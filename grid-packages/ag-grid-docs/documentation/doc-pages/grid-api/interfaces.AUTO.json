@@ -5104,6 +5104,16 @@
     "meta": {},
     "type": { "model": "ProvidedFilterModel", "apply": "boolean" }
   },
+  "FloatingFilterInputService": {
+    "meta": {},
+    "type": {
+      "setupGui(parentElement: HTMLElement)": "void",
+      "setEditable(editable: boolean)": "void",
+      "getValue()": "string | null | undefined",
+      "setValue(value: string | null | undefined, silent?: boolean)": "void",
+      "addValueChangedListener(listener: () => void)": "void"
+    }
+  },
   "ModelUnion": {
     "meta": { "isTypeAlias": true },
     "type": "TextFilterModel | NumberFilterModel"

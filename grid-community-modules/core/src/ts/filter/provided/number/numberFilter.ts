@@ -60,6 +60,22 @@ export class NumberFilterModelFormatter extends SimpleFilterModelFormatter {
     }
 }
 
+export function getAllowedCharPattern(filterParams?: NumberFilterParams): string | null {
+    const { allowedCharPattern } = filterParams ?? {};
+
+    if (allowedCharPattern) {
+        return allowedCharPattern;
+    }
+
+    if (!isBrowserChrome()) {
+        // only Chrome and Edge (Chromium) have nice HTML5 number field handling, so for other browsers we provide an equivalent
+        // constraint instead
+        return '\\d\\-\\.';
+    }
+
+    return null;
+}
+
 export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     public static DEFAULT_FILTER_OPTIONS = [
         ScalarFilter.EQUALS,
@@ -109,7 +125,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     protected setParams(params: NumberFilterParams): void {
         this.numberFilterParams = params;
 
-        const allowedCharPattern = this.getAllowedCharPattern();
+        const allowedCharPattern = getAllowedCharPattern(this.numberFilterParams);
 
         if (allowedCharPattern) {
             const config = { allowedCharPattern };
@@ -132,7 +148,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
 
     protected createValueTemplate(position: ConditionPosition): string {
         const pos = position === ConditionPosition.One ? '1' : '2';
-        const allowedCharPattern = this.getAllowedCharPattern();
+        const allowedCharPattern = getAllowedCharPattern(this.numberFilterParams);
         const agElementTag = allowedCharPattern ? 'ag-input-text-field' : 'ag-input-number-field';
 
         return /* html */`
@@ -204,22 +220,6 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
             [this.eValueFrom1, this.eValueTo1],
             [this.eValueFrom2, this.eValueTo2],
         ];
-    }
-
-    private getAllowedCharPattern(): string | null {
-        const { allowedCharPattern } = this.numberFilterParams || {};
-
-        if (allowedCharPattern) {
-            return allowedCharPattern;
-        }
-
-        if (!isBrowserChrome()) {
-            // only Chrome and Edge (Chromium) support the HTML5 number field, so for other browsers we provide an equivalent
-            // constraint instead
-            return '\\d\\-\\.';
-        }
-
-        return null;
     }
 
     public getModelAsString(model: ISimpleFilterModel): string {

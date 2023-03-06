@@ -9063,6 +9063,46 @@
     },
     "apply": { "type": { "returnType": "boolean", "optional": false } }
   },
+  "FloatingFilterInputService": {
+    "setupGui": {
+      "type": {
+        "arguments": { "parentElement": "HTMLElement" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "setEditable": {
+      "type": {
+        "arguments": { "editable": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "getValue": {
+      "type": {
+        "arguments": {},
+        "returnType": "string | null | undefined",
+        "optional": false
+      }
+    },
+    "setValue": {
+      "type": {
+        "arguments": {
+          "value": "string | null | undefined",
+          "silent?": "boolean"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "addValueChangedListener": {
+      "type": {
+        "arguments": { "listener": "() => void" },
+        "returnType": "void",
+        "optional": false
+      }
+    }
+  },
   "ModelUnion": {},
   "DateFilterModel": {
     "filterType": {
