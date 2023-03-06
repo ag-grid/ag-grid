@@ -94,11 +94,9 @@ const Announcements = ({ framework }) => (
 const SimpleMailingListSignup = () => {
     return (
         <>
-            <link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css" />
-            <div
-                id="mc_embed_signup"
-                style={{ background: '#fff', clear: 'left', font: '14px Helvetica,Arial,sans-serif' }}
-            >
+            {/* <link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css" /> */}
+
+            <div id="mc_embed_signup" className={styles.newsletterSignup}>
                 <form
                     action="https://ag-grid.us11.list-manage.com/subscribe/post?u=9b44b788c97fa5b498fbbc9b5&amp;id=9353cf87ce"
                     method="post"
@@ -109,9 +107,8 @@ const SimpleMailingListSignup = () => {
                     validate="true"
                 >
                     <div id="mc_embed_signup_scroll">
-                        <label htmlFor="mce-EMAIL">Join AG Grid Mailing List</label>
+                        <label htmlFor="mce-EMAIL">Join the AG Grid Mailing List</label>
                         <input
-                            style={{ width: '100%' }}
                             type="email"
                             defaultValue=""
                             name="EMAIL"
@@ -128,6 +125,7 @@ const SimpleMailingListSignup = () => {
                                 defaultValue=""
                             />
                         </div>
+
                         <div className="clear">
                             <input
                                 type="submit"

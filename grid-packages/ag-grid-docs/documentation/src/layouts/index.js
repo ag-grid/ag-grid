@@ -7,7 +7,6 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import favIcons from '../images/favicons';
 import styles from './index.module.scss';
-import './mailchimp.css';
 
 // export const getScreenLayout = path => {
 //     // order is important here

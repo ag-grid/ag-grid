@@ -5,9 +5,25 @@
 
 .versions {
     margin-top: $size-4 !important; // !important for .ag-styles specificity
+    margin-bottom: $size-4 !important; // !important for .ag-styles specificity
 
-    > div {
+    > div:not(:last-child) {
         margin-bottom: $size-2;
+    }
+}
+
+.newsletterSignup {
+    margin-bottom: $size-4 !important; // !important for .ag-styles specificity
+
+    label {
+        display: block;
+        margin-bottom: $size-half !important; // !important for .ag-styles specificity
+    }
+
+    input[type='email'] {
+        width: 100%;
+        margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+        margin-left: 0 !important; // !important for .ag-styles specificity
     }
 }
 
