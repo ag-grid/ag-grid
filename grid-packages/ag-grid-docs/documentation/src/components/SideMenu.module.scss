@@ -1,59 +1,26 @@
 @use '../design-system' as *;
 
-.side-nav {
+.sideNav {
     display: none;
-    width: 180px;
-    flex: none;
-    font-size: 0.9rem;
-    background-color: $white;
-    text-align: right;
+    width: 220px;
+    padding-left: $size-2;
+    line-height: var(--line-height-tight);
+    border-left: solid 1px var(--bright-blue-gray);
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
         display: block;
     }
 
-    &__list {
-        $top-bar-height: 58px;
-
-        composes: list-unstyled from global;
-
-        border-left: solid 1px var(--bright-blue-gray);
-
-        @supports (position: sticky) {
-            position: sticky;
-            top: 58px;
-            height: calc(100vh - #{$top-bar-height});
-            overflow: hidden;
-            overflow-y: auto;
-        }
+    ul {
     }
 
-    &__item--level-1 {
-        font-size: 1.05rem;
-        font-weight: 500;
+    li:not(.level-2):not(:first-child) {
+        margin-top: $size-2;
     }
+}
 
-    &__item--level-3 {
-        composes: ml-2 from global;
-
-        font-weight: 300;
-    }
-
-    &__item--level-4 {
-        composes: ml-3 from global;
-
-        font-weight: 300;
-    }
-
-    &__link {
-        composes: d-block my-2 from global;
-
-        color: $secondary;
-        text-decoration: none;
-
-        &:hover {
-            color: $primary;
-            text-decoration: none;
-        }
-    }
+.level-2 {
+    margin-top: $size-half;
+    margin-left: $size-2;
+    font-size: var(--font-size-small);
 }

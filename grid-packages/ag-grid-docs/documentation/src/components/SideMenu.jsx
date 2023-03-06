@@ -51,21 +51,17 @@ const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu }) => {
 
     return (
         allHeadings.length > 0 && (
-            <div className={classNames(styles['side-nav'], 'ag-styles')}>
-                <ul className={styles['side-nav__list']}>
-                    <li className={styles[`side-nav__item--level-1`]}>
-                        <a className={styles['side-nav__link']} href="#top">
-                            {pageTitle}
-                        </a>
+            <div className={classNames(styles.sideNav, 'ag-styles')}>
+                <h3>{pageName}</h3>
+
+                <ul className="list-style-none">
+                    <li>
+                        <a href="#top">{pageTitle}</a>
                     </li>
+
                     {allHeadings.map((heading) => (
-                        <li
-                            key={`${pageName}_${heading.id}`}
-                            className={styles[`side-nav__item--level-${heading.depth}`]}
-                        >
-                            <a className={styles['side-nav__link']} href={`#${heading.id}`}>
-                                {heading.value}
-                            </a>
+                        <li key={`${pageName}_${heading.id}`} className={styles[`level-${heading.depth}`]}>
+                            <a href={`#${heading.id}`}>{heading.value}</a>
                         </li>
                     ))}
                 </ul>
