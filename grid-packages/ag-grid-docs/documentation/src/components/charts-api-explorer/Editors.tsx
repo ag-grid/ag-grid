@@ -193,7 +193,7 @@ export const getPrimitiveEditor = ({ meta, desc }: JsonModelProperty, key: strin
 
         if (options.some((o) => validUnionTypes.includes(o))) {
             options = options.filter((o) => validUnionTypes.includes(o));
-            return { editor: CoercedEditor, editorProps: meta };
+            return { editor: CoercedEditor, editorProps: { ...meta, options } };
         }
 
         options = options.filter((v) => v.startsWith("'") && v.endsWith("'")).map((v) => v.substring(1, v.length - 1));
@@ -325,12 +325,15 @@ export const JsonEditor = (props) => (
 );
 
 export const CoercedEditor = (props) => {
+    const boolean = props.options.includes('boolean');
+    const number = ['PixelSize', 'Opacity', 'Ratio', 'number'].some((o) => props.options.includes(o));
+
     return (
         <StringEditor
             fromStringValue={(value) => {
-                if (value.toLowerCase() === 'false') return false;
-                if (value.toLowerCase() === 'true') return true;
-                if (!isNaN(value) && !isNaN(parseInt(value))) return parseInt(value);
+                if (boolean && value.toLowerCase() === 'false') return false;
+                if (boolean && value.toLowerCase() === 'true') return true;
+                if (number && !isNaN(value) && !isNaN(parseInt(value))) return parseInt(value);
                 return value;
             }}
             {...props}
