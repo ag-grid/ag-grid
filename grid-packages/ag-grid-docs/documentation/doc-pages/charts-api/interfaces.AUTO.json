@@ -3462,10 +3462,6 @@
     "meta": { "isTypeAlias": true },
     "type": "{ x: number; y: number; t?: 'move'; }"
   },
-  "Offset": {
-    "meta": {},
-    "type": { "offsetX": "number", "offsetY": "number" }
-  },
   "FillSelectionDatum": {
     "meta": {},
     "type": { "itemId": "string", "points": "{ x: number; y: number; }[]" }
