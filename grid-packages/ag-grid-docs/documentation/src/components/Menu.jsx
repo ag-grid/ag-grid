@@ -137,7 +137,7 @@ const Menu = ({ currentFramework, currentPage }) => {
         <aside className={classnames(styles['menu'], 'ag-styles')}>
             <div className="page-margin">
                 <FontAwesomeIcon icon={faChevronRight} className={styles['menu__arrow']} symbol="menu-item" />
-                <ul id="side-nav" className={styles['menu__sections']}>
+                <ul id="side-nav" className={classnames(styles['menu__sections'], 'list-style-none')}>
                     {combinedMenuItems.map((item) => {
                         const { title } = item;
                         const isActive = title === activeSection;

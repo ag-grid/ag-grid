@@ -3,8 +3,12 @@
 .announcements {
 }
 
-.versions > div {
-    margin-bottom: $size-2;
+.versions {
+    margin-top: $size-4 !important; // !important for .ag-styles specificity
+
+    > div {
+        margin-bottom: $size-2;
+    }
 }
 
 .announcement {

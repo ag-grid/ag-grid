@@ -1,6 +1,5 @@
 .side-nav {
-    composes: d-none d-xl-block my-4 from global;
-
+    display: none;
     width: 300px;
     flex: none;
     font-size: 0.9rem;

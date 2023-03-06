@@ -1,6 +1,10 @@
+@use '../design-system' as *;
+
 .menu {
     composes: navbar flex-grow-1 flex-column align-items-stretch navbar-expand-lg navbar-light p-0 from global;
+
     flex-basis: 0px;
+    border-bottom: 1px solid var(--border-color);
 
     &__item {
         &__link {
@@ -21,7 +25,7 @@
 
                 &::before {
                     font-size: 1.5rem;
-                    content: "•";
+                    content: '•';
                     position: absolute;
                     left: -1rem;
                     top: -0.55rem;
@@ -29,7 +33,7 @@
             }
         }
 
-        div[role="button"],
+        div[role='button'],
         &__link {
             white-space: nowrap;
 
@@ -45,7 +49,7 @@
             }
         }
 
-        div[role="button"] {
+        div[role='button'] {
             color: $dark;
             font-weight: 500;
         }
@@ -54,7 +58,7 @@
     &__enterprise-icon {
         composes: ml-1 from global;
 
-        background-image: url("../images/enterprise.svg");
+        background-image: url('../images/enterprise.svg');
         background-position-y: center;
         background-repeat: no-repeat;
         display: inline-block;
@@ -66,11 +70,12 @@
     }
 
     &__sections {
-        composes: collapse navbar-collapse flex-column ml-2 pt-1 align-items-stretch list-unstyled from global;
-        overflow: auto;
-        margin: 0;
-        padding: 0;
+        composes: collapse navbar-collapse from global;
+
         flex-basis: auto !important;
+        padding-top: $size-2;
+        padding-bottom: $size-4;
+        overflow: auto;
     }
 
     &__section {
