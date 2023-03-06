@@ -32,8 +32,6 @@ if [[ "$MODULE_NAME" != "ag-charts-community" ]] ; then
     INIT_CMD="npx lerna bootstrap --include-dependents --include-dependencies --scope=${SCOPE}"
 fi
 
-
-
 case $1 in
     init)
         # More FS write access is needed during init, as lerna temporarily modifies package.json.
