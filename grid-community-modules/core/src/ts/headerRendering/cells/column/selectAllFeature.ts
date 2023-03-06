@@ -7,7 +7,7 @@ import { Events, SelectionEventSourceType } from "../../../events";
 import { IRowModel } from "../../../interfaces/iRowModel";
 import { Column } from "../../../entities/column";
 import { RowNode } from "../../../entities/rowNode";
-import { SelectionService } from "../../../selectionService";
+import { ISelectionService } from "../../../interfaces/iSelectionService";
 import { HeaderCellCtrl } from "./headerCellCtrl";
 import { setAriaHidden, setAriaRole } from "../../../utils/aria";
 import { HeaderCheckboxSelectionCallbackParams } from "../../../entities/colDef";
@@ -17,7 +17,7 @@ export class SelectAllFeature extends BeanStub {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('selectionService') private selectionService: SelectionService;
+    @Autowired('selectionService') private selectionService: ISelectionService;
 
     private cbSelectAllVisible = false;
     private processingEventFromCheckbox = false;
@@ -93,33 +93,12 @@ export class SelectAllFeature extends BeanStub {
         this.updateStateOfCheckbox();
     }
 
-    private getNextCheckboxState(selectionCount: SelectionCount): boolean | null {
-        // if no rows, always have it unselected
-        if (selectionCount.selected === 0 && selectionCount.notSelected === 0) {
-            return false;
-        }
-
-        // if mix of selected and unselected, this is the tri-state
-        if (selectionCount.selected > 0 && selectionCount.notSelected > 0) {
-            return null;
-        }
-
-        // only selected
-        if (selectionCount.selected > 0) {
-            return true;
-        }
-
-        // nothing selected
-        return false;
-    }
-
     private updateStateOfCheckbox(): void {
         if (this.processingEventFromCheckbox) { return; }
 
         this.processingEventFromCheckbox = true;
 
-        const selectionCount = this.getSelectionCount();
-        const allSelected = this.getNextCheckboxState(selectionCount);
+        const allSelected = this.selectionService.getSelectAllState();
 
         this.cbSelectAll.setValue(allSelected!);
         this.refreshSelectAllLabel();
@@ -144,37 +123,12 @@ export class SelectAllFeature extends BeanStub {
         this.headerCellCtrl.refreshAriaDescription();
     }
 
-    private getSelectionCount(): SelectionCount {
-        let selectedCount = 0;
-        let notSelectedCount = 0;
-
-        const callback = (node: RowNode) => {
-
-            if (this.gridOptionsService.is('groupSelectsChildren') && node.group) { return; }
-
-            if (node.isSelected()) {
-                selectedCount++;
-            } else if (!node.selectable) {
-                // don't count non-selectable nodes!
-            } else {
-                notSelectedCount++;
-            }
-        };
-
-        this.selectionService.getNodesToSelect(this.filteredOnly, this.currentPageOnly).forEach(callback);
-
-        return {
-            notSelected: notSelectedCount,
-            selected: selectedCount
-        };
-    }
-
     private checkRightRowModelType(feature: string): boolean {
         const rowModelType = this.rowModel.getType();
-        const rowModelMatches = rowModelType === 'clientSide';
+        const rowModelMatches = rowModelType === 'clientSide' || rowModelType === 'serverSide';
 
         if (!rowModelMatches) {
-            console.warn(`AG Grid: ${feature} is only available if using 'clientSide' rowModelType, you are using ${rowModelType}.`);
+            console.warn(`AG Grid: ${feature} is only available if using 'clientSide' or 'serverSide' rowModelType, you are using ${rowModelType}.`);
             return false;
         }
         return true;

@@ -5,6 +5,7 @@ import { ChartAxis } from './chartAxis';
 import { ChartAxisDirection } from './chartAxisDirection';
 import { BBox } from '../scene/bbox';
 import { AgCartesianAxisPosition } from './agChartOptions';
+import { Logger } from '../util/logger';
 
 type VisibilityMap = { crossLines: boolean; series: boolean };
 
@@ -25,7 +26,11 @@ export class CartesianChart extends Chart {
     async performLayout() {
         this.scene.root!.visible = true;
 
-        const { width, height, legend, padding } = this;
+        const {
+            legend,
+            padding,
+            scene: { width, height },
+        } = this;
 
         let shrinkRect = new BBox(0, 0, width, height);
         shrinkRect.x += padding.left;
@@ -59,9 +64,9 @@ export class CartesianChart extends Chart {
         const { seriesRoot } = this;
         if (clipSeries) {
             const { x, y, width, height } = seriesRect;
-            seriesRoot.clipRect = new BBox(x, y, width, height);
+            seriesRoot.setClipRectInGroupCoordinateSpace(new BBox(x, y, width, height));
         } else {
-            seriesRoot.clipRect = undefined;
+            seriesRoot.setClipRectInGroupCoordinateSpace(undefined);
         }
     }
 
@@ -140,14 +145,32 @@ export class CartesianChart extends Chart {
             seriesRect = result.seriesRect;
 
             if (count++ > 10) {
-                console.warn('AG Charts - unable to find stable axis layout.');
+                Logger.warn('unable to find stable axis layout.');
                 break;
             }
         } while (!stableOutputs(lastPassAxisWidths, lastPassVisibility));
 
-        // update visibility of crosslines
+        const clipRectPadding = 5;
         this.axes.forEach((axis) => {
+            // update visibility of crosslines
             axis.setCrossLinesVisible(visibility.crossLines);
+
+            if (!seriesRect) {
+                return;
+            }
+
+            axis.clipGrid(seriesRect.x, seriesRect.y, seriesRect.width + clipRectPadding, seriesRect.height + clipRectPadding);
+
+            switch (axis.position) {
+                case 'left':
+                case 'right':
+                    axis.clipTickLines(inputShrinkRect.x, seriesRect.y, inputShrinkRect.width + clipRectPadding, seriesRect.height + clipRectPadding);
+                    break;
+                case 'top':
+                case 'bottom':
+                    axis.clipTickLines(seriesRect.x, inputShrinkRect.y, seriesRect.width + clipRectPadding, inputShrinkRect.height + clipRectPadding);
+                    break;
+            }
         });
 
         this._lastAxisWidths = axisWidths;
@@ -322,7 +345,7 @@ export class CartesianChart extends Chart {
         }
 
         const zoom = this.zoomManager.getZoom()?.[axis.direction];
-        let { min = 0, max = 1 } = zoom ?? {};
+        const { min = 0, max = 1 } = zoom ?? {};
         axis.visibleRange = [min, max];
 
         if (!clipSeries && (axis.visibleRange[0] > 0 || axis.visibleRange[1] < 1)) {

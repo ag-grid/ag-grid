@@ -6,6 +6,7 @@ import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
 import { windowValue } from '../util/window';
 import { ascendingStringNumberUndefined, compoundAscending } from '../util/compare';
 import { SceneDebugOptions } from './sceneDebugOptions';
+import { Logger } from '../util/logger';
 
 interface SceneOptions {
     document: Document;
@@ -111,8 +112,9 @@ export class Scene {
 
         // HdpiCanvas doesn't allow width/height <= 0.
         const lessThanZero = width <= 0 || height <= 0;
+        const nan = isNaN(width) || isNaN(height);
         const unchanged = width === this.width && height === this.height;
-        if (unchanged || lessThanZero) {
+        if (unchanged || nan || lessThanZero) {
             return false;
         }
 
@@ -184,7 +186,7 @@ export class Scene {
         }
 
         if (this.debug.consoleLog) {
-            console.log({ layers: this.layers });
+            Logger.debug({ layers: this.layers });
         }
 
         return newLayer.canvas;
@@ -199,7 +201,7 @@ export class Scene {
             this.markDirty();
 
             if (this.debug.consoleLog) {
-                console.log({ layers: this.layers });
+                Logger.debug({ layers: this.layers });
             }
         }
     }
@@ -214,7 +216,7 @@ export class Scene {
             this.markDirty();
 
             if (this.debug.consoleLog) {
-                console.log({ layers: this.layers });
+                Logger.debug({ layers: this.layers });
             }
         }
     }
@@ -319,7 +321,7 @@ export class Scene {
 
         if (root && !this.dirty) {
             if (this.debug.consoleLog) {
-                console.log('no-op', {
+                Logger.debug('no-op', {
                     redrawType: RedrawType[root.dirty],
                     tree: this.buildTree(root),
                 });
@@ -348,12 +350,12 @@ export class Scene {
 
         if (root && this.debug.dirtyTree) {
             const { dirtyTree, paths } = this.buildDirtyTree(root);
-            console.log({ dirtyTree, paths });
+            Logger.debug({ dirtyTree, paths });
         }
 
         if (root && canvasCleared) {
             if (this.debug.consoleLog) {
-                console.log('before', {
+                Logger.debug('before', {
                     redrawType: RedrawType[root.dirty],
                     canvasCleared,
                     tree: this.buildTree(root),
@@ -387,7 +389,7 @@ export class Scene {
         this.debugSceneNodeHighlight(ctx, this.debug.sceneNodeHighlight, renderCtx.debugNodes);
 
         if (root && this.debug.consoleLog) {
-            console.log('after', { redrawType: RedrawType[root.dirty], canvasCleared, tree: this.buildTree(root) });
+            Logger.debug('after', { redrawType: RedrawType[root.dirty], canvasCleared, tree: this.buildTree(root) });
         }
     }
 
@@ -466,7 +468,7 @@ export class Scene {
             const predicate = typeof next === 'string' ? stringPredicate(next) : regexpPredicate(next);
             const nodes = this.root?.findNodes(predicate);
             if (!nodes || nodes.length === 0) {
-                console.warn(`AG Charts - No debugging node with id [${next}] in scene graph.`);
+                Logger.debug(`no debugging node with id [${next}] in scene graph.`);
                 continue;
             }
 
@@ -485,7 +487,7 @@ export class Scene {
             const bbox = node.computeTransformedBBox();
 
             if (!bbox) {
-                console.warn(`AG Charts - No bbox for debugged node [${name}].`);
+                Logger.debug(`no bbox for debugged node [${name}].`);
                 continue;
             }
 
@@ -517,8 +519,8 @@ export class Scene {
             ...node.children
                 .map((c) => this.buildTree(c))
                 .reduce((result, childTree) => {
-                    let {
-                        name: treeNodeName,
+                    let { name: treeNodeName } = childTree;
+                    const {
                         node: { visible, opacity, zIndex, zIndexSubOrder },
                         node: childNode,
                     } = childTree;

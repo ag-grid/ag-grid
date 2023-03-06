@@ -41,6 +41,7 @@ function calculateColour(size: number) {
   return colours[matchingKey]
 }
 
+const year = new Date().getFullYear();
 const options: AgChartOptions = {
   container: document.getElementById('myChart'),
   autoSize: true,
@@ -48,7 +49,7 @@ const options: AgChartOptions = {
     return d.magnitude > 4
   }),
   title: {
-    text: 'Worldwide Earthquakes (first week of February 2020)',
+    text: `Worldwide Earthquakes (first week of February ${year - 1})`,
     fontSize: 18,
   },
   subtitle: {

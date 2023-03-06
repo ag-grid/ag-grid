@@ -10,6 +10,9 @@
     "build": "npx gulp && npm run rollup && npm run hash",
     "build-prod": "npm run build",
     "package": "npx gulp copy-umd-files",
+    "test": "if test -z \"$TEAMCITY_PROJECT_NAME\" ; then exec npm run test:dev ; else exec npm run test:ci ; fi",
+    "test:ci": "/bin/sh ./test-modifications.sh",
+    "test:dev": "echo \"No tests to run.\"",
     "rollup": "mkdir -p dist && node build.js",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },

@@ -248,7 +248,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     /**
      * Recursively applies a provided function to every node
      * 
-     * For the purpose of exclusively sever side filtered stores, this is the same as forEachNodeDeepAfterFilterAndSort
+     * For the purpose of exclusively server side filtered stores, this is the same as forEachNodeDeepAfterFilterAndSort
      */
     forEachStoreDeep(callback: (store: IServerSideStore, index: number) => void, sequence = new NumberSequence()): void {
         callback(this, sequence.next());
@@ -263,7 +263,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     /**
      * Recursively applies a provided function to every node
      * 
-     * For the purpose of exclusively sever side filtered stores, this is the same as forEachNodeDeepAfterFilterAndSort
+     * For the purpose of exclusively server side filtered stores, this is the same as forEachNodeDeepAfterFilterAndSort
      */
     forEachNodeDeep(callback: (rowNode: RowNode<any>, index: number) => void, sequence = new NumberSequence()): void {
         this.cache.getAllNodes().forEach(rowNode => {
@@ -278,7 +278,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     /**
      * Recursively applies a provided function to every node
      * 
-     * For the purpose of exclusively sever side filtered stores, this is the same as forEachNodeDeep
+     * For the purpose of exclusively server side filtered stores, this is the same as forEachNodeDeep
      */
     forEachNodeDeepAfterFilterAndSort(callback: (rowNode: RowNode<any>, index: number) => void, sequence = new NumberSequence()): void {
         this.cache.getAllNodes().forEach(rowNode => {

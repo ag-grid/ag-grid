@@ -214,7 +214,7 @@
 |
 |  constructor(private http: HttpClient) {}
 |
-|  // Example load data from sever
+|  // Example load data from server
 |  onGridReady(params: GridReadyEvent) {
 |    this.rowData$ = this.http
 |      .get<any[]>('https://www.ag-grid.com/example-assets/row-data.json');
@@ -327,7 +327,7 @@
 | public rowData$!: Observable<any[]>;
 | ...
 |
-| // Example load data from sever
+| // Example load data from server
 | onGridReady(params: GridReadyEvent) {
 |   this.rowData$ = this.http
 |     .get<any[]>('https://www.ag-grid.com/example-assets/row-data.json');

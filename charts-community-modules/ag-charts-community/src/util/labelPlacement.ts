@@ -110,9 +110,12 @@ export function axisLabelsOverlap(data: readonly PointLabelDatum[], padding?: nu
 
     for (let i = 0; i < data.length; i++) {
         const datum = data[i];
-        let {
+        const {
             point: { x, y },
-            label: { width, height, text },
+            label: { text },
+        } = datum;
+        let {
+            label: { width, height },
         } = datum;
 
         width += padding ?? 0;

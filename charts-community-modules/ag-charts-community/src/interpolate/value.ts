@@ -15,7 +15,9 @@ export default function (a: any, b: any): (t: number) => any {
             c = Color.fromString(b);
             b = c;
             return color(a, b);
-        } catch (e) {}
+        } catch (e) {
+            // Error-case handled below.
+        }
     }
 
     throw new Error('Unable to interpolate values');

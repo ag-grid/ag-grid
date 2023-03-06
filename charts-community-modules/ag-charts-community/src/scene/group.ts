@@ -3,11 +3,15 @@ import { BBox } from './bbox';
 import { HdpiCanvas } from '../canvas/hdpiCanvas';
 import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
 import { compoundAscending, ascendingStringNumberUndefined } from '../util/compare';
+import { Logger } from '../util/logger';
+import { Matrix } from './matrix';
+
+type OffscreenCanvasRenderingContext2D = any;
 
 export class Group extends Node {
     static className = 'Group';
 
-    clipRect?: BBox;
+    private clipRect?: BBox;
     protected layer?: HdpiCanvas | HdpiOffscreenCanvas;
     readonly name?: string;
 
@@ -123,13 +127,16 @@ export class Group extends Node {
         const { opts: { name = undefined } = {} } = this;
         const { _debug: { consoleLog = false } = {} } = this;
         const { dirty, dirtyZIndex, layer, children, clipRect } = this;
-        let { ctx, forceRender, clipBBox, resized, stats } = renderCtx;
+        let { ctx, forceRender, clipBBox } = renderCtx;
+        const { resized, stats } = renderCtx;
+
+        const canvasCtxTransform = ctx.getTransform();
 
         const isDirty = dirty >= RedrawType.MINOR || dirtyZIndex || resized;
         const isChildDirty = isDirty || children.some((n) => n.dirty >= RedrawType.TRIVIAL);
 
         if (name && consoleLog) {
-            console.log({ name, group: this, isDirty, isChildDirty, renderCtx, forceRender });
+            Logger.debug({ name, group: this, isDirty, isChildDirty, renderCtx, forceRender });
         }
 
         if (layer) {
@@ -150,7 +157,7 @@ export class Group extends Node {
         if (!isDirty && !isChildDirty && !forceRender) {
             if (name && consoleLog && stats) {
                 const counts = this.nodeCount;
-                console.log({ name, result: 'skipping', renderCtx, counts, group: this });
+                Logger.debug({ name, result: 'skipping', renderCtx, counts, group: this });
             }
 
             if (layer && stats) {
@@ -169,32 +176,27 @@ export class Group extends Node {
             // Switch context to the canvas layer we use for this group.
             ctx = layer.context;
             ctx.save();
-            ctx.setTransform(renderCtx.ctx.getTransform());
+            ctx.resetTransform();
 
             forceRender = true;
             layer.clear();
 
             if (clipBBox) {
+                // clipBBox is in the canvas coordinate space, when we hit a layer we apply the new clipping at which point there are no transforms in play
                 const { width, height, x, y } = clipBBox;
 
                 if (consoleLog) {
-                    console.log({ name, clipBBox, ctxTransform: ctx.getTransform(), renderCtx, group: this });
+                    Logger.debug({ name, clipBBox, ctxTransform: ctx.getTransform(), renderCtx, group: this });
                 }
 
-                ctx.rect(x, y, width, height);
-                ctx.clip();
+                this.clipCtx(ctx, x, y, width, height);
             }
+
+            ctx.setTransform(canvasCtxTransform);
         } else {
             // Only apply opacity if this isn't a distinct layer - opacity will be applied
             // at composition time.
             ctx.globalAlpha *= this.opacity;
-        }
-
-        if (clipRect) {
-            const { x, y, width, height } = clipRect;
-            ctx.save();
-            ctx.rect(x, y, width, height);
-            ctx.clip();
         }
 
         // A group can have `scaling`, `rotation`, `translation` properties
@@ -204,9 +206,18 @@ export class Group extends Node {
         this.matrix.toContext(ctx);
 
         if (clipRect) {
-            clipBBox = this.matrix.inverse().transformBBox(clipRect);
-        } else if (clipBBox) {
-            clipBBox = this.matrix.inverse().transformBBox(clipBBox);
+            // clipRect is in the group's coordinate space
+            const { x, y, width, height } = clipRect;
+            ctx.save();
+
+            if (consoleLog) {
+                Logger.debug({ name, clipRect, ctxTransform: ctx.getTransform(), renderCtx, group: this });
+            }
+
+            this.clipCtx(ctx, x, y, width, height);
+
+            // clipBBox is in the canvas coordinate space, when we hit a layer we apply the new clipping at which point there are no transforms in play
+            clipBBox = Matrix.fromContext(ctx).transformBBox(clipRect);
         }
 
         if (dirtyZIndex) {
@@ -257,7 +268,7 @@ export class Group extends Node {
 
         if (name && consoleLog && stats) {
             const counts = this.nodeCount;
-            console.log({ name, result: 'rendered', skipped, renderCtx, counts, group: this });
+            Logger.debug({ name, result: 'rendered', skipped, renderCtx, counts, group: this });
         }
     }
 
@@ -270,6 +281,22 @@ export class Group extends Node {
                 ascendingStringNumberUndefined
             );
         });
+    }
+
+    private clipCtx(
+        ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
+        x: number,
+        y: number,
+        width: number,
+        height: number
+    ) {
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + width, y);
+        ctx.lineTo(x + width, y + height);
+        ctx.lineTo(x, y + height);
+        ctx.closePath();
+        ctx.clip();
     }
 
     static computeBBox(nodes: Node[]) {
@@ -305,5 +332,14 @@ export class Group extends Node {
         });
 
         return new BBox(left, top, right - left, bottom - top);
+    }
+
+    /**
+     * Transforms bbox given in the canvas coordinate space to bbox in this group's coordinate space and
+     * sets this group's clipRect to the transformed bbox.
+     * @param bbox clipRect bbox in the canvas coordinate space.
+     */
+    setClipRectInGroupCoordinateSpace(bbox?: BBox) {
+        this.clipRect = bbox ? this.transformBBox(bbox) : undefined;
     }
 }

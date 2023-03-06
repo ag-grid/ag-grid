@@ -61,7 +61,6 @@ export class Caption {
     constructor() {
         const node = this.node;
         node.textAlign = 'center';
-        node.textBaseline = 'top';
         node.pointerEvents = PointerEvents.None;
     }
 }

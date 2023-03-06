@@ -7,11 +7,10 @@ import { DropShadow } from '../../../scene/dropShadow';
 import { LinearScale } from '../../../scale/linearScale';
 import { Sector } from '../../../scene/shape/sector';
 import { BBox } from '../../../scene/bbox';
-import { SeriesNodeDatum, HighlightStyle, SeriesTooltip, SeriesNodeClickEvent } from './../series';
+import { SeriesNodeDatum, HighlightStyle, SeriesTooltip, SeriesNodeBaseClickEvent } from './../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { normalizeAngle180, toRadians } from '../../../util/angle';
-import { doOnce } from '../../../util/function';
 import { toFixed, mod } from '../../../util/number';
 import { Layers } from '../../layers';
 import { LegendDatum } from '../../legendDatum';
@@ -40,8 +39,9 @@ import {
     AgPieSeriesFormat,
     AgPieSeriesFormatterParams,
 } from '../../agChartOptions';
+import { Logger } from '../../../util/logger';
 
-class PieSeriesNodeClickEvent extends SeriesNodeClickEvent<any> {
+class PieSeriesNodeBaseClickEvent extends SeriesNodeBaseClickEvent<any> {
     readonly angleKey: string;
     @DeprecatedAndRenamedTo('calloutLabelKey')
     readonly labelKey?: string;
@@ -64,6 +64,14 @@ class PieSeriesNodeClickEvent extends SeriesNodeClickEvent<any> {
         this.sectorLabelKey = sectorLabelKey;
         this.radiusKey = radiusKey;
     }
+}
+
+class PieSeriesNodeClickEvent extends PieSeriesNodeBaseClickEvent {
+    readonly type = 'nodeClick';
+}
+
+class PieSeriesNodeDoubleClickEvent extends PieSeriesNodeBaseClickEvent {
+    readonly type = 'nodeDoubleClick';
 }
 
 interface PieNodeDatum extends SeriesNodeDatum {
@@ -474,12 +482,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         if (labelKey) {
             if (labelFormatter) {
                 const showValueDeprecationWarning = () =>
-                    doOnce(
-                        () =>
-                            console.warn(
-                                'AG Charts - the use of { value } in the pie chart label formatter function is deprecated. Please use { datum, labelKey, ... } instead.'
-                            ),
-                        'deprecated use of "value" property in pie chart label formatter'
+                    Logger.warnOnce(
+                        'the use of { value } in the pie chart label formatter function is deprecated. Please use { datum, labelKey, ... } instead.'
                     );
                 labelData = data.map((datum) => {
                     let deprecatedValue = datum[labelKey];
@@ -1071,6 +1075,18 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     protected getNodeClickEvent(event: MouseEvent, datum: PieNodeDatum): PieSeriesNodeClickEvent {
         return new PieSeriesNodeClickEvent(
+            this.angleKey,
+            this.calloutLabelKey,
+            this.sectorLabelKey,
+            this.radiusKey,
+            event,
+            datum,
+            this
+        );
+    }
+
+    protected getNodeDoubleClickEvent(event: MouseEvent, datum: PieNodeDatum): PieSeriesNodeDoubleClickEvent {
+        return new PieSeriesNodeDoubleClickEvent(
             this.angleKey,
             this.calloutLabelKey,
             this.sectorLabelKey,

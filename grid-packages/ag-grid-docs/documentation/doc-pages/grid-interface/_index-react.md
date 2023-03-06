@@ -88,7 +88,7 @@
 | ```
 |
 |[[note]]
-|| Given React is asychronous, the grid may not be initialised when you access the API from the
+|| Given React is asynchronous, the grid may not be initialised when you access the API from the
 || React reference. If you want to access the API as soon as it's available (ie do initialisation
 || work), consider listening to the `gridReady` event and doing such initialisation there.
 |

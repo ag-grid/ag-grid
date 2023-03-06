@@ -15,7 +15,7 @@ import { IRowModel } from "../interfaces/iRowModel";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { RowNode } from "../entities/rowNode";
 import { RowHighlightPosition } from "../interfaces/iRowNode";
-import { SelectionService } from "../selectionService";
+import { ISelectionService } from "../interfaces/iSelectionService";
 import { MouseEventService } from "./mouseEventService";
 import { last } from '../utils/array';
 import { SortController } from "../sortController";
@@ -56,7 +56,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('selectionService') private selectionService: SelectionService;
+    @Autowired('selectionService') private selectionService: ISelectionService;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Optional('rangeService') private rangeService: IRangeService;

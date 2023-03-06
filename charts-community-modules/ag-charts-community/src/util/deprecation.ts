@@ -1,14 +1,10 @@
 import { addTransformToInstanceProperty, BREAK_TRANSFORM_CHAIN } from './decorator';
+import { Logger } from './logger';
 
 export function createDeprecationWarning() {
-    let logged = false;
     return (key: string, message?: string) => {
-        if (logged) {
-            return;
-        }
-        const msg = [`AG Charts - Property [${key}] is deprecated.`, message].filter((v) => v != null).join(' ');
-        console.warn(msg);
-        logged = true;
+        const msg = [`Property [${key}] is deprecated.`, message].filter((v) => v != null).join(' ');
+        Logger.warnOnce(msg);
     };
 }
 

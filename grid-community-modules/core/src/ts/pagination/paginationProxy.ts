@@ -140,10 +140,6 @@ export class PaginationProxy extends BeanStub {
         return this.rowModel.isRowsToRender();
     }
 
-    public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
-        return this.rowModel.getNodesInRangeForSelection(firstInRange, lastInRange);
-    }
-
     public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
         return this.rowModel.forEachNode(callback);
     }

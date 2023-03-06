@@ -113,6 +113,17 @@ The example below demonstrates transactions with Tree Data. Note the following:
 
 <grid-example title='Transactions with Tree Data' name='transactions-tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
+## Selection with Tree Data
+
+Tree Data can have row selection applied in the same way as row groups. This is explained in the [SSRM Row Selection](/server-side-model-selection/) section.
+
+The example below demonstrates row selection with Tree Data. Note the following:
+- `groupSelectsChildren` has been enabled, alongside `rowSelection='multiple'`.
+- Selecting a row with children also selects all of its children.
+- Selecting some, but not all, of a rows children places that row in the indeterminate state.
+
+<grid-example title='Selection with Tree Data' name='selecting-tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
+
 ## Filtering Tree Data
 
 Server-Side Tree Data Filtering should behave the same as Client-Side [Tree Data Filtering](/tree-data/#tree-data-filtering). A group will be included if:

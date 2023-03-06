@@ -491,9 +491,9 @@ interface AgChartEvent<T extends string> {
     event: Event;
 }
 
-export interface AgNodeClickEvent extends AgChartEvent<'seriesNodeClick'> {
+export interface AgNodeBaseClickEvent<T extends string> extends AgChartEvent<T> {
     /** Event type. */
-    type: 'seriesNodeClick';
+    type: T;
     /** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */
     series: any;
     /** Series ID, as specified in series.id (or generated if not specified) */
@@ -520,12 +520,17 @@ export interface AgNodeClickEvent extends AgChartEvent<'seriesNodeClick'> {
     radiusKey?: string;
 }
 
+export interface AgNodeClickEvent extends AgNodeBaseClickEvent<'seriesNodeClick'> {}
+export interface AgNodeDoubleClickEvent extends AgNodeBaseClickEvent<'seriesNodeDoubleClick'> {}
+
 export interface AgChartClickEvent extends AgChartEvent<'click'> {}
 export interface AgChartDoubleClickEvent extends AgChartEvent<'doubleClick'> {}
 
 export interface AgBaseChartListeners {
     /** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */
     seriesNodeClick?: (event: AgNodeClickEvent) => any;
+    /** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is double clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeDoubleClick` events of all the series at once. */
+    seriesNodeDoubleClick?: (event: AgNodeDoubleClickEvent) => any;
     /** The listener to call to signify a general click on the chart by the user. */
     click?: (event: AgChartClickEvent) => any;
     /** The listener to call to signify a double click on the chart by the user. */
@@ -552,6 +557,8 @@ export interface AgBaseChartOptions {
     title?: AgChartCaptionOptions;
     /** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */
     subtitle?: AgChartCaptionOptions;
+    /** Configuration for the footnote shown at the bottom of the chart. */
+    footnote?: AgChartCaptionOptions;
     /** Global configuration that applies to all tooltips in the chart. */
     tooltip?: AgChartTooltipOptions;
     /** Configuration for the chart legend. */
@@ -876,7 +883,9 @@ export interface AgSeriesNodeClickParams<DatumType> {
 
 export interface AgSeriesListeners<DatumType> {
     /** The listener to call when a node (marker, column, bar, tile or a pie sector) in the series is clicked. */
-    nodeClick: (params: AgSeriesNodeClickParams<DatumType>) => void;
+    nodeClick?: (params: AgSeriesNodeClickParams<DatumType>) => void;
+    /** The listener to call when a node (marker, column, bar, tile or a pie sector) in the series is double clicked. */
+    nodeDoubleClick?: (params: AgSeriesNodeClickParams<DatumType>) => void;
 }
 
 export interface AgBaseSeriesOptions<DatumType> {

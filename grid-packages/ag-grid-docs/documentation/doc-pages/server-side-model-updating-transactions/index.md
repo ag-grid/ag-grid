@@ -5,7 +5,7 @@ enterprise: true
 This section show how rows can be added, removed and updated using the Server-Side Transaction API.
 
 [[note]]
-| Server-Side Transactions require row ID's to be supplied to grid via [getRowId()](/row-ids/#application-assigned-ids/).
+| Server-Side Transactions require [Row ID's](/server-side-model-configuration/#providing-row-ids) to be supplied to grid.
 
 ##Transaction API
 
@@ -109,7 +109,7 @@ In the example below, note the following:
 
 ## Tree Data
 
-Transactions are also supported when using Tree data. See this documented on the [SSRM Tree Data](/server-side-model-tree-data/#transactions-with-tree-data) page.
+Transactions are also supported when using tree data. See this documented on the [SSRM Tree Data](/server-side-model-tree-data/#transactions-with-tree-data) page.
 
 ## Next Up
 

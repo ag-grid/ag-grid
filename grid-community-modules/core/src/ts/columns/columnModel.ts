@@ -4057,19 +4057,19 @@ export class ColumnModel extends BeanStub {
         return Math.max(defaultHeight, ...displayedHeights);
     }
 
-    public getHeaderHeight(): number | null | undefined {
+    public getHeaderHeight(): number {
         return this.gridOptionsService.getNum('headerHeight') ?? this.environment.getFromTheme(25, 'headerHeight');
     }
-    public getFloatingFiltersHeight(): number | null | undefined {
+    public getFloatingFiltersHeight(): number {
         return this.gridOptionsService.getNum('floatingFiltersHeight') ?? this.getHeaderHeight();
     }
-    private getGroupHeaderHeight(): number | null | undefined {
+    public getGroupHeaderHeight(): number {
         return this.gridOptionsService.getNum('groupHeaderHeight') ?? this.getHeaderHeight();
     }
-    private getPivotHeaderHeight(): number | null | undefined {
+    public getPivotHeaderHeight(): number {
         return this.gridOptionsService.getNum('pivotHeaderHeight') ?? this.getHeaderHeight();
     }
-    private getPivotGroupHeaderHeight(): number | null | undefined {
+    public getPivotGroupHeaderHeight(): number {
         return this.gridOptionsService.getNum('pivotGroupHeaderHeight') ?? this.getGroupHeaderHeight();
     }
 }

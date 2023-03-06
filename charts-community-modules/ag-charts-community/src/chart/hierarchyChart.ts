@@ -17,7 +17,11 @@ export class HierarchyChart extends Chart {
     async performLayout() {
         this.scene.root!!.visible = true;
 
-        const { width, height, legend, padding } = this;
+        const {
+            scene: { width, height },
+            legend,
+            padding,
+        } = this;
 
         let shrinkRect = new BBox(0, 0, width, height);
         shrinkRect.shrink(padding.left, 'left');
@@ -41,6 +45,8 @@ export class HierarchyChart extends Chart {
         });
 
         const { seriesRoot } = this;
-        seriesRoot.clipRect = new BBox(shrinkRect.x, shrinkRect.y, shrinkRect.width, shrinkRect.height);
+        seriesRoot.setClipRectInGroupCoordinateSpace(
+            new BBox(shrinkRect.x, shrinkRect.y, shrinkRect.width, shrinkRect.height)
+        );
     }
 }

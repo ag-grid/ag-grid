@@ -109,6 +109,9 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 |     subtitle: {
 |         text: 'per quarter'
 |     },
+|     footnote: {
+|         text: 'Based on a sample size of 200 respondents'
+|     },
 |     padding: {
 |         top: 40,
 |         right: 40,
@@ -116,10 +119,10 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 |         left: 40
 |     },
 |     series: [
-|         { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
-|         { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
-|         { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
 |         { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
+|         { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|         { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|         { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
 |     ],
 |     legend: {
 |         spacing: 40
@@ -173,11 +176,14 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 |             subtitle: {
 |                 text: 'per quarter',
 |             },
+|             footnote: {
+|                 text: 'Based on a sample size of 200 respondents',
+|             },
 |             series: [
-|                 { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
-|                 { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
-|                 { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
 |                 { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
 |             ],
 |         };
 |     }
@@ -222,6 +228,7 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 |                 data: this.data,
 |                 title: { text: 'Beverage Expenses' },
 |                 subtitle: { text: 'per quarter' },
+|                 footnote: { text: 'Based on a sample size of 200 respondents' },
 |                 padding: {
 |                     top: 40,
 |                     right: 40,
@@ -229,10 +236,10 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 |                     left: 40,
 |                 },
 |                 series: [
-|                     { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
-|                     { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
-|                     { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
 |                     { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
+|                     { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|                     { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|                     { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
 |                 ],
 |                 legend: { spacing: 40 },
 |             },
@@ -291,6 +298,9 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 |                     subtitle: {
 |                       text: 'per quarter',
 |                     },
+|                     footnote: {
+|                       text: 'Based on a sample size of 200 respondents',
+|                     },
 |                     padding: {
 |                       top: 40,
 |                       right: 40,
@@ -298,10 +308,10 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 |                       left: 40,
 |                     },
 |                     series: [
-|                       { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
-|                       { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
-|                       { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
 |                       { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
+|                       { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|                       { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|                       { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
 |                     ],
 |                     legend: { spacing: 40 },
 |                 },
@@ -904,10 +914,10 @@ Now let's try something more interesting. Let's say you want to visualise how mu
 |     data: data,
 |     container: document.querySelector('#myChart'),
 |     series: [
-|         { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
-|         { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
-|         { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
 |         { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
+|         { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|         { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|         { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
 |     ],
 | });
 | ```
@@ -921,10 +931,10 @@ Now let's try something more interesting. Let's say you want to visualise how mu
 |     this.options = {
 |         data: this.data,
 |         series: [
-|             { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
-|             { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
-|             { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
 |             { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
+|             { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|             { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|             { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
 |         ],
 |     };
 | }
@@ -939,10 +949,10 @@ Now let's try something more interesting. Let's say you want to visualise how mu
 |         options: {
 |             data: this.data,
 |             series: [
-|                 { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
-|                 { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
-|                 { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
 |                 { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
 |             ],
 |         }
 |     }
@@ -978,10 +988,10 @@ Now let's try something more interesting. Let's say you want to visualise how mu
 |         },
 |       ],
 |       series: [
-|           { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
-|           { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
-|           { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
 |           { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
+|           { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|           { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|           { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
 |       ],
 |     },
 |   };
@@ -1005,14 +1015,7 @@ We can enhance our chart by providing a label for each block segment. We can set
 |         {
 |             type: 'column',
 |             xKey: 'beverage',
-|             yKey: 'Q1',
-|             stacked: true,
-| +           label: {},
-|         },
-|         {
-|             type: 'column',
-|             xKey: 'beverage',
-|             yKey: 'Q2',
+|             yKey: 'Q4',
 |             stacked: true,
 | +           label: {},
 |         },
@@ -1026,7 +1029,14 @@ We can enhance our chart by providing a label for each block segment. We can set
 |         {
 |             type: 'column',
 |             xKey: 'beverage',
-|             yKey: 'Q4',
+|             yKey: 'Q2',
+|             stacked: true,
+| +           label: {},
+|         },
+|         {
+|             type: 'column',
+|             xKey: 'beverage',
+|             yKey: 'Q1',
 |             stacked: true,
 | +           label: {},
 |         },
@@ -1043,14 +1053,7 @@ We can enhance our chart by providing a label for each block segment. We can set
 |             {
 |                 type: 'column',
 |                 xKey: 'beverage',
-|                 yKey: 'Q1',
-|                 stacked: true,
-| +               label: {},
-|             },
-|             {
-|                 type: 'column',
-|                 xKey: 'beverage',
-|                 yKey: 'Q2',
+|                 yKey: 'Q4',
 |                 stacked: true,
 | +               label: {},
 |             },
@@ -1064,7 +1067,14 @@ We can enhance our chart by providing a label for each block segment. We can set
 |             {
 |                 type: 'column',
 |                 xKey: 'beverage',
-|                 yKey: 'Q4',
+|                 yKey: 'Q2',
+|                 stacked: true,
+| +               label: {},
+|             },
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q1',
 |                 stacked: true,
 | +               label: {},
 |             },
@@ -1085,14 +1095,7 @@ We can enhance our chart by providing a label for each block segment. We can set
 |                 {
 |                     type: 'column',
 |                     xKey: 'beverage',
-|                     yKey: 'Q1',
-|                     stacked: true,
-| +                   label: {},
-|                 },
-|                 {
-|                     type: 'column',
-|                     xKey: 'beverage',
-|                     yKey: 'Q2',
+|                     yKey: 'Q4',
 |                     stacked: true,
 | +                   label: {},
 |                 },
@@ -1106,7 +1109,14 @@ We can enhance our chart by providing a label for each block segment. We can set
 |                 {
 |                     type: 'column',
 |                     xKey: 'beverage',
-|                     yKey: 'Q4',
+|                     yKey: 'Q2',
+|                     stacked: true,
+| +                   label: {},
+|                 },
+|                 {
+|                     type: 'column',
+|                     xKey: 'beverage',
+|                     yKey: 'Q1',
 |                     stacked: true,
 | +                   label: {},
 |                 },
@@ -1148,14 +1158,7 @@ We can enhance our chart by providing a label for each block segment. We can set
 |         {
 |           type: 'column',
 |           xKey: 'beverage',
-|           yKey: 'Q1',
-|           stacked: true,
-| +         label: {},
-|         },
-|         {
-|           type: 'column',
-|           xKey: 'beverage',
-|           yKey: 'Q2',
+|           yKey: 'Q4',
 |           stacked: true,
 | +         label: {},
 |         },
@@ -1169,7 +1172,14 @@ We can enhance our chart by providing a label for each block segment. We can set
 |         {
 |           type: 'column',
 |           xKey: 'beverage',
-|           yKey: 'Q4',
+|           yKey: 'Q2',
+|           stacked: true,
+| +         label: {},
+|         },
+|         {
+|           type: 'column',
+|           xKey: 'beverage',
+|           yKey: 'Q1',
 |           stacked: true,
 | +         label: {},
 |         },
@@ -1194,18 +1204,14 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 | +   subtitle: {
 | +       text: 'per quarter',
 | +   },
+| +   footnote: {
+| +       text: 'Based on a sample size of 200 respondents',
+| +   },
 |     series: [
 |         {
 |             type: 'column',
 |             xKey: 'beverage',
-|             yKey: 'Q1',
-|             stacked: true,
-|             label: {},
-|         },
-|         {
-|             type: 'column',
-|             xKey: 'beverage',
-|             yKey: 'Q2',
+|             yKey: 'Q4',
 |             stacked: true,
 |             label: {},
 |         },
@@ -1219,7 +1225,14 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 |         {
 |             type: 'column',
 |             xKey: 'beverage',
-|             yKey: 'Q4',
+|             yKey: 'Q2',
+|             stacked: true,
+|             label: {},
+|         },
+|         {
+|             type: 'column',
+|             xKey: 'beverage',
+|             yKey: 'Q1',
 |             stacked: true,
 |             label: {},
 |         },
@@ -1238,18 +1251,14 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 | +       subtitle: {
 | +           text: 'per quarter',
 | +       },
+| +       footnote: {
+| +           text: 'Based on a sample size of 200 respondents',
+| +       },
 |         series: [
 |             {
 |                 type: 'column',
 |                 xKey: 'beverage',
-|                 yKey: 'Q1',
-|                 stacked: true,
-|                 label: {},
-|             },
-|             {
-|                 type: 'column',
-|                 xKey: 'beverage',
-|                 yKey: 'Q2',
+|                 yKey: 'Q4',
 |                 stacked: true,
 |                 label: {},
 |             },
@@ -1263,7 +1272,14 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 |             {
 |                 type: 'column',
 |                 xKey: 'beverage',
-|                 yKey: 'Q4',
+|                 yKey: 'Q2',
+|                 stacked: true,
+|                 label: {},
+|             },
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q1',
 |                 stacked: true,
 |                 label: {},
 |             },
@@ -1286,18 +1302,14 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 | +           subtitle: {
 | +               text: 'per quarter',
 | +           },
+| +           footnote: {
+| +               text: 'Based on a sample size of 200 respondents',
+| +           },
 |             series: [
 |                 {
 |                     type: 'column',
 |                     xKey: 'beverage',
-|                     yKey: 'Q1',
-|                     stacked: true,
-|                     label: {},
-|                 },
-|                 {
-|                     type: 'column',
-|                     xKey: 'beverage',
-|                     yKey: 'Q2',
+|                     yKey: 'Q4',
 |                     stacked: true,
 |                     label: {},
 |                 },
@@ -1311,7 +1323,14 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 |                 {
 |                     type: 'column',
 |                     xKey: 'beverage',
-|                     yKey: 'Q4',
+|                     yKey: 'Q2',
+|                     stacked: true,
+|                     label: {},
+|                 },
+|                 {
+|                     type: 'column',
+|                     xKey: 'beverage',
+|                     yKey: 'Q1',
 |                     stacked: true,
 |                     label: {},
 |                 },
@@ -1355,18 +1374,14 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 | +     subtitle: {
 | +       text: 'per quarter',
 | +     },
+| +     footnote: {
+| +       text: 'Based on a sample size of 200 respondents',
+| +     },
 |       series: [
 |         {
 |           type: 'column',
 |           xKey: 'beverage',
-|           yKey: 'Q1',
-|           stacked: true,
-|           label: {},
-|         },
-|         {
-|           type: 'column',
-|           xKey: 'beverage',
-|           yKey: 'Q2',
+|           yKey: 'Q4',
 |           stacked: true,
 |           label: {},
 |         },
@@ -1380,7 +1395,14 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 |         {
 |           type: 'column',
 |           xKey: 'beverage',
-|           yKey: 'Q4',
+|           yKey: 'Q2',
+|           stacked: true,
+|           label: {},
+|         },
+|         {
+|           type: 'column',
+|           xKey: 'beverage',
+|           yKey: 'Q1',
 |           stacked: true,
 |           label: {},
 |         },

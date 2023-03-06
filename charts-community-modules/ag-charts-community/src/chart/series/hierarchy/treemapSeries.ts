@@ -1,7 +1,7 @@
 import { Selection } from '../../../scene/selection';
 import { HdpiCanvas } from '../../../canvas/hdpiCanvas';
 import { Label } from '../../label';
-import { SeriesNodeDatum, SeriesTooltip, SeriesNodeClickEvent, HighlightStyle } from '../series';
+import { SeriesNodeDatum, SeriesTooltip, HighlightStyle, SeriesNodeBaseClickEvent } from '../series';
 import { HierarchySeries } from './hierarchySeries';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { Group } from '../../../scene/group';
@@ -15,7 +15,6 @@ import { toFixed } from '../../../util/number';
 import { Path2D } from '../../../scene/path2D';
 import { BBox } from '../../../scene/bbox';
 import { Color } from '../../../util/color';
-import { doOnce } from '../../../util/function';
 import {
     BOOLEAN,
     NUMBER,
@@ -35,6 +34,7 @@ import {
     AgTreemapSeriesFormatterParams,
     AgTreemapSeriesFormat,
 } from '../../agChartOptions';
+import { Logger } from '../../../util/logger';
 
 type TreeDatum = {
     [prop: string]: any;
@@ -57,7 +57,7 @@ class TreemapSeriesTooltip extends SeriesTooltip {
     renderer?: (params: AgTreemapSeriesTooltipRendererParams<any>) => string | AgTooltipRendererResult = undefined;
 }
 
-class TreemapSeriesNodeClickEvent extends SeriesNodeClickEvent<any> {
+class TreemapSeriesNodeBaseClickEvent extends SeriesNodeBaseClickEvent<any> {
     readonly labelKey: string;
     readonly sizeKey?: string;
     readonly colorKey?: string;
@@ -75,6 +75,14 @@ class TreemapSeriesNodeClickEvent extends SeriesNodeClickEvent<any> {
         this.sizeKey = sizeKey;
         this.colorKey = colorKey;
     }
+}
+
+class TreemapSeriesNodeClickEvent extends TreemapSeriesNodeBaseClickEvent {
+    readonly type = 'nodeClick';
+}
+
+class TreemapSeriesNodeDoubleClickEvent extends TreemapSeriesNodeBaseClickEvent {
+    readonly type = 'nodeDoubleClick';
 }
 
 class TreemapSeriesLabel extends Label {
@@ -111,12 +119,8 @@ function getTextSize(text: string, style: Label) {
 function validateColor(color?: string): string | undefined {
     if (typeof color === 'string' && !Color.validColorString(color)) {
         const fallbackColor = 'black';
-        doOnce(
-            () =>
-                console.warn(
-                    `AG Charts - Invalid Treemap tile colour string "${color}". Affected treemap tiles will be coloured ${fallbackColor}.`
-                ),
-            'treemap node color invalid'
+        Logger.warnOnce(
+            `invalid Treemap tile colour string "${color}". Affected treemap tiles will be coloured ${fallbackColor}.`
         );
         return 'black';
     }
@@ -761,6 +765,10 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
 
     protected getNodeClickEvent(event: MouseEvent, datum: TreemapNodeDatum): TreemapSeriesNodeClickEvent {
         return new TreemapSeriesNodeClickEvent(this.labelKey, this.sizeKey, this.colorKey, event, datum, this);
+    }
+
+    protected getNodeDoubleClickEvent(event: MouseEvent, datum: TreemapNodeDatum): TreemapSeriesNodeDoubleClickEvent {
+        return new TreemapSeriesNodeDoubleClickEvent(this.labelKey, this.sizeKey, this.colorKey, event, datum, this);
     }
 
     getTooltipHtml(nodeDatum: TreemapNodeDatum): string {

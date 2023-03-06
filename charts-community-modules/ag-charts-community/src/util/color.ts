@@ -1,4 +1,4 @@
-import { doOnce } from '../util/function';
+import { Logger } from './logger';
 
 export class Color {
     readonly r: number;
@@ -80,7 +80,7 @@ export class Color {
         try {
             return Color.fromString(str);
         } catch (e) {
-            doOnce(() => console.warn(`AG Charts - Invalid color string: '${str}'.`), `unable to parse color ${str}`);
+            Logger.warnOnce(`invalid color string: '${str}'.`);
             return Color.fromArray([0, 0, 0]);
         }
     }

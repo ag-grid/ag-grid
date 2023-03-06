@@ -15,7 +15,7 @@ export class TitleEdit extends Component {
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
-    private destroyableChartListeners: (() => void)[];
+    private destroyableChartListeners: (() => void)[] = [];
     private chartController: ChartController;
     private chartOptionsService: ChartOptionsService;
     private editing: boolean = false;
@@ -45,14 +45,12 @@ export class TitleEdit extends Component {
         this.chartController = chartController;
         this.chartOptionsService = chartOptionsService;
 
-        const chartProxy = this.chartController.getChartProxy();
-        if (chartProxy) {
-            for (let i = 0; i++; i < this.destroyableChartListeners.length) {
-                this.destroyableChartListeners[i]();
-            }
-            this.destroyableChartListeners = [];
+        for (const destroyFn of this.destroyableChartListeners) {
+            destroyFn();
         }
-
+        this.destroyableChartListeners = [];
+        
+        const chartProxy = this.chartController.getChartProxy();
         const chart = chartProxy.getChart();
         const canvas = chart.scene.canvas.element;
 
@@ -63,7 +61,7 @@ export class TitleEdit extends Component {
                 const bbox = title.node.computeBBox()!;
                 const xy = title.node.inverseTransformPoint(bbox.x, bbox.y);
 
-                this.startEditing({ ...bbox, ...xy });
+                this.startEditing({ ...bbox, ...xy }, canvas.width);
             }
         });
 
@@ -85,7 +83,7 @@ export class TitleEdit extends Component {
         ];
     }
 
-    private startEditing(titleBBox: BBox): void {
+    private startEditing(titleBBox: BBox, canvasWidth: number): void {
         if (this.chartMenu && this.chartMenu.isVisible()) {
             // currently, we ignore requests to edit the chart title while the chart menu is showing
             // because the click to edit the chart will also close the chart menu, making the position
@@ -99,8 +97,7 @@ export class TitleEdit extends Component {
         this.editing = true;
 
         const minimumTargetInputWidth: number = 300;
-        const maximumInputWidth: number = this.chartController.getChartProxy().getChart().width;
-        const inputWidth = Math.max(Math.min(titleBBox.width + 20, maximumInputWidth), minimumTargetInputWidth);
+        const inputWidth = Math.max(Math.min(titleBBox.width + 20, canvasWidth), minimumTargetInputWidth);
 
         const element = this.getGui() as HTMLTextAreaElement;
 

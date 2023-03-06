@@ -217,6 +217,10 @@
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
+    "footnote": {
+      "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
@@ -276,6 +280,10 @@
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
+    "footnote": {
+      "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
@@ -333,6 +341,10 @@
     },
     "subtitle": {
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
+    "footnote": {
+      "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
     "tooltip": {
@@ -1522,10 +1534,121 @@
     "event": { "type": { "returnType": "Event", "optional": false } },
     "meta": { "typeParams": ["T extends string"] }
   },
+  "AgNodeBaseClickEvent": {
+    "type": {
+      "description": "/** Event type. */",
+      "type": { "returnType": "T", "optional": false }
+    },
+    "series": {
+      "description": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "seriesId": {
+      "description": "/** Series ID, as specified in series.id (or generated if not specified) */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "datum": {
+      "description": "/** Datum from the chart or series data array. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "xKey": {
+      "description": "/** xKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yKey": {
+      "description": "/** yKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "sizeKey": {
+      "description": "/** sizeKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "labelKey": {
+      "description": "/** labelKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "colorKey": {
+      "description": "/** colorKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "angleKey": {
+      "description": "/** angleKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "calloutLabelKey": {
+      "description": "/** calloutLabelKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "sectorLabelKey": {
+      "description": "/** sectorLabelKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "radiusKey": {
+      "description": "/** radiusKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "meta": { "typeParams": ["T extends string"] },
+    "event": { "type": { "returnType": "Event", "optional": false } }
+  },
   "AgNodeClickEvent": {
     "type": {
       "description": "/** Event type. */",
-      "type": { "returnType": "'seriesNodeClick'", "optional": false }
+      "type": { "returnType": "T", "optional": false }
+    },
+    "series": {
+      "description": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "seriesId": {
+      "description": "/** Series ID, as specified in series.id (or generated if not specified) */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "datum": {
+      "description": "/** Datum from the chart or series data array. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "xKey": {
+      "description": "/** xKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yKey": {
+      "description": "/** yKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "sizeKey": {
+      "description": "/** sizeKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "labelKey": {
+      "description": "/** labelKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "colorKey": {
+      "description": "/** colorKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "angleKey": {
+      "description": "/** angleKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "calloutLabelKey": {
+      "description": "/** calloutLabelKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "sectorLabelKey": {
+      "description": "/** sectorLabelKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "radiusKey": {
+      "description": "/** radiusKey as specified on series options */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "event": { "type": { "returnType": "Event", "optional": false } }
+  },
+  "AgNodeDoubleClickEvent": {
+    "type": {
+      "description": "/** Event type. */",
+      "type": { "returnType": "T", "optional": false }
     },
     "series": {
       "description": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
@@ -1594,6 +1717,14 @@
         "optional": true
       }
     },
+    "seriesNodeDoubleClick": {
+      "description": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is double clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeDoubleClick` events of all the series at once. */",
+      "type": {
+        "arguments": { "event": "AgNodeDoubleClickEvent" },
+        "returnType": "any",
+        "optional": true
+      }
+    },
     "click": {
       "description": "/** The listener to call to signify a general click on the chart by the user. */",
       "type": {
@@ -1646,6 +1777,10 @@
     },
     "subtitle": {
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
+    "footnote": {
+      "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
     "tooltip": {
@@ -2339,7 +2474,15 @@
       "type": {
         "arguments": { "params": "AgSeriesNodeClickParams<DatumType>" },
         "returnType": "void",
-        "optional": false
+        "optional": true
+      }
+    },
+    "nodeDoubleClick": {
+      "description": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in the series is double clicked. */",
+      "type": {
+        "arguments": { "params": "AgSeriesNodeClickParams<DatumType>" },
+        "returnType": "void",
+        "optional": true
       }
     },
     "meta": { "typeParams": ["DatumType"] }
@@ -4530,6 +4673,10 @@
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
+    "footnote": {
+      "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
@@ -4592,6 +4739,10 @@
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
+    "footnote": {
+      "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
@@ -4649,6 +4800,10 @@
     },
     "subtitle": {
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
+    "footnote": {
+      "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
     "tooltip": {

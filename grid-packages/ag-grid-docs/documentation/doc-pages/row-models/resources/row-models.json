@@ -95,7 +95,7 @@
             "feature": "[Header Checkbox Selection](/row-selection/#header-checkbox-selection)",
             "clientSide": true,
             "infinite": false,
-            "serverSide": false,
+            "serverSide": true,
             "viewport": false
         },
         {

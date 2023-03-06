@@ -9,7 +9,6 @@ import { BBox } from './scene/bbox';
 import { Caption } from './caption';
 import { createId } from './util/id';
 import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from './util/angle';
-import { doOnce } from './util/function';
 import { TimeInterval } from './util/time/interval';
 import { areArrayNumbersEqual } from './util/equal';
 import { CrossLine } from './chart/crossline/crossLine';
@@ -45,6 +44,7 @@ import { Deprecated } from './util/deprecation';
 import { extent } from './util/array';
 import { ChartAxisDirection } from './chart/chartAxisDirection';
 import { calculateLabelRotation } from './chart/label';
+import { Logger } from './util/logger';
 
 const TICK_COUNT = predicateWithMessage(
     (v: any, ctx) => NUMBER(0)(v, ctx) || v instanceof TimeInterval,
@@ -431,13 +431,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
                 });
             } catch (e) {
                 this.labelFormatter = defaultLabelFormatter;
-                doOnce(
-                    () =>
-                        console.warn(
-                            `AG Charts - the axis label format string ${format} is invalid. No formatting will be applied`
-                        ),
-                    `invalid axis label format string ${format}`
-                );
+                Logger.warnOnce(`the axis label format string ${format} is invalid. No formatting will be applied`);
             }
         } else {
             this.labelFormatter = defaultLabelFormatter;
@@ -630,7 +624,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
         const checkForOverlap = avoidCollisions && this.tick.interval === undefined && this.tick.values === undefined;
         const tickSpacing = !isNaN(this.tick.minSpacing) || !isNaN(this.tick.maxSpacing);
-        const maxIterations = this.tick.count || !continuous ? 10 : maxTickCount;
+        const maxIterations = this.tick.count || !continuous || isNaN(maxTickCount) ? 10 : maxTickCount;
 
         while (labelOverlap) {
             let unchanged = true;
@@ -813,7 +807,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         minSpacing = Math.max(minSpacing, defaultMinSpacing);
 
         const maxTickCount = Math.max(1, Math.floor(availableRange / minSpacing));
-        const minTickCount = Math.ceil(availableRange / maxSpacing);
+        const minTickCount = Math.min(maxTickCount, Math.ceil(availableRange / maxSpacing));
 
         return { minTickCount, maxTickCount };
     }
@@ -1227,5 +1221,13 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
     isAnySeriesActive() {
         return false;
+    }
+
+    clipTickLines(x: number, y: number, width: number, height: number) {
+        this.tickLineGroup.setClipRectInGroupCoordinateSpace(new BBox(x, y, width, height));
+    }
+
+    clipGrid(x: number, y: number, width: number, height: number) {
+        this.gridGroup.setClipRectInGroupCoordinateSpace(new BBox(x, y, width, height));
     }
 }

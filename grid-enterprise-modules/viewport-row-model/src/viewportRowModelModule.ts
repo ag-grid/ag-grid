@@ -6,7 +6,8 @@ import { ViewportRowModel } from "./viewportRowModel/viewportRowModel";
 export const ViewportRowModelModule: Module = {
     version: VERSION,
     moduleName: ModuleNames.ViewportRowModelModule,
-    rowModels: {viewport: ViewportRowModel},
+    rowModel: 'viewport',
+    beans: [ViewportRowModel],
     dependantModules: [
         EnterpriseCoreModule
     ]

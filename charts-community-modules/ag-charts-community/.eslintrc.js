@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-undef
 module.exports = {
     env: {
         browser: true,
@@ -16,5 +17,15 @@ module.exports = {
     plugins: ['@typescript-eslint'],
     rules: {
         'no-console': 2,
+        'no-unused-vars': 0, // Handled by TS strict flag.
+        'no-case-declarations': 0,
     },
+    overrides: [
+        {
+            files: ['**/*.test.ts'],
+            rules: {
+                'no-console': 0,
+            },
+        },
+    ],
 };

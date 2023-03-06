@@ -154,6 +154,7 @@ export class AgDialog extends AgPanel {
         if (!eTitleBar || maximizable === this.isMaximizable) { return; }
 
         const maximizeButtonComp = this.buildMaximizeAndMinimizeElements();
+        this.refreshMaximizeIcon();
 
         maximizeButtonComp.addManagedListener(maximizeButtonComp.getGui(), 'click', this.toggleMaximize.bind(this));
 
@@ -179,7 +180,7 @@ export class AgDialog extends AgPanel {
         eGui.appendChild(this.maximizeIcon);
         this.maximizeIcon.classList.add('ag-panel-title-bar-button-icon');
 
-        this.minimizeIcon = createIconNoSpan('minimize', this.gridOptionsService)!
+        this.minimizeIcon = createIconNoSpan('minimize', this.gridOptionsService)!;
         eGui.appendChild(this.minimizeIcon);
         this.minimizeIcon.classList.add('ag-panel-title-bar-button-icon');
 

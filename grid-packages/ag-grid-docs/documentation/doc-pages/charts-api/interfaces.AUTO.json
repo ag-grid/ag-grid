@@ -150,6 +150,7 @@
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
+      "footnote?": "AgChartCaptionOptions",
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
@@ -168,6 +169,7 @@
       "background?": "/** Configuration for the background shown behind the chart. */",
       "title?": "/** Configuration for the title shown at the top of the chart. */",
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
+      "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
@@ -187,6 +189,7 @@
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
+      "footnote?": "AgChartCaptionOptions",
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
@@ -203,6 +206,7 @@
       "background?": "/** Configuration for the background shown behind the chart. */",
       "title?": "/** Configuration for the title shown at the top of the chart. */",
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
+      "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
@@ -222,6 +226,7 @@
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
+      "footnote?": "AgChartCaptionOptions",
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
@@ -238,6 +243,7 @@
       "background?": "/** Configuration for the background shown behind the chart. */",
       "title?": "/** Configuration for the title shown at the top of the chart. */",
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
+      "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
@@ -989,10 +995,78 @@
     "meta": { "typeParams": ["T extends string"] },
     "type": { "type": "T", "event": "Event" }
   },
+  "AgNodeBaseClickEvent": {
+    "meta": { "typeParams": ["T extends string"] },
+    "type": {
+      "type": "T",
+      "series": "any",
+      "seriesId": "string",
+      "datum": "any",
+      "xKey?": "string",
+      "yKey?": "string",
+      "sizeKey?": "string",
+      "labelKey?": "string",
+      "colorKey?": "string",
+      "angleKey?": "string",
+      "calloutLabelKey?": "string",
+      "sectorLabelKey?": "string",
+      "radiusKey?": "string",
+      "event": "Event"
+    },
+    "docs": {
+      "type": "/** Event type. */",
+      "series": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
+      "seriesId": "/** Series ID, as specified in series.id (or generated if not specified) */",
+      "datum": "/** Datum from the chart or series data array. */",
+      "xKey?": "/** xKey as specified on series options */",
+      "yKey?": "/** yKey as specified on series options */",
+      "sizeKey?": "/** sizeKey as specified on series options */",
+      "labelKey?": "/** labelKey as specified on series options */",
+      "colorKey?": "/** colorKey as specified on series options */",
+      "angleKey?": "/** angleKey as specified on series options */",
+      "calloutLabelKey?": "/** calloutLabelKey as specified on series options */",
+      "sectorLabelKey?": "/** sectorLabelKey as specified on series options */",
+      "radiusKey?": "/** radiusKey as specified on series options */"
+    }
+  },
   "AgNodeClickEvent": {
     "meta": {},
     "type": {
-      "type": "'seriesNodeClick'",
+      "type": "T",
+      "series": "any",
+      "seriesId": "string",
+      "datum": "any",
+      "xKey?": "string",
+      "yKey?": "string",
+      "sizeKey?": "string",
+      "labelKey?": "string",
+      "colorKey?": "string",
+      "angleKey?": "string",
+      "calloutLabelKey?": "string",
+      "sectorLabelKey?": "string",
+      "radiusKey?": "string",
+      "event": "Event"
+    },
+    "docs": {
+      "type": "/** Event type. */",
+      "series": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
+      "seriesId": "/** Series ID, as specified in series.id (or generated if not specified) */",
+      "datum": "/** Datum from the chart or series data array. */",
+      "xKey?": "/** xKey as specified on series options */",
+      "yKey?": "/** yKey as specified on series options */",
+      "sizeKey?": "/** sizeKey as specified on series options */",
+      "labelKey?": "/** labelKey as specified on series options */",
+      "colorKey?": "/** colorKey as specified on series options */",
+      "angleKey?": "/** angleKey as specified on series options */",
+      "calloutLabelKey?": "/** calloutLabelKey as specified on series options */",
+      "sectorLabelKey?": "/** sectorLabelKey as specified on series options */",
+      "radiusKey?": "/** radiusKey as specified on series options */"
+    }
+  },
+  "AgNodeDoubleClickEvent": {
+    "meta": {},
+    "type": {
+      "type": "T",
       "series": "any",
       "seriesId": "string",
       "datum": "any",
@@ -1035,11 +1109,13 @@
     "meta": {},
     "type": {
       "seriesNodeClick?": "(event: AgNodeClickEvent) => any",
+      "seriesNodeDoubleClick?": "(event: AgNodeDoubleClickEvent) => any",
       "click?": "(event: AgChartClickEvent) => any",
       "doubleClick?": "(event: AgChartDoubleClickEvent) => any"
     },
     "docs": {
       "seriesNodeClick?": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */",
+      "seriesNodeDoubleClick?": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is double clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeDoubleClick` events of all the series at once. */",
       "click?": "/** The listener to call to signify a general click on the chart by the user. */",
       "doubleClick?": "/** The listener to call to signify a double click on the chart by the user. */"
     }
@@ -1056,6 +1132,7 @@
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
+      "footnote?": "AgChartCaptionOptions",
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
@@ -1071,6 +1148,7 @@
       "background?": "/** Configuration for the background shown behind the chart. */",
       "title?": "/** Configuration for the title shown at the top of the chart. */",
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
+      "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
@@ -1545,10 +1623,12 @@
   "AgSeriesListeners": {
     "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "nodeClick": "(params: AgSeriesNodeClickParams<DatumType>) => void"
+      "nodeClick?": "(params: AgSeriesNodeClickParams<DatumType>) => void",
+      "nodeDoubleClick?": "(params: AgSeriesNodeClickParams<DatumType>) => void"
     },
     "docs": {
-      "nodeClick": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in the series is clicked. */"
+      "nodeClick?": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in the series is clicked. */",
+      "nodeDoubleClick?": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in the series is double clicked. */"
     }
   },
   "AgBaseSeriesOptions": {
@@ -2938,6 +3018,7 @@
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
+      "footnote?": "AgChartCaptionOptions",
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
@@ -2957,6 +3038,7 @@
       "background?": "/** Configuration for the background shown behind the chart. */",
       "title?": "/** Configuration for the title shown at the top of the chart. */",
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
+      "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
@@ -2977,6 +3059,7 @@
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
+      "footnote?": "AgChartCaptionOptions",
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
@@ -2994,6 +3077,7 @@
       "background?": "/** Configuration for the background shown behind the chart. */",
       "title?": "/** Configuration for the title shown at the top of the chart. */",
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
+      "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
@@ -3014,6 +3098,7 @@
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
+      "footnote?": "AgChartCaptionOptions",
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
@@ -3031,6 +3116,7 @@
       "background?": "/** Configuration for the background shown behind the chart. */",
       "title?": "/** Configuration for the title shown at the top of the chart. */",
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
+      "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
@@ -3854,7 +3940,7 @@
   },
   "TransformFn": {
     "meta": { "isTypeAlias": true },
-    "type": "(target: any, key: string | symbol, value: any) => any | typeof BREAK_TRANSFORM_CHAIN"
+    "type": "(target: any, key: string | symbol, value: any, oldValue?: any) => any | typeof BREAK_TRANSFORM_CHAIN"
   },
   "TransformConfig": {
     "meta": { "isTypeAlias": true },

@@ -1,11 +1,14 @@
-import { Grid, GridOptions, IServerSideDatasource, GetRowIdParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, GetRowIdParams, IsServerSideGroupOpenByDefaultParams, IServerSideDatasource, IRowNode } from '@ag-grid-community/core'
 declare var FakeServer: any;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'country', rowGroup: true, hide: true },
-    { field: 'sport', rowGroup: true, hide: true },
-    { headerName: 'Row ID', valueGetter: 'node.id', sortable: false },
-    { field: 'gold', aggFunc: 'sum' }
+    { field: 'year', rowGroup: true, hide: true },
+    { field: 'athlete', hide: true },
+    { field: 'sport', checkboxSelection: true, filter: 'agTextColumnFilter' },
+    { field: 'gold', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+    { field: 'silver', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+    { field: 'bronze', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
   ],
   defaultColDef: {
     flex: 1,
@@ -13,33 +16,25 @@ const gridOptions: GridOptions<IOlympicData> = {
     resizable: true,
     sortable: true,
   },
-  autoGroupColumnDef: {
-    flex: 1,
-    minWidth: 280,
-    field: 'athlete',
-  },
   getRowId: (params: GetRowIdParams) => {
-    // if leaf level, we have ID
     if (params.data.id != null) {
-      return params.data.id;
+      return (params.parentKeys || []).join('-') + params.data.id;
     }
-
-    // this array will contain items that will compose the unique key
-    var parts = [];
-
-    // if parent groups, add the value for the parent group
-    if (params.parentKeys) {
-      parts.push(...params.parentKeys);
-    }
-
-    // it we are a group, add the value for this level's group
-    var rowGroupCols = params.columnApi.getRowGroupColumns();
-    var thisGroupCol = rowGroupCols[params.level];
-    if (thisGroupCol) {
-      parts.push(params.data[thisGroupCol.getColDef().field!]);
-    }
-
-    return parts.join('-');
+    const rowGroupCols = params.columnApi.getRowGroupColumns();
+    const thisGroupCol = rowGroupCols[params.level];
+    return (params.parentKeys || []).join('-') + params.data[thisGroupCol.getColDef().field!];
+  },
+  isServerSideGroupOpenByDefault: (params: IsServerSideGroupOpenByDefaultParams) => {
+    return params.rowNode.key === 'United States' || String(params.rowNode.key) === '2004';
+  },
+  autoGroupColumnDef: {
+    headerCheckboxSelection: true,
+    field: 'athlete',
+    flex: 1,
+    minWidth: 240,
+    cellRendererParams: {
+      checkbox: true,
+    },
   },
 
   // use the server-side row model
@@ -48,9 +43,13 @@ const gridOptions: GridOptions<IOlympicData> = {
   // allow multiple row selections
   rowSelection: 'multiple',
 
-  suppressAggFuncInHeader: true,
+  // restrict row selections via checkbox selection
+  suppressRowClickSelection: true,
 
-  animateRows: true
+  groupSelectsChildren: true,
+
+  animateRows: true,
+  suppressAggFuncInHeader: true,
 }
 
 function getServerSideDatasource(server: any): IServerSideDatasource {
@@ -69,7 +68,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
           // inform the grid request failed
           params.fail()
         }
-      }, 300)
+      }, 200)
     },
   }
 }
@@ -82,9 +81,10 @@ document.addEventListener('DOMContentLoaded', function () {
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(function (data) {
-
-      // give an ID to each piece of row data
-      data.forEach((item: any, index: number) => item.id = index);
+      // assign a unique ID to each data item
+      data.forEach(function (item: any, index: number) {
+        item.id = index;
+      });
 
       // setup the fake server with entire dataset
       var fakeServer = new FakeServer(data)

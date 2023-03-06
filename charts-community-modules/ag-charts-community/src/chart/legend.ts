@@ -44,6 +44,7 @@ import { Pagination } from './pagination/pagination';
 import { TooltipManager } from './interaction/tooltipManager';
 import { toTooltipHtml } from './tooltip/tooltip';
 import { LegendDatum } from './legendDatum';
+import { Logger } from '../util/logger';
 
 const ORIENTATIONS = ['horizontal', 'vertical'];
 export const OPT_ORIENTATION = predicateWithMessage(
@@ -350,7 +351,7 @@ export class Legend {
             markerLabel.fontFamily = fontFamily;
 
             const id = datum.itemId || datum.id;
-            const text = datum.label.text ?? '<unknown>';
+            const text = (datum.label.text ?? '<unknown>').replace(/\r?\n/g, ' ');
             markerLabel.text = this.truncate(text, maxLength, maxItemWidth, paddedMarkerWidth, font, id);
 
             bboxes.push(markerLabel.computeBBox());
@@ -521,7 +522,7 @@ export class Legend {
 
         do {
             if (count++ > 10) {
-                console.warn('AG Charts - unable to find stable legend layout.');
+                Logger.warn('unable to find stable legend layout.');
                 break;
             }
 

@@ -18,6 +18,8 @@ export const ICON_MAP = {
     twitter: CarbonIcon.LogoTwitter,
     youtube: CarbonIcon.LogoYoutube,
     linkedin: CarbonIcon.LogoLinkedin,
+    collapseCategories: CarbonIcon.CollapseCategories,
+    search: CarbonIcon.Search,
 };
 
 export type IconName = keyof typeof ICON_MAP;

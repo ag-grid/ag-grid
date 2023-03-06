@@ -81,7 +81,7 @@ export class Text extends Shape {
         // Distance between first and last base lines.
         let baselineDistance = 0;
 
-        for (var i = 0; i < this.lines.length; i++) {
+        for (let i = 0; i < this.lines.length; i++) {
             const metrics = HdpiCanvas.measureText(this.lines[i], this.font, this.textBaseline, this.textAlign);
 
             left = Math.max(left, metrics.actualBoundingBoxLeft);

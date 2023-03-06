@@ -33,6 +33,9 @@ const options: AgChartOptions = {
   subtitle: {
     text: 'per quarter',
   },
+  footnote: {
+    text: 'Based on a sample size of 200 respondents',
+  },
   theme: {
     baseTheme: 'ag-pastel',
     overrides: {

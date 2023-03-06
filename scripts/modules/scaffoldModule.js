@@ -119,7 +119,7 @@ const main = async () => {
         }
     }
 
-    const sourceVersionModule = `${grid ? 'core' : enterprise ? 'ag-charts-enterprise' : 'ag-charts-community'}`
+    const sourceVersionModule = `${grid ? 'core' : enterprise ? 'core' : 'ag-charts-community'}`
     const packageVersionNumber = JSON.parse(fs.readFileSync(path.resolve(__dirname, `../../${moduleDirRoot}/${sourceVersionModule}/package.json`), 'UTF-8')).version;
     const templatePackageJson = JSON.parse(fs.readFileSync(path.resolve(__dirname, path.resolve(__dirname, `./${grid ? 'grid' : 'charts'}-template.json`)), 'UTF-8'));
 
@@ -128,7 +128,7 @@ const main = async () => {
     templatePackageJson.license = enterprise ? 'Commercial' : 'MIT';
     templatePackageJson.dependencies[grid ? '@ag-grid-community/core' : 'ag-charts-community'] = `~${packageVersionNumber}`;
     if(enterprise) {
-        templatePackageJson.dependencies[grid ? '@ag-grid-enterprise/core' : 'ag-charts-enterprise'] = `~${packageVersionNumber}`;
+        templatePackageJson.dependencies[grid ? '@ag-grid-enterprise/core' : '@ag-charts-enterprise/core'] = `~${packageVersionNumber}`;
     }
 
     if (!fs.existsSync(`./${moduleDir}/src`)) {

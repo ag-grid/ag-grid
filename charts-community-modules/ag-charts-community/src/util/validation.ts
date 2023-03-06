@@ -1,5 +1,6 @@
 import { Color } from './color';
 import { addTransformToInstanceProperty, BREAK_TRANSFORM_CHAIN } from './decorator';
+import { Logger } from './logger';
 type ValidationContext = { target: any };
 
 export type ValidatePredicate = {
@@ -21,16 +22,16 @@ export function Validate(predicate: ValidatePredicate) {
         }
 
         if (predicate.message) {
-            console.warn(
-                `AG Charts - Property [${cleanKey}] ${
-                    targetClass ? `of [${targetClass}] ` : ''
-                }cannot be set to [${JSON.stringify(v)}]; ${predicate.message}, ignoring.`
+            Logger.warn(
+                `Property [${cleanKey}] ${targetClass ? `of [${targetClass}] ` : ''}cannot be set to [${JSON.stringify(
+                    v
+                )}]; ${predicate.message}, ignoring.`
             );
         } else {
-            console.warn(
-                `AG Charts - Property [${cleanKey}] ${
-                    targetClass ? `of [${targetClass}] ` : ''
-                }cannot be set to [${JSON.stringify(v)}], ignoring.`
+            Logger.warn(
+                `Property [${cleanKey}] ${targetClass ? `of [${targetClass}] ` : ''}cannot be set to [${JSON.stringify(
+                    v
+                )}], ignoring.`
             );
         }
 

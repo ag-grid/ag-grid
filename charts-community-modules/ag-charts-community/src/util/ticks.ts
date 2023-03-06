@@ -26,7 +26,7 @@ export function tickStep(a: number, b: number, count: number, minCount = 0, maxC
     const m = tickMultipliers
         .map((multiplier) => {
             const s = multiplier * step;
-            const c = (b - a) / s;
+            const c = Math.ceil((b - a) / s);
             const isWithinBounds = c >= minCount && c <= maxCount;
             const diffCount = Math.abs(c - count);
             return { multiplier, isWithinBounds, diffCount };

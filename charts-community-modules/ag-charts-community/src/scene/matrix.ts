@@ -152,7 +152,13 @@ export class Matrix {
      * Returns the inverse of this matrix as a new matrix.
      */
     inverse(): Matrix {
-        let [a, b, c, d, e, f] = this.elements;
+        const el = this.elements;
+        let a = el[0],
+            b = el[1],
+            c = el[2],
+            d = el[3];
+        const e = el[4],
+            f = el[5];
         const rD = 1 / (a * d - b * c); // reciprocal of determinant
 
         a *= rD;
@@ -167,7 +173,13 @@ export class Matrix {
      * Save the inverse of this matrix to the given matrix.
      */
     inverseTo(other: Matrix): Matrix {
-        let [a, b, c, d, e, f] = this.elements;
+        const el = this.elements;
+        let a = el[0],
+            b = el[1],
+            c = el[2],
+            d = el[3];
+        const e = el[4],
+            f = el[5];
         const rD = 1 / (a * d - b * c); // reciprocal of determinant
 
         a *= rD;
@@ -185,8 +197,8 @@ export class Matrix {
         let a = el[0],
             b = el[1],
             c = el[2],
-            d = el[3],
-            e = el[4],
+            d = el[3];
+        const e = el[4],
             f = el[5];
         const rD = 1 / (a * d - b * c); // reciprocal of determinant
 
@@ -348,5 +360,10 @@ export class Matrix {
         ]);
 
         return matrix;
+    }
+
+    static fromContext(ctx: CanvasTransform) {
+        const domMatrix = ctx.getTransform();
+        return new Matrix([domMatrix.a, domMatrix.b, domMatrix.c, domMatrix.d, domMatrix.e, domMatrix.f]);
     }
 }

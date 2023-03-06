@@ -3,7 +3,7 @@ import { SeriesNodeDatum, SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMo
 import { extent } from '../../../util/array';
 import { LegendDatum } from '../../legendDatum';
 import { LinearScale } from '../../../scale/linearScale';
-import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesNodeClickEvent } from './cartesianSeries';
+import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesNodeBaseClickEvent } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { getMarker } from '../../marker/util';
 import { toTooltipHtml } from '../../tooltip/tooltip';
@@ -26,7 +26,7 @@ interface ScatterNodeDatum extends Required<SeriesNodeDatum> {
     readonly label: MeasuredLabel;
 }
 
-class ScatterSeriesNodeClickEvent extends CartesianSeriesNodeClickEvent<any> {
+class ScatterSeriesNodeBaseClickEvent extends CartesianSeriesNodeBaseClickEvent<any> {
     readonly sizeKey?: string;
 
     constructor(
@@ -40,6 +40,14 @@ class ScatterSeriesNodeClickEvent extends CartesianSeriesNodeClickEvent<any> {
         super(xKey, yKey, nativeEvent, datum, series);
         this.sizeKey = sizeKey;
     }
+}
+
+export class ScatterSeriesNodeClickEvent extends ScatterSeriesNodeBaseClickEvent {
+    readonly type = 'nodeClick';
+}
+
+export class ScatterSeriesNodeDoubleClickEvent extends ScatterSeriesNodeBaseClickEvent {
+    readonly type = 'nodeDoubleClick';
 }
 
 class ScatterSeriesTooltip extends SeriesTooltip {
@@ -172,8 +180,12 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         }
     }
 
-    protected getNodeClickEvent(event: MouseEvent, datum: ScatterNodeDatum): CartesianSeriesNodeClickEvent<any> {
+    protected getNodeClickEvent(event: MouseEvent, datum: ScatterNodeDatum): ScatterSeriesNodeClickEvent {
         return new ScatterSeriesNodeClickEvent(this.sizeKey, this.xKey, this.yKey, event, datum, this);
+    }
+
+    protected getNodeDoubleClickEvent(event: MouseEvent, datum: ScatterNodeDatum): ScatterSeriesNodeDoubleClickEvent {
+        return new ScatterSeriesNodeDoubleClickEvent(this.sizeKey, this.xKey, this.yKey, event, datum, this);
     }
 
     async createNodeData() {
@@ -249,7 +261,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         nodeData: ScatterNodeDatum[];
         markerSelection: Selection<Marker, ScatterNodeDatum>;
     }) {
-        let { nodeData, markerSelection } = opts;
+        const { nodeData, markerSelection } = opts;
         const {
             marker: { enabled },
         } = this;

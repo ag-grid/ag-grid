@@ -19,7 +19,6 @@ import { CartesianSeries } from './series/cartesian/cartesianSeries';
 import { Point } from '../scene/point';
 import { BOOLEAN, STRING_UNION, Validate } from '../util/validation';
 import { sleep } from '../util/async';
-import { doOnce } from '../util/function';
 import { Tooltip, TooltipMeta as PointerMeta } from './tooltip/tooltip';
 import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { jsonMerge } from '../util/json';
@@ -32,6 +31,8 @@ import { ZoomManager } from './interaction/zoomManager';
 import { LayoutService } from './layout/layoutService';
 import { ChartUpdateType } from './chartUpdateType';
 import { LegendDatum } from './legendDatum';
+import { Logger } from '../util/logger';
+import { ActionOnSet } from '../util/proxy';
 
 type OptionalHTMLElement = HTMLElement | undefined | null;
 
@@ -56,14 +57,12 @@ export abstract class Chart extends Observable implements AgChartInstance {
     readonly legend: Legend;
     readonly tooltip: Tooltip;
 
-    private _debug = false;
-    set debug(value: boolean) {
-        this._debug = value;
-        this.scene.debug.consoleLog = value;
-    }
-    get debug() {
-        return this._debug;
-    }
+    @ActionOnSet<Chart>({
+        newValue(value) {
+            this.scene.debug.consoleLog = value;
+        },
+    })
+    public debug;
 
     private extraDebugStats: Record<string, number> = {};
 
@@ -87,45 +86,39 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return this._container;
     }
 
-    protected _data: any = [];
-    set data(data: any) {
-        this._data = data;
-        this.series.forEach((series) => (series.data = data));
-    }
-    get data(): any {
-        return this._data;
-    }
+    @ActionOnSet<Chart>({
+        newValue(value) {
+            this.series?.forEach((series) => (series.data = value));
+        },
+    })
+    public data: any = [];
 
-    set width(value: number) {
-        this.autoSize = false;
-        if (this.width !== value) {
+    @ActionOnSet<Chart>({
+        newValue(value) {
+            this.autoSize = false;
             this.resize(value, this.height);
-        }
-    }
-    get width(): number {
-        return this.scene.width;
-    }
+        },
+    })
+    width?: number;
 
-    set height(value: number) {
-        this.autoSize = false;
-        if (this.height !== value) {
+    @ActionOnSet<Chart>({
+        newValue(value) {
+            this.autoSize = false;
             this.resize(this.width, value);
-        }
-    }
-    get height(): number {
-        return this.scene.height;
-    }
+        },
+    })
+    height?: number;
 
-    private _lastAutoSize?: [number, number];
+    @ActionOnSet<Chart>({
+        changeValue(value) {
+            this.autoSizeChanged(value);
+        },
+    })
     @Validate(BOOLEAN)
-    protected _autoSize = false;
-    set autoSize(value: boolean) {
-        if (this._autoSize === value) {
-            return;
-        }
+    public autoSize;
+    private _lastAutoSize?: [number, number];
 
-        this._autoSize = value;
-
+    private autoSizeChanged(value: boolean) {
         const { style } = this.element;
         if (value) {
             style.display = 'block';
@@ -142,9 +135,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
             style.height = 'auto';
         }
     }
-    get autoSize(): boolean {
-        return this._autoSize;
-    }
 
     download(fileName?: string, fileFormat?: string) {
         this.scene.download(fileName, fileFormat);
@@ -152,35 +142,35 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     padding = new Padding(20);
 
-    _title?: Caption = undefined;
-    set title(caption: Caption | undefined) {
-        const { root } = this.scene;
-        if (this._title != null) {
-            root?.removeChild(this._title.node);
-        }
-        this._title = caption;
-        if (this._title != null) {
-            root?.appendChild(this._title.node);
-        }
-    }
-    get title() {
-        return this._title;
-    }
+    @ActionOnSet<Chart>({
+        newValue(value) {
+            this.scene.root?.appendChild(value.node);
+        },
+        oldValue(oldValue) {
+            this.scene.root?.removeChild(oldValue.node);
+        },
+    })
+    public title?: Caption = undefined;
 
-    _subtitle?: Caption = undefined;
-    set subtitle(caption: Caption | undefined) {
-        const { root } = this.scene;
-        if (this._subtitle != null) {
-            root?.removeChild(this._subtitle.node);
-        }
-        this._subtitle = caption;
-        if (this._subtitle != null) {
-            root?.appendChild(this._subtitle.node);
-        }
-    }
-    get subtitle() {
-        return this._subtitle;
-    }
+    @ActionOnSet<Chart>({
+        newValue(value) {
+            this.scene.root?.appendChild(value.node);
+        },
+        oldValue(oldValue) {
+            this.scene.root?.removeChild(oldValue.node);
+        },
+    })
+    public subtitle?: Caption = undefined;
+
+    @ActionOnSet<Chart>({
+        newValue(value) {
+            this.scene.root?.appendChild(value.node);
+        },
+        oldValue(oldValue) {
+            this.scene.root?.removeChild(oldValue.node);
+        },
+    })
+    public footnote?: Caption = undefined;
 
     @Validate(STRING_UNION('standalone', 'integrated'))
     mode: 'standalone' | 'integrated' = 'standalone';
@@ -228,7 +218,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
         element.style.position = 'relative';
 
         this.scene = scene ?? new Scene({ document, overrideDevicePixelRatio });
-        this.scene.debug.consoleLog = this._debug;
+        this.debug = false;
+        this.scene.debug.consoleLog = false;
         this.scene.root = root;
         this.scene.container = element;
         this.autoSize = true;
@@ -364,7 +355,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     log(opts: any) {
         if (this.debug) {
-            console.log(opts);
+            Logger.debug(opts);
         }
     }
 
@@ -403,7 +394,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             try {
                 await callbacks[0]();
             } catch (e) {
-                console.error(e);
+                Logger.error('update error', e);
             }
 
             callbacks.shift();
@@ -430,8 +421,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
         try {
             await this.performUpdate(count);
         } catch (error) {
-            this._lastPerformUpdateError = error;
-            console.error(error);
+            this._lastPerformUpdateError = error as Error;
+            Logger.error('update error', error);
         }
     });
     public async awaitUpdateCompletion() {
@@ -466,9 +457,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 await this.processData();
                 this.disablePointer(true);
                 splits.push(performance.now());
-            // Fall-through to next pipeline stage.
+            // eslint-disable-next-line no-fallthrough
             case ChartUpdateType.PERFORM_LAYOUT:
-                if (this._autoSize && !this._lastAutoSize) {
+                if (this.autoSize && !this._lastAutoSize) {
                     const count = this._performUpdateNoRenderCount++;
 
                     if (count < 5) {
@@ -487,7 +478,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 await this.performLayout();
                 splits.push(performance.now());
 
-            // Fall-through to next pipeline stage.
+            // eslint-disable-next-line no-fallthrough
             case ChartUpdateType.SERIES_UPDATE:
                 const { seriesRect } = this;
                 const seriesUpdates = [...this.seriesToUpdate].map((series) => series.update({ seriesRect }));
@@ -495,18 +486,18 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 await Promise.all(seriesUpdates);
 
                 splits.push(performance.now());
-            // Fall-through to next pipeline stage.
+            // eslint-disable-next-line no-fallthrough
             case ChartUpdateType.TOOLTIP_RECALCULATION:
                 const tooltipMeta = this.tooltipManager.getTooltipMeta(this.id);
                 if (performUpdateType < ChartUpdateType.SERIES_UPDATE && tooltipMeta?.event?.type === 'hover') {
                     this.handlePointer(tooltipMeta.event as InteractionEvent<'hover'>);
                 }
 
-            // Fall-through to next pipeline stage.
+            // eslint-disable-next-line no-fallthrough
             case ChartUpdateType.SCENE_RENDER:
                 await this.scene.render({ debugSplitTimes: splits, extraDebugStats });
                 this.extraDebugStats = {};
-            // Fall-through to next pipeline stage.
+            // eslint-disable-next-line no-fallthrough
             case ChartUpdateType.NONE:
                 // Do nothing.
                 this._performUpdateType = ChartUpdateType.NONE;
@@ -572,11 +563,13 @@ export abstract class Chart extends Observable implements AgChartInstance {
             series.data = this.data;
         }
         series.addEventListener('nodeClick', this.onSeriesNodeClick);
+        series.addEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
     }
 
     protected freeSeries(series: Series<any>) {
         series.chart = undefined;
         series.removeEventListener('nodeClick', this.onSeriesNodeClick);
+        series.removeEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
     }
 
     removeAllSeries(): void {
@@ -615,17 +608,15 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
                 const directionAxes = directionToAxesMap[direction];
                 if (!directionAxes) {
-                    console.warn(
-                        `AG Charts - no available axis for direction [${direction}]; check series and axes configuration.`
-                    );
+                    Logger.warn(`no available axis for direction [${direction}]; check series and axes configuration.`);
                     return;
                 }
 
                 const seriesKeys = series.getKeys(direction);
                 const newAxis = this.findMatchingAxis(directionAxes, series.getKeys(direction));
                 if (!newAxis) {
-                    console.warn(
-                        `AG Charts - no matching axis for direction [${direction}] and keys [${seriesKeys}]; check series and axes configuration.`
+                    Logger.warn(
+                        `no matching axis for direction [${direction}] and keys [${seriesKeys}]; check series and axes configuration.`
                     );
                     return;
                 }
@@ -659,10 +650,12 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
     }
 
-    private resize(width: number, height: number) {
+    private resize(width?: number, height?: number) {
+        if (!width || !height || !Number.isFinite(width) || !Number.isFinite(height)) return;
+
         if (this.scene.resize(width, height)) {
-            this.background.width = this.width;
-            this.background.height = this.height;
+            this.background.width = width;
+            this.background.height = height;
 
             this.disablePointer();
             this.update(ChartUpdateType.PERFORM_LAYOUT, { forceNodeDataRefresh: true });
@@ -721,14 +714,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 (datum) =>
                     (datum.label.text = formatter({
                         get id() {
-                            doOnce(
-                                () =>
-                                    console.warn(
-                                        `AG Charts - LegendLabelFormatterParams.id is deprecated, use seriesId instead`,
-                                        datum
-                                    ),
-                                `LegendLabelFormatterParams.id deprecated`
-                            );
+                            Logger.warnOnce(`LegendLabelFormatterParams.id is deprecated, use seriesId instead`);
                             return datum.seriesId;
                         },
                         itemId: datum.itemId,
@@ -744,13 +730,14 @@ export abstract class Chart extends Observable implements AgChartInstance {
     abstract performLayout(): Promise<void>;
 
     protected positionCaptions(shrinkRect: BBox): BBox {
-        const { _title: title, _subtitle: subtitle } = this;
+        const { title, subtitle, footnote } = this;
         const newShrinkRect = shrinkRect.clone();
 
-        const positionAndShrinkBBox = (caption: Caption) => {
+        const positionTopAndShrinkBBox = (caption: Caption) => {
             const baseY = newShrinkRect.y;
             caption.node.x = newShrinkRect.x + newShrinkRect.width / 2;
             caption.node.y = baseY;
+            caption.node.textBaseline = 'top';
             const bbox = caption.node.computeBBox();
 
             // As the bbox (x,y) ends up at a different location than specified above, we need to
@@ -760,23 +747,37 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
             newShrinkRect.shrink(bboxHeight, 'top');
         };
+        const positionBottomAndShrinkBBox = (caption: Caption) => {
+            const baseY = newShrinkRect.y + newShrinkRect.height;
+            caption.node.x = newShrinkRect.x + newShrinkRect.width / 2;
+            caption.node.y = baseY;
+            caption.node.textBaseline = 'bottom';
+            const bbox = caption.node.computeBBox();
 
-        if (!title) {
-            return newShrinkRect;
+            const bboxHeight = Math.ceil(baseY - bbox.y + (caption.spacing ?? 0));
+
+            newShrinkRect.shrink(bboxHeight, 'bottom');
+        };
+
+        if (title) {
+            title.node.visible = title.enabled;
+            if (title.node.visible) {
+                positionTopAndShrinkBBox(title);
+            }
         }
 
-        title.node.visible = title.enabled;
-        if (title.enabled) {
-            positionAndShrinkBBox(title);
+        if (subtitle) {
+            subtitle.node.visible = title !== undefined && title.enabled && subtitle.enabled;
+            if (subtitle.node.visible) {
+                positionTopAndShrinkBBox(subtitle);
+            }
         }
 
-        if (!subtitle) {
-            return newShrinkRect;
-        }
-
-        subtitle.node.visible = title.enabled && subtitle.enabled;
-        if (title.enabled && subtitle.enabled) {
-            positionAndShrinkBBox(subtitle);
+        if (footnote) {
+            footnote.node.visible = footnote.enabled;
+            if (footnote.node.visible) {
+                positionBottomAndShrinkBBox(footnote);
+            }
         }
 
         return newShrinkRect;
@@ -1014,6 +1015,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     protected onDoubleClick(event: InteractionEvent<'dblclick'>) {
+        if (this.checkSeriesNodeDoubleClick(event)) {
+            this.update(ChartUpdateType.SERIES_UPDATE);
+            return;
+        }
         this.fireEvent<AgChartDoubleClickEvent>({
             type: 'doubleClick',
             event: event.sourceEvent,
@@ -1021,12 +1026,27 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     private checkSeriesNodeClick(event: InteractionEvent<'click'>): boolean {
+        return this.checkSeriesNodeAnyClick(event, (series: Series, datum: any) =>
+            series.fireNodeClickEvent(event.sourceEvent, datum)
+        );
+    }
+
+    private checkSeriesNodeDoubleClick(event: InteractionEvent<'dblclick'>): boolean {
+        return this.checkSeriesNodeAnyClick(event, (series: Series, datum: any) =>
+            series.fireNodeDoubleClickEvent(event.sourceEvent, datum)
+        );
+    }
+
+    private checkSeriesNodeAnyClick(
+        event: InteractionEvent<'click' | 'dblclick'>,
+        fireEventFn: (series: Series, datum: any) => void
+    ): boolean {
         const datum = this.lastPick?.datum;
         const nodeClickRange = datum?.series.nodeClickRange;
 
         // First check if we should fire the event based on nearest node
         if (datum && nodeClickRange === 'nearest') {
-            datum.series.fireNodeClickEvent(event.sourceEvent, datum);
+            fireEventFn(datum.series, datum);
             return true;
         }
 
@@ -1049,7 +1069,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         const exactlyMatched = nodeClickRange === 'exact' && pick.distance === 0;
 
         if (isPixelRange || exactlyMatched) {
-            pick.series.fireNodeClickEvent(event.sourceEvent, pick.datum);
+            fireEventFn(pick.series, pick.datum);
             return true;
         }
 
@@ -1067,6 +1087,14 @@ export abstract class Chart extends Observable implements AgChartInstance {
             get: () => (event as any).series,
         });
         this.fireEvent(seriesNodeClickEvent);
+    };
+
+    private onSeriesNodeDoubleClick = (event: TypedEvent) => {
+        const seriesNodeDoubleClick = {
+            ...event,
+            type: 'seriesNodeDoubleClick',
+        };
+        this.fireEvent(seriesNodeDoubleClick);
     };
 
     private mergePointerDatum(meta: PointerMeta, datum: SeriesNodeDatum): PointerMeta {

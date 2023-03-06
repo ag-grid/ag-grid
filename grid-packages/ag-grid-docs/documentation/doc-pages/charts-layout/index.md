@@ -8,13 +8,14 @@ This section explains the components of a chart and how they are laid out inside
 
 ![Chart Layout](cartesian-chart-layout.png)
 
-Each chart is composed of a single or multiple series, and optionally a legend, axes, and captions, such as title and subtitle. All of these components are managed by the chart's layout engine. They are sized and positioned appropriately based on the chart's dimensions, the nature of the data and the configuration.
+Each chart is composed of a single or multiple series, and optionally a legend, axes, and captions, such as title, subtitle and footnote. All of these components are managed by the chart's layout engine. They are sized and positioned appropriately based on the chart's dimensions, the nature of the data and the configuration.
 
 Components are laid out in the following order; earlier elements take up space that is then unavailable for the layout
 of later elements:
 - Chart padding
 - Title plus its configured spacing
 - Sub-title plus its configured spacing
+- Foot-note plus its configured spacing
 - Legend plus its configured spacing
 - Navigator plus its configured margin
 - Axes
@@ -37,6 +38,10 @@ height of the title and its additional `title.spacing`.
 
 `subtitle` configuration applies next, horizontally centring on the remaining space and consuming the
 height of the title and its additional `subtitle.spacing`.
+
+### Foot-Note
+
+`footnote` configuration applies next, horizontally centring on the remaining space and consuming the height of the title and its additional `footnote.spacing` at the bottom.
 
 ### Legend
 

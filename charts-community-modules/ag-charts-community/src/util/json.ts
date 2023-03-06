@@ -1,3 +1,5 @@
+import { Logger } from './logger';
+
 type LiteralProperties = 'shape' | 'data';
 type SkippableProperties = 'axes' | 'series' | 'container' | 'customChartThemes';
 type IsLiteralProperty<T, K extends keyof T> = K extends LiteralProperties
@@ -281,10 +283,11 @@ export function jsonApply<Target, Source extends DeepPartial<Target>>(
             const currentValueType = classify(currentValue);
             const newValueType = classify(newValue);
 
-            if (targetType === 'class-instance' && !(property in target || targetAny.hasOwnProperty(property))) {
-                console.warn(
-                    `AG Charts - unable to set [${propertyPath}] in ${targetClass?.name} - property is unknown`
-                );
+            if (
+                targetType === 'class-instance' &&
+                !(property in target || Object.prototype.hasOwnProperty.call(targetAny, property))
+            ) {
+                Logger.warn(`unable to set [${propertyPath}] in ${targetClass?.name} - property is unknown`);
                 continue;
             }
 
@@ -292,8 +295,8 @@ export function jsonApply<Target, Source extends DeepPartial<Target>>(
             if (currentValueType === 'class-instance' && newValueType === 'object') {
                 // Allowed, this is the common case! - do not error.
             } else if (currentValueType != null && newValueType != null && !allowableTypes.includes(newValueType)) {
-                console.warn(
-                    `AG Charts - unable to set [${propertyPath}] in ${targetClass?.name} - can't apply type of [${newValueType}], allowed types are: [${allowableTypes}]`
+                Logger.warn(
+                    `unable to set [${propertyPath}] in ${targetClass?.name} - can't apply type of [${newValueType}], allowed types are: [${allowableTypes}]`
                 );
                 continue;
             }
@@ -335,9 +338,7 @@ export function jsonApply<Target, Source extends DeepPartial<Target>>(
             }
         } catch (error) {
             const err = error as any;
-            console.warn(
-                `AG Charts - unable to set [${propertyPath}] in [${targetClass?.name}]; nested error is: ${err.message}`
-            );
+            Logger.warn(`unable to set [${propertyPath}] in [${targetClass?.name}]; nested error is: ${err.message}`);
             continue;
         }
     }
@@ -368,7 +369,7 @@ export function jsonWalk(
 
     if (jsonType === 'array') {
         json.forEach((element: any, index: number) => {
-            jsonWalk(element, visit, opts, ...jsons?.map((o) => o?.[index]));
+            jsonWalk(element, visit, opts, ...(jsons ?? []).map((o) => o?.[index]));
         });
         return;
     } else if (jsonType !== 'object') {

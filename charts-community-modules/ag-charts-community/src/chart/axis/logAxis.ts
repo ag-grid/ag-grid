@@ -3,6 +3,7 @@ import { Default } from '../../util/default';
 import { LogScale } from '../../scale/logScale';
 import { NumberAxis } from './numberAxis';
 import { extent } from '../../util/array';
+import { Logger } from '../../util/logger';
 
 function NON_ZERO_NUMBER() {
     // Cannot be 0
@@ -36,11 +37,11 @@ export class LogAxis extends NumberAxis {
         if (invalidDomain) {
             d = [];
             if (crossesZero) {
-                console.warn(
-                    `AG Charts - The data domain crosses zero, the chart data cannot be rendered. See log axis documentation for more information.`
+                Logger.warn(
+                    `the data domain crosses zero, the chart data cannot be rendered. See log axis documentation for more information.`
                 );
             } else if (hasZeroExtent) {
-                console.warn(`AG Charts - The data domain has 0 extent, no data is rendered.`);
+                Logger.warn(`the data domain has 0 extent, no data is rendered.`);
             }
         }
         if (d[0] === 0) {
