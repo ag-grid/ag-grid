@@ -81,8 +81,10 @@ export async function waitForChartStability(chartOrProxy: Chart | AgChartInstanc
     await chart.waitForUpdate(timeoutMs);
     if (chart.autoSize === true && !chartAny._lastAutoSize) {
         // Bypass wait for SizeObservable callback - it's never going to be invoked.
-        chartAny._lastAutoSize = [chart.width, chart.height];
-        chartAny.resize(chart.width, chart.height);
+        const width = chart.width ?? chart.scene.canvas.width;
+        const height = chart.height ?? chart.scene.canvas.height;
+        chartAny._lastAutoSize = [width, height];
+        chartAny.resize(width, height);
         await chart.waitForUpdate(timeoutMs);
     }
 }

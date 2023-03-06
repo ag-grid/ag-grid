@@ -112,8 +112,9 @@ export class Scene {
 
         // HdpiCanvas doesn't allow width/height <= 0.
         const lessThanZero = width <= 0 || height <= 0;
+        const nan = isNaN(width) || isNaN(height);
         const unchanged = width === this.width && height === this.height;
-        if (unchanged || lessThanZero) {
+        if (unchanged || nan || lessThanZero) {
             return false;
         }
 

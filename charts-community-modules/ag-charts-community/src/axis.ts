@@ -624,7 +624,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
         const checkForOverlap = avoidCollisions && this.tick.interval === undefined && this.tick.values === undefined;
         const tickSpacing = !isNaN(this.tick.minSpacing) || !isNaN(this.tick.maxSpacing);
-        const maxIterations = this.tick.count || !continuous ? 10 : maxTickCount;
+        const maxIterations = this.tick.count || !continuous || isNaN(maxTickCount) ? 10 : maxTickCount;
 
         while (labelOverlap) {
             let unchanged = true;

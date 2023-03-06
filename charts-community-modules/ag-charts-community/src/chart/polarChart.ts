@@ -20,7 +20,10 @@ export class PolarChart extends Chart {
     async performLayout() {
         this.scene.root!.visible = true;
 
-        const { width, height, padding } = this;
+        const {
+            padding,
+            scene: { width, height },
+        } = this;
 
         let shrinkRect = new BBox(0, 0, width, height);
         shrinkRect.shrink(padding.left, 'left');

@@ -3940,7 +3940,7 @@
   },
   "TransformFn": {
     "meta": { "isTypeAlias": true },
-    "type": "(target: any, key: string | symbol, value: any) => any | typeof BREAK_TRANSFORM_CHAIN"
+    "type": "(target: any, key: string | symbol, value: any, oldValue?: any) => any | typeof BREAK_TRANSFORM_CHAIN"
   },
   "TransformConfig": {
     "meta": { "isTypeAlias": true },

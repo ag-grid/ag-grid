@@ -26,7 +26,11 @@ export class CartesianChart extends Chart {
     async performLayout() {
         this.scene.root!.visible = true;
 
-        const { width, height, legend, padding } = this;
+        const {
+            legend,
+            padding,
+            scene: { width, height },
+        } = this;
 
         let shrinkRect = new BBox(0, 0, width, height);
         shrinkRect.x += padding.left;
