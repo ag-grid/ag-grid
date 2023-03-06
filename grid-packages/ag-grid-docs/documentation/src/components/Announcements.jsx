@@ -1,5 +1,3 @@
-import communitySvg from 'images/community.svg';
-import enterpriseSvg from 'images/enterprise.svg';
 import React from 'react';
 import { Announcement } from './Announcement';
 import styles from './Announcements.module.scss';
@@ -52,20 +50,11 @@ const Announcements = ({ framework }) => (
         <SimpleMailingListSignup />
 
         <Announcement title="Community or Enterprise?">
-            <img
-                style={{ width: '30px', height: '33px', float: 'left', marginRight: '6px' }}
-                src={communitySvg}
-                alt="Community"
-            />
             <p>
                 Everyone can use AG Grid Community for free. It's MIT licensed and Open Source. No restrictions. No
                 strings attached.
             </p>
-            <img
-                style={{ width: '30px', height: '33px', float: 'left', marginRight: '6px' }}
-                src={enterpriseSvg}
-                alt="Enterprise"
-            />
+
             <p>
                 Do you want more features? Then{' '}
                 <DocumentationLink framework={framework} href="/licensing/">
@@ -75,16 +64,6 @@ const Announcements = ({ framework }) => (
                 developing for production.
             </p>
         </Announcement>
-
-        {/*<Announcement highlight={false}>*/}
-        {/*    <p>Work at AG Grid:</p>*/}
-        {/*    <h5 className="card-title"><a href="/ag-grid-jobs-board/">JavaScript Developers</a></h5>*/}
-        {/*    <h6 className="card-subtitle mb-2 text-muted">London, United Kingdom</h6>*/}
-        {/*    <p className="card-text">*/}
-        {/*        Would you like to join the AG Grid team in London?<br /><br />*/}
-        {/*        Check the <a href="/ag-grid-jobs-board/">jobs board</a>*/}
-        {/*    </p>*/}
-        {/*</Announcement>*/}
     </div>
 );
 
@@ -94,8 +73,6 @@ const Announcements = ({ framework }) => (
 const SimpleMailingListSignup = () => {
     return (
         <>
-            {/* <link href="//cdn-images.mailchimp.com/embedcode/slim-10_7.css" rel="stylesheet" type="text/css" /> */}
-
             <div id="mc_embed_signup" className={styles.newsletterSignup}>
                 <form
                     action="https://ag-grid.us11.list-manage.com/subscribe/post?u=9b44b788c97fa5b498fbbc9b5&amp;id=9353cf87ce"

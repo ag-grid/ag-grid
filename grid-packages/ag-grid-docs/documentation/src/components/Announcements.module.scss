@@ -1,8 +1,5 @@
 @use '../design-system' as *;
 
-.announcements {
-}
-
 .versions {
     margin-top: $size-4 !important; // !important for .ag-styles specificity
     margin-bottom: $size-4 !important; // !important for .ag-styles specificity
@@ -28,39 +25,7 @@
 }
 
 .announcement {
-    composes: card my-2 from global;
-
-    &--highlighted {
-        background-color: #f1f7ff !important;
-    }
-
-    p {
-        font-size: 0.8rem;
-    }
-
-    h5,
-    h6 {
-        font-size: 1rem;
-
-        a {
-            color: $body-color;
-            text-decoration: none;
-        }
-    }
-
-    ul {
-        list-style: none;
-        padding-left: 0;
-        padding-inline-start: 0;
-    }
-
-    &__list-item {
-        composes: py-1 from global;
-    }
-
-    &__flag {
-        height: 12px;
-        padding-right: 5px;
-        vertical-align: baseline;
-    }
+    padding: $size-1;
+    border-radius: var(--border-radius);
+    background-color: var(--bright-blue-gray);
 }
