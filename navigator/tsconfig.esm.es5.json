@@ -1,0 +1,11 @@
+{
+    "extends": "../../module-build/tsconfig.esm.es5.json",
+    "compilerOptions": {
+        "outDir": "dist/esm/es5",
+        "baseUrl": ".",
+        "paths": { "@ag-*": ["node_modules/@ag-*/dist/esm/es5/main"] },
+        "strict": true
+    },
+    "include": ["src/**/*"],
+    "exclude": ["**/*.test.ts", "src/**/mock.ts"]
+}

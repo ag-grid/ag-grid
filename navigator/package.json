@@ -1,0 +1,106 @@
+{
+  "name": "@ag-charts-enterprise/navigator",
+  "version": "7.1.0",
+  "description": "Advanced Charting / Charts supporting Javascript / Typescript / React / Angular / Vue",
+  "main": "./dist/cjs/es5/main.js",
+  "module": "./dist/esm/es5/main.js",
+  "types": "./dist/cjs/es5/main.d.ts",
+  "private": true,
+  "scripts": {
+    "clean": "rimraf dist .hash",
+    "build-cjs": "rimraf dist/tsconfig.cjs.es5.docs.tsbuildinfo && npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
+    "build-esm": "npx tsc -p tsconfig.esm.es5.json && npx tsc -p tsconfig.esm.es6.json",
+    "build-cjs-prod": "npx tsc -p tsconfig.cjs.es5.json --sourceMap false && npx tsc -p tsconfig.cjs.es6.json --sourceMap false",
+    "build-esm-prod": "npx tsc -p tsconfig.esm.es5.json --sourceMap false && npx tsc -p tsconfig.esm.es6.json --sourceMap false",
+    "fix": "run-s fix:*",
+    "fix:prettier": "npx prettier -w .",
+    "fix:eslint": "npx eslint --fix src/ --ext .js,.ts",
+    "lint": "run-s lint:*",
+    "lint:prettier": "npx prettier -c .",
+    "lint:eslint": "npx eslint src/ --ext .js,.ts",
+    "watch-esm": "tsc -p tsconfig.esm.es5.json -w",
+    "build": "npm run build-cjs && npm run build-esm && npm run hash",
+    "build-prod": "npm run build-cjs-prod && npm run build-esm-prod && npm run hash",
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash",
+    "test:ci": "export FONTCONFIG_PATH=$PWD/src/chart/test FONTCONFIG_FILE=$PWD/src/chart/test/fonts.conf PANGOCAIRO_BACKEND=fontconfig ; npx jest --runInBand",
+    "test:dev": "npm run test:lint ; export FC_DEBUG=0 FONTCONFIG_PATH=$PWD/src/chart/test FONTCONFIG_FILE=$PWD/src/chart/test/fonts.conf PANGOCAIRO_BACKEND=fontconfig ; npx jest",
+    "test:lint": "npm run test-circular-deps",
+    "test": "if test -z \"$TEAMCITY_PROJECT_NAME\" ; then exec npm run test:dev ; else exec npm run test:ci ; fi",
+    "test-watch": "npm run test:dev -- --watch",
+    "test-coverage": "npm run test:dev -- --coverage",
+    "test-debug": "export FONTCONFIG_PATH=$PWD/src/chart/test FONTCONFIG_FILE=$PWD/src/chart/test/fonts.conf PANGOCAIRO_BACKEND=fontconfig ; node --inspect-brk=0.0.0.0 node_modules/.bin/jest --watch --no-cache",
+    "test-update": "export SNAPSHOT_FAILURE_THRESHOLD=0.001 ; npm run test:dev -- -u",
+    "test-circular-deps": "npx madge --circular --extensions ts src/",
+    "predocker:init": "docker build -t charts:latest node_modules/ag-charts-community/.docker",
+    "docker:init": "node_modules/ag-charts-community/.docker/run.sh init",
+    "docker:run": "node_modules/ag-charts-community/.docker/run.sh run",
+    "docker:test-watch": "node_modules/ag-charts-community/.docker/run.sh run npm run test-watch",
+    "docker:test-coverage": "node_modules/ag-charts-community/.docker/run.sh run npm run test-coverage",
+    "docker:test-debug": "node_modules/ag-charts-community/.docker/run.sh run npm run test-debug",
+    "docker:test-update": "node_modules/ag-charts-community/.docker/run.sh run npm run test-update",
+    "docker:clean": "node_modules/ag-charts-community/.docker/run.sh clean"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-grid.git"
+  },
+  "keywords": [
+    "chart",
+    "charts",
+    "data",
+    "angular",
+    "angular-component",
+    "react",
+    "react-component",
+    "reactjs",
+    "vue",
+    "vuejs"
+  ],
+  "author": "Sean Landsman <sean@thelandsmans.com>",
+  "license": "Commercial",
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-grid/issues"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie >= 0",
+    "not ie_mob >= 0",
+    "not blackberry > 0",
+    "not op_mini all",
+    "not operamobile >= 0"
+  ],
+  "homepage": "https://www.ag-grid.com/",
+  "devDependencies": {
+    "@types/jest": "^27.4.1",
+    "@types/jest-image-snapshot": "^5.1.0",
+    "@types/pixelmatch": "^5.2.4",
+    "@types/pngjs": "^6.0.1",
+    "@typescript-eslint/eslint-plugin": "^5.54.0",
+    "canvas": "^2.10.2",
+    "eslint": "^8.35.0",
+    "jest": "^27.5.1",
+    "jest-canvas-mock": "^2.4.0",
+    "jest-image-snapshot": "^6.0.0",
+    "jest-runner": "^27.5.1",
+    "jest-serial-runner": "^1.2.1",
+    "madge": "6.0.0",
+    "npm-run-all": "^4.1.5",
+    "pixelmatch": "^5.2.1",
+    "prettier": "^2.8.3",
+    "rimraf": "3.0.2",
+    "ts-jest": "^27.1.3",
+    "typescript": "~4.0.8"
+  },
+  "dependencies": {
+    "ag-charts-community": "~7.1.0",
+    "@ag-charts-enterprise/core": "~7.1.0"
+  },
+  "publishConfig": {
+    "access": "private"
+  },
+  "lint-staged": {
+    "*.{ts,js,md,json}": "../../charts-community-modules/ag-charts-community/.lint-staged/run.sh prettier",
+    "*.{ts,js}": "../../charts-community-modules/ag-charts-community/.lint-staged/run.sh eslint"
+  }
+}
