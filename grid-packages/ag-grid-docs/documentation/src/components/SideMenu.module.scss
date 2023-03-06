@@ -1,12 +1,19 @@
+@use '../design-system' as *;
+
 .side-nav {
     display: none;
-    width: 300px;
+    width: 180px;
     flex: none;
     font-size: 0.9rem;
     background-color: $white;
+    text-align: right;
+
+    @media screen and (min-width: $breakpoint-docs-nav-large) {
+        display: block;
+    }
 
     &__list {
-        composes: mx-3 pl-3 list-unstyled from global;
+        composes: list-unstyled from global;
 
         @supports (position: sticky) {
             position: sticky;

@@ -135,36 +135,37 @@ const Menu = ({ currentFramework, currentPage }) => {
 
     return (
         <aside className={classnames(styles['menu'], 'ag-styles')}>
-            <div className="page-margin">
-                <FontAwesomeIcon icon={faChevronRight} className={styles['menu__arrow']} symbol="menu-item" />
-                <ul id="side-nav" className={classnames(styles['menu__sections'], 'list-style-none')}>
-                    {combinedMenuItems.map((item) => {
-                        const { title } = item;
-                        const isActive = title === activeSection;
+            {/* <div className="page-margin"> */}
+            <FontAwesomeIcon icon={faChevronRight} className={styles['menu__arrow']} symbol="menu-item" />
 
-                        const toggleActive = (event) => {
-                            if (event.key && event.key !== 'Enter') {
-                                return;
-                            }
+            <ul id="side-nav" className={classnames(styles.menuInner, 'list-style-none')}>
+                {combinedMenuItems.map((item) => {
+                    const { title } = item;
+                    const isActive = title === activeSection;
 
-                            setActiveSection(isActive ? null : title);
-                        };
+                    const toggleActive = (event) => {
+                        if (event.key && event.key !== 'Enter') {
+                            return;
+                        }
 
-                        return (
-                            <MenuSection
-                                key={title}
-                                title={title}
-                                items={item.items}
-                                currentFramework={currentFramework}
-                                isActive={isActive}
-                                toggleActive={toggleActive}
-                            />
-                        );
-                    })}
+                        setActiveSection(isActive ? null : title);
+                    };
 
-                    <Announcements framework={currentFramework} />
-                </ul>
-            </div>
+                    return (
+                        <MenuSection
+                            key={title}
+                            title={title}
+                            items={item.items}
+                            currentFramework={currentFramework}
+                            isActive={isActive}
+                            toggleActive={toggleActive}
+                        />
+                    );
+                })}
+
+                <Announcements framework={currentFramework} />
+            </ul>
+            {/* </div> */}
         </aside>
     );
 };

@@ -1,25 +1,33 @@
+@use '../design-system' as *;
+
 .doc-page-wrapper {
-    composes: container-lg d-flex p-3 from global;
-    margin-left: 0;
-    @media (min-width: 2075px) {
-        margin-left: calc((100% - 300px) / 2 - 730px);
+    display: flex;
+
+    @media screen and (max-width: $breakpoint-docs-nav-medium) {
+        @include page-horizontal-margins();
     }
 }
 
 %enterprise-icon {
     display: inline-block;
-    background-image: url("../images/enterprise.svg");
+    background-image: url('../images/enterprise.svg');
     text-indent: -10000px;
     background-position-y: center;
     background-repeat: no-repeat;
-    content: "e";
+    content: 'e';
 }
 
 .doc-page {
-    margin-left: 1rem;
-    margin-right: 1rem;
     flex: 1 1 0px;
     min-width: 0px;
+
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        padding-right: $size-4;
+    }
+
+    @media screen and (min-width: $breakpoint-docs-nav-large) {
+        padding-left: $size-4;
+    }
 
     @include media-breakpoint-up(xl) {
         &:not(&--with-side-menu) {

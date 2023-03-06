@@ -1,10 +1,26 @@
 @use '../design-system' as *;
 
 .menu {
-    composes: navbar flex-grow-1 flex-column align-items-stretch navbar-expand-lg navbar-light p-0 from global;
+    // composes: navbar flex-grow-1 flex-column align-items-stretch navbar-expand-lg navbar-light p-0 from global;
 
-    flex-basis: 0px;
+    // flex-basis: 0px
     border-bottom: 1px solid var(--border-color);
+
+    @media screen and (max-width: $breakpoint-docs-nav-medium) {
+        @include page-horizontal-margins();
+    }
+
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        min-width: 300px;
+
+        @supports (position: sticky) {
+            position: sticky;
+            top: 64px;
+            height: calc(100vh - 64px);
+            overflow: hidden;
+            overflow-y: auto;
+        }
+    }
 
     &__item {
         &__link {
@@ -69,14 +85,6 @@
         vertical-align: middle;
     }
 
-    &__sections {
-        composes: collapse navbar-collapse from global;
-
-        flex-basis: auto !important;
-        padding-top: $size-2;
-        padding-bottom: $size-4;
-    }
-
     &__section {
         composes: pt-1 pb-2 from global;
 
@@ -121,5 +129,18 @@
 
     input:focus {
         border-color: $primary;
+    }
+}
+
+.menuInner {
+    composes: collapse navbar-collapse from global;
+
+    flex-basis: auto !important;
+    flex-direction: column;
+    padding-top: $size-2;
+    padding-bottom: $size-4;
+
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        display: block !important; // !important to override bootstrap styles
     }
 }

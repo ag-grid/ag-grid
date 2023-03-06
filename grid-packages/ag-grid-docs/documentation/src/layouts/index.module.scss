@@ -1,3 +1,5 @@
+@use '../design-system' as ds; // .ag-styles - remove namespace after bootstrap removed.
+
 @import '~bootstrap/scss/type';
 @import '~bootstrap/scss/alert';
 
@@ -19,6 +21,18 @@ main {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
+}
+
+.contentContainer {
+    // Variables added here untill .ag-styles is no longer needed
+    --max-page-width: #{ds.$max-page-width};
+    --horizontal-margin: #{ds.$horizontal-margin};
+
+    // .ag-styles - remove namespace after bootstrap removed.
+    @media screen and (min-width: ds.$breakpoint-docs-nav-medium) {
+        @include ds.page-max-width();
+        @include ds.page-horizontal-margins();
+    }
 }
 
 .content-viewport {

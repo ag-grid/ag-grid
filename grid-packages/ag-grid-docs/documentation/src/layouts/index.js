@@ -55,12 +55,15 @@ export const Layout = ({
                 <SiteHeader path={path} />
 
                 {!fullScreen && <TopBar frameworks={frameworks} currentFramework={framework} path={path} />}
-                <div className={styles['content-viewport']}>
-                    {!fullScreen && <Menu currentFramework={framework} currentPage={pageName} />}
 
-                    <main is="div" className={styles['content']}>
-                        {children}
-                    </main>
+                <div className={styles.contentContainer}>
+                    <div className={styles['content-viewport']}>
+                        {!fullScreen && <Menu currentFramework={framework} currentPage={pageName} />}
+
+                        <main is="div" className={styles['content']}>
+                            {children}
+                        </main>
+                    </div>
                 </div>
             </div>
             {(fullScreenWithFooter || !fullScreen) && <Footer framework={framework} />}
