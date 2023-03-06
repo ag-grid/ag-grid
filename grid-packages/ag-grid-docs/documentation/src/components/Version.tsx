@@ -31,7 +31,7 @@ const Version: FunctionComponent<Props> = ({ date, version, blogUrl, highlights 
             </p>
 
             {highlights && (
-                <ul className="list-style-none">
+                <ul className="list-style-none font-size-small">
                     {highlights.map((highlight, i) => {
                         return (
                             <li key={i}>
@@ -42,7 +42,7 @@ const Version: FunctionComponent<Props> = ({ date, version, blogUrl, highlights 
                 </ul>
             )}
 
-            <a href={`/changelog/?fixVersion=${version}`} target="_blank" rel="noreferrer">
+            <a className="font-size-small" href={`/changelog/?fixVersion=${version}`} target="_blank" rel="noreferrer">
                 {version} change log <Icon name="arrowRight" />
             </a>
         </div>

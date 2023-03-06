@@ -1,6 +1,8 @@
 @use '../design-system' as *;
 
 .sideNav {
+    $top-bar-height: 58px;
+
     display: none;
     width: 220px;
     padding-left: $size-2;
@@ -11,11 +13,24 @@
         display: block;
     }
 
-    ul {
+    > div {
+        @supports (position: sticky) {
+            position: sticky;
+            top: $top-bar-height;
+            height: calc(100vh - #{$top-bar-height});
+            overflow: hidden;
+            overflow-y: auto;
+        }
     }
 
     li:not(.level-2):not(:first-child) {
         margin-top: $size-2;
+    }
+
+    li:not(.level-2) a {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 }
 

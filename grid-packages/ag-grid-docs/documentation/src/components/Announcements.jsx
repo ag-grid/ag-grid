@@ -50,12 +50,12 @@ const Announcements = ({ framework }) => (
         <SimpleMailingListSignup />
 
         <Announcement title="Community or Enterprise?">
-            <p>
+            <p className="font-size-small">
                 Everyone can use AG Grid Community for free. It's MIT licensed and Open Source. No restrictions. No
                 strings attached.
             </p>
 
-            <p>
+            <p className="font-size-small">
                 Do you want more features? Then{' '}
                 <DocumentationLink framework={framework} href="/licensing/">
                     get started with AG Grid Enterprise
