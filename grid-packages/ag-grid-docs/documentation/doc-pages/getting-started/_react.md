@@ -169,7 +169,7 @@
 |    console.log('cellClicked', event);
 |  }, []);
 |
-|  // Example load data from sever
+|  // Example load data from server
 |  useEffect(() => {
 |    fetch('https://www.ag-grid.com/example-assets/row-data.json')
 |    .then(result => result.json())
@@ -250,7 +250,7 @@
 |
 |...
 |
-|// Example load data from sever
+|// Example load data from server
 |useEffect(() => {
 |    fetch('https://www.ag-grid.com/example-assets/row-data.json')
 |    .then(result => result.json())

@@ -210,7 +210,7 @@
 |      flex: 1
 |    };
 |
-|    // Example load data from sever
+|    // Example load data from server
 |    onMounted(() => {
 |      fetch("https://www.ag-grid.com/example-assets/row-data.json")
 |        .then((result) => result.json())
@@ -281,7 +281,7 @@
 |
 |...
 |
-| // Example load data from sever
+| // Example load data from server
 | onMounted(() => {
 |   fetch("https://www.ag-grid.com/example-assets/row-data.json")
 |     .then((result) => result.json())
