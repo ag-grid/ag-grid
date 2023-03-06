@@ -1,6 +1,8 @@
 @use '../design-system' as *;
 
 .menu {
+    $top-bar-height: 58px;
+
     // composes: navbar flex-grow-1 flex-column align-items-stretch navbar-expand-lg navbar-light p-0 from global;
 
     // flex-basis: 0px
@@ -12,11 +14,13 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         min-width: 300px;
+        border-right: solid 1px var(--bright-blue-gray);
+        padding-right: $size-2;
 
         @supports (position: sticky) {
             position: sticky;
-            top: 64px;
-            height: calc(100vh - 64px);
+            top: $top-bar-height;
+            height: calc(100vh - #{$top-bar-height});
             overflow: hidden;
             overflow-y: auto;
         }

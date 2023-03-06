@@ -13,17 +13,19 @@
     }
 
     &__list {
+        $top-bar-height: 58px;
+
         composes: list-unstyled from global;
+
+        border-left: solid 1px var(--bright-blue-gray);
 
         @supports (position: sticky) {
             position: sticky;
-            top: 64px;
-            height: calc(100vh - 64px);
+            top: 58px;
+            height: calc(100vh - #{$top-bar-height});
             overflow: hidden;
             overflow-y: auto;
         }
-
-        border-left: solid 1px $ag-light-grey;
     }
 
     &__item--level-1 {
