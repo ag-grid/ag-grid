@@ -273,7 +273,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         return false;
     }
 
-    public isRowGroupDisplayed(colId: string): boolean {
+    public isRowGroupDisplayed(colId?: string): boolean {
         if (missing(this.colDef) || missing(this.colDef.showRowGroup)) {
             return false;
         }

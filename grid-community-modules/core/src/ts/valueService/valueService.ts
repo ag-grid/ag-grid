@@ -132,18 +132,38 @@ export class ValueService extends BeanStub {
      * @returns `True` if the value has been updated, otherwise`False`.
      */
     public setValue(rowNode: IRowNode, colKey: string | Column, newValue: any, eventSource?: string): boolean {
-        const column = this.columnModel.getPrimaryColumn(colKey);
+        const column = this.columnModel.getGridColumn(colKey);
 
         if (!rowNode || !column) {
             return false;
         }
         // this will only happen if user is trying to paste into a group row, which doesn't make sense
         // the user should not be trying to paste into group rows
-        if (missing(rowNode.data)) {
-            rowNode.data = {};
+
+        let dataRef: any = {};
+        if (column.isPrimary()) {
+            if (column.isRowGroupDisplayed() && rowNode.group) {
+                if (missing(rowNode.groupData)) {
+                    rowNode.groupData = {};
+                }
+                dataRef = rowNode.groupData;
+            } else {
+                if (missing(rowNode.data)) {
+                    rowNode.data = {};
+                }
+                dataRef = rowNode.data;
+            }
+        } else {
+            if (missing(rowNode.aggData)) {
+                rowNode.aggData = {};
+            }
+            dataRef = rowNode.aggData;
         }
 
-        const { field, valueSetter } = column.getColDef();
+        let { field, valueSetter } = column.getColDef();
+        if (column.isRowGroupDisplayed() && rowNode.group) {
+            field = column.getId();
+        }
 
         if (missing(field) && missing(valueSetter)) {
             console.warn(`AG Grid: you need either field or valueSetter set on colDef for editing to work`);
@@ -152,7 +172,7 @@ export class ValueService extends BeanStub {
 
         const params: ValueSetterParams = {
             node: rowNode,
-            data: rowNode.data,
+            data: dataRef,
             oldValue: this.getValue(column, rowNode),
             newValue: newValue,
             colDef: column.getColDef(),
@@ -173,7 +193,7 @@ export class ValueService extends BeanStub {
                 valueWasDifferent = this.expressionService.evaluate(valueSetter, params);
             }
         } else {
-            valueWasDifferent = this.setValueUsingField(rowNode.data, field, newValue, column.isFieldContainsDots());
+            valueWasDifferent = this.setValueUsingField(dataRef, field, newValue, column.isFieldContainsDots());
         }
 
         // in case user forgot to return something (possible if they are not using TypeScript
@@ -206,7 +226,7 @@ export class ValueService extends BeanStub {
             columnApi: params.columnApi!,
             colDef: params.colDef,
             context: params.context,
-            data: rowNode.data,
+            data: dataRef,
             node: rowNode,
             oldValue: params.oldValue,
             newValue: params.newValue,

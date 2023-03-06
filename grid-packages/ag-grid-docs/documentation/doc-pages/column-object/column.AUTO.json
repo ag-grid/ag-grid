@@ -57,7 +57,7 @@
   },
   "isEmptyGroup": { "type": { "arguments": {}, "returnType": "boolean" } },
   "isRowGroupDisplayed": {
-    "type": { "arguments": { "colId": "string" }, "returnType": "boolean" }
+    "type": { "arguments": { "colId?": "string" }, "returnType": "boolean" }
   },
   "isPrimary": {
     "description": "/** Returns `true` if column is a primary column, `false` if secondary. Secondary columns are used for pivoting. */",

@@ -690,7 +690,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         // the cell knows about the change given it's in charge of the editing.
         // this method is for the client to call, so the cell listens for the change
         // event, and also flashes the cell when the change occurs.
-        const column = this.beans.columnModel.getPrimaryColumn(colKey)!;
+        const column = this.beans.columnModel.getGridColumn(colKey)!;
         const oldValue = this.beans.valueService.getValue(column, this);
 
         if (this.beans.gridOptionsService.is('readOnlyEdit')) {
