@@ -221,6 +221,7 @@ export class DragAndDropService extends BeanStub {
     private clearDragSourceParamsList(): void {
         this.dragSourceAndParamsList.forEach(sourceAndParams => this.dragService.removeDragSource(sourceAndParams.params));
         this.dragSourceAndParamsList.length = 0;
+        this.dropTargets.length = 0;
     }
 
     public nudge(): void {
