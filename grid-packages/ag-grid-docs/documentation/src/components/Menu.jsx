@@ -31,7 +31,7 @@ function filterProductionMenuData(data) {
 
 function toElementId(str) {
     // Could be replaced with a regex
-    return str.toLowerCase().replace('&', '').replace('/', '').replace(' ', '-').replace(' ', '');
+    return str.toLowerCase().replace('&', '').replace('/', '').replaceAll(' ', '-');
 }
 
 const menuData = filterProductionMenuData(rawMenuData);
