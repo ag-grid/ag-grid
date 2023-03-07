@@ -771,14 +771,21 @@ export class Legend {
         event.consume();
 
         if (toggleSeriesVisible) {
-            const singleItemVisible =
-                chart.series.reduce((count, s) => count + s.getLegendData().filter((d) => d.enabled).length, 0) === 1;
+            const legendData: Array<LegendDatum> = chart.series.reduce(
+                (ls, s) => [...ls, ...s.getLegendData()],
+                [] as Array<LegendDatum>
+            );
+            const visibleItemsCount = legendData.filter((d) => d.enabled).length;
+            const clickedItem = legendData.find((d) => d.itemId === itemId);
 
             chart.series.forEach((s) => {
-                const legendData = s.getLegendData();
+                const legendData = s.getLegendData() as any;
 
-                legendData.forEach((d) => {
-                    const newEnabled = d.itemId === itemId || singleItemVisible;
+                legendData.forEach((d: any) => {
+                    const wasClicked = d.itemId === itemId;
+                    const singleSelectedWasNotClicked = visibleItemsCount === 1 && (clickedItem?.enabled ?? false);
+                    const newEnabled = wasClicked || singleSelectedWasNotClicked;
+
                     s.toggleSeriesItem(d.itemId, newEnabled);
                 });
             });
