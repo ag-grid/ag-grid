@@ -17,7 +17,7 @@ To ensure your grid reflects the latest data on your server, you can periodicall
 
 The following example provides a simple demonstration of the different behaviours of the refresh API, note the following:
  - Using the <b>Refresh</b> button, you can request that all the rows are requested from the server again, bringing them up to date with the server version.
- - Because `getRowId` has been implemented, the grid is able to detect which rows have been updated, and flash cells when using `enableCellChangeFlash`.
+ - Because [Row IDs](/server-side-model-configuration/#providing-row-ids) have been implemented, the grid is able to detect which rows have been updated, and flash cells when using `enableCellChangeFlash`.
  - The `Purge` checkbox enables the purge option in the API call, this causes all rows (and row state) to be reset when the refresh call is made, and replaced with loading rows.
 
 
@@ -31,7 +31,7 @@ The following example demonstrates how to refresh specified groups on the server
  - Using the <b>Refresh Root Level</b> button, you can force all the rows in the root level group to refresh, this is equivalent to omitting a route parameter from the `refreshServerSide` API call.
  - The <b>Refresh ['Canada']</b> button only refreshes the direct children of the `Canada` row group.
  - The <b>Refresh ['Canada', '2002']</b> button only refreshes the direct children of the `2002` row group that belongs to the `Canada` row group.
- - Because `getRowId` has been implemented, the grid is able to retain the state for reloaded rows, such as whether a group row was expanded. 
+ - Because [Row IDs](/server-side-model-configuration/#providing-row-ids) have been implemented, the grid is able to retain the state for reloaded rows, such as whether a group row was expanded. 
 
 <grid-example title='Refreshing Groups' name='refreshing-the-groups' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
