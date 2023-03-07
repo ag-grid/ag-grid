@@ -1,5 +1,5 @@
 import { TextFilter, TextFilterModel, TextFilterModelFormatter } from './textFilter';
-import { TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
+import { FloatingFilterInputService, FloatingFilterTextInputService, TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
 import { SimpleFilterModelFormatter } from '../simpleFilter';
 import { IFloatingFilterParams } from '../../floating/floatingFilter';
 
@@ -17,5 +17,11 @@ export class TextFloatingFilter extends TextInputFloatingFilter<TextFilterModel>
 
     protected getFilterModelFormatter(): SimpleFilterModelFormatter {
         return this.filterModelFormatter;
+    }
+
+    protected createFloatingFilterInputService(ariaLabel: string): FloatingFilterInputService {
+        return this.createManagedBean(new FloatingFilterTextInputService({
+            ariaLabel
+        }));
     }
 }

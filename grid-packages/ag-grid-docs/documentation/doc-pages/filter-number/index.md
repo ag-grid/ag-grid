@@ -43,9 +43,9 @@ Number Filters are configured though the `filterParams` attribute of the column 
 
 ## Custom Number Support
 
-By default, the Number Filter uses HTML5 `number` inputs. However, these have mixed browser support, particularly around locale-specific nuances, e.g. using commas rather than periods for decimal values. You might also want to allow users to type other characters e.g. currency symbols, commas for thousands, etc, and still be able to handle those values correctly.
+HTML5 `number` inputs have mixed browser support and behaviour, particularly around locale-specific nuances, e.g. using commas rather than periods for decimal values. Due to this, the default behaviour of the Number Filter is to use a `number` input in Chrome and Microsoft Edge, and to use a `text` input in all other browsers whilst preventing non-numeric characters.
 
-For these reasons, the Number Filter allows you to control what characters the user is allowed to type, and provide custom logic to parse the provided value into a number to be used in the filtering. In this case, a `text` input is used with JavaScript controlling what characters the user is allowed (rather than the browser).
+If you want to override the default behaviour, or allow users to type other characters (e.g. currency symbols, commas for thousands, etc.), the Number Filter allows you to control what characters the user is allowed to type. In this case, a `text` input is used with JavaScript controlling what characters the user is allowed (rather than the browser). You can also provide custom logic to parse the provided value into a number to be used in the filtering.
 
 Custom number support is enabled by specifying configuration similar to the following:
 
