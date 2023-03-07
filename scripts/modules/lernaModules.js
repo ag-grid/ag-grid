@@ -7,9 +7,9 @@ const getModuleDirNames = (type, postfix = '-modules') => fs.readdirSync(path.re
 
 const flattenArray = array => [].concat.apply([], array);
 
-const mapToBarrelledScopes = (barrelName, moduleDirNames) => flattenArray(moduleDirNames.map(moduleDirName => ['--scope', `@ag-${barrelName}/${moduleDirName}`]));
-const mapToScopes = (rootDirectory, moduleDirNames) => flattenArray(moduleDirNames.map(moduleDirName => ['--scope', require(`${rootDirectory}/${moduleDirName}/package.json`).name]));
-const mapToCommonScopes = (rootDirectory, moduleDirNames) => flattenArray(moduleDirNames.map(moduleDirName => ['--scope', require(`${rootDirectory}/${moduleDirName}/package.json`).name]));
+const mapToBarrelledScopes = (barrelName, moduleDirNames) => flattenArray(moduleDirNames.filter(moduleDirName => moduleDirName !== '.git').map(moduleDirName => ['--scope', `@ag-${barrelName}/${moduleDirName}`]));
+const mapToScopes = (rootDirectory, moduleDirNames) => flattenArray(moduleDirNames.filter(moduleDirName => moduleDirName !== '.git').map(moduleDirName => ['--scope', require(`${rootDirectory}/${moduleDirName}/package.json`).name]));
+const mapToCommonScopes = (rootDirectory, moduleDirNames) => flattenArray(moduleDirNames.filter(moduleDirName => moduleDirName !== '.git').map(moduleDirName => ['--scope', require(`${rootDirectory}/${moduleDirName}/package.json`).name]));
 
 const getScopeForBarrelledModules = rootDirectories => flattenArray(rootDirectories.map(rootDirectory => mapToBarrelledScopes(rootDirectory.replace('../../', ''), getModuleDirNames(rootDirectory))));
 const getScopeForModules = rootDirectory => mapToScopes(rootDirectory, getModuleDirNames(rootDirectory, ''));
