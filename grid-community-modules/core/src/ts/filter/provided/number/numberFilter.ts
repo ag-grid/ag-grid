@@ -32,8 +32,8 @@ export type NumberFilterParams<TData = any> = INumberFilterParams & IFilterParam
  */
 export interface INumberFilterParams extends IScalarFilterParams {
     /**
-     * When specified, the input field will be of type `text` instead of `number`, and this will be used as a regex of all the characters that are allowed to be typed.
-     * This will be compared against any typed character and prevent the character from appearing in the input if it does not match, in supported browsers (all except Safari).
+     * When specified, the input field will be of type `text`, and this will be used as a regex of all the characters that are allowed to be typed.
+     * This will be compared against any typed character and prevent the character from appearing in the input if it does not match.
      */
     allowedCharPattern?: string;
     /**
