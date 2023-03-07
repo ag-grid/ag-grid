@@ -1,4 +1,4 @@
-import { GridBodyCtrl, IGridBodyComp, RowContainerName } from 'ag-grid-community';
+import { CssClassManager, GridBodyCtrl, IGridBodyComp, RowContainerName } from 'ag-grid-community';
 import React, { memo, useContext, useMemo, useRef, useState } from 'react';
 import { BeansContext } from './beansContext';
 import GridHeaderComp from './header/gridHeaderComp';
@@ -29,7 +29,6 @@ const GridBodyComp = () => {
     const [bottomDisplay, setBottomDisplay] = useState<string>('');
     const [bodyViewportWidth, setBodyViewportWidth] = useState<string>('');
     
-    const [movingCss, setMovingCss] = useState<string | null>(null);
     const [forceVerticalScrollClass, setForceVerticalScrollClass] = useState<string | null>(null);
     const [topAndBottomOverflowY, setTopAndBottomOverflowY] = useState<string>('');
     const [cellSelectableCss, setCellSelectableCss] = useState<string | null>(null);
@@ -40,6 +39,8 @@ const GridBodyComp = () => {
     // is due to React been async, for the non-async version (ie when not using React) this is not a
     // problem as the UI will finish initialising before we set data.
     const [layoutClass, setLayoutClass] = useState<string>('ag-layout-normal');
+
+    const cssClassManager = useMemo(() => new CssClassManager(() => eRoot.current!), []);
 
     const eRoot = useRef<HTMLDivElement>(null);
     const eTop = useRef<HTMLDivElement>(null);
@@ -87,7 +88,7 @@ const GridBodyComp = () => {
             setStickyTopWidth,
             setTopDisplay,
             setBottomDisplay,
-            setColumnMovingCss: setMovingCss,
+            setColumnMovingCss: (cssClass, flag) => cssClassManager.addOrRemoveCssClass(cssClass, flag),
             updateLayoutClasses: setLayoutClass,
             setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
             setPinnedTopBottomOverflowY: setTopAndBottomOverflowY,
@@ -118,8 +119,8 @@ const GridBodyComp = () => {
     });
 
     const rootClasses = useMemo(() =>
-        classesList('ag-root','ag-unselectable', movingCss, layoutClass), 
-        [movingCss, layoutClass]
+        classesList('ag-root', 'ag-unselectable', layoutClass),
+        [layoutClass]
     );
     const bodyViewportClasses = useMemo(() =>
         classesList('ag-body-viewport', rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss), 

@@ -5630,7 +5630,7 @@
   "IGridBodyComp": {
     "meta": {},
     "type": {
-      "setColumnMovingCss(cssClass: string | null, on: boolean)": "void",
+      "setColumnMovingCss(cssClass: string, on: boolean)": "void",
       "setCellSelectableCss(cssClass: string | null, on: boolean)": "void",
       "setTopHeight(height: number)": "void",
       "setTopDisplay(display: string)": "void",

@@ -8,12 +8,20 @@
 |    const refFlatPickr = useRef();
 |    const refInput = useRef();
 |
+|    // we use a ref as well as state, as state is async,
+|    // and after the grid calls setDate() (eg when setting filter model)
+|    // it then can call getDate() immediately (eg to execute the filter)
+|    // and we need to pass back the most recent value, not the old 'current state'.
+|    const dateRef = useRef();
+|
 |    //*********************************************************************************
 |    //          LINKING THE UI, THE STATE AND AG-GRID
 |    //*********************************************************************************
 |
 |    const onDateChanged = (selectedDates) => {
-|        setDate(selectedDates[0]);
+|        const newDate = selectedDates[0];
+|        setDate(newDate);
+|        dateRef.current = newDate;
 |        props.onDateChanged();
 |    };
 |
@@ -46,11 +54,12 @@
 |        getDate() {
 |            //ag-grid will call us here when in need to check what the current date value is hold by this
 |            //component.
-|            return date;
+|            return dateRef.current;
 |        },
 |
 |        setDate(date) {
 |            //ag-grid will call us here when it needs this component to update the date that it holds.
+|            dateRef.current = date;
 |            setDate(date);
 |        },
 |
@@ -83,7 +92,9 @@
 |});
 |```
 |
-|And here is the same example as a Class-based Component:
+| Note that the grid calls `getDate` and `setDate` synchronously. As state is asynchronous, you will also need to use a ref if using state to store the current date value. This is demonstrated in the example above.
+|
+| Here is the same example as a Class-based Component:
 |
 |```jsx
 |export default class CustomDateComponent extends Component {
@@ -167,3 +178,4 @@
 |    };
 |}
 |```
+

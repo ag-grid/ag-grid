@@ -87,8 +87,8 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     protected mapValuesFromModel(filterModel: NumberFilterModel | null): Tuple<number> {
         const { filter, filterTo, type } = filterModel || {};
         return [
-            filter == null ? null : filter,
-            filterTo == null ? null : filterTo,
+            this.processValue(filter),
+            this.processValue(filterTo),
         ].slice(0, this.getNumberOfInputs(type));
     }
 
@@ -145,7 +145,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         const result: Tuple<number> = [];
         this.forEachPositionInput(position, (element, index, _elPosition, numberOfInputs) => {
             if (index < numberOfInputs) {
-                result.push(this.stringToFloat(element.getValue()));
+                result.push(this.processValue(this.stringToFloat(element.getValue())));
             }
         });
 
@@ -160,6 +160,13 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
 
     protected getFilterType(): 'number' {
         return 'number';
+    }
+
+    private processValue(value?: number | null): number | null {
+        if (value == null) {
+            return null;
+        }
+        return isNaN(value) ? null : value;
     }
 
     private stringToFloat(value?: string | number | null): number | null {

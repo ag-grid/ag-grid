@@ -259,11 +259,14 @@ export class ChartDataPanel extends Component {
             this.addDragHandle(comp, col);
         });
 
-        this.addComponent(this.getGui(), this.seriesGroupComp, 'seriesGroup');
+        const eGui = this.getGui();
+        const seriesGroupGui = this.seriesGroupComp.getGui();
+
+        this.addComponent(eGui, this.seriesGroupComp, 'seriesGroup');
 
         const dropTarget: DropTarget = {
             getIconName: () => DragAndDropService.ICON_MOVE,
-            getContainer: () => this.seriesGroupComp!.getGui(),
+            getContainer: () => seriesGroupGui,
             onDragging: (params) => this.onDragging(params),
             onDragLeave: () => this.onDragLeave(),
             isInterestedIn: this.isInterestedIn.bind(this),
@@ -271,6 +274,7 @@ export class ChartDataPanel extends Component {
         };
 
         this.dragAndDropService.addDropTarget(dropTarget);
+        this.addDestroyFunc(() => this.dragAndDropService.removeDropTarget(dropTarget));
     }
 
     private createSeriesChartTypeGroup(columns: ColState[], index?: number): void {

@@ -30,7 +30,7 @@ export const CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
 export const CSS_CLASS_COLUMN_MOVING = 'ag-column-moving';
 
 export interface IGridBodyComp extends LayoutView {
-    setColumnMovingCss(cssClass: string | null, on: boolean): void;
+    setColumnMovingCss(cssClass: string, on: boolean): void;
     setCellSelectableCss(cssClass: string | null, on: boolean): void;
     setTopHeight(height: number): void;
     setTopDisplay(display: string): void;
@@ -158,7 +158,7 @@ export class GridBodyCtrl extends BeanStub {
 
     // used by ColumnAnimationService
     public setColumnMovingCss(moving: boolean): void {
-        this.comp.setColumnMovingCss(moving ? CSS_CLASS_COLUMN_MOVING : null, moving);
+        this.comp.setColumnMovingCss(CSS_CLASS_COLUMN_MOVING, moving);
     }
 
     public setCellTextSelection(selectable: boolean = false): void {

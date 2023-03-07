@@ -9826,7 +9826,7 @@
   "IGridBodyComp": {
     "setColumnMovingCss": {
       "type": {
-        "arguments": { "cssClass": "string | null", "on": "boolean" },
+        "arguments": { "cssClass": "string", "on": "boolean" },
         "returnType": "void",
         "optional": false
       }

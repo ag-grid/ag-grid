@@ -140,13 +140,19 @@
     }
 }
 
-.enterprise svg {
-    --text-color: red;
-
+.enterprise h3 {
     position: relative;
-    width: 26px;
-    top: -1px;
-    left: 2px;
+    display: inline-block;
+    padding-right: 32px;
+
+    svg {
+        --text-color: red;
+
+        position: absolute;
+        width: 26px;
+        bottom: -7px;
+        right: 2px;
+    }
 }
 
 .NpmButton svg {

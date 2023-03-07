@@ -1,6 +1,10 @@
-import { Context, AgPromise, UserCompDetails, ICellRendererComp } from 'ag-grid-community';
+import { Context, UserCompDetails } from 'ag-grid-community';
 import { MutableRefObject } from 'react';
 
+/**
+ * Show a JS Component
+ * @returns Effect Cleanup function
+ */
 export const showJsComp = (
     compDetails: UserCompDetails | undefined, 
     context: Context, eParent: HTMLElement, 
