@@ -1,5 +1,0 @@
-*/dist/
-*/.husky/
-
-# Copied from elsewhere, we shouldn't be forcing formatting.
-core/src/license/
