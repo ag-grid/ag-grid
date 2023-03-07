@@ -1,6 +1,11 @@
 export const BREAK_TRANSFORM_CHAIN = Symbol('BREAK');
 
-type TransformFn = (target: any, key: string | symbol, value: any) => any | typeof BREAK_TRANSFORM_CHAIN;
+type TransformFn = (
+    target: any,
+    key: string | symbol,
+    value: any,
+    oldValue?: any
+) => any | typeof BREAK_TRANSFORM_CHAIN;
 type TransformConfig = { setters: TransformFn[]; getters: TransformFn[] };
 const CONFIG_KEY = '__decorator_config';
 
@@ -38,8 +43,16 @@ function initialiseConfig(
         return value;
     };
     const setter = function (this: any, value: any) {
-        for (const transformFn of config[propertyKey]?.setters ?? []) {
-            value = transformFn(this, propertyKeyOrSymbol, value);
+        const setters = config[propertyKey]?.setters ?? [];
+
+        let oldValue;
+        if (setters.some((f) => f.length > 2)) {
+            // Lazily retrieve old value.
+            oldValue = prevGet ? prevGet.call(this) : this[valueStoreKey];
+        }
+
+        for (const transformFn of setters) {
+            value = transformFn(this, propertyKeyOrSymbol, value, oldValue);
 
             if (value === BREAK_TRANSFORM_CHAIN) {
                 return;

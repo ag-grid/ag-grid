@@ -32,6 +32,7 @@ import { LayoutService } from './layout/layoutService';
 import { ChartUpdateType } from './chartUpdateType';
 import { LegendDatum } from './legendDatum';
 import { Logger } from '../util/logger';
+import { ActionOnSet } from '../util/proxy';
 
 type OptionalHTMLElement = HTMLElement | undefined | null;
 
@@ -56,14 +57,12 @@ export abstract class Chart extends Observable implements AgChartInstance {
     readonly legend: Legend;
     readonly tooltip: Tooltip;
 
-    private _debug = false;
-    set debug(value: boolean) {
-        this._debug = value;
-        this.scene.debug.consoleLog = value;
-    }
-    get debug() {
-        return this._debug;
-    }
+    @ActionOnSet<Chart>({
+        newValue(value) {
+            this.scene.debug.consoleLog = value;
+        },
+    })
+    public debug;
 
     private extraDebugStats: Record<string, number> = {};
 
@@ -87,45 +86,39 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return this._container;
     }
 
-    protected _data: any = [];
-    set data(data: any) {
-        this._data = data;
-        this.series.forEach((series) => (series.data = data));
-    }
-    get data(): any {
-        return this._data;
-    }
+    @ActionOnSet<Chart>({
+        newValue(value) {
+            this.series?.forEach((series) => (series.data = value));
+        },
+    })
+    public data: any = [];
 
-    set width(value: number) {
-        this.autoSize = false;
-        if (this.width !== value) {
+    @ActionOnSet<Chart>({
+        newValue(value) {
+            this.autoSize = false;
             this.resize(value, this.height);
-        }
-    }
-    get width(): number {
-        return this.scene.width;
-    }
+        },
+    })
+    width?: number;
 
-    set height(value: number) {
-        this.autoSize = false;
-        if (this.height !== value) {
+    @ActionOnSet<Chart>({
+        newValue(value) {
+            this.autoSize = false;
             this.resize(this.width, value);
-        }
-    }
-    get height(): number {
-        return this.scene.height;
-    }
+        },
+    })
+    height?: number;
 
-    private _lastAutoSize?: [number, number];
+    @ActionOnSet<Chart>({
+        changeValue(value) {
+            this.autoSizeChanged(value);
+        },
+    })
     @Validate(BOOLEAN)
-    protected _autoSize = false;
-    set autoSize(value: boolean) {
-        if (this._autoSize === value) {
-            return;
-        }
+    public autoSize;
+    private _lastAutoSize?: [number, number];
 
-        this._autoSize = value;
-
+    private autoSizeChanged(value: boolean) {
         const { style } = this.element;
         if (value) {
             style.display = 'block';
@@ -142,9 +135,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
             style.height = 'auto';
         }
     }
-    get autoSize(): boolean {
-        return this._autoSize;
-    }
 
     download(fileName?: string, fileFormat?: string) {
         this.scene.download(fileName, fileFormat);
@@ -152,47 +142,35 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     padding = new Padding(20);
 
-    private removeCaptionIfPresents(caption: Caption | undefined) {
-        if (caption != null) {
-            this.scene.root?.removeChild(caption.node);
-        }
-    }
+    @ActionOnSet<Chart>({
+        newValue(value) {
+            this.scene.root?.appendChild(value.node);
+        },
+        oldValue(oldValue) {
+            this.scene.root?.removeChild(oldValue.node);
+        },
+    })
+    public title?: Caption = undefined;
 
-    private addCaptionIfPresents(caption: Caption | undefined) {
-        if (caption != null) {
-            this.scene.root?.appendChild(caption.node);
-        }
-    }
+    @ActionOnSet<Chart>({
+        newValue(value) {
+            this.scene.root?.appendChild(value.node);
+        },
+        oldValue(oldValue) {
+            this.scene.root?.removeChild(oldValue.node);
+        },
+    })
+    public subtitle?: Caption = undefined;
 
-    _title?: Caption = undefined;
-    set title(caption: Caption | undefined) {
-        this.removeCaptionIfPresents(this._title);
-        this._title = caption;
-        this.addCaptionIfPresents(this._title);
-    }
-    get title() {
-        return this._title;
-    }
-
-    _subtitle?: Caption = undefined;
-    set subtitle(caption: Caption | undefined) {
-        this.removeCaptionIfPresents(this._subtitle);
-        this._subtitle = caption;
-        this.addCaptionIfPresents(this._subtitle);
-    }
-    get subtitle() {
-        return this._subtitle;
-    }
-
-    _footnote?: Caption = undefined;
-    set footnote(caption: Caption | undefined) {
-        this.removeCaptionIfPresents(this._footnote);
-        this._footnote = caption;
-        this.addCaptionIfPresents(this._footnote);
-    }
-    get footnote() {
-        return this._footnote;
-    }
+    @ActionOnSet<Chart>({
+        newValue(value) {
+            this.scene.root?.appendChild(value.node);
+        },
+        oldValue(oldValue) {
+            this.scene.root?.removeChild(oldValue.node);
+        },
+    })
+    public footnote?: Caption = undefined;
 
     @Validate(STRING_UNION('standalone', 'integrated'))
     mode: 'standalone' | 'integrated' = 'standalone';
@@ -240,7 +218,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
         element.style.position = 'relative';
 
         this.scene = scene ?? new Scene({ document, overrideDevicePixelRatio });
-        this.scene.debug.consoleLog = this._debug;
+        this.debug = false;
+        this.scene.debug.consoleLog = false;
         this.scene.root = root;
         this.scene.container = element;
         this.autoSize = true;
@@ -480,7 +459,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 splits.push(performance.now());
             // eslint-disable-next-line no-fallthrough
             case ChartUpdateType.PERFORM_LAYOUT:
-                if (this._autoSize && !this._lastAutoSize) {
+                if (this.autoSize && !this._lastAutoSize) {
                     const count = this._performUpdateNoRenderCount++;
 
                     if (count < 5) {
@@ -671,10 +650,12 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
     }
 
-    private resize(width: number, height: number) {
+    private resize(width?: number, height?: number) {
+        if (!width || !height || !Number.isFinite(width) || !Number.isFinite(height)) return;
+
         if (this.scene.resize(width, height)) {
-            this.background.width = this.width;
-            this.background.height = this.height;
+            this.background.width = width;
+            this.background.height = height;
 
             this.disablePointer();
             this.update(ChartUpdateType.PERFORM_LAYOUT, { forceNodeDataRefresh: true });
@@ -749,7 +730,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     abstract performLayout(): Promise<void>;
 
     protected positionCaptions(shrinkRect: BBox): BBox {
-        const { _title: title, _subtitle: subtitle, _footnote: footnote } = this;
+        const { title, subtitle, footnote } = this;
         const newShrinkRect = shrinkRect.clone();
 
         const positionTopAndShrinkBBox = (caption: Caption) => {

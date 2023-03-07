@@ -3,25 +3,23 @@
  * type of the particular option.
  */
 
-import React, { useState } from 'react';
-import { HuePicker, AlphaPicker } from 'react-color';
+import { FontFamily, FontSize, FontStyle, FontWeight, Opacity, Ratio } from 'ag-charts-community';
 import classnames from 'classnames';
-
-import { FontFamily, FontWeight, FontStyle, FontSize, Opacity, Ratio } from 'ag-charts-community';
-
+import React, { useState } from 'react';
+import { AlphaPicker, HuePicker } from 'react-color';
+import { JsonModelProperty, JsonProperty } from '../expandable-snippet/model';
 import { doOnEnter } from '../key-handlers';
 import styles from './Editors.module.scss';
-import { JsonProperty, JsonModelProperty } from '../expandable-snippet/model';
 
 type AliasTypeProps<T> = {
-    default?: T,
-    options?: T[],
-    suggestions?: T[],
-    breakIndex?: number,
-    min?: T,
-    max?: T,
-    step?: T,
-    unit?: string,
+    default?: T;
+    options?: T[];
+    suggestions?: T[];
+    breakIndex?: number;
+    min?: T;
+    max?: T;
+    step?: T;
+    unit?: string;
 };
 
 const FONT_WEIGHT_EDITOR_PROPS: AliasTypeProps<FontWeight> = {
@@ -56,32 +54,29 @@ const OPACITY_PROPS: AliasTypeProps<Opacity> = {
 const RATIO_PROPS: AliasTypeProps<Ratio> = {
     step: 0.1,
     min: 0,
-    max: 1
+    max: 1,
 };
 
 const getMaxSize = () => {
     const DEFAULT_WIDTH = 800;
     const DEFAULT_HEIGHT = 600;
     const ELEMENT_PADDING = 10;
-    const element = typeof window !== 'undefined' && document.querySelector('#chart-container') as HTMLDivElement;
-    const {
-        offsetWidth = DEFAULT_WIDTH,
-        offsetHeight = DEFAULT_HEIGHT,
-    } = element || {};
+    const element = typeof window !== 'undefined' && (document.querySelector('#chart-container') as HTMLDivElement);
+    const { offsetWidth = DEFAULT_WIDTH, offsetHeight = DEFAULT_HEIGHT } = element || {};
 
     return {
         // Width and height accounting for CSS padding on container element.
-        width: (offsetWidth - (ELEMENT_PADDING * 2)),
-        height: (offsetHeight - ELEMENT_PADDING),
+        width: offsetWidth - ELEMENT_PADDING * 2,
+        height: offsetHeight - ELEMENT_PADDING,
     };
 };
 
-type Primitive = number | string | boolean
+type Primitive = number | string | boolean;
 const SPECIAL_OVERRIDE_PROPS: Record<string, Record<string, (() => Primitive) | Primitive>> = {
-    'width': {
+    width: {
         max: () => getMaxSize().width,
     },
-    'height': {
+    height: {
         max: () => getMaxSize().height,
     },
 };
@@ -128,11 +123,10 @@ export const getPrimitiveEditor = ({ meta, desc }: JsonModelProperty, key: strin
     if (specialOverride != null) {
         // Apply special overrides to a copy of meta before application below.
         meta = { ...meta };
-        Object.entries(specialOverride)
-            .forEach(([prop, valueOrFn]) => {
-                let value = typeof valueOrFn === 'function' ? valueOrFn() : valueOrFn;
-                meta[prop] = value;
-            });
+        Object.entries(specialOverride).forEach(([prop, valueOrFn]) => {
+            let value = typeof valueOrFn === 'function' ? valueOrFn() : valueOrFn;
+            meta[prop] = value;
+        });
     }
 
     if (desc.type === 'primitive' && desc.aliasType != null) {
@@ -144,7 +138,7 @@ export const getPrimitiveEditor = ({ meta, desc }: JsonModelProperty, key: strin
             case 'Opacity':
                 return { editor: NumberEditor, editorProps: { ...OPACITY_PROPS, ...meta } };
             case 'Ratio':
-                    return { editor: NumberEditor, editorProps: { ...RATIO_PROPS, ...meta } };
+                return { editor: NumberEditor, editorProps: { ...RATIO_PROPS, ...meta } };
             case 'FontFamily':
                 return {
                     editor: PresetEditor,
@@ -181,9 +175,28 @@ export const getPrimitiveEditor = ({ meta, desc }: JsonModelProperty, key: strin
     }
 
     if (desc.tsType.indexOf(' | ') >= 0) {
-        const options = desc.tsType.split(' | ')
-            .filter((v) => v.startsWith("'") && v.endsWith("'"))
-            .map((v) => v.substring(1, v.length - 1));
+        let options = desc.tsType.split(' | ');
+
+        const validUnionTypes = [
+            'CssColor',
+            'PixelSize',
+            'Opacity',
+            'Ratio',
+            'FontFamily',
+            'FontStyle',
+            'FontWeight',
+            'DataValue',
+            'number',
+            'string',
+            'boolean',
+        ];
+
+        if (options.some((o) => validUnionTypes.includes(o))) {
+            options = options.filter((o) => validUnionTypes.includes(o));
+            return { editor: CoercedEditor, editorProps: { ...meta, options } };
+        }
+
+        options = options.filter((v) => v.startsWith("'") && v.endsWith("'")).map((v) => v.substring(1, v.length - 1));
 
         if (options.length > 0 && options.every((v) => /^[a-z-]*$/.test(v))) {
             return { editor: PresetEditor, editorProps: { ...meta, options } };
@@ -207,18 +220,19 @@ const setStepEditorProp = (editorProps: Record<string, any>, { min, max, step }:
     if (min == null || max == null || step != null) {
         return;
     }
-    if ((max - min) <= 1) {
+    if (max - min <= 1) {
         editorProps.step = 0.05;
-    } else if ((max - min) <= 10) {
+    } else if (max - min <= 10) {
         editorProps.step = 0.1;
     }
 };
 
 export const NumberEditor = ({ value, min, max, step, unit, onChange }) => {
     const [stateValue, setValueChange] = useState(value || '');
-    const inputOnChange = event => {
+    const inputOnChange = (event) => {
         const { value } = event.target;
-        const newValue = value == null || value.trim() === '' ? undefined : step % 1 > 0 ? parseFloat(value) : parseInt(value);
+        const newValue =
+            value == null || value.trim() === '' ? undefined : step % 1 > 0 ? parseFloat(value) : parseInt(value);
         setValueChange(newValue);
         onChange(newValue);
     };
@@ -249,17 +263,19 @@ export const NumberEditor = ({ value, min, max, step, unit, onChange }) => {
         [styles['number-editor__slider_hidden']]: min == null || max == null,
     });
 
-    return <span className={styles['number-editor']}>
-        <input type="range" className={rangeClassName} {...props} />
-        <input type="number" className={styles['number-editor__input']} {...props} />
-        {unit && <span dangerouslySetInnerHTML={{ __html: '&nbsp;' + unit }}></span>}
-    </span>;
+    return (
+        <span className={styles['number-editor']}>
+            <input type="range" className={rangeClassName} {...props} />
+            <input type="number" className={styles['number-editor__input']} {...props} />
+            {unit && <span dangerouslySetInnerHTML={{ __html: '&nbsp;' + unit }}></span>}
+        </span>
+    );
 };
 
 export const StringEditor = ({ value, toStringValue, fromStringValue, onChange }) => {
     const initialValue = toStringValue ? toStringValue(value) : value;
     const [stateValue, setValueChange] = useState(initialValue);
-    const inputOnChange = event => {
+    const inputOnChange = (event) => {
         const newValue = event.target.value;
 
         setValueChange(newValue);
@@ -269,12 +285,20 @@ export const StringEditor = ({ value, toStringValue, fromStringValue, onChange }
         onChange(transformedValue);
     };
 
-    return <input className={styles['string-editor__input']} type="text" value={stateValue} maxLength={200} onChange={inputOnChange} />;
+    return (
+        <input
+            className={styles['string-editor__input']}
+            type="text"
+            value={stateValue}
+            maxLength={200}
+            onChange={inputOnChange}
+        />
+    );
 };
 
-export const ArrayEditor = props =>
+export const ArrayEditor = (props) => (
     <StringEditor
-        toStringValue={array => array ? JSON.stringify(array) : '[]'}
+        toStringValue={(array) => (array ? JSON.stringify(array) : '[]')}
         fromStringValue={(value) => {
             try {
                 return JSON.parse(value);
@@ -283,7 +307,8 @@ export const ArrayEditor = props =>
             }
         }}
         {...props}
-    />;
+    />
+);
 
 export const JsonEditor = (props) => (
     <StringEditor
@@ -299,26 +324,50 @@ export const JsonEditor = (props) => (
     />
 );
 
-export const BooleanEditor = ({ value, onChange }) => <PresetEditor options={[false, true]} value={value} onChange={onChange} />;
+export const CoercedEditor = (props) => {
+    const boolean = props.options.includes('boolean');
+    const number = ['PixelSize', 'Opacity', 'Ratio', 'number'].some((o) => props.options.includes(o));
+
+    return (
+        <StringEditor
+            fromStringValue={(value) => {
+                if (boolean && value.toLowerCase() === 'false') return false;
+                if (boolean && value.toLowerCase() === 'true') return true;
+                if (number && !isNaN(value) && !isNaN(parseInt(value))) return parseInt(value);
+                return value;
+            }}
+            {...props}
+        />
+    );
+};
+
+export const BooleanEditor = ({ value, onChange }) => (
+    <PresetEditor options={[false, true]} value={value} onChange={onChange} />
+);
 
 export const PresetEditor = ({ value, options, suggestions = undefined, breakIndex = Infinity, onChange }) => {
     const [stateValue, setValueChange] = useState(value);
-    const inputOnChange = newValue => {
+    const inputOnChange = (newValue) => {
         setValueChange(newValue);
         onChange(newValue);
     };
 
     const optionsToUse = options || suggestions;
 
-    const createOptionElement = o => <div
-        key={o}
-        role="button"
-        tabIndex={0}
-        className={classnames(styles['preset-editor__option'], { [styles['preset-editor__option--selected']]: stateValue === o })}
-        onClick={() => inputOnChange(o)}
-        onKeyDown={e => doOnEnter(e, () => inputOnChange(o))}>
-        {Array.isArray(optionsToUse) ? o.toString() : optionsToUse[o]}
-    </div>;
+    const createOptionElement = (o) => (
+        <div
+            key={o}
+            role="button"
+            tabIndex={0}
+            className={classnames(styles['preset-editor__option'], {
+                [styles['preset-editor__option--selected']]: stateValue === o,
+            })}
+            onClick={() => inputOnChange(o)}
+            onKeyDown={(e) => doOnEnter(e, () => inputOnChange(o))}
+        >
+            {Array.isArray(optionsToUse) ? o.toString() : optionsToUse[o]}
+        </div>
+    );
 
     const elementsBeforeBreak = [];
     const elementsAfterBreak = [];
@@ -333,17 +382,19 @@ export const PresetEditor = ({ value, options, suggestions = undefined, breakInd
         }
     });
 
-    return <React.Fragment>
-        {elementsBeforeBreak.length > 0 && <div className={styles['preset-editor']}>{elementsBeforeBreak}</div>}
-        {elementsAfterBreak.length > 0 && <div className={styles['preset-editor']}>{elementsAfterBreak}</div>}
-    </React.Fragment>;
+    return (
+        <React.Fragment>
+            {elementsBeforeBreak.length > 0 && <div className={styles['preset-editor']}>{elementsBeforeBreak}</div>}
+            {elementsAfterBreak.length > 0 && <div className={styles['preset-editor']}>{elementsAfterBreak}</div>}
+        </React.Fragment>
+    );
 };
 
 export const ColourEditor = ({ value, onChange }) => {
     const [colourString, setColourString] = useState(value);
     const [rgb, setRgb] = useState(null);
 
-    const inputOnChange = event => {
+    const inputOnChange = (event) => {
         const { value } = event.target;
 
         setColourString(value);
@@ -366,12 +417,34 @@ export const ColourEditor = ({ value, onChange }) => {
 
     const color = rgb || colourString || 'black';
 
-    return <div className={styles['colour-editor']}>
-        <div className={styles['colour-editor__input-wrapper']}>
-            <input className={styles['colour-editor__input']} type="text" value={colourString} maxLength={25} onChange={inputOnChange} />
-            <div style={{ backgroundColor: colourString }} className={styles['colour-editor__sample']}></div>
+    return (
+        <div className={styles['colour-editor']}>
+            <div className={styles['colour-editor__input-wrapper']}>
+                <input
+                    className={styles['colour-editor__input']}
+                    type="text"
+                    value={colourString}
+                    maxLength={25}
+                    onChange={inputOnChange}
+                />
+                <div style={{ backgroundColor: colourString }} className={styles['colour-editor__sample']}></div>
+            </div>
+            <div className={styles['colour-editor__slider']}>
+                <HuePicker
+                    width={'100%'}
+                    height={15}
+                    color={color}
+                    onChange={(value) => sliderOnChange(value, false)}
+                />
+            </div>
+            <div className={styles['colour-editor__slider']}>
+                <AlphaPicker
+                    width={'100%'}
+                    height={15}
+                    color={color}
+                    onChange={(value) => sliderOnChange(value, true)}
+                />
+            </div>
         </div>
-        <div className={styles['colour-editor__slider']}><HuePicker width={'100%'} height={15} color={color} onChange={value => sliderOnChange(value, false)} /></div>
-        <div className={styles['colour-editor__slider']}><AlphaPicker width={'100%'} height={15} color={color} onChange={value => sliderOnChange(value, true)} /></div>
-    </div>;
+    );
 };

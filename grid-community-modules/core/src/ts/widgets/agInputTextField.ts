@@ -32,6 +32,10 @@ export class AgInputTextField extends AgAbstractInputField<HTMLInputElement, str
         const pattern = new RegExp(`[${this.config.allowedCharPattern}]`);
 
         const preventDisallowedCharacters = (event: KeyboardEvent) => {
+            if (event.ctrlKey || event.metaKey) {
+                // copy/paste can fall in here on certain browsers (e.g. Safari)
+                return;
+            }
             if (event.key && !pattern.test(event.key)) {
                 event.preventDefault();
             }
