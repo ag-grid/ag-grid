@@ -30,6 +30,7 @@ function filterProductionMenuData(data) {
 }
 
 function toElementId(str) {
+    // Could be replaced with a regex
     return str.toLowerCase().replace('&', '').replace('/', '').replace(' ', '-').replace(' ', '');
 }
 
@@ -56,7 +57,6 @@ const MenuSection = ({ title, items, currentFramework, isActive, toggleActive })
                 {title}
             </div>
 
-            {/* {isActive && <MenuGroup group={{ group: title, items }} currentFramework={currentFramework} />} */}
             <MenuGroup group={{ group: title, items }} currentFramework={currentFramework} isTopLevel={true} />
         </li>
     );
