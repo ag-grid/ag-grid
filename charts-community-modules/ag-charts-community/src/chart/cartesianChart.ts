@@ -60,7 +60,10 @@ export class CartesianChart extends Chart {
         const { seriesRoot } = this;
         if (clipSeries) {
             const { x, y, width, height } = seriesRect;
-            seriesRoot.setClipRectInGroupCoordinateSpace(new BBox(x, y, width, height));
+            const { pixelRatio } = this.scene.canvas;
+            seriesRoot.setClipRectInGroupCoordinateSpace(
+                new BBox(x / pixelRatio, y / pixelRatio, width, height / pixelRatio)
+            );
         } else {
             seriesRoot.setClipRectInGroupCoordinateSpace(undefined);
         }
@@ -155,16 +158,31 @@ export class CartesianChart extends Chart {
                 return;
             }
 
-            axis.clipGrid(seriesRect.x, seriesRect.y, seriesRect.width + clipRectPadding, seriesRect.height + clipRectPadding);
+            axis.clipGrid(
+                seriesRect.x,
+                seriesRect.y,
+                seriesRect.width + clipRectPadding,
+                seriesRect.height + clipRectPadding
+            );
 
             switch (axis.position) {
                 case 'left':
                 case 'right':
-                    axis.clipTickLines(inputShrinkRect.x, seriesRect.y, inputShrinkRect.width + clipRectPadding, seriesRect.height + clipRectPadding);
+                    axis.clipTickLines(
+                        inputShrinkRect.x,
+                        seriesRect.y,
+                        inputShrinkRect.width + clipRectPadding,
+                        seriesRect.height + clipRectPadding
+                    );
                     break;
                 case 'top':
                 case 'bottom':
-                    axis.clipTickLines(seriesRect.x, inputShrinkRect.y, seriesRect.width + clipRectPadding, inputShrinkRect.height + clipRectPadding);
+                    axis.clipTickLines(
+                        seriesRect.x,
+                        inputShrinkRect.y,
+                        seriesRect.width + clipRectPadding,
+                        inputShrinkRect.height + clipRectPadding
+                    );
                     break;
             }
         });
