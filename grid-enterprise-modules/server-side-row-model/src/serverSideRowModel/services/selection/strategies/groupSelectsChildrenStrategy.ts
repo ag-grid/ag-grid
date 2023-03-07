@@ -127,7 +127,6 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             if (nextNode.hasChildren()) {
                 const groupState = state.toggledNodes.get(nextNode.id!);
                 if (groupState && groupState.toggledNodes.size) {
-                    // if indeterminate, what if all rows are loaded + selectAllChildren?
                     return undefined;
                 }
             }
@@ -165,11 +164,6 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             selectedState.toggledNodes.forEach((state, key) => {
                 const statePath = [...path, key];
                 recursivelyRemoveState(statePath, state);
-                
-                // cleans out groups which have no toggled nodes and an equivalent default to its parent
-                if (state.selectAllChildren === selectedState.selectAllChildren && state.toggledNodes.size === 0) {
-                    selectedState.toggledNodes.delete(key);
-                }
 
                 this.serverSideRowModel.executeOnStore(statePath, store => {
                     if (!store.isLastRowIndexKnown() || store.getRowCount() !== state.toggledNodes.size) {
@@ -186,6 +180,11 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                     if (!anyEntriesIndeterminate) {
                         state.toggledNodes.clear();
                         state.selectAllChildren = !state.selectAllChildren;
+                
+                        // cleans out groups which have no toggled nodes and an equivalent default to its parent
+                        if (state.selectAllChildren === selectedState.selectAllChildren) {
+                            selectedState.toggledNodes.delete(key);
+                        }
                     }
                 });
             });
@@ -215,18 +214,24 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             return;
         }
 
-        if (selectedState.toggledNodes.has(nextNode.id!)) {
-            const nextState = selectedState.toggledNodes.get(nextNode.id!)!;
-            this.recursivelySelectNode(nodes, nextState, params);
-            return;
-        }
-
-        const newState: SelectionState = {
+        const doesStateAlreadyExist = selectedState.toggledNodes.has(nextNode.id!);
+        const childState: SelectionState = doesStateAlreadyExist ? (
+            selectedState.toggledNodes.get(nextNode.id!)!
+        ) : {
             selectAllChildren: selectedState.selectAllChildren,
             toggledNodes: new Map(),
         };
-        selectedState.toggledNodes.set(nextNode.id!, newState);
-        this.recursivelySelectNode(nodes, newState, params);
+
+        if (!doesStateAlreadyExist) {
+            selectedState.toggledNodes.set(nextNode.id!, childState);
+        }
+
+        this.recursivelySelectNode(nodes, childState, params);
+
+        // cleans out groups which have no toggled nodes and an equivalent default to its parent
+        if (selectedState.selectAllChildren === childState.selectAllChildren && childState.toggledNodes.size === 0) {
+            selectedState.toggledNodes.delete(nextNode.id!);
+        }
     }
 
     public getSelectedNodes(): RowNode<any>[] {
