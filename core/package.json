@@ -1,86 +1,84 @@
 {
-  "name": "@ag-charts-enterprise/core",
-  "version": "7.1.0",
-  "description": "Advanced Charting / Charts supporting Javascript / Typescript / React / Angular / Vue",
-  "main": "./dist/cjs/es5/main.js",
-  "module": "./dist/esm/es5/main.js",
-  "types": "./dist/cjs/es5/main.d.ts",
-  "private": true,
-  "scripts": {
-    "clean": "rimraf dist .hash",
-    "build-cjs": "rimraf dist/tsconfig.cjs.es5.docs.tsbuildinfo && npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
-    "build-esm": "npx tsc -p tsconfig.esm.es5.json && npx tsc -p tsconfig.esm.es6.json",
-    "build-cjs-prod": "npx tsc -p tsconfig.cjs.es5.json --sourceMap false && npx tsc -p tsconfig.cjs.es6.json --sourceMap false",
-    "build-esm-prod": "npx tsc -p tsconfig.esm.es5.json --sourceMap false && npx tsc -p tsconfig.esm.es6.json --sourceMap false",
-    "watch-esm": "tsc -p tsconfig.esm.es5.json -w",
-    "package": "node ../../module-build/rollup/build.js --bundlePrefix ag-charts-enterprise --umdModuleName agChartsEnterprise",
-    "build": "npx gulp copy-license-files && npm run build-cjs && npm run build-esm && npm run hash",
-    "build-prod": "npx gulp copy-license-files && npm run build-cjs-prod && npm run build-esm-prod && npm run hash",
-    "hash": "sh ../../scripts/hashDirectory.sh > .hash",
-    "install-hooks": "cd .. && husky install core/.husky",
-    "lint": "run-s lint:*",
-    "lint:prettier": "npx prettier -c .",
-    "lint:eslint": "npx eslint src/ --ext .js,.ts",
-    "fix": "run-s fix:*",
-    "fix:prettier": "npx prettier -w .",
-    "fix:eslint": "npx eslint --fix src/ --ext .js,.ts"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ag-grid/ag-grid.git"
-  },
-  "keywords": [
-    "chart",
-    "charts",
-    "data",
-    "angular",
-    "angular-component",
-    "react",
-    "react-component",
-    "reactjs",
-    "vue",
-    "vuejs"
-  ],
-  "author": "Sean Landsman <sean@thelandsmans.com>",
-  "license": "Commercial",
-  "bugs": {
-    "url": "https://github.com/ag-grid/ag-grid/issues"
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie >= 0",
-    "not ie_mob >= 0",
-    "not blackberry > 0",
-    "not op_mini all",
-    "not operamobile >= 0"
-  ],
-  "homepage": "https://www.ag-grid.com/",
-  "devDependencies": {
-    "@babel/types": "7.12.7",
-    "@typescript-eslint/eslint-plugin": "^5.51.0",
-    "@typescript-eslint/parser": "^5.51.0",
-    "ag-charts-community": "~7.1.0",
-    "eslint": "^6.8.0",
-    "eslint-plugin-compat": "^3.5.1",
-    "eslint-plugin-ie11": "^1.0.0",
-    "glob": "8.0.3",
-    "gulp": "^4.0.0",
-    "npm-run-all": "^4.1.5",
-    "husky": "^8.0.3",
-    "lint-staged": "^13.1.2",
-    "prettier": "^2.8.3",
-    "rimraf": "3.0.2",
-    "typescript": "~4.0.8"
-  },
-  "peerDependencies": {
-    "ag-charts-community": "~7.1.0"
-  },
-  "publishConfig": {
-    "access": "private"
-  },
-  "lint-staged": {
-    "*.{ts,js,md,json}": "core/.lint-staged/run.sh prettier",
-    "*.{ts,js}": "core/.lint-staged/run.sh eslint"
-  }
+    "name": "@ag-charts-enterprise/core",
+    "version": "7.1.0",
+    "description": "Advanced Charting / Charts supporting Javascript / Typescript / React / Angular / Vue",
+    "main": "./dist/cjs/es5/main.js",
+    "module": "./dist/esm/es5/main.js",
+    "types": "./dist/cjs/es5/main.d.ts",
+    "private": true,
+    "scripts": {
+        "clean": "rimraf dist .hash",
+        "build-cjs": "rimraf dist/tsconfig.cjs.es5.docs.tsbuildinfo && npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
+        "build-esm": "npx tsc -p tsconfig.esm.es5.json && npx tsc -p tsconfig.esm.es6.json",
+        "build-cjs-prod": "npx tsc -p tsconfig.cjs.es5.json --sourceMap false && npx tsc -p tsconfig.cjs.es6.json --sourceMap false",
+        "build-esm-prod": "npx tsc -p tsconfig.esm.es5.json --sourceMap false && npx tsc -p tsconfig.esm.es6.json --sourceMap false",
+        "watch-esm": "tsc -p tsconfig.esm.es5.json -w",
+        "package": "node ../../module-build/rollup/build.js --bundlePrefix ag-charts-enterprise --umdModuleName agChartsEnterprise",
+        "build": "npx gulp copy-license-files && npm run build-cjs && npm run build-esm && npm run hash",
+        "build-prod": "npx gulp copy-license-files && npm run build-cjs-prod && npm run build-esm-prod && npm run hash",
+        "hash": "sh ../../scripts/hashDirectory.sh > .hash",
+        "install-hooks": "cd .. && husky install core/.husky",
+        "lint": "run-s lint:*",
+        "lint:prettier": "npx prettier -c .",
+        "lint:eslint": "npx eslint src/ --ext .js,.ts",
+        "fix": "run-s fix:*",
+        "fix:prettier": "npx prettier -w .",
+        "fix:eslint": "npx eslint --fix src/ --ext .js,.ts"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ag-grid/ag-grid.git"
+    },
+    "keywords": [
+        "chart",
+        "charts",
+        "data",
+        "angular",
+        "angular-component",
+        "react",
+        "react-component",
+        "reactjs",
+        "vue",
+        "vuejs"
+    ],
+    "author": "Sean Landsman <sean@thelandsmans.com>",
+    "license": "Commercial",
+    "bugs": {
+        "url": "https://github.com/ag-grid/ag-grid/issues"
+    },
+    "browserslist": [
+        "> 1%",
+        "last 2 versions",
+        "not ie >= 0",
+        "not ie_mob >= 0",
+        "not blackberry > 0",
+        "not op_mini all",
+        "not operamobile >= 0"
+    ],
+    "homepage": "https://www.ag-grid.com/",
+    "devDependencies": {
+        "@babel/types": "7.12.7",
+        "@typescript-eslint/eslint-plugin": "^5.51.0",
+        "@typescript-eslint/parser": "^5.51.0",
+        "ag-charts-community": "~7.1.0",
+        "eslint": "^6.8.0",
+        "glob": "8.0.3",
+        "gulp": "^4.0.0",
+        "npm-run-all": "^4.1.5",
+        "husky": "^8.0.3",
+        "lint-staged": "^13.1.2",
+        "prettier": "^2.8.3",
+        "rimraf": "3.0.2",
+        "typescript": "~4.0.8"
+    },
+    "peerDependencies": {
+        "ag-charts-community": "~7.1.0"
+    },
+    "publishConfig": {
+        "access": "private"
+    },
+    "lint-staged": {
+        "*.{ts,js,md,json}": "cd core && .lint-staged/run.sh prettier",
+        "*.{ts,js}": "cd core && .lint-staged/run.sh eslint"
+    }
 }
