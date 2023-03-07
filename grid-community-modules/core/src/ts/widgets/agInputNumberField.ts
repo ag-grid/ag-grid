@@ -103,11 +103,13 @@ export class AgInputNumberField extends AgInputTextField {
         return this;
     }
 
-    public setValue(value: string, silent?: boolean): this {
-        value = this.adjustPrecision(value);
-        const normalizedValue = this.normalizeValue(value);
+    public setValue(value?: string | null, silent?: boolean): this {
+        if (value != null) {
+            value = this.adjustPrecision(value);
+            const normalizedValue = this.normalizeValue(value);
 
-        if (value != normalizedValue) { return this; }
+            if (value != normalizedValue) { return this; }
+        }
 
         return super.setValue(value, silent);
     }

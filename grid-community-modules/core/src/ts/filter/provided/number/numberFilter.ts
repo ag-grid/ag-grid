@@ -33,8 +33,8 @@ export type NumberFilterParams<TData = any> = INumberFilterParams & IFilterParam
  */
 export interface INumberFilterParams extends IScalarFilterParams {
     /**
-     * When specified, the input field will be of type `text` instead of `number`, and this will be used as a regex of all the characters that are allowed to be typed.
-     * This will be compared against any typed character and prevent the character from appearing in the input if it does not match, in supported browsers (all except Safari).
+     * When specified, the input field will be of type `text`, and this will be used as a regex of all the characters that are allowed to be typed.
+     * This will be compared against any typed character and prevent the character from appearing in the input if it does not match.
      */
     allowedCharPattern?: string;
     /**
@@ -59,6 +59,22 @@ export class NumberFilterModelFormatter extends SimpleFilterModelFormatter {
 
         return `${condition.type}`;
     }
+}
+
+export function getAllowedCharPattern(filterParams?: NumberFilterParams): string | null {
+    const { allowedCharPattern } = filterParams ?? {};
+
+    if (allowedCharPattern) {
+        return allowedCharPattern;
+    }
+
+    if (!isBrowserChrome()) {
+        // only Chrome and Edge (Chromium) have nice HTML5 number field handling, so for other browsers we provide an equivalent
+        // constraint instead
+        return '\\d\\-\\.';
+    }
+
+    return null;
 }
 
 export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
@@ -116,7 +132,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     }
 
     protected createValueElement(): HTMLElement {
-        const allowedCharPattern = this.getAllowedCharPattern();
+        const allowedCharPattern = getAllowedCharPattern(this.numberFilterParams);
 
         const eCondition = document.createElement('div');
         eCondition.classList.add('ag-filter-body');
@@ -210,22 +226,6 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
             return [null, null];
         }
         return [this.eValuesFrom[position], this.eValuesTo[position]];
-    }
-
-    private getAllowedCharPattern(): string | null {
-        const { allowedCharPattern } = this.numberFilterParams || {};
-
-        if (allowedCharPattern) {
-            return allowedCharPattern;
-        }
-
-        if (!isBrowserChrome()) {
-            // only Chrome and Edge (Chromium) support the HTML5 number field, so for other browsers we provide an equivalent
-            // constraint instead
-            return '\\d\\-\\.';
-        }
-
-        return null;
     }
 
     public getModelAsString(model: ISimpleFilterModel): string {
