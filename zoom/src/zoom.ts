@@ -1,5 +1,5 @@
 import { _ModuleSupport, _Scene } from 'ag-charts-community';
-import { ZoomCoords, ZoomSelector } from './zoomSelector';
+import { ZoomCoords, ZoomSelector } from './scene/zoomSelector';
 
 interface DefinedZoomState extends _ModuleSupport.AxisZoomState {
     x: { min: number; max: number };
