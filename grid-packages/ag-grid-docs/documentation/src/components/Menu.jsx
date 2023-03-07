@@ -2,6 +2,7 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 import Announcements from 'components/Announcements';
+import { Icon } from 'components/Icon';
 import { Link } from 'gatsby';
 import React, { useEffect, useState } from 'react';
 import convertToFrameworkUrl from 'utils/convert-to-framework-url';
@@ -32,28 +33,28 @@ const menuData = filterProductionMenuData(rawMenuData);
 
 const MenuSection = ({ title, items, currentFramework, isActive, toggleActive }) => {
     return (
-        <li key={title} className={styles['menu__section']}>
+        <li key={title} className={styles.menuSection}>
             <div
                 onClick={toggleActive}
                 onKeyDown={toggleActive}
                 role="button"
                 tabIndex="0"
-                className={styles['menu__section__heading']}
+                className={styles.sectionHeader}
             >
                 <svg className={classnames(styles['menu__arrow'], { 'fa-rotate-90': isActive })}>
                     <use href="#menu-item" />
                 </svg>
+
                 {title}
             </div>
-            {isActive && (
-                <MenuGroup isTopLevel={true} group={{ group: title, items }} currentFramework={currentFramework} />
-            )}
+
+            {isActive && <MenuGroup group={{ group: title, items }} currentFramework={currentFramework} />}
         </li>
     );
 };
 
-const MenuGroup = ({ group, currentFramework, isTopLevel = false }) => (
-    <ul className={classnames(styles['menu__group'], { [styles['menu__group--top-level']]: isTopLevel })}>
+const MenuGroup = ({ group, currentFramework }) => (
+    <ul className={classnames(styles.menuGroup, 'list-style-none')}>
         {group.items
             .filter((item) => !item.menuHide && (!item.frameworks || item.frameworks.includes(currentFramework)))
             .map((item) => (
@@ -63,7 +64,7 @@ const MenuGroup = ({ group, currentFramework, isTopLevel = false }) => (
 );
 
 const MenuItem = ({ item, currentFramework }) => {
-    const enterpriseIcon = item.enterprise && <div className={styles['menu__enterprise-icon']}>(e)</div>;
+    const enterpriseIcon = item.enterprise && <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />;
     const title = (
         <>
             {item.title}
@@ -72,12 +73,12 @@ const MenuItem = ({ item, currentFramework }) => {
     );
 
     return (
-        <li key={item.title} className={styles['menu__item']}>
+        <li key={item.title}>
             {item.url ? (
                 <Link
                     to={convertToFrameworkUrl(item.url, currentFramework)}
-                    className={styles['menu__item__link']}
-                    activeClassName={styles['menu__item__link--active']}
+                    className="font-size-small"
+                    activeClassName={styles.activeMenuItem}
                 >
                     {title}
                 </Link>
@@ -135,7 +136,6 @@ const Menu = ({ currentFramework, currentPage }) => {
 
     return (
         <aside className={classnames(styles['menu'], 'ag-styles')}>
-            {/* <div className="page-margin"> */}
             <FontAwesomeIcon icon={faChevronRight} className={styles['menu__arrow']} symbol="menu-item" />
 
             <ul id="side-nav" className={classnames(styles.menuInner, 'list-style-none')}>
@@ -165,7 +165,6 @@ const Menu = ({ currentFramework, currentPage }) => {
 
                 <Announcements framework={currentFramework} />
             </ul>
-            {/* </div> */}
         </aside>
     );
 };

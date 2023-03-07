@@ -3,9 +3,6 @@
 .menu {
     $top-bar-height: 58px;
 
-    // composes: navbar flex-grow-1 flex-column align-items-stretch navbar-expand-lg navbar-light p-0 from global;
-
-    // flex-basis: 0px
     border-bottom: 1px solid var(--border-color);
 
     @media screen and (max-width: $breakpoint-docs-nav-medium) {
@@ -27,78 +24,6 @@
         }
     }
 
-    &__item {
-        &__link {
-            composes: d-block my-2 from global;
-
-            color: $secondary;
-            font-size: 0.85rem;
-
-            &:hover {
-                text-decoration: none;
-                color: $primary;
-            }
-
-            &--active {
-                font-weight: bolder !important;
-                color: $primary !important;
-                position: relative;
-
-                &::before {
-                    font-size: 1.5rem;
-                    content: '•';
-                    position: absolute;
-                    left: -1rem;
-                    top: -0.55rem;
-                }
-            }
-        }
-
-        div[role='button'],
-        &__link {
-            white-space: nowrap;
-
-            &:focus {
-                outline: none;
-            }
-
-            &:focus-visible {
-                outline-color: $primary;
-                outline-width: 1px;
-                outline-style: solid;
-                outline-offset: 0.15rem;
-            }
-        }
-
-        div[role='button'] {
-            color: $dark;
-            font-weight: 500;
-        }
-    }
-
-    &__enterprise-icon {
-        composes: ml-1 from global;
-
-        background-image: url('../images/enterprise.svg');
-        background-position-y: center;
-        background-repeat: no-repeat;
-        display: inline-block;
-        text-indent: -1000px;
-        width: 1rem;
-        height: 1rem;
-        background-size: contain;
-        vertical-align: middle;
-    }
-
-    &__section {
-        composes: pt-1 pb-2 from global;
-
-        &__heading {
-            font-weight: 500;
-            outline: none;
-        }
-    }
-
     &__arrow {
         composes: mr-1 from global;
 
@@ -106,34 +31,6 @@
         height: 0.8rem;
         width: 1rem;
         vertical-align: -0.05rem;
-    }
-
-    &__group {
-        composes: pl-2 list-unstyled from global;
-
-        &--top-level {
-            composes: pl-4 from global;
-
-            > .menu__item {
-                color: $dark;
-                font-weight: 400;
-                font-size: 0.9rem;
-
-                & > a {
-                    color: $dark;
-                    font-weight: 400;
-                    font-size: 0.9rem;
-
-                    &:hover {
-                        color: $primary;
-                    }
-                }
-            }
-        }
-    }
-
-    input:focus {
-        border-color: $primary;
     }
 }
 
@@ -147,5 +44,59 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         display: block !important; // !important to override bootstrap styles
+    }
+}
+
+.menuSection {
+    padding-top: $size-1;
+    padding-bottom: $size-1;
+}
+
+.sectionHeader {
+    font-weight: var(--font-weight-bold);
+}
+
+.menuGroup {
+    padding-left: 20px !important; // !important for .ag-styles specificity
+    line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
+
+    a {
+        position: relative;
+        display: block;
+        padding-top: $size-half;
+        padding-bottom: $size-half;
+        color: var(--text-color) !important; // !important for .ag-styles specificity
+
+        &:hover {
+            color: var(--link-color) !important; // !important for .ag-styles specificity
+        }
+    }
+
+    ul a {
+        color: var(--secondary-text-color) !important; // !important for .ag-styles specificity
+
+        &.activeMenuItem {
+            color: var(--text-color) !important; // !important for .ag-styles specificity
+        }
+    }
+
+    .enterpriseIcon {
+        --icon-size: 1.15em !important; // !important for .ag-styles specificity
+
+        margin-top: -0.15em;
+        margin-left: 0.15em;
+        fill: red !important; // !important for .ag-styles specificity
+    }
+}
+
+.activeMenuItem {
+    pointer-events: none;
+
+    &::before {
+        content: '•';
+        position: absolute;
+        top: -0.3em;
+        left: -0.5em;
+        font-size: 2.125em;
     }
 }
