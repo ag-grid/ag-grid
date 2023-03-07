@@ -285,7 +285,8 @@ export class PopupService extends BeanStub {
 
             ePopup.style.left = `${x}px`;
             ePopup.style.top = `${y}px`;
-            if (shouldSetMaxHeight) {
+            if (shouldSetMaxHeight && getComputedStyle(ePopup).maxHeight === '100%') {
+                // max height could be overridden, so only set if not the default (100%)
                 ePopup.style.maxHeight = `calc(100% - ${y}px)`;
             }
 
