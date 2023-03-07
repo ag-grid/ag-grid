@@ -92,7 +92,7 @@ export class GridBodyComp extends Component {
             setStickyTopHeight: height => this.eStickyTop.style.height = height,
             setStickyTopTop: top => this.eStickyTop.style.top = top,
             setStickyTopWidth: width => this.eStickyTop.style.width = width,
-            setColumnMovingCss: (cssClass, flag) => this.addOrRemoveCssClass(CSS_CLASS_COLUMN_MOVING, flag),
+            setColumnMovingCss: (cssClass, flag) => this.addOrRemoveCssClass(cssClass, flag),
             updateLayoutClasses: (cssClass, params) => {
                 
                 const classLists = [
