@@ -126,3 +126,9 @@
         margin-bottom: 0.25rem;
     }
 }
+
+.noSideMenu {
+    @media screen and (min-width: $breakpoint-docs-nav-large) {
+        padding-right: 220px;
+    }
+}

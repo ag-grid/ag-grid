@@ -1,3 +1,5 @@
+@use '../design-system' as *;
+
 .docs-home {
     composes: container-lg px-0 from global;
 

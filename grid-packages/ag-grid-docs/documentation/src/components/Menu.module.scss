@@ -13,7 +13,8 @@
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
-        min-width: 300px;
+        width: 300px;
+        flex-shrink: 0;
         border-right: solid 1px var(--bright-blue-gray);
         padding-right: $size-2;
 
