@@ -3326,7 +3326,7 @@
       "isTypeAlias": true,
       "typeParams": ["T extends InteractionTypes"]
     },
-    "type": "{ type: T; offsetX: number; offsetY: number; pageX: number; pageY: number; sourceEvent: Event; consume(): void; } & (T extends 'drag' ? { startX: number; startY: number; } : {})"
+    "type": "{ type: T; offsetX: number; offsetY: number; pageX: number; pageY: number; sourceEvent: Event; consume(): void; }"
   },
   "Coords": {
     "meta": {},

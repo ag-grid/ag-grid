@@ -48,7 +48,7 @@ export type InteractionEvent<T extends InteractionTypes> = {
     sourceEvent: Event;
     /** Consume the event, don't notify other listeners! */
     consume(): void;
-} & (T extends 'drag' ? { startX: number; startY: number } : {});
+};
 
 interface Coords {
     clientX: number;
