@@ -159,16 +159,31 @@ export class CartesianChart extends Chart {
                 return;
             }
 
-            axis.clipGrid(seriesRect.x, seriesRect.y, seriesRect.width + clipRectPadding, seriesRect.height + clipRectPadding);
+            axis.clipGrid(
+                seriesRect.x,
+                seriesRect.y,
+                seriesRect.width + clipRectPadding,
+                seriesRect.height + clipRectPadding
+            );
 
             switch (axis.position) {
                 case 'left':
                 case 'right':
-                    axis.clipTickLines(inputShrinkRect.x, seriesRect.y, inputShrinkRect.width + clipRectPadding, seriesRect.height + clipRectPadding);
+                    axis.clipTickLines(
+                        inputShrinkRect.x,
+                        seriesRect.y,
+                        inputShrinkRect.width + clipRectPadding,
+                        seriesRect.height + clipRectPadding
+                    );
                     break;
                 case 'top':
                 case 'bottom':
-                    axis.clipTickLines(seriesRect.x, inputShrinkRect.y, seriesRect.width + clipRectPadding, inputShrinkRect.height + clipRectPadding);
+                    axis.clipTickLines(
+                        seriesRect.x,
+                        inputShrinkRect.y,
+                        seriesRect.width + clipRectPadding,
+                        inputShrinkRect.height + clipRectPadding
+                    );
                     break;
             }
         });
