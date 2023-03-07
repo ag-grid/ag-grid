@@ -1,3 +1,4 @@
+import classnames from 'classnames';
 import Footer from 'components/footer/Footer';
 import { GlobalContextProvider } from 'components/GlobalContext';
 import Menu from 'components/Menu';
@@ -56,7 +57,7 @@ export const Layout = ({
 
                 {!fullScreen && <TopBar frameworks={frameworks} currentFramework={framework} path={path} />}
 
-                <div className={styles.contentContainer}>
+                <div className={classnames(styles.contentContainer, !fullScreen && styles.fullScreenPage)}>
                     <div className={styles['content-viewport']}>
                         {!fullScreen && <Menu currentFramework={framework} currentPage={pageName} />}
 
