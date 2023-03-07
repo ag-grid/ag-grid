@@ -1,4 +1,5 @@
-import { Autowired, BeanStub, IRowModel, IRowNode, IServerSideGroupSelectionState, RowNode, SelectionEventSourceType, ISetNodeSelectedParams, ColumnModel } from "@ag-grid-community/core";
+import { Autowired, BeanStub, IRowModel, IRowNode, IServerSideGroupSelectionState, RowNode, SelectionEventSourceType, ISetNodeSelectedParams, ColumnModel, FilterManager, PostConstruct, Events } from "@ag-grid-community/core";
+import { ServerSideRowModel } from "src/serverSideRowModel/serverSideRowModel";
 import { ISelectionStrategy } from "./iSelectionStrategy";
 
 interface SelectionState {
@@ -9,9 +10,16 @@ interface SelectionState {
 export class GroupSelectsChildrenStrategy extends BeanStub implements ISelectionStrategy {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
 
     private selectedState: SelectionState = { selectAllChildren: false, toggledNodes: new Map() };
     private lastSelected: RowNode | null = null;
+
+    @PostConstruct
+    private init(): void {
+        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, () => this.removeRedundantState());
+    }
 
     public getSelectedState() {
         const recursivelySerializeState = (state: SelectionState, level: number, nodeId?: string) => {
@@ -96,12 +104,14 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                 this.recursivelySelectNode(route, this.selectedState, params);
             });
 
+            this.removeRedundantState();
             this.lastSelected = params.node;
             return 1;
         }
 
         const idPathToNode = this.getRouteToNode(params.node);
         this.recursivelySelectNode(idPathToNode, this.selectedState, params);
+        this.removeRedundantState();
         this.lastSelected = params.node;
         return 1;
     }
@@ -146,32 +156,47 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         return pathToNode.reverse();
     }
 
+    private removeRedundantState() {
+        if (this.filterManager.isAnyFilterPresent()) {
+            return;
+        }
+        
+        const recursivelyRemoveState = (path: string[] = [], selectedState: SelectionState = this.selectedState) => {
+            selectedState.toggledNodes.forEach((state, key) => {
+                const statePath = [...path, key];
+                recursivelyRemoveState(statePath, state);
+                
+                // cleans out groups which have no toggled nodes and an equivalent default to its parent
+                if (state.selectAllChildren === selectedState.selectAllChildren && state.toggledNodes.size === 0) {
+                    selectedState.toggledNodes.delete(key);
+                }
+
+                this.serverSideRowModel.executeOnStore(statePath, store => {
+                    if (!store.isLastRowIndexKnown() || store.getRowCount() !== state.toggledNodes.size) {
+                        // if row count unknown, or doesn't match the size of toggledNodes, ignore.
+                        return;
+                    }
+
+                    let anyEntriesIndeterminate = false;
+                    state.toggledNodes.forEach(state => {
+                        if (state.toggledNodes.size > 0) {
+                            anyEntriesIndeterminate = true;
+                        }
+                    });
+                    if (!anyEntriesIndeterminate) {
+                        state.toggledNodes.clear();
+                        state.selectAllChildren = !state.selectAllChildren;
+                    }
+                });
+            });
+        }
+
+        recursivelyRemoveState();
+    }
+
     private recursivelySelectNode([nextNode, ...nodes]: IRowNode[], selectedState: SelectionState, params: { newValue: boolean, source: SelectionEventSourceType, event?: Event, node: RowNode }) {
         if (!nextNode) {
             return;
-        }
-
-        // cleans out groups which have no toggled nodes and an equivalent default to its parent
-        const cleanRedundantState = (childState?: SelectionState) => {
-            if (childState && childState.selectAllChildren === selectedState.selectAllChildren && childState.toggledNodes.size === 0) {
-                selectedState.toggledNodes.delete(nextNode.id!);
-            }
-
-            // if all of the rows have been selectAllChildren, we clear the list & flip the default
-            // this makes hierarchical selection easier
-            const parent = nextNode.parent as RowNode;
-            if (parent.childStore?.isLastRowIndexKnown() && parent.childStore.getRowCount() === selectedState.toggledNodes.size) {
-                let anyEntriesIndeterminate = false;
-                selectedState.toggledNodes.forEach(state => {
-                    if (state.toggledNodes.size > 0) {
-                        anyEntriesIndeterminate = true;
-                    }
-                });
-                if (!anyEntriesIndeterminate) {
-                    selectedState.toggledNodes.clear();
-                    selectedState.selectAllChildren = !selectedState.selectAllChildren;
-                }
-            }
         }
 
         // if this is the last node, hard add/remove based on its selectAllChildren state
@@ -187,14 +212,12 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                 toggledNodes: new Map(),
             };
             selectedState.toggledNodes.set(nextNode.id!, newState);
-            cleanRedundantState();
             return;
         }
 
         if (selectedState.toggledNodes.has(nextNode.id!)) {
             const nextState = selectedState.toggledNodes.get(nextNode.id!)!;
             this.recursivelySelectNode(nodes, nextState, params);
-            cleanRedundantState(nextState);
             return;
         }
 
@@ -204,7 +227,6 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         };
         selectedState.toggledNodes.set(nextNode.id!, newState);
         this.recursivelySelectNode(nodes, newState, params);
-        cleanRedundantState(newState);
     }
 
     public getSelectedNodes(): RowNode<any>[] {

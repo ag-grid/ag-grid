@@ -27,7 +27,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     field: 'athlete',
     flex: 1,
     minWidth: 240,
-    // headerCheckboxSelection: true, // not supported for Enterprise Model
     cellRendererParams: {
       checkbox: true,
     },
@@ -47,10 +46,10 @@ const gridOptions: GridOptions<IOlympicData> = {
   // restrict row selections via checkbox selection
   suppressRowClickSelection: true,
 
-  // groupSelectsChildren: true, // not supported for Server Side Row Model
 
   animateRows: true,
   suppressAggFuncInHeader: true,
+  serverSideFilterAllLevels: true,
 }
 
 function getServerSideDatasource(server: any): IServerSideDatasource {
