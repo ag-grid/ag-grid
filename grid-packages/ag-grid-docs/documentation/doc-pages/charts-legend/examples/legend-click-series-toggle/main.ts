@@ -1,4 +1,8 @@
-import { AgChart, AgChartLegendClickEvent, AgChartOptions } from "ag-charts-community"
+import {
+  AgChart,
+  AgChartLegendClickEvent,
+  AgChartOptions,
+} from "ag-charts-community"
 import { getData } from "./data"
 
 const colors = [
@@ -157,7 +161,7 @@ const options: AgChartOptions = {
         itemId,
         enabled,
       }: AgChartLegendClickEvent) => {
-        window.alert(
+        console.log(
           `seriesId: ${seriesId}, itemId: ${itemId}, enabled: ${enabled}`
         )
       },

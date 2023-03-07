@@ -244,6 +244,8 @@ If a callback function is configured via [`legend.listeners.legendItemClick`](#l
 
 ### Example: Legend Click
 
+This example logs a message to the browser console when the legend is clicked.
+
 <chart-example title='Legend Click' name='legend-click-series-toggle' type='generated'></chart-example>
 
 ## API Reference
