@@ -5,11 +5,11 @@ import {
     TooltipRendererParams,
     TooltipRendererResult,
 } from 'ag-grid-community';
-import { ChangeCellRenderer } from './changeCellRenderer';
+import { ChangeCellRenderer } from '../../utils/grid/changeCellRenderer';
+import { CurrentCellRenderer } from '../../utils/grid/currentCellRenderer';
+import { toCurrency, toTime } from '../../utils/grid/formatters';
+import { randomNumber, randomNumberList } from '../../utils/grid/generator-utils';
 import { MAX_NUMBER, STOCK_NAMES, TIMELINE_SIZE } from './constants';
-import { CurrentCellRenderer } from './currentCellRenderer';
-import { toCurrency, toTime } from './formatters';
-import { randomNumber, randomNumberList } from './generator-utils';
 
 type Change = {
     value: number;

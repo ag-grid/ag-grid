@@ -1,0 +1,400 @@
+@use "sass:map";
+@use '../../../design-system' as ds;
+
+$z-index-mouse-mask: 10000; // NOTE: Above .ag-dnd-ghost z-index of 9999
+$z-index-debug-canvas: $z-index-mouse-mask + 10;
+$z-index-splash: $z-index-debug-canvas + 10;
+$z-index-debug-panel: $z-index-splash + 10;
+$z-index-splash-contents: 10;
+
+$splash-transform: skew(-10deg) translateX(5%);
+
+:global(.automated-row-grouping-grid.ag-theme-alpine-dark) {
+    background-color: #00162d;
+    position: relative;
+
+    @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
+        width: 200% !important;
+        height: 500px !important;
+        margin-top: ds.$size-3 * -1;
+        margin-bottom: calc(500px / -2 + ds.$size-2);
+        transform-origin: top left;
+        transform: scale(0.5);
+        border-radius: 8px;
+        overflow: hidden;
+        pointer-events: none;
+    }
+
+    svg[class*='logo-mark'] {
+        position: absolute;
+        display: block;
+        width: 64px * 2;
+        height: 48px * 2;
+        top: 51%;
+        left: 18%;
+        transform: translate(-60px, -48px) scale(1.5);
+        z-index: 1;
+    }
+
+    // Button overrides for .ag-styles specificity
+    :global(button.ag-side-button-button) {
+        // Inherit text styles
+        color: inherit;
+        font-family: inherit;
+        font-size: inherit;
+        font-weight: inherit;
+        line-height: inherit;
+
+        // Button styles
+        background: transparent;
+        padding: calc(var(--ag-grid-size) * 2) 0 calc(var(--ag-grid-size) * 2) 0;
+        width: 100%;
+        margin: 0;
+        min-height: calc(var(--ag-grid-size) * 18);
+        background-position-y: center;
+        background-position-x: center;
+        background-repeat: no-repeat;
+
+        border: none;
+        border-top: var(--ag-borders-side-button) var(--ag-border-color);
+        border-bottom: var(--ag-borders-side-button) var(--ag-border-color);
+
+        &:focus {
+            box-shadow: none;
+        }
+    }
+
+    // Set mini filter overrides for .ag-styles specificity
+    :global(.ag-mini-filter) {
+        margin: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+    }
+
+    // Set filter overrides for .ag-styles specificity
+    :global(.ag-set-filter-item) {
+        margin: 0px var(--ag-widget-container-horizontal-padding);
+    }
+}
+
+.splashOn {
+    :global(.ag-dnd-ghost) {
+        background-color: hsl(210, 25%, 25%);
+    }
+}
+
+.splash {
+    $splash-hidden-amount: 96%;
+
+    display: flex;
+
+    @media screen and (min-width: ds.$breakpoint-automated-row-grouping-medium) {
+        --text-color: var(--white);
+
+        --button-color: var(--white);
+        --button-hover-color: var(--white);
+        --button-active-color: var(--white);
+        --button-text-color: var(--dark-cerulean-blue);
+
+        --link-color: var(--white);
+
+        position: absolute;
+        align-items: center;
+        top: 0;
+        left: 45%;
+        width: 55%;
+        height: 100%;
+        transition: transform 0.33s ease-in-out;
+    }
+
+    &.hide {
+        transform: translateX($splash-hidden-amount);
+
+        .contentsInner {
+            opacity: 0.5;
+        }
+
+        .exampleClickTarget {
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .splashTrapeziumBackground {
+            cursor: pointer;
+        }
+    }
+
+    &.exampleHover {
+        transform: translateX(4%);
+    }
+
+    &.hide:not(.hiding):hover {
+        transform: translateX(80%);
+
+        .openPanelIndicator {
+            --text-color: var(--link-hover-color);
+        }
+    }
+
+    &.hide:not(.hiding) .openPanelIndicator {
+        opacity: 1;
+    }
+}
+
+.contents {
+    line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity;
+    color: var(--text-color);
+    z-index: $z-index-splash + $z-index-splash-contents;
+
+    @media screen and (min-width: ds.$breakpoint-automated-row-grouping-medium) {
+        max-width: 22em;
+        margin-left: 10% !important; // !important for .ag-styles specificity;
+        margin-right: 10% !important; // !important for .ag-styles specificity;
+    }
+
+    @media screen and (min-width: ds.$breakpoint-automated-row-grouping-large) {
+        font-size: var(--font-size-extra-large) !important; // !important for .ag-styles specificity;
+    }
+
+    h2 {
+        --font-weight: var(--font-weight-bold);
+
+        @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
+            font-size: min(var(--font-size-massive), 8.5vw) !important; // !important for .ag-styles specificity;
+        }
+
+        @media screen and (min-width: ds.$breakpoint-automated-row-grouping-large) {
+            font-size: var(--font-size-gigantic) !important; // !important for .ag-styles specificity;
+        }
+    }
+
+    .hide & {
+        pointer-events: none;
+    }
+}
+
+.contentsInner {
+    transition: opacity 0.33s ease-in-out;
+}
+
+.exampleClickTarget {
+    position: absolute;
+    top: 0;
+    right: 125%;
+    width: 200%;
+    height: 100%;
+    background-color: mix(map.get(ds.$abstract-colors, 'dark-cerulean-blue'), black, 66%);
+    opacity: 0.33;
+    transform: $splash-transform;
+    cursor: pointer;
+    transition: opacity 0.33s ease-in-out;
+
+    @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
+        display: none;
+    }
+}
+
+.splashTrapeziumBackground {
+    position: absolute;
+    top: 0;
+    left: -25%;
+    width: 200%;
+    height: 100%;
+    z-index: $z-index-splash;
+    transform: $splash-transform;
+    background-color: rgba(map.get(ds.$abstract-colors, 'dark-cerulean-blue'), 0.75);
+    backdrop-filter: blur(3px);
+
+    @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
+        display: none;
+    }
+}
+
+.exploreExampleButton {
+    margin-top: ds.$size-2 !important; // !important for .ag-styles specificity;
+    padding: 0.375em 0.8em 0.5em 1em !important; // !important for .ag-styles specificity;
+    outline: transparent 3px solid !important; // !important for .ag-styles specificity;
+    outline-offset: 0;
+    transition: outline-color 0.15s ease-in-out, outline-offset 0.15s ease-in-out !important; // !important for .ag-styles specificity;
+
+    @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
+        display: none !important; // !important for .ag-styles specificity;
+    }
+
+    @media screen and (min-width: ds.$breakpoint-automated-row-grouping-large) {
+        margin-top: ds.$size-4 !important; // !important for .ag-styles specificity;
+        font-size: var(--font-size-extra-large) !important; // !important for .ag-styles specificity;
+    }
+
+    &:hover,
+    &:focus,
+    &:focus-visible {
+        box-shadow: none !important; // !important for .ag-styles specificity;
+    }
+
+    .exampleHover &,
+    &:hover,
+    &:focus-visible {
+        --button-text-color: var(--ag-grid-dark-blue);
+
+        outline-color: var(--sky-blue) !important; // !important for .ag-styles specificity;
+        outline-offset: 4px;
+    }
+
+    :global(.icon) {
+        --icon-size: 1.5em !important; // !important for .ag-styles specificity;
+
+        margin: -1em 0 -1em 0.25em !important; // !important for .ag-styles specificity;
+    }
+}
+
+.getStartedLink {
+    --icon-size: 1.25em;
+    --text-color: var(--link-color);
+
+    position: relative;
+    display: inline-block;
+    margin-top: ds.$size-4 !important; // !important for .ag-styles specificity;
+    padding-right: ds.$size-3;
+    transition: color ds.$default-transition-timing;
+
+    @media screen and (min-width: ds.$breakpoint-automated-row-grouping-medium) {
+        margin-top: ds.$size-6 !important; // !important for .ag-styles specificity;
+    }
+
+    @media screen and (min-width: ds.$breakpoint-automated-row-grouping-large) {
+        margin-top: ds.$size-8 !important; // !important for .ag-styles specificity;
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        bottom: -3px;
+        left: 0;
+        height: 2px;
+        background-color: var(--text-color);
+        transition: background-color ds.$default-transition-timing;
+
+        @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
+            display: none;
+        }
+    }
+
+    &:hover,
+    &:focus-visible {
+        --text-color: var(--link-hover-color);
+
+        :global(.icon) {
+            transform: translateX(4px);
+        }
+    }
+
+    :global(.icon) {
+        position: absolute;
+        bottom: 0;
+        right: -0.33em;
+        transition: transform ds.$default-transition-timing, fill ds.$default-transition-timing;
+    }
+}
+
+.openPanelIndicator {
+    --icon-size: 4em;
+
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    bottom: 32px;
+    left: -96px;
+    font-size: var(--font-size-medium);
+    opacity: 0;
+    transition: opacity 0.33s ease-in-out;
+
+    svg {
+        transition: fill ds.$default-transition-timing;
+    }
+
+    span {
+        margin-top: ds.$size-half;
+        color: var(--text-color);
+        transition: color ds.$default-transition-timing;
+    }
+}
+
+.debugPanel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: 7.5rem;
+    border-left: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    background-color: rgba(255, 255, 255, 0.85);
+    padding: ds.$size-2;
+    z-index: $z-index-debug-panel;
+
+    :global(.state) {
+        &::before {
+            content: 'State: ';
+            color: var(--dull-light-gray);
+        }
+    }
+
+    :global(.paused-state) {
+        &::before {
+            content: 'Paused at: ';
+            color: var(--dull-light-gray);
+        }
+    }
+
+    :global(.draw-checkbox) {
+        margin-top: ds.$size-1;
+        cursor: pointer;
+    }
+}
+
+.debugCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: $z-index-debug-canvas;
+}
+
+.mouseMask {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    margin: 41px 1rem 1rem;
+    overflow: hidden;
+    z-index: $z-index-mouse-mask;
+    pointer-events: none;
+
+    // Start off hidden
+    opacity: 0;
+
+    :global(.mouse) {
+        position: absolute;
+        top: 6px;
+        left: 4px;
+    }
+
+    :global(.highlight) {
+        opacity: 0.15;
+    }
+
+    :global(.animate-click) {
+        transform-origin: 50% calc(50% - 1px);
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+        transform: scale(0.1);
+    }
+
+    :global(.animate .animate-click) {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+}
