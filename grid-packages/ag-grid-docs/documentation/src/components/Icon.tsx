@@ -25,8 +25,11 @@ export const ICON_MAP = {
     arrowRight: CarbonIcon.ArrowRight,
     arrowDown: CarbonIcon.ArrowDown,
     arrowLeft: CarbonIcon.ArrowLeft,
-    chevronRight: BoldChevronRight,
     link: CarbonIcon.Link,
+    cursor: CarbonIcon.Cursor_1,
+    chevronRight: BoldChevronRight,
+    centerToFit: CarbonIcon.CenterToFit,
+    sidePanelClose: CarbonIcon.SidePanelClose,
 };
 
 export type IconName = keyof typeof ICON_MAP;

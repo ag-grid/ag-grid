@@ -5,9 +5,9 @@
 // NOTE: Only typescript types should be imported from the AG Grid packages
 // to prevent AG Grid from loading the code twice
 import { GetRowIdParams, GridOptions, GridSizeChangedEvent, ISetFilter } from 'ag-grid-community';
+import { createGenerator } from '../../utils/grid/generator-utils';
 import { COLUMN_ID_PRIORITIES, FILTER_ROWS_BREAKPOINT, UPDATE_INTERVAL } from './constants';
 import { columnDefs, generateStocks, generateStockUpdate } from './data';
-import { createGenerator } from './generator-utils';
 import { fixtureData } from './rowDataFixture';
 
 const rowData = generateStocks();

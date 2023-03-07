@@ -29,12 +29,6 @@ export const COLUMN_ID_PRIORITIES = ['stock', 'current', 'timeline', 'percentage
 export const FILTER_ROWS_BREAKPOINT = 1020;
 
 /**
- * When to filter rows for smaller screens.
- * Based on `window.innerWidth`
- */
-export const SHOW_CURRENT_COLORS_BREAKPOINT = 642;
-
-/**
  * Maximum number for data values
  */
 export const MAX_NUMBER = 150;

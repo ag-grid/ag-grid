@@ -111,6 +111,41 @@ body {
     }
 }
 
+.automatedRowGrouping {
+    margin-top: ds.$size-8 !important; // !important for .ag-styles specificity
+
+    @media screen and (min-width: ds.$breakpoint-automated-row-grouping-medium) {
+        position: relative;
+        display: flex;
+        height: 500px;
+        overflow: hidden;
+        background-color: #00162d;
+    }
+
+    @media screen and (min-width: ds.$breakpoint-automated-row-grouping-large) {
+        height: 700px;
+    }
+
+    // Use psuedo element to create fake border radius, as border radius can't
+    // be used to prevent screen tearing issues with transitions on .splash
+    &::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        right: 0;
+        border-radius: var(--border-radius);
+        box-shadow: 0 0 0 var(--border-radius) var(--white);
+        pointer-events: none;
+        z-index: 100000;
+
+        @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
+            display: none;
+        }
+    }
+}
+
 .frameworksInner {
     display: flex;
     flex-direction: column;
@@ -151,12 +186,7 @@ body {
 .homepageExample {
     margin-bottom: ds.$size-9 !important; // !important for .ag-styles specificity
 
-    h2 {
-        text-align: center;
-        margin-bottom: ds.$size-2 !important; // !important for .ag-styles specificity
-    }
-
-    a {
+    :global(.read-more-link) {
         margin-top: ds.$size-1 !important; // !important for .ag-styles specificity
         float: right;
     }
@@ -165,6 +195,11 @@ body {
     :global(.ag-chart-menu-close) {
         display: none !important;
     }
+}
+
+.demoHeader {
+    text-align: center;
+    margin-bottom: ds.$size-2 !important; // !important for .ag-styles specificity
 }
 
 .homepageDescription {
