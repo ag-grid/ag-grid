@@ -77,6 +77,12 @@ const YKEYS_REDUCER = (prop: string, activationValue: any) => (result: string[][
     }
     return result;
 };
+const GROUPS_REDUCER = () => (result: any, next: any) => {
+    return {
+        ...result,
+        [next.group]: (result[next.group] || []).concat(next.yKey),
+    };
+};
 
 interface ReduceConfig<T> {
     outputProp: string;
@@ -105,6 +111,12 @@ const REDUCE_CONFIG: Record<string, ReduceConfig<any>> = {
         reducer: YKEYS_REDUCER('showInLegend', false),
         seriesType: ['bar', 'column'],
         start: [],
+    },
+    group: {
+        outputProp: 'groups',
+        reducer: GROUPS_REDUCER(),
+        seriesType: ['bar', 'column'],
+        start: {},
     },
 };
 
