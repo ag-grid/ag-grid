@@ -1,4 +1,4 @@
-import { Autowired, BeanStub, IRowModel, IRowNode, IServerSideGroupSelectionState, RowNode, SelectionEventSourceType, ISetNodeSelectedParams, ColumnModel, FilterManager, PostConstruct, Events } from "@ag-grid-community/core";
+import { Autowired, BeanStub, IRowModel, IRowNode, IServerSideGroupSelectionState, RowNode, SelectionEventSourceType, ISetNodeSelectedParams, ColumnModel, FilterManager, PostConstruct, Events, IServerSideStore } from "@ag-grid-community/core";
 import { ServerSideRowModel } from "src/serverSideRowModel/serverSideRowModel";
 import { ISelectionStrategy } from "./iSelectionStrategy";
 
@@ -160,34 +160,45 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             return;
         }
         
-        const recursivelyRemoveState = (path: string[] = [], selectedState: SelectionState = this.selectedState) => {
-            selectedState.toggledNodes.forEach((state, key) => {
-                const statePath = [...path, key];
-                recursivelyRemoveState(statePath, state);
-
-                this.serverSideRowModel.executeOnStore(statePath, store => {
-                    if (!store.isLastRowIndexKnown() || store.getRowCount() !== state.toggledNodes.size) {
-                        // if row count unknown, or doesn't match the size of toggledNodes, ignore.
-                        return;
+        const recursivelyRemoveState = (
+            selectedState: SelectionState = this.selectedState,
+            store: IServerSideStore | undefined = this.serverSideRowModel.getRootStore(),
+        ) => {
+            let noIndeterminateChildren = true;
+            selectedState.toggledNodes.forEach((state, id) => {
+                const nextStore = this.rowModel.getRowNode(id)?.childStore;
+                if (!nextStore) {
+                    if (state.toggledNodes.size > 0) {
+                        noIndeterminateChildren = false;
                     }
+                    return;
+                }
 
-                    let anyEntriesIndeterminate = false;
-                    state.toggledNodes.forEach(state => {
-                        if (state.toggledNodes.size > 0) {
-                            anyEntriesIndeterminate = true;
-                        }
-                    });
-                    if (!anyEntriesIndeterminate) {
-                        state.toggledNodes.clear();
-                        state.selectAllChildren = !state.selectAllChildren;
-                
-                        // cleans out groups which have no toggled nodes and an equivalent default to its parent
-                        if (state.selectAllChildren === selectedState.selectAllChildren) {
-                            selectedState.toggledNodes.delete(key);
-                        }
+                // if child was cleared, check if this state is still relevant
+                if(recursivelyRemoveState(state, nextStore)) {
+                    // cleans out groups which have no toggled nodes and an equivalent default to its parent
+                    if (selectedState.selectAllChildren === state.selectAllChildren) {
+                        selectedState.toggledNodes.delete(id);
                     }
-                });
+                }
+
+                if (state.toggledNodes.size > 0) {
+                    noIndeterminateChildren = false;
+                }
             });
+
+
+            if (!store || !store.isLastRowIndexKnown() || store.getRowCount() !== selectedState.toggledNodes.size) {
+                // if row count unknown, or doesn't match the size of toggledNodes, ignore.
+                return false;
+            }
+
+            if (noIndeterminateChildren) {
+                selectedState.toggledNodes.clear();
+                selectedState.selectAllChildren = !selectedState.selectAllChildren;
+                return true;
+            }
+            return false;
         }
 
         recursivelyRemoveState();
