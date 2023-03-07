@@ -29,6 +29,10 @@ function filterProductionMenuData(data) {
     );
 }
 
+function toElementId(str) {
+    return str.toLowerCase().replace('&', '').replace('/', '').replace(' ', '-').replace(' ', '');
+}
+
 const menuData = filterProductionMenuData(rawMenuData);
 
 const MenuSection = ({ title, items, currentFramework, isActive, toggleActive }) => {
@@ -40,6 +44,10 @@ const MenuSection = ({ title, items, currentFramework, isActive, toggleActive })
                 role="button"
                 tabIndex="0"
                 className={styles.sectionHeader}
+                data-toggle="collapse"
+                data-target={`#${toElementId(title)}`}
+                aria-expanded="false"
+                aria-controls={`#${toElementId(title)}`}
             >
                 <svg className={classnames(styles['menu__arrow'], { 'fa-rotate-90': isActive })}>
                     <use href="#menu-item" />
@@ -48,13 +56,18 @@ const MenuSection = ({ title, items, currentFramework, isActive, toggleActive })
                 {title}
             </div>
 
-            {isActive && <MenuGroup group={{ group: title, items }} currentFramework={currentFramework} />}
+            {/* {isActive && <MenuGroup group={{ group: title, items }} currentFramework={currentFramework} />} */}
+            <MenuGroup group={{ group: title, items }} currentFramework={currentFramework} isTopLevel={true} />
         </li>
     );
 };
 
-const MenuGroup = ({ group, currentFramework }) => (
-    <ul className={classnames(styles.menuGroup, 'list-style-none')}>
+const MenuGroup = ({ group, currentFramework, isTopLevel }) => (
+    <ul
+        id={isTopLevel && toElementId(group.group)}
+        className={classnames(styles.menuGroup, 'list-style-none', isTopLevel && 'collapse')}
+        data-parent="#side-nav"
+    >
         {group.items
             .filter((item) => !item.menuHide && (!item.frameworks || item.frameworks.includes(currentFramework)))
             .map((item) => (
