@@ -273,7 +273,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private moveNode(childNode: RowNode, details: GroupingDetails, batchRemover: BatchRemover | undefined): void {
 
         this.removeNodesInStages([childNode], details, batchRemover);
-        this.insertOneNode(childNode, details, true);
+        this.insertOneNode(childNode, details, true, batchRemover);
 
         // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
         // refreshed into the gui.
@@ -531,11 +531,11 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         });
     }
 
-    private insertOneNode(childNode: RowNode, details: GroupingDetails, isMove: boolean): void {
+    private insertOneNode(childNode: RowNode, details: GroupingDetails, isMove: boolean, batchRemover?: BatchRemover): void {
 
         const path: GroupInfo[] = this.getGroupInfo(childNode, details);
 
-        const parentGroup = this.findParentForNode(childNode, path, details);
+        const parentGroup = this.findParentForNode(childNode, path, details, batchRemover);
         if (!parentGroup.group) {
             console.warn(`AG Grid: duplicate group keys for row data, keys should be unique`,
                 [parentGroup.data, childNode.data]);
@@ -551,14 +551,20 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         }
     }
 
-    private findParentForNode(childNode: RowNode, path: GroupInfo[], details: GroupingDetails): RowNode {
+    private findParentForNode(childNode: RowNode, path: GroupInfo[], details: GroupingDetails, batchRemover?: BatchRemover): RowNode {
         let nextNode: RowNode = details.rootNode;
 
         path.forEach((groupInfo, level) => {
             nextNode = this.getOrCreateNextNode(nextNode, groupInfo, level, details);
             // node gets added to all group nodes.
             // note: we do not add to rootNode here, as the rootNode is the master list of rowNodes
-            nextNode.allLeafChildren.push(childNode);
+
+            if (!batchRemover?.isRemoveFromAllLeafChildren(nextNode, childNode)) {
+                nextNode.allLeafChildren.push(childNode);
+            } else {
+                // if this node is about to be removed, prevent that
+                batchRemover?.preventRemoveFromAllLeafChildren(nextNode, childNode);
+            }
         });
 
         return nextNode;

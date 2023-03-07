@@ -25,6 +25,16 @@ export class BatchRemover {
         set.removeFromChildrenAfterGroup[child.id!] = true;
     }
 
+    public isRemoveFromAllLeafChildren(parent: RowNode, child: RowNode): boolean {
+        const set = this.getSet(parent);
+        return !!set.removeFromAllLeafChildren[child.id!];
+    }
+
+    public preventRemoveFromAllLeafChildren(parent: RowNode, child: RowNode): void {
+        const set = this.getSet(parent);
+        delete set.removeFromAllLeafChildren[child.id!];
+    }
+    
     public removeFromAllLeafChildren(parent: RowNode, child: RowNode): void {
         const set = this.getSet(parent);
         set.removeFromAllLeafChildren[child.id!] = true;
