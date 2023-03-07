@@ -985,10 +985,38 @@
   },
   "AgChartBackground": {
     "meta": {},
-    "type": { "visible?": "boolean", "fill?": "CssColor" },
+    "type": {
+      "visible?": "boolean",
+      "fill?": "CssColor",
+      "image?": "AgChartBackgroundImage"
+    },
     "docs": {
       "visible?": "/** Whether or not the background should be visible. */",
-      "fill?": "/** Colour of the chart background. */"
+      "fill?": "/** Colour of the chart background. */",
+      "image?": "/** Background image. May be combined with fill colour. */"
+    }
+  },
+  "AgChartBackgroundImage": {
+    "meta": {},
+    "type": {
+      "url": "string",
+      "left?": "PixelSize",
+      "top?": "PixelSize",
+      "right?": "PixelSize",
+      "bottom?": "PixelSize",
+      "width?": "PixelSize",
+      "height?": "PixelSize",
+      "opacity?": "Opacity"
+    },
+    "docs": {
+      "url": "/** URL of the image */",
+      "left?": "/** Distance from the left border of the chart to the left border of the image. If neither left nor right specified, the image is centred horizontally. */",
+      "top?": "/** Distance from the top border of the chart to the top border of the image. If neither top nor bottom specified, the image is centred vertically. */",
+      "right?": "/** Distance from the right border of the chart to the right border of the image. If neither left nor right specified, the image is centred horizontally. */",
+      "bottom?": "/** Distance from the bottom border of the chart to the bottom border of the image. If neither top nor bottom specified, the image is centred vertically. */",
+      "width?": "/** Width of the image. If both left and right specified, width is ignored. If width is not determined but height does,\n     * width computed to preserve the original width/height ratio. Otherwise the original width is used. */",
+      "height?": "/** Height of the image. If both top and bottom specified, height is ignored. If height is not determined but width does,\n     * height computed to preserve the original width/height ratio. Otherwise the original height is used. */",
+      "opacity?": "/** Opacity of the image. */"
     }
   },
   "AgChartEvent": {

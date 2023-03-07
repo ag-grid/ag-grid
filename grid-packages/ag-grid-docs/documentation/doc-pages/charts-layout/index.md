@@ -76,6 +76,10 @@ By default, the chart will resize automatically to fill the container element. I
 
 Make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container.
 
+
+## Background
+It is possible to specify chart background. It could be `background.fill` colour, `background.image` or both. The image requires `.url`. By default the image placed in the center of the chart. `.left`, `.top`, `.right` or `.bottom` properties specifies the distance between the respective borders of the image and the chart. `.width` and `.height` override the image size. If only one size defined, the other size adjusted to preserve the image proportion.
+
 ## Next Up
 
 Continue to the next section to learn about the [legend and its layout](/charts-legend/).
