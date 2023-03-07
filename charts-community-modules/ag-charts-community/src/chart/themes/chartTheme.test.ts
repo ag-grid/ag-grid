@@ -44,6 +44,11 @@ describe('ChartTheme', () => {
                     },
                     background: {
                         fill: 'red',
+                        image: {
+                            url: 'https://example.com',
+                            width: 10,
+                            height: 20,
+                        },
                     },
                     series: {
                         column: {
@@ -174,6 +179,9 @@ describe('ChartTheme', () => {
             expect(chart.title && chart.title.fontWeight).toBe('normal');
 
             expect(chart.background.fill).toBe('red');
+            expect(chart.background.image?.url).toBe('https://example.com/');
+            expect(chart.background.image?.width).toBe(10);
+            expect(chart.background.image?.height).toBe(20);
 
             expect(chart.series[0].type).toBe('bar');
             expect((chart.series[0] as BarSeries).fills).toEqual(['red', 'green', 'blue', 'red', 'green']);

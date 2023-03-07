@@ -50,6 +50,7 @@ import { CrossLine } from './crossline/crossLine';
 import { windowValue } from '../util/window';
 import { AxisModule, Module, RootModule } from '../util/module';
 import { Logger } from '../util/logger';
+import { BackgroundImage } from './backgroundImage';
 
 // Deliberately imported via `module-support` so that internal module registration happens.
 import { REGISTERED_MODULES } from '../module-support';
@@ -673,6 +674,7 @@ const JSON_APPLY_OPTIONS: Parameters<typeof jsonApply>[2] = {
         innerCircle: DoughnutInnerCircle,
         'axes[].crossLines[]': CrossLine,
         'series[].innerLabels[]': DoughnutInnerLabel,
+        'background.image': BackgroundImage,
     },
     allowedTypes: {
         'legend.pagination.marker.shape': ['primitive', 'function'],

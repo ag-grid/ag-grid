@@ -54,7 +54,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     readonly scene: Scene;
     readonly seriesRoot = new Group({ name: `${this.id}-Series-root` });
-    readonly background: Background = new Background();
+    readonly background: Background = new Background(() => this.update(ChartUpdateType.SCENE_RENDER));
     readonly legend: Legend;
     readonly tooltip: Tooltip;
     readonly overlays: ChartOverlays;
@@ -233,9 +233,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.highlightManager = new HighlightManager();
         this.zoomManager = new ZoomManager();
         this.layoutService = new LayoutService();
-
-        background.width = this.scene.width;
-        background.height = this.scene.height;
 
         SizeMonitor.observe(this.element, (size) => {
             const { width, height } = size;
@@ -487,6 +484,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 }
                 this._performUpdateNoRenderCount = 0;
 
+                this.background.performLayout(this.scene.width, this.scene.height);
                 await this.performLayout();
                 this.handleOverlays();
                 splits.push(performance.now());
@@ -680,9 +678,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
         if (!width || !height || !Number.isFinite(width) || !Number.isFinite(height)) return;
 
         if (this.scene.resize(width, height)) {
-            this.background.width = width;
-            this.background.height = height;
-
             this.disablePointer();
             this.update(ChartUpdateType.PERFORM_LAYOUT, { forceNodeDataRefresh: true });
         }
