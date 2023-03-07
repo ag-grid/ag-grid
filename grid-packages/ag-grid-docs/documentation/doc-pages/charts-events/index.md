@@ -53,7 +53,7 @@ This example shows how the `nodeDoubleClick` event listener can be used to liste
 
 The `legendItemClick` and `legendItemDoubleClick` events can be used to listen to legend item clicks and double clicks, respectively.
 
-By default, when a legend item is clicked it hides the related series, and when double clicked it shows that series and hides all others.
+By default, when a legend item is clicked the visibility of the series associated with that legend item will be toggled. In addition, when a legend item is double clicked it toggles the visibility of all other series.
 
 ### Example: legendItemClick & legendItemDoubleClick Events
 
@@ -125,4 +125,3 @@ All series event options have similar interface contracts. See the series-specif
 ### Chart Events
 
 <interface-documentation interfaceName='AgBaseChartListeners' names='["click", "doubleClick", "seriesNodeClick"] ' config='{ "lookupRoot": "charts-api" }'></interface-documentation>
-
