@@ -83,7 +83,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.setupMenuClass();
         this.setupSortableClass();
         this.setupWrapTextClass();
-        this.refreshSpanHeaderHeight(eGui);
+        this.refreshSpanHeaderHeight();
         this.setupAutoHeight(eHeaderCompWrapper);
         this.addColumnHoverListener();
         this.setupFilterCss();
@@ -113,7 +113,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_HEADER_HEIGHT_CHANGED, () => this.refreshSpanHeaderHeight(eGui));
+        this.addManagedListener(this.eventService, Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
     }
 
     private setupUserComp(): void {
@@ -454,8 +454,12 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.addRefreshFunction(listener);
     }
 
-    private refreshSpanHeaderHeight(eGui: HTMLElement) {
-        const { column, comp, columnModel, gridOptionsService } = this;
+    private onHeaderHeightChanged() {
+        this.refreshSpanHeaderHeight();
+    }
+
+    private refreshSpanHeaderHeight() {
+        const { eGui, column, comp, columnModel, gridOptionsService } = this;
         if (!column.getColDef().spanHeaderHeight) { return; }
 
         const { numberOfParents, isSpanningTotal } = this.getColumnGroupPaddingInfo();
@@ -471,7 +475,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             ? columnModel.getPivotGroupHeaderHeight()
             : columnModel.getGroupHeaderHeight();
 
-        const headerHeight = columnModel.getHeaderHeight();
+        const headerHeight = columnModel.getColumnHeaderRowHeight();
         const extraHeight = numberOfParents * groupHeaderHeight;
 
         eGui.style.setProperty('top', `${-extraHeight}px`);
@@ -535,7 +539,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             if (isSpanHeaderHeight) {
                 stopMeasuring();
                 if (newValue) {
-                    const message = "AG Grid: The properties `spanHeaderHeight` and `autoHeaderHeight` cannot be used together.";
+                    const message = "AG Grid: The properties `spanHeaderHeight` and `autoHeaderHeight` cannot be used together in the same column.";
                     doOnce(() => console.warn(message), 'HeaderCellCtrl.spanHeaderHeightAndAutoHeaderHeight');
                 }
                 return;

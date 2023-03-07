@@ -4066,7 +4066,7 @@ export class ColumnModel extends BeanStub {
     public getGroupHeaderHeight(): number {
         return this.gridOptionsService.getNum('groupHeaderHeight') ?? this.getHeaderHeight();
     }
-    public getPivotHeaderHeight(): number {
+    private getPivotHeaderHeight(): number {
         return this.gridOptionsService.getNum('pivotHeaderHeight') ?? this.getHeaderHeight();
     }
     public getPivotGroupHeaderHeight(): number {
