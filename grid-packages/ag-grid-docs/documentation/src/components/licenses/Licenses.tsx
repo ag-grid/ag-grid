@@ -112,13 +112,8 @@ const License = (props: LicenseData) => {
                 </div>
 
                 <div className={styles.licenseActions}>
-                    <a className="button button-secondary" href={buyLink} target="_blank">
-                        <Icon name="creditCard" />
-                        Pay with card
-                    </a>
-                    <a className="button" href={`mailto:info@ag-grid.com?subject=${name} license quote request`}>
-                        <Icon name="email" />
-                        Request a quote
+                    <a className="button" href={buyLink}>
+                        Buy now
                     </a>
                 </div>
             </div>
