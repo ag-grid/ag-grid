@@ -1,7 +1,5 @@
-import { RefSelector } from '../../../widgets/componentAnnotations';
 import {
     SimpleFilter,
-    ConditionPosition,
     ISimpleFilterParams,
     ISimpleFilterModel,
     ISimpleFilterModelType,
@@ -13,6 +11,7 @@ import { makeNull } from '../../../utils/generic';
 import { _ } from '../../../utils';
 import { BaseColDefParams } from '../../../entities/colDef';
 import { IDoesFilterPassParams, IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
+import { setAriaRole } from '../../../utils/aria';
 
 export interface TextFilterModel extends ISimpleFilterModel {
     /** Filter type is always `'text'` */
@@ -133,11 +132,8 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         }
     }
 
-    @RefSelector('eValue-index0-1') private readonly eValueFrom1: AgInputTextField;
-    @RefSelector('eValue-index1-1') private readonly eValueTo1: AgInputTextField;
-
-    @RefSelector('eValue-index0-2') private readonly eValueFrom2: AgInputTextField;
-    @RefSelector('eValue-index1-2') private readonly eValueTo2: AgInputTextField;
+    private readonly eValuesFrom: AgInputTextField[] = [];
+    private readonly eValuesTo: AgInputTextField[] = [];
 
     private matcher: TextMatcher;
     private formatter: TextFormatter;
@@ -161,9 +157,10 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     }
 
     protected setParams(params: TextFilterParams): void {
+        this.textFilterParams = params;
+
         super.setParams(params);
 
-        this.textFilterParams = params;
         this.matcher = this.getTextMatcher();
         this.formatter = this.textFilterParams.textFormatter ||
             (this.textFilterParams.caseSensitive ? TextFilter.DEFAULT_FORMATTER : TextFilter.DEFAULT_LOWERCASE_FORMATTER);
@@ -179,8 +176,8 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         return this.textFilterParams.textMatcher || TextFilter.DEFAULT_MATCHER
     }
 
-    protected createCondition(position: ConditionPosition): TextFilterModel {
-        const type = this.getConditionTypes()[position];
+    protected createCondition(position: number): TextFilterModel {
+        const type = this.getConditionType(position);
 
         const model: TextFilterModel = {
             filterType: this.getFilterType(),
@@ -208,17 +205,17 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
             aSimple.type === bSimple.type;
     }
 
-    protected getInputs(): Tuple<AgInputTextField>[] {
-        return [
-            [this.eValueFrom1, this.eValueTo1],
-            [this.eValueFrom2, this.eValueTo2],
-        ];
+    protected getInputs(position: number): Tuple<AgInputTextField> {
+        if (position >= this.eValuesFrom.length) {
+            return [null, null];
+        }
+        return [this.eValuesFrom[position], this.eValuesTo[position]];
     }
 
-    protected getValues(position: ConditionPosition): Tuple<string> {
+    protected getValues(position: number): Tuple<string> {
         const result: Tuple<string> = [];
-        this.forEachInput((element, index, elPosition, numberOfInputs) => {
-            if (position === elPosition && index < numberOfInputs) {
+        this.forEachPositionInput(position, (element, index, _elPosition, numberOfInputs) => {
+            if (index < numberOfInputs) {
                 const value = makeNull(element.getValue());
                 const cleanValue = (this.textFilterParams.trimInput ? TextFilter.trimInput(value) : value) || null;
                 result.push(cleanValue);
@@ -233,14 +230,28 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         return TextFilter.DEFAULT_FILTER_OPTIONS;
     }
 
-    protected createValueTemplate(position: ConditionPosition): string {
-        const pos = position === ConditionPosition.One ? '1' : '2';
+    protected createValueElement(): HTMLElement {
+        const eCondition = document.createElement('div');
+        eCondition.classList.add('ag-filter-body');
+        setAriaRole(eCondition, 'presentation');
 
-        return /* html */`
-            <div class="ag-filter-body" ref="eCondition${pos}Body" role="presentation">
-                <ag-input-text-field class=".ag-filter-from ag-filter-filter" ref="eValue-index0-${pos}"></ag-input-text-field>
-                <ag-input-text-field class="ag-filter-to ag-filter-filter" ref="eValue-index1-${pos}"></ag-input-text-field>
-            </div>`;
+        this.createFromToElement(eCondition, this.eValuesFrom, 'from');
+        this.createFromToElement(eCondition, this.eValuesTo, 'to');
+
+        return eCondition;
+    }
+
+    private createFromToElement(eCondition: HTMLElement, eValues: AgInputTextField[], fromTo: string): void {
+        const eValue = this.createManagedBean(new AgInputTextField());
+        eValue.addCssClass(`ag-filter-${fromTo}`);
+        eValue.addCssClass('ag-filter-filter');
+        eValues.push(eValue);
+        eCondition.appendChild(eValue.getGui());
+    }
+
+    protected removeValueElements(startPosition: number, deleteCount?: number): void {
+        this.removeComponents(this.eValuesFrom, startPosition, deleteCount);
+        this.removeComponents(this.eValuesTo, startPosition, deleteCount);
     }
 
     protected mapValuesFromModel(filterModel: TextFilterModel | null): Tuple<string> {

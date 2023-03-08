@@ -123,19 +123,20 @@ If more than one Filter Condition is set, then multiple instances of the model a
 
 
 ```ts
-// A filter combining two conditions
+// A filter combining multiple conditions
 interface ICombinedSimpleModel<DateFilterModel> {
     filterType: string;
 
     operator: JoinOperator;
 
-    // two instances of the Filter Model
-    condition1: DateFilterModel;
-    condition2: DateFilterModel;
+    // multiple instances of the Filter Model
+    conditions: DateFilterModel[];
 }
 
 type JoinOperator = 'AND' | 'OR';
 ```
+
+Note that in AG Grid versions prior to 29.2, only two Filter Conditions were supported. These appeared in the Combined Model as properties `condition1` and `condition2`. The grid will still accept and supply models using these properties, but this behaviour is deprecated. The `conditions` property should be used instead.
 
 An example of a Filter Model with two conditions is as follows:
 
@@ -144,16 +145,18 @@ An example of a Filter Model with two conditions is as follows:
 const dateEquals04OrEquals08 = {
     filterType: 'date',
     operator: 'OR',
-    condition1: {
-        filterType: 'date',
-        type: 'equals',
-        dateFrom: '2004-08-29'
-    },
-    condition2: {
-        filterType: 'date',
-        type: 'equals',
-        dateFrom: '2008-08-24'
-    }
+    conditions: [
+        {
+            filterType: 'date',
+            type: 'equals',
+            dateFrom: '2004-08-29'
+        },
+        {
+            filterType: 'date',
+            type: 'equals',
+            dateFrom: '2008-08-24'
+        }
+    ]
 };
 ```
 

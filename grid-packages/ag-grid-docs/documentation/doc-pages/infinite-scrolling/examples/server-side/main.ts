@@ -28,7 +28,7 @@ const columnDefs: ColDef[] = [
         filter: 'agNumberColumnFilter',
         filterParams: {
             filterOptions: ['equals', 'lessThan', 'greaterThan'],
-            suppressAndOrCondition: true,
+            maxNumConditions: 1,
         },
     },
     {

@@ -11,6 +11,8 @@ import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
 import { convertToSet } from '../../utils/set';
 import { Component } from '../../widgets/component';
 import { IRowNode } from '../../interfaces/iRowNode';
+import { RefSelector } from '../../widgets/componentAnnotations';
+import { PositionableFeature } from '../../rendering/features/positionableFeature';
 
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 
@@ -96,7 +98,11 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     // not active) then this appliedModel will be null/undefined.
     private appliedModel: M | null = null;
 
+    private positionableFeature: PositionableFeature;
+
     @Autowired('rowModel') protected readonly rowModel: IRowModel;
+
+    @RefSelector('eFilterBody') protected readonly eFilterBody: HTMLElement;
 
     constructor(private readonly filterNameKey: keyof IFilterTitleLocaleText) {
         super();
@@ -125,6 +131,8 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
                 handleKeyDown: this.handleKeyDown.bind(this)
             }
         ));
+        this.positionableFeature = new PositionableFeature(this.getPositionableElement(), { forcePopupParentAsOffsetParent: true });
+        this.createBean(this.positionableFeature);
     }
 
     // override
@@ -148,7 +156,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         }
         const templateString = /* html */`
             <form class="ag-filter-wrapper">
-                <div class="ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper">
+                <div class="ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper" ref="eFilterBody">
                     ${this.createBodyTemplate()}
                 </div>
             </form>`;
@@ -376,6 +384,18 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
+        if (params?.container === 'floatingFilter') {
+            this.positionableFeature.restoreLastSize();
+            this.positionableFeature.setResizable(
+                this.gridOptionsService.is('enableRtl')
+                    ? { bottom: true, bottomLeft: true, left: true }
+                    : { bottom: true, bottomRight: true, right: true }
+            );
+        } else {
+            this.positionableFeature.removeSizeFromEl();
+            this.positionableFeature.setResizable(false);
+        }
+
         if (params == null) { return; }
 
         this.hidePopup = params.hidePopup;
@@ -427,5 +447,10 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
             getValue: (field) => rowNode.data[field],
             node: rowNode,
         });
+    }
+
+    // override to control positionable feature
+    protected getPositionableElement(): HTMLElement {
+        return this.eFilterBody;
     }
 }

@@ -41,7 +41,7 @@ The example below shows the Text Filter in action:
     - There are only two [Filter Options](#text-filter-options): `filterOptions = ['contains', 'notContains']`
     - There is a [Text Formatter](#text-formatter), so if you search for 'o' it will find '&ouml;'. You can try this by searching the string `'Bjo'`.
     - The filter has a debounce of 200ms (`debounceMs = 200`).
-    - The AND/OR additional filter is suppressed (`suppressAndOrCondition = true`)
+    - Only one Filter Condition is allowed (`maxNumConditions = 1`)
 - For the **Country** column:
     - There is only one [Filter Option](#text-filter-options): `filterOptions = ['contains']`
     - There is a [Custom Matcher](#text-custom-matcher) so that aliases can be entered in the filter, e.g. if you filter using the text `'usa'` it will match `United States` or `'holland'` will match `'Netherlands'`
@@ -151,19 +151,20 @@ The Filter Model describes the current state of the applied Number Filter. If on
 If more than one Filter Condition is set, then multiple instances of the model are created and wrapped inside a Combined Model (`ICombinedSimpleModel<TextFilterModel>`). A Combined Model looks as follows:
 
 ```ts
-// A filter combining two conditions
+// A filter combining multiple conditions
 interface ICombinedSimpleModel<TextFilterModel> {
     filterType: string;
 
     operator: JoinOperator;
 
-    // two instances of the Filter Model
-    condition1: TextFilterModel;
-    condition2: TextFilterModel;
+    // multiple instances of the Filter Model
+    conditions: TextFilterModel[];
 }
 
 type JoinOperator = 'AND' | 'OR';
 ```
+
+Note that in AG Grid versions prior to 29.2, only two Filter Conditions were supported. These appeared in the Combined Model as properties `condition1` and `condition2`. The grid will still accept and supply models using these properties, but this behaviour is deprecated. The `conditions` property should be used instead.
 
 An example of a Filter Model with two conditions is as follows:
 
@@ -172,16 +173,18 @@ An example of a Filter Model with two conditions is as follows:
 const textEqualsSwimmingOrEqualsGymnastics = {
     filterType: 'text',
     operator: 'OR',
-    condition1: {
-        filterType: 'text',
-        type: 'equals',
-        filter: 'Swimming'
-    },
-    condition2: {
-        filterType: 'text',
-        type: 'equals',
-        filter: 'Gymnastics'
-    }
+    conditions: [
+        {
+            filterType: 'text',
+            type: 'equals',
+            filter: 'Swimming'
+        },
+        {
+            filterType: 'text',
+            type: 'equals',
+            filter: 'Gymnastics'
+        }
+    ]
 };
 ```
 

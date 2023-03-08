@@ -14,8 +14,6 @@ import {
     AgPromise,
     KeyCode,
     KeyCreatorParams,
-    PositionableFeature,
-    ResizableStructure,
     _,
     ISetFilter,
     SetFilterModel,
@@ -47,7 +45,6 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private valueModel: SetValueModel<V> | null = null;
     private setFilterParams: SetFilterParams<any, V> | null = null;
     private virtualList: VirtualList | null = null;
-    private positionableFeature: PositionableFeature;
     private caseSensitive: boolean = false;
     private convertValuesToStrings: boolean = false;
     private treeDataTreeList = false;
@@ -70,8 +67,6 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
     protected postConstruct() {
         super.postConstruct();
-        this.positionableFeature = new PositionableFeature(this.eSetFilterList, { forcePopupParentAsOffsetParent: true });
-        this.createBean(this.positionableFeature);
     }
 
     // unlike the simple filters, nothing in the set filter UI shows/hides.
@@ -549,23 +544,6 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
         if (!params || !params.suppressFocus) {
             eMiniFilter.getFocusableElement().focus();
-        }
-
-        const resizable = !!(params && params.container === 'floatingFilter');
-        let resizableObject: ResizableStructure;
-
-        if (this.gridOptionsService.is('enableRtl')) {
-            resizableObject = { bottom: true, bottomLeft: true, left: true };
-        } else {
-            resizableObject = { bottom: true, bottomRight: true, right: true };
-        }
-
-        if (resizable) {
-            this.positionableFeature.restoreLastSize();
-            this.positionableFeature.setResizable(resizableObject);
-        } else {
-            this.positionableFeature.removeSizeFromEl();
-            this.positionableFeature.setResizable(false);
         }
     }
 
@@ -1082,6 +1060,10 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
     public getModelAsString(model: SetFilterModel): string {
         return this.filterModelFormatter.getModelAsString(model, this);
+    }
+
+    protected getPositionableElement(): HTMLElement {
+        return this.eSetFilterList;
     }
 }
 

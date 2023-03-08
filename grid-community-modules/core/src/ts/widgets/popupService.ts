@@ -27,6 +27,7 @@ export interface PopupPositionParams {
     alignSide?: 'left' | 'right',
     keepWithinBounds?: boolean;
     skipObserver?: boolean;
+    shouldSetMaxHeight?: boolean;
     updatePosition?: () => { x: number; y: number; };
     postProcessCallback?: () => void;
 }
@@ -175,7 +176,7 @@ export class PopupService extends BeanStub {
     }
 
     public positionPopupUnderMouseEvent(params: PopupPositionParams & { type: string, mouseEvent: MouseEvent | Touch }): void {
-        const { ePopup, nudgeX, nudgeY, skipObserver } = params;
+        const { ePopup, nudgeX, nudgeY, skipObserver, shouldSetMaxHeight } = params;
 
         this.positionPopup({
             ePopup: ePopup,
@@ -183,6 +184,7 @@ export class PopupService extends BeanStub {
             nudgeY,
             keepWithinBounds: true,
             skipObserver,
+            shouldSetMaxHeight,
             updatePosition: () => this.calculatePointerAlign(params.mouseEvent),
             postProcessCallback: () => this.callPostProcessPopup(params.type, params.ePopup, null, params.mouseEvent, params.column, params.rowNode)
         });
@@ -221,6 +223,7 @@ export class PopupService extends BeanStub {
             nudgeX: params.nudgeX,
             nudgeY: params.nudgeY,
             keepWithinBounds: params.keepWithinBounds,
+            shouldSetMaxHeight: params.shouldSetMaxHeight,
             updatePosition,
             postProcessCallback: () => this.callPostProcessPopup(params.type, params.ePopup, params.eventSource, null, params.column, params.rowNode)
         });
@@ -249,7 +252,7 @@ export class PopupService extends BeanStub {
     }
 
     public positionPopup(params: PopupPositionParams): void {
-        const { ePopup, keepWithinBounds, nudgeX, nudgeY, skipObserver, updatePosition } = params;
+        const { ePopup, keepWithinBounds, nudgeX, nudgeY, skipObserver, shouldSetMaxHeight, updatePosition } = params;
         const lastSize = { width: 0, height: 0 };
 
         const updatePopupPosition = (fromResizeObserver: boolean = false) => {
@@ -268,7 +271,12 @@ export class PopupService extends BeanStub {
 
             if (nudgeX) { x += nudgeX; }
             if (nudgeY) { y += nudgeY; }
-            
+
+            if (shouldSetMaxHeight) {
+                // positionPopup can be called multiple times, so need to clear before bounds check
+                ePopup.style.removeProperty('max-height');
+            }
+
             // if popup is overflowing to the bottom, move it up
             if (keepWithinBounds) {
                 x = this.keepXYWithinBounds(ePopup, x, DIRECTION.horizontal);
@@ -277,6 +285,10 @@ export class PopupService extends BeanStub {
 
             ePopup.style.left = `${x}px`;
             ePopup.style.top = `${y}px`;
+            if (shouldSetMaxHeight && getComputedStyle(ePopup).maxHeight === '100%') {
+                // max height could be overridden, so only set if not the default (100%)
+                ePopup.style.maxHeight = `calc(100% - ${y}px)`;
+            }
 
             if (params.postProcessCallback) {
                 params.postProcessCallback();

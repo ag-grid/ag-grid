@@ -169,6 +169,9 @@
 
     .ag-simple-filter-body-wrapper {
         @include ag.vertical-widget-container();
+        .ag-resizer-wrapper {
+            margin: 0;
+        }
     }
 
     .ag-filter-no-matches {
