@@ -5,6 +5,7 @@
 
     display: none;
     width: 220px;
+    padding-top: $size-3;
     padding-left: $size-2;
     line-height: var(--line-height-tight);
     border-left: solid 1px var(--bright-blue-gray);
@@ -23,8 +24,13 @@
         }
     }
 
+    h3 {
+        line-height: var(--line-height-ultra-tight);
+        margin-bottom: $size-2 !important; // !important for .ag-styles specificity
+    }
+
     li:not(.level-2):not(:first-child) {
-        margin-top: $size-2;
+        margin-top: $size-1;
     }
 
     li:not(.level-2) a {
@@ -35,7 +41,7 @@
 }
 
 .level-2 {
-    margin-top: $size-half;
-    margin-left: $size-2;
+    margin-top: $size-1 !important; // !important for .ag-styles specificity
+    margin-left: 14px;
     font-size: var(--font-size-small);
 }

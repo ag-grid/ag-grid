@@ -88,11 +88,7 @@ const MenuItem = ({ item, currentFramework }) => {
     return (
         <li key={item.title}>
             {item.url ? (
-                <Link
-                    to={convertToFrameworkUrl(item.url, currentFramework)}
-                    className="font-size-small"
-                    activeClassName={styles.activeMenuItem}
-                >
+                <Link to={convertToFrameworkUrl(item.url, currentFramework)} activeClassName={styles.activeMenuItem}>
                     {title}
                 </Link>
             ) : (

@@ -20,6 +20,7 @@
 .doc-page {
     flex: 1 1 0px;
     min-width: 0px;
+    padding-top: $size-3;
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         padding-right: $size-4;
