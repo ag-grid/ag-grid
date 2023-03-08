@@ -64,7 +64,10 @@ export class CartesianChart extends Chart {
         const { seriesRoot } = this;
         if (clipSeries) {
             const { x, y, width, height } = seriesRect;
-            seriesRoot.setClipRectInGroupCoordinateSpace(new BBox(x, y, width, height));
+            const { pixelRatio } = this.scene.canvas;
+            seriesRoot.setClipRectInGroupCoordinateSpace(
+                new BBox(x / pixelRatio, y / pixelRatio, width / pixelRatio, height / pixelRatio)
+            );
         } else {
             seriesRoot.setClipRectInGroupCoordinateSpace(undefined);
         }

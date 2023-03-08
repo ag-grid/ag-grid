@@ -1,7 +1,16 @@
 import { isNumber } from '../../util/value';
 import { BaseManager } from './baseManager';
 
-type InteractionTypes = 'click' | 'dblclick' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left';
+type InteractionTypes =
+    | 'click'
+    | 'dblclick'
+    | 'hover'
+    | 'drag-start'
+    | 'drag'
+    | 'drag-end'
+    | 'leave'
+    | 'page-left'
+    | 'wheel';
 
 type SUPPORTED_EVENTS =
     | 'click'
@@ -15,8 +24,9 @@ type SUPPORTED_EVENTS =
     | 'touchmove'
     | 'touchend'
     | 'touchcancel'
-    | 'pagehide';
-const WINDOW_EVENT_HANDLERS: SUPPORTED_EVENTS[] = ['pagehide', 'mousemove', 'mouseup'];
+    | 'pagehide'
+    | 'wheel';
+const WINDOW_EVENT_HANDLERS: SUPPORTED_EVENTS[] = ['pagehide', 'mousemove', 'mouseup', 'wheel'];
 const EVENT_HANDLERS: SUPPORTED_EVENTS[] = [
     'click',
     'dblclick',
@@ -38,7 +48,7 @@ export type InteractionEvent<T extends InteractionTypes> = {
     sourceEvent: Event;
     /** Consume the event, don't notify other listeners! */
     consume(): void;
-} & (T extends 'drag' ? { startX: number; startY: number } : {});
+};
 
 interface Coords {
     clientX: number;
@@ -190,6 +200,9 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
 
             case 'pagehide':
                 return ['page-left'];
+
+            case 'wheel':
+                return ['wheel'];
         }
 
         return [];

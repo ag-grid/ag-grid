@@ -5,7 +5,7 @@ interface ZoomState {
     max: number;
 }
 
-interface AxisZoomState {
+export interface AxisZoomState {
     x?: ZoomState;
     y?: ZoomState;
 }
