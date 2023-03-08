@@ -1,7 +1,7 @@
 import { _ModuleSupport } from 'ag-charts-community';
-import { ZoomRect } from './scenes/zoomRect';
 
-export type ZoomCoords = { x1: number; y1: number; x2: number; y2: number };
+import { ZoomRect } from './scenes/zoomRect';
+import { ZoomCoords } from './zoomTypes';
 
 export class ZoomSelector {
     public rect = new ZoomRect();
