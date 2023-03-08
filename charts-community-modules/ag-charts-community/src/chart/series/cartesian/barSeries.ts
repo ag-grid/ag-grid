@@ -172,8 +172,13 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     @Validate(STRING_ARRAY)
     hideInLegend: string[] = [];
 
-    protected _yKeys: string[][] = [];
-    set yKeys(yKeys: string[][]) {
+    yKeys: string[][] = [];
+
+    protected yKeysCache: string[][] = [];
+
+    protected processYKeys() {
+        let { yKeys } = this;
+
         let flatYKeys: string[] | undefined = undefined;
         // Convert from flat y-keys to grouped y-keys.
         if (!is2dArray(yKeys)) {
@@ -186,9 +191,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             yKeys = stackGroups.map((keys) => keys);
         }
 
-        if (!areArrayItemsStrictlyEqual(this._yKeys, yKeys)) {
+        if (!areArrayItemsStrictlyEqual(this.yKeysCache, yKeys)) {
             this.flatYKeys = flatYKeys ? flatYKeys : undefined;
-            this._yKeys = yKeys;
+            this.yKeys = yKeys;
 
             let prevYKeyCount = 0;
             this.cumYKeyCount = [];
@@ -200,48 +205,34 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 this.cumYKeyCount.push(prevYKeyCount);
                 prevYKeyCount += stack.length;
             });
-            this.yData = [];
-
             this.processSeriesItemEnabled();
 
             const { groupScale } = this;
             groupScale.domain = visibleStacks;
         }
-    }
-    get yKeys(): string[][] {
-        return this._yKeys;
+        this.yKeysCache = yKeys;
     }
 
     @Validate(BOOLEAN_ARRAY)
-    protected _visibles: boolean[] = [];
-    set visibles(visibles: boolean[] | boolean[][]) {
-        const flattenFn = (r: boolean[], n: boolean | boolean[]) => r.concat(...(Array.isArray(n) ? n : [n]));
-        this._visibles = (visibles as any).reduce(flattenFn, []);
-
-        this.processSeriesItemEnabled();
-    }
-    get visibles() {
-        return this._visibles;
-    }
+    visibles: boolean[] = [];
 
     private processSeriesItemEnabled() {
-        const { seriesItemEnabled, _visibles: visibles = [] } = this;
+        const { seriesItemEnabled } = this;
+
+        const flattenFn = (r: boolean[], n: boolean | boolean[]) => r.concat(...(Array.isArray(n) ? n : [n]));
+        const visibles = this.visibles.reduce(flattenFn, []);
+
         seriesItemEnabled.clear();
         let visiblesIdx = 0;
-        this._yKeys.forEach((stack) => {
-            stack.forEach((yKey) => seriesItemEnabled.set(yKey, visibles?.[visiblesIdx++] ?? true));
+        this.yKeys.forEach((stack) => {
+            stack.forEach((yKey) => seriesItemEnabled.set(yKey, visibles[visiblesIdx++] ?? true));
         });
     }
 
     @Validate(BOOLEAN)
     protected _grouped: boolean = false;
     set grouped(value: boolean) {
-        if (this._grouped !== value) {
-            this._grouped = value;
-            if (this.flatYKeys) {
-                this.yKeys = this.flatYKeys as any;
-            }
-        }
+        this._grouped = value;
     }
     get grouped(): boolean {
         return this._grouped;
@@ -253,19 +244,17 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
      * A map of `yKeys` to their names (used in legends and tooltips).
      * For example, if a key is `product_name` it's name can be a more presentable `Product Name`.
      */
-    protected _yNames: { [key in string]: string } = {};
-    set yNames(values: { [key in string]: string }) {
+    yNames: { [key in string]: string } = {};
+
+    protected processYNames() {
+        const values = this.yNames;
         if (Array.isArray(values) && this.flatYKeys) {
             const map: { [key in string]: string } = {};
             this.flatYKeys.forEach((k, i) => {
                 map[k] = values[i];
             });
-            values = map;
+            this.yNames = map;
         }
-        this._yNames = values;
-    }
-    get yNames(): { [key in string]: string } {
-        return this._yNames;
     }
 
     /**
@@ -291,6 +280,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
     protected smallestDataInterval?: { x: number; y: number } = undefined;
     async processData() {
+        this.processYKeys();
+        this.processYNames();
+
         const { xKey, yKeys, seriesItemEnabled } = this;
         const data = xKey && yKeys.length && this.data ? this.data : [];
 

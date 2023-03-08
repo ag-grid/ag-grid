@@ -239,7 +239,6 @@ export function jsonMerge<T>(json: T[], opts?: JsonMergeOptions): T {
  * @param params.constructors dictionary of property name to class constructors for properties that
  *                            require object construction
  * @param params.allowedTypes overrides by path for allowed property types
- * @param params.priorityProps A list of properties to be merged first
  */
 export function jsonApply<Target, Source extends DeepPartial<Target>>(
     target: Target,
@@ -250,7 +249,6 @@ export function jsonApply<Target, Source extends DeepPartial<Target>>(
         skip?: string[];
         constructors?: Record<string, new () => any>;
         allowedTypes?: Record<string, ReturnType<typeof classify>[]>;
-        priorityProps?: string[];
     } = {}
 ): Target {
     const {
@@ -259,7 +257,6 @@ export function jsonApply<Target, Source extends DeepPartial<Target>>(
         skip = [],
         constructors = {},
         allowedTypes = {},
-        priorityProps = [],
     } = params;
 
     if (target == null) {
@@ -270,10 +267,7 @@ export function jsonApply<Target, Source extends DeepPartial<Target>>(
     }
 
     const targetType = classify(target);
-    const props = Object.keys(source).sort(
-        (a, b) => getPropPriority(a, priorityProps) - getPropPriority(b, priorityProps)
-    ) as Array<Extract<keyof Source, string>>;
-    for (const property of props) {
+    for (const property in source) {
         const propertyMatcherPath = `${matcherPath ? matcherPath + '.' : ''}${property}`;
         if (skip.indexOf(propertyMatcherPath) >= 0) {
             continue;
@@ -420,12 +414,4 @@ function classify(value: any): 'array' | 'object' | 'function' | 'primitive' | '
     }
 
     return 'primitive';
-}
-
-function getPropPriority(prop: string, priorityProps: string[]) {
-    const index = priorityProps.indexOf(prop);
-    if (index < 0) {
-        return priorityProps.length;
-    }
-    return index;
 }
