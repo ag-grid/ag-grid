@@ -87,47 +87,8 @@
     text-align: center;
 
     p {
-        max-width: 44em;
-    }
-
-    a {
-        margin-bottom: $size-1;
-        margin-left: $size-1;
-        margin-right: $size-1;
-    }
-
-    @media screen and (min-width: $breakpoint-pricing-medium) {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        p {
-            margin: 0 !important; // !important for .ag-styles specificity
-            text-align: left;
-        }
-
-        a {
-            font-size: var(--font-size-extra-large) !important; // !important for .ag-styles specificity
-        }
-    }
-}
-
-.contactSalesButton {
-    display: inline-flex !important; // !important for .ag-styles specificity
-    align-items: center;
-    gap: $size-1;
-
-    :global(.icon) {
-        position: static !important; // !important for .ag-styles specificity
-        width: 54px !important; // !important for .ag-styles specificity
-        height: 54px !important; // !important for .ag-styles specificity
-        margin: 0 0 -0.1em !important; // !important for .ag-styles specificity
-    }
-
-    div > span {
-        display: block;
-        line-height: var(--line-height-tight);
-        text-align: left;
+        max-width: 48em;
+        margin: 0 auto $size-1 !important; // !important for .ag-styles specificity
     }
 }
 
@@ -256,7 +217,7 @@
     p {
         max-width: 740px;
         margin-right: auto;
-        margin-bottom: $size-2;
+        margin-bottom: $size-1 !important; // !important for .ag-styles specificity
         margin-left: auto;
     }
 

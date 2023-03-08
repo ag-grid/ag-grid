@@ -87,21 +87,16 @@ const LicensePricing = () => {
 
                 <div className={styles.bulkLicenses}>
                     <p className="text-secondary">
-                        Bulk pricing discounts available. Use the pay with card buttons above to see pricing for up to
-                        10 developers. For more than 10 developers or any questions with regards to your purchase...
+                        Bulk pricing discounts available. Use the buy now buttons above to see pricing for up to 10
+                        developers. For more than 10 developers or any questions with regards to your purchase please
+                        email us.
                     </p>
+
                     <a
-                        className={classnames(styles.contactSalesButton, 'button-secondary')}
+                        className="font-size-extra-large"
                         href="mailto:info@ag-grid.com?subject=AG Grid Developer license query"
                     >
-                        <Icon name="email" />
-
-                        <div>
-                            <span className={styles.buttonText}>Contact sales</span>
-                            <span className={classnames(styles.buttonEmail, 'font-size-extra-small')}>
-                                info@ag-grid.com
-                            </span>
-                        </div>
+                        info@ag-grid.com
                     </a>
                 </div>
 
@@ -360,19 +355,10 @@ const LicensePricing = () => {
                     </p>
 
                     <a
-                        className={classnames(styles.contactSalesButton, 'button-secondary')}
+                        className="font-size-extra-large"
                         href="mailto:info@ag-grid.com?subject=AG Grid Developer license query"
                     >
-                        <span className="icon">
-                            <Icon name="email" />
-                        </span>
-
-                        <div>
-                            <span className={styles.buttonText}>Contact sales</span>
-                            <span className={classnames(styles.buttonEmail, 'font-size-extra-small')}>
-                                info@ag-grid.com
-                            </span>
-                        </div>
+                        info@ag-grid.com
                     </a>
                 </div>
             </div>
