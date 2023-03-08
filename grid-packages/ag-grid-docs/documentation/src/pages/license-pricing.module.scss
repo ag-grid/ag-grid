@@ -44,8 +44,15 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0 $size-2;
+    justify-content: center;
+    text-align: center;
+    gap: $size-1 $size-2;
     margin-top: $size-6 !important; // !important for .ag-styles specificity
+
+    @media screen and (min-width: $breakpoint-pricing-small) {
+        justify-content: flex-start;
+        text-align: left;
+    }
 
     h3,
     p {
@@ -57,10 +64,15 @@
     width: 33.333%;
     min-width: 160px;
     max-width: 220px;
-    aspect-ratio: 16 / 9;
-    margin-top: $size-1 !important; // !important for .ag-styles specificity
-    object-fit: cover;
     border-radius: var(--border-radius);
+
+    img {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        margin-top: $size-1 !important; // !important for .ag-styles specificity
+        object-fit: cover;
+        border-radius: var(--border-radius);
+    }
 }
 
 .bulkLicenses,
