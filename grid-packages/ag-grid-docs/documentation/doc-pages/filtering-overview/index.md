@@ -6,7 +6,7 @@ This section gives an overview of the different filter types provided by the gri
 
 ## Filter Types
 
-- **[Column Filters](/filtering/)** - a column-based filter that filters rows using the values under a specific column:
+- **[Column Filter](/filtering/)** - a column-based filter that filters rows using the values under a specific column:
 
 <image-caption src="filtering-overview/resources/column-filters.png" alt="Text Filter" width="50rem"></image-caption>
 
