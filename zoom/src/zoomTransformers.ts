@@ -12,6 +12,13 @@ const unitZoomState: () => DefinedZoomState = () => ({
 
 const constrain = (value: number, min = 0, max = 1) => Math.max(min, Math.min(max, value));
 
+export function definedZoomState(zoom?: _ModuleSupport.AxisZoomState): DefinedZoomState {
+    return {
+        x: { min: zoom?.x?.min ?? 0, max: zoom?.x?.max ?? 1 },
+        y: { min: zoom?.y?.min ?? 0, max: zoom?.y?.max ?? 1 },
+    };
+}
+
 /**
  * Calculate the position on the series rect as a ratio from the top left corner. Invert the ratio on the y-axis to
  * cater for conflicting direction between screen and chart axis systems. Constrains the point to the series
