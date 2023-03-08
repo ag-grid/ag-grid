@@ -145,6 +145,7 @@ const main = async () => {
 
     const chartsPrefix = grid ? '' : 'charts-';
     fsExtra.copySync(path.resolve(__dirname, './.npmignore'), `./${moduleDir}/.npmignore`);
+    fsExtra.copySync(path.resolve(__dirname, './.gitignore'), `./${moduleDir}/.gitignore`);
     fsExtra.copySync(path.resolve(__dirname, './tsconfig.cjs.es5.docs.json'), `./${moduleDir}/tsconfig.cjs.es5.docs.json`);
     fsExtra.copySync(path.resolve(__dirname, './tsconfig.cjs.es5.json'), `./${moduleDir}/tsconfig.cjs.es5.json`);
     fsExtra.copySync(path.resolve(__dirname, './tsconfig.cjs.es6.json'), `./${moduleDir}/tsconfig.cjs.es6.json`);
