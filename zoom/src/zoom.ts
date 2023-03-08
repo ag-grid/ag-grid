@@ -36,19 +36,19 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     /**
      * The step size to zoom in when scrolling the mouse wheel.
      */
-    @Validate(OPT_NUMBER)
+    @Validate(OPT_NUMBER(0, 1))
     public scrollingStep = 0.1;
 
     /**
      * The minimum number of nodes to show when zooming on the x-axis
      */
-    @Validate(OPT_NUMBER)
+    @Validate(OPT_NUMBER(1))
     public minXNodes?: number;
 
     /**
      * The minimum number of nodes to show when zooming on the y-axis
      */
-    @Validate(OPT_NUMBER)
+    @Validate(OPT_NUMBER(1))
     public minYNodes?: number;
 
     private readonly scene: _Scene.Scene;
