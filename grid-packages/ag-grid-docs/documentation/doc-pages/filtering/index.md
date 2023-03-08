@@ -3,14 +3,14 @@ title: "Column Filters"
 ---
 
 [[only-javascript-or-angular-or-vue]]
-|Column filters are filters that are applied to the data at the column level. Many column filters can be active at once (e.g. filters set on different columns) and the grid will display rows that pass every column's filter.
+|Column Filters are filters that are applied to the data at the column level. Many Column Filters can be active at once (e.g. filters set on different columns) and the grid will display rows that pass every column's filter.
 
 [[only-react]]
 |<video-section id="pebXUHUdlos" title="React Column Filters" header="true">
-|Column filters are filters that are applied to the data at the column level. Many column filters can be active at once (e.g. filters set on different columns) and the grid will display rows that pass every column's filter.
+|Column Filters are filters that are applied to the data at the column level. Many Column Filters can be active at once (e.g. filters set on different columns) and the grid will display rows that pass every column's filter.
 |</video-section>
 
-Column filters are accessed in the grid UI either through the [Column Menu](/column-menu/) or the [Tool Panel](/tool-panel/).
+Column Filters are accessed in the grid UI either through the [Column Menu](/column-menu/) or the [Tool Panel](/tool-panel/).
 
 <div style="display: flex; justify-content: center;">
     <image-caption src="filtering/resources/open-column.gif" alt="Open Column" width="25rem" constrained="true">
@@ -46,9 +46,9 @@ The example below demonstrates the four Provided Filters and the Multi Filter:
 
 ## Relation to Quick Filter and External Filter
 
-Column filters work independently of [Quick Filter](/filter-quick/) and [External Filter](/filter-external/). If a quick filter and / or external filter are applied along with a column filter, each filter type is considered and the row will only show if it passes all three types.
+Column Filters work independently of [Quick Filter](/filter-quick/) and [External Filter](/filter-external/). If a quick filter and / or external filter are applied along with a Column Filter, each filter type is considered and the row will only show if it passes all three types.
 
-Column filters are tied to a specific column. Quick Filter and external filter are not tied to any particular column. This section of the documentation talks about column filters only. For Quick Filter and external filter, click the links above to learn more.
+Column Filters are tied to a specific column. Quick Filter and external filter are not tied to any particular column. This section of the documentation talks about Column Filters only. For Quick Filter and external filter, click the links above to learn more.
 
 ## Next Up
 
