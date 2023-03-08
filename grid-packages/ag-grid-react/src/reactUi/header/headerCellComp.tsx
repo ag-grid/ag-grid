@@ -44,9 +44,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
     });
 
     // js comps
-    useEffect(() => showJsComp(
-        userCompDetails, context, eHeaderCompWrapper.current!, userCompRef
-    ), [userCompDetails]);
+    useLayoutEffect(() => showJsComp(userCompDetails, context, eHeaderCompWrapper.current!, userCompRef), [userCompDetails]);
 
     // add drag handling, must be done after component is added to the dom
     useEffect(() => {

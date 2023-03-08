@@ -4,7 +4,7 @@ import { BeansContext } from '../beansContext';
 import HeaderCellComp from './headerCellComp';
 import HeaderGroupCellComp from './headerGroupCellComp';
 import HeaderFilterCellComp from './headerFilterCellComp';
-import { useEffectOnce } from '../useEffectOnce';
+import { useLayoutEffectOnce } from '../useEffectOnce';
 
 const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
@@ -45,7 +45,7 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
         return [...oldCtrlsWeAreKeeping, ...newCtrls];
     }, []);
 
-    useEffectOnce(() => {
+    useLayoutEffectOnce(() => {
 
         const compProxy: IHeaderRowComp = {
             setTransform: transform => setTransform(transform),
@@ -90,7 +90,6 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
         }
     }, []);
 
-    // below, we are not doing floating filters, not yet
     return (
         <div ref={eGui} className={className} role="row" style={style} aria-rowindex={ariaRowIndex}>
             { cellCtrls.map( createCellJsx ) }

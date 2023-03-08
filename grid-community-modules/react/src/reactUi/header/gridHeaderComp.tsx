@@ -5,7 +5,7 @@ import {
 } from '@ag-grid-community/core';
 import { CssClasses } from '../utils';
 import HeaderRowContainerComp from './headerRowContainerComp';
-import { useEffectOnce } from '../useEffectOnce';
+import { useLayoutEffectOnce } from '../useEffectOnce';
 
 
 const GridHeaderComp = () => {
@@ -16,7 +16,7 @@ const GridHeaderComp = () => {
     const {context} = useContext(BeansContext);
     const eGui = useRef<HTMLDivElement>(null);
 
-    useEffectOnce(() => {
+    useLayoutEffectOnce(() => {
 
         const compProxy: IGridHeaderComp = {
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),

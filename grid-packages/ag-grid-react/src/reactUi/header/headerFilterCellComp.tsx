@@ -1,9 +1,9 @@
-import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
-import { AgPromise, HeaderFilterCellCtrl, ResolveAndRejectCallback, IFloatingFilter, IHeaderFilterCellComp, UserCompDetails } from 'ag-grid-community';
+import { AgPromise, HeaderFilterCellCtrl, IFloatingFilter, IHeaderFilterCellComp, UserCompDetails } from 'ag-grid-community';
 import { CssClasses, isComponentStateless } from '../utils';
 import { showJsComp } from '../jsComp';
-import { useEffectOnce } from '../useEffectOnce';
+import { useLayoutEffectOnce } from '../useEffectOnce';
 
 const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
 
@@ -24,7 +24,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
     const alreadyResolved = useRef<boolean>(false);
     const userCompResolve = useRef<(value: IFloatingFilter)=>void>();  
     const userCompPromise = useRef<AgPromise<IFloatingFilter>>();
-    useEffectOnce( ()=> {
+    useLayoutEffectOnce( ()=> {
         userCompPromise.current = new AgPromise<IFloatingFilter>( resolve => {
             userCompResolve.current = resolve;
         });
@@ -45,7 +45,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
 
     const { ctrl } = props;
 
-    useEffectOnce(() => {
+    useLayoutEffectOnce(() => {
 
         const compProxy: IHeaderFilterCellComp = {
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
@@ -65,9 +65,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
     });
 
     // js comps
-    useEffect(() => {
-        return showJsComp(userCompDetails, context, eFloatingFilterBody.current!, userCompRef);
-    }, [userCompDetails]);
+    useLayoutEffect(() => showJsComp(userCompDetails, context, eFloatingFilterBody.current!, userCompRef), [userCompDetails]);
 
     const style = useMemo(() => ({
         width: width

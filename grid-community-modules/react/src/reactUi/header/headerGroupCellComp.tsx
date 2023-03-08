@@ -1,8 +1,8 @@
 import { HeaderGroupCellCtrl, IHeaderGroupCellComp, UserCompDetails } from '@ag-grid-community/core';
-import React, { memo, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';
-import { useEffectOnce } from '../useEffectOnce';
+import { useLayoutEffectOnce } from '../useEffectOnce';
 import { CssClasses } from '../utils';
 
 const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
@@ -23,7 +23,7 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
 
     const { ctrl } = props;
 
-    useEffectOnce(() => {
+    useLayoutEffectOnce(() => {
 
         const compProxy: IHeaderGroupCellComp = {
             setWidth: width => setWidth(width),
@@ -43,9 +43,7 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
     });
 
     // js comps
-    useEffect(() => {
-        return showJsComp(userCompDetails, context, eGui.current!);
-    }, [userCompDetails]);
+    useLayoutEffect(() => showJsComp(userCompDetails, context, eGui.current!), [userCompDetails]);
 
     // add drag handling, must be done after component is added to the dom
     useEffect(()=> {

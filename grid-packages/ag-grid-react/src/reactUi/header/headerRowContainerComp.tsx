@@ -5,7 +5,7 @@ import {
 } from 'ag-grid-community';
 import { CssClasses } from '../utils';
 import HeaderRowComp from './headerRowComp';
-import { useEffectOnce } from '../useEffectOnce';
+import { useLayoutEffectOnce } from '../useEffectOnce';
 
 
 const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
@@ -24,7 +24,7 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
     const pinnedRight = props.pinned === 'right';
     const centre = !pinnedLeft && !pinnedRight;
 
-    useEffectOnce(() => {
+    useLayoutEffectOnce(() => {
         const compProxy: IHeaderRowContainerComp = {
             setDisplayed: displayed => {
                 setCssClasses(prev => prev.setClass('ag-hidden', !displayed));
