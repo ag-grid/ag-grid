@@ -153,7 +153,7 @@ const main = async () => {
     fsExtra.copySync(path.resolve(__dirname, './tsconfig.esm.es6.json'), `./${moduleDir}/tsconfig.esm.es6.json`);
     fsExtra.copySync(path.resolve(__dirname, './tsconfig.test.json'), `./${moduleDir}/tsconfig.test.json`);
     fsExtra.copySync(path.resolve(__dirname, `./${chartsPrefix}jest.config.js`), `./${moduleDir}/jest.config.js`);
-    fsExtra.copySync(path.resolve(__dirname, './main.ts'), `./${moduleDir}/src/main.ts`);
+    fsExtra.copySync(path.resolve(__dirname, `./${chartsPrefix}main.ts`), `./${moduleDir}/src/main.ts`);
     fsExtra.copySync(path.resolve(__dirname, '../../grid-enterprise-modules/core/LICENSE.html'), `./${moduleDir}/LICENSE.html`);
 
     if (!grid) {
@@ -180,11 +180,12 @@ const main = async () => {
         fs.writeFileSync(examplePackageJsonPath, JSON.stringify(examplePackageJson, null, 4));
     }
 
+    spawnSync('npx', `lerna bootstrap --include-dependents --include-dependencies --scope=${moduleName}`.split(' '), { stdio: 'inherit' });
+
     if (!grid) {
         spawnSync('npx', `prettier -w ./${moduleDir}/`.split(' '), { stdio: 'inherit' });
+        spawnSync('npx', `lerna run build --scope=${moduleName}`.split(' '), { stdio: 'inherit' })
     }
-
-    spawnSync('npx', `lerna bootstrap --include-dependents --include-dependencies --scope=${moduleName}`.split(' '), { stdio: 'inherit' });
 };
 
 main();
