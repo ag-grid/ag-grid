@@ -38,7 +38,7 @@ type ValidatorFunc = (property: string, value: any, defaultValue?: any) => boole
 export abstract class AgSparkline {
     static create(options: SparklineFactoryOptions, tooltip: SparklineTooltip) {
         // avoid mutating user provided options
-        options = Object.create(options);
+        options = _Util.jsonMerge([options]);
 
         const sparkline = getSparklineInstance(options.type);
 
