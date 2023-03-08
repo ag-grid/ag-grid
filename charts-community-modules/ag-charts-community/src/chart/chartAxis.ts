@@ -4,6 +4,7 @@ import { ChartAxisDirection } from './chartAxisDirection';
 import { LinearScale } from '../scale/linearScale';
 import { POSITION, STRING_ARRAY, Validate } from '../util/validation';
 import { AgCartesianAxisPosition, AgCartesianAxisType } from './agChartOptions';
+import { AxisLayout } from './layout/layoutService';
 
 export function flipChartAxisDirection(direction: ChartAxisDirection): ChartAxisDirection {
     if (direction === ChartAxisDirection.X) {
@@ -111,5 +112,12 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
 
     isAnySeriesActive() {
         return this.boundSeries.some((s) => this.includeInvisibleDomains || s.isEnabled());
+    }
+
+    getLayoutState(): AxisLayout {
+        return {
+            rect: this.computeBBox(),
+            ...this.layout,
+        };
     }
 }
