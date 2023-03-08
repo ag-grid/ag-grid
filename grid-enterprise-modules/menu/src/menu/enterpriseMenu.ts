@@ -94,7 +94,8 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
                 nudgeX: 9 * multiplier,
                 nudgeY: -23,
                 position: 'under',
-                keepWithinBounds: true
+                keepWithinBounds: true,
+                shouldSetMaxHeight: true
             });
 
             if (defaultTab) {
@@ -103,7 +104,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         }, containerType, defaultTab, restrictToTabs, eventSource);
     }
 
-    public showMenu(
+    private showMenu(
         column: Column,
         positionCallback: (menu: EnterpriseMenu) => void,
         containerType: ContainerType,

@@ -100,7 +100,7 @@
     "access": "private"
   },
   "lint-staged": {
-    "*.{ts,js,md,json}": "../../charts-community-modules/ag-charts-community/.lint-staged/run.sh prettier",
-    "*.{ts,js}": "../../charts-community-modules/ag-charts-community/.lint-staged/run.sh eslint"
+    "*.{ts,js,md,json}": "./node_modules/@ag-charts-enterprise/core/.lint-staged/run.sh prettier",
+    "*.{ts,js}": "./node_modules/@ag-charts-enterprise/core/.lint-staged/run.sh eslint"
   }
 }

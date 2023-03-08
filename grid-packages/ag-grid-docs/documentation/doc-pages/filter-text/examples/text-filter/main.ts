@@ -23,7 +23,7 @@ var athleteFilterParams: ITextFilterParams = {
       .replace(/[ýÿ]/g, 'y')
   },
   debounceMs: 200,
-  suppressAndOrCondition: true,
+  maxNumConditions: 1,
 };
 
 var countryFilterParams: ITextFilterParams = {

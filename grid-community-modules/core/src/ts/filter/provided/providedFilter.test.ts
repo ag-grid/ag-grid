@@ -4,6 +4,7 @@ import { IRowModel, RowModelType } from '../../interfaces/iRowModel';
 import { mock } from '../../test-utils/mock';
 import { AgPromise } from '../../utils';
 import { LocaleService } from '../../localeService';
+import { PositionableFeature } from '../../rendering/features/positionableFeature';
 
 class TestFilter extends ProvidedFilter<ProvidedFilterModel, string> {
     private uiModel: ProvidedFilterModel;
@@ -22,6 +23,8 @@ class TestFilter extends ProvidedFilter<ProvidedFilterModel, string> {
         const rowModel = mock<IRowModel>('getType');
         rowModel.getType.mockReturnValue(rowModelType);
         (this as any).rowModel = rowModel;
+
+        (this as any).positionableFeature = mock<PositionableFeature>('restoreLastSize', 'setResizable', 'removeSizeFromEl');
 
         this.setParams(params);
     }

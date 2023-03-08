@@ -1,10 +1,11 @@
-import { RefSelector } from '../../../widgets/componentAnnotations';
-import { ConditionPosition, ISimpleFilterModel, SimpleFilter, SimpleFilterModelFormatter, Tuple } from '../simpleFilter';
+import { ISimpleFilterModel, SimpleFilter, SimpleFilterModelFormatter, Tuple } from '../simpleFilter';
 import { ScalarFilter, Comparator, IScalarFilterParams } from '../scalarFilter';
 import { makeNull } from '../../../utils/generic';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { isBrowserChrome } from '../../../utils/browser';
 import { IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
+import { setAriaRole } from '../../../utils/aria';
+import { AgInputNumberField } from '../../../widgets/agInputNumberField';
 
 export interface NumberFilterModel extends ISimpleFilterModel {
     /** Filter type is always `'number'` */
@@ -89,11 +90,8 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         ScalarFilter.NOT_BLANK,
     ];
 
-    @RefSelector('eValue-index0-1') private readonly eValueFrom1: AgInputTextField;
-    @RefSelector('eValue-index1-1') private readonly eValueTo1: AgInputTextField;
-
-    @RefSelector('eValue-index0-2') private readonly eValueFrom2: AgInputTextField;
-    @RefSelector('eValue-index1-2') private readonly eValueTo2: AgInputTextField;
+    private readonly eValuesFrom: (AgInputTextField | AgInputNumberField)[] = [];
+    private readonly eValuesTo: (AgInputTextField | AgInputNumberField)[] = [];
 
     private numberFilterParams: NumberFilterParams;
     private filterModelFormatter: SimpleFilterModelFormatter;
@@ -125,19 +123,6 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     protected setParams(params: NumberFilterParams): void {
         this.numberFilterParams = params;
 
-        const allowedCharPattern = getAllowedCharPattern(this.numberFilterParams);
-
-        if (allowedCharPattern) {
-            const config = { allowedCharPattern };
-
-            this.resetTemplate({
-                'eValue-index0-1': config,
-                'eValue-index1-1': config,
-                'eValue-index0-2': config,
-                'eValue-index1-2': config,
-            });
-        }
-
         super.setParams(params);
         this.filterModelFormatter = new NumberFilterModelFormatter(this.localeService, this.optionsFactory);
     }
@@ -146,22 +131,36 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return NumberFilter.DEFAULT_FILTER_OPTIONS;
     }
 
-    protected createValueTemplate(position: ConditionPosition): string {
-        const pos = position === ConditionPosition.One ? '1' : '2';
+    protected createValueElement(): HTMLElement {
         const allowedCharPattern = getAllowedCharPattern(this.numberFilterParams);
-        const agElementTag = allowedCharPattern ? 'ag-input-text-field' : 'ag-input-number-field';
 
-        return /* html */`
-            <div class="ag-filter-body" ref="eCondition${pos}Body" role="presentation">
-                <${agElementTag} class="ag-filter-from ag-filter-filter" ref="eValue-index0-${pos}"></${agElementTag}>
-                <${agElementTag} class="ag-filter-to ag-filter-filter" ref="eValue-index1-${pos}"></${agElementTag}>
-            </div>`;
+        const eCondition = document.createElement('div');
+        eCondition.classList.add('ag-filter-body');
+        setAriaRole(eCondition, 'presentation');
+
+        this.createFromToElement(eCondition, this.eValuesFrom, 'from', allowedCharPattern);
+        this.createFromToElement(eCondition, this.eValuesTo, 'to', allowedCharPattern);
+
+        return eCondition;
     }
 
-    protected getValues(position: ConditionPosition): Tuple<number> {
+    private createFromToElement(eCondition: HTMLElement, eValues: (AgInputTextField | AgInputNumberField)[], fromTo: string, allowedCharPattern: string | null): void {
+        const eValue = this.createManagedBean(allowedCharPattern ? new AgInputTextField({ allowedCharPattern }) : new AgInputNumberField());
+        eValue.addCssClass(`ag-filter-${fromTo}`);
+        eValue.addCssClass('ag-filter-filter');
+        eValues.push(eValue);
+        eCondition.appendChild(eValue.getGui());
+    }
+
+    protected removeValueElements(startPosition: number, deleteCount?: number): void {
+        this.removeComponents(this.eValuesFrom, startPosition, deleteCount);
+        this.removeComponents(this.eValuesTo, startPosition, deleteCount);
+    }
+
+    protected getValues(position: number): Tuple<number> {
         const result: Tuple<number> = [];
-        this.forEachInput((element, index, elPosition, numberOfInputs) => {
-            if (position === elPosition && index < numberOfInputs) {
+        this.forEachPositionInput(position, (element, index, _elPosition, numberOfInputs) => {
+            if (index < numberOfInputs) {
                 result.push(this.processValue(this.stringToFloat(element.getValue())));
             }
         });
@@ -204,8 +203,8 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return filterText == null || filterText.trim() === '-' ? null : parseFloat(filterText);
     }
 
-    protected createCondition(position: ConditionPosition): NumberFilterModel {
-        const type = this.getConditionTypes()[position];
+    protected createCondition(position: number): NumberFilterModel {
+        const type = this.getConditionType(position);
         const model: NumberFilterModel = {
             filterType: this.getFilterType(),
             type
@@ -222,11 +221,11 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return model;
     }
 
-    protected getInputs(): Tuple<AgInputTextField>[] {
-        return [
-            [this.eValueFrom1, this.eValueTo1],
-            [this.eValueFrom2, this.eValueTo2],
-        ];
+    protected getInputs(position: number): Tuple<AgInputTextField | AgInputNumberField> {
+        if (position >= this.eValuesFrom.length) {
+            return [null, null];
+        }
+        return [this.eValuesFrom[position], this.eValuesTo[position]];
     }
 
     public getModelAsString(model: ISimpleFilterModel): string {

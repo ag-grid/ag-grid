@@ -59,10 +59,9 @@ function FakeServer(allData) {
 
     function createFilterSql(mapper, key, item) {
         if (item.operator) {
-            var condition1 = mapper(key, item.condition1);
-            var condition2 = mapper(key, item.condition2);
+            const conditions = item.conditions.map(condition => mapper(key, condition));
 
-            return '(' + condition1 + ' ' + item.operator + ' ' + condition2 + ')';
+            return '(' + conditions.join(' ' + item.operator + ' ') + ')';
         }
 
         return mapper(key, item);

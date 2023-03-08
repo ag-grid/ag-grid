@@ -63,7 +63,7 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
 
         if (isCombined) {
             const combinedModel = model as ICombinedSimpleModel<ISimpleFilterModel>;
-            condition = combinedModel.condition1;
+            condition = combinedModel.conditions![0];
         } else {
             condition = model as ISimpleFilterModel;
         }
