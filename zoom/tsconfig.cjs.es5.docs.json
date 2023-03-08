@@ -5,17 +5,10 @@
         "rootDir": "src",
         "outDir": "dist/cjs/es5",
         "baseUrl": ".",
-        "paths": {
-            "@ag-*": [
-                "node_modules/@ag-*/dist/cjs/es5/main"
-            ]
-        }
+        "paths": { "@ag-*": ["node_modules/@ag-*/dist/cjs/es5/main"] },
+        "strict": true,
+        "experimentalDecorators": true
     },
-    "include": [
-        "src/**/*"
-    ],
-    "exclude": [
-        "**/*.test.ts",
-        "src/**/mock.ts"
-    ]
+    "include": ["src/**/*"],
+    "exclude": ["**/*.test.ts", "src/**/mock.ts"]
 }

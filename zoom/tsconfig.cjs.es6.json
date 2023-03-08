@@ -4,17 +4,10 @@
         "rootDir": "src",
         "outDir": "dist/cjs/es6",
         "baseUrl": ".",
-        "paths": {
-            "@ag-*": [
-                "node_modules/@ag-*/dist/cjs/es6/main"
-            ]
-        }
+        "paths": { "@ag-*": ["node_modules/@ag-*/dist/cjs/es6/main"] },
+        "strict": true,
+        "experimentalDecorators": true
     },
-    "include": [
-        "src/**/*"
-    ],
-    "exclude": [
-        "**/*.test.ts",
-        "src/**/mock.ts"
-    ]
+    "include": ["src/**/*"],
+    "exclude": ["**/*.test.ts", "src/**/mock.ts"]
 }
