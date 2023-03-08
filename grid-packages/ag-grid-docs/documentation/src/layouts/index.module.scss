@@ -27,15 +27,15 @@ main {
 }
 
 .fullScreenPage {
-    // Variables added here untill .ag-styles is no longer needed
-    --max-page-width: #{ds.$max-page-width};
-    --horizontal-margin: #{ds.$horizontal-margin};
+    // // Variables added here untill .ag-styles is no longer needed
+    // --max-page-width: #{ds.$max-page-width};
+    // --horizontal-margin: #{ds.$horizontal-margin};
 
-    // .ag-styles - remove namespace after bootstrap removed.
-    @media screen and (min-width: ds.$breakpoint-docs-nav-medium) {
-        @include ds.page-max-width();
-        @include ds.page-horizontal-margins();
-    }
+    // // .ag-styles - remove namespace after bootstrap removed.
+    // @media screen and (min-width: ds.$breakpoint-docs-nav-medium) {
+    //     @include ds.page-max-width();
+    //     @include ds.page-horizontal-margins();
+    // }
 }
 
 .content-viewport {
