@@ -54,8 +54,8 @@ const LicensePricing = () => {
                 <div className={styles.bulkLicenses}>
                     <p className="text-secondary">
                         Bulk pricing discounts available. Use the buy now buttons above to see pricing for up to 10
-                        developers. For more than 10 developers or any questions with regards to your purchase please
-                        email us.
+                        developers. For more than 10 developers or any questions regarding your purchase, please email
+                        us.
                     </p>
 
                     <a
