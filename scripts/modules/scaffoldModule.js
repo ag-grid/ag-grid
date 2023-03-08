@@ -2,14 +2,15 @@ const fs = require('fs');
 const path = require('path');
 const inquirer = require('inquirer');
 const fsExtra = require('fs-extra');
-const { exec } = require('child_process');
+const { spawnSync } = require('child_process');
 
 const moduleDirs = (grid, enterprise, packageName) => {
     const moduleName = `@ag-${grid ? 'grid' : 'charts'}-${enterprise ? 'enterprise' : 'community'}/${packageName}`;
     const moduleDirRoot = `${grid ? 'grid' : 'charts'}-${enterprise ? 'enterprise' : 'community'}-modules`;
     const moduleDir = `${moduleDirRoot}/${packageName}`;
+    const exampleDir = grid ? undefined : `charts-examples/ag-charts-enterprise-example/`;
 
-    return { moduleName, moduleDirRoot, moduleDir };
+    return { moduleName, moduleDirRoot, moduleDir, exampleDir };
 };
 
 const readArgV = (flagName) => {
@@ -110,7 +111,7 @@ const getRequiredInputs = async () => {
 const main = async () => {
     const {grid, enterprise, packageName, force} = await getRequiredInputs();
 
-    const { moduleDir, moduleDirRoot, moduleName } = moduleDirs(grid, enterprise, packageName);
+    const { moduleDir, moduleDirRoot, moduleName, exampleDir } = moduleDirs(grid, enterprise, packageName);
 
     if (fs.existsSync(`./${moduleDir}`)) {
         if (!force) {
@@ -127,8 +128,15 @@ const main = async () => {
     templatePackageJson.version = packageVersionNumber;
     templatePackageJson.license = enterprise ? 'Commercial' : 'MIT';
     templatePackageJson.dependencies[grid ? '@ag-grid-community/core' : 'ag-charts-community'] = `~${packageVersionNumber}`;
-    if(enterprise) {
+    if (enterprise) {
         templatePackageJson.dependencies[grid ? '@ag-grid-enterprise/core' : '@ag-charts-enterprise/core'] = `~${packageVersionNumber}`;
+    }
+    const templatePackageJsonLintStaged = templatePackageJson['lint-staged'];
+    if (templatePackageJsonLintStaged) {
+        for (const [pattern, cmd] of Object.entries(templatePackageJsonLintStaged)) {
+            templatePackageJsonLintStaged[pattern] = cmd.replace('${moduleName}', moduleName);
+            templatePackageJsonLintStaged[pattern] = cmd.replace('${packageName}', packageName);
+        }
     }
 
     if (!fs.existsSync(`./${moduleDir}/src`)) {
@@ -164,9 +172,18 @@ const main = async () => {
 
     fs.writeFileSync(`./${moduleDir}/package.json`, JSON.stringify(templatePackageJson, null, 4), 'UTF-8');
 
-    if (!grid) {
-        exec(`npx prettier -w ./${moduleDir}/`);
+    if (exampleDir) {
+        const examplePackageJsonPath = path.resolve(exampleDir, 'package.json');
+        const examplePackageJson = JSON.parse(fs.readFileSync(examplePackageJsonPath), 'UTF-8');
+        examplePackageJson.dependencies[moduleName] = `~${packageVersionNumber}`;
+        fs.writeFileSync(examplePackageJsonPath, JSON.stringify(examplePackageJson, null, 4));
     }
+
+    if (!grid) {
+        spawnSync('npx', `prettier -w ./${moduleDir}/`.split(' '), { stdio: 'inherit' });
+    }
+
+    spawnSync('npx', `lerna bootstrap --include-dependents --include-dependencies --scope=${moduleName}`.split(' '), { stdio: 'inherit' });
 };
 
 main();
