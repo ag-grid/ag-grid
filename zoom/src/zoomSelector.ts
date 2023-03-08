@@ -1,20 +1,16 @@
-import { _ModuleSupport, _Scene } from 'ag-charts-community';
-import { ZoomRect } from './zoomRect';
+import { _ModuleSupport } from 'ag-charts-community';
+import { ZoomRect } from './scenes/zoomRect';
 
 export type ZoomCoords = { x1: number; y1: number; x2: number; y2: number };
 
-export class ZoomSelector extends _Scene.Group {
-    static className = 'Zoom';
+export class ZoomSelector {
+    public rect = new ZoomRect();
+    public onSelectionChange: (coords: ZoomCoords) => void;
 
     private coords?: ZoomCoords;
-    private rect = new ZoomRect();
 
-    onSelectionChange: (coords: ZoomCoords) => void;
-
-    constructor(onSelectionChange: (coords: ZoomCoords) => void) {
-        super({ name: 'zoomSelectorGroup' });
-
-        this.isContainerNode = true;
+    constructor(rect: ZoomRect, onSelectionChange: (coords: ZoomCoords) => void) {
+        this.rect = rect;
         this.onSelectionChange = onSelectionChange;
 
         this.rect.visible = false;
@@ -38,18 +34,6 @@ export class ZoomSelector extends _Scene.Group {
         this.resetCoords();
     }
 
-    render(renderCtx: _Scene.RenderContext) {
-        const { ctx, stats } = renderCtx;
-
-        if (this.rect) {
-            // ctx.save();
-            this.rect.render({ ...renderCtx, ctx });
-            // ctx.restore();
-        }
-
-        if (stats) stats.nodesRendered++;
-    }
-
     private updateCoords(x: number, y: number): void {
         if (!this.coords) {
             this.coords = { x1: x, y1: y, x2: x, y2: y };
@@ -60,32 +44,30 @@ export class ZoomSelector extends _Scene.Group {
     }
 
     private updateRect(): void {
-        const bbox = this.getBBox();
+        const { x, y, width, height } = this.getNormalisedDimensions();
 
-        this.rect.x = bbox.x;
-        this.rect.y = bbox.y;
-        this.rect.width = bbox.width;
-        this.rect.height = bbox.height;
-
-        this.markDirty(this, _Scene.RedrawType.MAJOR);
+        this.rect.x = x;
+        this.rect.y = y;
+        this.rect.width = width;
+        this.rect.height = height;
     }
 
     private resetCoords(): void {
         this.coords = undefined;
     }
 
-    private getBBox(): _Scene.BBox {
+    private getNormalisedDimensions() {
         const x1 = this.coords?.x1 ?? 0;
         const y1 = this.coords?.y1 ?? 0;
         const x2 = this.coords?.x2 ?? 0;
         const y2 = this.coords?.y2 ?? 0;
 
-        // Ensure we create a bounding box starting at the top left corner
+        // Ensure we create a box starting at the top left corner
         const x = x1 <= x2 ? x1 : x2;
         const y = y1 <= y2 ? y1 : y2;
         const width = x1 <= x2 ? x2 - x1 : x1 - x2;
         const height = y1 <= y2 ? y2 - y1 : y1 - y2;
 
-        return new _Scene.BBox(x, y, width, height);
+        return { x, y, width, height };
     }
 }
