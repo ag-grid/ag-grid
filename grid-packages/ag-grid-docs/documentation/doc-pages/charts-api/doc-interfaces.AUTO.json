@@ -3395,12 +3395,12 @@
       "description": "/** Whether to show different y-values as separate bars (grouped) or not (stacked). */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "group": {
-      "description": "/** An ID to be used to make stacked items appear in separate groups. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "stacked": {
       "description": "/** An option indicating if the bars/columns should be stacked. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "stackGroup": {
+      "description": "/** An ID to be used to make stacked items appear in separate groups. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "normalizedTo": {

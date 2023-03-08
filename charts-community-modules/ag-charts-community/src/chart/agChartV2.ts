@@ -645,7 +645,7 @@ const JSON_APPLY_OPTIONS: Parameters<typeof jsonApply>[2] = {
         'series[].marker.shape': ['primitive', 'function'],
         'axis[].tick.count': ['primitive', 'class-instance'],
     },
-    priorityProps: ['groups'],
+    priorityProps: ['stackGroups'],
 };
 
 function applyOptionValues<T, S>(target: T, options?: S, { skip, path }: { skip?: string[]; path?: string } = {}): T {

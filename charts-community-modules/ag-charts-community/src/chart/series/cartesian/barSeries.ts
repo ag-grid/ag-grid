@@ -181,9 +181,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             yKeys = this.grouped ? flatYKeys.map((k) => [k]) : [flatYKeys];
         }
 
-        const groups = Object.values(this.groups);
-        if (groups.length > 0) {
-            yKeys = groups.map((keys) => keys);
+        const stackGroups = Object.values(this.stackGroups);
+        if (stackGroups.length > 0) {
+            yKeys = stackGroups.map((keys) => keys);
         }
 
         if (!areArrayItemsStrictlyEqual(this._yKeys, yKeys)) {
@@ -247,7 +247,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         return this._grouped;
     }
 
-    groups: Record<string, string[]> = {};
+    stackGroups: Record<string, string[]> = {};
 
     /**
      * A map of `yKeys` to their names (used in legends and tooltips).
