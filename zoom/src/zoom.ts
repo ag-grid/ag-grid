@@ -1,43 +1,54 @@
 import { _ModuleSupport, _Scene } from 'ag-charts-community';
 
 import { ZoomRect } from './scenes/zoomRect';
-import { ZoomCoords, ZoomSelector } from './zoomSelector';
+import { ZoomSelector } from './zoomSelector';
 import { ZoomScroller } from './zoomScroller';
-import { pointToRatio, translateZoom, scaleZoom, constrainZoom } from './zoomTransformers';
-import { DefinedZoomState } from './zoomTypes';
+import { pointToRatio } from './zoomTransformers';
+import { DefinedZoomState, ZoomCoords } from './zoomTypes';
+
+const { BOOLEAN, OPT_BOOLEAN, OPT_NUMBER, STRING_UNION, Validate } = _ModuleSupport;
 
 export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
-    // @_ModuleSupport.Validate(_ModuleSupport.BOOLEAN)
+    /**
+     * Enable or disable the zoom module
+     */
+    @Validate(BOOLEAN)
     public enabled = false;
 
-    // @_ModuleSupport.Validate(_ModuleSupport.OPT_BOOLEAN)
+    /**
+     * Enable zooming by scrolling the mouse wheel
+     */
+    @Validate(OPT_BOOLEAN)
     public enableScrolling = true;
 
-    // @_ModuleSupport.Validate(_ModuleSupport.OPT_BOOLEAN)
+    /**
+     * Enable zooming by clicking and dragging out an area to zoom into
+     */
+    @Validate(OPT_BOOLEAN)
     public enableSelecting = true;
 
     /**
      * The axis on which to enable zooming.
      */
-    // @Validate
+    @Validate(STRING_UNION('xy', 'x', 'y'))
     public axes: 'xy' | 'x' | 'y' = 'xy';
 
     /**
      * The step size to zoom in when scrolling the mouse wheel.
      */
-    // @Validate
+    @Validate(OPT_NUMBER)
     public scrollingStep = 0.1;
 
     /**
      * The minimum number of nodes to show when zooming on the x-axis
      */
-    // @Validate
+    @Validate(OPT_NUMBER)
     public minXNodes?: number;
 
     /**
      * The minimum number of nodes to show when zooming on the y-axis
      */
-    // @Validate
+    @Validate(OPT_NUMBER)
     public minYNodes?: number;
 
     private readonly scene: _Scene.Scene;
