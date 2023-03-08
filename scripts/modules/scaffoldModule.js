@@ -167,8 +167,11 @@ const main = async () => {
             const filename = `./${moduleDir}/${tsconfig}`;
             const config = JSON.parse(fs.readFileSync(filename).toString());
             config.compilerOptions.strict = true;
+            config.compilerOptions.experimentalDecorators = true;
             fs.writeFileSync(filename, JSON.stringify(config));
         }
+
+        fsExtra.copySync(path.resolve(__dirname, './charts-tsconfig.json'), `./${moduleDir}/tsconfig.json`);
     }
 
     fs.writeFileSync(`./${moduleDir}/package.json`, JSON.stringify(templatePackageJson, null, 4), 'UTF-8');
