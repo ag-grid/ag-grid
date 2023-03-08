@@ -7,16 +7,6 @@ a {
 
     &:hover {
         color: var(--link-hover-color);
-
-        .icon {
-            fill: var(--link-hover-color);
-        }
-    }
-
-    .icon {
-        --icon-size: 1em;
-
-        fill: var(--link-color);
     }
 }
 
