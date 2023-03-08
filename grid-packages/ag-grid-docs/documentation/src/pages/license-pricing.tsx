@@ -63,11 +63,12 @@ const LicensePricing = () => {
                         </p>
 
                         <div className={styles.videoPrompt}>
-                            <img
-                                className={styles.thumbnail}
-                                src="https://img.youtube.com/vi/20SLdu4wLtI/hqdefault.jpg"
-                                alt="AG Grid license explained video"
-                            />
+                            <a href="#video-explainer" className={styles.thumbnail}>
+                                <img
+                                    src="https://img.youtube.com/vi/20SLdu4wLtI/hqdefault.jpg"
+                                    alt="AG Grid license explained video"
+                                />
+                            </a>
 
                             <div>
                                 <h3>Which licenses do I need?</h3>
