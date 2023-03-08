@@ -52,10 +52,21 @@
 
 .sectionHeader {
     font-weight: var(--font-weight-bold);
+    border: 2px solid transparent;
+    outline: none;
+    transition: border-color $default-transition-timing;
+    border-radius: var(--border-radius);
+
+    &:focus,
+    &:focus-visible {
+        border-color: var(--sky-blue);
+    }
 }
 
 .menuGroup {
-    padding-left: 20px !important; // !important for .ag-styles specificity
+    $first-indent-size: 20px;
+    $indent-size: 14px;
+
     line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
     font-size: var(--font-size-small);
 
@@ -64,23 +75,34 @@
         display: block;
         padding-top: $size-half;
         padding-bottom: $size-half;
+        padding-left: $first-indent-size;
+        outline: none;
+        border-radius: var(--border-radius);
+        border: 2px solid transparent;
         color: var(--text-color) !important; // !important for .ag-styles specificity
+        transition: border-color $default-transition-timing;
 
         &:hover {
             color: var(--link-color) !important; // !important for .ag-styles specificity
         }
-    }
 
-    ul {
-        padding-left: 14px !important; // !important for .ag-styles specificity
+        &:focus,
+        &:focus-visible {
+            border-color: var(--sky-blue);
+        }
     }
 
     ul a {
+        padding-left: $first-indent-size + $indent-size;
         color: var(--secondary-text-color) !important; // !important for .ag-styles specificity
 
         &.activeMenuItem {
             color: var(--text-color) !important; // !important for .ag-styles specificity
         }
+    }
+
+    ul ul a {
+        padding-left: $first-indent-size + $indent-size * 2;
     }
 
     .enterpriseIcon {
@@ -96,10 +118,12 @@
     pointer-events: none;
 
     &::before {
-        content: '•';
+        content: '';
         position: absolute;
-        top: -0.25em;
-        left: -0.5em;
-        font-size: 2.125em;
+        width: 6px;
+        height: 6px;
+        transform: translate(-10px, 6px);
+        border-radius: 50%;
+        background-color: var(--text-color);
     }
 }
