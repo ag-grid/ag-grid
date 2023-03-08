@@ -110,8 +110,8 @@
     "access": "public"
   },
   "lint-staged": {
-    "*.{ts,js,md,json}": "cd charts-community-modules/ag-charts-community/ && .lint-staged/run.sh prettier",
-    "*.{ts,js}": "cd charts-community-modules/ag-charts-community/ && .lint-staged/run.sh eslint",
-    "*.ts": "cd charts-community-modules/ag-charts-community/ && .lint-staged/run.sh autodocs"
+    "*.{ts,js,md,json}": "charts-community-modules/ag-charts-community/.lint-staged/run.sh prettier",
+    "*.{ts,js}": "charts-community-modules/ag-charts-community/.lint-staged/run.sh eslint",
+    "*.ts": "charts-community-modules/ag-charts-community/.lint-staged/run.sh autodocs"
   }
 }
