@@ -103,12 +103,19 @@ p.name {
 }
 
 .price {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
     grid-area: price;
     align-self: end;
 
     .bottom & {
         justify-self: end;
         text-align: right;
+    }
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        min-height: 132px;
     }
 
     .bottom & p:last-child {
@@ -143,7 +150,7 @@ p.priceFullDollars {
     text-align: right;
 
     @media screen and (min-width: $breakpoint-pricing-medium) and (max-width: $breakpoint-pricing-large) {
-        min-height: 130px;
+        min-height: 132px;
     }
 
     a {
