@@ -9,7 +9,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: $size-4;
-    margin-top: $size-6 !important; // !important for .ag-styles specificity
+    margin-top: $size-8 !important; // !important for .ag-styles specificity
 
     @media screen and (min-width: $breakpoint-pricing-large) {
         flex-wrap: nowrap;
@@ -17,25 +17,27 @@
 
     h1 {
         font-size: 46px;
-    }
-
-    p {
-        font-size: 18px;
-    }
-
-    h1 svg {
-        --text-color: red;
-
-        display: inline-block;
-        position: relative;
-        width: 46px;
-        bottom: 4px;
+        font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificit
+        margin-bottom: $size-1 !important; // !important for .ag-styles specificit
     }
 }
 
-.enterpriseExplainer {
-    margin-top: 76px !important; // !important for .ag-styles specificit
+.intro {
+    margin-top: $size-8 !important; // !important for .ag-styles specificit
     margin-bottom: $size-4 !important; // !important for .ag-styles specificit
+}
+
+.salesEmail {
+    margin-top: $size-2 !important; // !important for .ag-styles specificit
+    margin-bottom: $size-2 !important; // !important for .ag-styles specificit
+
+    p {
+        margin-bottom: 0 !important; // !important for .ag-styles specificit
+        line-height: var(--line-height-tight) !important; // !important for .ag-styles specificit
+    }
+
+    a {
+    }
 }
 
 .videoPrompt {
@@ -47,7 +49,7 @@
     justify-content: center;
     text-align: center;
     gap: $size-1 $size-2;
-    margin-top: $size-6 !important; // !important for .ag-styles specificity
+    margin-top: $size-7 !important; // !important for .ag-styles specificity
 
     @media screen and (min-width: $breakpoint-pricing-small) {
         justify-content: flex-start;
@@ -89,6 +91,23 @@
     p {
         max-width: 48em;
         margin: 0 auto $size-1 !important; // !important for .ag-styles specificity
+    }
+}
+
+.ukraineNotice {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $size-2;
+    max-width: 48em;
+    margin: $size-7 auto $size-8 !important; // !important for .ag-styles specificity
+
+    @media screen and (min-width: $breakpoint-alert-flag-small) {
+        flex-direction: row;
+    }
+
+    img {
+        width: 80px;
     }
 }
 

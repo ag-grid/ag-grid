@@ -1,7 +1,6 @@
 import classnames from 'classnames';
 import ukraineFlagSVG from 'images/ukraine-flag.svg';
 import React from 'react';
-import { Alert } from '../components/alert/Alert';
 import { Icon } from '../components/Icon';
 import { Licenses } from '../components/licenses/Licenses';
 import NPMIcon from '../images/inline-svgs/npm.svg';
@@ -14,52 +13,19 @@ const LicensePricing = () => {
     return (
         <div className="ag-styles">
             <div className={classnames('page-margin', styles.container)}>
-                <Alert type="flag">
-                    <img src={ukraineFlagSVG} alt="flag of Ukraine" />
-
-                    <p>
-                        In light of current events in Ukraine we are choosing to express our disappointment in the
-                        breakdown of diplomacy, and its effects on the people of Ukraine, the global economy and
-                        community by not licensing software to companies or individuals registered or residing in the
-                        Russian Federation.
-                    </p>
-                </Alert>
-
                 <div className={styles.topSection}>
-                    <div className={styles.enterpriseExplainer}>
-                        <h1>
-                            AG Grid Enterprise <Icon name="enterprise" />
-                        </h1>
-                        <p>
-                            <b>AG Grid Enterprise</b> offers advanced functionality like{' '}
-                            <a href={`${hostPrefix}/javascript-data-grid/grouping/`} target="_blank">
-                                Row Grouping
-                            </a>
-                            ,{' '}
-                            <a href={`${hostPrefix}/javascript-data-grid/range-selection/`} target="_blank">
-                                Range Selection
-                            </a>
-                            ,{' '}
-                            <a href={`${hostPrefix}/javascript-data-grid/master-detail/`} target="_blank">
-                                Master / Detail
-                            </a>
-                            ,{' '}
-                            <a href={`${hostPrefix}/javascript-data-grid/server-side-model/`} target="_blank">
-                                Server Side Row Model
-                            </a>{' '}
-                            and{' '}
-                            <a
-                                href={`${hostPrefix}/javascript-data-grid/licensing/#feature-comparison`}
-                                target="_blank"
-                            >
-                                much much more
-                            </a>
-                            .
+                    <div className={styles.intro}>
+                        <h1>AG Grid Licences</h1>
+
+                        <p className="font-size-extra-large">
+                            Get in touch and start a conversation. We can provide quotes, give bulk pricing, and answer
+                            any questions you have.
                         </p>
-                        <p>
-                            <b>AG Grid Enterprise</b> also comes with{' '}
-                            <a href={`${hostPrefix}/javascript-data-grid/integrated-charts/`}>Integrated Charts</a>,
-                            allowing your users to create charts using the grid's UI.
+
+                        <p className={styles.salesEmail}>
+                            <a className="button button-secondary font-size-extra-large" href="mailto:info@ag-grid.com">
+                                <Icon name="email" /> info@ag-grid.com
+                            </a>
                         </p>
 
                         <div className={styles.videoPrompt}>
@@ -197,6 +163,17 @@ const LicensePricing = () => {
                             See all AG Grid Enterprise features
                         </a>
                     </div>
+                </div>
+
+                <div className={styles.ukraineNotice}>
+                    <img src={ukraineFlagSVG} alt="flag of Ukraine" />
+
+                    <p className="text-secondary font-size-small">
+                        In light of current events in Ukraine we are choosing to express our disappointment in the
+                        breakdown of diplomacy, and its effects on the people of Ukraine, the global economy and
+                        community by not licensing software to companies or individuals registered or residing in the
+                        Russian Federation.
+                    </p>
                 </div>
 
                 <div className={styles.videoExplainer} id="video-explainer">
