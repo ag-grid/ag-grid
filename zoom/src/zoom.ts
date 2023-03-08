@@ -65,7 +65,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     public minYNodes?: number;
 
     private readonly scene: _Scene.Scene;
-    private seriesRect: _Scene.BBox;
+    private seriesRect?: _Scene.BBox;
 
     private readonly zoomManager: _ModuleSupport.ZoomManager;
 
@@ -132,9 +132,9 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     private onDrag(event: _ModuleSupport.InteractionEvent<'drag'>) {
         const zoom = this.zoomManager.getZoom();
         const isZoomed =
-            zoom && zoom.x && zoom.y && (zoom.x.min !== 0 || zoom.x.max !== 1 || zoom.y.min !== 0 || zoom.y.max);
+            zoom && zoom.x && zoom.y && (zoom.x.min !== 0 || zoom.x.max !== 1 || zoom.y.min !== 0 || zoom.y.max !== 1);
 
-        if (this.panner && isZoomed && this.isPanningKeyPressed(event.sourceEvent as DragEvent)) {
+        if (this.panner && this.seriesRect && isZoomed && this.isPanningKeyPressed(event.sourceEvent as DragEvent)) {
             const newZoom = this.panner.update(event.offsetX, event.offsetY, this.seriesRect, zoom);
             this.zoomManager.updateZoom('zoom', newZoom);
 
@@ -159,7 +159,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     }
 
     private onWheel(event: _ModuleSupport.InteractionEvent<'wheel'>) {
-        if (!this.scroller) return;
+        if (!this.scroller || !this.seriesRect) return;
 
         const currentZoom = this.zoomManager.getZoom();
         const newZoom = this.scroller.update(event, this.seriesRect, currentZoom);
@@ -193,8 +193,11 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         return this.axes === 'y' || this.axes === 'xy';
     }
 
-    private isWithinSeriesRect(x: number, y: number) {
+    private isWithinSeriesRect(x: number, y: number): boolean {
         const { seriesRect } = this;
+
+        if (!seriesRect) return false;
+
         return (
             x >= seriesRect.x &&
             x <= seriesRect.x + seriesRect.width &&

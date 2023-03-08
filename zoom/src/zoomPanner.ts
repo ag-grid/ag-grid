@@ -1,14 +1,14 @@
 import { _ModuleSupport, _Scene } from 'ag-charts-community';
 
 import { definedZoomState, pointToRatio, constrainZoom, translateZoom } from './zoomTransformers';
-import { ZoomCoords } from './zoomTypes';
+import { DefinedZoomState, ZoomCoords } from './zoomTypes';
 
 export class ZoomPanner {
     public isPanning: boolean = false;
 
     private coords?: ZoomCoords;
 
-    update(x: number, y: number, bbox: _Scene.BBox, zoom: _ModuleSupport.AxisZoomState) {
+    update(x: number, y: number, bbox: _Scene.BBox, zoom?: _ModuleSupport.AxisZoomState): DefinedZoomState {
         this.isPanning = true;
 
         this.updateCoords(x, y);
@@ -31,7 +31,7 @@ export class ZoomPanner {
         }
     }
 
-    private translate(bbox: _Scene.BBox, currentZoom: _ModuleSupport.AxisZoomState) {
+    private translate(bbox: _Scene.BBox, currentZoom?: _ModuleSupport.AxisZoomState) {
         const { x1 = 0, y1 = 0, x2 = 0, y2 = 0 } = this.coords ?? {};
 
         const dx = x1 <= x2 ? x2 - x1 : x1 - x2;
