@@ -166,7 +166,7 @@ const main = async () => {
         for (const tsconfig of fs.readdirSync(`./${moduleDir}/`).filter(p => p.startsWith('tsconfig.'))) {
             const filename = `./${moduleDir}/${tsconfig}`;
             const config = JSON.parse(fs.readFileSync(filename).toString());
-            config.compilerOptions.strict = true;
+            config.compilerOptions.strict = tsconfig.indexOf('.test.') < 0;
             config.compilerOptions.experimentalDecorators = true;
             fs.writeFileSync(filename, JSON.stringify(config));
         }
