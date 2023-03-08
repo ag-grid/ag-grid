@@ -1,3 +1,4 @@
+import { AgCartesianAxisPosition } from '../chart/agChartOptions';
 import { CursorManager } from '../chart/interaction/cursorManager';
 import { HighlightManager } from '../chart/interaction/highlightManager';
 import { InteractionManager } from '../chart/interaction/interactionManager';
@@ -22,8 +23,11 @@ export interface ModuleContextWithParent<P> extends ModuleContext {
 
 export interface AxisContext {
     axisId: string;
+    position: AgCartesianAxisPosition;
+    direction: 'x' | 'y';
 
     scaleConvert(val: any): number;
+    scaleInvert(position: number): any;
 }
 
 export interface ModuleInstance {

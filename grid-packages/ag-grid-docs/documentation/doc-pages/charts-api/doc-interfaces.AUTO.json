@@ -5028,6 +5028,15 @@
   },
   "Layers": {},
   "LayoutStage": {},
+  "AxisLayout": {
+    "rect": { "type": { "returnType": "BBox", "optional": false } },
+    "label": {
+      "type": {
+        "returnType": "{\n        baseline: 'hanging' | 'bottom' | 'middle';\n        align: 'start' | 'end' | 'center';\n    }",
+        "optional": false
+      }
+    }
+  },
   "LayoutCompleteEvent": {
     "type": {
       "type": { "returnType": "'layout-complete'", "optional": false }
@@ -5040,7 +5049,7 @@
     },
     "axes": {
       "type": {
-        "returnType": "{\n        id: string;\n        rect: BBox;\n        rotation: number;\n        mirrored: boolean;\n        label: {\n            baseline: 'hanging' | 'bottom' | 'middle';\n            align: 'start' | 'end' | 'center';\n        };\n    }[]",
+        "returnType": "(AxisLayout & {\n        id: string;\n    })[]",
         "optional": true
       }
     }
@@ -5685,10 +5694,21 @@
   },
   "AxisContext": {
     "axisId": { "type": { "returnType": "string", "optional": false } },
+    "position": {
+      "type": { "returnType": "AgCartesianAxisPosition", "optional": false }
+    },
+    "direction": { "type": { "returnType": "'x' | 'y'", "optional": false } },
     "scaleConvert": {
       "type": {
         "arguments": { "val": "any" },
         "returnType": "number",
+        "optional": false
+      }
+    },
+    "scaleInvert": {
+      "type": {
+        "arguments": { "position": "number" },
+        "returnType": "any",
         "optional": false
       }
     }
