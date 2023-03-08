@@ -5037,6 +5037,12 @@
         "returnType": "{ rect: BBox; visible: boolean }",
         "optional": false
       }
+    },
+    "axes": {
+      "type": {
+        "returnType": "{\n        id: string;\n        rect: BBox;\n        rotation: number;\n        mirrored: boolean;\n        label: {\n            baseline: 'hanging' | 'bottom' | 'middle';\n            align: 'start' | 'end' | 'center';\n        };\n    }[]",
+        "optional": true
+      }
     }
   },
   "LayoutContext": {
@@ -5651,6 +5657,42 @@
       }
     }
   },
+  "ModuleContextWithParent": {
+    "parent": { "type": { "returnType": "P", "optional": false } },
+    "meta": { "typeParams": ["P"] },
+    "scene": { "type": { "returnType": "Scene", "optional": false } },
+    "interactionManager": {
+      "type": { "returnType": "InteractionManager", "optional": false }
+    },
+    "highlightManager": {
+      "type": { "returnType": "HighlightManager", "optional": false }
+    },
+    "cursorManager": {
+      "type": { "returnType": "CursorManager", "optional": false }
+    },
+    "zoomManager": {
+      "type": { "returnType": "ZoomManager", "optional": false }
+    },
+    "tooltipManager": {
+      "type": { "returnType": "TooltipManager", "optional": false }
+    },
+    "layoutService": {
+      "type": {
+        "returnType": "Pick<LayoutService, 'addListener' | 'removeListener'>",
+        "optional": false
+      }
+    }
+  },
+  "AxisContext": {
+    "axisId": { "type": { "returnType": "string", "optional": false } },
+    "scaleConvert": {
+      "type": {
+        "arguments": { "val": "any" },
+        "returnType": "number",
+        "optional": false
+      }
+    }
+  },
   "ModuleInstance": {
     "update": {
       "type": { "arguments": {}, "returnType": "void", "optional": false }
@@ -5663,14 +5705,17 @@
     "instance": { "type": { "returnType": "M", "optional": false } },
     "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] }
   },
-  "Module": {
+  "BaseModule": {
     "optionsKey": { "type": { "returnType": "string", "optional": false } },
     "chartTypes": {
       "type": {
         "returnType": "('cartesian' | 'polar' | 'hierarchy')[]",
         "optional": false
       }
-    },
+    }
+  },
+  "RootModule": {
+    "type": { "type": { "returnType": "'root'", "optional": false } },
     "initialiseModule": {
       "type": {
         "arguments": { "ctx": "ModuleContext" },
@@ -5678,6 +5723,34 @@
         "optional": false
       }
     },
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "optionsKey": { "type": { "returnType": "string", "optional": false } },
+    "chartTypes": {
+      "type": {
+        "returnType": "('cartesian' | 'polar' | 'hierarchy')[]",
+        "optional": false
+      }
+    }
+  },
+  "AxisModule": {
+    "type": { "type": { "returnType": "'axis'", "optional": false } },
+    "initialiseModule": {
+      "type": {
+        "arguments": { "ctx": "ModuleContextWithParent<AxisContext>" },
+        "returnType": "ModuleInstanceMeta<M>",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "optionsKey": { "type": { "returnType": "string", "optional": false } },
+    "chartTypes": {
+      "type": {
+        "returnType": "('cartesian' | 'polar' | 'hierarchy')[]",
+        "optional": false
+      }
+    }
+  },
+  "Module": {
     "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] }
   },
   "FormatterOptions": {

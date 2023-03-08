@@ -6,6 +6,16 @@ export type LayoutStage = 'before-series';
 export interface LayoutCompleteEvent {
     type: 'layout-complete';
     series: { rect: BBox; visible: boolean };
+    axes?: {
+        id: string;
+        rect: BBox;
+        rotation: number;
+        mirrored: boolean;
+        label: {
+            baseline: 'hanging' | 'bottom' | 'middle';
+            align: 'start' | 'end' | 'center';
+        };
+    }[];
 }
 
 export interface LayoutContext {

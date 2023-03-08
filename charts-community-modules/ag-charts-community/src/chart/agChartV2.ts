@@ -48,7 +48,7 @@ import { SeriesOptionsTypes } from './mapping/defaults';
 import { CrossLine } from './crossline/crossLine';
 import { windowValue } from '../util/window';
 import { REGISTERED_MODULES } from '../module-support';
-import { Module } from '../util/module';
+import { Module, RootModule } from '../util/module';
 import { Logger } from '../util/logger';
 
 type ChartType = CartesianChart | PolarChart | HierarchyChart;
@@ -467,7 +467,8 @@ function applyModules(chart: Chart, options: AgChartOptions) {
     };
 
     let modulesChanged = false;
-    for (const next of REGISTERED_MODULES) {
+    const rootModules = REGISTERED_MODULES.filter((m): m is RootModule => m.type === 'root');
+    for (const next of rootModules) {
         const shouldBeEnabled = matchingChartType(next) && (options as any)[next.optionsKey] != null;
         const isEnabled = chart.isModuleEnabled(next);
 

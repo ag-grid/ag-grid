@@ -26,7 +26,7 @@ import { Layers } from './layers';
 import { CursorManager } from './interaction/cursorManager';
 import { HighlightChangeEvent, HighlightManager } from './interaction/highlightManager';
 import { TooltipManager } from './interaction/tooltipManager';
-import { Module, ModuleInstanceMeta } from '../util/module';
+import { Module, ModuleInstanceMeta, RootModule } from '../util/module';
 import { ZoomManager } from './interaction/zoomManager';
 import { LayoutService } from './layout/layoutService';
 import { ChartUpdateType } from './chartUpdateType';
@@ -277,7 +277,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.highlightManager.addListener('highlight-change', (event) => this.changeHighlightDatum(event));
     }
 
-    addModule(module: Module) {
+    addModule(module: RootModule) {
         if (this.modules[module.optionsKey] != null) {
             throw new Error('AG Charts - module already initialised: ' + module.optionsKey);
         }

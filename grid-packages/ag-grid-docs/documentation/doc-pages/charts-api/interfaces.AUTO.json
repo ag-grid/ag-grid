@@ -3375,7 +3375,8 @@
     "meta": {},
     "type": {
       "type": "'layout-complete'",
-      "series": "{ rect: BBox; visible: boolean; }"
+      "series": "{ rect: BBox; visible: boolean; }",
+      "axes?": "{ id: string; rect: BBox; rotation: number; mirrored: boolean; label: { baseline: 'hanging' | 'bottom' | 'middle'; align: 'start' | 'end' | 'center'; }; }[]"
     }
   },
   "LayoutContext": { "meta": {}, "type": { "shrinkRect": "BBox" } },
@@ -4018,6 +4019,23 @@
       "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>"
     }
   },
+  "ModuleContextWithParent": {
+    "meta": { "typeParams": ["P"] },
+    "type": {
+      "parent": "P",
+      "scene": "Scene",
+      "interactionManager": "InteractionManager",
+      "highlightManager": "HighlightManager",
+      "cursorManager": "CursorManager",
+      "zoomManager": "ZoomManager",
+      "tooltipManager": "TooltipManager",
+      "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>"
+    }
+  },
+  "AxisContext": {
+    "meta": {},
+    "type": { "axisId": "string", "scaleConvert(val: any)": "number" }
+  },
   "ModuleInstance": {
     "meta": {},
     "type": { "update()": "void", "destroy()": "void" }
@@ -4026,13 +4044,37 @@
     "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
     "type": { "instance": "M" }
   },
-  "Module": {
-    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+  "BaseModule": {
+    "meta": {},
     "type": {
       "optionsKey": "string",
-      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
-      "initialiseModule(ctx: ModuleContext)": "ModuleInstanceMeta<M>"
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
     }
+  },
+  "RootModule": {
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "type": {
+      "type": "'root'",
+      "initialiseModule(ctx: ModuleContext)": "ModuleInstanceMeta<M>",
+      "optionsKey": "string",
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
+    }
+  },
+  "AxisModule": {
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "type": {
+      "type": "'axis'",
+      "initialiseModule(ctx: ModuleContextWithParent<AxisContext>)": "ModuleInstanceMeta<M>",
+      "optionsKey": "string",
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
+    }
+  },
+  "Module": {
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["M extends ModuleInstance = ModuleInstance"]
+    },
+    "type": "RootModule<M> | AxisModule<M>"
   },
   "FormatterOptions": {
     "meta": {},
