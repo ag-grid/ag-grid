@@ -1,1 +1,1 @@
-export { ZoomModule } from './zoomModule';
+export * from './chartZoomModule';
