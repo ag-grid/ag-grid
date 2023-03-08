@@ -592,6 +592,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         userGroup.allLeafChildren = fillerGroup.allLeafChildren;
         userGroup.childrenAfterGroup = fillerGroup.childrenAfterGroup;
         userGroup.childrenMapped = fillerGroup.childrenMapped;
+        userGroup.sibling = fillerGroup.sibling;
         userGroup.updateHasChildren();
 
         this.removeFromParent(fillerGroup);
