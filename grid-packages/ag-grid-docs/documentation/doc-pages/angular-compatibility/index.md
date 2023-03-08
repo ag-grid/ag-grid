@@ -15,7 +15,8 @@ The following page provides information that is relevant when using older versio
  | 8       | 18 - 27   | 28                |
  | 9       | 23 - 27   | 28                |
  | 10 - 11 | 24 - 27   | 28 - 29           |
- | 12+     | 25 - 29+  | N/A               |
+ | 12 - 15 | 25 - 29+  | N/A               |
+ | 16+     | 28 - 29+  | N/A               |
 
  ## Future Support of Angular versions
 
