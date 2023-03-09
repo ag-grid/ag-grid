@@ -39,5 +39,5 @@
     --font-weight: var(--font-weight-normal);
     --line-height: var(--line-height-normal);
 
-    --icon-size: 2em;
+    --icon-size: ${$icon-size};
 }

@@ -8,6 +8,15 @@ a {
     &:hover {
         color: var(--link-hover-color);
     }
+
+    > .icon {
+        --icon-size: 1.5em;
+        --text-color: var(--link-color);
+    }
+
+    &:hover > .icon {
+        --text-color: var(--link-hover-color);
+    }
 }
 
 code {

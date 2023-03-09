@@ -51,6 +51,8 @@ input[type='submit']:not(.button-style-none),
     }
 
     .icon {
+        --icon-size: 2em;
+
         display: inline-block;
         position: relative;
         bottom: 0.05em;
