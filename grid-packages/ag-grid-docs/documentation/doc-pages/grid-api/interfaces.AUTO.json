@@ -9171,7 +9171,7 @@
       "suppressMiniFilter?": "/** Set to `true` to hide the Mini Filter.\n     * \n     * Default: `false`\n     */",
       "applyMiniFilterWhileTyping?": "/** Set to `true` to apply the Set Filter immediately when the user is typing in the Mini Filter.\n     * \n     * Default: `false`\n     */",
       "suppressSelectAll?": "/** Set to `true` to remove the Select All checkbox.\n     * Default: `false`\n     */",
-      "defaultToNothingSelected?": "/** By default, when the Set Filter is opened all values are shown selected. Set this to `true`\n     * to instead show all values as de-selected by default.\n     */",
+      "defaultToNothingSelected?": "/** By default, when the Set Filter is opened all values are shown selected. Set this to `true`\n     * to instead show all values as de-selected by default.\n     * \n     * This does not work when `excelMode` is enabled.\n     */",
       "comparator?": "/** Comparator for sorting. If not provided, the Column Definition comparator is used. If Column\n     * Definition comparator is also not provided, the default (grid provided) comparator is used.\n     */",
       "textFormatter?": "/** If specified, this formats the text before applying the Mini Filter compare logic, useful for\n     * instance to substitute accented characters.\n     */",
       "valueFormatter?": "/** If specified, this formats the value before it is displayed in the Filter List.\n     * If a Key Creator is provided (see `keyCreator`), this must also be provided,\n     * unless `convertValuesToStrings` is `true`\n     */",

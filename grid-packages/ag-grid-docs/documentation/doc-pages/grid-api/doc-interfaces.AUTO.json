@@ -16597,7 +16597,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "defaultToNothingSelected": {
-      "description": "/** By default, when the Set Filter is opened all values are shown selected. Set this to `true`\n     * to instead show all values as de-selected by default.\n     */",
+      "description": "/** By default, when the Set Filter is opened all values are shown selected. Set this to `true`\n     * to instead show all values as de-selected by default.\n     * \n     * This does not work when `excelMode` is enabled.\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "comparator": {
