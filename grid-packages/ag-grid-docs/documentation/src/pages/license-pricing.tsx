@@ -181,7 +181,7 @@ const LicensePricing = () => {
                         <h3 className="font-size-massive">Questions about our licenses? </h3>
                         <p>
                             Watch our short video for an in-depth look at exactly how each AG Grid license works. Learn
-                            which license is right for you, how many licenses you need for you team, and exactly when
+                            which license is right for you, how many licenses you need for your team, and exactly when
                             you need a deployment license.
                         </p>
                         <p>
@@ -291,7 +291,7 @@ const LicensePricing = () => {
                                     We do not charge per server. A cluster of many servers part of one application
                                     installation is considered one deployment and requires one Deployment License. This
                                     is true so long as the application instances within the cluster are replicas of each
-                                    other and server to provide load balancing and fail over only.
+                                    other and server provides load balancing and fail over only.
                                 </li>
                                 <li>
                                     Production failover deployments do not need to be licensed separately. They are
