@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from 'react';
+import { hostPrefix } from '../utils/consts';
 import { Icon } from './Icon';
 import styles from './Version.module.scss';
 
@@ -42,7 +43,12 @@ const Version: FunctionComponent<Props> = ({ date, version, blogUrl, highlights 
                 </ul>
             )}
 
-            <a className="font-size-small" href={`/changelog/?fixVersion=${version}`} target="_blank" rel="noreferrer">
+            <a
+                className="font-size-small"
+                href={`${hostPrefix}/changelog/?fixVersion=${version}`}
+                target="_blank"
+                rel="noreferrer"
+            >
                 {version} change log <Icon name="arrowRight" />
             </a>
         </div>
