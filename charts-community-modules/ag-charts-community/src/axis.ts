@@ -337,6 +337,10 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         this.refreshScale();
     }
 
+    public destroy() {
+        // For override by sub-classes.
+    }
+
     protected refreshScale() {
         this.requestedRange = this.scale.range.slice();
         this.crossLines?.forEach((crossLine) => {
