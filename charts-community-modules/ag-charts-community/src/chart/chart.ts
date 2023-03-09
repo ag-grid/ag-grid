@@ -26,7 +26,7 @@ import { Layers } from './layers';
 import { CursorManager } from './interaction/cursorManager';
 import { HighlightChangeEvent, HighlightManager } from './interaction/highlightManager';
 import { TooltipManager } from './interaction/tooltipManager';
-import { Module, ModuleInstanceMeta } from '../util/module';
+import { Module, ModuleContext, ModuleInstanceMeta, RootModule } from '../util/module';
 import { ZoomManager } from './interaction/zoomManager';
 import { LayoutService } from './layout/layoutService';
 import { ChartUpdateType } from './chartUpdateType';
@@ -277,29 +277,12 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.highlightManager.addListener('highlight-change', (event) => this.changeHighlightDatum(event));
     }
 
-    addModule(module: Module) {
+    addModule(module: RootModule) {
         if (this.modules[module.optionsKey] != null) {
             throw new Error('AG Charts - module already initialised: ' + module.optionsKey);
         }
 
-        const {
-            scene,
-            interactionManager,
-            zoomManager,
-            cursorManager,
-            highlightManager,
-            tooltipManager,
-            layoutService,
-        } = this;
-        const moduleMeta = module.initialiseModule({
-            scene,
-            interactionManager,
-            zoomManager,
-            cursorManager,
-            highlightManager,
-            tooltipManager,
-            layoutService,
-        });
+        const moduleMeta = module.initialiseModule(this.getModuleContext());
         this.modules[module.optionsKey] = moduleMeta;
 
         (this as any)[module.optionsKey] = moduleMeta.instance;
@@ -313,6 +296,27 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     isModuleEnabled(module: Module) {
         return this.modules[module.optionsKey] != null;
+    }
+
+    getModuleContext(): ModuleContext {
+        const {
+            scene,
+            interactionManager,
+            zoomManager,
+            cursorManager,
+            highlightManager,
+            tooltipManager,
+            layoutService,
+        } = this;
+        return {
+            scene,
+            interactionManager,
+            zoomManager,
+            cursorManager,
+            highlightManager,
+            tooltipManager,
+            layoutService,
+        };
     }
 
     destroy(opts?: { keepTransferableResources: boolean }): TransferableResources | undefined {
@@ -347,6 +351,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         this.series.forEach((s) => s.destroy());
         this.series = [];
+
+        this.axes.forEach((a) => a.destroy());
+        this.axes = [];
 
         this._destroyed = true;
 
@@ -516,10 +523,19 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     protected _axes: ChartAxis[] = [];
     set axes(values: ChartAxis[]) {
-        this._axes.forEach((axis) => axis.detachAxis(this.axisGroup));
+        const removedAxes = new Set<ChartAxis>();
+        this._axes.forEach((axis) => {
+            axis.detachAxis(this.axisGroup);
+            removedAxes.add(axis);
+        });
         // make linked axes go after the regular ones (simulates stable sort by `linkedTo` property)
         this._axes = values.filter((a) => !a.linkedTo).concat(values.filter((a) => a.linkedTo));
-        this._axes.forEach((axis) => axis.attachAxis(this.axisGroup));
+        this._axes.forEach((axis) => {
+            axis.attachAxis(this.axisGroup);
+            removedAxes.delete(axis);
+        });
+
+        removedAxes.forEach((axis) => axis.destroy());
     }
     get axes(): ChartAxis[] {
         return this._axes;

@@ -1,11 +1,23 @@
 ---
-title: "Filtering"
+title: "Filtering Overview"
 ---
 
-The grid can display a subset of the provided rows using filtering.
+This section gives an overview of the different filter types provided by the grid.
 
-This section outlines the different types of filtering that can be performed in the grid as follows:
+## Filter Types
 
-- [Column Filters](/filtering/): Column filters appear in the column menu and / or in the [Filters Tool Panel](/tool-panel-filters/). A filter set on a column filters using data in that column only.
-- [Quick Filter](/filter-quick/): Quick Filter is a piece of text given to the grid (typically the user will type it in somewhere in your application) that is used to filter rows using data in all columns in the grid.
-- [External Filter](/filter-external/): An external filter is a mechanism for the application to filter out rows independently of any filtering done by the grid.
+- **[Column Filter](/filtering/)** - a column-based filter that filters rows using the values under a specific column:
+
+<image-caption src="filtering-overview/resources/column-filters.png" alt="Text Filter" width="50rem"></image-caption>
+
+- **[Quick Filter](/filter-quick/)** - a text-based filter that filters rows across all columns and words in the text:
+
+<image-caption src="filtering-overview/resources/quick-filter.png" alt="Text Filter" width="50rem"></image-caption>
+
+- **[External Filter](/filter-external/)** - an application filter that is independent of any filtering done within the grid:
+
+<image-caption src="filtering-overview/resources/external-filter.png" alt="Text Filter" width="50rem"></image-caption>
+
+## Next Up
+
+Continue to the next section to learn about [Column Filters](/filtering/).

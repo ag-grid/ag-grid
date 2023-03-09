@@ -379,6 +379,8 @@ const gridOptions = {
 
 In this case, no filtering will occur until at least one value is selected.
 
+Note that the default state cannot be changed if [Excel Mode](/filter-set-excel-mode/) is enabled.
+
 The following example demonstrates different default states. Note the following:
 
 - The Athlete column has everything selected when the Set Filter is first opened, which is the default

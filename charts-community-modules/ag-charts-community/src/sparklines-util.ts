@@ -1,6 +1,7 @@
 export * from './util/value';
 export * from './util/id';
 export * from './util/padding';
+export * from './util/json';
 
 export { extent } from './util/array';
 export { tickFormat } from './util/numberFormat';

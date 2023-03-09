@@ -59,12 +59,16 @@ export class CartesianChart extends Chart {
         this.layoutService.dispatchLayoutComplete({
             type: 'layout-complete',
             series: { rect: seriesRect, visible: visibility.series },
+            axes: this.axes.map((axis) => ({ id: axis.id, ...axis.getLayoutState() })),
         });
 
         const { seriesRoot } = this;
         if (clipSeries) {
             const { x, y, width, height } = seriesRect;
-            seriesRoot.setClipRectInGroupCoordinateSpace(new BBox(x, y, width, height));
+            const { pixelRatio } = this.scene.canvas;
+            seriesRoot.setClipRectInGroupCoordinateSpace(
+                new BBox(x / pixelRatio, y / pixelRatio, width / pixelRatio, height / pixelRatio)
+            );
         } else {
             seriesRoot.setClipRectInGroupCoordinateSpace(undefined);
         }

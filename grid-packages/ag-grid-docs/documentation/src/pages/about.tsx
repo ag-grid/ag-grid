@@ -140,6 +140,11 @@ const AboutPage = () => {
                                 <p>Developer, Data Visualisation</p>
                             </div>
                             <div>
+                                <img src="../images/team/sergei.jpg" alt="Sergei Riazanov, Developer" />
+                                <h3>Sergei Riazanov</h3>
+                                <p>Developer, Data Visualisation</p>
+                            </div>
+                            <div>
                                 <img
                                     src="../images/team/alberto.jpg"
                                     alt="Alberto Gutierrez, Head of Customer Services"

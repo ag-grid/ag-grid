@@ -2241,6 +2241,7 @@
       "type?": "'bar' | 'column'",
       "grouped?": "boolean",
       "stacked?": "boolean",
+      "stackGroup?": "boolean",
       "normalizedTo?": "number",
       "xKey?": "string",
       "yKey?": "string",
@@ -2269,6 +2270,8 @@
     },
     "docs": {
       "grouped?": "/** Whether to show different y-values as separate bars (grouped) or not (stacked). */",
+      "stacked?": "/** An option indicating if the bars/columns should be stacked. */",
+      "stackGroup?": "/** An ID to be used to make stacked items appear in separate groups. */",
       "normalizedTo?": "/** The number to normalise the bar stacks to. Has no effect when `grouped` is `true`. For example, if `normalizedTo` is set to `100`, the bar stacks will all be scaled proportionally so that each of their totals is 100. */",
       "xKey?": "/** The key to use to retrieve x-values from the data. */",
       "yKey?": "/** The keys to use to retrieve y-values from the data. */",
@@ -3315,18 +3318,18 @@
   },
   "InteractionTypes": {
     "meta": { "isTypeAlias": true },
-    "type": "'click' | 'dblclick' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left'"
+    "type": "'click' | 'dblclick' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left' | 'wheel'"
   },
   "SUPPORTED_EVENTS": {
     "meta": { "isTypeAlias": true },
-    "type": "'click' | 'dblclick' | 'mousedown' | 'mousemove' | 'mouseup' | 'mouseout' | 'mouseenter' | 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel' | 'pagehide'"
+    "type": "'click' | 'dblclick' | 'mousedown' | 'mousemove' | 'mouseup' | 'mouseout' | 'mouseenter' | 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel' | 'pagehide' | 'wheel'"
   },
   "InteractionEvent": {
     "meta": {
       "isTypeAlias": true,
       "typeParams": ["T extends InteractionTypes"]
     },
-    "type": "{ type: T; offsetX: number; offsetY: number; pageX: number; pageY: number; sourceEvent: Event; consume(): void; } & (T extends 'drag' ? { startX: number; startY: number; } : {})"
+    "type": "{ type: T; offsetX: number; offsetY: number; pageX: number; pageY: number; sourceEvent: Event; consume(): void; }"
   },
   "Coords": {
     "meta": {},
@@ -3371,11 +3374,19 @@
     "docs": [null, null, null, null, null, null, null, null]
   },
   "LayoutStage": { "meta": { "isTypeAlias": true }, "type": "'before-series'" },
+  "AxisLayout": {
+    "meta": {},
+    "type": {
+      "rect": "BBox",
+      "label": "{ baseline: 'hanging' | 'bottom' | 'middle'; align: 'start' | 'end' | 'center'; }"
+    }
+  },
   "LayoutCompleteEvent": {
     "meta": {},
     "type": {
       "type": "'layout-complete'",
-      "series": "{ rect: BBox; visible: boolean; }"
+      "series": "{ rect: BBox; visible: boolean; }",
+      "axes?": "(AxisLayout & { id: string; })[]"
     }
   },
   "LayoutContext": { "meta": {}, "type": { "shrinkRect": "BBox" } },
@@ -4018,6 +4029,29 @@
       "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>"
     }
   },
+  "ModuleContextWithParent": {
+    "meta": { "typeParams": ["P"] },
+    "type": {
+      "parent": "P",
+      "scene": "Scene",
+      "interactionManager": "InteractionManager",
+      "highlightManager": "HighlightManager",
+      "cursorManager": "CursorManager",
+      "zoomManager": "ZoomManager",
+      "tooltipManager": "TooltipManager",
+      "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>"
+    }
+  },
+  "AxisContext": {
+    "meta": {},
+    "type": {
+      "axisId": "string",
+      "position": "AgCartesianAxisPosition",
+      "direction": "'x' | 'y'",
+      "scaleConvert(val: any)": "number",
+      "scaleInvert(position: number)": "any"
+    }
+  },
   "ModuleInstance": {
     "meta": {},
     "type": { "update()": "void", "destroy()": "void" }
@@ -4026,13 +4060,37 @@
     "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
     "type": { "instance": "M" }
   },
-  "Module": {
-    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+  "BaseModule": {
+    "meta": {},
     "type": {
       "optionsKey": "string",
-      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
-      "initialiseModule(ctx: ModuleContext)": "ModuleInstanceMeta<M>"
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
     }
+  },
+  "RootModule": {
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "type": {
+      "type": "'root'",
+      "initialiseModule(ctx: ModuleContext)": "ModuleInstanceMeta<M>",
+      "optionsKey": "string",
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
+    }
+  },
+  "AxisModule": {
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "type": {
+      "type": "'axis'",
+      "initialiseModule(ctx: ModuleContextWithParent<AxisContext>)": "ModuleInstanceMeta<M>",
+      "optionsKey": "string",
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
+    }
+  },
+  "Module": {
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["M extends ModuleInstance = ModuleInstance"]
+    },
+    "type": "RootModule<M> | AxisModule<M>"
   },
   "FormatterOptions": {
     "meta": {},

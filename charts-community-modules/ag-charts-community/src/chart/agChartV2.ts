@@ -12,6 +12,7 @@ import {
     AgPieSeriesOptions,
     AgTreemapSeriesOptions,
     AgChartInstance,
+    AgBaseAxisOptions,
 } from './agChartOptions';
 import { CartesianChart } from './cartesianChart';
 import { PolarChart } from './polarChart';
@@ -47,9 +48,11 @@ import {
 import { SeriesOptionsTypes } from './mapping/defaults';
 import { CrossLine } from './crossline/crossLine';
 import { windowValue } from '../util/window';
-import { REGISTERED_MODULES } from '../module-support';
-import { Module } from '../util/module';
+import { AxisModule, Module, RootModule } from '../util/module';
 import { Logger } from '../util/logger';
+
+// Deliberately imported via `module-support` so that internal module registration happens.
+import { REGISTERED_MODULES } from '../module-support';
 
 type ChartType = CartesianChart | PolarChart | HierarchyChart;
 
@@ -467,7 +470,8 @@ function applyModules(chart: Chart, options: AgChartOptions) {
     };
 
     let modulesChanged = false;
-    for (const next of REGISTERED_MODULES) {
+    const rootModules = REGISTERED_MODULES.filter((m): m is RootModule => m.type === 'root');
+    for (const next of rootModules) {
         const shouldBeEnabled = matchingChartType(next) && (options as any)[next.optionsKey] != null;
         const isEnabled = chart.isModuleEnabled(next);
 
@@ -542,7 +546,7 @@ function applyAxes(chart: Chart, options: AgCartesianChartOptions) {
         }
     }
 
-    chart.axes = createAxis(optAxes);
+    chart.axes = createAxis(chart, optAxes);
     return true;
 }
 
@@ -585,35 +589,63 @@ function createSeries(options: SeriesOptionsTypes[]): Series[] {
     return series;
 }
 
-function createAxis(options: AgCartesianAxisOptions[]): ChartAxis[] {
+function createAxis(chart: Chart, options: AgCartesianAxisOptions[]): ChartAxis[] {
     const axes: ChartAxis[] = [];
+    const skip = ['axes[].type'];
+    const moduleContext = chart.getModuleContext();
 
     let index = 0;
     for (const axisOptions of options || []) {
-        const path = `axes[${index++}]`;
-        const skip = ['axes[].type'];
+        let axis;
         switch (axisOptions.type) {
             case 'number':
-                axes.push(applyOptionValues(new NumberAxis(), axisOptions, { path, skip }));
+                axis = new NumberAxis(moduleContext);
                 break;
             case LogAxis.type:
-                axes.push(applyOptionValues(new LogAxis(), axisOptions, { path, skip }));
+                axis = new LogAxis(moduleContext);
                 break;
             case CategoryAxis.type:
-                axes.push(applyOptionValues(new CategoryAxis(), axisOptions, { path, skip }));
+                axis = new CategoryAxis(moduleContext);
                 break;
             case GroupedCategoryAxis.type:
-                axes.push(applyOptionValues(new GroupedCategoryAxis(), axisOptions, { path, skip }));
+                axis = new GroupedCategoryAxis(moduleContext);
                 break;
             case TimeAxis.type:
-                axes.push(applyOptionValues(new TimeAxis(), axisOptions, { path, skip }));
+                axis = new TimeAxis(moduleContext);
                 break;
             default:
                 throw new Error('AG Charts - unknown axis type: ' + axisOptions['type']);
         }
+
+        const path = `axes[${index++}]`;
+        applyAxisModules(axis, axisOptions);
+        applyOptionValues(axis, axisOptions, { path, skip });
+
+        axes.push(axis);
     }
 
     return axes;
+}
+
+function applyAxisModules(axis: ChartAxis, options: AgBaseAxisOptions) {
+    let modulesChanged = false;
+    const rootModules = REGISTERED_MODULES.filter((m): m is AxisModule => m.type === 'axis');
+
+    for (const next of rootModules) {
+        const shouldBeEnabled = (options as any)[next.optionsKey] != null;
+        const isEnabled = axis.isModuleEnabled(next);
+
+        if (shouldBeEnabled === isEnabled) continue;
+        modulesChanged = true;
+
+        if (shouldBeEnabled) {
+            axis.addModule(next);
+        } else {
+            axis.removeModule(next);
+        }
+    }
+
+    return modulesChanged;
 }
 
 type ObservableLike = {

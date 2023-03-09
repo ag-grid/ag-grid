@@ -45,6 +45,7 @@ import { extent } from './util/array';
 import { ChartAxisDirection } from './chart/chartAxisDirection';
 import { calculateLabelRotation } from './chart/label';
 import { Logger } from './util/logger';
+import { AxisLayout } from './chart/layout/layoutService';
 
 const TICK_COUNT = predicateWithMessage(
     (v: any, ctx) => NUMBER(0)(v, ctx) || v instanceof TimeInterval,
@@ -316,6 +317,13 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     readonly translation = { x: 0, y: 0 };
     rotation: number = 0; // axis rotation angle in degrees
 
+    protected readonly layout: Pick<AxisLayout, 'label'> = {
+        label: {
+            align: 'center',
+            baseline: 'middle',
+        },
+    };
+
     private attachCrossLine(crossLine: CrossLine) {
         this.crossLineGroup.appendChild(crossLine.group);
     }
@@ -327,6 +335,10 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     constructor(scale: S) {
         this._scale = scale;
         this.refreshScale();
+    }
+
+    public destroy() {
+        // For override by sub-classes.
     }
 
     protected refreshScale() {
@@ -1127,6 +1139,11 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
                 },
             });
         });
+
+        this.layout.label = {
+            align: labelTextAlign,
+            baseline: labelTextBaseline,
+        };
 
         return { labelData, rotated: !!(labelRotation || labelAutoRotation) };
     }

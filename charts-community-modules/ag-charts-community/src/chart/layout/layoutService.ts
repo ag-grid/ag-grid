@@ -3,9 +3,19 @@ import { Listeners } from '../../util/listeners';
 
 export type LayoutStage = 'before-series';
 
+export interface AxisLayout {
+    rect: BBox;
+    label: {
+        baseline: 'hanging' | 'bottom' | 'middle';
+        align: 'start' | 'end' | 'center';
+    };
+}
 export interface LayoutCompleteEvent {
     type: 'layout-complete';
     series: { rect: BBox; visible: boolean };
+    axes?: (AxisLayout & {
+        id: string;
+    })[];
 }
 
 export interface LayoutContext {

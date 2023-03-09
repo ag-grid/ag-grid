@@ -2,8 +2,11 @@
 
 set -eu
 
-LOCAL_REPO_ROOT=$(git rev-parse --show-toplevel)
-MODULE_PATH=$(git rev-parse --show-prefix)
+LOCAL_REPO_ROOT=$(git rev-parse --show-superproject-working-tree)
+if [[ $LOCAL_REPO_ROOT == "" ]] ; then
+    LOCAL_REPO_ROOT=$(git rev-parse --show-toplevel)
+fi
+MODULE_PATH=$(echo $PWD | sed s:${LOCAL_REPO_ROOT}/::)
 MODULE_NAME=$(basename $MODULE_PATH)
 CHARTS_PATH=charts-community-modules/ag-charts-community
 ENTERPRISE_PATH=charts-enterprise-modules/core

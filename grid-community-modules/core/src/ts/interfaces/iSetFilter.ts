@@ -161,6 +161,8 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
     /**
      * By default, when the Set Filter is opened all values are shown selected. Set this to `true`
      * to instead show all values as de-selected by default.
+     * 
+     * This does not work when `excelMode` is enabled.
      */
     defaultToNothingSelected?: boolean;
     /**

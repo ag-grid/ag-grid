@@ -3395,7 +3395,14 @@
       "description": "/** Whether to show different y-values as separate bars (grouped) or not (stacked). */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "stacked": { "type": { "returnType": "boolean", "optional": true } },
+    "stacked": {
+      "description": "/** An option indicating if the bars/columns should be stacked. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "stackGroup": {
+      "description": "/** An ID to be used to make stacked items appear in separate groups. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "normalizedTo": {
       "description": "/** The number to normalise the bar stacks to. Has no effect when `grouped` is `true`. For example, if `normalizedTo` is set to `100`, the bar stacks will all be scaled proportionally so that each of their totals is 100. */",
       "type": { "returnType": "number", "optional": true }
@@ -5028,6 +5035,15 @@
   },
   "Layers": {},
   "LayoutStage": {},
+  "AxisLayout": {
+    "rect": { "type": { "returnType": "BBox", "optional": false } },
+    "label": {
+      "type": {
+        "returnType": "{\n        baseline: 'hanging' | 'bottom' | 'middle';\n        align: 'start' | 'end' | 'center';\n    }",
+        "optional": false
+      }
+    }
+  },
   "LayoutCompleteEvent": {
     "type": {
       "type": { "returnType": "'layout-complete'", "optional": false }
@@ -5036,6 +5052,12 @@
       "type": {
         "returnType": "{ rect: BBox; visible: boolean }",
         "optional": false
+      }
+    },
+    "axes": {
+      "type": {
+        "returnType": "(AxisLayout & {\n        id: string;\n    })[]",
+        "optional": true
       }
     }
   },
@@ -5651,6 +5673,53 @@
       }
     }
   },
+  "ModuleContextWithParent": {
+    "parent": { "type": { "returnType": "P", "optional": false } },
+    "meta": { "typeParams": ["P"] },
+    "scene": { "type": { "returnType": "Scene", "optional": false } },
+    "interactionManager": {
+      "type": { "returnType": "InteractionManager", "optional": false }
+    },
+    "highlightManager": {
+      "type": { "returnType": "HighlightManager", "optional": false }
+    },
+    "cursorManager": {
+      "type": { "returnType": "CursorManager", "optional": false }
+    },
+    "zoomManager": {
+      "type": { "returnType": "ZoomManager", "optional": false }
+    },
+    "tooltipManager": {
+      "type": { "returnType": "TooltipManager", "optional": false }
+    },
+    "layoutService": {
+      "type": {
+        "returnType": "Pick<LayoutService, 'addListener' | 'removeListener'>",
+        "optional": false
+      }
+    }
+  },
+  "AxisContext": {
+    "axisId": { "type": { "returnType": "string", "optional": false } },
+    "position": {
+      "type": { "returnType": "AgCartesianAxisPosition", "optional": false }
+    },
+    "direction": { "type": { "returnType": "'x' | 'y'", "optional": false } },
+    "scaleConvert": {
+      "type": {
+        "arguments": { "val": "any" },
+        "returnType": "number",
+        "optional": false
+      }
+    },
+    "scaleInvert": {
+      "type": {
+        "arguments": { "position": "number" },
+        "returnType": "any",
+        "optional": false
+      }
+    }
+  },
   "ModuleInstance": {
     "update": {
       "type": { "arguments": {}, "returnType": "void", "optional": false }
@@ -5663,14 +5732,17 @@
     "instance": { "type": { "returnType": "M", "optional": false } },
     "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] }
   },
-  "Module": {
+  "BaseModule": {
     "optionsKey": { "type": { "returnType": "string", "optional": false } },
     "chartTypes": {
       "type": {
         "returnType": "('cartesian' | 'polar' | 'hierarchy')[]",
         "optional": false
       }
-    },
+    }
+  },
+  "RootModule": {
+    "type": { "type": { "returnType": "'root'", "optional": false } },
     "initialiseModule": {
       "type": {
         "arguments": { "ctx": "ModuleContext" },
@@ -5678,6 +5750,34 @@
         "optional": false
       }
     },
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "optionsKey": { "type": { "returnType": "string", "optional": false } },
+    "chartTypes": {
+      "type": {
+        "returnType": "('cartesian' | 'polar' | 'hierarchy')[]",
+        "optional": false
+      }
+    }
+  },
+  "AxisModule": {
+    "type": { "type": { "returnType": "'axis'", "optional": false } },
+    "initialiseModule": {
+      "type": {
+        "arguments": { "ctx": "ModuleContextWithParent<AxisContext>" },
+        "returnType": "ModuleInstanceMeta<M>",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "optionsKey": { "type": { "returnType": "string", "optional": false } },
+    "chartTypes": {
+      "type": {
+        "returnType": "('cartesian' | 'polar' | 'hierarchy')[]",
+        "optional": false
+      }
+    }
+  },
+  "Module": {
     "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] }
   },
   "FormatterOptions": {
