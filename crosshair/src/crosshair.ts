@@ -12,6 +12,7 @@ const {
     OPT_FONT_WEIGHT,
     STRING,
     OPT_STRING,
+    Layers,
 } = _ModuleSupport;
 
 export class CrosshairLabel {
@@ -84,7 +85,7 @@ export class Corsshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     private axisLayout?: _ModuleSupport.AxisLayout & {
         id: string;
     };
-    private crosshairGroup: _Scene.Group = new Group();
+    private crosshairGroup: _Scene.Group = new Group({ layer: true, zIndex: Layers.AXIS_ZINDEX });
     private labelNode: _Scene.Text = this.crosshairGroup.appendChild(new Text());
     private lineNode: _Scene.Line = this.crosshairGroup.appendChild(new Line());
 
