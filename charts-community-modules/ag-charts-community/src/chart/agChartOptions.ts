@@ -567,8 +567,14 @@ export interface AgBaseChartOptions {
     listeners?: AgBaseChartListeners;
     /** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */
     theme?: string | AgChartTheme; // | ChartTheme
-    /** When there is no data on the chart, this function will be used to generate HTML string. */
-    noDataRenderer?: () => string;
+    /** HTML overlays */
+    overlays?: {
+        /** An overlay to be displayed when there is no data, */
+        noData?: {
+            /** A function for generating HTML string for overlay content. */
+            renderer?: () => string;
+        };
+    };
 }
 
 export interface AgBaseAxisOptions {

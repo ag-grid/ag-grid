@@ -155,7 +155,7 @@
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "theme?": "string | AgChartTheme",
-      "noDataRenderer?": "() => string"
+      "overlays?": "{ noData?: { renderer?: () => string; }; }"
     },
     "docs": {
       "axes?": "/** Axis configurations. */",
@@ -175,7 +175,7 @@
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
-      "noDataRenderer?": "/** When there is no data on the chart, this function will be used to generate HTML string. */"
+      "overlays?": "/** HTML overlays */"
     }
   },
   "AgPolarThemeOptions": {
@@ -196,7 +196,7 @@
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "theme?": "string | AgChartTheme",
-      "noDataRenderer?": "() => string"
+      "overlays?": "{ noData?: { renderer?: () => string; }; }"
     },
     "docs": {
       "series?": "/** Series configurations. */",
@@ -214,7 +214,7 @@
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
-      "noDataRenderer?": "/** When there is no data on the chart, this function will be used to generate HTML string. */"
+      "overlays?": "/** HTML overlays */"
     }
   },
   "AgHierarchyThemeOptions": {
@@ -235,7 +235,7 @@
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "theme?": "string | AgChartTheme",
-      "noDataRenderer?": "() => string"
+      "overlays?": "{ noData?: { renderer?: () => string; }; }"
     },
     "docs": {
       "series?": "/** Series configurations. */",
@@ -253,7 +253,7 @@
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
-      "noDataRenderer?": "/** When there is no data on the chart, this function will be used to generate HTML string. */"
+      "overlays?": "/** HTML overlays */"
     }
   },
   "AgCrossLineThemeOptions": {
@@ -1143,7 +1143,7 @@
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "theme?": "string | AgChartTheme",
-      "noDataRenderer?": "() => string"
+      "overlays?": "{ noData?: { renderer?: () => string; }; }"
     },
     "docs": {
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
@@ -1160,7 +1160,7 @@
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
-      "noDataRenderer?": "/** When there is no data on the chart, this function will be used to generate HTML string. */"
+      "overlays?": "/** HTML overlays */"
     }
   },
   "AgBaseAxisOptions": {
@@ -3031,7 +3031,7 @@
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "theme?": "string | AgChartTheme",
-      "noDataRenderer?": "() => string"
+      "overlays?": "{ noData?: { renderer?: () => string; }; }"
     },
     "docs": {
       "type?": "/** If specified overrides the default series type. */",
@@ -3052,7 +3052,7 @@
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
-      "noDataRenderer?": "/** When there is no data on the chart, this function will be used to generate HTML string. */"
+      "overlays?": "/** HTML overlays */"
     }
   },
   "AgPolarChartOptions": {
@@ -3074,7 +3074,7 @@
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "theme?": "string | AgChartTheme",
-      "noDataRenderer?": "() => string"
+      "overlays?": "{ noData?: { renderer?: () => string; }; }"
     },
     "docs": {
       "type?": "/** If specified overrides the default series type. */",
@@ -3093,7 +3093,7 @@
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
-      "noDataRenderer?": "/** When there is no data on the chart, this function will be used to generate HTML string. */"
+      "overlays?": "/** HTML overlays */"
     }
   },
   "AgHierarchyChartOptions": {
@@ -3115,7 +3115,7 @@
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "theme?": "string | AgChartTheme",
-      "noDataRenderer?": "() => string"
+      "overlays?": "{ noData?: { renderer?: () => string; }; }"
     },
     "docs": {
       "type?": "/** If specified overrides the default series type. */",
@@ -3134,7 +3134,7 @@
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
-      "noDataRenderer?": "/** When there is no data on the chart, this function will be used to generate HTML string. */"
+      "overlays?": "/** HTML overlays */"
     }
   },
   "AgChartOptions": {

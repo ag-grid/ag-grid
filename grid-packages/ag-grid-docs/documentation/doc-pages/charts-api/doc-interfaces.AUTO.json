@@ -237,9 +237,12 @@
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
     },
-    "noDataRenderer": {
-      "description": "/** When there is no data on the chart, this function will be used to generate HTML string. */",
-      "type": { "arguments": {}, "returnType": "string", "optional": true }
+    "overlays": {
+      "description": "/** HTML overlays */",
+      "type": {
+        "returnType": "{\n        /** An overlay to be displayed when there is no data, */\n        noData?: {\n            /** A function for generating HTML string for overlay content. */\n            renderer?: () => string;\n        };\n    }",
+        "optional": true
+      }
     }
   },
   "AgPolarThemeOptions": {
@@ -304,9 +307,12 @@
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
     },
-    "noDataRenderer": {
-      "description": "/** When there is no data on the chart, this function will be used to generate HTML string. */",
-      "type": { "arguments": {}, "returnType": "string", "optional": true }
+    "overlays": {
+      "description": "/** HTML overlays */",
+      "type": {
+        "returnType": "{\n        /** An overlay to be displayed when there is no data, */\n        noData?: {\n            /** A function for generating HTML string for overlay content. */\n            renderer?: () => string;\n        };\n    }",
+        "optional": true
+      }
     }
   },
   "AgHierarchyThemeOptions": {
@@ -371,9 +377,12 @@
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
     },
-    "noDataRenderer": {
-      "description": "/** When there is no data on the chart, this function will be used to generate HTML string. */",
-      "type": { "arguments": {}, "returnType": "string", "optional": true }
+    "overlays": {
+      "description": "/** HTML overlays */",
+      "type": {
+        "returnType": "{\n        /** An overlay to be displayed when there is no data, */\n        noData?: {\n            /** A function for generating HTML string for overlay content. */\n            renderer?: () => string;\n        };\n    }",
+        "optional": true
+      }
     }
   },
   "AgCrossLineThemeOptions": {
@@ -1811,9 +1820,12 @@
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
     },
-    "noDataRenderer": {
-      "description": "/** When there is no data on the chart, this function will be used to generate HTML string. */",
-      "type": { "arguments": {}, "returnType": "string", "optional": true }
+    "overlays": {
+      "description": "/** HTML overlays */",
+      "type": {
+        "returnType": "{\n        /** An overlay to be displayed when there is no data, */\n        noData?: {\n            /** A function for generating HTML string for overlay content. */\n            renderer?: () => string;\n        };\n    }",
+        "optional": true
+      }
     }
   },
   "AgBaseAxisOptions": {
@@ -4709,9 +4721,12 @@
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
     },
-    "noDataRenderer": {
-      "description": "/** When there is no data on the chart, this function will be used to generate HTML string. */",
-      "type": { "arguments": {}, "returnType": "string", "optional": true }
+    "overlays": {
+      "description": "/** HTML overlays */",
+      "type": {
+        "returnType": "{\n        /** An overlay to be displayed when there is no data, */\n        noData?: {\n            /** A function for generating HTML string for overlay content. */\n            renderer?: () => string;\n        };\n    }",
+        "optional": true
+      }
     }
   },
   "AgPolarChartOptions": {
@@ -4779,9 +4794,12 @@
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
     },
-    "noDataRenderer": {
-      "description": "/** When there is no data on the chart, this function will be used to generate HTML string. */",
-      "type": { "arguments": {}, "returnType": "string", "optional": true }
+    "overlays": {
+      "description": "/** HTML overlays */",
+      "type": {
+        "returnType": "{\n        /** An overlay to be displayed when there is no data, */\n        noData?: {\n            /** A function for generating HTML string for overlay content. */\n            renderer?: () => string;\n        };\n    }",
+        "optional": true
+      }
     }
   },
   "AgHierarchyChartOptions": {
@@ -4846,9 +4864,12 @@
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
     },
-    "noDataRenderer": {
-      "description": "/** When there is no data on the chart, this function will be used to generate HTML string. */",
-      "type": { "arguments": {}, "returnType": "string", "optional": true }
+    "overlays": {
+      "description": "/** HTML overlays */",
+      "type": {
+        "returnType": "{\n        /** An overlay to be displayed when there is no data, */\n        noData?: {\n            /** A function for generating HTML string for overlay content. */\n            renderer?: () => string;\n        };\n    }",
+        "optional": true
+      }
     }
   },
   "AgChartOptions": {},

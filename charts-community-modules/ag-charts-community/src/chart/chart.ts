@@ -17,10 +17,10 @@ import { AgChartOptions, AgChartClickEvent, AgChartDoubleClickEvent, AgChartInst
 import { debouncedAnimationFrame, debouncedCallback } from '../util/render';
 import { CartesianSeries } from './series/cartesian/cartesianSeries';
 import { Point } from '../scene/point';
-import { BOOLEAN, OPT_FUNCTION, STRING_UNION, Validate } from '../util/validation';
+import { BOOLEAN, STRING_UNION, Validate } from '../util/validation';
 import { sleep } from '../util/async';
 import { Tooltip, TooltipMeta as PointerMeta } from './tooltip/tooltip';
-import { Overlay } from './overlay/overlay';
+import { ChartOverlays } from './overlay/chartOverlays';
 import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { jsonMerge } from '../util/json';
 import { Layers } from './layers';
@@ -57,7 +57,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     readonly background: Background = new Background();
     readonly legend: Legend;
     readonly tooltip: Tooltip;
-    readonly noDataOverlay: Overlay;
+    readonly overlays: ChartOverlays;
 
     @ActionOnSet<Chart>({
         newValue(value) {
@@ -174,9 +174,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
     })
     public footnote?: Caption = undefined;
 
-    @Validate(OPT_FUNCTION)
-    noDataRenderer: (() => string) | undefined = undefined;
-
     @Validate(STRING_UNION('standalone', 'integrated'))
     mode: 'standalone' | 'integrated' = 'standalone';
 
@@ -266,7 +263,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             this.highlightManager,
             this.tooltipManager
         );
-        this.noDataOverlay = new Overlay('ag-chart-no-data-overlay', this.element);
+        this.overlays = new ChartOverlays(this.element);
         this.container = container;
 
         // Add interaction listeners last so child components are registered first.
@@ -1173,11 +1170,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
         const shouldDisplayNoDataOverlay = !this.series.some((s) => s.hasData());
         const rect = this.getSeriesRect();
 
-        if (shouldDisplayNoDataOverlay && rect && typeof this.noDataRenderer === 'function') {
-            const html = this.noDataRenderer();
-            this.noDataOverlay.show(html, rect);
+        if (shouldDisplayNoDataOverlay && rect) {
+            this.overlays.noData.show(rect);
         } else {
-            this.noDataOverlay.hide();
+            this.overlays.noData.hide();
         }
     }
 }
