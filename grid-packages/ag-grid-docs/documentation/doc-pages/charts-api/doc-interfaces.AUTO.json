@@ -5536,6 +5536,7 @@
       }
     }
   },
+  "Command": {},
   "Point": {
     "x": { "type": { "returnType": "number", "optional": false } },
     "y": { "type": { "returnType": "number", "optional": false } }

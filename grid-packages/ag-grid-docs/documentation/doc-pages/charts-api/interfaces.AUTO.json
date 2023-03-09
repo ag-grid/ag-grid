@@ -3877,6 +3877,11 @@
       "removeLayer(canvas: Layer)": "void"
     }
   },
+  "Command": {
+    "meta": { "isEnum": true },
+    "type": ["Move", "Line", "Arc", "Curve", "ClosePath"],
+    "docs": [null, null, null, null, null]
+  },
   "Point": { "meta": {}, "type": { "x": "number", "y": "number" } },
   "SizedPoint": {
     "meta": {},
