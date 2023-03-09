@@ -138,6 +138,7 @@ $header-height: 64px;
 
     @media screen and (min-width: $breakpoint-site-header-small) {
         display: block !important; // !important needed to override bootstrap
+        overflow: visible !important; // !important needed to override bootstrap
     }
 }
 
