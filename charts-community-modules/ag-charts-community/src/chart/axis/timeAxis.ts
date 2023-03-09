@@ -2,6 +2,7 @@ import { Validate, AND, LESS_THAN, GREATER_THAN, OPT_DATE_OR_DATETIME_MS } from 
 import { TimeScale } from '../../scale/timeScale';
 import { extent } from '../../util/array';
 import { ChartAxis } from '../chartAxis';
+import { ModuleContext } from '../../util/module';
 
 export class TimeAxis extends ChartAxis<TimeScale, number | Date> {
     static className = 'TimeAxis';
@@ -10,8 +11,8 @@ export class TimeAxis extends ChartAxis<TimeScale, number | Date> {
     private datumFormat = '%m/%d/%y, %H:%M:%S';
     private datumFormatter: (date: Date) => string;
 
-    constructor() {
-        super(new TimeScale());
+    constructor(moduleCtx: ModuleContext) {
+        super(new TimeScale(), moduleCtx);
 
         const { scale } = this;
         scale.strictClampByDefault = true;

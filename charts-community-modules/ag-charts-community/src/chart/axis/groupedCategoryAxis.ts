@@ -12,6 +12,7 @@ import { extent } from '../../util/array';
 import { Point } from '../../scene/point';
 import { BOOLEAN, OPT_COLOR_STRING, Validate } from '../../util/validation';
 import { calculateLabelRotation } from '../label';
+import { ModuleContext } from '../../util/module';
 
 class GroupedCategoryAxisLabel extends AxisLabel {
     @Validate(BOOLEAN)
@@ -32,8 +33,8 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
     private labelSelection: Selection<Text, any>;
     private tickTreeLayout?: TreeLayout;
 
-    constructor() {
-        super(new BandScale<string | number>());
+    constructor(moduleCtx: ModuleContext) {
+        super(new BandScale<string | number>(), moduleCtx);
         this.includeInvisibleDomains = true;
 
         const { tickLineGroup, tickLabelGroup, gridLineGroup, tickScale, scale } = this;

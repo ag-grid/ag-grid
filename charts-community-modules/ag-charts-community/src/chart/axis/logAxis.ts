@@ -4,6 +4,7 @@ import { LogScale } from '../../scale/logScale';
 import { NumberAxis } from './numberAxis';
 import { extent } from '../../util/array';
 import { Logger } from '../../util/logger';
+import { ModuleContext } from '../../util/module';
 
 function NON_ZERO_NUMBER() {
     // Cannot be 0
@@ -69,8 +70,8 @@ export class LogAxis extends NumberAxis {
         return (this.scale as LogScale).base;
     }
 
-    constructor() {
-        super(new LogScale());
+    constructor(moduleCtx: ModuleContext) {
+        super(moduleCtx, new LogScale());
         this.scale.strictClampByDefault = true;
     }
 }

@@ -6,13 +6,14 @@ import { Validate, GREATER_THAN, AND, LESS_THAN, NUMBER_OR_NAN } from '../../uti
 import { Default } from '../../util/default';
 import { calculateNiceSecondaryAxis } from '../../util/secondaryAxisTicks';
 import { Logger } from '../../util/logger';
+import { ModuleContext } from '../../module-support';
 
 export class NumberAxis extends ChartAxis<LinearScale | LogScale, number> {
     static className = 'NumberAxis';
     static type = 'number' as 'number' | 'log';
 
-    constructor(scale = new LinearScale() as LinearScale | LogScale) {
-        super(scale);
+    constructor(moduleCtx: ModuleContext, scale = new LinearScale() as LinearScale | LogScale) {
+        super(scale, moduleCtx);
         scale.strictClampByDefault = true;
     }
 

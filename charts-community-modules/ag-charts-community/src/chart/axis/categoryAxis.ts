@@ -1,14 +1,16 @@
 import { NUMBER, Validate } from '../../util/validation';
 import { BandScale } from '../../scale/bandScale';
 import { ChartAxis } from '../chartAxis';
+import { ModuleContext } from '../../util/module';
+
 export class CategoryAxis extends ChartAxis<BandScale<string | object>> {
     static className = 'CategoryAxis';
     static type = 'category' as const;
 
     private _paddingOverrideEnabled = false;
 
-    constructor() {
-        super(new BandScale<string>());
+    constructor(moduleCtx: ModuleContext) {
+        super(new BandScale<string>(), moduleCtx);
 
         this.includeInvisibleDomains = true;
     }

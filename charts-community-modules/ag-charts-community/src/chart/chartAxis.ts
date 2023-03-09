@@ -5,6 +5,7 @@ import { LinearScale } from '../scale/linearScale';
 import { POSITION, STRING_ARRAY, Validate } from '../util/validation';
 import { AgCartesianAxisPosition, AgCartesianAxisType } from './agChartOptions';
 import { AxisLayout } from './layout/layoutService';
+import { AxisContext, AxisModule, ModuleContext, ModuleInstanceMeta } from '../util/module';
 
 export function flipChartAxisDirection(direction: ChartAxisDirection): ChartAxisDirection {
     if (direction === ChartAxisDirection.X) {
@@ -40,6 +41,8 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
     linkedTo?: ChartAxis;
     includeInvisibleDomains: boolean = false;
 
+    protected readonly modules: Record<string, ModuleInstanceMeta> = {};
+
     get type(): AgCartesianAxisType {
         return (this.constructor as any).type || '';
     }
@@ -49,6 +52,10 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
         // calculated or user-supplied tick-count, and time axes need special handling depending on
         // the time-range involved.
         return this.scale instanceof LinearScale;
+    }
+
+    protected constructor(scale: S, private readonly moduleCtx: ModuleContext) {
+        super(scale);
     }
 
     @Validate(POSITION)
@@ -81,6 +88,11 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
                     this.label.mirrored = false;
                     this.label.parallel = false;
                     break;
+            }
+
+            if (this.axisContext) {
+                this.axisContext.position = this.position;
+                this.axisContext.direction = this.direction;
             }
         }
     }
@@ -119,5 +131,50 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
             rect: this.computeBBox(),
             ...this.layout,
         };
+    }
+
+    private axisContext?: AxisContext;
+    addModule(module: AxisModule) {
+        if (this.modules[module.optionsKey] != null) {
+            throw new Error('AG Charts - module already initialised: ' + module.optionsKey);
+        }
+
+        if (this.axisContext == null) {
+            this.axisContext = {
+                axisId: this.id,
+                position: this.position,
+                direction: this.direction,
+                scaleConvert: (val) => this.scale.convert(val),
+                scaleInvert: (val) => this.scale.invert?.(val) ?? undefined,
+            };
+        }
+
+        const moduleMeta = module.initialiseModule({
+            ...this.moduleCtx,
+            parent: this.axisContext,
+        });
+        this.modules[module.optionsKey] = moduleMeta;
+
+        (this as any)[module.optionsKey] = moduleMeta.instance;
+    }
+
+    removeModule(module: AxisModule) {
+        this.modules[module.optionsKey]?.instance?.destroy();
+        delete this.modules[module.optionsKey];
+        delete (this as any)[module.optionsKey];
+    }
+
+    isModuleEnabled(module: AxisModule) {
+        return this.modules[module.optionsKey] != null;
+    }
+
+    public destroy(): void {
+        super.destroy();
+
+        for (const [key, module] of Object.entries(this.modules)) {
+            module.instance.destroy();
+            delete this.modules[key];
+            delete (this as any)[key];
+        }
     }
 }
