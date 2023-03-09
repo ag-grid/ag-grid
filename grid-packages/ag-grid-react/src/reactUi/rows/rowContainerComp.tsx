@@ -1,10 +1,10 @@
 import { getRowContainerTypeForName, IRowContainerComp, RowContainerCtrl, RowContainerName, RowCtrl } from 'ag-grid-community';
-import React, { useEffect, useMemo, useRef, useState, memo, useContext } from 'react';
+import React, { useMemo, useRef, useState, memo, useContext } from 'react';
 import { classesList } from '../utils';
 import useReactCommentEffect from '../reactComment';
 import RowComp from './rowComp';
 import { BeansContext } from '../beansContext';
-import { useEffectOnce } from '../useEffectOnce';
+import { useLayoutEffectOnce } from '../useEffectOnce';
 
 const RowContainerComp = (params: {name: RowContainerName}) => {
 
@@ -12,8 +12,6 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
     const [viewportHeight, setViewportHeight] = useState<string>('');
     const [rowCtrlsOrdered, setRowCtrlsOrdered] = useState<RowCtrl[]>([]);
-    const [rowCtrls, setRowCtrls] = useState<RowCtrl[]>([]);
-    const [domOrder, setDomOrder] = useState<boolean>(false);
     const [containerWidth, setContainerWidth] = useState<string>('');
 
     const { name } = params;
@@ -22,6 +20,9 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
     const eWrapper = useRef<HTMLDivElement>(null);
     const eViewport = useRef<HTMLDivElement>(null);
     const eContainer = useRef<HTMLDivElement>(null);
+
+    const rowCtrlsRef = useRef<RowCtrl[]>([]);
+    const domOrderRef = useRef<boolean>(false);
 
     const cssClasses = useMemo(() => RowContainerCtrl.getRowContainerCssClasses(name), [name]);
     const wrapperClasses = useMemo( ()=> classesList(cssClasses.wrapper), []);
@@ -41,27 +42,38 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
     // if domOrder=true, then we just copy rowCtrls into rowCtrlsOrdered observing order,
     // however if false, then we need to keep the order as they are in the dom, otherwise rowAnimation breaks
-    useEffect(() => {
-        setRowCtrlsOrdered( prev => {
-            if (domOrder) {
+    function updateRowCtrlsOrdered() {
+
+        setRowCtrlsOrdered(prev => {
+            const rowCtrls = rowCtrlsRef.current;
+
+            if (domOrderRef.current) {
                 return rowCtrls;
             }
+
             // if dom order not important, we don't want to change the order
             // of the elements in the dom, as this would break transition styles
             const oldRows = prev.filter(r => rowCtrls.indexOf(r) >= 0);
             const newRows = rowCtrls.filter(r => oldRows.indexOf(r) < 0);
-            const next = [...oldRows, ...newRows];
-            return next;
-        });
-    }, [domOrder, rowCtrls]);
 
-    useEffectOnce(() => {
+            return [...oldRows, ...newRows];
+        });
+
+    }
+
+    useLayoutEffectOnce(() => {
         const beansToDestroy: any[] = [];
 
         const compProxy: IRowContainerComp = {
             setViewportHeight: setViewportHeight,
-            setRowCtrls: rowCtrls => setRowCtrls(rowCtrls),
-            setDomOrder: domOrder => setDomOrder(domOrder),
+            setRowCtrls: rowCtrls => {
+                rowCtrlsRef.current = rowCtrls;
+                updateRowCtrlsOrdered();
+            },
+            setDomOrder: domOrder => {
+                domOrderRef.current = domOrder;
+                updateRowCtrlsOrdered();
+            },
             setContainerWidth: width => setContainerWidth(width)
         };
 
@@ -88,7 +100,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
         <div
             className={ containerClasses }
             ref={ eContainer }
-            role={ rowCtrls.length ? "rowgroup" : "presentation" }
+            role={ rowCtrlsOrdered.length ? "rowgroup" : "presentation" }
             style={ containerStyle }>
             {
                 rowCtrlsOrdered.map(rowCtrl =>

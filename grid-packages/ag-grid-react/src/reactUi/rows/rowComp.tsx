@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo, memo, useContext } from 'react';
+import React, { useEffect, useRef, useState, useMemo, memo, useContext, useLayoutEffect } from 'react';
 import { CellCtrl, RowContainerType, IRowComp, RowCtrl, UserCompDetails, ICellRenderer, CssClassManager, RowStyle } from 'ag-grid-community';
 import { showJsComp } from '../jsComp';
 import { isComponentStateless } from '../utils';
@@ -137,9 +137,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
         };
     });
 
-    useEffect(() => showJsComp(
-        fullWidthCompDetails, context, eGui.current!, fullWidthCompRef
-    ), [fullWidthCompDetails]);
+    useLayoutEffect(() => showJsComp(fullWidthCompDetails, context, eGui.current!, fullWidthCompRef), [fullWidthCompDetails]);
 
     const rowStyles = useMemo(() => {
         const res = { top, transform };
