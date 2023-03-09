@@ -2241,7 +2241,7 @@
       "type?": "'bar' | 'column'",
       "grouped?": "boolean",
       "stacked?": "boolean",
-      "stackGroup?": "boolean",
+      "stackGroup?": "string",
       "normalizedTo?": "number",
       "xKey?": "string",
       "yKey?": "string",
