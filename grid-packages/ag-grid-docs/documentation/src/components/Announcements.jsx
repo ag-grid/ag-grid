@@ -56,9 +56,9 @@ const Announcements = ({ framework }) => (
             </p>
 
             <p className="font-size-small">
-                Do you want more features? Then{' '}
+                Do you want more features? {''}
                 <DocumentationLink framework={framework} href="/licensing/">
-                    get started with AG Grid Enterprise
+                    Get started with AG Grid Enterprise
                 </DocumentationLink>
                 . You don't need to contact us to evaluate AG Grid Enterprise. A license is only required when you start
                 developing for production.
