@@ -56,6 +56,25 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
         return changedNodes;
     }
 
+    /**
+     * Deletes the selection state for a set of nodes, for use after deleting nodes via
+     * transaction. As this is designed for transactions, all nodes should belong to the same group.
+     */
+    public deleteSelectionStateFromParent(storeRoute: string[], removedNodeIds: string[]) {
+        const stateChanged = this.selectionStrategy.deleteSelectionStateFromParent(storeRoute, removedNodeIds);
+        if (!stateChanged) {
+            return;
+        }
+
+        this.shotgunResetNodeSelectionState();
+
+        const event: WithoutGridCommon<SelectionChangedEvent> = {
+            type: Events.EVENT_SELECTION_CHANGED,
+            source: 'api',
+        };
+        this.eventService.dispatchEvent(event);
+    }
+
     private shotgunResetNodeSelectionState(source?: SelectionEventSourceType) {
         this.rowModel.forEachNode(node => {
             if (node.stub) {
@@ -98,6 +117,10 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
     }
 
     public selectAllRowNodes(params: { source: SelectionEventSourceType; justFiltered?: boolean | undefined; justCurrentPage?: boolean | undefined; }): void {
+        if (params.justCurrentPage || params.justFiltered) {
+            console.warn("AG Grid: selecting just filtered only works when gridOptions.rowModelType='clientSide'");
+        }
+
         this.selectionStrategy.selectAllRowNodes(params);
 
         this.rowModel.forEachNode(node => {
@@ -116,6 +139,10 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
     }
     
     public deselectAllRowNodes(params: { source: SelectionEventSourceType; justFiltered?: boolean | undefined; justCurrentPage?: boolean | undefined; }): void {
+        if (params.justCurrentPage || params.justFiltered) {
+            console.warn("AG Grid: selecting just filtered only works when gridOptions.rowModelType='clientSide'");
+        }
+
         this.selectionStrategy.deselectAllRowNodes(params);
 
         this.rowModel.forEachNode(node => {

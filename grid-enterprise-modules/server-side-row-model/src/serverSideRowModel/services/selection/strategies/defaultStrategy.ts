@@ -69,6 +69,22 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         this.selectedState = newState;
     }
 
+    public deleteSelectionStateFromParent(parentPath: string[], removedNodeIds: string[]): boolean {
+        if (this.selectedState.toggledNodes.size === 0) {
+            return false;
+        }
+
+        let anyNodesToggled = false;
+
+        removedNodeIds.forEach(id => {
+            if(this.selectedState.toggledNodes.delete(id)) {
+                anyNodesToggled = true;
+            }
+        });
+
+        return anyNodesToggled;
+    }
+
     public setNodeSelected(params: ISetNodeSelectedParams): number {
         const onlyThisNode = params.clearSelection && params.newValue && !params.rangeSelect;
         if (this.rowSelection !== 'multiple' || onlyThisNode) {
@@ -130,7 +146,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     public getSelectedNodes(): RowNode<any>[] {
         if (this.selectAllUsed) {
             console.warn(
-                `AG Grid: getSelectedNodes and getSelectedRows functions are not advise while using select all functionality.
+                `AG Grid: getSelectedNodes and getSelectedRows functions cannot be used with select all functionality with the server-side row model.
                 Use \`api.getServerSideSelectionState()\` instead.`
             );
         }

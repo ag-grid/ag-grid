@@ -16,6 +16,7 @@ import {
     RowNode
 } from "@ag-grid-community/core";
 import { ServerSideRowModel } from "./serverSideRowModel";
+import { ServerSideSelectionService } from "./services/serverSideSelectionService";
 
 interface AsyncTransactionWrapper {
     transaction: ServerSideTransaction;
@@ -29,6 +30,7 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('selectionService') private selectionService: ServerSideSelectionService;
 
     private asyncTransactionsTimeout: number | undefined;
     private asyncTransactions: AsyncTransactionWrapper[] = [];
@@ -132,6 +134,10 @@ export class TransactionManager extends BeanStub implements IServerSideTransacti
 
         if (res) {
             this.valueCache.onDataChanged();
+            if (res.remove) {
+                const removedRowIds = res.remove.map(row => row.id!);
+                this.selectionService.deleteSelectionStateFromParent(transaction.route || [], removedRowIds);
+            }
 
             this.eventService.dispatchEvent({type: Events.EVENT_STORE_UPDATED});
             if (res.update && res.update.length) {
