@@ -275,14 +275,18 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     }
 
     private onBtCancel(e: Event): void {
-        const currentModel = this.getModel();
-
-        const afterAppliedFunc = () => {
-            this.onUiChanged(false, 'prevent');
-
+        this.resetUiToActiveModel(this.getModel(), () => {
             if (this.providedFilterParams.closeOnApply) {
                 this.close(e);
             }
+        });
+    }
+
+    protected resetUiToActiveModel(currentModel: M | null, afterUiUpdatedFunc?: () => void): void {
+        const afterAppliedFunc = () => {
+            this.onUiChanged(false, 'prevent');
+
+            afterUiUpdatedFunc?.();
         };
 
         if (currentModel != null) {
