@@ -34,7 +34,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
     private tickTreeLayout?: TreeLayout;
 
     constructor(moduleCtx: ModuleContext) {
-        super(new BandScale<string | number>(), moduleCtx);
+        super(moduleCtx, new BandScale<string | number>());
         this.includeInvisibleDomains = true;
 
         const { tickLineGroup, tickLabelGroup, gridLineGroup, tickScale, scale } = this;

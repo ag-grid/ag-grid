@@ -10,7 +10,7 @@ export class CategoryAxis extends ChartAxis<BandScale<string | object>> {
     private _paddingOverrideEnabled = false;
 
     constructor(moduleCtx: ModuleContext) {
-        super(new BandScale<string>(), moduleCtx);
+        super(moduleCtx, new BandScale<string>());
 
         this.includeInvisibleDomains = true;
     }

@@ -12,7 +12,7 @@ export class TimeAxis extends ChartAxis<TimeScale, number | Date> {
     private datumFormatter: (date: Date) => string;
 
     constructor(moduleCtx: ModuleContext) {
-        super(new TimeScale(), moduleCtx);
+        super(moduleCtx, new TimeScale());
 
         const { scale } = this;
         scale.strictClampByDefault = true;

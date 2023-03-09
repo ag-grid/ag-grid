@@ -13,7 +13,7 @@ export class NumberAxis extends ChartAxis<LinearScale | LogScale, number> {
     static type = 'number' as 'number' | 'log';
 
     constructor(moduleCtx: ModuleContext, scale = new LinearScale() as LinearScale | LogScale) {
-        super(scale, moduleCtx);
+        super(moduleCtx, scale);
         scale.strictClampByDefault = true;
     }
 
