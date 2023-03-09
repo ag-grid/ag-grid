@@ -17,13 +17,13 @@ const LicensePricing = () => {
                     <div className={styles.intro}>
                         <h1>AG Grid Licences</h1>
 
-                        <p className="font-size-extra-large">
+                        <p className="font-size-large">
                             Get in touch and start a conversation. We can provide quotes, give bulk pricing, and answer
                             any sales or contract-related questions you may have.
                         </p>
 
                         <p className={styles.salesEmail}>
-                            <a className="button font-size-extra-large" href="mailto:info@ag-grid.com">
+                            <a className="button font-size-large" href="mailto:info@ag-grid.com">
                                 <Icon name="email" /> info@ag-grid.com
                             </a>
                         </p>

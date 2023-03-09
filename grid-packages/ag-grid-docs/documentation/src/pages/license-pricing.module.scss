@@ -16,32 +16,42 @@
     }
 
     h1 {
-        font-size: 46px;
+        font-size: 44px !important; // !important for .ag-styles specificit
         font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificit
         margin-bottom: $size-1 !important; // !important for .ag-styles specificit
+        line-height: $line-height-ultra-tight !important; // !important for .ag-styles specificit
     }
 }
 
 .intro {
-    margin-top: $size-8 !important; // !important for .ag-styles specificit
+    width: 100%;
     margin-bottom: $size-4 !important; // !important for .ag-styles specificit
+    text-align: center;
+    
+    @media screen and (min-width: $breakpoint-pricing-large) {
+        margin-top: $size-8 !important; // !important for .ag-styles specificit
+        text-align: left;
+    }
+
+    p:global(.font-size-large) {
+        max-width: 44rem;
+        margin: 0 auto !important; // !important for .ag-styles specificit
+    }
 }
 
 .salesEmail {
     margin-top: $size-2 !important; // !important for .ag-styles specificit
     margin-bottom: $size-2 !important; // !important for .ag-styles specificit
 
-    p {
-        margin-bottom: 0 !important; // !important for .ag-styles specificit
-        line-height: var(--line-height-tight) !important; // !important for .ag-styles specificit
-    }
-
     a {
+        @media screen and (max-width: $breakpoint-pricing-small) {
+            font-size: var(--font-size-medium) !important; // !important for .ag-styles specificit
+        }
     }
 }
 
 .videoPrompt {
-    --line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
+    --line-height: $line-height-tight !important; // !important for .ag-styles specificity
 
     display: flex;
     flex-wrap: wrap;
@@ -52,8 +62,11 @@
     margin-top: $size-7 !important; // !important for .ag-styles specificity
 
     @media screen and (min-width: $breakpoint-pricing-small) {
-        justify-content: flex-start;
         text-align: left;
+    }
+
+    @media screen and (min-width: $breakpoint-pricing-large) {
+        justify-content: flex-start;
     }
 
     h3,
@@ -172,7 +185,7 @@
     }
 
     h3 {
-        --line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
+        --line-height: $line-height-tight !important; // !important for .ag-styles specificity
 
         font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity
 
@@ -206,7 +219,7 @@
     }
 
     ul {
-        --line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
+        --line-height: $line-height-tight !important; // !important for .ag-styles specificity
     }
 
     li:not(:last-child) {

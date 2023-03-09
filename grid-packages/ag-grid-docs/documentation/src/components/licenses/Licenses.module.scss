@@ -68,12 +68,12 @@
     }
 
     .top & {
-        margin-bottom: $size-5 !important; // !important for .ag-styles specificity
+        margin-bottom: $size-2 !important; // !important for .ag-styles specificity
         text-align: center;
     }
 
     .bottom & p:last-child {
-        --line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
+        --line-height: $line-height-tight !important; // !important for .ag-styles specificity
 
         max-width: 13em;
     }
@@ -82,7 +82,7 @@
 p.name {
     .top & {
         font-size: 46px !important; // !important for .ag-styles specificity
-        line-height: var(--line-height-ultra-tight) !important; // !important for .ag-styles specificity
+        line-height: $line-height-ultra-tight !important; // !important for .ag-styles specificity
         margin-top: $size-half !important; // !important for .ag-styles specificity
         margin-bottom: $size-1 !important; // !important for .ag-styles specificity
 
@@ -96,7 +96,7 @@ p.name {
     .bottom & {
         font-size: var(--font-size-extra-large) !important; // !important for .ag-styles specificity
 
-        line-height: var(--line-height-ultra-tight) !important; // !important for .ag-styles specificity
+        line-height: $line-height-ultra-tight !important; // !important for .ag-styles specificity
         margin-top: $size-half !important; // !important for .ag-styles specificity
         margin-bottom: $size-half !important; // !important for .ag-styles specificity
     }
@@ -109,24 +109,26 @@ p.name {
     grid-area: price;
     align-self: end;
 
+    .top & {
+        @media screen and (min-width: $breakpoint-pricing-medium) {
+            min-height: 132px;
+        }
+    }
+
     .bottom & {
         justify-self: end;
         text-align: right;
     }
 
-    @media screen and (min-width: $breakpoint-pricing-medium) {
-        min-height: 132px;
-    }
-
     .bottom & p:last-child {
-        --line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
+        --line-height: $line-height-tight !important; // !important for .ag-styles specificity
 
         max-width: 13em;
     }
 }
 
 p.priceFullDollars {
-    line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
+    line-height: $line-height-tight !important; // !important for .ag-styles specificity
     letter-spacing: -0.05em;
 
     &::before {
