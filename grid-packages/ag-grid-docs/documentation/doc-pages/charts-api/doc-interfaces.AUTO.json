@@ -236,6 +236,10 @@
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
+    },
+    "noDataRenderer": {
+      "description": "/** When there is no data on the chart, this function will be used to generate HTML string. */",
+      "type": { "arguments": {}, "returnType": "string", "optional": true }
     }
   },
   "AgPolarThemeOptions": {
@@ -299,6 +303,10 @@
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
+    },
+    "noDataRenderer": {
+      "description": "/** When there is no data on the chart, this function will be used to generate HTML string. */",
+      "type": { "arguments": {}, "returnType": "string", "optional": true }
     }
   },
   "AgHierarchyThemeOptions": {
@@ -362,6 +370,10 @@
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
+    },
+    "noDataRenderer": {
+      "description": "/** When there is no data on the chart, this function will be used to generate HTML string. */",
+      "type": { "arguments": {}, "returnType": "string", "optional": true }
     }
   },
   "AgCrossLineThemeOptions": {
@@ -1798,6 +1810,10 @@
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
+    },
+    "noDataRenderer": {
+      "description": "/** When there is no data on the chart, this function will be used to generate HTML string. */",
+      "type": { "arguments": {}, "returnType": "string", "optional": true }
     }
   },
   "AgBaseAxisOptions": {
@@ -4692,6 +4708,10 @@
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
+    },
+    "noDataRenderer": {
+      "description": "/** When there is no data on the chart, this function will be used to generate HTML string. */",
+      "type": { "arguments": {}, "returnType": "string", "optional": true }
     }
   },
   "AgPolarChartOptions": {
@@ -4758,6 +4778,10 @@
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
+    },
+    "noDataRenderer": {
+      "description": "/** When there is no data on the chart, this function will be used to generate HTML string. */",
+      "type": { "arguments": {}, "returnType": "string", "optional": true }
     }
   },
   "AgHierarchyChartOptions": {
@@ -4821,6 +4845,10 @@
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
+    },
+    "noDataRenderer": {
+      "description": "/** When there is no data on the chart, this function will be used to generate HTML string. */",
+      "type": { "arguments": {}, "returnType": "string", "optional": true }
     }
   },
   "AgChartOptions": {},

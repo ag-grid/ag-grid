@@ -476,6 +476,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 this._performUpdateNoRenderCount = 0;
 
                 await this.performLayout();
+                this.updateNoDataOverlayPosition();
                 splits.push(performance.now());
 
             // eslint-disable-next-line no-fallthrough
@@ -670,6 +671,42 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         await Promise.all(this.series.map((s) => s.processData()));
         await this.updateLegend();
+        if (!this.series.some((s) => s.hasData()) && typeof this.noDataRenderer === 'function') {
+            this.showNoDataOverlay();
+        } else {
+            this.hideNoDataOverlay();
+        }
+    }
+
+    noDataRenderer: (() => string) | undefined = undefined;
+
+    protected noDataOverlay?: HTMLElement;
+
+    protected showNoDataOverlay() {
+        const element = document.createElement('div');
+        this.noDataOverlay = element;
+        element.classList.add('ag-chart-no-data-overlay');
+        element.style.position = 'absolute';
+        this.updateNoDataOverlayPosition();
+        this.element?.append(element);
+        element.innerHTML = this.noDataRenderer!();
+    }
+
+    protected hideNoDataOverlay() {
+        this.noDataOverlay?.remove();
+        this.noDataOverlay = undefined;
+    }
+
+    protected updateNoDataOverlayPosition() {
+        const rect = this.seriesRect;
+        const element = this.noDataOverlay;
+        if (!rect || !element) {
+            return;
+        }
+        element.style.left = `${rect.x}px`;
+        element.style.top = `${rect.y}px`;
+        element.style.width = `${rect.width}px`;
+        element.style.height = `${rect.height}px`;
     }
 
     placeLabels(): Map<Series<any>, PlacedLabel[]> {

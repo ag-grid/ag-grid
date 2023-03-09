@@ -154,7 +154,8 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
-      "theme?": "string | AgChartTheme"
+      "theme?": "string | AgChartTheme",
+      "noDataRenderer?": "() => string"
     },
     "docs": {
       "axes?": "/** Axis configurations. */",
@@ -173,7 +174,8 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
+      "noDataRenderer?": "/** When there is no data on the chart, this function will be used to generate HTML string. */"
     }
   },
   "AgPolarThemeOptions": {
@@ -193,7 +195,8 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
-      "theme?": "string | AgChartTheme"
+      "theme?": "string | AgChartTheme",
+      "noDataRenderer?": "() => string"
     },
     "docs": {
       "series?": "/** Series configurations. */",
@@ -210,7 +213,8 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
+      "noDataRenderer?": "/** When there is no data on the chart, this function will be used to generate HTML string. */"
     }
   },
   "AgHierarchyThemeOptions": {
@@ -230,7 +234,8 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
-      "theme?": "string | AgChartTheme"
+      "theme?": "string | AgChartTheme",
+      "noDataRenderer?": "() => string"
     },
     "docs": {
       "series?": "/** Series configurations. */",
@@ -247,7 +252,8 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
+      "noDataRenderer?": "/** When there is no data on the chart, this function will be used to generate HTML string. */"
     }
   },
   "AgCrossLineThemeOptions": {
@@ -1136,7 +1142,8 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
-      "theme?": "string | AgChartTheme"
+      "theme?": "string | AgChartTheme",
+      "noDataRenderer?": "() => string"
     },
     "docs": {
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
@@ -1152,7 +1159,8 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
+      "noDataRenderer?": "/** When there is no data on the chart, this function will be used to generate HTML string. */"
     }
   },
   "AgBaseAxisOptions": {
@@ -3022,7 +3030,8 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
-      "theme?": "string | AgChartTheme"
+      "theme?": "string | AgChartTheme",
+      "noDataRenderer?": "() => string"
     },
     "docs": {
       "type?": "/** If specified overrides the default series type. */",
@@ -3042,7 +3051,8 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
+      "noDataRenderer?": "/** When there is no data on the chart, this function will be used to generate HTML string. */"
     }
   },
   "AgPolarChartOptions": {
@@ -3063,7 +3073,8 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
-      "theme?": "string | AgChartTheme"
+      "theme?": "string | AgChartTheme",
+      "noDataRenderer?": "() => string"
     },
     "docs": {
       "type?": "/** If specified overrides the default series type. */",
@@ -3081,7 +3092,8 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
+      "noDataRenderer?": "/** When there is no data on the chart, this function will be used to generate HTML string. */"
     }
   },
   "AgHierarchyChartOptions": {
@@ -3102,7 +3114,8 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
-      "theme?": "string | AgChartTheme"
+      "theme?": "string | AgChartTheme",
+      "noDataRenderer?": "() => string"
     },
     "docs": {
       "type?": "/** If specified overrides the default series type. */",
@@ -3120,7 +3133,8 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
+      "noDataRenderer?": "/** When there is no data on the chart, this function will be used to generate HTML string. */"
     }
   },
   "AgChartOptions": {

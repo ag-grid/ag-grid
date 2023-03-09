@@ -567,6 +567,8 @@ export interface AgBaseChartOptions {
     listeners?: AgBaseChartListeners;
     /** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */
     theme?: string | AgChartTheme; // | ChartTheme
+    /** When there is no data on the chart, this function will be used to generate HTML string. */
+    noDataRenderer?: () => string;
 }
 
 export interface AgBaseAxisOptions {
