@@ -17,9 +17,10 @@ import { AgChartOptions, AgChartClickEvent, AgChartDoubleClickEvent, AgChartInst
 import { debouncedAnimationFrame, debouncedCallback } from '../util/render';
 import { CartesianSeries } from './series/cartesian/cartesianSeries';
 import { Point } from '../scene/point';
-import { BOOLEAN, STRING_UNION, Validate } from '../util/validation';
+import { BOOLEAN, OPT_FUNCTION, STRING_UNION, Validate } from '../util/validation';
 import { sleep } from '../util/async';
 import { Tooltip, TooltipMeta as PointerMeta } from './tooltip/tooltip';
+import { Overlay } from './overlay/overlay';
 import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { jsonMerge } from '../util/json';
 import { Layers } from './layers';
@@ -56,6 +57,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     readonly background: Background = new Background();
     readonly legend: Legend;
     readonly tooltip: Tooltip;
+    readonly noDataOverlay: Overlay;
 
     @ActionOnSet<Chart>({
         newValue(value) {
@@ -172,6 +174,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
     })
     public footnote?: Caption = undefined;
 
+    @Validate(OPT_FUNCTION)
+    noDataRenderer: (() => string) | undefined = undefined;
+
     @Validate(STRING_UNION('standalone', 'integrated'))
     mode: 'standalone' | 'integrated' = 'standalone';
 
@@ -261,6 +266,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             this.highlightManager,
             this.tooltipManager
         );
+        this.noDataOverlay = new Overlay('ag-chart-no-data-overlay', this.element);
         this.container = container;
 
         // Add interaction listeners last so child components are registered first.
@@ -476,7 +482,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 this._performUpdateNoRenderCount = 0;
 
                 await this.performLayout();
-                this.updateNoDataOverlayPosition();
+                this.handleOverlays();
                 splits.push(performance.now());
 
             // eslint-disable-next-line no-fallthrough
@@ -671,42 +677,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         await Promise.all(this.series.map((s) => s.processData()));
         await this.updateLegend();
-        if (!this.series.some((s) => s.hasData()) && typeof this.noDataRenderer === 'function') {
-            this.showNoDataOverlay();
-        } else {
-            this.hideNoDataOverlay();
-        }
-    }
-
-    noDataRenderer: (() => string) | undefined = undefined;
-
-    protected noDataOverlay?: HTMLElement;
-
-    protected showNoDataOverlay() {
-        const element = document.createElement('div');
-        this.noDataOverlay = element;
-        element.classList.add('ag-chart-no-data-overlay');
-        element.style.position = 'absolute';
-        this.updateNoDataOverlayPosition();
-        this.element?.append(element);
-        element.innerHTML = this.noDataRenderer!();
-    }
-
-    protected hideNoDataOverlay() {
-        this.noDataOverlay?.remove();
-        this.noDataOverlay = undefined;
-    }
-
-    protected updateNoDataOverlayPosition() {
-        const rect = this.seriesRect;
-        const element = this.noDataOverlay;
-        if (!rect || !element) {
-            return;
-        }
-        element.style.left = `${rect.x}px`;
-        element.style.top = `${rect.y}px`;
-        element.style.width = `${rect.width}px`;
-        element.style.height = `${rect.height}px`;
     }
 
     placeLabels(): Map<Series<any>, PlacedLabel[]> {
@@ -1193,5 +1163,21 @@ export abstract class Chart extends Observable implements AgChartInstance {
             await sleep(5);
         }
         await this.awaitUpdateCompletion();
+    }
+
+    protected handleOverlays() {
+        this.handleNoDataOverlay();
+    }
+
+    protected handleNoDataOverlay() {
+        const shouldDisplayNoDataOverlay = !this.series.some((s) => s.hasData());
+        const rect = this.getSeriesRect();
+
+        if (shouldDisplayNoDataOverlay && rect && typeof this.noDataRenderer === 'function') {
+            const html = this.noDataRenderer();
+            this.noDataOverlay.show(html, rect);
+        } else {
+            this.noDataOverlay.hide();
+        }
     }
 }
