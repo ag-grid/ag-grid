@@ -45,7 +45,7 @@
 
     a {
         @media screen and (max-width: $breakpoint-pricing-small) {
-            font-size: var(--font-size-medium) !important; // !important for .ag-styles specificit
+            font-size: $font-size-medium !important; // !important for .ag-styles specificit
         }
     }
 }
@@ -254,7 +254,7 @@
     }
 
     a {
-        font-size: var(--font-size-extra-large) !important; // !important for .ag-styles specificity
+        font-size: $font-size-extra-large !important; // !important for .ag-styles specificity
         display: inline-block;
     }
 }
