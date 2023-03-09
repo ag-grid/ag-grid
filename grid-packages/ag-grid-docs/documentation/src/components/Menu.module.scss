@@ -54,15 +54,16 @@
 }
 
 .sectionHeader {
+    width: 100%;
     font-weight: var(--font-weight-bold);
-    border: 2px solid transparent;
+    border: 2px solid transparent !important; // !important for .ag-styles specificity
     outline: none;
     transition: border-color $default-transition-timing;
     border-radius: var(--border-radius);
 
     &:focus,
     &:focus-visible {
-        border-color: var(--sky-blue);
+        border-color: var(--sky-blue) !important; // !important for .ag-styles specificity
     }
 }
 

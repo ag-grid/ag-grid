@@ -47,6 +47,7 @@
 
     .grid {
         display: flex;
+        flex-wrap: wrap;
         gap: $size-6;
     }
 

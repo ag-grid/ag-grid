@@ -39,12 +39,12 @@ const menuData = filterProductionMenuData(rawMenuData);
 const MenuSection = ({ title, items, currentFramework, isActive, toggleActive }) => {
     return (
         <li key={title} className={styles.menuSection}>
-            <div
+            <button
                 onClick={toggleActive}
                 onKeyDown={toggleActive}
                 role="button"
                 tabIndex="0"
-                className={styles.sectionHeader}
+                className={classnames(styles.sectionHeader, 'button-style-none')}
                 data-toggle="collapse"
                 data-target={`#${toElementId(title)}`}
                 aria-expanded="false"
@@ -55,7 +55,7 @@ const MenuSection = ({ title, items, currentFramework, isActive, toggleActive })
                 </svg>
 
                 {title}
-            </div>
+            </button>
 
             <MenuGroup group={{ group: title, items }} currentFramework={currentFramework} isTopLevel={true} />
         </li>
