@@ -1,6 +1,6 @@
 import { _Scene, _ModuleSupport, FontStyle, FontWeight, AgCrosshairLabelFormatterParams } from 'ag-charts-community';
 
-const { Group, Line, Text } = _Scene;
+const { Group, Line, Text, BBox } = _Scene;
 const {
     Validate,
     NUMBER,
@@ -31,7 +31,7 @@ export class CrosshairLabel {
      * The padding between the label and the crosshair line.
      */
     @Validate(NUMBER(0))
-    padding: number = 5;
+    padding: number = 11;
 
     /**
      * The color of the label.
@@ -60,10 +60,10 @@ export class Corsshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     public update(): void {}
 
     @Validate(OPT_COLOR_STRING)
-    stroke?: string = 'rgb(195, 195, 195)';
+    stroke?: string = 'rgb(87, 87, 87)';
 
     @Validate(OPT_LINE_DASH)
-    lineDash?: number[] = [4, 2];
+    lineDash?: number[] = [6, 3];
 
     @Validate(NUMBER(0))
     lineDashOffset: number = 0;
@@ -79,45 +79,68 @@ export class Corsshair extends _ModuleSupport.BaseModuleInstance implements _Mod
 
     label: CrosshairLabel = new CrosshairLabel();
 
-    private seriesRect?: _Scene.BBox = undefined;
+    private seriesRect: _Scene.BBox = new BBox(0, 0, 0, 0);
+    private axisCtx: _ModuleSupport.AxisContext;
+    private axisLayout?: _ModuleSupport.AxisLayout & {
+        id: string;
+    };
     private crosshairGroup: _Scene.Group = new Group();
     private labelNode: _Scene.Text = this.crosshairGroup.appendChild(new Text());
     private lineNode: _Scene.Line = this.crosshairGroup.appendChild(new Line());
 
-    constructor(private readonly ctx: _ModuleSupport.ModuleContext) {
+    constructor(private readonly ctx: _ModuleSupport.ModuleContextWithParent<_ModuleSupport.AxisContext>) {
         super();
 
         const mouseMove = ctx.interactionManager.addListener('hover', (event) => this.onMouseMove(event));
         const highlight = ctx.highlightManager.addListener('highlight-change', (event) =>
             this.onHighlightChange(event)
         );
+        const layout = ctx.layoutService.addListener('layout-complete', (event) => this.layout(event));
+
         this.destroyFns.push(() => ctx.interactionManager.removeListener(mouseMove));
         this.destroyFns.push(() => ctx.highlightManager.removeListener(highlight));
-
-        const layout = ctx.layoutService.addListener('layout-complete', (event) => this.layout(event));
         this.destroyFns.push(() => ctx.layoutService.removeListener(layout));
 
+        this.axisCtx = ctx.parent;
+
         ctx.scene!.root!.appendChild(this.crosshairGroup);
+
+        this.crosshairGroup.visible = false;
     }
 
-    layout({ series: { rect, visible } }: _ModuleSupport.LayoutCompleteEvent) {
-        if (!(visible && rect)) {
+    layout({ series: { rect, visible }, axes }: _ModuleSupport.LayoutCompleteEvent) {
+        if (!(visible && rect && axes)) {
             return;
         }
         this.seriesRect = rect;
-        this.crosshairGroup.translationX = rect.x;
-        this.crosshairGroup.translationY = rect.y;
+
+        const { position: axisPosition, axisId } = this.axisCtx;
+
+        this.axisLayout = axes.find((a) => a.id === axisId);
+
+        this.crosshairGroup.translationX = Math.floor(rect.x);
+        this.crosshairGroup.translationY = Math.floor(
+            axisPosition === 'top' || axisPosition === 'bottom' ? rect.y + rect.height : rect.y
+        );
+
+        const rotation = axisPosition === 'top' || axisPosition === 'bottom' ? -Math.PI / 2 : 0;
+        this.crosshairGroup.rotation = rotation;
 
         this.updateLine();
         this.updateLabel();
     }
 
     updateLine() {
-        const { lineNode: line, seriesRect, stroke, strokeWidth, strokeOpacity, lineDash, lineDashOffset } = this;
-
-        if (!seriesRect) {
-            return;
-        }
+        const {
+            lineNode: line,
+            seriesRect,
+            stroke,
+            strokeWidth,
+            strokeOpacity,
+            lineDash,
+            lineDashOffset,
+            axisCtx,
+        } = this;
 
         line.stroke = stroke;
         line.strokeWidth = strokeWidth;
@@ -127,11 +150,14 @@ export class Corsshair extends _ModuleSupport.BaseModuleInstance implements _Mod
 
         line.y1 = line.y2 = 0;
         line.x1 = 0;
-        line.x2 = seriesRect.width;
+        line.x2 = axisCtx.direction === 'x' ? seriesRect.height : seriesRect.width;
     }
 
     updateLabel() {
         const {
+            axisCtx,
+            axisLayout,
+            seriesRect,
             labelNode,
             label: { fontStyle, fontWeight, fontSize, fontFamily, color, padding },
         } = this;
@@ -142,15 +168,46 @@ export class Corsshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         labelNode.fontFamily = fontFamily;
         labelNode.fill = color;
 
-        labelNode.text = 'label'; // remove
-        labelNode.x = -padding;
-        labelNode.textAlign = 'right';
-        labelNode.textBaseline = 'middle';
+        const crosshairLength = axisCtx.direction === 'x' ? seriesRect.height : seriesRect.width;
+        const mirrored = axisCtx.position === 'top' || axisCtx.position === 'right';
+        const labelX = mirrored ? padding + crosshairLength : -padding;
+
+        labelNode.rotationCenterX = labelX;
+        labelNode.x = labelX;
+
+        if (!axisLayout) {
+            return;
+        }
+
+        labelNode.rotation = axisLayout.label.rotation;
+        labelNode.textAlign = axisLayout.label.align;
+        labelNode.textBaseline = axisLayout.label.baseline;
+    }
+
+    updateLabelText(position: number) {
+        const { labelNode, axisCtx } = this;
+
+        const value = axisCtx.scaleInvert(position);
+
+        labelNode.text = this.formatLabel(value);
+    }
+
+    formatLabel(val: any): string {
+        const {
+            label: { formatter },
+            axisLayout,
+        } = this;
+
+        if (formatter) {
+            return formatter(val);
+        } else {
+            return typeof val === 'number' ? val.toFixed(axisLayout?.label.fractionDigits) : String(val);
+        }
     }
 
     onMouseMove(event: _ModuleSupport.InteractionEvent<'hover'>) {
-        const { crosshairGroup, snap, seriesRect } = this;
-        if (snap || !seriesRect) {
+        const { crosshairGroup, snap, seriesRect, axisCtx } = this;
+        if (snap) {
             return;
         }
 
@@ -158,25 +215,38 @@ export class Corsshair extends _ModuleSupport.BaseModuleInstance implements _Mod
 
         if (seriesRect.containsPoint(offsetX, offsetY)) {
             crosshairGroup.visible = true;
-            crosshairGroup.translationY = Math.floor(offsetY);
-            // update label text
+
+            if (axisCtx.direction === 'x') {
+                crosshairGroup.translationX = Math.floor(offsetX);
+                this.updateLabelText(offsetX - seriesRect.x);
+            } else {
+                crosshairGroup.translationY = Math.floor(offsetY);
+                this.updateLabelText(offsetY - seriesRect.y);
+            }
         } else {
             crosshairGroup.visible = false;
         }
     }
 
     onHighlightChange(event: _ModuleSupport.HighlightChangeEvent) {
-        const { crosshairGroup, snap, seriesRect } = this;
-        if (!(snap && seriesRect)) {
+        const { crosshairGroup, snap, seriesRect, axisCtx } = this;
+        if (!snap) {
             return;
         }
 
         const { currentHighlight } = event;
         if (currentHighlight && currentHighlight.point) {
-            const { y } = currentHighlight.point;
+            const { x, y } = currentHighlight.point;
+
             crosshairGroup.visible = true;
-            crosshairGroup.translationY = Math.floor(y + seriesRect.y);
-            // update label text
+
+            if (axisCtx.direction === 'x') {
+                crosshairGroup.translationX = Math.floor(x + seriesRect.x);
+                this.updateLabelText(x);
+            } else {
+                crosshairGroup.translationY = Math.floor(y + seriesRect.y);
+                this.updateLabelText(y);
+            }
         } else {
             crosshairGroup.visible = false;
         }

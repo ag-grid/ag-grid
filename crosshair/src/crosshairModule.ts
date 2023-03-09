@@ -10,7 +10,8 @@ import {
 } from 'ag-charts-community';
 import { Corsshair } from './crosshair';
 
-export const CROSSHAIR_MODULE: _ModuleSupport.Module = {
+export const CROSSHAIR_MODULE: _ModuleSupport.AxisModule = {
+    type: 'axis',
     chartTypes: ['cartesian'],
     optionsKey: 'crosshair',
     initialiseModule: (ctx) => {
