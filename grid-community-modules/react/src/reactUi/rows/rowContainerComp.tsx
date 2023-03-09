@@ -1,4 +1,4 @@
-import { getRowContainerTypeForName, IRowContainerComp, RowContainerCtrl, RowContainerName, RowCtrl } from 'ag-grid-community';
+import { getRowContainerTypeForName, IRowContainerComp, RowContainerCtrl, RowContainerName, RowCtrl } from '@ag-grid-community/core';
 import React, { useMemo, useRef, useState, memo, useContext } from 'react';
 import { classesList } from '../utils';
 import useReactCommentEffect from '../reactComment';
