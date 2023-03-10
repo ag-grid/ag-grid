@@ -19,8 +19,21 @@ import {
 
 export function loadExampleOptions(name: string, evalFn = 'options'): any {
     const filters = [/.*AgChart\.(update|create)/, /.* container: .*/, /.*setInterval.*/, /.*setTimeout.*/];
+    const srcDataFile = `../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-overview/examples/${name}/data.ts`;
+    const srcExampleFile = `../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-overview/examples/${name}/main.ts`;
     const dataFile = `../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-overview/examples/${name}/_gen/packages/vanilla/data.js`;
     const exampleFile = `../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-overview/examples/${name}/_gen/packages/vanilla/main.js`;
+
+    const checkMtime = (srcFile: string, targetFile: string) => {
+        if (!fs.existsSync(srcFile)) return;
+
+        if (fs.lstatSync(srcFile).mtime > fs.lstatSync(targetFile).mtime) {
+            throw new Error(`${targetFile} is stale`);
+        }
+    };
+
+    checkMtime(srcExampleFile, exampleFile);
+    checkMtime(srcDataFile, dataFile);
 
     const cleanJs = (content: Buffer) => {
         const inputLines = content.toString().split('\n');
