@@ -71,7 +71,7 @@
     "ciUpdateRebuildAndPackage": "npm i && npm run bootstrap && npm run buildPackageNoTest",
     "ciUpdateRebuild": "npm i && npm run bootstrap && npm run buildChangedModules",
     "charts:init": "lerna bootstrap --include-dependents --include-dependencies --scope '*charts-{community,enterprise}*{,/*}' && npm run charts:run -- install-hooks && npm run charts:run -- build",
-    "charts:run": "lerna run --stream --scope '*charts-{community,enterprise}*{,/*}'",
+    "charts:run": "lerna run --stream --scope '*charts-{community,enterprise}*{,/*}' --scope 'ag-charts-enterprise-example'",
     "charts:build": "npm run charts:run -- build",
     "charts:watch": "cd charts-examples/ag-charts-enterprise-example && npm run watch",
     "charts:lint": "npm run charts:run -- lint",
