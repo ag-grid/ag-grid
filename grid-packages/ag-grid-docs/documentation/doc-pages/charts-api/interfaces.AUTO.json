@@ -154,7 +154,8 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
-      "theme?": "string | AgChartTheme"
+      "theme?": "string | AgChartTheme",
+      "overlays?": "{ noData?: { renderer?: () => string; }; }"
     },
     "docs": {
       "axes?": "/** Axis configurations. */",
@@ -173,7 +174,8 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
+      "overlays?": "/** HTML overlays */"
     }
   },
   "AgPolarThemeOptions": {
@@ -193,7 +195,8 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
-      "theme?": "string | AgChartTheme"
+      "theme?": "string | AgChartTheme",
+      "overlays?": "{ noData?: { renderer?: () => string; }; }"
     },
     "docs": {
       "series?": "/** Series configurations. */",
@@ -210,7 +213,8 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
+      "overlays?": "/** HTML overlays */"
     }
   },
   "AgHierarchyThemeOptions": {
@@ -230,7 +234,8 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
-      "theme?": "string | AgChartTheme"
+      "theme?": "string | AgChartTheme",
+      "overlays?": "{ noData?: { renderer?: () => string; }; }"
     },
     "docs": {
       "series?": "/** Series configurations. */",
@@ -247,7 +252,8 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
+      "overlays?": "/** HTML overlays */"
     }
   },
   "AgCrossLineThemeOptions": {
@@ -1136,7 +1142,8 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
-      "theme?": "string | AgChartTheme"
+      "theme?": "string | AgChartTheme",
+      "overlays?": "{ noData?: { renderer?: () => string; }; }"
     },
     "docs": {
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
@@ -1152,7 +1159,8 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
+      "overlays?": "/** HTML overlays */"
     }
   },
   "AgBaseAxisOptions": {
@@ -3025,7 +3033,8 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
-      "theme?": "string | AgChartTheme"
+      "theme?": "string | AgChartTheme",
+      "overlays?": "{ noData?: { renderer?: () => string; }; }"
     },
     "docs": {
       "type?": "/** If specified overrides the default series type. */",
@@ -3045,7 +3054,8 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
+      "overlays?": "/** HTML overlays */"
     }
   },
   "AgPolarChartOptions": {
@@ -3066,7 +3076,8 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
-      "theme?": "string | AgChartTheme"
+      "theme?": "string | AgChartTheme",
+      "overlays?": "{ noData?: { renderer?: () => string; }; }"
     },
     "docs": {
       "type?": "/** If specified overrides the default series type. */",
@@ -3084,7 +3095,8 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
+      "overlays?": "/** HTML overlays */"
     }
   },
   "AgHierarchyChartOptions": {
@@ -3105,7 +3117,8 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
-      "theme?": "string | AgChartTheme"
+      "theme?": "string | AgChartTheme",
+      "overlays?": "{ noData?: { renderer?: () => string; }; }"
     },
     "docs": {
       "type?": "/** If specified overrides the default series type. */",
@@ -3123,7 +3136,8 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */"
+      "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
+      "overlays?": "/** HTML overlays */"
     }
   },
   "AgChartOptions": {

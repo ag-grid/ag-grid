@@ -236,6 +236,13 @@
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
+    },
+    "overlays": {
+      "description": "/** HTML overlays */",
+      "type": {
+        "returnType": "{\n        /** An overlay to be displayed when there is no data, */\n        noData?: {\n            /** A function for generating HTML string for overlay content. */\n            renderer?: () => string;\n        };\n    }",
+        "optional": true
+      }
     }
   },
   "AgPolarThemeOptions": {
@@ -299,6 +306,13 @@
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
+    },
+    "overlays": {
+      "description": "/** HTML overlays */",
+      "type": {
+        "returnType": "{\n        /** An overlay to be displayed when there is no data, */\n        noData?: {\n            /** A function for generating HTML string for overlay content. */\n            renderer?: () => string;\n        };\n    }",
+        "optional": true
+      }
     }
   },
   "AgHierarchyThemeOptions": {
@@ -362,6 +376,13 @@
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
+    },
+    "overlays": {
+      "description": "/** HTML overlays */",
+      "type": {
+        "returnType": "{\n        /** An overlay to be displayed when there is no data, */\n        noData?: {\n            /** A function for generating HTML string for overlay content. */\n            renderer?: () => string;\n        };\n    }",
+        "optional": true
+      }
     }
   },
   "AgCrossLineThemeOptions": {
@@ -1798,6 +1819,13 @@
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
+    },
+    "overlays": {
+      "description": "/** HTML overlays */",
+      "type": {
+        "returnType": "{\n        /** An overlay to be displayed when there is no data, */\n        noData?: {\n            /** A function for generating HTML string for overlay content. */\n            renderer?: () => string;\n        };\n    }",
+        "optional": true
+      }
     }
   },
   "AgBaseAxisOptions": {
@@ -4699,6 +4727,13 @@
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
+    },
+    "overlays": {
+      "description": "/** HTML overlays */",
+      "type": {
+        "returnType": "{\n        /** An overlay to be displayed when there is no data, */\n        noData?: {\n            /** A function for generating HTML string for overlay content. */\n            renderer?: () => string;\n        };\n    }",
+        "optional": true
+      }
     }
   },
   "AgPolarChartOptions": {
@@ -4765,6 +4800,13 @@
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
+    },
+    "overlays": {
+      "description": "/** HTML overlays */",
+      "type": {
+        "returnType": "{\n        /** An overlay to be displayed when there is no data, */\n        noData?: {\n            /** A function for generating HTML string for overlay content. */\n            renderer?: () => string;\n        };\n    }",
+        "optional": true
+      }
     }
   },
   "AgHierarchyChartOptions": {
@@ -4828,6 +4870,13 @@
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
+    },
+    "overlays": {
+      "description": "/** HTML overlays */",
+      "type": {
+        "returnType": "{\n        /** An overlay to be displayed when there is no data, */\n        noData?: {\n            /** A function for generating HTML string for overlay content. */\n            renderer?: () => string;\n        };\n    }",
+        "optional": true
+      }
     }
   },
   "AgChartOptions": {},

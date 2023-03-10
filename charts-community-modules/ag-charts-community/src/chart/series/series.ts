@@ -186,6 +186,11 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         return this._data;
     }
 
+    hasData() {
+        const { data } = this;
+        return data && (!Array.isArray(data) || data.length > 0);
+    }
+
     @Validate(BOOLEAN)
     protected _visible = true;
     set visible(value: boolean) {

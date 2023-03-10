@@ -20,6 +20,7 @@ import { Point } from '../scene/point';
 import { BOOLEAN, STRING_UNION, Validate } from '../util/validation';
 import { sleep } from '../util/async';
 import { Tooltip, TooltipMeta as PointerMeta } from './tooltip/tooltip';
+import { ChartOverlays } from './overlay/chartOverlays';
 import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { jsonMerge } from '../util/json';
 import { Layers } from './layers';
@@ -56,6 +57,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     readonly background: Background = new Background();
     readonly legend: Legend;
     readonly tooltip: Tooltip;
+    readonly overlays: ChartOverlays;
 
     @ActionOnSet<Chart>({
         newValue(value) {
@@ -261,6 +263,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             this.highlightManager,
             this.tooltipManager
         );
+        this.overlays = new ChartOverlays(this.element);
         this.container = container;
 
         // Add interaction listeners last so child components are registered first.
@@ -483,6 +486,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 this._performUpdateNoRenderCount = 0;
 
                 await this.performLayout();
+                this.handleOverlays();
                 splits.push(performance.now());
 
             // eslint-disable-next-line no-fallthrough
@@ -1172,5 +1176,20 @@ export abstract class Chart extends Observable implements AgChartInstance {
             await sleep(5);
         }
         await this.awaitUpdateCompletion();
+    }
+
+    protected handleOverlays() {
+        this.handleNoDataOverlay();
+    }
+
+    protected handleNoDataOverlay() {
+        const shouldDisplayNoDataOverlay = !this.series.some((s) => s.hasData());
+        const rect = this.getSeriesRect();
+
+        if (shouldDisplayNoDataOverlay && rect) {
+            this.overlays.noData.show(rect);
+        } else {
+            this.overlays.noData.hide();
+        }
     }
 }
