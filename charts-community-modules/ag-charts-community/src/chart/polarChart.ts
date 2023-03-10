@@ -38,12 +38,17 @@ export class PolarChart extends Chart {
     }
 
     private computeSeriesRect(shrinkRect: BBox) {
-        const { legend } = this;
+        const { legend, seriesPadding } = this;
 
         if (legend.visible && legend.enabled && legend.data.length) {
             const legendPadding = legend.spacing;
             shrinkRect.shrink(legendPadding, legend.position);
         }
+
+        shrinkRect.shrink(seriesPadding.left, 'left');
+        shrinkRect.shrink(seriesPadding.top, 'top');
+        shrinkRect.shrink(seriesPadding.right, 'right');
+        shrinkRect.shrink(seriesPadding.bottom, 'bottom');
 
         this.seriesRect = shrinkRect;
     }

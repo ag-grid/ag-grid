@@ -8,6 +8,7 @@ import { AgCartesianAxisPosition } from './agChartOptions';
 import { Logger } from '../util/logger';
 
 type VisibilityMap = { crossLines: boolean; series: boolean };
+const directions: AgCartesianAxisPosition[] = ['top', 'right', 'bottom', 'left'];
 
 export class CartesianChart extends Chart {
     static className = 'CartesianChart';
@@ -138,7 +139,19 @@ export class CartesianChart extends Chart {
             Object.assign(axisWidths, lastPassAxisWidths);
             Object.assign(visibility, lastPassVisibility);
 
-            const result = this.updateAxesPass(axisWidths, inputShrinkRect.clone(), seriesRect);
+            const paddedRect = inputShrinkRect.clone();
+            const reversedAxes = this.axes.slice().reverse();
+            directions.forEach((dir) => {
+                const padding = this.seriesPadding[dir];
+                const axis = reversedAxes.find((axis) => axis.position === dir);
+                if (axis) {
+                    axis.seriesPadding = padding;
+                } else {
+                    paddedRect.shrink(padding, dir);
+                }
+            });
+
+            const result = this.updateAxesPass(axisWidths, paddedRect, seriesRect);
             lastPassAxisWidths = ceilValues(result.axisWidths);
             lastPassVisibility = result.visibility;
             clipSeries = result.clipSeries;
