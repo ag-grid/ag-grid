@@ -2,6 +2,7 @@ import { Scale } from '../scale/scale';
 import { Axis, TickInterval } from '../axis';
 import { ChartAxisDirection } from './chartAxisDirection';
 import { LinearScale } from '../scale/linearScale';
+import { ContinuousScale } from '../scale/continuousScale';
 import { POSITION, STRING_ARRAY, Validate } from '../util/validation';
 import { AgCartesianAxisPosition, AgCartesianAxisType } from './agChartOptions';
 import { AxisLayout } from './layout/layoutService';
@@ -91,7 +92,7 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
             }
 
             if (this.axisContext) {
-                this.axisContext.position = this.position;
+                this.axisContext.position = value;
                 this.axisContext.direction = this.direction;
             }
         }
@@ -144,6 +145,7 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
                 axisId: this.id,
                 position: this.position,
                 direction: this.direction,
+                continuous: this.scale instanceof ContinuousScale,
                 scaleConvert: (val) => this.scale.convert(val),
                 scaleInvert: (val) => this.scale.invert?.(val) ?? undefined,
             };
