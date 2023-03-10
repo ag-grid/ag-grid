@@ -44,7 +44,7 @@ const MenuSection = ({ title, items, currentFramework, isActive, toggleActive })
                 className={classnames(styles.sectionHeader, 'button-style-none')}
                 data-toggle="collapse"
                 data-target={`#${toElementId(title)}`}
-                aria-expanded="false"
+                aria-expanded={isActive}
                 aria-controls={`#${toElementId(title)}`}
             >
                 <Icon name="chevronRight" svgClasses={classnames(styles.sectionIcon, isActive && styles.active)} />
@@ -52,15 +52,20 @@ const MenuSection = ({ title, items, currentFramework, isActive, toggleActive })
                 {title}
             </button>
 
-            <MenuGroup group={{ group: title, items }} currentFramework={currentFramework} isTopLevel={true} />
+            <MenuGroup
+                group={{ group: title, items }}
+                currentFramework={currentFramework}
+                isTopLevel={true}
+                isActive={isActive}
+            />
         </li>
     );
 };
 
-const MenuGroup = ({ group, currentFramework, isTopLevel }) => (
+const MenuGroup = ({ group, currentFramework, isTopLevel, isActive }) => (
     <ul
         id={isTopLevel && toElementId(group.group)}
-        className={classnames(styles.menuGroup, 'list-style-none', isTopLevel && 'collapse')}
+        className={classnames(styles.menuGroup, 'list-style-none', isTopLevel && 'collapse', isActive && 'show')}
         data-parent="#side-nav"
     >
         {group.items
