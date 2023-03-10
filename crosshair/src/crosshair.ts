@@ -76,7 +76,7 @@ export class Corsshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     strokeOpacity: number = 1;
 
     @Validate(BOOLEAN)
-    snap: boolean = true;
+    snap: boolean = false;
 
     label: CrosshairLabel = new CrosshairLabel();
 
@@ -195,20 +195,28 @@ export class Corsshair extends _ModuleSupport.BaseModuleInstance implements _Mod
 
     formatLabel(val: any): string {
         const {
-            label: { formatter },
+            label,
             axisLayout,
         } = this;
 
-        if (formatter) {
-            return formatter(val);
+        const isInteger = val % 1 === 0;
+        const fractionDigits = (axisLayout?.label.fractionDigits ?? 0) + (isInteger ? 0 : 1);
+        const defaultFormatter = typeof val === 'number' ? (val: number) => val.toFixed(fractionDigits) : (val: any) => String(val);
+
+        if (label.formatter) {
+            return label.formatter({
+                value: val,
+                fractionDigits,
+                formatter: defaultFormatter,
+            })
         } else {
-            return typeof val === 'number' ? val.toFixed(axisLayout?.label.fractionDigits) : String(val);
+            return defaultFormatter(val);
         }
     }
 
     onMouseMove(event: _ModuleSupport.InteractionEvent<'hover'>) {
         const { crosshairGroup, snap, seriesRect, axisCtx } = this;
-        if (snap) {
+        if (snap || !axisCtx.continuous) {
             return;
         }
 
@@ -231,7 +239,7 @@ export class Corsshair extends _ModuleSupport.BaseModuleInstance implements _Mod
 
     onHighlightChange(event: _ModuleSupport.HighlightChangeEvent) {
         const { crosshairGroup, snap, seriesRect, axisCtx } = this;
-        if (!snap) {
+        if (!snap && axisCtx.continuous) {
             return;
         }
 

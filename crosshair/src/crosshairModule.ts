@@ -24,6 +24,7 @@ export const CROSSHAIR_MODULE: _ModuleSupport.AxisModule = {
 declare module 'ag-charts-community' {
     export interface AgCrosshairLabelFormatterParams {
         readonly value: any;
+        readonly fractionDigits: number;
         readonly formatter?: (x: any) => string;
     }
 
