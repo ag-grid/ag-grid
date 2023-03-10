@@ -582,8 +582,12 @@ export abstract class Chart extends Observable implements AgChartInstance {
         if (!series.data) {
             series.data = this.data;
         }
-        series.addEventListener('nodeClick', this.onSeriesNodeClick);
-        series.addEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
+        if (this.hasEventListener('seriesNodeClick')) {
+            series.addEventListener('nodeClick', this.onSeriesNodeClick);
+        }
+        if (this.hasEventListener('seriesNodeDoubleClick')) {
+            series.addEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
+        }
     }
 
     protected freeSeries(series: Series<any>) {
@@ -973,9 +977,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.lastInteractionEvent = undefined;
     });
     protected handlePointer(event: InteractionEvent<'hover'>) {
-        const { lastPick, tooltip } = this;
-        const { range } = tooltip;
-        const { pageX, pageY, offsetX, offsetY } = event;
+        const { lastPick } = this;
+        const { offsetX, offsetY } = event;
 
         const disablePointer = () => {
             if (lastPick) {
@@ -988,6 +991,18 @@ export abstract class Chart extends Observable implements AgChartInstance {
             disablePointer();
             return;
         }
+
+        // Handle node highlighting and tooltip toggling when pointer within `tooltip.range`
+        this.handlePointerTooltip(event, disablePointer);
+
+        // Handle mouse cursor when pointer withing `series[].nodeClickRange`
+        this.handlePointerNodeCursor(event);
+    }
+
+    protected handlePointerTooltip(event: InteractionEvent<'hover'>, disablePointer: () => void) {
+        const { lastPick, tooltip } = this;
+        const { range } = tooltip;
+        const { pageX, pageY, offsetX, offsetY } = event;
 
         let pixelRange;
         if (typeof range === 'number' && Number.isFinite(range)) {
@@ -1023,6 +1038,18 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
     }
 
+    protected handlePointerNodeCursor(event: InteractionEvent<'hover'>) {
+        const found = this.checkSeriesNodeRange(event, (series: Series, _datum: any) => {
+            if (series.hasEventListener('nodeClick') || series.hasEventListener('nodeDoubleClick')) {
+                this.cursorManager.updateCursor('chart', 'pointer');
+            }
+        });
+
+        if (!found) {
+            this.cursorManager.updateCursor('chart');
+        }
+    }
+
     protected onClick(event: InteractionEvent<'click'>) {
         if (this.checkSeriesNodeClick(event)) {
             this.update(ChartUpdateType.SERIES_UPDATE);
@@ -1046,27 +1073,27 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     private checkSeriesNodeClick(event: InteractionEvent<'click'>): boolean {
-        return this.checkSeriesNodeAnyClick(event, (series: Series, datum: any) =>
+        return this.checkSeriesNodeRange(event, (series: Series, datum: any) =>
             series.fireNodeClickEvent(event.sourceEvent, datum)
         );
     }
 
     private checkSeriesNodeDoubleClick(event: InteractionEvent<'dblclick'>): boolean {
-        return this.checkSeriesNodeAnyClick(event, (series: Series, datum: any) =>
+        return this.checkSeriesNodeRange(event, (series: Series, datum: any) =>
             series.fireNodeDoubleClickEvent(event.sourceEvent, datum)
         );
     }
 
-    private checkSeriesNodeAnyClick(
-        event: InteractionEvent<'click' | 'dblclick'>,
-        fireEventFn: (series: Series, datum: any) => void
+    private checkSeriesNodeRange(
+        event: InteractionEvent<'click' | 'dblclick' | 'hover'>,
+        callback: (series: Series, datum: any) => void
     ): boolean {
         const datum = this.lastPick?.datum;
         const nodeClickRange = datum?.series.nodeClickRange;
 
-        // First check if we should fire the event based on nearest node
+        // First check if we should trigger the callback based on nearest node
         if (datum && nodeClickRange === 'nearest') {
-            fireEventFn(datum.series, datum);
+            callback(datum.series, datum);
             return true;
         }
 
@@ -1084,12 +1111,12 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         if (!pick) return false;
 
-        // Then if we've picked a node within the pixel range, or exactly, fire the event
+        // Then if we've picked a node within the pixel range, or exactly, trigger the callback
         const isPixelRange = pixelRange != null;
         const exactlyMatched = nodeClickRange === 'exact' && pick.distance === 0;
 
         if (isPixelRange || exactlyMatched) {
-            fireEventFn(pick.series, pick.datum);
+            callback(pick.series, pick.datum);
             return true;
         }
 

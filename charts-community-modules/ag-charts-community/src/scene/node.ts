@@ -389,14 +389,6 @@ export abstract class Node extends ChangeDetectable {
         return bbox;
     }
 
-    computeBBoxCenter(): [number, number] {
-        const bbox = this.computeBBox && this.computeBBox();
-        if (bbox) {
-            return [bbox.x + bbox.width * 0.5, bbox.y + bbox.height * 0.5];
-        }
-        return [0, 0];
-    }
-
     computeTransformMatrix() {
         if (!this._dirtyTransform) {
             return;

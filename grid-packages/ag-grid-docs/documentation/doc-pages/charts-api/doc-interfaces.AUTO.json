@@ -1739,7 +1739,7 @@
       }
     },
     "seriesNodeDoubleClick": {
-      "description": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is double clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeDoubleClick` events of all the series at once. */",
+      "description": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is double clicked. In case a chart has multiple series, the chart's `seriesNodeDoubleClick` event can be used to listen to `nodeDoubleClick` events of all the series at once. */",
       "type": {
         "arguments": { "event": "AgNodeDoubleClickEvent" },
         "returnType": "any",
@@ -5592,6 +5592,7 @@
       }
     }
   },
+  "Command": {},
   "Point": {
     "x": { "type": { "returnType": "number", "optional": false } },
     "y": { "type": { "returnType": "number", "optional": false } }

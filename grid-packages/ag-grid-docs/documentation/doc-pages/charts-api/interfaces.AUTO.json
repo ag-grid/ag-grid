@@ -1121,7 +1121,7 @@
     },
     "docs": {
       "seriesNodeClick?": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */",
-      "seriesNodeDoubleClick?": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is double clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeDoubleClick` events of all the series at once. */",
+      "seriesNodeDoubleClick?": "/** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is double clicked. In case a chart has multiple series, the chart's `seriesNodeDoubleClick` event can be used to listen to `nodeDoubleClick` events of all the series at once. */",
       "click?": "/** The listener to call to signify a general click on the chart by the user. */",
       "doubleClick?": "/** The listener to call to signify a double click on the chart by the user. */"
     }
@@ -3893,6 +3893,11 @@
       "moveLayer(canvas: Layer, zIndex: number, zIndexSubOrder?: [ string, number ])": "void",
       "removeLayer(canvas: Layer)": "void"
     }
+  },
+  "Command": {
+    "meta": { "isEnum": true },
+    "type": ["Move", "Line", "Arc", "Curve", "ClosePath"],
+    "docs": [null, null, null, null, null]
   },
   "Point": { "meta": {}, "type": { "x": "number", "y": "number" } },
   "SizedPoint": {

@@ -1,15 +1,23 @@
 import { cubicSegmentIntersections, segmentIntersection, arcIntersections } from './intersection';
 
+enum Command {
+    Move,
+    Line,
+    Arc,
+    Curve,
+    ClosePath,
+}
+
 export class Path2D {
     // The methods of this class will likely be called many times per animation frame,
     // and any allocation can trigger a GC cycle during animation, so we attempt
     // to minimize the number of allocations.
 
     private xy?: [number, number];
-    private previousCommands: string[] = [];
+    private previousCommands: Command[] = [];
     private previousParams: number[] = [];
     private previousClosedPath: boolean = false;
-    commands: string[] = [];
+    commands: Command[] = [];
     params: number[] = [];
 
     isDirty() {
@@ -46,19 +54,19 @@ export class Path2D {
         ctx.beginPath();
         for (const command of commands) {
             switch (command) {
-                case 'M':
+                case Command.Move:
                     ctx.moveTo(params[j++], params[j++]);
                     break;
-                case 'L':
+                case Command.Line:
                     ctx.lineTo(params[j++], params[j++]);
                     break;
-                case 'C':
+                case Command.Curve:
                     ctx.bezierCurveTo(params[j++], params[j++], params[j++], params[j++], params[j++], params[j++]);
                     break;
-                case 'A':
+                case Command.Arc:
                     ctx.arc(params[j++], params[j++], params[j++], params[j++], params[j++], params[j++] === 1);
                     break;
-                case 'Z':
+                case Command.ClosePath:
                     ctx.closePath();
                     break;
             }
@@ -77,13 +85,13 @@ export class Path2D {
             this.xy = [x, y];
         }
 
-        this.commands.push('M');
+        this.commands.push(Command.Move);
         this.params.push(x, y);
     }
 
     lineTo(x: number, y: number) {
         if (this.xy) {
-            this.commands.push('L');
+            this.commands.push(Command.Line);
             this.params.push(x, y);
             this.xy[0] = x;
             this.xy[1] = y;
@@ -111,7 +119,7 @@ export class Path2D {
             this.xy = [endX, endY];
         }
 
-        this.commands.push('A');
+        this.commands.push(Command.Arc);
         this.params.push(x, y, r, sAngle, eAngle, antiClockwise ? 1 : 0);
     }
 
@@ -119,7 +127,7 @@ export class Path2D {
         if (!this.xy) {
             this.moveTo(cx1, cy1);
         }
-        this.commands.push('C');
+        this.commands.push(Command.Curve);
         this.params.push(cx1, cy1, cx2, cy2, x, y);
         this.xy![0] = x;
         this.xy![1] = y;
@@ -133,7 +141,7 @@ export class Path2D {
     closePath() {
         if (this.xy) {
             this.xy = undefined;
-            this.commands.push('Z');
+            this.commands.push(Command.ClosePath);
             this._closedPath = true;
         }
     }
@@ -181,7 +189,7 @@ export class Path2D {
 
         for (let ci = 0, pi = 0; ci < cn; ci++) {
             switch (commands[ci]) {
-                case 'M':
+                case Command.Move:
                     if (!isNaN(sx)) {
                         if (segmentIntersection(sx, sy, px, py, ox, oy, x, y)) {
                             intersectionCount++;
@@ -192,14 +200,14 @@ export class Path2D {
                     py = params[pi++];
                     sy = py;
                     break;
-                case 'L':
+                case Command.Line:
                     if (segmentIntersection(px, py, params[pi++], params[pi++], ox, oy, x, y)) {
                         intersectionCount++;
                     }
                     px = params[pi - 2];
                     py = params[pi - 1];
                     break;
-                case 'C':
+                case Command.Curve:
                     intersectionCount += cubicSegmentIntersections(
                         px,
                         py,
@@ -217,7 +225,7 @@ export class Path2D {
                     px = params[pi - 2];
                     py = params[pi - 1];
                     break;
-                case 'A':
+                case Command.Arc:
                     intersectionCount += arcIntersections(
                         params[pi++],
                         params[pi++],
@@ -233,7 +241,7 @@ export class Path2D {
                     px = params[pi - 2];
                     py = params[pi - 1];
                     break;
-                case 'Z':
+                case Command.ClosePath:
                     if (!isNaN(sx)) {
                         if (segmentIntersection(sx, sy, px, py, ox, oy, x, y)) {
                             intersectionCount++;

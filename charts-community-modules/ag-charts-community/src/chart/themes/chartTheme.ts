@@ -114,7 +114,6 @@ export class ChartTheme {
             },
             visible: true,
             showInLegend: true,
-            cursor: 'default',
             highlightStyle: {
                 item: {
                     fill: 'yellow',
