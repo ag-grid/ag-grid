@@ -188,7 +188,34 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         const stackGroups = Object.values(this.stackGroups);
         if (stackGroups.length > 0) {
+            const flattenKeys = (keys: string[][]) => keys.reduce((res, k) => res.concat(k), []);
+
+            // Create a stack for items without a group
+            const flatKeys = flattenKeys(yKeys);
+            const keysInStacks = new Set(flattenKeys(stackGroups));
+            const ungroupedKeys = flatKeys.filter((k) => !keysInStacks.has(k));
             yKeys = stackGroups.map((keys) => keys);
+            if (ungroupedKeys.length > 0) {
+                yKeys.push(ungroupedKeys);
+            }
+
+            // Preserve the order of colours and other properties
+            const indexMap = <T>(items: T[]) =>
+                items.reduce((map, key, index) => map.set(key, index), new Map<T, number>());
+            const newKeys = flattenKeys(yKeys);
+            const newKeysIndices = indexMap(newKeys);
+            const sort = <T>(items: T[]) => {
+                const result = Array.from({ length: items.length }) as T[];
+                items.forEach((item, index) => {
+                    const key = flatKeys[index];
+                    const newIndex = newKeysIndices.get(key)!;
+                    result[newIndex] = item;
+                });
+                return result;
+            };
+            this.fills = sort(this.fills);
+            this.strokes = sort(this.strokes);
+            this.visibles = sort(this.visibles);
         }
 
         if (!areArrayItemsStrictlyEqual(this.yKeysCache, yKeys)) {
