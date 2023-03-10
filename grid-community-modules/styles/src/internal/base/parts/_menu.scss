@@ -169,9 +169,19 @@
 
     .ag-simple-filter-body-wrapper {
         @include ag.vertical-widget-container();
+        overflow-y: auto;
+        min-height: calc(var(--ag-list-item-height) + var(--ag-widget-container-vertical-padding) + var(--ag-widget-vertical-spacing));
         .ag-resizer-wrapper {
             margin: 0;
         }
+    }
+
+    .ag-menu:not(.ag-tabs) .ag-simple-filter-body-wrapper {
+        min-width: calc(var(--ag-menu-min-width) - 2px);
+    }
+
+    .ag-tabs .ag-simple-filter-body-wrapper {
+        min-width: calc(var(--ag-tab-min-width) - 2px);
     }
 
     .ag-filter-no-matches {

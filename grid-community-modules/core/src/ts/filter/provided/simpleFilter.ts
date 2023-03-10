@@ -459,6 +459,12 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             ), 'simpleFilterNumAlwaysVisibleConditions');
             this.numAlwaysVisibleConditions = 1;
         }
+        if (this.numAlwaysVisibleConditions > this.maxNumConditions) {
+            doOnce(() => console.warn(
+                'AG Grid: "filterParams.numAlwaysVisibleConditions" cannot be greater than "filterParams.maxNumConditions".'
+            ), 'simpleFilterNumAlwaysVisibleGreaterThanMaxNumConditions');
+            this.numAlwaysVisibleConditions = this.maxNumConditions;
+        }
     }
 
     private createOption(): void {
@@ -685,6 +691,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         let lastUiCompletePosition = -1;
         // as we remove incomplete positions, the last UI complete position will change
         let updatedLastUiCompletePosition = -1;
+        let conditionsRemoved = false;
         const joinOperator = this.getJoinOperator();
         for (let position = this.getNumConditions() - 1; position >= 0; position--) {
             if (this.isConditionUiComplete(position)) {
@@ -697,6 +704,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
                 const positionBeforeLastUiCompletePosition = position < lastUiCompletePosition;
                 if (shouldRemovePositionAtEnd || positionBeforeLastUiCompletePosition) {
                     this.removeConditionsAndOperators(position, 1);
+                    conditionsRemoved = true;
                     if (positionBeforeLastUiCompletePosition) {
                         updatedLastUiCompletePosition--;
                     }
@@ -716,6 +724,9 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         }
         if (shouldUpdateConditionStatusesAndValues) {
             this.updateConditionStatusesAndValues(updatedLastUiCompletePosition, joinOperator);
+        }
+        if (conditionsRemoved) {
+            this.updateJoinOperatorsDisabled();
         }
         this.lastUiCompletePosition = updatedLastUiCompletePosition;
     }
@@ -853,7 +864,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     private createMissingConditionsAndOperators(): void {
-        if (this.isReadOnly()) { return; } // dom't show incomplete conditions when read only
+        if (this.isReadOnly()) { return; } // don't show incomplete conditions when read only
         for (let i = this.getNumConditions(); i < this.numAlwaysVisibleConditions; i++) {
             this.createJoinOperatorPanel();
             this.createOption();
@@ -902,11 +913,22 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     private resetJoinOperator(eJoinOperator: AgRadioButton, index: number, value: boolean, label: string, uniqueGroupId: number): void {
-        eJoinOperator
-            .setValue(value, true)
-            .setName(`ag-simple-filter-and-or-${this.getCompId()}-${uniqueGroupId}`)
-            .setLabel(label)
-            .setDisabled(this.isReadOnly() || index > 0);
+        this.updateJoinOperatorDisabled(
+            eJoinOperator
+                .setValue(value, true)
+                .setName(`ag-simple-filter-and-or-${this.getCompId()}-${uniqueGroupId}`)
+                .setLabel(label),
+            index
+        );
+    }
+
+    private updateJoinOperatorsDisabled(): void {
+        this.eJoinOperatorsAnd.forEach((eJoinOperator, index) => this.updateJoinOperatorDisabled(eJoinOperator, index));
+        this.eJoinOperatorsOr.forEach((eJoinOperator, index) => this.updateJoinOperatorDisabled(eJoinOperator, index));
+    }
+
+    private updateJoinOperatorDisabled(eJoinOperator: AgRadioButton, index: number): void {
+        eJoinOperator.setDisabled(this.isReadOnly() || index > 0);
     }
 
     private resetInput(element: E): void {
