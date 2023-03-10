@@ -3,13 +3,18 @@ import { Listeners } from '../../util/listeners';
 
 export type LayoutStage = 'before-series';
 
+export type AxisLabelLayout = {
+    baseline: 'hanging' | 'bottom' | 'middle';
+    align: 'start' | 'end' | 'center';
+    rotation: number;
+    fractionDigits: number;
+};
+
 export interface AxisLayout {
     rect: BBox;
-    label: {
-        baseline: 'hanging' | 'bottom' | 'middle';
-        align: 'start' | 'end' | 'center';
-    };
+    label: AxisLabelLayout;
 }
+
 export interface LayoutCompleteEvent {
     type: 'layout-complete';
     series: { rect: BBox; visible: boolean };

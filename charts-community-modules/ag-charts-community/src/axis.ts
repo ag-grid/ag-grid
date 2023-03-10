@@ -321,6 +321,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         label: {
             align: 'center',
             baseline: 'middle',
+            rotation: 0,
+            fractionDigits: 0
         },
     };
 
@@ -1148,6 +1150,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         this.layout.label = {
             align: labelTextAlign,
             baseline: labelTextBaseline,
+            rotation: combinedRotation,
+            fractionDigits: this.fractionDigits
         };
 
         return { labelData, rotated: !!(labelRotation || labelAutoRotation) };
