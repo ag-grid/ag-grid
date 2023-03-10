@@ -37,6 +37,10 @@ export class Observable {
         }
     }
 
+    hasEventListener(type: string): boolean {
+        return this.allEventListeners.has(type);
+    }
+
     clearEventListeners() {
         this.allEventListeners.clear();
     }
