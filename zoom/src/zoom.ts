@@ -52,7 +52,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     public minYNodes?: number;
 
     private readonly scene: _Scene.Scene;
-    private seriesRect: _Scene.BBox;
+    private seriesRect: _Scene.BBox = new _Scene.BBox(0, 0, 0, 0);
 
     private readonly zoomManager: _ModuleSupport.ZoomManager;
 

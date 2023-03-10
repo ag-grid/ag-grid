@@ -2,6 +2,7 @@ import { _ModuleSupport } from 'ag-charts-community';
 import { Zoom } from './zoom';
 
 export const ZoomModule: _ModuleSupport.Module = {
+    type: 'root',
     optionsKey: 'zoom',
     chartTypes: ['cartesian'],
     initialiseModule(ctx: _ModuleSupport.ModuleContext) {
