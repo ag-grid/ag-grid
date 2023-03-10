@@ -1,0 +1,1 @@
+export { ZoomModule } from './zoomModule';
