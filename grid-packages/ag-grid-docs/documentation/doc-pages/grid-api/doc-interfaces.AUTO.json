@@ -9183,11 +9183,11 @@
       "type": { "returnType": "JoinOperator", "optional": true }
     },
     "maxNumConditions": {
-      "description": "/** Maximum number of conditions allowed in the filter.\n     * Default: 2\n     */",
+      "description": "/** Maximum number of conditions allowed in the filter.\n     * Default: `2`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "numAlwaysVisibleConditions": {
-      "description": "/** By default only one condition is shown, and additional conditions are made visible when the previous conditions are entered\n     * (up to `maxNumConditions`). To have more conditions shown by default, set this to the number required.\n     * Conditions will be disabled until the previous conditions have been entered.\n     * Note that this cannot be greater than `maxNumConditions` - anything larger will be ignored. \n     * Default: 1\n     */",
+      "description": "/** By default only one condition is shown, and additional conditions are made visible when the previous conditions are entered\n     * (up to `maxNumConditions`). To have more conditions shown by default, set this to the number required.\n     * Conditions will be disabled until the previous conditions have been entered.\n     * Note that this cannot be greater than `maxNumConditions` - anything larger will be ignored. \n     * Default: `1`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "suppressAndOrCondition": {
@@ -9294,11 +9294,11 @@
       "type": { "returnType": "JoinOperator", "optional": true }
     },
     "maxNumConditions": {
-      "description": "/** Maximum number of conditions allowed in the filter.\n     * Default: 2\n     */",
+      "description": "/** Maximum number of conditions allowed in the filter.\n     * Default: `2`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "numAlwaysVisibleConditions": {
-      "description": "/** By default only one condition is shown, and additional conditions are made visible when the previous conditions are entered\n     * (up to `maxNumConditions`). To have more conditions shown by default, set this to the number required.\n     * Conditions will be disabled until the previous conditions have been entered.\n     * Note that this cannot be greater than `maxNumConditions` - anything larger will be ignored. \n     * Default: 1\n     */",
+      "description": "/** By default only one condition is shown, and additional conditions are made visible when the previous conditions are entered\n     * (up to `maxNumConditions`). To have more conditions shown by default, set this to the number required.\n     * Conditions will be disabled until the previous conditions have been entered.\n     * Note that this cannot be greater than `maxNumConditions` - anything larger will be ignored. \n     * Default: `1`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "suppressAndOrCondition": {
@@ -9457,11 +9457,11 @@
       "type": { "returnType": "JoinOperator", "optional": true }
     },
     "maxNumConditions": {
-      "description": "/** Maximum number of conditions allowed in the filter.\n     * Default: 2\n     */",
+      "description": "/** Maximum number of conditions allowed in the filter.\n     * Default: `2`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "numAlwaysVisibleConditions": {
-      "description": "/** By default only one condition is shown, and additional conditions are made visible when the previous conditions are entered\n     * (up to `maxNumConditions`). To have more conditions shown by default, set this to the number required.\n     * Conditions will be disabled until the previous conditions have been entered.\n     * Note that this cannot be greater than `maxNumConditions` - anything larger will be ignored. \n     * Default: 1\n     */",
+      "description": "/** By default only one condition is shown, and additional conditions are made visible when the previous conditions are entered\n     * (up to `maxNumConditions`). To have more conditions shown by default, set this to the number required.\n     * Conditions will be disabled until the previous conditions have been entered.\n     * Note that this cannot be greater than `maxNumConditions` - anything larger will be ignored. \n     * Default: `1`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "suppressAndOrCondition": {
@@ -9605,11 +9605,11 @@
       "type": { "returnType": "JoinOperator", "optional": true }
     },
     "maxNumConditions": {
-      "description": "/** Maximum number of conditions allowed in the filter.\n     * Default: 2\n     */",
+      "description": "/** Maximum number of conditions allowed in the filter.\n     * Default: `2`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "numAlwaysVisibleConditions": {
-      "description": "/** By default only one condition is shown, and additional conditions are made visible when the previous conditions are entered\n     * (up to `maxNumConditions`). To have more conditions shown by default, set this to the number required.\n     * Conditions will be disabled until the previous conditions have been entered.\n     * Note that this cannot be greater than `maxNumConditions` - anything larger will be ignored. \n     * Default: 1\n     */",
+      "description": "/** By default only one condition is shown, and additional conditions are made visible when the previous conditions are entered\n     * (up to `maxNumConditions`). To have more conditions shown by default, set this to the number required.\n     * Conditions will be disabled until the previous conditions have been entered.\n     * Note that this cannot be greater than `maxNumConditions` - anything larger will be ignored. \n     * Default: `1`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "suppressAndOrCondition": {
@@ -9775,11 +9775,11 @@
       "type": { "returnType": "JoinOperator", "optional": true }
     },
     "maxNumConditions": {
-      "description": "/** Maximum number of conditions allowed in the filter.\n     * Default: 2\n     */",
+      "description": "/** Maximum number of conditions allowed in the filter.\n     * Default: `2`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "numAlwaysVisibleConditions": {
-      "description": "/** By default only one condition is shown, and additional conditions are made visible when the previous conditions are entered\n     * (up to `maxNumConditions`). To have more conditions shown by default, set this to the number required.\n     * Conditions will be disabled until the previous conditions have been entered.\n     * Note that this cannot be greater than `maxNumConditions` - anything larger will be ignored. \n     * Default: 1\n     */",
+      "description": "/** By default only one condition is shown, and additional conditions are made visible when the previous conditions are entered\n     * (up to `maxNumConditions`). To have more conditions shown by default, set this to the number required.\n     * Conditions will be disabled until the previous conditions have been entered.\n     * Note that this cannot be greater than `maxNumConditions` - anything larger will be ignored. \n     * Default: `1`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "suppressAndOrCondition": {

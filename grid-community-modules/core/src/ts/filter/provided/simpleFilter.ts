@@ -62,7 +62,7 @@ export interface ISimpleFilterParams extends IProvidedFilterParams {
     defaultJoinOperator?: JoinOperator;
     /**
      * Maximum number of conditions allowed in the filter.
-     * Default: 2
+     * Default: `2`
      */
     maxNumConditions?: number;
     /**
@@ -70,7 +70,7 @@ export interface ISimpleFilterParams extends IProvidedFilterParams {
      * (up to `maxNumConditions`). To have more conditions shown by default, set this to the number required.
      * Conditions will be disabled until the previous conditions have been entered.
      * Note that this cannot be greater than `maxNumConditions` - anything larger will be ignored. 
-     * Default: 1
+     * Default: `1`
      */
     numAlwaysVisibleConditions?: number;
     /**
@@ -359,7 +359,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
                 ];
             }
 
-            const numConditions = combinedModel.conditions.length;
+            const numConditions = this.validateAndUpdateConditions(combinedModel.conditions);
             const numPrevConditions = this.getNumConditions();
             if (numConditions < numPrevConditions) {
                 this.removeConditionsAndOperators(numConditions);
@@ -396,6 +396,18 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         this.onUiChanged();
 
         return AgPromise.resolve();
+    }
+
+    private validateAndUpdateConditions(conditions: M[]): number {
+        let numConditions = conditions.length;
+        if (numConditions > this.maxNumConditions) {
+            conditions.splice(this.maxNumConditions);
+            doOnce(() => console.warn(
+                'AG Grid: Filter Model contains more conditions than "filterParams.maxNumConditions". Additional conditions have been ignored.'
+            ), 'simpleFilterSetModelMaxNumConditions');
+            numConditions = this.maxNumConditions;
+        }
+        return numConditions;
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
