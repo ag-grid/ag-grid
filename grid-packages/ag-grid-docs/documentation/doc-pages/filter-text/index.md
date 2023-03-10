@@ -41,7 +41,7 @@ The example below shows the Text Filter in action:
     - There are only two [Filter Options](#text-filter-options): `filterOptions = ['contains', 'notContains']`
     - There is a [Text Formatter](#text-formatter), so if you search for 'o' it will find '&ouml;'. You can try this by searching the string `'Bjo'`.
     - The filter has a debounce of 200ms (`debounceMs = 200`).
-    - Only one Filter Condition is allowed (`maxNumConditions = 1`)
+    - Only one Filter Condition is allowed (`maxConditionCount = 1`)
 - For the **Country** column:
     - There is only one [Filter Option](#text-filter-options): `filterOptions = ['contains']`
     - There is a [Custom Matcher](#text-custom-matcher) so that aliases can be entered in the filter, e.g. if you filter using the text `'usa'` it will match `United States` or `'holland'` will match `'Netherlands'`

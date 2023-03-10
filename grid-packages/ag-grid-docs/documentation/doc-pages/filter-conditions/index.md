@@ -29,11 +29,11 @@ Each filter option takes zero (a possibility with custom options), one (for most
 
 By default each filter initially only displays one Filter Condition. When the user completes all the visible Filter Conditions, another Filter Condition becomes visible. When the user clears the last completed Filter Condition, any empty Filter Conditions on either side are hidden if required. Additionally, when the filter is closed, any empty Filter Conditions not at the end are removed if required.
 
-The maximum number of Filter Conditions can be controlled by setting the Filter Parameter `maxNumConditions` (the default value is two).
+The maximum number of Filter Conditions can be controlled by setting the Filter Parameter `maxConditionCount` (the default value is two).
 
-It is also possible to always display a certain number of Filter Conditions by setting the Filter Parameter `numAlwaysVisibleConditions`. In this case, Filter Conditions at the end will be disabled until the previous Filter Condition has been completed.
+It is also possible to always display a certain number of Filter Conditions by setting the Filter Parameter `alwaysVisibleConditionCount`. In this case, Filter Conditions at the end will be disabled until the previous Filter Condition has been completed.
 
-<interface-documentation interfaceName='ISimpleFilterParams' config='{"description":""}' names='["maxNumConditions", "numAlwaysVisibleConditions"]'></interface-documentation>
+<interface-documentation interfaceName='ISimpleFilterParams' config='{"description":""}' names='["maxConditionCount", "alwaysVisibleConditionCount"]'></interface-documentation>
 
 ## Join Operator
 
@@ -45,9 +45,9 @@ The following example demonstrates Filter Condition configuration that can be ap
 
 - The **Athlete** column shows a Text Filter with default behaviour for all options.
 - The **Country** column shows a Text Filter with `filterOptions` set to show a different list of available options, and `defaultOption` set to change the default option selected.
-- The **Sport** column shows a Text Filter with `maxNumConditions` set to `10` so that up to ten conditions can be entered.
-- The **Age** column has a Number Filter with `numAlwaysVisibleConditions` set to `2` so that two conditions are always shown. The `defaultJoinOperator` is also set to `'OR'` rather than the default (`'AND'`).
-- The **Date** column has a Date Filter with `maxNumConditions` set to `1`, so that only the first condition is shown.
+- The **Sport** column shows a Text Filter with `maxConditionCount` set to `10` so that up to ten conditions can be entered.
+- The **Age** column has a Number Filter with `alwaysVisibleConditionCount` set to `2` so that two conditions are always shown. The `defaultJoinOperator` is also set to `'OR'` rather than the default (`'AND'`).
+- The **Date** column has a Date Filter with `maxConditionCount` set to `1`, so that only the first condition is shown.
 
 <grid-example title='Simple Filter Conditions' name='simple-filter-options' type='generated' options='{ "exampleHeight": 560 }'></grid-example>
 
@@ -114,7 +114,7 @@ The following example demonstrates several custom filter options:
   - `Age 5 Years Ago` has one input; its predicate function is provided one value.
   - `Between (Exclusive)` has two inputs; its predicate function is provided two values.
   - `Choose One` is a built-in option and acts as an inactive filter option.
-  - The `maxNumConditions=1` option is used to only display one Filter Condition.
+  - The `maxConditionCount=1` option is used to only display one Filter Condition.
 - The **Date** column contains three custom filter options managed by a [Date Filter](/filter-date/):
   - `Equals (with Nulls)` has one inputs; its predicate function is provided one value.
   - `Leap Year` has no inputs; its predicate function is provided zero values.
