@@ -13,4 +13,5 @@ export interface ISelectionStrategy {
     selectAllRowNodes(params: { source: SelectionEventSourceType; justFiltered?: boolean | undefined; justCurrentPage?: boolean | undefined; }): void;
     deselectAllRowNodes(params: { source: SelectionEventSourceType; justFiltered?: boolean | undefined; justCurrentPage?: boolean | undefined; }): void;
     getSelectAllState(justFiltered?: boolean, justCurrentPage?: boolean): boolean | null;
+    deleteSelectionStateFromParent(parentRoute: string[], removedNodeIds: string[]): boolean;
 }

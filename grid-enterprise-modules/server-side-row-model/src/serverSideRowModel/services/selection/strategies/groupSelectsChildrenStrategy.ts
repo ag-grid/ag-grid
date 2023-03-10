@@ -1,4 +1,4 @@
-import { Autowired, BeanStub, IRowModel, IRowNode, IServerSideGroupSelectionState, RowNode, SelectionEventSourceType, ISetNodeSelectedParams, ColumnModel, FilterManager, PostConstruct, Events, IServerSideStore } from "@ag-grid-community/core";
+import { Autowired, BeanStub, IRowModel, IRowNode, IServerSideGroupSelectionState, RowNode, SelectionEventSourceType, ISetNodeSelectedParams, ColumnModel, FilterManager, PostConstruct, Events, IServerSideStore, ISelectionService } from "@ag-grid-community/core";
 import { ServerSideRowModel } from "src/serverSideRowModel/serverSideRowModel";
 import { ISelectionStrategy } from "./iSelectionStrategy";
 
@@ -12,13 +12,18 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
+    @Autowired('selectionService') private selectionService: ISelectionService;
 
     private selectedState: SelectionState = { selectAllChildren: false, toggledNodes: new Map() };
     private lastSelected: RowNode | null = null;
 
     @PostConstruct
     private init(): void {
+        // if model has updated, a store may now be fully loaded to clean up indeterminate states
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, () => this.removeRedundantState());
+
+        // when the grouping changes, the state no longer makes sense, so reset the state.
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.selectionService.reset());
     }
 
     public getSelectedState() {
@@ -84,6 +89,31 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         } catch (e) {
             console.error(e.message);
         }
+    }
+
+    public deleteSelectionStateFromParent(parentRoute: string[], removedNodeIds: string[]): boolean {
+        let parentState: SelectionState | undefined = this.selectedState;
+        const remainingRoute = [...parentRoute];
+        while (parentState && remainingRoute.length) {
+            parentState = parentState.toggledNodes.get(remainingRoute.pop()!);
+        }
+
+        // parent has no explicit state, nothing to remove
+        if (!parentState) {
+            return false;
+        }
+
+        let anyStateChanged = false;
+        removedNodeIds.forEach(id => {
+            if(parentState?.toggledNodes.delete(id)) {
+                anyStateChanged = true;
+            }
+        });
+
+        if (anyStateChanged) {
+            this.removeRedundantState();
+        }
+        return anyStateChanged;
     }
 
     public setNodeSelected(params: ISetNodeSelectedParams): number {
@@ -163,10 +193,12 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         const recursivelyRemoveState = (
             selectedState: SelectionState = this.selectedState,
             store: IServerSideStore | undefined = this.serverSideRowModel.getRootStore(),
+            node?: RowNode | null,
         ) => {
             let noIndeterminateChildren = true;
             selectedState.toggledNodes.forEach((state, id) => {
-                const nextStore = this.rowModel.getRowNode(id)?.childStore;
+                const parentNode = this.rowModel.getRowNode(id);
+                const nextStore = parentNode?.childStore;
                 if (!nextStore) {
                     if (state.toggledNodes.size > 0) {
                         noIndeterminateChildren = false;
@@ -175,7 +207,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                 }
 
                 // if child was cleared, check if this state is still relevant
-                if(recursivelyRemoveState(state, nextStore)) {
+                if(recursivelyRemoveState(state, nextStore, parentNode)) {
                     // cleans out groups which have no toggled nodes and an equivalent default to its parent
                     if (selectedState.selectAllChildren === state.selectAllChildren) {
                         selectedState.toggledNodes.delete(id);
@@ -187,6 +219,12 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                 }
             });
 
+            if (store && store.isLastRowIndexKnown() && store.getRowCount() < selectedState.toggledNodes.size) {
+                console.warn(`
+                    AG Grid: The number of toggled nodes in this store exceeds the total number of rows.
+                    Ensure your selection state is valid and up to date with your server.`
+                );
+            }
 
             if (!store || !store.isLastRowIndexKnown() || store.getRowCount() !== selectedState.toggledNodes.size) {
                 // if row count unknown, or doesn't match the size of toggledNodes, ignore.
@@ -196,6 +234,11 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             if (noIndeterminateChildren) {
                 selectedState.toggledNodes.clear();
                 selectedState.selectAllChildren = !selectedState.selectAllChildren;
+
+                // if node was indeterminate, it's not any more.
+                if (node && node?.isSelected() !== selectedState.selectAllChildren) {
+                    node.selectThisNode(selectedState.selectAllChildren, undefined, 'api');
+                } 
                 return true;
             }
             return false;
@@ -247,7 +290,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
 
     public getSelectedNodes(): RowNode<any>[] {
         console.warn(
-            `AG Grid: \`getSelectedNodes\` and \`getSelectedRows\` functions are not advised while using \`groupSelectsChildren\`.
+            `AG Grid: \`getSelectedNodes\` and \`getSelectedRows\` functions cannot be used with \`groupSelectsChildren\` and the server-side row model.
             Use \`api.getServerSideSelectionState()\` instead.`
         );
 

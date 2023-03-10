@@ -13,8 +13,8 @@ Just set the property `rowSelection` to either `'single'` or `'multiple'` as wit
 
 Row selection can be enabled in the grid by setting the `rowSelection` property to `single` or `multiple`. The below example demonstrates this property configured as `multiple`, note the following:
 
-- **Single 'Click' Selection** - when you click on a row, the row is selected.
-- **Multiple 'Shift-Click' Selections** - select a row (single click) and then 'shift-click' another row to select all rows between that range.
+- Selecting a single row can be achieved by clicking it. Clicking another row selects it and de-selects any other rows.
+- Selecting multiple rows can be achieved by holding down <kbd>Ctrl</kbd> and mouse clicking the rows. A range of fully loaded rows can be selected by using <kbd>Shift</kbd>.
 
 <grid-example title='Click Selection' name='click-selection' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
@@ -32,9 +32,9 @@ The following example demonstrates checkbox selection with the SSRM. Note the fo
 
 <grid-example title='Checkbox Example' name='checkbox' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
-## Select-all
+## Header Checkbox Selection
 
-The select-all checkbox can be enabled by setting `headerCheckboxSelection: true` on any column. This checkbox will toggle the selection state of every node loaded into the grid.
+The header select-all checkbox can be enabled by setting `headerCheckboxSelection: true` on any column. This checkbox will toggle the selection state of every node loaded into the grid.
 
 The following example demonstrates select-all with the SSRM. Note the following;
 
@@ -46,7 +46,7 @@ The following example demonstrates select-all with the SSRM. Note the following;
 [[note]]
 | When using select-all, you should **not** use the api functions `getSelectedNodes()` or `getSelectedRows()`. See the API section for suggested alternatives.
 
-## Groups Select Children
+## Group Selection
 
 The grid can be configured to select children with their parents. This can be enabled by setting the grid property `groupSelectsChildren: true`.
 
