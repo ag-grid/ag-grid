@@ -556,7 +556,11 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     public afterGuiDetached(): void {
         // discard any unapplied UI state (reset to model)
         if (this.setFilterParams?.excelMode) {
-            this.resetUiToActiveModel();
+            this.resetMiniFilter();
+        }
+        const appliedModel = this.getModel();
+        if (this.setFilterParams?.excelMode || !this.areModelsEqual(appliedModel!, this.getModelFromUi()!)) {
+            this.resetUiToActiveModel(appliedModel);
             this.showOrHideResults();
         }
     }
@@ -783,7 +787,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         if (excelMode == null || !!readOnly) {
             this.refresh();
         } else if (this.valueModel.getMiniFilter() == null) {
-            this.resetUiToActiveModel();
+            this.resetUiToActiveModel(this.getModel());
         } else {
             this.valueModel.selectAllMatchingMiniFilter(true);
             this.refresh();
@@ -802,12 +806,14 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         _.setDisplayed(this.eSetFilterList, !hideResults);
     }
 
-    private resetUiToActiveModel(): void {
-        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
-
+    private resetMiniFilter(): void {
         this.eMiniFilter.setValue(null, true);
-        this.valueModel.setMiniFilter(null);
-        this.setModelIntoUi(this.getModel()).then(() => this.onUiChanged(false, 'prevent'));
+        this.valueModel?.setMiniFilter(null);
+    }
+
+    protected resetUiToActiveModel(currentModel: SetFilterModel | null): void {
+        // override the default behaviour as we don't want to clear the mini filter
+        this.setModelAndRefresh(currentModel == null ? null : currentModel.values).then(() => this.onUiChanged(false, 'prevent'));
     }
 
     private onMiniFilterKeyPress(e: KeyboardEvent): void {

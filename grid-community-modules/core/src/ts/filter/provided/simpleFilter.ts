@@ -687,6 +687,11 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     public afterGuiDetached(): void {
+        const appliedModel = this.getModel();
+        if (!this.areModelsEqual(appliedModel!, this.getModelFromUi()!)) {
+            this.resetUiToActiveModel(appliedModel);
+        }
+
         // remove incomplete positions
         let lastUiCompletePosition = -1;
         // as we remove incomplete positions, the last UI complete position will change
