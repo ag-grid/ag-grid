@@ -1,5 +1,3 @@
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 import Announcements from 'components/Announcements';
 import { Icon } from 'components/Icon';
@@ -49,9 +47,7 @@ const MenuSection = ({ title, items, currentFramework, isActive, toggleActive })
                 aria-expanded="false"
                 aria-controls={`#${toElementId(title)}`}
             >
-                <svg className={classnames(styles['menu__arrow'], { 'fa-rotate-90': isActive })}>
-                    <use href="#menu-item" />
-                </svg>
+                <Icon name="chevronRight" svgClasses={classnames(styles.sectionIcon, isActive && styles.active)} />
 
                 {title}
             </button>
@@ -144,8 +140,6 @@ const Menu = ({ currentFramework, currentPage }) => {
 
     return (
         <aside className={classnames(styles['menu'], 'ag-styles')}>
-            <FontAwesomeIcon icon={faChevronRight} className={styles['menu__arrow']} symbol="menu-item" />
-
             <ul id="side-nav" className={classnames(styles.menuInner, 'list-style-none', 'collapse')}>
                 {combinedMenuItems.map((item) => {
                     const { title } = item;

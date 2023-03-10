@@ -26,15 +26,6 @@
             overflow-y: auto;
         }
     }
-
-    &__arrow {
-        composes: mr-1 from global;
-
-        transition: all 0.5s;
-        height: 0.8rem;
-        width: 1rem;
-        vertical-align: -0.05rem;
-    }
 }
 
 .menuInner {
@@ -64,6 +55,18 @@
     &:focus,
     &:focus-visible {
         border-color: var(--sky-blue) !important; // !important for .ag-styles specificity
+    }
+}
+
+.sectionIcon {
+    --icon-size: 20px;
+
+    position: relative;
+    top: -1px;
+    transition: transform 0.33s ease-in-out;
+
+    &.active {
+        transform: rotate(90deg);
     }
 }
 
