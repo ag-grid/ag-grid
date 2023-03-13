@@ -167,7 +167,6 @@ export class HdpiCanvas {
         HdpiCanvas.overrideScale(this.context, pixelRatio);
 
         this._pixelRatio = pixelRatio;
-        this.resize(this.width, this.height);
     }
 
     set pixelated(value: boolean) {
