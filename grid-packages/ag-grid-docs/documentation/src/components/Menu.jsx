@@ -38,7 +38,6 @@ const MenuSection = ({ title, items, currentFramework, isActive, toggleActive })
         <li key={title} className={styles.menuSection}>
             <button
                 onClick={toggleActive}
-                onKeyDown={toggleActive}
                 tabIndex="0"
                 className={classnames(styles.sectionHeader, 'button-style-none')}
                 data-toggle="collapse"
@@ -149,11 +148,7 @@ const Menu = ({ currentFramework, currentPage }) => {
                     const { title } = item;
                     const isActive = title === activeSection;
 
-                    const toggleActive = (event) => {
-                        if (event.key && event.key !== 'Enter') {
-                            return;
-                        }
-
+                    const toggleActive = () => {
                         setActiveSection(isActive ? null : title);
                     };
 
