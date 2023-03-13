@@ -17,7 +17,7 @@ function getImports(componentFilenames: string[], bindings): string[] {
 
     const imports = [
         `import React, { useState${useCallback ? ', useCallback ' : ''}${bindings.usesChartApi ? ', useRef ' : ''}} from 'react';`,
-        "import { render } from 'react-dom';",
+        "import { createRoot } from 'react-dom';",
         "import { AgChartsReact } from 'ag-charts-react';",
     ];
 
@@ -93,10 +93,8 @@ const ChartExample = () => {
 
 ${bindings.globals.join('\n')}
 
-render(
-    <ChartExample />,
-    document.querySelector('#root')
-)
+const root = createRoot(document.getElementById('root'));
+root.render(<ChartExample />);
 `;
 
         if (bindings.usesChartApi) {
