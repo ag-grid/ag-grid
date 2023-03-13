@@ -10,7 +10,7 @@ type OffscreenCanvas = any;
  * provide resolution independent rendering based on `window.devicePixelRatio`.
  */
 export class HdpiOffscreenCanvas {
-    readonly context: OffscreenCanvasRenderingContext2D;
+    readonly context: OffscreenCanvasRenderingContext2D & { verifyDepthZero?: () => void };
     readonly canvas: OffscreenCanvas;
     imageSource: ImageBitmap;
 
@@ -65,7 +65,7 @@ export class HdpiOffscreenCanvas {
      * or uses the window.devicePixelRatio (default), then resizes the Canvas
      * element accordingly (default).
      */
-    setPixelRatio(ratio?: number) {
+    private setPixelRatio(ratio?: number) {
         let pixelRatio = ratio ?? window.devicePixelRatio;
         if (!isDesktop()) {
             // Mobile browsers have stricter memory limits, we reduce rendering resolution to
@@ -74,14 +74,9 @@ export class HdpiOffscreenCanvas {
             pixelRatio = 1;
         }
 
-        if (pixelRatio === this.pixelRatio) {
-            return;
-        }
-
         HdpiCanvas.overrideScale(this.context, pixelRatio);
 
         this._pixelRatio = pixelRatio;
-        this.resize(this.width, this.height);
     }
 
     private _width: number = 0;
