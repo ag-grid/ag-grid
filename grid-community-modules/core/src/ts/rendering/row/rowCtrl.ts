@@ -1113,6 +1113,9 @@ export class RowCtrl extends BeanStub {
     }
 
     public getAllCellCtrls(): CellCtrl[] {
+        if (this.leftCellCtrls.list.length === 0 && this.rightCellCtrls.list.length === 0) {
+            return this.centerCellCtrls.list;
+        } 
         const res = [...this.centerCellCtrls.list, ...this.leftCellCtrls.list, ...this.rightCellCtrls.list];
         return res;
     }
