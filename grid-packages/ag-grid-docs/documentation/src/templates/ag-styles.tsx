@@ -4,7 +4,7 @@ export const AGStyles: FunctionComponent = ({ children }) => {
     return createElement(
         'div',
         {
-            className: 'ag-styles',
+            className: 'ag-styles font-size-responsive',
         },
         children
     );

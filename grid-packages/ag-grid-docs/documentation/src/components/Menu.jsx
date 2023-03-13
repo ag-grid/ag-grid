@@ -158,7 +158,7 @@ const Menu = ({ currentFramework, currentPage }) => {
     }, [currentPage, currentFramework]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
-        <aside className={classnames(styles['menu'], 'ag-styles')}>
+        <aside className={classnames(styles['menu'], 'ag-styles', 'font-size-responsive')}>
             <ul id="side-nav" className={classnames(styles.menuInner, 'list-style-none', 'collapse')}>
                 {combinedMenuItems.map((item) => {
                     const { title } = item;
