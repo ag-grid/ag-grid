@@ -42,7 +42,7 @@ class GridExample extends Component {
                     filter: 'agNumberColumnFilter',
                     filterParams: {
                         filterOptions: ['equals', 'lessThan', 'greaterThan'],
-                        maxConditionCount: 1,
+                        maxNumConditions: 1,
                     },
                 },
                 {

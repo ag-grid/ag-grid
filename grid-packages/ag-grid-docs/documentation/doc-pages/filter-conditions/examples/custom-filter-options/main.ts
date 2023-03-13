@@ -37,7 +37,7 @@ var filterParams: INumberFilterParams = {
       numberOfInputs: 2,
     },
   ] as IFilterOptionDef[],
-  maxConditionCount: 1,
+  maxNumConditions: 1,
 }
 
 var containsFilterParams: ITextFilterParams = {

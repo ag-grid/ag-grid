@@ -9182,20 +9182,20 @@
       "description": "/** By default, the two conditions are combined using `AND`.\n     * You can change this default by setting this property.\n     * Options: `AND`, `OR`\n     */",
       "type": { "returnType": "JoinOperator", "optional": true }
     },
-    "maxConditionCount": {
+    "maxNumConditions": {
       "description": "/** Maximum number of conditions allowed in the filter.\n     * Default: `2`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
-    "alwaysVisibleConditionCount": {
-      "description": "/** By default only one condition is shown, and additional conditions are made visible when the previous conditions are entered\n     * (up to `maxConditionCount`). To have more conditions shown by default, set this to the number required.\n     * Conditions will be disabled until the previous conditions have been entered.\n     * Note that this cannot be greater than `maxConditionCount` - anything larger will be ignored. \n     * Default: `1`\n     */",
+    "numAlwaysVisibleConditions": {
+      "description": "/** By default only one condition is shown, and additional conditions are made visible when the previous conditions are entered\n     * (up to `maxNumConditions`). To have more conditions shown by default, set this to the number required.\n     * Conditions will be disabled until the previous conditions have been entered.\n     * Note that this cannot be greater than `maxNumConditions` - anything larger will be ignored. \n     * Default: `1`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "suppressAndOrCondition": {
-      "description": "/** @deprecated As of v29.2 there can be more than two conditions in the filter. Use `maxConditionCount = 1` instead.\n     */",
+      "description": "/** @deprecated As of v29.2 there can be more than two conditions in the filter. Use `maxNumConditions = 1` instead.\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowBothConditions": {
-      "description": "/** @deprecated As of v29.2 there can be more than two conditions in the filter. Use `alwaysVisibleConditionCount = 2` instead.\n     */",
+      "description": "/** @deprecated As of v29.2 there can be more than two conditions in the filter. Use `numAlwaysVisibleConditions = 2` instead.\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "filterPlaceholder": {
@@ -9293,20 +9293,20 @@
       "description": "/** By default, the two conditions are combined using `AND`.\n     * You can change this default by setting this property.\n     * Options: `AND`, `OR`\n     */",
       "type": { "returnType": "JoinOperator", "optional": true }
     },
-    "maxConditionCount": {
+    "maxNumConditions": {
       "description": "/** Maximum number of conditions allowed in the filter.\n     * Default: `2`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
-    "alwaysVisibleConditionCount": {
-      "description": "/** By default only one condition is shown, and additional conditions are made visible when the previous conditions are entered\n     * (up to `maxConditionCount`). To have more conditions shown by default, set this to the number required.\n     * Conditions will be disabled until the previous conditions have been entered.\n     * Note that this cannot be greater than `maxConditionCount` - anything larger will be ignored. \n     * Default: `1`\n     */",
+    "numAlwaysVisibleConditions": {
+      "description": "/** By default only one condition is shown, and additional conditions are made visible when the previous conditions are entered\n     * (up to `maxNumConditions`). To have more conditions shown by default, set this to the number required.\n     * Conditions will be disabled until the previous conditions have been entered.\n     * Note that this cannot be greater than `maxNumConditions` - anything larger will be ignored. \n     * Default: `1`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "suppressAndOrCondition": {
-      "description": "/** @deprecated As of v29.2 there can be more than two conditions in the filter. Use `maxConditionCount = 1` instead.\n     */",
+      "description": "/** @deprecated As of v29.2 there can be more than two conditions in the filter. Use `maxNumConditions = 1` instead.\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowBothConditions": {
-      "description": "/** @deprecated As of v29.2 there can be more than two conditions in the filter. Use `alwaysVisibleConditionCount = 2` instead.\n     */",
+      "description": "/** @deprecated As of v29.2 there can be more than two conditions in the filter. Use `numAlwaysVisibleConditions = 2` instead.\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "filterPlaceholder": {
@@ -9456,20 +9456,20 @@
       "description": "/** By default, the two conditions are combined using `AND`.\n     * You can change this default by setting this property.\n     * Options: `AND`, `OR`\n     */",
       "type": { "returnType": "JoinOperator", "optional": true }
     },
-    "maxConditionCount": {
+    "maxNumConditions": {
       "description": "/** Maximum number of conditions allowed in the filter.\n     * Default: `2`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
-    "alwaysVisibleConditionCount": {
-      "description": "/** By default only one condition is shown, and additional conditions are made visible when the previous conditions are entered\n     * (up to `maxConditionCount`). To have more conditions shown by default, set this to the number required.\n     * Conditions will be disabled until the previous conditions have been entered.\n     * Note that this cannot be greater than `maxConditionCount` - anything larger will be ignored. \n     * Default: `1`\n     */",
+    "numAlwaysVisibleConditions": {
+      "description": "/** By default only one condition is shown, and additional conditions are made visible when the previous conditions are entered\n     * (up to `maxNumConditions`). To have more conditions shown by default, set this to the number required.\n     * Conditions will be disabled until the previous conditions have been entered.\n     * Note that this cannot be greater than `maxNumConditions` - anything larger will be ignored. \n     * Default: `1`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "suppressAndOrCondition": {
-      "description": "/** @deprecated As of v29.2 there can be more than two conditions in the filter. Use `maxConditionCount = 1` instead.\n     */",
+      "description": "/** @deprecated As of v29.2 there can be more than two conditions in the filter. Use `maxNumConditions = 1` instead.\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowBothConditions": {
-      "description": "/** @deprecated As of v29.2 there can be more than two conditions in the filter. Use `alwaysVisibleConditionCount = 2` instead.\n     */",
+      "description": "/** @deprecated As of v29.2 there can be more than two conditions in the filter. Use `numAlwaysVisibleConditions = 2` instead.\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "filterPlaceholder": {
@@ -9604,20 +9604,20 @@
       "description": "/** By default, the two conditions are combined using `AND`.\n     * You can change this default by setting this property.\n     * Options: `AND`, `OR`\n     */",
       "type": { "returnType": "JoinOperator", "optional": true }
     },
-    "maxConditionCount": {
+    "maxNumConditions": {
       "description": "/** Maximum number of conditions allowed in the filter.\n     * Default: `2`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
-    "alwaysVisibleConditionCount": {
-      "description": "/** By default only one condition is shown, and additional conditions are made visible when the previous conditions are entered\n     * (up to `maxConditionCount`). To have more conditions shown by default, set this to the number required.\n     * Conditions will be disabled until the previous conditions have been entered.\n     * Note that this cannot be greater than `maxConditionCount` - anything larger will be ignored. \n     * Default: `1`\n     */",
+    "numAlwaysVisibleConditions": {
+      "description": "/** By default only one condition is shown, and additional conditions are made visible when the previous conditions are entered\n     * (up to `maxNumConditions`). To have more conditions shown by default, set this to the number required.\n     * Conditions will be disabled until the previous conditions have been entered.\n     * Note that this cannot be greater than `maxNumConditions` - anything larger will be ignored. \n     * Default: `1`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "suppressAndOrCondition": {
-      "description": "/** @deprecated As of v29.2 there can be more than two conditions in the filter. Use `maxConditionCount = 1` instead.\n     */",
+      "description": "/** @deprecated As of v29.2 there can be more than two conditions in the filter. Use `maxNumConditions = 1` instead.\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowBothConditions": {
-      "description": "/** @deprecated As of v29.2 there can be more than two conditions in the filter. Use `alwaysVisibleConditionCount = 2` instead.\n     */",
+      "description": "/** @deprecated As of v29.2 there can be more than two conditions in the filter. Use `numAlwaysVisibleConditions = 2` instead.\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "filterPlaceholder": {
@@ -9774,20 +9774,20 @@
       "description": "/** By default, the two conditions are combined using `AND`.\n     * You can change this default by setting this property.\n     * Options: `AND`, `OR`\n     */",
       "type": { "returnType": "JoinOperator", "optional": true }
     },
-    "maxConditionCount": {
+    "maxNumConditions": {
       "description": "/** Maximum number of conditions allowed in the filter.\n     * Default: `2`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
-    "alwaysVisibleConditionCount": {
-      "description": "/** By default only one condition is shown, and additional conditions are made visible when the previous conditions are entered\n     * (up to `maxConditionCount`). To have more conditions shown by default, set this to the number required.\n     * Conditions will be disabled until the previous conditions have been entered.\n     * Note that this cannot be greater than `maxConditionCount` - anything larger will be ignored. \n     * Default: `1`\n     */",
+    "numAlwaysVisibleConditions": {
+      "description": "/** By default only one condition is shown, and additional conditions are made visible when the previous conditions are entered\n     * (up to `maxNumConditions`). To have more conditions shown by default, set this to the number required.\n     * Conditions will be disabled until the previous conditions have been entered.\n     * Note that this cannot be greater than `maxNumConditions` - anything larger will be ignored. \n     * Default: `1`\n     */",
       "type": { "returnType": "number", "optional": true }
     },
     "suppressAndOrCondition": {
-      "description": "/** @deprecated As of v29.2 there can be more than two conditions in the filter. Use `maxConditionCount = 1` instead.\n     */",
+      "description": "/** @deprecated As of v29.2 there can be more than two conditions in the filter. Use `maxNumConditions = 1` instead.\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowBothConditions": {
-      "description": "/** @deprecated As of v29.2 there can be more than two conditions in the filter. Use `alwaysVisibleConditionCount = 2` instead.\n     */",
+      "description": "/** @deprecated As of v29.2 there can be more than two conditions in the filter. Use `numAlwaysVisibleConditions = 2` instead.\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "filterPlaceholder": {

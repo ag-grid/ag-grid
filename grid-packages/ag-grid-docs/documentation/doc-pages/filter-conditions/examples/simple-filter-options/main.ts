@@ -1,7 +1,7 @@
 import { Grid, ColDef, GridOptions, IDateFilterParams, ITextFilterParams, INumberFilterParams } from '@ag-grid-community/core'
 
 var filterParams: IDateFilterParams = {
-  maxConditionCount: 1,
+  maxNumConditions: 1,
   comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
     var dateAsString = cellValue
     if (dateAsString == null) return -1
@@ -39,14 +39,14 @@ const columnDefs: ColDef[] = [
   {
     field: 'sport',
     filterParams: {
-      maxConditionCount: 10,
+      maxNumConditions: 10,
     } as ITextFilterParams,
   },
   {
     field: 'age',
     filter: 'agNumberColumnFilter',
     filterParams: {
-      alwaysVisibleConditionCount: 2,
+      numAlwaysVisibleConditions: 2,
       defaultJoinOperator: 'OR',
     } as INumberFilterParams,
     maxWidth: 100,
