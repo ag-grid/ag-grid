@@ -163,7 +163,7 @@
     "protractor": "5.4.0",
     "purgecss-webpack-plugin": "^1.5.0",
     "raw-loader": "1.0.0",
-    "react": "16.7.0.0",
+    "react": "16.7.0",
     "react-dom": "16.7.0",
     "rimraf": "3.0.2",
     "rxjs": "^6.5.3",
