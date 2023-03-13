@@ -12,7 +12,7 @@ type OffscreenCanvasRenderingContext2D = any;
 export class HdpiCanvas {
     readonly document: Document;
     readonly element: HTMLCanvasElement;
-    readonly context: CanvasRenderingContext2D;
+    readonly context: CanvasRenderingContext2D & { verifyDepthZero?: () => void };
     readonly imageSource: HTMLCanvasElement;
 
     // The width/height attributes of the Canvas element default to
@@ -155,17 +155,13 @@ export class HdpiCanvas {
      * or uses the window.devicePixelRatio (default), then resizes the Canvas
      * element accordingly (default).
      */
-    setPixelRatio(ratio?: number) {
+    private setPixelRatio(ratio?: number) {
         let pixelRatio = ratio ?? window.devicePixelRatio;
         if (!isDesktop()) {
             // Mobile browsers have stricter memory limits, we reduce rendering resolution to
             // improve stability on mobile browsers. iOS Safari 12->16 are pain-points since they
             // have memory allocation quirks - see https://bugs.webkit.org/show_bug.cgi?id=195325.
             pixelRatio = 1;
-        }
-
-        if (pixelRatio === this.pixelRatio) {
-            return;
         }
 
         HdpiCanvas.overrideScale(this.context, pixelRatio);
@@ -363,7 +359,7 @@ export class HdpiCanvas {
                     this.$restore();
                     depth--;
                 } else {
-                    throw new Error('Unable to restore() past depth 0');
+                    throw new Error('AG Charts - Unable to restore() past depth 0');
                 }
             },
             setTransform(a: number, b: number, c: number, d: number, e: number, f: number) {
@@ -377,6 +373,11 @@ export class HdpiCanvas {
                 // As of Jan 8, 2019, `resetTransform` is still an "experimental technology",
                 // and doesn't work in IE11 and Edge 44.
                 this.$setTransform(scale, 0, 0, scale, 0, 0);
+            },
+            verifyDepthZero() {
+                if (depth !== 0) {
+                    throw new Error('AG Charts - Save/restore depth is non-zero: ' + depth);
+                }
             },
         } as any;
 

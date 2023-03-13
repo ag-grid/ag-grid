@@ -264,6 +264,9 @@ export class Group extends Node {
             if (stats) stats.layersRendered++;
             ctx.restore();
             layer.snapshot();
+
+            // Check for save/restore depth of zero!
+            layer.context.verifyDepthZero?.();
         }
 
         if (name && consoleLog && stats) {
