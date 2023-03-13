@@ -619,7 +619,10 @@ function addPackageJson(type, framework, importType, basePath) {
 
     if (framework === 'reactFunctionalTs') {
         addDependency('react', '18');
-        addDependency('react-dom/client', '18');
+        addDependency('react-dom', '18');
+
+        addDependency('@types/react', '18');
+        addDependency('@types/react-dom', '18');
     }
 
     if (importType === 'modules' && framework !== 'vanilla') {

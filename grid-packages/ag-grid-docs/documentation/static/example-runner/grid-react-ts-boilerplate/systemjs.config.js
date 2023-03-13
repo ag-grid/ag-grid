@@ -44,6 +44,7 @@
                 // react
                 react: 'npm:react@18.2.0',
                 'react-dom': 'npm:react-dom@18.2.0',
+                'react-dom/client': 'npm:react-dom@18.2.0',
                 redux: 'npm:redux@3.6.0',
                 'react-redux': 'npm:react-redux@5.0.6',
                 'prop-types': 'npm:prop-types@15.8.1',
