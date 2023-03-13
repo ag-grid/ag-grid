@@ -55,9 +55,9 @@
 
         svg {
             position: relative;
-            width: 0.85em;
-            height: 0.85em;
-            top: -0.25em;
+            width: $size-4;
+            height: $size-4;
+            top: -0.1em;
             visibility: visible;
             fill: var(--water-blue);
             transition: fill $default-transition-timing;
