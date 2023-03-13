@@ -68,19 +68,9 @@
         }
     }
 
-    &__title {
-        font-weight: 400;
-
-        &--enterprise::after {
-            @extend %enterprise-icon;
-            height: 1em;
-            width: 1em;
-            margin-left: 6px;
-        }
-    }
-
     enterprise-icon::after {
         @extend %enterprise-icon;
+
         width: 1rem;
         margin-left: 0.25rem;
     }
@@ -148,5 +138,18 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
         padding-right: max(var(--horizontal-margin), calc(50vw - var(--max-page-width) / 2));
+    }
+}
+
+.docsPageTitle {
+    --icon-size: 1.25em;
+    --text-color: red;
+
+    margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+
+    :global(.icon) {
+        position: relative;
+        margin-left: $size-1;
+        top: -0.1em;
     }
 }

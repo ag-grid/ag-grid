@@ -6,6 +6,7 @@ import ExampleRunner from 'components/example-runner/ExampleRunner';
 import { ExpandableSnippet } from 'components/expandable-snippet/ExpandableSnippet';
 import FeatureOverview from 'components/FeatureOverview';
 import Gif from 'components/Gif';
+import { Icon } from 'components/Icon';
 import IconsPanel from 'components/IconsPanel';
 import ImageCaption from 'components/ImageCaption';
 import { ListItem } from 'components/ListItem';
@@ -191,13 +192,9 @@ const DocPageTemplate = ({ data, pageContext: { framework, jsonDataAsString, exa
                 {/*eslint-disable-next-line react/jsx-pascal-case*/}
                 <SEO title={title} description={description} framework={framework} pageName={pageName} />
                 <AGStyles>
-                    <h1
-                        id="top"
-                        className={classnames(styles['doc-page__title'], {
-                            [styles['doc-page__title--enterprise']]: page.frontmatter.enterprise,
-                        })}
-                    >
+                    <h1 id="top" className={styles.docsPageTitle}>
                         {pageTitle}
+                        {page.frontmatter.enterprise && <Icon name="enterprise" />}
                     </h1>
                 </AGStyles>
                 {renderAst(ast)}
