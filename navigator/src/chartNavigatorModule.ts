@@ -2,6 +2,7 @@ import { _ModuleSupport, AgBaseChartOptions, CssColor, PixelSize, Opacity } from
 import { Navigator } from './navigator';
 
 export const CHART_NAVIGATOR_MODULE: _ModuleSupport.Module = {
+    type: 'root',
     chartTypes: ['cartesian'],
     optionsKey: 'navigator',
     initialiseModule(ctx) {
