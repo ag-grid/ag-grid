@@ -74,7 +74,7 @@
     "charts:run": "lerna run --stream --scope '*charts-{community,enterprise}*{,/*}' --scope 'ag-charts-enterprise-example'",
     "charts:build": "npm run charts:run -- build",
     "charts:watch": "cd charts-examples/ag-charts-enterprise-example && npm run watch",
-    "charts:watch-bundle": "cd charts-examples/ag-charts-enterprise-example && npm run watch:enterprise-bundle",
+    "charts:watch-bundle": "cd charts-examples/ag-charts-enterprise-example && npm run watch-bundle",
     "charts:lint": "npm run charts:run -- lint",
     "charts:fix": "npm run charts:run -- fix"
   },
