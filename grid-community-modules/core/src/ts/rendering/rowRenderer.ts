@@ -606,16 +606,19 @@ export class RowRenderer extends BeanStub {
     }
 
     public getAllCellCtrls(): CellCtrl[] {
-        let res: CellCtrl[] = [];
+        const res: CellCtrl[] = [];
         const rowCtrls = this.getAllRowCtrls();
         const rowCtrlsLength = rowCtrls.length;
+
         for (let i = 0; i < rowCtrlsLength; i++) {
             const cellCtrls = rowCtrls[i].getAllCellCtrls();
             const cellCtrlsLength = cellCtrls.length;
+
             for (let j = 0; j < cellCtrlsLength; j++) {
-                res.push(cellCtrls[i]);
+                res.push(cellCtrls[j]);
             }
         }
+
         return res;
     }
 
@@ -623,7 +626,9 @@ export class RowRenderer extends BeanStub {
         const stickyRowCtrls = (this.stickyRowFeature && this.stickyRowFeature.getStickyRowCtrls()) || [];
         const res = [...this.topRowCtrls, ...this.bottomRowCtrls, ...stickyRowCtrls];
 
-        Object.keys(this.rowCtrlsByRowIndex).forEach(key => res.push(this.rowCtrlsByRowIndex[key]));
+        for (const key of Object.keys(this.rowCtrlsByRowIndex)) {
+            res.push(this.rowCtrlsByRowIndex[key]);
+        }
         return res;
     }
 
@@ -672,7 +677,7 @@ export class RowRenderer extends BeanStub {
 
         const fullWidthRenderers: ICellRenderer[] = [];
         const rowIdMap = this.mapRowNodes(params.rowNodes);
-        
+
         this.getAllRowCtrls().forEach(rowCtrl => {
             if (rowIdMap && !this.isRowInMap(rowCtrl.getRowNode(), rowIdMap)) {
                 return;

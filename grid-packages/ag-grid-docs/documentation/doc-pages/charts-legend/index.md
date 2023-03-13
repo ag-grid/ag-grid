@@ -198,35 +198,7 @@ legend: {
 }
 ```
 
-## Legend Events
-
-The `legendItemClick` event can be used to listen to legend item clicks. A listener can be configured via `legend.listeners.legendItemClick`.
-
-The event object passed to the listener includes:
-
-- the `seriesId` of the series associated with the legend item
-- the `itemId`, usually the `yKey` value for cartesian series
-- `enabled`, whether the legend item is currently enabled or not
-
-For example, to show an alert message with the `legendItemClick` event contents when a legend item is clicked, the following listener can be configured:
-
-```js
-legend: {
-  listeners: {
-    legendItemClick: ({
-      seriesId,
-      itemId,
-      enabled,
-    }: AgChartLegendClickEvent) => {
-      window.alert(
-        `seriesId: ${seriesId}, itemId: ${itemId}, enabled: ${enabled}`
-      )
-    }
-  }
-}
-```
-
-### Series Visibility Toggling
+## Series Visibility Toggling
 
 By default, when a legend item is clicked, the visibility of the series associated with that legend item will be toggled. This allows the users to control which series are displayed in the chart by clicking on legend items. Additionally, when a legend item is double clicked, the visibility of all other series, except that associated with that legend item, will be toggled.
 
@@ -240,17 +212,17 @@ legend: {
 }
 ```
 
-If a callback function is configured via [`legend.listeners.legendItemClick`](#legenditemclick), it will still be invoked when the legend click event is fired.
+### Example: Series Visibility Toggling
 
-### Example: Legend Click
+This example demonstrates toggling the visiblity of series via clicks and double clicks, and logs a message to the browser console when the legend is clicked.
 
-This example logs a message to the browser console when the legend is clicked.
-
-<chart-example title='Legend Click' name='legend-click-series-toggle' type='generated'></chart-example>
+<chart-example title='Series Visibility Toggling' name='legend-click-series-toggle' type='generated'></chart-example>
 
 ## API Reference
 
 <interface-documentation interfaceName='AgChartLegendOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
+
+The `legendItemClick` and `legendItemDoubleClick` events can be used to listen to legend item clicks and double clicks, respectively. For more information see [Legend Events](/charts-events/#legend-events---legenditemclick-and-legenditemdoubleclick).
 
 ## Next Up
 

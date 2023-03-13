@@ -251,7 +251,7 @@ export interface AgDropShadowOptions {
 export interface AgChartCaptionOptions {
     /** Whether or not the text should be shown. */
     enabled?: boolean;
-    /** The text to show in the text. */
+    /** The text to display. */
     text?: string;
     /** The font style to use for the text. */
     fontStyle?: FontStyle;

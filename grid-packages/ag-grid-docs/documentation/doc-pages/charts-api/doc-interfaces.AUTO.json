@@ -1104,7 +1104,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "text": {
-      "description": "/** The text to show in the text. */",
+      "description": "/** The text to display. */",
       "type": { "returnType": "string", "optional": true }
     },
     "fontStyle": {
@@ -3870,7 +3870,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "text": {
-      "description": "/** The text to show in the text. */",
+      "description": "/** The text to display. */",
       "type": { "returnType": "string", "optional": true }
     },
     "fontStyle": {
