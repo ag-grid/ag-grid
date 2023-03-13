@@ -678,14 +678,14 @@
       "spacing?": "number"
     },
     "docs": {
-      "enabled?": "/** Whether or not the title should be shown. */",
-      "text?": "/** The text to show in the title. */",
-      "fontStyle?": "/** The font style to use for the title. */",
-      "fontWeight?": "/** The font weight to use for the title. */",
-      "fontSize?": "/** The font size in pixels to use for the title. */",
-      "fontFamily?": "/** The font family to use for the title. */",
-      "color?": "/** The colour to use for the title. */",
-      "spacing?": "/** Spacing added to help position the caption. Default: 20 */"
+      "enabled?": "/** Whether or not the text should be shown. */",
+      "text?": "/** The text to show in the text. */",
+      "fontStyle?": "/** The font style to use for the text. */",
+      "fontWeight?": "/** The font weight to use for the text. */",
+      "fontSize?": "/** The font size in pixels to use for the text. */",
+      "fontFamily?": "/** The font family to use for the text. */",
+      "color?": "/** The colour to use for the text. */",
+      "spacing?": "/** Spacing added to help position the text. */"
     }
   },
   "AgAxisCaptionOptions": {
@@ -2549,14 +2549,14 @@
       "spacing?": "number"
     },
     "docs": {
-      "enabled?": "/** Whether or not the title should be shown. */",
-      "text?": "/** The text to show in the title. */",
-      "fontStyle?": "/** The font style to use for the title. */",
-      "fontWeight?": "/** The font weight to use for the title. */",
-      "fontSize?": "/** The font size in pixels to use for the title. */",
-      "fontFamily?": "/** The font family to use for the title. */",
-      "color?": "/** The colour to use for the title. */",
-      "spacing?": "/** Spacing added to help position the caption. Default: 20 */"
+      "enabled?": "/** Whether or not the text should be shown. */",
+      "text?": "/** The text to show in the text. */",
+      "fontStyle?": "/** The font style to use for the text. */",
+      "fontWeight?": "/** The font weight to use for the text. */",
+      "fontSize?": "/** The font size in pixels to use for the text. */",
+      "fontFamily?": "/** The font family to use for the text. */",
+      "color?": "/** The colour to use for the text. */",
+      "spacing?": "/** Spacing added to help position the text. */"
     }
   },
   "AgPieSeriesCalloutOptions": {

@@ -15,7 +15,7 @@ of later elements:
 - Chart padding
 - Title plus its configured spacing
 - Sub-title plus its configured spacing
-- Foot-note plus its configured spacing
+- Footnote plus its configured spacing
 - Legend plus its configured spacing
 - Navigator plus its configured margin
 - Axes
@@ -39,9 +39,9 @@ height of the title and its additional `title.spacing`.
 `subtitle` configuration applies next, horizontally centring on the remaining space and consuming the
 height of the title and its additional `subtitle.spacing`.
 
-### Foot-Note
+### Footnote
 
-`footnote` configuration applies next, horizontally centring on the remaining space and consuming the height of the title and its additional `footnote.spacing` at the bottom.
+`footnote` configuration applies next, horizontally centring on the remaining space and consuming the height of the footnote and its additional `footnote.spacing` at the bottom.
 
 ### Legend
 

@@ -249,21 +249,21 @@ export interface AgDropShadowOptions {
 }
 
 export interface AgChartCaptionOptions {
-    /** Whether or not the title should be shown. */
+    /** Whether or not the text should be shown. */
     enabled?: boolean;
-    /** The text to show in the title. */
+    /** The text to show in the text. */
     text?: string;
-    /** The font style to use for the title. */
+    /** The font style to use for the text. */
     fontStyle?: FontStyle;
-    /** The font weight to use for the title. */
+    /** The font weight to use for the text. */
     fontWeight?: FontWeight;
-    /** The font size in pixels to use for the title. */
+    /** The font size in pixels to use for the text. */
     fontSize?: FontSize;
-    /** The font family to use for the title. */
+    /** The font family to use for the text. */
     fontFamily?: FontFamily;
-    /** The colour to use for the title. */
+    /** The colour to use for the text. */
     color?: CssColor;
-    /** Spacing added to help position the caption. Default: 20 */
+    /** Spacing added to help position the text. */
     spacing?: number;
 }
 

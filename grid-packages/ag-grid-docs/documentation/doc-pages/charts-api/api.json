@@ -51,9 +51,6 @@
     "enabled": {
       "default": true
     },
-    "text": {
-      "default": "Title"
-    },
     "color": {
       "default": "#000000"
     },

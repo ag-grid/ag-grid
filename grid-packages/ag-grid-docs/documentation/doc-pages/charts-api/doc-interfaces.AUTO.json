@@ -1100,35 +1100,35 @@
   },
   "AgChartCaptionOptions": {
     "enabled": {
-      "description": "/** Whether or not the title should be shown. */",
+      "description": "/** Whether or not the text should be shown. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "text": {
-      "description": "/** The text to show in the title. */",
+      "description": "/** The text to show in the text. */",
       "type": { "returnType": "string", "optional": true }
     },
     "fontStyle": {
-      "description": "/** The font style to use for the title. */",
+      "description": "/** The font style to use for the text. */",
       "type": { "returnType": "FontStyle", "optional": true }
     },
     "fontWeight": {
-      "description": "/** The font weight to use for the title. */",
+      "description": "/** The font weight to use for the text. */",
       "type": { "returnType": "FontWeight", "optional": true }
     },
     "fontSize": {
-      "description": "/** The font size in pixels to use for the title. */",
+      "description": "/** The font size in pixels to use for the text. */",
       "type": { "returnType": "FontSize", "optional": true }
     },
     "fontFamily": {
-      "description": "/** The font family to use for the title. */",
+      "description": "/** The font family to use for the text. */",
       "type": { "returnType": "FontFamily", "optional": true }
     },
     "color": {
-      "description": "/** The colour to use for the title. */",
+      "description": "/** The colour to use for the text. */",
       "type": { "returnType": "CssColor", "optional": true }
     },
     "spacing": {
-      "description": "/** Spacing added to help position the caption. Default: 20 */",
+      "description": "/** Spacing added to help position the text. */",
       "type": { "returnType": "number", "optional": true }
     }
   },
@@ -3866,35 +3866,35 @@
   "AgPieTitleOptions": {
     "showInLegend": { "type": { "returnType": "boolean", "optional": true } },
     "enabled": {
-      "description": "/** Whether or not the title should be shown. */",
+      "description": "/** Whether or not the text should be shown. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "text": {
-      "description": "/** The text to show in the title. */",
+      "description": "/** The text to show in the text. */",
       "type": { "returnType": "string", "optional": true }
     },
     "fontStyle": {
-      "description": "/** The font style to use for the title. */",
+      "description": "/** The font style to use for the text. */",
       "type": { "returnType": "FontStyle", "optional": true }
     },
     "fontWeight": {
-      "description": "/** The font weight to use for the title. */",
+      "description": "/** The font weight to use for the text. */",
       "type": { "returnType": "FontWeight", "optional": true }
     },
     "fontSize": {
-      "description": "/** The font size in pixels to use for the title. */",
+      "description": "/** The font size in pixels to use for the text. */",
       "type": { "returnType": "FontSize", "optional": true }
     },
     "fontFamily": {
-      "description": "/** The font family to use for the title. */",
+      "description": "/** The font family to use for the text. */",
       "type": { "returnType": "FontFamily", "optional": true }
     },
     "color": {
-      "description": "/** The colour to use for the title. */",
+      "description": "/** The colour to use for the text. */",
       "type": { "returnType": "CssColor", "optional": true }
     },
     "spacing": {
-      "description": "/** Spacing added to help position the caption. Default: 20 */",
+      "description": "/** Spacing added to help position the text. */",
       "type": { "returnType": "number", "optional": true }
     }
   },
