@@ -679,7 +679,7 @@
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",
-      "text?": "/** The text to show in the text. */",
+      "text?": "/** The text to display. */",
       "fontStyle?": "/** The font style to use for the text. */",
       "fontWeight?": "/** The font weight to use for the text. */",
       "fontSize?": "/** The font size in pixels to use for the text. */",
@@ -2550,7 +2550,7 @@
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",
-      "text?": "/** The text to show in the text. */",
+      "text?": "/** The text to display. */",
       "fontStyle?": "/** The font style to use for the text. */",
       "fontWeight?": "/** The font weight to use for the text. */",
       "fontSize?": "/** The font size in pixels to use for the text. */",
