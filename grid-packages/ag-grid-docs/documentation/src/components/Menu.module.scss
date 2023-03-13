@@ -39,22 +39,27 @@
     }
 }
 
-.menuSection {
-    padding-top: $size-1;
-    padding-bottom: $size-1;
-}
-
 .sectionHeader {
     width: 100%;
+    padding-top: $size-1 !important; // !important for .ag-styles specificity
+    padding-bottom: $size-1 !important; // !important for .ag-styles specificity
     font-weight: var(--font-weight-bold);
     border: 2px solid transparent !important; // !important for .ag-styles specificity
     outline: none;
-    transition: border-color $default-transition-timing;
+    transition: color $default-transition-timing, border-color $default-transition-timing;
     border-radius: var(--border-radius);
+
+    &:hover {
+        --text-color: var(--link-color) !important; // !important for .ag-styles specificity
+    }
 
     &:focus,
     &:focus-visible {
-        border-color: var(--sky-blue) !important; // !important for .ag-styles specificity
+        border-color: var(--bright-blue-gray) !important; // !important for .ag-styles specificity
+    }
+
+    &:hover .sectionIcon {
+        transform: translateX(3px);
     }
 }
 
@@ -63,53 +68,26 @@
 
     position: relative;
     top: -1px;
-    transition: transform 0.33s ease-in-out;
+    transition: transform 0.33s ease-in-out, fill $default-transition-timing;
 
     &.active {
-        transform: rotate(90deg);
+        transform: rotate(90deg) !important;
     }
 }
 
 .menuGroup {
-    $first-indent-size: 20px;
-    $indent-size: 14px;
+    --first-indent-size: 20px;
+    --indent-size: 14px;
 
     line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
     font-size: var(--font-size-small);
 
-    a {
-        position: relative;
-        display: block;
-        padding-top: $size-half;
-        padding-bottom: $size-half;
-        padding-left: $first-indent-size;
-        outline: none;
-        border-radius: var(--border-radius);
-        border: 2px solid transparent;
-        color: var(--text-color) !important; // !important for .ag-styles specificity
-        transition: border-color $default-transition-timing;
-
-        &:hover {
-            color: var(--link-color) !important; // !important for .ag-styles specificity
-        }
-
-        &:focus,
-        &:focus-visible {
-            border-color: var(--sky-blue);
-        }
-    }
-
     ul a {
-        padding-left: $first-indent-size + $indent-size;
-        color: var(--secondary-text-color) !important; // !important for .ag-styles specificity
-
-        &.activeMenuItem {
-            color: var(--text-color) !important; // !important for .ag-styles specificity
-        }
+        padding-left: calc(var(--first-indent-size) + var(--indent-size));
     }
 
     ul ul a {
-        padding-left: $first-indent-size + $indent-size * 2;
+        padding-left: calc(var(--first-indent-size) + var(--indent-size) * 2);
     }
 
     .enterpriseIcon {
@@ -121,8 +99,18 @@
     }
 }
 
-.activeMenuItem {
-    pointer-events: none;
+.menuGroup a {
+    position: relative;
+    display: block;
+    padding-top: $size-half;
+    padding-bottom: $size-half;
+    padding-left: var(--first-indent-size);
+    outline: none;
+    border-radius: var(--border-radius);
+    border: 2px solid transparent;
+    color: var(--secondary-text-color) !important; // !important for .ag-styles specificity
+    font-weight: var(--font-weight-bold);
+    transition: color $default-transition-timing, border-color $default-transition-timing;
 
     &::before {
         content: '';
@@ -131,6 +119,32 @@
         height: 6px;
         transform: translate(-10px, 6px);
         border-radius: 50%;
-        background-color: var(--text-color);
+        transition: background-color $default-transition-timing;
+    }
+
+    &:hover {
+        color: var(--link-color) !important; // !important for .ag-styles specificity
+
+        &::before {
+            background-color: var(--link-color) !important;
+        }
+    }
+
+    &:focus,
+    &:focus-visible {
+        border-color: var(--bright-blue-gray) !important; // !important for .ag-styles specificity
+
+        &::before {
+            background-color: var(--platinum-gray);
+        }
+    }
+
+    &.activeMenuItem {
+        pointer-events: none;
+        color: var(--text-color) !important; // !important for .ag-styles specificity
+
+        &::before {
+            background-color: var(--text-color);
+        }
     }
 }
