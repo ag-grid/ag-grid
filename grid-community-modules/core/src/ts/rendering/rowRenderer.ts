@@ -607,6 +607,7 @@ export class RowRenderer extends BeanStub {
 
     public getAllCellCtrls(): CellCtrl[] {
         let res: CellCtrl[] = [];
+        
         const rowCtrls = this.getAllRowCtrls();
         const rowCtrlsLength = rowCtrls.length;
         for (let i = 0; i < rowCtrlsLength; i++) {
@@ -672,7 +673,7 @@ export class RowRenderer extends BeanStub {
 
         const fullWidthRenderers: ICellRenderer[] = [];
         const rowIdMap = this.mapRowNodes(params.rowNodes);
-        
+
         this.getAllRowCtrls().forEach(rowCtrl => {
             if (rowIdMap && !this.isRowInMap(rowCtrl.getRowNode(), rowIdMap)) {
                 return;
