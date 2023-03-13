@@ -113,14 +113,14 @@ h3:not(:last-child),
 h4:not(:last-child),
 h5:not(:last-child),
 h6:not(:last-child) {
-    margin-bottom: 0.5rem;
+    margin-bottom: $size-1;
 }
 
 p:not(:last-child),
 ul:not(:last-child),
 ol:not(:last-child),
 blockquote:not(:last-child) {
-    margin-bottom: 1rem;
+    margin-bottom: $size-2;
 }
 
 .max-text-length {

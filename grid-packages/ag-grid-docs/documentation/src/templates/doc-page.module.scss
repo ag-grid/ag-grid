@@ -27,6 +27,7 @@
     flex: 1 1 0px;
     min-width: 0px;
     padding-top: $size-3;
+    padding-bottom: $size-7;
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         padding-left: $size-4;
@@ -34,6 +35,18 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
         padding-right: $size-4;
+    }
+
+    h2:first-child,
+    h3:first-child,
+    h4:first-child {
+        margin-top: $size-7;
+        margin-bottom: $size-half; // Required because of .ag-styles wrapper
+    }
+
+    // Required because of .ag-styles wrapper
+    p {
+        margin-bottom: $size-2 !important;
     }
 
     &__title {

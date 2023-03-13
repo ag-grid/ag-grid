@@ -8,7 +8,7 @@
     display: none;
     width: calc(220px + var(--right-padding));
     padding-top: $size-4;
-    padding-bottom: $size-6;
+    padding-bottom: $size-7;
     padding-right: var(--right-padding);
     line-height: var(--line-height-tight);
 
@@ -26,7 +26,7 @@
         @supports (position: sticky) {
             padding-top: $size-4;
             padding-right: var(--right-padding);
-            padding-bottom: $size-6;
+            padding-bottom: $size-7;
             position: sticky;
             top: $top-bar-height;
             height: calc(100vh - #{$top-bar-height});

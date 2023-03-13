@@ -32,7 +32,7 @@
     flex-basis: auto !important;
     flex-direction: column;
     padding-top: $size-3;
-    padding-bottom: $size-4;
+    padding-bottom: $size-7;
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         display: block !important; // !important to override bootstrap styles
