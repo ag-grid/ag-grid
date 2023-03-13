@@ -6,11 +6,12 @@
     --right-padding: max(var(--horizontal-margin), calc(50vw - var(--max-page-width) / 2));
 
     display: none;
-    width: calc(220px + var(--right-padding));
+    width: calc(240px + var(--right-padding));
     padding-top: $size-4;
     padding-bottom: $size-7;
     padding-right: var(--right-padding);
     line-height: var(--line-height-tight);
+    border-left: 1px solid var(--border-color);
 
     @supports (position: sticky) {
         padding-top: 0;
@@ -27,6 +28,7 @@
             padding-top: $size-4;
             padding-right: var(--right-padding);
             padding-bottom: $size-7;
+            padding-left: $size-4;
             position: sticky;
             top: $top-bar-height;
             height: calc(100vh - #{$top-bar-height});
