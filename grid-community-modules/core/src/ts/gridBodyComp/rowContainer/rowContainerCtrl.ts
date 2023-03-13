@@ -150,6 +150,7 @@ export class RowContainerCtrl extends BeanStub {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     private readonly name: RowContainerName;
+    private readonly isFullWithContainer: boolean;
 
     private comp: IRowContainerComp;
     private eContainer: HTMLElement;
@@ -161,10 +162,17 @@ export class RowContainerCtrl extends BeanStub {
     private viewportSizeFeature: ViewportSizeFeature | undefined; // only center has this
     private pinnedWidthFeature: SetPinnedLeftWidthFeature | SetPinnedRightWidthFeature | undefined;
     private visible: boolean = true;
+    // Maintaining a constant reference enables optimization in React.
+    private EMPTY_CTRLS = [];
 
     constructor(name: RowContainerName) {
         super();
         this.name = name;
+        this.isFullWithContainer =
+            this.name === RowContainerName.TOP_FULL_WIDTH
+            || this.name === RowContainerName.STICKY_TOP_FULL_WIDTH
+            || this.name === RowContainerName.BOTTOM_FULL_WIDTH
+            || this.name === RowContainerName.FULL_WIDTH;
     }
 
     @PostConstruct
@@ -423,32 +431,27 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     private onDisplayedRowsChanged(): void {
-        const fullWithContainer =
-            this.name === RowContainerName.TOP_FULL_WIDTH
-            || this.name === RowContainerName.STICKY_TOP_FULL_WIDTH
-            || this.name === RowContainerName.BOTTOM_FULL_WIDTH
-            || this.name === RowContainerName.FULL_WIDTH;
-
-        const doesRowMatch = (rowCtrl: RowCtrl) => {
-            const fullWidthRow = rowCtrl.isFullWidth();
-
+               
+        if(this.visible){
             const printLayout = this.gridOptionsService.isDomLayout('print');
-
-            const embedFW = this.embedFullWidthRows || printLayout;
-
-            const match = fullWithContainer ?
-                !embedFW && fullWidthRow
-                : embedFW || !fullWidthRow;
-
-            return match;
-        };
-
-        // this list contains either all pinned top, center or pinned bottom rows
-        const allRowsRegardlessOfFullWidth = this.visible ? this.getRowCtrls() : [];
-        // this filters out rows not for this container, eg if it's a full with row, but we are not full with container
-        const rowsThisContainer = allRowsRegardlessOfFullWidth.filter(doesRowMatch);
-
-        this.comp.setRowCtrls(rowsThisContainer);
+            const doesRowMatch = (rowCtrl: RowCtrl) => {
+                const fullWidthRow = rowCtrl.isFullWidth();
+    
+                const embedFW = this.embedFullWidthRows || printLayout;
+    
+                const match = this.isFullWithContainer ?
+                    !embedFW && fullWidthRow
+                    : embedFW || !fullWidthRow;
+    
+                return match;
+            };
+            // this list contains either all pinned top, center or pinned bottom rows
+            // this filters out rows not for this container, eg if it's a full with row, but we are not full with container
+            const rowsThisContainer = this.getRowCtrls().filter(doesRowMatch);
+            this.comp.setRowCtrls(rowsThisContainer);
+        }else{
+            this.comp.setRowCtrls(this.EMPTY_CTRLS);
+        }
     }
 
     private getRowCtrls(): RowCtrl[] {

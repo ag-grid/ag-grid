@@ -65,12 +65,16 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
         const compProxy: IRowContainerComp = {
             setViewportHeight: setViewportHeight,
             setRowCtrls: rowCtrls => {
-                rowCtrlsRef.current = rowCtrls;
-                updateRowCtrlsOrdered();
+                if(rowCtrlsRef.current !== rowCtrls){
+                    rowCtrlsRef.current = rowCtrls;
+                    updateRowCtrlsOrdered();
+                }
             },
             setDomOrder: domOrder => {
-                domOrderRef.current = domOrder;
-                updateRowCtrlsOrdered();
+                if(domOrderRef.current != domOrder){
+                    domOrderRef.current = domOrder;
+                    updateRowCtrlsOrdered();
+                }
             },
             setContainerWidth: width => setContainerWidth(width)
         };
