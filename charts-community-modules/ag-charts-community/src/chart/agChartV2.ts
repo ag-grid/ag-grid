@@ -418,6 +418,11 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
         );
     }
 
+    // Needs to be done before applying the series to detect if a seriesNode[Double]Click listener has been added
+    if (processedOptions.listeners) {
+        registerListeners(chart, processedOptions.listeners);
+    }
+
     applyOptionValues(chart, processedOptions, { skip });
 
     let forceNodeDataRefresh = false;
@@ -443,9 +448,6 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
     // Needs to be done last to avoid overrides by width/height properties.
     if (processedOptions.autoSize != null) {
         chart.autoSize = processedOptions.autoSize;
-    }
-    if (processedOptions.listeners) {
-        registerListeners(chart, processedOptions.listeners);
     }
     if (processedOptions.legend?.listeners) {
         Object.assign(chart.legend.listeners, processedOptions.legend.listeners ?? {});

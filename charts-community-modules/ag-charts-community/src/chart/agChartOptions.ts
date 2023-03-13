@@ -529,7 +529,7 @@ export interface AgChartDoubleClickEvent extends AgChartEvent<'doubleClick'> {}
 export interface AgBaseChartListeners {
     /** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once. */
     seriesNodeClick?: (event: AgNodeClickEvent) => any;
-    /** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is double clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeDoubleClick` events of all the series at once. */
+    /** The listener to call when a node (marker, column, bar, tile or a pie sector) in any series is double clicked. In case a chart has multiple series, the chart's `seriesNodeDoubleClick` event can be used to listen to `nodeDoubleClick` events of all the series at once. */
     seriesNodeDoubleClick?: (event: AgNodeDoubleClickEvent) => any;
     /** The listener to call to signify a general click on the chart by the user. */
     click?: (event: AgChartClickEvent) => any;
@@ -567,6 +567,14 @@ export interface AgBaseChartOptions {
     listeners?: AgBaseChartListeners;
     /** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */
     theme?: string | AgChartTheme; // | ChartTheme
+    /** HTML overlays */
+    overlays?: {
+        /** An overlay to be displayed when there is no data, */
+        noData?: {
+            /** A function for generating HTML string for overlay content. */
+            renderer?: () => string;
+        };
+    };
 }
 
 export interface AgBaseAxisOptions {

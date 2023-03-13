@@ -59,19 +59,19 @@ export class SortService extends BeanStub {
             // so to ensure the array keeps its order, add an additional sorting condition manually, in this case we
             // are going to inspect the original array position. This is what sortedRowNodes is for.
             let skipSortingGroups = groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
-            if (!sortActive || skipSortingGroups || skipSortingPivotLeafs) {
-                // when 'groupMaintainOrder' is enabled we skip sorting groups unless we are sorting on group columns
+            if (skipSortingGroups) {
                 const childrenToBeSorted = rowNode.childrenAfterAggFilter!.slice(0);
-                if (groupMaintainOrder && rowNode.childrenAfterSort) {
-                    const indexedOrders = rowNode.childrenAfterSort.reduce<{ [key:string]: number }>(
-                        (acc, row, idx) => {
-                            acc[row.id!] = idx;
-                            return acc;
-                        }, {}
-                    );
-                    childrenToBeSorted.sort((row1, row2) => (indexedOrders[row1.id!] || 0) - (indexedOrders[row2.id!] || 0));
+                if (rowNode.childrenAfterSort) {
+                    const indexedOrders: { [key:string]: number } = {};
+                    rowNode.childrenAfterSort.forEach((node, idx) => {
+                        indexedOrders[node.id!] = idx;
+                    });
+                    childrenToBeSorted.sort((row1, row2) => (indexedOrders[row1.id!] ?? 0) - (indexedOrders[row2.id!] ?? 0));
                 }
                 rowNode.childrenAfterSort = childrenToBeSorted;
+            } else if(!sortActive || skipSortingPivotLeafs) {
+                // if there's no sort to make, skip this step
+                rowNode.childrenAfterSort = rowNode.childrenAfterAggFilter!.slice(0);
             } else if (useDeltaSort) {
                 rowNode.childrenAfterSort = this.doDeltaSort(rowNode, allDirtyNodes, changedPath!, sortOptions);
             } else {

@@ -98,7 +98,7 @@
         },
         {
             "behaviour": "Discard un-applied changes when the filter is closed",
-            "agGrid": false,
+            "agGrid": true,
             "windowsExcel": true,
             "macExcel": "N/A"
         },

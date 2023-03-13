@@ -122,7 +122,7 @@ const GridExample = () => {
             filter: 'agNumberColumnFilter',
             filterParams: {
                 filterOptions: ['equals', 'lessThan', 'greaterThan'],
-                maxNumConditions: 1,
+                maxConditionCount: 1,
             },
         },
         {

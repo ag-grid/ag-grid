@@ -201,7 +201,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -258,7 +257,6 @@ Object {
       "yName": "Marriages",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -315,7 +313,6 @@ Object {
       "yName": "Civil partnerships",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -663,7 +660,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "fillOpacity": 1,
       "fills": Array [
         "#c16068",
@@ -738,7 +734,6 @@ Object {
       },
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -1040,7 +1035,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -1098,7 +1092,6 @@ Object {
       "yName": "",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -1156,7 +1149,6 @@ Object {
       "yName": "",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -1214,7 +1206,6 @@ Object {
       "yName": "",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -1272,7 +1263,6 @@ Object {
       "yName": "",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -1330,7 +1320,6 @@ Object {
       "yName": "",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -1388,7 +1377,6 @@ Object {
       "yName": "",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -1698,7 +1686,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "fillOpacity": 1,
       "fills": Array [
         "#f3622d",
@@ -2027,7 +2014,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -2294,7 +2280,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -2351,7 +2336,6 @@ Object {
       "yName": "",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -2408,7 +2392,6 @@ Object {
       "yName": "",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -2465,7 +2448,6 @@ Object {
       "yName": "",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -2768,7 +2750,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "fillOpacity": 0.6,
       "fills": Array [
         "#FA7921",
@@ -2842,7 +2823,6 @@ Object {
       ],
     },
     Object {
-      "cursor": "default",
       "fillOpacity": 0.6,
       "fills": Array [
         "#5BC0EB",
@@ -2916,7 +2896,6 @@ Object {
       ],
     },
     Object {
-      "cursor": "default",
       "fillOpacity": 0.6,
       "fills": Array [
         "#9BC53D",
@@ -2990,7 +2969,6 @@ Object {
       ],
     },
     Object {
-      "cursor": "default",
       "fillOpacity": 0.6,
       "fills": Array [
         "#E55934",
@@ -3064,7 +3042,6 @@ Object {
       ],
     },
     Object {
-      "cursor": "default",
       "fillOpacity": 0.6,
       "fills": Array [
         "#FDE74C",
@@ -3385,7 +3362,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "fillOpacity": 1,
       "fills": Array [
         "#f3622d",
@@ -3676,7 +3652,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "fillOpacity": 1,
       "fills": Array [
         "rgba(0, 117, 163, 0.9)",
@@ -3956,7 +3931,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -4229,7 +4203,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -4497,7 +4470,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "fillOpacity": 1,
       "fills": Array [
         "#19A0AA",
@@ -4811,7 +4783,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "fillOpacity": 1,
       "fills": Array [
         "rgba(0, 117, 163, 0.9)",
@@ -5128,7 +5099,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "fillOpacity": 1,
       "fills": Array [
         "#f3622d",
@@ -5475,7 +5445,6 @@ Object {
           4500,
         ],
       ],
-      "cursor": "default",
       "fill": "#8888ff",
       "fillOpacity": 0.5,
       "highlightStyle": Object {
@@ -5746,7 +5715,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -5804,7 +5772,6 @@ Object {
       "yName": "Belize",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -5862,7 +5829,6 @@ Object {
       "yName": "Cameroon",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -5920,7 +5886,6 @@ Object {
       "yName": "Columbia",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -5978,7 +5943,6 @@ Object {
       "yName": "Costa Rica",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -6036,7 +6000,6 @@ Object {
       "yName": "Dominican Republic",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -6094,7 +6057,6 @@ Object {
       "yName": "Ecuador",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -6152,7 +6114,6 @@ Object {
       "yName": "Ghana",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -6210,7 +6171,6 @@ Object {
       "yName": "Honduras",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -6268,7 +6228,6 @@ Object {
       "yName": "Ivory Coast",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -6326,7 +6285,6 @@ Object {
       "yName": "Jamaica",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -6384,7 +6342,6 @@ Object {
       "yName": "Mexico",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -6442,7 +6399,6 @@ Object {
       "yName": "Panama",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -6500,7 +6456,6 @@ Object {
       "yName": "Windward Isles",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -6558,7 +6513,6 @@ Object {
       "yName": "Guatemala",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -6616,7 +6570,6 @@ Object {
       "yName": "Nicaragua",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -6947,7 +6900,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -7109,7 +7061,6 @@ Object {
         "#cb4b3f",
         "#6acb64",
       ],
-      "cursor": "default",
       "formatter": [Function],
       "gradient": true,
       "groupFill": "#272931",
@@ -7429,7 +7380,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "fillOpacity": 0.8,
       "fills": Array [
         "#f3622d",
@@ -7764,7 +7714,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "fillOpacity": 1,
       "fills": Array [
         "#00c851",
@@ -8086,7 +8035,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "fillOpacity": 1,
       "fills": Array [
         "#f1c40f",
@@ -8425,7 +8373,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "fillOpacity": 0.8,
       "fills": Array [
         "#c16068",
@@ -8498,7 +8445,6 @@ Object {
       ],
     },
     Object {
-      "cursor": "default",
       "fillOpacity": 0.8,
       "fills": Array [
         "#a2bf8a",
@@ -8571,7 +8517,6 @@ Object {
       ],
     },
     Object {
-      "cursor": "default",
       "fillOpacity": 0.8,
       "fills": Array [
         "#ebcc87",
@@ -8644,7 +8589,6 @@ Object {
       ],
     },
     Object {
-      "cursor": "default",
       "fillOpacity": 0.8,
       "fills": Array [
         "#80a0c3",
@@ -8945,7 +8889,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "fillOpacity": 1,
       "fills": Array [
         "#0084e7",
@@ -9125,7 +9068,6 @@ Object {
         "length": 10,
         "strokeWidth": 2,
       },
-      "cursor": "default",
       "fillOpacity": 0.9,
       "fills": Array [
         "#fb7451",
@@ -9451,7 +9393,6 @@ Object {
       "aggregation": "sum",
       "areaPlot": false,
       "bins": undefined,
-      "cursor": "default",
       "fill": "#f3622d",
       "fillOpacity": 0.5,
       "highlightStyle": Object {
@@ -9723,7 +9664,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -9781,7 +9721,6 @@ Object {
       "yName": "",
     },
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -9967,7 +9906,6 @@ Object {
         "length": 10,
         "strokeWidth": 2,
       },
-      "cursor": "default",
       "fillOpacity": 1,
       "fills": Array [
         "#49afda",
@@ -10268,7 +10206,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "highlightStyle": Object {
         "item": Object {
           "fill": "yellow",
@@ -10541,7 +10478,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "fillOpacity": 0.8,
       "fills": Array [
         "#5BC0EB",
@@ -10893,7 +10829,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "fillOpacity": 1,
       "fills": Array [
         "#f3622d",
@@ -11207,7 +11142,6 @@ Object {
   },
   "series": Array [
     Object {
-      "cursor": "default",
       "fillOpacity": 1,
       "fills": Array [
         "#5BC0EB",
@@ -11557,7 +11491,6 @@ Object {
           4500,
         ],
       ],
-      "cursor": "default",
       "fill": "#8888ff",
       "fillOpacity": 0.5,
       "highlightStyle": Object {
