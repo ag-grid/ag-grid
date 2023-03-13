@@ -618,8 +618,8 @@ function addPackageJson(type, framework, importType, basePath) {
     }
 
     if (framework === 'reactFunctionalTs') {
-        addDependency('react', '17');
-        addDependency('react-dom', '17');
+        addDependency('react', '18');
+        addDependency('react-dom', '18');
     }
 
     if (importType === 'modules' && framework !== 'vanilla') {
