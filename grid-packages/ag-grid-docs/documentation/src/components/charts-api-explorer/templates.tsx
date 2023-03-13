@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
       return {
         ...boilerplateFiles,
         "index.jsx": `import React, { Component } from "react";
-import { render } from "react-dom";
+import { createRoot } from "react-dom";
 import { AgChartsReact } from "ag-charts-react";
 
 class ChartExample extends Component {
@@ -82,7 +82,8 @@ class ChartExample extends Component {
     }
 }
 
-render(<ChartExample />, document.querySelector("#root"));`,
+const root = createRoot(document.getElementById('root'));
+root.render(<ChartExample />);`,
       }
     case "angular":
       return {
