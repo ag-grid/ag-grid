@@ -109,18 +109,17 @@ component as shown below:
 // index.jsx
 
 import React from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom';
 import { Provider } from 'react-redux';
 
 import store from './store.jsx';
 import FileBrowser from './FileBrowser.jsx';
 
-render(
-    <Provider store={ store }>
-        <FileBrowser/>
-    </Provider>,
-    document.getElementById('root')
-);
+const root = createRoot(document.getElementById('root'));
+root.render(
+    <Provider store={store}>
+        <FileView/>
+    </Provider>);
 ```
 
 The `Provider` accepts the store as property and makes it available via props to all child components.

@@ -25,7 +25,7 @@
 |
 | ```jsx
 | import React, { useState } from 'react';
-| import { render } from 'react-dom';
+| import { createRoot } from 'react-dom';
 | import { AgGridReact } from 'ag-grid-react';
 |
 | import 'ag-grid-community/styles/ag-grid.css';
@@ -54,7 +54,8 @@
 |    );
 | };
 |
-| render(<App />, document.getElementById('root'));
+|const root = createRoot(document.getElementById('root'));
+|root.render(<GridExample />);
 | ```
 |
 |</div>
@@ -141,7 +142,7 @@
 |
 |```jsx
 |import React, { useState, useRef, useEffect, useMemo, useCallback} from 'react';
-|import { render } from 'react-dom';
+|import { createRoot } from 'react-dom';
 |import { AgGridReact } from 'ag-grid-react'; // the AG Grid React Component
 |
 |import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS, always needed
