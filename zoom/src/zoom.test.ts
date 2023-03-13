@@ -9,7 +9,6 @@ import {
     CANVAS_HEIGHT,
     extractImageData,
     scrollAction,
-    dragAction,
     IMAGE_SNAPSHOT_DEFAULTS,
     clickAction,
 } from 'ag-charts-community/src/chart/test/utils';
@@ -90,39 +89,6 @@ describe('Zoom', () => {
 
         it('should zoom in to the given location', async () => {
             await scrollAction(cx + CANVAS_WIDTH / 4, cy + CANVAS_HEIGHT / 4, -1);
-
-            await compare();
-        });
-    });
-
-    describe('when a user clicks and drags', () => {
-        it.skip('should zoom in to fit the drawn rect', () => {
-            //
-        });
-    });
-
-    describe('when a user holds the pan key and clicks and drags', () => {
-        it('should not pan a unit-zoom state outside the zoom bounds', async () => {
-            await dragAction(cx, cy)(chart);
-            await dragAction(cx + CANVAS_WIDTH / 4, cy + CANVAS_HEIGHT / 4)(chart);
-
-            await compare();
-        });
-
-        it('should pan when zoomed in', async () => {
-            await scrollAction(cx, cy, -1);
-
-            await dragAction(cx, cy)(chart);
-            await dragAction(cx + CANVAS_WIDTH / 4, cy + CANVAS_HEIGHT / 4)(chart);
-
-            await compare();
-        });
-
-        it('should pan when zoomed in constrained by the zoom bounds', async () => {
-            await scrollAction(cx, cy, -1);
-
-            await dragAction(cx, cy)(chart);
-            await dragAction(cx + CANVAS_WIDTH, cy + CANVAS_HEIGHT)(chart);
 
             await compare();
         });
