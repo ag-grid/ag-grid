@@ -49,11 +49,35 @@ This example shows how the `nodeDoubleClick` event listener can be used to liste
 
 <chart-example title='Node Double Click Event' name='node-double-click-event' type='generated'></chart-example>
 
-## Legend Event - legendItemClick and legendItemDoubleClick
+## Legend Events - legendItemClick and legendItemDoubleClick
 
-The `legendItemClick` and `legendItemDoubleClick` events can be used to listen to legend item clicks and double clicks, respectively.
+The `legendItemClick` event can be used to listen to legend item clicks. A listener can be configured via `legend.listeners.legendItemClick`.
 
-By default, when a legend item is clicked the visibility of the series associated with that legend item will be toggled. In addition, when a legend item is double clicked it toggles the visibility of all other series.
+The event object passed to the listener includes:
+
+- the `seriesId` of the series associated with the legend item
+- the `itemId`, usually the `yKey` value for cartesian series
+- `enabled`, whether the legend item is currently enabled or not
+
+For example, to show an alert message with the `legendItemClick` event contents when a legend item is clicked, the following listener can be configured:
+
+```js
+legend: {
+  listeners: {
+    legendItemClick: ({
+      seriesId,
+      itemId,
+      enabled,
+    }: AgChartLegendClickEvent) => {
+      window.alert(
+        `seriesId: ${seriesId}, itemId: ${itemId}, enabled: ${enabled}`
+      )
+    }
+  }
+}
+```
+
+If a callback function is configured via [`legend.listeners.legendItemClick`](#legenditemclick), it will still be invoked when the legend click event is fired.
 
 ### Example: legendItemClick & legendItemDoubleClick Events
 
