@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createRoot } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 
 import { ModuleRegistry, ColDef } from '@ag-grid-community/core';

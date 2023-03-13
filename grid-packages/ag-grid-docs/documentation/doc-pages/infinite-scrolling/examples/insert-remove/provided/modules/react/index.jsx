@@ -1,7 +1,7 @@
 'use strict';
 
 import React, { Component } from 'react';
-import { createRoot } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import '@ag-grid-community/styles/ag-grid.css';

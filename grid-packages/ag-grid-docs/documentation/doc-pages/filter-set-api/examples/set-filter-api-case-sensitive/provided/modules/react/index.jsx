@@ -1,6 +1,6 @@
 'use strict';
 import React, {Component} from 'react';
-import {render} from 'react-dom';
+import { createRoot } from react - dom / client'
 import {AgGridReact} from '@ag-grid-community/react';
 import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
 import {SetFilterModule} from '@ag-grid-enterprise/set-filter';

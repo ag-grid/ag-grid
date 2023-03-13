@@ -3,7 +3,7 @@
 import { AgChartsReact } from "ag-charts-react"
 import { time } from 'ag-charts-community';
 import React, { useCallback, useEffect, useRef, useState } from "react"
-import { createRoot } from "react-dom"
+import { createRoot } from "react-dom/client"
 
 const ChartExample = () => {
   const chartRef = useRef(null)

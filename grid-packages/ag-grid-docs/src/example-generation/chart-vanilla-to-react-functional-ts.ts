@@ -17,7 +17,7 @@ function getImports(componentFilenames: string[], bindings): string[] {
 
     const imports = [
         `import React, { useState${useCallback ? ', useCallback ' : ''}${bindings.usesChartApi ? ', useRef ' : ''}} from 'react';`,
-        "import { createRoot } from 'react-dom';",
+        "import { createRoot } from 'react-dom/client';",
         "import { AgChartsReact } from 'ag-charts-react';",
     ];
 

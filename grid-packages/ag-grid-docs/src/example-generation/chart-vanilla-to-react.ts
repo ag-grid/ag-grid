@@ -13,7 +13,7 @@ export function processFunction(code: string): string {
 function getImports(componentFilenames: string[], bindings): string[] {
     const imports = [
         "import React, { Component } from 'react';",
-        "import { createRoot } from 'react-dom';",
+        "import { createRoot } from 'react-dom/client';",
         "import { AgChartsReact } from 'ag-charts-react';",
     ];
 

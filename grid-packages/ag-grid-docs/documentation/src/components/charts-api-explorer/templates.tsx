@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
       return {
         ...boilerplateFiles,
         "index.jsx": `import React, { Component } from "react";
-import { createRoot } from "react-dom";
+import { createRoot } from "react-dom/client";
 import { AgChartsReact } from "ag-charts-react";
 
 class ChartExample extends Component {

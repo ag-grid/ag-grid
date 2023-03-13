@@ -9,7 +9,7 @@ import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 import React, { useRef, useEffect, useMemo, useState, useCallback } from 'react';
-import { createRoot } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid

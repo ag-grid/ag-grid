@@ -6,7 +6,7 @@ const path = require('path');
 function getModuleImports(bindings: any, componentFilenames: string[], allStylesheets: string[]): string[] {
     let imports = [
         "import React, { useCallback, useMemo, useRef, useState } from 'react';",
-        "import { createRoot } from 'react-dom';",
+        "import { createRoot } from 'react-dom/client';",
         "import { AgGridReact } from '@ag-grid-community/react';"
     ];
 
@@ -42,7 +42,7 @@ function getPackageImports(bindings: any, componentFilenames: string[], allStyle
 
     const imports = [
         "import React, { useCallback, useMemo, useRef, useState } from 'react';",
-        "import { createRoot } from 'react-dom';",
+        "import { createRoot } from 'react-dom/client';",
         "import { AgGridReact } from 'ag-grid-react';"
     ];
 

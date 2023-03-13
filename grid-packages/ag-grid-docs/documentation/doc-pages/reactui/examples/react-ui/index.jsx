@@ -1,7 +1,7 @@
 'use strict';
 
 import React, { useMemo, useEffect, useState } from 'react';
-import { createRoot } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
