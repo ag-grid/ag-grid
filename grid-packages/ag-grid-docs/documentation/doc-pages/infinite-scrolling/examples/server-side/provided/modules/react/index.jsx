@@ -1,7 +1,7 @@
 'use strict';
 
 import React, { Component } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
@@ -231,7 +231,5 @@ function filterData(filterModel, data) {
     return resultOfFilter;
 }
 
-render(
-    <GridExample></GridExample>,
-    document.querySelector('#root')
-)
+const root = createRoot(document.getElementById('root'));
+root.render(<GridExample />);

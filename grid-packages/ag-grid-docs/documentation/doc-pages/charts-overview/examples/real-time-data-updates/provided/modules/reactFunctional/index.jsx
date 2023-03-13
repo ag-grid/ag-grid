@@ -3,7 +3,7 @@
 import { AgChartsReact } from "ag-charts-react"
 import { time } from 'ag-charts-community';
 import React, { useCallback, useEffect, useRef, useState } from "react"
-import { render } from "react-dom"
+import { createRoot } from "react-dom"
 
 const ChartExample = () => {
   const chartRef = useRef(null)
@@ -109,4 +109,5 @@ function getData() {
   return data
 }
 
-render(<ChartExample />, document.querySelector("#root"))
+const root = createRoot(document.getElementById('root'));
+root.render(<ChartExample />);

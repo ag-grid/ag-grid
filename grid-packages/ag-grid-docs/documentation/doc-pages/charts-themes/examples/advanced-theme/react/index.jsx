@@ -2,7 +2,7 @@
 
 import { AgChartsReact } from "ag-charts-react"
 import React, { Component } from "react"
-import { render } from "react-dom"
+import { createRoot } from "react-dom"
 
 class Chart1 extends Component {
   constructor(props) {

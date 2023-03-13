@@ -9,7 +9,7 @@ import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 import React, { useRef, useEffect, useMemo, useState, useCallback } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -100,4 +100,5 @@ function GridExample() {
 
 }
 
-render(<GridExample></GridExample>, document.querySelector('#root'))
+const root = createRoot(document.getElementById('root'));
+root.render(<GridExample />);

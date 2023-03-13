@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 
 import { ModuleRegistry, ColDef } from '@ag-grid-community/core';
@@ -38,4 +38,5 @@ const GridExample = () => {
     </div>;
 };
 
-render(<GridExample></GridExample>, document.querySelector('#root'))
+const root = createRoot(document.getElementById('root'));
+root.render(<GridExample />);
