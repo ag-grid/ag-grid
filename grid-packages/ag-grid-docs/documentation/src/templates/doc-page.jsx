@@ -187,14 +187,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, jsonDataAsString, exa
 
     return (
         <div id="doc-page-wrapper" className={styles['doc-page-wrapper']}>
-            <div
-                id="doc-content"
-                className={classnames(
-                    styles['doc-page'],
-                    { [styles['doc-page--with-side-menu']]: showSideMenu },
-                    { [styles.noSideMenu]: !showSideMenu }
-                )}
-            >
+            <div id="doc-content" className={classnames(styles['doc-page'], { [styles.noSideMenu]: !showSideMenu })}>
                 {/*eslint-disable-next-line react/jsx-pascal-case*/}
                 <SEO title={title} description={description} framework={framework} pageName={pageName} />
                 <AGStyles>
