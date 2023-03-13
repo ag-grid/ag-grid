@@ -153,3 +153,11 @@
         top: -0.1em;
     }
 }
+
+// Hack to target "intro" section of docs page
+.pageSections > div > div:first-child {
+    --font-size-large: #{$font-size-large};
+
+    font-size: var(--font-size-large);
+    margin-bottom: $size-4;
+}

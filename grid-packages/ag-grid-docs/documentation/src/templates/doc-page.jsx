@@ -197,7 +197,9 @@ const DocPageTemplate = ({ data, pageContext: { framework, jsonDataAsString, exa
                         {page.frontmatter.enterprise && <Icon name="enterprise" />}
                     </h1>
                 </AGStyles>
-                {renderAst(ast)}
+
+                {/* Wrapping div is a hack to target "intro" section of docs page */}
+                <div className={styles.pageSections}>{renderAst(ast)}</div>
             </div>
 
             <SideMenu
