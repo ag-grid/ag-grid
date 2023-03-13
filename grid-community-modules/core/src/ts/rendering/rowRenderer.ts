@@ -606,17 +606,19 @@ export class RowRenderer extends BeanStub {
     }
 
     public getAllCellCtrls(): CellCtrl[] {
-        let res: CellCtrl[] = [];
-        
+        const res: CellCtrl[] = [];
         const rowCtrls = this.getAllRowCtrls();
         const rowCtrlsLength = rowCtrls.length;
+
         for (let i = 0; i < rowCtrlsLength; i++) {
             const cellCtrls = rowCtrls[i].getAllCellCtrls();
             const cellCtrlsLength = cellCtrls.length;
+
             for (let j = 0; j < cellCtrlsLength; j++) {
                 res.push(cellCtrls[j]);
             }
         }
+
         return res;
     }
 
