@@ -49,6 +49,25 @@
         margin-bottom: $size-2 !important;
     }
 
+    :global(.docs-header-icon) {
+        padding-left: 0;
+        margin-left: $size-1;
+
+        svg {
+            position: relative;
+            width: 0.85em;
+            height: 0.85em;
+            top: -0.25em;
+            visibility: visible;
+            fill: var(--water-blue);
+            transition: fill $default-transition-timing;
+        }
+
+        &:hover svg {
+            fill: var(--sky-blue);
+        }
+    }
+
     &__title {
         font-weight: 400;
 
