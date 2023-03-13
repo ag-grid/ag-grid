@@ -64,7 +64,7 @@ const MenuSection = ({ title, items, currentFramework, isActive, toggleActive })
 const MenuGroup = ({ group, currentFramework, isTopLevel, isActive }) => (
     <ul
         id={isTopLevel && toElementId(group.group)}
-        className={classnames(styles.menuGroup, 'list-style-none', isTopLevel && 'collapse', isActive && 'show')}
+        className={classnames(styles.menuGroup, 'list-style-none', isTopLevel && 'collapse')}
         data-parent="#side-nav"
     >
         {group.items
