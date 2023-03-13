@@ -63,9 +63,13 @@ export class CartesianChart extends Chart {
             axes: this.axes.map((axis) => ({ id: axis.id, ...axis.getLayoutState() })),
         });
 
-        const { seriesRoot } = this;
+        const { seriesRoot, seriesPadding } = this;
         if (clipSeries) {
-            seriesRoot.setClipRectInGroupCoordinateSpace(seriesRect);
+            const x = seriesRect.x - seriesPadding.left;
+            const y = seriesRect.y - seriesPadding.top;
+            const width = seriesPadding.left + seriesRect.width + seriesPadding.right;
+            const height = seriesPadding.top + seriesRect.height + seriesPadding.bottom;
+            seriesRoot.setClipRectInGroupCoordinateSpace(new BBox(x, y, width, height));
         } else {
             seriesRoot.setClipRectInGroupCoordinateSpace(undefined);
         }
