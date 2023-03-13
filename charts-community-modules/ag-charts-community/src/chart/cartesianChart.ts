@@ -139,19 +139,7 @@ export class CartesianChart extends Chart {
             Object.assign(axisWidths, lastPassAxisWidths);
             Object.assign(visibility, lastPassVisibility);
 
-            const paddedRect = inputShrinkRect.clone();
-            const reversedAxes = this.axes.slice().reverse();
-            directions.forEach((dir) => {
-                const padding = this.seriesPadding[dir];
-                const axis = reversedAxes.find((axis) => axis.position === dir);
-                if (axis) {
-                    axis.seriesPadding = padding;
-                } else {
-                    paddedRect.shrink(padding, dir);
-                }
-            });
-
-            const result = this.updateAxesPass(axisWidths, paddedRect, seriesRect);
+            const result = this.updateAxesPass(axisWidths, inputShrinkRect.clone(), seriesRect);
             lastPassAxisWidths = ceilValues(result.axisWidths);
             lastPassVisibility = result.visibility;
             clipSeries = result.clipSeries;
@@ -223,8 +211,9 @@ export class CartesianChart extends Chart {
         let clipSeries = false;
         const primaryTickCounts: Partial<Record<ChartAxisDirection, number>> = {};
 
+        const paddedBounds = this.applySeriesPadding(bounds);
         const crossLinePadding = lastPassSeriesRect ? this.buildCrossLinePadding(lastPassSeriesRect, axisWidths) : {};
-        const axisBound = this.buildAxisBound(bounds, axisWidths, crossLinePadding, visibility);
+        const axisBound = this.buildAxisBound(paddedBounds, axisWidths, crossLinePadding, visibility);
 
         const seriesRect = this.buildSeriesRect(axisBound, axisWidths);
 
@@ -283,6 +272,21 @@ export class CartesianChart extends Chart {
         }
 
         return crossLinePadding;
+    }
+
+    private applySeriesPadding(bounds: BBox) {
+        const paddedRect = bounds.clone();
+        const reversedAxes = this.axes.slice().reverse();
+        directions.forEach((dir) => {
+            const padding = this.seriesPadding[dir];
+            const axis = reversedAxes.find((axis) => axis.position === dir);
+            if (axis) {
+                axis.seriesPadding = padding;
+            } else {
+                paddedRect.shrink(padding, dir);
+            }
+        });
+        return paddedRect;
     }
 
     private buildAxisBound(
