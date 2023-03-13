@@ -1,7 +1,7 @@
 import { _ModuleSupport, _Scene } from 'ag-charts-community';
 
 import { DefinedZoomState } from './zoomTypes';
-import { pointToRatio, translateZoom, scaleZoom, constrainZoom } from './zoomTransformers';
+import { definedZoomState, pointToRatio, translateZoom, scaleZoom, constrainZoom } from './zoomTransformers';
 
 export class ZoomScroller {
     private isScalingX: boolean;
@@ -19,10 +19,7 @@ export class ZoomScroller {
         bbox: _Scene.BBox,
         currentZoom?: _ModuleSupport.AxisZoomState
     ): DefinedZoomState {
-        const oldZoom: DefinedZoomState = {
-            x: { min: currentZoom?.x?.min ?? 0, max: currentZoom?.x?.max ?? 1 },
-            y: { min: currentZoom?.y?.min ?? 0, max: currentZoom?.y?.max ?? 1 },
-        };
+        const oldZoom = definedZoomState(currentZoom);
 
         const sourceEvent = event.sourceEvent as WheelEvent;
 

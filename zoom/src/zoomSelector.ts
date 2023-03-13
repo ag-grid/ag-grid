@@ -57,10 +57,7 @@ export class ZoomSelector {
     }
 
     private getNormalisedDimensions() {
-        const x1 = this.coords?.x1 ?? 0;
-        const y1 = this.coords?.y1 ?? 0;
-        const x2 = this.coords?.x2 ?? 0;
-        const y2 = this.coords?.y2 ?? 0;
+        const { x1 = 0, y1 = 0, x2 = 0, y2 = 0 } = this.coords ?? {};
 
         // Ensure we create a box starting at the top left corner
         const x = x1 <= x2 ? x1 : x2;

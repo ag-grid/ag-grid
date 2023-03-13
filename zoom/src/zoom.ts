@@ -1,31 +1,44 @@
 import { _ModuleSupport, _Scene } from 'ag-charts-community';
 
-import { ZoomRect } from './scenes/zoomRect';
 import { ZoomSelector } from './zoomSelector';
 import { ZoomScroller } from './zoomScroller';
+import { ZoomPanner } from './zoomPanner';
 import { pointToRatio } from './zoomTransformers';
 import { DefinedZoomState, ZoomCoords } from './zoomTypes';
+import { ZoomRect } from './scenes/zoomRect';
 
 const { BOOLEAN, OPT_BOOLEAN, OPT_NUMBER, STRING_UNION, Validate } = _ModuleSupport;
 
 export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
     /**
-     * Enable or disable the zoom module
+     * Enable or disable the zoom module.
      */
     @Validate(BOOLEAN)
     public enabled = false;
 
     /**
-     * Enable zooming by scrolling the mouse wheel
+     * Enable zooming by scrolling the mouse wheel.
      */
     @Validate(OPT_BOOLEAN)
     public enableScrolling = true;
 
     /**
-     * Enable zooming by clicking and dragging out an area to zoom into
+     * Enable zooming by clicking and dragging out an area to zoom into.
      */
     @Validate(OPT_BOOLEAN)
     public enableSelecting = true;
+
+    /**
+     * Enable panning when zoomed by holding the pan key while clicking and dragging.
+     */
+    @Validate(OPT_BOOLEAN)
+    public enablePanning = true;
+
+    /**
+     * The key which toggles panning.
+     */
+    @Validate(STRING_UNION('alt', 'ctrl', 'meta', 'shift'))
+    public panKey: 'alt' | 'ctrl' | 'meta' | 'shift' = 'alt';
 
     /**
      * The axis on which to enable zooming.
@@ -52,10 +65,11 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     public minYNodes?: number;
 
     private readonly scene: _Scene.Scene;
-    private seriesRect: _Scene.BBox = new _Scene.BBox(0, 0, 0, 0);
+    private seriesRect?: _Scene.BBox;
 
     private readonly zoomManager: _ModuleSupport.ZoomManager;
 
+    private readonly panner?: ZoomPanner;
     private readonly selector?: ZoomSelector;
     private readonly scroller?: ZoomScroller;
 
@@ -90,6 +104,11 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
             this.scene.root?.appendChild(selectionRect);
             this.destroyFns.push(() => this.scene.root?.removeChild(selectionRect));
         }
+
+        // Add panning while zoomed method
+        if (this.enablePanning) {
+            this.panner = new ZoomPanner();
+        }
     }
 
     update(): void {
@@ -111,7 +130,18 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     }
 
     private onDrag(event: _ModuleSupport.InteractionEvent<'drag'>) {
-        if (!this.selector) return;
+        const zoom = this.zoomManager.getZoom();
+        const isZoomed =
+            zoom && zoom.x && zoom.y && (zoom.x.min !== 0 || zoom.x.max !== 1 || zoom.y.min !== 0 || zoom.y.max !== 1);
+
+        if (this.panner && this.seriesRect && isZoomed && this.isPanningKeyPressed(event.sourceEvent as DragEvent)) {
+            const newZoom = this.panner.update(event.offsetX, event.offsetY, this.seriesRect, zoom);
+            this.zoomManager.updateZoom('zoom', newZoom);
+
+            return;
+        }
+
+        if (!this.selector || this.panner?.isPanning) return;
 
         if (this.isWithinSeriesRect(event.offsetX, event.offsetY)) {
             this.selector.update(event.offsetX, event.offsetY);
@@ -121,13 +151,15 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     }
 
     private onDragEnd() {
+        this.panner?.stop();
+
         if (!this.selector) return;
 
         this.selector.stop();
     }
 
     private onWheel(event: _ModuleSupport.InteractionEvent<'wheel'>) {
-        if (!this.scroller) return;
+        if (!this.scroller || !this.seriesRect) return;
 
         const currentZoom = this.zoomManager.getZoom();
         const newZoom = this.scroller.update(event, this.seriesRect, currentZoom);
@@ -140,6 +172,19 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         // TODO: handle visible
     }
 
+    private isPanningKeyPressed(event: MouseEvent) {
+        switch (this.panKey) {
+            case 'alt':
+                return event.altKey;
+            case 'ctrl':
+                return event.ctrlKey;
+            case 'shift':
+                return event.shiftKey;
+            case 'meta':
+                return event.metaKey;
+        }
+    }
+
     private isScalingX(): boolean {
         return this.axes === 'x' || this.axes === 'xy';
     }
@@ -148,8 +193,11 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         return this.axes === 'y' || this.axes === 'xy';
     }
 
-    private isWithinSeriesRect(x: number, y: number) {
+    private isWithinSeriesRect(x: number, y: number): boolean {
         const { seriesRect } = this;
+
+        if (!seriesRect) return false;
+
         return (
             x >= seriesRect.x &&
             x <= seriesRect.x + seriesRect.width &&
