@@ -39,7 +39,6 @@ const MenuSection = ({ title, items, currentFramework, isActive, toggleActive })
             <button
                 onClick={toggleActive}
                 onKeyDown={toggleActive}
-                role="button"
                 tabIndex="0"
                 className={classnames(styles.sectionHeader, 'button-style-none')}
                 data-toggle="collapse"
