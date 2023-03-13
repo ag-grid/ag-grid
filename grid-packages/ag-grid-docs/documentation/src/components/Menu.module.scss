@@ -76,18 +76,18 @@
 }
 
 .menuGroup {
-    --first-indent-size: 20px;
-    --indent-size: 14px;
+    --first-indent-size: 4px;
+    --indent-size: 12px;
 
     line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
     font-size: var(--font-size-small);
 
     ul a {
-        padding-left: calc(var(--first-indent-size) + var(--indent-size));
+        margin-left: calc(var(--first-indent-size) + var(--indent-size));
     }
 
     ul ul a {
-        padding-left: calc(var(--first-indent-size) + var(--indent-size) * 2);
+        margin-left: calc(var(--first-indent-size) + var(--indent-size) * 2);
     }
 
     .enterpriseIcon {
@@ -104,7 +104,8 @@
     display: block;
     padding-top: $size-half;
     padding-bottom: $size-half;
-    padding-left: var(--first-indent-size);
+    padding-left: $size-2;
+    margin-left: var(--first-indent-size);
     outline: none;
     border-radius: var(--border-radius);
     border: 2px solid transparent;
@@ -119,6 +120,7 @@
         height: 6px;
         transform: translate(-10px, 6px);
         border-radius: 50%;
+        background-color: var(--white);
         transition: background-color $default-transition-timing;
     }
 
@@ -135,7 +137,7 @@
         border-color: var(--bright-blue-gray) !important; // !important for .ag-styles specificity
 
         &::before {
-            background-color: var(--platinum-gray);
+            background-color: var(--dull-light-gray);
         }
     }
 
