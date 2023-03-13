@@ -19,7 +19,12 @@ declare module 'ag-charts-community' {
     export type AgZoomAxes = 'x' | 'y' | 'xy';
 
     export interface AgZoomOptions {
-        enabled?: boolean;
         axes?: AgZoomAxes;
+        enabled: boolean;
+        enablePanning?: boolean;
+        enableScrolling?: boolean;
+        enableSelecting?: boolean;
+        panKey?: 'alt' | 'ctrl' | 'meta' | 'shift';
+        scrollingStep?: number;
     }
 }
