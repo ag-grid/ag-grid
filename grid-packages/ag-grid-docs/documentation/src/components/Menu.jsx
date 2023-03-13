@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import Announcements from 'components/Announcements';
 import { Icon } from 'components/Icon';
 import { Link } from 'gatsby';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import convertToFrameworkUrl from 'utils/convert-to-framework-url';
 import rawMenuData from '../../doc-pages/licensing/menu.json';
 import { isProductionEnvironment } from '../utils/consts';
@@ -60,19 +60,35 @@ const MenuSection = ({ title, items, currentFramework, isActive, toggleActive })
     );
 };
 
-const MenuGroup = ({ group, currentFramework, isTopLevel, isActive }) => (
-    <ul
-        id={isTopLevel && toElementId(group.group)}
-        className={classnames(styles.menuGroup, 'list-style-none', isTopLevel && 'collapse')}
-        data-parent="#side-nav"
-    >
-        {group.items
-            .filter((item) => !item.menuHide && (!item.frameworks || item.frameworks.includes(currentFramework)))
-            .map((item) => (
-                <MenuItem key={item.title} item={item} currentFramework={currentFramework} />
-            ))}
-    </ul>
-);
+const MenuGroup = ({ group, currentFramework, isTopLevel, isActive }) => {
+    const containerRef = useRef(null);
+    useEffect(() => {
+        // NOTE: Using plain JavaScript DOM to add/remove class, so it doesn't
+        // interfere with bootstrap animations and allows for menu group to be
+        // shown on first load.
+        // Show class is from bootstrap collapse: https://getbootstrap.com/docs/4.0/components/collapse/
+        if (isActive) {
+            containerRef.current?.classList.add('show');
+        } else {
+            containerRef.current?.classList.remove('show');
+        }
+    }, [isActive, containerRef.current]);
+
+    return (
+        <ul
+            ref={containerRef}
+            id={isTopLevel && toElementId(group.group)}
+            className={classnames(styles.menuGroup, 'list-style-none', isTopLevel && 'collapse')}
+            data-parent="#side-nav"
+        >
+            {group.items
+                .filter((item) => !item.menuHide && (!item.frameworks || item.frameworks.includes(currentFramework)))
+                .map((item) => (
+                    <MenuItem key={item.title} item={item} currentFramework={currentFramework} />
+                ))}
+        </ul>
+    );
+};
 
 const MenuItem = ({ item, currentFramework }) => {
     const enterpriseIcon = item.enterprise && <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />;
