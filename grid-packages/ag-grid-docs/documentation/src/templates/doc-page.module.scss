@@ -154,6 +154,13 @@
     }
 }
 
+.headerFramework {
+    display: block;
+    font-size: var(--font-size-extra-large);
+    font-weight: var(--font-weight-normal);
+    color: var(--secondary-text-color);
+}
+
 // Hack to target "intro" section of docs page
 .pageSections > div > div:first-child {
     --font-size-large: #{$font-size-large};
