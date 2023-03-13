@@ -68,7 +68,7 @@ export class SortController extends BeanStub {
         const groupParent = this.columnModel.getGroupDisplayColumnForGroup(lastColToChange.getId());
         const lastSortIndexCol = isCoupled ? groupParent || lastColToChange : lastColToChange;
 
-        const allSortedCols = this.getIndexableColumnsOrdered();
+        const allSortedCols = this.getColumnsWithSortingOrdered(true);
 
         // reset sort index on everything
         this.columnModel.getPrimaryAndSecondaryAndAutoColumns().forEach(col => col.setSortIndex(null));
@@ -152,18 +152,42 @@ export class SortController extends BeanStub {
         return result;
     }
 
-    private getColumnsOrderedForSort(): Column[] {
+    /**
+     * @param includeRedundantColumns whether to include non-grouped, non-secondary, non-aggregated columns when pivot active
+     * @returns a map of sort indexes for every sorted column, if groups sort primaries then they will have equivalent indices
+     */
+    private getIndexedSortMap(includeRedundantColumns: boolean = false): Map<Column, number> {
         // pull out all the columns that have sorting set
-        const allColumnsIncludingAuto = this.columnModel.getPrimaryAndSecondaryAndAutoColumns();
+        let allSortedCols = this.columnModel.getPrimaryAndSecondaryAndAutoColumns()
+            .filter(col => !!col.getSort());
+
+        if (!includeRedundantColumns && this.columnModel.isPivotMode()) {
+            allSortedCols = allSortedCols.filter(col => (
+                !!col.getAggFunc() || !col.isPrimary() || this.columnModel.getGroupDisplayColumnForGroup(col.getId())
+            ));
+        }
+
+        const sortedRowGroupCols = this.columnModel.getRowGroupColumns()
+            .filter(col => !!col.getSort());
+
+        const isSortLinked = this.gridOptionsService.isColumnsSortingCoupledToGroup() && !!sortedRowGroupCols.length;
+        if (isSortLinked) {
+            allSortedCols = [
+                ...new Set(
+                    // if linked sorting, replace all columns with the display group column for index purposes, and ensure uniqueness
+                    allSortedCols.map(col =>  this.columnModel.getGroupDisplayColumnForGroup(col.getId()) ?? col)
+                )
+            ];
+        }
 
         // when both cols are missing sortIndex, we use the position of the col in all cols list.
         // this means if colDefs only have sort, but no sortIndex, we deterministically pick which
         // cols is sorted by first.
         const allColsIndexes: { [id: string]: number } = {};
-        allColumnsIncludingAuto.forEach((col: Column, index: number) => allColsIndexes[col.getId()] = index);
+        allSortedCols.forEach((col: Column, index: number) => allColsIndexes[col.getId()] = index);
 
         // put the columns in order of which one got sorted first
-        allColumnsIncludingAuto.sort((a: Column, b: Column) => {
+        allSortedCols.sort((a: Column, b: Column) => {
             const iA = a.getSortIndex();
             const iB = b.getSortIndex();
             if (iA != null && iB != null) {
@@ -180,44 +204,38 @@ export class SortController extends BeanStub {
             }
         });
 
-        return allColumnsIncludingAuto;
-    }
+        const indexMap: Map<Column, number> = new Map();
+        allSortedCols.forEach((col, idx) => indexMap.set(col, idx));
 
-    private getIndexableColumnsOrdered(): Column[] {{}
-        if (!this.gridOptionsService.isColumnsSortingCoupledToGroup()) {
-            return this.getColumnsWithSortingOrdered();
+        // add the row group cols back
+        if (isSortLinked) {
+            sortedRowGroupCols.forEach(col => {
+                const groupDisplayCol =  this.columnModel.getGroupDisplayColumnForGroup(col.getId())!;
+                indexMap.set(col, indexMap.get(groupDisplayCol)!);
+            });
         }
 
-        return this.getColumnsOrderedForSort()
-            .filter(col => {
-                if (!!col.getColDef().showRowGroup) {
-                    if (col.getColDef().field && col.getSort()) {
-                        return true;
-                    }
-    
-                    const sourceCols = this.columnModel.getSourceColumnsForGroupColumn(col);
-                    return sourceCols?.some(col => !!col.getSort());
-                }
-
-                return !!col.getSort();
-            });
+        return indexMap;
     }
 
-    public getColumnsWithSortingOrdered(): Column[] {
+    public getColumnsWithSortingOrdered(includeRedundantColumns: boolean = false): Column[] {
         // pull out all the columns that have sorting set
-        const orderedColumns = this.getColumnsOrderedForSort();
-        return orderedColumns.filter(column => !!column.getSort());
+        return [...this.getIndexedSortMap(includeRedundantColumns).entries()]
+            .sort(([col1, idx1], [col2, idx2]) => idx1 - idx2)
+            .map(([col]) => col);
     }
 
     // used by server side row models, to sent sort to server
     public getSortModel(): SortModelItem[] {
-        return this.getColumnsWithSortingOrdered().map(column => ({
+        // because this is used by the SSRM, we include redundant options and let the server decide
+        return this.getColumnsWithSortingOrdered(true).map(column => ({
             sort: column.getSort()!,
             colId: column.getId()
         }));
     }
 
     public getSortOptions(): SortOption[] {
+        // this is used for client side sorting, as such we can ignore redundant column sorts
         return this.getColumnsWithSortingOrdered().map(column => ({
             sort: column.getSort()!,
             column
@@ -250,21 +268,6 @@ export class SortController extends BeanStub {
     }
 
     public getDisplaySortIndexForColumn(column: Column): number | null | undefined {
-        const isColumnSortCouplingActive = this.gridOptionsService.isColumnsSortingCoupledToGroup();
-        if (!isColumnSortCouplingActive) {
-            return this.getColumnsWithSortingOrdered().indexOf(column);
-        }
-
-        const displayColumn = this.columnModel.getGroupDisplayColumnForGroup(column.getId());
-        if (displayColumn) {
-            if (!!column.getSort()) {
-                return this.getDisplaySortIndexForColumn(displayColumn);
-            }
-            return null;
-        }
-
-        const allSortedCols = this.getIndexableColumnsOrdered()
-            .filter(col => !this.columnModel.getGroupDisplayColumnForGroup(col.getId()));
-        return allSortedCols.indexOf(column);
+        return this.getIndexedSortMap().get(column);
     }
 }
