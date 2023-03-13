@@ -7,11 +7,16 @@
 
     display: none;
     width: calc(220px + var(--right-padding));
-    padding-top: $size-3;
-    padding-left: $size-4;
+    padding-top: $size-4;
+    padding-bottom: $size-6;
     padding-right: var(--right-padding);
     line-height: var(--line-height-tight);
-    border-left: solid 1px var(--bright-blue-gray);
+
+    @supports (position: sticky) {
+        padding-top: 0;
+        padding-right: 0;
+        padding-bottom: 0;
+    }
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
         display: block;
@@ -19,6 +24,9 @@
 
     > div {
         @supports (position: sticky) {
+            padding-top: $size-4;
+            padding-right: var(--right-padding);
+            padding-bottom: $size-6;
             position: sticky;
             top: $top-bar-height;
             height: calc(100vh - #{$top-bar-height});
@@ -44,7 +52,7 @@
 }
 
 .level-2 {
-    margin-top: $size-1 !important; // !important for .ag-styles specificity
+    margin-top: $size-half !important; // !important for .ag-styles specificity
     margin-left: 14px;
     font-size: var(--font-size-small);
 }
