@@ -175,7 +175,7 @@ export function clickAction(x: number, y: number): (chart: Chart | AgChartInstan
 export function scrollAction(x: number, y: number, delta: number): Promise<void> {
     window.dispatchEvent(wheelEvent({ clientX: x, clientY: y, deltaY: delta }));
     return new Promise((resolve) => {
-        setTimeout(resolve, 500);
+        setTimeout(resolve, 50);
     });
 }
 
