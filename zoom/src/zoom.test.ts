@@ -21,6 +21,7 @@ describe('Zoom', () => {
     const ctx = setupMockCanvas();
 
     beforeEach(() => {
+        // eslint-disable-next-line no-console
         console.warn = jest.fn();
     });
 
@@ -29,6 +30,7 @@ describe('Zoom', () => {
             chart.destroy();
             (chart as unknown) = undefined;
         }
+        // eslint-disable-next-line no-console
         expect(console.warn).not.toBeCalled();
     });
 
