@@ -239,10 +239,7 @@
     },
     "overlays": {
       "description": "/** HTML overlays */",
-      "type": {
-        "returnType": "{\n        /** An overlay to be displayed when there is no data, */\n        noData?: {\n            /** A function for generating HTML string for overlay content. */\n            renderer?: () => string;\n        };\n    }",
-        "optional": true
-      }
+      "type": { "returnType": "AgChartOverlaysOptions", "optional": true }
     }
   },
   "AgPolarThemeOptions": {
@@ -309,10 +306,7 @@
     },
     "overlays": {
       "description": "/** HTML overlays */",
-      "type": {
-        "returnType": "{\n        /** An overlay to be displayed when there is no data, */\n        noData?: {\n            /** A function for generating HTML string for overlay content. */\n            renderer?: () => string;\n        };\n    }",
-        "optional": true
-      }
+      "type": { "returnType": "AgChartOverlaysOptions", "optional": true }
     }
   },
   "AgHierarchyThemeOptions": {
@@ -379,10 +373,7 @@
     },
     "overlays": {
       "description": "/** HTML overlays */",
-      "type": {
-        "returnType": "{\n        /** An overlay to be displayed when there is no data, */\n        noData?: {\n            /** A function for generating HTML string for overlay content. */\n            renderer?: () => string;\n        };\n    }",
-        "optional": true
-      }
+      "type": { "returnType": "AgChartOverlaysOptions", "optional": true }
     }
   },
   "AgCrossLineThemeOptions": {
@@ -1045,6 +1036,18 @@
     "left": {
       "description": "/** The number of pixels of padding at the left of the chart area. */",
       "type": { "returnType": "PixelSize", "optional": true }
+    }
+  },
+  "AgChartOverlayOptions": {
+    "renderer": {
+      "description": "/** A function for generating HTML string for overlay content. */",
+      "type": { "arguments": {}, "returnType": "string", "optional": true }
+    }
+  },
+  "AgChartOverlaysOptions": {
+    "noData": {
+      "description": "/** An overlay to be displayed when there is no data, */",
+      "type": { "returnType": "AgChartOverlayOptions", "optional": true }
     }
   },
   "AgChartLabelOptions": {
@@ -1822,10 +1825,7 @@
     },
     "overlays": {
       "description": "/** HTML overlays */",
-      "type": {
-        "returnType": "{\n        /** An overlay to be displayed when there is no data, */\n        noData?: {\n            /** A function for generating HTML string for overlay content. */\n            renderer?: () => string;\n        };\n    }",
-        "optional": true
-      }
+      "type": { "returnType": "AgChartOverlaysOptions", "optional": true }
     }
   },
   "AgBaseAxisOptions": {
@@ -4730,10 +4730,7 @@
     },
     "overlays": {
       "description": "/** HTML overlays */",
-      "type": {
-        "returnType": "{\n        /** An overlay to be displayed when there is no data, */\n        noData?: {\n            /** A function for generating HTML string for overlay content. */\n            renderer?: () => string;\n        };\n    }",
-        "optional": true
-      }
+      "type": { "returnType": "AgChartOverlaysOptions", "optional": true }
     }
   },
   "AgPolarChartOptions": {
@@ -4803,10 +4800,7 @@
     },
     "overlays": {
       "description": "/** HTML overlays */",
-      "type": {
-        "returnType": "{\n        /** An overlay to be displayed when there is no data, */\n        noData?: {\n            /** A function for generating HTML string for overlay content. */\n            renderer?: () => string;\n        };\n    }",
-        "optional": true
-      }
+      "type": { "returnType": "AgChartOverlaysOptions", "optional": true }
     }
   },
   "AgHierarchyChartOptions": {
@@ -4873,10 +4867,7 @@
     },
     "overlays": {
       "description": "/** HTML overlays */",
-      "type": {
-        "returnType": "{\n        /** An overlay to be displayed when there is no data, */\n        noData?: {\n            /** A function for generating HTML string for overlay content. */\n            renderer?: () => string;\n        };\n    }",
-        "optional": true
-      }
+      "type": { "returnType": "AgChartOverlaysOptions", "optional": true }
     }
   },
   "AgChartOptions": {},

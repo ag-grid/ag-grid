@@ -210,6 +210,16 @@ export interface AgChartPaddingOptions {
     left?: PixelSize;
 }
 
+export interface AgChartOverlayOptions {
+    /** A function for generating HTML string for overlay content. */
+    renderer?: () => string;
+}
+
+export interface AgChartOverlaysOptions {
+    /** An overlay to be displayed when there is no data, */
+    noData?: AgChartOverlayOptions;
+}
+
 export interface AgChartLabelOptions {
     /** Whether or not the labels should be shown. */
     enabled?: boolean;
@@ -568,13 +578,7 @@ export interface AgBaseChartOptions {
     /** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */
     theme?: string | AgChartTheme; // | ChartTheme
     /** HTML overlays */
-    overlays?: {
-        /** An overlay to be displayed when there is no data, */
-        noData?: {
-            /** A function for generating HTML string for overlay content. */
-            renderer?: () => string;
-        };
-    };
+    overlays?: AgChartOverlaysOptions;
 }
 
 export interface AgBaseAxisOptions {

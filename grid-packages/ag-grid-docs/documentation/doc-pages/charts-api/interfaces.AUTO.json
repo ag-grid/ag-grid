@@ -155,7 +155,7 @@
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "theme?": "string | AgChartTheme",
-      "overlays?": "{ noData?: { renderer?: () => string; }; }"
+      "overlays?": "AgChartOverlaysOptions"
     },
     "docs": {
       "axes?": "/** Axis configurations. */",
@@ -196,7 +196,7 @@
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "theme?": "string | AgChartTheme",
-      "overlays?": "{ noData?: { renderer?: () => string; }; }"
+      "overlays?": "AgChartOverlaysOptions"
     },
     "docs": {
       "series?": "/** Series configurations. */",
@@ -235,7 +235,7 @@
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "theme?": "string | AgChartTheme",
-      "overlays?": "{ noData?: { renderer?: () => string; }; }"
+      "overlays?": "AgChartOverlaysOptions"
     },
     "docs": {
       "series?": "/** Series configurations. */",
@@ -613,6 +613,20 @@
       "right?": "/** The number of pixels of padding at the right of the chart area. */",
       "bottom?": "/** The number of pixels of padding at the bottom of the chart area. */",
       "left?": "/** The number of pixels of padding at the left of the chart area. */"
+    }
+  },
+  "AgChartOverlayOptions": {
+    "meta": {},
+    "type": { "renderer?": "() => string" },
+    "docs": {
+      "renderer?": "/** A function for generating HTML string for overlay content. */"
+    }
+  },
+  "AgChartOverlaysOptions": {
+    "meta": {},
+    "type": { "noData?": "AgChartOverlayOptions" },
+    "docs": {
+      "noData?": "/** An overlay to be displayed when there is no data, */"
     }
   },
   "AgChartLabelOptions": {
@@ -1143,7 +1157,7 @@
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "theme?": "string | AgChartTheme",
-      "overlays?": "{ noData?: { renderer?: () => string; }; }"
+      "overlays?": "AgChartOverlaysOptions"
     },
     "docs": {
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
@@ -3034,7 +3048,7 @@
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "theme?": "string | AgChartTheme",
-      "overlays?": "{ noData?: { renderer?: () => string; }; }"
+      "overlays?": "AgChartOverlaysOptions"
     },
     "docs": {
       "type?": "/** If specified overrides the default series type. */",
@@ -3077,7 +3091,7 @@
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "theme?": "string | AgChartTheme",
-      "overlays?": "{ noData?: { renderer?: () => string; }; }"
+      "overlays?": "AgChartOverlaysOptions"
     },
     "docs": {
       "type?": "/** If specified overrides the default series type. */",
@@ -3118,7 +3132,7 @@
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "theme?": "string | AgChartTheme",
-      "overlays?": "{ noData?: { renderer?: () => string; }; }"
+      "overlays?": "AgChartOverlaysOptions"
     },
     "docs": {
       "type?": "/** If specified overrides the default series type. */",
