@@ -72,18 +72,18 @@ describe('Zoom', () => {
         });
 
         it('should zoom in', async () => {
-            await scrollAction(cx, cy, -1)(chart);
-            await scrollAction(cx, cy, -1)(chart);
-            await scrollAction(cx, cy, -1)(chart);
-            await scrollAction(cx, cy, -1)(chart);
+            await scrollAction(cx, cy, -1);
+            await scrollAction(cx, cy, -1);
+            await scrollAction(cx, cy, -1);
+            await scrollAction(cx, cy, -1);
             await compare();
         });
 
         it('should zoom in then out', async () => {
-            await scrollAction(cx, cy, -1)(chart);
-            await scrollAction(cx, cy, -1)(chart);
-            await scrollAction(cx, cy, 1)(chart);
-            await scrollAction(cx, cy, 1)(chart);
+            await scrollAction(cx, cy, -1);
+            await scrollAction(cx, cy, -1);
+            await scrollAction(cx, cy, 1);
+            await scrollAction(cx, cy, 1);
             await compare();
         });
     });
