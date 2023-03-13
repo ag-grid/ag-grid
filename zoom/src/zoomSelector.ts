@@ -16,8 +16,8 @@ export class ZoomSelector {
         this.rect.visible = false;
     }
 
-    update(x: number, y: number): void {
-        this.updateCoords(x, y);
+    update(event: _ModuleSupport.InteractionEvent<'drag'>): void {
+        this.updateCoords(event.offsetX, event.offsetY);
         this.updateRect();
     }
 

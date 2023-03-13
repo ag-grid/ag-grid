@@ -8,10 +8,14 @@ export class ZoomPanner {
 
     private coords?: ZoomCoords;
 
-    update(x: number, y: number, bbox: _Scene.BBox, zoom?: _ModuleSupport.AxisZoomState): DefinedZoomState {
+    update(
+        event: _ModuleSupport.InteractionEvent<'drag'>,
+        bbox: _Scene.BBox,
+        zoom?: _ModuleSupport.AxisZoomState
+    ): DefinedZoomState {
         this.isPanning = true;
 
-        this.updateCoords(x, y);
+        this.updateCoords(event.offsetX, event.offsetY);
         return this.translate(bbox, zoom);
     }
 
