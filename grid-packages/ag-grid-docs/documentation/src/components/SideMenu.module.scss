@@ -53,6 +53,9 @@
 
 .level-2 {
     margin-top: $size-half !important; // !important for .ag-styles specificity
-    margin-left: 14px;
-    font-size: var(--font-size-small);
+
+    a::before {
+        content: '- ';
+        color: var(--sky-blue);
+    }
 }
