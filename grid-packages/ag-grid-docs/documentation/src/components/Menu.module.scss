@@ -116,9 +116,9 @@
     &::before {
         content: '';
         position: absolute;
-        width: 6px;
-        height: 6px;
-        transform: translate(-10px, 6px);
+        width: 0.375em;
+        height: 0.375em;
+        transform: translate(-0.625em, 0.45em);
         border-radius: 50%;
         background-color: var(--white);
         transition: background-color $default-transition-timing;

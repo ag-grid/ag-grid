@@ -38,8 +38,13 @@
     }
 
     h3 {
-        line-height: var(--line-height-ultra-tight);
+        line-height: var(--line-height-tight);
+        font-weight: var(--font-weight-normal);
         margin-bottom: $size-2 !important; // !important for .ag-styles specificity
+    }
+
+    a {
+        font-weight: var(--font-weight-thin);
     }
 
     li:not(.level-2):not(:first-child) {
@@ -56,8 +61,16 @@
 .level-2 {
     margin-top: $size-half !important; // !important for .ag-styles specificity
 
+    a {
+        display: block;
+        position: relative;
+        padding-left: 0.625em;
+    }
+
     a::before {
         content: '- ';
+        position: absolute;
+        left: 0;
         color: var(--sky-blue);
     }
 }
