@@ -3,9 +3,6 @@ import { AgCartesianChartOptions, AgChart } from "ag-charts-community"
 let options: AgCartesianChartOptions = {
   container: document.getElementById("myChart"),
   autoSize: true,
-  tooltip: {
-    range: "nearest",
-  },
   data: [
     {
       quarter: "Q1",
@@ -32,7 +29,7 @@ let options: AgCartesianChartOptions = {
     {
       xKey: "quarter",
       yKey: "petrol",
-      nodeClickRange: "nearest",
+      nodeClickRange: "exact",
       listeners: {
         nodeClick: event =>
           window.alert(`${event.yKey} - ${event.datum.petrol}`),
@@ -41,7 +38,7 @@ let options: AgCartesianChartOptions = {
     {
       xKey: "quarter",
       yKey: "diesel",
-      nodeClickRange: "nearest",
+      nodeClickRange: "exact",
       listeners: {
         nodeClick: event =>
           window.alert(`${event.yKey} - ${event.datum.diesel}`),
@@ -56,26 +53,33 @@ let options: AgCartesianChartOptions = {
 
 var chart = AgChart.create(options)
 
-function nearest() {
-  options.series = options.series?.map(s => ({
-    ...s,
-    nodeClickRange: "nearest",
-  }))
+function exact() {
+  if (!options.series) return
+
+  for (let i = 0; i < options.series.length; i++) {
+    options.series[i].nodeClickRange = "exact"
+  }
+
   AgChart.update(chart, options)
 }
 
-function exact() {
-  options.series = options.series?.map(s => ({
-    ...s,
-    nodeClickRange: "exact",
-  }))
+function nearest() {
+  console.log("nearest")
+  if (!options.series) return
+
+  for (let i = 0; i < options.series.length; i++) {
+    options.series[i].nodeClickRange = "nearest"
+  }
+
   AgChart.update(chart, options)
 }
 
 function distance() {
-  options.series = options.series?.map(s => ({
-    ...s,
-    nodeClickRange: 10,
-  }))
+  if (!options.series) return
+
+  for (let i = 0; i < options.series.length; i++) {
+    options.series[i].nodeClickRange = 10
+  }
+
   AgChart.update(chart, options)
 }
