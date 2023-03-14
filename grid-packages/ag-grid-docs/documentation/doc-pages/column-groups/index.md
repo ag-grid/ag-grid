@@ -173,7 +173,7 @@ const gridOptions = {
 
 In the example below, note the following: 
 
-- The **Athlete** column header cell is not under a column group cell, but spans the entire height of the header container.
+- The **Age** column header cell is not under a column group cell, but spans the entire height of the header container.
 
 <grid-example title='Span Header Height' name='span-header-height' type='generated' options='{ "exampleHeight": 300 }'></grid-example>
 
