@@ -3260,6 +3260,10 @@
     "meta": { "isTypeAlias": true },
     "type": "{ container?: OptionalHTMLElement; scene: Scene; element: HTMLElement; }"
   },
+  "PickedNode": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ series: Series<any>; datum: SeriesNodeDatum; distance: number; }"
+  },
   "BoundSeries": {
     "meta": {},
     "type": {

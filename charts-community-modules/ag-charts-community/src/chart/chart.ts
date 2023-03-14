@@ -39,6 +39,12 @@ type OptionalHTMLElement = HTMLElement | undefined | null;
 
 export type TransferableResources = { container?: OptionalHTMLElement; scene: Scene; element: HTMLElement };
 
+type PickedNode = {
+    series: Series<any>;
+    datum: SeriesNodeDatum;
+    distance: number;
+};
+
 export abstract class Chart extends Observable implements AgChartInstance {
     readonly id = createId(this);
 
@@ -913,17 +919,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     // x/y are local canvas coordinates in CSS pixels, not actual pixels
-    private pickSeriesNode(
-        point: Point,
-        exactMatchOnly: boolean,
-        maxDistance?: number
-    ):
-        | {
-              series: Series<any>;
-              datum: SeriesNodeDatum;
-              distance: number;
-          }
-        | undefined {
+    private pickSeriesNode(point: Point, exactMatchOnly: boolean, maxDistance?: number): PickedNode | undefined {
         const start = performance.now();
 
         // Disable 'nearest match' options if looking for exact matches only
@@ -1090,7 +1086,15 @@ export abstract class Chart extends Observable implements AgChartInstance {
         event: InteractionEvent<'click' | 'dblclick' | 'hover'>,
         callback: (series: Series, datum: any) => void
     ): boolean {
-        const datum = this.lastPick?.datum;
+        // If the tooltip picking uses `nearest` then, irregardless of the range of each series, the same node would
+        // be picked, so we can shortcut to using the last pick. Otherwise, we need to pick a node distinctly
+        // from the tooltip picking in case the node click range is greater than the tooltip range.
+        const nearestNode =
+            this.tooltip.range === 'nearest'
+                ? this.lastPick
+                : this.pickSeriesNode({ x: event.offsetX, y: event.offsetY }, false);
+
+        const datum = nearestNode?.datum;
         const nodeClickRange = datum?.series.nodeClickRange;
 
         // First check if we should trigger the callback based on nearest node

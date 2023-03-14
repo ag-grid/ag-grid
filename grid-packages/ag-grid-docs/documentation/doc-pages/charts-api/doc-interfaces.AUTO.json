@@ -5005,6 +5005,7 @@
   "VisibilityMap": {},
   "OptionalHTMLElement": {},
   "TransferableResources": {},
+  "PickedNode": {},
   "BoundSeries": {
     "type": { "type": { "returnType": "string", "optional": false } },
     "getDomain": {
