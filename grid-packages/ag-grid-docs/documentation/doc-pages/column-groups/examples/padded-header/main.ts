@@ -4,17 +4,14 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
   {
     headerName: 'Athlete Details',
     children: [
-      {
-        field: 'athlete',
-        width: 180,
-      },
-      { headerName: 'Country', field: 'country', width: 140 },
+      { field: 'athlete' },
+      { field: 'country' },
     ],
   },
   {
     field: 'age',
     width: 90
-  },
+  }
 ]
 
 const gridOptions: GridOptions<IOlympicData> = {

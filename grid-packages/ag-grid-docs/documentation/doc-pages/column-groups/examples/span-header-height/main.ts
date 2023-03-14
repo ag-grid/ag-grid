@@ -2,18 +2,17 @@ import { Grid, ColDef, ColGroupDef, GridOptions } from '@ag-grid-community/core'
 
 const columnDefs: (ColDef | ColGroupDef)[] = [
   {
-    field: 'athlete',
-    width: 180,
-    spanHeaderHeight: true,
-    pinned: true
-  },
-  {
     headerName: 'Athlete Details',
     children: [
+      { field: 'athlete' },
       { field: 'country' },
-      { field: 'age' },
     ],
   },
+  {
+    field: 'age',
+    width: 90,
+    spanHeaderHeight: true
+  }
 ]
 
 const gridOptions: GridOptions<IOlympicData> = {

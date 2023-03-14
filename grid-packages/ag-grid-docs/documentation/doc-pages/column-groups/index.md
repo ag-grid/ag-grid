@@ -154,19 +154,20 @@ Using the **Column Property** `spanHeaderHeight` will allow the header cell to s
 
 <snippet>
 const gridOptions = {
-    columnDefs: [
-        {
-            field: 'athlete',
-            spanHeaderHeight: true
-        },
-        {
-            headerName: 'Athlete Details',
-            children: [
-                { field: 'country' },
-                { field: 'age' },
-            ],
-        },
-    ]
+  columnDefs: [
+    {
+      headerName: 'Athlete Details',
+      children: [
+        { field: 'athlete' },
+        { field: 'country' },
+      ],
+    },
+    {
+      field: 'age',
+      width: 90,
+      spanHeaderHeight: true
+    }
+  ]
 }
 </snippet>
 
