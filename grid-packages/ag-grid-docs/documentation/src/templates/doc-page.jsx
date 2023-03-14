@@ -155,11 +155,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, jsonDataAsString, exa
                     <table {...otherProps}>{children}</table>
                 </AGStyles>
             ),
-            pre: ({ children, ...otherProps }) => (
-                <AGStyles>
-                    <pre {...otherProps}>{children}</pre>
-                </AGStyles>
-            ),
+            pre: ({ children, ...otherProps }) => <pre {...otherProps}>{children}</pre>,
             hr: ({ children, ...otherProps }) => (
                 <AGStyles>
                     <hr {...otherProps}>{children}</hr>
