@@ -632,7 +632,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         let i = 0;
         let labelOverlap = true;
         let ticks: any[] = [];
-        const { maxTickCount, minTickCount } = this.estimateTickCount({
+        const { maxTickCount, minTickCount, defaultTickCount } = this.estimateTickCount({
             minSpacing: this.tick.minSpacing,
             maxSpacing: this.tick.maxSpacing,
         });
@@ -654,7 +654,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
                 }
 
                 const prevTicks = ticks;
-                const tickCount = Math.max(maxTickCount - i, minTickCount);
+                const tickCount = Math.max(defaultTickCount - i, minTickCount);
 
                 const filterTicks =
                     checkForOverlap && !(continuous && this.tick.count === undefined) && (tickSpacing || i !== 0);
@@ -784,6 +784,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     private estimateTickCount({ minSpacing, maxSpacing }: { minSpacing: number; maxSpacing: number }): {
         minTickCount: number;
         maxTickCount: number;
+        defaultTickCount: number;
     } {
         const { requestedRange } = this;
 
@@ -821,12 +822,17 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             }
         }
 
-        minSpacing = Math.max(minSpacing, defaultMinSpacing);
-
         const maxTickCount = Math.max(1, Math.floor(availableRange / minSpacing));
         const minTickCount = Math.min(maxTickCount, Math.ceil(availableRange / maxSpacing));
 
-        return { minTickCount, maxTickCount };
+        let defaultTickCount = Math.max(1, Math.floor(availableRange / defaultMinSpacing));
+        if (defaultTickCount > maxTickCount) {
+            defaultTickCount = maxTickCount;
+        } else if (defaultTickCount < minTickCount) {
+            defaultTickCount = minTickCount;
+        }
+
+        return { minTickCount, maxTickCount, defaultTickCount };
     }
 
     private getLabelSpacing(rotated?: boolean): number {
