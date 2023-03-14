@@ -65,3 +65,7 @@ The screen shots below show example scenarios where the provided Number floating
 - **Two Values and One Condition - Read-Only**
     <image-caption src="floating-filters/resources/twoValuesOneCondition.png" alt="Two Values One Condition" width="24rem"></image-caption>
 
+
+## Custom Floating Filters
+
+In addition to the floating filters provided by the grid, you can also create your own [Custom Floating Filter Components](/component-floating-filter/).
