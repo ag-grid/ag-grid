@@ -1,4 +1,4 @@
-import { OPT_FUNCTION, Validate } from '../../util/validation';
+import { OPT_FUNCTION, OPT_STRING, Validate } from '../../util/validation';
 import { BBox } from '../../scene/bbox';
 
 export class Overlay {
@@ -10,16 +10,14 @@ export class Overlay {
     @Validate(OPT_FUNCTION)
     renderer: (() => string) | undefined = undefined;
 
+    @Validate(OPT_STRING)
+    text?: string = undefined;
+
     private className: string;
     private parentElement: HTMLElement;
     private element?: HTMLElement;
 
     show(rect: BBox) {
-        if (typeof this.renderer !== 'function') {
-            this.hide();
-            return;
-        }
-
         let element = this.element!;
         if (!this.element) {
             element = document.createElement('div');
@@ -33,7 +31,21 @@ export class Overlay {
         element.style.width = `${rect.width}px`;
         element.style.height = `${rect.height}px`;
 
-        element.innerHTML = this.renderer();
+        if (this.renderer) {
+            this.element.innerHTML = this.renderer();
+        } else {
+            const content = document.createElement('div');
+            content.style.alignItems = 'center';
+            content.style.boxSizing = 'border-box';
+            content.style.display = 'flex';
+            content.style.justifyContent = 'center';
+            content.style.margin = '8px';
+            content.style.height = '100%';
+            content.style.font = '12px Verdana, sans-serif';
+            content.innerText = this.text ?? 'No data to display';
+
+            element.append(content);
+        }
 
         this.parentElement?.append(element);
     }

@@ -211,6 +211,8 @@ export interface AgChartPaddingOptions {
 }
 
 export interface AgChartOverlayOptions {
+    /** Text to render in the overlay. */
+    text?: string;
     /** A function for generating HTML string for overlay content. */
     renderer?: () => string;
 }

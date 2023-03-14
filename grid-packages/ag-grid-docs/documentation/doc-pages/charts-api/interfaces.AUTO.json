@@ -623,8 +623,9 @@
   },
   "AgChartOverlayOptions": {
     "meta": {},
-    "type": { "renderer?": "() => string" },
+    "type": { "text?": "string", "renderer?": "() => string" },
     "docs": {
+      "text?": "/** Text to render in the overlay. */",
       "renderer?": "/** A function for generating HTML string for overlay content. */"
     }
   },
