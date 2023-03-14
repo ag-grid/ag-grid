@@ -61,6 +61,11 @@
     &:hover .sectionIcon {
         transform: translateX(3px);
     }
+
+    &.active {
+        border-color: transparent !important; // !important for .ag-styles specificity
+        transition: color $default-transition-timing;
+    }
 }
 
 .sectionIcon {
@@ -144,6 +149,7 @@
     &.activeMenuItem {
         pointer-events: none;
         color: var(--text-color) !important; // !important for .ag-styles specificity
+        border-color: transparent !important; // !important for .ag-styles specificity
 
         &::before {
             background-color: var(--text-color);

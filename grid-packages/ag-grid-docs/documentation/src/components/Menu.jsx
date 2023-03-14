@@ -39,7 +39,7 @@ const MenuSection = ({ title, items, currentFramework, isActive, toggleActive })
             <button
                 onClick={toggleActive}
                 tabIndex="0"
-                className={classnames(styles.sectionHeader, 'button-style-none')}
+                className={classnames(styles.sectionHeader, isActive && styles.active, 'button-style-none')}
                 data-toggle="collapse"
                 data-target={`#${toElementId(title)}`}
                 aria-expanded={isActive}
