@@ -6,7 +6,23 @@ There are some options to display custom HTML over a chart.
 
 ## Missing Data Overlay
 
-Sometimes end-users can be confused if a chart doesn't have any content. To help them understand the data is not supplied, a custom HTML message can be provided through `overlays.noData.renderer` function:
+Sometimes end-users can be confused if a chart doesn't have any content. To help them understand the data is not supplied, a message can be enabled through `overlays.noData`:
+
+```js
+overlays: {
+    noData: {
+        text: 'Some custom message',
+    },
+},
+```
+
+### Example: Overlay for missing data
+
+<chart-example title='Overlay for Missing Data' name='no-data-plain' type='generated'></chart-example>
+
+## Custom Missing Data Overlay
+
+If finer grained control is required, a renderer can be provided to allow full customisation:
 
 ```js
 overlays: {
