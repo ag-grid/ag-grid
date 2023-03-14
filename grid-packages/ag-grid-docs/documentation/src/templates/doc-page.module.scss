@@ -40,8 +40,16 @@
     h2:first-child,
     h3:first-child,
     h4:first-child {
-        margin-top: $size-6;
         margin-bottom: $size-half; // Required because of .ag-styles wrapper
+    }
+
+    h2:first-child {
+        margin-top: $size-6;
+    }
+
+    h3:first-child,
+    h4:first-child {
+        margin-top: $size-4;
     }
 
     // Required because of .ag-styles wrapper
