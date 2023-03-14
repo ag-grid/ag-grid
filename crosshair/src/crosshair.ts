@@ -1,67 +1,15 @@
-import { _Scene, _ModuleSupport, FontStyle, FontWeight, AgCrosshairLabelFormatterParams } from 'ag-charts-community';
+import { _Scene, _ModuleSupport, AgTooltipRendererResult } from 'ag-charts-community';
+import { CrosshairTooltip, TooltipMeta } from './crosshairTooltip';
+import { toTooltipHtml } from './util/tooltip';
 
-const { Group, Line, Text, BBox } = _Scene;
-const {
-    Validate,
-    NUMBER,
-    OPT_NUMBER,
-    BOOLEAN,
-    OPT_COLOR_STRING,
-    OPT_LINE_DASH,
-    OPT_FONT_STYLE,
-    OPT_FONT_WEIGHT,
-    STRING,
-    OPT_STRING,
-    Layers,
-} = _ModuleSupport;
-
-export class CrosshairLabel {
-    @Validate(OPT_FONT_STYLE)
-    fontStyle?: FontStyle = undefined;
-
-    @Validate(OPT_FONT_WEIGHT)
-    fontWeight?: FontWeight = undefined;
-
-    @Validate(NUMBER(1))
-    fontSize: number = 12;
-
-    @Validate(STRING)
-    fontFamily: string = 'Verdana, sans-serif';
-
-    /**
-     * The padding between the label and the crosshair line.
-     */
-    @Validate(NUMBER(0))
-    padding: number = 11;
-
-    /**
-     * The color of the label.
-     * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
-     */
-    @Validate(OPT_COLOR_STRING)
-    color?: string = 'rgba(87, 87, 87, 1)';
-
-    /**
-     * Custom label rotation in degrees.
-     * The label is rendered perpendicular to the axis line by default.
-     * Or parallel to the axis line.
-     * The value of this config is used as the angular offset/deflection
-     * from the default rotation.
-     */
-    @Validate(OPT_NUMBER(-360, 360))
-    rotation?: number = undefined;
-
-    formatter?: (params: AgCrosshairLabelFormatterParams) => string = undefined;
-
-    @Validate(OPT_STRING)
-    format: string | undefined = undefined;
-}
+const { Group, Line, BBox } = _Scene;
+const { Validate, NUMBER, BOOLEAN, OPT_COLOR_STRING, OPT_LINE_DASH, Layers } = _ModuleSupport;
 
 export class Corsshair extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
     public update(): void {}
 
     @Validate(OPT_COLOR_STRING)
-    stroke?: string = 'rgb(87, 87, 87)';
+    stroke?: string = 'rgb(195, 195, 195)';
 
     @Validate(OPT_LINE_DASH)
     lineDash?: number[] = [6, 3];
@@ -78,15 +26,13 @@ export class Corsshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     @Validate(BOOLEAN)
     snap: boolean = false;
 
-    label: CrosshairLabel = new CrosshairLabel();
-
+    readonly tooltip: CrosshairTooltip;
     private seriesRect: _Scene.BBox = new BBox(0, 0, 0, 0);
     private axisCtx: _ModuleSupport.AxisContext;
     private axisLayout?: _ModuleSupport.AxisLayout & {
         id: string;
     };
     private crosshairGroup: _Scene.Group = new Group({ layer: true, zIndex: Layers.AXIS_ZINDEX });
-    private labelNode: _Scene.Text = this.crosshairGroup.appendChild(new Text());
     private lineNode: _Scene.Line = this.crosshairGroup.appendChild(new Line());
 
     constructor(private readonly ctx: _ModuleSupport.ModuleContextWithParent<_ModuleSupport.AxisContext>) {
@@ -107,6 +53,8 @@ export class Corsshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         ctx.scene!.root!.appendChild(this.crosshairGroup);
 
         this.crosshairGroup.visible = false;
+
+        this.tooltip = new CrosshairTooltip(document, ctx.scene.canvas.container ?? document.body);
     }
 
     layout({ series: { rect, visible }, axes }: _ModuleSupport.LayoutCompleteEvent) {
@@ -128,7 +76,6 @@ export class Corsshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         this.crosshairGroup.rotation = rotation;
 
         this.updateLine();
-        this.updateLabel();
     }
 
     updateLine() {
@@ -154,64 +101,21 @@ export class Corsshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         line.x2 = axisCtx.direction === 'x' ? seriesRect.height : seriesRect.width;
     }
 
-    updateLabel() {
-        const {
-            axisCtx,
-            axisLayout,
-            seriesRect,
-            labelNode,
-            label: { fontStyle, fontWeight, fontSize, fontFamily, color, padding },
-        } = this;
-
-        labelNode.fontStyle = fontStyle;
-        labelNode.fontWeight = fontWeight;
-        labelNode.fontSize = fontSize;
-        labelNode.fontFamily = fontFamily;
-        labelNode.fill = color;
-
-        const crosshairLength = axisCtx.direction === 'x' ? seriesRect.height : seriesRect.width;
-        const mirrored = axisCtx.position === 'top' || axisCtx.position === 'right';
-        const labelX = mirrored ? padding + crosshairLength : -padding;
-
-        labelNode.rotationCenterX = labelX;
-        labelNode.x = labelX;
-
-        if (!axisLayout) {
-            return;
-        }
-
-        labelNode.rotation = axisLayout.label.rotation;
-        labelNode.textAlign = axisLayout.label.align;
-        labelNode.textBaseline = axisLayout.label.baseline;
-    }
-
-    updateLabelText(position: number) {
-        const { labelNode, axisCtx } = this;
+    getAxisValue(position: number): string {
+        const { axisCtx } = this;
 
         const value = axisCtx.scaleInvert(position);
 
-        labelNode.text = this.formatLabel(value);
+        return this.formatValue(value);
     }
 
-    formatLabel(val: any): string {
-        const {
-            label,
-            axisLayout,
-        } = this;
+    formatValue(val: any): string {
+        const { axisLayout } = this;
 
         const isInteger = val % 1 === 0;
         const fractionDigits = (axisLayout?.label.fractionDigits ?? 0) + (isInteger ? 0 : 1);
-        const defaultFormatter = typeof val === 'number' ? (val: number) => val.toFixed(fractionDigits) : (val: any) => String(val);
 
-        if (label.formatter) {
-            return label.formatter({
-                value: val,
-                fractionDigits,
-                formatter: defaultFormatter,
-            })
-        } else {
-            return defaultFormatter(val);
-        }
+        return typeof val === 'number' ? val.toFixed(fractionDigits) : String(val);
     }
 
     onMouseMove(event: _ModuleSupport.InteractionEvent<'hover'>) {
@@ -225,15 +129,19 @@ export class Corsshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         if (seriesRect.containsPoint(offsetX, offsetY)) {
             crosshairGroup.visible = true;
 
+            let value;
             if (axisCtx.direction === 'x') {
                 crosshairGroup.translationX = Math.floor(offsetX);
-                this.updateLabelText(offsetX - seriesRect.x);
+                value = this.getAxisValue(offsetX - seriesRect.x);
             } else {
                 crosshairGroup.translationY = Math.floor(offsetY);
-                this.updateLabelText(offsetY - seriesRect.y);
+                value = this.getAxisValue(offsetY - seriesRect.y);
             }
+
+            this.showTooltip(offsetX, offsetY, value);
         } else {
             crosshairGroup.visible = false;
+            this.hideTooltip();
         }
     }
 
@@ -249,15 +157,73 @@ export class Corsshair extends _ModuleSupport.BaseModuleInstance implements _Mod
 
             crosshairGroup.visible = true;
 
+            let value;
             if (axisCtx.direction === 'x') {
                 crosshairGroup.translationX = Math.floor(x + seriesRect.x);
-                this.updateLabelText(x);
+                value = this.getAxisValue(x);
             } else {
                 crosshairGroup.translationY = Math.floor(y + seriesRect.y);
-                this.updateLabelText(y);
+                value = this.getAxisValue(y);
             }
+
+            this.showTooltip(x + seriesRect.x, y + seriesRect.y, value);
         } else {
             crosshairGroup.visible = false;
+            this.hideTooltip();
         }
+    }
+
+    getTooltipHtml(value: string): string {
+        const { tooltip, axisLayout: { label: { fractionDigits = 0 } = {} } = {} } = this;
+        const { renderer: tooltipRenderer } = tooltip;
+        const content = value;
+        const defaults: AgTooltipRendererResult = {
+            content,
+        };
+
+        if (tooltipRenderer) {
+            const params = {
+                value,
+                fractionDigits,
+            };
+            if (tooltipRenderer) {
+                return toTooltipHtml(tooltipRenderer(params), defaults);
+            }
+        }
+
+        return toTooltipHtml(defaults);
+    }
+
+    showTooltip(x: number, y: number, value: string) {
+        const { axisCtx, seriesRect, tooltip } = this;
+
+        const html = this.getTooltipHtml(value);
+        tooltip.setTooltipHtml(html);
+        const tooltipBBox = tooltip.computeBBox();
+
+        let tooltipMeta: TooltipMeta;
+        if (axisCtx.direction === 'x') {
+            const xOffset = -tooltipBBox.width / 2;
+            const yOffset = axisCtx.position === 'bottom' ? 0 : -tooltipBBox.height;
+            const fixedY = axisCtx.position === 'bottom' ? seriesRect.y + seriesRect.height : seriesRect.y;
+            tooltipMeta = {
+                x: x + xOffset,
+                y: fixedY + yOffset,
+            };
+        } else {
+            const yOffset = -tooltipBBox.height / 2;
+            const xOffset = axisCtx.position === 'right' ? 0 : -tooltipBBox.width;
+            const fixedX = axisCtx.position === 'right' ? seriesRect.x + seriesRect.width : seriesRect.x;
+            tooltipMeta = {
+                x: fixedX + xOffset,
+                y: y + yOffset,
+            };
+        }
+
+        tooltip.show(tooltipMeta);
+    }
+
+    hideTooltip() {
+        this.tooltip.toggle(false);
     }
 }
