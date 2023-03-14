@@ -110,7 +110,7 @@ const MenuItem = ({ item, currentFramework }) => {
                     {title}
                 </Link>
             ) : (
-                title
+                <span className={classnames(styles.groupLabel, 'text-secondary')}>{title}</span>
             )}
             {item.items && !item.hideChildren && (
                 <MenuGroup group={{ group: item.title, items: item.items }} currentFramework={currentFramework} />

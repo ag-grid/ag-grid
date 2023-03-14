@@ -87,12 +87,18 @@
     line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
     font-size: var(--font-size-small);
 
-    ul a {
-        margin-left: calc(var(--first-indent-size) + var(--indent-size));
+    ul a,
+    ul .groupLabel {
+        margin-left: calc(
+            var(--first-indent-size) + var(--indent-size)
+        ) !important; // !important for .ag-styles specificity
     }
 
-    ul ul a {
-        margin-left: calc(var(--first-indent-size) + var(--indent-size) * 2);
+    ul ul a,
+    ul ul .groupLabel {
+        margin-left: calc(
+            var(--first-indent-size) + var(--indent-size) * 2
+        ) !important; // !important for .ag-styles specificity
     }
 
     .enterpriseIcon {
@@ -161,4 +167,9 @@
             background-color: var(--text-color);
         }
     }
+}
+
+.groupLabel {
+    margin-left: var(--first-indent-size) !important; // !important for .ag-styles specificity
+    padding-left: $size-2 + 2px;
 }
