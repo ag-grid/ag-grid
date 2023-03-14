@@ -575,6 +575,11 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     gridPadding = 0;
 
     /**
+     * Is used to avoid collisions between axis labels and series.
+     */
+    seriesPadding = 0;
+
+    /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      */
     update(primaryTickCount?: number): number | undefined {
@@ -1005,7 +1010,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         // Update properties that affect the size of the axis labels and measure the labels
         const labelBboxes: Map<number, BBox | null> = new Map();
 
-        const labelX = sideFlag * (tick.size + label.padding);
+        const labelX = sideFlag * (tick.size + label.padding + this.seriesPadding);
 
         const labelMatrix = new Matrix();
         Matrix.updateTransformMatrix(labelMatrix, 1, 1, autoRotation, 0, 0);

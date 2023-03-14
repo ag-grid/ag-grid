@@ -561,6 +561,8 @@ export interface AgBaseChartOptions {
     autoSize?: boolean;
     /** Configuration for the padding shown around the chart. */
     padding?: AgChartPaddingOptions;
+    /** Configuration for the padding around the series. */
+    seriesPadding?: AgChartPaddingOptions;
     /** Configuration for the background shown behind the chart. */
     background?: AgChartBackground;
     /** Configuration for the title shown at the top of the chart. */
