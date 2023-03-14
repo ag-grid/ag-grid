@@ -25,6 +25,7 @@ const ABSTRACT_COLOR_GROUPS = {
     Grays: [
         'black',
         'dark-gunmetal-gray',
+        'arsenic',
         'auro-metal',
         'dull-light-gray',
         'light-gray',
@@ -41,7 +42,7 @@ const ABSTRACT_COLOR_GROUPS = {
  * NOTE: **Without** the `--` prefix
  */
 const SEMANTIC_COLOR_GROUPS = {
-    Text: ['text-color', 'secondary-text-color'],
+    Text: ['text-color', 'large-header-color', 'secondary-text-color'],
     Border: ['border-color'],
     Link: ['link-color', 'link-hover-color'],
     Button: [

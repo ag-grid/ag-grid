@@ -5,3 +5,9 @@ html {
 .text-secondary {
     color: var(--secondary-text-color) !important; // !important to prevent bootstrap clash
 }
+
+h1,
+h2,
+h3 {
+    color: var(--large-header-color);
+}
