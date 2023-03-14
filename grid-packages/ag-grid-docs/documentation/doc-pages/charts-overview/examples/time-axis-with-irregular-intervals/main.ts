@@ -1,7 +1,6 @@
 import { AgChart, AgChartOptions } from "ag-charts-community"
 import { data } from "./data"
 
-const year = new Date().getFullYear();
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
   theme: {
@@ -22,10 +21,10 @@ const options: AgChartOptions = {
   },
   autoSize: true,
   title: {
-    text: `Earthquake Magnitudes by Source (January ${year - 1})`,
+    text: "Earthquake Magnitudes by Source",
     fontSize: 18,
   },
-  subtitle: {
+  footnote: {
     text: "Source: US Geological Survey",
   },
   padding: {

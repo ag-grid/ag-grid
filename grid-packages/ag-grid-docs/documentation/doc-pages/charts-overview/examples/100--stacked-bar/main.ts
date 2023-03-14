@@ -1,7 +1,6 @@
 import { AgChart, AgChartOptions } from 'ag-charts-community';
 import { getData } from "./data";
 
-const year = new Date().getFullYear();
 const options: AgChartOptions = {
   container: document.getElementById('myChart'),
   autoSize: true,
@@ -26,10 +25,10 @@ const options: AgChartOptions = {
     },
   },
   title: {
-    text: `Internet Users by Geographical Location (${year - 1})`,
+    text: 'Internet Users by Geographical Location',
     fontSize: 18,
   },
-  subtitle: {
+  footnote: {
     text: 'Source: Office for National Statistics',
   },
   series: [

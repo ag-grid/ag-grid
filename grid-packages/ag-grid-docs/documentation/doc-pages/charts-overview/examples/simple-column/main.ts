@@ -14,7 +14,7 @@ const options: AgChartOptions = {
     text: 'Total Visitors to Museums and Galleries',
     fontSize: 18,
   },
-  subtitle: {
+  footnote: {
     text: 'Source: Department for Digital, Culture, Media & Sport',
   },
   series: [

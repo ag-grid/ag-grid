@@ -9,7 +9,7 @@ const options: AgChartOptions = {
     text: 'Height vs Weight for Major League Baseball Players',
     fontSize: 18,
   },
-  subtitle: {
+  footnote: {
     text: 'Source: Statistics Online Computational Resource',
   },
   series: [

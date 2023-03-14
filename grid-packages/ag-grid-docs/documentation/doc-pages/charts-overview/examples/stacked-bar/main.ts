@@ -10,7 +10,6 @@ function getTotal(datum: any) {
   )
 }
 
-const year = new Date().getFullYear();
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
   autoSize: true,
@@ -33,10 +32,10 @@ const options: AgChartOptions = {
     },
   },
   title: {
-    text: `UK Housing Stock (${year - 1})`,
+    text: "UK Housing Stock",
     fontSize: 18,
   },
-  subtitle: {
+  footnote: {
     text: "Source: Ministry of Housing, Communities & Local Government",
   },
   series: [
