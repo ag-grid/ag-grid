@@ -53,10 +53,8 @@ const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu }) => {
         allHeadings.length > 0 && (
             <div className={classNames(styles.sideNav, 'ag-styles', 'font-size-responsive')}>
                 <div>
-                    <h3>{pageTitle}</h3>
-
                     <ul className="list-style-none">
-                        <li>
+                        <li className={styles['level-1']}>
                             <a href="#top">{pageTitle}</a>
                         </li>
 
