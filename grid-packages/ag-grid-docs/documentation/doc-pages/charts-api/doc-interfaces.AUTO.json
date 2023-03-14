@@ -1051,6 +1051,10 @@
     }
   },
   "AgChartOverlayOptions": {
+    "text": {
+      "description": "/** Text to render in the overlay. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "renderer": {
       "description": "/** A function for generating HTML string for overlay content. */",
       "type": { "arguments": {}, "returnType": "string", "optional": true }
