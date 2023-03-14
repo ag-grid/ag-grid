@@ -75,7 +75,7 @@ const filterInstance = gridOptions.api.getFilterInstance('name');
 
 All of the methods of the filter are available on the instance. If using a custom filter, any other methods you have added will also be present, allowing bespoke behaviour to be added to your filter. Both provided and custom filters implement `IFilter` and have the following common methods:
 
-<interface-documentation interfaceName='IFilter' exclude='["doesFilterPass", "onNewRowsLoaded", "onAnyFilterChanged", "getModelAsString", "afterGuiAttached", "afterGuiDetached"]' config='{"description":""}'></interface-documentation>
+<interface-documentation interfaceName='IFilter' names='["isFilterActive", "getModel", "setModel"]' config='{"description":""}'></interface-documentation>
 
 For filters that are created asynchronously, including React 16+ components, `getFilterInstance` will return `null` if the filter has not already been created. If your app uses asynchronous components, use the optional `callback` function which will be invoked with the filter instance when it is available.
 

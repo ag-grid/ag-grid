@@ -37,6 +37,8 @@ If any changes are made in the UI when the Apply button is active, or via other 
 
 Applying the model is then typically followed by calling `gridApi.onFilterChanged()` to tell the grid to re-run the filtering.
 
+<interface-documentation interfaceName='IProvidedFilter' names='["getModelFromUi", "applyModel"]' config='{"description":""}'></interface-documentation>
+
 <snippet>
 |// Get a reference to the 'name' filter instance
 |const filterInstance = gridOptions.api.getFilterInstance('name');
