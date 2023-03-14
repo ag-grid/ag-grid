@@ -1115,7 +1115,7 @@ export interface AgScatterSeriesMarker<DatumType> extends AgCartesianSeriesMarke
 
 /** Configuration for scatter/bubble series. */
 export interface AgScatterSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
-    /** Configuration for the treemap series.  */
+    /** Configuration for the scatter series.  */
     type?: 'scatter';
     /** Configuration for the markers used in the series.  */
     marker?: AgScatterSeriesMarker<DatumType>;

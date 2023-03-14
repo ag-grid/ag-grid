@@ -3155,7 +3155,7 @@
   },
   "AgScatterSeriesOptions": {
     "type": {
-      "description": "/** Configuration for the treemap series.  */",
+      "description": "/** Configuration for the scatter series.  */",
       "type": { "returnType": "'scatter'", "optional": true }
     },
     "marker": {

@@ -2109,7 +2109,7 @@
       "nodeClickRange?": "AgChartInteractionRange"
     },
     "docs": {
-      "type?": "/** Configuration for the treemap series.  */",
+      "type?": "/** Configuration for the scatter series.  */",
       "marker?": "/** Configuration for the markers used in the series.  */",
       "label?": "/** Configuration for the labels shown on top of data points.  */",
       "xKey?": "/** The key to use to retrieve x-values from the data.  */",
