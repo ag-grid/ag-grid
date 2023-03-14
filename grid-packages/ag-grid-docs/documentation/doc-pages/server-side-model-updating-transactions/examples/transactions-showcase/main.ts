@@ -48,9 +48,7 @@ const gridOptions: GridOptions = {
   onColumnRowGroupChanged: onColumnRowGroupChanged,
 
   // fetch group child count from 'childCount' returned by the server
-  getChildCount: (data) => {
-    return data ? data.childCount : undefined;
-  },
+  getChildCount: getChildCount,
   onGridReady: (params) => {
     disable('#stopUpdates', true);
   
@@ -81,6 +79,10 @@ function stopUpdates() {
   fakeServerInstance.stopUpdates();
   disable('#stopUpdates', true);
   disable('#startUpdates', false);
+}
+
+function getChildCount(data: any) {
+  return data ? data.childCount : undefined;
 }
 
 function disable(id: string, disabled: boolean) {

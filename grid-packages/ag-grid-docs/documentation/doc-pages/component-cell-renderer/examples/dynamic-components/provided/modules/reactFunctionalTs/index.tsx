@@ -160,7 +160,5 @@ const GridExample = () => {
     );
 };
 
-render(
-    <GridExample />,
-    document.querySelector('#root')
-);
+const root = createRoot(document.getElementById('root')!);
+root.render(<GridExample />);

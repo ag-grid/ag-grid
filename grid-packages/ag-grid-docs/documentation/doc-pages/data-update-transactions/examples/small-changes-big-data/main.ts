@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, GetRowIdParams, IAggFuncParams, IDoesFilterPassParams, IFilterComp, IFilterParams, IFilterType } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, GetRowIdParams, IAggFuncParams, IDoesFilterPassParams, IFilterComp, IFilterParams, IFilterType, IsGroupOpenByDefaultParams } from '@ag-grid-community/core'
 
 import { createDataItem, getData } from './data'
 
@@ -223,9 +223,11 @@ const gridOptions: GridOptions = {
       params.api.setRowData(getData())
     })
   },
-  isGroupOpenByDefault: (params) => {
-    return ['Delhi', 'Seoul'].includes(params.key);
-  },
+  isGroupOpenByDefault: isGroupOpenByDefault
+}
+
+function isGroupOpenByDefault(params: IsGroupOpenByDefaultParams<IOlympicData, any>) {
+  return ['Delhi', 'Seoul'].includes(params.key);
 }
 
 // wait for the document to be loaded, otherwise

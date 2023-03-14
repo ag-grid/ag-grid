@@ -1,4 +1,4 @@
-import { Grid, GridOptions, IGroupCellRendererParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, IGroupCellRendererParams, IsGroupOpenByDefaultParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -34,7 +34,11 @@ const gridOptions: GridOptions<IOlympicData> = {
   paginationAutoPageSize: true,
   paginateChildRows: true,
 
-  isGroupOpenByDefault: (params) => params.key === 'Australia' || params.key === 'Swimming',
+  isGroupOpenByDefault: isGroupOpenByDefault,
+}
+
+function isGroupOpenByDefault(params: IsGroupOpenByDefaultParams<IOlympicData, any>) {
+  return params.key === 'Australia' || params.key === 'Swimming';
 }
 
 // setup the grid after the page has finished loading

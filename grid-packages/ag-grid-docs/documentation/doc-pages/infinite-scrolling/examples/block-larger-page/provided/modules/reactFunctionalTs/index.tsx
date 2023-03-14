@@ -214,5 +214,5 @@ const GridExample = () => {
 
 }
 
-const root = createRoot(document.getElementById('root'));
+const root = createRoot(document.getElementById('root')!);
 root.render(<GridExample />);

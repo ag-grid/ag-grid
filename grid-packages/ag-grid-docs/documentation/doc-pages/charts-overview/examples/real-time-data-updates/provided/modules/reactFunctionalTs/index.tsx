@@ -105,7 +105,5 @@ function getData() {
     return data;
 }
 
-render(
-    <ChartExample />,
-    document.querySelector('#root')
-)
+const root = createRoot(document.getElementById('root')!);
+root.render(<ChartExample />);
