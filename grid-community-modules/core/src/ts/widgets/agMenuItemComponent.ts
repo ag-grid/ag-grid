@@ -21,6 +21,7 @@ interface MenuItemComponentParams extends MenuItemLeafDef {
     isCompact?: boolean;
     isAnotherSubMenuOpen: () => boolean;
     subMenu?: (MenuItemDef | string)[] | IComponent<any>;
+    shouldSetMaxHeight?: boolean;
 }
 
 export interface MenuItemSelectedEvent extends AgEvent {
@@ -151,7 +152,7 @@ export class AgMenuItemComponent extends Component {
         const eGui = this.getGui();
 
         const positionCallback = this.popupService.positionPopupForMenu.bind(this.popupService,
-            { eventSource: eGui, ePopup });
+            { eventSource: eGui, ePopup, shouldSetMaxHeight: this.params.shouldSetMaxHeight });
 
         const translate = this.localeService.getLocaleTextFunc();
 

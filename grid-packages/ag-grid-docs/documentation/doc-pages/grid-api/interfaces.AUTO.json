@@ -11275,6 +11275,7 @@
       "isCompact?": "boolean",
       "isAnotherSubMenuOpen": "() => boolean",
       "subMenu?": "(MenuItemDef | string)[] | IComponent<any>",
+      "shouldSetMaxHeight?": "boolean",
       "name": "string",
       "disabled?": "boolean",
       "shortcut?": "string",
