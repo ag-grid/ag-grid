@@ -11,7 +11,7 @@
     padding-bottom: $size-7;
     padding-right: var(--right-padding);
     line-height: var(--line-height-tight);
-    border-left: 1px solid var(--border-color);
+    border-left: 1px solid var(--bright-blue-gray);
 
     @supports (position: sticky) {
         padding-top: 0;
