@@ -47,7 +47,7 @@ const options: AgChartOptions = {
     text: "Taxed Alcohol Consumption (UK)",
     fontSize: 18,
   },
-  subtitle: {
+  footnote: {
     text: "Source: HM Revenue & Customs",
   },
   series: [

@@ -5,7 +5,6 @@ const data = getData();
 const numFormatter = new Intl.NumberFormat('en-US');
 const total = data.reduce((sum, d) => sum + d['count'], 0);
 
-const year = new Date().getFullYear();
 const options: AgChartOptions = {
     container: document.getElementById('myChart'),
     autoSize: true,
@@ -14,7 +13,7 @@ const options: AgChartOptions = {
         text: 'Dwelling Fires (UK)',
         fontSize: 18,
     },
-    subtitle: {
+    footnote: {
         text: 'Source: Home Office',
     },
     series: [
@@ -37,7 +36,7 @@ const options: AgChartOptions = {
                 }
             },
             title: {
-                text: `${year - 1}`,
+                text: 'Annual Count',
             },
             fills: [
                 '#fb7451',

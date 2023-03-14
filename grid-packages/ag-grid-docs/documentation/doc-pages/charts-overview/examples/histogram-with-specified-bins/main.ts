@@ -9,7 +9,7 @@ const options: AgChartOptions = {
     text: 'Vehicle weight distribution (USA 1987)',
     fontSize: 18,
   },
-  subtitle: {
+  footnote: {
     text: 'Source: UCI',
   },
   series: [

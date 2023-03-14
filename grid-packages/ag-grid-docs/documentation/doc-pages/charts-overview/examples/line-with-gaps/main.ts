@@ -1,7 +1,6 @@
 import { AgChart, AgChartOptions } from "ag-charts-community";
 import { getData } from "./data";
 
-const year = new Date().getFullYear();
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
   autoSize: true,
@@ -62,7 +61,7 @@ const options: AgChartOptions = {
     },
   },
   title: {
-    text: `Imported Banana Prices (${year - 1})`,
+    text: "Imported Banana Prices",
     fontSize: 18,
   },
   footnote: {

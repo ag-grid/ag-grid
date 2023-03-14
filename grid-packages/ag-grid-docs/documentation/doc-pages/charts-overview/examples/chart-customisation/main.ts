@@ -29,7 +29,7 @@ const options: AgChartOptions = {
     fontSize: 22,
     color: "#162c53",
   },
-  subtitle: {
+  footnote: {
     text: "Source: Northern Ireland Statistics and Research Agency",
     fontSize: 10,
     color: "#3f7cbf",

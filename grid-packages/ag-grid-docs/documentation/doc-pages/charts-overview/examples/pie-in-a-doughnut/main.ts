@@ -40,12 +40,11 @@ const sharedSeriesOptions: AgPolarSeriesOptions = {
     },
 };
 
-const year = new Date().getFullYear();
 const options: AgChartOptions = {
     container: document.getElementById('myChart'),
     autoSize: true,
     title: {
-        text: `Desktop Browser Market Share ${year - 3} vs ${year - 1}`,
+        text: 'Desktop Browser Market Share 2020 vs 2022',
         fontSize: 18,
     },
     subtitle: {
