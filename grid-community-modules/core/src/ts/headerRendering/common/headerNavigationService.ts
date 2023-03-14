@@ -5,9 +5,7 @@ import { Column } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { FocusService } from "../../focusService";
 import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
-import { AnimationFrameService } from "../../misc/animationFrameService";
 import { last } from "../../utils/array";
-import { HeaderRowType } from "../row/headerRowComp";
 import { HeaderPosition, HeaderPositionUtils } from "./headerPosition";
 
 export enum HeaderNavigationDirection {
@@ -22,7 +20,6 @@ export class HeaderNavigationService extends BeanStub {
 
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private gridBodyCon: GridBodyCtrl;
@@ -39,13 +36,6 @@ export class HeaderNavigationService extends BeanStub {
         return centerHeaderContainer ? centerHeaderContainer.getRowCount() : 0;
     }
 
-    public getHeaderRowType(rowIndex: number): HeaderRowType | undefined {
-        const centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();
-        if (centerHeaderContainer) {
-            return centerHeaderContainer.getRowType(rowIndex);
-        }
-    }
-
     /*
      * This method navigates grid header vertically
      * @return {boolean} true to preventDefault on the event that caused this navigation.
@@ -59,9 +49,12 @@ export class HeaderNavigationService extends BeanStub {
 
         const { headerRowIndex, column } = fromHeader;
         const rowLen = this.getHeaderRowCount();
-        const isUp = direction === HeaderNavigationDirection.UP ;
-        let nextRow = isUp ?  headerRowIndex - 1 : headerRowIndex + 1;
-        let nextFocusColumn: ColumnGroup | Column | null = null;
+        const isUp = direction === HeaderNavigationDirection.UP;
+
+        let { nextRow, nextFocusColumn } = isUp
+            ? this.headerPositionUtils.getColumnVisibleParent(column, headerRowIndex)
+            : this.headerPositionUtils.getColumnVisibleChild(column, headerRowIndex);
+
         let skipColumn = false;
 
         if (nextRow < 0) {
@@ -74,20 +67,8 @@ export class HeaderNavigationService extends BeanStub {
             nextRow = -1; // -1 indicates the focus should move to grid rows.
         }
 
-        const currentRowType = this.getHeaderRowType(headerRowIndex);
-
-        if (!skipColumn) {
-            if (currentRowType === HeaderRowType.COLUMN_GROUP) {
-                const currentColumn = column as ColumnGroup;
-                nextFocusColumn = isUp ? column.getParent() : currentColumn.getDisplayedChildren()![0] as ColumnGroup;
-            } else if (currentRowType === HeaderRowType.FLOATING_FILTER) {
-                nextFocusColumn = column;
-            } else {
-                const currentColumn = column as Column;
-                nextFocusColumn = isUp ? currentColumn.getParent() : currentColumn;
-            }
-
-            if (!nextFocusColumn) { return false; }
+        if (!skipColumn && !nextFocusColumn) {
+            return false;
         }
 
         return this.focusService.focusHeaderPosition({

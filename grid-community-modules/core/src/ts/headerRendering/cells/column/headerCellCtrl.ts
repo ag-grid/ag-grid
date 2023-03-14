@@ -460,7 +460,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
     private refreshSpanHeaderHeight() {
         const { eGui, column, comp, columnModel, gridOptionsService } = this;
-        if (!column.getColDef().spanHeaderHeight) { return; }
+        if (!column.isSpanHeaderHeight()) { return; }
 
         const { numberOfParents, isSpanningTotal } = this.getColumnGroupPaddingInfo();
 
@@ -533,7 +533,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         let stopResizeObserver: (() => void) | undefined;
 
         const checkMeasuring = () => {
-            const isSpanHeaderHeight = this.column.getColDef().spanHeaderHeight;
+            const isSpanHeaderHeight = this.column.isSpanHeaderHeight();
             const newValue = this.column.isAutoHeaderHeight();
 
             if (isSpanHeaderHeight) {

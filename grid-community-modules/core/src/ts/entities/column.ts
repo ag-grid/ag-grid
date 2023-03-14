@@ -635,6 +635,10 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         return this.visible;
     }
 
+    public isSpanHeaderHeight(): boolean {
+        return !!this.getColDef().spanHeaderHeight;
+    }
+
     /** Returns the column definition for this column.
      * The column definition will be the result of merging the application provided column definition with any provided defaults
      * (e.g. `defaultColDef` grid option, or column types.

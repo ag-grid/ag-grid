@@ -32,11 +32,85 @@ export class HeaderPositionUtils extends BeanStub {
             nextColumn = this.columnModel[getColMethod](focusedHeader.column)!;
         }
 
+        let { headerRowIndex } = focusedHeader;
+
+        const currentRowType = this.getHeaderRowType(headerRowIndex);
+
+        if (currentRowType === HeaderRowType.COLUMN_GROUP) {
+            if (this.isAnyChildSpanningHeaderHeight(nextColumn as ColumnGroup)) {
+                const { nextFocusColumn, nextRow } = this.getColumnVisibleChild(nextColumn, headerRowIndex);
+
+                if (nextFocusColumn) {
+                    nextColumn = nextFocusColumn;
+                    headerRowIndex = nextRow;
+                }
+            }
+        }
+
         if (nextColumn) {
             return {
                 column: nextColumn,
-                headerRowIndex: focusedHeader.headerRowIndex
+                headerRowIndex
             };
+        }
+    }
+
+    private isAnyChildSpanningHeaderHeight(columnGroup: ColumnGroup): boolean {
+        return columnGroup.getLeafColumns().some(col => col.isSpanHeaderHeight());
+    }
+
+    public getColumnVisibleParent(currentColumn: Column | ColumnGroup, currentIndex: number): { nextFocusColumn: Column | ColumnGroup | null; nextRow: number } {
+        const currentRowType = this.getHeaderRowType(currentIndex);
+        const isFloatingFilter = currentRowType === HeaderRowType.FLOATING_FILTER;
+        const isColumn = currentRowType === HeaderRowType.COLUMN;
+
+        let nextFocusColumn: Column | ColumnGroup = isFloatingFilter ? currentColumn : currentColumn.getParent();
+        let nextRow = currentIndex - 1;
+
+        if (isColumn && (currentColumn as Column).isSpanHeaderHeight()) {
+            while (nextFocusColumn && (nextFocusColumn as ColumnGroup).isPadding()) {
+                nextFocusColumn = nextFocusColumn.getParent();
+                nextRow--;
+            }
+
+            if (nextRow < 0) {
+                nextFocusColumn = currentColumn;
+                nextRow = currentIndex;
+            }
+        }
+
+        return { nextFocusColumn: nextFocusColumn, nextRow };
+    }
+
+    public getColumnVisibleChild(column: Column | ColumnGroup, currentIndex: number): { nextFocusColumn: Column | ColumnGroup | null; nextRow: number } {
+        const currentRowType = this.getHeaderRowType(currentIndex);
+        let nextFocusColumn: Column | ColumnGroup | null = column;
+        let nextRow = currentIndex + 1;
+
+        if (currentRowType === HeaderRowType.COLUMN_GROUP) {
+            const leafChild = (column as ColumnGroup).getLeafColumns()[0];
+
+            if (leafChild.isSpanHeaderHeight()) {
+                nextFocusColumn = leafChild;
+
+                let currentColumn = leafChild.getParent();
+
+                while (currentColumn && currentColumn !== column) {
+                    currentColumn = currentColumn.getParent();
+                    nextRow++;
+                }
+            } else {
+                nextFocusColumn =  (column as ColumnGroup).getDisplayedChildren()![0] as ColumnGroup;
+            }
+        }
+
+        return { nextFocusColumn, nextRow };
+    }
+
+    private getHeaderRowType(rowIndex: number): HeaderRowType | undefined {
+        const centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();
+        if (centerHeaderContainer) {
+            return centerHeaderContainer.getRowType(rowIndex);
         }
     }
 
