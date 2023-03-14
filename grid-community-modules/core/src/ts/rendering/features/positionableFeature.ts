@@ -34,7 +34,6 @@ export interface PositionableOptions {
     forcePopupParentAsOffsetParent?: boolean;
     x?: number | null;
     y?: number | null;
-    includeElementsAfterInHeight?: boolean;
 }
 
 export type ResizableSides = 'topLeft' |
@@ -275,7 +274,7 @@ export class PositionableFeature extends BeanStub {
     }
 
     public setHeight(height: number | string) {
-        const { popup } = this.config;
+        const { popup, forcePopupParentAsOffsetParent } = this.config;
         const eGui = this.element;
 
         let isPercent = false;
@@ -290,12 +289,15 @@ export class PositionableFeature extends BeanStub {
 
             height = Math.max(this.minHeight!, height as number);
             const { clientHeight } = this.offsetParent;
-            const yPosition = popup ? this.position.y : elRect.top;
-            const parentTop = popup ? 0 : parentRect.top;
-            const boundaryBottom = this.boundaryEl?.getBoundingClientRect()?.bottom;
-            const additionalHeight = this.config.includeElementsAfterInHeight && boundaryBottom != null ? boundaryBottom - elRect.bottom : 0;
-
             if (clientHeight) {
+                const yPosition = popup ? this.position.y : elRect.top;
+                const parentTop = popup ? 0 : parentRect.top;
+
+                // When `forcePopupParentAsOffsetParent`, there may be elements that appear after the resizable element, but aren't included in the height.
+                // Take these into account here
+                const boundaryBottom = this.boundaryEl?.getBoundingClientRect()?.bottom;
+                const additionalHeight = forcePopupParentAsOffsetParent && boundaryBottom != null ? boundaryBottom - elRect.bottom : 0;
+
                 const availableHeight = clientHeight + parentTop - yPosition - additionalHeight;
                 if (height > availableHeight) {
                     height = availableHeight;

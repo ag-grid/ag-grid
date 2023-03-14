@@ -131,7 +131,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
                 handleKeyDown: this.handleKeyDown.bind(this)
             }
         ));
-        this.positionableFeature = new PositionableFeature(this.getPositionableElement(), { forcePopupParentAsOffsetParent: true, includeElementsAfterInHeight: true });
+        this.positionableFeature = new PositionableFeature(this.getPositionableElement(), { forcePopupParentAsOffsetParent: true });
         this.createBean(this.positionableFeature);
     }
 
