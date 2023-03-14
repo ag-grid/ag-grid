@@ -17,6 +17,11 @@
     background-color: #67b168 !important;
 }
 
+.ag-keyboard-focus .column-group-g:focus::after,
+.ag-keyboard-focus .column-group-c:focus::after {
+    border-color: azure;
+}
+
 .button-bar {
     margin-bottom: 1rem;
 }
