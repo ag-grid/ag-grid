@@ -64,7 +64,6 @@ function exact() {
 }
 
 function nearest() {
-  console.log("nearest")
   if (!options.series) return
 
   for (let i = 0; i < options.series.length; i++) {

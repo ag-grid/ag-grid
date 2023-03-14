@@ -185,6 +185,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
     @Validate(STRING_UNION('standalone', 'integrated'))
     mode: 'standalone' | 'integrated' = 'standalone';
 
+    @Validate(STRING_UNION('tooltip', 'node'))
+    public highlightRange: 'tooltip' | 'node' = 'tooltip';
+
     private _destroyed: boolean = false;
     get destroyed() {
         return this._destroyed;
@@ -978,10 +981,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
         const { lastPick } = this;
         const { offsetX, offsetY } = event;
 
-        const disablePointer = () => {
+        const disablePointer = (highlightOnly = false) => {
             if (lastPick) {
                 // Cursor moved from a non-marker node to empty space.
-                this.disablePointer();
+                this.disablePointer(highlightOnly);
             }
         };
 
@@ -997,7 +1000,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.handlePointerNodeCursor(event);
     }
 
-    protected handlePointerTooltip(event: InteractionEvent<'hover'>, disablePointer: () => void) {
+    protected handlePointerTooltip(
+        event: InteractionEvent<'hover'>,
+        disablePointer: (highlightOnly?: boolean) => void
+    ) {
         const { lastPick, tooltip } = this;
         const { range } = tooltip;
         const { pageX, pageY, offsetX, offsetY } = event;
@@ -1009,16 +1015,20 @@ export abstract class Chart extends Observable implements AgChartInstance {
         const pick = this.pickSeriesNode({ x: offsetX, y: offsetY }, range === 'exact', pixelRange);
 
         if (!pick) {
-            disablePointer();
+            this.tooltipManager.updateTooltip(this.id);
+            if (this.highlightRange === 'tooltip') disablePointer(true);
             return;
         }
 
-        const isNewDatum = !lastPick || lastPick.datum !== pick.datum;
+        const isNewDatum = this.highlightRange === 'node' || !lastPick || lastPick.datum !== pick.datum;
         let html;
 
         if (isNewDatum) {
-            this.highlightManager.updateHighlight(this.id, pick.datum);
             html = pick.series.getTooltipHtml(pick.datum);
+
+            if (this.highlightRange === 'tooltip') {
+                this.highlightManager.updateHighlight(this.id, pick.datum);
+            }
         } else if (lastPick) {
             lastPick.event = event.sourceEvent;
         }
@@ -1037,14 +1047,22 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     protected handlePointerNodeCursor(event: InteractionEvent<'hover'>) {
-        const found = this.checkSeriesNodeRange(event, (series: Series, _datum: any) => {
+        const found = this.checkSeriesNodeRange(event, (series: Series, datum: any) => {
             if (series.hasEventListener('nodeClick') || series.hasEventListener('nodeDoubleClick')) {
                 this.cursorManager.updateCursor('chart', 'pointer');
+
+                if (this.highlightRange === 'node') {
+                    this.highlightManager.updateHighlight(this.id, datum);
+                }
             }
         });
 
         if (!found) {
             this.cursorManager.updateCursor('chart');
+
+            if (this.highlightRange === 'node') {
+                this.highlightManager.updateHighlight(this.id);
+            }
         }
     }
 

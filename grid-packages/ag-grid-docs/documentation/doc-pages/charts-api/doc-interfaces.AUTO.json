@@ -237,6 +237,10 @@
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
+    "highlightRange": {
+      "description": "/** By default, nodes will be highlighted when the cursor is within the `tooltip.range`. Set this to `'node'` to highlight nodes when within the `series[].nodeClickRange`. */",
+      "type": { "returnType": "'tooltip' | 'node'", "optional": true }
+    },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
@@ -308,6 +312,10 @@
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
+    "highlightRange": {
+      "description": "/** By default, nodes will be highlighted when the cursor is within the `tooltip.range`. Set this to `'node'` to highlight nodes when within the `series[].nodeClickRange`. */",
+      "type": { "returnType": "'tooltip' | 'node'", "optional": true }
+    },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
@@ -378,6 +386,10 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
+    },
+    "highlightRange": {
+      "description": "/** By default, nodes will be highlighted when the cursor is within the `tooltip.range`. Set this to `'node'` to highlight nodes when within the `series[].nodeClickRange`. */",
+      "type": { "returnType": "'tooltip' | 'node'", "optional": true }
     },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -1834,6 +1846,10 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
+    },
+    "highlightRange": {
+      "description": "/** By default, nodes will be highlighted when the cursor is within the `tooltip.range`. Set this to `'node'` to highlight nodes when within the `series[].nodeClickRange`. */",
+      "type": { "returnType": "'tooltip' | 'node'", "optional": true }
     },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -4744,6 +4760,10 @@
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
+    "highlightRange": {
+      "description": "/** By default, nodes will be highlighted when the cursor is within the `tooltip.range`. Set this to `'node'` to highlight nodes when within the `series[].nodeClickRange`. */",
+      "type": { "returnType": "'tooltip' | 'node'", "optional": true }
+    },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
@@ -4818,6 +4838,10 @@
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
+    "highlightRange": {
+      "description": "/** By default, nodes will be highlighted when the cursor is within the `tooltip.range`. Set this to `'node'` to highlight nodes when within the `series[].nodeClickRange`. */",
+      "type": { "returnType": "'tooltip' | 'node'", "optional": true }
+    },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
@@ -4888,6 +4912,10 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
+    },
+    "highlightRange": {
+      "description": "/** By default, nodes will be highlighted when the cursor is within the `tooltip.range`. Set this to `'node'` to highlight nodes when within the `series[].nodeClickRange`. */",
+      "type": { "returnType": "'tooltip' | 'node'", "optional": true }
     },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",

@@ -577,6 +577,8 @@ export interface AgBaseChartOptions {
     legend?: AgChartLegendOptions;
     /** A map of event names to event listeners. */
     listeners?: AgBaseChartListeners;
+    /** By default, nodes will be highlighted when the cursor is within the `tooltip.range`. Set this to `'node'` to highlight nodes when within the `series[].nodeClickRange`. */
+    highlightRange?: 'tooltip' | 'node';
     /** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */
     theme?: string | AgChartTheme; // | ChartTheme
     /** HTML overlays */
