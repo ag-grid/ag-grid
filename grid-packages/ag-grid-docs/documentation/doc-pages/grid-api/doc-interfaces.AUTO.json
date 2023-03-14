@@ -19258,7 +19258,10 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "x": { "type": { "returnType": "number | null", "optional": true } },
-    "y": { "type": { "returnType": "number | null", "optional": true } }
+    "y": { "type": { "returnType": "number | null", "optional": true } },
+    "includeElementsAfterInHeight": {
+      "type": { "returnType": "boolean", "optional": true }
+    }
   },
   "ResizableSides": {},
   "ResizableStructure": {},
@@ -19814,7 +19817,10 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "x": { "type": { "returnType": "number | null", "optional": true } },
-    "y": { "type": { "returnType": "number | null", "optional": true } }
+    "y": { "type": { "returnType": "number | null", "optional": true } },
+    "includeElementsAfterInHeight": {
+      "type": { "returnType": "boolean", "optional": true }
+    }
   },
   "GroupItem": {},
   "Align": {},
@@ -19991,7 +19997,10 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "x": { "type": { "returnType": "number | null", "optional": true } },
-    "y": { "type": { "returnType": "number | null", "optional": true } }
+    "y": { "type": { "returnType": "number | null", "optional": true } },
+    "includeElementsAfterInHeight": {
+      "type": { "returnType": "boolean", "optional": true }
+    }
   },
   "VisibleChangedEvent": {
     "visible": { "type": { "returnType": "boolean", "optional": false } },

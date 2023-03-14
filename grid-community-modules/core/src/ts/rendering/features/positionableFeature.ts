@@ -34,6 +34,7 @@ export interface PositionableOptions {
     forcePopupParentAsOffsetParent?: boolean;
     x?: number | null;
     y?: number | null;
+    includeElementsAfterInHeight?: boolean;
 }
 
 export type ResizableSides = 'topLeft' |
@@ -291,9 +292,14 @@ export class PositionableFeature extends BeanStub {
             const { clientHeight } = this.offsetParent;
             const yPosition = popup ? this.position.y : elRect.top;
             const parentTop = popup ? 0 : parentRect.top;
+            const boundaryBottom = this.boundaryEl?.getBoundingClientRect()?.bottom;
+            const additionalHeight = this.config.includeElementsAfterInHeight && boundaryBottom != null ? boundaryBottom - elRect.bottom : 0;
 
-            if (clientHeight && (height + yPosition > clientHeight + parentTop)) {
-                height = clientHeight - yPosition;
+            if (clientHeight) {
+                const availableHeight = clientHeight + parentTop - yPosition - additionalHeight;
+                if (height > availableHeight) {
+                    height = availableHeight;
+                }
             }
         }
 

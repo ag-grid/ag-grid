@@ -10763,7 +10763,8 @@
       "calculateTopBuffer?": "() => number",
       "forcePopupParentAsOffsetParent?": "boolean",
       "x?": "number | null",
-      "y?": "number | null"
+      "y?": "number | null",
+      "includeElementsAfterInHeight?": "boolean"
     },
     "docs": {
       "forcePopupParentAsOffsetParent?": "/** Used for when a popup needs to be resized by an element within itself\n     * In that case, the feature will configured as `popup=false` but the offsetParent\n     * needs to be the popupParent.\n     */"
@@ -11208,7 +11209,8 @@
       "calculateTopBuffer?": "() => number",
       "forcePopupParentAsOffsetParent?": "boolean",
       "x?": "number | null",
-      "y?": "number | null"
+      "y?": "number | null",
+      "includeElementsAfterInHeight?": "boolean"
     },
     "docs": {
       "forcePopupParentAsOffsetParent?": "/** Used for when a popup needs to be resized by an element within itself\n     * In that case, the feature will configured as `popup=false` but the offsetParent\n     * needs to be the popupParent.\n     */"
@@ -11336,7 +11338,8 @@
       "calculateTopBuffer?": "() => number",
       "forcePopupParentAsOffsetParent?": "boolean",
       "x?": "number | null",
-      "y?": "number | null"
+      "y?": "number | null",
+      "includeElementsAfterInHeight?": "boolean"
     },
     "docs": {
       "forcePopupParentAsOffsetParent?": "/** Used for when a popup needs to be resized by an element within itself\n     * In that case, the feature will configured as `popup=false` but the offsetParent\n     * needs to be the popupParent.\n     */"
