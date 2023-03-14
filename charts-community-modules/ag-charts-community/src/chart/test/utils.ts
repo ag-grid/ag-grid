@@ -101,6 +101,18 @@ export function clickEvent({ offsetX, offsetY }: { offsetX: number; offsetY: num
     return event;
 }
 
+export function wheelEvent({
+    clientX,
+    clientY,
+    deltaY,
+}: {
+    clientX: number;
+    clientY: number;
+    deltaY: number;
+}): WheelEvent {
+    return new WheelEvent('wheel', { bubbles: true, clientX, clientY, deltaY } as any);
+}
+
 export function cartesianChartAssertions(params?: { type?: string; axisTypes?: string[]; seriesTypes?: string[] }) {
     const { axisTypes = ['category', 'number'], seriesTypes = ['bar'] } = params || {};
 
@@ -158,6 +170,13 @@ export function clickAction(x: number, y: number): (chart: Chart | AgChartInstan
             setTimeout(resolve, 50);
         });
     };
+}
+
+export function scrollAction(x: number, y: number, delta: number): Promise<void> {
+    window.dispatchEvent(wheelEvent({ clientX: x, clientY: y, deltaY: delta }));
+    return new Promise((resolve) => {
+        setTimeout(resolve, 50);
+    });
 }
 
 export function combineAssertions(...assertions: ((chart: AgChartInstance) => void)[]) {
