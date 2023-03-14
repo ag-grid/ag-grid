@@ -337,7 +337,7 @@ ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   
 
 }
 
-const root = createRoot(document.getElementById('root'));
+const root = createRoot(document.getElementById('root')!);
 root.render(<GridExample />);
 `;
 

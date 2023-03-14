@@ -94,7 +94,7 @@ const ChartExample = () => {
 
 ${bindings.globals.join('\n')}
 
-const root = createRoot(document.getElementById('root'));
+const root = createRoot(document.getElementById('root')!);
 root.render(<ChartExample />);
 `;
 

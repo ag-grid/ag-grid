@@ -82,7 +82,7 @@ class ChartExample extends Component {
     }
 }
 
-const root = createRoot(document.getElementById('root'));
+const root = createRoot(document.getElementById('root')!);
 root.render(<ChartExample />);`,
       }
     case "angular":
