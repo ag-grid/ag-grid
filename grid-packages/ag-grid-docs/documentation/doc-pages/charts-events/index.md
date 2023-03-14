@@ -77,8 +77,6 @@ legend: {
 }
 ```
 
-If a callback function is configured via [`legend.listeners.legendItemClick`](#legenditemclick), it will still be invoked when the legend click event is fired.
-
 ### Example: legendItemClick & legendItemDoubleClick Events
 
 This example demonstrates:
