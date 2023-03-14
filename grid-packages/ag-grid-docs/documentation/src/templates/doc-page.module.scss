@@ -52,6 +52,12 @@
     :global(.docs-header-icon) {
         padding-left: 0;
         margin-left: $size-1;
+        opacity: 0;
+        transition: opacity 0.33s ease-in-out;
+
+        &:hover {
+            opacity: 1;
+        }
 
         svg {
             position: relative;
@@ -59,11 +65,6 @@
             height: $size-4;
             top: -0.1em;
             visibility: visible;
-            fill: var(--water-blue);
-            transition: fill $default-transition-timing;
-        }
-
-        &:hover svg {
             fill: var(--sky-blue);
         }
     }
