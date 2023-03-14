@@ -1,6 +1,6 @@
 import { Autowired, BeanStub, FocusService, GridApi, LoadSuccessParams, NumberSequence, PostConstruct, PreDestroy, RowNode, IRowNode, ServerSideGroupLevelParams } from "@ag-grid-community/core";
-import { BlockUtils } from "src/serverSideRowModel/blocks/blockUtils";
-import { NodeManager } from "src/serverSideRowModel/nodeManager";
+import { BlockUtils } from "../../blocks/blockUtils";
+import { NodeManager } from "../../nodeManager";
 import { LazyStore } from "./lazyStore";
 import { LazyBlockLoader } from "./lazyBlockLoader";
 
