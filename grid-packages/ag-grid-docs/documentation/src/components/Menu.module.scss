@@ -97,10 +97,16 @@
 
     .enterpriseIcon {
         --icon-size: 1.15em !important; // !important for .ag-styles specificity
+        --text-color: red !important; // !important for .ag-styles specificity
 
-        margin-top: -0.15em;
-        margin-left: 0.15em;
-        fill: red !important; // !important for .ag-styles specificity
+        position: relative;
+        color: transparent;
+
+        svg {
+            position: absolute;
+            left: 0;
+            transform: translate(-0.05em, 0.075em);
+        }
     }
 }
 

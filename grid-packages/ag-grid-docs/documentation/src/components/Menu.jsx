@@ -91,11 +91,15 @@ const MenuGroup = ({ group, currentFramework, isTopLevel, isActive }) => {
 };
 
 const MenuItem = ({ item, currentFramework }) => {
-    const enterpriseIcon = item.enterprise && <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />;
+    const enterpriseIcon = item.enterprise && (
+        <span className={styles.enterpriseIcon}>
+            (e)
+            <Icon name="enterprise" />
+        </span>
+    );
     const title = (
         <>
-            {item.title}
-            {enterpriseIcon}
+            {item.title}&nbsp;{enterpriseIcon}
         </>
     );
 
