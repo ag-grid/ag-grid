@@ -197,10 +197,17 @@ const DocPageTemplate = ({ data, pageContext: { framework, jsonDataAsString, exa
                 {/*eslint-disable-next-line react/jsx-pascal-case*/}
                 <SEO title={title} description={description} framework={framework} pageName={pageName} />
                 <AGStyles>
-                    <h1 id="top" className={styles.docsPageTitle}>
-                        {pageTitle}
-                        {page.frontmatter.enterprise && <Icon name="enterprise" />}
-                    </h1>
+                    <header className={styles.docsPageHeader}>
+                        <h1 id="top" className={styles.docsPageTitle}>
+                            {pageTitle}
+                        </h1>
+                        {page.frontmatter.enterprise && (
+                            <span className={styles.enterpriseLabel}>
+                                AG Grid Enterprise
+                                <Icon name="enterprise" />
+                            </span>
+                        )}
+                    </header>
                 </AGStyles>
 
                 {/* Wrapping div is a hack to target "intro" section of docs page */}

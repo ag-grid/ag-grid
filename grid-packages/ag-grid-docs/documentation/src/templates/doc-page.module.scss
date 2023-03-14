@@ -142,15 +142,37 @@
     }
 }
 
-.docsPageTitle {
-    --icon-size: 1.25em;
-    --text-color: red;
+.docsPageHeader {
+    position: relative;
+}
 
-    margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+.docsPageTitle {
+    margin-bottom: 0 !important; // !important for .ag-styles specificity
+
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+    }
+}
+
+.enterpriseLabel {
+    display: block;
+    margin-bottom: $size-2 !important; // !important for .ag-styles specificity
+    font-size: var(--font-size-extra-large);
+    font-weight: var(--font-weight-normal);
+    color: var(--secondary-text-color);
+
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        position: absolute;
+        right: 0;
+        top: -0.1em;
+    }
 
     :global(.icon) {
+        --icon-size: 1.25em;
+        --text-color: red;
+
         position: relative;
-        margin-left: $size-1;
+        margin-left: $size-half;
         top: -0.1em;
     }
 }
