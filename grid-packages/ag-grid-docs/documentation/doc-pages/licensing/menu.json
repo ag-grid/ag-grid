@@ -1994,6 +1994,10 @@
               {
                 "title": "Events",
                 "url": "/charts-events/"
+              },
+              {
+                "title": "Overlays",
+                "url": "/charts-overlays/"
               }
             ]
           }
