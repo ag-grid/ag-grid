@@ -2,9 +2,9 @@ import { RowNodeBlock } from "./rowNodeBlock";
 import { Autowired, Bean, PostConstruct, Qualifier } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { Logger, LoggerFactory } from "../logger";
-import { _ } from "../utils";
 import { IRowModel } from "../interfaces/iRowModel";
-import { IServerSideRowModel } from "../main";
+import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
+import { _ } from "../utils";
 
 @Bean('rowNodeBlockLoader')
 export class RowNodeBlockLoader extends BeanStub {

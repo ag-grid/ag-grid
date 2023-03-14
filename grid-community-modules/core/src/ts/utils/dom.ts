@@ -1,7 +1,8 @@
 import { browserSupportsPreventScroll, isBrowserChrome, isBrowserSafari } from './browser';
 import { exists } from './generic';
 import { setAriaHidden } from './aria';
-import { CellStyle, RowStyle } from '../main';
+import { RowStyle } from '../entities/gridOptions';
+import { CellStyle } from '../entities/colDef';
 
 let rtlNegativeScroll: boolean;
 
