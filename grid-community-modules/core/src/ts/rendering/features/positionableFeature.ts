@@ -295,9 +295,12 @@ export class PositionableFeature extends BeanStub {
 
                 // When `forcePopupParentAsOffsetParent`, there may be elements that appear after the resizable element, but aren't included in the height.
                 // Take these into account here
-                const boundaryBottom = this.boundaryEl?.getBoundingClientRect()?.bottom;
-                const additionalHeight = forcePopupParentAsOffsetParent && boundaryBottom != null ? boundaryBottom - elRect.bottom : 0;
-
+                let additionalHeight = 0;
+                if (forcePopupParentAsOffsetParent && this.boundaryEl) {
+                    const { bottom } = this.boundaryEl.getBoundingClientRect();
+                    additionalHeight = bottom - elRect.bottom;
+                }
+               
                 const availableHeight = clientHeight + parentTop - yPosition - additionalHeight;
                 if (height > availableHeight) {
                     height = availableHeight;
