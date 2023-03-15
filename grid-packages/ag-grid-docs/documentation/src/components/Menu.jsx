@@ -110,7 +110,7 @@ const MenuItem = ({ item, currentFramework, activeParentItems }) => {
         </>
     );
 
-    const isActiveParent = activeParentItems.filter((parentItem) => parentItem.url === item.url).length > 0;
+    const isActiveParent = activeParentItems.some((parentItem) => parentItem.url === item.url);
 
     return (
         <li key={item.title}>

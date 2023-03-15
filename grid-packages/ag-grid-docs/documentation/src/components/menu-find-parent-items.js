@@ -17,6 +17,7 @@ function getFullPath(section, urlPath) {
         return section.items.reduce((acc, sectionItem) => {
             const hasUrlPath = sectionHasPath(sectionItem, urlPath);
             let result = acc;
+
             if (hasUrlPath) {
                 const furtherPath = getFullPath(sectionItem, urlPath);
 

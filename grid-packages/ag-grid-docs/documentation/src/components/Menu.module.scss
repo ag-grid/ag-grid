@@ -139,14 +139,6 @@
         transition: background-color $default-transition-timing;
     }
 
-    &:hover {
-        color: var(--link-color) !important; // !important for .ag-styles specificity
-
-        &::before {
-            background-color: var(--link-color) !important;
-        }
-    }
-
     &:focus-visible {
         border-color: var(--bright-blue-gray) !important; // !important for .ag-styles specificity
 
@@ -157,6 +149,14 @@
 
     &.activeItemParent {
         color: var(--text-color) !important; // !important for .ag-styles specificity
+    }
+
+    &:hover {
+        color: var(--link-color) !important; // !important for .ag-styles specificity
+
+        &::before {
+            background-color: var(--link-color) !important;
+        }
     }
 
     &.activeMenuItem {
