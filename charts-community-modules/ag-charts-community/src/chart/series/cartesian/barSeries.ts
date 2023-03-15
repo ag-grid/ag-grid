@@ -205,7 +205,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             const newKeys = flattenKeys(yKeys);
             const newKeysIndices = indexMap(newKeys);
             const sort = <T>(items: T[]) => {
-                const result = Array.from({ length: items.length }) as T[];
+                const result = Array.from<T>({ length: items.length });
                 items.forEach((item, index) => {
                     const key = flatKeys[index];
                     const newIndex = newKeysIndices.get(key)!;

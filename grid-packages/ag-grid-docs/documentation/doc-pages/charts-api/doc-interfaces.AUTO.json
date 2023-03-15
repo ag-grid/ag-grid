@@ -1560,7 +1560,7 @@
     },
     "tracking": {
       "description": "/** @deprecated since v7.2.0 (ag-grid v29.2.0) If true, for series with markers the tooltip will be shown to the closest marker. */",
-      "type": { "returnType": "boolean | undefined", "optional": true }
+      "type": { "returnType": "boolean", "optional": true }
     },
     "range": {
       "description": "/** Range from a point that triggers the tooltip to show. */",
@@ -4996,8 +4996,6 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
-  "ChartType": {},
-  "ChartOptionType": { "meta": { "typeParams": ["T extends ChartType"] } },
   "SeriesOptionType": { "meta": { "typeParams": ["T extends Series"] } },
   "DownloadOptions": {
     "fileName": {

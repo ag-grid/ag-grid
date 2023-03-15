@@ -1004,7 +1004,7 @@
     "type": {
       "enabled?": "boolean",
       "class?": "string",
-      "tracking?": "boolean | undefined",
+      "tracking?": "boolean",
       "range?": "AgChartInteractionRange",
       "delay?": "number"
     },
@@ -3234,14 +3234,6 @@
       "getOptions()": "/** Get the `AgChartOptions` representing the current chart configuration. */",
       "destroy()": "/** Destroy the chart instance and any allocated resources to support its rendering. */"
     }
-  },
-  "ChartType": {
-    "meta": { "isTypeAlias": true },
-    "type": "CartesianChart | PolarChart | HierarchyChart"
-  },
-  "ChartOptionType": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T extends ChartType"] },
-    "type": "T extends CartesianChart ? AgCartesianChartOptions : T extends PolarChart ? AgPolarChartOptions : T extends HierarchyChart ? AgHierarchyChartOptions : never"
   },
   "SeriesOptionType": {
     "meta": { "isTypeAlias": true, "typeParams": ["T extends Series"] },

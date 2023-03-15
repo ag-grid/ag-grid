@@ -71,7 +71,7 @@ export class CartesianChart extends Chart {
             const height = seriesPadding.top + seriesRect.height + seriesPadding.bottom;
             seriesRoot.setClipRectInGroupCoordinateSpace(new BBox(x, y, width, height));
         } else {
-            seriesRoot.setClipRectInGroupCoordinateSpace(undefined);
+            seriesRoot.setClipRectInGroupCoordinateSpace();
         }
     }
 

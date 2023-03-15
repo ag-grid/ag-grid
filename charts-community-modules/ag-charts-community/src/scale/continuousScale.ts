@@ -22,10 +22,13 @@ export abstract class ContinuousScale<D extends number | Date, I = number> imple
     }
 
     fromDomain(d: D): number {
-        if (d instanceof Date) {
+        if (typeof d === 'number') {
+            return d;
+        } else if (d instanceof Date) {
             return d.getTime();
         }
-        return d as number;
+
+        return NaN;
     }
 
     abstract toDomain(d: number): D;
