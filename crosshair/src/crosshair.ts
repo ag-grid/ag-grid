@@ -1,6 +1,5 @@
 import { _Scene, _ModuleSupport, AgCrosshairLabelRendererResult } from 'ag-charts-community';
 import { CrosshairLabel, LabelMeta } from './crosshairLabel';
-import { toLabelHtml } from './util/label';
 
 const { Group, Line, BBox } = _Scene;
 const { Validate, NUMBER, BOOLEAN, OPT_COLOR_STRING, OPT_LINE_DASH, Layers } = _ModuleSupport;
@@ -188,11 +187,11 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
                 fractionDigits,
             };
             if (labelRenderer) {
-                return toLabelHtml(labelRenderer(params), defaults);
+                return label.toLabelHtml(labelRenderer(params), defaults);
             }
         }
 
-        return toLabelHtml(defaults);
+        return label.toLabelHtml(defaults);
     }
 
     private showLabel(x: number, y: number, value: string) {
