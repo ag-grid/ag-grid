@@ -2241,7 +2241,8 @@
       "highlighted": "boolean",
       "xKey": "string",
       "yKey": "string",
-      "seriesId": "string"
+      "seriesId": "string",
+      "stackGroup?": "string"
     }
   },
   "AgBarSeriesFormat": {
@@ -2252,10 +2253,38 @@
       "strokeWidth?": "PixelSize"
     }
   },
+  "AgBarSeriesTooltipRendererParams": {
+    "meta": {},
+    "type": {
+      "stackGroup?": "string",
+      "xKey": "string",
+      "xValue?": "any",
+      "xName?": "string",
+      "yKey": "string",
+      "yValue?": "any",
+      "yName?": "string",
+      "datum": "any",
+      "title?": "string",
+      "color?": "CssColor",
+      "seriesId": "string"
+    },
+    "docs": {
+      "xKey": "/** xKey as specified on series options. */",
+      "xValue?": "/** xValue as read from series data via the xKey property. */",
+      "xName?": "/** xName as specified on series options. */",
+      "yKey": "/** yKey as specified on series options. */",
+      "yValue?": "/** yValue as read from series data via the yKey property. */",
+      "yName?": "/** yName as specified on series options. */",
+      "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
+      "title?": "/** Series title or yName depending on series configuration. */",
+      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
+      "seriesId": "/** The ID of the series. */"
+    }
+  },
   "AgBarSeriesTooltip": {
     "meta": {},
     "type": {
-      "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+      "renderer?": "(params: AgBarSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "enabled?": "boolean"
     },
     "docs": {
