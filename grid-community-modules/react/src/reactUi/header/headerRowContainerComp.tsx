@@ -13,12 +13,12 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
     const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
     const [ariaHidden, setAriaHidden] = useState<true | false>(false);
     const [centerContainerWidth, setCenterContainerWidth] = useState<string>();
-    const [centerContainerTransform, setCenterContainerTransform] = useState<string>();
     const [pinnedContainerWidth, setPinnedContainerWidth] = useState<string>();
     const [headerRowCtrls, setHeaderRowCtrls] = useState<HeaderRowCtrl[]>([]);
 
     const {context} = useContext(BeansContext);
     const eGui = useRef<HTMLDivElement>(null);
+    const eCenterContainer = useRef<HTMLDivElement>(null);
 
     const pinnedLeft = props.pinned === 'left';
     const pinnedRight = props.pinned === 'right';
@@ -34,7 +34,7 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
 
             // centre only
             setCenterWidth: width => setCenterContainerWidth(width),
-            setContainerTransform: transform => setCenterContainerTransform(transform),
+            setContainerTransform: transform => eCenterContainer.current!.style.transform = transform,
 
             // pinned only
             setPinnedContainerWidth: width => setPinnedContainerWidth(width)
@@ -55,8 +55,7 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
 
     const eCenterContainerStyle = useMemo(() => ({
         width: centerContainerWidth,
-        transform: centerContainerTransform
-    }), [centerContainerWidth, centerContainerTransform]);
+    }), [centerContainerWidth]);
 
     const ePinnedStyle = useMemo(() => ({
         width: pinnedContainerWidth,
@@ -81,7 +80,7 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
             { 
                 centre && 
                 <div ref={eGui} className={"ag-header-viewport " + className} role="presentation">
-                    <div className={"ag-header-container"} role="rowgroup" style={eCenterContainerStyle}>
+                        <div ref={eCenterContainer} className={"ag-header-container"} role="rowgroup" style={eCenterContainerStyle}>
                         { insertRowsJsx() }
                     </div>
                 </div>
