@@ -1226,7 +1226,7 @@ export interface AgBarSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     grouped?: boolean;
     /** An option indicating if the bars/columns should be stacked. */
     stacked?: boolean;
-    /** An ID to be used to make stacked items appear in separate groups. */
+    /** An ID to be used to group stacked items. */
     stackGroup?: string;
     /** The number to normalise the bar stacks to. Has no effect when `grouped` is `true`. For example, if `normalizedTo` is set to `100`, the bar stacks will all be scaled proportionally so that each of their totals is 100. */
     normalizedTo?: number;

@@ -3448,7 +3448,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "stackGroup": {
-      "description": "/** An ID to be used to make stacked items appear in separate groups. */",
+      "description": "/** An ID to be used to group stacked items. */",
       "type": { "returnType": "string", "optional": true }
     },
     "normalizedTo": {
