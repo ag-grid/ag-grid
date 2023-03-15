@@ -63,12 +63,12 @@ export class CartesianChart extends Chart {
             axes: this.axes.map((axis) => ({ id: axis.id, ...axis.getLayoutState() })),
         });
 
-        const { seriesRoot, seriesPadding } = this;
+        const { seriesRoot, seriesAreaPadding } = this;
         if (clipSeries) {
-            const x = seriesRect.x - seriesPadding.left;
-            const y = seriesRect.y - seriesPadding.top;
-            const width = seriesPadding.left + seriesRect.width + seriesPadding.right;
-            const height = seriesPadding.top + seriesRect.height + seriesPadding.bottom;
+            const x = seriesRect.x - seriesAreaPadding.left;
+            const y = seriesRect.y - seriesAreaPadding.top;
+            const width = seriesAreaPadding.left + seriesRect.width + seriesAreaPadding.right;
+            const height = seriesAreaPadding.top + seriesRect.height + seriesAreaPadding.bottom;
             seriesRoot.setClipRectInGroupCoordinateSpace(new BBox(x, y, width, height));
         } else {
             seriesRoot.setClipRectInGroupCoordinateSpace();
@@ -282,10 +282,10 @@ export class CartesianChart extends Chart {
         const paddedRect = bounds.clone();
         const reversedAxes = this.axes.slice().reverse();
         directions.forEach((dir) => {
-            const padding = this.seriesPadding[dir];
+            const padding = this.seriesAreaPadding[dir];
             const axis = reversedAxes.find((axis) => axis.position === dir);
             if (axis) {
-                axis.seriesPadding = padding;
+                axis.seriesAreaPadding = padding;
             } else {
                 paddedRect.shrink(padding, dir);
             }

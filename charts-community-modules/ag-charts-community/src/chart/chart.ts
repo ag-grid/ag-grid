@@ -150,7 +150,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     padding = new Padding(20);
 
-    seriesPadding = new Padding(0);
+    seriesAreaPadding = new Padding(0);
 
     @ActionOnSet<Chart>({
         newValue(value) {

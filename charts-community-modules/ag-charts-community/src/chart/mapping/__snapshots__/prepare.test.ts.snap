@@ -2065,6 +2065,10 @@ Object {
       "yName": "Minimum Distance",
     },
   ],
+  "seriesAreaPadding": Object {
+    "bottom": 15,
+    "left": 20,
+  },
   "subtitle": Object {
     "color": "rgb(140, 140, 140)",
     "enabled": false,
