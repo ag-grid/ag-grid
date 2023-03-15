@@ -39,7 +39,7 @@ export class Background {
             }
             this.node.removeChild(image.node);
             image.onload = undefined;
-        }
+        },
     })
     image: BackgroundImage | undefined = undefined;
 
