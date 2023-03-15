@@ -84,8 +84,17 @@ export abstract class ContinuousScale<D extends number | Date, I = number> imple
         const { range } = this;
         const [r0, r1] = range;
 
+        const isReversed = r0 > r1;
+
+        const rMin = isReversed ? r1 : r0;
+        const rMax = isReversed ? r0 : r1;
+
         let d: any;
-        if (r0 === r1) {
+        if (x < rMin) {
+            return isReversed ? d1 : d0;
+        } else if (x > rMax) {
+            return isReversed ? d0 : d1;
+        } else if (r0 === r1) {
             d = this.toDomain((this.fromDomain(d0) + this.fromDomain(d1)) / 2);
         } else {
             d = this.toDomain(
