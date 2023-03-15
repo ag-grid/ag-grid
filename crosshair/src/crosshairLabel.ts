@@ -72,16 +72,7 @@ export class CrosshairLabel {
         }
     }
 
-    isVisible(): boolean {
-        const { element } = this;
-        if (element.classList) {
-            return !element.classList.contains(`${DEFAULT_LABEL_CLASS}-hidden`);
-        }
-
-        return false;
-    }
-
-    updateClass(visible?: boolean) {
+    private updateClass(visible?: boolean) {
         const classList = [DEFAULT_LABEL_CLASS];
 
         if (visible !== true) {
