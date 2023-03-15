@@ -49,5 +49,11 @@
             "url": "https://ag-grid.atlassian.net/browse/RTI-<num>"
         }
     ],
-    "peacock.color": "#f9e64f"
+    "peacock.color": "#f9e64f",
+    "git.autoRepositoryDetection": "subFolders",
+    "git.repositoryScanIgnoredFolders": [
+        "node_modules",
+        "dist",
+        "typings"
+    ]
 }
