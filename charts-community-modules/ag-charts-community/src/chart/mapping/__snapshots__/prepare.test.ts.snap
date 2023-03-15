@@ -5502,12 +5502,12 @@ Object {
   ],
   "subtitle": Object {
     "color": "rgb(140, 140, 140)",
-    "enabled": false,
+    "enabled": true,
     "fontFamily": "Verdana, sans-serif",
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
-    "text": "Subtitle",
+    "text": "USA 1987",
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -5516,7 +5516,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
-    "text": "Vehicle weight distribution (USA 1987)",
+    "text": "Vehicle weight distribution",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",
@@ -9450,12 +9450,12 @@ Object {
   ],
   "subtitle": Object {
     "color": "rgb(140, 140, 140)",
-    "enabled": false,
+    "enabled": true,
     "fontFamily": "Verdana, sans-serif",
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
-    "text": "Subtitle",
+    "text": "USA 1987",
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -9464,7 +9464,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
-    "text": "Engine size distribution (USA 1987)",
+    "text": "Engine size distribution",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",
@@ -11235,12 +11235,12 @@ Object {
   ],
   "subtitle": Object {
     "color": "rgb(140, 140, 140)",
-    "enabled": false,
+    "enabled": true,
     "fontFamily": "Verdana, sans-serif",
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
-    "text": "Subtitle",
+    "text": "Victoria Line (2010)",
   },
   "theme": Object {
     "overrides": Object {
@@ -11280,7 +11280,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
-    "text": "Average Station Entries: Victoria Line (2010)",
+    "text": "Average Station Entries",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",
@@ -11548,12 +11548,12 @@ Object {
   ],
   "subtitle": Object {
     "color": "rgb(140, 140, 140)",
-    "enabled": false,
+    "enabled": true,
     "fontFamily": "Verdana, sans-serif",
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
-    "text": "Subtitle",
+    "text": "USA 1987",
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -11562,7 +11562,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
-    "text": "Vehicle weight distribution (USA 1987)",
+    "text": "Vehicle weight distribution",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",

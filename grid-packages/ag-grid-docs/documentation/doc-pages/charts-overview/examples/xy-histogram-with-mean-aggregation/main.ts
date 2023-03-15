@@ -6,8 +6,11 @@ const options: AgChartOptions = {
   autoSize: true,
   data: getData(),
   title: {
-    text: 'Vehicle fuel efficiency by engine size (USA 1987)',
+    text: 'Vehicle fuel efficiency by engine size',
     fontSize: 18,
+  },
+  subtitle: {
+    text: 'USA 1987'
   },
   footnote: {
     text: 'Source: UCI',

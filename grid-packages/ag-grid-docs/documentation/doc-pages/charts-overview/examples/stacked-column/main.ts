@@ -37,8 +37,11 @@ const options: AgChartOptions = {
     },
   },
   title: {
-    text: "Average Station Entries: Victoria Line (2010)",
+    text: "Average Station Entries",
     fontSize: 18,
+  },
+  subtitle: {
+    text: "Victoria Line (2010)",
   },
   footnote: {
     text: "Source: Transport for London",
