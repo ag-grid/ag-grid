@@ -5189,14 +5189,10 @@
   },
   "Layers": {},
   "LayoutStage": {},
+  "AxisLabelLayout": {},
   "AxisLayout": {
     "rect": { "type": { "returnType": "BBox", "optional": false } },
-    "label": {
-      "type": {
-        "returnType": "{\n        baseline: 'hanging' | 'bottom' | 'middle';\n        align: 'start' | 'end' | 'center';\n    }",
-        "optional": false
-      }
-    }
+    "label": { "type": { "returnType": "AxisLabelLayout", "optional": false } }
   },
   "LayoutCompleteEvent": {
     "type": {
@@ -5860,6 +5856,7 @@
       "type": { "returnType": "AgCartesianAxisPosition", "optional": false }
     },
     "direction": { "type": { "returnType": "'x' | 'y'", "optional": false } },
+    "continuous": { "type": { "returnType": "boolean", "optional": false } },
     "scaleConvert": {
       "type": {
         "arguments": { "val": "any" },

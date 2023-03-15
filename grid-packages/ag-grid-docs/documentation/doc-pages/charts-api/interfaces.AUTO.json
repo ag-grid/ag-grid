@@ -3474,12 +3474,13 @@
     "docs": [null, null, null, null, null, null, null, null]
   },
   "LayoutStage": { "meta": { "isTypeAlias": true }, "type": "'before-series'" },
+  "AxisLabelLayout": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ baseline: 'hanging' | 'bottom' | 'middle'; align: 'start' | 'end' | 'center'; rotation: number; fractionDigits: number; }"
+  },
   "AxisLayout": {
     "meta": {},
-    "type": {
-      "rect": "BBox",
-      "label": "{ baseline: 'hanging' | 'bottom' | 'middle'; align: 'start' | 'end' | 'center'; }"
-    }
+    "type": { "rect": "BBox", "label": "AxisLabelLayout" }
   },
   "LayoutCompleteEvent": {
     "meta": {},
@@ -4153,6 +4154,7 @@
       "axisId": "string",
       "position": "AgCartesianAxisPosition",
       "direction": "'x' | 'y'",
+      "continuous": "boolean",
       "scaleConvert(val: any)": "number",
       "scaleInvert(position: number)": "any"
     }

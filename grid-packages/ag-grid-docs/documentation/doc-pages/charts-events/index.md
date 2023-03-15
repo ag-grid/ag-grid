@@ -150,4 +150,4 @@ All series event options have similar interface contracts. See the series-specif
 
 ## Next Up
 
-Continue to the next section to learn more about [overlays](/charts-overlays/).
+Continue to the next section to learn more about [backgrounds](/charts-background/).

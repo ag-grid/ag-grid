@@ -76,15 +76,6 @@ By default, the chart will resize automatically to fill the container element. I
 
 Make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container.
 
-
-## Background
-
-The chart's background can be managed via the `background.fill` and/or `background.image` properties. The `url` is required for the image. It is positioned in the center by default. `left`, `top`, `right` and `bottom` properties specify the distance between the respective borders of the image. `width` and `height` override the image size. Please see the API reference for more info.
-
-### API Reference
-
-<interface-documentation interfaceName='AgChartBackground' config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
-
 ## Next Up
 
 Continue to the next section to learn about the [legend and its layout](/charts-legend/).
