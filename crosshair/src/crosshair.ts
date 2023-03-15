@@ -178,9 +178,8 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     private getLabelHtml(value: string): string {
         const { label, axisLayout: { label: { fractionDigits = 0 } = {} } = {} } = this;
         const { renderer: labelRenderer } = label;
-        const content = value;
         const defaults: AgCrosshairLabelRendererResult = {
-            content,
+            text: value,
         };
 
         if (labelRenderer) {

@@ -49,8 +49,8 @@ declare module 'ag-charts-community' {
     }
 
     export interface AgCrosshairLabelRendererResult {
-        /** Content text for the label. */
-        content?: string;
+        /** Text for the label. */
+        text?: string;
         /** Label text color. */
         color?: CssColor;
         /** Label background color. */

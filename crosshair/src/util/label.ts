@@ -9,7 +9,7 @@ export function toLabelHtml(input: string | AgCrosshairLabelRendererResult, defa
     defaults = defaults || {};
 
     const {
-        content = defaults.content || '',
+        text = defaults.text || '',
         color = defaults.color,
         backgroundColor = undefined,
         opacity = defaults.opacity || 1,
@@ -18,9 +18,9 @@ export function toLabelHtml(input: string | AgCrosshairLabelRendererResult, defa
     let contentHtml;
 
     if (color) {
-        contentHtml = `<span class="${DEFAULT_LABEL_CLASS}-content" style="color: ${color}">${content}</span>`;
+        contentHtml = `<span class="${DEFAULT_LABEL_CLASS}-content" style="color: ${color}">${text}</span>`;
     } else {
-        contentHtml = `<span class="${DEFAULT_LABEL_CLASS}-content">${content}</span>`;
+        contentHtml = `<span class="${DEFAULT_LABEL_CLASS}-content">${text}</span>`;
     }
 
     let style = `opacity: ${opacity}`;
