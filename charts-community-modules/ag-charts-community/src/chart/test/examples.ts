@@ -28,7 +28,9 @@ export function loadExampleOptions(name: string, evalFn = 'options'): any {
         if (!fs.existsSync(srcFile)) return;
 
         if (fs.lstatSync(srcFile).mtime > fs.lstatSync(targetFile).mtime) {
-            throw new Error(`${targetFile} is stale; run 'npx lerna run generate-examples' to regenerate.`);
+            throw new Error(
+                `${targetFile} is stale; run 'npx lerna run generate-examples -- charts-overview' to regenerate.`
+            );
         }
     };
 
