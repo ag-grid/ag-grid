@@ -1,4 +1,4 @@
-import { Canvas, createCanvas } from 'canvas';
+import { Canvas, createCanvas, Image } from 'canvas';
 
 export class MockContext {
     realCreateElement: typeof document.createElement;
@@ -42,6 +42,8 @@ export function setup({ mockCtx = new MockContext(), width = 800, height = 600 }
             };
 
             return mockedElement;
+        } else if (element === 'img') {
+            return new Image();
         }
 
         return realCreateElement.call(document, element, options);

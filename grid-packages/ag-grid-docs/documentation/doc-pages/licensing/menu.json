@@ -1996,6 +1996,10 @@
                 "url": "/charts-events/"
               },
               {
+                "title": "Background",
+                "url": "/charts-background/"
+              },
+              {
                 "title": "Overlays",
                 "url": "/charts-overlays/"
               }

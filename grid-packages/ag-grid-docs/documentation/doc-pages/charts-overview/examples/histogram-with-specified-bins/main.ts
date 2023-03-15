@@ -6,8 +6,11 @@ const options: AgChartOptions = {
   autoSize: true,
   data: getData(),
   title: {
-    text: 'Vehicle weight distribution (USA 1987)',
+    text: 'Vehicle weight distribution',
     fontSize: 18,
+  },
+  subtitle: {
+    text: 'USA 1987'
   },
   footnote: {
     text: 'Source: UCI',
