@@ -98,6 +98,10 @@ const options: AgChartOptions = {
   legend: {
     enabled: false,
   },
+  seriesAreaPadding: {
+    left: 20,
+    bottom: 15,
+  },
 }
 
 var chart = AgChart.create(options)
