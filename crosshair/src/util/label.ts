@@ -1,7 +1,7 @@
-import { AgTooltipRendererResult } from "ag-charts-community";
-import { DEFAULT_TOOLTIP_CLASS } from "../crosshairTooltip";
+import { AgCrosshairLabelRendererResult } from 'ag-charts-community';
+import { DEFAULT_LABEL_CLASS } from '../crosshairLabel';
 
-export function toTooltipHtml(input: string | AgTooltipRendererResult, defaults?: AgTooltipRendererResult): string {
+export function toLabelHtml(input: string | AgCrosshairLabelRendererResult, defaults?: AgCrosshairLabelRendererResult): string {
     if (typeof input === 'string') {
         return input;
     }
@@ -18,9 +18,9 @@ export function toTooltipHtml(input: string | AgTooltipRendererResult, defaults?
     let contentHtml;
 
     if (color) {
-        contentHtml = `<span class="${DEFAULT_TOOLTIP_CLASS}-content" style="color: ${color}">${content}</span>`;
+        contentHtml = `<span class="${DEFAULT_LABEL_CLASS}-content" style="color: ${color}">${content}</span>`;
     } else {
-        contentHtml = `<span class="${DEFAULT_TOOLTIP_CLASS}-content">${content}</span>`;
+        contentHtml = `<span class="${DEFAULT_LABEL_CLASS}-content">${content}</span>`;
     }
 
     let style = `opacity: ${opacity}`;
@@ -28,7 +28,7 @@ export function toTooltipHtml(input: string | AgTooltipRendererResult, defaults?
         style += `; background-color: ${backgroundColor.toLowerCase()}`;
     }
 
-    return `<div class="${DEFAULT_TOOLTIP_CLASS}-wrapper" style="${style}">
+    return `<div class="${DEFAULT_LABEL_CLASS}-wrapper" style="${style}">
                 ${contentHtml}
             </div>`;
 }

@@ -1,14 +1,5 @@
-import {
-    _ModuleSupport,
-    CssColor,
-    PixelSize,
-    Opacity,
-    FontStyle,
-    FontWeight,
-    FontSize,
-    FontFamily,
-} from 'ag-charts-community';
-import { Corsshair } from './crosshair';
+import { _ModuleSupport, CssColor, PixelSize, Opacity } from 'ag-charts-community';
+import { Crosshair } from './crosshair';
 
 export const CROSSHAIR_MODULE: _ModuleSupport.AxisModule = {
     type: 'axis',
@@ -16,7 +7,7 @@ export const CROSSHAIR_MODULE: _ModuleSupport.AxisModule = {
     optionsKey: 'crosshair',
     initialiseModule: (ctx) => {
         return {
-            instance: new Corsshair(ctx),
+            instance: new Crosshair(ctx),
         };
     },
 };
@@ -39,30 +30,37 @@ declare module 'ag-charts-community' {
         lineDash?: PixelSize[];
         /** When true, the crosshair snaps to the highlighted data point. By default, this property is false and the crosshair is rendered at the mouse pointer position. */
         snap?: boolean;
-        /** The crosshair tooltip configuration */
-        tooltip?: AgCrosshairTooltip;
+        /** The crosshair label configuration */
+        label?: AgCrosshairLabel;
     }
 
-    export interface AgCrosshairTooltip {
-        /** Whether or not to show tooltips when the crosshair is visible. */
+    export interface AgCrosshairLabel {
+        /** Whether or not to show label when the crosshair is visible. */
         enabled?: boolean;
-        /** Function used to create the content for the tooltip. */
-        renderer?: (params: AgCrosshairTooltipRendererParams) => string | AgTooltipRendererResult;
+        /** Function used to create the content for the label. */
+        renderer?: (params: AgCrosshairLabelRendererParams) => string | AgCrosshairLabelRendererResult;
     }
 
-    export interface AgCrosshairTooltipRendererParams {
-        /** Axis value that the tooltip is being rendered for. */
+    export interface AgCrosshairLabelRendererParams {
+        /** Axis value that the label is being rendered for. */
         readonly value: any;
         /** If the axis value is a number, the fractional digits used to format the value. */
         readonly fractionDigits?: number;
     }
 
+    export interface AgCrosshairLabelRendererResult {
+        /** Content text for the label. */
+        content?: string;
+        /** Label text color. */
+        color?: CssColor;
+        /** Label background color. */
+        backgroundColor?: CssColor;
+        /** Opacity of the label. */
+        opacity?: Opacity;
+    }
+
     export interface AgBaseCartesiancrosshairOptions {
         /** Configuration for the chart navigator. */
         crosshair?: AgCrosshairOptions;
-    }
-
-    export interface AgTooltipRendererResult {
-        opacity?: number;
     }
 }

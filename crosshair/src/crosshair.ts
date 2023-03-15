@@ -1,11 +1,11 @@
-import { _Scene, _ModuleSupport, AgTooltipRendererResult } from 'ag-charts-community';
-import { CrosshairTooltip, TooltipMeta } from './crosshairTooltip';
-import { toTooltipHtml } from './util/tooltip';
+import { _Scene, _ModuleSupport, AgCrosshairLabelRendererResult } from 'ag-charts-community';
+import { CrosshairLabel, LabelMeta } from './crosshairLabel';
+import { toLabelHtml } from './util/label';
 
 const { Group, Line, BBox } = _Scene;
 const { Validate, NUMBER, BOOLEAN, OPT_COLOR_STRING, OPT_LINE_DASH, Layers } = _ModuleSupport;
 
-export class Corsshair extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
+export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
     public update(): void {}
 
     @Validate(OPT_COLOR_STRING)
@@ -26,7 +26,7 @@ export class Corsshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     @Validate(BOOLEAN)
     snap: boolean = false;
 
-    readonly tooltip: CrosshairTooltip;
+    readonly label: CrosshairLabel;
     private seriesRect: _Scene.BBox = new BBox(0, 0, 0, 0);
     private axisCtx: _ModuleSupport.AxisContext;
     private axisLayout?: _ModuleSupport.AxisLayout & {
@@ -54,7 +54,7 @@ export class Corsshair extends _ModuleSupport.BaseModuleInstance implements _Mod
 
         this.crosshairGroup.visible = false;
 
-        this.tooltip = new CrosshairTooltip(document, ctx.scene.canvas.container ?? document.body);
+        this.label = new CrosshairLabel(document, ctx.scene.canvas.container ?? document.body);
     }
 
     layout({ series: { rect, visible }, axes }: _ModuleSupport.LayoutCompleteEvent) {
@@ -138,10 +138,10 @@ export class Corsshair extends _ModuleSupport.BaseModuleInstance implements _Mod
                 value = this.getAxisValue(offsetY - seriesRect.y);
             }
 
-            this.showTooltip(offsetX, offsetY, value);
+            this.showLabel(offsetX, offsetY, value);
         } else {
             crosshairGroup.visible = false;
-            this.hideTooltip();
+            this.hideLabel();
         }
     }
 
@@ -166,64 +166,64 @@ export class Corsshair extends _ModuleSupport.BaseModuleInstance implements _Mod
                 value = this.getAxisValue(y);
             }
 
-            this.showTooltip(x + seriesRect.x, y + seriesRect.y, value);
+            this.showLabel(x + seriesRect.x, y + seriesRect.y, value);
         } else {
             crosshairGroup.visible = false;
-            this.hideTooltip();
+            this.hideLabel();
         }
     }
 
-    getTooltipHtml(value: string): string {
-        const { tooltip, axisLayout: { label: { fractionDigits = 0 } = {} } = {} } = this;
-        const { renderer: tooltipRenderer } = tooltip;
+    getLabelHtml(value: string): string {
+        const { label, axisLayout: { label: { fractionDigits = 0 } = {} } = {} } = this;
+        const { renderer: labelRenderer } = label;
         const content = value;
-        const defaults: AgTooltipRendererResult = {
+        const defaults: AgCrosshairLabelRendererResult = {
             content,
         };
 
-        if (tooltipRenderer) {
+        if (labelRenderer) {
             const params = {
                 value,
                 fractionDigits,
             };
-            if (tooltipRenderer) {
-                return toTooltipHtml(tooltipRenderer(params), defaults);
+            if (labelRenderer) {
+                return toLabelHtml(labelRenderer(params), defaults);
             }
         }
 
-        return toTooltipHtml(defaults);
+        return toLabelHtml(defaults);
     }
 
-    showTooltip(x: number, y: number, value: string) {
-        const { axisCtx, seriesRect, tooltip } = this;
+    showLabel(x: number, y: number, value: string) {
+        const { axisCtx, seriesRect, label } = this;
 
-        const html = this.getTooltipHtml(value);
-        tooltip.setTooltipHtml(html);
-        const tooltipBBox = tooltip.computeBBox();
+        const html = this.getLabelHtml(value);
+        label.setLabelHtml(html);
+        const labelBBox = label.computeBBox();
 
-        let tooltipMeta: TooltipMeta;
+        let labelMeta: LabelMeta;
         if (axisCtx.direction === 'x') {
-            const xOffset = -tooltipBBox.width / 2;
-            const yOffset = axisCtx.position === 'bottom' ? 0 : -tooltipBBox.height;
+            const xOffset = -labelBBox.width / 2;
+            const yOffset = axisCtx.position === 'bottom' ? 0 : -labelBBox.height;
             const fixedY = axisCtx.position === 'bottom' ? seriesRect.y + seriesRect.height : seriesRect.y;
-            tooltipMeta = {
+            labelMeta = {
                 x: x + xOffset,
                 y: fixedY + yOffset,
             };
         } else {
-            const yOffset = -tooltipBBox.height / 2;
-            const xOffset = axisCtx.position === 'right' ? 0 : -tooltipBBox.width;
+            const yOffset = -labelBBox.height / 2;
+            const xOffset = axisCtx.position === 'right' ? 0 : -labelBBox.width;
             const fixedX = axisCtx.position === 'right' ? seriesRect.x + seriesRect.width : seriesRect.x;
-            tooltipMeta = {
+            labelMeta = {
                 x: fixedX + xOffset,
                 y: y + yOffset,
             };
         }
 
-        tooltip.show(tooltipMeta);
+        label.show(labelMeta);
     }
 
-    hideTooltip() {
-        this.tooltip.toggle(false);
+    hideLabel() {
+        this.label.toggle(false);
     }
 }
