@@ -118,7 +118,7 @@ const MenuItem = ({ item, currentFramework, activeParentItems }) => {
                 <Link
                     to={convertToFrameworkUrl(item.url, currentFramework)}
                     activeClassName={styles.activeMenuItem}
-                    className={isActiveParent && styles.activeItemParent}
+                    className={isActiveParent ? styles.activeItemParent : undefined}
                 >
                     {title}
                 </Link>
@@ -126,7 +126,7 @@ const MenuItem = ({ item, currentFramework, activeParentItems }) => {
                 <span
                     className={classnames(
                         styles.groupLabel,
-                        isActiveParent && styles.activeItemParent,
+                        isActiveParent ? styles.activeItemParent : undefined,
                         'text-secondary'
                     )}
                 >
@@ -195,7 +195,7 @@ const Menu = ({ currentFramework, currentPage }) => {
                     const { title } = item;
                     const isActive = title === activeSection;
 
-                    const toggleActive = () => {
+                    const toggleActive = (event) => {
                         setActiveSection(isActive ? null : title);
                     };
 

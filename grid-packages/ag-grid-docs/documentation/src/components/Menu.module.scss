@@ -53,7 +53,6 @@
         --text-color: var(--link-color) !important; // !important for .ag-styles specificity
     }
 
-    &:focus,
     &:focus-visible {
         border-color: var(--bright-blue-gray) !important; // !important for .ag-styles specificity
     }
@@ -63,7 +62,6 @@
     }
 
     &.active {
-        border-color: transparent !important; // !important for .ag-styles specificity
         transition: color $default-transition-timing;
     }
 }
@@ -149,7 +147,6 @@
         }
     }
 
-    &:focus,
     &:focus-visible {
         border-color: var(--bright-blue-gray) !important; // !important for .ag-styles specificity
 
@@ -165,7 +162,6 @@
     &.activeMenuItem {
         pointer-events: none;
         color: var(--text-color) !important; // !important for .ag-styles specificity
-        border-color: transparent !important; // !important for .ag-styles specificity
 
         &::before {
             background-color: var(--text-color);
