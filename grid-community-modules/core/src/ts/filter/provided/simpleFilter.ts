@@ -6,7 +6,7 @@ import { AgSelect } from '../../widgets/agSelect';
 import { AgRadioButton } from '../../widgets/agRadioButton';
 import { areEqual } from '../../utils/array';
 import { setDisplayed, setDisabled, removeFromParent } from '../../utils/dom';
-import { IFilterLocaleText } from '../filterLocaleText';
+import { DEFAULT_FILTER_LOCALE_TEXT, IFilterLocaleText } from '../filterLocaleText';
 import { AgInputTextField } from '../../widgets/agInputTextField';
 import { Component } from '../../widgets/component';
 import { AgAbstractInputField } from '../../widgets/agAbstractInputField';
@@ -145,6 +145,7 @@ export abstract class SimpleFilterModelFormatter {
             return null;
         }
         const isCombined = (model as any).operator != null;
+        const translate = this.localeService.getLocaleTextFunc();
         if (isCombined) {
             const combinedModel = model as ICombinedSimpleModel<ISimpleFilterModel>;
             let { conditions } = combinedModel;
@@ -153,9 +154,9 @@ export abstract class SimpleFilterModelFormatter {
                 conditions = [condition1, condition2];
             }
             const customOptions = conditions.map(condition => this.getModelAsString(condition));
-            return customOptions.join(` ${combinedModel.operator} `);
+            const joinOperatorTranslateKey = combinedModel.operator === 'AND' ? 'andCondition' : 'orCondition';
+            return customOptions.join(` ${translate(joinOperatorTranslateKey, DEFAULT_FILTER_LOCALE_TEXT[joinOperatorTranslateKey])} `);
         } else if (model.type === SimpleFilter.BLANK || model.type === SimpleFilter.NOT_BLANK) {
-            const translate = this.localeService.getLocaleTextFunc();
             return translate(model.type, model.type);
         } else {
             const condition = model as ISimpleFilterModel;
@@ -165,7 +166,7 @@ export abstract class SimpleFilterModelFormatter {
             // of displaying the `from` value, as it wouldn't be relevant
             const { displayKey, displayName, numberOfInputs } = customOption || {};
             if (displayKey && displayName && numberOfInputs === 0) {
-                this.localeService.getLocaleTextFunc()(displayKey, displayName);
+                translate(displayKey, displayName);
                 return displayName;
             }
             return this.conditionToString(condition, customOption);
