@@ -1,7 +1,7 @@
 import { _ModuleSupport, CssColor, PixelSize, Opacity } from 'ag-charts-community';
 import { Crosshair } from './crosshair';
 
-export const CROSSHAIR_MODULE: _ModuleSupport.AxisModule = {
+export const CrosshairModule: _ModuleSupport.AxisModule = {
     type: 'axis',
     chartTypes: ['cartesian'],
     optionsKey: 'crosshair',

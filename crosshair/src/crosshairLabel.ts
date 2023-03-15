@@ -1,4 +1,9 @@
-import { AgCrosshairLabelRendererParams, AgCrosshairLabelRendererResult, _ModuleSupport, _Scene } from 'ag-charts-community';
+import {
+    AgCrosshairLabelRendererParams,
+    AgCrosshairLabelRendererResult,
+    _ModuleSupport,
+    _Scene,
+} from 'ag-charts-community';
 
 export const defaultLabelCss = `
 .ag-crosshair-label {
