@@ -1579,6 +1579,44 @@
     "fill": {
       "description": "/** Colour of the chart background. */",
       "type": { "returnType": "CssColor", "optional": true }
+    },
+    "image": {
+      "description": "/** Background image. May be combined with fill colour. */",
+      "type": { "returnType": "AgChartBackgroundImage", "optional": true }
+    }
+  },
+  "AgChartBackgroundImage": {
+    "url": {
+      "description": "/** URL of the image */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "left": {
+      "description": "/** Distance from the left border of the chart to the left border of the image. If neither left nor right specified, the image is centred horizontally. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "top": {
+      "description": "/** Distance from the top border of the chart to the top border of the image. If neither top nor bottom specified, the image is centred vertically. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "right": {
+      "description": "/** Distance from the right border of the chart to the right border of the image. If neither left nor right specified, the image is centred horizontally. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "bottom": {
+      "description": "/** Distance from the bottom border of the chart to the bottom border of the image. If neither top nor bottom specified, the image is centred vertically. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "width": {
+      "description": "/** Width of the image. If both left and right specified, width is ignored. If width is not determined but height does,\n     * width computed to preserve the original width/height ratio. Otherwise the original width is used. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "height": {
+      "description": "/** Height of the image. If both top and bottom specified, height is ignored. If height is not determined but width does,\n     * height computed to preserve the original width/height ratio. Otherwise the original height is used. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "opacity": {
+      "description": "/** Opacity of the image. */",
+      "type": { "returnType": "Opacity", "optional": true }
     }
   },
   "AgChartEvent": {
