@@ -1,7 +1,6 @@
 import { AgChart, AgChartOptions } from 'ag-charts-community';
 import { getData } from "./data";
 
-const year = new Date().getFullYear();
 const options: AgChartOptions = {
   container: document.getElementById('myChart'),
   autoSize: true,
@@ -9,10 +8,10 @@ const options: AgChartOptions = {
     return d.magnitude > 4
   }),
   title: {
-    text: `Worldwide Earthquakes (first week of February ${year - 1})`,
+    text: 'Worldwide Earthquakes',
     fontSize: 18,
   },
-  subtitle: {
+  footnote: {
     text: 'Source: US Geological Survey',
   },
   series: [

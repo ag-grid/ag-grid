@@ -23,7 +23,7 @@ const options: AgChartOptions = {
     text: "Regular Internet Users",
     fontSize: 18,
   },
-  subtitle: {
+  footnote: {
     text: "Source: Office for National Statistics",
   },
   series: [

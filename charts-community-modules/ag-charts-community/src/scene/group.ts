@@ -4,7 +4,6 @@ import { HdpiCanvas } from '../canvas/hdpiCanvas';
 import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
 import { compoundAscending, ascendingStringNumberUndefined } from '../util/compare';
 import { Logger } from '../util/logger';
-import { Matrix } from './matrix';
 
 type OffscreenCanvasRenderingContext2D = any;
 
@@ -217,7 +216,7 @@ export class Group extends Node {
             this.clipCtx(ctx, x, y, width, height);
 
             // clipBBox is in the canvas coordinate space, when we hit a layer we apply the new clipping at which point there are no transforms in play
-            clipBBox = Matrix.fromContext(ctx).transformBBox(clipRect);
+            clipBBox = this.matrix.inverse().transformBBox(clipRect);
         }
 
         if (dirtyZIndex) {
@@ -264,6 +263,9 @@ export class Group extends Node {
             if (stats) stats.layersRendered++;
             ctx.restore();
             layer.snapshot();
+
+            // Check for save/restore depth of zero!
+            layer.context.verifyDepthZero?.();
         }
 
         if (name && consoleLog && stats) {

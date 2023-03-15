@@ -329,7 +329,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         }
 
         if (this.colDef.cellEditor === 'agRichSelect' || this.colDef.cellEditor === 'agRichSelectCellEditor') {
-            ModuleRegistry.assertRegistered(ModuleNames.RichSelectModule, this.colDef.cellEditor)
+            ModuleRegistry.assertRegistered(ModuleNames.RichSelectModule, this.colDef.cellEditor);
         }
 
         if (this.gridOptionsService.isTreeData()) {
@@ -340,9 +340,17 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
             }
         }
 
-        exists(colDefAny['menuTabs']) && ModuleRegistry.assertRegistered(ModuleNames.MenuModule, 'menuTabs');
-        exists(colDefAny['columnsMenuParams']) && ModuleRegistry.assertRegistered(ModuleNames.MenuModule, 'columnsMenuParams');
-        exists(colDefAny['columnsMenuParams']) && ModuleRegistry.assertRegistered(ModuleNames.ColumnsToolPanelModule, 'columnsMenuParams');
+        if (exists(colDefAny.menuTabs)) {
+            ModuleRegistry.assertRegistered(ModuleNames.MenuModule, 'menuTabs');
+        }
+
+        if (exists(colDefAny.columnsMenuParams)) {
+            ModuleRegistry.assertRegistered(ModuleNames.MenuModule, 'columnsMenuParams');
+        }
+
+        if (exists(colDefAny.columnsMenuParams)) {
+            ModuleRegistry.assertRegistered(ModuleNames.ColumnsToolPanelModule, 'columnsMenuParams');
+        }
 
         if (exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
             warnOnce('AG Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck');
@@ -353,7 +361,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         }
 
         if (exists(colDefAny.columnGroupShow) && colDefAny.columnGroupShow !== 'closed' && colDefAny.columnGroupShow !== 'open') {
-            warnOnce(`AG Grid: '${colDefAny.columnGroupShow}' is not valid for columnGroupShow. Valid values are 'open', 'closed'`, 'columnGroupShow_invalid')
+            warnOnce(`AG Grid: '${colDefAny.columnGroupShow}' is not valid for columnGroupShow. Valid values are 'open', 'closed', 'undefined'`, 'columnGroupShow_invalid');
         }
     }
 
@@ -625,6 +633,10 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
 
     public isVisible(): boolean {
         return this.visible;
+    }
+
+    public isSpanHeaderHeight(): boolean {
+        return !!this.getColDef().spanHeaderHeight;
     }
 
     /** Returns the column definition for this column.

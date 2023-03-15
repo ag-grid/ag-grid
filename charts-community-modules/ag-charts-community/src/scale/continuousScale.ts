@@ -22,10 +22,13 @@ export abstract class ContinuousScale<D extends number | Date, I = number> imple
     }
 
     fromDomain(d: D): number {
-        if (d instanceof Date) {
+        if (typeof d === 'number') {
+            return d;
+        } else if (d instanceof Date) {
             return d.getTime();
         }
-        return d as number;
+
+        return NaN;
     }
 
     abstract toDomain(d: number): D;
@@ -84,17 +87,18 @@ export abstract class ContinuousScale<D extends number | Date, I = number> imple
         const { range } = this;
         const [r0, r1] = range;
 
+        const isReversed = r0 > r1;
+
+        const rMin = isReversed ? r1 : r0;
+        const rMax = isReversed ? r0 : r1;
+
         let d: any;
-        if (x < r0) {
-            d = d0;
-        } else if (x > r1) {
-            d = d1;
+        if (x < rMin) {
+            return isReversed ? d1 : d0;
+        } else if (x > rMax) {
+            return isReversed ? d0 : d1;
         } else if (r0 === r1) {
             d = this.toDomain((this.fromDomain(d0) + this.fromDomain(d1)) / 2);
-        } else if (x === r0) {
-            d = d0;
-        } else if (x === r1) {
-            d = d1;
         } else {
             d = this.toDomain(
                 this.fromDomain(d0) + ((x - r0) / (r1 - r0)) * (this.fromDomain(d1) - this.fromDomain(d0))

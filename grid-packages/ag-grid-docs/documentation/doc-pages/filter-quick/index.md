@@ -68,7 +68,7 @@ When in use, the Quick Filter cache text can be manually reset in one of the fol
 - Each Row Node has a `resetQuickFilterAggregateText()` method on it, which can be called to reset the cache text.
 - `api.resetQuickFilter()` will reset the cache text on every Row Node.
 
-[Updating Data](/data-update/), [Cell Editing](/cell-editing/) and [Updating Column Definitions](/column-updating-definitions/) will automatically reset the cache text on any affected Row Nodes.
+[Updating Data](/data-update/), [Cell Editing](/cell-editing/), [Excluding/Including Hidden Columns](#exclude-hidden-columns) from the Quick Filter, and [Updating Column Definitions](/column-updating-definitions/) will automatically reset the cache text on any affected Row Nodes.
 
 ## Exclude Hidden Columns
 

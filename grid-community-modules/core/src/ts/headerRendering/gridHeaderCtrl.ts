@@ -114,7 +114,7 @@ export class GridHeaderCtrl extends BeanStub {
 
     private onDisplayedColumnsChanged(): void {
         const columns = this.columnModel.getAllDisplayedColumns();
-        const shouldAllowOverflow = columns.some(col => col.getColDef().spanHeaderHeight);
+        const shouldAllowOverflow = columns.some(col => col.isSpanHeaderHeight());
 
         this.comp.addOrRemoveCssClass('ag-header-allow-overflow', shouldAllowOverflow);
     }

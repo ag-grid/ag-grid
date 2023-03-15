@@ -247,6 +247,9 @@
     }
   },
   "isVisible": { "type": { "arguments": {}, "returnType": "boolean" } },
+  "isSpanHeaderHeight": {
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
   "getColDef": {
     "description": "/** Returns the column definition for this column.\n     * The column definition will be the result of merging the application provided column definition with any provided defaults\n     * (e.g. `defaultColDef` grid option, or column types.\n     *\n     * Equivalent: `getDefinition` */",
     "type": { "arguments": {}, "returnType": "ColDef" }

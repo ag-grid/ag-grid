@@ -54,15 +54,30 @@ The following example demonstrates `groupSelectsChildren` with the SSRM. Note th
 
 - Selecting the `United States` group selects all of its children.
 - Deselecting `United States` &rarr; `2004` also deselects all of its children, and puts the `United States` row in an indeterminate state.
+- Changing the row group columns resets the selection state.
 
 <grid-example title='Group Selects Children Example' name='group-selects-children' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
 [[note]]
 | When using `groupSelectsChildren`, you should **not** use the api functions `getSelectedNodes()` or `getSelectedRows()`. See the API section for suggested alternatives.
 
+### Transactions
+
+When adding a new row via transaction, the new row will be treated as if it conforms to the parents selection. Therefore, if the parent row was selected the new row will be treated as selected upon creation. For indeterminate groups, this will follow the last non-indeterminate state. Note the following:
+
+- When clicking the `Add new Aggressive` button, the new row is unselected
+- After selecting the `Aggressive` group, new rows created by the `Add new Aggressive` button will be selected.
+- After toggling one of the child rows of the `Aggressive` group, new rows follow the groups previous selection state.
+
+<grid-example title='Transactions Example' name='group-selects-children-transactions' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
+
 ## Selection API
 
-The below API functions exist for the Server-Side Row Model when using selection. Unlike the Client-Side Row Model, they provide and retrieve a set of rules to determine the selected rows. This is because the grid is not necessarily aware of all of the rows in the grid, and so cannot work exclusively with IDs.
+The following API functions exist for the Server-Side Row Model when using [Row Selection](/row-selection/#grid-selection-api). These can be used to get the currently selected rows and nodes if all of the selected rows have been loaded by the grid. These cannot be used while using `groupSelectsChildren` or when any select all functionality is required.
+
+<api-documentation source='grid-api/api.json' section='selection' names='["getSelectedNodes", "getSelectedRows"]' ></api-documentation>
+
+When using selection where all selected rows may not have been loaded, it is instead advised to use `api.getServerSideSelectionState` and `api.setServerSideSelectionState`, as these functions can be used to identify selected rows without having ever loaded the rows.
 
 <api-documentation source='grid-api/api.json' section='serverSideRowModel' names='["getServerSideSelectionState", "setServerSideSelectionState"]' ></api-documentation>
 

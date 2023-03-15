@@ -147,6 +147,7 @@
       "height?": "PixelSize",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
+      "seriesPadding?": "AgChartPaddingOptions",
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
@@ -154,6 +155,7 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
+      "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
       "overlays?": "AgChartOverlaysOptions"
     },
@@ -167,6 +169,7 @@
       "height?": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "padding?": "/** Configuration for the padding shown around the chart. */",
+      "seriesPadding?": "/** Configuration for the padding around the series. */",
       "background?": "/** Configuration for the background shown behind the chart. */",
       "title?": "/** Configuration for the title shown at the top of the chart. */",
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
@@ -174,6 +177,7 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
+      "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "overlays?": "/** HTML overlays */"
     }
@@ -188,6 +192,7 @@
       "height?": "PixelSize",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
+      "seriesPadding?": "AgChartPaddingOptions",
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
@@ -195,6 +200,7 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
+      "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
       "overlays?": "AgChartOverlaysOptions"
     },
@@ -206,6 +212,7 @@
       "height?": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "padding?": "/** Configuration for the padding shown around the chart. */",
+      "seriesPadding?": "/** Configuration for the padding around the series. */",
       "background?": "/** Configuration for the background shown behind the chart. */",
       "title?": "/** Configuration for the title shown at the top of the chart. */",
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
@@ -213,6 +220,7 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
+      "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "overlays?": "/** HTML overlays */"
     }
@@ -227,6 +235,7 @@
       "height?": "PixelSize",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
+      "seriesPadding?": "AgChartPaddingOptions",
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
@@ -234,6 +243,7 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
+      "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
       "overlays?": "AgChartOverlaysOptions"
     },
@@ -245,6 +255,7 @@
       "height?": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "padding?": "/** Configuration for the padding shown around the chart. */",
+      "seriesPadding?": "/** Configuration for the padding around the series. */",
       "background?": "/** Configuration for the background shown behind the chart. */",
       "title?": "/** Configuration for the title shown at the top of the chart. */",
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
@@ -252,6 +263,7 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
+      "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "overlays?": "/** HTML overlays */"
     }
@@ -617,8 +629,9 @@
   },
   "AgChartOverlayOptions": {
     "meta": {},
-    "type": { "renderer?": "() => string" },
+    "type": { "text?": "string", "renderer?": "() => string" },
     "docs": {
+      "text?": "/** Text to render in the overlay. */",
       "renderer?": "/** A function for generating HTML string for overlay content. */"
     }
   },
@@ -991,7 +1004,7 @@
     "type": {
       "enabled?": "boolean",
       "class?": "string",
-      "tracking?": "boolean | undefined",
+      "tracking?": "boolean",
       "range?": "AgChartInteractionRange",
       "delay?": "number"
     },
@@ -1140,6 +1153,17 @@
       "doubleClick?": "/** The listener to call to signify a double click on the chart by the user. */"
     }
   },
+  "AgChartHighlightRange": {
+    "meta": { "isTypeAlias": true },
+    "type": "'tooltip' | 'node'"
+  },
+  "AgChartHighlightOptions": {
+    "meta": {},
+    "type": { "range?": "AgChartHighlightRange" },
+    "docs": {
+      "range?": "/** By default, nodes will be highlighted when the cursor is within the `tooltip.range`. Set this to `'node'` to highlight nodes when within the `series[].nodeClickRange`. */"
+    }
+  },
   "AgBaseChartOptions": {
     "meta": { "doc": "/** Configuration common to all charts.  */" },
     "type": {
@@ -1149,6 +1173,7 @@
       "height?": "PixelSize",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
+      "seriesPadding?": "AgChartPaddingOptions",
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
@@ -1156,6 +1181,7 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
+      "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
       "overlays?": "AgChartOverlaysOptions"
     },
@@ -1166,6 +1192,7 @@
       "height?": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "padding?": "/** Configuration for the padding shown around the chart. */",
+      "seriesPadding?": "/** Configuration for the padding around the series. */",
       "background?": "/** Configuration for the background shown behind the chart. */",
       "title?": "/** Configuration for the title shown at the top of the chart. */",
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
@@ -1173,6 +1200,7 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
+      "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "overlays?": "/** HTML overlays */"
     }
@@ -2101,7 +2129,7 @@
       "nodeClickRange?": "AgChartInteractionRange"
     },
     "docs": {
-      "type?": "/** Configuration for the treemap series.  */",
+      "type?": "/** Configuration for the scatter series.  */",
       "marker?": "/** Configuration for the markers used in the series.  */",
       "label?": "/** Configuration for the labels shown on top of data points.  */",
       "xKey?": "/** The key to use to retrieve x-values from the data.  */",
@@ -2232,7 +2260,8 @@
       "highlighted": "boolean",
       "xKey": "string",
       "yKey": "string",
-      "seriesId": "string"
+      "seriesId": "string",
+      "stackGroup?": "string"
     }
   },
   "AgBarSeriesFormat": {
@@ -2243,10 +2272,38 @@
       "strokeWidth?": "PixelSize"
     }
   },
+  "AgBarSeriesTooltipRendererParams": {
+    "meta": {},
+    "type": {
+      "stackGroup?": "string",
+      "xKey": "string",
+      "xValue?": "any",
+      "xName?": "string",
+      "yKey": "string",
+      "yValue?": "any",
+      "yName?": "string",
+      "datum": "any",
+      "title?": "string",
+      "color?": "CssColor",
+      "seriesId": "string"
+    },
+    "docs": {
+      "xKey": "/** xKey as specified on series options. */",
+      "xValue?": "/** xValue as read from series data via the xKey property. */",
+      "xName?": "/** xName as specified on series options. */",
+      "yKey": "/** yKey as specified on series options. */",
+      "yValue?": "/** yValue as read from series data via the yKey property. */",
+      "yName?": "/** yName as specified on series options. */",
+      "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
+      "title?": "/** Series title or yName depending on series configuration. */",
+      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
+      "seriesId": "/** The ID of the series. */"
+    }
+  },
   "AgBarSeriesTooltip": {
     "meta": {},
     "type": {
-      "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+      "renderer?": "(params: AgBarSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "enabled?": "boolean"
     },
     "docs": {
@@ -2293,7 +2350,7 @@
     "docs": {
       "grouped?": "/** Whether to show different y-values as separate bars (grouped) or not (stacked). */",
       "stacked?": "/** An option indicating if the bars/columns should be stacked. */",
-      "stackGroup?": "/** An ID to be used to make stacked items appear in separate groups. */",
+      "stackGroup?": "/** An ID to be used to group stacked items. */",
       "normalizedTo?": "/** The number to normalise the bar stacks to. Has no effect when `grouped` is `true`. For example, if `normalizedTo` is set to `100`, the bar stacks will all be scaled proportionally so that each of their totals is 100. */",
       "xKey?": "/** The key to use to retrieve x-values from the data. */",
       "yKey?": "/** The keys to use to retrieve y-values from the data. */",
@@ -3040,6 +3097,7 @@
       "height?": "PixelSize",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
+      "seriesPadding?": "AgChartPaddingOptions",
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
@@ -3047,6 +3105,7 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
+      "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
       "overlays?": "AgChartOverlaysOptions"
     },
@@ -3061,6 +3120,7 @@
       "height?": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "padding?": "/** Configuration for the padding shown around the chart. */",
+      "seriesPadding?": "/** Configuration for the padding around the series. */",
       "background?": "/** Configuration for the background shown behind the chart. */",
       "title?": "/** Configuration for the title shown at the top of the chart. */",
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
@@ -3068,6 +3128,7 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
+      "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "overlays?": "/** HTML overlays */"
     }
@@ -3083,6 +3144,7 @@
       "height?": "PixelSize",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
+      "seriesPadding?": "AgChartPaddingOptions",
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
@@ -3090,6 +3152,7 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
+      "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
       "overlays?": "AgChartOverlaysOptions"
     },
@@ -3102,6 +3165,7 @@
       "height?": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "padding?": "/** Configuration for the padding shown around the chart. */",
+      "seriesPadding?": "/** Configuration for the padding around the series. */",
       "background?": "/** Configuration for the background shown behind the chart. */",
       "title?": "/** Configuration for the title shown at the top of the chart. */",
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
@@ -3109,6 +3173,7 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
+      "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "overlays?": "/** HTML overlays */"
     }
@@ -3124,6 +3189,7 @@
       "height?": "PixelSize",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
+      "seriesPadding?": "AgChartPaddingOptions",
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
@@ -3131,6 +3197,7 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
+      "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
       "overlays?": "AgChartOverlaysOptions"
     },
@@ -3143,6 +3210,7 @@
       "height?": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "padding?": "/** Configuration for the padding shown around the chart. */",
+      "seriesPadding?": "/** Configuration for the padding around the series. */",
       "background?": "/** Configuration for the background shown behind the chart. */",
       "title?": "/** Configuration for the title shown at the top of the chart. */",
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
@@ -3150,6 +3218,7 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
+      "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "overlays?": "/** HTML overlays */"
     }
@@ -3165,14 +3234,6 @@
       "getOptions()": "/** Get the `AgChartOptions` representing the current chart configuration. */",
       "destroy()": "/** Destroy the chart instance and any allocated resources to support its rendering. */"
     }
-  },
-  "ChartType": {
-    "meta": { "isTypeAlias": true },
-    "type": "CartesianChart | PolarChart | HierarchyChart"
-  },
-  "ChartOptionType": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T extends ChartType"] },
-    "type": "T extends CartesianChart ? AgCartesianChartOptions : T extends PolarChart ? AgPolarChartOptions : T extends HierarchyChart ? AgHierarchyChartOptions : never"
   },
   "SeriesOptionType": {
     "meta": { "isTypeAlias": true, "typeParams": ["T extends Series"] },
@@ -3245,6 +3306,10 @@
   "TransferableResources": {
     "meta": { "isTypeAlias": true },
     "type": "{ container?: OptionalHTMLElement; scene: Scene; element: HTMLElement; }"
+  },
+  "PickedNode": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ series: Series<any>; datum: SeriesNodeDatum; distance: number; }"
   },
   "BoundSeries": {
     "meta": {},
@@ -3402,12 +3467,13 @@
     "docs": [null, null, null, null, null, null, null, null]
   },
   "LayoutStage": { "meta": { "isTypeAlias": true }, "type": "'before-series'" },
+  "AxisLabelLayout": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ baseline: 'hanging' | 'bottom' | 'middle'; align: 'start' | 'end' | 'center'; rotation: number; fractionDigits: number; }"
+  },
   "AxisLayout": {
     "meta": {},
-    "type": {
-      "rect": "BBox",
-      "label": "{ baseline: 'hanging' | 'bottom' | 'middle'; align: 'start' | 'end' | 'center'; }"
-    }
+    "type": { "rect": "BBox", "label": "AxisLabelLayout" }
   },
   "LayoutCompleteEvent": {
     "meta": {},
@@ -4081,6 +4147,7 @@
       "axisId": "string",
       "position": "AgCartesianAxisPosition",
       "direction": "'x' | 'y'",
+      "continuous": "boolean",
       "scaleConvert(val: any)": "number",
       "scaleInvert(position: number)": "any"
     }

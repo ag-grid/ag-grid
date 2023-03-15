@@ -1,8 +1,6 @@
 import {
     AgChartOptions,
     AgCartesianChartOptions,
-    AgPolarChartOptions,
-    AgHierarchyChartOptions,
     AgCartesianAxisOptions,
     AgLineSeriesOptions,
     AgBarSeriesOptions,
@@ -54,16 +52,6 @@ import { Logger } from '../util/logger';
 // Deliberately imported via `module-support` so that internal module registration happens.
 import { REGISTERED_MODULES } from '../module-support';
 
-type ChartType = CartesianChart | PolarChart | HierarchyChart;
-
-type ChartOptionType<T extends ChartType> = T extends CartesianChart
-    ? AgCartesianChartOptions
-    : T extends PolarChart
-    ? AgPolarChartOptions
-    : T extends HierarchyChart
-    ? AgHierarchyChartOptions
-    : never;
-
 type SeriesOptionType<T extends Series> = T extends LineSeries
     ? AgLineSeriesOptions
     : T extends BarSeries
@@ -94,7 +82,7 @@ export interface ImageDataUrlOptions {
     fileFormat?: string;
 }
 
-function chartType<T extends ChartType>(options: ChartOptionType<T>): 'cartesian' | 'polar' | 'hierarchy' {
+function chartType(options: any): 'cartesian' | 'polar' | 'hierarchy' {
     if (isAgCartesianChartOptions(options)) {
         return 'cartesian';
     } else if (isAgPolarChartOptions(options)) {
@@ -103,7 +91,7 @@ function chartType<T extends ChartType>(options: ChartOptionType<T>): 'cartesian
         return 'hierarchy';
     }
 
-    throw new Error(`AG Chart - unknown type of chart for options with type: ${options!.type}`);
+    throw new Error(`AG Chart - unknown type of chart for options with type: ${options.type}`);
 }
 
 type DeepPartialDepth = [never, 0, 1, 2, 3, 4, 5, 6]; // DeepPartial recursion limit type.

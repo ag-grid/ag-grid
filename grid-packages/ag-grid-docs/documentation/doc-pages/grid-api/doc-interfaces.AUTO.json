@@ -19882,6 +19882,9 @@
         "optional": true
       }
     },
+    "shouldSetMaxHeight": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "name": {
       "description": "/** Name of the menu item */",
       "type": { "returnType": "string", "optional": false }

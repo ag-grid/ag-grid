@@ -19,7 +19,7 @@ const options: AgChartOptions = {
     text: "Cattle Holdings and Beef Exports (UK)",
     fontSize: 18,
   },
-  subtitle: {
+  footnote: {
     text:
       "Source: Department for Environment, Food & Rural Affairs; Agriculture and Horticulture Development Board",
   },

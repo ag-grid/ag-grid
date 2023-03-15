@@ -129,9 +129,10 @@ export class PopupService extends BeanStub {
         return this.gridCtrl.getGui();
     }
 
-    public positionPopupForMenu(params: { eventSource: HTMLElement, ePopup: HTMLElement; }): void {
+    public positionPopupForMenu(params: { eventSource: HTMLElement; ePopup: HTMLElement; shouldSetMaxHeight?: boolean; }): void {
         const sourceRect = params.eventSource.getBoundingClientRect();
         const parentRect = this.getParentRect();
+        this.checkClearMaxHeight(params.ePopup, params.shouldSetMaxHeight);
         const y = this.keepXYWithinBounds(params.ePopup, sourceRect.top - parentRect.top, DIRECTION.vertical);
 
         const minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth : 200;
@@ -165,6 +166,7 @@ export class PopupService extends BeanStub {
 
         params.ePopup.style.left = `${x}px`;
         params.ePopup.style.top = `${y}px`;
+        this.checkSetMaxHeight(params.ePopup, y, params.shouldSetMaxHeight);
 
         function xRightPosition(): number {
             return sourceRect.right - parentRect.left - 2;
@@ -272,10 +274,7 @@ export class PopupService extends BeanStub {
             if (nudgeX) { x += nudgeX; }
             if (nudgeY) { y += nudgeY; }
 
-            if (shouldSetMaxHeight) {
-                // positionPopup can be called multiple times, so need to clear before bounds check
-                ePopup.style.removeProperty('max-height');
-            }
+            this.checkClearMaxHeight(ePopup, shouldSetMaxHeight);
 
             // if popup is overflowing to the bottom, move it up
             if (keepWithinBounds) {
@@ -285,10 +284,7 @@ export class PopupService extends BeanStub {
 
             ePopup.style.left = `${x}px`;
             ePopup.style.top = `${y}px`;
-            if (shouldSetMaxHeight && getComputedStyle(ePopup).maxHeight === '100%') {
-                // max height could be overridden, so only set if not the default (100%)
-                ePopup.style.maxHeight = `calc(100% - ${y}px)`;
-            }
+            this.checkSetMaxHeight(ePopup, y, shouldSetMaxHeight);
 
             if (params.postProcessCallback) {
                 params.postProcessCallback();
@@ -749,5 +745,19 @@ export class PopupService extends BeanStub {
         };
 
         this.eventService.dispatchEvent(params);
+    }
+
+    private checkClearMaxHeight(ePopup: HTMLElement, shouldSetMaxHeight?: boolean): void {
+        if (shouldSetMaxHeight) {
+            // positionPopup can be called multiple times, so need to clear before bounds check
+            ePopup.style.removeProperty('max-height');
+        }
+    }
+
+    private checkSetMaxHeight(ePopup: HTMLElement, y: number, shouldSetMaxHeight?: boolean): void {
+        if (shouldSetMaxHeight && getComputedStyle(ePopup).maxHeight === '100%') {
+            // max height could be overridden, so only set if the default (100%)
+            ePopup.style.maxHeight = `calc(100% - ${y}px)`;
+        }
     }
 }

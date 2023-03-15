@@ -205,6 +205,10 @@
       "description": "/** Configuration for the padding shown around the chart. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
+    "seriesPadding": {
+      "description": "/** Configuration for the padding around the series. */",
+      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
+    },
     "background": {
       "description": "/** Configuration for the background shown behind the chart. */",
       "type": { "returnType": "AgChartBackground", "optional": true }
@@ -232,6 +236,10 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
+    },
+    "highlight": {
+      "description": "/** Configuration for the chart highlighting. */",
+      "type": { "returnType": "AgChartHighlightOptions", "optional": true }
     },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -272,6 +280,10 @@
       "description": "/** Configuration for the padding shown around the chart. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
+    "seriesPadding": {
+      "description": "/** Configuration for the padding around the series. */",
+      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
+    },
     "background": {
       "description": "/** Configuration for the background shown behind the chart. */",
       "type": { "returnType": "AgChartBackground", "optional": true }
@@ -299,6 +311,10 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
+    },
+    "highlight": {
+      "description": "/** Configuration for the chart highlighting. */",
+      "type": { "returnType": "AgChartHighlightOptions", "optional": true }
     },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -339,6 +355,10 @@
       "description": "/** Configuration for the padding shown around the chart. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
+    "seriesPadding": {
+      "description": "/** Configuration for the padding around the series. */",
+      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
+    },
     "background": {
       "description": "/** Configuration for the background shown behind the chart. */",
       "type": { "returnType": "AgChartBackground", "optional": true }
@@ -366,6 +386,10 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
+    },
+    "highlight": {
+      "description": "/** Configuration for the chart highlighting. */",
+      "type": { "returnType": "AgChartHighlightOptions", "optional": true }
     },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -1039,6 +1063,10 @@
     }
   },
   "AgChartOverlayOptions": {
+    "text": {
+      "description": "/** Text to render in the overlay. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "renderer": {
       "description": "/** A function for generating HTML string for overlay content. */",
       "type": { "arguments": {}, "returnType": "string", "optional": true }
@@ -1532,7 +1560,7 @@
     },
     "tracking": {
       "description": "/** @deprecated since v7.2.0 (ag-grid v29.2.0) If true, for series with markers the tooltip will be shown to the closest marker. */",
-      "type": { "returnType": "boolean | undefined", "optional": true }
+      "type": { "returnType": "boolean", "optional": true }
     },
     "range": {
       "description": "/** Range from a point that triggers the tooltip to show. */",
@@ -1766,6 +1794,13 @@
       }
     }
   },
+  "AgChartHighlightRange": {},
+  "AgChartHighlightOptions": {
+    "range": {
+      "description": "/** By default, nodes will be highlighted when the cursor is within the `tooltip.range`. Set this to `'node'` to highlight nodes when within the `series[].nodeClickRange`. */",
+      "type": { "returnType": "AgChartHighlightRange", "optional": true }
+    }
+  },
   "AgBaseChartOptions": {
     "data": {
       "description": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
@@ -1789,6 +1824,10 @@
     },
     "padding": {
       "description": "/** Configuration for the padding shown around the chart. */",
+      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
+    },
+    "seriesPadding": {
+      "description": "/** Configuration for the padding around the series. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
     "background": {
@@ -1818,6 +1857,10 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
+    },
+    "highlight": {
+      "description": "/** Configuration for the chart highlighting. */",
+      "type": { "returnType": "AgChartHighlightOptions", "optional": true }
     },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -3139,7 +3182,7 @@
   },
   "AgScatterSeriesOptions": {
     "type": {
-      "description": "/** Configuration for the treemap series.  */",
+      "description": "/** Configuration for the scatter series.  */",
       "type": { "returnType": "'scatter'", "optional": true }
     },
     "marker": {
@@ -3396,6 +3439,7 @@
     "xKey": { "type": { "returnType": "string", "optional": false } },
     "yKey": { "type": { "returnType": "string", "optional": false } },
     "seriesId": { "type": { "returnType": "string", "optional": false } },
+    "stackGroup": { "type": { "returnType": "string", "optional": true } },
     "meta": { "typeParams": ["DatumType"] }
   },
   "AgBarSeriesFormat": {
@@ -3403,11 +3447,54 @@
     "stroke": { "type": { "returnType": "CssColor", "optional": true } },
     "strokeWidth": { "type": { "returnType": "PixelSize", "optional": true } }
   },
+  "AgBarSeriesTooltipRendererParams": {
+    "stackGroup": { "type": { "returnType": "string", "optional": true } },
+    "xKey": {
+      "description": "/** xKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "xValue": {
+      "description": "/** xValue as read from series data via the xKey property. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "xName": {
+      "description": "/** xName as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yKey": {
+      "description": "/** yKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "yValue": {
+      "description": "/** yValue as read from series data via the yKey property. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "yName": {
+      "description": "/** yName as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "datum": {
+      "description": "/** Datum from the series data array that the tooltip is being rendered for. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "title": {
+      "description": "/** Series title or yName depending on series configuration. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "color": {
+      "description": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    },
+    "seriesId": {
+      "description": "/** The ID of the series. */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
   "AgBarSeriesTooltip": {
     "renderer": {
       "description": "/** Function used to create the content for tooltips. */",
       "type": {
-        "arguments": { "params": "AgCartesianSeriesTooltipRendererParams" },
+        "arguments": { "params": "AgBarSeriesTooltipRendererParams" },
         "returnType": "string | AgTooltipRendererResult",
         "optional": true
       }
@@ -3428,7 +3515,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "stackGroup": {
-      "description": "/** An ID to be used to make stacked items appear in separate groups. */",
+      "description": "/** An ID to be used to group stacked items. */",
       "type": { "returnType": "string", "optional": true }
     },
     "normalizedTo": {
@@ -4696,6 +4783,10 @@
       "description": "/** Configuration for the padding shown around the chart. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
+    "seriesPadding": {
+      "description": "/** Configuration for the padding around the series. */",
+      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
+    },
     "background": {
       "description": "/** Configuration for the background shown behind the chart. */",
       "type": { "returnType": "AgChartBackground", "optional": true }
@@ -4723,6 +4814,10 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
+    },
+    "highlight": {
+      "description": "/** Configuration for the chart highlighting. */",
+      "type": { "returnType": "AgChartHighlightOptions", "optional": true }
     },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -4766,6 +4861,10 @@
       "description": "/** Configuration for the padding shown around the chart. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
+    "seriesPadding": {
+      "description": "/** Configuration for the padding around the series. */",
+      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
+    },
     "background": {
       "description": "/** Configuration for the background shown behind the chart. */",
       "type": { "returnType": "AgChartBackground", "optional": true }
@@ -4793,6 +4892,10 @@
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
+    },
+    "highlight": {
+      "description": "/** Configuration for the chart highlighting. */",
+      "type": { "returnType": "AgChartHighlightOptions", "optional": true }
     },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -4833,6 +4936,10 @@
       "description": "/** Configuration for the padding shown around the chart. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
+    "seriesPadding": {
+      "description": "/** Configuration for the padding around the series. */",
+      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
+    },
     "background": {
       "description": "/** Configuration for the background shown behind the chart. */",
       "type": { "returnType": "AgChartBackground", "optional": true }
@@ -4861,6 +4968,10 @@
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
     },
+    "highlight": {
+      "description": "/** Configuration for the chart highlighting. */",
+      "type": { "returnType": "AgChartHighlightOptions", "optional": true }
+    },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "type": { "returnType": "string | AgChartTheme", "optional": true }
@@ -4885,8 +4996,6 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
-  "ChartType": {},
-  "ChartOptionType": { "meta": { "typeParams": ["T extends ChartType"] } },
   "SeriesOptionType": { "meta": { "typeParams": ["T extends Series"] } },
   "DownloadOptions": {
     "fileName": {
@@ -4977,6 +5086,7 @@
   "VisibilityMap": {},
   "OptionalHTMLElement": {},
   "TransferableResources": {},
+  "PickedNode": {},
   "BoundSeries": {
     "type": { "type": { "returnType": "string", "optional": false } },
     "getDomain": {
@@ -5075,14 +5185,10 @@
   },
   "Layers": {},
   "LayoutStage": {},
+  "AxisLabelLayout": {},
   "AxisLayout": {
     "rect": { "type": { "returnType": "BBox", "optional": false } },
-    "label": {
-      "type": {
-        "returnType": "{\n        baseline: 'hanging' | 'bottom' | 'middle';\n        align: 'start' | 'end' | 'center';\n    }",
-        "optional": false
-      }
-    }
+    "label": { "type": { "returnType": "AxisLabelLayout", "optional": false } }
   },
   "LayoutCompleteEvent": {
     "type": {
@@ -5746,6 +5852,7 @@
       "type": { "returnType": "AgCartesianAxisPosition", "optional": false }
     },
     "direction": { "type": { "returnType": "'x' | 'y'", "optional": false } },
+    "continuous": { "type": { "returnType": "boolean", "optional": false } },
     "scaleConvert": {
       "type": {
         "arguments": { "val": "any" },

@@ -32,13 +32,20 @@ if [[ "$MODULE_NAME" != "ag-charts-community" ]] ; then
         SCOPE="@ag-charts-community/${MODULE_NAME}"
     fi
 
-    INIT_CMD="npx lerna bootstrap --include-dependents --include-dependencies --scope=${SCOPE}"
+    INIT_CMD="npx lerna bootstrap --include-dependencies --scope=${SCOPE}"
+fi
+
+DOCKER_OPTS="--rm"
+if [ -t 0 ] ; then
+    # If run from a terminal, enable interactive mode.
+    DOCKER_OPTS="${DOCKER_OPTS} -it"
+    INIT_CMD="-il ${INIT_CMD}"
 fi
 
 case $1 in
     init)
         # More FS write access is needed during init, as lerna temporarily modifies package.json.
-        docker run --rm -it \
+        docker run ${DOCKER_OPTS} \
             -v ${LOCAL_REPO_ROOT}:${DOCKER_REPO_ROOT}:ro \
             -v ${LOCAL_REPO_ROOT}/${CHARTS_PATH}:${DOCKER_CHARTS_PATH} \
             -v ${LOCAL_REPO_ROOT}/${ENTERPRISE_PATH}:${DOCKER_ENTERPRISE_PATH} \
@@ -53,7 +60,7 @@ case $1 in
     run)
         shift 1
         # Local repo is mounted read-only, except the module being tested (allows snapshot writing).
-        docker run --rm -it \
+        docker run ${DOCKER_OPTS} \
             --cap-add=SYS_PTRACE \
             -v ${LOCAL_REPO_ROOT}:${DOCKER_REPO_ROOT}:ro \
             -v ${LOCAL_REPO_ROOT}/${MODULE_PATH}:${DOCKER_MODULE_PATH} \
@@ -61,8 +68,6 @@ case $1 in
             -v charts-enterprise-nm:${ENTERPRISE_NODE_MODULES_PATH} \
             ${EXTRA_VOL_MOUNTS} \
             -w ${DOCKER_MODULE_PATH} \
-            -p 3000:3000 \
-            -p 9229:9229 \
             --name ${MODULE_NAME}-test \
             charts:latest \
             $@

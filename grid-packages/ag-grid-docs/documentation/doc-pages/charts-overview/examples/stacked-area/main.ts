@@ -1,7 +1,6 @@
 import { AgChart, AgChartOptions, time } from "ag-charts-community";
 import { getData } from "./data";
 
-const year = new Date().getFullYear();
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
   autoSize: true,
@@ -38,10 +37,10 @@ const options: AgChartOptions = {
     },
   },
   title: {
-    text: `Total Visitors to Science Museums (${year - 1})`,
+    text: "Total Visitors to Science Museums",
     fontSize: 18,
   },
-  subtitle: {
+  footnote: {
     text: "Source: Department for Digital, Culture, Media & Sport",
   },
   series: [

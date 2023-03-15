@@ -50,8 +50,6 @@ export class Scene {
     readonly canvas: HdpiCanvas;
     readonly layers: SceneLayer[] = [];
 
-    private readonly ctx: CanvasRenderingContext2D;
-
     private readonly opts: SceneOptions;
 
     constructor(
@@ -77,7 +75,6 @@ export class Scene {
         this.debug.dirtyTree = windowValue('agChartsSceneDirtyTree') ?? false;
         this.debug.sceneNodeHighlight = buildSceneNodeHighlight();
         this.canvas = new HdpiCanvas({ document, width, height, overrideDevicePixelRatio });
-        this.ctx = this.canvas.context;
     }
 
     set container(value: HTMLElement | undefined) {
@@ -284,7 +281,7 @@ export class Scene {
 
         this.root = null;
         this._dirty = false;
-        this.ctx.resetTransform();
+        this.canvas.context.resetTransform();
     }
 
     destroy() {
@@ -300,7 +297,7 @@ export class Scene {
         const { debugSplitTimes = [performance.now()], extraDebugStats = {} } = opts || {};
         const {
             canvas,
-            ctx,
+            canvas: { context: ctx },
             root,
             layers,
             pendingSize,
@@ -382,6 +379,9 @@ export class Scene {
             });
             ctx.restore();
         }
+
+        // Check for save/restore depth of zero!
+        ctx.verifyDepthZero?.();
 
         this._dirty = false;
 

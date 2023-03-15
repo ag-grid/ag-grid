@@ -49,13 +49,13 @@ The difference in Column vs Column Group definitions is as follows:
 
 ## Showing / Hiding Columns
 
-A group can have children initially hidden. If you want to show or hide children, set `columnGroupShow` to either `'open'` or `'closed'` to one or more of the children. When a children set has `columnGroupShow` set, it behaves in the following way:
+A group can have children shown or hidden based on the open / closed state of the group. This is controlled by setting `columnGroupShow` on one or more of the children. When a child has `columnGroupShow` set, it behaves in the following way:
 
-- **open:** The child is only shown when the group is open.
-- **closed:** The child is only shown when the group is closed.
-- **everything else:** Any other value, including `null` and `undefined`, the child is always shown.
+- **`open`:** The child is only shown when the group is open.
+- **`closed`:** The child is only shown when the group is closed.
+- **`null`, `undefined`:** The child is always shown.
 
-If a group has any child that is dependent on the open / closed state, the open / close icon will appear. Otherwise the icon will not be shown.
+If a group has any child with `columnGroupShow` set as `open` / `closed`, then the open / close icon will appear in the group header. Otherwise the icon will not be shown.
 
 Having columns only show when closed is useful when you want to replace a column with others. For example, in the code snippet above (and the example below), the 'Total' column is replaced with other columns when the group is opened.
 
@@ -154,25 +154,26 @@ Using the **Column Property** `spanHeaderHeight` will allow the header cell to s
 
 <snippet>
 const gridOptions = {
-    columnDefs: [
-        {
-            field: 'athlete',
-            spanHeaderHeight: true
-        },
-        {
-            headerName: 'Athlete Details',
-            children: [
-                { field: 'country' },
-                { field: 'age' },
-            ],
-        },
-    ]
+  columnDefs: [
+    {
+      headerName: 'Athlete Details',
+      children: [
+        { field: 'athlete' },
+        { field: 'country' },
+      ],
+    },
+    {
+      field: 'age',
+      width: 90,
+      spanHeaderHeight: true
+    }
+  ]
 }
 </snippet>
 
 In the example below, note the following: 
 
-- The **Athlete** column header cell is not under a column group cell, but spans the entire height of the header container.
+- The **Age** column header cell is not under a column group cell, but spans the entire height of the header container.
 
 <grid-example title='Span Header Height' name='span-header-height' type='generated' options='{ "exampleHeight": 300 }'></grid-example>
 

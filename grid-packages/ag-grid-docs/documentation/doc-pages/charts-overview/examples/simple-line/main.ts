@@ -13,7 +13,6 @@ const tooltip = {
   }),
 }
 
-const year = new Date().getFullYear();
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
   autoSize: true,
@@ -33,10 +32,10 @@ const options: AgChartOptions = {
     },
   },
   title: {
-    text: `Road fuel prices (${year - 1})`,
+    text: "Road fuel prices",
     fontSize: 18,
   },
-  subtitle: {
+  footnote: {
     text: "Source: Department for Business, Energy & Industrial Strategy",
   },
   series: [

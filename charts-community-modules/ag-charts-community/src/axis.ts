@@ -321,6 +321,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         label: {
             align: 'center',
             baseline: 'middle',
+            rotation: 0,
+            fractionDigits: 0,
         },
     };
 
@@ -575,6 +577,11 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     gridPadding = 0;
 
     /**
+     * Is used to avoid collisions between axis labels and series.
+     */
+    seriesPadding = 0;
+
+    /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      */
     update(primaryTickCount?: number): number | undefined {
@@ -627,7 +634,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         let i = 0;
         let labelOverlap = true;
         let ticks: any[] = [];
-        const { maxTickCount, minTickCount } = this.estimateTickCount({
+        const { maxTickCount, minTickCount, defaultTickCount } = this.estimateTickCount({
             minSpacing: this.tick.minSpacing,
             maxSpacing: this.tick.maxSpacing,
         });
@@ -649,7 +656,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
                 }
 
                 const prevTicks = ticks;
-                const tickCount = Math.max(maxTickCount - i, minTickCount);
+                const tickCount = Math.max(defaultTickCount - i, minTickCount);
 
                 const filterTicks =
                     checkForOverlap && !(continuous && this.tick.count === undefined) && (tickSpacing || i !== 0);
@@ -779,6 +786,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     private estimateTickCount({ minSpacing, maxSpacing }: { minSpacing: number; maxSpacing: number }): {
         minTickCount: number;
         maxTickCount: number;
+        defaultTickCount: number;
     } {
         const { requestedRange } = this;
 
@@ -816,12 +824,17 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             }
         }
 
-        minSpacing = Math.max(minSpacing, defaultMinSpacing);
-
         const maxTickCount = Math.max(1, Math.floor(availableRange / minSpacing));
         const minTickCount = Math.min(maxTickCount, Math.ceil(availableRange / maxSpacing));
 
-        return { minTickCount, maxTickCount };
+        let defaultTickCount = Math.max(1, Math.floor(availableRange / defaultMinSpacing));
+        if (defaultTickCount > maxTickCount) {
+            defaultTickCount = maxTickCount;
+        } else if (defaultTickCount < minTickCount) {
+            defaultTickCount = minTickCount;
+        }
+
+        return { minTickCount, maxTickCount, defaultTickCount };
     }
 
     private getLabelSpacing(rotated?: boolean): number {
@@ -1005,7 +1018,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         // Update properties that affect the size of the axis labels and measure the labels
         const labelBboxes: Map<number, BBox | null> = new Map();
 
-        const labelX = sideFlag * (tick.size + label.padding);
+        const labelX = sideFlag * (tick.size + label.padding + this.seriesPadding);
 
         const labelMatrix = new Matrix();
         Matrix.updateTransformMatrix(labelMatrix, 1, 1, autoRotation, 0, 0);
@@ -1143,6 +1156,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         this.layout.label = {
             align: labelTextAlign,
             baseline: labelTextBaseline,
+            rotation: combinedRotation,
+            fractionDigits: this.fractionDigits,
         };
 
         return { labelData, rotated: !!(labelRotation || labelAutoRotation) };

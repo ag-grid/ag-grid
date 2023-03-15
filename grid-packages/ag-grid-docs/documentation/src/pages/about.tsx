@@ -90,9 +90,9 @@ const AboutPage = () => {
                                 <p>CEO / CTO</p>
                             </div>
                             <div>
-                                <img src="../images/team/rob.jpg" alt="Rob Clarke, VP of Engineering" />
+                                <img src="../images/team/rob.jpg" alt="Rob Clarke, VP Engineering" />
                                 <h3>Rob Clarke</h3>
-                                <p>VP of Engineering</p>
+                                <p>VP Engineering</p>
                             </div>
                             <div>
                                 <img src="../images/team/sean.jpg" alt="Sean Landsman, Lead Developer" />
@@ -135,13 +135,8 @@ const AboutPage = () => {
                                 <p>Developer, Data Visualisation</p>
                             </div>
                             <div>
-                                <img src="../images/team/alex.png" alt="Alex (Sasha) Shutau, Developer" />
-                                <h3>Alex (Sasha) Shutau</h3>
-                                <p>Developer, Data Visualisation</p>
-                            </div>
-                            <div>
-                                <img src="../images/team/sergei.jpg" alt="Sergei Riazanov, Developer" />
-                                <h3>Sergei Riazanov</h3>
+                                <img src="../images/team/alex.png" alt="Alex Shutau, Developer" />
+                                <h3>Alex Shutau</h3>
                                 <p>Developer, Data Visualisation</p>
                             </div>
                             <div>

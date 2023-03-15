@@ -162,7 +162,6 @@ export const NUMBER_AXIS_TICK_VALUES: AgChartOptions = {
     ],
 };
 
-const lastYear = new Date().getFullYear() - 1;
 export const TIME_AXIS_TICK_VALUES: AgChartOptions = {
     ...examples.ADV_TIME_AXIS_WITH_IRREGULAR_INTERVALS,
     axes: [
@@ -170,12 +169,7 @@ export const TIME_AXIS_TICK_VALUES: AgChartOptions = {
             type: 'time',
             position: 'bottom',
             tick: {
-                values: [
-                    new Date(lastYear, 0, 1),
-                    new Date(lastYear, 0, 4),
-                    new Date(lastYear, 0, 17),
-                    new Date(lastYear, 0, 28),
-                ],
+                values: [new Date(2020, 0, 1), new Date(2020, 0, 4), new Date(2020, 0, 17), new Date(2020, 0, 28)],
             } as AgAxisTimeTickOptions,
         },
         {
@@ -261,11 +255,7 @@ export const TIME_AXIS_NO_SERIES_FIXED_DOMAIN: AgChartOptions = {
         if (a.position === 'left' && a.type === 'number') {
             return { ...a, min: 2.4, max: 4.7 };
         } else if (a.position === 'bottom' && a.type === 'time') {
-            return {
-                ...a,
-                min: new Date(`${lastYear}-01-01T00:25:35.920Z`),
-                max: new Date(`${lastYear}-01-31T14:15:33.950Z`),
-            };
+            return { ...a, min: new Date('2020-01-01T00:25:35.920Z'), max: new Date('2020-01-31T14:15:33.950Z') };
         }
         return a;
     }),

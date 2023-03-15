@@ -200,7 +200,7 @@ legend: {
 
 ## Series Visibility Toggling
 
-By default, when a legend item is clicked, the visibility of the series associated with that legend item will be toggled. This allows the users to control which series are displayed in the chart by clicking on legend items. Additionally, when a legend item is double clicked, the visibility of all other series, except that associated with that legend item, will be toggled.
+By default, when a legend item is clicked, the visibility of the series associated with that legend item will be toggled. This allows the users to control which series are displayed in the chart by clicking on legend items. Additionally, when a legend item is double clicked, it will make only that series visible.
 
 To disable series toggling on legend item click or double click, the `legend.item.toggleSeriesVisible` property can be set to `false`:
 
@@ -212,6 +212,10 @@ legend: {
 }
 ```
 
+If a callback function is configured via [`legend.listeners.legendItemClick`](/charts-events/#legend-events---legenditemclick-and-legenditemdoubleclick), it will still be invoked when the legend click event is fired.
+
+The `legendItemClick` and `legendItemDoubleClick` events can be used to listen to legend item clicks and double clicks, respectively. For more information see [Legend Events](/charts-events/#legend-events---legenditemclick-and-legenditemdoubleclick).
+
 ### Example: Series Visibility Toggling
 
 This example demonstrates toggling the visiblity of series via clicks and double clicks, and logs a message to the browser console when the legend is clicked.
@@ -221,8 +225,6 @@ This example demonstrates toggling the visiblity of series via clicks and double
 ## API Reference
 
 <interface-documentation interfaceName='AgChartLegendOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
-
-The `legendItemClick` and `legendItemDoubleClick` events can be used to listen to legend item clicks and double clicks, respectively. For more information see [Legend Events](/charts-events/#legend-events---legenditemclick-and-legenditemdoubleclick).
 
 ## Next Up
 

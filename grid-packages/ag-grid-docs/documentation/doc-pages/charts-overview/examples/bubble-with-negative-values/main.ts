@@ -1,16 +1,15 @@
 import { AgChart, AgChartOptions } from 'ag-charts-community';
 import { getData } from "./data";
 
-const year = new Date().getFullYear();
 const options: AgChartOptions = {
   container: document.getElementById('myChart'),
   autoSize: true,
   data: getData(),
   title: {
-    text: `Most Populous Cities (${year - 1})`,
+    text: 'Most Populous Cities',
     fontSize: 18,
   },
-  subtitle: {
+  footnote: {
     text: 'Source: Simple Maps',
   },
   series: [

@@ -1,5 +1,5 @@
 import { Autowired, BeanStub, IRowModel, IRowNode, IServerSideGroupSelectionState, RowNode, SelectionEventSourceType, ISetNodeSelectedParams, ColumnModel, FilterManager, PostConstruct, Events, IServerSideStore, ISelectionService } from "@ag-grid-community/core";
-import { ServerSideRowModel } from "src/serverSideRowModel/serverSideRowModel";
+import { ServerSideRowModel } from "../../../serverSideRowModel";
 import { ISelectionStrategy } from "./iSelectionStrategy";
 
 interface SelectionState {

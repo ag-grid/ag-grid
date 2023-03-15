@@ -211,6 +211,8 @@ export interface AgChartPaddingOptions {
 }
 
 export interface AgChartOverlayOptions {
+    /** Text to render in the overlay. */
+    text?: string;
     /** A function for generating HTML string for overlay content. */
     renderer?: () => string;
 }
@@ -482,7 +484,7 @@ export interface AgChartTooltipOptions {
     /** A class name to be added to the tooltip element of the chart. */
     class?: string;
     /** @deprecated since v7.2.0 (ag-grid v29.2.0) If true, for series with markers the tooltip will be shown to the closest marker. */
-    tracking?: boolean | undefined;
+    tracking?: boolean;
     /** Range from a point that triggers the tooltip to show. */
     range?: AgChartInteractionRange;
     /** The time interval (in milliseconds) after which the tooltip is shown. */
@@ -547,6 +549,13 @@ export interface AgBaseChartListeners {
     doubleClick?: (event: AgChartDoubleClickEvent) => any;
 }
 
+type AgChartHighlightRange = 'tooltip' | 'node';
+
+export interface AgChartHighlightOptions {
+    /** By default, nodes will be highlighted when the cursor is within the `tooltip.range`. Set this to `'node'` to highlight nodes when within the `series[].nodeClickRange`. */
+    range?: AgChartHighlightRange;
+}
+
 /** Configuration common to all charts.  */
 export interface AgBaseChartOptions {
     /** The data to render the chart from. If this is not specified, it must be set on individual series instead. */
@@ -561,6 +570,8 @@ export interface AgBaseChartOptions {
     autoSize?: boolean;
     /** Configuration for the padding shown around the chart. */
     padding?: AgChartPaddingOptions;
+    /** Configuration for the padding around the series. */
+    seriesPadding?: AgChartPaddingOptions;
     /** Configuration for the background shown behind the chart. */
     background?: AgChartBackground;
     /** Configuration for the title shown at the top of the chart. */
@@ -575,6 +586,8 @@ export interface AgBaseChartOptions {
     legend?: AgChartLegendOptions;
     /** A map of event names to event listeners. */
     listeners?: AgBaseChartListeners;
+    /** Configuration for the chart highlighting. */
+    highlight?: AgChartHighlightOptions;
     /** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */
     theme?: string | AgChartTheme; // | ChartTheme
     /** HTML overlays */
@@ -1113,7 +1126,7 @@ export interface AgScatterSeriesMarker<DatumType> extends AgCartesianSeriesMarke
 
 /** Configuration for scatter/bubble series. */
 export interface AgScatterSeriesOptions<DatumType = any> extends AgBaseSeriesOptions<DatumType> {
-    /** Configuration for the treemap series.  */
+    /** Configuration for the scatter series.  */
     type?: 'scatter';
     /** Configuration for the markers used in the series.  */
     marker?: AgScatterSeriesMarker<DatumType>;
@@ -1202,6 +1215,7 @@ export interface AgBarSeriesFormatterParams<DatumType> {
     readonly xKey: string;
     readonly yKey: string;
     readonly seriesId: string;
+    readonly stackGroup?: string;
 }
 
 export interface AgBarSeriesFormat {
@@ -1210,9 +1224,13 @@ export interface AgBarSeriesFormat {
     strokeWidth?: PixelSize;
 }
 
+export interface AgBarSeriesTooltipRendererParams extends AgCartesianSeriesTooltipRendererParams {
+    readonly stackGroup?: string;
+}
+
 export interface AgBarSeriesTooltip extends AgSeriesTooltip {
     /** Function used to create the content for tooltips. */
-    renderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
+    renderer?: (params: AgBarSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 
 /** Configuration for bar/column series. */
@@ -1222,7 +1240,7 @@ export interface AgBarSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     grouped?: boolean;
     /** An option indicating if the bars/columns should be stacked. */
     stacked?: boolean;
-    /** An ID to be used to make stacked items appear in separate groups. */
+    /** An ID to be used to group stacked items. */
     stackGroup?: string;
     /** The number to normalise the bar stacks to. Has no effect when `grouped` is `true`. For example, if `normalizedTo` is set to `100`, the bar stacks will all be scaled proportionally so that each of their totals is 100. */
     normalizedTo?: number;

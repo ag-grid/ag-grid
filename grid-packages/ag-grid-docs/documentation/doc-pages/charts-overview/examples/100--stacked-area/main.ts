@@ -1,7 +1,6 @@
 import { AgChart, AgChartOptions } from "ag-charts-community";
 import { getData } from "./data";
 
-const year = new Date().getFullYear();
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
   autoSize: true,
@@ -21,10 +20,10 @@ const options: AgChartOptions = {
     },
   },
   title: {
-    text: `UK Energy Sources (${year - 1})`,
+    text: "UK Energy Sources",
     fontSize: 18,
   },
-  subtitle: {
+  footnote: {
     text: "Source: Department for Business, Energy & Industrial Strategy",
   },
   series: [

@@ -24,7 +24,7 @@ const options: AgChartOptions = {
     text: 'Total Visitors to Tate Galleries',
     fontSize: 18,
   },
-  subtitle: {
+  footnote: {
     text: 'Source: Department for Digital, Culture, Media & Sport',
   },
   series: [

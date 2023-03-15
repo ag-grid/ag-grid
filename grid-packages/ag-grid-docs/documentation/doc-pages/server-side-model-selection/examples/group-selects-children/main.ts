@@ -2,10 +2,10 @@ import { Grid, GridOptions, GetRowIdParams, IsServerSideGroupOpenByDefaultParams
 declare var FakeServer: any;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
-    { field: 'country', rowGroup: true, hide: true },
-    { field: 'year', rowGroup: true, hide: true },
+    { field: 'country', enableRowGroup: true, rowGroup: true, hide: true },
+    { field: 'year', enableRowGroup: true, rowGroup: true, hide: true },
     { field: 'athlete', hide: true },
-    { field: 'sport', checkboxSelection: true, filter: 'agTextColumnFilter' },
+    { field: 'sport', enableRowGroup: true, checkboxSelection: true, filter: 'agTextColumnFilter' },
     { field: 'gold', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
     { field: 'silver', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
     { field: 'bronze', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
@@ -51,6 +51,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   animateRows: true,
   suppressAggFuncInHeader: true,
   serverSideFilterAllLevels: true,
+  rowGroupPanelShow: 'always',
 }
 
 function getServerSideDatasource(server: any): IServerSideDatasource {

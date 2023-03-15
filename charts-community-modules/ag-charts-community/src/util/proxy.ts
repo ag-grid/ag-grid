@@ -31,17 +31,15 @@ export function ActionOnSet<T>(opts: {
 }) {
     const { newValue: newValueFn, oldValue: oldValueFn, changeValue: changeValueFn } = opts;
     return addTransformToInstanceProperty((target, _, newValue, oldValue) => {
-        if (newValue === oldValue) {
-            return newValue;
+        if (newValue !== oldValue) {
+            if (oldValue !== undefined) {
+                oldValueFn?.call(target, oldValue);
+            }
+            if (newValue !== undefined) {
+                newValueFn?.call(target, newValue);
+            }
+            changeValueFn?.call(target, newValue, oldValue);
         }
-
-        if (oldValue !== undefined) {
-            oldValueFn?.call(target, oldValue);
-        }
-        if (newValue !== undefined) {
-            newValueFn?.call(target, newValue);
-        }
-        changeValueFn?.call(target, newValue, oldValue);
 
         return newValue;
     });

@@ -21,18 +21,15 @@ export function Validate(predicate: ValidatePredicate) {
             targetClass = null;
         }
 
+        const targetClassName = targetClass ? `of [${targetClass}] ` : '';
         if (predicate.message) {
             Logger.warn(
-                `Property [${cleanKey}] ${targetClass ? `of [${targetClass}] ` : ''}cannot be set to [${JSON.stringify(
-                    v
-                )}]; ${predicate.message}, ignoring.`
+                `Property [${cleanKey}] ${targetClassName}cannot be set to [${JSON.stringify(v)}]; ${
+                    predicate.message
+                }, ignoring.`
             );
         } else {
-            Logger.warn(
-                `Property [${cleanKey}] ${targetClass ? `of [${targetClass}] ` : ''}cannot be set to [${JSON.stringify(
-                    v
-                )}], ignoring.`
-            );
+            Logger.warn(`Property [${cleanKey}] ${targetClassName}cannot be set to [${JSON.stringify(v)}], ignoring.`);
         }
 
         return BREAK_TRANSFORM_CHAIN;

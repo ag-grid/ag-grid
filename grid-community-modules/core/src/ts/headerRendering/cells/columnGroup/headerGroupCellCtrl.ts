@@ -188,7 +188,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         if (this.columnGroup.isPadding()) {
             classes.push('ag-header-group-cell-no-group');
             const leafCols = this.columnGroup.getLeafColumns();
-            if (leafCols.every(col => col.getColDef().spanHeaderHeight)) {
+            if (leafCols.every(col => col.isSpanHeaderHeight())) {
                 classes.push('ag-header-span-height');
             }
         } else {

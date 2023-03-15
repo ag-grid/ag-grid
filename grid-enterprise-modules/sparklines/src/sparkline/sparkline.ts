@@ -49,6 +49,8 @@ export abstract class Sparkline {
     tooltip!: SparklineTooltip;
     private static tooltipDocuments: Document[] = [];
 
+    private mouseMoveEvent: MouseEvent;
+
     protected seriesRect: SeriesRect = {
         x: 0,
         y: 0,
@@ -91,6 +93,9 @@ export abstract class Sparkline {
         if (this._data !== value) {
             this._data = value;
             this.processData();
+            if (this.mouseMoveEvent && this.highlightedDatum) {
+                this.updateHitPoint(this.mouseMoveEvent);
+            }
         }
     }
     get data() {
@@ -299,6 +304,11 @@ export abstract class Sparkline {
      * @param event
      */
     private onMouseMove(event: MouseEvent) {
+        this.mouseMoveEvent = event;
+        this.updateHitPoint(event);
+    }
+
+    private updateHitPoint(event: MouseEvent) {
         const closestDatum: SeriesNodeDatum | undefined = this.pickClosestSeriesNodeDatum(event.offsetX, event.offsetY);
 
         if (!closestDatum) {
