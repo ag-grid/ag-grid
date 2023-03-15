@@ -39,6 +39,12 @@ type OptionalHTMLElement = HTMLElement | undefined | null;
 
 export type TransferableResources = { container?: OptionalHTMLElement; scene: Scene; element: HTMLElement };
 
+type PickedNode = {
+    series: Series<any>;
+    datum: SeriesNodeDatum;
+    distance: number;
+};
+
 export abstract class Chart extends Observable implements AgChartInstance {
     readonly id = createId(this);
 
@@ -178,6 +184,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     @Validate(STRING_UNION('standalone', 'integrated'))
     mode: 'standalone' | 'integrated' = 'standalone';
+
+    @Validate(STRING_UNION('tooltip', 'node'))
+    public highlightRange: 'tooltip' | 'node' = 'tooltip';
 
     private _destroyed: boolean = false;
     get destroyed() {
@@ -913,17 +922,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     // x/y are local canvas coordinates in CSS pixels, not actual pixels
-    private pickSeriesNode(
-        point: Point,
-        exactMatchOnly: boolean,
-        maxDistance?: number
-    ):
-        | {
-              series: Series<any>;
-              datum: SeriesNodeDatum;
-              distance: number;
-          }
-        | undefined {
+    private pickSeriesNode(point: Point, exactMatchOnly: boolean, maxDistance?: number): PickedNode | undefined {
         const start = performance.now();
 
         // Disable 'nearest match' options if looking for exact matches only
@@ -982,10 +981,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
         const { lastPick } = this;
         const { offsetX, offsetY } = event;
 
-        const disablePointer = () => {
+        const disablePointer = (highlightOnly = false) => {
             if (lastPick) {
                 // Cursor moved from a non-marker node to empty space.
-                this.disablePointer();
+                this.disablePointer(highlightOnly);
             }
         };
 
@@ -1001,7 +1000,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.handlePointerNodeCursor(event);
     }
 
-    protected handlePointerTooltip(event: InteractionEvent<'hover'>, disablePointer: () => void) {
+    protected handlePointerTooltip(
+        event: InteractionEvent<'hover'>,
+        disablePointer: (highlightOnly?: boolean) => void
+    ) {
         const { lastPick, tooltip } = this;
         const { range } = tooltip;
         const { pageX, pageY, offsetX, offsetY } = event;
@@ -1013,16 +1015,20 @@ export abstract class Chart extends Observable implements AgChartInstance {
         const pick = this.pickSeriesNode({ x: offsetX, y: offsetY }, range === 'exact', pixelRange);
 
         if (!pick) {
-            disablePointer();
+            this.tooltipManager.updateTooltip(this.id);
+            if (this.highlightRange === 'tooltip') disablePointer(true);
             return;
         }
 
-        const isNewDatum = !lastPick || lastPick.datum !== pick.datum;
+        const isNewDatum = this.highlightRange === 'node' || !lastPick || lastPick.datum !== pick.datum;
         let html;
 
         if (isNewDatum) {
-            this.highlightManager.updateHighlight(this.id, pick.datum);
             html = pick.series.getTooltipHtml(pick.datum);
+
+            if (this.highlightRange === 'tooltip') {
+                this.highlightManager.updateHighlight(this.id, pick.datum);
+            }
         } else if (lastPick) {
             lastPick.event = event.sourceEvent;
         }
@@ -1041,14 +1047,22 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     protected handlePointerNodeCursor(event: InteractionEvent<'hover'>) {
-        const found = this.checkSeriesNodeRange(event, (series: Series, _datum: any) => {
+        const found = this.checkSeriesNodeRange(event, (series: Series, datum: any) => {
             if (series.hasEventListener('nodeClick') || series.hasEventListener('nodeDoubleClick')) {
                 this.cursorManager.updateCursor('chart', 'pointer');
+
+                if (this.highlightRange === 'node') {
+                    this.highlightManager.updateHighlight(this.id, datum);
+                }
             }
         });
 
         if (!found) {
             this.cursorManager.updateCursor('chart');
+
+            if (this.highlightRange === 'node') {
+                this.highlightManager.updateHighlight(this.id);
+            }
         }
     }
 
@@ -1090,7 +1104,15 @@ export abstract class Chart extends Observable implements AgChartInstance {
         event: InteractionEvent<'click' | 'dblclick' | 'hover'>,
         callback: (series: Series, datum: any) => void
     ): boolean {
-        const datum = this.lastPick?.datum;
+        // If the tooltip picking uses `nearest` then, irregardless of the range of each series, the same node would
+        // be picked, so we can shortcut to using the last pick. Otherwise, we need to pick a node distinctly
+        // from the tooltip picking in case the node click range is greater than the tooltip range.
+        const nearestNode =
+            this.tooltip.range === 'nearest'
+                ? this.lastPick
+                : this.pickSeriesNode({ x: event.offsetX, y: event.offsetY }, false);
+
+        const datum = nearestNode?.datum;
         const nodeClickRange = datum?.series.nodeClickRange;
 
         // First check if we should trigger the callback based on nearest node
