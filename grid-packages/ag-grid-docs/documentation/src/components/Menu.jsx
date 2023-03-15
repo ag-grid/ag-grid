@@ -6,6 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import convertToFrameworkUrl from 'utils/convert-to-framework-url';
 import rawMenuData from '../../doc-pages/licensing/menu.json';
 import { isProductionEnvironment } from '../utils/consts';
+import { findParentItems } from './menu-find-parent-items';
 import styles from './Menu.module.scss';
 
 function filterProductionMenuData(data) {
@@ -33,7 +34,7 @@ function toElementId(str) {
 
 const menuData = filterProductionMenuData(rawMenuData);
 
-const MenuSection = ({ title, items, currentFramework, isActive, toggleActive }) => {
+const MenuSection = ({ title, items, currentFramework, isActive, toggleActive, activeParentItems }) => {
     return (
         <li key={title} className={styles.menuSection}>
             <button
@@ -55,12 +56,13 @@ const MenuSection = ({ title, items, currentFramework, isActive, toggleActive })
                 currentFramework={currentFramework}
                 isTopLevel={true}
                 isActive={isActive}
+                activeParentItems={activeParentItems}
             />
         </li>
     );
 };
 
-const MenuGroup = ({ group, currentFramework, isTopLevel, isActive }) => {
+const MenuGroup = ({ group, currentFramework, isTopLevel, isActive, activeParentItems }) => {
     const containerRef = useRef(null);
     useEffect(() => {
         // NOTE: Using plain JavaScript DOM to add/remove class, so it doesn't
@@ -84,13 +86,18 @@ const MenuGroup = ({ group, currentFramework, isTopLevel, isActive }) => {
             {group.items
                 .filter((item) => !item.menuHide && (!item.frameworks || item.frameworks.includes(currentFramework)))
                 .map((item) => (
-                    <MenuItem key={item.title} item={item} currentFramework={currentFramework} />
+                    <MenuItem
+                        key={item.title}
+                        item={item}
+                        currentFramework={currentFramework}
+                        activeParentItems={activeParentItems}
+                    />
                 ))}
         </ul>
     );
 };
 
-const MenuItem = ({ item, currentFramework }) => {
+const MenuItem = ({ item, currentFramework, activeParentItems }) => {
     const enterpriseIcon = item.enterprise && (
         <span className={styles.enterpriseIcon}>
             (e)
@@ -103,17 +110,35 @@ const MenuItem = ({ item, currentFramework }) => {
         </>
     );
 
+    const isActiveParent = activeParentItems.filter((parentItem) => parentItem.url === item.url).length > 0;
+
     return (
         <li key={item.title}>
             {item.url ? (
-                <Link to={convertToFrameworkUrl(item.url, currentFramework)} activeClassName={styles.activeMenuItem}>
+                <Link
+                    to={convertToFrameworkUrl(item.url, currentFramework)}
+                    activeClassName={styles.activeMenuItem}
+                    className={isActiveParent && styles.activeItemParent}
+                >
                     {title}
                 </Link>
             ) : (
-                <span className={classnames(styles.groupLabel, 'text-secondary')}>{title}</span>
+                <span
+                    className={classnames(
+                        styles.groupLabel,
+                        isActiveParent && styles.activeItemParent,
+                        'text-secondary'
+                    )}
+                >
+                    {title}
+                </span>
             )}
             {item.items && !item.hideChildren && (
-                <MenuGroup group={{ group: item.title, items: item.items }} currentFramework={currentFramework} />
+                <MenuGroup
+                    group={{ group: item.title, items: item.items }}
+                    currentFramework={currentFramework}
+                    activeParentItems={activeParentItems}
+                />
             )}
         </li>
     );
@@ -140,6 +165,8 @@ const Menu = ({ currentFramework, currentPage }) => {
     const combinedMenuItems = menuData
         .reduce((combined, group) => [...combined, ...group.items], [])
         .filter((group) => groupItemHasApplicableChild(group.items));
+
+    const activeParentItems = findParentItems(combinedMenuItems, `/${window.location.pathname.split('/')[2]}/`);
 
     const containsPage = (items, frameworks) =>
         items.reduce((hasPage, item) => {
@@ -180,6 +207,7 @@ const Menu = ({ currentFramework, currentPage }) => {
                             currentFramework={currentFramework}
                             isActive={isActive}
                             toggleActive={toggleActive}
+                            activeParentItems={activeParentItems}
                         />
                     );
                 })}

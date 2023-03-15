@@ -158,6 +158,10 @@
         }
     }
 
+    &.activeItemParent {
+        color: var(--text-color) !important; // !important for .ag-styles specificity
+    }
+
     &.activeMenuItem {
         pointer-events: none;
         color: var(--text-color) !important; // !important for .ag-styles specificity
@@ -169,7 +173,12 @@
     }
 }
 
-.groupLabel {
+.menuGroup .groupLabel {
     margin-left: var(--first-indent-size) !important; // !important for .ag-styles specificity
     padding-left: $size-2 + 2px;
+    transition: color $default-transition-timing;
+
+    &.activeItemParent {
+        color: var(--text-color) !important; // !important for .ag-styles specificity
+    }
 }
