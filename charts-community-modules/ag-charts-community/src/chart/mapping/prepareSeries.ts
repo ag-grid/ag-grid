@@ -78,9 +78,10 @@ const YKEYS_REDUCER = (prop: string, activationValue: any) => (result: string[][
     return result;
 };
 const STACK_GROUPS_REDUCER = () => (result: any, next: any) => {
-    result[next.stackGroup] ??= [];
-    result[next.stackGroup].push(next.yKey);
-    return result;
+    return {
+        ...result,
+        [next.stackGroup]: [...(result[next.stackGroup] || []), next.yKey],
+    };
 };
 
 interface ReduceConfig<T> {
