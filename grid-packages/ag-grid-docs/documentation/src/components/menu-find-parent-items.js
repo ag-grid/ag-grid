@@ -30,8 +30,6 @@ function getFullPath(section, urlPath) {
 }
 
 export function findParentItems(combinedMenuItems, urlPath) {
-    console.log(combinedMenuItems, urlPath);
-
     let foundPath;
     combinedMenuItems.forEach((section) => {
         if (foundPath) {
