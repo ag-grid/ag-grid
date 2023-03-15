@@ -37,6 +37,11 @@ export function findParentItems(combinedMenuItems, urlPath) {
             return;
         }
 
+        // Special case for Standalone Charts menu items
+        if (section.title === 'Standalone Charts') {
+            urlPath = urlPath.replace('/', '/charts-');
+        }
+
         const sectionPath = getFullPath(section, urlPath);
         if (sectionPath.length) {
             foundPath = [section].concat(sectionPath);
