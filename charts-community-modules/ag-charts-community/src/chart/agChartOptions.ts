@@ -587,7 +587,7 @@ export interface AgBaseChartOptions {
     /** A map of event names to event listeners. */
     listeners?: AgBaseChartListeners;
     /** Configuration for the chart highlighting. */
-    highlight: AgChartHighlightOptions;
+    highlight?: AgChartHighlightOptions;
     /** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */
     theme?: string | AgChartTheme; // | ChartTheme
     /** HTML overlays */

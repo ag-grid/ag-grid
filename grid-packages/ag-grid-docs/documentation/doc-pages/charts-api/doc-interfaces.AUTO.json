@@ -239,7 +239,7 @@
     },
     "highlight": {
       "description": "/** Configuration for the chart highlighting. */",
-      "type": { "returnType": "AgChartHighlightOptions", "optional": false }
+      "type": { "returnType": "AgChartHighlightOptions", "optional": true }
     },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -314,7 +314,7 @@
     },
     "highlight": {
       "description": "/** Configuration for the chart highlighting. */",
-      "type": { "returnType": "AgChartHighlightOptions", "optional": false }
+      "type": { "returnType": "AgChartHighlightOptions", "optional": true }
     },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -389,7 +389,7 @@
     },
     "highlight": {
       "description": "/** Configuration for the chart highlighting. */",
-      "type": { "returnType": "AgChartHighlightOptions", "optional": false }
+      "type": { "returnType": "AgChartHighlightOptions", "optional": true }
     },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -1860,7 +1860,7 @@
     },
     "highlight": {
       "description": "/** Configuration for the chart highlighting. */",
-      "type": { "returnType": "AgChartHighlightOptions", "optional": false }
+      "type": { "returnType": "AgChartHighlightOptions", "optional": true }
     },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -4817,7 +4817,7 @@
     },
     "highlight": {
       "description": "/** Configuration for the chart highlighting. */",
-      "type": { "returnType": "AgChartHighlightOptions", "optional": false }
+      "type": { "returnType": "AgChartHighlightOptions", "optional": true }
     },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -4895,7 +4895,7 @@
     },
     "highlight": {
       "description": "/** Configuration for the chart highlighting. */",
-      "type": { "returnType": "AgChartHighlightOptions", "optional": false }
+      "type": { "returnType": "AgChartHighlightOptions", "optional": true }
     },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -4970,7 +4970,7 @@
     },
     "highlight": {
       "description": "/** Configuration for the chart highlighting. */",
-      "type": { "returnType": "AgChartHighlightOptions", "optional": false }
+      "type": { "returnType": "AgChartHighlightOptions", "optional": true }
     },
     "theme": {
       "description": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
