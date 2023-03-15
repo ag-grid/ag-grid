@@ -76,7 +76,9 @@
     "charts:watch": "cd charts-examples/ag-charts-enterprise-example && npm run watch",
     "charts:watch-bundle": "cd charts-examples/ag-charts-enterprise-example && npm run watch-bundle",
     "charts:lint": "npm run charts:run -- lint",
-    "charts:fix": "npm run charts:run -- fix"
+    "charts:fix": "npm run charts:run -- fix",
+    "charts:test-init": "npm run charts:run -- --concurrency 1 docker:init",
+    "charts:test-update": "npm run charts:run -- docker:test-update"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^13.3.0",

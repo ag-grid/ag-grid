@@ -23,4 +23,4 @@ COPY launch.sh /root/launch.sh
 RUN /bin/bash -il -c "npm config set update-notifier false"
 
 ENTRYPOINT ["/root/launch.sh"]
-CMD ["bash", "-il"]
+CMD ["/bin/bash"]
