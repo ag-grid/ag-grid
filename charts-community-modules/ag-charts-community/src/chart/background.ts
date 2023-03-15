@@ -1,60 +1,53 @@
 import { Rect } from '../scene/shape/rect';
 import { Group } from '../scene/group';
+import { ActionOnSet, ProxyPropertyOnWrite } from '../util/proxy';
 import { BOOLEAN, OPT_COLOR_STRING, Validate } from '../util/validation';
 import { BackgroundImage } from './backgroundImage';
 
 export class Background {
-    readonly node: Group = new Group();
-    readonly rectNode = new Rect();
+    readonly node: Group;
+    readonly rectNode: Rect;
     private readonly imageLoadCallback: () => void;
 
     constructor(imageLoadCallback: () => void) {
+        this.node = new Group();
+        this.rectNode = new Rect();
         this.node.appendChild(this.rectNode);
+        this.visible = true;
         this.imageLoadCallback = imageLoadCallback;
     }
 
     @Validate(BOOLEAN)
-    private _visible: boolean = true;
-    set visible(value: boolean) {
-        this._visible = value;
-        this.node.visible = this._visible;
-    }
-    get visible(): boolean {
-        return this._visible;
-    }
+    @ProxyPropertyOnWrite('node', 'visible')
+    visible: boolean;
 
     @Validate(OPT_COLOR_STRING)
-    private _fill?: string;
-    set fill(value: string | undefined) {
-        this._fill = value;
-        this.rectNode.fill = this._fill;
-    }
-    get fill(): string | undefined {
-        return this._fill;
-    }
+    @ProxyPropertyOnWrite('rectNode', 'fill')
+    fill: string | undefined;
 
-    private _image?: BackgroundImage;
-    set image(value: BackgroundImage | undefined) {
-        if (this._image) {
-            this.node.removeChild(this._image.node);
-            this._image.onload = undefined;
+    @ActionOnSet<Background>({
+        newValue(image: BackgroundImage | undefined) {
+            if (!image) {
+                return;
+            }
+            this.node.appendChild(image.node);
+            image.onload = this.imageLoadCallback;
+        },
+        oldValue(image: BackgroundImage | undefined) {
+            if (!image) {
+                return;
+            }
+            this.node.removeChild(image.node);
+            image.onload = undefined;
         }
-        this._image = value;
-
-        if (this._image) {
-            this.node.appendChild(this._image.node);
-            this._image.onload = this.imageLoadCallback;
-        }
-    }
-    get image() {
-        return this._image;
-    }
+    })
+    image: BackgroundImage | undefined = undefined;
 
     performLayout(width: number, height: number) {
         this.rectNode.width = width;
         this.rectNode.height = height;
-        if (this._image) {
-            this._image.performLayout(width, height);
+        if (this.image) {
+            this.image.performLayout(width, height);
         }
     }
 }

@@ -15,8 +15,15 @@ import {
 
 expect.extend({ toMatchImageSnapshot });
 
-const SMALL_IMAGE =
-    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==';
+const SMALL_IMAGE = [
+    'data:image/svg+xml;base64,',
+    btoa([
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">',
+        '<rect x="0" y="0" width="12" height="12" fill="blue"/>',
+        '<circle cx="10" cy="10" r="6" fill="red"/>',
+        '</svg>',
+    ].join('')),
+].join('');
 
 describe('backgroundImage', () => {
     describe('Positioning', () => {
