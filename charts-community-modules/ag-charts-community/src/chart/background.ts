@@ -26,17 +26,11 @@ export class Background {
     fill: string | undefined;
 
     @ActionOnSet<Background>({
-        newValue(image: BackgroundImage | undefined) {
-            if (!image) {
-                return;
-            }
+        newValue(image: BackgroundImage) {
             this.node.appendChild(image.node);
             image.onload = this.imageLoadCallback;
         },
-        oldValue(image: BackgroundImage | undefined) {
-            if (!image) {
-                return;
-            }
+        oldValue(image: BackgroundImage) {
             this.node.removeChild(image.node);
             image.onload = undefined;
         },
