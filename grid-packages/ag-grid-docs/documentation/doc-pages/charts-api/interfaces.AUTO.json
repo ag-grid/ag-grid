@@ -155,7 +155,7 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
-      "highlightRange?": "'tooltip' | 'node'",
+      "highlight": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
       "overlays?": "AgChartOverlaysOptions"
     },
@@ -177,7 +177,7 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "highlightRange?": "/** By default, nodes will be highlighted when the cursor is within the `tooltip.range`. Set this to `'node'` to highlight nodes when within the `series[].nodeClickRange`. */",
+      "highlight": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "overlays?": "/** HTML overlays */"
     }
@@ -200,7 +200,7 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
-      "highlightRange?": "'tooltip' | 'node'",
+      "highlight": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
       "overlays?": "AgChartOverlaysOptions"
     },
@@ -220,7 +220,7 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "highlightRange?": "/** By default, nodes will be highlighted when the cursor is within the `tooltip.range`. Set this to `'node'` to highlight nodes when within the `series[].nodeClickRange`. */",
+      "highlight": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "overlays?": "/** HTML overlays */"
     }
@@ -243,7 +243,7 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
-      "highlightRange?": "'tooltip' | 'node'",
+      "highlight": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
       "overlays?": "AgChartOverlaysOptions"
     },
@@ -263,7 +263,7 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "highlightRange?": "/** By default, nodes will be highlighted when the cursor is within the `tooltip.range`. Set this to `'node'` to highlight nodes when within the `series[].nodeClickRange`. */",
+      "highlight": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "overlays?": "/** HTML overlays */"
     }
@@ -1152,6 +1152,17 @@
       "doubleClick?": "/** The listener to call to signify a double click on the chart by the user. */"
     }
   },
+  "AgChartHighlightRange": {
+    "meta": { "isTypeAlias": true },
+    "type": "'tooltip' | 'node'"
+  },
+  "AgChartHighlightOptions": {
+    "meta": {},
+    "type": { "range?": "AgChartHighlightRange" },
+    "docs": {
+      "range?": "/** By default, nodes will be highlighted when the cursor is within the `tooltip.range`. Set this to `'node'` to highlight nodes when within the `series[].nodeClickRange`. */"
+    }
+  },
   "AgBaseChartOptions": {
     "meta": { "doc": "/** Configuration common to all charts.  */" },
     "type": {
@@ -1169,7 +1180,7 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
-      "highlightRange?": "'tooltip' | 'node'",
+      "highlight": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
       "overlays?": "AgChartOverlaysOptions"
     },
@@ -1188,7 +1199,7 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "highlightRange?": "/** By default, nodes will be highlighted when the cursor is within the `tooltip.range`. Set this to `'node'` to highlight nodes when within the `series[].nodeClickRange`. */",
+      "highlight": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "overlays?": "/** HTML overlays */"
     }
@@ -3064,7 +3075,7 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
-      "highlightRange?": "'tooltip' | 'node'",
+      "highlight": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
       "overlays?": "AgChartOverlaysOptions"
     },
@@ -3087,7 +3098,7 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "highlightRange?": "/** By default, nodes will be highlighted when the cursor is within the `tooltip.range`. Set this to `'node'` to highlight nodes when within the `series[].nodeClickRange`. */",
+      "highlight": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "overlays?": "/** HTML overlays */"
     }
@@ -3111,7 +3122,7 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
-      "highlightRange?": "'tooltip' | 'node'",
+      "highlight": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
       "overlays?": "AgChartOverlaysOptions"
     },
@@ -3132,7 +3143,7 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "highlightRange?": "/** By default, nodes will be highlighted when the cursor is within the `tooltip.range`. Set this to `'node'` to highlight nodes when within the `series[].nodeClickRange`. */",
+      "highlight": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "overlays?": "/** HTML overlays */"
     }
@@ -3156,7 +3167,7 @@
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
-      "highlightRange?": "'tooltip' | 'node'",
+      "highlight": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
       "overlays?": "AgChartOverlaysOptions"
     },
@@ -3177,7 +3188,7 @@
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
       "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
-      "highlightRange?": "/** By default, nodes will be highlighted when the cursor is within the `tooltip.range`. Set this to `'node'` to highlight nodes when within the `series[].nodeClickRange`. */",
+      "highlight": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
       "overlays?": "/** HTML overlays */"
     }

@@ -547,6 +547,13 @@ export interface AgBaseChartListeners {
     doubleClick?: (event: AgChartDoubleClickEvent) => any;
 }
 
+type AgChartHighlightRange = 'tooltip' | 'node';
+
+export interface AgChartHighlightOptions {
+    /** By default, nodes will be highlighted when the cursor is within the `tooltip.range`. Set this to `'node'` to highlight nodes when within the `series[].nodeClickRange`. */
+    range?: AgChartHighlightRange;
+}
+
 /** Configuration common to all charts.  */
 export interface AgBaseChartOptions {
     /** The data to render the chart from. If this is not specified, it must be set on individual series instead. */
@@ -577,8 +584,8 @@ export interface AgBaseChartOptions {
     legend?: AgChartLegendOptions;
     /** A map of event names to event listeners. */
     listeners?: AgBaseChartListeners;
-    /** By default, nodes will be highlighted when the cursor is within the `tooltip.range`. Set this to `'node'` to highlight nodes when within the `series[].nodeClickRange`. */
-    highlightRange?: 'tooltip' | 'node';
+    /** Configuration for the chart highlighting. */
+    highlight: AgChartHighlightOptions;
     /** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */
     theme?: string | AgChartTheme; // | ChartTheme
     /** HTML overlays */
