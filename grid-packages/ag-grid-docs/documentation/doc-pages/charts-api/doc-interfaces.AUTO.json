@@ -3416,6 +3416,7 @@
     "xKey": { "type": { "returnType": "string", "optional": false } },
     "yKey": { "type": { "returnType": "string", "optional": false } },
     "seriesId": { "type": { "returnType": "string", "optional": false } },
+    "stackGroup": { "type": { "returnType": "string", "optional": true } },
     "meta": { "typeParams": ["DatumType"] }
   },
   "AgBarSeriesFormat": {
@@ -3423,11 +3424,54 @@
     "stroke": { "type": { "returnType": "CssColor", "optional": true } },
     "strokeWidth": { "type": { "returnType": "PixelSize", "optional": true } }
   },
+  "AgBarSeriesTooltipRendererParams": {
+    "stackGroup": { "type": { "returnType": "string", "optional": true } },
+    "xKey": {
+      "description": "/** xKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "xValue": {
+      "description": "/** xValue as read from series data via the xKey property. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "xName": {
+      "description": "/** xName as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yKey": {
+      "description": "/** yKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "yValue": {
+      "description": "/** yValue as read from series data via the yKey property. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "yName": {
+      "description": "/** yName as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "datum": {
+      "description": "/** Datum from the series data array that the tooltip is being rendered for. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "title": {
+      "description": "/** Series title or yName depending on series configuration. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "color": {
+      "description": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    },
+    "seriesId": {
+      "description": "/** The ID of the series. */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
   "AgBarSeriesTooltip": {
     "renderer": {
       "description": "/** Function used to create the content for tooltips. */",
       "type": {
-        "arguments": { "params": "AgCartesianSeriesTooltipRendererParams" },
+        "arguments": { "params": "AgBarSeriesTooltipRendererParams" },
         "returnType": "string | AgTooltipRendererResult",
         "optional": true
       }

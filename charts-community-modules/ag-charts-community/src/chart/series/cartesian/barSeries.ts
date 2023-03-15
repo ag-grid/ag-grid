@@ -36,9 +36,9 @@ import { CategoryAxis } from '../../axis/categoryAxis';
 import { GroupedCategoryAxis } from '../../axis/groupedCategoryAxis';
 import {
     AgCartesianSeriesLabelFormatterParams,
-    AgCartesianSeriesTooltipRendererParams,
     AgTooltipRendererResult,
     AgBarSeriesFormatterParams,
+    AgBarSeriesTooltipRendererParams,
     AgBarSeriesFormat,
     AgBarSeriesLabelPlacement,
     FontStyle,
@@ -88,7 +88,7 @@ class BarSeriesLabel extends Label {
 
 class BarSeriesTooltip extends SeriesTooltip {
     @Validate(OPT_FUNCTION)
-    renderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult = undefined;
+    renderer?: (params: AgBarSeriesTooltipRendererParams) => string | AgTooltipRendererResult = undefined;
 }
 
 function is2dArray<E>(array: E[] | E[][]): array is E[][] {
@@ -266,6 +266,11 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }
 
     stackGroups: Record<string, string[]> = {};
+
+    protected getStackGroup(yKey: string) {
+        const { stackGroups } = this;
+        return Object.entries(stackGroups).find(([_, keys]) => keys.includes(yKey))?.[0];
+    }
 
     /**
      * A map of `yKeys` to their names (used in legends and tooltips).
@@ -780,6 +785,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     ? highlightedDatumStrokeWidth
                     : this.getStrokeWidth(this.strokeWidth, datum);
             const fillOpacity = isDatumHighlighted ? highlightFillOpacity : seriesFillOpacity;
+            const stackGroup = this.getStackGroup(datum.yKey);
 
             let format: AgBarSeriesFormat | undefined = undefined;
             if (formatter) {
@@ -792,6 +798,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     xKey,
                     yKey: datum.yKey,
                     seriesId,
+                    stackGroup,
                 });
             }
             rect.crisp = crisp;
@@ -880,6 +887,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const { renderer: tooltipRenderer } = tooltip;
         const datum = nodeDatum.datum;
         const yName = yNames[yKey];
+        const stackGroup = this.getStackGroup(yKey);
         const fill = fills[fillIndex % fills.length];
         const stroke = strokes[fillIndex % fills.length];
         const strokeWidth = this.getStrokeWidth(this.strokeWidth);
@@ -902,6 +910,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 xKey,
                 yKey,
                 seriesId,
+                stackGroup,
             });
         }
 
@@ -926,6 +935,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     color,
                     title,
                     seriesId,
+                    stackGroup,
                 }),
                 defaults
             );

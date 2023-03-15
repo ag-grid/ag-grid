@@ -1206,6 +1206,7 @@ export interface AgBarSeriesFormatterParams<DatumType> {
     readonly xKey: string;
     readonly yKey: string;
     readonly seriesId: string;
+    readonly stackGroup?: string;
 }
 
 export interface AgBarSeriesFormat {
@@ -1214,9 +1215,13 @@ export interface AgBarSeriesFormat {
     strokeWidth?: PixelSize;
 }
 
+export interface AgBarSeriesTooltipRendererParams extends AgCartesianSeriesTooltipRendererParams {
+    readonly stackGroup?: string;
+}
+
 export interface AgBarSeriesTooltip extends AgSeriesTooltip {
     /** Function used to create the content for tooltips. */
-    renderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
+    renderer?: (params: AgBarSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 
 /** Configuration for bar/column series. */
