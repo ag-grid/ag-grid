@@ -55,5 +55,6 @@
         "node_modules",
         "dist",
         "typings"
-    ]
+    ],
+    "typescript.enablePromptUseWorkspaceTsdk": true
 }
