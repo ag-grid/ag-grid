@@ -50,14 +50,16 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
 
         this.axisCtx = ctx.parent;
 
-        ctx.scene!.root!.appendChild(this.crosshairGroup);
+        ctx.scene.root!.appendChild(this.crosshairGroup);
+        this.destroyFns.push(() => ctx.scene.root?.removeChild(this.crosshairGroup));
 
         this.crosshairGroup.visible = false;
 
         this.label = new CrosshairLabel(document, ctx.scene.canvas.container ?? document.body);
+        this.destroyFns.push(() => this.label.destroy());
     }
 
-    layout({ series: { rect, visible }, axes }: _ModuleSupport.LayoutCompleteEvent) {
+    private layout({ series: { rect, visible }, axes }: _ModuleSupport.LayoutCompleteEvent) {
         if (!(visible && rect && axes)) {
             return;
         }
@@ -78,7 +80,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         this.updateLine();
     }
 
-    updateLine() {
+    private updateLine() {
         const {
             lineNode: line,
             seriesRect,
@@ -101,7 +103,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         line.x2 = axisCtx.direction === 'x' ? seriesRect.height : seriesRect.width;
     }
 
-    getAxisValue(position: number): string {
+    private getAxisValue(position: number): string {
         const { axisCtx } = this;
 
         const value = axisCtx.scaleInvert(position);
@@ -109,7 +111,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         return this.formatValue(value);
     }
 
-    formatValue(val: any): string {
+    private formatValue(val: any): string {
         const { axisLayout } = this;
 
         const isInteger = val % 1 === 0;
@@ -118,7 +120,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         return typeof val === 'number' ? val.toFixed(fractionDigits) : String(val);
     }
 
-    onMouseMove(event: _ModuleSupport.InteractionEvent<'hover'>) {
+    private onMouseMove(event: _ModuleSupport.InteractionEvent<'hover'>) {
         const { crosshairGroup, snap, seriesRect, axisCtx } = this;
         if (snap || !axisCtx.continuous) {
             return;
@@ -145,7 +147,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         }
     }
 
-    onHighlightChange(event: _ModuleSupport.HighlightChangeEvent) {
+    private onHighlightChange(event: _ModuleSupport.HighlightChangeEvent) {
         const { crosshairGroup, snap, seriesRect, axisCtx } = this;
         if (!snap && axisCtx.continuous) {
             return;
@@ -173,7 +175,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         }
     }
 
-    getLabelHtml(value: string): string {
+    private getLabelHtml(value: string): string {
         const { label, axisLayout: { label: { fractionDigits = 0 } = {} } = {} } = this;
         const { renderer: labelRenderer } = label;
         const content = value;
@@ -194,7 +196,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         return toLabelHtml(defaults);
     }
 
-    showLabel(x: number, y: number, value: string) {
+    private showLabel(x: number, y: number, value: string) {
         const { axisCtx, seriesRect, label } = this;
 
         const html = this.getLabelHtml(value);
@@ -223,7 +225,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         label.show(labelMeta);
     }
 
-    hideLabel() {
+    private hideLabel() {
         this.label.toggle(false);
     }
 }

@@ -78,12 +78,6 @@ export class CrosshairLabel {
             return !element.classList.contains(`${DEFAULT_LABEL_CLASS}-hidden`);
         }
 
-        // IE11
-        const classes = element.getAttribute('class');
-        if (classes) {
-            return classes.split(' ').indexOf(`${DEFAULT_LABEL_CLASS}-hidden`) < 0;
-        }
-
         return false;
     }
 
