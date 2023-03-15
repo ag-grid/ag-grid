@@ -3,12 +3,12 @@
  */
 
 function sectionHasPath(section, urlPath) {
-    if (section.items) {
+    if (urlPath === section.url) {
+        return true;
+    } else if (section.items) {
         return section.items.reduce((acc, sectionItem) => {
             return acc || sectionHasPath(sectionItem, urlPath);
         }, false);
-    } else {
-        return urlPath === section.url;
     }
 }
 
