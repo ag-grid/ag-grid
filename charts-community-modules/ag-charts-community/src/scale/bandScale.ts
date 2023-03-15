@@ -94,6 +94,12 @@ export class BandScale<D> implements Scale<D, number, number> {
         return r;
     }
 
+    invert(position: number) {
+        this.refresh();
+        const index = this.ordinalRange.findIndex((p) => p === position);
+        return this.domain[index];
+    }
+
     private _bandwidth: number = 1;
     get bandwidth(): number {
         this.refresh();

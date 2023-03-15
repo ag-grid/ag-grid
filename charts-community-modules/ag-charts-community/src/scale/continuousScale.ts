@@ -85,16 +85,8 @@ export abstract class ContinuousScale<D extends number | Date, I = number> imple
         const [r0, r1] = range;
 
         let d: any;
-        if (x < r0) {
-            d = d0;
-        } else if (x > r1) {
-            d = d1;
-        } else if (r0 === r1) {
+        if (r0 === r1) {
             d = this.toDomain((this.fromDomain(d0) + this.fromDomain(d1)) / 2);
-        } else if (x === r0) {
-            d = d0;
-        } else if (x === r1) {
-            d = d1;
         } else {
             d = this.toDomain(
                 this.fromDomain(d0) + ((x - r0) / (r1 - r0)) * (this.fromDomain(d1) - this.fromDomain(d0))

@@ -25,7 +25,7 @@ export interface AxisContext {
     axisId: string;
     position: AgCartesianAxisPosition;
     direction: 'x' | 'y';
-
+    continuous: boolean;
     scaleConvert(val: any): number;
     scaleInvert(position: number): any;
 }
