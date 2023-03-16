@@ -1,8 +1,8 @@
 import { _ModuleSupport, _Scene } from 'ag-charts-community';
 
-import { ZoomSelector } from './zoomSelector';
-import { ZoomScroller } from './zoomScroller';
 import { ZoomPanner } from './zoomPanner';
+import { ZoomScroller } from './zoomScroller';
+import { ZoomSelector } from './zoomSelector';
 import { pointToRatio } from './zoomTransformers';
 import { DefinedZoomState, ZoomCoords } from './zoomTypes';
 import { ZoomRect } from './scenes/zoomRect';
@@ -53,16 +53,18 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     public scrollingStep = 0.1;
 
     /**
-     * The minimum number of nodes to show when zooming on the x-axis
+     * The minimum proportion of the original chart to display when zooming on the x-axis. Trying to zoom beyond this
+     * point will be blocked.
      */
-    @Validate(OPT_NUMBER(1))
-    public minXNodes?: number;
+    @Validate(OPT_NUMBER(0, 1))
+    public minXRatio?: number = 0.1;
 
     /**
-     * The minimum number of nodes to show when zooming on the y-axis
+     * The minimum proportion of the original chart to display when zooming in on the y-axis. Trying to zoom beyond this
+     * point will be blocked.
      */
-    @Validate(OPT_NUMBER(1))
-    public minYNodes?: number;
+    @Validate(OPT_NUMBER(0, 1))
+    public minYRatio?: number = 0.1;
 
     private readonly scene: _Scene.Scene;
     private seriesRect?: _Scene.BBox;
@@ -86,10 +88,9 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
             ctx.interactionManager.addListener('wheel', (event) => this.onWheel(event)),
         ].forEach((s) => this.destroyFns.push(() => ctx.interactionManager.removeListener(s)));
 
-        // Add layout listeners
-        [ctx.layoutService.addListener('layout-complete', (event) => this.onLayoutComplete(event))].forEach((s) =>
-            this.destroyFns.push(() => ctx.layoutService.removeListener(s))
-        );
+        // Add layout listener
+        const layoutHandle = ctx.layoutService.addListener('layout-complete', (event) => this.onLayoutComplete(event));
+        this.destroyFns.push(() => ctx.layoutService.removeListener(layoutHandle));
 
         // Add scrolling zoom method
         if (this.enableScrolling) {
@@ -121,12 +122,12 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         const min = pointToRatio(this.seriesRect, coords.x1, coords.y1);
         const max = pointToRatio(this.seriesRect, coords.x2, coords.y2);
 
-        const zoomState: DefinedZoomState = {
+        const zoom: DefinedZoomState = {
             x: { min: min.x, max: max.x },
             y: { min: max.y, max: min.y }, // TODO: zoom state is inverse of the chart coords system
         };
 
-        this.zoomManager.updateZoom('zoom', zoomState);
+        this.updateZoomWithConstraints(zoom);
     }
 
     private onDrag(event: _ModuleSupport.InteractionEvent<'drag'>) {
@@ -136,8 +137,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
 
         if (this.panner && this.seriesRect && isZoomed && this.isPanningKeyPressed(event.sourceEvent as DragEvent)) {
             const newZoom = this.panner.update(event, this.seriesRect, zoom);
-            this.zoomManager.updateZoom('zoom', newZoom);
-
+            this.updateZoomWithConstraints(newZoom);
             return;
         }
 
@@ -164,7 +164,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         const currentZoom = this.zoomManager.getZoom();
         const newZoom = this.scroller.update(event, this.seriesRect, currentZoom);
 
-        this.zoomManager.updateZoom('zoom', newZoom);
+        this.updateZoomWithConstraints(newZoom);
     }
 
     private onLayoutComplete({ series: { rect, visible } }: _ModuleSupport.LayoutCompleteEvent) {
@@ -204,5 +204,18 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
             y >= seriesRect.y &&
             y <= seriesRect.y + seriesRect.height
         );
+    }
+
+    private updateZoomWithConstraints(zoom: DefinedZoomState) {
+        const dx = zoom.x.max - zoom.x.min;
+        const dy = zoom.y.max - zoom.y.min;
+
+        const constrainOnX = this.minXRatio !== undefined && dx < this.minXRatio;
+        const constrainOnY = this.minYRatio !== undefined && dy < this.minYRatio;
+
+        // Discard the zoom update if it would take us past either min ratio
+        if (constrainOnX || constrainOnY) return;
+
+        this.zoomManager.updateZoom('zoom', zoom);
     }
 }

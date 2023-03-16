@@ -31,8 +31,10 @@ export class ZoomScroller {
         const zoomFactor = 1 + this.step * dir;
         const aspectRatio = (oldZoom.y.max - oldZoom.y.min) / (oldZoom.x.max - oldZoom.x.min);
 
+        // Round the yFactor to ensure floating point maths doesn't cause an extra zoom scroll step
+        // due to a zoom of 0.999...
         const xFactor = this.isScalingX ? zoomFactor : 1;
-        const yFactor = this.isScalingY ? zoomFactor * aspectRatio : 1;
+        const yFactor = this.isScalingY ? Math.round(zoomFactor * aspectRatio * 100) / 100 : 1;
 
         let newZoom = scaleZoom(oldZoom, xFactor, yFactor);
 

@@ -17,6 +17,7 @@ declare module 'ag-charts-community' {
     }
 
     export type AgZoomAxes = 'x' | 'y' | 'xy';
+    export type AgZoomPanKey = 'alt' | 'ctrl' | 'meta' | 'shift';
 
     export interface AgZoomOptions {
         axes?: AgZoomAxes;
@@ -24,7 +25,9 @@ declare module 'ag-charts-community' {
         enablePanning?: boolean;
         enableScrolling?: boolean;
         enableSelecting?: boolean;
-        panKey?: 'alt' | 'ctrl' | 'meta' | 'shift';
+        minXRatio?: number;
+        minYRatio?: number;
+        panKey?: AgZoomPanKey;
         scrollingStep?: number;
     }
 }
