@@ -3963,14 +3963,18 @@
     "meta": { "isTypeAlias": true },
     "type": "HdpiCanvas | HdpiOffscreenCanvas"
   },
+  "ZIndexSubOrder": {
+    "meta": { "isTypeAlias": true },
+    "type": "[ LiteralOrFn<string | number>, LiteralOrFn<number> ]"
+  },
   "LayerManager": {
     "meta": {},
     "type": {
       "debug": "SceneDebugOptions",
       "canvas": "Layer",
       "markDirty()": "void",
-      "addLayer(opts: { zIndex?: number; zIndexSubOrder?: [ string, number ]; name?: string; getComputedOpacity: () => number; getVisibility: () => boolean; })": "Layer | undefined",
-      "moveLayer(canvas: Layer, zIndex: number, zIndexSubOrder?: [ string, number ])": "void",
+      "addLayer(opts: { zIndex?: number; zIndexSubOrder?: ZIndexSubOrder; name?: string; getComputedOpacity: () => number; getVisibility: () => boolean; })": "Layer | undefined",
+      "moveLayer(canvas: Layer, zIndex: number, zIndexSubOrder?: ZIndexSubOrder)": "void",
       "removeLayer(canvas: Layer)": "void"
     }
   },
@@ -4047,6 +4051,10 @@
   "Comparator": {
     "meta": { "isTypeAlias": true, "typeParams": ["T"] },
     "type": "(a: T, b: T) => number"
+  },
+  "LiteralOrFn": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
+    "type": "T | (() => T)"
   },
   "TransformFn": {
     "meta": { "isTypeAlias": true },

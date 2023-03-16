@@ -5653,6 +5653,7 @@
   "PointerEvents": {},
   "RenderContext": {},
   "Layer": {},
+  "ZIndexSubOrder": {},
   "LayerManager": {
     "debug": {
       "type": { "returnType": "SceneDebugOptions", "optional": false }
@@ -5664,7 +5665,7 @@
     "addLayer": {
       "type": {
         "arguments": {
-          "opts": "{ zIndex?: number; zIndexSubOrder?: [ string, number ]; name?: string; getComputedOpacity: () => number; getVisibility: () => boolean; }"
+          "opts": "{ zIndex?: number; zIndexSubOrder?: ZIndexSubOrder; name?: string; getComputedOpacity: () => number; getVisibility: () => boolean; }"
         },
         "returnType": "Layer | undefined",
         "optional": false
@@ -5675,7 +5676,7 @@
         "arguments": {
           "canvas": "Layer",
           "zIndex": "number",
-          "zIndexSubOrder?": "[ string, number ]"
+          "zIndexSubOrder?": "ZIndexSubOrder"
         },
         "returnType": "void",
         "optional": false
@@ -5753,6 +5754,7 @@
   "ShapeLineCap": {},
   "ShapeLineJoin": {},
   "Comparator": { "meta": { "typeParams": ["T"] } },
+  "LiteralOrFn": { "meta": { "typeParams": ["T"] } },
   "TransformFn": {},
   "TransformConfig": {},
   "LiteralProperties": {},

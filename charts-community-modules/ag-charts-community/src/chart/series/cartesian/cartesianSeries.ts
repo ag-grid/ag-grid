@@ -271,21 +271,21 @@ export abstract class CartesianSeries<
                 name: `${this.id}-series-sub${subGroupId}-dataNodes`,
                 layer,
                 zIndex: Layers.SERIES_LAYER_ZINDEX,
-                zIndexSubOrder: [this.id, subGroupZOffset],
+                zIndexSubOrder: [() => this._declarationOrder, subGroupZOffset],
             });
             const markerGroup = hasMarkers
                 ? new Group({
                       name: `${this.id}-series-sub${this.subGroupId++}-markers`,
                       layer,
                       zIndex: Layers.SERIES_LAYER_ZINDEX,
-                      zIndexSubOrder: [this.id, 10000 + subGroupId],
+                      zIndexSubOrder: [() => this._declarationOrder, 10000 + subGroupId],
                   })
                 : undefined;
             const labelGroup = new Group({
                 name: `${this.id}-series-sub${this.subGroupId++}-labels`,
                 layer,
                 zIndex: Layers.SERIES_LABEL_ZINDEX,
-                zIndexSubOrder: [this.id, subGroupId],
+                zIndexSubOrder: [() => this._declarationOrder, subGroupId],
             });
 
             contentGroup.appendChild(dataNodeGroup);
@@ -299,7 +299,10 @@ export abstract class CartesianSeries<
             for (let index = 0; index < pathsPerSeries; index++) {
                 paths[index] = new Path();
                 paths[index].zIndex = Layers.SERIES_LAYER_ZINDEX;
-                paths[index].zIndexSubOrder = [this.id, (pathsZIndexSubOrderOffset[index] ?? 0) + subGroupZOffset];
+                paths[index].zIndexSubOrder = [
+                    () => this._declarationOrder,
+                    (pathsZIndexSubOrderOffset[index] ?? 0) + subGroupZOffset,
+                ];
                 pathParentGroup.appendChild(paths[index]);
             }
 
