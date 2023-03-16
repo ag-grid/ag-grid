@@ -166,7 +166,7 @@ const Menu = ({ currentFramework, currentPage, path }) => {
         .reduce((combined, group) => [...combined, ...group.items], [])
         .filter((group) => groupItemHasApplicableChild(group.items));
 
-    const pathSegment = `/${path.split('/')[2]}/`;
+    const pathSegment = `/${path.split('/').reverse()[1]}/`;
     const activeParentItems = findParentItems(combinedMenuItems, pathSegment);
 
     const containsPage = (items, frameworks) =>
