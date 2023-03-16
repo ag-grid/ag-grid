@@ -59,65 +59,9 @@ Text Filters are configured though the `filterParams` attribute of the column de
 
 <interface-documentation interfaceName='ITextFilterParams' config='{"description":"", "sortAlphabetically":"true"}' overrideSrc="filter-text/resources/text-filter-params.json"></interface-documentation>
 
-## Text Custom Matcher
-
-By default the text filter performs strict case-insensitive text filtering, i.e. if you provide `['1,234.5USD','345GBP']` as data for a text column:
-
-- **contains '1,2'** will show 1 value: ['1,234.5USD']
-- **contains '12'** will show 0 values
-- **contains '$'** will show 0 values
-- **contains 'gbp'** will show 1 value ['345GBP']
-
-You can change the default behaviour by providing your own `textMatcher`, which allows you to provide your own logic to decide when to include a row in the filtered results.
-
-<interface-documentation interfaceName='ITextFilterParams' names='["textMatcher"]' config='{"description":"", "overrideBottomMargin":"1rem"}' ></interface-documentation>
-
-- `filter` The applicable filter type being tested. One of: `equals`, `notEqual`, `contains`, `notContains`, `startsWith`, `endsWith`
-- `value` The value about to be filtered. If this column has a value getter, this value will be coming from the value getter, otherwise it is the raw value injected into the grid.
-- `filterText` The value to filter by.
-- `returns: boolean` Set to `true` if the value passes the filter, otherwise `false`.
-
-The following is an example of a `textMatcher` that mimics the current implementation of AG Grid. This can be used as a template to create your own.
-
-<snippet>
-const gridOptions = {
-    columnDefs: [
-        {
-            field: 'athlete',
-            filter: 'agTextColumnFilter',
-            filterParams: {
-                textMatcher: ({filter, value, filterText}) => {
-                    const filterTextLowerCase = filterText.toLowerCase();
-                    const valueLowerCase = value.toString().toLowerCase();
-                    switch (filter) {
-                        case 'contains':
-                            return valueLowerCase.indexOf(filterTextLowerCase) >= 0;
-                        case 'notContains':
-                            return valueLowerCase.indexOf(filterTextLowerCase) === -1;
-                        case 'equals':
-                            return valueLowerCase === filterTextLowerCase;
-                        case 'notEqual':
-                            return valueLowerCase != filterTextLowerCase;
-                        case 'startsWith':
-                            return valueLowerCase.indexOf(filterTextLowerCase) === 0;
-                        case 'endsWith':
-                            var index = valueLowerCase.lastIndexOf(filterTextLowerCase);
-                            return index >= 0 && index === (valueLowerCase.length - filterTextLowerCase.length);
-                        default:
-                            // should never happen
-                            console.warn('invalid filter type ' + filter);
-                            return false;
-                    }
-                }
-            }
-        }
-    ]
-}
-</snippet>
-
 ## Text Formatter
 
-By default, the grid compares the text filter with the values in a case-insensitive way, by converting both the filter text and the values to lower-case and comparing them; for example, `'o'` will match `'Olivia'` and `'Salmon'`. If you instead want to have case-sensitive matches, you can set `caseSensitive = true` in the `filterParams`, so that no lower-casing is performed. In this case, `'o'` would no longer match `'Olivia'`.
+By default, the grid compares the Text Filter with the values in a case-insensitive way, by converting both the filter text and the values to lower case and comparing them; for example, `'o'` will match `'Olivia'` and `'Salmon'`. If you instead want to have case-sensitive matches, you can set `caseSensitive = true` in the `filterParams`, so that no lowercasing is performed. In this case, `'o'` would no longer match `'Olivia'`.
 
 You might have more advanced requirements, for example to ignore accented characters. In this case, you can provide your own `textFormatter`, which is a function with the following signature:
 
@@ -125,11 +69,14 @@ You might have more advanced requirements, for example to ignore accented charac
 
 `from` is the value coming from the grid. This can be from the `valueGetter` if there is any for the column, or the value as originally provided in the `rowData`. The function should return a string to be used for the purpose of filtering.
 
+The Text Formatter is applied to both the filter text and the values before they are compared.
+
 The following is an example function to remove accents and convert to lower case.
 
 ```js
-const toLowerWithoutAccents = value =>
-    value.toLowerCase()
+const toLowerWithoutAccents = value => value == null
+    ? null
+    : value.toLowerCase()
         .replace(/[àáâãäå]/g, 'a')
         .replace(/æ/g, 'ae')
         .replace(/ç/g, 'c')
@@ -141,6 +88,55 @@ const toLowerWithoutAccents = value =>
         .replace(/[ùúûü]/g, 'u')
         .replace(/[ýÿ]/g, 'y');
 ```
+
+Note that when providing a Text Formatter, the `caseSensitive` parameter is ignored. In this situation, if you want to do a case-insensitive comparison, you will need to perform case conversion inside the `textFormatter` function.
+
+## Text Custom Matcher
+
+In most cases, you can customise the Text Filter matching logic by providing your own [Text Formatter](#text-formatter), e.g. to remove or replace characters in the filter text and values. The Text Formatter is applied to both the filter text and values before the filter comparison is performed.
+
+For more advanced use cases, you can provide your own `textMatcher` to decide when to include a row in the filtered results. For example, you might want to apply different logic for the filter option `equals` than for `contains`.
+
+<interface-documentation interfaceName='ITextFilterParams' names='["textMatcher"]' config='{"description":"", "overrideBottomMargin":"1rem"}' ></interface-documentation>
+
+The following is an example of a `textMatcher` that mimics the current implementation of AG Grid. This can be used as a template to create your own.
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'athlete',
+            filter: 'agTextColumnFilter',
+            filterParams: {
+                textMatcher: ({ filterOption, value, filterText }) => {
+                    if (filterText == null) {
+                        return false;
+                    }
+                    switch (filterOption) {
+                        case 'contains':
+                            return value.indexOf(filterText) >= 0;
+                        case 'notContains':
+                            return value.indexOf(filterText) < 0;
+                        case 'equals':
+                            return value === filterText;
+                        case 'notEqual':
+                            return value != filterText;
+                        case 'startsWith':
+                            return value.indexOf(filterText) === 0;
+                        case 'endsWith':
+                            const index = value.lastIndexOf(filterText);
+                            return index >= 0 && index === (value.length - filterText.length);
+                        default:
+                            // should never happen
+                            console.warn('invalid filter type ' + filter);
+                            return false;
+                    }
+                }
+            }
+        }
+    ]
+}
+</snippet>
 
 ## Text Filter Model
 

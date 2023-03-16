@@ -9696,10 +9696,15 @@
   },
   "TextMatcherParams": {
     "filterOption": {
+      "description": "/** The applicable filter option being tested.\n     * One of: `equals`, `notEqual`, `contains`, `notContains`, `startsWith`, `endsWith`.\n     */",
       "type": { "returnType": "string | null | undefined", "optional": false }
     },
-    "value": { "type": { "returnType": "any", "optional": false } },
+    "value": {
+      "description": "/** The value about to be filtered.\n     * If this column has a value getter, this value will be coming from the value getter,\n     * otherwise it is the raw value injected into the grid.\n     * If a `textFormatter` is provided, this value will have been formatted.\n     * If no `textFormatter` is provided and `caseSensitive` is not provided or is `false`,\n     * the value will have been converted to lower case.\n     */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "filterText": {
+      "description": "/** The value to filter by.\n     * If a `textFormatter` is provided, this value will have been formatted.\n     * If no `textFormatter` is provided and `caseSensitive` is not provided or is `false`,\n     * the value will have been converted to lower case.\n     */",
       "type": { "returnType": "string | null", "optional": false }
     },
     "textFormatter": {
@@ -9740,7 +9745,7 @@
   "TextFilterParams": { "meta": { "typeParams": ["TData = any"] } },
   "ITextFilterParams": {
     "textMatcher": {
-      "description": "/** Used to override how to filter based on the user input.\n     */",
+      "description": "/** Used to override how to filter based on the user input.\n     * Returns `true` if the value passes the filter, otherwise `false`.\n     */",
       "type": { "returnType": "TextMatcher", "optional": true }
     },
     "caseSensitive": {

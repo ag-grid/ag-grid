@@ -5526,6 +5526,9 @@
       "context": "any"
     },
     "docs": {
+      "filterOption": "/** The applicable filter option being tested.\n     * One of: `equals`, `notEqual`, `contains`, `notContains`, `startsWith`, `endsWith`.\n     */",
+      "value": "/** The value about to be filtered.\n     * If this column has a value getter, this value will be coming from the value getter,\n     * otherwise it is the raw value injected into the grid.\n     * If a `textFormatter` is provided, this value will have been formatted.\n     * If no `textFormatter` is provided and `caseSensitive` is not provided or is `false`,\n     * the value will have been converted to lower case.\n     */",
+      "filterText": "/** The value to filter by.\n     * If a `textFormatter` is provided, this value will have been formatted.\n     * If no `textFormatter` is provided and `caseSensitive` is not provided or is `false`,\n     * the value will have been converted to lower case.\n     */",
       "node": "/** Row node for the given row */",
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
@@ -5576,7 +5579,7 @@
       "readOnly?": "boolean"
     },
     "docs": {
-      "textMatcher?": "/** Used to override how to filter based on the user input.\n     */",
+      "textMatcher?": "/** Used to override how to filter based on the user input.\n     * Returns `true` if the value passes the filter, otherwise `false`.\n     */",
       "caseSensitive?": "/** By default, text filtering is case-insensitive. Set this to `true` to make text filtering case-sensitive.\n     * Default: `false`\n     */",
       "textFormatter?": "/** Formats the text before applying the filter compare logic.\n     * Useful if you want to substitute accented characters, for example.\n     */",
       "trimInput?": "/** If `true`, the input that the user enters will be trimmed when the filter is applied, so any leading or trailing whitespace will be removed.\n     * If only whitespace is entered, it will be left as-is.\n     * If you enable `trimInput`, it is best to also increase the `debounceMs` to give users more time to enter text.\n     * Default: `false`\n     */",
