@@ -100,6 +100,13 @@ const INVALID_DATA_EXAMPLES: Record<string, TestCase> = {
 };
 
 describe('AreaSeries', () => {
+    const compare = async () => {
+        await waitForChartStability(chart);
+
+        const imageData = extractImageData(ctx);
+        (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
+    };
+
     let chart: Chart;
 
     afterEach(() => {
@@ -133,13 +140,6 @@ describe('AreaSeries', () => {
             });
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
-                const compare = async () => {
-                    await waitForChartStability(chart);
-
-                    const imageData = extractImageData(ctx);
-                    (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-                };
-
                 const options: AgChartOptions = { ...example.options };
                 options.autoSize = false;
                 options.width = CANVAS_WIDTH;
@@ -174,13 +174,6 @@ describe('AreaSeries', () => {
             });
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
-                const compare = async () => {
-                    await waitForChartStability(chart);
-
-                    const imageData = extractImageData(ctx);
-                    (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-                };
-
                 const options: AgChartOptions = { ...example.options };
                 options.autoSize = false;
                 options.width = CANVAS_WIDTH;
@@ -197,5 +190,45 @@ describe('AreaSeries', () => {
                 expect(console.warn).toBeCalled();
             });
         }
+    });
+
+    describe('multiple overlapping areas', () => {
+        beforeEach(() => {
+            console.warn = jest.fn();
+        });
+
+        it('should render area series with the correct relative Z-index', async () => {
+            const options: AgChartOptions = {
+                data: repeat(null, 30).reduce(
+                    (result, _, i) => [
+                        {
+                            ...(result[0] ?? {}),
+                            [`x${i}`]: 0,
+                            [`y${i}`]: i,
+                        },
+                        {
+                            ...(result[1] ?? {}),
+                            [`x${i}`]: 1,
+                            [`y${i}`]: 30 - i,
+                        },
+                    ],
+                    [{}, {}]
+                ),
+                series: repeat(null, 30).map((_, i) => ({
+                    type: 'area',
+                    xKey: `x${i}`,
+                    yKey: `y${i}`,
+                    strokeWidth: 2,
+                })),
+                legend: { enabled: false },
+            };
+
+            options.autoSize = false;
+            options.width = CANVAS_WIDTH;
+            options.height = CANVAS_HEIGHT;
+
+            chart = AgChart.create(options) as Chart;
+            await compare();
+        });
     });
 });
