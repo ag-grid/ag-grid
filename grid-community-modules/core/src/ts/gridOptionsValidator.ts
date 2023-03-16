@@ -74,7 +74,7 @@ export class GridOptionsValidator {
         const validateRegistered = (prop: keyof GridOptions, module: ModuleNames) => this.gridOptionsService.exists(prop) && ModuleRegistry.assertRegistered(module, prop);
 
         // Ensure the SideBar is registered which will then lead them to register Column / Filter Tool panels as required by their config.
-        // It is possible to use the SideBar only with your own custom tool panels.            
+        // It is possible to use the SideBar only with your own custom tool panels.
         validateRegistered('sideBar', ModuleNames.SideBarModule);
         validateRegistered('statusBar', ModuleNames.StatusBarModule);
         validateRegistered('enableCharts', ModuleNames.GridChartsModule);
@@ -84,11 +84,11 @@ export class GridOptionsValidator {
 
         if (this.gridOptionsService.is('groupRowsSticky')) {
             if (this.gridOptionsService.is('groupHideOpenParents')) {
-                this.pickOneWarning('groupRowsSticky', 'groupHideOpenParents');                
+                this.pickOneWarning('groupRowsSticky', 'groupHideOpenParents');
             }
 
             if (this.gridOptionsService.is('masterDetail')) {
-                this.pickOneWarning('groupRowsSticky', 'masterDetail');                
+                this.pickOneWarning('groupRowsSticky', 'masterDetail');
             }
 
             if (this.gridOptionsService.is('pagination')) {
