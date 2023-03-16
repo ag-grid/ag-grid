@@ -1,8 +1,6 @@
 import { Grid, ColDef, GridOptions, GetRowIdParams, GridReadyEvent, IServerSideGetRowsParams, IsServerSideGroupOpenByDefaultParams, ServerSideTransaction, ServerSideTransactionResult } from '@ag-grid-community/core'
 
 declare var FakeServer: any;
-declare var deletePortfolioOnServer: any;
-declare var changePortfolioOnServer: any;
 declare var createRowOnServer: any;
 
 const columnDefs: ColDef[] = [
@@ -77,24 +75,6 @@ function logResults(transaction: ServerSideTransaction, result?: ServerSideTrans
   console.log('[Example] - Applied transaction:', transaction, 'Result:', result);
 }
 
-function deleteAllHybrid() {
-  // NOTE: real applications would be better served listening to a stream of changes from the server instead
-  const serverResponse: any = deletePortfolioOnServer('Hybrid');
-  if (!serverResponse.success) {
-    console.warn('Nothing has changed on the server');
-    return;
-  }
-
-  if (serverResponse) {
-    // apply tranaction to keep grid in sync
-    const transaction = {
-      remove: [{ portfolio: 'Hybrid' }],
-    };
-    const result = gridOptions.api!.applyServerSideTransaction(transaction);
-    logResults(transaction, result);
-  }
-}
-
 function createOneAggressive() {
   // NOTE: real applications would be better served listening to a stream of changes from the server instead
   const serverResponse: any = createRowOnServer('Aggressive', 'Aluminium', 'GL-1');
@@ -119,40 +99,6 @@ function createOneAggressive() {
     };
     const result = gridOptions.api!.applyServerSideTransaction(transaction);
     logResults(transaction, result);
-  }
-}
-
-function updateAggressiveToHybrid() {
-  // NOTE: real applications would be better served listening to a stream of changes from the server instead
-  const serverResponse: any = changePortfolioOnServer('Aggressive', 'Hybrid');
-  if (!serverResponse.success) {
-    console.warn('Nothing has changed on the server');
-    return;
-  }
-
-  const transaction = {
-    remove: [{ portfolio: 'Aggressive' }],
-  };
-  // aggressive group no longer exists, so delete the group
-  const result = gridOptions.api!.applyServerSideTransaction(transaction);
-  logResults(transaction, result);
-
-  if (serverResponse.newGroupCreated) {
-    // hybrid group didn't exist, so just create the new group
-    const t = {
-      route: [],
-      add: [{ portfolio: 'Hybrid' }],
-    };
-    const r = gridOptions.api!.applyServerSideTransaction(t);
-    logResults(t, r);
-  } else {
-    // hybrid group already existed, add rows to it
-    const t = {
-      route: ['Hybrid'],
-      add: serverResponse.updatedRecords,
-    };
-    const r = gridOptions.api!.applyServerSideTransaction(t);
-    logResults(t, r);
   }
 }
 
