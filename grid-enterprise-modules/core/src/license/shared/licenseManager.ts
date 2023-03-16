@@ -1,4 +1,4 @@
-import { MD5 } from './md5';
+import {MD5} from './md5';
 
 // move to general utils
 function missingOrEmpty<T>(value?: T[] | string | null): boolean {
@@ -30,16 +30,25 @@ export class LicenseManager {
                 this.outputMissingLicenseKey();
             }
         } else if (LicenseManager.licenseKey.length > 32) {
-            const {md5, license, version, isTrial} = LicenseManager.extractLicenseComponents(LicenseManager.licenseKey);
-
-            if (md5 === this.md5.md5(license)) {
-                if (exists(version) && version) {
-                    this.validateLicenseKeyForVersion(version, !!isTrial, license);
-                } else {
-                    this.validateLegacyKey(license);
-                }
-            } else {
+            if (LicenseManager.licenseKey.indexOf("For_Trialing_ag-Grid_Only") !== -1) {
                 this.outputInvalidLicenseKey();
+            } else {
+                const {
+                    md5,
+                    license,
+                    version,
+                    isTrial
+                } = LicenseManager.extractLicenseComponents(LicenseManager.licenseKey);
+
+                if (md5 === this.md5.md5(license)) {
+                    if (exists(version) && version) {
+                        this.validateLicenseKeyForVersion(version, !!isTrial, license);
+                    } else {
+                        this.validateLegacyKey(license);
+                    }
+                } else {
+                    this.outputInvalidLicenseKey();
+                }
             }
         } else {
             this.outputInvalidLicenseKey();
@@ -89,14 +98,14 @@ export class LicenseManager {
         return !this.isLocalhost() && !this.isWebsiteUrl() && !missingOrEmpty(this.watermarkMessage);
     }
 
-    public getWatermarkMessage() : string {
+    public getWatermarkMessage(): string {
         return this.watermarkMessage || '';
     }
 
     private getHostname(): string {
         const win = (this.document.defaultView || window);
         const loc = win.location;
-        const { hostname = '' } = loc;
+        const {hostname = ''} = loc;
 
         return hostname;
     }
@@ -182,10 +191,10 @@ export class LicenseManager {
 
     private static extractBracketedInformation(licenseKey: string): [string | null, boolean | null] {
         const matches = licenseKey.split('[')
-            .filter(function(v) {
+            .filter(function (v) {
                 return v.indexOf(']') > -1;
             })
-            .map(function(value) {
+            .map(function (value) {
                 return value.split(']')[0];
             });
 
@@ -200,7 +209,9 @@ export class LicenseManager {
     }
 
     private validateLicenseKeyForVersion(version: string, isTrial: boolean, license: string) {
-        if (version !== '2') { return; }
+        if (version !== '2') {
+            return;
+        }
 
         if (isTrial) {
             this.validateForTrial(license);
