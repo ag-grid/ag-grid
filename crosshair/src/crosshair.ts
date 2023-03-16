@@ -1,7 +1,8 @@
-import { _Scene, _ModuleSupport, AgCrosshairLabelRendererResult } from 'ag-charts-community';
+import { _Scene, _Util, _ModuleSupport, AgCrosshairLabelRendererResult } from 'ag-charts-community';
 import { CrosshairLabel, LabelMeta } from './crosshairLabel';
 
 const { Group, Line, BBox } = _Scene;
+const { checkDatum } = _Util;
 const { Validate, NUMBER, BOOLEAN, OPT_COLOR_STRING, OPT_LINE_DASH, Layers } = _ModuleSupport;
 
 export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
@@ -153,18 +154,24 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         }
 
         const { currentHighlight } = event;
-        if (currentHighlight && currentHighlight.point) {
-            const { x, y } = currentHighlight.point;
-
+        if (currentHighlight) {
             crosshairGroup.visible = true;
 
-            let value;
+            const { xKey = '', yKey = '', datum } = currentHighlight;
+            const key = axisCtx.keys().indexOf(yKey) >= 0 ? yKey : xKey;
+            const datumValue = checkDatum(datum[key], axisCtx.continuous);
+            const position = axisCtx.scaleConvert(datumValue);
+            const value = this.formatValue(datumValue);
+
+            let x = 0;
+            let y = 0;
+            const halfBandwidth = axisCtx.scaleBandwidth() / 2;
             if (axisCtx.direction === 'x') {
+                x = position + halfBandwidth;
                 crosshairGroup.translationX = Math.floor(x + seriesRect.x);
-                value = this.getAxisValue(x);
             } else {
+                y = position + halfBandwidth;
                 crosshairGroup.translationY = Math.floor(y + seriesRect.y);
-                value = this.getAxisValue(y);
             }
 
             this.showLabel(x + seriesRect.x, y + seriesRect.y, value);
