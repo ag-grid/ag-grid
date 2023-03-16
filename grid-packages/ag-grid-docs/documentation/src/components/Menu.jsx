@@ -148,7 +148,7 @@ const MenuItem = ({ item, currentFramework, activeParentItems }) => {
  * This generates the navigation menu for the left-hand side. When a page loads, it will ensure the relevant section and
  * link is shown and highlighted.
  */
-const Menu = ({ currentFramework, currentPage }) => {
+const Menu = ({ currentFramework, currentPage, path }) => {
     const groupItemHasApplicableChild = (items) => {
         if (!items) {
             return false;
@@ -166,7 +166,8 @@ const Menu = ({ currentFramework, currentPage }) => {
         .reduce((combined, group) => [...combined, ...group.items], [])
         .filter((group) => groupItemHasApplicableChild(group.items));
 
-    const activeParentItems = findParentItems(combinedMenuItems, `/${window.location.pathname.split('/')[2]}/`);
+    const pathSegment = `/${path.split('/')[2]}/`;
+    const activeParentItems = findParentItems(combinedMenuItems, pathSegment);
 
     const containsPage = (items, frameworks) =>
         items.reduce((hasPage, item) => {

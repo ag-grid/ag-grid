@@ -59,7 +59,7 @@ export const Layout = ({
 
                 <div className={classnames(styles.contentContainer, !fullScreen && styles.fullScreenPage)}>
                     <div className={styles['content-viewport']}>
-                        {!fullScreen && <Menu currentFramework={framework} currentPage={pageName} />}
+                        {!fullScreen && <Menu currentFramework={framework} currentPage={pageName} path={path} />}
 
                         <main is="div" className={styles['content']}>
                             {children}
