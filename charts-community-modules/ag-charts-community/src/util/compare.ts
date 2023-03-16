@@ -1,4 +1,5 @@
 export type Comparator<T> = (a: T, b: T) => number;
+export type LiteralOrFn<T> = T | (() => T);
 
 export function ascendingStringNumberUndefined(
     a: number | string | undefined | null,
@@ -22,9 +23,15 @@ export function ascendingStringNumberUndefined(
     return diff;
 }
 
-export function compoundAscending<E, A extends Array<E>>(a: A, b: A, comparator: Comparator<E>): number {
+export function compoundAscending<E>(a: LiteralOrFn<E>[], b: LiteralOrFn<E>[], comparator: Comparator<E>): number {
+    const toLiteral = <T, F extends LiteralOrFn<T>>(v: F) => {
+        if (typeof v === 'function') {
+            return v();
+        }
+        return v;
+    };
     for (const idx in a) {
-        const diff = comparator(a[idx], b[idx]);
+        const diff = comparator(toLiteral(a[idx]), toLiteral(b[idx]));
 
         if (diff !== 0) {
             return diff;

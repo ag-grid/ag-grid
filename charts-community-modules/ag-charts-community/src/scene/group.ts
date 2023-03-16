@@ -1,4 +1,4 @@
-import { Node, RedrawType, SceneChangeDetection, RenderContext, LayerManager } from './node';
+import { Node, RedrawType, SceneChangeDetection, RenderContext, LayerManager, ZIndexSubOrder } from './node';
 import { BBox } from './bbox';
 import { HdpiCanvas } from '../canvas/hdpiCanvas';
 import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
@@ -33,7 +33,7 @@ export class Group extends Node {
         protected readonly opts?: {
             readonly layer?: boolean;
             readonly zIndex?: number;
-            readonly zIndexSubOrder?: [string, number];
+            readonly zIndexSubOrder?: ZIndexSubOrder;
             readonly name?: string;
         }
     ) {
