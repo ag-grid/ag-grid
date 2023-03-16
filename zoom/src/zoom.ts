@@ -57,14 +57,14 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
      * point will be blocked.
      */
     @Validate(OPT_NUMBER(0, 1))
-    public minXRatio?: number = 0.1;
+    public minXRatio?: number = 0.2;
 
     /**
      * The minimum proportion of the original chart to display when zooming in on the y-axis. Trying to zoom beyond this
      * point will be blocked.
      */
     @Validate(OPT_NUMBER(0, 1))
-    public minYRatio?: number = 0.1;
+    public minYRatio?: number = 0.2;
 
     private readonly scene: _Scene.Scene;
     private seriesRect?: _Scene.BBox;
