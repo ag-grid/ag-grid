@@ -1,3 +1,29 @@
+// Fix styles for heading anchor lists whilst working on .ag-styles
+.apiDocumentationOuter {
+    :global(.anchor) {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: translateX(-100%);
+        padding-right: 4px;
+
+        svg {
+            visibility: hidden;
+        }
+    }
+
+    h1:hover,
+    h2:hover,
+    h3:hover,
+    h4:hover,
+    h5:hover,
+    h6:hover {
+        :global(.anchor) svg {
+            visibility: visible;
+        }
+    }
+}
+
 .breadcrumbs {
     margin-bottom: 1rem;
 
@@ -70,5 +96,26 @@
 
     &__code-sample {
         composes: my-2 from global;
+    }
+
+    // Fix styles for heading anchor links whilst working on .ag-styles
+    :global(.anchor) {
+        margin-left: 4px;
+
+        svg {
+            visibility: hidden;
+        }
+    }
+
+    // Fix styles for heading anchor links whilst working on .ag-styles
+    h1:hover,
+    h2:hover,
+    h3:hover,
+    h4:hover,
+    h5:hover,
+    h6:hover {
+        :global(.anchor) svg {
+            visibility: visible;
+        }
     }
 }
