@@ -4,6 +4,7 @@
     --horizontal-margin: #{$horizontal-margin}; // required as outside of .aq-styles
 
     display: flex;
+    justify-content: space-between;
 
     @media screen and (max-width: $breakpoint-docs-nav-medium) {
         @include page-horizontal-margins();
@@ -29,12 +30,13 @@
     padding-top: $size-3;
     padding-bottom: $size-7;
 
-    @media screen and (min-width: $breakpoint-docs-nav-medium) {
-        padding-left: $size-4;
+    @media screen and (min-width: $breakpoint-docs-nav-large) {
+        padding-right: $size-7;
+        max-width: 54em;
     }
 
-    @media screen and (min-width: $breakpoint-docs-nav-large) {
-        padding-right: $size-4;
+    > div {
+        max-width: 52em;
     }
 
     h2:first-child,
@@ -138,15 +140,6 @@
 
     ul li > p {
         margin-bottom: 0.25rem;
-    }
-}
-
-.noSideMenu {
-    --max-page-width: #{$max-page-width}; // required as outside of .aq-styles
-    --horizontal-margin: #{$horizontal-margin}; // required as outside of .aq-styles
-
-    @media screen and (min-width: $breakpoint-docs-nav-large) {
-        padding-right: max(var(--horizontal-margin), calc(50vw - var(--max-page-width) / 2));
     }
 }
 
