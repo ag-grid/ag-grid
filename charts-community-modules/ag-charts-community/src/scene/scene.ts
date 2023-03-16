@@ -367,6 +367,7 @@ export class Scene {
         }
 
         if (mode !== 'dom-composite' && layers.length > 0 && canvasCleared) {
+            this.sortLayers();
             ctx.save();
             ctx.setTransform(1 / canvas.pixelRatio, 0, 0, 1 / canvas.pixelRatio, 0, 0);
             layers.forEach(({ canvas: { imageSource, enabled }, getComputedOpacity, getVisibility }) => {

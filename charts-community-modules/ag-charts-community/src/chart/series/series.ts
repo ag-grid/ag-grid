@@ -212,6 +212,8 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     @Validate(INTERACTION_RANGE)
     nodeClickRange: AgChartInteractionRange = 'exact';
 
+    _declarationOrder: number = -1;
+
     constructor({
         useSeriesGroupLayer = true,
         useLabelLayer = false,
@@ -229,6 +231,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
                 name: `${this.id}-content`,
                 layer: useSeriesGroupLayer,
                 zIndex: Layers.SERIES_LAYER_ZINDEX,
+                zIndexSubOrder: [() => this._declarationOrder, 0],
             })
         );
 
@@ -237,7 +240,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
                 name: `${this.id}-highlight`,
                 layer: true,
                 zIndex: Layers.SERIES_LAYER_ZINDEX,
-                zIndexSubOrder: [this.id, 15000],
+                zIndexSubOrder: [() => this._declarationOrder, 15000],
             })
         );
         this.highlightNode = this.highlightGroup.appendChild(new Group({ name: 'highlightNode' }));
