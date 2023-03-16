@@ -59,8 +59,8 @@ declare module 'ag-charts-community' {
         opacity?: Opacity;
     }
 
-    export interface AgBaseCartesiancrosshairOptions {
-        /** Configuration for the chart navigator. */
+    export interface AgBaseCartesianAxisOptions {
+        /** Configuration for the axis crosshair. */
         crosshair?: AgCrosshairOptions;
     }
 }
