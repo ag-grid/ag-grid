@@ -1,8 +1,8 @@
 import { GroupCellRendererCtrl, GroupCellRendererParams, IGroupCellRenderer, UserCompDetails, _ } from "ag-grid-community";
-import React, { useContext, useImperativeHandle, forwardRef, useEffect, useMemo, useRef, useState, memo } from 'react';
+import React, { useContext, useImperativeHandle, forwardRef, useMemo, useRef, useState, useLayoutEffect } from 'react';
 import { BeansContext } from "../beansContext";
 import { showJsComp } from "../jsComp";
-import { useEffectOnce } from "../useEffectOnce";
+import { useLayoutEffectOnce } from "../useEffectOnce";
 import { CssClasses } from "../utils";
 
 const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
@@ -30,11 +30,11 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
         };
     });
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         return showJsComp(innerCompDetails, context, eValueRef.current!);
     }, [innerCompDetails]);
 
-    useEffectOnce( ()=> {
+    useLayoutEffectOnce(() => {
 
         const compProxy: IGroupCellRenderer = {
             setInnerRenderer: (details, valueToDisplay) => {
