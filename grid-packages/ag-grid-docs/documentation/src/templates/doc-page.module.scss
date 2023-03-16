@@ -59,6 +59,17 @@
         margin-bottom: $size-2 !important;
     }
 
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        &:hover :global(.docs-header-icon) {
+            opacity: 0.3333;
+        }
+    }
+
     :global(.docs-header-icon) {
         padding-left: 0;
         margin-left: $size-1;
@@ -66,7 +77,7 @@
         transition: opacity 0.33s ease-in-out;
 
         &:hover {
-            opacity: 1;
+            opacity: 1 !important;
         }
 
         svg {
