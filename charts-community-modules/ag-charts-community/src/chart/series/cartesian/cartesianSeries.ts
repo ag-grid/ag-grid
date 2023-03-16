@@ -38,6 +38,11 @@ type LabelDataSelection<N extends Node, ContextType extends SeriesNodeDataContex
     ContextType['labelData'][number]
 >;
 
+export interface CartesianSeriesNodeDatum extends SeriesNodeDatum {
+    readonly xKey: string;
+    readonly yKey: string;
+}
+
 interface SubGroup<C extends SeriesNodeDataContext, SceneNodeType extends Node> {
     paths: Path[];
     dataNodeGroup: Group;
@@ -463,7 +468,7 @@ export abstract class CartesianSeries<
         const hitPoint = rootGroup.transformPoint(x, y);
 
         let minDistance = Infinity;
-        let closestDatum: SeriesNodeDatum | undefined;
+        let closestDatum: CartesianSeriesNodeDatum | undefined;
 
         for (const context of contextNodeData) {
             for (const datum of context.nodeData) {
@@ -496,7 +501,7 @@ export abstract class CartesianSeries<
     protected pickNodeMainAxisFirst(
         point: Point,
         requireCategoryAxis: boolean
-    ): { datum: SeriesNodeDatum; distance: number } | undefined {
+    ): { datum: CartesianSeriesNodeDatum; distance: number } | undefined {
         const { x, y } = point;
         const { xAxis, yAxis, rootGroup, _contextNodeData: contextNodeData } = this;
 
@@ -516,7 +521,7 @@ export abstract class CartesianSeries<
             primaryDirection === ChartAxisDirection.X ? [hitPoint.x, hitPoint.y] : [hitPoint.y, hitPoint.x];
 
         const minDistance = [Infinity, Infinity];
-        let closestDatum: SeriesNodeDatum | undefined = undefined;
+        let closestDatum: CartesianSeriesNodeDatum | undefined = undefined;
 
         for (const context of contextNodeData) {
             for (const datum of context.nodeData) {

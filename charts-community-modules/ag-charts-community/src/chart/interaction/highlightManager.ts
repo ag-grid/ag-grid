@@ -9,6 +9,8 @@ interface HighlightNodeDatum {
     readonly series: any;
     readonly itemId?: any;
     readonly datum: any;
+    readonly xKey?: string;
+    readonly yKey?: string;
     readonly point?: Readonly<SizedPoint>;
 }
 
