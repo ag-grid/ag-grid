@@ -6,7 +6,7 @@ import { ZoomSelector } from './zoomSelector';
 import { DefinedZoomState } from './zoomTypes';
 import { ZoomRect } from './scenes/zoomRect';
 
-const { BOOLEAN, OPT_BOOLEAN, OPT_NUMBER, STRING_UNION, Validate } = _ModuleSupport;
+const { BOOLEAN, NUMBER, STRING_UNION, Validate } = _ModuleSupport;
 
 export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
     /**
@@ -18,19 +18,19 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     /**
      * Enable zooming by scrolling the mouse wheel.
      */
-    @Validate(OPT_BOOLEAN)
+    @Validate(BOOLEAN)
     public enableScrolling = true;
 
     /**
      * Enable zooming by clicking and dragging out an area to zoom into.
      */
-    @Validate(OPT_BOOLEAN)
+    @Validate(BOOLEAN)
     public enableSelecting = true;
 
     /**
      * Enable panning when zoomed by holding the pan key while clicking and dragging.
      */
-    @Validate(OPT_BOOLEAN)
+    @Validate(BOOLEAN)
     public enablePanning = true;
 
     /**
@@ -48,21 +48,21 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     /**
      * The step size to zoom in when scrolling the mouse wheel.
      */
-    @Validate(OPT_NUMBER(0, 1))
+    @Validate(NUMBER(0, 1))
     public scrollingStep = 0.1;
 
     /**
      * The minimum proportion of the original chart to display when zooming on the x-axis. Trying to zoom beyond this
      * point will be blocked.
      */
-    @Validate(OPT_NUMBER(0, 1))
+    @Validate(NUMBER(0, 1))
     public minXRatio: number = 0.2;
 
     /**
      * The minimum proportion of the original chart to display when zooming in on the y-axis. Trying to zoom beyond this
      * point will be blocked.
      */
-    @Validate(OPT_NUMBER(0, 1))
+    @Validate(NUMBER(0, 1))
     public minYRatio: number = 0.2;
 
     private readonly scene: _Scene.Scene;
