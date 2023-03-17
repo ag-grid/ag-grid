@@ -3473,11 +3473,17 @@
   "LayoutStage": { "meta": { "isTypeAlias": true }, "type": "'before-series'" },
   "AxisLabelLayout": {
     "meta": { "isTypeAlias": true },
-    "type": "{ baseline: 'hanging' | 'bottom' | 'middle'; align: 'start' | 'end' | 'center'; rotation: number; fractionDigits: number; }"
+    "type": "{ baseline: 'hanging' | 'bottom' | 'middle'; align: 'start' | 'end' | 'center'; rotation: number; fractionDigits: number; padding: number; }"
   },
   "AxisLayout": {
     "meta": {},
-    "type": { "rect": "BBox", "label": "AxisLabelLayout" }
+    "type": {
+      "rect": "BBox",
+      "seriesAreaPadding": "number",
+      "gridPadding": "number",
+      "tickSize": "number",
+      "label": "AxisLabelLayout"
+    }
   },
   "LayoutCompleteEvent": {
     "meta": {},

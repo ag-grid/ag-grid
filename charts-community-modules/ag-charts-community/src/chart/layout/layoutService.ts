@@ -8,10 +8,14 @@ export type AxisLabelLayout = {
     align: 'start' | 'end' | 'center';
     rotation: number;
     fractionDigits: number;
+    padding: number;
 };
 
 export interface AxisLayout {
     rect: BBox;
+    seriesAreaPadding: number;
+    gridPadding: number;
+    tickSize: number;
     label: AxisLabelLayout;
 }
 
