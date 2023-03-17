@@ -279,6 +279,11 @@ export class ChartTheme {
                 delay: 0,
                 class: DEFAULT_TOOLTIP_CLASS,
             },
+            overlays: {
+                noData: {
+                    text: 'No data to display',
+                },
+            },
             listeners: {},
         };
     }

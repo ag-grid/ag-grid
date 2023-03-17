@@ -1,20 +1,10 @@
 {
   "_config_": {},
   "AgChartTooltipOptions": {
-    "enabled": {
-      "default": true
-    },
-    "tracking": {
-      "default": true
-    },
     "delay": {
-      "default": 0,
       "min": 0,
       "max": 1000,
       "unit": "ms"
-    },
-    "range": {
-      "default": "nearest"
     }
   },
   "AgChartPaddingOptions": {

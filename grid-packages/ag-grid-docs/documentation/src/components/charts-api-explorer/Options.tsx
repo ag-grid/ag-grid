@@ -1,5 +1,6 @@
+import { ChartTheme } from 'ag-charts-community/dist/cjs/es5/chart/themes/chartTheme';
 import classnames from 'classnames';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Code from '../Code';
 import { convertMarkdown, formatJsDocString, inferType } from '../documentation-helpers';
 import {
@@ -13,9 +14,9 @@ import {
     loadLookups,
 } from '../expandable-snippet/model';
 import { doOnEnter } from '../key-handlers';
-import { PresetEditor, getPrimitivePropertyEditor, getPrimitiveEditor } from './Editors';
+import { getPrimitiveEditor, getPrimitivePropertyEditor, PresetEditor } from './Editors';
 import styles from './Options.module.scss';
-import { formatJson, deepClone, isXAxisNumeric } from './utils';
+import { deepClone, formatJson, isXAxisNumeric } from './utils';
 
 const FunctionDefinition = ({ definition }: { definition: JsonFunction }) => {
     const lines = [`function ${definition.tsType};`];
@@ -65,7 +66,8 @@ const Option = ({ name, isVisible, isAlternate, isRequired, type, description, d
             className={classnames(styles['option'], {
                 [styles['option--hidden']]: !isVisible,
                 [styles['option--alternate']]: isAlternate,
-            })}>
+            })}
+        >
             <span className={styles['option__name']}>{name}</span>
             {derivedType && <span className={styles['option__type']}>{isFunction ? 'Function' : derivedType}</span>}
             {isRequired ? (
@@ -86,7 +88,8 @@ const Option = ({ name, isVisible, isAlternate, isRequired, type, description, d
                 <>
                     <span
                         className={styles['option__description']}
-                        dangerouslySetInnerHTML={{ __html: configureLinksForParent(descriptionHTML) }}></span>
+                        dangerouslySetInnerHTML={{ __html: configureLinksForParent(descriptionHTML) }}
+                    ></span>
                     <br />
                 </>
             ) : (
@@ -112,33 +115,38 @@ const ComplexOption = ({ name, description, isVisible, isAlternate, isSearching,
             className={classnames(styles['option'], {
                 [styles['option--hidden']]: !isVisible,
                 [styles['option--alternate']]: isAlternate,
-            })}>
+            })}
+        >
             <div
                 className={styles['option--expandable']}
                 role="button"
                 tabIndex={0}
                 aria-expanded={isExpanded}
                 onClick={() => setExpanded(!isExpanded)}
-                onKeyDown={(e) => doOnEnter(e, () => setExpanded(!isExpanded))}>
+                onKeyDown={(e) => doOnEnter(e, () => setExpanded(!isExpanded))}
+            >
                 <span className={styles['option__name']}>{name}</span>
                 <span className={styles['option__type']}>Object</span>
                 <span
                     className={classnames(styles['option__expander'], {
                         [styles['option__expander--expanded']]: contentIsExpanded,
-                    })}>
+                    })}
+                >
                     ❯
                 </span>
                 <br />
                 {descriptionHTML && (
                     <span
                         className={styles['option__description']}
-                        dangerouslySetInnerHTML={{ __html: descriptionHTML }}></span>
+                        dangerouslySetInnerHTML={{ __html: descriptionHTML }}
+                    ></span>
                 )}
             </div>
             <div
                 className={classnames(styles['option__content'], {
                     [styles['option__content--hidden']]: !contentIsExpanded,
-                })}>
+                })}
+            >
                 {children}
             </div>
         </div>
@@ -241,8 +249,17 @@ const Search = ({ value, onChange }) => {
 /**
  * This displays the list of options in the Standalone Charts API Explorer.
  */
-export const Options = ({ chartType, updateOption }) => {
+export const Options = ({ chartType, updateOption, jsonOptions }) => {
     const [searchText, setSearchText] = useState('');
+    const [chartTheme, setChartTheme] = useState<ChartTheme | undefined>(undefined);
+
+    useEffect(() => {
+        import('ag-charts-community').then(({ _Theme }) => {
+            setChartTheme(_Theme.getChartTheme('ag-default'));
+        });
+    }, [chartTheme]);
+
+    const isXNumeric = isXAxisNumeric(chartType);
     const getTrimmedSearchText = () => searchText.trim();
     const matchesSearch = (name: string) => name.toLowerCase().indexOf(getTrimmedSearchText().toLowerCase()) >= 0;
     const childMatchesSearch = (config: JsonProperty) => {
@@ -261,8 +278,35 @@ export const Options = ({ chartType, updateOption }) => {
         );
     };
     const isRequiresWholeObject = (prop: string) => ['highlightStyle', 'item', 'series'].includes(prop);
-    const isArraySkipped = (prop: string) => ['series', 'axes', 'gridStyle', 'crossLines', 'innerLabels'].includes(prop);
-    const isEditable = (prop: string) => !['data'].includes(prop);
+    const isArraySkipped = (prop: string) =>
+        ['series', 'axes', 'gridStyle', 'crossLines', 'innerLabels'].includes(prop);
+    const isEditable = (key: string) => !['data', 'type', 'series.data'].includes(key);
+    const getDefault = (path: string, pChartTheme?: ChartTheme) => {
+        try {
+            const chartThemeDefaults = pChartTheme?.config;
+            if (!chartThemeDefaults) {
+                return undefined;
+            }
+
+            if (path.startsWith('axes')) {
+                const parts = path.split('.');
+                parts[1] = parts[1] === '0' && !isXNumeric ? 'category' : 'number';
+                path = parts.join('?.');
+            } else if (path.startsWith('series')) {
+                const parts = path.split('.');
+                parts.splice(1, 0, jsonOptions?.series?.[0]?.type ?? chartType);
+                path = parts.join('?.');
+            } else {
+                path = path.replaceAll('.', '?.');
+            }
+            path = `${chartType}.${path}`;
+
+            const result = eval(`chartThemeDefaults.${path}`);
+            return result;
+        } catch (error) {
+            return undefined;
+        }
+    };
 
     const isSearching = getTrimmedSearchText() !== '';
 
@@ -278,17 +322,16 @@ export const Options = ({ chartType, updateOption }) => {
 
     const axesModelDesc = model.properties['axes']?.desc;
     if (axesModelDesc?.type === 'array' && axesModelDesc.elements.type === 'union') {
-        const isAxisOfType = (axis: any, type: string) =>
-            axis.model.properties['type'].desc.tsType.includes(type);
+        const isAxisOfType = (axis: any, type: string) => axis.model.properties['type'].desc.tsType.includes(type);
         const getAxisModel = (axisType: string, direction: 'x' | 'y') => {
-            const axis = deepClone((axesModelDesc.elements as any).options.find(
-                (o) => o.type === 'nested-object' && isAxisOfType(o, axisType)
-            ));
-            axis.model.properties.position.desc.tsType =
-                direction === 'x' ? `'top' | 'bottom'` : `'left' | 'right'`;
+            const axis = deepClone(
+                (axesModelDesc.elements as any).options.find(
+                    (o) => o.type === 'nested-object' && isAxisOfType(o, axisType)
+                )
+            );
+            axis.model.properties.position.desc.tsType = direction === 'x' ? `'top' | 'bottom'` : `'left' | 'right'`;
             return axis;
         };
-        const isXNumeric = isXAxisNumeric(chartType);
 
         // Replace "axes" array model with "axes[0]" and "axes[1]"
         // object models preserving the properties order
@@ -296,7 +339,7 @@ export const Options = ({ chartType, updateOption }) => {
         const keys = Object.keys(model.properties);
         const axesKeyIndex = keys.indexOf('axes');
         const newProps: Record<string, JsonModelProperty> = {};
-        keys.slice(0, axesKeyIndex).forEach((key) => newProps[key] = oldProps[key]);
+        keys.slice(0, axesKeyIndex).forEach((key) => (newProps[key] = oldProps[key]));
         newProps['axes[0]'] = {
             deprecated: false,
             desc: getAxisModel(isXNumeric ? 'number' : 'category', 'x'),
@@ -309,7 +352,7 @@ export const Options = ({ chartType, updateOption }) => {
             documentation: '/** Y-axis (numeric). */',
             required: false,
         };
-        keys.slice(axesKeyIndex + 1).forEach((key) => newProps[key] = oldProps[key]);
+        keys.slice(axesKeyIndex + 1).forEach((key) => (newProps[key] = oldProps[key]));
         model.properties = newProps;
     }
 
@@ -323,6 +366,8 @@ export const Options = ({ chartType, updateOption }) => {
         isSearching,
         matchesSearch,
         updateOption,
+        getDefault,
+        chartTheme,
     };
     const options = generateOptions({
         model,
@@ -356,12 +401,14 @@ interface GenerateOptionParameters {
         chartType: string;
         isSearching: boolean;
         hasResults: boolean;
+        chartTheme?: ChartTheme;
         matchesSearch(name: string): boolean;
         childMatchesSearch(prop: JsonProperty): boolean;
         updateOption(key: string, newValue: any, requiresWholeObject: boolean): void;
         isRequiresWholeObject(name: string): boolean;
         isArraySkipped(name: string): boolean;
         isEditable(name: string): boolean;
+        getDefault(path: string, chartTheme: ChartTheme): any | undefined;
     };
 }
 
@@ -382,12 +429,13 @@ const generateOptions = ({
         isRequiresWholeObject,
         isArraySkipped,
         isEditable,
+        chartTheme,
     } = context;
     let elements: React.ReactFragment[] = [];
 
     Object.entries(model.properties).forEach(([name, prop]) => {
         // Turn array index like "axes[0]" into "axes.0"
-        const normalizedName = name.replace(/\[(\d+)\]/g, '.$1')
+        const normalizedName = name.replace(/\[(\d+)\]/g, '.$1');
 
         const key = `${prefix}${normalizedName}`;
         const componentKey = `${chartType}_${key}`;
@@ -395,11 +443,17 @@ const generateOptions = ({
             required,
             meta,
             meta: { options = null, suggestions = null } = {},
-            default: defaultValue,
             documentation,
             desc,
             desc: { type },
         } = prop;
+        const [defaultValue, setDefaultValue] = useState(undefined);
+
+        useEffect(() => {
+            if (chartTheme) {
+                setDefaultValue(context.getDefault(key, chartTheme));
+            }
+        }, [chartTheme]);
 
         const isVisible =
             !isSearching ||
@@ -420,7 +474,7 @@ const generateOptions = ({
         };
 
         if (desc.type === 'primitive' || (desc.type === 'array' && desc.elements.type === 'primitive')) {
-            const { editor, editorProps } = isEditable(name) && getPrimitiveEditor(prop, key);
+            const { editor, editorProps } = isEditable(key) && getPrimitiveEditor(prop, key);
 
             elements.push(
                 <Option
@@ -440,7 +494,8 @@ const generateOptions = ({
                 <ComplexOption
                     {...commonProps}
                     isVisible={isVisible || childMatchesSearch(desc)}
-                    isSearching={isSearching}>
+                    isSearching={isSearching}
+                >
                     {generateOptions({
                         model: desc.model,
                         prefix: `${key}.`,
@@ -456,7 +511,8 @@ const generateOptions = ({
                 <ComplexOption
                     {...commonProps}
                     isVisible={isVisible || childMatchesSearch(desc)}
-                    isSearching={isSearching}>
+                    isSearching={isSearching}
+                >
                     <UnionOption
                         componentKey={key}
                         desc={desc.elements}
@@ -475,7 +531,8 @@ const generateOptions = ({
                 <ComplexOption
                     {...commonProps}
                     isVisible={isVisible || childMatchesSearch(desc)}
-                    isSearching={isSearching}>
+                    isSearching={isSearching}
+                >
                     {generateOptions({
                         model: desc.elements.model,
                         prefix: `${key}.`,

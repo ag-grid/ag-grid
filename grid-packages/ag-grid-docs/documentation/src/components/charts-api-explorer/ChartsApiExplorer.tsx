@@ -196,6 +196,7 @@ export const ChartsApiExplorer = ({ framework }) => {
                         <Options
                             chartType={chartType}
                             updateOption={updateOption}
+                            optionsJson={optionsJson}
                         />
                     </div>
                 </div>
