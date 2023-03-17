@@ -150,8 +150,8 @@
       "seriesAreaPadding?": "AgSeriesAreaPaddingOptions",
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
-      "subtitle?": "AgChartCaptionOptions",
-      "footnote?": "AgChartCaptionOptions",
+      "subtitle?": "AgChartSubtitleOptions",
+      "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
@@ -195,8 +195,8 @@
       "seriesAreaPadding?": "AgSeriesAreaPaddingOptions",
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
-      "subtitle?": "AgChartCaptionOptions",
-      "footnote?": "AgChartCaptionOptions",
+      "subtitle?": "AgChartSubtitleOptions",
+      "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
@@ -238,8 +238,8 @@
       "seriesAreaPadding?": "AgSeriesAreaPaddingOptions",
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
-      "subtitle?": "AgChartCaptionOptions",
-      "footnote?": "AgChartCaptionOptions",
+      "subtitle?": "AgChartSubtitleOptions",
+      "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
@@ -636,10 +636,10 @@
       "left?": "PixelSize"
     },
     "docs": {
-      "top?": "/** The number of pixels of padding at the top of the series area.\n     * Default: `0`\n     */",
-      "right?": "/** The number of pixels of padding at the right of the series area.\n     * Default: `0`\n     */",
-      "bottom?": "/** The number of pixels of padding at the bottom of the series area.\n     * Default: `0`\n     */",
-      "left?": "/** The number of pixels of padding at the left of the series area.\n     * Default: `0`\n     */"
+      "top?": "/** The number of pixels of padding at the top of the series area. */",
+      "right?": "/** The number of pixels of padding at the right of the series area. */",
+      "bottom?": "/** The number of pixels of padding at the bottom of the series area. */",
+      "left?": "/** The number of pixels of padding at the left of the series area. */"
     }
   },
   "AgChartOverlayOptions": {
@@ -694,6 +694,52 @@
     }
   },
   "AgChartCaptionOptions": {
+    "meta": {},
+    "type": {
+      "enabled?": "boolean",
+      "text?": "string",
+      "fontStyle?": "FontStyle",
+      "fontWeight?": "FontWeight",
+      "fontSize?": "FontSize",
+      "fontFamily?": "FontFamily",
+      "color?": "CssColor",
+      "spacing?": "number"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not the text should be shown. */",
+      "text?": "/** The text to display. */",
+      "fontStyle?": "/** The font style to use for the text. */",
+      "fontWeight?": "/** The font weight to use for the text. */",
+      "fontSize?": "/** The font size in pixels to use for the text. */",
+      "fontFamily?": "/** The font family to use for the text. */",
+      "color?": "/** The colour to use for the text. */",
+      "spacing?": "/** Spacing added to help position the text. */"
+    }
+  },
+  "AgChartSubtitleOptions": {
+    "meta": {},
+    "type": {
+      "enabled?": "boolean",
+      "text?": "string",
+      "fontStyle?": "FontStyle",
+      "fontWeight?": "FontWeight",
+      "fontSize?": "FontSize",
+      "fontFamily?": "FontFamily",
+      "color?": "CssColor",
+      "spacing?": "number"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not the text should be shown. */",
+      "text?": "/** The text to display. */",
+      "fontStyle?": "/** The font style to use for the text. */",
+      "fontWeight?": "/** The font weight to use for the text. */",
+      "fontSize?": "/** The font size in pixels to use for the text. */",
+      "fontFamily?": "/** The font family to use for the text. */",
+      "color?": "/** The colour to use for the text. */",
+      "spacing?": "/** Spacing added to help position the text. */"
+    }
+  },
+  "AgChartFooterOptions": {
     "meta": {},
     "type": {
       "enabled?": "boolean",
@@ -1191,8 +1237,8 @@
       "seriesAreaPadding?": "AgSeriesAreaPaddingOptions",
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
-      "subtitle?": "AgChartCaptionOptions",
-      "footnote?": "AgChartCaptionOptions",
+      "subtitle?": "AgChartSubtitleOptions",
+      "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
@@ -3115,8 +3161,8 @@
       "seriesAreaPadding?": "AgSeriesAreaPaddingOptions",
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
-      "subtitle?": "AgChartCaptionOptions",
-      "footnote?": "AgChartCaptionOptions",
+      "subtitle?": "AgChartSubtitleOptions",
+      "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
@@ -3162,8 +3208,8 @@
       "seriesAreaPadding?": "AgSeriesAreaPaddingOptions",
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
-      "subtitle?": "AgChartCaptionOptions",
-      "footnote?": "AgChartCaptionOptions",
+      "subtitle?": "AgChartSubtitleOptions",
+      "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
@@ -3207,8 +3253,8 @@
       "seriesAreaPadding?": "AgSeriesAreaPaddingOptions",
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
-      "subtitle?": "AgChartCaptionOptions",
-      "footnote?": "AgChartCaptionOptions",
+      "subtitle?": "AgChartSubtitleOptions",
+      "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",

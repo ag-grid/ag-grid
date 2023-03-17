@@ -219,11 +219,11 @@
     },
     "subtitle": {
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgChartSubtitleOptions", "optional": true }
     },
     "footnote": {
       "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgChartFooterOptions", "optional": true }
     },
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
@@ -294,11 +294,11 @@
     },
     "subtitle": {
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgChartSubtitleOptions", "optional": true }
     },
     "footnote": {
       "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgChartFooterOptions", "optional": true }
     },
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
@@ -369,11 +369,11 @@
     },
     "subtitle": {
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgChartSubtitleOptions", "optional": true }
     },
     "footnote": {
       "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgChartFooterOptions", "optional": true }
     },
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
@@ -1064,19 +1064,19 @@
   },
   "AgSeriesAreaPaddingOptions": {
     "top": {
-      "description": "/** The number of pixels of padding at the top of the series area.\n     * Default: `0`\n     */",
+      "description": "/** The number of pixels of padding at the top of the series area. */",
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "right": {
-      "description": "/** The number of pixels of padding at the right of the series area.\n     * Default: `0`\n     */",
+      "description": "/** The number of pixels of padding at the right of the series area. */",
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "bottom": {
-      "description": "/** The number of pixels of padding at the bottom of the series area.\n     * Default: `0`\n     */",
+      "description": "/** The number of pixels of padding at the bottom of the series area. */",
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "left": {
-      "description": "/** The number of pixels of padding at the left of the series area.\n     * Default: `0`\n     */",
+      "description": "/** The number of pixels of padding at the left of the series area. */",
       "type": { "returnType": "PixelSize", "optional": true }
     }
   },
@@ -1145,6 +1145,74 @@
     }
   },
   "AgChartCaptionOptions": {
+    "enabled": {
+      "description": "/** Whether or not the text should be shown. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "text": {
+      "description": "/** The text to display. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "fontStyle": {
+      "description": "/** The font style to use for the text. */",
+      "type": { "returnType": "FontStyle", "optional": true }
+    },
+    "fontWeight": {
+      "description": "/** The font weight to use for the text. */",
+      "type": { "returnType": "FontWeight", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** The font size in pixels to use for the text. */",
+      "type": { "returnType": "FontSize", "optional": true }
+    },
+    "fontFamily": {
+      "description": "/** The font family to use for the text. */",
+      "type": { "returnType": "FontFamily", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour to use for the text. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    },
+    "spacing": {
+      "description": "/** Spacing added to help position the text. */",
+      "type": { "returnType": "number", "optional": true }
+    }
+  },
+  "AgChartSubtitleOptions": {
+    "enabled": {
+      "description": "/** Whether or not the text should be shown. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "text": {
+      "description": "/** The text to display. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "fontStyle": {
+      "description": "/** The font style to use for the text. */",
+      "type": { "returnType": "FontStyle", "optional": true }
+    },
+    "fontWeight": {
+      "description": "/** The font weight to use for the text. */",
+      "type": { "returnType": "FontWeight", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** The font size in pixels to use for the text. */",
+      "type": { "returnType": "FontSize", "optional": true }
+    },
+    "fontFamily": {
+      "description": "/** The font family to use for the text. */",
+      "type": { "returnType": "FontFamily", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour to use for the text. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    },
+    "spacing": {
+      "description": "/** Spacing added to help position the text. */",
+      "type": { "returnType": "number", "optional": true }
+    }
+  },
+  "AgChartFooterOptions": {
     "enabled": {
       "description": "/** Whether or not the text should be shown. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -1858,11 +1926,11 @@
     },
     "subtitle": {
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgChartSubtitleOptions", "optional": true }
     },
     "footnote": {
       "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgChartFooterOptions", "optional": true }
     },
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
@@ -4815,11 +4883,11 @@
     },
     "subtitle": {
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgChartSubtitleOptions", "optional": true }
     },
     "footnote": {
       "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgChartFooterOptions", "optional": true }
     },
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
@@ -4893,11 +4961,11 @@
     },
     "subtitle": {
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgChartSubtitleOptions", "optional": true }
     },
     "footnote": {
       "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgChartFooterOptions", "optional": true }
     },
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
@@ -4968,11 +5036,11 @@
     },
     "subtitle": {
       "description": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgChartSubtitleOptions", "optional": true }
     },
     "footnote": {
       "description": "/** Configuration for the footnote shown at the bottom of the chart. */",
-      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+      "type": { "returnType": "AgChartFooterOptions", "optional": true }
     },
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
