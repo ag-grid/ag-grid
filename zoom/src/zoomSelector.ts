@@ -32,7 +32,7 @@ export class ZoomSelector {
         if (!bbox) return zoom;
 
         if (this.coords) {
-            zoom = this.createZoomFromCoords2(bbox, currentZoom);
+            zoom = this.createZoomFromCoords(bbox, currentZoom);
         }
 
         this.reset();
@@ -113,7 +113,7 @@ export class ZoomSelector {
         if (rect.clipPath) {
             rect.clipPath.clear();
         } else {
-            rect.clipPath = new _ModuleSupport.Path2D();
+            rect.clipPath = new _Scene.Path2D();
         }
 
         rect.clipPath.moveTo(x, y);
@@ -124,7 +124,7 @@ export class ZoomSelector {
         rect.clipPath.closePath();
     }
 
-    private createZoomFromCoords2(bbox: _Scene.BBox, currentZoom?: _ModuleSupport.AxisZoomState) {
+    private createZoomFromCoords(bbox: _Scene.BBox, currentZoom?: _ModuleSupport.AxisZoomState) {
         const oldZoom = definedZoomState(currentZoom);
         const normal = this.getNormalisedDimensions();
 
