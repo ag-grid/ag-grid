@@ -123,7 +123,21 @@ export class MenuItemMapper extends BeanStub {
             case 'rowUnGroup':
                 return {
                     name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + _.escapeString(this.columnModel.getDisplayNameForColumn(column, 'header')),
-                    action: () => this.columnModel.removeRowGroupColumn(column, "contextMenu"),
+                    action: () => {
+                        const showRowGroup = column?.getColDef().showRowGroup;
+                        console.log('bob', showRowGroup);
+                        if (showRowGroup === true) {
+                            this.columnModel.removeRowGroupColumns(this.columnModel.getRowGroupColumns(), "contextMenu");
+                            return;
+                        }
+
+                        if (!!showRowGroup) {
+                            this.columnModel.removeRowGroupColumn(showRowGroup, "contextMenu");
+                            return;
+                        }
+
+                        this.columnModel.removeRowGroupColumn(column, "contextMenu");
+                    },
                     icon: _.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsService, null)
                 };
             case 'resetColumns':
