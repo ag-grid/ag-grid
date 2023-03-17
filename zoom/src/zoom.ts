@@ -3,8 +3,7 @@ import { _ModuleSupport, _Scene } from 'ag-charts-community';
 import { ZoomPanner } from './zoomPanner';
 import { ZoomScroller } from './zoomScroller';
 import { ZoomSelector } from './zoomSelector';
-import { pointToRatio } from './zoomTransformers';
-import { DefinedZoomState, ZoomCoords } from './zoomTypes';
+import { DefinedZoomState } from './zoomTypes';
 import { ZoomRect } from './scenes/zoomRect';
 
 const { BOOLEAN, OPT_BOOLEAN, OPT_NUMBER, STRING_UNION, Validate } = _ModuleSupport;
@@ -57,14 +56,14 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
      * point will be blocked.
      */
     @Validate(OPT_NUMBER(0, 1))
-    public minXRatio?: number = 0.2;
+    public minXRatio: number = 0.2;
 
     /**
      * The minimum proportion of the original chart to display when zooming in on the y-axis. Trying to zoom beyond this
      * point will be blocked.
      */
     @Validate(OPT_NUMBER(0, 1))
-    public minYRatio?: number = 0.2;
+    public minYRatio: number = 0.2;
 
     private readonly scene: _Scene.Scene;
     private seriesRect?: _Scene.BBox;
@@ -100,7 +99,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         // Add selection zoom method and attach selection rect to root scene
         if (this.enableSelecting) {
             const selectionRect = new ZoomRect();
-            this.selector = new ZoomSelector(selectionRect, (coords: ZoomCoords) => this.handleSelectionChange(coords));
+            this.selector = new ZoomSelector(selectionRect);
 
             this.scene.root?.appendChild(selectionRect);
             this.destroyFns.push(() => this.scene.root?.removeChild(selectionRect));
@@ -116,20 +115,6 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         // TODO: handle any updates from somewhere?
     }
 
-    private handleSelectionChange(coords: ZoomCoords) {
-        if (!this.seriesRect) return;
-
-        const min = pointToRatio(this.seriesRect, coords.x1, coords.y1);
-        const max = pointToRatio(this.seriesRect, coords.x2, coords.y2);
-
-        const zoom: DefinedZoomState = {
-            x: { min: min.x, max: max.x },
-            y: { min: max.y, max: min.y }, // TODO: zoom state is inverse of the chart coords system
-        };
-
-        this.updateZoomWithConstraints(zoom);
-    }
-
     private onDrag(event: _ModuleSupport.InteractionEvent<'drag'>) {
         const zoom = this.zoomManager.getZoom();
         const isZoomed =
@@ -141,21 +126,20 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
             return;
         }
 
+        // If the user stops pressing the panKey but continues dragging, we shouldn't go to selection until they stop
+        // dragging and click to start a new drag.
         if (!this.selector || this.panner?.isPanning) return;
 
-        if (this.isWithinSeriesRect(event.offsetX, event.offsetY)) {
-            this.selector.update(event);
-        } else {
-            this.selector.reset();
-        }
+        this.selector.update(event, this.minXRatio, this.minYRatio, this.seriesRect, zoom);
     }
 
     private onDragEnd() {
-        this.panner?.stop();
-
-        if (!this.selector) return;
-
-        this.selector.stop();
+        if (this.panner?.isPanning) {
+            this.panner.stop();
+        } else if (this.selector) {
+            const newZoom = this.selector.stop(this.seriesRect, this.zoomManager.getZoom());
+            this.updateZoomWithConstraints(newZoom);
+        }
     }
 
     private onWheel(event: _ModuleSupport.InteractionEvent<'wheel'>) {
@@ -210,11 +194,8 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         const dx = zoom.x.max - zoom.x.min;
         const dy = zoom.y.max - zoom.y.min;
 
-        const constrainOnX = this.minXRatio !== undefined && dx < this.minXRatio;
-        const constrainOnY = this.minYRatio !== undefined && dy < this.minYRatio;
-
-        // Discard the zoom update if it would take us past either min ratio
-        if (constrainOnX || constrainOnY) return;
+        // Discard the zoom update if it would take us below either min ratio
+        if (dx < this.minXRatio || dy < this.minYRatio) return;
 
         this.zoomManager.updateZoom('zoom', zoom);
     }

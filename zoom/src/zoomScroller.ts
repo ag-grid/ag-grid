@@ -1,7 +1,7 @@
 import { _ModuleSupport, _Scene } from 'ag-charts-community';
 
-import { DefinedZoomState } from './zoomTypes';
 import { definedZoomState, pointToRatio, translateZoom, scaleZoom, constrainZoom } from './zoomTransformers';
+import { DefinedZoomState } from './zoomTypes';
 
 export class ZoomScroller {
     private isScalingX: boolean;
@@ -23,18 +23,15 @@ export class ZoomScroller {
 
         const sourceEvent = event.sourceEvent as WheelEvent;
 
-        // Translate the cursor position to coordinates as a ratio of 0 to 1
+        // Convert the cursor position to coordinates as a ratio of 0 to 1
         const origin = pointToRatio(bbox, sourceEvent.clientX, sourceEvent.clientY);
 
         // Scale the zoom bounding box
         const dir = sourceEvent.deltaY < 0 ? -1 : 1;
         const zoomFactor = 1 + this.step * dir;
-        const aspectRatio = (oldZoom.y.max - oldZoom.y.min) / (oldZoom.x.max - oldZoom.x.min);
 
-        // Round the yFactor to ensure floating point maths doesn't cause an extra zoom scroll step
-        // due to a zoom of 0.999...
         const xFactor = this.isScalingX ? zoomFactor : 1;
-        const yFactor = this.isScalingY ? Math.round(zoomFactor * aspectRatio * 100) / 100 : 1;
+        const yFactor = this.isScalingY ? zoomFactor : 1;
 
         let newZoom = scaleZoom(oldZoom, xFactor, yFactor);
 
