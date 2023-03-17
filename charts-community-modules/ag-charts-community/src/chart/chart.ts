@@ -34,6 +34,7 @@ import { ChartUpdateType } from './chartUpdateType';
 import { LegendDatum } from './legendDatum';
 import { Logger } from '../util/logger';
 import { ActionOnSet } from '../util/proxy';
+import { ChartHighlight } from './chartHighlight';
 
 type OptionalHTMLElement = HTMLElement | undefined | null;
 
@@ -64,6 +65,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     readonly legend: Legend;
     readonly tooltip: Tooltip;
     readonly overlays: ChartOverlays;
+    readonly highlight: ChartHighlight;
 
     @ActionOnSet<Chart>({
         newValue(value) {
@@ -185,9 +187,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
     @Validate(STRING_UNION('standalone', 'integrated'))
     mode: 'standalone' | 'integrated' = 'standalone';
 
-    @Validate(STRING_UNION('tooltip', 'node'))
-    public highlightRange: 'tooltip' | 'node' = 'tooltip';
-
     private _destroyed: boolean = false;
     get destroyed() {
         return this._destroyed;
@@ -272,6 +271,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             this.tooltipManager
         );
         this.overlays = new ChartOverlays(this.element);
+        this.highlight = new ChartHighlight();
         this.container = container;
 
         // Add interaction listeners last so child components are registered first.
@@ -1011,17 +1011,17 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         if (!pick) {
             this.tooltipManager.updateTooltip(this.id);
-            if (this.highlightRange === 'tooltip') disablePointer(true);
+            if (this.highlight.range === 'tooltip') disablePointer(true);
             return;
         }
 
-        const isNewDatum = this.highlightRange === 'node' || !lastPick || lastPick.datum !== pick.datum;
+        const isNewDatum = this.highlight.range === 'node' || !lastPick || lastPick.datum !== pick.datum;
         let html;
 
         if (isNewDatum) {
             html = pick.series.getTooltipHtml(pick.datum);
 
-            if (this.highlightRange === 'tooltip') {
+            if (this.highlight.range === 'tooltip') {
                 this.highlightManager.updateHighlight(this.id, pick.datum);
             }
         } else if (lastPick) {
@@ -1045,8 +1045,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         const found = this.checkSeriesNodeRange(event, (series: Series, datum: any) => {
             if (series.hasEventListener('nodeClick') || series.hasEventListener('nodeDoubleClick')) {
                 this.cursorManager.updateCursor('chart', 'pointer');
-
-                if (this.highlightRange === 'node') {
+                if (this.highlight.range === 'node') {
                     this.highlightManager.updateHighlight(this.id, datum);
                 }
             }
@@ -1055,7 +1054,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         if (!found) {
             this.cursorManager.updateCursor('chart');
 
-            if (this.highlightRange === 'node') {
+            if (this.highlight.range === 'node') {
                 this.highlightManager.updateHighlight(this.id);
             }
         }
@@ -1103,7 +1102,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         // be picked, so we can shortcut to using the last pick. Otherwise, we need to pick a node distinctly
         // from the tooltip picking in case the node click range is greater than the tooltip range.
         const nearestNode =
-            this.tooltip.range === 'nearest'
+            this.tooltip.range === 'nearest' && this.lastPick !== undefined
                 ? this.lastPick
                 : this.pickSeriesNode({ x: event.offsetX, y: event.offsetY }, false);
 
