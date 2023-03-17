@@ -3,7 +3,7 @@
 .menu {
     $top-bar-height: 58px;
 
-    --menu-width: min(30vw, 340px);
+    --menu-width: min(30vw, 320px);
 
     border-bottom: 1px solid var(--border-color);
 
@@ -12,12 +12,13 @@
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        --menu-horizontal-margin: #{$size-2};
         --right-margin: max(#{$size-4}, calc(50vw - var(--max-page-width) / 2 - var(--menu-width)));
 
         flex-shrink: 0;
         width: var(--menu-width);
         margin-right: var(--right-margin);
-        padding-right: $size-4;
+        padding-right: var(--menu-horizontal-margin);
         padding-left: var(--horizontal-margin);
         border-right: solid 1px var(--bright-blue-gray);
 
@@ -31,7 +32,7 @@
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
-        padding-left: $size-4;
+        padding-left: var(--menu-horizontal-margin);
     }
 }
 
