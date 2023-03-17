@@ -1,8 +1,10 @@
 import { ColDefUtil } from './components/colDefUtil';
 import { ComponentUtil } from './components/componentUtil';
 import { Autowired, Bean, PostConstruct } from './context/context';
+import { ColDef, ColGroupDef } from './entities/colDef';
 import { GridOptions, RowGroupingDisplayType, TreeDataDisplayType } from './entities/gridOptions';
 import { GridOptionsService } from './gridOptionsService';
+import { RowModelType } from './interfaces/iRowModel';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { PropertyKeys } from './propertyKeys';
@@ -35,6 +37,7 @@ export class GridOptionsValidator {
             this.checkGridOptionsProperties();
             this.checkColumnDefProperties();
         }
+        this.checkColumnDefViolations();
 
         if (this.gridOptionsService.is('groupSelectsChildren') && this.gridOptionsService.is('suppressParentsInRowNodes')) {
             console.warn("AG Grid: 'groupSelectsChildren' does not work with 'suppressParentsInRowNodes', this selection method needs the part in rowNode to work");
@@ -112,6 +115,42 @@ export class GridOptionsValidator {
                 'https://www.ag-grid.com/javascript-data-grid/column-properties/'
             );
         });
+    }
+
+    private checkColumnDefViolations() {
+        const rowModel = this.gridOptionsService.get('rowModelType') ?? 'clientSide';
+        const unsupportedPropertiesMap: { [key in RowModelType]: (keyof ColDef | keyof ColGroupDef)[] } = {
+            infinite: ['headerCheckboxSelection', 'headerCheckboxSelectionFilteredOnly', 'headerCheckboxSelectionCurrentPageOnly'],
+            viewport: ['headerCheckboxSelection', 'headerCheckboxSelectionFilteredOnly', 'headerCheckboxSelectionCurrentPageOnly'],
+            serverSide: ['headerCheckboxSelectionFilteredOnly', 'headerCheckboxSelectionCurrentPageOnly'],
+            clientSide: [],
+        };
+        
+        const unsupportedProperties = unsupportedPropertiesMap[rowModel];
+
+        if (!unsupportedProperties?.length) {
+            return;
+        }
+
+        const validateColDef = (colDef: ColDef | ColGroupDef) => {
+            unsupportedProperties.forEach(property => {
+                if (property in colDef && !!(colDef as any)[property]) {
+                    console.warn(`AG Grid: Column property ${property} is not supported with the row model type ${rowModel}.`);
+                }
+            });
+        }
+
+        if (this.gridOptions.columnDefs != null) {
+            this.gridOptions.columnDefs.forEach(colDef => validateColDef(colDef));
+        }
+
+        if (this.gridOptions.autoGroupColumnDef != null) {
+            validateColDef(this.gridOptions.autoGroupColumnDef);
+        }
+
+        if (this.gridOptions.defaultColDef != null) {
+            validateColDef(this.gridOptions.defaultColDef);
+        }
     }
 
     private checkGridOptionsProperties() {

@@ -39,8 +39,8 @@ The header select-all checkbox can be enabled by setting `headerCheckboxSelectio
 
 The following example demonstrates select-all with the SSRM. Note the following;
 
-- Selecting the header checkbox selects every node in the grid.
-- Deselecting one node puts the header checkbox into an indeterminate state, clicking this again asserts every node is selected.
+- Selecting the header checkbox selects every row in the grid, even rows not matching the currently applied column filter (if one is applied). Setting `headerCheckboxSelectionFilteredOnly=true` or  `headerCheckboxSelectionCurrentPageOnly=true` is not supported when using the server-side row model.
+- Deselecting one row puts the header checkbox into an indeterminate state, clicking this again asserts every row is selected.
 
 <grid-example title='Header Checkbox Selection' name='select-all' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
