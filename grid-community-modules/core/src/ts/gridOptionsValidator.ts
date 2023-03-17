@@ -229,7 +229,12 @@ export class GridOptionsValidator {
         processSecondaryColGroupDef: { version: '28', newProp: 'processPivotResultColGroupDef', copyToNewProp: true },
         getServerSideStoreParams: { version: '28', newProp: 'getServerSideGroupLevelParams', copyToNewProp: true },
 
-        enableChartToolPanelsButton: { version: '29', message: 'The Chart Tool Panels button is now enabled by default. To hide the Chart Tool Panels button and display the hamburger button instead, set suppressChartToolPanelsButton=true.' }
+        enableChartToolPanelsButton: { version: '29', message: 'The Chart Tool Panels button is now enabled by default. To hide the Chart Tool Panels button and display the hamburger button instead, set suppressChartToolPanelsButton=true.' },
+        functionsPassive: { version: '29.2' },
+        onColumnRowGroupChangeRequest: { version: '29.2' },
+        onColumnPivotChangeRequest: { version: '29.2' },
+        onColumnValueChangeRequest: { version: '29.2' },
+        onColumnAggFuncChangeRequest: { version: '29.2' },
     }
 
     private checkForDeprecated() {
