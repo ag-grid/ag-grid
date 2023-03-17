@@ -3401,6 +3401,7 @@
       "datum": "any",
       "xKey?": "string",
       "yKey?": "string",
+      "cumulativeValue?": "number",
       "point?": "Readonly<SizedPoint>"
     }
   },
@@ -3593,6 +3594,7 @@
       "fill?": "string",
       "stroke?": "string",
       "yValue": "number",
+      "cumulativeValue": "number",
       "xKey": "string",
       "yKey": "string"
     }
@@ -3628,6 +3630,7 @@
     "type": {
       "index": "number",
       "yValue": "number",
+      "cumulativeValue": "number",
       "width": "number",
       "height": "number",
       "fill?": "string",

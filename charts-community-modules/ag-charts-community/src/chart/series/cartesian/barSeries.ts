@@ -59,6 +59,7 @@ const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
 interface BarNodeDatum extends CartesianSeriesNodeDatum, Readonly<Point> {
     readonly index: number;
     readonly yValue: number;
+    readonly cumulativeValue: number;
     readonly width: number;
     readonly height: number;
     readonly fill?: string;
@@ -697,6 +698,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                         series: this,
                         itemId: yKey,
                         datum: seriesDatum,
+                        cumulativeValue: prevY + currY,
                         yValue,
                         yKey,
                         xKey,

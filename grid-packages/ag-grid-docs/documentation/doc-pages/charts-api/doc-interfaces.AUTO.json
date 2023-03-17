@@ -5146,6 +5146,7 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "xKey": { "type": { "returnType": "string", "optional": true } },
     "yKey": { "type": { "returnType": "string", "optional": true } },
+    "cumulativeValue": { "type": { "returnType": "number", "optional": true } },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     }
@@ -5308,6 +5309,9 @@
     "fill": { "type": { "returnType": "string", "optional": true } },
     "stroke": { "type": { "returnType": "string", "optional": true } },
     "yValue": { "type": { "returnType": "number", "optional": false } },
+    "cumulativeValue": {
+      "type": { "returnType": "number", "optional": false }
+    },
     "xKey": { "type": { "returnType": "string", "optional": false } },
     "yKey": { "type": { "returnType": "string", "optional": false } }
   },
@@ -5329,6 +5333,9 @@
   "BarNodeDatum": {
     "index": { "type": { "returnType": "number", "optional": false } },
     "yValue": { "type": { "returnType": "number", "optional": false } },
+    "cumulativeValue": {
+      "type": { "returnType": "number", "optional": false }
+    },
     "width": { "type": { "returnType": "number", "optional": false } },
     "height": { "type": { "returnType": "number", "optional": false } },
     "fill": { "type": { "returnType": "string", "optional": true } },

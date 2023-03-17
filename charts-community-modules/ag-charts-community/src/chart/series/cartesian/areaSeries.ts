@@ -61,6 +61,7 @@ interface MarkerSelectionDatum extends Required<CartesianSeriesNodeDatum> {
     readonly fill?: string;
     readonly stroke?: string;
     readonly yValue: number;
+    readonly cumulativeValue: number;
 }
 
 interface LabelSelectionDatum {
@@ -514,6 +515,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                         series: this,
                         itemId: yKey,
                         datum: seriesDatum,
+                        cumulativeValue: cumulativeMarkerValues[datumIdx],
                         yValue: yDatum!,
                         yKey,
                         xKey,
