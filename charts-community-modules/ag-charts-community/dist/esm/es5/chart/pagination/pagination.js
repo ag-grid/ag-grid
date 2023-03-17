@@ -1,0 +1,352 @@
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+import { Group } from '../../scene/group';
+import { Triangle } from '../marker/triangle';
+import { Text } from '../../scene/shape/text';
+import { HdpiCanvas } from '../../canvas/hdpiCanvas';
+import { getMarker } from '../marker/util';
+import { createId } from '../../util/id';
+import { ChartUpdateType } from '../chartUpdateType';
+import { COLOR_STRING, NUMBER, OPT_COLOR_STRING, OPT_FONT_STYLE, OPT_FONT_WEIGHT, OPT_NUMBER, STRING, Validate, } from '../../util/validation';
+var PaginationLabel = /** @class */ (function () {
+    function PaginationLabel() {
+        this.color = 'black';
+        this.fontStyle = undefined;
+        this.fontWeight = undefined;
+        this.fontSize = 12;
+        this.fontFamily = 'Verdana, sans-serif';
+    }
+    __decorate([
+        Validate(COLOR_STRING)
+    ], PaginationLabel.prototype, "color", void 0);
+    __decorate([
+        Validate(OPT_FONT_STYLE)
+    ], PaginationLabel.prototype, "fontStyle", void 0);
+    __decorate([
+        Validate(OPT_FONT_WEIGHT)
+    ], PaginationLabel.prototype, "fontWeight", void 0);
+    __decorate([
+        Validate(NUMBER(0))
+    ], PaginationLabel.prototype, "fontSize", void 0);
+    __decorate([
+        Validate(STRING)
+    ], PaginationLabel.prototype, "fontFamily", void 0);
+    return PaginationLabel;
+}());
+var PaginationMarkerStyle = /** @class */ (function () {
+    function PaginationMarkerStyle() {
+        this.size = 15;
+        this.fill = undefined;
+        this.fillOpacity = undefined;
+        this.stroke = undefined;
+        this.strokeWidth = 1;
+        this.strokeOpacity = 1;
+    }
+    __decorate([
+        Validate(NUMBER(0))
+    ], PaginationMarkerStyle.prototype, "size", void 0);
+    __decorate([
+        Validate(OPT_COLOR_STRING)
+    ], PaginationMarkerStyle.prototype, "fill", void 0);
+    __decorate([
+        Validate(OPT_NUMBER(0, 1))
+    ], PaginationMarkerStyle.prototype, "fillOpacity", void 0);
+    __decorate([
+        Validate(OPT_COLOR_STRING)
+    ], PaginationMarkerStyle.prototype, "stroke", void 0);
+    __decorate([
+        Validate(NUMBER(0))
+    ], PaginationMarkerStyle.prototype, "strokeWidth", void 0);
+    __decorate([
+        Validate(NUMBER(0, 1))
+    ], PaginationMarkerStyle.prototype, "strokeOpacity", void 0);
+    return PaginationMarkerStyle;
+}());
+var PaginationMarker = /** @class */ (function () {
+    function PaginationMarker() {
+        this.size = 15;
+        this._shape = Triangle;
+        /**
+         * Inner padding between a pagination button and the label.
+         */
+        this.padding = 8;
+    }
+    Object.defineProperty(PaginationMarker.prototype, "shape", {
+        get: function () {
+            return this._shape;
+        },
+        set: function (value) {
+            var _a;
+            this._shape = value;
+            (_a = this.parent) === null || _a === void 0 ? void 0 : _a.onMarkerShapeChange();
+        },
+        enumerable: false,
+        configurable: true
+    });
+    __decorate([
+        Validate(NUMBER(0))
+    ], PaginationMarker.prototype, "size", void 0);
+    __decorate([
+        Validate(NUMBER(0))
+    ], PaginationMarker.prototype, "padding", void 0);
+    return PaginationMarker;
+}());
+var Pagination = /** @class */ (function () {
+    function Pagination(chartUpdateCallback, pageUpdateCallback, interactionManager, cursorManager) {
+        var _this = this;
+        this.chartUpdateCallback = chartUpdateCallback;
+        this.pageUpdateCallback = pageUpdateCallback;
+        this.interactionManager = interactionManager;
+        this.cursorManager = cursorManager;
+        this.id = createId(this);
+        this.group = new Group({ name: 'pagination' });
+        this.labelNode = new Text();
+        this.marker = new PaginationMarker();
+        this.activeStyle = new PaginationMarkerStyle();
+        this.inactiveStyle = new PaginationMarkerStyle();
+        this.highlightStyle = new PaginationMarkerStyle();
+        this.label = new PaginationLabel();
+        this.totalPages = 0;
+        this.currentPage = 0;
+        this.nextButtonDisabled = false;
+        this.previousButtonDisabled = false;
+        this._visible = true;
+        this._enabled = true;
+        this._orientation = 'vertical';
+        this._nextButton = new Triangle();
+        this._previousButton = new Triangle();
+        var labelNode = this.labelNode;
+        labelNode.textBaseline = 'middle';
+        labelNode.fontSize = 12;
+        labelNode.fontFamily = 'Verdana, sans-serif';
+        labelNode.fill = 'black';
+        labelNode.y = HdpiCanvas.has.textMetrics ? 1 : 0;
+        this.group.append([this.nextButton, this.previousButton, labelNode]);
+        this.interactionManager.addListener('click', function (event) { return _this.onPaginationClick(event); });
+        this.interactionManager.addListener('hover', function (event) { return _this.onPaginationMouseMove(event); });
+        this.marker.parent = this;
+        this.update();
+        this.updateMarkers();
+    }
+    Object.defineProperty(Pagination.prototype, "visible", {
+        get: function () {
+            return this._visible;
+        },
+        set: function (value) {
+            this._visible = value;
+            this.updateGroupVisibility();
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Pagination.prototype, "enabled", {
+        get: function () {
+            return this._enabled;
+        },
+        set: function (value) {
+            this._enabled = value;
+            this.updateGroupVisibility();
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Pagination.prototype.updateGroupVisibility = function () {
+        this.group.visible = this.enabled && this.visible;
+    };
+    Object.defineProperty(Pagination.prototype, "orientation", {
+        get: function () {
+            return this._orientation;
+        },
+        set: function (value) {
+            this._orientation = value;
+            switch (value) {
+                case 'horizontal': {
+                    this.previousButton.rotation = -Math.PI / 2;
+                    this.nextButton.rotation = Math.PI / 2;
+                    break;
+                }
+                case 'vertical':
+                default: {
+                    this.previousButton.rotation = 0;
+                    this.nextButton.rotation = Math.PI;
+                }
+            }
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Pagination.prototype, "translationX", {
+        get: function () {
+            return this.group.translationX;
+        },
+        set: function (value) {
+            this.group.translationX = value;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Pagination.prototype, "translationY", {
+        get: function () {
+            return this.group.translationY;
+        },
+        set: function (value) {
+            this.group.translationY = value;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Pagination.prototype, "nextButton", {
+        get: function () {
+            return this._nextButton;
+        },
+        set: function (value) {
+            if (this._nextButton !== value) {
+                this.group.removeChild(this._nextButton);
+                this._nextButton = value;
+                this.group.appendChild(value);
+            }
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Pagination.prototype, "previousButton", {
+        get: function () {
+            return this._previousButton;
+        },
+        set: function (value) {
+            if (this._previousButton !== value) {
+                this.group.removeChild(this._previousButton);
+                this._previousButton = value;
+                this.group.appendChild(value);
+            }
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Pagination.prototype.update = function () {
+        this.updateLabel();
+        this.updatePositions();
+        this.enableOrDisableButtons();
+    };
+    Pagination.prototype.updatePositions = function () {
+        this.updateLabelPosition();
+        this.updateNextButtonPosition();
+    };
+    Pagination.prototype.updateLabelPosition = function () {
+        var _a = this.marker, markerSize = _a.size, markerPadding = _a.padding;
+        this.nextButton.size = markerSize;
+        this.previousButton.size = markerSize;
+        this.labelNode.x = markerSize / 2 + markerPadding;
+    };
+    Pagination.prototype.updateNextButtonPosition = function () {
+        var labelBBox = this.labelNode.computeBBox();
+        this.nextButton.translationX = labelBBox.x + labelBBox.width + this.marker.size / 2 + this.marker.padding;
+    };
+    Pagination.prototype.updateLabel = function () {
+        var _a = this, currentPage = _a.currentPage, pages = _a.totalPages, labelNode = _a.labelNode, _b = _a.label, color = _b.color, fontStyle = _b.fontStyle, fontWeight = _b.fontWeight, fontSize = _b.fontSize, fontFamily = _b.fontFamily;
+        labelNode.text = currentPage + 1 + " / " + pages;
+        labelNode.fill = color;
+        labelNode.fontStyle = fontStyle;
+        labelNode.fontWeight = fontWeight;
+        labelNode.fontSize = fontSize;
+        labelNode.fontFamily = fontFamily;
+    };
+    Pagination.prototype.updateMarkers = function () {
+        var _a = this, nextButton = _a.nextButton, previousButton = _a.previousButton, nextButtonDisabled = _a.nextButtonDisabled, previousButtonDisabled = _a.previousButtonDisabled, activeStyle = _a.activeStyle, inactiveStyle = _a.inactiveStyle, highlightStyle = _a.highlightStyle, highlightActive = _a.highlightActive;
+        var buttonStyle = function (button, disabled) {
+            if (disabled) {
+                return inactiveStyle;
+            }
+            else if (button === highlightActive) {
+                return highlightStyle;
+            }
+            return activeStyle;
+        };
+        this.updateMarker(nextButton, buttonStyle('next', nextButtonDisabled));
+        this.updateMarker(previousButton, buttonStyle('previous', previousButtonDisabled));
+    };
+    Pagination.prototype.updateMarker = function (marker, style) {
+        var _a;
+        var size = this.marker.size;
+        marker.size = size;
+        marker.fill = style.fill;
+        marker.fillOpacity = (_a = style.fillOpacity) !== null && _a !== void 0 ? _a : 1;
+        marker.stroke = style.stroke;
+        marker.strokeWidth = style.strokeWidth;
+        marker.strokeOpacity = style.strokeOpacity;
+    };
+    Pagination.prototype.enableOrDisableButtons = function () {
+        var _a = this, currentPage = _a.currentPage, totalPages = _a.totalPages;
+        var zeroPagesToDisplay = totalPages === 0;
+        var onLastPage = currentPage === totalPages - 1;
+        var onFirstPage = currentPage === 0;
+        this.nextButtonDisabled = onLastPage || zeroPagesToDisplay;
+        this.previousButtonDisabled = onFirstPage || zeroPagesToDisplay;
+    };
+    Pagination.prototype.nextButtonContainsPoint = function (offsetX, offsetY) {
+        return !this.nextButtonDisabled && this.nextButton.containsPoint(offsetX, offsetY);
+    };
+    Pagination.prototype.previousButtonContainsPoint = function (offsetX, offsetY) {
+        return !this.previousButtonDisabled && this.previousButton.containsPoint(offsetX, offsetY);
+    };
+    Pagination.prototype.onPaginationClick = function (event) {
+        var offsetX = event.offsetX, offsetY = event.offsetY;
+        if (this.nextButtonContainsPoint(offsetX, offsetY)) {
+            this.incrementPage();
+            this.onPaginationChanged();
+            event.consume();
+        }
+        else if (this.previousButtonContainsPoint(offsetX, offsetY)) {
+            this.decrementPage();
+            this.onPaginationChanged();
+            event.consume();
+        }
+    };
+    Pagination.prototype.onPaginationMouseMove = function (event) {
+        var offsetX = event.offsetX, offsetY = event.offsetY;
+        if (this.nextButtonContainsPoint(offsetX, offsetY)) {
+            this.cursorManager.updateCursor(this.id, 'pointer');
+            this.highlightActive = 'next';
+        }
+        else if (this.previousButtonContainsPoint(offsetX, offsetY)) {
+            this.cursorManager.updateCursor(this.id, 'pointer');
+            this.highlightActive = 'previous';
+        }
+        else {
+            this.cursorManager.updateCursor(this.id);
+            this.highlightActive = undefined;
+        }
+        this.updateMarkers();
+        this.chartUpdateCallback(ChartUpdateType.SCENE_RENDER);
+    };
+    Pagination.prototype.onPaginationChanged = function () {
+        this.pageUpdateCallback(this.currentPage);
+    };
+    Pagination.prototype.incrementPage = function () {
+        this.currentPage = Math.min(this.currentPage + 1, this.totalPages - 1);
+    };
+    Pagination.prototype.decrementPage = function () {
+        this.currentPage = Math.max(this.currentPage - 1, 0);
+    };
+    Pagination.prototype.onMarkerShapeChange = function () {
+        var Marker = getMarker(this.marker.shape || Triangle);
+        this.previousButton = new Marker();
+        this.nextButton = new Marker();
+        this.updatePositions();
+        this.updateMarkers();
+        this.chartUpdateCallback(ChartUpdateType.SCENE_RENDER);
+    };
+    Pagination.prototype.attachPagination = function (node) {
+        node.append(this.group);
+    };
+    Pagination.prototype.computeBBox = function () {
+        return this.group.computeBBox();
+    };
+    Pagination.className = 'Pagination';
+    return Pagination;
+}());
+export { Pagination };

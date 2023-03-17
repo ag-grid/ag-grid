@@ -30,7 +30,7 @@ GEN_KEY_DEFAULT_LOCATION=~/Documents/aggrid/aggrid/genkey/genKey.js
 
 echo "########################################################################"
 echo "########### Creating and switching to new branch $NEW_BRANCH ###########"
-./scripts/release/createAndSwitchToBranch.sh $SOURCE_BRANCH $NEW_BRANCH
+#./scripts/release/createAndSwitchToBranch.sh $SOURCE_BRANCH $NEW_BRANCH
 
 echo "########################################################################"
 echo "#################### Updating LicenseManager ###########################"

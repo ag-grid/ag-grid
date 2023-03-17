@@ -1,0 +1,47 @@
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+import { Rect } from '../scene/shape/rect';
+import { Group } from '../scene/group';
+import { ActionOnSet, ProxyPropertyOnWrite } from '../util/proxy';
+import { BOOLEAN, OPT_COLOR_STRING, Validate } from '../util/validation';
+export class Background {
+    constructor(imageLoadCallback) {
+        this.image = undefined;
+        this.node = new Group();
+        this.rectNode = new Rect();
+        this.node.appendChild(this.rectNode);
+        this.visible = true;
+        this.imageLoadCallback = imageLoadCallback;
+    }
+    performLayout(width, height) {
+        this.rectNode.width = width;
+        this.rectNode.height = height;
+        if (this.image) {
+            this.image.performLayout(width, height);
+        }
+    }
+}
+__decorate([
+    Validate(BOOLEAN),
+    ProxyPropertyOnWrite('node', 'visible')
+], Background.prototype, "visible", void 0);
+__decorate([
+    Validate(OPT_COLOR_STRING),
+    ProxyPropertyOnWrite('rectNode', 'fill')
+], Background.prototype, "fill", void 0);
+__decorate([
+    ActionOnSet({
+        newValue(image) {
+            this.node.appendChild(image.node);
+            image.onload = this.imageLoadCallback;
+        },
+        oldValue(image) {
+            this.node.removeChild(image.node);
+            image.onload = undefined;
+        },
+    })
+], Background.prototype, "image", void 0);

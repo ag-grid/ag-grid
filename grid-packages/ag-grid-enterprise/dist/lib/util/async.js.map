@@ -1,0 +1,1 @@
+{"version":3,"file":"async.js","sourceRoot":"","sources":["../../src/util/async.ts"],"names":[],"mappings":";;;AAAA,SAAgB,KAAK,CAAC,cAAsB;IACxC,OAAO,IAAI,OAAO,CAAC,UAAC,OAAO;QACvB,UAAU,CAAC,cAAM,OAAA,OAAO,CAAC,SAAS,CAAC,EAAlB,CAAkB,EAAE,cAAc,CAAC,CAAC;IACzD,CAAC,CAAC,CAAC;AACP,CAAC;AAJD,sBAIC"}

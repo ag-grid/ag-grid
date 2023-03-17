@@ -1,0 +1,15 @@
+// Type definitions for @ag-grid-community/core v29.2.0
+// Project: https://www.ag-grid.com/
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
+export declare type ContainerType = 'columnMenu' | 'contextMenu' | 'toolPanel' | 'floatingFilter';
+export interface IAfterGuiAttachedParams {
+    /** Where this component is attached to. */
+    container?: ContainerType;
+    /**
+     * Call this to hide the popup.
+     * i.e useful if your component has an action button and you want to hide the popup after it is pressed.
+     */
+    hidePopup?: () => void;
+    /** Set to `true` to not have the component focus its default item. */
+    suppressFocus?: boolean;
+}
