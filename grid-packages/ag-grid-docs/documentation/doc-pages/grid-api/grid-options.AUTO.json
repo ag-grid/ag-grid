@@ -958,7 +958,10 @@
   },
   "deltaSort": { "type": { "returnType": "boolean" } },
   "treeDataDisplayType": { "type": { "returnType": "TreeDataDisplayType" } },
-  "functionsPassive": { "type": { "returnType": "boolean" } },
+  "functionsPassive": {
+    "description": "/** @deprecated v29.2 */",
+    "type": { "returnType": "boolean" }
+  },
   "enableGroupEdit": { "type": { "returnType": "boolean" } },
   "getContextMenuItems": {
     "description": "/** For customising the context menu. */",
@@ -2461,6 +2464,7 @@
     "meta": { "isEvent": true, "name": "onSortChanged" }
   },
   "onColumnRowGroupChangeRequest": {
+    "description": "/** @deprecated v29.2 */",
     "type": {
       "arguments": { "event": "ColumnRowGroupChangeRequestEvent<TData>" },
       "returnType": "void"
@@ -2468,6 +2472,7 @@
     "meta": { "isEvent": true, "name": "onColumnRowGroupChangeRequest" }
   },
   "columnRowGroupChangeRequest": {
+    "description": "/** @deprecated v29.2 */",
     "type": {
       "arguments": { "event": "ColumnRowGroupChangeRequestEvent<TData>" },
       "returnType": "void"
@@ -2475,6 +2480,7 @@
     "meta": { "isEvent": true, "name": "onColumnRowGroupChangeRequest" }
   },
   "onColumnPivotChangeRequest": {
+    "description": "/** @deprecated v29.2 */",
     "type": {
       "arguments": { "event": "ColumnPivotChangeRequestEvent<TData>" },
       "returnType": "void"
@@ -2482,6 +2488,7 @@
     "meta": { "isEvent": true, "name": "onColumnPivotChangeRequest" }
   },
   "columnPivotChangeRequest": {
+    "description": "/** @deprecated v29.2 */",
     "type": {
       "arguments": { "event": "ColumnPivotChangeRequestEvent<TData>" },
       "returnType": "void"
@@ -2489,6 +2496,7 @@
     "meta": { "isEvent": true, "name": "onColumnPivotChangeRequest" }
   },
   "onColumnValueChangeRequest": {
+    "description": "/** @deprecated v29.2 */",
     "type": {
       "arguments": { "event": "ColumnValueChangeRequestEvent<TData>" },
       "returnType": "void"
@@ -2496,6 +2504,7 @@
     "meta": { "isEvent": true, "name": "onColumnValueChangeRequest" }
   },
   "columnValueChangeRequest": {
+    "description": "/** @deprecated v29.2 */",
     "type": {
       "arguments": { "event": "ColumnValueChangeRequestEvent<TData>" },
       "returnType": "void"
@@ -2503,6 +2512,7 @@
     "meta": { "isEvent": true, "name": "onColumnValueChangeRequest" }
   },
   "onColumnAggFuncChangeRequest": {
+    "description": "/** @deprecated v29.2 */",
     "type": {
       "arguments": { "event": "ColumnAggFuncChangeRequestEvent<TData>" },
       "returnType": "void"
@@ -2510,6 +2520,7 @@
     "meta": { "isEvent": true, "name": "onColumnAggFuncChangeRequest" }
   },
   "columnAggFuncChangeRequest": {
+    "description": "/** @deprecated v29.2 */",
     "type": {
       "arguments": { "event": "ColumnAggFuncChangeRequestEvent<TData>" },
       "returnType": "void"

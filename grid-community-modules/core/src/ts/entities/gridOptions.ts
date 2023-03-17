@@ -794,6 +794,8 @@ export interface GridOptions<TData = any> {
 
     deltaSort?: boolean;
     treeDataDisplayType?: TreeDataDisplayType;
+    
+    /** @deprecated v29.2 */
     functionsPassive?: boolean;
     enableGroupEdit?: boolean;
 
@@ -1134,9 +1136,13 @@ export interface GridOptions<TData = any> {
     /** Sort has changed. The grid also listens for this and updates the model. */
     onSortChanged?(event: SortChangedEvent<TData>): void;
 
+    /** @deprecated v29.2 */
     onColumnRowGroupChangeRequest?(event: ColumnRowGroupChangeRequestEvent<TData>): void;
+    /** @deprecated v29.2 */
     onColumnPivotChangeRequest?(event: ColumnPivotChangeRequestEvent<TData>): void;
+    /** @deprecated v29.2 */
     onColumnValueChangeRequest?(event: ColumnValueChangeRequestEvent<TData>): void;
+    /** @deprecated v29.2 */
     onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent<TData>): void;
 
     /**

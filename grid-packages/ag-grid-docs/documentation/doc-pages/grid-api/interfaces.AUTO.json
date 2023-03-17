@@ -2141,6 +2141,7 @@
       "suppressRowHoverHighlight?": "/** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. Default: `false` */",
       "suppressRowTransform?": "/** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. Default: `false` */",
       "columnHoverHighlight?": "/** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false` */",
+      "functionsPassive?": "/** @deprecated v29.2 */",
       "getContextMenuItems?": "/** For customising the context menu. */",
       "getMainMenuItems?": "/** For customising the main 'column header' menu. */",
       "postProcessPopup?": "/** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */",
@@ -2267,6 +2268,10 @@
       "onCellContextMenu?(event: CellContextMenuEvent<TData>)": "/** Cell is right clicked. */",
       "onRangeSelectionChanged?(event: RangeSelectionChangedEvent<TData>)": "/** A change to range selection has occurred. */",
       "onSortChanged?(event: SortChangedEvent<TData>)": "/** Sort has changed. The grid also listens for this and updates the model. */",
+      "onColumnRowGroupChangeRequest?(event: ColumnRowGroupChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
+      "onColumnPivotChangeRequest?(event: ColumnPivotChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
+      "onColumnValueChangeRequest?(event: ColumnValueChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
+      "onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
       "api?": "/** The Grid Api for interacting with the grid.\n     * Set by the grid on init, set to null on destroy.\n     */",
       "columnApi?": "/** The Column Api for interacting with the grid columns.\n     * Set by the grid on init, set to null on destroy.\n     */"
     }
@@ -12503,6 +12508,7 @@
       "suppressRowHoverHighlight?": "/** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. Default: `false` */",
       "suppressRowTransform?": "/** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. Default: `false` */",
       "columnHoverHighlight?": "/** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false` */",
+      "functionsPassive?": "/** @deprecated v29.2 */",
       "getContextMenuItems?": "/** For customising the context menu. */",
       "getMainMenuItems?": "/** For customising the main 'column header' menu. */",
       "postProcessPopup?": "/** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */",
@@ -12629,6 +12635,10 @@
       "onCellContextMenu?(event: CellContextMenuEvent<TData>)": "/** Cell is right clicked. */",
       "onRangeSelectionChanged?(event: RangeSelectionChangedEvent<TData>)": "/** A change to range selection has occurred. */",
       "onSortChanged?(event: SortChangedEvent<TData>)": "/** Sort has changed. The grid also listens for this and updates the model. */",
+      "onColumnRowGroupChangeRequest?(event: ColumnRowGroupChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
+      "onColumnPivotChangeRequest?(event: ColumnPivotChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
+      "onColumnValueChangeRequest?(event: ColumnValueChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
+      "onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
       "api?": "/** The Grid Api for interacting with the grid.\n     * Set by the grid on init, set to null on destroy.\n     */",
       "columnApi?": "/** The Column Api for interacting with the grid columns.\n     * Set by the grid on init, set to null on destroy.\n     */"
     }
@@ -13260,6 +13270,7 @@
       "suppressRowHoverHighlight?": "/** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. Default: `false` */",
       "suppressRowTransform?": "/** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. Default: `false` */",
       "columnHoverHighlight?": "/** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false` */",
+      "functionsPassive?": "/** @deprecated v29.2 */",
       "getContextMenuItems?": "/** For customising the context menu. */",
       "getMainMenuItems?": "/** For customising the main 'column header' menu. */",
       "postProcessPopup?": "/** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */",
@@ -13386,6 +13397,10 @@
       "onCellContextMenu?(event: CellContextMenuEvent<TData>)": "/** Cell is right clicked. */",
       "onRangeSelectionChanged?(event: RangeSelectionChangedEvent<TData>)": "/** A change to range selection has occurred. */",
       "onSortChanged?(event: SortChangedEvent<TData>)": "/** Sort has changed. The grid also listens for this and updates the model. */",
+      "onColumnRowGroupChangeRequest?(event: ColumnRowGroupChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
+      "onColumnPivotChangeRequest?(event: ColumnPivotChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
+      "onColumnValueChangeRequest?(event: ColumnValueChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
+      "onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
       "api?": "/** The Grid Api for interacting with the grid.\n     * Set by the grid on init, set to null on destroy.\n     */",
       "columnApi?": "/** The Column Api for interacting with the grid columns.\n     * Set by the grid on init, set to null on destroy.\n     */"
     }
@@ -14019,6 +14034,7 @@
       "suppressRowHoverHighlight?": "/** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. Default: `false` */",
       "suppressRowTransform?": "/** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. Default: `false` */",
       "columnHoverHighlight?": "/** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false` */",
+      "functionsPassive?": "/** @deprecated v29.2 */",
       "getContextMenuItems?": "/** For customising the context menu. */",
       "getMainMenuItems?": "/** For customising the main 'column header' menu. */",
       "postProcessPopup?": "/** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */",
@@ -14145,6 +14161,10 @@
       "onCellContextMenu?(event: CellContextMenuEvent<TData>)": "/** Cell is right clicked. */",
       "onRangeSelectionChanged?(event: RangeSelectionChangedEvent<TData>)": "/** A change to range selection has occurred. */",
       "onSortChanged?(event: SortChangedEvent<TData>)": "/** Sort has changed. The grid also listens for this and updates the model. */",
+      "onColumnRowGroupChangeRequest?(event: ColumnRowGroupChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
+      "onColumnPivotChangeRequest?(event: ColumnPivotChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
+      "onColumnValueChangeRequest?(event: ColumnValueChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
+      "onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
       "api?": "/** The Grid Api for interacting with the grid.\n     * Set by the grid on init, set to null on destroy.\n     */",
       "columnApi?": "/** The Column Api for interacting with the grid columns.\n     * Set by the grid on init, set to null on destroy.\n     */"
     }
