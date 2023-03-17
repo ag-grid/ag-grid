@@ -9,7 +9,6 @@ import Gif from 'components/Gif';
 import { Icon } from 'components/Icon';
 import IconsPanel from 'components/IconsPanel';
 import ImageCaption from 'components/ImageCaption';
-import { ListItem } from 'components/ListItem';
 import MatrixTable from 'components/MatrixTable';
 import { SEO } from 'components/SEO';
 import SideMenu from 'components/SideMenu';
@@ -59,7 +58,6 @@ const DocPageTemplate = ({ data, pageContext: { framework, jsonDataAsString, exa
         createElement: React.createElement,
         components: {
             a: (props) => DocumentationLink({ ...props, framework }),
-            li: ListItem,
             gif: (props) =>
                 Gif({ ...props, pageName, autoPlay: props.autoPlay != null ? JSON.parse(props.autoPlay) : false }),
             'grid-example': (props) => ExampleRunner(getExampleRunnerProps(props, 'grid')),
