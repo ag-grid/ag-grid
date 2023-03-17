@@ -158,10 +158,15 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
             crosshairGroup.visible = true;
 
             const { xKey = '', yKey = '', datum } = currentHighlight;
-            const key = axisCtx.keys().indexOf(yKey) >= 0 ? yKey : xKey;
+            const isYValue = axisCtx.keys().indexOf(yKey) >= 0;
+            const key = isYValue ? yKey : xKey;
+
             const datumValue = checkDatum(datum[key], axisCtx.continuous);
-            const position = axisCtx.scaleConvert(datumValue);
-            const value = this.formatValue(datumValue);
+            const cumulativeValue = currentHighlight.cumulativeValue;
+
+            const value = isYValue && cumulativeValue !== undefined ? cumulativeValue : datumValue;
+            const position = axisCtx.scaleConvert(value);
+            const labelValue = this.formatValue(value);
 
             let x = 0;
             let y = 0;
@@ -174,7 +179,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
                 crosshairGroup.translationY = Math.floor(y + seriesRect.y);
             }
 
-            this.showLabel(x + seriesRect.x, y + seriesRect.y, value);
+            this.showLabel(x + seriesRect.x, y + seriesRect.y, labelValue);
         } else {
             crosshairGroup.visible = false;
             this.hideLabel();
