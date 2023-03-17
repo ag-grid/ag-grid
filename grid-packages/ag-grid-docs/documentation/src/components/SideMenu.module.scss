@@ -49,27 +49,26 @@
 .sideNav li {
     --item-gap: 0.875em;
 
-    margin-bottom: $size-1;
+    margin-bottom: $size-1 !important; // !important for .ag-styles specificity
 }
 
 .sideNav .level-1 {
     font-size: var(--font-size-large);
-    margin-bottom: var(--item-gap);
+    margin-bottom: var(--item-gap) !important; // !important for .ag-styles specificity
 }
 
 .sideNav .level-2 {
-    margin-bottom: var(--item-gap);
+    margin-bottom: var(--item-gap) !important; // !important for .ag-styles specificity
 }
 
 .sideNav .level-3 {
-    font-size: var(--font-size-small);
     font-weight: var(--font-weight-thin);
-    margin-bottom: calc(var(--item-gap) / 4);
+    margin-bottom: calc(var(--item-gap) / 4) !important; // !important for .ag-styles specificity
     margin-left: $size-1;
 }
 
 .sideNav .level-2 + .level-3 {
-    margin-top: calc(var(--item-gap) * -1);
+    margin-top: calc(var(--item-gap) * -0.8);
 }
 
 .sideNav .level-3 + .level-2 {
