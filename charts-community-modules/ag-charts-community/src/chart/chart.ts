@@ -278,6 +278,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.interactionManager.addListener('click', (event) => this.onClick(event));
         this.interactionManager.addListener('dblclick', (event) => this.onDoubleClick(event));
         this.interactionManager.addListener('hover', (event) => this.onMouseMove(event));
+        this.interactionManager.addListener('drag', (event) => this.onDrag(event));
         this.interactionManager.addListener('leave', () => this.disablePointer());
         this.interactionManager.addListener('page-left', () => this.destroy());
 
@@ -963,6 +964,12 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.extraDebugStats['mouseX'] = event.offsetX;
         this.extraDebugStats['mouseY'] = event.offsetY;
         this.update(ChartUpdateType.SCENE_RENDER);
+    }
+
+    protected onDrag(event: InteractionEvent<'drag'>): void {
+        this.extraDebugStats['mouseX'] = event.offsetX;
+        this.extraDebugStats['mouseY'] = event.offsetY;
+        this.update(ChartUpdateType.PERFORM_LAYOUT);
     }
 
     private lastInteractionEvent?: InteractionEvent<'hover'> = undefined;
