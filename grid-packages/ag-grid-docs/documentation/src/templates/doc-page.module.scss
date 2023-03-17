@@ -55,7 +55,9 @@
     }
 
     // Required because of .ag-styles wrapper
-    p {
+    p,
+    ul,
+    ol {
         margin-bottom: $size-2 !important;
     }
 
