@@ -210,6 +210,29 @@ export interface AgChartPaddingOptions {
     left?: PixelSize;
 }
 
+export interface AgSeriesAreaPaddingOptions {
+    /**
+     * The number of pixels of padding at the top of the series area.
+     * Default: `0`
+     */
+    top?: PixelSize;
+    /**
+     * The number of pixels of padding at the right of the series area.
+     * Default: `0`
+     */
+    right?: PixelSize;
+    /**
+     * The number of pixels of padding at the bottom of the series area.
+     * Default: `0`
+     */
+    bottom?: PixelSize;
+    /**
+     * The number of pixels of padding at the left of the series area.
+     * Default: `0`
+     */
+    left?: PixelSize;
+}
+
 export interface AgChartOverlayOptions {
     /** Text to render in the overlay. */
     text?: string;
@@ -570,8 +593,8 @@ export interface AgBaseChartOptions {
     autoSize?: boolean;
     /** Configuration for the padding shown around the chart. */
     padding?: AgChartPaddingOptions;
-    /** Configuration for the padding around the series. */
-    seriesAreaPadding?: AgChartPaddingOptions;
+    /** Configuration for the padding around the series area. */
+    seriesAreaPadding?: AgSeriesAreaPaddingOptions;
     /** Configuration for the background shown behind the chart. */
     background?: AgChartBackground;
     /** Configuration for the title shown at the top of the chart. */

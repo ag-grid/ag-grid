@@ -206,8 +206,8 @@
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
     "seriesAreaPadding": {
-      "description": "/** Configuration for the padding around the series. */",
-      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
+      "description": "/** Configuration for the padding around the series area. */",
+      "type": { "returnType": "AgSeriesAreaPaddingOptions", "optional": true }
     },
     "background": {
       "description": "/** Configuration for the background shown behind the chart. */",
@@ -281,8 +281,8 @@
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
     "seriesAreaPadding": {
-      "description": "/** Configuration for the padding around the series. */",
-      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
+      "description": "/** Configuration for the padding around the series area. */",
+      "type": { "returnType": "AgSeriesAreaPaddingOptions", "optional": true }
     },
     "background": {
       "description": "/** Configuration for the background shown behind the chart. */",
@@ -356,8 +356,8 @@
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
     "seriesAreaPadding": {
-      "description": "/** Configuration for the padding around the series. */",
-      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
+      "description": "/** Configuration for the padding around the series area. */",
+      "type": { "returnType": "AgSeriesAreaPaddingOptions", "optional": true }
     },
     "background": {
       "description": "/** Configuration for the background shown behind the chart. */",
@@ -1059,6 +1059,24 @@
     },
     "left": {
       "description": "/** The number of pixels of padding at the left of the chart area. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    }
+  },
+  "AgSeriesAreaPaddingOptions": {
+    "top": {
+      "description": "/** The number of pixels of padding at the top of the series area.\n     * Default: `0`\n     */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "right": {
+      "description": "/** The number of pixels of padding at the right of the series area.\n     * Default: `0`\n     */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "bottom": {
+      "description": "/** The number of pixels of padding at the bottom of the series area.\n     * Default: `0`\n     */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "left": {
+      "description": "/** The number of pixels of padding at the left of the series area.\n     * Default: `0`\n     */",
       "type": { "returnType": "PixelSize", "optional": true }
     }
   },
@@ -1827,8 +1845,8 @@
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
     "seriesAreaPadding": {
-      "description": "/** Configuration for the padding around the series. */",
-      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
+      "description": "/** Configuration for the padding around the series area. */",
+      "type": { "returnType": "AgSeriesAreaPaddingOptions", "optional": true }
     },
     "background": {
       "description": "/** Configuration for the background shown behind the chart. */",
@@ -4784,8 +4802,8 @@
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
     "seriesAreaPadding": {
-      "description": "/** Configuration for the padding around the series. */",
-      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
+      "description": "/** Configuration for the padding around the series area. */",
+      "type": { "returnType": "AgSeriesAreaPaddingOptions", "optional": true }
     },
     "background": {
       "description": "/** Configuration for the background shown behind the chart. */",
@@ -4862,8 +4880,8 @@
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
     "seriesAreaPadding": {
-      "description": "/** Configuration for the padding around the series. */",
-      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
+      "description": "/** Configuration for the padding around the series area. */",
+      "type": { "returnType": "AgSeriesAreaPaddingOptions", "optional": true }
     },
     "background": {
       "description": "/** Configuration for the background shown behind the chart. */",
@@ -4937,8 +4955,8 @@
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
     },
     "seriesAreaPadding": {
-      "description": "/** Configuration for the padding around the series. */",
-      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
+      "description": "/** Configuration for the padding around the series area. */",
+      "type": { "returnType": "AgSeriesAreaPaddingOptions", "optional": true }
     },
     "background": {
       "description": "/** Configuration for the background shown behind the chart. */",
