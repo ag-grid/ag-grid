@@ -227,13 +227,6 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                 }
             });
 
-            if (store && store.isLastRowIndexKnown() && store.getRowCount() < selectedState.toggledNodes.size) {
-                console.warn(`
-                    AG Grid: The number of toggled nodes in this store exceeds the total number of rows.
-                    Ensure your selection state is valid and up to date with your server.`
-                );
-            }
-
             if (!store || !store.isLastRowIndexKnown() || store.getRowCount() !== selectedState.toggledNodes.size) {
                 // if row count unknown, or doesn't match the size of toggledNodes, ignore.
                 return false;

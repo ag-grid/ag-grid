@@ -47,6 +47,7 @@ const gridOptions: GridOptions = {
 
   rowModelType: 'serverSide',
   groupSelectsChildren: true,
+  rowSelection: 'multiple',
 };
 
 function getServerSideDatasource(server: any) {
