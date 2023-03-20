@@ -4,7 +4,11 @@ declare var dateComparator: any;
 var defaultFilterParams: IProvidedFilterParams = { readOnly: true }
 
 const columnDefs: ColDef[] = [
-  { field: 'athlete', filter: true, filterParams: defaultFilterParams },
+  {
+    field: 'athlete',
+    filter: 'agTextColumnFilter',
+    filterParams: defaultFilterParams
+  },
   {
     field: 'age',
     filter: 'agNumberColumnFilter',

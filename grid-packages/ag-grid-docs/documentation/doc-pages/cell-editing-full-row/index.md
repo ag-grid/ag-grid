@@ -9,7 +9,7 @@ To enable full row editing, set the grid option `editType = 'fullRow'`.
 If using custom cell editors, the cell editors will work in the exact same way with the following additions:
 
 - `focusIn`: If your cell editor has a `focusIn()` method, it will get called when the user tabs into the cell. This should be used to put the focus on the particular item to be focused, e.g. the `textfield` within your cell editor.
-- `focusOut`: If your cell editor has a `focusOut()` method, it will get called when the user tabs out of the cell. No intended use for this, is just there to complement the `focusIn()` method.
+- `focusOut`: If your cell editor has a `focusOut()` method, it will get called when the user tabs out of the cell. There is no intended use for this; it's just there to complement the `focusIn()` method.
 - Events: When a row stops editing, the `cellValueChanged` event gets called for each column and `rowValueChanged` gets called once for the row.
 
 ### Full Row Edit and Popup Editors

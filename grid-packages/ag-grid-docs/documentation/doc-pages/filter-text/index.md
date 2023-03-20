@@ -140,7 +140,7 @@ const gridOptions = {
 
 ## Text Filter Model
 
-The Filter Model describes the current state of the applied Number Filter. If only one [Filter Condition](/filter-conditions/) is set, this will be a `TextFilterModel`:
+The Filter Model describes the current state of the applied Text Filter. If only one [Filter Condition](/filter-conditions/) is set, this will be a `TextFilterModel`:
 
 <interface-documentation interfaceName='TextFilterModel' config='{"description":""}'></interface-documentation>
 
