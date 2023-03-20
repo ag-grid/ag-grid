@@ -39,8 +39,7 @@ main {
     .main-menu {
         width: 300px;
         border-bottom-style: none;
-        border-right-style: solid;
-        border-color: #dee2e6;
+        border-right: 2px solid #dee2e6;
     }
 
     @supports (position: sticky) {

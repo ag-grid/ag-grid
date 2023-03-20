@@ -47,7 +47,7 @@ The grid has the following API methods for editing:
 
 <api-documentation source='grid-api/api.json' section='editing' names='["startEditingCell", "stopEditing", "getEditingCells"]'></api-documentation>
 
-If the grid is editing, `getEditingCells()` returns back details of the editing cell(s). The result is an array of objects. If only one cell is editing (the default) then the array will have one entry. If multiple cells are editing (e.g. [Full Row Edit](#full-row-editing)) then the array contains all editing cells.
+If the grid is editing, `getEditingCells()` returns back details of the editing cell(s). The result is an array of objects. If only one cell is editing (the default) then the array will have one entry. If multiple cells are editing (e.g. [Full Row Edit](/cell-editing-full-row/)) then the array contains all editing cells.
 
 Below is a code example of using the editing API methods.
 

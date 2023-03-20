@@ -700,6 +700,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     public afterGuiDetached(): void {
+        super.afterGuiDetached();
+
         const appliedModel = this.getModel();
         if (!this.areModelsEqual(appliedModel!, this.getModelFromUi()!)) {
             this.resetUiToActiveModel(appliedModel);
