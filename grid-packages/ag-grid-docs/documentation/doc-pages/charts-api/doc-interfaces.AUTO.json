@@ -5730,6 +5730,7 @@
     "meta": { "typeParams": ["D", "R", "I = number"] }
   },
   "DefaultTimeFormats": {},
+  "Padding": {},
   "RedrawType": {},
   "SceneChangeDetectionOptions": {},
   "GradientColorStop": {

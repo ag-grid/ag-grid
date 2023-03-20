@@ -114,6 +114,7 @@ const options: AgChartOptions = {
       position: "bottom",
       type: "time",
       gridStyle: [],
+      nice: false,
     },
     {
       position: "right",

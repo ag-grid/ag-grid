@@ -5294,6 +5294,7 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
+        "interval": 500,
         "size": 6,
         "width": 1,
       },
@@ -8245,6 +8246,11 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
+        "interval": TimeInterval {
+          "_decode": [Function],
+          "_encode": [Function],
+          "_rangeCallback": [Function],
+        },
         "size": 6,
         "width": 1,
       },
@@ -9516,7 +9522,7 @@ Object {
         },
       ],
       "label": Object {
-        "autoRotate": false,
+        "autoRotate": true,
         "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
@@ -9565,7 +9571,7 @@ Object {
         },
       ],
       "label": Object {
-        "autoRotate": false,
+        "autoRotate": true,
         "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
@@ -11357,6 +11363,7 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
+        "interval": 500,
         "size": 6,
         "width": 1,
       },

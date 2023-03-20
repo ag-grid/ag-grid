@@ -3998,6 +3998,10 @@
     ],
     "docs": [null, null, null, null, null, null, null, null, null]
   },
+  "Padding": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ top: number; left: number; right: number; bottom: number; }"
+  },
   "RedrawType": {
     "meta": { "isEnum": true },
     "type": ["NONE", "TRIVIAL", "MINOR", "MAJOR"],

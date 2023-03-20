@@ -60,6 +60,9 @@ const options: AgChartOptions = {
       title: {
         text: 'Curb weight (pounds)',
       },
+      tick: {
+        interval: 500,
+      },
     },
     {
       position: 'left',
