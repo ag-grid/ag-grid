@@ -10,7 +10,7 @@ import styles from './Menu.module.scss';
 import { isProductionBuild } from '../utils/consts';
 
 function filterProductionMenuData(data) {
-    if (!isProductionBuild()) {
+    if (!isProductionEnvironment()) {
         // No filtering needed for non-production builds.
         return data;
     }
