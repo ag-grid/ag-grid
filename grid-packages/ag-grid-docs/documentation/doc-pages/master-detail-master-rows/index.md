@@ -22,7 +22,7 @@ Because Static Master Rows are used in all the basic examples of Master / Detail
 
 Dynamic Master Rows allows specifically deciding what rows in the Master Grid can be expanded. This can be useful if, for example, a Master Row has no child records, then it may not be desirable to allow expanding the Master Row.
 
-In specify which rows should expand, provide the grid callback `isRowMaster`. The callback will be called once for each row. Return `true` to allow expanding and `false` to disallow expanding for that row.
+To specify which rows should expand, provide the grid callback `isRowMaster`. The callback will be called once for each row. Return `true` to allow expanding and `false` to disallow expanding for that row.
 
 <api-documentation source='grid-options/properties.json' section='masterDetail' names='["isRowMaster"]'></api-documentation>
 
