@@ -1,7 +1,7 @@
 import { ColumnFormat, ColumnFormatterParams } from '@ag-grid-community/core';
 import { FontStyle, FontWeight, _Scene, _Util } from 'ag-charts-community';
 
-import { SeriesNodeDatum, Sparkline } from '../sparkline';
+import { SeriesNodeDatum, Sparkline, ZINDICIES } from '../sparkline';
 import { toTooltipHtml } from '../tooltip/sparklineTooltip';
 import { Label } from '../label/label';
 
@@ -63,10 +63,12 @@ export abstract class BarColumnSparkline extends Sparkline {
     private labelGroup: _Scene.Group = new _Scene.Group();
 
     private rectSelection: _Scene.Selection<_Scene.Rect, RectNodeDatum> = _Scene.Selection.select(
-        this.rectGroup, _Scene.Rect
+        this.rectGroup,
+        _Scene.Rect
     );
     private labelSelection: _Scene.Selection<_Scene.Text, RectNodeDatum> = _Scene.Selection.select(
-        this.labelGroup, _Scene.Text
+        this.labelGroup,
+        _Scene.Text
     );
 
     private nodeSelectionData: RectNodeDatum[] = [];
@@ -77,6 +79,11 @@ export abstract class BarColumnSparkline extends Sparkline {
         super();
 
         this.rootGroup.append(this.sparklineGroup);
+
+        this.rectGroup.zIndex = ZINDICIES.SERIES_FILL_ZINDEX;
+        this.axisLine.zIndex = ZINDICIES.AXIS_LINE_ZINDEX;
+        this.labelGroup.zIndex = ZINDICIES.SERIES_LABEL_ZINDEX;
+
         this.sparklineGroup.append([this.rectGroup, this.axisLine, this.labelGroup]);
 
         this.axisLine.lineCap = 'round';
@@ -115,11 +122,11 @@ export abstract class BarColumnSparkline extends Sparkline {
     }
 
     protected calculateStep(range: number): number {
-        const { xScale, paddingInner, paddingOuter,  smallestInterval } = this;
+        const { xScale, paddingInner, paddingOuter, smallestInterval } = this;
 
         // calculate step
         let domainLength = xScale.domain[1] - xScale.domain[0];
-        let intervals = (domainLength / (smallestInterval?.x ?? 1)) + 1;
+        let intervals = domainLength / (smallestInterval?.x ?? 1) + 1;
 
         // The number of intervals/bands is used to determine the width of individual bands by dividing the available range.
         // Allow a maximum of 50 bands to ensure the step (width of individual bands + padding) does not fall below a certain number of pixels.
@@ -129,7 +136,7 @@ export abstract class BarColumnSparkline extends Sparkline {
         const bands = Math.min(intervals, maxBands);
         const gaps = bands - 1; // number of gaps (padding between bands)
 
-        const step = range / Math.max(1, (2 * paddingOuter) + (gaps * paddingInner) + bands); // step width is a combination of band width and gap width
+        const step = range / Math.max(1, 2 * paddingOuter + gaps * paddingInner + bands); // step width is a combination of band width and gap width
 
         return step;
     }
@@ -226,7 +233,7 @@ export abstract class BarColumnSparkline extends Sparkline {
 
     private updateLabelSelection(selectionData: RectNodeDatum[]): void {
         this.labelSelection.update(selectionData, (text) => {
-            text.tag = BarColumnNodeTag.Label; 
+            text.tag = BarColumnNodeTag.Label;
             text.pointerEvents = _Scene.PointerEvents.None;
         });
     }

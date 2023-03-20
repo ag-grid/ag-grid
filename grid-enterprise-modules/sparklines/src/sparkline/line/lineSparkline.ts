@@ -1,7 +1,7 @@
 import { MarkerFormat, MarkerFormatterParams, CrosshairLineOptions } from '@ag-grid-community/core';
 import { _Scale, _Scene, _Util } from 'ag-charts-community';
 
-import { Point, SeriesNodeDatum, Sparkline } from '../sparkline';
+import { Point, SeriesNodeDatum, Sparkline, ZINDICIES } from '../sparkline';
 import { toTooltipHtml } from '../tooltip/sparklineTooltip';
 import { getMarker } from '../marker/markerFactory';
 import { getLineDash } from '../../util/lineDash';
@@ -45,7 +45,6 @@ class SparklineCrosshairs {
     };
 }
 
-
 export class LineSparkline extends Sparkline {
     static className = 'LineSparkline';
 
@@ -55,8 +54,10 @@ export class LineSparkline extends Sparkline {
 
     private lineSparklineGroup: _Scene.Group = new _Scene.Group();
     private markers: _Scene.Group = new _Scene.Group();
-    private markerSelection: _Scene.Selection<_Scene.Marker, LineNodeDatum> =
-        _Scene.Selection.select(this.markers, () => this.markerFactory());
+    private markerSelection: _Scene.Selection<_Scene.Marker, LineNodeDatum> = _Scene.Selection.select(
+        this.markers,
+        () => this.markerFactory()
+    );
     private markerSelectionData: LineNodeDatum[] = [];
 
     readonly marker = new SparklineMarker();
@@ -66,6 +67,12 @@ export class LineSparkline extends Sparkline {
     constructor() {
         super();
         this.rootGroup.append(this.lineSparklineGroup);
+
+        this.linePath.zIndex = ZINDICIES.SERIES_STROKE_ZINDEX;
+        this.xCrosshairLine.zIndex = ZINDICIES.CROSSHAIR_ZINDEX;
+        this.yCrosshairLine.zIndex = ZINDICIES.CROSSHAIR_ZINDEX;
+        this.markers.zIndex = ZINDICIES.SERIES_MARKERS_ZINDEX;
+
         this.lineSparklineGroup.append([this.linePath, this.xCrosshairLine, this.yCrosshairLine, this.markers]);
     }
 
