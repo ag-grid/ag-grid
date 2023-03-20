@@ -72,12 +72,18 @@ const options: AgChartOptions = {
       title: {
         text: "Date",
       },
+      label: {
+        autoRotate: true,
+      },
     },
     {
       position: "left",
       type: "number",
       title: {
         text: "Price in pence",
+      },
+      label: {
+        autoRotate: true,
       },
     },
   ],

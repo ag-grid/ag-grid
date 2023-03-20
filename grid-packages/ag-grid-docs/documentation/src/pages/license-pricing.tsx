@@ -23,7 +23,7 @@ const LicensePricing = () => {
                         </p>
 
                         <p className={styles.salesEmail}>
-                            <a className="button font-size-large" href="mailto:info@ag-grid.com">
+                            <a className="button font-size-extra-large" href="mailto:info@ag-grid.com">
                                 <Icon name="email" /> info@ag-grid.com
                             </a>
                         </p>
@@ -59,7 +59,7 @@ const LicensePricing = () => {
                     </p>
 
                     <a
-                        className="font-size-extra-large"
+                        className="font-size-massive"
                         href="mailto:info@ag-grid.com?subject=AG Grid Developer license query"
                     >
                         info@ag-grid.com

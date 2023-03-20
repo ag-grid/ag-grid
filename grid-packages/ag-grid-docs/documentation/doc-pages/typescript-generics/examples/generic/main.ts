@@ -6,6 +6,10 @@ interface ICar {
   price: number;
 }
 
+interface IDiscountRate {
+  discount: number;
+}
+
 const columnDefs: ColDef<ICar>[] = [
   { headerName: 'Make', field: 'make' },
   { headerName: 'Model', field: 'model' },
@@ -30,16 +34,21 @@ const gridOptions: GridOptions<ICar> = {
   columnDefs: columnDefs,
   rowData: rowData,
   rowSelection: 'multiple',
+  context: {
+    discount: 0.9
+  } as IDiscountRate,
   // Type specified her but can be omitted and inferred by Typescript
   getRowId: (params: GetRowIdParams<ICar>) => {
     // params.data : ICar
     return params.data.make + params.data.model;
   },
-  onRowSelected: (event: RowSelectedEvent<ICar>) => {
+  onRowSelected: (event: RowSelectedEvent<ICar, IDiscountRate>) => {
     // event.data: ICar | undefined
-    if (event.data) {
+    if (event.data && event.node.isSelected()) {
       const price = event.data.price;
-      console.log('Price with 10% discount:', price * 0.9)
+      // event.context: IContext
+      const discountRate = event.context.discount;
+      console.log('Price with 10% discount:', price * discountRate);
     }
   }
 }

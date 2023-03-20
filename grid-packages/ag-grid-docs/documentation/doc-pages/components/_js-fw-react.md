@@ -14,12 +14,12 @@
 |
 |const GridExample = () => {
 |   // JS and React components, only need register if looking up by name
-|   const [components] = useState({
+|   const components = useMemo(() => ({
 |       'javascriptComponent': JavascriptComponent,
 |       'reactComponent': ReactComponent    
-|   });
+|   }), []);
 |
-|   const [columnDefs] = useState([
+|   const columnDefs = useMemo( () => [
 |       {
 |           headerName: "JS Cell",
 |           field: "value",
@@ -40,7 +40,7 @@
 |           field: "value",
 |           cellRenderer: ReactComponent, // React comp by Direct Reference
 |       }
-|   ]);
+|   ], []);
 |
 |    return (
 |        <div className="ag-theme-alpine">

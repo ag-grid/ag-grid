@@ -15,6 +15,7 @@ const options: AgChartOptions = {
       type: 'pie',
       title: {
         text: 'Market Share',
+        showInLegend: true,
       },
       calloutLabelKey: 'os',
       angleKey: 'share',
@@ -24,6 +25,7 @@ const options: AgChartOptions = {
       type: 'pie',
       title: {
         text: 'Satisfaction',
+        showInLegend: true,
       },
       calloutLabelKey: 'os',
       angleKey: 'satisfaction',
