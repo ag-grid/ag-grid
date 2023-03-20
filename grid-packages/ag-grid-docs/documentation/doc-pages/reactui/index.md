@@ -9,11 +9,7 @@ AG Grid React shares the same 'business logic layer' as the other AG Grid versio
 </video-section>
 
 
-
 The remainder of this page takes a deeper look at the grid's React rendering, including React Render Cycles and also React Developer Tools.
-
-[[note]]
-| Don't like our new React Rendering introduced in v27? You can turn it off with `suppressReactUi=true`. However we advise against this long term, as we plan to drop support for the old rendering engine in future versions.
 
 ## Show Me
 
@@ -96,7 +92,7 @@ Below is an example using Master Detail. When the master grid is AG Grid React, 
 ## All Customisations Supported
 
 Above we saw customising the grid Cells (Renderers and Editors) and Headers using React Components.
-All of the other customisations allowed by AG Grid are also supported when `reactUi=true`.
+All of the other customisations allowed by AG Grid are also supported.
 
 The example below shows the following customisations:
 1. Column Filters and Floating Filters.
