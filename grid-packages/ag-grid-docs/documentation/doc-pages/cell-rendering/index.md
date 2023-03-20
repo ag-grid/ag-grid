@@ -54,7 +54,7 @@ The code snippet below demonstrates each of these method types.
 |             field: 'year',
 |             cellRenderer: params => {
 |                 // put the value in bold
-|                 return 'Value is **' + params.value + '**';
+|                 return 'Value is &lt;b&gt;' + params.value + '&lt;/b&gt;';
 |             }
 |         }
 |     ]
@@ -80,7 +80,7 @@ The code snippet below demonstrates each of these method types.
 |             field: 'year',
 |             cellRenderer: params => {
 |                 // put the value in bold
-|                 return 'Value is **' + params.value + '**';
+|                 return 'Value is &lt;b&gt;' + params.value + '&lt;/b&gt;';
 |             }
 |         }
 |     ]
