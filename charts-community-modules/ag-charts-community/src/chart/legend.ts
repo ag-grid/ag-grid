@@ -230,6 +230,7 @@ export class Legend {
         private readonly chart: {
             readonly series: Series<any>[];
             readonly element: HTMLElement;
+            readonly mode: 'standalone' | 'integrated';
             update(
                 type: ChartUpdateType,
                 opts?: { forceNodeDataRefresh?: boolean; seriesToUpdate?: Iterable<Series> }
@@ -758,6 +759,13 @@ export class Legend {
             chart,
             item: { toggleSeriesVisible },
         } = this;
+
+        // Integrated charts do not handle double click behaviour correctly due to multiple instances of the
+        // chart being created. See https://ag-grid.atlassian.net/browse/RTI-1381
+        if (chart.mode === 'integrated') {
+            return;
+        }
+
         const datum = this.getDatumForPoint(event.offsetX, event.offsetY);
         if (!datum) {
             return;

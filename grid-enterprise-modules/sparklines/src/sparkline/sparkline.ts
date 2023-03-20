@@ -8,6 +8,18 @@ import { SparklineTooltip } from './tooltip/sparklineTooltip';
 const { extent, isNumber, isString, isStringObject, isDate, createId, Padding } = _Util;
 const { LinearScale, BandScale, TimeScale } = _Scale;
 
+/**
+ * Constants to declare the expected nominal zIndex for nodes in a sparkline rendering.
+ */
+export enum ZINDICIES {
+    SERIES_FILL_ZINDEX = 50,
+    AXIS_LINE_ZINDEX = 500,
+    SERIES_STROKE_ZINDEX = 1000,
+    SERIES_LABEL_ZINDEX = 1500,
+    CROSSHAIR_ZINDEX = 2000,
+    SERIES_MARKERS_ZINDEX = 2500,
+}
+
 export interface SeriesNodeDatum {
     readonly seriesDatum: any;
     readonly point?: Point;
