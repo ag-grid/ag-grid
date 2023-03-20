@@ -197,14 +197,14 @@ const DocPageTemplate = ({ data, pageContext: { framework, jsonDataAsString, exa
                 <AGStyles>
                     <header className={styles.docsPageHeader}>
                         <h1 id="top" className={styles.docsPageTitle}>
-                            {pageTitle}
+                            {pageTitle}&nbsp;
+                            {page.frontmatter.enterprise && (
+                                <span className={styles.enterpriseLabel}>
+                                    Enterprise
+                                    <Icon name="enterprise" />
+                                </span>
+                            )}
                         </h1>
-                        {page.frontmatter.enterprise && (
-                            <span className={styles.enterpriseLabel}>
-                                AG Grid Enterprise
-                                <Icon name="enterprise" />
-                            </span>
-                        )}
                     </header>
                 </AGStyles>
 

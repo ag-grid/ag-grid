@@ -162,26 +162,25 @@
 }
 
 .docsPageTitle {
-    // margin-bottom: 0 !important; // !important for .ag-styles specificity
+    margin-bottom: $size-1 !important; // !important for .ag-styles specificity
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
-        // margin-bottom: $size-1 !important; // !important for .ag-styles specificity
-        padding-right: 140px;
+        line-height: var(--line-height-ultra-tight) !important; // !important for .ag-styles specificity
+    }
+
+    > span {
+        margin-bottom: $size-1 !important; // !important for .ag-styles specificity
     }
 }
 
 .enterpriseLabel {
-    display: block;
-    margin-bottom: $size-2 !important; // !important for .ag-styles specificity
+    display: inline-block;
+    position: relative;
+    bottom: 0.15em;
+    padding-right: 30px;
     font-size: var(--font-size-large);
     font-weight: var(--font-weight-normal);
     color: var(--secondary-text-color);
-
-    @media screen and (min-width: $breakpoint-docs-nav-medium) {
-        position: absolute;
-        right: 0;
-        top: 51px;
-    }
 
     :global(.icon) {
         --icon-size: 1.25em;
@@ -202,9 +201,8 @@
 
 // Hack to target "intro" section of docs page
 .pageSections > div > div:first-child {
-    --font-size-large: #{$font-size-large};
+    --font-size-extra-large: #{$font-size-extra-large};
 
-    font-size: var(--font-size-large);
+    font-size: var(--font-size-extra-large);
     margin-bottom: $size-4;
-    font-weight: 600;
 }
