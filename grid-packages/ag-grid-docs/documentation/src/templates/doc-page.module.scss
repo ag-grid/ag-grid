@@ -57,6 +57,11 @@
         margin-bottom: $size-2 !important;
     }
 
+    // Required because of .ag-styles wrapper
+    li p:last-child {
+        margin-bottom: $size-1 !important;
+    }
+
     h1,
     h2,
     h3,
@@ -157,24 +162,25 @@
 }
 
 .docsPageTitle {
-    margin-bottom: 0 !important; // !important for .ag-styles specificity
+    // margin-bottom: 0 !important; // !important for .ag-styles specificity
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
-        margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+        // margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+        padding-right: 140px;
     }
 }
 
 .enterpriseLabel {
     display: block;
     margin-bottom: $size-2 !important; // !important for .ag-styles specificity
-    font-size: var(--font-size-extra-large);
+    font-size: var(--font-size-large);
     font-weight: var(--font-weight-normal);
     color: var(--secondary-text-color);
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         position: absolute;
         right: 0;
-        top: -0.1em;
+        top: 51px;
     }
 
     :global(.icon) {
@@ -200,4 +206,5 @@
 
     font-size: var(--font-size-large);
     margin-bottom: $size-4;
+    font-weight: 600;
 }
