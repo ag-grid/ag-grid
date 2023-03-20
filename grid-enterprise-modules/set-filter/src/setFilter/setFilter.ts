@@ -554,6 +554,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     public afterGuiDetached(): void {
+        super.afterGuiDetached();
+
         // discard any unapplied UI state (reset to model)
         if (this.setFilterParams?.excelMode) {
             this.resetMiniFilter();
