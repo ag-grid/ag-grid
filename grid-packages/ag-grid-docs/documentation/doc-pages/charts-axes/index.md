@@ -563,4 +563,4 @@ The example below demonstrates how one or more cross lines can be configured in 
 
 ## Next Up
 
-Continue to the next section to learn more about [backgrounds](/charts-background/).
+Continue to the next section to learn more about [overlays](/charts-overlays/).
