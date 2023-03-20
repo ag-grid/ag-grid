@@ -10,6 +10,29 @@ import styles from './Announcements.module.scss';
  */
 const Announcements = ({ framework }) => <div className={styles['announcements']}>
 
+    <Announcement date="Mar 21" version="29.2.0">
+        <p className="card-text">
+            <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-29-2/">What's new in AG Grid 29.2.0</a><br/><br/>
+            Minor release with new features and bug fixes.
+        </p>
+        <ul>
+            <li className={styles['announcement__list-item']}>
+                <a href="https://ag-grid.com/javascript-data-grid/filter-conditions/#number-of-conditions">Multiple Filter Conditions</a>
+            </li>
+            <li className={styles['announcement__list-item']}>
+                <a href="https://ag-grid.com/javascript-data-grid/server-side-model-selection/#header-checkbox-selection">SSRM Header Checkbox Selection</a>
+            </li>
+            <li className={styles['announcement__list-item']}>
+                <a href="https://ag-grid.com/javascript-data-grid/column-groups/#span-header-height">Span Header Height</a>
+            </li>
+            <li className={styles['announcement__list-item']}>
+                <a href="https://ag-grid.com/javascript-charts/events/#interaction-ranges">Chart Interaction Ranges</a>
+            </li>
+            <li className={styles['announcement__list-item']}>
+                <a href="https://ag-grid.com/javascript-charts/overlays/">Chart Overlays</a>
+            </li>
+        </ul>
+    </Announcement>
 
     <Announcement date="Feb 17" version="29.1.0">
         <p className="card-text">

@@ -477,8 +477,34 @@ var LazyCache = /** @class */ (function (_super) {
             // not enough rows to bother clearing any
             return;
         }
+        var disposableNodesNotInViewport = disposableNodes.filter(function (_a) {
+            var _b = __read(_a, 2), _ = _b[0], node = _b[1];
+            var startRowNum = node.rowIndex;
+            if (!startRowNum) {
+                // row is not displayed and can be disposed
+                return true;
+            }
+            if (firstRowInViewport <= startRowNum && startRowNum <= lastRowInViewport) {
+                // start row in viewport, block is in viewport
+                return false;
+            }
+            var lastRowNum = startRowNum + blockSize;
+            if (firstRowInViewport <= lastRowNum && lastRowNum <= lastRowInViewport) {
+                // end row in viewport, block is in viewport
+                return false;
+            }
+            if (startRowNum < firstRowInViewport && lastRowNum > lastRowInViewport) {
+                // full block surrounds in viewport
+                return false;
+            }
+            // block does not appear in viewport and can be disposed
+            return true;
+        });
+        if (!disposableNodesNotInViewport.length) {
+            return;
+        }
         var midViewportRow = firstRowInViewport + ((lastRowInViewport - firstRowInViewport) / 2);
-        var blockDistanceArray = this.getBlocksDistanceFromRow(disposableNodes, midViewportRow);
+        var blockDistanceArray = this.getBlocksDistanceFromRow(disposableNodesNotInViewport, midViewportRow);
         var blockSize = this.rowLoader.getBlockSize();
         var numberOfBlocksToRetain = Math.ceil(numberOfRowsToRetain / blockSize);
         if (blockDistanceArray.length <= numberOfBlocksToRetain) {

@@ -124,3 +124,4 @@ class ContinuousScale {
 }
 exports.ContinuousScale = ContinuousScale;
 ContinuousScale.defaultTickCount = 5;
+ContinuousScale.defaultMaxTickCount = 6;

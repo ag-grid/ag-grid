@@ -422,8 +422,33 @@ export class LazyCache extends BeanStub {
             // not enough rows to bother clearing any
             return;
         }
+        const disposableNodesNotInViewport = disposableNodes.filter(([_, node]) => {
+            const startRowNum = node.rowIndex;
+            if (!startRowNum) {
+                // row is not displayed and can be disposed
+                return true;
+            }
+            if (firstRowInViewport <= startRowNum && startRowNum <= lastRowInViewport) {
+                // start row in viewport, block is in viewport
+                return false;
+            }
+            const lastRowNum = startRowNum + blockSize;
+            if (firstRowInViewport <= lastRowNum && lastRowNum <= lastRowInViewport) {
+                // end row in viewport, block is in viewport
+                return false;
+            }
+            if (startRowNum < firstRowInViewport && lastRowNum > lastRowInViewport) {
+                // full block surrounds in viewport
+                return false;
+            }
+            // block does not appear in viewport and can be disposed
+            return true;
+        });
+        if (!disposableNodesNotInViewport.length) {
+            return;
+        }
         const midViewportRow = firstRowInViewport + ((lastRowInViewport - firstRowInViewport) / 2);
-        const blockDistanceArray = this.getBlocksDistanceFromRow(disposableNodes, midViewportRow);
+        const blockDistanceArray = this.getBlocksDistanceFromRow(disposableNodesNotInViewport, midViewportRow);
         const blockSize = this.rowLoader.getBlockSize();
         const numberOfBlocksToRetain = Math.ceil(numberOfRowsToRetain / blockSize);
         if (blockDistanceArray.length <= numberOfBlocksToRetain) {

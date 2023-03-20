@@ -12,7 +12,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import { _Scale, _Scene, _Util } from 'ag-charts-community';
-import { Sparkline } from '../sparkline';
+import { Sparkline, ZINDICIES } from '../sparkline';
 import { toTooltipHtml } from '../tooltip/sparklineTooltip';
 import { getMarker } from '../marker/markerFactory';
 import { getLineDash } from '../../util/lineDash';
@@ -71,6 +71,10 @@ var LineSparkline = /** @class */ (function (_super) {
         _this.line = new SparklineLine();
         _this.crosshairs = new SparklineCrosshairs();
         _this.rootGroup.append(_this.lineSparklineGroup);
+        _this.linePath.zIndex = ZINDICIES.SERIES_STROKE_ZINDEX;
+        _this.xCrosshairLine.zIndex = ZINDICIES.CROSSHAIR_ZINDEX;
+        _this.yCrosshairLine.zIndex = ZINDICIES.CROSSHAIR_ZINDEX;
+        _this.markers.zIndex = ZINDICIES.SERIES_MARKERS_ZINDEX;
         _this.lineSparklineGroup.append([_this.linePath, _this.xCrosshairLine, _this.yCrosshairLine, _this.markers]);
         return _this;
     }

@@ -4,6 +4,7 @@ export declare abstract class ContinuousScale<D extends number | Date, I = numbe
     domain: D[];
     range: number[];
     static readonly defaultTickCount = 5;
+    static readonly defaultMaxTickCount = 6;
     nice: boolean;
     interval?: I;
     tickCount: number;

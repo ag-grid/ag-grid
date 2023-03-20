@@ -1,3 +1,9 @@
+declare type Padding = {
+    top: number;
+    left: number;
+    right: number;
+    bottom: number;
+};
 export declare class BBox {
     x: number;
     y: number;
@@ -8,7 +14,10 @@ export declare class BBox {
     equals(other: BBox): boolean;
     containsPoint(x: number, y: number): boolean;
     isInfinite(): boolean;
-    shrink(amount: number, position?: 'top' | 'left' | 'bottom' | 'right' | 'vertical' | 'horizontal'): void;
-    grow(amount: number, position?: 'top' | 'left' | 'bottom' | 'right' | 'vertical' | 'horizontal'): void;
+    shrink(amounts: Partial<Padding>): this;
+    shrink(amount: number, position?: 'top' | 'left' | 'bottom' | 'right' | 'vertical' | 'horizontal'): this;
+    grow(amounts: Partial<Padding>): this;
+    grow(amount: number, position?: 'top' | 'left' | 'bottom' | 'right' | 'vertical' | 'horizontal'): this;
     static merge(boxes: BBox[]): BBox;
 }
+export {};

@@ -645,6 +645,33 @@ var HdpiCanvas = /** @class */ (function () {
 // rather than become enticed by the much slower:
 // `ctx.strokeRect(...bbox);`
 // https://jsperf.com/array-vs-object-create-access
+var __assign$m = (undefined && undefined.__assign) || function () {
+    __assign$m = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign$m.apply(this, arguments);
+};
+var __read$D = (undefined && undefined.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 var BBox = /** @class */ (function () {
     function BBox(x, y, width, height) {
         this.x = x;
@@ -669,36 +696,59 @@ var BBox = /** @class */ (function () {
             Math.abs(this.height) === Infinity);
     };
     BBox.prototype.shrink = function (amount, position) {
-        switch (position) {
-            case 'top':
-                this.y += amount;
-            // eslint-disable-next-line no-fallthrough
-            case 'bottom':
-                this.height -= amount;
-                break;
-            case 'left':
-                this.x += amount;
-            // eslint-disable-next-line no-fallthrough
-            case 'right':
-                this.width -= amount;
-                break;
-            case 'vertical':
-                this.y += amount;
-                this.height -= amount * 2;
-                break;
-            case 'horizontal':
-                this.x += amount;
-                this.width -= amount * 2;
-                break;
-            default:
-                this.x += amount;
-                this.width -= amount * 2;
-                this.y += amount;
-                this.height -= amount * 2;
+        var _this = this;
+        var apply = function (pos, amt) {
+            switch (pos) {
+                case 'top':
+                    _this.y += amt;
+                // eslint-disable-next-line no-fallthrough
+                case 'bottom':
+                    _this.height -= amt;
+                    break;
+                case 'left':
+                    _this.x += amt;
+                // eslint-disable-next-line no-fallthrough
+                case 'right':
+                    _this.width -= amt;
+                    break;
+                case 'vertical':
+                    _this.y += amt;
+                    _this.height -= amt * 2;
+                    break;
+                case 'horizontal':
+                    _this.x += amt;
+                    _this.width -= amt * 2;
+                    break;
+                default:
+                    _this.x += amt;
+                    _this.width -= amt * 2;
+                    _this.y += amt;
+                    _this.height -= amt * 2;
+            }
+        };
+        if (typeof amount === 'number') {
+            apply(position, amount);
         }
+        else {
+            Object.entries(amount).forEach(function (_a) {
+                var _b = __read$D(_a, 2), pos = _b[0], amt = _b[1];
+                return apply(pos, amt);
+            });
+        }
+        return this;
     };
     BBox.prototype.grow = function (amount, position) {
-        this.shrink(-amount, position);
+        if (typeof amount === 'number') {
+            this.shrink(-amount, position);
+        }
+        else {
+            var paddingCopy = __assign$m({}, amount);
+            for (var key in paddingCopy) {
+                paddingCopy[key] *= -1;
+            }
+            this.shrink(paddingCopy);
+        }
+        return this;
     };
     BBox.merge = function (boxes) {
         var left = Infinity;
@@ -3841,6 +3891,7 @@ var ContinuousScale = /** @class */ (function () {
         return false;
     };
     ContinuousScale.defaultTickCount = 5;
+    ContinuousScale.defaultMaxTickCount = 6;
     return ContinuousScale;
 }());
 
@@ -7571,7 +7622,7 @@ var Axis = /** @class */ (function () {
         var min = Math.min.apply(Math, __spread$e(requestedRange));
         var max = Math.max.apply(Math, __spread$e(requestedRange));
         var availableRange = max - min;
-        var defaultMinSpacing = Math.max(Axis.defaultTickMinSpacing, availableRange / ContinuousScale.defaultTickCount);
+        var defaultMinSpacing = Math.max(Axis.defaultTickMinSpacing, availableRange / ContinuousScale.defaultMaxTickCount);
         if (isNaN(minSpacing) && isNaN(maxSpacing)) {
             minSpacing = defaultMinSpacing;
             maxSpacing = availableRange;
@@ -7596,7 +7647,7 @@ var Axis = /** @class */ (function () {
         }
         var maxTickCount = Math.max(1, Math.floor(availableRange / minSpacing));
         var minTickCount = Math.min(maxTickCount, Math.ceil(availableRange / maxSpacing));
-        var defaultTickCount = Math.max(1, Math.floor(availableRange / defaultMinSpacing));
+        var defaultTickCount = ContinuousScale.defaultTickCount;
         if (defaultTickCount > maxTickCount) {
             defaultTickCount = maxTickCount;
         }
@@ -8031,15 +8082,16 @@ var LinearScale$1 = /** @class */ (function (_super) {
         var prev1 = stop;
         for (var i = 0; i < maxAttempts; i++) {
             var step = (_b = this.interval) !== null && _b !== void 0 ? _b : tickStep(start, stop, count, this.minTickCount, this.maxTickCount);
+            var _d = __read$r(this.domain, 2), d0 = _d[0], d1 = _d[1];
             if (step >= 1) {
-                start = Math.floor(start / step) * step;
-                stop = Math.ceil(stop / step) * step;
+                start = Math.floor(d0 / step) * step;
+                stop = Math.ceil(d1 / step) * step;
             }
             else {
                 // Prevent floating point error
                 var s = 1 / step;
-                start = Math.floor(start * s) / s;
-                stop = Math.ceil(stop * s) / s;
+                start = Math.floor(d0 * s) / s;
+                stop = Math.ceil(d1 * s) / s;
             }
             if (start === prev0 && stop === prev1) {
                 break;
@@ -11087,11 +11139,16 @@ var Legend = /** @class */ (function () {
     };
     Legend.prototype.checkLegendDoubleClick = function (event) {
         var _a = this, legendItemDoubleClick = _a.listeners.legendItemDoubleClick, chart = _a.chart, toggleSeriesVisible = _a.item.toggleSeriesVisible;
+        // Integrated charts do not handle double click behaviour correctly due to multiple instances of the
+        // chart being created. See https://ag-grid.atlassian.net/browse/RTI-1381
+        if (chart.mode === 'integrated') {
+            return;
+        }
         var datum = this.getDatumForPoint(event.offsetX, event.offsetY);
         if (!datum) {
             return;
         }
-        var id = datum.id, itemId = datum.itemId;
+        var id = datum.id, itemId = datum.itemId, seriesId = datum.seriesId;
         var series = chart.series.find(function (s) { return s.id === id; });
         if (!series) {
             return;
@@ -11100,12 +11157,12 @@ var Legend = /** @class */ (function () {
         if (toggleSeriesVisible) {
             var legendData = chart.series.reduce(function (ls, s) { return __spread$b(ls, s.getLegendData()); }, []);
             var visibleItemsCount_1 = legendData.filter(function (d) { return d.enabled; }).length;
-            var clickedItem_1 = legendData.find(function (d) { return d.itemId === itemId; });
+            var clickedItem_1 = legendData.find(function (d) { return d.itemId === itemId && d.seriesId === seriesId; });
             chart.series.forEach(function (s) {
                 var legendData = s.getLegendData();
                 legendData.forEach(function (d) {
                     var _a;
-                    var wasClicked = d.itemId === itemId;
+                    var wasClicked = d.itemId === itemId && d.seriesId === seriesId;
                     var singleSelectedWasNotClicked = visibleItemsCount_1 === 1 && ((_a = clickedItem_1 === null || clickedItem_1 === void 0 ? void 0 : clickedItem_1.enabled) !== null && _a !== void 0 ? _a : false);
                     var newEnabled = wasClicked || singleSelectedWasNotClicked;
                     s.toggleSeriesItem(d.itemId, newEnabled);
@@ -14786,6 +14843,7 @@ var Chart = /** @class */ (function (_super) {
     };
     Chart.prototype.handlePointer = function (event) {
         var _this = this;
+        var _a;
         var lastPick = this.lastPick;
         var offsetX = event.offsetX, offsetY = event.offsetY;
         var disablePointer = function (highlightOnly) {
@@ -14795,7 +14853,9 @@ var Chart = /** @class */ (function (_super) {
                 _this.disablePointer(highlightOnly);
             }
         };
-        if (!(this.seriesRect && this.seriesRect.containsPoint(offsetX, offsetY))) {
+        var hoverRectPadding = 20;
+        var hoverRect = (_a = this.seriesRect) === null || _a === void 0 ? void 0 : _a.clone().grow(hoverRectPadding).grow(this.seriesAreaPadding);
+        if (!(hoverRect === null || hoverRect === void 0 ? void 0 : hoverRect.containsPoint(offsetX, offsetY))) {
             disablePointer();
             return;
         }
@@ -20460,16 +20520,22 @@ var Sector = /** @class */ (function (_super) {
         var centerX = this.centerX;
         var centerY = this.centerY;
         path.clear();
-        if (!fullPie) {
-            path.moveTo(centerX + innerRadius * Math.cos(startAngle), centerY + innerRadius * Math.sin(startAngle));
-            path.lineTo(centerX + outerRadius * Math.cos(startAngle), centerY + outerRadius * Math.sin(startAngle));
-        }
-        path.arc(centerX, centerY, outerRadius, startAngle, endAngle);
-        if (innerRadius > 0) {
-            path.arc(centerX, centerY, innerRadius, endAngle, startAngle, true);
+        if (fullPie) {
+            path.arc(centerX, centerY, outerRadius, startAngle, endAngle);
+            if (innerRadius > 0) {
+                path.moveTo(centerX + innerRadius * Math.cos(endAngle), centerY + innerRadius * Math.sin(endAngle));
+                path.arc(centerX, centerY, innerRadius, endAngle, startAngle, true);
+            }
         }
         else {
-            path.lineTo(centerX, centerY);
+            path.moveTo(centerX + innerRadius * Math.cos(startAngle), centerY + innerRadius * Math.sin(startAngle));
+            path.arc(centerX, centerY, outerRadius, startAngle, endAngle);
+            if (innerRadius > 0) {
+                path.arc(centerX, centerY, innerRadius, endAngle, startAngle, true);
+            }
+            else {
+                path.lineTo(centerX, centerY);
+            }
         }
         path.closePath();
         this.dirtyPath = false;
@@ -20491,6 +20557,9 @@ var Sector = /** @class */ (function (_super) {
         if (startAngle > endAngle) {
             // Sector passes through 0-angle.
             return startAngle < angle || endAngle > angle;
+        }
+        if (startAngle === endAngle) {
+            return true;
         }
         return startAngle < angle && endAngle > angle;
     };
@@ -21268,6 +21337,7 @@ function isPointInArc(x, y, sector) {
                     sector.lineDashOffset = _this.lineDashOffset;
                     sector.fillShadow = _this.shadow;
                     sector.lineJoin = 'round';
+                    sector.visible = _this.seriesItemEnabled[index];
                     _this.datumSectorRefs.set(datum, sector);
                 };
                 this.groupSelection
@@ -22952,6 +23022,7 @@ var ChartTheme = /** @class */ (function () {
                 fontSize: 12,
                 fontFamily: this.fontFamily,
                 color: 'rgb(140, 140, 140)',
+                spacing: 30,
             },
             legend: {
                 enabled: true,
@@ -25699,6 +25770,18 @@ var __values = (undefined && undefined.__values) || function(o) {
 };
 var extent$3 = extent$4, isNumber$3 = isNumber$4, isString = isString$1, isStringObject = isStringObject$1, isDate = isDate$1, createId = createId$1, Padding = Padding$1;
 var LinearScale = LinearScale$1, BandScale$4 = BandScale$5, TimeScale = TimeScale$1;
+/**
+ * Constants to declare the expected nominal zIndex for nodes in a sparkline rendering.
+ */
+var ZINDICIES;
+(function (ZINDICIES) {
+    ZINDICIES[ZINDICIES["SERIES_FILL_ZINDEX"] = 50] = "SERIES_FILL_ZINDEX";
+    ZINDICIES[ZINDICIES["AXIS_LINE_ZINDEX"] = 500] = "AXIS_LINE_ZINDEX";
+    ZINDICIES[ZINDICIES["SERIES_STROKE_ZINDEX"] = 1000] = "SERIES_STROKE_ZINDEX";
+    ZINDICIES[ZINDICIES["SERIES_LABEL_ZINDEX"] = 1500] = "SERIES_LABEL_ZINDEX";
+    ZINDICIES[ZINDICIES["CROSSHAIR_ZINDEX"] = 2000] = "CROSSHAIR_ZINDEX";
+    ZINDICIES[ZINDICIES["SERIES_MARKERS_ZINDEX"] = 2500] = "SERIES_MARKERS_ZINDEX";
+})(ZINDICIES || (ZINDICIES = {}));
 var SparklineAxis = /** @class */ (function () {
     function SparklineAxis() {
         this.type = 'category';
@@ -26493,6 +26576,12 @@ var AreaSparkline = /** @class */ (function (_super) {
         _this.line = new SparklineLine$1();
         _this.crosshairs = new SparklineCrosshairs$1();
         _this.rootGroup.append(_this.areaSparklineGroup);
+        _this.xAxisLine.zIndex = ZINDICIES.AXIS_LINE_ZINDEX;
+        _this.fillPath.zIndex = ZINDICIES.SERIES_FILL_ZINDEX;
+        _this.strokePath.zIndex = ZINDICIES.SERIES_STROKE_ZINDEX;
+        _this.xCrosshairLine.zIndex = ZINDICIES.CROSSHAIR_ZINDEX;
+        _this.yCrosshairLine.zIndex = ZINDICIES.CROSSHAIR_ZINDEX;
+        _this.markers.zIndex = ZINDICIES.SERIES_MARKERS_ZINDEX;
         _this.areaSparklineGroup.append([
             _this.fillPath,
             _this.xAxisLine,
@@ -26841,6 +26930,10 @@ var LineSparkline = /** @class */ (function (_super) {
         _this.line = new SparklineLine();
         _this.crosshairs = new SparklineCrosshairs();
         _this.rootGroup.append(_this.lineSparklineGroup);
+        _this.linePath.zIndex = ZINDICIES.SERIES_STROKE_ZINDEX;
+        _this.xCrosshairLine.zIndex = ZINDICIES.CROSSHAIR_ZINDEX;
+        _this.yCrosshairLine.zIndex = ZINDICIES.CROSSHAIR_ZINDEX;
+        _this.markers.zIndex = ZINDICIES.SERIES_MARKERS_ZINDEX;
         _this.lineSparklineGroup.append([_this.linePath, _this.xCrosshairLine, _this.yCrosshairLine, _this.markers]);
         return _this;
     }
@@ -27121,6 +27214,9 @@ var BarColumnSparkline = /** @class */ (function (_super) {
         _this.nodeSelectionData = [];
         _this.label = new BarColumnLabel();
         _this.rootGroup.append(_this.sparklineGroup);
+        _this.rectGroup.zIndex = ZINDICIES.SERIES_FILL_ZINDEX;
+        _this.axisLine.zIndex = ZINDICIES.AXIS_LINE_ZINDEX;
+        _this.labelGroup.zIndex = ZINDICIES.SERIES_LABEL_ZINDEX;
         _this.sparklineGroup.append([_this.rectGroup, _this.axisLine, _this.labelGroup]);
         _this.axisLine.lineCap = 'round';
         _this.label.enabled = false;
@@ -27151,7 +27247,7 @@ var BarColumnSparkline = /** @class */ (function (_super) {
         var _b = this, xScale = _b.xScale, paddingInner = _b.paddingInner, paddingOuter = _b.paddingOuter, smallestInterval = _b.smallestInterval;
         // calculate step
         var domainLength = xScale.domain[1] - xScale.domain[0];
-        var intervals = (domainLength / ((_a = smallestInterval === null || smallestInterval === void 0 ? void 0 : smallestInterval.x) !== null && _a !== void 0 ? _a : 1)) + 1;
+        var intervals = domainLength / ((_a = smallestInterval === null || smallestInterval === void 0 ? void 0 : smallestInterval.x) !== null && _a !== void 0 ? _a : 1) + 1;
         // The number of intervals/bands is used to determine the width of individual bands by dividing the available range.
         // Allow a maximum of 50 bands to ensure the step (width of individual bands + padding) does not fall below a certain number of pixels.
         // If the number of intervals exceeds 50, calculate the step for 50 bands within the given range.
@@ -27159,7 +27255,7 @@ var BarColumnSparkline = /** @class */ (function (_super) {
         var maxBands = 50;
         var bands = Math.min(intervals, maxBands);
         var gaps = bands - 1; // number of gaps (padding between bands)
-        var step = range / Math.max(1, (2 * paddingOuter) + (gaps * paddingInner) + bands); // step width is a combination of band width and gap width
+        var step = range / Math.max(1, 2 * paddingOuter + gaps * paddingInner + bands); // step width is a combination of band width and gap width
         return step;
     };
     BarColumnSparkline.prototype.updateYScaleDomain = function () {

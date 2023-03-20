@@ -771,6 +771,7 @@ var PieSeries = /** @class */ (function (_super) {
                     sector.lineDashOffset = _this.lineDashOffset;
                     sector.fillShadow = _this.shadow;
                     sector.lineJoin = 'round';
+                    sector.visible = _this.seriesItemEnabled[index];
                     _this.datumSectorRefs.set(datum, sector);
                 };
                 this.groupSelection

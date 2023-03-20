@@ -74,6 +74,10 @@ var LineSparkline = /** @class */ (function (_super) {
         _this.line = new SparklineLine();
         _this.crosshairs = new SparklineCrosshairs();
         _this.rootGroup.append(_this.lineSparklineGroup);
+        _this.linePath.zIndex = sparkline_1.ZINDICIES.SERIES_STROKE_ZINDEX;
+        _this.xCrosshairLine.zIndex = sparkline_1.ZINDICIES.CROSSHAIR_ZINDEX;
+        _this.yCrosshairLine.zIndex = sparkline_1.ZINDICIES.CROSSHAIR_ZINDEX;
+        _this.markers.zIndex = sparkline_1.ZINDICIES.SERIES_MARKERS_ZINDEX;
         _this.lineSparklineGroup.append([_this.linePath, _this.xCrosshairLine, _this.yCrosshairLine, _this.markers]);
         return _this;
     }

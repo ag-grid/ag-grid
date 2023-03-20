@@ -11609,6 +11609,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
         _this.filterNameKey = filterNameKey;
         _this.applyActive = false;
         _this.hidePopup = null;
+        _this.debouncePending = false;
         // after the user hits 'apply' the model gets copied to here. this is then the model that we use for
         // all filtering. so if user changes UI but doesn't hit apply, then the UI will be out of sync with this model.
         // this is what we want, as the UI should only become the 'active' filter once it's applied. when apply is
@@ -11710,8 +11711,20 @@ var ProvidedFilter = /** @class */ (function (_super) {
         return 0;
     };
     ProvidedFilter.prototype.setupOnBtApplyDebounce = function () {
+        var _this = this;
         var debounceMs = ProvidedFilter.getDebounceMs(this.providedFilterParams, this.getDefaultDebounceMs());
-        this.onBtApplyDebounce = debounce(this.onBtApply.bind(this), debounceMs);
+        var debounceFunc = debounce(this.checkApplyDebounce.bind(this), debounceMs);
+        this.onBtApplyDebounce = function () {
+            _this.debouncePending = true;
+            debounceFunc();
+        };
+    };
+    ProvidedFilter.prototype.checkApplyDebounce = function () {
+        if (this.debouncePending) {
+            // May already have been applied, so don't apply again (e.g. closing filter before debounce timeout)
+            this.debouncePending = false;
+            this.onBtApply();
+        }
     };
     ProvidedFilter.prototype.getModel = function () {
         return this.appliedModel ? this.appliedModel : null;
@@ -11844,6 +11857,9 @@ var ProvidedFilter = /** @class */ (function (_super) {
             return;
         }
         this.hidePopup = params.hidePopup;
+    };
+    ProvidedFilter.prototype.afterGuiDetached = function () {
+        this.checkApplyDebounce();
     };
     // static, as used by floating filter also
     ProvidedFilter.getDebounceMs = function (params, debounceDefault) {
@@ -13319,6 +13335,7 @@ var SimpleFilter = /** @class */ (function (_super) {
         }
     };
     SimpleFilter.prototype.afterGuiDetached = function () {
+        _super.prototype.afterGuiDetached.call(this);
         var appliedModel = this.getModel();
         if (!this.areModelsEqual(appliedModel, this.getModelFromUi())) {
             this.resetUiToActiveModel(appliedModel);
@@ -49498,8 +49515,34 @@ var LazyCache = /** @class */ (function (_super) {
             // not enough rows to bother clearing any
             return;
         }
+        var disposableNodesNotInViewport = disposableNodes.filter(function (_a) {
+            var _b = __read$4(_a, 2); _b[0]; var node = _b[1];
+            var startRowNum = node.rowIndex;
+            if (!startRowNum) {
+                // row is not displayed and can be disposed
+                return true;
+            }
+            if (firstRowInViewport <= startRowNum && startRowNum <= lastRowInViewport) {
+                // start row in viewport, block is in viewport
+                return false;
+            }
+            var lastRowNum = startRowNum + blockSize;
+            if (firstRowInViewport <= lastRowNum && lastRowNum <= lastRowInViewport) {
+                // end row in viewport, block is in viewport
+                return false;
+            }
+            if (startRowNum < firstRowInViewport && lastRowNum > lastRowInViewport) {
+                // full block surrounds in viewport
+                return false;
+            }
+            // block does not appear in viewport and can be disposed
+            return true;
+        });
+        if (!disposableNodesNotInViewport.length) {
+            return;
+        }
         var midViewportRow = firstRowInViewport + ((lastRowInViewport - firstRowInViewport) / 2);
-        var blockDistanceArray = this.getBlocksDistanceFromRow(disposableNodes, midViewportRow);
+        var blockDistanceArray = this.getBlocksDistanceFromRow(disposableNodesNotInViewport, midViewportRow);
         var blockSize = this.rowLoader.getBlockSize();
         var numberOfBlocksToRetain = Math.ceil(numberOfRowsToRetain / blockSize);
         if (blockDistanceArray.length <= numberOfBlocksToRetain) {

@@ -750,7 +750,7 @@ var Axis = /** @class */ (function () {
         var min = Math.min.apply(Math, __spread(requestedRange));
         var max = Math.max.apply(Math, __spread(requestedRange));
         var availableRange = max - min;
-        var defaultMinSpacing = Math.max(Axis.defaultTickMinSpacing, availableRange / continuousScale_1.ContinuousScale.defaultTickCount);
+        var defaultMinSpacing = Math.max(Axis.defaultTickMinSpacing, availableRange / continuousScale_1.ContinuousScale.defaultMaxTickCount);
         if (isNaN(minSpacing) && isNaN(maxSpacing)) {
             minSpacing = defaultMinSpacing;
             maxSpacing = availableRange;
@@ -775,7 +775,7 @@ var Axis = /** @class */ (function () {
         }
         var maxTickCount = Math.max(1, Math.floor(availableRange / minSpacing));
         var minTickCount = Math.min(maxTickCount, Math.ceil(availableRange / maxSpacing));
-        var defaultTickCount = Math.max(1, Math.floor(availableRange / defaultMinSpacing));
+        var defaultTickCount = continuousScale_1.ContinuousScale.defaultTickCount;
         if (defaultTickCount > maxTickCount) {
             defaultTickCount = maxTickCount;
         }

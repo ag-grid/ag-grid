@@ -139,6 +139,7 @@ var ContinuousScale = /** @class */ (function () {
         return false;
     };
     ContinuousScale.defaultTickCount = 5;
+    ContinuousScale.defaultMaxTickCount = 6;
     return ContinuousScale;
 }());
 export { ContinuousScale };

@@ -663,11 +663,16 @@ var Legend = /** @class */ (function () {
     };
     Legend.prototype.checkLegendDoubleClick = function (event) {
         var _a = this, legendItemDoubleClick = _a.listeners.legendItemDoubleClick, chart = _a.chart, toggleSeriesVisible = _a.item.toggleSeriesVisible;
+        // Integrated charts do not handle double click behaviour correctly due to multiple instances of the
+        // chart being created. See https://ag-grid.atlassian.net/browse/RTI-1381
+        if (chart.mode === 'integrated') {
+            return;
+        }
         var datum = this.getDatumForPoint(event.offsetX, event.offsetY);
         if (!datum) {
             return;
         }
-        var id = datum.id, itemId = datum.itemId;
+        var id = datum.id, itemId = datum.itemId, seriesId = datum.seriesId;
         var series = chart.series.find(function (s) { return s.id === id; });
         if (!series) {
             return;
@@ -676,12 +681,12 @@ var Legend = /** @class */ (function () {
         if (toggleSeriesVisible) {
             var legendData = chart.series.reduce(function (ls, s) { return __spread(ls, s.getLegendData()); }, []);
             var visibleItemsCount_1 = legendData.filter(function (d) { return d.enabled; }).length;
-            var clickedItem_1 = legendData.find(function (d) { return d.itemId === itemId; });
+            var clickedItem_1 = legendData.find(function (d) { return d.itemId === itemId && d.seriesId === seriesId; });
             chart.series.forEach(function (s) {
                 var legendData = s.getLegendData();
                 legendData.forEach(function (d) {
                     var _a;
-                    var wasClicked = d.itemId === itemId;
+                    var wasClicked = d.itemId === itemId && d.seriesId === seriesId;
                     var singleSelectedWasNotClicked = visibleItemsCount_1 === 1 && ((_a = clickedItem_1 === null || clickedItem_1 === void 0 ? void 0 : clickedItem_1.enabled) !== null && _a !== void 0 ? _a : false);
                     var newEnabled = wasClicked || singleSelectedWasNotClicked;
                     s.toggleSeriesItem(d.itemId, newEnabled);

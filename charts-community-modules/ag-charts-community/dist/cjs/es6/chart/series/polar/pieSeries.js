@@ -631,6 +631,7 @@ class PieSeries extends polarSeries_1.PolarSeries {
                 sector.lineDashOffset = this.lineDashOffset;
                 sector.fillShadow = this.shadow;
                 sector.lineJoin = 'round';
+                sector.visible = this.seriesItemEnabled[index];
                 this.datumSectorRefs.set(datum, sector);
             };
             this.groupSelection

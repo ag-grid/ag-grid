@@ -2,6 +2,17 @@ import { HighlightStyleOptions } from '@ag-grid-community/core';
 import { _Scale, _Scene, _Util } from 'ag-charts-community';
 import { SparklineFactoryOptions } from './agSparkline';
 import { SparklineTooltip } from './tooltip/sparklineTooltip';
+/**
+ * Constants to declare the expected nominal zIndex for nodes in a sparkline rendering.
+ */
+export declare enum ZINDICIES {
+    SERIES_FILL_ZINDEX = 50,
+    AXIS_LINE_ZINDEX = 500,
+    SERIES_STROKE_ZINDEX = 1000,
+    SERIES_LABEL_ZINDEX = 1500,
+    CROSSHAIR_ZINDEX = 2000,
+    SERIES_MARKERS_ZINDEX = 2500
+}
 export interface SeriesNodeDatum {
     readonly seriesDatum: any;
     readonly point?: Point;

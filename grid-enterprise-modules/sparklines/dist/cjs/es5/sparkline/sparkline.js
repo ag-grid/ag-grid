@@ -11,11 +11,23 @@ var __values = (this && this.__values) || function(o) {
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Sparkline = exports.SparklineAxis = void 0;
+exports.Sparkline = exports.SparklineAxis = exports.ZINDICIES = void 0;
 var ag_charts_community_1 = require("ag-charts-community");
 var defaultTooltipCss_1 = require("./tooltip/defaultTooltipCss");
 var extent = ag_charts_community_1._Util.extent, isNumber = ag_charts_community_1._Util.isNumber, isString = ag_charts_community_1._Util.isString, isStringObject = ag_charts_community_1._Util.isStringObject, isDate = ag_charts_community_1._Util.isDate, createId = ag_charts_community_1._Util.createId, Padding = ag_charts_community_1._Util.Padding;
 var LinearScale = ag_charts_community_1._Scale.LinearScale, BandScale = ag_charts_community_1._Scale.BandScale, TimeScale = ag_charts_community_1._Scale.TimeScale;
+/**
+ * Constants to declare the expected nominal zIndex for nodes in a sparkline rendering.
+ */
+var ZINDICIES;
+(function (ZINDICIES) {
+    ZINDICIES[ZINDICIES["SERIES_FILL_ZINDEX"] = 50] = "SERIES_FILL_ZINDEX";
+    ZINDICIES[ZINDICIES["AXIS_LINE_ZINDEX"] = 500] = "AXIS_LINE_ZINDEX";
+    ZINDICIES[ZINDICIES["SERIES_STROKE_ZINDEX"] = 1000] = "SERIES_STROKE_ZINDEX";
+    ZINDICIES[ZINDICIES["SERIES_LABEL_ZINDEX"] = 1500] = "SERIES_LABEL_ZINDEX";
+    ZINDICIES[ZINDICIES["CROSSHAIR_ZINDEX"] = 2000] = "CROSSHAIR_ZINDEX";
+    ZINDICIES[ZINDICIES["SERIES_MARKERS_ZINDEX"] = 2500] = "SERIES_MARKERS_ZINDEX";
+})(ZINDICIES = exports.ZINDICIES || (exports.ZINDICIES = {}));
 var SparklineAxis = /** @class */ (function () {
     function SparklineAxis() {
         this.type = 'category';

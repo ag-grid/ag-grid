@@ -488,6 +488,7 @@ var SetFilter = /** @class */ (function (_super) {
     };
     SetFilter.prototype.afterGuiDetached = function () {
         var _a, _b;
+        _super.prototype.afterGuiDetached.call(this);
         // discard any unapplied UI state (reset to model)
         if ((_a = this.setFilterParams) === null || _a === void 0 ? void 0 : _a.excelMode) {
             this.resetMiniFilter();

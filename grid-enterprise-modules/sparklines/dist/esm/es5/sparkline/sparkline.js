@@ -13,6 +13,18 @@ import { _Scale, _Scene, _Util } from 'ag-charts-community';
 import { defaultTooltipCss } from './tooltip/defaultTooltipCss';
 var extent = _Util.extent, isNumber = _Util.isNumber, isString = _Util.isString, isStringObject = _Util.isStringObject, isDate = _Util.isDate, createId = _Util.createId, Padding = _Util.Padding;
 var LinearScale = _Scale.LinearScale, BandScale = _Scale.BandScale, TimeScale = _Scale.TimeScale;
+/**
+ * Constants to declare the expected nominal zIndex for nodes in a sparkline rendering.
+ */
+export var ZINDICIES;
+(function (ZINDICIES) {
+    ZINDICIES[ZINDICIES["SERIES_FILL_ZINDEX"] = 50] = "SERIES_FILL_ZINDEX";
+    ZINDICIES[ZINDICIES["AXIS_LINE_ZINDEX"] = 500] = "AXIS_LINE_ZINDEX";
+    ZINDICIES[ZINDICIES["SERIES_STROKE_ZINDEX"] = 1000] = "SERIES_STROKE_ZINDEX";
+    ZINDICIES[ZINDICIES["SERIES_LABEL_ZINDEX"] = 1500] = "SERIES_LABEL_ZINDEX";
+    ZINDICIES[ZINDICIES["CROSSHAIR_ZINDEX"] = 2000] = "CROSSHAIR_ZINDEX";
+    ZINDICIES[ZINDICIES["SERIES_MARKERS_ZINDEX"] = 2500] = "SERIES_MARKERS_ZINDEX";
+})(ZINDICIES || (ZINDICIES = {}));
 var SparklineAxis = /** @class */ (function () {
     function SparklineAxis() {
         this.type = 'category';

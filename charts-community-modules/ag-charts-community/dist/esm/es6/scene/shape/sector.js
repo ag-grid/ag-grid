@@ -34,16 +34,22 @@ export class Sector extends Path {
         const centerX = this.centerX;
         const centerY = this.centerY;
         path.clear();
-        if (!fullPie) {
-            path.moveTo(centerX + innerRadius * Math.cos(startAngle), centerY + innerRadius * Math.sin(startAngle));
-            path.lineTo(centerX + outerRadius * Math.cos(startAngle), centerY + outerRadius * Math.sin(startAngle));
-        }
-        path.arc(centerX, centerY, outerRadius, startAngle, endAngle);
-        if (innerRadius > 0) {
-            path.arc(centerX, centerY, innerRadius, endAngle, startAngle, true);
+        if (fullPie) {
+            path.arc(centerX, centerY, outerRadius, startAngle, endAngle);
+            if (innerRadius > 0) {
+                path.moveTo(centerX + innerRadius * Math.cos(endAngle), centerY + innerRadius * Math.sin(endAngle));
+                path.arc(centerX, centerY, innerRadius, endAngle, startAngle, true);
+            }
         }
         else {
-            path.lineTo(centerX, centerY);
+            path.moveTo(centerX + innerRadius * Math.cos(startAngle), centerY + innerRadius * Math.sin(startAngle));
+            path.arc(centerX, centerY, outerRadius, startAngle, endAngle);
+            if (innerRadius > 0) {
+                path.arc(centerX, centerY, innerRadius, endAngle, startAngle, true);
+            }
+            else {
+                path.lineTo(centerX, centerY);
+            }
         }
         path.closePath();
         this.dirtyPath = false;
@@ -65,6 +71,9 @@ export class Sector extends Path {
         if (startAngle > endAngle) {
             // Sector passes through 0-angle.
             return startAngle < angle || endAngle > angle;
+        }
+        if (startAngle === endAngle) {
+            return true;
         }
         return startAngle < angle && endAngle > angle;
     }

@@ -505,6 +505,7 @@ var SimpleFilter = /** @class */ (function (_super) {
         }
     };
     SimpleFilter.prototype.afterGuiDetached = function () {
+        _super.prototype.afterGuiDetached.call(this);
         var appliedModel = this.getModel();
         if (!this.areModelsEqual(appliedModel, this.getModelFromUi())) {
             this.resetUiToActiveModel(appliedModel);

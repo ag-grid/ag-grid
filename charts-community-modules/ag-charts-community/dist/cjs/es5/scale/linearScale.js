@@ -92,15 +92,16 @@ var LinearScale = /** @class */ (function (_super) {
         var prev1 = stop;
         for (var i = 0; i < maxAttempts; i++) {
             var step = (_b = this.interval) !== null && _b !== void 0 ? _b : ticks_1.tickStep(start, stop, count, this.minTickCount, this.maxTickCount);
+            var _d = __read(this.domain, 2), d0 = _d[0], d1 = _d[1];
             if (step >= 1) {
-                start = Math.floor(start / step) * step;
-                stop = Math.ceil(stop / step) * step;
+                start = Math.floor(d0 / step) * step;
+                stop = Math.ceil(d1 / step) * step;
             }
             else {
                 // Prevent floating point error
                 var s = 1 / step;
-                start = Math.floor(start * s) / s;
-                stop = Math.ceil(stop * s) / s;
+                start = Math.floor(d0 * s) / s;
+                stop = Math.ceil(d1 * s) / s;
             }
             if (start === prev0 && stop === prev1) {
                 break;

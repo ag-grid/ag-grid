@@ -33,6 +33,7 @@ export class ProvidedFilter extends Component {
         this.filterNameKey = filterNameKey;
         this.applyActive = false;
         this.hidePopup = null;
+        this.debouncePending = false;
         // after the user hits 'apply' the model gets copied to here. this is then the model that we use for
         // all filtering. so if user changes UI but doesn't hit apply, then the UI will be out of sync with this model.
         // this is what we want, as the UI should only become the 'active' filter once it's applied. when apply is
@@ -142,7 +143,18 @@ export class ProvidedFilter extends Component {
     }
     setupOnBtApplyDebounce() {
         const debounceMs = ProvidedFilter.getDebounceMs(this.providedFilterParams, this.getDefaultDebounceMs());
-        this.onBtApplyDebounce = debounce(this.onBtApply.bind(this), debounceMs);
+        const debounceFunc = debounce(this.checkApplyDebounce.bind(this), debounceMs);
+        this.onBtApplyDebounce = () => {
+            this.debouncePending = true;
+            debounceFunc();
+        };
+    }
+    checkApplyDebounce() {
+        if (this.debouncePending) {
+            // May already have been applied, so don't apply again (e.g. closing filter before debounce timeout)
+            this.debouncePending = false;
+            this.onBtApply();
+        }
     }
     getModel() {
         return this.appliedModel ? this.appliedModel : null;
@@ -268,6 +280,9 @@ export class ProvidedFilter extends Component {
             return;
         }
         this.hidePopup = params.hidePopup;
+    }
+    afterGuiDetached() {
+        this.checkApplyDebounce();
     }
     // static, as used by floating filter also
     static getDebounceMs(params, debounceDefault) {

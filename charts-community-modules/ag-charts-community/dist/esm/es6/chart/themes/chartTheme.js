@@ -200,6 +200,7 @@ export class ChartTheme {
                 fontSize: 12,
                 fontFamily: this.fontFamily,
                 color: 'rgb(140, 140, 140)',
+                spacing: 30,
             },
             legend: {
                 enabled: true,

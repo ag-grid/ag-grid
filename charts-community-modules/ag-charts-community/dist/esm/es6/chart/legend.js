@@ -579,11 +579,16 @@ export class Legend {
     }
     checkLegendDoubleClick(event) {
         const { listeners: { legendItemDoubleClick }, chart, item: { toggleSeriesVisible }, } = this;
+        // Integrated charts do not handle double click behaviour correctly due to multiple instances of the
+        // chart being created. See https://ag-grid.atlassian.net/browse/RTI-1381
+        if (chart.mode === 'integrated') {
+            return;
+        }
         const datum = this.getDatumForPoint(event.offsetX, event.offsetY);
         if (!datum) {
             return;
         }
-        const { id, itemId } = datum;
+        const { id, itemId, seriesId } = datum;
         const series = chart.series.find((s) => s.id === id);
         if (!series) {
             return;
@@ -592,12 +597,12 @@ export class Legend {
         if (toggleSeriesVisible) {
             const legendData = chart.series.reduce((ls, s) => [...ls, ...s.getLegendData()], []);
             const visibleItemsCount = legendData.filter((d) => d.enabled).length;
-            const clickedItem = legendData.find((d) => d.itemId === itemId);
+            const clickedItem = legendData.find((d) => d.itemId === itemId && d.seriesId === seriesId);
             chart.series.forEach((s) => {
                 const legendData = s.getLegendData();
                 legendData.forEach((d) => {
                     var _a;
-                    const wasClicked = d.itemId === itemId;
+                    const wasClicked = d.itemId === itemId && d.seriesId === seriesId;
                     const singleSelectedWasNotClicked = visibleItemsCount === 1 && ((_a = clickedItem === null || clickedItem === void 0 ? void 0 : clickedItem.enabled) !== null && _a !== void 0 ? _a : false);
                     const newEnabled = wasClicked || singleSelectedWasNotClicked;
                     s.toggleSeriesItem(d.itemId, newEnabled);

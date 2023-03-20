@@ -60,6 +60,12 @@ class AreaSparkline extends sparkline_1.Sparkline {
         this.line = new SparklineLine();
         this.crosshairs = new SparklineCrosshairs();
         this.rootGroup.append(this.areaSparklineGroup);
+        this.xAxisLine.zIndex = sparkline_1.ZINDICIES.AXIS_LINE_ZINDEX;
+        this.fillPath.zIndex = sparkline_1.ZINDICIES.SERIES_FILL_ZINDEX;
+        this.strokePath.zIndex = sparkline_1.ZINDICIES.SERIES_STROKE_ZINDEX;
+        this.xCrosshairLine.zIndex = sparkline_1.ZINDICIES.CROSSHAIR_ZINDEX;
+        this.yCrosshairLine.zIndex = sparkline_1.ZINDICIES.CROSSHAIR_ZINDEX;
+        this.markers.zIndex = sparkline_1.ZINDICIES.SERIES_MARKERS_ZINDEX;
         this.areaSparklineGroup.append([
             this.fillPath,
             this.xAxisLine,

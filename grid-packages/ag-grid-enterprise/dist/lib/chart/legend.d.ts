@@ -104,6 +104,7 @@ export declare class Legend {
     constructor(chart: {
         readonly series: Series<any>[];
         readonly element: HTMLElement;
+        readonly mode: 'standalone' | 'integrated';
         update(type: ChartUpdateType, opts?: {
             forceNodeDataRefresh?: boolean;
             seriesToUpdate?: Iterable<Series>;

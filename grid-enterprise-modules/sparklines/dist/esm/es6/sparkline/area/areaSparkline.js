@@ -1,5 +1,5 @@
 import { _Scale, _Scene, _Util } from 'ag-charts-community';
-import { Sparkline } from '../sparkline';
+import { Sparkline, ZINDICIES } from '../sparkline';
 import { toTooltipHtml } from '../tooltip/sparklineTooltip';
 import { getMarker } from '../marker/markerFactory';
 import { getLineDash } from '../../util/lineDash';
@@ -57,6 +57,12 @@ export class AreaSparkline extends Sparkline {
         this.line = new SparklineLine();
         this.crosshairs = new SparklineCrosshairs();
         this.rootGroup.append(this.areaSparklineGroup);
+        this.xAxisLine.zIndex = ZINDICIES.AXIS_LINE_ZINDEX;
+        this.fillPath.zIndex = ZINDICIES.SERIES_FILL_ZINDEX;
+        this.strokePath.zIndex = ZINDICIES.SERIES_STROKE_ZINDEX;
+        this.xCrosshairLine.zIndex = ZINDICIES.CROSSHAIR_ZINDEX;
+        this.yCrosshairLine.zIndex = ZINDICIES.CROSSHAIR_ZINDEX;
+        this.markers.zIndex = ZINDICIES.SERIES_MARKERS_ZINDEX;
         this.areaSparklineGroup.append([
             this.fillPath,
             this.xAxisLine,

@@ -57,6 +57,10 @@ class LineSparkline extends sparkline_1.Sparkline {
         this.line = new SparklineLine();
         this.crosshairs = new SparklineCrosshairs();
         this.rootGroup.append(this.lineSparklineGroup);
+        this.linePath.zIndex = sparkline_1.ZINDICIES.SERIES_STROKE_ZINDEX;
+        this.xCrosshairLine.zIndex = sparkline_1.ZINDICIES.CROSSHAIR_ZINDEX;
+        this.yCrosshairLine.zIndex = sparkline_1.ZINDICIES.CROSSHAIR_ZINDEX;
+        this.markers.zIndex = sparkline_1.ZINDICIES.SERIES_MARKERS_ZINDEX;
         this.lineSparklineGroup.append([this.linePath, this.xCrosshairLine, this.yCrosshairLine, this.markers]);
     }
     getNodeData() {

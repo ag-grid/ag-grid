@@ -609,7 +609,7 @@ var FunctionUtils = /*#__PURE__*/Object.freeze({
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-var __read$1h = (undefined && undefined.__read) || function (o, n) {
+var __read$1i = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -626,7 +626,7 @@ var __read$1h = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$1h(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$1i(arguments[i]));
     return ar;
 };
 function PreConstruct(target, methodName, descriptor) {
@@ -947,7 +947,7 @@ var ModuleNames;
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-var __read$1g = (undefined && undefined.__read) || function (o, n) {
+var __read$1h = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -1033,7 +1033,7 @@ var ModuleRegistry = /** @class */ (function () {
         }
         else if (ModuleRegistry.moduleBased || ModuleRegistry.moduleBased === undefined) {
             var modName = (_a = Object.entries(ModuleNames).find(function (_a) {
-                var _b = __read$1g(_a, 2); _b[0]; var v = _b[1];
+                var _b = __read$1h(_a, 2); _b[0]; var v = _b[1];
                 return v === moduleName;
             })) === null || _a === void 0 ? void 0 : _a[0];
             warningMessage =
@@ -3097,7 +3097,7 @@ var Events = /** @class */ (function () {
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-var __read$1f = (undefined && undefined.__read) || function (o, n) {
+var __read$1g = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -3114,7 +3114,7 @@ var __read$1f = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$P = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$1f(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$1g(arguments[i]));
     return ar;
 };
 /**
@@ -3211,8 +3211,8 @@ var PropertyKeys = /** @class */ (function () {
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-var __assign$U = (undefined && undefined.__assign) || function () {
-    __assign$U = Object.assign || function(t) {
+var __assign$V = (undefined && undefined.__assign) || function () {
+    __assign$V = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -3220,9 +3220,9 @@ var __assign$U = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$U.apply(this, arguments);
+    return __assign$V.apply(this, arguments);
 };
-var __read$1e = (undefined && undefined.__read) || function (o, n) {
+var __read$1f = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -3239,7 +3239,7 @@ var __read$1e = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$O = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$1e(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$1f(arguments[i]));
     return ar;
 };
 var ComponentUtil = /** @class */ (function () {
@@ -3317,7 +3317,7 @@ var ComponentUtil = /** @class */ (function () {
         if (!changes || Object.keys(changes).length === 0) {
             return;
         }
-        var changesToApply = __assign$U({}, changes);
+        var changesToApply = __assign$V({}, changes);
         // We manually call these updates so that we can provide a different source of gridOptionsChanged
         // We do not call setProperty as this will be called by the grid api methods
         if (changesToApply.columnTypes) {
@@ -3495,7 +3495,7 @@ var __decorate$3B = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$1d = (undefined && undefined.__read) || function (o, n) {
+var __read$1e = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -3512,7 +3512,7 @@ var __read$1d = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$N = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$1d(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$1e(arguments[i]));
     return ar;
 };
 function logDeprecation(version, oldProp, newProp, message) {
@@ -3683,7 +3683,7 @@ function logDeprecation(version, oldProp, newProp, message) {
         var options = this.gridOptions;
         Object.entries(this.deprecatedProperties).forEach(function (_a) {
             var _b;
-            var _c = __read$1d(_a, 2), oldProp = _c[0], details = _c[1];
+            var _c = __read$1e(_a, 2), oldProp = _c[0], details = _c[1];
             var oldPropValue = options[oldProp];
             if (oldPropValue) {
                 logDeprecation(details.version, oldProp, details.newProp, details.message);
@@ -4461,7 +4461,7 @@ var __values$D = (undefined && undefined.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
-var __read$1c = (undefined && undefined.__read) || function (o, n) {
+var __read$1d = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -4478,7 +4478,7 @@ var __read$1c = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$M = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$1c(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$1d(arguments[i]));
     return ar;
 };
 /** @class */ ((function (_super) {
@@ -8586,7 +8586,7 @@ var NumberUtils = /*#__PURE__*/Object.freeze({
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-var __read$1b = (undefined && undefined.__read) || function (o, n) {
+var __read$1c = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -8681,7 +8681,7 @@ function parseDateTimeFromString(value) {
     if (!value) {
         return null;
     }
-    var _a = __read$1b(value.split(' '), 2), dateStr = _a[0], timeStr = _a[1];
+    var _a = __read$1c(value.split(' '), 2), dateStr = _a[0], timeStr = _a[1];
     if (!dateStr) {
         return null;
     }
@@ -8689,7 +8689,7 @@ function parseDateTimeFromString(value) {
     if (fields.filter(function (f) { return !isNaN(f); }).length !== 3) {
         return null;
     }
-    var _b = __read$1b(fields, 3), year = _b[0], month = _b[1], day = _b[2];
+    var _b = __read$1c(fields, 3), year = _b[0], month = _b[1], day = _b[2];
     var date = new Date(year, month - 1, day);
     if (date.getFullYear() !== year ||
         date.getMonth() !== month - 1 ||
@@ -8700,7 +8700,7 @@ function parseDateTimeFromString(value) {
     if (!timeStr || timeStr === '00:00:00') {
         return date;
     }
-    var _c = __read$1b(timeStr.split(':').map(function (part) { return parseInt(part, 10); }), 3), hours = _c[0], minutes = _c[1], seconds = _c[2];
+    var _c = __read$1c(timeStr.split(':').map(function (part) { return parseInt(part, 10); }), 3), hours = _c[0], minutes = _c[1], seconds = _c[2];
     if (hours >= 0 && hours < 24) {
         date.setHours(hours);
     }
@@ -8737,7 +8737,7 @@ var __values$C = (undefined && undefined.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
-var __read$1a = (undefined && undefined.__read) || function (o, n) {
+var __read$1b = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -9041,7 +9041,7 @@ function addStylesToElement(eElement, styles) {
     }
     try {
         for (var _b = __values$C(Object.entries(styles)), _c = _b.next(); !_c.done; _c = _b.next()) {
-            var _d = __read$1a(_c.value, 2), key = _d[0], value = _d[1];
+            var _d = __read$1b(_c.value, 2), key = _d[0], value = _d[1];
             if (!key || !key.length || value == null) {
                 continue;
             }
@@ -9707,8 +9707,8 @@ var SetUtils = /*#__PURE__*/Object.freeze({
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-var __assign$T = (undefined && undefined.__assign) || function () {
-    __assign$T = Object.assign || function(t) {
+var __assign$U = (undefined && undefined.__assign) || function () {
+    __assign$U = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -9716,9 +9716,9 @@ var __assign$T = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$T.apply(this, arguments);
+    return __assign$U.apply(this, arguments);
 };
-var utils = __assign$T(__assign$T(__assign$T(__assign$T(__assign$T(__assign$T(__assign$T(__assign$T(__assign$T(__assign$T(__assign$T(__assign$T(__assign$T(__assign$T(__assign$T(__assign$T(__assign$T(__assign$T({}, AriaUtils), ArrayUtils), BrowserUtils), DateUtils), DomUtils), EventUtils), FunctionUtils), FuzzyMatchUtils), GenericUtils), IconUtils), KeyboardUtils), MapUtils), MouseUtils), NumberUtils), ObjectUtils), RowNodeUtils), SetUtils), StringUtils);
+var utils = __assign$U(__assign$U(__assign$U(__assign$U(__assign$U(__assign$U(__assign$U(__assign$U(__assign$U(__assign$U(__assign$U(__assign$U(__assign$U(__assign$U(__assign$U(__assign$U(__assign$U(__assign$U({}, AriaUtils), ArrayUtils), BrowserUtils), DateUtils), DomUtils), EventUtils), FunctionUtils), FuzzyMatchUtils), GenericUtils), IconUtils), KeyboardUtils), MapUtils), MouseUtils), NumberUtils), ObjectUtils), RowNodeUtils), SetUtils), StringUtils);
 var _ = utils;
 
 /**
@@ -9830,8 +9830,8 @@ var __extends$4C = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$S = (undefined && undefined.__assign) || function () {
-    __assign$S = Object.assign || function(t) {
+var __assign$T = (undefined && undefined.__assign) || function () {
+    __assign$T = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -9839,7 +9839,7 @@ var __assign$S = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$S.apply(this, arguments);
+    return __assign$T.apply(this, arguments);
 };
 var __decorate$3u = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9975,7 +9975,7 @@ var CustomTooltipFeature = /** @class */ (function (_super) {
         return (now - then) < this.SHOW_QUICK_TOOLTIP_DIFF;
     };
     CustomTooltipFeature.prototype.showTooltip = function () {
-        var params = __assign$S({}, this.parentComp.getTooltipParams());
+        var params = __assign$T({}, this.parentComp.getTooltipParams());
         if (!exists$1(params.value)) {
             this.setToDoNothing();
             return;
@@ -10672,8 +10672,8 @@ var DateCompWrapper = /** @class */ (function () {
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-var __assign$R = (undefined && undefined.__assign) || function () {
-    __assign$R = Object.assign || function(t) {
+var __assign$S = (undefined && undefined.__assign) || function () {
+    __assign$S = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -10681,7 +10681,7 @@ var __assign$R = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$R.apply(this, arguments);
+    return __assign$S.apply(this, arguments);
 };
 /* Common logic for options, used by both filters and floating filters. */
 var OptionsFactory = /** @class */ (function () {
@@ -10727,7 +10727,7 @@ var OptionsFactory = /** @class */ (function () {
                 return;
             }
             var test = filterOption.test;
-            var mutatedFilterOptions = __assign$R({}, filterOption);
+            var mutatedFilterOptions = __assign$S({}, filterOption);
             if (test != null && filterOption.predicate == null) {
                 mutatedFilterOptions.predicate = function (v, cv) { return test(v[0], cv); };
                 delete mutatedFilterOptions.test;
@@ -10824,8 +10824,8 @@ var __extends$4z = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$Q = (undefined && undefined.__assign) || function () {
-    __assign$Q = Object.assign || function(t) {
+var __assign$R = (undefined && undefined.__assign) || function () {
+    __assign$R = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -10833,7 +10833,7 @@ var __assign$Q = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$Q.apply(this, arguments);
+    return __assign$R.apply(this, arguments);
 };
 var __decorate$3r = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10848,7 +10848,7 @@ var ManagedFocusFeature = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.eFocusableElement = eFocusableElement;
         _this.callbacks = callbacks;
-        _this.callbacks = __assign$Q({ shouldStopEventPropagation: function () { return false; }, onTabKeyDown: function (e) {
+        _this.callbacks = __assign$R({ shouldStopEventPropagation: function () { return false; }, onTabKeyDown: function (e) {
                 if (e.defaultPrevented) {
                     return;
                 }
@@ -11609,6 +11609,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
         _this.filterNameKey = filterNameKey;
         _this.applyActive = false;
         _this.hidePopup = null;
+        _this.debouncePending = false;
         // after the user hits 'apply' the model gets copied to here. this is then the model that we use for
         // all filtering. so if user changes UI but doesn't hit apply, then the UI will be out of sync with this model.
         // this is what we want, as the UI should only become the 'active' filter once it's applied. when apply is
@@ -11710,8 +11711,20 @@ var ProvidedFilter = /** @class */ (function (_super) {
         return 0;
     };
     ProvidedFilter.prototype.setupOnBtApplyDebounce = function () {
+        var _this = this;
         var debounceMs = ProvidedFilter.getDebounceMs(this.providedFilterParams, this.getDefaultDebounceMs());
-        this.onBtApplyDebounce = debounce(this.onBtApply.bind(this), debounceMs);
+        var debounceFunc = debounce(this.checkApplyDebounce.bind(this), debounceMs);
+        this.onBtApplyDebounce = function () {
+            _this.debouncePending = true;
+            debounceFunc();
+        };
+    };
+    ProvidedFilter.prototype.checkApplyDebounce = function () {
+        if (this.debouncePending) {
+            // May already have been applied, so don't apply again (e.g. closing filter before debounce timeout)
+            this.debouncePending = false;
+            this.onBtApply();
+        }
     };
     ProvidedFilter.prototype.getModel = function () {
         return this.appliedModel ? this.appliedModel : null;
@@ -11844,6 +11857,9 @@ var ProvidedFilter = /** @class */ (function (_super) {
             return;
         }
         this.hidePopup = params.hidePopup;
+    };
+    ProvidedFilter.prototype.afterGuiDetached = function () {
+        this.checkApplyDebounce();
     };
     // static, as used by floating filter also
     ProvidedFilter.getDebounceMs = function (params, debounceDefault) {
@@ -12843,7 +12859,7 @@ var __extends$4o = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __read$19 = (undefined && undefined.__read) || function (o, n) {
+var __read$1a = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -12860,7 +12876,7 @@ var __read$19 = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$L = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$19(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$1a(arguments[i]));
     return ar;
 };
 var SimpleFilterModelFormatter = /** @class */ (function () {
@@ -13319,6 +13335,7 @@ var SimpleFilter = /** @class */ (function (_super) {
         }
     };
     SimpleFilter.prototype.afterGuiDetached = function () {
+        _super.prototype.afterGuiDetached.call(this);
         var appliedModel = this.getModel();
         if (!this.areModelsEqual(appliedModel, this.getModelFromUi())) {
             this.resetUiToActiveModel(appliedModel);
@@ -13734,8 +13751,8 @@ var __extends$4m = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$P = (undefined && undefined.__assign) || function () {
-    __assign$P = Object.assign || function(t) {
+var __assign$Q = (undefined && undefined.__assign) || function () {
+    __assign$Q = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -13743,7 +13760,7 @@ var __assign$P = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$P.apply(this, arguments);
+    return __assign$Q.apply(this, arguments);
 };
 var __decorate$3j = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -13927,7 +13944,7 @@ var DateFilter = /** @class */ (function (_super) {
         if (values.length > 1) {
             model.dateTo = serialiseDate(values[1]);
         }
-        return __assign$P({ dateFrom: null, dateTo: null, filterType: this.getFilterType(), type: type }, model);
+        return __assign$Q({ dateFrom: null, dateTo: null, filterType: this.getFilterType(), type: type }, model);
     };
     DateFilter.prototype.resetPlaceholder = function () {
         var globalTranslate = this.localeService.getLocaleTextFunc();
@@ -14655,8 +14672,8 @@ var __extends$4f = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$O = (undefined && undefined.__assign) || function () {
-    __assign$O = Object.assign || function(t) {
+var __assign$P = (undefined && undefined.__assign) || function () {
+    __assign$P = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -14664,7 +14681,7 @@ var __assign$O = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$O.apply(this, arguments);
+    return __assign$P.apply(this, arguments);
 };
 var TextFilterModelFormatter = /** @class */ (function (_super) {
     __extends$4f(TextFilterModelFormatter, _super);
@@ -14820,7 +14837,7 @@ var TextFilter = /** @class */ (function (_super) {
             value: cellValueFormatted,
             textFormatter: textFormatter,
         };
-        return formattedValues.some(function (v) { return _this.matcher(__assign$O(__assign$O({}, matcherParams), { filterText: v })); });
+        return formattedValues.some(function (v) { return _this.matcher(__assign$P(__assign$P({}, matcherParams), { filterText: v })); });
     };
     TextFilter.prototype.getModelAsString = function (model) {
         var _a;
@@ -16345,8 +16362,8 @@ var AnimateSlideCellRenderer = /** @class */ (function (_super) {
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-var __assign$N = (undefined && undefined.__assign) || function () {
-    __assign$N = Object.assign || function(t) {
+var __assign$O = (undefined && undefined.__assign) || function () {
+    __assign$O = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -16354,7 +16371,7 @@ var __assign$N = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$N.apply(this, arguments);
+    return __assign$O.apply(this, arguments);
 };
 var RowNode = /** @class */ (function () {
     function RowNode(beans) {
@@ -16984,7 +17001,7 @@ var RowNode = /** @class */ (function () {
         if (this.eventService) {
             this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_ROW_SELECTED));
         }
-        var event = __assign$N(__assign$N({}, this.createGlobalRowEvent(Events.EVENT_ROW_SELECTED)), { event: e || null, source: source });
+        var event = __assign$O(__assign$O({}, this.createGlobalRowEvent(Events.EVENT_ROW_SELECTED)), { event: e || null, source: source });
         this.beans.eventService.dispatchEvent(event);
         return true;
     };
@@ -17017,7 +17034,7 @@ var RowNode = /** @class */ (function () {
             console.warn('AG Grid: cannot select node until id for node is known');
             return 0;
         }
-        return this.beans.selectionService.setNodeSelected(__assign$N(__assign$N({}, params), { node: this.footer ? this.sibling : this }));
+        return this.beans.selectionService.setNodeSelected(__assign$O(__assign$O({}, params), { node: this.footer ? this.sibling : this }));
     };
     /**
      * Returns:
@@ -17190,8 +17207,8 @@ var __extends$42 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$M = (undefined && undefined.__assign) || function () {
-    __assign$M = Object.assign || function(t) {
+var __assign$N = (undefined && undefined.__assign) || function () {
+    __assign$N = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -17199,7 +17216,7 @@ var __assign$M = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$M.apply(this, arguments);
+    return __assign$N.apply(this, arguments);
 };
 var __decorate$37 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -17297,7 +17314,7 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
             if (typeof isVisible === 'function') {
                 var extraParams = (_a = this.overrides) === null || _a === void 0 ? void 0 : _a.callbackParams;
                 var params = (_b = this.column) === null || _b === void 0 ? void 0 : _b.createColumnFunctionCallbackParams(this.rowNode);
-                selectable = params ? isVisible(__assign$M(__assign$M({}, extraParams), params)) : false;
+                selectable = params ? isVisible(__assign$N(__assign$N({}, extraParams), params)) : false;
             }
             else {
                 selectable = isVisible !== null && isVisible !== void 0 ? isVisible : false;
@@ -18082,8 +18099,8 @@ var __extends$3$ = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$L = (undefined && undefined.__assign) || function () {
-    __assign$L = Object.assign || function(t) {
+var __assign$M = (undefined && undefined.__assign) || function () {
+    __assign$M = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -18091,7 +18108,7 @@ var __assign$L = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$L.apply(this, arguments);
+    return __assign$M.apply(this, arguments);
 };
 var __decorate$34 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -18305,7 +18322,7 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
         // we don't update the original params, as they could of come through React,
         // as react has RowGroupCellRenderer, which means the params could be props which
         // would be read only
-        var paramsAdjusted = __assign$L(__assign$L({}, params), { valueFormatted: valueFormatted });
+        var paramsAdjusted = __assign$M(__assign$M({}, params), { valueFormatted: valueFormatted });
         return paramsAdjusted;
     };
     GroupCellRendererCtrl.prototype.addFooterValue = function () {
@@ -18930,7 +18947,7 @@ var __decorate$31 = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$18 = (undefined && undefined.__read) || function (o, n) {
+var __read$19 = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -18947,7 +18964,7 @@ var __read$18 = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$K = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$18(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$19(arguments[i]));
     return ar;
 };
 /** @class */ ((function (_super) {
@@ -21584,8 +21601,8 @@ var __extends$3S = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$K = (undefined && undefined.__assign) || function () {
-    __assign$K = Object.assign || function(t) {
+var __assign$L = (undefined && undefined.__assign) || function () {
+    __assign$L = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -21593,7 +21610,7 @@ var __assign$K = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$K.apply(this, arguments);
+    return __assign$L.apply(this, arguments);
 };
 var __decorate$2Z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -22059,7 +22076,7 @@ var __decorate$2Z = (undefined && undefined.__decorate) || function (decorators,
         var defaultFilter = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule) ? 'agSetColumnFilter' : 'agTextColumnFilter';
         var colDef = column.getColDef();
         var filterInstance;
-        var params = __assign$K(__assign$K({}, this.createFilterParams(column, colDef)), { filterModifiedCallback: function () {
+        var params = __assign$L(__assign$L({}, this.createFilterParams(column, colDef)), { filterModifiedCallback: function () {
                 var event = {
                     type: Events.EVENT_FILTER_MODIFIED,
                     column: column,
@@ -22483,8 +22500,8 @@ var __extends$3O = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$J = (undefined && undefined.__assign) || function () {
-    __assign$J = Object.assign || function(t) {
+var __assign$K = (undefined && undefined.__assign) || function () {
+    __assign$K = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -22492,7 +22509,7 @@ var __assign$J = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$J.apply(this, arguments);
+    return __assign$K.apply(this, arguments);
 };
 var __decorate$2W = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -22675,7 +22692,7 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         window.clearTimeout(this.scrollTimer);
         this.scrollTimer = undefined;
         this.scrollTimer = window.setTimeout(function () {
-            var bodyScrollEndEvent = __assign$J(__assign$J({}, bodyScrollEvent), { type: Events.EVENT_BODY_SCROLL_END });
+            var bodyScrollEndEvent = __assign$K(__assign$K({}, bodyScrollEvent), { type: Events.EVENT_BODY_SCROLL_END });
             _this.eventService.dispatchEvent(bodyScrollEndEvent);
         }, 100);
     };
@@ -23107,8 +23124,8 @@ var __extends$3N = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$I = (undefined && undefined.__assign) || function () {
-    __assign$I = Object.assign || function(t) {
+var __assign$J = (undefined && undefined.__assign) || function () {
+    __assign$J = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -23116,7 +23133,7 @@ var __assign$I = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$I.apply(this, arguments);
+    return __assign$J.apply(this, arguments);
 };
 var __decorate$2V = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -23124,7 +23141,7 @@ var __decorate$2V = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$17 = (undefined && undefined.__read) || function (o, n) {
+var __read$18 = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -23141,7 +23158,7 @@ var __read$17 = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$J = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$17(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$18(arguments[i]));
     return ar;
 };
 var RowDragFeature = /** @class */ (function (_super) {
@@ -23365,7 +23382,7 @@ var RowDragFeature = /** @class */ (function (_super) {
                 };
             }
         }
-        this.dragAndDropService.addDropTarget(__assign$I({ isInterestedIn: function (type) { return type === DragSourceType.RowDrag; }, getIconName: function () { return DragAndDropService.ICON_MOVE; }, external: true }, processedParams));
+        this.dragAndDropService.addDropTarget(__assign$J({ isInterestedIn: function (type) { return type === DragSourceType.RowDrag; }, getIconName: function () { return DragAndDropService.ICON_MOVE; }, external: true }, processedParams));
     };
     RowDragFeature.prototype.getRowDropZone = function (events) {
         var _this = this;
@@ -25115,8 +25132,8 @@ var __extends$3F = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$H = (undefined && undefined.__assign) || function () {
-    __assign$H = Object.assign || function(t) {
+var __assign$I = (undefined && undefined.__assign) || function () {
+    __assign$I = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -25124,7 +25141,7 @@ var __assign$H = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$H.apply(this, arguments);
+    return __assign$I.apply(this, arguments);
 };
 var CSS_CELL = 'ag-cell';
 var CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
@@ -25456,7 +25473,7 @@ var CellCtrl = /** @class */ (function (_super) {
         return valueChanged;
     };
     CellCtrl.prototype.dispatchEditingStoppedEvent = function (oldValue, newValue, valueChanged) {
-        var editingStoppedEvent = __assign$H(__assign$H({}, this.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED)), { oldValue: oldValue,
+        var editingStoppedEvent = __assign$I(__assign$I({}, this.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED)), { oldValue: oldValue,
             newValue: newValue,
             valueChanged: valueChanged });
         this.beans.eventService.dispatchEvent(editingStoppedEvent);
@@ -26065,7 +26082,7 @@ var __values$A = (undefined && undefined.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
-var __read$16 = (undefined && undefined.__read) || function (o, n) {
+var __read$17 = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -26082,7 +26099,7 @@ var __read$16 = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$I = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$16(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$17(arguments[i]));
     return ar;
 };
 var RowType;
@@ -27419,7 +27436,7 @@ var __decorate$2R = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$15 = (undefined && undefined.__read) || function (o, n) {
+var __read$16 = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -27643,7 +27660,7 @@ var RowContainerEventsFeature = /** @class */ (function (_super) {
     RowContainerEventsFeature.prototype.onCtrlAndA = function (event) {
         var _a = this, pinnedRowModel = _a.pinnedRowModel, paginationProxy = _a.paginationProxy, rangeService = _a.rangeService;
         if (rangeService && paginationProxy.isRowsToRender()) {
-            var _b = __read$15([
+            var _b = __read$16([
                 pinnedRowModel.isEmpty('top'),
                 pinnedRowModel.isEmpty('bottom')
             ], 2), isEmptyPinnedTop = _b[0], isEmptyPinnedBottom = _b[1];
@@ -28196,7 +28213,7 @@ var __decorate$2K = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$14 = (undefined && undefined.__read) || function (o, n) {
+var __read$15 = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -28213,7 +28230,7 @@ var __read$14 = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$H = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$14(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$15(arguments[i]));
     return ar;
 };
 var RowContainerName;
@@ -28978,8 +28995,8 @@ var __extends$3s = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$G = (undefined && undefined.__assign) || function () {
-    __assign$G = Object.assign || function(t) {
+var __assign$H = (undefined && undefined.__assign) || function () {
+    __assign$H = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -28987,7 +29004,7 @@ var __assign$G = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$G.apply(this, arguments);
+    return __assign$H.apply(this, arguments);
 };
 var __decorate$2G = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -29392,7 +29409,7 @@ var __decorate$2G = (undefined && undefined.__decorate) || function (decorators,
         var displayedColumns = this.columnModel.getAllDisplayedColumns();
         var cellPos;
         if (previousCell instanceof RowCtrl) {
-            cellPos = __assign$G(__assign$G({}, previousCell.getRowPosition()), { column: backwards ? displayedColumns[0] : last(displayedColumns) });
+            cellPos = __assign$H(__assign$H({}, previousCell.getRowPosition()), { column: backwards ? displayedColumns[0] : last(displayedColumns) });
         }
         else {
             cellPos = previousCell.getCellPosition();
@@ -30400,8 +30417,8 @@ var __extends$3o = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$F = (undefined && undefined.__assign) || function () {
-    __assign$F = Object.assign || function(t) {
+var __assign$G = (undefined && undefined.__assign) || function () {
+    __assign$G = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -30409,7 +30426,7 @@ var __assign$F = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$F.apply(this, arguments);
+    return __assign$G.apply(this, arguments);
 };
 var __decorate$2E = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -30467,7 +30484,7 @@ function templateFactory() {
     };
     RowContainerComp.prototype.setRowCtrls = function (rowCtrls) {
         var _this = this;
-        var oldRows = __assign$F({}, this.rowComps);
+        var oldRows = __assign$G({}, this.rowComps);
         this.rowComps = {};
         this.lastPlacedElement = null;
         var processRow = function (rowCon) {
@@ -30630,7 +30647,7 @@ var __decorate$2C = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$13 = (undefined && undefined.__read) || function (o, n) {
+var __read$14 = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -30920,7 +30937,7 @@ var MoveColumnFeature = /** @class */ (function () {
             var a = parents(columns[i]);
             var b = parents(columns[i + 1]);
             // iterate over the longest one
-            _a = __read$13(a.length > b.length ? [a, b] : [b, a], 2), a = _a[0], b = _a[1];
+            _a = __read$14(a.length > b.length ? [a, b] : [b, a], 2), a = _a[0], b = _a[1];
             a.forEach(function (parent) {
                 if (b.indexOf(parent) === -1) {
                     count++; // More fragmented if other column doesn't share the parent
@@ -31242,7 +31259,7 @@ var BodyDropTarget = /** @class */ (function (_super) {
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-var __read$12 = (undefined && undefined.__read) || function (o, n) {
+var __read$13 = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -31259,7 +31276,7 @@ var __read$12 = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$G = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$12(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$13(arguments[i]));
     return ar;
 };
 var CssClassApplier = /** @class */ (function () {
@@ -33831,7 +33848,7 @@ var __decorate$2m = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$11 = (undefined && undefined.__read) || function (o, n) {
+var __read$12 = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -33848,7 +33865,7 @@ var __read$11 = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$F = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$11(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$12(arguments[i]));
     return ar;
 };
 var HeaderRowContainerCtrl = /** @class */ (function (_super) {
@@ -35506,7 +35523,7 @@ var __values$z = (undefined && undefined.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
-var __read$10 = (undefined && undefined.__read) || function (o, n) {
+var __read$11 = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -35523,7 +35540,7 @@ var __read$10 = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$E = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$10(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$11(arguments[i]));
     return ar;
 };
 var StickyRowFeature = /** @class */ (function (_super) {
@@ -35683,7 +35700,7 @@ var __decorate$2a = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$$ = (undefined && undefined.__read) || function (o, n) {
+var __read$10 = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -35700,7 +35717,7 @@ var __read$$ = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$D = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$$(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$10(arguments[i]));
     return ar;
 };
 var __values$y = (undefined && undefined.__values) || function(o) {
@@ -38669,7 +38686,7 @@ var __extends$2L = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __read$_ = (undefined && undefined.__read) || function (o, n) {
+var __read$$ = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -38686,7 +38703,7 @@ var __read$_ = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$C = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$_(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$$(arguments[i]));
     return ar;
 };
 var TabGuardComp = /** @class */ (function (_super) {
@@ -38772,8 +38789,8 @@ var __extends$2K = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$E = (undefined && undefined.__assign) || function () {
-    __assign$E = Object.assign || function(t) {
+var __assign$F = (undefined && undefined.__assign) || function () {
+    __assign$F = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -38781,7 +38798,7 @@ var __assign$E = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$E.apply(this, arguments);
+    return __assign$F.apply(this, arguments);
 };
 var __decorate$21 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -38858,7 +38875,7 @@ var AgMenuList = /** @class */ (function (_super) {
     };
     AgMenuList.prototype.addItem = function (menuItemDef) {
         var _this = this;
-        var menuItem = this.createManagedBean(new AgMenuItemComponent(__assign$E(__assign$E({}, menuItemDef), { isAnotherSubMenuOpen: function () { return _this.menuItems.some(function (m) { return m.isSubMenuOpen(); }); } })));
+        var menuItem = this.createManagedBean(new AgMenuItemComponent(__assign$F(__assign$F({}, menuItemDef), { isAnotherSubMenuOpen: function () { return _this.menuItems.some(function (m) { return m.isSubMenuOpen(); }); } })));
         menuItem.setParentComponent(this);
         setAriaLevel(menuItem.getGui(), this.level);
         this.menuItems.push(menuItem);
@@ -39557,8 +39574,8 @@ var __extends$2G = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$D = (undefined && undefined.__assign) || function () {
-    __assign$D = Object.assign || function(t) {
+var __assign$E = (undefined && undefined.__assign) || function () {
+    __assign$E = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -39566,7 +39583,7 @@ var __assign$D = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$D.apply(this, arguments);
+    return __assign$E.apply(this, arguments);
 };
 var __decorate$1Z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -39577,7 +39594,7 @@ var __decorate$1Z = (undefined && undefined.__decorate) || function (decorators,
 var AgDialog = /** @class */ (function (_super) {
     __extends$2G(AgDialog, _super);
     function AgDialog(config) {
-        var _this = _super.call(this, __assign$D(__assign$D({}, config), { popup: true })) || this;
+        var _this = _super.call(this, __assign$E(__assign$E({}, config), { popup: true })) || this;
         _this.isMaximizable = false;
         _this.isMaximized = false;
         _this.maximizeListeners = [];
@@ -39734,8 +39751,8 @@ var __extends$2F = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$C = (undefined && undefined.__assign) || function () {
-    __assign$C = Object.assign || function(t) {
+var __assign$D = (undefined && undefined.__assign) || function () {
+    __assign$D = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -39743,7 +39760,7 @@ var __assign$C = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$C.apply(this, arguments);
+    return __assign$D.apply(this, arguments);
 };
 var __decorate$1Y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -39751,7 +39768,7 @@ var __decorate$1Y = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$Z = (undefined && undefined.__read) || function (o, n) {
+var __read$_ = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -39768,7 +39785,7 @@ var __read$Z = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$B = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$Z(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$_(arguments[i]));
     return ar;
 };
 var FocusService = /** @class */ (function (_super) {
@@ -39944,7 +39961,7 @@ var FocusService = /** @class */ (function (_super) {
         if (this.focusedCellPosition == null) {
             return;
         }
-        var event = __assign$C({ type: Events.EVENT_CELL_FOCUS_CLEARED }, this.getFocusEventParams());
+        var event = __assign$D({ type: Events.EVENT_CELL_FOCUS_CLEARED }, this.getFocusEventParams());
         this.focusedCellPosition = null;
         this.eventService.dispatchEvent(event);
     };
@@ -39963,7 +39980,7 @@ var FocusService = /** @class */ (function (_super) {
             rowPinned: makeNull(rowPinned),
             column: gridColumn
         } : null;
-        var event = __assign$C(__assign$C({ type: Events.EVENT_CELL_FOCUSED }, this.getFocusEventParams()), { forceBrowserFocus: forceBrowserFocus,
+        var event = __assign$D(__assign$D({ type: Events.EVENT_CELL_FOCUSED }, this.getFocusEventParams()), { forceBrowserFocus: forceBrowserFocus,
             preventScrollOnBrowserFocus: preventScrollOnBrowserFocus, floating: null });
         this.eventService.dispatchEvent(event);
     };
@@ -40273,7 +40290,7 @@ var __decorate$1X = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$Y = (undefined && undefined.__read) || function (o, n) {
+var __read$Z = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -40290,7 +40307,7 @@ var __read$Y = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$A = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$Y(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$Z(arguments[i]));
     return ar;
 };
 var DIRECTION;
@@ -41204,7 +41221,7 @@ var __decorate$1V = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$X = (undefined && undefined.__read) || function (o, n) {
+var __read$Y = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -41221,7 +41238,7 @@ var __read$X = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$z = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$X(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$Y(arguments[i]));
     return ar;
 };
 /** @class */ ((function (_super) {
@@ -41827,8 +41844,8 @@ var __extends$2A = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$B = (undefined && undefined.__assign) || function () {
-    __assign$B = Object.assign || function(t) {
+var __assign$C = (undefined && undefined.__assign) || function () {
+    __assign$C = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -41836,7 +41853,7 @@ var __assign$B = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$B.apply(this, arguments);
+    return __assign$C.apply(this, arguments);
 };
 var __decorate$1T = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -41847,7 +41864,7 @@ var __decorate$1T = (undefined && undefined.__decorate) || function (decorators,
 var __param$4 = (undefined && undefined.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __read$W = (undefined && undefined.__read) || function (o, n) {
+var __read$X = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -41899,7 +41916,7 @@ var __read$W = (undefined && undefined.__read) || function (o, n) {
         // if we are a footer, we don't do selection, just pass the info
         // to the sibling (the parent of the group)
         if (node.footer) {
-            return this.setNodeSelected(__assign$B(__assign$B({}, params), { node: node.sibling }));
+            return this.setNodeSelected(__assign$C(__assign$C({}, params), { node: node.sibling }));
         }
         var lastSelectedNode = this.getLastSelectedNode();
         if (rangeSelect && lastSelectedNode) {
@@ -42025,7 +42042,7 @@ var __read$W = (undefined && undefined.__read) || function (o, n) {
     SelectionService.prototype.filterFromSelection = function (predicate) {
         var newSelectedNodes = {};
         Object.entries(this.selectedNodes).forEach(function (_a) {
-            var _b = __read$W(_a, 2), key = _b[0], node = _b[1];
+            var _b = __read$X(_a, 2), key = _b[0], node = _b[1];
             var passesPredicate = node && predicate(node);
             if (passesPredicate) {
                 newSelectedNodes[key] = node;
@@ -43434,7 +43451,7 @@ var __decorate$1L = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$V = (undefined && undefined.__read) || function (o, n) {
+var __read$W = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -43451,7 +43468,7 @@ var __read$V = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$y = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$V(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$W(arguments[i]));
     return ar;
 };
 /** @class */ ((function (_super) {
@@ -43628,12 +43645,12 @@ var __spread$y = (undefined && undefined.__spread) || function () {
         if (includeRedundantColumns === void 0) { includeRedundantColumns = false; }
         // pull out all the columns that have sorting set
         return __spread$y(this.getIndexedSortMap(includeRedundantColumns).entries()).sort(function (_a, _b) {
-            var _c = __read$V(_a, 2); _c[0]; var idx1 = _c[1];
-            var _d = __read$V(_b, 2); _d[0]; var idx2 = _d[1];
+            var _c = __read$W(_a, 2); _c[0]; var idx1 = _c[1];
+            var _d = __read$W(_b, 2); _d[0]; var idx2 = _d[1];
             return idx1 - idx2;
         })
             .map(function (_a) {
-            var _b = __read$V(_a, 1), col = _b[0];
+            var _b = __read$W(_a, 1), col = _b[0];
             return col;
         });
     };
@@ -44311,7 +44328,7 @@ var __decorate$1D = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$U = (undefined && undefined.__read) || function (o, n) {
+var __read$V = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -44328,7 +44345,7 @@ var __read$U = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$x = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$U(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$V(arguments[i]));
     return ar;
 };
 var DEFAULT_ROW_HEIGHT = 25;
@@ -45454,8 +45471,8 @@ var __extends$2d = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$A = (undefined && undefined.__assign) || function () {
-    __assign$A = Object.assign || function(t) {
+var __assign$B = (undefined && undefined.__assign) || function () {
+    __assign$B = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -45463,7 +45480,7 @@ var __assign$A = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$A.apply(this, arguments);
+    return __assign$B.apply(this, arguments);
 };
 var __decorate$1w = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -45471,7 +45488,7 @@ var __decorate$1w = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$T = (undefined && undefined.__read) || function (o, n) {
+var __read$U = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -45488,7 +45505,7 @@ var __read$T = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$w = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$T(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$U(arguments[i]));
     return ar;
 };
 /** @class */ ((function (_super) {
@@ -45679,7 +45696,7 @@ var __spread$w = (undefined && undefined.__spread) || function () {
         scrollFeature.ensureIndexVisible(rowIndex);
         scrollFeature.ensureColumnVisible(column);
         var cellPosition = { rowIndex: rowIndex, column: column, rowPinned: rowPinned };
-        this.focusService.setFocusedCell(__assign$A(__assign$A({}, cellPosition), { forceBrowserFocus: true }));
+        this.focusService.setFocusedCell(__assign$B(__assign$B({}, cellPosition), { forceBrowserFocus: true }));
         if (setRangeToCell) {
             this.rangeService.setRangeToCell(cellPosition);
         }
@@ -46961,8 +46978,8 @@ var __decorate$1m = (undefined && undefined.__decorate) || function (decorators,
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-var __assign$z = (undefined && undefined.__assign) || function () {
-    __assign$z = Object.assign || function(t) {
+var __assign$A = (undefined && undefined.__assign) || function () {
+    __assign$A = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -46970,7 +46987,7 @@ var __assign$z = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$z.apply(this, arguments);
+    return __assign$A.apply(this, arguments);
 };
 var __decorate$1l = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -46981,7 +46998,7 @@ var __decorate$1l = (undefined && undefined.__decorate) || function (decorators,
 var __param = (undefined && undefined.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var __read$S = (undefined && undefined.__read) || function (o, n) {
+var __read$T = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -46998,7 +47015,7 @@ var __read$S = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$v = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$S(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$T(arguments[i]));
     return ar;
 };
 function toNumber$1(value) {
@@ -47115,7 +47132,7 @@ function isTrue(value) {
             var previousValue = this.gridOptions[key];
             if (force || previousValue !== newValue) {
                 this.gridOptions[key] = newValue;
-                var event_1 = __assign$z({ type: key, currentValue: newValue, previousValue: previousValue }, eventParams);
+                var event_1 = __assign$A({ type: key, currentValue: newValue, previousValue: previousValue }, eventParams);
                 this.propertyEventService.dispatchEvent(event_1);
             }
         }
@@ -47483,7 +47500,7 @@ var __decorate$1j = (undefined && undefined.__decorate) || function (decorators,
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-var __read$R = (undefined && undefined.__read) || function (o, n) {
+var __read$S = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -47500,7 +47517,7 @@ var __read$R = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$R(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$S(arguments[i]));
     return ar;
 };
 
@@ -47759,7 +47776,7 @@ var MD5 = /** @class */ (function () {
     return MD5;
 }());
 
-var __read$Q = (undefined && undefined.__read) || function (o, n) {
+var __read$R = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -47832,7 +47849,7 @@ var LicenseManager = /** @class */ (function () {
         var hashStart = cleanedLicenseKey.length - 32;
         var md5 = cleanedLicenseKey.substring(hashStart);
         var license = cleanedLicenseKey.substring(0, hashStart);
-        var _a = __read$Q(LicenseManager.extractBracketedInformation(cleanedLicenseKey), 2), version = _a[0], isTrial = _a[1];
+        var _a = __read$R(LicenseManager.extractBracketedInformation(cleanedLicenseKey), 2), version = _a[0], isTrial = _a[1];
         return { md5: md5, license: license, version: version, isTrial: isTrial };
     };
     LicenseManager.prototype.getLicenseDetails = function (licenseKey) {
@@ -48823,6 +48840,33 @@ var HdpiCanvas = /** @class */ (function () {
 // rather than become enticed by the much slower:
 // `ctx.strokeRect(...bbox);`
 // https://jsperf.com/array-vs-object-create-access
+var __assign$z = (undefined && undefined.__assign) || function () {
+    __assign$z = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign$z.apply(this, arguments);
+};
+var __read$Q = (undefined && undefined.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 var BBox = /** @class */ (function () {
     function BBox(x, y, width, height) {
         this.x = x;
@@ -48847,36 +48891,59 @@ var BBox = /** @class */ (function () {
             Math.abs(this.height) === Infinity);
     };
     BBox.prototype.shrink = function (amount, position) {
-        switch (position) {
-            case 'top':
-                this.y += amount;
-            // eslint-disable-next-line no-fallthrough
-            case 'bottom':
-                this.height -= amount;
-                break;
-            case 'left':
-                this.x += amount;
-            // eslint-disable-next-line no-fallthrough
-            case 'right':
-                this.width -= amount;
-                break;
-            case 'vertical':
-                this.y += amount;
-                this.height -= amount * 2;
-                break;
-            case 'horizontal':
-                this.x += amount;
-                this.width -= amount * 2;
-                break;
-            default:
-                this.x += amount;
-                this.width -= amount * 2;
-                this.y += amount;
-                this.height -= amount * 2;
+        var _this = this;
+        var apply = function (pos, amt) {
+            switch (pos) {
+                case 'top':
+                    _this.y += amt;
+                // eslint-disable-next-line no-fallthrough
+                case 'bottom':
+                    _this.height -= amt;
+                    break;
+                case 'left':
+                    _this.x += amt;
+                // eslint-disable-next-line no-fallthrough
+                case 'right':
+                    _this.width -= amt;
+                    break;
+                case 'vertical':
+                    _this.y += amt;
+                    _this.height -= amt * 2;
+                    break;
+                case 'horizontal':
+                    _this.x += amt;
+                    _this.width -= amt * 2;
+                    break;
+                default:
+                    _this.x += amt;
+                    _this.width -= amt * 2;
+                    _this.y += amt;
+                    _this.height -= amt * 2;
+            }
+        };
+        if (typeof amount === 'number') {
+            apply(position, amount);
         }
+        else {
+            Object.entries(amount).forEach(function (_a) {
+                var _b = __read$Q(_a, 2), pos = _b[0], amt = _b[1];
+                return apply(pos, amt);
+            });
+        }
+        return this;
     };
     BBox.prototype.grow = function (amount, position) {
-        this.shrink(-amount, position);
+        if (typeof amount === 'number') {
+            this.shrink(-amount, position);
+        }
+        else {
+            var paddingCopy = __assign$z({}, amount);
+            for (var key in paddingCopy) {
+                paddingCopy[key] *= -1;
+            }
+            this.shrink(paddingCopy);
+        }
+        return this;
     };
     BBox.merge = function (boxes) {
         var left = Infinity;
@@ -52018,6 +52085,7 @@ var ContinuousScale = /** @class */ (function () {
         return false;
     };
     ContinuousScale.defaultTickCount = 5;
+    ContinuousScale.defaultMaxTickCount = 6;
     return ContinuousScale;
 }());
 
@@ -55748,7 +55816,7 @@ var Axis = /** @class */ (function () {
         var min = Math.min.apply(Math, __spread$n(requestedRange));
         var max = Math.max.apply(Math, __spread$n(requestedRange));
         var availableRange = max - min;
-        var defaultMinSpacing = Math.max(Axis.defaultTickMinSpacing, availableRange / ContinuousScale.defaultTickCount);
+        var defaultMinSpacing = Math.max(Axis.defaultTickMinSpacing, availableRange / ContinuousScale.defaultMaxTickCount);
         if (isNaN(minSpacing) && isNaN(maxSpacing)) {
             minSpacing = defaultMinSpacing;
             maxSpacing = availableRange;
@@ -55773,7 +55841,7 @@ var Axis = /** @class */ (function () {
         }
         var maxTickCount = Math.max(1, Math.floor(availableRange / minSpacing));
         var minTickCount = Math.min(maxTickCount, Math.ceil(availableRange / maxSpacing));
-        var defaultTickCount = Math.max(1, Math.floor(availableRange / defaultMinSpacing));
+        var defaultTickCount = ContinuousScale.defaultTickCount;
         if (defaultTickCount > maxTickCount) {
             defaultTickCount = maxTickCount;
         }
@@ -56208,15 +56276,16 @@ var LinearScale = /** @class */ (function (_super) {
         var prev1 = stop;
         for (var i = 0; i < maxAttempts; i++) {
             var step = (_b = this.interval) !== null && _b !== void 0 ? _b : tickStep(start, stop, count, this.minTickCount, this.maxTickCount);
+            var _d = __read$E(this.domain, 2), d0 = _d[0], d1 = _d[1];
             if (step >= 1) {
-                start = Math.floor(start / step) * step;
-                stop = Math.ceil(stop / step) * step;
+                start = Math.floor(d0 / step) * step;
+                stop = Math.ceil(d1 / step) * step;
             }
             else {
                 // Prevent floating point error
                 var s = 1 / step;
-                start = Math.floor(start * s) / s;
-                stop = Math.ceil(stop * s) / s;
+                start = Math.floor(d0 * s) / s;
+                stop = Math.ceil(d1 * s) / s;
             }
             if (start === prev0 && stop === prev1) {
                 break;
@@ -59264,11 +59333,16 @@ var Legend = /** @class */ (function () {
     };
     Legend.prototype.checkLegendDoubleClick = function (event) {
         var _a = this, legendItemDoubleClick = _a.listeners.legendItemDoubleClick, chart = _a.chart, toggleSeriesVisible = _a.item.toggleSeriesVisible;
+        // Integrated charts do not handle double click behaviour correctly due to multiple instances of the
+        // chart being created. See https://ag-grid.atlassian.net/browse/RTI-1381
+        if (chart.mode === 'integrated') {
+            return;
+        }
         var datum = this.getDatumForPoint(event.offsetX, event.offsetY);
         if (!datum) {
             return;
         }
-        var id = datum.id, itemId = datum.itemId;
+        var id = datum.id, itemId = datum.itemId, seriesId = datum.seriesId;
         var series = chart.series.find(function (s) { return s.id === id; });
         if (!series) {
             return;
@@ -59277,12 +59351,12 @@ var Legend = /** @class */ (function () {
         if (toggleSeriesVisible) {
             var legendData = chart.series.reduce(function (ls, s) { return __spread$k(ls, s.getLegendData()); }, []);
             var visibleItemsCount_1 = legendData.filter(function (d) { return d.enabled; }).length;
-            var clickedItem_1 = legendData.find(function (d) { return d.itemId === itemId; });
+            var clickedItem_1 = legendData.find(function (d) { return d.itemId === itemId && d.seriesId === seriesId; });
             chart.series.forEach(function (s) {
                 var legendData = s.getLegendData();
                 legendData.forEach(function (d) {
                     var _a;
-                    var wasClicked = d.itemId === itemId;
+                    var wasClicked = d.itemId === itemId && d.seriesId === seriesId;
                     var singleSelectedWasNotClicked = visibleItemsCount_1 === 1 && ((_a = clickedItem_1 === null || clickedItem_1 === void 0 ? void 0 : clickedItem_1.enabled) !== null && _a !== void 0 ? _a : false);
                     var newEnabled = wasClicked || singleSelectedWasNotClicked;
                     s.toggleSeriesItem(d.itemId, newEnabled);
@@ -63100,6 +63174,7 @@ var Chart = /** @class */ (function (_super) {
     };
     Chart.prototype.handlePointer = function (event) {
         var _this = this;
+        var _a;
         var lastPick = this.lastPick;
         var offsetX = event.offsetX, offsetY = event.offsetY;
         var disablePointer = function (highlightOnly) {
@@ -63109,7 +63184,9 @@ var Chart = /** @class */ (function (_super) {
                 _this.disablePointer(highlightOnly);
             }
         };
-        if (!(this.seriesRect && this.seriesRect.containsPoint(offsetX, offsetY))) {
+        var hoverRectPadding = 20;
+        var hoverRect = (_a = this.seriesRect) === null || _a === void 0 ? void 0 : _a.clone().grow(hoverRectPadding).grow(this.seriesAreaPadding);
+        if (!(hoverRect === null || hoverRect === void 0 ? void 0 : hoverRect.containsPoint(offsetX, offsetY))) {
             disablePointer();
             return;
         }
@@ -68774,16 +68851,22 @@ var Sector = /** @class */ (function (_super) {
         var centerX = this.centerX;
         var centerY = this.centerY;
         path.clear();
-        if (!fullPie) {
-            path.moveTo(centerX + innerRadius * Math.cos(startAngle), centerY + innerRadius * Math.sin(startAngle));
-            path.lineTo(centerX + outerRadius * Math.cos(startAngle), centerY + outerRadius * Math.sin(startAngle));
-        }
-        path.arc(centerX, centerY, outerRadius, startAngle, endAngle);
-        if (innerRadius > 0) {
-            path.arc(centerX, centerY, innerRadius, endAngle, startAngle, true);
+        if (fullPie) {
+            path.arc(centerX, centerY, outerRadius, startAngle, endAngle);
+            if (innerRadius > 0) {
+                path.moveTo(centerX + innerRadius * Math.cos(endAngle), centerY + innerRadius * Math.sin(endAngle));
+                path.arc(centerX, centerY, innerRadius, endAngle, startAngle, true);
+            }
         }
         else {
-            path.lineTo(centerX, centerY);
+            path.moveTo(centerX + innerRadius * Math.cos(startAngle), centerY + innerRadius * Math.sin(startAngle));
+            path.arc(centerX, centerY, outerRadius, startAngle, endAngle);
+            if (innerRadius > 0) {
+                path.arc(centerX, centerY, innerRadius, endAngle, startAngle, true);
+            }
+            else {
+                path.lineTo(centerX, centerY);
+            }
         }
         path.closePath();
         this.dirtyPath = false;
@@ -68805,6 +68888,9 @@ var Sector = /** @class */ (function (_super) {
         if (startAngle > endAngle) {
             // Sector passes through 0-angle.
             return startAngle < angle || endAngle > angle;
+        }
+        if (startAngle === endAngle) {
+            return true;
         }
         return startAngle < angle && endAngle > angle;
     };
@@ -69582,6 +69668,7 @@ var PieSeries = /** @class */ (function (_super) {
                     sector.lineDashOffset = _this.lineDashOffset;
                     sector.fillShadow = _this.shadow;
                     sector.lineJoin = 'round';
+                    sector.visible = _this.seriesItemEnabled[index];
                     _this.datumSectorRefs.set(datum, sector);
                 };
                 this.groupSelection
@@ -71354,6 +71441,7 @@ var ChartTheme = /** @class */ (function () {
                 fontSize: 12,
                 fontFamily: this.fontFamily,
                 color: 'rgb(140, 140, 140)',
+                spacing: 30,
             },
             legend: {
                 enabled: true,

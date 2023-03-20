@@ -1012,6 +1012,7 @@ var Chart = /** @class */ (function (_super) {
     };
     Chart.prototype.handlePointer = function (event) {
         var _this = this;
+        var _a;
         var lastPick = this.lastPick;
         var offsetX = event.offsetX, offsetY = event.offsetY;
         var disablePointer = function (highlightOnly) {
@@ -1021,7 +1022,9 @@ var Chart = /** @class */ (function (_super) {
                 _this.disablePointer(highlightOnly);
             }
         };
-        if (!(this.seriesRect && this.seriesRect.containsPoint(offsetX, offsetY))) {
+        var hoverRectPadding = 20;
+        var hoverRect = (_a = this.seriesRect) === null || _a === void 0 ? void 0 : _a.clone().grow(hoverRectPadding).grow(this.seriesAreaPadding);
+        if (!(hoverRect === null || hoverRect === void 0 ? void 0 : hoverRect.containsPoint(offsetX, offsetY))) {
             disablePointer();
             return;
         }

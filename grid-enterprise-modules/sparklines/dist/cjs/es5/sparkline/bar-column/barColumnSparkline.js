@@ -63,6 +63,9 @@ var BarColumnSparkline = /** @class */ (function (_super) {
         _this.nodeSelectionData = [];
         _this.label = new BarColumnLabel();
         _this.rootGroup.append(_this.sparklineGroup);
+        _this.rectGroup.zIndex = sparkline_1.ZINDICIES.SERIES_FILL_ZINDEX;
+        _this.axisLine.zIndex = sparkline_1.ZINDICIES.AXIS_LINE_ZINDEX;
+        _this.labelGroup.zIndex = sparkline_1.ZINDICIES.SERIES_LABEL_ZINDEX;
         _this.sparklineGroup.append([_this.rectGroup, _this.axisLine, _this.labelGroup]);
         _this.axisLine.lineCap = 'round';
         _this.label.enabled = false;
@@ -93,7 +96,7 @@ var BarColumnSparkline = /** @class */ (function (_super) {
         var _b = this, xScale = _b.xScale, paddingInner = _b.paddingInner, paddingOuter = _b.paddingOuter, smallestInterval = _b.smallestInterval;
         // calculate step
         var domainLength = xScale.domain[1] - xScale.domain[0];
-        var intervals = (domainLength / ((_a = smallestInterval === null || smallestInterval === void 0 ? void 0 : smallestInterval.x) !== null && _a !== void 0 ? _a : 1)) + 1;
+        var intervals = domainLength / ((_a = smallestInterval === null || smallestInterval === void 0 ? void 0 : smallestInterval.x) !== null && _a !== void 0 ? _a : 1) + 1;
         // The number of intervals/bands is used to determine the width of individual bands by dividing the available range.
         // Allow a maximum of 50 bands to ensure the step (width of individual bands + padding) does not fall below a certain number of pixels.
         // If the number of intervals exceeds 50, calculate the step for 50 bands within the given range.
@@ -101,7 +104,7 @@ var BarColumnSparkline = /** @class */ (function (_super) {
         var maxBands = 50;
         var bands = Math.min(intervals, maxBands);
         var gaps = bands - 1; // number of gaps (padding between bands)
-        var step = range / Math.max(1, (2 * paddingOuter) + (gaps * paddingInner) + bands); // step width is a combination of band width and gap width
+        var step = range / Math.max(1, 2 * paddingOuter + gaps * paddingInner + bands); // step width is a combination of band width and gap width
         return step;
     };
     BarColumnSparkline.prototype.updateYScaleDomain = function () {

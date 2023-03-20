@@ -30,36 +30,55 @@ export class BBox {
             Math.abs(this.height) === Infinity);
     }
     shrink(amount, position) {
-        switch (position) {
-            case 'top':
-                this.y += amount;
-            // eslint-disable-next-line no-fallthrough
-            case 'bottom':
-                this.height -= amount;
-                break;
-            case 'left':
-                this.x += amount;
-            // eslint-disable-next-line no-fallthrough
-            case 'right':
-                this.width -= amount;
-                break;
-            case 'vertical':
-                this.y += amount;
-                this.height -= amount * 2;
-                break;
-            case 'horizontal':
-                this.x += amount;
-                this.width -= amount * 2;
-                break;
-            default:
-                this.x += amount;
-                this.width -= amount * 2;
-                this.y += amount;
-                this.height -= amount * 2;
+        const apply = (pos, amt) => {
+            switch (pos) {
+                case 'top':
+                    this.y += amt;
+                // eslint-disable-next-line no-fallthrough
+                case 'bottom':
+                    this.height -= amt;
+                    break;
+                case 'left':
+                    this.x += amt;
+                // eslint-disable-next-line no-fallthrough
+                case 'right':
+                    this.width -= amt;
+                    break;
+                case 'vertical':
+                    this.y += amt;
+                    this.height -= amt * 2;
+                    break;
+                case 'horizontal':
+                    this.x += amt;
+                    this.width -= amt * 2;
+                    break;
+                default:
+                    this.x += amt;
+                    this.width -= amt * 2;
+                    this.y += amt;
+                    this.height -= amt * 2;
+            }
+        };
+        if (typeof amount === 'number') {
+            apply(position, amount);
         }
+        else {
+            Object.entries(amount).forEach(([pos, amt]) => apply(pos, amt));
+        }
+        return this;
     }
     grow(amount, position) {
-        this.shrink(-amount, position);
+        if (typeof amount === 'number') {
+            this.shrink(-amount, position);
+        }
+        else {
+            const paddingCopy = Object.assign({}, amount);
+            for (const key in paddingCopy) {
+                paddingCopy[key] *= -1;
+            }
+            this.shrink(paddingCopy);
+        }
+        return this;
     }
     static merge(boxes) {
         let left = Infinity;

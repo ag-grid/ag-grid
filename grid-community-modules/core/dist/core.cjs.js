@@ -11848,6 +11848,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
         _this.filterNameKey = filterNameKey;
         _this.applyActive = false;
         _this.hidePopup = null;
+        _this.debouncePending = false;
         // after the user hits 'apply' the model gets copied to here. this is then the model that we use for
         // all filtering. so if user changes UI but doesn't hit apply, then the UI will be out of sync with this model.
         // this is what we want, as the UI should only become the 'active' filter once it's applied. when apply is
@@ -11949,8 +11950,20 @@ var ProvidedFilter = /** @class */ (function (_super) {
         return 0;
     };
     ProvidedFilter.prototype.setupOnBtApplyDebounce = function () {
+        var _this = this;
         var debounceMs = ProvidedFilter.getDebounceMs(this.providedFilterParams, this.getDefaultDebounceMs());
-        this.onBtApplyDebounce = debounce(this.onBtApply.bind(this), debounceMs);
+        var debounceFunc = debounce(this.checkApplyDebounce.bind(this), debounceMs);
+        this.onBtApplyDebounce = function () {
+            _this.debouncePending = true;
+            debounceFunc();
+        };
+    };
+    ProvidedFilter.prototype.checkApplyDebounce = function () {
+        if (this.debouncePending) {
+            // May already have been applied, so don't apply again (e.g. closing filter before debounce timeout)
+            this.debouncePending = false;
+            this.onBtApply();
+        }
     };
     ProvidedFilter.prototype.getModel = function () {
         return this.appliedModel ? this.appliedModel : null;
@@ -12083,6 +12096,9 @@ var ProvidedFilter = /** @class */ (function (_super) {
             return;
         }
         this.hidePopup = params.hidePopup;
+    };
+    ProvidedFilter.prototype.afterGuiDetached = function () {
+        this.checkApplyDebounce();
     };
     // static, as used by floating filter also
     ProvidedFilter.getDebounceMs = function (params, debounceDefault) {
@@ -13558,6 +13574,7 @@ var SimpleFilter = /** @class */ (function (_super) {
         }
     };
     SimpleFilter.prototype.afterGuiDetached = function () {
+        _super.prototype.afterGuiDetached.call(this);
         var appliedModel = this.getModel();
         if (!this.areModelsEqual(appliedModel, this.getModelFromUi())) {
             this.resetUiToActiveModel(appliedModel);

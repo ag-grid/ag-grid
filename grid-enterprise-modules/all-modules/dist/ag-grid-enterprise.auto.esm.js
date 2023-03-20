@@ -175,7 +175,7 @@ var MD5 = /** @class */ (function () {
     return MD5;
 }());
 
-var __read$18 = (undefined && undefined.__read) || function (o, n) {
+var __read$19 = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -248,7 +248,7 @@ var LicenseManager = /** @class */ (function () {
         var hashStart = cleanedLicenseKey.length - 32;
         var md5 = cleanedLicenseKey.substring(hashStart);
         var license = cleanedLicenseKey.substring(0, hashStart);
-        var _a = __read$18(LicenseManager.extractBracketedInformation(cleanedLicenseKey), 2), version = _a[0], isTrial = _a[1];
+        var _a = __read$19(LicenseManager.extractBracketedInformation(cleanedLicenseKey), 2), version = _a[0], isTrial = _a[1];
         return { md5: md5, license: license, version: version, isTrial: isTrial };
     };
     LicenseManager.prototype.getLicenseDetails = function (licenseKey) {
@@ -1695,7 +1695,7 @@ var __decorate$2s = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$17 = (undefined && undefined.__read) || function (o, n) {
+var __read$18 = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -1712,7 +1712,7 @@ var __read$17 = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$I = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$17(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$18(arguments[i]));
     return ar;
 };
 var __values$B = (undefined && undefined.__values) || function(o) {
@@ -3521,7 +3521,7 @@ var __decorate$2l = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$16 = (undefined && undefined.__read) || function (o, n) {
+var __read$17 = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -3538,7 +3538,7 @@ var __read$16 = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$H = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$16(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$17(arguments[i]));
     return ar;
 };
 var GroupStage = /** @class */ (function (_super) {
@@ -4182,8 +4182,8 @@ var __extends$38 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$L = (undefined && undefined.__assign) || function () {
-    __assign$L = Object.assign || function(t) {
+var __assign$M = (undefined && undefined.__assign) || function () {
+    __assign$M = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -4191,7 +4191,7 @@ var __assign$L = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$L.apply(this, arguments);
+    return __assign$M.apply(this, arguments);
 };
 var __decorate$2k = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -4199,7 +4199,7 @@ var __decorate$2k = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$15 = (undefined && undefined.__read) || function (o, n) {
+var __read$16 = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -4216,7 +4216,7 @@ var __read$15 = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$G = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$15(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$16(arguments[i]));
     return ar;
 };
 var PivotColDefService = /** @class */ (function (_super) {
@@ -4273,7 +4273,7 @@ var PivotColDefService = /** @class */ (function (_super) {
             var leafCols_1 = [];
             _.iterateObject(uniqueValue, function (key) {
                 var newPivotKeys = __spread$G(pivotKeys, [key]);
-                leafCols_1.push(__assign$L(__assign$L({}, _this.createColDef(measureColumns[0], key, newPivotKeys)), { columnGroupShow: 'open' }));
+                leafCols_1.push(__assign$M(__assign$M({}, _this.createColDef(measureColumns[0], key, newPivotKeys)), { columnGroupShow: 'open' }));
             });
             leafCols_1.sort(comparator);
             return leafCols_1;
@@ -4304,7 +4304,7 @@ var PivotColDefService = /** @class */ (function (_super) {
         }
         return measureColumns.map(function (measureCol) {
             var columnName = _this.columnModel.getDisplayNameForColumn(measureCol, 'header');
-            return __assign$L(__assign$L({}, _this.createColDef(measureCol, columnName, pivotKeys)), { columnGroupShow: 'open' });
+            return __assign$M(__assign$M({}, _this.createColDef(measureCol, columnName, pivotKeys)), { columnGroupShow: 'open' });
         });
     };
     PivotColDefService.prototype.addExpandablePivotGroups = function (pivotColumnGroupDefs, pivotColumnDefs) {
@@ -5310,7 +5310,7 @@ var __decorate$2g = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __read$14 = (undefined && undefined.__read) || function (o, n) {
+var __read$15 = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -5327,7 +5327,7 @@ var __read$14 = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$F = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$14(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$15(arguments[i]));
     return ar;
 };
 var BaseDropZonePanel = /** @class */ (function (_super) {
@@ -6760,8 +6760,8 @@ var __extends$2X = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$K = (undefined && undefined.__assign) || function () {
-    __assign$K = Object.assign || function(t) {
+var __assign$L = (undefined && undefined.__assign) || function () {
+    __assign$L = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -6769,7 +6769,7 @@ var __assign$K = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$K.apply(this, arguments);
+    return __assign$L.apply(this, arguments);
 };
 var __decorate$27 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -6808,7 +6808,7 @@ var ColumnToolPanel = /** @class */ (function (_super) {
             api: this.gridApi,
             columnApi: this.columnApi,
         };
-        this.params = __assign$K(__assign$K(__assign$K({}, defaultParams), params), { context: this.gridOptionsService.context });
+        this.params = __assign$L(__assign$L(__assign$L({}, defaultParams), params), { context: this.gridOptionsService.context });
         if (this.isRowGroupingModuleLoaded() && !this.params.suppressPivotMode) {
             // DO NOT CHANGE TO createManagedBean
             this.pivotModePanel = this.createBean(new PivotModePanel());
@@ -8625,8 +8625,8 @@ var __extends$2Q = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$J = (undefined && undefined.__assign) || function () {
-    __assign$J = Object.assign || function(t) {
+var __assign$K = (undefined && undefined.__assign) || function () {
+    __assign$K = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -8634,9 +8634,9 @@ var __assign$J = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$J.apply(this, arguments);
+    return __assign$K.apply(this, arguments);
 };
-var __read$13 = (undefined && undefined.__read) || function (o, n) {
+var __read$14 = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -8653,7 +8653,7 @@ var __read$13 = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$E = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$13(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$14(arguments[i]));
     return ar;
 };
 var BaseExcelSerializingSession = /** @class */ (function (_super) {
@@ -8680,7 +8680,7 @@ var BaseExcelSerializingSession = /** @class */ (function (_super) {
                 cells: (row.cells || []).map(function (cell, idx) {
                     var _a;
                     var image = _this.addImage(rowLen, _this.columnsToExport[idx], (_a = cell.data) === null || _a === void 0 ? void 0 : _a.value);
-                    var ret = __assign$J({}, cell);
+                    var ret = __assign$K({}, cell);
                     if (image) {
                         ret.data = {};
                         if (image.value != null) {
@@ -8714,7 +8714,7 @@ var BaseExcelSerializingSession = /** @class */ (function (_super) {
         return {
             onColumn: function (columnGroup, header, index, span, collapsibleRanges) {
                 var styleIds = _this.config.styleLinker({ rowType: RowType.HEADER_GROUPING, rowIndex: 1, value: "grouping-" + header, columnGroup: columnGroup });
-                currentCells.push(__assign$J(__assign$J({}, _this.createMergedCell(_this.getStyleId(styleIds), _this.getDataTypeForValue('string'), header, span)), { collapsibleRanges: collapsibleRanges }));
+                currentCells.push(__assign$K(__assign$K({}, _this.createMergedCell(_this.getStyleId(styleIds), _this.getDataTypeForValue('string'), header, span)), { collapsibleRanges: collapsibleRanges }));
             }
         };
     };
@@ -9027,7 +9027,7 @@ var contentTypeFactory = {
     }
 };
 
-var __read$12 = (undefined && undefined.__read) || function (o, n) {
+var __read$13 = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -9044,7 +9044,7 @@ var __read$12 = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$D = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$12(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$13(arguments[i]));
     return ar;
 };
 var contentTypesFactory = {
@@ -9418,7 +9418,7 @@ var drawingFactory = {
     }
 };
 
-var __read$11 = (undefined && undefined.__read) || function (o, n) {
+var __read$12 = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -9435,7 +9435,7 @@ var __read$11 = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var getColorChildren = function (props) {
-    var _a = __read$11(props, 4), type = _a[0], innerType = _a[1], val = _a[2], lastClr = _a[3];
+    var _a = __read$12(props, 4), type = _a[0], innerType = _a[1], val = _a[2], lastClr = _a[3];
     return {
         name: "a:" + type,
         children: [{
@@ -9476,7 +9476,7 @@ var colorScheme = {
     }
 };
 
-var __read$10 = (undefined && undefined.__read) || function (o, n) {
+var __read$11 = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -9493,7 +9493,7 @@ var __read$10 = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var getFont$1 = function (props) {
-    var _a = __read$10(props, 4), type = _a[0], typeface = _a[1], script = _a[2], panose = _a[3];
+    var _a = __read$11(props, 4), type = _a[0], typeface = _a[1], script = _a[2], panose = _a[3];
     return {
         name: "a:" + type,
         properties: {
@@ -9628,7 +9628,7 @@ var fontScheme = {
     }
 };
 
-var __read$$ = (undefined && undefined.__read) || function (o, n) {
+var __read$10 = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -9654,7 +9654,7 @@ var getPropertyVal = function (name, val, children) { return ({
     children: children
 }); };
 var getGs = function (props) {
-    var _a = __read$$(props, 6), pos = _a[0], schemeColor = _a[1], satMod = _a[2], lumMod = _a[3], tint = _a[4], shade = _a[5];
+    var _a = __read$10(props, 6), pos = _a[0], schemeColor = _a[1], satMod = _a[2], lumMod = _a[3], tint = _a[4], shade = _a[5];
     var children = [];
     children.push(getPropertyVal('satMod', satMod));
     if (lumMod) {
@@ -9689,8 +9689,8 @@ var getSolidFill = function (val, children) { return ({
     children: [getPropertyVal('schemeClr', val, children)]
 }); };
 var getGradFill = function (props) {
-    var _a = __read$$(props, 5), rotWithShape = _a[0], gs1 = _a[1], gs2 = _a[2], gs3 = _a[3], lin = _a[4];
-    var _b = __read$$(lin, 2), ang = _b[0], scaled = _b[1];
+    var _a = __read$10(props, 5), rotWithShape = _a[0], gs1 = _a[1], gs2 = _a[2], gs3 = _a[3], lin = _a[4];
+    var _b = __read$10(lin, 2), ang = _b[0], scaled = _b[1];
     return {
         name: 'a:gradFill',
         properties: {
@@ -9717,7 +9717,7 @@ var getGradFill = function (props) {
     };
 };
 var getLine = function (props) {
-    var _a = __read$$(props, 4), w = _a[0], cap = _a[1], cmpd = _a[2], algn = _a[3];
+    var _a = __read$10(props, 4), w = _a[0], cap = _a[1], cmpd = _a[2], algn = _a[3];
     return {
         name: 'a:ln',
         properties: {
@@ -9740,7 +9740,7 @@ var getLine = function (props) {
 var getEffectStyle = function (shadow) {
     var children = [];
     if (shadow) {
-        var _a = __read$$(shadow, 5), blurRad = _a[0], dist = _a[1], dir = _a[2], algn = _a[3], rotWithShape = _a[4];
+        var _a = __read$10(shadow, 5), blurRad = _a[0], dist = _a[1], dir = _a[2], algn = _a[3], rotWithShape = _a[4];
         children.push({
             name: 'a:outerShdw',
             properties: {
@@ -10340,8 +10340,8 @@ var cellStylesFactory = {
     }
 };
 
-var __assign$I = (undefined && undefined.__assign) || function () {
-    __assign$I = Object.assign || function(t) {
+var __assign$J = (undefined && undefined.__assign) || function () {
+    __assign$J = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -10349,7 +10349,7 @@ var __assign$I = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$I.apply(this, arguments);
+    return __assign$J.apply(this, arguments);
 };
 var stylesMap;
 var registeredNumberFmts;
@@ -10573,7 +10573,7 @@ var registerStyle = function (config) {
 var stylesheetFactory = {
     getTemplate: function (defaultFontSize) {
         var numberFormats = numberFormatsFactory.getTemplate(registeredNumberFmts);
-        var fonts = fontsFactory.getTemplate(registeredFonts.map(function (font) { return (__assign$I(__assign$I({}, font), { size: font.size != null ? font.size : defaultFontSize })); }));
+        var fonts = fontsFactory.getTemplate(registeredFonts.map(function (font) { return (__assign$J(__assign$J({}, font), { size: font.size != null ? font.size : defaultFontSize })); }));
         var fills = fillsFactory.getTemplate(registeredFills);
         var borders = bordersFactory.getTemplate(registeredBorders);
         var cellStylesXfs = cellStylesXfsFactory.getTemplate(registeredCellStyleXfs);
@@ -10753,7 +10753,7 @@ var cellFactory = {
     }
 };
 
-var __read$_ = (undefined && undefined.__read) || function (o, n) {
+var __read$$ = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -10770,7 +10770,7 @@ var __read$_ = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$C = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$_(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$$(arguments[i]));
     return ar;
 };
 var addEmptyCells = function (cells, rowIdx) {
@@ -11199,7 +11199,7 @@ var relationshipsFactory = {
     }
 };
 
-var __read$Z = (undefined && undefined.__read) || function (o, n) {
+var __read$_ = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
     var i = m.call(o), r, ar = [], e;
@@ -11216,7 +11216,7 @@ var __read$Z = (undefined && undefined.__read) || function (o, n) {
     return ar;
 };
 var __spread$B = (undefined && undefined.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$Z(arguments[i]));
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$_(arguments[i]));
     return ar;
 };
 /**
@@ -11529,8 +11529,8 @@ var __extends$2N = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$H = (undefined && undefined.__assign) || function () {
-    __assign$H = Object.assign || function(t) {
+var __assign$I = (undefined && undefined.__assign) || function () {
+    __assign$I = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -11538,7 +11538,7 @@ var __assign$H = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$H.apply(this, arguments);
+    return __assign$I.apply(this, arguments);
 };
 var __decorate$1$ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -11702,7 +11702,7 @@ var ExcelCreator = /** @class */ (function (_super) {
         if (params.sheetName != null) {
             sheetName = _.utf8_encode(params.sheetName.toString().substr(0, 31));
         }
-        var config = __assign$H(__assign$H({}, params), { sheetName: sheetName,
+        var config = __assign$I(__assign$I({}, params), { sheetName: sheetName,
             columnModel: columnModel,
             valueService: valueService,
             gridOptionsService: gridOptionsService, headerRowHeight: params.headerRowHeight || params.rowHeight, baseExcelStyles: this.gridOptionsService.get('excelStyles') || [], styleLinker: this.styleLinker.bind(this) });
@@ -12712,8 +12712,8 @@ var __extends$2I = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$G = (undefined && undefined.__assign) || function () {
-    __assign$G = Object.assign || function(t) {
+var __assign$H = (undefined && undefined.__assign) || function () {
+    __assign$H = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -12721,7 +12721,7 @@ var __assign$G = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$G.apply(this, arguments);
+    return __assign$H.apply(this, arguments);
 };
 var __decorate$1W = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -12751,7 +12751,7 @@ var FiltersToolPanel = /** @class */ (function (_super) {
             api: this.gridApi,
             columnApi: this.columnApi,
         };
-        this.params = __assign$G(__assign$G(__assign$G({}, defaultParams), params), { context: this.gridOptionsService.context });
+        this.params = __assign$H(__assign$H(__assign$H({}, defaultParams), params), { context: this.gridOptionsService.context });
         this.filtersToolPanelHeaderPanel.init(this.params);
         this.filtersToolPanelListPanel.init(this.params);
         var hideExpand = this.params.suppressExpandAll;
@@ -13501,6 +13501,33 @@ var HdpiCanvas = /** @class */ (function () {
 // rather than become enticed by the much slower:
 // `ctx.strokeRect(...bbox);`
 // https://jsperf.com/array-vs-object-create-access
+var __assign$G = (undefined && undefined.__assign) || function () {
+    __assign$G = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign$G.apply(this, arguments);
+};
+var __read$Z = (undefined && undefined.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 var BBox = /** @class */ (function () {
     function BBox(x, y, width, height) {
         this.x = x;
@@ -13525,36 +13552,59 @@ var BBox = /** @class */ (function () {
             Math.abs(this.height) === Infinity);
     };
     BBox.prototype.shrink = function (amount, position) {
-        switch (position) {
-            case 'top':
-                this.y += amount;
-            // eslint-disable-next-line no-fallthrough
-            case 'bottom':
-                this.height -= amount;
-                break;
-            case 'left':
-                this.x += amount;
-            // eslint-disable-next-line no-fallthrough
-            case 'right':
-                this.width -= amount;
-                break;
-            case 'vertical':
-                this.y += amount;
-                this.height -= amount * 2;
-                break;
-            case 'horizontal':
-                this.x += amount;
-                this.width -= amount * 2;
-                break;
-            default:
-                this.x += amount;
-                this.width -= amount * 2;
-                this.y += amount;
-                this.height -= amount * 2;
+        var _this = this;
+        var apply = function (pos, amt) {
+            switch (pos) {
+                case 'top':
+                    _this.y += amt;
+                // eslint-disable-next-line no-fallthrough
+                case 'bottom':
+                    _this.height -= amt;
+                    break;
+                case 'left':
+                    _this.x += amt;
+                // eslint-disable-next-line no-fallthrough
+                case 'right':
+                    _this.width -= amt;
+                    break;
+                case 'vertical':
+                    _this.y += amt;
+                    _this.height -= amt * 2;
+                    break;
+                case 'horizontal':
+                    _this.x += amt;
+                    _this.width -= amt * 2;
+                    break;
+                default:
+                    _this.x += amt;
+                    _this.width -= amt * 2;
+                    _this.y += amt;
+                    _this.height -= amt * 2;
+            }
+        };
+        if (typeof amount === 'number') {
+            apply(position, amount);
         }
+        else {
+            Object.entries(amount).forEach(function (_a) {
+                var _b = __read$Z(_a, 2), pos = _b[0], amt = _b[1];
+                return apply(pos, amt);
+            });
+        }
+        return this;
     };
     BBox.prototype.grow = function (amount, position) {
-        this.shrink(-amount, position);
+        if (typeof amount === 'number') {
+            this.shrink(-amount, position);
+        }
+        else {
+            var paddingCopy = __assign$G({}, amount);
+            for (var key in paddingCopy) {
+                paddingCopy[key] *= -1;
+            }
+            this.shrink(paddingCopy);
+        }
+        return this;
     };
     BBox.merge = function (boxes) {
         var left = Infinity;
@@ -16697,6 +16747,7 @@ var ContinuousScale = /** @class */ (function () {
         return false;
     };
     ContinuousScale.defaultTickCount = 5;
+    ContinuousScale.defaultMaxTickCount = 6;
     return ContinuousScale;
 }());
 
@@ -20427,7 +20478,7 @@ var Axis = /** @class */ (function () {
         var min = Math.min.apply(Math, __spread$t(requestedRange));
         var max = Math.max.apply(Math, __spread$t(requestedRange));
         var availableRange = max - min;
-        var defaultMinSpacing = Math.max(Axis.defaultTickMinSpacing, availableRange / ContinuousScale.defaultTickCount);
+        var defaultMinSpacing = Math.max(Axis.defaultTickMinSpacing, availableRange / ContinuousScale.defaultMaxTickCount);
         if (isNaN(minSpacing) && isNaN(maxSpacing)) {
             minSpacing = defaultMinSpacing;
             maxSpacing = availableRange;
@@ -20452,7 +20503,7 @@ var Axis = /** @class */ (function () {
         }
         var maxTickCount = Math.max(1, Math.floor(availableRange / minSpacing));
         var minTickCount = Math.min(maxTickCount, Math.ceil(availableRange / maxSpacing));
-        var defaultTickCount = Math.max(1, Math.floor(availableRange / defaultMinSpacing));
+        var defaultTickCount = ContinuousScale.defaultTickCount;
         if (defaultTickCount > maxTickCount) {
             defaultTickCount = maxTickCount;
         }
@@ -20887,15 +20938,16 @@ var LinearScale$1 = /** @class */ (function (_super) {
         var prev1 = stop;
         for (var i = 0; i < maxAttempts; i++) {
             var step = (_b = this.interval) !== null && _b !== void 0 ? _b : tickStep(start, stop, count, this.minTickCount, this.maxTickCount);
+            var _d = __read$N(this.domain, 2), d0 = _d[0], d1 = _d[1];
             if (step >= 1) {
-                start = Math.floor(start / step) * step;
-                stop = Math.ceil(stop / step) * step;
+                start = Math.floor(d0 / step) * step;
+                stop = Math.ceil(d1 / step) * step;
             }
             else {
                 // Prevent floating point error
                 var s = 1 / step;
-                start = Math.floor(start * s) / s;
-                stop = Math.ceil(stop * s) / s;
+                start = Math.floor(d0 * s) / s;
+                stop = Math.ceil(d1 * s) / s;
             }
             if (start === prev0 && stop === prev1) {
                 break;
@@ -23943,11 +23995,16 @@ var Legend = /** @class */ (function () {
     };
     Legend.prototype.checkLegendDoubleClick = function (event) {
         var _a = this, legendItemDoubleClick = _a.listeners.legendItemDoubleClick, chart = _a.chart, toggleSeriesVisible = _a.item.toggleSeriesVisible;
+        // Integrated charts do not handle double click behaviour correctly due to multiple instances of the
+        // chart being created. See https://ag-grid.atlassian.net/browse/RTI-1381
+        if (chart.mode === 'integrated') {
+            return;
+        }
         var datum = this.getDatumForPoint(event.offsetX, event.offsetY);
         if (!datum) {
             return;
         }
-        var id = datum.id, itemId = datum.itemId;
+        var id = datum.id, itemId = datum.itemId, seriesId = datum.seriesId;
         var series = chart.series.find(function (s) { return s.id === id; });
         if (!series) {
             return;
@@ -23956,12 +24013,12 @@ var Legend = /** @class */ (function () {
         if (toggleSeriesVisible) {
             var legendData = chart.series.reduce(function (ls, s) { return __spread$q(ls, s.getLegendData()); }, []);
             var visibleItemsCount_1 = legendData.filter(function (d) { return d.enabled; }).length;
-            var clickedItem_1 = legendData.find(function (d) { return d.itemId === itemId; });
+            var clickedItem_1 = legendData.find(function (d) { return d.itemId === itemId && d.seriesId === seriesId; });
             chart.series.forEach(function (s) {
                 var legendData = s.getLegendData();
                 legendData.forEach(function (d) {
                     var _a;
-                    var wasClicked = d.itemId === itemId;
+                    var wasClicked = d.itemId === itemId && d.seriesId === seriesId;
                     var singleSelectedWasNotClicked = visibleItemsCount_1 === 1 && ((_a = clickedItem_1 === null || clickedItem_1 === void 0 ? void 0 : clickedItem_1.enabled) !== null && _a !== void 0 ? _a : false);
                     var newEnabled = wasClicked || singleSelectedWasNotClicked;
                     s.toggleSeriesItem(d.itemId, newEnabled);
@@ -27779,6 +27836,7 @@ var Chart = /** @class */ (function (_super) {
     };
     Chart.prototype.handlePointer = function (event) {
         var _this = this;
+        var _a;
         var lastPick = this.lastPick;
         var offsetX = event.offsetX, offsetY = event.offsetY;
         var disablePointer = function (highlightOnly) {
@@ -27788,7 +27846,9 @@ var Chart = /** @class */ (function (_super) {
                 _this.disablePointer(highlightOnly);
             }
         };
-        if (!(this.seriesRect && this.seriesRect.containsPoint(offsetX, offsetY))) {
+        var hoverRectPadding = 20;
+        var hoverRect = (_a = this.seriesRect) === null || _a === void 0 ? void 0 : _a.clone().grow(hoverRectPadding).grow(this.seriesAreaPadding);
+        if (!(hoverRect === null || hoverRect === void 0 ? void 0 : hoverRect.containsPoint(offsetX, offsetY))) {
             disablePointer();
             return;
         }
@@ -33453,16 +33513,22 @@ var Sector = /** @class */ (function (_super) {
         var centerX = this.centerX;
         var centerY = this.centerY;
         path.clear();
-        if (!fullPie) {
-            path.moveTo(centerX + innerRadius * Math.cos(startAngle), centerY + innerRadius * Math.sin(startAngle));
-            path.lineTo(centerX + outerRadius * Math.cos(startAngle), centerY + outerRadius * Math.sin(startAngle));
-        }
-        path.arc(centerX, centerY, outerRadius, startAngle, endAngle);
-        if (innerRadius > 0) {
-            path.arc(centerX, centerY, innerRadius, endAngle, startAngle, true);
+        if (fullPie) {
+            path.arc(centerX, centerY, outerRadius, startAngle, endAngle);
+            if (innerRadius > 0) {
+                path.moveTo(centerX + innerRadius * Math.cos(endAngle), centerY + innerRadius * Math.sin(endAngle));
+                path.arc(centerX, centerY, innerRadius, endAngle, startAngle, true);
+            }
         }
         else {
-            path.lineTo(centerX, centerY);
+            path.moveTo(centerX + innerRadius * Math.cos(startAngle), centerY + innerRadius * Math.sin(startAngle));
+            path.arc(centerX, centerY, outerRadius, startAngle, endAngle);
+            if (innerRadius > 0) {
+                path.arc(centerX, centerY, innerRadius, endAngle, startAngle, true);
+            }
+            else {
+                path.lineTo(centerX, centerY);
+            }
         }
         path.closePath();
         this.dirtyPath = false;
@@ -33484,6 +33550,9 @@ var Sector = /** @class */ (function (_super) {
         if (startAngle > endAngle) {
             // Sector passes through 0-angle.
             return startAngle < angle || endAngle > angle;
+        }
+        if (startAngle === endAngle) {
+            return true;
         }
         return startAngle < angle && endAngle > angle;
     };
@@ -34261,6 +34330,7 @@ var PieSeries = /** @class */ (function (_super) {
                     sector.lineDashOffset = _this.lineDashOffset;
                     sector.fillShadow = _this.shadow;
                     sector.lineJoin = 'round';
+                    sector.visible = _this.seriesItemEnabled[index];
                     _this.datumSectorRefs.set(datum, sector);
                 };
                 this.groupSelection
@@ -36033,6 +36103,7 @@ var ChartTheme = /** @class */ (function () {
                 fontSize: 12,
                 fontFamily: this.fontFamily,
                 color: 'rgb(140, 140, 140)',
+                spacing: 30,
             },
             legend: {
                 enabled: true,
@@ -54797,8 +54868,34 @@ var LazyCache = /** @class */ (function (_super) {
             // not enough rows to bother clearing any
             return;
         }
+        var disposableNodesNotInViewport = disposableNodes.filter(function (_a) {
+            var _b = __read$6(_a, 2); _b[0]; var node = _b[1];
+            var startRowNum = node.rowIndex;
+            if (!startRowNum) {
+                // row is not displayed and can be disposed
+                return true;
+            }
+            if (firstRowInViewport <= startRowNum && startRowNum <= lastRowInViewport) {
+                // start row in viewport, block is in viewport
+                return false;
+            }
+            var lastRowNum = startRowNum + blockSize;
+            if (firstRowInViewport <= lastRowNum && lastRowNum <= lastRowInViewport) {
+                // end row in viewport, block is in viewport
+                return false;
+            }
+            if (startRowNum < firstRowInViewport && lastRowNum > lastRowInViewport) {
+                // full block surrounds in viewport
+                return false;
+            }
+            // block does not appear in viewport and can be disposed
+            return true;
+        });
+        if (!disposableNodesNotInViewport.length) {
+            return;
+        }
         var midViewportRow = firstRowInViewport + ((lastRowInViewport - firstRowInViewport) / 2);
-        var blockDistanceArray = this.getBlocksDistanceFromRow(disposableNodes, midViewportRow);
+        var blockDistanceArray = this.getBlocksDistanceFromRow(disposableNodesNotInViewport, midViewportRow);
         var blockSize = this.rowLoader.getBlockSize();
         var numberOfBlocksToRetain = Math.ceil(numberOfRowsToRetain / blockSize);
         if (blockDistanceArray.length <= numberOfBlocksToRetain) {
@@ -59824,6 +59921,7 @@ var SetFilter = /** @class */ (function (_super) {
     };
     SetFilter.prototype.afterGuiDetached = function () {
         var _a, _b;
+        _super.prototype.afterGuiDetached.call(this);
         // discard any unapplied UI state (reset to model)
         if ((_a = this.setFilterParams) === null || _a === void 0 ? void 0 : _a.excelMode) {
             this.resetMiniFilter();
@@ -61517,6 +61615,18 @@ var __values = (undefined && undefined.__values) || function(o) {
 };
 var extent$3 = extent$4, isNumber$3 = isNumber$4, isString = isString$1, isStringObject = isStringObject$1, isDate = isDate$1, createId = createId$1, Padding = Padding$1;
 var LinearScale = LinearScale$1, BandScale$4 = BandScale$5, TimeScale = TimeScale$1;
+/**
+ * Constants to declare the expected nominal zIndex for nodes in a sparkline rendering.
+ */
+var ZINDICIES;
+(function (ZINDICIES) {
+    ZINDICIES[ZINDICIES["SERIES_FILL_ZINDEX"] = 50] = "SERIES_FILL_ZINDEX";
+    ZINDICIES[ZINDICIES["AXIS_LINE_ZINDEX"] = 500] = "AXIS_LINE_ZINDEX";
+    ZINDICIES[ZINDICIES["SERIES_STROKE_ZINDEX"] = 1000] = "SERIES_STROKE_ZINDEX";
+    ZINDICIES[ZINDICIES["SERIES_LABEL_ZINDEX"] = 1500] = "SERIES_LABEL_ZINDEX";
+    ZINDICIES[ZINDICIES["CROSSHAIR_ZINDEX"] = 2000] = "CROSSHAIR_ZINDEX";
+    ZINDICIES[ZINDICIES["SERIES_MARKERS_ZINDEX"] = 2500] = "SERIES_MARKERS_ZINDEX";
+})(ZINDICIES || (ZINDICIES = {}));
 var SparklineAxis = /** @class */ (function () {
     function SparklineAxis() {
         this.type = 'category';
@@ -62311,6 +62421,12 @@ var AreaSparkline = /** @class */ (function (_super) {
         _this.line = new SparklineLine$1();
         _this.crosshairs = new SparklineCrosshairs$1();
         _this.rootGroup.append(_this.areaSparklineGroup);
+        _this.xAxisLine.zIndex = ZINDICIES.AXIS_LINE_ZINDEX;
+        _this.fillPath.zIndex = ZINDICIES.SERIES_FILL_ZINDEX;
+        _this.strokePath.zIndex = ZINDICIES.SERIES_STROKE_ZINDEX;
+        _this.xCrosshairLine.zIndex = ZINDICIES.CROSSHAIR_ZINDEX;
+        _this.yCrosshairLine.zIndex = ZINDICIES.CROSSHAIR_ZINDEX;
+        _this.markers.zIndex = ZINDICIES.SERIES_MARKERS_ZINDEX;
         _this.areaSparklineGroup.append([
             _this.fillPath,
             _this.xAxisLine,
@@ -62659,6 +62775,10 @@ var LineSparkline = /** @class */ (function (_super) {
         _this.line = new SparklineLine();
         _this.crosshairs = new SparklineCrosshairs();
         _this.rootGroup.append(_this.lineSparklineGroup);
+        _this.linePath.zIndex = ZINDICIES.SERIES_STROKE_ZINDEX;
+        _this.xCrosshairLine.zIndex = ZINDICIES.CROSSHAIR_ZINDEX;
+        _this.yCrosshairLine.zIndex = ZINDICIES.CROSSHAIR_ZINDEX;
+        _this.markers.zIndex = ZINDICIES.SERIES_MARKERS_ZINDEX;
         _this.lineSparklineGroup.append([_this.linePath, _this.xCrosshairLine, _this.yCrosshairLine, _this.markers]);
         return _this;
     }
@@ -62939,6 +63059,9 @@ var BarColumnSparkline = /** @class */ (function (_super) {
         _this.nodeSelectionData = [];
         _this.label = new BarColumnLabel();
         _this.rootGroup.append(_this.sparklineGroup);
+        _this.rectGroup.zIndex = ZINDICIES.SERIES_FILL_ZINDEX;
+        _this.axisLine.zIndex = ZINDICIES.AXIS_LINE_ZINDEX;
+        _this.labelGroup.zIndex = ZINDICIES.SERIES_LABEL_ZINDEX;
         _this.sparklineGroup.append([_this.rectGroup, _this.axisLine, _this.labelGroup]);
         _this.axisLine.lineCap = 'round';
         _this.label.enabled = false;
@@ -62969,7 +63092,7 @@ var BarColumnSparkline = /** @class */ (function (_super) {
         var _b = this, xScale = _b.xScale, paddingInner = _b.paddingInner, paddingOuter = _b.paddingOuter, smallestInterval = _b.smallestInterval;
         // calculate step
         var domainLength = xScale.domain[1] - xScale.domain[0];
-        var intervals = (domainLength / ((_a = smallestInterval === null || smallestInterval === void 0 ? void 0 : smallestInterval.x) !== null && _a !== void 0 ? _a : 1)) + 1;
+        var intervals = domainLength / ((_a = smallestInterval === null || smallestInterval === void 0 ? void 0 : smallestInterval.x) !== null && _a !== void 0 ? _a : 1) + 1;
         // The number of intervals/bands is used to determine the width of individual bands by dividing the available range.
         // Allow a maximum of 50 bands to ensure the step (width of individual bands + padding) does not fall below a certain number of pixels.
         // If the number of intervals exceeds 50, calculate the step for 50 bands within the given range.
@@ -62977,7 +63100,7 @@ var BarColumnSparkline = /** @class */ (function (_super) {
         var maxBands = 50;
         var bands = Math.min(intervals, maxBands);
         var gaps = bands - 1; // number of gaps (padding between bands)
-        var step = range / Math.max(1, (2 * paddingOuter) + (gaps * paddingInner) + bands); // step width is a combination of band width and gap width
+        var step = range / Math.max(1, 2 * paddingOuter + gaps * paddingInner + bands); // step width is a combination of band width and gap width
         return step;
     };
     BarColumnSparkline.prototype.updateYScaleDomain = function () {

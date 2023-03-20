@@ -463,6 +463,7 @@ class SimpleFilter extends providedFilter_1.ProvidedFilter {
         }
     }
     afterGuiDetached() {
+        super.afterGuiDetached();
         const appliedModel = this.getModel();
         if (!this.areModelsEqual(appliedModel, this.getModelFromUi())) {
             this.resetUiToActiveModel(appliedModel);

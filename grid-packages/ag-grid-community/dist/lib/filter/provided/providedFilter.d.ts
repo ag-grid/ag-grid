@@ -74,6 +74,7 @@ export declare abstract class ProvidedFilter<M, V> extends Component implements 
     private applyActive;
     private hidePopup;
     private onBtApplyDebounce;
+    private debouncePending;
     private appliedModel;
     private positionableFeature;
     protected readonly rowModel: IRowModel;
@@ -100,6 +101,7 @@ export declare abstract class ProvidedFilter<M, V> extends Component implements 
     private createButtonPanel;
     protected getDefaultDebounceMs(): number;
     private setupOnBtApplyDebounce;
+    private checkApplyDebounce;
     getModel(): M | null;
     setModel(model: M | null): AgPromise<void>;
     private onBtCancel;
@@ -122,6 +124,7 @@ export declare abstract class ProvidedFilter<M, V> extends Component implements 
      */
     protected onUiChanged(fromFloatingFilter?: boolean, apply?: 'immediately' | 'debounce' | 'prevent'): void;
     afterGuiAttached(params?: IAfterGuiAttachedParams): void;
+    afterGuiDetached(): void;
     static getDebounceMs(params: ProvidedFilterParams, debounceDefault: number): number;
     static isUseApplyButton(params: ProvidedFilterParams): boolean;
     destroy(): void;

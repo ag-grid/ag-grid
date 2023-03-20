@@ -1,10 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Sparkline = exports.SparklineAxis = void 0;
+exports.Sparkline = exports.SparklineAxis = exports.ZINDICIES = void 0;
 const ag_charts_community_1 = require("ag-charts-community");
 const defaultTooltipCss_1 = require("./tooltip/defaultTooltipCss");
 const { extent, isNumber, isString, isStringObject, isDate, createId, Padding } = ag_charts_community_1._Util;
 const { LinearScale, BandScale, TimeScale } = ag_charts_community_1._Scale;
+/**
+ * Constants to declare the expected nominal zIndex for nodes in a sparkline rendering.
+ */
+var ZINDICIES;
+(function (ZINDICIES) {
+    ZINDICIES[ZINDICIES["SERIES_FILL_ZINDEX"] = 50] = "SERIES_FILL_ZINDEX";
+    ZINDICIES[ZINDICIES["AXIS_LINE_ZINDEX"] = 500] = "AXIS_LINE_ZINDEX";
+    ZINDICIES[ZINDICIES["SERIES_STROKE_ZINDEX"] = 1000] = "SERIES_STROKE_ZINDEX";
+    ZINDICIES[ZINDICIES["SERIES_LABEL_ZINDEX"] = 1500] = "SERIES_LABEL_ZINDEX";
+    ZINDICIES[ZINDICIES["CROSSHAIR_ZINDEX"] = 2000] = "CROSSHAIR_ZINDEX";
+    ZINDICIES[ZINDICIES["SERIES_MARKERS_ZINDEX"] = 2500] = "SERIES_MARKERS_ZINDEX";
+})(ZINDICIES = exports.ZINDICIES || (exports.ZINDICIES = {}));
 class SparklineAxis {
     constructor() {
         this.type = 'category';

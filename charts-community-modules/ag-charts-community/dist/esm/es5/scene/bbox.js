@@ -6,6 +6,33 @@
 // rather than become enticed by the much slower:
 // `ctx.strokeRect(...bbox);`
 // https://jsperf.com/array-vs-object-create-access
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 var BBox = /** @class */ (function () {
     function BBox(x, y, width, height) {
         this.x = x;
@@ -30,36 +57,59 @@ var BBox = /** @class */ (function () {
             Math.abs(this.height) === Infinity);
     };
     BBox.prototype.shrink = function (amount, position) {
-        switch (position) {
-            case 'top':
-                this.y += amount;
-            // eslint-disable-next-line no-fallthrough
-            case 'bottom':
-                this.height -= amount;
-                break;
-            case 'left':
-                this.x += amount;
-            // eslint-disable-next-line no-fallthrough
-            case 'right':
-                this.width -= amount;
-                break;
-            case 'vertical':
-                this.y += amount;
-                this.height -= amount * 2;
-                break;
-            case 'horizontal':
-                this.x += amount;
-                this.width -= amount * 2;
-                break;
-            default:
-                this.x += amount;
-                this.width -= amount * 2;
-                this.y += amount;
-                this.height -= amount * 2;
+        var _this = this;
+        var apply = function (pos, amt) {
+            switch (pos) {
+                case 'top':
+                    _this.y += amt;
+                // eslint-disable-next-line no-fallthrough
+                case 'bottom':
+                    _this.height -= amt;
+                    break;
+                case 'left':
+                    _this.x += amt;
+                // eslint-disable-next-line no-fallthrough
+                case 'right':
+                    _this.width -= amt;
+                    break;
+                case 'vertical':
+                    _this.y += amt;
+                    _this.height -= amt * 2;
+                    break;
+                case 'horizontal':
+                    _this.x += amt;
+                    _this.width -= amt * 2;
+                    break;
+                default:
+                    _this.x += amt;
+                    _this.width -= amt * 2;
+                    _this.y += amt;
+                    _this.height -= amt * 2;
+            }
+        };
+        if (typeof amount === 'number') {
+            apply(position, amount);
         }
+        else {
+            Object.entries(amount).forEach(function (_a) {
+                var _b = __read(_a, 2), pos = _b[0], amt = _b[1];
+                return apply(pos, amt);
+            });
+        }
+        return this;
     };
     BBox.prototype.grow = function (amount, position) {
-        this.shrink(-amount, position);
+        if (typeof amount === 'number') {
+            this.shrink(-amount, position);
+        }
+        else {
+            var paddingCopy = __assign({}, amount);
+            for (var key in paddingCopy) {
+                paddingCopy[key] *= -1;
+            }
+            this.shrink(paddingCopy);
+        }
+        return this;
     };
     BBox.merge = function (boxes) {
         var left = Infinity;

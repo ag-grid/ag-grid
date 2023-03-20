@@ -744,6 +744,7 @@ export class Chart extends Observable {
         this.update(ChartUpdateType.SCENE_RENDER);
     }
     handlePointer(event) {
+        var _a;
         const { lastPick } = this;
         const { offsetX, offsetY } = event;
         const disablePointer = (highlightOnly = false) => {
@@ -752,7 +753,9 @@ export class Chart extends Observable {
                 this.disablePointer(highlightOnly);
             }
         };
-        if (!(this.seriesRect && this.seriesRect.containsPoint(offsetX, offsetY))) {
+        const hoverRectPadding = 20;
+        const hoverRect = (_a = this.seriesRect) === null || _a === void 0 ? void 0 : _a.clone().grow(hoverRectPadding).grow(this.seriesAreaPadding);
+        if (!(hoverRect === null || hoverRect === void 0 ? void 0 : hoverRect.containsPoint(offsetX, offsetY))) {
             disablePointer();
             return;
         }

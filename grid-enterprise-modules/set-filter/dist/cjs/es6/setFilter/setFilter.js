@@ -473,6 +473,7 @@ class SetFilter extends core_1.ProvidedFilter {
     }
     afterGuiDetached() {
         var _a, _b;
+        super.afterGuiDetached();
         // discard any unapplied UI state (reset to model)
         if ((_a = this.setFilterParams) === null || _a === void 0 ? void 0 : _a.excelMode) {
             this.resetMiniFilter();

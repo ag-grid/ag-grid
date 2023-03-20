@@ -61,15 +61,16 @@ class LinearScale extends continuousScale_1.ContinuousScale {
         let prev1 = stop;
         for (let i = 0; i < maxAttempts; i++) {
             const step = (_b = this.interval) !== null && _b !== void 0 ? _b : ticks_1.tickStep(start, stop, count, this.minTickCount, this.maxTickCount);
+            const [d0, d1] = this.domain;
             if (step >= 1) {
-                start = Math.floor(start / step) * step;
-                stop = Math.ceil(stop / step) * step;
+                start = Math.floor(d0 / step) * step;
+                stop = Math.ceil(d1 / step) * step;
             }
             else {
                 // Prevent floating point error
                 const s = 1 / step;
-                start = Math.floor(start * s) / s;
-                stop = Math.ceil(stop * s) / s;
+                start = Math.floor(d0 * s) / s;
+                stop = Math.ceil(d1 * s) / s;
             }
             if (start === prev0 && stop === prev1) {
                 break;
