@@ -138,6 +138,8 @@ const options: AgChartOptions = {
       label: {
         padding: 15,
       },
+      max: new Date(2025, 0, 1),
+      nice: false,
     },
     {
       position: "right",

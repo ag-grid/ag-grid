@@ -41,6 +41,7 @@ const options: AgChartOptions = {
     {
       type: "time",
       position: "bottom",
+      nice: false,
     },
     {
       type: "number",
