@@ -42,7 +42,7 @@ The example below demonstrates the four Provided Filters and the Multi Filter:
 - Column **Country** has a Set Filter.
 - Column **Sport** has a Multi Filter (consisting of a Text Filter and a Set Filter).
 
-<grid-example title='Provided Filters' name='provided-filters' type='generated' options='{ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "setfilter", "multifilter"] }'></grid-example>
+<grid-example title='Provided Filters' name='provided-filters' type='generated' options='{ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "setfilter", "multifilter", "menu"] }'></grid-example>
 
 ## Relation to Quick Filter and External Filter
 
