@@ -56,14 +56,14 @@ In the example below, only Master Rows that have data to show are expandable. No
 
 - Row 'Nora Thomas' has no detail records, thus is not expandable.
 - Row 'Mila Smith' has detail records, thus is expandable.
-- Clicking 'Clear Mila Calls' removes detail records from Mila Smith which results in the Mila Smith row no longer been a Master Row.
+- Clicking 'Clear Mila Calls' removes detail records from Mila Smith which results in the Mila Smith row no longer being a Master Row.
 - Clicking 'Set Mila Calls' sets detail records from Mila Smith which results in the Mila Smith becoming a Master Row.
 
 <grid-example title='Dynamically Changing Master Rows' name='changing-dynamic-1' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
 The example below extends the previous example. It demonstrates a common scenario of the Master Row controlling the Detail Rows. Note the following:
 
-- Each Master Row has buttons to add or remove one detail rows.
+- Each Master Row has buttons to add or remove one detail row.
 - Clicking 'Add' will:
     - Add one detail row.
     - Ensure the Master Row is expandable.
