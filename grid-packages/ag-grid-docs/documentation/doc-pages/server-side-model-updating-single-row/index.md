@@ -1,6 +1,8 @@
 ---
 title: "SSRM - Single Row Updates"
+enterprise: true
 ---
+
 This section demonstrates updating rows directly while using the Server-Side Row Model (SSRM).
 
 ## Updating Rows API

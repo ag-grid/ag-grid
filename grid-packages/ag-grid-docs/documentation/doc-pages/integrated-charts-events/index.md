@@ -1,5 +1,6 @@
 ---
 title: "Chart Events"
+enterprise: true
 ---
 
 There are several events which are raised at different points in the lifecycle of a chart.

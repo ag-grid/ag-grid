@@ -1,5 +1,6 @@
 ---
 title: "Server-Side Operations With Node.js"
+enterprise: true
 ---
 
 Learn how to perform server-side operations using Node.js with a complete reference implementation that uses the MySQL database.
