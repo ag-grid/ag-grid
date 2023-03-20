@@ -83,6 +83,9 @@ export class Sector extends Path {
             // Sector passes through 0-angle.
             return startAngle < angle || endAngle > angle;
         }
+        if (startAngle === endAngle) {
+            return true;
+        }
         return startAngle < angle && endAngle > angle;
     }
 }
