@@ -14,7 +14,7 @@ The Date Filter can be configured as shown below:
 const gridOptions = {
     columnDefs: [
         {
-            field: 'age',
+            field: 'date',
             // configure column to use the Date Filter
             filter: 'agDateColumnFilter',
             filterParams: {
