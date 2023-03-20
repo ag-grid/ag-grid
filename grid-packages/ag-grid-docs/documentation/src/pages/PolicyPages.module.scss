@@ -47,7 +47,7 @@
 
     > li {
         counter-increment: policy-count;
-        margin-bottom: ds.$size-6;
+        margin-bottom: ds.$size-6 !important; // !important needed because of .ag-styles specificity
     }
 
     li > h3:first-child:before {
