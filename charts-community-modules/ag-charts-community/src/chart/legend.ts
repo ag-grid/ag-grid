@@ -763,7 +763,7 @@ export class Legend {
             return;
         }
 
-        const { id, itemId } = datum;
+        const { id, itemId, seriesId } = datum;
         const series = chart.series.find((s) => s.id === id);
         if (!series) {
             return;
@@ -776,13 +776,13 @@ export class Legend {
                 [] as Array<LegendDatum>
             );
             const visibleItemsCount = legendData.filter((d) => d.enabled).length;
-            const clickedItem = legendData.find((d) => d.itemId === itemId);
+            const clickedItem = legendData.find((d) => d.itemId === itemId && d.seriesId === seriesId);
 
             chart.series.forEach((s) => {
                 const legendData = s.getLegendData() as any;
 
                 legendData.forEach((d: any) => {
-                    const wasClicked = d.itemId === itemId;
+                    const wasClicked = d.itemId === itemId && d.seriesId === seriesId;
                     const singleSelectedWasNotClicked = visibleItemsCount === 1 && (clickedItem?.enabled ?? false);
                     const newEnabled = wasClicked || singleSelectedWasNotClicked;
 

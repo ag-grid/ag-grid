@@ -66,7 +66,7 @@
 |In this second example, the template is set dynamically. Note the following:
 |
 |- All Detail Grids have a spacing with blue background.
-|- All Detail Grids have the a different dynamic title including the persons name e.g. 'Mila Smith'.
+|- All Detail Grids have a different dynamic title including the persons name e.g. 'Mila Smith'.
 |
 |<grid-example title='Customising via Template Callback' name='template-callback-customisation' type='generated' options='{ "enterprise": true, "exampleHeight": 550, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 |
