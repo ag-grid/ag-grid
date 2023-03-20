@@ -7,6 +7,13 @@
 // `ctx.strokeRect(...bbox);`
 // https://jsperf.com/array-vs-object-create-access
 
+type Padding = {
+    top: number;
+    left: number;
+    right: number;
+    bottom: number;
+};
+
 export class BBox {
     x: number;
     y: number;
@@ -42,38 +49,70 @@ export class BBox {
         );
     }
 
-    shrink(amount: number, position?: 'top' | 'left' | 'bottom' | 'right' | 'vertical' | 'horizontal') {
-        switch (position) {
-            case 'top':
-                this.y += amount;
-            // eslint-disable-next-line no-fallthrough
-            case 'bottom':
-                this.height -= amount;
-                break;
-            case 'left':
-                this.x += amount;
-            // eslint-disable-next-line no-fallthrough
-            case 'right':
-                this.width -= amount;
-                break;
-            case 'vertical':
-                this.y += amount;
-                this.height -= amount * 2;
-                break;
-            case 'horizontal':
-                this.x += amount;
-                this.width -= amount * 2;
-                break;
-            default:
-                this.x += amount;
-                this.width -= amount * 2;
-                this.y += amount;
-                this.height -= amount * 2;
+    shrink(amounts: Partial<Padding>): this;
+    shrink(amount: number, position?: 'top' | 'left' | 'bottom' | 'right' | 'vertical' | 'horizontal'): this;
+    shrink(
+        amount: number | Partial<Padding>,
+        position?: 'top' | 'left' | 'bottom' | 'right' | 'vertical' | 'horizontal'
+    ) {
+        const apply = (pos: typeof position, amt: number) => {
+            switch (pos) {
+                case 'top':
+                    this.y += amt;
+                // eslint-disable-next-line no-fallthrough
+                case 'bottom':
+                    this.height -= amt;
+                    break;
+                case 'left':
+                    this.x += amt;
+                // eslint-disable-next-line no-fallthrough
+                case 'right':
+                    this.width -= amt;
+                    break;
+                case 'vertical':
+                    this.y += amt;
+                    this.height -= amt * 2;
+                    break;
+                case 'horizontal':
+                    this.x += amt;
+                    this.width -= amt * 2;
+                    break;
+                default:
+                    this.x += amt;
+                    this.width -= amt * 2;
+                    this.y += amt;
+                    this.height -= amt * 2;
+            }
+        };
+
+        if (typeof amount === 'number') {
+            apply(position, amount);
+        } else {
+            Object.entries(amount).forEach(([pos, amt]) => apply(pos as typeof position, amt!));
         }
+
+        return this;
     }
 
-    grow(amount: number, position?: 'top' | 'left' | 'bottom' | 'right' | 'vertical' | 'horizontal') {
-        this.shrink(-amount, position);
+    grow(amounts: Partial<Padding>): this;
+    grow(amount: number, position?: 'top' | 'left' | 'bottom' | 'right' | 'vertical' | 'horizontal'): this;
+    grow(
+        amount: number | Partial<Padding>,
+        position?: 'top' | 'left' | 'bottom' | 'right' | 'vertical' | 'horizontal'
+    ) {
+        if (typeof amount === 'number') {
+            this.shrink(-amount, position);
+        } else {
+            const paddingCopy = { ...amount };
+
+            for (const key in paddingCopy) {
+                (paddingCopy as any)[key] *= -1;
+            }
+
+            this.shrink(paddingCopy);
+        }
+
+        return this;
     }
 
     static merge(boxes: BBox[]) {

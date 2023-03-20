@@ -983,7 +983,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
             }
         };
 
-        if (!(this.seriesRect && this.seriesRect.containsPoint(offsetX, offsetY))) {
+        const hoverRectPadding = 20;
+        const hoverRect = this.seriesRect?.clone().grow(hoverRectPadding).grow(this.seriesAreaPadding);
+        if (!hoverRect?.containsPoint(offsetX, offsetY)) {
             disablePointer();
             return;
         }
