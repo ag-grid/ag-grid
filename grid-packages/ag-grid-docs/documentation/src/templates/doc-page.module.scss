@@ -32,11 +32,7 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
         padding-right: $size-7;
-        max-width: 54em;
-    }
-
-    > div {
-        max-width: 52em;
+        max-width: 60em;
     }
 
     h2:first-child,
