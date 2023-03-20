@@ -120,6 +120,7 @@ Object {
     "fontSize": 10,
     "fontStyle": "italic",
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Northern Ireland Statistics and Research Agency",
   },
   "legend": Object {
@@ -579,6 +580,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Department for Environment, Food & Rural Affairs; Agriculture and Horticulture Development Board",
   },
   "legend": Object {
@@ -954,6 +956,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: HM Revenue & Customs",
   },
   "legend": Object {
@@ -1605,6 +1608,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Environmental Agency",
   },
   "legend": Object {
@@ -1933,6 +1937,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: US Geological Survey",
   },
   "legend": Object {
@@ -2203,6 +2208,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: US Geological Survey",
   },
   "legend": Object {
@@ -2673,6 +2679,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Department for Business, Energy & Industrial Strategy",
   },
   "legend": Object {
@@ -3285,6 +3292,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Office for National Statistics",
   },
   "legend": Object {
@@ -3575,6 +3583,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Office for National Statistics",
   },
   "legend": Object {
@@ -3854,6 +3863,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Footnote",
   },
   "legend": Object {
@@ -4126,6 +4136,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Simple Maps",
   },
   "legend": Object {
@@ -4393,6 +4404,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Ministry of Justice, HM Prison Service, and Her Majesty’s Prison and Probation Service",
   },
   "legend": Object {
@@ -4706,6 +4718,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Office for National Statistics",
   },
   "legend": Object {
@@ -5022,6 +5035,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Office for National Statistics",
   },
   "legend": Object {
@@ -5352,6 +5366,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: UCI",
   },
   "legend": Object {
@@ -5638,6 +5653,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Department for Environment, Food and Rural Affairs",
   },
   "legend": Object {
@@ -6823,6 +6839,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Footnote",
   },
   "legend": Object {
@@ -7003,6 +7020,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Footnote",
   },
   "legend": Object {
@@ -7303,6 +7321,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Department for Business, Energy & Industrial Strategy",
   },
   "legend": Object {
@@ -7637,6 +7656,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Office for National Statistics",
   },
   "legend": Object {
@@ -7958,6 +7978,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Department for Education",
   },
   "legend": Object {
@@ -8296,6 +8317,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Department for Digital, Culture, Media & Sport",
   },
   "legend": Object {
@@ -8812,6 +8834,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Department for Digital, Culture, Media & Sport",
   },
   "legend": Object {
@@ -9001,6 +9024,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Home Office",
   },
   "legend": Object {
@@ -9313,6 +9337,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: UCI",
   },
   "legend": Object {
@@ -9587,6 +9612,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Department for Business, Energy & Industrial Strategy",
   },
   "legend": Object {
@@ -9839,6 +9865,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Office for National Statistics",
   },
   "legend": Object {
@@ -10129,6 +10156,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Statistics Online Computational Resource",
   },
   "legend": Object {
@@ -10401,6 +10429,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Department for Digital, Culture, Media & Sport",
   },
   "legend": Object {
@@ -10752,6 +10781,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Ministry of Housing, Communities & Local Government",
   },
   "legend": Object {
@@ -11065,6 +11095,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Transport for London",
   },
   "legend": Object {
@@ -11398,6 +11429,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: UCI",
   },
   "legend": Object {
