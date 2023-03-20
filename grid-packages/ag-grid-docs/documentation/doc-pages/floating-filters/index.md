@@ -50,7 +50,7 @@ All the default filters provided by the grid provide their own implementation of
 | Filter | Editable  | Description |
 | ------ | --------- | ----------- |
 | Text   | Sometimes | Provides a text input field to display the filter value, or a read-only label if read-only. |
-| Number | Sometimes | Provides a text input field to display the filter value, or a read-only label if read-only. |
+| Number | Sometimes | Provides a number input field to display the filter value (unless using [Custom Number Support](/filter-number/#custom-number-support)), or a read-only label if read-only. |
 | Date   | Sometimes | Provides a date input field to display the filter value, or a read-only label if read-only. |
 | Set    | No        | Provides a read-only label by concatenating all selected values. |
 
