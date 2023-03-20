@@ -26,6 +26,7 @@ export const ICON_MAP = {
     arrowDown: CarbonIcon.ArrowDown,
     arrowLeft: CarbonIcon.ArrowLeft,
     chevronRight: BoldChevronRight,
+    link: CarbonIcon.Link,
 };
 
 export type IconName = keyof typeof ICON_MAP;

@@ -1,6 +1,6 @@
 import classnames from 'classnames';
+import { Icon } from 'components/Icon';
 import React, { useState } from 'react';
-import anchorIcon from '../images/anchor';
 import styles from './ApiDocumentation.module.scss';
 import {
     ApiProps,
@@ -307,13 +307,13 @@ const Section: React.FC<SectionProps> = ({
         // We use a plugin (gatsby-remark-autolink-headers) to insert links for all the headings in Markdown
         // We manually add the element here ourselves to match
         header = (
-            <div className={styles.apiDocumentationOuter}>
+            <>
                 {!config.hideHeader && (
                     <HeaderTag id={`reference-${id}`} style={{ position: 'relative' }}>
-                        <a href={`#reference-${id}`} className="anchor before">
-                            {anchorIcon}
-                        </a>
                         {displayName}
+                        <a href={`#reference-${id}`} className="docs-header-icon ag-styles">
+                            <Icon name="link" />
+                        </a>
                     </HeaderTag>
                 )}
                 <Breadcrumbs breadcrumbs={breadcrumbs} />
@@ -328,7 +328,7 @@ const Section: React.FC<SectionProps> = ({
                 {config.showSnippets && names.length < 1 && (
                     <ObjectCodeSample framework={framework} id={id} breadcrumbs={breadcrumbs} properties={properties} />
                 )}
-            </div>
+            </>
         );
     }
 
@@ -559,8 +559,12 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                                 : styles['reference__name']
                         }
                     ></code>
-                    <a href={`#reference-${id}-${name}`} className="anchor after" style={{ fontSize: 'small' }}>
-                        {anchorIcon}
+                    <a
+                        href={`#reference-${id}-${name}`}
+                        className="docs-header-icon ag-styles"
+                        style={{ fontSize: 'small' }}
+                    >
+                        <Icon name="link" />
                     </a>
                 </h6>
 

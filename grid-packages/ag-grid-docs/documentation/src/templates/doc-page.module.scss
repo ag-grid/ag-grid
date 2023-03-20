@@ -74,8 +74,10 @@
     }
 
     :global(.docs-header-icon) {
+        position: relative;
         padding-left: 0;
         margin-left: $size-1;
+        font-size: inherit !important; // !important for .ag-styles specificity
         opacity: 0;
         transition: opacity 0.33s ease-in-out;
 
@@ -85,8 +87,8 @@
 
         svg {
             position: relative;
-            width: $size-4;
-            height: $size-4;
+            width: 0.85em;
+            height: 0.85em;
             top: -0.1em;
             visibility: visible;
             fill: var(--sky-blue);

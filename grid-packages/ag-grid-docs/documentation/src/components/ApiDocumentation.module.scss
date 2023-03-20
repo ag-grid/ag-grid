@@ -118,4 +118,12 @@
             visibility: visible;
         }
     }
+
+    :global(a.docs-header-icon) {
+        font-size: var(--font-size-large) !important; // !important for .ag-styles specificity
+
+        svg {
+            top: -0.5em;
+        }
+    }
 }
