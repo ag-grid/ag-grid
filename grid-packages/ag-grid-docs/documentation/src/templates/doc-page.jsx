@@ -220,7 +220,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, jsonDataAsString, exa
                 <AGStyles>
                     <header className={styles.docsPageHeader}>
                         <h1 id="top" className={styles.docsPageTitle}>
-                            {pageTitle}&nbsp;
+                            {pageTitle}&nbsp;&nbsp;&nbsp;
                             {page.frontmatter.enterprise && (
                                 <span className={styles.enterpriseLabel}>
                                     Enterprise
