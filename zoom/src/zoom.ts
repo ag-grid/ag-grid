@@ -135,7 +135,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
             zoom && zoom.x && zoom.y && (zoom.x.min !== 0 || zoom.x.max !== 1 || zoom.y.min !== 0 || zoom.y.max !== 1);
 
         if (this.panner && this.seriesRect && isZoomed && this.isPanningKeyPressed(event.sourceEvent as DragEvent)) {
-            const newZoom = this.panner.update(event.offsetX, event.offsetY, this.seriesRect, zoom);
+            const newZoom = this.panner.update(event, this.seriesRect, zoom);
             this.zoomManager.updateZoom('zoom', newZoom);
 
             return;
@@ -144,7 +144,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         if (!this.selector || this.panner?.isPanning) return;
 
         if (this.isWithinSeriesRect(event.offsetX, event.offsetY)) {
-            this.selector.update(event.offsetX, event.offsetY);
+            this.selector.update(event);
         } else {
             this.selector.reset();
         }
