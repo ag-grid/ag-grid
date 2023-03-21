@@ -42,6 +42,14 @@
     padding-top: $size-3;
     padding-bottom: $size-7;
 
+    li {
+        margin-bottom: $size-half !important; // !important to override bootstrap styles
+    }
+
+    li li {
+        margin-bottom: 0 !important; // !important to override bootstrap styles
+    }
+
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         display: block !important; // !important to override bootstrap styles
     }
