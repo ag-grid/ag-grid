@@ -1,6 +1,6 @@
 import { Selection } from '../../../scene/selection';
 import { DropShadow } from '../../../scene/dropShadow';
-import { SeriesNodeDatum, SeriesTooltip, SeriesNodeDataContext } from '../series';
+import { SeriesTooltip, SeriesNodeDataContext } from '../series';
 import { PointerEvents } from '../../../scene/node';
 import { LegendDatum } from '../../legendDatum';
 import { Path } from '../../../scene/shape/path';
@@ -9,6 +9,7 @@ import {
     CartesianSeries,
     CartesianSeriesMarker,
     CartesianSeriesNodeClickEvent,
+    CartesianSeriesNodeDatum,
     CartesianSeriesNodeDoubleClickEvent,
 } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
@@ -55,12 +56,12 @@ interface StrokeSelectionDatum extends FillSelectionDatum {
     readonly yValues: (number | undefined)[];
 }
 
-interface MarkerSelectionDatum extends Required<SeriesNodeDatum> {
+interface MarkerSelectionDatum extends Required<CartesianSeriesNodeDatum> {
     readonly index: number;
     readonly fill?: string;
     readonly stroke?: string;
-    readonly yKey: string;
     readonly yValue: number;
+    readonly cumulativeValue: number;
 }
 
 interface LabelSelectionDatum {
@@ -416,7 +417,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         }
 
         const contexts: AreaSeriesNodeDataContext[] = [];
-        const { yKeys, marker, label, fills, strokes, id: seriesId } = this;
+        const { yKeys, xKey, marker, label, fills, strokes, id: seriesId } = this;
         const { scale: xScale } = xAxis;
         const { scale: yScale } = yAxis;
 
@@ -514,8 +515,10 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                         series: this,
                         itemId: yKey,
                         datum: seriesDatum,
+                        cumulativeValue: cumulativeMarkerValues[datumIdx],
                         yValue: yDatum!,
                         yKey,
+                        xKey,
                         point,
                         fill: fills[seriesIdx % fills.length],
                         stroke: strokes[seriesIdx % strokes.length],

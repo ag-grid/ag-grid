@@ -3,11 +3,16 @@ import { Rect } from '../../../scene/shape/rect';
 import { Text } from '../../../scene/shape/text';
 import { BandScale } from '../../../scale/bandScale';
 import { DropShadow } from '../../../scene/dropShadow';
-import { SeriesNodeDatum, SeriesNodeDataContext, SeriesTooltip, SeriesNodePickMode } from '../series';
+import { SeriesNodeDataContext, SeriesTooltip, SeriesNodePickMode } from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { LegendDatum } from '../../legendDatum';
-import { CartesianSeries, CartesianSeriesNodeClickEvent, CartesianSeriesNodeDoubleClickEvent } from './cartesianSeries';
+import {
+    CartesianSeries,
+    CartesianSeriesNodeClickEvent,
+    CartesianSeriesNodeDatum,
+    CartesianSeriesNodeDoubleClickEvent,
+} from './cartesianSeries';
 import { ChartAxis, flipChartAxisDirection } from '../../chartAxis';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
@@ -51,10 +56,10 @@ const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
     OPTIONAL(v, ctx, (v: any) => BAR_LABEL_PLACEMENTS.includes(v));
 
-interface BarNodeDatum extends SeriesNodeDatum, Readonly<Point> {
+interface BarNodeDatum extends CartesianSeriesNodeDatum, Readonly<Point> {
     readonly index: number;
-    readonly yKey: string;
     readonly yValue: number;
+    readonly cumulativeValue: number;
     readonly width: number;
     readonly height: number;
     readonly fill?: string;
@@ -553,6 +558,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const {
             groupScale,
             yKeys,
+            xKey,
             cumYKeyCount,
             fills,
             strokes,
@@ -692,8 +698,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                         series: this,
                         itemId: yKey,
                         datum: seriesDatum,
+                        cumulativeValue: prevY + currY,
                         yValue,
                         yKey,
+                        xKey,
                         x: flipXY ? Math.min(y, bottomY) : barX,
                         y: flipXY ? barX : Math.min(y, bottomY),
                         width: flipXY ? Math.abs(bottomY - y) : barWidth,

@@ -1,9 +1,14 @@
 import { Selection } from '../../../scene/selection';
-import { SeriesNodeDatum, SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
+import { SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
 import { extent } from '../../../util/array';
 import { LegendDatum } from '../../legendDatum';
 import { LinearScale } from '../../../scale/linearScale';
-import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesNodeBaseClickEvent } from './cartesianSeries';
+import {
+    CartesianSeries,
+    CartesianSeriesMarker,
+    CartesianSeriesNodeBaseClickEvent,
+    CartesianSeriesNodeDatum,
+} from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { getMarker } from '../../marker/util';
 import { toTooltipHtml } from '../../tooltip/tooltip';
@@ -22,7 +27,7 @@ import {
     AgCartesianSeriesMarkerFormat,
 } from '../../agChartOptions';
 
-interface ScatterNodeDatum extends Required<SeriesNodeDatum> {
+interface ScatterNodeDatum extends Required<CartesianSeriesNodeDatum> {
     readonly label: MeasuredLabel;
 }
 
@@ -189,7 +194,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     }
 
     async createNodeData() {
-        const { data, visible, xAxis, yAxis, yKey, label, labelKey } = this;
+        const { data, visible, xAxis, yAxis, yKey, xKey, label, labelKey } = this;
 
         if (!(data && visible && xAxis && yAxis)) {
             return [];
@@ -229,6 +234,8 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             nodeData[actualLength++] = {
                 series: this,
                 itemId: yKey,
+                yKey,
+                xKey,
                 datum: validData[i],
                 point: { x, y, size: markerSize },
                 label: {

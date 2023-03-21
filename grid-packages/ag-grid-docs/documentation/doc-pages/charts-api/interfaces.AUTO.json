@@ -3382,6 +3382,7 @@
       "type": "string",
       "getDomain(direction: ChartAxisDirection)": "any[]",
       "isEnabled()": "boolean",
+      "getKeys(direction: ChartAxisDirection)": "string[]",
       "visible": "boolean"
     }
   },
@@ -3463,6 +3464,9 @@
       "series": "any",
       "itemId?": "any",
       "datum": "any",
+      "xKey?": "string",
+      "yKey?": "string",
+      "cumulativeValue?": "number",
       "point?": "Readonly<SizedPoint>"
     }
   },
@@ -3534,11 +3538,17 @@
   "LayoutStage": { "meta": { "isTypeAlias": true }, "type": "'before-series'" },
   "AxisLabelLayout": {
     "meta": { "isTypeAlias": true },
-    "type": "{ baseline: 'hanging' | 'bottom' | 'middle'; align: 'start' | 'end' | 'center'; rotation: number; fractionDigits: number; }"
+    "type": "{ baseline: 'hanging' | 'bottom' | 'middle'; align: 'start' | 'end' | 'center'; rotation: number; fractionDigits: number; padding: number; }"
   },
   "AxisLayout": {
     "meta": {},
-    "type": { "rect": "BBox", "label": "AxisLabelLayout" }
+    "type": {
+      "rect": "BBox",
+      "seriesAreaPadding": "number",
+      "gridPadding": "number",
+      "tickSize": "number",
+      "label": "AxisLabelLayout"
+    }
   },
   "LayoutCompleteEvent": {
     "meta": {},
@@ -3654,12 +3664,10 @@
       "index": "number",
       "fill?": "string",
       "stroke?": "string",
-      "yKey": "string",
       "yValue": "number",
-      "series": "Series<any>",
-      "itemId?": "any",
-      "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "cumulativeValue": "number",
+      "xKey": "string",
+      "yKey": "string"
     }
   },
   "LabelSelectionDatum": {
@@ -3692,8 +3700,8 @@
     "meta": {},
     "type": {
       "index": "number",
-      "yKey": "string",
       "yValue": "number",
+      "cumulativeValue": "number",
       "width": "number",
       "height": "number",
       "fill?": "string",
@@ -3701,12 +3709,14 @@
       "colorIndex": "number",
       "strokeWidth": "number",
       "label?": "Readonly<Point> & { readonly text: string; readonly fontStyle?: FontStyle; readonly fontWeight?: FontWeight; readonly fontSize: number; readonly fontFamily: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; readonly fill: string; }",
+      "xKey": "string",
+      "yKey": "string",
+      "x": "number",
+      "y": "number",
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>",
-      "x": "number",
-      "y": "number"
+      "point?": "Readonly<SizedPoint>"
     }
   },
   "BarSeriesNodeTag": {
@@ -3733,6 +3743,17 @@
       ]
     },
     "type": "Selection<N, ContextType['labelData'][number]>"
+  },
+  "CartesianSeriesNodeDatum": {
+    "meta": {},
+    "type": {
+      "xKey": "string",
+      "yKey": "string",
+      "series": "Series<any>",
+      "itemId?": "any",
+      "datum": "any",
+      "point?": "Readonly<SizedPoint>"
+    }
   },
   "SubGroup": {
     "meta": {
@@ -3776,6 +3797,8 @@
       "stroke?": "string",
       "strokeWidth": "number",
       "label?": "{ readonly text: string; readonly x: number; readonly y: number; readonly fontStyle?: FontStyle; readonly fontWeight?: FontWeight; readonly fontSize: number; readonly fontFamily: string; readonly fill: string; }",
+      "xKey": "string",
+      "yKey": "string",
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
@@ -3795,6 +3818,8 @@
     "type": {
       "point": "SeriesNodeDatum['point'] & { readonly moveTo: boolean; }",
       "label?": "{ readonly text: string; readonly fontStyle?: FontStyle; readonly fontWeight?: FontWeight; readonly fontSize: number; readonly fontFamily: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; readonly fill: string; }",
+      "xKey": "string",
+      "yKey": "string",
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
@@ -3813,6 +3838,8 @@
     "meta": {},
     "type": {
       "label": "MeasuredLabel",
+      "xKey": "string",
+      "yKey": "string",
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
@@ -4227,6 +4254,8 @@
       "position": "AgCartesianAxisPosition",
       "direction": "'x' | 'y'",
       "continuous": "boolean",
+      "keys": "() => string[]",
+      "scaleBandwidth": "() => number",
       "scaleConvert(val: any)": "number",
       "scaleInvert(position: number)": "any"
     }

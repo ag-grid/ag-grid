@@ -2,11 +2,16 @@ import { Selection } from '../../../scene/selection';
 import { Rect } from '../../../scene/shape/rect';
 import { Text } from '../../../scene/shape/text';
 import { DropShadow } from '../../../scene/dropShadow';
-import { SeriesNodeDatum, SeriesTooltip, Series, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
+import { SeriesTooltip, Series, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { LegendDatum } from '../../legendDatum';
-import { CartesianSeries, CartesianSeriesNodeClickEvent, CartesianSeriesNodeDoubleClickEvent } from './cartesianSeries';
+import {
+    CartesianSeries,
+    CartesianSeriesNodeClickEvent,
+    CartesianSeriesNodeDatum,
+    CartesianSeriesNodeDoubleClickEvent,
+} from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { extent } from '../../../util/array';
@@ -51,7 +56,7 @@ class HistogramSeriesLabel extends Label {
 
 const defaultBinCount = 10;
 
-interface HistogramNodeDatum extends SeriesNodeDatum {
+interface HistogramNodeDatum extends CartesianSeriesNodeDatum {
     readonly x: number;
     readonly y: number;
     readonly width: number;
@@ -351,7 +356,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
         const { scale: xScale } = xAxis;
         const { scale: yScale } = yAxis;
-        const { fill, stroke, strokeWidth, id: seriesId } = this;
+        const { fill, stroke, strokeWidth, id: seriesId, yKey, xKey } = this;
 
         const nodeData: HistogramNodeDatum[] = [];
 
@@ -378,7 +383,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             const xMinPx = xScale.convert(xDomainMin),
                 xMaxPx = xScale.convert(xDomainMax),
                 // note: assuming can't be negative:
-                y = this.areaPlot ? relativeHeight : this.yKey ? total : frequency,
+                y = this.areaPlot ? relativeHeight : yKey ? total : frequency,
                 yZeroPx = yScale.convert(0),
                 yMaxPx = yScale.convert(y),
                 w = xMaxPx - xMinPx,
@@ -402,6 +407,8 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                 series: this,
                 datum: binOfData, // required by SeriesNodeDatum, but might not make sense here
                 // since each selection is an aggregation of multiple data.
+                yKey,
+                xKey,
                 x: xMinPx,
                 y: yMaxPx,
                 width: w,

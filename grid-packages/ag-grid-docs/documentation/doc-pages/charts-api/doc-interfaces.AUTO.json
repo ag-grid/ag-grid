@@ -5186,6 +5186,13 @@
     "isEnabled": {
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
+    "getKeys": {
+      "type": {
+        "arguments": { "direction": "ChartAxisDirection" },
+        "returnType": "string[]",
+        "optional": false
+      }
+    },
     "visible": { "type": { "returnType": "boolean", "optional": false } }
   },
   "ChartAxisDirection": {},
@@ -5224,6 +5231,9 @@
     "series": { "type": { "returnType": "any", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
+    "xKey": { "type": { "returnType": "string", "optional": true } },
+    "yKey": { "type": { "returnType": "string", "optional": true } },
+    "cumulativeValue": { "type": { "returnType": "number", "optional": true } },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     }
@@ -5275,6 +5285,11 @@
   "AxisLabelLayout": {},
   "AxisLayout": {
     "rect": { "type": { "returnType": "BBox", "optional": false } },
+    "seriesAreaPadding": {
+      "type": { "returnType": "number", "optional": false }
+    },
+    "gridPadding": { "type": { "returnType": "number", "optional": false } },
+    "tickSize": { "type": { "returnType": "number", "optional": false } },
     "label": { "type": { "returnType": "AxisLabelLayout", "optional": false } }
   },
   "LayoutCompleteEvent": {
@@ -5385,14 +5400,12 @@
     "index": { "type": { "returnType": "number", "optional": false } },
     "fill": { "type": { "returnType": "string", "optional": true } },
     "stroke": { "type": { "returnType": "string", "optional": true } },
-    "yKey": { "type": { "returnType": "string", "optional": false } },
     "yValue": { "type": { "returnType": "number", "optional": false } },
-    "series": { "type": { "returnType": "Series<any>", "optional": false } },
-    "itemId": { "type": { "returnType": "any", "optional": true } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "point": {
-      "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
-    }
+    "cumulativeValue": {
+      "type": { "returnType": "number", "optional": false }
+    },
+    "xKey": { "type": { "returnType": "string", "optional": false } },
+    "yKey": { "type": { "returnType": "string", "optional": false } }
   },
   "LabelSelectionDatum": {
     "index": { "type": { "returnType": "number", "optional": false } },
@@ -5411,8 +5424,10 @@
   "AreaSeriesNodeDataContext": {},
   "BarNodeDatum": {
     "index": { "type": { "returnType": "number", "optional": false } },
-    "yKey": { "type": { "returnType": "string", "optional": false } },
     "yValue": { "type": { "returnType": "number", "optional": false } },
+    "cumulativeValue": {
+      "type": { "returnType": "number", "optional": false }
+    },
     "width": { "type": { "returnType": "number", "optional": false } },
     "height": { "type": { "returnType": "number", "optional": false } },
     "fill": { "type": { "returnType": "string", "optional": true } },
@@ -5425,14 +5440,16 @@
         "optional": true
       }
     },
+    "xKey": { "type": { "returnType": "string", "optional": false } },
+    "yKey": { "type": { "returnType": "string", "optional": false } },
+    "x": { "type": { "returnType": "number", "optional": false } },
+    "y": { "type": { "returnType": "number", "optional": false } },
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
-    },
-    "x": { "type": { "returnType": "number", "optional": false } },
-    "y": { "type": { "returnType": "number", "optional": false } }
+    }
   },
   "BarSeriesNodeTag": {},
   "NodeDataSelection": {
@@ -5449,6 +5466,16 @@
         "N extends Node",
         "ContextType extends SeriesNodeDataContext"
       ]
+    }
+  },
+  "CartesianSeriesNodeDatum": {
+    "xKey": { "type": { "returnType": "string", "optional": false } },
+    "yKey": { "type": { "returnType": "string", "optional": false } },
+    "series": { "type": { "returnType": "Series<any>", "optional": false } },
+    "itemId": { "type": { "returnType": "any", "optional": true } },
+    "datum": { "type": { "returnType": "any", "optional": false } },
+    "point": {
+      "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     }
   },
   "SubGroup": {
@@ -5500,6 +5527,8 @@
         "optional": true
       }
     },
+    "xKey": { "type": { "returnType": "string", "optional": false } },
+    "yKey": { "type": { "returnType": "string", "optional": false } },
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
@@ -5522,6 +5551,8 @@
         "optional": true
       }
     },
+    "xKey": { "type": { "returnType": "string", "optional": false } },
+    "yKey": { "type": { "returnType": "string", "optional": false } },
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } }
@@ -5534,6 +5565,8 @@
   "LineContext": {},
   "ScatterNodeDatum": {
     "label": { "type": { "returnType": "MeasuredLabel", "optional": false } },
+    "xKey": { "type": { "returnType": "string", "optional": false } },
+    "yKey": { "type": { "returnType": "string", "optional": false } },
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
@@ -5949,6 +5982,12 @@
     },
     "direction": { "type": { "returnType": "'x' | 'y'", "optional": false } },
     "continuous": { "type": { "returnType": "boolean", "optional": false } },
+    "keys": {
+      "type": { "arguments": {}, "returnType": "string[]", "optional": false }
+    },
+    "scaleBandwidth": {
+      "type": { "arguments": {}, "returnType": "number", "optional": false }
+    },
     "scaleConvert": {
       "type": {
         "arguments": { "val": "any" },

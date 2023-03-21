@@ -28,6 +28,8 @@ export interface AxisContext {
     position: AgCartesianAxisPosition;
     direction: 'x' | 'y';
     continuous: boolean;
+    keys: () => string[];
+    scaleBandwidth: () => number;
     scaleConvert(val: any): number;
     scaleInvert(position: number): any;
 }
