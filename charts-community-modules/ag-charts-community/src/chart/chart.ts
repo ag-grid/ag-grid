@@ -30,6 +30,7 @@ import { TooltipManager } from './interaction/tooltipManager';
 import { Module, ModuleContext, ModuleInstanceMeta, RootModule } from '../util/module';
 import { ZoomManager } from './interaction/zoomManager';
 import { LayoutService } from './layout/layoutService';
+import { UpdateService } from './updateService';
 import { ChartUpdateType } from './chartUpdateType';
 import { LegendDatum } from './legendDatum';
 import { Logger } from '../util/logger';
@@ -39,6 +40,8 @@ import { ChartHighlight } from './chartHighlight';
 type OptionalHTMLElement = HTMLElement | undefined | null;
 
 export type TransferableResources = { container?: OptionalHTMLElement; scene: Scene; element: HTMLElement };
+
+export type ChartUpdateOptions = { forceNodeDataRefresh?: boolean; seriesToUpdate?: Iterable<Series> };
 
 type PickedNode = {
     series: Series<any>;
@@ -198,6 +201,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     protected readonly tooltipManager: TooltipManager;
     protected readonly zoomManager: ZoomManager;
     protected readonly layoutService: LayoutService;
+    protected readonly updateService: UpdateService;
     protected readonly axisGroup: Group;
     protected readonly modules: Record<string, ModuleInstanceMeta> = {};
 
@@ -241,6 +245,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.highlightManager = new HighlightManager();
         this.zoomManager = new ZoomManager();
         this.layoutService = new LayoutService();
+        this.updateService = new UpdateService((type = ChartUpdateType.FULL, opts?: ChartUpdateOptions) =>
+            this.update(type, opts)
+        );
 
         SizeMonitor.observe(this.element, (size) => {
             const { width, height } = size;
@@ -278,7 +285,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.interactionManager.addListener('click', (event) => this.onClick(event));
         this.interactionManager.addListener('dblclick', (event) => this.onDoubleClick(event));
         this.interactionManager.addListener('hover', (event) => this.onMouseMove(event));
-        this.interactionManager.addListener('drag', (event) => this.onDrag(event));
         this.interactionManager.addListener('leave', () => this.disablePointer());
         this.interactionManager.addListener('page-left', () => this.destroy());
 
@@ -319,6 +325,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             highlightManager,
             tooltipManager,
             layoutService,
+            updateService,
         } = this;
         return {
             scene,
@@ -328,6 +335,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             highlightManager,
             tooltipManager,
             layoutService,
+            updateService,
         };
     }
 
@@ -964,12 +972,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.extraDebugStats['mouseX'] = event.offsetX;
         this.extraDebugStats['mouseY'] = event.offsetY;
         this.update(ChartUpdateType.SCENE_RENDER);
-    }
-
-    protected onDrag(event: InteractionEvent<'drag'>): void {
-        this.extraDebugStats['mouseX'] = event.offsetX;
-        this.extraDebugStats['mouseY'] = event.offsetY;
-        this.update(ChartUpdateType.PERFORM_LAYOUT);
     }
 
     private lastInteractionEvent?: InteractionEvent<'hover'> = undefined;

@@ -5172,6 +5172,7 @@
   "VisibilityMap": {},
   "OptionalHTMLElement": {},
   "TransferableResources": {},
+  "ChartUpdateOptions": {},
   "PickedNode": {},
   "BoundSeries": {
     "type": { "type": { "returnType": "string", "optional": false } },
@@ -5907,6 +5908,9 @@
         "returnType": "Pick<LayoutService, 'addListener' | 'removeListener'>",
         "optional": false
       }
+    },
+    "updateService": {
+      "type": { "returnType": "UpdateService", "optional": false }
     }
   },
   "ModuleContextWithParent": {
@@ -5933,6 +5937,9 @@
         "returnType": "Pick<LayoutService, 'addListener' | 'removeListener'>",
         "optional": false
       }
+    },
+    "updateService": {
+      "type": { "returnType": "UpdateService", "optional": false }
     }
   },
   "AxisContext": {
