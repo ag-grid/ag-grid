@@ -20,3 +20,4 @@ export { Diamond } from './chart/marker/diamond';
 export { Square } from './chart/marker/square';
 export { HdpiCanvas } from './canvas/hdpiCanvas';
 export { BBox } from './scene/bbox';
+export { Path2D } from './scene/path2D';

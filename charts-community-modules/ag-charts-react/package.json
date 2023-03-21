@@ -1,6 +1,6 @@
 {
   "name": "ag-charts-react",
-  "version": "7.1.0",
+  "version": "7.2.0",
   "description": "AG Charts React Component",
   "main": "main.js",
   "typings": "./main.d.ts",
@@ -33,7 +33,7 @@
     "prop-types": "^15.6.2"
   },
   "devDependencies": {
-    "ag-charts-community": "~7.1.0",
+    "ag-charts-community": "~7.2.0",
     "@types/jest": "^25.2.1",
     "@types/react": "^18",
     "@types/react-dom": "^18",
@@ -65,7 +65,7 @@
     "rimraf": "3.0.2"
   },
   "peerDependencies": {
-    "ag-charts-community": "~7.1.0",
+    "ag-charts-community": "~7.2.0",
     "react": "^16.3.0 || ^17.0.0 || ^18.0.0",
     "react-dom": "^16.3.0 || ^17.0.0 || ^18.0.0"
   },

@@ -64,9 +64,11 @@ export class Path extends Shape {
         return this.path.closedPath && this.path.isPointInPath(point.x, point.y);
     }
 
-    protected isDirtyPath() {
+    protected isDirtyPath(): boolean {
         // Override point for more expensive dirty checks.
+        return false;
     }
+
     updatePath() {
         // Override point for subclasses.
     }
