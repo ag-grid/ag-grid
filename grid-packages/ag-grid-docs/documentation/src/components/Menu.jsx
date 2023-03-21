@@ -7,10 +7,10 @@ import Announcements from 'components/Announcements';
 import convertToFrameworkUrl from 'utils/convert-to-framework-url';
 import rawMenuData from '../../doc-pages/licensing/menu.json';
 import styles from './Menu.module.scss';
-import { isProductionBuild } from '../utils/consts';
+import { isProductionEnvironment } from '../utils/consts';
 
 function filterProductionMenuData(data) {
-    if (!isProductionBuild()) {
+    if (!isProductionEnvironment()) {
         // No filtering needed for non-production builds.
         return data;
     }
