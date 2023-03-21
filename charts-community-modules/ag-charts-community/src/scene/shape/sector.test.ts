@@ -24,7 +24,6 @@ describe('Sector', () => {
             { startAngle: 2, endAngle: 4 },
         ];
         const STROKE_TC_PARAMS: Partial<Sector> = {
-            strokeWidth: 2,
             stroke: 'red',
             fill: 'yellow',
         };
