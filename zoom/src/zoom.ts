@@ -69,6 +69,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     private seriesRect?: _Scene.BBox;
 
     private readonly zoomManager: _ModuleSupport.ZoomManager;
+    private readonly updateService: _ModuleSupport.UpdateService;
 
     private readonly panner?: ZoomPanner;
     private readonly selector?: ZoomSelector;
@@ -79,6 +80,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
 
         this.scene = ctx.scene;
         this.zoomManager = ctx.zoomManager;
+        this.updateService = ctx.updateService;
 
         // Add interaction listeners
         [
@@ -131,6 +133,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         if (!this.selector || this.panner?.isPanning) return;
 
         this.selector.update(event, this.minXRatio, this.minYRatio, this.seriesRect, zoom);
+        this.updateService.update(_ModuleSupport.ChartUpdateType.PERFORM_LAYOUT);
     }
 
     private onDragEnd() {
@@ -175,19 +178,6 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
 
     private isScalingY(): boolean {
         return this.axes === 'y' || this.axes === 'xy';
-    }
-
-    private isWithinSeriesRect(x: number, y: number): boolean {
-        const { seriesRect } = this;
-
-        if (!seriesRect) return false;
-
-        return (
-            x >= seriesRect.x &&
-            x <= seriesRect.x + seriesRect.width &&
-            y >= seriesRect.y &&
-            y <= seriesRect.y + seriesRect.height
-        );
     }
 
     private updateZoomWithConstraints(zoom: DefinedZoomState) {
