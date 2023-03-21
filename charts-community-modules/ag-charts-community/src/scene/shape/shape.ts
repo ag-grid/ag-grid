@@ -171,11 +171,7 @@ export abstract class Shape extends Node {
     protected fillStroke(
         ctx: CanvasFillStrokeStyles & CanvasCompositing & CanvasShadowStyles & CanvasPathDrawingStyles & CanvasDrawPath
     ) {
-        if (!this.layerManager) {
-            return;
-        }
-
-        const pixelRatio = this.layerManager.canvas.pixelRatio || 1;
+        const pixelRatio = this.layerManager?.canvas.pixelRatio || 1;
         const { globalAlpha } = ctx;
 
         if (this.fill) {
