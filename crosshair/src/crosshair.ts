@@ -61,6 +61,8 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     }
 
     private layout({ series: { rect, visible }, axes }: _ModuleSupport.LayoutCompleteEvent) {
+        this.hideCrosshair();
+
         if (!(visible && rect && axes)) {
             this.visible = false;
             return;
@@ -166,8 +168,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
 
             this.showLabel(offsetX, offsetY, value);
         } else {
-            crosshairGroup.visible = false;
-            this.hideLabel();
+            this.hideCrosshair();
         }
     }
 
@@ -205,8 +206,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
 
             this.showLabel(x + seriesRect.x, y + seriesRect.y, labelValue);
         } else {
-            crosshairGroup.visible = false;
-            this.hideLabel();
+            this.hideCrosshair();
         }
     }
 
@@ -272,6 +272,11 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         }
 
         label.show(labelMeta);
+    }
+
+    private hideCrosshair() {
+        this.crosshairGroup.visible = false;
+        this.hideLabel();
     }
 
     private hideLabel() {
