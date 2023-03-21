@@ -57,7 +57,7 @@ export interface ICellEditor {
 export interface ICellEditorParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** Current value of the cell */
     value: TValue;
-    /** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable
+    /** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable
      *  characters appear here */
     eventKey: string | null;
     /** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if
