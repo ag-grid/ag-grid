@@ -63,7 +63,7 @@ The following example shows how you can provide a unique look and feel to the he
 }
 
 .ag-header-cell-label .ag-header-cell-text {
-    /* Force the width corresponding at how much width
+    /* Force the width corresponding to how much width
     we need once the text is laid out vertically */
     width: 30px;
     transform: rotate(90deg);

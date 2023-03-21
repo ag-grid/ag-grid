@@ -210,6 +210,17 @@ export interface AgChartPaddingOptions {
     left?: PixelSize;
 }
 
+export interface AgSeriesAreaPaddingOptions {
+    /** The number of pixels of padding at the top of the series area. */
+    top?: PixelSize;
+    /** The number of pixels of padding at the right of the series area. */
+    right?: PixelSize;
+    /** The number of pixels of padding at the bottom of the series area. */
+    bottom?: PixelSize;
+    /** The number of pixels of padding at the left of the series area. */
+    left?: PixelSize;
+}
+
 export interface AgChartOverlayOptions {
     /** Text to render in the overlay. */
     text?: string;
@@ -268,6 +279,8 @@ export interface AgChartCaptionOptions {
     /** Spacing added to help position the text. */
     spacing?: number;
 }
+export interface AgChartSubtitleOptions extends AgChartCaptionOptions {}
+export interface AgChartFooterOptions extends AgChartCaptionOptions {}
 
 export interface AgAxisCaptionOptions {
     /** Whether or not the title should be shown. */
@@ -570,16 +583,16 @@ export interface AgBaseChartOptions {
     autoSize?: boolean;
     /** Configuration for the padding shown around the chart. */
     padding?: AgChartPaddingOptions;
-    /** Configuration for the padding around the series. */
-    seriesPadding?: AgChartPaddingOptions;
+    /** Configuration for the padding around the series area. */
+    seriesAreaPadding?: AgSeriesAreaPaddingOptions;
     /** Configuration for the background shown behind the chart. */
     background?: AgChartBackground;
     /** Configuration for the title shown at the top of the chart. */
     title?: AgChartCaptionOptions;
     /** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */
-    subtitle?: AgChartCaptionOptions;
+    subtitle?: AgChartSubtitleOptions;
     /** Configuration for the footnote shown at the bottom of the chart. */
-    footnote?: AgChartCaptionOptions;
+    footnote?: AgChartFooterOptions;
     /** Global configuration that applies to all tooltips in the chart. */
     tooltip?: AgChartTooltipOptions;
     /** Configuration for the chart legend. */

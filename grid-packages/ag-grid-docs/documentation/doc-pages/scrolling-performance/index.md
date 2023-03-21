@@ -12,7 +12,6 @@ The grid is fast. However, the grid can also be configured and extended in many 
 | | allow the grid to perform optimally without any overhead introduced by Dev Mode. Performance testing should be 
 | | performed in Production Mode only.
 | |
-| | Check the [React Docs](https://reactjs.org/docs/optimizing-performance.html) to learn how to check which mode React is running in.
 
 ## Setting Expectations
 

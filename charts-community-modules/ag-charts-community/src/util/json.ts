@@ -249,6 +249,7 @@ export function jsonApply<Target, Source extends DeepPartial<Target>>(
         skip?: string[];
         constructors?: Record<string, new () => any>;
         allowedTypes?: Record<string, ReturnType<typeof classify>[]>;
+        idx?: number;
     } = {}
 ): Target {
     const {
@@ -257,6 +258,7 @@ export function jsonApply<Target, Source extends DeepPartial<Target>>(
         skip = [],
         constructors = {},
         allowedTypes = {},
+        idx,
     } = params;
 
     if (target == null) {
@@ -264,6 +266,11 @@ export function jsonApply<Target, Source extends DeepPartial<Target>>(
     }
     if (source == null) {
         return target;
+    }
+
+    const targetAny = target as any;
+    if (idx != null && '_declarationOrder' in targetAny) {
+        targetAny['_declarationOrder'] = idx;
     }
 
     const targetType = classify(target);
@@ -275,7 +282,6 @@ export function jsonApply<Target, Source extends DeepPartial<Target>>(
 
         const newValue = source[property];
         const propertyPath = `${path ? path + '.' : ''}${property}`;
-        const targetAny = target as any;
         const targetClass = targetAny.constructor;
         const currentValue = targetAny[property];
         let ctr = constructors[property] ?? constructors[propertyMatcherPath];
@@ -305,11 +311,12 @@ export function jsonApply<Target, Source extends DeepPartial<Target>>(
                 ctr = ctr ?? constructors[`${propertyMatcherPath}[]`];
                 if (ctr != null) {
                     const newValueArray: any[] = newValue as any;
-                    targetAny[property] = newValueArray.map((v) =>
+                    targetAny[property] = newValueArray.map((v, idx) =>
                         jsonApply(new ctr(), v, {
                             ...params,
                             path: propertyPath,
                             matcherPath: propertyMatcherPath + '[]',
+                            idx,
                         })
                     );
                 } else {
@@ -323,12 +330,14 @@ export function jsonApply<Target, Source extends DeepPartial<Target>>(
                         ...params,
                         path: propertyPath,
                         matcherPath: propertyMatcherPath,
+                        idx: undefined,
                     });
                 } else if (ctr != null) {
                     targetAny[property] = jsonApply(new ctr(), newValue as any, {
                         ...params,
                         path: propertyPath,
                         matcherPath: propertyMatcherPath,
+                        idx: undefined,
                     });
                 } else {
                     targetAny[property] = newValue;

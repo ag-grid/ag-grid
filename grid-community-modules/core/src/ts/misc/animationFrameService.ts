@@ -1,6 +1,7 @@
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { CtrlsService } from "../ctrlsService";
+import { PaginationProxy } from "../pagination/paginationProxy";
 
 interface TaskItem {
     task: () => void;
@@ -17,6 +18,7 @@ interface TaskList {
 export class AnimationFrameService extends BeanStub {
 
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
     // p1 and p2 are create tasks are to do with row and cell creation.
     // for them we want to execute according to row order, so we use
@@ -34,13 +36,24 @@ export class AnimationFrameService extends BeanStub {
     // we need to know direction of scroll, to build up rows in the direction of
     // the scroll. eg if user scrolls down, we extend the rows by building down.
     private scrollGoingDown = true;
+    private lastPage = 0;
     private lastScrollTop = 0;
 
     private taskCount = 0;
     private cancelledTasks = new Set();
 
     public setScrollTop(scrollTop: number): void {
-        this.scrollGoingDown = scrollTop > this.lastScrollTop;
+        const isPaginationActive = this.gridOptionsService.is('pagination');
+        this.scrollGoingDown = scrollTop >= this.lastScrollTop;
+
+        if (isPaginationActive && scrollTop === 0) {
+            const currentPage = this.paginationProxy.getCurrentPage();
+            if (currentPage !== this.lastPage) {
+                this.lastPage = currentPage;
+                this.scrollGoingDown = true;
+            }
+        }
+
         this.lastScrollTop = scrollTop;
     }
 

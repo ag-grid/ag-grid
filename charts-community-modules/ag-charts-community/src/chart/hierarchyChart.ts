@@ -21,7 +21,7 @@ export class HierarchyChart extends Chart {
             scene: { width, height },
             legend,
             padding,
-            seriesPadding,
+            seriesAreaPadding,
         } = this;
 
         let shrinkRect = new BBox(0, 0, width, height);
@@ -38,10 +38,10 @@ export class HierarchyChart extends Chart {
             shrinkRect.shrink(legendPadding, legend.position);
         }
 
-        shrinkRect.shrink(seriesPadding.left, 'left');
-        shrinkRect.shrink(seriesPadding.top, 'top');
-        shrinkRect.shrink(seriesPadding.right, 'right');
-        shrinkRect.shrink(seriesPadding.bottom, 'bottom');
+        shrinkRect.shrink(seriesAreaPadding.left, 'left');
+        shrinkRect.shrink(seriesAreaPadding.top, 'top');
+        shrinkRect.shrink(seriesAreaPadding.right, 'right');
+        shrinkRect.shrink(seriesAreaPadding.bottom, 'bottom');
 
         this.seriesRect = shrinkRect;
         this.series.forEach((series) => {

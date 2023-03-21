@@ -42,11 +42,11 @@ The example below demonstrates the four Provided Filters and the Multi Filter:
 - Column **Country** has a Set Filter.
 - Column **Sport** has a Multi Filter (consisting of a Text Filter and a Set Filter).
 
-<grid-example title='Provided Filters' name='provided-filters' type='generated' options='{ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "setfilter", "multifilter"] }'></grid-example>
+<grid-example title='Provided Filters' name='provided-filters' type='generated' options='{ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "setfilter", "multifilter", "menu"] }'></grid-example>
 
 ## Relation to Quick Filter and External Filter
 
-Column Filters work independently of [Quick Filter](/filter-quick/) and [External Filter](/filter-external/). If a quick filter and / or external filter are applied along with a Column Filter, each filter type is considered and the row will only show if it passes all three types.
+Column Filters work independently of [Quick Filter](/filter-quick/) and [External Filter](/filter-external/). If Quick Filter and / or an external filter are applied along with a Column Filter, each filter type is considered and the row will only show if it passes all three types.
 
 Column Filters are tied to a specific column. Quick Filter and external filter are not tied to any particular column. This section of the documentation talks about Column Filters only. For Quick Filter and external filter, click the links above to learn more.
 

@@ -48,6 +48,7 @@ import { CrossLine } from './crossline/crossLine';
 import { windowValue } from '../util/window';
 import { AxisModule, Module, RootModule } from '../util/module';
 import { Logger } from '../util/logger';
+import { BackgroundImage } from './backgroundImage';
 
 // Deliberately imported via `module-support` so that internal module registration happens.
 import { REGISTERED_MODULES } from '../module-support';
@@ -499,7 +500,7 @@ function applySeries(chart: Chart, options: AgChartOptions) {
 
             debug(`applying series diff idx ${i}`, seriesDiff);
 
-            applySeriesValues(s as any, seriesDiff, { path: `series[${i}]` });
+            applySeriesValues(s as any, seriesDiff, { path: `series[${i}]`, index: i });
             s.markNodeDataDirty();
         });
 
@@ -548,28 +549,28 @@ function createSeries(options: SeriesOptionsTypes[]): Series[] {
         const path = `series[${index++}]`;
         switch (seriesOptions.type) {
             case 'area':
-                series.push(applySeriesValues(new AreaSeries(), seriesOptions, { path }));
+                series.push(applySeriesValues(new AreaSeries(), seriesOptions, { path, index }));
                 break;
             case 'bar':
-                series.push(applySeriesValues(new BarSeries(), seriesOptions, { path }));
+                series.push(applySeriesValues(new BarSeries(), seriesOptions, { path, index }));
                 break;
             case 'column':
-                series.push(applySeriesValues(new BarSeries(), seriesOptions, { path }));
+                series.push(applySeriesValues(new BarSeries(), seriesOptions, { path, index }));
                 break;
             case 'histogram':
-                series.push(applySeriesValues(new HistogramSeries(), seriesOptions, { path }));
+                series.push(applySeriesValues(new HistogramSeries(), seriesOptions, { path, index }));
                 break;
             case 'line':
-                series.push(applySeriesValues(new LineSeries(), seriesOptions, { path }));
+                series.push(applySeriesValues(new LineSeries(), seriesOptions, { path, index }));
                 break;
             case 'scatter':
-                series.push(applySeriesValues(new ScatterSeries(), seriesOptions, { path }));
+                series.push(applySeriesValues(new ScatterSeries(), seriesOptions, { path, index }));
                 break;
             case 'pie':
-                series.push(applySeriesValues(new PieSeries(), seriesOptions, { path }));
+                series.push(applySeriesValues(new PieSeries(), seriesOptions, { path, index }));
                 break;
             case 'treemap':
-                series.push(applySeriesValues(new TreemapSeries(), seriesOptions, { path }));
+                series.push(applySeriesValues(new TreemapSeries(), seriesOptions, { path, index }));
                 break;
             default:
                 throw new Error('AG Charts - unknown series type: ' + (seriesOptions as any).type);
@@ -661,6 +662,7 @@ const JSON_APPLY_OPTIONS: Parameters<typeof jsonApply>[2] = {
         innerCircle: DoughnutInnerCircle,
         'axes[].crossLines[]': CrossLine,
         'series[].innerLabels[]': DoughnutInnerLabel,
+        'background.image': BackgroundImage,
     },
     allowedTypes: {
         'legend.pagination.marker.shape': ['primitive', 'function'],
@@ -681,7 +683,7 @@ function applyOptionValues<T, S>(target: T, options?: S, { skip, path }: { skip?
 function applySeriesValues<T extends Series<any>, S extends SeriesOptionType<T>>(
     target: T,
     options?: S,
-    { path }: { path?: string } = {}
+    { path, index }: { path?: string; index?: number } = {}
 ): T {
     const skip: string[] = ['series[].listeners'];
     const ctrs = JSON_APPLY_OPTIONS?.constructors || {};
@@ -697,6 +699,7 @@ function applySeriesValues<T extends Series<any>, S extends SeriesOptionType<T>>
         ...seriesTypeOverrides,
         skip: ['series[].type', ...(skip || [])],
         ...(path ? { path } : {}),
+        idx: index ?? -1,
     };
 
     const result = jsonApply<T, any>(target, options, applyOpts);

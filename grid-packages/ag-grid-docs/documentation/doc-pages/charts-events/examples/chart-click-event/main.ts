@@ -11,7 +11,7 @@ const options: AgChartOptions = {
     text: "Number of Cars Sold",
   },
   subtitle: {
-    text: "(click a column for details)",
+    text: "(single or double click empty space outside bars)",
   },
   data: [
     { month: "March", units: 25, brands: { BMW: 10, Toyota: 15 } },

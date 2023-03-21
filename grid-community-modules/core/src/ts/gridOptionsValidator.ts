@@ -1,8 +1,10 @@
 import { ColDefUtil } from './components/colDefUtil';
 import { ComponentUtil } from './components/componentUtil';
 import { Autowired, Bean, PostConstruct } from './context/context';
+import { ColDef, ColGroupDef } from './entities/colDef';
 import { GridOptions, RowGroupingDisplayType, TreeDataDisplayType } from './entities/gridOptions';
 import { GridOptionsService } from './gridOptionsService';
+import { RowModelType } from './interfaces/iRowModel';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { PropertyKeys } from './propertyKeys';
@@ -35,6 +37,7 @@ export class GridOptionsValidator {
             this.checkGridOptionsProperties();
             this.checkColumnDefProperties();
         }
+        this.checkColumnDefViolations();
 
         if (this.gridOptionsService.is('groupSelectsChildren') && this.gridOptionsService.is('suppressParentsInRowNodes')) {
             console.warn("AG Grid: 'groupSelectsChildren' does not work with 'suppressParentsInRowNodes', this selection method needs the part in rowNode to work");
@@ -74,7 +77,7 @@ export class GridOptionsValidator {
         const validateRegistered = (prop: keyof GridOptions, module: ModuleNames) => this.gridOptionsService.exists(prop) && ModuleRegistry.assertRegistered(module, prop);
 
         // Ensure the SideBar is registered which will then lead them to register Column / Filter Tool panels as required by their config.
-        // It is possible to use the SideBar only with your own custom tool panels.            
+        // It is possible to use the SideBar only with your own custom tool panels.
         validateRegistered('sideBar', ModuleNames.SideBarModule);
         validateRegistered('statusBar', ModuleNames.StatusBarModule);
         validateRegistered('enableCharts', ModuleNames.GridChartsModule);
@@ -84,11 +87,11 @@ export class GridOptionsValidator {
 
         if (this.gridOptionsService.is('groupRowsSticky')) {
             if (this.gridOptionsService.is('groupHideOpenParents')) {
-                this.pickOneWarning('groupRowsSticky', 'groupHideOpenParents');                
+                this.pickOneWarning('groupRowsSticky', 'groupHideOpenParents');
             }
 
             if (this.gridOptionsService.is('masterDetail')) {
-                this.pickOneWarning('groupRowsSticky', 'masterDetail');                
+                this.pickOneWarning('groupRowsSticky', 'masterDetail');
             }
 
             if (this.gridOptionsService.is('pagination')) {
@@ -112,6 +115,42 @@ export class GridOptionsValidator {
                 'https://www.ag-grid.com/javascript-data-grid/column-properties/'
             );
         });
+    }
+
+    private checkColumnDefViolations() {
+        const rowModel = this.gridOptionsService.get('rowModelType') ?? 'clientSide';
+        const unsupportedPropertiesMap: { [key in RowModelType]: (keyof ColDef | keyof ColGroupDef)[] } = {
+            infinite: ['headerCheckboxSelection', 'headerCheckboxSelectionFilteredOnly', 'headerCheckboxSelectionCurrentPageOnly'],
+            viewport: ['headerCheckboxSelection', 'headerCheckboxSelectionFilteredOnly', 'headerCheckboxSelectionCurrentPageOnly'],
+            serverSide: ['headerCheckboxSelectionFilteredOnly', 'headerCheckboxSelectionCurrentPageOnly'],
+            clientSide: [],
+        };
+        
+        const unsupportedProperties = unsupportedPropertiesMap[rowModel];
+
+        if (!unsupportedProperties?.length) {
+            return;
+        }
+
+        const validateColDef = (colDef: ColDef | ColGroupDef) => {
+            unsupportedProperties.forEach(property => {
+                if (property in colDef && !!(colDef as any)[property]) {
+                    console.warn(`AG Grid: Column property ${property} is not supported with the row model type ${rowModel}.`);
+                }
+            });
+        }
+
+        if (this.gridOptions.columnDefs != null) {
+            this.gridOptions.columnDefs.forEach(colDef => validateColDef(colDef));
+        }
+
+        if (this.gridOptions.autoGroupColumnDef != null) {
+            validateColDef(this.gridOptions.autoGroupColumnDef);
+        }
+
+        if (this.gridOptions.defaultColDef != null) {
+            validateColDef(this.gridOptions.defaultColDef);
+        }
     }
 
     private checkGridOptionsProperties() {
@@ -190,7 +229,12 @@ export class GridOptionsValidator {
         processSecondaryColGroupDef: { version: '28', newProp: 'processPivotResultColGroupDef', copyToNewProp: true },
         getServerSideStoreParams: { version: '28', newProp: 'getServerSideGroupLevelParams', copyToNewProp: true },
 
-        enableChartToolPanelsButton: { version: '29', message: 'The Chart Tool Panels button is now enabled by default. To hide the Chart Tool Panels button and display the hamburger button instead, set suppressChartToolPanelsButton=true.' }
+        enableChartToolPanelsButton: { version: '29', message: 'The Chart Tool Panels button is now enabled by default. To hide the Chart Tool Panels button and display the hamburger button instead, set suppressChartToolPanelsButton=true.' },
+        functionsPassive: { version: '29.2' },
+        onColumnRowGroupChangeRequest: { version: '29.2' },
+        onColumnPivotChangeRequest: { version: '29.2' },
+        onColumnValueChangeRequest: { version: '29.2' },
+        onColumnAggFuncChangeRequest: { version: '29.2' },
     }
 
     private checkForDeprecated() {

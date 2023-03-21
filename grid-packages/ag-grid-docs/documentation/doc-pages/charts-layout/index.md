@@ -18,6 +18,7 @@ of later elements:
 - Footnote plus its configured spacing
 - Legend plus its configured spacing
 - Navigator plus its configured margin
+- Series area padding
 - Axes
 - Series area
 
@@ -56,6 +57,10 @@ height of the title and its additional `subtitle.spacing`.
 [navigator](/charts-navigator/) is configured.
 
 `navigator.margin` can be used to adjust the space between the navigator and later components.
+
+### Series Area Padding
+
+`seriesAreaPadding` configuration is applied. It can be used to avoid the overlapping of series items with legend, title and axes labels.
 
 ### Axes
 

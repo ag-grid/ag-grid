@@ -147,11 +147,11 @@
       "height?": "PixelSize",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
-      "seriesPadding?": "AgChartPaddingOptions",
+      "seriesAreaPadding?": "AgSeriesAreaPaddingOptions",
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
-      "subtitle?": "AgChartCaptionOptions",
-      "footnote?": "AgChartCaptionOptions",
+      "subtitle?": "AgChartSubtitleOptions",
+      "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
@@ -169,7 +169,7 @@
       "height?": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "padding?": "/** Configuration for the padding shown around the chart. */",
-      "seriesPadding?": "/** Configuration for the padding around the series. */",
+      "seriesAreaPadding?": "/** Configuration for the padding around the series area. */",
       "background?": "/** Configuration for the background shown behind the chart. */",
       "title?": "/** Configuration for the title shown at the top of the chart. */",
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
@@ -192,11 +192,11 @@
       "height?": "PixelSize",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
-      "seriesPadding?": "AgChartPaddingOptions",
+      "seriesAreaPadding?": "AgSeriesAreaPaddingOptions",
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
-      "subtitle?": "AgChartCaptionOptions",
-      "footnote?": "AgChartCaptionOptions",
+      "subtitle?": "AgChartSubtitleOptions",
+      "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
@@ -212,7 +212,7 @@
       "height?": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "padding?": "/** Configuration for the padding shown around the chart. */",
-      "seriesPadding?": "/** Configuration for the padding around the series. */",
+      "seriesAreaPadding?": "/** Configuration for the padding around the series area. */",
       "background?": "/** Configuration for the background shown behind the chart. */",
       "title?": "/** Configuration for the title shown at the top of the chart. */",
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
@@ -235,11 +235,11 @@
       "height?": "PixelSize",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
-      "seriesPadding?": "AgChartPaddingOptions",
+      "seriesAreaPadding?": "AgSeriesAreaPaddingOptions",
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
-      "subtitle?": "AgChartCaptionOptions",
-      "footnote?": "AgChartCaptionOptions",
+      "subtitle?": "AgChartSubtitleOptions",
+      "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
@@ -255,7 +255,7 @@
       "height?": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "padding?": "/** Configuration for the padding shown around the chart. */",
-      "seriesPadding?": "/** Configuration for the padding around the series. */",
+      "seriesAreaPadding?": "/** Configuration for the padding around the series area. */",
       "background?": "/** Configuration for the background shown behind the chart. */",
       "title?": "/** Configuration for the title shown at the top of the chart. */",
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
@@ -627,6 +627,21 @@
       "left?": "/** The number of pixels of padding at the left of the chart area. */"
     }
   },
+  "AgSeriesAreaPaddingOptions": {
+    "meta": {},
+    "type": {
+      "top?": "PixelSize",
+      "right?": "PixelSize",
+      "bottom?": "PixelSize",
+      "left?": "PixelSize"
+    },
+    "docs": {
+      "top?": "/** The number of pixels of padding at the top of the series area. */",
+      "right?": "/** The number of pixels of padding at the right of the series area. */",
+      "bottom?": "/** The number of pixels of padding at the bottom of the series area. */",
+      "left?": "/** The number of pixels of padding at the left of the series area. */"
+    }
+  },
   "AgChartOverlayOptions": {
     "meta": {},
     "type": { "text?": "string", "renderer?": "() => string" },
@@ -679,6 +694,52 @@
     }
   },
   "AgChartCaptionOptions": {
+    "meta": {},
+    "type": {
+      "enabled?": "boolean",
+      "text?": "string",
+      "fontStyle?": "FontStyle",
+      "fontWeight?": "FontWeight",
+      "fontSize?": "FontSize",
+      "fontFamily?": "FontFamily",
+      "color?": "CssColor",
+      "spacing?": "number"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not the text should be shown. */",
+      "text?": "/** The text to display. */",
+      "fontStyle?": "/** The font style to use for the text. */",
+      "fontWeight?": "/** The font weight to use for the text. */",
+      "fontSize?": "/** The font size in pixels to use for the text. */",
+      "fontFamily?": "/** The font family to use for the text. */",
+      "color?": "/** The colour to use for the text. */",
+      "spacing?": "/** Spacing added to help position the text. */"
+    }
+  },
+  "AgChartSubtitleOptions": {
+    "meta": {},
+    "type": {
+      "enabled?": "boolean",
+      "text?": "string",
+      "fontStyle?": "FontStyle",
+      "fontWeight?": "FontWeight",
+      "fontSize?": "FontSize",
+      "fontFamily?": "FontFamily",
+      "color?": "CssColor",
+      "spacing?": "number"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not the text should be shown. */",
+      "text?": "/** The text to display. */",
+      "fontStyle?": "/** The font style to use for the text. */",
+      "fontWeight?": "/** The font weight to use for the text. */",
+      "fontSize?": "/** The font size in pixels to use for the text. */",
+      "fontFamily?": "/** The font family to use for the text. */",
+      "color?": "/** The colour to use for the text. */",
+      "spacing?": "/** Spacing added to help position the text. */"
+    }
+  },
+  "AgChartFooterOptions": {
     "meta": {},
     "type": {
       "enabled?": "boolean",
@@ -1173,11 +1234,11 @@
       "height?": "PixelSize",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
-      "seriesPadding?": "AgChartPaddingOptions",
+      "seriesAreaPadding?": "AgSeriesAreaPaddingOptions",
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
-      "subtitle?": "AgChartCaptionOptions",
-      "footnote?": "AgChartCaptionOptions",
+      "subtitle?": "AgChartSubtitleOptions",
+      "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
@@ -1192,7 +1253,7 @@
       "height?": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "padding?": "/** Configuration for the padding shown around the chart. */",
-      "seriesPadding?": "/** Configuration for the padding around the series. */",
+      "seriesAreaPadding?": "/** Configuration for the padding around the series area. */",
       "background?": "/** Configuration for the background shown behind the chart. */",
       "title?": "/** Configuration for the title shown at the top of the chart. */",
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
@@ -3097,11 +3158,11 @@
       "height?": "PixelSize",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
-      "seriesPadding?": "AgChartPaddingOptions",
+      "seriesAreaPadding?": "AgSeriesAreaPaddingOptions",
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
-      "subtitle?": "AgChartCaptionOptions",
-      "footnote?": "AgChartCaptionOptions",
+      "subtitle?": "AgChartSubtitleOptions",
+      "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
@@ -3120,7 +3181,7 @@
       "height?": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "padding?": "/** Configuration for the padding shown around the chart. */",
-      "seriesPadding?": "/** Configuration for the padding around the series. */",
+      "seriesAreaPadding?": "/** Configuration for the padding around the series area. */",
       "background?": "/** Configuration for the background shown behind the chart. */",
       "title?": "/** Configuration for the title shown at the top of the chart. */",
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
@@ -3144,11 +3205,11 @@
       "height?": "PixelSize",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
-      "seriesPadding?": "AgChartPaddingOptions",
+      "seriesAreaPadding?": "AgSeriesAreaPaddingOptions",
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
-      "subtitle?": "AgChartCaptionOptions",
-      "footnote?": "AgChartCaptionOptions",
+      "subtitle?": "AgChartSubtitleOptions",
+      "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
@@ -3165,7 +3226,7 @@
       "height?": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "padding?": "/** Configuration for the padding shown around the chart. */",
-      "seriesPadding?": "/** Configuration for the padding around the series. */",
+      "seriesAreaPadding?": "/** Configuration for the padding around the series area. */",
       "background?": "/** Configuration for the background shown behind the chart. */",
       "title?": "/** Configuration for the title shown at the top of the chart. */",
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
@@ -3189,11 +3250,11 @@
       "height?": "PixelSize",
       "autoSize?": "boolean",
       "padding?": "AgChartPaddingOptions",
-      "seriesPadding?": "AgChartPaddingOptions",
+      "seriesAreaPadding?": "AgSeriesAreaPaddingOptions",
       "background?": "AgChartBackground",
       "title?": "AgChartCaptionOptions",
-      "subtitle?": "AgChartCaptionOptions",
-      "footnote?": "AgChartCaptionOptions",
+      "subtitle?": "AgChartSubtitleOptions",
+      "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
@@ -3210,7 +3271,7 @@
       "height?": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "padding?": "/** Configuration for the padding shown around the chart. */",
-      "seriesPadding?": "/** Configuration for the padding around the series. */",
+      "seriesAreaPadding?": "/** Configuration for the padding around the series area. */",
       "background?": "/** Configuration for the background shown behind the chart. */",
       "title?": "/** Configuration for the title shown at the top of the chart. */",
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
@@ -3937,6 +3998,10 @@
     ],
     "docs": [null, null, null, null, null, null, null, null, null]
   },
+  "Padding": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ top: number; left: number; right: number; bottom: number; }"
+  },
   "RedrawType": {
     "meta": { "isEnum": true },
     "type": ["NONE", "TRIVIAL", "MINOR", "MAJOR"],
@@ -3963,14 +4028,18 @@
     "meta": { "isTypeAlias": true },
     "type": "HdpiCanvas | HdpiOffscreenCanvas"
   },
+  "ZIndexSubOrder": {
+    "meta": { "isTypeAlias": true },
+    "type": "[ LiteralOrFn<string | number>, LiteralOrFn<number> ]"
+  },
   "LayerManager": {
     "meta": {},
     "type": {
       "debug": "SceneDebugOptions",
       "canvas": "Layer",
       "markDirty()": "void",
-      "addLayer(opts: { zIndex?: number; zIndexSubOrder?: [ string, number ]; name?: string; getComputedOpacity: () => number; getVisibility: () => boolean; })": "Layer | undefined",
-      "moveLayer(canvas: Layer, zIndex: number, zIndexSubOrder?: [ string, number ])": "void",
+      "addLayer(opts: { zIndex?: number; zIndexSubOrder?: ZIndexSubOrder; name?: string; getComputedOpacity: () => number; getVisibility: () => boolean; })": "Layer | undefined",
+      "moveLayer(canvas: Layer, zIndex: number, zIndexSubOrder?: ZIndexSubOrder)": "void",
       "removeLayer(canvas: Layer)": "void"
     }
   },
@@ -4047,6 +4116,10 @@
   "Comparator": {
     "meta": { "isTypeAlias": true, "typeParams": ["T"] },
     "type": "(a: T, b: T) => number"
+  },
+  "LiteralOrFn": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
+    "type": "T | (() => T)"
   },
   "TransformFn": {
     "meta": { "isTypeAlias": true },

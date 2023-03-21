@@ -14,35 +14,29 @@ const columnDefs: ColDef[] = [
     valueParser: numberValueParser,
   },
   {
-    headerName: 'Editable C',
+    headerName: 'API C',
     field: 'c',
-    editable: true,
-    valueParser: numberValueParser,
-  },
-  {
-    headerName: 'API D',
-    field: 'd',
-    minWidth: 140,
+    minWidth: 135,
     valueParser: numberValueParser,
     cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
-    headerName: 'API E',
-    field: 'e',
-    minWidth: 140,
+    headerName: 'API D',
+    field: 'd',
+    minWidth: 135,
     valueParser: numberValueParser,
     cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'Total',
-    minWidth: 140,
-    valueGetter: 'data.a + data.b + data.c + data.d + data.e',
+    valueGetter: 'data.a + data.b + data.c + data.d',
+    minWidth: 135,
     cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'Average',
-    minWidth: 140,
-    valueGetter: '(data.a + data.b + data.c + data.d + data.e) / 5',
+    valueGetter: '(data.a + data.b + data.c + data.d) / 4',
+    minWidth: 135,
     cellRenderer: 'agAnimateSlideCellRenderer',
   },
 ]
@@ -50,8 +44,8 @@ const columnDefs: ColDef[] = [
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
+    minWidth: 105,
     flex: 1,
-    minWidth: 120,
     resizable: true,
     cellClass: 'align-right',
     valueFormatter: (params) => {
@@ -78,8 +72,8 @@ function onUpdateSomeValues() {
   for (let i = 0; i < 10; i++) {
     const row = Math.floor(Math.random() * rowCount)
     const rowNode = gridOptions.api!.getDisplayedRowAtIndex(row)!
+    rowNode.setDataValue('c', Math.floor(Math.random() * 10000))
     rowNode.setDataValue('d', Math.floor(Math.random() * 10000))
-    rowNode.setDataValue('e', Math.floor(Math.random() * 10000))
   }
 }
 
@@ -92,7 +86,6 @@ function createRowData() {
       b: Math.floor(((i + 323) * 23221) % 10000),
       c: Math.floor(((i + 323) * 468276) % 10000),
       d: 0,
-      e: 0,
     })
   }
 

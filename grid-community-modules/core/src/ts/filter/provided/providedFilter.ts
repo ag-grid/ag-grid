@@ -89,6 +89,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     private hidePopup: ((params: PopupEventParams) => void) | null | undefined = null;
     // a debounce of the onBtApply method
     private onBtApplyDebounce: () => void;
+    private debouncePending = false;
 
     // after the user hits 'apply' the model gets copied to here. this is then the model that we use for
     // all filtering. so if user changes UI but doesn't hit apply, then the UI will be out of sync with this model.
@@ -254,7 +255,19 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     private setupOnBtApplyDebounce(): void {
         const debounceMs = ProvidedFilter.getDebounceMs(this.providedFilterParams, this.getDefaultDebounceMs());
-        this.onBtApplyDebounce = debounce(this.onBtApply.bind(this), debounceMs);
+        const debounceFunc = debounce(this.checkApplyDebounce.bind(this), debounceMs);
+        this.onBtApplyDebounce = () => {
+            this.debouncePending = true;
+            debounceFunc();
+        }
+    }
+
+    private checkApplyDebounce(): void {
+        if (this.debouncePending) {
+            // May already have been applied, so don't apply again (e.g. closing filter before debounce timeout)
+            this.debouncePending = false;
+            this.onBtApply();
+        }
     }
 
     public getModel(): M | null {
@@ -403,6 +416,10 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         if (params == null) { return; }
 
         this.hidePopup = params.hidePopup;
+    }
+
+    public afterGuiDetached(): void {
+        this.checkApplyDebounce();
     }
 
     // static, as used by floating filter also

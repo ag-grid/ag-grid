@@ -262,7 +262,7 @@ export const Options = ({ chartType, updateOption }) => {
     };
     const isRequiresWholeObject = (prop: string) => ['highlightStyle', 'item', 'series'].includes(prop);
     const isArraySkipped = (prop: string) => ['series', 'axes', 'gridStyle', 'crossLines', 'innerLabels'].includes(prop);
-    const isEditable = (prop: string) => !['data'].includes(prop);
+    const isEditable = (key: string) => !['data', 'type', 'series.data'].includes(key);
 
     const isSearching = getTrimmedSearchText() !== '';
 
@@ -420,7 +420,7 @@ const generateOptions = ({
         };
 
         if (desc.type === 'primitive' || (desc.type === 'array' && desc.elements.type === 'primitive')) {
-            const { editor, editorProps } = isEditable(name) && getPrimitiveEditor(prop, key);
+            const { editor, editorProps } = isEditable(key) && getPrimitiveEditor(prop, key);
 
             elements.push(
                 <Option

@@ -6,7 +6,7 @@ This section describes the Filter Conditions shared by the three Simple Filters 
 
 Each Simple Filter follows the same layout. The filter consists of one or more Filter Conditions separated by zero or more Join Operators.
 
-The only layout difference is the type of input field presented to the user: for Text and Number Filters a text field is displayed, whereas for Date Filters a date picker field is displayed.
+The only layout difference is the type of input field presented to the user: a text field for Text Filters, a number field for Number Filters, and a date picker field for Date Filters.
 
 <image-caption src="filter-conditions/resources/filter-panel-components.png" alt="Filter Panel Component" width="40rem" centered="true"></image-caption>
 

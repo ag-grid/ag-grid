@@ -18,7 +18,7 @@ To ensure your grid reflects the latest data on your server, you can periodicall
 The following example provides a simple demonstration of the different behaviours of the refresh API, note the following:
  - Using the <b>Refresh</b> button, you can request that all the rows are requested from the server again, bringing them up to date with the server version.
  - Because [Row IDs](/server-side-model-configuration/#providing-row-ids) have been implemented, the grid is able to detect which rows have been updated, and flash cells when using `enableCellChangeFlash`.
- - The `Purge` checkbox enables the purge option in the API call, this causes all rows (and row state) to be reset when the refresh call is made, and replaced with loading rows.
+ - The `Purge` checkbox enables the purge option in the API call, this causes all rows (and all row state except row selection state) to be reset when the refresh call is made, and replaced with loading rows.
 
 
 <grid-example title='Simple Example' name='refreshing-the-grid' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>

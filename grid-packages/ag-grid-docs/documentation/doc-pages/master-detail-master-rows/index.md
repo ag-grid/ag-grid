@@ -22,7 +22,7 @@ Because Static Master Rows are used in all the basic examples of Master / Detail
 
 Dynamic Master Rows allows specifically deciding what rows in the Master Grid can be expanded. This can be useful if, for example, a Master Row has no child records, then it may not be desirable to allow expanding the Master Row.
 
-In specify which rows should expand, provide the grid callback `isRowMaster`. The callback will be called once for each row. Return `true` to allow expanding and `false` to disallow expanding for that row.
+To specify which rows should expand, provide the grid callback `isRowMaster`. The callback will be called once for each row. Return `true` to allow expanding and `false` to disallow expanding for that row.
 
 <api-documentation source='grid-options/properties.json' section='masterDetail' names='["isRowMaster"]'></api-documentation>
 
@@ -56,14 +56,14 @@ In the example below, only Master Rows that have data to show are expandable. No
 
 - Row 'Nora Thomas' has no detail records, thus is not expandable.
 - Row 'Mila Smith' has detail records, thus is expandable.
-- Clicking 'Clear Mila Calls' removes detail records from Mila Smith which results in the Mila Smith row no longer been a Master Row.
+- Clicking 'Clear Mila Calls' removes detail records from Mila Smith which results in the Mila Smith row no longer being a Master Row.
 - Clicking 'Set Mila Calls' sets detail records from Mila Smith which results in the Mila Smith becoming a Master Row.
 
 <grid-example title='Dynamically Changing Master Rows' name='changing-dynamic-1' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
 The example below extends the previous example. It demonstrates a common scenario of the Master Row controlling the Detail Rows. Note the following:
 
-- Each Master Row has buttons to add or remove one detail rows.
+- Each Master Row has buttons to add or remove one detail row.
 - Clicking 'Add' will:
     - Add one detail row.
     - Ensure the Master Row is expandable.

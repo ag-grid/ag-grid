@@ -120,6 +120,7 @@ Object {
     "fontSize": 10,
     "fontStyle": "italic",
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Northern Ireland Statistics and Research Agency",
   },
   "legend": Object {
@@ -579,6 +580,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Department for Environment, Food & Rural Affairs; Agriculture and Horticulture Development Board",
   },
   "legend": Object {
@@ -954,6 +956,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: HM Revenue & Customs",
   },
   "legend": Object {
@@ -1605,6 +1608,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Environmental Agency",
   },
   "legend": Object {
@@ -1933,6 +1937,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: US Geological Survey",
   },
   "legend": Object {
@@ -2065,6 +2070,10 @@ Object {
       "yName": "Minimum Distance",
     },
   ],
+  "seriesAreaPadding": Object {
+    "bottom": 15,
+    "left": 20,
+  },
   "subtitle": Object {
     "color": "rgb(140, 140, 140)",
     "enabled": false,
@@ -2199,6 +2208,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: US Geological Survey",
   },
   "legend": Object {
@@ -2669,6 +2679,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Department for Business, Energy & Industrial Strategy",
   },
   "legend": Object {
@@ -3281,6 +3292,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Office for National Statistics",
   },
   "legend": Object {
@@ -3571,6 +3583,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Office for National Statistics",
   },
   "legend": Object {
@@ -3850,6 +3863,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Footnote",
   },
   "legend": Object {
@@ -4122,6 +4136,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Simple Maps",
   },
   "legend": Object {
@@ -4389,6 +4404,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Ministry of Justice, HM Prison Service, and Her Majesty’s Prison and Probation Service",
   },
   "legend": Object {
@@ -4702,6 +4718,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Office for National Statistics",
   },
   "legend": Object {
@@ -5018,6 +5035,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Office for National Statistics",
   },
   "legend": Object {
@@ -5276,6 +5294,7 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
+        "interval": 500,
         "size": 6,
         "width": 1,
       },
@@ -5348,6 +5367,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: UCI",
   },
   "legend": Object {
@@ -5498,12 +5518,12 @@ Object {
   ],
   "subtitle": Object {
     "color": "rgb(140, 140, 140)",
-    "enabled": false,
+    "enabled": true,
     "fontFamily": "Verdana, sans-serif",
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
-    "text": "Subtitle",
+    "text": "USA 1987",
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -5512,7 +5532,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
-    "text": "Vehicle weight distribution (USA 1987)",
+    "text": "Vehicle weight distribution",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",
@@ -5634,6 +5654,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Department for Environment, Food and Rural Affairs",
   },
   "legend": Object {
@@ -6819,6 +6840,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Footnote",
   },
   "legend": Object {
@@ -6999,6 +7021,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Footnote",
   },
   "legend": Object {
@@ -7299,6 +7322,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Department for Business, Energy & Industrial Strategy",
   },
   "legend": Object {
@@ -7633,6 +7657,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Office for National Statistics",
   },
   "legend": Object {
@@ -7954,6 +7979,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Department for Education",
   },
   "legend": Object {
@@ -8220,6 +8246,11 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
+        "interval": TimeInterval {
+          "_decode": [Function],
+          "_encode": [Function],
+          "_rangeCallback": [Function],
+        },
         "size": 6,
         "width": 1,
       },
@@ -8292,6 +8323,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Department for Digital, Culture, Media & Sport",
   },
   "legend": Object {
@@ -8808,6 +8840,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Department for Digital, Culture, Media & Sport",
   },
   "legend": Object {
@@ -8997,6 +9030,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Home Office",
   },
   "legend": Object {
@@ -9309,6 +9343,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: UCI",
   },
   "legend": Object {
@@ -9446,12 +9481,12 @@ Object {
   ],
   "subtitle": Object {
     "color": "rgb(140, 140, 140)",
-    "enabled": false,
+    "enabled": true,
     "fontFamily": "Verdana, sans-serif",
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
-    "text": "Subtitle",
+    "text": "USA 1987",
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -9460,7 +9495,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
-    "text": "Engine size distribution (USA 1987)",
+    "text": "Engine size distribution",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",
@@ -9487,7 +9522,7 @@ Object {
         },
       ],
       "label": Object {
-        "autoRotate": false,
+        "autoRotate": true,
         "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
@@ -9536,7 +9571,7 @@ Object {
         },
       ],
       "label": Object {
-        "autoRotate": false,
+        "autoRotate": true,
         "avoidCollisions": true,
         "color": "rgb(87, 87, 87)",
         "fontFamily": "Verdana, sans-serif",
@@ -9583,6 +9618,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Department for Business, Energy & Industrial Strategy",
   },
   "legend": Object {
@@ -9835,6 +9871,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Office for National Statistics",
   },
   "legend": Object {
@@ -10125,6 +10162,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Statistics Online Computational Resource",
   },
   "legend": Object {
@@ -10397,6 +10435,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Department for Digital, Culture, Media & Sport",
   },
   "legend": Object {
@@ -10748,6 +10787,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Ministry of Housing, Communities & Local Government",
   },
   "legend": Object {
@@ -11061,6 +11101,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: Transport for London",
   },
   "legend": Object {
@@ -11231,12 +11272,12 @@ Object {
   ],
   "subtitle": Object {
     "color": "rgb(140, 140, 140)",
-    "enabled": false,
+    "enabled": true,
     "fontFamily": "Verdana, sans-serif",
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
-    "text": "Subtitle",
+    "text": "Victoria Line (2010)",
   },
   "theme": Object {
     "overrides": Object {
@@ -11276,7 +11317,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
-    "text": "Average Station Entries: Victoria Line (2010)",
+    "text": "Average Station Entries",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",
@@ -11322,6 +11363,7 @@ Object {
       "thickness": 0,
       "tick": Object {
         "color": "rgb(195, 195, 195)",
+        "interval": 500,
         "size": 6,
         "width": 1,
       },
@@ -11394,6 +11436,7 @@ Object {
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
+    "spacing": 30,
     "text": "Source: UCI",
   },
   "legend": Object {
@@ -11544,12 +11587,12 @@ Object {
   ],
   "subtitle": Object {
     "color": "rgb(140, 140, 140)",
-    "enabled": false,
+    "enabled": true,
     "fontFamily": "Verdana, sans-serif",
     "fontSize": 12,
     "fontStyle": undefined,
     "fontWeight": undefined,
-    "text": "Subtitle",
+    "text": "USA 1987",
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -11558,7 +11601,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
-    "text": "Vehicle weight distribution (USA 1987)",
+    "text": "Vehicle weight distribution",
   },
   "tooltip": Object {
     "class": "ag-chart-tooltip",

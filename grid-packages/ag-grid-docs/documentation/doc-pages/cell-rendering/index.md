@@ -30,7 +30,7 @@ The cell renderer for a column is set via `colDef.cellRenderer` and can be any o
 
 The code snippet below demonstrates each of these method types.
 
-[[only-javascript-or-angular-or-react]]
+[[only-javascript]]
 | <snippet spaceBetweenProperties="true">
 | const gridOptions = {
 |     columnDefs: [
@@ -54,7 +54,69 @@ The code snippet below demonstrates each of these method types.
 |             field: 'year',
 |             cellRenderer: params => {
 |                 // put the value in bold
-|                 return 'Value is **' + params.value + '**';
+|                 return 'Value is &lt;b&gt;' + params.value + '&lt;/b&gt;';
+|             }
+|         }
+|     ]
+| }
+| </snippet>
+
+[[only-angular]]
+| <snippet spaceBetweenProperties="true">
+| const gridOptions = {
+|     columnDefs: [
+|         // 1 - undefined - Grid renders the value as a string.
+|         {
+|             field: 'name',
+|             cellRenderer: undefined,
+|         },
+|         // 2 - String - The name of a cell renderer registered with the grid.
+|         {
+|             field: 'age',
+|             cellRenderer: 'agGroupCellRenderer',
+|         },
+|         // 3 - Class - Provide your own cell renderer component directly without registering.
+|         {
+|             field: 'sport',
+|             cellRenderer: MyCustomCellRendererClass,
+|         },
+|         // 4 - Function - A function that returns an HTML string or DOM element for display
+|         {
+|             field: 'year',
+|             cellRenderer: params => {
+|                 // put the value in bold
+|                 return 'Value is &lt;b&gt;' + params.value + '&lt;/b&gt;';
+|             }
+|         }
+|     ]
+| }
+| </snippet>
+
+[[only-react]]
+| <snippet spaceBetweenProperties="true">
+| const gridOptions = {
+|     columnDefs: [
+|         // 1 - undefined - Grid renders the value as a string.
+|         {
+|             field: 'name',
+|             cellRenderer: undefined,
+|         },
+|         // 2 - String - The name of a cell renderer registered with the grid.
+|         {
+|             field: 'age',
+|             cellRenderer: 'agGroupCellRenderer',
+|         },
+|         // 3 - Class - Provide your own cell renderer component directly without registering.
+|         {
+|             field: 'sport',
+|             cellRenderer: MyCustomCellRendererClass,
+|         },
+|         // 4 - Function - A function that returns a JSX element for display
+|         {
+|             field: 'year',
+|             cellRenderer: params => {
+|                 // put the value in bold
+|                 return &lt;&gt;Value is &lt;b&gt; {params.value} &lt;/b&gt; &lt;/&gt;;
 |             }
 |         }
 |     ]
@@ -80,7 +142,7 @@ The code snippet below demonstrates each of these method types.
 |             field: 'year',
 |             cellRenderer: params => {
 |                 // put the value in bold
-|                 return 'Value is **' + params.value + '**';
+|                 return 'Value is &lt;b&gt;' + params.value + '&lt;/b&gt;';
 |             }
 |         }
 |     ]

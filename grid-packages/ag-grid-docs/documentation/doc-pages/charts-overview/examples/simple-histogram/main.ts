@@ -6,8 +6,11 @@ const options: AgChartOptions = {
   autoSize: true,
   data: getData(),
   title: {
-    text: 'Engine size distribution (USA 1987)',
+    text: 'Engine size distribution',
     fontSize: 18,
+  },
+  subtitle: {
+    text: 'USA 1987'
   },
   footnote: {
     text: 'Source: UCI',

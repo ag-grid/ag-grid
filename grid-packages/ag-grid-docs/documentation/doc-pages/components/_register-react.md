@@ -20,7 +20,7 @@
 |const GridExample = () => {
 |   // other properties & methods
 |   
-|    const [columnDefs] = useState( [{field: 'value', cellRenderer: CubeComponent}] );
+|    const columnDefs = useMemo( () => [{field: 'value', cellRenderer: CubeComponent}], []);
 |
 |    return (
 |         <AgGridReact
@@ -48,11 +48,11 @@
 |const GridExample = () => {
 |   // other properties & methods
 |   
-|   const [components] = useState({
+|   const components = useMemo(() => ({
 |       cubeComponent: CubeComponent    
-|   });
+|   }), []);
 |
-|   const [columnDefs] = useState( [{field: 'value', cellRenderer: 'cubeComponent'}] );
+|   const columnDefs = useMemo(() => [{field: 'value', cellRenderer: 'cubeComponent'}], []);
 |
 |   return (
 |         <AgGridReact

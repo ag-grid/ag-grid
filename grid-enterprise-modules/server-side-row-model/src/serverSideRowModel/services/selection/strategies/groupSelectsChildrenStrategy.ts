@@ -76,7 +76,10 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             ));
             const doesRedundantStateExist = convertedChildren?.some(([_, innerState]) => isThisNodeSelected === innerState.selectAllChildren && innerState.toggledNodes.size === 0);
             if (doesRedundantStateExist) {
-                throw new Error('AG Grid: State could not be parsed due to nonsensical data. Ensure all child state has toggledNodes or does not conform with the parent rule.')
+                throw new Error(`
+                    AG Grid: AG Grid: Row selection state could not be parsed due to invalid data. Ensure all child state has toggledNodes or does not conform with the parent rule.
+                    Please rebuild the selection state and reapply it.
+                `);
             }
             return {
                 selectAllChildren: isThisNodeSelected,
@@ -195,9 +198,14 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
             store: IServerSideStore | undefined = this.serverSideRowModel.getRootStore(),
             node?: RowNode | null,
         ) => {
+            let allChildNodesFound = true;
             let noIndeterminateChildren = true;
             selectedState.toggledNodes.forEach((state, id) => {
                 const parentNode = this.rowModel.getRowNode(id);
+                if (!parentNode) {
+                    allChildNodesFound = false;
+                }
+
                 const nextStore = parentNode?.childStore;
                 if (!nextStore) {
                     if (state.toggledNodes.size > 0) {
@@ -219,19 +227,12 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                 }
             });
 
-            if (store && store.isLastRowIndexKnown() && store.getRowCount() < selectedState.toggledNodes.size) {
-                console.warn(`
-                    AG Grid: The number of toggled nodes in this store exceeds the total number of rows.
-                    Ensure your selection state is valid and up to date with your server.`
-                );
-            }
-
             if (!store || !store.isLastRowIndexKnown() || store.getRowCount() !== selectedState.toggledNodes.size) {
                 // if row count unknown, or doesn't match the size of toggledNodes, ignore.
                 return false;
             }
 
-            if (noIndeterminateChildren) {
+            if (noIndeterminateChildren && allChildNodesFound) {
                 selectedState.toggledNodes.clear();
                 selectedState.selectAllChildren = !selectedState.selectAllChildren;
 

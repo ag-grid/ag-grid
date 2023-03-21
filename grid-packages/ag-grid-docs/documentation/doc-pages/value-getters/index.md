@@ -132,7 +132,7 @@ As before, we focus on the value getter of the **'Total'** column and can see ho
 
 - The values in the **Total** column are used many times as follows:
     - For inserting the value into the DOM (i.e. what's visible in the cell).
-    - For calculating the group total for the total column (ie the figure 87,040 is a sum of the 5 values below it).
+    - For calculating the group total for the total column (ie the figure 870,400 is a sum of the 5 values below it).
     - For calculating the **'Total x 10'** column, as that value getter also references the values in the **'Total'** column.
 - Despite the values getting used multiple times, each value getter is executed exactly once. This can be observed by opening the development console and observing the log message the value getter prints.
 - If you close and then re-open a group, the value getters are not re-executed, even though the values are needed to re-create the DOM elements that represent the cells.

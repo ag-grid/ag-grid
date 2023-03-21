@@ -85,6 +85,13 @@ const INVALID_DATA_EXAMPLES: Record<string, TestCase> = {
 };
 
 describe('LineSeries', () => {
+    const compare = async () => {
+        await waitForChartStability(chart);
+
+        const imageData = extractImageData(ctx);
+        (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
+    };
+
     let chart: Chart;
 
     afterEach(() => {
@@ -118,13 +125,6 @@ describe('LineSeries', () => {
             });
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
-                const compare = async () => {
-                    await waitForChartStability(chart);
-
-                    const imageData = extractImageData(ctx);
-                    (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-                };
-
                 const options: AgChartOptions = { ...example.options };
                 options.autoSize = false;
                 options.width = CANVAS_WIDTH;
@@ -159,13 +159,6 @@ describe('LineSeries', () => {
             });
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
-                const compare = async () => {
-                    await waitForChartStability(chart);
-
-                    const imageData = extractImageData(ctx);
-                    (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
-                };
-
                 const options: AgChartOptions = { ...example.options };
                 options.autoSize = false;
                 options.width = CANVAS_WIDTH;
@@ -182,5 +175,45 @@ describe('LineSeries', () => {
                 expect(console.warn).toBeCalled();
             });
         }
+    });
+
+    describe('multiple overlapping lines', () => {
+        beforeEach(() => {
+            console.warn = jest.fn();
+        });
+
+        it('should render line series with the correct relative Z-index', async () => {
+            const options: AgChartOptions = {
+                data: repeat(null, 30).reduce(
+                    (result, _, i) => [
+                        {
+                            ...(result[0] ?? {}),
+                            [`x${i}`]: 0,
+                            [`y${i}`]: i,
+                        },
+                        {
+                            ...(result[1] ?? {}),
+                            [`x${i}`]: 1,
+                            [`y${i}`]: 30 - i,
+                        },
+                    ],
+                    [{}, {}]
+                ),
+                series: repeat(null, 30).map((_, i) => ({
+                    type: 'line',
+                    xKey: `x${i}`,
+                    yKey: `y${i}`,
+                    strokeWidth: 30,
+                })),
+                legend: { enabled: false },
+            };
+
+            options.autoSize = false;
+            options.width = CANVAS_WIDTH;
+            options.height = CANVAS_HEIGHT;
+
+            chart = AgChart.create(options) as Chart;
+            await compare();
+        });
     });
 });

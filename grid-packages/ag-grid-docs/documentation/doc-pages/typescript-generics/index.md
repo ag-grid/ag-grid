@@ -167,9 +167,43 @@ The `TValue` generic type is also supported for cell renderers / editors by `ICe
 
 For a number of events and callbacks when a generic interface is provided the `value` property is typed as `TValue | undefined` instead of `any`. This is because it is possible for the `value` property to be undefined under certain grid configurations. 
 
+## Context: \<TContext\>
+
+The grid options property `context` can be used to provided additional information to grid callbacks and event handlers implemented by your application. See [Context](/context) for more details. The `params.context` property can be typed via the `TContext` generic parameter.
+
+### Configure via Interfaces
+
+The generic parameter `TContext` needs to be explicitly provided to each interface where it is used.  For example, an event handler function can accept the generic parameter on the event `RowSelectedEvent<TData, TContext>`. 
+
+```ts
+// Define the interface for your context
+interface IDiscountRate {
+    discount: number;
+}
+
+// Set the context property on gridOptions using `as` to apply the type
+const gridOptions: GridOptions<ICar> {
+    context: {
+        discount: 0.9
+    } as IDiscountRate;
+}
+
+// Provide to the interface to the TContext generic parameter to type the params.context property
+function onRowSelected(event: RowSelectedEvent<ICar, IDiscountRate>) {
+    if (event.data) {
+        // event.context.discount is typed as number
+        const price = event.data.price * event.context.discount;
+    }
+}
+```
+
 ## Generic Type Example
 
 Inspect the code in the following example or open in Plunker to experiment with generic typing yourself.
+
+- `rowData` is typed using the `ICar` interface via `TData`.
+- `valueFormatter` types the `value` property as `number` via `TValue`.
+- `onRowSelected` event handler uses the `IDiscountRate` interface via `TContext`.
 
 <grid-example title='Generic Types' name='generic' type='generated' options='{ "exampleHeight": 500 }'></grid-example>
 
@@ -178,3 +212,4 @@ Inspect the code in the following example or open in Plunker to experiment with 
 If generic interfaces are not provided then the grid will use the default type of `any`. This means that generics in AG Grid are completely optional. GridOptions is defined as `GridOptions<TData = any>`, so if a generic parameter is not provided then `any` is used in its place for row data properties. 
 
 Likewise for cell values, if a generic parameter is not provided, `any` is used for the value property. For example, cell renderer params are defined as `ICellRendererParams<TData = any, TValue = any>`.
+

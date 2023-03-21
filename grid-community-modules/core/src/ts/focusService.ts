@@ -26,7 +26,6 @@ import { WithoutGridCommon } from "./interfaces/iCommon";
 import { FOCUSABLE_EXCLUDE, FOCUSABLE_SELECTOR } from "./utils/dom";
 import { TabGuardClassNames } from "./widgets/tabGuardCtrl";
 
-
 @Bean('focusService')
 export class FocusService extends BeanStub {
 
@@ -248,8 +247,8 @@ export class FocusService extends BeanStub {
 
         const event: WithoutGridCommon<CellFocusClearedEvent> = {
             type: Events.EVENT_CELL_FOCUS_CLEARED,
-            ... this.getFocusEventParams(),
-        }
+            ...this.getFocusEventParams(),
+        };
 
         this.focusedCellPosition = null;
 
@@ -283,7 +282,7 @@ export class FocusService extends BeanStub {
 
         const event: WithoutGridCommon<CellFocusedEvent> = {
             type: Events.EVENT_CELL_FOCUSED,
-            ... this.getFocusEventParams(),
+            ...this.getFocusEventParams(),
             forceBrowserFocus,
             preventScrollOnBrowserFocus,
             floating: null

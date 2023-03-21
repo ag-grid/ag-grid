@@ -86,8 +86,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     public resizeLeafColumnsToFit(): void {
-        this.groupResizeFeature.onResizeStart(false);
-        this.groupResizeFeature.resizeLeafColumnsToFit();
+        // AG-8205 Temp null check to avoid throwing when a component has not been setup yet (React 18)
+        this.groupResizeFeature?.onResizeStart(false);
+        this.groupResizeFeature?.resizeLeafColumnsToFit();
     }
 
     private setupUserComp(): void {

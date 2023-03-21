@@ -2141,6 +2141,7 @@
       "suppressRowHoverHighlight?": "/** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. Default: `false` */",
       "suppressRowTransform?": "/** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. Default: `false` */",
       "columnHoverHighlight?": "/** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false` */",
+      "functionsPassive?": "/** @deprecated v29.2 */",
       "getContextMenuItems?": "/** For customising the context menu. */",
       "getMainMenuItems?": "/** For customising the main 'column header' menu. */",
       "postProcessPopup?": "/** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */",
@@ -2267,6 +2268,10 @@
       "onCellContextMenu?(event: CellContextMenuEvent<TData>)": "/** Cell is right clicked. */",
       "onRangeSelectionChanged?(event: RangeSelectionChangedEvent<TData>)": "/** A change to range selection has occurred. */",
       "onSortChanged?(event: SortChangedEvent<TData>)": "/** Sort has changed. The grid also listens for this and updates the model. */",
+      "onColumnRowGroupChangeRequest?(event: ColumnRowGroupChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
+      "onColumnPivotChangeRequest?(event: ColumnPivotChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
+      "onColumnValueChangeRequest?(event: ColumnValueChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
+      "onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
       "api?": "/** The Grid Api for interacting with the grid.\n     * Set by the grid on init, set to null on destroy.\n     */",
       "columnApi?": "/** The Column Api for interacting with the grid columns.\n     * Set by the grid on init, set to null on destroy.\n     */"
     }
@@ -5526,6 +5531,9 @@
       "context": "any"
     },
     "docs": {
+      "filterOption": "/** The applicable filter option being tested.\n     * One of: `equals`, `notEqual`, `contains`, `notContains`, `startsWith`, `endsWith`.\n     */",
+      "value": "/** The value about to be filtered.\n     * If this column has a value getter, this value will be coming from the value getter,\n     * otherwise it is the raw value injected into the grid.\n     * If a `textFormatter` is provided, this value will have been formatted.\n     * If no `textFormatter` is provided and `caseSensitive` is not provided or is `false`,\n     * the value will have been converted to lower case.\n     */",
+      "filterText": "/** The value to filter by.\n     * If a `textFormatter` is provided, this value will have been formatted.\n     * If no `textFormatter` is provided and `caseSensitive` is not provided or is `false`,\n     * the value will have been converted to lower case.\n     */",
       "node": "/** Row node for the given row */",
       "data": "/** Data associated with the node */",
       "column": "/** Column for this callback */",
@@ -5576,7 +5584,7 @@
       "readOnly?": "boolean"
     },
     "docs": {
-      "textMatcher?": "/** Used to override how to filter based on the user input.\n     */",
+      "textMatcher?": "/** Used to override how to filter based on the user input.\n     * Returns `true` if the value passes the filter, otherwise `false`.\n     */",
       "caseSensitive?": "/** By default, text filtering is case-insensitive. Set this to `true` to make text filtering case-sensitive.\n     * Default: `false`\n     */",
       "textFormatter?": "/** Formats the text before applying the filter compare logic.\n     * Useful if you want to substitute accented characters, for example.\n     */",
       "trimInput?": "/** If `true`, the input that the user enters will be trimmed when the filter is applied, so any leading or trailing whitespace will be removed.\n     * If only whitespace is entered, it will be left as-is.\n     * If you enable `trimInput`, it is best to also increase the `debounceMs` to give users more time to enter text.\n     * Default: `false`\n     */",
@@ -12500,6 +12508,7 @@
       "suppressRowHoverHighlight?": "/** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. Default: `false` */",
       "suppressRowTransform?": "/** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. Default: `false` */",
       "columnHoverHighlight?": "/** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false` */",
+      "functionsPassive?": "/** @deprecated v29.2 */",
       "getContextMenuItems?": "/** For customising the context menu. */",
       "getMainMenuItems?": "/** For customising the main 'column header' menu. */",
       "postProcessPopup?": "/** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */",
@@ -12626,6 +12635,10 @@
       "onCellContextMenu?(event: CellContextMenuEvent<TData>)": "/** Cell is right clicked. */",
       "onRangeSelectionChanged?(event: RangeSelectionChangedEvent<TData>)": "/** A change to range selection has occurred. */",
       "onSortChanged?(event: SortChangedEvent<TData>)": "/** Sort has changed. The grid also listens for this and updates the model. */",
+      "onColumnRowGroupChangeRequest?(event: ColumnRowGroupChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
+      "onColumnPivotChangeRequest?(event: ColumnPivotChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
+      "onColumnValueChangeRequest?(event: ColumnValueChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
+      "onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
       "api?": "/** The Grid Api for interacting with the grid.\n     * Set by the grid on init, set to null on destroy.\n     */",
       "columnApi?": "/** The Column Api for interacting with the grid columns.\n     * Set by the grid on init, set to null on destroy.\n     */"
     }
@@ -13257,6 +13270,7 @@
       "suppressRowHoverHighlight?": "/** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. Default: `false` */",
       "suppressRowTransform?": "/** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. Default: `false` */",
       "columnHoverHighlight?": "/** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false` */",
+      "functionsPassive?": "/** @deprecated v29.2 */",
       "getContextMenuItems?": "/** For customising the context menu. */",
       "getMainMenuItems?": "/** For customising the main 'column header' menu. */",
       "postProcessPopup?": "/** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */",
@@ -13383,6 +13397,10 @@
       "onCellContextMenu?(event: CellContextMenuEvent<TData>)": "/** Cell is right clicked. */",
       "onRangeSelectionChanged?(event: RangeSelectionChangedEvent<TData>)": "/** A change to range selection has occurred. */",
       "onSortChanged?(event: SortChangedEvent<TData>)": "/** Sort has changed. The grid also listens for this and updates the model. */",
+      "onColumnRowGroupChangeRequest?(event: ColumnRowGroupChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
+      "onColumnPivotChangeRequest?(event: ColumnPivotChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
+      "onColumnValueChangeRequest?(event: ColumnValueChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
+      "onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
       "api?": "/** The Grid Api for interacting with the grid.\n     * Set by the grid on init, set to null on destroy.\n     */",
       "columnApi?": "/** The Column Api for interacting with the grid columns.\n     * Set by the grid on init, set to null on destroy.\n     */"
     }
@@ -14016,6 +14034,7 @@
       "suppressRowHoverHighlight?": "/** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. Default: `false` */",
       "suppressRowTransform?": "/** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. Default: `false` */",
       "columnHoverHighlight?": "/** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false` */",
+      "functionsPassive?": "/** @deprecated v29.2 */",
       "getContextMenuItems?": "/** For customising the context menu. */",
       "getMainMenuItems?": "/** For customising the main 'column header' menu. */",
       "postProcessPopup?": "/** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */",
@@ -14142,6 +14161,10 @@
       "onCellContextMenu?(event: CellContextMenuEvent<TData>)": "/** Cell is right clicked. */",
       "onRangeSelectionChanged?(event: RangeSelectionChangedEvent<TData>)": "/** A change to range selection has occurred. */",
       "onSortChanged?(event: SortChangedEvent<TData>)": "/** Sort has changed. The grid also listens for this and updates the model. */",
+      "onColumnRowGroupChangeRequest?(event: ColumnRowGroupChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
+      "onColumnPivotChangeRequest?(event: ColumnPivotChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
+      "onColumnValueChangeRequest?(event: ColumnValueChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
+      "onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent<TData>)": "/** @deprecated v29.2 */",
       "api?": "/** The Grid Api for interacting with the grid.\n     * Set by the grid on init, set to null on destroy.\n     */",
       "columnApi?": "/** The Column Api for interacting with the grid columns.\n     * Set by the grid on init, set to null on destroy.\n     */"
     }

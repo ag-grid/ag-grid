@@ -10,6 +10,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     { field: 'bronze', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
   ],
   defaultColDef: {
+    floatingFilter: true,
     flex: 1,
     minWidth: 120,
     resizable: true,
@@ -21,11 +22,12 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   getRowId: (params: GetRowIdParams) => {
     if (params.data.id != null) {
-      return (params.parentKeys || []).join('-') + params.data.id;
+      return 'leaf-' + params.data.id;
     }
     const rowGroupCols = params.columnApi.getRowGroupColumns();
+    const rowGroupColIds = rowGroupCols.map(col => col.getId()).join('-');
     const thisGroupCol = rowGroupCols[params.level];
-    return (params.parentKeys || []).join('-') + params.data[thisGroupCol.getColDef().field!];
+    return 'group-' + rowGroupColIds + '-' + (params.parentKeys || []).join('-') + params.data[thisGroupCol.getColDef().field!];
   },
 
   // use the server-side row model

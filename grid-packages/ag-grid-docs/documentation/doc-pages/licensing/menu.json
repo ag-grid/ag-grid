@@ -1908,6 +1908,10 @@
                 "url": "/charts-api-download/"
               },
               {
+                "title": "Events",
+                "url": "/charts-events/"
+              },
+              {
                 "title": "Explorer",
                 "showInCollapsed": true,
                 "url": "/charts-api-explorer/"
@@ -1992,8 +1996,9 @@
                 "url": "/charts-axes/"
               },
               {
-                "title": "Events",
-                "url": "/charts-events/"
+                "title": "Background",
+                "url": "/charts-background/",
+                "enterprise": "charts"
               },
               {
                 "title": "Overlays",

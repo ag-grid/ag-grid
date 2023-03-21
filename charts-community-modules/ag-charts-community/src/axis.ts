@@ -579,7 +579,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     /**
      * Is used to avoid collisions between axis labels and series.
      */
-    seriesPadding = 0;
+    seriesAreaPadding = 0;
 
     /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
@@ -797,7 +797,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
         const defaultMinSpacing = Math.max(
             Axis.defaultTickMinSpacing,
-            availableRange / ContinuousScale.defaultTickCount
+            availableRange / ContinuousScale.defaultMaxTickCount
         );
 
         if (isNaN(minSpacing) && isNaN(maxSpacing)) {
@@ -827,7 +827,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         const maxTickCount = Math.max(1, Math.floor(availableRange / minSpacing));
         const minTickCount = Math.min(maxTickCount, Math.ceil(availableRange / maxSpacing));
 
-        let defaultTickCount = Math.max(1, Math.floor(availableRange / defaultMinSpacing));
+        let defaultTickCount = ContinuousScale.defaultTickCount;
         if (defaultTickCount > maxTickCount) {
             defaultTickCount = maxTickCount;
         } else if (defaultTickCount < minTickCount) {
@@ -1018,7 +1018,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         // Update properties that affect the size of the axis labels and measure the labels
         const labelBboxes: Map<number, BBox | null> = new Map();
 
-        const labelX = sideFlag * (tick.size + label.padding + this.seriesPadding);
+        const labelX = sideFlag * (tick.size + label.padding + this.seriesAreaPadding);
 
         const labelMatrix = new Matrix();
         Matrix.updateTransformMatrix(labelMatrix, 1, 1, autoRotation, 0, 0);

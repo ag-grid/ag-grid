@@ -230,6 +230,7 @@ export class Legend {
         private readonly chart: {
             readonly series: Series<any>[];
             readonly element: HTMLElement;
+            readonly mode: 'standalone' | 'integrated';
             update(
                 type: ChartUpdateType,
                 opts?: { forceNodeDataRefresh?: boolean; seriesToUpdate?: Iterable<Series> }
@@ -758,12 +759,19 @@ export class Legend {
             chart,
             item: { toggleSeriesVisible },
         } = this;
+
+        // Integrated charts do not handle double click behaviour correctly due to multiple instances of the
+        // chart being created. See https://ag-grid.atlassian.net/browse/RTI-1381
+        if (chart.mode === 'integrated') {
+            return;
+        }
+
         const datum = this.getDatumForPoint(event.offsetX, event.offsetY);
         if (!datum) {
             return;
         }
 
-        const { id, itemId } = datum;
+        const { id, itemId, seriesId } = datum;
         const series = chart.series.find((s) => s.id === id);
         if (!series) {
             return;
@@ -776,13 +784,13 @@ export class Legend {
                 [] as Array<LegendDatum>
             );
             const visibleItemsCount = legendData.filter((d) => d.enabled).length;
-            const clickedItem = legendData.find((d) => d.itemId === itemId);
+            const clickedItem = legendData.find((d) => d.itemId === itemId && d.seriesId === seriesId);
 
             chart.series.forEach((s) => {
                 const legendData = s.getLegendData() as any;
 
                 legendData.forEach((d: any) => {
-                    const wasClicked = d.itemId === itemId;
+                    const wasClicked = d.itemId === itemId && d.seriesId === seriesId;
                     const singleSelectedWasNotClicked = visibleItemsCount === 1 && (clickedItem?.enabled ?? false);
                     const newEnabled = wasClicked || singleSelectedWasNotClicked;
 
