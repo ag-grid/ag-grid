@@ -20,13 +20,7 @@ interface BoundSeries {
     type: string;
     getDomain(direction: ChartAxisDirection): any[];
     isEnabled(): boolean;
-    visible: boolean;
-}
-
-interface BoundSeries {
-    type: string;
-    getDomain(direction: ChartAxisDirection): any[];
-    isEnabled(): boolean;
+    getKeys(direction: ChartAxisDirection): string[];
     visible: boolean;
 }
 
@@ -130,6 +124,9 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
     getLayoutState(): AxisLayout {
         return {
             rect: this.computeBBox(),
+            seriesAreaPadding: this.seriesAreaPadding,
+            gridPadding: this.gridPadding,
+            tickSize: this.tick.size,
             ...this.layout,
         };
     }
@@ -141,11 +138,22 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
         }
 
         if (this.axisContext == null) {
+            const keys = () => {
+                return this.boundSeries
+                    .map((s) => s.getKeys(this.direction))
+                    .reduce((keys, seriesKeys) => {
+                        keys.push(...seriesKeys);
+                        return keys;
+                    }, []);
+            };
+
             this.axisContext = {
                 axisId: this.id,
                 position: this.position,
                 direction: this.direction,
                 continuous: this.scale instanceof ContinuousScale,
+                keys,
+                scaleBandwidth: () => this.scale.bandwidth ?? 0,
                 scaleConvert: (val) => this.scale.convert(val),
                 scaleInvert: (val) => this.scale.invert?.(val) ?? undefined,
             };

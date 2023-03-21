@@ -10,6 +10,7 @@ import {
     CartesianSeries,
     CartesianSeriesMarker,
     CartesianSeriesNodeClickEvent,
+    CartesianSeriesNodeDatum,
     CartesianSeriesNodeDoubleClickEvent,
 } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
@@ -38,7 +39,7 @@ import {
     AgCartesianSeriesMarkerFormat,
 } from '../../agChartOptions';
 
-interface LineNodeDatum extends SeriesNodeDatum {
+interface LineNodeDatum extends CartesianSeriesNodeDatum {
     readonly point: SeriesNodeDatum['point'] & {
         readonly moveTo: boolean;
     };
@@ -209,7 +210,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
             return [];
         }
 
-        const { pointsData, label, yKey, id: seriesId } = this;
+        const { pointsData, label, yKey, xKey, id: seriesId } = this;
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
         const xOffset = (xScale.bandwidth || 0) / 2;
@@ -269,6 +270,8 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 nodeData[actualLength++] = {
                     series: this,
                     datum,
+                    yKey,
+                    xKey,
                     point: { x, y, moveTo, size },
                     label: labelText
                         ? {
