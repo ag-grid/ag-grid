@@ -1,7 +1,7 @@
 'use strict';
 
 import React, { useMemo, useRef, useEffect, useState, forwardRef, useImperativeHandle, useCallback } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import YearFilter from './yearFilter.jsx';
 import YearFloatingFilter from './yearFloatingFilter.jsx';
@@ -125,4 +125,5 @@ function GridExample() {
     );
 }
 
-render(<GridExample></GridExample>, document.querySelector('#root'));
+const root = createRoot(document.getElementById('root'));
+root.render(<GridExample />);;

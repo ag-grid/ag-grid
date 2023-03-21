@@ -1,7 +1,7 @@
 'use strict';
 
 import React, { Component, dangerouslySetInnerHTML, useMemo, useEffect, useState } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
@@ -86,4 +86,5 @@ function GridExample() {
     );
 }
 
-render(<GridExample></GridExample>, document.querySelector('#root'));
+const root = createRoot(document.getElementById('root'));
+root.render(<GridExample />);;

@@ -1,7 +1,7 @@
 'use strict';
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -242,4 +242,5 @@ const GridExample = () => {
 
 }
 
-render(<GridExample></GridExample>, document.querySelector('#root'))
+const root = createRoot(document.getElementById('root')!);
+root.render(<GridExample />);

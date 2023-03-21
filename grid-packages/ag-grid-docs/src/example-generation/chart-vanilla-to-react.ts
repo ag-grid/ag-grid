@@ -13,7 +13,7 @@ export function processFunction(code: string): string {
 function getImports(componentFilenames: string[], bindings): string[] {
     const imports = [
         "import React, { Component } from 'react';",
-        "import { render } from 'react-dom';",
+        "import { createRoot } from 'react-dom/client';",
         "import { AgChartsReact } from 'ag-charts-react';",
     ];
 
@@ -100,10 +100,8 @@ class ChartExample extends Component {
 
 ${bindings.globals.join('\n')}
 
-render(
-    <ChartExample />,
-    document.querySelector('#root')
-)
+const root = createRoot(document.getElementById('root'));
+root.render(<ChartExample />);
 `;
 
         if (bindings.usesChartApi) {

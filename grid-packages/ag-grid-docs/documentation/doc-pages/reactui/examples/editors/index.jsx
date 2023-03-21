@@ -8,7 +8,7 @@ import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import React, { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState, useCallback } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -94,4 +94,5 @@ function GridExample() {
     );
 }
 
-render(<GridExample></GridExample>, document.querySelector('#root'));
+const root = createRoot(document.getElementById('root'));
+root.render(<GridExample />);;

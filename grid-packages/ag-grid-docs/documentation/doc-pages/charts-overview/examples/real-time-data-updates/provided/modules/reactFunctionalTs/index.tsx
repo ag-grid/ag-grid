@@ -1,7 +1,7 @@
 'use strict';
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { AgChartsReact } from 'ag-charts-react';
 import { AgCartesianChartOptions, time } from 'ag-charts-community';
 
@@ -105,7 +105,5 @@ function getData() {
     return data;
 }
 
-render(
-    <ChartExample />,
-    document.querySelector('#root')
-)
+const root = createRoot(document.getElementById('root')!);
+root.render(<ChartExample />);
