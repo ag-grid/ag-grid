@@ -21,7 +21,7 @@ declare module 'ag-charts-community' {
 
     export interface AgZoomOptions {
         axes?: AgZoomAxes;
-        enabled: boolean;
+        enabled?: boolean;
         enablePanning?: boolean;
         enableScrolling?: boolean;
         enableSelecting?: boolean;

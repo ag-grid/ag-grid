@@ -7,9 +7,14 @@ import { ZoomRect } from './scenes/zoomRect';
 export class ZoomSelector {
     private rect: ZoomRect;
     private coords?: ZoomCoords;
+    private isScalingX: boolean;
+    private isScalingY: boolean;
 
-    constructor(rect: ZoomRect) {
+    constructor(rect: ZoomRect, isScalingX: boolean, isScalingY: boolean) {
         this.rect = rect;
+        this.isScalingX = isScalingX;
+        this.isScalingY = isScalingY;
+
         this.rect.visible = false;
     }
 
@@ -85,7 +90,17 @@ export class ZoomSelector {
             }
         }
 
-        if (this.coords.y2 < this.coords.y1) {
+        // If only scaling on the y-axis, we switch to scaling using height as the source of truth, otherwise we scale
+        // the height in relation to the aspect ratio
+        if (this.isScalingY && !this.isScalingX) {
+            if (normal.height / bbox.height < yRatio) {
+                if (this.coords.y2 < this.coords.y1) {
+                    this.coords.y2 = this.coords.y1 - bbox.width * xRatio;
+                } else {
+                    this.coords.y2 = this.coords.y1 + bbox.height * yRatio;
+                }
+            }
+        } else if (this.coords.y2 < this.coords.y1) {
             this.coords.y2 = Math.min(
                 this.coords.y1 - normal.width / aspectRatio,
                 this.coords.y1 - bbox.height * yRatio
@@ -95,6 +110,17 @@ export class ZoomSelector {
                 this.coords.y1 + normal.width / aspectRatio,
                 this.coords.y1 + bbox.height * yRatio
             );
+        }
+
+        // Finally we reset the coords to maximise if not scaling on either axis
+        if (!this.isScalingX) {
+            this.coords.x1 = bbox.x;
+            this.coords.x2 = bbox.x + bbox.width;
+        }
+
+        if (!this.isScalingY) {
+            this.coords.y1 = bbox.y;
+            this.coords.y2 = bbox.y + bbox.height;
         }
     }
 
@@ -132,8 +158,9 @@ export class ZoomSelector {
         const origin = pointToRatio(bbox, normal.x, normal.y + normal.height);
 
         // Scale the zoom bounding box
-        const zoomFactor = normal.width / bbox.width;
-        let newZoom = scaleZoom(oldZoom, zoomFactor, zoomFactor);
+        const xFactor = normal.width / bbox.width;
+        const yFactor = normal.height / bbox.height;
+        let newZoom = scaleZoom(oldZoom, xFactor, yFactor);
 
         // Translate the zoom bounding box by an amount scaled to the old zoom
         const translateX = origin.x * (oldZoom.x.max - oldZoom.x.min);

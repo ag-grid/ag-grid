@@ -101,7 +101,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         // Add selection zoom method and attach selection rect to root scene
         if (this.enableSelecting) {
             const selectionRect = new ZoomRect();
-            this.selector = new ZoomSelector(selectionRect);
+            this.selector = new ZoomSelector(selectionRect, this.isScalingX(), this.isScalingY());
 
             this.scene.root?.appendChild(selectionRect);
             this.destroyFns.push(() => this.scene.root?.removeChild(selectionRect));
@@ -181,8 +181,8 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     }
 
     private updateZoomWithConstraints(zoom: DefinedZoomState) {
-        const dx = zoom.x.max - zoom.x.min;
-        const dy = zoom.y.max - zoom.y.min;
+        const dx = Math.round((zoom.x.max - zoom.x.min) * 100) / 100;
+        const dy = Math.round((zoom.y.max - zoom.y.min) * 100) / 100;
 
         // Discard the zoom update if it would take us below either min ratio
         if (dx < this.minXRatio || dy < this.minYRatio) return;
