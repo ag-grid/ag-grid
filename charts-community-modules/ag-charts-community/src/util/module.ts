@@ -5,6 +5,7 @@ import { InteractionManager } from '../chart/interaction/interactionManager';
 import { TooltipManager } from '../chart/interaction/tooltipManager';
 import { ZoomManager } from '../chart/interaction/zoomManager';
 import { LayoutService } from '../chart/layout/layoutService';
+import { UpdateService } from '../chart/updateService';
 import { Scene } from '../integrated-charts-scene';
 
 export interface ModuleContext {
@@ -15,6 +16,7 @@ export interface ModuleContext {
     zoomManager: ZoomManager;
     tooltipManager: TooltipManager;
     layoutService: Pick<LayoutService, 'addListener' | 'removeListener'>;
+    updateService: UpdateService;
 }
 
 export interface ModuleContextWithParent<P> extends ModuleContext {

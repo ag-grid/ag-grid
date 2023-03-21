@@ -9,7 +9,7 @@ export abstract class Shape extends Node {
      * Creates a light-weight instance of the given shape (that serves as a template).
      * The created instance only stores the properites set on the instance itself
      * and the rest of the properties come via the prototype chain from the template.
-     * This can greatly reduce memory usage in cases where one has many simular shapes,
+     * This can greatly reduce memory usage in cases where one has many similar shapes,
      * for example, circles of different size, position and color. The exact memory usage
      * reduction will depend on the size of the template and the number of own properties
      * set on its lightweight instances, but will typically be around an order of magnitude

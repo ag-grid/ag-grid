@@ -3368,6 +3368,10 @@
     "meta": { "isTypeAlias": true },
     "type": "{ container?: OptionalHTMLElement; scene: Scene; element: HTMLElement; }"
   },
+  "ChartUpdateOptions": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ forceNodeDataRefresh?: boolean; seriesToUpdate?: Iterable<Series>; }"
+  },
   "PickedNode": {
     "meta": { "isTypeAlias": true },
     "type": "{ series: Series<any>; datum: SeriesNodeDatum; distance: number; }"
@@ -4198,7 +4202,8 @@
       "cursorManager": "CursorManager",
       "zoomManager": "ZoomManager",
       "tooltipManager": "TooltipManager",
-      "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>"
+      "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>",
+      "updateService": "UpdateService"
     }
   },
   "ModuleContextWithParent": {
@@ -4211,7 +4216,8 @@
       "cursorManager": "CursorManager",
       "zoomManager": "ZoomManager",
       "tooltipManager": "TooltipManager",
-      "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>"
+      "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>",
+      "updateService": "UpdateService"
     }
   },
   "AxisContext": {
