@@ -245,9 +245,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.highlightManager = new HighlightManager();
         this.zoomManager = new ZoomManager();
         this.layoutService = new LayoutService();
-        this.updateService = new UpdateService((type = ChartUpdateType.FULL, opts?: ChartUpdateOptions) =>
-            this.update(type, opts)
-        );
+        this.updateService = new UpdateService((type = ChartUpdateType.FULL) => this.update(type));
 
         SizeMonitor.observe(this.element, (size) => {
             const { width, height } = size;
