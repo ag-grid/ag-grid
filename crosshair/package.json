@@ -1,6 +1,6 @@
 {
   "name": "@ag-charts-enterprise/crosshair",
-  "version": "7.1.0",
+  "version": "7.2.0",
   "description": "Advanced Charting / Charts supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/cjs/es5/main.js",
   "module": "./dist/esm/es5/main.js",
