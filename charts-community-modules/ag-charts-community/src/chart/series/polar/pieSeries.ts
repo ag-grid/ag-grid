@@ -88,6 +88,8 @@ interface PieNodeDatum extends SeriesNodeDatum {
         readonly textAlign: CanvasTextAlign;
         readonly textBaseline: CanvasTextBaseline;
         hidden: boolean;
+        collisionOffsetX: number;
+        collisionOffsetY: number;
     };
 
     readonly sectorLabel?: {
@@ -591,6 +593,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                           textAlign,
                           textBaseline,
                           hidden: false,
+                          collisionOffsetX: 0,
+                          collisionOffsetY: 0,
                       }
                     : undefined,
                 sectorLabel: sectorLabelKey
@@ -822,14 +826,19 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const { datum } = line;
             const radius = radiusScale.convert(datum.radius);
             const outerRadius = Math.max(0, radius);
+            const label = datum.calloutLabel;
 
-            if (datum.calloutLabel && outerRadius !== 0 && !datum.calloutLabel.hidden) {
+            if (label && !label.hidden && outerRadius !== 0) {
                 line.strokeWidth = calloutStrokeWidth;
                 line.stroke = calloutColors[index % calloutColors.length];
                 line.x1 = datum.midCos * outerRadius;
                 line.y1 = datum.midSin * outerRadius;
-                line.x2 = datum.midCos * (outerRadius + calloutLength);
-                line.y2 = datum.midSin * (outerRadius + calloutLength);
+                const isAlignedHorizontally = label.textAlign !== 'center';
+                const collisionOffset = isAlignedHorizontally
+                    ? label.collisionOffsetX / datum.midCos
+                    : label.collisionOffsetY / datum.midSin;
+                line.x2 = datum.midCos * (outerRadius + calloutLength + collisionOffset);
+                line.y2 = datum.midSin * (outerRadius + calloutLength + collisionOffset);
                 line.visible = true;
             } else {
                 line.visible = false;
@@ -856,55 +865,49 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         return { visibleTextPart, textLength, hasVerticalOverflow };
     }
 
-    updateCalloutLabelNodes() {
+    private calculateCalloutLabelCollisionOffsets() {
         const { radiusScale, calloutLabel, calloutLine } = this;
         const calloutLength = calloutLine.length;
-        const { offset, color } = calloutLabel;
+        const { offset } = calloutLabel;
 
         const tempTextNode = new Text();
 
-        const shouldSkip = (text: Text) => {
-            const { datum } = text;
+        const shouldSkip = (datum: PieNodeDatum) => {
             const label = datum.calloutLabel;
             const radius = radiusScale.convert(datum.radius);
             const outerRadius = Math.max(0, radius);
 
-            return !label || outerRadius === 0 || label.hidden;
+            return !label || label.hidden || outerRadius === 0;
         };
 
-        const labels = this.calloutLabelSelection.selectByTag<Text>(PieNodeTag.Label).filter((text) => !shouldSkip(text));
-        const xOffsets = new Map<Text, number>();
-        const yOffsets = new Map<Text, number>();
+        const datums = this.groupSelectionData.filter((text) => !shouldSkip(text));
+        datums.forEach((datum) => {
+            const label = datum.calloutLabel!;
+            label.collisionOffsetX = 0;
+            label.collisionOffsetY = 0;
+        });
+        if (datums.length <= 1) {
+            return;
+        }
 
-        const leftLabels = labels.filter((l) => l.datum.midCos < 0);
-        const rightLabels = labels.filter((l) => l.datum.midCos >= 0);
-        leftLabels.sort((a, b) => a.datum.midSin - b.datum.midSin);
-        rightLabels.sort((a, b) => a.datum.midSin - b.datum.midSin);
+        const leftLabels = datums.filter((d) => d.midCos < 0);
+        const rightLabels = datums.filter((d) => d.midCos >= 0);
+        leftLabels.sort((a, b) => a.midSin - b.midSin);
+        rightLabels.sort((a, b) => a.midSin - b.midSin);
 
-        let midLeftLabel = leftLabels.slice().sort((a, b) => Math.abs(a.datum.midSin) - Math.abs(b.datum.midSin))[0];
-        let midLeftIndex = leftLabels.indexOf(midLeftLabel);
-        let midRightLabel = rightLabels.slice().sort((a, b) => Math.abs(a.datum.midSin) - Math.abs(b.datum.midSin))[0];
-        let midRightIndex = rightLabels.indexOf(midRightLabel);
-
-        const topLabels = labels.filter((l) => l.datum.midSin < 0);
-        const bottomLabels = labels.filter((l) => l.datum.midSin >= 0);
+        const topLabels = datums.filter((d) => d.midSin < 0);
+        const bottomLabels = datums.filter((d) => d.midSin >= 0);
         topLabels.sort((a, b) => a.datum.midCos - b.datum.midCos);
         bottomLabels.sort((a, b) => a.datum.midCos - b.datum.midCos);
 
-        let midTopLabel = topLabels.slice().sort((a, b) => Math.abs(a.datum.midCos) - Math.abs(b.datum.midCos))[0];
-        let midTopIndex = topLabels.indexOf(midTopLabel);
-        let midBottomLabel = bottomLabels.slice().sort((a, b) => Math.abs(a.datum.midCos) - Math.abs(b.datum.midCos))[0];
-        let midBottomIndex = bottomLabels.indexOf(midBottomLabel);
-
-        const getTextBBox = (text: Text) => {
-            const { datum } = text;
-            const label = datum.calloutLabel;
+        const getTextBBox = (datum: PieNodeDatum) => {
+            const label = datum.calloutLabel!;
             const radius = radiusScale.convert(datum.radius);
             const outerRadius = Math.max(0, radius);
 
             const labelRadius = outerRadius + calloutLength + offset;
-            const x = datum.midCos * labelRadius + (xOffsets.get(text) ?? 0);
-            const y = datum.midSin * labelRadius + (yOffsets.get(text) ?? 0);
+            const x = datum.midCos * labelRadius + label.collisionOffsetX;
+            const y = datum.midSin * labelRadius + label.collisionOffsetY;
 
             // Detect text overflow
             this.setTextDimensionalProps(tempTextNode, x, y, this.calloutLabel, label);
@@ -916,162 +919,85 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const boxesCollide = (a: BBox, b: BBox) => {
             const p = collisionPadding / 2;
             return (
-                (a.x - p) < (b.x + b.width + p) &&
-                (a.x + a.width + p) > (b.x - p) &&
-                (a.y - p) < (b.y + b.height + p) &&
-                (a.y + a.height + p) > (b.y - p)
+                a.x - p < b.x + b.width + p &&
+                a.x + a.width + p > b.x - p &&
+                a.y - p < b.y + b.height + p &&
+                a.y + a.height + p > b.y - p
             );
         };
 
-        const increaseXOffset = (text: Text, dx: number) => {
-            const dx0 = xOffsets.get(text) ?? 0;
-            xOffsets.set(text, dx0 + dx);
+        const avoidNeighbourYCollision = (
+            label: PieNodeDatum,
+            next: PieNodeDatum,
+            direction: 'to-top' | 'to-bottom'
+        ) => {
+            const box = getTextBBox(label);
+            const other = getTextBBox(next);
+            if (boxesCollide(box, other)) {
+                const dy =
+                    direction === 'to-top'
+                        ? box.y - other.y - other.height - collisionPadding
+                        : box.y + box.height - other.y + collisionPadding;
+                next.calloutLabel!.collisionOffsetY = dy;
+            }
         };
-        const increaseYOffset = (text: Text, dy: number) => {
-            const dy0 = yOffsets.get(text) ?? 0;
-            yOffsets.set(text, dy0 + dy);
+
+        const avoidYCollisions = (labels: PieNodeDatum[]) => {
+            const midLabel = labels.slice().sort((a, b) => Math.abs(a.midSin) - Math.abs(b.midSin))[0];
+            const midIndex = labels.indexOf(midLabel);
+            for (let i = midIndex - 1; i >= 0; i--) {
+                const prev = labels[i + 1];
+                const next = labels[i];
+                avoidNeighbourYCollision(prev, next, 'to-top');
+            }
+            for (let i = midIndex + 1; i < labels.length; i++) {
+                const prev = labels[i - 1];
+                const next = labels[i];
+                avoidNeighbourYCollision(prev, next, 'to-bottom');
+            }
         };
 
-        const repeats = 1;
-
-        for (let r = 0; r < repeats; r++) {
-            // Left mid to top
-            for (let i = midLeftIndex - 1; i >= 0; i--) {
-                const prev = leftLabels[i + 1];
-                const next = leftLabels[i];
-                const boxPrev = getTextBBox(prev);
-                const boxNext = getTextBBox(next);
-                if (boxesCollide(boxPrev, boxNext)) {
-                    increaseYOffset(next, boxPrev.y - (boxNext.y + boxNext.height) - collisionPadding);
-                    console.log('collide <^', prev.datum.calloutLabel.text, next.datum.calloutLabel.text);
-                }
-            }
-            // Left mid to bottom
-            for (let i = midLeftIndex + 1; i < leftLabels.length; i++) {
-                const prev = leftLabels[i - 1];
-                const next = leftLabels[i];
-                const boxPrev = getTextBBox(prev);
-                const boxNext = getTextBBox(next);
-                if (boxesCollide(boxPrev, boxNext)) {
-                    increaseYOffset(next, boxPrev.y + boxPrev.height - boxNext.y + collisionPadding);
-                    console.log('collide <v', prev.datum.calloutLabel.text, next.datum.calloutLabel.text, boxPrev, boxNext, boxPrev.y + boxPrev.height - boxNext.y);
-                }
-            }
-
-            // Right mid to top
-            for (let i = midRightIndex - 1; i >= 0; i--) {
-                const prev = rightLabels[i + 1];
-                const next = rightLabels[i];
-                const boxPrev = getTextBBox(prev);
-                const boxNext = getTextBBox(next);
-                if (boxesCollide(boxPrev, boxNext)) {
-                    increaseYOffset(next, boxPrev.y - (boxNext.y + boxNext.height) - collisionPadding);
-                    console.log('collide >^', prev.datum.calloutLabel.text, next.datum.calloutLabel.text);
-                }
-            }
-            // Right mid to bottom
-            for (let i = midRightIndex + 1; i < rightLabels.length; i++) {
-                const prev = rightLabels[i - 1];
-                const next = rightLabels[i];
-                const boxPrev = getTextBBox(prev);
-                const boxNext = getTextBBox(next);
-                if (boxesCollide(boxPrev, boxNext)) {
-                    increaseYOffset(next, boxPrev.y - (boxNext.y + boxNext.height) - collisionPadding);
-                    console.log('collide >v', prev.datum.calloutLabel.text, next.datum.calloutLabel.text);
-                }
-            }
-
-            // const 
-
-            const anyTopLabelCollide = topLabels.some((label) => {
-                return topLabels.some((other) => {
-                    if (other === label) {
-                        return false;
+        const avoidXCollisions = (labels: PieNodeDatum[]) => {
+            let anyLabelsCollide = false;
+            const boxes = labels.map((label) => getTextBBox(label));
+            loop: for (let i = 0; i < boxes.length; i++) {
+                const box0 = boxes[i];
+                for (let j = i + 1; j < labels.length; j++) {
+                    const box1 = boxes[j];
+                    if (boxesCollide(box0, box1)) {
+                        anyLabelsCollide = true;
+                        break loop;
                     }
-                    const box0 = getTextBBox(label);
-                    const box1 = getTextBBox(other);
-                    return boxesCollide(box0, box1);
-                }); 
+                }
+            }
+            if (!anyLabelsCollide) {
+                return;
+            }
+            labels.forEach((datum, i) => {
+                const label = datum.calloutLabel!;
+                if (label.textAlign !== 'center') {
+                    return;
+                }
+                const box = boxes[i];
+                label.collisionOffsetX = (Math.sign(datum.midCos) * box.width) / 2;
             });
-            if (anyTopLabelCollide) {
-                topLabels.forEach((label) => {
-                    if (label === midTopLabel || label.datum.calloutLabel.textAlign !== 'center') {
-                        return;
-                    }
-                    const box = getTextBBox(label);
-                    const dx = Math.sign(label.datum.midCos) * box.width / 2;
-                    increaseXOffset(label, dx);
-                });
-            }
-            const anyBottomLabelCollide = bottomLabels.some((label) => {
-                return bottomLabels.some((other) => {
-                    if (other === label) {
-                        return false;
-                    }
-                    const box0 = getTextBBox(label);
-                    const box1 = getTextBBox(other);
-                    return boxesCollide(box0, box1);
-                }); 
-            });
-            if (anyBottomLabelCollide) {
-                bottomLabels.forEach((label) => {
-                    if (label.datum.calloutLabel.textAlign !== 'center') {
-                        return;
-                    }
-                    const box = getTextBBox(label);
-                    const dx = Math.sign(label.datum.midCos) * box.width / 2;
-                    increaseXOffset(label, dx);
-                });
-            }
+        };
 
-            // // Top mid to left
-            // for (let i = midTopIndex - 1; i >= 0; i--) {
-            //     const prev = topLabels[i + 1];
-            //     const next = topLabels[i];
-            //     const boxPrev = getTextBBox(prev);
-            //     const boxNext = getTextBBox(next);
-            //     if (boxesCollide(boxPrev, boxNext)) {
-            //         increaseXOffset(next, boxPrev.x - (boxNext.x + boxNext.width));
-            //         console.log('collide ^<', prev.datum.calloutLabel.text, next.datum.calloutLabel.text);
-            //     }
-            // }
-            // // Top mid to right
-            // for (let i = midTopIndex + 1; i < topLabels.length; i++) {
-            //     const prev = topLabels[i - 1];
-            //     const next = topLabels[i];
-            //     const boxPrev = getTextBBox(prev);
-            //     const boxNext = getTextBBox(next);
-            //     if (boxesCollide(boxPrev, boxNext)) {
-            //         increaseXOffset(next, (boxPrev.x + boxPrev.width) - boxNext.x);
-            //         console.log('collide ^>', prev.datum.calloutLabel.text, next.datum.calloutLabel.text);
-            //     }
-            // }
+        avoidYCollisions(leftLabels);
+        avoidYCollisions(rightLabels);
+        avoidXCollisions(topLabels);
+        avoidXCollisions(bottomLabels);
+    }
 
-            // // Bottom mid to left
-            // for (let i = midBottomIndex - 1; i >= 0; i--) {
-            //     const prev = bottomLabels[i + 1];
-            //     const next = bottomLabels[i];
-            //     const boxPrev = getTextBBox(prev);
-            //     const boxNext = getTextBBox(next);
-            //     if (boxesCollide(boxPrev, boxNext)) {
-            //         increaseXOffset(next, boxPrev.x - (boxNext.x + boxNext.width));
-            //         console.log('collide v<', prev.datum.calloutLabel.text, next.datum.calloutLabel.text);
-            //     }
-            // }
-            // // Bottom mid to right
-            // for (let i = midBottomIndex + 1; i < bottomLabels.length; i++) {
-            //     const prev = bottomLabels[i - 1];
-            //     const next = bottomLabels[i];
-            //     const boxPrev = getTextBBox(prev);
-            //     const boxNext = getTextBBox(next);
-            //     if (boxesCollide(boxPrev, boxNext)) {
-            //         increaseXOffset(next, boxPrev.x - (boxNext.x + boxNext.width));
-            //         console.log('collide v>', prev.datum.calloutLabel.text, next.datum.calloutLabel.text);
-            //     }
-            // }
-        }
+    updateCalloutLabelNodes() {
+        const { radiusScale, calloutLabel, calloutLine } = this;
+        const calloutLength = calloutLine.length;
+        const { offset, color } = calloutLabel;
+        this.calculateCalloutLabelCollisionOffsets();
 
-        labels.forEach((text) => {
+        const tempTextNode = new Text();
+
+        this.calloutLabelSelection.selectByTag<Text>(PieNodeTag.Label).forEach((text) => {
             const { datum } = text;
             const label = datum.calloutLabel;
             const radius = radiusScale.convert(datum.radius);
@@ -1083,20 +1009,18 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             }
 
             const labelRadius = outerRadius + calloutLength + offset;
-            const x = datum.midCos * labelRadius + (xOffsets.get(text) ?? 0);
-            const y = datum.midSin * labelRadius + (yOffsets.get(text) ?? 0);
+            const x = datum.midCos * labelRadius + label.collisionOffsetX;
+            const y = datum.midSin * labelRadius + label.collisionOffsetY;
 
             // Detect text overflow
             this.setTextDimensionalProps(tempTextNode, x, y, this.calloutLabel, label);
             const box = tempTextNode.computeBBox();
-            // const { visibleTextPart, textLength, hasVerticalOverflow } = this.getLabelOverflow(label.text, box);
-            const { visibleTextPart, textLength } = this.getLabelOverflow(label.text, box);
+            const { visibleTextPart, textLength, hasVerticalOverflow } = this.getLabelOverflow(label.text, box);
             const displayText = visibleTextPart === 1 ? label.text : `${label.text.substring(0, textLength)}…`;
 
             this.setTextDimensionalProps(text, x, y, this.calloutLabel, { ...label, text: displayText });
             text.fill = color;
-            // text.visible = !hasVerticalOverflow;
-            text.visible = true;
+            text.visible = !hasVerticalOverflow;
         });
     }
 
@@ -1105,6 +1029,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const calloutLength = calloutLine.length;
         const { offset } = calloutLabel;
         this.updateRadiusScale();
+        this.calculateCalloutLabelCollisionOffsets();
 
         const text = new Text();
         const textBoxes = this.groupSelectionData
@@ -1117,8 +1042,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 }
 
                 const labelRadius = outerRadius + calloutLength + offset;
-                const x = datum.midCos * labelRadius;
-                const y = datum.midSin * labelRadius;
+                const x = datum.midCos * labelRadius + label.collisionOffsetX;
+                const y = datum.midSin * labelRadius + label.collisionOffsetY;
                 this.setTextDimensionalProps(text, x, y, this.calloutLabel, label);
                 const box = text.computeBBox();
 
@@ -1144,6 +1069,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                     textBaseline: 'bottom',
                     textAlign: 'center',
                     hidden: false,
+                    collisionOffsetX: 0,
+                    collisionOffsetY: 0,
                 });
                 const box = text.computeBBox();
                 textBoxes.push(box);

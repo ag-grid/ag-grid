@@ -5607,7 +5607,7 @@
     "midSin": { "type": { "returnType": "number", "optional": false } },
     "calloutLabel": {
       "type": {
-        "returnType": "{\n        readonly text: string;\n        readonly textAlign: CanvasTextAlign;\n        readonly textBaseline: CanvasTextBaseline;\n        hidden: boolean;\n    }",
+        "returnType": "{\n        readonly text: string;\n        readonly textAlign: CanvasTextAlign;\n        readonly textBaseline: CanvasTextBaseline;\n        hidden: boolean;\n        collisionOffsetX: number;\n        collisionOffsetY: number;\n    }",
         "optional": true
       }
     },
