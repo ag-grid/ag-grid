@@ -1,0 +1,22 @@
+<div class="wrapper">
+    <div id="toolPanel">
+        Rotation:
+        <button onclick="disableRotation()">No rotation</button>
+        <button onclick="fixedRotation()">Fixed rotation</button>
+        <button onclick="autoRotation()">Auto rotation (default)</button>
+    </div>
+    <div id="toolPanel">
+        Values:
+        <button onclick="uniformLabels()">Uniform labels</button>
+        <button onclick="irregularLabels()">Irregular labels</button>
+    </div>
+    <div id="toolPanel">
+        Avoid Collisions:
+        <button onclick="noCollisionDetection()">Off</button>
+        <button onclick="autoCollisionDetection()">On (default)</button>
+    </div>
+    <div id="toolPanel" style="position: absolute; top: 0; right: 0">
+        <button onclick="reset()">Reset</button>
+    </div>
+    <div id="myChart"></div>
+</div>

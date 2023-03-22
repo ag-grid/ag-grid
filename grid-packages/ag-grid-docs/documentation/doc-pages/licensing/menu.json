@@ -1993,7 +1993,39 @@
               },
               {
                 "title": "Axes",
-                "url": "/charts-axes/"
+                "url": "/charts-axes/",
+                "matrixExcludeChildren": true,
+                "showInCollapsed": true,
+                "items": [
+                  {
+                    "title": "Axis Types",
+                    "url": "/charts-axes-types/"
+                  },
+                  {
+                    "title": "Axis Title",
+                    "url": "/charts-axes-title/"
+                  },
+                  {
+                    "title": "Axis Ticks",
+                    "url": "/charts-axes-ticks/"
+                  },
+                  {
+                    "title": "Axis Labels",
+                    "url": "/charts-axes-labels/"
+                  },
+                  {
+                    "title": "Grid Lines",
+                    "url": "/charts-axes-grid-lines/"
+                  },
+                  {
+                    "title": "Cross Lines",
+                    "url": "/charts-axes-cross-lines/"
+                  },
+                  {
+                    "title": "Multiple Axes",
+                    "url": "/charts-axes-multiple/"
+                  }
+                ]
               },
               {
                 "title": "Background",
