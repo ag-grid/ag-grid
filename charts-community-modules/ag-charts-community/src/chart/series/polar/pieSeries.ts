@@ -959,7 +959,6 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const { radiusScale, calloutLabel, calloutLine } = this;
         const calloutLength = calloutLine.length;
         const { offset, color } = calloutLabel;
-        this.calculateCalloutLabelCollisionOffsets();
 
         const tempTextNode = new Text();
 
