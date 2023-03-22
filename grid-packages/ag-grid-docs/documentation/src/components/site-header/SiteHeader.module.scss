@@ -48,6 +48,14 @@ $header-height: 64px;
     border: none !important; // !important for .ag-styles specificity
     transition: background-color 0.4s ease-in-out;
 
+    &:focus {
+        box-shadow: none !important; // !important for .ag-styles specificity
+    }
+
+    &:focus-visible {
+        box-shadow: inset 0 0 0 2px var(--button-focus-box-shadow-color) !important; // !important for .ag-styles specificity
+    }
+
     &[aria-expanded='true'],
     &:hover[aria-expanded='true'] {
         background-color: var(--site-nav-background);
