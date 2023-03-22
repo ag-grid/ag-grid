@@ -114,6 +114,8 @@ export class PositionableFeature extends BeanStub {
     }
 
     public initialisePosition(): void {
+        if (this.positioned) { return; }
+
         const { centered, forcePopupParentAsOffsetParent, minWidth, width, minHeight, height, x, y } = this.config;
 
         if (!this.offsetParent) { this.setOffsetParent(); }
@@ -274,7 +276,7 @@ export class PositionableFeature extends BeanStub {
     }
 
     public setHeight(height: number | string) {
-        const { popup, forcePopupParentAsOffsetParent } = this.config;
+        const { popup } = this.config;
         const eGui = this.element;
 
         let isPercent = false;
@@ -284,27 +286,11 @@ export class PositionableFeature extends BeanStub {
             height = getAbsoluteHeight(eGui);
             isPercent = true;
         } else if (this.positioned) {
-            const elRect = this.element.getBoundingClientRect();
-            const parentRect = this.offsetParent.getBoundingClientRect();
-
             height = Math.max(this.minHeight!, height as number);
-            const { clientHeight } = this.offsetParent;
-            if (clientHeight) {
-                const yPosition = popup ? this.position.y : elRect.top;
-                const parentTop = popup ? 0 : parentRect.top;
+            const availableHeight = this.getAvailableHeight();
 
-                // When `forcePopupParentAsOffsetParent`, there may be elements that appear after the resizable element, but aren't included in the height.
-                // Take these into account here
-                let additionalHeight = 0;
-                if (forcePopupParentAsOffsetParent && this.boundaryEl) {
-                    const { bottom } = this.boundaryEl.getBoundingClientRect();
-                    additionalHeight = bottom - elRect.bottom;
-                }
-               
-                const availableHeight = clientHeight + parentTop - yPosition - additionalHeight;
-                if (height > availableHeight) {
-                    height = availableHeight;
-                }
+            if (availableHeight && height > availableHeight) {
+                height = availableHeight;
             }
         }
 
@@ -322,6 +308,34 @@ export class PositionableFeature extends BeanStub {
             eGui.style.maxHeight = 'unset';
             eGui.style.minHeight = 'unset';
         }
+    }
+
+    public getAvailableHeight(): number | null {
+        const { popup, forcePopupParentAsOffsetParent } = this.config;
+        const { clientHeight } = this.offsetParent;
+
+        if (!clientHeight) { return null; }
+
+        const elRect = this.element.getBoundingClientRect();
+        const parentRect = this.offsetParent.getBoundingClientRect();
+
+        const yPosition = popup ? this.position.y : elRect.top;
+        const parentTop = popup ? 0 : parentRect.top;
+
+        // When `forcePopupParentAsOffsetParent`, there may be elements that appear after the resizable element, but aren't included in the height.
+        // Take these into account here
+        let additionalHeight = 0;
+        if (forcePopupParentAsOffsetParent) {
+            const boundaryEl = this.boundaryEl || this.findBoundaryElement();
+            if (boundaryEl) {
+                const { bottom } = boundaryEl.getBoundingClientRect();
+                additionalHeight = bottom - elRect.bottom;
+            }
+        }
+
+        const availableHeight = clientHeight + parentTop - yPosition - additionalHeight;
+
+        return availableHeight;
     }
 
     public getWidth(): number | undefined {

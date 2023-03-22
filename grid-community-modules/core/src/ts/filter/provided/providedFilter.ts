@@ -99,7 +99,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     // not active) then this appliedModel will be null/undefined.
     private appliedModel: M | null = null;
 
-    private positionableFeature: PositionableFeature;
+    private positionableFeature: PositionableFeature | undefined;
 
     @Autowired('rowModel') protected readonly rowModel: IRowModel;
 
@@ -259,7 +259,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         this.onBtApplyDebounce = () => {
             this.debouncePending = true;
             debounceFunc();
-        }
+        };
     }
 
     private checkApplyDebounce(): void {
@@ -401,21 +401,31 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
+        if (params) {
+            this.hidePopup = params.hidePopup;
+        }
+
+        if (!this.positionableFeature) { return; }
+
+        const { positionableFeature, gridOptionsService } = this;
+        const el = this.getPositionableElement();
+
         if (params?.container === 'floatingFilter') {
-            this.positionableFeature.restoreLastSize();
-            this.positionableFeature.setResizable(
-                this.gridOptionsService.is('enableRtl')
+            positionableFeature.restoreLastSize();
+            positionableFeature.setResizable(
+                gridOptionsService.is('enableRtl')
                     ? { bottom: true, bottomLeft: true, left: true }
                     : { bottom: true, bottomRight: true, right: true }
             );
+
+            positionableFeature.initialisePosition();
+            const availableHeight = positionableFeature.getAvailableHeight();
+            el.style.setProperty('max-height', `${availableHeight}px`);
         } else {
             this.positionableFeature.removeSizeFromEl();
             this.positionableFeature.setResizable(false);
+            el.style.removeProperty('max-height');
         }
-
-        if (params == null) { return; }
-
-        this.hidePopup = params.hidePopup;
     }
 
     public afterGuiDetached(): void {
@@ -442,10 +452,15 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     public destroy(): void {
         const eGui = this.getGui();
+
         if (eGui) {
             eGui.removeEventListener('submit', this.onFormSubmit);
         }
         this.hidePopup = null;
+
+        if (this.positionableFeature) {
+            this.positionableFeature = this.destroyBean(this.positionableFeature);
+        }
 
         super.destroy();
     }
