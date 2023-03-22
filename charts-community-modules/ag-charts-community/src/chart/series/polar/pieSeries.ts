@@ -1199,4 +1199,13 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.seriesItemEnabled[itemId] = enabled;
         this.nodeDataRefresh = true;
     }
+
+    toggleOtherSeriesItem(itemId: number, enabled: boolean): void {
+        // A pie series that has no `calloutLabelKey` will not appear in the legend items. These should therefore be
+        // toggled when an item in a sibling series is clicked that shares the same `itemId`.
+
+        if (this.calloutLabelKey === undefined) {
+            this.toggleSeriesItem(itemId, enabled);
+        }
+    }
 }

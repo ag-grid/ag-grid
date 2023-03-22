@@ -735,7 +735,14 @@ export class Legend {
         let newEnabled = enabled;
         if (toggleSeriesVisible) {
             newEnabled = !enabled;
-            series.toggleSeriesItem(itemId, newEnabled);
+
+            chart.series.forEach((s) => {
+                if (s.id === series.id) {
+                    s.toggleSeriesItem(itemId, newEnabled);
+                } else {
+                    s.toggleOtherSeriesItem(itemId, newEnabled);
+                }
+            });
         }
 
         if (!newEnabled) {
