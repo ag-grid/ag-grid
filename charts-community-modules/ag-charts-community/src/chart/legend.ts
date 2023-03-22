@@ -792,13 +792,23 @@ export class Legend {
             );
             const visibleItemsCount = legendData.filter((d) => d.enabled).length;
             const clickedItem = legendData.find((d) => d.itemId === itemId && d.seriesId === seriesId);
+            const singleSelectedWasNotClicked = visibleItemsCount === 1 && (clickedItem?.enabled ?? false);
 
             chart.series.forEach((s) => {
-                const legendData = s.getLegendData() as any;
+                const legendData = s.getLegendData();
 
-                legendData.forEach((d: any) => {
+                if (legendData.length === 0) {
+                    s.data?.forEach((_, index) => {
+                        const wasClicked = index === itemId;
+                        const newEnabled = wasClicked || singleSelectedWasNotClicked;
+
+                        s.toggleOtherSeriesItem(index, newEnabled);
+                    });
+                    return;
+                }
+
+                legendData.forEach((d) => {
                     const wasClicked = d.itemId === itemId && d.seriesId === seriesId;
-                    const singleSelectedWasNotClicked = visibleItemsCount === 1 && (clickedItem?.enabled ?? false);
                     const newEnabled = wasClicked || singleSelectedWasNotClicked;
 
                     s.toggleSeriesItem(d.itemId, newEnabled);
