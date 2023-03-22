@@ -95,6 +95,7 @@ export class PolarChart extends Chart {
 
         shake(); // Initial attempt
         shake(); // Precise attempt
+        shake(); // Just in case
         shake({ hideWhenNecessary: true }); // Hide unnecessary labels
         shake({ hideWhenNecessary: true }); // Final result
     }
@@ -126,9 +127,15 @@ export class PolarChart extends Chart {
             // If the radius is too small, reduce the label padding
             newRadius = minRadius;
             if (newRadius === minVerticalRadius) {
-                const t = seriesBox.height / (newRadius * 2 + padTop + padBottom);
-                padTop *= t;
-                padBottom *= t;
+                const padHeight = seriesBox.height - 2 * newRadius;
+                if (Math.min(padTop, padBottom) * 2 > padHeight) {
+                    padTop = padHeight / 2;
+                    padBottom = padHeight / 2;
+                } else if (padTop > padBottom) {
+                    padTop = padHeight - padBottom;
+                } else {
+                    padBottom = padHeight - padTop;
+                }
             }
             if (newRadius === minHorizontalRadius) {
                 const padWidth = seriesBox.width - 2 * newRadius;
