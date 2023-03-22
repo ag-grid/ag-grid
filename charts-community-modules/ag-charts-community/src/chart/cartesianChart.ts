@@ -57,19 +57,23 @@ export class CartesianChart extends Chart {
             series.rootGroup.translationY = Math.floor(seriesRect.y);
         });
 
+        const { seriesRoot, seriesAreaPadding } = this;
+
+        const paddedX = seriesRect.x - seriesAreaPadding.left;
+        const paddedY = seriesRect.y - seriesAreaPadding.top;
+        const paddedWidth = seriesAreaPadding.left + seriesRect.width + seriesAreaPadding.right;
+        const paddedHeight = seriesAreaPadding.top + seriesRect.height + seriesAreaPadding.bottom;
+
+        const seriesPaddedRect = new BBox(paddedX, paddedY, paddedWidth, paddedHeight);
+
         this.layoutService.dispatchLayoutComplete({
             type: 'layout-complete',
-            series: { rect: seriesRect, visible: visibility.series },
+            series: { rect: seriesRect, paddedRect: seriesPaddedRect, visible: visibility.series },
             axes: this.axes.map((axis) => ({ id: axis.id, ...axis.getLayoutState() })),
         });
 
-        const { seriesRoot, seriesAreaPadding } = this;
         if (clipSeries) {
-            const x = seriesRect.x - seriesAreaPadding.left;
-            const y = seriesRect.y - seriesAreaPadding.top;
-            const width = seriesAreaPadding.left + seriesRect.width + seriesAreaPadding.right;
-            const height = seriesAreaPadding.top + seriesRect.height + seriesAreaPadding.bottom;
-            seriesRoot.setClipRectInGroupCoordinateSpace(new BBox(x, y, width, height));
+            seriesRoot.setClipRectInGroupCoordinateSpace(seriesPaddedRect);
         } else {
             seriesRoot.setClipRectInGroupCoordinateSpace();
         }
