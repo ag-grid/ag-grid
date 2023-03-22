@@ -39,7 +39,6 @@ DOCKER_OPTS="--rm"
 if [ -t 0 ] ; then
     # If run from a terminal, enable interactive mode.
     DOCKER_OPTS="${DOCKER_OPTS} -it"
-    INIT_CMD="-il ${INIT_CMD}"
 fi
 
 case $1 in
