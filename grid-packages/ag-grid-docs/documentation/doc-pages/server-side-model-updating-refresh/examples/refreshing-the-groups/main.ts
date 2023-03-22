@@ -1,4 +1,4 @@
-import { Grid, GridOptions, IServerSideDatasource, GetRowIdParams, IsServerSideGroupOpenByDefaultParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, IServerSideDatasource, GetRowIdParams, IsServerSideGroupOpenByDefaultParams, StoreRefreshedEvent } from '@ag-grid-community/core'
 declare var FakeServer: any;
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -36,6 +36,9 @@ const gridOptions: GridOptions = {
   },
   isServerSideGroupOpenByDefault: (params: IsServerSideGroupOpenByDefaultParams) => {
     return params.rowNode.key === 'Canada' || params.rowNode.key!.toString() === '2002';
+  },
+  onStoreRefreshed: (event: StoreRefreshedEvent) => {
+    console.log('Refresh finished for store with route:', event.route);
   },
   // use the server-side row model
   rowModelType: 'serverSide',

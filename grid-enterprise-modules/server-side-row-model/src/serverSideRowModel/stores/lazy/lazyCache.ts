@@ -614,6 +614,7 @@ export class LazyCache extends BeanStub {
             }
         }
         
+        let wasRefreshing = false;
         response.rowData.forEach((data, responseRowIndex) => {
             const rowIndex = firstRowIndex + responseRowIndex;
             const nodeFromCache = this.nodeIndexMap[rowIndex];
@@ -624,6 +625,10 @@ export class LazyCache extends BeanStub {
                 return;
             }
             
+            if (nodeFromCache?.__needsRefresh) {
+                wasRefreshing = true;
+            }
+
             if (nodeFromCache && this.doesNodeMatch(data, nodeFromCache)) {
                 this.blockUtils.updateDataIntoRowNode(nodeFromCache, data);
                 nodeFromCache.__needsRefresh = false;
@@ -633,6 +638,10 @@ export class LazyCache extends BeanStub {
             // create row will handle deleting the overwritten row
             this.createRowAtIndex(rowIndex, data);
         });
+
+        if (wasRefreshing) {
+            this.fireRefreshFinishedEvent();
+        }
 
         if (response.rowCount != undefined && response.rowCount !== -1) {
             // if the rowCount has been provided, set the row count
@@ -663,6 +672,15 @@ export class LazyCache extends BeanStub {
         }
 
         this.fireStoreUpdatedEvent();
+    }
+
+    public fireRefreshFinishedEvent() {
+        const isAnythingRefreshing = Object.values(this.nodeIndexMap).some(node => node.__needsRefresh);
+        if (isAnythingRefreshing) {
+            return;
+        }
+
+        this.store.fireRefreshFinishedEvent();
     }
 
     public isLastRowIndexKnown() {

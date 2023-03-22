@@ -4822,6 +4822,24 @@
       },
       "meta": { "isEvent": true, "name": "onAsyncTransactionsFlushed" }
     },
+    "onStoreRefreshed": {
+      "description": "/** A server side store has finished refreshing. */",
+      "type": {
+        "arguments": { "event": "StoreRefreshedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onStoreRefreshed" }
+    },
+    "storeRefreshed": {
+      "description": "/** A server side store has finished refreshing. */",
+      "type": {
+        "arguments": { "event": "StoreRefreshedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onStoreRefreshed" }
+    },
     "onCellClicked": {
       "description": "/** Cell is clicked. */",
       "type": {
@@ -8749,6 +8767,29 @@
     "aggFunc": { "type": { "returnType": "any", "optional": false } },
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "columns": { "type": { "returnType": "Column[]", "optional": false } },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "TContext", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "StoreRefreshedEvent": {
+    "route": {
+      "description": "/** The route of the store which has finished refreshing, undefined if root level */",
+      "type": { "returnType": "string[]", "optional": true }
+    },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -23484,6 +23525,24 @@
       },
       "meta": { "isEvent": true, "name": "onAsyncTransactionsFlushed" }
     },
+    "onStoreRefreshed": {
+      "description": "/** A server side store has finished refreshing. */",
+      "type": {
+        "arguments": { "event": "StoreRefreshedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onStoreRefreshed" }
+    },
+    "storeRefreshed": {
+      "description": "/** A server side store has finished refreshing. */",
+      "type": {
+        "arguments": { "event": "StoreRefreshedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onStoreRefreshed" }
+    },
     "onCellClicked": {
       "description": "/** Cell is clicked. */",
       "type": {
@@ -26294,6 +26353,24 @@
         "optional": true
       },
       "meta": { "isEvent": true, "name": "onAsyncTransactionsFlushed" }
+    },
+    "onStoreRefreshed": {
+      "description": "/** A server side store has finished refreshing. */",
+      "type": {
+        "arguments": { "event": "StoreRefreshedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onStoreRefreshed" }
+    },
+    "storeRefreshed": {
+      "description": "/** A server side store has finished refreshing. */",
+      "type": {
+        "arguments": { "event": "StoreRefreshedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onStoreRefreshed" }
     },
     "onCellClicked": {
       "description": "/** Cell is clicked. */",
@@ -29111,6 +29188,24 @@
         "optional": true
       },
       "meta": { "isEvent": true, "name": "onAsyncTransactionsFlushed" }
+    },
+    "onStoreRefreshed": {
+      "description": "/** A server side store has finished refreshing. */",
+      "type": {
+        "arguments": { "event": "StoreRefreshedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onStoreRefreshed" }
+    },
+    "storeRefreshed": {
+      "description": "/** A server side store has finished refreshing. */",
+      "type": {
+        "arguments": { "event": "StoreRefreshedEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onStoreRefreshed" }
     },
     "onCellClicked": {
       "description": "/** Cell is clicked. */",

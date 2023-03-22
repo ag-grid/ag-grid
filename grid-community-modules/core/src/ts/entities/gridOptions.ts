@@ -59,6 +59,7 @@ import {
     RowValueChangedEvent,
     SelectionChangedEvent,
     SortChangedEvent,
+    StoreRefreshedEvent,
     ToolPanelSizeChangedEvent,
     ToolPanelVisibleChangedEvent,
     UndoEndedEvent,
@@ -1105,6 +1106,10 @@ export interface GridOptions<TData = any> {
     onRowDataUpdated?(event: RowDataUpdatedEvent<TData>): void;
     /** Async transactions have been applied. Contains a list of all transaction results. */
     onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed<TData>): void;
+
+    // *** Row Model: Server Side ***//
+    /** A server side store has finished refreshing. */
+    onStoreRefreshed?(event: StoreRefreshedEvent<TData>): void;
 
     // *** Selection *** //
     /** Cell is clicked. */

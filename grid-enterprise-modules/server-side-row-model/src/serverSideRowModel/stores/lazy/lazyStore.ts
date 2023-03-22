@@ -21,7 +21,8 @@ import {
     ColumnModel,
     IsApplyServerSideTransactionParams,
     SelectionChangedEvent,
-    IRowNode
+    IRowNode,
+    StoreRefreshedEvent
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../../serverSideRowModel";
 import { StoreUtils } from "../storeUtils";
@@ -611,6 +612,15 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         // server side row model also updates the row indexes first
         const event: WithoutGridCommon<StoreUpdatedEvent> = {
             type: Events.EVENT_STORE_UPDATED
+        };
+        this.eventService.dispatchEvent(event);
+    }
+
+    // gets called when row data updated, and no more refreshing needed
+    public fireRefreshFinishedEvent(): void {
+        const event: WithoutGridCommon<StoreRefreshedEvent> = {
+            type: Events.EVENT_STORE_REFRESHED,
+            route: this.parentRowNode.getRoute(),
         };
         this.eventService.dispatchEvent(event);
     }

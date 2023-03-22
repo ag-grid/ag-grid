@@ -149,6 +149,7 @@ import {
     SortChangedEvent,
     SortDirection,
     StatusPanelDef,
+    StoreRefreshedEvent,
     TabToNextCellParams,
     TabToNextHeaderParams,
     ToolPanelSizeChangedEvent,
@@ -1107,6 +1108,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public rowDataUpdated: EventEmitter<RowDataUpdatedEvent<TData>> = new EventEmitter<RowDataUpdatedEvent<TData>>();
     /** Async transactions have been applied. Contains a list of all transaction results.     */
     @Output() public asyncTransactionsFlushed: EventEmitter<AsyncTransactionsFlushed<TData>> = new EventEmitter<AsyncTransactionsFlushed<TData>>();
+    /** A server side store has finished refreshing.     */
+    @Output() public storeRefreshed: EventEmitter<StoreRefreshedEvent<TData>> = new EventEmitter<StoreRefreshedEvent<TData>>();
     /** Cell is clicked.     */
     @Output() public cellClicked: EventEmitter<CellClickedEvent<TData>> = new EventEmitter<CellClickedEvent<TData>>();
     /** Cell is double clicked.     */

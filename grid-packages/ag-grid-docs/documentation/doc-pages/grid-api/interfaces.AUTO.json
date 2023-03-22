@@ -1882,6 +1882,7 @@
       "onRowDataChanged?(event: RowDataChangedEvent<TData>)": "void",
       "onRowDataUpdated?(event: RowDataUpdatedEvent<TData>)": "void",
       "onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed<TData>)": "void",
+      "onStoreRefreshed?(event: StoreRefreshedEvent<TData>)": "void",
       "onCellClicked?(event: CellClickedEvent<TData>)": "void",
       "onCellDoubleClicked?(event: CellDoubleClickedEvent<TData>)": "void",
       "onCellFocused?(event: CellFocusedEvent<TData>)": "void",
@@ -2255,6 +2256,7 @@
       "onRowDataChanged?(event: RowDataChangedEvent<TData>)": "/** @deprecated v28 No longer fired, use onRowDataUpdated instead */",
       "onRowDataUpdated?(event: RowDataUpdatedEvent<TData>)": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
       "onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed<TData>)": "/** Async transactions have been applied. Contains a list of all transaction results. */",
+      "onStoreRefreshed?(event: StoreRefreshedEvent<TData>)": "/** A server side store has finished refreshing. */",
       "onCellClicked?(event: CellClickedEvent<TData>)": "/** Cell is clicked. */",
       "onCellDoubleClicked?(event: CellDoubleClickedEvent<TData>)": "/** Cell is double clicked. */",
       "onCellFocused?(event: CellFocusedEvent<TData>)": "/** Cell is focused. */",
@@ -4871,6 +4873,23 @@
       "type": "string"
     },
     "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
+  },
+  "StoreRefreshedEvent": {
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "type": {
+      "route?": "string[]",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "TContext",
+      "type": "string"
+    },
+    "docs": {
+      "route?": "/** The route of the store which has finished refreshing, undefined if root level */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -12248,6 +12267,7 @@
       "onRowDataChanged?(event: RowDataChangedEvent<TData>)": "void",
       "onRowDataUpdated?(event: RowDataUpdatedEvent<TData>)": "void",
       "onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed<TData>)": "void",
+      "onStoreRefreshed?(event: StoreRefreshedEvent<TData>)": "void",
       "onCellClicked?(event: CellClickedEvent<TData>)": "void",
       "onCellDoubleClicked?(event: CellDoubleClickedEvent<TData>)": "void",
       "onCellFocused?(event: CellFocusedEvent<TData>)": "void",
@@ -12622,6 +12642,7 @@
       "onRowDataChanged?(event: RowDataChangedEvent<TData>)": "/** @deprecated v28 No longer fired, use onRowDataUpdated instead */",
       "onRowDataUpdated?(event: RowDataUpdatedEvent<TData>)": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
       "onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed<TData>)": "/** Async transactions have been applied. Contains a list of all transaction results. */",
+      "onStoreRefreshed?(event: StoreRefreshedEvent<TData>)": "/** A server side store has finished refreshing. */",
       "onCellClicked?(event: CellClickedEvent<TData>)": "/** Cell is clicked. */",
       "onCellDoubleClicked?(event: CellDoubleClickedEvent<TData>)": "/** Cell is double clicked. */",
       "onCellFocused?(event: CellFocusedEvent<TData>)": "/** Cell is focused. */",
@@ -13010,6 +13031,7 @@
       "onRowDataChanged?(event: RowDataChangedEvent<TData>)": "void",
       "onRowDataUpdated?(event: RowDataUpdatedEvent<TData>)": "void",
       "onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed<TData>)": "void",
+      "onStoreRefreshed?(event: StoreRefreshedEvent<TData>)": "void",
       "onCellClicked?(event: CellClickedEvent<TData>)": "void",
       "onCellDoubleClicked?(event: CellDoubleClickedEvent<TData>)": "void",
       "onCellFocused?(event: CellFocusedEvent<TData>)": "void",
@@ -13384,6 +13406,7 @@
       "onRowDataChanged?(event: RowDataChangedEvent<TData>)": "/** @deprecated v28 No longer fired, use onRowDataUpdated instead */",
       "onRowDataUpdated?(event: RowDataUpdatedEvent<TData>)": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
       "onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed<TData>)": "/** Async transactions have been applied. Contains a list of all transaction results. */",
+      "onStoreRefreshed?(event: StoreRefreshedEvent<TData>)": "/** A server side store has finished refreshing. */",
       "onCellClicked?(event: CellClickedEvent<TData>)": "/** Cell is clicked. */",
       "onCellDoubleClicked?(event: CellDoubleClickedEvent<TData>)": "/** Cell is double clicked. */",
       "onCellFocused?(event: CellFocusedEvent<TData>)": "/** Cell is focused. */",
@@ -13774,6 +13797,7 @@
       "onRowDataChanged?(event: RowDataChangedEvent<TData>)": "void",
       "onRowDataUpdated?(event: RowDataUpdatedEvent<TData>)": "void",
       "onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed<TData>)": "void",
+      "onStoreRefreshed?(event: StoreRefreshedEvent<TData>)": "void",
       "onCellClicked?(event: CellClickedEvent<TData>)": "void",
       "onCellDoubleClicked?(event: CellDoubleClickedEvent<TData>)": "void",
       "onCellFocused?(event: CellFocusedEvent<TData>)": "void",
@@ -14148,6 +14172,7 @@
       "onRowDataChanged?(event: RowDataChangedEvent<TData>)": "/** @deprecated v28 No longer fired, use onRowDataUpdated instead */",
       "onRowDataUpdated?(event: RowDataUpdatedEvent<TData>)": "/** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */",
       "onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed<TData>)": "/** Async transactions have been applied. Contains a list of all transaction results. */",
+      "onStoreRefreshed?(event: StoreRefreshedEvent<TData>)": "/** A server side store has finished refreshing. */",
       "onCellClicked?(event: CellClickedEvent<TData>)": "/** Cell is clicked. */",
       "onCellDoubleClicked?(event: CellDoubleClickedEvent<TData>)": "/** Cell is double clicked. */",
       "onCellFocused?(event: CellFocusedEvent<TData>)": "/** Cell is focused. */",

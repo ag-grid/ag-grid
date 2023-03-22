@@ -184,6 +184,9 @@ export class Events {
      * to bound properties, this event fires after the grid has finished processing the change. */
     public static EVENT_COMPONENT_STATE_CHANGED: 'componentStateChanged' = 'componentStateChanged';
 
+    /** Only used by the SSRM, called when the grid has no more rows to refresh */
+    public static EVENT_STORE_REFRESHED: 'storeRefreshed' = 'storeRefreshed';
+
     /*****************************  INTERNAL EVENTS: START ******************************************* */
 
     /** Please remember to add to ComponentUtil.EXCLUDED_INTERNAL_EVENTS to not have these events exposed to framework components. */

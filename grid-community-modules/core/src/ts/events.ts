@@ -617,6 +617,11 @@ export interface ColumnAggFuncChangeRequestEvent<TData = any, TContext = any> ex
     aggFunc: any;
 }
 
+export interface StoreRefreshedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /** The route of the store which has finished refreshing, undefined if root level */
+    route?: string[];
+}
+
 export interface ScrollVisibilityChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented
 
 export interface StoreUpdatedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented

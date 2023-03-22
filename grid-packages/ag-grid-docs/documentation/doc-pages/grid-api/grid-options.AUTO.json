@@ -2255,6 +2255,22 @@
     },
     "meta": { "isEvent": true, "name": "onAsyncTransactionsFlushed" }
   },
+  "onStoreRefreshed": {
+    "description": "/** A server side store has finished refreshing. */",
+    "type": {
+      "arguments": { "event": "StoreRefreshedEvent<TData>" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onStoreRefreshed" }
+  },
+  "storeRefreshed": {
+    "description": "/** A server side store has finished refreshing. */",
+    "type": {
+      "arguments": { "event": "StoreRefreshedEvent<TData>" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onStoreRefreshed" }
+  },
   "onCellClicked": {
     "description": "/** Cell is clicked. */",
     "type": {
