@@ -46,14 +46,16 @@ const DocPageTemplate = ({ data, pageContext: { framework, jsonDataAsString, exa
     const ast = processFrameworkSpecificSections(page.htmlAst, framework);
 
     const avoidOrphans = (child) => {
-        if (child.children) {
+        if (child.children && child.children.length > 0) {
+            const lastChild = child.children.slice(-1)[0];
+
+            if (lastChild.type === 'text') {
+                lastChild.value = addNonBreakingSpaceBetweenLastWords(lastChild.value);
+            }
+
             child.children = child.children.map((child) => {
                 return avoidOrphans(child);
             });
-        }
-
-        if (child.value) {
-            child.value = addNonBreakingSpaceBetweenLastWords(child.value);
         }
 
         return child;
