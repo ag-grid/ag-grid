@@ -127,7 +127,3 @@ interface AgZoomOptions {
 ```
 
 <!-- <interface-documentation interfaceName='AgZoomOptions' config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation> -->
-
-## Next Up
-
-Continue to the next section to learn more about [overlays](/charts-overlays/).
