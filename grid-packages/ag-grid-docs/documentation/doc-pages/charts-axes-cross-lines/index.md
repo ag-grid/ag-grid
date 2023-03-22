@@ -6,7 +6,11 @@ This section covers axis cross lines
 
 ## Cross Lines
 
-Cross lines display a vertical or horizontal line or region running across a desired chart region. This feature can be useful for data analysis as the cross lines or shaded regions will emphasise trends and draw attention to important information such as a threshold. Cross lines are not supported on polar (pie, doughnut) or treemap charts.
+Cross lines display a vertical or horizontal line or region running across a desired chart region. This feature can be 
+useful for data analysis as the cross lines or shaded regions will emphasise trends and draw attention to important 
+information such as a threshold. Cross lines are not supported on polar (pie, doughnut) or treemap charts.
+
+<interface-documentation interfaceName='AgBaseCartesianAxisOptions' names='["crossLines"]' config='{"description":"", "overrideBottomMargin":"1rem", "lookupRoot": "charts-api"}' ></interface-documentation>
 
 To render a cross line at a specific data value associated with a particular axis, the `crossLines` property needs to be specified on the individual `axes` options objects. The cross lines will span the entire chart width or height depending on which axis they are configured on.
 
@@ -67,8 +71,6 @@ crossLines: [
   },
 ],
 ```
-
-Please see the [API reference](#reference-AgBaseCartesianAxisOptions-crossLines) for the full cross lines styling options.
 
 ### Example: Cross Lines
 

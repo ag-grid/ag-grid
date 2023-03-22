@@ -35,6 +35,8 @@ The simplest category axis config looks like this:
 }
 ```
 
+<interface-documentation interfaceName='AgCategoryAxisOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }' exclude='["position", "title", "line", "label", "gridStyle", "keys"]'></interface-documentation>
+
 ## Number Axis
 
 The number axis is meant to be used as a value axis. While categories are spaced out evenly, the distance between values depends on their magnitude.
@@ -51,6 +53,8 @@ Here's the simplest number axis config:
     position: 'left'
 }
 ```
+
+<interface-documentation interfaceName='AgNumberAxisOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }' exclude='["position", "title", "line", "label", "gridStyle", "keys"]'></interface-documentation>
 
 ## Log Axis
 
@@ -91,6 +95,8 @@ you to change the base to any number you like, for example `Math.E` for natural 
 }
 ```
 
+<interface-documentation interfaceName='AgLogAxisOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }' exclude='["position", "title", "line", "label", "gridStyle", "keys"]'></interface-documentation>
+
 All of the above points are demonstrated by the example below.
 
 ### Example: Number Axis vs Log Axis
@@ -99,6 +105,7 @@ All of the above points are demonstrated by the example below.
 
 [[note]]
 | The domain of a log axis should be strictly positive or strictly negative (because there's no power you can raise a number to that will yield zero). For that reason, any non-conforming domain will be clipped to conformity. For example, `[0, 10]` will be clipped to  `[1, 10]`. If the data domain crosses `0`, for example `[-10, 5]`, no data will be rendered. It is often desirable to set the `min` or `max` property of the axis manually. In this case it can be `max: -1`.
+
 ## Time Axis
 
 The time axis is similar to the number axis in the sense that it is also used to plot continuous values. The time axis can even be used with numeric data (in addition to `Date` objects), but the numbers will be interpreted as Unix timestamps. The time axis differs from the number axis in tick segmentation and label formatting. For example, you could choose to place a tick every 5 minutes, every month, or every Friday.
@@ -111,6 +118,8 @@ The time axis also supports specifier strings to control the way time values are
     position: 'bottom'
 }
 ```
+
+<interface-documentation interfaceName='AgTimeAxisOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }' exclude='["position", "title", "line", "label", "gridStyle", "keys"]'></interface-documentation>
 
 ## Next Up
 
