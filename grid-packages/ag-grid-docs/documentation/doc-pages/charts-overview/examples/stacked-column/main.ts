@@ -1,4 +1,9 @@
-import { AgCartesianSeriesTooltipRendererParams, AgChart, AgChartOptions, AgTooltipRendererResult } from "ag-charts-community"
+import {
+  AgCartesianSeriesTooltipRendererParams,
+  AgChart,
+  AgChartOptions,
+  AgTooltipRendererResult,
+} from "ag-charts-community"
 import { getData } from "./data"
 
 const numFormatter = new Intl.NumberFormat("en-US")

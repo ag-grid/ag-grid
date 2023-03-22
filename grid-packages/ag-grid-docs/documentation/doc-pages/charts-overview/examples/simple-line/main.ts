@@ -1,4 +1,10 @@
-import { AgCartesianSeriesTooltipRendererParams, AgChart, AgChartOptions, AgTooltipRendererResult, time } from "ag-charts-community"
+import {
+  AgCartesianSeriesTooltipRendererParams,
+  AgChart,
+  AgChartOptions,
+  AgTooltipRendererResult,
+  time,
+} from "ag-charts-community"
 import { getData } from "./data"
 
 const dateFormatter = new Intl.DateTimeFormat("en-US")
@@ -34,6 +40,7 @@ const options: AgChartOptions = {
   title: {
     text: "Road fuel prices",
     fontSize: 18,
+    spacing: 25,
   },
   footnote: {
     text: "Source: Department for Business, Energy & Industrial Strategy",

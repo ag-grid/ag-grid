@@ -410,6 +410,7 @@ Object {
     "fontSize": 22,
     "fontStyle": undefined,
     "fontWeight": "bold",
+    "spacing": 25,
     "text": "Marriage Statistics (Northern Ireland)",
   },
   "tooltip": Object {
@@ -837,6 +838,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
+    "spacing": 25,
     "text": "Cattle Holdings and Beef Exports (UK)",
   },
   "tooltip": Object {
@@ -1489,6 +1491,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
+    "spacing": 25,
     "text": "Taxed Alcohol Consumption (UK)",
   },
   "tooltip": Object {
@@ -1819,6 +1822,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
+    "spacing": 25,
     "text": "WEEE Collected in UK",
   },
   "tooltip": Object {
@@ -2090,6 +2094,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
+    "spacing": 25,
     "text": "Worldwide Earthquakes",
   },
   "tooltip": Object {
@@ -2560,6 +2565,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
+    "spacing": 25,
     "text": "Earthquake Magnitudes by Source",
   },
   "tooltip": Object {
@@ -3173,6 +3179,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
+    "spacing": 25,
     "text": "Changes in UK Energy Stock",
   },
   "tooltip": Object {
@@ -3463,6 +3470,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
+    "spacing": 25,
     "text": "Gross Weekly Earnings
 by Occupation",
   },
@@ -3745,6 +3753,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
+    "spacing": 25,
     "text": "Change in Number of Jobs in UK
 (June to September)",
   },
@@ -4285,6 +4294,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
+    "spacing": 25,
     "text": "Most Populous Cities",
   },
   "tooltip": Object {
@@ -4599,6 +4609,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
+    "spacing": 25,
     "text": "Changes in Prison Population",
   },
   "tooltip": Object {
@@ -4916,6 +4927,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
+    "spacing": 25,
     "text": "Annual Growth in Pay",
   },
   "tooltip": Object {
@@ -5248,6 +5260,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
+    "spacing": 25,
     "text": "Regular Internet Users",
   },
   "tooltip": Object {
@@ -6721,6 +6734,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
+    "spacing": 25,
     "text": "Imported Banana Prices",
   },
   "tooltip": Object {
@@ -7537,6 +7551,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
+    "spacing": 25,
     "text": "UK Energy Sources",
   },
   "tooltip": Object {
@@ -7859,6 +7874,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
+    "spacing": 25,
     "text": "Internet Users by Geographical Location",
   },
   "tooltip": Object {
@@ -8200,6 +8216,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
+    "spacing": 25,
     "text": "Ethnic Diversity of School Pupils",
   },
   "tooltip": Object {
@@ -9002,6 +9019,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
+    "spacing": 25,
     "text": "Total Visitors to Museums and Galleries",
   },
   "tooltip": Object {
@@ -9224,6 +9242,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
+    "spacing": 25,
     "text": "Dwelling Fires (UK)",
   },
   "tooltip": Object {
@@ -9844,6 +9863,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
+    "spacing": 25,
     "text": "Road fuel prices",
   },
   "tooltip": Object {
@@ -10044,6 +10064,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
+    "spacing": 25,
     "text": "Religions of London Population",
   },
   "tooltip": Object {
@@ -10311,6 +10332,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
+    "spacing": 25,
     "text": "Height vs Weight for Major League Baseball Players",
   },
   "tooltip": Object {
@@ -10982,6 +11004,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
+    "spacing": 25,
     "text": "UK Housing Stock",
   },
   "tooltip": Object {

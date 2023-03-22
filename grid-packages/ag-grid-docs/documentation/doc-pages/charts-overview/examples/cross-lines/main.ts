@@ -1,5 +1,5 @@
-import { AgChart, AgChartOptions } from "ag-charts-community";
-import { getData } from "./data";
+import { AgChart, AgChartOptions } from "ag-charts-community"
+import { getData } from "./data"
 
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
@@ -7,8 +7,8 @@ const options: AgChartOptions = {
   data: getData(),
   theme: {
     palette: {
-      fills: ['#330066', '#99CCFF'],
-      strokes: ['#330066', '#99CCFF'],
+      fills: ["#330066", "#99CCFF"],
+      strokes: ["#330066", "#99CCFF"],
     },
     overrides: {
       column: {
@@ -17,15 +17,14 @@ const options: AgChartOptions = {
             gridStyle: [],
           },
           number: {
-            tick: {
-            },
+            tick: {},
           },
         },
         series: {
           highlightStyle: {
             item: {
-              fill: 'rgb(40,40,40)',
-              strokeWidth: 0
+              fill: "rgb(40,40,40)",
+              strokeWidth: 0,
             },
             series: {
               dimOpacity: 0.3,
@@ -38,6 +37,7 @@ const options: AgChartOptions = {
   title: {
     text: "Changes in Prison Population",
     fontSize: 18,
+    spacing: 25,
   },
   footnote: {
     text:
@@ -63,45 +63,45 @@ const options: AgChartOptions = {
       position: "bottom",
       crossLines: [
         {
-          type: 'range',
-          range: ['Jan', 'Mar'],
-          fill: '#DFDFDF',
+          type: "range",
+          range: ["Jan", "Mar"],
+          fill: "#DFDFDF",
           fillOpacity: 0.3,
           strokeWidth: 0,
           label: {
-            text: 'Q1',
-            position: 'insideTop',
+            text: "Q1",
+            position: "insideTop",
           },
         },
         {
-          type: 'range',
-          range: ['Apr', 'Jun'],
+          type: "range",
+          range: ["Apr", "Jun"],
           fill: undefined,
           strokeWidth: 0,
           label: {
-            text: 'Q2',
-            position: 'insideTop',
+            text: "Q2",
+            position: "insideTop",
           },
         },
         {
-          type: 'range',
-          range: ['Jul', 'Sep'],
-          fill: '#DFDFDF',
+          type: "range",
+          range: ["Jul", "Sep"],
+          fill: "#DFDFDF",
           fillOpacity: 0.3,
           strokeWidth: 0,
           label: {
-            text: 'Q3',
-            position: 'insideTop',
+            text: "Q3",
+            position: "insideTop",
           },
         },
         {
-          type: 'range',
-          range: ['Oct', 'Dec'],
+          type: "range",
+          range: ["Oct", "Dec"],
           fill: undefined,
           strokeWidth: 0,
           label: {
-            text: 'Q4',
-            position: 'insideTop',
+            text: "Q4",
+            position: "insideTop",
           },
         },
       ],
@@ -111,31 +111,31 @@ const options: AgChartOptions = {
       position: "left",
       crossLines: [
         {
-          type: 'line',
+          type: "line",
           value: -321,
-          fill: '#330066',
+          fill: "#330066",
           fillOpacity: 0.1,
-          stroke: '#330066',
+          stroke: "#330066",
           strokeOpacity: 0.3,
           lineDash: [10, 2],
           label: {
-            text: 'Peak Male Release',
+            text: "Peak Male Release",
             padding: 10,
-            position: 'bottomRight',
+            position: "bottomRight",
           },
         },
         {
-          type: 'range',
+          type: "range",
           range: [-90, 65],
-          fill: '#330066',
+          fill: "#330066",
           fillOpacity: 0.1,
-          stroke: '#330066',
+          stroke: "#330066",
           strokeOpacity: 0.2,
           strokeWidth: 0,
           label: {
-            text: 'Female Range',
+            text: "Female Range",
             padding: 10,
-            position: 'insideTopRight',
+            position: "insideTopRight",
           },
         },
       ],

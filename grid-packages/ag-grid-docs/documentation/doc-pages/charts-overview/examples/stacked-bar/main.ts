@@ -1,5 +1,5 @@
-import { AgChart, AgChartOptions } from "ag-charts-community";
-import { getData } from "./data";
+import { AgChart, AgChartOptions } from "ag-charts-community"
+import { getData } from "./data"
 
 function getTotal(datum: any) {
   return (
@@ -34,6 +34,7 @@ const options: AgChartOptions = {
   title: {
     text: "UK Housing Stock",
     fontSize: 18,
+    spacing: 25,
   },
   footnote: {
     text: "Source: Ministry of Housing, Communities & Local Government",

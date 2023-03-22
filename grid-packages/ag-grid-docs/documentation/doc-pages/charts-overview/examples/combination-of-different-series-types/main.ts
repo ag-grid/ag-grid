@@ -1,5 +1,5 @@
-import { AgChart, AgChartOptions } from "ag-charts-community";
-import { getData } from "./data";
+import { AgChart, AgChartOptions } from "ag-charts-community"
+import { getData } from "./data"
 
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
@@ -18,6 +18,7 @@ const options: AgChartOptions = {
   title: {
     text: "Cattle Holdings and Beef Exports (UK)",
     fontSize: 18,
+    spacing: 25,
   },
   footnote: {
     text:
@@ -56,7 +57,7 @@ const options: AgChartOptions = {
         text: "Number of cattle",
       },
       label: {
-        formatter: (params) => {
+        formatter: params => {
           return params.value / 1000 + "M"
         },
       },
@@ -69,7 +70,7 @@ const options: AgChartOptions = {
         text: "Exports (tonnes)",
       },
       label: {
-        formatter: (params) => {
+        formatter: params => {
           return params.value / 1000 + "k"
         },
       },
