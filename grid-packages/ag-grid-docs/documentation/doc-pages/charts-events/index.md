@@ -1,6 +1,5 @@
 ---
 title: "Events"
-enterprise: true
 ---
 
 This section explains how to listen and respond to various chart and series events.
