@@ -25,29 +25,7 @@ export class CartesianChart extends Chart {
     }
 
     async performLayout() {
-        this.scene.root!.visible = true;
-
-        const {
-            legend,
-            padding,
-            scene: { width, height },
-        } = this;
-
-        let shrinkRect = new BBox(0, 0, width, height);
-        shrinkRect.x += padding.left;
-        shrinkRect.y += padding.top;
-        shrinkRect.width -= padding.left + padding.right;
-        shrinkRect.height -= padding.top + padding.bottom;
-
-        shrinkRect = this.positionCaptions(shrinkRect);
-        shrinkRect = this.positionLegend(shrinkRect);
-
-        if (legend.visible && legend.enabled && legend.data.length) {
-            const legendPadding = legend.spacing;
-            shrinkRect.shrink(legendPadding, legend.position);
-        }
-
-        ({ shrinkRect } = this.layoutService.dispatchPerformLayout('before-series', { shrinkRect }));
+        const shrinkRect = await super.performLayout();
 
         const { seriesRect, visibility, clipSeries } = this.updateAxes(shrinkRect);
         this.seriesRoot.visible = visibility.series;
@@ -77,6 +55,8 @@ export class CartesianChart extends Chart {
         } else {
             seriesRoot.setClipRectInGroupCoordinateSpace();
         }
+
+        return shrinkRect;
     }
 
     private _lastAxisWidths: Partial<Record<AgCartesianAxisPosition, number>> = {

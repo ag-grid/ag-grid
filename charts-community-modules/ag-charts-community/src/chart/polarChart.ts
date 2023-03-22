@@ -18,32 +18,16 @@ export class PolarChart extends Chart {
     }
 
     async performLayout() {
-        this.scene.root!.visible = true;
+        const shrinkRect = await super.performLayout();
 
-        const {
-            padding,
-            scene: { width, height },
-        } = this;
-
-        let shrinkRect = new BBox(0, 0, width, height);
-        shrinkRect.shrink(padding.left, 'left');
-        shrinkRect.shrink(padding.top, 'top');
-        shrinkRect.shrink(padding.right, 'right');
-        shrinkRect.shrink(padding.bottom, 'bottom');
-
-        shrinkRect = this.positionCaptions(shrinkRect);
-        shrinkRect = this.positionLegend(shrinkRect);
         this.computeSeriesRect(shrinkRect);
         this.computeCircle();
+
+        return shrinkRect;
     }
 
     private computeSeriesRect(shrinkRect: BBox) {
-        const { legend, seriesAreaPadding } = this;
-
-        if (legend.visible && legend.enabled && legend.data.length) {
-            const legendPadding = legend.spacing;
-            shrinkRect.shrink(legendPadding, legend.position);
-        }
+        const { seriesAreaPadding } = this;
 
         shrinkRect.shrink(seriesAreaPadding.left, 'left');
         shrinkRect.shrink(seriesAreaPadding.top, 'top');

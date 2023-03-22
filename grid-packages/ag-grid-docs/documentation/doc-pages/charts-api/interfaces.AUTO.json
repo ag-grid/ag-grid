@@ -3535,7 +3535,10 @@
     ],
     "docs": [null, null, null, null, null, null, null, null]
   },
-  "LayoutStage": { "meta": { "isTypeAlias": true }, "type": "'before-series'" },
+  "LayoutStage": {
+    "meta": { "isTypeAlias": true },
+    "type": "'start-layout' | 'before-series'"
+  },
   "AxisLabelLayout": {
     "meta": { "isTypeAlias": true },
     "type": "{ baseline: 'hanging' | 'bottom' | 'middle'; align: 'start' | 'end' | 'center'; rotation: number; fractionDigits: number; padding: number; }"

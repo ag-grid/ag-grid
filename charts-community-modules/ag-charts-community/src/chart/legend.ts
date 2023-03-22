@@ -45,6 +45,7 @@ import { TooltipManager } from './interaction/tooltipManager';
 import { toTooltipHtml } from './tooltip/tooltip';
 import { LegendDatum } from './legendDatum';
 import { Logger } from '../util/logger';
+import { LayoutService } from './layout/layoutService';
 
 const ORIENTATIONS = ['horizontal', 'vertical'];
 export const OPT_ORIENTATION = predicateWithMessage(
@@ -226,6 +227,8 @@ export class Legend {
     @Validate(OPT_ORIENTATION)
     orientation?: AgChartOrientation;
 
+    private destroyFns: Function[] = [];
+
     constructor(
         private readonly chart: {
             readonly series: Series<any>[];
@@ -239,7 +242,8 @@ export class Legend {
         private readonly interactionManager: InteractionManager,
         private readonly cursorManager: CursorManager,
         private readonly highlightManager: HighlightManager,
-        private readonly tooltipManager: TooltipManager
+        private readonly tooltipManager: TooltipManager,
+        private readonly layoutService: LayoutService
     ) {
         this.item.marker.parent = this;
         this.pagination = new Pagination(
@@ -252,9 +256,23 @@ export class Legend {
 
         this.item.marker.parent = this;
 
-        this.interactionManager.addListener('click', (e) => this.checkLegendClick(e));
-        this.interactionManager.addListener('dblclick', (e) => this.checkLegendDoubleClick(e));
-        this.interactionManager.addListener('hover', (e) => this.handleLegendMouseMove(e));
+        const interactionListeners = [
+            this.interactionManager.addListener('click', (e) => this.checkLegendClick(e)),
+            this.interactionManager.addListener('dblclick', (e) => this.checkLegendDoubleClick(e)),
+            this.interactionManager.addListener('hover', (e) => this.handleLegendMouseMove(e)),
+        ];
+        const layoutListeners = [
+            this.layoutService.addListener('start-layout', (e) => this.positionLegend(e.shrinkRect)),
+        ];
+
+        this.destroyFns.push(
+            ...interactionListeners.map((s) => () => this.interactionManager.removeListener(s)),
+            ...layoutListeners.map((s) => () => this.layoutService.removeListener(s))
+        );
+    }
+
+    public destroy() {
+        this.destroyFns.forEach((f) => f());
     }
 
     public onMarkerShapeChange() {
@@ -315,7 +333,7 @@ export class Legend {
      * @param width
      * @param height
      */
-    performLayout(width: number, height: number) {
+    private performLayout(width: number, height: number) {
         const {
             paddingX,
             paddingY,
@@ -861,5 +879,105 @@ export class Legend {
         } else {
             this.highlightManager.updateHighlight(this.id);
         }
+    }
+
+    private positionLegend(shrinkRect: BBox) {
+        const newShrinkRect = shrinkRect.clone();
+
+        if (!this.enabled || !this.data.length) {
+            return { shrinkRect: newShrinkRect };
+        }
+
+        const [legendWidth, legendHeight] = this.calculateLegendDimensions(shrinkRect);
+
+        let translationX = 0;
+        let translationY = 0;
+
+        this.translationX = 0;
+        this.translationY = 0;
+        this.performLayout(legendWidth, legendHeight);
+        const legendBBox = this.computePagedBBox();
+
+        const calculateTranslationPerpendicularDimension = () => {
+            switch (this.position) {
+                case 'top':
+                    return 0;
+                case 'bottom':
+                    return shrinkRect.height - legendBBox.height;
+                case 'left':
+                    return 0;
+                case 'right':
+                default:
+                    return shrinkRect.width - legendBBox.width;
+            }
+        };
+        if (this.visible) {
+            switch (this.position) {
+                case 'top':
+                case 'bottom':
+                    translationX = (shrinkRect.width - legendBBox.width) / 2;
+                    translationY = calculateTranslationPerpendicularDimension();
+                    newShrinkRect.shrink(legendBBox.height, this.position);
+                    break;
+
+                case 'left':
+                case 'right':
+                default:
+                    translationX = calculateTranslationPerpendicularDimension();
+                    translationY = (shrinkRect.height - legendBBox.height) / 2;
+                    newShrinkRect.shrink(legendBBox.width, this.position);
+            }
+
+            // Round off for pixel grid alignment to work properly.
+            this.translationX = Math.floor(-legendBBox.x + shrinkRect.x + translationX);
+            this.translationY = Math.floor(-legendBBox.y + shrinkRect.y + translationY);
+        }
+
+        if (this.visible && this.enabled && this.data.length) {
+            const legendPadding = this.spacing;
+            newShrinkRect.shrink(legendPadding, this.position);
+        }
+
+        return { shrinkRect: newShrinkRect };
+    }
+
+    private calculateLegendDimensions(shrinkRect: BBox): [number, number] {
+        const { width, height } = shrinkRect;
+
+        const aspectRatio = width / height;
+        const maxCoefficient = 0.5;
+        const minHeightCoefficient = 0.2;
+        const minWidthCoefficient = 0.25;
+
+        let legendWidth = 0;
+        let legendHeight = 0;
+
+        switch (this.position) {
+            case 'top':
+            case 'bottom':
+                // A horizontal legend should take maximum between 20 to 50 percent of the chart height if height is larger than width
+                // and maximum 20 percent of the chart height if height is smaller than width.
+                const heightCoefficient =
+                    aspectRatio < 1
+                        ? Math.min(maxCoefficient, minHeightCoefficient * (1 / aspectRatio))
+                        : minHeightCoefficient;
+                legendWidth = this.maxWidth ? Math.min(this.maxWidth, width) : width;
+                legendHeight = this.maxHeight
+                    ? Math.min(this.maxHeight, height)
+                    : Math.round(height * heightCoefficient);
+                break;
+
+            case 'left':
+            case 'right':
+            default:
+                // A vertical legend should take maximum between 25 to 50 percent of the chart width if width is larger than height
+                // and maximum 25 percent of the chart width if width is smaller than height.
+                const widthCoefficient =
+                    aspectRatio > 1 ? Math.min(maxCoefficient, minWidthCoefficient * aspectRatio) : minWidthCoefficient;
+                legendWidth = this.maxWidth ? Math.min(this.maxWidth, width) : Math.round(width * widthCoefficient);
+                legendHeight = this.maxHeight ? Math.min(this.maxHeight, height) : height;
+        }
+
+        return [legendWidth, legendHeight];
     }
 }
