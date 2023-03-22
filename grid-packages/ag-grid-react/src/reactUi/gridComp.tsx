@@ -9,7 +9,7 @@ import { BeansContext } from './beansContext';
 import GridBodyComp from './gridBodyComp';
 import useReactCommentEffect from './reactComment';
 import TabGuardComp, { TabGuardCompCallback } from './tabGuardComp';
-import { useEffectOnce } from './useEffectOnce';
+import { useLayoutEffectOnce } from './useEffectOnce';
 import { classesList } from './utils';
 
 interface GridCompProps {
@@ -39,7 +39,7 @@ const GridComp = ({ context }: GridCompProps) => {
     useReactCommentEffect(' AG Grid ', eRootWrapperRef);
 
     // create shared controller.
-    useEffectOnce(() => {
+    useLayoutEffectOnce(() => {
         const currentController = gridCtrlRef.current = context.createBean(new GridCtrl());
 
         return () => {
@@ -49,7 +49,7 @@ const GridComp = ({ context }: GridCompProps) => {
     });
 
     // initialise the UI
-    useEffectOnce(() => {
+    useLayoutEffectOnce(() => {
         const gridCtrl = gridCtrlRef.current!;
 
         focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
