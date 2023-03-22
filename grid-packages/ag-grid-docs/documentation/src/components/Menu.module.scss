@@ -57,8 +57,9 @@
 
 .sectionHeader {
     width: 100%;
-    padding-top: $size-1 !important; // !important for .ag-styles specificity
-    padding-bottom: $size-1 !important; // !important for .ag-styles specificity
+    padding-top: $size-half !important; // !important for .ag-styles specificity
+    padding-bottom: $size-half !important; // !important for .ag-styles specificity
+    margin-top: $size-1 !important; // !important for .ag-styles specificity
     font-weight: var(--font-weight-bold);
     border: 2px solid transparent !important; // !important for .ag-styles specificity
     outline: none;
@@ -79,6 +80,10 @@
 
     &.active {
         transition: color $default-transition-timing;
+    }
+
+    + .menuGroup {
+        margin-top: $size-half * -1 !important; // !important for .ag-styles specificity
     }
 }
 
@@ -133,8 +138,8 @@
 .menuGroup a {
     position: relative;
     display: block;
-    padding-top: $size-half;
-    padding-bottom: $size-half;
+    padding-top: 3px;
+    padding-bottom: 3px;
     padding-left: $size-2;
     margin-left: var(--first-indent-size);
     outline: none;
@@ -187,8 +192,8 @@
 
 .menuGroup .groupLabel {
     margin-left: var(--first-indent-size) !important; // !important for .ag-styles specificity
-    padding-top: $size-half + 2px;
-    padding-bottom: $size-half + 2px;
+    padding-top: 5px;
+    padding-bottom: 5px;
     transition: color $default-transition-timing;
 
     &.activeItemParent {
