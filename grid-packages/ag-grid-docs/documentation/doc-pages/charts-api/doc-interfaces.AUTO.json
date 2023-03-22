@@ -5628,12 +5628,6 @@
     }
   },
   "PieNodeTag": {},
-  "SectorBoundaries": {
-    "startAngle": { "type": { "returnType": "number", "optional": false } },
-    "endAngle": { "type": { "returnType": "number", "optional": false } },
-    "innerRadius": { "type": { "returnType": "number", "optional": false } },
-    "outerRadius": { "type": { "returnType": "number", "optional": false } }
-  },
   "SeriesNodeDatum": {
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
@@ -6082,6 +6076,20 @@
   },
   "TypedEventListener": {},
   "Callback": {},
+  "SectorBoundaries": {
+    "startAngle": { "type": { "returnType": "number", "optional": false } },
+    "endAngle": { "type": { "returnType": "number", "optional": false } },
+    "innerRadius": { "type": { "returnType": "number", "optional": false } },
+    "outerRadius": { "type": { "returnType": "number", "optional": false } }
+  },
+  "LineCoordinates": {
+    "start": {
+      "type": { "returnType": "{ x: number; y: number }", "optional": false }
+    },
+    "end": {
+      "type": { "returnType": "{ x: number; y: number }", "optional": false }
+    }
+  },
   "OnSizeChange": {},
   "Entry": {},
   "NumberFormat": {},

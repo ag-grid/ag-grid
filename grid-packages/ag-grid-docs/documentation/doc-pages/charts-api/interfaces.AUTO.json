@@ -3903,15 +3903,6 @@
     "type": ["Sector", "Callout", "Label"],
     "docs": [null, null, null]
   },
-  "SectorBoundaries": {
-    "meta": {},
-    "type": {
-      "startAngle": "number",
-      "endAngle": "number",
-      "innerRadius": "number",
-      "outerRadius": "number"
-    }
-  },
   "SeriesNodeDatum": {
     "meta": {
       "doc": "/** Processed series datum used in node selections,\n * contains information used to render pie sectors, bars, markers, etc.\n */"
@@ -4325,6 +4316,22 @@
   "Callback": {
     "meta": { "isTypeAlias": true },
     "type": "(params: { count: number; }) => Promise<void> | void"
+  },
+  "SectorBoundaries": {
+    "meta": {},
+    "type": {
+      "startAngle": "number",
+      "endAngle": "number",
+      "innerRadius": "number",
+      "outerRadius": "number"
+    }
+  },
+  "LineCoordinates": {
+    "meta": {},
+    "type": {
+      "start": "{ x: number; y: number; }",
+      "end": "{ x: number; y: number; }"
+    }
   },
   "OnSizeChange": {
     "meta": { "isTypeAlias": true },
