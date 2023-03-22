@@ -21,7 +21,7 @@ export interface AxisLayout {
 
 export interface LayoutCompleteEvent {
     type: 'layout-complete';
-    series: { rect: BBox; visible: boolean };
+    series: { rect: BBox; paddedRect: BBox; visible: boolean };
     axes?: (AxisLayout & {
         id: string;
     })[];
