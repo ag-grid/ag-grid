@@ -970,9 +970,27 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                     }
                 }
             }
-            if (!anyLabelsCollide) {
+
+            const innerRadius = radiusScale.convert(0);
+            const anyLabelCollidesSector = labels.some((datum) => {
+                const radius = radiusScale.convert(datum.radius);
+                const outerRadius = Math.max(0, radius);
+                const bbox = getTextBBox(datum);
+                const corners = [
+                    [bbox.x, bbox.y],
+                    [bbox.x + bbox.width, bbox.y],
+                    [bbox.x + bbox.width, bbox.y + bbox.height],
+                    [bbox.x, bbox.y + bbox.height],
+                ];
+                const { startAngle, endAngle } = datum;
+                const sectorBounds = { startAngle, endAngle, innerRadius, outerRadius };
+                return corners.some(([x, y]) => isPointInArc(x, y, sectorBounds));
+            });
+
+            if (!(anyLabelsCollide || anyLabelCollidesSector)) {
                 return;
             }
+
             labels.forEach((datum, i) => {
                 const label = datum.calloutLabel!;
                 if (label.textAlign !== 'center') {
