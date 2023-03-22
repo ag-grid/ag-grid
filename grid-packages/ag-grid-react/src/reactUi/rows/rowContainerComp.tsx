@@ -12,7 +12,6 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
     const [viewportHeight, setViewportHeight] = useState<string>('');
     const [rowCtrlsOrdered, setRowCtrlsOrdered] = useState<RowCtrl[]>([]);
-    const [containerWidth, setContainerWidth] = useState<string>('');
 
     const { name } = params;
     const containerType = useMemo(() => getRowContainerTypeForName(name), [name]);
@@ -76,7 +75,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
                     updateRowCtrlsOrdered();
                 }
             },
-            setContainerWidth: width => setContainerWidth(width)
+            setContainerWidth: width => eContainer.current!.style.width = width
         };
 
         const ctrl = context.createBean(new RowContainerCtrl(name));
@@ -94,16 +93,12 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
         height: viewportHeight
     }), [viewportHeight]);
 
-    const containerStyle = useMemo(() => ({
-        width: containerWidth
-    }), [containerWidth]);
-
     const buildContainer = () => (
         <div
             className={ containerClasses }
             ref={ eContainer }
             role={ rowCtrlsOrdered.length ? "rowgroup" : "presentation" }
-            style={ containerStyle }>
+        >
             {
                 rowCtrlsOrdered.map(rowCtrl =>
                     <RowComp rowCtrl={ rowCtrl } containerType={ containerType } key={ rowCtrl.getInstanceId() }></RowComp>

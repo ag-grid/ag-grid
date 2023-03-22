@@ -27,7 +27,6 @@ const GridBodyComp = () => {
     const [stickyTopWidth, setStickyTopWidth] = useState<string>('100%');
     const [topDisplay, setTopDisplay] = useState<string>('');
     const [bottomDisplay, setBottomDisplay] = useState<string>('');
-    const [bodyViewportWidth, setBodyViewportWidth] = useState<string>('');
     
     const [forceVerticalScrollClass, setForceVerticalScrollClass] = useState<string | null>(null);
     const [topAndBottomOverflowY, setTopAndBottomOverflowY] = useState<string>('');
@@ -93,7 +92,7 @@ const GridBodyComp = () => {
             setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
             setPinnedTopBottomOverflowY: setTopAndBottomOverflowY,
             setCellSelectableCss: setCellSelectableCss,
-            setBodyViewportWidth: setBodyViewportWidth,
+            setBodyViewportWidth: (width) => eBodyViewport.current!.style.width = width,
             registerBodyViewportResizeListener: listener => {
                 const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport.current!, listener);
                 destroyFuncs.push(() => unsubscribeFromResize());
@@ -167,10 +166,6 @@ const GridBodyComp = () => {
         overflowY: (topAndBottomOverflowY as any)
     }), [bottomHeight, bottomDisplay, topAndBottomOverflowY]);
 
-    const bodyViewportStyle: React.CSSProperties = useMemo( ()=> ({
-        width: bodyViewportWidth
-    }), [bodyViewportWidth]);
-
     const createRowContainer = (container: RowContainerName) => <RowContainerComp name={ container } key={`${container}-container`} />;
     const createSection = ({
         section,
@@ -195,7 +190,7 @@ const GridBodyComp = () => {
             <div className={bodyClasses} ref={eBody} role="presentation">
                 <div className={bodyClipperClasses} role="presentation">
                     { createSection({ section: eBodyViewport, className: bodyViewportClasses, 
-                                        style: bodyViewportStyle, children: [
+                        children: [
                         RowContainerName.LEFT,
                         RowContainerName.CENTER,
                         RowContainerName.RIGHT,
