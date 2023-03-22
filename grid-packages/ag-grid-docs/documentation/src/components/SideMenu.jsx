@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styles from './SideMenu.module.scss';
 
 /**
@@ -9,6 +9,7 @@ import styles from './SideMenu.module.scss';
  */
 const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu }) => {
     const [allHeadings, setAllHeadings] = useState(headings);
+    const menuRef = useRef(null);
 
     useEffect(() => {
         // this checks for headings once the page has rendered
@@ -49,23 +50,36 @@ const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu }) => {
         }
     }, [hideMenu]);
 
+    useEffect(() => {
+        if (!menuRef.current) {
+            return;
+        }
+
+        $('body').scrollspy({ target: '#side-menu' });
+    }, [menuRef.current]);
+
     return (
         allHeadings.length > 0 && (
-            <div className={classNames(styles.sideNav, 'ag-styles', 'font-size-responsive')}>
-                <div>
-                    <ul className="list-style-none">
-                        <li className={styles['level-1']}>
-                            <a href="#top">{pageTitle}</a>
-                        </li>
+            <nav id="side-menu" ref={menuRef} class="navbar navbar-light bg-light" style={{
+                position: 'fixed',
+                right: 0,
+                flexDirection: 'column'
+            }}>
+                <ul class="nav nav-pills" style={{
+                    flexDirection: 'column'
+                }}>
+                <a class="navbar-brand" href="#">Navbar</a>
+                    <li className={classNames('nav-item', styles['level-1'])}>
+                           <a href="#top" className="nav-link">{pageTitle}</a>
+                    </li>
 
-                        {allHeadings.map((heading) => (
-                            <li key={`${pageName}_${heading.id}`} className={styles[`level-${heading.depth}`]}>
-                                <a href={`#${heading.id}`}>{heading.value}</a>
-                            </li>
-                        ))}
+                     {allHeadings.map((heading) => (
+                         <li key={`${pageName}_${heading.id}`} className={classNames('nav-item', styles[`level-${heading.depth}`])}>
+                             <a className="nav-link" href={`#${heading.id}`}>{heading.value}</a>
+                         </li>
+                    ))}
                     </ul>
-                </div>
-            </div>
+                </nav>
         )
     );
 };
