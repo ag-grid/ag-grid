@@ -1919,6 +1919,28 @@
             ]
           },
           {
+            "title": "Layout & Styling",
+            "items": [
+              {
+                "title": "Layout",
+                "url": "/charts-layout/"
+              },
+              {
+                "title": "Themes",
+                "url": "/charts-themes/"
+              },
+              {
+                "title": "Overlays",
+                "url": "/charts-overlays/"
+              },
+              {
+                "title": "Background",
+                "url": "/charts-background/",
+                "enterprise": "charts"
+              }
+            ]
+          },
+          {
             "title": "Series",
             "url": "/charts-series/",
             "items": [
@@ -1960,38 +1982,6 @@
             "title": "Features",
             "items": [
               {
-                "title": "Layout",
-                "url": "/charts-layout/"
-              },
-              {
-                "title": "Legend",
-                "url": "/charts-legend/"
-              },
-              {
-                "title": "Series Highlighting",
-                "url": "/charts-series-highlighting/"
-              },
-              {
-                "title": "Themes",
-                "url": "/charts-themes/"
-              },
-              {
-                "title": "Navigator",
-                "url": "/charts-navigator/"
-              },
-              {
-                "title": "Markers",
-                "url": "/charts-markers/"
-              },
-              {
-                "title": "Formatters",
-                "url": "/charts-formatters/"
-              },
-              {
-                "title": "Tooltips",
-                "url": "/charts-tooltips/"
-              },
-              {
                 "title": "Axes",
                 "url": "/charts-axes/",
                 "matrixExcludeChildren": true,
@@ -1999,7 +1989,27 @@
                 "items": [
                   {
                     "title": "Axis Types",
-                    "url": "/charts-axes-types/"
+                    "url": "/charts-axes-types/",
+                    "matrixExcludeChildren": true,
+                    "showInCollapsed": true,
+                    "items": [
+                      {
+                        "title": "Category",
+                        "url": "/charts-axes-category/"
+                      },
+                      {
+                        "title": "Number",
+                        "url": "/charts-axes-number/"
+                      },
+                      {
+                        "title": "Log",
+                        "url": "/charts-axes-log/"
+                      },
+                      {
+                        "title": "Time",
+                        "url": "/charts-axes-time/"
+                      }
+                    ]
                   },
                   {
                     "title": "Axis Title",
@@ -2028,13 +2038,28 @@
                 ]
               },
               {
-                "title": "Background",
-                "url": "/charts-background/",
-                "enterprise": "charts"
+                "title": "Legend",
+                "url": "/charts-legend/"
               },
               {
-                "title": "Overlays",
-                "url": "/charts-overlays/"
+                "title": "Series Highlighting",
+                "url": "/charts-series-highlighting/"
+              },
+              {
+                "title": "Navigator",
+                "url": "/charts-navigator/"
+              },
+              {
+                "title": "Markers",
+                "url": "/charts-markers/"
+              },
+              {
+                "title": "Formatters",
+                "url": "/charts-formatters/"
+              },
+              {
+                "title": "Tooltips",
+                "url": "/charts-tooltips/"
               },
               {
                 "title": "Zoom",
