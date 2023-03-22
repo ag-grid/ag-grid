@@ -1,4 +1,4 @@
-import { _ModuleSupport, CssColor, PixelSize, Opacity } from 'ag-charts-community';
+import { _ModuleSupport, CssColor, PixelSize, Opacity, AgCategoryAxisOptions } from 'ag-charts-community';
 import { Crosshair } from './crosshair';
 
 export const CrosshairModule: _ModuleSupport.AxisModule = {
@@ -19,7 +19,7 @@ declare module 'ag-charts-community' {
         readonly formatter?: (x: any) => string;
     }
 
-    export interface AgCrosshairOptions {
+    export interface AgBaseCrosshairOptions {
         /** The colour of the stroke for the lines. */
         stroke?: CssColor;
         /** The width in pixels of the stroke for the lines. */
@@ -28,11 +28,18 @@ declare module 'ag-charts-community' {
         strokeOpacity?: Opacity;
         /** Defines how the line stroke is rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
         lineDash?: PixelSize[];
-        /** When true, the crosshair snaps to the highlighted data point. By default, this property is false and the crosshair is rendered at the mouse pointer position. */
-        snap?: boolean;
         /** The crosshair label configuration */
         label?: AgCrosshairLabel;
     }
+
+    export interface AgContinuousAxisCrosshairOptions extends AgBaseCrosshairOptions {
+        /** When true, the crosshair snaps to the highlighted data point. By default, this property is false and the crosshair is rendered at the mouse pointer position. */
+        snap?: boolean;
+    }
+
+    export type AgCrosshairOptions<T> = T extends AgCategoryAxisOptions
+        ? AgBaseCrosshairOptions
+        : AgContinuousAxisCrosshairOptions;
 
     export interface AgCrosshairLabel {
         /** Whether or not to show label when the crosshair is visible. */
@@ -61,6 +68,6 @@ declare module 'ag-charts-community' {
 
     export interface AgBaseCartesianAxisOptions {
         /** Configuration for the axis crosshair. */
-        crosshair?: AgCrosshairOptions;
+        crosshair?: AgCrosshairOptions<this>;
     }
 }

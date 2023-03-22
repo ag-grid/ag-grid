@@ -18,7 +18,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     lineDashOffset: number = 0;
 
     @Validate(NUMBER(0))
-    strokeWidth: number = 2;
+    strokeWidth: number = 1;
 
     @Validate(NUMBER(0, 1))
     strokeOpacity: number = 1;
@@ -28,6 +28,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
 
     readonly label: CrosshairLabel;
     private seriesRect: _Scene.BBox = new BBox(0, 0, 0, 0);
+    private visible: boolean = false;
     private axisCtx: _ModuleSupport.AxisContext;
     private axisLayout?: _ModuleSupport.AxisLayout & {
         id: string;
@@ -60,9 +61,15 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     }
 
     private layout({ series: { rect, visible }, axes }: _ModuleSupport.LayoutCompleteEvent) {
+        this.hideCrosshair();
+
         if (!(visible && rect && axes)) {
+            this.visible = false;
             return;
         }
+
+        this.visible = true;
+
         this.seriesRect = rect;
 
         const { position: axisPosition, axisId } = this.axisCtx;
@@ -80,13 +87,14 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         const xPaddingOffset = axisPosition === 'left' ? -padding : 0;
         const yPaddingOffset = axisPosition === 'bottom' ? padding : 0;
 
-        this.crosshairGroup.translationX = Math.floor(rect.x) + xPaddingOffset;
-        this.crosshairGroup.translationY =
-            Math.floor(axisPosition === 'top' || axisPosition === 'bottom' ? rect.y + rect.height : rect.y) +
+        const { crosshairGroup } = this;
+        crosshairGroup.translationX = Math.round(rect.x) + xPaddingOffset;
+        crosshairGroup.translationY =
+            Math.round(axisPosition === 'top' || axisPosition === 'bottom' ? rect.y + rect.height : rect.y) +
             yPaddingOffset;
 
         const rotation = axisPosition === 'top' || axisPosition === 'bottom' ? -Math.PI / 2 : 0;
-        this.crosshairGroup.rotation = rotation;
+        crosshairGroup.rotation = rotation;
 
         this.updateLine();
     }
@@ -139,40 +147,39 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     }
 
     private onMouseMove(event: _ModuleSupport.InteractionEvent<'hover'>) {
-        const { crosshairGroup, snap, seriesRect, axisCtx } = this;
+        const { crosshairGroup, snap, seriesRect, axisCtx, visible } = this;
         if (snap || !axisCtx.continuous) {
             return;
         }
 
         const { offsetX, offsetY } = event;
 
-        if (seriesRect.containsPoint(offsetX, offsetY)) {
+        if (visible && seriesRect.containsPoint(offsetX, offsetY)) {
             crosshairGroup.visible = true;
 
             let value;
             if (axisCtx.direction === 'x') {
-                crosshairGroup.translationX = Math.floor(offsetX);
+                crosshairGroup.translationX = Math.round(offsetX);
                 value = this.getAxisValue(offsetX - seriesRect.x);
             } else {
-                crosshairGroup.translationY = Math.floor(offsetY);
+                crosshairGroup.translationY = Math.round(offsetY);
                 value = this.getAxisValue(offsetY - seriesRect.y);
             }
 
             this.showLabel(offsetX, offsetY, value);
         } else {
-            crosshairGroup.visible = false;
-            this.hideLabel();
+            this.hideCrosshair();
         }
     }
 
     private onHighlightChange(event: _ModuleSupport.HighlightChangeEvent) {
-        const { crosshairGroup, snap, seriesRect, axisCtx } = this;
+        const { crosshairGroup, snap, seriesRect, axisCtx, visible } = this;
         if (!snap && axisCtx.continuous) {
             return;
         }
 
         const { currentHighlight } = event;
-        if (currentHighlight) {
+        if (visible && currentHighlight) {
             crosshairGroup.visible = true;
 
             const { xKey = '', yKey = '', datum } = currentHighlight;
@@ -191,16 +198,15 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
             const halfBandwidth = axisCtx.scaleBandwidth() / 2;
             if (axisCtx.direction === 'x') {
                 x = position + halfBandwidth;
-                crosshairGroup.translationX = Math.floor(x + seriesRect.x);
+                crosshairGroup.translationX = Math.round(x + seriesRect.x);
             } else {
                 y = position + halfBandwidth;
-                crosshairGroup.translationY = Math.floor(y + seriesRect.y);
+                crosshairGroup.translationY = Math.round(y + seriesRect.y);
             }
 
             this.showLabel(x + seriesRect.x, y + seriesRect.y, labelValue);
         } else {
-            crosshairGroup.visible = false;
-            this.hideLabel();
+            this.hideCrosshair();
         }
     }
 
@@ -266,6 +272,11 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         }
 
         label.show(labelMeta);
+    }
+
+    private hideCrosshair() {
+        this.crosshairGroup.visible = false;
+        this.hideLabel();
     }
 
     private hideLabel() {
