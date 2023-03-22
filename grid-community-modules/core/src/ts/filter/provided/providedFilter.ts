@@ -29,7 +29,7 @@ export interface IProvidedFilterParams {
     /**
      * Specifies the buttons to be shown in the filter, in the order they should be displayed in.
      * The options are:
-     * 
+     *
      *  - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.
      *  - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.
      *  - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.
@@ -39,7 +39,7 @@ export interface IProvidedFilterParams {
     /**
      * If the Apply button is present, the filter popup will be closed immediately when the Apply
      * or Reset button is clicked if this is set to `true`.
-     * 
+     *
      * Default: `false`
      */
     closeOnApply?: boolean;
@@ -52,7 +52,7 @@ export interface IProvidedFilterParams {
     /**
      * If set to `true`, disables controls in the filter to mutate its state. Normally this would
      * be used in conjunction with the Filter API.
-     * 
+     *
      * Default: `false`
      */
     readOnly?: boolean;

@@ -42,7 +42,7 @@ export interface IDateFilterParams extends IScalarFilterParams {
      * Defines whether the grid uses the browser date picker or a plain text box.
      *  - `true`: Force the browser date picker to be used.
      *  - `false`: Force a plain text box to be used.
-     * 
+     *
      * Default: `undefined` - If a date component is not provided, then the grid will use the browser date picker
      * for all supported browsers and a plain text box for other browsers.
      */
@@ -53,7 +53,7 @@ export interface IDateFilterParams extends IScalarFilterParams {
     maxValidYear?: number;
     /**
      * Defines the date format for the floating filter text when an in range filter has been applied.
-     * 
+     *
      * Default: `YYYY-MM-DD`
      */
      inRangeFloatingFilterDateFormat?: string;
