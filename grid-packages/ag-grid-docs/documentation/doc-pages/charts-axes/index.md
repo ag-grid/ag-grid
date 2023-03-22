@@ -1,10 +1,19 @@
 ---
 title: "Axes Overview"
 ---
+This section provides an overview of different chart axes elements. 
 
-This section explains what chart axes are, how to configure and style them, and which axis type to use in which situation.
+<image-caption src="charts-axes/resources/axes.png" alt="Chart Axes" centered="true" constrained="true"></image-caption>
 
-A chart uses axes to plot data such as categories and values by converting them to screen coordinates. Since any point on the screen is an `(x, y)` pair of coordinates, a chart needs two orthogonal axes to plot the data &mdash; a horizontal axis to determine the `x` position of a point and a vertical axis to determine the `y` position. Axes also show ticks, labels and grid lines to help the user navigate a chart.
+As shown above, Axes contain the following elements:
+
+- **[Axis Types](/axes-types/)**: the x-axis and y-axis can be plotted against a category, number, log or times axis.
+- **[Axis Title](/axes-title/)**: the axis title shows text alongside the axis line.
+- **[Axis Ticks](/axes-ticks/)**: the axis lines placed at the axis values.
+- **[Axis Labels](/axes-labels/)**: shows the data values along the axis.
+- **[Grid Lines](/axes-grid-lines/)**: lines that appear inside the chart area to identify chart values against the axis.
+- **[Multiple Axes](/axes-multiple/)**: multiple axes (secondary y-axis) that correspond to different data series.
+- **[Cross Lines](/axes-cross-lines/)**: Cross lines display a vertical or horizontal lines across a chart region.
 
 ## Axis API Reference
 
@@ -12,4 +21,4 @@ A chart uses axes to plot data such as categories and values by converting them 
 
 ## Next Up
 
-Continue to the next section to learn more about [overlays](/charts-overlays/).
+Continue to the next section to learn more about [Axis Types](/axes-types/).
