@@ -4,18 +4,23 @@
     $top-bar-height: 58px;
 
     --right-padding: max(var(--horizontal-margin), calc(50vw - var(--max-page-width) / 2));
+    --fw-selector-width: 414px;
 
     display: none;
-    width: calc(min(414px, 14vw) + var(--right-padding));
-    padding-top: $size-4;
+    width: clamp(220px, 22vw, var(--fw-selector-width));
+    padding-top: $size-5;
+    padding-right: $size-4;
     padding-bottom: $size-7;
-    padding-right: var(--right-padding);
     line-height: var(--line-height-tight);
 
     @supports (position: sticky) {
         padding-top: 0;
         padding-right: 0;
         padding-bottom: 0;
+
+        @media screen and (min-width: $breakpoint-docs-nav-extra-large) {
+            width: auto;
+        }
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
@@ -24,14 +29,19 @@
 
     > div {
         @supports (position: sticky) {
-            padding-top: $size-4;
-            padding-right: var(--right-padding);
+            padding-top: $size-5;
+            padding-right: $size-4;
             padding-bottom: $size-7;
             position: sticky;
             top: $top-bar-height;
             height: calc(100vh - #{$top-bar-height});
             overflow: hidden;
             overflow-y: auto;
+
+            @media screen and (min-width: $breakpoint-docs-nav-extra-large) {
+                padding-right: var(--right-padding);
+                width: calc(var(--fw-selector-width) + var(--right-padding));
+            }
         }
     }
 }
@@ -63,7 +73,7 @@
 .sideNav .level-3 {
     font-weight: var(--font-weight-thin);
     margin-bottom: calc(var(--item-gap) / 4) !important; // !important for .ag-styles specificity
-    margin-left: $size-1;
+    margin-left: $size-2;
 }
 
 .sideNav .level-2 + .level-3 {
