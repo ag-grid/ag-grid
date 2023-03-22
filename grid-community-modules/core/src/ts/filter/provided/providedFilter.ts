@@ -420,11 +420,16 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
             positionableFeature.initialisePosition();
             const availableHeight = positionableFeature.getAvailableHeight();
-            el.style.setProperty('max-height', `${availableHeight}px`);
+            if (el) {
+                el.style.setProperty('max-height', `${availableHeight}px`);
+            }
         } else {
             this.positionableFeature.removeSizeFromEl();
             this.positionableFeature.setResizable(false);
-            el.style.removeProperty('max-height');
+
+            if (el) {
+                el.style.removeProperty('max-height');
+            }
         }
     }
 
