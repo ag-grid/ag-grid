@@ -101,7 +101,7 @@ zoom: {
 
 [Zoom Disable Selecting Example](https://plnkr.co/edit/QjuAvu5fi8yCTbYQ?open=main.js&preview)
 
-### API Reference
+## API Reference
 
 <!-- TODO: replace with usual api reference component -->
 
