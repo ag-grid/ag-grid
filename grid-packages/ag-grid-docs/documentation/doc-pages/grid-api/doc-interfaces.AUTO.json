@@ -12000,7 +12000,7 @@
       "type": { "returnType": "TValue", "optional": false }
     },
     "eventKey": {
-      "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n     *  characters appear here */",
+      "description": "/** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable\n     *  characters appear here */",
       "type": { "returnType": "string | null", "optional": false }
     },
     "charPress": {
@@ -15023,7 +15023,7 @@
       "type": { "returnType": "TValue", "optional": false }
     },
     "eventKey": {
-      "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n     *  characters appear here */",
+      "description": "/** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable\n     *  characters appear here */",
       "type": { "returnType": "string | null", "optional": false }
     },
     "charPress": {
@@ -18438,7 +18438,7 @@
       "type": { "returnType": "TValue", "optional": false }
     },
     "eventKey": {
-      "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n     *  characters appear here */",
+      "description": "/** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable\n     *  characters appear here */",
       "type": { "returnType": "string | null", "optional": false }
     },
     "charPress": {
@@ -18529,7 +18529,7 @@
       "type": { "returnType": "TValue", "optional": false }
     },
     "eventKey": {
-      "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n     *  characters appear here */",
+      "description": "/** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable\n     *  characters appear here */",
       "type": { "returnType": "string | null", "optional": false }
     },
     "charPress": {
@@ -18624,7 +18624,7 @@
       "type": { "returnType": "TValue", "optional": false }
     },
     "eventKey": {
-      "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n     *  characters appear here */",
+      "description": "/** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable\n     *  characters appear here */",
       "type": { "returnType": "string | null", "optional": false }
     },
     "charPress": {
