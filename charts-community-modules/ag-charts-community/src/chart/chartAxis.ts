@@ -124,7 +124,6 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
     getLayoutState(): AxisLayout {
         return {
             rect: this.computeBBox(),
-            seriesAreaPadding: this.seriesAreaPadding,
             gridPadding: this.gridPadding,
             tickSize: this.tick.size,
             ...this.layout,

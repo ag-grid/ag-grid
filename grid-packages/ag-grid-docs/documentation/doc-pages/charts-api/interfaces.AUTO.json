@@ -3544,7 +3544,6 @@
     "meta": {},
     "type": {
       "rect": "BBox",
-      "seriesAreaPadding": "number",
       "gridPadding": "number",
       "tickSize": "number",
       "label": "AxisLabelLayout"
