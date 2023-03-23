@@ -8,9 +8,8 @@ import {
     IMAGE_SNAPSHOT_DEFAULTS,
     setupMockCanvas,
     extractImageData,
-    CANVAS_WIDTH,
-    CANVAS_HEIGHT,
     deproxy,
+    prepareTestOptions,
 } from './test/utils';
 import * as examples from './test/examples';
 import { HierarchyChart } from './hierarchyChart';
@@ -56,9 +55,7 @@ describe('HierarchyChart', () => {
 
         it('should render a complex chart', async () => {
             const options: AgChartOptions = { ...SIMPLIFIED_EXAMPLE };
-            options.autoSize = false;
-            options.width = CANVAS_WIDTH;
-            options.height = CANVAS_HEIGHT;
+            prepareTestOptions(options);
 
             chart = deproxy(AgChart.create(options)) as HierarchyChart;
             await compare(chart);
@@ -67,9 +64,7 @@ describe('HierarchyChart', () => {
         const childAtDepth = [0, 0, 0, 0];
         it.each([0, 1, 2, 3])(`should render highlight at depth %s`, async (depth) => {
             const options: AgChartOptions = { ...SIMPLIFIED_EXAMPLE };
-            options.autoSize = false;
-            options.width = CANVAS_WIDTH;
-            options.height = CANVAS_HEIGHT;
+            prepareTestOptions(options);
 
             chart = deproxy(AgChart.create(options)) as HierarchyChart;
             await waitForChartStability(chart);

@@ -15,10 +15,9 @@ import {
     setupMockCanvas,
     extractImageData,
     toMatchImage,
-    CANVAS_HEIGHT,
-    CANVAS_WIDTH,
     deproxy,
     repeat,
+    prepareTestOptions,
 } from '../test/utils';
 import { ChartAxisDirection } from '../chartAxisDirection';
 
@@ -281,9 +280,7 @@ describe('Axis Examples', () => {
             };
 
             const options: AgChartOptions = { ...example.options };
-            options.autoSize = false;
-            options.width = CANVAS_WIDTH;
-            options.height = CANVAS_HEIGHT;
+            prepareTestOptions(options);
 
             chart = deproxy(AgChart.create(options)) as Chart;
             await compare();
@@ -318,9 +315,7 @@ describe('Axis Examples', () => {
                 };
 
                 const options: AgChartOptions = { ...example.options };
-                options.autoSize = false;
-                options.width = CANVAS_WIDTH;
-                options.height = CANVAS_HEIGHT;
+                prepareTestOptions(options);
 
                 chart = deproxy(AgChart.create(options)) as Chart;
                 await compare();
@@ -339,9 +334,7 @@ describe('Axis Examples', () => {
                 };
 
                 const options: AgChartOptions = { ...example.options };
-                options.autoSize = false;
-                options.width = CANVAS_WIDTH;
-                options.height = CANVAS_HEIGHT;
+                prepareTestOptions(options);
 
                 chart = deproxy(AgChart.create(options)) as Chart;
                 const reference = await snapshot();
@@ -374,9 +367,7 @@ describe('Axis Examples', () => {
             };
 
             const options: AgChartOptions = { ...examples.ADV_COMBINATION_SERIES_CHART_EXAMPLE };
-            options.autoSize = false;
-            options.width = CANVAS_WIDTH;
-            options.height = CANVAS_HEIGHT;
+            prepareTestOptions(options);
 
             chart = deproxy(AgChart.create(options)) as Chart;
             const reference = await snapshot();
@@ -416,9 +407,7 @@ describe('Axis Examples', () => {
                 };
 
                 const options: AgChartOptions = { ...example.options };
-                options.autoSize = false;
-                options.width = CANVAS_WIDTH;
-                options.height = CANVAS_HEIGHT;
+                prepareTestOptions(options);
 
                 chart = deproxy(AgChart.create(options)) as Chart;
                 await compare();
@@ -449,9 +438,7 @@ describe('Axis Examples', () => {
                 };
 
                 const options: AgChartOptions = { ...example.options };
-                options.autoSize = false;
-                options.width = CANVAS_WIDTH;
-                options.height = CANVAS_HEIGHT;
+                prepareTestOptions(options);
 
                 chart = deproxy(AgChart.create(options)) as Chart;
                 await compare();
@@ -482,9 +469,7 @@ describe('Axis Examples', () => {
                 };
 
                 const options: AgChartOptions = { ...example.options };
-                options.autoSize = false;
-                options.width = CANVAS_WIDTH;
-                options.height = CANVAS_HEIGHT;
+                prepareTestOptions(options);
 
                 chart = deproxy(AgChart.create(options)) as Chart;
                 await compare();

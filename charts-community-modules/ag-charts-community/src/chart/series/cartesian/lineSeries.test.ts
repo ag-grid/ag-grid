@@ -19,9 +19,8 @@ import {
     IMAGE_SNAPSHOT_DEFAULTS,
     setupMockCanvas,
     extractImageData,
-    CANVAS_WIDTH,
-    CANVAS_HEIGHT,
     TestCase,
+    prepareTestOptions,
 } from '../../test/utils';
 
 expect.extend({ toMatchImageSnapshot });
@@ -115,9 +114,7 @@ describe('LineSeries', () => {
         for (const [exampleName, example] of Object.entries(EXAMPLES)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = { ...example.options };
-                options.autoSize = false;
-                options.width = CANVAS_WIDTH;
-                options.height = CANVAS_HEIGHT;
+                prepareTestOptions(options);
 
                 chart = AgChart.create(options) as Chart;
                 await waitForChartStability(chart);
@@ -126,9 +123,7 @@ describe('LineSeries', () => {
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
                 const options: AgChartOptions = { ...example.options };
-                options.autoSize = false;
-                options.width = CANVAS_WIDTH;
-                options.height = CANVAS_HEIGHT;
+                prepareTestOptions(options);
 
                 chart = AgChart.create(options) as Chart;
                 await compare();
@@ -149,9 +144,7 @@ describe('LineSeries', () => {
         for (const [exampleName, example] of Object.entries(INVALID_DATA_EXAMPLES)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = { ...example.options };
-                options.autoSize = false;
-                options.width = CANVAS_WIDTH;
-                options.height = CANVAS_HEIGHT;
+                prepareTestOptions(options);
 
                 chart = AgChart.create(options) as Chart;
                 await waitForChartStability(chart);
@@ -160,9 +153,7 @@ describe('LineSeries', () => {
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
                 const options: AgChartOptions = { ...example.options };
-                options.autoSize = false;
-                options.width = CANVAS_WIDTH;
-                options.height = CANVAS_HEIGHT;
+                prepareTestOptions(options);
 
                 chart = AgChart.create(options) as Chart;
                 await compare();
@@ -208,9 +199,7 @@ describe('LineSeries', () => {
                 legend: { enabled: false },
             };
 
-            options.autoSize = false;
-            options.width = CANVAS_WIDTH;
-            options.height = CANVAS_HEIGHT;
+            prepareTestOptions(options);
 
             chart = AgChart.create(options) as Chart;
             await compare();

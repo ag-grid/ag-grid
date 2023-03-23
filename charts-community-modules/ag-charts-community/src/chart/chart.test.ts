@@ -16,11 +16,10 @@ import { Chart } from './chart';
 import {
     waitForChartStability,
     setupMockCanvas,
-    CANVAS_WIDTH,
-    CANVAS_HEIGHT,
     hoverAction,
     clickAction,
     deproxy,
+    prepareTestOptions,
 } from './test/utils';
 
 expect.extend({ toMatchImageSnapshot });
@@ -112,8 +111,6 @@ describe('Chart', () => {
             const options: AgCartesianChartOptions | AgPolarChartOptions = {
                 container: document.body,
                 autoSize: false,
-                width: CANVAS_WIDTH,
-                height: CANVAS_HEIGHT,
                 series: [
                     {
                         tooltip,
@@ -129,6 +126,7 @@ describe('Chart', () => {
                 ],
                 ...(testParams.chartOptions || {}),
             };
+            prepareTestOptions(options);
             const chart = deproxy(AgChart.create(options));
             await waitForChartStability(chart);
             return chart;
