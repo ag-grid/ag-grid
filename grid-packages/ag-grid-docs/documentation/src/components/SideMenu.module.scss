@@ -108,6 +108,7 @@
 .sideNav .level-3 {
     margin-bottom: calc(var(--item-gap) / 4) !important; // !important for .ag-styles specificity
     padding-left: $size-4;
+    opacity: 0.8;
 }
 
 .sideNav .level-1 + .level-3,
@@ -125,4 +126,5 @@
     font-size: var(--font-size-extra-small);
     margin-bottom: calc(var(--item-gap) / 4);
     padding-left: $size-4;
+    opacity: 0.8;
 }
