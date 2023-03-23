@@ -119,6 +119,7 @@ describe('Legend', () => {
             options.autoSize = false;
             options.width = CANVAS_WIDTH;
             options.height = CANVAS_HEIGHT;
+            options.container = document.body;
 
             chart = deproxy(AgChart.create(options)) as CartesianChart;
 
@@ -136,6 +137,7 @@ describe('Legend', () => {
             options.autoSize = false;
             options.width = CANVAS_WIDTH;
             options.height = CANVAS_HEIGHT;
+            options.container = document.body;
 
             chart = deproxy(AgChart.create(options)) as CartesianChart;
 
@@ -157,6 +159,7 @@ describe('Legend', () => {
             options.autoSize = false;
             options.width = CANVAS_WIDTH;
             options.height = CANVAS_HEIGHT;
+            options.container = document.body;
 
             chart = deproxy(AgChart.create(options)) as CartesianChart;
 
@@ -174,6 +177,7 @@ describe('Legend', () => {
             options.autoSize = false;
             options.width = CANVAS_WIDTH;
             options.height = CANVAS_HEIGHT;
+            options.container = document.body;
 
             chart = deproxy(AgChart.create(options)) as CartesianChart;
 
