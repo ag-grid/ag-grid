@@ -126,7 +126,9 @@ export class PolarChart extends Chart {
         if (newRadius < minRadius) {
             // If the radius is too small, reduce the label padding
             newRadius = minRadius;
-            if (newRadius === minVerticalRadius) {
+            const horizontalPadding = padLeft + padRight;
+            const verticalPadding = padTop + padBottom;
+            if (verticalPadding > horizontalPadding) {
                 const padHeight = seriesBox.height - 2 * newRadius;
                 if (Math.min(padTop, padBottom) * 2 > padHeight) {
                     padTop = padHeight / 2;
@@ -136,8 +138,7 @@ export class PolarChart extends Chart {
                 } else {
                     padBottom = padHeight - padTop;
                 }
-            }
-            if (newRadius === minHorizontalRadius) {
+            } else {
                 const padWidth = seriesBox.width - 2 * newRadius;
                 if (Math.min(padLeft, padRight) * 2 > padWidth) {
                     padLeft = padWidth / 2;
