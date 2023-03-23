@@ -2,28 +2,44 @@ import { Canvas, createCanvas, Image } from 'canvas';
 
 export class MockContext {
     realCreateElement: typeof document.createElement;
-    ctx: { nodeCanvas?: Canvas } = {};
-    canvasStack: Canvas[] = [];
-    canvases: Canvas[] = [];
+    ctx: { nodeCanvas: Canvas };
+    canvasStack: Canvas[];
+    canvases: Canvas[];
+
+    constructor(width = 1, height = 1, realCreateElement: typeof document.createElement = document.createElement) {
+        const nodeCanvas = createCanvas(width, height);
+
+        this.realCreateElement = realCreateElement;
+        this.ctx = { nodeCanvas };
+        this.canvasStack = [nodeCanvas];
+        this.canvases = [nodeCanvas];
+    }
+
+    destroy() {
+        (this as any).ctx.nodeCanvas = undefined;
+        (this as any).realCreateElement = undefined;
+        this.canvasStack = [];
+        this.canvases = [];
+    }
 }
 
-export function setup({ mockCtx = new MockContext(), width = 800, height = 600 } = {}) {
+export function setup({ width = 800, height = 600, mockCtx = new MockContext() } = {}) {
     const nodeCanvas = createCanvas(width, height);
     mockCtx.ctx.nodeCanvas = nodeCanvas;
     mockCtx.canvasStack = [nodeCanvas];
 
     if (typeof window !== 'undefined') {
-        window['agChartsSceneRenderModel'] = 'composite';
+        (window as any)['agChartsSceneRenderModel'] = 'composite';
     } else {
-        global['agChartsSceneRenderModel'] = 'composite';
+        (global as any)['agChartsSceneRenderModel'] = 'composite';
     }
 
     const realCreateElement = document.createElement;
     mockCtx.realCreateElement = realCreateElement;
 
-    document.createElement = (element, options) => {
+    (document as any).createElement = (element: any, options: any) => {
         if (element === 'canvas') {
-            const mockedElement: HTMLCanvasElement = realCreateElement.call(document, element, options);
+            const mockedElement = realCreateElement.call(document, element, options) as HTMLCanvasElement;
 
             let [nextCanvas] = mockCtx.canvasStack.splice(0, 1);
             if (!nextCanvas) {
@@ -31,8 +47,8 @@ export function setup({ mockCtx = new MockContext(), width = 800, height = 600 }
             }
             mockCtx.canvases.push(nextCanvas);
 
-            mockedElement.getContext = (p) => {
-                const context2d = nextCanvas.getContext(p, { alpha: true });
+            mockedElement.getContext = (type: any) => {
+                const context2d = nextCanvas.getContext(type, { alpha: true });
                 context2d.patternQuality = 'good';
                 context2d.quality = 'good';
                 context2d.textDrawingMode = 'path';
@@ -53,10 +69,6 @@ export function setup({ mockCtx = new MockContext(), width = 800, height = 600 }
 }
 
 export function teardown(mockContext: MockContext) {
-    document.createElement = mockContext.realCreateElement;
-    if (mockContext.ctx) {
-        mockContext.ctx.nodeCanvas = undefined;
-    }
-    mockContext.canvasStack = [];
-    mockContext.canvases = [];
+    document.createElement = mockContext.realCreateElement!;
+    mockContext.destroy();
 }

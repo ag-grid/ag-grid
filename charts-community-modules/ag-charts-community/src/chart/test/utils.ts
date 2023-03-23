@@ -230,15 +230,15 @@ export function extractImageData({
     nodeCanvas,
     bbox,
 }: {
-    nodeCanvas?: Canvas;
+    nodeCanvas: Canvas;
     bbox?: { x: number; y: number; width: number; height: number };
 }) {
     let sourceCanvas = nodeCanvas;
-    if (bbox) {
+    if (bbox && nodeCanvas) {
         const { x, y, width, height } = bbox;
         sourceCanvas = createCanvas(width, height);
         sourceCanvas
-            .getContext('2d')
+            ?.getContext('2d')
             .drawImage(
                 nodeCanvas,
                 Math.round(x),
@@ -252,10 +252,10 @@ export function extractImageData({
             );
     }
 
-    return sourceCanvas.toBuffer('image/png', CANVAS_TO_BUFFER_DEFAULTS);
+    return sourceCanvas?.toBuffer('image/png', CANVAS_TO_BUFFER_DEFAULTS);
 }
 
-export function setupMockCanvas(): { nodeCanvas?: Canvas } {
+export function setupMockCanvas(): { nodeCanvas: Canvas } {
     const mockCtx: mockCanvas.MockContext = new mockCanvas.MockContext();
 
     beforeEach(() => {
@@ -268,10 +268,10 @@ export function setupMockCanvas(): { nodeCanvas?: Canvas } {
         mockCanvas.teardown(mockCtx);
     });
 
-    return mockCtx.ctx;
+    return mockCtx?.ctx;
 }
 
-export function toMatchImage(actual, expected, { writeDiff = true } = {}) {
+export function toMatchImage(this: any, actual: Buffer, expected: Buffer, { writeDiff = true } = {}) {
     // Grab values from enclosing Jest scope.
     const { testPath, currentTestName } = this;
 
