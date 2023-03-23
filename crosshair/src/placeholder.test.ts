@@ -4,11 +4,10 @@ import { AgChart, AgChartOptions, _ModuleSupport } from 'ag-charts-community';
 import {
     waitForChartStability,
     setupMockCanvas,
-    CANVAS_WIDTH,
-    CANVAS_HEIGHT,
     extractImageData,
     IMAGE_SNAPSHOT_DEFAULTS,
     hoverAction,
+    prepareTestOptions,
 } from 'ag-charts-community/src/chart/test/utils';
 
 import { CrosshairModule } from './crosshairModule';
@@ -58,10 +57,7 @@ describe('Chart', () => {
 
     it(`should render placeholder chart as expected`, async () => {
         const options: AgChartOptions = { ...EXAMPLE_OPTIONS };
-        options.autoSize = false;
-        options.width = CANVAS_WIDTH;
-        options.height = CANVAS_HEIGHT;
-        options.container = document.body;
+        prepareTestOptions(options);
 
         chart = AgChart.create(options);
         await waitForChartStability(chart);
