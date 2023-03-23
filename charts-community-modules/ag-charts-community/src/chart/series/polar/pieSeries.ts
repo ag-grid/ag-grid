@@ -865,7 +865,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         return { visibleTextPart, textLength, hasVerticalOverflow };
     }
 
-    private calculateCalloutLabelCollisionOffsets() {
+    private computeCalloutLabelCollisionOffsets() {
         const { radiusScale, calloutLabel, calloutLine } = this;
         const { offset } = calloutLabel;
         const innerRadius = radiusScale.convert(0);
@@ -949,16 +949,18 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         };
 
         const avoidXCollisions = (labels: PieNodeDatum[]) => {
+            const labelsCollideLabelsByY = data.some((datum) => datum.calloutLabel!.collisionOffsetY !== 0);
+
             const boxes = labels.map((label) => getTextBBox(label));
             const paddedBoxes = boxes.map((box) => box.clone().grow(collisionPadding / 2));
 
-            let labelsCollideLabels = false;
+            let labelsCollideLabelsByX = false;
             loop: for (let i = 0; i < paddedBoxes.length; i++) {
                 const box = paddedBoxes[i];
                 for (let j = i + 1; j < labels.length; j++) {
                     const other = paddedBoxes[j];
                     if (box.collidesBBox(other)) {
-                        labelsCollideLabels = true;
+                        labelsCollideLabelsByX = true;
                         break loop;
                     }
                 }
@@ -974,7 +976,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 return sectors.some((sector) => boxCollidesSector(box, sector));
             });
 
-            if (!labelsCollideLabels && !labelsCollideSectors) {
+            if (!labelsCollideLabelsByX && !labelsCollideLabelsByY && !labelsCollideSectors) {
                 return;
             }
 
@@ -1031,7 +1033,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const calloutLength = calloutLine.length;
         const { offset, maxCollisionOffset } = calloutLabel;
         this.updateRadiusScale();
-        this.calculateCalloutLabelCollisionOffsets();
+        this.computeCalloutLabelCollisionOffsets();
 
         const text = new Text();
         const textBoxes = this.groupSelectionData
