@@ -1,8 +1,8 @@
-import { AgChart, AgChartOptions } from 'ag-charts-community';
-import { getData } from "./data";
+import { AgChart, AgChartOptions } from "ag-charts-community"
+import { getData } from "./data"
 
 const options: AgChartOptions = {
-  container: document.getElementById('myChart'),
+  container: document.getElementById("myChart"),
   autoSize: true,
   data: getData(),
   theme: {
@@ -15,30 +15,31 @@ const options: AgChartOptions = {
     },
   },
   title: {
-    text: 'Gross Weekly Earnings\nby Occupation',
+    text: "Gross Weekly Earnings\nby Occupation",
     fontSize: 18,
+    spacing: 25,
   },
   footnote: {
-    text: 'Source: Office for National Statistics',
+    text: "Source: Office for National Statistics",
   },
   series: [
     {
-      type: 'bar',
-      xKey: 'type',
-      yKey: 'earnings',
+      type: "bar",
+      xKey: "type",
+      yKey: "earnings",
     },
   ],
   axes: [
     {
-      type: 'category',
-      position: 'left',
+      type: "category",
+      position: "left",
     },
     {
-      type: 'number',
-      position: 'bottom',
+      type: "number",
+      position: "bottom",
       title: {
         enabled: true,
-        text: '£/week',
+        text: "£/week",
       },
     },
   ],

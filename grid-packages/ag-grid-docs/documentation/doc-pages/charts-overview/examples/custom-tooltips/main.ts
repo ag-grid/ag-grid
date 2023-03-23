@@ -42,6 +42,7 @@ const options: AgChartOptions = {
   title: {
     text: "WEEE Collected in UK",
     fontSize: 18,
+    spacing: 25,
   },
   footnote: {
     text: "Source: Environmental Agency",

@@ -1,5 +1,5 @@
-import { AgChart, AgChartOptions } from 'ag-charts-community';
-import { getData } from "./data";
+import { AgChart, AgChartOptions } from "ag-charts-community"
+import { getData } from "./data"
 
 var minSize = 5
 var maxSize = 100
@@ -15,16 +15,16 @@ function find(arr: any[], predicate: any) {
 
 function calculateColour(size: number) {
   var colours: Record<number, string> = {
-    0.1: '#33CC00',
-    0.2: '#5CC200',
-    0.3: '#85B800',
-    0.4: '#ADAD00',
-    0.5: '#D6A300',
-    0.6: '#FF9900',
-    0.7: '#FF7300',
-    0.8: '#FF4D00',
-    0.9: '#FF2600',
-    1: '#FF0000',
+    0.1: "#33CC00",
+    0.2: "#5CC200",
+    0.3: "#85B800",
+    0.4: "#ADAD00",
+    0.5: "#D6A300",
+    0.6: "#FF9900",
+    0.7: "#FF7300",
+    0.8: "#FF4D00",
+    0.9: "#FF2600",
+    1: "#FF0000",
   }
 
   var position = (size - minSize) / (maxSize - minSize)
@@ -42,31 +42,32 @@ function calculateColour(size: number) {
 }
 
 const options: AgChartOptions = {
-  container: document.getElementById('myChart'),
+  container: document.getElementById("myChart"),
   autoSize: true,
   data: getData().filter(function (d) {
     return d.magnitude > 4
   }),
   title: {
-    text: 'Worldwide Earthquakes',
+    text: "Worldwide Earthquakes",
     fontSize: 18,
+    spacing: 25,
   },
   footnote: {
-    text: 'Source: US Geological Survey',
+    text: "Source: US Geological Survey",
   },
   series: [
     {
-      type: 'scatter',
-      xKey: 'depth',
-      xName: 'Depth',
-      yKey: 'minDistance',
-      yName: 'Minimum Distance',
-      sizeKey: 'magnitude',
-      sizeName: 'Magnitude',
+      type: "scatter",
+      xKey: "depth",
+      xName: "Depth",
+      yKey: "minDistance",
+      yName: "Minimum Distance",
+      sizeKey: "magnitude",
+      sizeName: "Magnitude",
       marker: {
         size: minSize,
         maxSize: maxSize,
-        formatter: (params) => {
+        formatter: params => {
           return {
             fill: params.highlighted
               ? params.fill
@@ -81,17 +82,17 @@ const options: AgChartOptions = {
   ],
   axes: [
     {
-      position: 'bottom',
-      type: 'number',
+      position: "bottom",
+      type: "number",
       title: {
-        text: 'Depth (m)',
+        text: "Depth (m)",
       },
     },
     {
-      position: 'left',
-      type: 'number',
+      position: "left",
+      type: "number",
       title: {
-        text: 'Minimum distance (km)',
+        text: "Minimum distance (km)",
       },
     },
   ],

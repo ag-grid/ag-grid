@@ -23,6 +23,7 @@ const options: AgChartOptions = {
   title: {
     text: "Earthquake Magnitudes by Source",
     fontSize: 18,
+    spacing: 25,
   },
   footnote: {
     text: "Source: US Geological Survey",

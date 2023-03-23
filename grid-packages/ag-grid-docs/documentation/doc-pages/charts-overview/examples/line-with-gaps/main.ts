@@ -1,5 +1,5 @@
-import { AgChart, AgChartOptions } from "ag-charts-community";
-import { getData } from "./data";
+import { AgChart, AgChartOptions } from "ag-charts-community"
+import { getData } from "./data"
 
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
@@ -63,6 +63,7 @@ const options: AgChartOptions = {
   title: {
     text: "Imported Banana Prices",
     fontSize: 18,
+    spacing: 25,
   },
   footnote: {
     text: "Source: Department for Environment, Food and Rural Affairs",

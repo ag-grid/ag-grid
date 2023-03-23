@@ -1,5 +1,5 @@
-import { AgChart, AgChartOptions } from "ag-charts-community";
-import { getData } from "./data";
+import { AgChart, AgChartOptions } from "ag-charts-community"
+import { getData } from "./data"
 
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
@@ -27,6 +27,7 @@ const options: AgChartOptions = {
   title: {
     text: "Changes in UK Energy Stock",
     fontSize: 18,
+    spacing: 25,
   },
   footnote: {
     text: "Source: Department for Business, Energy & Industrial Strategy",
