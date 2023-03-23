@@ -257,6 +257,7 @@ describe('CartesianChart', () => {
 
                     return s;
                 }),
+                container: document.body,
             };
 
             options.autoSize = false;
