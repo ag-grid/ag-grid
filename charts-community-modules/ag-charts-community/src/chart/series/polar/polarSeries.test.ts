@@ -11,12 +11,11 @@ import {
     IMAGE_SNAPSHOT_DEFAULTS,
     setupMockCanvas,
     extractImageData,
-    CANVAS_WIDTH,
-    CANVAS_HEIGHT,
     PolarTestCase,
     toMatchImage,
     repeat,
     deproxy,
+    prepareTestOptions,
 } from '../../test/utils';
 
 expect.extend({ toMatchImageSnapshot, toMatchImage });
@@ -100,9 +99,7 @@ describe('PolarSeries', () => {
         for (const [exampleName, example] of Object.entries(EXAMPLES)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgPolarChartOptions = { ...example.options };
-                options.autoSize = false;
-                options.width = CANVAS_WIDTH;
-                options.height = CANVAS_HEIGHT;
+                prepareTestOptions(options);
 
                 chart = deproxy(AgChart.create(options));
                 await waitForChartStability(chart);
@@ -118,9 +115,7 @@ describe('PolarSeries', () => {
                 };
 
                 const options: AgPolarChartOptions = { ...example.options };
-                options.autoSize = false;
-                options.width = CANVAS_WIDTH;
-                options.height = CANVAS_HEIGHT;
+                prepareTestOptions(options);
 
                 chart = deproxy(AgChart.create(options));
                 await compare();
@@ -147,9 +142,7 @@ describe('PolarSeries', () => {
             };
 
             const options: AgPolarChartOptions = { ...examples.PIE_SERIES };
-            options.autoSize = false;
-            options.width = CANVAS_WIDTH;
-            options.height = CANVAS_HEIGHT;
+            prepareTestOptions(options);
             options.legend = { enabled: true };
 
             chart = deproxy(AgChart.create(options));

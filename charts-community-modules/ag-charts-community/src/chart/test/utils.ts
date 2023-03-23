@@ -35,8 +35,15 @@ process.env.PANGOCAIRO_BACKEND = 'fontconfig';
 process.env.FONTCONFIG_PATH = __dirname;
 process.env.FONTCONFIG_NAME = `${__dirname}/fonts.conf`;
 
-export const CANVAS_WIDTH = 800;
-export const CANVAS_HEIGHT = 600;
+const CANVAS_WIDTH = 800;
+const CANVAS_HEIGHT = 600;
+
+export function prepareTestOptions<T extends AgChartOptions>(options: T, container = document.body) {
+    options.autoSize = false;
+    options.width = CANVAS_WIDTH;
+    options.height = CANVAS_HEIGHT;
+    options.container = container;
+}
 
 export function deproxy(chartOrProxy: Chart | AgChartInstance): Chart {
     return chartOrProxy instanceof Chart ? (chartOrProxy as any) : (chartOrProxy as any).chart;
