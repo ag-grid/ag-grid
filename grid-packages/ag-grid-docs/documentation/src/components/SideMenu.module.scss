@@ -4,7 +4,7 @@
     $top-bar-height: 58px;
 
     --right-padding: max(var(--horizontal-margin), calc(50vw - var(--max-page-width) / 2));
-    --fw-selector-width: 414px;
+    --fw-selector-width: 412px;
 
     display: none;
     width: clamp(220px, 22vw, var(--fw-selector-width));
