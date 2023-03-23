@@ -915,14 +915,19 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             next: PieNodeDatum,
             direction: 'to-top' | 'to-bottom'
         ) => {
-            const prevDY = label.calloutLabel!.collisionOffsetY;
-            next.calloutLabel!.collisionOffsetY = prevDY;
 
             const box = getTextBBox(label).grow(collisionPadding / 2);
             const other = getTextBBox(next).grow(collisionPadding / 2);
-            if (box.collidesBBox(other)) {
+            // The full collision is not detected, because sometimes
+            // the next label can appear behind the label with offset
+            const collidesOrBehind = (
+                box.x < other.x + other.width &&
+                box.x + box.width > other.x &&
+                (direction === 'to-top' ? (box.y < other.y + other.height) : (box.y + box.height > other.y))
+            );
+            if (collidesOrBehind) {
                 const dy = direction === 'to-top' ? box.y - other.y - other.height : box.y + box.height - other.y;
-                next.calloutLabel!.collisionOffsetY = dy + prevDY;
+                next.calloutLabel!.collisionOffsetY = dy;
             }
         };
 
