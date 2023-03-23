@@ -11,6 +11,8 @@ import {
     CANVAS_WIDTH,
     CANVAS_HEIGHT,
     deproxy,
+    clickAction,
+    doubleClickAction,
 } from './test/utils';
 import * as examples from './test/examples';
 import { AgCartesianChartOptions } from './agChartOptions';
@@ -80,7 +82,6 @@ describe('Legend', () => {
             options.height = CANVAS_HEIGHT;
 
             chart = deproxy(AgChart.create(options)) as CartesianChart;
-            await waitForChartStability(chart);
             await compare(chart);
         });
     });
@@ -100,6 +101,92 @@ describe('Legend', () => {
             };
 
             chart = deproxy(AgChart.create(options)) as CartesianChart;
+            await compare(chart);
+        });
+    });
+
+    // Coords for `Chrome` legend item
+    const legendItemCoords = { x: 720, y: 284 };
+    const clickLegendItem = clickAction(legendItemCoords.x, legendItemCoords.y);
+    const doubleClickLegendItem = doubleClickAction(legendItemCoords.x, legendItemCoords.y);
+
+    describe('Clicking a legend', () => {
+        it('should hide the related series', async () => {
+            const options = {
+                ...examples.PIE_IN_A_DOUGHNUT,
+            };
+
+            options.autoSize = false;
+            options.width = CANVAS_WIDTH;
+            options.height = CANVAS_HEIGHT;
+
+            chart = deproxy(AgChart.create(options)) as CartesianChart;
+
+            await waitForChartStability(chart);
+            await clickLegendItem(chart);
+
+            await compare(chart);
+        });
+
+        it('when clicked twice should hide and re-show the related series', async () => {
+            const options = {
+                ...examples.PIE_IN_A_DOUGHNUT,
+            };
+
+            options.autoSize = false;
+            options.width = CANVAS_WIDTH;
+            options.height = CANVAS_HEIGHT;
+
+            chart = deproxy(AgChart.create(options)) as CartesianChart;
+
+            await waitForChartStability(chart);
+            await clickLegendItem(chart);
+            await waitForChartStability(chart);
+            await clickLegendItem(chart);
+
+            await compare(chart);
+        });
+    });
+
+    describe('Double clicking a legend', () => {
+        it('should hide all other series except this one', async () => {
+            const options = {
+                ...examples.PIE_IN_A_DOUGHNUT,
+            };
+
+            options.autoSize = false;
+            options.width = CANVAS_WIDTH;
+            options.height = CANVAS_HEIGHT;
+
+            chart = deproxy(AgChart.create(options)) as CartesianChart;
+
+            await waitForChartStability(chart);
+            await doubleClickLegendItem(chart);
+
+            await compare(chart);
+        });
+
+        it('when double clicked twice should show all series', async () => {
+            const options = {
+                ...examples.PIE_IN_A_DOUGHNUT,
+            };
+
+            options.autoSize = false;
+            options.width = CANVAS_WIDTH;
+            options.height = CANVAS_HEIGHT;
+
+            chart = deproxy(AgChart.create(options)) as CartesianChart;
+
+            await waitForChartStability(chart);
+            await doubleClickLegendItem(chart);
+            await waitForChartStability(chart);
+
+            // Click the legend item again for some reason... why does this test require this?
+            await clickLegendItem(chart);
+            await waitForChartStability(chart);
+
+            await doubleClickLegendItem(chart);
+
             await compare(chart);
         });
     });

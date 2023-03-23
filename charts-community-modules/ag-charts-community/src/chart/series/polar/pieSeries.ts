@@ -1159,44 +1159,47 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     getLegendData(): LegendDatum[] {
-        const { calloutLabelKey, data, sectorFormatData } = this;
+        const { calloutLabelKey, data, id, sectorFormatData } = this;
 
-        if (data && data.length && calloutLabelKey) {
-            const { id } = this;
+        if (!data || data.length === 0 || !calloutLabelKey) return [];
 
-            const legendData: LegendDatum[] = [];
+        const titleText = this.title && this.title.showInLegend && this.title.text;
+        const legendData: LegendDatum[] = data.map((datum, index) => {
+            const labelParts = [];
+            titleText && labelParts.push(titleText);
+            labelParts.push(String(datum[calloutLabelKey]));
 
-            const titleText = this.title && this.title.showInLegend && this.title.text;
-            data.forEach((datum, index) => {
-                const labelParts = [];
-                titleText && labelParts.push(titleText);
-                labelParts.push(String(datum[calloutLabelKey]));
+            return {
+                id,
+                itemId: index,
+                seriesId: id,
+                enabled: this.seriesItemEnabled[index],
+                label: {
+                    text: labelParts.join(' - '),
+                },
+                marker: {
+                    fill: sectorFormatData[index].fill!,
+                    stroke: sectorFormatData[index].stroke!,
+                    fillOpacity: this.fillOpacity,
+                    strokeOpacity: this.strokeOpacity,
+                },
+            };
+        });
 
-                legendData.push({
-                    id,
-                    itemId: index,
-                    seriesId: id,
-                    enabled: this.seriesItemEnabled[index],
-                    label: {
-                        text: labelParts.join(' - '),
-                    },
-                    marker: {
-                        fill: sectorFormatData[index].fill!,
-                        stroke: sectorFormatData[index].stroke!,
-                        fillOpacity: this.fillOpacity,
-                        strokeOpacity: this.strokeOpacity,
-                    },
-                });
-            });
-
-            return legendData;
-        }
-
-        return [];
+        return legendData;
     }
 
     toggleSeriesItem(itemId: number, enabled: boolean): void {
         this.seriesItemEnabled[itemId] = enabled;
         this.nodeDataRefresh = true;
+    }
+
+    toggleOtherSeriesItem(itemId: number, enabled: boolean): void {
+        // A pie series that has no `calloutLabelKey` will not appear in the legend items. These should therefore be
+        // toggled when an item in a sibling series is clicked that shares the same `itemId`.
+
+        if (this.calloutLabelKey === undefined) {
+            this.toggleSeriesItem(itemId, enabled);
+        }
     }
 }

@@ -101,6 +101,12 @@ export function clickEvent({ offsetX, offsetY }: { offsetX: number; offsetY: num
     return event;
 }
 
+export function doubleClickEvent({ offsetX, offsetY }: { offsetX: number; offsetY: number }): MouseEvent {
+    const event = new MouseEvent('dblclick', { bubbles: true } as any);
+    Object.assign(event, { offsetX, offsetY, pageX: offsetX, pageY: offsetY });
+    return event;
+}
+
 export function wheelEvent({
     clientX,
     clientY,
@@ -166,6 +172,24 @@ export function clickAction(x: number, y: number): (chart: Chart | AgChartInstan
         const chart = deproxy(chartOrProxy);
         const target = chart.scene.canvas.element;
         target?.dispatchEvent(clickEvent({ offsetX: x, offsetY: y }));
+        return new Promise((resolve) => {
+            setTimeout(resolve, 50);
+        });
+    };
+}
+
+export function doubleClickAction(x: number, y: number): (chart: Chart | AgChartInstance) => Promise<void> {
+    return async (chartOrProxy) => {
+        const chart = deproxy(chartOrProxy);
+        const target = chart.scene.canvas.element;
+        // A double click is always preceeded by two single clicks, simulate here to ensure correct handling
+        target?.dispatchEvent(clickEvent({ offsetX: x, offsetY: y }));
+        target?.dispatchEvent(clickEvent({ offsetX: x, offsetY: y }));
+        await new Promise((resolve) => {
+            setTimeout(resolve, 50);
+        });
+        await waitForChartStability(chart);
+        target?.dispatchEvent(doubleClickEvent({ offsetX: x, offsetY: y }));
         return new Promise((resolve) => {
             setTimeout(resolve, 50);
         });

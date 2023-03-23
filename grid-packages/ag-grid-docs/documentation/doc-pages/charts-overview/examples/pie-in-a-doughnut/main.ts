@@ -25,7 +25,9 @@ const sharedSeriesOptions: AgPolarSeriesOptions = {
   tooltip: {
     renderer: ({ datum, color, sectorLabelKey }) => {
       return [
-        `<div style="background-color: ${color}; padding: 4px 8px; border-top-left-radius: 5px; border-top-right-radius: 5px; color: white; font-weight: bold;">2020</div>`,
+        `<div style="background-color: ${color}; padding: 4px 8px; border-top-left-radius: 5px; border-top-right-radius: 5px; color: white; font-weight: bold;">`,
+        datum["year"],
+        `</div>`,
         `<div style="padding: 4px 8px;">`,
         `  <strong>${datum["browser"]}:</strong> ${numFormatter.format(
           datum[sectorLabelKey!]

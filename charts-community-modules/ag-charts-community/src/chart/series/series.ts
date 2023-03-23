@@ -504,6 +504,10 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         this.nodeDataRefresh = true;
     }
 
+    toggleOtherSeriesItem(_itemId: any, _enabled: boolean): void {
+        return;
+    }
+
     isEnabled() {
         return this.visible;
     }
