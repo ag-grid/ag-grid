@@ -87,7 +87,8 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         }
 
         this.axisLayout = axisLayout;
-        this.bounds = this.buildBounds(paddedRect, axisPosition, axisLayout.gridPadding);
+        const padding = axisLayout.gridPadding + axisLayout.seriesAreaPadding;
+        this.bounds = this.buildBounds(rect, axisPosition, padding);
 
         const { crosshairGroup, bounds } = this;
         crosshairGroup.translationX = Math.round(bounds.x);
@@ -101,12 +102,12 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         this.updateLine();
     }
 
-    private buildBounds(rect: _Scene.BBox, axisPosition: AgCartesianAxisPosition, gridPadding: number): _Scene.BBox {
+    private buildBounds(rect: _Scene.BBox, axisPosition: AgCartesianAxisPosition, padding: number): _Scene.BBox {
         const bounds = rect.clone();
-        bounds.x += axisPosition === 'left' ? -gridPadding : 0;
-        bounds.y += axisPosition === 'top' ? -gridPadding : 0;
-        bounds.width += axisPosition === 'left' || axisPosition === 'right' ? gridPadding : 0;
-        bounds.height += axisPosition === 'top' || axisPosition === 'bottom' ? gridPadding : 0;
+        bounds.x += axisPosition === 'left' ? -padding : 0;
+        bounds.y += axisPosition === 'top' ? -padding : 0;
+        bounds.width += axisPosition === 'left' || axisPosition === 'right' ? padding : 0;
+        bounds.height += axisPosition === 'top' || axisPosition === 'bottom' ? padding : 0;
 
         return bounds;
     }
