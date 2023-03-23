@@ -56,10 +56,6 @@ const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu }) => {
         }
 
         $('body').scrollspy({ target: '#side-menu', offset: 120 });
-
-        $('[data-spy="scroll"]').on('activate.bs.scrollspy', function (event) {
-            console.log(event);
-        });
     }, [menuRef.current]);
 
     return (
@@ -72,7 +68,7 @@ const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu }) => {
                 <div>
                     <ul className="list-style-none">
                         <li className={styles['level-1']}>
-                            <a href="#top" className="nav-link">
+                            <a href="#top" className={classNames(styles.topLink, 'nav-link')}>
                                 {pageTitle}
                             </a>
                         </li>

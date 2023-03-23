@@ -83,7 +83,7 @@
     }
 
     + .menuGroup {
-        margin-top: $size-half * -1 !important; // !important for .ag-styles specificity
+        margin-top: -$size-half !important; // !important for .ag-styles specificity
     }
 }
 

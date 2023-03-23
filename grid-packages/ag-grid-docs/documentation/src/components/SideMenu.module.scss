@@ -63,7 +63,7 @@
 .sideNav a {
     display: inline-block;
     padding: 0;
-    opacity: 0.8;
+    opacity: 0.66;
     color: var(--secondary-text-color);
     transition: opacity $default-transition-timing, color $default-transition-timing;
 
@@ -76,12 +76,16 @@
         content: '';
         position: absolute;
         width: 2px;
-        top: 0;
-        bottom: 0;
+        top: -$size-half;
+        bottom: -$size-half;
         left: 0;
         background-color: var(--secondary-text-color);
         opacity: 0;
         transition: opacity 0.33s ease-in-out;
+    }
+
+    &.topLink {
+        opacity: 1;
     }
 
     &:global(.active) {
