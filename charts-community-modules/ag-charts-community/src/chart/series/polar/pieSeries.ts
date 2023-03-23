@@ -89,7 +89,7 @@ interface PieNodeDatum extends SeriesNodeDatum {
         readonly textAlign: CanvasTextAlign;
         readonly textBaseline: CanvasTextBaseline;
         hidden: boolean;
-        collisionOffsetX: number;
+        collisionTextAlign?: CanvasTextAlign;
         collisionOffsetY: number;
         box?: BBox;
     };
@@ -565,7 +565,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                           textAlign,
                           textBaseline,
                           hidden: false,
-                          collisionOffsetX: 0,
+                          collisionTextAlign: undefined,
                           collisionOffsetY: 0,
                           box: undefined,
                       }
@@ -816,7 +816,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 let x2 = datum.midCos * (outerRadius + calloutLength);
                 let y2 = datum.midSin * (outerRadius + calloutLength);
 
-                if (label.collisionOffsetX !== 0 || label.collisionOffsetY !== 0) {
+                if (label.collisionTextAlign || label.collisionOffsetY !== 0) {
                     // Get the closest point to the text bounding box
                     const box = label.box!;
                     const cx = x2 < box.x ? box.x : x2 > box.x + box.width ? box.x + box.width : x2;
@@ -879,7 +879,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const data = this.groupSelectionData.filter((text) => !shouldSkip(text));
         data.forEach((datum) => {
             const label = datum.calloutLabel!;
-            label.collisionOffsetX = 0;
+            label.collisionTextAlign = undefined;
             label.collisionOffsetY = 0;
         });
 
@@ -903,7 +903,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const outerRadius = Math.max(0, radius);
 
             const labelRadius = outerRadius + calloutLine.length + offset;
-            const x = datum.midCos * labelRadius + label.collisionOffsetX;
+            const x = datum.midCos * labelRadius;
             const y = datum.midSin * labelRadius + label.collisionOffsetY;
 
             this.setTextDimensionalProps(tempTextNode, x, y, this.calloutLabel, label);
@@ -973,11 +973,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
             labels
                 .filter((datum) => datum.calloutLabel!.textAlign === 'center')
-                .forEach((datum, i) => {
+                .forEach((datum) => {
                     const label = datum.calloutLabel!;
-                    const box = boxes[i];
-                    const isMidLabel = Math.abs(datum.midCos) < 1e-12;
-                    label.collisionOffsetX = isMidLabel ? 0 : (Math.sign(datum.midCos) * box.width) / 2;
+                    label.collisionTextAlign = datum.midCos < 0 ? 'right' : datum.midCos > 0 ? 'left' : 'center';
                 });
         };
 
@@ -1006,7 +1004,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             }
 
             const labelRadius = outerRadius + calloutLength + offset;
-            const x = datum.midCos * labelRadius + label.collisionOffsetX;
+            const x = datum.midCos * labelRadius;
             const y = datum.midSin * labelRadius + label.collisionOffsetY;
 
             // Detect text overflow
@@ -1039,7 +1037,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 }
 
                 const labelRadius = outerRadius + calloutLength + offset;
-                const x = datum.midCos * labelRadius + label.collisionOffsetX;
+                const x = datum.midCos * labelRadius;
                 const y = datum.midSin * labelRadius + label.collisionOffsetY;
                 this.setTextDimensionalProps(text, x, y, this.calloutLabel, label);
                 const box = text.computeBBox();
@@ -1067,7 +1065,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                     textBaseline: 'bottom',
                     textAlign: 'center',
                     hidden: false,
-                    collisionOffsetX: 0,
+                    collisionTextAlign: undefined,
                     collisionOffsetY: 0,
                 });
                 const box = text.computeBBox();
@@ -1095,7 +1093,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         textNode.text = label!.text;
         textNode.x = x;
         textNode.y = y;
-        textNode.textAlign = label!.textAlign;
+        textNode.textAlign = label!.collisionTextAlign || label!.textAlign;
         textNode.textBaseline = label!.textBaseline;
     }
 
