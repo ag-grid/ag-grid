@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
-import { AgChart, AgChartOptions } from 'ag-charts-community';
+import { AgChart, AgChartOptions, _ModuleSupport } from 'ag-charts-community';
 import {
     waitForChartStability,
     setupMockCanvas,
@@ -8,9 +8,14 @@ import {
     CANVAS_HEIGHT,
     extractImageData,
     IMAGE_SNAPSHOT_DEFAULTS,
+    hoverAction,
 } from 'ag-charts-community/src/chart/test/utils';
 
+import { CrosshairModule } from './crosshairModule';
+
 expect.extend({ toMatchImageSnapshot });
+
+_ModuleSupport.registerModule(CrosshairModule);
 
 describe('Chart', () => {
     let chart: any;
@@ -38,6 +43,10 @@ describe('Chart', () => {
             { x: 3, y: 75 },
         ],
         series: [{ type: 'line', xKey: 'x', yKey: 'y' }],
+        axes: [
+            { type: 'number', position: 'left', crosshair: {} },
+            { type: 'number', position: 'bottom', crosshair: {} },
+        ],
     };
 
     const compare = async () => {
@@ -52,8 +61,11 @@ describe('Chart', () => {
         options.autoSize = false;
         options.width = CANVAS_WIDTH;
         options.height = CANVAS_HEIGHT;
+        options.container = document.body;
 
         chart = AgChart.create(options);
+        await waitForChartStability(chart);
+        await hoverAction(300, 300)(chart);
         await compare();
     });
 });
