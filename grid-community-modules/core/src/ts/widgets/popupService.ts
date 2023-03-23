@@ -18,13 +18,13 @@ import { ResizeObserverService } from "../misc/resizeObserverService";
 import { IRowNode } from "../interfaces/iRowNode";
 
 export interface PopupPositionParams {
-    ePopup: HTMLElement,
-    column?: Column | null,
-    rowNode?: IRowNode | null,
-    nudgeX?: number,
-    nudgeY?: number,
-    position?: 'over' | 'under',
-    alignSide?: 'left' | 'right',
+    ePopup: HTMLElement;
+    column?: Column | null;
+    rowNode?: IRowNode | null;
+    nudgeX?: number;
+    nudgeY?: number;
+    position?: 'over' | 'under';
+    alignSide?: 'left' | 'right';
     keepWithinBounds?: boolean;
     skipObserver?: boolean;
     shouldSetMaxHeight?: boolean;
@@ -289,7 +289,7 @@ export class PopupService extends BeanStub {
             if (params.postProcessCallback) {
                 params.postProcessCallback();
             }
-        }
+        };
 
         updatePopupPosition();
 
