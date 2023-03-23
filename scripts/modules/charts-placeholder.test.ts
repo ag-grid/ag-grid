@@ -1,9 +1,13 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
-import { AgChart, AgChartOptions, _ModuleTestSupport } from 'ag-charts-community';
-
-const { waitForChartStability, setupMockCanvas, extractImageData, IMAGE_SNAPSHOT_DEFAULTS, prepareTestOptions } =
-    _ModuleTestSupport;
+import { AgChart, AgChartOptions } from 'ag-charts-community';
+import {
+    waitForChartStability,
+    setupMockCanvas,
+    extractImageData,
+    IMAGE_SNAPSHOT_DEFAULTS,
+    prepareTestOptions,
+} from 'ag-charts-community/src/chart/test/utils';
 
 expect.extend({ toMatchImageSnapshot });
 

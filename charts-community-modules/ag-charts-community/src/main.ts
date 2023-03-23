@@ -15,4 +15,3 @@ export * as _Util from './sparklines-util';
 
 // Undocumented APIs used by Enterprise Modules.
 export * as _ModuleSupport from './module-support';
-export * as _ModuleTestSupport from './chart/test/utils';
