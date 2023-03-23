@@ -283,7 +283,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.interactionManager.addListener('click', (event) => this.onClick(event));
         this.interactionManager.addListener('dblclick', (event) => this.onDoubleClick(event));
         this.interactionManager.addListener('hover', (event) => this.onMouseMove(event));
-        this.interactionManager.addListener('leave', () => this.disablePointer());
+        this.interactionManager.addListener('leave', (event) => this.onLeave(event));
         this.interactionManager.addListener('page-left', () => this.destroy());
 
         this.zoomManager.addListener('zoom-change', (_) =>
@@ -970,6 +970,16 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.extraDebugStats['mouseX'] = event.offsetX;
         this.extraDebugStats['mouseY'] = event.offsetY;
         this.update(ChartUpdateType.SCENE_RENDER);
+    }
+
+    protected onLeave(event: InteractionEvent<'leave'>): void {
+        // Do not disable the pointer or hide the tooltip if the hovered element when leaving the canvas is the tooltip
+        const classList = (event.sourceEvent as MouseEvent).relatedTarget?.classList;
+        if (classList && (classList.contains('ag-chart-tooltip') || classList.contains('ag-chart-tooltip-content'))) {
+            return;
+        }
+
+        this.disablePointer();
     }
 
     private lastInteractionEvent?: InteractionEvent<'hover'> = undefined;
