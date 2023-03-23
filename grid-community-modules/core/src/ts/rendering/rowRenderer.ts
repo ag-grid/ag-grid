@@ -1116,7 +1116,7 @@ export class RowRenderer extends BeanStub {
                 return;
             }
 
-            rowCtrl.destroyFirstPass(animate);
+            rowCtrl.destroyFirstPass();
             if (animate) {
                 this.zombieRowCtrls[rowCtrl.getInstanceId()] = rowCtrl;
                 executeInAWhileFuncs.push(() => {

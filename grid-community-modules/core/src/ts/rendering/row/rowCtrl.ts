@@ -1328,13 +1328,13 @@ export class RowCtrl extends BeanStub {
     }
 
     // note - this is NOT called by context, as we don't wire / unwire the CellComp for performance reasons.
-    public destroyFirstPass(animate: boolean = true): void {
+    public destroyFirstPass(): void {
         this.active = false;
 
         // why do we have this method? shouldn't everything below be added as a destroy func beside
         // the corresponding create logic?
 
-        if (animate) {
+        if (this.beans.gridOptionsService.isAnimateRows()) {
             this.setupRemoveAnimation();
         }
 
