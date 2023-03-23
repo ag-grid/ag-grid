@@ -973,9 +973,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     protected onLeave(event: InteractionEvent<'leave'>): void {
-        // Do not disable the pointer or hide the tooltip if the hovered element when leaving the canvas is the tooltip
-        const classList = (event.sourceEvent as MouseEvent).relatedTarget?.classList;
-        if (classList && (classList.contains('ag-chart-tooltip') || classList.contains('ag-chart-tooltip-content'))) {
+        if (this.tooltip.pointerLeftOntoTooltip(event)) {
             return;
         }
 
