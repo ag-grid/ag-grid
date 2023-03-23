@@ -8,7 +8,7 @@
 
     display: none;
     width: clamp(220px, 22vw, var(--fw-selector-width));
-    padding-top: $size-5;
+    padding-top: $size-4;
     padding-right: $size-4;
     padding-bottom: $size-7;
     line-height: var(--line-height-tight);
@@ -29,7 +29,7 @@
 
     > div {
         @supports (position: sticky) {
-            padding-top: $size-5;
+            padding-top: $size-4;
             padding-right: $size-4;
             padding-bottom: $size-7;
             position: sticky;
@@ -46,19 +46,51 @@
     }
 }
 
-.sideNav a {
-    display: inline-block;
-    color: var(--secondary-text-color);
-
-    &:hover {
-        color: var(--link-color);
-    }
+.sideNav ul {
+    padding-top: $size-1;
+    padding-bottom: $size-6;
+    box-shadow: inset 2px 0 0 0 var(--bright-blue-gray);
 }
 
 .sideNav li {
     --item-gap: 0.875em;
 
+    position: relative;
+    padding-left: $size-2;
     margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+}
+
+.sideNav a {
+    display: inline-block;
+    padding: 0;
+    opacity: 0.8;
+    color: var(--secondary-text-color);
+    transition: opacity $default-transition-timing, color $default-transition-timing;
+
+    &:hover {
+        color: var(--link-color);
+        opacity: 1;
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        width: 2px;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        background-color: var(--secondary-text-color);
+        opacity: 0;
+        transition: opacity 0.33s ease-in-out;
+    }
+
+    &:global(.active) {
+        opacity: 1;
+
+        &::before {
+            opacity: 0.66;
+        }
+    }
 }
 
 .sideNav .level-1 {
@@ -73,7 +105,7 @@
 .sideNav .level-3 {
     font-weight: var(--font-weight-thin);
     margin-bottom: calc(var(--item-gap) / 4) !important; // !important for .ag-styles specificity
-    margin-left: $size-2;
+    padding-left: $size-4;
 }
 
 .sideNav .level-2 + .level-3 {
@@ -90,5 +122,5 @@
     font-size: var(--font-size-extra-small);
     font-weight: var(--font-weight-thin);
     margin-bottom: calc(var(--item-gap) / 4);
-    margin-left: $size-2;
+    padding-left: $size-4;
 }
