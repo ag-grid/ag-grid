@@ -116,6 +116,9 @@ class PieSeriesCalloutLabel extends Label {
 
     @Validate(OPT_FUNCTION)
     formatter?: (params: AgPieSeriesLabelFormatterParams<any>) => string = undefined;
+
+    @Validate(NUMBER(0))
+    maxCollisionOffset = 50;
 }
 
 class PieSeriesSectorLabel extends Label {
@@ -915,16 +918,14 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             next: PieNodeDatum,
             direction: 'to-top' | 'to-bottom'
         ) => {
-
             const box = getTextBBox(label).grow(collisionPadding / 2);
             const other = getTextBBox(next).grow(collisionPadding / 2);
             // The full collision is not detected, because sometimes
             // the next label can appear behind the label with offset
-            const collidesOrBehind = (
+            const collidesOrBehind =
                 box.x < other.x + other.width &&
                 box.x + box.width > other.x &&
-                (direction === 'to-top' ? (box.y < other.y + other.height) : (box.y + box.height > other.y))
-            );
+                (direction === 'to-top' ? box.y < other.y + other.height : box.y + box.height > other.y);
             if (collidesOrBehind) {
                 const dy = direction === 'to-top' ? box.y - other.y - other.height : box.y + box.height - other.y;
                 next.calloutLabel!.collisionOffsetY = dy;
@@ -1027,7 +1028,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     computeLabelsBBox(options: { hideWhenNecessary: boolean }): BBox | null {
         const { radiusScale, calloutLabel, calloutLine } = this;
         const calloutLength = calloutLine.length;
-        const { offset } = calloutLabel;
+        const { offset, maxCollisionOffset } = calloutLabel;
         this.updateRadiusScale();
         this.calculateCalloutLabelCollisionOffsets();
 
@@ -1047,6 +1048,11 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 this.setTextDimensionalProps(text, x, y, this.calloutLabel, label);
                 const box = text.computeBBox();
                 label.box = box;
+
+                if (Math.abs(label.collisionOffsetY) > maxCollisionOffset) {
+                    label.hidden = true;
+                    return null;
+                }
 
                 if (options.hideWhenNecessary) {
                     const { textLength, hasVerticalOverflow } = this.getLabelOverflow(label.text, box);

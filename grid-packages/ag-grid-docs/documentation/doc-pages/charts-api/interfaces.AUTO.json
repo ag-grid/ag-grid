@@ -3889,7 +3889,7 @@
       "midAngle": "number",
       "midCos": "number",
       "midSin": "number",
-      "calloutLabel?": "{ readonly text: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; hidden: boolean; collisionOffsetX: number; collisionOffsetY: number; box?: BBox; }",
+      "calloutLabel?": "{ readonly text: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; hidden: boolean; collisionTextAlign?: CanvasTextAlign; collisionOffsetY: number; box?: BBox; }",
       "sectorLabel?": "{ readonly text: string; }",
       "sectorFormat": "AgPieSeriesFormat",
       "series": "Series<any>",
