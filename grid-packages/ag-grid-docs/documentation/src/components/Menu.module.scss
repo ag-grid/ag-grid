@@ -82,6 +82,10 @@
         transition: color $default-transition-timing;
     }
 
+    li:first-child & {
+        margin-top: $size-1 !important; // !important for .ag-styles specificity
+    }
+
     + .menuGroup {
         margin-top: -$size-half !important; // !important for .ag-styles specificity
         padding-bottom: $size-1;
@@ -126,6 +130,7 @@
         --text-color: red !important; // !important for .ag-styles specificity
 
         position: relative;
+        margin-left: 2px;
         color: transparent;
 
         svg {
