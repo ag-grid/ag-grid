@@ -59,7 +59,7 @@
     width: 100%;
     padding-top: $size-half !important; // !important for .ag-styles specificity
     padding-bottom: $size-half !important; // !important for .ag-styles specificity
-    margin-top: $size-1 !important; // !important for .ag-styles specificity
+    margin-top: $size-half !important; // !important for .ag-styles specificity
     font-weight: var(--font-weight-bold);
     border: 2px solid transparent !important; // !important for .ag-styles specificity
     outline: none;
@@ -84,6 +84,7 @@
 
     + .menuGroup {
         margin-top: -$size-half !important; // !important for .ag-styles specificity
+        padding-bottom: $size-1;
     }
 }
 
