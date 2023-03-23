@@ -1356,7 +1356,9 @@ export class RowCtrl extends BeanStub {
             const rowTop = this.roundRowTopToBounds(this.rowNode.rowTop!);
             this.setRowTop(rowTop);
         } else {
-            this.allRowGuis.forEach(gui => gui.rowComp.addOrRemoveCssClass('ag-opacity-zero', true));
+            executeNextVMTurn(() => {
+                this.allRowGuis.forEach(gui => gui.rowComp.addOrRemoveCssClass('ag-opacity-zero', true));
+            });
         }
     }
 
