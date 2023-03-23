@@ -125,6 +125,13 @@
         ) !important; // !important for .ag-styles specificity
     }
 
+    ul ul ul a,
+    ul ul ul .groupLabel {
+        margin-left: calc(
+            var(--first-indent-size) + var(--indent-size) * 3
+        ) !important; // !important for .ag-styles specificity
+    }
+
     .enterpriseIcon {
         --icon-size: 1.15em !important; // !important for .ag-styles specificity
         --text-color: red !important; // !important for .ag-styles specificity
@@ -200,6 +207,7 @@
     margin-left: var(--first-indent-size) !important; // !important for .ag-styles specificity
     padding-top: 5px;
     padding-bottom: 5px;
+    padding-left: $size-2 + 2px;
     transition: color $default-transition-timing;
 
     &.activeItemParent {
