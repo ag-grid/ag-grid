@@ -1328,13 +1328,15 @@ export class RowCtrl extends BeanStub {
     }
 
     // note - this is NOT called by context, as we don't wire / unwire the CellComp for performance reasons.
-    public destroyFirstPass(): void {
+    public destroyFirstPass(animate: boolean = true): void {
         this.active = false;
 
         // why do we have this method? shouldn't everything below be added as a destroy func beside
         // the corresponding create logic?
 
-        this.setupRemoveAnimation();
+        if (animate) {
+            this.setupRemoveAnimation();
+        }
 
         const event: VirtualRowRemovedEvent = this.createRowEvent(Events.EVENT_VIRTUAL_ROW_REMOVED);
 
@@ -1356,9 +1358,7 @@ export class RowCtrl extends BeanStub {
             const rowTop = this.roundRowTopToBounds(this.rowNode.rowTop!);
             this.setRowTop(rowTop);
         } else {
-            executeNextVMTurn(() => {
-                this.allRowGuis.forEach(gui => gui.rowComp.addOrRemoveCssClass('ag-opacity-zero', true));
-            });
+            this.allRowGuis.forEach(gui => gui.rowComp.addOrRemoveCssClass('ag-opacity-zero', true));
         }
     }
 
