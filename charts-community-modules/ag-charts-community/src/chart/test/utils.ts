@@ -153,10 +153,16 @@ export function hierarchyChartAssertions(params?: { seriesTypes?: string[] }) {
     };
 }
 
+const checkTargetValid = (target: HTMLElement) => {
+    if (!target.isConnected) throw new Error('Chart must be configured with a container for event testing to work');
+};
+
 export function hoverAction(x: number, y: number): (chart: Chart | AgChartInstance) => Promise<void> {
     return async (chartOrProxy) => {
         const chart = deproxy(chartOrProxy);
         const target = chart.scene.canvas.element as HTMLElement;
+        checkTargetValid(target);
+
         // Reveal tooltip.
         target?.dispatchEvent(mouseMoveEvent({ offsetX: x - 1, offsetY: y - 1 }));
         target?.dispatchEvent(mouseMoveEvent({ offsetX: x, offsetY: y }));
@@ -171,6 +177,8 @@ export function clickAction(x: number, y: number): (chart: Chart | AgChartInstan
     return async (chartOrProxy) => {
         const chart = deproxy(chartOrProxy);
         const target = chart.scene.canvas.element;
+        checkTargetValid(target);
+
         target?.dispatchEvent(clickEvent({ offsetX: x, offsetY: y }));
         return new Promise((resolve) => {
             setTimeout(resolve, 50);
