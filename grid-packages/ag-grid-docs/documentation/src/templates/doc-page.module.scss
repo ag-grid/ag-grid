@@ -166,6 +166,10 @@
 .docsPageTitle {
     margin-bottom: $size-1 !important; // !important for .ag-styles specificity
 
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        padding-right: 166px;
+    }
+
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         line-height: var(--line-height-ultra-tight) !important; // !important for .ag-styles specificity
     }
@@ -175,14 +179,33 @@
     }
 }
 
+.headerFramework {
+    display: block;
+    font-size: var(--font-size-extra-large);
+    font-weight: var(--font-weight-normal);
+    color: var(--secondary-text-color);
+}
+
 .enterpriseLabel {
     display: inline-block;
     position: relative;
-    bottom: 0.15em;
-    padding-right: 30px;
-    font-size: var(--font-size-large);
+    bottom: 0.05em;
+    padding-left: $size-1;
+    font-size: var(--font-size-extra-large);
     font-weight: var(--font-weight-normal);
     color: var(--secondary-text-color);
+
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        position: absolute;
+        top: 2.25em;
+        right: -2px;
+        bottom: auto;
+        padding-left: 0;
+    }
+
+    @media screen and (min-width: $max-page-width) {
+        top: 1.8em;
+    }
 
     :global(.icon) {
         --icon-size: 1.25em;
@@ -192,13 +215,6 @@
         margin-left: $size-half;
         top: -0.1em;
     }
-}
-
-.headerFramework {
-    display: block;
-    font-size: var(--font-size-extra-large);
-    font-weight: var(--font-weight-normal);
-    color: var(--secondary-text-color);
 }
 
 // Hack to target "intro" section of docs page
