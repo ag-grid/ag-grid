@@ -875,13 +875,14 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const label = datum.calloutLabel;
             const radius = radiusScale.convert(datum.radius);
             const outerRadius = Math.max(0, radius);
-            return !label || label.hidden || outerRadius === 0;
+            return !label || outerRadius === 0;
         };
 
         const fullData = this.groupSelectionData;
         const data = this.groupSelectionData.filter((text) => !shouldSkip(text));
         data.forEach((datum) => {
             const label = datum.calloutLabel!;
+            label.hidden = false;
             label.collisionTextAlign = undefined;
             label.collisionOffsetY = 0;
         });

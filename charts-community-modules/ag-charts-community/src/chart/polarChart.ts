@@ -139,7 +139,7 @@ export class PolarChart extends Chart {
                     padBottom = padHeight - padTop;
                 }
             }
-            
+
             if (2 * newRadius + horizontalPadding > seriesBox.width) {
                 const padWidth = seriesBox.width - 2 * newRadius;
                 if (Math.min(padLeft, padRight) * 2 > padWidth) {
