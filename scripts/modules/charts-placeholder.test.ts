@@ -52,6 +52,7 @@ describe('Chart', () => {
         options.autoSize = false;
         options.width = CANVAS_WIDTH;
         options.height = CANVAS_HEIGHT;
+        options.container = document.body;
 
         chart = AgChart.create(options);
         await compare();
