@@ -15,9 +15,9 @@ const options: AgChartOptions = {
     text: "Source: Office for National Statistics",
   },
   padding: {
-    top: 32,
+    top: 20,
     right: 20,
-    bottom: 32,
+    bottom: 20,
     left: 20,
   },
   series: [

@@ -3889,7 +3889,7 @@
       "midAngle": "number",
       "midCos": "number",
       "midSin": "number",
-      "calloutLabel?": "{ readonly text: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; hidden: boolean; }",
+      "calloutLabel?": "{ readonly text: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; hidden: boolean; collisionTextAlign?: CanvasTextAlign; collisionOffsetY: number; box?: BBox; }",
       "sectorLabel?": "{ readonly text: string; }",
       "sectorFormat": "AgPieSeriesFormat",
       "series": "Series<any>",
@@ -3902,15 +3902,6 @@
     "meta": { "isEnum": true },
     "type": ["Sector", "Callout", "Label"],
     "docs": [null, null, null]
-  },
-  "SectorBoundaries": {
-    "meta": {},
-    "type": {
-      "startAngle": "number",
-      "endAngle": "number",
-      "innerRadius": "number",
-      "outerRadius": "number"
-    }
   },
   "SeriesNodeDatum": {
     "meta": {
@@ -4325,6 +4316,22 @@
   "Callback": {
     "meta": { "isTypeAlias": true },
     "type": "(params: { count: number; }) => Promise<void> | void"
+  },
+  "SectorBoundaries": {
+    "meta": {},
+    "type": {
+      "startAngle": "number",
+      "endAngle": "number",
+      "innerRadius": "number",
+      "outerRadius": "number"
+    }
+  },
+  "LineCoordinates": {
+    "meta": {},
+    "type": {
+      "start": "{ x: number; y: number; }",
+      "end": "{ x: number; y: number; }"
+    }
   },
   "OnSizeChange": {
     "meta": { "isTypeAlias": true },

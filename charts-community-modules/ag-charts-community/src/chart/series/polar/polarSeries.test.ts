@@ -73,6 +73,10 @@ const EXAMPLES: Record<string, PolarTestCase> = {
         options: examples.GROUPED_DOUGHNUT_SERIES_DIFFERENT_RADII,
         assertions: polarChartAssertions({ seriesTypes: repeat('pie', 2) }),
     },
+    PIE_CALLOUT_LABELS_COLLISIONS: {
+        options: examples.PIE_CALLOUT_LABELS_COLLISIONS,
+        assertions: polarChartAssertions({ seriesTypes: ['pie'] }),
+    },
 };
 
 describe('PolarSeries', () => {
