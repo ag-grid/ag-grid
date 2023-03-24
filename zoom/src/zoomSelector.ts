@@ -7,14 +7,9 @@ import { ZoomRect } from './scenes/zoomRect';
 export class ZoomSelector {
     private rect: ZoomRect;
     private coords?: ZoomCoords;
-    private isScalingX: boolean;
-    private isScalingY: boolean;
 
-    constructor(rect: ZoomRect, isScalingX: boolean, isScalingY: boolean) {
+    constructor(rect: ZoomRect) {
         this.rect = rect;
-        this.isScalingX = isScalingX;
-        this.isScalingY = isScalingY;
-
         this.rect.visible = false;
     }
 
@@ -22,12 +17,23 @@ export class ZoomSelector {
         event: _ModuleSupport.InteractionEvent<'drag' | 'hover'>,
         minXRatio: number,
         minYRatio: number,
+        isScalingX: boolean,
+        isScalingY: boolean,
         bbox?: _Scene.BBox,
         currentZoom?: _ModuleSupport.AxisZoomState
     ): void {
         this.rect.visible = true;
 
-        this.updateCoords(event.offsetX, event.offsetY, minXRatio, minYRatio, bbox, currentZoom);
+        this.updateCoords(
+            event.offsetX,
+            event.offsetY,
+            minXRatio,
+            minYRatio,
+            isScalingX,
+            isScalingY,
+            bbox,
+            currentZoom
+        );
         this.updateRect(bbox);
     }
 
@@ -56,6 +62,8 @@ export class ZoomSelector {
         y: number,
         minXRatio: number,
         minYRatio: number,
+        isScalingX: boolean,
+        isScalingY: boolean,
         bbox?: _Scene.BBox,
         currentZoom?: _ModuleSupport.AxisZoomState
     ): void {
@@ -92,7 +100,7 @@ export class ZoomSelector {
 
         // If only scaling on the y-axis, we switch to scaling using height as the source of truth, otherwise we scale
         // the height in relation to the aspect ratio
-        if (this.isScalingY && !this.isScalingX) {
+        if (isScalingY && !isScalingX) {
             if (normal.height / bbox.height < yRatio) {
                 if (this.coords.y2 < this.coords.y1) {
                     this.coords.y2 = this.coords.y1 - bbox.width * xRatio;
@@ -113,12 +121,12 @@ export class ZoomSelector {
         }
 
         // Finally we reset the coords to maximise if not scaling on either axis
-        if (!this.isScalingX) {
+        if (!isScalingX) {
             this.coords.x1 = bbox.x;
             this.coords.x2 = bbox.x + bbox.width;
         }
 
-        if (!this.isScalingY) {
+        if (!isScalingY) {
             this.coords.y1 = bbox.y;
             this.coords.y2 = bbox.y + bbox.height;
         }
