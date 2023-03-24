@@ -3751,7 +3751,7 @@ export class ColumnModel extends BeanStub {
         // on getting the grid width, which only happens after attached after ResizeObserver fires)
         // we get get rows to re-calc their heights.
         if (!this.flexColsCalculatedAtLestOnce) {
-            if (this.gridOptionsService.isRowModelType('clientSide')) {
+            if (this.gridOptionsService.isRowModelType('clientSide') && this.autoHeightActive) {
                 (this.rowModel as IClientSideRowModel).resetRowHeights();
             }
             this.flexColsCalculatedAtLestOnce = true;
