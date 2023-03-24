@@ -1,6 +1,7 @@
 import { Path, ScenePathChangeDetection } from './path';
-import { normalizeAngle360, normalizeAngle360Inclusive } from '../../util/angle';
+import { normalizeAngle360 } from '../../util/angle';
 import { isEqual } from '../../util/number';
+import { isPointInSector } from '../../util/sector';
 import { BBox } from '../bbox';
 
 export class Sector extends Path {
@@ -70,28 +71,13 @@ export class Sector extends Path {
 
     isPointInPath(x: number, y: number): boolean {
         const { angleOffset } = this;
-        const startAngle = normalizeAngle360Inclusive(Math.min(this.startAngle, this.endAngle) + angleOffset);
-        const endAngle = normalizeAngle360Inclusive(Math.max(this.startAngle, this.endAngle) + angleOffset);
+        const startAngle = this.startAngle + angleOffset;
+        const endAngle = this.endAngle + angleOffset;
         const innerRadius = Math.min(this.innerRadius, this.outerRadius);
         const outerRadius = Math.max(this.innerRadius, this.outerRadius);
 
         const point = this.transformPoint(x, y);
 
-        const deltaX = point.x - this.centerX;
-        const deltaY = point.y - this.centerY;
-        const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
-        if (distance < innerRadius || distance > outerRadius) {
-            return false;
-        }
-
-        const angle = normalizeAngle360Inclusive(Math.atan2(deltaY, deltaX));
-        if (startAngle > endAngle) {
-            // Sector passes through 0-angle.
-            return startAngle < angle || endAngle > angle;
-        }
-        if (startAngle === endAngle) {
-            return true;
-        }
-        return startAngle < angle && endAngle > angle;
+        return isPointInSector(point.x, point.y, { startAngle, endAngle, innerRadius, outerRadius });
     }
 }
