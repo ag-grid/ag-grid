@@ -1334,7 +1334,9 @@ export class RowCtrl extends BeanStub {
         // why do we have this method? shouldn't everything below be added as a destroy func beside
         // the corresponding create logic?
 
-        this.setupRemoveAnimation();
+        if (this.beans.gridOptionsService.isAnimateRows()) {
+            this.setupRemoveAnimation();
+        }
 
         const event: VirtualRowRemovedEvent = this.createRowEvent(Events.EVENT_VIRTUAL_ROW_REMOVED);
 
