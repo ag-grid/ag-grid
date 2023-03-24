@@ -9938,10 +9938,10 @@ Object {
   },
   "listeners": Object {},
   "padding": Object {
-    "bottom": 32,
+    "bottom": 20,
     "left": 20,
     "right": 20,
-    "top": 32,
+    "top": 20,
   },
   "series": Array [
     Object {
