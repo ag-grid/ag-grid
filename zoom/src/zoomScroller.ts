@@ -4,18 +4,11 @@ import { definedZoomState, pointToRatio, translateZoom, scaleZoom, constrainZoom
 import { DefinedZoomState } from './zoomTypes';
 
 export class ZoomScroller {
-    private isScalingX: boolean;
-    private isScalingY: boolean;
-    private step: number;
-
-    constructor(isScalingX: boolean, isScalingY: boolean, step: number) {
-        this.isScalingX = isScalingX;
-        this.isScalingY = isScalingY;
-        this.step = step;
-    }
-
     update(
         event: _ModuleSupport.InteractionEvent<'wheel'>,
+        step: number,
+        isScalingX: boolean,
+        isScalingY: boolean,
         bbox: _Scene.BBox,
         currentZoom?: _ModuleSupport.AxisZoomState
     ): DefinedZoomState {
@@ -28,10 +21,10 @@ export class ZoomScroller {
 
         // Scale the zoom bounding box
         const dir = sourceEvent.deltaY < 0 ? -1 : 1;
-        const zoomFactor = 1 + this.step * dir;
+        const zoomFactor = 1 + step * dir;
 
-        const xFactor = this.isScalingX ? zoomFactor : 1;
-        const yFactor = this.isScalingY ? zoomFactor : 1;
+        const xFactor = isScalingX ? zoomFactor : 1;
+        const yFactor = isScalingY ? zoomFactor : 1;
 
         let newZoom = scaleZoom(oldZoom, xFactor, yFactor);
 
@@ -39,8 +32,8 @@ export class ZoomScroller {
         const scaledOriginX = origin.x * (1 - (oldZoom.x.max - oldZoom.x.min - (newZoom.x.max - newZoom.x.min)));
         const scaledOriginY = origin.y * (1 - (oldZoom.y.max - oldZoom.y.min - (newZoom.y.max - newZoom.y.min)));
 
-        const translateX = this.isScalingX ? origin.x - scaledOriginX : 0;
-        const translateY = this.isScalingY ? origin.y - scaledOriginY : 0;
+        const translateX = isScalingX ? origin.x - scaledOriginX : 0;
+        const translateY = isScalingY ? origin.y - scaledOriginY : 0;
 
         newZoom = translateZoom(newZoom, translateX, translateY);
 

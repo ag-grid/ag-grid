@@ -13,7 +13,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
      * Enable or disable the zoom module.
      */
     @Validate(BOOLEAN)
-    public enabled = false;
+    public enabled = true;
 
     /**
      * Enable zooming by scrolling the mouse wheel.
@@ -71,9 +71,9 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     private readonly zoomManager: _ModuleSupport.ZoomManager;
     private readonly updateService: _ModuleSupport.UpdateService;
 
-    private readonly panner?: ZoomPanner;
-    private readonly selector?: ZoomSelector;
-    private readonly scroller?: ZoomScroller;
+    private readonly panner: ZoomPanner;
+    private readonly selector: ZoomSelector;
+    private readonly scroller: ZoomScroller;
 
     constructor(readonly ctx: _ModuleSupport.ModuleContext) {
         super();
@@ -94,23 +94,17 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         this.destroyFns.push(() => ctx.layoutService.removeListener(layoutHandle));
 
         // Add scrolling zoom method
-        if (this.enableScrolling) {
-            this.scroller = new ZoomScroller(this.isScalingX(), this.isScalingY(), this.scrollingStep);
-        }
+        this.scroller = new ZoomScroller();
 
         // Add selection zoom method and attach selection rect to root scene
-        if (this.enableSelecting) {
-            const selectionRect = new ZoomRect();
-            this.selector = new ZoomSelector(selectionRect, this.isScalingX(), this.isScalingY());
+        const selectionRect = new ZoomRect();
+        this.selector = new ZoomSelector(selectionRect);
 
-            this.scene.root?.appendChild(selectionRect);
-            this.destroyFns.push(() => this.scene.root?.removeChild(selectionRect));
-        }
+        this.scene.root?.appendChild(selectionRect);
+        this.destroyFns.push(() => this.scene.root?.removeChild(selectionRect));
 
         // Add panning while zoomed method
-        if (this.enablePanning) {
-            this.panner = new ZoomPanner();
-        }
+        this.panner = new ZoomPanner();
     }
 
     update(): void {
@@ -122,7 +116,12 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         const isZoomed =
             zoom && zoom.x && zoom.y && (zoom.x.min !== 0 || zoom.x.max !== 1 || zoom.y.min !== 0 || zoom.y.max !== 1);
 
-        if (this.panner && this.seriesRect && isZoomed && this.isPanningKeyPressed(event.sourceEvent as DragEvent)) {
+        if (
+            this.enablePanning &&
+            this.seriesRect &&
+            isZoomed &&
+            this.isPanningKeyPressed(event.sourceEvent as DragEvent)
+        ) {
             const newZoom = this.panner.update(event, this.seriesRect, zoom);
             this.updateZoomWithConstraints(newZoom);
             return;
@@ -130,33 +129,47 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
 
         // If the user stops pressing the panKey but continues dragging, we shouldn't go to selection until they stop
         // dragging and click to start a new drag.
-        if (!this.selector || this.panner?.isPanning) return;
+        if (!this.enableSelecting || this.panner.isPanning) return;
 
-        this.selector.update(event, this.minXRatio, this.minYRatio, this.seriesRect, zoom);
+        this.selector.update(
+            event,
+            this.minXRatio,
+            this.minYRatio,
+            this.isScalingX(),
+            this.isScalingY(),
+            this.seriesRect,
+            zoom
+        );
         this.updateService.update(_ModuleSupport.ChartUpdateType.PERFORM_LAYOUT);
     }
 
     private onDragEnd() {
-        if (this.panner?.isPanning) {
+        if (this.enablePanning && this.panner.isPanning) {
             this.panner.stop();
-        } else if (this.selector) {
+        } else if (this.enableSelecting) {
             const newZoom = this.selector.stop(this.seriesRect, this.zoomManager.getZoom());
             this.updateZoomWithConstraints(newZoom);
         }
     }
 
     private onWheel(event: _ModuleSupport.InteractionEvent<'wheel'>) {
-        if (!this.scroller || !this.seriesRect) return;
+        if (!this.enableScrolling || !this.seriesRect) return;
 
         const currentZoom = this.zoomManager.getZoom();
-        const newZoom = this.scroller.update(event, this.seriesRect, currentZoom);
+        const newZoom = this.scroller.update(
+            event,
+            this.scrollingStep,
+            this.isScalingX(),
+            this.isScalingY(),
+            this.seriesRect,
+            currentZoom
+        );
 
         this.updateZoomWithConstraints(newZoom);
     }
 
-    private onLayoutComplete({ series: { rect, visible } }: _ModuleSupport.LayoutCompleteEvent) {
+    private onLayoutComplete({ series: { rect } }: _ModuleSupport.LayoutCompleteEvent) {
         this.seriesRect = rect;
-        // TODO: handle visible
     }
 
     private isPanningKeyPressed(event: MouseEvent) {
