@@ -653,7 +653,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         if (outerRadius === 0) {
             return NaN;
         }
-        const titleOffset = 2;
+        const spacing = this.title?.spacing ?? 0;
+        const titleOffset = 2 + spacing;
         const minLabelY = Math.min(0, ...this.groupSelectionData.map((d) => d.calloutLabel?.box?.y || 0));
         const dy = Math.max(0, -outerRadius - minLabelY);
         return -outerRadius - titleOffset - dy;
