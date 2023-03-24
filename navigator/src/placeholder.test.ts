@@ -7,7 +7,7 @@ import {
     extractImageData,
     IMAGE_SNAPSHOT_DEFAULTS,
     prepareTestOptions,
-} from 'ag-charts-community/src/chart/test/utils';
+} from 'ag-charts-community/dist/cjs/es5/main-test';
 
 expect.extend({ toMatchImageSnapshot });
 

@@ -8,7 +8,7 @@ import {
     IMAGE_SNAPSHOT_DEFAULTS,
     hoverAction,
     prepareTestOptions,
-} from 'ag-charts-community/src/chart/test/utils';
+} from 'ag-charts-community/dist/cjs/es5/main-test';
 
 import { CrosshairModule } from './crosshairModule';
 

@@ -1,7 +1,6 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import { AgChart, AgCartesianChartOptions, _ModuleSupport } from '@ag-charts-enterprise/core';
-import { ZoomModule } from './chartZoomModule';
 import {
     waitForChartStability,
     setupMockCanvas,
@@ -10,7 +9,8 @@ import {
     IMAGE_SNAPSHOT_DEFAULTS,
     clickAction,
     prepareTestOptions,
-} from 'ag-charts-community/src/chart/test/utils';
+} from 'ag-charts-community/dist/cjs/es5/main-test';
+import { ZoomModule } from './chartZoomModule';
 
 expect.extend({ toMatchImageSnapshot });
 
