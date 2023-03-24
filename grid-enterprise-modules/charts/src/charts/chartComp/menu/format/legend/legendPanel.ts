@@ -13,7 +13,6 @@ import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { FormatPanelOptions, getMaxValue } from "../formatPanel";
-import { AgChartLegendPosition } from "ag-charts-community/src/chart/agChartOptions";
 
 export class LegendPanel extends Component {
 

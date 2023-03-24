@@ -10,6 +10,7 @@
         "noUnusedLocals": true,
         "strict": true
     },
+    "files": ["src/chart/test/utils.ts", "src/chart/test/mock-canvas.ts"],
     "include": ["src/**/*"],
     "exclude": ["**/*.test.ts", "**/test/*.ts"]
 }
