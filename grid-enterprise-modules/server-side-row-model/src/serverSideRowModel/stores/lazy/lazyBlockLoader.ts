@@ -175,6 +175,11 @@ export class LazyBlockLoader extends BeanStub {
             const isAInViewport = this.isBlockInViewport(Number(aStart), aEnd);
             const isBInViewport = this.isBlockInViewport(Number(bStart), bEnd);
 
+            if (isAInViewport && isBInViewport) {
+                // if both blocks are in viewport, prioritise based on which one is first
+                return Number(aStart) - Number(bStart);
+            }
+
             // always prioritise loading blocks in viewport
             if (isAInViewport) {
                 return -1;
