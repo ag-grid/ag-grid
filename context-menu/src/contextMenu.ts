@@ -2,7 +2,12 @@ import { _ModuleSupport, _Scene } from 'ag-charts-community';
 
 import { DEFAULT_CONTEXT_MENU_CLASS, defaultContextMenuCss } from './contextMenuStyles';
 
-type ContextMenuItem = 'divider' | 'download' | 'focus-node' | 'zoom-node' | CustomContextMenuItem;
+type ContextMenuGroups = {
+    default: Array<ContextMenuItem>;
+    node: Array<ContextMenuItem>;
+    extra: Array<ContextMenuItem>;
+};
+type ContextMenuItem = 'download' | 'focus-node' | 'zoom-node' | CustomContextMenuItem;
 type CustomContextMenuItem = { label: string; action: () => void };
 
 export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
@@ -19,7 +24,7 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
     private scene: _Scene.Scene;
 
     // State
-    private items: Array<ContextMenuItem>;
+    private groups: ContextMenuGroups;
 
     // HTML elements
     private canvasElement: HTMLElement;
@@ -45,7 +50,7 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
         this.destroyFns.push(() => ctx.interactionManager.removeListener(contextMenuHandle));
 
         // State
-        this.items = ['download'];
+        this.groups = { default: ['download'], node: [], extra: [] };
 
         // HTML elements
         this.canvasElement = ctx.scene.canvas.element;
@@ -98,26 +103,24 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
     }
 
     onContextMenu(event: _ModuleSupport.InteractionEvent<'contextmenu'>) {
-        // if (false) {
-        //     this.items.push('focus-node');
-        //     this.items.push('zoom-node');
-        // }
+        const x = event.pageX;
+        const y = event.pageY;
 
-        if (this.items.length === 0) return;
+        // TODO: detect clicked on marker
+        const hasClickedOnMarker = true;
+        if (hasClickedOnMarker) {
+            this.groups.node = ['focus-node', 'zoom-node'];
+        }
+
+        if (this.groups.default.length === 0 && this.groups.node.length === 0 && this.groups.extra.length === 0) return;
 
         event.consume();
         event.sourceEvent.preventDefault();
 
-        this.show(event.pageX, event.pageY);
+        this.show(x, y);
     }
 
     show(x: number, y: number) {
-        // TODO: detect clicked on marker
-        const hasClickedOnMarker = true;
-        if (hasClickedOnMarker && !this.items.includes('focus-node')) {
-            this.items.push('divider', 'focus-node', 'zoom-node');
-        }
-
         const newMenuElement = this.renderMenu();
 
         if (this.menuElement) {
@@ -153,11 +156,18 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
         const menuElement = document.createElement('div');
         menuElement.classList.add(`${DEFAULT_CONTEXT_MENU_CLASS}__menu`);
 
-        const itemElements = this.items
-            .map((item) => this.renderItem(item))
-            .filter((i): i is HTMLElement => Boolean(i));
-        itemElements.forEach((el) => {
-            menuElement.appendChild(el);
+        this.groups.default.forEach((i) => {
+            const item = this.renderItem(i);
+            if (item) menuElement.appendChild(item);
+        });
+
+        (['node', 'extra'] as Array<keyof ContextMenuGroups>).forEach((group) => {
+            if (this.groups[group].length === 0) return;
+            menuElement.appendChild(this.createDividerElement());
+            this.groups[group].forEach((i) => {
+                const item = this.renderItem(i);
+                if (item) menuElement.appendChild(item);
+            });
         });
 
         return menuElement;
@@ -165,8 +175,6 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
 
     renderItem(item: ContextMenuItem): HTMLElement | void {
         switch (item) {
-            case 'divider':
-                return this.createDividerElement();
             case 'download':
                 return this.createDownloadElement();
             case 'focus-node':
