@@ -3,6 +3,6 @@
     "tabWidth": 4,
     "printWidth": 120,
     "singleQuote": true,
-    "jsxBracketSameLine": true,
+    "bracketSameLine": true,
     "overrides": [{ "files": "package.json", "options": { "tabWidth": 2 } }]
 }
