@@ -702,6 +702,10 @@ export class LazyCache extends BeanStub {
     public markNodesForRefresh() {
         this.getAllNodes().forEach(node => node.__needsRefresh = true);
         this.rowLoader.queueLoadAction();
+
+        this.isLastRowKnown = false;
+        this.numberOfRows += 1;
+        this.fireStoreUpdatedEvent();
     }
 
     public isNodeInCache(id: string): boolean {

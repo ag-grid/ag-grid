@@ -8,11 +8,10 @@ import {
     IMAGE_SNAPSHOT_DEFAULTS,
     setupMockCanvas,
     extractImageData,
-    CANVAS_WIDTH,
-    CANVAS_HEIGHT,
     deproxy,
     clickAction,
     doubleClickAction,
+    prepareTestOptions,
 } from './test/utils';
 import * as examples from './test/examples';
 import { AgCartesianChartOptions } from './agChartOptions';
@@ -77,9 +76,8 @@ describe('Legend', () => {
                 ...examples.LINE_GRAPH_WITH_GAPS_EXAMPLE,
             };
 
-            options.autoSize = false;
-            options.width = width ?? CANVAS_WIDTH;
-            options.height = CANVAS_HEIGHT;
+            prepareTestOptions(options);
+            options.width = width ?? options.width;
 
             chart = deproxy(AgChart.create(options)) as CartesianChart;
             await compare(chart);
@@ -92,13 +90,11 @@ describe('Legend', () => {
         it.each(positions)('should render legend correctly at position [%s]', async (position) => {
             const options = {
                 ...OPTIONS,
-                autoSize: false,
-                width: CANVAS_WIDTH,
-                height: CANVAS_HEIGHT,
                 legend: {
                     position,
                 },
             };
+            prepareTestOptions(options);
 
             chart = deproxy(AgChart.create(options)) as CartesianChart;
             await compare(chart);
@@ -116,9 +112,7 @@ describe('Legend', () => {
                 ...examples.PIE_IN_A_DOUGHNUT,
             };
 
-            options.autoSize = false;
-            options.width = CANVAS_WIDTH;
-            options.height = CANVAS_HEIGHT;
+            prepareTestOptions(options);
 
             chart = deproxy(AgChart.create(options)) as CartesianChart;
 
@@ -133,9 +127,7 @@ describe('Legend', () => {
                 ...examples.PIE_IN_A_DOUGHNUT,
             };
 
-            options.autoSize = false;
-            options.width = CANVAS_WIDTH;
-            options.height = CANVAS_HEIGHT;
+            prepareTestOptions(options);
 
             chart = deproxy(AgChart.create(options)) as CartesianChart;
 
@@ -154,9 +146,7 @@ describe('Legend', () => {
                 ...examples.PIE_IN_A_DOUGHNUT,
             };
 
-            options.autoSize = false;
-            options.width = CANVAS_WIDTH;
-            options.height = CANVAS_HEIGHT;
+            prepareTestOptions(options);
 
             chart = deproxy(AgChart.create(options)) as CartesianChart;
 
@@ -171,9 +161,7 @@ describe('Legend', () => {
                 ...examples.PIE_IN_A_DOUGHNUT,
             };
 
-            options.autoSize = false;
-            options.width = CANVAS_WIDTH;
-            options.height = CANVAS_HEIGHT;
+            prepareTestOptions(options);
 
             chart = deproxy(AgChart.create(options)) as CartesianChart;
 

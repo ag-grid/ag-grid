@@ -1,3 +1,5 @@
+@use '../design-system' as ds; // .ag-styles - remove namespace after bootstrap removed.
+
 @import '~bootstrap/scss/type';
 @import '~bootstrap/scss/alert';
 
@@ -23,42 +25,6 @@ main {
 
 .content-viewport {
     composes: d-flex flex-column flex-lg-row flex-grow-1 from global;
-}
-
-.main-menu {
-    composes: d-flex from global;
-
-    position: relative;
-    top: 0;
-    flex: none;
-    width: auto;
-    background-color: $white;
-}
-
-@include media-breakpoint-up(lg) {
-    .main-menu {
-        width: 300px;
-        border-bottom-style: none;
-        border-right: 2px solid #dee2e6;
-    }
-
-    @supports (position: sticky) {
-        .main-menu {
-            position: sticky;
-            z-index: 2;
-            top: 64px;
-            height: calc(100vh - 64px);
-        }
-    }
-}
-
-@media all and (-ms-high-contrast: none) {
-    .main-menu {
-        form svg {
-            top: 10px;
-            left: 0;
-        }
-    }
 }
 
 .content {

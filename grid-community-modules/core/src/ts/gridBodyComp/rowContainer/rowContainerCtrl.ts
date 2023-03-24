@@ -239,11 +239,11 @@ export class RowContainerCtrl extends BeanStub {
         const allRight = [RowContainerName.RIGHT, RowContainerName.BOTTOM_RIGHT, RowContainerName.TOP_RIGHT, RowContainerName.STICKY_TOP_RIGHT];
 
         this.forContainers(allLeft, () => {
-            this.pinnedWidthFeature = this.createManagedBean(new SetPinnedLeftWidthFeature(this.eContainer))
+            this.pinnedWidthFeature = this.createManagedBean(new SetPinnedLeftWidthFeature(this.eContainer));
             this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, () => this.onPinnedWidthChanged());
         });
         this.forContainers(allRight, () => {
-            this.pinnedWidthFeature = this.createManagedBean(new SetPinnedRightWidthFeature(this.eContainer))
+            this.pinnedWidthFeature = this.createManagedBean(new SetPinnedRightWidthFeature(this.eContainer));
             this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, () => this.onPinnedWidthChanged());
         });
         this.forContainers(allMiddle, () => this.createManagedBean(new SetHeightFeature(this.eContainer, this.eWrapper)));
@@ -306,7 +306,8 @@ export class RowContainerCtrl extends BeanStub {
             const isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
             const isPrintLayout = this.gridOptionsService.isDomLayout('print');
             this.comp.setDomOrder(isEnsureDomOrder || isPrintLayout);
-        }
+        };
+
         this.addManagedPropertyListener('domLayout', listener);
         listener();
     }
@@ -330,12 +331,20 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     private onScrollVisibilityChanged(): void {
-        if (this.name !== RowContainerName.CENTER) { return; }
+        const scrollWidth = this.gridOptionsService.getScrollbarWidth() || 0;
 
-        const visible = this.scrollVisibleService.isHorizontalScrollShowing();
-        const scrollbarWidth = visible ? (this.gridOptionsService.getScrollbarWidth() || 0) : 0;
-        const height = scrollbarWidth == 0 ? '100%' : `calc(100% + ${scrollbarWidth}px)`;
-        this.comp.setViewportHeight(height);
+        if (this.name === RowContainerName.CENTER) {
+            const visible = this.scrollVisibleService.isHorizontalScrollShowing();
+            const scrollbarWidth = visible ? scrollWidth : 0;
+            const size = scrollbarWidth == 0 ? '100%' : `calc(100% + ${scrollbarWidth}px)`;
+            this.comp.setViewportHeight(size);
+        }
+
+        if (this.name === RowContainerName.FULL_WIDTH) {
+            const pad = isInvisibleScrollbar() ? 16 : 0;
+            const size = `calc(100% - ${pad}px)`;
+            this.eContainer.style.setProperty('width', size);
+        }
     }
 
     // this methods prevents the grid views from being scrolled while the dragService is being used
@@ -431,25 +440,23 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     private onDisplayedRowsChanged(): void {
-               
-        if(this.visible){
+        if (this.visible) {
             const printLayout = this.gridOptionsService.isDomLayout('print');
             const doesRowMatch = (rowCtrl: RowCtrl) => {
                 const fullWidthRow = rowCtrl.isFullWidth();
-    
                 const embedFW = this.embedFullWidthRows || printLayout;
-    
+
                 const match = this.isFullWithContainer ?
                     !embedFW && fullWidthRow
                     : embedFW || !fullWidthRow;
-    
+
                 return match;
             };
             // this list contains either all pinned top, center or pinned bottom rows
             // this filters out rows not for this container, eg if it's a full with row, but we are not full with container
             const rowsThisContainer = this.getRowCtrls().filter(doesRowMatch);
             this.comp.setRowCtrls(rowsThisContainer);
-        }else{
+        } else {
             this.comp.setRowCtrls(this.EMPTY_CTRLS);
         }
     }

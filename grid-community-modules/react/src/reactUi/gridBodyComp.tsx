@@ -1,4 +1,4 @@
-import { CssClassManager, GridBodyCtrl, IGridBodyComp, RowContainerName } from '@ag-grid-community/core';
+import { CssClassManager, GridBodyCtrl, IGridBodyComp, RowContainerName, _ } from '@ag-grid-community/core';
 import React, { memo, useContext, useMemo, useRef, useState } from 'react';
 import { BeansContext } from './beansContext';
 import GridHeaderComp from './header/gridHeaderComp';
@@ -18,8 +18,6 @@ const GridBodyComp = () => {
     const {context, agStackComponentsRegistry, resizeObserverService} = useContext(BeansContext);
 
     const [rowAnimationClass, setRowAnimationClass] = useState<string>('');
-    const [ariaColCount, setAriaColCount] = useState<number>(0);
-    const [ariaRowCount, setAriaRowCount] = useState<number>(0);
     const [topHeight, setTopHeight] = useState<number>(0);
     const [bottomHeight, setBottomHeight] = useState<number>(0);
     const [stickyTopHeight, setStickyTopHeight] = useState<string>('0px');
@@ -78,8 +76,8 @@ const GridBodyComp = () => {
 
         const compProxy: IGridBodyComp = {
             setRowAnimationCssOnBodyViewport: setRowAnimationClass,
-            setColumnCount: setAriaColCount,
-            setRowCount: setAriaRowCount,
+            setColumnCount: count => _.setAriaColCount(eRoot.current!, count),
+            setRowCount: count => _.setAriaRowCount(eRoot.current!, count),
             setTopHeight,
             setBottomHeight,
             setStickyTopHeight,
@@ -179,7 +177,7 @@ const GridBodyComp = () => {
     );
 
     return (
-        <div ref={ eRoot } className={ rootClasses } role="treegrid" aria-colcount={ ariaColCount } aria-rowcount={ ariaRowCount }>
+        <div ref={eRoot} className={rootClasses} role="treegrid">
             <GridHeaderComp/>
             { createSection({ section: eTop, className: topClasses, style: topStyle, children: [
                 RowContainerName.TOP_LEFT,

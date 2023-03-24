@@ -247,7 +247,7 @@ $header-height: 64px;
     }
 
     svg {
-        --icon-size: 30px;
+        --icon-size: 30px !important; // !important for .ag-styles specificity
 
         display: block;
         position: absolute;

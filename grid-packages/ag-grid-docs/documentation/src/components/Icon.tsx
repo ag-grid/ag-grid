@@ -1,6 +1,7 @@
 import * as CarbonIcon from '@carbon/icons-react';
 import classNames from 'classnames';
 import React from 'react';
+import BoldChevronRight from '../images/inline-svgs/bold-chevron-right.svg';
 import EnterpriseIcon from '../images/inline-svgs/enterprise.svg';
 import styles from './Icon.module.scss';
 
@@ -20,6 +21,12 @@ export const ICON_MAP = {
     linkedin: CarbonIcon.LogoLinkedin,
     collapseCategories: CarbonIcon.CollapseCategories,
     search: CarbonIcon.Search,
+    arrowUp: CarbonIcon.ArrowUp,
+    arrowRight: CarbonIcon.ArrowRight,
+    arrowDown: CarbonIcon.ArrowDown,
+    arrowLeft: CarbonIcon.ArrowLeft,
+    chevronRight: BoldChevronRight,
+    link: CarbonIcon.Link,
 };
 
 export type IconName = keyof typeof ICON_MAP;

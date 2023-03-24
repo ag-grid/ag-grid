@@ -1,121 +1,215 @@
+@use '../design-system' as *;
+
 .menu {
-    composes: navbar flex-grow-1 flex-column align-items-stretch navbar-expand-lg navbar-light p-0 from global;
-    flex-basis: 0px;
+    $top-bar-height: 58px;
 
-    &__item {
-        &__link {
-            composes: d-block my-2 from global;
+    --menu-width: min(30vw, 320px);
 
-            color: $secondary;
-            font-size: 0.85rem;
+    border-bottom: 1px solid var(--border-color);
 
-            &:hover {
-                text-decoration: none;
-                color: $primary;
-            }
+    @media screen and (max-width: $breakpoint-docs-nav-medium) {
+        @include page-horizontal-margins();
+    }
 
-            &--active {
-                font-weight: bolder !important;
-                color: $primary !important;
-                position: relative;
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        --menu-horizontal-margin: #{$size-2};
+        --right-margin: max(#{$size-4}, calc(50vw - var(--max-page-width) / 2 - var(--menu-width)));
 
-                &::before {
-                    font-size: 1.5rem;
-                    content: "•";
-                    position: absolute;
-                    left: -1rem;
-                    top: -0.55rem;
-                }
-            }
-        }
+        flex-shrink: 0;
+        width: var(--menu-width);
+        margin-right: var(--right-margin);
+        padding-right: var(--menu-horizontal-margin);
+        padding-left: var(--horizontal-margin);
+        border-right: solid 1px var(--bright-blue-gray);
 
-        div[role="button"],
-        &__link {
-            white-space: nowrap;
-
-            &:focus {
-                outline: none;
-            }
-
-            &:focus-visible {
-                outline-color: $primary;
-                outline-width: 1px;
-                outline-style: solid;
-                outline-offset: 0.15rem;
-            }
-        }
-
-        div[role="button"] {
-            color: $dark;
-            font-weight: 500;
+        @supports (position: sticky) {
+            position: sticky;
+            top: $top-bar-height;
+            height: calc(100vh - #{$top-bar-height});
+            overflow: hidden;
+            overflow-y: auto;
         }
     }
 
-    &__enterprise-icon {
-        composes: ml-1 from global;
+    @media screen and (min-width: $breakpoint-docs-nav-large) {
+        padding-left: var(--menu-horizontal-margin);
+    }
+}
 
-        background-image: url("../images/enterprise.svg");
-        background-position-y: center;
-        background-repeat: no-repeat;
-        display: inline-block;
-        text-indent: -1000px;
-        width: 1rem;
-        height: 1rem;
-        background-size: contain;
-        vertical-align: middle;
+.menuInner {
+    flex-basis: auto !important;
+    flex-direction: column;
+    padding-top: $size-3;
+    padding-bottom: $size-7;
+
+    li {
+        margin-bottom: $size-half !important; // !important to override bootstrap styles
     }
 
-    &__sections {
-        composes: collapse navbar-collapse flex-column ml-2 pt-1 align-items-stretch list-unstyled from global;
-        overflow: auto;
-        margin: 0;
-        padding: 0;
-        flex-basis: auto !important;
+    li li {
+        margin-bottom: 0 !important; // !important to override bootstrap styles
     }
 
-    &__section {
-        composes: pt-1 pb-2 from global;
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        display: block !important; // !important to override bootstrap styles
+    }
+}
 
-        &__heading {
-            font-weight: 500;
-            outline: none;
+.sectionHeader {
+    width: 100%;
+    padding-top: $size-half !important; // !important for .ag-styles specificity
+    padding-bottom: $size-half !important; // !important for .ag-styles specificity
+    margin-top: 0 !important; // !important for .ag-styles specificity
+    font-weight: var(--font-weight-bold);
+    border: 2px solid transparent !important; // !important for .ag-styles specificity
+    outline: none;
+    transition: color $default-transition-timing, border-color $default-transition-timing;
+    border-radius: var(--border-radius);
+
+    &:hover {
+        --text-color: var(--link-color) !important; // !important for .ag-styles specificity
+    }
+
+    &:focus-visible {
+        border-color: var(--bright-blue-gray) !important; // !important for .ag-styles specificity
+    }
+
+    &:hover .sectionIcon {
+        transform: translateX(3px);
+    }
+
+    &.active {
+        transition: color $default-transition-timing;
+    }
+
+    li:first-child & {
+        margin-top: $size-1 !important; // !important for .ag-styles specificity
+    }
+
+    + .menuGroup {
+        padding-bottom: $size-1;
+    }
+}
+
+.sectionIcon {
+    --icon-size: 20px;
+
+    position: relative;
+    top: -1px;
+    transition: transform 0.33s ease-in-out, fill $default-transition-timing;
+
+    &.active {
+        transform: rotate(90deg) !important;
+    }
+}
+
+.menuGroup {
+    --first-indent-size: 4px;
+    --indent-size: 12px;
+
+    line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
+    font-size: var(--font-size-small);
+
+    ul a,
+    ul .groupLabel {
+        margin-left: calc(
+            var(--first-indent-size) + var(--indent-size)
+        ) !important; // !important for .ag-styles specificity
+    }
+
+    ul ul a,
+    ul ul .groupLabel {
+        margin-left: calc(
+            var(--first-indent-size) + var(--indent-size) * 2
+        ) !important; // !important for .ag-styles specificity
+    }
+
+    ul ul ul a,
+    ul ul ul .groupLabel {
+        margin-left: calc(
+            var(--first-indent-size) + var(--indent-size) * 3
+        ) !important; // !important for .ag-styles specificity
+    }
+
+    .enterpriseIcon {
+        --icon-size: 1.15em !important; // !important for .ag-styles specificity
+        --text-color: red !important; // !important for .ag-styles specificity
+
+        position: relative;
+        margin-left: 2px;
+        color: transparent;
+
+        svg {
+            position: absolute;
+            left: 0;
+            transform: translate(-0.05em, 0.075em);
+        }
+    }
+}
+
+.menuGroup a {
+    position: relative;
+    display: block;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: $size-2;
+    margin-left: var(--first-indent-size);
+    outline: none;
+    border-radius: var(--border-radius);
+    border: 2px solid transparent;
+    color: var(--secondary-text-color) !important; // !important for .ag-styles specificity
+    font-weight: var(--font-weight-bold);
+    transition: color $default-transition-timing, border-color $default-transition-timing;
+
+    &::before {
+        content: '';
+        position: absolute;
+        width: 0.375em;
+        height: 0.375em;
+        transform: translate(-0.625em, 0.45em);
+        border-radius: 50%;
+        background-color: var(--white);
+        transition: background-color $default-transition-timing;
+    }
+
+    &:focus-visible {
+        border-color: var(--bright-blue-gray) !important; // !important for .ag-styles specificity
+
+        &::before {
+            background-color: var(--dull-light-gray);
         }
     }
 
-    &__arrow {
-        composes: mr-1 from global;
-
-        transition: all 0.5s;
-        height: 0.8rem;
-        width: 1rem;
-        vertical-align: -0.05rem;
+    &.activeItemParent {
+        color: var(--text-color) !important; // !important for .ag-styles specificity
     }
 
-    &__group {
-        composes: pl-2 list-unstyled from global;
+    &:hover {
+        color: var(--link-color) !important; // !important for .ag-styles specificity
 
-        &--top-level {
-            composes: pl-4 from global;
-
-            > .menu__item {
-                color: $dark;
-                font-weight: 400;
-                font-size: 0.9rem;
-
-                & > a {
-                    color: $dark;
-                    font-weight: 400;
-                    font-size: 0.9rem;
-
-                    &:hover {
-                        color: $primary;
-                    }
-                }
-            }
+        &::before {
+            background-color: var(--link-color) !important;
         }
     }
 
-    input:focus {
-        border-color: $primary;
+    &.activeMenuItem {
+        pointer-events: none;
+        color: var(--text-color) !important; // !important for .ag-styles specificity
+
+        &::before {
+            background-color: var(--text-color);
+        }
+    }
+}
+
+.menuGroup .groupLabel {
+    margin-left: var(--first-indent-size) !important; // !important for .ag-styles specificity
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: $size-2 + 2px;
+    transition: color $default-transition-timing;
+
+    &.activeItemParent {
+        color: var(--text-color) !important; // !important for .ag-styles specificity
     }
 }

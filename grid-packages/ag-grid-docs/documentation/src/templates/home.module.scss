@@ -1,10 +1,16 @@
+@use '../design-system' as *;
+
 .docs-home {
-    composes: container-lg px-0 from global;
+    --max-page-width: #{$max-page-width}; // required as outside of .aq-styles
+    --horizontal-margin: #{$horizontal-margin}; // required as outside of .aq-styles
 
-    margin-left: 0;
+    @media screen and (max-width: $breakpoint-docs-nav-medium) {
+        @include page-horizontal-margins();
+    }
 
-    @media (min-width: 2075px) {
-        margin-left: calc((100% - 300px) / 2 - 730px);
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        padding-left: $size-2; // Should be $size-4 but waiting until docs home re-style
+        padding-right: max(var(--horizontal-margin), calc(50vw - var(--max-page-width) / 2));
     }
 
     h2 {

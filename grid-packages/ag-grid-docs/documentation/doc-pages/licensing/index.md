@@ -1,5 +1,6 @@
 ---
 title: "Community and Enterprise"
+enterprise: true
 ---
 
 AG Grid comes in two forms: AG Grid Community (free for everyone, including production use) and AG Grid Enterprise (you need a license to use).

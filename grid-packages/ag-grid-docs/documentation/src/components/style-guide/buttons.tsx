@@ -39,7 +39,29 @@ export const Buttons = () => {
                     </button>
                     <button className="button disabled">Disabled (.disabled)</button>
                 </div>
+            </div>
 
+            <div className="grid buttons-list">
+                <div>
+                    <p className="item-label">
+                        <span>Input button:</span>
+                        <code>.button-input</code>
+                    </p>
+
+                    <button className="button-input">Input button</button>
+                </div>
+
+                <div>
+                    <p className="item-label">
+                        <span>Button style none:</span>
+                        <code>.button-style-none</code>
+                    </p>
+
+                    <button className="button-style-none">Unstyled button</button>
+                </div>
+            </div>
+
+            <div className="grid buttons-list">
                 <div>
                     <p className="item-label">
                         <span>Small:</span>
@@ -58,17 +80,6 @@ export const Buttons = () => {
                     </p>
 
                     <button className="font-size-large">Large</button>
-                </div>
-            </div>
-
-            <div className="grid buttons-list">
-                <div>
-                    <p className="item-label">
-                        <span>Input button:</span>
-                        <code>.button-input</code>
-                    </p>
-
-                    <button className="button-input">Input button</button>
                 </div>
             </div>
         </>

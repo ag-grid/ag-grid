@@ -35,8 +35,15 @@ process.env.PANGOCAIRO_BACKEND = 'fontconfig';
 process.env.FONTCONFIG_PATH = __dirname;
 process.env.FONTCONFIG_NAME = `${__dirname}/fonts.conf`;
 
-export const CANVAS_WIDTH = 800;
-export const CANVAS_HEIGHT = 600;
+const CANVAS_WIDTH = 800;
+const CANVAS_HEIGHT = 600;
+
+export function prepareTestOptions<T extends AgChartOptions>(options: T, container = document.body) {
+    options.autoSize = false;
+    options.width = CANVAS_WIDTH;
+    options.height = CANVAS_HEIGHT;
+    options.container = container;
+}
 
 export function deproxy(chartOrProxy: Chart | AgChartInstance): Chart {
     return chartOrProxy instanceof Chart ? (chartOrProxy as any) : (chartOrProxy as any).chart;
@@ -153,10 +160,16 @@ export function hierarchyChartAssertions(params?: { seriesTypes?: string[] }) {
     };
 }
 
+const checkTargetValid = (target: HTMLElement) => {
+    if (!target.isConnected) throw new Error('Chart must be configured with a container for event testing to work');
+};
+
 export function hoverAction(x: number, y: number): (chart: Chart | AgChartInstance) => Promise<void> {
     return async (chartOrProxy) => {
         const chart = deproxy(chartOrProxy);
         const target = chart.scene.canvas.element as HTMLElement;
+        checkTargetValid(target);
+
         // Reveal tooltip.
         target?.dispatchEvent(mouseMoveEvent({ offsetX: x - 1, offsetY: y - 1 }));
         target?.dispatchEvent(mouseMoveEvent({ offsetX: x, offsetY: y }));
@@ -171,6 +184,8 @@ export function clickAction(x: number, y: number): (chart: Chart | AgChartInstan
     return async (chartOrProxy) => {
         const chart = deproxy(chartOrProxy);
         const target = chart.scene.canvas.element;
+        checkTargetValid(target);
+
         target?.dispatchEvent(clickEvent({ offsetX: x, offsetY: y }));
         return new Promise((resolve) => {
             setTimeout(resolve, 50);

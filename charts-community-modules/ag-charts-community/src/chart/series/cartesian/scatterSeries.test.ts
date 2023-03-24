@@ -9,8 +9,7 @@ import {
     IMAGE_SNAPSHOT_DEFAULTS,
     setupMockCanvas,
     extractImageData,
-    CANVAS_WIDTH,
-    CANVAS_HEIGHT,
+    prepareTestOptions,
 } from '../../test/utils';
 
 expect.extend({ toMatchImageSnapshot });
@@ -71,9 +70,7 @@ describe('ScatterSeries', () => {
                 legend: { enabled: false },
             };
 
-            options.autoSize = false;
-            options.width = CANVAS_WIDTH;
-            options.height = CANVAS_HEIGHT;
+            prepareTestOptions(options);
 
             chart = AgChart.create(options) as Chart;
             await compare();

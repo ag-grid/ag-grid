@@ -1,65 +1,105 @@
+@use '../design-system' as *;
+
 .doc-page-wrapper {
-    composes: container-lg d-flex p-3 from global;
-    margin-left: 0;
-    @media (min-width: 2075px) {
-        margin-left: calc((100% - 300px) / 2 - 730px);
+    --horizontal-margin: #{$horizontal-margin}; // required as outside of .aq-styles
+
+    display: flex;
+    justify-content: space-between;
+
+    @media screen and (max-width: $breakpoint-docs-nav-medium) {
+        @include page-horizontal-margins();
+    }
+
+    @media screen and (min-width: $breakpoint-docs-nav-medium) and (max-width: $breakpoint-docs-nav-large) {
+        padding-right: var(--horizontal-margin);
     }
 }
 
 %enterprise-icon {
     display: inline-block;
-    background-image: url("../images/enterprise.svg");
+    background-image: url('../images/enterprise.svg');
     text-indent: -10000px;
     background-position-y: center;
     background-repeat: no-repeat;
-    content: "e";
+    content: 'e';
 }
 
 .doc-page {
-    margin-left: 1rem;
-    margin-right: 1rem;
     flex: 1 1 0px;
     min-width: 0px;
+    padding-top: $size-4 + $size-half;
+    padding-bottom: $size-7;
 
-    @include media-breakpoint-up(xl) {
-        &:not(&--with-side-menu) {
-            margin-right: 1rem;
+    @media screen and (min-width: $breakpoint-docs-nav-large) {
+        padding-right: $size-7;
+        max-width: 60em;
+    }
+
+    h2:first-child,
+    h3:first-child,
+    h4:first-child {
+        margin-bottom: $size-half; // Required because of .ag-styles wrapper
+    }
+
+    h2:first-child {
+        margin-top: $size-6;
+    }
+
+    h3:first-child,
+    h4:first-child {
+        margin-top: $size-4;
+    }
+
+    // Required because of .ag-styles wrapper
+    p,
+    ul,
+    ol {
+        margin-bottom: $size-2 !important;
+    }
+
+    // Required because of .ag-styles wrapper
+    li p:last-child {
+        margin-bottom: $size-1 !important;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        &:hover :global(.docs-header-icon) {
+            opacity: 0.3333;
         }
     }
 
-    &__title {
-        font-weight: 400;
+    :global(.docs-header-icon) {
+        position: relative;
+        padding-left: 0;
+        margin-left: $size-1;
+        font-size: inherit !important; // !important for .ag-styles specificity
+        opacity: 0;
+        transition: opacity 0.33s ease-in-out;
 
-        &--enterprise::after {
-            @extend %enterprise-icon;
-            height: 1em;
-            width: 1em;
-            margin-left: 6px;
+        &:hover {
+            opacity: 1 !important;
+        }
+
+        svg {
+            position: relative;
+            width: 0.85em;
+            height: 0.85em;
+            top: -0.1em;
+            visibility: visible;
+            fill: var(--sky-blue);
         }
     }
 
     enterprise-icon::after {
         @extend %enterprise-icon;
+
         width: 1rem;
         margin-left: 0.25rem;
-    }
-
-    h2 {
-        enterprise-icon::after {
-            width: 1.5rem;
-        }
-    }
-
-    h1 + div > p:first-child {
-        font-size: 1.25rem;
-    }
-
-    h2 {
-        font-weight: 300;
-    }
-
-    h3 {
-        font-weight: 200;
     }
 
     table {
@@ -117,4 +157,70 @@
     ul li > p {
         margin-bottom: 0.25rem;
     }
+}
+
+.docsPageHeader {
+    position: relative;
+}
+
+.docsPageTitle {
+    margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        padding-right: 166px;
+    }
+
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        line-height: var(--line-height-ultra-tight) !important; // !important for .ag-styles specificity
+    }
+
+    > span {
+        margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+    }
+}
+
+.headerFramework {
+    display: block;
+    font-size: var(--font-size-extra-large);
+    font-weight: var(--font-weight-normal);
+    color: var(--secondary-text-color);
+}
+
+.enterpriseLabel {
+    display: inline-block;
+    position: relative;
+    bottom: 0.05em;
+    padding-left: $size-1;
+    font-size: var(--font-size-extra-large);
+    font-weight: var(--font-weight-normal);
+    color: var(--secondary-text-color);
+
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        position: absolute;
+        top: 2.25em;
+        right: -2px;
+        bottom: auto;
+        padding-left: 0;
+    }
+
+    @media screen and (min-width: $max-page-width) {
+        top: 1.8em;
+    }
+
+    :global(.icon) {
+        --icon-size: 1.25em;
+        --text-color: red;
+
+        position: relative;
+        margin-left: $size-half;
+        top: -0.1em;
+    }
+}
+
+// Hack to target "intro" section of docs page
+.pageSections > div > div:first-child {
+    --font-size-extra-large: #{$font-size-extra-large};
+
+    font-size: var(--font-size-extra-large);
+    margin-bottom: $size-4;
 }

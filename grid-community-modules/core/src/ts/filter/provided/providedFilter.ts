@@ -132,7 +132,14 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
                 handleKeyDown: this.handleKeyDown.bind(this)
             }
         ));
-        this.positionableFeature = new PositionableFeature(this.getPositionableElement(), { forcePopupParentAsOffsetParent: true });
+
+        this.positionableFeature = new PositionableFeature(
+            this.getPositionableElement(),
+            {
+                forcePopupParentAsOffsetParent: true
+            }
+        );
+
         this.createBean(this.positionableFeature);
     }
 
@@ -152,6 +159,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     protected resetTemplate(paramsMap?: any) {
         let eGui = this.getGui();
+
         if (eGui) {
             eGui.removeEventListener('submit', this.onFormSubmit);
         }
@@ -405,36 +413,35 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
             this.hidePopup = params.hidePopup;
         }
 
+        const isFloatingFilter = params?.container === 'floatingFilter';
+        this.refreshFilterResizer(isFloatingFilter);
+    }
+
+    private refreshFilterResizer(isFloatingFilter?: boolean): void {
         if (!this.positionableFeature) { return; }
 
         const { positionableFeature, gridOptionsService } = this;
-        const el = this.getPositionableElement();
 
-        if (params?.container === 'floatingFilter') {
+        if (isFloatingFilter) {
             positionableFeature.restoreLastSize();
             positionableFeature.setResizable(
                 gridOptionsService.is('enableRtl')
                     ? { bottom: true, bottomLeft: true, left: true }
                     : { bottom: true, bottomRight: true, right: true }
             );
-
-            positionableFeature.initialisePosition();
-            const availableHeight = positionableFeature.getAvailableHeight();
-            if (el) {
-                el.style.setProperty('max-height', `${availableHeight}px`);
-            }
+            this.positionableFeature.constrainSizeToAvailableHeight(true);
         } else {
             this.positionableFeature.removeSizeFromEl();
             this.positionableFeature.setResizable(false);
-
-            if (el) {
-                el.style.removeProperty('max-height');
-            }
         }
     }
 
     public afterGuiDetached(): void {
         this.checkApplyDebounce();
+
+        if (this.positionableFeature) {
+            this.positionableFeature.constrainSizeToAvailableHeight(false);
+        }
     }
 
     // static, as used by floating filter also

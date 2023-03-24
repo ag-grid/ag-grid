@@ -9,8 +9,7 @@ import {
     setupMockCanvas,
     extractImageData,
     deproxy,
-    CANVAS_WIDTH,
-    CANVAS_HEIGHT,
+    prepareTestOptions,
 } from './test/utils';
 
 expect.extend({ toMatchImageSnapshot });
@@ -186,9 +185,8 @@ describe.skip('backgroundImage', () => {
                     //     opacity: 1,
                     // },
                 },
-                width: CANVAS_WIDTH,
-                height: CANVAS_HEIGHT,
             };
+            prepareTestOptions(options);
 
             chart = deproxy(AgChart.create(options));
 
@@ -209,9 +207,8 @@ describe.skip('backgroundImage', () => {
                         opacity: 0.3,
                     },
                 },
-                width: CANVAS_WIDTH,
-                height: CANVAS_HEIGHT,
             };
+            prepareTestOptions(options);
 
             chart = deproxy(AgChart.create(options));
 

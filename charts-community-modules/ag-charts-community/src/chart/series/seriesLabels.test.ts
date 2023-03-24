@@ -1,13 +1,12 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import {
-    CANVAS_HEIGHT,
-    CANVAS_WIDTH,
     cartesianChartAssertions,
     extractImageData,
     hierarchyChartAssertions,
     IMAGE_SNAPSHOT_DEFAULTS,
     polarChartAssertions,
+    prepareTestOptions,
     repeat,
     setupMockCanvas,
     TestCase,
@@ -144,9 +143,7 @@ describe('series labels', () => {
         for (const [exampleName, example] of Object.entries(EXAMPLES)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = { ...example.options };
-                options.autoSize = false;
-                options.width = CANVAS_WIDTH;
-                options.height = CANVAS_HEIGHT;
+                prepareTestOptions(options);
 
                 chart = AgChart.create(options) as Chart;
                 await waitForChartStability(chart);
@@ -162,9 +159,7 @@ describe('series labels', () => {
                 };
 
                 const options: AgChartOptions = { ...example.options };
-                options.autoSize = false;
-                options.width = CANVAS_WIDTH;
-                options.height = CANVAS_HEIGHT;
+                prepareTestOptions(options);
 
                 chart = AgChart.create(options) as Chart;
                 await compare();

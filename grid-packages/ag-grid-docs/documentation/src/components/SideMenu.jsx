@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import classNames from 'classnames';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from './SideMenu.module.scss';
 
 /**
@@ -8,13 +9,14 @@ import styles from './SideMenu.module.scss';
  */
 const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu }) => {
     const [allHeadings, setAllHeadings] = useState(headings);
+    const menuRef = useRef(null);
 
     useEffect(() => {
         // this checks for headings once the page has rendered
         let headings = [];
         let maxLevel = 1;
 
-        const selector = [2, 3, 4, 5, 6].map(depth => `#doc-content h${depth}:not(.side-menu-exclude)`).join(',');
+        const selector = [2, 3, 4, 5, 6].map((depth) => `#doc-content h${depth}:not(.side-menu-exclude)`).join(',');
         const headingsFromDom = document.querySelectorAll(selector);
 
         for (let i = 0; i < headingsFromDom.length; i++) {
@@ -22,7 +24,9 @@ const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu }) => {
             const depth = parseInt(heading.tagName.match(/\d/)[0], 10);
             const { id } = heading;
 
-            if (!id) { continue; }
+            if (!id) {
+                continue;
+            }
 
             headings.push({ depth, id, value: heading.innerText });
 
@@ -34,7 +38,7 @@ const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu }) => {
         // limit the length of the side menu
         while (headings.length > 30 && maxLevel > 2) {
             const topLevel = maxLevel;
-            headings = headings.filter(h => h.depth < topLevel);
+            headings = headings.filter((h) => h.depth < topLevel);
             maxLevel--;
         }
 
@@ -46,17 +50,41 @@ const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu }) => {
         }
     }, [hideMenu]);
 
-    return allHeadings.length > 0 &&
-        <div className={styles['side-nav']}>
-            <ul className={styles['side-nav__list']}>
-                <li className={styles[`side-nav__item--level-1`]}>
-                    <a className={styles['side-nav__link']} href="#top">{pageTitle}</a>
-                </li>
-                {allHeadings.map(heading => <li key={`${pageName}_${heading.id}`} className={styles[`side-nav__item--level-${heading.depth}`]}>
-                    <a className={styles['side-nav__link']} href={`#${heading.id}`}>{heading.value}</a>
-                </li>)}
-            </ul>
-        </div>;
+    useEffect(() => {
+        if (!menuRef.current) {
+            return;
+        }
+
+        $('body').scrollspy({ target: '#side-menu', offset: 120 });
+    }, [menuRef.current]);
+
+    return (
+        allHeadings.length > 0 && (
+            <nav
+                id="side-menu"
+                ref={menuRef}
+                className={classNames(styles.sideNav, 'ag-styles', 'font-size-responsive')}
+            >
+                <div>
+                    <ul className="list-style-none">
+                        <li className={styles['level-1']}>
+                            <a href="#top" className={classNames(styles.topLink, 'nav-link')}>
+                                {pageTitle}
+                            </a>
+                        </li>
+
+                        {allHeadings.map((heading) => (
+                            <li key={`${pageName}_${heading.id}`} className={styles[`level-${heading.depth}`]}>
+                                <a className="nav-link" href={`#${heading.id}`}>
+                                    {heading.value}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </nav>
+        )
+    );
 };
 
 export default SideMenu;

@@ -10,10 +10,9 @@ import {
     IMAGE_SNAPSHOT_DEFAULTS,
     setupMockCanvas,
     extractImageData,
-    CANVAS_WIDTH,
-    CANVAS_HEIGHT,
     TestCase,
     toMatchImage,
+    prepareTestOptions,
 } from './test/utils';
 
 expect.extend({ toMatchImageSnapshot, toMatchImage });
@@ -62,10 +61,7 @@ describe('AgChartV2', () => {
         for (const [exampleName, example] of Object.entries(EXAMPLES)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = { ...example.options };
-                options.autoSize = false;
-                options.width = CANVAS_WIDTH;
-                options.height = CANVAS_HEIGHT;
-                options.container = container;
+                prepareTestOptions(options, container);
 
                 chart = AgChart.create(options);
                 await waitForChartStability(chart);
@@ -74,10 +70,7 @@ describe('AgChartV2', () => {
 
             it(`for ${exampleName} it should render to canvas as expected`, async () => {
                 const options: AgChartOptions = { ...example.options };
-                options.autoSize = false;
-                options.width = CANVAS_WIDTH;
-                options.height = CANVAS_HEIGHT;
-                options.container = container;
+                prepareTestOptions(options, container);
 
                 chart = AgChart.create(options);
                 await compare();
@@ -98,10 +91,8 @@ describe('AgChartV2', () => {
             ].map(({ series, ...opts }, idx) => ({
                 ...opts,
                 series: series?.map((s) => ({ ...s, grouped: idx === 0, stacked: idx !== 0 })),
-                autoSize: false,
-                width: CANVAS_WIDTH,
-                height: CANVAS_HEIGHT,
             }));
+            exampleCycle.forEach((opts) => prepareTestOptions(opts));
             const snapshots: any[] = [];
 
             // Create initial chart instance.
@@ -141,10 +132,8 @@ describe('AgChartV2', () => {
                     ...a,
                     position: a.type === 'category' ? (idx === 0 ? 'left' : 'right') : idx === 0 ? 'bottom' : 'top',
                 })),
-                autoSize: false,
-                width: CANVAS_WIDTH,
-                height: CANVAS_HEIGHT,
             }));
+            exampleCycle.forEach((opts) => prepareTestOptions(opts));
 
             // Create initial chart instance.
             chart = AgChart.create(exampleCycle[0]) as Chart;

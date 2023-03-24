@@ -3,6 +3,7 @@ import { Autowired } from "../../context/context";
 import { DragListenerParams, DragService } from "../../dragAndDrop/dragService";
 import { getAbsoluteHeight, getAbsoluteWidth, setFixedHeight, setFixedWidth } from "../../utils/dom";
 import { PopupService } from "../../widgets/popupService";
+import { ResizeObserverService } from "../../misc/resizeObserverService";
 
 const RESIZE_CONTAINER_STYLE = 'ag-resizer-wrapper';
 
@@ -56,6 +57,10 @@ interface MappedResizer {
 
 export class PositionableFeature extends BeanStub {
 
+    @Autowired('popupService') protected readonly popupService: PopupService;
+    @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
+    @Autowired('dragService') private readonly dragService: DragService;
+
     private dragStartPosition = {
         x: 0,
         y: 0
@@ -92,9 +97,7 @@ export class PositionableFeature extends BeanStub {
     private resizable: ResizableStructure = {};
     private movable = false;
     private currentResizer: { isTop: boolean, isRight: boolean, isBottom: boolean, isLeft: boolean } | null = null;
-
-    @Autowired('popupService') protected readonly popupService: PopupService;
-    @Autowired('dragService') private readonly dragService: DragService;
+    private resizeObserverSubscriber: (() => void) | undefined;
 
     constructor(
         private readonly element: HTMLElement,
@@ -310,25 +313,28 @@ export class PositionableFeature extends BeanStub {
         }
     }
 
-    public getAvailableHeight(): number | null {
+    private getAvailableHeight(): number | null {
         const { popup, forcePopupParentAsOffsetParent } = this.config;
+
+        if (!this.positioned) { this.initialisePosition(); }
+
         const { clientHeight } = this.offsetParent;
 
         if (!clientHeight) { return null; }
 
         const elRect = this.element.getBoundingClientRect();
-        const parentRect = this.offsetParent.getBoundingClientRect();
+        const offsetParentRect = this.offsetParent.getBoundingClientRect();
 
         const yPosition = popup ? this.position.y : elRect.top;
-        const parentTop = popup ? 0 : parentRect.top;
+        const parentTop = popup ? 0 : offsetParentRect.top;
 
         // When `forcePopupParentAsOffsetParent`, there may be elements that appear after the resizable element, but aren't included in the height.
         // Take these into account here
         let additionalHeight = 0;
         if (forcePopupParentAsOffsetParent) {
-            const boundaryEl = this.boundaryEl || this.findBoundaryElement();
-            if (boundaryEl) {
-                const { bottom } = boundaryEl.getBoundingClientRect();
+            const parentEl = this.element.parentElement;
+            if (parentEl) {
+                const { bottom } = parentEl.getBoundingClientRect();
                 additionalHeight = bottom - elRect.bottom;
             }
         }
@@ -392,6 +398,27 @@ export class PositionableFeature extends BeanStub {
             parseFloat(ePopup.style.left!),
             parseFloat(ePopup.style.top!)
         );
+    }
+
+    public constrainSizeToAvailableHeight(constrain: boolean): void {
+        if (!this.config.forcePopupParentAsOffsetParent) { return; }
+
+        const applyMaxHeightToElement = () => {
+            const availableHeight = this.getAvailableHeight();
+            this.element.style.setProperty('max-height', `${availableHeight}px`);
+        };
+
+        if (constrain) {
+            this.resizeObserverSubscriber = this.resizeObserverService.observeResize(
+                this.popupService.getPopupParent(), applyMaxHeightToElement
+            );
+        } else {
+            this.element.style.removeProperty('max-height');
+            if (this.resizeObserverSubscriber) {
+                this.resizeObserverSubscriber();
+                this.resizeObserverSubscriber = undefined;
+            }
+        }
     }
 
     private setPosition(x: number, y: number): void {
@@ -826,6 +853,7 @@ export class PositionableFeature extends BeanStub {
             this.dragService.removeDragSource(this.moveElementDragListener);
         }
 
+        this.constrainSizeToAvailableHeight(false);
         this.clearResizeListeners();
         this.removeResizers();
     }

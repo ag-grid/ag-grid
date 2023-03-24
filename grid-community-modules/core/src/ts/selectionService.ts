@@ -300,7 +300,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
         if (rowNode.isSelected()) {
             this.selectedNodes[rowNode.id] = rowNode;
         } else {
-            this.selectedNodes[rowNode.id] = undefined;
+            delete this.selectedNodes[rowNode.id];
         }
     }
 

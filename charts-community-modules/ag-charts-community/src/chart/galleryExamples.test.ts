@@ -15,8 +15,7 @@ import {
     setupMockCanvas,
     toMatchImage,
     extractImageData,
-    CANVAS_WIDTH,
-    CANVAS_HEIGHT,
+    prepareTestOptions,
 } from './test/utils';
 
 expect.extend({ toMatchImageSnapshot, toMatchImage });
@@ -175,9 +174,7 @@ describe('Gallery Examples', () => {
                 };
 
                 const options: AgChartOptions = { ...example.options };
-                options.autoSize = false;
-                options.width = CANVAS_WIDTH;
-                options.height = CANVAS_HEIGHT;
+                prepareTestOptions(options);
 
                 chart = AgChart.create(options) as Chart;
                 await compare();
@@ -208,9 +205,7 @@ describe('Gallery Examples', () => {
 
                 beforeEach(async () => {
                     options = { ...example.options };
-                    options.autoSize = false;
-                    options.width = CANVAS_WIDTH;
-                    options.height = CANVAS_HEIGHT;
+                    prepareTestOptions(options);
 
                     chart = AgChart.create(options) as Chart;
                     await waitForChartStability(chart);

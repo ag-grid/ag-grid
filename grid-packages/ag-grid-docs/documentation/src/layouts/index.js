@@ -1,3 +1,4 @@
+import classnames from 'classnames';
 import Footer from 'components/footer/Footer';
 import { GlobalContextProvider } from 'components/GlobalContext';
 import Menu from 'components/Menu';
@@ -7,7 +8,6 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import favIcons from '../images/favicons';
 import styles from './index.module.scss';
-import './mailchimp.css';
 
 // export const getScreenLayout = path => {
 //     // order is important here
@@ -56,15 +56,15 @@ export const Layout = ({
                 <SiteHeader path={path} />
 
                 {!fullScreen && <TopBar frameworks={frameworks} currentFramework={framework} path={path} />}
-                <div className={styles['content-viewport']}>
-                    {!fullScreen && (
-                        <aside className={`${styles['main-menu']}`}>
-                            <Menu currentFramework={framework} currentPage={pageName} />
-                        </aside>
-                    )}
-                    <main is="div" className={styles['content']}>
-                        {children}
-                    </main>
+
+                <div className={classnames(styles.contentContainer, !fullScreen && styles.fullScreenPage)}>
+                    <div className={styles['content-viewport']}>
+                        {!fullScreen && <Menu currentFramework={framework} currentPage={pageName} path={path} />}
+
+                        <main is="div" className={styles['content']}>
+                            {children}
+                        </main>
+                    </div>
                 </div>
             </div>
             {(fullScreenWithFooter || !fullScreen) && <Footer framework={framework} />}

@@ -32,6 +32,7 @@ $size-half: math.div($size-1, 2);
 // Layout constants
 // ================
 $max-page-width: 1400px;
+$horizontal-margin: 6vw;
 
 // Typographic constants
 // =====================
@@ -44,19 +45,19 @@ $font-size-extra-small: px-to-rem(12); // convert px values to rems
 $font-size-small: px-to-rem(14); // convert px values to rems
 $font-size-medium: px-to-rem(16); // convert px values to rems
 $font-size-large: px-to-rem(20); // convert px values to rems
-$font-size-extra-large: px-to-rem(26); // convert px values to rems
-$font-size-massive: px-to-rem(36); // convert px values to rems
-$font-size-gigantic: px-to-rem(48); // convert px values to rems
-$font-size-gargantuan: px-to-rem(66); // convert px values to rems
+$font-size-extra-large: px-to-rem(24); // convert px values to rems
+$font-size-massive: px-to-rem(30); // convert px values to rems
+$font-size-gigantic: px-to-rem(40); // convert px values to rems
+$font-size-gargantuan: px-to-rem(50); // convert px values to rems
 
 $large-font-size-extra-small: px-to-rem(13); // convert px values to rems
 $large-font-size-small: px-to-rem(15); // convert px values to rems
 $large-font-size-medium: px-to-rem(18); // convert px values to rems
-$large-font-size-large: px-to-rem(23); // convert px values to rems
-$large-font-size-extra-large: px-to-rem(29); // convert px values to rems
-$large-font-size-massive: px-to-rem(41); // convert px values to rems
-$large-font-size-gigantic: px-to-rem(54); // convert px values to rems
-$large-font-size-gargantuan: px-to-rem(74); // convert px values to rems
+$large-font-size-large: px-to-rem(22); // convert px values to rems
+$large-font-size-extra-large: px-to-rem(26); // convert px values to rems
+$large-font-size-massive: px-to-rem(32); // convert px values to rems
+$large-font-size-gigantic: px-to-rem(42); // convert px values to rems
+$large-font-size-gargantuan: px-to-rem(52); // convert px values to rems
 
 $font-weight-normal: 400;
 $font-weight-thin: 300;
@@ -65,6 +66,8 @@ $font-weight-bold: 600;
 $line-height-normal: 1.5;
 $line-height-tight: 1.25;
 $line-height-ultra-tight: 1;
+
+$icon-size: 2em;
 
 // Color constants
 // ===========================================
