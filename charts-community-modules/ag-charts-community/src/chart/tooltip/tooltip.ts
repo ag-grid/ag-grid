@@ -292,6 +292,9 @@ export class Tooltip {
 
     pointerLeftOntoTooltip(event: InteractionEvent<'leave'>): boolean {
         const classList = (event.sourceEvent as MouseEvent).relatedTarget?.classList;
-        return classList && (classList.contains('ag-chart-tooltip') || classList.contains('ag-chart-tooltip-content'));
+        return (
+            classList &&
+            (classList.contains(DEFAULT_TOOLTIP_CLASS) || classList.contains(`${DEFAULT_TOOLTIP_CLASS}content`))
+        );
     }
 }
