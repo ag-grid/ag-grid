@@ -1,1 +1,1 @@
-export * from './chartZoomModule';
+export * from './zoomModule';
