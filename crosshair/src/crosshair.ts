@@ -40,7 +40,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     private axisLayout?: _ModuleSupport.AxisLayout & {
         id: string;
     };
-    private crosshairGroup: _Scene.Group = new Group({ layer: true, zIndex: Layers.AXIS_ZINDEX });
+    private crosshairGroup: _Scene.Group = new Group({ layer: true, zIndex: Layers.SERIES_CROSSHAIR_ZINDEX });
     private lineNode: _Scene.Line = this.crosshairGroup.appendChild(new Line());
 
     constructor(private readonly ctx: _ModuleSupport.ModuleContextWithParent<_ModuleSupport.AxisContext>) {
