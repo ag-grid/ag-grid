@@ -408,7 +408,7 @@ export abstract class BaseDropZonePanel extends Component {
         let alternateElement = this.focusService.findNextFocusableElement();
 
         if (!alternateElement) {
-            alternateElement = this.focusService.findNextFocusableElement(undefined, false, true)
+            alternateElement = this.focusService.findNextFocusableElement(undefined, false, true);
         }
 
         this.toggleResizable(false);
@@ -426,7 +426,12 @@ export abstract class BaseDropZonePanel extends Component {
             this.toggleResizable(resizeEnabled);
         }
 
-        this.restoreFocus(focusedIndex, alternateElement!);
+        // focus should only be restored when keyboard mode
+        // otherwise mouse clicks will cause containers to scroll
+        // without no apparent reason.
+        if (this.focusService.isKeyboardMode()) {
+            this.restoreFocus(focusedIndex, alternateElement!);
+        }
     }
 
     private getFocusedItem(): number {
