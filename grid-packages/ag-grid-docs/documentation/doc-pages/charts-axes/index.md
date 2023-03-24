@@ -19,10 +19,6 @@ As shown above, Axes contain the following elements:
 - **[Multiple Axes](/charts-axes-multiple/)**: multiple axes (secondary y-axis) that correspond to different data series.
 - **[Cross Lines](/charts-axes-cross-lines/)**: Cross lines display a vertical or horizontal lines across a chart region.
 
-## Axis API Reference
-
-<interface-documentation interfaceName='AgBaseCartesianAxisOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
-
 ## Next Up
 
 Continue to the next section to learn about [Axis Types](/axes-types/).
