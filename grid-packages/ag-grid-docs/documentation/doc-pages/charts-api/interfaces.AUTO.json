@@ -3486,11 +3486,11 @@
   },
   "InteractionTypes": {
     "meta": { "isTypeAlias": true },
-    "type": "'click' | 'dblclick' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left' | 'wheel'"
+    "type": "'click' | 'dblclick' | 'contextmenu' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left' | 'wheel'"
   },
   "SUPPORTED_EVENTS": {
     "meta": { "isTypeAlias": true },
-    "type": "'click' | 'dblclick' | 'mousedown' | 'mousemove' | 'mouseup' | 'mouseout' | 'mouseenter' | 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel' | 'pagehide' | 'wheel'"
+    "type": "'click' | 'dblclick' | 'contextmenu' | 'mousedown' | 'mousemove' | 'mouseup' | 'mouseout' | 'mouseenter' | 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel' | 'pagehide' | 'wheel'"
   },
   "InteractionEvent": {
     "meta": {

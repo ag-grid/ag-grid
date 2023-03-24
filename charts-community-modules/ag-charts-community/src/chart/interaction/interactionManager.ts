@@ -4,6 +4,7 @@ import { BaseManager } from './baseManager';
 type InteractionTypes =
     | 'click'
     | 'dblclick'
+    | 'contextmenu'
     | 'hover'
     | 'drag-start'
     | 'drag'
@@ -15,6 +16,7 @@ type InteractionTypes =
 type SUPPORTED_EVENTS =
     | 'click'
     | 'dblclick'
+    | 'contextmenu'
     | 'mousedown'
     | 'mousemove'
     | 'mouseup'
@@ -30,6 +32,7 @@ const WINDOW_EVENT_HANDLERS: SUPPORTED_EVENTS[] = ['pagehide', 'mousemove', 'mou
 const EVENT_HANDLERS: SUPPORTED_EVENTS[] = [
     'click',
     'dblclick',
+    'contextmenu',
     'mousedown',
     'mouseout',
     'mouseenter',
@@ -148,6 +151,9 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
 
             case 'dblclick':
                 return ['dblclick'];
+
+            case 'contextmenu':
+                return ['contextmenu'];
 
             case 'mousedown':
                 this.mouseDown = true;
