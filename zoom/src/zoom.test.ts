@@ -5,12 +5,11 @@ import { ZoomModule } from './chartZoomModule';
 import {
     waitForChartStability,
     setupMockCanvas,
-    CANVAS_WIDTH,
-    CANVAS_HEIGHT,
     extractImageData,
     scrollAction,
     IMAGE_SNAPSHOT_DEFAULTS,
     clickAction,
+    prepareTestOptions,
 } from 'ag-charts-community/src/chart/test/utils';
 
 expect.extend({ toMatchImageSnapshot });
@@ -22,9 +21,6 @@ describe('Zoom', () => {
     const ctx = setupMockCanvas();
 
     const EXAMPLE_OPTIONS: AgCartesianChartOptions = {
-        autoSize: false,
-        width: CANVAS_WIDTH,
-        height: CANVAS_HEIGHT,
         data: [
             { x: 0, y: 0 },
             { x: 1, y: 50 },
@@ -42,15 +38,20 @@ describe('Zoom', () => {
         },
     };
 
-    const cx = CANVAS_WIDTH / 2;
-    const cy = CANVAS_HEIGHT / 2;
+    let cx: number = 0;
+    let cy: number = 0;
 
     beforeEach(async () => {
         const options: AgCartesianChartOptions = { ...EXAMPLE_OPTIONS };
+        prepareTestOptions(options);
+        cx = options.width! / 2;
+        cy = options.height! / 2;
+
         chart = AgChart.create(options);
 
         // Click once in the chart to ensure the chart is active / mouse is over it to ensure the first scroll wheel
         // event is triggered.
+        await waitForChartStability(chart);
         await clickAction(cx, cy)(chart);
 
         // eslint-disable-next-line no-console
@@ -88,7 +89,7 @@ describe('Zoom', () => {
         });
 
         it('should zoom in to the given location', async () => {
-            await scrollAction(cx + CANVAS_WIDTH / 4, cy + CANVAS_HEIGHT / 4, -1);
+            await scrollAction(cx * 1.5, cy * 1.5, -1);
 
             await compare();
         });
