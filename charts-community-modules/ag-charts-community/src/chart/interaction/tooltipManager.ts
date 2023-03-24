@@ -32,6 +32,14 @@ export class TooltipManager {
         this.applyStates();
     }
 
+    public clearAllTooltips() {
+        Object.keys(this.states).forEach((callerId) => {
+            delete this.states[callerId];
+        });
+
+        this.applyStates();
+    }
+
     public getTooltipMeta(callerId: string): TooltipMeta | undefined {
         return this.states[callerId]?.meta;
     }
