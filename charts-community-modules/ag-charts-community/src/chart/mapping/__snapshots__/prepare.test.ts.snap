@@ -8738,6 +8738,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
+    "spacing": 25,
     "text": "Total Visitors to Tate Galleries",
   },
   "tooltip": Object {
@@ -10689,6 +10690,7 @@ Object {
     "fontSize": 18,
     "fontStyle": undefined,
     "fontWeight": "bold",
+    "spacing": 25,
     "text": "Total Visitors to Science Museums",
   },
   "tooltip": Object {

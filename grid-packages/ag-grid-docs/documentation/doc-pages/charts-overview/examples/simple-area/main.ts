@@ -23,6 +23,7 @@ const options: AgChartOptions = {
   title: {
     text: 'Total Visitors to Tate Galleries',
     fontSize: 18,
+    spacing: 25,
   },
   footnote: {
     text: 'Source: Department for Digital, Culture, Media & Sport',
