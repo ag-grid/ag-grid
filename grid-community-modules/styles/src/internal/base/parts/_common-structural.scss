@@ -255,7 +255,7 @@
     .ag-sticky-top-full-width-container {
         position: absolute;
         top: 0px;
-        left: 0px;
+        @include ag.unthemed-rtl(( left: 0 ));
         // turn off pointer events, because this container overlays the main row containers.
         // so when user clicks on space between full width rows, we want the mouse clicks to
         // pass onto the underlying container where the real rows are. eg if using full width
@@ -263,9 +263,6 @@
         // opens a group the children are shown in the other containers - we want to make sure we
         // don't block mouse clicks to those other containers with the children.
         pointer-events: none;
-    }
-    .ag-full-width-container {
-        width: 100%;
     }
 
     .ag-floating-bottom-full-width-container, .ag-floating-top-full-width-container {
