@@ -11,12 +11,11 @@ import {
 import {
     waitForChartStability,
     setupMockCanvas,
-    CANVAS_WIDTH,
-    CANVAS_HEIGHT,
     extractImageData,
     IMAGE_SNAPSHOT_DEFAULTS,
     hoverAction,
-} from 'ag-charts-community/src/chart/test/utils';
+    prepareTestOptions,
+} from 'ag-charts-community/dist/cjs/es5/main-test';
 import { CrosshairModule } from './crosshairModule';
 
 expect.extend({ toMatchImageSnapshot });
@@ -223,10 +222,7 @@ describe('Crosshair', () => {
     for (const TEST_CASE of CASES) {
         it(`should follow mouse pointer on series hover`, async () => {
             const options: AgChartOptions = TEST_CASE;
-            options.autoSize = false;
-            options.width = CANVAS_WIDTH;
-            options.height = CANVAS_HEIGHT;
-            options.container = document.body;
+            prepareTestOptions(options);
 
             chart = AgChart.create(options);
             await waitForChartStability(chart);
@@ -236,10 +232,7 @@ describe('Crosshair', () => {
 
         it(`should snap to the closest highlighted node datum`, async () => {
             const options: AgChartOptions = applyCrosshairSnap(TEST_CASE, true);
-            options.autoSize = false;
-            options.width = CANVAS_WIDTH;
-            options.height = CANVAS_HEIGHT;
-            options.container = document.body;
+            prepareTestOptions(options);
 
             chart = AgChart.create(options);
             await waitForChartStability(chart);
@@ -249,10 +242,7 @@ describe('Crosshair', () => {
 
         it(`should layout correctly with series area padding`, async () => {
             const options: AgChartOptions = TEST_CASE;
-            options.autoSize = false;
-            options.width = CANVAS_WIDTH;
-            options.height = CANVAS_HEIGHT;
-            options.container = document.body;
+            prepareTestOptions(options);
             options.seriesAreaPadding = {
                 left: 100,
                 right: 100,
