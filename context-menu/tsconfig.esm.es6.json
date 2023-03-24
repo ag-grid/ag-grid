@@ -1,0 +1,12 @@
+{
+    "extends": "../../module-build/tsconfig.esm.es6.json",
+    "compilerOptions": {
+        "outDir": "dist/esm/es6",
+        "baseUrl": ".",
+        "paths": { "@ag-*": ["node_modules/@ag-*/dist/esm/es6/main"] },
+        "strict": true,
+        "experimentalDecorators": true
+    },
+    "include": ["src/**/*"],
+    "exclude": ["**/*.test.ts", "src/**/mock.ts"]
+}
