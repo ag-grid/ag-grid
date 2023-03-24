@@ -98,7 +98,7 @@ export class SelectAllFeature extends BeanStub {
 
         this.processingEventFromCheckbox = true;
 
-        const allSelected = this.selectionService.getSelectAllState();
+        const allSelected = this.selectionService.getSelectAllState(this.filteredOnly, this.currentPageOnly);
 
         this.cbSelectAll.setValue(allSelected!);
         this.refreshSelectAllLabel();
