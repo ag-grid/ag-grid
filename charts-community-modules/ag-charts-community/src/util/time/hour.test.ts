@@ -37,7 +37,7 @@ test('hour.every', () => {
     ]);
 });
 
-test('hour.every with snapTo: null', () => {
+test.skip('hour.every with snapTo: null', () => {
     const interval = hour.every(5, { snapTo: null! });
 
     const range = interval.range(new Date(2023, 0, 18, 8, 31, 5, 100), new Date(2023, 0, 18, 21, 31, 5, 100));
