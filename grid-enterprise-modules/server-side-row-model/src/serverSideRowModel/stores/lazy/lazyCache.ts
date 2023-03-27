@@ -194,6 +194,10 @@ export class LazyCache extends BeanStub {
 
         if (isLastRowIndexKnown != null) {
             this.isLastRowKnown = isLastRowIndexKnown;
+
+            if (isLastRowIndexKnown === false) {
+                this.numberOfRows += 1;
+            }
         }
 
         this.fireStoreUpdatedEvent();
