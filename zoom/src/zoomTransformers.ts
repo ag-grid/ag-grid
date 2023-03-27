@@ -59,6 +59,19 @@ export function scaleZoom(zoom: DefinedZoomState, sx: number, sy: number): Defin
     };
 }
 
+export function scaleZoomCenter(zoom: DefinedZoomState, sx: number, sy: number): DefinedZoomState {
+    const dx = zoom.x.max - zoom.x.min;
+    const dy = zoom.y.max - zoom.y.min;
+
+    const cx = zoom.x.min + dx / 2;
+    const cy = zoom.y.min + dy / 2;
+
+    return {
+        x: { min: cx - (dx * sx) / 2, max: cx + (dx * sx) / 2 },
+        y: { min: cy - (dy * sy) / 2, max: cy + (dy * sy) / 2 },
+    };
+}
+
 /**
  * Constrain a zoom bounding box such that no corner exceeds an edge while maintaining the same width and height.
  */

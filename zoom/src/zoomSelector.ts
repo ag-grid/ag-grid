@@ -4,6 +4,7 @@ import { constrainZoom, definedZoomState, pointToRatio, scaleZoom, translateZoom
 import { DefinedZoomState, ZoomCoords } from './zoomTypes';
 import { ZoomRect } from './scenes/zoomRect';
 
+// "Re-rewind, when the crowd say..."
 export class ZoomSelector {
     private rect: ZoomRect;
     private coords?: ZoomCoords;

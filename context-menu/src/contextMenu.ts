@@ -7,24 +7,23 @@ type ContextMenuGroups = {
     node: Array<ContextMenuItem>;
     extra: Array<ContextMenuItem>;
 };
-type ContextMenuItem = 'download' | 'focus-node' | 'zoom-node' | CustomContextMenuItem;
-type CustomContextMenuItem = { label: string; action: () => void };
+type ContextMenuItem = 'download' | ContextMenuAction;
+type ContextMenuAction = { id?: string; label: string; action: (params: ContextMenuActionParams) => void };
+export type ContextMenuActionParams = { datum?: any; event: MouseEvent };
 
 export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
-    public menuRenderer: () => void;
-    public itemRenderer: () => void;
-
     /**
-     * Extra menu items with a label and action callback.
+     * Extra menu actions with a label and callback.
      */
-    public extraMenuItems: Array<CustomContextMenuItem> = [];
+    public extraActions: Array<ContextMenuAction> = [];
 
     // Module context
-    private tooltipManager: _ModuleSupport.TooltipManager;
     private scene: _Scene.Scene;
+    private tooltipManager: _ModuleSupport.TooltipManager;
 
     // State
     private groups: ContextMenuGroups;
+    private showEvent?: MouseEvent;
 
     // HTML elements
     private canvasElement: HTMLElement;
@@ -36,6 +35,9 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
 
     // Global shared state
     private static contextMenuDocuments: Document[] = [];
+    private static registeredDefaultActions: Array<ContextMenuAction> = [];
+    private static registeredNodeActions: Array<ContextMenuAction> = [];
+    private static disabledActions: Set<string> = new Set();
 
     constructor(readonly ctx: _ModuleSupport.ModuleContext) {
         super();
@@ -50,7 +52,7 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
         this.destroyFns.push(() => ctx.interactionManager.removeListener(contextMenuHandle));
 
         // State
-        this.groups = { default: ['download'], node: [], extra: [] };
+        this.groups = { default: [], node: [], extra: [] };
 
         // HTML elements
         this.canvasElement = ctx.scene.canvas.element;
@@ -61,9 +63,9 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
 
         this.coverElement = this.container.appendChild(document.createElement('div'));
         this.coverElement.classList.add(`${DEFAULT_CONTEXT_MENU_CLASS}__cover`);
-        this.coverElement.onclick = () => this.hide();
 
         // TODO: hmmm...
+        this.coverElement.onclick = () => this.hide();
         this.coverElement.oncontextmenu = (event) => {
             this.hide();
             event.preventDefault();
@@ -96,20 +98,40 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
             document.head.insertBefore(styleElement, document.head.querySelector('style'));
             ContextMenu.contextMenuDocuments.push(document);
         }
-
-        // User-defined options
-        this.menuRenderer = () => {};
-        this.itemRenderer = () => {};
     }
 
-    onContextMenu(event: _ModuleSupport.InteractionEvent<'contextmenu'>) {
+    public static registerDefaultAction(action: ContextMenuAction) {
+        this.registeredDefaultActions.push(action);
+    }
+
+    public static registerNodeAction(action: ContextMenuAction) {
+        this.registeredNodeActions.push(action);
+    }
+
+    public static enableAction(actionId: string) {
+        this.disabledActions.delete(actionId);
+    }
+
+    public static disableAction(actionId: string) {
+        this.disabledActions.add(actionId);
+    }
+
+    public onContextMenu(event: _ModuleSupport.InteractionEvent<'contextmenu'>) {
+        this.showEvent = event.sourceEvent as MouseEvent;
+
         const x = event.pageX;
         const y = event.pageY;
+
+        this.groups.default = ['download', ...ContextMenu.registeredDefaultActions];
 
         // TODO: detect clicked on marker
         const hasClickedOnMarker = true;
         if (hasClickedOnMarker) {
-            this.groups.node = ['focus-node', 'zoom-node'];
+            this.groups.node = [...ContextMenu.registeredNodeActions];
+        }
+
+        if (this.extraActions.length > 0) {
+            this.groups.extra = [...this.extraActions];
         }
 
         if (this.groups.default.length === 0 && this.groups.node.length === 0 && this.groups.extra.length === 0) return;
@@ -120,7 +142,7 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
         this.show(x, y);
     }
 
-    show(x: number, y: number) {
+    public show(x: number, y: number) {
         const newMenuElement = this.renderMenu();
 
         if (this.menuElement) {
@@ -129,8 +151,29 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
             this.element.appendChild(newMenuElement);
         }
 
-        this.element.style.left = `${x + 1}px`;
-        this.element.style.top = `calc(${y}px - 0.5em)`;
+        // TODO: contain within the window
+        const pinned: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' = 'top-left';
+        switch (pinned) {
+            case 'top-left':
+                this.element.style.left = `${x + 1}px`;
+                this.element.style.top = `calc(${y}px - 0.5em)`;
+                break;
+
+            case 'top-right':
+                this.element.style.right = `calc(100% - ${x - 1}px)`;
+                this.element.style.top = `calc(${y}px - 0.5em)`;
+                break;
+
+            case 'bottom-left':
+                this.element.style.left = `${x + 1}px`;
+                this.element.style.bottom = `calc(100% - ${y}px - 0.5em)`;
+                break;
+
+            case 'bottom-right':
+                this.element.style.right = `calc(100% - ${x - 1}px)`;
+                this.element.style.bottom = `calc(100% - ${y}px - 0.5em)`;
+                break;
+        }
 
         this.menuElement = newMenuElement;
 
@@ -143,7 +186,7 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
         this.coverElement.style.height = `${this.canvasElement.clientHeight}px`;
     }
 
-    hide() {
+    public hide() {
         if (this.menuElement) {
             this.element.removeChild(this.menuElement);
             this.menuElement = undefined;
@@ -152,7 +195,7 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
         this.coverElement.style.display = 'none';
     }
 
-    renderMenu() {
+    public renderMenu() {
         const menuElement = document.createElement('div');
         menuElement.classList.add(`${DEFAULT_CONTEXT_MENU_CLASS}__menu`);
 
@@ -173,18 +216,14 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
         return menuElement;
     }
 
-    renderItem(item: ContextMenuItem): HTMLElement | void {
+    public renderItem(item: ContextMenuItem): HTMLElement | void {
         switch (item) {
             case 'download':
                 return this.createDownloadElement();
-            case 'focus-node':
-                return this.createFocusNodeElement();
-            case 'zoom-node':
-                return this.createZoomNodeElement();
         }
 
         if (item && typeof item === 'object' && item.constructor === Object && item.action && item.label) {
-            return this.createCallbackElement(item);
+            return this.createActionElement(item);
         }
     }
 
@@ -195,41 +234,46 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
     }
 
     private createDownloadElement(): HTMLElement {
-        return this.createButtonElement('Download', () => {
+        return this.createButtonElement('Download', (_params) => {
             // TODO: chart name
             this.scene.download('chart');
         });
     }
 
-    private createFocusNodeElement(): HTMLElement {
-        return this.createButtonElement('Focus Node', () => {
-            // TODO: call out to zoom module, without the expectation that it has been registered
-        });
-    }
-
-    private createZoomNodeElement(): HTMLElement {
-        return this.createButtonElement('Zoom Node', () => {
-            // TODO: call out to zoom module, without the expectation that it has been registered
-        });
-    }
-
-    private createCallbackElement({ label, action }: CustomContextMenuItem): HTMLElement {
+    private createActionElement({ id, label, action }: ContextMenuAction): HTMLElement {
+        if (ContextMenu.disabledActions.has(id)) {
+            return this.createDisabledElement(label);
+        }
         return this.createButtonElement(label, action);
     }
 
-    private createButtonElement(label: string, callback: () => void): HTMLElement {
+    private createButtonElement(label: string, callback: (params: ContextMenuActionParams) => void): HTMLElement {
         const el = document.createElement('button');
         el.classList.add(`${DEFAULT_CONTEXT_MENU_CLASS}__item`);
         el.innerHTML = label;
-        el.onclick = callback;
+        el.onclick = () => {
+            const params: ContextMenuActionParams = {
+                event: this.showEvent!,
+            };
+            callback(params);
+            this.hide();
+        };
         return el;
     }
 
-    update() {
+    private createDisabledElement(label: string): HTMLElement {
+        const el = document.createElement('button');
+        el.classList.add(`${DEFAULT_CONTEXT_MENU_CLASS}__item`);
+        el.disabled = true;
+        el.innerHTML = label;
+        return el;
+    }
+
+    public update() {
         //
     }
 
-    destroy() {
+    public destroy() {
         super.destroy();
 
         const { parentNode } = this.element;

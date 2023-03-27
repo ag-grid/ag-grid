@@ -1,12 +1,31 @@
 import { _ModuleSupport, _Scene } from 'ag-charts-community';
+import * as ContextMenu from '@ag-charts-enterprise/context-menu';
 
 import { ZoomPanner } from './zoomPanner';
 import { ZoomScroller } from './zoomScroller';
 import { ZoomSelector } from './zoomSelector';
+import {
+    constrainZoom,
+    definedZoomState,
+    pointToRatio,
+    scaleZoom,
+    scaleZoomCenter,
+    translateZoom,
+} from './zoomTransformers';
 import { DefinedZoomState } from './zoomTypes';
 import { ZoomRect } from './scenes/zoomRect';
 
+declare global {
+    interface EventTarget {
+        readonly clientHeight: number;
+        readonly clientWidth: number;
+    }
+}
+
 const { BOOLEAN, NUMBER, STRING_UNION, Validate } = _ModuleSupport;
+
+const CONTEXT_ZOOM_ACTION_ID = 'zoom-action';
+const CONTEXT_PAN_ACTION_ID = 'pan-action';
 
 export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
     @Validate(BOOLEAN)
@@ -83,6 +102,19 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
 
         // Add panning while zoomed method
         this.panner = new ZoomPanner();
+
+        // Add context menu zoom actions
+        ContextMenu._registerDefaultAction(
+            CONTEXT_ZOOM_ACTION_ID,
+            'Zoom to here',
+            (params: ContextMenu.ContextMenuActionParams) => this.onContextMenuZoomToHere(params)
+        );
+        ContextMenu._registerDefaultAction(
+            CONTEXT_PAN_ACTION_ID,
+            'Pan to here',
+            (params: ContextMenu.ContextMenuActionParams) => this.onContextMenuPanToHere(params)
+        );
+        ContextMenu._disableAction(CONTEXT_PAN_ACTION_ID);
     }
 
     update(): void {
@@ -99,9 +131,10 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     }
 
     private onDrag(event: _ModuleSupport.InteractionEvent<'drag'>) {
-        if (!this.seriesRect?.containsPoint(event.offsetX, event.offsetY)) {
-            return;
-        }
+        const isWithinSeriesRect = this.seriesRect?.containsPoint(event.offsetX, event.offsetY);
+        const isPrimaryMouseButton = (event.sourceEvent as MouseEvent).button === 0;
+        
+        if (!isWithinSeriesRect || !isPrimaryMouseButton) return;
 
         this.isDragging = true;
 
@@ -116,7 +149,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
             this.isPanningKeyPressed(event.sourceEvent as DragEvent)
         ) {
             const newZoom = this.panner.update(event, this.seriesRect, zoom);
-            this.updateZoomWithConstraints(newZoom);
+            this.updateZoom(newZoom);
             return;
         }
 
@@ -144,7 +177,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
             this.panner.stop();
         } else if (this.enableSelecting) {
             const newZoom = this.selector.stop(this.seriesRect, this.zoomManager.getZoom());
-            this.updateZoomWithConstraints(newZoom);
+            this.updateZoom(newZoom);
         }
 
         this.isDragging = false;
@@ -163,11 +196,54 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
             currentZoom
         );
 
-        this.updateZoomWithConstraints(newZoom);
+        this.updateZoom(newZoom);
     }
 
     private onLayoutComplete({ series: { rect } }: _ModuleSupport.LayoutCompleteEvent) {
         this.seriesRect = rect;
+    }
+
+    private onContextMenuZoomToHere({ event }: ContextMenu.ContextMenuActionParams) {
+        if (!this.seriesRect || !event || !event.target) return;
+
+        const zoom = definedZoomState(this.zoomManager.getZoom());
+        const origin = pointToRatio(this.seriesRect, event.clientX, event.clientY);
+
+        const scaledOriginX = origin.x * (zoom.x.max - zoom.x.min);
+        const scaledOriginY = origin.y * (zoom.y.max - zoom.y.min);
+
+        let newZoom = {
+            x: { min: origin.x - 0.5, max: origin.x + 0.5 },
+            y: { min: origin.y - 0.5, max: origin.y + 0.5 },
+        };
+
+        newZoom = scaleZoomCenter(newZoom, this.minXRatio, this.minYRatio);
+        newZoom = translateZoom(newZoom, zoom.x.min - origin.x + scaledOriginX, zoom.y.min - origin.y + scaledOriginY);
+
+        this.updateZoom(constrainZoom(newZoom));
+    }
+
+    private onContextMenuPanToHere({ event }: ContextMenu.ContextMenuActionParams) {
+        if (!this.seriesRect || !event || !event.target) return;
+
+        const zoom = definedZoomState(this.zoomManager.getZoom());
+        const origin = pointToRatio(this.seriesRect, event.clientX, event.clientY);
+
+        const scaleX = zoom.x.max - zoom.x.min;
+        const scaleY = zoom.y.max - zoom.y.min;
+
+        const scaledOriginX = origin.x * (zoom.x.max - zoom.x.min);
+        const scaledOriginY = origin.y * (zoom.y.max - zoom.y.min);
+
+        let newZoom = {
+            x: { min: origin.x - 0.5, max: origin.x + 0.5 },
+            y: { min: origin.y - 0.5, max: origin.y + 0.5 },
+        };
+
+        newZoom = scaleZoomCenter(newZoom, scaleX, scaleY);
+        newZoom = translateZoom(newZoom, zoom.x.min - origin.x + scaledOriginX, zoom.y.min - origin.y + scaledOriginY);
+
+        this.updateZoom(constrainZoom(newZoom));
     }
 
     private isPanningKeyPressed(event: MouseEvent) {
@@ -191,12 +267,39 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         return this.axes === 'y' || this.axes === 'xy';
     }
 
-    private updateZoomWithConstraints(zoom: DefinedZoomState) {
+    private isMinZoom(zoom: DefinedZoomState): boolean {
+        return (
+            Math.round((zoom.x.max - zoom.x.min) * 100) / 100 <= this.minXRatio &&
+            Math.round((zoom.y.max - zoom.y.min) * 100) / 100 <= this.minYRatio
+        );
+    }
+
+    private isMaxZoom(zoom: DefinedZoomState): boolean {
+        return zoom.x.min === 0 && zoom.x.max === 1 && zoom.y.min === 0 && zoom.y.max === 1;
+    }
+
+    private updateZoom(zoom: DefinedZoomState) {
         const dx = Math.round((zoom.x.max - zoom.x.min) * 100) / 100;
         const dy = Math.round((zoom.y.max - zoom.y.min) * 100) / 100;
 
         // Discard the zoom update if it would take us below either min ratio
-        if (dx < this.minXRatio || dy < this.minYRatio) return;
+        if (dx < this.minXRatio || dy < this.minYRatio) {
+            ContextMenu._disableAction(CONTEXT_ZOOM_ACTION_ID);
+            ContextMenu._enableAction(CONTEXT_PAN_ACTION_ID);
+            return;
+        }
+
+        if (this.isMinZoom(zoom)) {
+            ContextMenu._disableAction(CONTEXT_ZOOM_ACTION_ID);
+        } else {
+            ContextMenu._enableAction(CONTEXT_ZOOM_ACTION_ID);
+        }
+
+        if (this.isMaxZoom(zoom)) {
+            ContextMenu._disableAction(CONTEXT_PAN_ACTION_ID);
+        } else {
+            ContextMenu._enableAction(CONTEXT_PAN_ACTION_ID);
+        }
 
         this.zoomManager.updateZoom('zoom', zoom);
     }

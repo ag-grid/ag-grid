@@ -93,8 +93,9 @@
     "typescript": "~4.0.8"
   },
   "dependencies": {
-    "ag-charts-community": "~7.2.0",
-    "@ag-charts-enterprise/core": "~7.2.0"
+    "@ag-charts-enterprise/context-menu": "~7.2.0",
+    "@ag-charts-enterprise/core": "~7.2.0",
+    "ag-charts-community": "~7.2.0"
   },
   "publishConfig": {
     "access": "private"
