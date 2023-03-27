@@ -1,4 +1,10 @@
-import { _Scene, _Util, _ModuleSupport, AgCrosshairLabelRendererResult } from 'ag-charts-community';
+import {
+    _Scene,
+    _Util,
+    _ModuleSupport,
+    AgCrosshairLabelRendererResult,
+    AgCartesianAxisPosition,
+} from 'ag-charts-community';
 import { CrosshairLabel, LabelMeta } from './crosshairLabel';
 
 const { Group, Line, BBox } = _Scene;
@@ -28,12 +34,13 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
 
     readonly label: CrosshairLabel;
     private seriesRect: _Scene.BBox = new BBox(0, 0, 0, 0);
+    private bounds: _Scene.BBox = new BBox(0, 0, 0, 0);
     private visible: boolean = false;
     private axisCtx: _ModuleSupport.AxisContext;
     private axisLayout?: _ModuleSupport.AxisLayout & {
         id: string;
     };
-    private crosshairGroup: _Scene.Group = new Group({ layer: true, zIndex: Layers.AXIS_ZINDEX });
+    private crosshairGroup: _Scene.Group = new Group({ layer: true, zIndex: Layers.SERIES_CROSSHAIR_ZINDEX });
     private lineNode: _Scene.Line = this.crosshairGroup.appendChild(new Line());
 
     constructor(private readonly ctx: _ModuleSupport.ModuleContextWithParent<_ModuleSupport.AxisContext>) {
@@ -60,16 +67,15 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         this.destroyFns.push(() => this.label.destroy());
     }
 
-    private layout({ series: { rect, visible }, axes }: _ModuleSupport.LayoutCompleteEvent) {
+    private layout({ series: { rect, paddedRect, visible }, axes }: _ModuleSupport.LayoutCompleteEvent) {
         this.hideCrosshair();
 
-        if (!(visible && rect && axes)) {
+        if (!(visible && axes)) {
             this.visible = false;
             return;
         }
 
         this.visible = true;
-
         this.seriesRect = rect;
 
         const { position: axisPosition, axisId } = this.axisCtx;
@@ -81,17 +87,14 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         }
 
         this.axisLayout = axisLayout;
-
         const padding = axisLayout.gridPadding + axisLayout.seriesAreaPadding;
+        this.bounds = this.buildBounds(rect, axisPosition, padding);
 
-        const xPaddingOffset = axisPosition === 'left' ? -padding : 0;
-        const yPaddingOffset = axisPosition === 'bottom' ? padding : 0;
-
-        const { crosshairGroup } = this;
-        crosshairGroup.translationX = Math.round(rect.x) + xPaddingOffset;
-        crosshairGroup.translationY =
-            Math.round(axisPosition === 'top' || axisPosition === 'bottom' ? rect.y + rect.height : rect.y) +
-            yPaddingOffset;
+        const { crosshairGroup, bounds } = this;
+        crosshairGroup.translationX = Math.round(bounds.x);
+        crosshairGroup.translationY = Math.round(
+            axisPosition === 'top' || axisPosition === 'bottom' ? bounds.y + bounds.height : bounds.y
+        );
 
         const rotation = axisPosition === 'top' || axisPosition === 'bottom' ? -Math.PI / 2 : 0;
         crosshairGroup.rotation = rotation;
@@ -99,10 +102,20 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         this.updateLine();
     }
 
+    private buildBounds(rect: _Scene.BBox, axisPosition: AgCartesianAxisPosition, padding: number): _Scene.BBox {
+        const bounds = rect.clone();
+        bounds.x += axisPosition === 'left' ? -padding : 0;
+        bounds.y += axisPosition === 'top' ? -padding : 0;
+        bounds.width += axisPosition === 'left' || axisPosition === 'right' ? padding : 0;
+        bounds.height += axisPosition === 'top' || axisPosition === 'bottom' ? padding : 0;
+
+        return bounds;
+    }
+
     private updateLine() {
         const {
             lineNode: line,
-            seriesRect,
+            bounds,
             stroke,
             strokeWidth,
             strokeOpacity,
@@ -123,10 +136,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
 
         line.y1 = line.y2 = 0;
         line.x1 = 0;
-        line.x2 =
-            (axisCtx.direction === 'x' ? seriesRect.height : seriesRect.width) +
-            axisLayout.gridPadding +
-            axisLayout.seriesAreaPadding;
+        line.x2 = axisCtx.direction === 'x' ? bounds.height : bounds.width;
     }
 
     private getAxisValue(position: number): string {
@@ -180,6 +190,15 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
 
         const { currentHighlight } = event;
         if (visible && currentHighlight) {
+            const hasCrosshair =
+                currentHighlight.series.xAxis.id === axisCtx.axisId ||
+                currentHighlight.series.yAxis.id === axisCtx.axisId;
+
+            if (!hasCrosshair) {
+                this.hideCrosshair();
+                return;
+            }
+
             crosshairGroup.visible = true;
 
             const { xKey = '', yKey = '', datum } = currentHighlight;
@@ -231,20 +250,18 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     }
 
     private showLabel(x: number, y: number, value: string) {
-        const { axisCtx, seriesRect, label, axisLayout } = this;
+        const { axisCtx, bounds, label, axisLayout } = this;
 
         if (!axisLayout) {
             return;
         }
 
         const {
-            gridPadding,
-            seriesAreaPadding,
             label: { padding: labelPadding },
             tickSize,
         } = axisLayout;
 
-        const padding = gridPadding + seriesAreaPadding + labelPadding + tickSize;
+        const padding = labelPadding + tickSize;
 
         const html = this.getLabelHtml(value);
         label.setLabelHtml(html);
@@ -254,8 +271,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         if (axisCtx.direction === 'x') {
             const xOffset = -labelBBox.width / 2;
             const yOffset = axisCtx.position === 'bottom' ? 0 : -labelBBox.height;
-            const fixedY =
-                axisCtx.position === 'bottom' ? seriesRect.y + seriesRect.height + padding : seriesRect.y - padding;
+            const fixedY = axisCtx.position === 'bottom' ? bounds.y + bounds.height + padding : bounds.y - padding;
             labelMeta = {
                 x: x + xOffset,
                 y: fixedY + yOffset,
@@ -263,8 +279,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         } else {
             const yOffset = -labelBBox.height / 2;
             const xOffset = axisCtx.position === 'right' ? 0 : -labelBBox.width;
-            const fixedX =
-                axisCtx.position === 'right' ? seriesRect.x + seriesRect.width + padding : seriesRect.x - padding;
+            const fixedX = axisCtx.position === 'right' ? bounds.x + bounds.width + padding : bounds.x - padding;
             labelMeta = {
                 x: fixedX + xOffset,
                 y: y + yOffset,
