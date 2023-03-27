@@ -294,7 +294,7 @@ export class Tooltip {
         const classList = (event.sourceEvent as MouseEvent).relatedTarget?.classList;
         return (
             classList &&
-            (classList.contains(DEFAULT_TOOLTIP_CLASS) || classList.contains(`${DEFAULT_TOOLTIP_CLASS}content`))
+            (classList.contains(DEFAULT_TOOLTIP_CLASS) || classList.contains(`${DEFAULT_TOOLTIP_CLASS}-content`))
         );
     }
 }
