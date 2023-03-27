@@ -1,15 +1,4 @@
 (function (global) {
-    // simplified version of Object.assign for es3
-    function assign() {
-        var result = {};
-        for (var i = 0, len = arguments.length; i < len; i++) {
-            var arg = arguments[i];
-            for (var prop in arg) {
-                result[prop] = arg[prop];
-            }
-        }
-        return result;
-    }
 
     var sjsPaths = {};
     if (typeof systemJsPaths !== "undefined") {
@@ -19,31 +8,29 @@
     System.config({
         transpiler: 'plugin-babel',
         defaultExtension: 'js',
-        paths: assign({
+        paths: {
             // paths serve as alias
             "npm:": "https://cdn.jsdelivr.net/npm/",
-        }, sjsPaths),
-        map: assign(
+            ...sjsPaths,
+        },
+        map: 
             {
-                // babel transpiler
-                'plugin-babel': 'npm:systemjs-plugin-babel@0.0.25/plugin-babel.js',
-                'systemjs-babel-build': 'npm:systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
+            // babel transpiler
+            'plugin-babel': 'npm:systemjs-plugin-babel@0.0.25/plugin-babel.js',
+            'systemjs-babel-build': 'npm:systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
 
-                // css plugin
-                css: boilerplatePath + "css.js",
-                // css: 'npm:systemjs-plugin-css@0.1.37/css.js',
+            css: boilerplatePath + "css.js",
 
-                // vuejs
-                'vue': 'npm:vue@3.2.29/dist/vue.esm-browser.js',
-                '@vue/reactivity': 'npm:@vue/reactivity@3.0.0/dist/reactivity.esm-browser.prod.js',
+            // vuejs
+            'vue': 'npm:vue@3.2.29/dist/vue.esm-browser.js',
+            '@vue/reactivity': 'npm:@vue/reactivity@3.0.0/dist/reactivity.esm-browser.prod.js',
+            // vue class component
+            'vue-class-component': 'npm:vue-class-component@^8.0.0-beta.3/dist/vue-class-component.cjs.js',
 
-                // vue class component
-                'vue-class-component': 'npm:vue-class-component@^8.0.0-beta.3/dist/vue-class-component.cjs.js',
-
-                app: appLocation + 'app'
-            },
-            systemJsMap
-        ), // systemJsMap comes from index.html
+            app: appLocation + 'app',
+            // systemJsMap comes from index.html
+            ...systemJsMap
+        },
 
         packages: {
             'vue': {
