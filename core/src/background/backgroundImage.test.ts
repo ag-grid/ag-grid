@@ -177,12 +177,12 @@ describe('backgroundImage', () => {
             const options = {
                 title: { text: 'Background image in the center' },
                 background: {
-                    // image: {
-                    //     url: SMALL_IMAGE,
-                    //     width: 100,
-                    //     height: 100,
-                    //     opacity: 1,
-                    // },
+                    image: {
+                        url: SMALL_IMAGE,
+                        width: 100,
+                        height: 100,
+                        opacity: 1,
+                    },
                 },
             };
             prepareTestOptions(options);

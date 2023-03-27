@@ -1,12 +1,14 @@
 import { _ModuleSupport, _Util, _Scene } from 'ag-charts-community';
 
+const { Image } = _Scene;
+
 export class BackgroundImage {
     readonly node: _Scene.Image;
     private readonly _image: HTMLImageElement = document.createElement('img');
     private loadedSynchronously: boolean = true;
 
     constructor() {
-        this.node = new _Scene.Image(this._image);
+        this.node = new Image(this._image);
         this._image.onload = this.onImageLoad;
     }
 

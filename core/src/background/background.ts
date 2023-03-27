@@ -1,21 +1,24 @@
 import { _ModuleSupport, _Util, _Scene } from 'ag-charts-community';
 import { BackgroundImage } from './backgroundImage';
 
+const { ActionOnSet, Validate, ProxyPropertyOnWrite, BOOLEAN, OPT_COLOR_STRING } = _ModuleSupport;
+const { Group, Rect } = _Scene;
+
 export class Background extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
     private readonly node: _Scene.Group;
     private readonly rectNode: _Scene.Rect;
     private readonly scene: _Scene.Scene;
     private readonly updateService: _ModuleSupport.UpdateService;
 
-    @_ModuleSupport.Validate(_ModuleSupport.BOOLEAN)
-    @_ModuleSupport.ProxyPropertyOnWrite('node', 'visible')
+    @Validate(BOOLEAN)
+    @ProxyPropertyOnWrite('node', 'visible')
     visible: boolean;
 
-    @_ModuleSupport.Validate(_ModuleSupport.OPT_COLOR_STRING)
-    @_ModuleSupport.ProxyPropertyOnWrite('rectNode', 'fill')
+    @Validate(OPT_COLOR_STRING)
+    @ProxyPropertyOnWrite('rectNode', 'fill')
     fill: string | undefined;
 
-    @_ModuleSupport.ActionOnSet<Background>({
+    @ActionOnSet<Background>({
         newValue(image: BackgroundImage) {
             this.node.appendChild(image.node);
             image.onload = this.onImageLoad;
@@ -33,8 +36,8 @@ export class Background extends _ModuleSupport.BaseModuleInstance implements _Mo
         this.scene = ctx.scene;
         this.updateService = ctx.updateService;
 
-        this.node = this.scene.root!.children.find((node) => node instanceof _Scene.Group && node.name === 'background') as _Scene.Group;
-        this.rectNode = this.node.children.find((node) => node instanceof _Scene.Rect) as _Scene.Rect;
+        this.node = this.scene.root!.children.find((node) => node instanceof Group && node.name === 'background') as _Scene.Group;
+        this.rectNode = this.node.children.find((node) => node instanceof Rect) as _Scene.Rect;
         this.visible = true;
 
         const layoutHandle = ctx.layoutService.addListener('layout-complete', () => this.onLayoutComplete());
