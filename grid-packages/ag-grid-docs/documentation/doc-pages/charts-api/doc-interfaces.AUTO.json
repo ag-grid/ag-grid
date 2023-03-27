@@ -5285,10 +5285,10 @@
   "AxisLabelLayout": {},
   "AxisLayout": {
     "rect": { "type": { "returnType": "BBox", "optional": false } },
+    "gridPadding": { "type": { "returnType": "number", "optional": false } },
     "seriesAreaPadding": {
       "type": { "returnType": "number", "optional": false }
     },
-    "gridPadding": { "type": { "returnType": "number", "optional": false } },
     "tickSize": { "type": { "returnType": "number", "optional": false } },
     "label": { "type": { "returnType": "AxisLabelLayout", "optional": false } }
   },

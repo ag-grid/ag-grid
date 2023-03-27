@@ -13,8 +13,8 @@ export type AxisLabelLayout = {
 
 export interface AxisLayout {
     rect: BBox;
-    seriesAreaPadding: number;
     gridPadding: number;
+    seriesAreaPadding: number;
     tickSize: number;
     label: AxisLabelLayout;
 }

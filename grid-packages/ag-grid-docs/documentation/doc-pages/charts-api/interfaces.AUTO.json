@@ -3529,11 +3529,12 @@
       "AXIS_ZINDEX = 20",
       "SERIES_CROSSLINE_RANGE_ZINDEX = 30",
       "SERIES_LAYER_ZINDEX = 500",
-      "SERIES_LABEL_ZINDEX = 1000",
+      "SERIES_CROSSHAIR_ZINDEX = 1000",
+      "SERIES_LABEL_ZINDEX = 1500",
       "SERIES_CROSSLINE_LINE_ZINDEX = 2500",
       "LEGEND_ZINDEX = 3000"
     ],
-    "docs": [null, null, null, null, null, null, null, null]
+    "docs": [null, null, null, null, null, null, null, null, null]
   },
   "LayoutStage": { "meta": { "isTypeAlias": true }, "type": "'before-series'" },
   "AxisLabelLayout": {
@@ -3544,8 +3545,8 @@
     "meta": {},
     "type": {
       "rect": "BBox",
-      "seriesAreaPadding": "number",
       "gridPadding": "number",
+      "seriesAreaPadding": "number",
       "tickSize": "number",
       "label": "AxisLabelLayout"
     }
