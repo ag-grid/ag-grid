@@ -13,8 +13,6 @@ const defaultTooltipCss = `
     position: fixed;
     left: 0px;
     top: 0px;
-    user-select: none;
-    pointer-events: none;
     white-space: nowrap;
     z-index: 99999;
     font: 12px Verdana, sans-serif;
@@ -211,7 +209,7 @@ export class Tooltip {
     private updateClass(visible?: boolean, constrained?: boolean) {
         const { element, class: newClass, lastClass } = this;
 
-        const wasVisible = !element.classList.contains(`${DEFAULT_TOOLTIP_CLASS}-hidden`);
+        const wasVisible = this.isVisible();
 
         const toggleClass = (name: string, include: boolean) => {
             const className = `${DEFAULT_TOOLTIP_CLASS}-${name}`;
@@ -290,5 +288,13 @@ export class Tooltip {
             window.clearTimeout(this.showTimeout);
         }
         this.updateClass(visible, this.constrained);
+    }
+
+    pointerLeftOntoTooltip(event: InteractionEvent<'leave'>): boolean {
+        const classList = (event.sourceEvent as MouseEvent).relatedTarget?.classList;
+        return (
+            classList &&
+            (classList.contains(DEFAULT_TOOLTIP_CLASS) || classList.contains(`${DEFAULT_TOOLTIP_CLASS}-content`))
+        );
     }
 }
