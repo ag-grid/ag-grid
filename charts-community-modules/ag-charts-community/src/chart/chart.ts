@@ -64,7 +64,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     readonly scene: Scene;
     readonly seriesRoot = new Group({ name: `${this.id}-Series-root` });
-    readonly background: Background = new Background(() => this.update(ChartUpdateType.SCENE_RENDER));
+    readonly background: Background = new Background();
     readonly legend: Legend;
     readonly tooltip: Tooltip;
     readonly overlays: ChartOverlays;
