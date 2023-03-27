@@ -5296,6 +5296,12 @@
     "type": {
       "type": { "returnType": "'layout-complete'", "optional": false }
     },
+    "chart": {
+      "type": {
+        "returnType": "{ width: number; height: number }",
+        "optional": false
+      }
+    },
     "series": {
       "type": {
         "returnType": "{ rect: BBox; paddedRect: BBox; visible: boolean }",
@@ -6014,6 +6020,9 @@
   },
   "BaseModule": {
     "optionsKey": { "type": { "returnType": "string", "optional": false } },
+    "packageType": {
+      "type": { "returnType": "'community' | 'enterprise'", "optional": false }
+    },
     "chartTypes": {
       "type": {
         "returnType": "('cartesian' | 'polar' | 'hierarchy')[]",
@@ -6032,6 +6041,9 @@
     },
     "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
     "optionsKey": { "type": { "returnType": "string", "optional": false } },
+    "packageType": {
+      "type": { "returnType": "'community' | 'enterprise'", "optional": false }
+    },
     "chartTypes": {
       "type": {
         "returnType": "('cartesian' | 'polar' | 'hierarchy')[]",
@@ -6050,6 +6062,9 @@
     },
     "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
     "optionsKey": { "type": { "returnType": "string", "optional": false } },
+    "packageType": {
+      "type": { "returnType": "'community' | 'enterprise'", "optional": false }
+    },
     "chartTypes": {
       "type": {
         "returnType": "('cartesian' | 'polar' | 'hierarchy')[]",

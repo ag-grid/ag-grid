@@ -1,9 +1,9 @@
-import { Rect } from '../scene/shape/rect';
-import { Group } from '../scene/group';
-import { BaseModuleInstance, ModuleContext, ModuleInstance } from '../util/module';
-import { ProxyPropertyOnWrite } from '../util/proxy';
-import { BOOLEAN, OPT_COLOR_STRING, Validate } from '../util/validation';
-import { LayoutCompleteEvent } from './layout/layoutService';
+import { Rect } from '../../scene/shape/rect';
+import { Group } from '../../scene/group';
+import { BaseModuleInstance, ModuleContext, ModuleInstance } from '../../util/module';
+import { ProxyPropertyOnWrite } from '../../util/proxy';
+import { BOOLEAN, OPT_COLOR_STRING, Validate } from '../../util/validation';
+import { LayoutCompleteEvent } from '../layout/layoutService';
 
 export class Background extends BaseModuleInstance implements ModuleInstance {
     private node: Group;
@@ -15,7 +15,6 @@ export class Background extends BaseModuleInstance implements ModuleInstance {
         this.node = new Group({ name: 'background' });
         this.rectNode = new Rect();
         this.node.appendChild(this.rectNode);
-        this.fill = 'white';
         this.visible = true;
 
         ctx.scene.root?.insertBefore(this.node, ctx.scene.root.children[0]);

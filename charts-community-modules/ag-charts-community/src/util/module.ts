@@ -46,6 +46,7 @@ export interface ModuleInstanceMeta<M extends ModuleInstance = ModuleInstance> {
 
 interface BaseModule {
     optionsKey: string;
+    packageType: 'community' | 'enterprise';
     chartTypes: ('cartesian' | 'polar' | 'hierarchy')[];
 }
 
@@ -75,5 +76,33 @@ export abstract class BaseModuleInstance {
 
 export const REGISTERED_MODULES: Module[] = [];
 export function registerModule(module: Module) {
+    // Skip if the module is already registered
+    const sameModule = REGISTERED_MODULES.find((other) => {
+        return (
+            module.type === other.type &&
+            module.optionsKey === other.optionsKey &&
+            module.packageType === other.packageType
+        );
+    });
+    if (sameModule) {
+        return;
+    }
+
+    // Replace the community module with an enterprise version
+    if (module.packageType === 'enterprise') {
+        const communityModuleIndex = REGISTERED_MODULES.findIndex((other) => {
+            return (
+                module.type === other.type &&
+                module.optionsKey === other.optionsKey &&
+                other.packageType === 'community'
+            );
+        });
+        if (communityModuleIndex >= 0) {
+            REGISTERED_MODULES.splice(communityModuleIndex, 1, module);
+            return;
+        }
+    }
+
+    // Simply register the module
     REGISTERED_MODULES.push(module);
 }
