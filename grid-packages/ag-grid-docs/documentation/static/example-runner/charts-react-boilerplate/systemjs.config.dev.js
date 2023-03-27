@@ -21,6 +21,7 @@
             'react-dom/client': 'npm:react-dom@18.2.0',
             redux: 'npm:redux@3.6.0',
             'react-redux': 'npm:react-redux@5.0.6',
+            'prop-types': 'npm:prop-types@15.8.1',
 
             app: 'app',
             // systemJsMap comes from index.html
@@ -41,6 +42,11 @@
                 main: './dist/react-redux.min.js',
                 defaultExtension: 'js'
             },
+            'prop-types': {
+                main: './prop-types.min.js',
+                defaultExtension: 'js',
+            },
+
             app: {
                 defaultExtension: 'jsx'
             },
