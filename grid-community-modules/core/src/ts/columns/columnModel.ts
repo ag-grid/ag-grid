@@ -3744,14 +3744,11 @@ export class ColumnModel extends BeanStub {
             this.dispatchColumnResizedEvent(changedColumns, true, source, flexingColumns);
         }
 
-        // if the user sets rowData directly into GridOptions, then the row data is set before
-        // grid is attached to the DOM. this means the columns are not flexed, and then the rows
-        // have the wrong height (as they depend on column widths). so once the columns have
-        // been flexed for the first time (only happens once grid is attached to DOM, as dependency
-        // on getting the grid width, which only happens after attached after ResizeObserver fires)
-        // we get get rows to re-calc their heights.
+        // If rowData has been provided directly into GridOptions and auto row height is active then
+        // we can improve the initial render, i.e quicker to stable state, by calling resetRowHeights
+        // directly here instead of waiting for the resize observer to fire.
         if (!this.flexColsCalculatedAtLestOnce) {
-            if (this.gridOptionsService.isRowModelType('clientSide')) {
+            if (this.autoHeightActive && this.gridOptionsService.isRowModelType('clientSide')) {
                 (this.rowModel as IClientSideRowModel).resetRowHeights();
             }
             this.flexColsCalculatedAtLestOnce = true;
