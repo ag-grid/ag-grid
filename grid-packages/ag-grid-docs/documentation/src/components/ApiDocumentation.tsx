@@ -541,10 +541,8 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                 role="presentation"
             >
                 {showAdditionalDetails && (
-                    <div className={styles['reference__expander']}>
-                        <svg className={classnames({ 'fa-rotate-90': isExpanded })}>
-                            <use href="#menu-item" />
-                        </svg>
+                    <div className={classnames(styles['reference__expander'], { [styles.isExpanded]: isExpanded })}>
+                        <Icon name="chevronRight" />
                     </div>
                 )}
             </td>

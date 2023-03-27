@@ -70,6 +70,7 @@
     &__expander-cell {
         padding: 0 !important;
         width: 1.1rem !important;
+
         + td {
             width: 280px;
         }
@@ -85,12 +86,17 @@
         background-color: $light;
         height: 100%;
         padding: 0 1px;
+        cursor: pointer;
 
         svg {
-            transition: all 0.5s;
-            height: 0.8rem;
-            width: 1rem;
+            width: 1em;
+            margin-left: 0.05em;
             vertical-align: middle;
+            transition: transform 0.33s ease-in-out;
+        }
+
+        &.isExpanded svg {
+            transform: rotate(90deg);
         }
     }
 
