@@ -1,7 +1,7 @@
 import { BBox } from '../../scene/bbox';
 import { Listeners } from '../../util/listeners';
 
-export type LayoutStage = 'before-series';
+export type LayoutStage = 'start-layout' | 'before-series';
 
 export type AxisLabelLayout = {
     baseline: 'hanging' | 'bottom' | 'middle';

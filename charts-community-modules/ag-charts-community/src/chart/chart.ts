@@ -265,6 +265,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
             this._lastAutoSize = [width, height];
             this.resize(width, height);
         });
+        this.layoutService.addListener('start-layout', (e) => this.positionPadding(e.shrinkRect));
+        this.layoutService.addListener('start-layout', (e) => this.positionCaptions(e.shrinkRect));
 
         this.tooltip = new Tooltip(this.scene.canvas.element, document, document.body);
         this.tooltipManager = new TooltipManager(this.tooltip);
@@ -273,7 +275,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
             this.interactionManager,
             this.cursorManager,
             this.highlightManager,
-            this.tooltipManager
+            this.tooltipManager,
+            this.layoutService
         );
         this.overlays = new ChartOverlays(this.element);
         this.highlight = new ChartHighlight();
@@ -349,6 +352,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this._pendingFactoryUpdates.splice(0);
 
         this.tooltip.destroy();
+        this.legend.destroy();
         SizeMonitor.unobserve(this.element);
 
         for (const [key, module] of Object.entries(this.modules)) {
@@ -764,9 +768,32 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.legend.data = legendData;
     }
 
-    abstract performLayout(): Promise<void>;
+    protected async performLayout() {
+        this.scene.root!.visible = true;
 
-    protected positionCaptions(shrinkRect: BBox): BBox {
+        const {
+            scene: { width, height },
+        } = this;
+
+        let shrinkRect = new BBox(0, 0, width, height);
+        ({ shrinkRect } = this.layoutService.dispatchPerformLayout('start-layout', { shrinkRect }));
+        ({ shrinkRect } = this.layoutService.dispatchPerformLayout('before-series', { shrinkRect }));
+
+        return shrinkRect;
+    }
+
+    private positionPadding(shrinkRect: BBox) {
+        const { padding } = this;
+
+        shrinkRect.shrink(padding.left, 'left');
+        shrinkRect.shrink(padding.top, 'top');
+        shrinkRect.shrink(padding.right, 'right');
+        shrinkRect.shrink(padding.bottom, 'bottom');
+
+        return { shrinkRect };
+    }
+
+    private positionCaptions(shrinkRect: BBox) {
         const { title, subtitle, footnote } = this;
         const newShrinkRect = shrinkRect.clone();
 
@@ -817,104 +844,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             }
         }
 
-        return newShrinkRect;
-    }
-
-    protected positionLegend(shrinkRect: BBox): BBox {
-        const { legend } = this;
-        const newShrinkRect = shrinkRect.clone();
-
-        if (!legend.enabled || !legend.data.length) {
-            return newShrinkRect;
-        }
-
-        const [legendWidth, legendHeight] = this.calculateLegendDimensions(shrinkRect);
-
-        let translationX = 0;
-        let translationY = 0;
-
-        legend.translationX = 0;
-        legend.translationY = 0;
-        legend.performLayout(legendWidth, legendHeight);
-        const legendBBox = legend.computePagedBBox();
-
-        const calculateTranslationPerpendicularDimension = () => {
-            switch (legend.position) {
-                case 'top':
-                    return 0;
-                case 'bottom':
-                    return shrinkRect.height - legendBBox.height;
-                case 'left':
-                    return 0;
-                case 'right':
-                default:
-                    return shrinkRect.width - legendBBox.width;
-            }
-        };
-        if (legend.visible) {
-            switch (legend.position) {
-                case 'top':
-                case 'bottom':
-                    translationX = (shrinkRect.width - legendBBox.width) / 2;
-                    translationY = calculateTranslationPerpendicularDimension();
-                    newShrinkRect.shrink(legendBBox.height, legend.position);
-                    break;
-
-                case 'left':
-                case 'right':
-                default:
-                    translationX = calculateTranslationPerpendicularDimension();
-                    translationY = (shrinkRect.height - legendBBox.height) / 2;
-                    newShrinkRect.shrink(legendBBox.width, legend.position);
-            }
-
-            // Round off for pixel grid alignment to work properly.
-            legend.translationX = Math.floor(-legendBBox.x + shrinkRect.x + translationX);
-            legend.translationY = Math.floor(-legendBBox.y + shrinkRect.y + translationY);
-        }
-
-        return newShrinkRect;
-    }
-
-    private calculateLegendDimensions(shrinkRect: BBox): [number, number] {
-        const { legend } = this;
-        const { width, height } = shrinkRect;
-
-        const aspectRatio = width / height;
-        const maxCoefficient = 0.5;
-        const minHeightCoefficient = 0.2;
-        const minWidthCoefficient = 0.25;
-
-        let legendWidth = 0;
-        let legendHeight = 0;
-
-        switch (legend.position) {
-            case 'top':
-            case 'bottom':
-                // A horizontal legend should take maximum between 20 to 50 percent of the chart height if height is larger than width
-                // and maximum 20 percent of the chart height if height is smaller than width.
-                const heightCoefficient =
-                    aspectRatio < 1
-                        ? Math.min(maxCoefficient, minHeightCoefficient * (1 / aspectRatio))
-                        : minHeightCoefficient;
-                legendWidth = legend.maxWidth ? Math.min(legend.maxWidth, width) : width;
-                legendHeight = legend.maxHeight
-                    ? Math.min(legend.maxHeight, height)
-                    : Math.round(height * heightCoefficient);
-                break;
-
-            case 'left':
-            case 'right':
-            default:
-                // A vertical legend should take maximum between 25 to 50 percent of the chart width if width is larger than height
-                // and maximum 25 percent of the chart width if width is smaller than height.
-                const widthCoefficient =
-                    aspectRatio > 1 ? Math.min(maxCoefficient, minWidthCoefficient * aspectRatio) : minWidthCoefficient;
-                legendWidth = legend.maxWidth ? Math.min(legend.maxWidth, width) : Math.round(width * widthCoefficient);
-                legendHeight = legend.maxHeight ? Math.min(legend.maxHeight, height) : height;
-        }
-
-        return [legendWidth, legendHeight];
+        return { shrinkRect: newShrinkRect };
     }
 
     // Should be available after the first layout.

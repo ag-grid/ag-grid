@@ -15,28 +15,9 @@ export class HierarchyChart extends Chart {
     protected _data: any = {};
 
     async performLayout() {
-        this.scene.root!!.visible = true;
+        const shrinkRect = await super.performLayout();
 
-        const {
-            scene: { width, height },
-            legend,
-            padding,
-            seriesAreaPadding,
-        } = this;
-
-        let shrinkRect = new BBox(0, 0, width, height);
-        shrinkRect.shrink(padding.left, 'left');
-        shrinkRect.shrink(padding.top, 'top');
-        shrinkRect.shrink(padding.right, 'right');
-        shrinkRect.shrink(padding.bottom, 'bottom');
-
-        shrinkRect = this.positionCaptions(shrinkRect);
-        shrinkRect = this.positionLegend(shrinkRect);
-
-        if (legend.visible && legend.enabled && legend.data.length) {
-            const legendPadding = legend.spacing;
-            shrinkRect.shrink(legendPadding, legend.position);
-        }
+        const { seriesAreaPadding } = this;
 
         shrinkRect.shrink(seriesAreaPadding.left, 'left');
         shrinkRect.shrink(seriesAreaPadding.top, 'top');
@@ -54,5 +35,7 @@ export class HierarchyChart extends Chart {
         seriesRoot.setClipRectInGroupCoordinateSpace(
             new BBox(shrinkRect.x, shrinkRect.y, shrinkRect.width, shrinkRect.height)
         );
+
+        return shrinkRect;
     }
 }
