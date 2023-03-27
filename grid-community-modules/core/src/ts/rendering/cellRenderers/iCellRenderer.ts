@@ -27,10 +27,13 @@ export interface ICellRendererParams<TData = any, TValue = any, TContext = any> 
     eGridCell: HTMLElement;
     /** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */
     eParentOfValue: HTMLElement;
+    // return should be type `TValue`. Change in v30
     /** Convenience function to get most recent up to date value. */
     getValue?: () => any;
+    // `value` should be type `TValue`. Change in v30
     /** Convenience function to set the value. */
     setValue?: (value: any) => void;
+    // `value` should be type `TValue`. Return should be type `string`. Change in v30
     /** Convenience function to format a value using the column's formatter. */
     formatValue?: (value: any) => any;
     /** Convenience function to refresh the cell. */

@@ -540,7 +540,9 @@ export interface FullWidthCellKeyPressEvent<TData = any, TContext = any> extends
 /** CELL EVENTS */
 /**------------*/
 export interface CellEvent<TData = any, TValue = any> extends RowEvent<TData> {
+    // `Column` should be typed `TValue`. Change in v30
     column: Column;
+    // `ColDef` should be typed `TValue`. Change in v30
     colDef: ColDef<TData>;
     /** The value for the cell if available otherwise undefined. */
     value: TValue | undefined;
@@ -548,7 +550,9 @@ export interface CellEvent<TData = any, TValue = any> extends RowEvent<TData> {
 
 /** Use for cell events that will always have a value and data property. */
 interface CellWithDataEvent<TData = any, TValue = any> extends RowWithDataEvent<TData> {
+    // `Column` should be typed `TValue`. Change in v30
     column: Column;
+    // `ColDef` should be typed `TValue`. Change in v30
     colDef: ColDef<TData>;
     /** The value for the cell */
     value: TValue;
@@ -573,8 +577,10 @@ export interface CellContextMenuEvent<TData = any, TValue = any> extends CellEve
 export interface CellEditingStartedEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> { }
 
 export interface CellEditingStoppedEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> {
+    // `oldValue` should be type `TValue`. Change in v30
     /** The old value before editing */
     oldValue: any;
+    // `newValue` should be type `TValue`. Change in v30
     /** The new value after editing */
     newValue: any;
     /** Property indicating if the value of the editor has changed */
@@ -582,13 +588,17 @@ export interface CellEditingStoppedEvent<TData = any, TValue = any> extends Cell
 }
 
 export interface CellValueChangedEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> {
+    // `oldValue` should be type `TValue`. Change in v30
     oldValue: any;
+    // `newValue` should be type `TValue`. Change in v30
     newValue: any;
     source: string | undefined;
 }
 
 export interface CellEditRequestEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> {
+    // `oldValue` should be type `TValue`. Change in v30
     oldValue: any;
+    // `newValue` should be type `TValue`. Change in v30
     newValue: any;
     source: string | undefined;
 }

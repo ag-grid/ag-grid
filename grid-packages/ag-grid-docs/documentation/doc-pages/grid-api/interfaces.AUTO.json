@@ -353,17 +353,17 @@
   },
   "AbstractColDef": {
     "meta": {
-      "typeParams": ["TData = any"],
+      "typeParams": ["TData = any", "TValue = any"],
       "doc": "/** AbstractColDef can be a group or a column definition */"
     },
     "type": {
       "headerName?": "string",
-      "headerValueGetter?": "string | HeaderValueGetterFunc<TData>",
+      "headerValueGetter?": "string | HeaderValueGetterFunc<TData, TValue>",
       "headerTooltip?": "string",
-      "headerClass?": "HeaderClass",
-      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams<TData>) => boolean",
+      "headerClass?": "HeaderClass<TData, TValue>",
+      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams<TData, TValue>) => boolean",
       "columnGroupShow?": "ColumnGroupShowType",
-      "toolPanelClass?": "ToolPanelClass<TData>",
+      "toolPanelClass?": "ToolPanelClass<TData, TValue>",
       "suppressColumnsToolPanel?": "boolean",
       "suppressFiltersToolPanel?": "boolean",
       "tooltipComponent?": "any",
@@ -401,12 +401,12 @@
       "headerGroupComponentFramework?": "any",
       "headerGroupComponentParams?": "any",
       "headerName?": "string",
-      "headerValueGetter?": "string | HeaderValueGetterFunc<TData>",
+      "headerValueGetter?": "string | HeaderValueGetterFunc<TData, TValue>",
       "headerTooltip?": "string",
-      "headerClass?": "HeaderClass",
-      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams<TData>) => boolean",
+      "headerClass?": "HeaderClass<TData, TValue>",
+      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams<TData, TValue>) => boolean",
       "columnGroupShow?": "ColumnGroupShowType",
-      "toolPanelClass?": "ToolPanelClass<TData>",
+      "toolPanelClass?": "ToolPanelClass<TData, TValue>",
       "suppressColumnsToolPanel?": "boolean",
       "suppressFiltersToolPanel?": "boolean",
       "tooltipComponent?": "any",
@@ -471,10 +471,10 @@
     }
   },
   "HeaderClassParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "colDef": "AbstractColDef<TData>",
-      "column?": "Column | null",
+      "colDef": "AbstractColDef<TData, TValue>",
+      "column?": "Column<TValue> | null",
       "columnGroup?": "ColumnGroup | null",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
@@ -487,14 +487,17 @@
     }
   },
   "HeaderClass": {
-    "meta": { "isTypeAlias": true, "typeParams": ["TData = any"] },
-    "type": "string | string[] | ((params: HeaderClassParams<TData>) => string | string[] | undefined)"
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
+    "type": "string | string[] | ((params: HeaderClassParams<TData, TValue>) => string | string[] | undefined)"
   },
   "ToolPanelClassParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "colDef": "AbstractColDef<TData>",
-      "column?": "Column | null",
+      "colDef": "AbstractColDef<TData, TValue>",
+      "column?": "Column<TValue> | null",
       "columnGroup?": "ProvidedColumnGroup | null",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
@@ -507,53 +510,56 @@
     }
   },
   "ToolPanelClass": {
-    "meta": { "isTypeAlias": true, "typeParams": ["TData = any"] },
-    "type": "string | string[] | ((params: ToolPanelClassParams<TData>) => string | string[] | undefined)"
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
+    "type": "string | string[] | ((params: ToolPanelClassParams<TData, TValue>) => string | string[] | undefined)"
   },
   "ColDef": {
     "meta": {
-      "typeParams": ["TData = any"],
+      "typeParams": ["TData = any", "TValue = any"],
       "doc": "/** Configuration options for columns in AG Grid. */"
     },
     "type": {
       "colId?": "string",
       "field?": "string",
       "type?": "string | string[]",
-      "valueGetter?": "string | ValueGetterFunc<TData>",
+      "valueGetter?": "string | ValueGetterFunc<TData, TValue>",
       "valueFormatter?": "string | ValueFormatterFunc<TData>",
       "refData?": "{ [key: string]: string; }",
       "keyCreator?": "(params: KeyCreatorParams<TData>) => string",
-      "equals?": "(valueA: any, valueB: any) => boolean",
+      "equals?": "(valueA: TValue, valueB: TValue) => boolean",
       "tooltipField?": "string",
-      "tooltipValueGetter?": "(params: ITooltipParams<TData>) => string | any",
-      "checkboxSelection?": "boolean | CheckboxSelectionCallback<TData>",
+      "tooltipValueGetter?": "(params: ITooltipParams<TData, TValue>) => string | any",
+      "checkboxSelection?": "boolean | CheckboxSelectionCallback<TData, TValue>",
       "showDisabledCheckboxes?": "boolean",
       "icons?": "{ [key: string]: Function | string; }",
-      "suppressNavigable?": "boolean | SuppressNavigableCallback<TData>",
-      "suppressKeyboardEvent?": "(params: SuppressKeyboardEventParams<TData>) => boolean",
-      "suppressPaste?": "boolean | SuppressPasteCallback<TData>",
+      "suppressNavigable?": "boolean | SuppressNavigableCallback<TData, TValue>",
+      "suppressKeyboardEvent?": "(params: SuppressKeyboardEventParams<TData, TValue>) => boolean",
+      "suppressPaste?": "boolean | SuppressPasteCallback<TData, TValue>",
       "suppressFillHandle?": "boolean",
       "hide?": "boolean",
       "initialHide?": "boolean",
       "lockVisible?": "boolean",
       "lockPosition?": "boolean | 'left' | 'right'",
       "suppressMovable?": "boolean",
-      "editable?": "boolean | EditableCallback<TData>",
-      "valueSetter?": "string | ValueSetterFunc<TData>",
-      "valueParser?": "string | ValueParserFunc<TData>",
+      "editable?": "boolean | EditableCallback<TData, TValue>",
+      "valueSetter?": "string | ValueSetterFunc<TData, TValue>",
+      "valueParser?": "string | ValueParserFunc<TData, TValue>",
       "cellEditor?": "any",
       "cellEditorFramework?": "any",
       "cellEditorParams?": "any",
-      "cellEditorSelector?": "CellEditorSelectorFunc<TData>",
+      "cellEditorSelector?": "CellEditorSelectorFunc<TData, TValue>",
       "singleClickEdit?": "boolean",
       "cellEditorPopup?": "boolean",
       "cellEditorPopupPosition?": "'over' | 'under'",
-      "onCellValueChanged?": "(event: NewValueParams<TData>) => void",
-      "onCellClicked?": "(event: CellClickedEvent<TData>) => void",
-      "onCellDoubleClicked?": "(event: CellDoubleClickedEvent<TData>) => void",
-      "onCellContextMenu?": "(event: CellContextMenuEvent<TData>) => void",
+      "onCellValueChanged?": "(event: NewValueParams<TData, TValue>) => void",
+      "onCellClicked?": "(event: CellClickedEvent<TData, TValue>) => void",
+      "onCellDoubleClicked?": "(event: CellDoubleClickedEvent<TData, TValue>) => void",
+      "onCellContextMenu?": "(event: CellContextMenuEvent<TData, TValue>) => void",
       "getQuickFilterText?": "(params: GetQuickFilterTextParams<TData>) => string",
-      "filterValueGetter?": "string | ValueGetterFunc<TData>",
+      "filterValueGetter?": "string | ValueGetterFunc<TData, TValue>",
       "floatingFilter?": "boolean",
       "wrapHeaderText?": "boolean",
       "autoHeaderHeight?": "boolean",
@@ -563,7 +569,7 @@
       "menuTabs?": "ColumnMenuTab[]",
       "columnsMenuParams?": "ColumnsMenuParams",
       "suppressMenu?": "boolean",
-      "headerCheckboxSelection?": "boolean | HeaderCheckboxSelectionCallback<TData>",
+      "headerCheckboxSelection?": "boolean | HeaderCheckboxSelectionCallback<TData, TValue>",
       "headerCheckboxSelectionFilteredOnly?": "boolean",
       "headerCheckboxSelectionCurrentPageOnly?": "boolean",
       "chartDataType?": "'category' | 'series' | 'time' | 'excluded'",
@@ -582,14 +588,14 @@
       "cellRenderer?": "any",
       "cellRendererFramework?": "any",
       "cellRendererParams?": "any",
-      "cellRendererSelector?": "CellRendererSelectorFunc<TData>",
+      "cellRendererSelector?": "CellRendererSelectorFunc<TData, TValue>",
       "autoHeight?": "boolean",
       "wrapText?": "boolean",
       "enableCellChangeFlash?": "boolean",
       "suppressCellFlash?": "boolean",
-      "rowDrag?": "boolean | RowDragCallback<TData>",
+      "rowDrag?": "boolean | RowDragCallback<TData, TValue>",
       "rowDragText?": "(params: IRowDragItem, dragItemCount: number) => string",
-      "dndSource?": "boolean | DndSourceCallback<TData>",
+      "dndSource?": "boolean | DndSourceCallback<TData, TValue>",
       "dndSourceOnRowDrag?": "(params: DndSourceOnRowDragParams<TData>) => void",
       "rowGroup?": "boolean",
       "initialRowGroup?": "boolean",
@@ -597,8 +603,8 @@
       "initialRowGroupIndex?": "number",
       "enableRowGroup?": "boolean",
       "enableValue?": "boolean",
-      "aggFunc?": "string | IAggFunc<TData> | null",
-      "initialAggFunc?": "string | IAggFunc<TData>",
+      "aggFunc?": "string | IAggFunc<TData, TValue> | null",
+      "initialAggFunc?": "string | IAggFunc<TData, TValue>",
       "defaultAggFunc?": "string",
       "allowedAggFuncs?": "string[]",
       "showRowGroup?": "string | boolean",
@@ -608,10 +614,10 @@
       "sortIndex?": "number | null",
       "initialSortIndex?": "number",
       "sortingOrder?": "(SortDirection)[]",
-      "comparator?": "(valueA: any, valueB: any, nodeA: IRowNode<TData>, nodeB: IRowNode<TData>, isDescending: boolean) => number",
+      "comparator?": "(valueA: TValue, valueB: TValue, nodeA: IRowNode<TData>, nodeB: IRowNode<TData>, isDescending: boolean) => number",
       "unSortIcon?": "boolean",
-      "colSpan?": "(params: ColSpanParams<TData>) => number",
-      "rowSpan?": "(params: RowSpanParams<TData>) => number",
+      "colSpan?": "(params: ColSpanParams<TData, TValue>) => number",
+      "rowSpan?": "(params: RowSpanParams<TData, TValue>) => number",
       "width?": "number",
       "initialWidth?": "number",
       "minWidth?": "number",
@@ -625,12 +631,12 @@
       "pivotTotalColumnIds?": "string[]",
       "spanHeaderHeight?": "boolean",
       "headerName?": "string",
-      "headerValueGetter?": "string | HeaderValueGetterFunc<TData>",
+      "headerValueGetter?": "string | HeaderValueGetterFunc<TData, TValue>",
       "headerTooltip?": "string",
-      "headerClass?": "HeaderClass",
-      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams<TData>) => boolean",
+      "headerClass?": "HeaderClass<TData, TValue>",
+      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams<TData, TValue>) => boolean",
       "columnGroupShow?": "ColumnGroupShowType",
-      "toolPanelClass?": "ToolPanelClass<TData>",
+      "toolPanelClass?": "ToolPanelClass<TData, TValue>",
       "suppressColumnsToolPanel?": "boolean",
       "suppressFiltersToolPanel?": "boolean",
       "tooltipComponent?": "any",
@@ -652,7 +658,7 @@
       "valueFormatter?": "/** A function or expression to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */",
       "refData?": "/** Provided a reference data map to be used to map column values to their respective value from the map. */",
       "keyCreator?": "/** Function to return a string key for a value.\n     * This string is used for grouping, Set filtering, and searching within cell editor dropdowns.\n     * When filtering and searching the string is exposed to the user, so make sure to return a human-readable value. */",
-      "equals?": "/** Custom comparator for values, used by renderer to know if values have changed. Cells who's values have not changed don't get refreshed.\n     * By default the grid uses `===` is used which should work for most use cases.\n     */",
+      "equals?": "/** Custom comparator for values, used by renderer to know if values have changed. Cells whose values have not changed don't get refreshed.\n     * By default the grid uses `===` which should work for most use cases.\n     */",
       "tooltipField?": "/** The field of the tooltip to apply to the cell. */",
       "tooltipValueGetter?": "/** Callback that should return the string to use for a tooltip, `tooltipField` takes precedence if set.\n     * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component.\n     */",
       "checkboxSelection?": "/** Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */",
@@ -775,12 +781,12 @@
     }
   },
   "ColumnFunctionCallbackParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "node": "IRowNode<TData>",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -796,12 +802,12 @@
     }
   },
   "CheckboxSelectionCallbackParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "node": "IRowNode<TData>",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -817,19 +823,22 @@
     }
   },
   "CheckboxSelectionCallback": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
       "arguments": { "params": "CheckboxSelectionCallbackParams<TData>" },
       "returnType": "boolean"
     }
   },
   "RowDragCallbackParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "node": "IRowNode<TData>",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -845,19 +854,22 @@
     }
   },
   "RowDragCallback": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "params": "RowDragCallbackParams<TData>" },
+      "arguments": { "params": "RowDragCallbackParams<TData, TValue>" },
       "returnType": "boolean"
     }
   },
   "DndSourceCallbackParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "node": "IRowNode<TData>",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -890,19 +902,22 @@
     }
   },
   "DndSourceCallback": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "params": "DndSourceCallbackParams<TData>" },
+      "arguments": { "params": "DndSourceCallbackParams<TData, TValue>" },
       "returnType": "boolean"
     }
   },
   "EditableCallbackParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "node": "IRowNode<TData>",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -918,19 +933,22 @@
     }
   },
   "EditableCallback": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "params": "EditableCallbackParams<TData>" },
+      "arguments": { "params": "EditableCallbackParams<TData, TValue>" },
       "returnType": "boolean"
     }
   },
   "SuppressPasteCallbackParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "node": "IRowNode<TData>",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -946,19 +964,22 @@
     }
   },
   "SuppressPasteCallback": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "params": "SuppressPasteCallbackParams<TData>" },
+      "arguments": { "params": "SuppressPasteCallbackParams<TData, TValue>" },
       "returnType": "boolean"
     }
   },
   "SuppressNavigableCallbackParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "node": "IRowNode<TData>",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -974,17 +995,22 @@
     }
   },
   "SuppressNavigableCallback": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "params": "SuppressNavigableCallbackParams<TData>" },
+      "arguments": {
+        "params": "SuppressNavigableCallbackParams<TData, TValue>"
+      },
       "returnType": "boolean"
     }
   },
   "HeaderCheckboxSelectionCallbackParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -996,9 +1022,14 @@
     }
   },
   "HeaderCheckboxSelectionCallback": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "params": "HeaderCheckboxSelectionCallbackParams<TData>" },
+      "arguments": {
+        "params": "HeaderCheckboxSelectionCallbackParams<TData, TValue>"
+      },
       "returnType": "boolean"
     }
   },
@@ -1021,8 +1052,8 @@
     "type": {
       "node": "IRowNode<TData>",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1084,12 +1115,12 @@
     }
   },
   "BaseColDefParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "node": "IRowNode<TData> | null",
       "data": "TData",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1105,12 +1136,12 @@
     }
   },
   "BaseColDefOptionalDataParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "node": "IRowNode<TData> | null",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1126,13 +1157,13 @@
     }
   },
   "ValueGetterParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "getValue": "(field: string) => any",
       "node": "IRowNode<TData> | null",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1149,17 +1180,20 @@
     }
   },
   "ValueGetterFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "params": "ValueGetterParams<TData>" },
-      "returnType": "any"
+      "arguments": { "params": "ValueGetterParams<TData, TValue>" },
+      "returnType": "TValue"
     }
   },
   "HeaderValueGetterParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "colDef": "AbstractColDef<TData>",
-      "column?": "Column | null",
+      "colDef": "AbstractColDef<TData, TValue>",
+      "column?": "Column<TValue> | null",
       "columnGroup?": "ColumnGroup | ProvidedColumnGroup | null",
       "providedColumnGroup": "ProvidedColumnGroup | null",
       "location": "string | null",
@@ -1178,21 +1212,49 @@
     }
   },
   "HeaderValueGetterFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "params": "HeaderValueGetterParams<TData>" },
+      "arguments": { "params": "HeaderValueGetterParams<TData, TValue>" },
       "returnType": "any"
     }
   },
-  "NewValueParams": {
-    "meta": { "typeParams": ["TData = any"] },
+  "ChangedValueParams": {
+    "meta": { "typeParams": ["TData", "TValueOld", "TValueNew"] },
     "type": {
-      "oldValue": "any",
-      "newValue": "any",
+      "oldValue": "TValueOld",
+      "newValue": "TValueNew",
       "node": "IRowNode<TData> | null",
       "data": "TData",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "oldValue": "/** The value before the change */",
+      "newValue": "/** The value after the change */",
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "NewValueParams": {
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
+    "type": {
+      "oldValue": "TValue",
+      "newValue": "TValue",
+      "node": "IRowNode<TData> | null",
+      "data": "TData",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1210,14 +1272,14 @@
     }
   },
   "ValueSetterParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "oldValue": "any",
-      "newValue": "any",
+      "oldValue": "TValue",
+      "newValue": "TValue",
       "node": "IRowNode<TData> | null",
       "data": "TData",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1235,21 +1297,24 @@
     }
   },
   "ValueSetterFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "params": "ValueSetterParams<TData>" },
+      "arguments": { "params": "ValueSetterParams<TData, TValue>" },
       "returnType": "boolean"
     }
   },
   "ValueParserParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "oldValue": "any",
+      "oldValue": "TValue",
       "newValue": "any",
       "node": "IRowNode<TData> | null",
       "data": "TData",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1282,8 +1347,8 @@
       "value": "TValue",
       "node": "IRowNode<TData> | null",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1300,9 +1365,12 @@
     }
   },
   "ValueFormatterFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "params": "ValueFormatterParams<TData>" },
+      "arguments": { "params": "ValueFormatterParams<TData, TValue>" },
       "returnType": "string"
     }
   },
@@ -1312,8 +1380,8 @@
       "value": "TValue",
       "node": "IRowNode<TData> | null",
       "data": "TData",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1330,12 +1398,12 @@
     }
   },
   "ColSpanParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "node": "IRowNode<TData> | null",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1351,12 +1419,12 @@
     }
   },
   "RowSpanParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "node": "IRowNode<TData> | null",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1372,14 +1440,14 @@
     }
   },
   "SuppressKeyboardEventParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "event": "KeyboardEvent",
       "editing": "boolean",
       "node": "IRowNode<TData>",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1397,10 +1465,10 @@
     }
   },
   "SuppressHeaderKeyboardEventParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "column": "Column | ColumnGroup",
-      "colDef": "ColDef<TData> | ColGroupDef<TData> | null",
+      "column": "Column<TValue> | ColumnGroup",
+      "colDef": "ColDef<TData, TValue> | ColGroupDef<TData> | null",
       "headerRowIndex": "number",
       "event": "KeyboardEvent",
       "api": "GridApi<TData>",
@@ -1441,16 +1509,22 @@
     }
   },
   "CellClassFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "cellClassParams": "CellClassParams<TData>" },
+      "arguments": { "cellClassParams": "CellClassParams<TData, TValue>" },
       "returnType": "string | string[] | null | undefined"
     }
   },
   "CellStyleFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "cellClassParams": "CellClassParams<TData>" },
+      "arguments": { "cellClassParams": "CellClassParams<TData, TValue>" },
       "returnType": "CellStyle | null | undefined"
     }
   },
@@ -1459,22 +1533,28 @@
     "type": { "[cssProperty: string]": "string | number" }
   },
   "CellClassRules": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "[cssClassName: string]": "(((params: CellClassParams<TData>) => boolean) | string)"
+      "[cssClassName: string]": "(((params: CellClassParams<TData, TValue>) => boolean) | string)"
     }
   },
   "CellRendererSelectorFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "params": "ICellRendererParams<TData>" },
+      "arguments": { "params": "ICellRendererParams<TData, TValue>" },
       "returnType": "CellRendererSelectorResult | undefined"
     }
   },
   "CellEditorSelectorFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "params": "ICellEditorParams<TData>" },
+      "arguments": { "params": "ICellEditorParams<TData, TValue>" },
       "returnType": "CellEditorSelectorResult | undefined"
     }
   },
@@ -5543,8 +5623,8 @@
       "textFormatter?": "TextFormatter",
       "node": "IRowNode<TData> | null",
       "data": "TData",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -6880,9 +6960,9 @@
     }
   },
   "ICellEditor": {
-    "meta": {},
+    "meta": { "typeParams": ["TValue = any"] },
     "type": {
-      "getValue()": "any",
+      "getValue()": "TValue",
       "isPopup?()": "boolean",
       "getPopupPosition?()": "'over' | 'under' | undefined",
       "isCancelBeforeStart?()": "boolean",
@@ -6944,9 +7024,9 @@
     }
   },
   "ICellEditorComp": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "getValue()": "any",
+      "getValue()": "TValue",
       "isPopup?()": "boolean",
       "getPopupPosition?()": "'over' | 'under' | undefined",
       "isCancelBeforeStart?()": "boolean",
@@ -8105,14 +8185,14 @@
     }
   },
   "IHeaderColumn": {
-    "meta": {},
+    "meta": { "typeParams": ["TValue = any"] },
     "type": {
       "getUniqueId()": "string",
       "getActualWidth()": "number",
       "getMinWidth()": "number | null | undefined",
       "getLeft()": "number | null",
       "getOldLeft()": "number | null",
-      "getDefinition()": "AbstractColDef | null",
+      "getDefinition()": "AbstractColDef<TValue> | null",
       "getColumnGroupShow()": "ColumnGroupShowType | undefined",
       "getParent()": "IHeaderColumn",
       "isResizable()": "boolean",
@@ -11752,7 +11832,7 @@
     "meta": {},
     "type": {
       "agInit(params: ICellEditorParams)": "void",
-      "getValue()": "any",
+      "getValue()": "TValue",
       "isPopup?()": "boolean",
       "getPopupPosition?()": "'over' | 'under' | undefined",
       "isCancelBeforeStart?()": "boolean",
@@ -11788,7 +11868,7 @@
     "meta": {},
     "type": {
       "agInit(params: ICellEditorParams)": "void",
-      "getValue()": "any",
+      "getValue()": "TValue",
       "isPopup?()": "boolean",
       "getPopupPosition?()": "'over' | 'under' | undefined",
       "isCancelBeforeStart?()": "boolean",
@@ -14294,7 +14374,7 @@
   "ICellEditorReactComp": {
     "meta": {},
     "type": {
-      "getValue()": "any",
+      "getValue()": "TValue",
       "isPopup?()": "boolean",
       "getPopupPosition?()": "'over' | 'under' | undefined",
       "isCancelBeforeStart?()": "boolean",

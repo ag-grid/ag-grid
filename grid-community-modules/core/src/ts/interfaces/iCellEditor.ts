@@ -4,11 +4,11 @@ import { AgGridCommon } from "./iCommon";
 import { IPopupComponent } from "./iPopupComponent";
 import { IRowNode } from "./iRowNode";
 
-export interface ICellEditor {
+export interface ICellEditor<TValue = any> {
     /**
      * Return the final value - called by the grid once after editing is complete
      */
-    getValue(): any;
+    getValue(): TValue;
 
     /** Gets called once after initialised. If you return true, the editor will
      * appear in a popup, so is not constrained to the boundaries of the cell.
@@ -87,10 +87,12 @@ export interface ICellEditorParams<TData = any, TValue = any, TContext = any> ex
      *  will live inside. Useful if you want to add event listeners or classes at this level.
      *  This is the DOM element that gets browser focus when selecting cells. */
     eGridCell: HTMLElement;
+    // `value` should be type `string`. Return should be type `TValue`. Change in v30
     /** Utility function to parse a value using the column's `colDef.valueParser` */
     parseValue: (value: any) => any;
+    // `value` should be type `TValue`. Return should be type `string`. Change in v30
     /** Utility function to format a value using the column's `colDef.valueFormatter` */
     formatValue: (value: any) => any;
 }
 
-export interface ICellEditorComp<TData = any> extends ICellEditor, IPopupComponent<ICellEditorParams<TData>> { }
+export interface ICellEditorComp<TData = any, TValue = any> extends ICellEditor<TValue>, IPopupComponent<ICellEditorParams<TData, TValue>> { }

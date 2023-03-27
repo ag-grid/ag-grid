@@ -568,7 +568,7 @@
     "headerValueGetter": {
       "description": "/** Function or expression. Gets the value for display in the header. */",
       "type": {
-        "returnType": "string | HeaderValueGetterFunc<TData>",
+        "returnType": "string | HeaderValueGetterFunc<TData, TValue>",
         "optional": true
       }
     },
@@ -578,12 +578,14 @@
     },
     "headerClass": {
       "description": "/** CSS class to use for the header cell. Can be a string, array of strings, or function. */",
-      "type": { "returnType": "HeaderClass", "optional": true }
+      "type": { "returnType": "HeaderClass<TData, TValue>", "optional": true }
     },
     "suppressHeaderKeyboardEvent": {
       "description": "/** Suppress the grid taking action for the relevant keyboard event when a header is focused. */",
       "type": {
-        "arguments": { "params": "SuppressHeaderKeyboardEventParams<TData>" },
+        "arguments": {
+          "params": "SuppressHeaderKeyboardEventParams<TData, TValue>"
+        },
         "returnType": "boolean",
         "optional": true
       }
@@ -594,7 +596,10 @@
     },
     "toolPanelClass": {
       "description": "/** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */",
-      "type": { "returnType": "ToolPanelClass<TData>", "optional": true }
+      "type": {
+        "returnType": "ToolPanelClass<TData, TValue>",
+        "optional": true
+      }
     },
     "suppressColumnsToolPanel": {
       "description": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. Default: `false` */",
@@ -620,7 +625,7 @@
       "description": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
       "type": { "returnType": "string[]", "optional": true }
     },
-    "meta": { "typeParams": ["TData = any"] }
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
   },
   "ColGroupDef": {
     "children": {
@@ -662,7 +667,7 @@
     "headerValueGetter": {
       "description": "/** Function or expression. Gets the value for display in the header. */",
       "type": {
-        "returnType": "string | HeaderValueGetterFunc<TData>",
+        "returnType": "string | HeaderValueGetterFunc<TData, TValue>",
         "optional": true
       }
     },
@@ -672,12 +677,14 @@
     },
     "headerClass": {
       "description": "/** CSS class to use for the header cell. Can be a string, array of strings, or function. */",
-      "type": { "returnType": "HeaderClass", "optional": true }
+      "type": { "returnType": "HeaderClass<TData, TValue>", "optional": true }
     },
     "suppressHeaderKeyboardEvent": {
       "description": "/** Suppress the grid taking action for the relevant keyboard event when a header is focused. */",
       "type": {
-        "arguments": { "params": "SuppressHeaderKeyboardEventParams<TData>" },
+        "arguments": {
+          "params": "SuppressHeaderKeyboardEventParams<TData, TValue>"
+        },
         "returnType": "boolean",
         "optional": true
       }
@@ -688,7 +695,10 @@
     },
     "toolPanelClass": {
       "description": "/** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */",
-      "type": { "returnType": "ToolPanelClass<TData>", "optional": true }
+      "type": {
+        "returnType": "ToolPanelClass<TData, TValue>",
+        "optional": true
+      }
     },
     "suppressColumnsToolPanel": {
       "description": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. Default: `false` */",
@@ -753,13 +763,18 @@
   },
   "HeaderClassParams": {
     "colDef": {
-      "type": { "returnType": "AbstractColDef<TData>", "optional": false }
+      "type": {
+        "returnType": "AbstractColDef<TData, TValue>",
+        "optional": false
+      }
     },
-    "column": { "type": { "returnType": "Column | null", "optional": true } },
+    "column": {
+      "type": { "returnType": "Column<TValue> | null", "optional": true }
+    },
     "columnGroup": {
       "type": { "returnType": "ColumnGroup | null", "optional": true }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -773,16 +788,21 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "HeaderClass": { "meta": { "typeParams": ["TData = any"] } },
+  "HeaderClass": { "meta": { "typeParams": ["TData = any", "TValue = any"] } },
   "ToolPanelClassParams": {
     "colDef": {
-      "type": { "returnType": "AbstractColDef<TData>", "optional": false }
+      "type": {
+        "returnType": "AbstractColDef<TData, TValue>",
+        "optional": false
+      }
     },
-    "column": { "type": { "returnType": "Column | null", "optional": true } },
+    "column": {
+      "type": { "returnType": "Column<TValue> | null", "optional": true }
+    },
     "columnGroup": {
       "type": { "returnType": "ProvidedColumnGroup | null", "optional": true }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -796,7 +816,9 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "ToolPanelClass": { "meta": { "typeParams": ["TData = any"] } },
+  "ToolPanelClass": {
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
+  },
   "ColDef": {
     "colId": {
       "description": "/** The unique ID to give the column. This is optional. If missing, the ID will default to the field.\n     *  If both field and colId are missing, a unique ID will be generated.\n     *  This ID is used to identify the column in the API for sorting, filtering etc. */",
@@ -813,7 +835,7 @@
     "valueGetter": {
       "description": "/** Function or expression. Gets the value from your data for display. */",
       "type": {
-        "returnType": "string | ValueGetterFunc<TData>",
+        "returnType": "string | ValueGetterFunc<TData, TValue>",
         "optional": true
       }
     },
@@ -837,9 +859,9 @@
       }
     },
     "equals": {
-      "description": "/** Custom comparator for values, used by renderer to know if values have changed. Cells who's values have not changed don't get refreshed.\n     * By default the grid uses `===` is used which should work for most use cases.\n     */",
+      "description": "/** Custom comparator for values, used by renderer to know if values have changed. Cells whose values have not changed don't get refreshed.\n     * By default the grid uses `===` which should work for most use cases.\n     */",
       "type": {
-        "arguments": { "valueA": "any", "valueB": "any" },
+        "arguments": { "valueA": "TValue", "valueB": "TValue" },
         "returnType": "boolean",
         "optional": true
       }
@@ -851,7 +873,7 @@
     "tooltipValueGetter": {
       "description": "/** Callback that should return the string to use for a tooltip, `tooltipField` takes precedence if set.\n     * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component.\n     */",
       "type": {
-        "arguments": { "params": "ITooltipParams<TData>" },
+        "arguments": { "params": "ITooltipParams<TData, TValue>" },
         "returnType": "string | any",
         "optional": true
       }
@@ -859,7 +881,7 @@
     "checkboxSelection": {
       "description": "/** Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */",
       "type": {
-        "returnType": "boolean | CheckboxSelectionCallback<TData>",
+        "returnType": "boolean | CheckboxSelectionCallback<TData, TValue>",
         "optional": true
       }
     },
@@ -877,14 +899,14 @@
     "suppressNavigable": {
       "description": "/** Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`.\n     * Can also be a callback function to have different rows navigable.\n     * Default: `false`\n     */",
       "type": {
-        "returnType": "boolean | SuppressNavigableCallback<TData>",
+        "returnType": "boolean | SuppressNavigableCallback<TData, TValue>",
         "optional": true
       }
     },
     "suppressKeyboardEvent": {
       "description": "/** Allows the user to suppress certain keyboard events in the grid cell. Default: `false` */",
       "type": {
-        "arguments": { "params": "SuppressKeyboardEventParams<TData>" },
+        "arguments": { "params": "SuppressKeyboardEventParams<TData, TValue>" },
         "returnType": "boolean",
         "optional": true
       }
@@ -892,7 +914,7 @@
     "suppressPaste": {
       "description": "/** Pasting is on by default as long as cells are editable (non-editable cells cannot be modified, even with a paste operation).\n     * Set to `true` turn paste operations off.\n     */",
       "type": {
-        "returnType": "boolean | SuppressPasteCallback<TData>",
+        "returnType": "boolean | SuppressPasteCallback<TData, TValue>",
         "optional": true
       }
     },
@@ -923,21 +945,21 @@
     "editable": {
       "description": "/** Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable. Default: `false` */",
       "type": {
-        "returnType": "boolean | EditableCallback<TData>",
+        "returnType": "boolean | EditableCallback<TData, TValue>",
         "optional": true
       }
     },
     "valueSetter": {
       "description": "/** Function or expression. Sets the value into your data for saving. Return `true` if the data changed. */",
       "type": {
-        "returnType": "string | ValueSetterFunc<TData>",
+        "returnType": "string | ValueSetterFunc<TData, TValue>",
         "optional": true
       }
     },
     "valueParser": {
       "description": "/** Function or expression. Parses the value for saving. */",
       "type": {
-        "returnType": "string | ValueParserFunc<TData>",
+        "returnType": "string | ValueParserFunc<TData, TValue>",
         "optional": true
       }
     },
@@ -956,7 +978,7 @@
     "cellEditorSelector": {
       "description": "/** Callback to select which cell editor to be used for a given row within the same column. */",
       "type": {
-        "returnType": "CellEditorSelectorFunc<TData>",
+        "returnType": "CellEditorSelectorFunc<TData, TValue>",
         "optional": true
       }
     },
@@ -975,7 +997,7 @@
     "onCellValueChanged": {
       "description": "/** Callback for after the value of a cell has changed, either due to editing or the application calling `api.setValue()`. */",
       "type": {
-        "arguments": { "event": "NewValueParams<TData>" },
+        "arguments": { "event": "NewValueParams<TData, TValue>" },
         "returnType": "void",
         "optional": true
       }
@@ -983,7 +1005,7 @@
     "onCellClicked": {
       "description": "/** Callback called when a cell is clicked. */",
       "type": {
-        "arguments": { "event": "CellClickedEvent<TData>" },
+        "arguments": { "event": "CellClickedEvent<TData, TValue>" },
         "returnType": "void",
         "optional": true
       }
@@ -991,7 +1013,7 @@
     "onCellDoubleClicked": {
       "description": "/** Callback called when a cell is double clicked. */",
       "type": {
-        "arguments": { "event": "CellDoubleClickedEvent<TData>" },
+        "arguments": { "event": "CellDoubleClickedEvent<TData, TValue>" },
         "returnType": "void",
         "optional": true
       }
@@ -999,7 +1021,7 @@
     "onCellContextMenu": {
       "description": "/** Callback called when a cell is right clicked. */",
       "type": {
-        "arguments": { "event": "CellContextMenuEvent<TData>" },
+        "arguments": { "event": "CellContextMenuEvent<TData, TValue>" },
         "returnType": "void",
         "optional": true
       }
@@ -1015,7 +1037,7 @@
     "filterValueGetter": {
       "description": "/** Function or expression. Gets the value for filtering purposes. */",
       "type": {
-        "returnType": "string | ValueGetterFunc<TData>",
+        "returnType": "string | ValueGetterFunc<TData, TValue>",
         "optional": true
       }
     },
@@ -1058,7 +1080,7 @@
     "headerCheckboxSelection": {
       "description": "/** If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header. */",
       "type": {
-        "returnType": "boolean | HeaderCheckboxSelectionCallback<TData>",
+        "returnType": "boolean | HeaderCheckboxSelectionCallback<TData, TValue>",
         "optional": true
       }
     },
@@ -1153,7 +1175,7 @@
     "cellRendererSelector": {
       "description": "/** Callback to select which cell renderer to be used for a given row within the same column. */",
       "type": {
-        "returnType": "CellRendererSelectorFunc<TData>",
+        "returnType": "CellRendererSelectorFunc<TData, TValue>",
         "optional": true
       }
     },
@@ -1176,7 +1198,7 @@
     "rowDrag": {
       "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow row dragging. Default: `false` */",
       "type": {
-        "returnType": "boolean | RowDragCallback<TData>",
+        "returnType": "boolean | RowDragCallback<TData, TValue>",
         "optional": true
       }
     },
@@ -1191,7 +1213,7 @@
     "dndSource": {
       "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow dragging for native drag and drop. Default: `false` */",
       "type": {
-        "returnType": "boolean | DndSourceCallback<TData>",
+        "returnType": "boolean | DndSourceCallback<TData, TValue>",
         "optional": true
       }
     },
@@ -1230,13 +1252,16 @@
     "aggFunc": {
       "description": "/** Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. Also accepts a custom aggregation name or an aggregation function. */",
       "type": {
-        "returnType": "string | IAggFunc<TData> | null",
+        "returnType": "string | IAggFunc<TData, TValue> | null",
         "optional": true
       }
     },
     "initialAggFunc": {
       "description": "/** Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions. */",
-      "type": { "returnType": "string | IAggFunc<TData>", "optional": true }
+      "type": {
+        "returnType": "string | IAggFunc<TData, TValue>",
+        "optional": true
+      }
     },
     "defaultAggFunc": {
       "description": "/** The name of the aggregation function to use for this column when it is enabled via the GUI.\n     * Note that this does not immediately apply the aggregation function like `aggFunc`\n     * Default: `sum`\n     */",
@@ -1278,8 +1303,8 @@
       "description": "/** Override the default sorting order by providing a custom sort comparator.\n     *\n     * - `valueA`, `valueB` are the values to compare.\n     * - `nodeA`,  `nodeB` are the corresponding RowNodes. Useful if additional details are required by the sort.\n     * - `isDescending` - `true` if sort direction is `desc`. Not to be used for inverting the return value as the grid already applies `asc` or `desc` ordering.\n     *\n     * Return:\n     *  - `0`  valueA is the same as valueB\n     *  - `> 0` Sort valueA after valueB\n     *  - `< 0` Sort valueA before valueB\n     */",
       "type": {
         "arguments": {
-          "valueA": "any",
-          "valueB": "any",
+          "valueA": "TValue",
+          "valueB": "TValue",
           "nodeA": "IRowNode<TData>",
           "nodeB": "IRowNode<TData>",
           "isDescending": "boolean"
@@ -1295,7 +1320,7 @@
     "colSpan": {
       "description": "/** By default, each cell will take up the width of one column. You can change this behaviour to allow cells to span multiple columns. */",
       "type": {
-        "arguments": { "params": "ColSpanParams<TData>" },
+        "arguments": { "params": "ColSpanParams<TData, TValue>" },
         "returnType": "number",
         "optional": true
       }
@@ -1303,7 +1328,7 @@
     "rowSpan": {
       "description": "/** By default, each cell will take up the height of one row. You can change this behaviour to allow cells to span multiple rows. */",
       "type": {
-        "arguments": { "params": "RowSpanParams<TData>" },
+        "arguments": { "params": "RowSpanParams<TData, TValue>" },
         "returnType": "number",
         "optional": true
       }
@@ -1356,7 +1381,7 @@
       "description": "/** Set to `true` if you want this column header for this column to span the whole height of the header container. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "headerName": {
       "description": "/** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name. */",
       "type": { "returnType": "string", "optional": true }
@@ -1364,7 +1389,7 @@
     "headerValueGetter": {
       "description": "/** Function or expression. Gets the value for display in the header. */",
       "type": {
-        "returnType": "string | HeaderValueGetterFunc<TData>",
+        "returnType": "string | HeaderValueGetterFunc<TData, TValue>",
         "optional": true
       }
     },
@@ -1374,12 +1399,14 @@
     },
     "headerClass": {
       "description": "/** CSS class to use for the header cell. Can be a string, array of strings, or function. */",
-      "type": { "returnType": "HeaderClass", "optional": true }
+      "type": { "returnType": "HeaderClass<TData, TValue>", "optional": true }
     },
     "suppressHeaderKeyboardEvent": {
       "description": "/** Suppress the grid taking action for the relevant keyboard event when a header is focused. */",
       "type": {
-        "arguments": { "params": "SuppressHeaderKeyboardEventParams<TData>" },
+        "arguments": {
+          "params": "SuppressHeaderKeyboardEventParams<TData, TValue>"
+        },
         "returnType": "boolean",
         "optional": true
       }
@@ -1390,7 +1417,10 @@
     },
     "toolPanelClass": {
       "description": "/** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */",
-      "type": { "returnType": "ToolPanelClass<TData>", "optional": true }
+      "type": {
+        "returnType": "ToolPanelClass<TData, TValue>",
+        "optional": true
+      }
     },
     "suppressColumnsToolPanel": {
       "description": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. Default: `false` */",
@@ -1452,13 +1482,13 @@
     },
     "column": {
       "description": "/** Column for this callback */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** ColDef provided for this column */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -1473,7 +1503,7 @@
     }
   },
   "CheckboxSelectionCallbackParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "node": {
       "description": "/** Row node for the given row */",
       "type": { "returnType": "IRowNode<TData>", "optional": false }
@@ -1484,11 +1514,11 @@
     },
     "column": {
       "description": "/** Column for this callback */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** ColDef provided for this column */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -1503,9 +1533,11 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "CheckboxSelectionCallback": { "meta": { "typeParams": ["TData = any"] } },
+  "CheckboxSelectionCallback": {
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
+  },
   "RowDragCallbackParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "node": {
       "description": "/** Row node for the given row */",
       "type": { "returnType": "IRowNode<TData>", "optional": false }
@@ -1516,11 +1548,11 @@
     },
     "column": {
       "description": "/** Column for this callback */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** ColDef provided for this column */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -1535,9 +1567,11 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "RowDragCallback": { "meta": { "typeParams": ["TData = any"] } },
+  "RowDragCallback": {
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
+  },
   "DndSourceCallbackParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "node": {
       "description": "/** Row node for the given row */",
       "type": { "returnType": "IRowNode<TData>", "optional": false }
@@ -1548,11 +1582,11 @@
     },
     "column": {
       "description": "/** Column for this callback */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** ColDef provided for this column */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -1590,9 +1624,11 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "DndSourceCallback": { "meta": { "typeParams": ["TData = any"] } },
+  "DndSourceCallback": {
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
+  },
   "EditableCallbackParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "node": {
       "description": "/** Row node for the given row */",
       "type": { "returnType": "IRowNode<TData>", "optional": false }
@@ -1603,11 +1639,11 @@
     },
     "column": {
       "description": "/** Column for this callback */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** ColDef provided for this column */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -1622,9 +1658,11 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "EditableCallback": { "meta": { "typeParams": ["TData = any"] } },
+  "EditableCallback": {
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
+  },
   "SuppressPasteCallbackParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "node": {
       "description": "/** Row node for the given row */",
       "type": { "returnType": "IRowNode<TData>", "optional": false }
@@ -1635,11 +1673,11 @@
     },
     "column": {
       "description": "/** Column for this callback */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** ColDef provided for this column */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -1654,9 +1692,11 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "SuppressPasteCallback": { "meta": { "typeParams": ["TData = any"] } },
+  "SuppressPasteCallback": {
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
+  },
   "SuppressNavigableCallbackParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "node": {
       "description": "/** Row node for the given row */",
       "type": { "returnType": "IRowNode<TData>", "optional": false }
@@ -1667,11 +1707,11 @@
     },
     "column": {
       "description": "/** Column for this callback */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** ColDef provided for this column */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -1686,11 +1726,15 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "SuppressNavigableCallback": { "meta": { "typeParams": ["TData = any"] } },
+  "SuppressNavigableCallback": {
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
+  },
   "HeaderCheckboxSelectionCallbackParams": {
-    "column": { "type": { "returnType": "Column", "optional": false } },
-    "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
-    "meta": { "typeParams": ["TData = any"] },
+    "column": { "type": { "returnType": "Column<TValue>", "optional": false } },
+    "colDef": {
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -1705,7 +1749,7 @@
     }
   },
   "HeaderCheckboxSelectionCallback": {
-    "meta": { "typeParams": ["TData = any"] }
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
   },
   "IsColumnFunc": { "meta": { "typeParams": ["TData = any"] } },
   "IsColumnFuncParams": {
@@ -1720,11 +1764,11 @@
     },
     "column": {
       "description": "/** Column for this callback */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** ColDef provided for this column */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -1812,13 +1856,13 @@
     },
     "column": {
       "description": "/** Column for this callback */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** ColDef provided for this column */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -1843,13 +1887,13 @@
     },
     "column": {
       "description": "/** Column for this callback */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** ColDef provided for this column */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -1872,7 +1916,7 @@
         "optional": false
       }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "node": {
       "description": "/** Row node for the given row */",
       "type": { "returnType": "IRowNode<TData> | null", "optional": false }
@@ -1883,11 +1927,11 @@
     },
     "column": {
       "description": "/** Column for this callback */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** ColDef provided for this column */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -1902,14 +1946,19 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "ValueGetterFunc": { "meta": { "typeParams": ["TData = any"] } },
+  "ValueGetterFunc": {
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
+  },
   "HeaderValueGetterParams": {
     "colDef": {
-      "type": { "returnType": "AbstractColDef<TData>", "optional": false }
+      "type": {
+        "returnType": "AbstractColDef<TData, TValue>",
+        "optional": false
+      }
     },
     "column": {
       "description": "/** Column for this callback if applicable*/",
-      "type": { "returnType": "Column | null", "optional": true }
+      "type": { "returnType": "Column<TValue> | null", "optional": true }
     },
     "columnGroup": {
       "description": "/** ColumnGroup for this callback if applicable */",
@@ -1926,7 +1975,7 @@
       "description": "/** Where the column is going to appear */",
       "type": { "returnType": "string | null", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -1940,17 +1989,19 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "HeaderValueGetterFunc": { "meta": { "typeParams": ["TData = any"] } },
-  "NewValueParams": {
+  "HeaderValueGetterFunc": {
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
+  },
+  "ChangedValueParams": {
     "oldValue": {
       "description": "/** The value before the change */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValueOld", "optional": false }
     },
     "newValue": {
       "description": "/** The value after the change */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValueNew", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData", "TValueOld", "TValueNew"] },
     "node": {
       "description": "/** Row node for the given row */",
       "type": { "returnType": "IRowNode<TData> | null", "optional": false }
@@ -1961,11 +2012,50 @@
     },
     "column": {
       "description": "/** Column for this callback */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** ColDef provided for this column */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "NewValueParams": {
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
+    "oldValue": {
+      "description": "/** The value before the change */",
+      "type": { "returnType": "TValue", "optional": false }
+    },
+    "newValue": {
+      "description": "/** The value after the change */",
+      "type": { "returnType": "TValue", "optional": false }
+    },
+    "node": {
+      "description": "/** Row node for the given row */",
+      "type": { "returnType": "IRowNode<TData> | null", "optional": false }
+    },
+    "data": {
+      "description": "/** Data associated with the node */",
+      "type": { "returnType": "TData", "optional": false }
+    },
+    "column": {
+      "description": "/** Column for this callback */",
+      "type": { "returnType": "Column<TValue>", "optional": false }
+    },
+    "colDef": {
+      "description": "/** ColDef provided for this column */",
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -1981,14 +2071,14 @@
     }
   },
   "ValueSetterParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "oldValue": {
       "description": "/** The value before the change */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
     "newValue": {
       "description": "/** The value after the change */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
     "node": {
       "description": "/** Row node for the given row */",
@@ -2000,11 +2090,11 @@
     },
     "column": {
       "description": "/** Column for this callback */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** ColDef provided for this column */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -2019,12 +2109,14 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "ValueSetterFunc": { "meta": { "typeParams": ["TData = any"] } },
+  "ValueSetterFunc": {
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
+  },
   "ValueParserParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "oldValue": {
       "description": "/** The value before the change */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue", "optional": false }
     },
     "newValue": {
       "description": "/** The value after the change */",
@@ -2040,11 +2132,11 @@
     },
     "column": {
       "description": "/** Column for this callback */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** ColDef provided for this column */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -2078,11 +2170,11 @@
     },
     "column": {
       "description": "/** Column for this callback */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** ColDef provided for this column */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -2097,7 +2189,9 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "ValueFormatterFunc": { "meta": { "typeParams": ["TData = any"] } },
+  "ValueFormatterFunc": {
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
+  },
   "KeyCreatorParams": {
     "value": {
       "description": "/** Value for the cell. */",
@@ -2114,11 +2208,11 @@
     },
     "column": {
       "description": "/** Column for this callback */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** ColDef provided for this column */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -2134,7 +2228,7 @@
     }
   },
   "ColSpanParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "node": {
       "description": "/** Row node for the given row */",
       "type": { "returnType": "IRowNode<TData> | null", "optional": false }
@@ -2145,11 +2239,11 @@
     },
     "column": {
       "description": "/** Column for this callback */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** ColDef provided for this column */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -2165,7 +2259,7 @@
     }
   },
   "RowSpanParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "node": {
       "description": "/** Row node for the given row */",
       "type": { "returnType": "IRowNode<TData> | null", "optional": false }
@@ -2176,11 +2270,11 @@
     },
     "column": {
       "description": "/** Column for this callback */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** ColDef provided for this column */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -2204,7 +2298,7 @@
       "description": "/** Whether the cell is editing or not */",
       "type": { "returnType": "boolean", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "node": {
       "description": "/** Row node for the given row */",
       "type": { "returnType": "IRowNode<TData>", "optional": false }
@@ -2215,11 +2309,11 @@
     },
     "column": {
       "description": "/** Column for this callback */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** ColDef provided for this column */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -2236,11 +2330,14 @@
   },
   "SuppressHeaderKeyboardEventParams": {
     "column": {
-      "type": { "returnType": "Column | ColumnGroup", "optional": false }
+      "type": {
+        "returnType": "Column<TValue> | ColumnGroup",
+        "optional": false
+      }
     },
     "colDef": {
       "type": {
-        "returnType": "ColDef<TData> | ColGroupDef<TData> | null",
+        "returnType": "ColDef<TData, TValue> | ColGroupDef<TData> | null",
         "optional": false
       }
     },
@@ -2252,7 +2349,7 @@
       "description": "/** The keyboard event the grid received */",
       "type": { "returnType": "KeyboardEvent", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -2305,12 +2402,22 @@
       "type": { "returnType": "TContext", "optional": false }
     }
   },
-  "CellClassFunc": { "meta": { "typeParams": ["TData = any"] } },
-  "CellStyleFunc": { "meta": { "typeParams": ["TData = any"] } },
+  "CellClassFunc": {
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
+  },
+  "CellStyleFunc": {
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
+  },
   "CellStyle": {},
-  "CellClassRules": { "meta": { "typeParams": ["TData = any"] } },
-  "CellRendererSelectorFunc": { "meta": { "typeParams": ["TData = any"] } },
-  "CellEditorSelectorFunc": { "meta": { "typeParams": ["TData = any"] } },
+  "CellClassRules": {
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
+  },
+  "CellRendererSelectorFunc": {
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
+  },
+  "CellEditorSelectorFunc": {
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
+  },
   "CellRendererSelectorResult": {
     "component": {
       "description": "/** Equivalent of setting `colDef.cellRenderer` */",
@@ -9770,13 +9877,13 @@
     },
     "column": {
       "description": "/** Column for this callback */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** ColDef provided for this column */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "api": {
       "description": "/** The grid api. */",
       "type": { "returnType": "GridApi<TData>", "optional": false }
@@ -12000,7 +12107,7 @@
   "ICellEditor": {
     "getValue": {
       "description": "/** Return the final value - called by the grid once after editing is complete\n     */",
-      "type": { "arguments": {}, "returnType": "any", "optional": false }
+      "type": { "arguments": {}, "returnType": "TValue", "optional": false }
     },
     "isPopup": {
       "description": "/** Gets called once after initialised. If you return true, the editor will\n     * appear in a popup, so is not constrained to the boundaries of the cell.\n     * This is great if you want to, for example, provide you own custom dropdown list\n     * for selection. Default is false (ie if you don't provide the method).\n     */",
@@ -12033,7 +12140,8 @@
     "afterGuiAttached": {
       "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n     * This method is called each time the edit component is activated.\n     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.\n     */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
-    }
+    },
+    "meta": { "typeParams": ["TValue = any"] }
   },
   "ICellEditorParams": {
     "value": {
@@ -12123,10 +12231,10 @@
     }
   },
   "ICellEditorComp": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "getValue": {
       "description": "/** Return the final value - called by the grid once after editing is complete\n     */",
-      "type": { "arguments": {}, "returnType": "any", "optional": false }
+      "type": { "arguments": {}, "returnType": "TValue", "optional": false }
     },
     "isPopup": {
       "description": "/** Gets called once after initialised. If you return true, the editor will\n     * appear in a popup, so is not constrained to the boundaries of the cell.\n     * This is great if you want to, for example, provide you own custom dropdown list\n     * for selection. Default is false (ie if you don't provide the method).\n     */",
@@ -14264,7 +14372,7 @@
     "getDefinition": {
       "type": {
         "arguments": {},
-        "returnType": "AbstractColDef | null",
+        "returnType": "AbstractColDef<TValue> | null",
         "optional": false
       }
     },
@@ -14305,6 +14413,7 @@
         "optional": false
       }
     },
+    "meta": { "typeParams": ["TValue = any"] },
     "addEventListener": {
       "type": {
         "arguments": {
@@ -20778,9 +20887,10 @@
         "optional": false
       }
     },
+    "meta": { "typeParams": ["TValue = any"] },
     "getValue": {
       "description": "/** Return the final value - called by the grid once after editing is complete\n     */",
-      "type": { "arguments": {}, "returnType": "any", "optional": false }
+      "type": { "arguments": {}, "returnType": "TValue", "optional": false }
     },
     "isPopup": {
       "description": "/** Gets called once after initialised. If you return true, the editor will\n     * appear in a popup, so is not constrained to the boundaries of the cell.\n     * This is great if you want to, for example, provide you own custom dropdown list\n     * for selection. Default is false (ie if you don't provide the method).\n     */",
@@ -20843,9 +20953,10 @@
         "optional": false
       }
     },
+    "meta": { "typeParams": ["TValue = any"] },
     "getValue": {
       "description": "/** Return the final value - called by the grid once after editing is complete\n     */",
-      "type": { "arguments": {}, "returnType": "any", "optional": false }
+      "type": { "arguments": {}, "returnType": "TValue", "optional": false }
     },
     "isPopup": {
       "description": "/** Gets called once after initialised. If you return true, the editor will\n     * appear in a popup, so is not constrained to the boundaries of the cell.\n     * This is great if you want to, for example, provide you own custom dropdown list\n     * for selection. Default is false (ie if you don't provide the method).\n     */",
@@ -29713,7 +29824,7 @@
   "ICellEditorReactComp": {
     "getValue": {
       "description": "/** Return the final value - called by the grid once after editing is complete\n     */",
-      "type": { "arguments": {}, "returnType": "any", "optional": false }
+      "type": { "arguments": {}, "returnType": "TValue", "optional": false }
     },
     "isPopup": {
       "description": "/** Gets called once after initialised. If you return true, the editor will\n     * appear in a popup, so is not constrained to the boundaries of the cell.\n     * This is great if you want to, for example, provide you own custom dropdown list\n     * for selection. Default is false (ie if you don't provide the method).\n     */",
@@ -29747,6 +29858,7 @@
       "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.\n     * This method is called each time the edit component is activated.\n     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.\n     */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
+    "meta": { "typeParams": ["TValue = any"] },
     "getReactContainerStyle": {
       "type": { "arguments": {}, "returnType": "{}", "optional": true }
     },

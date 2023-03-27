@@ -7,6 +7,7 @@ import { CellPosition } from "../../entities/cellPositionUtils";
 import {
     CellContextMenuEvent,
     CellEditingStartedEvent,
+    CellEditingStoppedEvent,
     CellEvent,
     CellFocusedEvent,
     Events,
@@ -465,7 +466,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private dispatchEditingStoppedEvent(oldValue: any, newValue: any, valueChanged: boolean): void {
-        const editingStoppedEvent = {
+        const editingStoppedEvent: CellEditingStoppedEvent = {
             ...this.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED),
             oldValue,
             newValue,

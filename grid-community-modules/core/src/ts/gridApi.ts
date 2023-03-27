@@ -949,7 +949,7 @@ export class GridApi<TData = any> {
         return unwrapUserComp(comp) as any;
     }
 
-    public getColumnDef(key: string | Column): ColDef<TData> | null {
+    public getColumnDef<TValue = any>(key: string | Column<TValue>): ColDef<TData, TValue> | null {
         const column = this.columnModel.getPrimaryColumn(key);
         if (column) {
             return column.getColDef();
@@ -1421,6 +1421,7 @@ export class GridApi<TData = any> {
         }
     }
 
+    // Should return `TValue | null | undefined`. `Column` should be typed `TValue`. Change in v30
     /**
      * Gets the value for a column for a particular `rowNode` (row).
      * This is useful if you want the raw value of a cell e.g. if implementing your own CSV export.

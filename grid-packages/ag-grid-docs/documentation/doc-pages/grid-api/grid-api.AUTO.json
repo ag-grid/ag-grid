@@ -497,8 +497,8 @@
   },
   "getColumnDef": {
     "type": {
-      "arguments": { "key": "string | Column" },
-      "returnType": "ColDef<TData> | null"
+      "arguments": { "key": "string | Column<TValue>" },
+      "returnType": "ColDef<TData, TValue> | null"
     }
   },
   "getColumnDefs": {

@@ -23,15 +23,15 @@
   "setColDef": {
     "type": {
       "arguments": {
-        "colDef": "ColDef",
-        "userProvidedColDef": "ColDef | null"
+        "colDef": "ColDef<TValue>",
+        "userProvidedColDef": "ColDef<TValue> | null"
       },
       "returnType": "void"
     }
   },
   "getUserProvidedColDef": {
     "description": "/** Returns the column definition provided by the application.\n     * This may not be correct, as items can be superseded by default column options.\n     * However it's useful for comparison, eg to know which application column definition matches that column.\n     */",
-    "type": { "arguments": {}, "returnType": "ColDef | null" }
+    "type": { "arguments": {}, "returnType": "ColDef<TValue> | null" }
   },
   "setParent": {
     "type": { "arguments": { "parent": "ColumnGroup" }, "returnType": "void" }
@@ -252,7 +252,7 @@
   },
   "getColDef": {
     "description": "/** Returns the column definition for this column.\n     * The column definition will be the result of merging the application provided column definition with any provided defaults\n     * (e.g. `defaultColDef` grid option, or column types.\n     *\n     * Equivalent: `getDefinition` */",
-    "type": { "arguments": {}, "returnType": "ColDef" }
+    "type": { "arguments": {}, "returnType": "ColDef<TValue>" }
   },
   "getColumnGroupShow": {
     "type": { "arguments": {}, "returnType": "ColumnGroupShowType | undefined" }
@@ -270,7 +270,7 @@
     "type": { "arguments": {}, "returnType": "string" }
   },
   "getDefinition": {
-    "type": { "arguments": {}, "returnType": "AbstractColDef" }
+    "type": { "arguments": {}, "returnType": "AbstractColDef<TValue>" }
   },
   "getActualWidth": {
     "description": "/** Returns the current width of the column. If the column is resized, the actual width is the new size. */",
