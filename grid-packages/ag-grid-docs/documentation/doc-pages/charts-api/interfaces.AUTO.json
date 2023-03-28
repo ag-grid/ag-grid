@@ -2417,7 +2417,7 @@
       "yKey?": "/** The keys to use to retrieve y-values from the data. */",
       "xName?": "/** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
       "yName?": "/** Human-readable description of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
-      "fill?": "/** The colour to use for the fill of the area. */",
+      "fill?": "/** The colour to use for the fill of the bars. */",
       "stroke?": "/** The colours to use for the stroke of the bars. */",
       "strokeWidth?": "/** The width in pixels of the stroke for the bars. */",
       "fillOpacity?": "/** The opacity of the fill for the bars. */",

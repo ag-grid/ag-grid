@@ -3626,7 +3626,7 @@
     },
     "flipXY": { "type": { "returnType": "boolean", "optional": true } },
     "fill": {
-      "description": "/** The colour to use for the fill of the area. */",
+      "description": "/** The colour to use for the fill of the bars. */",
       "type": { "returnType": "CssColor", "optional": true }
     },
     "stroke": {

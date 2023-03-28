@@ -1266,7 +1266,7 @@ export interface AgBarSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     /** Human-readable description of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     yName?: string;
     flipXY?: boolean;
-    /** The colour to use for the fill of the area. */
+    /** The colour to use for the fill of the bars. */
     fill?: CssColor;
     /** The colours to use for the stroke of the bars. */
     stroke?: CssColor;
