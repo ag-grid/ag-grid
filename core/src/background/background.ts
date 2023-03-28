@@ -1,7 +1,7 @@
 import { _ModuleSupport, _Util, _Scene } from 'ag-charts-community';
 import { BackgroundImage } from './backgroundImage';
 
-const { ActionOnSet, Validate, ProxyPropertyOnWrite, BOOLEAN, OPT_COLOR_STRING } = _ModuleSupport;
+const { ActionOnSet, Validate, ProxyPropertyOnWrite, BOOLEAN, OPT_COLOR_STRING, Layers } = _ModuleSupport;
 const { Group, Rect } = _Scene;
 
 export class Background extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
@@ -35,6 +35,7 @@ export class Background extends _ModuleSupport.BaseModuleInstance implements _Mo
         this.updateService = ctx.updateService;
 
         this.node = new Group({ name: 'background' });
+        this.node.zIndex = Layers.SERIES_BACKGROUND_ZINDEX;
         this.rectNode = new Rect();
         this.node.appendChild(this.rectNode);
         this.fill = 'white';
