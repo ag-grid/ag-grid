@@ -3,8 +3,9 @@ import { Crosshair } from './crosshair';
 
 export const CrosshairModule: _ModuleSupport.AxisModule = {
     type: 'axis',
-    chartTypes: ['cartesian'],
     optionsKey: 'crosshair',
+    packageType: 'enterprise',
+    chartTypes: ['cartesian'],
     initialiseModule: (ctx) => {
         return {
             instance: new Crosshair(ctx),
