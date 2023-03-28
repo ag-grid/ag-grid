@@ -23,7 +23,24 @@
         "lint:eslint": "npx eslint src/ --ext .js,.ts",
         "fix": "run-s fix:*",
         "fix:prettier": "npx prettier -w .",
-        "fix:eslint": "npx eslint --fix src/ --ext .js,.ts"
+        "fix:eslint": "npx eslint --fix src/ --ext .js,.ts",
+        "test:ci": "export FONTCONFIG_PATH=$PWD/src/chart/test FONTCONFIG_FILE=$PWD/src/chart/test/fonts.conf PANGOCAIRO_BACKEND=fontconfig ; npx jest --runInBand",
+        "test:dev": "npm run test:lint ; export FC_DEBUG=0 FONTCONFIG_PATH=$PWD/src/chart/test FONTCONFIG_FILE=$PWD/src/chart/test/fonts.conf PANGOCAIRO_BACKEND=fontconfig ; npx jest",
+        "test:lint": "npm run test-circular-deps",
+        "test": "if test -z \"$TEAMCITY_PROJECT_NAME\" ; then exec npm run test:dev ; else exec npm run test:ci ; fi",
+        "test-watch": "npm run test:dev -- --watch",
+        "test-coverage": "npm run test:dev -- --coverage",
+        "test-debug": "export FONTCONFIG_PATH=$PWD/src/chart/test FONTCONFIG_FILE=$PWD/src/chart/test/fonts.conf PANGOCAIRO_BACKEND=fontconfig ; node --inspect-brk=0.0.0.0 node_modules/.bin/jest --watch --no-cache",
+        "test-update": "export SNAPSHOT_FAILURE_THRESHOLD=0.001 ; npm run test:dev -- -u",
+        "test-circular-deps": "npx madge --circular --extensions ts src/",
+        "predocker:init": "docker build -t charts:latest node_modules/ag-charts-community/.docker",
+        "docker:init": "node_modules/ag-charts-community/.docker/run.sh init",
+        "docker:run": "node_modules/ag-charts-community/.docker/run.sh run",
+        "docker:test-watch": "node_modules/ag-charts-community/.docker/run.sh run npm run test-watch",
+        "docker:test-coverage": "node_modules/ag-charts-community/.docker/run.sh run npm run test-coverage",
+        "docker:test-debug": "node_modules/ag-charts-community/.docker/run.sh run npm run test-debug",
+        "docker:test-update": "node_modules/ag-charts-community/.docker/run.sh run npm run test-update",
+        "docker:clean": "node_modules/ag-charts-community/.docker/run.sh clean"
     },
     "repository": {
         "type": "git",
@@ -69,7 +86,20 @@
         "lint-staged": "^13.1.2",
         "prettier": "^2.8.3",
         "rimraf": "3.0.2",
-        "typescript": "~4.0.8"
+        "typescript": "~4.0.8",
+        "@types/jest": "^27.4.1",
+        "@types/jest-image-snapshot": "^5.1.0",
+        "@types/pixelmatch": "^5.2.4",
+        "@types/pngjs": "^6.0.1",
+        "canvas": "^2.10.2",
+        "jest": "^27.5.1",
+        "jest-canvas-mock": "^2.4.0",
+        "jest-image-snapshot": "^6.0.0",
+        "jest-runner": "^27.5.1",
+        "jest-serial-runner": "^1.2.1",
+        "madge": "6.0.0",
+        "pixelmatch": "^5.2.1",
+        "ts-jest": "^27.1.3"
     },
     "peerDependencies": {
         "ag-charts-community": "~7.2.0"
@@ -78,7 +108,7 @@
         "access": "private"
     },
     "lint-staged": {
-        "*.{ts,js,md,json}": "cd core && .lint-staged/run.sh prettier",
-        "*.{ts,js}": "cd core && .lint-staged/run.sh eslint"
+        "*.{ts,js,md,json}": ".lint-staged/run.sh prettier",
+        "*.{ts,js}": ".lint-staged/run.sh eslint"
     }
 }
