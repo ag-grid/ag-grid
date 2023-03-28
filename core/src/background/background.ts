@@ -5,10 +5,9 @@ const { ActionOnSet, Validate, ProxyPropertyOnWrite, BOOLEAN, OPT_COLOR_STRING }
 const { Group, Rect } = _Scene;
 
 export class Background extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
-    private readonly node: _Scene.Group;
-    private readonly rectNode: _Scene.Rect;
-    private readonly scene: _Scene.Scene;
-    private readonly updateService: _ModuleSupport.UpdateService;
+    private node: _Scene.Group;
+    private rectNode: _Scene.Rect;
+    private updateService: _ModuleSupport.UpdateService;
 
     @Validate(BOOLEAN)
     @ProxyPropertyOnWrite('node', 'visible')
@@ -30,37 +29,36 @@ export class Background extends _ModuleSupport.BaseModuleInstance implements _Mo
     })
     image: BackgroundImage | undefined = undefined;
 
-    constructor(readonly ctx: _ModuleSupport.ModuleContext) {
+    constructor(ctx: _ModuleSupport.ModuleContext) {
         super();
 
-        this.scene = ctx.scene;
         this.updateService = ctx.updateService;
 
-        this.node = this.scene.root!.children.find((node) => node instanceof Group && node.name === 'background') as _Scene.Group;
-        this.rectNode = this.node.children.find((node) => node instanceof Rect) as _Scene.Rect;
+        this.node = new Group({ name: 'background' });
+        this.rectNode = new Rect();
+        this.node.appendChild(this.rectNode);
+        this.fill = 'white';
         this.visible = true;
 
-        const layoutHandle = ctx.layoutService.addListener('layout-complete', () => this.onLayoutComplete());
+        ctx.scene.root?.insertBefore(this.node, ctx.scene.root.children[0]);
+        this.destroyFns.push(() => ctx.scene.root?.removeChild(this.node));
+
+        const layoutHandle = ctx.layoutService.addListener('layout-complete', this.onLayoutComplete);
         this.destroyFns.push(() => ctx.layoutService.removeListener(layoutHandle));
     }
 
-    update(): void {
-    }
-    
-    performLayout(width: number, height: number) {
+    update(): void {}
+
+    private onLayoutComplete = (event: _ModuleSupport.LayoutCompleteEvent) => {
+        const { width, height } = event.chart;
         this.rectNode.width = width;
         this.rectNode.height = height;
         if (this.image) {
             this.image.performLayout(width, height);
         }
-    }
+    };
 
-    private onLayoutComplete() {
-        const { width, height } = this.scene;
-        this.performLayout(width, height);
-    }
-
-    private onImageLoad() {
+    private onImageLoad = () => {
         this.updateService.update(_ModuleSupport.ChartUpdateType.SCENE_RENDER);
-    }
+    };
 }
