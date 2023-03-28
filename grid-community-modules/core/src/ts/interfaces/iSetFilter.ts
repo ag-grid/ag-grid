@@ -180,7 +180,7 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
      * If a Key Creator is provided (see `keyCreator`), this must also be provided,
      * unless `convertValuesToStrings` is `true`
      */
-    valueFormatter?: (params: ValueFormatterParams) => string;
+    valueFormatter?: (params: ValueFormatterParams<TData, V>) => string;
     /**
      * Function to return a string key for a value. This is required when the filter values are complex objects,
      * or when `treeList = true` and the column is a group column with Tree Data or Grouping enabled.
