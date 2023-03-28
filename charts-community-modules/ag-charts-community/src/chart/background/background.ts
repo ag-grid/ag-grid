@@ -15,6 +15,7 @@ export class Background extends BaseModuleInstance implements ModuleInstance {
         this.node = new Group({ name: 'background' });
         this.rectNode = new Rect();
         this.node.appendChild(this.rectNode);
+        this.fill = 'white';
         this.visible = true;
 
         ctx.scene.root?.insertBefore(this.node, ctx.scene.root.children[0]);
