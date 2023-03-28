@@ -4,6 +4,7 @@ import { BaseModuleInstance, ModuleContext, ModuleInstance } from '../../util/mo
 import { ProxyPropertyOnWrite } from '../../util/proxy';
 import { BOOLEAN, OPT_COLOR_STRING, Validate } from '../../util/validation';
 import { LayoutCompleteEvent } from '../layout/layoutService';
+import { Layers } from '../layers';
 
 export class Background extends BaseModuleInstance implements ModuleInstance {
     private node: Group;
@@ -13,12 +14,13 @@ export class Background extends BaseModuleInstance implements ModuleInstance {
         super();
 
         this.node = new Group({ name: 'background' });
+        this.node.zIndex = Layers.SERIES_BACKGROUND_ZINDEX;
         this.rectNode = new Rect();
         this.node.appendChild(this.rectNode);
         this.fill = 'white';
         this.visible = true;
 
-        ctx.scene.root?.insertBefore(this.node, ctx.scene.root.children[0]);
+        ctx.scene.root?.appendChild(this.node);
         this.destroyFns.push(() => ctx.scene.root?.removeChild(this.node));
 
         const layoutHandle = ctx.layoutService.addListener('layout-complete', this.onLayoutComplete);
