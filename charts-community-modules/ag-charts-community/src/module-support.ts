@@ -2,6 +2,7 @@ export * from './util/validation';
 export * from './util/module';
 export * from './util/navigator-module';
 export * from './util/proxy';
+export * from './chart/background/backgroundModule';
 export * from './chart/updateService';
 export * from './chart/layout/layoutService';
 export * from './chart/interaction/cursorManager';

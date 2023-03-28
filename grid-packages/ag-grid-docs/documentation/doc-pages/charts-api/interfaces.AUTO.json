@@ -3558,6 +3558,7 @@
     "meta": {},
     "type": {
       "type": "'layout-complete'",
+      "chart": "{ width: number; height: number; }",
       "series": "{ rect: BBox; paddedRect: BBox; visible: boolean; }",
       "axes?": "(AxisLayout & { id: string; })[]"
     }
@@ -4268,6 +4269,7 @@
     "meta": {},
     "type": {
       "optionsKey": "string",
+      "packageType": "'community' | 'enterprise'",
       "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
     }
   },
@@ -4277,6 +4279,7 @@
       "type": "'root'",
       "initialiseModule(ctx: ModuleContext)": "ModuleInstanceMeta<M>",
       "optionsKey": "string",
+      "packageType": "'community' | 'enterprise'",
       "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
     }
   },
@@ -4286,6 +4289,7 @@
       "type": "'axis'",
       "initialiseModule(ctx: ModuleContextWithParent<AxisContext>)": "ModuleInstanceMeta<M>",
       "optionsKey": "string",
+      "packageType": "'community' | 'enterprise'",
       "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
     }
   },
