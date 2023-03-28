@@ -4,6 +4,7 @@ import { Zoom } from './zoom';
 export const ZoomModule: _ModuleSupport.Module = {
     type: 'root',
     optionsKey: 'zoom',
+    packageType: 'enterprise',
     chartTypes: ['cartesian'],
     initialiseModule(ctx: _ModuleSupport.ModuleContext) {
         const instance = new Zoom(ctx);

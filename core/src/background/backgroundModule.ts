@@ -4,6 +4,7 @@ import { Background } from './background';
 export const BackgroundModule: _ModuleSupport.RootModule = {
     type: 'root',
     optionsKey: 'background',
+    packageType: 'enterprise',
     chartTypes: ['cartesian', 'polar', 'hierarchy'],
     initialiseModule: (ctx) => {
         return {
