@@ -65,10 +65,11 @@ export class ChartSettingsPanel extends Component {
         // setTimeout to wait until the panel animation is over and is able to scroll
         setTimeout(() => {
             const currentPallet = this.miniCharts.find(pallet => !pallet.getGui().classList.contains('ag-hidden'));
-            const currentChart = currentPallet!.getGui().querySelector('.ag-selected');
-    
+            const currentChart = currentPallet!.getGui().querySelector('.ag-selected') as HTMLElement;
+
             if (currentChart) {
-                currentChart.scrollIntoView({ block: 'nearest' });
+                const parent = currentChart.offsetParent as HTMLElement;
+                this.eMiniChartsContainer.scrollTo(0, parent.offsetTop);
             }
         }, 250);
     }
