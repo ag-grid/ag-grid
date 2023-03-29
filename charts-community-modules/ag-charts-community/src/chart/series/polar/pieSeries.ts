@@ -7,7 +7,7 @@ import { DropShadow } from '../../../scene/dropShadow';
 import { LinearScale } from '../../../scale/linearScale';
 import { Sector } from '../../../scene/shape/sector';
 import { BBox } from '../../../scene/bbox';
-import { SeriesNodeDatum, HighlightStyle, SeriesTooltip, SeriesNodeBaseClickEvent } from './../series';
+import { SeriesNodeDatum, HighlightStyle, SeriesTooltip, SeriesNodeBaseClickEvent, Series } from './../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { normalizeAngle180, toRadians } from '../../../util/angle';
@@ -315,6 +315,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     @Validate(OPT_STRING)
     sectorLabelName?: string = undefined;
+
+    @Validate(OPT_STRING)
+    legendItemKey?: string = undefined;
 
     @Validate(COLOR_STRING_ARRAY)
     fills: string[] = ['#c16068', '#a2bf8a', '#ebcc87', '#80a0c3', '#b58dae', '#85c0d1'];
@@ -1307,15 +1310,19 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     getLegendData(): LegendDatum[] {
-        const { calloutLabelKey, data, id, sectorFormatData } = this;
+        const { calloutLabelKey, legendItemKey, data, id, sectorFormatData } = this;
 
-        if (!data || data.length === 0 || !calloutLabelKey) return [];
+        if (!data || data.length === 0 || (!legendItemKey && !calloutLabelKey)) return [];
 
         const titleText = this.title && this.title.showInLegend && this.title.text;
         const legendData: LegendDatum[] = data.map((datum, index) => {
             const labelParts = [];
             titleText && labelParts.push(titleText);
-            labelParts.push(String(datum[calloutLabelKey]));
+            if (legendItemKey) {
+                labelParts.push(String(datum[legendItemKey]));
+            } else if (calloutLabelKey) {
+                labelParts.push(String(datum[calloutLabelKey]));
+            }
 
             return {
                 id,
@@ -1342,12 +1349,30 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.nodeDataRefresh = true;
     }
 
-    toggleOtherSeriesItem(itemId: number, enabled: boolean): void {
-        // A pie series that has no `calloutLabelKey` will not appear in the legend items. These should therefore be
-        // toggled when an item in a sibling series is clicked that shares the same `itemId`.
+    toggleOtherSeriesItems(
+        seriesToggled: Series<any>,
+        datumToggled: any,
+        enabled?: boolean,
+        suggestedEnabled?: boolean
+    ): void {
+        const { legendItemKey } = this;
+        if (seriesToggled.type !== 'pie') return;
+        if (legendItemKey === undefined) return;
 
-        if (this.calloutLabelKey === undefined) {
-            this.toggleSeriesItem(itemId, enabled);
-        }
+        const pieSeriesToggled = seriesToggled as PieSeries;
+        const datumToggledLegendItemValue =
+            datumToggled &&
+            pieSeriesToggled.legendItemKey &&
+            pieSeriesToggled.data?.find((_, index) => index === datumToggled.itemId)[pieSeriesToggled.legendItemKey];
+
+        if (!datumToggledLegendItemValue) return;
+
+        this.data?.forEach((d, itemId) => {
+            if (enabled !== undefined && d[legendItemKey] === datumToggledLegendItemValue) {
+                this.toggleSeriesItem(itemId, enabled);
+            } else if (suggestedEnabled !== undefined) {
+                this.toggleSeriesItem(itemId, suggestedEnabled || d[legendItemKey] === datumToggledLegendItemValue);
+            }
+        });
     }
 }
