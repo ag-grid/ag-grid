@@ -139,14 +139,6 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         line.x2 = axisCtx.direction === 'x' ? bounds.height : bounds.width;
     }
 
-    private getAxisValue(position: number): string {
-        const { axisCtx } = this;
-
-        const value = axisCtx.scaleInvert(position);
-
-        return this.formatValue(value);
-    }
-
     private formatValue(val: any): string {
         const { axisLayout } = this;
 
@@ -170,10 +162,10 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
             let value;
             if (axisCtx.direction === 'x') {
                 crosshairGroup.translationX = Math.round(offsetX);
-                value = this.getAxisValue(offsetX - seriesRect.x);
+                value = axisCtx.scaleInvert(offsetX - seriesRect.x);
             } else {
                 crosshairGroup.translationY = Math.round(offsetY);
-                value = this.getAxisValue(offsetY - seriesRect.y);
+                value = axisCtx.scaleInvert(offsetY - seriesRect.y);
             }
 
             this.showLabel(offsetX, offsetY, value);
@@ -210,7 +202,6 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
 
             const value = isYValue && cumulativeValue !== undefined ? cumulativeValue : datumValue;
             const position = axisCtx.scaleConvert(value);
-            const labelValue = this.formatValue(value);
 
             let x = 0;
             let y = 0;
@@ -223,7 +214,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
                 crosshairGroup.translationY = Math.round(y + seriesRect.y);
             }
 
-            this.showLabel(x + seriesRect.x, y + seriesRect.y, labelValue);
+            this.showLabel(x + seriesRect.x, y + seriesRect.y, value);
         } else {
             this.hideCrosshair();
         }
@@ -233,7 +224,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         const { label, axisLayout: { label: { fractionDigits = 0 } = {} } = {} } = this;
         const { renderer: labelRenderer } = label;
         const defaults: AgCrosshairLabelRendererResult = {
-            text: value,
+            text: this.formatValue(value),
         };
 
         if (labelRenderer) {
