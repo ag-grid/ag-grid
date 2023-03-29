@@ -92,7 +92,11 @@ export class AgGridReactUi<TData = any> extends Component<AgReactUiProps<TData>,
                 this.api = this.gridOptions.api!;
                 this.columnApi = this.gridOptions.columnApi!;
                 this.props.setGridApi!(this.api, this.columnApi);
-                this.destroyFuncs.push(() => this.api.destroy());
+                this.destroyFuncs.push(() => {
+                    this.api.destroy();
+                    this.api = null!;
+                    this.columnApi = null!;
+                });
             });
         };
 
@@ -125,6 +129,8 @@ export class AgGridReactUi<TData = any> extends Component<AgReactUiProps<TData>,
             debug('AgGridReactUi.componentWillUnmount - executing');
             this.destroyFuncs.forEach(f => f());
             this.destroyFuncs.length = 0;
+            this.ready = false;
+            this.mounted = false;
         } else {
             debug('AgGridReactUi.componentWillUnmount - skipping');
         }

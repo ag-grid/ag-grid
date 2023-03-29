@@ -4,7 +4,7 @@ import {
     GridCtrl,
     IGridComp
 } from 'ag-grid-community';
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState, useLayoutEffect } from 'react';
 import { BeansContext } from './beansContext';
 import GridBodyComp from './gridBodyComp';
 import useReactCommentEffect from './reactComment';
@@ -34,23 +34,20 @@ const GridComp = ({ context }: GridCompProps) => {
 
     const onTabKeyDown = useCallback(() => undefined, []);
 
-    const beans = useMemo( ()=> context.getBean('beans') as Beans, []);
+    const beans = useMemo(() => context.getBean('beans') as Beans, [context]);
 
     useReactCommentEffect(' AG Grid ', eRootWrapperRef);
 
     // create shared controller.
-    useLayoutEffectOnce(() => {
+    useLayoutEffect(() => {
+
         const currentController = gridCtrlRef.current = context.createBean(new GridCtrl());
 
-        return () => {
-            context.destroyBean(currentController);
-            gridCtrlRef.current = null;
-        }
-    });
-
-    // initialise the UI
-    useLayoutEffectOnce(() => {
         const gridCtrl = gridCtrlRef.current!;
+        if (!(gridCtrl as any).dragAndDropService) {
+            console.log('gridCtrl', gridCtrl);
+            return;
+        }
 
         focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
 
@@ -87,13 +84,18 @@ const GridComp = ({ context }: GridCompProps) => {
         gridCtrl.setComp(compProxy, eRootWrapperRef.current!, eRootWrapperRef.current!);
 
         setInitialised(true);
-    });
+        return () => {
+            context.destroyBean(currentController);
+            gridCtrlRef.current = null;
+        }
+    }, [context]);
 
     // initialise the extra components
     useEffect(() => {
         if (!tabGuardReady) { return; }
 
         const gridCtrl = gridCtrlRef.current!;
+        if (!gridCtrl) { return; }
         const beansToDestroy: any[] = [];
 
         const {agStackComponentsRegistry} = beans;
@@ -174,7 +176,7 @@ const GridComp = ({ context }: GridCompProps) => {
 
     const setTabGuardCompRef = useCallback((ref: TabGuardCompCallback) => {
         tabGuardRef.current = ref;
-        setTabGuardReady(true);
+        setTabGuardReady(ref !== null);
     }, []);
     
     return (

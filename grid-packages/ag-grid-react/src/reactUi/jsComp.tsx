@@ -11,6 +11,8 @@ export const showJsComp = (
     ref?: MutableRefObject<any> | ((ref: any)=>void)
 )  => {
 
+    if ((context as any).destroyed) { return; }
+
     const doNothing = !compDetails || compDetails.componentFromFramework;
     if (doNothing) { return; }
 
