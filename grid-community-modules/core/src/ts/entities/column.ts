@@ -341,7 +341,25 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         }
 
         if (exists(colDefAny.menuTabs)) {
-            ModuleRegistry.assertRegistered(ModuleNames.MenuModule, 'menuTabs');
+
+            if (Array.isArray(colDefAny.menuTabs)) {
+
+                const communityMenuTabs: ColumnMenuTab[] = ['filterMenuTab'];
+
+                const enterpriseMenuTabs: ColumnMenuTab[] = ['columnsMenuTab', 'generalMenuTab'];
+                const itemsUsed = enterpriseMenuTabs.filter(x => colDefAny.menuTabs.includes(x));
+                if (itemsUsed.length > 0) {
+                    ModuleRegistry.assertRegistered(ModuleNames.MenuModule, `menuTab(s): ${itemsUsed.map(t => `'${t}'`).join()}`);
+                }
+
+                colDefAny.menuTabs.forEach((tab: ColumnMenuTab) => {
+                    if (!enterpriseMenuTabs.includes(tab) && !communityMenuTabs.includes(tab)) {
+                        warnOnce(`AG Grid: '${tab}' is not valid for 'colDef.menuTabs'. Valid values are: ${[...communityMenuTabs, ...enterpriseMenuTabs].map(t => `'${t}'`).join()}.`, 'wrongValue_menuTabs_' + tab);
+                    }
+                });
+            } else {
+                warnOnce(`AG Grid: The typeof 'colDef.menuTabs' should be an array not:` + typeof colDefAny.menuTabs, 'wrongType_menuTabs');
+            }
         }
 
         if (exists(colDefAny.columnsMenuParams)) {
