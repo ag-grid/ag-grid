@@ -45,6 +45,10 @@ declare module 'ag-charts-community' {
     export interface AgCrosshairLabel {
         /** Whether or not to show label when the crosshair is visible. */
         enabled?: boolean;
+        /** The horizontal offset in pixels for the shadow. */
+        xOffset?: PixelSize;
+        /** The vertical offset in pixels for the shadow. */
+        yOffset?: PixelSize;
         /** Function used to create the content for the label. */
         renderer?: (params: AgCrosshairLabelRendererParams) => string | AgCrosshairLabelRendererResult;
     }
