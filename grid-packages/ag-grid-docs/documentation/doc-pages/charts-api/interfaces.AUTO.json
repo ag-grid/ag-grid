@@ -1067,14 +1067,16 @@
       "class?": "string",
       "tracking?": "boolean",
       "range?": "AgChartInteractionRange",
-      "delay?": "number"
+      "delay?": "number",
+      "enableInteraction?": "boolean"
     },
     "docs": {
       "enabled?": "/** Set to false to disable tooltips for all series in the chart. */",
       "class?": "/** A class name to be added to the tooltip element of the chart. */",
       "tracking?": "/** @deprecated since v7.2.0 (ag-grid v29.2.0) If true, for series with markers the tooltip will be shown to the closest marker. */",
       "range?": "/** Range from a point that triggers the tooltip to show. */",
-      "delay?": "/** The time interval (in milliseconds) after which the tooltip is shown. */"
+      "delay?": "/** The time interval (in milliseconds) after which the tooltip is shown. */",
+      "enableInteraction?": "/** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */"
     }
   },
   "AgChartBackground": {
