@@ -47,6 +47,9 @@ export class CategoryAxis extends ChartAxis<BandScale<string | object>> {
             if (boundSeries.some((s) => ['bar', 'column'].includes(s.type))) {
                 this.scale.paddingInner = 0.2;
                 this.scale.paddingOuter = 0.3;
+            } else if (boundSeries.some((s) => s.type === 'heatmap')) {
+                this.scale.paddingInner = 0;
+                this.scale.paddingOuter = 0;
             } else {
                 this.scale.paddingInner = 1;
                 this.scale.paddingOuter = 0;

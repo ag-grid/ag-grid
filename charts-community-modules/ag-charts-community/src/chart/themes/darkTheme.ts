@@ -85,6 +85,9 @@ export class DarkTheme extends ChartTheme {
                     column: {
                         ...seriesLabelDefaults,
                     },
+                    heatmap: {
+                        ...seriesLabelDefaults,
+                    },
                     histogram: {
                         ...seriesLabelDefaults,
                     },
@@ -98,6 +101,9 @@ export class DarkTheme extends ChartTheme {
                         ...seriesLabelDefaults,
                     },
                     column: {
+                        ...seriesLabelDefaults,
+                    },
+                    heatmap: {
                         ...seriesLabelDefaults,
                     },
                     histogram: {

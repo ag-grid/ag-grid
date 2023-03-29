@@ -367,6 +367,24 @@ export class ChartTheme {
                     color: 'rgb(70, 70, 70)',
                 },
             },
+            heatmap: {
+                ...ChartTheme.getSeriesDefaults(),
+                title: undefined,
+                xKey: '',
+                yKey: '',
+                labelKey: undefined,
+                xName: '',
+                yName: '',
+                labelName: 'Label',
+                label: {
+                    enabled: false,
+                    fontStyle: undefined,
+                    fontWeight: undefined,
+                    fontSize: 12,
+                    fontFamily: ChartTheme.fontFamily,
+                    color: 'rgb(70, 70, 70)',
+                },
+            },
             area: {
                 ...ChartTheme.getAreaSeriesDefaults(),
                 xKey: '',
@@ -680,6 +698,7 @@ export class ChartTheme {
         'bar',
         'column',
         'scatter',
+        'heatmap',
         'histogram',
     ];
     private static polarSeriesTypes: (keyof AgChartThemeOverrides)[] = ['pie'];

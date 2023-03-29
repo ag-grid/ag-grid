@@ -95,6 +95,13 @@
         "optional": true
       }
     },
+    "heatmap": {
+      "description": "/** Specifies defaults for heatmap charts. */",
+      "type": {
+        "returnType": "AgCartesianThemeOptions<AgHeatmapSeriesOptions>",
+        "optional": true
+      }
+    },
     "histogram": {
       "description": "/** Specifies defaults for histogram charts. */",
       "type": {
@@ -847,6 +854,9 @@
     "bar": { "type": { "returnType": "AgBarSeriesOptions", "optional": true } },
     "column": {
       "type": { "returnType": "AgBarSeriesOptions", "optional": true }
+    },
+    "heatmap": {
+      "type": { "returnType": "AgHeatmapSeriesOptions", "optional": true }
     },
     "histogram": {
       "type": { "returnType": "AgHistogramSeriesOptions", "optional": true }
@@ -3383,6 +3393,271 @@
       "type": { "returnType": "AgChartInteractionRange", "optional": true }
     }
   },
+  "AgHeatmapSeriesFormatterParams": {
+    "datum": { "type": { "returnType": "DatumType", "optional": false } },
+    "fill": { "type": { "returnType": "CssColor", "optional": true } },
+    "stroke": { "type": { "returnType": "CssColor", "optional": true } },
+    "strokeWidth": { "type": { "returnType": "PixelSize", "optional": false } },
+    "highlighted": { "type": { "returnType": "boolean", "optional": false } },
+    "xKey": { "type": { "returnType": "string", "optional": false } },
+    "yKey": { "type": { "returnType": "string", "optional": false } },
+    "colorKey": { "type": { "returnType": "string", "optional": true } },
+    "labelKey": { "type": { "returnType": "string", "optional": true } },
+    "seriesId": { "type": { "returnType": "string", "optional": false } },
+    "meta": { "typeParams": ["DatumType"] }
+  },
+  "AgHeatmapSeriesFormat": {
+    "fill": { "type": { "returnType": "CssColor", "optional": true } },
+    "stroke": { "type": { "returnType": "CssColor", "optional": true } },
+    "strokeWidth": { "type": { "returnType": "PixelSize", "optional": true } }
+  },
+  "AgHeatmapSeriesTooltipRendererParams": {
+    "labelKey": {
+      "description": "/** labelKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "labelName": {
+      "description": "/** labelName as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "xKey": {
+      "description": "/** xKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "xValue": {
+      "description": "/** xValue as read from series data via the xKey property. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "xName": {
+      "description": "/** xName as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yKey": {
+      "description": "/** yKey as specified on series options. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "yValue": {
+      "description": "/** yValue as read from series data via the yKey property. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "yName": {
+      "description": "/** yName as specified on series options. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "datum": {
+      "description": "/** Datum from the series data array that the tooltip is being rendered for. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "title": {
+      "description": "/** Series title or yName depending on series configuration. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "color": {
+      "description": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    },
+    "seriesId": {
+      "description": "/** The ID of the series. */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "AgHeatmapSeriesTooltip": {
+    "renderer": {
+      "description": "/** Function used to create the content for tooltips. */",
+      "type": {
+        "arguments": { "params": "AgHeatmapSeriesTooltipRendererParams" },
+        "returnType": "string | AgTooltipRendererResult",
+        "optional": true
+      }
+    },
+    "enabled": {
+      "description": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "AgHeatmapSeriesLabelOptions": {
+    "enabled": {
+      "description": "/** Whether or not the labels should be shown. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "fontStyle": {
+      "description": "/** The font style to use for the labels. */",
+      "type": { "returnType": "FontStyle", "optional": true }
+    },
+    "fontWeight": {
+      "description": "/** The font weight to use for the labels. */",
+      "type": { "returnType": "FontWeight", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** The font size in pixels to use for the labels. */",
+      "type": { "returnType": "FontSize", "optional": true }
+    },
+    "fontFamily": {
+      "description": "/** The font family to use for the labels. */",
+      "type": { "returnType": "FontFamily", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour to use for the labels. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    }
+  },
+  "AgHeatmapSeriesMarker": {
+    "domain": {
+      "description": "/** If sizeKey is used, explicitly specifies the extent of the domain of it's values. */",
+      "type": { "returnType": "[number, number]", "optional": true }
+    },
+    "meta": { "typeParams": ["DatumType"] },
+    "formatter": {
+      "description": "/** Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
+      "type": {
+        "returnType": "AgCartesianSeriesMarkerFormatter<DatumType>",
+        "optional": true
+      }
+    },
+    "enabled": {
+      "description": "/** Whether or not to show markers. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "shape": {
+      "description": "/** The shape to use for the markers. You can also supply a custom marker by providing a `Marker` subclass. */",
+      "type": { "returnType": "MarkerShape", "optional": true }
+    },
+    "size": {
+      "description": "/** The size in pixels of the markers. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "maxSize": {
+      "description": "/** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "fill": {
+      "description": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    },
+    "fillOpacity": {
+      "description": "/** Opacity of the marker fills. */",
+      "type": { "returnType": "Opacity", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "strokeOpacity": {
+      "description": "/** Opacity of the marker strokes. */",
+      "type": { "returnType": "Opacity", "optional": true }
+    }
+  },
+  "AgHeatmapSeriesOptions": {
+    "type": {
+      "description": "/** Configuration for the heatmap series. */",
+      "type": { "returnType": "'heatmap'", "optional": true }
+    },
+    "label": {
+      "description": "/** Configuration for the labels shown on top of data points. */",
+      "type": { "returnType": "AgHeatmapSeriesLabelOptions", "optional": true }
+    },
+    "xKey": {
+      "description": "/** The key to use to retrieve x-values from the data. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yKey": {
+      "description": "/** The key to use to retrieve y-values from the data. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "xName": {
+      "description": "/** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yName": {
+      "description": "/** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "labelKey": {
+      "description": "/** The key to use to retrieve values from the data to use as labels for the markers. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "labelName": {
+      "description": "/** A human-readable description of the label values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "colorKey": {
+      "description": "/** The name of the node key containing the color value. This value (along with `colorDomain` and `colorRange` configs) will be used to determine the tile color. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "colorName": {
+      "description": "/** A human-readable description of the colour values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "colorDomain": {
+      "description": "/** The domain the 'colorKey' values belong to. The domain can contain more than two stops, for example `[-5, 0, -5]`. In that case the 'colorRange' should also use a matching number of colors. */",
+      "type": { "returnType": "number[]", "optional": true }
+    },
+    "colorRange": {
+      "description": "/** The color range to interpolate the numeric `colorDomain` into. For example, if the `colorDomain` is `[-5, 5]` and `colorRange` is `['red', 'green']`, a `colorKey` value of `-5` will be assigned the 'red' color, `5` - 'green' color and `0` a blend of 'red' and 'green'. */",
+      "type": { "returnType": "string[]", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The stroke color of cells. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The stroke width of cells. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "title": {
+      "description": "/** The title to use for the series. Defaults to `yName` if it exists, or `yKey` if not. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "formatter": {
+      "description": "/** Function used to return formatting for individual heatmap cells, based on the given parameters. If the current cell is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
+      "type": {
+        "arguments": { "params": "AgHeatmapSeriesFormatterParams<DatumType>" },
+        "returnType": "AgHeatmapSeriesFormat",
+        "optional": true
+      }
+    },
+    "tooltip": {
+      "description": "/** Series-specific tooltip configuration. */",
+      "type": { "returnType": "AgHeatmapSeriesTooltip", "optional": true }
+    },
+    "listeners": {
+      "description": "/** A map of event names to event listeners. */",
+      "type": { "returnType": "AgSeriesListeners<DatumType>", "optional": true }
+    },
+    "meta": { "typeParams": ["DatumType = any"] },
+    "id": {
+      "description": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n     * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n     * by series please supply your own unique `id` value.\n     *\n     * Default: auto-generated value\n     */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "data": {
+      "description": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
+      "type": { "returnType": "DatumType[]", "optional": true }
+    },
+    "visible": {
+      "description": "/** Whether or not to display the series. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "showInLegend": {
+      "description": "/** Whether or not to include the series in the legend. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "cursor": {
+      "description": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "highlightStyle": {
+      "description": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
+      "type": { "returnType": "AgSeriesHighlightStyle", "optional": true }
+    },
+    "nodeClickRange": {
+      "description": "/** Range from a node a click triggers the listener. */",
+      "type": { "returnType": "AgChartInteractionRange", "optional": true }
+    }
+  },
   "AgAreaSeriesTooltip": {
     "renderer": {
       "type": {
@@ -4860,7 +5135,7 @@
     "type": {
       "description": "/** If specified overrides the default series type. */",
       "type": {
-        "returnType": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram'",
+        "returnType": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'heatmap' | 'histogram'",
         "optional": true
       }
     },
@@ -5634,6 +5909,20 @@
     "hasMarkers": { "type": { "returnType": "boolean", "optional": false } },
     "renderLayerPerSubSeries": {
       "type": { "returnType": "boolean", "optional": false }
+    }
+  },
+  "HeatmapNodeDatum": {
+    "label": { "type": { "returnType": "MeasuredLabel", "optional": false } },
+    "width": { "type": { "returnType": "number", "optional": false } },
+    "height": { "type": { "returnType": "number", "optional": false } },
+    "fill": { "type": { "returnType": "string", "optional": false } },
+    "xKey": { "type": { "returnType": "string", "optional": false } },
+    "yKey": { "type": { "returnType": "string", "optional": false } },
+    "series": { "type": { "returnType": "Series<any>", "optional": false } },
+    "itemId": { "type": { "returnType": "any", "optional": true } },
+    "datum": { "type": { "returnType": "any", "optional": false } },
+    "point": {
+      "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     }
   },
   "HistogramSeriesNodeTag": {},

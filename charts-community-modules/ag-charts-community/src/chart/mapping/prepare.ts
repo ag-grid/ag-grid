@@ -11,6 +11,7 @@ import {
     DEFAULT_CARTESIAN_CHART_OVERRIDES,
     DEFAULT_BAR_CHART_OVERRIDES,
     DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES,
+    DEFAULT_HEATMAP_CHART_OVERRIDES,
 } from './defaults';
 import { jsonMerge, DELETE, jsonWalk, JsonMergeOptions } from '../../util/json';
 import { applySeriesTransform } from './transforms';
@@ -45,6 +46,7 @@ export function isAgCartesianChartOptions(input: AgChartOptions): input is AgCar
         case 'histogram':
         case 'line':
         case 'scatter':
+        case 'heatmap':
             return true;
 
         default:
@@ -80,7 +82,7 @@ export function isAgPolarChartOptions(input: AgChartOptions): input is AgPolarCh
     return specifiedType === 'pie';
 }
 
-const SERIES_OPTION_TYPES = ['line', 'bar', 'column', 'histogram', 'scatter', 'area', 'pie', 'treemap'];
+const SERIES_OPTION_TYPES = ['line', 'bar', 'column', 'heatmap', 'histogram', 'scatter', 'area', 'pie', 'treemap'];
 function isSeriesOptionType(input?: string): input is NonNullable<SeriesOptionsTypes['type']> {
     if (input == null) {
         return false;
@@ -157,6 +159,8 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallb
         defaultOverrides = DEFAULT_BAR_CHART_OVERRIDES;
     } else if (type === 'scatter' || type === 'histogram') {
         defaultOverrides = DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES;
+    } else if (type === 'heatmap') {
+        defaultOverrides = DEFAULT_HEATMAP_CHART_OVERRIDES;
     } else if (isAgCartesianChartOptions(options)) {
         defaultOverrides = DEFAULT_CARTESIAN_CHART_OVERRIDES;
     }
@@ -280,6 +284,12 @@ function calculateSeriesPalette<T extends SeriesOptionsTypes>(context: Preparati
             paletteOptions.stroke = takeColours(context, strokes, 1)[0];
             break;
         case 'scatter':
+            paletteOptions.marker = {
+                stroke: takeColours(context, strokes, 1)[0],
+                fill: takeColours(context, fills, 1)[0],
+            };
+            break;
+        case 'heatmap':
             paletteOptions.marker = {
                 stroke: takeColours(context, strokes, 1)[0],
                 fill: takeColours(context, fills, 1)[0],

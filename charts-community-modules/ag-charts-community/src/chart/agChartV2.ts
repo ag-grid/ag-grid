@@ -6,6 +6,7 @@ import {
     AgBarSeriesOptions,
     AgAreaSeriesOptions,
     AgScatterSeriesOptions,
+    AgHeatmapSeriesOptions,
     AgHistogramSeriesOptions,
     AgPieSeriesOptions,
     AgTreemapSeriesOptions,
@@ -19,6 +20,7 @@ import { Caption } from '../caption';
 import { Series } from './series/series';
 import { AreaSeries } from './series/cartesian/areaSeries';
 import { BarSeries } from './series/cartesian/barSeries';
+import { HeatmapSeries } from './series/cartesian/heatmapSeries';
 import { HistogramSeries } from './series/cartesian/histogramSeries';
 import { LineSeries } from './series/cartesian/lineSeries';
 import { ScatterSeries } from './series/cartesian/scatterSeries';
@@ -61,6 +63,8 @@ type SeriesOptionType<T extends Series> = T extends LineSeries
     ? AgAreaSeriesOptions
     : T extends ScatterSeries
     ? AgScatterSeriesOptions
+    : T extends HeatmapSeries
+    ? AgHeatmapSeriesOptions
     : T extends HistogramSeries
     ? AgHistogramSeriesOptions
     : T extends PieSeries
@@ -556,6 +560,9 @@ function createSeries(options: SeriesOptionsTypes[]): Series[] {
                 break;
             case 'column':
                 series.push(applySeriesValues(new BarSeries(), seriesOptions, { path, index }));
+                break;
+            case 'heatmap':
+                series.push(applySeriesValues(new HeatmapSeries(), seriesOptions, { path, index }));
                 break;
             case 'histogram':
                 series.push(applySeriesValues(new HistogramSeries(), seriesOptions, { path, index }));

@@ -115,6 +115,7 @@ const SERIES_TRANSFORMS: {
     area: identityTransform,
     bar: barSeriesTransform,
     column: barSeriesTransform,
+    heatmap: identityTransform,
     histogram: identityTransform,
     line: identityTransform,
     pie: identityTransform,
