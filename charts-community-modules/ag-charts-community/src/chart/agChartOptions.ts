@@ -502,6 +502,8 @@ export interface AgChartTooltipOptions {
     range?: AgChartInteractionRange;
     /** The time interval (in milliseconds) after which the tooltip is shown. */
     delay?: number;
+    /** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */
+    enableInteraction?: boolean;
 }
 
 export interface AgChartBackground {

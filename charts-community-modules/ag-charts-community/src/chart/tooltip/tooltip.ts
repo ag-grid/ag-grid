@@ -164,6 +164,9 @@ export class Tooltip {
     @Validate(INTERACTION_RANGE)
     range: AgChartInteractionRange = 'nearest';
 
+    @Validate(BOOLEAN)
+    enableInteraction: boolean = false;
+
     constructor(canvasElement: HTMLCanvasElement, document: Document, container: HTMLElement) {
         this.tooltipRoot = container;
         const element = document.createElement('div');
@@ -298,6 +301,8 @@ export class Tooltip {
     }
 
     pointerLeftOntoTooltip(event: InteractionEvent<'leave'>): boolean {
+        if (!this.enableInteraction) return false;
+
         const classList = (event.sourceEvent as MouseEvent).relatedTarget?.classList;
         return (
             classList !== undefined &&
