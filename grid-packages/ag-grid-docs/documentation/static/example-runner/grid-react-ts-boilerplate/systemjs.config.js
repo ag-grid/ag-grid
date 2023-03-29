@@ -53,6 +53,11 @@
                 main: './dist/react-redux.min.js',
                 defaultExtension: 'js',
             },
+            'prop-types': {
+                main: './prop-types.min.js',
+                defaultExtension: 'js',
+            },
+
             app: {
                 main: './index.tsx',
                 defaultExtension: 'tsx',
