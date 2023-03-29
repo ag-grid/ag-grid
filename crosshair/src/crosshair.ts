@@ -220,7 +220,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         }
     }
 
-    private getLabelHtml(value: string): string {
+    private getLabelHtml(value: any): string {
         const { label, axisLayout: { label: { fractionDigits = 0 } = {} } = {} } = this;
         const { renderer: labelRenderer } = label;
         const defaults: AgCrosshairLabelRendererResult = {
@@ -240,7 +240,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         return label.toLabelHtml(defaults);
     }
 
-    private showLabel(x: number, y: number, value: string) {
+    private showLabel(x: number, y: number, value: any) {
         const { axisCtx, bounds, label, axisLayout } = this;
 
         if (!axisLayout) {
