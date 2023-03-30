@@ -43,6 +43,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     private crosshairGroup: _Scene.Group = new Group({ layer: true, zIndex: Layers.SERIES_CROSSHAIR_ZINDEX });
     private lineNode: _Scene.Line = this.crosshairGroup.appendChild(new Line());
 
+    private activeHighlight?: _ModuleSupport.HighlightChangeEvent['currentHighlight'] = undefined;
     constructor(private readonly ctx: _ModuleSupport.ModuleContextWithParent<_ModuleSupport.AxisContext>) {
         super();
 
@@ -149,8 +150,8 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     }
 
     private onMouseMove(event: _ModuleSupport.InteractionEvent<'hover'>) {
-        const { crosshairGroup, snap, seriesRect, axisCtx, visible } = this;
-        if (snap || !axisCtx.continuous) {
+        const { crosshairGroup, snap, seriesRect, axisCtx, visible, activeHighlight } = this;
+        if (snap) {
             return;
         }
 
@@ -159,16 +160,21 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         if (visible && seriesRect.containsPoint(offsetX, offsetY)) {
             crosshairGroup.visible = true;
 
+            const highlightValue = activeHighlight ? this.getActiveHighlightValue(activeHighlight) : undefined;
             let value;
             if (axisCtx.direction === 'x') {
                 crosshairGroup.translationX = Math.round(offsetX);
-                value = axisCtx.scaleInvert(offsetX - seriesRect.x);
+                value = axisCtx.continuous ? axisCtx.scaleInvert(offsetX - seriesRect.x) : highlightValue;
             } else {
                 crosshairGroup.translationY = Math.round(offsetY);
-                value = axisCtx.scaleInvert(offsetY - seriesRect.y);
+                value = axisCtx.continuous ? axisCtx.scaleInvert(offsetY - seriesRect.y) : highlightValue;
             }
 
-            this.showLabel(offsetX, offsetY, value);
+            if (value) {
+                this.showLabel(offsetX, offsetY, value);
+            } else {
+                this.hideLabel();
+            }
         } else {
             this.hideCrosshair();
         }
@@ -176,31 +182,28 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
 
     private onHighlightChange(event: _ModuleSupport.HighlightChangeEvent) {
         const { crosshairGroup, snap, seriesRect, axisCtx, visible } = this;
-        if (!snap && axisCtx.continuous) {
+
+        const { currentHighlight } = event;
+
+        const hasCrosshair =
+            currentHighlight &&
+            (currentHighlight.series.xAxis.id === axisCtx.axisId ||
+                currentHighlight.series.yAxis.id === axisCtx.axisId);
+
+        if (!hasCrosshair) {
+            this.activeHighlight = undefined;
+        } else {
+            this.activeHighlight = currentHighlight;
+        }
+
+        if (!snap) {
             return;
         }
 
-        const { currentHighlight } = event;
-        if (visible && currentHighlight) {
-            const hasCrosshair =
-                currentHighlight.series.xAxis.id === axisCtx.axisId ||
-                currentHighlight.series.yAxis.id === axisCtx.axisId;
-
-            if (!hasCrosshair) {
-                this.hideCrosshair();
-                return;
-            }
-
+        if (visible && this.activeHighlight) {
             crosshairGroup.visible = true;
 
-            const { xKey = '', yKey = '', datum } = currentHighlight;
-            const isYValue = axisCtx.keys().indexOf(yKey) >= 0;
-            const key = isYValue ? yKey : xKey;
-
-            const datumValue = checkDatum(datum[key], axisCtx.continuous);
-            const cumulativeValue = currentHighlight.cumulativeValue;
-
-            const value = isYValue && cumulativeValue !== undefined ? cumulativeValue : datumValue;
+            const value = this.getActiveHighlightValue(this.activeHighlight);
             const position = axisCtx.scaleConvert(value);
 
             let x = 0;
@@ -218,6 +221,22 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         } else {
             this.hideCrosshair();
         }
+    }
+
+    private getActiveHighlightValue(
+        activeHighlight: Exclude<_ModuleSupport.HighlightChangeEvent['currentHighlight'], undefined>
+    ) {
+        const { axisCtx } = this;
+        const { xKey = '', yKey = '', datum } = activeHighlight;
+        const isYValue = axisCtx.keys().indexOf(yKey) >= 0;
+        const key = isYValue ? yKey : xKey;
+
+        const datumValue = checkDatum(datum[key], axisCtx.continuous);
+        const cumulativeValue = activeHighlight.cumulativeValue;
+
+        const value = isYValue && cumulativeValue !== undefined ? cumulativeValue : datumValue;
+
+        return value;
     }
 
     private getLabelHtml(value: any): string {
