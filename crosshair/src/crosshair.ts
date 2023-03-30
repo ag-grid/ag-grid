@@ -40,6 +40,8 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     private axisLayout?: _ModuleSupport.AxisLayout & {
         id: string;
     };
+    private labelFormatter?: (value: any) => string;
+
     private crosshairGroup: _Scene.Group = new Group({ layer: true, zIndex: Layers.SERIES_CROSSHAIR_ZINDEX });
     private lineNode: _Scene.Line = this.crosshairGroup.appendChild(new Line());
 
@@ -68,7 +70,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         this.destroyFns.push(() => this.label.destroy());
     }
 
-    private layout({ series: { rect, paddedRect, visible }, axes }: _ModuleSupport.LayoutCompleteEvent) {
+    private layout({ series: { rect, visible }, axes }: _ModuleSupport.LayoutCompleteEvent) {
         this.hideCrosshair();
 
         if (!(visible && axes)) {
@@ -101,6 +103,9 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         crosshairGroup.rotation = rotation;
 
         this.updateLine();
+
+        const format = this.label.format ?? axisLayout.label.format;
+        this.labelFormatter = format ? this.axisCtx.scaleValueFormatter(format) : undefined;
     }
 
     private buildBounds(rect: _Scene.BBox, axisPosition: AgCartesianAxisPosition, padding: number): _Scene.BBox {
@@ -141,7 +146,11 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     }
 
     private formatValue(val: any): string {
-        const { axisLayout } = this;
+        const { labelFormatter, axisLayout } = this;
+
+        if (labelFormatter) {
+            return labelFormatter(val);
+        }
 
         const isInteger = val % 1 === 0;
         const fractionDigits = (axisLayout?.label.fractionDigits ?? 0) + (isInteger ? 0 : 1);
