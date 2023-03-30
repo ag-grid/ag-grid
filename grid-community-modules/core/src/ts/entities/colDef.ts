@@ -432,7 +432,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      *  - `> 0` Sort valueA after valueB
      *  - `< 0` Sort valueA before valueB
      */
-    comparator?: (valueA: TValue, valueB: TValue, nodeA: IRowNode<TData>, nodeB: IRowNode<TData>, isDescending: boolean) => number;
+    comparator?: (valueA: TValue | undefined, valueB: TValue | undefined, nodeA: IRowNode<TData>, nodeB: IRowNode<TData>, isDescending: boolean) => number;
     /** Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column. Default: `false` */
     unSortIcon?: boolean;
 
@@ -485,7 +485,7 @@ export interface ColumnFunctionCallbackParams<TData = any, TValue = any> extends
 
 export interface CheckboxSelectionCallbackParams<TData = any, TValue = any> extends ColumnFunctionCallbackParams<TData, TValue> { }
 export interface CheckboxSelectionCallback<TData = any, TValue = any> {
-    (params: CheckboxSelectionCallbackParams<TData>): boolean;
+    (params: CheckboxSelectionCallbackParams<TData, TValue>): boolean;
 }
 export interface RowDragCallbackParams<TData = any, TValue = any> extends ColumnFunctionCallbackParams<TData, TValue> { }
 export interface RowDragCallback<TData = any, TValue = any> {
@@ -596,7 +596,7 @@ export interface ValueGetterParams<TData = any, TValue = any> extends BaseColDef
     getValue: (field: string) => any;
 }
 export interface ValueGetterFunc<TData = any, TValue = any> {
-    (params: ValueGetterParams<TData, TValue>): TValue;
+    (params: ValueGetterParams<TData, TValue>): TValue | undefined;
 }
 export interface HeaderValueGetterParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {
     colDef: AbstractColDef<TData, TValue>;
@@ -621,24 +621,25 @@ interface ChangedValueParams<TData, TValueOld, TValueNew> extends BaseColDefPara
     /** The value after the change */
     newValue: TValueNew;
 }
-export interface NewValueParams<TData = any, TValue = any> extends ChangedValueParams<TData, TValue, TValue> {
+export interface NewValueParams<TData = any, TValue = any> extends ChangedValueParams<TData, TValue | undefined, TValue | undefined> {
 }
 
-export interface ValueSetterParams<TData = any, TValue = any> extends ChangedValueParams<TData, TValue, TValue> {
+export interface ValueSetterParams<TData = any, TValue = any> extends ChangedValueParams<TData, TValue | undefined, TValue | undefined> {
 }
 export interface ValueSetterFunc<TData = any, TValue = any> {
     (params: ValueSetterParams<TData, TValue>): boolean;
 }
-// `newValue` should be type `string`. Change in v30
-export interface ValueParserParams<TData = any, TValue = any> extends ChangedValueParams<TData, TValue, any> {
+// `newValue` should be type `string` (no `undefined`). Change in v30
+export interface ValueParserParams<TData = any, TValue = any> extends ChangedValueParams<TData, TValue | undefined, any> {
 }
 export interface ValueParserFunc<TData = any, TValue = any> {
-    // `ValueParserParams` should be type `TValue`. Change in v30
+    // `ValueParserParams` should be type `TValue`. Return should be `TValue | undefined`. Change in v30
     (params: ValueParserParams<TData>): TValue;
 }
 
 // `BaseColDefOptionalDataParams` should be type `TValue`. Change in v30
 export interface ValueFormatterParams<TData = any, TValue = any> extends BaseColDefOptionalDataParams<TData> {
+    // `value` should be `TValue | undefined`. Change in v30
     /** Value for the cell. */
     value: TValue;
 }
@@ -682,6 +683,7 @@ export interface CellClassParams<TData = any, TValue = any> extends RowClassPara
     // `ColDef` should be typed `TValue`. Change in v30
     /** The colDef associated with the column for this cell */
     colDef: ColDef<TData>;
+    // `value` should be typed `TValue | undefined`. Change in v30
     /** The value to be rendered */
     value: TValue;
 }

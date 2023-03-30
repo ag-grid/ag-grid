@@ -574,13 +574,15 @@ export interface CellMouseOutEvent<TData = any, TValue = any> extends CellEvent<
 
 export interface CellContextMenuEvent<TData = any, TValue = any> extends CellEvent<TData, TValue> { }
 
+// Should extend `CellEvent`. Change in v30
 export interface CellEditingStartedEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> { }
 
+// Should extend `CellEvent`. Change in v30
 export interface CellEditingStoppedEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> {
-    // `oldValue` should be type `TValue`. Change in v30
+    // `oldValue` should be type `TValue | undefined`. Change in v30
     /** The old value before editing */
     oldValue: any;
-    // `newValue` should be type `TValue`. Change in v30
+    // `newValue` should be type `TValue | undefined`. Change in v30
     /** The new value after editing */
     newValue: any;
     /** Property indicating if the value of the editor has changed */
@@ -588,17 +590,17 @@ export interface CellEditingStoppedEvent<TData = any, TValue = any> extends Cell
 }
 
 export interface CellValueChangedEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> {
-    // `oldValue` should be type `TValue`. Change in v30
+    // `oldValue` should be type `TValue | undefined`. Change in v30
     oldValue: any;
-    // `newValue` should be type `TValue`. Change in v30
+    // `newValue` should be type `TValue | undefined`. Change in v30
     newValue: any;
     source: string | undefined;
 }
 
 export interface CellEditRequestEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> {
-    // `oldValue` should be type `TValue`. Change in v30
+    // `oldValue` should be type `TValue | undefined`. Change in v30
     oldValue: any;
-    // `newValue` should be type `TValue`. Change in v30
+    // `newValue` should be type `TValue | undefined`. Change in v30
     newValue: any;
     source: string | undefined;
 }

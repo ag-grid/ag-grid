@@ -614,7 +614,7 @@
       "sortIndex?": "number | null",
       "initialSortIndex?": "number",
       "sortingOrder?": "(SortDirection)[]",
-      "comparator?": "(valueA: TValue, valueB: TValue, nodeA: IRowNode<TData>, nodeB: IRowNode<TData>, isDescending: boolean) => number",
+      "comparator?": "(valueA: TValue | undefined, valueB: TValue | undefined, nodeA: IRowNode<TData>, nodeB: IRowNode<TData>, isDescending: boolean) => number",
       "unSortIcon?": "boolean",
       "colSpan?": "(params: ColSpanParams<TData, TValue>) => number",
       "rowSpan?": "(params: RowSpanParams<TData, TValue>) => number",
@@ -828,7 +828,9 @@
       "typeParams": ["TData = any", "TValue = any"]
     },
     "type": {
-      "arguments": { "params": "CheckboxSelectionCallbackParams<TData>" },
+      "arguments": {
+        "params": "CheckboxSelectionCallbackParams<TData, TValue>"
+      },
       "returnType": "boolean"
     }
   },
@@ -1186,7 +1188,7 @@
     },
     "type": {
       "arguments": { "params": "ValueGetterParams<TData, TValue>" },
-      "returnType": "TValue"
+      "returnType": "TValue | undefined"
     }
   },
   "HeaderValueGetterParams": {
@@ -1249,8 +1251,8 @@
   "NewValueParams": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "oldValue": "TValue",
-      "newValue": "TValue",
+      "oldValue": "TValue | undefined",
+      "newValue": "TValue | undefined",
       "node": "IRowNode<TData> | null",
       "data": "TData",
       "column": "Column<TValue>",
@@ -1274,8 +1276,8 @@
   "ValueSetterParams": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "oldValue": "TValue",
-      "newValue": "TValue",
+      "oldValue": "TValue | undefined",
+      "newValue": "TValue | undefined",
       "node": "IRowNode<TData> | null",
       "data": "TData",
       "column": "Column<TValue>",
@@ -1309,7 +1311,7 @@
   "ValueParserParams": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "oldValue": "TValue",
+      "oldValue": "TValue | undefined",
       "newValue": "any",
       "node": "IRowNode<TData> | null",
       "data": "TData",
