@@ -813,12 +813,14 @@ export class Legend {
             const clickedItem = legendData.find((d) => d.itemId === itemId && d.seriesId === seriesId);
 
             const seriesItemCounts = legendData.reduce((acc, d) => {
-                acc[d.seriesId] ? ++acc[d.seriesId] : (acc[d.seriesId] = 1);
+                acc[d.seriesId] ??= 0;
+                acc[d.seriesId]++;
                 return acc;
             }, {} as any);
             const seriesItemEnabledCounts = legendData.reduce((acc, d) => {
                 if (!d.enabled) return acc;
-                acc[d.seriesId] ? ++acc[d.seriesId] : (acc[d.seriesId] = 1);
+                acc[d.seriesId] ??= 0;
+                acc[d.seriesId]++;
                 return acc;
             }, {} as any);
 
