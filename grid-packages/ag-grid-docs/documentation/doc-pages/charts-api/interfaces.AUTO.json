@@ -3499,8 +3499,11 @@
     "type": "[ T, T ]"
   },
   "Options": {
-    "meta": { "isTypeAlias": true, "typeParams": ["K"] },
-    "type": "{ readonly props: DatumPropertyDefinition<K>[]; readonly groupByKeys?: boolean; readonly sumGroupDataDomains?: K[][]; }"
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["K", "Grouped extends boolean | undefined"]
+    },
+    "type": "{ readonly props: DatumPropertyDefinition<K>[]; readonly groupByKeys?: Grouped; readonly sumGroupDataDomains?: K[][]; }"
   },
   "DatumPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
@@ -3508,7 +3511,7 @@
   },
   "InternalDatumPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
-    "type": "DatumPropertyDefinition<K> & { index: number; }"
+    "type": "DatumPropertyDefinition<K> & { index: number; missing: boolean; }"
   },
   "Page": {
     "meta": { "isTypeAlias": true },

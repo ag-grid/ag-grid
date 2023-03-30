@@ -1,3 +1,5 @@
+import { Logger } from '../../util/logger';
+
 export interface UngroupedData<D> {
     type: 'ungrouped';
     data: {
@@ -81,9 +83,9 @@ function sumValues(values: any[]) {
     return accumulator;
 }
 
-type Options<K> = {
+type Options<K, Grouped extends boolean | undefined> = {
     readonly props: DatumPropertyDefinition<K>[];
-    readonly groupByKeys?: boolean;
+    readonly groupByKeys?: Grouped;
     readonly sumGroupDataDomains?: K[][];
 };
 
@@ -94,15 +96,18 @@ export type DatumPropertyDefinition<K> = {
     validation?: (datum: any) => boolean;
 };
 
-type InternalDatumPropertyDefinition<K> = DatumPropertyDefinition<K> & { index: number };
+type InternalDatumPropertyDefinition<K> = DatumPropertyDefinition<K> & {
+    index: number;
+    missing: boolean;
+};
 
-export class DataModel<D extends object, K extends keyof D = keyof D> {
-    private readonly opts: Options<K>;
+export class DataModel<D extends object, K extends keyof D = keyof D, Grouped extends boolean | undefined = undefined> {
+    private readonly opts: Options<K, Grouped>;
     private readonly keys: InternalDatumPropertyDefinition<K>[];
     private readonly values: InternalDatumPropertyDefinition<K>[];
 
-    public constructor(opts: Options<K>) {
-        const { props } = opts;
+    public constructor(opts: Options<K, Grouped>) {
+        const { props, sumGroupDataDomains } = opts;
 
         // Validate that keys appear before values in the definitions, as output ordering depends
         // on configuration ordering, but we process keys before values.
@@ -116,16 +121,40 @@ export class DataModel<D extends object, K extends keyof D = keyof D> {
             }
         }
 
+        for (const sumGroup of sumGroupDataDomains ?? []) {
+            for (const sumGroupPropName of sumGroup) {
+                if (!props.some((def) => def.property === sumGroupPropName)) {
+                    throw new Error(
+                        'AG Charts - internal config error: sum group properties must match defined properties.'
+                    );
+                }
+            }
+        }
+
         this.opts = opts;
-        this.keys = props.filter((def) => def.type === 'key').map((def, index) => ({ ...def, index }));
-        this.values = props.filter((def) => def.type === 'value').map((def, index) => ({ ...def, index }));
+        this.keys = props.filter((def) => def.type === 'key').map((def, index) => ({ ...def, index, missing: false }));
+        this.values = props
+            .filter((def) => def.type === 'value')
+            .map((def, index) => ({ ...def, index, missing: false }));
     }
 
-    processData(data: D[]): ProcessedData<D> {
+    resolveProcessedDataIndex(propName: string): { type: 'key' | 'value'; index: number } | undefined {
+        const { keys, values } = this;
+
+        const def = [...keys, ...values].find(({ property }) => property === propName);
+        if (!def) return undefined;
+
+        return { type: def.type, index: def.index };
+    }
+
+    processData(data: D[]): Grouped extends true ? GroupedData<D> : UngroupedData<D> {
         const { groupByKeys, sumGroupDataDomains } = this.opts;
-        // TODO:
-        // Validation.
-        // Normalisation.
+
+        // TODO: Normalisation.
+
+        for (const def of [...this.keys, ...this.values]) {
+            def.missing = false;
+        }
 
         let processedData: ProcessedData<D> = this.extractData(data);
         if (groupByKeys) {
@@ -135,7 +164,13 @@ export class DataModel<D extends object, K extends keyof D = keyof D> {
             processedData = this.sumData(processedData);
         }
 
-        return processedData;
+        for (const def of [...this.keys, ...this.values]) {
+            if (def.missing) {
+                Logger.warnOnce(`the key '${def.property}' was not found in at least one data element.`);
+            }
+        }
+
+        return processedData as Grouped extends true ? GroupedData<D> : UngroupedData<D>;
     }
 
     private extractData(data: D[]): UngroupedData<D> {
@@ -149,8 +184,8 @@ export class DataModel<D extends object, K extends keyof D = keyof D> {
 
         let resultData = data.map((datum) => ({
             datum,
-            keys: keyDefs.map((def) => processValue(def.property, datum[def.property])),
-            values: valueDefs.map((def) => processValue(def.property, datum[def.property])),
+            keys: keyDefs.map((def) => processValue(def, datum)),
+            values: valueDefs.map((def) => processValue(def, datum)),
         }));
 
         if (props.some((def) => def.validation != null)) {
@@ -274,12 +309,17 @@ export class DataModel<D extends object, K extends keyof D = keyof D> {
         };
         initDataDomain();
 
-        const processValue = (key: K, value: any, updateDataDomain = dataDomain) => {
-            // TODO: Handle illegal values or non-numeric/comparable types?
-            if (!updateDataDomain.has(key)) {
+        const processValue = (def: InternalDatumPropertyDefinition<K>, datum: any, updateDataDomain = dataDomain) => {
+            if (!def.missing && !(def.property in datum)) {
+                def.missing = true;
+            }
+
+            if (!updateDataDomain.has(def.property)) {
                 initDataDomain(updateDataDomain);
             }
-            const meta = updateDataDomain.get(key);
+
+            const value = datum[def.property];
+            const meta = updateDataDomain.get(def.property);
             if (meta?.type === 'category') {
                 meta.domain.add(value);
             } else if (meta?.type === 'range') {

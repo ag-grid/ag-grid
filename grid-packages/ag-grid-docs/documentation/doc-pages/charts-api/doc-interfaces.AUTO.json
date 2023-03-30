@@ -5288,7 +5288,9 @@
   "ProcessedData": { "meta": { "typeParams": ["D"] } },
   "DatumPropertyType": {},
   "ContinuousDomain": { "meta": { "typeParams": ["T extends number | Date"] } },
-  "Options": { "meta": { "typeParams": ["K"] } },
+  "Options": {
+    "meta": { "typeParams": ["K", "Grouped extends boolean | undefined"] }
+  },
   "DatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "InternalDatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "Page": {},

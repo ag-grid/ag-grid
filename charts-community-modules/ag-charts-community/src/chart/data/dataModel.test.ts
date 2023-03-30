@@ -23,7 +23,7 @@ describe('DataModel', () => {
     describe('grouped processing - grouped example', () => {
         it('should generated the expected results', () => {
             const data = examples.GROUPED_BAR_CHART_EXAMPLE.data!;
-            const dataModel = new DataModel<any, any>({
+            const dataModel = new DataModel<any, any, true>({
                 props: [
                     { property: 'type', type: 'key', valueType: 'category' },
                     { property: 'total', type: 'value', valueType: 'range' },
@@ -39,7 +39,7 @@ describe('DataModel', () => {
     describe('grouped processing - stacked example', () => {
         it('should generated the expected results', () => {
             const data = examples.STACKED_BAR_CHART_EXAMPLE.data!;
-            const dataModel = new DataModel<any, any>({
+            const dataModel = new DataModel<any, any, true>({
                 props: [
                     { property: 'type', type: 'key', valueType: 'category' },
                     { property: 'ownerOccupied', type: 'value', valueType: 'range' },
