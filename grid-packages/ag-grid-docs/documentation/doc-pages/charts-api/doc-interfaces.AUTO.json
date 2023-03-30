@@ -6000,6 +6000,13 @@
     "keys": {
       "type": { "arguments": {}, "returnType": "string[]", "optional": false }
     },
+    "scaleValueFormatter": {
+      "type": {
+        "arguments": { "specifier": "string" },
+        "returnType": "((x: any) => string) | undefined",
+        "optional": false
+      }
+    },
     "scaleBandwidth": {
       "type": { "arguments": {}, "returnType": "number", "optional": false }
     },

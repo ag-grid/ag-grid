@@ -3548,7 +3548,7 @@
   },
   "AxisLabelLayout": {
     "meta": { "isTypeAlias": true },
-    "type": "{ baseline: 'hanging' | 'bottom' | 'middle'; align: 'start' | 'end' | 'center'; rotation: number; fractionDigits: number; padding: number; }"
+    "type": "{ baseline: 'hanging' | 'bottom' | 'middle'; align: 'start' | 'end' | 'center'; rotation: number; fractionDigits: number; padding: number; format?: string; }"
   },
   "AxisLayout": {
     "meta": {},
@@ -4258,6 +4258,7 @@
       "direction": "'x' | 'y'",
       "continuous": "boolean",
       "keys": "() => string[]",
+      "scaleValueFormatter": "(specifier: string) => ((x: any) => string) | undefined",
       "scaleBandwidth": "() => number",
       "scaleConvert(val: any)": "number",
       "scaleInvert(position: number)": "any"

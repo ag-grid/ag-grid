@@ -9,6 +9,7 @@ export type AxisLabelLayout = {
     rotation: number;
     fractionDigits: number;
     padding: number;
+    format?: string;
 };
 
 export interface AxisLayout {
