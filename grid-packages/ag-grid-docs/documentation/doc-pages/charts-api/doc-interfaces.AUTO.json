@@ -930,6 +930,10 @@
       "description": "/** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "type": { "returnType": "string", "optional": true }
     },
+    "legendItemKey": {
+      "description": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "fills": {
       "description": "/** The colours to cycle through for the fills of the sectors. */",
       "type": { "returnType": "CssColor[]", "optional": true }
@@ -4228,6 +4232,10 @@
     },
     "sectorLabelName": {
       "description": "/** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "legendItemKey": {
+      "description": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */",
       "type": { "returnType": "string", "optional": true }
     },
     "fills": {

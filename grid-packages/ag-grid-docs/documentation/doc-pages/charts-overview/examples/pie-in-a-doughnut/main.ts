@@ -65,6 +65,7 @@ const options: AgChartOptions = {
       ...sharedSeriesOptions,
       data: getData2020(),
       outerRadiusRatio: 0.5,
+      legendItemKey: "browser",
       title: {
         text: "January 2020",
         fontWeight: "bold",
@@ -79,6 +80,7 @@ const options: AgChartOptions = {
         text: "September 2022",
         fontWeight: "bold",
       },
+      legendItemKey: "browser",
       calloutLabelKey: "browser",
       calloutLabel: {
         minAngle: 25,
