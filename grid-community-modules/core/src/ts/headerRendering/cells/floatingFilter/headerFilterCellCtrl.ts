@@ -5,11 +5,8 @@ import { Autowired } from '../../../context/context';
 import { Column } from '../../../entities/column';
 import { Events, FilterChangedEvent } from '../../../events';
 import { FilterManager } from '../../../filter/filterManager';
-import { IFloatingFilter, IFloatingFilterParams, IFloatingFilterParentCallback } from '../../../filter/floating/floatingFilter';
-import { unwrapUserComp } from '../../../gridApi';
-import { IFilter, IFilterComp } from '../../../interfaces/iFilter';
+import { IFloatingFilter } from '../../../filter/floating/floatingFilter';
 import { IMenuFactory } from '../../../interfaces/iMenuFactory';
-import { WithoutGridCommon } from '../../../interfaces/iCommon';
 import { ColumnHoverService } from '../../../rendering/columnHoverService';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { AgPromise } from '../../../utils';
@@ -18,7 +15,6 @@ import { createIconNoSpan } from '../../../utils/icon';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { HoverFeature } from '../hoverFeature';
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
-import { FilterComponent } from "../../../components/framework/componentTypes";
 
 export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
