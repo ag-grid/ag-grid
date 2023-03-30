@@ -342,7 +342,7 @@ export class RowCtrl extends BeanStub {
 
         if (this.rowType == RowType.FullWidthDetail) {
             if (!ModuleRegistry.assertRegistered(ModuleNames.MasterDetailModule, "cell renderer 'agDetailCellRenderer' (for master detail)")) {
-                return
+                return;
             }
         }
 
@@ -1115,7 +1115,7 @@ export class RowCtrl extends BeanStub {
     public getAllCellCtrls(): CellCtrl[] {
         if (this.leftCellCtrls.list.length === 0 && this.rightCellCtrls.list.length === 0) {
             return this.centerCellCtrls.list;
-        } 
+        }
         const res = [...this.centerCellCtrls.list, ...this.leftCellCtrls.list, ...this.rightCellCtrls.list];
         return res;
     }
@@ -1284,7 +1284,7 @@ export class RowCtrl extends BeanStub {
         return this.beans.frameworkOverrides;
     }
 
-    private forEachGui(gui: RowGui | undefined, callback: (gui: RowGui)=>void): void {
+    private forEachGui(gui: RowGui | undefined, callback: (gui: RowGui) => void): void {
         const list = gui ? [gui] : this.allRowGuis;
         list.forEach(callback);
     }
