@@ -18,6 +18,7 @@ series: [{
     angleKey: 'value'
 }]
 ```
+
 This results in the chart shown below. Note that [tooltips](/charts-tooltips/) show the absolute value of each pie sector.
 
 <chart-example title='Basic Pie Chart' name='basic-pie' type='generated'></chart-example>
@@ -25,6 +26,7 @@ This results in the chart shown below. Note that [tooltips](/charts-tooltips/) s
 ## Labels
 
 We support two types of label related to individual sectors:
+
 - Call-out labels: displayed adjacent to each sector with a joining line (configured via `calloutLabelKey`, `calloutLabel` and `calloutLabelLine` options).
 - Sector labels: displayed inside each sector (configured via `sectorLabelKey` and `sectorLabel` options).
 
@@ -34,7 +36,9 @@ Additionally legend labels and tooltips are derived from the call-out label opti
 series: [{
     type: 'pie',
     angleKey: 'value',
+
 +   calloutLabelKey: 'label',
++   legendItemKey: 'label',
 +   sectorLabelKey: 'value',
 +   sectorLabel: {
 +       color: 'white',
@@ -44,9 +48,12 @@ series: [{
 ```
 
 This example demonstrates:
+
+- Use of `legendItemKey`, enabling:
+  - Labels for use in the legend.
 - Use of `calloutLabelKey`, enabling:
   - Display of a per-sector callout label.
-  - Labels for use in the legend.
+  - A fallback label for use in the legend if `legendItemKey` is not provided.
   - Tooltips on segment hover including the callout label and sector value.
   - Some callout labels are not displayed, where the sector is smaller than `calloutLabel.minAngle` (defaults to `20`).
 - Use of `sectorLabelKey` and `sectorLabel`, enabling:
@@ -167,6 +174,28 @@ The difference of `0.3` (`30%`) between these offsets will determine the size of
 The example below uses one pie series to plot the market share of each operating system and another pie series to plot user satisfaction level with each OS:
 
 <chart-example title='Multi-Doughnut Chart' name='multi-doughnut' type='generated'></chart-example>
+
+### Multiple Doughnuts with a Shared Legend
+
+Providing a matching `legendItemKey` allows us to create multiple doughnut series that share a single legend. When a legend item is clicked, the items in all the series that have a matching `legendItemKey` will be toggled together.
+
+```js
+series: [
+    {
+        type: 'pie',
+        calloutLabelKey: 'os',
+        legendItemKey: 'os',
+    },
+    {
+        type: 'pie',
+        legendItemKey: 'os',
+    }
+]
+```
+
+In the example below, we match the series with a `legendItemKey` of `'os'` comparing the market share of each operating system in two different years.
+
+<chart-example title='Multi-Doughnut Chart with Shared Series' name='multi-doughnut-shared' type='generated'></chart-example>
 
 ## API Reference
 
