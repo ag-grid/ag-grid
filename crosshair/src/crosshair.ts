@@ -236,21 +236,21 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         activeHighlight: Exclude<_ModuleSupport.HighlightChangeEvent['currentHighlight'], undefined>
     ) {
         const { axisCtx } = this;
-        const { xKey = '', yKey = '', datum } = activeHighlight;
+        const { xKey = '', yKey = '', datum, aggregatedValue, series, domain, cumulativeValue } = activeHighlight;
 
-        const isAggregatedValue = activeHighlight.aggregatedValue !== undefined;
+        const isAggregatedValue = aggregatedValue !== undefined;
         if (isAggregatedValue) {
-            if (activeHighlight.series.yAxis.id === axisCtx.axisId) {
-                return activeHighlight.aggregatedValue;
+            if (series.yAxis.id === axisCtx.axisId) {
+                return aggregatedValue;
             }
 
-            return activeHighlight.domain?.[1];
+            return domain?.[1];
         }
 
-        const isCumulativeValue = activeHighlight.cumulativeValue !== undefined;
+        const isCumulativeValue = cumulativeValue !== undefined;
         const isYValue = axisCtx.keys().indexOf(yKey) >= 0;
         if (isCumulativeValue && isYValue) {
-            return activeHighlight.cumulativeValue;
+            return cumulativeValue;
         }
 
         const key = isYValue ? yKey : xKey;
