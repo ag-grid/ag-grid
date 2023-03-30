@@ -5237,6 +5237,58 @@
   "LabelTranslationDirection": {},
   "CrossLineTranslationDirection": {},
   "CrossLinesRangeConfig": {},
+  "UngroupedData": {
+    "type": { "type": { "returnType": "'ungrouped'", "optional": false } },
+    "data": {
+      "type": {
+        "returnType": "{\n        keys: any[];\n        values: any[];\n        datum: D;\n    }[]",
+        "optional": false
+      }
+    },
+    "dataDomain": {
+      "type": {
+        "returnType": "{\n        keys: any[][];\n        values: any[][];\n    }",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["D"] }
+  },
+  "GroupedData": {
+    "type": { "type": { "returnType": "'grouped'", "optional": false } },
+    "data": {
+      "type": {
+        "returnType": "{\n        keys: any[];\n        values: any[][];\n        datum: D[];\n    }[]",
+        "optional": false
+      }
+    },
+    "dataDomain": {
+      "type": {
+        "returnType": "{\n        keys: any[][];\n        values: any[][];\n        sumValues?: any[][];\n    }",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["D"] }
+  },
+  "AggregatedData": {
+    "type": { "type": { "returnType": "'aggregated'", "optional": false } },
+    "data": {
+      "type": {
+        "returnType": "{\n        keys: any[];\n        values: any[];\n        datum: D[];\n    }[]",
+        "optional": false
+      }
+    },
+    "dataDomain": {
+      "type": {
+        "returnType": "{\n        keys: any[][];\n        values: any[][];\n    }",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["D"] }
+  },
+  "ProcessedData": { "meta": { "typeParams": ["D"] } },
+  "DatumPropertyType": {},
+  "ContinuousDomain": { "meta": { "typeParams": ["T extends number | Date"] } },
+  "Options": { "meta": { "typeParams": ["K"] } },
   "Page": {},
   "Column": {},
   "DimensionProps": {

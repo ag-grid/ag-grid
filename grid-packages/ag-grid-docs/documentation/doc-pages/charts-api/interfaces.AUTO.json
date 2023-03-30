@@ -3462,6 +3462,46 @@
     "meta": { "isTypeAlias": true },
     "type": "Record<string, { vertical: [ Date, Date ]; horizontal: [ number, number ]; }>"
   },
+  "UngroupedData": {
+    "meta": { "typeParams": ["D"] },
+    "type": {
+      "type": "'ungrouped'",
+      "data": "{ keys: any[]; values: any[]; datum: D; }[]",
+      "dataDomain": "{ keys: any[][]; values: any[][]; }"
+    }
+  },
+  "GroupedData": {
+    "meta": { "typeParams": ["D"] },
+    "type": {
+      "type": "'grouped'",
+      "data": "{ keys: any[]; values: any[][]; datum: D[]; }[]",
+      "dataDomain": "{ keys: any[][]; values: any[][]; sumValues?: any[][]; }"
+    }
+  },
+  "AggregatedData": {
+    "meta": { "typeParams": ["D"] },
+    "type": {
+      "type": "'aggregated'",
+      "data": "{ keys: any[]; values: any[]; datum: D[]; }[]",
+      "dataDomain": "{ keys: any[][]; values: any[][]; }"
+    }
+  },
+  "ProcessedData": {
+    "meta": { "isTypeAlias": true, "typeParams": ["D"] },
+    "type": "UngroupedData<D> | GroupedData<D> | AggregatedData<D>"
+  },
+  "DatumPropertyType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'range' | 'category'"
+  },
+  "ContinuousDomain": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T extends number | Date"] },
+    "type": "[ T, T ]"
+  },
+  "Options": {
+    "meta": { "isTypeAlias": true, "typeParams": ["K"] },
+    "type": "{ readonly dimensionKeys: K[]; readonly valueKeys: K[]; readonly dimensionKeyTypes: DatumPropertyType[]; readonly valueKeyTypes: DatumPropertyType[]; readonly groupByKeys?: boolean; readonly sumGroupDataDomains?: K[][]; }"
+  },
   "Page": {
     "meta": { "isTypeAlias": true },
     "type": "{ columns: Column[]; pageWidth: number; pageHeight: number; startIndex: number; endIndex: number; }"
