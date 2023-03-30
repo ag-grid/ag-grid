@@ -237,15 +237,24 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     ) {
         const { axisCtx } = this;
         const { xKey = '', yKey = '', datum } = activeHighlight;
+
+        const isAggregatedValue = activeHighlight.aggregatedValue !== undefined;
+        if (isAggregatedValue) {
+            if (activeHighlight.series.yAxis.id === axisCtx.axisId) {
+                return activeHighlight.aggregatedValue;
+            }
+
+            return activeHighlight.domain?.[1];
+        }
+
+        const isCumulativeValue = activeHighlight.cumulativeValue !== undefined;
         const isYValue = axisCtx.keys().indexOf(yKey) >= 0;
+        if (isCumulativeValue && isYValue) {
+            return activeHighlight.cumulativeValue;
+        }
+
         const key = isYValue ? yKey : xKey;
-
-        const datumValue = checkDatum(datum[key], axisCtx.continuous);
-        const cumulativeValue = activeHighlight.cumulativeValue;
-
-        const value = isYValue && cumulativeValue !== undefined ? cumulativeValue : datumValue;
-
-        return value;
+        return checkDatum(datum[key], axisCtx.continuous);
     }
 
     private getLabelHtml(value: any): string {
