@@ -88,6 +88,7 @@ type Options<K> = {
     readonly valueKeyTypes: DatumPropertyType[];
     readonly groupByKeys?: boolean;
     readonly sumGroupDataDomains?: K[][];
+    readonly validateDatumType?: Record<DatumPropertyType, (datum: any) => boolean>;
 };
 
 export class DataModel<D extends object, K extends keyof D = keyof D> {
@@ -124,17 +125,39 @@ export class DataModel<D extends object, K extends keyof D = keyof D> {
     }
 
     private extractData(data: D[]): UngroupedData<D> {
-        const { dimensionKeys, valueKeys } = this.opts;
+        const { dimensionKeys, valueKeys, validateDatumType, dimensionKeyTypes, valueKeyTypes } = this.opts;
 
         const { dataDomain, processValue } = this.initDataDomainProcessor();
 
+        let resultData = data.map((datum) => ({
+            datum,
+            keys: dimensionKeys.map((key) => processValue(key, datum[key])),
+            values: valueKeys.map((key) => processValue(key, datum[key])),
+        }));
+
+        if (validateDatumType) {
+            resultData = resultData.filter(({ keys, values }) => {
+                let typeIdx = 0;
+                for (const key of keys) {
+                    const validator = validateDatumType[dimensionKeyTypes[typeIdx++]];
+                    if (!validator(key)) {
+                        return false;
+                    }
+                }
+                typeIdx = 0;
+                for (const value of values) {
+                    const validator = validateDatumType[valueKeyTypes[typeIdx++]];
+                    if (!validator(value)) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+        }
+
         return {
             type: 'ungrouped',
-            data: data.map((datum) => ({
-                datum,
-                keys: dimensionKeys.map((key) => processValue(key, datum[key])),
-                values: valueKeys.map((key) => processValue(key, datum[key])),
-            })),
+            data: resultData,
             dataDomain: {
                 keys: dimensionKeys.map((key) => [...dataDomain.get(key)!.domain]),
                 values: valueKeys.map((key) => [...dataDomain.get(key)!.domain]),

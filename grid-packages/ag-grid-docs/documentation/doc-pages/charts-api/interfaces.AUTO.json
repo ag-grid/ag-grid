@@ -3500,7 +3500,7 @@
   },
   "Options": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
-    "type": "{ readonly dimensionKeys: K[]; readonly valueKeys: K[]; readonly dimensionKeyTypes: DatumPropertyType[]; readonly valueKeyTypes: DatumPropertyType[]; readonly groupByKeys?: boolean; readonly sumGroupDataDomains?: K[][]; }"
+    "type": "{ readonly dimensionKeys: K[]; readonly valueKeys: K[]; readonly dimensionKeyTypes: DatumPropertyType[]; readonly valueKeyTypes: DatumPropertyType[]; readonly groupByKeys?: boolean; readonly sumGroupDataDomains?: K[][]; readonly validateDatumType?: Record<DatumPropertyType, (datum: any) => boolean>; }"
   },
   "Page": {
     "meta": { "isTypeAlias": true },
