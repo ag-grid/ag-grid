@@ -137,19 +137,26 @@ export const iconNameClassMap: { [key: string]: string; } = {
  * @param {Column | null} [column]
  * @returns {HTMLElement}
  */
-export function createIcon(iconName: string, gridOptionsService: GridOptionsService, column: Column | null): HTMLElement {
+export function createIcon(iconName: string, gridOptionsService: GridOptionsService, column: Column | null): HTMLElement | SVGElement {
     const iconContents = createIconNoSpan(iconName, gridOptionsService, column);
 
-    if (iconContents && iconContents.className.indexOf('ag-icon') > -1) {
-        return iconContents;
+    if (iconContents) {
+        const { className } = iconContents;
+        if (
+            (typeof className === 'string' && className.indexOf('ag-icon') > -1) ||
+            (typeof className === 'object' && className.hasOwnProperty('ag-icon'))
+        ) {
+            return iconContents;
+        }
     }
 
     const eResult = document.createElement('span');
     eResult.appendChild(iconContents!);
+
     return eResult;
 }
 
-export function createIconNoSpan(iconName: string, gridOptionsService: GridOptionsService, column?: Column | null, forceCreate?: boolean): HTMLElement | undefined {
+export function createIconNoSpan(iconName: string, gridOptionsService: GridOptionsService, column?: Column | null, forceCreate?: boolean): HTMLElement | SVGElement | undefined {
     let userProvidedIcon: Function | string | null = null;
 
     // check col for icon first

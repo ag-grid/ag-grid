@@ -45,7 +45,7 @@ export function isFocusableFormField(element: HTMLElement): boolean {
     return focusable;
 }
 
-export function setDisplayed(element: HTMLElement, displayed: boolean, options: { skipAriaHidden?: boolean } = {}) {
+export function setDisplayed(element: Element, displayed: boolean, options: { skipAriaHidden?: boolean } = {}) {
     const  { skipAriaHidden } = options;
     element.classList.toggle('ag-hidden', !displayed);
     if (!skipAriaHidden) {
