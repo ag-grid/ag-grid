@@ -27,7 +27,6 @@ const defaultTooltipCss = `
     background: rgb(244, 244, 244);
     border-radius: 5px;
     box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);
-    pointer-events: none;
 }
 
 .ag-chart-tooltip-no-animation {
