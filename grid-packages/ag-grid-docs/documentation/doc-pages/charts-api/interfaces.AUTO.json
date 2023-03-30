@@ -3473,6 +3473,8 @@
       "xKey?": "string",
       "yKey?": "string",
       "cumulativeValue?": "number",
+      "aggregatedValue?": "number",
+      "domain?": "[ number, number ]",
       "point?": "Readonly<SizedPoint>"
     }
   },
@@ -3807,6 +3809,8 @@
       "fill?": "string",
       "stroke?": "string",
       "strokeWidth": "number",
+      "aggregatedValue": "number",
+      "domain": "[ number, number ]",
       "label?": "{ readonly text: string; readonly x: number; readonly y: number; readonly fontStyle?: FontStyle; readonly fontWeight?: FontWeight; readonly fontSize: number; readonly fontFamily: string; readonly fill: string; }",
       "xKey": "string",
       "yKey": "string",
