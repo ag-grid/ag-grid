@@ -48,7 +48,7 @@ export class Selection<TChild extends Node = Node, TDatum = any> {
             });
         }
 
-        this._data = data;
+        this._data = data.slice(0);
         for (let i = 0; i < data.length; i++) {
             this._nodes[i].datum = this._data[i];
         }
