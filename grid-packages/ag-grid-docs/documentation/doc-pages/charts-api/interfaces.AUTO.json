@@ -3500,7 +3500,15 @@
   },
   "Options": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
-    "type": "{ readonly dimensionKeys: K[]; readonly valueKeys: K[]; readonly dimensionKeyTypes: DatumPropertyType[]; readonly valueKeyTypes: DatumPropertyType[]; readonly groupByKeys?: boolean; readonly sumGroupDataDomains?: K[][]; readonly validateDatumType?: Record<DatumPropertyType, (datum: any) => boolean>; }"
+    "type": "{ readonly props: DatumPropertyDefinition<K>[]; readonly groupByKeys?: boolean; readonly sumGroupDataDomains?: K[][]; }"
+  },
+  "DatumPropertyDefinition": {
+    "meta": { "isTypeAlias": true, "typeParams": ["K"] },
+    "type": "{ type: 'key' | 'value'; valueType: DatumPropertyType; property: K; validation?: (datum: any) => boolean; }"
+  },
+  "InternalDatumPropertyDefinition": {
+    "meta": { "isTypeAlias": true, "typeParams": ["K"] },
+    "type": "DatumPropertyDefinition<K> & { index: number; }"
   },
   "Page": {
     "meta": { "isTypeAlias": true },

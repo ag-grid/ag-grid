@@ -25,7 +25,7 @@ import {
     AgTooltipRendererResult,
     AgCartesianSeriesMarkerFormat,
 } from '../../agChartOptions';
-import { DataModel, DatumPropertyType, ProcessedData } from '../../data/dataModel';
+import { DataModel, DatumPropertyDefinition, ProcessedData } from '../../data/dataModel';
 
 interface ScatterNodeDatum extends Required<CartesianSeriesNodeDatum> {
     readonly label: MeasuredLabel;
@@ -150,25 +150,25 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         const isContinuousX = xScale instanceof ContinuousScale;
         const isContinuousY = yScale instanceof ContinuousScale;
 
-        const valueKeys = [xKey, yKey];
-        const valueKeyTypes: DatumPropertyType[] = [
-            isContinuousX ? 'range' : 'category',
-            isContinuousY ? 'range' : 'category',
-        ];
-        if (sizeKey) {
-            valueKeys.push(sizeKey);
-            valueKeyTypes.push('range');
-        }
-
+        const sizeKeyProp: DatumPropertyDefinition<any>[] = sizeKey
+            ? [{ property: yKey, type: 'value', valueType: 'range', validation: (v) => checkDatum(v, true) }]
+            : [];
         const dataModel = new DataModel<any>({
-            dimensionKeys: [],
-            dimensionKeyTypes: [],
-            valueKeys,
-            valueKeyTypes,
-            validateDatumType: {
-                category: (v) => checkDatum(v, false),
-                range: (v) => checkDatum(v, true),
-            },
+            props: [
+                {
+                    property: xKey,
+                    type: 'value',
+                    valueType: isContinuousX ? 'range' : 'category',
+                    validation: (v) => checkDatum(v, isContinuousX),
+                },
+                {
+                    property: yKey,
+                    type: 'value',
+                    valueType: isContinuousY ? 'range' : 'category',
+                    validation: (v) => checkDatum(v, isContinuousY),
+                },
+                ...sizeKeyProp,
+            ],
         });
         this.processedData = dataModel.processData(data);
 

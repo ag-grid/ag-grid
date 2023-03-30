@@ -5289,6 +5289,8 @@
   "DatumPropertyType": {},
   "ContinuousDomain": { "meta": { "typeParams": ["T extends number | Date"] } },
   "Options": { "meta": { "typeParams": ["K"] } },
+  "DatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
+  "InternalDatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "Page": {},
   "Column": {},
   "DimensionProps": {

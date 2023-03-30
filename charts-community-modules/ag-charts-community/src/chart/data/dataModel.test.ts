@@ -9,10 +9,11 @@ describe('DataModel', () => {
         it('should generated the expected results', () => {
             const data = examples.SIMPLE_LINE_CHART_EXAMPLE.data!;
             const dataModel = new DataModel<any, any>({
-                dimensionKeys: ['date'],
-                valueKeys: ['petrol', 'diesel'],
-                dimensionKeyTypes: ['range'],
-                valueKeyTypes: ['range', 'range'],
+                props: [
+                    { property: 'date', type: 'key', valueType: 'range' },
+                    { property: 'petrol', type: 'value', valueType: 'range' },
+                    { property: 'diesel', type: 'value', valueType: 'range' },
+                ],
             });
 
             expect(dataModel.processData(data)).toMatchSnapshot();
@@ -23,10 +24,11 @@ describe('DataModel', () => {
         it('should generated the expected results', () => {
             const data = examples.GROUPED_BAR_CHART_EXAMPLE.data!;
             const dataModel = new DataModel<any, any>({
-                dimensionKeys: ['type'],
-                valueKeys: ['total', 'regular'],
-                dimensionKeyTypes: ['category'],
-                valueKeyTypes: ['range', 'range'],
+                props: [
+                    { property: 'type', type: 'key', valueType: 'category' },
+                    { property: 'total', type: 'value', valueType: 'range' },
+                    { property: 'regular', type: 'value', valueType: 'range' },
+                ],
                 groupByKeys: true,
             });
 
@@ -38,10 +40,13 @@ describe('DataModel', () => {
         it('should generated the expected results', () => {
             const data = examples.STACKED_BAR_CHART_EXAMPLE.data!;
             const dataModel = new DataModel<any, any>({
-                dimensionKeys: ['type'],
-                valueKeys: ['ownerOccupied', 'privateRented', 'localAuthority', 'housingAssociation'],
-                dimensionKeyTypes: ['category'],
-                valueKeyTypes: ['range', 'range', 'range', 'range'],
+                props: [
+                    { property: 'type', type: 'key', valueType: 'category' },
+                    { property: 'ownerOccupied', type: 'value', valueType: 'range' },
+                    { property: 'privateRented', type: 'value', valueType: 'range' },
+                    { property: 'localAuthority', type: 'value', valueType: 'range' },
+                    { property: 'housingAssociation', type: 'value', valueType: 'range' },
+                ],
                 groupByKeys: true,
                 sumGroupDataDomains: [['ownerOccupied', 'privateRented', 'localAuthority', 'housingAssociation']],
             });

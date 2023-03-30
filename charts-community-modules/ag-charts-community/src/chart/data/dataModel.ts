@@ -82,29 +82,43 @@ function sumValues(values: any[]) {
 }
 
 type Options<K> = {
-    readonly dimensionKeys: K[];
-    readonly valueKeys: K[];
-    readonly dimensionKeyTypes: DatumPropertyType[];
-    readonly valueKeyTypes: DatumPropertyType[];
+    readonly props: DatumPropertyDefinition<K>[];
     readonly groupByKeys?: boolean;
     readonly sumGroupDataDomains?: K[][];
-    readonly validateDatumType?: Record<DatumPropertyType, (datum: any) => boolean>;
 };
+
+export type DatumPropertyDefinition<K> = {
+    type: 'key' | 'value';
+    valueType: DatumPropertyType;
+    property: K;
+    validation?: (datum: any) => boolean;
+};
+
+type InternalDatumPropertyDefinition<K> = DatumPropertyDefinition<K> & { index: number };
 
 export class DataModel<D extends object, K extends keyof D = keyof D> {
     private readonly opts: Options<K>;
+    private readonly keys: InternalDatumPropertyDefinition<K>[];
+    private readonly values: InternalDatumPropertyDefinition<K>[];
 
     public constructor(opts: Options<K>) {
-        const { dimensionKeys, dimensionKeyTypes, valueKeys, valueKeyTypes } = opts;
+        const { props } = opts;
 
-        if (dimensionKeys.length !== dimensionKeyTypes.length) {
-            throw new Error('AG Charts - dimensionKeys should be same length as dimensionKeyTypes');
-        }
-        if (valueKeys.length !== valueKeyTypes.length) {
-            throw new Error('AG Charts - valueKeys should be same length as valueKeyTypes');
+        // Validate that keys appear before values in the definitions, as output ordering depends
+        // on configuration ordering, but we process keys before values.
+        let keys = true;
+        for (const next of props) {
+            if (next.type === 'key' && !keys) {
+                throw new Error('AG Charts - internal config error: keys must come before values.');
+            }
+            if (next.type === 'value' && keys) {
+                keys = false;
+            }
         }
 
         this.opts = opts;
+        this.keys = props.filter((def) => def.type === 'key').map((def, index) => ({ ...def, index }));
+        this.values = props.filter((def) => def.type === 'value').map((def, index) => ({ ...def, index }));
     }
 
     processData(data: D[]): ProcessedData<D> {
@@ -125,29 +139,33 @@ export class DataModel<D extends object, K extends keyof D = keyof D> {
     }
 
     private extractData(data: D[]): UngroupedData<D> {
-        const { dimensionKeys, valueKeys, validateDatumType, dimensionKeyTypes, valueKeyTypes } = this.opts;
+        const {
+            opts: { props },
+            keys: keyDefs,
+            values: valueDefs,
+        } = this;
 
         const { dataDomain, processValue } = this.initDataDomainProcessor();
 
         let resultData = data.map((datum) => ({
             datum,
-            keys: dimensionKeys.map((key) => processValue(key, datum[key])),
-            values: valueKeys.map((key) => processValue(key, datum[key])),
+            keys: keyDefs.map((def) => processValue(def.property, datum[def.property])),
+            values: valueDefs.map((def) => processValue(def.property, datum[def.property])),
         }));
 
-        if (validateDatumType) {
+        if (props.some((def) => def.validation != null)) {
             resultData = resultData.filter(({ keys, values }) => {
-                let typeIdx = 0;
+                let idx = 0;
                 for (const key of keys) {
-                    const validator = validateDatumType[dimensionKeyTypes[typeIdx++]];
-                    if (!validator(key)) {
+                    const validator = keyDefs[idx++].validation;
+                    if (validator && !validator(key)) {
                         return false;
                     }
                 }
-                typeIdx = 0;
+                idx = 0;
                 for (const value of values) {
-                    const validator = validateDatumType[valueKeyTypes[typeIdx++]];
-                    if (!validator(value)) {
+                    const validator = valueDefs[idx++].validation;
+                    if (validator && !validator(value)) {
                         return false;
                     }
                 }
@@ -159,8 +177,8 @@ export class DataModel<D extends object, K extends keyof D = keyof D> {
             type: 'ungrouped',
             data: resultData,
             dataDomain: {
-                keys: dimensionKeys.map((key) => [...dataDomain.get(key)!.domain]),
-                values: valueKeys.map((key) => [...dataDomain.get(key)!.domain]),
+                keys: keyDefs.map((def) => [...dataDomain.get(def.property)!.domain]),
+                values: valueDefs.map((def) => [...dataDomain.get(def.property)!.domain]),
             },
         };
     }
@@ -180,11 +198,6 @@ export class DataModel<D extends object, K extends keyof D = keyof D> {
             }
         }
 
-        // TODO:
-        // Validation.
-        // Normalisation.
-        // Domain calculation.
-
         const resultData = new Array(processedData.size);
         let dataIndex = 0;
         for (const [, { keys, values, datum }] of processedData.entries()) {
@@ -195,10 +208,6 @@ export class DataModel<D extends object, K extends keyof D = keyof D> {
             };
         }
 
-        // let resultSumValues = undefined;
-        // if (this.sumGroupDataDomains) {
-        // }
-
         return {
             ...data,
             type: 'grouped',
@@ -207,14 +216,19 @@ export class DataModel<D extends object, K extends keyof D = keyof D> {
     }
 
     private sumData<T extends ProcessedData<any>>(data: T): T {
-        const { sumGroupDataDomains, valueKeys } = this.opts;
+        const {
+            values: valueDefs,
+            opts: { sumGroupDataDomains },
+        } = this;
 
         if (!sumGroupDataDomains) {
             return data;
         }
 
         const resultSumValues = sumGroupDataDomains.map((): ContinuousDomain<number> => [Infinity, -Infinity]);
-        const resultSumValueIndices = sumGroupDataDomains.map((keys) => keys.map((key) => valueKeys.indexOf(key)));
+        const resultSumValueIndices = sumGroupDataDomains.map((props) =>
+            props.map((prop) => valueDefs.findIndex((def) => def.property === prop))
+        );
 
         for (let { values } of data.data) {
             if (data.type === 'ungrouped') {
@@ -242,51 +256,8 @@ export class DataModel<D extends object, K extends keyof D = keyof D> {
         };
     }
 
-    // private processAggregatedData(): AggregatedData<D> {
-    //     const { dataDomain, processValue } = this.initDataDomainProcessor();
-
-    //     const processedData = new Map<string, { keys: D[K][]; values: D[K][]; datum: D[] }>();
-    //     for (const datum of this.data) {
-    //         const keys = this.dimensionKeys.map((key) => processValue(key, datum[key]));
-    //         const values = this.valueKeys.map((key) => processValue(key, datum[key]));
-    //         const keyStr = keys.join('-');
-
-    //         if (processedData.has(keyStr)) {
-    //             const existingData = processedData.get(keyStr)!;
-    //             this.accumulationFns!.forEach((accFn, i) => {
-    //                 existingData.values[i] = accFn<D[K]>(existingData.values[i], values[i]);
-    //             });
-    //         } else {
-    //             processedData.set(keyStr, { keys, values, datum: [datum] });
-    //         }
-    //     }
-
-    //     // TODO:
-    //     // Validation.
-    //     // Normalisation.
-    //     // Domain calculation.
-
-    //     const data = new Array(processedData.size);
-    //     let dataIndex = 0;
-    //     for (const [, { keys, values }] of processedData.entries()) {
-    //         data[dataIndex++] = {
-    //             keys,
-    //             values,
-    //         };
-    //     }
-
-    //     return {
-    //         type: 'aggregated',
-    //         data,
-    //         dataDomain: {
-    //             keys: this.dimensionKeys.map((key) => [...dataDomain.get(key)!.domain]),
-    //             values: this.valueKeys.map((key) => [...dataDomain.get(key)!.domain]),
-    //         },
-    //     };
-    // }
-
     private initDataDomainProcessor() {
-        const { dimensionKeys, dimensionKeyTypes, valueKeys, valueKeyTypes } = this.opts;
+        const { keys: keyDefs, values: valueDefs } = this;
         const dataDomain: Map<K, { type: 'range'; domain: [number, number] } | { type: 'category'; domain: Set<any> }> =
             new Map();
         const initDataDomainKey = (key: K, type: DatumPropertyType, updateDataDomain: typeof dataDomain) => {
@@ -297,8 +268,8 @@ export class DataModel<D extends object, K extends keyof D = keyof D> {
             }
         };
         const initDataDomain = (updateDataDomain = dataDomain) => {
-            dimensionKeyTypes.forEach((type, i) => initDataDomainKey(dimensionKeys[i], type, updateDataDomain));
-            valueKeyTypes.forEach((type, i) => initDataDomainKey(valueKeys[i], type, updateDataDomain));
+            keyDefs.forEach((def) => initDataDomainKey(def.property, def.valueType, updateDataDomain));
+            valueDefs.forEach((def) => initDataDomainKey(def.property, def.valueType, updateDataDomain));
             return updateDataDomain;
         };
         initDataDomain();
