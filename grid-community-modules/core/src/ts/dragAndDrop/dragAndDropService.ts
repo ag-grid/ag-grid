@@ -42,7 +42,7 @@ export interface DragSource {
     /**
      * Element which, when dragged, will kick off the DnD process
      */
-    eElement: HTMLElement;
+    eElement: Element;
     /**
      * If eElement is dragged, then the dragItem is the object that gets passed around.
      */
@@ -96,7 +96,7 @@ export interface DropTarget {
     /** Icon to show when drag is over */
     getIconName?(): string | null;
 
-    isInterestedIn(type: DragSourceType, el: HTMLElement): boolean;
+    isInterestedIn(type: DragSourceType, el: Element): boolean;
 
     /**
      * If `true`, the DragSources will only be allowed to be dragged within the DragTarget that contains them.

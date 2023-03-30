@@ -210,7 +210,7 @@ export class DragService extends BeanStub {
         return null;
     }
 
-    private onCommonMove(currentEvent: MouseEvent | Touch, startEvent: MouseEvent | Touch, el: HTMLElement): void {
+    private onCommonMove(currentEvent: MouseEvent | Touch, startEvent: MouseEvent | Touch, el: Element): void {
         if (!this.dragging) {
             // if mouse hasn't travelled from the start position enough, do nothing
             if (!this.dragging && this.isEventNearStartEvent(currentEvent, startEvent)) { return; }
@@ -236,7 +236,7 @@ export class DragService extends BeanStub {
         this.currentDragParams!.onDragging(currentEvent);
     }
 
-    private onTouchMove(touchEvent: TouchEvent, el: HTMLElement): void {
+    private onTouchMove(touchEvent: TouchEvent, el: Element): void {
         const touch = this.getFirstActiveTouch(touchEvent.touches);
         if (!touch) { return; }
 
@@ -246,7 +246,7 @@ export class DragService extends BeanStub {
 
     // only gets called after a mouse down - as this is only added after mouseDown
     // and is removed when mouseUp happens
-    private onMouseMove(mouseEvent: MouseEvent, el: HTMLElement): void {
+    private onMouseMove(mouseEvent: MouseEvent, el: Element): void {
         // when `isEnableCellTextSelect` is `true`, we need to preventDefault on mouseMove
         // to avoid the grid text being selected while dragging components.
         // Note: Safari also has an issue, where `user-select: none` is not being respected.
@@ -273,7 +273,7 @@ export class DragService extends BeanStub {
         return !!tagName?.match('^a$|textarea|input|select|button');
     }
 
-    public onTouchUp(touchEvent: TouchEvent, el: HTMLElement): void {
+    public onTouchUp(touchEvent: TouchEvent, el: Element): void {
         let touch = this.getFirstActiveTouch(touchEvent.changedTouches);
 
         // i haven't worked this out yet, but there is no matching touch
@@ -299,11 +299,11 @@ export class DragService extends BeanStub {
         // }
     }
 
-    public onMouseUp(mouseEvent: MouseEvent, el: HTMLElement): void {
+    public onMouseUp(mouseEvent: MouseEvent, el: Element): void {
         this.onUpCommon(mouseEvent, el);
     }
 
-    public onUpCommon(eventOrTouch: MouseEvent | Touch, el: HTMLElement): void {
+    public onUpCommon(eventOrTouch: MouseEvent | Touch, el: Element): void {
         if (this.dragging) {
             this.dragging = false;
             this.currentDragParams!.onDragStop(eventOrTouch);
@@ -335,7 +335,7 @@ export interface DragListenerParams {
     /** After how many pixels of dragging should the drag operation start. Default is 4px. */
     dragStartPixels?: number;
     /** Dom element to add the drag handling to */
-    eElement: HTMLElement;
+    eElement: Element;
     /** Some places may wish to ignore certain events, eg range selection ignores shift clicks */
     skipMouseEvent?: (mouseEvent: MouseEvent) => boolean;
     /** Callback for drag starting */

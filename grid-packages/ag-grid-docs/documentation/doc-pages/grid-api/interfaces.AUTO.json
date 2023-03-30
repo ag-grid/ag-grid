@@ -232,7 +232,7 @@
     "meta": {},
     "type": {
       "type": "DragSourceType",
-      "eElement": "HTMLElement",
+      "eElement": "Element",
       "getDragItem": "() => DragItem",
       "dragItemName": "string | (() => string) | null",
       "defaultIconName?": "string",
@@ -265,7 +265,7 @@
       "getContainer()": "HTMLElement",
       "getSecondaryContainers?()": "HTMLElement[][]",
       "getIconName?()": "string | null",
-      "isInterestedIn(type: DragSourceType, el: HTMLElement)": "boolean",
+      "isInterestedIn(type: DragSourceType, el: Element)": "boolean",
       "targetContainsSource?": "boolean",
       "onDragEnter?(params: DraggingEvent)": "void",
       "onDragLeave?(params: DraggingEvent)": "void",
@@ -323,7 +323,7 @@
     "meta": {},
     "type": {
       "dragStartPixels?": "number",
-      "eElement": "HTMLElement",
+      "eElement": "Element",
       "skipMouseEvent?": "(mouseEvent: MouseEvent) => boolean",
       "onDragStart": "(mouseEvent: MouseEvent | Touch) => void",
       "onDragStop": "(mouseEvent: MouseEvent | Touch) => void",
@@ -2374,7 +2374,7 @@
       "shortcut?": "string",
       "action?": "() => void",
       "checked?": "boolean",
-      "icon?": "HTMLElement | string",
+      "icon?": "Element | string",
       "cssClasses?": "string[]",
       "tooltip?": "string"
     },
@@ -2398,7 +2398,7 @@
       "shortcut?": "string",
       "action?": "() => void",
       "checked?": "boolean",
-      "icon?": "HTMLElement | string",
+      "icon?": "Element | string",
       "cssClasses?": "string[]",
       "tooltip?": "string"
     },
@@ -3033,7 +3033,7 @@
   "AgDragEvent": {
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
-      "target": "HTMLElement",
+      "target": "Element",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "TContext",
@@ -3051,7 +3051,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "type": "'dragStarted'",
-      "target": "HTMLElement",
+      "target": "Element",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "TContext"
@@ -3068,7 +3068,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "type": "'dragStopped'",
-      "target": "HTMLElement",
+      "target": "Element",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "TContext"
@@ -11308,7 +11308,7 @@
       "shortcut?": "string",
       "action?": "() => void",
       "checked?": "boolean",
-      "icon?": "HTMLElement | string",
+      "icon?": "Element | string",
       "cssClasses?": "string[]",
       "tooltip?": "string"
     },
@@ -11331,7 +11331,7 @@
       "shortcut?": "string",
       "action?": "() => void",
       "checked?": "boolean",
-      "icon?": "HTMLElement | string",
+      "icon?": "Element | string",
       "subMenu?": "(MenuItemDef | string)[] | IPopupComponent<any>",
       "cssClasses?": "string[]",
       "tooltip?": "string",

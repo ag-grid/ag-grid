@@ -188,7 +188,7 @@ export interface ColumnPanelItemDragEndEvent<TData = any, TContext = any> extend
 
 export interface AgDragEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     /** The DOM element that started the event. */
-    target: HTMLElement;
+    target: Element;
 }
 
 export interface DragStartedEvent<TData = any, TContext = any> extends AgDragEvent<TData, TContext> {
