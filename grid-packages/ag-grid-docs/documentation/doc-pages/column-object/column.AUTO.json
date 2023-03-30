@@ -203,6 +203,10 @@
       "returnType": "void"
     }
   },
+  "isHovered": {
+    "description": "/** `Returns true` when this `Column` is hovered, otherwise `false` */",
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
   "setPinned": {
     "type": {
       "arguments": { "pinned": "ColumnPinnedType" },

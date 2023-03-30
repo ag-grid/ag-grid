@@ -24,6 +24,7 @@ import { attrToNumber, attrToBoolean, exists, missing } from "../utils/generic";
 import { doOnce } from "../utils/function";
 import { mergeDeep } from "../utils/object";
 import { GridOptionsService } from "../gridOptionsService";
+import { ColumnHoverService } from "../rendering/columnHoverService";
 import { IRowNode } from "../interfaces/iRowNode";
 
 export type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
@@ -85,8 +86,9 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     // + toolpanel, for gui updates
     public static EVENT_VALUE_CHANGED: ColumnEventName = 'columnValueChanged';
 
-    @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
-    @Autowired('columnUtils') private columnUtils: ColumnUtils;
+    @Autowired('gridOptionsService') private readonly gridOptionsService: GridOptionsService;
+    @Autowired('columnUtils') private readonly columnUtils: ColumnUtils;
+    @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
 
     private readonly colId: any;
     private colDef: ColDef;
@@ -591,6 +593,11 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
             mergeDeep(filterChangedEvent, additionalEventAttributes);
         }
         this.eventService.dispatchEvent(filterChangedEvent);
+    }
+
+    /** `Returns true` when this `Column` is hovered, otherwise `false` */
+    public isHovered(): boolean {
+        return this.columnHoverService.isHovered(this);
     }
 
     public setPinned(pinned: ColumnPinnedType): void {

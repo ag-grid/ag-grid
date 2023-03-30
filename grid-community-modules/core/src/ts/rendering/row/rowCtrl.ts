@@ -1257,11 +1257,13 @@ export class RowCtrl extends BeanStub {
                 !this.beans.gridOptionsService.is('suppressRowHoverHighlight')
             ) {
                 eRow.classList.add('ag-row-hover');
+                this.rowNode.setHovered(true);
             }
         });
 
         this.addManagedListener(this.rowNode, RowNode.EVENT_MOUSE_LEAVE, () => {
             eRow.classList.remove('ag-row-hover');
+            this.rowNode.setHovered(false);
         });
     }
 
@@ -1337,6 +1339,8 @@ export class RowCtrl extends BeanStub {
         if (this.beans.gridOptionsService.isAnimateRows()) {
             this.setupRemoveAnimation();
         }
+
+        this.rowNode.setHovered(false);
 
         const event: VirtualRowRemovedEvent = this.createRowEvent(Events.EVENT_VIRTUAL_ROW_REMOVED);
 
