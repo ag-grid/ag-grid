@@ -18,6 +18,52 @@ describe('DataModel', () => {
 
             expect(dataModel.processData(data)).toMatchSnapshot();
         });
+
+        describe('property tests', () => {
+            const dataModel = new DataModel<any, any>({
+                props: [
+                    { property: 'kp', type: 'key', valueType: 'range' },
+                    { property: 'vp1', type: 'value', valueType: 'range' },
+                    { property: 'vp2', type: 'value', valueType: 'range' },
+                ],
+            });
+            const data = [
+                { kp: 2, vp1: 5, vp2: 7 },
+                { kp: 3, vp1: 1, vp2: 2 },
+                { kp: 4, vp1: 6, vp2: 9 },
+            ];
+
+            it('should extract the configured keys', () => {
+                const result = dataModel.processData(data);
+
+                expect(result.type).toEqual('ungrouped');
+                expect(result.data.length).toEqual(3);
+                expect(result.data[0].keys).toEqual([2]);
+                expect(result.data[1].keys).toEqual([3]);
+                expect(result.data[2].keys).toEqual([4]);
+            });
+
+            it('should extract the configured values', () => {
+                const result = dataModel.processData(data);
+
+                expect(result.type).toEqual('ungrouped');
+                expect(result.data.length).toEqual(3);
+                expect(result.data[0].values).toEqual([5, 7]);
+                expect(result.data[1].values).toEqual([1, 2]);
+                expect(result.data[2].values).toEqual([6, 9]);
+            });
+
+            it('should calculate the domains', () => {
+                const result = dataModel.processData(data);
+
+                expect(result.type).toEqual('ungrouped');
+                expect(result.dataDomain.keys).toEqual([[2, 4]]);
+                expect(result.dataDomain.values).toEqual([
+                    [1, 6],
+                    [2, 9],
+                ]);
+            });
+        });
     });
 
     describe('grouped processing - grouped example', () => {
@@ -33,6 +79,64 @@ describe('DataModel', () => {
             });
 
             expect(dataModel.processData(data)).toMatchSnapshot();
+        });
+
+        describe('property tests', () => {
+            const dataModel = new DataModel<any, any, true>({
+                props: [
+                    { property: 'kp', type: 'key', valueType: 'category' },
+                    { property: 'vp1', type: 'value', valueType: 'range' },
+                    { property: 'vp2', type: 'value', valueType: 'range' },
+                ],
+                groupByKeys: true,
+            });
+            const data = [
+                { kp: 'Q1', vp1: 5, vp2: 7 },
+                { kp: 'Q1', vp1: 1, vp2: 2 },
+                { kp: 'Q2', vp1: 6, vp2: 9 },
+                { kp: 'Q2', vp1: 6, vp2: 9 },
+            ];
+
+            it('should extract the configured keys', () => {
+                const result = dataModel.processData(data);
+
+                expect(result.type).toEqual('grouped');
+                expect(result.data.length).toEqual(2);
+                expect(result.data[0].keys).toEqual(['Q1']);
+                expect(result.data[1].keys).toEqual(['Q2']);
+            });
+
+            it('should extract the configured values', () => {
+                const result = dataModel.processData(data);
+
+                expect(result.type).toEqual('grouped');
+                expect(result.data.length).toEqual(2);
+                expect(result.data[0].values).toEqual([
+                    [5, 7],
+                    [1, 2],
+                ]);
+                expect(result.data[1].values).toEqual([
+                    [6, 9],
+                    [6, 9],
+                ]);
+            });
+
+            it('should calculate the domains', () => {
+                const result = dataModel.processData(data);
+
+                expect(result.type).toEqual('grouped');
+                expect(result.dataDomain.keys).toEqual([['Q1', 'Q2']]);
+                expect(result.dataDomain.values).toEqual([
+                    [1, 6],
+                    [2, 9],
+                ]);
+            });
+
+            it('should not include sums', () => {
+                const result = dataModel.processData(data);
+
+                expect(result.dataDomain.sumValues).toBeUndefined();
+            });
         });
     });
 
@@ -52,6 +156,90 @@ describe('DataModel', () => {
             });
 
             expect(dataModel.processData(data)).toMatchSnapshot();
+        });
+
+        describe('property tests', () => {
+            const dataModel = new DataModel<any, any, true>({
+                props: [
+                    { property: 'kp', type: 'key', valueType: 'category' },
+                    { property: 'vp1', type: 'value', valueType: 'range' },
+                    { property: 'vp2', type: 'value', valueType: 'range' },
+                    { property: 'vp3', type: 'value', valueType: 'range' },
+                    { property: 'vp4', type: 'value', valueType: 'range' },
+                ],
+                groupByKeys: true,
+                sumGroupDataDomains: [
+                    ['vp1', 'vp2'],
+                    ['vp3', 'vp4'],
+                ],
+            });
+            const data = [
+                { kp: 'Q1', vp1: 5, vp2: 7, vp3: 1, vp4: 5 },
+                { kp: 'Q1', vp1: 1, vp2: 2, vp3: 2, vp4: 4 },
+                { kp: 'Q2', vp1: 6, vp2: 9, vp3: 3, vp4: 3 },
+                { kp: 'Q2', vp1: 6, vp2: 9, vp3: 4, vp4: 2 },
+            ];
+
+            it('should extract the configured keys', () => {
+                const result = dataModel.processData(data);
+
+                expect(result.type).toEqual('grouped');
+                expect(result.data.length).toEqual(2);
+                expect(result.data[0].keys).toEqual(['Q1']);
+                expect(result.data[1].keys).toEqual(['Q2']);
+            });
+
+            it('should extract the configured values', () => {
+                const result = dataModel.processData(data);
+
+                expect(result.type).toEqual('grouped');
+                expect(result.data.length).toEqual(2);
+                expect(result.data[0].values).toEqual([
+                    [5, 7, 1, 5],
+                    [1, 2, 2, 4],
+                ]);
+                expect(result.data[1].values).toEqual([
+                    [6, 9, 3, 3],
+                    [6, 9, 4, 2],
+                ]);
+            });
+
+            it('should extract the configured values', () => {
+                const result = dataModel.processData(data);
+
+                expect(result.type).toEqual('grouped');
+                expect(result.data.length).toEqual(2);
+                expect(result.data[0].values).toEqual([
+                    [5, 7, 1, 5],
+                    [1, 2, 2, 4],
+                ]);
+                expect(result.data[1].values).toEqual([
+                    [6, 9, 3, 3],
+                    [6, 9, 4, 2],
+                ]);
+            });
+
+            it('should calculate the domains', () => {
+                const result = dataModel.processData(data);
+
+                expect(result.type).toEqual('grouped');
+                expect(result.dataDomain.keys).toEqual([['Q1', 'Q2']]);
+                expect(result.dataDomain.values).toEqual([
+                    [1, 6],
+                    [2, 9],
+                    [1, 4],
+                    [2, 5],
+                ]);
+            });
+
+            it('should calculate the sums', () => {
+                const result = dataModel.processData(data);
+
+                expect(result.dataDomain.sumValues).toEqual([
+                    [0, 15],
+                    [0, 6],
+                ]);
+            });
         });
     });
 });
