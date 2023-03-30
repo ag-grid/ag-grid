@@ -65,7 +65,6 @@ const options: AgChartOptions = {
       ...sharedSeriesOptions,
       data: getData2020(),
       outerRadiusRatio: 0.5,
-      legendItemKey: "browser",
       title: {
         text: "January 2020",
         fontWeight: "bold",
