@@ -138,17 +138,10 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     }
 
     async processData() {
-        const { xKey, yKey, sizeKey, xAxis, yAxis, marker } = this;
+        const { xKey, yKey, sizeKey, xAxis, yAxis, marker, data } = this;
 
-        if (!xAxis || !yAxis || !xKey || !yKey) {
-            return;
-        }
-
-        const data = xKey && yKey && this.data ? this.data : [];
-        const xScale = xAxis.scale;
-        const yScale = yAxis.scale;
-        const isContinuousX = xScale instanceof ContinuousScale;
-        const isContinuousY = yScale instanceof ContinuousScale;
+        const isContinuousX = xAxis?.scale instanceof ContinuousScale;
+        const isContinuousY = yAxis?.scale instanceof ContinuousScale;
 
         const sizeKeyProp: DatumPropertyDefinition<any>[] = sizeKey
             ? [{ property: yKey, type: 'value', valueType: 'range', validation: (v) => checkDatum(v, true) }]
@@ -170,16 +163,16 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                 ...sizeKeyProp,
             ],
         });
-        this.processedData = dataModel.processData(data);
+        this.processedData = dataModel.processData(data ?? []);
 
-        this.sizeScale.domain = marker.domain ? marker.domain : this.processedData.dataDomain.values[2];
+        this.sizeScale.domain = marker.domain ? marker.domain : this.processedData.domain.values[2];
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
         if (direction === ChartAxisDirection.X) {
-            return this.processedData?.dataDomain.values[0] ?? [];
+            return this.processedData?.domain.values[0] ?? [];
         } else {
-            return this.processedData?.dataDomain.values[1] ?? [];
+            return this.processedData?.domain.values[1] ?? [];
         }
     }
 

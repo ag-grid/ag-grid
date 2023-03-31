@@ -8,10 +8,14 @@ export interface UngroupedData<D> {
         sumValues?: [number, number][];
         datum: D;
     }[];
-    dataDomain: {
+    domain: {
         keys: any[][];
         values: any[][];
         sumValues?: [number, number][];
+    };
+    indices: {
+        keys: Record<keyof D, number>;
+        values: Record<keyof D, number>;
     };
 }
 
@@ -23,10 +27,14 @@ export interface GroupedData<D> {
         sumValues?: [number, number][];
         datum: D[];
     }[];
-    dataDomain: {
+    domain: {
         keys: any[][];
         values: any[][];
         sumValues?: [number, number][];
+    };
+    indices: {
+        keys: Record<keyof D, number>;
+        values: Record<keyof D, number>;
     };
 }
 
@@ -75,7 +83,7 @@ function sumValues(values: any[], accumulator = [0, 0] as ContinuousDomain<numbe
 type Options<K, Grouped extends boolean | undefined> = {
     readonly props: PropertyDefinition<K>[];
     readonly groupByKeys?: Grouped;
-    readonly normaliseValues?: number;
+    readonly normaliseTo?: number;
 };
 
 export type PropertyDefinition<K> = DatumPropertyDefinition<K> | OutputPropertyDefinition<K>;
@@ -145,11 +153,9 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
 
     processData(data: D[]): Grouped extends true ? GroupedData<D> : UngroupedData<D> {
         const {
-            opts: { groupByKeys },
+            opts: { groupByKeys, normaliseTo },
             sums,
         } = this;
-
-        // TODO: Normalisation.
 
         for (const def of [...this.keys, ...this.values]) {
             def.missing = false;
@@ -162,6 +168,9 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
         if (sums.length > 0) {
             processedData = this.sumData(processedData);
         }
+        if (typeof normaliseTo === 'number') {
+            processedData = this.normaliseData(processedData);
+        }
 
         for (const def of [...this.keys, ...this.values]) {
             if (def.missing) {
@@ -172,10 +181,16 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
         return processedData as Grouped extends true ? GroupedData<D> : UngroupedData<D>;
     }
 
-    normaliseData(data: GroupedData<D>, normaliseTo: number): GroupedData<D> {
-        const { sums: sumDefs, values: valueDefs } = this;
-        const sumValues = data.dataDomain.sumValues;
+    private normaliseData(processedData: ProcessedData<D>): ProcessedData<D> {
+        const {
+            sums: sumDefs,
+            values: valueDefs,
+            opts: { normaliseTo },
+        } = this;
 
+        if (normaliseTo == null) return processedData;
+
+        const sumValues = processedData.domain.sumValues;
         const resultSumValueIndices = sumDefs.map((defs) =>
             defs.properties.map((prop) => valueDefs.findIndex((def) => def.property === prop))
         );
@@ -192,7 +207,14 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
                 sums[sumRangeIdx++] *= multiplier;
             }
 
-            for (const { values, sumValues } of data.data) {
+            for (const next of processedData.data) {
+                const { sumValues } = next;
+                let { values } = next;
+
+                if (processedData.type === 'ungrouped') {
+                    values = [values];
+                }
+
                 const valuesSumExtent = Math.max(...(sumValues?.[sumIdx].map((v) => Math.abs(v)) ?? [0]));
                 multiplier = normaliseTo / valuesSumExtent;
                 for (const row of values) {
@@ -210,7 +232,7 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
             }
         }
 
-        return data;
+        return processedData;
     }
 
     private extractData(data: D[]): UngroupedData<D> {
@@ -248,9 +270,19 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
         return {
             type: 'ungrouped',
             data: resultData,
-            dataDomain: {
+            domain: {
                 keys: keyDefs.map((def) => [...dataDomain.get(def.property)!.domain]),
                 values: valueDefs.map((def) => [...dataDomain.get(def.property)!.domain]),
+            },
+            indices: {
+                keys: keyDefs.reduce((r, { property, index }) => {
+                    r[property] = index;
+                    return r;
+                }, {} as Record<keyof D, number>),
+                values: valueDefs.reduce((r, { property, index }) => {
+                    r[property] = index;
+                    return r;
+                }, {} as Record<keyof D, number>),
             },
         };
     }
@@ -322,8 +354,8 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
 
         return {
             ...processedData,
-            dataDomain: {
-                ...processedData.dataDomain,
+            domain: {
+                ...processedData.domain,
                 sumValues: resultSumValues,
             },
         };

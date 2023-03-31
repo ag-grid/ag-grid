@@ -5245,9 +5245,15 @@
         "optional": false
       }
     },
-    "dataDomain": {
+    "domain": {
       "type": {
         "returnType": "{\n        keys: any[][];\n        values: any[][];\n        sumValues?: [number, number][];\n    }",
+        "optional": false
+      }
+    },
+    "indices": {
+      "type": {
+        "returnType": "{\n        keys: Record<keyof D, number>;\n        values: Record<keyof D, number>;\n    }",
         "optional": false
       }
     },
@@ -5261,9 +5267,15 @@
         "optional": false
       }
     },
-    "dataDomain": {
+    "domain": {
       "type": {
         "returnType": "{\n        keys: any[][];\n        values: any[][];\n        sumValues?: [number, number][];\n    }",
+        "optional": false
+      }
+    },
+    "indices": {
+      "type": {
+        "returnType": "{\n        keys: Record<keyof D, number>;\n        values: Record<keyof D, number>;\n    }",
         "optional": false
       }
     },

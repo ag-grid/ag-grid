@@ -130,7 +130,7 @@ Object {
       ],
     },
   ],
-  "dataDomain": Object {
+  "domain": Object {
     "keys": Array [
       Array [
         "Whole economy",
@@ -152,6 +152,15 @@ Object {
         4.2,
       ],
     ],
+  },
+  "indices": Object {
+    "keys": Object {
+      "type": 0,
+    },
+    "values": Object {
+      "regular": 1,
+      "total": 0,
+    },
   },
   "type": "grouped",
 }
@@ -321,7 +330,7 @@ Object {
       ],
     },
   ],
-  "dataDomain": Object {
+  "domain": Object {
     "keys": Array [
       Array [
         "Nursery",
@@ -363,6 +372,19 @@ Object {
         95064,
       ],
     ],
+  },
+  "indices": Object {
+    "keys": Object {
+      "type": 0,
+    },
+    "values": Object {
+      "asian": 2,
+      "black": 3,
+      "chinese": 4,
+      "mixed": 1,
+      "other": 5,
+      "white": 0,
+    },
   },
   "type": "grouped",
 }
@@ -596,7 +618,7 @@ Object {
       ],
     },
   ],
-  "dataDomain": Object {
+  "domain": Object {
     "keys": Array [
       Array [
         "Semi-detached house",
@@ -633,6 +655,17 @@ Object {
         919,
       ],
     ],
+  },
+  "indices": Object {
+    "keys": Object {
+      "type": 0,
+    },
+    "values": Object {
+      "housingAssociation": 3,
+      "localAuthority": 2,
+      "ownerOccupied": 0,
+      "privateRented": 1,
+    },
   },
   "type": "grouped",
 }
@@ -1370,7 +1403,7 @@ Object {
       ],
     },
   ],
-  "dataDomain": Object {
+  "domain": Object {
     "keys": Array [
       Array [
         2019-01-07T00:00:00.000Z,
@@ -1387,6 +1420,15 @@ Object {
         136.45,
       ],
     ],
+  },
+  "indices": Object {
+    "keys": Object {
+      "date": 0,
+    },
+    "values": Object {
+      "diesel": 1,
+      "petrol": 0,
+    },
   },
   "type": "ungrouped",
 }

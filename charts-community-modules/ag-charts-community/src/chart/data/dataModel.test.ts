@@ -57,8 +57,8 @@ describe('DataModel', () => {
                 const result = dataModel.processData(data);
 
                 expect(result.type).toEqual('ungrouped');
-                expect(result.dataDomain.keys).toEqual([[2, 4]]);
-                expect(result.dataDomain.values).toEqual([
+                expect(result.domain.keys).toEqual([[2, 4]]);
+                expect(result.domain.values).toEqual([
                     [1, 6],
                     [2, 9],
                 ]);
@@ -125,8 +125,8 @@ describe('DataModel', () => {
                 const result = dataModel.processData(data);
 
                 expect(result.type).toEqual('grouped');
-                expect(result.dataDomain.keys).toEqual([['Q1', 'Q2']]);
-                expect(result.dataDomain.values).toEqual([
+                expect(result.domain.keys).toEqual([['Q1', 'Q2']]);
+                expect(result.domain.values).toEqual([
                     [1, 6],
                     [2, 9],
                 ]);
@@ -136,7 +136,7 @@ describe('DataModel', () => {
                 const result = dataModel.processData(data);
 
                 expect(result.data.filter((g) => g.sumValues != null)).toEqual([]);
-                expect(result.dataDomain.sumValues).toBeUndefined();
+                expect(result.domain.sumValues).toBeUndefined();
             });
         });
     });
@@ -210,8 +210,8 @@ describe('DataModel', () => {
                 const result = dataModel.processData(data);
 
                 expect(result.type).toEqual('grouped');
-                expect(result.dataDomain.keys).toEqual([['Q1', 'Q2']]);
-                expect(result.dataDomain.values).toEqual([
+                expect(result.domain.keys).toEqual([['Q1', 'Q2']]);
+                expect(result.domain.values).toEqual([
                     [1, 6],
                     [2, 9],
                     [1, 4],
@@ -232,7 +232,7 @@ describe('DataModel', () => {
                         [0, 12],
                     ],
                 ]);
-                expect(result.dataDomain.sumValues).toEqual([
+                expect(result.domain.sumValues).toEqual([
                     [0, 30],
                     [0, 12],
                 ]);
@@ -258,11 +258,10 @@ describe('DataModel', () => {
                     },
                 ],
                 groupByKeys: true,
+                normaliseTo: 100,
             });
 
-            let processedData = dataModel.processData(data);
-            processedData = dataModel.normaliseData(processedData, 100);
-            expect(processedData).toMatchSnapshot();
+            expect(dataModel.processData(data)).toMatchSnapshot();
         });
 
         describe('property tests', () => {
@@ -277,6 +276,7 @@ describe('DataModel', () => {
                     { properties: ['vp3', 'vp4'], type: 'sum' },
                 ],
                 groupByKeys: true,
+                normaliseTo: 100,
             });
             const data = [
                 { kp: 'Q1', vp1: 5, vp2: 7, vp3: 1, vp4: 5 },
@@ -286,8 +286,7 @@ describe('DataModel', () => {
             ];
 
             it('should allow normalisation of values', () => {
-                let result = dataModel.processData(data);
-                result = dataModel.normaliseData(result, 100);
+                const result = dataModel.processData(data);
 
                 expect(result.data.map((g) => g.sumValues)).toEqual([
                     [
@@ -299,7 +298,7 @@ describe('DataModel', () => {
                         [0, 100],
                     ],
                 ]);
-                expect(result.dataDomain.sumValues).toEqual([
+                expect(result.domain.sumValues).toEqual([
                     [0, 100],
                     [0, 100],
                 ]);

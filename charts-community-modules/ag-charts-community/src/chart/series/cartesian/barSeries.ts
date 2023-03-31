@@ -48,7 +48,7 @@ import {
     FontStyle,
     FontWeight,
 } from '../../agChartOptions';
-import { DataModel, DatumPropertyDefinition, GroupedData } from '../../data/dataModel';
+import { DataModel, GroupedData } from '../../data/dataModel';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
@@ -103,7 +103,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     static type = 'bar' as const;
 
     private processedData?: GroupedData<any>;
-    private yIndexes?: (number | undefined)[][];
 
     readonly label = new BarSeriesLabel();
 
@@ -317,30 +316,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         this.processYKeys();
         this.processYNames();
 
-        const { xKey, yKeys, seriesItemEnabled } = this;
-        const data = xKey && yKeys.length && this.data ? this.data : [];
+        const { xKey, seriesItemEnabled, normalizedTo, data = [] } = this;
 
-        const xAxis = this.getCategoryAxis();
-        const yAxis = this.getValueAxis();
-
-        if (!(xAxis && yAxis)) {
-            return;
-        }
-
-        const isContinuousX = xAxis.scale instanceof ContinuousScale;
-        const isContinuousY = yAxis.scale instanceof ContinuousScale;
-
-        const enabledYKeyProps: DatumPropertyDefinition<any>[] = [];
-        seriesItemEnabled.forEach((enabled, yKey) => {
-            if (!enabled) return;
-
-            enabledYKeyProps.push({
-                property: yKey,
-                type: 'value',
-                valueType: isContinuousY ? 'range' : 'category',
-                validation: (v) => checkDatum(v, isContinuousY),
-            });
-        });
+        const isContinuousX = this.getCategoryAxis()?.scale instanceof ContinuousScale;
+        const isContinuousY = this.getValueAxis()?.scale instanceof ContinuousScale;
 
         const dataModel = new DataModel<any, any, true>({
             props: [
@@ -350,7 +329,14 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     valueType: isContinuousX ? 'range' : 'category',
                     validation: (v) => checkDatum(v, isContinuousX),
                 },
-                ...enabledYKeyProps,
+                ...[...seriesItemEnabled.entries()]
+                    .filter(([, enabled]) => enabled)
+                    .map(([yKey]) => ({
+                        property: yKey,
+                        type: 'value' as const,
+                        valueType: isContinuousY ? ('range' as const) : ('category' as const),
+                        validation: (v: any) => checkDatum(v, isContinuousY),
+                    })),
                 ...this.yKeys
                     .map((stack) => ({
                         type: 'sum' as const,
@@ -359,11 +345,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     .filter((def) => def.properties.length > 0),
             ],
             groupByKeys: true,
+            normaliseTo: normalizedTo && isFinite(normalizedTo) ? normalizedTo : undefined,
         });
+
         this.processedData = dataModel.processData(data);
-        this.yIndexes = yKeys.map((stackKeys) =>
-            stackKeys.map((key) => dataModel.resolveProcessedDataIndex(key)?.index)
-        );
 
         let smallestXInterval = Infinity;
         if (isContinuousX) {
@@ -379,18 +364,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             }
         }
         this.smallestDataInterval === { x: smallestXInterval, y: Infinity };
-
-        // if (normalizedTo && isFinite(normalizedTo)) {
-        //     yMin = yMin < 0 ? -normalizedTo : isLogAxis ? 1 : 0;
-        //     yMax = yMax > 0 ? normalizedTo : isLogAxis ? -1 : 0;
-        //     yData.forEach((group, i) => {
-        //         group.forEach((stack, j) => {
-        //             stack.forEach((y, k) => {
-        //                 stack[k] = (y / yAbsTotal[i][j]) * normalizedTo;
-        //             });
-        //         });
-        //     });
-        // }
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
@@ -399,11 +372,11 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             direction = flipChartAxisDirection(direction);
         }
         if (direction === ChartAxisDirection.X) {
-            return this.processedData?.dataDomain.keys?.[0] ?? [];
+            return this.processedData?.domain.keys?.[0] ?? [];
         } else {
-            const result = [...(this.processedData?.dataDomain.sumValues?.[0] ?? [])];
+            const result = [...(this.processedData?.domain.sumValues?.[0] ?? [])];
 
-            for (const [min, max] of this.processedData?.dataDomain.sumValues?.slice(1) ?? []) {
+            for (const [min, max] of this.processedData?.domain.sumValues?.slice(1) ?? []) {
                 if (min < result[0]) {
                     result[0] = min;
                 }
@@ -474,7 +447,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const {
             groupScale,
             yKeys,
-            yIndexes,
             xKey,
             cumYKeyCount,
             fills,
@@ -544,7 +516,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
                 for (let levelIndex = 0; levelIndex < stackYKeys.length; levelIndex++) {
                     const yKey = stackYKeys[levelIndex];
-                    const yIndex = yIndexes?.[stackIndex][levelIndex];
+                    const yIndex = processedData?.indices.values[yKey] ?? -1;
                     contexts[stackIndex][levelIndex] ??= {
                         itemId: yKey,
                         nodeData: [],

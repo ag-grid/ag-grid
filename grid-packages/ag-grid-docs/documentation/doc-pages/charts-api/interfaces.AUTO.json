@@ -3467,7 +3467,8 @@
     "type": {
       "type": "'ungrouped'",
       "data": "{ keys: any[]; values: any[]; sumValues?: [ number, number ][]; datum: D; }[]",
-      "dataDomain": "{ keys: any[][]; values: any[][]; sumValues?: [ number, number ][]; }"
+      "domain": "{ keys: any[][]; values: any[][]; sumValues?: [ number, number ][]; }",
+      "indices": "{ keys: Record<keyof D, number>; values: Record<keyof D, number>; }"
     }
   },
   "GroupedData": {
@@ -3475,7 +3476,8 @@
     "type": {
       "type": "'grouped'",
       "data": "{ keys: any[]; values: any[][]; sumValues?: [ number, number ][]; datum: D[]; }[]",
-      "dataDomain": "{ keys: any[][]; values: any[][]; sumValues?: [ number, number ][]; }"
+      "domain": "{ keys: any[][]; values: any[][]; sumValues?: [ number, number ][]; }",
+      "indices": "{ keys: Record<keyof D, number>; values: Record<keyof D, number>; }"
     }
   },
   "ProcessedData": {
@@ -3495,7 +3497,7 @@
       "isTypeAlias": true,
       "typeParams": ["K", "Grouped extends boolean | undefined"]
     },
-    "type": "{ readonly props: PropertyDefinition<K>[]; readonly groupByKeys?: Grouped; readonly normaliseValues?: number; }"
+    "type": "{ readonly props: PropertyDefinition<K>[]; readonly groupByKeys?: Grouped; readonly normaliseTo?: number; }"
   },
   "PropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
