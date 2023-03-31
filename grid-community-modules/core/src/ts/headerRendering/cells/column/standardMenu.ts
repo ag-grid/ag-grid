@@ -48,7 +48,6 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
                 keepWithinBounds: true,
                 position: 'under',
                 column,
-                shouldSetMaxHeight: true
             });
         }, containerType, eventSource);
     }

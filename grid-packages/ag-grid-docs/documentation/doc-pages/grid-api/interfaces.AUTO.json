@@ -11302,7 +11302,6 @@
       "isCompact?": "boolean",
       "isAnotherSubMenuOpen": "() => boolean",
       "subMenu?": "(MenuItemDef | string)[] | IComponent<any>",
-      "shouldSetMaxHeight?": "boolean",
       "name": "string",
       "disabled?": "boolean",
       "shortcut?": "string",
@@ -11408,7 +11407,6 @@
       "alignSide?": "'left' | 'right'",
       "keepWithinBounds?": "boolean",
       "skipObserver?": "boolean",
-      "shouldSetMaxHeight?": "boolean",
       "updatePosition?": "() => { x: number; y: number; }",
       "postProcessCallback?": "() => void"
     }

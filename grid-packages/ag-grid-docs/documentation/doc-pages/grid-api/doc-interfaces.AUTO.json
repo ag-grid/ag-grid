@@ -19937,9 +19937,6 @@
         "optional": true
       }
     },
-    "shouldSetMaxHeight": {
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "name": {
       "description": "/** Name of the menu item */",
       "type": { "returnType": "string", "optional": false }
@@ -20125,9 +20122,6 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipObserver": { "type": { "returnType": "boolean", "optional": true } },
-    "shouldSetMaxHeight": {
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "updatePosition": {
       "type": {
         "arguments": {},
