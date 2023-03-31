@@ -5241,13 +5241,13 @@
     "type": { "type": { "returnType": "'ungrouped'", "optional": false } },
     "data": {
       "type": {
-        "returnType": "{\n        keys: any[];\n        values: any[];\n        datum: D;\n    }[]",
+        "returnType": "{\n        keys: any[];\n        values: any[];\n        sumValues?: [number, number][];\n        datum: D;\n    }[]",
         "optional": false
       }
     },
     "dataDomain": {
       "type": {
-        "returnType": "{\n        keys: any[][];\n        values: any[][];\n    }",
+        "returnType": "{\n        keys: any[][];\n        values: any[][];\n        sumValues?: [number, number][];\n    }",
         "optional": false
       }
     },
@@ -5257,29 +5257,13 @@
     "type": { "type": { "returnType": "'grouped'", "optional": false } },
     "data": {
       "type": {
-        "returnType": "{\n        keys: any[];\n        values: any[][];\n        datum: D[];\n    }[]",
+        "returnType": "{\n        keys: any[];\n        values: any[][];\n        sumValues?: [number, number][];\n        datum: D[];\n    }[]",
         "optional": false
       }
     },
     "dataDomain": {
       "type": {
-        "returnType": "{\n        keys: any[][];\n        values: any[][];\n        sumValues?: any[][];\n    }",
-        "optional": false
-      }
-    },
-    "meta": { "typeParams": ["D"] }
-  },
-  "AggregatedData": {
-    "type": { "type": { "returnType": "'aggregated'", "optional": false } },
-    "data": {
-      "type": {
-        "returnType": "{\n        keys: any[];\n        values: any[];\n        datum: D[];\n    }[]",
-        "optional": false
-      }
-    },
-    "dataDomain": {
-      "type": {
-        "returnType": "{\n        keys: any[][];\n        values: any[][];\n    }",
+        "returnType": "{\n        keys: any[][];\n        values: any[][];\n        sumValues?: [number, number][];\n    }",
         "optional": false
       }
     },
@@ -5291,8 +5275,10 @@
   "Options": {
     "meta": { "typeParams": ["K", "Grouped extends boolean | undefined"] }
   },
+  "PropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "DatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "InternalDatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
+  "OutputPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "Page": {},
   "Column": {},
   "DimensionProps": {

@@ -3466,29 +3466,21 @@
     "meta": { "typeParams": ["D"] },
     "type": {
       "type": "'ungrouped'",
-      "data": "{ keys: any[]; values: any[]; datum: D; }[]",
-      "dataDomain": "{ keys: any[][]; values: any[][]; }"
+      "data": "{ keys: any[]; values: any[]; sumValues?: [ number, number ][]; datum: D; }[]",
+      "dataDomain": "{ keys: any[][]; values: any[][]; sumValues?: [ number, number ][]; }"
     }
   },
   "GroupedData": {
     "meta": { "typeParams": ["D"] },
     "type": {
       "type": "'grouped'",
-      "data": "{ keys: any[]; values: any[][]; datum: D[]; }[]",
-      "dataDomain": "{ keys: any[][]; values: any[][]; sumValues?: any[][]; }"
-    }
-  },
-  "AggregatedData": {
-    "meta": { "typeParams": ["D"] },
-    "type": {
-      "type": "'aggregated'",
-      "data": "{ keys: any[]; values: any[]; datum: D[]; }[]",
-      "dataDomain": "{ keys: any[][]; values: any[][]; }"
+      "data": "{ keys: any[]; values: any[][]; sumValues?: [ number, number ][]; datum: D[]; }[]",
+      "dataDomain": "{ keys: any[][]; values: any[][]; sumValues?: [ number, number ][]; }"
     }
   },
   "ProcessedData": {
     "meta": { "isTypeAlias": true, "typeParams": ["D"] },
-    "type": "UngroupedData<D> | GroupedData<D> | AggregatedData<D>"
+    "type": "UngroupedData<D> | GroupedData<D>"
   },
   "DatumPropertyType": {
     "meta": { "isTypeAlias": true },
@@ -3503,7 +3495,11 @@
       "isTypeAlias": true,
       "typeParams": ["K", "Grouped extends boolean | undefined"]
     },
-    "type": "{ readonly props: DatumPropertyDefinition<K>[]; readonly groupByKeys?: Grouped; readonly sumGroupDataDomains?: K[][]; }"
+    "type": "{ readonly props: PropertyDefinition<K>[]; readonly groupByKeys?: Grouped; readonly normaliseValues?: number; }"
+  },
+  "PropertyDefinition": {
+    "meta": { "isTypeAlias": true, "typeParams": ["K"] },
+    "type": "DatumPropertyDefinition<K> | OutputPropertyDefinition<K>"
   },
   "DatumPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
@@ -3512,6 +3508,10 @@
   "InternalDatumPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
     "type": "DatumPropertyDefinition<K> & { index: number; missing: boolean; }"
+  },
+  "OutputPropertyDefinition": {
+    "meta": { "isTypeAlias": true, "typeParams": ["K"] },
+    "type": "{ type: 'sum'; properties: K[]; }"
   },
   "Page": {
     "meta": { "isTypeAlias": true },

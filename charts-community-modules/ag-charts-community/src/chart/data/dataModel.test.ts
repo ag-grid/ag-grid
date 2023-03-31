@@ -135,6 +135,7 @@ describe('DataModel', () => {
             it('should not include sums', () => {
                 const result = dataModel.processData(data);
 
+                expect(result.data.filter((g) => g.sumValues != null)).toEqual([]);
                 expect(result.dataDomain.sumValues).toBeUndefined();
             });
         });
@@ -150,9 +151,12 @@ describe('DataModel', () => {
                     { property: 'privateRented', type: 'value', valueType: 'range' },
                     { property: 'localAuthority', type: 'value', valueType: 'range' },
                     { property: 'housingAssociation', type: 'value', valueType: 'range' },
+                    {
+                        properties: ['ownerOccupied', 'privateRented', 'localAuthority', 'housingAssociation'],
+                        type: 'sum',
+                    },
                 ],
                 groupByKeys: true,
-                sumGroupDataDomains: [['ownerOccupied', 'privateRented', 'localAuthority', 'housingAssociation']],
             });
 
             expect(dataModel.processData(data)).toMatchSnapshot();
@@ -166,12 +170,10 @@ describe('DataModel', () => {
                     { property: 'vp2', type: 'value', valueType: 'range' },
                     { property: 'vp3', type: 'value', valueType: 'range' },
                     { property: 'vp4', type: 'value', valueType: 'range' },
+                    { properties: ['vp1', 'vp2'], type: 'sum' },
+                    { properties: ['vp3', 'vp4'], type: 'sum' },
                 ],
                 groupByKeys: true,
-                sumGroupDataDomains: [
-                    ['vp1', 'vp2'],
-                    ['vp3', 'vp4'],
-                ],
             });
             const data = [
                 { kp: 'Q1', vp1: 5, vp2: 7, vp3: 1, vp4: 5 },
@@ -187,21 +189,6 @@ describe('DataModel', () => {
                 expect(result.data.length).toEqual(2);
                 expect(result.data[0].keys).toEqual(['Q1']);
                 expect(result.data[1].keys).toEqual(['Q2']);
-            });
-
-            it('should extract the configured values', () => {
-                const result = dataModel.processData(data);
-
-                expect(result.type).toEqual('grouped');
-                expect(result.data.length).toEqual(2);
-                expect(result.data[0].values).toEqual([
-                    [5, 7, 1, 5],
-                    [1, 2, 2, 4],
-                ]);
-                expect(result.data[1].values).toEqual([
-                    [6, 9, 3, 3],
-                    [6, 9, 4, 2],
-                ]);
             });
 
             it('should extract the configured values', () => {
@@ -235,9 +222,19 @@ describe('DataModel', () => {
             it('should calculate the sums', () => {
                 const result = dataModel.processData(data);
 
+                expect(result.data.map((g) => g.sumValues)).toEqual([
+                    [
+                        [0, 15],
+                        [0, 12],
+                    ],
+                    [
+                        [0, 30],
+                        [0, 12],
+                    ],
+                ]);
                 expect(result.dataDomain.sumValues).toEqual([
-                    [0, 15],
-                    [0, 6],
+                    [0, 30],
+                    [0, 12],
                 ]);
             });
         });

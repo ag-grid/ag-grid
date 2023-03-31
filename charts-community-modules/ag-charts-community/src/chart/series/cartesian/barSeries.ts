@@ -351,9 +351,14 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     validation: (v) => checkDatum(v, isContinuousX),
                 },
                 ...enabledYKeyProps,
+                ...this.yKeys
+                    .map((stack) => ({
+                        type: 'sum' as const,
+                        properties: stack.filter((key) => seriesItemEnabled.get(key) === true),
+                    }))
+                    .filter((def) => def.properties.length > 0),
             ],
             groupByKeys: true,
-            sumGroupDataDomains: this.yKeys.map((stack) => stack.filter((key) => seriesItemEnabled.get(key) === true)),
         });
         this.processedData = dataModel.processData(data);
         this.yIndexes = yKeys.map((stackKeys) =>
