@@ -12,16 +12,18 @@ export class PaginationAutoPageSizeService extends BeanStub {
 
     private centerRowContainerCon: RowContainerCtrl;
 
+    // Once the body is rendered, we debounce changes to the page size,
+    // but we do not want to debounce the first time the body is rendered.
+    private isBodyRendered: boolean;
+
     @PostConstruct
     private postConstruct(): void {
         this.ctrlsService.whenReady(p => {
             this.centerRowContainerCon = p.centerRowContainerCtrl;
 
-            // we debounce this, as it can get called many times in a row and sometimes falsely 
-            // (eg when the grid is resized horizontally, and columns are flexing causing scrollbar to toggle)
-            const debounced = debounce(() => this.checkPageSize(), 50);
-            this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, debounced);
-            this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, debounced);
+            this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.checkPageSize.bind(this));
+            this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.checkPageSize.bind(this));
+
             this.checkPageSize();
         });
     }
@@ -35,12 +37,23 @@ export class PaginationAutoPageSizeService extends BeanStub {
             return;
         }
 
-        const rowHeight = this.gridOptionsService.getRowHeightAsNumber();
         const bodyHeight = this.centerRowContainerCon.getViewportSizeFeature()!.getBodyHeight();
 
         if (bodyHeight > 0) {
-            const newPageSize = Math.floor(bodyHeight / rowHeight);
-            this.gridOptionsService.set('paginationPageSize', newPageSize);
+            const update = () => {
+                const rowHeight = this.gridOptionsService.getRowHeightAsNumber();
+                const newPageSize = Math.floor(bodyHeight / rowHeight);
+                this.gridOptionsService.set('paginationPageSize', newPageSize);
+            }
+
+            if (!this.isBodyRendered) {
+                update();
+                this.isBodyRendered = true;
+            } else {
+                debounce(() => update(), 50)();
+            }
+        } else {
+            this.isBodyRendered = false;
         }
     }
 }

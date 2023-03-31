@@ -6,13 +6,11 @@ import { Autowired, Bean, PostConstruct } from "../context/context";
 import { missing, exists } from "../utils/generic";
 import { RowPosition } from "../entities/rowPositionUtils";
 import { WithoutGridCommon } from "../interfaces/iCommon";
-import { PaginationAutoPageSizeService } from "./paginationAutoPageSizeService";
 
 @Bean('paginationProxy')
 export class PaginationProxy extends BeanStub {
 
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('paginationAutoPageSizeService') private paginationAutoPageSizeService: PaginationAutoPageSizeService;
 
     private active: boolean;
     private paginateChildRows: boolean;
@@ -180,7 +178,7 @@ export class PaginationProxy extends BeanStub {
     }
 
     public getPageForIndex(index: number): number {
-        return Math.floor(index / this.getPageSize());
+        return Math.floor(index / this.pageSize);
     }
 
     public goToPageWithIndex(index: any): void {
@@ -218,16 +216,11 @@ export class PaginationProxy extends BeanStub {
 
     public goToLastPage(): void {
         const rowCount = this.rowModel.getRowCount();
-        const lastPage = Math.floor(rowCount / this.getPageSize());
+        const lastPage = Math.floor(rowCount / this.pageSize);
         this.goToPage(lastPage);
     }
 
     public getPageSize(): number {
-        if (this.active) {
-            // Ensure if auto page size is enabled, the page size is updated based on latest height
-            // which may be out of date based off fact that auto page size needs to debounce viewport changes
-            this.paginationAutoPageSizeService.checkPageSize();
-        }
         return this.pageSize;
     }
 
@@ -309,13 +302,12 @@ export class PaginationProxy extends BeanStub {
         }
 
         const masterLastRowIndex = this.masterRowCount - 1;
-        const pageSize = this.getPageSize();
-        this.totalPages = Math.floor((masterLastRowIndex) / pageSize) + 1;
+        this.totalPages = Math.floor((masterLastRowIndex) / this.pageSize) + 1;
 
         this.adjustCurrentPageIfInvalid();
 
-        const masterPageStartIndex = pageSize * this.currentPage;
-        let masterPageEndIndex = (pageSize * (this.currentPage + 1)) - 1;
+        const masterPageStartIndex = this.pageSize * this.currentPage;
+        let masterPageEndIndex = (this.pageSize * (this.currentPage + 1)) - 1;
 
         if (masterPageEndIndex > masterLastRowIndex) {
             masterPageEndIndex = masterLastRowIndex;
@@ -349,13 +341,12 @@ export class PaginationProxy extends BeanStub {
         }
 
         const maxRowIndex = this.masterRowCount - 1;
-        const pageSize = this.getPageSize();
-        this.totalPages = Math.floor((maxRowIndex) / pageSize) + 1;
+        this.totalPages = Math.floor((maxRowIndex) / this.pageSize) + 1;
 
         this.adjustCurrentPageIfInvalid();
 
-        this.topDisplayedRowIndex = pageSize * this.currentPage;
-        this.bottomDisplayedRowIndex = (pageSize * (this.currentPage + 1)) - 1;
+        this.topDisplayedRowIndex = this.pageSize * this.currentPage;
+        this.bottomDisplayedRowIndex = (this.pageSize * (this.currentPage + 1)) - 1;
 
         if (this.bottomDisplayedRowIndex > maxRowIndex) {
             this.bottomDisplayedRowIndex = maxRowIndex;
