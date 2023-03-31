@@ -14,7 +14,7 @@ declare global {
 export const DEFAULT_TOOLTIP_CLASS = 'ag-chart-tooltip';
 
 const defaultTooltipCss = `
-.ag-chart-tooltip {
+.${DEFAULT_TOOLTIP_CLASS} {
     transition: transform 0.1s ease;
     display: table;
     position: fixed;
@@ -29,15 +29,20 @@ const defaultTooltipCss = `
     box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);
 }
 
-.ag-chart-tooltip-no-animation {
+.${DEFAULT_TOOLTIP_CLASS}-no-interaction {
+    pointer-events: none;
+    user-select: none;
+}
+
+.${DEFAULT_TOOLTIP_CLASS}-no-animation {
     transition: none !important;
 }
 
-.ag-chart-tooltip-hidden {
+.${DEFAULT_TOOLTIP_CLASS}-hidden {
     visibility: hidden;
 }
 
-.ag-chart-tooltip-title {
+.${DEFAULT_TOOLTIP_CLASS}-title {
     font-weight: bold;
     padding: 7px;
     border-top-left-radius: 5px;
@@ -48,7 +53,7 @@ const defaultTooltipCss = `
     border-top-right-radius: 5px;
 }
 
-.ag-chart-tooltip-content {
+.${DEFAULT_TOOLTIP_CLASS}-content {
     padding: 7px;
     line-height: 1.7em;
     border-bottom-left-radius: 5px;
@@ -56,12 +61,12 @@ const defaultTooltipCss = `
     overflow: hidden;
 }
 
-.ag-chart-tooltip-content:empty {
+.${DEFAULT_TOOLTIP_CLASS}-content:empty {
     padding: 0;
     height: 7px;
 }
 
-.ag-chart-tooltip-arrow::before {
+.${DEFAULT_TOOLTIP_CLASS}-arrow::before {
     content: "";
 
     position: absolute;
@@ -82,7 +87,7 @@ const defaultTooltipCss = `
     margin: 0 auto;
 }
 
-.ag-chart-tooltip-arrow::after {
+.${DEFAULT_TOOLTIP_CLASS}-arrow::after {
     content: "";
 
     position: absolute;
@@ -217,7 +222,7 @@ export class Tooltip {
     }
 
     private updateClass(visible?: boolean, constrained?: boolean) {
-        const { element, class: newClass, lastClass } = this;
+        const { element, class: newClass, lastClass, enableInteraction } = this;
 
         const wasVisible = this.isVisible();
 
@@ -231,6 +236,7 @@ export class Tooltip {
         };
 
         toggleClass('no-animation', !wasVisible && !!visible); // No animation on first show.
+        toggleClass('no-interaction', !enableInteraction); // Prevent interaction.
         toggleClass('hidden', !visible); // Hide if not visible.
         toggleClass('arrow', !constrained); // Add arrow if tooltip is constrained.
 
@@ -304,11 +310,9 @@ export class Tooltip {
         if (!this.enableInteraction) return false;
 
         const classList = (event.sourceEvent as MouseEvent).relatedTarget?.classList;
-        return (
-            classList !== undefined &&
-            (classList.contains(DEFAULT_TOOLTIP_CLASS) ||
-                classList.contains(`${DEFAULT_TOOLTIP_CLASS}-title`) ||
-                classList.contains(`${DEFAULT_TOOLTIP_CLASS}-content`))
-        );
+        const classes = ['', '-title', '-content'];
+        const classListContains = Boolean(classes.filter((c) => classList?.contains(`${DEFAULT_TOOLTIP_CLASS}${c}`)));
+
+        return classList !== undefined && classListContains;
     }
 }
