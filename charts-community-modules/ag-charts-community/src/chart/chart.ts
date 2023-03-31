@@ -384,7 +384,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     disablePointer(highlightOnly = false) {
         if (!highlightOnly) {
-            this.tooltipManager.updateTooltip(this.id);
+            this.tooltipManager.removeTooltip(this.id);
         }
         this.highlightManager.updateHighlight(this.id);
         if (this.lastInteractionEvent) {

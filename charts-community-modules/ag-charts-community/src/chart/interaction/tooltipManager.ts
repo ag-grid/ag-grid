@@ -2,7 +2,7 @@ import { Tooltip, TooltipMeta } from '../tooltip/tooltip';
 
 interface TooltipState {
     content: string;
-    meta: TooltipMeta;
+    meta?: TooltipMeta;
 }
 
 /**
@@ -23,19 +23,13 @@ export class TooltipManager {
             content = this.states[callerId]?.content;
         }
 
-        delete this.states[callerId];
-
-        if (meta != null && content != null) {
-            this.states[callerId] = { content, meta };
-        }
+        this.states[callerId] = { content, meta };
 
         this.applyStates();
     }
 
-    public clearAllTooltips() {
-        Object.keys(this.states).forEach((callerId) => {
-            delete this.states[callerId];
-        });
+    public removeTooltip(callerId: string) {
+        delete this.states[callerId];
 
         this.applyStates();
     }
