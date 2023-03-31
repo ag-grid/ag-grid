@@ -10,7 +10,6 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
     const {context} = useContext(BeansContext);
 
-  //  const [viewportHeight, setViewportHeight] = useState<string>('');
     const [rowCtrlsOrdered, setRowCtrlsOrdered] = useState<RowCtrl[]>([]);
 
     const { name } = params;
@@ -62,7 +61,6 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
         const beansToDestroy: any[] = [];
 
         const compProxy: IRowContainerComp = {
-            //setViewportHeight: setViewportHeight,
             setViewportHeight: (height: string) => eViewport.current!.style.height = height,
             setRowCtrls: rowCtrls => {
                 if(rowCtrlsRef.current !== rowCtrls){
@@ -90,10 +88,6 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
     });
 
- /*    const viewportStyle = useMemo(() => ({
-        height: viewportHeight
-    }), [viewportHeight]);
- */
     const buildContainer = () => (
         <div
             className={ containerClasses }
