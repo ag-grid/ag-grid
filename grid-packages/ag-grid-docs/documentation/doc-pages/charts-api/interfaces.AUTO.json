@@ -3473,7 +3473,8 @@
       "data": "UngroupedDataItem<D, any[]>[]",
       "domain": "{ keys: any[][]; values: any[][]; sumValues?: [ number, number ][]; }",
       "indices": "{ keys: Record<keyof D, number>; values: Record<keyof D, number>; }",
-      "reduced?": "Record<string, any>"
+      "reduced?": "Record<string, any>",
+      "defs": "{ keys: DatumPropertyDefinition<keyof D>[]; values: DatumPropertyDefinition<keyof D>[]; }"
     }
   },
   "GroupedData": {
@@ -3483,7 +3484,8 @@
       "data": "UngroupedDataItem<D[], any[][]>[]",
       "domain": "{ keys: any[][]; values: any[][]; sumValues?: [ number, number ][]; }",
       "indices": "{ keys: Record<keyof D, number>; values: Record<keyof D, number>; }",
-      "reduced?": "Record<string, any>"
+      "reduced?": "Record<string, any>",
+      "defs": "{ keys: DatumPropertyDefinition<keyof D>[]; values: DatumPropertyDefinition<keyof D>[]; }"
     }
   },
   "ProcessedData": {
@@ -3507,7 +3509,7 @@
   },
   "PropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
-    "type": "DatumPropertyDefinition<K> | OutputPropertyDefinition<K> | ReducerOutputPropertyDefinition<any>"
+    "type": "DatumPropertyDefinition<K> | OutputPropertyDefinition<K> | ReducerOutputPropertyDefinition<any> | ProcessorOutputPropertyDefinition<any>"
   },
   "DatumPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
@@ -3524,6 +3526,10 @@
   "ReducerOutputPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["R"] },
     "type": "{ type: 'reducer'; property: string; initialValue?: R; reducer: () => (acc: R, next: UngroupedDataItem<any, any>) => R; }"
+  },
+  "ProcessorOutputPropertyDefinition": {
+    "meta": { "isTypeAlias": true, "typeParams": ["R"] },
+    "type": "{ type: 'processor'; property: string; calculate: (data: ProcessedData<any>) => R; }"
   },
   "Page": {
     "meta": { "isTypeAlias": true },

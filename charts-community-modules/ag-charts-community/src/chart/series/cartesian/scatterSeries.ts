@@ -144,7 +144,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         const isContinuousY = yAxis?.scale instanceof ContinuousScale;
 
         const sizeKeyProp: DatumPropertyDefinition<any>[] = sizeKey
-            ? [{ property: yKey, type: 'value', valueType: 'range', validation: (v) => checkDatum(v, true) }]
+            ? [{ property: sizeKey, type: 'value', valueType: 'range', validation: (v) => checkDatum(v, true) }]
             : [];
         const dataModel = new DataModel<any>({
             props: [

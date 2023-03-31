@@ -20,6 +20,10 @@ export interface UngroupedData<D> {
         values: Record<keyof D, number>;
     };
     reduced?: Record<string, any>;
+    defs: {
+        keys: DatumPropertyDefinition<keyof D>[];
+        values: DatumPropertyDefinition<keyof D>[];
+    };
 }
 
 export interface GroupedData<D> {
@@ -35,6 +39,10 @@ export interface GroupedData<D> {
         values: Record<keyof D, number>;
     };
     reduced?: Record<string, any>;
+    defs: {
+        keys: DatumPropertyDefinition<keyof D>[];
+        values: DatumPropertyDefinition<keyof D>[];
+    };
 }
 
 export type ProcessedData<D> = UngroupedData<D> | GroupedData<D>;
@@ -97,6 +105,25 @@ export const SMALLEST_KEY_INTERVAL: ReducerOutputPropertyDefinition<number> = {
     },
 };
 
+export const SUM_VALUE_EXTENT: ProcessorOutputPropertyDefinition<[number, number]> = {
+    type: 'processor',
+    property: 'sumValueExtent',
+    calculate: (processedData) => {
+        const result: [number, number] = [...(processedData.domain.sumValues?.[0] ?? [0, 0])];
+
+        for (const [min, max] of processedData.domain.sumValues?.slice(1) ?? []) {
+            if (min < result[0]) {
+                result[0] = min;
+            }
+            if (max > result[1]) {
+                result[1] = max;
+            }
+        }
+
+        return result;
+    },
+};
+
 type Options<K, Grouped extends boolean | undefined> = {
     readonly props: PropertyDefinition<K>[];
     readonly groupByKeys?: Grouped;
@@ -106,7 +133,8 @@ type Options<K, Grouped extends boolean | undefined> = {
 export type PropertyDefinition<K> =
     | DatumPropertyDefinition<K>
     | OutputPropertyDefinition<K>
-    | ReducerOutputPropertyDefinition<any>;
+    | ReducerOutputPropertyDefinition<any>
+    | ProcessorOutputPropertyDefinition<any>;
 
 export type DatumPropertyDefinition<K> = {
     type: 'key' | 'value';
@@ -132,12 +160,19 @@ export type ReducerOutputPropertyDefinition<R> = {
     reducer: () => (acc: R, next: UngroupedDataItem<any, any>) => R;
 };
 
+export type ProcessorOutputPropertyDefinition<R> = {
+    type: 'processor';
+    property: string;
+    calculate: (data: ProcessedData<any>) => R;
+};
+
 export class DataModel<D extends object, K extends keyof D = keyof D, Grouped extends boolean | undefined = undefined> {
     private readonly opts: Options<K, Grouped>;
     private readonly keys: InternalDatumPropertyDefinition<K>[];
     private readonly values: InternalDatumPropertyDefinition<K>[];
     private readonly sums: OutputPropertyDefinition<K>[];
     private readonly reducers: ReducerOutputPropertyDefinition<any>[];
+    private readonly processors: ProcessorOutputPropertyDefinition<any>[];
 
     public constructor(opts: Options<K, Grouped>) {
         const { props } = opts;
@@ -163,6 +198,9 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
             .map((def, index) => ({ ...def, index, missing: false }));
         this.sums = props.filter((def): def is OutputPropertyDefinition<K> => def.type === 'sum');
         this.reducers = props.filter((def): def is ReducerOutputPropertyDefinition<unknown> => def.type === 'reducer');
+        this.processors = props.filter(
+            (def): def is ProcessorOutputPropertyDefinition<unknown> => def.type === 'processor'
+        );
 
         for (const { properties } of this.sums ?? []) {
             if (!properties.some((prop) => this.values.some((def) => def.property === prop))) {
@@ -185,6 +223,7 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
             opts: { groupByKeys, normaliseTo },
             sums,
             reducers,
+            processors,
         } = this;
 
         for (const def of [...this.keys, ...this.values]) {
@@ -196,13 +235,16 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
             processedData = this.groupData(processedData);
         }
         if (sums.length > 0) {
-            processedData = this.sumData(processedData);
+            this.sumData(processedData);
         }
         if (typeof normaliseTo === 'number') {
-            processedData = this.normaliseData(processedData);
+            this.normaliseData(processedData);
         }
         if (reducers.length > 0) {
-            processedData = this.reduceData(processedData);
+            this.reduceData(processedData);
+        }
+        if (processors.length > 0) {
+            this.postProcessData(processedData);
         }
 
         for (const def of [...this.keys, ...this.values]) {
@@ -263,6 +305,10 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
                     return r;
                 }, {} as Record<keyof D, number>),
             },
+            defs: {
+                keys: keyDefs,
+                values: valueDefs,
+            },
         };
     }
 
@@ -298,12 +344,10 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
         };
     }
 
-    private sumData<T extends ProcessedData<any>>(processedData: T): T {
+    private sumData(processedData: ProcessedData<any>) {
         const { values: valueDefs, sums: sumDefs } = this;
 
-        if (!sumDefs) {
-            return processedData;
-        }
+        if (!sumDefs) return;
 
         const resultSumValues = sumDefs.map((): ContinuousDomain<number> => [Infinity, -Infinity]);
         const resultSumValueIndices = sumDefs.map((defs) =>
@@ -331,16 +375,10 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
             }
         }
 
-        return {
-            ...processedData,
-            domain: {
-                ...processedData.domain,
-                sumValues: resultSumValues,
-            },
-        };
+        processedData.domain.sumValues = resultSumValues;
     }
 
-    private normaliseData(processedData: ProcessedData<D>): ProcessedData<D> {
+    private normaliseData(processedData: ProcessedData<D>) {
         const {
             sums: sumDefs,
             values: valueDefs,
@@ -390,11 +428,9 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
                 }
             }
         }
-
-        return processedData;
     }
 
-    private reduceData(processedData: ProcessedData<D>): ProcessedData<D> {
+    private reduceData(processedData: ProcessedData<D>) {
         const { reducers: reducerDefs } = this;
 
         const reducers = reducerDefs.map((def) => def.reducer());
@@ -408,12 +444,19 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
             }
         }
 
-        processedData.reduced = accValues.reduce((acc, next, idx) => {
-            acc[reducerDefs[idx].property] = next;
-            return acc;
-        }, {});
+        for (let accIdx = 0; accIdx < accValues.length; accIdx++) {
+            processedData.reduced ??= {};
+            processedData.reduced[reducerDefs[accIdx].property] = accValues[accIdx];
+        }
+    }
 
-        return processedData;
+    private postProcessData(processedData: ProcessedData<D>) {
+        const { processors: processorDefs } = this;
+
+        for (const def of processorDefs) {
+            processedData.reduced ??= {};
+            processedData.reduced[def.property] = def.calculate(processedData);
+        }
     }
 
     private initDataDomainProcessor() {

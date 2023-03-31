@@ -5261,6 +5261,12 @@
     "reduced": {
       "type": { "returnType": "Record<string, any>", "optional": true }
     },
+    "defs": {
+      "type": {
+        "returnType": "{\n        keys: DatumPropertyDefinition<keyof D>[];\n        values: DatumPropertyDefinition<keyof D>[];\n    }",
+        "optional": false
+      }
+    },
     "meta": { "typeParams": ["D"] }
   },
   "GroupedData": {
@@ -5286,6 +5292,12 @@
     "reduced": {
       "type": { "returnType": "Record<string, any>", "optional": true }
     },
+    "defs": {
+      "type": {
+        "returnType": "{\n        keys: DatumPropertyDefinition<keyof D>[];\n        values: DatumPropertyDefinition<keyof D>[];\n    }",
+        "optional": false
+      }
+    },
     "meta": { "typeParams": ["D"] }
   },
   "ProcessedData": { "meta": { "typeParams": ["D"] } },
@@ -5299,6 +5311,7 @@
   "InternalDatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "OutputPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "ReducerOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
+  "ProcessorOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
   "Page": {},
   "Column": {},
   "DimensionProps": {

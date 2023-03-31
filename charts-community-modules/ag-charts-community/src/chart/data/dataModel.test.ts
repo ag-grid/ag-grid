@@ -2,7 +2,7 @@ import { expect, it, describe } from '@jest/globals';
 
 import * as examples from '../test/examples';
 
-import { DataModel, SMALLEST_KEY_INTERVAL } from './dataModel';
+import { DataModel, SMALLEST_KEY_INTERVAL, SUM_VALUE_EXTENT } from './dataModel';
 
 describe('DataModel', () => {
     describe('ungrouped processing', () => {
@@ -162,6 +162,7 @@ describe('DataModel', () => {
                         properties: ['ownerOccupied', 'privateRented', 'localAuthority', 'housingAssociation'],
                         type: 'sum',
                     },
+                    SUM_VALUE_EXTENT,
                 ],
                 groupByKeys: true,
             });

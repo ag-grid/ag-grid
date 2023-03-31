@@ -130,6 +130,33 @@ Object {
       ],
     },
   ],
+  "defs": Object {
+    "keys": Array [
+      Object {
+        "index": 0,
+        "missing": false,
+        "property": "type",
+        "type": "key",
+        "valueType": "category",
+      },
+    ],
+    "values": Array [
+      Object {
+        "index": 0,
+        "missing": false,
+        "property": "total",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "index": 1,
+        "missing": false,
+        "property": "regular",
+        "type": "value",
+        "valueType": "range",
+      },
+    ],
+  },
   "domain": Object {
     "keys": Array [
       Array [
@@ -330,6 +357,61 @@ Object {
       ],
     },
   ],
+  "defs": Object {
+    "keys": Array [
+      Object {
+        "index": 0,
+        "missing": false,
+        "property": "type",
+        "type": "key",
+        "valueType": "category",
+      },
+    ],
+    "values": Array [
+      Object {
+        "index": 0,
+        "missing": false,
+        "property": "white",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "index": 1,
+        "missing": false,
+        "property": "mixed",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "index": 2,
+        "missing": false,
+        "property": "asian",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "index": 3,
+        "missing": false,
+        "property": "black",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "index": 4,
+        "missing": false,
+        "property": "chinese",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "index": 5,
+        "missing": false,
+        "property": "other",
+        "type": "value",
+        "valueType": "range",
+      },
+    ],
+  },
   "domain": Object {
     "keys": Array [
       Array [
@@ -618,6 +700,47 @@ Object {
       ],
     },
   ],
+  "defs": Object {
+    "keys": Array [
+      Object {
+        "index": 0,
+        "missing": false,
+        "property": "type",
+        "type": "key",
+        "valueType": "category",
+      },
+    ],
+    "values": Array [
+      Object {
+        "index": 0,
+        "missing": false,
+        "property": "ownerOccupied",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "index": 1,
+        "missing": false,
+        "property": "privateRented",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "index": 2,
+        "missing": false,
+        "property": "localAuthority",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "index": 3,
+        "missing": false,
+        "property": "housingAssociation",
+        "type": "value",
+        "valueType": "range",
+      },
+    ],
+  },
   "domain": Object {
     "keys": Array [
       Array [
@@ -666,6 +789,12 @@ Object {
       "ownerOccupied": 0,
       "privateRented": 1,
     },
+  },
+  "reduced": Object {
+    "sumValueExtent": Array [
+      0,
+      6002,
+    ],
   },
   "type": "grouped",
 }
@@ -1403,6 +1532,33 @@ Object {
       ],
     },
   ],
+  "defs": Object {
+    "keys": Array [
+      Object {
+        "index": 0,
+        "missing": false,
+        "property": "date",
+        "type": "key",
+        "valueType": "range",
+      },
+    ],
+    "values": Array [
+      Object {
+        "index": 0,
+        "missing": false,
+        "property": "petrol",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "index": 1,
+        "missing": false,
+        "property": "diesel",
+        "type": "value",
+        "valueType": "range",
+      },
+    ],
+  },
   "domain": Object {
     "keys": Array [
       Array [

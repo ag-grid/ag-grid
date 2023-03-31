@@ -48,7 +48,8 @@ import {
     FontStyle,
     FontWeight,
 } from '../../agChartOptions';
-import { DataModel, GroupedData, SMALLEST_KEY_INTERVAL } from '../../data/dataModel';
+import { DataModel, GroupedData, SMALLEST_KEY_INTERVAL, SUM_VALUE_EXTENT } from '../../data/dataModel';
+import { extent } from '../../../util/array';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
@@ -344,6 +345,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     }))
                     .filter((def) => def.properties.length > 0),
                 ...(isContinuousX ? [SMALLEST_KEY_INTERVAL] : []),
+                SUM_VALUE_EXTENT,
             ],
             groupByKeys: true,
             normaliseTo: normalizedTo && isFinite(normalizedTo) ? normalizedTo : undefined,
@@ -358,25 +360,35 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
-        const { flipXY } = this;
+        const { flipXY, processedData } = this;
+        if (!processedData) return [];
+
         if (flipXY) {
             direction = flipChartAxisDirection(direction);
         }
-        if (direction === ChartAxisDirection.X) {
-            return this.processedData?.domain.keys?.[0] ?? [];
-        } else {
-            const result = [...(this.processedData?.domain.sumValues?.[0] ?? [])];
 
-            for (const [min, max] of this.processedData?.domain.sumValues?.slice(1) ?? []) {
-                if (min < result[0]) {
-                    result[0] = min;
-                }
-                if (max > result[1]) {
-                    result[1] = max;
-                }
+        const {
+            defs: {
+                keys: [keyDef],
+            },
+            domain: {
+                keys: [keys],
+            },
+            reduced: { [SMALLEST_KEY_INTERVAL.property]: smallestX, [SUM_VALUE_EXTENT.property]: yExtent } = {},
+        } = processedData;
+
+        if (direction === ChartAxisDirection.X) {
+            if (keyDef.valueType === 'category') {
+                return keys;
             }
 
-            return result;
+            const keysExtent = extent(keys) || [NaN, NaN];
+            if (flipXY) {
+                return [keysExtent[0] + -smallestX, keysExtent[1]];
+            }
+            return [keysExtent[0], keysExtent[1] + smallestX];
+        } else {
+            return yExtent;
         }
     }
 
