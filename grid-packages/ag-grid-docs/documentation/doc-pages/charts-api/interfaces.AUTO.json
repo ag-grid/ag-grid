@@ -3473,6 +3473,8 @@
       "xKey?": "string",
       "yKey?": "string",
       "cumulativeValue?": "number",
+      "aggregatedValue?": "number",
+      "domain?": "[ number, number ]",
       "point?": "Readonly<SizedPoint>"
     }
   },
@@ -3548,7 +3550,7 @@
   },
   "AxisLabelLayout": {
     "meta": { "isTypeAlias": true },
-    "type": "{ baseline: 'hanging' | 'bottom' | 'middle'; align: 'start' | 'end' | 'center'; rotation: number; fractionDigits: number; padding: number; }"
+    "type": "{ baseline: 'hanging' | 'bottom' | 'middle'; align: 'start' | 'end' | 'center'; rotation: number; fractionDigits: number; padding: number; format?: string; }"
   },
   "AxisLayout": {
     "meta": {},
@@ -3807,6 +3809,8 @@
       "fill?": "string",
       "stroke?": "string",
       "strokeWidth": "number",
+      "aggregatedValue": "number",
+      "domain": "[ number, number ]",
       "label?": "{ readonly text: string; readonly x: number; readonly y: number; readonly fontStyle?: FontStyle; readonly fontWeight?: FontWeight; readonly fontSize: number; readonly fontFamily: string; readonly fill: string; }",
       "xKey": "string",
       "yKey": "string",
@@ -4258,6 +4262,7 @@
       "direction": "'x' | 'y'",
       "continuous": "boolean",
       "keys": "() => string[]",
+      "scaleValueFormatter": "(specifier: string) => ((x: any) => string) | undefined",
       "scaleBandwidth": "() => number",
       "scaleConvert(val: any)": "number",
       "scaleInvert(position: number)": "any"

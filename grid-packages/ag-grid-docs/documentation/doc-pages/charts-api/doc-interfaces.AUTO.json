@@ -5246,6 +5246,10 @@
     "xKey": { "type": { "returnType": "string", "optional": true } },
     "yKey": { "type": { "returnType": "string", "optional": true } },
     "cumulativeValue": { "type": { "returnType": "number", "optional": true } },
+    "aggregatedValue": { "type": { "returnType": "number", "optional": true } },
+    "domain": {
+      "type": { "returnType": "[number, number]", "optional": true }
+    },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     }
@@ -5539,6 +5543,12 @@
     "fill": { "type": { "returnType": "string", "optional": true } },
     "stroke": { "type": { "returnType": "string", "optional": true } },
     "strokeWidth": { "type": { "returnType": "number", "optional": false } },
+    "aggregatedValue": {
+      "type": { "returnType": "number", "optional": false }
+    },
+    "domain": {
+      "type": { "returnType": "[number, number]", "optional": false }
+    },
     "label": {
       "type": {
         "returnType": "{\n        readonly text: string;\n        readonly x: number;\n        readonly y: number;\n        readonly fontStyle?: FontStyle;\n        readonly fontWeight?: FontWeight;\n        readonly fontSize: number;\n        readonly fontFamily: string;\n        readonly fill: string;\n    }",
@@ -5999,6 +6009,13 @@
     "continuous": { "type": { "returnType": "boolean", "optional": false } },
     "keys": {
       "type": { "arguments": {}, "returnType": "string[]", "optional": false }
+    },
+    "scaleValueFormatter": {
+      "type": {
+        "arguments": { "specifier": "string" },
+        "returnType": "((x: any) => string) | undefined",
+        "optional": false
+      }
     },
     "scaleBandwidth": {
       "type": { "arguments": {}, "returnType": "number", "optional": false }

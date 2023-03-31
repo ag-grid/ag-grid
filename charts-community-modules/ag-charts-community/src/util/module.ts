@@ -29,6 +29,7 @@ export interface AxisContext {
     direction: 'x' | 'y';
     continuous: boolean;
     keys: () => string[];
+    scaleValueFormatter: (specifier: string) => ((x: any) => string) | undefined;
     scaleBandwidth: () => number;
     scaleConvert(val: any): number;
     scaleInvert(position: number): any;
