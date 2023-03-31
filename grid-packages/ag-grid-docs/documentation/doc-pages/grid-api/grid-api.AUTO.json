@@ -1012,7 +1012,7 @@
     "type": { "arguments": { "enable": "boolean" }, "returnType": "void" }
   },
   "setRowCount": {
-    "description": "/** Sets the `rowCount` and `lastRowIndexKnown` properties.\n     * The second parameter, `lastRowIndexKnown`, is optional and if left out, only `rowCount` is set.\n     * Set `rowCount` to adjust the height of the vertical scroll.\n     * Set `lastRowIndexKnown` to enable / disable searching for more rows.\n     * Use this method if you add or remove rows into the dataset and need to reset the number of rows or put the data back into 'look for data' mode.\n     */",
+    "description": "/** Sets the `rowCount` and `maxRowFound` properties.\n     * The second parameter, `maxRowFound`, is optional and if left out, only `rowCount` is set.\n     * Set `rowCount` to adjust the height of the vertical scroll.\n     * Set `maxRowFound` to enable / disable searching for more rows.\n     * Use this method if you add or remove rows into the dataset and need to reset the number of rows or instruct the grid that the entire row count is no longer known.\n     */",
     "type": {
       "arguments": { "rowCount": "number", "maxRowFound?": "boolean" },
       "returnType": "void"
