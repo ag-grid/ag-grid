@@ -40,9 +40,12 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     private axisLayout?: _ModuleSupport.AxisLayout & {
         id: string;
     };
+    private labelFormatter?: (value: any) => string;
+
     private crosshairGroup: _Scene.Group = new Group({ layer: true, zIndex: Layers.SERIES_CROSSHAIR_ZINDEX });
     private lineNode: _Scene.Line = this.crosshairGroup.appendChild(new Line());
 
+    private activeHighlight?: _ModuleSupport.HighlightChangeEvent['currentHighlight'] = undefined;
     constructor(private readonly ctx: _ModuleSupport.ModuleContextWithParent<_ModuleSupport.AxisContext>) {
         super();
 
@@ -67,7 +70,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         this.destroyFns.push(() => this.label.destroy());
     }
 
-    private layout({ series: { rect, paddedRect, visible }, axes }: _ModuleSupport.LayoutCompleteEvent) {
+    private layout({ series: { rect, visible }, axes }: _ModuleSupport.LayoutCompleteEvent) {
         this.hideCrosshair();
 
         if (!(visible && axes)) {
@@ -100,6 +103,9 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         crosshairGroup.rotation = rotation;
 
         this.updateLine();
+
+        const format = this.label.format ?? axisLayout.label.format;
+        this.labelFormatter = format ? this.axisCtx.scaleValueFormatter(format) : undefined;
     }
 
     private buildBounds(rect: _Scene.BBox, axisPosition: AgCartesianAxisPosition, padding: number): _Scene.BBox {
@@ -140,7 +146,11 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     }
 
     private formatValue(val: any): string {
-        const { axisLayout } = this;
+        const { labelFormatter, axisLayout } = this;
+
+        if (labelFormatter) {
+            return labelFormatter(val);
+        }
 
         const isInteger = val % 1 === 0;
         const fractionDigits = (axisLayout?.label.fractionDigits ?? 0) + (isInteger ? 0 : 1);
@@ -149,8 +159,8 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     }
 
     private onMouseMove(event: _ModuleSupport.InteractionEvent<'hover'>) {
-        const { crosshairGroup, snap, seriesRect, axisCtx, visible } = this;
-        if (snap || !axisCtx.continuous) {
+        const { crosshairGroup, snap, seriesRect, axisCtx, visible, activeHighlight } = this;
+        if (snap) {
             return;
         }
 
@@ -159,16 +169,21 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         if (visible && seriesRect.containsPoint(offsetX, offsetY)) {
             crosshairGroup.visible = true;
 
+            const highlightValue = activeHighlight ? this.getActiveHighlightValue(activeHighlight) : undefined;
             let value;
             if (axisCtx.direction === 'x') {
                 crosshairGroup.translationX = Math.round(offsetX);
-                value = axisCtx.scaleInvert(offsetX - seriesRect.x);
+                value = axisCtx.continuous ? axisCtx.scaleInvert(offsetX - seriesRect.x) : highlightValue;
             } else {
                 crosshairGroup.translationY = Math.round(offsetY);
-                value = axisCtx.scaleInvert(offsetY - seriesRect.y);
+                value = axisCtx.continuous ? axisCtx.scaleInvert(offsetY - seriesRect.y) : highlightValue;
             }
 
-            this.showLabel(offsetX, offsetY, value);
+            if (value) {
+                this.showLabel(offsetX, offsetY, value);
+            } else {
+                this.hideLabel();
+            }
         } else {
             this.hideCrosshair();
         }
@@ -176,31 +191,28 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
 
     private onHighlightChange(event: _ModuleSupport.HighlightChangeEvent) {
         const { crosshairGroup, snap, seriesRect, axisCtx, visible } = this;
-        if (!snap && axisCtx.continuous) {
+
+        const { currentHighlight } = event;
+
+        const hasCrosshair =
+            currentHighlight &&
+            (currentHighlight.series.xAxis.id === axisCtx.axisId ||
+                currentHighlight.series.yAxis.id === axisCtx.axisId);
+
+        if (!hasCrosshair) {
+            this.activeHighlight = undefined;
+        } else {
+            this.activeHighlight = currentHighlight;
+        }
+
+        if (!snap) {
             return;
         }
 
-        const { currentHighlight } = event;
-        if (visible && currentHighlight) {
-            const hasCrosshair =
-                currentHighlight.series.xAxis.id === axisCtx.axisId ||
-                currentHighlight.series.yAxis.id === axisCtx.axisId;
-
-            if (!hasCrosshair) {
-                this.hideCrosshair();
-                return;
-            }
-
+        if (visible && this.activeHighlight) {
             crosshairGroup.visible = true;
 
-            const { xKey = '', yKey = '', datum } = currentHighlight;
-            const isYValue = axisCtx.keys().indexOf(yKey) >= 0;
-            const key = isYValue ? yKey : xKey;
-
-            const datumValue = checkDatum(datum[key], axisCtx.continuous);
-            const cumulativeValue = currentHighlight.cumulativeValue;
-
-            const value = isYValue && cumulativeValue !== undefined ? cumulativeValue : datumValue;
+            const value = this.getActiveHighlightValue(this.activeHighlight);
             const position = axisCtx.scaleConvert(value);
 
             let x = 0;
@@ -218,6 +230,31 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         } else {
             this.hideCrosshair();
         }
+    }
+
+    private getActiveHighlightValue(
+        activeHighlight: Exclude<_ModuleSupport.HighlightChangeEvent['currentHighlight'], undefined>
+    ) {
+        const { axisCtx } = this;
+        const { xKey = '', yKey = '', datum, aggregatedValue, series, domain, cumulativeValue } = activeHighlight;
+
+        const isAggregatedValue = aggregatedValue !== undefined;
+        if (isAggregatedValue) {
+            if (series.yAxis.id === axisCtx.axisId) {
+                return aggregatedValue;
+            }
+
+            return domain?.[1];
+        }
+
+        const isCumulativeValue = cumulativeValue !== undefined;
+        const isYValue = axisCtx.keys().indexOf(yKey) >= 0;
+        if (isCumulativeValue && isYValue) {
+            return cumulativeValue;
+        }
+
+        const key = isYValue ? yKey : xKey;
+        return checkDatum(datum[key], axisCtx.continuous);
     }
 
     private getLabelHtml(value: any): string {

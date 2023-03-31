@@ -5,6 +5,8 @@ import {
     _Scene,
 } from 'ag-charts-community';
 
+const { Validate, NUMBER, BOOLEAN, OPT_STRING, OPT_FUNCTION } = _ModuleSupport;
+
 export const defaultLabelCss = `
 .ag-crosshair-label {
     position: absolute;
@@ -56,10 +58,19 @@ export class CrosshairLabel {
 
     private readonly labelRoot: HTMLElement;
 
+    @Validate(BOOLEAN)
     enabled: boolean = true;
-    container?: HTMLElement = undefined;
+
+    @Validate(NUMBER())
     xOffset: number = 0;
+
+    @Validate(NUMBER())
     yOffset: number = 0;
+
+    @Validate(OPT_STRING)
+    format?: string = undefined;
+
+    @Validate(OPT_FUNCTION)
     renderer?: (params: AgCrosshairLabelRendererParams) => string | AgCrosshairLabelRendererResult = undefined;
 
     constructor(document: Document, container: HTMLElement) {
