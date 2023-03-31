@@ -48,7 +48,7 @@ import {
     FontStyle,
     FontWeight,
 } from '../../agChartOptions';
-import { DataModel, GroupedData } from '../../data/dataModel';
+import { DataModel, GroupedData, SMALLEST_KEY_INTERVAL } from '../../data/dataModel';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
@@ -343,6 +343,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                         properties: stack.filter((key) => seriesItemEnabled.get(key) === true),
                     }))
                     .filter((def) => def.properties.length > 0),
+                ...(isContinuousX ? [SMALLEST_KEY_INTERVAL] : []),
             ],
             groupByKeys: true,
             normaliseTo: normalizedTo && isFinite(normalizedTo) ? normalizedTo : undefined,
@@ -350,20 +351,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         this.processedData = dataModel.processData(data);
 
-        let smallestXInterval = Infinity;
-        if (isContinuousX) {
-            let prevX = Infinity;
-            for (const {
-                keys: [currX],
-            } of this.processedData.data) {
-                const interval = Math.abs(currX - prevX);
-                if (interval > 0 && interval < smallestXInterval) {
-                    smallestXInterval = interval;
-                }
-                prevX = currX;
-            }
-        }
-        this.smallestDataInterval === { x: smallestXInterval, y: Infinity };
+        this.smallestDataInterval = {
+            x: this.processedData.reduced?.[SMALLEST_KEY_INTERVAL.property] ?? Infinity,
+            y: Infinity,
+        };
     }
 
     getDomain(direction: ChartAxisDirection): any[] {

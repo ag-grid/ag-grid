@@ -3462,22 +3462,28 @@
     "meta": { "isTypeAlias": true },
     "type": "Record<string, { vertical: [ Date, Date ]; horizontal: [ number, number ]; }>"
   },
+  "UngroupedDataItem": {
+    "meta": { "isTypeAlias": true, "typeParams": ["D", "V"] },
+    "type": "{ keys: any[]; values: V; sumValues?: [ number, number ][]; datum: D; }"
+  },
   "UngroupedData": {
     "meta": { "typeParams": ["D"] },
     "type": {
       "type": "'ungrouped'",
-      "data": "{ keys: any[]; values: any[]; sumValues?: [ number, number ][]; datum: D; }[]",
+      "data": "UngroupedDataItem<D, any[]>[]",
       "domain": "{ keys: any[][]; values: any[][]; sumValues?: [ number, number ][]; }",
-      "indices": "{ keys: Record<keyof D, number>; values: Record<keyof D, number>; }"
+      "indices": "{ keys: Record<keyof D, number>; values: Record<keyof D, number>; }",
+      "reduced?": "Record<string, any>"
     }
   },
   "GroupedData": {
     "meta": { "typeParams": ["D"] },
     "type": {
       "type": "'grouped'",
-      "data": "{ keys: any[]; values: any[][]; sumValues?: [ number, number ][]; datum: D[]; }[]",
+      "data": "UngroupedDataItem<D[], any[][]>[]",
       "domain": "{ keys: any[][]; values: any[][]; sumValues?: [ number, number ][]; }",
-      "indices": "{ keys: Record<keyof D, number>; values: Record<keyof D, number>; }"
+      "indices": "{ keys: Record<keyof D, number>; values: Record<keyof D, number>; }",
+      "reduced?": "Record<string, any>"
     }
   },
   "ProcessedData": {
@@ -3501,7 +3507,7 @@
   },
   "PropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
-    "type": "DatumPropertyDefinition<K> | OutputPropertyDefinition<K>"
+    "type": "DatumPropertyDefinition<K> | OutputPropertyDefinition<K> | ReducerOutputPropertyDefinition<any>"
   },
   "DatumPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
@@ -3514,6 +3520,10 @@
   "OutputPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
     "type": "{ type: 'sum'; properties: K[]; }"
+  },
+  "ReducerOutputPropertyDefinition": {
+    "meta": { "isTypeAlias": true, "typeParams": ["R"] },
+    "type": "{ type: 'reducer'; property: string; initialValue?: R; reducer: () => (acc: R, next: UngroupedDataItem<any, any>) => R; }"
   },
   "Page": {
     "meta": { "isTypeAlias": true },

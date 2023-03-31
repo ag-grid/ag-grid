@@ -2,7 +2,7 @@ import { expect, it, describe } from '@jest/globals';
 
 import * as examples from '../test/examples';
 
-import { DataModel } from './dataModel';
+import { DataModel, SMALLEST_KEY_INTERVAL } from './dataModel';
 
 describe('DataModel', () => {
     describe('ungrouped processing', () => {
@@ -25,6 +25,7 @@ describe('DataModel', () => {
                     { property: 'kp', type: 'key', valueType: 'range' },
                     { property: 'vp1', type: 'value', valueType: 'range' },
                     { property: 'vp2', type: 'value', valueType: 'range' },
+                    SMALLEST_KEY_INTERVAL,
                 ],
             });
             const data = [
@@ -62,6 +63,12 @@ describe('DataModel', () => {
                     [1, 6],
                     [2, 9],
                 ]);
+            });
+
+            it('should calculate smallest X interval', () => {
+                const result = dataModel.processData(data);
+
+                expect(result.reduced?.[SMALLEST_KEY_INTERVAL.property]).toEqual(1);
             });
         });
     });

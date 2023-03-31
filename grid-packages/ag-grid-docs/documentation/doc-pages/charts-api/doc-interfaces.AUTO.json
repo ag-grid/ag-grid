@@ -5237,11 +5237,12 @@
   "LabelTranslationDirection": {},
   "CrossLineTranslationDirection": {},
   "CrossLinesRangeConfig": {},
+  "UngroupedDataItem": { "meta": { "typeParams": ["D", "V"] } },
   "UngroupedData": {
     "type": { "type": { "returnType": "'ungrouped'", "optional": false } },
     "data": {
       "type": {
-        "returnType": "{\n        keys: any[];\n        values: any[];\n        sumValues?: [number, number][];\n        datum: D;\n    }[]",
+        "returnType": "UngroupedDataItem<D, any[]>[]",
         "optional": false
       }
     },
@@ -5256,6 +5257,9 @@
         "returnType": "{\n        keys: Record<keyof D, number>;\n        values: Record<keyof D, number>;\n    }",
         "optional": false
       }
+    },
+    "reduced": {
+      "type": { "returnType": "Record<string, any>", "optional": true }
     },
     "meta": { "typeParams": ["D"] }
   },
@@ -5263,7 +5267,7 @@
     "type": { "type": { "returnType": "'grouped'", "optional": false } },
     "data": {
       "type": {
-        "returnType": "{\n        keys: any[];\n        values: any[][];\n        sumValues?: [number, number][];\n        datum: D[];\n    }[]",
+        "returnType": "UngroupedDataItem<D[], any[][]>[]",
         "optional": false
       }
     },
@@ -5278,6 +5282,9 @@
         "returnType": "{\n        keys: Record<keyof D, number>;\n        values: Record<keyof D, number>;\n    }",
         "optional": false
       }
+    },
+    "reduced": {
+      "type": { "returnType": "Record<string, any>", "optional": true }
     },
     "meta": { "typeParams": ["D"] }
   },
@@ -5291,6 +5298,7 @@
   "DatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "InternalDatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "OutputPropertyDefinition": { "meta": { "typeParams": ["K"] } },
+  "ReducerOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
   "Page": {},
   "Column": {},
   "DimensionProps": {
