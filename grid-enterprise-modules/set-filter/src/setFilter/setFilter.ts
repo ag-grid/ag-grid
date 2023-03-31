@@ -813,9 +813,18 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         this.valueModel?.setMiniFilter(null);
     }
 
-    protected resetUiToActiveModel(currentModel: SetFilterModel | null): void {
-        // override the default behaviour as we don't want to clear the mini filter
-        this.setModelAndRefresh(currentModel == null ? null : currentModel.values).then(() => this.onUiChanged(false, 'prevent'));
+    protected resetUiToActiveModel(currentModel: SetFilterModel | null, afterUiUpdatedFunc?: () => void): void {
+        // override the default behaviour as we don't always want to clear the mini filter
+        this.setModelAndRefresh(currentModel == null ? null : currentModel.values).then(() => {
+            this.onUiChanged(false, 'prevent');
+
+            afterUiUpdatedFunc?.();
+        });
+    }
+
+    protected handleCancelEnd(e: Event): void {
+        this.setMiniFilter(null);
+        super.handleCancelEnd(e);
     }
 
     private onMiniFilterKeyPress(e: KeyboardEvent): void {
