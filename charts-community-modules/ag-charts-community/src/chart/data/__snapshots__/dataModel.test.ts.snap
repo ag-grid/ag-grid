@@ -157,6 +157,217 @@ Object {
 }
 `;
 
+exports[`DataModel grouped processing - stacked and normalised example should generated the expected results 1`] = `
+Object {
+  "data": Array [
+    Object {
+      "datum": Array [
+        Object {
+          "asian": 7317,
+          "black": 3742,
+          "chinese": 284,
+          "mixed": 4052,
+          "other": 1338,
+          "type": "Nursery",
+          "white": 24801,
+        },
+      ],
+      "keys": Array [
+        "Nursery",
+      ],
+      "sumValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
+      "values": Array [
+        Array [
+          59.712524678576585,
+          9.75586266673087,
+          17.616892184716136,
+          9.00948620407377,
+          0.6837771464342466,
+          3.221457119468387,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "asian": 527391,
+          "black": 258774,
+          "chinese": 22844,
+          "mixed": 298866,
+          "other": 95064,
+          "type": "Primary",
+          "white": 3475379,
+        },
+      ],
+      "keys": Array [
+        "Primary",
+      ],
+      "sumValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
+      "values": Array [
+        Array [
+          74.28693389376268,
+          6.388321614734185,
+          11.273090029365255,
+          5.531346949908065,
+          0.48829515223206293,
+          2.03201235999776,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "asian": 377168,
+          "black": 198080,
+          "chinese": 13317,
+          "mixed": 182721,
+          "other": 62662,
+          "type": "Secondary",
+          "white": 2436365,
+        },
+      ],
+      "keys": Array [
+        "Secondary",
+      ],
+      "sumValues": Array [
+        Array [
+          0,
+          99.99999999999999,
+        ],
+      ],
+      "values": Array [
+        Array [
+          74.49944393701765,
+          5.587263359806844,
+          11.533085671004578,
+          6.056912595216421,
+          0.4072087289504093,
+          1.916085708004096,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "asian": 12328,
+          "black": 8546,
+          "chinese": 404,
+          "mixed": 7426,
+          "other": 2109,
+          "type": "Special",
+          "white": 91696,
+        },
+      ],
+      "keys": Array [
+        "Special",
+      ],
+      "sumValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
+      "values": Array [
+        Array [
+          74.84837848647855,
+          6.0615954746181915,
+          10.062934151776604,
+          6.9758140218269675,
+          0.3297716902431658,
+          1.7215061750565266,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "asian": 605,
+          "black": 1104,
+          "chinese": 4,
+          "mixed": 1448,
+          "other": 229,
+          "type": "Referral units",
+          "white": 12347,
+        },
+      ],
+      "keys": Array [
+        "Referral units",
+      ],
+      "sumValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
+      "values": Array [
+        Array [
+          78.45841011628646,
+          9.201245472453452,
+          3.8444430323441567,
+          7.015314227616445,
+          0.02541780517252335,
+          1.455169346126962,
+        ],
+      ],
+    },
+  ],
+  "dataDomain": Object {
+    "keys": Array [
+      Array [
+        "Nursery",
+        "Primary",
+        "Secondary",
+        "Special",
+        "Referral units",
+      ],
+    ],
+    "sumValues": Array [
+      Array [
+        0,
+        100,
+      ],
+    ],
+    "values": Array [
+      Array [
+        12347,
+        3475379,
+      ],
+      Array [
+        1448,
+        298866,
+      ],
+      Array [
+        605,
+        527391,
+      ],
+      Array [
+        1104,
+        258774,
+      ],
+      Array [
+        4,
+        22844,
+      ],
+      Array [
+        229,
+        95064,
+      ],
+    ],
+  },
+  "type": "grouped",
+}
+`;
+
 exports[`DataModel grouped processing - stacked example should generated the expected results 1`] = `
 Object {
   "data": Array [

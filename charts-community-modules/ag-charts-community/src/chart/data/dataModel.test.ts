@@ -239,4 +239,82 @@ describe('DataModel', () => {
             });
         });
     });
+
+    describe('grouped processing - stacked and normalised example', () => {
+        it('should generated the expected results', () => {
+            const data = examples.ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE.data!;
+            const dataModel = new DataModel<any, any, true>({
+                props: [
+                    { property: 'type', type: 'key', valueType: 'category' },
+                    { property: 'white', type: 'value', valueType: 'range' },
+                    { property: 'mixed', type: 'value', valueType: 'range' },
+                    { property: 'asian', type: 'value', valueType: 'range' },
+                    { property: 'black', type: 'value', valueType: 'range' },
+                    { property: 'chinese', type: 'value', valueType: 'range' },
+                    { property: 'other', type: 'value', valueType: 'range' },
+                    {
+                        properties: ['white', 'mixed', 'asian', 'black', 'chinese', 'other'],
+                        type: 'sum',
+                    },
+                ],
+                groupByKeys: true,
+            });
+
+            let processedData = dataModel.processData(data);
+            processedData = dataModel.normaliseData(processedData, 100);
+            expect(processedData).toMatchSnapshot();
+        });
+
+        describe('property tests', () => {
+            const dataModel = new DataModel<any, any, true>({
+                props: [
+                    { property: 'kp', type: 'key', valueType: 'category' },
+                    { property: 'vp1', type: 'value', valueType: 'range' },
+                    { property: 'vp2', type: 'value', valueType: 'range' },
+                    { property: 'vp3', type: 'value', valueType: 'range' },
+                    { property: 'vp4', type: 'value', valueType: 'range' },
+                    { properties: ['vp1', 'vp2'], type: 'sum' },
+                    { properties: ['vp3', 'vp4'], type: 'sum' },
+                ],
+                groupByKeys: true,
+            });
+            const data = [
+                { kp: 'Q1', vp1: 5, vp2: 7, vp3: 1, vp4: 5 },
+                { kp: 'Q1', vp1: 1, vp2: 2, vp3: 2, vp4: 4 },
+                { kp: 'Q2', vp1: 6, vp2: 9, vp3: 3, vp4: 3 },
+                { kp: 'Q2', vp1: 6, vp2: 9, vp3: 4, vp4: 2 },
+            ];
+
+            it('should allow normalisation of values', () => {
+                let result = dataModel.processData(data);
+                result = dataModel.normaliseData(result, 100);
+
+                expect(result.data.map((g) => g.sumValues)).toEqual([
+                    [
+                        [0, 100],
+                        [0, 100],
+                    ],
+                    [
+                        [0, 100],
+                        [0, 100],
+                    ],
+                ]);
+                expect(result.dataDomain.sumValues).toEqual([
+                    [0, 100],
+                    [0, 100],
+                ]);
+
+                expect(result.data.map((g) => g.values)).toEqual([
+                    [
+                        [33.333333333333336, 46.66666666666667, 8.333333333333334, 41.66666666666667],
+                        [6.666666666666667, 13.333333333333334, 16.666666666666668, 33.333333333333336],
+                    ],
+                    [
+                        [20, 30, 25, 25],
+                        [20, 30, 33.333333333333336, 16.666666666666668],
+                    ],
+                ]);
+            });
+        });
+    });
 });

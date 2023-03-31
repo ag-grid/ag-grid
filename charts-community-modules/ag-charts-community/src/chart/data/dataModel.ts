@@ -172,6 +172,47 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
         return processedData as Grouped extends true ? GroupedData<D> : UngroupedData<D>;
     }
 
+    normaliseData(data: GroupedData<D>, normaliseTo: number): GroupedData<D> {
+        const { sums: sumDefs, values: valueDefs } = this;
+        const sumValues = data.dataDomain.sumValues;
+
+        const resultSumValueIndices = sumDefs.map((defs) =>
+            defs.properties.map((prop) => valueDefs.findIndex((def) => def.property === prop))
+        );
+
+        for (let sumIdx = 0; sumIdx < sumDefs.length; sumIdx++) {
+            const sums = sumValues?.[sumIdx];
+            if (sums == null) continue;
+
+            const sumAbsExtent = Math.max(...sums.map((v) => Math.abs(v)));
+
+            let multiplier = normaliseTo / sumAbsExtent;
+            let sumRangeIdx = 0;
+            for (const _ of sums) {
+                sums[sumRangeIdx++] *= multiplier;
+            }
+
+            for (const { values, sumValues } of data.data) {
+                const valuesSumExtent = Math.max(...(sumValues?.[sumIdx].map((v) => Math.abs(v)) ?? [0]));
+                multiplier = normaliseTo / valuesSumExtent;
+                for (const row of values) {
+                    for (const indices of resultSumValueIndices[sumIdx]) {
+                        row[indices] *= multiplier;
+                    }
+                }
+
+                if (sumValues == null) continue;
+
+                sumRangeIdx = 0;
+                for (const _ of sumValues[sumIdx]) {
+                    sumValues[sumIdx][sumRangeIdx++] *= multiplier;
+                }
+            }
+        }
+
+        return data;
+    }
+
     private extractData(data: D[]): UngroupedData<D> {
         const { keys: keyDefs, values: valueDefs } = this;
         const defs = [...keyDefs, ...valueDefs];
