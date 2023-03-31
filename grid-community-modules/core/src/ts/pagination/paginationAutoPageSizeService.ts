@@ -3,6 +3,7 @@ import { Events } from "../events";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { CtrlsService } from "../ctrlsService";
 import { RowContainerCtrl } from "../gridBodyComp/rowContainer/rowContainerCtrl";
+import { debounce } from "../utils/function";
 
 @Bean('paginationAutoPageSizeService')
 export class PaginationAutoPageSizeService extends BeanStub {
@@ -16,25 +17,20 @@ export class PaginationAutoPageSizeService extends BeanStub {
         this.ctrlsService.whenReady(p => {
             this.centerRowContainerCon = p.centerRowContainerCtrl;
 
-            this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.onBodyHeightChanged.bind(this));
-            this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
+            // we debounce this, as it can get called many times in a row and sometimes falsely 
+            // (eg when the grid is resized horizontally, and columns are flexing causing scrollbar to toggle)
+            const debounced = debounce(() => this.checkPageSize(), 50);
+            this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, debounced);
+            this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, debounced);
             this.checkPageSize();
         });
     }
 
     private notActive(): boolean {
-        return !this.gridOptionsService.is('paginationAutoPageSize');
+        return !this.gridOptionsService.is('paginationAutoPageSize') || this.centerRowContainerCon == null;
     }
 
-    private onScrollVisibilityChanged(): void {
-        this.checkPageSize();
-    }
-
-    private onBodyHeightChanged(): void {
-        this.checkPageSize();
-    }
-
-    private checkPageSize(): void {
+    public checkPageSize(): void {
         if (this.notActive()) {
             return;
         }

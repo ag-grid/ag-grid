@@ -10,7 +10,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
     const {context} = useContext(BeansContext);
 
-    const [viewportHeight, setViewportHeight] = useState<string>('');
+  //  const [viewportHeight, setViewportHeight] = useState<string>('');
     const [rowCtrlsOrdered, setRowCtrlsOrdered] = useState<RowCtrl[]>([]);
 
     const { name } = params;
@@ -62,7 +62,8 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
         const beansToDestroy: any[] = [];
 
         const compProxy: IRowContainerComp = {
-            setViewportHeight: setViewportHeight,
+            //setViewportHeight: setViewportHeight,
+            setViewportHeight: (height: string) => eViewport.current!.style.height = height,
             setRowCtrls: rowCtrls => {
                 if(rowCtrlsRef.current !== rowCtrls){
                     rowCtrlsRef.current = rowCtrls;
@@ -89,10 +90,10 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
     });
 
-    const viewportStyle = useMemo(() => ({
+ /*    const viewportStyle = useMemo(() => ({
         height: viewportHeight
     }), [viewportHeight]);
-
+ */
     const buildContainer = () => (
         <div
             className={ containerClasses }
@@ -112,14 +113,14 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
             {
                 template1 &&
                 <div className={ wrapperClasses } ref={ eWrapper } role="presentation">
-                    <div className={ viewportClasses } ref= { eViewport } role="presentation" style={ viewportStyle }>
+                    <div className={viewportClasses} ref={eViewport} role="presentation">
                         { buildContainer() }
                     </div>
                 </div>
             }
             {
                 template2 &&
-                <div className={ viewportClasses } ref= { eViewport } role="presentation" style={ viewportStyle }>
+                <div className={viewportClasses} ref={eViewport} role="presentation">
                     { buildContainer() }
                 </div>
             }

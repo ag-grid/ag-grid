@@ -388,10 +388,6 @@ export class RowContainerCtrl extends BeanStub {
         return isVisible(this.eViewport);
     }
 
-    public isViewportHScrollShowing(): boolean {
-        return isHorizontalScrollShowing(this.eViewport);
-    }
-
     public getViewportScrollLeft(): number {
         return getScrollLeft(this.eViewport, this.enableRtl);
     }
