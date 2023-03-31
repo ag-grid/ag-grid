@@ -53,6 +53,7 @@ export class PrimaryColsHeaderPanel extends Component {
 
         this.addManagedListener(this.eExpand, 'keydown', (e: KeyboardEvent) => {
             if (e.key === KeyCode.SPACE) {
+                e.preventDefault();
                 this.onExpandClicked();
             }
         });
