@@ -32,7 +32,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
         return !this.gridOptionsService.is('paginationAutoPageSize') || this.centerRowContainerCon == null;
     }
 
-    public checkPageSize(): void {
+    private checkPageSize(): void {
         if (this.notActive()) {
             return;
         }
