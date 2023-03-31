@@ -504,7 +504,7 @@ export class LazyCache extends BeanStub {
         const [_, lastRowBlockEnd] = this.rowLoader.getBlockBoundsForIndex(lastRowInViewport);
 
         // number of blocks to cache on top of the viewport blocks
-        const numberOfRowsToRetain = this.getNumberOfRowsToRetain(firstRowBlockStart, lastRowBlockEnd);
+        let numberOfRowsToRetain = this.getNumberOfRowsToRetain(firstRowBlockStart, lastRowBlockEnd);
         if (this.store.getDisplayIndexEnd() == null || numberOfRowsToRetain == null) {
             // if group is collapsed, or max blocks missing, ignore the event
             return;
@@ -525,18 +525,18 @@ export class LazyCache extends BeanStub {
                 return true;
             }
     
-            if (firstRowInViewport <= startRowNum && startRowNum <= lastRowInViewport) {
+            if (firstRowInViewport <= startRowNum && startRowNum < lastRowInViewport) {
                 // start row in viewport, block is in viewport
                 return false;
             }
 
             const lastRowNum = startRowNum + blockSize;
-            if (firstRowInViewport <= lastRowNum && lastRowNum <= lastRowInViewport) {
+            if (firstRowInViewport <= lastRowNum && lastRowNum < lastRowInViewport) {
                 // end row in viewport, block is in viewport
                 return false;
             }
 
-            if (startRowNum < firstRowInViewport && lastRowNum > lastRowInViewport) {
+            if (startRowNum < firstRowInViewport && lastRowNum >= lastRowInViewport) {
                 // full block surrounds in viewport
                 return false;
             }
@@ -544,6 +544,9 @@ export class LazyCache extends BeanStub {
             // block does not appear in viewport and can be disposed
             return true;
         });
+
+        // reduce the number of rows to retain by the number in viewport which were retained
+        numberOfRowsToRetain = numberOfRowsToRetain - (disposableNodes.length - disposableNodesNotInViewport.length);
 
         if (!disposableNodesNotInViewport.length) {
             return;
