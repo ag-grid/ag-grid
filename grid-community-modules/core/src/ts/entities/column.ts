@@ -595,7 +595,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         this.eventService.dispatchEvent(filterChangedEvent);
     }
 
-    /** `Returns true` when this `Column` is hovered, otherwise `false` */
+    /** Returns `true` when this `Column` is hovered, otherwise `false` */
     public isHovered(): boolean {
         return this.columnHoverService.isHovered(this);
     }

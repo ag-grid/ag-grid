@@ -506,7 +506,6 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.hovered = hovered;
     }
 
-    /** Returns `true` when this rowNode is hovered, otherwise `false` */
     public isHovered(): boolean {
         return this.hovered;
     }

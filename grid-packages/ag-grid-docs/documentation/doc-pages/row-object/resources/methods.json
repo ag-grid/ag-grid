@@ -13,6 +13,7 @@
         "isRowPinned": {},
         "isExpandable": {},
         "setExpanded": {},
+        "isHovered": {},
         "isFullWidthCell": {},
         "addEventListener": {},
         "removeEventListener": {},
