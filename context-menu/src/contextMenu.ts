@@ -11,6 +11,8 @@ type ContextMenuItem = 'download' | ContextMenuAction;
 type ContextMenuAction = { id?: string; label: string; action: (params: ContextMenuActionParams) => void };
 export type ContextMenuActionParams = { datum?: any; event: MouseEvent };
 
+const TOOLTIP_ID = 'context-menu';
+
 export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
     /**
      * Extra menu actions with a label and callback.
@@ -35,8 +37,8 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
 
     // Global shared state
     private static contextMenuDocuments: Document[] = [];
-    private static registeredDefaultActions: Array<ContextMenuAction> = [];
-    private static registeredNodeActions: Array<ContextMenuAction> = [];
+    private static defaultActions: Array<ContextMenuAction> = [];
+    private static nodeActions: Array<ContextMenuAction> = [];
     private static disabledActions: Set<string> = new Set();
 
     constructor(readonly ctx: _ModuleSupport.ModuleContext) {
@@ -60,6 +62,7 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
 
         this.element = this.container.appendChild(document.createElement('div'));
         this.element.classList.add(DEFAULT_CONTEXT_MENU_CLASS);
+        this.destroyFns.push(() => this.element.parentNode?.removeChild(this.element));
 
         this.coverElement = this.container.appendChild(document.createElement('div'));
         this.coverElement.classList.add(`${DEFAULT_CONTEXT_MENU_CLASS}__cover`);
@@ -98,14 +101,29 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
             document.head.insertBefore(styleElement, document.head.querySelector('style'));
             ContextMenu.contextMenuDocuments.push(document);
         }
+
+        ContextMenu.registerDefaultAction({
+            id: 'download',
+            label: 'Download',
+            action: () => {
+                // TODO: chart name
+                this.scene.download('chart');
+            },
+        });
     }
 
     public static registerDefaultAction(action: ContextMenuAction) {
-        this.registeredDefaultActions.push(action);
+        if (action.id && this.defaultActions.find(({ id }) => id === action.id)) {
+            return;
+        }
+        this.defaultActions.push(action);
     }
 
     public static registerNodeAction(action: ContextMenuAction) {
-        this.registeredNodeActions.push(action);
+        if (action.id && this.defaultActions.find(({ id }) => id === action.id)) {
+            return;
+        }
+        this.nodeActions.push(action);
     }
 
     public static enableAction(actionId: string) {
@@ -116,25 +134,28 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
         this.disabledActions.add(actionId);
     }
 
-    public onContextMenu(event: _ModuleSupport.InteractionEvent<'contextmenu'>) {
+    private onContextMenu(event: _ModuleSupport.InteractionEvent<'contextmenu'>) {
         this.showEvent = event.sourceEvent as MouseEvent;
 
         const x = event.pageX;
         const y = event.pageY;
 
-        this.groups.default = ['download', ...ContextMenu.registeredDefaultActions];
+        this.groups.default = [...ContextMenu.defaultActions];
 
         // TODO: detect clicked on marker
         const hasClickedOnMarker = true;
         if (hasClickedOnMarker) {
-            this.groups.node = [...ContextMenu.registeredNodeActions];
+            this.groups.node = [...ContextMenu.nodeActions];
         }
 
         if (this.extraActions.length > 0) {
             this.groups.extra = [...this.extraActions];
         }
 
-        if (this.groups.default.length === 0 && this.groups.node.length === 0 && this.groups.extra.length === 0) return;
+        const { default: def, extra, node } = this.groups;
+        const groupCount = def.length + node.length + extra.length;
+
+        if (groupCount === 0) return;
 
         event.consume();
         event.sourceEvent.preventDefault();
@@ -143,6 +164,8 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
     }
 
     public show(x: number, y: number) {
+        if (!this.coverElement) return;
+
         const newMenuElement = this.renderMenu();
 
         if (this.menuElement) {
@@ -177,7 +200,7 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
 
         this.menuElement = newMenuElement;
 
-        this.tooltipManager.clearAllTooltips();
+        this.tooltipManager.updateTooltip(TOOLTIP_ID);
 
         this.coverElement.style.display = 'block';
         this.coverElement.style.left = `${this.canvasElement.parentElement?.offsetLeft}px`;
@@ -191,6 +214,8 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
             this.element.removeChild(this.menuElement);
             this.menuElement = undefined;
         }
+
+        this.tooltipManager.removeTooltip(TOOLTIP_ID);
 
         this.coverElement.style.display = 'none';
     }
@@ -217,11 +242,6 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
     }
 
     public renderItem(item: ContextMenuItem): HTMLElement | void {
-        switch (item) {
-            case 'download':
-                return this.createDownloadElement();
-        }
-
         if (item && typeof item === 'object' && item.constructor === Object && item.action && item.label) {
             return this.createActionElement(item);
         }
@@ -233,15 +253,8 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
         return el;
     }
 
-    private createDownloadElement(): HTMLElement {
-        return this.createButtonElement('Download', (_params) => {
-            // TODO: chart name
-            this.scene.download('chart');
-        });
-    }
-
     private createActionElement({ id, label, action }: ContextMenuAction): HTMLElement {
-        if (ContextMenu.disabledActions.has(id)) {
+        if (id && ContextMenu.disabledActions.has(id)) {
             return this.createDisabledElement(label);
         }
         return this.createButtonElement(label, action);
@@ -275,11 +288,6 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
 
     public destroy() {
         super.destroy();
-
-        const { parentNode } = this.element;
-        if (parentNode) {
-            parentNode.removeChild(this.element);
-        }
 
         if (this.observer) {
             this.observer.unobserve(this.canvasElement);
