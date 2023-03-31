@@ -86,6 +86,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
 
         // Add interaction listeners
         [
+            ctx.interactionManager.addListener('dblclick', (event) => this.onDoubleClick(event));
             ctx.interactionManager.addListener('drag', (event) => this.onDrag(event)),
             ctx.interactionManager.addListener('drag-end', () => this.onDragEnd()),
             ctx.interactionManager.addListener('wheel', (event) => this.onWheel(event)),
@@ -111,6 +112,15 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
 
     update(): void {
         // TODO: handle any updates from somewhere?
+    }
+
+    private onDoubleClick(event: _ModuleSupport.InteractionEvent<'dblclick'>) {
+        if (!this.seriesRect?.containsPoint(event.offsetX, event.offsetY)) {
+            return;
+        }
+
+        const newZoom = { x: { min: 0 , max: 1 }, y: { min: 0, max: 1 } };
+        this.updateZoomWithConstraints(newZoom)
     }
 
     private onDrag(event: _ModuleSupport.InteractionEvent<'drag'>) {
