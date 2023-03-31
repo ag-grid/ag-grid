@@ -58,8 +58,8 @@ export const defaultContextMenuCss = `
 }
 
 .${DEFAULT_CONTEXT_MENU_CLASS}__divider {
-    margin: 5px;
-    background: rgb(230, 230, 230);
+    margin: 5px 0;
+    background: #babfc7;
     height: 1px;
 }
 `;
