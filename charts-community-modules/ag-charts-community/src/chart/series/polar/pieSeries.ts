@@ -112,7 +112,7 @@ class PieSeriesCalloutLabel extends Label {
     offset = 3; // from the callout line
 
     @Validate(NUMBER(0))
-    minAngle = 20; // in degrees
+    minAngle = 0; // in degrees
 
     @Validate(OPT_FUNCTION)
     formatter?: (params: AgPieSeriesLabelFormatterParams<any>) => string = undefined;

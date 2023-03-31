@@ -9112,7 +9112,7 @@ Object {
         "fontSize": 12,
         "fontStyle": undefined,
         "fontWeight": undefined,
-        "minAngle": 20,
+        "minAngle": 0,
         "offset": 3,
       },
       "calloutLabelKey": "type",
