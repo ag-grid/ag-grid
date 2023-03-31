@@ -118,6 +118,9 @@ class PieSeriesCalloutLabel extends Label {
     formatter?: (params: AgPieSeriesLabelFormatterParams<any>) => string = undefined;
 
     @Validate(NUMBER(0))
+    minSpacing = 4;
+
+    @Validate(NUMBER(0))
     maxCollisionOffset = 50;
 }
 
@@ -871,9 +874,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     private computeCalloutLabelCollisionOffsets() {
         const { radiusScale, calloutLabel, calloutLine } = this;
-        const { offset } = calloutLabel;
+        const { offset, minSpacing } = calloutLabel;
         const innerRadius = radiusScale.convert(0);
-        const collisionPadding = 4;
 
         const shouldSkip = (datum: PieNodeDatum) => {
             const label = datum.calloutLabel;
@@ -923,8 +925,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             next: PieNodeDatum,
             direction: 'to-top' | 'to-bottom'
         ) => {
-            const box = getTextBBox(label).grow(collisionPadding / 2);
-            const other = getTextBBox(next).grow(collisionPadding / 2);
+            const box = getTextBBox(label).grow(minSpacing / 2);
+            const other = getTextBBox(next).grow(minSpacing / 2);
             // The full collision is not detected, because sometimes
             // the next label can appear behind the label with offset
             const collidesOrBehind =
@@ -956,7 +958,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const labelsCollideLabelsByY = data.some((datum) => datum.calloutLabel!.collisionOffsetY !== 0);
 
             const boxes = labels.map((label) => getTextBBox(label));
-            const paddedBoxes = boxes.map((box) => box.clone().grow(collisionPadding / 2));
+            const paddedBoxes = boxes.map((box) => box.clone().grow(minSpacing / 2));
 
             let labelsCollideLabelsByX = false;
             loop: for (let i = 0; i < paddedBoxes.length; i++) {
