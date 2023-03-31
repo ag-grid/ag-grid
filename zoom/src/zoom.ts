@@ -75,6 +75,8 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     private readonly selector: ZoomSelector;
     private readonly scroller: ZoomScroller;
 
+    private isDragging: boolean = false;
+
     constructor(readonly ctx: _ModuleSupport.ModuleContext) {
         super();
 
@@ -112,6 +114,8 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     }
 
     private onDrag(event: _ModuleSupport.InteractionEvent<'drag'>) {
+        this.isDragging = true;
+
         const zoom = this.zoomManager.getZoom();
         const isZoomed =
             zoom && zoom.x && zoom.y && (zoom.x.min !== 0 || zoom.x.max !== 1 || zoom.y.min !== 0 || zoom.y.max !== 1);
@@ -144,12 +148,17 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     }
 
     private onDragEnd() {
+        // Stop single clicks from triggering drag end and resetting the zoom
+        if (!this.isDragging) return;
+
         if (this.enablePanning && this.panner.isPanning) {
             this.panner.stop();
         } else if (this.enableSelecting) {
             const newZoom = this.selector.stop(this.seriesRect, this.zoomManager.getZoom());
             this.updateZoomWithConstraints(newZoom);
         }
+
+        this.isDragging = false;
     }
 
     private onWheel(event: _ModuleSupport.InteractionEvent<'wheel'>) {

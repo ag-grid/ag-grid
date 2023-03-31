@@ -138,24 +138,10 @@ export class ZoomSelector {
         const { rect } = this;
         const { x, y, width, height } = this.getNormalisedDimensions();
 
-        rect.x = bbox.x;
-        rect.y = bbox.y;
-        rect.width = bbox.width;
-        rect.height = bbox.height;
-
-        rect.clipMode = 'punch-out';
-        if (rect.clipPath) {
-            rect.clipPath.clear();
-        } else {
-            rect.clipPath = new _Scene.Path2D();
-        }
-
-        rect.clipPath.moveTo(x, y);
-        rect.clipPath.lineTo(x + width, y);
-        rect.clipPath.lineTo(x + width, y + height);
-        rect.clipPath.lineTo(x, y + height);
-        rect.clipPath.lineTo(x, y);
-        rect.clipPath.closePath();
+        rect.x = x;
+        rect.y = y;
+        rect.width = width;
+        rect.height = height;
     }
 
     private createZoomFromCoords(bbox: _Scene.BBox, currentZoom?: _ModuleSupport.AxisZoomState) {
