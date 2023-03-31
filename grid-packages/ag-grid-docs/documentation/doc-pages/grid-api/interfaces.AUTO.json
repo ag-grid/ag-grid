@@ -2631,7 +2631,7 @@
   "InternalToolPanelVisibleChangedEvent": {
     "meta": {
       "typeParams": ["TData = any", "TContext = any"],
-      "doc": "/** \n * This is the replacement event for ToolPanelVisibleChangedEvent. In v30, this will be renamed ToolPanelVisibleChangedEvent,\n * and the original ToolPanelVisibleChangedEvent will be dropped\n */"
+      "doc": "/** This is the replacement event for ToolPanelVisibleChangedEvent. In v30, this will be renamed ToolPanelVisibleChangedEvent,\n * and the original ToolPanelVisibleChangedEvent will be dropped\n */"
     },
     "type": {
       "source": "'sideBarButtonClicked' | 'sideBarInitializing' | 'api'",
