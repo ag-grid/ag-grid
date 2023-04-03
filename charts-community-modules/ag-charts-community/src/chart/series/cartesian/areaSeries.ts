@@ -520,6 +520,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                         yKey,
                         xKey,
                         point,
+                        nodeMidPoint: { x: point.x, y: point.y },
                         fill: fills[seriesIdx % fills.length],
                         stroke: strokes[seriesIdx % strokes.length],
                     });
