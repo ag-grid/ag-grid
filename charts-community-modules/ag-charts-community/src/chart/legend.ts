@@ -227,6 +227,9 @@ export class Legend {
     @Validate(OPT_ORIENTATION)
     orientation?: AgChartOrientation;
 
+    @Validate(BOOLEAN)
+    mergeMatchingItems: boolean = false;
+
     private destroyFns: Function[] = [];
 
     constructor(

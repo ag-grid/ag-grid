@@ -10,6 +10,9 @@ const options: AgChartOptions = {
     { os: "Bada", "2020": 2.6, "2023": 0.6 },
     { os: "Windows", "2020": 1.9, "2023": 0.9 },
   ],
+  legend: {
+    mergeMatchingItems: true,
+  },
   series: [
     {
       type: "pie",

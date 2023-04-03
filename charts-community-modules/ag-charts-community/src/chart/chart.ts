@@ -739,7 +739,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.series
             .filter((s) => s.showInLegend)
             .forEach((series) => {
-                legendData.push(...series.getLegendData());
+                const usedItemKeys = this.legend.mergeMatchingItems
+                    ? legendData.map((d) => d.itemKey ?? '').filter(Boolean)
+                    : undefined;
+                legendData.push(...series.getLegendData(usedItemKeys));
             });
 
         const { formatter } = this.legend.item.label;

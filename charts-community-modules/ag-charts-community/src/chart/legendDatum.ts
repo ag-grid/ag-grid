@@ -3,6 +3,7 @@ import { Marker } from './marker/marker';
 export interface LegendDatum {
     id: string; // component ID
     itemId: any; // sub-component ID
+    itemKey?: string;
     seriesId: string;
     enabled: boolean; // the current state of the sub-component
     marker: {

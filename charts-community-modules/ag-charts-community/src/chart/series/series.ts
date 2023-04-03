@@ -497,7 +497,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
      * what is considered an item. An item could be the series itself or some
      * part of the series.
      */
-    abstract getLegendData(): LegendDatum[];
+    abstract getLegendData(usedItemKeys?: string[]): LegendDatum[];
 
     toggleSeriesItem(_itemId: any, enabled: boolean): void {
         this.visible = enabled;

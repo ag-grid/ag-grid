@@ -489,7 +489,6 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
     getLegendData(): LegendDatum[] {
         const { id, data, xKey, yKey, yName, title, visible, marker } = this;
-        const { fill, stroke, fillOpacity, strokeOpacity } = marker;
 
         if (!(data && data.length && xKey && yKey)) {
             return [];
@@ -505,10 +504,10 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                 },
                 marker: {
                     shape: marker.shape,
-                    fill: marker.fill || fill || 'rgba(0, 0, 0, 0)',
-                    stroke: marker.stroke || stroke || 'rgba(0, 0, 0, 0)',
-                    fillOpacity: fillOpacity ?? 1,
-                    strokeOpacity: strokeOpacity ?? 1,
+                    fill: marker.fill || 'rgba(0, 0, 0, 0)',
+                    stroke: marker.stroke || 'rgba(0, 0, 0, 0)',
+                    fillOpacity: marker.fillOpacity ?? 1,
+                    strokeOpacity: marker.strokeOpacity ?? 1,
                 },
             },
         ];

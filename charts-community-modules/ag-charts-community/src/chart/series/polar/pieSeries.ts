@@ -1311,13 +1311,17 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         return toTooltipHtml(defaults);
     }
 
-    getLegendData(): LegendDatum[] {
+    getLegendData(usedItemKeys?: string[]): LegendDatum[] {
         const { calloutLabelKey, legendItemKey, data, id, sectorFormatData } = this;
 
         if (!data || data.length === 0 || (!legendItemKey && !calloutLabelKey)) return [];
 
         const titleText = this.title && this.title.showInLegend && this.title.text;
-        const legendData: LegendDatum[] = data.map((datum, index) => {
+
+        const filteredData =
+            legendItemKey && usedItemKeys ? data.filter((datum) => !usedItemKeys.includes(datum[legendItemKey])) : data;
+
+        const legendData: LegendDatum[] = filteredData.map((datum, index) => {
             const labelParts = [];
             titleText && labelParts.push(titleText);
             if (legendItemKey) {
@@ -1329,6 +1333,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             return {
                 id,
                 itemId: index,
+                itemKey: legendItemKey ? datum[legendItemKey] : undefined,
                 seriesId: id,
                 enabled: this.seriesItemEnabled[index],
                 label: {

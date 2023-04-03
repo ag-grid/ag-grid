@@ -440,7 +440,10 @@ export interface AgChartLegendOptions {
     reverseOrder?: boolean;
     /** Optional callbacks for specific legend-related events. */
     listeners?: AgChartLegendListeners;
+    /** Configuration for the legend pagination. */
     pagination?: AgChartLegendPaginationOptions;
+    /** Show a single legend item when two or more items in separate series share the same `legendItemKey`. */
+    mergeMatchingItems?: boolean;
 }
 
 export interface AgChartLegendPaginationOptions {

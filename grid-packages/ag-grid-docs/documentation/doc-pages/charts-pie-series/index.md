@@ -13,10 +13,12 @@ To plot a basic pie all we need is an array of values that will determine the an
 A minimal pie series configuration is shown below:
 
 ```js
-series: [{
-    type: 'pie',
-    angleKey: 'value'
-}]
+series: [
+  {
+    type: "pie",
+    angleKey: "value",
+  },
+]
 ```
 
 This results in the chart shown below. Note that [tooltips](/charts-tooltips/) show the absolute value of each pie sector.
@@ -86,12 +88,14 @@ Please check the [API reference](#api-reference) below to learn more about `call
 Let's say we have the data for both the market share of mobile operating systems and the level of user satisfaction with each OS. We could represent the satisfaction level as the radius of a sector using the `radiusKey` config like so:
 
 ```js
-series: [{
-    type: 'pie',
-    calloutLabelKey: 'os',
-    angleKey: 'share',
-    radiusKey: 'satisfaction'
-}]
+series: [
+  {
+    type: "pie",
+    calloutLabelKey: "os",
+    angleKey: "share",
+    radiusKey: "satisfaction",
+  },
+]
 ```
 
 A pie chart where sectors have different radii is also known as a **rose chart**.
@@ -103,12 +107,14 @@ A pie chart where sectors have different radii is also known as a **rose chart**
 Pie series can be used to create a doughnut chart by using the `innerRadiusOffset` config.
 
 ```js
-series: [{
-    type: 'pie',
-    calloutLabelKey: 'os',
-    angleKey: 'share',
-    innerRadiusOffset: -70
-}]
+series: [
+  {
+    type: "pie",
+    calloutLabelKey: "os",
+    angleKey: "share",
+    innerRadiusOffset: -70,
+  },
+]
 ```
 
 The config specifies the offset value from the maximum pie radius which all pie sectors use by default (the maximum pie series radius is determined automatically by the chart depending on the chart's dimensions). `-70` in the snippet above means the inner radius of the series should be 70 pixels smaller than the maximum radius.
@@ -177,9 +183,14 @@ The example below uses one pie series to plot the market share of each operating
 
 ### Multiple Doughnuts with a Shared Legend
 
-Providing a matching `legendItemKey` allows us to create multiple doughnut series that share a single legend. When a legend item is clicked, the items in all the series that have a matching `legendItemKey` will be toggled together.
+There are two steps to create multiple nested doughnut series that share a single legend. Firstly, provide a `legendItemKey` to each series that indicates which value in the datum to use for the legend labels. Secondly, set `legend.mergeMatchingItems` to `true` to indicate to the legend that it should merge any items that have matching values in their `legendItemKey` property.
+
+If `mergeMatchingItems` is set to `false`, all series items will be displayed but any items that have matching `legendItemKey` values will toggle together when either is clicked.
 
 ```js
+legend: {
+    mergeMatchingItems: true
+},
 series: [
     {
         type: 'pie',
