@@ -9,71 +9,48 @@ import { ZoomRect } from './scenes/zoomRect';
 const { BOOLEAN, NUMBER, STRING_UNION, Validate } = _ModuleSupport;
 
 export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
-    /**
-     * Enable or disable the zoom module.
-     */
     @Validate(BOOLEAN)
     public enabled = true;
 
-    /**
-     * Enable zooming by scrolling the mouse wheel.
-     */
     @Validate(BOOLEAN)
     public enableScrolling = true;
 
-    /**
-     * Enable zooming by clicking and dragging out an area to zoom into.
-     */
     @Validate(BOOLEAN)
     public enableSelecting = true;
 
-    /**
-     * Enable panning when zoomed by holding the pan key while clicking and dragging.
-     */
     @Validate(BOOLEAN)
     public enablePanning = true;
 
-    /**
-     * The key which toggles panning.
-     */
     @Validate(STRING_UNION('alt', 'ctrl', 'meta', 'shift'))
     public panKey: 'alt' | 'ctrl' | 'meta' | 'shift' = 'alt';
 
-    /**
-     * The axis on which to enable zooming.
-     */
     @Validate(STRING_UNION('xy', 'x', 'y'))
     public axes: 'xy' | 'x' | 'y' = 'xy';
 
-    /**
-     * The step size to zoom in when scrolling the mouse wheel.
-     */
     @Validate(NUMBER(0, 1))
     public scrollingStep = 0.1;
 
-    /**
-     * The minimum proportion of the original chart to display when zooming on the x-axis. Trying to zoom beyond this
-     * point will be blocked.
-     */
     @Validate(NUMBER(0, 1))
     public minXRatio: number = 0.2;
 
-    /**
-     * The minimum proportion of the original chart to display when zooming in on the y-axis. Trying to zoom beyond this
-     * point will be blocked.
-     */
     @Validate(NUMBER(0, 1))
     public minYRatio: number = 0.2;
 
+    // Scenes
     private readonly scene: _Scene.Scene;
     private seriesRect?: _Scene.BBox;
-
+    
+    // Module context
     private readonly zoomManager: _ModuleSupport.ZoomManager;
     private readonly updateService: _ModuleSupport.UpdateService;
-
+    
+    // Zoom methods
     private readonly panner: ZoomPanner;
     private readonly selector: ZoomSelector;
     private readonly scroller: ZoomScroller;
+
+    // State
+    private isDragging: boolean = false;
 
     constructor(readonly ctx: _ModuleSupport.ModuleContext) {
         super();
@@ -84,6 +61,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
 
         // Add interaction listeners
         [
+            ctx.interactionManager.addListener('dblclick', (event) => this.onDoubleClick(event));
             ctx.interactionManager.addListener('drag', (event) => this.onDrag(event)),
             ctx.interactionManager.addListener('drag-end', () => this.onDragEnd()),
             ctx.interactionManager.addListener('wheel', (event) => this.onWheel(event)),
@@ -111,7 +89,22 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         // TODO: handle any updates from somewhere?
     }
 
+    private onDoubleClick(event: _ModuleSupport.InteractionEvent<'dblclick'>) {
+        if (!this.seriesRect?.containsPoint(event.offsetX, event.offsetY)) {
+            return;
+        }
+
+        const newZoom = { x: { min: 0 , max: 1 }, y: { min: 0, max: 1 } };
+        this.updateZoomWithConstraints(newZoom)
+    }
+
     private onDrag(event: _ModuleSupport.InteractionEvent<'drag'>) {
+        if (!this.seriesRect?.containsPoint(event.offsetX, event.offsetY)) {
+            return;
+        }
+
+        this.isDragging = true;
+
         const zoom = this.zoomManager.getZoom();
         const isZoomed =
             zoom && zoom.x && zoom.y && (zoom.x.min !== 0 || zoom.x.max !== 1 || zoom.y.min !== 0 || zoom.y.max !== 1);
@@ -144,12 +137,17 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     }
 
     private onDragEnd() {
+        // Stop single clicks from triggering drag end and resetting the zoom
+        if (!this.isDragging) return;
+
         if (this.enablePanning && this.panner.isPanning) {
             this.panner.stop();
         } else if (this.enableSelecting) {
             const newZoom = this.selector.stop(this.seriesRect, this.zoomManager.getZoom());
             this.updateZoomWithConstraints(newZoom);
         }
+
+        this.isDragging = false;
     }
 
     private onWheel(event: _ModuleSupport.InteractionEvent<'wheel'>) {
