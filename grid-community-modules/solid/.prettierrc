@@ -5,7 +5,7 @@
   "htmlWhitespaceSensitivity": "ignore",
   "arrowParens": "always",
   "printWidth": 100,
-  "jsxBracketSameLine": false,
+  "bracketSameLine": false,
   "semi": true,
   "useTabs": false,
   "tabWidth": 2,

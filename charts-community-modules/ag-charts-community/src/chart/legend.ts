@@ -871,7 +871,7 @@ export class Legend {
         if (!pointerInsideLegend) {
             this.cursorManager.updateCursor(this.id);
             this.highlightManager.updateHighlight(this.id);
-            this.tooltipManager.updateTooltip(this.id);
+            this.tooltipManager.removeTooltip(this.id);
             return;
         }
 
@@ -895,7 +895,7 @@ export class Legend {
                 toTooltipHtml({ content: datum.label.text })
             );
         } else {
-            this.tooltipManager.updateTooltip(this.id);
+            this.tooltipManager.removeTooltip(this.id);
         }
 
         if (toggleSeriesVisible || listeners.legendItemClick != null) {
