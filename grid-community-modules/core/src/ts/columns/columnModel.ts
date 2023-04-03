@@ -43,8 +43,6 @@ import { SortController } from "../sortController";
 import { missingOrEmpty, exists, missing, attrToBoolean, attrToNumber } from '../utils/generic';
 import { camelCaseToHumanText } from '../utils/string';
 import { ColumnDefFactory } from "./columnDefFactory";
-import { IRowModel } from "../interfaces/iRowModel";
-import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { convertToMap } from '../utils/map';
 import { doOnce } from '../utils/function';
 import { CtrlsService } from '../ctrlsService';
@@ -135,7 +133,6 @@ export class ColumnModel extends BeanStub {
     @Optional('valueCache') private valueCache: ValueCache;
     @Optional('animationFrameService') private animationFrameService: AnimationFrameService;
 
-    @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('columnDefFactory') private columnDefFactory: ColumnDefFactory;
 
@@ -260,8 +257,6 @@ export class ColumnModel extends BeanStub {
     private flexViewportWidth: number;
 
     private columnDefs: (ColDef | ColGroupDef)[];
-
-    private flexColsCalculatedAtLestOnce = false;
 
     @PostConstruct
     public init(): void {
@@ -3279,8 +3274,7 @@ export class ColumnModel extends BeanStub {
         if (this.autoHeightActive) {
             this.autoHeightActiveAtLeastOnce = true;
 
-            const rowModelType = this.rowModel.getType();
-            const supportedRowModel = rowModelType === 'clientSide' || rowModelType === 'serverSide';
+            const supportedRowModel = this.gridOptionsService.isRowModelType('clientSide') || this.gridOptionsService.isRowModelType('serverSide');
             if (!supportedRowModel) {
                 const message = 'AG Grid - autoHeight columns only work with Client Side Row Model and Server Side Row Model.';
                 doOnce(() => console.warn(message), 'autoHeightActive.wrongRowModel');
@@ -3742,16 +3736,6 @@ export class ColumnModel extends BeanStub {
 
         if (params.fireResizedEvent) {
             this.dispatchColumnResizedEvent(changedColumns, true, source, flexingColumns);
-        }
-
-        // If rowData has been provided directly into GridOptions and auto row height is active then
-        // we can improve the initial render, i.e quicker to stable state, by calling resetRowHeights
-        // directly here instead of waiting for the resize observer to fire.
-        if (!this.flexColsCalculatedAtLestOnce) {
-            if (this.autoHeightActive && this.gridOptionsService.isRowModelType('clientSide')) {
-                (this.rowModel as IClientSideRowModel).resetRowHeights();
-            }
-            this.flexColsCalculatedAtLestOnce = true;
         }
 
         return flexingColumns;
