@@ -182,20 +182,20 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
                 this.element.style.top = `calc(${y}px - 0.5em)`;
                 break;
 
-            case 'top-right':
-                this.element.style.right = `calc(100% - ${x - 1}px)`;
-                this.element.style.top = `calc(${y}px - 0.5em)`;
-                break;
+            // case 'top-right':
+            //     this.element.style.right = `calc(100% - ${x - 1}px)`;
+            //     this.element.style.top = `calc(${y}px - 0.5em)`;
+            //     break;
 
-            case 'bottom-left':
-                this.element.style.left = `${x + 1}px`;
-                this.element.style.bottom = `calc(100% - ${y}px - 0.5em)`;
-                break;
+            // case 'bottom-left':
+            //     this.element.style.left = `${x + 1}px`;
+            //     this.element.style.bottom = `calc(100% - ${y}px - 0.5em)`;
+            //     break;
 
-            case 'bottom-right':
-                this.element.style.right = `calc(100% - ${x - 1}px)`;
-                this.element.style.bottom = `calc(100% - ${y}px - 0.5em)`;
-                break;
+            // case 'bottom-right':
+            //     this.element.style.right = `calc(100% - ${x - 1}px)`;
+            //     this.element.style.bottom = `calc(100% - ${y}px - 0.5em)`;
+            //     break;
         }
 
         this.menuElement = newMenuElement;
