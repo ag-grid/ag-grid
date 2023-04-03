@@ -405,6 +405,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                 series: this,
                 isLeaf,
                 children: [] as TreemapNodeDatum[],
+                nodeMidPoint: { x: 0, y: 0 },
             };
             if (isLeaf) {
                 nodeDatum.value = sizeKey ? datum[sizeKey] ?? 1 : 1;
@@ -541,6 +542,8 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         const boxes = this.squarify(this.dataRoot!, new BBox(0, 0, seriesRect.width, seriesRect.height));
         const labelMeta = this.buildLabelMeta(boxes);
 
+        this.updateNodeMidPoint(boxes);
+
         const updateRectFn = (rect: Rect, datum: TreemapNodeDatum, isDatumHighlighted: boolean) => {
             const box = boxes.get(datum)!;
             if (!box) {
@@ -653,6 +656,15 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             if (text.visible) {
                 updateLabelFn(text, text.datum, isDatumHighlighted, 'value');
             }
+        });
+    }
+
+    private updateNodeMidPoint(boxes: Map<TreemapNodeDatum, BBox>) {
+        boxes.forEach((box, treeNodeDatum) => {
+            treeNodeDatum.nodeMidPoint = {
+                x: box.x + box.width / 2,
+                y: box.y,
+            };
         });
     }
 

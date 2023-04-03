@@ -568,6 +568,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 midAngle,
                 midCos,
                 midSin,
+                nodeMidPoint: { x: 0, y: 0 },
                 calloutLabel: labelVisible
                     ? {
                           text: labelData[datumIndex],
@@ -683,8 +684,20 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             }
         }
 
+        this.updateNodeMidPoint();
+
         await this.updateSelections();
         await this.updateNodes();
+    }
+
+    private updateNodeMidPoint() {
+        this.groupSelectionData.forEach((d) => {
+            const radius = this.radiusScale.convert(d.radius);
+            d.nodeMidPoint = {
+                x: d.midCos * Math.max(0, radius / 2),
+                y: d.midSin * Math.max(0, radius / 2),
+            };
+        });
     }
 
     private async updateSelections() {

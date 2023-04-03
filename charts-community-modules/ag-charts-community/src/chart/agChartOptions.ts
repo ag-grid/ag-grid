@@ -500,10 +500,23 @@ export interface AgChartTooltipOptions {
     tracking?: boolean;
     /** Range from a point that triggers the tooltip to show. */
     range?: AgChartInteractionRange;
+    /** The position of the tooltip. By default the tooltip follows the mouse pointer. */
+    position?: AgTooltipPositionOptions;
     /** The time interval (in milliseconds) after which the tooltip is shown. */
     delay?: number;
     /** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */
     enableInteraction?: boolean;
+}
+
+export type AgTooltipPositionOptions = AgMovingTooltipPositionOptions;
+
+export interface AgMovingTooltipPositionOptions {
+    /** The type of positioning for the tooltip. By default, the tooltip follows the pointer. */
+    type: 'pointer' | 'node';
+    /** The horizontal offset in pixels for the position of the tooltip. */
+    xOffset?: PixelSize;
+    /** The vertical offset in pixels for the position of the tooltip. */
+    yOffset?: PixelSize;
 }
 
 export interface AgChartBackground {

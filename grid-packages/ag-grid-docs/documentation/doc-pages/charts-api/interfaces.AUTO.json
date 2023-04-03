@@ -1069,6 +1069,7 @@
       "class?": "string",
       "tracking?": "boolean",
       "range?": "AgChartInteractionRange",
+      "position?": "AgTooltipPositionOptions",
       "delay?": "number",
       "enableInteraction?": "boolean"
     },
@@ -1077,8 +1078,26 @@
       "class?": "/** A class name to be added to the tooltip element of the chart. */",
       "tracking?": "/** @deprecated since v7.2.0 (ag-grid v29.2.0) If true, for series with markers the tooltip will be shown to the closest marker. */",
       "range?": "/** Range from a point that triggers the tooltip to show. */",
+      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "delay?": "/** The time interval (in milliseconds) after which the tooltip is shown. */",
       "enableInteraction?": "/** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */"
+    }
+  },
+  "AgTooltipPositionOptions": {
+    "meta": { "isTypeAlias": true },
+    "type": "AgMovingTooltipPositionOptions"
+  },
+  "AgMovingTooltipPositionOptions": {
+    "meta": {},
+    "type": {
+      "type": "'pointer' | 'node'",
+      "xOffset?": "PixelSize",
+      "yOffset?": "PixelSize"
+    },
+    "docs": {
+      "type": "/** The type of positioning for the tooltip. By default, the tooltip follows the pointer. */",
+      "xOffset?": "/** The horizontal offset in pixels for the position of the tooltip. */",
+      "yOffset?": "/** The vertical offset in pixels for the position of the tooltip. */"
     }
   },
   "AgChartBackground": {
@@ -3475,7 +3494,8 @@
       "cumulativeValue?": "number",
       "aggregatedValue?": "number",
       "domain?": "[ number, number ]",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint": "Readonly<Point>"
     }
   },
   "HighlightChangeEvent": {
@@ -3518,7 +3538,7 @@
   },
   "TooltipState": {
     "meta": {},
-    "type": { "content": "string", "meta": "TooltipMeta" }
+    "type": { "content": "string", "meta?": "TooltipMeta" }
   },
   "ZoomState": { "meta": {}, "type": { "min": "number", "max": "number" } },
   "AxisZoomState": {
@@ -3729,7 +3749,8 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint": "Readonly<Point>"
     }
   },
   "BarSeriesNodeTag": {
@@ -3765,7 +3786,8 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint": "Readonly<Point>"
     }
   },
   "SubGroup": {
@@ -3817,7 +3839,8 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint": "Readonly<Point>"
     }
   },
   "HistogramAggregation": {
@@ -3838,7 +3861,8 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint": "Readonly<Point>"
     }
   },
   "PointDatum": {
@@ -3858,7 +3882,8 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint": "Readonly<Point>"
     }
   },
   "TreeDatum": {
@@ -3878,7 +3903,8 @@
       "children": "TreemapNodeDatum[]",
       "series": "Series<any>",
       "itemId?": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint": "Readonly<Point>"
     }
   },
   "TextNodeTag": {
@@ -3910,7 +3936,8 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint": "Readonly<Point>"
     }
   },
   "PieNodeTag": {
@@ -3926,7 +3953,8 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint": "Readonly<Point>"
     }
   },
   "SeriesNodePickMode": {
@@ -3993,6 +4021,10 @@
       "offsetY": "number",
       "event": "Event | InteractionEvent<any>"
     }
+  },
+  "TooltipPositionType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'pointer' | 'node'"
   },
   "Tick": { "meta": {}, "type": { "labels": "string[]" } },
   "ScaleClampParams": {

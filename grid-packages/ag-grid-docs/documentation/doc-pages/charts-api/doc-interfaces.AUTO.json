@@ -1656,6 +1656,10 @@
       "description": "/** Range from a point that triggers the tooltip to show. */",
       "type": { "returnType": "AgChartInteractionRange", "optional": true }
     },
+    "position": {
+      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
+    },
     "delay": {
       "description": "/** The time interval (in milliseconds) after which the tooltip is shown. */",
       "type": { "returnType": "number", "optional": true }
@@ -1663,6 +1667,21 @@
     "enableInteraction": {
       "description": "/** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */",
       "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "AgTooltipPositionOptions": {},
+  "AgMovingTooltipPositionOptions": {
+    "type": {
+      "description": "/** The type of positioning for the tooltip. By default, the tooltip follows the pointer. */",
+      "type": { "returnType": "'pointer' | 'node'", "optional": false }
+    },
+    "xOffset": {
+      "description": "/** The horizontal offset in pixels for the position of the tooltip. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "yOffset": {
+      "description": "/** The vertical offset in pixels for the position of the tooltip. */",
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgChartBackground": {
@@ -5252,6 +5271,9 @@
     },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+    },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": false }
     }
   },
   "HighlightChangeEvent": {
@@ -5281,7 +5303,7 @@
   "SupportedEvent": {},
   "TooltipState": {
     "content": { "type": { "returnType": "string", "optional": false } },
-    "meta": { "type": { "returnType": "TooltipMeta", "optional": false } }
+    "meta": { "type": { "returnType": "TooltipMeta", "optional": true } }
   },
   "ZoomState": {
     "min": { "type": { "returnType": "number", "optional": false } },
@@ -5471,6 +5493,9 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+    },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": false }
     }
   },
   "BarSeriesNodeTag": {},
@@ -5498,6 +5523,9 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+    },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": false }
     }
   },
   "SubGroup": {
@@ -5562,6 +5590,9 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+    },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": false }
     }
   },
   "HistogramAggregation": {},
@@ -5583,7 +5614,10 @@
     "yKey": { "type": { "returnType": "string", "optional": false } },
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
-    "datum": { "type": { "returnType": "any", "optional": false } }
+    "datum": { "type": { "returnType": "any", "optional": false } },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": false }
+    }
   },
   "PointDatum": {
     "xDatum": { "type": { "returnType": "any", "optional": false } },
@@ -5600,6 +5634,9 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+    },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": false }
     }
   },
   "TreeDatum": {},
@@ -5620,6 +5657,9 @@
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+    },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": false }
     }
   },
   "TextNodeTag": {},
@@ -5653,6 +5693,9 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+    },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": false }
     }
   },
   "PieNodeTag": {},
@@ -5662,6 +5705,9 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+    },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": false }
     }
   },
   "SeriesNodePickMode": {},
@@ -5742,6 +5788,7 @@
       }
     }
   },
+  "TooltipPositionType": {},
   "Tick": {
     "labels": { "type": { "returnType": "string[]", "optional": false } }
   },

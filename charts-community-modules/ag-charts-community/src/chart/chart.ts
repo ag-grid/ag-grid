@@ -1103,21 +1103,23 @@ export abstract class Chart extends Observable implements AgChartInstance {
     };
 
     private mergePointerDatum(meta: PointerMeta, datum: SeriesNodeDatum): PointerMeta {
-        if (datum.point) {
-            const { x, y } = datum.point;
-            const { canvas } = this.scene;
-            const point = datum.series.rootGroup.inverseTransformPoint(x, y);
-            const canvasRect = canvas.element.getBoundingClientRect();
-            return {
-                ...meta,
-                pageX: Math.round(canvasRect.left + window.scrollX + point.x),
-                pageY: Math.round(canvasRect.top + window.scrollY + point.y),
-                offsetX: Math.round(point.x),
-                offsetY: Math.round(point.y),
-            };
+        const { type } = this.tooltip.position;
+
+        if (type === 'pointer') {
+            return meta;
         }
 
-        return meta;
+        const { x, y } = datum.nodeMidPoint;
+        const { canvas } = this.scene;
+        const point = datum.series.rootGroup.inverseTransformPoint(x, y);
+        const canvasRect = canvas.element.getBoundingClientRect();
+        return {
+            ...meta,
+            pageX: Math.round(canvasRect.left + window.scrollX + point.x),
+            pageY: Math.round(canvasRect.top + window.scrollY + point.y),
+            offsetX: Math.round(point.x),
+            offsetY: Math.round(point.y),
+        };
     }
 
     changeHighlightDatum(event: HighlightChangeEvent) {
