@@ -1,11 +1,7 @@
-import {
-    _Scene,
-    _Util,
-    _ModuleSupport,
-    AgCrosshairLabelRendererResult,
-    AgCartesianAxisPosition,
-} from 'ag-charts-community';
+import { _Scene, _Util, _ModuleSupport, AgCartesianAxisPosition } from 'ag-charts-community';
 import { CrosshairLabel, LabelMeta } from './crosshairLabel';
+
+type AgCrosshairLabelRendererResult = any;
 
 const { Group, Line, BBox } = _Scene;
 const { checkDatum } = _Util;
@@ -46,7 +42,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     private lineNode: _Scene.Line = this.crosshairGroup.appendChild(new Line());
 
     private activeHighlight?: _ModuleSupport.HighlightChangeEvent['currentHighlight'] = undefined;
-    constructor(private readonly ctx: _ModuleSupport.ModuleContextWithParent<_ModuleSupport.AxisContext>) {
+    constructor(ctx: _ModuleSupport.ModuleContextWithParent<_ModuleSupport.AxisContext>) {
         super();
 
         const mouseMove = ctx.interactionManager.addListener('hover', (event) => this.onMouseMove(event));

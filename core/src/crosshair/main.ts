@@ -1,1 +1,1 @@
-export { CrosshairModule } from './crosshairModule';
+export * from './crosshairModule';

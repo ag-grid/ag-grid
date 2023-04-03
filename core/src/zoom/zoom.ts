@@ -1,5 +1,5 @@
 import { _ModuleSupport, _Scene } from 'ag-charts-community';
-import * as ContextMenu from '@ag-charts-enterprise/context-menu';
+import * as ContextMenu from '../context-menu/main';
 
 import { ZoomPanner } from './zoomPanner';
 import { ZoomScroller } from './zoomScroller';
@@ -119,7 +119,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
             return;
         }
 
-        const newZoom = { x: { min: 0, max: 1 }, y: { min: 0, max: 1 } };
+        // const newZoom = { x: { min: 0, max: 1 }, y: { min: 0, max: 1 } };
         // this.updateZoomWithConstraints(newZoom);
     }
 

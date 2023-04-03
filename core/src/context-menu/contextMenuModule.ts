@@ -38,20 +38,6 @@ export function _enableAction(actionId: string) {
     ContextMenu.enableAction(actionId);
 }
 
-declare module 'ag-charts-community' {
-    export interface AgCartesianChartOptions {
-        contextMenu?: AgContextMenuOptions;
-    }
-
-    export interface AgPolarChartOptions {
-        contextMenu?: AgContextMenuOptions;
-    }
-
-    export interface AgHierarchyChartOptions {
-        contextMenu?: AgContextMenuOptions;
-    }
-}
-
 export interface AgContextMenuOptions {
     enabled?: boolean;
     extraActions?: Array<AgContextMenuAction>;

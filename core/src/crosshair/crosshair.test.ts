@@ -4,10 +4,10 @@ import {
     AgCartesianAxisOptions,
     AgCartesianAxisPosition,
     AgCartesianChartOptions,
-    AgChart,
     AgChartOptions,
+    AgEnterpriseCharts,
     _ModuleSupport,
-} from 'ag-charts-community';
+} from '../main';
 import {
     waitForChartStability,
     setupMockCanvas,
@@ -16,11 +16,8 @@ import {
     hoverAction,
     prepareTestOptions,
 } from 'ag-charts-community/dist/cjs/es5/main-test';
-import { CrosshairModule } from './crosshairModule';
 
 expect.extend({ toMatchImageSnapshot });
-
-_ModuleSupport.registerModule(CrosshairModule);
 
 function applyAxesFlip<T>(opts: T): T {
     const positionFlip = (position: AgCartesianAxisPosition) => {
@@ -224,7 +221,7 @@ describe('Crosshair', () => {
             const options: AgChartOptions = TEST_CASE;
             prepareTestOptions(options);
 
-            chart = AgChart.create(options);
+            chart = AgEnterpriseCharts.create(options);
             await waitForChartStability(chart);
             await hoverAction(605, 300)(chart);
             await compare();
@@ -234,7 +231,7 @@ describe('Crosshair', () => {
             const options: AgChartOptions = applyCrosshairSnap(TEST_CASE, true);
             prepareTestOptions(options);
 
-            chart = AgChart.create(options);
+            chart = AgEnterpriseCharts.create(options);
             await waitForChartStability(chart);
             await hoverAction(605, 120)(chart);
             await compare();
@@ -250,7 +247,7 @@ describe('Crosshair', () => {
                 top: 100,
             };
 
-            chart = AgChart.create(options);
+            chart = AgEnterpriseCharts.create(options);
             await waitForChartStability(chart);
             await hoverAction(300, 300)(chart);
             await compare();

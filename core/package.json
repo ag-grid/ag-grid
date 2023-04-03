@@ -108,7 +108,7 @@
         "access": "private"
     },
     "lint-staged": {
-        "*.{ts,js,md,json}": ".lint-staged/run.sh prettier",
-        "*.{ts,js}": ".lint-staged/run.sh eslint"
+        "*.{ts,js,md,json}": "charts-enterprise-modules/core/.lint-staged/run.sh prettier",
+        "*.{ts,js}": "charts-enterprise-modules/core/.lint-staged/run.sh eslint"
     }
 }

@@ -12,12 +12,6 @@ export const ZoomModule: _ModuleSupport.Module = {
     },
 };
 
-declare module 'ag-charts-community' {
-    export interface AgCartesianChartOptions {
-        zoom?: AgZoomOptions;
-    }
-}
-
 export type AgZoomAxes = 'x' | 'y' | 'xy';
 export type AgZoomPanKey = 'alt' | 'ctrl' | 'meta' | 'shift';
 

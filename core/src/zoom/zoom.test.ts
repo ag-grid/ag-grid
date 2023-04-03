@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
-import { AgChart, AgCartesianChartOptions, _ModuleSupport } from '@ag-charts-enterprise/core';
+import { AgCartesianChartOptions, _ModuleSupport, AgEnterpriseCharts } from '../main';
 import {
     waitForChartStability,
     setupMockCanvas,
@@ -10,11 +10,8 @@ import {
     clickAction,
     prepareTestOptions,
 } from 'ag-charts-community/dist/cjs/es5/main-test';
-import { ZoomModule } from './chartZoomModule';
 
 expect.extend({ toMatchImageSnapshot });
-
-_ModuleSupport.registerModule(ZoomModule);
 
 describe('Zoom', () => {
     let chart: any;
@@ -47,7 +44,7 @@ describe('Zoom', () => {
         cx = options.width! / 2;
         cy = options.height! / 2;
 
-        chart = AgChart.create(options);
+        chart = AgEnterpriseCharts.create(options);
 
         // Click once in the chart to ensure the chart is active / mouse is over it to ensure the first scroll wheel
         // event is triggered.
