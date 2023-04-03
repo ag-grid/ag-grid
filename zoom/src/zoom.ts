@@ -4,14 +4,7 @@ import * as ContextMenu from '@ag-charts-enterprise/context-menu';
 import { ZoomPanner } from './zoomPanner';
 import { ZoomScroller } from './zoomScroller';
 import { ZoomSelector } from './zoomSelector';
-import {
-    constrainZoom,
-    definedZoomState,
-    pointToRatio,
-    scaleZoom,
-    scaleZoomCenter,
-    translateZoom,
-} from './zoomTransformers';
+import { constrainZoom, definedZoomState, pointToRatio, scaleZoomCenter, translateZoom } from './zoomTransformers';
 import { DefinedZoomState } from './zoomTypes';
 import { ZoomRect } from './scenes/zoomRect';
 
@@ -58,11 +51,11 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     // Scenes
     private readonly scene: _Scene.Scene;
     private seriesRect?: _Scene.BBox;
-    
+
     // Module context
     private readonly zoomManager: _ModuleSupport.ZoomManager;
     private readonly updateService: _ModuleSupport.UpdateService;
-    
+
     // Zoom methods
     private readonly panner: ZoomPanner;
     private readonly selector: ZoomSelector;
@@ -80,7 +73,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
 
         // Add interaction listeners
         [
-            ctx.interactionManager.addListener('dblclick', (event) => this.onDoubleClick(event));
+            ctx.interactionManager.addListener('dblclick', (event) => this.onDoubleClick(event)),
             ctx.interactionManager.addListener('drag', (event) => this.onDrag(event)),
             ctx.interactionManager.addListener('drag-end', () => this.onDragEnd()),
             ctx.interactionManager.addListener('wheel', (event) => this.onWheel(event)),
@@ -126,14 +119,14 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
             return;
         }
 
-        const newZoom = { x: { min: 0 , max: 1 }, y: { min: 0, max: 1 } };
-        this.updateZoomWithConstraints(newZoom)
+        const newZoom = { x: { min: 0, max: 1 }, y: { min: 0, max: 1 } };
+        // this.updateZoomWithConstraints(newZoom);
     }
 
     private onDrag(event: _ModuleSupport.InteractionEvent<'drag'>) {
         const isWithinSeriesRect = this.seriesRect?.containsPoint(event.offsetX, event.offsetY);
         const isPrimaryMouseButton = (event.sourceEvent as MouseEvent).button === 0;
-        
+
         if (!isWithinSeriesRect || !isPrimaryMouseButton) return;
 
         this.isDragging = true;
