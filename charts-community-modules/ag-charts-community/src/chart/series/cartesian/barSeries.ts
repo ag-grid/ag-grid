@@ -16,6 +16,7 @@ import {
 import { ChartAxis, flipChartAxisDirection } from '../../chartAxis';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
+import { extent } from '../../../util/array';
 import { areArrayItemsStrictlyEqual } from '../../../util/equal';
 import { Scale } from '../../../scale/scale';
 import { sanitizeHtml } from '../../../util/sanitize';
@@ -48,8 +49,8 @@ import {
     FontStyle,
     FontWeight,
 } from '../../agChartOptions';
+import { LogAxis } from '../../axis/logAxis';
 import { DataModel, GroupedData, SMALLEST_KEY_INTERVAL, SUM_VALUE_EXTENT } from '../../data/dataModel';
-import { extent } from '../../../util/array';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
@@ -373,8 +374,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             },
             domain: {
                 keys: [keys],
+                values: [yExtent],
             },
-            reduced: { [SMALLEST_KEY_INTERVAL.property]: smallestX, [SUM_VALUE_EXTENT.property]: yExtent } = {},
+            reduced: { [SMALLEST_KEY_INTERVAL.property]: smallestX, [SUM_VALUE_EXTENT.property]: ySumExtent } = {},
         } = processedData;
 
         if (direction === ChartAxisDirection.X) {
@@ -387,8 +389,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 return [keysExtent[0] + -smallestX, keysExtent[1]];
             }
             return [keysExtent[0], keysExtent[1] + smallestX];
+        } else if (this.getValueAxis() instanceof LogAxis) {
+            return this.fixNumericExtent(yExtent as any);
         } else {
-            return yExtent;
+            return this.fixNumericExtent(ySumExtent);
         }
     }
 
