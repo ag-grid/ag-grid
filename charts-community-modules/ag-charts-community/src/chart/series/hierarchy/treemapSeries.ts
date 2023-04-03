@@ -405,7 +405,6 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                 series: this,
                 isLeaf,
                 children: [] as TreemapNodeDatum[],
-                nodeMidPoint: { x: 0, y: 0 },
             };
             if (isLeaf) {
                 nodeDatum.value = sizeKey ? datum[sizeKey] ?? 1 : 1;

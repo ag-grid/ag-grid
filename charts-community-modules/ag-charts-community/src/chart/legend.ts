@@ -770,7 +770,6 @@ export class Legend {
                 series,
                 itemId,
                 datum: undefined,
-                nodeMidPoint: { x: 0, y: 0 },
             });
         }
 
@@ -908,7 +907,6 @@ export class Legend {
                 series,
                 itemId: datum?.itemId,
                 datum: undefined,
-                nodeMidPoint: { x: 0, y: 0 },
             });
         } else {
             this.highlightManager.updateHighlight(this.id);

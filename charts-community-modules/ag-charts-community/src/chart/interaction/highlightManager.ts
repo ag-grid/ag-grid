@@ -15,7 +15,7 @@ interface HighlightNodeDatum {
     readonly aggregatedValue?: number;
     readonly domain?: [number, number];
     readonly point?: Readonly<SizedPoint>;
-    readonly nodeMidPoint: Readonly<Point>;
+    readonly nodeMidPoint?: Readonly<Point>;
 }
 
 export interface HighlightChangeEvent {

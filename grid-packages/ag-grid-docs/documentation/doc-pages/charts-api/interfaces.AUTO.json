@@ -3495,7 +3495,7 @@
       "aggregatedValue?": "number",
       "domain?": "[ number, number ]",
       "point?": "Readonly<SizedPoint>",
-      "nodeMidPoint": "Readonly<Point>"
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "HighlightChangeEvent": {
@@ -3750,7 +3750,7 @@
       "itemId?": "any",
       "datum": "any",
       "point?": "Readonly<SizedPoint>",
-      "nodeMidPoint": "Readonly<Point>"
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "BarSeriesNodeTag": {
@@ -3787,7 +3787,7 @@
       "itemId?": "any",
       "datum": "any",
       "point?": "Readonly<SizedPoint>",
-      "nodeMidPoint": "Readonly<Point>"
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "SubGroup": {
@@ -3840,7 +3840,7 @@
       "itemId?": "any",
       "datum": "any",
       "point?": "Readonly<SizedPoint>",
-      "nodeMidPoint": "Readonly<Point>"
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "HistogramAggregation": {
@@ -3862,7 +3862,7 @@
       "itemId?": "any",
       "datum": "any",
       "point?": "Readonly<SizedPoint>",
-      "nodeMidPoint": "Readonly<Point>"
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "PointDatum": {
@@ -3883,7 +3883,7 @@
       "itemId?": "any",
       "datum": "any",
       "point?": "Readonly<SizedPoint>",
-      "nodeMidPoint": "Readonly<Point>"
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "TreeDatum": {
@@ -3904,7 +3904,7 @@
       "series": "Series<any>",
       "itemId?": "any",
       "point?": "Readonly<SizedPoint>",
-      "nodeMidPoint": "Readonly<Point>"
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "TextNodeTag": {
@@ -3937,7 +3937,7 @@
       "itemId?": "any",
       "datum": "any",
       "point?": "Readonly<SizedPoint>",
-      "nodeMidPoint": "Readonly<Point>"
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "PieNodeTag": {
@@ -3954,7 +3954,7 @@
       "itemId?": "any",
       "datum": "any",
       "point?": "Readonly<SizedPoint>",
-      "nodeMidPoint": "Readonly<Point>"
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "SeriesNodePickMode": {

@@ -5273,7 +5273,7 @@
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     },
     "nodeMidPoint": {
-      "type": { "returnType": "Readonly<Point>", "optional": false }
+      "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
   "HighlightChangeEvent": {
@@ -5495,7 +5495,7 @@
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     },
     "nodeMidPoint": {
-      "type": { "returnType": "Readonly<Point>", "optional": false }
+      "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
   "BarSeriesNodeTag": {},
@@ -5525,7 +5525,7 @@
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     },
     "nodeMidPoint": {
-      "type": { "returnType": "Readonly<Point>", "optional": false }
+      "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
   "SubGroup": {
@@ -5592,7 +5592,7 @@
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     },
     "nodeMidPoint": {
-      "type": { "returnType": "Readonly<Point>", "optional": false }
+      "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
   "HistogramAggregation": {},
@@ -5616,7 +5616,7 @@
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
     "nodeMidPoint": {
-      "type": { "returnType": "Readonly<Point>", "optional": false }
+      "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
   "PointDatum": {
@@ -5636,7 +5636,7 @@
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     },
     "nodeMidPoint": {
-      "type": { "returnType": "Readonly<Point>", "optional": false }
+      "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
   "TreeDatum": {},
@@ -5659,7 +5659,7 @@
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     },
     "nodeMidPoint": {
-      "type": { "returnType": "Readonly<Point>", "optional": false }
+      "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
   "TextNodeTag": {},
@@ -5695,7 +5695,7 @@
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     },
     "nodeMidPoint": {
-      "type": { "returnType": "Readonly<Point>", "optional": false }
+      "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
   "PieNodeTag": {},
@@ -5707,7 +5707,7 @@
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
     },
     "nodeMidPoint": {
-      "type": { "returnType": "Readonly<Point>", "optional": false }
+      "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
   "SeriesNodePickMode": {},

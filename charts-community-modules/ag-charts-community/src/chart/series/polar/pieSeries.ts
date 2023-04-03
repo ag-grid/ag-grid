@@ -568,7 +568,6 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 midAngle,
                 midCos,
                 midSin,
-                nodeMidPoint: { x: 0, y: 0 },
                 calloutLabel: labelVisible
                     ? {
                           text: labelData[datumIndex],
