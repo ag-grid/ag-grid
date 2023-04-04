@@ -6,7 +6,6 @@ import {
     AgBarSeriesOptions,
     AgAreaSeriesOptions,
     AgScatterSeriesOptions,
-    AgHeatmapSeriesOptions,
     AgHistogramSeriesOptions,
     AgPieSeriesOptions,
     AgTreemapSeriesOptions,
@@ -20,7 +19,6 @@ import { Caption } from '../caption';
 import { Series } from './series/series';
 import { AreaSeries } from './series/cartesian/areaSeries';
 import { BarSeries } from './series/cartesian/barSeries';
-import { HeatmapSeries } from './series/cartesian/heatmapSeries';
 import { HistogramSeries } from './series/cartesian/histogramSeries';
 import { LineSeries } from './series/cartesian/lineSeries';
 import { ScatterSeries } from './series/cartesian/scatterSeries';
@@ -48,9 +46,12 @@ import {
 import { SeriesOptionsTypes } from './mapping/defaults';
 import { CrossLine } from './crossline/crossLine';
 import { windowValue } from '../util/window';
-import { AxisModule, Module, RootModule } from '../util/module';
+import { AxisModule, Module, ModuleInstanceMeta, RootModule, SeriesModule } from '../util/module';
 import { Logger } from '../util/logger';
 import { BackgroundImage } from './background/backgroundImage';
+import { CHART_TYPES } from './chartTypes';
+import { ChartTheme } from './themes/chartTheme';
+import { DarkTheme } from './themes/darkTheme';
 
 // Deliberately imported via `module-support` so that internal module registration happens.
 import { REGISTERED_MODULES } from '../module-support';
@@ -63,8 +64,6 @@ type SeriesOptionType<T extends Series> = T extends LineSeries
     ? AgAreaSeriesOptions
     : T extends ScatterSeries
     ? AgScatterSeriesOptions
-    : T extends HeatmapSeries
-    ? AgHeatmapSeriesOptions
     : T extends HistogramSeries
     ? AgHistogramSeriesOptions
     : T extends PieSeries
@@ -231,7 +230,9 @@ abstract class AgChartInternal {
         const { overrideDevicePixelRatio } = userOptions;
         delete userOptions['overrideDevicePixelRatio'];
 
-        const processedOptions = prepareOptions(userOptions, mixinOpts);
+        initialiseSeriesModules();
+
+        const processedOptions = prepareOptions(userOptions, mixinOpts, seriesDefaults);
         let chart = proxy?.chart;
         if (chart == null || chartType(userOptions as any) !== chartType(chart.processedOptions as any)) {
             chart = AgChartInternal.createChartInstance(processedOptions, overrideDevicePixelRatio, chart);
@@ -545,43 +546,93 @@ function applyAxes(chart: Chart, options: AgCartesianChartOptions) {
     return true;
 }
 
+const builtinSeriesTypes: Record<string, new () => Series<any>> = {
+    area: AreaSeries,
+    bar: BarSeries,
+    column: BarSeries,
+    histogram: HistogramSeries,
+    line: LineSeries,
+    pie: PieSeries,
+    scatter: ScatterSeries,
+    treemap: TreemapSeries,
+};
+
+const extraSeriesFactories: Record<string, () => Series<any>> = {};
+
+const initialisedSeriesModules = new Map<SeriesModule, ModuleInstanceMeta>();
+
+function initialiseSeriesModules() {
+    REGISTERED_MODULES.filter((m): m is SeriesModule => m.type === 'series')
+        .filter((m) => !initialisedSeriesModules.has(m))
+        .forEach(initialiseSeriesModule);
+}
+
+const seriesDefaults: Record<string, any> = {};
+
+function initialiseSeriesModule(mod: SeriesModule) {
+    const seriesType = mod.optionsKey;
+    const instance = mod.initialiseModule({
+        seriesFactory: {
+            add(factory) {
+                extraSeriesFactories[seriesType] = factory;
+            },
+            delete() {
+                delete extraSeriesFactories[seriesType];
+            },
+        },
+        defaults: {
+            add(defaultOptions: any) {
+                seriesDefaults[seriesType] = defaultOptions;
+            },
+            delete() {
+                delete seriesDefaults[seriesType];
+            },
+        },
+        themes: {
+            chartTheme: {
+                add(fn) {
+                    ChartTheme.seriesThemeOverrides[seriesType] = fn;
+                },
+                delete() {
+                    delete ChartTheme.seriesThemeOverrides[seriesType];
+                },
+            },
+            darkTheme: {
+                add(fn) {
+                    DarkTheme.seriesDarkThemeOverrides[seriesType] = fn;
+                },
+                delete() {
+                    delete DarkTheme.seriesDarkThemeOverrides[seriesType];
+                },
+            },
+        },
+    });
+    initialisedSeriesModules.set(mod, instance);
+    const chartType = mod.chartTypes[0];
+    CHART_TYPES.add(seriesType, chartType);
+}
+
+function getSeries(chartType: string): Series<any> {
+    if (extraSeriesFactories.hasOwnProperty(chartType)) {
+        const factory = extraSeriesFactories[chartType];
+        return factory();
+    }
+    if (builtinSeriesTypes.hasOwnProperty(chartType)) {
+        const SeriesConstructor = builtinSeriesTypes[chartType];
+        return new SeriesConstructor();
+    }
+    throw new Error(`AG Charts - unknown series type: ${chartType}`);
+}
+
 function createSeries(options: SeriesOptionsTypes[]): Series[] {
     const series: Series<any>[] = [];
 
     let index = 0;
     for (const seriesOptions of options || []) {
         const path = `series[${index++}]`;
-        switch (seriesOptions.type) {
-            case 'area':
-                series.push(applySeriesValues(new AreaSeries(), seriesOptions, { path, index }));
-                break;
-            case 'bar':
-                series.push(applySeriesValues(new BarSeries(), seriesOptions, { path, index }));
-                break;
-            case 'column':
-                series.push(applySeriesValues(new BarSeries(), seriesOptions, { path, index }));
-                break;
-            case 'heatmap':
-                series.push(applySeriesValues(new HeatmapSeries(), seriesOptions, { path, index }));
-                break;
-            case 'histogram':
-                series.push(applySeriesValues(new HistogramSeries(), seriesOptions, { path, index }));
-                break;
-            case 'line':
-                series.push(applySeriesValues(new LineSeries(), seriesOptions, { path, index }));
-                break;
-            case 'scatter':
-                series.push(applySeriesValues(new ScatterSeries(), seriesOptions, { path, index }));
-                break;
-            case 'pie':
-                series.push(applySeriesValues(new PieSeries(), seriesOptions, { path, index }));
-                break;
-            case 'treemap':
-                series.push(applySeriesValues(new TreemapSeries(), seriesOptions, { path, index }));
-                break;
-            default:
-                throw new Error('AG Charts - unknown series type: ' + (seriesOptions as any).type);
-        }
+        const seriesInstance = getSeries(seriesOptions.type!);
+        applySeriesValues(seriesInstance, seriesOptions as any, { path, index });
+        series.push(seriesInstance);
     }
 
     return series;

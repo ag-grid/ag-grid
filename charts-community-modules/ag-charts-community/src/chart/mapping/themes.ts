@@ -11,29 +11,29 @@ import { VividDark } from '../themes/vividDark';
 import { AgChartTheme, AgChartThemeName, AgChartThemeOverrides } from '../agChartOptions';
 import { jsonMerge } from '../../util/json';
 
-type ThemeMap = { [key in AgChartThemeName | 'undefined' | 'null']?: ChartTheme };
+type ThemeMap = { [key in AgChartThemeName | 'undefined' | 'null']?: () => ChartTheme };
 
-const lightTheme = new ChartTheme();
-const darkTheme = new DarkTheme();
+const lightTheme = () => new ChartTheme();
+const darkTheme = () => new DarkTheme();
 
 const lightThemes: ThemeMap = {
     undefined: lightTheme,
     null: lightTheme,
     'ag-default': lightTheme,
-    'ag-material': new MaterialLight(),
-    'ag-pastel': new PastelLight(),
-    'ag-solar': new SolarLight(),
-    'ag-vivid': new VividLight(),
+    'ag-material': () => new MaterialLight(),
+    'ag-pastel': () => new PastelLight(),
+    'ag-solar': () => new SolarLight(),
+    'ag-vivid': () => new VividLight(),
 };
 
 const darkThemes: ThemeMap = {
     undefined: darkTheme,
     null: darkTheme,
     'ag-default-dark': darkTheme,
-    'ag-material-dark': new MaterialDark(),
-    'ag-pastel-dark': new PastelDark(),
-    'ag-solar-dark': new SolarDark(),
-    'ag-vivid-dark': new VividDark(),
+    'ag-material-dark': () => new MaterialDark(),
+    'ag-pastel-dark': () => new PastelDark(),
+    'ag-solar-dark': () => new SolarDark(),
+    'ag-vivid-dark': () => new VividDark(),
 };
 
 export const themes: ThemeMap = {
@@ -48,7 +48,7 @@ export function getChartTheme(value?: string | ChartTheme | AgChartTheme): Chart
 
     const stockTheme = themes[value as AgChartThemeName];
     if (stockTheme) {
-        return stockTheme;
+        return stockTheme();
     }
 
     value = value as AgChartTheme;
@@ -79,5 +79,5 @@ export function getChartTheme(value?: string | ChartTheme | AgChartTheme): Chart
         return new baseTheme.constructor(flattenedTheme);
     }
 
-    return lightTheme;
+    return lightTheme();
 }

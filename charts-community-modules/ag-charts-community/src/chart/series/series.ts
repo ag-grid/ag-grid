@@ -17,6 +17,7 @@ import {
 } from '../../util/validation';
 import { PlacedLabel, PointLabelDatum } from '../../util/labelPlacement';
 import { Layers } from '../layers';
+import { BandScale } from '../../scale/bandScale';
 import { SizedPoint, Point } from '../../scene/point';
 import { BBox } from '../../scene/bbox';
 import { HighlightManager } from '../interaction/highlightManager';
@@ -244,6 +245,11 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     @Validate(INTERACTION_RANGE)
     nodeClickRange: AgChartInteractionRange = 'exact';
+
+    setBandScalePadding(scale: BandScale<any>) {
+        scale.paddingInner = 1;
+        scale.paddingOuter = 0;
+    }
 
     _declarationOrder: number = -1;
 

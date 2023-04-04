@@ -115,7 +115,6 @@ const SERIES_TRANSFORMS: {
     area: identityTransform,
     bar: barSeriesTransform,
     column: barSeriesTransform,
-    heatmap: identityTransform,
     histogram: identityTransform,
     line: identityTransform,
     pie: identityTransform,
@@ -124,7 +123,7 @@ const SERIES_TRANSFORMS: {
 };
 
 export function applySeriesTransform<S extends SeriesTypes>(options: S): S {
-    const type = options.type;
+    const type = (options as any).type;
     const transform = SERIES_TRANSFORMS[type || 'line'] as Function;
-    return transform(options);
+    return (transform || identityTransform)(options);
 }

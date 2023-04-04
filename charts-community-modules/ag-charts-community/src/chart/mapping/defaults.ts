@@ -30,21 +30,6 @@ export const DEFAULT_BAR_CHART_OVERRIDES: AgCartesianChartOptions = {
     ],
 };
 
-export const DEFAULT_HEATMAP_CHART_OVERRIDES: AgCartesianChartOptions = {
-    axes: [
-        {
-            type: CategoryAxis.type,
-            position: 'left',
-            paddingOuter: 0.5,
-        },
-        {
-            type: CategoryAxis.type,
-            position: 'bottom',
-            paddingOuter: 0.5,
-        },
-    ],
-};
-
 export const DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES: AgCartesianChartOptions = {
     axes: [
         {

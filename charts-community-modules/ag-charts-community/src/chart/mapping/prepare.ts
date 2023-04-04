@@ -11,13 +11,13 @@ import {
     DEFAULT_CARTESIAN_CHART_OVERRIDES,
     DEFAULT_BAR_CHART_OVERRIDES,
     DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES,
-    DEFAULT_HEATMAP_CHART_OVERRIDES,
 } from './defaults';
 import { jsonMerge, DELETE, jsonWalk, JsonMergeOptions } from '../../util/json';
 import { applySeriesTransform } from './transforms';
 import { getChartTheme } from './themes';
 import { processSeriesOptions, SeriesOptions } from './prepareSeries';
 import { Logger } from '../../util/logger';
+import { CHART_TYPES } from '../chartTypes';
 
 type AxesOptionsTypes = NonNullable<AgCartesianChartOptions['axes']>[number];
 
@@ -39,19 +39,7 @@ export function isAgCartesianChartOptions(input: AgChartOptions): input is AgCar
         return true;
     }
 
-    switch (specifiedType) {
-        case 'area':
-        case 'bar':
-        case 'column':
-        case 'histogram':
-        case 'line':
-        case 'scatter':
-        case 'heatmap':
-            return true;
-
-        default:
-            return false;
-    }
+    return CHART_TYPES.isCartesian(specifiedType);
 }
 
 export function isAgHierarchyChartOptions(input: AgChartOptions): input is AgHierarchyChartOptions {
@@ -65,7 +53,7 @@ export function isAgHierarchyChartOptions(input: AgChartOptions): input is AgHie
         return true;
     }
 
-    return specifiedType === 'treemap';
+    return CHART_TYPES.isHierarchy(specifiedType);
 }
 
 export function isAgPolarChartOptions(input: AgChartOptions): input is AgPolarChartOptions {
@@ -79,15 +67,14 @@ export function isAgPolarChartOptions(input: AgChartOptions): input is AgPolarCh
         return true;
     }
 
-    return specifiedType === 'pie';
+    return CHART_TYPES.isPolar(specifiedType);
 }
 
-const SERIES_OPTION_TYPES = ['line', 'bar', 'column', 'heatmap', 'histogram', 'scatter', 'area', 'pie', 'treemap'];
 function isSeriesOptionType(input?: string): input is NonNullable<SeriesOptionsTypes['type']> {
     if (input == null) {
         return false;
     }
-    return SERIES_OPTION_TYPES.indexOf(input) >= 0;
+    return CHART_TYPES.has(input);
 }
 
 function countArrayElements<T extends any[] | any[][]>(input: T): number {
@@ -122,8 +109,8 @@ export const noDataCloneMergeOptions: JsonMergeOptions = {
     avoidDeepClone: ['data'],
 };
 
-export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallbackOptions: T[]): T {
-    let options: T = jsonMerge([...fallbackOptions, newOptions], noDataCloneMergeOptions);
+export function prepareOptions<T extends AgChartOptions>(newOptions: T, fallbackOptions: T, seriesDefaults: any): T {
+    let options: T = jsonMerge([fallbackOptions, newOptions], noDataCloneMergeOptions);
     sanityCheckOptions(options);
 
     // Determine type and ensure it's explicit in the options config.
@@ -131,10 +118,8 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallb
     const type = optionsType(options);
 
     const checkSeriesType = (type?: string) => {
-        if (type != null && !isSeriesOptionType(type)) {
-            throw new Error(
-                `AG Charts - unknown series type: ${type}; expected one of: ${SERIES_OPTION_TYPES.join(', ')}`
-            );
+        if (type != null && !(isSeriesOptionType(type) || seriesDefaults[type])) {
+            throw new Error(`AG Charts - unknown series type: ${type}; expected one of: ${CHART_TYPES.seriesTypes}`);
         }
     };
     checkSeriesType(type);
@@ -155,12 +140,12 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallb
     }
 
     let defaultOverrides = {};
-    if (type === 'bar') {
+    if (seriesDefaults.hasOwnProperty(type)) {
+        defaultOverrides = seriesDefaults[type];
+    } else if (type === 'bar') {
         defaultOverrides = DEFAULT_BAR_CHART_OVERRIDES;
     } else if (type === 'scatter' || type === 'histogram') {
         defaultOverrides = DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES;
-    } else if (type === 'heatmap') {
-        defaultOverrides = DEFAULT_HEATMAP_CHART_OVERRIDES;
     } else if (isAgCartesianChartOptions(options)) {
         defaultOverrides = DEFAULT_CARTESIAN_CHART_OVERRIDES;
     }
@@ -177,7 +162,7 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallb
             if (s.type) {
                 type = s.type;
             } else if (isSeriesOptionType(userSuppliedOptionsType)) {
-                type = userSuppliedOptionsType;
+                type = userSuppliedOptionsType as any;
             }
             const mergedSeries = jsonMerge([seriesThemes[type] || {}, { ...s, type }], noDataCloneMergeOptions);
             if (type === 'pie') {
@@ -188,7 +173,7 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallb
     ).map((s) => prepareSeries(context, s)) as any[];
 
     if (isAgCartesianChartOptions(mergedOptions)) {
-        mergedOptions.axes = mergedOptions.axes?.map((a) => {
+        (mergedOptions as any).axes = (mergedOptions as any).axes?.map((a: any) => {
             const type = a.type ?? 'number';
             const axis = { ...a, type };
             const axesTheme = jsonMerge([axesThemes[type], axesThemes[type][a.position || 'unknown'] || {}]);
@@ -269,7 +254,7 @@ function calculateSeriesPalette<T extends SeriesOptionsTypes>(context: Preparati
 
     const inputAny = input as any;
     let colourCount = countArrayElements(inputAny['yKeys'] || []) || 1; // Defaults to 1 if no yKeys.
-    switch (input.type) {
+    switch ((input as any).type) {
         case 'pie':
             colourCount = Math.max(fills.length, strokes.length);
         // eslint-disable-next-line no-fallthrough
@@ -289,12 +274,6 @@ function calculateSeriesPalette<T extends SeriesOptionsTypes>(context: Preparati
                 fill: takeColours(context, fills, 1)[0],
             };
             break;
-        case 'heatmap':
-            paletteOptions.marker = {
-                stroke: takeColours(context, strokes, 1)[0],
-                fill: takeColours(context, fills, 1)[0],
-            };
-            break;
         case 'line':
             paletteOptions.stroke = takeColours(context, fills, 1)[0];
             paletteOptions.marker = {
@@ -302,10 +281,6 @@ function calculateSeriesPalette<T extends SeriesOptionsTypes>(context: Preparati
                 fill: takeColours(context, fills, 1)[0],
             };
             break;
-        case 'treemap':
-            break;
-        default:
-            throw new Error('AG Charts - unknown series type: ' + input.type);
     }
     context.colourIndex += colourCount;
 

@@ -1,10 +1,26 @@
-import { ChartTheme } from './chartTheme';
 import { AgChartThemeOptions } from '../agChartOptions';
+import { ChartTheme } from './chartTheme';
+import { CHART_TYPES } from '../chartTypes';
+
+export interface DarkThemeParams {
+    seriesLabelDefaults: any;
+}
 
 export class DarkTheme extends ChartTheme {
+    static fontColor = 'rgb(200, 200, 200)';
+    static mutedFontColor = 'rgb(150, 150, 150)';
+
+    static seriesLabelDefaults = {
+        label: {
+            color: DarkTheme.fontColor,
+        },
+    };
+
+    static seriesDarkThemeOverrides: Record<string, (params: DarkThemeParams) => any> = {};
+
     protected getDefaults(): (typeof ChartTheme)['defaults'] {
-        const fontColor = 'rgb(200, 200, 200)';
-        const mutedFontColor = 'rgb(150, 150, 150)';
+        const fontColor = DarkTheme.fontColor;
+        const mutedFontColor = DarkTheme.mutedFontColor;
 
         const axisDefaults = {
             title: {
@@ -74,6 +90,17 @@ export class DarkTheme extends ChartTheme {
             },
         };
 
+        const getOverridesByType = (seriesTypes: string[]) => {
+            return seriesTypes.reduce((obj, seriesType) => {
+                if (DarkTheme.seriesDarkThemeOverrides.hasOwnProperty(seriesType)) {
+                    obj[seriesType] = DarkTheme.seriesDarkThemeOverrides[seriesType]({
+                        seriesLabelDefaults: DarkTheme.seriesLabelDefaults,
+                    });
+                }
+                return obj;
+            }, {} as Record<string, any>);
+        };
+
         return this.mergeWithParentDefaults(super.getDefaults(), {
             cartesian: {
                 ...chartDefaults,
@@ -85,12 +112,10 @@ export class DarkTheme extends ChartTheme {
                     column: {
                         ...seriesLabelDefaults,
                     },
-                    heatmap: {
-                        ...seriesLabelDefaults,
-                    },
                     histogram: {
                         ...seriesLabelDefaults,
                     },
+                    ...getOverridesByType(CHART_TYPES.cartesianTypes),
                 },
             },
             groupedCategory: {
@@ -103,12 +128,10 @@ export class DarkTheme extends ChartTheme {
                     column: {
                         ...seriesLabelDefaults,
                     },
-                    heatmap: {
-                        ...seriesLabelDefaults,
-                    },
                     histogram: {
                         ...seriesLabelDefaults,
                     },
+                    ...getOverridesByType(CHART_TYPES.cartesianTypes),
                 },
             },
             polar: {
@@ -128,6 +151,7 @@ export class DarkTheme extends ChartTheme {
                             color: fontColor,
                         },
                     },
+                    ...getOverridesByType(CHART_TYPES.polarTypes),
                 },
             },
             hierarchy: {
@@ -159,6 +183,7 @@ export class DarkTheme extends ChartTheme {
                             },
                         },
                     },
+                    ...getOverridesByType(CHART_TYPES.hierarchyTypes),
                 },
             },
         });
