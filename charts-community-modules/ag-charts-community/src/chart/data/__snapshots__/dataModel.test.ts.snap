@@ -193,7 +193,535 @@ Object {
 }
 `;
 
-exports[`DataModel grouped processing - stacked and normalised example should generated the expected results 1`] = `
+exports[`DataModel grouped processing - stacked and normalised example should generated the expected results for 100% stacked area example 1`] = `
+Object {
+  "data": Array [
+    Object {
+      "datum": Array [
+        Object {
+          "bioenergyWaste": 1.6,
+          "coal": 0.8,
+          "imported": 0.2,
+          "month": "Jan",
+          "naturalGas": 9.4,
+          "nuclear": 1.2,
+          "petroleum": 5.6,
+          "windSolarHydro": 0.7,
+        },
+      ],
+      "keys": Array [
+        "Jan",
+      ],
+      "sumValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
+      "values": Array [
+        Array [
+          29.946524064171125,
+          50.26737967914438,
+          8.556149732620321,
+          6.4171122994652405,
+          3.7433155080213907,
+          1.0695187165775402,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "bioenergyWaste": 1.6,
+          "coal": 1.1,
+          "imported": 0.1,
+          "month": "Feb",
+          "naturalGas": 8.8,
+          "nuclear": 1.2,
+          "petroleum": 5.6,
+          "windSolarHydro": 0.5,
+        },
+      ],
+      "keys": Array [
+        "Feb",
+      ],
+      "sumValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
+      "values": Array [
+        Array [
+          31.46067415730337,
+          49.438202247191015,
+          8.988764044943819,
+          6.741573033707865,
+          2.8089887640449436,
+          0.5617977528089887,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "bioenergyWaste": 1.6,
+          "coal": 1.4,
+          "imported": 0.1,
+          "month": "Mar",
+          "naturalGas": 9,
+          "nuclear": 1.2,
+          "petroleum": 5.4,
+          "windSolarHydro": 0.6,
+        },
+      ],
+      "keys": Array [
+        "Mar",
+      ],
+      "sumValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
+      "values": Array [
+        Array [
+          30.167597765363126,
+          50.27932960893854,
+          8.938547486033519,
+          6.703910614525139,
+          3.3519553072625694,
+          0.5586592178770949,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "bioenergyWaste": 1.3,
+          "coal": 0.6,
+          "imported": 0.1,
+          "month": "Apr",
+          "naturalGas": 6.3,
+          "nuclear": 1.2,
+          "petroleum": 5.9,
+          "windSolarHydro": 0.5,
+        },
+      ],
+      "keys": Array [
+        "Apr",
+      ],
+      "sumValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
+      "values": Array [
+        Array [
+          38.56209150326798,
+          41.1764705882353,
+          8.49673202614379,
+          7.843137254901961,
+          3.2679738562091507,
+          0.6535947712418301,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "bioenergyWaste": 1.3,
+          "coal": 0.5,
+          "imported": 0.2,
+          "month": "May",
+          "naturalGas": 4.5,
+          "nuclear": 1.2,
+          "petroleum": 5.6,
+          "windSolarHydro": 0.5,
+        },
+      ],
+      "keys": Array [
+        "May",
+      ],
+      "sumValues": Array [
+        Array [
+          0,
+          100.00000000000001,
+        ],
+      ],
+      "values": Array [
+        Array [
+          42.10526315789474,
+          33.83458646616542,
+          9.774436090225565,
+          9.022556390977444,
+          3.759398496240602,
+          1.5037593984962407,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "bioenergyWaste": 1.3,
+          "coal": 0.5,
+          "imported": 0.1,
+          "month": "Jun",
+          "naturalGas": 3.8,
+          "nuclear": 1.2,
+          "petroleum": 5.8,
+          "windSolarHydro": 0.4,
+        },
+      ],
+      "keys": Array [
+        "Jun",
+      ],
+      "sumValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
+      "values": Array [
+        Array [
+          46.03174603174603,
+          30.158730158730158,
+          10.317460317460318,
+          9.523809523809524,
+          3.174603174603175,
+          0.7936507936507937,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "bioenergyWaste": 1.3,
+          "coal": 0.4,
+          "imported": 0.2,
+          "month": "Jul",
+          "naturalGas": 3.9,
+          "nuclear": 1.2,
+          "petroleum": 5.6,
+          "windSolarHydro": 0.4,
+        },
+      ],
+      "keys": Array [
+        "Jul",
+      ],
+      "sumValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
+      "values": Array [
+        Array [
+          44.44444444444444,
+          30.952380952380953,
+          10.317460317460318,
+          9.523809523809524,
+          3.174603174603175,
+          1.5873015873015874,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "bioenergyWaste": 1.3,
+          "coal": 0.4,
+          "imported": 0.1,
+          "month": "Aug",
+          "naturalGas": 3.7,
+          "nuclear": 1.3,
+          "petroleum": 5.9,
+          "windSolarHydro": 0.4,
+        },
+      ],
+      "keys": Array [
+        "Aug",
+      ],
+      "sumValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
+      "values": Array [
+        Array [
+          46.456692913385815,
+          29.13385826771653,
+          10.236220472440943,
+          10.236220472440943,
+          3.1496062992125977,
+          0.7874015748031494,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "bioenergyWaste": 1.3,
+          "coal": 0.7,
+          "imported": 0.1,
+          "month": "Sep",
+          "naturalGas": 4.1,
+          "nuclear": 1.2,
+          "petroleum": 5.8,
+          "windSolarHydro": 0.6,
+        },
+      ],
+      "keys": Array [
+        "Sep",
+      ],
+      "sumValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
+      "values": Array [
+        Array [
+          44.27480916030535,
+          31.297709923664122,
+          9.923664122137406,
+          9.160305343511451,
+          4.580152671755726,
+          0.7633587786259544,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "bioenergyWaste": 1.6,
+          "coal": 0.6,
+          "imported": 0.1,
+          "month": "Oct",
+          "naturalGas": 5.9,
+          "nuclear": 1,
+          "petroleum": 5.5,
+          "windSolarHydro": 0.6,
+        },
+      ],
+      "keys": Array [
+        "Oct",
+      ],
+      "sumValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
+      "values": Array [
+        Array [
+          37.41496598639456,
+          40.13605442176871,
+          10.884353741496598,
+          6.802721088435375,
+          4.081632653061225,
+          0.6802721088435374,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "bioenergyWaste": 1.6,
+          "coal": 0.9,
+          "imported": 0.1,
+          "month": "Nov",
+          "naturalGas": 7.3,
+          "nuclear": 1,
+          "petroleum": 5.9,
+          "windSolarHydro": 0.7,
+        },
+      ],
+      "keys": Array [
+        "Nov",
+      ],
+      "sumValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
+      "values": Array [
+        Array [
+          35.54216867469879,
+          43.97590361445783,
+          9.638554216867469,
+          6.024096385542168,
+          4.216867469879518,
+          0.6024096385542168,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "bioenergyWaste": 1.6,
+          "coal": 0.7,
+          "imported": 0.1,
+          "month": "Dec",
+          "naturalGas": 8.2,
+          "nuclear": 1.1,
+          "petroleum": 5.8,
+          "windSolarHydro": 0.6,
+        },
+      ],
+      "keys": Array [
+        "Dec",
+      ],
+      "sumValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
+      "values": Array [
+        Array [
+          33.33333333333333,
+          47.126436781609186,
+          9.195402298850574,
+          6.32183908045977,
+          3.4482758620689653,
+          0.5747126436781609,
+        ],
+      ],
+    },
+  ],
+  "defs": Object {
+    "keys": Array [
+      Object {
+        "index": 0,
+        "missing": false,
+        "property": "month",
+        "type": "key",
+        "valueType": "category",
+      },
+    ],
+    "values": Array [
+      Object {
+        "index": 0,
+        "missing": false,
+        "property": "petroleum",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "index": 1,
+        "missing": false,
+        "property": "naturalGas",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "index": 2,
+        "missing": false,
+        "property": "bioenergyWaste",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "index": 3,
+        "missing": false,
+        "property": "nuclear",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "index": 4,
+        "missing": false,
+        "property": "windSolarHydro",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "index": 5,
+        "missing": false,
+        "property": "imported",
+        "type": "value",
+        "valueType": "range",
+      },
+    ],
+  },
+  "domain": Object {
+    "keys": Array [
+      Array [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ],
+    ],
+    "sumValues": Array [
+      Array [
+        0,
+        100,
+      ],
+    ],
+    "values": Array [
+      Array [
+        5.4,
+        5.9,
+      ],
+      Array [
+        3.7,
+        9.4,
+      ],
+      Array [
+        1.3,
+        1.6,
+      ],
+      Array [
+        1,
+        1.3,
+      ],
+      Array [
+        0.4,
+        0.7,
+      ],
+      Array [
+        0.1,
+        0.2,
+      ],
+    ],
+  },
+  "indices": Object {
+    "keys": Object {
+      "month": 0,
+    },
+    "values": Object {
+      "bioenergyWaste": 2,
+      "imported": 5,
+      "naturalGas": 1,
+      "nuclear": 3,
+      "petroleum": 0,
+      "windSolarHydro": 4,
+    },
+  },
+  "reduced": Object {
+    "sumValueExtent": Array [
+      0,
+      100,
+    ],
+  },
+  "type": "grouped",
+}
+`;
+
+exports[`DataModel grouped processing - stacked and normalised example should generated the expected results for 100% stacked columns example 1`] = `
 Object {
   "data": Array [
     Object {
@@ -220,10 +748,10 @@ Object {
       "values": Array [
         Array [
           59.712524678576585,
-          9.75586266673087,
+          9.755862666730872,
           17.616892184716136,
           9.00948620407377,
-          0.6837771464342466,
+          0.6837771464342467,
           3.221457119468387,
         ],
       ],
@@ -255,7 +783,7 @@ Object {
           6.388321614734185,
           11.273090029365255,
           5.531346949908065,
-          0.48829515223206293,
+          0.4882951522320629,
           2.03201235999776,
         ],
       ],
@@ -278,17 +806,17 @@ Object {
       "sumValues": Array [
         Array [
           0,
-          99.99999999999999,
+          100,
         ],
       ],
       "values": Array [
         Array [
           74.49944393701765,
           5.587263359806844,
-          11.533085671004578,
-          6.056912595216421,
+          11.53308567100458,
+          6.056912595216422,
           0.4072087289504093,
-          1.916085708004096,
+          1.9160857080040963,
         ],
       ],
     },
@@ -315,12 +843,12 @@ Object {
       ],
       "values": Array [
         Array [
-          74.84837848647855,
+          74.84837848647854,
           6.0615954746181915,
           10.062934151776604,
           6.9758140218269675,
           0.3297716902431658,
-          1.7215061750565266,
+          1.7215061750565264,
         ],
       ],
     },
@@ -348,9 +876,9 @@ Object {
       "values": Array [
         Array [
           78.45841011628646,
-          9.201245472453452,
-          3.8444430323441567,
-          7.015314227616445,
+          9.201245472453454,
+          3.844443032344157,
+          7.015314227616446,
           0.02541780517252335,
           1.455169346126962,
         ],
@@ -467,6 +995,12 @@ Object {
       "other": 5,
       "white": 0,
     },
+  },
+  "reduced": Object {
+    "sumValueExtent": Array [
+      0,
+      100,
+    ],
   },
   "type": "grouped",
 }

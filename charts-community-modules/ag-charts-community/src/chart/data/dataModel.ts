@@ -385,23 +385,28 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
             opts: { normaliseTo },
         } = this;
 
-        if (normaliseTo == null) return processedData;
+        if (normaliseTo == null) return;
 
         const sumValues = processedData.domain.sumValues;
         const resultSumValueIndices = sumDefs.map((defs) =>
             defs.properties.map((prop) => valueDefs.findIndex((def) => def.property === prop))
         );
+        // const normalisedRange = [-normaliseTo, normaliseTo];
+        const normalise = (val: number, extent: number) => {
+            return (val * normaliseTo) / extent;
+        };
 
         for (let sumIdx = 0; sumIdx < sumDefs.length; sumIdx++) {
             const sums = sumValues?.[sumIdx];
             if (sums == null) continue;
 
-            const sumAbsExtent = Math.max(...sums.map((v) => Math.abs(v)));
+            const sumAbs = sums.map((v) => Math.abs(v));
+            const sumAbsExtent = Math.max(...sumAbs);
 
-            let multiplier = normaliseTo / sumAbsExtent;
             let sumRangeIdx = 0;
             for (const _ of sums) {
-                sums[sumRangeIdx++] *= multiplier;
+                sums[sumRangeIdx] = normalise(sums[sumRangeIdx], sumAbsExtent);
+                sumRangeIdx++;
             }
 
             for (const next of processedData.data) {
@@ -412,11 +417,11 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
                     values = [values];
                 }
 
-                const valuesSumExtent = Math.max(...(sumValues?.[sumIdx].map((v) => Math.abs(v)) ?? [0]));
-                multiplier = normaliseTo / valuesSumExtent;
+                const valuesSumAbs = sumValues?.[sumIdx].map((v) => Math.abs(v));
+                const valuesSumExtent = Math.max(...(valuesSumAbs ?? [0]));
                 for (const row of values) {
                     for (const indices of resultSumValueIndices[sumIdx]) {
-                        row[indices] *= multiplier;
+                        row[indices] = normalise(row[indices], valuesSumExtent);
                     }
                 }
 
@@ -424,7 +429,8 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
 
                 sumRangeIdx = 0;
                 for (const _ of sumValues[sumIdx]) {
-                    sumValues[sumIdx][sumRangeIdx++] *= multiplier;
+                    sumValues[sumIdx][sumRangeIdx] = normalise(sumValues[sumIdx][sumRangeIdx], valuesSumExtent);
+                    sumRangeIdx++;
                 }
             }
         }

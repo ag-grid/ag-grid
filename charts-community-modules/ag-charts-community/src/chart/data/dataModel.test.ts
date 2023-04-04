@@ -249,7 +249,7 @@ describe('DataModel', () => {
     });
 
     describe('grouped processing - stacked and normalised example', () => {
-        it('should generated the expected results', () => {
+        it('should generated the expected results for 100% stacked columns example', () => {
             const data = examples.ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE.data!;
             const dataModel = new DataModel<any, any, true>({
                 props: [
@@ -264,12 +264,46 @@ describe('DataModel', () => {
                         properties: ['white', 'mixed', 'asian', 'black', 'chinese', 'other'],
                         type: 'sum',
                     },
+                    SUM_VALUE_EXTENT,
                 ],
                 groupByKeys: true,
                 normaliseTo: 100,
             });
 
             expect(dataModel.processData(data)).toMatchSnapshot();
+        });
+
+        it('should generated the expected results for 100% stacked area example', () => {
+            const data = examples.ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAMPLE.data!;
+            const dataModel = new DataModel<any, any, true>({
+                props: [
+                    { property: 'month', type: 'key', valueType: 'category' },
+                    { property: 'petroleum', type: 'value', valueType: 'range' },
+                    { property: 'naturalGas', type: 'value', valueType: 'range' },
+                    { property: 'bioenergyWaste', type: 'value', valueType: 'range' },
+                    { property: 'nuclear', type: 'value', valueType: 'range' },
+                    { property: 'windSolarHydro', type: 'value', valueType: 'range' },
+                    { property: 'imported', type: 'value', valueType: 'range' },
+                    {
+                        properties: [
+                            'petroleum',
+                            'naturalGas',
+                            'bioenergyWaste',
+                            'nuclear',
+                            'windSolarHydro',
+                            'imported',
+                        ],
+                        type: 'sum',
+                    },
+                    SUM_VALUE_EXTENT,
+                ],
+                groupByKeys: true,
+                normaliseTo: 100,
+            });
+
+            const result = dataModel.processData(data);
+            expect(result).toMatchSnapshot();
+            expect(result.reduced?.[SUM_VALUE_EXTENT.property]).toEqual([0, 100]);
         });
 
         describe('property tests', () => {
@@ -313,7 +347,7 @@ describe('DataModel', () => {
 
                 expect(result.data.map((g) => g.values)).toEqual([
                     [
-                        [33.333333333333336, 46.66666666666667, 8.333333333333334, 41.66666666666667],
+                        [33.333333333333336, 46.666666666666664, 8.333333333333334, 41.666666666666664],
                         [6.666666666666667, 13.333333333333334, 16.666666666666668, 33.333333333333336],
                     ],
                     [
