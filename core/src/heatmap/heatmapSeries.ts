@@ -249,6 +249,7 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<_ModuleSupport
                     text,
                     ...size,
                 },
+                nodeMidPoint: { x, y },
             };
         }
 
