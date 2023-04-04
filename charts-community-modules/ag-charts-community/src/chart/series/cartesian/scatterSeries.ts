@@ -168,6 +168,13 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
+        const xDataIdx = this.dataModel?.resolveProcessedDataIndex(this.xKey);
+        const yDataIdx = this.dataModel?.resolveProcessedDataIndex(this.yKey);
+
+        if (!xDataIdx || !yDataIdx) {
+            return [];
+        }
+
         if (direction === ChartAxisDirection.X) {
             return this.processedData?.domain.values[0] ?? [];
         } else {
@@ -184,9 +191,12 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     }
 
     async createNodeData() {
-        const { data, visible, xAxis, yAxis, yKey, xKey, label, labelKey } = this;
+        const { visible, xAxis, yAxis, yKey, xKey, label, labelKey } = this;
 
-        if (!(data && visible && xAxis && yAxis)) {
+        const xDataIdx = this.dataModel?.resolveProcessedDataIndex(xKey);
+        const yDataIdx = this.dataModel?.resolveProcessedDataIndex(yKey);
+
+        if (!(xDataIdx && yDataIdx && visible && xAxis && yAxis)) {
             return [];
         }
 
@@ -202,8 +212,8 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         const font = label.getFont();
         let actualLength = 0;
         for (const { values, datum } of this.processedData?.data ?? []) {
-            const x = xScale.convert(values[0]) + xOffset;
-            const y = yScale.convert(values[1]) + yOffset;
+            const x = xScale.convert(values[xDataIdx.index]) + xOffset;
+            const y = yScale.convert(values[yDataIdx.index]) + yOffset;
 
             if (!this.checkRangeXY(x, y, xAxis, yAxis)) {
                 continue;
