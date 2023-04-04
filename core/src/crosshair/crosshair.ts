@@ -26,7 +26,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     strokeOpacity: number = 1;
 
     @Validate(BOOLEAN)
-    snap: boolean = false;
+    snap: boolean = true;
 
     readonly label: CrosshairLabel;
     private seriesRect: _Scene.BBox = new BBox(0, 0, 0, 0);
