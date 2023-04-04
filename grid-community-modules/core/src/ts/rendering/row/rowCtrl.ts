@@ -342,7 +342,7 @@ export class RowCtrl extends BeanStub {
 
         if (this.rowType == RowType.FullWidthDetail) {
             if (!ModuleRegistry.assertRegistered(ModuleNames.MasterDetailModule, "cell renderer 'agDetailCellRenderer' (for master detail)")) {
-                return
+                return;
             }
         }
 
@@ -653,6 +653,16 @@ export class RowCtrl extends BeanStub {
     }
 
     private onRowNodeDataChanged(event: DataChangedEvent): void {
+        // if master row has updated, then need to also try to refresh the detail node
+        if (this.rowNode.detailNode) {
+            this.beans.rowRenderer.refreshFullWidthRow(this.rowNode.detailNode);
+        }
+
+        if (this.isFullWidth()) {
+            this.beans.rowRenderer.refreshFullWidthRow(this.rowNode);
+            return;
+        }
+
         // if this is an update, we want to refresh, as this will allow the user to put in a transition
         // into the cellRenderer refresh method. otherwise this might be completely new data, in which case
         // we will want to completely replace the cells
@@ -1115,7 +1125,7 @@ export class RowCtrl extends BeanStub {
     public getAllCellCtrls(): CellCtrl[] {
         if (this.leftCellCtrls.list.length === 0 && this.rightCellCtrls.list.length === 0) {
             return this.centerCellCtrls.list;
-        } 
+        }
         const res = [...this.centerCellCtrls.list, ...this.leftCellCtrls.list, ...this.rightCellCtrls.list];
         return res;
     }
@@ -1257,11 +1267,13 @@ export class RowCtrl extends BeanStub {
                 !this.beans.gridOptionsService.is('suppressRowHoverHighlight')
             ) {
                 eRow.classList.add('ag-row-hover');
+                this.rowNode.setHovered(true);
             }
         });
 
         this.addManagedListener(this.rowNode, RowNode.EVENT_MOUSE_LEAVE, () => {
             eRow.classList.remove('ag-row-hover');
+            this.rowNode.setHovered(false);
         });
     }
 
@@ -1282,7 +1294,7 @@ export class RowCtrl extends BeanStub {
         return this.beans.frameworkOverrides;
     }
 
-    private forEachGui(gui: RowGui | undefined, callback: (gui: RowGui)=>void): void {
+    private forEachGui(gui: RowGui | undefined, callback: (gui: RowGui) => void): void {
         const list = gui ? [gui] : this.allRowGuis;
         list.forEach(callback);
     }
@@ -1337,6 +1349,8 @@ export class RowCtrl extends BeanStub {
         if (this.beans.gridOptionsService.isAnimateRows()) {
             this.setupRemoveAnimation();
         }
+
+        this.rowNode.setHovered(false);
 
         const event: VirtualRowRemovedEvent = this.createRowEvent(Events.EVENT_VIRTUAL_ROW_REMOVED);
 

@@ -1,5 +1,3 @@
 echo "Starting" >> pipeline.log
-source /home/aggrid/.bash_profile
 
-JIRA_CREDENTIALS=$JIRA_CREDENTIALS /opt/cpanel/ea-nodejs10/bin/node /home/aggrid/jira_reports/getPipeline.js
-
+JIRA_CREDENTIALS=$JIRA_CREDENTIALS /home/ubuntu/.nvm/versions/node/v16.14.0/bin/node /home/ubuntu/jira_reports/getPipeline.js

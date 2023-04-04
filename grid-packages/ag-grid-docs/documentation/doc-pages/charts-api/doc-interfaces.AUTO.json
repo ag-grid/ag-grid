@@ -930,6 +930,10 @@
       "description": "/** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "type": { "returnType": "string", "optional": true }
     },
+    "legendItemKey": {
+      "description": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "fills": {
       "description": "/** The colours to cycle through for the fills of the sectors. */",
       "type": { "returnType": "CssColor[]", "optional": true }
@@ -1652,9 +1656,32 @@
       "description": "/** Range from a point that triggers the tooltip to show. */",
       "type": { "returnType": "AgChartInteractionRange", "optional": true }
     },
+    "position": {
+      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
+    },
     "delay": {
       "description": "/** The time interval (in milliseconds) after which the tooltip is shown. */",
       "type": { "returnType": "number", "optional": true }
+    },
+    "enableInteraction": {
+      "description": "/** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "AgTooltipPositionOptions": {},
+  "AgMovingTooltipPositionOptions": {
+    "type": {
+      "description": "/** The type of positioning for the tooltip. By default, the tooltip follows the pointer. */",
+      "type": { "returnType": "'pointer' | 'node'", "optional": false }
+    },
+    "xOffset": {
+      "description": "/** The horizontal offset in pixels for the position of the tooltip. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "yOffset": {
+      "description": "/** The vertical offset in pixels for the position of the tooltip. */",
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgChartBackground": {
@@ -3626,7 +3653,7 @@
     },
     "flipXY": { "type": { "returnType": "boolean", "optional": true } },
     "fill": {
-      "description": "/** The colour to use for the fill of the area. */",
+      "description": "/** The colour to use for the fill of the bars. */",
       "type": { "returnType": "CssColor", "optional": true }
     },
     "stroke": {
@@ -4224,6 +4251,10 @@
     },
     "sectorLabelName": {
       "description": "/** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "legendItemKey": {
+      "description": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */",
       "type": { "returnType": "string", "optional": true }
     },
     "fills": {
@@ -5234,8 +5265,15 @@
     "xKey": { "type": { "returnType": "string", "optional": true } },
     "yKey": { "type": { "returnType": "string", "optional": true } },
     "cumulativeValue": { "type": { "returnType": "number", "optional": true } },
+    "aggregatedValue": { "type": { "returnType": "number", "optional": true } },
+    "domain": {
+      "type": { "returnType": "[number, number]", "optional": true }
+    },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+    },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
   "HighlightChangeEvent": {
@@ -5265,7 +5303,7 @@
   "SupportedEvent": {},
   "TooltipState": {
     "content": { "type": { "returnType": "string", "optional": false } },
-    "meta": { "type": { "returnType": "TooltipMeta", "optional": false } }
+    "meta": { "type": { "returnType": "TooltipMeta", "optional": true } }
   },
   "ZoomState": {
     "min": { "type": { "returnType": "number", "optional": false } },
@@ -5295,6 +5333,12 @@
   "LayoutCompleteEvent": {
     "type": {
       "type": { "returnType": "'layout-complete'", "optional": false }
+    },
+    "chart": {
+      "type": {
+        "returnType": "{ width: number; height: number }",
+        "optional": false
+      }
     },
     "series": {
       "type": {
@@ -5449,6 +5493,9 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+    },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
   "BarSeriesNodeTag": {},
@@ -5476,6 +5523,9 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+    },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
   "SubGroup": {
@@ -5521,6 +5571,12 @@
     "fill": { "type": { "returnType": "string", "optional": true } },
     "stroke": { "type": { "returnType": "string", "optional": true } },
     "strokeWidth": { "type": { "returnType": "number", "optional": false } },
+    "aggregatedValue": {
+      "type": { "returnType": "number", "optional": false }
+    },
+    "domain": {
+      "type": { "returnType": "[number, number]", "optional": false }
+    },
     "label": {
       "type": {
         "returnType": "{\n        readonly text: string;\n        readonly x: number;\n        readonly y: number;\n        readonly fontStyle?: FontStyle;\n        readonly fontWeight?: FontWeight;\n        readonly fontSize: number;\n        readonly fontFamily: string;\n        readonly fill: string;\n    }",
@@ -5534,6 +5590,9 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+    },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
   "HistogramAggregation": {},
@@ -5555,7 +5614,10 @@
     "yKey": { "type": { "returnType": "string", "optional": false } },
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
-    "datum": { "type": { "returnType": "any", "optional": false } }
+    "datum": { "type": { "returnType": "any", "optional": false } },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": true }
+    }
   },
   "PointDatum": {
     "xDatum": { "type": { "returnType": "any", "optional": false } },
@@ -5572,6 +5634,9 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+    },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
   "TreeDatum": {},
@@ -5592,6 +5657,9 @@
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+    },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
   "TextNodeTag": {},
@@ -5625,6 +5693,9 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+    },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
   "PieNodeTag": {},
@@ -5634,6 +5705,9 @@
     "datum": { "type": { "returnType": "any", "optional": false } },
     "point": {
       "type": { "returnType": "Readonly<SizedPoint>", "optional": true }
+    },
+    "nodeMidPoint": {
+      "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
   "SeriesNodePickMode": {},
@@ -5714,6 +5788,7 @@
       }
     }
   },
+  "TooltipPositionType": {},
   "Tick": {
     "labels": { "type": { "returnType": "string[]", "optional": false } }
   },
@@ -5982,6 +6057,13 @@
     "keys": {
       "type": { "arguments": {}, "returnType": "string[]", "optional": false }
     },
+    "scaleValueFormatter": {
+      "type": {
+        "arguments": { "specifier": "string" },
+        "returnType": "((x: any) => string) | undefined",
+        "optional": false
+      }
+    },
     "scaleBandwidth": {
       "type": { "arguments": {}, "returnType": "number", "optional": false }
     },
@@ -6014,6 +6096,9 @@
   },
   "BaseModule": {
     "optionsKey": { "type": { "returnType": "string", "optional": false } },
+    "packageType": {
+      "type": { "returnType": "'community' | 'enterprise'", "optional": false }
+    },
     "chartTypes": {
       "type": {
         "returnType": "('cartesian' | 'polar' | 'hierarchy')[]",
@@ -6032,6 +6117,9 @@
     },
     "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
     "optionsKey": { "type": { "returnType": "string", "optional": false } },
+    "packageType": {
+      "type": { "returnType": "'community' | 'enterprise'", "optional": false }
+    },
     "chartTypes": {
       "type": {
         "returnType": "('cartesian' | 'polar' | 'hierarchy')[]",
@@ -6050,6 +6138,9 @@
     },
     "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
     "optionsKey": { "type": { "returnType": "string", "optional": false } },
+    "packageType": {
+      "type": { "returnType": "'community' | 'enterprise'", "optional": false }
+    },
     "chartTypes": {
       "type": {
         "returnType": "('cartesian' | 'polar' | 'hierarchy')[]",

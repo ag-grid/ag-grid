@@ -24,6 +24,7 @@ import { attrToNumber, attrToBoolean, exists, missing } from "../utils/generic";
 import { doOnce } from "../utils/function";
 import { mergeDeep } from "../utils/object";
 import { GridOptionsService } from "../gridOptionsService";
+import { ColumnHoverService } from "../rendering/columnHoverService";
 import { IRowNode } from "../interfaces/iRowNode";
 
 export type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
@@ -85,8 +86,9 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     // + toolpanel, for gui updates
     public static EVENT_VALUE_CHANGED: ColumnEventName = 'columnValueChanged';
 
-    @Autowired('gridOptionsService') private gridOptionsService: GridOptionsService;
-    @Autowired('columnUtils') private columnUtils: ColumnUtils;
+    @Autowired('gridOptionsService') private readonly gridOptionsService: GridOptionsService;
+    @Autowired('columnUtils') private readonly columnUtils: ColumnUtils;
+    @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
 
     private readonly colId: any;
     private colDef: ColDef<TValue>;
@@ -341,7 +343,25 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         }
 
         if (exists(colDefAny.menuTabs)) {
-            ModuleRegistry.assertRegistered(ModuleNames.MenuModule, 'menuTabs');
+
+            if (Array.isArray(colDefAny.menuTabs)) {
+
+                const communityMenuTabs: ColumnMenuTab[] = ['filterMenuTab'];
+
+                const enterpriseMenuTabs: ColumnMenuTab[] = ['columnsMenuTab', 'generalMenuTab'];
+                const itemsUsed = enterpriseMenuTabs.filter(x => colDefAny.menuTabs.includes(x));
+                if (itemsUsed.length > 0) {
+                    ModuleRegistry.assertRegistered(ModuleNames.MenuModule, `menuTab(s): ${itemsUsed.map(t => `'${t}'`).join()}`);
+                }
+
+                colDefAny.menuTabs.forEach((tab: ColumnMenuTab) => {
+                    if (!enterpriseMenuTabs.includes(tab) && !communityMenuTabs.includes(tab)) {
+                        warnOnce(`AG Grid: '${tab}' is not valid for 'colDef.menuTabs'. Valid values are: ${[...communityMenuTabs, ...enterpriseMenuTabs].map(t => `'${t}'`).join()}.`, 'wrongValue_menuTabs_' + tab);
+                    }
+                });
+            } else {
+                warnOnce(`AG Grid: The typeof 'colDef.menuTabs' should be an array not:` + typeof colDefAny.menuTabs, 'wrongType_menuTabs');
+            }
         }
 
         if (exists(colDefAny.columnsMenuParams)) {
@@ -573,6 +593,11 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
             mergeDeep(filterChangedEvent, additionalEventAttributes);
         }
         this.eventService.dispatchEvent(filterChangedEvent);
+    }
+
+    /** Returns `true` when this `Column` is hovered, otherwise `false` */
+    public isHovered(): boolean {
+        return this.columnHoverService.isHovered(this);
     }
 
     public setPinned(pinned: ColumnPinnedType): void {

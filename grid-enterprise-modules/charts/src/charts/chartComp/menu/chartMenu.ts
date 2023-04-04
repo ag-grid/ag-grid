@@ -249,7 +249,7 @@ export class ChartMenu extends Component {
             buttonEl.classList.add('ag-chart-menu-icon');
 
             const tooltipTitle = this.chartTranslationService.translate(button + 'ToolbarTooltip');
-            if (tooltipTitle) {
+            if (tooltipTitle && buttonEl instanceof HTMLElement) {
                 buttonEl.title = tooltipTitle;
             }
 

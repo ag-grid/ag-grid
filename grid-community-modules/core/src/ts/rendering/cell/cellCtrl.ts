@@ -200,7 +200,7 @@ export class CellCtrl extends BeanStub {
         printLayout: boolean,
         startEditing: boolean
     ): void {
-        this.cellComp = comp;        
+        this.cellComp = comp;
         this.eGui = eGui;
         this.printLayout = printLayout;
 

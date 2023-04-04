@@ -445,7 +445,7 @@ export class FocusService extends BeanStub {
         const toFocus = up ? last(focusableElements) : focusableElements[0];
 
         if (toFocus) {
-            toFocus.focus();
+            toFocus.focus({ preventScroll: true });
             return true;
         }
 

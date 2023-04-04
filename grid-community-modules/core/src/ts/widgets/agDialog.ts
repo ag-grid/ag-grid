@@ -31,8 +31,8 @@ export class AgDialog extends AgPanel {
     private isMaximized: boolean = false;
     private maximizeListeners: (() => void)[] = [];
     private maximizeButtonComp: Component | undefined;
-    private maximizeIcon: HTMLElement | undefined;
-    private minimizeIcon: HTMLElement | undefined;
+    private maximizeIcon: Element | undefined;
+    private minimizeIcon: Element | undefined;
     private resizeListenerDestroy: (() => void) | null | undefined = null;
 
     private lastPosition = {

@@ -79,6 +79,7 @@ const options: AgChartOptions = {
         text: "September 2022",
         fontWeight: "bold",
       },
+      legendItemKey: "browser",
       calloutLabelKey: "browser",
       calloutLabel: {
         minAngle: 25,

@@ -340,7 +340,7 @@
     },
     "eElement": {
       "description": "/** Element which, when dragged, will kick off the DnD process\n     */",
-      "type": { "returnType": "HTMLElement", "optional": false }
+      "type": { "returnType": "Element", "optional": false }
     },
     "getDragItem": {
       "description": "/** If eElement is dragged, then the dragItem is the object that gets passed around.\n     */",
@@ -421,7 +421,7 @@
     },
     "isInterestedIn": {
       "type": {
-        "arguments": { "type": "DragSourceType", "el": "HTMLElement" },
+        "arguments": { "type": "DragSourceType", "el": "Element" },
         "returnType": "boolean",
         "optional": false
       }
@@ -511,7 +511,7 @@
     },
     "eElement": {
       "description": "/** Dom element to add the drag handling to */",
-      "type": { "returnType": "HTMLElement", "optional": false }
+      "type": { "returnType": "Element", "optional": false }
     },
     "skipMouseEvent": {
       "description": "/** Some places may wish to ignore certain events, eg range selection ignores shift clicks */",
@@ -5326,7 +5326,7 @@
     },
     "icon": {
       "description": "/** The icon to display, either a DOM element or HTML string */",
-      "type": { "returnType": "HTMLElement | string", "optional": true }
+      "type": { "returnType": "Element | string", "optional": true }
     },
     "cssClasses": {
       "description": "/** CSS classes to apply to the menu item */",
@@ -5364,7 +5364,7 @@
     },
     "icon": {
       "description": "/** The icon to display, either a DOM element or HTML string */",
-      "type": { "returnType": "HTMLElement | string", "optional": true }
+      "type": { "returnType": "Element | string", "optional": true }
     },
     "cssClasses": {
       "description": "/** CSS classes to apply to the menu item */",
@@ -6152,7 +6152,7 @@
   "AgDragEvent": {
     "target": {
       "description": "/** The DOM element that started the event. */",
-      "type": { "returnType": "HTMLElement", "optional": false }
+      "type": { "returnType": "Element", "optional": false }
     },
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
@@ -6177,7 +6177,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "target": {
       "description": "/** The DOM element that started the event. */",
-      "type": { "returnType": "HTMLElement", "optional": false }
+      "type": { "returnType": "Element", "optional": false }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -6197,7 +6197,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "target": {
       "description": "/** The DOM element that started the event. */",
-      "type": { "returnType": "HTMLElement", "optional": false }
+      "type": { "returnType": "Element", "optional": false }
     },
     "api": {
       "description": "/** The grid api. */",
@@ -15613,6 +15613,10 @@
       "description": "/** Returns:\n     * - `true` if the node is a full width cell.\n     * - `false` if the node is not a full width cell.\n     */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
+    "isHovered": {
+      "description": "/** Returns:\n     * - `true` if the node is currently hovered.\n     * - `false` if the node is not hovered.\n     */",
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
     "addEventListener": {
       "description": "/** Add an event listener. */",
       "type": {
@@ -20071,7 +20075,7 @@
     },
     "icon": {
       "description": "/** The icon to display, either a DOM element or HTML string */",
-      "type": { "returnType": "HTMLElement | string", "optional": true }
+      "type": { "returnType": "Element | string", "optional": true }
     },
     "cssClasses": {
       "description": "/** CSS classes to apply to the menu item */",
@@ -20090,9 +20094,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "checked": { "type": { "returnType": "boolean", "optional": true } },
-    "icon": {
-      "type": { "returnType": "HTMLElement | string", "optional": true }
-    },
+    "icon": { "type": { "returnType": "Element | string", "optional": true } },
     "subMenu": {
       "type": {
         "returnType": "(MenuItemDef | string)[] | IPopupComponent<any>",

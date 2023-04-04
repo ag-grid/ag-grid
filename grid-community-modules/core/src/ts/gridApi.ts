@@ -1388,11 +1388,11 @@ export class GridApi<TData = any> {
         this.gridOptionsService.set('deltaSort', enable);
     }
     /**
-     * Sets the `rowCount` and `lastRowIndexKnown` properties.
-     * The second parameter, `lastRowIndexKnown`, is optional and if left out, only `rowCount` is set.
+     * Sets the `rowCount` and `maxRowFound` properties.
+     * The second parameter, `maxRowFound`, is optional and if left out, only `rowCount` is set.
      * Set `rowCount` to adjust the height of the vertical scroll.
-     * Set `lastRowIndexKnown` to enable / disable searching for more rows.
-     * Use this method if you add or remove rows into the dataset and need to reset the number of rows or put the data back into 'look for data' mode.
+     * Set `maxRowFound` to enable / disable searching for more rows.
+     * Use this method if you add or remove rows into the dataset and need to reset the number of rows or instruct the grid that the entire row count is no longer known.
      */
     public setRowCount(rowCount: number, maxRowFound?: boolean): void {
         if (this.serverSideRowModel) {
@@ -1815,9 +1815,6 @@ export class GridApi<TData = any> {
         }
 
         const res: RowNodeTransaction<TData> | null = this.clientSideRowModel.updateRowData(rowDataTransaction);
-
-        // refresh all the full width rows
-        this.rowRenderer.refreshFullWidthRows(res!.update as RowNode[]);
 
         // do change detection for all present cells
         if (!this.gridOptionsService.is('suppressChangeDetection')) {

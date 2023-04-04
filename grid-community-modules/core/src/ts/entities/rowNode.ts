@@ -1,4 +1,4 @@
-import { AgEvent, Events, RowEvent, RowSelectedEvent, SelectionChangedEvent, SelectionEventSourceType } from "../events";
+import { AgEvent, Events, RowEvent, RowSelectedEvent, SelectionEventSourceType } from "../events";
 import { EventService } from "../eventService";
 import { DetailGridInfo } from "../gridApi";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
@@ -225,6 +225,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     public alreadyRendered = false;
 
     public highlighted: RowHighlightPosition | null = null;
+
+    private hovered: boolean = false;
 
     private selected: boolean | undefined = false;
     private eventService: EventService | null;
@@ -496,6 +498,16 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HIGHLIGHT_CHANGED));
         }
+    }
+
+    public setHovered(hovered: boolean): void {
+        if (this.hovered === hovered) { return; }
+
+        this.hovered = hovered;
+    }
+
+    public isHovered(): boolean {
+        return this.hovered;
     }
 
     public setAllChildrenCount(allChildrenCount: number | null): void {

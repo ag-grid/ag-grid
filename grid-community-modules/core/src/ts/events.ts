@@ -50,7 +50,7 @@ export interface ToolPanelVisibleChangedEvent<TData = any, TContext = any> exten
     source: string | undefined;
 }
 
-/** 
+/**
  * This is the replacement event for ToolPanelVisibleChangedEvent. In v30, this will be renamed ToolPanelVisibleChangedEvent,
  * and the original ToolPanelVisibleChangedEvent will be dropped
  */
@@ -59,7 +59,7 @@ export interface InternalToolPanelVisibleChangedEvent<TData = any, TContext = an
     /** Key of tool panel. */
     key: string;
     /** True if now visible; false if now hidden. */
-    visible: boolean
+    visible: boolean;
 }
 
 export interface ToolPanelSizeChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
@@ -123,7 +123,7 @@ export type SelectionEventSourceType =
     'uiSelectAllFiltered' |
     'uiSelectAllCurrentPage';
 
-export interface SelectionChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { 
+export interface SelectionChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     source: SelectionEventSourceType;
 }
 
@@ -188,7 +188,7 @@ export interface ColumnPanelItemDragEndEvent<TData = any, TContext = any> extend
 
 export interface AgDragEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     /** The DOM element that started the event. */
-    target: HTMLElement;
+    target: Element;
 }
 
 export interface DragStartedEvent<TData = any, TContext = any> extends AgDragEvent<TData, TContext> {

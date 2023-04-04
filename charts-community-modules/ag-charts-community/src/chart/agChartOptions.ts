@@ -500,8 +500,23 @@ export interface AgChartTooltipOptions {
     tracking?: boolean;
     /** Range from a point that triggers the tooltip to show. */
     range?: AgChartInteractionRange;
+    /** The position of the tooltip. By default the tooltip follows the mouse pointer. */
+    position?: AgTooltipPositionOptions;
     /** The time interval (in milliseconds) after which the tooltip is shown. */
     delay?: number;
+    /** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */
+    enableInteraction?: boolean;
+}
+
+export type AgTooltipPositionOptions = AgMovingTooltipPositionOptions;
+
+export interface AgMovingTooltipPositionOptions {
+    /** The type of positioning for the tooltip. By default, the tooltip follows the pointer. */
+    type: 'pointer' | 'node';
+    /** The horizontal offset in pixels for the position of the tooltip. */
+    xOffset?: PixelSize;
+    /** The vertical offset in pixels for the position of the tooltip. */
+    yOffset?: PixelSize;
 }
 
 export interface AgChartBackground {
@@ -1266,7 +1281,7 @@ export interface AgBarSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     /** Human-readable description of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     yName?: string;
     flipXY?: boolean;
-    /** The colour to use for the fill of the area. */
+    /** The colour to use for the fill of the bars. */
     fill?: CssColor;
     /** The colours to use for the stroke of the bars. */
     stroke?: CssColor;
@@ -1485,6 +1500,8 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     sectorLabelKey?: string;
     /** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
     sectorLabelName?: string;
+    /** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */
+    legendItemKey?: string;
     /** The colours to cycle through for the fills of the sectors. */
     fills?: CssColor[];
     /** The colours to cycle through for the strokes of the sectors. */

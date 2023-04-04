@@ -48,7 +48,7 @@ import { CrossLine } from './crossline/crossLine';
 import { windowValue } from '../util/window';
 import { AxisModule, Module, RootModule } from '../util/module';
 import { Logger } from '../util/logger';
-import { BackgroundImage } from './backgroundImage';
+import { BackgroundImage } from './background/backgroundImage';
 
 // Deliberately imported via `module-support` so that internal module registration happens.
 import { REGISTERED_MODULES } from '../module-support';

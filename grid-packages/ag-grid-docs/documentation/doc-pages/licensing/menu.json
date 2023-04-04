@@ -2032,6 +2032,11 @@
                     "url": "/charts-axes-cross-lines/"
                   },
                   {
+                    "title": "Crosshairs",
+                    "url": "/charts-axes-crosshairs/",
+                    "enterprise": "charts"
+                  },
+                  {
                     "title": "Multiple Axes",
                     "url": "/charts-axes-multiple/"
                   }

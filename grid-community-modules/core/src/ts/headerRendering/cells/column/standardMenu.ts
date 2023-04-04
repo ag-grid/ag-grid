@@ -131,7 +131,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
     }
 
     public isMenuEnabled(column: Column): boolean {
-        // for standard, we show menu if filter is enabled, and the menu is not suppressed
-        return column.isFilterAllowed();
+        // for standard, we show menu if filter is enabled, and the menu is not suppressed by passing an empty array
+        return column.isFilterAllowed() && column.getMenuTabs(['filterMenuTab']).includes('filterMenuTab');
     }
 }

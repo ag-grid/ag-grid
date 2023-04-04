@@ -2,7 +2,6 @@ import { Scene } from '../scene/scene';
 import { Group } from '../scene/group';
 import { Series, SeriesNodeDatum, SeriesNodePickMode } from './series/series';
 import { Padding } from '../util/padding';
-import { Background } from './background';
 import { Legend } from './legend';
 
 import { BBox } from '../scene/bbox';
@@ -64,7 +63,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     readonly scene: Scene;
     readonly seriesRoot = new Group({ name: `${this.id}-Series-root` });
-    readonly background: Background = new Background();
     readonly legend: Legend;
     readonly tooltip: Tooltip;
     readonly overlays: ChartOverlays;
@@ -221,10 +219,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
         // (before first layout is performed).
         root.visible = false;
         root.append(this.seriesRoot);
-
-        const background = this.background;
-        background.fill = 'white';
-        root.appendChild(background.node);
 
         this.axisGroup = new Group({ name: 'Axes', layer: true, zIndex: Layers.AXIS_ZINDEX });
         root.appendChild(this.axisGroup);
@@ -390,7 +384,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     disablePointer(highlightOnly = false) {
         if (!highlightOnly) {
-            this.tooltipManager.updateTooltip(this.id);
+            this.tooltipManager.removeTooltip(this.id);
         }
         this.highlightManager.updateHighlight(this.id);
         if (this.lastInteractionEvent) {
@@ -504,7 +498,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 }
                 this._performUpdateNoRenderCount = 0;
 
-                this.background.performLayout(this.scene.width, this.scene.height);
                 await this.performLayout();
                 this.handleOverlays();
                 splits.push(performance.now());
@@ -1110,8 +1103,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
     };
 
     private mergePointerDatum(meta: PointerMeta, datum: SeriesNodeDatum): PointerMeta {
-        if (datum.point) {
-            const { x, y } = datum.point;
+        const { type } = this.tooltip.position;
+
+        if (type === 'node' && datum.nodeMidPoint) {
+            const { x, y } = datum.nodeMidPoint;
             const { canvas } = this.scene;
             const point = datum.series.rootGroup.inverseTransformPoint(x, y);
             const canvasRect = canvas.element.getBoundingClientRect();

@@ -232,7 +232,7 @@
     "meta": {},
     "type": {
       "type": "DragSourceType",
-      "eElement": "HTMLElement",
+      "eElement": "Element",
       "getDragItem": "() => DragItem",
       "dragItemName": "string | (() => string) | null",
       "defaultIconName?": "string",
@@ -265,7 +265,7 @@
       "getContainer()": "HTMLElement",
       "getSecondaryContainers?()": "HTMLElement[][]",
       "getIconName?()": "string | null",
-      "isInterestedIn(type: DragSourceType, el: HTMLElement)": "boolean",
+      "isInterestedIn(type: DragSourceType, el: Element)": "boolean",
       "targetContainsSource?": "boolean",
       "onDragEnter?(params: DraggingEvent)": "void",
       "onDragLeave?(params: DraggingEvent)": "void",
@@ -323,7 +323,7 @@
     "meta": {},
     "type": {
       "dragStartPixels?": "number",
-      "eElement": "HTMLElement",
+      "eElement": "Element",
       "skipMouseEvent?": "(mouseEvent: MouseEvent) => boolean",
       "onDragStart": "(mouseEvent: MouseEvent | Touch) => void",
       "onDragStop": "(mouseEvent: MouseEvent | Touch) => void",
@@ -2456,7 +2456,7 @@
       "shortcut?": "string",
       "action?": "() => void",
       "checked?": "boolean",
-      "icon?": "HTMLElement | string",
+      "icon?": "Element | string",
       "cssClasses?": "string[]",
       "tooltip?": "string"
     },
@@ -2480,7 +2480,7 @@
       "shortcut?": "string",
       "action?": "() => void",
       "checked?": "boolean",
-      "icon?": "HTMLElement | string",
+      "icon?": "Element | string",
       "cssClasses?": "string[]",
       "tooltip?": "string"
     },
@@ -2713,7 +2713,7 @@
   "InternalToolPanelVisibleChangedEvent": {
     "meta": {
       "typeParams": ["TData = any", "TContext = any"],
-      "doc": "/** \n * This is the replacement event for ToolPanelVisibleChangedEvent. In v30, this will be renamed ToolPanelVisibleChangedEvent,\n * and the original ToolPanelVisibleChangedEvent will be dropped\n */"
+      "doc": "/** This is the replacement event for ToolPanelVisibleChangedEvent. In v30, this will be renamed ToolPanelVisibleChangedEvent,\n * and the original ToolPanelVisibleChangedEvent will be dropped\n */"
     },
     "type": {
       "source": "'sideBarButtonClicked' | 'sideBarInitializing' | 'api'",
@@ -3115,7 +3115,7 @@
   "AgDragEvent": {
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
-      "target": "HTMLElement",
+      "target": "Element",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "TContext",
@@ -3133,7 +3133,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "type": "'dragStarted'",
-      "target": "HTMLElement",
+      "target": "Element",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "TContext"
@@ -3150,7 +3150,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "type": "'dragStopped'",
-      "target": "HTMLElement",
+      "target": "Element",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "TContext"
@@ -8764,6 +8764,7 @@
       "isExpandable()": "boolean",
       "setExpanded(expanded: boolean, e?: MouseEvent | KeyboardEvent)": "void",
       "isFullWidthCell()": "boolean",
+      "isHovered()": "boolean",
       "addEventListener(eventType: RowNodeEventType, listener: Function)": "void",
       "removeEventListener(eventType: RowNodeEventType, listener: Function)": "void",
       "resetQuickFilterAggregateText()": "void",
@@ -8816,6 +8817,7 @@
       "isExpandable()": "/** Returns:\n    * - `true` if the node can be expanded, i.e it is a group or master row.\n    * - `false` if the node cannot be expanded.\n    */",
       "setExpanded(expanded: boolean, e?: MouseEvent | KeyboardEvent)": "/** Set the expanded state of this rowNode. Pass `true` to expand and `false` to collapse.\n     */",
       "isFullWidthCell()": "/** Returns:\n     * - `true` if the node is a full width cell.\n     * - `false` if the node is not a full width cell.\n     */",
+      "isHovered()": "/** Returns:\n     * - `true` if the node is currently hovered.\n     * - `false` if the node is not hovered.\n     */",
       "addEventListener(eventType: RowNodeEventType, listener: Function)": "/** Add an event listener. */",
       "removeEventListener(eventType: RowNodeEventType, listener: Function)": "/** Remove event listener. */",
       "resetQuickFilterAggregateText()": "/** The first time `quickFilter` runs, the grid creates a one-off string representation of the row.\n     * This string is then used for the quick filter instead of hitting each column separately.\n     * When you edit, using grid editing, this string gets cleared down.\n     * However if you edit without using grid editing, you will need to clear this string down for the row to be updated with the new values.\n     * Otherwise new values will not work with the `quickFilter`.\n     */",
@@ -11390,7 +11392,7 @@
       "shortcut?": "string",
       "action?": "() => void",
       "checked?": "boolean",
-      "icon?": "HTMLElement | string",
+      "icon?": "Element | string",
       "cssClasses?": "string[]",
       "tooltip?": "string"
     },
@@ -11413,7 +11415,7 @@
       "shortcut?": "string",
       "action?": "() => void",
       "checked?": "boolean",
-      "icon?": "HTMLElement | string",
+      "icon?": "Element | string",
       "subMenu?": "(MenuItemDef | string)[] | IPopupComponent<any>",
       "cssClasses?": "string[]",
       "tooltip?": "string",

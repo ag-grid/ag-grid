@@ -1224,7 +1224,7 @@ export interface MenuItemLeafDef {
     /** Set to true to provide a check beside the option */
     checked?: boolean;
     /** The icon to display, either a DOM element or HTML string */
-    icon?: HTMLElement | string;
+    icon?: Element | string;
     /** CSS classes to apply to the menu item */
     cssClasses?: string[];
     /** Tooltip for the menu item */

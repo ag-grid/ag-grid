@@ -17,15 +17,15 @@ export enum ExpandState { EXPANDED, COLLAPSED, INDETERMINATE }
 export class PrimaryColsHeaderPanel extends Component {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
 
-    @RefSelector('eExpand') private readonly eExpand: HTMLElement;
+    @RefSelector('eExpand') private readonly eExpand: Element;
     @RefSelector('eSelect') private readonly eSelect: AgCheckbox;
     @RefSelector('eFilterTextField') private eFilterTextField: AgInputTextField;
 
     private static DEBOUNCE_DELAY = 300;
 
-    private eExpandChecked: HTMLElement;
-    private eExpandUnchecked: HTMLElement;
-    private eExpandIndeterminate: HTMLElement;
+    private eExpandChecked: Element;
+    private eExpandUnchecked: Element;
+    private eExpandIndeterminate: Element;
 
     private expandState: ExpandState;
     private selectState?: boolean;
@@ -53,6 +53,7 @@ export class PrimaryColsHeaderPanel extends Component {
 
         this.addManagedListener(this.eExpand, 'keydown', (e: KeyboardEvent) => {
             if (e.key === KeyCode.SPACE) {
+                e.preventDefault();
                 this.onExpandClicked();
             }
         });

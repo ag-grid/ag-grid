@@ -535,6 +535,7 @@
       "calloutLabelName?": "string",
       "sectorLabelKey?": "string",
       "sectorLabelName?": "string",
+      "legendItemKey?": "string",
       "fills?": "CssColor[]",
       "strokes?": "CssColor[]",
       "fillOpacity?": "Opacity",
@@ -579,6 +580,7 @@
       "calloutLabelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "sectorLabelKey?": "/** The key to use to retrieve sector label values from the data. */",
       "sectorLabelName?": "/** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "legendItemKey?": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */",
       "fills?": "/** The colours to cycle through for the fills of the sectors. */",
       "strokes?": "/** The colours to cycle through for the strokes of the sectors. */",
       "fillOpacity?": "/** The opacity of the fill for the sectors. */",
@@ -1067,14 +1069,35 @@
       "class?": "string",
       "tracking?": "boolean",
       "range?": "AgChartInteractionRange",
-      "delay?": "number"
+      "position?": "AgTooltipPositionOptions",
+      "delay?": "number",
+      "enableInteraction?": "boolean"
     },
     "docs": {
       "enabled?": "/** Set to false to disable tooltips for all series in the chart. */",
       "class?": "/** A class name to be added to the tooltip element of the chart. */",
       "tracking?": "/** @deprecated since v7.2.0 (ag-grid v29.2.0) If true, for series with markers the tooltip will be shown to the closest marker. */",
       "range?": "/** Range from a point that triggers the tooltip to show. */",
-      "delay?": "/** The time interval (in milliseconds) after which the tooltip is shown. */"
+      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "delay?": "/** The time interval (in milliseconds) after which the tooltip is shown. */",
+      "enableInteraction?": "/** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */"
+    }
+  },
+  "AgTooltipPositionOptions": {
+    "meta": { "isTypeAlias": true },
+    "type": "AgMovingTooltipPositionOptions"
+  },
+  "AgMovingTooltipPositionOptions": {
+    "meta": {},
+    "type": {
+      "type": "'pointer' | 'node'",
+      "xOffset?": "PixelSize",
+      "yOffset?": "PixelSize"
+    },
+    "docs": {
+      "type": "/** The type of positioning for the tooltip. By default, the tooltip follows the pointer. */",
+      "xOffset?": "/** The horizontal offset in pixels for the position of the tooltip. */",
+      "yOffset?": "/** The vertical offset in pixels for the position of the tooltip. */"
     }
   },
   "AgChartBackground": {
@@ -2417,7 +2440,7 @@
       "yKey?": "/** The keys to use to retrieve y-values from the data. */",
       "xName?": "/** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
       "yName?": "/** Human-readable description of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
-      "fill?": "/** The colour to use for the fill of the area. */",
+      "fill?": "/** The colour to use for the fill of the bars. */",
       "stroke?": "/** The colours to use for the stroke of the bars. */",
       "strokeWidth?": "/** The width in pixels of the stroke for the bars. */",
       "fillOpacity?": "/** The opacity of the fill for the bars. */",
@@ -2761,6 +2784,7 @@
       "calloutLabelName?": "string",
       "sectorLabelKey?": "string",
       "sectorLabelName?": "string",
+      "legendItemKey?": "string",
       "fills?": "CssColor[]",
       "strokes?": "CssColor[]",
       "fillOpacity?": "Opacity",
@@ -2806,6 +2830,7 @@
       "calloutLabelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "sectorLabelKey?": "/** The key to use to retrieve sector label values from the data. */",
       "sectorLabelName?": "/** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "legendItemKey?": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */",
       "fills?": "/** The colours to cycle through for the fills of the sectors. */",
       "strokes?": "/** The colours to cycle through for the strokes of the sectors. */",
       "fillOpacity?": "/** The opacity of the fill for the sectors. */",
@@ -3467,7 +3492,10 @@
       "xKey?": "string",
       "yKey?": "string",
       "cumulativeValue?": "number",
-      "point?": "Readonly<SizedPoint>"
+      "aggregatedValue?": "number",
+      "domain?": "[ number, number ]",
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "HighlightChangeEvent": {
@@ -3480,11 +3508,11 @@
   },
   "InteractionTypes": {
     "meta": { "isTypeAlias": true },
-    "type": "'click' | 'dblclick' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left' | 'wheel'"
+    "type": "'click' | 'dblclick' | 'contextmenu' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left' | 'wheel'"
   },
   "SUPPORTED_EVENTS": {
     "meta": { "isTypeAlias": true },
-    "type": "'click' | 'dblclick' | 'mousedown' | 'mousemove' | 'mouseup' | 'mouseout' | 'mouseenter' | 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel' | 'pagehide' | 'wheel'"
+    "type": "'click' | 'dblclick' | 'contextmenu' | 'mousedown' | 'mousemove' | 'mouseup' | 'mouseout' | 'mouseenter' | 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel' | 'pagehide' | 'wheel'"
   },
   "InteractionEvent": {
     "meta": {
@@ -3510,7 +3538,7 @@
   },
   "TooltipState": {
     "meta": {},
-    "type": { "content": "string", "meta": "TooltipMeta" }
+    "type": { "content": "string", "meta?": "TooltipMeta" }
   },
   "ZoomState": { "meta": {}, "type": { "min": "number", "max": "number" } },
   "AxisZoomState": {
@@ -3542,7 +3570,7 @@
   },
   "AxisLabelLayout": {
     "meta": { "isTypeAlias": true },
-    "type": "{ baseline: 'hanging' | 'bottom' | 'middle'; align: 'start' | 'end' | 'center'; rotation: number; fractionDigits: number; padding: number; }"
+    "type": "{ baseline: 'hanging' | 'bottom' | 'middle'; align: 'start' | 'end' | 'center'; rotation: number; fractionDigits: number; padding: number; format?: string; }"
   },
   "AxisLayout": {
     "meta": {},
@@ -3558,6 +3586,7 @@
     "meta": {},
     "type": {
       "type": "'layout-complete'",
+      "chart": "{ width: number; height: number; }",
       "series": "{ rect: BBox; paddedRect: BBox; visible: boolean; }",
       "axes?": "(AxisLayout & { id: string; })[]"
     }
@@ -3720,7 +3749,8 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "BarSeriesNodeTag": {
@@ -3756,7 +3786,8 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "SubGroup": {
@@ -3800,13 +3831,16 @@
       "fill?": "string",
       "stroke?": "string",
       "strokeWidth": "number",
+      "aggregatedValue": "number",
+      "domain": "[ number, number ]",
       "label?": "{ readonly text: string; readonly x: number; readonly y: number; readonly fontStyle?: FontStyle; readonly fontWeight?: FontWeight; readonly fontSize: number; readonly fontFamily: string; readonly fill: string; }",
       "xKey": "string",
       "yKey": "string",
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "HistogramAggregation": {
@@ -3827,7 +3861,8 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "PointDatum": {
@@ -3847,7 +3882,8 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "TreeDatum": {
@@ -3867,7 +3903,8 @@
       "children": "TreemapNodeDatum[]",
       "series": "Series<any>",
       "itemId?": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "TextNodeTag": {
@@ -3899,7 +3936,8 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "PieNodeTag": {
@@ -3915,7 +3953,8 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "SeriesNodePickMode": {
@@ -3982,6 +4021,10 @@
       "offsetY": "number",
       "event": "Event | InteractionEvent<any>"
     }
+  },
+  "TooltipPositionType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'pointer' | 'node'"
   },
   "Tick": { "meta": {}, "type": { "labels": "string[]" } },
   "ScaleClampParams": {
@@ -4251,6 +4294,7 @@
       "direction": "'x' | 'y'",
       "continuous": "boolean",
       "keys": "() => string[]",
+      "scaleValueFormatter": "(specifier: string) => ((x: any) => string) | undefined",
       "scaleBandwidth": "() => number",
       "scaleConvert(val: any)": "number",
       "scaleInvert(position: number)": "any"
@@ -4268,6 +4312,7 @@
     "meta": {},
     "type": {
       "optionsKey": "string",
+      "packageType": "'community' | 'enterprise'",
       "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
     }
   },
@@ -4277,6 +4322,7 @@
       "type": "'root'",
       "initialiseModule(ctx: ModuleContext)": "ModuleInstanceMeta<M>",
       "optionsKey": "string",
+      "packageType": "'community' | 'enterprise'",
       "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
     }
   },
@@ -4286,6 +4332,7 @@
       "type": "'axis'",
       "initialiseModule(ctx: ModuleContextWithParent<AxisContext>)": "ModuleInstanceMeta<M>",
       "optionsKey": "string",
+      "packageType": "'community' | 'enterprise'",
       "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
     }
   },

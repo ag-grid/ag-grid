@@ -297,10 +297,14 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     private onBtCancel(e: Event): void {
         this.resetUiToActiveModel(this.getModel(), () => {
-            if (this.providedFilterParams.closeOnApply) {
-                this.close(e);
-            }
+            this.handleCancelEnd(e);
         });
+    }
+
+    protected handleCancelEnd(e: Event): void {
+        if (this.providedFilterParams.closeOnApply) {
+            this.close(e);
+        }
     }
 
     protected resetUiToActiveModel(currentModel: M | null, afterUiUpdatedFunc?: () => void): void {

@@ -758,7 +758,7 @@ export class Legend {
                 if (s.id === series.id) {
                     s.toggleSeriesItem(itemId, newEnabled);
                 } else {
-                    s.toggleOtherSeriesItem(itemId, newEnabled);
+                    s.toggleOtherSeriesItems(series, datum, newEnabled);
                 }
             });
         }
@@ -808,29 +808,44 @@ export class Legend {
                 (ls, s) => [...ls, ...s.getLegendData()],
                 [] as Array<LegendDatum>
             );
+
             const visibleItemsCount = legendData.filter((d) => d.enabled).length;
             const clickedItem = legendData.find((d) => d.itemId === itemId && d.seriesId === seriesId);
+
+            const seriesItemCounts = legendData.reduce((acc, d) => {
+                acc[d.seriesId] ??= 0;
+                acc[d.seriesId]++;
+                return acc;
+            }, {} as any);
+            const seriesItemEnabledCounts = legendData.reduce((acc, d) => {
+                if (!d.enabled) return acc;
+                acc[d.seriesId] ??= 0;
+                acc[d.seriesId]++;
+                return acc;
+            }, {} as any);
+
+            const eachSeriesHasSingleItem = Object.values(seriesItemCounts).filter((c: any) => c > 1).length === 0;
+            const singleEnabledInEachSeries =
+                Object.values(seriesItemEnabledCounts).filter((count: any) => count > 1).length === 0;
+
             const singleSelectedWasNotClicked = visibleItemsCount === 1 && (clickedItem?.enabled ?? false);
+            const singleEnabledInEachSeriesWasNotClicked = singleEnabledInEachSeries && (clickedItem?.enabled ?? false);
 
             chart.series.forEach((s) => {
                 const legendData = s.getLegendData();
 
-                if (legendData.length === 0) {
-                    s.data?.forEach((_, index) => {
-                        const wasClicked = index === itemId;
-                        const newEnabled = wasClicked || singleSelectedWasNotClicked;
-
-                        s.toggleOtherSeriesItem(index, newEnabled);
-                    });
-                    return;
-                }
-
                 legendData.forEach((d) => {
                     const wasClicked = d.itemId === itemId && d.seriesId === seriesId;
-                    const newEnabled = wasClicked || singleSelectedWasNotClicked;
-
+                    const newEnabled =
+                        wasClicked ||
+                        (eachSeriesHasSingleItem && singleSelectedWasNotClicked) ||
+                        (!eachSeriesHasSingleItem && singleEnabledInEachSeriesWasNotClicked);
                     s.toggleSeriesItem(d.itemId, newEnabled);
                 });
+
+                if (s.id !== series.id) {
+                    s.toggleOtherSeriesItems(series, datum, undefined, singleEnabledInEachSeriesWasNotClicked);
+                }
             });
         }
 
@@ -856,7 +871,7 @@ export class Legend {
         if (!pointerInsideLegend) {
             this.cursorManager.updateCursor(this.id);
             this.highlightManager.updateHighlight(this.id);
-            this.tooltipManager.updateTooltip(this.id);
+            this.tooltipManager.removeTooltip(this.id);
             return;
         }
 
@@ -880,7 +895,7 @@ export class Legend {
                 toTooltipHtml({ content: datum.label.text })
             );
         } else {
-            this.tooltipManager.updateTooltip(this.id);
+            this.tooltipManager.removeTooltip(this.id);
         }
 
         if (toggleSeriesVisible || listeners.legendItemClick != null) {

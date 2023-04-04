@@ -30,7 +30,7 @@ export interface MenuItemSelectedEvent extends AgEvent {
     shortcut?: string;
     action?: () => void;
     checked?: boolean;
-    icon?: HTMLElement | string;
+    icon?: Element | string;
     subMenu?: (MenuItemDef | string)[] | IPopupComponent<any>;
     cssClasses?: string[];
     tooltip?: string;

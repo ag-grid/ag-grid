@@ -12,6 +12,7 @@
         "getParent": {},
         "isFilterAllowed": {},
         "isFilterActive": {},
+        "isHovered": {},
         "getSort": {},
         "getAggFunc": {},
         "getActualWidth": {},

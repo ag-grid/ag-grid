@@ -20,8 +20,16 @@ export class PolarChart extends Chart {
     async performLayout() {
         const shrinkRect = await super.performLayout();
 
+        const fullSeriesRect = shrinkRect.clone();
         this.computeSeriesRect(shrinkRect);
         this.computeCircle();
+
+        this.layoutService.dispatchLayoutComplete({
+            type: 'layout-complete',
+            chart: { width: this.scene.width, height: this.scene.height },
+            series: { rect: fullSeriesRect, paddedRect: shrinkRect, visible: true },
+            axes: [],
+        });
 
         return shrinkRect;
     }

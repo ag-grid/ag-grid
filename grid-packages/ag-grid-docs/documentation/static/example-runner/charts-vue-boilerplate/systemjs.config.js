@@ -8,10 +8,11 @@
     System.config({
         transpiler: 'plugin-babel',
         defaultExtension: 'js',
-        paths: assign({
+        paths: {
             // paths serve as alias
             "npm:": "https://cdn.jsdelivr.net/npm/",
-        }, sjsPaths),
+            ...sjsPaths,
+        },
         map: {
             // babel transpiler
             'plugin-babel': 'npm:systemjs-plugin-babel@0.0.25/plugin-babel.js',

@@ -492,7 +492,7 @@ export class ChartTheme {
                     fontFamily: ChartTheme.fontFamily,
                     color: 'rgb(70, 70, 70)',
                     offset: 3,
-                    minAngle: 20,
+                    minAngle: 0,
                 },
                 sectorLabel: {
                     enabled: true,

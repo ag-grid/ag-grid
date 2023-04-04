@@ -28,7 +28,7 @@ export class ChartSettingsPanel extends Component {
     @RefSelector('ePrevBtn') private readonly ePrevBtn: HTMLElement;
     @RefSelector('eNextBtn') private readonly eNextBtn: HTMLElement;
 
-    private miniCharts: MiniChartsContainer[] = [];
+    private miniChartsContainers: MiniChartsContainer[] = [];
     private cardItems: HTMLElement[] = [];
 
     private readonly chartController: ChartController;
@@ -64,11 +64,15 @@ export class ChartSettingsPanel extends Component {
         // the panel is not immediately visible due to the slide animation, so we add a
         // setTimeout to wait until the panel animation is over and is able to scroll
         setTimeout(() => {
-            const currentPallet = this.miniCharts.find(pallet => !pallet.getGui().classList.contains('ag-hidden'));
-            const currentChart = currentPallet!.getGui().querySelector('.ag-selected');
-    
+            const isMiniChartsContainerVisible = (miniChartsContainers: MiniChartsContainer) => {
+                return !miniChartsContainers.getGui().classList.contains('ag-hidden');
+            }
+            const currentMiniChartContainer = this.miniChartsContainers.find(isMiniChartsContainerVisible);
+            const currentChart = currentMiniChartContainer!.getGui().querySelector('.ag-selected') as HTMLElement;
+
             if (currentChart) {
-                currentChart.scrollIntoView({ block: 'nearest' });
+                const parent = currentChart.offsetParent as HTMLElement;
+                this.eMiniChartsContainer.scrollTo(0, parent.offsetTop);
             }
         }, 250);
     }
@@ -95,7 +99,7 @@ export class ChartSettingsPanel extends Component {
             const { fills, strokes } = palette;
             const miniChartsContainer = this.createBean(new MiniChartsContainer(this.chartController, fills, strokes, chartGroups));
 
-            this.miniCharts.push(miniChartsContainer);
+            this.miniChartsContainers.push(miniChartsContainer);
             this.eMiniChartsContainer.appendChild(miniChartsContainer.getGui());
             this.addCardLink(index);
 
@@ -147,9 +151,9 @@ export class ChartSettingsPanel extends Component {
 
         _.radioCssClass(this.cardItems[index], 'ag-selected', 'ag-not-selected');
 
-        const currentPalette = this.miniCharts[this.activePaletteIndex];
+        const currentPalette = this.miniChartsContainers[this.activePaletteIndex];
         const currentGui = currentPalette.getGui();
-        const futurePalette = this.miniCharts[index];
+        const futurePalette = this.miniChartsContainers[index];
         const nextGui = futurePalette.getGui();
 
         currentPalette.updateSelectedMiniChart();
@@ -187,7 +191,7 @@ export class ChartSettingsPanel extends Component {
     private destroyMiniCharts(): void {
         _.clearElement(this.eMiniChartsContainer);
 
-        this.miniCharts = this.destroyBeans(this.miniCharts);
+        this.miniChartsContainers = this.destroyBeans(this.miniChartsContainers);
     }
 
     protected destroy(): void {

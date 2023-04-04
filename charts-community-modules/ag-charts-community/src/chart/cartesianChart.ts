@@ -46,6 +46,7 @@ export class CartesianChart extends Chart {
 
         this.layoutService.dispatchLayoutComplete({
             type: 'layout-complete',
+            chart: { width: this.scene.width, height: this.scene.height },
             series: { rect: seriesRect, paddedRect: seriesPaddedRect, visible: visibility.series },
             axes: this.axes.map((axis) => ({ id: axis.id, ...axis.getLayoutState() })),
         });

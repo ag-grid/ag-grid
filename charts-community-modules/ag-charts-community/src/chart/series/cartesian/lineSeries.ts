@@ -273,6 +273,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                     yKey,
                     xKey,
                     point: { x, y, moveTo, size },
+                    nodeMidPoint: { x, y },
                     label: labelText
                         ? {
                               text: labelText,

@@ -19,6 +19,7 @@ export class HierarchyChart extends Chart {
 
         const { seriesAreaPadding } = this;
 
+        const fullSeriesRect = shrinkRect.clone();
         shrinkRect.shrink(seriesAreaPadding.left, 'left');
         shrinkRect.shrink(seriesAreaPadding.top, 'top');
         shrinkRect.shrink(seriesAreaPadding.right, 'right');
@@ -35,6 +36,13 @@ export class HierarchyChart extends Chart {
         seriesRoot.setClipRectInGroupCoordinateSpace(
             new BBox(shrinkRect.x, shrinkRect.y, shrinkRect.width, shrinkRect.height)
         );
+
+        this.layoutService.dispatchLayoutComplete({
+            type: 'layout-complete',
+            chart: { width: this.scene.width, height: this.scene.height },
+            series: { rect: fullSeriesRect, paddedRect: shrinkRect, visible: true },
+            axes: [],
+        });
 
         return shrinkRect;
     }

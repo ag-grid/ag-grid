@@ -1,4 +1,4 @@
-import { SizedPoint } from '../../scene/point';
+import { SizedPoint, Point } from '../../scene/point';
 import { BaseManager } from './baseManager';
 
 interface HighlightState {
@@ -12,7 +12,10 @@ interface HighlightNodeDatum {
     readonly xKey?: string;
     readonly yKey?: string;
     readonly cumulativeValue?: number;
+    readonly aggregatedValue?: number;
+    readonly domain?: [number, number];
     readonly point?: Readonly<SizedPoint>;
+    readonly nodeMidPoint?: Readonly<Point>;
 }
 
 export interface HighlightChangeEvent {

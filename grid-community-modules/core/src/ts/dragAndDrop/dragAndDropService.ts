@@ -42,7 +42,7 @@ export interface DragSource {
     /**
      * Element which, when dragged, will kick off the DnD process
      */
-    eElement: HTMLElement;
+    eElement: Element;
     /**
      * If eElement is dragged, then the dragItem is the object that gets passed around.
      */
@@ -96,7 +96,7 @@ export interface DropTarget {
     /** Icon to show when drag is over */
     getIconName?(): string | null;
 
-    isInterestedIn(type: DragSourceType, el: HTMLElement): boolean;
+    isInterestedIn(type: DragSourceType, el: Element): boolean;
 
     /**
      * If `true`, the DragSources will only be allowed to be dragged within the DragTarget that contains them.
@@ -171,15 +171,15 @@ export class DragAndDropService extends BeanStub {
     private dropTargets: DropTarget[] = [];
     private lastDropTarget: DropTarget | null | undefined;
 
-    private ePinnedIcon: HTMLElement;
-    private eHideIcon: HTMLElement;
-    private eMoveIcon: HTMLElement;
-    private eLeftIcon: HTMLElement;
-    private eRightIcon: HTMLElement;
-    private eGroupIcon: HTMLElement;
-    private eAggregateIcon: HTMLElement;
-    private ePivotIcon: HTMLElement;
-    private eDropNotAllowedIcon: HTMLElement;
+    private ePinnedIcon: Element;
+    private eHideIcon: Element;
+    private eMoveIcon: Element;
+    private eLeftIcon: Element;
+    private eRightIcon: Element;
+    private eGroupIcon: Element;
+    private eAggregateIcon: Element;
+    private ePivotIcon: Element;
+    private eDropNotAllowedIcon: Element;
 
     @PostConstruct
     private init(): void {
@@ -545,7 +545,7 @@ export class DragAndDropService extends BeanStub {
     public setGhostIcon(iconName: string | null, shake = false): void {
         clearElement(this.eGhostIcon);
 
-        let eIcon: HTMLElement | null = null;
+        let eIcon: Element | null = null;
 
         if (!iconName) {
             iconName = this.dragSource.defaultIconName || DragAndDropService.ICON_NOT_ALLOWED;

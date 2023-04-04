@@ -1,4 +1,4 @@
-import { Image } from '../scene/image';
+import { Image } from '../../scene/image';
 
 export class BackgroundImage {
     readonly node: Image;

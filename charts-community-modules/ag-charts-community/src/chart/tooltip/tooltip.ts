@@ -1,6 +1,6 @@
 import { BBox } from '../../scene/bbox';
 import { DeprecatedAndRenamedTo } from '../../util/deprecation';
-import { Validate, BOOLEAN, NUMBER, OPT_STRING, INTERACTION_RANGE } from '../../util/validation';
+import { Validate, BOOLEAN, NUMBER, OPT_STRING, INTERACTION_RANGE, predicateWithMessage } from '../../util/validation';
 import { AgChartInteractionRange, AgTooltipRendererResult } from '../agChartOptions';
 import { InteractionEvent } from '../interaction/interactionManager';
 
@@ -14,7 +14,7 @@ declare global {
 export const DEFAULT_TOOLTIP_CLASS = 'ag-chart-tooltip';
 
 const defaultTooltipCss = `
-.ag-chart-tooltip {
+.${DEFAULT_TOOLTIP_CLASS} {
     transition: transform 0.1s ease;
     display: table;
     position: fixed;
@@ -29,15 +29,20 @@ const defaultTooltipCss = `
     box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);
 }
 
-.ag-chart-tooltip-no-animation {
+.${DEFAULT_TOOLTIP_CLASS}-no-interaction {
+    pointer-events: none;
+    user-select: none;
+}
+
+.${DEFAULT_TOOLTIP_CLASS}-no-animation {
     transition: none !important;
 }
 
-.ag-chart-tooltip-hidden {
+.${DEFAULT_TOOLTIP_CLASS}-hidden {
     visibility: hidden;
 }
 
-.ag-chart-tooltip-title {
+.${DEFAULT_TOOLTIP_CLASS}-title {
     font-weight: bold;
     padding: 7px;
     border-top-left-radius: 5px;
@@ -48,7 +53,7 @@ const defaultTooltipCss = `
     border-top-right-radius: 5px;
 }
 
-.ag-chart-tooltip-content {
+.${DEFAULT_TOOLTIP_CLASS}-content {
     padding: 7px;
     line-height: 1.7em;
     border-bottom-left-radius: 5px;
@@ -56,12 +61,12 @@ const defaultTooltipCss = `
     overflow: hidden;
 }
 
-.ag-chart-tooltip-content:empty {
+.${DEFAULT_TOOLTIP_CLASS}-content:empty {
     padding: 0;
     height: 7px;
 }
 
-.ag-chart-tooltip-arrow::before {
+.${DEFAULT_TOOLTIP_CLASS}-arrow::before {
     content: "";
 
     position: absolute;
@@ -82,7 +87,7 @@ const defaultTooltipCss = `
     margin: 0 auto;
 }
 
-.ag-chart-tooltip-arrow::after {
+.${DEFAULT_TOOLTIP_CLASS}-arrow::after {
     content: "";
 
     position: absolute;
@@ -139,6 +144,28 @@ export function toTooltipHtml(input: string | AgTooltipRendererResult, defaults?
     return `${titleHtml}<div class="${DEFAULT_TOOLTIP_CLASS}-content">${content}</div>`;
 }
 
+const POSITION_TYPES = ['pointer', 'node'];
+export const POSITION_TYPE = predicateWithMessage(
+    (v: any) => POSITION_TYPES.includes(v),
+    `expecting a position type keyword such as 'pointer' or 'node'`
+);
+
+export type TooltipPositionType = 'pointer' | 'node';
+
+class TooltipPosition {
+    @Validate(POSITION_TYPE)
+    /** The type of positioning for the tooltip. By default, the tooltip follows the pointer. */
+    type: TooltipPositionType = 'pointer';
+
+    @Validate(NUMBER())
+    /** The horizontal offset in pixels for the position of the tooltip. */
+    xOffset?: number = 0;
+
+    @Validate(NUMBER())
+    /** The vertical offset in pixels for the position of the tooltip. */
+    yOffset?: number = 0;
+}
+
 export class Tooltip {
     private static tooltipDocuments: Document[] = [];
 
@@ -163,6 +190,11 @@ export class Tooltip {
 
     @Validate(INTERACTION_RANGE)
     range: AgChartInteractionRange = 'nearest';
+
+    @Validate(BOOLEAN)
+    enableInteraction: boolean = false;
+
+    readonly position: TooltipPosition = new TooltipPosition();
 
     constructor(canvasElement: HTMLCanvasElement, document: Document, container: HTMLElement) {
         this.tooltipRoot = container;
@@ -214,7 +246,7 @@ export class Tooltip {
     }
 
     private updateClass(visible?: boolean, constrained?: boolean) {
-        const { element, class: newClass, lastClass } = this;
+        const { element, class: newClass, lastClass, enableInteraction } = this;
 
         const wasVisible = this.isVisible();
 
@@ -228,6 +260,7 @@ export class Tooltip {
         };
 
         toggleClass('no-animation', !wasVisible && !!visible); // No animation on first show.
+        toggleClass('no-interaction', !enableInteraction); // Prevent interaction.
         toggleClass('hidden', !visible); // Hide if not visible.
         toggleClass('arrow', !constrained); // Add arrow if tooltip is constrained.
 
@@ -249,7 +282,7 @@ export class Tooltip {
      * If the `html` parameter is missing, moves the existing tooltip to the new position.
      */
     show(meta: TooltipMeta, html?: string, instantly = false) {
-        const { element, canvasElement } = this;
+        const { element, canvasElement, position } = this;
 
         if (html !== undefined) {
             element.innerHTML = html;
@@ -262,8 +295,8 @@ export class Tooltip {
         };
 
         const canvasRect = canvasElement.getBoundingClientRect();
-        const naiveLeft = canvasRect.left + meta.offsetX - element.clientWidth / 2;
-        const naiveTop = canvasRect.top + meta.offsetY - element.clientHeight - 8;
+        const naiveLeft = canvasRect.left + meta.offsetX - element.clientWidth / 2 + (position.xOffset ?? 0);
+        const naiveTop = canvasRect.top + meta.offsetY - element.clientHeight - 8 + (position.yOffset ?? 0);
 
         const windowBounds = this.getWindowBoundingBox();
         const maxLeft = windowBounds.x + windowBounds.width - element.clientWidth - 1;
@@ -298,10 +331,12 @@ export class Tooltip {
     }
 
     pointerLeftOntoTooltip(event: InteractionEvent<'leave'>): boolean {
+        if (!this.enableInteraction) return false;
+
         const classList = (event.sourceEvent as MouseEvent).relatedTarget?.classList;
-        return (
-            classList !== undefined &&
-            (classList.contains(DEFAULT_TOOLTIP_CLASS) || classList.contains(`${DEFAULT_TOOLTIP_CLASS}-content`))
-        );
+        const classes = ['', '-title', '-content'];
+        const classListContains = Boolean(classes.filter((c) => classList?.contains(`${DEFAULT_TOOLTIP_CLASS}${c}`)));
+
+        return classList !== undefined && classListContains;
     }
 }

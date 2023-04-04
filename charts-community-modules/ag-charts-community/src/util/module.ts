@@ -29,6 +29,7 @@ export interface AxisContext {
     direction: 'x' | 'y';
     continuous: boolean;
     keys: () => string[];
+    scaleValueFormatter: (specifier: string) => ((x: any) => string) | undefined;
     scaleBandwidth: () => number;
     scaleConvert(val: any): number;
     scaleInvert(position: number): any;
@@ -46,6 +47,7 @@ export interface ModuleInstanceMeta<M extends ModuleInstance = ModuleInstance> {
 
 interface BaseModule {
     optionsKey: string;
+    packageType: 'community' | 'enterprise';
     chartTypes: ('cartesian' | 'polar' | 'hierarchy')[];
 }
 
@@ -75,5 +77,20 @@ export abstract class BaseModuleInstance {
 
 export const REGISTERED_MODULES: Module[] = [];
 export function registerModule(module: Module) {
-    REGISTERED_MODULES.push(module);
+    const otherModule = REGISTERED_MODULES.find((other) => {
+        return module.type === other.type && module.optionsKey === other.optionsKey;
+    });
+
+    if (otherModule) {
+        if (module.packageType === 'enterprise' && otherModule.packageType === 'community') {
+            // Replace the community module with an enterprise version
+            const index = REGISTERED_MODULES.indexOf(otherModule);
+            REGISTERED_MODULES.splice(index, 1, module);
+        } else {
+            // Skip if the module is already registered
+        }
+    } else {
+        // Simply register the module
+        REGISTERED_MODULES.push(module);
+    }
 }

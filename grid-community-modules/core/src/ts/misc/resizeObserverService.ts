@@ -13,12 +13,8 @@ export class ResizeObserverService extends BeanStub {
     public observeResize(element: HTMLElement, callback: () => void): () => void {
         const eDocument = this.gridOptionsService.getDocument();
         const win = (eDocument.defaultView || window) as any;
-        // this gets fired too often and might cause some relayout issues
-        // so we add a debounce to the callback here to avoid the flashing effect.
-        const debouncedCallback = debounce(callback, DEBOUNCE_DELAY);
         const useBrowserResizeObserver = () => {
-
-            const resizeObserver = new win.ResizeObserver(debouncedCallback);
+            const resizeObserver = new win.ResizeObserver(callback);
             resizeObserver.observe(element);
             return () => resizeObserver.disconnect();
         };

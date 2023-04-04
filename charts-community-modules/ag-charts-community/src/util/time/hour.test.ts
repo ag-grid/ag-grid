@@ -45,7 +45,10 @@ test('hour.every with snapTo: null', () => {
     const month = today.getMonth();
     const date = today.getDate();
 
-    const range = interval.range(new Date(year, month, date, 8, 31, 5, 100), new Date(year, month, date, 21, 31, 5, 100));
+    const range = interval.range(
+        new Date(year, month, date, 8, 31, 5, 100),
+        new Date(year, month, date, 21, 31, 5, 100)
+    );
     expect(range).toEqual([
         new Date(year, month, date, 12, 0, 0, 0),
         new Date(year, month, date, 16, 0, 0, 0),

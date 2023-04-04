@@ -4,19 +4,12 @@ title: "Zoom"
 
 AG Charts provides two methods of zooming, either by scrolling with the mouse wheel or selecting an area of the chart to zoom into.
 
-To enable these features, first, install the zoom package:
-
-```bash
-$ npm install @ag-charts-enterprise/zoom
-```
-
-Then register the zoom module:
+To enable these features, set `zoom.enabled` to `true`.
 
 ```ts
-import { _ModuleSupport } from "@ag-charts-enterprise/core"
-import { ZoomModule } from "@ag-charts-enterprise/zoom"
-
-_ModuleSupport.registerModule(ZoomModule)
+zoom: {
+    enabled: true,
+}
 ```
 
 A user will now be able to use the zooming features as in the following example, including:
@@ -44,7 +37,7 @@ zoom: {
 
 ## Min x/y ratio
 
-The `minXRatio` and `minYRatio` options can be used to limit how far a user can zoom in to the chart, helping to prevent them from getting lost in a blank space of the chart. These options are defined as the minimum proportion of the full chart that can be displayed.
+The `minXRatio` and `minYRatio` options can be used to limit how far a user can zoom in to the chart, helping to prevent them from getting lost in a blank space of the chart. These options are defined as the minimum proportion of the full chart that can be displayed. The default for both values is `0.2`.
 
 The example below demonstrates setting both these properties to `0.4`, preventing the user from zooming beyond showing a minimum of 40% of the full chart.
 

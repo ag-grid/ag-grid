@@ -201,7 +201,14 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      * - `true` if the node is a full width cell.
      * - `false` if the node is not a full width cell.
      */
-    isFullWidthCell(): boolean
+    isFullWidthCell(): boolean;
+
+    /**
+     * Returns:
+     * - `true` if the node is currently hovered.
+     * - `false` if the node is not hovered.
+     */
+    isHovered(): boolean;
 
     /** Add an event listener. */
     addEventListener(eventType: RowNodeEventType, listener: Function): void;

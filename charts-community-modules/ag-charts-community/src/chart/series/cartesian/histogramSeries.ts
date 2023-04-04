@@ -64,6 +64,8 @@ interface HistogramNodeDatum extends CartesianSeriesNodeDatum {
     readonly fill?: string;
     readonly stroke?: string;
     readonly strokeWidth: number;
+    readonly aggregatedValue: number;
+    readonly domain: [number, number];
     readonly label?: {
         readonly text: string;
         readonly x: number;
@@ -403,16 +405,24 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                       }
                     : undefined;
 
+            const nodeMidPoint = {
+                x: xMinPx + w / 2,
+                y: yMaxPx + h / 2,
+            };
+
             nodeData.push({
                 series: this,
                 datum: binOfData, // required by SeriesNodeDatum, but might not make sense here
                 // since each selection is an aggregation of multiple data.
+                aggregatedValue: binOfData.aggregatedValue,
+                domain: binOfData.domain,
                 yKey,
                 xKey,
                 x: xMinPx,
                 y: yMaxPx,
                 width: w,
                 height: h,
+                nodeMidPoint,
                 fill: fill,
                 stroke: stroke,
                 strokeWidth: strokeWidth,

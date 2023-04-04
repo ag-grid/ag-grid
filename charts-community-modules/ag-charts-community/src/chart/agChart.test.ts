@@ -138,8 +138,8 @@ describe('update', () => {
         expect(chart.subtitle!.text).toBe('My Subtitle');
         expect(chart.subtitle!.fontSize).toBe(20);
         expect(chart.subtitle!.enabled).toBe(false);
-        expect(chart.background.fill).toBe('red');
-        expect(chart.background.visible).toBe(false);
+        expect((chart as any).background.fill).toBe('red');
+        expect((chart as any).background.visible).toBe(false);
         expect((chart.series[0] as any).marker.shape).toBe('plus');
 
         AgChart.updateDelta(chartProxy, {
