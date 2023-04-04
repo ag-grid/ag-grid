@@ -1,5 +1,6 @@
 ---
 title: "Zoom"
+enterprise: true
 ---
 
 AG Charts provides two methods of zooming, either by scrolling with the mouse wheel or selecting an area of the chart to zoom into.

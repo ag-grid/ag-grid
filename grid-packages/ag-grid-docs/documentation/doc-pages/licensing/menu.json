@@ -2067,6 +2067,11 @@
                 "url": "/charts-tooltips/"
               },
               {
+                "title": "Context Menu",
+                "url": "/charts-context-menu/",
+                "enterprise": "charts"
+              },
+              {
                 "title": "Zoom",
                 "url": "/charts-zoom/",
                 "enterprise": "charts"
