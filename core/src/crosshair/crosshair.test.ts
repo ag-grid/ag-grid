@@ -1,7 +1,6 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import {
-    AgCartesianAxisOptions,
     AgCartesianAxisPosition,
     AgCartesianChartOptions,
     AgChartOptions,
@@ -42,23 +41,15 @@ function applyAxesFlip<T>(opts: T): T {
 }
 
 function applyCrosshairSnap<T>(opts: T, snap: boolean): T {
-    const getAxisOpts = (axisOpts: AgCartesianAxisOptions) => {
-        if (axisOpts.type !== 'category') {
-            return {
-                ...axisOpts,
-                crosshair: {
-                    ...axisOpts.crosshair,
-                    snap,
-                },
-            };
-        }
-
-        return axisOpts;
-    };
-
     return {
         ...opts,
-        axes: opts['axes']?.map((axis) => getAxisOpts(axis)) || undefined,
+        axes: opts['axes']?.map((axis) => ({
+            ...axis,
+            crosshair: {
+                ...axis.crosshair,
+                snap,
+            },
+        })),
     };
 }
 
@@ -66,6 +57,7 @@ const CROSSHAIR_OPTIONS = {
     stroke: '#5470C6',
     strokeWidth: 3,
     lineDash: [10, 5],
+    snap: false,
 };
 
 const BASE_OPTIONS: AgChartOptions = {
@@ -179,6 +171,36 @@ const STACKED_AREA_OPTIONS: AgCartesianChartOptions = {
     series: SIMPLE_AXIS_OPTIONS.series?.map((s) => ({ ...s, type: 'area', stacked: true })),
 };
 
+const HISTOGRAM_OPTIONS: AgCartesianChartOptions = {
+    ...SIMPLE_AXIS_OPTIONS,
+    data: [
+        { x: 0, y1: 100 },
+        { x: 1, y1: 500 },
+        { x: 2, y1: 250 },
+        { x: 3, y1: 750 },
+        { x: 4, y1: 100 },
+        { x: 5, y1: 500 },
+        { x: 6, y1: 250 },
+        { x: 7, y1: 750 },
+        { x: 8, y1: 100 },
+        { x: 9, y1: 500 },
+        { x: 10, y1: 250 },
+        { x: 11, y1: 750 },
+        { x: 12, y1: 100 },
+        { x: 13, y1: 500 },
+        { x: 14, y1: 250 },
+        { x: 15, y1: 750 },
+        { x: 16, y1: 250 },
+    ],
+    series: [
+        {
+            type: 'histogram',
+            xKey: 'x',
+            yKey: 'y1',
+        },
+    ],
+};
+
 describe('Crosshair', () => {
     let chart: any;
     const ctx = setupMockCanvas();
@@ -214,6 +236,7 @@ describe('Crosshair', () => {
         STACKED_BAR_OPTIONS,
         STACKED_AREA_OPTIONS,
         applyAxesFlip(STACKED_AREA_OPTIONS),
+        HISTOGRAM_OPTIONS,
     ];
 
     for (const TEST_CASE of CASES) {
