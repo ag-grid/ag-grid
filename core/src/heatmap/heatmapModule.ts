@@ -14,7 +14,7 @@ export const HeatmapModule: _ModuleSupport.SeriesModule = {
         ctx.defaults.add(heatmapDefaults);
         ctx.themes.chartTheme.add(getHeatmapDefaultTheme);
         ctx.themes.darkTheme.add(getHeatmapDarkTheme);
-        
+
         return {
             instance: {
                 update() {},

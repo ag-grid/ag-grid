@@ -5,7 +5,18 @@ type AgTooltipRendererResult = any;
 type AgHeatmapSeriesFormatterParams<_T> = any;
 type AgHeatmapSeriesFormat = any;
 
-const { Validate, SeriesNodePickMode, ChartAxisDirection, STRING, COLOR_STRING_ARRAY, OPT_NUMBER, OPT_STRING, OPT_FUNCTION, OPT_NUMBER_ARRAY, OPT_COLOR_STRING } = _ModuleSupport;
+const {
+    Validate,
+    SeriesNodePickMode,
+    ChartAxisDirection,
+    STRING,
+    COLOR_STRING_ARRAY,
+    OPT_NUMBER,
+    OPT_STRING,
+    OPT_FUNCTION,
+    OPT_NUMBER_ARRAY,
+    OPT_COLOR_STRING,
+} = _ModuleSupport;
 const { Rect, Label, toTooltipHtml } = _Scene;
 const { ContinuousScale, ColorScale } = _Scale;
 const { checkDatum, extent, sanitizeHtml } = _Util;
@@ -46,7 +57,10 @@ class HeatmapSeriesTooltip extends _ModuleSupport.SeriesTooltip {
     renderer?: (params: AgHeatmapSeriesTooltipRendererParams) => string | AgTooltipRendererResult = undefined;
 }
 
-export class HeatmapSeries extends _ModuleSupport.CartesianSeries<_ModuleSupport.SeriesNodeDataContext<any>, _Scene.Rect> {
+export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
+    _ModuleSupport.SeriesNodeDataContext<any>,
+    _Scene.Rect
+> {
     static className = 'HeatmapSeries';
     static type = 'heatmap' as const;
 
@@ -335,7 +349,7 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<_ModuleSupport
 
     protected async updateLabelSelection(opts: {
         labelData: HeatmapNodeDatum[];
-        labelSelection:_Scene.Selection<_Scene.Text, HeatmapNodeDatum>;
+        labelSelection: _Scene.Selection<_Scene.Text, HeatmapNodeDatum>;
     }) {
         const { labelSelection } = opts;
         const {

@@ -1,4 +1,12 @@
-import { AgBaseSeriesOptions, AgSeriesListeners, AgSeriesTooltip, AgCartesianSeriesTooltipRendererParams, AgTooltipRendererResult, CssColor, PixelSize } from 'ag-charts-community';
+import {
+    AgBaseSeriesOptions,
+    AgSeriesListeners,
+    AgSeriesTooltip,
+    AgCartesianSeriesTooltipRendererParams,
+    AgTooltipRendererResult,
+    CssColor,
+    PixelSize,
+} from 'ag-charts-community';
 
 export { HeatmapModule } from './heatmapModule';
 
