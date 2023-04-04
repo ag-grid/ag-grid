@@ -4,7 +4,6 @@ import { CrosshairLabel, LabelMeta } from './crosshairLabel';
 type AgCrosshairLabelRendererResult = any;
 
 const { Group, Line, BBox } = _Scene;
-const { checkDatum } = _Util;
 const { Validate, NUMBER, BOOLEAN, OPT_COLOR_STRING, OPT_LINE_DASH, Layers } = _ModuleSupport;
 
 export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
@@ -165,14 +164,14 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         if (visible && seriesRect.containsPoint(offsetX, offsetY)) {
             crosshairGroup.visible = true;
 
-            const highlightValue = activeHighlight ? this.getActiveHighlightValue(activeHighlight) : undefined;
+            const highlight = activeHighlight ? this.getActiveHighlight(activeHighlight) : undefined;
             let value;
             if (axisCtx.direction === 'x') {
                 crosshairGroup.translationX = Math.round(offsetX);
-                value = axisCtx.continuous ? axisCtx.scaleInvert(offsetX - seriesRect.x) : highlightValue;
+                value = axisCtx.continuous ? axisCtx.scaleInvert(offsetX - seriesRect.x) : highlight?.value;
             } else {
                 crosshairGroup.translationY = Math.round(offsetY);
-                value = axisCtx.continuous ? axisCtx.scaleInvert(offsetY - seriesRect.y) : highlightValue;
+                value = axisCtx.continuous ? axisCtx.scaleInvert(offsetY - seriesRect.y) : highlight?.value;
             }
 
             if (value) {
@@ -208,17 +207,15 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         if (visible && this.activeHighlight) {
             crosshairGroup.visible = true;
 
-            const value = this.getActiveHighlightValue(this.activeHighlight);
-            const position = axisCtx.scaleConvert(value);
+            const { value, position } = this.getActiveHighlight(this.activeHighlight);
 
             let x = 0;
             let y = 0;
-            const halfBandwidth = axisCtx.scaleBandwidth() / 2;
             if (axisCtx.direction === 'x') {
-                x = position + halfBandwidth;
+                x = position;
                 crosshairGroup.translationX = Math.round(x + seriesRect.x);
             } else {
-                y = position + halfBandwidth;
+                y = position;
                 crosshairGroup.translationY = Math.round(y + seriesRect.y);
             }
 
@@ -228,29 +225,27 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         }
     }
 
-    private getActiveHighlightValue(
+    private getActiveHighlight(
         activeHighlight: Exclude<_ModuleSupport.HighlightChangeEvent['currentHighlight'], undefined>
-    ) {
+    ): { position: number; value: any } {
         const { axisCtx } = this;
-        const { xKey = '', yKey = '', datum, aggregatedValue, series, domain, cumulativeValue } = activeHighlight;
-
-        const isAggregatedValue = aggregatedValue !== undefined;
-        if (isAggregatedValue) {
+        const { datum, xKey = '', yKey = '', aggregatedValue, series, cumulativeValue, nodeMidPoint } = activeHighlight;
+        const halfBandwidth = axisCtx.scaleBandwidth() / 2;
+        if (aggregatedValue !== undefined) {
             if (series.yAxis.id === axisCtx.axisId) {
-                return aggregatedValue;
+                return { value: aggregatedValue!, position: axisCtx.scaleConvert(aggregatedValue) + halfBandwidth };
             }
-
-            return domain?.[1];
         }
 
-        const isCumulativeValue = cumulativeValue !== undefined;
         const isYValue = axisCtx.keys().indexOf(yKey) >= 0;
-        if (isCumulativeValue && isYValue) {
-            return cumulativeValue;
+        if (cumulativeValue !== undefined && isYValue) {
+            return { value: cumulativeValue, position: axisCtx.scaleConvert(cumulativeValue) + halfBandwidth };
         }
 
         const key = isYValue ? yKey : xKey;
-        return checkDatum(datum[key], axisCtx.continuous);
+        const position = (axisCtx.direction === 'x' ? nodeMidPoint?.x : nodeMidPoint?.y) ?? 0;
+        const value = axisCtx.continuous ? axisCtx.scaleInvert(position) : datum[key];
+        return { value, position };
     }
 
     private getLabelHtml(value: any): string {
