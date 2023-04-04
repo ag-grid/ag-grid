@@ -81,6 +81,8 @@ export interface IAggFuncParams<TData = any, TValue = any> extends AgGridCommon<
     column: Column;
     /** ColDef of the aggregation column */
     colDef: ColDef<TData>;
+    /** Pivot Result Column being produced using this aggregation */
+    pivotResultColumn?: Column;
     /** The parent RowNode, where the aggregation result will be shown */
     rowNode: IRowNode<TData>;
     /** data (if any) of the parent RowNode */

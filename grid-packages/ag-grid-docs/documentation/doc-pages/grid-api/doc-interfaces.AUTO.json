@@ -729,6 +729,10 @@
       "description": "/** ColDef of the aggregation column */",
       "type": { "returnType": "ColDef<TData>", "optional": false }
     },
+    "pivotResultColumn": {
+      "description": "/** Pivot Result Column being produced using this aggregation */",
+      "type": { "returnType": "Column", "optional": true }
+    },
     "rowNode": {
       "description": "/** The parent RowNode, where the aggregation result will be shown */",
       "type": { "returnType": "IRowNode<TData>", "optional": false }
