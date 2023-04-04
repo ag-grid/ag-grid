@@ -622,7 +622,7 @@ export class ColumnModel extends BeanStub {
         }
 
         if (!shouldSkipHeaderGroups) {
-            this.autoSizeColumnGroupsByColumns(columns, stopAtGroup);
+            this.autoSizeColumnGroupsByColumns(columns, source, stopAtGroup);
         }
 
         this.dispatchColumnResizedEvent(columnsAutosized, true, 'autosizeColumns');
@@ -719,7 +719,7 @@ export class ColumnModel extends BeanStub {
         }
     }
 
-    private autoSizeColumnGroupsByColumns(keys: (string | Column)[], stopAtGroup?: ColumnGroup): Column[] {
+    private autoSizeColumnGroupsByColumns(keys: (string | Column)[], source: ColumnEventType, stopAtGroup?: ColumnGroup): Column[] {
         const columnGroups: Set<ColumnGroup> = new Set();
         const columns = this.getGridColumns(keys);
 
@@ -743,7 +743,7 @@ export class ColumnModel extends BeanStub {
                 if (headerGroupCtrl) { break; }
             }
             if (headerGroupCtrl) {
-                headerGroupCtrl.resizeLeafColumnsToFit();
+                headerGroupCtrl.resizeLeafColumnsToFit(source);
             }
         }
 
