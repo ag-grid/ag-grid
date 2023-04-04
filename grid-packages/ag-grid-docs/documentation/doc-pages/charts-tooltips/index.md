@@ -175,6 +175,14 @@ The example below shows the three types of interaction range:
 
 <chart-example title='Tooltip Range' name='interaction-range' type='generated'></chart-example>
 
+## Interaction with a Tooltip
+
+By default, you can not hover over a tooltip or select its text. Set the `tooltip.enableInteraction` flag to `true` to enable selecting the text and clicking links within the tooltip.
+
+### Example: Interaction with a Tooltip
+
+<chart-example title='Tooltip Interaction' name='tooltip-interaction' type='generated'></chart-example>
+
 ## API Reference
 
 ### Bar/Column Tooltips
