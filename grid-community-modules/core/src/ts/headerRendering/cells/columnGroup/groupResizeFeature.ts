@@ -1,3 +1,4 @@
+import { ColumnEventType } from "../../../events";
 import { ColumnModel, ColumnResizeSet } from "../../../columns/columnModel";
 import { BeanStub } from "../../../context/beanStub";
 import { Autowired, PostConstruct } from "../../../context/context";
@@ -76,7 +77,7 @@ export class GroupResizeFeature extends BeanStub {
                     });
                 }
 
-                this.resizeLeafColumnsToFit();
+                this.resizeLeafColumnsToFit('uiColumnResized');
             });
         }
     }
@@ -109,23 +110,23 @@ export class GroupResizeFeature extends BeanStub {
 
     }
 
-    public onResizing(finished: boolean, resizeAmount: any): void {
+    public onResizing(finished: boolean, resizeAmount: any, source: ColumnEventType = 'uiColumnResized'): void {
         const resizeAmountNormalised = this.normaliseDragChange(resizeAmount);
         const width = this.resizeStartWidth + resizeAmountNormalised;
 
-        this.resizeColumns(width, finished);
+        this.resizeColumns(width, source, finished);
     }
 
-    public resizeLeafColumnsToFit(): void {
+    public resizeLeafColumnsToFit(source: ColumnEventType): void {
         const preferredSize = this.autoWidthCalculator.getPreferredWidthForColumnGroup(this.columnGroup);
         this.calculateInitialValues();
 
         if (preferredSize > this.resizeStartWidth) {
-            this.resizeColumns(preferredSize, true);
+            this.resizeColumns(preferredSize, source, true);
         }
     }
 
-    public resizeColumns(totalWidth: number, finished: boolean = true): void {
+    public resizeColumns(totalWidth: number, source: ColumnEventType, finished: boolean = true): void {
         const resizeSets: ColumnResizeSet[] = [];
 
         resizeSets.push({
@@ -146,7 +147,7 @@ export class GroupResizeFeature extends BeanStub {
         this.columnModel.resizeColumnSets({
             resizeSets,
             finished,
-            source: 'uiColumnDragged'
+            source: source
         });
 
         if (finished) {
