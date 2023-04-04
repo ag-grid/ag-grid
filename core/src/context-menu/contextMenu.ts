@@ -26,6 +26,8 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
     // State
     private groups: ContextMenuGroups;
     private showEvent?: MouseEvent;
+    private x: number = 0;
+    private y: number = 0;
 
     // HTML elements
     private canvasElement: HTMLElement;
@@ -33,7 +35,8 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
     private coverElement: HTMLElement;
     private element: HTMLDivElement;
     private menuElement?: HTMLDivElement;
-    private observer?: IntersectionObserver;
+    private intersectionObserver?: IntersectionObserver;
+    private mutationObserver?: MutationObserver;
 
     // Global shared state
     private static contextMenuDocuments: Document[] = [];
@@ -73,7 +76,11 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
             this.hide();
             event.preventDefault();
 
-            this.show(event.pageX, event.pageY);
+            this.x = event.pageX;
+            this.y = event.pageY;
+
+            this.show();
+            this.reposition();
         };
 
         if (window.IntersectionObserver) {
@@ -90,7 +97,17 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
             );
 
             observer.observe(this.canvasElement);
-            this.observer = observer;
+            this.intersectionObserver = observer;
+        }
+
+        if (window.MutationObserver) {
+            const observer = new MutationObserver(() => {
+                if (this.menuElement && this.element.contains(this.menuElement)) {
+                    this.reposition();
+                }
+            });
+            observer.observe(this.element, { childList: true });
+            this.mutationObserver = observer;
         }
 
         // Global shared state
@@ -136,9 +153,8 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
 
     private onContextMenu(event: _ModuleSupport.InteractionEvent<'contextmenu'>) {
         this.showEvent = event.sourceEvent as MouseEvent;
-
-        const x = event.pageX;
-        const y = event.pageY;
+        this.x = event.pageX;
+        this.y = event.pageY;
 
         this.groups.default = [...ContextMenu.defaultActions];
 
@@ -160,10 +176,10 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
         event.consume();
         event.sourceEvent.preventDefault();
 
-        this.show(x, y);
+        this.show();
     }
 
-    public show(x: number, y: number) {
+    public show() {
         if (!this.coverElement) return;
 
         const newMenuElement = this.renderMenu();
@@ -174,33 +190,11 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
             this.element.appendChild(newMenuElement);
         }
 
-        // TODO: contain within the window
-        const pinned: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' = 'top-left';
-        switch (pinned) {
-            case 'top-left':
-                this.element.style.left = `${x + 1}px`;
-                this.element.style.top = `calc(${y}px - 0.5em)`;
-                break;
-
-            // case 'top-right':
-            //     this.element.style.right = `calc(100% - ${x - 1}px)`;
-            //     this.element.style.top = `calc(${y}px - 0.5em)`;
-            //     break;
-
-            // case 'bottom-left':
-            //     this.element.style.left = `${x + 1}px`;
-            //     this.element.style.bottom = `calc(100% - ${y}px - 0.5em)`;
-            //     break;
-
-            // case 'bottom-right':
-            //     this.element.style.right = `calc(100% - ${x - 1}px)`;
-            //     this.element.style.bottom = `calc(100% - ${y}px - 0.5em)`;
-            //     break;
-        }
-
         this.menuElement = newMenuElement;
 
         this.tooltipManager.updateTooltip(TOOLTIP_ID);
+
+        this.element.style.display = 'block';
 
         this.coverElement.style.display = 'block';
         this.coverElement.style.left = `${this.canvasElement.parentElement?.offsetLeft}px`;
@@ -217,6 +211,7 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
 
         this.tooltipManager.removeTooltip(TOOLTIP_ID);
 
+        this.element.style.display = 'none';
         this.coverElement.style.display = 'none';
     }
 
@@ -282,6 +277,27 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
         return el;
     }
 
+    private reposition() {
+        const { x, y } = this;
+
+        this.element.style.top = 'unset';
+        this.element.style.bottom = 'unset';
+        this.element.style.left = 'unset';
+        this.element.style.right = 'unset';
+
+        if (x + this.element.offsetWidth > window.innerWidth) {
+            this.element.style.right = `calc(100% - ${x - 1}px)`;
+        } else {
+            this.element.style.left = `${x + 1}px`;
+        }
+
+        if (y + this.element.offsetHeight > window.innerHeight) {
+            this.element.style.bottom = `calc(100% - ${y}px - 0.5em)`;
+        } else {
+            this.element.style.top = `calc(${y}px - 0.5em)`;
+        }
+    }
+
     public update() {
         //
     }
@@ -289,8 +305,7 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
     public destroy() {
         super.destroy();
 
-        if (this.observer) {
-            this.observer.unobserve(this.canvasElement);
-        }
+        this.intersectionObserver?.unobserve(this.canvasElement);
+        this.mutationObserver?.disconnect();
     }
 }
