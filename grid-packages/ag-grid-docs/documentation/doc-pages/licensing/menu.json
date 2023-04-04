@@ -1935,7 +1935,11 @@
               },
               {
                 "title": "Background",
-                "url": "/charts-background/",
+                "url": "/charts-background/"
+              },
+              {
+                "title": "Background Image",
+                "url": "/charts-background-image/",
                 "enterprise": "charts"
               }
             ]
