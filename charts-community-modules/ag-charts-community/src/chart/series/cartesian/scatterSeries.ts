@@ -25,7 +25,7 @@ import {
     AgTooltipRendererResult,
     AgCartesianSeriesMarkerFormat,
 } from '../../agChartOptions';
-import { DataModel, DatumPropertyDefinition, ProcessedData } from '../../data/dataModel';
+import { DataModel, DatumPropertyDefinition } from '../../data/dataModel';
 
 interface ScatterNodeDatum extends Required<CartesianSeriesNodeDatum> {
     readonly label: MeasuredLabel;
@@ -64,7 +64,6 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     static className = 'ScatterSeries';
     static type = 'scatter' as const;
 
-    private processedData?: ProcessedData<any>;
     private sizeScale = new LinearScale();
 
     readonly marker = new CartesianSeriesMarker();
@@ -146,24 +145,24 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         const sizeKeyProp: DatumPropertyDefinition<any>[] = sizeKey
             ? [{ property: sizeKey, type: 'value', valueType: 'range', validation: (v) => checkDatum(v, true) }]
             : [];
-        const dataModel = new DataModel<any>({
+        this.dataModel = new DataModel<any>({
             props: [
                 {
                     property: xKey,
                     type: 'value',
                     valueType: isContinuousX ? 'range' : 'category',
-                    validation: (v) => checkDatum(v, isContinuousX),
+                    validation: (v) => checkDatum(v, isContinuousX) != null,
                 },
                 {
                     property: yKey,
                     type: 'value',
                     valueType: isContinuousY ? 'range' : 'category',
-                    validation: (v) => checkDatum(v, isContinuousY),
+                    validation: (v) => checkDatum(v, isContinuousY) != null,
                 },
                 ...sizeKeyProp,
             ],
         });
-        this.processedData = dataModel.processData(data ?? []);
+        this.processedData = this.dataModel.processData(data ?? []);
 
         this.sizeScale.domain = marker.domain ? marker.domain : this.processedData.domain.values[2];
     }

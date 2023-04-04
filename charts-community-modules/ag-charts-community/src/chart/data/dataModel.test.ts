@@ -1,4 +1,6 @@
 import { expect, it, describe } from '@jest/globals';
+import { isNumber } from '../../util/value';
+import { DATA_BROWSER_MARKET_SHARE } from '../test/data';
 
 import * as examples from '../test/examples';
 
@@ -356,6 +358,84 @@ describe('DataModel', () => {
                     ],
                 ]);
             });
+        });
+    });
+
+    describe('missing and invalid data processing', () => {
+        it('should generated the expected results', () => {
+            const data = [...DATA_BROWSER_MARKET_SHARE.map((v) => ({ ...v }))];
+            const DEFAULTS = {
+                invalidValue: NaN,
+                missingValue: null,
+                validation: isNumber,
+            };
+            const dataModel = new DataModel<any, any>({
+                props: [
+                    { property: 'year', type: 'key', valueType: 'category' },
+                    { ...DEFAULTS, property: 'ie', type: 'value', valueType: 'range' },
+                    { ...DEFAULTS, property: 'chrome', type: 'value', valueType: 'range' },
+                    { ...DEFAULTS, property: 'firefox', type: 'value', valueType: 'range' },
+                    { ...DEFAULTS, property: 'safari', type: 'value', valueType: 'range' },
+                ],
+            });
+            data.forEach((datum, idx) => {
+                delete datum[['ie', 'chrome', 'firefox', 'safari'][idx % 4]];
+                if (idx % 3 === 0) {
+                    datum[['ie', 'chrome', 'firefox', 'safari'][(idx + 1) % 4]] = 'illegal value';
+                }
+            });
+
+            expect(dataModel.processData(data)).toMatchSnapshot();
+        });
+
+        describe('property tests', () => {
+            const defaults = { missingValue: null, invalidValue: NaN };
+            const validated = { ...defaults, validation: isNumber };
+            const dataModel = new DataModel<any, any, true>({
+                props: [
+                    { property: 'kp', type: 'key', valueType: 'category' },
+                    { property: 'vp1', type: 'value', valueType: 'range', ...validated },
+                    { property: 'vp2', type: 'value', valueType: 'range', ...validated },
+                    { property: 'vp3', type: 'value', valueType: 'range', ...defaults },
+                    { properties: ['vp1', 'vp2'], type: 'sum' },
+                ],
+                groupByKeys: true,
+            });
+            const data = [
+                { kp: 'Q1', /* vp1: 5,*/ vp2: 7, vp3: 1 },
+                { kp: 'Q1', vp1: 1, vp2: 'illegal value', vp3: 2 },
+                { kp: 'Q2', vp1: 6, vp2: 9 /* vp3: 3 */ },
+                { kp: 'Q2', vp1: 6, vp2: 9, vp3: 4 },
+            ];
+
+            it('should substitute missing value when configured', () => {
+                const result = dataModel.processData(data);
+
+                expect(result.data[0].values).toEqual([
+                    [NaN, 7, 1],
+                    [1, NaN, 2],
+                ]);
+                expect(result.data[1].values).toEqual([
+                    [6, 9, null],
+                    [6, 9, 4],
+                ]);
+            });
+        });
+    });
+
+    describe('empty data set processing', () => {
+        it('should generated the expected results', () => {
+            const dataModel = new DataModel<any, any>({
+                props: [
+                    { property: 'year', type: 'key', valueType: 'category' },
+                    { property: 'ie', type: 'value', valueType: 'range' },
+                    { property: 'chrome', type: 'value', valueType: 'range' },
+                    { property: 'firefox', type: 'value', valueType: 'range' },
+                    { property: 'safari', type: 'value', valueType: 'range' },
+                ],
+            });
+
+            expect(dataModel.processData([])).toMatchSnapshot();
         });
     });
 });

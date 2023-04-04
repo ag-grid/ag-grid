@@ -1,5 +1,75 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`DataModel empty data set processing should generated the expected results 1`] = `
+Object {
+  "data": Array [],
+  "defs": Object {
+    "keys": Array [
+      Object {
+        "index": 0,
+        "missing": false,
+        "property": "year",
+        "type": "key",
+        "valueType": "category",
+      },
+    ],
+    "values": Array [
+      Object {
+        "index": 0,
+        "missing": false,
+        "property": "ie",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "index": 1,
+        "missing": false,
+        "property": "chrome",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "index": 2,
+        "missing": false,
+        "property": "firefox",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "index": 3,
+        "missing": false,
+        "property": "safari",
+        "type": "value",
+        "valueType": "range",
+      },
+    ],
+  },
+  "domain": Object {
+    "keys": Array [
+      Array [],
+    ],
+    "values": Array [
+      Array [],
+      Array [],
+      Array [],
+      Array [],
+    ],
+  },
+  "indices": Object {
+    "keys": Object {
+      "year": 0,
+    },
+    "values": Object {
+      "chrome": 1,
+      "firefox": 2,
+      "ie": 0,
+      "safari": 3,
+    },
+  },
+  "type": "ungrouped",
+}
+`;
+
 exports[`DataModel grouped processing - grouped example should generated the expected results 1`] = `
 Object {
   "data": Array [
@@ -1331,6 +1401,300 @@ Object {
     ],
   },
   "type": "grouped",
+}
+`;
+
+exports[`DataModel missing and invalid data processing should generated the expected results 1`] = `
+Object {
+  "data": Array [
+    Object {
+      "datum": Object {
+        "chrome": "illegal value",
+        "firefox": 26.85,
+        "safari": 2.79,
+        "year": "2009",
+      },
+      "keys": Array [
+        "2009",
+      ],
+      "values": Array [
+        NaN,
+        NaN,
+        26.85,
+        2.79,
+      ],
+    },
+    Object {
+      "datum": Object {
+        "firefox": 31.15,
+        "ie": 54.39,
+        "safari": 4.22,
+        "year": "2010",
+      },
+      "keys": Array [
+        "2010",
+      ],
+      "values": Array [
+        54.39,
+        NaN,
+        31.15,
+        4.22,
+      ],
+    },
+    Object {
+      "datum": Object {
+        "chrome": 15.01,
+        "ie": 44.03,
+        "safari": 5.94,
+        "year": "2011",
+      },
+      "keys": Array [
+        "2011",
+      ],
+      "values": Array [
+        44.03,
+        15.01,
+        NaN,
+        5.94,
+      ],
+    },
+    Object {
+      "datum": Object {
+        "chrome": 25.99,
+        "firefox": 22.69,
+        "ie": "illegal value",
+        "year": "2012",
+      },
+      "keys": Array [
+        "2012",
+      ],
+      "values": Array [
+        NaN,
+        25.99,
+        22.69,
+        NaN,
+      ],
+    },
+    Object {
+      "datum": Object {
+        "chrome": 31.71,
+        "firefox": undefined,
+        "safari": undefined,
+        "year": "2013",
+      },
+      "keys": Array [
+        "2013",
+      ],
+      "values": Array [
+        NaN,
+        31.71,
+        NaN,
+        NaN,
+      ],
+    },
+    Object {
+      "datum": Object {
+        "firefox": 14.77,
+        "ie": 17.75,
+        "safari": 12.63,
+        "year": "2014",
+      },
+      "keys": Array [
+        "2014",
+      ],
+      "values": Array [
+        17.75,
+        NaN,
+        14.77,
+        12.63,
+      ],
+    },
+    Object {
+      "datum": Object {
+        "chrome": 42.27,
+        "ie": -13.3,
+        "safari": "illegal value",
+        "year": "2015",
+      },
+      "keys": Array [
+        "2015",
+      ],
+      "values": Array [
+        -13.3,
+        42.27,
+        NaN,
+        NaN,
+      ],
+    },
+    Object {
+      "datum": Object {
+        "chrome": 47.79,
+        "firefox": 8.97,
+        "ie": -8.94,
+        "year": "2016",
+      },
+      "keys": Array [
+        "2016",
+      ],
+      "values": Array [
+        -8.94,
+        47.79,
+        8.97,
+        NaN,
+      ],
+    },
+    Object {
+      "datum": Object {
+        "chrome": 51.76,
+        "firefox": 6.75,
+        "safari": 14.54,
+        "year": "2017",
+      },
+      "keys": Array [
+        "2017",
+      ],
+      "values": Array [
+        NaN,
+        51.76,
+        6.75,
+        14.54,
+      ],
+    },
+    Object {
+      "datum": Object {
+        "firefox": "illegal value",
+        "ie": 3.2,
+        "safari": 14.44,
+        "year": "2018",
+      },
+      "keys": Array [
+        "2018",
+      ],
+      "values": Array [
+        3.2,
+        NaN,
+        NaN,
+        14.44,
+      ],
+    },
+    Object {
+      "datum": Object {
+        "chrome": 61.72,
+        "ie": 2.7,
+        "safari": 15.23,
+        "year": "2019",
+      },
+      "keys": Array [
+        "2019",
+      ],
+      "values": Array [
+        2.7,
+        61.72,
+        NaN,
+        15.23,
+      ],
+    },
+  ],
+  "defs": Object {
+    "keys": Array [
+      Object {
+        "index": 0,
+        "missing": false,
+        "property": "year",
+        "type": "key",
+        "valueType": "category",
+      },
+    ],
+    "values": Array [
+      Object {
+        "index": 0,
+        "invalidValue": NaN,
+        "missing": false,
+        "missingValue": null,
+        "property": "ie",
+        "type": "value",
+        "validation": [Function],
+        "valueType": "range",
+      },
+      Object {
+        "index": 1,
+        "invalidValue": NaN,
+        "missing": false,
+        "missingValue": null,
+        "property": "chrome",
+        "type": "value",
+        "validation": [Function],
+        "valueType": "range",
+      },
+      Object {
+        "index": 2,
+        "invalidValue": NaN,
+        "missing": false,
+        "missingValue": null,
+        "property": "firefox",
+        "type": "value",
+        "validation": [Function],
+        "valueType": "range",
+      },
+      Object {
+        "index": 3,
+        "invalidValue": NaN,
+        "missing": false,
+        "missingValue": null,
+        "property": "safari",
+        "type": "value",
+        "validation": [Function],
+        "valueType": "range",
+      },
+    ],
+  },
+  "domain": Object {
+    "keys": Array [
+      Array [
+        "2009",
+        "2010",
+        "2011",
+        "2012",
+        "2013",
+        "2014",
+        "2015",
+        "2016",
+        "2017",
+        "2018",
+        "2019",
+      ],
+    ],
+    "values": Array [
+      Array [
+        -13.3,
+        54.39,
+      ],
+      Array [
+        null,
+        61.72,
+      ],
+      Array [
+        null,
+        31.15,
+      ],
+      Array [
+        null,
+        15.23,
+      ],
+    ],
+  },
+  "indices": Object {
+    "keys": Object {
+      "year": 0,
+    },
+    "values": Object {
+      "chrome": 1,
+      "firefox": 2,
+      "ie": 0,
+      "safari": 3,
+    },
+  },
+  "type": "ungrouped",
 }
 `;
 

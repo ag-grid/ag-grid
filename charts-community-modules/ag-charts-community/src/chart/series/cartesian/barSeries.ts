@@ -50,7 +50,7 @@ import {
     FontWeight,
 } from '../../agChartOptions';
 import { LogAxis } from '../../axis/logAxis';
-import { DataModel, GroupedData, SMALLEST_KEY_INTERVAL, SUM_VALUE_EXTENT } from '../../data/dataModel';
+import { DataModel, SMALLEST_KEY_INTERVAL, SUM_VALUE_EXTENT } from '../../data/dataModel';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
@@ -103,8 +103,6 @@ function is2dArray<E>(array: E[] | E[][]): array is E[][] {
 export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatum>, Rect> {
     static className = 'BarSeries';
     static type = 'bar' as const;
-
-    private processedData?: GroupedData<any>;
 
     readonly label = new BarSeriesLabel();
 
@@ -323,13 +321,13 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const isContinuousX = this.getCategoryAxis()?.scale instanceof ContinuousScale;
         const isContinuousY = this.getValueAxis()?.scale instanceof ContinuousScale;
 
-        const dataModel = new DataModel<any, any, true>({
+        this.dataModel = new DataModel<any, any, true>({
             props: [
                 {
                     property: xKey,
                     type: 'key',
                     valueType: isContinuousX ? 'range' : 'category',
-                    validation: (v) => checkDatum(v, isContinuousX),
+                    validation: (v) => checkDatum(v, isContinuousX) != null,
                 },
                 ...[...seriesItemEnabled.entries()]
                     .filter(([, enabled]) => enabled)
@@ -337,7 +335,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                         property: yKey,
                         type: 'value' as const,
                         valueType: isContinuousY ? ('range' as const) : ('category' as const),
-                        validation: (v: any) => checkDatum(v, isContinuousY),
+                        validation: (v: any) => checkDatum(v, isContinuousY) != null,
                     })),
                 ...this.yKeys
                     .map((stack) => ({
@@ -352,7 +350,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             normaliseTo: normalizedTo && isFinite(normalizedTo) ? normalizedTo : undefined,
         });
 
-        this.processedData = dataModel.processData(data);
+        this.processedData = this.dataModel.processData(data);
 
         this.smallestDataInterval = {
             x: this.processedData.reduced?.[SMALLEST_KEY_INTERVAL.property] ?? Infinity,

@@ -140,6 +140,8 @@ export type DatumPropertyDefinition<K> = {
     type: 'key' | 'value';
     valueType: DatumPropertyType;
     property: K;
+    invalidValue?: any;
+    missingValue?: any;
     validation?: (datum: any) => boolean;
 };
 
@@ -189,7 +191,7 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
             }
         }
 
-        this.opts = opts;
+        this.opts = { ...opts };
         this.keys = props
             .filter((def): def is DatumPropertyDefinition<K> => def.type === 'key')
             .map((def, index) => ({ ...def, index, missing: false }));
@@ -203,8 +205,12 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
         );
 
         for (const { properties } of this.sums ?? []) {
+            if (properties.length === 0) continue;
+
             if (!properties.some((prop) => this.values.some((def) => def.property === prop))) {
-                throw new Error('AG Charts - internal config error: sum properties must match defined properties.');
+                throw new Error(
+                    `AG Charts - internal config error: sum properties must match defined properties (${properties}).`
+                );
             }
         }
     }
@@ -258,7 +264,6 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
 
     private extractData(data: D[]): UngroupedData<D> {
         const { keys: keyDefs, values: valueDefs } = this;
-        const defs = [...keyDefs, ...valueDefs];
 
         const { dataDomain, processValue } = this.initDataDomainProcessor();
 
@@ -268,32 +273,23 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
             values: valueDefs.map((def) => processValue(def, datum)),
         }));
 
-        if (defs.some((def) => def.validation != null)) {
-            resultData = resultData.filter(({ keys, values }) => {
-                let idx = 0;
-                for (const key of keys) {
-                    const validator = keyDefs[idx++].validation;
-                    if (validator && !validator(key)) {
-                        return false;
-                    }
-                }
-                idx = 0;
-                for (const value of values) {
-                    const validator = valueDefs[idx++].validation;
-                    if (validator && !validator(value)) {
-                        return false;
-                    }
-                }
-                return true;
-            });
-        }
+        resultData = this.validateData(resultData);
+
+        const propertyDomain = (def: InternalDatumPropertyDefinition<K>) => {
+            const result = dataDomain.get(def.property)!.domain;
+            if (Array.isArray(result) && result[0] > result[1]) {
+                // Ignore starting values.
+                return [];
+            }
+            return [...result];
+        };
 
         return {
             type: 'ungrouped',
             data: resultData,
             domain: {
-                keys: keyDefs.map((def) => [...dataDomain.get(def.property)!.domain]),
-                values: valueDefs.map((def) => [...dataDomain.get(def.property)!.domain]),
+                keys: keyDefs.map((def) => propertyDomain(def)),
+                values: valueDefs.map((def) => propertyDomain(def)),
             },
             indices: {
                 keys: keyDefs.reduce((r, { property, index }) => {
@@ -310,6 +306,47 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
                 values: valueDefs,
             },
         };
+    }
+
+    private validateData(resultData: UngroupedData<D>['data']) {
+        const { keys: keyDefs, values: valueDefs } = this;
+        const defs = [...keyDefs, ...valueDefs];
+
+        if (!defs.some((def) => def.validation != null)) {
+            return resultData;
+        }
+
+        const noInvalidValue = Symbol('unset');
+        const substituteInvalidValues = defs.map((def) => ('invalidValue' in def ? def.invalidValue : noInvalidValue));
+        resultData = resultData.filter(({ keys, values }) => {
+            let idx = 0;
+            for (const key of keys) {
+                const validator = defs[idx].validation;
+                if (!validator || validator(key)) {
+                    // Valid, nothing to do.
+                } else if (substituteInvalidValues[idx] === noInvalidValue) {
+                    return false;
+                } else {
+                    keys[idx] = substituteInvalidValues[idx];
+                }
+                idx++;
+            }
+            const valueStartIdx = idx;
+            for (const value of values) {
+                const validator = defs[idx].validation;
+                if (!validator || validator(value)) {
+                    // Valid, nothing to do.
+                } else if (substituteInvalidValues[idx] === noInvalidValue) {
+                    return false;
+                } else {
+                    values[idx - valueStartIdx] = substituteInvalidValues[idx];
+                }
+                idx++;
+            }
+            return true;
+        });
+
+        return resultData;
     }
 
     private groupData(data: UngroupedData<D>): GroupedData<D> {
@@ -484,7 +521,8 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
         initDataDomain();
 
         const processValue = (def: InternalDatumPropertyDefinition<K>, datum: any, updateDataDomain = dataDomain) => {
-            if (!def.missing && !(def.property in datum)) {
+            const valueInDatum = def.property in datum;
+            if (!def.missing && !valueInDatum && !('missingValue' in def)) {
                 def.missing = true;
             }
 
@@ -492,7 +530,7 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
                 initDataDomain(updateDataDomain);
             }
 
-            const value = datum[def.property];
+            const value = valueInDatum ? datum[def.property] : def.missingValue;
             const meta = updateDataDomain.get(def.property);
             if (meta?.type === 'category') {
                 meta.domain.add(value);
