@@ -91,7 +91,6 @@
       "line?": "AgCartesianThemeOptions<AgLineSeriesOptions>",
       "area?": "AgCartesianThemeOptions<AgAreaSeriesOptions>",
       "scatter?": "AgCartesianThemeOptions<AgScatterSeriesOptions>",
-      "heatmap?": "AgCartesianThemeOptions<AgHeatmapSeriesOptions>",
       "histogram?": "AgCartesianThemeOptions<AgHistogramSeriesOptions>",
       "polar?": "AgPolarThemeOptions<AgPolarSeriesTheme>",
       "pie?": "AgPolarThemeOptions<AgPieSeriesOptions>",
@@ -106,7 +105,6 @@
       "line?": "/** Specifies defaults for line charts. */",
       "area?": "/** Specifies defaults for area charts. */",
       "scatter?": "/** Specifies defaults for scatter/bubble charts. */",
-      "heatmap?": "/** Specifies defaults for heatmap charts. */",
       "histogram?": "/** Specifies defaults for histogram charts. */",
       "polar?": "/** Specifies defaults for all polar charts (used for pie series) */",
       "pie?": "/** Specifies defaults for pie/doughnut charts. */",
@@ -512,7 +510,6 @@
       "area?": "AgAreaSeriesOptions",
       "bar?": "AgBarSeriesOptions",
       "column?": "AgBarSeriesOptions",
-      "heatmap?": "AgHeatmapSeriesOptions",
       "histogram?": "AgHistogramSeriesOptions"
     }
   },
@@ -2239,179 +2236,6 @@
       "nodeClickRange?": "/** Range from a node a click triggers the listener. */"
     }
   },
-  "AgHeatmapSeriesFormatterParams": {
-    "meta": { "typeParams": ["DatumType"] },
-    "type": {
-      "datum": "DatumType",
-      "fill?": "CssColor",
-      "stroke?": "CssColor",
-      "strokeWidth": "PixelSize",
-      "highlighted": "boolean",
-      "xKey": "string",
-      "yKey": "string",
-      "colorKey?": "string",
-      "labelKey?": "string",
-      "seriesId": "string"
-    }
-  },
-  "AgHeatmapSeriesFormat": {
-    "meta": {},
-    "type": {
-      "fill?": "CssColor",
-      "stroke?": "CssColor",
-      "strokeWidth?": "PixelSize"
-    }
-  },
-  "AgHeatmapSeriesTooltipRendererParams": {
-    "meta": {},
-    "type": {
-      "labelKey?": "string",
-      "labelName?": "string",
-      "xKey": "string",
-      "xValue?": "any",
-      "xName?": "string",
-      "yKey": "string",
-      "yValue?": "any",
-      "yName?": "string",
-      "datum": "any",
-      "title?": "string",
-      "color?": "CssColor",
-      "seriesId": "string"
-    },
-    "docs": {
-      "labelKey?": "/** labelKey as specified on series options. */",
-      "labelName?": "/** labelName as specified on series options. */",
-      "xKey": "/** xKey as specified on series options. */",
-      "xValue?": "/** xValue as read from series data via the xKey property. */",
-      "xName?": "/** xName as specified on series options. */",
-      "yKey": "/** yKey as specified on series options. */",
-      "yValue?": "/** yValue as read from series data via the yKey property. */",
-      "yName?": "/** yName as specified on series options. */",
-      "datum": "/** Datum from the series data array that the tooltip is being rendered for. */",
-      "title?": "/** Series title or yName depending on series configuration. */",
-      "color?": "/** Series primary colour, as selected from the active theme, series options or formatter. */",
-      "seriesId": "/** The ID of the series. */"
-    }
-  },
-  "AgHeatmapSeriesTooltip": {
-    "meta": {},
-    "type": {
-      "renderer?": "(params: AgHeatmapSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
-      "enabled?": "boolean"
-    },
-    "docs": {
-      "renderer?": "/** Function used to create the content for tooltips. */",
-      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
-    }
-  },
-  "AgHeatmapSeriesLabelOptions": {
-    "meta": {},
-    "type": {
-      "enabled?": "boolean",
-      "fontStyle?": "FontStyle",
-      "fontWeight?": "FontWeight",
-      "fontSize?": "FontSize",
-      "fontFamily?": "FontFamily",
-      "color?": "CssColor"
-    },
-    "docs": {
-      "enabled?": "/** Whether or not the labels should be shown. */",
-      "fontStyle?": "/** The font style to use for the labels. */",
-      "fontWeight?": "/** The font weight to use for the labels. */",
-      "fontSize?": "/** The font size in pixels to use for the labels. */",
-      "fontFamily?": "/** The font family to use for the labels. */",
-      "color?": "/** The colour to use for the labels. */"
-    }
-  },
-  "AgHeatmapSeriesMarker": {
-    "meta": { "typeParams": ["DatumType"] },
-    "type": {
-      "domain?": "[ number, number ]",
-      "formatter?": "AgCartesianSeriesMarkerFormatter<DatumType>",
-      "enabled?": "boolean",
-      "shape?": "MarkerShape",
-      "size?": "PixelSize",
-      "maxSize?": "PixelSize",
-      "fill?": "CssColor",
-      "fillOpacity?": "Opacity",
-      "stroke?": "CssColor",
-      "strokeWidth?": "PixelSize",
-      "strokeOpacity?": "Opacity"
-    },
-    "docs": {
-      "domain?": "/** If sizeKey is used, explicitly specifies the extent of the domain of it's values. */",
-      "formatter?": "/** Function used to return formatting for individual markers, based on the supplied information. If the current marker is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
-      "enabled?": "/** Whether or not to show markers. */",
-      "shape?": "/** The shape to use for the markers. You can also supply a custom marker by providing a `Marker` subclass. */",
-      "size?": "/** The size in pixels of the markers. */",
-      "maxSize?": "/** For series where the size of the marker is determined by the data, this determines the largest size a marker can be in pixels. */",
-      "fill?": "/** The colour to use for marker fills. If this is not specified, the markers will take their fill from the series. */",
-      "fillOpacity?": "/** Opacity of the marker fills. */",
-      "stroke?": "/** The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series. */",
-      "strokeWidth?": "/** The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series. */",
-      "strokeOpacity?": "/** Opacity of the marker strokes. */"
-    }
-  },
-  "AgHeatmapSeriesOptions": {
-    "meta": {
-      "typeParams": ["DatumType = any"],
-      "doc": "/** Configuration for heatmap series. */"
-    },
-    "type": {
-      "type?": "'heatmap'",
-      "label?": "AgHeatmapSeriesLabelOptions",
-      "xKey?": "string",
-      "yKey?": "string",
-      "xName?": "string",
-      "yName?": "string",
-      "labelKey?": "string",
-      "labelName?": "string",
-      "colorKey?": "string",
-      "colorName?": "string",
-      "colorDomain?": "number[]",
-      "colorRange?": "string[]",
-      "stroke?": "string",
-      "strokeWidth?": "number",
-      "title?": "string",
-      "formatter?": "(params: AgHeatmapSeriesFormatterParams<DatumType>) => AgHeatmapSeriesFormat",
-      "tooltip?": "AgHeatmapSeriesTooltip",
-      "listeners?": "AgSeriesListeners<DatumType>",
-      "id?": "string",
-      "data?": "DatumType[]",
-      "visible?": "boolean",
-      "showInLegend?": "boolean",
-      "cursor?": "string",
-      "highlightStyle?": "AgSeriesHighlightStyle",
-      "nodeClickRange?": "AgChartInteractionRange"
-    },
-    "docs": {
-      "type?": "/** Configuration for the heatmap series. */",
-      "label?": "/** Configuration for the labels shown on top of data points. */",
-      "xKey?": "/** The key to use to retrieve x-values from the data. */",
-      "yKey?": "/** The key to use to retrieve y-values from the data. */",
-      "xName?": "/** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
-      "yName?": "/** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
-      "labelKey?": "/** The key to use to retrieve values from the data to use as labels for the markers. */",
-      "labelName?": "/** A human-readable description of the label values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
-      "colorKey?": "/** The name of the node key containing the color value. This value (along with `colorDomain` and `colorRange` configs) will be used to determine the tile color. */",
-      "colorName?": "/** A human-readable description of the colour values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
-      "colorDomain?": "/** The domain the 'colorKey' values belong to. The domain can contain more than two stops, for example `[-5, 0, -5]`. In that case the 'colorRange' should also use a matching number of colors. */",
-      "colorRange?": "/** The color range to interpolate the numeric `colorDomain` into. For example, if the `colorDomain` is `[-5, 5]` and `colorRange` is `['red', 'green']`, a `colorKey` value of `-5` will be assigned the 'red' color, `5` - 'green' color and `0` a blend of 'red' and 'green'. */",
-      "stroke?": "/** The stroke color of cells. */",
-      "strokeWidth?": "/** The stroke width of cells. */",
-      "title?": "/** The title to use for the series. Defaults to `yName` if it exists, or `yKey` if not. */",
-      "formatter?": "/** Function used to return formatting for individual heatmap cells, based on the given parameters. If the current cell is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */",
-      "tooltip?": "/** Series-specific tooltip configuration. */",
-      "listeners?": "/** A map of event names to event listeners. */",
-      "id?": "/** Primary identifier for the series. This is provided as `seriesId` in user callbacks to differentiate multiple\n     * series. Auto-generated ids are subject to future change without warning, if your callbacks need to vary behaviour\n     * by series please supply your own unique `id` value.\n     *\n     * Default: auto-generated value\n     */",
-      "data?": "/** The data to use when rendering the series. If this is not supplied, data must be set on the chart instead. */",
-      "visible?": "/** Whether or not to display the series. */",
-      "showInLegend?": "/** Whether or not to include the series in the legend. */",
-      "cursor?": "/** The cursor to use for hovered area markers. This config is identical to the CSS `cursor` property. */",
-      "highlightStyle?": "/** Configuration for series markers and series line highlighting when a marker / data point or a legend item is hovered over. */",
-      "nodeClickRange?": "/** Range from a node a click triggers the listener. */"
-    }
-  },
   "AgAreaSeriesTooltip": {
     "meta": {},
     "type": {
@@ -3336,7 +3160,7 @@
   },
   "AgCartesianSeriesOptions": {
     "meta": { "isTypeAlias": true },
-    "type": "AgLineSeriesOptions | AgScatterSeriesOptions | AgAreaSeriesOptions | AgBarSeriesOptions | AgHeatmapSeriesOptions | AgHistogramSeriesOptions"
+    "type": "AgLineSeriesOptions | AgScatterSeriesOptions | AgAreaSeriesOptions | AgBarSeriesOptions | AgHistogramSeriesOptions | any"
   },
   "AgPolarSeriesOptions": {
     "meta": { "isTypeAlias": true },
@@ -3349,7 +3173,7 @@
   "AgCartesianChartOptions": {
     "meta": {},
     "type": {
-      "type?": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'heatmap' | 'histogram'",
+      "type?": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram' | string",
       "axes?": "AgCartesianAxisOptions[]",
       "series?": "AgCartesianSeriesOptions[]",
       "navigator?": "AgNavigatorOptions",
@@ -3499,7 +3323,7 @@
   },
   "SeriesOptionType": {
     "meta": { "isTypeAlias": true, "typeParams": ["T extends Series"] },
-    "type": "T extends LineSeries ? AgLineSeriesOptions : T extends BarSeries ? AgBarSeriesOptions : T extends AreaSeries ? AgAreaSeriesOptions : T extends ScatterSeries ? AgScatterSeriesOptions : T extends HeatmapSeries ? AgHeatmapSeriesOptions : T extends HistogramSeries ? AgHistogramSeriesOptions : T extends PieSeries ? AgPieSeriesOptions : T extends TreemapSeries ? AgTreemapSeriesOptions : never"
+    "type": "T extends LineSeries ? AgLineSeriesOptions : T extends BarSeries ? AgBarSeriesOptions : T extends AreaSeries ? AgAreaSeriesOptions : T extends ScatterSeries ? AgScatterSeriesOptions : T extends HistogramSeries ? AgHistogramSeriesOptions : T extends PieSeries ? AgPieSeriesOptions : T extends TreemapSeries ? AgTreemapSeriesOptions : never"
   },
   "DownloadOptions": {
     "meta": {},
@@ -3584,13 +3408,18 @@
       "getDomain(direction: ChartAxisDirection)": "any[]",
       "isEnabled()": "boolean",
       "getKeys(direction: ChartAxisDirection)": "string[]",
-      "visible": "boolean"
+      "visible": "boolean",
+      "setBandScalePadding?(scale: any)": "void"
     }
   },
   "ChartAxisDirection": {
     "meta": { "isEnum": true },
     "type": ["X = 'x'", "Y = 'y'"],
     "docs": [null, null]
+  },
+  "ChartType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'cartesian' | 'polar' | 'hierarchy'"
   },
   "ChartUpdateType": {
     "meta": { "isEnum": true },
@@ -3892,7 +3721,7 @@
   },
   "ThemeMap": {
     "meta": { "isTypeAlias": true },
-    "type": "{[key in AgChartThemeName | 'undefined' | 'null']?: ChartTheme}"
+    "type": "{[key in AgChartThemeName | 'undefined' | 'null']?: () => ChartTheme}"
   },
   "Transforms": {
     "meta": {
@@ -4055,21 +3884,6 @@
       "pathsZIndexSubOrderOffset": "number[]",
       "hasMarkers": "boolean",
       "renderLayerPerSubSeries": "boolean"
-    }
-  },
-  "HeatmapNodeDatum": {
-    "meta": {},
-    "type": {
-      "label": "MeasuredLabel",
-      "width": "number",
-      "height": "number",
-      "fill": "string",
-      "xKey": "string",
-      "yKey": "string",
-      "series": "Series<any>",
-      "itemId?": "any",
-      "datum": "any",
-      "point?": "Readonly<SizedPoint>"
     }
   },
   "HistogramSeriesNodeTag": {
@@ -4267,6 +4081,11 @@
     "meta": { "isTypeAlias": true },
     "type": "{ cartesian: AgCartesianThemeOptions; groupedCategory: AgCartesianThemeOptions; polar: AgPolarThemeOptions; hierarchy: AgHierarchyThemeOptions; } & { [key in keyof AgCartesianSeriesTheme]?: AgCartesianThemeOptions; } & { [key in keyof AgPolarSeriesTheme]?: AgPolarThemeOptions; } & { [key in keyof AgHierarchySeriesTheme]?: AgHierarchyThemeOptions; }"
   },
+  "ChartThemeParams": {
+    "meta": {},
+    "type": { "seriesDefaults": "any", "defaultFontFamily": "string" }
+  },
+  "DarkThemeParams": { "meta": {}, "type": { "seriesLabelDefaults": "any" } },
   "EventTarget": { "meta": {}, "type": { "classList": "DOMTokenList" } },
   "TooltipMeta": {
     "meta": {},
@@ -4556,6 +4375,18 @@
       "scaleInvert(position: number)": "any"
     }
   },
+  "SeriesFactory": {
+    "meta": { "isTypeAlias": true },
+    "type": "() => Series<any>"
+  },
+  "SeriesContext": {
+    "meta": {},
+    "type": {
+      "seriesFactory": "{ add(factory: SeriesFactory): void; delete(): void; }",
+      "defaults": "{ add(defaultOptions: any): void; delete(): void; }",
+      "themes": "{ chartTheme: { add(fn: (params: ChartThemeParams) => any): void; delete(): void; }; darkTheme: { add(fn: (params: DarkThemeParams) => any): void; delete(): void; }; }"
+    }
+  },
   "ModuleInstance": {
     "meta": {},
     "type": { "update()": "void", "destroy()": "void" }
@@ -4592,12 +4423,22 @@
       "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
     }
   },
+  "SeriesModule": {
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "type": {
+      "type": "'series'",
+      "initialiseModule(ctx: SeriesContext)": "ModuleInstanceMeta<M>",
+      "optionsKey": "string",
+      "packageType": "'community' | 'enterprise'",
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
+    }
+  },
   "Module": {
     "meta": {
       "isTypeAlias": true,
       "typeParams": ["M extends ModuleInstance = ModuleInstance"]
     },
-    "type": "RootModule<M> | AxisModule<M>"
+    "type": "RootModule<M> | AxisModule<M> | SeriesModule<M>"
   },
   "FormatterOptions": {
     "meta": {},
