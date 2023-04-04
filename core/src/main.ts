@@ -3,6 +3,7 @@ import { AgChart, AgChartOptions, AgChartInstance, _ModuleSupport } from 'ag-cha
 import { AgChartBackgroundImage, BackgroundModule } from './background/main';
 import { AgContextMenuOptions, ContextMenuModule } from './context-menu/main';
 import { AgCrosshairOptions, CrosshairModule } from './crosshair/main';
+import * as Heatmap from './heatmap/main';
 import { AgNavigatorOptions } from './navigator/main';
 import { AgZoomOptions, ZoomModule } from './zoom/main';
 
@@ -11,6 +12,7 @@ export * from 'ag-charts-community';
 _ModuleSupport.registerModule(BackgroundModule);
 _ModuleSupport.registerModule(ContextMenuModule);
 _ModuleSupport.registerModule(CrosshairModule);
+_ModuleSupport.registerModule(Heatmap.HeatmapModule);
 _ModuleSupport.registerModule(ZoomModule);
 
 declare module 'ag-charts-community' {
@@ -29,6 +31,13 @@ declare module 'ag-charts-community' {
     export interface AgPolarChartOptions {
         contextMenu?: AgContextMenuOptions;
     }
+
+    export type AgHeatmapSeriesFormat = Heatmap.AgHeatmapSeriesFormat;
+    export type AgHeatmapSeriesFormatterParams<T> = Heatmap.AgHeatmapSeriesFormatterParams<T>;
+    export type AgHeatmapSeriesLabelOptions = Heatmap.AgHeatmapSeriesLabelOptions;
+    export type AgHeatmapSeriesOptions = Heatmap.AgHeatmapSeriesOptions;
+    export type AgHeatmapSeriesTooltip = Heatmap.AgHeatmapSeriesTooltip;
+    export type AgHeatmapSeriesTooltipRendererParams = Heatmap.AgHeatmapSeriesTooltipRendererParams;
 
     export interface AgHierarchyChartOptions {
         contextMenu?: AgContextMenuOptions;

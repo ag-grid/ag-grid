@@ -3,7 +3,6 @@ import { HeatmapSeries } from './heatmapSeries';
 import { heatmapDefaults } from './heatmapDefaults';
 import { getHeatmapDefaultTheme, getHeatmapDarkTheme } from './heatmapThemes';
 
-
 export const HeatmapModule: _ModuleSupport.SeriesModule = {
     type: 'series',
     optionsKey: 'heatmap',
