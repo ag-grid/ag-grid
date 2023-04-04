@@ -693,6 +693,16 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     }
 
                     const colorIndex = cumYKeyCount[stackIndex] + levelIndex;
+                    const rect = {
+                        x: flipXY ? Math.min(y, bottomY) : barX,
+                        y: flipXY ? barX : Math.min(y, bottomY),
+                        width: flipXY ? Math.abs(bottomY - y) : barWidth,
+                        height: flipXY ? barWidth : Math.abs(bottomY - y),
+                    };
+                    const nodeMidPoint = {
+                        x: rect.x + rect.width / 2,
+                        y: rect.y + rect.height / 2,
+                    };
                     const nodeData: BarNodeDatum = {
                         index: groupIndex,
                         series: this,
@@ -702,10 +712,11 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                         yValue,
                         yKey,
                         xKey,
-                        x: flipXY ? Math.min(y, bottomY) : barX,
-                        y: flipXY ? barX : Math.min(y, bottomY),
-                        width: flipXY ? Math.abs(bottomY - y) : barWidth,
-                        height: flipXY ? barWidth : Math.abs(bottomY - y),
+                        x: rect.x,
+                        y: rect.y,
+                        width: rect.width,
+                        height: rect.height,
+                        nodeMidPoint,
                         colorIndex,
                         fill: fills[colorIndex % fills.length],
                         stroke: strokes[colorIndex % strokes.length],

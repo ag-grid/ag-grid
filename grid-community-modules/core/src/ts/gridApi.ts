@@ -1815,9 +1815,6 @@ export class GridApi<TData = any> {
 
         const res: RowNodeTransaction<TData> | null = this.clientSideRowModel.updateRowData(rowDataTransaction);
 
-        // refresh all the full width rows
-        this.rowRenderer.refreshFullWidthRows(res!.update as RowNode[]);
-
         // do change detection for all present cells
         if (!this.gridOptionsService.is('suppressChangeDetection')) {
             this.rowRenderer.refreshCells();

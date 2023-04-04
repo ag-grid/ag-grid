@@ -405,6 +405,11 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                       }
                     : undefined;
 
+            const nodeMidPoint = {
+                x: xMinPx + w / 2,
+                y: yMaxPx + h / 2,
+            };
+
             nodeData.push({
                 series: this,
                 datum: binOfData, // required by SeriesNodeDatum, but might not make sense here
@@ -417,6 +422,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                 y: yMaxPx,
                 width: w,
                 height: h,
+                nodeMidPoint,
                 fill: fill,
                 stroke: stroke,
                 strokeWidth: strokeWidth,

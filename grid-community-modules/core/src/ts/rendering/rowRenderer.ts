@@ -1024,38 +1024,18 @@ export class RowRenderer extends BeanStub {
         });
     }
 
-    public refreshFullWidthRows(rowNodesToRefresh?: RowNode[]): void {
-        const rowsToRemove: string[] = [];
-
-        const selectivelyRefreshing = !!rowNodesToRefresh;
-        const idsToRefresh: { [id: string]: boolean; } | undefined = selectivelyRefreshing ? {} : undefined;
-
-        if (selectivelyRefreshing && idsToRefresh) {
-            rowNodesToRefresh!.forEach(r => idsToRefresh[r.id!] = true);
+    public refreshFullWidthRow(rowNode: RowNode) {
+        const fullWidthCtrl = this.getFullWidthRowCtrls().find(rowCtrl => rowCtrl.getRowNode() === rowNode);
+        if (!fullWidthCtrl) {
+            return;
         }
 
-        this.getFullWidthRowCtrls().forEach(fullWidthRowCtrl => {
-            const rowNode = fullWidthRowCtrl.getRowNode();
+        const refreshed = fullWidthCtrl.refreshFullWidth();
+        if (refreshed) {
+            return;
+        }
 
-            if (selectivelyRefreshing && idsToRefresh) {
-                // we refresh if a) this node is present or b) this parents nodes is present. checking parent
-                // node is important for master/detail, as we want detail to refresh on changes to parent node.
-                // it's also possible, if user is provider their own fullWidth, that details panels contain
-                // some info on the parent, eg if in tree data and child row shows some data from parent row also.
-                const parentId = (rowNode.level > 0 && rowNode.parent) ? rowNode.parent.id : undefined;
-                const skipThisNode = !idsToRefresh[rowNode.id!] && !idsToRefresh[parentId!];
-                if (skipThisNode) { return; }
-            }
-
-            const fullWidthRowsRefreshed = fullWidthRowCtrl.refreshFullWidth();
-            if (!fullWidthRowsRefreshed) {
-                const rowIndex = fullWidthRowCtrl.getRowNode().rowIndex;
-
-                rowsToRemove.push(rowIndex!.toString());
-            }
-        });
-
-        this.removeRowCtrls(rowsToRemove);
+        this.removeRowCtrls([rowNode.rowIndex!]);
         this.redrawAfterScroll();
     }
 

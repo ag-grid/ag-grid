@@ -4,19 +4,12 @@ title: "Zoom"
 
 AG Charts provides two methods of zooming, either by scrolling with the mouse wheel or selecting an area of the chart to zoom into.
 
-To enable these features, first, install the zoom package:
-
-```bash
-$ npm install @ag-charts-enterprise/zoom
-```
-
-Then register the zoom module:
+To enable these features, set `zoom.enabled` to `true`.
 
 ```ts
-import { _ModuleSupport } from "@ag-charts-enterprise/core"
-import { ZoomModule } from "@ag-charts-enterprise/zoom"
-
-_ModuleSupport.registerModule(ZoomModule)
+zoom: {
+    enabled: true,
+}
 ```
 
 A user will now be able to use the zooming features as in the following example, including:

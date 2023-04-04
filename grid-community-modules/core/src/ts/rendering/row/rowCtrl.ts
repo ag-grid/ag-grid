@@ -653,6 +653,16 @@ export class RowCtrl extends BeanStub {
     }
 
     private onRowNodeDataChanged(event: DataChangedEvent): void {
+        // if master row has updated, then need to also try to refresh the detail node
+        if (this.rowNode.detailNode) {
+            this.beans.rowRenderer.refreshFullWidthRow(this.rowNode.detailNode);
+        }
+
+        if (this.isFullWidth()) {
+            this.beans.rowRenderer.refreshFullWidthRow(this.rowNode);
+            return;
+        }
+
         // if this is an update, we want to refresh, as this will allow the user to put in a transition
         // into the cellRenderer refresh method. otherwise this might be completely new data, in which case
         // we will want to completely replace the cells

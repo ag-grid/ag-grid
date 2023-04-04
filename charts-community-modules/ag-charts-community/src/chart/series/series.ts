@@ -37,6 +37,7 @@ export interface SeriesNodeDatum {
     readonly itemId?: any;
     readonly datum: any;
     readonly point?: Readonly<SizedPoint>;
+    nodeMidPoint?: Readonly<Point>;
 }
 
 /** Modes of matching user interactions to rendered nodes (e.g. hover or click) */

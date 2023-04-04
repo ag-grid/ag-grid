@@ -79,6 +79,7 @@
     "charts:fix": "npm run charts:run -- fix",
     "charts:test": "npm run charts:run -- test",
     "charts:docker-test-init": "npm run charts:run -- --concurrency 1 docker:init",
+    "charts:docker-test-clean": "npm run charts:run -- --concurrency 1 docker:clean",
     "charts:docker-test-update": "npm run charts:run -- docker:test-update"
   },
   "devDependencies": {

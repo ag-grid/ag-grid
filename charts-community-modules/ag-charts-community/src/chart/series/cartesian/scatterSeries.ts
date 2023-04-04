@@ -238,6 +238,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                 xKey,
                 datum: validData[i],
                 point: { x, y, size: markerSize },
+                nodeMidPoint: { x, y },
                 label: {
                     text,
                     ...size,

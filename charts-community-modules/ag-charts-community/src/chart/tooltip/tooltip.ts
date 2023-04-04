@@ -1,6 +1,6 @@
 import { BBox } from '../../scene/bbox';
 import { DeprecatedAndRenamedTo } from '../../util/deprecation';
-import { Validate, BOOLEAN, NUMBER, OPT_STRING, INTERACTION_RANGE } from '../../util/validation';
+import { Validate, BOOLEAN, NUMBER, OPT_STRING, INTERACTION_RANGE, predicateWithMessage } from '../../util/validation';
 import { AgChartInteractionRange, AgTooltipRendererResult } from '../agChartOptions';
 import { InteractionEvent } from '../interaction/interactionManager';
 
@@ -144,6 +144,28 @@ export function toTooltipHtml(input: string | AgTooltipRendererResult, defaults?
     return `${titleHtml}<div class="${DEFAULT_TOOLTIP_CLASS}-content">${content}</div>`;
 }
 
+const POSITION_TYPES = ['pointer', 'node'];
+export const POSITION_TYPE = predicateWithMessage(
+    (v: any) => POSITION_TYPES.includes(v),
+    `expecting a position type keyword such as 'pointer' or 'node'`
+);
+
+export type TooltipPositionType = 'pointer' | 'node';
+
+class TooltipPosition {
+    @Validate(POSITION_TYPE)
+    /** The type of positioning for the tooltip. By default, the tooltip follows the pointer. */
+    type: TooltipPositionType = 'pointer';
+
+    @Validate(NUMBER())
+    /** The horizontal offset in pixels for the position of the tooltip. */
+    xOffset?: number = 0;
+
+    @Validate(NUMBER())
+    /** The vertical offset in pixels for the position of the tooltip. */
+    yOffset?: number = 0;
+}
+
 export class Tooltip {
     private static tooltipDocuments: Document[] = [];
 
@@ -171,6 +193,8 @@ export class Tooltip {
 
     @Validate(BOOLEAN)
     enableInteraction: boolean = false;
+
+    readonly position: TooltipPosition = new TooltipPosition();
 
     constructor(canvasElement: HTMLCanvasElement, document: Document, container: HTMLElement) {
         this.tooltipRoot = container;
@@ -258,7 +282,7 @@ export class Tooltip {
      * If the `html` parameter is missing, moves the existing tooltip to the new position.
      */
     show(meta: TooltipMeta, html?: string, instantly = false) {
-        const { element, canvasElement } = this;
+        const { element, canvasElement, position } = this;
 
         if (html !== undefined) {
             element.innerHTML = html;
@@ -271,8 +295,8 @@ export class Tooltip {
         };
 
         const canvasRect = canvasElement.getBoundingClientRect();
-        const naiveLeft = canvasRect.left + meta.offsetX - element.clientWidth / 2;
-        const naiveTop = canvasRect.top + meta.offsetY - element.clientHeight - 8;
+        const naiveLeft = canvasRect.left + meta.offsetX - element.clientWidth / 2 + (position.xOffset ?? 0);
+        const naiveTop = canvasRect.top + meta.offsetY - element.clientHeight - 8 + (position.yOffset ?? 0);
 
         const windowBounds = this.getWindowBoundingBox();
         const maxLeft = windowBounds.x + windowBounds.width - element.clientWidth - 1;
