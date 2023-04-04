@@ -1,16 +1,17 @@
 import { AgChart, AgChartOptions, AgChartInstance, _ModuleSupport } from 'ag-charts-community';
 
 import { AgChartBackgroundImage, BackgroundModule } from './background/main';
-import { AgContextMenuOptions } from './context-menu/main';
-import { CrosshairModule, AgCrosshairOptions } from './crosshair/main';
+import { AgContextMenuOptions, ContextMenuModule } from './context-menu/main';
+import { AgCrosshairOptions, CrosshairModule } from './crosshair/main';
 import { AgNavigatorOptions } from './navigator/main';
 import { AgZoomOptions, ZoomModule } from './zoom/main';
 
 export * from 'ag-charts-community';
 
 _ModuleSupport.registerModule(BackgroundModule);
-_ModuleSupport.registerModule(ZoomModule);
+_ModuleSupport.registerModule(ContextMenuModule);
 _ModuleSupport.registerModule(CrosshairModule);
+_ModuleSupport.registerModule(ZoomModule);
 
 declare module 'ag-charts-community' {
     export interface AgCartesianChartOptions {
