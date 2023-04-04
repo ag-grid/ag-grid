@@ -1,4 +1,4 @@
-import { AgCartesianChartOptions, AgChart } from "ag-charts-community"
+import { AgCartesianChartOptions, AgCartesianSeriesTooltipRendererParams, AgChart } from "ag-charts-community"
 
 function renderer(params: AgCartesianSeriesTooltipRendererParams) {
   return `<div class="ag-chart-tooltip-title" style="background-color: ${
