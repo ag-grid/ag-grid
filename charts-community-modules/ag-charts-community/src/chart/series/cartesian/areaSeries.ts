@@ -46,6 +46,7 @@ import {
 } from '../../agChartOptions';
 import { LogAxis } from '../../axis/logAxis';
 import { DataModel, SUM_VALUE_EXTENT } from '../../data/dataModel';
+import { TimeAxis } from '../../axis/timeAxis';
 
 interface FillSelectionDatum {
     readonly itemId: string;
@@ -277,7 +278,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             }
 
             return this.fixNumericExtent(extent(keys), xAxis);
-        } else if (yAxis instanceof LogAxis) {
+        } else if (yAxis instanceof LogAxis || yAxis instanceof TimeAxis) {
             return this.fixNumericExtent(yExtent as any, yAxis);
         } else {
             return this.fixNumericExtent(ySumExtent, yAxis);
