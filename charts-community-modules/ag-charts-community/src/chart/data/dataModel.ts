@@ -168,6 +168,8 @@ export type ProcessorOutputPropertyDefinition<R> = {
     calculate: (data: ProcessedData<any>) => R;
 };
 
+const INVALID_VALUE = Symbol('invalid');
+
 export class DataModel<D extends object, K extends keyof D = keyof D, Grouped extends boolean | undefined = undefined> {
     private readonly opts: Options<K, Grouped>;
     private readonly keys: InternalDatumPropertyDefinition<K>[];
@@ -267,11 +269,13 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
 
         const { dataDomain, processValue } = this.initDataDomainProcessor();
 
-        let resultData = data.map((datum) => ({
-            datum,
-            keys: keyDefs.map((def) => processValue(def, datum)),
-            values: valueDefs.map((def) => processValue(def, datum)),
-        }));
+        let resultData = data
+            .map((datum) => ({
+                datum,
+                keys: keyDefs.map((def) => processValue(def, datum)),
+                values: valueDefs.map((def) => processValue(def, datum)),
+            }))
+            .filter(({ keys }) => !keys.some((k) => k === INVALID_VALUE));
 
         resultData = this.validateData(resultData);
 
@@ -316,34 +320,8 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
             return resultData;
         }
 
-        const noInvalidValue = Symbol('unset');
-        const substituteInvalidValues = defs.map((def) => ('invalidValue' in def ? def.invalidValue : noInvalidValue));
         resultData = resultData.filter(({ keys, values }) => {
-            let idx = 0;
-            for (const key of keys) {
-                const validator = defs[idx].validation;
-                if (!validator || validator(key)) {
-                    // Valid, nothing to do.
-                } else if (substituteInvalidValues[idx] === noInvalidValue) {
-                    return false;
-                } else {
-                    keys[idx] = substituteInvalidValues[idx];
-                }
-                idx++;
-            }
-            const valueStartIdx = idx;
-            for (const value of values) {
-                const validator = defs[idx].validation;
-                if (!validator || validator(value)) {
-                    // Valid, nothing to do.
-                } else if (substituteInvalidValues[idx] === noInvalidValue) {
-                    return false;
-                } else {
-                    values[idx - valueStartIdx] = substituteInvalidValues[idx];
-                }
-                idx++;
-            }
-            return true;
+            return !keys.some((k) => k === INVALID_VALUE) || !values.some((v) => v === INVALID_VALUE);
         });
 
         return resultData;
@@ -525,7 +503,8 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
 
         const processValue = (def: InternalDatumPropertyDefinition<K>, datum: any, updateDataDomain = dataDomain) => {
             const valueInDatum = def.property in datum;
-            if (!def.missing && !valueInDatum && !('missingValue' in def)) {
+            const missingValueDef = 'missingValue' in def;
+            if (!def.missing && !valueInDatum && !missingValueDef) {
                 def.missing = true;
             }
 
@@ -533,7 +512,19 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
                 initDataDomain(updateDataDomain);
             }
 
-            const value = valueInDatum ? datum[def.property] : def.missingValue;
+            let value = valueInDatum ? datum[def.property] : def.missingValue;
+
+            if (valueInDatum) {
+                const valid = def.validation?.(value) ?? true;
+                if (!valid) {
+                    if ('invalidValue' in def) {
+                        value = def.invalidValue;
+                    } else {
+                        return INVALID_VALUE;
+                    }
+                }
+            }
+
             const meta = updateDataDomain.get(def.property);
             if (meta?.type === 'category') {
                 meta.domain.add(value);

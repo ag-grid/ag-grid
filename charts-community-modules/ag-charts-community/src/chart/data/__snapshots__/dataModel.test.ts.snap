@@ -1418,7 +1418,7 @@ Object {
         "2009",
       ],
       "values": Array [
-        NaN,
+        null,
         NaN,
         26.85,
         2.79,
@@ -1436,7 +1436,7 @@ Object {
       ],
       "values": Array [
         54.39,
-        NaN,
+        null,
         31.15,
         4.22,
       ],
@@ -1454,7 +1454,7 @@ Object {
       "values": Array [
         44.03,
         15.01,
-        NaN,
+        null,
         5.94,
       ],
     },
@@ -1472,7 +1472,7 @@ Object {
         NaN,
         25.99,
         22.69,
-        NaN,
+        null,
       ],
     },
     Object {
@@ -1486,7 +1486,7 @@ Object {
         "2013",
       ],
       "values": Array [
-        NaN,
+        null,
         31.71,
         NaN,
         NaN,
@@ -1504,7 +1504,7 @@ Object {
       ],
       "values": Array [
         17.75,
-        NaN,
+        null,
         14.77,
         12.63,
       ],
@@ -1522,7 +1522,7 @@ Object {
       "values": Array [
         -13.3,
         42.27,
-        NaN,
+        null,
         NaN,
       ],
     },
@@ -1540,7 +1540,7 @@ Object {
         -8.94,
         47.79,
         8.97,
-        NaN,
+        null,
       ],
     },
     Object {
@@ -1554,7 +1554,7 @@ Object {
         "2017",
       ],
       "values": Array [
-        NaN,
+        null,
         51.76,
         6.75,
         14.54,
@@ -1572,7 +1572,7 @@ Object {
       ],
       "values": Array [
         3.2,
-        NaN,
+        null,
         NaN,
         14.44,
       ],
@@ -1590,7 +1590,7 @@ Object {
       "values": Array [
         2.7,
         61.72,
-        NaN,
+        null,
         15.23,
       ],
     },

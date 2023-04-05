@@ -178,7 +178,7 @@ describe('DataModel', () => {
         describe('property tests', () => {
             const dataModel = new DataModel<any, any, true>({
                 props: [
-                    { property: 'kp', type: 'key', valueType: 'range' },
+                    { property: 'kp', type: 'key', valueType: 'range', validation: (v) => v instanceof Date },
                     { property: 'vp1', type: 'value', valueType: 'range' },
                     { property: 'vp2', type: 'value', valueType: 'range' },
                 ],
@@ -189,6 +189,7 @@ describe('DataModel', () => {
                 { kp: new Date('2023-01-02T00:00:00.000Z'), vp1: 1, vp2: 2 },
                 { kp: new Date('2023-01-03T00:00:00.000Z'), vp1: 6, vp2: 9 },
                 { kp: new Date('2023-01-04T00:00:00.000Z'), vp1: 6, vp2: 9 },
+                { kp: null, vp1: 6, vp2: 9 },
             ];
 
             it('should extract the configured keys', () => {
@@ -497,7 +498,7 @@ describe('DataModel', () => {
 
         describe('property tests', () => {
             const defaults = { missingValue: null, invalidValue: NaN };
-            const validated = { ...defaults, validation: isNumber };
+            const validated = { ...defaults, validation: (v) => typeof v === 'number' };
             const dataModel = new DataModel<any, any, true>({
                 props: [
                     { property: 'kp', type: 'key', valueType: 'category' },
@@ -519,7 +520,7 @@ describe('DataModel', () => {
                 const result = dataModel.processData(data);
 
                 expect(result.data[0].values).toEqual([
-                    [NaN, 7, 1],
+                    [null, 7, 1],
                     [1, NaN, 2],
                 ]);
                 expect(result.data[1].values).toEqual([
