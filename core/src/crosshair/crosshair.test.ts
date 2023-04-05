@@ -55,6 +55,7 @@ function applyCrosshairSnap<T>(opts: T, snap: boolean): T {
 }
 
 const CROSSHAIR_OPTIONS = {
+    enabled: true,
     stroke: '#5470C6',
     strokeWidth: 3,
     lineDash: [10, 5],
