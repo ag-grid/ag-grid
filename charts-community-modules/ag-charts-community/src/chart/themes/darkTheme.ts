@@ -92,7 +92,7 @@ export class DarkTheme extends ChartTheme {
 
         const getOverridesByType = (seriesTypes: string[]) => {
             return seriesTypes.reduce((obj, seriesType) => {
-                if (DarkTheme.seriesDarkThemeOverrides.hasOwnProperty(seriesType)) {
+                if (Object.prototype.hasOwnProperty.call(DarkTheme.seriesDarkThemeOverrides, seriesType)) {
                     obj[seriesType] = DarkTheme.seriesDarkThemeOverrides[seriesType]({
                         seriesLabelDefaults: DarkTheme.seriesLabelDefaults,
                     });

@@ -19,7 +19,7 @@ export const CHART_TYPES = {
         delete types[seriesType];
     },
     has(seriesType: string) {
-        return types.hasOwnProperty(seriesType);
+        return Object.prototype.hasOwnProperty.call(types, seriesType);
     },
 
     isCartesian(seriesType: string) {

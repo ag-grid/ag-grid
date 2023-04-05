@@ -4853,14 +4853,16 @@
       "type": { "returnType": "boolean", "optional": true }
     }
   },
+  "AgCartesianSeriesOptionsExtension": {},
   "AgCartesianSeriesOptions": {},
   "AgPolarSeriesOptions": {},
   "AgHierarchySeriesOptions": {},
+  "AgCartesianChartOptionsTypeExtension": {},
   "AgCartesianChartOptions": {
     "type": {
       "description": "/** If specified overrides the default series type. */",
       "type": {
-        "returnType": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram' | string",
+        "returnType": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram' | AgCartesianChartOptionsTypeExtension",
         "optional": true
       }
     },

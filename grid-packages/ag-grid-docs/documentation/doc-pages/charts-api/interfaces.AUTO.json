@@ -3158,9 +3158,13 @@
       "gradient?": "/** Whether or not the gradient is used for the treemap tile. */"
     }
   },
+  "AgCartesianSeriesOptionsExtension": {
+    "meta": { "isTypeAlias": true },
+    "type": "never"
+  },
   "AgCartesianSeriesOptions": {
     "meta": { "isTypeAlias": true },
-    "type": "AgLineSeriesOptions | AgScatterSeriesOptions | AgAreaSeriesOptions | AgBarSeriesOptions | AgHistogramSeriesOptions | any"
+    "type": "AgLineSeriesOptions | AgScatterSeriesOptions | AgAreaSeriesOptions | AgBarSeriesOptions | AgHistogramSeriesOptions | AgCartesianSeriesOptionsExtension"
   },
   "AgPolarSeriesOptions": {
     "meta": { "isTypeAlias": true },
@@ -3170,10 +3174,14 @@
     "meta": { "isTypeAlias": true },
     "type": "AgTreemapSeriesOptions"
   },
+  "AgCartesianChartOptionsTypeExtension": {
+    "meta": { "isTypeAlias": true },
+    "type": "never"
+  },
   "AgCartesianChartOptions": {
     "meta": {},
     "type": {
-      "type?": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram' | string",
+      "type?": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram' | AgCartesianChartOptionsTypeExtension",
       "axes?": "AgCartesianAxisOptions[]",
       "series?": "AgCartesianSeriesOptions[]",
       "navigator?": "AgNavigatorOptions",

@@ -79,11 +79,11 @@ function initialiseSeriesModule(mod: SeriesModule) {
 }
 
 export function getSeries(chartType: string): Series<any> {
-    if (extraSeriesFactories.hasOwnProperty(chartType)) {
+    if (Object.prototype.hasOwnProperty.call(extraSeriesFactories, chartType)) {
         const factory = extraSeriesFactories[chartType];
         return factory();
     }
-    if (builtinSeriesTypes.hasOwnProperty(chartType)) {
+    if (Object.prototype.hasOwnProperty.call(builtinSeriesTypes, chartType)) {
         const SeriesConstructor = builtinSeriesTypes[chartType];
         return new SeriesConstructor();
     }

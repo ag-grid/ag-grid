@@ -716,7 +716,7 @@ export class ChartTheme {
         const getOverridesByType = (seriesTypes: string[]) => {
             const result = {} as any;
             result.series = seriesTypes.reduce((obj, seriesType) => {
-                if (ChartTheme.seriesThemeOverrides.hasOwnProperty(seriesType)) {
+                if (Object.prototype.hasOwnProperty.call(ChartTheme.seriesThemeOverrides, seriesType)) {
                     obj[seriesType] = ChartTheme.seriesThemeOverrides[seriesType]({
                         seriesDefaults: ChartTheme.getSeriesDefaults(),
                         defaultFontFamily: ChartTheme.fontFamily,
