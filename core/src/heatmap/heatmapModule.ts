@@ -20,6 +20,9 @@ export const HeatmapModule: _ModuleSupport.SeriesModule = {
                 update() {},
                 destroy: () => {
                     ctx.seriesFactory.delete();
+                    ctx.defaults.delete();
+                    ctx.themes.chartTheme.delete();
+                    ctx.themes.darkTheme.delete();
                 },
             },
         };
