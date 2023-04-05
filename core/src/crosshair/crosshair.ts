@@ -9,6 +9,9 @@ const { Validate, NUMBER, BOOLEAN, OPT_COLOR_STRING, OPT_LINE_DASH, Layers } = _
 export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
     public update(): void {}
 
+    @Validate(BOOLEAN)
+    enabled = false;
+
     @Validate(OPT_COLOR_STRING)
     stroke?: string = 'rgb(195, 195, 195)';
 
@@ -68,7 +71,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     private layout({ series: { rect, visible }, axes }: _ModuleSupport.LayoutCompleteEvent) {
         this.hideCrosshair();
 
-        if (!(visible && axes)) {
+        if (!(visible && axes && this.enabled)) {
             this.visible = false;
             return;
         }
@@ -155,7 +158,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
 
     private onMouseMove(event: _ModuleSupport.InteractionEvent<'hover'>) {
         const { crosshairGroup, snap, seriesRect, axisCtx, visible, activeHighlight } = this;
-        if (snap) {
+        if (snap || !this.enabled) {
             return;
         }
 
@@ -185,7 +188,11 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     }
 
     private onHighlightChange(event: _ModuleSupport.HighlightChangeEvent) {
-        const { crosshairGroup, snap, seriesRect, axisCtx, visible } = this;
+        const { enabled, crosshairGroup, snap, seriesRect, axisCtx, visible } = this;
+
+        if (!enabled) {
+            return;
+        }
 
         const { currentHighlight } = event;
 

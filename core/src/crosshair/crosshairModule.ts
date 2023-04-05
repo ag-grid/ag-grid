@@ -20,6 +20,8 @@ export interface AgCrosshairLabelFormatterParams {
 }
 
 export interface AgCrosshairOptions {
+    /** Whether or not to show the crosshair. */
+    enabled?: boolean;
     /** When true, the crosshair snaps to the highlighted data point. By default this property is false and the crosshair is rendered at the mouse pointer position. */
     snap?: boolean;
     /** The colour of the stroke for the lines. */
