@@ -32,6 +32,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
 
     readonly label: CrosshairLabel;
     private seriesRect: _Scene.BBox = new BBox(0, 0, 0, 0);
+    private hoverRect: _Scene.BBox = new BBox(0, 0, 0, 0);
     private bounds: _Scene.BBox = new BBox(0, 0, 0, 0);
     private visible: boolean = false;
     private axisCtx: _ModuleSupport.AxisContext;
@@ -68,7 +69,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         this.destroyFns.push(() => this.label.destroy());
     }
 
-    private layout({ series: { rect, visible }, axes }: _ModuleSupport.LayoutCompleteEvent) {
+    private layout({ series: { rect, hoverRect, visible }, axes }: _ModuleSupport.LayoutCompleteEvent) {
         this.hideCrosshair();
 
         if (!(visible && axes && this.enabled)) {
@@ -78,6 +79,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
 
         this.visible = true;
         this.seriesRect = rect;
+        this.hoverRect = hoverRect;
 
         const { position: axisPosition, axisId } = this.axisCtx;
 
@@ -157,28 +159,32 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     }
 
     private onMouseMove(event: _ModuleSupport.InteractionEvent<'hover'>) {
-        const { crosshairGroup, snap, seriesRect, axisCtx, visible, activeHighlight } = this;
+        const { crosshairGroup, snap, seriesRect, hoverRect, axisCtx, visible, activeHighlight } = this;
         if (snap || !this.enabled) {
             return;
         }
 
         const { offsetX, offsetY } = event;
 
-        if (visible && seriesRect.containsPoint(offsetX, offsetY)) {
+        if (visible && hoverRect.containsPoint(offsetX, offsetY)) {
             crosshairGroup.visible = true;
 
             const highlight = activeHighlight ? this.getActiveHighlight(activeHighlight) : undefined;
             let value;
+            let clampedX = 0;
+            let clampedY = 0;
             if (axisCtx.direction === 'x') {
-                crosshairGroup.translationX = Math.round(offsetX);
+                clampedX = Math.max(Math.min(seriesRect.x + seriesRect.width, offsetX), seriesRect.x);
+                crosshairGroup.translationX = Math.round(clampedX);
                 value = axisCtx.continuous ? axisCtx.scaleInvert(offsetX - seriesRect.x) : highlight?.value;
             } else {
-                crosshairGroup.translationY = Math.round(offsetY);
+                clampedY = Math.max(Math.min(seriesRect.y + seriesRect.height, offsetY), seriesRect.y);
+                crosshairGroup.translationY = Math.round(clampedY);
                 value = axisCtx.continuous ? axisCtx.scaleInvert(offsetY - seriesRect.y) : highlight?.value;
             }
 
             if (value) {
-                this.showLabel(offsetX, offsetY, value);
+                this.showLabel(clampedX, clampedY, value);
             } else {
                 this.hideLabel();
             }
