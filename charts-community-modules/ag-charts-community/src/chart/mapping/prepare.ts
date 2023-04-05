@@ -166,7 +166,7 @@ export function prepareOptions<T extends AgChartOptions>(
             if (s.type) {
                 type = s.type;
             } else if (isSeriesOptionType(userSuppliedOptionsType)) {
-                type = userSuppliedOptionsType as any;
+                type = userSuppliedOptionsType;
             }
             const mergedSeries = jsonMerge([seriesThemes[type] || {}, { ...s, type }], noDataCloneMergeOptions);
             if (type === 'pie') {
@@ -177,11 +177,11 @@ export function prepareOptions<T extends AgChartOptions>(
     ).map((s) => prepareSeries(context, s)) as any[];
 
     if (isAgCartesianChartOptions(mergedOptions)) {
-        (mergedOptions as any).axes = (mergedOptions as any).axes?.map((a: any) => {
+        mergedOptions.axes = mergedOptions.axes?.map((a: any) => {
             const type = a.type ?? 'number';
             const axis = { ...a, type };
             const axesTheme = jsonMerge([axesThemes[type], axesThemes[type][a.position || 'unknown'] || {}]);
-            return prepareAxis(axis as any, axesTheme);
+            return prepareAxis(axis, axesTheme);
         });
     }
 
@@ -258,7 +258,7 @@ function calculateSeriesPalette<T extends SeriesOptionsTypes>(context: Preparati
 
     const inputAny = input as any;
     let colourCount = countArrayElements(inputAny['yKeys'] || []) || 1; // Defaults to 1 if no yKeys.
-    switch ((input as any).type) {
+    switch (input.type) {
         case 'pie':
             colourCount = Math.max(fills.length, strokes.length);
         // eslint-disable-next-line no-fallthrough

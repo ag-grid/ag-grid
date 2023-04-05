@@ -123,7 +123,7 @@ const SERIES_TRANSFORMS: {
 };
 
 export function applySeriesTransform<S extends SeriesTypes>(options: S): S {
-    const type = ((options as any).type || 'line') as keyof typeof SERIES_TRANSFORMS;
+    const type = options.type || 'line';
     const transform = SERIES_TRANSFORMS[type] as Function;
-    return (transform || identityTransform)(options);
+    return (transform ?? identityTransform)(options);
 }
