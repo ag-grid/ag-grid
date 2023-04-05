@@ -174,6 +174,89 @@ describe('DataModel', () => {
         });
     });
 
+    describe('grouped processing - time-series example', () => {
+        describe('property tests', () => {
+            const dataModel = new DataModel<any, any, true>({
+                props: [
+                    { property: 'kp', type: 'key', valueType: 'range' },
+                    { property: 'vp1', type: 'value', valueType: 'range' },
+                    { property: 'vp2', type: 'value', valueType: 'range' },
+                ],
+                groupByKeys: true,
+            });
+            const data = [
+                { kp: new Date('2023-01-01T00:00:00.000Z'), vp1: 5, vp2: 7 },
+                { kp: new Date('2023-01-02T00:00:00.000Z'), vp1: 1, vp2: 2 },
+                { kp: new Date('2023-01-03T00:00:00.000Z'), vp1: 6, vp2: 9 },
+                { kp: new Date('2023-01-04T00:00:00.000Z'), vp1: 6, vp2: 9 },
+            ];
+
+            it('should extract the configured keys', () => {
+                const result = dataModel.processData(data);
+
+                expect(result.type).toEqual('grouped');
+                expect(result.data.length).toEqual(4);
+                expect(result.data[0].keys).toEqual([new Date('2023-01-01T00:00:00.000Z')]);
+                expect(result.data[1].keys).toEqual([new Date('2023-01-02T00:00:00.000Z')]);
+                expect(result.data[2].keys).toEqual([new Date('2023-01-03T00:00:00.000Z')]);
+                expect(result.data[3].keys).toEqual([new Date('2023-01-04T00:00:00.000Z')]);
+            });
+
+            it('should extract the configured values', () => {
+                const result = dataModel.processData(data);
+
+                expect(result.type).toEqual('grouped');
+                expect(result.data.length).toEqual(4);
+                expect(result.data[0].values).toEqual([[5, 7]]);
+                expect(result.data[1].values).toEqual([[1, 2]]);
+                expect(result.data[2].values).toEqual([[6, 9]]);
+                expect(result.data[3].values).toEqual([[6, 9]]);
+            });
+
+            it('should calculate the domains', () => {
+                const result = dataModel.processData(data);
+
+                expect(result.type).toEqual('grouped');
+                expect(result.domain.keys).toEqual([[data[0].kp, data[3].kp]]);
+                expect(result.domain.values).toEqual([
+                    [1, 6],
+                    [2, 9],
+                ]);
+            });
+
+            it('should not include sums', () => {
+                const result = dataModel.processData(data);
+
+                expect(result.data.filter((g) => g.sumValues != null)).toEqual([]);
+                expect(result.domain.sumValues).toBeUndefined();
+            });
+
+            it('should only sum per data-item', () => {
+                const dataModel = new DataModel<any, any, true>({
+                    props: [
+                        { property: 'kp', type: 'key', valueType: 'category' },
+                        { property: 'vp1', type: 'value', valueType: 'range' },
+                        { property: 'vp2', type: 'value', valueType: 'range' },
+                        { type: 'sum', properties: ['vp1', 'vp2'] },
+                    ],
+                    groupByKeys: true,
+                });
+                const data = [
+                    { kp: 'Q1', vp1: 5, vp2: 7 },
+                    { kp: 'Q1', vp1: 1, vp2: 2 },
+                    { kp: 'Q2', vp1: 6, vp2: 9 },
+                    { kp: 'Q2', vp1: 6, vp2: 9 },
+                ];
+
+                const result = dataModel.processData(data);
+
+                expect(result.domain.sumValues).toEqual([[0, 15]]);
+                expect(result.data[0].sumValues).toEqual([[0, 12]]);
+                expect(result.data[1].sumValues).toEqual([[0, 15]]);
+            });
+        });
+    });
+
     describe('grouped processing - stacked example', () => {
         it('should generated the expected results', () => {
             const data = examples.STACKED_BAR_CHART_EXAMPLE.data!;
@@ -460,6 +543,31 @@ describe('DataModel', () => {
             });
 
             expect(dataModel.processData([])).toMatchSnapshot();
+        });
+
+        describe('property tests', () => {
+            const dataModel = new DataModel<any, any>({
+                props: [
+                    { property: 'year', type: 'key', valueType: 'category' },
+                    { property: 'ie', type: 'value', valueType: 'range' },
+                    { property: 'chrome', type: 'value', valueType: 'range' },
+                    { property: 'firefox', type: 'value', valueType: 'range' },
+                    { property: 'safari', type: 'value', valueType: 'range' },
+                ],
+            });
+
+            it('should not generate data extracts', () => {
+                const result = dataModel.processData([]);
+
+                expect(result.data).toEqual([]);
+            });
+
+            it('should not generate values for domains', () => {
+                const result = dataModel.processData([]);
+
+                expect(result.domain.keys).toEqual([[]]);
+                expect(result.domain.values).toEqual([[], [], [], []]);
+            });
         });
     });
 });

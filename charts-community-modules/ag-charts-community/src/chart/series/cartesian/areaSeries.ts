@@ -257,7 +257,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
-        const { processedData, yAxis } = this;
+        const { processedData, xAxis, yAxis } = this;
         if (!processedData) return [];
 
         const {
@@ -276,11 +276,11 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 return keys;
             }
 
-            return this.fixNumericExtent(extent(keys));
+            return this.fixNumericExtent(extent(keys), xAxis);
         } else if (yAxis instanceof LogAxis) {
-            return this.fixNumericExtent(yExtent as any);
+            return this.fixNumericExtent(yExtent as any, yAxis);
         } else {
-            return this.fixNumericExtent(ySumExtent);
+            return this.fixNumericExtent(ySumExtent, yAxis);
         }
     }
 
