@@ -86,7 +86,7 @@ export class LicenseManager {
 
             if(isTrial) {
                 const now = new Date();
-                trialExpired = (expiry > now);
+                trialExpired = (expiry < now);
             }
         }
 
