@@ -5,12 +5,12 @@ import classnames from 'classnames';
 import { withPrefix } from 'gatsby';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { createAutomatedRowGrouping } from '../../../components/automated-examples/row-grouping';
+import { createAutomatedIntegratedCharts } from '../../../components/automated-examples/integrated-charts';
 import { Splash } from '../../../components/automated-examples/Splash';
 import { Icon } from '../../../components/Icon';
 import LogoMark from '../../../components/LogoMark';
 import { hostPrefix, isProductionBuild, localPrefix } from '../../../utils/consts';
-import styles from './AutomatedRowGrouping.module.scss';
+import styles from './AutomatedIntegratedCharts.module.scss';
 
 const helmet = [];
 if (!isProductionBuild()) {
@@ -41,14 +41,14 @@ if (!isProductionBuild()) {
 }
 
 const mouseStyles = `
-    .automated-row-grouping-grid .ag-root-wrapper,
-    .automated-row-grouping-grid .ag-root-wrapper * {
+    .automated-integrated-charts-grid .ag-root-wrapper,
+    .automated-integrated-charts-grid .ag-root-wrapper * {
         cursor: url(${hostPrefix}/images/cursor/automated-example-cursor.svg) 22 21, pointer !important;
     }
 `;
 
-function AutomatedRowGrouping({ scriptDebuggerManager, useStaticData, runOnce }) {
-    const gridClassname = 'automated-row-grouping-grid';
+function AutomatedIntegratedCharts({ scriptDebuggerManager, useStaticData, runOnce }) {
+    const gridClassname = 'automated-integrated-charts-grid';
     const automatedScript = useRef(null);
     // NOTE: Needs to be a ref instead of useState, as it is passed into a plain JavaScript context
     const scriptEnabled = useRef(true);
@@ -86,7 +86,7 @@ function AutomatedRowGrouping({ scriptDebuggerManager, useStaticData, runOnce })
             },
         };
 
-        automatedScript.current = createAutomatedRowGrouping(params);
+        automatedScript.current = createAutomatedIntegratedCharts(params);
     }, []);
 
     return (
@@ -95,24 +95,27 @@ function AutomatedRowGrouping({ scriptDebuggerManager, useStaticData, runOnce })
                 {helmet.map((entry) => entry)}
                 <style>{mouseStyles}</style>
             </Helmet>
-            <div style={{ height: '100%', width: '100%' }} className="automated-row-grouping-grid ag-theme-alpine-dark">
+            <div
+                style={{ height: '100%', width: '100%' }}
+                className="automated-integrated-charts-grid ag-theme-alpine-dark"
+            >
                 {!gridIsReady && !useStaticData && <LogoMark isSpinning />}
             </div>
             <Splash
+                width="30%"
+                contentOffset="20%"
+                hideOverlayClickTarget
                 onSplashHide={onSplashHide}
                 onSplashShow={onSplashShow}
                 renderContent={({ hideSplash, setClickTargetHover }) => {
                     return (
                         <div className={classnames(styles.contents, 'font-size-large')}>
                             <div className={styles.contentsInner}>
-                                <h2 className="font-size-massive">
-                                    Feature Packed,
-                                    <br />
-                                    Incredible Performance
-                                </h2>
+                                <h2 className="font-size-massive">Integrated Charts</h2>
                                 <p>
-                                    All the features your users expect and more. Out of the box performance that can
-                                    handle any data you can throw&nbsp;at&nbsp;it.
+                                    Visualise and analyse your data seemlessly.
+                                    <br />
+                                    Create charts directly inside the grid with an intuitive UI and comprehensive API.
                                 </p>
                                 <button
                                     className={styles.exploreExampleButton}
@@ -138,4 +141,4 @@ function AutomatedRowGrouping({ scriptDebuggerManager, useStaticData, runOnce })
     );
 }
 
-export default AutomatedRowGrouping;
+export default AutomatedIntegratedCharts;

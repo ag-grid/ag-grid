@@ -1,5 +1,6 @@
 import classNames from 'classnames';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { createScriptDebuggerManager } from '../components/automated-examples/lib/scriptDebugger';
 import Footer from '../components/footer/Footer';
 import FrameworkSelector from '../components/FrameworkSelector';
 import { Quotes } from '../components/quotes/Quotes';
@@ -11,8 +12,8 @@ import Seo from './components/SEO';
 
 const IS_SSR = typeof window === 'undefined';
 
+const AutomatedIntegratedCharts = React.lazy(() => import('./components/home-page-demos/AutomatedIntegratedCharts'));
 const AutomatedRowGrouping = React.lazy(() => import('./components/home-page-demos/AutomatedRowGrouping'));
-const ChartingDashboardDemo = React.lazy(() => import('./components/home-page-demos/ChartingDashboard'));
 const HeroGrid = React.lazy(() => import('./components/home-page-demos/HeroGrid'));
 
 const Default = () => {
@@ -38,6 +39,23 @@ const Default = () => {
             url: '/react-data-grid/solidjs/',
         },
     ];
+    let debugValue, isCI, runAutomatedExamplesOnce;
+
+    if (!IS_SSR) {
+        const searchParams = new URLSearchParams(window.location.search);
+        debugValue = searchParams.get('debug');
+        isCI = searchParams.get('isCI') === 'true';
+        runAutomatedExamplesOnce = searchParams.get('runOnce') === 'true';
+    }
+    const scriptDebuggerManager = createScriptDebuggerManager({
+        canvasClassname: styles.automatedExampleDebugCanvas,
+        panelClassname: styles.automatedExampleDebugPanel,
+    });
+
+    useEffect(() => {
+        scriptDebuggerManager.setEnabled(Boolean(debugValue));
+        scriptDebuggerManager.setInitialDraw(debugValue === 'draw');
+    }, []);
 
     return (
         <>
@@ -81,17 +99,19 @@ const Default = () => {
                     </div>
                 </div>
 
-                <div className={styles.homepageExample}>
-                    <section className="page-margin">
-                        <div className={styles.automatedRowGrouping}>
-                            {!IS_SSR && (
-                                <React.Suspense fallback={<></>}>
-                                    <AutomatedRowGrouping />
-                                </React.Suspense>
-                            )}
-                        </div>
-                    </section>
-                </div>
+                <section className="page-margin">
+                    <div className={styles.automatedRowGrouping}>
+                        {!IS_SSR && (
+                            <React.Suspense fallback={<></>}>
+                                <AutomatedRowGrouping
+                                    scriptDebuggerManager={scriptDebuggerManager}
+                                    useStaticData={isCI}
+                                    runOnce={runAutomatedExamplesOnce}
+                                />
+                            </React.Suspense>
+                        )}
+                    </div>
+                </section>
 
                 <div className={styles.homepageDescription}>
                     <div className="page-margin">
@@ -125,19 +145,19 @@ const Default = () => {
                     </div>
                 </div>
 
-                <div className={styles.homepageExample}>
-                    <section className="page-margin">
-                        <h2 className={styles.demoHeader}>Integrated Charting</h2>
-
-                        <div className={styles.demo}>
-                            {!IS_SSR && (
-                                <React.Suspense fallback={<div>Loading...</div>}>
-                                    <ChartingDashboardDemo />
-                                </React.Suspense>
-                            )}
-                        </div>
-                    </section>
-                </div>
+                <section className={classNames('page-margin', styles.homepageExample)}>
+                    <div className={styles.automatedIntegratedCharts}>
+                        {!IS_SSR && (
+                            <React.Suspense fallback={<></>}>
+                                <AutomatedIntegratedCharts
+                                    scriptDebuggerManager={scriptDebuggerManager}
+                                    useStaticData={isCI}
+                                    runOnce={runAutomatedExamplesOnce}
+                                />
+                            </React.Suspense>
+                        )}
+                    </div>
+                </section>
 
                 <div className={styles.homepageSponsorship}>
                     <section className={classNames(styles.sponsorshipInner, 'page-margin')}>

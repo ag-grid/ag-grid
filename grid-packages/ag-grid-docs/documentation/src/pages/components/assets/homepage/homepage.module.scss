@@ -6,11 +6,22 @@
 @import '../common/content.scss';
 @import '../common/mixins.scss';
 
+$z-index-base: 10000; // For automated example mouse
+$z-index-debug-canvas: $z-index-base + 10;
+$z-index-debug-panel: $z-index-debug-canvas + 200;
+
+$z-index-gatsby-overlay: 10100;
+
 html,
 body {
     margin: 0;
     padding: 0;
     position: relative;
+}
+
+// Increase z-index, so gatsby errors show on top of the splash
+gatsby-fast-refresh {
+    --z-index-overlay: #{$z-index-gatsby-overlay};
 }
 
 .homepageHero {
@@ -111,7 +122,8 @@ body {
     }
 }
 
-.automatedRowGrouping {
+.automatedRowGrouping,
+.automatedIntegratedCharts {
     margin-top: ds.$size-8 !important; // !important for .ag-styles specificity
 
     @media screen and (min-width: ds.$breakpoint-automated-row-grouping-medium) {
@@ -189,11 +201,6 @@ body {
     :global(.read-more-link) {
         margin-top: ds.$size-1 !important; // !important for .ag-styles specificity
         float: right;
-    }
-
-    // fixes homepage charts example .ag-styles specificity bug
-    :global(.ag-chart-menu-close) {
-        display: none !important;
     }
 }
 
@@ -294,4 +301,72 @@ body {
     a {
         grid-area: link;
     }
+}
+
+.automatedExampleDebugPanel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: fit-content;
+    border-left: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    background-color: rgba(255, 255, 255, 0.85);
+    padding: ds.$size-2;
+    z-index: $z-index-debug-panel;
+
+    h2 {
+        font-size: ds.$font-size-medium !important; // !important for .ag-styles specificity
+        margin-bottom: ds.$size-half !important; // !important for .ag-styles specificity
+        margin-top: ds.$size-1 !important; // !important for .ag-styles specificity
+    }
+
+    :global(.state) {
+        &::before {
+            content: 'State: ';
+            color: var(--dull-light-gray);
+        }
+    }
+
+    :global(.paused-state) {
+        &::before {
+            content: 'Paused at: ';
+            color: var(--dull-light-gray);
+        }
+    }
+
+    :global(.controls) {
+        display: flex;
+        justify-content: space-between;
+
+        button {
+            padding: ds.$size-half !important; // !important for .ag-styles specificity
+            line-height: ds.$line-height-ultra-tight;
+        }
+    }
+
+    :global(.draw-checkbox) {
+        margin-top: ds.$size-1;
+        cursor: pointer;
+    }
+
+    :global(.mouse-position) {
+        margin-top: ds.$size-1;
+        cursor: pointer;
+
+        &::before {
+            content: 'Mouse: ';
+            color: var(--dull-light-gray);
+        }
+    }
+}
+
+.automatedExampleDebugCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: $z-index-debug-canvas;
 }

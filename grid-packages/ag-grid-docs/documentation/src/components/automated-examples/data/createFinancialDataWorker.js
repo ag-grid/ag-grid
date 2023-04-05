@@ -1,6 +1,6 @@
 // NOTE: The details of this web worker are not important it's just used to simulate streaming updates in the grid.
 
-export function createDataUpdateWorker() {
+export function createFinancialDataWorker() {
     // update these to change the number and rate of updates
     const UPDATES_PER_MESSAGE = 100;
     const MILLISECONDS_BETWEEN_MESSAGES = 100;

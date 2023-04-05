@@ -7,23 +7,22 @@
 
 import { Easing, Group } from '@tweenjs/tween.js';
 import { ColDef, GridOptions } from 'ag-grid-community';
-import { createFinancialDataWorker } from '../data/createFinancialDataWorker';
+import { COUNTRY_CODES } from '../data/constants';
+import { createPeopleData } from '../data/createPeopleData';
 import { createMouse } from '../lib/createMouse';
 import { getBottomMidPos } from '../lib/dom';
 import { Point } from '../lib/geometry';
 import { ScriptDebuggerManager } from '../lib/scriptDebugger';
 import { ScriptRunner } from '../lib/scriptRunner';
-import { createRowGroupingScriptRunner } from './createRowGroupingScriptRunner';
-import { fixtureData } from './rowDataFixture';
+import { createIntegratedChartsScriptRunner } from './createIntegratedChartsScriptRunner';
 
 const WAIT_TILL_MOUSE_ANIMATION_STARTS = 2000;
 const VISIBLE_GRID_THRESHOLD_BEFORE_PLAYING_SCRIPT = 0.2;
 
-let dataWorker;
 let scriptRunner: ScriptRunner;
 let restartScriptTimeout;
 
-interface CreateAutomatedRowGroupingParams {
+interface CreateAutomatedIntegratedChartsParams {
     gridClassname: string;
     mouseMaskClassname: string;
     scriptIsEnabled?: () => boolean;
@@ -42,32 +41,42 @@ function numberCellFormatter(params) {
         .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
+function getCountryFlagImageUrl(country: string) {
+    const countryCode = COUNTRY_CODES[country];
+    return `https://flags.fmcdn.net/data/flags/mini/${countryCode}.png`;
+}
+
 const columnDefs: ColDef[] = [
     {
-        field: 'product',
+        field: 'name',
         chartDataType: 'category',
         minWidth: 280,
         enableRowGroup: true,
     },
     {
-        field: 'book',
+        field: 'country',
         chartDataType: 'category',
         enableRowGroup: true,
+        cellRenderer: (params) => {
+            // put the value in bold
+            return `<img border="0" width="20" height="10" src='${getCountryFlagImageUrl(params.data.country)}' /> ${
+                params.value
+            }`;
+        },
     },
-    { field: 'current', type: 'measure', enableRowGroup: true },
-    { field: 'previous', type: 'measure', enableRowGroup: true },
-    { headerName: 'PL 1', field: 'pl1', type: 'measure', enableRowGroup: true },
-    { headerName: 'PL 2', field: 'pl2', type: 'measure', enableRowGroup: true },
-    { headerName: 'Gain-DX', field: 'gainDx', type: 'measure', enableRowGroup: true },
-    { headerName: 'SX / PX', field: 'sxPx', type: 'measure', enableRowGroup: true },
-
-    { field: 'trade', type: 'measure', enableRowGroup: true },
-    { field: 'submitterID', type: 'measure', enableRowGroup: true },
-    { field: 'submitterDealID', type: 'measure', minWidth: 170, enableRowGroup: true },
-
-    { field: 'portfolio', enableRowGroup: true },
-    { field: 'dealType', enableRowGroup: true },
-    { headerName: 'Bid', field: 'bidFlag', enableRowGroup: true },
+    { field: 'jan', type: 'measure', enableRowGroup: true },
+    { field: 'feb', type: 'measure', enableRowGroup: true },
+    { field: 'mar', type: 'measure', enableRowGroup: true },
+    { field: 'apr', type: 'measure', enableRowGroup: true },
+    { field: 'may', type: 'measure', enableRowGroup: true },
+    { field: 'jun', type: 'measure', enableRowGroup: true },
+    { field: 'jul', type: 'measure', enableRowGroup: true },
+    { field: 'aug', type: 'measure', enableRowGroup: true },
+    { field: 'sep', type: 'measure', enableRowGroup: true },
+    { field: 'oct', type: 'measure', enableRowGroup: true },
+    { field: 'nov', type: 'measure', enableRowGroup: true },
+    { field: 'dec', type: 'measure', enableRowGroup: true },
+    { field: 'totalWinnings', type: 'measure', enableRowGroup: true },
 ];
 
 const gridOptions: GridOptions = {
@@ -95,49 +104,20 @@ const gridOptions: GridOptions = {
     enableCharts: true,
     enableRangeSelection: true,
     suppressAggFuncInHeader: true,
-    getRowId: (params) => {
-        return params.data.trade;
-    },
     rowGroupPanelShow: 'always',
 };
 
-function initWorker() {
-    dataWorker = new Worker(
-        URL.createObjectURL(new Blob(['(' + createFinancialDataWorker.toString() + ')()'], { type: 'text/javascript' }))
-    );
-    dataWorker.onmessage = function (e) {
-        if (!gridOptions || !gridOptions.api) {
-            return;
-        }
-
-        if (e.data.type === 'setRowData') {
-            gridOptions.api.setRowData(e.data.records);
-        } else if (e.data.type === 'updateData') {
-            gridOptions.api.applyTransactionAsync({ update: e.data.records });
-        }
-    };
-}
-
-function startWorkerMessages() {
-    dataWorker?.postMessage('start');
-}
-
-function stopWorkerMessages() {
-    dataWorker?.postMessage('stop');
-}
-
-export function createAutomatedRowGrouping({
+export function createAutomatedIntegratedCharts({
     gridClassname,
     mouseMaskClassname,
     scriptIsEnabled = () => true,
     onInactive,
     onGridReady,
     suppressUpdates,
-    useStaticData,
     scriptDebuggerManager,
     runOnce,
     pauseOnMouseMove,
-}: CreateAutomatedRowGroupingParams) {
+}: CreateAutomatedIntegratedChartsParams) {
     const gridSelector = `.${gridClassname}`;
 
     const init = () => {
@@ -147,21 +127,17 @@ export function createAutomatedRowGrouping({
         }
 
         const offScreenPos: Point = getBottomMidPos(gridDiv);
-        if (useStaticData) {
-            gridOptions.rowData = fixtureData;
-        }
 
+        gridOptions.rowData = createPeopleData({ randomize: !suppressUpdates });
         gridOptions.onGridReady = () => {
             if (suppressUpdates) {
                 return;
             }
 
             onGridReady && onGridReady();
-            initWorker();
-            startWorkerMessages();
 
             const scriptDebugger = scriptDebuggerManager.add({
-                id: 'Row Grouping',
+                id: 'Integrated Charts',
                 containerEl: gridDiv,
             });
 
@@ -172,17 +148,12 @@ export function createAutomatedRowGrouping({
                 scriptRunner.stop();
             }
 
-            scriptRunner = createRowGroupingScriptRunner({
+            scriptRunner = createIntegratedChartsScriptRunner({
                 containerEl: gridDiv,
                 mouse,
                 offScreenPos,
-                onPlaying() {
-                    startWorkerMessages();
-                },
                 onInactive() {
                     onInactive && onInactive();
-
-                    stopWorkerMessages();
                 },
                 tweenGroup,
                 gridOptions,
@@ -274,8 +245,6 @@ if (import.meta.webpackHot) {
             scriptRunner.stop();
         }
 
-        stopWorkerMessages();
-        dataWorker?.terminate();
         gridOptions.api?.destroy();
     });
 }

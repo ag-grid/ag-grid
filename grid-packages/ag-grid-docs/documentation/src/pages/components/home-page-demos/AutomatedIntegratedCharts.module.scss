@@ -7,7 +7,7 @@ $z-index-splash: $z-index-debug-canvas + 10;
 $z-index-debug-panel: $z-index-splash + 10;
 $z-index-splash-contents: 10;
 
-:global(.automated-row-grouping-grid.ag-theme-alpine-dark) {
+:global(.automated-integrated-charts-grid.ag-theme-alpine-dark) {
     background-color: #00162d;
     position: relative;
 
@@ -29,7 +29,7 @@ $z-index-splash-contents: 10;
         width: 64px * 2;
         height: 48px * 2;
         top: 51%;
-        left: 18%;
+        left: 50%;
         transform: translate(-60px, -48px) scale(1.5);
         z-index: 1;
     }
@@ -70,6 +70,45 @@ $z-index-splash-contents: 10;
     // Set filter overrides for .ag-styles specificity
     :global(.ag-set-filter-item) {
         margin: 0px var(--ag-widget-container-horizontal-padding);
+    }
+
+    // Set chart panel button overrides for .ag-styles specificity
+    :global(.ag-chart-tool-panel-button-enable) {
+        :global(.ag-chart-menu-close) {
+            position: absolute;
+            top: 50%;
+            transition: transform 0.33s ease-in-out;
+            padding: 0;
+            display: block;
+            cursor: pointer;
+            border: none;
+
+            right: 0;
+
+            :global(.ag-icon) {
+                padding: 14px 5px 14px 2px;
+            }
+
+            &::before {
+                content: '';
+                position: absolute;
+                top: -40px;
+                bottom: -40px;
+
+                right: 0;
+            }
+        }
+    }
+
+    // Set chart panel group container overrides for .ag-styles specificity
+    :global(.ag-charts-format-top-level-group-container) {
+        margin-left: calc(var(--ag-grid-size) * 2);
+    }
+    :global(.ag-charts-format-top-level-group-item) {
+        margin: var(--ag-grid-size) 0;
+    }
+    :global(.ag-charts-format-sub-level-group-container > *) {
+        margin-bottom: var(--ag-widget-vertical-spacing);
     }
 }
 

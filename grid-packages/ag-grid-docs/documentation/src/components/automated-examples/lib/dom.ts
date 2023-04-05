@@ -35,6 +35,34 @@ export function getBoundingClientRectMidpoint(element: HTMLElement): Point {
     };
 }
 
+/**
+ * @deprecated use findElementWithInnerText instead
+ */
+export function findElementWithInnerHTML({
+    containerEl = document.body,
+    selector,
+    text,
+}: {
+    containerEl?: HTMLElement;
+    selector: string;
+    text: string;
+}): HTMLElement | undefined {
+    let element!: HTMLElement;
+    containerEl.querySelectorAll(selector).forEach((el) => {
+        const htmlElement = el as HTMLElement;
+        const sanitisedElementText = htmlElement.innerHTML
+            .trim()
+            .replace(/\u200e/g, '') // Left to Right mark eg, in localisation text
+            .replace(/\u200f/g, ''); // Right to Left mark eg, in localisation text
+        if (sanitisedElementText === text.trim()) {
+            element = htmlElement;
+            return;
+        }
+    });
+
+    return element;
+}
+
 export function findElementWithInnerText({
     containerEl = document.body,
     selector,
@@ -44,10 +72,15 @@ export function findElementWithInnerText({
     selector: string;
     text: string;
 }): HTMLElement | undefined {
-    let element: HTMLElement;
-    containerEl.querySelectorAll(selector).forEach((el: HTMLElement) => {
-        if (el.innerHTML === text) {
-            element = el;
+    let element!: HTMLElement;
+    containerEl.querySelectorAll(selector).forEach((el) => {
+        const htmlElement = el as HTMLElement;
+        const sanitisedElementText = htmlElement.innerText
+            .trim()
+            .replace(/\u200e/g, '') // Left to Right mark eg, in localisation text
+            .replace(/\u200f/g, ''); // Right to Left mark eg, in localisation text
+        if (sanitisedElementText === text.trim()) {
+            element = htmlElement;
             return;
         }
     });
