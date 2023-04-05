@@ -234,17 +234,17 @@ export class ColumnFactory extends BeanStub {
     ): ProvidedColumnGroup {
         const colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
         const groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId || null, null);
+        const providedGroup = new ProvidedColumnGroup(colGroupDefMerged, groupId, false, level);
+        this.createBean(providedGroup);
         const existingGroup = this.findExistingGroup(colGroupDef, existingGroups);
-
-        let providedGroup: ProvidedColumnGroup;
-
+        // make sure we remove, so if user provided duplicate id, then we don't have more than
+        // one column instance for colDef with common id
         if (existingGroup) {
-            providedGroup = existingGroup;
-            providedGroup.reset(colGroupDefMerged, level);
             removeFromArray(existingGroups, existingGroup);
-        } else {
-            providedGroup = new ProvidedColumnGroup(colGroupDefMerged, groupId, false, level);
-            this.createBean(providedGroup);
+        }
+
+        if (existingGroup && existingGroup.isExpanded()) {
+            providedGroup.setExpanded(true);
         }
 
         const children = this.recursivelyCreateColumns(colGroupDefMerged.children,
