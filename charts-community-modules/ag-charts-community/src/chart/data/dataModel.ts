@@ -74,7 +74,7 @@ function extendDomain<T extends number | Date>(
 function sumValues(values: any[], accumulator = [0, 0] as ContinuousDomain<number>) {
     for (const value of values) {
         if (typeof value !== 'number') {
-            return;
+            continue;
         }
         if (value < 0) {
             accumulator[0] += value;
@@ -401,14 +401,17 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
 
             let resultIdx = 0;
             for (const indices of resultSumValueIndices) {
-                const accumulatedRange: ContinuousDomain<number> = [0, 0];
+                const groupDomain = extendDomain([]);
                 for (const distinctValues of values) {
                     const valuesToSum = indices.map((valueIdx) => distinctValues[valueIdx] as D[K]);
-                    sumValues(valuesToSum, accumulatedRange);
+                    const range = sumValues(valuesToSum);
+                    if (range) {
+                        extendDomain(range, groupDomain);
+                    }
                 }
 
-                group.sumValues[resultIdx] = accumulatedRange;
-                extendDomain(accumulatedRange, resultSumValues[resultIdx++]);
+                extendDomain(groupDomain, resultSumValues[resultIdx]);
+                group.sumValues[resultIdx++] = groupDomain;
             }
         }
 

@@ -147,6 +147,30 @@ describe('DataModel', () => {
                 expect(result.data.filter((g) => g.sumValues != null)).toEqual([]);
                 expect(result.domain.sumValues).toBeUndefined();
             });
+
+            it('should only sum per data-item', () => {
+                const dataModel = new DataModel<any, any, true>({
+                    props: [
+                        { property: 'kp', type: 'key', valueType: 'category' },
+                        { property: 'vp1', type: 'value', valueType: 'range' },
+                        { property: 'vp2', type: 'value', valueType: 'range' },
+                        { type: 'sum', properties: ['vp1', 'vp2'] },
+                    ],
+                    groupByKeys: true,
+                });
+                const data = [
+                    { kp: 'Q1', vp1: 5, vp2: 7 },
+                    { kp: 'Q1', vp1: 1, vp2: 2 },
+                    { kp: 'Q2', vp1: 6, vp2: 9 },
+                    { kp: 'Q2', vp1: 6, vp2: 9 },
+                ];
+
+                const result = dataModel.processData(data);
+
+                expect(result.domain.sumValues).toEqual([[0, 15]]);
+                expect(result.data[0].sumValues).toEqual([[0, 12]]);
+                expect(result.data[1].sumValues).toEqual([[0, 15]]);
+            });
         });
     });
 
@@ -234,17 +258,17 @@ describe('DataModel', () => {
 
                 expect(result.data.map((g) => g.sumValues)).toEqual([
                     [
-                        [0, 15],
                         [0, 12],
+                        [0, 6],
                     ],
                     [
-                        [0, 30],
-                        [0, 12],
+                        [0, 15],
+                        [0, 6],
                     ],
                 ]);
                 expect(result.domain.sumValues).toEqual([
-                    [0, 30],
-                    [0, 12],
+                    [0, 15],
+                    [0, 6],
                 ]);
             });
         });
@@ -349,12 +373,12 @@ describe('DataModel', () => {
 
                 expect(result.data.map((g) => g.values)).toEqual([
                     [
-                        [33.333333333333336, 46.666666666666664, 8.333333333333334, 41.666666666666664],
-                        [6.666666666666667, 13.333333333333334, 16.666666666666668, 33.333333333333336],
+                        [41.666666666666664, 58.333333333333336, 16.666666666666668, 83.33333333333333],
+                        [8.333333333333334, 16.666666666666668, 33.333333333333336, 66.66666666666667],
                     ],
                     [
-                        [20, 30, 25, 25],
-                        [20, 30, 33.333333333333336, 16.666666666666668],
+                        [40, 60, 50, 50],
+                        [40, 60, 66.66666666666667, 33.333333333333336],
                     ],
                 ]);
             });

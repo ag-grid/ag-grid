@@ -294,7 +294,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     }
 
     async createNodeData() {
-        const { xAxis, yAxis, processedData: { data } = {} } = this;
+        const { xAxis, yAxis, data, processedData: { data: groupedData } = {} } = this;
 
         if (!xAxis || !yAxis || !data) {
             return [];
@@ -382,101 +382,110 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             const strokePoints = strokeSelectionData.points;
             const yValues = strokeSelectionData.yValues;
 
-            data.forEach((datumGroup, datumIdx) => {
+            let datumIdx = -1;
+            groupedData?.forEach((datumGroup, dataIdx) => {
                 const {
                     keys: [xDatum],
-                    datum: [seriesDatum],
-                    values: [values],
+                    datum: datumArray,
+                    values: valuesArray,
                 } = datumGroup;
-                const rawYDatum = values[yKeyDataIndex.index];
-                const yDatum = isNaN(rawYDatum) ? undefined : rawYDatum;
 
-                const nextDatumGroup = data[datumIdx + 1];
-                const nextXDatum = nextDatumGroup?.keys[0];
-                const rawNextYDatum = nextDatumGroup?.values[0][yKeyDataIndex.index];
-                const nextYDatum = isNaN(rawNextYDatum) ? undefined : rawNextYDatum;
+                valuesArray.forEach((values, valueIdx) => {
+                    datumIdx++;
 
-                // marker data
-                const point = createMarkerCoordinate(xDatum, +yDatum!, datumIdx, seriesDatum[yKey]);
+                    const seriesDatum = datumArray[valueIdx];
+                    const rawYDatum = values[yKeyDataIndex.index];
+                    const yDatum = isNaN(rawYDatum) ? undefined : rawYDatum;
 
-                if (marker) {
-                    markerSelectionData.push({
-                        index: datumIdx,
-                        series: this,
-                        itemId: yKey,
-                        datum: seriesDatum,
-                        cumulativeValue: cumulativeMarkerValues[datumIdx],
-                        yValue: yDatum!,
-                        yKey,
-                        xKey,
-                        point,
-                        nodeMidPoint: { x: point.x, y: point.y },
-                        fill: fills[seriesIdx % fills.length],
-                        stroke: strokes[seriesIdx % strokes.length],
-                    });
-                }
+                    const nextValuesSameGroup = valueIdx < valuesArray.length - 1;
+                    const nextDatumGroup = nextValuesSameGroup ? datumGroup : groupedData[dataIdx + 1];
+                    const nextXDatum = nextDatumGroup?.keys[0];
+                    const rawNextYIdx = nextValuesSameGroup ? valueIdx + 1 : 0;
+                    const rawNextYDatum = nextDatumGroup?.values[rawNextYIdx][yKeyDataIndex.index];
+                    const nextYDatum = isNaN(rawNextYDatum) ? undefined : rawNextYDatum;
 
-                // label data
-                let labelText: string;
+                    // marker data
+                    const point = createMarkerCoordinate(xDatum, +yDatum!, datumIdx, seriesDatum[yKey]);
 
-                if (label.formatter) {
-                    labelText = label.formatter({ value: yDatum!, seriesId });
-                } else {
-                    labelText = isNumber(yDatum) ? Number(yDatum).toFixed(2) : String(yDatum);
-                }
+                    if (marker) {
+                        markerSelectionData.push({
+                            index: datumIdx,
+                            series: this,
+                            itemId: yKey,
+                            datum: seriesDatum,
+                            nodeMidPoint: { x: point.x, y: point.y },
+                            cumulativeValue: cumulativeMarkerValues[datumIdx],
+                            yValue: yDatum!,
+                            yKey,
+                            xKey,
+                            point,
+                            fill: fills[seriesIdx % fills.length],
+                            stroke: strokes[seriesIdx % strokes.length],
+                        });
+                    }
 
-                if (label) {
-                    labelSelectionData.push({
-                        index: datumIdx,
-                        itemId: yKey,
-                        point,
-                        label: labelText
-                            ? {
-                                  text: labelText,
-                                  fontStyle: label.fontStyle,
-                                  fontWeight: label.fontWeight,
-                                  fontSize: label.fontSize,
-                                  fontFamily: label.fontFamily,
-                                  textAlign: 'center',
-                                  textBaseline: 'bottom',
-                                  fill: label.color,
-                              }
-                            : undefined,
-                    });
-                }
+                    // label data
+                    let labelText: string;
 
-                // fill data
-                // Handle data in pairs of current and next x and y values
-                const windowX = [xDatum, nextXDatum];
-                const windowY = [yDatum, nextYDatum];
+                    if (label.formatter) {
+                        labelText = label.formatter({ value: yDatum!, seriesId });
+                    } else {
+                        labelText = isNumber(yDatum) ? Number(yDatum).toFixed(2) : String(yDatum);
+                    }
 
-                if (windowX.some((v) => v == undefined)) {
-                    return;
-                }
-                if (windowY.some((v) => v == undefined)) {
-                    windowY[0] = 0;
-                    windowY[1] = 0;
-                }
+                    if (label) {
+                        labelSelectionData.push({
+                            index: datumIdx,
+                            itemId: yKey,
+                            point,
+                            label: labelText
+                                ? {
+                                      text: labelText,
+                                      fontStyle: label.fontStyle,
+                                      fontWeight: label.fontWeight,
+                                      fontSize: label.fontSize,
+                                      fontFamily: label.fontFamily,
+                                      textAlign: 'center',
+                                      textBaseline: 'bottom',
+                                      fill: label.color,
+                                  }
+                                : undefined,
+                        });
+                    }
 
-                const currCoordinates = createPathCoordinates(windowX[0], +windowY[0]!, datumIdx, 'right');
-                fillPoints.push(currCoordinates[0]);
-                fillPhantomPoints.push(currCoordinates[1]);
+                    // fill data
+                    // Handle data in pairs of current and next x and y values
+                    const windowX = [xDatum, nextXDatum];
+                    const windowY = [yDatum, nextYDatum];
 
-                const nextCoordinates = createPathCoordinates(windowX[1], +windowY[1]!, datumIdx, 'left');
-                fillPoints.push(nextCoordinates[0]);
-                fillPhantomPoints.push(nextCoordinates[1]);
+                    if (windowX.some((v) => v == undefined)) {
+                        return;
+                    }
+                    if (windowY.some((v) => v == undefined)) {
+                        windowY[0] = 0;
+                        windowY[1] = 0;
+                    }
 
-                // stroke data
-                strokePoints.push({ x: NaN, y: NaN }); // moveTo
-                yValues.push(undefined);
+                    const currCoordinates = createPathCoordinates(windowX[0], +windowY[0]!, datumIdx, 'right');
+                    fillPoints.push(currCoordinates[0]);
+                    fillPhantomPoints.push(currCoordinates[1]);
 
-                strokePoints.push(currCoordinates[0]);
-                yValues.push(yDatum);
+                    const nextCoordinates = createPathCoordinates(windowX[1], +windowY[1]!, datumIdx, 'left');
+                    fillPoints.push(nextCoordinates[0]);
+                    fillPhantomPoints.push(nextCoordinates[1]);
 
-                if (nextYDatum !== undefined) {
-                    strokePoints.push(nextCoordinates[0]);
+                    // stroke data
+                    strokePoints.push({ x: NaN, y: NaN }); // moveTo
+                    yValues.push(undefined);
+
+                    strokePoints.push(currCoordinates[0]);
                     yValues.push(yDatum);
-                }
+
+                    if (nextYDatum !== undefined) {
+                        strokePoints.push(nextCoordinates[0]);
+                        yValues.push(yDatum);
+                    }
+                });
             });
 
             for (let i = fillPhantomPoints.length - 1; i >= 0; i--) {
