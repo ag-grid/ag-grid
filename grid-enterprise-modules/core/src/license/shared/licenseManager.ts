@@ -76,7 +76,7 @@ export class LicenseManager {
 
     public getLicenseDetails(licenseKey: string) {
         const {md5, license, version, isTrial} = LicenseManager.extractLicenseComponents(licenseKey);
-        let valid = (md5 === this.md5.md5(license)) && LicenseManager.licenseKey.indexOf("For_Trialing_ag-Grid_Only") === -1;
+        let valid = (md5 === this.md5.md5(license)) && licenseKey.indexOf("For_Trialing_ag-Grid_Only") === -1;
         let trialExpired: null | boolean = null;
 
         let expiry: Date | null = null;
