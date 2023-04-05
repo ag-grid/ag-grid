@@ -1,5 +1,5 @@
 import { Selection } from '../../../scene/selection';
-import { SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
+import { SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode, valueProperty } from '../series';
 import { LegendDatum } from '../../legendDatum';
 import { LinearScale } from '../../../scale/linearScale';
 import {
@@ -18,14 +18,13 @@ import { Text } from '../../../scene/shape/text';
 import { HdpiCanvas } from '../../../canvas/hdpiCanvas';
 import { Marker } from '../../marker/marker';
 import { MeasuredLabel, PointLabelDatum } from '../../../util/labelPlacement';
-import { checkDatum } from '../../../util/value';
 import { OPT_FUNCTION, OPT_STRING, STRING, Validate } from '../../../util/validation';
 import {
     AgScatterSeriesTooltipRendererParams,
     AgTooltipRendererResult,
     AgCartesianSeriesMarkerFormat,
 } from '../../agChartOptions';
-import { DataModel, DatumPropertyDefinition } from '../../data/dataModel';
+import { DataModel } from '../../data/dataModel';
 
 interface ScatterNodeDatum extends Required<CartesianSeriesNodeDatum> {
     readonly label: MeasuredLabel;
@@ -142,29 +141,19 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         const isContinuousX = xAxis?.scale instanceof ContinuousScale;
         const isContinuousY = yAxis?.scale instanceof ContinuousScale;
 
-        const sizeKeyProp: DatumPropertyDefinition<any>[] = sizeKey
-            ? [{ property: sizeKey, type: 'value', valueType: 'range', validation: (v) => checkDatum(v, true) }]
-            : [];
         this.dataModel = new DataModel<any>({
             props: [
-                {
-                    property: xKey,
-                    type: 'value',
-                    valueType: isContinuousX ? 'range' : 'category',
-                    validation: (v) => checkDatum(v, isContinuousX) != null,
-                },
-                {
-                    property: yKey,
-                    type: 'value',
-                    valueType: isContinuousY ? 'range' : 'category',
-                    validation: (v) => checkDatum(v, isContinuousY) != null,
-                },
-                ...sizeKeyProp,
+                valueProperty(xKey, isContinuousX),
+                valueProperty(yKey, isContinuousY),
+                ...(sizeKey ? [valueProperty(sizeKey, true)] : []),
             ],
         });
         this.processedData = this.dataModel.processData(data ?? []);
 
-        this.sizeScale.domain = marker.domain ? marker.domain : this.processedData.domain.values[2];
+        if (sizeKey) {
+            const sizeKeyIdx = this.dataModel.resolveProcessedDataIndex(sizeKey)?.index ?? -1;
+            this.sizeScale.domain = marker.domain ? marker.domain : this.processedData.domain.values[sizeKeyIdx];
+        }
     }
 
     getDomain(direction: ChartAxisDirection): any[] {

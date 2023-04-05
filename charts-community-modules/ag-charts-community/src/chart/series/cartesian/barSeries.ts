@@ -3,7 +3,14 @@ import { Rect } from '../../../scene/shape/rect';
 import { Text } from '../../../scene/shape/text';
 import { BandScale } from '../../../scale/bandScale';
 import { DropShadow } from '../../../scene/dropShadow';
-import { SeriesNodeDataContext, SeriesTooltip, SeriesNodePickMode } from '../series';
+import {
+    SeriesNodeDataContext,
+    SeriesTooltip,
+    SeriesNodePickMode,
+    keyProperty,
+    valueProperty,
+    sumProperties,
+} from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { LegendDatum } from '../../legendDatum';
@@ -20,7 +27,7 @@ import { extent } from '../../../util/array';
 import { areArrayItemsStrictlyEqual } from '../../../util/equal';
 import { Scale } from '../../../scale/scale';
 import { sanitizeHtml } from '../../../util/sanitize';
-import { checkDatum, isNumber } from '../../../util/value';
+import { isNumber } from '../../../util/value';
 import { ContinuousScale } from '../../../scale/continuousScale';
 import { Point } from '../../../scene/point';
 import {
@@ -321,33 +328,24 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const isContinuousX = this.getCategoryAxis()?.scale instanceof ContinuousScale;
         const isContinuousY = this.getValueAxis()?.scale instanceof ContinuousScale;
 
+        const activeSeriesItems = [...seriesItemEnabled.entries()]
+            .filter(([, enabled]) => enabled)
+            .map(([yKey]) => yKey);
+        const activeStacks = this.yKeys
+            .map((stack) => stack.filter((key) => seriesItemEnabled.get(key)))
+            .filter((stack) => stack.length > 0);
+        const normaliseTo = normalizedTo && isFinite(normalizedTo) ? normalizedTo : undefined;
+
         this.dataModel = new DataModel<any, any, true>({
             props: [
-                {
-                    property: xKey,
-                    type: 'key',
-                    valueType: isContinuousX ? 'range' : 'category',
-                    validation: (v) => checkDatum(v, isContinuousX) != null,
-                },
-                ...[...seriesItemEnabled.entries()]
-                    .filter(([, enabled]) => enabled)
-                    .map(([yKey]) => ({
-                        property: yKey,
-                        type: 'value' as const,
-                        valueType: isContinuousY ? ('range' as const) : ('category' as const),
-                        validation: (v: any) => checkDatum(v, isContinuousY) != null,
-                    })),
-                ...this.yKeys
-                    .map((stack) => ({
-                        type: 'sum' as const,
-                        properties: stack.filter((key) => seriesItemEnabled.get(key) === true),
-                    }))
-                    .filter((def) => def.properties.length > 0),
+                keyProperty(xKey, isContinuousX),
+                ...activeSeriesItems.map((yKey) => valueProperty(yKey, isContinuousY)),
+                ...activeStacks.map((stack) => sumProperties(stack)),
                 ...(isContinuousX ? [SMALLEST_KEY_INTERVAL] : []),
                 SUM_VALUE_EXTENT,
             ],
             groupByKeys: true,
-            normaliseTo: normalizedTo && isFinite(normalizedTo) ? normalizedTo : undefined,
+            normaliseTo,
         });
 
         this.processedData = this.dataModel.processData(data);

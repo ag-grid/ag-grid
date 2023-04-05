@@ -1,6 +1,6 @@
 import { Selection } from '../../../scene/selection';
 import { DropShadow } from '../../../scene/dropShadow';
-import { SeriesTooltip, SeriesNodeDataContext } from '../series';
+import { SeriesTooltip, SeriesNodeDataContext, keyProperty, valueProperty, sumProperties } from '../series';
 import { PointerEvents } from '../../../scene/node';
 import { LegendDatum } from '../../legendDatum';
 import { Path } from '../../../scene/shape/path';
@@ -21,7 +21,7 @@ import { interpolate } from '../../../util/string';
 import { Text } from '../../../scene/shape/text';
 import { Label } from '../../label';
 import { sanitizeHtml } from '../../../util/sanitize';
-import { checkDatum, isContinuous, isNumber } from '../../../util/value';
+import { isContinuous, isNumber } from '../../../util/value';
 import { ContinuousScale } from '../../../scale/continuousScale';
 import { Point, SizedPoint } from '../../../scene/point';
 import {
@@ -234,32 +234,23 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         const isContinuousX = xAxis.scale instanceof ContinuousScale;
         const isContinuousY = yAxis.scale instanceof ContinuousScale;
 
-        const enabledYKeys = [...seriesItemEnabled.entries()].filter(([, enabled]) => enabled);
+        const enabledYKeys = [...seriesItemEnabled.entries()].filter(([, enabled]) => enabled).map(([yKey]) => yKey);
+        const normaliseTo = normalizedTo && isFinite(normalizedTo) ? normalizedTo : undefined;
 
         this.dataModel = new DataModel<any, any, true>({
             props: [
-                {
-                    property: xKey,
-                    type: 'key',
-                    valueType: isContinuousX ? 'range' : 'category',
-                    validation: (v) => checkDatum(v, isContinuousX) != null,
-                },
-                ...enabledYKeys.map(([yKey]) => ({
-                    property: yKey,
-                    type: 'value' as const,
-                    valueType: isContinuousY ? ('range' as const) : ('category' as const),
-                    validation: (v: any) => checkDatum(v, isContinuousY) != null,
-                    missingValue: NaN,
-                    invalidValue: undefined,
-                })),
-                {
-                    type: 'sum' as const,
-                    properties: enabledYKeys.map(([yKey]) => yKey),
-                },
+                keyProperty(xKey, isContinuousX),
+                ...enabledYKeys.map((yKey) =>
+                    valueProperty(yKey, isContinuousY, {
+                        missingValue: NaN,
+                        invalidValue: undefined,
+                    })
+                ),
+                sumProperties(enabledYKeys),
                 SUM_VALUE_EXTENT,
             ],
             groupByKeys: true,
-            normaliseTo: normalizedTo && isFinite(normalizedTo) ? normalizedTo : undefined,
+            normaliseTo,
         });
 
         this.processedData = this.dataModel.processData(data);
