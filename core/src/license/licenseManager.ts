@@ -76,12 +76,18 @@ export class LicenseManager {
 
     public getLicenseDetails(licenseKey: string) {
         const {md5, license, version, isTrial} = LicenseManager.extractLicenseComponents(licenseKey);
-        let valid = (md5 === this.md5.md5(license));
+        let valid = (md5 === this.md5.md5(license)) && licenseKey.indexOf("For_Trialing_ag-Grid_Only") === -1;
+        let trialExpired: null | boolean = null;
 
         let expiry: Date | null = null;
         if (valid) {
             expiry = LicenseManager.extractExpiry(license);
             valid = !isNaN(expiry.getTime());
+
+            if(isTrial) {
+                const now = new Date();
+                trialExpired = (expiry < now);
+            }
         }
 
         return {
@@ -89,11 +95,11 @@ export class LicenseManager {
             valid,
             expiry: valid ? LicenseManager.formatDate(expiry) : null,
             version: version ? version : 'legacy',
-            isTrial
+            isTrial,
+            trialExpired
         };
     }
 
-    // this.gridOptionsService.getDocument()
     public isDisplayWatermark(): boolean {
         return !this.isLocalhost() && !this.isWebsiteUrl() && !missingOrEmpty(this.watermarkMessage);
     }
