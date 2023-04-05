@@ -551,7 +551,7 @@ function createSeries(options: SeriesOptionsTypes[]): Series[] {
     for (const seriesOptions of options || []) {
         const path = `series[${index++}]`;
         const seriesInstance = getSeries(seriesOptions.type!);
-        applySeriesValues(seriesInstance, seriesOptions as any, { path, index });
+        applySeriesValues(seriesInstance, seriesOptions, { path, index });
         series.push(seriesInstance);
     }
 
@@ -658,11 +658,11 @@ function applyOptionValues<T, S>(target: T, options?: S, { skip, path }: { skip?
     return jsonApply<T, any>(target, options, applyOpts);
 }
 
-function applySeriesValues<T extends Series<any>, S extends SeriesOptionType<T>>(
-    target: T,
-    options?: S,
+function applySeriesValues(
+    target: Series<any>,
+    options?: SeriesOptionType<any>,
     { path, index }: { path?: string; index?: number } = {}
-): T {
+): Series<any> {
     const skip: string[] = ['series[].listeners'];
     const ctrs = JSON_APPLY_OPTIONS?.constructors || {};
     const seriesTypeOverrides = {
@@ -680,7 +680,7 @@ function applySeriesValues<T extends Series<any>, S extends SeriesOptionType<T>>
         idx: index ?? -1,
     };
 
-    const result = jsonApply<T, any>(target, options, applyOpts);
+    const result = jsonApply(target, options, applyOpts);
 
     const listeners = options?.listeners;
     if (listeners != null) {
