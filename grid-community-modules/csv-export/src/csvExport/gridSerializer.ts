@@ -70,6 +70,7 @@ export class GridSerializer extends BeanStub {
         const isExplicitExportSelection = isClipboardExport || !!params.onlySelected;
         const hideOpenParents = this.gridOptionsService.is('groupHideOpenParents') && !isExplicitExportSelection;
         const isLeafNode = this.columnModel.isPivotMode() ? node.leafGroup : !node.group;
+        const isFooter = !!node.footer;
         const skipRowGroups = params.skipGroups || params.skipRowGroups;
         const shouldSkipLowestGroup = skipLowestSingleChildrenGroup && node.leafGroup;
         const shouldSkipCurrentGroup = node.allChildrenCount === 1 && (skipSingleChildrenGroup || shouldSkipLowestGroup);
@@ -79,7 +80,7 @@ export class GridSerializer extends BeanStub {
         }
 
         if (
-            (!isLeafNode && (params.skipRowGroups || shouldSkipCurrentGroup || hideOpenParents)) ||
+            (!isLeafNode && !isFooter && (params.skipRowGroups || shouldSkipCurrentGroup || hideOpenParents)) ||
             (params.onlySelected && !node.isSelected()) ||
             (params.skipPinnedTop && node.rowPinned === 'top') ||
             (params.skipPinnedBottom && node.rowPinned === 'bottom')
@@ -91,7 +92,7 @@ export class GridSerializer extends BeanStub {
         // if it's not a leaf group
         const nodeIsRootNode = node.level === -1;
 
-        if (nodeIsRootNode && !node.leafGroup && !node.footer) { 
+        if (nodeIsRootNode && !isLeafNode && !isFooter) {
             return;
         }
 
