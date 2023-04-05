@@ -2,14 +2,12 @@ import { Group } from '@tweenjs/tween.js';
 import { GridOptions } from 'ag-grid-community';
 import { Mouse } from '../lib/createMouse';
 import { Point } from '../lib/geometry';
-import { removeFocus } from '../lib/scriptActions/removeFocus';
-import { clearAllSingleCellSelections } from '../lib/scriptActions/singleCell';
 import { ScriptDebugger } from '../lib/scriptDebugger';
 import { createScriptRunner } from '../lib/scriptRunner';
 import { EasingFunction } from '../lib/tween';
-import { createRowGroupingScript } from '../scripts/createRowGroupingScript';
+import { createIntegratedChartsScript } from '../scripts/createIntegratedChartsScript';
 
-interface CreateRowGroupingScriptRunnerParams {
+interface CreateIntegratedChartsScriptRunnerParams {
     mouse: Mouse;
     containerEl?: HTMLElement;
     offScreenPos: Point;
@@ -22,7 +20,7 @@ interface CreateRowGroupingScriptRunnerParams {
     defaultEasing?: EasingFunction;
 }
 
-export function createRowGroupingScriptRunner({
+export function createIntegratedChartsScriptRunner({
     containerEl,
     mouse,
     offScreenPos,
@@ -33,8 +31,8 @@ export function createRowGroupingScriptRunner({
     loop,
     scriptDebugger,
     defaultEasing,
-}: CreateRowGroupingScriptRunnerParams) {
-    const rowGroupingScript = createRowGroupingScript({
+}: CreateIntegratedChartsScriptRunnerParams) {
+    const rowGroupingScript = createIntegratedChartsScript({
         containerEl,
         mouse,
         offScreenPos,
@@ -58,14 +56,6 @@ export function createRowGroupingScriptRunner({
                 mouse.hide();
                 onInactive && onInactive();
             }
-        },
-        onPaused: () => {
-            clearAllSingleCellSelections();
-            mouse.hide();
-        },
-        onUnpaused: () => {
-            removeFocus();
-            mouse.show();
         },
         scriptDebugger,
         defaultEasing,

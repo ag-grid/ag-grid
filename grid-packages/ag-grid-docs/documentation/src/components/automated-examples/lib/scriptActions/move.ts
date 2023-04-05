@@ -1,6 +1,6 @@
 import { Mouse } from '../createMouse';
-import { ScriptDebugger } from '../createScriptDebugger';
 import { addPoints, Point } from '../geometry';
+import { ScriptDebugger } from '../scriptDebugger';
 
 interface MoveTargetParams {
     target: HTMLElement;
@@ -9,7 +9,7 @@ interface MoveTargetParams {
     scriptDebugger?: ScriptDebugger;
 }
 
-interface MoveMouseParams {
+export interface MoveMouseParams {
     mouse: Mouse;
     coords: Point;
     offset?: Point;

@@ -1,9 +1,9 @@
 import { Group, Tween } from '@tweenjs/tween.js';
 import { AG_ROW_HOVER_CLASSNAME, AG_ROW_SELECTOR } from '../constants';
 import { Mouse } from '../createMouse';
-import { ScriptDebugger } from '../createScriptDebugger';
 import { getOffset } from '../dom';
 import { Point } from '../geometry';
+import { ScriptDebugger } from '../scriptDebugger';
 import { EasingFunction, getTweenDuration } from '../tween';
 import { clearAllRowHighlights } from './clearAllRowHighlights';
 import { moveMouse } from './move';

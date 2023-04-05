@@ -1,16 +1,17 @@
 import { Group } from '@tweenjs/tween.js';
 import { ColumnState, GridOptions } from 'ag-grid-community';
+import { createAgElementFinder } from './agElements';
+import { AGCreatorAction, createAGActionCreator } from './createAGActionCreator';
 import { Mouse } from './createMouse';
 import { createRowExpandedState, RowExpandedState } from './createRowExpandedState';
-import { ScriptDebugger } from './createScriptDebugger';
 import { Point } from './geometry';
 import { PathItem } from './pathRecorder';
-import { AGCreatorAction, createAGActionCreator } from './scriptActions/createAGActionCreator';
 import { createMoveMouse } from './scriptActions/createMoveMouse';
 import { playPath } from './scriptActions/playPath';
 import { removeFocus } from './scriptActions/removeFocus';
 import { clearAllSingleCellSelections } from './scriptActions/singleCell';
 import { waitFor } from './scriptActions/waitFor';
+import { ScriptDebugger } from './scriptDebugger';
 import { EasingFunction } from './tween';
 
 export interface PathAction {
@@ -138,7 +139,16 @@ function createScriptAction({
     defaultEasing,
 }: CreateScriptActionParams) {
     const { type } = action;
-    const agActionCreator = createAGActionCreator({ containerEl, gridOptions });
+    const agElementFinder = createAgElementFinder({ containerEl });
+    const agActionCreator = createAGActionCreator({
+        containerEl,
+        gridOptions,
+        agElementFinder,
+        mouse,
+        tweenGroup,
+        defaultEasing,
+        scriptDebugger,
+    });
 
     if (type === 'path') {
         const scriptAction = action as PathAction;

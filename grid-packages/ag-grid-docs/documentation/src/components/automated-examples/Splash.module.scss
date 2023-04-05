@@ -1,0 +1,133 @@
+@use "sass:map";
+@use '../../design-system/' as *;
+
+$z-index-base: 10010;
+$z-index-splash: $z-index-base + 10;
+$z-index-splash-open-panel-indicator: $z-index-splash + 10;
+
+$splash-transform: skew(-10deg) translateX(5%);
+
+.splashOn {
+    :global(.ag-dnd-ghost) {
+        background-color: hsl(210, 25%, 25%);
+    }
+}
+
+.splash {
+    --splash-width: 55%;
+    --splash-content-offset: 25%;
+
+    $splash-hidden-amount: 96%;
+
+    display: flex;
+
+    @media screen and (min-width: $breakpoint-automated-row-grouping-medium) {
+        --text-color: var(--white);
+
+        --button-color: var(--white);
+        --button-hover-color: var(--white);
+        --button-active-color: var(--white);
+        --button-text-color: var(--dark-cerulean-blue);
+
+        --link-color: var(--white);
+
+        position: absolute;
+        align-items: center;
+        top: 0;
+        left: calc(100% - var(--splash-width));
+        width: var(--splash-width);
+        height: 100%;
+        transition: transform 0.33s ease-in-out;
+    }
+
+    &.hide {
+        transform: translateX($splash-hidden-amount);
+
+        .contentsInner {
+            opacity: 0.5;
+        }
+
+        .exampleClickTarget {
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .splashTrapeziumBackground {
+            cursor: pointer;
+        }
+    }
+
+    &:global(.exampleHover) {
+        transform: translateX(4%);
+    }
+
+    &.hide:not(.hiding):hover {
+        transform: translateX(80%);
+
+        .openPanelIndicator {
+            --text-color: var(--link-hover-color);
+        }
+    }
+
+    &.hide:not(.hiding) .openPanelIndicator {
+        opacity: 1;
+    }
+}
+
+.exampleClickTarget {
+    position: absolute;
+    top: 0;
+    right: calc(100% + var(--splash-content-offset));
+    width: 240%;
+    height: 100%;
+    background-color: mix(map.get($abstract-colors, 'dark-cerulean-blue'), black, 66%);
+    opacity: 0.33;
+    transform: $splash-transform;
+    cursor: pointer;
+    transition: opacity 0.33s ease-in-out;
+
+    @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
+        display: none;
+    }
+}
+
+.splashTrapeziumBackground {
+    position: absolute;
+    top: 0;
+    left: calc(-1 * var(--splash-content-offset));
+    width: 200%;
+    height: 100%;
+    z-index: $z-index-splash;
+    transform: $splash-transform;
+    background-color: rgba(map.get($abstract-colors, 'dark-cerulean-blue'), 0.75);
+    backdrop-filter: blur(3px);
+
+    @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
+        display: none;
+    }
+}
+
+.openPanelIndicator {
+    --icon-size: 4em;
+
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    bottom: 32px;
+    left: -96px;
+    font-size: var(--font-size-medium);
+    z-index: $z-index-splash-open-panel-indicator;
+    opacity: 0;
+    transition: opacity 0.33s ease-in-out;
+
+    svg {
+        transition: fill $default-transition-timing;
+    }
+
+    span {
+        margin-top: $size-half;
+        color: var(--text-color);
+        transition: color $default-transition-timing;
+    }
+}

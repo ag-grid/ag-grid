@@ -1,6 +1,6 @@
 import { Point } from './geometry';
 
-export interface CreateDrawerParams {
+export interface CreatePenParams {
     canvas: HTMLCanvasElement;
     backgroundColor?: string;
     width: number;
@@ -16,7 +16,7 @@ export interface Drawer {
 
 const DEFAULT_COLOR = 'rgba(255,0,0,0.5)';
 
-export function createDrawer({ canvas, backgroundColor, width, height }: CreateDrawerParams): Drawer | undefined {
+export function createPen({ canvas, backgroundColor, width, height }: CreatePenParams): Drawer | undefined {
     if (!canvas || !canvas.getContext) {
         console.error('Not a valid canvas:', canvas);
         return;
