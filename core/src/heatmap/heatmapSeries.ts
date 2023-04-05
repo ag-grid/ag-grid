@@ -7,6 +7,7 @@ type AgHeatmapSeriesFormat = any;
 
 const {
     Validate,
+    ActionOnSet,
     SeriesNodePickMode,
     ChartAxisDirection,
     STRING,
@@ -102,24 +103,20 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
     colorScale: _Scale.ColorScale;
 
     @Validate(STRING)
-    protected _xKey: string = '';
-    set xKey(value: string) {
-        this._xKey = value;
-        this.xData = [];
-    }
-    get xKey(): string {
-        return this._xKey;
-    }
+    @ActionOnSet<HeatmapSeries>({
+        newValue(_xKey: string) {
+            this.xData = [];
+        },
+    })
+    xKey: string = '';
 
     @Validate(STRING)
-    protected _yKey: string = '';
-    set yKey(value: string) {
-        this._yKey = value;
-        this.yData = [];
-    }
-    get yKey(): string {
-        return this._yKey;
-    }
+    @ActionOnSet<HeatmapSeries>({
+        newValue(_yKey: string) {
+            this.yData = [];
+        },
+    })
+    yKey: string = '';
 
     @Validate(OPT_COLOR_STRING)
     stroke: string = 'black';
@@ -143,9 +140,7 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
             hasMarkers: false,
         });
 
-        const { label } = this;
-
-        label.enabled = false;
+        this.label.enabled = false;
 
         this.colorScale = new ColorScale();
     }
