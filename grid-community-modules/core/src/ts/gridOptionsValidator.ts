@@ -115,6 +115,10 @@ export class GridOptionsValidator {
                 propertyName,
                 'https://www.ag-grid.com/javascript-data-grid/column-properties/'
             );
+
+            if ((colDef as ColGroupDef).children) {
+                (colDef as ColGroupDef).children.forEach(child => validateColDef(child, 'columnDefs.children'));
+            }
         }
 
         this.gridOptions.columnDefs.forEach(colDef => validateColDef(colDef, 'columnDefs'));
