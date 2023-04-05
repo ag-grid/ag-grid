@@ -109,7 +109,11 @@ export const noDataCloneMergeOptions: JsonMergeOptions = {
     avoidDeepClone: ['data'],
 };
 
-export function prepareOptions<T extends AgChartOptions>(newOptions: T, fallbackOptions: T, seriesDefaults: any): T {
+export function prepareOptions<T extends AgChartOptions>(
+    newOptions: T,
+    fallbackOptions: T,
+    seriesDefaults: Record<string, any>
+): T {
     let options: T = jsonMerge([fallbackOptions, newOptions], noDataCloneMergeOptions);
     sanityCheckOptions(options);
 

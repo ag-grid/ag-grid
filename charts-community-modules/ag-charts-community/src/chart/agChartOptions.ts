@@ -1787,21 +1787,25 @@ export interface AgTreemapSeriesFormat {
     readonly gradient?: boolean;
 }
 
+export type AgCartesianSeriesOptionsExtension = never;
+
 export type AgCartesianSeriesOptions =
     | AgLineSeriesOptions
     | AgScatterSeriesOptions
     | AgAreaSeriesOptions
     | AgBarSeriesOptions
     | AgHistogramSeriesOptions
-    | any;
+    | AgCartesianSeriesOptionsExtension;
 
 export type AgPolarSeriesOptions = AgPieSeriesOptions;
 
 export type AgHierarchySeriesOptions = AgTreemapSeriesOptions;
 
+export type AgCartesianChartOptionsTypeExtension = never;
+
 export interface AgCartesianChartOptions extends AgBaseChartOptions {
     /** If specified overrides the default series type. */
-    type?: 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram' | string;
+    type?: 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram' | AgCartesianChartOptionsTypeExtension;
     /** Axis configurations. */
     axes?: AgCartesianAxisOptions[];
     /** Series configurations. */

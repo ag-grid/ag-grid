@@ -17,6 +17,7 @@ import { PolarChart } from './polarChart';
 import { HierarchyChart } from './hierarchyChart';
 import { Caption } from '../caption';
 import { Series } from './series/series';
+import { getSeries, initialiseSeriesModules, seriesDefaults } from './series/seriesTypes';
 import { AreaSeries } from './series/cartesian/areaSeries';
 import { BarSeries } from './series/cartesian/barSeries';
 import { HistogramSeries } from './series/cartesian/histogramSeries';
@@ -46,12 +47,9 @@ import {
 import { SeriesOptionsTypes } from './mapping/defaults';
 import { CrossLine } from './crossline/crossLine';
 import { windowValue } from '../util/window';
-import { AxisModule, Module, ModuleInstanceMeta, RootModule, SeriesModule } from '../util/module';
+import { AxisModule, Module, RootModule } from '../util/module';
 import { Logger } from '../util/logger';
 import { BackgroundImage } from './background/backgroundImage';
-import { CHART_TYPES } from './chartTypes';
-import { ChartTheme } from './themes/chartTheme';
-import { DarkTheme } from './themes/darkTheme';
 
 // Deliberately imported via `module-support` so that internal module registration happens.
 import { REGISTERED_MODULES } from '../module-support';
@@ -544,84 +542,6 @@ function applyAxes(chart: Chart, options: AgCartesianChartOptions) {
 
     chart.axes = createAxis(chart, optAxes);
     return true;
-}
-
-const builtinSeriesTypes: Record<string, new () => Series<any>> = {
-    area: AreaSeries,
-    bar: BarSeries,
-    column: BarSeries,
-    histogram: HistogramSeries,
-    line: LineSeries,
-    pie: PieSeries,
-    scatter: ScatterSeries,
-    treemap: TreemapSeries,
-};
-
-const extraSeriesFactories: Record<string, () => Series<any>> = {};
-
-const initialisedSeriesModules = new Map<SeriesModule, ModuleInstanceMeta>();
-
-function initialiseSeriesModules() {
-    REGISTERED_MODULES.filter((m): m is SeriesModule => m.type === 'series')
-        .filter((m) => !initialisedSeriesModules.has(m))
-        .forEach(initialiseSeriesModule);
-}
-
-const seriesDefaults: Record<string, any> = {};
-
-function initialiseSeriesModule(mod: SeriesModule) {
-    const seriesType = mod.optionsKey;
-    const instance = mod.initialiseModule({
-        seriesFactory: {
-            add(factory) {
-                extraSeriesFactories[seriesType] = factory;
-            },
-            delete() {
-                delete extraSeriesFactories[seriesType];
-            },
-        },
-        defaults: {
-            add(defaultOptions: any) {
-                seriesDefaults[seriesType] = defaultOptions;
-            },
-            delete() {
-                delete seriesDefaults[seriesType];
-            },
-        },
-        themes: {
-            chartTheme: {
-                add(fn) {
-                    ChartTheme.seriesThemeOverrides[seriesType] = fn;
-                },
-                delete() {
-                    delete ChartTheme.seriesThemeOverrides[seriesType];
-                },
-            },
-            darkTheme: {
-                add(fn) {
-                    DarkTheme.seriesDarkThemeOverrides[seriesType] = fn;
-                },
-                delete() {
-                    delete DarkTheme.seriesDarkThemeOverrides[seriesType];
-                },
-            },
-        },
-    });
-    initialisedSeriesModules.set(mod, instance);
-    const chartType = mod.chartTypes[0];
-    CHART_TYPES.add(seriesType, chartType);
-}
-
-function getSeries(chartType: string): Series<any> {
-    if (extraSeriesFactories.hasOwnProperty(chartType)) {
-        const factory = extraSeriesFactories[chartType];
-        return factory();
-    }
-    if (builtinSeriesTypes.hasOwnProperty(chartType)) {
-        const SeriesConstructor = builtinSeriesTypes[chartType];
-        return new SeriesConstructor();
-    }
-    throw new Error(`AG Charts - unknown series type: ${chartType}`);
 }
 
 function createSeries(options: SeriesOptionsTypes[]): Series[] {
