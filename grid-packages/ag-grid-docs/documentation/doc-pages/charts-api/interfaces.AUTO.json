@@ -3163,8 +3163,8 @@
     "type": "never"
   },
   "AgCartesianSeriesOptions": {
-    "meta": { "isTypeAlias": true },
-    "type": "AgLineSeriesOptions | AgScatterSeriesOptions | AgAreaSeriesOptions | AgBarSeriesOptions | AgHistogramSeriesOptions | AgCartesianSeriesOptionsExtension"
+    "meta": { "isTypeAlias": true, "typeParams": ["TAddon = never"] },
+    "type": "AgLineSeriesOptions | AgScatterSeriesOptions | AgAreaSeriesOptions | AgBarSeriesOptions | AgHistogramSeriesOptions | TAddon"
   },
   "AgPolarSeriesOptions": {
     "meta": { "isTypeAlias": true },
@@ -3179,11 +3179,11 @@
     "type": "never"
   },
   "AgCartesianChartOptions": {
-    "meta": {},
+    "meta": { "typeParams": ["TAddonType = never", "TAddonSeries = never"] },
     "type": {
-      "type?": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram' | AgCartesianChartOptionsTypeExtension",
+      "type?": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram' | TAddonType",
       "axes?": "AgCartesianAxisOptions[]",
-      "series?": "AgCartesianSeriesOptions[]",
+      "series?": "AgCartesianSeriesOptions<TAddonSeries>[]",
       "navigator?": "AgNavigatorOptions",
       "data?": "any[]",
       "container?": "HTMLElement | null",
@@ -3318,8 +3318,11 @@
     }
   },
   "AgChartOptions": {
-    "meta": { "isTypeAlias": true },
-    "type": "AgCartesianChartOptions | AgPolarChartOptions | AgHierarchyChartOptions"
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["TAddonType = never", "TAddonSeries = never"]
+    },
+    "type": "AgCartesianChartOptions<TAddonType, TAddonSeries> | AgPolarChartOptions | AgHierarchyChartOptions"
   },
   "AgChartInstance": {
     "meta": {},

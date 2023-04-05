@@ -4854,7 +4854,7 @@
     }
   },
   "AgCartesianSeriesOptionsExtension": {},
-  "AgCartesianSeriesOptions": {},
+  "AgCartesianSeriesOptions": { "meta": { "typeParams": ["TAddon = never"] } },
   "AgPolarSeriesOptions": {},
   "AgHierarchySeriesOptions": {},
   "AgCartesianChartOptionsTypeExtension": {},
@@ -4862,7 +4862,7 @@
     "type": {
       "description": "/** If specified overrides the default series type. */",
       "type": {
-        "returnType": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram' | AgCartesianChartOptionsTypeExtension",
+        "returnType": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram' | TAddonType",
         "optional": true
       }
     },
@@ -4872,12 +4872,16 @@
     },
     "series": {
       "description": "/** Series configurations. */",
-      "type": { "returnType": "AgCartesianSeriesOptions[]", "optional": true }
+      "type": {
+        "returnType": "AgCartesianSeriesOptions<TAddonSeries>[]",
+        "optional": true
+      }
     },
     "navigator": {
       "description": "/** Configuration for the chart navigator. */",
       "type": { "returnType": "AgNavigatorOptions", "optional": true }
     },
+    "meta": { "typeParams": ["TAddonType = never", "TAddonSeries = never"] },
     "data": {
       "description": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "type": { "returnType": "any[]", "optional": true }
@@ -5100,7 +5104,9 @@
       "type": { "returnType": "AgChartOverlaysOptions", "optional": true }
     }
   },
-  "AgChartOptions": {},
+  "AgChartOptions": {
+    "meta": { "typeParams": ["TAddonType = never", "TAddonSeries = never"] }
+  },
   "AgChartInstance": {
     "getOptions": {
       "description": "/** Get the `AgChartOptions` representing the current chart configuration. */",
