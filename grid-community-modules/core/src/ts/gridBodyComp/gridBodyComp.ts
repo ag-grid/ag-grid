@@ -8,7 +8,6 @@ import { Component } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';
 import {
     CSS_CLASS_CELL_SELECTABLE,
-    CSS_CLASS_COLUMN_MOVING,
     CSS_CLASS_FORCE_VERTICAL_SCROLL,
     GridBodyCtrl,
     IGridBodyComp,

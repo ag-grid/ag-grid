@@ -277,32 +277,52 @@ export class GridBodyCtrl extends BeanStub {
     private addBodyViewportListener(): void {
         // we want to listen for clicks directly on the eBodyViewport, so the user has a way of showing
         // the context menu if no rows or columns are displayed, or user simply clicks outside of a cell
-        const listener = (mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => {
-            if (!mouseEvent && !touchEvent) { return; }
-
-            if (this.gridOptionsService.is('preventDefaultOnContextMenu')) {
-                const event = (mouseEvent || touchEvent)!;
-                event.preventDefault();
-            }
-
-            const { target } = (mouseEvent || touch)!;
-
-            if (target === this.eBodyViewport || target === this.ctrlsService.getCenterRowContainerCtrl().getViewportElement()) {
-                // show it
-                if (this.contextMenuFactory) {
-                    if (mouseEvent) {
-                        this.contextMenuFactory.onContextMenu(mouseEvent, null, null, null, null, this.eGridBody);
-                    } else if (touchEvent) {
-                        this.contextMenuFactory.onContextMenu(null, touchEvent, null, null, null, this.eGridBody);
-                    }
-                }
-            }
-        };
-
+        const listener = this.onBodyViewportContextMenu.bind(this);
         this.addManagedListener(this.eBodyViewport, 'contextmenu', listener);
         this.mockContextMenuForIPad(listener);
+
         this.addManagedListener(this.eBodyViewport, 'wheel', this.onBodyViewportWheel.bind(this));
         this.addManagedListener(this.eStickyTop, 'wheel', this.onStickyTopWheel.bind(this));
+
+        // allow mouseWheel on the Full Width Container to Scroll the Viewport
+        this.addFullWidthContainerWheelListener();
+    }
+
+    private addFullWidthContainerWheelListener(): void {
+        const fullWidthContainer = this.eBodyViewport.querySelector('.ag-full-width-container');
+        const eCenterColsViewport = this.eBodyViewport.querySelector('.ag-center-cols-viewport');
+
+        if (fullWidthContainer && eCenterColsViewport) {
+            this.addManagedListener(fullWidthContainer, 'wheel', (e: WheelEvent) => this.onFullWidthContainerWheel(e, eCenterColsViewport));
+        }
+    }
+
+    private onFullWidthContainerWheel(e: WheelEvent, eCenterColsViewport: Element): void {
+        if (!e.deltaX) { return; }
+
+        eCenterColsViewport.scrollBy({ left: e.deltaX });
+    }
+
+    private onBodyViewportContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
+        if (!mouseEvent && !touchEvent) { return; }
+
+        if (this.gridOptionsService.is('preventDefaultOnContextMenu')) {
+            const event = (mouseEvent || touchEvent)!;
+            event.preventDefault();
+        }
+
+        const { target } = (mouseEvent || touch)!;
+
+        if (target === this.eBodyViewport || target === this.ctrlsService.getCenterRowContainerCtrl().getViewportElement()) {
+            // show it
+            if (!this.contextMenuFactory) { return; }
+
+            if (mouseEvent) {
+                this.contextMenuFactory.onContextMenu(mouseEvent, null, null, null, null, this.eGridBody);
+            } else if (touchEvent) {
+                this.contextMenuFactory.onContextMenu(null, touchEvent, null, null, null, this.eGridBody);
+            }
+        }
     }
 
     private mockContextMenuForIPad(listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void): void {
