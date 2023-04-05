@@ -1,4 +1,9 @@
-import { AgChart, AgChartOptions, AgChartInstance, _ModuleSupport } from 'ag-charts-community';
+import {
+    AgChart,
+    AgChartOptions as AgCommunityChartOptions,
+    AgChartInstance,
+    _ModuleSupport,
+} from 'ag-charts-community';
 
 import { AgChartBackgroundImage, BackgroundModule } from './background/main';
 import { AgContextMenuOptions, ContextMenuModule } from './context-menu/main';
@@ -50,10 +55,12 @@ declare module 'ag-charts-community' {
 }
 
 import { LicenseManager } from './license/licenseManager';
+
+export type AgChartOptions = AgCommunityChartOptions<'heatmap', Heatmap.AgHeatmapSeriesOptions>;
 export class AgEnterpriseCharts {
     public static create(options: AgChartOptions): AgChartInstance {
         new LicenseManager(options.container as any).validateLicense();
 
-        return AgChart.create(options);
+        return AgChart.create(options as any);
     }
 }

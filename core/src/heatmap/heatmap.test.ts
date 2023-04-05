@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
-import { AgChart, AgChartOptions } from 'ag-charts-community';
+import { AgChartOptions, AgEnterpriseCharts, _ModuleSupport } from '../main';
 
 import {
     waitForChartStability,
@@ -32,12 +32,23 @@ describe('Chart', () => {
 
     const EXAMPLE_OPTIONS: AgChartOptions = {
         data: [
-            { x: 0, y: 0 },
-            { x: 1, y: 50 },
-            { x: 2, y: 25 },
-            { x: 3, y: 75 },
+            { year: '2020', person: 'Florian', spending: 10 },
+            { year: '2020', person: 'Julian', spending: 20 },
+            { year: '2020', person: 'Martian', spending: 30 },
+            { year: '2021', person: 'Florian', spending: 20 },
+            { year: '2021', person: 'Julian', spending: 30 },
+            { year: '2021', person: 'Martian', spending: 40 },
+            { year: '2022', person: 'Florian', spending: 30 },
+            { year: '2022', person: 'Julian', spending: 40 },
+            { year: '2022', person: 'Martian', spending: 50 },
         ],
-        series: [{ type: 'line', xKey: 'x', yKey: 'y' }],
+        series: [{
+            type: 'heatmap',
+            xKey: 'year',
+            yKey: 'person',
+            colorKey: 'spending',
+            colorRange: ['yellow', 'red', 'blue'],
+        }],
     };
 
     const compare = async () => {
@@ -49,9 +60,9 @@ describe('Chart', () => {
 
     it(`should render placeholder chart as expected`, async () => {
         const options: AgChartOptions = { ...EXAMPLE_OPTIONS };
-        prepareTestOptions(options);
+        prepareTestOptions(options as any);
 
-        chart = AgChart.create(options);
+        chart = AgEnterpriseCharts.create(options);
         await compare();
     });
 });
