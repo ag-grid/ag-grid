@@ -298,8 +298,9 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private onFullWidthContainerWheel(e: WheelEvent, eCenterColsViewport: Element): void {
-        if (!e.deltaX) { return; }
-
+        if (!e.deltaX || Math.abs(e.deltaY) > Math.abs(e.deltaX)) { return; }
+        
+        e.preventDefault();
         eCenterColsViewport.scrollBy({ left: e.deltaX });
     }
 
