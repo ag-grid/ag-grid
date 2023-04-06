@@ -24,6 +24,7 @@ export interface UngroupedData<D> {
         keys: DatumPropertyDefinition<keyof D>[];
         values: DatumPropertyDefinition<keyof D>[];
     };
+    time: number;
 }
 
 export interface GroupedData<D> {
@@ -43,6 +44,7 @@ export interface GroupedData<D> {
         keys: DatumPropertyDefinition<keyof D>[];
         values: DatumPropertyDefinition<keyof D>[];
     };
+    time: number;
 }
 
 export type ProcessedData<D> = UngroupedData<D> | GroupedData<D>;
@@ -233,6 +235,7 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
             reducers,
             processors,
         } = this;
+        const start = performance.now();
 
         for (const def of [...this.keys, ...this.values]) {
             def.missing = false;
@@ -268,6 +271,9 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
             }
         }
 
+        const end = performance.now();
+        processedData.time = end - start;
+
         return processedData as Grouped extends true ? GroupedData<D> : UngroupedData<D>;
     }
 
@@ -276,15 +282,36 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
 
         const { dataDomain, processValue } = this.initDataDomainProcessor();
 
-        let resultData = data
-            .map((datum) => ({
-                datum,
-                keys: keyDefs.map((def) => processValue(def, datum)),
-                values: valueDefs.map((def) => processValue(def, datum)),
-            }))
-            .filter(({ keys }) => !keys.some((k) => k === INVALID_VALUE));
+        const resultData = new Array(data.length);
+        let resultDataIdx = 0;
+        dataLoop: for (const datum of data) {
+            const keys = new Array(keyDefs.length);
+            let keyIdx = 0;
+            for (const def of keyDefs) {
+                const key = processValue(def, datum);
+                if (key === INVALID_VALUE) {
+                    continue dataLoop;
+                }
+                keys[keyIdx++] = key;
+            }
 
-        resultData = this.validateData(resultData);
+            const values = new Array(valueDefs.length);
+            let valueIdx = 0;
+            for (const def of valueDefs) {
+                const value = processValue(def, datum);
+                values[valueIdx++] = processValue(def, datum);
+                if (value === INVALID_VALUE) {
+                    continue dataLoop;
+                }
+            }
+
+            resultData[resultDataIdx++] = {
+                datum,
+                keys,
+                values,
+            };
+        }
+        resultData.length = resultDataIdx;
 
         const propertyDomain = (def: InternalDatumPropertyDefinition<K>) => {
             const result = dataDomain.get(def.property)!.domain;
@@ -316,22 +343,8 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
                 keys: keyDefs,
                 values: valueDefs,
             },
+            time: 0,
         };
-    }
-
-    private validateData(resultData: UngroupedData<D>['data']) {
-        const { keys: keyDefs, values: valueDefs } = this;
-        const defs = [...keyDefs, ...valueDefs];
-
-        if (!defs.some((def) => def.validation != null)) {
-            return resultData;
-        }
-
-        resultData = resultData.filter(({ keys, values }) => {
-            return !keys.some((k) => k === INVALID_VALUE) || !values.some((v) => v === INVALID_VALUE);
-        });
-
-        return resultData;
     }
 
     private groupData(data: UngroupedData<D>): GroupedData<D> {
@@ -425,8 +438,13 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
             const sums = sumValues?.[sumIdx];
             if (sums == null) continue;
 
-            const sumAbs = sums.map((v) => Math.abs(v));
-            const sumAbsExtent = Math.max(...sumAbs);
+            let sumAbsExtent = -Infinity;
+            for (const sum of sums) {
+                const sumAbs = Math.abs(sum);
+                if (sumAbsExtent < sumAbs) {
+                    sumAbsExtent = sumAbs;
+                }
+            }
 
             let sumRangeIdx = 0;
             for (const _ of sums) {
@@ -442,8 +460,14 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
                     values = [values];
                 }
 
-                const valuesSumAbs = sumValues?.[sumIdx].map((v) => Math.abs(v));
-                const valuesSumExtent = Math.max(...(valuesSumAbs ?? [0]));
+                let valuesSumExtent = 0;
+                for (const sum of sumValues?.[sumIdx] ?? []) {
+                    const sumAbs = Math.abs(sum);
+                    if (valuesSumExtent < sumAbs) {
+                        valuesSumExtent = sumAbs;
+                    }
+                }
+
                 for (const row of values) {
                     for (const indices of resultSumValueIndices[sumIdx]) {
                         row[indices] = normalise(row[indices], valuesSumExtent);

@@ -5267,6 +5267,7 @@
         "optional": false
       }
     },
+    "time": { "type": { "returnType": "number", "optional": false } },
     "meta": { "typeParams": ["D"] }
   },
   "GroupedData": {
@@ -5298,6 +5299,7 @@
         "optional": false
       }
     },
+    "time": { "type": { "returnType": "number", "optional": false } },
     "meta": { "typeParams": ["D"] }
   },
   "ProcessedData": { "meta": { "typeParams": ["D"] } },

@@ -3474,7 +3474,8 @@
       "domain": "{ keys: any[][]; values: any[][]; sumValues?: [ number, number ][]; }",
       "indices": "{ keys: Record<keyof D, number>; values: Record<keyof D, number>; }",
       "reduced?": "Record<string, any>",
-      "defs": "{ keys: DatumPropertyDefinition<keyof D>[]; values: DatumPropertyDefinition<keyof D>[]; }"
+      "defs": "{ keys: DatumPropertyDefinition<keyof D>[]; values: DatumPropertyDefinition<keyof D>[]; }",
+      "time": "number"
     }
   },
   "GroupedData": {
@@ -3485,7 +3486,8 @@
       "domain": "{ keys: any[][]; values: any[][]; sumValues?: [ number, number ][]; }",
       "indices": "{ keys: Record<keyof D, number>; values: Record<keyof D, number>; }",
       "reduced?": "Record<string, any>",
-      "defs": "{ keys: DatumPropertyDefinition<keyof D>[]; values: DatumPropertyDefinition<keyof D>[]; }"
+      "defs": "{ keys: DatumPropertyDefinition<keyof D>[]; values: DatumPropertyDefinition<keyof D>[]; }",
+      "time": "number"
     }
   },
   "ProcessedData": {

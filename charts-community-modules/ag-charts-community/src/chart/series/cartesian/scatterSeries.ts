@@ -138,6 +138,11 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     async processData() {
         const { xKey, yKey, sizeKey, xAxis, yAxis, marker, data } = this;
 
+        if (!this.visible) {
+            this.processedData = undefined;
+            return;
+        }
+
         const isContinuousX = xAxis?.scale instanceof ContinuousScale;
         const isContinuousY = yAxis?.scale instanceof ContinuousScale;
 

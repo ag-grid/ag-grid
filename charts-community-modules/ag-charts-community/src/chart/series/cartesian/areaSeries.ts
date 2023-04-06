@@ -228,7 +228,8 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         const { xKey, yKeys, seriesItemEnabled, xAxis, yAxis, normalizedTo } = this;
         const data = xKey && yKeys.length && this.data ? this.data : [];
 
-        if (!xAxis || !yAxis) {
+        if (!this.visible || !xAxis || !yAxis) {
+            this.processedData = undefined;
             return;
         }
 
