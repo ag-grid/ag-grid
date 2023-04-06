@@ -111,10 +111,10 @@ export const noDataCloneMergeOptions: JsonMergeOptions = {
 
 export function prepareOptions<T extends AgChartOptions>(
     newOptions: T,
-    fallbackOptions: T,
-    seriesDefaults: Record<string, any>
+    fallbackOptions?: T,
+    seriesDefaults?: Record<string, any>
 ): T {
-    let options: T = jsonMerge([fallbackOptions, newOptions], noDataCloneMergeOptions);
+    let options: T = jsonMerge([fallbackOptions, newOptions], noDataCloneMergeOptions)!;
     sanityCheckOptions(options);
 
     // Determine type and ensure it's explicit in the options config.
@@ -122,7 +122,7 @@ export function prepareOptions<T extends AgChartOptions>(
     const type = optionsType(options);
 
     const checkSeriesType = (type?: string) => {
-        if (type != null && !(isSeriesOptionType(type) || seriesDefaults[type])) {
+        if (type != null && !(isSeriesOptionType(type) || seriesDefaults?.[type])) {
             throw new Error(`AG Charts - unknown series type: ${type}; expected one of: ${CHART_TYPES.seriesTypes}`);
         }
     };
@@ -144,8 +144,8 @@ export function prepareOptions<T extends AgChartOptions>(
     }
 
     let defaultOverrides = {};
-    if (Object.prototype.hasOwnProperty.call(seriesDefaults, type)) {
-        defaultOverrides = seriesDefaults[type];
+    if (seriesDefaults && Object.prototype.hasOwnProperty.call(seriesDefaults, type)) {
+        defaultOverrides = seriesDefaults![type];
     } else if (type === 'bar') {
         defaultOverrides = DEFAULT_BAR_CHART_OVERRIDES;
     } else if (type === 'scatter' || type === 'histogram') {
