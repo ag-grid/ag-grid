@@ -145,7 +145,7 @@ export function prepareOptions<T extends AgChartOptions>(
 
     let defaultOverrides = {};
     if (seriesDefaults && Object.prototype.hasOwnProperty.call(seriesDefaults, type)) {
-        defaultOverrides = seriesDefaults![type];
+        defaultOverrides = seriesDefaults[type];
     } else if (type === 'bar') {
         defaultOverrides = DEFAULT_BAR_CHART_OVERRIDES;
     } else if (type === 'scatter' || type === 'histogram') {

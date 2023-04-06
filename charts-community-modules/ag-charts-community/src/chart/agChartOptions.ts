@@ -1787,8 +1787,6 @@ export interface AgTreemapSeriesFormat {
     readonly gradient?: boolean;
 }
 
-export type AgCartesianSeriesOptionsExtension = never;
-
 export type AgCartesianSeriesOptions<TAddon = never> =
     | AgLineSeriesOptions
     | AgScatterSeriesOptions
@@ -1800,8 +1798,6 @@ export type AgCartesianSeriesOptions<TAddon = never> =
 export type AgPolarSeriesOptions = AgPieSeriesOptions;
 
 export type AgHierarchySeriesOptions = AgTreemapSeriesOptions;
-
-export type AgCartesianChartOptionsTypeExtension = never;
 
 export interface AgCartesianChartOptions<TAddonType = never, TAddonSeries = never> extends AgBaseChartOptions {
     /** If specified overrides the default series type. */

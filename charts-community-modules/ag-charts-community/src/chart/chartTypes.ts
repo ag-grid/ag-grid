@@ -36,12 +36,12 @@ export const CHART_TYPES = {
         return Object.keys(types);
     },
     get cartesianTypes() {
-        return this.seriesTypes.filter((t) => types[t] === 'cartesian');
+        return this.seriesTypes.filter((t) => this.isCartesian(t));
     },
     get polarTypes() {
-        return this.seriesTypes.filter((t) => types[t] === 'polar');
+        return this.seriesTypes.filter((t) => this.isPolar(t));
     },
     get hierarchyTypes() {
-        return this.seriesTypes.filter((t) => types[t] === 'hierarchy');
+        return this.seriesTypes.filter((t) => this.isHierarchy(t));
     },
 };

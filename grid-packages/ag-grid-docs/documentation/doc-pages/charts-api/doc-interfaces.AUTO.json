@@ -4853,11 +4853,9 @@
       "type": { "returnType": "boolean", "optional": true }
     }
   },
-  "AgCartesianSeriesOptionsExtension": {},
   "AgCartesianSeriesOptions": { "meta": { "typeParams": ["TAddon = never"] } },
   "AgPolarSeriesOptions": {},
   "AgHierarchySeriesOptions": {},
-  "AgCartesianChartOptionsTypeExtension": {},
   "AgCartesianChartOptions": {
     "type": {
       "description": "/** If specified overrides the default series type. */",
