@@ -8,7 +8,9 @@ type AgHeatmapSeriesFormat = any;
 const {
     Validate,
     ActionOnSet,
+    DataModel,
     SeriesNodePickMode,
+    valueProperty,
     ChartAxisDirection,
     STRING,
     COLOR_STRING_ARRAY,
@@ -20,7 +22,7 @@ const {
 } = _ModuleSupport;
 const { Rect, Label, toTooltipHtml } = _Scene;
 const { ContinuousScale, ColorScale } = _Scale;
-const { checkDatum, extent, sanitizeHtml } = _Util;
+const { sanitizeHtml } = _Util;
 
 interface HeatmapNodeDatum extends Required<_ModuleSupport.CartesianSeriesNodeDatum> {
     readonly label: _Util.MeasuredLabel;
@@ -65,12 +67,6 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
     static className = 'HeatmapSeries';
     static type = 'heatmap' as const;
 
-    private xDomain: number[] = [];
-    private yDomain: number[] = [];
-    private xData: any[] = [];
-    private yData: any[] = [];
-    private validData: any[] = [];
-
     readonly label = new Label();
 
     @Validate(OPT_STRING)
@@ -80,7 +76,23 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
     labelKey?: string = undefined;
 
     @Validate(STRING)
+    @ActionOnSet<HeatmapSeries>({
+        newValue(_xKey: string) {
+            this.processedData = undefined;
+        },
+    })
+    xKey: string = '';
+
+    @Validate(STRING)
     xName: string = '';
+
+    @Validate(STRING)
+    @ActionOnSet<HeatmapSeries>({
+        newValue(_yKey: string) {
+            this.processedData = undefined;
+        },
+    })
+    yKey: string = '';
 
     @Validate(STRING)
     yName: string = '';
@@ -89,6 +101,11 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
     labelName?: string = 'Label';
 
     @Validate(OPT_STRING)
+    @ActionOnSet<HeatmapSeries>({
+        newValue(_colorKey: string) {
+            this.processedData = undefined;
+        },
+    })
     colorKey?: string = 'color';
 
     @Validate(OPT_STRING)
@@ -101,22 +118,6 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
     colorRange: string[] = ['#cb4b3f', '#6acb64'];
 
     colorScale: _Scale.ColorScale;
-
-    @Validate(STRING)
-    @ActionOnSet<HeatmapSeries>({
-        newValue(_xKey: string) {
-            this.xData = [];
-        },
-    })
-    xKey: string = '';
-
-    @Validate(STRING)
-    @ActionOnSet<HeatmapSeries>({
-        newValue(_yKey: string) {
-            this.yData = [];
-        },
-    })
-    yKey: string = '';
 
     @Validate(OPT_COLOR_STRING)
     stroke: string = 'black';
@@ -158,40 +159,36 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
         const isContinuousX = xScale instanceof ContinuousScale;
         const isContinuousY = yScale instanceof ContinuousScale;
 
-        this.validData = data.filter(
-            (d) => checkDatum(d[xKey], isContinuousX) !== undefined && checkDatum(d[yKey], isContinuousY) !== undefined
-        );
-        this.xData = this.validData.map((d) => d[xKey]);
-        this.yData = this.validData.map((d) => d[yKey]);
-        this.validateXYData(this.xKey, this.yKey, data, xAxis, yAxis, this.xData, this.yData, 1);
-
-        if (xAxis.scale instanceof ContinuousScale) {
-            this.xDomain = this.fixNumericExtent(extent(this.xData), xAxis);
-        } else {
-            this.xDomain = this.xData;
-        }
-        if (yAxis.scale instanceof ContinuousScale) {
-            this.yDomain = this.fixNumericExtent(extent(this.yData), yAxis);
-        } else {
-            this.yDomain = this.yData;
-        }
-
         const { colorScale, colorDomain, colorRange, colorKey } = this;
-        const colorValues: number[] = (
-            colorKey ? this.validData.filter((datum) => datum[colorKey] != null).map((datum) => datum[colorKey]) : []
-        ).filter((v) => Number.isFinite(v));
-        if (colorValues.length === 0) {
-            colorValues.push(0);
+
+        this.dataModel = new DataModel<any>({
+            props: [
+                valueProperty(xKey, isContinuousX),
+                valueProperty(yKey, isContinuousY),
+                ...(colorKey ? [valueProperty(colorKey, true)] : []),
+            ],
+        });
+        this.processedData = this.dataModel.processData(data ?? []);
+
+        if (colorKey) {
+            const colorKeyIdx = this.dataModel.resolveProcessedDataIndex(colorKey)?.index ?? -1;
+            colorScale.domain = colorDomain ?? this.processedData.domain.values[colorKeyIdx];
+            colorScale.range = colorRange;
         }
-        colorScale.domain = colorDomain ?? (extent(colorValues) as [number, number]);
-        colorScale.range = colorRange;
     }
 
     getDomain(direction: _ModuleSupport.ChartAxisDirection): any[] {
+        const xDataIdx = this.dataModel?.resolveProcessedDataIndex(this.xKey);
+        const yDataIdx = this.dataModel?.resolveProcessedDataIndex(this.yKey);
+
+        if (!xDataIdx || !yDataIdx) {
+            return [];
+        }
+
         if (direction === ChartAxisDirection.X) {
-            return this.xDomain;
+            return this.processedData?.domain.values[0] ?? [];
         } else {
-            return this.yDomain;
+            return this.processedData?.domain.values[1] ?? [];
         }
     }
 
@@ -212,36 +209,28 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
 
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
-        const isContinuousX = xScale instanceof ContinuousScale;
-        const isContinuousY = yScale instanceof ContinuousScale;
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
-        const { xData, yData, validData, label, labelKey, colorKey, colorScale, xKey, yKey } = this;
-        const nodeData: HeatmapNodeDatum[] = new Array(xData.length);
+        const { colorScale, label, labelKey, xKey, yKey } = this;
+        const nodeData: HeatmapNodeDatum[] = new Array(this.processedData?.data.length ?? 0);
 
         const width = xScale.bandwidth || 10;
         const height = yScale.bandwidth || 10;
 
         const font = label.getFont();
         let actualLength = 0;
-        for (let i = 0; i < xData.length; i++) {
-            const xy = this.checkDomainXY(xData[i], yData[i], isContinuousX, isContinuousY);
-
-            if (!xy) {
-                continue;
-            }
-
-            const x = xScale.convert(xy[0]) + xOffset;
-            const y = yScale.convert(xy[1]) + yOffset;
+        for (const { values, datum } of this.processedData?.data ?? []) {
+            const x = xScale.convert(values[0]) + xOffset;
+            const y = yScale.convert(values[1]) + yOffset;
 
             if (!this.checkRangeXY(x, y, xAxis, yAxis)) {
                 continue;
             }
 
-            const text = labelKey ? String(validData[i][labelKey]) : '';
+            const text = labelKey ? String(datum[labelKey]) : '';
             const size = _Scene.HdpiCanvas.getTextSize(text, font);
 
-            const colorValue = colorKey ? validData[i][colorKey] ?? 0 : 0;
+            const colorValue = values.length > 2 ? values[2] : 0;
             const fill = colorScale.convert(colorValue);
 
             nodeData[actualLength++] = {
@@ -249,7 +238,7 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
                 itemId: yKey,
                 yKey,
                 xKey,
-                datum: validData[i],
+                datum,
                 point: { x, y, size: 0 },
                 width,
                 height,
