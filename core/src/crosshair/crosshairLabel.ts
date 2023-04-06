@@ -4,6 +4,7 @@ type AgCrosshairLabelRendererParams = any;
 type AgCrosshairLabelRendererResult = any;
 
 const { Validate, NUMBER, BOOLEAN, OPT_STRING, OPT_FUNCTION } = _ModuleSupport;
+const { BBox } = _Scene;
 
 export const defaultLabelCss = `
 .ag-crosshair-label {
@@ -99,8 +100,19 @@ export class CrosshairLabel {
     show(meta: LabelMeta) {
         const { element } = this;
 
-        const left = meta.x + this.xOffset;
-        const top = meta.y + this.yOffset;
+        let left = meta.x + this.xOffset;
+        let top = meta.y + this.yOffset;
+
+        const limit = (low: number, actual: number, high: number) => {
+            return Math.max(Math.min(actual, high), low);
+        };
+
+        const windowBounds = this.getWindowBoundingBox();
+        const maxLeft = windowBounds.x + windowBounds.width - element.clientWidth - 1;
+        const maxTop = windowBounds.y + windowBounds.height - element.clientHeight;
+
+        left = limit(windowBounds.x, left, maxLeft);
+        top = limit(windowBounds.y, top, maxTop);
 
         element.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
 
@@ -116,6 +128,10 @@ export class CrosshairLabel {
     computeBBox(): _Scene.BBox {
         const { element } = this;
         return new _Scene.BBox(element.clientLeft, element.clientTop, element.clientWidth, element.clientHeight);
+    }
+
+    private getWindowBoundingBox(): _Scene.BBox {
+        return new BBox(0, 0, window.innerWidth, window.innerHeight);
     }
 
     toggle(visible?: boolean) {
