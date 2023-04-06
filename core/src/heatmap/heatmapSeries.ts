@@ -486,8 +486,7 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
         return this.label.enabled;
     }
 
-    setBandScalePadding(scale: _Scale.BandScale<any>) {
-        scale.paddingInner = 0;
-        scale.paddingOuter = 0;
+    getBandScalePadding() {
+        return { inner: 0, outer: 0 };
     }
 }
