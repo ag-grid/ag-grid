@@ -40,7 +40,7 @@ export class CartesianChart extends Chart {
         const seriesPaddedRect = seriesRect.clone().grow(seriesAreaPadding);
 
         const hoverRectPadding = 20;
-        const hoverRect = seriesPaddedRect.grow(hoverRectPadding);
+        const hoverRect = seriesPaddedRect.clone().grow(hoverRectPadding);
 
         this.hoverRect = hoverRect;
 
