@@ -3462,6 +3462,75 @@
     "meta": { "isTypeAlias": true },
     "type": "Record<string, { vertical: [ Date, Date ]; horizontal: [ number, number ]; }>"
   },
+  "UngroupedDataItem": {
+    "meta": { "isTypeAlias": true, "typeParams": ["D", "V"] },
+    "type": "{ keys: any[]; values: V; sumValues?: [ number, number ][]; datum: D; }"
+  },
+  "UngroupedData": {
+    "meta": { "typeParams": ["D"] },
+    "type": {
+      "type": "'ungrouped'",
+      "data": "UngroupedDataItem<D, any[]>[]",
+      "domain": "{ keys: any[][]; values: any[][]; sumValues?: [ number, number ][]; }",
+      "indices": "{ keys: Record<keyof D, number>; values: Record<keyof D, number>; }",
+      "reduced?": "Record<string, any>",
+      "defs": "{ keys: DatumPropertyDefinition<keyof D>[]; values: DatumPropertyDefinition<keyof D>[]; }"
+    }
+  },
+  "GroupedData": {
+    "meta": { "typeParams": ["D"] },
+    "type": {
+      "type": "'grouped'",
+      "data": "UngroupedDataItem<D[], any[][]>[]",
+      "domain": "{ keys: any[][]; values: any[][]; sumValues?: [ number, number ][]; }",
+      "indices": "{ keys: Record<keyof D, number>; values: Record<keyof D, number>; }",
+      "reduced?": "Record<string, any>",
+      "defs": "{ keys: DatumPropertyDefinition<keyof D>[]; values: DatumPropertyDefinition<keyof D>[]; }"
+    }
+  },
+  "ProcessedData": {
+    "meta": { "isTypeAlias": true, "typeParams": ["D"] },
+    "type": "UngroupedData<D> | GroupedData<D>"
+  },
+  "DatumPropertyType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'range' | 'category'"
+  },
+  "ContinuousDomain": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T extends number | Date"] },
+    "type": "[ T, T ]"
+  },
+  "Options": {
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["K", "Grouped extends boolean | undefined"]
+    },
+    "type": "{ readonly props: PropertyDefinition<K>[]; readonly groupByKeys?: Grouped; readonly normaliseTo?: number; }"
+  },
+  "PropertyDefinition": {
+    "meta": { "isTypeAlias": true, "typeParams": ["K"] },
+    "type": "DatumPropertyDefinition<K> | OutputPropertyDefinition<K> | ReducerOutputPropertyDefinition<any> | ProcessorOutputPropertyDefinition<any>"
+  },
+  "DatumPropertyDefinition": {
+    "meta": { "isTypeAlias": true, "typeParams": ["K"] },
+    "type": "{ type: 'key' | 'value'; valueType: DatumPropertyType; property: K; invalidValue?: any; missingValue?: any; validation?: (datum: any) => boolean; }"
+  },
+  "InternalDatumPropertyDefinition": {
+    "meta": { "isTypeAlias": true, "typeParams": ["K"] },
+    "type": "DatumPropertyDefinition<K> & { index: number; missing: boolean; }"
+  },
+  "OutputPropertyDefinition": {
+    "meta": { "isTypeAlias": true, "typeParams": ["K"] },
+    "type": "{ type: 'sum'; properties: K[]; }"
+  },
+  "ReducerOutputPropertyDefinition": {
+    "meta": { "isTypeAlias": true, "typeParams": ["R"] },
+    "type": "{ type: 'reducer'; property: string; initialValue?: R; reducer: () => (acc: R, next: UngroupedDataItem<any, any>) => R; }"
+  },
+  "ProcessorOutputPropertyDefinition": {
+    "meta": { "isTypeAlias": true, "typeParams": ["R"] },
+    "type": "{ type: 'processor'; property: string; calculate: (data: ProcessedData<any>) => R; }"
+  },
   "Page": {
     "meta": { "isTypeAlias": true },
     "type": "{ columns: Column[]; pageWidth: number; pageHeight: number; startIndex: number; endIndex: number; }"
@@ -3715,10 +3784,6 @@
   "CumulativeValue": {
     "meta": { "isTypeAlias": true },
     "type": "{ left: number; right: number; }"
-  },
-  "ProcessedXDatum": {
-    "meta": { "isTypeAlias": true },
-    "type": "{ xDatum: any; seriesDatum: any; }"
   },
   "AreaSeriesTag": {
     "meta": { "isEnum": true },

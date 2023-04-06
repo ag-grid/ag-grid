@@ -1,6 +1,5 @@
 import { Selection } from '../../../scene/selection';
-import { SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
-import { extent } from '../../../util/array';
+import { SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode, valueProperty } from '../series';
 import { LegendDatum } from '../../legendDatum';
 import { LinearScale } from '../../../scale/linearScale';
 import {
@@ -19,13 +18,13 @@ import { Text } from '../../../scene/shape/text';
 import { HdpiCanvas } from '../../../canvas/hdpiCanvas';
 import { Marker } from '../../marker/marker';
 import { MeasuredLabel, PointLabelDatum } from '../../../util/labelPlacement';
-import { checkDatum } from '../../../util/value';
 import { OPT_FUNCTION, OPT_STRING, STRING, Validate } from '../../../util/validation';
 import {
     AgScatterSeriesTooltipRendererParams,
     AgTooltipRendererResult,
     AgCartesianSeriesMarkerFormat,
 } from '../../agChartOptions';
+import { DataModel } from '../../data/dataModel';
 
 interface ScatterNodeDatum extends Required<CartesianSeriesNodeDatum> {
     readonly label: MeasuredLabel;
@@ -64,12 +63,6 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     static className = 'ScatterSeries';
     static type = 'scatter' as const;
 
-    private xDomain: number[] = [];
-    private yDomain: number[] = [];
-    private xData: any[] = [];
-    private yData: any[] = [];
-    private validData: any[] = [];
-    private sizeData: number[] = [];
     private sizeScale = new LinearScale();
 
     readonly marker = new CartesianSeriesMarker();
@@ -98,7 +91,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     protected _xKey: string = '';
     set xKey(value: string) {
         this._xKey = value;
-        this.xData = [];
+        this.processedData = undefined;
     }
     get xKey(): string {
         return this._xKey;
@@ -108,7 +101,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     protected _yKey: string = '';
     set yKey(value: string) {
         this._yKey = value;
-        this.yData = [];
+        this.processedData = undefined;
     }
     get yKey(): string {
         return this._yKey;
@@ -118,7 +111,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     protected _sizeKey?: string = undefined;
     set sizeKey(value: string | undefined) {
         this._sizeKey = value;
-        this.sizeData = [];
+        this.processedData = undefined;
     }
     get sizeKey(): string | undefined {
         return this._sizeKey;
@@ -143,45 +136,38 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     }
 
     async processData() {
-        const { xKey, yKey, sizeKey, xAxis, yAxis, marker } = this;
+        const { xKey, yKey, sizeKey, xAxis, yAxis, marker, data } = this;
 
-        if (!xAxis || !yAxis) {
-            return;
-        }
+        const isContinuousX = xAxis?.scale instanceof ContinuousScale;
+        const isContinuousY = yAxis?.scale instanceof ContinuousScale;
 
-        const data = xKey && yKey && this.data ? this.data : [];
-        const xScale = xAxis.scale;
-        const yScale = yAxis.scale;
-        const isContinuousX = xScale instanceof ContinuousScale;
-        const isContinuousY = yScale instanceof ContinuousScale;
+        this.dataModel = new DataModel<any>({
+            props: [
+                valueProperty(xKey, isContinuousX),
+                valueProperty(yKey, isContinuousY),
+                ...(sizeKey ? [valueProperty(sizeKey, true)] : []),
+            ],
+        });
+        this.processedData = this.dataModel.processData(data ?? []);
 
-        this.validData = data.filter(
-            (d) => checkDatum(d[xKey], isContinuousX) !== undefined && checkDatum(d[yKey], isContinuousY) !== undefined
-        );
-        this.xData = this.validData.map((d) => d[xKey]);
-        this.yData = this.validData.map((d) => d[yKey]);
-        this.validateXYData(this.xKey, this.yKey, data, xAxis, yAxis, this.xData, this.yData, 1);
-
-        this.sizeData = sizeKey ? this.validData.map((d) => d[sizeKey]) : [];
-
-        this.sizeScale.domain = marker.domain ? marker.domain : extent(this.sizeData) || [1, 1];
-        if (xAxis.scale instanceof ContinuousScale) {
-            this.xDomain = this.fixNumericExtent(extent(this.xData), xAxis);
-        } else {
-            this.xDomain = this.xData;
-        }
-        if (yAxis.scale instanceof ContinuousScale) {
-            this.yDomain = this.fixNumericExtent(extent(this.yData), yAxis);
-        } else {
-            this.yDomain = this.yData;
+        if (sizeKey) {
+            const sizeKeyIdx = this.dataModel.resolveProcessedDataIndex(sizeKey)?.index ?? -1;
+            this.sizeScale.domain = marker.domain ? marker.domain : this.processedData.domain.values[sizeKeyIdx];
         }
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
+        const xDataIdx = this.dataModel?.resolveProcessedDataIndex(this.xKey);
+        const yDataIdx = this.dataModel?.resolveProcessedDataIndex(this.yKey);
+
+        if (!xDataIdx || !yDataIdx) {
+            return [];
+        }
+
         if (direction === ChartAxisDirection.X) {
-            return this.xDomain;
+            return this.processedData?.domain.values[0] ?? [];
         } else {
-            return this.yDomain;
+            return this.processedData?.domain.values[1] ?? [];
         }
     }
 
@@ -194,49 +180,44 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     }
 
     async createNodeData() {
-        const { data, visible, xAxis, yAxis, yKey, xKey, label, labelKey } = this;
+        const { visible, xAxis, yAxis, yKey, xKey, label, labelKey } = this;
 
-        if (!(data && visible && xAxis && yAxis)) {
+        const xDataIdx = this.dataModel?.resolveProcessedDataIndex(xKey);
+        const yDataIdx = this.dataModel?.resolveProcessedDataIndex(yKey);
+
+        if (!(xDataIdx && yDataIdx && visible && xAxis && yAxis)) {
             return [];
         }
 
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
-        const isContinuousX = xScale instanceof ContinuousScale;
-        const isContinuousY = yScale instanceof ContinuousScale;
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
-        const { xData, yData, validData, sizeData, sizeScale, marker } = this;
-        const nodeData: ScatterNodeDatum[] = new Array(xData.length);
+        const { sizeScale, marker } = this;
+        const nodeData: ScatterNodeDatum[] = new Array(this.processedData?.data.length ?? 0);
 
         sizeScale.range = [marker.size, marker.maxSize];
 
         const font = label.getFont();
         let actualLength = 0;
-        for (let i = 0; i < xData.length; i++) {
-            const xy = this.checkDomainXY(xData[i], yData[i], isContinuousX, isContinuousY);
-
-            if (!xy) {
-                continue;
-            }
-
-            const x = xScale.convert(xy[0]) + xOffset;
-            const y = yScale.convert(xy[1]) + yOffset;
+        for (const { values, datum } of this.processedData?.data ?? []) {
+            const x = xScale.convert(values[xDataIdx.index]) + xOffset;
+            const y = yScale.convert(values[yDataIdx.index]) + yOffset;
 
             if (!this.checkRangeXY(x, y, xAxis, yAxis)) {
                 continue;
             }
 
-            const text = labelKey ? String(validData[i][labelKey]) : '';
+            const text = labelKey ? String(datum[labelKey]) : '';
             const size = HdpiCanvas.getTextSize(text, font);
-            const markerSize = sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size;
+            const markerSize = values.length > 2 ? sizeScale.convert(values[2]) : marker.size;
 
             nodeData[actualLength++] = {
                 series: this,
                 itemId: yKey,
                 yKey,
                 xKey,
-                datum: validData[i],
+                datum,
                 point: { x, y, size: markerSize },
                 nodeMidPoint: { x, y },
                 label: {

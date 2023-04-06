@@ -5237,6 +5237,81 @@
   "LabelTranslationDirection": {},
   "CrossLineTranslationDirection": {},
   "CrossLinesRangeConfig": {},
+  "UngroupedDataItem": { "meta": { "typeParams": ["D", "V"] } },
+  "UngroupedData": {
+    "type": { "type": { "returnType": "'ungrouped'", "optional": false } },
+    "data": {
+      "type": {
+        "returnType": "UngroupedDataItem<D, any[]>[]",
+        "optional": false
+      }
+    },
+    "domain": {
+      "type": {
+        "returnType": "{\n        keys: any[][];\n        values: any[][];\n        sumValues?: [number, number][];\n    }",
+        "optional": false
+      }
+    },
+    "indices": {
+      "type": {
+        "returnType": "{\n        keys: Record<keyof D, number>;\n        values: Record<keyof D, number>;\n    }",
+        "optional": false
+      }
+    },
+    "reduced": {
+      "type": { "returnType": "Record<string, any>", "optional": true }
+    },
+    "defs": {
+      "type": {
+        "returnType": "{\n        keys: DatumPropertyDefinition<keyof D>[];\n        values: DatumPropertyDefinition<keyof D>[];\n    }",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["D"] }
+  },
+  "GroupedData": {
+    "type": { "type": { "returnType": "'grouped'", "optional": false } },
+    "data": {
+      "type": {
+        "returnType": "UngroupedDataItem<D[], any[][]>[]",
+        "optional": false
+      }
+    },
+    "domain": {
+      "type": {
+        "returnType": "{\n        keys: any[][];\n        values: any[][];\n        sumValues?: [number, number][];\n    }",
+        "optional": false
+      }
+    },
+    "indices": {
+      "type": {
+        "returnType": "{\n        keys: Record<keyof D, number>;\n        values: Record<keyof D, number>;\n    }",
+        "optional": false
+      }
+    },
+    "reduced": {
+      "type": { "returnType": "Record<string, any>", "optional": true }
+    },
+    "defs": {
+      "type": {
+        "returnType": "{\n        keys: DatumPropertyDefinition<keyof D>[];\n        values: DatumPropertyDefinition<keyof D>[];\n    }",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["D"] }
+  },
+  "ProcessedData": { "meta": { "typeParams": ["D"] } },
+  "DatumPropertyType": {},
+  "ContinuousDomain": { "meta": { "typeParams": ["T extends number | Date"] } },
+  "Options": {
+    "meta": { "typeParams": ["K", "Grouped extends boolean | undefined"] }
+  },
+  "PropertyDefinition": { "meta": { "typeParams": ["K"] } },
+  "DatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
+  "InternalDatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
+  "OutputPropertyDefinition": { "meta": { "typeParams": ["K"] } },
+  "ReducerOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
+  "ProcessorOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
   "Page": {},
   "Column": {},
   "DimensionProps": {
@@ -5463,7 +5538,6 @@
     }
   },
   "CumulativeValue": {},
-  "ProcessedXDatum": {},
   "AreaSeriesTag": {},
   "AreaSeriesNodeDataContext": {},
   "BarNodeDatum": {
