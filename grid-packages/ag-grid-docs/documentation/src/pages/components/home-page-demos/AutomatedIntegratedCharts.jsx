@@ -103,7 +103,6 @@ function AutomatedIntegratedCharts({ scriptDebuggerManager, useStaticData, runOn
             </div>
             <Splash
                 size="small"
-                hideOverlayClickTarget
                 onSplashHide={onSplashHide}
                 onSplashShow={onSplashShow}
                 renderContent={({ hideSplash, setClickTargetHover }) => {
