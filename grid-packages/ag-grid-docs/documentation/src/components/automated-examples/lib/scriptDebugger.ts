@@ -52,6 +52,13 @@ function createDebugPanelSection({
     getScriptRunner: () => ScriptRunner;
     initialDrawChecked?: boolean;
 }) {
+    const existingSection = document.querySelectorAll(`[data-section-id="${id}"]`);
+    if (existingSection) {
+        existingSection.forEach((element) => {
+            element.remove();
+        });
+    }
+
     const stateEl = document.createElement('div');
     stateEl.classList.add(STATE_CLASSNAME);
 
@@ -84,6 +91,7 @@ function createDebugPanelSection({
     controlsEl.appendChild(runnerButtonEl);
 
     const sectionEl = document.createElement('section');
+    sectionEl.dataset.sectionId = id;
     const heading = document.createElement('h2');
     heading.innerHTML = id;
     sectionEl.appendChild(heading);
