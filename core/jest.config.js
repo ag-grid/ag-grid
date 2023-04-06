@@ -4,6 +4,7 @@ module.exports = {
             tsconfig: 'tsconfig.test.json',
         },
     },
+    setupFiles: ['./jest.setup.js'],
     roots: ['<rootDir>/src'],
     transform: {
         '^.+\\.tsx?$': 'ts-jest',
