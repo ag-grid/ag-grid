@@ -42,13 +42,15 @@ describe('Chart', () => {
             { year: '2022', person: 'Julian', spending: 40 },
             { year: '2022', person: 'Martian', spending: 50 },
         ],
-        series: [{
-            type: 'heatmap',
-            xKey: 'year',
-            yKey: 'person',
-            colorKey: 'spending',
-            colorRange: ['yellow', 'red', 'blue'],
-        }],
+        series: [
+            {
+                type: 'heatmap',
+                xKey: 'year',
+                yKey: 'person',
+                colorKey: 'spending',
+                colorRange: ['yellow', 'red', 'blue'],
+            },
+        ],
     };
 
     const compare = async () => {

@@ -174,7 +174,7 @@ describe('backgroundImage', () => {
         };
 
         it('Image in the center', async () => {
-            const options: AgChartOptions = {
+            const options = {
                 title: { text: 'Background image in the center' },
                 background: {
                     image: {
