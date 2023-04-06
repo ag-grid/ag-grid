@@ -374,7 +374,18 @@ export class UserComponentFactory extends BeanStub {
             const usingDefaultFilter = (jsComp == null && fwComp == null) && (def.filter === true);
             if (usingDefaultFilter) {
                 const setFilterModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule);
-                defaultFloatingFilterType = setFilterModuleLoaded ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';
+                if (setFilterModuleLoaded) {
+                    defaultFloatingFilterType = 'agSetColumnFloatingFilter';
+                } else {
+                    const cellDataType = (def as any).cellDataType;
+                    if (cellDataType === 'number') {
+                        defaultFloatingFilterType = 'agNumberColumnFloatingFilter';
+                    } else if (cellDataType === 'date' || cellDataType === 'dateString') {
+                        defaultFloatingFilterType = 'agDateColumnFloatingFilter';
+                    } else {
+                        defaultFloatingFilterType = 'agTextColumnFloatingFilter';
+                    }
+                }
             }
         }
 

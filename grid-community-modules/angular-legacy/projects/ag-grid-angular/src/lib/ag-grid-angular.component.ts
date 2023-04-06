@@ -60,6 +60,7 @@ import {
     ColumnVisibleEvent,
     ComponentStateChangedEvent,
     CsvExportParams,
+    DataTypeDefinition,
     DisplayedColumnsChangedEvent,
     DomLayoutType,
     DragStartedEvent,

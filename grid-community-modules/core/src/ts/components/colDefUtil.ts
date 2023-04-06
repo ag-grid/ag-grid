@@ -17,6 +17,7 @@ export class ColDefUtil {
         initialSort: undefined,
         field: undefined,
         type: undefined,
+        cellDataType: undefined,
         tooltipComponent: undefined,
         tooltipField: undefined,
         headerTooltip: undefined,

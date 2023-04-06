@@ -525,6 +525,7 @@
       "colId?": "string",
       "field?": "string",
       "type?": "string | string[]",
+      "cellDataType?": "string",
       "valueGetter?": "string | ValueGetterFunc<TData, TValue>",
       "valueFormatter?": "string | ValueFormatterFunc<TData>",
       "refData?": "{ [key: string]: string; }",
@@ -1606,6 +1607,135 @@
     "meta": { "isTypeAlias": true },
     "type": "'open' | 'closed'"
   },
+  "ValueParserLiteParams": {
+    "meta": { "isTypeAlias": true, "typeParams": ["TData", "TValue"] },
+    "type": "Omit<ValueParserParams<TData, TValue>, 'data' | 'node' | 'oldValue'>"
+  },
+  "ValueParserLiteFunc": {
+    "meta": { "isCallSignature": true, "typeParams": ["TData", "TValue"] },
+    "type": {
+      "arguments": { "params": "ValueParserLiteParams<TData, TValue>" },
+      "returnType": "TValue | undefined"
+    }
+  },
+  "ValueFormatterLiteParams": {
+    "meta": { "isTypeAlias": true, "typeParams": ["TData", "TValue"] },
+    "type": "Omit<ValueFormatterParams<TData, TValue>, 'data' | 'node'>"
+  },
+  "ValueFormatterLiteFunc": {
+    "meta": { "isCallSignature": true, "typeParams": ["TData", "TValue"] },
+    "type": {
+      "arguments": { "params": "ValueFormatterLiteParams<TData, TValue>" },
+      "returnType": "string"
+    }
+  },
+  "BaseDataType": {
+    "meta": {
+      "typeParams": [
+        "TDataType extends 'text' | 'number' | 'boolean' | 'date' | 'dateString' | 'object'"
+      ]
+    },
+    "type": { "baseDataType": "TDataType" }
+  },
+  "BaseDataTypeDefinition": {
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
+    "type": {
+      "valueParser?": "ValueParserLiteFunc<TData, TValue>",
+      "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
+      "columnTypes?": "string | string[]"
+    }
+  },
+  "ChildDataTypeDefinition": {
+    "meta": {},
+    "type": { "extends": "string", "appendColumnTypes?": "boolean" }
+  },
+  "TextDataTypeDefinition": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "valueParser?": "ValueParserLiteFunc<TData, TValue>",
+      "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
+      "columnTypes?": "string | string[]",
+      "baseDataType": "TDataType",
+      "extends": "string",
+      "appendColumnTypes?": "boolean"
+    }
+  },
+  "NumberDataTypeDefinition": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "valueParser?": "ValueParserLiteFunc<TData, TValue>",
+      "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
+      "columnTypes?": "string | string[]",
+      "baseDataType": "TDataType",
+      "extends": "string",
+      "appendColumnTypes?": "boolean"
+    }
+  },
+  "BooleanDataTypeDefinition": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "valueParser?": "ValueParserLiteFunc<TData, TValue>",
+      "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
+      "columnTypes?": "string | string[]",
+      "baseDataType": "TDataType",
+      "extends": "string",
+      "appendColumnTypes?": "boolean"
+    }
+  },
+  "DateDataTypeDefinition": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "valueParser?": "ValueParserLiteFunc<TData, TValue>",
+      "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
+      "columnTypes?": "string | string[]",
+      "baseDataType": "TDataType",
+      "extends": "string",
+      "appendColumnTypes?": "boolean"
+    }
+  },
+  "DateStringDataTypeDefinition": {
+    "meta": { "typeParams": ["TData = any"] },
+    "type": {
+      "convertToDate?": "(value: string | undefined) => Date | undefined",
+      "matcher?": "(value: string) => boolean",
+      "valueParser?": "ValueParserLiteFunc<TData, TValue>",
+      "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
+      "columnTypes?": "string | string[]",
+      "baseDataType": "TDataType",
+      "extends": "string",
+      "appendColumnTypes?": "boolean"
+    }
+  },
+  "BaseObjectDataTypeDefinition": {
+    "meta": { "typeParams": ["TData", "TValue"] },
+    "type": {
+      "valueParser": "ValueParserLiteFunc<TData, TValue>",
+      "valueFormatter": "ValueFormatterLiteFunc<TData, TValue>",
+      "valueParser?": "ValueParserLiteFunc<TData, TValue>",
+      "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
+      "columnTypes?": "string | string[]",
+      "baseDataType": "TDataType"
+    }
+  },
+  "ObjectDataTypeDefinition": {
+    "meta": { "typeParams": ["TData", "TValue"] },
+    "type": {
+      "valueParser?": "ValueParserLiteFunc<TData, TValue>",
+      "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
+      "columnTypes?": "string | string[]",
+      "baseDataType": "TDataType",
+      "extends": "string",
+      "appendColumnTypes?": "boolean"
+    }
+  },
+  "DataTypeDefinition": {
+    "meta": { "isTypeAlias": true, "typeParams": ["TData = any"] },
+    "type": "TextDataTypeDefinition<TData> | NumberDataTypeDefinition<TData> | BooleanDataTypeDefinition<TData> | DateDataTypeDefinition<TData> | DateStringDataTypeDefinition<TData> | BaseObjectDataTypeDefinition<TData, any> | ObjectDataTypeDefinition<TData, any>"
+  },
+  "CoreDataTypeDefinition": {
+    "meta": { "isTypeAlias": true, "typeParams": ["TData = any"] },
+    "type": "Omit<TextDataTypeDefinition<TData>, 'extends'> | Omit<NumberDataTypeDefinition<TData>, 'extends'> | Omit<BooleanDataTypeDefinition<TData>, 'extends'> | Omit<DateDataTypeDefinition<TData>, 'extends'> | Omit<DateStringDataTypeDefinition<TData>, 'extends'>"
+  },
   "GridOptions": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
@@ -1634,6 +1764,8 @@
       "defaultColDef?": "ColDef<TData>",
       "defaultColGroupDef?": "Partial<ColGroupDef<TData>>",
       "columnTypes?": "{ [key: string]: ColDef<TData>; }",
+      "dataTypeDefinitions?": "{ [key: string]: DataTypeDefinition<TData>; }",
+      "inferCellDataTypes?": "boolean",
       "maintainColumnOrder?": "boolean",
       "suppressFieldDotNotation?": "boolean",
       "headerHeight?": "number",
@@ -12021,6 +12153,8 @@
       "defaultColDef?": "ColDef<TData>",
       "defaultColGroupDef?": "Partial<ColGroupDef<TData>>",
       "columnTypes?": "{ [key: string]: ColDef<TData>; }",
+      "dataTypeDefinitions?": "{ [key: string]: DataTypeDefinition<TData>; }",
+      "inferCellDataTypes?": "boolean",
       "maintainColumnOrder?": "boolean",
       "suppressFieldDotNotation?": "boolean",
       "headerHeight?": "number",
@@ -12785,6 +12919,8 @@
       "defaultColDef?": "ColDef<TData>",
       "defaultColGroupDef?": "Partial<ColGroupDef<TData>>",
       "columnTypes?": "{ [key: string]: ColDef<TData>; }",
+      "dataTypeDefinitions?": "{ [key: string]: DataTypeDefinition<TData>; }",
+      "inferCellDataTypes?": "boolean",
       "maintainColumnOrder?": "boolean",
       "suppressFieldDotNotation?": "boolean",
       "headerHeight?": "number",
@@ -13551,6 +13687,8 @@
       "defaultColDef?": "ColDef<TData>",
       "defaultColGroupDef?": "Partial<ColGroupDef<TData>>",
       "columnTypes?": "{ [key: string]: ColDef<TData>; }",
+      "dataTypeDefinitions?": "{ [key: string]: DataTypeDefinition<TData>; }",
+      "inferCellDataTypes?": "boolean",
       "maintainColumnOrder?": "boolean",
       "suppressFieldDotNotation?": "boolean",
       "headerHeight?": "number",

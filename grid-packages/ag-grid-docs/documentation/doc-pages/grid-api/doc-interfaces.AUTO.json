@@ -832,6 +832,7 @@
       "description": "/** A comma separated string or array of strings containing `ColumnType` keys which can be used as a template for a column.\n     * This helps to reduce duplication of properties when you have a lot of common column properties.\n     */",
       "type": { "returnType": "string | string[]", "optional": true }
     },
+    "cellDataType": { "type": { "returnType": "string", "optional": true } },
     "valueGetter": {
       "description": "/** Function or expression. Gets the value from your data for display. */",
       "type": {
@@ -2458,6 +2459,229 @@
   "ColumnPinnedType": {},
   "ColumnEventName": {},
   "ColumnGroupShowType": {},
+  "ValueParserLiteParams": { "meta": { "typeParams": ["TData", "TValue"] } },
+  "ValueParserLiteFunc": { "meta": { "typeParams": ["TData", "TValue"] } },
+  "ValueFormatterLiteParams": { "meta": { "typeParams": ["TData", "TValue"] } },
+  "ValueFormatterLiteFunc": { "meta": { "typeParams": ["TData", "TValue"] } },
+  "BaseDataType": {
+    "baseDataType": {
+      "type": { "returnType": "TDataType", "optional": false }
+    },
+    "meta": {
+      "typeParams": [
+        "TDataType extends 'text' | 'number' | 'boolean' | 'date' | 'dateString' | 'object'"
+      ]
+    }
+  },
+  "BaseDataTypeDefinition": {
+    "valueParser": {
+      "type": {
+        "returnType": "ValueParserLiteFunc<TData, TValue>",
+        "optional": true
+      }
+    },
+    "valueFormatter": {
+      "type": {
+        "returnType": "ValueFormatterLiteFunc<TData, TValue>",
+        "optional": true
+      }
+    },
+    "columnTypes": {
+      "type": { "returnType": "string | string[]", "optional": true }
+    },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] }
+  },
+  "ChildDataTypeDefinition": {
+    "extends": { "type": { "returnType": "string", "optional": false } },
+    "appendColumnTypes": {
+      "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "TextDataTypeDefinition": {
+    "meta": { "typeParams": ["TData = any"] },
+    "valueParser": {
+      "type": {
+        "returnType": "ValueParserLiteFunc<TData, TValue>",
+        "optional": true
+      }
+    },
+    "valueFormatter": {
+      "type": {
+        "returnType": "ValueFormatterLiteFunc<TData, TValue>",
+        "optional": true
+      }
+    },
+    "columnTypes": {
+      "type": { "returnType": "string | string[]", "optional": true }
+    },
+    "baseDataType": {
+      "type": { "returnType": "TDataType", "optional": false }
+    },
+    "extends": { "type": { "returnType": "string", "optional": false } },
+    "appendColumnTypes": {
+      "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "NumberDataTypeDefinition": {
+    "meta": { "typeParams": ["TData = any"] },
+    "valueParser": {
+      "type": {
+        "returnType": "ValueParserLiteFunc<TData, TValue>",
+        "optional": true
+      }
+    },
+    "valueFormatter": {
+      "type": {
+        "returnType": "ValueFormatterLiteFunc<TData, TValue>",
+        "optional": true
+      }
+    },
+    "columnTypes": {
+      "type": { "returnType": "string | string[]", "optional": true }
+    },
+    "baseDataType": {
+      "type": { "returnType": "TDataType", "optional": false }
+    },
+    "extends": { "type": { "returnType": "string", "optional": false } },
+    "appendColumnTypes": {
+      "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "BooleanDataTypeDefinition": {
+    "meta": { "typeParams": ["TData = any"] },
+    "valueParser": {
+      "type": {
+        "returnType": "ValueParserLiteFunc<TData, TValue>",
+        "optional": true
+      }
+    },
+    "valueFormatter": {
+      "type": {
+        "returnType": "ValueFormatterLiteFunc<TData, TValue>",
+        "optional": true
+      }
+    },
+    "columnTypes": {
+      "type": { "returnType": "string | string[]", "optional": true }
+    },
+    "baseDataType": {
+      "type": { "returnType": "TDataType", "optional": false }
+    },
+    "extends": { "type": { "returnType": "string", "optional": false } },
+    "appendColumnTypes": {
+      "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "DateDataTypeDefinition": {
+    "meta": { "typeParams": ["TData = any"] },
+    "valueParser": {
+      "type": {
+        "returnType": "ValueParserLiteFunc<TData, TValue>",
+        "optional": true
+      }
+    },
+    "valueFormatter": {
+      "type": {
+        "returnType": "ValueFormatterLiteFunc<TData, TValue>",
+        "optional": true
+      }
+    },
+    "columnTypes": {
+      "type": { "returnType": "string | string[]", "optional": true }
+    },
+    "baseDataType": {
+      "type": { "returnType": "TDataType", "optional": false }
+    },
+    "extends": { "type": { "returnType": "string", "optional": false } },
+    "appendColumnTypes": {
+      "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "DateStringDataTypeDefinition": {
+    "convertToDate": {
+      "type": {
+        "arguments": { "value": "string | undefined" },
+        "returnType": "Date | undefined",
+        "optional": true
+      }
+    },
+    "matcher": {
+      "type": {
+        "arguments": { "value": "string" },
+        "returnType": "boolean",
+        "optional": true
+      }
+    },
+    "meta": { "typeParams": ["TData = any"] },
+    "valueParser": {
+      "type": {
+        "returnType": "ValueParserLiteFunc<TData, TValue>",
+        "optional": true
+      }
+    },
+    "valueFormatter": {
+      "type": {
+        "returnType": "ValueFormatterLiteFunc<TData, TValue>",
+        "optional": true
+      }
+    },
+    "columnTypes": {
+      "type": { "returnType": "string | string[]", "optional": true }
+    },
+    "baseDataType": {
+      "type": { "returnType": "TDataType", "optional": false }
+    },
+    "extends": { "type": { "returnType": "string", "optional": false } },
+    "appendColumnTypes": {
+      "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "BaseObjectDataTypeDefinition": {
+    "valueParser": {
+      "type": {
+        "returnType": "ValueParserLiteFunc<TData, TValue>",
+        "optional": false
+      }
+    },
+    "valueFormatter": {
+      "type": {
+        "returnType": "ValueFormatterLiteFunc<TData, TValue>",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["TData", "TValue"] },
+    "columnTypes": {
+      "type": { "returnType": "string | string[]", "optional": true }
+    },
+    "baseDataType": { "type": { "returnType": "TDataType", "optional": false } }
+  },
+  "ObjectDataTypeDefinition": {
+    "meta": { "typeParams": ["TData", "TValue"] },
+    "valueParser": {
+      "type": {
+        "returnType": "ValueParserLiteFunc<TData, TValue>",
+        "optional": true
+      }
+    },
+    "valueFormatter": {
+      "type": {
+        "returnType": "ValueFormatterLiteFunc<TData, TValue>",
+        "optional": true
+      }
+    },
+    "columnTypes": {
+      "type": { "returnType": "string | string[]", "optional": true }
+    },
+    "baseDataType": {
+      "type": { "returnType": "TDataType", "optional": false }
+    },
+    "extends": { "type": { "returnType": "string", "optional": false } },
+    "appendColumnTypes": {
+      "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "DataTypeDefinition": { "meta": { "typeParams": ["TData = any"] } },
+  "CoreDataTypeDefinition": { "meta": { "typeParams": ["TData = any"] } },
   "GridOptions": {
     "statusBar": {
       "description": "/** Specifies the status bar components to use in the status bar. */",
@@ -2570,6 +2794,15 @@
         "returnType": "{ [key: string]: ColDef<TData>; }",
         "optional": true
       }
+    },
+    "dataTypeDefinitions": {
+      "type": {
+        "returnType": "{\n        [key: string]: DataTypeDefinition<TData>;\n    }",
+        "optional": true
+      }
+    },
+    "inferCellDataTypes": {
+      "type": { "returnType": "boolean", "optional": true }
     },
     "maintainColumnOrder": {
       "description": "/** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */",
@@ -21280,6 +21513,15 @@
         "optional": true
       }
     },
+    "dataTypeDefinitions": {
+      "type": {
+        "returnType": "{\n        [key: string]: DataTypeDefinition<TData>;\n    }",
+        "optional": true
+      }
+    },
+    "inferCellDataTypes": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "maintainColumnOrder": {
       "description": "/** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
@@ -24108,6 +24350,15 @@
         "returnType": "{ [key: string]: ColDef<TData>; }",
         "optional": true
       }
+    },
+    "dataTypeDefinitions": {
+      "type": {
+        "returnType": "{\n        [key: string]: DataTypeDefinition<TData>;\n    }",
+        "optional": true
+      }
+    },
+    "inferCellDataTypes": {
+      "type": { "returnType": "boolean", "optional": true }
     },
     "maintainColumnOrder": {
       "description": "/** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */",
@@ -26943,6 +27194,15 @@
         "returnType": "{ [key: string]: ColDef<TData>; }",
         "optional": true
       }
+    },
+    "dataTypeDefinitions": {
+      "type": {
+        "returnType": "{\n        [key: string]: DataTypeDefinition<TData>;\n    }",
+        "optional": true
+      }
+    },
+    "inferCellDataTypes": {
+      "type": { "returnType": "boolean", "optional": true }
     },
     "maintainColumnOrder": {
       "description": "/** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */",

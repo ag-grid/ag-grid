@@ -382,6 +382,20 @@ export {
     IsColumnFuncParams
 } from "./entities/colDef";
 export {
+    DataTypeDefinition,
+    TextDataTypeDefinition,
+    NumberDataTypeDefinition,
+    BooleanDataTypeDefinition,
+    DateDataTypeDefinition,
+    DateStringDataTypeDefinition,
+    BaseObjectDataTypeDefinition,
+    ObjectDataTypeDefinition,
+    ValueFormatterLiteFunc,
+    ValueFormatterLiteParams,
+    ValueParserLiteFunc,
+    ValueParserLiteParams,
+} from "./entities/dataType";
+export {
     GridOptions,
     IsApplyServerSideTransaction,
     GetContextMenuItems,

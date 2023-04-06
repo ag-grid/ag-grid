@@ -96,6 +96,7 @@
     "description": "/** A comma separated string or array of strings containing `ColumnType` keys which can be used as a template for a column.\n     * This helps to reduce duplication of properties when you have a lot of common column properties.\n     */",
     "type": { "returnType": "string | string[]" }
   },
+  "cellDataType": { "type": { "returnType": "string" } },
   "valueGetter": {
     "description": "/** Function or expression. Gets the value from your data for display. */",
     "type": { "returnType": "string | ValueGetterFunc<TData, TValue>" }

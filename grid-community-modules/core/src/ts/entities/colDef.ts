@@ -121,6 +121,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * This helps to reduce duplication of properties when you have a lot of common column properties.
      */
     type?: string | string[];
+    cellDataType?: string;
     /** Function or expression. Gets the value from your data for display. */
     valueGetter?: string | ValueGetterFunc<TData, TValue>;
     // `ValueFormatterFunc` should be type `TValue`. Change in v30
