@@ -226,7 +226,7 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
         return { type: def.type, index: def.index };
     }
 
-    processData(data: D[]): Grouped extends true ? GroupedData<D> : UngroupedData<D> {
+    processData(data: D[]): (Grouped extends true ? GroupedData<D> : UngroupedData<D>) | undefined {
         const {
             opts: { groupByKeys, normaliseTo },
             sums,
@@ -236,6 +236,13 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
 
         for (const def of [...this.keys, ...this.values]) {
             def.missing = false;
+        }
+
+        if (groupByKeys && this.keys.length === 0) {
+            return undefined;
+        }
+        if (this.values.length === 0) {
+            return undefined;
         }
 
         let processedData: ProcessedData<D> = this.extractData(data);

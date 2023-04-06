@@ -152,7 +152,8 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
         if (sizeKey) {
             const sizeKeyIdx = this.dataModel.resolveProcessedDataIndex(sizeKey)?.index ?? -1;
-            this.sizeScale.domain = marker.domain ? marker.domain : this.processedData.domain.values[sizeKeyIdx];
+            const processedSize = this.processedData?.domain.values[sizeKeyIdx] ?? [];
+            this.sizeScale.domain = marker.domain ? marker.domain : processedSize;
         }
     }
 
