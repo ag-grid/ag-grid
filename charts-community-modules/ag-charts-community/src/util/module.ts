@@ -1,4 +1,5 @@
 import { AgCartesianAxisPosition } from '../chart/agChartOptions';
+import { AnimationManager } from '../chart/interaction/animationManager';
 import { CursorManager } from '../chart/interaction/cursorManager';
 import { HighlightManager } from '../chart/interaction/highlightManager';
 import { InteractionManager } from '../chart/interaction/interactionManager';
@@ -11,11 +12,12 @@ import { Series } from '../chart/series/series';
 
 export interface ModuleContext {
     scene: Scene;
-    interactionManager: InteractionManager;
-    highlightManager: HighlightManager;
+    animationManager: AnimationManager;
     cursorManager: CursorManager;
-    zoomManager: ZoomManager;
+    highlightManager: HighlightManager;
+    interactionManager: InteractionManager;
     tooltipManager: TooltipManager;
+    zoomManager: ZoomManager;
     layoutService: Pick<LayoutService, 'addListener' | 'removeListener'>;
     updateService: UpdateService;
 }

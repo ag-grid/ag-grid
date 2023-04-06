@@ -23,6 +23,7 @@ import { ChartOverlays } from './overlay/chartOverlays';
 import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { jsonMerge } from '../util/json';
 import { Layers } from './layers';
+import { AnimationManager } from './interaction/animationManager';
 import { CursorManager } from './interaction/cursorManager';
 import { HighlightChangeEvent, HighlightManager } from './interaction/highlightManager';
 import { TooltipManager } from './interaction/tooltipManager';
@@ -193,9 +194,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return this._destroyed;
     }
 
-    protected readonly interactionManager: InteractionManager;
+    protected readonly animationManager: AnimationManager;
     protected readonly cursorManager: CursorManager;
     protected readonly highlightManager: HighlightManager;
+    protected readonly interactionManager: InteractionManager;
     protected readonly tooltipManager: TooltipManager;
     protected readonly zoomManager: ZoomManager;
     protected readonly layoutService: LayoutService;
@@ -234,12 +236,15 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.scene.container = element;
         this.autoSize = true;
 
-        this.interactionManager = new InteractionManager(element);
+        this.animationManager = new AnimationManager();
         this.cursorManager = new CursorManager(element);
         this.highlightManager = new HighlightManager();
+        this.interactionManager = new InteractionManager(element);
         this.zoomManager = new ZoomManager();
         this.layoutService = new LayoutService();
         this.updateService = new UpdateService((type = ChartUpdateType.FULL) => this.update(type));
+
+        this.animationManager.play();
 
         SizeMonitor.observe(this.element, (size) => {
             const { width, height } = size;
@@ -288,6 +293,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
         );
 
         this.highlightManager.addListener('highlight-change', (event) => this.changeHighlightDatum(event));
+
+        this.animationManager.addListener('animation-frame', ({ delta }) => {
+            this.update(ChartUpdateType.SCENE_RENDER);
+        });
     }
 
     addModule(module: RootModule) {
@@ -314,21 +323,23 @@ export abstract class Chart extends Observable implements AgChartInstance {
     getModuleContext(): ModuleContext {
         const {
             scene,
-            interactionManager,
-            zoomManager,
+            animationManager,
             cursorManager,
             highlightManager,
+            interactionManager,
             tooltipManager,
+            zoomManager,
             layoutService,
             updateService,
         } = this;
         return {
             scene,
-            interactionManager,
-            zoomManager,
+            animationManager,
             cursorManager,
             highlightManager,
+            interactionManager,
             tooltipManager,
+            zoomManager,
             layoutService,
             updateService,
         };
