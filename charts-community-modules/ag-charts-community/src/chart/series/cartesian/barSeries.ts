@@ -325,11 +325,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         const { xKey, seriesItemEnabled, normalizedTo, data = [] } = this;
 
-        if (!this.visible) {
-            this.processedData = undefined;
-            return;
-        }
-
         const isContinuousX = this.getCategoryAxis()?.scale instanceof ContinuousScale;
         const isContinuousY = this.getValueAxis()?.scale instanceof ContinuousScale;
 
@@ -350,6 +345,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 SUM_VALUE_EXTENT,
             ],
             groupByKeys: true,
+            dataVisible: this.visible && activeSeriesItems.length > 0,
             normaliseTo,
         });
 

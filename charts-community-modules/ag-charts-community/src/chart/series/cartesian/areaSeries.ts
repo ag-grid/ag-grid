@@ -228,13 +228,8 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         const { xKey, yKeys, seriesItemEnabled, xAxis, yAxis, normalizedTo } = this;
         const data = xKey && yKeys.length && this.data ? this.data : [];
 
-        if (!this.visible || !xAxis || !yAxis) {
-            this.processedData = undefined;
-            return;
-        }
-
-        const isContinuousX = xAxis.scale instanceof ContinuousScale;
-        const isContinuousY = yAxis.scale instanceof ContinuousScale;
+        const isContinuousX = xAxis?.scale instanceof ContinuousScale;
+        const isContinuousY = yAxis?.scale instanceof ContinuousScale;
 
         const enabledYKeys = [...seriesItemEnabled.entries()].filter(([, enabled]) => enabled).map(([yKey]) => yKey);
         const normaliseTo = normalizedTo && isFinite(normalizedTo) ? normalizedTo : undefined;
@@ -252,6 +247,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 SUM_VALUE_EXTENT,
             ],
             groupByKeys: true,
+            dataVisible: this.visible && enabledYKeys.length > 0,
             normaliseTo,
         });
 

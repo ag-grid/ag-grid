@@ -1,6 +1,6 @@
 import { Logger } from '../../util/logger';
 
-type UngroupedDataItem<D, V> = {
+export type UngroupedDataItem<D, V> = {
     keys: any[];
     values: V;
     sumValues?: [number, number][];
@@ -130,6 +130,7 @@ type Options<K, Grouped extends boolean | undefined> = {
     readonly props: PropertyDefinition<K>[];
     readonly groupByKeys?: Grouped;
     readonly normaliseTo?: number;
+    readonly dataVisible?: boolean;
 };
 
 export type PropertyDefinition<K> =
@@ -195,7 +196,7 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
             }
         }
 
-        this.opts = { ...opts };
+        this.opts = { dataVisible: true, ...opts };
         this.keys = props
             .filter((def): def is DatumPropertyDefinition<K> => def.type === 'key')
             .map((def, index) => ({ ...def, index, missing: false }));
@@ -220,12 +221,30 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
     }
 
     resolveProcessedDataIndex(propName: string): { type: 'key' | 'value'; index: number } | undefined {
+        const def = this.resolveProcessedDataDef(propName);
+
+        if (def?.type === 'key' || def?.type === 'value') {
+            return { type: def.type, index: def.index };
+        }
+    }
+
+    resolveProcessedDataDef(propName: string): InternalDatumPropertyDefinition<any> | undefined {
         const { keys, values } = this;
 
         const def = [...keys, ...values].find(({ property }) => property === propName);
         if (!def) return undefined;
 
-        return { type: def.type, index: def.index };
+        return def;
+    }
+
+    getDomain(propName: string, processedData: ProcessedData<K>): any[] | ContinuousDomain<number> | [] {
+        const idx = this.resolveProcessedDataIndex(propName);
+
+        if (!idx) {
+            return [];
+        }
+
+        return processedData.domain[idx.type === 'key' ? 'keys' : 'values'][idx.index];
     }
 
     processData(data: D[]): (Grouped extends true ? GroupedData<D> : UngroupedData<D>) | undefined {
@@ -242,9 +261,6 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
         }
 
         if (groupByKeys && this.keys.length === 0) {
-            return undefined;
-        }
-        if (this.values.length === 0) {
             return undefined;
         }
 
@@ -278,38 +294,48 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
     }
 
     private extractData(data: D[]): UngroupedData<D> {
-        const { keys: keyDefs, values: valueDefs } = this;
+        const {
+            keys: keyDefs,
+            values: valueDefs,
+            opts: { dataVisible },
+        } = this;
 
         const { dataDomain, processValue } = this.initDataDomainProcessor();
 
-        const resultData = new Array(data.length);
+        const resultData = new Array(dataVisible ? data.length : 0);
         let resultDataIdx = 0;
         dataLoop: for (const datum of data) {
-            const keys = new Array(keyDefs.length);
+            const keys = dataVisible ? new Array(keyDefs.length) : undefined;
             let keyIdx = 0;
             for (const def of keyDefs) {
                 const key = processValue(def, datum);
                 if (key === INVALID_VALUE) {
                     continue dataLoop;
                 }
-                keys[keyIdx++] = key;
-            }
-
-            const values = new Array(valueDefs.length);
-            let valueIdx = 0;
-            for (const def of valueDefs) {
-                const value = processValue(def, datum);
-                values[valueIdx++] = processValue(def, datum);
-                if (value === INVALID_VALUE) {
-                    continue dataLoop;
+                if (keys) {
+                    keys[keyIdx++] = key;
                 }
             }
 
-            resultData[resultDataIdx++] = {
-                datum,
-                keys,
-                values,
-            };
+            const values = dataVisible ? new Array(valueDefs.length) : undefined;
+            let valueIdx = 0;
+            for (const def of valueDefs) {
+                const value = processValue(def, datum);
+                if (value === INVALID_VALUE) {
+                    continue dataLoop;
+                }
+                if (values) {
+                    values[valueIdx++] = value;
+                }
+            }
+
+            if (dataVisible) {
+                resultData[resultDataIdx++] = {
+                    datum,
+                    keys,
+                    values,
+                };
+            }
         }
         resultData.length = resultDataIdx;
 
