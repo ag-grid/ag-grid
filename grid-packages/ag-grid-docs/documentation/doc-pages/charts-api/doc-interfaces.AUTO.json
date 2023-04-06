@@ -5417,7 +5417,7 @@
     },
     "series": {
       "type": {
-        "returnType": "{ rect: BBox; paddedRect: BBox; visible: boolean }",
+        "returnType": "{ rect: BBox; paddedRect: BBox; hoverRect: BBox; visible: boolean }",
         "optional": false
       }
     },

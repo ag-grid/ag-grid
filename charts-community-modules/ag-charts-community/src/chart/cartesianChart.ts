@@ -37,17 +37,17 @@ export class CartesianChart extends Chart {
 
         const { seriesRoot, seriesAreaPadding } = this;
 
-        const paddedX = seriesRect.x - seriesAreaPadding.left;
-        const paddedY = seriesRect.y - seriesAreaPadding.top;
-        const paddedWidth = seriesAreaPadding.left + seriesRect.width + seriesAreaPadding.right;
-        const paddedHeight = seriesAreaPadding.top + seriesRect.height + seriesAreaPadding.bottom;
+        const seriesPaddedRect = seriesRect.clone().grow(seriesAreaPadding);
 
-        const seriesPaddedRect = new BBox(paddedX, paddedY, paddedWidth, paddedHeight);
+        const hoverRectPadding = 20;
+        const hoverRect = seriesPaddedRect.clone().grow(hoverRectPadding);
+
+        this.hoverRect = hoverRect;
 
         this.layoutService.dispatchLayoutComplete({
             type: 'layout-complete',
             chart: { width: this.scene.width, height: this.scene.height },
-            series: { rect: seriesRect, paddedRect: seriesPaddedRect, visible: visibility.series },
+            series: { rect: seriesRect, paddedRect: seriesPaddedRect, hoverRect, visible: visibility.series },
             axes: this.axes.map((axis) => ({ id: axis.id, ...axis.getLayoutState() })),
         });
 

@@ -26,6 +26,11 @@ export class HierarchyChart extends Chart {
         shrinkRect.shrink(seriesAreaPadding.bottom, 'bottom');
 
         this.seriesRect = shrinkRect;
+
+        const hoverRectPadding = 20;
+        const hoverRect = shrinkRect.clone().grow(hoverRectPadding);
+        this.hoverRect = hoverRect;
+
         this.series.forEach((series) => {
             series.rootGroup.translationX = Math.floor(shrinkRect.x);
             series.rootGroup.translationY = Math.floor(shrinkRect.y);
@@ -40,7 +45,7 @@ export class HierarchyChart extends Chart {
         this.layoutService.dispatchLayoutComplete({
             type: 'layout-complete',
             chart: { width: this.scene.width, height: this.scene.height },
-            series: { rect: fullSeriesRect, paddedRect: shrinkRect, visible: true },
+            series: { rect: fullSeriesRect, paddedRect: shrinkRect, hoverRect, visible: true },
             axes: [],
         });
 

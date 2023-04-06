@@ -840,6 +840,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return { shrinkRect: newShrinkRect };
     }
 
+    protected hoverRect?: BBox;
+
     // Should be available after the first layout.
     protected seriesRect?: BBox;
     getSeriesRect(): Readonly<BBox | undefined> {
@@ -911,7 +913,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.lastInteractionEvent = undefined;
     });
     protected handlePointer(event: InteractionEvent<'hover'>) {
-        const { lastPick } = this;
+        const { lastPick, hoverRect } = this;
         const { offsetX, offsetY } = event;
 
         const disablePointer = (highlightOnly = false) => {
@@ -921,8 +923,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
             }
         };
 
-        const hoverRectPadding = 20;
-        const hoverRect = this.seriesRect?.clone().grow(hoverRectPadding).grow(this.seriesAreaPadding);
         if (!hoverRect?.containsPoint(offsetX, offsetY)) {
             disablePointer();
             return;
