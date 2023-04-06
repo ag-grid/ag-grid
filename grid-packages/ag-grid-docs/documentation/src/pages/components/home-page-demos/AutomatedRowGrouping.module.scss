@@ -1,6 +1,7 @@
 @use "sass:map";
 @use '../../../design-system' as ds;
 
+$z-index-grid: 0;
 $z-index-mouse-mask: 10000; // NOTE: Above .ag-dnd-ghost z-index of 9999
 $z-index-debug-canvas: $z-index-mouse-mask + 10;
 $z-index-splash: $z-index-debug-canvas + 10;
@@ -10,6 +11,7 @@ $z-index-splash-contents: 10;
 :global(.automated-row-grouping-grid.ag-theme-alpine-dark) {
     background-color: #00162d;
     position: relative;
+    z-index: $z-index-grid;
 
     @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
         width: 200% !important;

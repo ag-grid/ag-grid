@@ -102,8 +102,7 @@ function AutomatedIntegratedCharts({ scriptDebuggerManager, useStaticData, runOn
                 {!gridIsReady && !useStaticData && <LogoMark isSpinning />}
             </div>
             <Splash
-                width="30%"
-                contentOffset="20%"
+                size="small"
                 hideOverlayClickTarget
                 onSplashHide={onSplashHide}
                 onSplashShow={onSplashShow}

@@ -16,6 +16,13 @@ $splash-transform: skew(-10deg) translateX(5%);
 .splash {
     --splash-width: 55%;
     --splash-content-offset: 25%;
+    --splash-open-panel-indicator-left: -96px;
+
+    &.small {
+        --splash-width: 32%;
+        --splash-content-offset: 20%;
+        --splash-open-panel-indicator-left: -75px;
+    }
 
     $splash-hidden-amount: 96%;
 
@@ -115,8 +122,9 @@ $splash-transform: skew(-10deg) translateX(5%);
     flex-direction: column;
     align-items: center;
     bottom: 32px;
-    left: -96px;
+    left: var(--splash-open-panel-indicator-left);
     font-size: var(--font-size-medium);
+    cursor: pointer;
     z-index: $z-index-splash-open-panel-indicator;
     opacity: 0;
     transition: opacity 0.33s ease-in-out;

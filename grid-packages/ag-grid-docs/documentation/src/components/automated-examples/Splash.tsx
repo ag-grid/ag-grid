@@ -3,9 +3,10 @@ import React, { FunctionComponent, ReactNode, useCallback, useEffect, useRef, us
 import { Icon } from '../Icon';
 import styles from './Splash.module.scss';
 
+type Size = 'small' | 'medium';
+
 interface Props {
-    width?: string;
-    contentOffset?: string;
+    size?: Size;
     hideOverlayClickTarget: boolean;
     onSplashHide: () => boolean;
     onSplashShow: () => void;
@@ -20,29 +21,8 @@ interface Props {
  */
 const EXAMPLE_HOVER_CLASSNAME = 'exampleHover';
 
-const useSplashWidth = ({ splashEl, width }) => {
-    useEffect(() => {
-        if (!width || !splashEl.current) {
-            return;
-        }
-
-        splashEl.current.style.setProperty('--splash-width', width);
-    }, [width, splashEl.current]);
-};
-
-const useSplashContentOffset = ({ splashEl, contentOffset }) => {
-    useEffect(() => {
-        if (!contentOffset || !splashEl.current) {
-            return;
-        }
-
-        splashEl.current.style.setProperty('--splash-content-offset', contentOffset);
-    }, [contentOffset, splashEl.current]);
-};
-
 export const Splash: FunctionComponent<Props> = ({
-    width,
-    contentOffset,
+    size = 'medium',
     hideOverlayClickTarget,
     onSplashHide,
     onSplashShow,
@@ -98,9 +78,6 @@ export const Splash: FunctionComponent<Props> = ({
         }
     }, [showSplash]);
 
-    useSplashWidth({ splashEl, width });
-    useSplashContentOffset({ splashEl, contentOffset });
-
     return (
         <div
             className={classnames({
@@ -108,6 +85,7 @@ export const Splash: FunctionComponent<Props> = ({
                 [styles.hide]: !showSplash,
                 [styles.hiding]: splashIsTransitioning,
                 [EXAMPLE_HOVER_CLASSNAME]: clickTargetHover,
+                [styles.small]: size === 'small',
             })}
             onClick={splashClickHandler}
             aria-hidden="true"
