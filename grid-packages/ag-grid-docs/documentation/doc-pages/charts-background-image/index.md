@@ -1,5 +1,6 @@
 ---
 title: "Background Image"
+enterprise: true
 ---
 
 This section describes how to add a background image to a chart.
