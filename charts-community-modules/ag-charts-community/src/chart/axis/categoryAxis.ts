@@ -43,7 +43,11 @@ export class CategoryAxis extends ChartAxis<BandScale<string | object>> {
     protected calculateDomain() {
         if (!this._paddingOverrideEnabled) {
             const { boundSeries } = this;
-            boundSeries.forEach((s) => s.setBandScalePadding?.(this.scale));
+            const paddings = boundSeries.map((s) => s.getBandScalePadding?.()).filter((p) => p != null);
+            if (paddings.length > 0) {
+                this.scale.paddingInner = Math.min(...paddings.map((p) => p!.inner));
+                this.scale.paddingOuter = Math.max(...paddings.map((p) => p!.outer));
+            }
         }
 
         return super.calculateDomain();

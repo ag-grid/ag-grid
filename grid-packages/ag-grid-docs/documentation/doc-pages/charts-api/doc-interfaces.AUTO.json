@@ -5233,10 +5233,10 @@
       }
     },
     "visible": { "type": { "returnType": "boolean", "optional": false } },
-    "setBandScalePadding": {
+    "getBandScalePadding": {
       "type": {
-        "arguments": { "scale": "any" },
-        "returnType": "void",
+        "arguments": {},
+        "returnType": "{ inner: number; outer: number }",
         "optional": true
       }
     }

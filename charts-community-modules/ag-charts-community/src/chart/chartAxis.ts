@@ -22,7 +22,7 @@ interface BoundSeries {
     isEnabled(): boolean;
     getKeys(direction: ChartAxisDirection): string[];
     visible: boolean;
-    setBandScalePadding?(scale: any): void;
+    getBandScalePadding?(): { inner: number; outer: number };
 }
 
 export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, number, any>, D = any> extends Axis<
