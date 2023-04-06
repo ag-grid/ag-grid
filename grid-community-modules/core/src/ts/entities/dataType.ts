@@ -1,3 +1,4 @@
+import { dateToFormattedString, parseDateTimeFromString } from "../utils/date";
 import { ValueFormatterParams, ValueParserParams } from "./colDef";
 
 export type ValueParserLiteParams<TData, TValue> = Omit<ValueParserParams<TData, TValue>, 'data' | 'node' | 'oldValue'>;
@@ -59,27 +60,7 @@ export type CoreDataTypeDefinition<TData = any> =
     | Omit<NumberDataTypeDefinition<TData>, 'extends'>
     | Omit<BooleanDataTypeDefinition<TData>, 'extends'>
     | Omit<DateDataTypeDefinition<TData>, 'extends'>
-    | Omit<DateStringDataTypeDefinition<TData>, 'extends'>
-;
-
-function padNumber(value: number): string {
-    const stringValue = String(value);
-    if (stringValue.length === 1) {
-        return `0${stringValue}`;
-    }
-    return stringValue;
-}
-
-function convertStringToDate(value: string | undefined): Date | undefined {
-    if (value == null) { return undefined; }
-    const dateParts = value.split('-');
-    if (dateParts.length < 3) { return undefined; }
-    return new Date(
-        Number(dateParts[0]),
-        Number(dateParts[1]) - 1,
-        Number(dateParts[2])
-    );
-}
+    | Omit<DateStringDataTypeDefinition<TData>, 'extends'>;
 
 export const DEFAULT_DATA_TYPES: { [key: string]: CoreDataTypeDefinition } = {
     number: {
@@ -100,18 +81,18 @@ export const DEFAULT_DATA_TYPES: { [key: string]: CoreDataTypeDefinition } = {
     },
     date: {
         baseDataType: 'date',
-        valueParser: (params: ValueParserLiteParams<any, Date>) => convertStringToDate(params.newValue),
+        valueParser: (params: ValueParserLiteParams<any, Date>) => parseDateTimeFromString(params.newValue) ?? undefined,
         valueFormatter: (params: ValueFormatterLiteParams<any, Date>) => {
             if (params.value == null) { return ''; }
             if (isNaN(params.value.getTime())) { return params.value.toString() }
-            return `${params.value.getFullYear()}-${padNumber(params.value.getMonth() + 1)}-${padNumber(params.value.getDate())}`
+            return dateToFormattedString(params.value);
         },
         columnTypes: 'agDateColumn',
     },
     dateString: {
         baseDataType: 'dateString',
-        matcher: (value: string) => !!value.match('[0-9]{4,4}-[0-9]{2,2}-[0-9]{2,2}'),
-        convertToDate: (value: string | undefined) => convertStringToDate(value),
+        matcher: (value: string) => !!value.match('\\d{4}-\\d{2}-\\d{2}'),
+        convertToDate: (value: string | undefined) => parseDateTimeFromString(value) ?? undefined,
         columnTypes: 'agDateStringColumn',
     }
 }
