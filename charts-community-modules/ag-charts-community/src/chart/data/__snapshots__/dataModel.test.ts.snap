@@ -66,6 +66,7 @@ Object {
       "safari": 3,
     },
   },
+  "time": Any<Number>,
   "type": "ungrouped",
 }
 `;
@@ -259,6 +260,7 @@ Object {
       "total": 0,
     },
   },
+  "time": Any<Number>,
   "type": "grouped",
 }
 `;
@@ -787,6 +789,7 @@ Object {
       100,
     ],
   },
+  "time": Any<Number>,
   "type": "grouped",
 }
 `;
@@ -1072,6 +1075,7 @@ Object {
       100,
     ],
   },
+  "time": Any<Number>,
   "type": "grouped",
 }
 `;
@@ -1400,6 +1404,7 @@ Object {
       6002,
     ],
   },
+  "time": Any<Number>,
   "type": "grouped",
 }
 `;
@@ -1694,6 +1699,7 @@ Object {
       "safari": 3,
     },
   },
+  "time": Any<Number>,
   "type": "ungrouped",
 }
 `;
@@ -2484,6 +2490,7 @@ Object {
       "petrol": 0,
     },
   },
+  "time": Any<Number>,
   "type": "ungrouped",
 }
 `;

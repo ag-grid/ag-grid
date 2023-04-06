@@ -18,7 +18,9 @@ describe('DataModel', () => {
                 ],
             });
 
-            expect(dataModel.processData(data)).toMatchSnapshot();
+            expect(dataModel.processData(data)).toMatchSnapshot({
+                time: expect.any(Number),
+            });
         });
 
         describe('property tests', () => {
@@ -87,7 +89,9 @@ describe('DataModel', () => {
                 groupByKeys: true,
             });
 
-            expect(dataModel.processData(data)).toMatchSnapshot();
+            expect(dataModel.processData(data)).toMatchSnapshot({
+                time: expect.any(Number),
+            });
         });
 
         describe('property tests', () => {
@@ -277,7 +281,9 @@ describe('DataModel', () => {
                 groupByKeys: true,
             });
 
-            expect(dataModel.processData(data)).toMatchSnapshot();
+            expect(dataModel.processData(data)).toMatchSnapshot({
+                time: expect.any(Number),
+            });
         });
 
         describe('property tests', () => {
@@ -380,7 +386,9 @@ describe('DataModel', () => {
                 normaliseTo: 100,
             });
 
-            expect(dataModel.processData(data)).toMatchSnapshot();
+            expect(dataModel.processData(data)).toMatchSnapshot({
+                time: expect.any(Number),
+            });
         });
 
         it('should generated the expected results for 100% stacked area example', () => {
@@ -412,7 +420,9 @@ describe('DataModel', () => {
             });
 
             const result = dataModel.processData(data);
-            expect(result).toMatchSnapshot();
+            expect(result).toMatchSnapshot({
+                time: expect.any(Number),
+            });
             expect(result.reduced?.[SUM_VALUE_EXTENT.property]).toEqual([0, 100]);
         });
 
@@ -493,7 +503,9 @@ describe('DataModel', () => {
                 }
             });
 
-            expect(dataModel.processData(data)).toMatchSnapshot();
+            expect(dataModel.processData(data)).toMatchSnapshot({
+                time: expect.any(Number),
+            });
         });
 
         describe('property tests', () => {
@@ -543,7 +555,9 @@ describe('DataModel', () => {
                 ],
             });
 
-            expect(dataModel.processData([])).toMatchSnapshot();
+            expect(dataModel.processData([])).toMatchSnapshot({
+                time: expect.any(Number),
+            });
         });
 
         describe('property tests', () => {
