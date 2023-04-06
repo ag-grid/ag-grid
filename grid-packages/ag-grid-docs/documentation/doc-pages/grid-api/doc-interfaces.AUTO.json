@@ -9883,7 +9883,7 @@
   },
   "DetailGridInfo": {
     "id": {
-      "description": "/** Id of the detail grid, the format is `detail_<ROW_ID>`,\n     * where ROW_ID is the `id` of the parent row.\n     */",
+      "description": "/** Id of the detail grid, the format is `detail_{ROW-ID}`,\n     * where `ROW-ID` is the `id` of the parent row.\n     */",
       "type": { "returnType": "string", "optional": false }
     },
     "api": {

@@ -5634,7 +5634,7 @@
     "meta": {},
     "type": { "id": "string", "api?": "GridApi", "columnApi?": "ColumnApi" },
     "docs": {
-      "id": "/** Id of the detail grid, the format is `detail_<ROW_ID>`,\n     * where ROW_ID is the `id` of the parent row.\n     */",
+      "id": "/** Id of the detail grid, the format is `detail_{ROW-ID}`,\n     * where `ROW-ID` is the `id` of the parent row.\n     */",
       "api?": "/** Grid api of the detail grid. */",
       "columnApi?": "/** Column api of the detail grid. */"
     }

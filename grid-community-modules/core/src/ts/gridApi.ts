@@ -115,8 +115,8 @@ import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./int
 
 export interface DetailGridInfo {
     /**
-     * Id of the detail grid, the format is `detail_<ROW_ID>`,
-     * where ROW_ID is the `id` of the parent row.
+     * Id of the detail grid, the format is `detail_{ROW-ID}`,
+     * where `ROW-ID` is the `id` of the parent row.
      */
     id: string;
     /** Grid api of the detail grid. */

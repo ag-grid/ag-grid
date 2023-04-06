@@ -77,7 +77,7 @@ const detailGridInfo = gridOptions.api.getDetailGridInfo('detail_someId');
 detailGridInfo.api.flashCells();
 </snippet>
 
-The grid generates IDs for detail grids by prefixing the parent row's ID with `detail_`. For example if the ID of the expanded Master Row is `"88"`, then the ID of the Detail Grid / row will be `"detail_88"`.
+The grid generates IDs for detail grids by prefixing the parent row's ID with `detail_{ROW-ID}`. For example if the ID of the expanded Master Row is `"88"`, then the ID of the Detail Grid / row will be `"detail_88"`.
 
 <api-documentation source='grid-api/api.json' section='masterDetail' names='["forEachDetailGridInfo"]'></api-documentation>
 
