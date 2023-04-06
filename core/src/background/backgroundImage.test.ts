@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
-import { AgChart, AgChartInstance, AgChartOptions, _ModuleSupport } from '../main';
+import { AgChart, AgChartInstance, _ModuleSupport } from '../main';
 import {
     waitForChartStability,
     IMAGE_SNAPSHOT_DEFAULTS,
