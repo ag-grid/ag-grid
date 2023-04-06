@@ -70,6 +70,16 @@ export class AnimationManager extends BaseManager<AnimationType, AnimationEvent<
         return controller;
     }
 
+    public tween(opts: Motion.TweenOptions) {
+        const id = `tween-${Object.keys(this.states).length}`;
+        const optsExtra = {
+            ...opts,
+            driver: this.createDriver(id),
+        };
+
+        return Motion.tween(optsExtra);
+    }
+
     private createDriver(id: AnimationId): Motion.Driver {
         return (update: (time: number) => void) => {
             return {
@@ -77,8 +87,9 @@ export class AnimationManager extends BaseManager<AnimationType, AnimationEvent<
                     this.updaters.push([id, update]);
                 },
                 stop: () => {
-                    this.updaters.filter(([uid]) => uid !== id);
+                    this.updaters = this.updaters.filter(([uid]) => uid !== id);
                 },
+                reset: () => {},
             };
         };
     }

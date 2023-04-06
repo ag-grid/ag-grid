@@ -29,11 +29,13 @@ export interface AnimationControls {
     play: () => AnimationControls;
     pause: () => AnimationControls;
     stop: () => AnimationControls;
+    reset: () => AnimationControls;
 }
 
 export interface DriverControls {
     start: () => void;
     stop: () => void;
+    reset: () => void;
 }
 
 export type Driver = (update: (time: number) => void) => DriverControls;
@@ -58,6 +60,9 @@ function requestAnimationFrameDriver(update: (time: number) => void) {
         stop: () => {
             if (requestId) cancelAnimationFrame(requestId);
         },
+        reset: () => {
+            lastTime = undefined;
+        },
     };
 }
 
@@ -80,10 +85,10 @@ export function animate<T = number>({
     let elapsed = 0;
     let iteration = 0;
     let isForward = true;
-    let isOverlapped = false;
+    let isComplete = false;
 
     const easing = ease({ from, to });
-    const controls: AnimationControls = { isPlaying: false, play, pause, stop };
+    const controls: AnimationControls = { isPlaying: false, play, pause, stop, reset };
     const driverControls = driver(update);
 
     function play(): AnimationControls {
@@ -105,6 +110,14 @@ export function animate<T = number>({
         return controls;
     }
 
+    function reset(): AnimationControls {
+        isComplete = false;
+        elapsed = 0;
+        iteration = 0;
+        driverControls.reset();
+        return controls;
+    }
+
     function repeat() {
         iteration++;
 
@@ -115,7 +128,7 @@ export function animate<T = number>({
             elapsed = elapsed % duration;
         }
 
-        isOverlapped = false;
+        isComplete = false;
         onRepeat?.();
     }
 
@@ -128,14 +141,14 @@ export function animate<T = number>({
         if (!isForward) delta = -delta;
         elapsed += delta;
 
-        if (!isOverlapped) {
-            state = easing(Math.max(0, elapsed / duration));
-            isOverlapped = isForward ? elapsed >= duration : elapsed <= 0;
+        if (!isComplete) {
+            state = easing(Math.min(1, Math.max(0, elapsed / duration)));
+            isComplete = isForward ? elapsed >= duration : elapsed <= 0;
         }
 
         onUpdate?.(state);
 
-        if (isOverlapped) {
+        if (isComplete) {
             if (iteration < repeatMax) {
                 repeat();
             } else {
@@ -145,6 +158,44 @@ export function animate<T = number>({
     }
 
     if (autoplay) play();
+
+    return controls;
+}
+
+export interface TweenOptions extends KeyframesOptions<number> {}
+
+export interface TweenControls {
+    start: (onUpdate?: (value: number) => void) => TweenControls;
+    stop: () => TweenControls;
+}
+
+export function tween(opts: TweenOptions): TweenControls {
+    let handleUpdate: Function | undefined;
+
+    const animateOpts: AnimationOptions<number> = {
+        ...opts,
+        repeat: 0,
+        autoplay: false,
+        onUpdate: (value: number) => {
+            handleUpdate?.(value);
+        },
+    };
+
+    const animationControls = animate(animateOpts);
+
+    const controls = {
+        start: (onUpdate?: (value: number) => void) => {
+            animationControls.stop();
+            animationControls.reset();
+            animationControls.play();
+            handleUpdate = onUpdate;
+            return controls;
+        },
+        stop: () => {
+            animationControls.stop();
+            return controls;
+        },
+    };
 
     return controls;
 }

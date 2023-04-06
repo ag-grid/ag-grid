@@ -13,7 +13,7 @@ export * as _Theme from './integrated-charts-theme';
 export * as _Scale from './sparklines-scale';
 export * as _Util from './sparklines-util';
 
-export * as _Motion from './motion';
+export * as _Motion from './motion/index';
 
 // Undocumented APIs used by Enterprise Modules.
 export * as _ModuleSupport from './module-support';
