@@ -1077,7 +1077,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
                 if (options.hideWhenNecessary) {
                     const { textLength, hasVerticalOverflow } = this.getLabelOverflow(label.text, box);
-                    const isTooShort = textLength < 2;
+                    const isTooShort = label.text.length > 2 && textLength < 2;
 
                     if (hasVerticalOverflow || isTooShort) {
                         label.hidden = true;
