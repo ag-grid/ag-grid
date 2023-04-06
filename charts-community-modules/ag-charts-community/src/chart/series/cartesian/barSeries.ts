@@ -3,7 +3,14 @@ import { Rect } from '../../../scene/shape/rect';
 import { Text } from '../../../scene/shape/text';
 import { BandScale } from '../../../scale/bandScale';
 import { DropShadow } from '../../../scene/dropShadow';
-import { SeriesNodeDataContext, SeriesTooltip, SeriesNodePickMode } from '../series';
+import {
+    SeriesNodeDataContext,
+    SeriesTooltip,
+    SeriesNodePickMode,
+    keyProperty,
+    valueProperty,
+    sumProperties,
+} from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { LegendDatum } from '../../legendDatum';
@@ -16,11 +23,11 @@ import {
 import { ChartAxis, flipChartAxisDirection } from '../../chartAxis';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
-import { extent, findMinMax } from '../../../util/array';
+import { extent } from '../../../util/array';
 import { areArrayItemsStrictlyEqual } from '../../../util/equal';
 import { Scale } from '../../../scale/scale';
 import { sanitizeHtml } from '../../../util/sanitize';
-import { checkDatum, isNumber } from '../../../util/value';
+import { isNumber } from '../../../util/value';
 import { ContinuousScale } from '../../../scale/continuousScale';
 import { Point } from '../../../scene/point';
 import {
@@ -50,7 +57,7 @@ import {
     FontWeight,
 } from '../../agChartOptions';
 import { LogAxis } from '../../axis/logAxis';
-import { Logger } from '../../../util/logger';
+import { DataModel, SMALLEST_KEY_INTERVAL, SUM_VALUE_EXTENT } from '../../data/dataModel';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
@@ -103,10 +110,6 @@ function is2dArray<E>(array: E[] | E[][]): array is E[][] {
 export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatum>, Rect> {
     static className = 'BarSeries';
     static type = 'bar' as const;
-
-    private xData: any[] = [];
-    private yData: number[][][] = [];
-    private yDomain: number[] = [];
 
     readonly label = new BarSeriesLabel();
 
@@ -162,7 +165,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     protected _xKey: string = '';
     set xKey(value: string) {
         this._xKey = value;
-        this.xData = [];
+        this.processedData = undefined;
     }
     get xKey(): string {
         return this._xKey;
@@ -320,183 +323,72 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         this.processYKeys();
         this.processYNames();
 
-        const { xKey, yKeys, seriesItemEnabled } = this;
-        const data = xKey && yKeys.length && this.data ? this.data : [];
+        const { xKey, seriesItemEnabled, normalizedTo, data = [] } = this;
 
-        const xAxis = this.getCategoryAxis();
-        const yAxis = this.getValueAxis();
+        const isContinuousX = this.getCategoryAxis()?.scale instanceof ContinuousScale;
+        const isContinuousY = this.getValueAxis()?.scale instanceof ContinuousScale;
 
-        if (!(xAxis && yAxis)) {
-            return;
-        }
+        const activeSeriesItems = [...seriesItemEnabled.entries()]
+            .filter(([, enabled]) => enabled)
+            .map(([yKey]) => yKey);
+        const activeStacks = this.yKeys
+            .map((stack) => stack.filter((key) => seriesItemEnabled.get(key)))
+            .filter((stack) => stack.length > 0);
+        const normaliseTo = normalizedTo && isFinite(normalizedTo) ? normalizedTo : undefined;
 
-        const setSmallestXInterval = (curr: number, prev: number) => {
-            if (this.smallestDataInterval === undefined) {
-                this.smallestDataInterval = { x: Infinity, y: Infinity };
-            }
-            const { x } = this.smallestDataInterval;
-
-            const interval = Math.abs(curr - prev);
-            if (interval > 0 && interval < x) {
-                this.smallestDataInterval.x = interval;
-            }
-        };
-
-        const isContinuousX = xAxis.scale instanceof ContinuousScale;
-        const isContinuousY = yAxis.scale instanceof ContinuousScale;
-        let keysFound = true; // only warn once
-        let prevX = Infinity;
-        this.xData = data.map((datum) => {
-            if (keysFound && !(xKey in datum)) {
-                keysFound = false;
-                Logger.warn(`the key '${xKey}' was not found in the data: `, datum);
-            }
-
-            const x = checkDatum(datum[xKey], isContinuousX);
-
-            if (isContinuousX) {
-                setSmallestXInterval(x, prevX);
-            }
-
-            prevX = x;
-
-            return x;
+        this.dataModel = new DataModel<any, any, true>({
+            props: [
+                keyProperty(xKey, isContinuousX),
+                ...activeSeriesItems.map((yKey) => valueProperty(yKey, isContinuousY)),
+                ...activeStacks.map((stack) => sumProperties(stack)),
+                ...(isContinuousX ? [SMALLEST_KEY_INTERVAL] : []),
+                SUM_VALUE_EXTENT,
+            ],
+            groupByKeys: true,
+            normaliseTo,
         });
 
-        this.yData = data.map((datum) =>
-            yKeys.map((stack) => {
-                return stack.map((yKey) => {
-                    if (keysFound && !(yKey in datum)) {
-                        keysFound = false;
-                        Logger.warn(`the key '${yKey}' was not found in the data: `, datum);
-                    }
+        this.processedData = this.dataModel.processData(data);
 
-                    const yDatum = checkDatum(datum[yKey], isContinuousY);
-
-                    if (!seriesItemEnabled.get(yKey) || yDatum === undefined) {
-                        return NaN;
-                    }
-
-                    return yDatum;
-                });
-            })
-        );
-
-        const xyValid = this.validateXYData(
-            this.xKey,
-            this.yKeys.join(', '),
-            data,
-            xAxis,
-            yAxis,
-            this.xData,
-            this.yData,
-            3
-        );
-        if (!xyValid) {
-            this.xData = [];
-            this.yData = [];
-            this.yDomain = [];
-            return;
-        }
-
-        // Contains min/max values for each stack in each group,
-        // where min is zero and max is a positive total of all values in the stack
-        // or min is a negative total of all values in the stack and max is zero.
-        const isLogAxis = yAxis instanceof LogAxis;
-        let yMinMax: {
-            min?: number;
-            max?: number;
-        }[][];
-
-        if (!isLogAxis) {
-            yMinMax = this.yData.map((group) => group.map((stack) => findMinMax(stack)));
-        } else {
-            yMinMax = this.yData.map((group) =>
-                group.map((stack) => {
-                    const stackExtent = extent(stack) ?? [];
-
-                    return {
-                        min: stackExtent[0],
-                        max: stackExtent[1],
-                    };
-                })
-            );
-        }
-
-        const { yData, normalizedTo } = this;
-
-        // Calculate the sum of the absolute values of all items in each stack in each group. Used for normalization of stacked bars.
-        const yAbsTotal = this.yData.map((group) =>
-            group.map((stack) =>
-                stack.reduce((acc, stack) => {
-                    acc += isNaN(stack) ? 0 : Math.abs(stack);
-                    return acc;
-                }, 0)
-            )
-        );
-
-        let { min: yMin, max: yMax } = this.findLargestMinMax(yMinMax);
-
-        if (yMin === Infinity && yMax === -Infinity) {
-            // There's no data in the domain.
-            this.yDomain = [];
-            return;
-        }
-
-        if (normalizedTo && isFinite(normalizedTo)) {
-            yMin = yMin < 0 ? -normalizedTo : isLogAxis ? 1 : 0;
-            yMax = yMax > 0 ? normalizedTo : isLogAxis ? -1 : 0;
-            yData.forEach((group, i) => {
-                group.forEach((stack, j) => {
-                    stack.forEach((y, k) => {
-                        stack[k] = (y / yAbsTotal[i][j]) * normalizedTo;
-                    });
-                });
-            });
-        }
-
-        this.yDomain = this.fixNumericExtent([yMin, yMax], this.yAxis);
-    }
-
-    findLargestMinMax(groups: { min?: number; max?: number }[][]): { min: number; max: number } {
-        let tallestStackMin = Infinity;
-        let tallestStackMax = -Infinity;
-
-        for (const group of groups) {
-            for (const stack of group) {
-                const { min = Infinity, max = -Infinity } = stack;
-                if (min < tallestStackMin) {
-                    tallestStackMin = min;
-                }
-                if (max > tallestStackMax) {
-                    tallestStackMax = max;
-                }
-            }
-        }
-
-        return { min: tallestStackMin, max: tallestStackMax };
+        this.smallestDataInterval = {
+            x: this.processedData.reduced?.[SMALLEST_KEY_INTERVAL.property] ?? Infinity,
+            y: Infinity,
+        };
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
-        const { flipXY } = this;
-        if (this.flipXY) {
+        const { flipXY, processedData } = this;
+        if (!processedData) return [];
+
+        if (flipXY) {
             direction = flipChartAxisDirection(direction);
         }
+
+        const {
+            defs: {
+                keys: [keyDef],
+            },
+            domain: {
+                keys: [keys],
+                values: [yExtent],
+            },
+            reduced: { [SMALLEST_KEY_INTERVAL.property]: smallestX, [SUM_VALUE_EXTENT.property]: ySumExtent } = {},
+        } = processedData;
+
         if (direction === ChartAxisDirection.X) {
-            if (!(this.getCategoryAxis()?.scale instanceof ContinuousScale)) {
-                return this.xData;
+            if (keyDef.valueType === 'category') {
+                return keys;
             }
-            // The last node will be clipped if the scale is not a band scale
-            // Extend the domain by the smallest data interval so that the last band is not clipped
-            const xDomain = extent(this.xData) || [NaN, NaN];
+
+            const keysExtent = extent(keys) || [NaN, NaN];
             if (flipXY) {
-                xDomain[0] = xDomain[0] - (this.smallestDataInterval?.x ?? 0);
-            } else {
-                xDomain[1] = xDomain[1] + (this.smallestDataInterval?.x ?? 0);
+                return [keysExtent[0] + -smallestX, keysExtent[1]];
             }
-            return xDomain;
+            return [keysExtent[0], keysExtent[1] + smallestX];
+        } else if (this.getValueAxis() instanceof LogAxis) {
+            return this.fixNumericExtent(yExtent as any);
         } else {
-            return this.yDomain;
+            return this.fixNumericExtent(ySumExtent);
         }
     }
 
@@ -564,11 +456,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             strokes,
             strokeWidth,
             seriesItemEnabled,
-            xData,
-            yData,
             label,
             flipXY,
             id: seriesId,
+            processedData,
         } = this;
 
         const {
@@ -616,27 +507,30 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                   groupScale.rawBandwidth;
         const contexts: SeriesNodeDataContext<BarNodeDatum>[][] = [];
 
-        xData.forEach((group, groupIndex) => {
-            const seriesDatum = data[groupIndex];
-            const x = xScale.convert(group);
+        processedData?.data.forEach(({ keys, datum: seriesDatum, values }, dataIndex) => {
+            const x = xScale.convert(keys[0]);
 
-            const groupYs = yData[groupIndex]; // y-data for groups of stacks
-            for (let stackIndex = 0; stackIndex < groupYs.length; stackIndex++) {
-                const stackYs = groupYs[stackIndex]; // y-data for a stack within a group
-                contexts[stackIndex] = contexts[stackIndex] ?? [];
+            for (let stackIndex = 0; stackIndex < (yKeys?.length ?? 0); stackIndex++) {
+                const stackYKeys = yKeys?.[stackIndex] ?? []; // y-data for a stack within a group
+                contexts[stackIndex] ??= [];
 
                 let prevMinY = 0;
                 let prevMaxY = 0;
 
-                for (let levelIndex = 0; levelIndex < stackYs.length; levelIndex++) {
-                    const currY = +stackYs[levelIndex];
-                    const yKey = yKeys[stackIndex][levelIndex];
-                    const barX = x + groupScale.convert(String(stackIndex));
-                    contexts[stackIndex][levelIndex] = contexts[stackIndex][levelIndex] ?? {
+                for (let levelIndex = 0; levelIndex < stackYKeys.length; levelIndex++) {
+                    const yKey = stackYKeys[levelIndex];
+                    const yIndex = processedData?.indices.values[yKey] ?? -1;
+                    contexts[stackIndex][levelIndex] ??= {
                         itemId: yKey,
                         nodeData: [],
                         labelData: [],
                     };
+
+                    if (yIndex === undefined) continue;
+
+                    const yValue = values[0][yIndex];
+                    const currY = +yValue;
+                    const barX = x + groupScale.convert(String(stackIndex));
 
                     // Bars outside of visible range are not rendered, so we create node data
                     // only for the visible subset of user data.
@@ -650,7 +544,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     const prevY = currY < 0 ? prevMinY : prevMaxY;
                     const y = yScale.convert(prevY + currY, { strict: false });
                     const bottomY = yScale.convert(prevY, { strict: false });
-                    const yValue = seriesDatum[yKey]; // unprocessed y-value
 
                     let labelText: string;
                     if (labelFormatter) {
@@ -704,10 +597,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                         y: rect.y + rect.height / 2,
                     };
                     const nodeData: BarNodeDatum = {
-                        index: groupIndex,
+                        index: dataIndex,
                         series: this,
                         itemId: yKey,
-                        datum: seriesDatum,
+                        datum: seriesDatum[0],
                         cumulativeValue: prevY + currY,
                         yValue,
                         yKey,
@@ -880,12 +773,12 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }
 
     getTooltipHtml(nodeDatum: BarNodeDatum): string {
-        const { xKey, yKeys, yData } = this;
+        const { xKey, yKeys, processedData } = this;
         const xAxis = this.getCategoryAxis();
         const yAxis = this.getValueAxis();
         const { yKey } = nodeDatum;
 
-        if (!yData.length || !xKey || !yKey || !xAxis || !yAxis) {
+        if (!processedData || !xKey || !yKey || !xAxis || !yAxis) {
             return '';
         }
 
