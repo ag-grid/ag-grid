@@ -9,6 +9,8 @@ $z-index-debug-panel: $z-index-splash + 10;
 $z-index-splash-contents: 10;
 
 :global(.automated-integrated-charts-grid.ag-theme-alpine-dark) {
+    --logo-mark-left: 33%;
+
     background-color: #00162d;
     position: relative;
     z-index: $z-index-grid;
@@ -31,7 +33,7 @@ $z-index-splash-contents: 10;
         width: 64px * 2;
         height: 48px * 2;
         top: 51%;
-        left: 50%;
+        left: var(--logo-mark-left);
         transform: translate(-60px, -48px) scale(1.5);
         z-index: 1;
     }
