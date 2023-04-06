@@ -3513,7 +3513,7 @@
   },
   "DatumPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
-    "type": "{ type: 'key' | 'value'; valueType: DatumPropertyType; property: K; validation?: (datum: any) => boolean; }"
+    "type": "{ type: 'key' | 'value'; valueType: DatumPropertyType; property: K; invalidValue?: any; missingValue?: any; validation?: (datum: any) => boolean; }"
   },
   "InternalDatumPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
@@ -3784,10 +3784,6 @@
   "CumulativeValue": {
     "meta": { "isTypeAlias": true },
     "type": "{ left: number; right: number; }"
-  },
-  "ProcessedXDatum": {
-    "meta": { "isTypeAlias": true },
-    "type": "{ xDatum: any; seriesDatum: any; }"
   },
   "AreaSeriesTag": {
     "meta": { "isEnum": true },
