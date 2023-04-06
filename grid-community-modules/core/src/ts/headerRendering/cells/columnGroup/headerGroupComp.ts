@@ -149,11 +149,13 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
     private setupLabel(): void {
         // no renderer, default text render
-        const displayName = this.params.displayName;
+        const { displayName, columnGroup } = this.params;
 
         if (exists(displayName)) {
             const displayNameSanitised = escapeString(displayName);
             this.getRefElement('agLabel').innerHTML = displayNameSanitised!;
         }
+
+        this.addOrRemoveCssClass('ag-sticky-label', !!columnGroup.getColGroupDef()?.stickyLabel);
     }
 }

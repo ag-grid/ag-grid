@@ -43,7 +43,7 @@ export class HeaderRowContainerComp extends Component {
 
             // only gets called for center section
             setCenterWidth: width => this.eCenterContainer.style.width = width,
-            setContainerTransform: transform => this.eCenterContainer.style.transform = transform,
+            setViewportScrollLeft: left => this.getGui().scrollLeft = left,
 
             // only gets called for pinned sections
             setPinnedContainerWidth: width => {

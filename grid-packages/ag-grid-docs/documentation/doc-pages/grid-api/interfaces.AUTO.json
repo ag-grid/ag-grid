@@ -397,6 +397,7 @@
       "groupId?": "string",
       "openByDefault?": "boolean",
       "marryChildren?": "boolean",
+      "stickyLabel?": "boolean",
       "headerGroupComponent?": "any",
       "headerGroupComponentFramework?": "any",
       "headerGroupComponentParams?": "any",
@@ -419,6 +420,7 @@
       "groupId?": "/** The unique ID to give the column. This is optional. If missing, a unique ID will be generated. This ID is used to identify the column group in the column API. */",
       "openByDefault?": "/** Set to `true` if this group should be opened by default. Default: `false` */",
       "marryChildren?": "/** Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed. Default: `false` */",
+      "stickyLabel?": "/** If `true` the label of the Column Group will scroll alongside the grid to always remain visible. Default: `false`\n     */",
       "headerGroupComponent?": "/** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.\n    * See [Header Group Component](https://www.ag-grid.com/javascript-data-grid/component-header/#header-group-components/) for framework specific implementation details.\n    */",
       "headerGroupComponentFramework?": "/** @deprecated As of v27, use `headerGroupComponent` for framework components too. */",
       "headerGroupComponentParams?": "/** The params used to configure the `headerGroupComponent`. */",
@@ -6075,7 +6077,7 @@
     "meta": {},
     "type": {
       "setCenterWidth(width: string)": "void",
-      "setContainerTransform(transform: string)": "void",
+      "setViewportScrollLeft(left: number)": "void",
       "setPinnedContainerWidth(width: string)": "void",
       "setDisplayed(displayed: boolean)": "void",
       "setCtrls(ctrls: HeaderRowCtrl[])": "void"

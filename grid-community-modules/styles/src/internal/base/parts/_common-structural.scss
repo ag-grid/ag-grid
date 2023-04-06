@@ -394,7 +394,11 @@
 
     .ag-header-row {
         position: absolute;
-        overflow: hidden; // so when floating filters are height 0px, the contents don't spill out
+    }
+
+    .ag-header-row:not(.ag-header-row-column-group) {
+        // so when floating filters are height 0px, the contents don't spill out
+        overflow: hidden;
     }
 
     .ag-header.ag-header-allow-overflow .ag-header-row {
@@ -425,6 +429,11 @@
         align-items: center;
         text-overflow: ellipsis;
         align-self: stretch;
+    }
+
+    .ag-header-group-cell-label.ag-sticky-label {
+        position: sticky;
+        flex: none;
     }
 
     .ag-header-cell-text {

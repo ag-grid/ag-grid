@@ -36,9 +36,9 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
                     eCenterContainer.current.style.width = width;
                 }
             },
-            setContainerTransform: transform => {
-                if (eCenterContainer.current) {
-                    eCenterContainer.current.style.transform = transform;
+            setViewportScrollLeft: left => {
+                if (eGui.current) {
+                    eGui.current.scrollLeft = left;
                 }
             },
 

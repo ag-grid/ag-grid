@@ -37,6 +37,10 @@
         }
     }
 
+    .ag-header-group-cell-label.ag-sticky-label {
+        @include ag.unthemed-rtl(( left: var(--ag-cell-horizontal-padding) ));
+    }
+
     .ag-header-cell.ag-header-span-height::after,
     .ag-header-cell.ag-header-span-height .ag-header-cell-resize::after {
         height: calc(100% - calc(var(--ag-grid-size) * 4));

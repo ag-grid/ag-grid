@@ -642,6 +642,10 @@
       "description": "/** Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "stickyLabel": {
+      "description": "/** If `true` the label of the Column Group will scroll alongside the grid to always remain visible. Default: `false`\n     */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "headerGroupComponent": {
       "description": "/** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.\n    * See [Header Group Component](https://www.ag-grid.com/javascript-data-grid/component-header/#header-group-components/) for framework specific implementation details.\n    */",
       "type": { "returnType": "any", "optional": true }
@@ -10730,9 +10734,9 @@
         "optional": false
       }
     },
-    "setContainerTransform": {
+    "setViewportScrollLeft": {
       "type": {
-        "arguments": { "transform": "string" },
+        "arguments": { "left": "number" },
         "returnType": "void",
         "optional": false
       }
