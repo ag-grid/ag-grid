@@ -119,8 +119,8 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
             return;
         }
 
-        // const newZoom = { x: { min: 0, max: 1 }, y: { min: 0, max: 1 } };
-        // this.updateZoomWithConstraints(newZoom);
+        const newZoom = { x: { min: 0, max: 1 }, y: { min: 0, max: 1 } };
+        this.updateZoom(newZoom);
     }
 
     private onDrag(event: _ModuleSupport.InteractionEvent<'drag'>) {

@@ -55,7 +55,6 @@ export class ZoomSelector {
     reset(): void {
         this.coords = undefined;
         this.rect.visible = false;
-        this.rect.clipPath = undefined;
     }
 
     private updateCoords(
