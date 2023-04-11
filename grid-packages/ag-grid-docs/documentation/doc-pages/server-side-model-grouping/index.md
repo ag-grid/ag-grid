@@ -88,7 +88,7 @@ Below shows `isServerSideGroupOpenByDefault()` and `getRoute` in action. Note th
 
 ## Sticky Groups
 
-To enable sticky groups, set the groupRowsSticky property to true. This behaviour applies to all row group levels.
+To enable sticky groups, set the `groupRowsSticky` property to true. This behaviour applies to all row group levels.
 
 <grid-example title='Sticky Groups' name='sticky-groups' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 

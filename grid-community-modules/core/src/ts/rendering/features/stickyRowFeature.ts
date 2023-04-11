@@ -17,7 +17,7 @@ export class StickyRowFeature extends BeanStub {
     private stickyRowCtrls: RowCtrl[] = [];
     private gridBodyCtrl: GridBodyCtrl;
     private containerHeight = 0;
-    private rowModelType: RowModelType;
+    private isClientSide: boolean;
 
     constructor(
         private readonly createRowCon: (rowNode: RowNode, animate: boolean, afterScroll: boolean) => RowCtrl,
@@ -28,7 +28,7 @@ export class StickyRowFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.rowModelType = this.rowModel.getType();
+        this.isClientSide = this.rowModel.getType() === 'clientSide';
 
         this.ctrlsService.whenReady(params => {
             this.gridBodyCtrl = params.gridBodyCtrl;
@@ -55,17 +55,17 @@ export class StickyRowFeature extends BeanStub {
 
 
             let lastChildBottom: number;
-            if (this.rowModelType === 'serverSide') {
-                const storeBounds = stickyRow.childStore?.getStoreBounds();
-                lastChildBottom = (storeBounds?.heightPx ?? 0) + (storeBounds?.topPx ?? 0);
-            } else if (this.rowModelType === 'clientSide') {
+            if (this.isClientSide) {
                 let lastAncester = stickyRow;
                 while (lastAncester.expanded) {
                     lastAncester = last(lastAncester.childrenAfterSort!);
                 }
                 lastChildBottom = lastAncester.rowTop! + lastAncester.rowHeight!;
-            } else {
-                throw new Error('AG Grid: Unsupported row model type.');
+            }
+            // if the rowModel is `serverSide` as only `clientSide` and `serverSide` create this feature.
+            else {
+                const storeBounds = stickyRow.childStore?.getStoreBounds();
+                lastChildBottom = (storeBounds?.heightPx ?? 0) + (storeBounds?.topPx ?? 0);
             }
 
             const stickRowBottom = firstPixel + height + stickyRow.rowHeight!;
