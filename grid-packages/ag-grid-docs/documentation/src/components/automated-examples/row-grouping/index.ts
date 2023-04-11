@@ -17,7 +17,6 @@ import { createRowGroupingScriptRunner } from './createRowGroupingScriptRunner';
 import { fixtureData } from './rowDataFixture';
 
 const WAIT_TILL_MOUSE_ANIMATION_STARTS = 2000;
-const VISIBLE_GRID_THRESHOLD_BEFORE_PLAYING_SCRIPT = 0.2;
 
 let dataWorker;
 let scriptRunner: ScriptRunner;
@@ -26,7 +25,6 @@ let restartScriptTimeout;
 interface CreateAutomatedRowGroupingParams {
     gridClassname: string;
     mouseMaskClassname: string;
-    scriptIsEnabled?: () => boolean;
     onInactive?: () => void;
     onGridReady?: () => void;
     suppressUpdates?: boolean;
@@ -129,7 +127,6 @@ function stopWorkerMessages() {
 export function createAutomatedRowGrouping({
     gridClassname,
     mouseMaskClassname,
-    scriptIsEnabled = () => true,
     onInactive,
     onGridReady,
     suppressUpdates,
@@ -215,35 +212,8 @@ export function createAutomatedRowGrouping({
                     pauseScriptRunner();
                 });
             }
-
-            // Only play script if the grid is visible
-            const gridObserver = new window.IntersectionObserver(
-                ([entry]) => {
-                    if (entry.isIntersecting) {
-                        if (scriptRunner.currentState() !== 'playing' && scriptIsEnabled()) {
-                            scriptRunner.play();
-                        }
-                        return;
-                    }
-                    clearTimeout(restartScriptTimeout);
-                    scriptRunner.inactive();
-                },
-                {
-                    root: null,
-                    threshold: VISIBLE_GRID_THRESHOLD_BEFORE_PLAYING_SCRIPT,
-                }
-            );
-            gridObserver.observe(gridDiv);
         };
         new globalThis.agGrid.Grid(gridDiv, gridOptions);
-    };
-
-    const start = () => {
-        scriptRunner?.play();
-    };
-
-    const stop = () => {
-        scriptRunner?.stop();
     };
 
     const loadGrid = function () {
@@ -257,8 +227,10 @@ export function createAutomatedRowGrouping({
     loadGrid();
 
     return {
-        start,
-        stop,
+        start: () => scriptRunner?.play(),
+        stop: () => scriptRunner?.stop(),
+        inactive: () => scriptRunner?.inactive(),
+        currentState: () => scriptRunner?.currentState(),
     };
 }
 

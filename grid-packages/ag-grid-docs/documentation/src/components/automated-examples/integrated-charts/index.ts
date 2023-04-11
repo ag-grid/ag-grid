@@ -17,7 +17,6 @@ import { ScriptRunner } from '../lib/scriptRunner';
 import { createIntegratedChartsScriptRunner } from './createIntegratedChartsScriptRunner';
 
 const WAIT_TILL_MOUSE_ANIMATION_STARTS = 2000;
-const VISIBLE_GRID_THRESHOLD_BEFORE_PLAYING_SCRIPT = 0.2;
 
 let scriptRunner: ScriptRunner;
 let restartScriptTimeout;
@@ -25,7 +24,6 @@ let restartScriptTimeout;
 interface CreateAutomatedIntegratedChartsParams {
     gridClassname: string;
     mouseMaskClassname: string;
-    scriptIsEnabled?: () => boolean;
     onInactive?: () => void;
     onGridReady?: () => void;
     suppressUpdates?: boolean;
@@ -110,7 +108,6 @@ const gridOptions: GridOptions = {
 export function createAutomatedIntegratedCharts({
     gridClassname,
     mouseMaskClassname,
-    scriptIsEnabled = () => true,
     onInactive,
     onGridReady,
     suppressUpdates,
@@ -186,35 +183,8 @@ export function createAutomatedIntegratedCharts({
                     pauseScriptRunner();
                 });
             }
-
-            // Only play script if the grid is visible
-            const gridObserver = new window.IntersectionObserver(
-                ([entry]) => {
-                    if (entry.isIntersecting) {
-                        if (scriptRunner.currentState() !== 'playing' && scriptIsEnabled()) {
-                            scriptRunner.play();
-                        }
-                        return;
-                    }
-                    clearTimeout(restartScriptTimeout);
-                    scriptRunner.inactive();
-                },
-                {
-                    root: null,
-                    threshold: VISIBLE_GRID_THRESHOLD_BEFORE_PLAYING_SCRIPT,
-                }
-            );
-            gridObserver.observe(gridDiv);
         };
         new globalThis.agGrid.Grid(gridDiv, gridOptions);
-    };
-
-    const start = () => {
-        scriptRunner?.play();
-    };
-
-    const stop = () => {
-        scriptRunner?.stop();
     };
 
     const loadGrid = function () {
@@ -228,8 +198,10 @@ export function createAutomatedIntegratedCharts({
     loadGrid();
 
     return {
-        start,
-        stop,
+        start: () => scriptRunner?.play(),
+        stop: () => scriptRunner?.stop(),
+        inactive: () => scriptRunner?.inactive(),
+        currentState: () => scriptRunner?.currentState(),
     };
 }
 

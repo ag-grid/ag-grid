@@ -10,6 +10,7 @@ import { Splash } from '../../../components/automated-examples/Splash';
 import { Icon } from '../../../components/Icon';
 import LogoMark from '../../../components/LogoMark';
 import { hostPrefix, isProductionBuild, localPrefix } from '../../../utils/consts';
+import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
 import styles from './AutomatedIntegratedCharts.module.scss';
 
 const helmet = [];
@@ -49,6 +50,7 @@ const mouseStyles = `
 
 function AutomatedIntegratedCharts({ scriptDebuggerManager, useStaticData, runOnce }) {
     const gridClassname = 'automated-integrated-charts-grid';
+    const gridRef = useRef(null);
     const automatedScript = useRef(null);
     // NOTE: Needs to be a ref instead of useState, as it is passed into a plain JavaScript context
     const scriptEnabled = useRef(true);
@@ -68,15 +70,26 @@ function AutomatedIntegratedCharts({ scriptDebuggerManager, useStaticData, runOn
         automatedScript.current.start();
     }, [scriptEnabled.current, automatedScript.current]);
 
-    const scriptIsEnabled = () => {
-        return scriptEnabled.current;
-    };
+    useIntersectionObserver({
+        elementRef: gridRef,
+        onChange: ({ isIntersecting }) => {
+            if (!automatedScript.current) {
+                return;
+            }
+            if (isIntersecting) {
+                if (automatedScript.current.currentState() !== 'playing' && scriptEnabled.current) {
+                    automatedScript.current.start();
+                }
+                return;
+            }
+            automatedScript.current.inactive();
+        },
+    });
 
     useEffect(() => {
         let params = {
             gridClassname,
             mouseMaskClassname: styles.mouseMask,
-            scriptIsEnabled,
             scriptDebuggerManager,
             suppressUpdates: useStaticData,
             useStaticData,
@@ -95,7 +108,11 @@ function AutomatedIntegratedCharts({ scriptDebuggerManager, useStaticData, runOn
                 {helmet.map((entry) => entry)}
                 <style>{mouseStyles}</style>
             </Helmet>
-            <div style={{ height: '100%', width: '100%' }} className="automated-integrated-charts-grid ag-theme-alpine">
+            <div
+                ref={gridRef}
+                style={{ height: '100%', width: '100%' }}
+                className="automated-integrated-charts-grid ag-theme-alpine"
+            >
                 {!gridIsReady && !useStaticData && <LogoMark isSpinning />}
             </div>
             <Splash
