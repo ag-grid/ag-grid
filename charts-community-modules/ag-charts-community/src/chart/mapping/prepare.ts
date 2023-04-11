@@ -17,6 +17,7 @@ import { applySeriesTransform } from './transforms';
 import { getChartTheme } from './themes';
 import { processSeriesOptions, SeriesOptions } from './prepareSeries';
 import { Logger } from '../../util/logger';
+import { CHART_TYPES } from '../chartTypes';
 
 type AxesOptionsTypes = NonNullable<AgCartesianChartOptions['axes']>[number];
 
@@ -38,18 +39,7 @@ export function isAgCartesianChartOptions(input: AgChartOptions): input is AgCar
         return true;
     }
 
-    switch (specifiedType) {
-        case 'area':
-        case 'bar':
-        case 'column':
-        case 'histogram':
-        case 'line':
-        case 'scatter':
-            return true;
-
-        default:
-            return false;
-    }
+    return CHART_TYPES.isCartesian(specifiedType);
 }
 
 export function isAgHierarchyChartOptions(input: AgChartOptions): input is AgHierarchyChartOptions {
@@ -63,7 +53,7 @@ export function isAgHierarchyChartOptions(input: AgChartOptions): input is AgHie
         return true;
     }
 
-    return specifiedType === 'treemap';
+    return CHART_TYPES.isHierarchy(specifiedType);
 }
 
 export function isAgPolarChartOptions(input: AgChartOptions): input is AgPolarChartOptions {
@@ -77,15 +67,14 @@ export function isAgPolarChartOptions(input: AgChartOptions): input is AgPolarCh
         return true;
     }
 
-    return specifiedType === 'pie';
+    return CHART_TYPES.isPolar(specifiedType);
 }
 
-const SERIES_OPTION_TYPES = ['line', 'bar', 'column', 'histogram', 'scatter', 'area', 'pie', 'treemap'];
 function isSeriesOptionType(input?: string): input is NonNullable<SeriesOptionsTypes['type']> {
     if (input == null) {
         return false;
     }
-    return SERIES_OPTION_TYPES.indexOf(input) >= 0;
+    return CHART_TYPES.has(input);
 }
 
 function countArrayElements<T extends any[] | any[][]>(input: T): number {
@@ -120,8 +109,12 @@ export const noDataCloneMergeOptions: JsonMergeOptions = {
     avoidDeepClone: ['data'],
 };
 
-export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallbackOptions: T[]): T {
-    let options: T = jsonMerge([...fallbackOptions, newOptions], noDataCloneMergeOptions);
+export function prepareOptions<T extends AgChartOptions>(
+    newOptions: T,
+    fallbackOptions?: T,
+    seriesDefaults?: Record<string, any>
+): T {
+    let options: T = jsonMerge([fallbackOptions, newOptions], noDataCloneMergeOptions)!;
     sanityCheckOptions(options);
 
     // Determine type and ensure it's explicit in the options config.
@@ -129,10 +122,8 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallb
     const type = optionsType(options);
 
     const checkSeriesType = (type?: string) => {
-        if (type != null && !isSeriesOptionType(type)) {
-            throw new Error(
-                `AG Charts - unknown series type: ${type}; expected one of: ${SERIES_OPTION_TYPES.join(', ')}`
-            );
+        if (type != null && !(isSeriesOptionType(type) || seriesDefaults?.[type])) {
+            throw new Error(`AG Charts - unknown series type: ${type}; expected one of: ${CHART_TYPES.seriesTypes}`);
         }
     };
     checkSeriesType(type);
@@ -153,7 +144,9 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallb
     }
 
     let defaultOverrides = {};
-    if (type === 'bar') {
+    if (seriesDefaults && Object.prototype.hasOwnProperty.call(seriesDefaults, type)) {
+        defaultOverrides = seriesDefaults[type];
+    } else if (type === 'bar') {
         defaultOverrides = DEFAULT_BAR_CHART_OVERRIDES;
     } else if (type === 'scatter' || type === 'histogram') {
         defaultOverrides = DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES;
@@ -184,11 +177,11 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, ...fallb
     ).map((s) => prepareSeries(context, s)) as any[];
 
     if (isAgCartesianChartOptions(mergedOptions)) {
-        mergedOptions.axes = mergedOptions.axes?.map((a) => {
+        mergedOptions.axes = mergedOptions.axes?.map((a: any) => {
             const type = a.type ?? 'number';
             const axis = { ...a, type };
             const axesTheme = jsonMerge([axesThemes[type], axesThemes[type][a.position || 'unknown'] || {}]);
-            return prepareAxis(axis as any, axesTheme);
+            return prepareAxis(axis, axesTheme);
         });
     }
 
@@ -292,10 +285,6 @@ function calculateSeriesPalette<T extends SeriesOptionsTypes>(context: Preparati
                 fill: takeColours(context, fills, 1)[0],
             };
             break;
-        case 'treemap':
-            break;
-        default:
-            throw new Error('AG Charts - unknown series type: ' + input.type);
     }
     context.colourIndex += colourCount;
 

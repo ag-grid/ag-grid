@@ -15,6 +15,7 @@ import {
     AgChartInteractionRange,
 } from '../agChartOptions';
 import { DEFAULT_TOOLTIP_CLASS } from '../tooltip/tooltip';
+import { CHART_TYPES } from '../chartTypes';
 
 const palette: AgChartThemePalette = {
     fills: ['#f3622d', '#fba71b', '#57b757', '#41a9c9', '#4258c9', '#9a42c8', '#c84164', '#888888'],
@@ -30,6 +31,11 @@ type ChartThemeDefaults = {
     [key in keyof AgPolarSeriesTheme]?: AgPolarThemeOptions;
 } & { [key in keyof AgHierarchySeriesTheme]?: AgHierarchyThemeOptions };
 
+export interface ChartThemeParams {
+    seriesDefaults: any;
+    defaultFontFamily: string;
+}
+
 const BOLD: FontWeight = 'bold';
 const INSIDE: AgBarSeriesLabelOptions['placement'] = 'inside';
 const RIGHT: AgChartLegendPosition = 'right';
@@ -42,7 +48,7 @@ export class ChartTheme {
 
     readonly config: any;
 
-    private static fontFamily = 'Verdana, sans-serif';
+    static fontFamily = 'Verdana, sans-serif';
 
     private static getAxisDefaults() {
         return {
@@ -106,7 +112,7 @@ export class ChartTheme {
         };
     }
 
-    private static getSeriesDefaults() {
+    static getSeriesDefaults() {
         return {
             tooltip: {
                 enabled: true,
@@ -283,6 +289,8 @@ export class ChartTheme {
             listeners: {},
         };
     }
+
+    static seriesThemeOverrides: Record<string, (params: ChartThemeParams) => any> = {};
 
     private static readonly cartesianDefaults: AgCartesianThemeOptions = {
         ...ChartTheme.getChartDefaults(),
@@ -626,7 +634,7 @@ export class ChartTheme {
         },
     };
 
-    static readonly defaults: ChartThemeDefaults = {
+    private static readonly defaults: ChartThemeDefaults = {
         cartesian: ChartTheme.cartesianDefaults,
         groupedCategory: ChartTheme.cartesianDefaults,
         polar: ChartTheme.polarDefaults,
@@ -644,22 +652,24 @@ export class ChartTheme {
 
             const applyOverrides = <K extends keyof typeof defaults>(
                 type: K,
-                seriesTypes: (keyof typeof defaults)[],
+                seriesTypes: string[],
                 overrideOpts: AgChartThemeOverrides[K]
             ) => {
                 if (overrideOpts) {
                     defaults[type] = deepMerge(defaults[type], overrideOpts);
-                    seriesTypes.forEach((seriesType) => {
+                    seriesTypes.forEach((s) => {
+                        const seriesType = s as keyof AgChartThemeOverrides;
                         defaults[seriesType] = deepMerge(defaults[seriesType], overrideOpts);
                     });
                 }
             };
             applyOverrides('common', Object.keys(defaults) as any[], common);
-            applyOverrides('cartesian', ChartTheme.cartesianSeriesTypes, cartesian);
-            applyOverrides('polar', ChartTheme.polarSeriesTypes, polar);
-            applyOverrides('hierarchy', ChartTheme.hierarchySeriesTypes, hierarchy);
+            applyOverrides('cartesian', CHART_TYPES.cartesianTypes, cartesian);
+            applyOverrides('polar', CHART_TYPES.polarTypes, polar);
+            applyOverrides('hierarchy', CHART_TYPES.hierarchyTypes, hierarchy);
 
-            ChartTheme.seriesTypes.forEach((seriesType) => {
+            CHART_TYPES.seriesTypes.forEach((s) => {
+                const seriesType = s as keyof AgChartThemeOverrides;
                 const chartConfig = overrides[seriesType];
                 if (chartConfig) {
                     if (chartConfig.series) {
@@ -674,25 +684,11 @@ export class ChartTheme {
         this.config = Object.freeze(defaults);
     }
 
-    private static cartesianSeriesTypes: (keyof AgChartThemeOverrides)[] = [
-        'line',
-        'area',
-        'bar',
-        'column',
-        'scatter',
-        'histogram',
-    ];
-    private static polarSeriesTypes: (keyof AgChartThemeOverrides)[] = ['pie'];
-    private static hierarchySeriesTypes: (keyof AgChartThemeOverrides)[] = ['treemap'];
-    private static seriesTypes: (keyof AgChartThemeOverrides)[] = ChartTheme.cartesianSeriesTypes
-        .concat(ChartTheme.polarSeriesTypes)
-        .concat(ChartTheme.hierarchySeriesTypes);
-
     private createChartConfigPerChartType(config: ChartThemeDefaults) {
         const typeToAliases = {
-            cartesian: ChartTheme.cartesianSeriesTypes,
-            polar: ChartTheme.polarSeriesTypes,
-            hierarchy: ChartTheme.hierarchySeriesTypes,
+            cartesian: CHART_TYPES.cartesianTypes,
+            polar: CHART_TYPES.polarTypes,
+            hierarchy: CHART_TYPES.hierarchyTypes,
             groupedCategory: [],
         };
         Object.entries(typeToAliases).forEach(([type, aliases]) => {
@@ -716,7 +712,27 @@ export class ChartTheme {
      * ```
      */
     protected getDefaults(): ChartThemeDefaults {
-        return deepMerge({}, ChartTheme.defaults);
+        const defaults = deepMerge({}, ChartTheme.defaults);
+        const getOverridesByType = (seriesTypes: string[]) => {
+            const result = {} as any;
+            result.series = seriesTypes.reduce((obj, seriesType) => {
+                if (Object.prototype.hasOwnProperty.call(ChartTheme.seriesThemeOverrides, seriesType)) {
+                    obj[seriesType] = ChartTheme.seriesThemeOverrides[seriesType]({
+                        seriesDefaults: ChartTheme.getSeriesDefaults(),
+                        defaultFontFamily: ChartTheme.fontFamily,
+                    });
+                }
+                return obj;
+            }, {} as Record<string, any>);
+            return result;
+        };
+        const extension = {
+            cartesian: getOverridesByType(CHART_TYPES.cartesianTypes),
+            groupedCategory: getOverridesByType(CHART_TYPES.cartesianTypes),
+            polar: getOverridesByType(CHART_TYPES.polarTypes),
+            hierarchy: getOverridesByType(CHART_TYPES.hierarchyTypes),
+        };
+        return deepMerge(defaults, extension);
     }
 
     protected mergeWithParentDefaults(

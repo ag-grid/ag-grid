@@ -245,6 +245,10 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     @Validate(INTERACTION_RANGE)
     nodeClickRange: AgChartInteractionRange = 'exact';
 
+    getBandScalePadding() {
+        return { inner: 1, outer: 0 };
+    }
+
     _declarationOrder: number = -1;
 
     constructor({

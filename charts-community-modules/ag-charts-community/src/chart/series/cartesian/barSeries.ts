@@ -944,4 +944,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     protected isLabelEnabled() {
         return this.label.enabled;
     }
+
+    getBandScalePadding() {
+        return { inner: 0.2, outer: 0.3 };
+    }
 }

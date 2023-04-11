@@ -4853,14 +4853,14 @@
       "type": { "returnType": "boolean", "optional": true }
     }
   },
-  "AgCartesianSeriesOptions": {},
+  "AgCartesianSeriesOptions": { "meta": { "typeParams": ["TAddon = never"] } },
   "AgPolarSeriesOptions": {},
   "AgHierarchySeriesOptions": {},
   "AgCartesianChartOptions": {
     "type": {
       "description": "/** If specified overrides the default series type. */",
       "type": {
-        "returnType": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram'",
+        "returnType": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram' | TAddonType",
         "optional": true
       }
     },
@@ -4870,12 +4870,16 @@
     },
     "series": {
       "description": "/** Series configurations. */",
-      "type": { "returnType": "AgCartesianSeriesOptions[]", "optional": true }
+      "type": {
+        "returnType": "AgCartesianSeriesOptions<TAddonSeries>[]",
+        "optional": true
+      }
     },
     "navigator": {
       "description": "/** Configuration for the chart navigator. */",
       "type": { "returnType": "AgNavigatorOptions", "optional": true }
     },
+    "meta": { "typeParams": ["TAddonType = never", "TAddonSeries = never"] },
     "data": {
       "description": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "type": { "returnType": "any[]", "optional": true }
@@ -5098,7 +5102,9 @@
       "type": { "returnType": "AgChartOverlaysOptions", "optional": true }
     }
   },
-  "AgChartOptions": {},
+  "AgChartOptions": {
+    "meta": { "typeParams": ["TAddonType = never", "TAddonSeries = never"] }
+  },
   "AgChartInstance": {
     "getOptions": {
       "description": "/** Get the `AgChartOptions` representing the current chart configuration. */",
@@ -5224,9 +5230,17 @@
         "optional": false
       }
     },
-    "visible": { "type": { "returnType": "boolean", "optional": false } }
+    "visible": { "type": { "returnType": "boolean", "optional": false } },
+    "getBandScalePadding": {
+      "type": {
+        "arguments": {},
+        "returnType": "{ inner: number; outer: number }",
+        "optional": true
+      }
+    }
   },
   "ChartAxisDirection": {},
+  "ChartType": {},
   "ChartUpdateType": {},
   "NodeData": {},
   "CrossLineType": {},
@@ -5849,6 +5863,17 @@
     }
   },
   "ChartThemeDefaults": {},
+  "ChartThemeParams": {
+    "seriesDefaults": { "type": { "returnType": "any", "optional": false } },
+    "defaultFontFamily": {
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "DarkThemeParams": {
+    "seriesLabelDefaults": {
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
   "EventTarget": {
     "classList": { "type": { "returnType": "DOMTokenList", "optional": false } }
   },
@@ -6158,6 +6183,27 @@
       }
     }
   },
+  "SeriesFactory": {},
+  "SeriesContext": {
+    "seriesFactory": {
+      "type": {
+        "returnType": "{\n        add(factory: SeriesFactory): void;\n        delete(): void;\n    }",
+        "optional": false
+      }
+    },
+    "defaults": {
+      "type": {
+        "returnType": "{\n        add(defaultOptions: any): void;\n        delete(): void;\n    }",
+        "optional": false
+      }
+    },
+    "themes": {
+      "type": {
+        "returnType": "{\n        chartTheme: {\n            add(fn: (params: ChartThemeParams) => any): void;\n            delete(): void;\n        };\n        darkTheme: {\n            add(fn: (params: DarkThemeParams) => any): void;\n            delete(): void;\n        };\n    }",
+        "optional": false
+      }
+    }
+  },
   "ModuleInstance": {
     "update": {
       "type": { "arguments": {}, "returnType": "void", "optional": false }
@@ -6208,6 +6254,27 @@
     "initialiseModule": {
       "type": {
         "arguments": { "ctx": "ModuleContextWithParent<AxisContext>" },
+        "returnType": "ModuleInstanceMeta<M>",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "optionsKey": { "type": { "returnType": "string", "optional": false } },
+    "packageType": {
+      "type": { "returnType": "'community' | 'enterprise'", "optional": false }
+    },
+    "chartTypes": {
+      "type": {
+        "returnType": "('cartesian' | 'polar' | 'hierarchy')[]",
+        "optional": false
+      }
+    }
+  },
+  "SeriesModule": {
+    "type": { "type": { "returnType": "'series'", "optional": false } },
+    "initialiseModule": {
+      "type": {
+        "arguments": { "ctx": "SeriesContext" },
         "returnType": "ModuleInstanceMeta<M>",
         "optional": false
       }

@@ -3159,8 +3159,8 @@
     }
   },
   "AgCartesianSeriesOptions": {
-    "meta": { "isTypeAlias": true },
-    "type": "AgLineSeriesOptions | AgScatterSeriesOptions | AgAreaSeriesOptions | AgBarSeriesOptions | AgHistogramSeriesOptions"
+    "meta": { "isTypeAlias": true, "typeParams": ["TAddon = never"] },
+    "type": "AgLineSeriesOptions | AgScatterSeriesOptions | AgAreaSeriesOptions | AgBarSeriesOptions | AgHistogramSeriesOptions | TAddon"
   },
   "AgPolarSeriesOptions": {
     "meta": { "isTypeAlias": true },
@@ -3171,11 +3171,11 @@
     "type": "AgTreemapSeriesOptions"
   },
   "AgCartesianChartOptions": {
-    "meta": {},
+    "meta": { "typeParams": ["TAddonType = never", "TAddonSeries = never"] },
     "type": {
-      "type?": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram'",
+      "type?": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram' | TAddonType",
       "axes?": "AgCartesianAxisOptions[]",
-      "series?": "AgCartesianSeriesOptions[]",
+      "series?": "AgCartesianSeriesOptions<TAddonSeries>[]",
       "navigator?": "AgNavigatorOptions",
       "data?": "any[]",
       "container?": "HTMLElement | null",
@@ -3310,8 +3310,11 @@
     }
   },
   "AgChartOptions": {
-    "meta": { "isTypeAlias": true },
-    "type": "AgCartesianChartOptions | AgPolarChartOptions | AgHierarchyChartOptions"
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["TAddonType = never", "TAddonSeries = never"]
+    },
+    "type": "AgCartesianChartOptions<TAddonType, TAddonSeries> | AgPolarChartOptions | AgHierarchyChartOptions"
   },
   "AgChartInstance": {
     "meta": {},
@@ -3408,13 +3411,18 @@
       "getDomain(direction: ChartAxisDirection)": "any[]",
       "isEnabled()": "boolean",
       "getKeys(direction: ChartAxisDirection)": "string[]",
-      "visible": "boolean"
+      "visible": "boolean",
+      "getBandScalePadding?()": "{ inner: number; outer: number; }"
     }
   },
   "ChartAxisDirection": {
     "meta": { "isEnum": true },
     "type": ["X = 'x'", "Y = 'y'"],
     "docs": [null, null]
+  },
+  "ChartType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'cartesian' | 'polar' | 'hierarchy'"
   },
   "ChartUpdateType": {
     "meta": { "isEnum": true },
@@ -3718,7 +3726,7 @@
   },
   "ThemeMap": {
     "meta": { "isTypeAlias": true },
-    "type": "{[key in AgChartThemeName | 'undefined' | 'null']?: ChartTheme}"
+    "type": "{[key in AgChartThemeName | 'undefined' | 'null']?: () => ChartTheme}"
   },
   "Transforms": {
     "meta": {
@@ -4078,6 +4086,11 @@
     "meta": { "isTypeAlias": true },
     "type": "{ cartesian: AgCartesianThemeOptions; groupedCategory: AgCartesianThemeOptions; polar: AgPolarThemeOptions; hierarchy: AgHierarchyThemeOptions; } & { [key in keyof AgCartesianSeriesTheme]?: AgCartesianThemeOptions; } & { [key in keyof AgPolarSeriesTheme]?: AgPolarThemeOptions; } & { [key in keyof AgHierarchySeriesTheme]?: AgHierarchyThemeOptions; }"
   },
+  "ChartThemeParams": {
+    "meta": {},
+    "type": { "seriesDefaults": "any", "defaultFontFamily": "string" }
+  },
+  "DarkThemeParams": { "meta": {}, "type": { "seriesLabelDefaults": "any" } },
   "EventTarget": { "meta": {}, "type": { "classList": "DOMTokenList" } },
   "TooltipMeta": {
     "meta": {},
@@ -4367,6 +4380,18 @@
       "scaleInvert(position: number)": "any"
     }
   },
+  "SeriesFactory": {
+    "meta": { "isTypeAlias": true },
+    "type": "() => Series<any>"
+  },
+  "SeriesContext": {
+    "meta": {},
+    "type": {
+      "seriesFactory": "{ add(factory: SeriesFactory): void; delete(): void; }",
+      "defaults": "{ add(defaultOptions: any): void; delete(): void; }",
+      "themes": "{ chartTheme: { add(fn: (params: ChartThemeParams) => any): void; delete(): void; }; darkTheme: { add(fn: (params: DarkThemeParams) => any): void; delete(): void; }; }"
+    }
+  },
   "ModuleInstance": {
     "meta": {},
     "type": { "update()": "void", "destroy()": "void" }
@@ -4403,12 +4428,22 @@
       "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
     }
   },
+  "SeriesModule": {
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "type": {
+      "type": "'series'",
+      "initialiseModule(ctx: SeriesContext)": "ModuleInstanceMeta<M>",
+      "optionsKey": "string",
+      "packageType": "'community' | 'enterprise'",
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
+    }
+  },
   "Module": {
     "meta": {
       "isTypeAlias": true,
       "typeParams": ["M extends ModuleInstance = ModuleInstance"]
     },
-    "type": "RootModule<M> | AxisModule<M>"
+    "type": "RootModule<M> | AxisModule<M> | SeriesModule<M>"
   },
   "FormatterOptions": {
     "meta": {},

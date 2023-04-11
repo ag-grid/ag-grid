@@ -1787,24 +1787,25 @@ export interface AgTreemapSeriesFormat {
     readonly gradient?: boolean;
 }
 
-export type AgCartesianSeriesOptions =
+export type AgCartesianSeriesOptions<TAddon = never> =
     | AgLineSeriesOptions
     | AgScatterSeriesOptions
     | AgAreaSeriesOptions
     | AgBarSeriesOptions
-    | AgHistogramSeriesOptions;
+    | AgHistogramSeriesOptions
+    | TAddon;
 
 export type AgPolarSeriesOptions = AgPieSeriesOptions;
 
 export type AgHierarchySeriesOptions = AgTreemapSeriesOptions;
 
-export interface AgCartesianChartOptions extends AgBaseChartOptions {
+export interface AgCartesianChartOptions<TAddonType = never, TAddonSeries = never> extends AgBaseChartOptions {
     /** If specified overrides the default series type. */
-    type?: 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram';
+    type?: 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram' | TAddonType;
     /** Axis configurations. */
     axes?: AgCartesianAxisOptions[];
     /** Series configurations. */
-    series?: AgCartesianSeriesOptions[];
+    series?: AgCartesianSeriesOptions<TAddonSeries>[];
     /** Configuration for the chart navigator. */
     navigator?: AgNavigatorOptions;
 }
@@ -1824,7 +1825,10 @@ export interface AgHierarchyChartOptions extends AgBaseChartOptions {
     series?: AgHierarchySeriesOptions[];
 }
 
-export type AgChartOptions = AgCartesianChartOptions | AgPolarChartOptions | AgHierarchyChartOptions;
+export type AgChartOptions<TAddonType = never, TAddonSeries = never> =
+    | AgCartesianChartOptions<TAddonType, TAddonSeries>
+    | AgPolarChartOptions
+    | AgHierarchyChartOptions;
 
 export interface AgChartInstance {
     /** Get the `AgChartOptions` representing the current chart configuration. */
