@@ -3,7 +3,7 @@ import { BeanStub } from "../../context/beanStub";
 import { RowCtrl } from "../row/rowCtrl";
 import { RowCtrlMap, RowRenderer } from "../rowRenderer";
 import { Autowired, PostConstruct } from "../../context/context";
-import { IRowModel } from "../../interfaces/iRowModel";
+import { IRowModel, RowModelType } from "../../interfaces/iRowModel";
 import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
 import { CtrlsService } from "../../ctrlsService";
 import { last } from "../../utils/array";
@@ -17,6 +17,7 @@ export class StickyRowFeature extends BeanStub {
     private stickyRowCtrls: RowCtrl[] = [];
     private gridBodyCtrl: GridBodyCtrl;
     private containerHeight = 0;
+    private rowModelType: RowModelType;
 
     constructor(
         private readonly createRowCon: (rowNode: RowNode, animate: boolean, afterScroll: boolean) => RowCtrl,
@@ -27,6 +28,8 @@ export class StickyRowFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
+        this.rowModelType = this.rowModel.getType();
+
         this.ctrlsService.whenReady(params => {
             this.gridBodyCtrl = params.gridBodyCtrl;
         });
@@ -52,10 +55,10 @@ export class StickyRowFeature extends BeanStub {
 
 
             let lastChildBottom: number;
-            if (this.rowModel.getType() === 'clientSide') {
+            if (this.rowModelType === 'serverSide') {
                 const storeBounds = stickyRow.childStore?.getStoreBounds();
                 lastChildBottom = (storeBounds?.heightPx ?? 0) + (storeBounds?.topPx ?? 0);
-            } else if (this.rowModel.getType() === 'serverSide') {
+            } else if (this.rowModelType === 'clientSide') {
                 let lastAncester = stickyRow;
                 while (lastAncester.expanded) {
                     lastAncester = last(lastAncester.childrenAfterSort!);

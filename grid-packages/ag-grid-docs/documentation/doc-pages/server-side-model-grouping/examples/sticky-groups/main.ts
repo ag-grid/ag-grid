@@ -24,7 +24,8 @@ const gridOptions: GridOptions<IOlympicData> = {
   isServerSideGroupOpenByDefault: isServerSideGroupOpenByDefault,
   suppressAggFuncInHeader: true,
   animateRows: true,
-  getRowId: getRowId
+  getRowId: getRowId,
+  groupRowsSticky: true,
 }
 
 function getRowId(params: GetRowIdParams) {
@@ -46,15 +47,6 @@ function isServerSideGroupOpenByDefault(params: IsServerSideGroupOpenByDefaultPa
   ]
 
   return routesToOpenByDefault.indexOf(routeAsString) >= 0
-}
-
-function onBtRouteOfSelected() {
-  var selectedNodes = gridOptions.api!.getSelectedNodes()
-  selectedNodes.forEach(function (rowNode, index) {
-    var route = rowNode.getRoute()
-    var routeString = route ? route.join(',') : undefined
-    console.log('#' + index + ', route = [' + routeString + ']')
-  })
 }
 
 function getServerSideDatasource(server: any): IServerSideDatasource {
