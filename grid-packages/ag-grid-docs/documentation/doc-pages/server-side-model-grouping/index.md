@@ -169,6 +169,16 @@ Then the columns are set up so that country uses a `valueGetter` that uses the f
 
 <grid-example title='Complex Objects' name='complex-objects' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
+## Filtering
+
+By default the grid will attempt to only refresh the groups which are directly impacted by the change in filters. Be aware, this can mean your grid may have empty group rows. This is because the grid will not refresh the groups above the groups it deems impacted by the filter. This behaviour can be disabled, instead favouring purging the entire grid by enabling the grid property `serverSideRefreshAllLevels`.
+
+In the example below, note the following:
+- Filtering by `Gold`, `Silver` or `Bronze` fully purges the grid, this is because they have aggregations applied.
+- Applying a filter to the `Year` column does not purge the entire grid, and instead only refreshes the `Year` group rows.
+
+<grid-example title='Filtering' name='filtering' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
+
 ## Next Up
 
 Continue to the next section to learn about [SSRM Pivoting](/server-side-model-pivoting/).
