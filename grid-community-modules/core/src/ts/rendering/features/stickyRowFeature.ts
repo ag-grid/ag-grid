@@ -54,10 +54,18 @@ export class StickyRowFeature extends BeanStub {
             stickyRows.push(stickyRow);
 
             let lastChildBottom: number;
+
             if (this.isClientSide) {
                 let lastAncestor = stickyRow;
                 while (lastAncestor.expanded) {
-                    lastAncestor = lastAncestor.master ? lastAncestor.detailNode : last(lastAncestor.childrenAfterSort!);
+                    if (lastAncestor.master) {
+                        lastAncestor = lastAncestor.detailNode;
+                    } else if (lastAncestor.childrenAfterSort) {
+                        // Tree Data will have `childrenAfterSort` without any nodes, but
+                        // the current node will still be marked as expansible.
+                        if (lastAncestor.childrenAfterSort.length === 0) { break; }
+                        lastAncestor = last(lastAncestor.childrenAfterSort);
+                    }
                 }
                 lastChildBottom = lastAncestor.rowTop! + lastAncestor.rowHeight!;
             }

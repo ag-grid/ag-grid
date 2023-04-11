@@ -143,9 +143,7 @@ export class RowRenderer extends BeanStub {
             const rowModelType = this.rowModel.getType();
             if (rowModelType != 'clientSide' && rowModelType != 'serverSide') {
                 doOnce(() => console.warn('AG Grid: The feature Sticky Row Groups only works with the Client Side or Server Side Row Model'), 'rowRenderer.stickyWorksWithCsrmOnly');
-            } else if (this.gridOptionsService.isTreeData()) {
-                doOnce(() => console.warn('AG Grid: The feature Sticky Row Groups does not work with Tree Data.'), 'rowRenderer.stickyDoesNotWorkWithTreeData');
-            }  else {
+            } else {
                 this.stickyRowFeature = this.createManagedBean(new StickyRowFeature(
                     this.createRowCon.bind(this),
                     this.destroyRowCtrls.bind(this)
