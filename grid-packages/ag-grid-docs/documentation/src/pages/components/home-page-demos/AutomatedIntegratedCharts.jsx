@@ -95,10 +95,7 @@ function AutomatedIntegratedCharts({ scriptDebuggerManager, useStaticData, runOn
                 {helmet.map((entry) => entry)}
                 <style>{mouseStyles}</style>
             </Helmet>
-            <div
-                style={{ height: '100%', width: '100%' }}
-                className="automated-integrated-charts-grid ag-theme-alpine-dark"
-            >
+            <div style={{ height: '100%', width: '100%' }} className="automated-integrated-charts-grid ag-theme-alpine">
                 {!gridIsReady && !useStaticData && <LogoMark isSpinning />}
             </div>
             <Splash

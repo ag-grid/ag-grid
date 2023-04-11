@@ -8,7 +8,7 @@ $z-index-splash: $z-index-debug-canvas + 10;
 $z-index-debug-panel: $z-index-splash + 10;
 $z-index-splash-contents: 10;
 
-:global(.automated-integrated-charts-grid.ag-theme-alpine-dark) {
+:global(.automated-integrated-charts-grid.ag-theme-alpine) {
     --logo-mark-left: 33%;
 
     background-color: #00162d;
@@ -22,7 +22,7 @@ $z-index-splash-contents: 10;
         margin-bottom: calc(500px / -2 + ds.$size-2);
         transform-origin: top left;
         transform: scale(0.5);
-        border-radius: 8px;
+        border-radius: calc(var(--border-radius) * 2);
         overflow: hidden;
         pointer-events: none;
     }
@@ -63,6 +63,23 @@ $z-index-splash-contents: 10;
 
         &:focus {
             box-shadow: none;
+        }
+    }
+
+    :global(.ag-root-wrapper) {
+        border-radius: var(--border-radius);
+
+        @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
+            border-radius: calc(var(--border-radius) * 2);
+        }
+    }
+
+    // Set chart side menu expand/collapse button overrides for .ag-styles specificity
+    :global(.ag-chart-menu-close) {
+        color: var(--ag-foreground-color);
+
+        &:hover {
+            color: var(--ag-alpine-active-color);
         }
     }
 
@@ -258,6 +275,12 @@ $z-index-splash-contents: 10;
         position: absolute;
         top: 6px;
         left: 4px;
+    }
+
+    // Override inline styles for 'dark-mode' automated cursor
+    :global(.highlight),
+    :global(.animate-click) {
+        fill: var(--azure-blue) !important;
     }
 
     :global(.highlight) {
