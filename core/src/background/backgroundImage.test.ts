@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
-import { AgChart, AgChartInstance, AgChartOptions, _ModuleSupport } from '../main';
+import { AgChart, AgChartInstance, _ModuleSupport } from '../main';
 import {
     waitForChartStability,
     IMAGE_SNAPSHOT_DEFAULTS,
@@ -174,7 +174,7 @@ describe('backgroundImage', () => {
         };
 
         it('Image in the center', async () => {
-            const options: AgChartOptions = {
+            const options = {
                 title: { text: 'Background image in the center' },
                 background: {
                     image: {

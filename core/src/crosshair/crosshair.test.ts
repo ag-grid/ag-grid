@@ -62,7 +62,7 @@ const CROSSHAIR_OPTIONS = {
     snap: false,
 };
 
-const BASE_OPTIONS: AgChartOptions = {
+const BASE_OPTIONS: AgCartesianChartOptions = {
     theme: {
         palette: {
             strokes: ['#9A60B4', '#91CC75', '#EE6666'],
