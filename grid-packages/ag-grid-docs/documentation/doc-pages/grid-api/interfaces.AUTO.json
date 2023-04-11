@@ -7637,18 +7637,18 @@
   "ExcelCell": {
     "meta": {},
     "type": {
-      "ref?": "string",
-      "styleId?": "string",
       "data?": "ExcelData",
-      "mergeAcross?": "number",
-      "collapsibleRanges?": "number[][]"
+      "ref?": "string",
+      "collapsibleRanges?": "number[][]",
+      "styleId?": "string | string[]",
+      "mergeAcross?": "number"
     },
     "docs": {
-      "ref?": "/** Cell reference. */",
-      "styleId?": "/** The ExcelStyle id to be associated with the cell. */",
       "data?": "/** The data that will be added to the cell. */",
-      "mergeAcross?": "/** The number of cells to span across (1 means span 2 columns).\n     * Default: `0`\n     */",
-      "collapsibleRanges?": "/** Collapsible ranges. */"
+      "ref?": "/** Cell reference. */",
+      "collapsibleRanges?": "/** Collapsible ranges. */",
+      "styleId?": "/** The ExcelStyle id to be associated with the cell. */",
+      "mergeAcross?": "/** The number of cells to span across (1 means span 2 columns).\n     * Default: `0`\n     */"
     }
   },
   "ExcelImagePosition": {

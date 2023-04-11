@@ -13367,25 +13367,25 @@
     }
   },
   "ExcelCell": {
-    "ref": {
-      "description": "/** Cell reference. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "styleId": {
-      "description": "/** The ExcelStyle id to be associated with the cell. */",
-      "type": { "returnType": "string", "optional": true }
-    },
     "data": {
       "description": "/** The data that will be added to the cell. */",
       "type": { "returnType": "ExcelData", "optional": true }
     },
-    "mergeAcross": {
-      "description": "/** The number of cells to span across (1 means span 2 columns).\n     * Default: `0`\n     */",
-      "type": { "returnType": "number", "optional": true }
+    "ref": {
+      "description": "/** Cell reference. */",
+      "type": { "returnType": "string", "optional": true }
     },
     "collapsibleRanges": {
       "description": "/** Collapsible ranges. */",
       "type": { "returnType": "number[][]", "optional": true }
+    },
+    "styleId": {
+      "description": "/** The ExcelStyle id to be associated with the cell. */",
+      "type": { "returnType": "string | string[]", "optional": true }
+    },
+    "mergeAcross": {
+      "description": "/** The number of cells to span across (1 means span 2 columns).\n     * Default: `0`\n     */",
+      "type": { "returnType": "number", "optional": true }
     }
   },
   "ExcelImagePosition": {
