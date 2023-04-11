@@ -43,6 +43,7 @@ import { RowNodeEventThrottle } from "../entities/rowNodeEventThrottle";
 import { GridOptionsService } from "../gridOptionsService";
 import { LocaleService } from "../localeService";
 import { Environment } from "../environment";
+import { ValueParserService } from "../valueService/valueParserService";
 
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
@@ -96,6 +97,7 @@ export class Beans {
     @Autowired('valueCache') public valueCache: ValueCache;
     @Autowired('rowNodeEventThrottle') public rowNodeEventThrottle: RowNodeEventThrottle;
     @Autowired('localeService') public localeService: LocaleService;
+    @Autowired('ValueParserService') public ValueParserService: ValueParserService;
 
     public doingMasterDetail: boolean;
 

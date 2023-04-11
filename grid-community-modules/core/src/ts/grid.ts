@@ -97,6 +97,7 @@ import { GridOptionsValidator } from "./gridOptionsValidator";
 import { FakeVScrollComp } from "./gridBodyComp/fakeVScrollComp";
 import { DataTypeService } from "./columns/dataTypeService";
 import { AgInputDateField } from "./widgets/agInputDateField";
+import { ValueParserService } from "./valueService/valueParserService";
 
 export interface GridParams {
     // used by Web Components
@@ -331,7 +332,7 @@ export class GridCoreCreator {
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
             UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,
             RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter, CtrlsService,
-            PinnedWidthService, RowNodeEventThrottle, CtrlsFactory, DataTypeService
+            PinnedWidthService, RowNodeEventThrottle, CtrlsFactory, DataTypeService, ValueParserService
         ];
 
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => module.beans ? module.beans : []);
