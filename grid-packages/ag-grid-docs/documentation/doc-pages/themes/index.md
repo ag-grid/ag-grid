@@ -22,8 +22,9 @@ To use a theme, add the theme class name to the `div` element that contains your
 <div id="myGrid" class="ag-theme-alpine"></div>
 ```
 
-[[warning]]
+<warning>
 | The grid must always have a theme class set on its container, whether this is a provided theme or your own.
+</warning>
 
 ## Loading CSS files
 
@@ -32,19 +33,20 @@ In order for the above code to work, the correct stylesheets must be loaded in t
 - **`ag-grid.css`** - structural styles containing CSS rules that are essential to the functioning of the grid and must be loaded first.
 - **`ag-theme-{theme-name}.css`** - theme styles that add design look and feel on top of the structural styles.
 
-[[note]]
+<note>
 | The correct files to load are located in `ag-grid-community/styles` or `@ag-grid-community/styles` if you're using [modules](/modules/).
 |
 | This path has changed in v28, and the old files are still there as part of the [Legacy Styles](/global-style-upgrading-to-v28/) but will be removed in v29.
 |
 | Double-check that you are importing files from the new paths. If you have `/src/` or `/dist/` in your path then you're using the old paths.
+</note>
 
 There are various ways to load these stylesheets, as described in the sections below:
 
-[[only-javascript]]
-| ### Pre-built Bundles
-|
-| Some pre-built bundles, whether [downloaded from our website](/download/) or included in the `ag-grid-community` [NPM package](/npm/), already embed the structural styles and all provided themes. If you are using one of these files, you do not need to load separately CSS.
+<framework-specific-section frameworks="javascript">
+|### Pre-built Bundles
+|Some pre-built bundles, whether [downloaded from our website](/download/) or included in the `ag-grid-community` [NPM package](/npm/), already embed the structural styles and all provided themes. If you are using one of these files, you do not need to load separately CSS.
+</framework-specific-section>
 
 ### JavaScript Bundlers
 
@@ -72,16 +74,17 @@ You can load the structural styles and theme from a free CDN by adding this code
 
 ```html
 <link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/ag-grid-community@@AG_GRID_VERSION@/styles/ag-grid.css" />
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/ag-grid-community@@AG_GRID_VERSION@/styles/ag-grid.css" />
 
 <link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/ag-grid-community@@AG_GRID_VERSION@/styles/ag-theme-alpine.css" />
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/ag-grid-community@@AG_GRID_VERSION@/styles/ag-theme-alpine.css" />
 ```
 
-[[note]]
+<note>
 | Change the theme name in the URL to the one that you're using, and ensure that the version number in the URL matches the JS version you're using. This is useful for testing and prototyping but not recommended for production as your app will be unavailable if the jsdelivr servers are down.
+</note>
 
 ### Loading the Roboto font for Material theme
 

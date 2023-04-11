@@ -14,15 +14,16 @@ const languages = {
  * framework.
  */
 export const Snippet = props => {
+    const transformCode = props.transform === undefined ? true : props.transform === "true";
     const snippetToTransform = props.children.toString();
 
     // snippets with spaces need to be prefixed with '|' as markdown doesn't allow spaces
     const formattedSnippet = snippetToTransform.replace(/^\|/gm, '').trim();
 
     // create FW specific snippet
-    const snippet = transform(formattedSnippet, props.framework, extractOptions(props));
+    const snippet = transformCode ? transform(formattedSnippet, props.framework, extractOptions(props)) : formattedSnippet;
 
-    return <Code code={snippet} language={languages[props.framework]} />;
+    return <Code code={snippet} language={props.language ? props.language : languages[props.framework]} />;
 };
 
 const extractOptions = props => {

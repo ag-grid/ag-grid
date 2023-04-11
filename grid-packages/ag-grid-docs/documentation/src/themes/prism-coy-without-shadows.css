@@ -55,7 +55,7 @@ pre[class*="language-"] > code {
     border-radius: 0.3em;
     font-size: 0.9rem;
     color: #e83e8c;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    /*border: 1px solid rgba(0, 0, 0, 0.1);*/
     display: inline;
     white-space: normal;
     background-color: #f8f9fa;

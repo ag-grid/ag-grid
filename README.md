@@ -50,7 +50,7 @@ Here are some of the features that make AG Grid stand out:
 * Integrated Charting
 * Sparklines
 
-\* The features marked with an asterisk are available in the [Enterprise version](https://www.ag-grid.com/license-pricing?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) only.
+* The features marked with an asterisk are available in the [Enterprise version](https://www.ag-grid.com/license-pricing?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) only.
 
 Check out the [developer documentation](https://www.ag-grid.com/documentation/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) for a complete list of features or visit [our official docs](https://www.ag-grid.com/features-overview/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) for tutorials and feature demos.
 

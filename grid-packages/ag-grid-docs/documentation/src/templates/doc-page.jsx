@@ -17,6 +17,8 @@ import VideoSection from 'components/VideoSection';
 import VideoLink from 'components/VideoLink';
 import ChartGallery from 'components/chart-gallery/ChartGallery';
 import ChartsApiExplorer from 'components/charts-api-explorer/ChartsApiExplorer';
+import FrameworkSpecificSection from 'components/FrameworkSpecificSection';
+import StyledSection from 'components/StyledSection';
 import {ListItem} from 'components/ListItem';
 import DocumentationLink from '../components/DocumentationLink';
 import Gif from 'components/Gif';
@@ -40,8 +42,7 @@ const DocPageTemplate = ({data, pageContext: {framework, jsonDataAsString, examp
         return null;
     }
 
-    // handles [[only-xxxx blocks
-    const ast = processFrameworkSpecificSections(page.htmlAst, framework);
+    const ast = page.htmlAst;
 
     const getExampleRunnerProps = (props, library) => ({
         ...props,
@@ -95,7 +96,11 @@ const DocPageTemplate = ({data, pageContext: {framework, jsonDataAsString, examp
             'video-section': VideoSection,
             'video-link': VideoLink,
             'chart-gallery': ChartGallery,
-            'charts-api-explorer': props => ChartsApiExplorer({...props, framework, jsonData, exampleIndexData})
+            'charts-api-explorer': props => ChartsApiExplorer({...props, framework, jsonData, exampleIndexData}),
+            'note': props => StyledSection({...props, style: 'note'}),
+            'warning': props => StyledSection({...props, style: 'warning'}),
+            'styled-section': StyledSection,
+            'framework-specific-section': props => FrameworkSpecificSection({...props, currentFramework: framework})
         },
     }).Compiler;
 
@@ -134,9 +139,9 @@ export const pageQuery = graphql`
     markdownRemark(fields: { path: { eq: $srcPath } }) {
       htmlAst
       frontmatter {
-        title
+        title       
         version
-        enterprise
+        enterprise        
         description
       }
       headings {

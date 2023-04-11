@@ -31,9 +31,10 @@ The example below uses the same built-in aggregation functions shown in the snip
 
 <grid-example title='Enabling Aggregation' name='enabling-aggregation' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel", "setfilter"] }'></grid-example>
 
-[[note]]
+<note>
 | The built-in functions will support `bigint` values if you have them in your data, but the `avg`
 | function will lose precision as it can only use integer arithmetic if `bigint` is used.
+</note>
 
 ## Customisations
 
