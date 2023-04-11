@@ -1,17 +1,17 @@
 import { Group } from '@tweenjs/tween.js';
-import { createAgElementFinder } from '../lib/agElements';
-import { getCellPos } from '../lib/agQuery';
-import { Mouse } from '../lib/createMouse';
-import { getOffset } from '../lib/dom';
-import { addPoints, Point } from '../lib/geometry';
-import { clearAllRowHighlights } from '../lib/scriptActions/clearAllRowHighlights';
-import { dragRange } from '../lib/scriptActions/dragRange';
-import { moveTarget } from '../lib/scriptActions/move';
-import { updateRangeInputValue } from '../lib/scriptActions/updateRangeInputValue';
-import { ScriptDebugger } from '../lib/scriptDebugger';
-import { ScriptAction } from '../lib/scriptRunner';
+import { createAgElementFinder } from '../../lib/agElements';
+import { getCellPos } from '../../lib/agQuery';
+import { Mouse } from '../../lib/createMouse';
+import { getOffset } from '../../lib/dom';
+import { addPoints, Point } from '../../lib/geometry';
+import { clearAllRowHighlights } from '../../lib/scriptActions/clearAllRowHighlights';
+import { dragRange } from '../../lib/scriptActions/dragRange';
+import { moveTarget } from '../../lib/scriptActions/move';
+import { updateRangeInputValue } from '../../lib/scriptActions/updateRangeInputValue';
+import { ScriptDebugger } from '../../lib/scriptDebugger';
+import { ScriptAction } from '../../lib/scriptRunner';
 
-interface CreateIntegratedChartsScriptParams {
+interface Params {
     containerEl?: HTMLElement;
     mouse: Mouse;
     offScreenPos: Point;
@@ -19,13 +19,13 @@ interface CreateIntegratedChartsScriptParams {
     scriptDebugger?: ScriptDebugger;
 }
 
-export const createIntegratedChartsScript = ({
+export const createScript = ({
     containerEl,
     mouse,
     offScreenPos,
     tweenGroup,
     scriptDebugger,
-}: CreateIntegratedChartsScriptParams): ScriptAction[] => {
+}: Params): ScriptAction[] => {
     const START_CELL_COL_INDEX = 0;
     const START_CELL_ROW_INDEX = 0;
     const END_CELL_COL_INDEX = 2;

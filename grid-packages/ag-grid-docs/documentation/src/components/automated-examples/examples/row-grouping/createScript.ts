@@ -1,15 +1,15 @@
 import { Group } from '@tweenjs/tween.js';
-import { getCellPos, getGroupCellTogglePos } from '../lib/agQuery';
-import { Mouse } from '../lib/createMouse';
-import { getOffset } from '../lib/dom';
-import { addPoints, Point } from '../lib/geometry';
-import { clearAllRowHighlights } from '../lib/scriptActions/clearAllRowHighlights';
-import { createGroupColumnScriptActions } from '../lib/scriptActions/createGroupColumnScriptActions';
-import { moveTarget } from '../lib/scriptActions/move';
-import { ScriptDebugger } from '../lib/scriptDebugger';
-import { ScriptAction } from '../lib/scriptRunner';
+import { getCellPos, getGroupCellTogglePos } from '../../lib/agQuery';
+import { Mouse } from '../../lib/createMouse';
+import { getOffset } from '../../lib/dom';
+import { addPoints, Point } from '../../lib/geometry';
+import { clearAllRowHighlights } from '../../lib/scriptActions/clearAllRowHighlights';
+import { createGroupColumnScriptActions } from '../../lib/scriptActions/createGroupColumnScriptActions';
+import { moveTarget } from '../../lib/scriptActions/move';
+import { ScriptDebugger } from '../../lib/scriptDebugger';
+import { ScriptAction } from '../../lib/scriptRunner';
 
-interface CreateRowGroupingScriptParams {
+interface Params {
     containerEl?: HTMLElement;
     mouse: Mouse;
     offScreenPos: Point;
@@ -17,13 +17,13 @@ interface CreateRowGroupingScriptParams {
     scriptDebugger?: ScriptDebugger;
 }
 
-export const createRowGroupingScript = ({
+export const createScript = ({
     containerEl,
     mouse,
     offScreenPos,
     tweenGroup,
     scriptDebugger,
-}: CreateRowGroupingScriptParams): ScriptAction[] => {
+}: Params): ScriptAction[] => {
     const TARGET_GROUP_ROW_INDEX = 2;
     const TARGET_GROUP_CELL_KEY = 'Gold and Silver';
 

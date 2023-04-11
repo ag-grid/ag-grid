@@ -5,7 +5,7 @@ import classnames from 'classnames';
 import { withPrefix } from 'gatsby';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { createAutomatedRowGrouping } from '../../../components/automated-examples/row-grouping';
+import { createAutomatedRowGrouping } from '../../../components/automated-examples/examples/row-grouping';
 import { Splash } from '../../../components/automated-examples/Splash';
 import { Icon } from '../../../components/Icon';
 import LogoMark from '../../../components/LogoMark';

@@ -1,15 +1,13 @@
 import { Group } from '@tweenjs/tween.js';
 import { GridOptions } from 'ag-grid-community';
-import { Mouse } from '../lib/createMouse';
-import { Point } from '../lib/geometry';
-import { removeFocus } from '../lib/scriptActions/removeFocus';
-import { clearAllSingleCellSelections } from '../lib/scriptActions/singleCell';
-import { ScriptDebugger } from '../lib/scriptDebugger';
-import { createScriptRunner } from '../lib/scriptRunner';
-import { EasingFunction } from '../lib/tween';
-import { createRowGroupingScript } from '../scripts/createRowGroupingScript';
+import { Mouse } from '../../lib/createMouse';
+import { Point } from '../../lib/geometry';
+import { ScriptDebugger } from '../../lib/scriptDebugger';
+import { createScriptRunner as createScriptRunnerCore } from '../../lib/scriptRunner';
+import { EasingFunction } from '../../lib/tween';
+import { createScript } from './createScript';
 
-interface CreateRowGroupingScriptRunnerParams {
+interface Params {
     mouse: Mouse;
     containerEl?: HTMLElement;
     offScreenPos: Point;
@@ -22,7 +20,7 @@ interface CreateRowGroupingScriptRunnerParams {
     defaultEasing?: EasingFunction;
 }
 
-export function createRowGroupingScriptRunner({
+export function createScriptRunner({
     containerEl,
     mouse,
     offScreenPos,
@@ -33,8 +31,8 @@ export function createRowGroupingScriptRunner({
     loop,
     scriptDebugger,
     defaultEasing,
-}: CreateRowGroupingScriptRunnerParams) {
-    const rowGroupingScript = createRowGroupingScript({
+}: Params) {
+    const script = createScript({
         containerEl,
         mouse,
         offScreenPos,
@@ -42,10 +40,10 @@ export function createRowGroupingScriptRunner({
         scriptDebugger,
     });
 
-    const scriptRunner = createScriptRunner({
+    const scriptRunner = createScriptRunnerCore({
         containerEl,
         mouse,
-        script: rowGroupingScript,
+        script,
         gridOptions,
         loop,
         tweenGroup,
@@ -58,14 +56,6 @@ export function createRowGroupingScriptRunner({
                 mouse.hide();
                 onInactive && onInactive();
             }
-        },
-        onPaused: () => {
-            clearAllSingleCellSelections();
-            mouse.hide();
-        },
-        onUnpaused: () => {
-            removeFocus();
-            mouse.show();
         },
         scriptDebugger,
         defaultEasing,

@@ -5,7 +5,7 @@ import classnames from 'classnames';
 import { withPrefix } from 'gatsby';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { createAutomatedIntegratedCharts } from '../../../components/automated-examples/integrated-charts';
+import { createAutomatedIntegratedCharts } from '../../../components/automated-examples/examples/integrated-charts';
 import { Splash } from '../../../components/automated-examples/Splash';
 import { Icon } from '../../../components/Icon';
 import LogoMark from '../../../components/LogoMark';
