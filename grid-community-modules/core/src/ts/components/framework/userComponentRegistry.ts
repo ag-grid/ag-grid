@@ -28,6 +28,9 @@ import { TooltipComponent } from "../../rendering/tooltipComponent";
 import { doOnce } from "../../utils/function";
 import { iterateObject } from '../../utils/object';
 import { fuzzySuggestions } from '../../utils/fuzzyMatch';
+import { NumberCellEditor } from "../../rendering/cellEditors/numberCellEditor";
+import { DateCellEditor } from "../../rendering/cellEditors/dateCellEditor";
+import { DateStringCellEditor } from "../../rendering/cellEditors/dateStringCellEditor";
 
 @Bean('userComponentRegistry')
 export class UserComponentRegistry extends BeanStub {
@@ -59,6 +62,9 @@ export class UserComponentRegistry extends BeanStub {
         //editors
         agCellEditor: TextCellEditor,
         agTextCellEditor: TextCellEditor,
+        agNumberCellEditor: NumberCellEditor,
+        agDateCellEditor: DateCellEditor,
+        agDateStringCellEditor: DateStringCellEditor,
         agSelectCellEditor: SelectCellEditor,
         agLargeTextCellEditor: LargeTextCellEditor,
 

@@ -163,6 +163,9 @@ export { LargeTextCellEditor, ILargeTextEditorParams } from "./rendering/cellEdi
 export { PopupEditorWrapper } from "./rendering/cellEditors/popupEditorWrapper";
 export { SelectCellEditor, ISelectCellEditorParams } from "./rendering/cellEditors/selectCellEditor";
 export { TextCellEditor, ITextCellEditorParams } from "./rendering/cellEditors/textCellEditor";
+export { NumberCellEditor, INumberCellEditorParams } from "./rendering/cellEditors/numberCellEditor";
+export { DateCellEditor, IDateCellEditorParams } from "./rendering/cellEditors/dateCellEditor";
+export { DateStringCellEditor, IDateStringCellEditorParams } from "./rendering/cellEditors/dateStringCellEditor";
 export { IRichCellEditorParams } from "./interfaces/iRichCellEditorParams";
 
 
