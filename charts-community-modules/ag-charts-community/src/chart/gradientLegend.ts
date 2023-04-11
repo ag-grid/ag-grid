@@ -2,7 +2,7 @@ import { ColorScale } from '../scale/colorScale';
 import { BBox } from '../scene/bbox';
 import { Node } from '../scene/node';
 import { Group } from '../scene/group';
-import { Rect } from '../scene/shape/rect';
+import { GradientRect } from '../scene/shape/gradientRect';
 import { Selection } from '../scene/selection';
 import { Text, getFont } from '../scene/shape/text';
 import { createId } from '../util/id';
@@ -75,7 +75,7 @@ export class GradientLegend {
     readonly id = createId(this);
 
     private readonly group: Group = new Group({ name: 'legend', layer: true, zIndex: Layers.LEGEND_ZINDEX });
-    private readonly gradientRect: Rect;
+    private readonly gradientRect: GradientRect;
     private readonly textSelection: Selection<Text, number>;
 
     private colorScale = new ColorScale();
@@ -119,16 +119,14 @@ export class GradientLegend {
     listeners: any = {};
 
     constructor(private readonly layoutService: LayoutService) {
-        const layoutListeners = [
-            this.layoutService.addListener('start-layout', (e) => this.performLayout(e.shrinkRect)),
-        ];
+        const layoutListeners = [this.layoutService.addListener('start-layout', (e) => this.update(e.shrinkRect))];
 
         this.destroyFns.push(...layoutListeners.map((s) => () => this.layoutService.removeListener(s)));
 
         this.colorScale.domain = [0, 100];
         this.colorScale.range = ['red', 'green', 'blue'];
 
-        this.gradientRect = new Rect();
+        this.gradientRect = new GradientRect();
         this.group.append(this.gradientRect);
         const textContainer = new Group();
         this.group.append(textContainer);
@@ -145,7 +143,7 @@ export class GradientLegend {
         node.append(this.group);
     }
 
-    private performLayout(shrinkRect: BBox) {
+    private update(shrinkRect: BBox) {
         const newShrinkRect = shrinkRect.clone();
 
         if (!this.enabled) {
@@ -180,6 +178,9 @@ export class GradientLegend {
         }
         this.gradientRect.x = gradientLeft;
         this.gradientRect.y = gradientTop;
+        this.gradientRect.linearGradient = `linear-gradient(${
+            orientation === 'vertical' ? 90 : 0
+        }deg, ${colorScale.range.join(', ')})`;
 
         let left = 0;
         let top = 0;
