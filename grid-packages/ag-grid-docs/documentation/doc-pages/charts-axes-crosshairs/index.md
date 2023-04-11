@@ -16,20 +16,19 @@ axes: [
     type: "number",
     position: "left",
     crosshair: {
-      // crosshair configuration for the bottom axis.
+      enabled: true,
     },
   },
 ]
 ```
 
-[Crosshair Example](https://plnkr.co/edit/X5sAPyvHaWTB8JeH?open=main.js)
+[Crosshair Example](https://plnkr.co/edit/CIja77MQKhSnePn4?open=main.js)
 
 ## Crosshair Snap
 
-By default, for continuous axes such as [Number](/charts-axes-number/) or
-[Time](/charts-axes-time/) axes, the crosshair will follow the mouse pointer.
+By default, the crosshair will snap to the position of the highlighted node.
 
-This default behaviour can be modified by using the crosshair `snap` option. When `snap` is `true`, the crosshair will snap to the highlighted item rather than following the mouse pointer.
+This default behaviour can be modified by using the crosshair `snap` option. When `snap` is `false`, the crosshair will follow the mouse pointer rather than snapping to the highlighted item.
 
 ```js
 axes: [
@@ -37,15 +36,13 @@ axes: [
     type: "number",
     position: "bottom",
     crosshair: {
-      snap: true,
+      snap: false,
     },
   },
 ]
 ```
 
-[Crosshair Snap Example](https://plnkr.co/edit/fy39QecBt7zHGvTq?open=main.js)
-
-For [Category](/charts-axes-category/) axes, as the axis values are discrete categories, the crosshair will snap to the closest category by default.
+[Crosshair Snap False Example](https://plnkr.co/edit/KIZfPMY3yG31rScl?open=main.js)
 
 ## Crosshair Styles
 
@@ -59,7 +56,7 @@ crosshair: {
 },
 ```
 
-[Crosshair Styles Example](https://plnkr.co/edit/Hpg5pU3qMlIVlct2?open=main.js)
+[Crosshair Styles Example](https://plnkr.co/edit/WWShmKEk4U2EiOoU?open=main.js)
 
 ## Crosshair Label
 
@@ -86,7 +83,7 @@ crosshair: {
 }
 ```
 
-[Crosshair Label Offset Example](https://plnkr.co/edit/9roaj4NYZUMo9eIn?open=main.js)
+[Crosshair Label Offset Example](https://plnkr.co/edit/cMwlh8WT7VSTD1pg?open=main.js)
 
 ## Crosshair Label Renderer
 
@@ -116,7 +113,7 @@ const labelRenderer = ({ value, fractionDigits }) => {
 }
 ```
 
-[Crosshair Default Label Example](https://plnkr.co/edit/kGvyJxcQhBD9u1YL?open=main.js)
+[Crosshair Default Label Custom Renderer Styles Example](https://plnkr.co/edit/emFruynNi7HiwDae?open=main.js)
 
 More styling can be applied using the CSS class selector to select the label HTML element with the `ag-crosshair-label` class attribute, and modifying the style definitions in a stylesheet file.
 
@@ -124,7 +121,7 @@ This is shown in the example below. Note that:
 
 - The default label template is used and the style definitions are overriden in the styles.css file.
 
-[Crosshair Default Label Style Example](https://plnkr.co/edit/7jBVxaNgHDw2NqUz?open=main.js)
+[Crosshair Default Label Custom CSS Example](https://plnkr.co/edit/BJ0UoCFvMknL2jN7?open=main.js)
 
 ### Custom Label
 
@@ -147,4 +144,4 @@ Note that:
 - The elements have custom CSS class attributes, but the default class names can also be used so that the label gets the default styling.
 - The styles for the elements are defined in the external styles.css file.
 
-[Crosshair Custom Label Style Example](https://plnkr.co/edit/uVT3wf3mRqmazuOe?open=main.js)
+[Crosshair Custom Label Style Example](https://plnkr.co/edit/7uBJFVUN75sL625M?open=main.js)
