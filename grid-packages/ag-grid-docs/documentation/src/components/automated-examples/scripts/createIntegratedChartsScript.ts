@@ -56,6 +56,7 @@ export const createIntegratedChartsScript = ({
         {
             type: 'moveTo',
             toPos: () => getCellPos({ containerEl, colIndex: START_CELL_COL_INDEX, rowIndex: START_CELL_ROW_INDEX }),
+            speed: 2,
         },
         { type: 'mouseDown' },
 
@@ -72,12 +73,12 @@ export const createIntegratedChartsScript = ({
                     endRow: END_CELL_ROW_INDEX,
                     tweenGroup,
                     scriptDebugger,
-                    duration: 1000,
+                    duration: 200,
                 });
             },
         },
         { type: 'mouseUp' },
-        { type: 'wait', duration: 300 },
+        { type: 'wait', duration: 100 },
 
         {
             type: 'agAction',
@@ -89,9 +90,10 @@ export const createIntegratedChartsScript = ({
                 menuItemPath: ['Chart Range', 'Column', 'Stacked'],
                 tweenGroup,
                 scriptDebugger,
+                speed: 2,
             },
         },
-        { type: 'wait', duration: 500 },
+        { type: 'wait', duration: 200 },
 
         {
             type: 'agAction',
@@ -100,7 +102,7 @@ export const createIntegratedChartsScript = ({
                 target: 'chartToolPanelButton',
             },
         },
-        { type: 'wait', duration: 500 },
+        { type: 'wait', duration: 300 },
 
         // Click on data tab
         {
