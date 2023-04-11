@@ -974,7 +974,12 @@ export abstract class Chart extends Observable implements AgChartInstance {
         const rangeMatched = range === 'nearest' || isPixelRange || exactlyMatched;
         const shouldUpdateTooltip = tooltipEnabled && rangeMatched && (!isNewDatum || html !== undefined);
 
-        const meta = this.mergePointerDatum({ pageX, pageY, offsetX, offsetY, event: event }, pick.datum);
+        const position = {
+            xOffset: pick.datum.series.tooltip.position.xOffset,
+            yOffset: pick.datum.series.tooltip.position.yOffset,
+        };
+
+        const meta = this.mergePointerDatum({ pageX, pageY, offsetX, offsetY, event: event, position }, pick.datum);
 
         if (shouldUpdateTooltip) {
             this.tooltipManager.updateTooltip(this.id, meta, html);
@@ -1103,7 +1108,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     };
 
     private mergePointerDatum(meta: PointerMeta, datum: SeriesNodeDatum): PointerMeta {
-        const { type } = datum.series.tooltip.position ?? this.tooltip.position;
+        const { type } = datum.series.tooltip.position;
 
         if (type === 'node' && datum.nodeMidPoint) {
             const { x, y } = datum.nodeMidPoint;

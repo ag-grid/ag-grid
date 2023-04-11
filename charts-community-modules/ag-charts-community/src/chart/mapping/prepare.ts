@@ -5,6 +5,7 @@ import {
     AgCartesianChartOptions,
     AgChartThemePalette,
     AgCrossLineOptions,
+    AgTooltipPositionOptions,
 } from '../agChartOptions';
 import {
     SeriesOptionsTypes,
@@ -121,6 +122,8 @@ export function prepareOptions<T extends AgChartOptions>(
     const userSuppliedOptionsType = options.type;
     const type = optionsType(options);
 
+    const globalTooltipPositionOptions = options.tooltip?.position || {};
+
     const checkSeriesType = (type?: string) => {
         if (type != null && !(isSeriesOptionType(type) || seriesDefaults?.[type])) {
             throw new Error(`AG Charts - unknown series type: ${type}; expected one of: ${CHART_TYPES.seriesTypes}`);
@@ -168,7 +171,9 @@ export function prepareOptions<T extends AgChartOptions>(
             } else if (isSeriesOptionType(userSuppliedOptionsType)) {
                 type = userSuppliedOptionsType;
             }
-            const mergedSeries = jsonMerge([seriesThemes[type] || {}, { ...s, type }], noDataCloneMergeOptions);
+
+            const mergedSeries = mergeSeriesOptions(s, type, seriesThemes, globalTooltipPositionOptions);
+
             if (type === 'pie') {
                 preparePieOptions(seriesThemes.pie, s, mergedSeries);
             }
@@ -202,6 +207,26 @@ function sanityCheckOptions<T extends AgChartOptions>(options: T) {
             );
         }
     });
+}
+
+function mergeSeriesOptions<T extends SeriesOptionsTypes>(
+    series: T,
+    type: string,
+    seriesThemes: any,
+    globalTooltipPositionOptions: AgTooltipPositionOptions | {}
+): T {
+    const mergedTooltipPosition = jsonMerge(
+        [{ ...globalTooltipPositionOptions }, series.tooltip?.position],
+        noDataCloneMergeOptions
+    );
+    const mergedSeries = jsonMerge(
+        [
+            seriesThemes[type] || {},
+            { ...series, type, tooltip: { ...series.tooltip, position: mergedTooltipPosition } },
+        ],
+        noDataCloneMergeOptions
+    );
+    return mergedSeries;
 }
 
 function prepareMainOptions<T>(
@@ -298,7 +323,7 @@ function prepareAxis<T extends AxesOptionsTypes>(
     // Remove redundant theme overload keys.
     const removeOptions = { top: DELETE, bottom: DELETE, left: DELETE, right: DELETE } as any;
 
-    // Special cross lines case where we have an arrays of cross line elements which need their own defaults.
+    // Special cross lines case where we have an array of cross line elements which need their own defaults.
     if (axis.crossLines) {
         if (!Array.isArray(axis.crossLines)) {
             Logger.warn('axis[].crossLines should be an array.');

@@ -5915,6 +5915,12 @@
     "pageY": { "type": { "returnType": "number", "optional": false } },
     "offsetX": { "type": { "returnType": "number", "optional": false } },
     "offsetY": { "type": { "returnType": "number", "optional": false } },
+    "position": {
+      "type": {
+        "returnType": "{\n        xOffset?: number;\n        yOffset?: number;\n    }",
+        "optional": true
+      }
+    },
     "event": {
       "type": {
         "returnType": "Event | InteractionEvent<any>",

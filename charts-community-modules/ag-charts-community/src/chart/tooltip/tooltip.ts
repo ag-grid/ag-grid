@@ -119,6 +119,10 @@ export interface TooltipMeta {
     pageY: number;
     offsetX: number;
     offsetY: number;
+    position?: {
+        xOffset?: number;
+        yOffset?: number;
+    };
     event: Event | InteractionEvent<any>;
 }
 
@@ -282,7 +286,7 @@ export class Tooltip {
      * If the `html` parameter is missing, moves the existing tooltip to the new position.
      */
     show(meta: TooltipMeta, html?: string, instantly = false) {
-        const { element, canvasElement, position } = this;
+        const { element, canvasElement } = this;
 
         if (html !== undefined) {
             element.innerHTML = html;
@@ -295,8 +299,8 @@ export class Tooltip {
         };
 
         const canvasRect = canvasElement.getBoundingClientRect();
-        const naiveLeft = canvasRect.left + meta.offsetX - element.clientWidth / 2 + (position.xOffset ?? 0);
-        const naiveTop = canvasRect.top + meta.offsetY - element.clientHeight - 8 + (position.yOffset ?? 0);
+        const naiveLeft = canvasRect.left + meta.offsetX - element.clientWidth / 2 + (meta.position?.xOffset ?? 0);
+        const naiveTop = canvasRect.top + meta.offsetY - element.clientHeight - 8 + (meta.position?.yOffset ?? 0);
 
         const windowBounds = this.getWindowBoundingBox();
         const maxLeft = windowBounds.x + windowBounds.width - element.clientWidth - 1;
