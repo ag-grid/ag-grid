@@ -5,6 +5,7 @@ import {
     AgCartesianChartOptions,
     AgChartThemePalette,
     AgCrossLineOptions,
+    AgTooltipPositionOptions,
 } from '../agChartOptions';
 import {
     SeriesOptionsTypes,
@@ -170,14 +171,9 @@ export function prepareOptions<T extends AgChartOptions>(
             } else if (isSeriesOptionType(userSuppliedOptionsType)) {
                 type = userSuppliedOptionsType;
             }
-            const mergedTooltipPosition = jsonMerge(
-                [{ ...globalTooltipPositionOptions }, s.tooltip?.position],
-                noDataCloneMergeOptions
-            );
-            const mergedSeries = jsonMerge(
-                [seriesThemes[type] || {}, { ...s, type, tooltip: { ...s.tooltip, position: mergedTooltipPosition } }],
-                noDataCloneMergeOptions
-            );
+
+            const mergedSeries = mergeSeriesOptions(s, type, seriesThemes, globalTooltipPositionOptions);
+
             if (type === 'pie') {
                 preparePieOptions(seriesThemes.pie, s, mergedSeries);
             }
@@ -211,6 +207,26 @@ function sanityCheckOptions<T extends AgChartOptions>(options: T) {
             );
         }
     });
+}
+
+function mergeSeriesOptions<T extends SeriesOptionsTypes>(
+    series: T,
+    type: string,
+    seriesThemes: any,
+    globalTooltipPositionOptions: AgTooltipPositionOptions | {}
+): T {
+    const mergedTooltipPosition = jsonMerge(
+        [{ ...globalTooltipPositionOptions }, series.tooltip?.position],
+        noDataCloneMergeOptions
+    );
+    const mergedSeries = jsonMerge(
+        [
+            seriesThemes[type] || {},
+            { ...series, type, tooltip: { ...series.tooltip, position: mergedTooltipPosition } },
+        ],
+        noDataCloneMergeOptions
+    );
+    return mergedSeries;
 }
 
 function prepareMainOptions<T>(
