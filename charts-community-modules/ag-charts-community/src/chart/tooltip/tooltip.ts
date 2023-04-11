@@ -152,7 +152,7 @@ export const POSITION_TYPE = predicateWithMessage(
 
 export type TooltipPositionType = 'pointer' | 'node';
 
-class TooltipPosition {
+export class TooltipPosition {
     @Validate(POSITION_TYPE)
     /** The type of positioning for the tooltip. By default, the tooltip follows the pointer. */
     type: TooltipPositionType = 'pointer';
