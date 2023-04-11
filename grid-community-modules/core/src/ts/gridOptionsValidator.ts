@@ -53,6 +53,10 @@ export class GridOptionsValidator {
             this.pickOneWarning('groupRemoveSingleChildren', 'groupHideOpenParents');
         }
 
+        if (this.gridOptionsService.get('domLayout') === 'autoHeight' && !this.gridOptionsService.isRowModelType('clientSide')) {
+            console.warn(`AG Grid: 'domLayout' is only supported by the Client-Side row model.`);
+        }
+
         if (this.gridOptionsService.isRowModelType('serverSide')) {
             const msg = (prop: string, alt?: string) => (
                 `AG Grid: '${prop}' is not supported on the Server-Side Row Model.` + (alt ? ` Please use ${alt} instead.` : '')
