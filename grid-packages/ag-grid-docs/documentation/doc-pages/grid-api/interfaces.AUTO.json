@@ -9006,7 +9006,8 @@
       "getTopLevelRowDisplayedIndex(topLevelIndex: number)": "number",
       "isLastRowIndexKnown()": "boolean",
       "getRowNodesInRange(firstInRange: IRowNode, lastInRange: IRowNode)": "IRowNode[]",
-      "addStoreStates(result: ServerSideGroupLevelState[])": "void"
+      "addStoreStates(result: ServerSideGroupLevelState[])": "void",
+      "getStoreBounds()": "{ topPx: number; heightPx: number; }"
     }
   },
   "StoreRefreshAfterParams": {

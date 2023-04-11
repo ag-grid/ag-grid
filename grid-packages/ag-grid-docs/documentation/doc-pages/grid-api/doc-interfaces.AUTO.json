@@ -16377,6 +16377,13 @@
         "returnType": "void",
         "optional": false
       }
+    },
+    "getStoreBounds": {
+      "type": {
+        "arguments": {},
+        "returnType": "{ topPx: number, heightPx: number }",
+        "optional": false
+      }
     }
   },
   "StoreRefreshAfterParams": {

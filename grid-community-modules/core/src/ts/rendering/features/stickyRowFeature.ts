@@ -50,11 +50,21 @@ export class StickyRowFeature extends BeanStub {
         const addStickyRow = (stickyRow: RowNode) => {
             stickyRows.push(stickyRow);
 
-            let lastAncester = stickyRow;
-            while (lastAncester.expanded) {
-                lastAncester = last(lastAncester.childrenAfterSort!);
+
+            let lastChildBottom: number;
+            if (this.rowModel.getType() === 'clientSide') {
+                const storeBounds = stickyRow.childStore?.getStoreBounds();
+                lastChildBottom = (storeBounds?.heightPx ?? 0) + (storeBounds?.topPx ?? 0);
+            } else if (this.rowModel.getType() === 'serverSide') {
+                let lastAncester = stickyRow;
+                while (lastAncester.expanded) {
+                    lastAncester = last(lastAncester.childrenAfterSort!);
+                }
+                lastChildBottom = lastAncester.rowTop! + lastAncester.rowHeight!;
+            } else {
+                throw new Error('AG Grid: Unsupported row model type.');
             }
-            const lastChildBottom = lastAncester.rowTop! + lastAncester.rowHeight!;
+
             const stickRowBottom = firstPixel + height + stickyRow.rowHeight!;
             if (lastChildBottom < stickRowBottom) {
                 stickyRow.stickyRowTop = height + (lastChildBottom - stickRowBottom);

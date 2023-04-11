@@ -9,9 +9,6 @@ This section covers Sticky Groups, which display group rows that are expanded at
 
 To enable sticky groups, set the `groupRowsSticky` property to true. This behaviour applies to all row group levels.
 
-[[note]]
-| Sticky Groups only work with the [Client Side Row Model](/client-side-model/).
-
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
     columnDefs: [
