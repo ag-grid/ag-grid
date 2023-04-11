@@ -723,6 +723,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "column",
@@ -1788,6 +1789,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": [Function],
       },
       "type": "column",
@@ -3493,6 +3495,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "bar",
@@ -3785,6 +3788,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "bar",
@@ -4616,6 +4620,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "column",
@@ -4932,6 +4937,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "bar",
@@ -5260,6 +5266,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "column",
@@ -5588,6 +5595,7 @@ Object {
       "strokeWidth": 1,
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": [Function],
       },
       "type": "histogram",
@@ -7314,6 +7322,7 @@ Object {
       },
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": [Function],
       },
       "type": "treemap",
@@ -7930,6 +7939,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "bar",
@@ -8258,6 +8268,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "column",
@@ -9124,6 +9135,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": [Function],
       },
       "type": "column",
@@ -9356,6 +9368,7 @@ Object {
       },
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": [Function],
       },
       "type": "pie",
@@ -9624,6 +9637,7 @@ Object {
       "strokeWidth": 1,
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "histogram",
@@ -10184,6 +10198,7 @@ Object {
       },
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": [Function],
       },
       "type": "pie",
@@ -11095,6 +11110,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "bar",
@@ -11412,6 +11428,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": [Function],
       },
       "type": "column",
@@ -11747,6 +11764,7 @@ Object {
       "strokeWidth": 1,
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": [Function],
       },
       "type": "histogram",

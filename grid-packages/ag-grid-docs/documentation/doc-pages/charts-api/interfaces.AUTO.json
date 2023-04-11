@@ -4118,6 +4118,7 @@
       "pageY": "number",
       "offsetX": "number",
       "offsetY": "number",
+      "position?": "{ xOffset?: number; yOffset?: number; }",
       "event": "Event | InteractionEvent<any>"
     }
   },
