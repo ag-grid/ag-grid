@@ -508,11 +508,12 @@ export interface AgChartTooltipOptions {
     enableInteraction?: boolean;
 }
 
+export type AgTooltipPositionType = 'pointer' | 'node';
 export type AgTooltipPositionOptions = AgMovingTooltipPositionOptions;
 
 export interface AgMovingTooltipPositionOptions {
     /** The type of positioning for the tooltip. By default, the tooltip follows the pointer. */
-    type: 'pointer' | 'node';
+    type: AgTooltipPositionType;
     /** The horizontal offset in pixels for the position of the tooltip. */
     xOffset?: PixelSize;
     /** The vertical offset in pixels for the position of the tooltip. */
@@ -1089,6 +1090,8 @@ export interface AgAreaSeriesMarker<DatumType> extends AgCartesianSeriesMarker<D
 export interface AgSeriesTooltip {
     /** Whether or not to show tooltips when the series are hovered over. */
     enabled?: boolean;
+    /** The position of the tooltip. By default the tooltip follows the mouse pointer. */
+    position?: AgTooltipPositionOptions;
 }
 
 export interface AgCartesianSeriesLabelFormatterParams {

@@ -23,6 +23,7 @@ import { HighlightManager } from '../interaction/highlightManager';
 import { ChartAxisDirection } from '../chartAxisDirection';
 import { AgChartInteractionRange } from '../agChartOptions';
 import { DatumPropertyDefinition, OutputPropertyDefinition } from '../data/dataModel';
+import { TooltipPosition } from '../tooltip/tooltip';
 
 /**
  * Processed series datum used in node selections,
@@ -158,6 +159,8 @@ export class HighlightStyle {
 export class SeriesTooltip {
     @Validate(BOOLEAN)
     enabled = true;
+
+    readonly position: TooltipPosition = new TooltipPosition();
 }
 
 export type SeriesNodeDataContext<S = SeriesNodeDatum, L = S> = {

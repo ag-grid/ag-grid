@@ -1083,6 +1083,10 @@
       "enableInteraction?": "/** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */"
     }
   },
+  "AgTooltipPositionType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'pointer' | 'node'"
+  },
   "AgTooltipPositionOptions": {
     "meta": { "isTypeAlias": true },
     "type": "AgMovingTooltipPositionOptions"
@@ -1090,7 +1094,7 @@
   "AgMovingTooltipPositionOptions": {
     "meta": {},
     "type": {
-      "type": "'pointer' | 'node'",
+      "type": "AgTooltipPositionType",
       "xOffset?": "PixelSize",
       "yOffset?": "PixelSize"
     },
@@ -2027,9 +2031,10 @@
   },
   "AgSeriesTooltip": {
     "meta": {},
-    "type": { "enabled?": "boolean" },
+    "type": { "enabled?": "boolean", "position?": "AgTooltipPositionOptions" },
     "docs": {
-      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
+      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */"
     }
   },
   "AgCartesianSeriesLabelFormatterParams": {
@@ -2066,11 +2071,13 @@
     "type": {
       "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "format?": "string",
-      "enabled?": "boolean"
+      "enabled?": "boolean",
+      "position?": "AgTooltipPositionOptions"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
-      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
+      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */"
     }
   },
   "AgLineSeriesOptions": {
@@ -2129,11 +2136,13 @@
     "meta": {},
     "type": {
       "renderer?": "(params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
-      "enabled?": "boolean"
+      "enabled?": "boolean",
+      "position?": "AgTooltipPositionOptions"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
-      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
+      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */"
     }
   },
   "AgScatterSeriesLabelOptions": {
@@ -2241,10 +2250,12 @@
     "type": {
       "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "format?": "string",
-      "enabled?": "boolean"
+      "enabled?": "boolean",
+      "position?": "AgTooltipPositionOptions"
     },
     "docs": {
-      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
+      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */"
     }
   },
   "AgAreaSeriesOptions": {
@@ -2388,11 +2399,13 @@
     "meta": {},
     "type": {
       "renderer?": "(params: AgBarSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
-      "enabled?": "boolean"
+      "enabled?": "boolean",
+      "position?": "AgTooltipPositionOptions"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
-      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
+      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */"
     }
   },
   "AgBarSeriesOptions": {
@@ -2513,11 +2526,13 @@
     "meta": {},
     "type": {
       "renderer?": "(params: AgHistogramSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
-      "enabled?": "boolean"
+      "enabled?": "boolean",
+      "position?": "AgTooltipPositionOptions"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
-      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
+      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */"
     }
   },
   "AgHistogramBinDatum": {
@@ -2669,11 +2684,13 @@
     "meta": {},
     "type": {
       "renderer?": "(params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
-      "enabled?": "boolean"
+      "enabled?": "boolean",
+      "position?": "AgTooltipPositionOptions"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
-      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
+      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */"
     }
   },
   "AgPieTitleOptions": {
@@ -2992,11 +3009,13 @@
     "meta": { "typeParams": ["DatumType"] },
     "type": {
       "renderer?": "(params: AgTreemapSeriesTooltipRendererParams<DatumType>) => string | AgTooltipRendererResult",
-      "enabled?": "boolean"
+      "enabled?": "boolean",
+      "position?": "AgTooltipPositionOptions"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
-      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
+      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */"
     }
   },
   "AgTreemapSeriesLabelsOptions": {

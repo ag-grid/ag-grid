@@ -1103,7 +1103,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     };
 
     private mergePointerDatum(meta: PointerMeta, datum: SeriesNodeDatum): PointerMeta {
-        const { type } = this.tooltip.position;
+        const { type } = datum.series.tooltip.position ?? this.tooltip.position;
 
         if (type === 'node' && datum.nodeMidPoint) {
             const { x, y } = datum.nodeMidPoint;

@@ -1669,11 +1669,12 @@
       "type": { "returnType": "boolean", "optional": true }
     }
   },
+  "AgTooltipPositionType": {},
   "AgTooltipPositionOptions": {},
   "AgMovingTooltipPositionOptions": {
     "type": {
       "description": "/** The type of positioning for the tooltip. By default, the tooltip follows the pointer. */",
-      "type": { "returnType": "'pointer' | 'node'", "optional": false }
+      "type": { "returnType": "AgTooltipPositionType", "optional": false }
     },
     "xOffset": {
       "description": "/** The horizontal offset in pixels for the position of the tooltip. */",
@@ -3049,6 +3050,10 @@
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "position": {
+      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     }
   },
   "AgCartesianSeriesLabelFormatterParams": {
@@ -3108,6 +3113,10 @@
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "position": {
+      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     }
   },
   "AgLineSeriesOptions": {
@@ -3215,6 +3224,10 @@
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "position": {
+      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     }
   },
   "AgScatterSeriesLabelOptions": {
@@ -3395,6 +3408,10 @@
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "position": {
+      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     }
   },
   "AgAreaSeriesOptions": {
@@ -3615,6 +3632,10 @@
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "position": {
+      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     }
   },
   "AgBarSeriesOptions": {
@@ -3821,6 +3842,10 @@
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "position": {
+      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     }
   },
   "AgHistogramBinDatum": {
@@ -4061,6 +4086,10 @@
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "position": {
+      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     }
   },
   "AgPieTitleOptions": {
@@ -4596,6 +4625,10 @@
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "position": {
+      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     }
   },
   "AgTreemapSeriesLabelsOptions": {
