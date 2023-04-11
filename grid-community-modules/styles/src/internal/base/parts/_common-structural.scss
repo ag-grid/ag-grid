@@ -924,8 +924,8 @@
 
     .ag-popup-editor {
         position: absolute;
-        user-select: none;
         z-index: 1;
+        @include ag.selectable(none);
     }
 
     .ag-large-text-input {
@@ -1060,8 +1060,8 @@
     .ag-resizer {
         position: absolute;
         pointer-events: none;
-        user-select: none;
         z-index: 1;
+        @include ag.selectable(none);
         &.ag-resizer-topLeft {
             top: 0;
             left: 0;
@@ -1172,7 +1172,7 @@
         max-height: 100%;
         overflow-y: auto;
         position: absolute;
-        user-select: none;
+        @include ag.selectable(none);
     }
 
     .ag-menu-column-select-wrapper {
@@ -1285,7 +1285,7 @@
         overflow-y: auto;
         overflow-x: hidden;
         cursor: default;
-        user-select: none;
+        @include ag.selectable(none);
     }
 
     .ag-column-select-column,
