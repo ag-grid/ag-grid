@@ -53,14 +53,13 @@ export class StickyRowFeature extends BeanStub {
         const addStickyRow = (stickyRow: RowNode) => {
             stickyRows.push(stickyRow);
 
-
             let lastChildBottom: number;
             if (this.isClientSide) {
-                let lastAncester = stickyRow;
-                while (lastAncester.expanded) {
-                    lastAncester = last(lastAncester.childrenAfterSort!);
+                let lastAncestor = stickyRow;
+                while (lastAncestor.expanded) {
+                    lastAncestor = lastAncestor.master ? lastAncestor.detailNode : last(lastAncestor.childrenAfterSort!);
                 }
-                lastChildBottom = lastAncester.rowTop! + lastAncester.rowHeight!;
+                lastChildBottom = lastAncestor.rowTop! + lastAncestor.rowHeight!;
             }
             // if the rowModel is `serverSide` as only `clientSide` and `serverSide` create this feature.
             else {
@@ -109,7 +108,7 @@ export class StickyRowFeature extends BeanStub {
 
             // if first row is an open group, and practically shown, it needs
             // to be stuck
-            if (firstRow.hasChildren() && firstRow.expanded && !firstRow.footer && firstRow.rowTop! < firstPixelAfterStickyRows) {
+            if (firstRow.isExpandable() && firstRow.expanded && firstRow.rowTop! < firstPixelAfterStickyRows) {
                 addStickyRow(firstRow);
                 continue;
             }
