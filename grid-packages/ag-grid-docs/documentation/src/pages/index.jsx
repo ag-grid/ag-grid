@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React, { useEffect } from 'react';
+import { createAutomatedExampleManager } from '../components/automated-examples/lib/createAutomatedExampleManager';
 import { createScriptDebuggerManager } from '../components/automated-examples/lib/scriptDebugger';
 import Footer from '../components/footer/Footer';
 import FrameworkSelector from '../components/FrameworkSelector';
@@ -15,6 +16,8 @@ const IS_SSR = typeof window === 'undefined';
 const AutomatedIntegratedCharts = React.lazy(() => import('./components/home-page-demos/AutomatedIntegratedCharts'));
 const AutomatedRowGrouping = React.lazy(() => import('./components/home-page-demos/AutomatedRowGrouping'));
 const HeroGrid = React.lazy(() => import('./components/home-page-demos/HeroGrid'));
+
+const automatedExampleManager = createAutomatedExampleManager();
 
 const Default = () => {
     const frameworksData = [
@@ -104,6 +107,7 @@ const Default = () => {
                         {!IS_SSR && (
                             <React.Suspense fallback={<></>}>
                                 <AutomatedRowGrouping
+                                    automatedExampleManager={automatedExampleManager}
                                     scriptDebuggerManager={scriptDebuggerManager}
                                     useStaticData={isCI}
                                     runOnce={runAutomatedExamplesOnce}
@@ -150,6 +154,7 @@ const Default = () => {
                         {!IS_SSR && (
                             <React.Suspense fallback={<></>}>
                                 <AutomatedIntegratedCharts
+                                    automatedExampleManager={automatedExampleManager}
                                     scriptDebuggerManager={scriptDebuggerManager}
                                     useStaticData={isCI}
                                     runOnce={runAutomatedExamplesOnce}

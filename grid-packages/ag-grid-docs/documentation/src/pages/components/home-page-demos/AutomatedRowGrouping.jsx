@@ -13,6 +13,8 @@ import { hostPrefix, isProductionBuild, localPrefix } from '../../../utils/const
 import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
 import styles from './AutomatedRowGrouping.module.scss';
 
+const SCRIPT_ID = 'row-grouping';
+
 const helmet = [];
 if (!isProductionBuild()) {
     helmet.push(
@@ -48,41 +50,33 @@ const mouseStyles = `
     }
 `;
 
-function AutomatedRowGrouping({ scriptDebuggerManager, useStaticData, runOnce }) {
+function AutomatedRowGrouping({ automatedExampleManager, scriptDebuggerManager, useStaticData, runOnce }) {
     const gridClassname = 'automated-row-grouping-grid';
     const gridRef = useRef(null);
-    const automatedScript = useRef(null);
     // NOTE: Needs to be a ref instead of useState, as it is passed into a plain JavaScript context
     const scriptEnabled = useRef(true);
     const [gridIsReady, setGridIsReady] = useState(false);
 
     const onSplashHide = useCallback(() => {
-        if (!automatedScript.current) {
-            return true;
-        }
-
         scriptEnabled.current = false;
-        automatedScript.current.stop();
-    }, [scriptEnabled.current, automatedScript.current]);
+        automatedExampleManager.stop(SCRIPT_ID);
+    }, []);
 
     const onSplashShow = useCallback(() => {
         scriptEnabled.current = true;
-        automatedScript.current.start();
-    }, [scriptEnabled.current, automatedScript.current]);
+        automatedExampleManager.start(SCRIPT_ID);
+    }, []);
 
     useIntersectionObserver({
         elementRef: gridRef,
         onChange: ({ isIntersecting }) => {
-            if (!automatedScript.current) {
-                return;
-            }
             if (isIntersecting) {
-                if (automatedScript.current.currentState() !== 'playing' && scriptEnabled.current) {
-                    automatedScript.current.start();
+                if (scriptEnabled.current) {
+                    automatedExampleManager.start(SCRIPT_ID);
                 }
-                return;
+            } else {
+                automatedExampleManager.inactive(SCRIPT_ID);
             }
-            automatedScript.current.inactive();
         },
     });
 
@@ -99,7 +93,10 @@ function AutomatedRowGrouping({ scriptDebuggerManager, useStaticData, runOnce })
             },
         };
 
-        automatedScript.current = createAutomatedRowGrouping(params);
+        automatedExampleManager.add({
+            id: SCRIPT_ID,
+            automatedExample: createAutomatedRowGrouping(params),
+        });
     }, []);
 
     return (

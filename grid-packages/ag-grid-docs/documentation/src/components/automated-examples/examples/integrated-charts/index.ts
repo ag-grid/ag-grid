@@ -14,6 +14,7 @@ import { getBottomMidPos } from '../../lib/dom';
 import { Point } from '../../lib/geometry';
 import { ScriptDebuggerManager } from '../../lib/scriptDebugger';
 import { ScriptRunner } from '../../lib/scriptRunner';
+import { AutomatedExample } from '../../types';
 import { createScriptRunner } from './createScriptRunner';
 
 const WAIT_TILL_MOUSE_ANIMATION_STARTS = 2000;
@@ -114,7 +115,7 @@ export function createAutomatedIntegratedCharts({
     scriptDebuggerManager,
     runOnce,
     pauseOnMouseMove,
-}: CreateAutomatedIntegratedChartsParams) {
+}: CreateAutomatedIntegratedChartsParams): AutomatedExample {
     const gridSelector = `.${gridClassname}`;
 
     const init = () => {
