@@ -584,34 +584,42 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         let nonePresent = true;
         let newRowHeight = 0;
 
-        if (this.__autoHeights == null) { return; }
+        const autoHeights = this.__autoHeights!;
+        if (autoHeights == null) { return; }
 
         const displayedAutoHeightCols = this.beans.columnModel.getAllDisplayedAutoHeightCols();
         displayedAutoHeightCols.forEach(col => {
-            let cellHeight = this.__autoHeights![col.getId()];
+            let cellHeight = autoHeights[col.getId()];
 
             if (cellHeight == null) {
                 // If column spanning is active a column may not provide auto height for a row if that
                 // cell is not present for the given row due to a previous cell spanning over the auto height column.
-                let activeColsForRow: Column[] = [];
-                switch (col.getPinned()) {
-                    case 'left':
-                        activeColsForRow = this.beans.columnModel.getDisplayedLeftColumnsForRow(this);
-                        break;
-                    case 'right':
-                        activeColsForRow = this.beans.columnModel.getDisplayedRightColumnsForRow(this);
-                        break;
-                    case null:
-                        activeColsForRow = this.beans.columnModel.getViewportCenterColumnsForRow(this);
-                        break;
-                }
-                if (activeColsForRow.includes(col)) {
-                    // Column is present in the row, i.e not spanned over, but no auto height was provided so we cannot calculate the row height
+                if (this.beans.columnModel.isColSpanActive()) {
+                    let activeColsForRow: Column[] = [];
+                    switch (col.getPinned()) {
+                        case 'left':
+                            activeColsForRow = this.beans.columnModel.getDisplayedLeftColumnsForRow(this);
+                            break;
+                        case 'right':
+                            activeColsForRow = this.beans.columnModel.getDisplayedRightColumnsForRow(this);
+                            break;
+                        case null:
+                            activeColsForRow = this.beans.columnModel.getViewportCenterColumnsForRow(this);
+                            break;
+                    }
+                    if (activeColsForRow.includes(col)) {
+                        // Column is present in the row, i.e not spanned over, but no auto height was provided so we cannot calculate the row height
+                        notAllPresent = true;
+                        return;
+                    }
+                    // Ignore this column as it is spanned over and not present in the row
+                    cellHeight = -1;
+                } else {
                     notAllPresent = true;
                     return;
                 }
-                cellHeight = -1;
             } else {
+                // At least one auto height is present
                 nonePresent = false;
             }
 
