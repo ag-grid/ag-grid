@@ -1,5 +1,6 @@
 ---
 title: "Axis Crosshairs"
+enterprise: true
 ---
 
 Crosshairs are used to display a reference line with the corresponding axis value at a position on the chart.

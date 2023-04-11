@@ -54,6 +54,33 @@ Also note that for numeric values the tooltips show two digits after the decimal
 
 <chart-example title='Default Tooltip' name='default-tooltip' type='generated'></chart-example>
 
+## Tooltip Position
+
+The tooltip position can be modified using the `tooltip.position.type` property.
+
+`tooltip.position.type` can be one of the following:
+
+- `node` - anchors the tooltip to the highlighted node. This is the default position type for `line`, `area`, `scatter` and `bubble` series, where the tooltip will be positioned above the highlighted marker node.
+- `pointer` - attaches the tooltip to the mouse pointer. This is the default position type for `bar`,`column`, `histogram`, `treemap`, `pie` and `doughnut` series where the tooltip will follow the mouse pointer.
+
+The `xOffset` and `yOffset` properties in `tooltip.position` options define the distance in pixels from the tooltip to the anchor point:
+
+```js
+tooltip: {
+    position: {
+        type: 'pointer',
+        xOffset: 80, // positions tooltip 80px to the right of the mouse cursor
+        yOffset: 80, // positions tooltip 80px down from the start of the mouse cursor
+    }
+}
+```
+
+### Example: Tooltip Position
+
+In this example we show how to change the tooltip's default position.
+
+<chart-example title='Tooltip Position' name='tooltip-position' type='generated'></chart-example>
+
 ## Styling the Default Tooltip
 
 The default tooltip already uses `ag-chart-tooltip`, `ag-chart-tooltip-title` and `ag-chart-tooltip-content` CSS classes, but these classes are not meant to be used directly to add custom CSS rules to, unless you want to change the styling of all the tooltips in your app. Instead, users of the charting library should provide their own tooltip class name via the `chart.tooltip.class` config. This class name will be added to the class list of the tooltip element for only that particular chart instance.
