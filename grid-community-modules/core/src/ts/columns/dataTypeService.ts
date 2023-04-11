@@ -175,7 +175,7 @@ export class DataTypeService extends BeanStub {
         if (value == null) {
             return undefined;
         } else if (typeof value === 'string') {
-            const matcher = (this.dataTypeDefinitions.dateString as DateStringDataTypeDefinition).matcher!;
+            const matcher = (this.dataTypeDefinitions.dateString as DateStringDataTypeDefinition).dateMatcher!;
             if (matcher(value)) {
                 return 'dateString';
             } else {
@@ -209,8 +209,16 @@ export class DataTypeService extends BeanStub {
         return typeKeys;
     }
 
-    getConvertToDateFunction(): (value: string | undefined) => Date | undefined {
-        return (this.dataTypeDefinitions.dateString as DateStringDataTypeDefinition).convertToDate!;
+    private getDateStringTypeDefinition(): DateStringDataTypeDefinition {
+        return this.dataTypeDefinitions.dateString as DateStringDataTypeDefinition;
+    }
+
+    public getDateParserFunction(): (value: string | undefined) => Date | undefined {
+        return this.getDateStringTypeDefinition().dateParser!;
+    }
+
+    public getDateFormatterFunction(): (value: Date | undefined) => string | undefined {
+        return this.getDateStringTypeDefinition().dateFormatter!;
     }
 
     private isChildDataTypeDefinition<TData = any>(

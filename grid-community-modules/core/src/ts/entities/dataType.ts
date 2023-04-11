@@ -1,4 +1,4 @@
-import { dateToFormattedString, parseDateTimeFromString } from "../utils/date";
+import { parseDateTimeFromString, serialiseDate } from "../utils/date";
 import { ValueFormatterParams, ValueParserParams } from "./colDef";
 
 export type ValueParserLiteParams<TData, TValue> = Omit<ValueParserParams<TData, TValue>, 'data' | 'node' | 'oldValue'>;
@@ -34,8 +34,9 @@ export interface DateDataTypeDefinition<TData = any> extends BaseDataTypeDefinit
 }
 
 export interface DateStringDataTypeDefinition<TData = any> extends BaseDataTypeDefinition<'dateString', TData, string> {
-    convertToDate?: (value: string | undefined) => Date | undefined;
-    matcher?: (value: string) => boolean;
+    dateParser?: (value: string | undefined) => Date | undefined;
+    dateFormatter?: (value: Date | undefined) => string | undefined;
+    dateMatcher?: (value: string) => boolean;
 }
 
 export interface BaseObjectDataTypeDefinition<TData, TValue> extends Omit<BaseDataTypeDefinition<'object', TData, TValue>, 'extends' | 'appendColumnTypes'> {
@@ -81,18 +82,22 @@ export const DEFAULT_DATA_TYPES: { [key: string]: CoreDataTypeDefinition } = {
     },
     date: {
         baseDataType: 'date',
-        valueParser: (params: ValueParserLiteParams<any, Date>) => parseDateTimeFromString(params.newValue) ?? undefined,
+        valueParser: (params: ValueParserLiteParams<any, Date>) => parseDateTimeFromString(params.newValue == null ? null : String(params.newValue)) ?? undefined,
         valueFormatter: (params: ValueFormatterLiteParams<any, Date>) => {
             if (params.value == null) { return ''; }
+            if (!(params.value instanceof Date)) { return new Date(NaN).toString(); }
             if (isNaN(params.value.getTime())) { return params.value.toString() }
-            return dateToFormattedString(params.value);
+            return serialiseDate(params.value, false) ?? '';
         },
         columnTypes: 'agDateColumn',
     },
     dateString: {
         baseDataType: 'dateString',
-        matcher: (value: string) => !!value.match('\\d{4}-\\d{2}-\\d{2}'),
-        convertToDate: (value: string | undefined) => parseDateTimeFromString(value) ?? undefined,
+        dateMatcher: (value: string) => !!value.match('\\d{4}-\\d{2}-\\d{2}'),
+        dateParser: (value: string | undefined) => parseDateTimeFromString(value) ?? undefined,
+        dateFormatter: (value: Date | undefined) => serialiseDate(value ?? null, false) ?? undefined,
+        valueParser: (params: ValueParserLiteParams<any, string>) => String(params.newValue).match('\\d{4}-\\d{2}-\\d{2}') ? params.newValue : undefined,
+        valueFormatter: (params: ValueFormatterLiteParams<any, string>) => String(params.value).match('\\d{4}-\\d{2}-\\d{2}') ? params.value : '',
         columnTypes: 'agDateStringColumn',
     }
 }

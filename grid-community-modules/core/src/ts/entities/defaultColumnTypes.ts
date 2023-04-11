@@ -13,12 +13,18 @@ export const DefaultColumnTypes: { [key: string]: ColDef } = {
     agNumberColumn: {
         headerClass: 'ag-right-aligned-header',
         cellClass: 'ag-right-aligned-cell',
+        cellEditor: 'agNumberCellEditor',
     },
     agDateColumn: {
+        cellEditor: 'agDateCellEditor',
+    },
+    agDateStringColumn: {
+        cellEditor: 'agDateStringCellEditor',
+    },
+    agBooleanColumn: {
+        cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
-            useFormatter: true,
+            values: [true, false],
         },
     },
-    agDateStringColumn: {},
-    agBooleanColumn: {},
 };

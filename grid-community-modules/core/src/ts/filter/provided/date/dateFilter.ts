@@ -153,7 +153,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
 
     protected comparator(): Comparator<Date> {
         if (this.dateFilterParams.colDef.cellDataType === 'dateString') {
-            const convertToDate = this.dataTypeService.getConvertToDateFunction();
+            const convertToDate = this.dataTypeService.getDateParserFunction();
             return (filterDate: Date, cellValue: any) => this.defaultComparator(
                 filterDate,
                 convertToDate(cellValue)
