@@ -96,6 +96,7 @@ import { LocaleService } from "./localeService";
 import { GridOptionsValidator } from "./gridOptionsValidator";
 import { FakeVScrollComp } from "./gridBodyComp/fakeVScrollComp";
 import { DataTypeService } from "./columns/dataTypeService";
+import { AgInputDateField } from "./widgets/agInputDateField";
 
 export interface GridParams {
     // used by Web Components
@@ -267,6 +268,7 @@ export class GridCoreCreator {
             { componentName: 'AgInputTextField', componentClass: AgInputTextField },
             { componentName: 'AgInputTextArea', componentClass: AgInputTextArea },
             { componentName: 'AgInputNumberField', componentClass: AgInputNumberField },
+            { componentName: 'AgInputDateField', componentClass: AgInputDateField },
             { componentName: 'AgInputRange', componentClass: AgInputRange },
             { componentName: 'AgSelect', componentClass: AgSelect },
             { componentName: 'AgSlider', componentClass: AgSlider },
