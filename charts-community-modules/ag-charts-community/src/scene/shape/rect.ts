@@ -1,7 +1,5 @@
 import { Path, ScenePathChangeDetection } from './path';
 import { BBox } from '../bbox';
-import { LinearGradient } from '../gradient/linearGradient';
-import { Color } from '../../util/color';
 import { Shape } from './shape';
 import { Path2D } from '../path2D';
 
@@ -33,42 +31,7 @@ export class Rect extends Path {
     @ScenePathChangeDetection()
     crisp: boolean = false;
 
-    @ScenePathChangeDetection({ changeCb: (r) => r.updateGradientInstance() })
-    gradient: boolean = false;
-
-    private gradientFill?: string;
-    private gradientInstance?: LinearGradient;
     private borderClipPath?: Path2D;
-
-    constructor() {
-        super((ctx) => this.renderRect(ctx));
-    }
-
-    private updateGradientInstance() {
-        const { fill } = this;
-
-        if (this.gradient) {
-            if (fill) {
-                const gradient = new LinearGradient();
-                gradient.angle = 270;
-                gradient.stops = [
-                    {
-                        offset: 0,
-                        color: Color.tryParseFromString(fill).brighter().toString(),
-                    },
-                    {
-                        offset: 1,
-                        color: Color.tryParseFromString(fill).darker().toString(),
-                    },
-                ];
-                this.gradientInstance = gradient;
-            }
-        } else {
-            this.gradientInstance = undefined;
-        }
-
-        this.gradientFill = fill;
-    }
 
     private lastUpdatePathStrokeWidth: number = Shape.defaultStyles.strokeWidth;
 
@@ -173,50 +136,15 @@ export class Rect extends Path {
         return bbox.containsPoint(point.x, point.y);
     }
 
-    private renderRect(ctx: CanvasRenderingContext2D) {
-        const {
-            stroke,
-            effectiveStrokeWidth,
-            fill,
-            path,
-            borderPath,
-            borderClipPath,
-            opacity,
-            microPixelEffectOpacity,
-        } = this;
+    protected applyAlpha(ctx: CanvasRenderingContext2D) {
+        const { fillOpacity, microPixelEffectOpacity, opacity } = this;
+        ctx.globalAlpha = opacity * fillOpacity * microPixelEffectOpacity;
+    }
+
+    protected renderStroke(ctx: CanvasRenderingContext2D) {
+        const { stroke, effectiveStrokeWidth, borderPath, borderClipPath, opacity, microPixelEffectOpacity } = this;
 
         const borderActive = !!stroke && !!effectiveStrokeWidth;
-
-        if (fill) {
-            const { gradientFill, fillOpacity, fillShadow } = this;
-            if (fill !== gradientFill) {
-                this.updateGradientInstance();
-            }
-
-            const { gradientInstance } = this;
-            if (gradientInstance) {
-                ctx.fillStyle = gradientInstance.createGradient(ctx, this.computeBBox());
-            } else {
-                ctx.fillStyle = fill;
-            }
-            ctx.globalAlpha = opacity * fillOpacity * microPixelEffectOpacity;
-
-            // The canvas context scaling (depends on the device's pixel ratio)
-            // has no effect on shadows, so we have to account for the pixel ratio
-            // manually here.
-            if (fillShadow && fillShadow.enabled) {
-                const pixelRatio = this.layerManager?.canvas.pixelRatio ?? 1;
-
-                ctx.shadowColor = fillShadow.color;
-                ctx.shadowOffsetX = fillShadow.xOffset * pixelRatio;
-                ctx.shadowOffsetY = fillShadow.yOffset * pixelRatio;
-                ctx.shadowBlur = fillShadow.blur * pixelRatio;
-            }
-            path.draw(ctx);
-            ctx.fill();
-            ctx.shadowColor = 'rgba(0, 0, 0, 0)';
-        }
-
         if (borderActive) {
             const { strokeOpacity, lineDash, lineDashOffset, lineCap, lineJoin } = this;
             if (borderClipPath) {

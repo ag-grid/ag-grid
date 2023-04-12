@@ -6086,6 +6086,7 @@
   "ArcType": {},
   "ShapeLineCap": {},
   "ShapeLineJoin": {},
+  "CanvasContext": {},
   "Comparator": { "meta": { "typeParams": ["T"] } },
   "LiteralOrFn": { "meta": { "typeParams": ["T"] } },
   "TransformFn": {},
