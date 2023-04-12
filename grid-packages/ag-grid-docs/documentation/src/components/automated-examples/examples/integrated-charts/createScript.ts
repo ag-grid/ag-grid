@@ -102,7 +102,8 @@ export const createScript = ({
                 target: 'chartToolPanelButton',
             },
         },
-        { type: 'wait', duration: 300 },
+        // Wait for chart tool panel button to finish coming out
+        { type: 'wait', duration: 500 },
 
         // Click on data tab
         {
