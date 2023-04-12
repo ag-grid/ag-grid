@@ -123,7 +123,7 @@ For example, to set the label element's `border-radius` to `15px`, add a custom 
 ```js
 crosshair: {
   label: {
-    className: 'custom-crosshair-label' // Add label renderer callback function to customise label styles and content
+    className: 'custom-crosshair-label'
   }
 },
 ```
