@@ -210,7 +210,11 @@ export function prepareOptions<T extends AgChartOptions>(
             mergedOptions.axes = (defaultOverrides as AgCartesianChartOptions).axes;
         } else {
             mergedOptions.axes = mergedOptions.axes?.map((axis: any) => {
-                const axesTheme = jsonMerge([axesThemes[type], axesThemes[type][axis.position || 'unknown'] || {}]);
+                const axisType = axis.type;
+                const axesTheme = jsonMerge([
+                    axesThemes[axisType],
+                    axesThemes[axisType][axis.position || 'unknown'] || {},
+                ]);
                 return prepareAxis(axis, axesTheme);
             });
         }

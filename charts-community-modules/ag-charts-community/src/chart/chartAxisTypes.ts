@@ -1,10 +1,11 @@
-export type ChartAxisType = 'number' | 'time' | 'log' | 'category';
+import { AgCartesianAxisType } from './agChartOptions';
 
-const types: Record<string, ChartAxisType> = {
+const types: Record<string, AgCartesianAxisType> = {
     number: 'number',
     time: 'time',
     log: 'log',
     category: 'category',
+    groupedCategory: 'groupedCategory',
 };
 
 export const CHART_AXES_TYPES = {
