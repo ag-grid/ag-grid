@@ -208,10 +208,12 @@ export abstract class Shape extends Node {
 
     protected renderFill(ctx: CanvasContext) {
         if (this.fill) {
+            const { globalAlpha } = ctx;
             this.applyFill(ctx);
-            this.applyAlpha(ctx);
+            this.applyFillAlpha(ctx);
             this.applyShadow(ctx);
             ctx.fill();
+            ctx.globalAlpha = globalAlpha;
         }
         ctx.shadowColor = 'rgba(0, 0, 0, 0)';
     }
@@ -224,7 +226,7 @@ export abstract class Shape extends Node {
         }
     }
 
-    protected applyAlpha(ctx: CanvasContext) {
+    protected applyFillAlpha(ctx: CanvasContext) {
         const { globalAlpha } = ctx;
         ctx.globalAlpha = globalAlpha * this.opacity * this.fillOpacity;
     }
@@ -244,8 +246,8 @@ export abstract class Shape extends Node {
     }
 
     protected renderStroke(ctx: CanvasContext) {
-        const { globalAlpha } = ctx;
         if (this.stroke && this.strokeWidth) {
+            const { globalAlpha } = ctx;
             ctx.strokeStyle = this.stroke;
             ctx.globalAlpha = globalAlpha * this.opacity * this.strokeOpacity;
 
@@ -264,6 +266,7 @@ export abstract class Shape extends Node {
             }
 
             ctx.stroke();
+            ctx.globalAlpha = globalAlpha;
         }
     }
 

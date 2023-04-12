@@ -136,7 +136,7 @@ export class Rect extends Path {
         return bbox.containsPoint(point.x, point.y);
     }
 
-    protected applyAlpha(ctx: CanvasRenderingContext2D) {
+    protected applyFillAlpha(ctx: CanvasRenderingContext2D) {
         const { fillOpacity, microPixelEffectOpacity, opacity } = this;
         ctx.globalAlpha = opacity * fillOpacity * microPixelEffectOpacity;
     }
@@ -157,8 +157,9 @@ export class Rect extends Path {
 
             borderPath.draw(ctx);
 
+            const { globalAlpha } = ctx;
             ctx.strokeStyle = stroke!;
-            ctx.globalAlpha = opacity * strokeOpacity * microPixelEffectOpacity;
+            ctx.globalAlpha = globalAlpha * opacity * strokeOpacity * microPixelEffectOpacity;
 
             ctx.lineWidth = effectiveStrokeWidth;
             if (lineDash) {
@@ -175,6 +176,7 @@ export class Rect extends Path {
             }
 
             ctx.stroke();
+            ctx.globalAlpha = globalAlpha;
         }
     }
 }
