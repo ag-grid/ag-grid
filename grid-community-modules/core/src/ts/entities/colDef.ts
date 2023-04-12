@@ -472,6 +472,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     /** Set to `true` if you want this column header for this column to span the whole height of the header container. Default: `false` */
     spanHeaderHeight?: boolean;
+
+    useValueFormatterForExport?: boolean;
+
+    useValueParserForImport?: boolean;
 }
 export interface ColumnFunctionCallbackParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {
     /** Row node for the given row */

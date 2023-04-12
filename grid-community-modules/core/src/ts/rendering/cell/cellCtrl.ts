@@ -527,7 +527,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private parseValue(newValue: any): any {
-        return this.beans.ValueParserService.parseValue(this.column, this.rowNode, newValue, this.getValue());
+        return this.beans.valueParserService.parseValue(this.column, this.rowNode, newValue, this.getValue());
     }
 
     public setFocusOutOnEditor(): void {

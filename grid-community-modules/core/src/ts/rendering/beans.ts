@@ -97,7 +97,7 @@ export class Beans {
     @Autowired('valueCache') public valueCache: ValueCache;
     @Autowired('rowNodeEventThrottle') public rowNodeEventThrottle: RowNodeEventThrottle;
     @Autowired('localeService') public localeService: LocaleService;
-    @Autowired('ValueParserService') public ValueParserService: ValueParserService;
+    @Autowired('valueParserService') public valueParserService: ValueParserService;
 
     public doingMasterDetail: boolean;
 

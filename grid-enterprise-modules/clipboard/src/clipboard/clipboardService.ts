@@ -39,6 +39,9 @@ import {
     CtrlsService,
     WithoutGridCommon,
     ProcessRowGroupForExportParams,
+    ExpressionService,
+    ValueFormatterService,
+    ValueParserService
 } from "@ag-grid-community/core";
 
 interface RowCallback {
@@ -76,9 +79,9 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
-
-
-
+    @Autowired('expressionService') private expressionService: ExpressionService;
+    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
+    @Autowired('valueParserService') private valueParserService: ValueParserService;
 
     private clientSideRowModel: IClientSideRowModel;
     private logger: Logger;
@@ -901,7 +904,9 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                 value,
                 node,
                 column,
-                type: 'clipboard'
+                type: 'clipboard',
+                formatValue: (valueToFormat: any) => this.valueFormatterService.formatValue(column, node, valueToFormat) ?? valueToFormat,
+                parseValue: (valueToParse: string) => this.valueParserService.parseValue(column, node, valueToParse, this.valueService.getValue(column, node))
             });
         }
         return value;
@@ -930,9 +935,15 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                 node: rowNode,
                 value,
                 type,
+                formatValue: (valueToFormat: any) => this.valueFormatterService.formatValue(column, rowNode ?? null, valueToFormat) ?? valueToFormat,
+                parseValue: (valueToParse: string) => this.valueParserService.parseValue(column, rowNode ?? null, valueToParse, this.valueService.getValue(column, rowNode))
+
             };
 
             return func(params);
+        }
+        if (column.getColDef().useValueParserForImport) {
+            return this.valueParserService.parseValue(column, rowNode ?? null, value, this.valueService.getValue(column, rowNode));
         }
 
         return value;
