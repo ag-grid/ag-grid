@@ -702,14 +702,14 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
      *
      * Equivalent: `getColId`, `getUniqueId` */
     public getId(): string {
-        return this.getColId();
+        return this.colId;
     }
     /**
      * Returns the unique ID for the column.
      *
      * Equivalent: `getColId`, `getId` */
     public getUniqueId(): string {
-        return this.getId();
+        return this.colId;
     }
 
     public getDefinition(): AbstractColDef {
