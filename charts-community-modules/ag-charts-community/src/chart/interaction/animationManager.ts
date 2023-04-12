@@ -9,8 +9,15 @@ interface AnimationEvent<AnimationType> {
     delta: number;
 }
 
+interface AnimationManyOptions<T> extends Omit<Motion.AnimationOptions<T>, 'from' | 'to' | 'onUpdate'> {
+    onUpdate: (props: Array<T>) => void;
+}
+
+const DEBOUNCE_DELAY = 300;
+
 export class AnimationManager extends BaseManager<AnimationType, AnimationEvent<AnimationType>> {
     private readonly states: Record<AnimationId, Motion.AnimationControls> = {};
+    private debouncers: Record<AnimationId, number> = {};
 
     private updaters: Array<[AnimationId, FrameRequestCallback]> = [];
 
@@ -52,7 +59,16 @@ export class AnimationManager extends BaseManager<AnimationType, AnimationEvent<
         }
     }
 
-    public animate<T>(id: AnimationId, opts: Motion.AnimationOptions<T>) {
+    public debouncedAnimate<T>(id: AnimationId, opts: Motion.AnimationOptions<T>): Motion.AnimationControls {
+        if (this.debouncers[id] && Date.now() - this.debouncers[id] < (opts.duration ?? DEBOUNCE_DELAY)) {
+            return this.states[id];
+        }
+
+        this.debouncers[id] = Date.now();
+        return this.animate(id, opts);
+    }
+
+    public animate<T>(id: AnimationId, opts: Motion.AnimationOptions<T>): Motion.AnimationControls {
         const optsExtra = {
             ...opts,
             autoplay: this.isPlaying ? opts.autoplay : false,
@@ -70,8 +86,50 @@ export class AnimationManager extends BaseManager<AnimationType, AnimationEvent<
         return controller;
     }
 
-    public tween(opts: Motion.TweenOptions) {
-        const id = `tween-${Object.keys(this.states).length}`;
+    public animateMany<T>(
+        id: AnimationId,
+        props: Array<Pick<Motion.AnimationOptions<T>, 'from' | 'to'>>,
+        opts: AnimationManyOptions<T>
+    ): Motion.AnimationControls {
+        const state = props.map((prop) => prop.from);
+
+        const onUpdate = (index: number) => (v: T) => {
+            state[index] = v;
+            opts.onUpdate?.(state);
+        };
+
+        const drivers = props.map((prop, index) => {
+            const inner_id = `${id}-${index}`;
+            return this.animate(inner_id, { ...opts, ...prop, onUpdate: onUpdate(index) });
+        });
+
+        const controls = {
+            get isPlaying() {
+                return drivers.filter((driver) => driver.isPlaying).length > 0;
+            },
+            play() {
+                drivers.forEach((driver) => driver.play());
+                return controls;
+            },
+            pause() {
+                drivers.forEach((driver) => driver.pause());
+                return controls;
+            },
+            stop() {
+                drivers.forEach((driver) => driver.stop());
+                return controls;
+            },
+            reset() {
+                drivers.forEach((driver) => driver.reset());
+                return controls;
+            },
+        };
+
+        return controls;
+    }
+
+    public tween<T>(opts: Motion.TweenOptions<T>): Motion.TweenControls<T> {
+        const id = `tween-${btoa(JSON.stringify(opts))}`;
         const optsExtra = {
             ...opts,
             driver: this.createDriver(id),

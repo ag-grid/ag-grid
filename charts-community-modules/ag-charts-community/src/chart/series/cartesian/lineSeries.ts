@@ -38,6 +38,7 @@ import {
     FontWeight,
     AgCartesianSeriesMarkerFormat,
 } from '../../agChartOptions';
+import { easeOut, easeOutElastic } from '../../../motion/easing';
 
 interface LineNodeDatum extends CartesianSeriesNodeDatum {
     readonly point: SeriesNodeDatum['point'] & {
@@ -343,15 +344,82 @@ export class LineSeries extends CartesianSeries<LineContext> {
     protected async updateMarkerSelection(opts: {
         nodeData: LineNodeDatum[];
         markerSelection: Selection<Marker, LineNodeDatum>;
+        seriesIdx: number;
     }) {
         let { nodeData } = opts;
-        const { markerSelection } = opts;
-        const { shape, enabled } = this.marker;
-        nodeData = shape && enabled ? nodeData : [];
+        const { markerSelection, seriesIdx } = opts;
 
-        if (this.marker.isDirty()) {
+        const {
+            marker,
+            highlightStyle: { item: highlight },
+        } = this;
+
+        nodeData = marker.shape && marker.enabled ? nodeData : [];
+
+        if (marker.isDirty() || seriesIdx === -1) {
             markerSelection.clear();
         }
+
+        markerSelection.enter((node) => {
+            node.fill = marker.fill;
+            node.fillOpacity = marker.fillOpacity ?? 1;
+            node.stroke = marker.stroke;
+            node.strokeWidth = marker.strokeWidth ?? 1;
+
+            return new Promise((resolve) => {
+                if (!this.animationManager || seriesIdx >= 0) return resolve();
+
+                this.animationManager?.animateMany<string | number>(
+                    `${this.id}-node-${node.id}-enter`,
+                    [
+                        { from: node.fill ?? 'rgb(0,0,0)', to: highlight.fill ?? 'rgb(0,0,0)' },
+                        { from: node.fillOpacity ?? 1, to: highlight.fillOpacity ?? 1 },
+                        { from: node.stroke ?? 'rgb(0,0,0)', to: highlight.stroke ?? 'rgb(0,0,0)' },
+                        { from: node.strokeWidth ?? 1, to: highlight.strokeWidth ?? 1 },
+                    ],
+                    {
+                        duration: 1000,
+                        ease: easeOutElastic,
+                        repeat: 0,
+                        onUpdate: ([fill, fillOpacity, stroke, strokeWidth]) => {
+                            node.fill = fill as string;
+                            node.fillOpacity = fillOpacity as number;
+                            node.stroke = stroke as string;
+                            node.strokeWidth = strokeWidth as number;
+                        },
+                        onComplete: () => resolve(),
+                    }
+                );
+            });
+        });
+
+        markerSelection.exit((node) => {
+            return new Promise((resolve) => {
+                if (!this.animationManager) return resolve();
+
+                this.animationManager?.animateMany<string | number>(
+                    `${this.id}-node-${node.id}-exit`,
+                    [
+                        { from: node.fill ?? 'rgb(0,0,0)', to: marker.fill ?? 'rgb(0,0,0)' },
+                        { from: node.fillOpacity ?? 1, to: marker.fillOpacity ?? 1 },
+                        { from: node.stroke ?? 'rgb(0,0,0)', to: marker.stroke ?? 'rgb(0,0,0)' },
+                        { from: node.strokeWidth ?? 1, to: marker.strokeWidth ?? 1 },
+                    ],
+                    {
+                        duration: 200,
+                        repeat: 0,
+                        ease: easeOut,
+                        onUpdate: ([fill, fillOpacity, stroke, strokeWidth]) => {
+                            node.fill = fill as string;
+                            node.fillOpacity = fillOpacity as number;
+                            node.stroke = stroke as string;
+                            node.strokeWidth = strokeWidth as number;
+                        },
+                        onComplete: () => resolve(),
+                    }
+                );
+            });
+        });
 
         return markerSelection.update(nodeData);
     }
@@ -408,10 +476,14 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 });
             }
 
-            node.fill = (format && format.fill) || fill;
-            node.stroke = (format && format.stroke) || stroke;
-            node.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
-            node.fillOpacity = fillOpacity ?? 1;
+            // Animated properties
+            if (!isDatumHighlighted) {
+                node.fill = (format && format.fill) || fill;
+                node.fillOpacity = fillOpacity ?? 1;
+                node.stroke = (format && format.stroke) || stroke;
+                node.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
+            }
+
             node.strokeOpacity = marker.strokeOpacity ?? strokeOpacity ?? 1;
             node.size = format && format.size !== undefined ? format.size : size;
 
@@ -423,7 +495,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 return;
             }
 
-            // Only for cutom marker shapes
+            // Only for custom marker shapes
             node.path.clear({ trackChanges: true });
             node.updatePath();
             node.checkPathDirty();

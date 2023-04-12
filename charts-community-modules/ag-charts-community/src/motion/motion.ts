@@ -40,32 +40,6 @@ export interface DriverControls {
 
 export type Driver = (update: (time: number) => void) => DriverControls;
 
-function requestAnimationFrameDriver(update: (time: number) => void) {
-    let requestId: number | undefined;
-    let lastTime: number | undefined;
-
-    function frame(time: number) {
-        if (lastTime === undefined) lastTime = time;
-        const delta = time - lastTime;
-        lastTime = time;
-        update(delta);
-
-        requestId = requestAnimationFrame(frame);
-    }
-
-    return {
-        start: () => {
-            requestId = requestAnimationFrame(frame);
-        },
-        stop: () => {
-            if (requestId) cancelAnimationFrame(requestId);
-        },
-        reset: () => {
-            lastTime = undefined;
-        },
-    };
-}
-
 export function animate<T = number>({
     from,
     to,
@@ -162,21 +136,21 @@ export function animate<T = number>({
     return controls;
 }
 
-export interface TweenOptions extends KeyframesOptions<number> {}
+export interface TweenOptions<T> extends KeyframesOptions<T> {}
 
-export interface TweenControls {
-    start: (onUpdate?: (value: number) => void) => TweenControls;
-    stop: () => TweenControls;
+export interface TweenControls<T> {
+    start: (onUpdate?: (value: T) => void) => TweenControls<T>;
+    stop: () => TweenControls<T>;
 }
 
-export function tween(opts: TweenOptions): TweenControls {
+export function tween<T>(opts: TweenOptions<T>): TweenControls<T> {
     let handleUpdate: Function | undefined;
 
-    const animateOpts: AnimationOptions<number> = {
+    const animateOpts: AnimationOptions<T> = {
         ...opts,
         repeat: 0,
         autoplay: false,
-        onUpdate: (value: number) => {
+        onUpdate: (value: T) => {
             handleUpdate?.(value);
         },
     };
@@ -184,7 +158,7 @@ export function tween(opts: TweenOptions): TweenControls {
     const animationControls = animate(animateOpts);
 
     const controls = {
-        start: (onUpdate?: (value: number) => void) => {
+        start: (onUpdate?: (value: T) => void) => {
             animationControls.stop();
             animationControls.reset();
             animationControls.play();
@@ -198,4 +172,30 @@ export function tween(opts: TweenOptions): TweenControls {
     };
 
     return controls;
+}
+
+function requestAnimationFrameDriver(update: (time: number) => void) {
+    let requestId: number | undefined;
+    let lastTime: number | undefined;
+
+    function frame(time: number) {
+        if (lastTime === undefined) lastTime = time;
+        const delta = time - lastTime;
+        lastTime = time;
+        update(delta);
+
+        requestId = requestAnimationFrame(frame);
+    }
+
+    return {
+        start: () => {
+            requestId = requestAnimationFrame(frame);
+        },
+        stop: () => {
+            if (requestId) cancelAnimationFrame(requestId);
+        },
+        reset: () => {
+            lastTime = undefined;
+        },
+    };
 }

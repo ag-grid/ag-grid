@@ -339,7 +339,7 @@ export abstract class CartesianSeries<
         const visible = this.visible && this._contextNodeData?.length > 0 && anySeriesItemEnabled;
         this.rootGroup.visible = visible;
         this.contentGroup.visible = visible;
-        this.highlightGroup.visible = visible && !!seriesHighlighted;
+        this.highlightGroup.visible = visible; // && !!seriesHighlighted;
 
         const seriesOpacity = this.getOpacity();
         const subGroupOpacities = this.subGroups.map((_, index) => {

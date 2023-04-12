@@ -294,7 +294,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         this.highlightManager.addListener('highlight-change', (event) => this.changeHighlightDatum(event));
 
-        this.animationManager.addListener('animation-frame', ({ delta }) => {
+        this.animationManager.addListener('animation-frame', (_) => {
             this.update(ChartUpdateType.SCENE_RENDER);
         });
     }
@@ -602,6 +602,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     protected initSeries(series: Series<any>) {
         series.chart = this;
+        series.animationManager = this.animationManager;
         series.highlightManager = this.highlightManager;
         if (!series.data) {
             series.data = this.data;

@@ -23,6 +23,8 @@ export class Selection<TChild extends Node = Node, TDatum = any> {
     private _nodes: TChild[] = [];
     private _data: TDatum[] = [];
     private _factory: NodeFactory<TChild, TDatum>;
+    private _enterFn?: (node: TChild) => void;
+    private _exitFn?: (node: TChild) => void;
 
     each(iterate: (node: TChild, datum: TDatum, index: number) => void) {
         this._nodes.forEach((node, i) => iterate(node, node.datum, i));
@@ -38,12 +40,14 @@ export class Selection<TChild extends Node = Node, TDatum = any> {
             data.slice(old.length).forEach((datum) => {
                 const node = factory(datum);
                 node.datum = datum;
-                init && init(node);
+                init && init(node); // TODO: remove init() if we have enterFn()
+                this._enterFn?.(node);
                 parent.appendChild(node);
                 this._nodes.push(node);
             });
         } else if (data.length < old.length) {
-            this._nodes.splice(data.length).forEach((node) => {
+            this._nodes.splice(data.length).forEach(async (node) => {
+                await this._exitFn?.(node);
                 parent.removeChild(node);
             });
         }
@@ -83,5 +87,19 @@ export class Selection<TChild extends Node = Node, TDatum = any> {
 
     nodes() {
         return this._nodes;
+    }
+
+    /**
+     * A function to run on a node when it is added to a selection.
+     */
+    async enter(fn: (node: TChild) => void) {
+        this._enterFn = this._enterFn || fn;
+    }
+
+    /**
+     * A function to run on a node when it is removed from a selection.
+     */
+    async exit(fn: (node: TChild) => void) {
+        this._exitFn = this._exitFn || fn;
     }
 }
