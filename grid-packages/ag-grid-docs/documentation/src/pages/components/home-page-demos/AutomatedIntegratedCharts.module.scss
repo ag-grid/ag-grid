@@ -9,10 +9,9 @@ $z-index-debug-panel: $z-index-splash + 10;
 $z-index-splash-contents: 10;
 
 :global(.automated-integrated-charts-grid.ag-theme-alpine) {
-    --logo-mark-left: 33%;
-
-    background-color: #00162d;
     position: relative;
+    width: 100%;
+    border-radius: var(--border-radius);
     z-index: $z-index-grid;
 
     @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
@@ -27,13 +26,21 @@ $z-index-splash-contents: 10;
         pointer-events: none;
     }
 
+    @media screen and (min-width: ds.$breakpoint-automated-row-grouping-medium) {
+        height: 500px;
+    }
+
+    @media screen and (min-width: ds.$breakpoint-automated-row-grouping-large) {
+        height: 700px;
+    }
+
     svg[class*='logo-mark'] {
         position: absolute;
         display: block;
         width: 64px * 2;
         height: 48px * 2;
         top: 51%;
-        left: var(--logo-mark-left);
+        left: 50%;
         transform: translate(-60px, -48px) scale(1.5);
         z-index: 1;
     }
@@ -133,71 +140,41 @@ $z-index-splash-contents: 10;
     }
 }
 
-.contents {
-    line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity;
-    color: var(--text-color);
-    z-index: $z-index-splash + $z-index-splash-contents;
+.sectionHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: ds.$size-2 !important; // !important for .ag-styles specificity;
 
-    @media screen and (min-width: ds.$breakpoint-automated-row-grouping-medium) {
-        max-width: 22em;
-        margin-left: 10% !important; // !important for .ag-styles specificity;
-        margin-right: 10% !important; // !important for .ag-styles specificity;
-    }
-
-    @media screen and (min-width: ds.$breakpoint-automated-row-grouping-large) {
-        font-size: var(--font-size-extra-large) !important; // !important for .ag-styles specificity;
+    h2,
+    p {
+        max-width: 51rem;
     }
 
     h2 {
-        --font-weight: var(--font-weight-bold);
-
-        @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
-            font-size: min(var(--font-size-massive), 8.5vw) !important; // !important for .ag-styles specificity;
-        }
-
-        @media screen and (min-width: ds.$breakpoint-automated-row-grouping-large) {
-            font-size: var(--font-size-gigantic) !important; // !important for .ag-styles specificity;
-        }
-    }
-
-    .hide & {
-        pointer-events: none;
+        margin-bottom: ds.$size-2 !important; // !important for .ag-styles specificity;
+        font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity;
     }
 }
 
-.contentsInner {
-    transition: opacity 0.33s ease-in-out;
+.sectionFooter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: ds.$size-2;
+    margin-top: ds.$size-3 !important; // !important for .ag-styles specificity;
 }
 
 .exploreExampleButton {
-    margin-top: ds.$size-2 !important; // !important for .ag-styles specificity;
     padding: 0.375em 0.5em 0.5em 0.5em !important; // !important for .ag-styles specificity;
-    outline: transparent 3px solid !important; // !important for .ag-styles specificity;
-    outline-offset: 0;
-    transition: outline-color 0.15s ease-in-out, outline-offset 0.15s ease-in-out !important; // !important for .ag-styles specificity;
 
     @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
         display: none !important; // !important for .ag-styles specificity;
     }
 
     @media screen and (min-width: ds.$breakpoint-automated-row-grouping-large) {
-        margin-top: ds.$size-4 !important; // !important for .ag-styles specificity;
         font-size: var(--font-size-extra-large) !important; // !important for .ag-styles specificity;
-    }
-
-    &:hover,
-    &:focus,
-    &:focus-visible {
-        box-shadow: none !important; // !important for .ag-styles specificity;
-    }
-
-    :global(.exampleHover) &,
-    &:hover,
-    &:focus-visible {
-        --button-text-color: var(--ag-grid-dark-blue);
-
-        outline-color: var(--sky-blue) !important; // !important for .ag-styles specificity;
-        outline-offset: 4px;
     }
 
     :global(.icon) {
@@ -213,17 +190,8 @@ $z-index-splash-contents: 10;
 
     position: relative;
     display: inline-block;
-    margin-top: ds.$size-4 !important; // !important for .ag-styles specificity;
     padding-right: ds.$size-3;
     transition: color ds.$default-transition-timing;
-
-    @media screen and (min-width: ds.$breakpoint-automated-row-grouping-medium) {
-        margin-top: ds.$size-6 !important; // !important for .ag-styles specificity;
-    }
-
-    @media screen and (min-width: ds.$breakpoint-automated-row-grouping-large) {
-        margin-top: ds.$size-8 !important; // !important for .ag-styles specificity;
-    }
 
     &::after {
         content: '';
