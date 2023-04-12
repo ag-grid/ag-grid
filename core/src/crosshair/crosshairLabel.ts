@@ -3,7 +3,7 @@ import { _ModuleSupport, _Scene } from 'ag-charts-community';
 type AgCrosshairLabelRendererParams = any;
 type AgCrosshairLabelRendererResult = any;
 
-const { Validate, NUMBER, BOOLEAN, OPT_STRING, OPT_FUNCTION } = _ModuleSupport;
+const { ActionOnSet, Validate, NUMBER, BOOLEAN, OPT_STRING, OPT_FUNCTION } = _ModuleSupport;
 const { BBox } = _Scene;
 
 export const defaultLabelCss = `
@@ -61,8 +61,19 @@ export class CrosshairLabel {
     enabled: boolean = true;
 
     @Validate(OPT_STRING)
+    @ActionOnSet<CrosshairLabel>({
+        changeValue(newValue, oldValue) {
+            if (newValue !== oldValue) {
+                if (oldValue) {
+                    this.element.classList.remove(oldValue);
+                }
+                if (newValue) {
+                    this.element.classList.add(newValue);
+                }
+            }
+        },
+    })
     className?: string = undefined;
-    private lastClassName?: string = undefined;
 
     @Validate(NUMBER())
     xOffset: number = 0;
@@ -88,22 +99,6 @@ export class CrosshairLabel {
             // Make sure the default label style goes before other styles so it can be overridden.
             document.head.insertBefore(styleElement, document.head.querySelector('style'));
             CrosshairLabel.labelDocuments.push(document);
-        }
-    }
-
-    private updateClass(visible?: boolean) {
-        const { element, className, lastClassName } = this;
-
-        element.classList.toggle(`${DEFAULT_LABEL_CLASS}-hidden`, !visible);
-
-        if (className !== lastClassName) {
-            if (lastClassName) {
-                element.classList.remove(lastClassName);
-            }
-            if (className) {
-                element.classList.add(className);
-            }
-            this.lastClassName = className;
         }
     }
 
@@ -145,7 +140,7 @@ export class CrosshairLabel {
     }
 
     toggle(visible?: boolean) {
-        this.updateClass(visible);
+        this.element.classList.toggle(`${DEFAULT_LABEL_CLASS}-hidden`, !visible);
     }
 
     destroy() {
