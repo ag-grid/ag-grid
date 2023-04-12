@@ -17,7 +17,6 @@ import {
     GetGroupRowAggParams,
     WithoutGridCommon
 } from "@ag-grid-community/core";
-import { PivotStage } from "./pivotStage";
 import { AggFuncService } from "./aggFuncService";
 
 interface AggregationDetails {
@@ -31,7 +30,6 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('pivotStage') private pivotStage: PivotStage;
     @Autowired('aggFuncService') private aggFuncService: AggFuncService;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -151,46 +149,47 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
 
     private aggregateRowNodeUsingValuesAndPivot(rowNode: RowNode): any {
         const result: any = {};
-        const pivotColumnDefs = this.pivotStage.getPivotColumnDefs();
 
-        // Step 1: process value columns
-        pivotColumnDefs
-            .filter(v => !_.exists(v.pivotTotalColumnIds)) // only process pivot value columns
-            .forEach(valueColDef => {
-                const keys: string[] = valueColDef.pivotKeys || [];
-                let values: any[];
-                const valueColumn: Column = valueColDef.pivotValueColumn!;
-                const colId = valueColDef.colId!;
+        const secondaryColumns = this.columnModel.getSecondaryColumns() ?? [];
+        secondaryColumns.forEach(secondaryCol => {
+            const { pivotValueColumn, pivotTotalColumnIds, colId, pivotKeys } = secondaryCol.getColDef();
+            if (_.exists(pivotTotalColumnIds)) {
+                return;
+            }
 
-                if (rowNode.leafGroup) {
-                    // lowest level group, get the values from the mapped set
-                    values = this.getValuesFromMappedSet(rowNode.childrenMapped, keys, valueColumn);
-                } else {
-                    // value columns and pivot columns, non-leaf group
-                    values = this.getValuesPivotNonLeaf(rowNode, colId);
-                }
+            const keys: string[] = pivotKeys ?? [];
+            let values: any[];
 
-                result[colId] = this.aggregateValues(values, valueColumn.getAggFunc()!, valueColumn, rowNode);
+            if (rowNode.leafGroup) {
+                // lowest level group, get the values from the mapped set
+                values = this.getValuesFromMappedSet(rowNode.childrenMapped, keys, pivotValueColumn!);
+            } else {
+                // value columns and pivot columns, non-leaf group
+                values = this.getValuesPivotNonLeaf(rowNode, colId!);
+            }
+
+            result[colId!] = this.aggregateValues(values, pivotValueColumn!.getAggFunc()!, pivotValueColumn!, rowNode, secondaryCol);
+        });
+
+        secondaryColumns.forEach(secondaryCol => {
+            const { pivotValueColumn, pivotTotalColumnIds, colId } = secondaryCol.getColDef();
+            if (!_.exists(pivotTotalColumnIds)) {
+                return;
+            }
+
+            const aggResults: any[] = [];
+
+            //retrieve results for colIds associated with this pivot total column
+            if (!pivotTotalColumnIds || !pivotTotalColumnIds.length) {
+                return;
+            }
+
+            pivotTotalColumnIds.forEach((currentColId: string) => {
+                aggResults.push(result[currentColId]);
             });
 
-        // Step 2: process total columns
-        pivotColumnDefs
-            .filter(v => _.exists(v.pivotTotalColumnIds)) // only process pivot total columns
-            .forEach(totalColDef => {
-                const aggResults: any[] = [];
-                const { pivotValueColumn, pivotTotalColumnIds, colId } = totalColDef;
-
-                //retrieve results for colIds associated with this pivot total column
-                if (!pivotTotalColumnIds || !pivotTotalColumnIds.length) {
-                    return;
-                }
-
-                pivotTotalColumnIds.forEach((currentColId: string) => {
-                    aggResults.push(result[currentColId]);
-                });
-
-                result[colId!] = this.aggregateValues(aggResults, pivotValueColumn!.getAggFunc()!, pivotValueColumn!, rowNode);
-            });
+            result[colId!] = this.aggregateValues(aggResults, pivotValueColumn!.getAggFunc()!, pivotValueColumn!, rowNode, secondaryCol);
+        });
 
         return result;
     }
@@ -272,7 +271,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
         return values;
     }
 
-    public aggregateValues(values: any[], aggFuncOrString: string | IAggFunc, column?: Column, rowNode?: RowNode): any {
+    public aggregateValues(values: any[], aggFuncOrString: string | IAggFunc, column?: Column, rowNode?: RowNode, pivotResultColumn?: Column): any {
         const aggFunc = typeof aggFuncOrString === 'string' ?
             this.aggFuncService.getAggFunc(aggFuncOrString) :
             aggFuncOrString;
@@ -287,6 +286,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
             values: values,
             column: column,
             colDef: column ? column.getColDef() : undefined,
+            pivotResultColumn: pivotResultColumn,
             rowNode: rowNode,
             data: rowNode ? rowNode.data : undefined,
             api: this.gridApi,
