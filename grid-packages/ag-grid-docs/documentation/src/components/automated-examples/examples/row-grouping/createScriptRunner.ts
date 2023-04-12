@@ -1,13 +1,15 @@
 import { Group } from '@tweenjs/tween.js';
 import { GridOptions } from 'ag-grid-community';
-import { Mouse } from '../lib/createMouse';
-import { Point } from '../lib/geometry';
-import { ScriptDebugger } from '../lib/scriptDebugger';
-import { createScriptRunner } from '../lib/scriptRunner';
-import { EasingFunction } from '../lib/tween';
-import { createIntegratedChartsScript } from '../scripts/createIntegratedChartsScript';
+import { Mouse } from '../../lib/createMouse';
+import { Point } from '../../lib/geometry';
+import { removeFocus } from '../../lib/scriptActions/removeFocus';
+import { clearAllSingleCellSelections } from '../../lib/scriptActions/singleCell';
+import { ScriptDebugger } from '../../lib/scriptDebugger';
+import { createScriptRunner as createScriptRunnerCore } from '../../lib/scriptRunner';
+import { EasingFunction } from '../../lib/tween';
+import { createScript } from './createScript';
 
-interface CreateIntegratedChartsScriptRunnerParams {
+interface Params {
     mouse: Mouse;
     containerEl?: HTMLElement;
     offScreenPos: Point;
@@ -20,7 +22,7 @@ interface CreateIntegratedChartsScriptRunnerParams {
     defaultEasing?: EasingFunction;
 }
 
-export function createIntegratedChartsScriptRunner({
+export function createScriptRunner({
     containerEl,
     mouse,
     offScreenPos,
@@ -31,8 +33,8 @@ export function createIntegratedChartsScriptRunner({
     loop,
     scriptDebugger,
     defaultEasing,
-}: CreateIntegratedChartsScriptRunnerParams) {
-    const rowGroupingScript = createIntegratedChartsScript({
+}: Params) {
+    const script = createScript({
         containerEl,
         mouse,
         offScreenPos,
@@ -40,10 +42,10 @@ export function createIntegratedChartsScriptRunner({
         scriptDebugger,
     });
 
-    const scriptRunner = createScriptRunner({
+    const scriptRunner = createScriptRunnerCore({
         containerEl,
         mouse,
-        script: rowGroupingScript,
+        script,
         gridOptions,
         loop,
         tweenGroup,
@@ -56,6 +58,14 @@ export function createIntegratedChartsScriptRunner({
                 mouse.hide();
                 onInactive && onInactive();
             }
+        },
+        onPaused: () => {
+            clearAllSingleCellSelections();
+            mouse.hide();
+        },
+        onUnpaused: () => {
+            removeFocus();
+            mouse.show();
         },
         scriptDebugger,
         defaultEasing,

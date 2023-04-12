@@ -7,25 +7,24 @@
 
 import { Easing, Group } from '@tweenjs/tween.js';
 import { ColDef, GridOptions } from 'ag-grid-community';
-import { COUNTRY_CODES } from '../data/constants';
-import { createPeopleData } from '../data/createPeopleData';
-import { createMouse } from '../lib/createMouse';
-import { getBottomMidPos } from '../lib/dom';
-import { Point } from '../lib/geometry';
-import { ScriptDebuggerManager } from '../lib/scriptDebugger';
-import { ScriptRunner } from '../lib/scriptRunner';
-import { createIntegratedChartsScriptRunner } from './createIntegratedChartsScriptRunner';
+import { createFinancialDataWorker } from '../../data/createFinancialDataWorker';
+import { createMouse } from '../../lib/createMouse';
+import { getBottomMidPos, isInViewport } from '../../lib/dom';
+import { Point } from '../../lib/geometry';
+import { ScriptDebuggerManager } from '../../lib/scriptDebugger';
+import { ScriptRunner } from '../../lib/scriptRunner';
+import { createScriptRunner } from './createScriptRunner';
+import { fixtureData } from './rowDataFixture';
 
 const WAIT_TILL_MOUSE_ANIMATION_STARTS = 2000;
-const VISIBLE_GRID_THRESHOLD_BEFORE_PLAYING_SCRIPT = 0.2;
 
+let dataWorker;
 let scriptRunner: ScriptRunner;
 let restartScriptTimeout;
 
-interface CreateAutomatedIntegratedChartsParams {
+interface CreateAutomatedRowGroupingParams {
     gridClassname: string;
     mouseMaskClassname: string;
-    scriptIsEnabled?: () => boolean;
     onInactive?: () => void;
     onGridReady?: () => void;
     suppressUpdates?: boolean;
@@ -33,6 +32,7 @@ interface CreateAutomatedIntegratedChartsParams {
     runOnce: boolean;
     scriptDebuggerManager: ScriptDebuggerManager;
     pauseOnMouseMove?: boolean;
+    visibilityThreshold: number;
 }
 
 function numberCellFormatter(params) {
@@ -41,42 +41,32 @@ function numberCellFormatter(params) {
         .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
-function getCountryFlagImageUrl(country: string) {
-    const countryCode = COUNTRY_CODES[country];
-    return `https://flags.fmcdn.net/data/flags/mini/${countryCode}.png`;
-}
-
 const columnDefs: ColDef[] = [
     {
-        field: 'name',
+        field: 'product',
         chartDataType: 'category',
         minWidth: 280,
         enableRowGroup: true,
     },
     {
-        field: 'country',
+        field: 'book',
         chartDataType: 'category',
         enableRowGroup: true,
-        cellRenderer: (params) => {
-            // put the value in bold
-            return `<img border="0" width="20" height="10" src='${getCountryFlagImageUrl(params.data.country)}' /> ${
-                params.value
-            }`;
-        },
     },
-    { field: 'jan', type: 'measure', enableRowGroup: true },
-    { field: 'feb', type: 'measure', enableRowGroup: true },
-    { field: 'mar', type: 'measure', enableRowGroup: true },
-    { field: 'apr', type: 'measure', enableRowGroup: true },
-    { field: 'may', type: 'measure', enableRowGroup: true },
-    { field: 'jun', type: 'measure', enableRowGroup: true },
-    { field: 'jul', type: 'measure', enableRowGroup: true },
-    { field: 'aug', type: 'measure', enableRowGroup: true },
-    { field: 'sep', type: 'measure', enableRowGroup: true },
-    { field: 'oct', type: 'measure', enableRowGroup: true },
-    { field: 'nov', type: 'measure', enableRowGroup: true },
-    { field: 'dec', type: 'measure', enableRowGroup: true },
-    { field: 'totalWinnings', type: 'measure', enableRowGroup: true },
+    { field: 'current', type: 'measure', enableRowGroup: true },
+    { field: 'previous', type: 'measure', enableRowGroup: true },
+    { headerName: 'PL 1', field: 'pl1', type: 'measure', enableRowGroup: true },
+    { headerName: 'PL 2', field: 'pl2', type: 'measure', enableRowGroup: true },
+    { headerName: 'Gain-DX', field: 'gainDx', type: 'measure', enableRowGroup: true },
+    { headerName: 'SX / PX', field: 'sxPx', type: 'measure', enableRowGroup: true },
+
+    { field: 'trade', type: 'measure', enableRowGroup: true },
+    { field: 'submitterID', type: 'measure', enableRowGroup: true },
+    { field: 'submitterDealID', type: 'measure', minWidth: 170, enableRowGroup: true },
+
+    { field: 'portfolio', enableRowGroup: true },
+    { field: 'dealType', enableRowGroup: true },
+    { headerName: 'Bid', field: 'bidFlag', enableRowGroup: true },
 ];
 
 const gridOptions: GridOptions = {
@@ -104,40 +94,74 @@ const gridOptions: GridOptions = {
     enableCharts: true,
     enableRangeSelection: true,
     suppressAggFuncInHeader: true,
+    getRowId: (params) => {
+        return params.data.trade;
+    },
     rowGroupPanelShow: 'always',
 };
 
-export function createAutomatedIntegratedCharts({
+function initWorker() {
+    dataWorker = new Worker(
+        URL.createObjectURL(new Blob(['(' + createFinancialDataWorker.toString() + ')()'], { type: 'text/javascript' }))
+    );
+    dataWorker.onmessage = function (e) {
+        if (!gridOptions || !gridOptions.api) {
+            return;
+        }
+
+        if (e.data.type === 'setRowData') {
+            gridOptions.api.setRowData(e.data.records);
+        } else if (e.data.type === 'updateData') {
+            gridOptions.api.applyTransactionAsync({ update: e.data.records });
+        }
+    };
+}
+
+function startWorkerMessages() {
+    dataWorker?.postMessage('start');
+}
+
+function stopWorkerMessages() {
+    dataWorker?.postMessage('stop');
+}
+
+export function createAutomatedRowGrouping({
     gridClassname,
     mouseMaskClassname,
-    scriptIsEnabled = () => true,
     onInactive,
     onGridReady,
     suppressUpdates,
+    useStaticData,
     scriptDebuggerManager,
     runOnce,
     pauseOnMouseMove,
-}: CreateAutomatedIntegratedChartsParams) {
+    visibilityThreshold,
+}: CreateAutomatedRowGroupingParams) {
     const gridSelector = `.${gridClassname}`;
+    let gridDiv: HTMLElement;
 
     const init = () => {
-        const gridDiv = document.querySelector(gridSelector) as HTMLElement;
+        gridDiv = document.querySelector(gridSelector) as HTMLElement;
         if (!gridDiv) {
             return;
         }
 
         const offScreenPos: Point = getBottomMidPos(gridDiv);
+        if (useStaticData) {
+            gridOptions.rowData = fixtureData;
+        }
 
-        gridOptions.rowData = createPeopleData({ randomize: !suppressUpdates });
         gridOptions.onGridReady = () => {
             if (suppressUpdates) {
                 return;
             }
 
             onGridReady && onGridReady();
+            initWorker();
+            startWorkerMessages();
 
             const scriptDebugger = scriptDebuggerManager.add({
-                id: 'Integrated Charts',
+                id: 'Row Grouping',
                 containerEl: gridDiv,
             });
 
@@ -148,12 +172,17 @@ export function createAutomatedIntegratedCharts({
                 scriptRunner.stop();
             }
 
-            scriptRunner = createIntegratedChartsScriptRunner({
+            scriptRunner = createScriptRunner({
                 containerEl: gridDiv,
                 mouse,
                 offScreenPos,
+                onPlaying() {
+                    startWorkerMessages();
+                },
                 onInactive() {
                     onInactive && onInactive();
+
+                    stopWorkerMessages();
                 },
                 tweenGroup,
                 gridOptions,
@@ -186,35 +215,8 @@ export function createAutomatedIntegratedCharts({
                     pauseScriptRunner();
                 });
             }
-
-            // Only play script if the grid is visible
-            const gridObserver = new window.IntersectionObserver(
-                ([entry]) => {
-                    if (entry.isIntersecting) {
-                        if (scriptRunner.currentState() !== 'playing' && scriptIsEnabled()) {
-                            scriptRunner.play();
-                        }
-                        return;
-                    }
-                    clearTimeout(restartScriptTimeout);
-                    scriptRunner.inactive();
-                },
-                {
-                    root: null,
-                    threshold: VISIBLE_GRID_THRESHOLD_BEFORE_PLAYING_SCRIPT,
-                }
-            );
-            gridObserver.observe(gridDiv);
         };
         new globalThis.agGrid.Grid(gridDiv, gridOptions);
-    };
-
-    const start = () => {
-        scriptRunner?.play();
-    };
-
-    const stop = () => {
-        scriptRunner?.stop();
     };
 
     const loadGrid = function () {
@@ -228,8 +230,13 @@ export function createAutomatedIntegratedCharts({
     loadGrid();
 
     return {
-        start,
-        stop,
+        start: () => scriptRunner?.play(),
+        stop: () => scriptRunner?.stop(),
+        inactive: () => scriptRunner?.inactive(),
+        currentState: () => scriptRunner?.currentState(),
+        isInViewport: () => {
+            return isInViewport(gridDiv, visibilityThreshold);
+        },
     };
 }
 
@@ -245,6 +252,8 @@ if (import.meta.webpackHot) {
             scriptRunner.stop();
         }
 
+        stopWorkerMessages();
+        dataWorker?.terminate();
         gridOptions.api?.destroy();
     });
 }

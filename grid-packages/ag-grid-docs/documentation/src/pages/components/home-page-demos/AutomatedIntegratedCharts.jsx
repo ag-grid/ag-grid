@@ -1,16 +1,15 @@
 // Remount component when Fast Refresh is triggered
 // @refresh reset
 
-import classnames from 'classnames';
-import { withPrefix } from 'gatsby';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { createAutomatedIntegratedCharts } from '../../../components/automated-examples/integrated-charts';
-import { Splash } from '../../../components/automated-examples/Splash';
-import { Icon } from '../../../components/Icon';
+import { createAutomatedIntegratedCharts } from '../../../components/automated-examples/examples/integrated-charts';
 import LogoMark from '../../../components/LogoMark';
 import { hostPrefix, isProductionBuild, localPrefix } from '../../../utils/consts';
+import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
 import styles from './AutomatedIntegratedCharts.module.scss';
+
+const SCRIPT_ID = 'integrated-charts';
 
 const helmet = [];
 if (!isProductionBuild()) {
@@ -47,36 +46,51 @@ const mouseStyles = `
     }
 `;
 
-function AutomatedIntegratedCharts({ scriptDebuggerManager, useStaticData, runOnce }) {
+function AutomatedIntegratedCharts({
+    automatedExampleManager,
+    scriptDebuggerManager,
+    useStaticData,
+    runOnce,
+    visibilityThreshold,
+}) {
     const gridClassname = 'automated-integrated-charts-grid';
-    const automatedScript = useRef(null);
+    const gridRef = useRef(null);
     // NOTE: Needs to be a ref instead of useState, as it is passed into a plain JavaScript context
     const scriptEnabled = useRef(true);
     const [gridIsReady, setGridIsReady] = useState(false);
 
-    const onSplashHide = useCallback(() => {
-        if (!automatedScript.current) {
-            return true;
-        }
+    // const onSplashHide = useCallback(() => {
+    //     if (!automatedScript.current) {
+    //         return true;
+    //     }
 
-        scriptEnabled.current = false;
-        automatedScript.current.stop();
-    }, [scriptEnabled.current, automatedScript.current]);
+    //     scriptEnabled.current = false;
+    //     automatedScript.current.stop();
+    // }, [scriptEnabled.current, automatedScript.current]);
 
-    const onSplashShow = useCallback(() => {
-        scriptEnabled.current = true;
-        automatedScript.current.start();
-    }, [scriptEnabled.current, automatedScript.current]);
+    // const onSplashShow = useCallback(() => {
+    //     scriptEnabled.current = true;
+    //     automatedScript.current.start();
+    // }, [scriptEnabled.current, automatedScript.current]);
 
-    const scriptIsEnabled = () => {
-        return scriptEnabled.current;
-    };
+    useIntersectionObserver({
+        elementRef: gridRef,
+        onChange: ({ isIntersecting }) => {
+            if (isIntersecting) {
+                if (scriptEnabled.current) {
+                    automatedExampleManager.start(SCRIPT_ID);
+                }
+            } else {
+                automatedExampleManager.inactive(SCRIPT_ID);
+            }
+        },
+        threshold: visibilityThreshold,
+    });
 
     useEffect(() => {
         let params = {
             gridClassname,
             mouseMaskClassname: styles.mouseMask,
-            scriptIsEnabled,
             scriptDebuggerManager,
             suppressUpdates: useStaticData,
             useStaticData,
@@ -84,9 +98,13 @@ function AutomatedIntegratedCharts({ scriptDebuggerManager, useStaticData, runOn
             onGridReady() {
                 setGridIsReady(true);
             },
+            visibilityThreshold,
         };
 
-        automatedScript.current = createAutomatedIntegratedCharts(params);
+        automatedExampleManager.add({
+            id: SCRIPT_ID,
+            automatedExample: createAutomatedIntegratedCharts(params),
+        });
     }, []);
 
     return (
@@ -95,10 +113,14 @@ function AutomatedIntegratedCharts({ scriptDebuggerManager, useStaticData, runOn
                 {helmet.map((entry) => entry)}
                 <style>{mouseStyles}</style>
             </Helmet>
-            <div style={{ height: '100%', width: '100%' }} className="automated-integrated-charts-grid ag-theme-alpine">
+            <div
+                ref={gridRef}
+                style={{ height: '100%', width: '100%' }}
+                className="automated-integrated-charts-grid ag-theme-alpine"
+            >
                 {!gridIsReady && !useStaticData && <LogoMark isSpinning />}
             </div>
-            <Splash
+            {/* <Splash
                 size="small"
                 onSplashHide={onSplashHide}
                 onSplashShow={onSplashShow}
@@ -131,7 +153,7 @@ function AutomatedIntegratedCharts({ scriptDebuggerManager, useStaticData, runOn
                         </div>
                     );
                 }}
-            />
+            /> */}
         </>
     );
 }

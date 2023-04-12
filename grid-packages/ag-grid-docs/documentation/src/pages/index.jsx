@@ -1,5 +1,7 @@
 import classNames from 'classnames';
 import React, { useEffect } from 'react';
+import { DEFAULT_AUTOMATED_EXAMPLE_VISIBILITY_THRESHOLD } from '../components/automated-examples/lib/constants';
+import { createAutomatedExampleManager } from '../components/automated-examples/lib/createAutomatedExampleManager';
 import { createScriptDebuggerManager } from '../components/automated-examples/lib/scriptDebugger';
 import Footer from '../components/footer/Footer';
 import FrameworkSelector from '../components/FrameworkSelector';
@@ -16,7 +18,10 @@ const AutomatedIntegratedCharts = React.lazy(() => import('./components/home-pag
 const AutomatedRowGrouping = React.lazy(() => import('./components/home-page-demos/AutomatedRowGrouping'));
 const HeroGrid = React.lazy(() => import('./components/home-page-demos/HeroGrid'));
 
+const automatedExampleManager = createAutomatedExampleManager();
+
 const Default = () => {
+    const automatedExampleVisiblityThreshold = DEFAULT_AUTOMATED_EXAMPLE_VISIBILITY_THRESHOLD;
     const frameworksData = [
         {
             name: 'javascript',
@@ -104,9 +109,11 @@ const Default = () => {
                         {!IS_SSR && (
                             <React.Suspense fallback={<></>}>
                                 <AutomatedRowGrouping
+                                    automatedExampleManager={automatedExampleManager}
                                     scriptDebuggerManager={scriptDebuggerManager}
                                     useStaticData={isCI}
                                     runOnce={runAutomatedExamplesOnce}
+                                    visibilityThreshold={automatedExampleVisiblityThreshold}
                                 />
                             </React.Suspense>
                         )}
@@ -150,9 +157,11 @@ const Default = () => {
                         {!IS_SSR && (
                             <React.Suspense fallback={<></>}>
                                 <AutomatedIntegratedCharts
+                                    automatedExampleManager={automatedExampleManager}
                                     scriptDebuggerManager={scriptDebuggerManager}
                                     useStaticData={isCI}
                                     runOnce={runAutomatedExamplesOnce}
+                                    visibilityThreshold={automatedExampleVisiblityThreshold}
                                 />
                             </React.Suspense>
                         )}

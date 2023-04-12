@@ -37,10 +37,12 @@ export async function moveToElementAndClick({
 }: MoveToElementAndClickParams) {
     const element = agElementFinder.get(target, targetParams);
     if (!element) {
-        console.error(`No element found: ${target}`);
-        return;
+        throw new Error(`No element found: ${target}`);
     }
-    const toPos = element.getPos()!;
+    const toPos = element.getPos();
+    if (!toPos) {
+        throw new Error(`Element position not found: ${target}`);
+    }
 
     await createMoveMouse({
         mouse,

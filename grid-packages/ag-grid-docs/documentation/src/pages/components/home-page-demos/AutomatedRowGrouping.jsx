@@ -5,12 +5,15 @@ import classnames from 'classnames';
 import { withPrefix } from 'gatsby';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { createAutomatedRowGrouping } from '../../../components/automated-examples/row-grouping';
+import { createAutomatedRowGrouping } from '../../../components/automated-examples/examples/row-grouping';
 import { Splash } from '../../../components/automated-examples/Splash';
 import { Icon } from '../../../components/Icon';
 import LogoMark from '../../../components/LogoMark';
 import { hostPrefix, isProductionBuild, localPrefix } from '../../../utils/consts';
+import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
 import styles from './AutomatedRowGrouping.module.scss';
+
+const SCRIPT_ID = 'row-grouping';
 
 const helmet = [];
 if (!isProductionBuild()) {
@@ -47,36 +50,47 @@ const mouseStyles = `
     }
 `;
 
-function AutomatedRowGrouping({ scriptDebuggerManager, useStaticData, runOnce }) {
+function AutomatedRowGrouping({
+    automatedExampleManager,
+    scriptDebuggerManager,
+    useStaticData,
+    runOnce,
+    visibilityThreshold,
+}) {
     const gridClassname = 'automated-row-grouping-grid';
-    const automatedScript = useRef(null);
+    const gridRef = useRef(null);
     // NOTE: Needs to be a ref instead of useState, as it is passed into a plain JavaScript context
     const scriptEnabled = useRef(true);
     const [gridIsReady, setGridIsReady] = useState(false);
 
     const onSplashHide = useCallback(() => {
-        if (!automatedScript.current) {
-            return true;
-        }
-
         scriptEnabled.current = false;
-        automatedScript.current.stop();
-    }, [scriptEnabled.current, automatedScript.current]);
+        automatedExampleManager.stop(SCRIPT_ID);
+    }, []);
 
     const onSplashShow = useCallback(() => {
         scriptEnabled.current = true;
-        automatedScript.current.start();
-    }, [scriptEnabled.current, automatedScript.current]);
+        automatedExampleManager.start(SCRIPT_ID);
+    }, []);
 
-    const scriptIsEnabled = () => {
-        return scriptEnabled.current;
-    };
+    useIntersectionObserver({
+        elementRef: gridRef,
+        onChange: ({ isIntersecting }) => {
+            if (isIntersecting) {
+                if (scriptEnabled.current) {
+                    automatedExampleManager.start(SCRIPT_ID);
+                }
+            } else {
+                automatedExampleManager.inactive(SCRIPT_ID);
+            }
+        },
+        threshold: visibilityThreshold,
+    });
 
     useEffect(() => {
         let params = {
             gridClassname,
             mouseMaskClassname: styles.mouseMask,
-            scriptIsEnabled,
             scriptDebuggerManager,
             suppressUpdates: useStaticData,
             useStaticData,
@@ -84,9 +98,13 @@ function AutomatedRowGrouping({ scriptDebuggerManager, useStaticData, runOnce })
             onGridReady() {
                 setGridIsReady(true);
             },
+            visibilityThreshold,
         };
 
-        automatedScript.current = createAutomatedRowGrouping(params);
+        automatedExampleManager.add({
+            id: SCRIPT_ID,
+            automatedExample: createAutomatedRowGrouping(params),
+        });
     }, []);
 
     return (
@@ -95,7 +113,11 @@ function AutomatedRowGrouping({ scriptDebuggerManager, useStaticData, runOnce })
                 {helmet.map((entry) => entry)}
                 <style>{mouseStyles}</style>
             </Helmet>
-            <div style={{ height: '100%', width: '100%' }} className="automated-row-grouping-grid ag-theme-alpine-dark">
+            <div
+                ref={gridRef}
+                style={{ height: '100%', width: '100%' }}
+                className="automated-row-grouping-grid ag-theme-alpine-dark"
+            >
                 {!gridIsReady && !useStaticData && <LogoMark isSpinning />}
             </div>
             <Splash

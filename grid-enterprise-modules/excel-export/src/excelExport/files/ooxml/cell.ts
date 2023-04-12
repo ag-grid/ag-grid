@@ -25,7 +25,7 @@ const cellFactory: ExcelOOXMLTemplate = {
                 rawMap: {
                     r: ref,
                     t: convertedType === 'empty' ? undefined : convertedType,
-                    s: styleId ? getStyleId(styleId, currentSheet) : undefined
+                    s: styleId ? getStyleId(styleId as string, currentSheet) : undefined
                 }
             }
         };
