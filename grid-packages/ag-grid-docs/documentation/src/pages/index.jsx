@@ -120,38 +120,6 @@ const Default = () => {
                     </div>
                 </section>
 
-                <div className={styles.homepageDescription}>
-                    <div className="page-margin">
-                        <ul className="list-style-none">
-                            <li>
-                                <h3>Feature Packed</h3>
-                                <p>
-                                    The performance, feature set and quality of AG Grid has not been seen before in a
-                                    JavaScript datagrid. Many features in AG Grid are unique to AG Grid, and simply put
-                                    AG Grid into a class of its own, without compromising on quality or performance.
-                                </p>
-                            </li>
-                            <li>
-                                <h3>Industry Leading</h3>
-                                <p>
-                                    Over 1.2 million monthly downloads of AG Grid Community and over 80% of the Fortune
-                                    500 using AG Grid Enterprise. AG Grid has become the JavaScript datagrid of choice
-                                    for Enterprise JavaScript developers.
-                                </p>
-                            </li>
-                            <li>
-                                <h3>Community & Enterprise</h3>
-                                <p>
-                                    AG Grid Community is free and open-sourced under the MIT license. AG Grid Enterprise
-                                    comes with dedicated support and more enterprise style features. AG Grid gives for
-                                    free what other grids charge for, then provides AG Grid Enterprise where it goes
-                                    above and beyond the competition.
-                                </p>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
                 <section className={classNames('page-margin', styles.homepageExample)}>
                     <div className={styles.automatedIntegratedCharts}>
                         {!IS_SSR && (
