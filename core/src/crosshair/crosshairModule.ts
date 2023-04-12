@@ -40,7 +40,7 @@ export interface AgCrosshairLabel {
     /** Whether or not to show label when the crosshair is visible. */
     enabled?: boolean;
     /** A class name to be added to the crosshair label element. */
-    class?: string;
+    className?: string;
     /** The horizontal offset in pixels for the label. */
     xOffset?: PixelSize;
     /** The vertical offset in pixels for the label. */

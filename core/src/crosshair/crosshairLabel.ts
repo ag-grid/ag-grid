@@ -61,8 +61,8 @@ export class CrosshairLabel {
     enabled: boolean = true;
 
     @Validate(OPT_STRING)
-    class?: string = undefined;
-    lastClass?: string = undefined;
+    className?: string = undefined;
+    private lastClassName?: string = undefined;
 
     @Validate(NUMBER())
     xOffset: number = 0;
@@ -92,22 +92,18 @@ export class CrosshairLabel {
     }
 
     private updateClass(visible?: boolean) {
-        const { element, class: newClass, lastClass } = this;
+        const { element, className, lastClassName } = this;
 
-        if (visible !== true) {
-            element.classList.add(`${DEFAULT_LABEL_CLASS}-hidden`);
-        } else {
-            element.classList.remove(`${DEFAULT_LABEL_CLASS}-hidden`);
-        }
+        element.classList.toggle(`${DEFAULT_LABEL_CLASS}-hidden`, !visible);
 
-        if (newClass !== lastClass) {
-            if (lastClass) {
-                element.classList.remove(lastClass);
+        if (className !== lastClassName) {
+            if (lastClassName) {
+                element.classList.remove(lastClassName);
             }
-            if (newClass) {
-                element.classList.add(newClass);
+            if (className) {
+                element.classList.add(className);
             }
-            this.lastClass = newClass;
+            this.lastClassName = className;
         }
     }
 
