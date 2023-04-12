@@ -64,14 +64,17 @@
     display: inline-block;
     padding: 0;
     color: var(--secondary-text-color);
+    opacity: 0.75;
     transition: opacity $default-transition-timing, color $default-transition-timing;
 
     &:global(.active) {
         color: var(--text-color);
+        opacity: 1;
     }
 
     &:hover {
         color: var(--link-color);
+        opacity: 1;
     }
 
     &::before {
@@ -88,11 +91,11 @@
 
     &:hover::before {
         background-color: var(--link-color);
-        opacity: 0.33;
+        opacity: 0.5;
     }
 
     &:global(.active)::before {
-        opacity: 0.66;
+        opacity: 1;
     }
 }
 
@@ -108,7 +111,7 @@
 .sideNav .level-3 {
     margin-bottom: calc(var(--item-gap) / 4) !important; // !important for .ag-styles specificity
     padding-left: $size-4;
-    opacity: 0.8;
+    // opacity: 0.8;
 }
 
 .sideNav .level-1 + .level-3,
