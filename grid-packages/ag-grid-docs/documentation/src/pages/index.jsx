@@ -104,35 +104,39 @@ const Default = () => {
                     </div>
                 </div>
 
-                <section className="page-margin">
-                    <div className={styles.automatedRowGrouping}>
-                        {!IS_SSR && (
-                            <React.Suspense fallback={<></>}>
-                                <AutomatedRowGrouping
-                                    automatedExampleManager={automatedExampleManager}
-                                    scriptDebuggerManager={scriptDebuggerManager}
-                                    useStaticData={isCI}
-                                    runOnce={runAutomatedExamplesOnce}
-                                    visibilityThreshold={automatedExampleVisiblityThreshold}
-                                />
-                            </React.Suspense>
-                        )}
+                <section className={styles.automatedRowGroupingOuter}>
+                    <div className={classNames('page-margin', styles.homepageExample)}>
+                        <div className={styles.automatedRowGrouping}>
+                            {!IS_SSR && (
+                                <React.Suspense fallback={<></>}>
+                                    <AutomatedRowGrouping
+                                        automatedExampleManager={automatedExampleManager}
+                                        scriptDebuggerManager={scriptDebuggerManager}
+                                        useStaticData={isCI}
+                                        runOnce={runAutomatedExamplesOnce}
+                                        visibilityThreshold={automatedExampleVisiblityThreshold}
+                                    />
+                                </React.Suspense>
+                            )}
+                        </div>
                     </div>
                 </section>
 
-                <section className={classNames('page-margin', styles.homepageExample)}>
-                    <div className={styles.automatedIntegratedCharts}>
-                        {!IS_SSR && (
-                            <React.Suspense fallback={<></>}>
-                                <AutomatedIntegratedCharts
-                                    automatedExampleManager={automatedExampleManager}
-                                    scriptDebuggerManager={scriptDebuggerManager}
-                                    useStaticData={isCI}
-                                    runOnce={runAutomatedExamplesOnce}
-                                    visibilityThreshold={automatedExampleVisiblityThreshold}
-                                />
-                            </React.Suspense>
-                        )}
+                <section className={styles.automatedIntegratedChartsOuter}>
+                    <div className={classNames('page-margin', styles.homepageExample)}>
+                        <div className={styles.automatedIntegratedCharts}>
+                            {!IS_SSR && (
+                                <React.Suspense fallback={<></>}>
+                                    <AutomatedIntegratedCharts
+                                        automatedExampleManager={automatedExampleManager}
+                                        scriptDebuggerManager={scriptDebuggerManager}
+                                        useStaticData={isCI}
+                                        runOnce={runAutomatedExamplesOnce}
+                                        visibilityThreshold={automatedExampleVisiblityThreshold}
+                                    />
+                                </React.Suspense>
+                            )}
+                        </div>
                     </div>
                 </section>
 

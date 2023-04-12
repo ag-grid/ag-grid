@@ -1,12 +1,11 @@
 // Remount component when Fast Refresh is triggered
 // @refresh reset
 
-import classnames from 'classnames';
+import classNames from 'classnames';
 import { withPrefix } from 'gatsby';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { createAutomatedRowGrouping } from '../../../components/automated-examples/examples/row-grouping';
-import { Splash } from '../../../components/automated-examples/Splash';
 import { Icon } from '../../../components/Icon';
 import LogoMark from '../../../components/LogoMark';
 import { hostPrefix, isProductionBuild, localPrefix } from '../../../utils/consts';
@@ -63,16 +62,6 @@ function AutomatedRowGrouping({
     const scriptEnabled = useRef(true);
     const [gridIsReady, setGridIsReady] = useState(false);
 
-    const onSplashHide = useCallback(() => {
-        scriptEnabled.current = false;
-        automatedExampleManager.stop(SCRIPT_ID);
-    }, []);
-
-    const onSplashShow = useCallback(() => {
-        scriptEnabled.current = true;
-        automatedExampleManager.start(SCRIPT_ID);
-    }, []);
-
     useIntersectionObserver({
         elementRef: gridRef,
         onChange: ({ isIntersecting }) => {
@@ -109,53 +98,33 @@ function AutomatedRowGrouping({
 
     return (
         <>
+            <header className={styles.sectionHeader}>
+                <h2 className="font-size-gigantic">Feature Packed, Incredible Performance</h2>
+                <p>
+                    All the features your users expect and more. Out of the box performance that can handle any data you
+                    can throw&nbsp;at&nbsp;it.
+                </p>
+            </header>
+
             <Helmet>
                 {helmet.map((entry) => entry)}
                 <style>{mouseStyles}</style>
             </Helmet>
-            <div
-                ref={gridRef}
-                style={{ height: '100%', width: '100%' }}
-                className="automated-row-grouping-grid ag-theme-alpine-dark"
-            >
+            <div ref={gridRef} className="automated-row-grouping-grid ag-theme-alpine-dark">
                 {!gridIsReady && !useStaticData && <LogoMark isSpinning />}
             </div>
-            <Splash
-                onSplashHide={onSplashHide}
-                onSplashShow={onSplashShow}
-                renderContent={({ hideSplash, setClickTargetHover }) => {
-                    return (
-                        <div className={classnames(styles.contents, 'font-size-large')}>
-                            <div className={styles.contentsInner}>
-                                <h2 className="font-size-massive">
-                                    Feature Packed,
-                                    <br />
-                                    Incredible Performance
-                                </h2>
-                                <p>
-                                    All the features your users expect and more. Out of the box performance that can
-                                    handle any data you can throw&nbsp;at&nbsp;it.
-                                </p>
-                                <button
-                                    className={styles.exploreExampleButton}
-                                    onClick={hideSplash}
-                                    onPointerEnter={() => {
-                                        setClickTargetHover(true);
-                                    }}
-                                    onPointerOut={() => {
-                                        setClickTargetHover(false);
-                                    }}
-                                >
-                                    Explore this example <Icon name="centerToFit" />
-                                </button>
-                                <a className={styles.getStartedLink} href={withPrefix('/documentation/')}>
-                                    Get Started with AG Grid <Icon name="chevronRight" />
-                                </a>
-                            </div>
-                        </div>
-                    );
-                }}
-            />
+
+            <footer className={styles.sectionFooter}>
+                <button className={styles.exploreExampleButton}>
+                    Explore this example <Icon name="centerToFit" />
+                </button>
+                <a
+                    className={classNames('font-size-large', styles.getStartedLink)}
+                    href={withPrefix('/documentation/')}
+                >
+                    Get Started with AG Grid <Icon name="chevronRight" />
+                </a>
+            </footer>
         </>
     );
 }

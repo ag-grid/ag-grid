@@ -122,40 +122,14 @@ gatsby-fast-refresh {
     }
 }
 
-.automatedRowGrouping,
-.automatedIntegratedCharts {
-    margin-top: ds.$size-8 !important; // !important for .ag-styles specificity
+.homepageExample {
+    padding-top: ds.$size-8;
+    padding-bottom: ds.$size-9;
+}
 
-    @media screen and (min-width: ds.$breakpoint-automated-row-grouping-medium) {
-        position: relative;
-        display: flex;
-        height: 500px;
-        overflow: hidden;
-        background-color: #00162d;
-    }
-
-    @media screen and (min-width: ds.$breakpoint-automated-row-grouping-large) {
-        height: 700px;
-    }
-
-    // Use psuedo element to create fake border radius, as border radius can't
-    // be used to prevent screen tearing issues with transitions on .splash
-    &::after {
-        content: '';
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        right: 0;
-        border-radius: var(--border-radius);
-        box-shadow: 0 0 0 var(--border-radius) var(--white);
-        pointer-events: none;
-        z-index: 100000;
-
-        @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
-            display: none;
-        }
-    }
+.automatedIntegratedChartsOuter {
+    margin-bottom: ds.$size-8 !important; // !important for .ag-styles specificity;
+    background-color: var(--bright-blue-gray);
 }
 
 .frameworksInner {
@@ -192,15 +166,6 @@ gatsby-fast-refresh {
     @media screen and (min-width: 940px) {
         padding-top: ds.$size-8;
         padding-bottom: ds.$size-5;
-    }
-}
-
-.homepageExample {
-    margin-bottom: ds.$size-9 !important; // !important for .ag-styles specificity
-
-    :global(.read-more-link) {
-        margin-top: ds.$size-1 !important; // !important for .ag-styles specificity
-        float: right;
     }
 }
 
