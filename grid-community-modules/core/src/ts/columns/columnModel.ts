@@ -3370,7 +3370,7 @@ export class ColumnModel extends BeanStub {
         }
         columnsForQuickFilter = columnsForQuickFilter ?? [];
         this.columnsForQuickFilter = this.gridOptionsService.is('excludeHiddenColumnsFromQuickFilter')
-            ? columnsForQuickFilter.filter(col => col.isVisible())
+            ? columnsForQuickFilter.filter(col => col.isVisible() || col.isRowGroupActive())
             : columnsForQuickFilter;
     }
 
