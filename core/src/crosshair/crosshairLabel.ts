@@ -3,7 +3,7 @@ import { _ModuleSupport, _Scene } from 'ag-charts-community';
 type AgCrosshairLabelRendererParams = any;
 type AgCrosshairLabelRendererResult = any;
 
-const { Validate, NUMBER, BOOLEAN, OPT_STRING, OPT_FUNCTION } = _ModuleSupport;
+const { ActionOnSet, Validate, NUMBER, BOOLEAN, OPT_STRING, OPT_FUNCTION } = _ModuleSupport;
 const { BBox } = _Scene;
 
 export const defaultLabelCss = `
@@ -60,6 +60,21 @@ export class CrosshairLabel {
     @Validate(BOOLEAN)
     enabled: boolean = true;
 
+    @Validate(OPT_STRING)
+    @ActionOnSet<CrosshairLabel>({
+        changeValue(newValue, oldValue) {
+            if (newValue !== oldValue) {
+                if (oldValue) {
+                    this.element.classList.remove(oldValue);
+                }
+                if (newValue) {
+                    this.element.classList.add(newValue);
+                }
+            }
+        },
+    })
+    className?: string = undefined;
+
     @Validate(NUMBER())
     xOffset: number = 0;
 
@@ -85,16 +100,6 @@ export class CrosshairLabel {
             document.head.insertBefore(styleElement, document.head.querySelector('style'));
             CrosshairLabel.labelDocuments.push(document);
         }
-    }
-
-    private updateClass(visible?: boolean) {
-        const classList = [DEFAULT_LABEL_CLASS];
-
-        if (visible !== true) {
-            classList.push(`${DEFAULT_LABEL_CLASS}-hidden`);
-        }
-
-        this.element.className = classList.join(' ');
     }
 
     show(meta: LabelMeta) {
@@ -135,7 +140,7 @@ export class CrosshairLabel {
     }
 
     toggle(visible?: boolean) {
-        this.updateClass(visible);
+        this.element.classList.toggle(`${DEFAULT_LABEL_CLASS}-hidden`, !visible);
     }
 
     destroy() {
