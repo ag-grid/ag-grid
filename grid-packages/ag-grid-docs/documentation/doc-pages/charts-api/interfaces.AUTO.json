@@ -3449,6 +3449,10 @@
     "type": ["X = 'x'", "Y = 'y'"],
     "docs": [null, null]
   },
+  "ChartAxisType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'number' | 'time' | 'log' | 'category'"
+  },
   "ChartType": {
     "meta": { "isTypeAlias": true },
     "type": "'cartesian' | 'polar' | 'hierarchy'"

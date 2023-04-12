@@ -19,6 +19,7 @@ import { getChartTheme } from './themes';
 import { processSeriesOptions, SeriesOptions } from './prepareSeries';
 import { Logger } from '../../util/logger';
 import { CHART_TYPES } from '../chartTypes';
+import { CHART_AXES_TYPES } from '../chartAxisTypes';
 
 type AxesOptionsTypes = NonNullable<AgCartesianChartOptions['axes']>[number];
 
@@ -76,6 +77,13 @@ function isSeriesOptionType(input?: string): input is NonNullable<SeriesOptionsT
         return false;
     }
     return CHART_TYPES.has(input);
+}
+
+function isAxisOptionType(input?: string): input is NonNullable<AxesOptionsTypes>['type'] {
+    if (input == null) {
+        return false;
+    }
+    return CHART_AXES_TYPES.has(input);
 }
 
 function countArrayElements<T extends any[] | any[][]>(input: T): number {
@@ -181,13 +189,31 @@ export function prepareOptions<T extends AgChartOptions>(
         })
     ).map((s) => prepareSeries(context, s)) as any[];
 
+    const checkAxisType = (type?: string) => {
+        const isAxisType = isAxisOptionType(type);
+        if (!isAxisType) {
+            Logger.warnOnce(`AG Charts - unknown axis type: ${type}; expected one of: ${CHART_AXES_TYPES.axesTypes}`);
+        }
+
+        return isAxisType;
+    };
+
     if (isAgCartesianChartOptions(mergedOptions)) {
-        mergedOptions.axes = mergedOptions.axes?.map((a: any) => {
-            const type = a.type ?? 'number';
-            const axis = { ...a, type };
-            const axesTheme = jsonMerge([axesThemes[type], axesThemes[type][a.position || 'unknown'] || {}]);
-            return prepareAxis(axis, axesTheme);
-        });
+        let validAxesTypes = true;
+        for (const { type: axisType } of mergedOptions.axes ?? []) {
+            if (!checkAxisType(axisType)) {
+                validAxesTypes = false;
+            }
+        }
+
+        if (!validAxesTypes) {
+            mergedOptions.axes = (defaultOverrides as AgCartesianChartOptions).axes;
+        } else {
+            mergedOptions.axes = mergedOptions.axes?.map((axis: any) => {
+                const axesTheme = jsonMerge([axesThemes[type], axesThemes[type][axis.position || 'unknown'] || {}]);
+                return prepareAxis(axis, axesTheme);
+            });
+        }
     }
 
     prepareEnabledOptions<T>(options, mergedOptions);
