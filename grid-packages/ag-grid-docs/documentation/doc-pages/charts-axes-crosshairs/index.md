@@ -51,9 +51,9 @@ Crosshair styles such as `stroke`, `strokeWidth` and `lineDash` are customisable
 
 ```js
 crosshair: {
-    stroke: '#7290C4',
-    strokeWidth: 2,
-    lineDash: [5, 10],
+  stroke: '#7290C4',
+  strokeWidth: 2,
+  lineDash: [5, 10],
 },
 ```
 
@@ -65,9 +65,9 @@ The crosshair label will be displayed along the axis by default. The label can b
 
 ```js
 crosshair: {
-    label: {
-        enabled: false // removes crosshair label
-    }
+  label: {
+    enabled: false // removes crosshair label
+  }
 },
 ```
 
@@ -77,10 +77,10 @@ The label position relative to the crosshair can be modified using the `xOffset`
 
 ```js
 crosshair: {
-    label: {
-            xOffset: 20, // positions label 20px to the right of the start of the crosshair line
-            yOffset: 20, // positions label 20px down from the start of the crosshair line
-    }
+  label: {
+    xOffset: 20, // positions label 20px to the right of the start of the crosshair line
+    yOffset: 20, // positions label 20px down from the start of the crosshair line
+  }
 }
 ```
 
@@ -94,9 +94,9 @@ The default crosshair label is customisable using the crosshair label `renderer`
 
 ```js
 crosshair: {
-    label: {
-        renderer: labelRenderer // Add label renderer callback function to customise label styles and content
-    }
+  label: {
+    renderer: labelRenderer // Add label renderer callback function to customise label styles and content
+  }
 },
 ```
 
@@ -116,7 +116,25 @@ const labelRenderer = ({ value, fractionDigits }) => {
 
 [Crosshair Default Label Custom Renderer Styles Example](https://plnkr.co/edit/emFruynNi7HiwDae?open=main.js)
 
-More styling can be applied using the CSS class selector to select the label HTML element with the `ag-crosshair-label` class attribute, and modifying the style definitions in a stylesheet file.
+The default label HTML element uses CSS class name `ag-crosshair-label`. Custom CSS styling can be applied by providing a class name via the `crosshair.label.className` config. This class name will be added to the class list of the label's element.
+
+For example, to set the label element's `border-radius` to `15px`, add a custom class name to the crosshair label options:
+
+```js
+crosshair: {
+  label: {
+    className: 'custom-crosshair-label'
+  }
+},
+```
+
+Then modify the style definitions in a stylesheet file:
+
+```css
+.custom-crosshair-label .ag-crosshair-label {
+  border-radius: 15px;
+}
+```
 
 This is shown in the example below. Note that:
 
