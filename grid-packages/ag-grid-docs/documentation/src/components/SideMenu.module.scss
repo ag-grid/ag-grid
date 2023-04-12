@@ -34,7 +34,7 @@
             padding-bottom: $size-7;
             position: sticky;
             top: $top-bar-height;
-            height: calc(100vh - #{$top-bar-height});
+            max-height: calc(100vh - #{$top-bar-height});
             overflow: hidden;
             overflow-y: auto;
 
