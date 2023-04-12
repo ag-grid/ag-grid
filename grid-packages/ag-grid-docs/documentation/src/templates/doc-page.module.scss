@@ -80,7 +80,7 @@
     h5,
     h6 {
         &:hover :global(.docs-header-icon) {
-            opacity: 0.3333;
+            opacity: 0.5;
         }
     }
 
@@ -102,7 +102,7 @@
             height: 0.85em;
             top: -0.1em;
             visibility: visible;
-            fill: var(--sky-blue);
+            fill: var(--azure-blue);
         }
     }
 
