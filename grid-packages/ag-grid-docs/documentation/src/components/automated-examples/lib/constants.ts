@@ -38,3 +38,6 @@ export const AG_GROUP_EXPANDED = '.ag-group-expanded';
 
 // Speed in pixel/ms
 export const DEFAULT_MOUSE_SPEED = 1;
+
+// Visibility of automated example for it to start playing
+export const DEFAULT_AUTOMATED_EXAMPLE_VISIBILITY_THRESHOLD = 0.2;

@@ -50,7 +50,13 @@ const mouseStyles = `
     }
 `;
 
-function AutomatedRowGrouping({ automatedExampleManager, scriptDebuggerManager, useStaticData, runOnce }) {
+function AutomatedRowGrouping({
+    automatedExampleManager,
+    scriptDebuggerManager,
+    useStaticData,
+    runOnce,
+    visibilityThreshold,
+}) {
     const gridClassname = 'automated-row-grouping-grid';
     const gridRef = useRef(null);
     // NOTE: Needs to be a ref instead of useState, as it is passed into a plain JavaScript context
@@ -78,6 +84,7 @@ function AutomatedRowGrouping({ automatedExampleManager, scriptDebuggerManager, 
                 automatedExampleManager.inactive(SCRIPT_ID);
             }
         },
+        threshold: visibilityThreshold,
     });
 
     useEffect(() => {
@@ -91,6 +98,7 @@ function AutomatedRowGrouping({ automatedExampleManager, scriptDebuggerManager, 
             onGridReady() {
                 setGridIsReady(true);
             },
+            visibilityThreshold,
         };
 
         automatedExampleManager.add({

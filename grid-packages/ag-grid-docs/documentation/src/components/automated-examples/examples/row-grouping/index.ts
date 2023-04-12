@@ -9,7 +9,7 @@ import { Easing, Group } from '@tweenjs/tween.js';
 import { ColDef, GridOptions } from 'ag-grid-community';
 import { createFinancialDataWorker } from '../../data/createFinancialDataWorker';
 import { createMouse } from '../../lib/createMouse';
-import { getBottomMidPos } from '../../lib/dom';
+import { getBottomMidPos, isInViewport } from '../../lib/dom';
 import { Point } from '../../lib/geometry';
 import { ScriptDebuggerManager } from '../../lib/scriptDebugger';
 import { ScriptRunner } from '../../lib/scriptRunner';
@@ -32,6 +32,7 @@ interface CreateAutomatedRowGroupingParams {
     runOnce: boolean;
     scriptDebuggerManager: ScriptDebuggerManager;
     pauseOnMouseMove?: boolean;
+    visibilityThreshold: number;
 }
 
 function numberCellFormatter(params) {
@@ -134,11 +135,13 @@ export function createAutomatedRowGrouping({
     scriptDebuggerManager,
     runOnce,
     pauseOnMouseMove,
+    visibilityThreshold,
 }: CreateAutomatedRowGroupingParams) {
     const gridSelector = `.${gridClassname}`;
+    let gridDiv: HTMLElement;
 
     const init = () => {
-        const gridDiv = document.querySelector(gridSelector) as HTMLElement;
+        gridDiv = document.querySelector(gridSelector) as HTMLElement;
         if (!gridDiv) {
             return;
         }
@@ -231,6 +234,9 @@ export function createAutomatedRowGrouping({
         stop: () => scriptRunner?.stop(),
         inactive: () => scriptRunner?.inactive(),
         currentState: () => scriptRunner?.currentState(),
+        isInViewport: () => {
+            return isInViewport(gridDiv, visibilityThreshold);
+        },
     };
 }
 

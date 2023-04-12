@@ -127,3 +127,21 @@ export function isElementChildOfClass({
 
     return false;
 }
+
+export function isInViewport(element: HTMLElement, threshold: number): boolean {
+    if (!element) {
+        return false;
+    }
+
+    const containerEl = window;
+    const { top, bottom, height } = element.getBoundingClientRect();
+    const amountInView = (containerEl.innerHeight - top) / height;
+
+    if (top >= 0 && bottom <= containerEl.innerHeight) {
+        return true;
+    } else if (top < containerEl.innerHeight && bottom >= 0 && amountInView > threshold) {
+        return true;
+    }
+
+    return false;
+}

@@ -46,7 +46,13 @@ const mouseStyles = `
     }
 `;
 
-function AutomatedIntegratedCharts({ automatedExampleManager, scriptDebuggerManager, useStaticData, runOnce }) {
+function AutomatedIntegratedCharts({
+    automatedExampleManager,
+    scriptDebuggerManager,
+    useStaticData,
+    runOnce,
+    visibilityThreshold,
+}) {
     const gridClassname = 'automated-integrated-charts-grid';
     const gridRef = useRef(null);
     // NOTE: Needs to be a ref instead of useState, as it is passed into a plain JavaScript context
@@ -78,6 +84,7 @@ function AutomatedIntegratedCharts({ automatedExampleManager, scriptDebuggerMana
                 automatedExampleManager.inactive(SCRIPT_ID);
             }
         },
+        threshold: visibilityThreshold,
     });
 
     useEffect(() => {
@@ -91,6 +98,7 @@ function AutomatedIntegratedCharts({ automatedExampleManager, scriptDebuggerMana
             onGridReady() {
                 setGridIsReady(true);
             },
+            visibilityThreshold,
         };
 
         automatedExampleManager.add({

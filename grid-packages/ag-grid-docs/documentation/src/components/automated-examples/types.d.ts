@@ -5,4 +5,5 @@ export interface AutomatedExample {
     stop: () => void;
     inactive: () => void;
     currentState: () => RunScriptState;
+    isInViewport: () => boolean;
 }
