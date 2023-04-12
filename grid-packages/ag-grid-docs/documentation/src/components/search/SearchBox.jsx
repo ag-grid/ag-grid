@@ -21,11 +21,13 @@ const SearchBox = ({ delay, refine, currentRefinement, className, onFocus, resul
         );
     };
 
+    const searchPlaceholder = window.innerWidth < 620 ? 'Search...' : 'Search documentation...';
+
     return (
         <form className={classnames(className, styles.searchBox)}>
             <input
                 type="text"
-                placeholder="Search documentation..."
+                placeholder={searchPlaceholder}
                 aria-label="Search"
                 onChange={onChangeDebounced}
                 onFocus={onFocus}
