@@ -142,7 +142,9 @@ export class CellCtrl extends BeanStub {
             this.addDestroyFunc(() => { this.cellRangeFeature?.destroy(); this.cellRangeFeature = null; });
         }
 
-        this.addTooltipFeature();
+        if (this.column.isTooltipEnabled()) {
+            this.addTooltipFeature();
+        }
     }
 
     private addTooltipFeature(): void {

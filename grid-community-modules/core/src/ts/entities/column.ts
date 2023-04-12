@@ -130,6 +130,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
 
     private fieldContainsDots: boolean;
     private tooltipFieldContainsDots: boolean;
+    private tooltipEnabled = false;
 
     private rowGroupActive = false;
     private pivotActive = false;
@@ -250,6 +251,8 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
 
         this.initDotNotation();
 
+        this.initTooltip();
+
         this.validate();
     }
 
@@ -264,6 +267,13 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
 
         this.minWidth = this.columnUtils.calculateColMinWidth(colDef);
         this.maxWidth = this.columnUtils.calculateColMaxWidth(colDef);
+    }
+
+    private initTooltip(): void {
+        this.tooltipEnabled = exists(this.colDef.tooltipField) ||
+            exists(this.colDef.tooltipValueGetter) ||
+            exists(this.colDef.tooltipComponent) ||
+            exists(this.colDef.tooltipComponentFramework);
     }
 
     public resetActualWidth(source: ColumnEventType = 'api'): void {
@@ -301,6 +311,10 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
 
     public isFieldContainsDots(): boolean {
         return this.fieldContainsDots;
+    }
+
+    public isTooltipEnabled(): boolean {
+        return this.tooltipEnabled;
     }
 
     public isTooltipFieldContainsDots(): boolean {

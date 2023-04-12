@@ -1,7 +1,5 @@
 import { Autowired, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { ColumnApi } from "../columns/columnApi";
-import { GridApi } from "../gridApi";
 import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
 import { PopupService } from "./popupService";
 import { UserComponentFactory } from "../components/framework/userComponentFactory";
@@ -31,8 +29,6 @@ export class CustomTooltipFeature extends BeanStub {
 
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
 
     private tooltipShowDelay: number;
     private tooltipHideDelay: number;
