@@ -101,8 +101,19 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: ds.$size-2;
+    gap: ds.$size-6;
     margin-top: ds.$size-3 !important; // !important for .ag-styles specificity;
+
+    button,
+    input[type='range'] {
+        margin-left: ds.$size-1 !important; // !important for .ag-styles specificity;
+    }
+
+    input[type='range'] {
+        position: relative;
+        top: -0.25em;
+        min-width: 14em;
+    }
 }
 
 .getStartedLink {

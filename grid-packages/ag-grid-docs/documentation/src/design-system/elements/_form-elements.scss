@@ -192,19 +192,20 @@ select {
 
 input[type='range'] {
     appearance: none;
-    position: relative;
-    top: -0.125em;
-    background-color: var(--input-secondary-background-color);
-    border-radius: var(--border-radius);
-    height: math.div(4em, 16);
+    background-color: transparent;
     cursor: pointer;
 
-    &::-webkit-slider-thumb,
-    &::-moz-range-thumb,
-    &::-ms-thumb {
+    &::-webkit-slider-runnable-track {
+        height: math.div(4em, 16);
+        background-color: var(--input-secondary-background-color);
+        border-radius: var(--border-radius);
+    }
+
+    &::-webkit-slider-thumb {
         appearance: none;
         width: 1em;
         height: 1em;
+        margin-top: math.div(-6em, 16);
         border-radius: 50%;
         background-color: var(--input-primary-color);
     }

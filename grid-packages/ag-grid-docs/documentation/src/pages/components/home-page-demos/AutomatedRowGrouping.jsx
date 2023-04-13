@@ -1,8 +1,6 @@
 // Remount component when Fast Refresh is triggered
 // @refresh reset
 
-import classNames from 'classnames';
-import { withPrefix } from 'gatsby';
 import React, { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { createAutomatedRowGrouping } from '../../../components/automated-examples/examples/row-grouping';
@@ -52,8 +50,8 @@ const mouseStyles = `
 `;
 
 const BUTTON_TEXT = {
-    explore: 'Explore this example',
-    replay: 'Replay',
+    explore: 'Give me control',
+    replay: 'Replay demo',
 };
 
 function AutomatedRowGrouping({
@@ -136,32 +134,34 @@ function AutomatedRowGrouping({
             </div>
 
             <footer className={styles.sectionFooter}>
-                <ToggleAutomatedExampleButton
-                    onClick={() => {
-                        if (scriptIsEnabled) {
-                            setAllScriptEnabledVars(false);
-                            automatedExampleManager.stop(EXAMPLE_ID);
-                        } else {
-                            setAllScriptEnabledVars(true);
-                            automatedExampleManager.start(EXAMPLE_ID);
-                        }
-                    }}
-                    isHoveredOver={gridIsHoveredOver}
-                >
-                    {scriptIsEnabled ? (
-                        <>
-                            {BUTTON_TEXT.explore} <Icon name="centerToFit" />
-                        </>
-                    ) : (
-                        <>{BUTTON_TEXT.replay}</>
-                    )}
-                </ToggleAutomatedExampleButton>
-                <a
-                    className={classNames('font-size-large', styles.getStartedLink)}
-                    href={withPrefix('/documentation/')}
-                >
-                    Get Started with AG Grid <Icon name="chevronRight" />
-                </a>
+                <div className="font-size-large">
+                    <span className="text-secondary">Live example:</span>
+                    <ToggleAutomatedExampleButton
+                        onClick={() => {
+                            if (scriptIsEnabled) {
+                                setAllScriptEnabledVars(false);
+                                automatedExampleManager.stop(EXAMPLE_ID);
+                            } else {
+                                setAllScriptEnabledVars(true);
+                                automatedExampleManager.start(EXAMPLE_ID);
+                            }
+                        }}
+                        isHoveredOver={gridIsHoveredOver}
+                    >
+                        {scriptIsEnabled ? (
+                            <>
+                                {BUTTON_TEXT.explore} <Icon name="centerToFit" />
+                            </>
+                        ) : (
+                            <>{BUTTON_TEXT.replay}</>
+                        )}
+                    </ToggleAutomatedExampleButton>
+                </div>
+
+                <div className="font-size-large">
+                    <span className="text-secondary">Update frequency: </span> <span>250ms</span>
+                    <input type="range" name="update-frequency" min={50} max={500} step={1} defaultValue={250} />
+                </div>
             </footer>
         </>
     );
