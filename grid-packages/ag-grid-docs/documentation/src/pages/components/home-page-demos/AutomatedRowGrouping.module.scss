@@ -91,11 +91,6 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
     text-align: center;
     margin-bottom: ds.$size-2 !important; // !important for .ag-styles specificity;
 
-    h2,
-    p {
-        max-width: 54rem;
-    }
-
     h2 {
         margin-bottom: ds.$size-2 !important; // !important for .ag-styles specificity;
         font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity;
