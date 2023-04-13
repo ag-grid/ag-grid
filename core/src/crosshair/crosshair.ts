@@ -183,7 +183,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
                 value = axisCtx.continuous ? axisCtx.scaleInvert(offsetY - seriesRect.y) : highlight?.value;
             }
 
-            if (value) {
+            if (value && this.label.enabled) {
                 this.showLabel(clampedX, clampedY, value);
             } else {
                 this.hideLabel();
@@ -232,7 +232,11 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
                 crosshairGroup.translationY = Math.round(y + seriesRect.y);
             }
 
-            this.showLabel(x + seriesRect.x, y + seriesRect.y, value);
+            if (this.label.enabled) {
+                this.showLabel(x + seriesRect.x, y + seriesRect.y, value);
+            } else {
+                this.hideLabel();
+            }
         } else {
             this.hideCrosshair();
         }
