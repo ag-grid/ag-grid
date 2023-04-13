@@ -7,9 +7,17 @@ export function createAutomatedExampleManager() {
     const automatedExamplesEnabled: Record<string, boolean> = {};
     let lastPlayingExample;
 
-    const add = ({ id, automatedExample }: { id: string; automatedExample: AutomatedExample }) => {
+    const add = ({
+        id,
+        automatedExample,
+        isDisabled,
+    }: {
+        id: string;
+        automatedExample: AutomatedExample;
+        isDisabled?: boolean;
+    }) => {
         automatedExamples[id] = automatedExample;
-        automatedExamplesEnabled[id] = true;
+        automatedExamplesEnabled[id] = !isDisabled;
     };
 
     const start = (id: string) => {
