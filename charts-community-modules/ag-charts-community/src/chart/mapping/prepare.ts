@@ -19,7 +19,7 @@ import { getChartTheme } from './themes';
 import { processSeriesOptions, SeriesOptions } from './prepareSeries';
 import { Logger } from '../../util/logger';
 import { CHART_TYPES } from '../chartTypes';
-import { CHART_AXES_TYPES } from '../chartAxisTypes';
+import { CHART_AXES_TYPES } from '../chartAxesTypes';
 
 type AxesOptionsTypes = NonNullable<AgCartesianChartOptions['axes']>[number];
 
