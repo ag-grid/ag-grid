@@ -2,7 +2,7 @@ import { ColorScale } from '../scale/colorScale';
 import { BBox } from '../scene/bbox';
 import { Node } from '../scene/node';
 import { Group } from '../scene/group';
-import { GradientRect } from '../scene/shape/gradientRect';
+import { Rect } from '../scene/shape/rect';
 import { Selection } from '../scene/selection';
 import { Text, getFont } from '../scene/shape/text';
 import { createId } from '../util/id';
@@ -66,7 +66,7 @@ class GradientLegendItem {
 
 class GradientBar {
     thickness = 16;
-    minLength = 64;
+    preferredLength = 100;
 }
 
 export class GradientLegend {
@@ -75,7 +75,7 @@ export class GradientLegend {
     readonly id = createId(this);
 
     private readonly group: Group = new Group({ name: 'legend', layer: true, zIndex: Layers.LEGEND_ZINDEX });
-    private readonly gradientRect: GradientRect;
+    private readonly gradientRect: Rect;
     private readonly textSelection: Selection<Text, number>;
 
     private colorScale = new ColorScale();
@@ -126,7 +126,7 @@ export class GradientLegend {
         this.colorScale.domain = [0, 100];
         this.colorScale.range = ['red', 'green', 'blue'];
 
-        this.gradientRect = new GradientRect();
+        this.gradientRect = new Rect();
         this.group.append(this.gradientRect);
         const textContainer = new Group();
         this.group.append(textContainer);
@@ -151,10 +151,10 @@ export class GradientLegend {
         }
 
         const { spacing, colorScale } = this;
-        const { minLength, thickness } = this.gradientBar;
+        const { preferredLength, thickness } = this.gradientBar;
         const { padding, label } = this.item;
         const [textWidth, textHeight] = this.measureMaxText();
-        const gradientLength = minLength;
+        const gradientLength = preferredLength;
 
         let width: number;
         let height: number;
@@ -178,15 +178,14 @@ export class GradientLegend {
         }
         this.gradientRect.x = gradientLeft;
         this.gradientRect.y = gradientTop;
-        this.gradientRect.linearGradient = `linear-gradient(${
-            orientation === 'vertical' ? 90 : 0
-        }deg, ${colorScale.range.join(', ')})`;
+        const colorsString = colorScale.range.join(', ');
+        this.gradientRect.fill = `linear-gradient(${orientation === 'vertical' ? 0 : 90}deg, ${colorsString})`;
 
-        let left = 0;
-        let top = 0;
+        let left: number;
+        let top: number;
         if (this.position === 'left') {
-            left = 0;
-            top = shrinkRect.x + shrinkRect.height / 2 - height / 2;
+            left = shrinkRect.x;
+            top = shrinkRect.y + shrinkRect.height / 2 - height / 2;
             newShrinkRect.shrink(width + spacing, 'left');
         } else if (this.position === 'right') {
             left = shrinkRect.x + shrinkRect.width - width;
@@ -194,7 +193,7 @@ export class GradientLegend {
             newShrinkRect.shrink(width + spacing, 'right');
         } else if (this.position === 'top') {
             left = shrinkRect.x + shrinkRect.width / 2 - width / 2;
-            top = 0;
+            top = shrinkRect.y;
             newShrinkRect.shrink(height + spacing, 'top');
         } else {
             left = shrinkRect.x + shrinkRect.width / 2 - width / 2;
