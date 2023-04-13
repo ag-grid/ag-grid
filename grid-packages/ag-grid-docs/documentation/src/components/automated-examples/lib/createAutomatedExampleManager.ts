@@ -1,17 +1,25 @@
 import { AutomatedExample } from '../types';
 
+export type AutomatedExampleManager = ReturnType<typeof createAutomatedExampleManager>;
+
 export function createAutomatedExampleManager() {
     const automatedExamples: Record<string, AutomatedExample> = {};
+    const automatedExamplesEnabled: Record<string, boolean> = {};
     let lastPlayingExample;
 
     const add = ({ id, automatedExample }: { id: string; automatedExample: AutomatedExample }) => {
         automatedExamples[id] = automatedExample;
+        automatedExamplesEnabled[id] = true;
     };
 
     const start = (id: string) => {
         const automatedExample = automatedExamples[id];
+        const isEnabled = automatedExamplesEnabled[id];
 
         if (!automatedExample) {
+            console.error('Automated example not found:', id);
+            return;
+        } else if (!isEnabled) {
             return;
         }
 
@@ -51,16 +59,26 @@ export function createAutomatedExampleManager() {
         automatedExample.inactive();
 
         // If there is another example in the viewport, play it
-        const otherExample = Object.values(automatedExamples).find((example) => {
-            return example !== automatedExample && example?.isInViewport();
+        const otherExampleKey = Object.keys(automatedExamples).find((key) => {
+            const example = automatedExamples[key];
+            const isEnabled = automatedExamplesEnabled[key];
+            return example !== automatedExample && isEnabled && example?.isInViewport();
         });
-        otherExample?.start();
+        otherExampleKey && automatedExamples[otherExampleKey]?.start();
     };
+
+    const setEnabled = ({ id, isEnabled }: { id: string; isEnabled: boolean }) => {
+        automatedExamplesEnabled[id] = isEnabled;
+    };
+
+    const getEnabled = (id: string) => automatedExamplesEnabled[id];
 
     return {
         add,
         start,
         stop,
         inactive,
+        setEnabled,
+        getEnabled,
     };
 }

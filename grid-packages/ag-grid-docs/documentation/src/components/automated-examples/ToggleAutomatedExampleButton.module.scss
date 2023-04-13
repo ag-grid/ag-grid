@@ -1,0 +1,19 @@
+@use '../../design-system' as *;
+
+.button {
+    padding: 0.375em 0.5em 0.5em 0.5em !important; // !important for .ag-styles specificity;
+
+    @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
+        display: none !important; // !important for .ag-styles specificity;
+    }
+
+    @media screen and (min-width: $breakpoint-automated-row-grouping-large) {
+        font-size: var(--font-size-extra-large) !important; // !important for .ag-styles specificity;
+    }
+
+    :global(.icon) {
+        --icon-size: 1.5em !important; // !important for .ag-styles specificity;
+
+        margin: -1em 0 -1em 0.25em !important; // !important for .ag-styles specificity;
+    }
+}
