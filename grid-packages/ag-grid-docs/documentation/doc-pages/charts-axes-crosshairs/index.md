@@ -2,10 +2,10 @@
 title: "Axis Crosshairs"
 enterprise: true
 ---
+Crosshairs show a reference line on the chart, along with the corresponding axis value at a specific position.
 
-Crosshairs are used to display a reference line with the corresponding axis value at a position on the chart.
-
-When the chart is hovered, crosshairs can be displayed following the mouse pointer position or can snap to the position of the highlighted item to show the value of the axis at that position.
+When hovering over the chart, the crosshairs can either follow the mouse pointer position or snap to the highlighted 
+item's position to display the axis value at that specific point.
 
 ## Enabling Crosshairs
 
