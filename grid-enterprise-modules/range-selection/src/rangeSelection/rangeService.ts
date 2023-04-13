@@ -10,7 +10,6 @@ import {
     IRangeService,
     IRowModel,
     CellRangeParams,
-    MouseEventService,
     PostConstruct,
     CellRange,
     RangeSelectionChangedEvent,
@@ -20,17 +19,19 @@ import {
     BeanStub,
     CtrlsService,
     AutoScrollService,
-    _,
     RowPinnedType,
-    WithoutGridCommon
+    WithoutGridCommon,
+    DragService,
+    CellCtrl,
+    _
 } from "@ag-grid-community/core";
 
 @Bean('rangeService')
 export class RangeService extends BeanStub implements IRangeService {
 
     @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('dragService') private dragService: DragService;
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
@@ -41,7 +42,6 @@ export class RangeService extends BeanStub implements IRangeService {
     private lastMouseEvent: MouseEvent | null;
     private bodyScrollListener = this.onBodyScroll.bind(this);
 
-    private cellHoverListener: (() => void) | undefined;
     private lastCellHovered: CellPosition | undefined;
     private cellHasChanged: boolean;
 
@@ -594,18 +594,13 @@ export class RangeService extends BeanStub implements IRangeService {
             this.removeAllCellRanges(true);
         }
 
-        // The DragService used by this service (RangeService), automatically adds a `mousemove`
-        // listener the document of the page that will then call `onDragging`. If you are in a shadow DOM
-        // DOM elements outside your component's wrapper will be inaccessible to you, so here, we add a 
-        // temporary `mousemove` listener to the gridPanel to be able to update the last hovered cell.
-        this.cellHoverListener = this.addManagedListener(
-            this.ctrlsService.getGridCtrl().getGui(),
-            'mousemove',
-            this.updateValuesOnMove.bind(this)
-        );
-        // This is the mouse start event, so we need to call `updateValuesOnMove` 
-        // manually once to get the necessary variables initiated.
-        this.updateValuesOnMove(mouseEvent);
+        // The browser changes the Event target of cached events when working with the ShadowDOM
+        // so we need to retrieve the initial DragStartTarget.
+        const startTarget = this.dragService.getStartTarget();
+
+        if (startTarget) {
+            this.updateValuesOnMove(startTarget);
+        }
 
         if (!this.lastCellHovered) { return; }
 
@@ -718,8 +713,9 @@ export class RangeService extends BeanStub implements IRangeService {
         }
     }
     
-    private updateValuesOnMove(mouseEvent: MouseEvent) {
-        const cell = this.mouseEventService.getCellPositionForEvent(mouseEvent);
+    private updateValuesOnMove(eventTarget: EventTarget | null) {
+        const cellCtrl = _.getCtrlForEventTarget<CellCtrl>(this.gridOptionsService, eventTarget, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
+        const cell = cellCtrl?.getCellPosition();
 
         this.cellHasChanged = false;
 
@@ -728,11 +724,14 @@ export class RangeService extends BeanStub implements IRangeService {
         if (this.lastCellHovered) {
             this.cellHasChanged = true;
         }
+
         this.lastCellHovered = cell;
     }
 
     public onDragging(mouseEvent: MouseEvent | null): void {
         if (!this.dragging || !mouseEvent) { return; }
+
+        this.updateValuesOnMove(mouseEvent.target);
 
         this.lastMouseEvent = mouseEvent;
 
@@ -761,11 +760,6 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public onDragStop(): void {
-        if (this.cellHoverListener) {
-            this.cellHoverListener();
-            this.cellHoverListener = undefined;
-        }
-
         if (!this.dragging) { return; }
 
         const { id } = this.draggingRange!;
