@@ -1,8 +1,15 @@
 import { Node, RedrawType, SceneChangeDetection } from '../node';
 import { DropShadow } from '../dropShadow';
+import { LinearGradient } from '../gradient/linearGradient';
 
 export type ShapeLineCap = 'butt' | 'round' | 'square';
 type ShapeLineJoin = 'round' | 'bevel' | 'miter';
+
+type CanvasContext = CanvasFillStrokeStyles &
+    CanvasCompositing &
+    CanvasShadowStyles &
+    CanvasPathDrawingStyles &
+    CanvasDrawPath;
 
 export abstract class Shape extends Node {
     /**
@@ -100,8 +107,34 @@ export abstract class Shape extends Node {
     @SceneChangeDetection({ redraw: RedrawType.MINOR })
     strokeOpacity: number = 1;
 
-    @SceneChangeDetection({ redraw: RedrawType.MINOR })
+    @SceneChangeDetection({ redraw: RedrawType.MINOR, changeCb: (s: Shape) => s.updateGradient() })
     fill: string | undefined = Shape.defaultStyles.fill;
+
+    protected updateGradient() {
+        const { fill } = this;
+
+        const match = fill?.match(/^linear-gradient\((.*?)deg,\s*(.*?)\s*\)$/i);
+        if (match) {
+            const angle = parseFloat(match[1]);
+            const colors = [];
+            const colorsPart = match[2];
+            const colorRegex = /(#[0-9a-f]+)|(rgba?\(.+?\))|([a-z]+)/gi;
+            let c: RegExpExecArray | null;
+            while ((c = colorRegex.exec(colorsPart))) {
+                colors.push(c[0]);
+            }
+            this.gradient = new LinearGradient();
+            this.gradient.angle = angle;
+            this.gradient.stops = colors.map((color, index) => {
+                const offset = index / (colors.length - 1);
+                return { offset, color };
+            });
+        } else {
+            this.gradient = undefined;
+        }
+    }
+
+    protected gradient: LinearGradient | undefined;
 
     /**
      * Note that `strokeStyle = null` means invisible stroke,
@@ -168,32 +201,53 @@ export abstract class Shape extends Node {
     @SceneChangeDetection({ redraw: RedrawType.MINOR, checkDirtyOnAssignment: true })
     fillShadow: DropShadow | undefined = Shape.defaultStyles.fillShadow;
 
-    protected fillStroke(
-        ctx: CanvasFillStrokeStyles & CanvasCompositing & CanvasShadowStyles & CanvasPathDrawingStyles & CanvasDrawPath
-    ) {
-        const pixelRatio = this.layerManager?.canvas.pixelRatio || 1;
-        const { globalAlpha } = ctx;
+    protected fillStroke(ctx: CanvasContext) {
+        this.renderFill(ctx);
+        this.renderStroke(ctx);
+    }
 
+    protected renderFill(ctx: CanvasContext) {
         if (this.fill) {
-            ctx.fillStyle = this.fill;
-            ctx.globalAlpha = globalAlpha * this.opacity * this.fillOpacity;
-
-            // The canvas context scaling (depends on the device's pixel ratio)
-            // has no effect on shadows, so we have to account for the pixel ratio
-            // manually here.
-            const fillShadow = this.fillShadow;
-            if (fillShadow && fillShadow.enabled) {
-                ctx.shadowColor = fillShadow.color;
-                ctx.shadowOffsetX = fillShadow.xOffset * pixelRatio;
-                ctx.shadowOffsetY = fillShadow.yOffset * pixelRatio;
-                ctx.shadowBlur = fillShadow.blur * pixelRatio;
-            }
+            const { globalAlpha } = ctx;
+            this.applyFill(ctx);
+            this.applyFillAlpha(ctx);
+            this.applyShadow(ctx);
             ctx.fill();
+            ctx.globalAlpha = globalAlpha;
         }
-
         ctx.shadowColor = 'rgba(0, 0, 0, 0)';
+    }
 
+    protected applyFill(ctx: CanvasContext) {
+        if (this.gradient) {
+            ctx.fillStyle = this.gradient.createGradient(ctx as any, this.computeBBox()!);
+        } else {
+            ctx.fillStyle = this.fill!;
+        }
+    }
+
+    protected applyFillAlpha(ctx: CanvasContext) {
+        const { globalAlpha } = ctx;
+        ctx.globalAlpha = globalAlpha * this.opacity * this.fillOpacity;
+    }
+
+    protected applyShadow(ctx: CanvasContext) {
+        // The canvas context scaling (depends on the device's pixel ratio)
+        // has no effect on shadows, so we have to account for the pixel ratio
+        // manually here.
+        const pixelRatio = this.layerManager?.canvas.pixelRatio ?? 1;
+        const fillShadow = this.fillShadow;
+        if (fillShadow && fillShadow.enabled) {
+            ctx.shadowColor = fillShadow.color;
+            ctx.shadowOffsetX = fillShadow.xOffset * pixelRatio;
+            ctx.shadowOffsetY = fillShadow.yOffset * pixelRatio;
+            ctx.shadowBlur = fillShadow.blur * pixelRatio;
+        }
+    }
+
+    protected renderStroke(ctx: CanvasContext) {
         if (this.stroke && this.strokeWidth) {
+            const { globalAlpha } = ctx;
             ctx.strokeStyle = this.stroke;
             ctx.globalAlpha = globalAlpha * this.opacity * this.strokeOpacity;
 
@@ -212,6 +266,7 @@ export abstract class Shape extends Node {
             }
 
             ctx.stroke();
+            ctx.globalAlpha = globalAlpha;
         }
     }
 

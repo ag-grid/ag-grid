@@ -4283,6 +4283,10 @@
     "meta": { "isTypeAlias": true },
     "type": "'round' | 'bevel' | 'miter'"
   },
+  "CanvasContext": {
+    "meta": { "isTypeAlias": true },
+    "type": "CanvasFillStrokeStyles & CanvasCompositing & CanvasShadowStyles & CanvasPathDrawingStyles & CanvasDrawPath"
+  },
   "Comparator": {
     "meta": { "isTypeAlias": true, "typeParams": ["T"] },
     "type": "(a: T, b: T) => number"
