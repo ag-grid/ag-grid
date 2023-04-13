@@ -6,13 +6,15 @@ import { withPrefix } from 'gatsby';
 import React, { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { createAutomatedIntegratedCharts } from '../../../components/automated-examples/examples/integrated-charts';
+import { OverlayButton } from '../../../components/automated-examples/OverlayButton';
+import { ToggleAutomatedExampleButton } from '../../../components/automated-examples/ToggleAutomatedExampleButton';
 import { Icon } from '../../../components/Icon';
 import LogoMark from '../../../components/LogoMark';
 import { hostPrefix, isProductionBuild, localPrefix } from '../../../utils/consts';
 import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
 import styles from './AutomatedIntegratedCharts.module.scss';
 
-const SCRIPT_ID = 'integrated-charts';
+const EXAMPLE_ID = 'integrated-charts';
 
 const helmet = [];
 if (!isProductionBuild()) {
@@ -49,6 +51,11 @@ const mouseStyles = `
     }
 `;
 
+const BUTTON_TEXT = {
+    explore: 'Explore this example',
+    replay: 'Replay',
+};
+
 function AutomatedIntegratedCharts({
     automatedExampleManager,
     scriptDebuggerManager,
@@ -58,22 +65,26 @@ function AutomatedIntegratedCharts({
 }) {
     const gridClassname = 'automated-integrated-charts-grid';
     const gridRef = useRef(null);
-    // NOTE: Needs to be a ref instead of useState, as it is passed into a plain JavaScript context
-    const scriptEnabled = useRef(true);
+    const [scriptIsEnabled, setScriptIsEnabled] = useState(true);
     const [gridIsReady, setGridIsReady] = useState(false);
+    const [gridIsHoveredOver, setGridIsHoveredOver] = useState(false);
+
+    const setAllScriptEnabledVars = (isEnabled) => {
+        setScriptIsEnabled(isEnabled);
+        automatedExampleManager.setEnabled({ id: EXAMPLE_ID, isEnabled });
+    };
 
     useIntersectionObserver({
         elementRef: gridRef,
         onChange: ({ isIntersecting }) => {
             if (isIntersecting) {
-                if (scriptEnabled.current) {
-                    automatedExampleManager.start(SCRIPT_ID);
-                }
+                automatedExampleManager.start(EXAMPLE_ID);
             } else {
-                automatedExampleManager.inactive(SCRIPT_ID);
+                automatedExampleManager.inactive(EXAMPLE_ID);
             }
         },
         threshold: visibilityThreshold,
+        isDisabled: !gridIsReady,
     });
 
     useEffect(() => {
@@ -91,7 +102,7 @@ function AutomatedIntegratedCharts({
         };
 
         automatedExampleManager.add({
-            id: SCRIPT_ID,
+            id: EXAMPLE_ID,
             automatedExample: createAutomatedIntegratedCharts(params),
         });
     }, []);
@@ -116,13 +127,40 @@ function AutomatedIntegratedCharts({
                 <style>{mouseStyles}</style>
             </Helmet>
             <div ref={gridRef} className="automated-integrated-charts-grid ag-theme-alpine">
+                <OverlayButton
+                    ariaLabel={BUTTON_TEXT.explore}
+                    isHidden={!scriptIsEnabled}
+                    onPointerEnter={() => setGridIsHoveredOver(true)}
+                    onPointerOut={() => setGridIsHoveredOver(false)}
+                    onClick={() => {
+                        setAllScriptEnabledVars(false);
+                        automatedExampleManager.stop(EXAMPLE_ID);
+                    }}
+                />
                 {!gridIsReady && !useStaticData && <LogoMark isSpinning />}
             </div>
 
             <footer className={styles.sectionFooter}>
-                <button className={styles.exploreExampleButton}>
-                    Explore this example <Icon name="centerToFit" />
-                </button>
+                <ToggleAutomatedExampleButton
+                    onClick={() => {
+                        if (scriptIsEnabled) {
+                            setAllScriptEnabledVars(false);
+                            automatedExampleManager.stop(EXAMPLE_ID);
+                        } else {
+                            setAllScriptEnabledVars(true);
+                            automatedExampleManager.start(EXAMPLE_ID);
+                        }
+                    }}
+                    isHoveredOver={gridIsHoveredOver}
+                >
+                    {scriptIsEnabled ? (
+                        <>
+                            {BUTTON_TEXT.explore} <Icon name="centerToFit" />
+                        </>
+                    ) : (
+                        <>{BUTTON_TEXT.replay}</>
+                    )}
+                </ToggleAutomatedExampleButton>
                 <a
                     className={classNames('font-size-large', styles.getStartedLink)}
                     href={withPrefix('/documentation/')}

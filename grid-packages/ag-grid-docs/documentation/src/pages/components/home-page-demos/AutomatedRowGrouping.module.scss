@@ -4,9 +4,7 @@
 $z-index-grid: 0;
 $z-index-mouse-mask: 10000; // NOTE: Above .ag-dnd-ghost z-index of 9999
 $z-index-debug-canvas: $z-index-mouse-mask + 10;
-$z-index-splash: $z-index-debug-canvas + 10;
-$z-index-debug-panel: $z-index-splash + 10;
-$z-index-splash-contents: 10;
+$z-index-debug-panel: $z-index-debug-canvas + 10;
 
 :global(.automated-row-grouping-grid.ag-theme-alpine-dark) {
     position: relative;
@@ -85,6 +83,7 @@ $z-index-splash-contents: 10;
         margin: 0px var(--ag-widget-container-horizontal-padding);
     }
 }
+
 .sectionHeader {
     display: flex;
     flex-direction: column;
@@ -109,24 +108,6 @@ $z-index-splash-contents: 10;
     align-items: center;
     gap: ds.$size-2;
     margin-top: ds.$size-3 !important; // !important for .ag-styles specificity;
-}
-
-.exploreExampleButton {
-    padding: 0.375em 0.5em 0.5em 0.5em !important; // !important for .ag-styles specificity;
-
-    @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
-        display: none !important; // !important for .ag-styles specificity;
-    }
-
-    @media screen and (min-width: ds.$breakpoint-automated-row-grouping-large) {
-        font-size: var(--font-size-extra-large) !important; // !important for .ag-styles specificity;
-    }
-
-    :global(.icon) {
-        --icon-size: 1.5em !important; // !important for .ag-styles specificity;
-
-        margin: -1em 0 -1em 0.25em !important; // !important for .ag-styles specificity;
-    }
 }
 
 .getStartedLink {

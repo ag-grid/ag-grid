@@ -420,7 +420,7 @@ export function createScriptRunner({
     };
 
     // Initial playState
-    updateState('inactive');
+    updateState('stopped');
 
     return {
         currentState,

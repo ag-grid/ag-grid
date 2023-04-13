@@ -4,6 +4,7 @@ export interface UseIntersectionObserverParams {
     elementRef: MutableRefObject<HTMLElement>;
     onChange: (params: { isIntersecting: boolean }) => void;
     threshold?: number;
+    isDisabled?: boolean;
 }
 
 const DEFAULT_THRESHOLD = 0.2;
@@ -12,9 +13,10 @@ export function useIntersectionObserver({
     elementRef,
     onChange,
     threshold = DEFAULT_THRESHOLD,
+    isDisabled,
 }: UseIntersectionObserverParams) {
     useEffect(() => {
-        if (!window || !elementRef.current) {
+        if (!window || !elementRef.current || isDisabled) {
             return;
         }
 
