@@ -161,8 +161,12 @@ $z-index-splash-contents: 10;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: ds.$size-2;
+    gap: ds.$size-6;
     margin-top: ds.$size-3 !important; // !important for .ag-styles specificity;
+
+    button {
+        margin-left: ds.$size-1 !important; // !important for .ag-styles specificity;
+    }
 }
 
 .exploreExampleButton {

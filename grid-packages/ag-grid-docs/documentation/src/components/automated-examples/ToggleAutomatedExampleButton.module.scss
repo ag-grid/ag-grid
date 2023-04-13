@@ -1,7 +1,7 @@
 @use '../../design-system' as *;
 
 .button {
-    padding: 0.375em 0.5em 0.5em 0.5em !important; // !important for .ag-styles specificity;
+    padding: 0.25em 0.5em 0.4em 0.5em !important; // !important for .ag-styles specificity;
 
     @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
         display: none !important; // !important for .ag-styles specificity;
