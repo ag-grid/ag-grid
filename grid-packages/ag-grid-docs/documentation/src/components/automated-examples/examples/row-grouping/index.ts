@@ -7,16 +7,20 @@
 
 import { Easing, Group } from '@tweenjs/tween.js';
 import { ColDef, GridOptions } from 'ag-grid-community';
-import { createFinancialDataWorker } from '../../data/createFinancialDataWorker';
+import { CATEGORIES, PORTFOLIOS } from '../../data/constants';
+import { createDataWorker } from '../../data/createDataWorker';
 import { createMouse } from '../../lib/createMouse';
 import { getBottomMidPos, isInViewport } from '../../lib/dom';
 import { Point } from '../../lib/geometry';
 import { ScriptDebuggerManager } from '../../lib/scriptDebugger';
 import { ScriptRunner } from '../../lib/scriptRunner';
+import { AutomatedExample } from '../../types';
 import { createScriptRunner } from './createScriptRunner';
 import { fixtureData } from './rowDataFixture';
 
 const WAIT_TILL_MOUSE_ANIMATION_STARTS = 2000;
+const UPDATES_PER_MESSAGE_1X = 100;
+const MESSAGE_FEQUENCY_1X = 200;
 
 let dataWorker;
 let scriptRunner: ScriptRunner;
@@ -35,6 +39,10 @@ interface CreateAutomatedRowGroupingParams {
     visibilityThreshold: number;
 }
 
+export type RowGroupingAutomatedExample = AutomatedExample & {
+    setUpdateFrequency: (value: number) => void;
+};
+
 function numberCellFormatter(params) {
     return Math.floor(params.value)
         .toString()
@@ -43,30 +51,21 @@ function numberCellFormatter(params) {
 
 const columnDefs: ColDef[] = [
     {
-        field: 'product',
+        field: 'category',
         chartDataType: 'category',
         minWidth: 280,
         enableRowGroup: true,
     },
     {
-        field: 'book',
+        field: 'product',
         chartDataType: 'category',
         enableRowGroup: true,
     },
+    { field: 'previous', enableRowGroup: true },
     { field: 'current', type: 'measure', enableRowGroup: true },
-    { field: 'previous', type: 'measure', enableRowGroup: true },
-    { headerName: 'PL 1', field: 'pl1', type: 'measure', enableRowGroup: true },
-    { headerName: 'PL 2', field: 'pl2', type: 'measure', enableRowGroup: true },
     { headerName: 'Gain-DX', field: 'gainDx', type: 'measure', enableRowGroup: true },
-    { headerName: 'SX / PX', field: 'sxPx', type: 'measure', enableRowGroup: true },
-
-    { field: 'trade', type: 'measure', enableRowGroup: true },
-    { field: 'submitterID', type: 'measure', enableRowGroup: true },
-    { field: 'submitterDealID', type: 'measure', minWidth: 170, enableRowGroup: true },
-
-    { field: 'portfolio', enableRowGroup: true },
     { field: 'dealType', enableRowGroup: true },
-    { headerName: 'Bid', field: 'bidFlag', enableRowGroup: true },
+    { field: 'portfolio', enableRowGroup: true },
 ];
 
 const gridOptions: GridOptions = {
@@ -95,15 +94,23 @@ const gridOptions: GridOptions = {
     enableRangeSelection: true,
     suppressAggFuncInHeader: true,
     getRowId: (params) => {
-        return params.data.trade;
+        return params.data.id;
     },
     rowGroupPanelShow: 'always',
 };
 
 function initWorker() {
     dataWorker = new Worker(
-        URL.createObjectURL(new Blob(['(' + createFinancialDataWorker.toString() + ')()'], { type: 'text/javascript' }))
+        URL.createObjectURL(new Blob(['(' + createDataWorker.toString() + ')()'], { type: 'text/javascript' }))
     );
+    dataWorker.postMessage({
+        type: 'init',
+        data: {
+            categories: CATEGORIES,
+            portfolios: PORTFOLIOS,
+            maxTradeCount: 5,
+        },
+    });
     dataWorker.onmessage = function (e) {
         if (!gridOptions || !gridOptions.api) {
             return;
@@ -118,11 +125,15 @@ function initWorker() {
 }
 
 function startWorkerMessages() {
-    dataWorker?.postMessage('start');
+    dataWorker?.postMessage({
+        type: 'start',
+    });
 }
 
 function stopWorkerMessages() {
-    dataWorker?.postMessage('stop');
+    dataWorker?.postMessage({
+        type: 'stop',
+    });
 }
 
 export function createAutomatedRowGrouping({
@@ -136,7 +147,7 @@ export function createAutomatedRowGrouping({
     runOnce,
     pauseOnMouseMove,
     visibilityThreshold,
-}: CreateAutomatedRowGroupingParams) {
+}: CreateAutomatedRowGroupingParams): RowGroupingAutomatedExample {
     const gridSelector = `.${gridClassname}`;
     let gridDiv: HTMLElement;
 
@@ -219,6 +230,16 @@ export function createAutomatedRowGrouping({
         new globalThis.agGrid.Grid(gridDiv, gridOptions);
     };
 
+    const setUpdateFrequency = (value: number) => {
+        dataWorker?.postMessage({
+            type: 'updateConfig',
+            data: {
+                updatesPerMessage: UPDATES_PER_MESSAGE_1X * value,
+                messageFrequency: MESSAGE_FEQUENCY_1X / value,
+            },
+        });
+    };
+
     const loadGrid = function () {
         if (document.querySelector(gridSelector) && globalThis.agGrid) {
             init();
@@ -237,6 +258,7 @@ export function createAutomatedRowGrouping({
         isInViewport: () => {
             return isInViewport(gridDiv, visibilityThreshold);
         },
+        setUpdateFrequency,
     };
 }
 
