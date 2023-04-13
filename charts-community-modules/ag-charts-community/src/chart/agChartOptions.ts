@@ -639,6 +639,8 @@ export interface AgAxisLineOptions {
 }
 
 export interface AgAxisBaseTickOptions {
+    /** Set to false to hide the axis tick lines. */
+    enabled?: boolean;
     /** The width in pixels of the axis ticks (and corresponding grid line). */
     width?: PixelSize;
     /** The length in pixels of the axis ticks. */
@@ -689,6 +691,8 @@ export interface AgAxisLabelFormatterParams {
 }
 
 export interface AgAxisLabelOptions {
+    /** Set to false to hide the axis labels. */
+    enabled?: boolean;
     /** The font style to use for the labels. */
     fontStyle?: FontStyle;
     /** The font weight to use for the labels. */

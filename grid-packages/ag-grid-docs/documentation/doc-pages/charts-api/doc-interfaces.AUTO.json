@@ -2004,6 +2004,10 @@
     }
   },
   "AgAxisBaseTickOptions": {
+    "enabled": {
+      "description": "/** Set to false to hide the axis tick lines. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "width": {
       "description": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "type": { "returnType": "PixelSize", "optional": true }
@@ -2030,6 +2034,10 @@
     }
   },
   "AgAxisCategoryTickOptions": {
+    "enabled": {
+      "description": "/** Set to false to hide the axis tick lines. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "width": {
       "description": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "type": { "returnType": "PixelSize", "optional": true }
@@ -2064,6 +2072,10 @@
       "description": "/** The step value between ticks specified as a number. If the configured interval results in too many ticks given the chart size, it will be ignored.\n     */",
       "type": { "returnType": "number", "optional": true }
     },
+    "enabled": {
+      "description": "/** Set to false to hide the axis tick lines. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "width": {
       "description": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "type": { "returnType": "PixelSize", "optional": true }
@@ -2097,6 +2109,10 @@
     "interval": {
       "description": "/** The step value between ticks specified as a TimeInterval or a number. If the configured interval results in dense ticks given the data domain, the ticks will be removed.\n     */",
       "type": { "returnType": "any", "optional": true }
+    },
+    "enabled": {
+      "description": "/** Set to false to hide the axis tick lines. */",
+      "type": { "returnType": "boolean", "optional": true }
     },
     "width": {
       "description": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
@@ -2136,6 +2152,10 @@
     }
   },
   "AgAxisLabelOptions": {
+    "enabled": {
+      "description": "/** Set to false to hide the axis labels. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "fontStyle": {
       "description": "/** The font style to use for the labels. */",
       "type": { "returnType": "FontStyle", "optional": true }
