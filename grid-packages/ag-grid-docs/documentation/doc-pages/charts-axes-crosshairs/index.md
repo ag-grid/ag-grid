@@ -131,7 +131,7 @@ crosshair: {
 Then modify the style definitions in a stylesheet file:
 
 ```css
-.custom-crosshair-label .ag-crosshair-label {
+.custom-crosshair-label {
   border-radius: 15px;
 }
 ```
