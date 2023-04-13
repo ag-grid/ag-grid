@@ -1315,6 +1315,7 @@
   "AgAxisBaseTickOptions": {
     "meta": {},
     "type": {
+      "enabled?": "boolean",
       "width?": "PixelSize",
       "size?": "PixelSize",
       "color?": "CssColor",
@@ -1323,6 +1324,7 @@
       "maxSpacing?": "number"
     },
     "docs": {
+      "enabled?": "/** Set to false to hide the axis tick lines. */",
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
       "color?": "/** The colour of the axis ticks. */",
@@ -1334,6 +1336,7 @@
   "AgAxisCategoryTickOptions": {
     "meta": {},
     "type": {
+      "enabled?": "boolean",
       "width?": "PixelSize",
       "size?": "PixelSize",
       "color?": "CssColor",
@@ -1342,6 +1345,7 @@
       "maxSpacing?": "number"
     },
     "docs": {
+      "enabled?": "/** Set to false to hide the axis tick lines. */",
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
       "color?": "/** The colour of the axis ticks. */",
@@ -1355,6 +1359,7 @@
     "type": {
       "count?": "number",
       "interval?": "number",
+      "enabled?": "boolean",
       "width?": "PixelSize",
       "size?": "PixelSize",
       "color?": "CssColor",
@@ -1365,6 +1370,7 @@
     "docs": {
       "count?": "/** A hint of how many ticks to use across an axis.\n     * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.\n     * @deprecated since v7.1.0 (ag-grid v29.1.0) Use tick.interval or tick.minSpacing and tick.maxSpacing instead.\n     */",
       "interval?": "/** The step value between ticks specified as a number. If the configured interval results in too many ticks given the chart size, it will be ignored.\n     */",
+      "enabled?": "/** Set to false to hide the axis tick lines. */",
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
       "color?": "/** The colour of the axis ticks. */",
@@ -1378,6 +1384,7 @@
     "type": {
       "count?": "any",
       "interval?": "any",
+      "enabled?": "boolean",
       "width?": "PixelSize",
       "size?": "PixelSize",
       "color?": "CssColor",
@@ -1388,6 +1395,7 @@
     "docs": {
       "count?": "/** A hint of how many ticks to use across an axis.\n     * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.\n     * The following intervals from the `agCharts.time` namespace can be used:\n     * `millisecond, second, minute, hour, day, sunday, monday, tuesday, wednesday, thursday, friday, saturday, month, year, utcMinute, utcHour, utcDay, utcMonth, utcYear`.\n     * Derived intervals can be created by using the `every` method on the default ones. For example, `agCharts.time.month.every(2)` will return a derived interval that will make the axis place ticks for every other month. */",
       "interval?": "/** The step value between ticks specified as a TimeInterval or a number. If the configured interval results in dense ticks given the data domain, the ticks will be removed.\n     */",
+      "enabled?": "/** Set to false to hide the axis tick lines. */",
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
       "color?": "/** The colour of the axis ticks. */",

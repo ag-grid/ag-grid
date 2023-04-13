@@ -95,6 +95,9 @@ export class AxisLine {
 }
 
 class AxisTick<S extends Scale<D, number>, D = any> {
+    @Validate(BOOLEAN)
+    enabled = true;
+
     /**
      * The line width to be used by axis ticks.
      */
@@ -759,7 +762,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         tickLineGroupSelection.each(visibleFn);
         tickLabelGroupSelection.each(visibleFn);
 
-        this.tickLineGroup.visible = anyTickVisible;
+        this.tickLineGroup.visible = this.tick.enabled && anyTickVisible;
         this.tickLabelGroup.visible = enabledLabels && anyTickVisible;
         this.gridLineGroup.visible = anyTickVisible;
         this.gridArcGroup.visible = anyTickVisible;
