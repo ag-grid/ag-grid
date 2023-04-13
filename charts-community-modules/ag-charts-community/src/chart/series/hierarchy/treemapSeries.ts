@@ -567,11 +567,17 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
 
             const format = this.getTileFormat(datum, isDatumHighlighted);
 
-            rect.fill = validateColor(format?.fill ?? fill);
+            const fillColor = validateColor(format?.fill ?? fill);
+            if (format?.gradient ?? gradient) {
+                const start = Color.tryParseFromString(fill).brighter().toString();
+                const end = Color.tryParseFromString(fill).darker().toString();
+                rect.fill = `linear-gradient(180deg, ${start}, ${end})`;
+            } else {
+                rect.fill = fillColor;
+            }
             rect.fillOpacity = format?.fillOpacity ?? fillOpacity;
             rect.stroke = validateColor(format?.stroke ?? stroke);
             rect.strokeWidth = format?.strokeWidth ?? strokeWidth;
-            rect.gradient = format?.gradient ?? gradient;
             rect.fillShadow = tileShadow;
             rect.crisp = true;
 

@@ -352,6 +352,7 @@ describe('Chart', () => {
                 labelKey: datasets.food.labelKey,
                 sizeKey: datasets.food.valueKey,
                 colorKey: undefined,
+                gradient: false,
             },
             chartOptions: {
                 data: datasets.food.data,
