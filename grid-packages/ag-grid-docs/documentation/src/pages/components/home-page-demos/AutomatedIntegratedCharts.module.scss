@@ -147,14 +147,13 @@ $z-index-splash-contents: 10;
     text-align: center;
     margin-bottom: ds.$size-2 !important; // !important for .ag-styles specificity;
 
-    h2,
-    p {
-        max-width: 51rem;
-    }
-
     h2 {
         margin-bottom: ds.$size-2 !important; // !important for .ag-styles specificity;
         font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity;
+    }
+
+    p {
+        max-width: 50em;
     }
 }
 

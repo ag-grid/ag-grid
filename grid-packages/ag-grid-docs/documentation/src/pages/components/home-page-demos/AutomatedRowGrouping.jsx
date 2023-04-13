@@ -110,8 +110,8 @@ function AutomatedRowGrouping({
     return (
         <>
             <header className={styles.sectionHeader}>
-                <h2 className="font-size-gigantic">Feature Packed, Incredible Performance</h2>
-                <p>
+                <h2 className="font-size-gargantuan">Feature Packed, Incredible Performance</h2>
+                <p className="font-size-large">
                     All the features your users expect and more. Out of the box performance that can handle any data you
                     can throw&nbsp;at&nbsp;it.
                 </p>
