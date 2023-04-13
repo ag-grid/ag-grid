@@ -16,7 +16,7 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
 
     @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
         width: 200% !important;
-        height: 500px !important;
+        height: 450px !important;
         margin-top: ds.$size-3 * -1;
         margin-bottom: calc(500px / -2 + ds.$size-2);
         transform-origin: top left;
@@ -27,11 +27,11 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
     }
 
     @media screen and (min-width: ds.$breakpoint-automated-row-grouping-medium) {
-        height: 500px;
+        height: 450px;
     }
 
     @media screen and (min-width: ds.$breakpoint-automated-row-grouping-large) {
-        height: 700px;
+        height: 600px;
     }
 
     svg[class*='logo-mark'] {

@@ -1,11 +1,12 @@
 // Remount component when Fast Refresh is triggered
 // @refresh reset
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { createAutomatedRowGrouping } from '../../../components/automated-examples/examples/row-grouping';
 import { OverlayButton } from '../../../components/automated-examples/OverlayButton';
 import { ToggleAutomatedExampleButton } from '../../../components/automated-examples/ToggleAutomatedExampleButton';
+import { UpdateSpeedSlider } from '../../../components/automated-examples/UpdateSpeedSlider';
 import LogoMark from '../../../components/LogoMark';
 import { hostPrefix, isProductionBuild, localPrefix } from '../../../utils/consts';
 import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
@@ -62,14 +63,23 @@ function AutomatedRowGrouping({
 }) {
     const gridClassname = 'automated-row-grouping-grid';
     const gridRef = useRef(null);
+    const exampleRef = useRef(null);
     const [scriptIsEnabled, setScriptIsEnabled] = useState(true);
     const [gridIsReady, setGridIsReady] = useState(false);
     const [gridIsHoveredOver, setGridIsHoveredOver] = useState(false);
+    const [frequency, setFrequency] = useState(1);
 
     const setAllScriptEnabledVars = (isEnabled) => {
         setScriptIsEnabled(isEnabled);
         automatedExampleManager.setEnabled({ id: EXAMPLE_ID, isEnabled });
     };
+    const updateFrequency = useCallback((value) => {
+        if (!exampleRef.current) {
+            return;
+        }
+        exampleRef.current.setUpdateFrequency(value);
+        setFrequency(value);
+    }, []);
 
     useIntersectionObserver({
         elementRef: gridRef,
@@ -98,9 +108,10 @@ function AutomatedRowGrouping({
             visibilityThreshold,
         };
 
+        exampleRef.current = createAutomatedRowGrouping(params);
         automatedExampleManager.add({
             id: EXAMPLE_ID,
-            automatedExample: createAutomatedRowGrouping(params),
+            automatedExample: exampleRef.current,
         });
     }, []);
 
@@ -150,10 +161,14 @@ function AutomatedRowGrouping({
                     ></ToggleAutomatedExampleButton>
                 </div>
 
-                <div className="font-size-large">
-                    <span className="text-secondary">Update frequency: </span> <span>250ms</span>
-                    <input type="range" name="update-frequency" min={50} max={500} step={1} defaultValue={250} />
-                </div>
+                <UpdateSpeedSlider
+                    min={0.1}
+                    max={4}
+                    step={0.05}
+                    value={frequency}
+                    disabled={!gridIsReady}
+                    setValue={updateFrequency}
+                />
             </footer>
         </>
     );
