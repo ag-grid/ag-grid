@@ -1408,6 +1408,7 @@
   "AgAxisLabelOptions": {
     "meta": {},
     "type": {
+      "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
       "fontSize?": "FontSize",
@@ -1423,6 +1424,7 @@
       "formatter?": "(params: AgAxisLabelFormatterParams) => string | undefined"
     },
     "docs": {
+      "enabled?": "/** Set to false to hide the axis labels. */",
       "fontStyle?": "/** The font style to use for the labels. */",
       "fontWeight?": "/** The font weight to use for the labels. */",
       "fontSize?": "/** The font size in pixels to use for the labels. */",

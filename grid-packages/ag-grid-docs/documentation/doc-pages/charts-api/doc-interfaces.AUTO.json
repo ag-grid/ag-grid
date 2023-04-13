@@ -2136,6 +2136,10 @@
     }
   },
   "AgAxisLabelOptions": {
+    "enabled": {
+      "description": "/** Set to false to hide the axis labels. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "fontStyle": {
       "description": "/** The font style to use for the labels. */",
       "type": { "returnType": "FontStyle", "optional": true }

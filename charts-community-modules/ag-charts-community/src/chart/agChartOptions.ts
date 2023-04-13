@@ -689,6 +689,8 @@ export interface AgAxisLabelFormatterParams {
 }
 
 export interface AgAxisLabelOptions {
+    /** Set to false to hide the axis labels. */
+    enabled?: boolean;
     /** The font style to use for the labels. */
     fontStyle?: FontStyle;
     /** The font weight to use for the labels. */
