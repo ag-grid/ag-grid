@@ -393,7 +393,6 @@ export {
     BooleanDataTypeDefinition,
     DateDataTypeDefinition,
     DateStringDataTypeDefinition,
-    BaseObjectDataTypeDefinition,
     ObjectDataTypeDefinition,
     ValueFormatterLiteFunc,
     ValueFormatterLiteParams,

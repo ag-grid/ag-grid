@@ -1,33 +1,34 @@
 import { Autowired, Bean, PostConstruct } from '../context/context';
 import { BeanStub } from '../context/beanStub';
-import { ColDef } from '../entities/colDef';
+import { ColDef, KeyCreatorParams, ValueGetterParams } from '../entities/colDef';
 import {
-    BooleanDataTypeDefinition,
     CoreDataTypeDefinition,
     DataTypeDefinition,
-    DateDataTypeDefinition,
     DateStringDataTypeDefinition,
     DEFAULT_DATA_TYPES,
-    NumberDataTypeDefinition,
-    ObjectDataTypeDefinition,
-    TextDataTypeDefinition,
 } from '../entities/dataType';
 import { IRowModel } from '../interfaces/iRowModel';
 import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import { Events } from '../eventKeys';
 import { ColumnModel } from './columnModel';
 import { iterateObject } from '../utils/object';
+import { ModuleRegistry } from '../modules/moduleRegistry';
+import { ModuleNames } from '../modules/moduleNames';
+import { ValueService } from '../valueService/valueService';
 
 @Bean('dataTypeService')
 export class DataTypeService extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('valueService') private valueService: ValueService;
 
     private dataTypeDefinitions: { [cellDataType: string]: DataTypeDefinition | CoreDataTypeDefinition } = {};
 
     @PostConstruct
     public init(): void {
         this.processDataTypeDefinitions();
+
+        this.addManagedPropertyListener('dataTypeDefinitions', () => this.processDataTypeDefinitions());
 
         if (this.gridOptionsService.is('inferCellDataTypes') && !this.gridOptionsService.get('rowData')) {
             const destroyFunc = this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, () => {
@@ -78,45 +79,40 @@ export class DataTypeService extends BeanStub {
         dataTypeDefinitions: { [key: string]: DataTypeDefinition }
     ): DataTypeDefinition | undefined {
         let mergedDataTypeDefinition: DataTypeDefinition;
-        if (this.isChildDataTypeDefinition(dataTypeDefinition)) {
-            const extendsCellDataType = dataTypeDefinition.extends;
-            if (dataTypeDefinition.extends === dataTypeDefinition.baseDataType) {
-                const baseDataTypeDefinition = DEFAULT_DATA_TYPES[extendsCellDataType];
-                if (
-                    !baseDataTypeDefinition ||
-                    baseDataTypeDefinition.baseDataType !== dataTypeDefinition.baseDataType
-                ) {
-                    // TODO - error
-                    return undefined;
-                }
-                mergedDataTypeDefinition = this.mergeDataTypeDefinitions(
-                    baseDataTypeDefinition,
-                    dataTypeDefinition
-                );
-            } else {
-                const extendedDataTypeDefinition = dataTypeDefinitions[extendsCellDataType];
-                if (
-                    !extendedDataTypeDefinition ||
-                    extendedDataTypeDefinition.baseDataType !== dataTypeDefinition.baseDataType
-                ) {
-                    // TODO - error
-                    return undefined;
-                }
-                const mergedExtendedDataTypeDefinition = this.processDataTypeDefinition(
-                    extendedDataTypeDefinition,
-                    dataTypeDefinitions
-                );
-                if (!mergedExtendedDataTypeDefinition) {
-                    return undefined;
-                }
-                mergedDataTypeDefinition = this.mergeDataTypeDefinitions(
-                    mergedExtendedDataTypeDefinition,
-                    dataTypeDefinition
-                );
+        const extendsCellDataType = dataTypeDefinition.extends;
+        if (dataTypeDefinition.extends === dataTypeDefinition.baseDataType) {
+            const baseDataTypeDefinition = DEFAULT_DATA_TYPES[extendsCellDataType];
+            if (
+                !baseDataTypeDefinition ||
+                baseDataTypeDefinition.baseDataType !== dataTypeDefinition.baseDataType
+            ) {
+                // TODO - error
+                return undefined;
             }
+            mergedDataTypeDefinition = this.mergeDataTypeDefinitions(
+                baseDataTypeDefinition,
+                dataTypeDefinition
+            );
         } else {
-            // must be object
-            mergedDataTypeDefinition = dataTypeDefinition;
+            const extendedDataTypeDefinition = dataTypeDefinitions[extendsCellDataType];
+            if (
+                !extendedDataTypeDefinition ||
+                extendedDataTypeDefinition.baseDataType !== dataTypeDefinition.baseDataType
+            ) {
+                // TODO - error
+                return undefined;
+            }
+            const mergedExtendedDataTypeDefinition = this.processDataTypeDefinition(
+                extendedDataTypeDefinition,
+                dataTypeDefinitions
+            );
+            if (!mergedExtendedDataTypeDefinition) {
+                return undefined;
+            }
+            mergedDataTypeDefinition = this.mergeDataTypeDefinitions(
+                mergedExtendedDataTypeDefinition,
+                dataTypeDefinition
+            );
         }
 
         return mergedDataTypeDefinition;
@@ -148,6 +144,9 @@ export class DataTypeService extends BeanStub {
         }
         if (dataTypeDefinition.valueParser) {
             colDef.valueParser = dataTypeDefinition.valueParser;
+        }
+        if (!dataTypeDefinition.suppressDefaultProperties) {
+            this.setColDefPropertiesForBaseDataType(colDef, dataTypeDefinition);
         }
         return dataTypeDefinition.columnTypes;
     }
@@ -188,7 +187,7 @@ export class DataTypeService extends BeanStub {
         } else if (value instanceof Date) {
             return 'date';
         }
-        return undefined;
+        return 'object';
     }
 
     public convertColumnTypes(type: string | string[]): string[] {
@@ -221,15 +220,82 @@ export class DataTypeService extends BeanStub {
         return this.getDateStringTypeDefinition().dateFormatter!;
     }
 
-    private isChildDataTypeDefinition<TData = any>(
-        dataTypeDefinition: DataTypeDefinition<TData>
-    ): dataTypeDefinition is
-        | TextDataTypeDefinition<TData>
-        | NumberDataTypeDefinition<TData>
-        | BooleanDataTypeDefinition<TData>
-        | DateDataTypeDefinition<TData>
-        | DateStringDataTypeDefinition<TData> 
-        | ObjectDataTypeDefinition<TData, any> {
-        return (dataTypeDefinition as any).extends;
+    private setColDefPropertiesForBaseDataType(colDef: ColDef, dataTypeDefinition: DataTypeDefinition | CoreDataTypeDefinition): void {
+        const setFilterModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule);
+        switch (dataTypeDefinition.baseDataType) {
+            case 'number': {
+                colDef.headerClass = 'ag-right-aligned-header';
+                colDef.cellClass = 'ag-right-aligned-cell';
+                colDef.cellEditor = 'agNumberCellEditor';
+                colDef.useValueFormatterForExport = true;
+                colDef.useValueParserForImport = true;
+                break;
+            }
+            case 'boolean': {
+                colDef.cellEditor = 'agSelectCellEditor';
+                colDef.cellEditorParams = {
+                    values: [true, false],
+                };
+                if (!setFilterModuleLoaded) {
+                    colDef.filterParams = {
+                        maxNumConditions: 1,
+                        filterOptions: [
+                            'empty',
+                            {
+                                displayKey: 'true',
+                                displayName: 'True',
+                                predicate: (_filterValues: any[], cellValue: any) => cellValue,
+                                numberOfInputs: 0,
+                            },
+                            {
+                                displayKey: 'false',
+                                displayName: 'False',
+                                predicate: (_filterValues: any[], cellValue: any) => cellValue === false,
+                                numberOfInputs: 0,
+                            },
+                        ]
+                    };
+                }
+                colDef.useValueFormatterForExport = true;
+                colDef.useValueParserForImport = true;
+                break;
+            }
+            case 'date': {
+                colDef.cellEditor = 'agDateCellEditor';
+                if (setFilterModuleLoaded) {
+                    colDef.filterParams = {
+                        valueFormatter: dataTypeDefinition.valueFormatter
+                    }
+                }
+                colDef.useValueFormatterForExport = true;
+                colDef.useValueParserForImport = true;
+                break;
+            }
+            case 'dateString': {
+                colDef.cellEditor = 'agDateStringCellEditor';
+                colDef.useValueFormatterForExport = true;
+                colDef.useValueParserForImport = true;
+                break;
+            }
+            case 'object': {
+                colDef.cellEditorParams = {
+                    useFormatter: true,
+                };
+                colDef.keyCreator = (params: KeyCreatorParams) => dataTypeDefinition.valueFormatter!(params);
+                if (setFilterModuleLoaded) {
+                    colDef.filterParams = {
+                        valueFormatter: dataTypeDefinition.valueFormatter
+                    }
+                } else {
+                    colDef.filterValueGetter = (params: ValueGetterParams) => dataTypeDefinition.valueFormatter!({
+                        ...params,
+                        value: this.valueService.getValue(params.column, params.node)
+                    });
+                }
+                colDef.useValueFormatterForExport = true;
+                colDef.useValueParserForImport = true;
+                break;
+            }
+        }
     }
 }
