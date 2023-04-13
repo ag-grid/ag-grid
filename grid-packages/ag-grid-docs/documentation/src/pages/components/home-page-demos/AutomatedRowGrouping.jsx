@@ -6,7 +6,6 @@ import { Helmet } from 'react-helmet';
 import { createAutomatedRowGrouping } from '../../../components/automated-examples/examples/row-grouping';
 import { OverlayButton } from '../../../components/automated-examples/OverlayButton';
 import { ToggleAutomatedExampleButton } from '../../../components/automated-examples/ToggleAutomatedExampleButton';
-import { Icon } from '../../../components/Icon';
 import LogoMark from '../../../components/LogoMark';
 import { hostPrefix, isProductionBuild, localPrefix } from '../../../utils/consts';
 import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
@@ -147,15 +146,8 @@ function AutomatedRowGrouping({
                             }
                         }}
                         isHoveredOver={gridIsHoveredOver}
-                    >
-                        {scriptIsEnabled ? (
-                            <>
-                                {BUTTON_TEXT.explore} <Icon name="centerToFit" />
-                            </>
-                        ) : (
-                            <>{BUTTON_TEXT.replay}</>
-                        )}
-                    </ToggleAutomatedExampleButton>
+                        scriptIsActive={scriptIsEnabled}
+                    ></ToggleAutomatedExampleButton>
                 </div>
 
                 <div className="font-size-large">
