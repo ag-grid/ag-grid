@@ -341,7 +341,8 @@ export function createScriptRunner({
                 const stepName =
                     scriptAction.name ||
                     (scriptAction.type === 'agAction' ? scriptAction.actionType : scriptAction.type);
-                scriptDebugger?.updateStep({ step: index, stepName });
+                // NOTE: Starting from 1
+                scriptDebugger?.updateStep({ step: index + 1, numSteps: scriptFromStartIndex.length, stepName });
                 if (runScriptState === 'stopping') {
                     updateState('stopped');
                     return { shouldCancel: true };
