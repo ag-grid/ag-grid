@@ -160,7 +160,7 @@ function AutomatedRowGrouping({
                 <UpdateSpeedSlider
                     min={0.1}
                     max={4}
-                    step={0.05}
+                    step={0.1}
                     value={frequency}
                     disabled={!gridIsReady}
                     setValue={updateFrequency}

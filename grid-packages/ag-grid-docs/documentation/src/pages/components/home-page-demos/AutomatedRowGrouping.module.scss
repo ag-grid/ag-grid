@@ -17,7 +17,7 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
     @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
         width: 200% !important;
         height: 450px !important;
-        margin-bottom: calc(500px / -2 + ds.$size-2);
+        margin-bottom: calc(500px / -2 + ds.$size-4);
         transform-origin: top left;
         transform: scale(0.5);
         border-radius: calc(var(--border-radius) * 2);
@@ -110,16 +110,6 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
 
     button {
         margin-left: ds.$size-1 !important; // !important for .ag-styles specificity;
-    }
-
-    input[type='range'] {
-        position: relative;
-        top: -0.25em;
-        min-width: 14em;
-
-        @media screen and (min-width: ds.$breakpoint-automated-row-grouping-medium) {
-            margin-left: ds.$size-1 !important; // !important for .ag-styles specificity;
-        }
     }
 }
 
