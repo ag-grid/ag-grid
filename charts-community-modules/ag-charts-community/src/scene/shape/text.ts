@@ -280,6 +280,53 @@ export class Text extends Shape {
             offsetY += lineHeights[i];
         }
     }
+
+    static wrap(text: string, maxWidth: number, font: string, fontSize: number): string {
+        const lines: string[] = text.split(/\r?\n/g);
+        const result = lines.map((l) => Text.wrapLine(l, maxWidth, font, fontSize));
+        return result.join('\n');
+    }
+
+    static wrapLine(text: string, maxWidth: number, font: string, fontSize: number) {
+        const lines: string[] = [];
+        const guesstimate = Math.max(1, Math.round(maxWidth / fontSize));
+
+        const sliceText = (text: string, startIndex: number) => {
+            const whiteSpaceIndex = text.indexOf(' ', startIndex);
+            const noWhiteSpace = whiteSpaceIndex < 0;
+            const index = noWhiteSpace ? Math.max(1, text.length - 1) : whiteSpaceIndex;
+            return {
+                result: text.slice(0, index),
+                index,
+                addHyphen: noWhiteSpace,
+            };
+        };
+
+        function processText(text: string) {
+            let result = text;
+            let index = text.length;
+            let addHyphen = false;
+            let width = HdpiCanvas.getTextSize(text, font).width;
+
+            const maxCount = 10;
+            let count: number = 0;
+            while (width > maxWidth && count < maxCount) {
+                ({ result, index, addHyphen } = sliceText(result, Math.min(guesstimate, index)));
+                width = HdpiCanvas.getTextSize(result.concat(addHyphen ? '-' : ''), font).width;
+                count++;
+            }
+
+            lines.push(result.concat(addHyphen ? '-' : ''));
+
+            const remainder = text.slice(index);
+            if (remainder && remainder.length > 1 && remainder !== text) {
+                processText(remainder.trim());
+            }
+        }
+
+        processText(text.trim());
+        return lines.join('\n');
+    }
 }
 
 export function getFont(fontSize: number, fontFamily: string, fontStyle?: string, fontWeight?: string): string {
