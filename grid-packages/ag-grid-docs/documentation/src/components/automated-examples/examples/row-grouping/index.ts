@@ -19,7 +19,7 @@ import { createScriptRunner } from './createScriptRunner';
 import { fixtureData } from './rowDataFixture';
 
 const WAIT_TILL_MOUSE_ANIMATION_STARTS = 2000;
-const UPDATES_PER_MESSAGE_1X = 100;
+const UPDATES_PER_MESSAGE_1X = 10;
 const MESSAGE_FEQUENCY_1X = 200;
 
 let dataWorker;
