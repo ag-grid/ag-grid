@@ -1935,7 +1935,11 @@
               },
               {
                 "title": "Background",
-                "url": "/charts-background/",
+                "url": "/charts-background/"
+              },
+              {
+                "title": "Background Image",
+                "url": "/charts-background-image/",
                 "enterprise": "charts"
               }
             ]
@@ -2065,6 +2069,11 @@
               {
                 "title": "Tooltips",
                 "url": "/charts-tooltips/"
+              },
+              {
+                "title": "Context Menu",
+                "url": "/charts-context-menu/",
+                "enterprise": "charts"
               },
               {
                 "title": "Zoom",

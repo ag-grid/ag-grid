@@ -58,6 +58,10 @@ export interface ColGroupDef<TData = any> extends AbstractColDef<TData> {
     openByDefault?: boolean;
     /** Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed. Default: `false` */
     marryChildren?: boolean;
+    /**
+     * If `true` the label of the Column Group will scroll alongside the grid to always remain visible. Default: `false`
+     */
+    stickyLabel?: boolean;
 
     /**
     * The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.
@@ -83,6 +87,8 @@ export interface IAggFuncParams<TData = any, TValue = any> extends AgGridCommon<
     // `ColDef` should be typed `TValue`. Change in v30
     /** ColDef of the aggregation column */
     colDef: ColDef<TData>;
+    /** Pivot Result Column being produced using this aggregation */
+    pivotResultColumn?: Column;
     /** The parent RowNode, where the aggregation result will be shown */
     rowNode: IRowNode<TData>;
     /** data (if any) of the parent RowNode */

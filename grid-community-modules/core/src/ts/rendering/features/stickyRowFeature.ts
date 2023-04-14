@@ -3,7 +3,7 @@ import { BeanStub } from "../../context/beanStub";
 import { RowCtrl } from "../row/rowCtrl";
 import { RowCtrlMap, RowRenderer } from "../rowRenderer";
 import { Autowired, PostConstruct } from "../../context/context";
-import { IRowModel } from "../../interfaces/iRowModel";
+import { IRowModel, RowModelType } from "../../interfaces/iRowModel";
 import { GridBodyCtrl } from "../../gridBodyComp/gridBodyCtrl";
 import { CtrlsService } from "../../ctrlsService";
 import { last } from "../../utils/array";
@@ -17,6 +17,7 @@ export class StickyRowFeature extends BeanStub {
     private stickyRowCtrls: RowCtrl[] = [];
     private gridBodyCtrl: GridBodyCtrl;
     private containerHeight = 0;
+    private isClientSide: boolean;
 
     constructor(
         private readonly createRowCon: (rowNode: RowNode, animate: boolean, afterScroll: boolean) => RowCtrl,
@@ -27,6 +28,8 @@ export class StickyRowFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
+        this.isClientSide = this.rowModel.getType() === 'clientSide';
+
         this.ctrlsService.whenReady(params => {
             this.gridBodyCtrl = params.gridBodyCtrl;
         });
@@ -50,11 +53,28 @@ export class StickyRowFeature extends BeanStub {
         const addStickyRow = (stickyRow: RowNode) => {
             stickyRows.push(stickyRow);
 
-            let lastAncester = stickyRow;
-            while (lastAncester.expanded) {
-                lastAncester = last(lastAncester.childrenAfterSort!);
+            let lastChildBottom: number;
+
+            if (this.isClientSide) {
+                let lastAncestor = stickyRow;
+                while (lastAncestor.expanded) {
+                    if (lastAncestor.master) {
+                        lastAncestor = lastAncestor.detailNode;
+                    } else if (lastAncestor.childrenAfterSort) {
+                        // Tree Data will have `childrenAfterSort` without any nodes, but
+                        // the current node will still be marked as expansible.
+                        if (lastAncestor.childrenAfterSort.length === 0) { break; }
+                        lastAncestor = last(lastAncestor.childrenAfterSort);
+                    }
+                }
+                lastChildBottom = lastAncestor.rowTop! + lastAncestor.rowHeight!;
             }
-            const lastChildBottom = lastAncester.rowTop! + lastAncester.rowHeight!;
+            // if the rowModel is `serverSide` as only `clientSide` and `serverSide` create this feature.
+            else {
+                const storeBounds = stickyRow.childStore?.getStoreBounds();
+                lastChildBottom = (storeBounds?.heightPx ?? 0) + (storeBounds?.topPx ?? 0);
+            }
+
             const stickRowBottom = firstPixel + height + stickyRow.rowHeight!;
             if (lastChildBottom < stickRowBottom) {
                 stickyRow.stickyRowTop = height + (lastChildBottom - stickRowBottom);
@@ -96,7 +116,7 @@ export class StickyRowFeature extends BeanStub {
 
             // if first row is an open group, and practically shown, it needs
             // to be stuck
-            if (firstRow.group && firstRow.expanded && !firstRow.footer && firstRow.rowTop! < firstPixelAfterStickyRows) {
+            if (firstRow.isExpandable() && firstRow.expanded && firstRow.rowTop! < firstPixelAfterStickyRows) {
                 addStickyRow(firstRow);
                 continue;
             }

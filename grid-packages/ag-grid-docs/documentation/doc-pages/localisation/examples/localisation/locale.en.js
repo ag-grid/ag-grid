@@ -126,6 +126,7 @@ const AG_GRID_LOCALE_EN = {
     to: 'to',
     of: 'of',
     page: 'Page',
+    pageLastRowUnknown: '?',
     nextPage: 'Next Page',
     lastPage: 'Last Page',
     firstPage: 'First Page',

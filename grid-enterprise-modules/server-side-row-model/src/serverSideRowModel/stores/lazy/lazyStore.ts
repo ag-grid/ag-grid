@@ -628,4 +628,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     public getBlockStates() {
         return this.cache.getBlockStates();
     }
+
+    public getStoreBounds() {
+        return {
+            topPx: this.topPx,
+            heightPx: this.heightPx,
+        }
+    }
 }

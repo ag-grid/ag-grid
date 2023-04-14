@@ -1,5 +1,8 @@
 import classNames from 'classnames';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { DEFAULT_AUTOMATED_EXAMPLE_VISIBILITY_THRESHOLD } from '../components/automated-examples/lib/constants';
+import { createAutomatedExampleManager } from '../components/automated-examples/lib/createAutomatedExampleManager';
+import { createScriptDebuggerManager } from '../components/automated-examples/lib/scriptDebugger';
 import Footer from '../components/footer/Footer';
 import FrameworkSelector from '../components/FrameworkSelector';
 import { Quotes } from '../components/quotes/Quotes';
@@ -11,11 +14,14 @@ import Seo from './components/SEO';
 
 const IS_SSR = typeof window === 'undefined';
 
-const LiveStreamingDemo = React.lazy(() => import('./components/home-page-demos/LiveStreaming'));
-const ChartingDashboardDemo = React.lazy(() => import('./components/home-page-demos/ChartingDashboard'));
+const AutomatedIntegratedCharts = React.lazy(() => import('./components/home-page-demos/AutomatedIntegratedCharts'));
+const AutomatedRowGrouping = React.lazy(() => import('./components/home-page-demos/AutomatedRowGrouping'));
 const HeroGrid = React.lazy(() => import('./components/home-page-demos/HeroGrid'));
 
+const automatedExampleManager = createAutomatedExampleManager();
+
 const Default = () => {
+    const automatedExampleVisiblityThreshold = DEFAULT_AUTOMATED_EXAMPLE_VISIBILITY_THRESHOLD;
     const frameworksData = [
         {
             name: 'javascript',
@@ -38,6 +44,23 @@ const Default = () => {
             url: '/react-data-grid/solidjs/',
         },
     ];
+    let debugValue, isCI, runAutomatedExamplesOnce;
+
+    if (!IS_SSR) {
+        const searchParams = new URLSearchParams(window.location.search);
+        debugValue = searchParams.get('debug');
+        isCI = searchParams.get('isCI') === 'true';
+        runAutomatedExamplesOnce = searchParams.get('runOnce') === 'true';
+    }
+    const scriptDebuggerManager = createScriptDebuggerManager({
+        canvasClassname: styles.automatedExampleDebugCanvas,
+        panelClassname: styles.automatedExampleDebugPanel,
+    });
+
+    useEffect(() => {
+        scriptDebuggerManager.setEnabled(Boolean(debugValue));
+        scriptDebuggerManager.setInitialDraw(debugValue === 'draw');
+    }, []);
 
     return (
         <>
@@ -81,65 +104,41 @@ const Default = () => {
                     </div>
                 </div>
 
-                <div className={styles.homepageExample}>
-                    <section className="page-margin">
-                        <h2>Live Streaming Updates</h2>
-
-                        <div className={styles.demo}>
+                <section className={styles.automatedRowGroupingOuter}>
+                    <div className={classNames('page-margin', styles.homepageExample)}>
+                        <div className={styles.automatedRowGrouping}>
                             {!IS_SSR && (
-                                <React.Suspense fallback={<div>Loading...</div>}>
-                                    <LiveStreamingDemo />
+                                <React.Suspense fallback={<></>}>
+                                    <AutomatedRowGrouping
+                                        automatedExampleManager={automatedExampleManager}
+                                        scriptDebuggerManager={scriptDebuggerManager}
+                                        useStaticData={isCI}
+                                        runOnce={runAutomatedExamplesOnce}
+                                        visibilityThreshold={automatedExampleVisiblityThreshold}
+                                    />
                                 </React.Suspense>
                             )}
                         </div>
-                    </section>
-                </div>
-
-                <div className={styles.homepageDescription}>
-                    <div className="page-margin">
-                        <ul className="list-style-none">
-                            <li>
-                                <h3>Feature Packed</h3>
-                                <p>
-                                    The performance, feature set and quality of AG Grid has not been seen before in a
-                                    JavaScript datagrid. Many features in AG Grid are unique to AG Grid, and simply put
-                                    AG Grid into a class of its own, without compromising on quality or performance.
-                                </p>
-                            </li>
-                            <li>
-                                <h3>Industry Leading</h3>
-                                <p>
-                                    Over 1.2 million monthly downloads of AG Grid Community and over 80% of the Fortune
-                                    500 using AG Grid Enterprise. AG Grid has become the JavaScript datagrid of choice
-                                    for Enterprise JavaScript developers.
-                                </p>
-                            </li>
-                            <li>
-                                <h3>Community & Enterprise</h3>
-                                <p>
-                                    AG Grid Community is free and open-sourced under the MIT license. AG Grid Enterprise
-                                    comes with dedicated support and more enterprise style features. AG Grid gives for
-                                    free what other grids charge for, then provides AG Grid Enterprise where it goes
-                                    above and beyond the competition.
-                                </p>
-                            </li>
-                        </ul>
                     </div>
-                </div>
+                </section>
 
-                <div className={styles.homepageExample}>
-                    <section className="page-margin">
-                        <h2>Integrated Charting</h2>
-
-                        <div className={styles.demo}>
+                <section className={styles.automatedIntegratedChartsOuter}>
+                    <div className={classNames('page-margin', styles.homepageExample)}>
+                        <div className={styles.automatedIntegratedCharts}>
                             {!IS_SSR && (
-                                <React.Suspense fallback={<div>Loading...</div>}>
-                                    <ChartingDashboardDemo />
+                                <React.Suspense fallback={<></>}>
+                                    <AutomatedIntegratedCharts
+                                        automatedExampleManager={automatedExampleManager}
+                                        scriptDebuggerManager={scriptDebuggerManager}
+                                        useStaticData={isCI}
+                                        runOnce={runAutomatedExamplesOnce}
+                                        visibilityThreshold={automatedExampleVisiblityThreshold}
+                                    />
                                 </React.Suspense>
                             )}
                         </div>
-                    </section>
-                </div>
+                    </div>
+                </section>
 
                 <div className={styles.homepageSponsorship}>
                     <section className={classNames(styles.sponsorshipInner, 'page-margin')}>

@@ -4,7 +4,7 @@ import { CellPosition } from "../entities/cellPositionUtils";
 import { NumberSequence } from '../utils';
 import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
 import { BeanStub } from "../context/beanStub";
-import { getCtrlForEvent } from "../utils/event";
+import { getCtrlForEventTarget } from "../utils/event";
 import { exists } from "../utils/generic";
 import { CtrlsService } from "../ctrlsService";
 import { CellCtrl } from "../rendering/cell/cellCtrl";
@@ -27,7 +27,7 @@ export class MouseEventService extends BeanStub {
     }
 
     public getRenderedCellForEvent(event: Event): CellCtrl | null {
-        return getCtrlForEvent<CellCtrl>(this.gridOptionsService, event, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
+        return getCtrlForEventTarget<CellCtrl>(this.gridOptionsService, event.target, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
     }
 
     // walks the path of the event, and returns true if this grid is the first one that it finds. if doing

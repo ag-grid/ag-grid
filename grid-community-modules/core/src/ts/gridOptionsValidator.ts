@@ -53,6 +53,10 @@ export class GridOptionsValidator {
             this.pickOneWarning('groupRemoveSingleChildren', 'groupHideOpenParents');
         }
 
+        if (this.gridOptionsService.get('domLayout') === 'autoHeight' && !this.gridOptionsService.isRowModelType('clientSide')) {
+            console.warn(`AG Grid: 'domLayout' is only supported by the Client-Side row model.`);
+        }
+
         if (this.gridOptionsService.isRowModelType('serverSide')) {
             const msg = (prop: string, alt?: string) => (
                 `AG Grid: '${prop}' is not supported on the Server-Side Row Model.` + (alt ? ` Please use ${alt} instead.` : '')
@@ -103,18 +107,29 @@ export class GridOptionsValidator {
     private checkColumnDefProperties() {
         if (this.gridOptions.columnDefs == null) { return; }
 
-        this.gridOptions.columnDefs.forEach(colDef => {
+        const validProperties: string[] = [...ColDefUtil.ALL_PROPERTIES, ...ColDefUtil.FRAMEWORK_PROPERTIES];
+
+        const validateColDef = (colDef: ColDef | ColGroupDef, propertyName: string) => {
             const userProperties: string[] = Object.getOwnPropertyNames(colDef);
-            const validProperties: string[] = [...ColDefUtil.ALL_PROPERTIES, ...ColDefUtil.FRAMEWORK_PROPERTIES];
 
             this.checkProperties(
                 userProperties,
                 validProperties,
                 validProperties,
-                'colDef',
+                propertyName,
                 'https://www.ag-grid.com/javascript-data-grid/column-properties/'
             );
-        });
+
+            if ((colDef as ColGroupDef).children) {
+                (colDef as ColGroupDef).children.forEach(child => validateColDef(child, 'columnDefs.children'));
+            }
+        }
+
+        this.gridOptions.columnDefs.forEach(colDef => validateColDef(colDef, 'columnDefs'));
+
+        if (this.gridOptions.defaultColDef) {
+            validateColDef(this.gridOptions.defaultColDef, 'defaultColDef');
+        }
     }
 
     private checkColumnDefViolations() {
@@ -186,11 +201,12 @@ export class GridOptionsValidator {
         );
 
         iterateObject<any>(invalidProperties, (key, value) => {
-            console.warn(`AG Grid: invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(", ")}`);
+
+            doOnce(() => console.warn(`AG Grid: invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(", ")}`), 'invalidProperty' + containerName + key);
         });
 
         if (Object.keys(invalidProperties).length > 0) {
-            console.warn(`AG Grid: to see all the valid ${containerName} properties please check: ${docsUrl}`);
+            doOnce(() => console.warn(`AG Grid: to see all the valid ${containerName} properties please check: ${docsUrl}`), 'invalidProperties' + containerName + docsUrl);
         }
     }
 

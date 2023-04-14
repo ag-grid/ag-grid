@@ -70,6 +70,7 @@
   "isFieldContainsDots": {
     "type": { "arguments": {}, "returnType": "boolean" }
   },
+  "isTooltipEnabled": { "type": { "arguments": {}, "returnType": "boolean" } },
   "isTooltipFieldContainsDots": {
     "type": { "arguments": {}, "returnType": "boolean" }
   },

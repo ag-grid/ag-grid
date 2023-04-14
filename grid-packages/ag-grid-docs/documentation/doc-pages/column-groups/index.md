@@ -110,6 +110,15 @@ Sometimes you want columns of the group to always stick together. To achieve thi
 
 <grid-example title='Marry Children' name='marry-children' type='generated' options='{ "exampleHeight": 560 }'></grid-example>
 
+## Sticky Label
+
+When Column Groups are too wide, it might be useful to have the **Header Label** to be always visible while scrolling the grid horizontally. To achieve this, set the column group property `stickyLabel=true`. The example below demonstrates the following:
+
+- Both 'Athlete Details' and 'Sport Results' have `stickyLabel=true`.
+- If you scroll the grid horizontally, the header label will always be visible until it's completely out of view.
+
+<grid-example title='Sticky Label' name='sticky-label' type='generated' options='{ "exampleHeight": 560 }'></grid-example>
+
 ## Advanced Grouping Example
 
 And here, to hammer in the 'no limit to the number of levels or groups', we have a more complex example. The grid here doesn't make much sense, it's just using the same Olympic Winners data and going crazy with the column groups. The example also demonstrates the following features:

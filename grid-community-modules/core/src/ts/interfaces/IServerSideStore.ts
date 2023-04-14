@@ -26,6 +26,7 @@ export interface IServerSideStore {
     isLastRowIndexKnown(): boolean;
     getRowNodesInRange(firstInRange: IRowNode, lastInRange: IRowNode): IRowNode[];
     addStoreStates(result: ServerSideGroupLevelState[]): void;
+    getStoreBounds(): { topPx: number, heightPx: number };
 }
 
 export interface StoreRefreshAfterParams {

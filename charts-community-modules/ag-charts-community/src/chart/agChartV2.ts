@@ -17,6 +17,7 @@ import { PolarChart } from './polarChart';
 import { HierarchyChart } from './hierarchyChart';
 import { Caption } from '../caption';
 import { Series } from './series/series';
+import { getSeries, initialiseSeriesModules, seriesDefaults } from './series/seriesTypes';
 import { AreaSeries } from './series/cartesian/areaSeries';
 import { BarSeries } from './series/cartesian/barSeries';
 import { HistogramSeries } from './series/cartesian/histogramSeries';
@@ -227,7 +228,9 @@ abstract class AgChartInternal {
         const { overrideDevicePixelRatio } = userOptions;
         delete userOptions['overrideDevicePixelRatio'];
 
-        const processedOptions = prepareOptions(userOptions, mixinOpts);
+        initialiseSeriesModules();
+
+        const processedOptions = prepareOptions(userOptions, mixinOpts, seriesDefaults);
         let chart = proxy?.chart;
         if (chart == null || chartType(userOptions as any) !== chartType(chart.processedOptions as any)) {
             chart = AgChartInternal.createChartInstance(processedOptions, overrideDevicePixelRatio, chart);
@@ -547,34 +550,9 @@ function createSeries(options: SeriesOptionsTypes[]): Series[] {
     let index = 0;
     for (const seriesOptions of options || []) {
         const path = `series[${index++}]`;
-        switch (seriesOptions.type) {
-            case 'area':
-                series.push(applySeriesValues(new AreaSeries(), seriesOptions, { path, index }));
-                break;
-            case 'bar':
-                series.push(applySeriesValues(new BarSeries(), seriesOptions, { path, index }));
-                break;
-            case 'column':
-                series.push(applySeriesValues(new BarSeries(), seriesOptions, { path, index }));
-                break;
-            case 'histogram':
-                series.push(applySeriesValues(new HistogramSeries(), seriesOptions, { path, index }));
-                break;
-            case 'line':
-                series.push(applySeriesValues(new LineSeries(), seriesOptions, { path, index }));
-                break;
-            case 'scatter':
-                series.push(applySeriesValues(new ScatterSeries(), seriesOptions, { path, index }));
-                break;
-            case 'pie':
-                series.push(applySeriesValues(new PieSeries(), seriesOptions, { path, index }));
-                break;
-            case 'treemap':
-                series.push(applySeriesValues(new TreemapSeries(), seriesOptions, { path, index }));
-                break;
-            default:
-                throw new Error('AG Charts - unknown series type: ' + (seriesOptions as any).type);
-        }
+        const seriesInstance = getSeries(seriesOptions.type!);
+        applySeriesValues(seriesInstance, seriesOptions, { path, index });
+        series.push(seriesInstance);
     }
 
     return series;
@@ -680,11 +658,11 @@ function applyOptionValues<T, S>(target: T, options?: S, { skip, path }: { skip?
     return jsonApply<T, any>(target, options, applyOpts);
 }
 
-function applySeriesValues<T extends Series<any>, S extends SeriesOptionType<T>>(
-    target: T,
-    options?: S,
+function applySeriesValues(
+    target: Series<any>,
+    options?: SeriesOptionType<any>,
     { path, index }: { path?: string; index?: number } = {}
-): T {
+): Series<any> {
     const skip: string[] = ['series[].listeners'];
     const ctrs = JSON_APPLY_OPTIONS?.constructors || {};
     const seriesTypeOverrides = {
@@ -702,7 +680,7 @@ function applySeriesValues<T extends Series<any>, S extends SeriesOptionType<T>>
         idx: index ?? -1,
     };
 
-    const result = jsonApply<T, any>(target, options, applyOpts);
+    const result = jsonApply(target, options, applyOpts);
 
     const listeners = options?.listeners;
     if (listeners != null) {

@@ -130,6 +130,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
 
     private fieldContainsDots: boolean;
     private tooltipFieldContainsDots: boolean;
+    private tooltipEnabled = false;
 
     private rowGroupActive = false;
     private pivotActive = false;
@@ -250,6 +251,8 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
 
         this.initDotNotation();
 
+        this.initTooltip();
+
         this.validate();
     }
 
@@ -264,6 +267,13 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
 
         this.minWidth = this.columnUtils.calculateColMinWidth(colDef);
         this.maxWidth = this.columnUtils.calculateColMaxWidth(colDef);
+    }
+
+    private initTooltip(): void {
+        this.tooltipEnabled = exists(this.colDef.tooltipField) ||
+            exists(this.colDef.tooltipValueGetter) ||
+            exists(this.colDef.tooltipComponent) ||
+            exists(this.colDef.tooltipComponentFramework);
     }
 
     public resetActualWidth(source: ColumnEventType = 'api'): void {
@@ -301,6 +311,10 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
 
     public isFieldContainsDots(): boolean {
         return this.fieldContainsDots;
+    }
+
+    public isTooltipEnabled(): boolean {
+        return this.tooltipEnabled;
     }
 
     public isTooltipFieldContainsDots(): boolean {
@@ -688,14 +702,14 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
      *
      * Equivalent: `getColId`, `getUniqueId` */
     public getId(): string {
-        return this.getColId();
+        return this.colId;
     }
     /**
      * Returns the unique ID for the column.
      *
      * Equivalent: `getColId`, `getId` */
     public getUniqueId(): string {
-        return this.getId();
+        return this.colId;
     }
 
     public getDefinition(): AbstractColDef<TValue> {

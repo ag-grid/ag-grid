@@ -840,6 +840,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return { shrinkRect: newShrinkRect };
     }
 
+    protected hoverRect?: BBox;
+
     // Should be available after the first layout.
     protected seriesRect?: BBox;
     getSeriesRect(): Readonly<BBox | undefined> {
@@ -911,7 +913,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.lastInteractionEvent = undefined;
     });
     protected handlePointer(event: InteractionEvent<'hover'>) {
-        const { lastPick } = this;
+        const { lastPick, hoverRect } = this;
         const { offsetX, offsetY } = event;
 
         const disablePointer = (highlightOnly = false) => {
@@ -921,8 +923,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
             }
         };
 
-        const hoverRectPadding = 20;
-        const hoverRect = this.seriesRect?.clone().grow(hoverRectPadding).grow(this.seriesAreaPadding);
         if (!hoverRect?.containsPoint(offsetX, offsetY)) {
             disablePointer();
             return;
@@ -974,7 +974,12 @@ export abstract class Chart extends Observable implements AgChartInstance {
         const rangeMatched = range === 'nearest' || isPixelRange || exactlyMatched;
         const shouldUpdateTooltip = tooltipEnabled && rangeMatched && (!isNewDatum || html !== undefined);
 
-        const meta = this.mergePointerDatum({ pageX, pageY, offsetX, offsetY, event: event }, pick.datum);
+        const position = {
+            xOffset: pick.datum.series.tooltip.position.xOffset,
+            yOffset: pick.datum.series.tooltip.position.yOffset,
+        };
+
+        const meta = this.mergePointerDatum({ pageX, pageY, offsetX, offsetY, event: event, position }, pick.datum);
 
         if (shouldUpdateTooltip) {
             this.tooltipManager.updateTooltip(this.id, meta, html);
@@ -1103,7 +1108,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     };
 
     private mergePointerDatum(meta: PointerMeta, datum: SeriesNodeDatum): PointerMeta {
-        const { type } = this.tooltip.position;
+        const { type } = datum.series.tooltip.position;
 
         if (type === 'node' && datum.nodeMidPoint) {
             const { x, y } = datum.nodeMidPoint;

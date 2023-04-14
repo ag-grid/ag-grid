@@ -397,6 +397,7 @@
       "groupId?": "string",
       "openByDefault?": "boolean",
       "marryChildren?": "boolean",
+      "stickyLabel?": "boolean",
       "headerGroupComponent?": "any",
       "headerGroupComponentFramework?": "any",
       "headerGroupComponentParams?": "any",
@@ -419,6 +420,7 @@
       "groupId?": "/** The unique ID to give the column. This is optional. If missing, a unique ID will be generated. This ID is used to identify the column group in the column API. */",
       "openByDefault?": "/** Set to `true` if this group should be opened by default. Default: `false` */",
       "marryChildren?": "/** Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed. Default: `false` */",
+      "stickyLabel?": "/** If `true` the label of the Column Group will scroll alongside the grid to always remain visible. Default: `false`\n     */",
       "headerGroupComponent?": "/** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.\n    * See [Header Group Component](https://www.ag-grid.com/javascript-data-grid/component-header/#header-group-components/) for framework specific implementation details.\n    */",
       "headerGroupComponentFramework?": "/** @deprecated As of v27, use `headerGroupComponent` for framework components too. */",
       "headerGroupComponentParams?": "/** The params used to configure the `headerGroupComponent`. */",
@@ -453,6 +455,7 @@
       "values": "TValue[]",
       "column": "Column",
       "colDef": "ColDef<TData>",
+      "pivotResultColumn?": "Column",
       "rowNode": "IRowNode<TData>",
       "data": "TData",
       "api": "GridApi<TData>",
@@ -463,6 +466,7 @@
       "values": "/** Values to aggregate */",
       "column": "/** Column the aggregation function is working on */",
       "colDef": "/** ColDef of the aggregation column */",
+      "pivotResultColumn?": "/** Pivot Result Column being produced using this aggregation */",
       "rowNode": "/** The parent RowNode, where the aggregation result will be shown */",
       "data": "/** data (if any) of the parent RowNode */",
       "api": "/** The grid api. */",
@@ -5848,7 +5852,7 @@
     "meta": {},
     "type": { "id": "string", "api?": "GridApi", "columnApi?": "ColumnApi" },
     "docs": {
-      "id": "/** Id of the detail grid, the format is `detail_<ROW_ID>`,\n     * where ROW_ID is the `id` of the parent row.\n     */",
+      "id": "/** Id of the detail grid, the format is `detail_{ROW-ID}`,\n     * where `ROW-ID` is the `id` of the parent row.\n     */",
       "api?": "/** Grid api of the detail grid. */",
       "columnApi?": "/** Column api of the detail grid. */"
     }
@@ -6289,7 +6293,7 @@
     "meta": {},
     "type": {
       "setCenterWidth(width: string)": "void",
-      "setContainerTransform(transform: string)": "void",
+      "setViewportScrollLeft(left: number)": "void",
       "setPinnedContainerWidth(width: string)": "void",
       "setDisplayed(displayed: boolean)": "void",
       "setCtrls(ctrls: HeaderRowCtrl[])": "void"
@@ -7853,18 +7857,18 @@
   "ExcelCell": {
     "meta": {},
     "type": {
-      "ref?": "string",
-      "styleId?": "string",
       "data?": "ExcelData",
-      "mergeAcross?": "number",
-      "collapsibleRanges?": "number[][]"
+      "ref?": "string",
+      "collapsibleRanges?": "number[][]",
+      "styleId?": "string | string[]",
+      "mergeAcross?": "number"
     },
     "docs": {
-      "ref?": "/** Cell reference. */",
-      "styleId?": "/** The ExcelStyle id to be associated with the cell. */",
       "data?": "/** The data that will be added to the cell. */",
-      "mergeAcross?": "/** The number of cells to span across (1 means span 2 columns).\n     * Default: `0`\n     */",
-      "collapsibleRanges?": "/** Collapsible ranges. */"
+      "ref?": "/** Cell reference. */",
+      "collapsibleRanges?": "/** Collapsible ranges. */",
+      "styleId?": "/** The ExcelStyle id to be associated with the cell. */",
+      "mergeAcross?": "/** The number of cells to span across (1 means span 2 columns).\n     * Default: `0`\n     */"
     }
   },
   "ExcelImagePosition": {
@@ -9222,7 +9226,8 @@
       "getTopLevelRowDisplayedIndex(topLevelIndex: number)": "number",
       "isLastRowIndexKnown()": "boolean",
       "getRowNodesInRange(firstInRange: IRowNode, lastInRange: IRowNode)": "IRowNode[]",
-      "addStoreStates(result: ServerSideGroupLevelState[])": "void"
+      "addStoreStates(result: ServerSideGroupLevelState[])": "void",
+      "getStoreBounds()": "{ topPx: number; heightPx: number; }"
     }
   },
   "StoreRefreshAfterParams": {

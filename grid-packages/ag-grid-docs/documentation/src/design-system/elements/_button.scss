@@ -22,7 +22,8 @@ input[type='submit']:not(.button-style-none),
     transition: background-color $default-transition-timing, border $default-transition-timing,
         box-shadow $default-transition-timing;
 
-    &:hover {
+    &:hover,
+    &.hover {
         background-color: var(--button-hover-color);
         color: var(--button-text-color);
     }
@@ -32,7 +33,6 @@ input[type='submit']:not(.button-style-none),
         transition: background-color 0.125s ease-in-out;
     }
 
-    &:focus,
     &:focus-visible {
         border-color: var(--button-hover-color);
         box-shadow: 0 0 0 4px var(--button-focus-box-shadow-color);
@@ -80,12 +80,10 @@ input[type='submit']:not(.button-style-none),
     transition: border-color $default-transition-timing, box-shadow $default-transition-timing;
 
     &:hover:not(:disabled):not([readonly]),
-    &:focus:not(:disabled):not([readonly]),
     &:focus-visible:not(:disabled):not([readonly]) {
         border-color: var(--input-focus-border-color);
     }
 
-    &:focus:not(:disabled):not([readonly]),
     &:focus-visible:not(:disabled):not([readonly]) {
         box-shadow: 0 0 0 3px var(--input-focus-box-shadow-color);
     }

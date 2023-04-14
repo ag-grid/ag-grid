@@ -9,9 +9,6 @@ This section covers Sticky Groups, which display group rows that are expanded at
 
 To enable sticky groups, set the `groupRowsSticky` property to true. This behaviour applies to all row group levels.
 
-[[note]]
-| Sticky Groups only work with the [Client Side Row Model](/client-side-model/).
-
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
     columnDefs: [
@@ -40,7 +37,7 @@ The example below demonstrates the default row grouping behaviour with sticky gr
 Sticky groups supports row grouping using Multiple Group Columns.
 
 [[note]]
-| At the moment `groupRowsSticky` does not work with the following features: `groupHideOpenParents`, `masterDetail` and `pagination`. Turning them on at the same time will cause unexpected behaviour.
+| At the moment `groupRowsSticky` does not work with the following features: [Hide Open Parents](/grouping-multiple-group-columns/#hide-open-parents) and [Row Pagination](/row-pagination/). Turning them on at the same time will cause unexpected behaviour.
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {

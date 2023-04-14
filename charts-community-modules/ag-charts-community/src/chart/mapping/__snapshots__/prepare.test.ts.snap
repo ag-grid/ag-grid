@@ -248,6 +248,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -304,6 +307,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -360,6 +366,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -714,6 +723,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "column",
@@ -783,6 +793,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -1087,6 +1100,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -1144,6 +1160,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -1201,6 +1220,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -1258,6 +1280,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -1315,6 +1340,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -1372,6 +1400,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -1429,6 +1460,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -1755,6 +1789,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": [Function],
       },
       "type": "column",
@@ -2064,6 +2099,9 @@ Object {
       "title": undefined,
       "tooltip": Object {
         "enabled": true,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "scatter",
@@ -2341,6 +2379,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -2397,6 +2438,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -2453,6 +2497,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -2509,6 +2556,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -2824,6 +2874,9 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "area",
@@ -2897,6 +2950,9 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "area",
@@ -2970,6 +3026,9 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "area",
@@ -3043,6 +3102,9 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "area",
@@ -3116,6 +3178,9 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "area",
@@ -3430,6 +3495,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "bar",
@@ -3722,6 +3788,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "bar",
@@ -3995,6 +4062,9 @@ Object {
       "title": "Punch Card",
       "tooltip": Object {
         "enabled": true,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "scatter",
@@ -4268,6 +4338,9 @@ Object {
       "title": "Most populous cities",
       "tooltip": Object {
         "enabled": true,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "scatter",
@@ -4547,6 +4620,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "column",
@@ -4863,6 +4937,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "bar",
@@ -5191,6 +5266,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "column",
@@ -5519,6 +5595,7 @@ Object {
       "strokeWidth": 1,
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": [Function],
       },
       "type": "histogram",
@@ -5796,6 +5873,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -5853,6 +5933,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -5910,6 +5993,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -5967,6 +6053,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6024,6 +6113,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6081,6 +6173,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6138,6 +6233,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6195,6 +6293,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6252,6 +6353,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6309,6 +6413,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6366,6 +6473,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6423,6 +6533,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6480,6 +6593,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6537,6 +6653,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6594,6 +6713,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6651,6 +6773,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6982,6 +7107,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -7194,6 +7322,7 @@ Object {
       },
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": [Function],
       },
       "type": "treemap",
@@ -7487,6 +7616,9 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "area",
@@ -7807,6 +7939,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "bar",
@@ -8135,6 +8268,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "column",
@@ -8478,6 +8612,9 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": [Function],
       },
       "type": "area",
@@ -8550,6 +8687,9 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": [Function],
       },
       "type": "area",
@@ -8622,6 +8762,9 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": [Function],
       },
       "type": "area",
@@ -8694,6 +8837,9 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": [Function],
       },
       "type": "area",
@@ -8989,6 +9135,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": [Function],
       },
       "type": "column",
@@ -9221,6 +9368,7 @@ Object {
       },
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": [Function],
       },
       "type": "pie",
@@ -9489,6 +9637,7 @@ Object {
       "strokeWidth": 1,
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "histogram",
@@ -9767,6 +9916,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": [Function],
       },
       "type": "line",
@@ -9824,6 +9976,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": [Function],
       },
       "type": "line",
@@ -10043,6 +10198,7 @@ Object {
       },
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": [Function],
       },
       "type": "pie",
@@ -10307,6 +10463,9 @@ Object {
       "title": undefined,
       "tooltip": Object {
         "enabled": true,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "scatter",
@@ -10606,6 +10765,9 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {
+          "type": "node",
+        },
         "renderer": [Function],
       },
       "type": "area",
@@ -10948,6 +11110,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "bar",
@@ -11265,6 +11428,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": [Function],
       },
       "type": "column",
@@ -11600,6 +11764,7 @@ Object {
       "strokeWidth": 1,
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": [Function],
       },
       "type": "histogram",

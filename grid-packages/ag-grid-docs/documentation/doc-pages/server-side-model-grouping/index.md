@@ -86,6 +86,12 @@ Below shows `isServerSideGroupOpenByDefault()` and `getRoute` in action. Note th
 
 <grid-example title='Open by Default' name='open-by-default' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
+## Sticky Groups
+
+To enable sticky groups, set the `groupRowsSticky` property to true. This behaviour applies to all row group levels.
+
+<grid-example title='Sticky Groups' name='sticky-groups' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+
 ## Expand All / Collapse All
 
 It is possible to expand and collapse all group rows using the `expandAll()` and `collapseAll()` grid API's.
@@ -168,6 +174,16 @@ In the example below, all rows are modified so that the rows look something like
 Then the columns are set up so that country uses a `valueGetter` that uses the field with dot notation, i.e. `data.country.name`
 
 <grid-example title='Complex Objects' name='complex-objects' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
+
+## Filtering
+
+By default the grid will attempt to only refresh the groups which are directly impacted by the change in filters. Be aware, this can mean your grid may have empty group rows. This is because the grid will not refresh the groups above the groups it deems impacted by the filter. This behaviour can be disabled, instead favouring purging the entire grid by enabling the grid property `serverSideRefreshAllLevels`.
+
+In the example below, note the following:
+- Filtering by `Gold`, `Silver` or `Bronze` fully purges the grid, this is because they have aggregations applied.
+- Applying a filter to the `Year` column does not purge the entire grid, and instead only refreshes the `Year` group rows.
+
+<grid-example title='Filtering' name='filtering' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
 ## Next Up
 

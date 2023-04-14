@@ -28,6 +28,7 @@ import { AgCartesianSeriesMarkerFormatterParams, AgCartesianSeriesMarkerFormat }
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { getMarker } from '../../marker/util';
 import { Logger } from '../../../util/logger';
+import { DataModel, ProcessedData } from '../../data/dataModel';
 
 type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<
     N,
@@ -112,6 +113,9 @@ export abstract class CartesianSeries<
      * in the {@link yKeys} setter.
      */
     protected readonly seriesItemEnabled = new Map<string, boolean>();
+
+    protected dataModel?: DataModel<any, any, any>;
+    protected processedData?: ProcessedData<any>;
 
     protected constructor(
         opts: Partial<SeriesOpts> & {

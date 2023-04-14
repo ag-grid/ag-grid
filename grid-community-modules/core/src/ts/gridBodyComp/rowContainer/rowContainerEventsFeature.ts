@@ -1,5 +1,5 @@
 import { BeanStub } from "../../context/beanStub";
-import { getCtrlForEvent, isStopPropagationForAgGrid, isEventSupported } from "../../utils/event";
+import { getCtrlForEventTarget, isStopPropagationForAgGrid, isEventSupported } from "../../utils/event";
 import { Autowired, Optional, PostConstruct } from "../../context/context";
 import { MouseEventService } from "./../mouseEventService";
 import { RowCtrl } from "../../rendering/row/rowCtrl";
@@ -151,8 +151,8 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private processKeyboardEvent(eventName: string, keyboardEvent: KeyboardEvent): void {
-        const cellComp = getCtrlForEvent<CellCtrl>(this.gridOptionsService, keyboardEvent, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
-        const rowComp = getCtrlForEvent<RowCtrl>(this.gridOptionsService, keyboardEvent, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
+        const cellComp = getCtrlForEventTarget<CellCtrl>(this.gridOptionsService, keyboardEvent.target, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
+        const rowComp = getCtrlForEventTarget<RowCtrl>(this.gridOptionsService, keyboardEvent.target, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
 
         if (keyboardEvent.defaultPrevented) { return; }
         if (cellComp) {

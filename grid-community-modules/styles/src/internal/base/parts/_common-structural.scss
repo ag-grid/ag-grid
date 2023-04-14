@@ -394,7 +394,11 @@
 
     .ag-header-row {
         position: absolute;
-        overflow: hidden; // so when floating filters are height 0px, the contents don't spill out
+    }
+
+    .ag-header-row:not(.ag-header-row-column-group) {
+        // so when floating filters are height 0px, the contents don't spill out
+        overflow: hidden;
     }
 
     .ag-header.ag-header-allow-overflow .ag-header-row {
@@ -425,6 +429,11 @@
         align-items: center;
         text-overflow: ellipsis;
         align-self: stretch;
+    }
+
+    .ag-header-group-cell-label.ag-sticky-label {
+        position: sticky;
+        flex: none;
     }
 
     .ag-header-cell-text {
@@ -915,8 +924,8 @@
 
     .ag-popup-editor {
         position: absolute;
-        user-select: none;
         z-index: 1;
+        @include ag.selectable(none);
     }
 
     .ag-large-text-input {
@@ -1051,8 +1060,8 @@
     .ag-resizer {
         position: absolute;
         pointer-events: none;
-        user-select: none;
         z-index: 1;
+        @include ag.selectable(none);
         &.ag-resizer-topLeft {
             top: 0;
             left: 0;
@@ -1163,7 +1172,7 @@
         max-height: 100%;
         overflow-y: auto;
         position: absolute;
-        user-select: none;
+        @include ag.selectable(none);
     }
 
     .ag-menu-column-select-wrapper {
@@ -1276,7 +1285,7 @@
         overflow-y: auto;
         overflow-x: hidden;
         cursor: default;
-        user-select: none;
+        @include ag.selectable(none);
     }
 
     .ag-column-select-column,

@@ -3,7 +3,7 @@ import { LegendDatum } from '../legendDatum';
 import { Observable, TypedEvent } from '../../util/observable';
 import { ChartAxis } from '../chartAxis';
 import { createId } from '../../util/id';
-import { isNumber } from '../../util/value';
+import { checkDatum, isNumber } from '../../util/value';
 import { TimeAxis } from '../axis/timeAxis';
 import { createDeprecationWarning } from '../../util/deprecation';
 import {
@@ -22,6 +22,8 @@ import { BBox } from '../../scene/bbox';
 import { HighlightManager } from '../interaction/highlightManager';
 import { ChartAxisDirection } from '../chartAxisDirection';
 import { AgChartInteractionRange } from '../agChartOptions';
+import { DatumPropertyDefinition, OutputPropertyDefinition } from '../data/dataModel';
+import { TooltipPosition } from '../tooltip/tooltip';
 
 /**
  * Processed series datum used in node selections,
@@ -59,6 +61,37 @@ export type SeriesNodePickMatch = {
 
 const warnDeprecated = createDeprecationWarning();
 const warnSeriesDeprecated = () => warnDeprecated('series', 'Use seriesId to get the series ID');
+
+export function keyProperty<K>(propName: K, continuous: boolean, opts = {} as Partial<DatumPropertyDefinition<K>>) {
+    const result: DatumPropertyDefinition<K> = {
+        ...opts,
+        property: propName,
+        type: 'key',
+        valueType: continuous ? 'range' : 'category',
+        validation: (v) => checkDatum(v, continuous) != null,
+    };
+    return result;
+}
+
+export function valueProperty<K>(propName: K, continuous: boolean, opts = {} as Partial<DatumPropertyDefinition<K>>) {
+    const result: DatumPropertyDefinition<K> = {
+        ...opts,
+        property: propName,
+        type: 'value',
+        valueType: continuous ? 'range' : 'category',
+        validation: (v) => checkDatum(v, continuous) != null,
+    };
+    return result;
+}
+
+export function sumProperties<K>(props: K[]) {
+    const result: OutputPropertyDefinition<K> = {
+        properties: props,
+        type: 'sum',
+    };
+
+    return result;
+}
 
 export class SeriesNodeBaseClickEvent<Datum extends { datum: any }> implements TypedEvent {
     readonly type: 'nodeClick' | 'nodeDoubleClick' = 'nodeClick';
@@ -126,6 +159,8 @@ export class HighlightStyle {
 export class SeriesTooltip {
     @Validate(BOOLEAN)
     enabled = true;
+
+    readonly position: TooltipPosition = new TooltipPosition();
 }
 
 export type SeriesNodeDataContext<S = SeriesNodeDatum, L = S> = {
@@ -212,6 +247,10 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     @Validate(INTERACTION_RANGE)
     nodeClickRange: AgChartInteractionRange = 'exact';
+
+    getBandScalePadding() {
+        return { inner: 1, outer: 0 };
+    }
 
     _declarationOrder: number = -1;
 

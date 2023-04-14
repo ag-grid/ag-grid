@@ -508,11 +508,12 @@ export interface AgChartTooltipOptions {
     enableInteraction?: boolean;
 }
 
+export type AgTooltipPositionType = 'pointer' | 'node';
 export type AgTooltipPositionOptions = AgMovingTooltipPositionOptions;
 
 export interface AgMovingTooltipPositionOptions {
     /** The type of positioning for the tooltip. By default, the tooltip follows the pointer. */
-    type: 'pointer' | 'node';
+    type: AgTooltipPositionType;
     /** The horizontal offset in pixels for the position of the tooltip. */
     xOffset?: PixelSize;
     /** The vertical offset in pixels for the position of the tooltip. */
@@ -638,6 +639,8 @@ export interface AgAxisLineOptions {
 }
 
 export interface AgAxisBaseTickOptions {
+    /** Set to false to hide the axis tick lines. */
+    enabled?: boolean;
     /** The width in pixels of the axis ticks (and corresponding grid line). */
     width?: PixelSize;
     /** The length in pixels of the axis ticks. */
@@ -688,6 +691,8 @@ export interface AgAxisLabelFormatterParams {
 }
 
 export interface AgAxisLabelOptions {
+    /** Set to false to hide the axis labels. */
+    enabled?: boolean;
     /** The font style to use for the labels. */
     fontStyle?: FontStyle;
     /** The font weight to use for the labels. */
@@ -1089,6 +1094,8 @@ export interface AgAreaSeriesMarker<DatumType> extends AgCartesianSeriesMarker<D
 export interface AgSeriesTooltip {
     /** Whether or not to show tooltips when the series are hovered over. */
     enabled?: boolean;
+    /** The position of the tooltip. By default the tooltip follows the mouse pointer. */
+    position?: AgTooltipPositionOptions;
 }
 
 export interface AgCartesianSeriesLabelFormatterParams {
@@ -1787,24 +1794,25 @@ export interface AgTreemapSeriesFormat {
     readonly gradient?: boolean;
 }
 
-export type AgCartesianSeriesOptions =
+export type AgCartesianSeriesOptions<TAddon = never> =
     | AgLineSeriesOptions
     | AgScatterSeriesOptions
     | AgAreaSeriesOptions
     | AgBarSeriesOptions
-    | AgHistogramSeriesOptions;
+    | AgHistogramSeriesOptions
+    | TAddon;
 
 export type AgPolarSeriesOptions = AgPieSeriesOptions;
 
 export type AgHierarchySeriesOptions = AgTreemapSeriesOptions;
 
-export interface AgCartesianChartOptions extends AgBaseChartOptions {
+export interface AgCartesianChartOptions<TAddonType = never, TAddonSeries = never> extends AgBaseChartOptions {
     /** If specified overrides the default series type. */
-    type?: 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram';
+    type?: 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram' | TAddonType;
     /** Axis configurations. */
     axes?: AgCartesianAxisOptions[];
     /** Series configurations. */
-    series?: AgCartesianSeriesOptions[];
+    series?: AgCartesianSeriesOptions<TAddonSeries>[];
     /** Configuration for the chart navigator. */
     navigator?: AgNavigatorOptions;
 }
@@ -1824,7 +1832,10 @@ export interface AgHierarchyChartOptions extends AgBaseChartOptions {
     series?: AgHierarchySeriesOptions[];
 }
 
-export type AgChartOptions = AgCartesianChartOptions | AgPolarChartOptions | AgHierarchyChartOptions;
+export type AgChartOptions<TAddonType = never, TAddonSeries = never> =
+    | AgCartesianChartOptions<TAddonType, TAddonSeries>
+    | AgPolarChartOptions
+    | AgHierarchyChartOptions;
 
 export interface AgChartInstance {
     /** Get the `AgChartOptions` representing the current chart configuration. */

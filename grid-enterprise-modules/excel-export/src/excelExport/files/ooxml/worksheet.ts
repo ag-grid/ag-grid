@@ -1,6 +1,7 @@
 import {
     ExcelOOXMLTemplate,
     ExcelWorksheet,
+    ExcelCell,
     ExcelRow,
     ExcelColumn,
     XmlElement,
@@ -27,7 +28,7 @@ const getMergedCellsAndAddColumnGroups = (rows: ExcelRow[], cols: ExcelColumn[])
         let merges = 0;
         let lastCol: ExcelColumn;
 
-        cells.forEach((currentCell, cellIdx) => {
+        cells.forEach((currentCell: ExcelCell, cellIdx: number) => {
             const min = cellIdx + merges + 1;
             const start = getExcelColumnName(min);
             const outputRow = rowIdx + 1;
