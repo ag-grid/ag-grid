@@ -383,7 +383,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                 }
 
                 const newValue = this.processCell(
-                    rowNode, column, currentRowData[idx], EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc);
+                    rowNode, column, currentRowData[idx], EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc, true);
 
                 rowNode.setDataValue(column, newValue, SOURCE_PASTE);
 
@@ -598,7 +598,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             column.isSuppressPaste(rowNode)
         ) { return; }
 
-        const processedValue = this.processCell(rowNode, column, value, type, this.gridOptionsService.getCallback('processCellFromClipboard'));
+        const processedValue = this.processCell(rowNode, column, value, type, this.gridOptionsService.getCallback('processCellFromClipboard'), true);
         rowNode.setDataValue(column, processedValue, SOURCE_PASTE);
         
         const { rowIndex, rowPinned } = rowNode;
@@ -928,7 +928,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         column: Column,
         value: T,
         type: string,
-        func?: ((params: WithoutGridCommon<ProcessCellForExportParams>) => T)): T {
+        func?: ((params: WithoutGridCommon<ProcessCellForExportParams>) => T),
+        canParse?: boolean): T {
         if (func) {
             const params: WithoutGridCommon<ProcessCellForExportParams> = {
                 column,
@@ -942,7 +943,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
             return func(params);
         }
-        if (column.getColDef().useValueParserForImport) {
+        if (canParse && column.getColDef().useValueParserForImport) {
             return this.valueParserService.parseValue(column, rowNode ?? null, value, this.valueService.getValue(column, rowNode));
         }
 
