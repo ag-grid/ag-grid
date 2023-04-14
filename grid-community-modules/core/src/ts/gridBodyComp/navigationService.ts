@@ -360,8 +360,13 @@ export class NavigationService extends BeanStub {
             const { rowIndex, rowPinned } = previous.getRowPosition();
             const firstRow = rowPinned ? rowIndex === 0 : rowIndex === this.paginationProxy.getPageFirstRow();
             if (firstRow) {
-                keyboardEvent.preventDefault();
-                this.focusService.focusLastHeader(keyboardEvent);
+                if (this.gridOptionsService.getNum('headerHeight') === 0) {
+                    this.focusService.focusNextGridCoreContainer(true, true);
+                } else {
+                    keyboardEvent.preventDefault();
+                    this.focusService.focusLastHeader(keyboardEvent);
+                }
+                
             }
         } else {
             // if the case it's a popup editor, the focus is on the editor and not the previous cell.

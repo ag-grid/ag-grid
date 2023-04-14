@@ -567,13 +567,13 @@ export class FocusService extends BeanStub {
         return true;
     }
 
-    public focusNextGridCoreContainer(backwards: boolean): boolean {
-        if (this.gridCtrl.focusNextInnerContainer(backwards)) {
+    public focusNextGridCoreContainer(backwards: boolean, forceOut: boolean = false): boolean {
+        if (!forceOut && this.gridCtrl.focusNextInnerContainer(backwards)) {
             return true;
         }
 
-        if (!backwards && !this.gridCtrl.isDetailGrid()) {
-            this.gridCtrl.forceFocusOutOfContainer();
+        if (forceOut || (!backwards && !this.gridCtrl.isDetailGrid())) {
+            this.gridCtrl.forceFocusOutOfContainer(backwards);
         }
 
         return false;
