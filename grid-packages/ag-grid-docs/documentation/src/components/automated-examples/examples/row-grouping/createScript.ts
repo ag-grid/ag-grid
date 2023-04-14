@@ -1,8 +1,8 @@
 import { Group } from '@tweenjs/tween.js';
 import { getCellPos, getGroupCellTogglePos } from '../../lib/agQuery';
 import { Mouse } from '../../lib/createMouse';
-import { getOffset } from '../../lib/dom';
-import { addPoints, Point } from '../../lib/geometry';
+import { getBottomMidPos, getOffset } from '../../lib/dom';
+import { addPoints } from '../../lib/geometry';
 import { clearAllRowHighlights } from '../../lib/scriptActions/clearAllRowHighlights';
 import { createGroupColumnScriptActions } from '../../lib/scriptActions/createGroupColumnScriptActions';
 import { moveTarget } from '../../lib/scriptActions/move';
@@ -10,20 +10,13 @@ import { ScriptDebugger } from '../../lib/scriptDebugger';
 import { ScriptAction } from '../../lib/scriptRunner';
 
 interface Params {
-    containerEl?: HTMLElement;
+    containerEl: HTMLElement;
     mouse: Mouse;
-    offScreenPos: Point;
     tweenGroup: Group;
     scriptDebugger?: ScriptDebugger;
 }
 
-export const createScript = ({
-    containerEl,
-    mouse,
-    offScreenPos,
-    tweenGroup,
-    scriptDebugger,
-}: Params): ScriptAction[] => {
+export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }: Params): ScriptAction[] => {
     const GROUP_1_HEADER_CELL_NAME = 'Category';
     const GROUP_1_COL_ID = 'category';
     const GROUP_1_GROUP_INDEX = 0;
@@ -41,12 +34,14 @@ export const createScript = ({
     const TARGET_GROUP_ITEM_CELL_COL_INDEX = 2;
     const TARGET_GROUP_ITEM_CELL_ROW_INDEX = TARGET_GROUP_ITEM_ROW_INDEX + 1;
 
+    const getOffscreenPos = () => getBottomMidPos(containerEl);
+
     return [
         {
             type: 'custom',
             action: () => {
                 // Move mouse to starting position
-                moveTarget({ target: mouse.getTarget(), coords: offScreenPos, scriptDebugger });
+                moveTarget({ target: mouse.getTarget(), coords: getOffscreenPos(), scriptDebugger });
 
                 mouse.show();
                 clearAllRowHighlights();
@@ -276,7 +271,7 @@ export const createScript = ({
             type: 'moveTo',
             toPos: () => {
                 const offset = containerEl ? getOffset(containerEl) : undefined;
-                return addPoints(offScreenPos, offset)!;
+                return addPoints(getOffscreenPos(), offset)!;
             },
             speed: 2,
         },

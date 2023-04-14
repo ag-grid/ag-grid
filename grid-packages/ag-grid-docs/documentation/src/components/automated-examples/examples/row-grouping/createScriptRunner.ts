@@ -1,7 +1,6 @@
 import { Group } from '@tweenjs/tween.js';
 import { GridOptions } from 'ag-grid-community';
 import { Mouse } from '../../lib/createMouse';
-import { Point } from '../../lib/geometry';
 import { removeFocus } from '../../lib/scriptActions/removeFocus';
 import { clearAllSingleCellSelections } from '../../lib/scriptActions/singleCell';
 import { ScriptDebugger } from '../../lib/scriptDebugger';
@@ -11,8 +10,7 @@ import { createScript } from './createScript';
 
 interface Params {
     mouse: Mouse;
-    containerEl?: HTMLElement;
-    offScreenPos: Point;
+    containerEl: HTMLElement;
     onPlaying?: () => void;
     onInactive?: () => void;
     tweenGroup: Group;
@@ -25,7 +23,6 @@ interface Params {
 export function createScriptRunner({
     containerEl,
     mouse,
-    offScreenPos,
     onPlaying,
     onInactive,
     tweenGroup,
@@ -37,7 +34,6 @@ export function createScriptRunner({
     const script = createScript({
         containerEl,
         mouse,
-        offScreenPos,
         tweenGroup,
         scriptDebugger,
     });

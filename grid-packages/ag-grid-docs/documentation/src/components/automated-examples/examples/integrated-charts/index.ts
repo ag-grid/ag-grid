@@ -10,8 +10,7 @@ import { ColDef, GridOptions } from 'ag-grid-community';
 import { COUNTRY_CODES } from '../../data/constants';
 import { createPeopleData } from '../../data/createPeopleData';
 import { createMouse } from '../../lib/createMouse';
-import { getBottomMidPos, isInViewport } from '../../lib/dom';
-import { Point } from '../../lib/geometry';
+import { isInViewport } from '../../lib/dom';
 import { ScriptDebuggerManager } from '../../lib/scriptDebugger';
 import { ScriptRunner } from '../../lib/scriptRunner';
 import { AutomatedExample } from '../../types';
@@ -127,8 +126,6 @@ export function createAutomatedIntegratedCharts({
             return;
         }
 
-        const offScreenPos: Point = getBottomMidPos(gridDiv);
-
         gridOptions.rowData = createPeopleData({ randomize: !suppressUpdates });
         gridOptions.onGridReady = () => {
             if (suppressUpdates) {
@@ -152,7 +149,6 @@ export function createAutomatedIntegratedCharts({
             scriptRunner = createScriptRunner({
                 containerEl: gridDiv,
                 mouse,
-                offScreenPos,
                 onInactive() {
                     onInactive && onInactive();
                 },

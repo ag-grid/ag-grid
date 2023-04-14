@@ -10,8 +10,7 @@ import { ColDef, GridOptions } from 'ag-grid-community';
 import { CATEGORIES, PORTFOLIOS } from '../../data/constants';
 import { createDataWorker } from '../../data/createDataWorker';
 import { createMouse } from '../../lib/createMouse';
-import { getBottomMidPos, isInViewport } from '../../lib/dom';
-import { Point } from '../../lib/geometry';
+import { isInViewport } from '../../lib/dom';
 import { ScriptDebuggerManager } from '../../lib/scriptDebugger';
 import { ScriptRunner } from '../../lib/scriptRunner';
 import { AutomatedExample } from '../../types';
@@ -157,7 +156,6 @@ export function createAutomatedRowGrouping({
             return;
         }
 
-        const offScreenPos: Point = getBottomMidPos(gridDiv);
         if (useStaticData) {
             gridOptions.rowData = fixtureData;
         }
@@ -186,7 +184,6 @@ export function createAutomatedRowGrouping({
             scriptRunner = createScriptRunner({
                 containerEl: gridDiv,
                 mouse,
-                offScreenPos,
                 onPlaying() {
                     startWorkerMessages();
                 },
