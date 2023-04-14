@@ -81,4 +81,9 @@ export async function dragColumnToRowGroupPanel({
     } else {
         console.error('No dragged header item:', headerCellName);
     }
+
+    // Clean up any dangling drag items
+    document.querySelectorAll(AG_DND_GHOST_SELECTOR).forEach((el) => {
+        el.remove();
+    });
 }
