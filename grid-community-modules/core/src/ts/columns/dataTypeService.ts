@@ -157,19 +157,15 @@ export class DataTypeService extends BeanStub {
         }
         const rowData = this.gridOptionsService.get('rowData');
         let value: any;
-        const hasValue = (rowValue: any) => {
-            if (rowValue != null) {
-                value = rowValue;
-                return true;
-            }
-            return false;
-        };
-        if (rowData) {
-            rowData.find((row) => hasValue(row[field]));
+        if (rowData?.length) {
+            value = rowData[0][field];
         } else if (this.rowModel.getType() === 'clientSide') {
-            (this.rowModel as IClientSideRowModel)
+            const rowNodes = (this.rowModel as IClientSideRowModel)
                 .getRootNode()
-                .allLeafChildren?.find((rowNode) => hasValue(rowNode.data?.[field]));
+                .allLeafChildren;
+            if (rowNodes?.length) {
+                value = rowNodes[0].data?.[field];
+            }
         }
         if (value == null) {
             return undefined;
