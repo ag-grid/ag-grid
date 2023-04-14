@@ -130,7 +130,6 @@ export function createAutomatedIntegratedCharts({
         const offScreenPos: Point = getBottomMidPos(gridDiv);
 
         gridOptions.rowData = createPeopleData({ randomize: !suppressUpdates });
-        gridOptions.popupParent = document.querySelector('body');
         gridOptions.onGridReady = () => {
             if (suppressUpdates) {
                 return;

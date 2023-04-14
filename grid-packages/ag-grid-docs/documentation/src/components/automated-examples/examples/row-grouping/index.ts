@@ -162,7 +162,6 @@ export function createAutomatedRowGrouping({
             gridOptions.rowData = fixtureData;
         }
 
-        gridOptions.popupParent = document.querySelector('body');
         gridOptions.onGridReady = () => {
             if (suppressUpdates) {
                 return;
