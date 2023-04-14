@@ -50,11 +50,6 @@ const mouseStyles = `
     }
 `;
 
-const BUTTON_TEXT = {
-    explore: 'Give me control',
-    replay: 'Replay demo',
-};
-
 function AutomatedRowGrouping({
     automatedExampleManager,
     scriptDebuggerManager,
@@ -132,7 +127,7 @@ function AutomatedRowGrouping({
             </Helmet>
             <div ref={gridRef} className="automated-row-grouping-grid ag-theme-alpine-dark">
                 <OverlayButton
-                    ariaLabel={BUTTON_TEXT.explore}
+                    ariaLabel="Give me control"
                     isHidden={!scriptIsEnabled}
                     onPointerEnter={() => setGridIsHoveredOver(true)}
                     onPointerOut={() => setGridIsHoveredOver(false)}

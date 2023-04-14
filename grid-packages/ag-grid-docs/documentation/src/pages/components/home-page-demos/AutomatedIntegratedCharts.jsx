@@ -51,11 +51,6 @@ const mouseStyles = `
     }
 `;
 
-const BUTTON_TEXT = {
-    explore: 'Give me control',
-    replay: 'Replay demo',
-};
-
 function AutomatedIntegratedCharts({
     automatedExampleManager,
     scriptDebuggerManager,
@@ -128,7 +123,7 @@ function AutomatedIntegratedCharts({
             </Helmet>
             <div ref={gridRef} className="automated-integrated-charts-grid ag-theme-alpine">
                 <OverlayButton
-                    ariaLabel={BUTTON_TEXT.explore}
+                    ariaLabel="Give me control"
                     isHidden={!scriptIsEnabled}
                     onPointerEnter={() => setGridIsHoveredOver(true)}
                     onPointerOut={() => setGridIsHoveredOver(false)}
@@ -154,15 +149,8 @@ function AutomatedIntegratedCharts({
                             }
                         }}
                         isHoveredOver={gridIsHoveredOver}
-                    >
-                        {scriptIsEnabled ? (
-                            <>
-                                {BUTTON_TEXT.explore} <Icon name="centerToFit" />
-                            </>
-                        ) : (
-                            <>{BUTTON_TEXT.replay}</>
-                        )}
-                    </ToggleAutomatedExampleButton>
+                        scriptIsActive={scriptIsEnabled}
+                    ></ToggleAutomatedExampleButton>
                 </div>
                 <div className="font-size-large">
                     <a
