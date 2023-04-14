@@ -43,6 +43,11 @@ export function createAutomatedExampleManager() {
             lastPlayingExample = automatedExample;
             automatedExample.start();
         }
+        // Initial condition when page is loaded and grid was not on the page
+        else if (automatedExample.currentState() === 'inactive' && !lastPlayingExample) {
+            lastPlayingExample = automatedExample;
+            automatedExample.start();
+        }
     };
 
     const stop = (id: string) => {
