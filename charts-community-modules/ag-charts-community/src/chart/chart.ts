@@ -3,6 +3,7 @@ import { Group } from '../scene/group';
 import { Series, SeriesNodeDatum, SeriesNodePickMode } from './series/series';
 import { Padding } from '../util/padding';
 import { Legend } from './legend';
+import { GradientLegend } from './gradientLegend';
 
 import { BBox } from '../scene/bbox';
 import { SizeMonitor } from '../util/sizeMonitor';
@@ -32,6 +33,7 @@ import { LayoutService } from './layout/layoutService';
 import { UpdateService } from './updateService';
 import { ChartUpdateType } from './chartUpdateType';
 import { LegendDatum } from './legendDatum';
+import { GradientLegendDatum } from './gradientLegendDatum';
 import { Logger } from '../util/logger';
 import { ActionOnSet } from '../util/proxy';
 import { ChartHighlight } from './chartHighlight';
@@ -63,7 +65,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     readonly scene: Scene;
     readonly seriesRoot = new Group({ name: `${this.id}-Series-root` });
-    readonly legend: Legend;
+    legend: Legend | GradientLegend;
     readonly tooltip: Tooltip;
     readonly overlays: ChartOverlays;
     readonly highlight: ChartHighlight;
@@ -750,6 +752,38 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     private async updateLegend() {
+        const gradientLegendData: GradientLegendDatum[] = [];
+        this.series
+            .filter((s) => s.showInLegend)
+            .forEach((series) => {
+                const data = series.getGradientLegendData();
+                if (data) {
+                    gradientLegendData.push(data);
+                }
+            });
+        if (gradientLegendData.length > 0) {
+            if (!(this.legend instanceof GradientLegend)) {
+                this.legend.destroy();
+                this.legend = new GradientLegend(this.layoutService);
+                this.legend.attachLegend(this.scene!.root!);
+            }
+            this.legend.data = gradientLegendData;
+            return;
+        }
+
+        if (!(this.legend instanceof Legend)) {
+            this.legend.destroy();
+            this.legend = new Legend(
+                this,
+                this.interactionManager,
+                this.cursorManager,
+                this.highlightManager,
+                this.tooltipManager,
+                this.layoutService
+            );
+            this.legend.attachLegend(this.scene!.root!);
+        }
+
         const legendData: LegendDatum[] = [];
 
         this.series

@@ -1,4 +1,3 @@
-import { ColorScale } from '../scale/colorScale';
 import { BBox } from '../scene/bbox';
 import { Node } from '../scene/node';
 import { Group } from '../scene/group';
@@ -20,6 +19,7 @@ import {
 } from '../util/validation';
 import { Layers } from './layers';
 import { LayoutService } from './layout/layoutService';
+import { GradientLegendDatum } from './gradientLegendDatum';
 import {
     AgChartLegendLabelFormatterParams,
     AgChartLegendPosition,
@@ -78,8 +78,6 @@ export class GradientLegend {
     private readonly gradientRect: Rect;
     private readonly textSelection: Selection<Text, number>;
 
-    private colorScale = new ColorScale();
-
     @Validate(BOOLEAN)
     private _enabled = true;
     set enabled(value: boolean) {
@@ -114,23 +112,20 @@ export class GradientLegend {
 
     readonly item = new GradientLegendItem();
 
-    data: any[] = [];
+    data: GradientLegendDatum[] = [];
 
     listeners: any = {};
 
     constructor(private readonly layoutService: LayoutService) {
-        const layoutListeners = [this.layoutService.addListener('start-layout', (e) => this.update(e.shrinkRect))];
-
-        this.destroyFns.push(...layoutListeners.map((s) => () => this.layoutService.removeListener(s)));
-
-        this.colorScale.domain = [0, 100];
-        this.colorScale.range = ['red', 'green', 'blue'];
+        const layoutListener = this.layoutService.addListener('start-layout', (e) => this.update(e.shrinkRect));
+        this.destroyFns.push(() => this.layoutService.removeListener(layoutListener));
 
         this.gradientRect = new Rect();
         this.group.append(this.gradientRect);
         const textContainer = new Group();
         this.group.append(textContainer);
         this.textSelection = Selection.select(textContainer, Text);
+        this.destroyFns.push(() => this.detachLegend());
     }
 
     destroy() {
@@ -143,17 +138,26 @@ export class GradientLegend {
         node.append(this.group);
     }
 
+    detachLegend() {
+        this.group.parent?.removeChild(this.group);
+    }
+
     private update(shrinkRect: BBox) {
         const newShrinkRect = shrinkRect.clone();
+        const data = this.data[0];
 
-        if (!this.enabled) {
+        if (!this.enabled || !data || !data.enabled) {
+            this.group.visible = false;
             return { shrinkRect: newShrinkRect };
         }
 
-        const { spacing, colorScale } = this;
+        this.group.visible = true;
+        const { colorDomain, colorRange } = data;
+
+        const { spacing } = this;
         const { preferredLength, thickness } = this.gradientBar;
         const { padding, label } = this.item;
-        const [textWidth, textHeight] = this.measureMaxText();
+        const [textWidth, textHeight] = this.measureMaxText(colorDomain);
         const gradientLength = preferredLength;
 
         let width: number;
@@ -178,7 +182,7 @@ export class GradientLegend {
         }
         this.gradientRect.x = gradientLeft;
         this.gradientRect.y = gradientTop;
-        const colorsString = colorScale.range.join(', ');
+        const colorsString = data.colorRange.join(', ');
         this.gradientRect.fill = `linear-gradient(${orientation === 'vertical' ? 0 : 90}deg, ${colorsString})`;
 
         let left: number;
@@ -202,9 +206,10 @@ export class GradientLegend {
         }
 
         const stops: number[] = [];
-        const { domain, range } = colorScale;
-        for (let i = 0; i < range.length; i++) {
-            const s = domain[0] + ((domain[1] - domain[0]) * i) / (range.length - 1);
+        const colorCount = colorRange.length;
+        for (let i = 0; i < colorCount; i++) {
+            const [d0, d1] = colorDomain;
+            const s = d0 + ((d1 - d0) * i) / (colorCount - 1);
             stops.push(s);
         }
         if (orientation === 'vertical') {
@@ -240,10 +245,10 @@ export class GradientLegend {
         return { shrinkRect: newShrinkRect };
     }
 
-    private measureMaxText() {
+    private measureMaxText(colorDomain: number[]) {
         const { label } = this.item;
         const tempText = new Text();
-        const boxes: BBox[] = this.colorScale.domain.map((d) => {
+        const boxes: BBox[] = colorDomain.map((d) => {
             const text = String(d);
             tempText.text = text;
             tempText.fill = label.color;

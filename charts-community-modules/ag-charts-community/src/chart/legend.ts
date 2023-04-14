@@ -265,7 +265,8 @@ export class Legend {
 
         this.destroyFns.push(
             ...interactionListeners.map((s) => () => this.interactionManager.removeListener(s)),
-            ...layoutListeners.map((s) => () => this.layoutService.removeListener(s))
+            ...layoutListeners.map((s) => () => this.layoutService.removeListener(s)),
+            () => this.detachLegend()
         );
     }
 
@@ -317,6 +318,10 @@ export class Legend {
 
     attachLegend(node: Node) {
         node.append(this.group);
+    }
+
+    detachLegend() {
+        this.group.parent?.removeChild(this.group);
     }
 
     /**
