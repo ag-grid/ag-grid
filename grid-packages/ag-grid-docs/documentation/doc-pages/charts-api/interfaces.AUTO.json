@@ -3580,6 +3580,16 @@
     "meta": { "isTypeAlias": true, "typeParams": ["R"] },
     "type": "{ type: 'processor'; property: string; calculate: (data: ProcessedData<any>) => R; }"
   },
+  "GradientLegendDatum": {
+    "meta": {},
+    "type": {
+      "enabled": "boolean",
+      "seriesId": "string",
+      "colorName?": "string",
+      "colorDomain": "number[]",
+      "colorRange": "string[]"
+    }
+  },
   "Page": {
     "meta": { "isTypeAlias": true },
     "type": "{ columns: Column[]; pageWidth: number; pageHeight: number; startIndex: number; endIndex: number; }"
@@ -3991,6 +4001,7 @@
     "meta": {},
     "type": {
       "label": "MeasuredLabel",
+      "fill": "string | undefined",
       "xKey": "string",
       "yKey": "string",
       "series": "Series<any>",

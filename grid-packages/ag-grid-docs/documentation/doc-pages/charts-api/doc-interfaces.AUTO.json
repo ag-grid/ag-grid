@@ -5387,6 +5387,13 @@
   "OutputPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "ReducerOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
   "ProcessorOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
+  "GradientLegendDatum": {
+    "enabled": { "type": { "returnType": "boolean", "optional": false } },
+    "seriesId": { "type": { "returnType": "string", "optional": false } },
+    "colorName": { "type": { "returnType": "string", "optional": true } },
+    "colorDomain": { "type": { "returnType": "number[]", "optional": false } },
+    "colorRange": { "type": { "returnType": "string[]", "optional": false } }
+  },
   "Page": {},
   "Column": {},
   "DimensionProps": {
@@ -5776,6 +5783,9 @@
   "LineContext": {},
   "ScatterNodeDatum": {
     "label": { "type": { "returnType": "MeasuredLabel", "optional": false } },
+    "fill": {
+      "type": { "returnType": "string | undefined", "optional": false }
+    },
     "xKey": { "type": { "returnType": "string", "optional": false } },
     "yKey": { "type": { "returnType": "string", "optional": false } },
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
