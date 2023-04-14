@@ -167,6 +167,7 @@ export { NumberCellEditor, INumberCellEditorParams } from "./rendering/cellEdito
 export { DateCellEditor, IDateCellEditorParams } from "./rendering/cellEditors/dateCellEditor";
 export { DateStringCellEditor, IDateStringCellEditorParams } from "./rendering/cellEditors/dateStringCellEditor";
 export { IRichCellEditorParams } from "./interfaces/iRichCellEditorParams";
+export { CheckboxCellEditor } from "./rendering/cellEditors/checkboxCellEditor";
 
 
 // rendering / cellRenderers
@@ -204,6 +205,7 @@ export { RowRenderer, FlashCellsParams, GetCellRendererInstancesParams, RefreshC
 export { ValueFormatterService } from "./rendering/valueFormatterService";
 export { ILoadingCellRenderer, ILoadingCellRendererComp, ILoadingCellRendererParams } from "./rendering/cellRenderers/loadingCellRenderer";
 export { CssClassManager } from "./rendering/cssClassManager";
+export { CheckboxCellRenderer } from "./rendering/cellRenderers/checkboxCellRenderer";
 
 // row models
 export { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";

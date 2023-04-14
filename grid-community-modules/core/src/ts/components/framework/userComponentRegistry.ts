@@ -31,6 +31,8 @@ import { fuzzySuggestions } from '../../utils/fuzzyMatch';
 import { NumberCellEditor } from "../../rendering/cellEditors/numberCellEditor";
 import { DateCellEditor } from "../../rendering/cellEditors/dateCellEditor";
 import { DateStringCellEditor } from "../../rendering/cellEditors/dateStringCellEditor";
+import { CheckboxCellRenderer } from "../../rendering/cellRenderers/checkboxCellRenderer";
+import { CheckboxCellEditor } from "../../rendering/cellEditors/checkboxCellEditor";
 
 @Bean('userComponentRegistry')
 export class UserComponentRegistry extends BeanStub {
@@ -58,6 +60,7 @@ export class UserComponentRegistry extends BeanStub {
         agGroupCellRenderer: GroupCellRenderer,
         agGroupRowRenderer: GroupCellRenderer,
         agLoadingCellRenderer: LoadingCellRenderer,
+        agCheckboxCellRenderer: CheckboxCellRenderer,
 
         //editors
         agCellEditor: TextCellEditor,
@@ -67,6 +70,7 @@ export class UserComponentRegistry extends BeanStub {
         agDateStringCellEditor: DateStringCellEditor,
         agSelectCellEditor: SelectCellEditor,
         agLargeTextCellEditor: LargeTextCellEditor,
+        agCheckboxCellEditor: CheckboxCellEditor,
 
         //filter
         agTextColumnFilter: TextFilter,

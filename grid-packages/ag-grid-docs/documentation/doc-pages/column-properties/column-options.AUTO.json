@@ -574,6 +574,8 @@
     "description": "/** Set to `true` if you want this column header for this column to span the whole height of the header container. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
+  "useValueFormatterForExport": { "type": { "returnType": "boolean" } },
+  "useValueParserForImport": { "type": { "returnType": "boolean" } },
   "filter": {
     "description": "/** Filter component to use for this column.\n     * - Set to `true` to use the default filter.\n     * - Set to the name of a provided filter: `set`, `number`, `text`, `date`.\n     * - Set to a `IFilterComp`.\n     */",
     "type": { "returnType": "any" }

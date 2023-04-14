@@ -1,6 +1,6 @@
 import { Autowired, Bean, PostConstruct } from '../context/context';
 import { BeanStub } from '../context/beanStub';
-import { ColDef, KeyCreatorParams, ValueGetterParams } from '../entities/colDef';
+import { ColDef, KeyCreatorParams, ValueFormatterParams, ValueGetterParams } from '../entities/colDef';
 import {
     CoreDataTypeDefinition,
     DataTypeDefinition,
@@ -218,6 +218,7 @@ export class DataTypeService extends BeanStub {
 
     private setColDefPropertiesForBaseDataType(colDef: ColDef, dataTypeDefinition: DataTypeDefinition | CoreDataTypeDefinition): void {
         const setFilterModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule);
+        const translate = this.localeService.getLocaleTextFunc();
         switch (dataTypeDefinition.baseDataType) {
             case 'number': {
                 colDef.headerClass = 'ag-right-aligned-header';
@@ -228,11 +229,19 @@ export class DataTypeService extends BeanStub {
                 break;
             }
             case 'boolean': {
-                colDef.cellEditor = 'agSelectCellEditor';
-                colDef.cellEditorParams = {
-                    values: [true, false],
-                };
-                if (!setFilterModuleLoaded) {
+                colDef.cellEditor = 'agCheckboxCellEditor';
+                colDef.cellRenderer = 'agCheckboxCellRenderer';
+                if (setFilterModuleLoaded) {
+                    colDef.filterParams = {
+                        valueFormatter: (params: ValueFormatterParams) => {
+                            if (params.value == null) {
+                                return translate('blanks', '(Blanks)');
+                            }
+                            const value = String(params.value);
+                            return translate(value, value);
+                        }
+                    }
+                } else {
                     colDef.filterParams = {
                         maxNumConditions: 1,
                         filterOptions: [

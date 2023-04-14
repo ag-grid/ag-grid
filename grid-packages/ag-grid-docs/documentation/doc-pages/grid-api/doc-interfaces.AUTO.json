@@ -1382,6 +1382,12 @@
       "description": "/** Set to `true` if you want this column header for this column to span the whole height of the header container. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "useValueFormatterForExport": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "useValueParserForImport": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "headerName": {
       "description": "/** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name. */",
@@ -2463,17 +2469,11 @@
   "ValueParserLiteFunc": { "meta": { "typeParams": ["TData", "TValue"] } },
   "ValueFormatterLiteParams": { "meta": { "typeParams": ["TData", "TValue"] } },
   "ValueFormatterLiteFunc": { "meta": { "typeParams": ["TData", "TValue"] } },
-  "BaseDataType": {
-    "baseDataType": {
-      "type": { "returnType": "TDataType", "optional": false }
-    },
-    "meta": {
-      "typeParams": [
-        "TDataType extends 'text' | 'number' | 'boolean' | 'date' | 'dateString' | 'object'"
-      ]
-    }
-  },
+  "BaseCellDataType": {},
   "BaseDataTypeDefinition": {
+    "baseDataType": {
+      "type": { "returnType": "TValueType", "optional": false }
+    },
     "valueParser": {
       "type": {
         "returnType": "ValueParserLiteFunc<TData, TValue>",
@@ -2489,16 +2489,26 @@
     "columnTypes": {
       "type": { "returnType": "string | string[]", "optional": true }
     },
-    "meta": { "typeParams": ["TData = any", "TValue = any"] }
-  },
-  "ChildDataTypeDefinition": {
     "extends": { "type": { "returnType": "string", "optional": false } },
     "appendColumnTypes": {
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressDefaultProperties": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "meta": {
+      "typeParams": [
+        "TValueType extends BaseCellDataType",
+        "TData = any",
+        "TValue = any"
+      ]
     }
   },
   "TextDataTypeDefinition": {
     "meta": { "typeParams": ["TData = any"] },
+    "baseDataType": {
+      "type": { "returnType": "TValueType", "optional": false }
+    },
     "valueParser": {
       "type": {
         "returnType": "ValueParserLiteFunc<TData, TValue>",
@@ -2514,16 +2524,19 @@
     "columnTypes": {
       "type": { "returnType": "string | string[]", "optional": true }
     },
-    "baseDataType": {
-      "type": { "returnType": "TDataType", "optional": false }
-    },
     "extends": { "type": { "returnType": "string", "optional": false } },
     "appendColumnTypes": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressDefaultProperties": {
       "type": { "returnType": "boolean", "optional": true }
     }
   },
   "NumberDataTypeDefinition": {
     "meta": { "typeParams": ["TData = any"] },
+    "baseDataType": {
+      "type": { "returnType": "TValueType", "optional": false }
+    },
     "valueParser": {
       "type": {
         "returnType": "ValueParserLiteFunc<TData, TValue>",
@@ -2539,16 +2552,19 @@
     "columnTypes": {
       "type": { "returnType": "string | string[]", "optional": true }
     },
-    "baseDataType": {
-      "type": { "returnType": "TDataType", "optional": false }
-    },
     "extends": { "type": { "returnType": "string", "optional": false } },
     "appendColumnTypes": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressDefaultProperties": {
       "type": { "returnType": "boolean", "optional": true }
     }
   },
   "BooleanDataTypeDefinition": {
     "meta": { "typeParams": ["TData = any"] },
+    "baseDataType": {
+      "type": { "returnType": "TValueType", "optional": false }
+    },
     "valueParser": {
       "type": {
         "returnType": "ValueParserLiteFunc<TData, TValue>",
@@ -2564,16 +2580,19 @@
     "columnTypes": {
       "type": { "returnType": "string | string[]", "optional": true }
     },
-    "baseDataType": {
-      "type": { "returnType": "TDataType", "optional": false }
-    },
     "extends": { "type": { "returnType": "string", "optional": false } },
     "appendColumnTypes": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressDefaultProperties": {
       "type": { "returnType": "boolean", "optional": true }
     }
   },
   "DateDataTypeDefinition": {
     "meta": { "typeParams": ["TData = any"] },
+    "baseDataType": {
+      "type": { "returnType": "TValueType", "optional": false }
+    },
     "valueParser": {
       "type": {
         "returnType": "ValueParserLiteFunc<TData, TValue>",
@@ -2589,23 +2608,30 @@
     "columnTypes": {
       "type": { "returnType": "string | string[]", "optional": true }
     },
-    "baseDataType": {
-      "type": { "returnType": "TDataType", "optional": false }
-    },
     "extends": { "type": { "returnType": "string", "optional": false } },
     "appendColumnTypes": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressDefaultProperties": {
       "type": { "returnType": "boolean", "optional": true }
     }
   },
   "DateStringDataTypeDefinition": {
-    "convertToDate": {
+    "dateParser": {
       "type": {
         "arguments": { "value": "string | undefined" },
         "returnType": "Date | undefined",
         "optional": true
       }
     },
-    "matcher": {
+    "dateFormatter": {
+      "type": {
+        "arguments": { "value": "Date | undefined" },
+        "returnType": "string | undefined",
+        "optional": true
+      }
+    },
+    "dateMatcher": {
       "type": {
         "arguments": { "value": "string" },
         "returnType": "boolean",
@@ -2613,6 +2639,9 @@
       }
     },
     "meta": { "typeParams": ["TData = any"] },
+    "baseDataType": {
+      "type": { "returnType": "TValueType", "optional": false }
+    },
     "valueParser": {
       "type": {
         "returnType": "ValueParserLiteFunc<TData, TValue>",
@@ -2627,36 +2656,20 @@
     },
     "columnTypes": {
       "type": { "returnType": "string | string[]", "optional": true }
-    },
-    "baseDataType": {
-      "type": { "returnType": "TDataType", "optional": false }
     },
     "extends": { "type": { "returnType": "string", "optional": false } },
     "appendColumnTypes": {
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressDefaultProperties": {
+      "type": { "returnType": "boolean", "optional": true }
     }
-  },
-  "BaseObjectDataTypeDefinition": {
-    "valueParser": {
-      "type": {
-        "returnType": "ValueParserLiteFunc<TData, TValue>",
-        "optional": false
-      }
-    },
-    "valueFormatter": {
-      "type": {
-        "returnType": "ValueFormatterLiteFunc<TData, TValue>",
-        "optional": false
-      }
-    },
-    "meta": { "typeParams": ["TData", "TValue"] },
-    "columnTypes": {
-      "type": { "returnType": "string | string[]", "optional": true }
-    },
-    "baseDataType": { "type": { "returnType": "TDataType", "optional": false } }
   },
   "ObjectDataTypeDefinition": {
     "meta": { "typeParams": ["TData", "TValue"] },
+    "baseDataType": {
+      "type": { "returnType": "TValueType", "optional": false }
+    },
     "valueParser": {
       "type": {
         "returnType": "ValueParserLiteFunc<TData, TValue>",
@@ -2672,11 +2685,11 @@
     "columnTypes": {
       "type": { "returnType": "string | string[]", "optional": true }
     },
-    "baseDataType": {
-      "type": { "returnType": "TDataType", "optional": false }
-    },
     "extends": { "type": { "returnType": "string", "optional": false } },
     "appendColumnTypes": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressDefaultProperties": {
       "type": { "returnType": "boolean", "optional": true }
     }
   },
@@ -2797,7 +2810,7 @@
     },
     "dataTypeDefinitions": {
       "type": {
-        "returnType": "{\n        [key: string]: DataTypeDefinition<TData>;\n    }",
+        "returnType": "{\n        [cellDataType: string]: DataTypeDefinition<TData>;\n    }",
         "optional": true
       }
     },
@@ -11518,6 +11531,22 @@
     },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "type": { "type": { "returnType": "string", "optional": false } },
+    "parseValue": {
+      "description": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
+      "type": {
+        "arguments": { "value": "string" },
+        "returnType": "any",
+        "optional": false
+      }
+    },
+    "formatValue": {
+      "description": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
+      "type": {
+        "arguments": { "value": "any" },
+        "returnType": "string",
+        "optional": false
+      }
+    },
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
@@ -12340,7 +12369,11 @@
   "ICellEditor": {
     "getValue": {
       "description": "/** Return the final value - called by the grid once after editing is complete\n     */",
-      "type": { "arguments": {}, "returnType": "TValue", "optional": false }
+      "type": {
+        "arguments": {},
+        "returnType": "TValue | undefined",
+        "optional": false
+      }
     },
     "isPopup": {
       "description": "/** Gets called once after initialised. If you return true, the editor will\n     * appear in a popup, so is not constrained to the boundaries of the cell.\n     * This is great if you want to, for example, provide you own custom dropdown list\n     * for selection. Default is false (ie if you don't provide the method).\n     */",
@@ -12467,7 +12500,11 @@
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "getValue": {
       "description": "/** Return the final value - called by the grid once after editing is complete\n     */",
-      "type": { "arguments": {}, "returnType": "TValue", "optional": false }
+      "type": {
+        "arguments": {},
+        "returnType": "TValue | undefined",
+        "optional": false
+      }
     },
     "isPopup": {
       "description": "/** Gets called once after initialised. If you return true, the editor will\n     * appear in a popup, so is not constrained to the boundaries of the cell.\n     * This is great if you want to, for example, provide you own custom dropdown list\n     * for selection. Default is false (ie if you don't provide the method).\n     */",
@@ -18807,6 +18844,194 @@
       }
     }
   },
+  "IDateCellEditorParams": {
+    "min": { "type": { "returnType": "string | Date", "optional": true } },
+    "max": { "type": { "returnType": "string | Date", "optional": true } },
+    "step": { "type": { "returnType": "number", "optional": true } },
+    "useFormatter": {
+      "description": "/** If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor.\n     * Used when the cell value needs formatting prior to editing, such as when using reference data and you\n     * want to display text rather than code. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "value": {
+      "description": "/** Current value of the cell */",
+      "type": { "returnType": "TValue", "optional": false }
+    },
+    "eventKey": {
+      "description": "/** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable\n     *  characters appear here */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "charPress": {
+      "description": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n     *  shift + letter 'a' only printable characters appear here */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "column": {
+      "description": "/** Grid column */",
+      "type": { "returnType": "Column", "optional": false }
+    },
+    "colDef": {
+      "description": "/** Column definition */",
+      "type": { "returnType": "ColDef<TData>", "optional": false }
+    },
+    "node": {
+      "description": "/** Row node for the cell */",
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
+    },
+    "data": {
+      "description": "/** Row data */",
+      "type": { "returnType": "TData", "optional": false }
+    },
+    "rowIndex": {
+      "description": "/** Editing row index */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "cellStartedEdit": {
+      "description": "/** If doing full row edit, this is true if the cell is the one that started the edit\n     *  (eg it is the cell the use double clicked on, or pressed a key on etc). */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "onKeyDown": {
+      "description": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n     *  arrows etc) back to grid - however you do */",
+      "type": {
+        "arguments": { "event": "KeyboardEvent" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "stopEditing": {
+      "description": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n     * true to prevent focus from moving to the next cell after editing stops in case the\n     * grid property `enterMovesDownAfterEdit=true` */",
+      "type": {
+        "arguments": { "suppressNavigateAfterEdit?": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "eGridCell": {
+      "description": "/** A reference to the DOM element representing the grid cell that your component\n     *  will live inside. Useful if you want to add event listeners or classes at this level.\n     *  This is the DOM element that gets browser focus when selecting cells. */",
+      "type": { "returnType": "HTMLElement", "optional": false }
+    },
+    "parseValue": {
+      "description": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
+      "type": {
+        "arguments": { "value": "any" },
+        "returnType": "any",
+        "optional": false
+      }
+    },
+    "formatValue": {
+      "description": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
+      "type": {
+        "arguments": { "value": "any" },
+        "returnType": "any",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "TContext", "optional": false }
+    }
+  },
+  "IDateStringCellEditorParams": {
+    "min": { "type": { "returnType": "string | Date", "optional": true } },
+    "max": { "type": { "returnType": "string | Date", "optional": true } },
+    "step": { "type": { "returnType": "number", "optional": true } },
+    "useFormatter": {
+      "description": "/** If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor.\n     * Used when the cell value needs formatting prior to editing, such as when using reference data and you\n     * want to display text rather than code. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "value": {
+      "description": "/** Current value of the cell */",
+      "type": { "returnType": "TValue", "optional": false }
+    },
+    "eventKey": {
+      "description": "/** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable\n     *  characters appear here */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "charPress": {
+      "description": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n     *  shift + letter 'a' only printable characters appear here */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "column": {
+      "description": "/** Grid column */",
+      "type": { "returnType": "Column", "optional": false }
+    },
+    "colDef": {
+      "description": "/** Column definition */",
+      "type": { "returnType": "ColDef<TData>", "optional": false }
+    },
+    "node": {
+      "description": "/** Row node for the cell */",
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
+    },
+    "data": {
+      "description": "/** Row data */",
+      "type": { "returnType": "TData", "optional": false }
+    },
+    "rowIndex": {
+      "description": "/** Editing row index */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "cellStartedEdit": {
+      "description": "/** If doing full row edit, this is true if the cell is the one that started the edit\n     *  (eg it is the cell the use double clicked on, or pressed a key on etc). */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "onKeyDown": {
+      "description": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n     *  arrows etc) back to grid - however you do */",
+      "type": {
+        "arguments": { "event": "KeyboardEvent" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "stopEditing": {
+      "description": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n     * true to prevent focus from moving to the next cell after editing stops in case the\n     * grid property `enterMovesDownAfterEdit=true` */",
+      "type": {
+        "arguments": { "suppressNavigateAfterEdit?": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "eGridCell": {
+      "description": "/** A reference to the DOM element representing the grid cell that your component\n     *  will live inside. Useful if you want to add event listeners or classes at this level.\n     *  This is the DOM element that gets browser focus when selecting cells. */",
+      "type": { "returnType": "HTMLElement", "optional": false }
+    },
+    "parseValue": {
+      "description": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
+      "type": {
+        "arguments": { "value": "any" },
+        "returnType": "any",
+        "optional": false
+      }
+    },
+    "formatValue": {
+      "description": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
+      "type": {
+        "arguments": { "value": "any" },
+        "returnType": "any",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "TContext", "optional": false }
+    }
+  },
   "ILargeTextEditorParams": {
     "maxLength": {
       "description": "/** Max number of characters to allow. Default: `200` */",
@@ -18819,6 +19044,101 @@
     "cols": {
       "description": "/** Number of character columns to display. Default: `60` */",
       "type": { "returnType": "number", "optional": false }
+    },
+    "value": {
+      "description": "/** Current value of the cell */",
+      "type": { "returnType": "TValue", "optional": false }
+    },
+    "eventKey": {
+      "description": "/** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable\n     *  characters appear here */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "charPress": {
+      "description": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n     *  shift + letter 'a' only printable characters appear here */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "column": {
+      "description": "/** Grid column */",
+      "type": { "returnType": "Column", "optional": false }
+    },
+    "colDef": {
+      "description": "/** Column definition */",
+      "type": { "returnType": "ColDef<TData>", "optional": false }
+    },
+    "node": {
+      "description": "/** Row node for the cell */",
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
+    },
+    "data": {
+      "description": "/** Row data */",
+      "type": { "returnType": "TData", "optional": false }
+    },
+    "rowIndex": {
+      "description": "/** Editing row index */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "cellStartedEdit": {
+      "description": "/** If doing full row edit, this is true if the cell is the one that started the edit\n     *  (eg it is the cell the use double clicked on, or pressed a key on etc). */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "onKeyDown": {
+      "description": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n     *  arrows etc) back to grid - however you do */",
+      "type": {
+        "arguments": { "event": "KeyboardEvent" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "stopEditing": {
+      "description": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n     * true to prevent focus from moving to the next cell after editing stops in case the\n     * grid property `enterMovesDownAfterEdit=true` */",
+      "type": {
+        "arguments": { "suppressNavigateAfterEdit?": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "eGridCell": {
+      "description": "/** A reference to the DOM element representing the grid cell that your component\n     *  will live inside. Useful if you want to add event listeners or classes at this level.\n     *  This is the DOM element that gets browser focus when selecting cells. */",
+      "type": { "returnType": "HTMLElement", "optional": false }
+    },
+    "parseValue": {
+      "description": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
+      "type": {
+        "arguments": { "value": "any" },
+        "returnType": "any",
+        "optional": false
+      }
+    },
+    "formatValue": {
+      "description": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
+      "type": {
+        "arguments": { "value": "any" },
+        "returnType": "any",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "TContext", "optional": false }
+    }
+  },
+  "INumberCellEditorParams": {
+    "min": { "type": { "returnType": "number", "optional": true } },
+    "max": { "type": { "returnType": "number", "optional": true } },
+    "precision": { "type": { "returnType": "number", "optional": true } },
+    "step": { "type": { "returnType": "number", "optional": true } },
+    "useFormatter": {
+      "description": "/** If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor.\n     * Used when the cell value needs formatting prior to editing, such as when using reference data and you\n     * want to display text rather than code. */",
+      "type": { "returnType": "boolean", "optional": false }
     },
     "value": {
       "description": "/** Current value of the cell */",
@@ -18997,14 +19317,134 @@
       "type": { "returnType": "TContext", "optional": false }
     }
   },
-  "ITextCellEditorParams": {
+  "ISimpleCellEditorParams": {
     "useFormatter": {
-      "description": "/** If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor. */",
+      "description": "/** If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor.\n     * Used when the cell value needs formatting prior to editing, such as when using reference data and you\n     * want to display text rather than code. */",
       "type": { "returnType": "boolean", "optional": false }
     },
+    "value": {
+      "description": "/** Current value of the cell */",
+      "type": { "returnType": "TValue", "optional": false }
+    },
+    "eventKey": {
+      "description": "/** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable\n     *  characters appear here */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "charPress": {
+      "description": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n     *  shift + letter 'a' only printable characters appear here */",
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "column": {
+      "description": "/** Grid column */",
+      "type": { "returnType": "Column", "optional": false }
+    },
+    "colDef": {
+      "description": "/** Column definition */",
+      "type": { "returnType": "ColDef<TData>", "optional": false }
+    },
+    "node": {
+      "description": "/** Row node for the cell */",
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
+    },
+    "data": {
+      "description": "/** Row data */",
+      "type": { "returnType": "TData", "optional": false }
+    },
+    "rowIndex": {
+      "description": "/** Editing row index */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "cellStartedEdit": {
+      "description": "/** If doing full row edit, this is true if the cell is the one that started the edit\n     *  (eg it is the cell the use double clicked on, or pressed a key on etc). */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "onKeyDown": {
+      "description": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n     *  arrows etc) back to grid - however you do */",
+      "type": {
+        "arguments": { "event": "KeyboardEvent" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "stopEditing": {
+      "description": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n     * true to prevent focus from moving to the next cell after editing stops in case the\n     * grid property `enterMovesDownAfterEdit=true` */",
+      "type": {
+        "arguments": { "suppressNavigateAfterEdit?": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "eGridCell": {
+      "description": "/** A reference to the DOM element representing the grid cell that your component\n     *  will live inside. Useful if you want to add event listeners or classes at this level.\n     *  This is the DOM element that gets browser focus when selecting cells. */",
+      "type": { "returnType": "HTMLElement", "optional": false }
+    },
+    "parseValue": {
+      "description": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
+      "type": {
+        "arguments": { "value": "any" },
+        "returnType": "any",
+        "optional": false
+      }
+    },
+    "formatValue": {
+      "description": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
+      "type": {
+        "arguments": { "value": "any" },
+        "returnType": "any",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "TContext", "optional": false }
+    }
+  },
+  "CellEditorInput": {
+    "getTemplate": {
+      "type": { "arguments": {}, "returnType": "string", "optional": false }
+    },
+    "init": {
+      "type": {
+        "arguments": { "eInput": "I", "params": "P" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "getValue": {
+      "type": { "arguments": {}, "returnType": "TValue", "optional": false }
+    },
+    "getStartValue": {
+      "type": {
+        "arguments": {},
+        "returnType": "string | undefined",
+        "optional": false
+      }
+    },
+    "meta": {
+      "typeParams": [
+        "TValue",
+        "P extends ISimpleCellEditorParams",
+        "I extends AgInputTextField"
+      ]
+    }
+  },
+  "ITextCellEditorParams": {
     "maxLength": {
       "description": "/** Max number of characters to allow. Default: `524288` */",
       "type": { "returnType": "number", "optional": true }
+    },
+    "useFormatter": {
+      "description": "/** If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor.\n     * Used when the cell value needs formatting prior to editing, such as when using reference data and you\n     * want to display text rather than code. */",
+      "type": { "returnType": "boolean", "optional": false }
     },
     "value": {
       "description": "/** Current value of the cell */",
@@ -21125,7 +21565,11 @@
     "meta": { "typeParams": ["TValue = any"] },
     "getValue": {
       "description": "/** Return the final value - called by the grid once after editing is complete\n     */",
-      "type": { "arguments": {}, "returnType": "TValue", "optional": false }
+      "type": {
+        "arguments": {},
+        "returnType": "TValue | undefined",
+        "optional": false
+      }
     },
     "isPopup": {
       "description": "/** Gets called once after initialised. If you return true, the editor will\n     * appear in a popup, so is not constrained to the boundaries of the cell.\n     * This is great if you want to, for example, provide you own custom dropdown list\n     * for selection. Default is false (ie if you don't provide the method).\n     */",
@@ -21191,7 +21635,11 @@
     "meta": { "typeParams": ["TValue = any"] },
     "getValue": {
       "description": "/** Return the final value - called by the grid once after editing is complete\n     */",
-      "type": { "arguments": {}, "returnType": "TValue", "optional": false }
+      "type": {
+        "arguments": {},
+        "returnType": "TValue | undefined",
+        "optional": false
+      }
     },
     "isPopup": {
       "description": "/** Gets called once after initialised. If you return true, the editor will\n     * appear in a popup, so is not constrained to the boundaries of the cell.\n     * This is great if you want to, for example, provide you own custom dropdown list\n     * for selection. Default is false (ie if you don't provide the method).\n     */",
@@ -21515,7 +21963,7 @@
     },
     "dataTypeDefinitions": {
       "type": {
-        "returnType": "{\n        [key: string]: DataTypeDefinition<TData>;\n    }",
+        "returnType": "{\n        [cellDataType: string]: DataTypeDefinition<TData>;\n    }",
         "optional": true
       }
     },
@@ -24353,7 +24801,7 @@
     },
     "dataTypeDefinitions": {
       "type": {
-        "returnType": "{\n        [key: string]: DataTypeDefinition<TData>;\n    }",
+        "returnType": "{\n        [cellDataType: string]: DataTypeDefinition<TData>;\n    }",
         "optional": true
       }
     },
@@ -27197,7 +27645,7 @@
     },
     "dataTypeDefinitions": {
       "type": {
-        "returnType": "{\n        [key: string]: DataTypeDefinition<TData>;\n    }",
+        "returnType": "{\n        [cellDataType: string]: DataTypeDefinition<TData>;\n    }",
         "optional": true
       }
     },
@@ -30086,7 +30534,11 @@
   "ICellEditorReactComp": {
     "getValue": {
       "description": "/** Return the final value - called by the grid once after editing is complete\n     */",
-      "type": { "arguments": {}, "returnType": "TValue", "optional": false }
+      "type": {
+        "arguments": {},
+        "returnType": "TValue | undefined",
+        "optional": false
+      }
     },
     "isPopup": {
       "description": "/** Gets called once after initialised. If you return true, the editor will\n     * appear in a popup, so is not constrained to the boundaries of the cell.\n     * This is great if you want to, for example, provide you own custom dropdown list\n     * for selection. Default is false (ie if you don't provide the method).\n     */",

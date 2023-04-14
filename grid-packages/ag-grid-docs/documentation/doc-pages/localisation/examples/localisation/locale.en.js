@@ -334,6 +334,9 @@ const AG_GRID_LOCALE_EN = {
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
-    decimalSeparator: '.'
+    decimalSeparator: '.',
 
+    // Data types
+    true: 'True',
+    false: 'False',
 }
