@@ -51,7 +51,7 @@ export async function clickOnContextMenuItem({
         const menuItemEl = menuItemTextEl?.parentElement;
         const isLastMenuItem = i === menuItemPath.length - 1;
         if (!coords || !menuItemEl) {
-            console.error(`Cannot find menu item: ${menuItemName}`);
+            throw new Error(`Cannot find menu item: ${menuItemName}`);
             break;
         }
 
