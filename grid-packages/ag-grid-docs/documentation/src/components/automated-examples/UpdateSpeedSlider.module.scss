@@ -19,6 +19,11 @@
 
         @media screen and (min-width: $breakpoint-automated-row-grouping-medium) {
             margin-left: $size-1 !important; // !important for .ag-styles specificity;
+            min-width: 8em;
+        }
+
+        @media screen and (min-width: $breakpoint-automated-row-grouping-large) {
+            min-width: 14em;
         }
     }
 }

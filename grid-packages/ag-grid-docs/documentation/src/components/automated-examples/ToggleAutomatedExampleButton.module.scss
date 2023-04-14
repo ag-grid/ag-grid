@@ -24,9 +24,6 @@
 
     @media screen and (min-width: $breakpoint-automated-row-grouping-large) {
         font-size: var(--font-size-extra-large) !important; // !important for .ag-styles specificity;
-    }
-
-    @media screen and (min-width: $max-page-width) {
         width: $replay-large-width;
     }
 
@@ -43,7 +40,7 @@
     &.isActive {
         width: $control-small-width;
 
-        @media screen and (min-width: $max-page-width) {
+        @media screen and (min-width: $breakpoint-automated-row-grouping-large) {
             width: $control-large-width;
         }
     }
