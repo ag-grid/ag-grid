@@ -109,14 +109,14 @@
 }
 
 .sideNav .level-3 {
-    margin-bottom: calc(var(--item-gap) / 4) !important; // !important for .ag-styles specificity
+    margin-bottom: calc(var(--item-gap) / 2) !important; // !important for .ag-styles specificity
     padding-left: $size-4;
     // opacity: 0.8;
 }
 
 .sideNav .level-1 + .level-3,
 .sideNav .level-2 + .level-3 {
-    margin-top: calc(var(--item-gap) * -0.8);
+    margin-top: calc(var(--item-gap) * -0.6);
 }
 
 .sideNav .level-3 + .level-2 {
@@ -127,7 +127,7 @@
 .sideNav .level-5,
 .sideNav .level-6 {
     font-size: var(--font-size-extra-small);
-    margin-bottom: calc(var(--item-gap) / 4);
+    margin-bottom: calc(var(--item-gap) / 2);
     padding-left: $size-4;
     opacity: 0.8;
 }
