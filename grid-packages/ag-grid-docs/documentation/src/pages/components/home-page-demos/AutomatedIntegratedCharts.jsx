@@ -141,7 +141,7 @@ function AutomatedIntegratedCharts({
             </div>
 
             <footer className={styles.sectionFooter}>
-                <div className="font-size-large">
+                <div className={classNames(styles.exploreButtonOuter, 'font-size-large')}>
                     <span className="text-secondary">Live example:</span>
                     <ToggleAutomatedExampleButton
                         onClick={() => {

@@ -123,8 +123,13 @@ gatsby-fast-refresh {
 }
 
 .homepageExample {
-    padding-top: ds.$size-8;
-    padding-bottom: ds.$size-9;
+    padding-top: ds.$size-6;
+    padding-bottom: ds.$size-7;
+
+    @media screen and (min-width: ds.$breakpoint-automated-row-grouping-medium) {
+        padding-top: ds.$size-8;
+        padding-bottom: ds.$size-9;
+    }
 }
 
 .automatedIntegratedChartsOuter {

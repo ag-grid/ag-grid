@@ -1,6 +1,7 @@
 // Remount component when Fast Refresh is triggered
 // @refresh reset
 
+import classNames from 'classnames';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { createAutomatedRowGrouping } from '../../../components/automated-examples/examples/row-grouping';
@@ -144,7 +145,7 @@ function AutomatedRowGrouping({
             </div>
 
             <footer className={styles.sectionFooter}>
-                <div className="font-size-large">
+                <div className={classNames(styles.exploreButtonOuter, 'font-size-large')}>
                     <span className="text-secondary">Live example:</span>
                     <ToggleAutomatedExampleButton
                         onClick={() => {
