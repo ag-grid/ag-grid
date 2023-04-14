@@ -38,7 +38,7 @@ import {
     FontWeight,
     AgCartesianSeriesMarkerFormat,
 } from '../../agChartOptions';
-import { easeOut, easeOutElastic } from '../../../motion/easing';
+import * as easing from '../../../motion/easing';
 
 interface LineNodeDatum extends CartesianSeriesNodeDatum {
     readonly point: SeriesNodeDatum['point'] & {
@@ -312,13 +312,39 @@ export class LineSeries extends CartesianSeries<LineContext> {
         lineNode.pointerEvents = PointerEvents.None;
 
         linePath.clear({ trackChanges: true });
-        for (const data of nodeData) {
-            if (data.point.moveTo) {
-                linePath.moveTo(data.point.x, data.point.y);
-            } else {
-                linePath.lineTo(data.point.x, data.point.y);
+
+        if (this.animationManager) {
+            const done: any = [];
+            this.animationManager.animate(`${this.id}_path`, {
+                from: 0,
+                to: nodeData.length - 1,
+                duration: 1000,
+                ease: easing.easeOut,
+                repeat: 0,
+                onUpdate: (i) => {
+                    const j = Math.round(i);
+                    for (let k = done.length > 0 ? done[done.length - 1] + 1 : 0; k <= j; k++) {
+                        done.push(k);
+                        const data = nodeData[k];
+                        if (data.point.moveTo) {
+                            linePath.moveTo(data.point.x, data.point.y);
+                        } else {
+                            linePath.lineTo(data.point.x, data.point.y);
+                        }
+                        lineNode.checkPathDirty();
+                    }
+                },
+            });
+        } else {
+            for (const data of nodeData) {
+                if (data.point.moveTo) {
+                    linePath.moveTo(data.point.x, data.point.y);
+                } else {
+                    linePath.lineTo(data.point.x, data.point.y);
+                }
             }
         }
+
         lineNode.checkPathDirty();
     }
 
@@ -360,42 +386,58 @@ export class LineSeries extends CartesianSeries<LineContext> {
             markerSelection.clear();
         }
 
-        markerSelection.enter((node) => {
-            node.fill = marker.fill;
-            node.fillOpacity = marker.fillOpacity ?? 1;
-            node.stroke = marker.stroke;
-            node.strokeWidth = marker.strokeWidth ?? 1;
+        markerSelection.enter((node, datum) => {
+            // node.fill = marker.fill;
+            // node.fillOpacity = marker.fillOpacity ?? 1;
+            // node.stroke = marker.stroke;
+            // node.strokeWidth = marker.strokeWidth ?? 1;
 
             return new Promise((resolve) => {
-                if (!this.animationManager || seriesIdx >= 0) return resolve();
+                if (!this.animationManager) return resolve();
 
-                this.animationManager?.animateMany<string | number>(
-                    `${this.id}-node-${node.id}-enter`,
-                    [
-                        { from: node.fill ?? 'rgb(0,0,0)', to: highlight.fill ?? 'rgb(0,0,0)' },
-                        { from: node.fillOpacity ?? 1, to: highlight.fillOpacity ?? 1 },
-                        { from: node.stroke ?? 'rgb(0,0,0)', to: highlight.stroke ?? 'rgb(0,0,0)' },
-                        { from: node.strokeWidth ?? 1, to: highlight.strokeWidth ?? 1 },
-                    ],
-                    {
-                        duration: 1000,
-                        ease: easeOutElastic,
+                if (seriesIdx >= 0) {
+                    const [x1, x2] = this.getDomain(ChartAxisDirection.X);
+                    this.animationManager?.animate<number>(`${this.id}_${node.id}_enter`, {
+                        from: 0,
+                        to: marker.size,
+                        duration: 300,
+                        delay: (datum.point.x / (datum.series.xAxis?.range[1] ?? 1)) * 700,
+                        ease: easing.easeIn,
                         repeat: 0,
-                        onUpdate: ([fill, fillOpacity, stroke, strokeWidth]) => {
-                            node.fill = fill as string;
-                            node.fillOpacity = fillOpacity as number;
-                            node.stroke = stroke as string;
-                            node.strokeWidth = strokeWidth as number;
+                        onUpdate: (value) => {
+                            node.size = value;
                         },
                         onComplete: () => resolve(),
-                    }
-                );
+                    });
+                } else {
+                    this.animationManager?.animateMany<string | number>(
+                        `${this.id}_${node.id}_enter`,
+                        [
+                            { from: node.fill ?? 'rgb(0,0,0)', to: highlight.fill ?? 'rgb(0,0,0)' },
+                            { from: node.fillOpacity ?? 1, to: highlight.fillOpacity ?? 1 },
+                            { from: node.stroke ?? 'rgb(0,0,0)', to: highlight.stroke ?? 'rgb(0,0,0)' },
+                            { from: node.strokeWidth ?? 1, to: highlight.strokeWidth ?? 1 },
+                        ],
+                        {
+                            duration: 300,
+                            ease: easing.easeOut,
+                            repeat: 0,
+                            onUpdate: ([fill, fillOpacity, stroke, strokeWidth]) => {
+                                node.fill = fill as string;
+                                node.fillOpacity = fillOpacity as number;
+                                node.stroke = stroke as string;
+                                node.strokeWidth = strokeWidth as number;
+                            },
+                            onComplete: () => resolve(),
+                        }
+                    );
+                }
             });
         });
 
         markerSelection.exit((node) => {
             return new Promise((resolve) => {
-                if (!this.animationManager) return resolve();
+                if (!this.animationManager || seriesIdx >= 0) return resolve();
 
                 this.animationManager?.animateMany<string | number>(
                     `${this.id}-node-${node.id}-exit`,
@@ -408,7 +450,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                     {
                         duration: 200,
                         repeat: 0,
-                        ease: easeOut,
+                        ease: easing.easeOut,
                         onUpdate: ([fill, fillOpacity, stroke, strokeWidth]) => {
                             node.fill = fill as string;
                             node.fillOpacity = fillOpacity as number;
@@ -477,15 +519,19 @@ export class LineSeries extends CartesianSeries<LineContext> {
             }
 
             // Animated properties
-            if (!isDatumHighlighted) {
+            if (!this.animationManager || !isDatumHighlighted) {
                 node.fill = (format && format.fill) || fill;
                 node.fillOpacity = fillOpacity ?? 1;
                 node.stroke = (format && format.stroke) || stroke;
                 node.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
+                node.size = format && format.size !== undefined ? format.size : size;
+            }
+
+            if (this.animationManager && !isDatumHighlighted) {
+                node.size = 0.1;
             }
 
             node.strokeOpacity = marker.strokeOpacity ?? strokeOpacity ?? 1;
-            node.size = format && format.size !== undefined ? format.size : size;
 
             node.translationX = datum.point.x;
             node.translationY = datum.point.y;

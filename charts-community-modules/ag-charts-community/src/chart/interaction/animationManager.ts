@@ -93,9 +93,14 @@ export class AnimationManager extends BaseManager<AnimationType, AnimationEvent<
     ): Motion.AnimationControls {
         const state = props.map((prop) => prop.from);
 
+        let updateBatch = 0;
+
         const onUpdate = (index: number) => (v: T) => {
             state[index] = v;
-            opts.onUpdate?.(state);
+            if (++updateBatch >= props.length) {
+                opts.onUpdate?.(state);
+                updateBatch = 0;
+            }
         };
 
         const drivers = props.map((prop, index) => {

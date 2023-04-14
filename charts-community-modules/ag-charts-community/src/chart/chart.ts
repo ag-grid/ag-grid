@@ -130,6 +130,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
     public autoSize;
     private _lastAutoSize?: [number, number];
 
+    @Validate(BOOLEAN)
+    public animate = true;
+
     private autoSizeChanged(value: boolean) {
         const { style } = this.element;
         if (value) {
@@ -244,8 +247,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.layoutService = new LayoutService();
         this.updateService = new UpdateService((type = ChartUpdateType.FULL) => this.update(type));
 
-        this.animationManager.play();
-
         SizeMonitor.observe(this.element, (size) => {
             const { width, height } = size;
 
@@ -294,9 +295,12 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         this.highlightManager.addListener('highlight-change', (event) => this.changeHighlightDatum(event));
 
-        this.animationManager.addListener('animation-frame', (_) => {
-            this.update(ChartUpdateType.SCENE_RENDER);
-        });
+        if (this.animate) {
+            this.animationManager.play();
+            this.animationManager.addListener('animation-frame', (_) => {
+                this.update(ChartUpdateType.SCENE_RENDER);
+            });
+        }
     }
 
     addModule(module: RootModule) {
@@ -602,8 +606,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     protected initSeries(series: Series<any>) {
         series.chart = this;
-        series.animationManager = this.animationManager;
         series.highlightManager = this.highlightManager;
+        if (this.animate) {
+            series.animationManager = this.animationManager;
+        }
         if (!series.data) {
             series.data = this.data;
         }

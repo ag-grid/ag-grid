@@ -41,6 +41,7 @@ import {
     AgPieSeriesFormatterParams,
 } from '../../agChartOptions';
 import { Logger } from '../../../util/logger';
+import * as easing from '../../../motion/easing';
 
 class PieSeriesNodeBaseClickEvent extends SeriesNodeBaseClickEvent<any> {
     readonly angleKey: string;
@@ -776,8 +777,31 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             sector.innerRadius = Math.max(0, innerRadius);
             sector.outerRadius = Math.max(0, radius);
 
-            sector.startAngle = datum.startAngle;
-            sector.endAngle = datum.endAngle;
+            if (this.animationManager && !isDatumHighlighted) {
+                sector.startAngle = 0;
+                sector.endAngle = 0;
+
+                const time = 600;
+                const delay = this.groupSelection.nodes().reduce((sum, node, i) => {
+                    if (i >= index) return sum;
+                    return sum + ((node.datum.startAngle - node.datum.endAngle) / (2 * Math.PI)) * time;
+                }, 0);
+                this.animationManager?.animate(`${this.id}_${sector.id}_highlight`, {
+                    from: datum.endAngle,
+                    to: datum.startAngle,
+                    duration: ((datum.startAngle - datum.endAngle) / (2 * Math.PI)) * time,
+                    delay: delay,
+                    ease: easing.linear,
+                    repeat: 0,
+                    onUpdate: (value) => {
+                        sector.endAngle = datum.endAngle;
+                        sector.startAngle = value;
+                    },
+                });
+            } else {
+                sector.startAngle = datum.startAngle;
+                sector.endAngle = datum.endAngle;
+            }
 
             const format = this.getSectorFormat(datum.datum, datum.itemId, index, isDatumHighlighted);
 

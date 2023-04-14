@@ -58,6 +58,7 @@ import {
 } from '../../agChartOptions';
 import { LogAxis } from '../../axis/logAxis';
 import { DataModel, SMALLEST_KEY_INTERVAL, SUM_VALUE_EXTENT } from '../../data/dataModel';
+import * as easing from '../../../motion/easing';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
@@ -653,8 +654,103 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     protected async updateDatumSelection(opts: {
         nodeData: BarNodeDatum[];
         datumSelection: Selection<Rect, BarNodeDatum>;
+        seriesIdx: number;
     }) {
-        const { nodeData, datumSelection } = opts;
+        const { nodeData, datumSelection, seriesIdx } = opts;
+        const {
+            fills,
+            fillOpacity,
+            strokes,
+            strokeWidth,
+            highlightStyle: { item: highlight },
+        } = this;
+
+        datumSelection.enter((rect, datum) => {
+            rect.fill = fills[datum.colorIndex % fills.length];
+            // rect.fillOpacity = marker.fillOpacity ?? 1;
+            rect.stroke = strokes[datum.colorIndex % strokes.length];
+            // rect.strokeWidth = marker.strokeWidth ?? 1;
+
+            return new Promise((resolve) => {
+                if (!this.animationManager) return resolve();
+
+                if (seriesIdx >= 0) {
+                    // const [y1, y2] = this.getDomain(ChartAxisDirection.Y);
+                    this.animationManager?.animate<number>(`${this.id}_${rect.id}_enter`, {
+                        from: 0,
+                        to: datum.height,
+                        duration: 600,
+                        // duration: Math.floor((datum.height / (y2 - y1)) * 100),
+                        ease: easing.easeIn,
+                        repeat: 0,
+                        onUpdate: (value) => {
+                            if (datum.yValue >= 0) {
+                                rect.y = datum.y + datum.height - value;
+                                rect.height = value;
+                            } else {
+                                rect.y = datum.y;
+                                rect.height = value;
+                            }
+                        },
+                        onComplete: () => resolve(),
+                    });
+                } else {
+                    this.animationManager?.animateMany<string | number>(
+                        `${this.id}_${rect.id}_enter`,
+                        [
+                            { from: rect.fill ?? 'rgb(0,0,0)', to: highlight.fill ?? 'rgb(0,0,0)' },
+                            { from: rect.fillOpacity ?? 1, to: highlight.fillOpacity ?? 1 },
+                            { from: rect.stroke ?? 'rgb(0,0,0)', to: highlight.stroke ?? 'rgb(0,0,0)' },
+                            { from: rect.strokeWidth ?? 1, to: highlight.strokeWidth ?? 1 },
+                        ],
+                        {
+                            duration: 200,
+                            ease: easing.easeOut,
+                            repeat: 0,
+                            onUpdate: ([fill, fillOpacity, stroke, strokeWidth]) => {
+                                rect.fill = fill as string;
+                                rect.fillOpacity = fillOpacity as number;
+                                rect.stroke = stroke as string;
+                                rect.strokeWidth = strokeWidth as number;
+                            },
+                            onComplete: () => resolve(),
+                        }
+                    );
+                }
+            });
+        });
+
+        datumSelection.exit((rect, datum) => {
+            return new Promise((resolve) => {
+                if (!this.animationManager || seriesIdx >= 0) return resolve();
+
+                this.animationManager?.animateMany<string | number>(
+                    `${this.id}_${rect.id}_exit`,
+                    [
+                        { from: rect.fill ?? 'rgb(0,0,0)', to: fills[datum.colorIndex % fills.length] ?? 'rgb(0,0,0)' },
+                        { from: rect.fillOpacity ?? 1, to: fillOpacity ?? 1 },
+                        {
+                            from: rect.stroke ?? 'rgb(0,0,0)',
+                            to: strokes[datum.colorIndex % fills.length] ?? 'rgb(0,0,0)',
+                        },
+                        { from: rect.strokeWidth ?? 1, to: strokeWidth ?? 1 },
+                    ],
+                    {
+                        duration: 200,
+                        ease: easing.easeIn,
+                        repeat: 0,
+                        onUpdate: ([fill, fillOpacity, stroke, strokeWidth]) => {
+                            rect.fill = fill as string;
+                            rect.fillOpacity = fillOpacity as number;
+                            rect.stroke = stroke as string;
+                            rect.strokeWidth = strokeWidth as number;
+                        },
+                        onComplete: () => resolve(),
+                    }
+                );
+            });
+        });
+
         return datumSelection.update(nodeData, (rect) => (rect.tag = BarSeriesNodeTag.Bar));
     }
 
@@ -719,10 +815,12 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             rect.y = datum.y;
             rect.width = datum.width;
             rect.height = datum.height;
-            rect.fill = (format && format.fill) || fill;
-            rect.stroke = (format && format.stroke) || stroke;
-            rect.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
-            rect.fillOpacity = fillOpacity;
+            if (!this.animationManager || !isDatumHighlighted) {
+                rect.fill = (format && format.fill) || fill;
+                rect.stroke = (format && format.stroke) || stroke;
+                rect.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
+                rect.fillOpacity = fillOpacity;
+            }
             rect.strokeOpacity = strokeOpacity;
             rect.lineDash = this.lineDash;
             rect.lineDashOffset = this.lineDashOffset;

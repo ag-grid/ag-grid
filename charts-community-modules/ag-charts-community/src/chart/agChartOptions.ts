@@ -596,6 +596,8 @@ export interface AgBaseChartOptions {
     height?: PixelSize;
     /** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */
     autoSize?: boolean;
+    /** Whether or not to show animations on the chart. */
+    animate?: boolean;
     /** Configuration for the padding shown around the chart. */
     padding?: AgChartPaddingOptions;
     /** Configuration for the padding around the series area. */

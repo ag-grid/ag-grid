@@ -954,7 +954,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         const { gridStyle, scale, tick, gridPadding } = this;
         if (gridLength && gridStyle.length) {
             const styleCount = gridStyle.length;
-            let grid: Selection<Line | Arc, Group>;
+            let grid: Selection<Line, Group> | Selection<Arc, Group>;
 
             if (this.radialGrid) {
                 const angularGridLength = normalizeAngle360Inclusive(toRadians(gridLength));
@@ -976,7 +976,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
                 });
             }
 
-            grid.each((node, _, index) => {
+            grid.each((node: Line | Arc, _: Group, index: number) => {
                 const style = gridStyle[index % styleCount];
 
                 node.stroke = style.stroke;

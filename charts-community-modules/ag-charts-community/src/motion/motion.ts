@@ -14,6 +14,7 @@ export enum RepeatType {
 
 export interface AnimationOptions<T> extends KeyframesOptions<T> {
     autoplay?: boolean;
+    delay?: number;
     driver?: Driver;
     repeat?: number;
     repeatType?: RepeatType;
@@ -45,6 +46,7 @@ export function animate<T = number>({
     to,
     duration,
     autoplay = true,
+    delay = 0,
     driver = requestAnimationFrameDriver,
     ease = linear,
     repeat: repeatMax = Infinity,
@@ -56,6 +58,7 @@ export function animate<T = number>({
     onUpdate,
 }: AnimationOptions<T>): AnimationControls {
     let state: T;
+    let delayElapsed = 0;
     let elapsed = 0;
     let iteration = 0;
     let isForward = true;
@@ -113,7 +116,12 @@ export function animate<T = number>({
 
     function update(delta: number): void {
         if (!isForward) delta = -delta;
-        elapsed += delta;
+        if (delayElapsed >= delay) {
+            elapsed += delta;
+        } else {
+            delayElapsed += delta;
+            return;
+        }
 
         if (!isComplete) {
             state = easing(Math.min(1, Math.max(0, elapsed / duration)));
