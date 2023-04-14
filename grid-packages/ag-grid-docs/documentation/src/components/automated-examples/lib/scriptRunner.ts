@@ -337,12 +337,15 @@ export function createScriptRunner({
         const sequence = createActionSequenceRunner({
             actionSequence: actionSequence.slice(startIndex),
             onPreAction({ index }) {
-                const scriptAction = scriptFromStartIndex[index];
-                const stepName =
-                    scriptAction.name ||
-                    (scriptAction.type === 'agAction' ? scriptAction.actionType : scriptAction.type);
-                // NOTE: Starting from 1
-                scriptDebugger?.updateStep({ step: index + 1, numSteps: scriptFromStartIndex.length, stepName });
+                if (runScriptState !== 'stopped') {
+                    const scriptAction = scriptFromStartIndex[index];
+                    const stepName =
+                        scriptAction.name ||
+                        (scriptAction.type === 'agAction' ? scriptAction.actionType : scriptAction.type);
+                    // NOTE: Starting from 1
+                    scriptDebugger?.updateStep({ step: index + 1, numSteps: scriptFromStartIndex.length, stepName });
+                }
+
                 if (runScriptState === 'stopping') {
                     updateState('stopped');
                     return { shouldCancel: true };
