@@ -127,6 +127,14 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
     @media screen and (min-width: ds.$breakpoint-automated-row-grouping-medium) {
         display: block;
     }
+
+    > span:first-child {
+        display: none;
+
+        @media screen and (min-width: ds.$max-page-width) {
+            display: inline;
+        }
+    }
 }
 
 .getStartedLink {
