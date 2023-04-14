@@ -15,6 +15,7 @@ export type ScriptDebuggerManager = ReturnType<typeof createScriptDebuggerManage
 type DebugPanel = ReturnType<typeof createDebugPanel>;
 
 const STATE_CLASSNAME = 'state';
+const STEP_CLASSNAME = 'step';
 const PAUSED_STATE_CLASSNAME = 'paused-state';
 const MOUSE_POSITION_CLASSNAME = 'mouse-position';
 const getCheckboxTemplate = (isChecked?: boolean) => `
@@ -62,6 +63,9 @@ function createDebugPanelSection({
     const stateEl = document.createElement('div');
     stateEl.classList.add(STATE_CLASSNAME);
 
+    const stepEl = document.createElement('div');
+    stepEl.classList.add(STEP_CLASSNAME);
+
     const pausedStateEl = document.createElement('div');
     pausedStateEl.classList.add(PAUSED_STATE_CLASSNAME);
 
@@ -96,11 +100,15 @@ function createDebugPanelSection({
     heading.innerHTML = id;
     sectionEl.appendChild(heading);
     sectionEl.appendChild(stateEl);
+    sectionEl.appendChild(stepEl);
     sectionEl.appendChild(pausedStateEl);
     sectionEl.appendChild(controlsEl);
 
     const updateStateText = (state: string) => {
         stateEl.innerHTML = state;
+    };
+    const updateStepText = ({ step, stepName }: { step: number; stepName?: string }) => {
+        stepEl.innerHTML = `<span class='index'>${step}</span>${stepName ? ` ${stepName}` : ''}`;
     };
     const updatePausedStateText = (pausedState?: string) => {
         pausedStateEl.innerHTML = pausedState ? pausedState : '';
@@ -121,6 +129,7 @@ function createDebugPanelSection({
     return {
         sectionEl,
         updateStateText,
+        updateStepText,
         updatePausedStateText,
         updateButton,
     };
@@ -164,7 +173,13 @@ function createDebugPanel(classname: string) {
             getScriptRunner: () => ScriptRunner;
             onDrawChange: (checked: boolean) => void;
         }) => {
-            const { sectionEl, updateStateText, updatePausedStateText, updateButton } = createDebugPanelSection({
+            const {
+                sectionEl,
+                updateStateText,
+                updateStepText,
+                updatePausedStateText,
+                updateButton,
+            } = createDebugPanelSection({
                 id,
                 onDrawChange,
                 getScriptRunner,
@@ -174,6 +189,7 @@ function createDebugPanel(classname: string) {
 
             return {
                 updateStateText,
+                updateStepText,
                 updatePausedStateText,
                 updateButton,
             };
@@ -196,7 +212,7 @@ function createScriptDebugger({
         return scriptRunner;
     };
 
-    const { updateStateText, updatePausedStateText, updateButton } = debugPanel.addSection({
+    const { updateStateText, updateStepText, updatePausedStateText, updateButton } = debugPanel.addSection({
         id,
         initialDraw,
         getScriptRunner,
@@ -209,6 +225,10 @@ function createScriptDebugger({
         updateStateText(state);
         updatePausedStateText(pauseIndex);
         updateButton(state);
+    };
+
+    const updateStep = ({ step, stepName }) => {
+        updateStepText({ step, stepName });
     };
 
     const drawPoint = ({ x, y }: Point, color?: string, radius: number = 5) => {
@@ -226,7 +246,7 @@ function createScriptDebugger({
         scriptRunner = runner;
     };
 
-    return { clear, drawPoint, updateState, setScriptRunner };
+    return { clear, drawPoint, updateStep, updateState, setScriptRunner };
 }
 
 export function createScriptDebuggerManager({

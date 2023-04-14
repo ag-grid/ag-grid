@@ -14,12 +14,17 @@ import { waitFor } from './scriptActions/waitFor';
 import { ScriptDebugger } from './scriptDebugger';
 import { EasingFunction } from './tween';
 
-export interface PathAction {
+export interface Action {
+    name?: string;
+    type: string;
+}
+
+export interface PathAction extends Action {
     type: 'path';
     path: PathItem<any>[];
 }
 
-export interface MoveToAction {
+export interface MoveToAction extends Action {
     type: 'moveTo';
     toPos: Point | (() => Point | undefined);
     speed?: number;
@@ -27,35 +32,35 @@ export interface MoveToAction {
     easing?: EasingFunction;
 }
 
-export interface WaitAction {
+export interface WaitAction extends Action {
     type: 'wait';
     duration: number;
 }
 
-export interface ClickAction {
+export interface ClickAction extends Action {
     type: 'click';
 }
 
-export interface MouseDownAction {
+export interface MouseDownAction extends Action {
     type: 'mouseDown';
 }
 
-export interface MouseUpAction {
+export interface MouseUpAction extends Action {
     type: 'mouseUp';
 }
 
-export interface RemoveFocusAction {
+export interface RemoveFocusAction extends Action {
     type: 'removeFocus';
 }
 
-export interface CustomAction {
+export interface CustomAction extends Action {
     type: 'custom';
     action: () => Promise<void> | void;
 }
 
 export type AGAction = AGCreatorAction & {
     type: 'agAction';
-};
+} & Action;
 
 export interface ScriptRunner {
     currentState: () => RunScriptState;
@@ -328,9 +333,15 @@ export function createScriptRunner({
     const startActionSequence = (startIndex: number = 0) => {
         updateState('playing');
         tweenUpdate();
+        const scriptFromStartIndex = script.slice(startIndex);
         const sequence = createActionSequenceRunner({
             actionSequence: actionSequence.slice(startIndex),
             onPreAction({ index }) {
+                const scriptAction = scriptFromStartIndex[index];
+                const stepName =
+                    scriptAction.name ||
+                    (scriptAction.type === 'agAction' ? scriptAction.actionType : scriptAction.type);
+                scriptDebugger?.updateStep({ step: index, stepName });
                 if (runScriptState === 'stopping') {
                     updateState('stopped');
                     return { shouldCancel: true };

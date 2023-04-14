@@ -252,7 +252,7 @@ gatsby-fast-refresh {
     position: fixed;
     top: 0;
     right: 0;
-    width: 200px;
+    width: 220px;
     height: fit-content;
     border-left: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
@@ -270,6 +270,18 @@ gatsby-fast-refresh {
         &::before {
             content: 'State: ';
             color: var(--dull-light-gray);
+        }
+    }
+
+    :global(.step) {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        :global(.index) {
+            &::after {
+                content: ':';
+            }
         }
     }
 
