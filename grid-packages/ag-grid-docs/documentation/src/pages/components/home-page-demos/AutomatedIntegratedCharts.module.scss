@@ -44,6 +44,31 @@ $z-index-splash-contents: 10;
         z-index: 1;
     }
 
+    // Copy default theme slider styles to deal with .ag-styles specificity issues
+    input[type='range'] {
+        &::-webkit-slider-runnable-track {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            height: 3px !important;
+            background-color: var(--ag-border-color) !important;
+            border-radius: var(--ag-border-radius) !important;
+            border-radius: var(--ag-checkbox-border-radius) !important;
+        }
+
+        &::-webkit-slider-thumb {
+            margin: 0 !important;
+            padding: 0 !important;
+            -webkit-appearance: none !important;
+            width: var(--ag-icon-size) !important;
+            height: var(--ag-icon-size) !important;
+            background-color: var(--ag-background-color) !important;
+            border: 1px solid !important;
+            border-color: var(--ag-checkbox-unchecked-color) !important;
+            border-radius: var(--ag-icon-size) !important;
+        }
+    }
+
     // Button overrides for .ag-styles specificity
     :global(button.ag-side-button-button) {
         // Inherit text styles
