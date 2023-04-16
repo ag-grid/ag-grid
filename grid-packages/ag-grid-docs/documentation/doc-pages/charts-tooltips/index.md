@@ -235,7 +235,3 @@ By default, you can not hover over a tooltip or select its text. Set the `toolti
 ### Histogram Tooltips
 
 <interface-documentation interfaceName='AgHistogramSeriesTooltip' config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
-
-## Next Up
-
-Continue to the next section to learn about [axes](/charts-axes/).

@@ -36,7 +36,3 @@ The example below demonstrates two common combination chart types. You can switc
 - The `series` configurations are logged in the dev console when switching between combination charts.
 
 <chart-example title='Combination Charts' name='combination' type='generated'></chart-example>
-
-## Next Up
-
-Continue to the next section to learn about [layout](../layout/).

@@ -67,7 +67,3 @@ The example below uses various navigator configs (in a deliberately exaggerated 
 ## API Reference
 
 <interface-documentation interfaceName='AgNavigatorOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
-
-## Next Up
-
-Continue to the next section to learn more about [markers](/charts-markers/).

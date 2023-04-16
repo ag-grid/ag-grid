@@ -1451,7 +1451,3 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 |
 
 Now that you've had a taste of what it's like to use AG Charts, we encourage you to explore our documentation to learn more.
-
-## Next Up
-
-Continue to the next section to see the [API Reference](/charts-api/).

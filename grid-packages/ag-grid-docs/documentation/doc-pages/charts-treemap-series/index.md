@@ -262,7 +262,3 @@ For more advanced configuration see the [Tooltips](../tooltips/) section.
 ## API Reference
 
 <interface-documentation interfaceName='AgTreemapSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
-
-## Next Up
-
-Continue to the next section to learn about [combination charts](../combination-series/).

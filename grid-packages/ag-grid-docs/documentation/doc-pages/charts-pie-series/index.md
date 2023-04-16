@@ -200,7 +200,3 @@ In the example below, we match the series with a `legendItemKey` of `'os'` compa
 ## API Reference
 
 <interface-documentation interfaceName='AgPieSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
-
-## Next Up
-
-Continue to the next section to learn about [treemap](../treemap-series/).

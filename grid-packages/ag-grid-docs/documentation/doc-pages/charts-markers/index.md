@@ -77,7 +77,3 @@ The final result is shown in the example below.
 
 <interface-documentation interfaceName='AgCartesianSeriesMarker' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
 
-## Next Up
-
-Continue to the next section to learn about [formatters](/charts-formatters/).
-

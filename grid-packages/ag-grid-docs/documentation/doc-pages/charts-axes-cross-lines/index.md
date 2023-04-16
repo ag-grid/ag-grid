@@ -77,7 +77,3 @@ The example below demonstrates these configurations, note the following:
 - The bottom X axis has a cross line of type `range`; the `range` property is used to configure the range of the cross line boundaries.
 
 <chart-example title='Customising Cross Lines' name='axis-cross-lines-customising' type='generated'></chart-example>
-
-## Next Up
-
-Continue to the next section to learn more about [Multiple Axes](/charts-axes-multiple/).

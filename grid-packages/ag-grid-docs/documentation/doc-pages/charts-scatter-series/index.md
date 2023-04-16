@@ -91,7 +91,3 @@ label placement.
 ## API Reference
 
 <interface-documentation interfaceName='AgScatterSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
-
-## Next Up
-
-Continue to the next section to learn about [pie and doughnut series](/charts-pie-series/).
