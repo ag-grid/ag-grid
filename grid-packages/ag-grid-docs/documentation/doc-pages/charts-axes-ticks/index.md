@@ -18,7 +18,7 @@ Tick placement can be customised by using one of the following strategies:
 
 The `tick.interval` defines the exact step value between ticks, expressed in the units of the respective axis.
 
-For [Number Axes](/charts-axes-number/), the interval property should be a number. Ticks will be displayed at every interval
+For [Number Axes](/charts-axes-types/#number), the interval property should be a number. Ticks will be displayed at every interval
 value within the axis range. For instance, with an interval of `5`, the ticks will appear at `0`, `5`, `10`, and so on.
 
 ```js
@@ -31,11 +31,11 @@ The following example demonstrates how to specify the tick interval on a number 
 
 <chart-example title='Number Axis Tick Interval' name='axis-tick-interval' type='generated'></chart-example>
 
-For [Log Axes](/charts-axes-log/) the interval attribute should be assigned a numerical value. This number increments 
+For [Log Axes](/charts-axes-types/#log) the interval attribute should be assigned a numerical value. This number increments 
 the exponent to which the base of the logarithm is elevated. For instance, an interval of `2` will display values like
 `10^0`, `10^2`, `10^4`, and so on.
 
-For [Time Axes](/charts-axes-time/) the interval property should represent a time interval, such as `time.month`, which 
+For [Time Axes](/charts-axes-types/#time) the interval property should represent a time interval, such as `time.month`, which 
 displays a tick every month. You can also utilise an interval based on predefined time intervals, like `time.month.every(3)`, 
 to customise the frequency of the ticks.
 
@@ -101,4 +101,4 @@ The following example demonstrates how to specify min / max tick spacing:
 
 ## Next Up
 
-Continue to the next section to learn more about [overlays](/charts-overlays/).
+Continue to the next section to learn more about [Axis Labels](/charts-axes-labels/).

@@ -1993,27 +1993,7 @@
                 "items": [
                   {
                     "title": "Axis Types",
-                    "url": "/charts-axes-types/",
-                    "matrixExcludeChildren": true,
-                    "showInCollapsed": true,
-                    "items": [
-                      {
-                        "title": "Category",
-                        "url": "/charts-axes-category/"
-                      },
-                      {
-                        "title": "Number",
-                        "url": "/charts-axes-number/"
-                      },
-                      {
-                        "title": "Log",
-                        "url": "/charts-axes-log/"
-                      },
-                      {
-                        "title": "Time",
-                        "url": "/charts-axes-time/"
-                      }
-                    ]
+                    "url": "/charts-axes-types/"
                   },
                   {
                     "title": "Axis Ticks",
@@ -2026,15 +2006,6 @@
                   {
                     "title": "Grid Lines",
                     "url": "/charts-axes-grid-lines/"
-                  },
-                  {
-                    "title": "Cross Lines",
-                    "url": "/charts-axes-cross-lines/"
-                  },
-                  {
-                    "title": "Crosshairs",
-                    "url": "/charts-axes-crosshairs/",
-                    "enterprise": "charts"
                   },
                   {
                     "title": "Multiple Axes",
@@ -2065,6 +2036,15 @@
               {
                 "title": "Tooltips",
                 "url": "/charts-tooltips/"
+              },
+              {
+                "title": "Cross Lines",
+                "url": "/charts-axes-cross-lines/"
+              },
+              {
+                "title": "Crosshairs",
+                "url": "/charts-axes-crosshairs/",
+                "enterprise": "charts"
               },
               {
                 "title": "Context Menu",

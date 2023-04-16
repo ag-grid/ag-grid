@@ -23,4 +23,4 @@ Each config object in the `gridStyle` array is alternately applied to the grid l
 
 ## Next Up
 
-Continue to the next section to learn more about [overlays](/charts-overlays/).
+Continue to the next section to learn more about [Multiple Axes](/charts-axes-multiple/).

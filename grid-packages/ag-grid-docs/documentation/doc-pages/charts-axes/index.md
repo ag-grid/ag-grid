@@ -8,10 +8,6 @@ This section provides an overview of the different chart axes elements.
 As shown above, Axes contain the following elements:
 
 - **[Axis Types](/charts-axes-types/)**: lists the different axis types.
-  - **[Category Axis](/charts-axes-category/)**: displays discrete data, such as categories, labels or names.
-  - **[Number Axis](/charts-axes-number/)**: displays numerical data, such as numbers, percentages, or currency values.
-  - **[Log Axis](/charts-axes-log/)**: displays data that spans several orders of magnitude.
-  - **[Time Axis](/charts-axes-time/)**: displays chronological data, such as dates and times.
 - **[Axis Ticks](/charts-axes-ticks/)**: the axis lines placed at the axis values.
 - **[Axis Labels](/charts-axes-labels/)**: shows the data values along the axis.
 - **[Grid Lines](/charts-axes-grid-lines/)**: lines that appear inside the chart area to identify chart values against the axis.
@@ -20,4 +16,4 @@ As shown above, Axes contain the following elements:
 
 ## Next Up
 
-Continue to the next section to learn about [Axis Types](/axes-types/).
+Continue to the next section to learn about [Axis Types](/charts-axes-types/).

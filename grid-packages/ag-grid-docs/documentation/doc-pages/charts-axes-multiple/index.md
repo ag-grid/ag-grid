@@ -22,7 +22,3 @@ Note, that we are:
 - set the right number axis `keys` to match the `yKey` of the `line` series
 
 <chart-example title='Multiple y-axes' name='multiple-axes' type='generated'></chart-example>
-
-## Next Up
-
-Continue to the next section to learn more about [overlays](/charts-overlays/).
