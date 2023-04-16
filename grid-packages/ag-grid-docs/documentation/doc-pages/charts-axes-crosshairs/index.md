@@ -1,5 +1,5 @@
 ---
-title: "Axis Crosshairs"
+title: "Crosshairs"
 enterprise: true
 ---
 Crosshairs show a reference line on the chart, along with the corresponding axis value at a specific position.

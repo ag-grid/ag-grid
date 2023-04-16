@@ -101,4 +101,4 @@ The following example demonstrates how to specify min / max tick spacing:
 
 ## Next Up
 
-Continue to the next section to learn more about [Axis Labels](/charts-axes-labels/).
+Continue to the next section to learn about [Axis Labels](/charts-axes-labels/).

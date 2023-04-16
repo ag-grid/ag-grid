@@ -1,5 +1,5 @@
 ---
-title: "Axis Cross Lines"
+title: "Cross Lines"
 ---
 Cross lines are lines or shaded areas in a chart that can highlight important information like trends and thresholds, making them useful for data analysis.
 

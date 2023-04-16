@@ -205,4 +205,4 @@ Please see the [Axis Ticks](#axis-ticks) section to learn more about tick interv
 
 ## Next Up
 
-Continue to the next section to learn more about [Grid Lines](/charts-axes-grid-lines/).
+Continue to the next section to learn about [Grid Lines](/charts-axes-grid-lines/).

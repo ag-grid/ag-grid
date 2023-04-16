@@ -11,8 +11,7 @@ As shown above, Axes contain the following elements:
 - **[Axis Ticks](/charts-axes-ticks/)**: the axis lines placed at the axis values.
 - **[Axis Labels](/charts-axes-labels/)**: shows the data values along the axis.
 - **[Grid Lines](/charts-axes-grid-lines/)**: lines that appear inside the chart area to identify chart values against the axis.
-- **[Multiple Axes](/charts-axes-multiple/)**: multiple axes (secondary y-axis) that correspond to different data series.
-- **[Cross Lines](/charts-axes-cross-lines/)**: Cross lines display a vertical or horizontal lines across a chart region.
+- **[Secondary Axis](/charts-axes-secondary/)**: multiple axes (secondary y-axis) that correspond to different data series.
 
 ## Next Up
 
