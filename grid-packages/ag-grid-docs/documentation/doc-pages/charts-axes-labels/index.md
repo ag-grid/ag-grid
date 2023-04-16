@@ -1,14 +1,9 @@
 ---
 title: "Axis Labels"
 ---
+Axis labels, positioned on the X and Y axes of a chart, supply context for the depicted data, making it easier for users to comprehend.
 
-This section covers axis labels.
-
-## Axis Labels
-
-The axis renders a label next to every tick to show the tick's value. Chart axis labels support the same font and colour options as the axis title. Additionally, the distance of the labels from the ticks and their rotation can be configured via the `padding`, `rotation` and `autoRotate` properties respectively.
-
-### Label Rotation & Skipping
+## Label Rotation & Skipping
 
 Label rotation allows a trade-off to be made between space occupied by the axis, series area, and readability of the axis
 labels.
@@ -53,7 +48,7 @@ The following example demonstrates label rotation and skipping:
 <chart-example title='Axis Label Rotation & Skipping' name='axis-label-rotation' type='generated'></chart-example>
 
 
-### Label Formatting
+## Label Formatting
 
 A label formatter function can be used to change the value displayed in the label. It's a handy feature when you need to show units next to values or format number values to a certain precision.
 
@@ -74,7 +69,7 @@ formatter: function(params) {
 
 <chart-example title='Axis Label Formatter' name='axis-label-formatter' type='generated'></chart-example>
 
-#### Number Label Format String
+### Number Formatting 
 
 For number axes, a format string can be provided, which will be used to format the numbers for display as axis labels.
 The format string may contain the following directives, which reflect those from Python's <a href="https://docs.python.org/3/library/string.html#format-specification-mini-language" target="_blank">format specification</a>:
@@ -126,9 +121,9 @@ The `label` config of the left axis in the example below uses the `'🌧️ #{0>
 Notice that we wrapped the number format in `#{}` since we want to prepend the formatted value with the weather icon
 and to append the units used at the end.
 
-<chart-example title='Number Axis Label Format' name='number-axis-label-format' type='generated'></chart-example>
+<chart-example title='Number Formatting' name='number-axis-label-format' type='generated'></chart-example>
 
-#### Number Currency Format
+### Currency Formatting
 
 Let's take a look at another example that illustrates a common requirement of formatting numbers as currency. Note that we are using:
 - the `s` SI prefix directive to shorten big numbers by using smaller numbers in combination with units,
@@ -149,9 +144,9 @@ to do is to format the original value using that generated formatter `params.for
 and replace the SI units with the currency ones `.replace('k', 'K').replace('G', 'B')`.
 
 
-<chart-example title='Number Axis Currency Format' name='number-axis-currency-format' type='generated'></chart-example>
+<chart-example title='Currency Formatting' name='number-axis-currency-format' type='generated'></chart-example>
 
-#### Time Label Format String
+### Time Formatting
 
 For time axes, a format string can be provided, which will be used to format the dates for display as axis labels. The format string may contain the following directives, which reflect those from Python's <a href="https://strftime.org/" target="_blank">strftime</a>:
 
@@ -207,19 +202,6 @@ The `label` config of the bottom axis in the example below uses the `'%b&nbsp;%Y
 Notice that the `label.format` property only affects label formatting but not segmentation. The fact that axis labels were configured to show the name of the month and the year doesn't mean that the axis will show a tick every month. To ensure that it does, we also set the `tick.interval` config to use the `time.month` interval.
 
 Please see the [Axis Ticks](#axis-ticks) section to learn more about tick intervals.
-
-## Axis Grid Lines
-
-Chart axes feature grid lines by default. Grid lines extend from axis ticks on the other side of the axis into the series area, so that it's easy to trace a series item such as a marker to a corresponding tick/label.
-
-Grid lines have the same stroke width as ticks.
-
-Grid lines of each axis can be styled individually via the `gridStyle` config. The config takes an array of objects with two properties:
-
-- `stroke`: colour string in hex, <a href="https://www.w3.org/TR/css-color-4/#typedef-named-color" target="blank">named</a>, rgb, or rgba format.
-- `lineDash`: an array of numbers that specify distances to alternately draw a line and a gap. If the number of elements in the array is odd, the elements of the array get copied and concatenated. For example, `[5, 15, 25]` will become `[5, 15, 25, 5, 15, 25]`. If the array is empty, the grid lines will be solid without any dashes.
-
-Each config object in the `gridStyle` array is alternately applied to the grid lines of the axis.
 
 ## Next Up
 

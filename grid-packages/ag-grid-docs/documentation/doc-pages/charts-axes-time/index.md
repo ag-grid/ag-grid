@@ -19,4 +19,4 @@ The time axis also supports specifier strings to control the way time values are
 
 ## Next Up
 
-Continue to the next section to learn about the [Time Axis](/charts-axes-time/).
+Continue to the next section to learn about the [Axis Ticks](/charts-axes-ticks/).

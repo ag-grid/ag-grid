@@ -12,7 +12,6 @@ As shown above, Axes contain the following elements:
   - **[Number Axis](/charts-axes-number/)**: displays numerical data, such as numbers, percentages, or currency values.
   - **[Log Axis](/charts-axes-log/)**: displays data that spans several orders of magnitude.
   - **[Time Axis](/charts-axes-time/)**: displays chronological data, such as dates and times.
-- **[Axis Title](/charts-axes-title/)**: the axis title shows text alongside the axis line.
 - **[Axis Ticks](/charts-axes-ticks/)**: the axis lines placed at the axis values.
 - **[Axis Labels](/charts-axes-labels/)**: shows the data values along the axis.
 - **[Grid Lines](/charts-axes-grid-lines/)**: lines that appear inside the chart area to identify chart values against the axis.
