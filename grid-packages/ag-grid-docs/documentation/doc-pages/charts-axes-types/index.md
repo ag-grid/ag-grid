@@ -27,6 +27,8 @@ axes: [
 The category axis will attempt to render an [Axis Tick](/charts-axes-ticks/), [Axis Label](/charts-axis-labels/) and
 [Grid Line](/charts-axis-grid-lines/) for each category with even spacing.
 
+For a full list of configuration options see [Category Axis Options](#category-axis-options).
+
 ## Number
 
 A number axis is used to display continuous numerical values in a chart.
@@ -50,6 +52,8 @@ axes: [
 ]
 ```
 
+For a full list of configuration options see [Number Axis Options](#number-axis-options).
+
 ## Time
 
 The time axis is similar to the number axis in the sense that it is also used to plot continuous values. The time axis can even be used with numeric data (in addition to `Date` objects), but the numbers will be interpreted as Unix timestamps. The time axis differs from the number axis in tick segmentation and label formatting. For example, you could choose to place a tick every 5 minutes, every month, or every Friday.
@@ -62,6 +66,8 @@ The time axis also supports specifier strings to control the way time values are
     position: 'bottom'
 }
 ```
+
+For a full list of configuration options see [Time Axis Options](#time-axis-options).
 
 ## Log
 
@@ -102,9 +108,9 @@ you to change the base to any number you like, for example `Math.E` for natural 
 }
 ```
 
-<interface-documentation interfaceName='AgLogAxisOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }' exclude='["position", "title", "line", "label", "gridStyle", "keys"]'></interface-documentation>
+For a full list of configuration options see [Log Axis Options](#log-axis-options).
 
-All of the above points are demonstrated by the example below.
+These configurations above are demonstrated in the following example:
 
 <chart-example title='Log Axis' name='number-vs-log' type='generated'></chart-example>
 
@@ -113,16 +119,16 @@ All of the above points are demonstrated by the example below.
 
 ## API Reference
 
-### Category Axis
+### Category Axis Options
 <interface-documentation interfaceName='AgCategoryAxisOptions' overridesrc="charts-api/api.json" exclude='["keys"]' config='{ "description": "", "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
 
-### Number Axis
+### Number Axis Options
 <interface-documentation interfaceName='AgNumberAxisOptions' overridesrc="charts-api/api.json" exclude='["keys"]' config='{ "description": "", "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
 
-### Time Axis
+### Time Axis Options
 <interface-documentation interfaceName='AgTimeAxisOptions' overridesrc="charts-api/api.json" exclude='["keys"]' config='{ "description": "", "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
 
-### Log Axis
+### Log Axis Options
 <interface-documentation interfaceName='AgLogAxisOptions' overridesrc="charts-api/api.json" exclude='["keys"]' config='{ "description": "", "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
 
 ## Next Up
