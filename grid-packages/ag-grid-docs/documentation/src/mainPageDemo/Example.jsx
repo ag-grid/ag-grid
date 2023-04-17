@@ -82,9 +82,9 @@ export class CountryCellRendererJs {
             this.eGui.innerHTML = params.value;
         } else {
             // Get flags from here: http://www.freeflagicons.com/
-            var flag = `<img border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/${
-                COUNTRY_CODES[params.value]
-            }.png">`;
+            var flag = `<img border="0" width="15" height="10" alt="${
+                params.value
+            } flag"  src="https://flags.fmcdn.net/data/flags/mini/${COUNTRY_CODES[params.value]}.png">`;
             this.eGui.innerHTML = flag + ' ' + params.value;
         }
     }
