@@ -235,7 +235,8 @@ gatsby-fast-refresh {
 
     img {
         grid-area: icon;
-        width: 100%;
+        width: var(--icon-size);
+        height: var(--icon-size);
     }
 
     h3 {
