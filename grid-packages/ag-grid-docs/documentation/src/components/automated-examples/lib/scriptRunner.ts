@@ -412,6 +412,10 @@ export function createScriptRunner({
     };
 
     const play: ScriptRunner['play'] = ({ loop } = {}) => {
+        if (runScriptState === 'playing') {
+            return;
+        }
+
         loopScript = loop === undefined ? loopScript : Boolean(loop);
 
         playAgain();
