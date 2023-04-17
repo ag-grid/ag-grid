@@ -370,7 +370,6 @@ export class LazyCache extends BeanStub {
             this.nodesToRefresh.delete(node);
             node.__needsRefreshWhenVisible = false;
 
-            if (data === null) debugger;
             // if the node is the same, just update the content
             if (this.doesNodeMatch(data, node)) {
                 this.blockUtils.updateDataIntoRowNode(node, data);
