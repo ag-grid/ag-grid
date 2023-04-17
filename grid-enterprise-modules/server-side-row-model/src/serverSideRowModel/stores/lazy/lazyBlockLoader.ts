@@ -153,7 +153,6 @@ export class LazyBlockLoader extends BeanStub {
     private getNextBlockToLoad(): [string, number] | null {
         const result = this.getBlockToLoad();
         if (result != null && result < 0) {
-            debugger;
             this.getBlockToLoad();
         }
         if (result != null) {

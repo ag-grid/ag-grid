@@ -21,9 +21,6 @@ export class MultiIndexMap<K> {
     }
 
     public set(item: K) {
-        if ((item as any).index < 0) {
-            debugger;
-        }
         this.indexes.forEach(index => {
             const map = this.maps.get(index);
             if (!map) {
