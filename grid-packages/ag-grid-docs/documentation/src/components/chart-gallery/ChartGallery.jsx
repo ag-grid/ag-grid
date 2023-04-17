@@ -14,7 +14,6 @@ const ChartGallery = () => {
         .filter(filter);
 
     return <>
-        <h2 id='gallery' className={styles['chart-gallery__title']}>Gallery</h2>
         {categories.map(c => <GallerySection key={c} title={c} exampleNames={Object.keys(chartGallery[c]).filter(filter)} />)}
     </>;
 };
