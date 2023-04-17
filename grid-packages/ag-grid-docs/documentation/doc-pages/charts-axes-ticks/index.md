@@ -62,7 +62,7 @@ tick: {
 }
 ```
 
-<chart-example title='Time Axis Label Format' name='time-axis-label-format' type='generated'></chart-example>
+<chart-example title='Time Axis Tick Interval' name='time-axis-label-format' type='generated'></chart-example>
 
 ### Tick Values
 
