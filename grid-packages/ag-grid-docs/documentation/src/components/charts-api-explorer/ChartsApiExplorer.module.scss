@@ -9,6 +9,12 @@
     overflow: hidden;
     padding-top: 0 !important;
 
+    h2:first-child,
+    h3:first-child,
+    h4:first-child {
+        margin-top: 0 !important;
+    }
+
     &__body {
         display: flex;
         flex-direction: row;
