@@ -1,5 +1,5 @@
 import { Group } from '@tweenjs/tween.js';
-import { getCell, getCellPos } from '../agQuery';
+import { AgElementFinder } from '../agElements';
 import { Mouse } from '../createMouse';
 import { getScrollOffset } from '../dom';
 import { addPoints, minusPoint } from '../geometry';
@@ -9,7 +9,7 @@ import { createTween } from './createTween';
 import { moveMouse } from './move';
 
 interface DragRangeParams {
-    containerEl?: HTMLElement;
+    agElementFinder: AgElementFinder;
     mouse: Mouse;
     startCol: number;
     startRow: number;
@@ -22,7 +22,7 @@ interface DragRangeParams {
 }
 
 export async function dragRange({
-    containerEl,
+    agElementFinder,
     mouse,
     startCol,
     startRow,
@@ -33,24 +33,29 @@ export async function dragRange({
     tweenGroup,
     scriptDebugger,
 }: DragRangeParams) {
-    const fromPos = getCellPos({ containerEl, colIndex: startCol, rowIndex: startRow });
+    const startCell = agElementFinder.get('cell', {
+        colIndex: startCol,
+        rowIndex: startRow,
+    });
+    const fromPos = startCell?.getPos();
     if (!fromPos) {
         scriptDebugger?.errorLog(`Start position not found: col=${startCol}, row=${startRow}`);
         return;
     }
 
-    const toPos = getCellPos({ containerEl, colIndex: endCol, rowIndex: endRow });
+    const toPos = agElementFinder
+        .get('cell', {
+            colIndex: endCol,
+            rowIndex: endRow,
+        })
+        ?.getPos();
     if (!toPos) {
         scriptDebugger?.errorLog(`End position not found: col=${endCol}, row=${endRow}`);
         return;
     }
 
-    const startCell = getCell({
-        containerEl,
-        colIndex: startCol,
-        rowIndex: startRow,
-    });
-    if (!startCell) {
+    const startCellEl = startCell?.get();
+    if (!startCellEl) {
         scriptDebugger?.errorLog(`Start cell not found: col=${startCol}, row=${startRow}`);
         return;
     }
@@ -59,7 +64,7 @@ export async function dragRange({
         clientY: fromPos.y,
         bubbles: true,
     });
-    startCell.dispatchEvent(mouseDownEvent);
+    startCellEl.dispatchEvent(mouseDownEvent);
 
     const offset = mouse.getOffset();
     const scrollOffset = getScrollOffset();
@@ -94,5 +99,5 @@ export async function dragRange({
         clientY: toPos.y,
         bubbles: true,
     });
-    startCell.dispatchEvent(mouseUpEvent);
+    startCellEl.dispatchEvent(mouseUpEvent);
 }

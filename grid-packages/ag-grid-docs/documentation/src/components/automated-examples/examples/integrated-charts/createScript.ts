@@ -1,7 +1,6 @@
 import { Group } from '@tweenjs/tween.js';
 import { GridOptions } from 'ag-grid-community';
 import { createAgElementFinder } from '../../lib/agElements';
-import { getCellPos } from '../../lib/agQuery';
 import { Mouse } from '../../lib/createMouse';
 import { getBottomMidPos, getOffset } from '../../lib/dom';
 import { addPoints } from '../../lib/geometry';
@@ -61,7 +60,13 @@ export const createScript = ({
         // Select start cell
         {
             type: 'moveTo',
-            toPos: () => getCellPos({ containerEl, colIndex: START_CELL_COL_INDEX, rowIndex: START_CELL_ROW_INDEX }),
+            toPos: () =>
+                agElementFinder
+                    .get('cell', {
+                        colIndex: START_CELL_COL_INDEX,
+                        rowIndex: START_CELL_ROW_INDEX,
+                    })
+                    ?.getPos(),
             speed: 2,
         },
         { type: 'mouseDown' },
@@ -71,7 +76,7 @@ export const createScript = ({
             type: 'custom',
             action() {
                 return dragRange({
-                    containerEl,
+                    agElementFinder,
                     mouse,
                     startCol: START_CELL_COL_INDEX,
                     startRow: START_CELL_ROW_INDEX,

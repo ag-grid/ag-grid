@@ -1,5 +1,5 @@
 import { Group } from '@tweenjs/tween.js';
-import { getCellPos, getContextMenuItemPos } from '../agQuery';
+import { AgElementFinder } from '../agElements';
 import { Mouse } from '../createMouse';
 import { findElementWithInnerText } from '../dom';
 import { ScriptDebugger } from '../scriptDebugger';
@@ -9,7 +9,6 @@ import { mouseClick } from './mouseClick';
 import { waitFor } from './waitFor';
 
 export interface ClickOnContextMenuItemParams {
-    containerEl?: HTMLElement;
     mouse: Mouse;
     cellColIndex: number;
     cellRowIndex: number;
@@ -23,11 +22,11 @@ export interface ClickOnContextMenuItemParams {
      * @see https://createjs.com/docs/tweenjs/classes/Ease.html
      */
     easing?: EasingFunction;
+    agElementFinder: AgElementFinder;
     scriptDebugger?: ScriptDebugger;
 }
 
 export async function clickOnContextMenuItem({
-    containerEl,
     mouse,
     cellColIndex,
     cellRowIndex,
@@ -36,11 +35,17 @@ export async function clickOnContextMenuItem({
     duration,
     tweenGroup,
     easing,
+    agElementFinder,
     scriptDebugger,
 }: ClickOnContextMenuItemParams): Promise<void> {
     await mouseClick({
         mouse,
-        coords: getCellPos({ containerEl, colIndex: cellColIndex, rowIndex: cellRowIndex })!,
+        coords: agElementFinder
+            .get('cell', {
+                colIndex: cellColIndex,
+                rowIndex: cellRowIndex,
+            })
+            ?.getPos()!,
         clickType: 'right',
         scriptDebugger,
     });
@@ -48,7 +53,12 @@ export async function clickOnContextMenuItem({
 
     for (let i = 0; i < menuItemPath.length; i++) {
         const menuItemName = menuItemPath[i];
-        const coords = getContextMenuItemPos({ containerEl, menuItemName });
+
+        const coords = agElementFinder
+            .get('contextMenuItem', {
+                text: menuItemName,
+            })
+            ?.getPos();
         const menuItemTextEl = findElementWithInnerText({ selector: '.ag-menu-option-text', text: menuItemName });
         const menuItemEl = menuItemTextEl?.parentElement;
         const isLastMenuItem = i === menuItemPath.length - 1;

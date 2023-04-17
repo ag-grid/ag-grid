@@ -119,7 +119,7 @@ interface CreateRangeChartAction {
 
 interface ClickOnContextMenuItemAction {
     actionType: 'clickOnContextMenuItem';
-    actionParams: ClickOnContextMenuItemParams;
+    actionParams: Omit<ClickOnContextMenuItemParams, 'agElementFinder'>;
 }
 
 interface MoveToElementAndClickAction {
@@ -184,7 +184,7 @@ export function createAGActionCreator({
             const action = agAction as DragColumnToRowGroupPanelAction;
 
             // NOTE: Need to return promise, so that it gets resolved downstream
-            return dragColumnToRowGroupPanel({ containerEl, scriptDebugger, ...action.actionParams });
+            return dragColumnToRowGroupPanel({ agElementFinder, scriptDebugger, ...action.actionParams });
         } else if (actionType === 'toggleGroupCell') {
             const action = agAction as ToggleGroupCellAction;
             const expandParents = !action.actionParams.skipParents;
@@ -204,10 +204,10 @@ export function createAGActionCreator({
             gridOptions?.api?.setFocusedCell(action.actionParams.rowIndex, firstCol);
         } else if (actionType === 'selectSingleCell') {
             const action = agAction as SelectSingleCellAction;
-            selectSingleCell({ containerEl, ...action.actionParams });
+            selectSingleCell({ agElementFinder, ...action.actionParams });
         } else if (actionType === 'clearSelectSingleCell') {
             const action = agAction as ClearSelectSingleCellAction;
-            clearSingleCell({ containerEl, ...action.actionParams });
+            clearSingleCell({ agElementFinder, ...action.actionParams });
         } else if (actionType === 'clearAllSingleCellSelections') {
             clearAllSingleCellSelections();
         } else if (actionType === 'clearRangeSelection') {
@@ -235,7 +235,7 @@ export function createAGActionCreator({
         } else if (actionType === 'clickOnContextMenuItem') {
             const action = agAction as ClickOnContextMenuItemAction;
             // NOTE: Need to return promise, so that it gets resolved downstream
-            return clickOnContextMenuItem({ containerEl, scriptDebugger, ...action.actionParams });
+            return clickOnContextMenuItem({ agElementFinder, scriptDebugger, ...action.actionParams });
         } else if (actionType === 'moveToElementAndClick') {
             const action = agAction as MoveToElementAndClickAction;
             return moveToElementAndClick({
