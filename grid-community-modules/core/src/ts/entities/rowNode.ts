@@ -138,9 +138,6 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     /** Used by server side row model, true if this row node failed a load */
     public failedLoad: boolean;
 
-    /** Used by server side row model, true if this row node requires reload */
-    public __needsRefresh: boolean;
-
     /** Used by server side row model, true if this node needs refreshed by the server when in viewport */
     public __needsRefreshWhenVisible: boolean;
 

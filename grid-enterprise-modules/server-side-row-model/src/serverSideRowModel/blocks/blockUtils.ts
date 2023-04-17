@@ -56,7 +56,6 @@ export class BlockUtils extends BeanStub {
 
         // stub gets set to true here, and then false when this rowNode gets it's data
         rowNode.stub = true;
-        rowNode.__needsRefresh = false;
         rowNode.__needsRefreshWhenVisible = false;
 
         if (rowNode.group) {
