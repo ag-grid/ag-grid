@@ -1,11 +1,3 @@
-.ag-chart-tooltip-arrow::after {
-  all: unset;
-}
-
-.ag-chart-tooltip-arrow::before {
-  all: unset;
-}
-
 #myChart {
   height: 100%;
 }
