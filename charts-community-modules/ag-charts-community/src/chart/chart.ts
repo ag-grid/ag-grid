@@ -282,6 +282,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.interactionManager.addListener('hover', (event) => this.onMouseMove(event));
         this.interactionManager.addListener('leave', (event) => this.onLeave(event));
         this.interactionManager.addListener('page-left', () => this.destroy());
+        this.interactionManager.addListener('wheel', () => this.disablePointer());
 
         this.zoomManager.addListener('zoom-change', (_) =>
             this.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true })
@@ -980,6 +981,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         };
 
         const meta = this.mergePointerDatum({ pageX, pageY, offsetX, offsetY, event: event, position }, pick.datum);
+        meta.enableInteraction = pick.series.tooltip.interaction?.enabled ?? false;
 
         if (shouldUpdateTooltip) {
             this.tooltipManager.updateTooltip(this.id, meta, html);

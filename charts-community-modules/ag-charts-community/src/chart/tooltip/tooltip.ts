@@ -123,6 +123,7 @@ export interface TooltipMeta {
         xOffset?: number;
         yOffset?: number;
     };
+    enableInteraction?: boolean;
     event: Event | InteractionEvent<any>;
 }
 
@@ -179,6 +180,8 @@ export class Tooltip {
     private readonly canvasElement: HTMLElement;
     private readonly tooltipRoot: HTMLElement;
 
+    private enableInteraction: boolean = false;
+
     @Validate(BOOLEAN)
     enabled: boolean = true;
 
@@ -194,9 +197,6 @@ export class Tooltip {
 
     @Validate(INTERACTION_RANGE)
     range: AgChartInteractionRange = 'nearest';
-
-    @Validate(BOOLEAN)
-    enableInteraction: boolean = false;
 
     readonly position: TooltipPosition = new TooltipPosition();
 
@@ -311,6 +311,8 @@ export class Tooltip {
 
         this.constrained = left !== naiveLeft || top !== naiveTop;
         element.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
+
+        this.enableInteraction = meta.enableInteraction ?? false;
 
         if (this.delay > 0 && !instantly) {
             this.toggle(false);

@@ -160,7 +160,14 @@ export class SeriesTooltip {
     @Validate(BOOLEAN)
     enabled = true;
 
+    interaction?: SeriesTooltipInteraction = new SeriesTooltipInteraction();
+
     readonly position: TooltipPosition = new TooltipPosition();
+}
+
+export class SeriesTooltipInteraction {
+    @Validate(BOOLEAN)
+    enabled = false;
 }
 
 export type SeriesNodeDataContext<S = SeriesNodeDatum, L = S> = {

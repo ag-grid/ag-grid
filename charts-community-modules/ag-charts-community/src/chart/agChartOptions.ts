@@ -504,8 +504,6 @@ export interface AgChartTooltipOptions {
     position?: AgTooltipPositionOptions;
     /** The time interval (in milliseconds) after which the tooltip is shown. */
     delay?: number;
-    /** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */
-    enableInteraction?: boolean;
 }
 
 export type AgTooltipPositionType = 'pointer' | 'node';
@@ -1092,6 +1090,13 @@ export interface AgSeriesTooltip {
     enabled?: boolean;
     /** The position of the tooltip. By default the tooltip follows the mouse pointer. */
     position?: AgTooltipPositionOptions;
+    /** Configuration for tooltip interaction. */
+    interaction?: AgSeriesTooltipInteraction;
+}
+
+export interface AgSeriesTooltipInteraction {
+    /** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */
+    enabled: boolean;
 }
 
 export interface AgCartesianSeriesLabelFormatterParams {
