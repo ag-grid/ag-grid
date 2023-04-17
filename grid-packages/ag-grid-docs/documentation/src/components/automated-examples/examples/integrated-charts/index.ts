@@ -58,9 +58,9 @@ const columnDefs: ColDef[] = [
         enableRowGroup: true,
         cellRenderer: (params) => {
             // put the value in bold
-            return `<img border="0" width="20" height="10" src='${getCountryFlagImageUrl(params.data.country)}' /> ${
-                params.value
-            }`;
+            return `<img border="0" width="21" height="14" alt="${params.value} flag" src='${getCountryFlagImageUrl(
+                params.data.country
+            )}' /> ${params.value}`;
         },
     },
     { field: 'jan', type: 'measure', enableRowGroup: true },
