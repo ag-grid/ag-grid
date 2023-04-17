@@ -30,13 +30,19 @@ import styles from './doc-page.module.scss';
 
 const lzString = require('lz-string');
 
+const suppressSideMenu = (pageName) => {
+    const pagesToSuppress = ['charts-overview'];
+    return pagesToSuppress.includes(pageName);
+}
+
+
 /**
  * This template is used for documentation pages, i.e. those generated from Markdown files.
  */
 const DocPageTemplate = ({ data, pageContext: { framework, jsonDataAsString, exampleIndexData, pageName } }) => {
     const jsonData = jsonDataAsString ? JSON.parse(lzString.decompress(jsonDataAsString)) : null;
     const { markdownRemark: page } = data;
-    const [showSideMenu, setShowSideMenu] = useState(true);
+    const [showSideMenu, setShowSideMenu] = useState(!suppressSideMenu(pageName));
 
     if (!page) {
         return null;
@@ -237,12 +243,12 @@ const DocPageTemplate = ({ data, pageContext: { framework, jsonDataAsString, exa
                 <div className={styles.pageSections}>{renderAst(orphanlessAst)}</div>
             </div>
 
-            <SideMenu
+            {showSideMenu && <SideMenu
                 headings={page.headings || []}
                 pageName={pageName}
                 pageTitle={title}
                 hideMenu={() => setShowSideMenu(false)}
-            />
+            />}
         </div>
     );
 };
