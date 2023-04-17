@@ -7,7 +7,7 @@ function renderer(params: AgCartesianSeriesTooltipRendererParams) {
       ${params.xValue}
     </div>
     <div class="ag-chart-tooltip-content">
-      <a href="/" target="_top">Go to AG Grid</a> | ${params.yValue.toFixed(0)}
+      <a href="#" onclick="window.alert('Clicked within a tooltip')">Click here</a> | ${params.yValue.toFixed(0)}
     </div>`
 }
 
