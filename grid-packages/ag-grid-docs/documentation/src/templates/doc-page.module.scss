@@ -220,4 +220,8 @@
 
     font-size: var(--font-size-extra-large);
     margin-bottom: $size-4;
+
+    code {
+        font-size: 0.8em;
+    }
 }
