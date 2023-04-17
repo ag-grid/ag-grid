@@ -1,6 +1,6 @@
 import { parseDateTimeFromString, serialiseDate } from "../utils/date";
 import { toStringOrNull } from "../utils/generic";
-import { ValueFormatterParams, ValueParserParams } from "./colDef";
+import { BaseColDefOptionalDataParams, ValueFormatterParams, ValueParserParams } from "./colDef";
 
 export type ValueParserLiteParams<TData, TValue> = Omit<ValueParserParams<TData, TValue>, 'data' | 'node' | 'oldValue'>;
 
@@ -14,12 +14,21 @@ export interface ValueFormatterLiteFunc<TData, TValue> {
     (params: ValueFormatterLiteParams<TData, TValue>): string;
 }
 
+export type DataTypeCheckerParams<TData, TValue> = Omit<BaseColDefOptionalDataParams<TData, TValue>, 'data' | 'node'> & {
+    value: TValue | undefined;
+}
+
+export interface DataTypeChecker<TData, TValue> {
+    (params: DataTypeCheckerParams<TData, TValue>): boolean;
+}
+
 export type BaseCellDataType = 'text' | 'number' | 'boolean' | 'date' | 'dateString' | 'object';
 
 interface BaseDataTypeDefinition<TValueType extends BaseCellDataType, TData = any, TValue = any> {
     baseDataType: TValueType;
     valueParser?: ValueParserLiteFunc<TData, TValue>;
 	valueFormatter?: ValueFormatterLiteFunc<TData, TValue>;
+    dataTypeChecker?: DataTypeChecker<TData, TValue>;
 	columnTypes?: string | string[];
     extends: string;
     appendColumnTypes?: boolean;
@@ -62,11 +71,16 @@ export type CoreDataTypeDefinition<TData = any> =
     | Omit<DateStringDataTypeDefinition<TData>, 'extends'>
     | Omit<ObjectDataTypeDefinition<TData, any>, 'extends'>;
 
+function defaultDateFormatMatcher(value: string): boolean {
+    return !!value.match('\\d{4}-\\d{2}-\\d{2}')
+}
+
 export const DEFAULT_DATA_TYPES: { [key: string]: CoreDataTypeDefinition } = {
     number: {
         baseDataType: 'number',
         valueParser: (params: ValueParserLiteParams<any, number>) => params.newValue === '' ? undefined : Number(params.newValue),
         valueFormatter: (params: ValueFormatterLiteParams<any, number>) => params.value == null ? '' : String(params.value),
+        dataTypeChecker: (params: DataTypeCheckerParams<any, number>) => params.value == null || typeof params.value === 'number',
     },
     text: {
         baseDataType: 'text',
@@ -75,6 +89,7 @@ export const DEFAULT_DATA_TYPES: { [key: string]: CoreDataTypeDefinition } = {
         baseDataType: 'boolean',
         valueParser: (params: ValueParserLiteParams<any, boolean>) => params.newValue === '' ? undefined : String(params.newValue).toLowerCase() === 'true',
         valueFormatter: (params: ValueFormatterLiteParams<any, boolean>) => params.value == null ? '' : String(params.value),
+        dataTypeChecker: (params: DataTypeCheckerParams<any, boolean>) => params.value == null || typeof params.value === 'boolean',
     },
     date: {
         baseDataType: 'date',
@@ -85,14 +100,16 @@ export const DEFAULT_DATA_TYPES: { [key: string]: CoreDataTypeDefinition } = {
             if (isNaN(params.value.getTime())) { return params.value.toString() }
             return serialiseDate(params.value, false) ?? '';
         },
+        dataTypeChecker: (params: DataTypeCheckerParams<any, Date>) => params.value == null || params.value instanceof Date,
     },
     dateString: {
         baseDataType: 'dateString',
-        dateMatcher: (value: string) => !!value.match('\\d{4}-\\d{2}-\\d{2}'),
+        dateMatcher: (value: string) => defaultDateFormatMatcher(value),
         dateParser: (value: string | undefined) => parseDateTimeFromString(value) ?? undefined,
         dateFormatter: (value: Date | undefined) => serialiseDate(value ?? null, false) ?? undefined,
-        valueParser: (params: ValueParserLiteParams<any, string>) => String(params.newValue).match('\\d{4}-\\d{2}-\\d{2}') ? params.newValue : undefined,
-        valueFormatter: (params: ValueFormatterLiteParams<any, string>) => String(params.value).match('\\d{4}-\\d{2}-\\d{2}') ? params.value : '',
+        valueParser: (params: ValueParserLiteParams<any, string>) => defaultDateFormatMatcher(String(params.newValue)) ? params.newValue : undefined,
+        valueFormatter: (params: ValueFormatterLiteParams<any, string>) => defaultDateFormatMatcher(String(params.value)) ? params.value : '',
+        dataTypeChecker: (params: DataTypeCheckerParams<any, string>) => params.value == null || (typeof params.value === 'string' && defaultDateFormatMatcher(params.value)),
     },
     object: {
         baseDataType: 'object',

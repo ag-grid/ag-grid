@@ -11,6 +11,7 @@ import { missing, exists } from "../utils/generic";
 import { doOnce } from "../utils/function";
 import { IRowNode } from "../interfaces/iRowNode";
 import { RowNode } from "../entities/rowNode";
+import { DataTypeService } from "../columns/dataTypeService";
 
 @Bean('valueService')
 export class ValueService extends BeanStub {
@@ -18,6 +19,7 @@ export class ValueService extends BeanStub {
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('valueCache') private valueCache: ValueCache;
+    @Autowired('dataTypeService') private dataTypeService: DataTypeService;
 
     private cellExpressions: boolean;
     // Store locally for performance reasons and keep updated via property listener
@@ -147,6 +149,11 @@ export class ValueService extends BeanStub {
 
         if (missing(field) && missing(valueSetter)) {
             console.warn(`AG Grid: you need either field or valueSetter set on colDef for editing to work`);
+            return false;
+        }
+
+        if (!this.dataTypeService.checkType(column, newValue)) {
+            console.warn(`AG Grid: Data type of the new value does not match the cell data type of the column`);
             return false;
         }
 

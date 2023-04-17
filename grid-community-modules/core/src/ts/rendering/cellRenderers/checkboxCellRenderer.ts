@@ -21,10 +21,14 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
 
     public init(params: ICellRendererParams<any, boolean>): void {
         this.params = params;
-        this.eCheckbox.setValue(params.value);
+        this.updateCheckbox(params);
 
         this.addManagedListener(this.eCheckbox.getInputElement(), 'click', (event) => {
             stopPropagationForAgGrid(event);
+
+            if (this.eCheckbox.isDisabled()) {
+                return;
+            }
 
             const isSelected = this.eCheckbox.getValue();
 
@@ -38,8 +42,19 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
 
     public refresh(params: ICellRendererParams<any, boolean>): boolean {
         this.params = params;
-        this.eCheckbox.setValue(params.value);
+        this.updateCheckbox(params);
         return true;
+    }
+
+    private updateCheckbox(params: ICellRendererParams<any, boolean>): void {
+        let isSelected: boolean | undefined;
+        if (params.node.group) {
+            isSelected = params.value == null || (params.value as any) === '' ? undefined : (params.value as any) === 'true';
+        } else {
+            isSelected = params.value;
+        }
+        this.eCheckbox.setValue(isSelected);
+        this.eCheckbox.setDisabled(!params.column?.isCellEditable(params.node));
     }
 
     private onCheckboxChanged(isSelected?: boolean): void {

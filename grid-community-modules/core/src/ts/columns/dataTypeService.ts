@@ -6,6 +6,7 @@ import {
     DataTypeDefinition,
     DateStringDataTypeDefinition,
     DEFAULT_DATA_TYPES,
+    DataTypeCheckerParams,
 } from '../entities/dataType';
 import { IRowModel } from '../interfaces/iRowModel';
 import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
@@ -15,6 +16,7 @@ import { iterateObject } from '../utils/object';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { ModuleNames } from '../modules/moduleNames';
 import { ValueService } from '../valueService/valueService';
+import { Column } from '../entities/column';
 
 @Bean('dataTypeService')
 export class DataTypeService extends BeanStub {
@@ -140,7 +142,7 @@ export class DataTypeService extends BeanStub {
         }
         colDef.cellDataType = cellDataType;
         if (dataTypeDefinition.valueFormatter) {
-            colDef.valueFormatter = dataTypeDefinition.valueFormatter;
+            colDef.valueFormatter = (params: ValueFormatterParams) => params.node?.group ? undefined as any : dataTypeDefinition.valueFormatter!(params as any);
         }
         if (dataTypeDefinition.valueParser) {
             colDef.valueParser = dataTypeDefinition.valueParser;
@@ -216,6 +218,26 @@ export class DataTypeService extends BeanStub {
         return this.getDateStringTypeDefinition().dateFormatter!;
     }
 
+    public checkType(column: Column, value: any): boolean {
+        const colDef = column.getColDef();
+        if (!colDef.cellDataType) {
+            return true;
+        }
+        const typeChecker = this.dataTypeDefinitions[colDef.cellDataType]?.dataTypeChecker;
+        if (!typeChecker) {
+            return true;
+        }
+        const params: DataTypeCheckerParams<any, any> = {
+            value,
+            colDef: column.getColDef(),
+            column: column,
+            api: this.gridOptionsService.api,
+            columnApi: this.gridOptionsService.columnApi,
+            context: this.gridOptionsService.context
+        };
+        return typeChecker(params);
+    }
+
     private setColDefPropertiesForBaseDataType(colDef: ColDef, dataTypeDefinition: DataTypeDefinition | CoreDataTypeDefinition): void {
         const setFilterModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule);
         const translate = this.localeService.getLocaleTextFunc();
@@ -224,6 +246,7 @@ export class DataTypeService extends BeanStub {
                 colDef.headerClass = 'ag-right-aligned-header';
                 colDef.cellClass = 'ag-right-aligned-cell';
                 colDef.cellEditor = 'agNumberCellEditor';
+                colDef.keyCreator = (params: KeyCreatorParams) => dataTypeDefinition.valueFormatter!(params);
                 colDef.useValueFormatterForExport = true;
                 colDef.useValueParserForImport = true;
                 break;
@@ -267,6 +290,7 @@ export class DataTypeService extends BeanStub {
             }
             case 'date': {
                 colDef.cellEditor = 'agDateCellEditor';
+                colDef.keyCreator = (params: KeyCreatorParams) => dataTypeDefinition.valueFormatter!(params);
                 if (setFilterModuleLoaded) {
                     colDef.filterParams = {
                         valueFormatter: dataTypeDefinition.valueFormatter
@@ -278,6 +302,7 @@ export class DataTypeService extends BeanStub {
             }
             case 'dateString': {
                 colDef.cellEditor = 'agDateStringCellEditor';
+                colDef.keyCreator = (params: KeyCreatorParams) => dataTypeDefinition.valueFormatter!(params);
                 colDef.useValueFormatterForExport = true;
                 colDef.useValueParserForImport = true;
                 break;

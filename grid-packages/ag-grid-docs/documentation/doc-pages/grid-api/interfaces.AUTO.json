@@ -1635,6 +1635,17 @@
       "returnType": "string"
     }
   },
+  "DataTypeCheckerParams": {
+    "meta": { "isTypeAlias": true, "typeParams": ["TData", "TValue"] },
+    "type": "Omit<BaseColDefOptionalDataParams<TData, TValue>, 'data' | 'node'> & { value: TValue | undefined; }"
+  },
+  "DataTypeChecker": {
+    "meta": { "isCallSignature": true, "typeParams": ["TData", "TValue"] },
+    "type": {
+      "arguments": { "params": "DataTypeCheckerParams<TData, TValue>" },
+      "returnType": "boolean"
+    }
+  },
   "BaseCellDataType": {
     "meta": { "isTypeAlias": true },
     "type": "'text' | 'number' | 'boolean' | 'date' | 'dateString' | 'object'"
@@ -1651,6 +1662,7 @@
       "baseDataType": "TValueType",
       "valueParser?": "ValueParserLiteFunc<TData, TValue>",
       "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
+      "dataTypeChecker?": "DataTypeChecker<TData, TValue>",
       "columnTypes?": "string | string[]",
       "extends": "string",
       "appendColumnTypes?": "boolean",
@@ -1663,6 +1675,7 @@
       "baseDataType": "TValueType",
       "valueParser?": "ValueParserLiteFunc<TData, TValue>",
       "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
+      "dataTypeChecker?": "DataTypeChecker<TData, TValue>",
       "columnTypes?": "string | string[]",
       "extends": "string",
       "appendColumnTypes?": "boolean",
@@ -1675,6 +1688,7 @@
       "baseDataType": "TValueType",
       "valueParser?": "ValueParserLiteFunc<TData, TValue>",
       "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
+      "dataTypeChecker?": "DataTypeChecker<TData, TValue>",
       "columnTypes?": "string | string[]",
       "extends": "string",
       "appendColumnTypes?": "boolean",
@@ -1687,6 +1701,7 @@
       "baseDataType": "TValueType",
       "valueParser?": "ValueParserLiteFunc<TData, TValue>",
       "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
+      "dataTypeChecker?": "DataTypeChecker<TData, TValue>",
       "columnTypes?": "string | string[]",
       "extends": "string",
       "appendColumnTypes?": "boolean",
@@ -1699,6 +1714,7 @@
       "baseDataType": "TValueType",
       "valueParser?": "ValueParserLiteFunc<TData, TValue>",
       "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
+      "dataTypeChecker?": "DataTypeChecker<TData, TValue>",
       "columnTypes?": "string | string[]",
       "extends": "string",
       "appendColumnTypes?": "boolean",
@@ -1714,6 +1730,7 @@
       "baseDataType": "TValueType",
       "valueParser?": "ValueParserLiteFunc<TData, TValue>",
       "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
+      "dataTypeChecker?": "DataTypeChecker<TData, TValue>",
       "columnTypes?": "string | string[]",
       "extends": "string",
       "appendColumnTypes?": "boolean",
@@ -1726,6 +1743,7 @@
       "baseDataType": "TValueType",
       "valueParser?": "ValueParserLiteFunc<TData, TValue>",
       "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
+      "dataTypeChecker?": "DataTypeChecker<TData, TValue>",
       "columnTypes?": "string | string[]",
       "extends": "string",
       "appendColumnTypes?": "boolean",
