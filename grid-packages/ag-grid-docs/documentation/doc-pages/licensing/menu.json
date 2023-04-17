@@ -13,6 +13,14 @@
             "pane": "left"
           },
           {
+            "title": "React Compatibility",
+            "icon": "react",
+            "url": "/react-compatibility",
+            "frameworks": [
+              "react"
+            ]
+          },
+          {
             "title": "Rendering",
             "icon": "react",
             "url": "/reactui/",
