@@ -3071,9 +3071,15 @@
       "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
-    "enableInteraction": {
+    "interaction": {
+      "description": "/** Configuration for tooltip interaction. */",
+      "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
+    }
+  },
+  "AgSeriesTooltipInteraction": {
+    "enabled": {
       "description": "/** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */",
-      "type": { "returnType": "boolean", "optional": true }
+      "type": { "returnType": "boolean", "optional": false }
     }
   },
   "AgCartesianSeriesLabelFormatterParams": {
@@ -3138,9 +3144,9 @@
       "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
-    "enableInteraction": {
-      "description": "/** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */",
-      "type": { "returnType": "boolean", "optional": true }
+    "interaction": {
+      "description": "/** Configuration for tooltip interaction. */",
+      "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
     }
   },
   "AgLineSeriesOptions": {
@@ -3253,9 +3259,9 @@
       "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
-    "enableInteraction": {
-      "description": "/** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */",
-      "type": { "returnType": "boolean", "optional": true }
+    "interaction": {
+      "description": "/** Configuration for tooltip interaction. */",
+      "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
     }
   },
   "AgScatterSeriesLabelOptions": {
@@ -3441,9 +3447,9 @@
       "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
-    "enableInteraction": {
-      "description": "/** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */",
-      "type": { "returnType": "boolean", "optional": true }
+    "interaction": {
+      "description": "/** Configuration for tooltip interaction. */",
+      "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
     }
   },
   "AgAreaSeriesOptions": {
@@ -3669,9 +3675,9 @@
       "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
-    "enableInteraction": {
-      "description": "/** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */",
-      "type": { "returnType": "boolean", "optional": true }
+    "interaction": {
+      "description": "/** Configuration for tooltip interaction. */",
+      "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
     }
   },
   "AgBarSeriesOptions": {
@@ -3883,9 +3889,9 @@
       "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
-    "enableInteraction": {
-      "description": "/** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */",
-      "type": { "returnType": "boolean", "optional": true }
+    "interaction": {
+      "description": "/** Configuration for tooltip interaction. */",
+      "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
     }
   },
   "AgHistogramBinDatum": {
@@ -4131,9 +4137,9 @@
       "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
-    "enableInteraction": {
-      "description": "/** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */",
-      "type": { "returnType": "boolean", "optional": true }
+    "interaction": {
+      "description": "/** Configuration for tooltip interaction. */",
+      "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
     }
   },
   "AgPieTitleOptions": {
@@ -4674,9 +4680,9 @@
       "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
-    "enableInteraction": {
-      "description": "/** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */",
-      "type": { "returnType": "boolean", "optional": true }
+    "interaction": {
+      "description": "/** Configuration for tooltip interaction. */",
+      "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
     }
   },
   "AgTreemapSeriesLabelsOptions": {

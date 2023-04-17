@@ -204,7 +204,7 @@ The example below shows the three types of interaction range:
 
 ## Interaction with Tooltips
 
-By default, you can not hover over a tooltip or select its text. Set the `tooltip.enableInteraction` flag to `true` to enable selecting the text and clicking links within the tooltip.
+By default, you can not hover over a tooltip or select its text. Set the `series[].tooltip.interaction.enabled` flag to `true` to enable selecting the text and clicking links within the tooltip.
 
 ### Example: Interaction with Tooltips
 

@@ -35,7 +35,9 @@ const options: AgCartesianChartOptions = {
       yName: "Sweaters Made",
       tooltip: {
         renderer,
-        enableInteraction: true,
+        interaction: {
+          enabled: true,
+        },
       },
     },
   ],
