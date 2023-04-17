@@ -68,7 +68,6 @@ const defaultColDef = {
 
 const GridExample = () => {
     const [leftApi, setLeftApi] = useState(null);
-    const [leftColumnApi, setLeftColumnApi] = useState(null);
     const [rightApi, setRightApi] = useState(null);
     const [rawData, setRawData] = useState([]);
     const [leftRowData, setLeftRowData] = useState(null);
@@ -143,7 +142,6 @@ const GridExample = () => {
     const onGridReady = (params, side) => {
         if (side === 0) {
             setLeftApi(params.api);
-            setLeftColumnApi(params.columnApi);
         }
 
         if (side === 1) {

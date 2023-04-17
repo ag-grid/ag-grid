@@ -10,12 +10,12 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
+let rowIdSequence = 100;
 class GridExample extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            rowIdSequence: 100,
 
             leftGridOptions: {
                 defaultColDef: {
@@ -80,15 +80,12 @@ class GridExample extends Component {
 
     createDataItem(color) {
         let newDataItem = {
-            id: this.state.rowIdSequence,
+            id: rowIdSequence++,
             color: color,
             value1: Math.floor(Math.random() * 100),
             value2: Math.floor(Math.random() * 100)
         };
 
-        this.setState({
-            rowIdSequence: this.state.rowIdSequence + 1
-        });
         return newDataItem;
     }
 
