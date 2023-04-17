@@ -2,13 +2,12 @@ import { Group } from '@tweenjs/tween.js';
 import { ApplyColumnStateParams, CreateRangeChartParams, GridOptions } from 'ag-grid-community';
 import { AgElementFinder } from './agElements';
 import { AgElementName } from './agElements/agElementsConfig';
-import { AG_DND_GHOST_SELECTOR } from './constants';
 import { Mouse } from './createMouse';
 import { addCellRange } from './scriptActions/addCellRange';
 import { clickOnContextMenuItem, ClickOnContextMenuItemParams } from './scriptActions/clickOnContextMenuItem';
-import { destoryAllCharts } from './scriptActions/destroyAllCharts';
 import { dragColumnToRowGroupPanel } from './scriptActions/dragColumnToRowGroupPanel';
 import { moveToElementAndClick } from './scriptActions/moveToElementAndClick';
+import { resetGrid } from './scriptActions/resetGrid';
 import { clearAllSingleCellSelections, clearSingleCell, selectSingleCell } from './scriptActions/singleCell';
 import { ScriptDebugger } from './scriptDebugger';
 import { EasingFunction } from './tween';
@@ -174,31 +173,11 @@ export function createAGActionCreator({
 
         if (actionType === 'reset') {
             const action = agAction as ResetAction;
-            gridOptions?.columnApi?.resetColumnState();
-            gridOptions?.columnApi?.resetColumnGroupState();
-            gridOptions?.columnApi?.setColumnsPinned([], null);
-            if (gridOptions?.api) {
-                gridOptions.api.setFilterModel(null);
-                gridOptions.api.closeToolPanel();
-                gridOptions.api.clearRangeSelection();
-                destoryAllCharts(gridOptions.api);
-            }
-            document.querySelector(AG_DND_GHOST_SELECTOR)?.remove();
-            clearAllSingleCellSelections();
-
-            const { scrollRow, scrollColumn } = action.actionParams || {};
-            if (scrollColumn !== undefined) {
-                const allColumns = gridOptions.columnApi!.getColumns();
-                if (allColumns) {
-                    const column = allColumns[scrollColumn];
-                    if (column) {
-                        gridOptions.api!.ensureColumnVisible(column);
-                    }
-                }
-            }
-            if (scrollRow !== undefined) {
-                gridOptions.api!.ensureIndexVisible(scrollRow);
-            }
+            return resetGrid({
+                gridOptions,
+                scrollRow: action.actionParams?.scrollRow,
+                scrollColumn: action.actionParams?.scrollColumn,
+            });
         } else if (actionType === 'resetColumnState') {
             gridOptions?.columnApi?.resetColumnState();
         } else if (actionType === 'dragColumnToRowGroupPanel') {
