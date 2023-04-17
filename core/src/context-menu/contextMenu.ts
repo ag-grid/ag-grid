@@ -11,9 +11,13 @@ type ContextMenuItem = 'download' | ContextMenuAction;
 type ContextMenuAction = { id?: string; label: string; action: (params: ContextMenuActionParams) => void };
 export type ContextMenuActionParams = { datum?: any; event: MouseEvent };
 
+const { BOOLEAN, Validate } = _ModuleSupport;
 const TOOLTIP_ID = 'context-menu';
 
 export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
+    @Validate(BOOLEAN)
+    enabled = false;
+
     /**
      * Extra menu actions with a label and callback.
      */
@@ -152,6 +156,8 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
     }
 
     private onContextMenu(event: _ModuleSupport.InteractionEvent<'contextmenu'>) {
+        if (!this.enabled) return;
+
         this.showEvent = event.sourceEvent as MouseEvent;
         this.x = event.pageX;
         this.y = event.pageY;
