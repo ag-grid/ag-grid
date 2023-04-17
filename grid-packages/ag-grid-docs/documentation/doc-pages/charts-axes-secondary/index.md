@@ -38,7 +38,7 @@ In the snippet above, a secondary y-axis is positioned to the `right` of the cha
 
 The following example demonstrates a secondary y-axis. Note the following:
 
-- The axis `keys` property on the primary axis (left) matches the `yKeys` of the `column` series
-- The axis `keys` property on the secondary axis (right) matches the `yKey` of the `line` series
+- The axis `keys` property on the primary axis (left) matches the `yKeys` of the `column` series.
+- The axis `keys` property on the secondary axis (right) matches the `yKey` of the `line` series.
 
 <chart-example title='Secondary y-axis' name='multiple-axes' type='generated'></chart-example>
