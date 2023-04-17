@@ -114,6 +114,17 @@ $z-index-splash-contents: 10;
         }
     }
 
+    // Set chart thumbnail overrides for .ag-styles specificity
+    :global(.ag-chart-mini-thumbnail) {
+        border: 1px solid var(--ag-secondary-border-color);
+        border-radius: 5px;
+        margin: 5px;
+
+        &:global(.ag-selected) {
+            border-color: var(--ag-minichart-selected-chart-color);
+        }
+    }
+
     // Set mini filter overrides for .ag-styles specificity
     :global(.ag-mini-filter) {
         margin: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);

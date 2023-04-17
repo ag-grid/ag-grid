@@ -116,6 +116,17 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
         }
     }
 
+    // Set chart thumbnail overrides for .ag-styles specificity
+    :global(.ag-chart-mini-thumbnail) {
+        border: 1px solid var(--ag-secondary-border-color);
+        border-radius: 5px;
+        margin: 5px;
+
+        &:global(.ag-selected) {
+            border-color: var(--ag-minichart-selected-chart-color);
+        }
+    }
+
     // Set chart panel button overrides for .ag-styles specificity
     :global(.ag-chart-tool-panel-button-enable) {
         :global(.ag-chart-menu-close) {
