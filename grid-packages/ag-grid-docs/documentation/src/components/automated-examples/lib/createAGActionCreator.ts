@@ -4,6 +4,7 @@ import { AgElementFinder } from './agElements';
 import { AgElementName } from './agElements/agElementsConfig';
 import { AG_DND_GHOST_SELECTOR } from './constants';
 import { Mouse } from './createMouse';
+import { addCellRange } from './scriptActions/addCellRange';
 import { clickOnContextMenuItem, ClickOnContextMenuItemParams } from './scriptActions/clickOnContextMenuItem';
 import { destoryAllCharts } from './scriptActions/destroyAllCharts';
 import { dragColumnToRowGroupPanel } from './scriptActions/dragColumnToRowGroupPanel';
@@ -102,6 +103,16 @@ interface ApplyColumnStateAction {
     actionParams: ApplyColumnStateParams;
 }
 
+interface AddCellRangeAction {
+    actionType: 'addCellRange';
+    actionParams: {
+        rowStartIndex: number;
+        rowEndIndex: number;
+        columnStartIndex: number;
+        columnEndIndex: number;
+    };
+}
+
 interface ClickOnContextMenuItemAction {
     actionType: 'clickOnContextMenuItem';
     actionParams: ClickOnContextMenuItemParams;
@@ -131,6 +142,7 @@ export type AGCreatorAction =
     | OpenToolPanelAction
     | CloseToolPanelAction
     | ApplyColumnStateAction
+    | AddCellRangeAction
     | ClickOnContextMenuItemAction
     | MoveToElementAndClickAction;
 
@@ -223,6 +235,15 @@ export function createAGActionCreator({
         } else if (actionType === 'applyColumnState') {
             const action = agAction as ApplyColumnStateAction;
             gridOptions?.columnApi?.applyColumnState(action.actionParams);
+        } else if (actionType === 'addCellRange') {
+            const action = agAction as AddCellRangeAction;
+            addCellRange({
+                gridOptions,
+                rowStartIndex: action.actionParams.rowStartIndex,
+                rowEndIndex: action.actionParams.rowEndIndex,
+                columnStartIndex: action.actionParams.columnStartIndex,
+                columnEndIndex: action.actionParams.columnEndIndex,
+            });
         } else if (actionType === 'clickOnContextMenuItem') {
             const action = agAction as ClickOnContextMenuItemAction;
             // NOTE: Need to return promise, so that it gets resolved downstream
