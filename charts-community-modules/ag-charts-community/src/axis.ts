@@ -95,9 +95,6 @@ export class AxisLine {
 }
 
 class AxisTick<S extends Scale<D, number>, D = any> {
-    @Validate(BOOLEAN)
-    enabled = true;
-
     /**
      * The line width to be used by axis ticks.
      */
@@ -146,9 +143,6 @@ class AxisTick<S extends Scale<D, number>, D = any> {
 }
 
 export class AxisLabel {
-    @Validate(BOOLEAN)
-    enabled = true;
-
     @Validate(OPT_FONT_STYLE)
     fontStyle?: FontStyle = undefined;
 
@@ -599,7 +593,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             scale,
             gridLength,
             tick,
-            label: { enabled: enabledLabels, parallel: parallelLabels, mirrored, avoidCollisions },
+            label: { parallel: parallelLabels, mirrored, avoidCollisions },
             requestedRange,
         } = this;
         const requestedRangeMin = Math.min(...requestedRange);
@@ -649,8 +643,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         const continuous = scale instanceof ContinuousScale;
         const secondaryAxis = primaryTickCount !== undefined;
 
-        const checkForOverlap =
-            enabledLabels && avoidCollisions && this.tick.interval === undefined && this.tick.values === undefined;
+        const checkForOverlap = avoidCollisions && this.tick.interval === undefined && this.tick.values === undefined;
         const tickSpacing = !isNaN(this.tick.minSpacing) || !isNaN(this.tick.maxSpacing);
         const maxIterations = this.tick.count || !continuous || isNaN(maxTickCount) ? 10 : maxTickCount;
 
@@ -762,8 +755,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         tickLineGroupSelection.each(visibleFn);
         tickLabelGroupSelection.each(visibleFn);
 
-        this.tickLineGroup.visible = this.tick.enabled && anyTickVisible;
-        this.tickLabelGroup.visible = enabledLabels && anyTickVisible;
+        this.tickLineGroup.visible = anyTickVisible;
+        this.tickLabelGroup.visible = anyTickVisible;
         this.gridLineGroup.visible = anyTickVisible;
         this.gridArcGroup.visible = anyTickVisible;
 
@@ -1006,17 +999,12 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         sideFlag: -1 | 1;
         parallelFlipRotation: number;
         regularFlipRotation: number;
-    }): { labelData: PointLabelDatum[]; rotated: boolean } {
+    }) {
         const {
             label,
-            label: { enabled: labelsEnabled, parallel, rotation },
+            label: { parallel, rotation },
             tick,
         } = this;
-
-        if (!labelsEnabled) {
-            return { labelData: [], rotated: false };
-        }
-
         let labelAutoRotation = 0;
 
         const { autoRotation, labelRotation, parallelFlipFlag, regularFlipFlag } = calculateLabelRotation({
