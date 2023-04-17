@@ -33,6 +33,7 @@ export function createScriptRunner({
         containerEl,
         mouse,
         tweenGroup,
+        gridOptions,
         scriptDebugger,
     });
 

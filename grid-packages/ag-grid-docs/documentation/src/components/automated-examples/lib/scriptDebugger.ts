@@ -238,6 +238,14 @@ function createScriptDebugger({
         debugPen?.drawPoint({ x, y }, radius, color ?? DEFAULT_DRAW_COLOR);
     };
 
+    const log = (...args: any[]) => {
+        console.log(...args);
+    };
+
+    const errorLog = (...args: any[]) => {
+        console.error(...args);
+    };
+
     const clear = () => {
         debugPen?.clear();
     };
@@ -246,7 +254,7 @@ function createScriptDebugger({
         scriptRunner = runner;
     };
 
-    return { clear, drawPoint, updateStep, updateState, setScriptRunner };
+    return { log, errorLog, clear, drawPoint, updateStep, updateState, setScriptRunner };
 }
 
 export function createScriptDebuggerManager({

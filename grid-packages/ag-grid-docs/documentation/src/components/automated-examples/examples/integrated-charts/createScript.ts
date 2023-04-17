@@ -1,4 +1,5 @@
 import { Group } from '@tweenjs/tween.js';
+import { GridOptions } from 'ag-grid-community';
 import { createAgElementFinder } from '../../lib/agElements';
 import { getCellPos } from '../../lib/agQuery';
 import { Mouse } from '../../lib/createMouse';
@@ -15,10 +16,17 @@ interface Params {
     containerEl: HTMLElement;
     mouse: Mouse;
     tweenGroup: Group;
+    gridOptions: GridOptions;
     scriptDebugger?: ScriptDebugger;
 }
 
-export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }: Params): ScriptAction[] => {
+export const createScript = ({
+    containerEl,
+    mouse,
+    tweenGroup,
+    gridOptions,
+    scriptDebugger,
+}: Params): ScriptAction[] => {
     const START_CELL_COL_INDEX = 0;
     const START_CELL_ROW_INDEX = 0;
     const END_CELL_COL_INDEX = 2;
@@ -92,6 +100,44 @@ export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }:
             },
         },
         { type: 'wait', duration: 200 },
+        {
+            name: 'Context menu fallback',
+            type: 'custom',
+            action: () => {
+                const chartModels = gridOptions.api?.getChartModels() || [];
+
+                if (chartModels.length) {
+                    return; // Chart created, no need for fallback
+                }
+
+                const allColumns = gridOptions.columnApi?.getColumns() || [];
+                const colStartIndex = START_CELL_COL_INDEX;
+                const colEndIndex = END_CELL_COL_INDEX;
+                const columnStart = allColumns[colStartIndex];
+                const columnEnd = allColumns[colEndIndex];
+
+                if (!columnStart) {
+                    scriptDebugger?.errorLog('Column start not found for index', colStartIndex);
+                    return;
+                }
+                if (!columnEnd) {
+                    scriptDebugger?.errorLog('Column end not found for index', colEndIndex);
+                    return;
+                }
+
+                scriptDebugger?.log('Context menu chart creation failed, creating chart using grid API');
+
+                gridOptions?.api?.createRangeChart({
+                    chartType: 'stackedColumn',
+                    cellRange: {
+                        rowStartIndex: START_CELL_ROW_INDEX,
+                        rowEndIndex: END_CELL_ROW_INDEX,
+                        columnStart,
+                        columnEnd,
+                    },
+                });
+            },
+        },
 
         {
             type: 'agAction',

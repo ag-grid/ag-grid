@@ -1,5 +1,5 @@
 import { Group } from '@tweenjs/tween.js';
-import { ApplyColumnStateParams, GridOptions } from 'ag-grid-community';
+import { ApplyColumnStateParams, CreateRangeChartParams, GridOptions } from 'ag-grid-community';
 import { AgElementFinder } from './agElements';
 import { AgElementName } from './agElements/agElementsConfig';
 import { AG_DND_GHOST_SELECTOR } from './constants';
@@ -113,6 +113,11 @@ interface AddCellRangeAction {
     };
 }
 
+interface CreateRangeChartAction {
+    actionType: 'createRangeChart';
+    actionParams: CreateRangeChartParams;
+}
+
 interface ClickOnContextMenuItemAction {
     actionType: 'clickOnContextMenuItem';
     actionParams: ClickOnContextMenuItemParams;
@@ -143,6 +148,7 @@ export type AGCreatorAction =
     | CloseToolPanelAction
     | ApplyColumnStateAction
     | AddCellRangeAction
+    | CreateRangeChartAction
     | ClickOnContextMenuItemAction
     | MoveToElementAndClickAction;
 
@@ -244,6 +250,9 @@ export function createAGActionCreator({
                 columnStartIndex: action.actionParams.columnStartIndex,
                 columnEndIndex: action.actionParams.columnEndIndex,
             });
+        } else if (actionType === 'createRangeChart') {
+            const action = agAction as CreateRangeChartAction;
+            gridOptions?.api?.createRangeChart(action.actionParams);
         } else if (actionType === 'clickOnContextMenuItem') {
             const action = agAction as ClickOnContextMenuItemAction;
             // NOTE: Need to return promise, so that it gets resolved downstream
