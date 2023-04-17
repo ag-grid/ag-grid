@@ -35,6 +35,17 @@
         max-width: 60em;
     }
 
+    &.noSideMenu {
+        @media screen and (min-width: $breakpoint-docs-nav-large) {
+            padding-right: $horizontal-margin;
+            max-width: none;
+        }
+
+        @media screen and (min-width: 1600px) {
+            padding-right: calc(50vw - $max-page-width / 2);
+        }
+    }
+
     h2:first-child,
     h3:first-child,
     h4:first-child {
