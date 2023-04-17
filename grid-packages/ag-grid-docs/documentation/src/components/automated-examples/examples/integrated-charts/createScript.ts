@@ -41,6 +41,10 @@ export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }:
         {
             type: 'agAction',
             actionType: 'reset',
+            actionParams: {
+                scrollRow: 0,
+                scrollColumn: 0,
+            },
         },
 
         // Wait for data to load
@@ -309,6 +313,10 @@ export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }:
         {
             type: 'agAction',
             actionType: 'reset',
+            actionParams: {
+                scrollRow: 0,
+                scrollColumn: 0,
+            },
         },
         {
             type: 'custom',

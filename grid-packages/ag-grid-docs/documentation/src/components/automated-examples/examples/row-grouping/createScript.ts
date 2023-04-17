@@ -50,6 +50,10 @@ export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }:
         {
             type: 'agAction',
             actionType: 'reset',
+            actionParams: {
+                scrollRow: 0,
+                scrollColumn: 0,
+            },
         },
         ...createGroupColumnScriptActions({
             containerEl,
@@ -289,6 +293,10 @@ export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }:
         {
             type: 'agAction',
             actionType: 'reset',
+            actionParams: {
+                scrollRow: 0,
+                scrollColumn: 0,
+            },
         },
         {
             type: 'custom',

@@ -14,6 +14,10 @@ import { EasingFunction } from './tween';
 
 interface ResetAction {
     actionType: 'reset';
+    actionParams?: {
+        scrollRow: number;
+        scrollColumn: number;
+    };
 }
 
 interface ResetColumnStateAction {
@@ -151,6 +155,7 @@ export function createAGActionCreator({
         const { actionType } = agAction;
 
         if (actionType === 'reset') {
+            const action = agAction as ResetAction;
             gridOptions?.columnApi?.resetColumnState();
             gridOptions?.columnApi?.resetColumnGroupState();
             gridOptions?.columnApi?.setColumnsPinned([], null);
@@ -162,6 +167,20 @@ export function createAGActionCreator({
             }
             document.querySelector(AG_DND_GHOST_SELECTOR)?.remove();
             clearAllSingleCellSelections();
+
+            const { scrollRow, scrollColumn } = action.actionParams || {};
+            if (scrollColumn !== undefined) {
+                const allColumns = gridOptions.columnApi!.getColumns();
+                if (allColumns) {
+                    const column = allColumns[scrollColumn];
+                    if (column) {
+                        gridOptions.api!.ensureColumnVisible(column);
+                    }
+                }
+            }
+            if (scrollRow !== undefined) {
+                gridOptions.api!.ensureIndexVisible(scrollRow);
+            }
         } else if (actionType === 'resetColumnState') {
             gridOptions?.columnApi?.resetColumnState();
         } else if (actionType === 'dragColumnToRowGroupPanel') {
