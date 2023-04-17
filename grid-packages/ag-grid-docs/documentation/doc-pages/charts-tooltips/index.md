@@ -60,8 +60,12 @@ The tooltip position can be modified using the `tooltip.position.type` property.
 
 `tooltip.position.type` can be one of the following:
 
-- `node` - anchors the tooltip to the highlighted node. This is the default position type for `line`, `area`, `scatter` and `bubble` series, where the tooltip will be positioned above the highlighted marker node.
-- `pointer` - attaches the tooltip to the mouse pointer. This is the default position type for `bar`,`column`, `histogram`, `treemap`, `pie` and `doughnut` series where the tooltip will follow the mouse pointer.
+- `node` - Anchors the tooltip to the highlighted node
+- `pointer` - Anchors the tooltip to the mouse pointer
+
+For series with markers, such as `line`, `area`, `scatter` and `bubble`, where each data point is represented by a marker, the default tooltip `position.type` is `node`. This means that the tooltip will be positioned above the highlighted marker node.
+
+For series without markers, such as `bar`,`column`, `histogram`, `treemap`, `pie` and `doughnut`, where each data point is represented by a fixed shape, for example a rectangle or a pie sector, the default tooltip `position.type` is `pointer`. This means that the tooltip will follow the mouse pointer as it moves over the shapes.
 
 The `xOffset` and `yOffset` properties in `tooltip.position` options define the distance in pixels from the tooltip to the anchor point:
 
@@ -77,7 +81,9 @@ tooltip: {
 
 ### Example: Tooltip Position
 
-In this example we show how to change the tooltip's default position.
+In this example we show how to change the tooltip's default position. Note that:
+
+- Instead of the tooltip being anchored to the highlighted marker node, it is anchored 80 pixels to the left and below the mouse pointer.
 
 <chart-example title='Tooltip Position' name='tooltip-position' type='generated'></chart-example>
 
