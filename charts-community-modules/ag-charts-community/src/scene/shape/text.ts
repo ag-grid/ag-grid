@@ -293,8 +293,9 @@ export class Text extends Shape {
 
         const sliceText = (text: string, startIndex: number) => {
             const whiteSpaceIndex = text.indexOf(' ', startIndex);
-            const noWhiteSpace = whiteSpaceIndex < 0;
-            const index = noWhiteSpace ? Math.max(1, text.length - 1) : whiteSpaceIndex;
+            const lastWhiteSpaceIndex = whiteSpaceIndex > 0 ? whiteSpaceIndex : text.lastIndexOf(' ');
+            const noWhiteSpace = lastWhiteSpaceIndex < 0;
+            const index = noWhiteSpace ? Math.max(1, startIndex) : lastWhiteSpaceIndex;
             return {
                 result: text.slice(0, index),
                 index,
