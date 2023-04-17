@@ -12,7 +12,7 @@ Tick placement can be customised by using one of the following strategies:
 
 - [Tick Interval](#tick-interval) - used to place a tick at regular intervals
 - [Tick Values](#tick-values) - used to place a tick at specified values
-- [Min / Max Spacing](#tick-min-and-max-spacing) - used to control the pixel gap between ticks
+- [Min / Max Spacing](#tick-min--max-spacing) - used to control the pixel gap between ticks
 
 ### Tick Interval
 
