@@ -79,6 +79,7 @@ export class AutoGroupColService extends BeanStub {
         const existingCol = existingCols.find( col => col.getId()==colId );
 
         if (existingCol) {
+            if (existingCol.actualWidth) defaultAutoColDef.width = existingCol.actualWidth;
             existingCol.setColDef(defaultAutoColDef, null);
             this.columnFactory.applyColumnState(existingCol, defaultAutoColDef);
             return existingCol;
