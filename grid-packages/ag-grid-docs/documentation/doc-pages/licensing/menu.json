@@ -2018,28 +2018,28 @@
                 "url": "/charts-legend/"
               },
               {
-                "title": "Series Highlighting",
-                "url": "/charts-series-highlighting/"
-              },
-              {
-                "title": "Navigator",
-                "url": "/charts-navigator/"
-              },
-              {
-                "title": "Markers",
+                "title": "Series Markers",
                 "url": "/charts-markers/"
               },
               {
-                "title": "Formatters",
-                "url": "/charts-formatters/"
+                "title": "Series Highlighting",
+                "url": "/charts-series-highlighting/"
               },
               {
                 "title": "Tooltips",
                 "url": "/charts-tooltips/"
               },
               {
+                "title": "Formatters",
+                "url": "/charts-formatters/"
+              },
+              {
                 "title": "Cross Lines",
                 "url": "/charts-axes-cross-lines/"
+              },
+              {
+                "title": "Navigator",
+                "url": "/charts-navigator/"
               },
               {
                 "title": "Crosshairs",
