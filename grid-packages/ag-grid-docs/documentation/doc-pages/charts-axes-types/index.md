@@ -9,8 +9,8 @@ the relationships between data points on the graph. This section discusses the d
 A category axis is used to display distinct categories or groups of data in a chart.
 
 The category axis shows discrete categories or groups of data, unlike the [Number](/charts-axes-types/#number) or
-[Time](/charts-axes-types/#time) axes which use a continuous scale. For instance, In a bar chart of sales per quarter, the
-category axis shows the quarters as different groups, and the number axis displays the sales for each group.
+[Time](/charts-axes-types/#time) axes which use a continuous scale. For instance, in a bar chart of sales per product, the
+category axis shows the products as different groups, and the number axis displays the corresponding sale value for each group.
 
 If no `axes` are supplied, a category axis will be used as the x-axis by default. However, it can also
 be explicitly configured as shown below:
@@ -56,9 +56,15 @@ For a full list of configuration options see [Number Axis Options](#number-axis-
 
 ## Time
 
-The time axis is similar to the number axis in the sense that it is also used to plot continuous values. The time axis can even be used with numeric data (in addition to `Date` objects), but the numbers will be interpreted as Unix timestamps. The time axis differs from the number axis in tick segmentation and label formatting. For example, you could choose to place a tick every 5 minutes, every month, or every Friday.
+The time axis is similar to the number axis in the sense that it is also used to plot continuous values. The time axis
+can even be used with numeric data (in addition to `Date` objects), but the numbers will be interpreted as Unix timestamps.
+The time axis differs from the number axis in tick segmentation and label formatting. For example, you could choose to
+place a tick every 5 minutes, every month, or every Friday.
 
-The time axis also supports specifier strings to control the way time values are presented as labels. For example, the `%H:%M:%S` specifier string will instruct the axis to format a time value like `new Date('Tue Feb 04 202 15:08:03')` or `1580828883000` as `'15:08:03'`. Time axes are typically used as x-axes and placed at the bottom of a chart. The simplest time axis config looks like this:
+The time axis also supports specifier strings to control the way time values are presented as labels. For example, 
+the `%H:%M:%S` specifier string will instruct the axis to format a time value like `new Date('Mon Apr 17 2023 12:43:17')` 
+or `1681735397` as `'12:43:17'`. Time axes are typically used as x-axes and placed at the bottom of a chart. The 
+simplest time axis config looks like this:
 
 ```js
 {
@@ -83,9 +89,12 @@ represent the same percentage increase. Whereas, if the `number` axis was used, 
 The above property of the log axis can also be useful in financial charts. For example, if your rate of
 return on an investment stays consistent over time, the investment value chart will look like a straight line.
 
-By default, if the data domain has `5` or more orders of magnitude, the `log` axis attempts to render `5` ticks. Otherwise, `10` ticks (the logarithm base) is rendered per order of magnitude. For example a data domain of `[1, 100]` with `2` orders of magnitude, will show `1`, `2`, `3`, `4`,`5`, `6`, `7`, `8`, `9`, `10`, `20`, `30`, `40`, `50`, `60`, `70`, `80`, `90`, `100`.
+By default, if the data domain has `5` or more orders of magnitude, the `log` axis attempts to render `5` ticks. Otherwise,
+`10` ticks (the logarithm base) is rendered per order of magnitude. For example a data domain of `[1, 100]` with `2` orders
+of magnitude, will show `1`, `2`, `3`, `4`,`5`, `6`, `7`, `8`, `9`, `10`, `20`, `30`, `40`, `50`, `60`, `70`, `80`, `90`, `100`.
 
-Depending on the data domain and chart size, using a larger value for the `tick: { minSpacing: xxx }` config might be necessary to reduce the number of ticks.
+Depending on the data domain and chart size, using a larger value for the `tick: { minSpacing: xxx }` config might be
+necessary to reduce the number of ticks.
 
 ```js
 {
