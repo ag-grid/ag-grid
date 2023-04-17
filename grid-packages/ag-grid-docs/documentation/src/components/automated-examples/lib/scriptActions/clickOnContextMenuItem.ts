@@ -52,7 +52,6 @@ export async function clickOnContextMenuItem({
         const isLastMenuItem = i === menuItemPath.length - 1;
         if (!coords || !menuItemEl) {
             throw new Error(`Cannot find menu item: ${menuItemName}`);
-            break;
         }
 
         await createMoveMouse({
