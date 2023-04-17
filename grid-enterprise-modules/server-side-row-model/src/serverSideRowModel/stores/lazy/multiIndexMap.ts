@@ -47,7 +47,7 @@ export class MultiIndexMap<K> {
         this.maps.forEach(map => map.clear());
     }
 
-    public getIterator(index: keyof K) {
+    private getIterator(index: keyof K) {
         const map = this.maps.get(index);
         if (!map) {
             throw new Error(`AG Grid: ${String(index)} not found`);
