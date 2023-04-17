@@ -392,24 +392,38 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             return this.getDisplayIndexEnd()! - 1;
         }
     
-        const allNodes = this.cache.getOrderedNodeMap();
+        let distToPreviousNodeTop: number = Number.MAX_SAFE_INTEGER;
         let previousNode: RowNode | null = null;
+        let distToNextNodeTop: number = Number.MAX_SAFE_INTEGER;
         let nextNode: RowNode | null = null;
 
-        for (let stringIndex in allNodes) {
-            const { node } = allNodes[stringIndex];
-            if (node.rowTop! > pixel) {
-                nextNode = node;
-                break;
+        this.cache.getNodes().forEach(({ node }) => {
+            const distBetween = Math.abs(pixel - node.rowTop!);
+    
+            // previous node
+            if (node.rowTop! < pixel) {
+                if (distBetween < distToPreviousNodeTop) {
+                    distToPreviousNodeTop = distBetween;
+                    previousNode = node;
+                }
+                return;
             }
-            previousNode = node;
-        }
+            // next node
+            if (distBetween < distToNextNodeTop) {
+                distToNextNodeTop = distBetween;
+                nextNode = node;
+            }
+        });
+
+        // cast these back as typescript doesn't understand the forEach above
+        previousNode = previousNode as RowNode | null;
+        nextNode = nextNode as RowNode | null;
 
         // previous node may equal, or catch via detail node or child of group
         if (previousNode) {
             const indexOfRow = this.blockUtils.getIndexAtPixel(previousNode, pixel);
             if (indexOfRow != null) {
-            return indexOfRow;
+                return indexOfRow;
             }
         }
 
