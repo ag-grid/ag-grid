@@ -33,12 +33,12 @@ const options: AgCartesianChartOptions = {
       xKey: "month",
       yKey: "sweaters",
       yName: "Sweaters Made",
-      tooltip: { renderer },
+      tooltip: {
+        renderer,
+        enableInteraction: true,
+      },
     },
   ],
-  tooltip: {
-    enableInteraction: true,
-  },
 }
 
 var chart = AgChart.create(options)

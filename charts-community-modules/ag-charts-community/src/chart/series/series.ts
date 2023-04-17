@@ -160,6 +160,9 @@ export class SeriesTooltip {
     @Validate(BOOLEAN)
     enabled = true;
 
+    @Validate(BOOLEAN)
+    enableInteraction = false;
+
     readonly position: TooltipPosition = new TooltipPosition();
 }
 
