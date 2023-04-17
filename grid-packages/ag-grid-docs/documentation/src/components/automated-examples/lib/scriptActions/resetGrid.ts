@@ -22,6 +22,9 @@ export function resetGrid({ gridOptions, scrollRow, scrollColumn }: Params) {
     document.querySelector(AG_DND_GHOST_SELECTOR)?.remove();
     clearAllSingleCellSelections();
 
+    // Send escape to clear context menu
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+
     if (scrollColumn !== undefined) {
         const allColumns = gridOptions.columnApi!.getColumns();
         if (allColumns) {
