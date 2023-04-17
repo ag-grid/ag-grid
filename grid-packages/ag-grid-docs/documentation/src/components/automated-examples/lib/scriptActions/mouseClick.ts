@@ -1,5 +1,6 @@
 import { Mouse } from '../createMouse';
 import { Point } from '../geometry';
+import { ScriptDebugger } from '../scriptDebugger';
 import { waitFor } from './waitFor';
 
 export type ClickType = 'left' | 'middle' | 'right';
@@ -9,6 +10,7 @@ interface MouseClickParams {
     mouse: Mouse;
     clickType?: ClickType;
     coords: Point;
+    scriptDebugger?: ScriptDebugger;
 }
 
 const CLICK_TYPE_MAPPING: Record<ClickType, number> = {
@@ -18,10 +20,15 @@ const CLICK_TYPE_MAPPING: Record<ClickType, number> = {
 };
 const DEFAULT_CLICK_BUTTON = CLICK_TYPE_MAPPING.left;
 
-export async function mouseClick({ mouse, coords, clickType = 'left' }: MouseClickParams): Promise<void> {
+export async function mouseClick({
+    mouse,
+    coords,
+    clickType = 'left',
+    scriptDebugger,
+}: MouseClickParams): Promise<void> {
     const element = document.elementFromPoint(coords.x, coords.y);
     if (!element) {
-        console.error('No element found');
+        scriptDebugger?.errorLog('No element found');
         return;
     }
 

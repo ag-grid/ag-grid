@@ -177,7 +177,7 @@ function createScriptAction({
         const toPos = scriptAction.toPos instanceof Function ? scriptAction.toPos() : scriptAction.toPos;
 
         if (!toPos) {
-            console.error(`No 'toPos' in 'moveTo' action`, scriptAction);
+            scriptDebugger?.errorLog(`No 'toPos' in 'moveTo' action`, scriptAction);
             return;
         }
 
@@ -228,7 +228,7 @@ function createScriptActionSequence({
 
                 return result;
             } catch (error) {
-                console.error('Script action error', {
+                scriptDebugger?.errorLog('Script action error', {
                     scriptAction: JSON.stringify(scriptAction, function replacer(key, value) {
                         if (typeof value === 'function') {
                             return value.toString().replaceAll(/\s/gm, '').replace('function', '');
@@ -362,7 +362,7 @@ export function createScriptRunner({
                 }
             },
             onError({ error, index }) {
-                console.error('Action error (stopping)', {
+                scriptDebugger?.errorLog('Action error (stopping)', {
                     index,
                     error,
                 });
@@ -389,7 +389,7 @@ export function createScriptRunner({
                 }
             })
             .catch((error) => {
-                console.error('Action sequence error', error);
+                scriptDebugger?.errorLog('Action sequence error', error);
                 stop();
             });
     };

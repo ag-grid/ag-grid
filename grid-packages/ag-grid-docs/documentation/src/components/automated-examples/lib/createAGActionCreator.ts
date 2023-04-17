@@ -184,7 +184,7 @@ export function createAGActionCreator({
             const action = agAction as DragColumnToRowGroupPanelAction;
 
             // NOTE: Need to return promise, so that it gets resolved downstream
-            return dragColumnToRowGroupPanel({ containerEl, ...action.actionParams });
+            return dragColumnToRowGroupPanel({ containerEl, scriptDebugger, ...action.actionParams });
         } else if (actionType === 'toggleGroupCell') {
             const action = agAction as ToggleGroupCellAction;
             const expandParents = !action.actionParams.skipParents;
@@ -235,7 +235,7 @@ export function createAGActionCreator({
         } else if (actionType === 'clickOnContextMenuItem') {
             const action = agAction as ClickOnContextMenuItemAction;
             // NOTE: Need to return promise, so that it gets resolved downstream
-            return clickOnContextMenuItem({ containerEl, ...action.actionParams });
+            return clickOnContextMenuItem({ containerEl, scriptDebugger, ...action.actionParams });
         } else if (actionType === 'moveToElementAndClick') {
             const action = agAction as MoveToElementAndClickAction;
             return moveToElementAndClick({

@@ -42,6 +42,7 @@ export async function clickOnContextMenuItem({
         mouse,
         coords: getCellPos({ containerEl, colIndex: cellColIndex, rowIndex: cellRowIndex })!,
         clickType: 'right',
+        scriptDebugger,
     });
     await waitFor(200);
 
@@ -52,7 +53,7 @@ export async function clickOnContextMenuItem({
         const menuItemEl = menuItemTextEl?.parentElement;
         const isLastMenuItem = i === menuItemPath.length - 1;
         if (!coords || !menuItemEl) {
-            console.error(`Cannot find menu item: ${menuItemName}`);
+            scriptDebugger?.errorLog(`Cannot find menu item: ${menuItemName}`);
             break;
         }
 

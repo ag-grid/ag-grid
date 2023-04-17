@@ -304,7 +304,7 @@ export const createScript = ({
                     sliderLabel: 'Marker Size',
                 });
                 if (!slider) {
-                    console.error('Marker Size slider not found');
+                    scriptDebugger?.errorLog('Marker Size slider not found');
                     return;
                 }
                 const sliderEl = slider?.get() as HTMLInputElement;

@@ -35,13 +35,13 @@ export async function dragRange({
 }: DragRangeParams) {
     const fromPos = getCellPos({ containerEl, colIndex: startCol, rowIndex: startRow });
     if (!fromPos) {
-        console.error(`Start position not found: col=${startCol}, row=${startRow}`);
+        scriptDebugger?.errorLog(`Start position not found: col=${startCol}, row=${startRow}`);
         return;
     }
 
     const toPos = getCellPos({ containerEl, colIndex: endCol, rowIndex: endRow });
     if (!toPos) {
-        console.error(`End position not found: col=${endCol}, row=${endRow}`);
+        scriptDebugger?.errorLog(`End position not found: col=${endCol}, row=${endRow}`);
         return;
     }
 
@@ -51,7 +51,7 @@ export async function dragRange({
         rowIndex: startRow,
     });
     if (!startCell) {
-        console.error(`Start cell not found: col=${startCol}, row=${startRow}`);
+        scriptDebugger?.errorLog(`Start cell not found: col=${startCol}, row=${startRow}`);
         return;
     }
     const mouseDownEvent: MouseEvent = new MouseEvent('mousedown', {

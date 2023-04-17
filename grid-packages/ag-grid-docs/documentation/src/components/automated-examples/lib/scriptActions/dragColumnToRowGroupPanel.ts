@@ -4,6 +4,7 @@ import { AG_DND_GHOST_SELECTOR } from '../constants';
 import { Mouse } from '../createMouse';
 import { getScrollOffset } from '../dom';
 import { addPoints, minusPoint } from '../geometry';
+import { ScriptDebugger } from '../scriptDebugger';
 import { EasingFunction } from '../tween';
 import { createTween } from './createTween';
 import { moveTarget } from './move';
@@ -15,6 +16,7 @@ interface DragColumnToRowGroupPanelParams {
     duration: number;
     easing?: EasingFunction;
     tweenGroup: Group;
+    scriptDebugger?: ScriptDebugger;
 }
 
 export async function dragColumnToRowGroupPanel({
@@ -24,11 +26,12 @@ export async function dragColumnToRowGroupPanel({
     duration,
     easing,
     tweenGroup,
+    scriptDebugger,
 }: DragColumnToRowGroupPanelParams) {
     const fromPos = getHeaderCellPos({ containerEl, headerCellText: headerCellName });
 
     if (!fromPos) {
-        console.error('Header not found:', headerCellName);
+        scriptDebugger?.errorLog('Header not found:', headerCellName);
         return;
     }
     const rowGroupPanelOffset = {
@@ -79,7 +82,7 @@ export async function dragColumnToRowGroupPanel({
         });
         document.dispatchEvent(mouseUpEvent);
     } else {
-        console.error('No dragged header item:', headerCellName);
+        scriptDebugger?.errorLog('No dragged header item:', headerCellName);
     }
 
     // Clean up any dangling drag items
