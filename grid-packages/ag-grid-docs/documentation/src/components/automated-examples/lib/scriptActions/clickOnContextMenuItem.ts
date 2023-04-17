@@ -66,10 +66,12 @@ export async function clickOnContextMenuItem({
         });
         if (isLastMenuItem) {
             mouse.click();
+            await waitFor(500);
         }
-        await waitFor(500);
 
         // Use keyboard event to fake a click
         menuItemEl.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+
+        await waitFor(500);
     }
 }
