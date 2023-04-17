@@ -2,25 +2,36 @@ import { Mouse } from '../createMouse';
 import { Point } from '../geometry';
 import { waitFor } from './waitFor';
 
-interface RightClickParams {
+export type ClickType = 'left' | 'middle' | 'right';
+
+interface MouseClickParams {
     containerEl?: HTMLElement;
     mouse: Mouse;
+    clickType?: ClickType;
     coords: Point;
 }
 
-export async function rightClick({ mouse, coords }: RightClickParams): Promise<void> {
+const CLICK_TYPE_MAPPING: Record<ClickType, number> = {
+    left: 0,
+    middle: 1,
+    right: 2,
+};
+const DEFAULT_CLICK_BUTTON = CLICK_TYPE_MAPPING.left;
+
+export async function mouseClick({ mouse, coords, clickType = 'left' }: MouseClickParams): Promise<void> {
     const element = document.elementFromPoint(coords.x, coords.y);
     if (!element) {
         console.error('No element found');
         return;
     }
 
+    const button = CLICK_TYPE_MAPPING[clickType] === undefined ? DEFAULT_CLICK_BUTTON : CLICK_TYPE_MAPPING[clickType];
+
     const mouseDownEvent = new MouseEvent('mousedown', {
         bubbles: true,
         cancelable: false,
         view: window,
-        button: 2,
-        buttons: 2,
+        button,
         clientX: coords.x,
         clientY: coords.y,
     });
@@ -30,8 +41,7 @@ export async function rightClick({ mouse, coords }: RightClickParams): Promise<v
         bubbles: true,
         cancelable: false,
         view: window,
-        button: 2,
-        buttons: 0,
+        button,
         clientX: coords.x,
         clientY: coords.y,
     });
@@ -41,8 +51,7 @@ export async function rightClick({ mouse, coords }: RightClickParams): Promise<v
         bubbles: true,
         cancelable: false,
         view: window,
-        button: 2,
-        buttons: 0,
+        button,
         clientX: coords.x,
         clientY: coords.y,
     });

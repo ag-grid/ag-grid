@@ -5,7 +5,7 @@ import { findElementWithInnerText } from '../dom';
 import { ScriptDebugger } from '../scriptDebugger';
 import { EasingFunction } from '../tween';
 import { createMoveMouse } from './createMoveMouse';
-import { rightClick } from './rightClick';
+import { mouseClick } from './mouseClick';
 import { waitFor } from './waitFor';
 
 export interface ClickOnContextMenuItemParams {
@@ -38,9 +38,10 @@ export async function clickOnContextMenuItem({
     easing,
     scriptDebugger,
 }: ClickOnContextMenuItemParams): Promise<void> {
-    await rightClick({
+    await mouseClick({
         mouse,
         coords: getCellPos({ containerEl, colIndex: cellColIndex, rowIndex: cellRowIndex })!,
+        clickType: 'right',
     });
     await waitFor(200);
 
