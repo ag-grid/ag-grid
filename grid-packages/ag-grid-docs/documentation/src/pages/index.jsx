@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import React, { useEffect } from 'react';
-import { DEFAULT_AUTOMATED_EXAMPLE_VISIBILITY_THRESHOLD } from '../components/automated-examples/lib/constants';
 import { createAutomatedExampleManager } from '../components/automated-examples/lib/createAutomatedExampleManager';
 import { createScriptDebuggerManager } from '../components/automated-examples/lib/scriptDebugger';
 import Footer from '../components/footer/Footer';
@@ -21,7 +20,6 @@ const HeroGrid = React.lazy(() => import('./components/home-page-demos/HeroGrid'
 const automatedExampleManager = createAutomatedExampleManager();
 
 const Default = () => {
-    const automatedExampleVisiblityThreshold = DEFAULT_AUTOMATED_EXAMPLE_VISIBILITY_THRESHOLD;
     const frameworksData = [
         {
             name: 'javascript',
@@ -114,7 +112,7 @@ const Default = () => {
                                         scriptDebuggerManager={scriptDebuggerManager}
                                         useStaticData={isCI}
                                         runOnce={runAutomatedExamplesOnce}
-                                        visibilityThreshold={automatedExampleVisiblityThreshold}
+                                        visibilityThreshold={0.2}
                                     />
                                 </React.Suspense>
                             )}
@@ -132,7 +130,7 @@ const Default = () => {
                                         scriptDebuggerManager={scriptDebuggerManager}
                                         useStaticData={isCI}
                                         runOnce={runAutomatedExamplesOnce}
-                                        visibilityThreshold={automatedExampleVisiblityThreshold}
+                                        visibilityThreshold={0.8}
                                     />
                                 </React.Suspense>
                             )}
