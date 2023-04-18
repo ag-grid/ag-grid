@@ -1012,7 +1012,7 @@ Object {
         "size": 12,
       },
     },
-    "position": "right",
+    "position": "bottom",
     "reverseOrder": false,
     "spacing": 20,
   },
@@ -1485,6 +1485,9 @@ Object {
   "theme": Object {
     "overrides": Object {
       "line": Object {
+        "legend": Object {
+          "position": "bottom",
+        },
         "series": Object {
           "highlightStyle": Object {
             "series": Object {
@@ -4528,7 +4531,7 @@ Object {
         "size": 12,
       },
     },
-    "position": "right",
+    "position": "bottom",
     "reverseOrder": false,
     "spacing": 20,
   },
@@ -4656,6 +4659,9 @@ Object {
   "theme": Object {
     "overrides": Object {
       "column": Object {
+        "legend": Object {
+          "position": "bottom",
+        },
         "series": Object {
           "highlightStyle": Object {
             "series": Object {
@@ -5163,7 +5169,7 @@ Object {
         "size": 12,
       },
     },
-    "position": "right",
+    "position": "bottom",
     "reverseOrder": false,
     "spacing": 20,
   },
@@ -5318,6 +5324,9 @@ Object {
   "theme": Object {
     "overrides": Object {
       "column": Object {
+        "legend": Object {
+          "position": "bottom",
+        },
         "series": Object {
           "highlightStyle": Object {
             "item": Object {
@@ -7845,7 +7854,7 @@ Object {
         "size": 12,
       },
     },
-    "position": "right",
+    "position": "bottom",
     "reverseOrder": false,
     "spacing": 20,
   },
@@ -7976,6 +7985,9 @@ Object {
   "theme": Object {
     "overrides": Object {
       "bar": Object {
+        "legend": Object {
+          "position": "bottom",
+        },
         "series": Object {
           "highlightStyle": Object {
             "series": Object {
@@ -8169,7 +8181,7 @@ Object {
         "size": 12,
       },
     },
-    "position": "right",
+    "position": "bottom",
     "reverseOrder": false,
     "spacing": 20,
   },
@@ -8314,6 +8326,9 @@ Object {
   "theme": Object {
     "overrides": Object {
       "column": Object {
+        "legend": Object {
+          "position": "bottom",
+        },
         "series": Object {
           "highlightStyle": Object {
             "series": Object {
@@ -9828,7 +9843,7 @@ Object {
         "size": 12,
       },
     },
-    "position": "right",
+    "position": "bottom",
     "reverseOrder": false,
     "spacing": 20,
   },
@@ -10001,6 +10016,9 @@ Object {
   "theme": Object {
     "overrides": Object {
       "line": Object {
+        "legend": Object {
+          "position": "bottom",
+        },
         "series": Object {
           "highlightStyle": Object {
             "series": Object {
