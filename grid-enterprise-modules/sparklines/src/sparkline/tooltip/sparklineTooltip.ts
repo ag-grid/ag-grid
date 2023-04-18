@@ -52,7 +52,6 @@ export class SparklineTooltip {
     container?: HTMLElement = undefined;
     xOffset: number = 10;
     yOffset: number = 0;
-    renderer?: (params: TooltipRendererParams) => string | TooltipRendererResult = undefined;
 
     constructor() {
         const tooltipRoot = document.body;

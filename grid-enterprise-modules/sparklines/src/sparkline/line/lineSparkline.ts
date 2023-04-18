@@ -336,9 +336,10 @@ export class LineSparkline extends Sparkline {
             title,
         };
 
-        if (this.tooltip.renderer) {
+        const tooltipRenderer = this.processedOptions?.tooltip?.renderer;
+        if (tooltipRenderer) {
             return toTooltipHtml(
-                this.tooltip.renderer({
+                tooltipRenderer({
                     context: this.context,
                     datum: seriesDatum,
                     yValue,

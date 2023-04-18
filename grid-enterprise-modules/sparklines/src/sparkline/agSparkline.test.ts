@@ -1,17 +1,37 @@
-import { describe, beforeAll, afterAll, test, expect } from '@jest/globals'
+import { describe, beforeAll, afterAll, test, expect } from '@jest/globals';
 import { AgSparkline, SparklineFactoryOptions } from './agSparkline';
-import "jest-canvas-mock";
-import { ColumnFormat, ColumnFormatterParams, MarkerFormat, MarkerFormatterParams, TooltipRendererResult, TooltipRendererParams } from '@ag-grid-community/core';
-import { SparklineTooltip } from "./tooltip/sparklineTooltip";
+import 'jest-canvas-mock';
+import { ColumnFormat, ColumnFormatterParams, MarkerFormat, MarkerFormatterParams } from '@ag-grid-community/core';
+import { SparklineTooltip } from './tooltip/sparklineTooltip';
 
-const data = [7, 8.3, undefined, -9, '9.2', null, 5.5, Infinity, 6.75, -11.9, NaN, -Infinity, 5, 4, null, {}, 6, []] as any;
+const data = [
+    7,
+    8.3,
+    undefined,
+    -9,
+    '9.2',
+    null,
+    5.5,
+    Infinity,
+    6.75,
+    -11.9,
+    NaN,
+    -Infinity,
+    5,
+    4,
+    null,
+    {},
+    6,
+    [],
+] as any;
 
 describe('line sparkline', () => {
     let sparkline: any;
     let containerDiv: HTMLElement = document.createElement('div');
     let tooltipContainer: HTMLElement = document.createElement('div');
-    let markerFormatter = (params: MarkerFormatterParams): MarkerFormat => { return {} }
-    let tooltipRenderer = (params: TooltipRendererParams): TooltipRendererResult => { return {} }
+    let markerFormatter = (params: MarkerFormatterParams): MarkerFormat => {
+        return {};
+    };
 
     const options: SparklineFactoryOptions = {
         data,
@@ -23,11 +43,11 @@ describe('line sparkline', () => {
             top: 2,
             right: 5,
             bottom: 6,
-            left: 9
+            left: 9,
         },
         line: {
             stroke: 'red',
-            strokeWidth: 3
+            strokeWidth: 3,
         },
         marker: {
             enabled: false,
@@ -36,24 +56,23 @@ describe('line sparkline', () => {
             fill: 'blue',
             stroke: 'blue',
             strokeWidth: 2,
-            formatter: markerFormatter
+            formatter: markerFormatter,
         },
         axis: {
             stroke: 'green',
-            strokeWidth: 2
+            strokeWidth: 2,
         },
         highlightStyle: {
             size: 7,
             fill: 'orange',
             stroke: 'orange',
-            strokeWidth: 4
+            strokeWidth: 4,
         },
         tooltip: {
             enabled: false,
             container: tooltipContainer,
-            renderer: tooltipRenderer
-        }
-    }
+        },
+    };
 
     beforeAll(() => {
         sparkline = AgSparkline.create(options, new SparklineTooltip());
@@ -77,45 +96,45 @@ describe('line sparkline', () => {
     });
     test('line properties', () => {
         const { line } = sparkline;
-        expect(line.stroke).toBe("red");
+        expect(line.stroke).toBe('red');
         expect(line.strokeWidth).toBe(3);
     });
     test('marker properties', () => {
         const { marker } = sparkline;
         expect(marker.enabled).toBe(false);
-        expect(marker.shape).toBe("diamond");
+        expect(marker.shape).toBe('diamond');
         expect(marker.size).toBe(5);
-        expect(marker.fill).toBe("blue");
-        expect(marker.stroke).toBe("blue");
+        expect(marker.fill).toBe('blue');
+        expect(marker.stroke).toBe('blue');
         expect(marker.strokeWidth).toBe(2);
         expect(marker.formatter).toBe(markerFormatter);
     });
     test('axis properties', () => {
         const { axis } = sparkline;
-        expect(axis.stroke).toBe("green");
+        expect(axis.stroke).toBe('green');
         expect(axis.strokeWidth).toBe(2);
     });
     test('highlightStyle properties', () => {
         const { highlightStyle } = sparkline;
         expect(highlightStyle.size).toBe(7);
-        expect(highlightStyle.fill).toBe("orange");
-        expect(highlightStyle.stroke).toBe("orange");
+        expect(highlightStyle.fill).toBe('orange');
+        expect(highlightStyle.stroke).toBe('orange');
         expect(highlightStyle.strokeWidth).toBe(4);
     });
     test('tooltip properties', () => {
         const { tooltip } = sparkline;
         expect(tooltip.enabled).toBe(false);
         expect(tooltip.container).toBe(tooltipContainer);
-        expect(tooltip.renderer).toBe(tooltipRenderer);
     });
-})
+});
 
 describe('area sparkline', () => {
     let sparkline: any;
     let containerDiv: HTMLElement = document.createElement('div');
     let tooltipContainer: HTMLElement = document.createElement('div');
-    let markerFormatter = (params: MarkerFormatterParams): MarkerFormat => { return {} }
-    let tooltipRenderer = (params: TooltipRendererParams): TooltipRendererResult => { return {} }
+    let markerFormatter = (params: MarkerFormatterParams): MarkerFormat => {
+        return {};
+    };
 
     const options: SparklineFactoryOptions = {
         data,
@@ -130,7 +149,7 @@ describe('area sparkline', () => {
         fill: 'lavender',
         line: {
             stroke: 'purple',
-            strokeWidth: 3
+            strokeWidth: 3,
         },
         marker: {
             enabled: true,
@@ -139,28 +158,27 @@ describe('area sparkline', () => {
             fill: 'yellow',
             stroke: 'yellow',
             strokeWidth: 4,
-            formatter: markerFormatter
+            formatter: markerFormatter,
         },
         axis: {
             stroke: 'pink',
-            strokeWidth: 6
+            strokeWidth: 6,
         },
         highlightStyle: {
             size: 8,
             fill: 'brown',
             stroke: 'brown',
-            strokeWidth: 1
+            strokeWidth: 1,
         },
         tooltip: {
             enabled: true,
             container: tooltipContainer,
-            renderer: tooltipRenderer
-        }
-    }
+        },
+    };
 
     beforeAll(() => {
         sparkline = AgSparkline.create(options, new SparklineTooltip());
-    })
+    });
 
     afterAll(() => {
         sparkline.destroy();
@@ -181,45 +199,45 @@ describe('area sparkline', () => {
     });
     test('line properties', () => {
         const { line } = sparkline;
-        expect(line.stroke).toBe("purple");
+        expect(line.stroke).toBe('purple');
         expect(line.strokeWidth).toBe(3);
     });
     test('marker properties', () => {
         const { marker } = sparkline;
         expect(marker.enabled).toBe(true);
-        expect(marker.shape).toBe("circle");
+        expect(marker.shape).toBe('circle');
         expect(marker.size).toBe(9);
-        expect(marker.fill).toBe("yellow");
-        expect(marker.stroke).toBe("yellow");
+        expect(marker.fill).toBe('yellow');
+        expect(marker.stroke).toBe('yellow');
         expect(marker.strokeWidth).toBe(4);
         expect(marker.formatter).toBe(markerFormatter);
     });
     test('axis properties', () => {
         const { axis } = sparkline;
-        expect(axis.stroke).toBe("pink");
+        expect(axis.stroke).toBe('pink');
         expect(axis.strokeWidth).toBe(6);
     });
     test('highlightStyle properties', () => {
         const { highlightStyle } = sparkline;
         expect(highlightStyle.size).toBe(8);
-        expect(highlightStyle.fill).toBe("brown");
-        expect(highlightStyle.stroke).toBe("brown");
+        expect(highlightStyle.fill).toBe('brown');
+        expect(highlightStyle.stroke).toBe('brown');
         expect(highlightStyle.strokeWidth).toBe(1);
     });
     test('tooltip properties', () => {
         const { tooltip } = sparkline;
         expect(tooltip.enabled).toBe(true);
         expect(tooltip.container).toBe(tooltipContainer);
-        expect(tooltip.renderer).toBe(tooltipRenderer);
     });
-})
+});
 
 describe('column sparkline', () => {
     let sparkline: any;
     let containerDiv: HTMLElement = document.createElement('div');
     let tooltipContainer: HTMLElement = document.createElement('div');
-    let columnFormatter = (params: ColumnFormatterParams): ColumnFormat => { return {} }
-    let tooltipRenderer = (params: TooltipRendererParams): TooltipRendererResult => { return {} }
+    let columnFormatter = (params: ColumnFormatterParams): ColumnFormat => {
+        return {};
+    };
 
     const options: SparklineFactoryOptions = {
         data,
@@ -240,20 +258,19 @@ describe('column sparkline', () => {
         formatter: columnFormatter,
         axis: {
             stroke: 'aqua',
-            strokeWidth: 2
+            strokeWidth: 2,
         },
         highlightStyle: {
             size: 2,
             fill: 'coral',
             stroke: 'coral',
-            strokeWidth: 3
+            strokeWidth: 3,
         },
         tooltip: {
             enabled: false,
             container: tooltipContainer,
-            renderer: tooltipRenderer
-        }
-    }
+        },
+    };
 
     beforeAll(() => {
         sparkline = AgSparkline.create(options, new SparklineTooltip());
@@ -276,8 +293,8 @@ describe('column sparkline', () => {
         expect(padding.left).toBe(15);
     });
     test('column properties', () => {
-        expect(sparkline.fill).toBe("silver");
-        expect(sparkline.stroke).toBe("blue");
+        expect(sparkline.fill).toBe('silver');
+        expect(sparkline.stroke).toBe('blue');
         expect(sparkline.strokeWidth).toBe(2);
         expect(sparkline.paddingInner).toBe(0.6);
         expect(sparkline.paddingOuter).toBe(0.8);
@@ -285,20 +302,19 @@ describe('column sparkline', () => {
     });
     test('axis properties', () => {
         const { axis } = sparkline;
-        expect(axis.stroke).toBe("aqua");
+        expect(axis.stroke).toBe('aqua');
         expect(axis.strokeWidth).toBe(2);
     });
     test('highlightStyle properties', () => {
         const { highlightStyle } = sparkline;
         expect(highlightStyle.size).toBe(2);
-        expect(highlightStyle.fill).toBe("coral");
-        expect(highlightStyle.stroke).toBe("coral");
+        expect(highlightStyle.fill).toBe('coral');
+        expect(highlightStyle.stroke).toBe('coral');
         expect(highlightStyle.strokeWidth).toBe(3);
     });
     test('tooltip properties', () => {
         const { tooltip } = sparkline;
         expect(tooltip.enabled).toBe(false);
         expect(tooltip.container).toBe(tooltipContainer);
-        expect(tooltip.renderer).toBe(tooltipRenderer);
     });
-})
+});

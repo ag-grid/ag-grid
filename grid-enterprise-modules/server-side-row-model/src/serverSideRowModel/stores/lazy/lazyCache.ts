@@ -620,23 +620,23 @@ export class LazyCache extends BeanStub {
         const disposableNodesNotInViewport = disposableNodes.filter(({ node }) => {
             const startRowNum = node.rowIndex;
 
-            if (!startRowNum) {
+            if (startRowNum == null || startRowNum === -1) {
                 // row is not displayed and can be disposed
                 return true;
             }
     
-            if (firstRowInViewport <= startRowNum && startRowNum < lastRowInViewport) {
+            if (firstRowBlockStart <= startRowNum && startRowNum < lastRowBlockEnd) {
                 // start row in viewport, block is in viewport
                 return false;
             }
 
             const lastRowNum = startRowNum + blockSize;
-            if (firstRowInViewport <= lastRowNum && lastRowNum < lastRowInViewport) {
+            if (firstRowBlockStart <= lastRowNum && lastRowNum < lastRowBlockEnd) {
                 // end row in viewport, block is in viewport
                 return false;
             }
 
-            if (startRowNum < firstRowInViewport && lastRowNum >= lastRowInViewport) {
+            if (startRowNum < firstRowBlockStart && lastRowNum >= lastRowBlockEnd) {
                 // full block surrounds in viewport
                 return false;
             }
@@ -663,7 +663,7 @@ export class LazyCache extends BeanStub {
 
         // sort the blocks by distance from middle of viewport
         blockDistanceArray.sort((a, b) => Math.sign(b[1] - a[1]));
-        const blocksToRemove = blockDistanceArray.length - numberOfBlocksToRetain;
+        const blocksToRemove = blockDistanceArray.length - Math.max(numberOfBlocksToRetain, 0);
         for (let i = 0; i < blocksToRemove; i++) {
             const blockStart = Number(blockDistanceArray[i][0]);
             for (let x = blockStart; x < blockStart + blockSize; x++) {
@@ -801,9 +801,11 @@ export class LazyCache extends BeanStub {
         this.nodeMap.forEach(lazyNode => this.nodesToRefresh.add(lazyNode.node));
         this.rowLoader.queueLoadCheck();
 
-        this.isLastRowKnown = false;
-        this.numberOfRows += 1;
-        this.fireStoreUpdatedEvent();
+        if (this.isLastRowKnown && this.numberOfRows === 0) {
+            this.numberOfRows = 1;
+            this.isLastRowKnown = false;
+            this.fireStoreUpdatedEvent();
+        }
     }
 
     public isNodeInCache(id: string): boolean {
