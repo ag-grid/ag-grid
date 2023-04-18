@@ -55,9 +55,13 @@ const columnDefs: ColDef[] = [
         chartDataType: 'category',
         enableRowGroup: true,
         cellRenderer: (params) => {
+            if (params.node.group) {
+                return params.value;
+            }
+
             // put the value in bold
             return `<img border="0" width="21" height="14" alt="${params.value} flag" src='${getCountryFlagImageUrl(
-                params.data.country
+                params.data?.country
             )}' /> ${params.value}`;
         },
     },
