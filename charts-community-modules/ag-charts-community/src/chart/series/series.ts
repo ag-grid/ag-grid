@@ -4,7 +4,6 @@ import { Observable, TypedEvent } from '../../util/observable';
 import { ChartAxis } from '../chartAxis';
 import { createId } from '../../util/id';
 import { checkDatum, isNumber } from '../../util/value';
-import { TimeAxis } from '../axis/timeAxis';
 import { createDeprecationWarning } from '../../util/deprecation';
 import {
     BOOLEAN,
@@ -595,16 +594,9 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         if (min === max) {
             // domain has zero length, there is only a single valid value in data
 
-            if (axis instanceof TimeAxis) {
-                // numbers in domain correspond to Unix timestamps
-                // automatically expand domain by 1 in each direction
-                min -= 1;
-                max += 1;
-            } else {
-                const padding = Math.abs(min * 0.01);
-                min -= padding;
-                max += padding;
-            }
+            const padding = axis?.calculatePadding(min, max) ?? 1;
+            min -= padding;
+            max -= padding;
         }
 
         if (!(isNumber(min) && isNumber(max))) {

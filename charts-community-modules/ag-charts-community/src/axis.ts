@@ -1266,4 +1266,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     clipGrid(x: number, y: number, width: number, height: number) {
         this.gridGroup.setClipRectInGroupCoordinateSpace(new BBox(x, y, width, height));
     }
+
+    calculatePadding(min: number, _max: number): number {
+        return Math.abs(min * 0.01);
+    }
 }
