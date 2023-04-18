@@ -130,6 +130,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
 
     private fieldContainsDots: boolean;
     private tooltipFieldContainsDots: boolean;
+    private tooltipEnabled = false;
 
     private rowGroupActive = false;
     private pivotActive = false;
@@ -250,6 +251,8 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
 
         this.initDotNotation();
 
+        this.initTooltip();
+
         this.validate();
     }
 
@@ -264,6 +267,13 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
 
         this.minWidth = this.columnUtils.calculateColMinWidth(colDef);
         this.maxWidth = this.columnUtils.calculateColMaxWidth(colDef);
+    }
+
+    private initTooltip(): void {
+        this.tooltipEnabled = exists(this.colDef.tooltipField) ||
+            exists(this.colDef.tooltipValueGetter) ||
+            exists(this.colDef.tooltipComponent) ||
+            exists(this.colDef.tooltipComponentFramework);
     }
 
     public resetActualWidth(source: ColumnEventType = 'api'): void {
@@ -301,6 +311,10 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
 
     public isFieldContainsDots(): boolean {
         return this.fieldContainsDots;
+    }
+
+    public isTooltipEnabled(): boolean {
+        return this.tooltipEnabled;
     }
 
     public isTooltipFieldContainsDots(): boolean {
@@ -423,6 +437,9 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         return false;
     }
 
+    /**
+     * Returns `true` if the cell for this column is editable for the given `rowNode`, otherwise `false`.
+     */
     public isCellEditable(rowNode: IRowNode): boolean {
         // only allow editing of groups if the user has this option enabled
         if (rowNode.group && !this.gridOptionsService.is('enableGroupEdit')) {
@@ -688,14 +705,14 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
      *
      * Equivalent: `getColId`, `getUniqueId` */
     public getId(): string {
-        return this.getColId();
+        return this.colId;
     }
     /**
      * Returns the unique ID for the column.
      *
      * Equivalent: `getColId`, `getId` */
     public getUniqueId(): string {
-        return this.getId();
+        return this.colId;
     }
 
     public getDefinition(): AbstractColDef {

@@ -1,15 +1,17 @@
 // Remount component when Fast Refresh is triggered
 // @refresh reset
 
-import classnames from 'classnames';
-import { withPrefix } from 'gatsby';
+import classNames from 'classnames';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { createAutomatedRowGrouping } from '../../../components/automated-examples/row-grouping';
-import { Splash } from '../../../components/automated-examples/Splash';
-import { Icon } from '../../../components/Icon';
+import { createAutomatedRowGrouping } from '../../../components/automated-examples/examples/row-grouping';
+import { ROW_GROUPING_ID } from '../../../components/automated-examples/lib/constants';
+import { OverlayButton } from '../../../components/automated-examples/OverlayButton';
+import { ToggleAutomatedExampleButton } from '../../../components/automated-examples/ToggleAutomatedExampleButton';
+import { UpdateSpeedSlider } from '../../../components/automated-examples/UpdateSpeedSlider';
 import LogoMark from '../../../components/LogoMark';
-import { hostPrefix, isProductionBuild, localPrefix } from '../../../utils/consts';
+import { isProductionBuild, localPrefix } from '../../../utils/consts';
+import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
 import styles from './AutomatedRowGrouping.module.scss';
 
 const helmet = [];
@@ -40,100 +42,126 @@ if (!isProductionBuild()) {
     );
 }
 
-const mouseStyles = `
-    .automated-row-grouping-grid .ag-root-wrapper,
-    .automated-row-grouping-grid .ag-root-wrapper * {
-        cursor: url(${hostPrefix}/images/cursor/automated-example-cursor.svg) 22 21, pointer !important;
-    }
-`;
-
-function AutomatedRowGrouping({ scriptDebuggerManager, useStaticData, runOnce }) {
+function AutomatedRowGrouping({
+    automatedExampleManager,
+    scriptDebuggerManager,
+    useStaticData,
+    runOnce,
+    visibilityThreshold,
+}) {
+    const exampleId = ROW_GROUPING_ID;
     const gridClassname = 'automated-row-grouping-grid';
-    const automatedScript = useRef(null);
-    // NOTE: Needs to be a ref instead of useState, as it is passed into a plain JavaScript context
-    const scriptEnabled = useRef(true);
+    const gridRef = useRef(null);
+    const exampleRef = useRef(null);
+    const [scriptIsEnabled, setScriptIsEnabled] = useState(true);
     const [gridIsReady, setGridIsReady] = useState(false);
+    const [gridIsHoveredOver, setGridIsHoveredOver] = useState(false);
+    const [frequency, setFrequency] = useState(1);
 
-    const onSplashHide = useCallback(() => {
-        if (!automatedScript.current) {
-            return true;
-        }
-
-        scriptEnabled.current = false;
-        automatedScript.current.stop();
-    }, [scriptEnabled.current, automatedScript.current]);
-
-    const onSplashShow = useCallback(() => {
-        scriptEnabled.current = true;
-        automatedScript.current.start();
-    }, [scriptEnabled.current, automatedScript.current]);
-
-    const scriptIsEnabled = () => {
-        return scriptEnabled.current;
+    const setAllScriptEnabledVars = (isEnabled) => {
+        setScriptIsEnabled(isEnabled);
+        automatedExampleManager.setEnabled({ id: exampleId, isEnabled });
     };
+    const updateFrequency = useCallback((value) => {
+        if (!exampleRef.current) {
+            return;
+        }
+        exampleRef.current.setUpdateFrequency(value);
+        setFrequency(value);
+    }, []);
+
+    useIntersectionObserver({
+        elementRef: gridRef,
+        onChange: ({ isIntersecting }) => {
+            if (isIntersecting) {
+                automatedExampleManager.start(exampleId);
+            } else {
+                automatedExampleManager.inactive(exampleId);
+            }
+        },
+        threshold: visibilityThreshold,
+        isDisabled: !gridIsReady,
+    });
 
     useEffect(() => {
         let params = {
             gridClassname,
             mouseMaskClassname: styles.mouseMask,
-            scriptIsEnabled,
             scriptDebuggerManager,
             suppressUpdates: useStaticData,
             useStaticData,
             runOnce,
+            onStateChange(state) {
+                // Catch errors, and allow the user to use the grid
+                if (state === 'stopping') {
+                    setAllScriptEnabledVars(false);
+                }
+            },
             onGridReady() {
                 setGridIsReady(true);
             },
+            visibilityThreshold,
         };
 
-        automatedScript.current = createAutomatedRowGrouping(params);
+        exampleRef.current = createAutomatedRowGrouping(params);
+        automatedExampleManager.add({
+            id: exampleId,
+            automatedExample: exampleRef.current,
+        });
     }, []);
 
     return (
         <>
-            <Helmet>
-                {helmet.map((entry) => entry)}
-                <style>{mouseStyles}</style>
-            </Helmet>
-            <div style={{ height: '100%', width: '100%' }} className="automated-row-grouping-grid ag-theme-alpine-dark">
+            <header className={styles.sectionHeader}>
+                <h2 className="font-size-gargantuan">Feature Packed, Incredible Performance</h2>
+                <p className="font-size-large">
+                    All the features your users expect and more. Out of the box performance that can handle any data you
+                    can throw&nbsp;at&nbsp;it.
+                </p>
+            </header>
+
+            <Helmet>{helmet.map((entry) => entry)}</Helmet>
+            <div ref={gridRef} className="automated-row-grouping-grid ag-theme-alpine-dark">
+                <OverlayButton
+                    ariaLabel="Give me control"
+                    isHidden={!scriptIsEnabled}
+                    onPointerEnter={() => setGridIsHoveredOver(true)}
+                    onPointerOut={() => setGridIsHoveredOver(false)}
+                    onClick={() => {
+                        setAllScriptEnabledVars(false);
+                        automatedExampleManager.stop(exampleId);
+                    }}
+                />
                 {!gridIsReady && !useStaticData && <LogoMark isSpinning />}
             </div>
-            <Splash
-                onSplashHide={onSplashHide}
-                onSplashShow={onSplashShow}
-                renderContent={({ hideSplash, setClickTargetHover }) => {
-                    return (
-                        <div className={classnames(styles.contents, 'font-size-large')}>
-                            <div className={styles.contentsInner}>
-                                <h2 className="font-size-massive">
-                                    Feature Packed,
-                                    <br />
-                                    Incredible Performance
-                                </h2>
-                                <p>
-                                    All the features your users expect and more. Out of the box performance that can
-                                    handle any data you can throw&nbsp;at&nbsp;it.
-                                </p>
-                                <button
-                                    className={styles.exploreExampleButton}
-                                    onClick={hideSplash}
-                                    onPointerEnter={() => {
-                                        setClickTargetHover(true);
-                                    }}
-                                    onPointerOut={() => {
-                                        setClickTargetHover(false);
-                                    }}
-                                >
-                                    Explore this example <Icon name="centerToFit" />
-                                </button>
-                                <a className={styles.getStartedLink} href={withPrefix('/documentation/')}>
-                                    Get Started with AG Grid <Icon name="chevronRight" />
-                                </a>
-                            </div>
-                        </div>
-                    );
-                }}
-            />
+
+            <footer className={styles.sectionFooter}>
+                <div className={classNames(styles.exploreButtonOuter, 'font-size-large')}>
+                    <span className="text-secondary">Live example:</span>
+                    <ToggleAutomatedExampleButton
+                        onClick={() => {
+                            if (scriptIsEnabled) {
+                                setAllScriptEnabledVars(false);
+                                automatedExampleManager.stop(exampleId);
+                            } else {
+                                setAllScriptEnabledVars(true);
+                                automatedExampleManager.start(exampleId);
+                            }
+                        }}
+                        isHoveredOver={gridIsHoveredOver}
+                        scriptIsActive={scriptIsEnabled}
+                    ></ToggleAutomatedExampleButton>
+                </div>
+
+                <UpdateSpeedSlider
+                    min={0.1}
+                    max={4}
+                    step={0.1}
+                    value={frequency}
+                    disabled={!gridIsReady}
+                    setValue={updateFrequency}
+                />
+            </footer>
         </>
     );
 }

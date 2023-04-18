@@ -17,7 +17,7 @@ export class StickyRowFeature extends BeanStub {
     private stickyRowCtrls: RowCtrl[] = [];
     private gridBodyCtrl: GridBodyCtrl;
     private containerHeight = 0;
-    private rowModelType: RowModelType;
+    private isClientSide: boolean;
 
     constructor(
         private readonly createRowCon: (rowNode: RowNode, animate: boolean, afterScroll: boolean) => RowCtrl,
@@ -28,7 +28,7 @@ export class StickyRowFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.rowModelType = this.rowModel.getType();
+        this.isClientSide = this.rowModel.getType() === 'clientSide';
 
         this.ctrlsService.whenReady(params => {
             this.gridBodyCtrl = params.gridBodyCtrl;
@@ -53,19 +53,26 @@ export class StickyRowFeature extends BeanStub {
         const addStickyRow = (stickyRow: RowNode) => {
             stickyRows.push(stickyRow);
 
-
             let lastChildBottom: number;
-            if (this.rowModelType === 'serverSide') {
+
+            if (this.isClientSide) {
+                let lastAncestor = stickyRow;
+                while (lastAncestor.expanded) {
+                    if (lastAncestor.master) {
+                        lastAncestor = lastAncestor.detailNode;
+                    } else if (lastAncestor.childrenAfterSort) {
+                        // Tree Data will have `childrenAfterSort` without any nodes, but
+                        // the current node will still be marked as expansible.
+                        if (lastAncestor.childrenAfterSort.length === 0) { break; }
+                        lastAncestor = last(lastAncestor.childrenAfterSort);
+                    }
+                }
+                lastChildBottom = lastAncestor.rowTop! + lastAncestor.rowHeight!;
+            }
+            // if the rowModel is `serverSide` as only `clientSide` and `serverSide` create this feature.
+            else {
                 const storeBounds = stickyRow.childStore?.getStoreBounds();
                 lastChildBottom = (storeBounds?.heightPx ?? 0) + (storeBounds?.topPx ?? 0);
-            } else if (this.rowModelType === 'clientSide') {
-                let lastAncester = stickyRow;
-                while (lastAncester.expanded) {
-                    lastAncester = last(lastAncester.childrenAfterSort!);
-                }
-                lastChildBottom = lastAncester.rowTop! + lastAncester.rowHeight!;
-            } else {
-                throw new Error('AG Grid: Unsupported row model type.');
             }
 
             const stickRowBottom = firstPixel + height + stickyRow.rowHeight!;
@@ -109,7 +116,7 @@ export class StickyRowFeature extends BeanStub {
 
             // if first row is an open group, and practically shown, it needs
             // to be stuck
-            if (firstRow.group && firstRow.expanded && !firstRow.footer && firstRow.rowTop! < firstPixelAfterStickyRows) {
+            if (firstRow.isExpandable() && firstRow.expanded && firstRow.rowTop! < firstPixelAfterStickyRows) {
                 addStickyRow(firstRow);
                 continue;
             }

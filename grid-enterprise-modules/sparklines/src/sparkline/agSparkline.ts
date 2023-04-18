@@ -213,7 +213,6 @@ function initTooltipOptions(target: SparklineTooltip, options: any) {
     setValueIfPropertyExists(target, 'container', options.container, options);
     setValueIfPropertyExists(target, 'xOffset', options.xOffset, options);
     setValueIfPropertyExists(target, 'yOffset', options.yOffset, options);
-    setValueIfPropertyExists(target, 'renderer', options.renderer, options);
 }
 
 function initCrosshairsOptions(target: SparklineCrosshairsOptions, options: any) {

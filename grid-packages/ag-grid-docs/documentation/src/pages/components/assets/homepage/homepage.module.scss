@@ -122,40 +122,19 @@ gatsby-fast-refresh {
     }
 }
 
-.automatedRowGrouping,
-.automatedIntegratedCharts {
-    margin-top: ds.$size-8 !important; // !important for .ag-styles specificity
+.homepageExample {
+    padding-top: ds.$size-6;
+    padding-bottom: ds.$size-7;
 
     @media screen and (min-width: ds.$breakpoint-automated-row-grouping-medium) {
-        position: relative;
-        display: flex;
-        height: 500px;
-        overflow: hidden;
-        background-color: #00162d;
+        padding-top: ds.$size-8;
+        padding-bottom: ds.$size-9;
     }
+}
 
-    @media screen and (min-width: ds.$breakpoint-automated-row-grouping-large) {
-        height: 700px;
-    }
-
-    // Use psuedo element to create fake border radius, as border radius can't
-    // be used to prevent screen tearing issues with transitions on .splash
-    &::after {
-        content: '';
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        right: 0;
-        border-radius: var(--border-radius);
-        box-shadow: 0 0 0 var(--border-radius) var(--white);
-        pointer-events: none;
-        z-index: 100000;
-
-        @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
-            display: none;
-        }
-    }
+.automatedIntegratedChartsOuter {
+    margin-bottom: ds.$size-8 !important; // !important for .ag-styles specificity;
+    background-color: var(--bright-blue-gray);
 }
 
 .frameworksInner {
@@ -195,43 +174,9 @@ gatsby-fast-refresh {
     }
 }
 
-.homepageExample {
-    margin-bottom: ds.$size-9 !important; // !important for .ag-styles specificity
-
-    :global(.read-more-link) {
-        margin-top: ds.$size-1 !important; // !important for .ag-styles specificity
-        float: right;
-    }
-}
-
 .demoHeader {
     text-align: center;
     margin-bottom: ds.$size-2 !important; // !important for .ag-styles specificity
-}
-
-.homepageDescription {
-    margin-top: ds.$size-6 !important; // !important for .ag-styles specificity
-    margin-bottom: ds.$size-6 !important; // !important for .ag-styles specificity
-
-    li:not(:last-child) {
-        margin-bottom: ds.$size-3 !important; // !important for .ag-styles specificity
-    }
-
-    @media screen and (min-width: 880px) {
-        margin-bottom: ds.$size-8 !important; // !important for .ag-styles specificity
-
-        ul {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: ds.$size-3;
-        }
-    }
-
-    @media screen and (min-width: 1200px) {
-        ul {
-            gap: ds.$size-5;
-        }
-    }
 }
 
 .sponsorshipInner {
@@ -290,7 +235,8 @@ gatsby-fast-refresh {
 
     img {
         grid-area: icon;
-        width: 100%;
+        width: var(--icon-size);
+        height: var(--icon-size);
     }
 
     h3 {
@@ -307,7 +253,7 @@ gatsby-fast-refresh {
     position: fixed;
     top: 0;
     right: 0;
-    width: 200px;
+    width: 220px;
     height: fit-content;
     border-left: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
@@ -325,6 +271,18 @@ gatsby-fast-refresh {
         &::before {
             content: 'State: ';
             color: var(--dull-light-gray);
+        }
+    }
+
+    :global(.step) {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        :global(.index) {
+            &::after {
+                content: ':';
+            }
         }
     }
 

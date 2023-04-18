@@ -48,8 +48,8 @@ export const isEventSupported = (() => {
     return eventChecker;
 })();
 
-export function getCtrlForEvent<T>(gridOptionsService: GridOptionsService, event: Event, type: string): T | null {
-    let sourceElement = event.target as HTMLElement;
+export function getCtrlForEventTarget<T>(gridOptionsService: GridOptionsService, eventTarget: EventTarget | null, type: string): T | null {
+    let sourceElement = eventTarget as HTMLElement;
 
     while (sourceElement) {
         const renderedComp = gridOptionsService.getDomData(sourceElement, type);

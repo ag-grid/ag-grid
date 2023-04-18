@@ -504,8 +504,6 @@ export interface AgChartTooltipOptions {
     position?: AgTooltipPositionOptions;
     /** The time interval (in milliseconds) after which the tooltip is shown. */
     delay?: number;
-    /** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */
-    enableInteraction?: boolean;
 }
 
 export type AgTooltipPositionType = 'pointer' | 'node';
@@ -1092,6 +1090,13 @@ export interface AgSeriesTooltip {
     enabled?: boolean;
     /** The position of the tooltip. By default the tooltip follows the mouse pointer. */
     position?: AgTooltipPositionOptions;
+    /** Configuration for tooltip interaction. */
+    interaction?: AgSeriesTooltipInteraction;
+}
+
+export interface AgSeriesTooltipInteraction {
+    /** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */
+    enabled: boolean;
 }
 
 export interface AgCartesianSeriesLabelFormatterParams {
@@ -1503,8 +1508,6 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     sectorLabelKey?: string;
     /** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
     sectorLabelName?: string;
-    /** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */
-    legendItemKey?: string;
     /** The colours to cycle through for the fills of the sectors. */
     fills?: CssColor[];
     /** The colours to cycle through for the strokes of the sectors. */

@@ -1,19 +1,23 @@
 import { Group } from '@tweenjs/tween.js';
-import { ApplyColumnStateParams, GridOptions } from 'ag-grid-community';
+import { ApplyColumnStateParams, CreateRangeChartParams, GridOptions } from 'ag-grid-community';
 import { AgElementFinder } from './agElements';
 import { AgElementName } from './agElements/agElementsConfig';
-import { AG_DND_GHOST_SELECTOR } from './constants';
 import { Mouse } from './createMouse';
+import { addCellRange } from './scriptActions/addCellRange';
 import { clickOnContextMenuItem, ClickOnContextMenuItemParams } from './scriptActions/clickOnContextMenuItem';
-import { destoryAllCharts } from './scriptActions/destroyAllCharts';
 import { dragColumnToRowGroupPanel } from './scriptActions/dragColumnToRowGroupPanel';
 import { moveToElementAndClick } from './scriptActions/moveToElementAndClick';
+import { resetGrid } from './scriptActions/resetGrid';
 import { clearAllSingleCellSelections, clearSingleCell, selectSingleCell } from './scriptActions/singleCell';
 import { ScriptDebugger } from './scriptDebugger';
 import { EasingFunction } from './tween';
 
 interface ResetAction {
     actionType: 'reset';
+    actionParams?: {
+        scrollRow: number;
+        scrollColumn: number;
+    };
 }
 
 interface ResetColumnStateAction {
@@ -98,9 +102,24 @@ interface ApplyColumnStateAction {
     actionParams: ApplyColumnStateParams;
 }
 
+interface AddCellRangeAction {
+    actionType: 'addCellRange';
+    actionParams: {
+        rowStartIndex: number;
+        rowEndIndex: number;
+        columnStartIndex: number;
+        columnEndIndex: number;
+    };
+}
+
+interface CreateRangeChartAction {
+    actionType: 'createRangeChart';
+    actionParams: CreateRangeChartParams;
+}
+
 interface ClickOnContextMenuItemAction {
     actionType: 'clickOnContextMenuItem';
-    actionParams: ClickOnContextMenuItemParams;
+    actionParams: Omit<ClickOnContextMenuItemParams, 'agElementFinder'>;
 }
 
 interface MoveToElementAndClickAction {
@@ -127,6 +146,8 @@ export type AGCreatorAction =
     | OpenToolPanelAction
     | CloseToolPanelAction
     | ApplyColumnStateAction
+    | AddCellRangeAction
+    | CreateRangeChartAction
     | ClickOnContextMenuItemAction
     | MoveToElementAndClickAction;
 
@@ -151,24 +172,19 @@ export function createAGActionCreator({
         const { actionType } = agAction;
 
         if (actionType === 'reset') {
-            gridOptions?.columnApi?.resetColumnState();
-            gridOptions?.columnApi?.resetColumnGroupState();
-            gridOptions?.columnApi?.setColumnsPinned([], null);
-            if (gridOptions?.api) {
-                gridOptions.api.setFilterModel(null);
-                gridOptions.api.closeToolPanel();
-                gridOptions.api.clearRangeSelection();
-                destoryAllCharts(gridOptions.api);
-            }
-            document.querySelector(AG_DND_GHOST_SELECTOR)?.remove();
-            clearAllSingleCellSelections();
+            const action = agAction as ResetAction;
+            return resetGrid({
+                gridOptions,
+                scrollRow: action.actionParams?.scrollRow,
+                scrollColumn: action.actionParams?.scrollColumn,
+            });
         } else if (actionType === 'resetColumnState') {
             gridOptions?.columnApi?.resetColumnState();
         } else if (actionType === 'dragColumnToRowGroupPanel') {
             const action = agAction as DragColumnToRowGroupPanelAction;
 
             // NOTE: Need to return promise, so that it gets resolved downstream
-            return dragColumnToRowGroupPanel({ containerEl, ...action.actionParams });
+            return dragColumnToRowGroupPanel({ agElementFinder, scriptDebugger, ...action.actionParams });
         } else if (actionType === 'toggleGroupCell') {
             const action = agAction as ToggleGroupCellAction;
             const expandParents = !action.actionParams.skipParents;
@@ -188,10 +204,10 @@ export function createAGActionCreator({
             gridOptions?.api?.setFocusedCell(action.actionParams.rowIndex, firstCol);
         } else if (actionType === 'selectSingleCell') {
             const action = agAction as SelectSingleCellAction;
-            selectSingleCell({ containerEl, ...action.actionParams });
+            selectSingleCell({ agElementFinder, ...action.actionParams });
         } else if (actionType === 'clearSelectSingleCell') {
             const action = agAction as ClearSelectSingleCellAction;
-            clearSingleCell({ containerEl, ...action.actionParams });
+            clearSingleCell({ agElementFinder, ...action.actionParams });
         } else if (actionType === 'clearAllSingleCellSelections') {
             clearAllSingleCellSelections();
         } else if (actionType === 'clearRangeSelection') {
@@ -204,10 +220,22 @@ export function createAGActionCreator({
         } else if (actionType === 'applyColumnState') {
             const action = agAction as ApplyColumnStateAction;
             gridOptions?.columnApi?.applyColumnState(action.actionParams);
+        } else if (actionType === 'addCellRange') {
+            const action = agAction as AddCellRangeAction;
+            addCellRange({
+                gridOptions,
+                rowStartIndex: action.actionParams.rowStartIndex,
+                rowEndIndex: action.actionParams.rowEndIndex,
+                columnStartIndex: action.actionParams.columnStartIndex,
+                columnEndIndex: action.actionParams.columnEndIndex,
+            });
+        } else if (actionType === 'createRangeChart') {
+            const action = agAction as CreateRangeChartAction;
+            gridOptions?.api?.createRangeChart(action.actionParams);
         } else if (actionType === 'clickOnContextMenuItem') {
             const action = agAction as ClickOnContextMenuItemAction;
             // NOTE: Need to return promise, so that it gets resolved downstream
-            return clickOnContextMenuItem({ containerEl, ...action.actionParams });
+            return clickOnContextMenuItem({ agElementFinder, scriptDebugger, ...action.actionParams });
         } else if (actionType === 'moveToElementAndClick') {
             const action = agAction as MoveToElementAndClickAction;
             return moveToElementAndClick({

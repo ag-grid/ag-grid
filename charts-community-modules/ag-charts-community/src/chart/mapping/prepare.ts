@@ -5,6 +5,7 @@ import {
     AgCartesianChartOptions,
     AgChartThemePalette,
     AgCrossLineOptions,
+    AgTooltipPositionOptions,
 } from '../agChartOptions';
 import {
     SeriesOptionsTypes,
@@ -18,6 +19,7 @@ import { getChartTheme } from './themes';
 import { processSeriesOptions, SeriesOptions } from './prepareSeries';
 import { Logger } from '../../util/logger';
 import { CHART_TYPES } from '../chartTypes';
+import { CHART_AXES_TYPES } from '../chartAxesTypes';
 
 type AxesOptionsTypes = NonNullable<AgCartesianChartOptions['axes']>[number];
 
@@ -77,6 +79,13 @@ function isSeriesOptionType(input?: string): input is NonNullable<SeriesOptionsT
     return CHART_TYPES.has(input);
 }
 
+function isAxisOptionType(input?: string): input is NonNullable<AxesOptionsTypes>['type'] {
+    if (input == null) {
+        return false;
+    }
+    return CHART_AXES_TYPES.has(input);
+}
+
 function countArrayElements<T extends any[] | any[][]>(input: T): number {
     let count = 0;
     for (const next of input) {
@@ -120,6 +129,8 @@ export function prepareOptions<T extends AgChartOptions>(
     // Determine type and ensure it's explicit in the options config.
     const userSuppliedOptionsType = options.type;
     const type = optionsType(options);
+
+    const globalTooltipPositionOptions = options.tooltip?.position || {};
 
     const checkSeriesType = (type?: string) => {
         if (type != null && !(isSeriesOptionType(type) || seriesDefaults?.[type])) {
@@ -168,7 +179,9 @@ export function prepareOptions<T extends AgChartOptions>(
             } else if (isSeriesOptionType(userSuppliedOptionsType)) {
                 type = userSuppliedOptionsType;
             }
-            const mergedSeries = jsonMerge([seriesThemes[type] || {}, { ...s, type }], noDataCloneMergeOptions);
+
+            const mergedSeries = mergeSeriesOptions(s, type, seriesThemes, globalTooltipPositionOptions);
+
             if (type === 'pie') {
                 preparePieOptions(seriesThemes.pie, s, mergedSeries);
             }
@@ -176,13 +189,37 @@ export function prepareOptions<T extends AgChartOptions>(
         })
     ).map((s) => prepareSeries(context, s)) as any[];
 
+    const checkAxisType = (type?: string) => {
+        const isAxisType = isAxisOptionType(type);
+        if (!isAxisType) {
+            Logger.warnOnce(
+                `AG Charts - unknown axis type: ${type}; expected one of: ${CHART_AXES_TYPES.axesTypes}, ignoring.`
+            );
+        }
+
+        return isAxisType;
+    };
+
     if (isAgCartesianChartOptions(mergedOptions)) {
-        mergedOptions.axes = mergedOptions.axes?.map((a: any) => {
-            const type = a.type ?? 'number';
-            const axis = { ...a, type };
-            const axesTheme = jsonMerge([axesThemes[type], axesThemes[type][a.position || 'unknown'] || {}]);
-            return prepareAxis(axis, axesTheme);
-        });
+        let validAxesTypes = true;
+        for (const { type: axisType } of mergedOptions.axes ?? []) {
+            if (!checkAxisType(axisType)) {
+                validAxesTypes = false;
+            }
+        }
+
+        if (!validAxesTypes) {
+            mergedOptions.axes = (defaultOverrides as AgCartesianChartOptions).axes;
+        } else {
+            mergedOptions.axes = mergedOptions.axes?.map((axis: any) => {
+                const axisType = axis.type;
+                const axesTheme = jsonMerge([
+                    axesThemes[axisType],
+                    axesThemes[axisType][axis.position || 'unknown'] || {},
+                ]);
+                return prepareAxis(axis, axesTheme);
+            });
+        }
     }
 
     prepareEnabledOptions<T>(options, mergedOptions);
@@ -202,6 +239,26 @@ function sanityCheckOptions<T extends AgChartOptions>(options: T) {
             );
         }
     });
+}
+
+function mergeSeriesOptions<T extends SeriesOptionsTypes>(
+    series: T,
+    type: string,
+    seriesThemes: any,
+    globalTooltipPositionOptions: AgTooltipPositionOptions | {}
+): T {
+    const mergedTooltipPosition = jsonMerge(
+        [{ ...globalTooltipPositionOptions }, series.tooltip?.position],
+        noDataCloneMergeOptions
+    );
+    const mergedSeries = jsonMerge(
+        [
+            seriesThemes[type] || {},
+            { ...series, type, tooltip: { ...series.tooltip, position: mergedTooltipPosition } },
+        ],
+        noDataCloneMergeOptions
+    );
+    return mergedSeries;
 }
 
 function prepareMainOptions<T>(
@@ -298,7 +355,7 @@ function prepareAxis<T extends AxesOptionsTypes>(
     // Remove redundant theme overload keys.
     const removeOptions = { top: DELETE, bottom: DELETE, left: DELETE, right: DELETE } as any;
 
-    // Special cross lines case where we have an arrays of cross line elements which need their own defaults.
+    // Special cross lines case where we have an array of cross line elements which need their own defaults.
     if (axis.crossLines) {
         if (!Array.isArray(axis.crossLines)) {
             Logger.warn('axis[].crossLines should be an array.');

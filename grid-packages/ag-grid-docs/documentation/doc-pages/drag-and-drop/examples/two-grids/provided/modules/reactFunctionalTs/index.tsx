@@ -29,7 +29,7 @@ const baseGridOptions: GridOptions = {
 }
 
 const baseColumnDefs: ColDef[] = [
-    { field: 'id', dndSource: true },
+    { field: 'id', dndSource: true, width: 90 },
     { field: 'color' },
     { field: 'value1' },
     { field: 'value2' }

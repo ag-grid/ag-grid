@@ -29,15 +29,12 @@ import { addNonBreakingSpaceBetweenLastWords } from '../utils/add-non-breaking-s
 import { AGStyles } from './ag-styles';
 import styles from './doc-page.module.scss';
 
-const lzString = require('lz-string');
-
 /**
  * This template is used for documentation pages, i.e. those generated from Markdown files.
  */
-const DocPageTemplate = ({ data, pageContext: { framework, jsonDataAsString, exampleIndexData, pageName } }) => {
-    const jsonData = jsonDataAsString ? JSON.parse(lzString.decompress(jsonDataAsString)) : null;
+const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pageName } }) => {
     const { markdownRemark: page } = data;
-    const [showSideMenu, setShowSideMenu] = useState(true);
+    const [showSideMenu, setShowSideMenu] = useState(page.frontmatter.sideMenu === null ? true : page.frontmatter.sideMenu);
 
     if (!page) {
         return null;
@@ -92,7 +89,6 @@ const DocPageTemplate = ({ data, pageContext: { framework, jsonDataAsString, exa
                     ...props,
                     pageName,
                     framework,
-                    jsonData,
                     exampleIndexData,
                     sources: props.sources != null ? JSON.parse(props.sources) : undefined,
                     config: props.config != null ? JSON.parse(props.config) : undefined,
@@ -101,7 +97,6 @@ const DocPageTemplate = ({ data, pageContext: { framework, jsonDataAsString, exa
                 InterfaceDocumentation({
                     ...props,
                     framework,
-                    jsonData,
                     exampleIndexData,
                     config: props.config != null ? JSON.parse(props.config) : undefined,
                 }),
@@ -110,7 +105,6 @@ const DocPageTemplate = ({ data, pageContext: { framework, jsonDataAsString, exa
                 ExpandableSnippet({
                     ...props,
                     framework,
-                    jsonData,
                     exampleIndexData,
                     breadcrumbs: props.breadcrumbs ? JSON.parse(props.breadcrumbs) : undefined,
                     config: props.config != null ? JSON.parse(props.config) : undefined,
@@ -118,7 +112,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, jsonDataAsString, exa
             'feature-overview': (props) => FeatureOverview({ ...props, framework }),
             'icons-panel': IconsPanel,
             'image-caption': (props) => ImageCaption({ ...props, pageName }),
-            'matrix-table': (props) => MatrixTable({ ...props, framework, jsonData, exampleIndexData }),
+            'matrix-table': (props) => MatrixTable({ ...props, framework, exampleIndexData }),
             tabs: (props) => Tabs({ ...props }),
             'learning-videos': (props) => LearningVideos({ framework }),
             'video-section': VideoSection,
@@ -241,12 +235,12 @@ const DocPageTemplate = ({ data, pageContext: { framework, jsonDataAsString, exa
                 <div className={styles.pageSections}>{renderAst(orphanlessAst)}</div>
             </div>
 
-            <SideMenu
+            {showSideMenu && <SideMenu
                 headings={page.headings || []}
                 pageName={pageName}
                 pageTitle={title}
                 hideMenu={() => setShowSideMenu(false)}
-            />
+            />}
         </div>
     );
 };
@@ -259,6 +253,7 @@ export const pageQuery = graphql`
                 title
                 version
                 enterprise
+                sideMenu
                 description
             }
             headings {

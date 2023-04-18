@@ -21,14 +21,6 @@ The grid can be as fast as demonstrated in the demo application [Demo Applicatio
 
 The grid can be slowed down by custom [Cell Renderers](/component-cell-renderer/). To test this, remove all Cell Renderers from the grid and compare the speed again. If the grid does improve it's speed by removing Cell Renderers, introduce the Cell Renderers one by one to find out which ones are adding the most overhead.
 
-[[only-react]]
-|
-| ## React or JavaScript Cell Renderers
-|
-| In the past we recommended writing Cell Renderers in JavaScript for best performance, as the grid rendering WAS written in plan JavaScript (i.e. it was not using React). However this guidance has changed as since v27 of the grid, the grid now uses React for it's rendering engine. As such, there is no real advantage between using JavaScript or React for your Cell Renderers.
-|
-| Given React and Plain JavaScript are different, you might wonder which one would be faster for your implementation. This is down to you, which one you prefer. The only thing we can say is we can't see why there would be a clear winner form the grid's point of view.
-
 [[only-angular]]
 | 
 | ## Consider JavaScript Cell Renderers
@@ -71,11 +63,9 @@ The `rowBuffer` property sets the number of rows the grid renders outside of the
 
 Setting a low row buffer will make initial draws of the grid faster (eg when data is first loaded, or after filtering, grouping etc). Setting a high row buffer will reduce the redraw visible vertically scrolling.
 
-## Use Chrome (or Chrome Powered Browser)
+## Compare Browsers
 
-The grid works fastest on Google Chrome. If you can, tell your users.
-
-This includes Microsoft Edge, which is now powered by Chrome.
+Performance of the grid can vary between browsers due to their underlying implementations. At the time of writing Chromium based browsers (Google Chrome, Microsoft Edge) have the best performance. However, it may be outside of your control to recommend which browser users of your application have installed.
 
 ## Understand Data Updates
 
@@ -84,10 +74,6 @@ For fast changing data, consider using [Batch Update Transactions](/data-update-
 
 ## Debounce Vertical Scroll
 
-By default, there is no debouncing of the vertical scroll. However on slow browsers, especially IE, depending on your application, you may wish to debounce the vertical scroll.
+By default, there is no debouncing of the vertical scroll. However, in some rare circumstances, you may wish to debounce the vertical scroll so that the grid only scrolls after the user has finished updating the scroll position. 
 
 To debounce the vertical scroll, set grid property `debounceVerticalScrollbar=true`.
-
-The example below demonstrates debouncing of the vertical scroll.
-
-<grid-example title='Debounce Vertical Scroll' name='debounce-vertical-scroll' type='generated'></grid-example>

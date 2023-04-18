@@ -623,8 +623,9 @@ export abstract class Sparkline {
         // check if tooltip is enabled for this specific data point
         let enabled = this.tooltip.enabled;
 
-        if (this.tooltip.renderer) {
-            const tooltipRendererResult = this.tooltip.renderer({
+        const tooltipRenderer = this.processedOptions?.tooltip?.renderer;
+        if (tooltipRenderer) {
+            const tooltipRendererResult = tooltipRenderer({
                 context: this.context,
                 datum: seriesDatum,
                 yValue,

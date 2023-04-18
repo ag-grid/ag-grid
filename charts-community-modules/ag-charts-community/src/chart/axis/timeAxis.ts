@@ -67,4 +67,10 @@ export class TimeAxis extends ChartAxis<TimeScale, number | Date> {
     formatDatum(datum: Date): string {
         return this.datumFormatter(datum);
     }
+
+    calculatePadding(_min: number, _max: number) {
+        // numbers in domain correspond to Unix timestamps
+        // automatically expand domain by 1 in each direction
+        return 1;
+    }
 }

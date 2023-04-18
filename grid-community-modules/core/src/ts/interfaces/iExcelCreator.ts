@@ -217,19 +217,23 @@ export interface ExcelRow {
 }
 
 export interface ExcelCell {
-    /** Cell reference. */
-    ref?: string;
-    /** The ExcelStyle id to be associated with the cell. */
-    styleId?: string;
     /** The data that will be added to the cell. */
     data?: ExcelData;
+
+    /** Cell reference. */
+    ref?: string;
+
+    /** Collapsible ranges. */
+    collapsibleRanges?: number[][];
+
+    /** The ExcelStyle id to be associated with the cell. */
+    styleId?: string | string[];
+    
     /**
      * The number of cells to span across (1 means span 2 columns).
      * Default: `0`
      */
     mergeAcross?: number;
-    /** Collapsible ranges. */
-    collapsibleRanges?: number[][];
 }
 
 export interface ExcelImagePosition {

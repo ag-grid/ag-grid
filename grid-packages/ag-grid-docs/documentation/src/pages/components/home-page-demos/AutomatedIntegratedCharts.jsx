@@ -1,15 +1,18 @@
 // Remount component when Fast Refresh is triggered
 // @refresh reset
 
-import classnames from 'classnames';
+import classNames from 'classnames';
 import { withPrefix } from 'gatsby';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { createAutomatedIntegratedCharts } from '../../../components/automated-examples/integrated-charts';
-import { Splash } from '../../../components/automated-examples/Splash';
+import { createAutomatedIntegratedCharts } from '../../../components/automated-examples/examples/integrated-charts';
+import { INTEGRATED_CHARTS_ID } from '../../../components/automated-examples/lib/constants';
+import { OverlayButton } from '../../../components/automated-examples/OverlayButton';
+import { ToggleAutomatedExampleButton } from '../../../components/automated-examples/ToggleAutomatedExampleButton';
 import { Icon } from '../../../components/Icon';
 import LogoMark from '../../../components/LogoMark';
-import { hostPrefix, isProductionBuild, localPrefix } from '../../../utils/consts';
+import { isProductionBuild, localPrefix } from '../../../utils/consts';
+import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
 import styles from './AutomatedIntegratedCharts.module.scss';
 
 const helmet = [];
@@ -40,98 +43,120 @@ if (!isProductionBuild()) {
     );
 }
 
-const mouseStyles = `
-    .automated-integrated-charts-grid .ag-root-wrapper,
-    .automated-integrated-charts-grid .ag-root-wrapper * {
-        cursor: url(${hostPrefix}/images/cursor/automated-example-cursor.svg) 22 21, pointer !important;
-    }
-`;
-
-function AutomatedIntegratedCharts({ scriptDebuggerManager, useStaticData, runOnce }) {
+function AutomatedIntegratedCharts({
+    automatedExampleManager,
+    scriptDebuggerManager,
+    useStaticData,
+    runOnce,
+    visibilityThreshold,
+}) {
+    const exampleId = INTEGRATED_CHARTS_ID;
     const gridClassname = 'automated-integrated-charts-grid';
-    const automatedScript = useRef(null);
-    // NOTE: Needs to be a ref instead of useState, as it is passed into a plain JavaScript context
-    const scriptEnabled = useRef(true);
+    const gridRef = useRef(null);
+    const [scriptIsEnabled, setScriptIsEnabled] = useState(true);
     const [gridIsReady, setGridIsReady] = useState(false);
+    const [gridIsHoveredOver, setGridIsHoveredOver] = useState(false);
 
-    const onSplashHide = useCallback(() => {
-        if (!automatedScript.current) {
-            return true;
-        }
-
-        scriptEnabled.current = false;
-        automatedScript.current.stop();
-    }, [scriptEnabled.current, automatedScript.current]);
-
-    const onSplashShow = useCallback(() => {
-        scriptEnabled.current = true;
-        automatedScript.current.start();
-    }, [scriptEnabled.current, automatedScript.current]);
-
-    const scriptIsEnabled = () => {
-        return scriptEnabled.current;
+    const setAllScriptEnabledVars = (isEnabled) => {
+        setScriptIsEnabled(isEnabled);
+        automatedExampleManager.setEnabled({ id: exampleId, isEnabled });
     };
+
+    useIntersectionObserver({
+        elementRef: gridRef,
+        onChange: ({ isIntersecting }) => {
+            if (isIntersecting) {
+                automatedExampleManager.start(exampleId);
+            } else {
+                automatedExampleManager.inactive(exampleId);
+            }
+        },
+        threshold: visibilityThreshold,
+        isDisabled: !gridIsReady,
+    });
 
     useEffect(() => {
         let params = {
             gridClassname,
             mouseMaskClassname: styles.mouseMask,
-            scriptIsEnabled,
             scriptDebuggerManager,
             suppressUpdates: useStaticData,
             useStaticData,
             runOnce,
+            onStateChange(state) {
+                // Catch errors, and allow the user to use the grid
+                if (state === 'stopping') {
+                    setAllScriptEnabledVars(false);
+                }
+            },
             onGridReady() {
                 setGridIsReady(true);
             },
+            visibilityThreshold,
         };
 
-        automatedScript.current = createAutomatedIntegratedCharts(params);
+        automatedExampleManager.add({
+            id: exampleId,
+            automatedExample: createAutomatedIntegratedCharts(params),
+        });
     }, []);
 
     return (
         <>
-            <Helmet>
-                {helmet.map((entry) => entry)}
-                <style>{mouseStyles}</style>
-            </Helmet>
-            <div style={{ height: '100%', width: '100%' }} className="automated-integrated-charts-grid ag-theme-alpine">
+            <header className={styles.sectionHeader}>
+                <h2 className="font-size-gargantuan">Fully Integrated Charting</h2>
+                <p className="font-size-large">
+                    With a complete suite of integrated charting tools, your users can visualise their data any way they
+                    choose.
+                </p>
+                <p className="font-size-large">
+                    Intuitive cell selection and simple right-click context menus let users export and chart exactly the
+                    data they need. With dazzling themes, dozens of chart types, and a multitude of settings, Integrated
+                    Charts make data beautiful.
+                </p>
+            </header>
+
+            <Helmet>{helmet.map((entry) => entry)}</Helmet>
+            <div ref={gridRef} className="automated-integrated-charts-grid ag-theme-alpine">
+                <OverlayButton
+                    ariaLabel="Give me control"
+                    isHidden={!scriptIsEnabled}
+                    onPointerEnter={() => setGridIsHoveredOver(true)}
+                    onPointerOut={() => setGridIsHoveredOver(false)}
+                    onClick={() => {
+                        setAllScriptEnabledVars(false);
+                        automatedExampleManager.stop(exampleId);
+                    }}
+                />
                 {!gridIsReady && !useStaticData && <LogoMark isSpinning />}
             </div>
-            <Splash
-                size="small"
-                onSplashHide={onSplashHide}
-                onSplashShow={onSplashShow}
-                renderContent={({ hideSplash, setClickTargetHover }) => {
-                    return (
-                        <div className={classnames(styles.contents, 'font-size-large')}>
-                            <div className={styles.contentsInner}>
-                                <h2 className="font-size-massive">Integrated Charts</h2>
-                                <p>
-                                    Visualise and analyse your data seemlessly.
-                                    <br />
-                                    Create charts directly inside the grid with an intuitive UI and comprehensive API.
-                                </p>
-                                <button
-                                    className={styles.exploreExampleButton}
-                                    onClick={hideSplash}
-                                    onPointerEnter={() => {
-                                        setClickTargetHover(true);
-                                    }}
-                                    onPointerOut={() => {
-                                        setClickTargetHover(false);
-                                    }}
-                                >
-                                    Explore this example <Icon name="centerToFit" />
-                                </button>
-                                <a className={styles.getStartedLink} href={withPrefix('/documentation/')}>
-                                    Get Started with AG Grid <Icon name="chevronRight" />
-                                </a>
-                            </div>
-                        </div>
-                    );
-                }}
-            />
+
+            <footer className={styles.sectionFooter}>
+                <div className={classNames(styles.exploreButtonOuter, 'font-size-large')}>
+                    <span className="text-secondary">Live example:</span>
+                    <ToggleAutomatedExampleButton
+                        onClick={() => {
+                            if (scriptIsEnabled) {
+                                setAllScriptEnabledVars(false);
+                                automatedExampleManager.stop(exampleId);
+                            } else {
+                                setAllScriptEnabledVars(true);
+                                automatedExampleManager.start(exampleId);
+                            }
+                        }}
+                        isHoveredOver={gridIsHoveredOver}
+                        scriptIsActive={scriptIsEnabled}
+                    ></ToggleAutomatedExampleButton>
+                </div>
+                <div className="font-size-large">
+                    <a
+                        className={classNames('font-size-large', styles.getStartedLink)}
+                        href={withPrefix('/documentation/')}
+                    >
+                        Get Started with AG Grid <Icon name="chevronRight" />
+                    </a>
+                </div>
+            </footer>
         </>
     );
 }

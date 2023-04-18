@@ -12,8 +12,6 @@ class CRF extends React.Component {
 }
 
 const App = () => {
-    const [gridApi, setGridApi] = useState(null);
-    const [gridColumnApi, setGridColumnApi] = useState(null);
 
     const [rowData, setRowData] = useState([
         { value: "Toyota" },
@@ -26,8 +24,6 @@ const App = () => {
     ])
 
     function onGridReady(params) {
-        setGridApi(params.api);
-        setGridColumnApi(params.columnApi);
     }
 
     return (

@@ -3,6 +3,8 @@ import classNames from 'classnames';
 import React from 'react';
 import BoldChevronRight from '../images/inline-svgs/bold-chevron-right.svg';
 import EnterpriseIcon from '../images/inline-svgs/enterprise.svg';
+import ReplayDemoIcon from '../images/inline-svgs/replay-demo-icon.svg';
+import TakeControlIcon from '../images/inline-svgs/take-control-icon.svg';
 import styles from './Icon.module.scss';
 
 // Uses IBM Carbon Design System icons as a base
@@ -30,6 +32,8 @@ export const ICON_MAP = {
     chevronRight: BoldChevronRight,
     centerToFit: CarbonIcon.CenterToFit,
     sidePanelClose: CarbonIcon.SidePanelClose,
+    replaydemo: ReplayDemoIcon,
+    takeControl: TakeControlIcon,
 };
 
 export type IconName = keyof typeof ICON_MAP;

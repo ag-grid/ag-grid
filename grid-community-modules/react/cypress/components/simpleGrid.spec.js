@@ -6,9 +6,6 @@ import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model
 import {ensureGridApiHasBeenSet} from "./utils";
 
 const App = () => {
-    const [gridApi, setGridApi] = useState(null);
-    const [gridColumnApi, setGridColumnApi] = useState(null);
-
     const [rowData, setRowData] = useState([
         {make: "Toyota", model: "Celica", price: 35000},
         {make: "Ford", model: "Mondeo", price: 32000},
@@ -22,8 +19,6 @@ const App = () => {
     ]);
 
     function onGridReady(params) {
-        setGridApi(params.api);
-        setGridColumnApi(params.columnApi);
     }
 
     return (

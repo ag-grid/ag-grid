@@ -27,7 +27,6 @@ export interface PopupPositionParams {
     alignSide?: 'left' | 'right';
     keepWithinBounds?: boolean;
     skipObserver?: boolean;
-    shouldSetMaxHeight?: boolean;
     updatePosition?: () => { x: number; y: number; };
     postProcessCallback?: () => void;
 }
@@ -129,10 +128,9 @@ export class PopupService extends BeanStub {
         return this.gridCtrl.getGui();
     }
 
-    public positionPopupForMenu(params: { eventSource: HTMLElement; ePopup: HTMLElement; shouldSetMaxHeight?: boolean; }): void {
+    public positionPopupForMenu(params: { eventSource: HTMLElement; ePopup: HTMLElement; }): void {
         const sourceRect = params.eventSource.getBoundingClientRect();
         const parentRect = this.getParentRect();
-        this.checkClearMaxHeight(params.ePopup, params.shouldSetMaxHeight);
         const y = this.keepXYWithinBounds(params.ePopup, sourceRect.top - parentRect.top, DIRECTION.vertical);
 
         const minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth : 200;
@@ -166,7 +164,6 @@ export class PopupService extends BeanStub {
 
         params.ePopup.style.left = `${x}px`;
         params.ePopup.style.top = `${y}px`;
-        this.checkSetMaxHeight(params.ePopup, y, params.shouldSetMaxHeight);
 
         function xRightPosition(): number {
             return sourceRect.right - parentRect.left - 2;
@@ -178,7 +175,7 @@ export class PopupService extends BeanStub {
     }
 
     public positionPopupUnderMouseEvent(params: PopupPositionParams & { type: string, mouseEvent: MouseEvent | Touch }): void {
-        const { ePopup, nudgeX, nudgeY, skipObserver, shouldSetMaxHeight } = params;
+        const { ePopup, nudgeX, nudgeY, skipObserver } = params;
 
         this.positionPopup({
             ePopup: ePopup,
@@ -186,7 +183,6 @@ export class PopupService extends BeanStub {
             nudgeY,
             keepWithinBounds: true,
             skipObserver,
-            shouldSetMaxHeight,
             updatePosition: () => this.calculatePointerAlign(params.mouseEvent),
             postProcessCallback: () => this.callPostProcessPopup(params.type, params.ePopup, null, params.mouseEvent, params.column, params.rowNode)
         });
@@ -225,7 +221,6 @@ export class PopupService extends BeanStub {
             nudgeX: params.nudgeX,
             nudgeY: params.nudgeY,
             keepWithinBounds: params.keepWithinBounds,
-            shouldSetMaxHeight: params.shouldSetMaxHeight,
             updatePosition,
             postProcessCallback: () => this.callPostProcessPopup(params.type, params.ePopup, params.eventSource, null, params.column, params.rowNode)
         });
@@ -254,7 +249,7 @@ export class PopupService extends BeanStub {
     }
 
     public positionPopup(params: PopupPositionParams): void {
-        const { ePopup, keepWithinBounds, nudgeX, nudgeY, skipObserver, shouldSetMaxHeight, updatePosition } = params;
+        const { ePopup, keepWithinBounds, nudgeX, nudgeY, skipObserver, updatePosition } = params;
         const lastSize = { width: 0, height: 0 };
 
         const updatePopupPosition = (fromResizeObserver: boolean = false) => {
@@ -274,8 +269,6 @@ export class PopupService extends BeanStub {
             if (nudgeX) { x += nudgeX; }
             if (nudgeY) { y += nudgeY; }
 
-            this.checkClearMaxHeight(ePopup, shouldSetMaxHeight);
-
             // if popup is overflowing to the bottom, move it up
             if (keepWithinBounds) {
                 x = this.keepXYWithinBounds(ePopup, x, DIRECTION.horizontal);
@@ -284,7 +277,6 @@ export class PopupService extends BeanStub {
 
             ePopup.style.left = `${x}px`;
             ePopup.style.top = `${y}px`;
-            this.checkSetMaxHeight(ePopup, y, shouldSetMaxHeight);
 
             if (params.postProcessCallback) {
                 params.postProcessCallback();
@@ -745,19 +737,5 @@ export class PopupService extends BeanStub {
         };
 
         this.eventService.dispatchEvent(params);
-    }
-
-    private checkClearMaxHeight(ePopup: HTMLElement, shouldSetMaxHeight?: boolean): void {
-        if (shouldSetMaxHeight) {
-            // positionPopup can be called multiple times, so need to clear before bounds check
-            ePopup.style.removeProperty('max-height');
-        }
-    }
-
-    private checkSetMaxHeight(ePopup: HTMLElement, y: number, shouldSetMaxHeight?: boolean): void {
-        if (shouldSetMaxHeight && getComputedStyle(ePopup).maxHeight === '100%') {
-            // max height could be overridden, so only set if the default (100%)
-            ePopup.style.maxHeight = `calc(100% - ${y}px)`;
-        }
     }
 }

@@ -433,11 +433,11 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
                     ? { bottom: true, bottomLeft: true, left: true }
                     : { bottom: true, bottomRight: true, right: true }
             );
-            this.positionableFeature.constrainSizeToAvailableHeight(true);
         } else {
             this.positionableFeature.removeSizeFromEl();
             this.positionableFeature.setResizable(false);
         }
+        this.positionableFeature.constrainSizeToAvailableHeight(true);
     }
 
     public afterGuiDetached(): void {

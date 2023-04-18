@@ -1,8 +1,6 @@
 @use "sass:map";
 @use "../../design-system/" as *;
 
-$header-height: 64px;
-
 .header {
     display: flex;
     align-items: center;
@@ -42,7 +40,7 @@ $header-height: 64px;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: $header-height;
+    height: $site-header-height;
     margin-left: auto !important; // !important for .ag-styles specificity
     padding: 0 16px 0 14px !important; // !important for .ag-styles specificity
     border: none !important; // !important for .ag-styles specificity
@@ -173,7 +171,7 @@ $header-height: 64px;
 .navItemList {
     @media screen and (min-width: $breakpoint-site-header-small) {
         display: flex;
-        height: $header-height;
+        height: $site-header-height;
         align-items: center;
     }
 }

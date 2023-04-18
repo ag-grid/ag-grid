@@ -24,7 +24,7 @@ class TestFilter extends ProvidedFilter<ProvidedFilterModel, string> {
         rowModel.getType.mockReturnValue(rowModelType);
         (this as any).rowModel = rowModel;
 
-        (this as any).positionableFeature = mock<PositionableFeature>('restoreLastSize', 'setResizable', 'removeSizeFromEl');
+        (this as any).positionableFeature = mock<PositionableFeature>('restoreLastSize', 'setResizable', 'removeSizeFromEl', 'constrainSizeToAvailableHeight');
 
         this.setParams(params);
     }

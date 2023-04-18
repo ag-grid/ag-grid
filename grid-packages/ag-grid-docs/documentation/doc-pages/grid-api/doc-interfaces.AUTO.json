@@ -733,6 +733,10 @@
       "description": "/** ColDef of the aggregation column */",
       "type": { "returnType": "ColDef<TData>", "optional": false }
     },
+    "pivotResultColumn": {
+      "description": "/** Pivot Result Column being produced using this aggregation */",
+      "type": { "returnType": "Column", "optional": true }
+    },
     "rowNode": {
       "description": "/** The parent RowNode, where the aggregation result will be shown */",
       "type": { "returnType": "IRowNode<TData>", "optional": false }
@@ -13367,25 +13371,25 @@
     }
   },
   "ExcelCell": {
-    "ref": {
-      "description": "/** Cell reference. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "styleId": {
-      "description": "/** The ExcelStyle id to be associated with the cell. */",
-      "type": { "returnType": "string", "optional": true }
-    },
     "data": {
       "description": "/** The data that will be added to the cell. */",
       "type": { "returnType": "ExcelData", "optional": true }
     },
-    "mergeAcross": {
-      "description": "/** The number of cells to span across (1 means span 2 columns).\n     * Default: `0`\n     */",
-      "type": { "returnType": "number", "optional": true }
+    "ref": {
+      "description": "/** Cell reference. */",
+      "type": { "returnType": "string", "optional": true }
     },
     "collapsibleRanges": {
       "description": "/** Collapsible ranges. */",
       "type": { "returnType": "number[][]", "optional": true }
+    },
+    "styleId": {
+      "description": "/** The ExcelStyle id to be associated with the cell. */",
+      "type": { "returnType": "string | string[]", "optional": true }
+    },
+    "mergeAcross": {
+      "description": "/** The number of cells to span across (1 means span 2 columns).\n     * Default: `0`\n     */",
+      "type": { "returnType": "number", "optional": true }
     }
   },
   "ExcelImagePosition": {
@@ -19952,9 +19956,6 @@
         "optional": true
       }
     },
-    "shouldSetMaxHeight": {
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "name": {
       "description": "/** Name of the menu item */",
       "type": { "returnType": "string", "optional": false }
@@ -20140,9 +20141,6 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipObserver": { "type": { "returnType": "boolean", "optional": true } },
-    "shouldSetMaxHeight": {
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "updatePosition": {
       "type": {
         "arguments": {},

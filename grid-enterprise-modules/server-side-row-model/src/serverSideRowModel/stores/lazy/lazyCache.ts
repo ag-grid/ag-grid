@@ -1,8 +1,15 @@
-import { Autowired, BeanStub, FocusService, GridApi, LoadSuccessParams, NumberSequence, PostConstruct, PreDestroy, RowNode, IRowNode, ServerSideGroupLevelParams } from "@ag-grid-community/core";
+import { Autowired, BeanStub, FocusService, GridApi, LoadSuccessParams, NumberSequence, PostConstruct, PreDestroy, RowNode, IRowNode, ServerSideGroupLevelParams, GetRowIdFunc, WithoutGridCommon, GetRowIdParams } from "@ag-grid-community/core";
 import { BlockUtils } from "../../blocks/blockUtils";
 import { NodeManager } from "../../nodeManager";
 import { LazyStore } from "./lazyStore";
 import { LazyBlockLoader } from "./lazyBlockLoader";
+import { MultiIndexMap } from "./multiIndexMap";
+
+interface LazyStoreNode {
+    id: string;
+    index: number;
+    node: RowNode;
+};
 
 export class LazyCache extends BeanStub {
     @Autowired('gridApi') private api: GridApi;
@@ -10,21 +17,60 @@ export class LazyCache extends BeanStub {
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
 
-    // Indicates whether this is still the live dataset for this store (used for ignoring old requests after purge)
+    /**
+     * Indicates whether this is still the live dataset for this store (used for ignoring old requests after purge)
+     */
     private live = true;
 
-    private nodeIndexMap: { [index: number]: RowNode };
-    private nodeIds: Set<string>;
+    /**
+     * A node map indexed by the node's id, index, and node.
+     */
+    private nodeMap: MultiIndexMap<LazyStoreNode>;
 
+    /**
+     * A map of nodes indexed by the display index.
+     */
+    private nodeDisplayIndexMap: Map<number, RowNode>;
+
+    /**
+     * A set of nodes waiting to be refreshed
+     */
+    private nodesToRefresh: Set<RowNode>;
+
+    /**
+     * A list of display indexes bounds which are not currently present in this store, this can be due to;
+     * - Row stub hasn't been generated yet
+     * - Display index belongs to a child store
+     * - Display index is a detail node
+     * 
+     *    (Note, this is not always up to date, as stub nodes being generated do not refresh this, however
+     *     this is a non issue as stub nodes are only ever default height and occupy 1 display index)
+     */
+    private skippedDisplayIndexes: { from: number, to: number }[];
+
+    /**
+     * End of store properties
+     */
     private numberOfRows: number;
     private isLastRowKnown: boolean;
 
+    /**
+     * The prefix to use for node ids, this is used to ensure that node ids are unique across stores
+     */
     private defaultNodeIdPrefix: string | undefined;
 
+    /**
+     * Sibling services - 1-1 relationships.
+     */
     private store: LazyStore;
     private rowLoader: LazyBlockLoader;
-
     private storeParams: ServerSideGroupLevelParams;
+
+    /**
+     * Grid options properties - stored locally for access speed.
+     */
+    private getRowIdFunc?: ((params: WithoutGridCommon<GetRowIdParams<any, any>>) => string);
+    private isMasterDetail: boolean;
 
     constructor(store: LazyStore, numberOfRows: number, storeParams: ServerSideGroupLevelParams) {
         super();
@@ -36,18 +82,27 @@ export class LazyCache extends BeanStub {
 
     @PostConstruct
     private init() {
-        this.nodeIndexMap = {};
-        this.nodeIds = new Set();
+        // initiate the node map to be indexed at 'index', 'id' and 'node' for quick look-up.
+        // it's important id isn't first, as stub nodes overwrite each-other, and the first index is
+        // used for iteration.
+        this.nodeMap = new MultiIndexMap('index', 'id', 'node');
+
+        this.nodeDisplayIndexMap = new Map();
+        this.nodesToRefresh = new Set();
+
         this.defaultNodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.store.getParentNode());
         this.rowLoader = this.createManagedBean(new LazyBlockLoader(this, this.store.getParentNode(), this.storeParams));
+        this.getRowIdFunc = this.gridOptionsService.getRowIdFunc();
+        this.isMasterDetail = this.gridOptionsService.isMasterDetail();
     }
 
     @PreDestroy
     private destroyRowNodes() {
         this.numberOfRows = 0;
-        this.blockUtils.destroyRowNodes(this.getAllNodes());
-        this.nodeIndexMap = {};
-        this.nodeIds.clear();
+        this.nodeMap.forEach(node => this.blockUtils.destroyRowNode(node.node));
+        this.nodeMap.clear();
+        this.nodeDisplayIndexMap.clear();
+        this.nodesToRefresh.clear();
         this.live = false;
     }
 
@@ -62,60 +117,69 @@ export class LazyCache extends BeanStub {
             return undefined;
         }
 
-        let nodeAfterStringIndex: string | undefined;
-        const nodeMapEntries = this.getNodeMapEntries();
-        for (let i = 0; i < nodeMapEntries.length; i++) {
-            const [stringIndex, node] = nodeMapEntries[i];
-            // if we find the index, simply return this node
-            if (node.rowIndex === displayIndex) {
-                if (node.stub || node.__needsRefreshWhenVisible) {
-                    this.rowLoader.queueLoadAction();
-                }
-                return node;
+
+        // first try to directly look this node up in the display index map
+        const node = this.nodeDisplayIndexMap.get(displayIndex);
+        if (node) {
+            // if we have the node, check if it needs refreshed when rendered
+            if (node.stub || node.__needsRefreshWhenVisible) {
+                this.rowLoader.queueLoadCheck();
             }
-
-            // then check if current row contains a detail row with the index
-            const expandedMasterRow = node.master && node.expanded;
-            const detailNode = node.detailNode;
-
-            if (expandedMasterRow && detailNode && detailNode.rowIndex === displayIndex) {
-                return detailNode;
-            }
-
-            // if the index belongs to a child store, recursively search
-            if (node.childStore?.isDisplayIndexInStore(displayIndex)) {
-                return node.childStore.getRowUsingDisplayIndex(displayIndex);
-            }
-
-            // if current row index is higher, then the node has been passed
-            if (node.rowIndex! > displayIndex) {
-                // keep track of the last next node we find that comes after in case we need to create a new stub
-                nodeAfterStringIndex = stringIndex;
-                break;
-            }
-
+            return node;
         }
 
-        /**
-         * The code below this point is assuming we haven't found a stored node with this display index, but the node does belong in this store,
-         * in this case we want to create a stub node to display in the grid, so we need to calculate the store index from the display index using
-         * the next node found after this one (can use end index here as we have confidence it should be up to date, as we aren't inserting rows)
-         */
+        // next check if this is the first row, if so return a stub node
+        // this is a performance optimisation, as it is the most common scenario
+        // and enables the node - 1 check to kick in more often.
+        if (displayIndex === this.store.getDisplayIndexStart()) {
+            return this.createStubNode(0, displayIndex);
+        }
 
-        // no node was found before this display index, so calculate based on store end index
-        if (nodeAfterStringIndex == null) {
+        // check if the row immediately prior is available in the store
+        const contiguouslyPreviousNode = this.nodeDisplayIndexMap.get(displayIndex - 1);
+        if (contiguouslyPreviousNode) {
+            // if previous row is master detail, and expanded, this node must be detail
+            if (this.isMasterDetail && contiguouslyPreviousNode.master && contiguouslyPreviousNode.expanded) {
+                return contiguouslyPreviousNode.detailNode;
+            }
+
+            // if previous row is expanded group, this node will belong to that group.
+            if (contiguouslyPreviousNode.expanded && contiguouslyPreviousNode.childStore?.isDisplayIndexInStore(displayIndex)) {
+                return contiguouslyPreviousNode.childStore?.getRowUsingDisplayIndex(displayIndex);
+            }
+
+            // otherwise, row must be a stub node
+            const lazyCacheNode = this.nodeMap.getBy('node', contiguouslyPreviousNode)!;
+            return this.createStubNode(lazyCacheNode.index + 1, displayIndex);
+        }
+
+        const adjacentNodes = this.getSurroundingNodesByDisplayIndex(displayIndex);
+
+        // if no bounds skipped includes this, calculate from end index
+        if (adjacentNodes == null) {
             const storeIndexFromEndIndex = this.store.getRowCount() - (this.store.getDisplayIndexEnd()! - displayIndex);
             return this.createStubNode(storeIndexFromEndIndex, displayIndex);
         }
 
-        // important to remember this node is not necessarily directly after the node we're searching for
-        const nodeAfterIndex = Number(nodeAfterStringIndex);
-        const nodeAfter = this.nodeIndexMap[nodeAfterIndex];
+        const {previousNode, nextNode} = adjacentNodes;
 
-        // difference can be calculated from next nodes display index
-        const nodeAfterDisplayIndex = nodeAfter.rowIndex!;
-        const storeIndexFromNodeAfterIndex = nodeAfterIndex - (nodeAfterDisplayIndex - displayIndex);
-        return this.createStubNode(storeIndexFromNodeAfterIndex, displayIndex);
+        // if the node before this node is expanded, this node might be a child of that node
+        if (previousNode && previousNode.expanded && previousNode.childStore?.isDisplayIndexInStore(displayIndex)) {
+            return previousNode.childStore?.getRowUsingDisplayIndex(displayIndex);
+        }
+
+        // if we have the node after this node, we can calculate the store index of this node by the difference
+        // in display indexes between the two nodes.
+        if (nextNode) {
+            const nextSimpleRowStoreIndex = this.nodeMap.getBy('node', nextNode)!;
+            const displayIndexDiff = nextNode.rowIndex! - displayIndex;
+            const newStoreIndex = nextSimpleRowStoreIndex.index - displayIndexDiff;
+            return this.createStubNode(newStoreIndex, displayIndex);
+        }
+
+        // if no next node, calculate from end index of this store
+        const storeIndexFromEndIndex = this.store.getRowCount() - (this.store.getDisplayIndexEnd()! - displayIndex);
+        return this.createStubNode(storeIndexFromEndIndex, displayIndex);
     }
 
     /**
@@ -127,8 +191,9 @@ export class LazyCache extends BeanStub {
         const newNode = this.createRowAtIndex(storeIndex, null, node => {
             node.setRowIndex(displayIndex);
             node.setRowTop(rowBounds!.rowTop);
+            this.nodeDisplayIndexMap.set(displayIndex, node);
         });
-        this.rowLoader.queueLoadAction();
+        this.rowLoader.queueLoadCheck();
         return newNode;
     }
 
@@ -137,7 +202,7 @@ export class LazyCache extends BeanStub {
      * @returns A rowNode at the given store index
      */
     public getRowByStoreIndex(index: number) {
-        return this.nodeIndexMap[index];
+        return this.nodeMap.getBy('index', index)?.node;
     }
 
     /**
@@ -147,7 +212,15 @@ export class LazyCache extends BeanStub {
      * @param nextRowTop the row top reference in which to skip
      */
     private skipDisplayIndexes(numberOfRowsToSkip: number, displayIndexSeq: NumberSequence, nextRowTop: { value: number; }) {
+        if (numberOfRowsToSkip === 0) {
+            return;
+        }
         const defaultRowHeight = this.gridOptionsService.getRowHeightAsNumber();
+        // these are recorded so that the previous node can be found more quickly when a node is missing
+        this.skippedDisplayIndexes.push({
+            from: displayIndexSeq.peek(),
+            to: displayIndexSeq.peek() + numberOfRowsToSkip
+        });
         displayIndexSeq.skip(numberOfRowsToSkip);
         nextRowTop.value += numberOfRowsToSkip * defaultRowHeight;
     }
@@ -157,27 +230,51 @@ export class LazyCache extends BeanStub {
      * @param nextRowTop an object containing the next row top value intended to be modified by ref per row
      */
     public setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number; }): void {
-        const nodeEntries = this.getNodeMapEntries();
+        // Create a map of display index nodes for access speed
+        this.nodeDisplayIndexMap.clear();
+        this.skippedDisplayIndexes = [];
+
+        // create an object indexed by store index, as this will sort all of the nodes when we iterate
+        // the object
+        const orderedMap: {[key: number]: RowNode} = {};
+        this.nodeMap.forEach(lazyNode => {
+            orderedMap[lazyNode.index] = lazyNode.node;
+        });
 
         let lastIndex = -1;
-        nodeEntries.forEach(([stringIndex, node]) => {
+        // iterate over the nodes in order, setting the display index on each node. When display indexes
+        // are skipped, they're added to the skippedDisplayIndexes array
+        for (const stringIndex in orderedMap) {
+            const node = orderedMap[stringIndex];
             const numericIndex = Number(stringIndex);
 
             // if any nodes aren't currently in the store, skip the display indexes too
             const numberOfRowsToSkip = (numericIndex - 1) - lastIndex;
             this.skipDisplayIndexes(numberOfRowsToSkip, displayIndexSeq, nextRowTop);
 
+
             // set this nodes index and row top
             this.blockUtils.setDisplayIndex(node, displayIndexSeq, nextRowTop);
+            this.nodeDisplayIndexMap.set(node.rowIndex!, node);
+            const passedRows = displayIndexSeq.peek() - node.rowIndex!;
+            if (passedRows > 1) {
+                this.skippedDisplayIndexes.push({
+                    from: node.rowIndex! + 1,
+                    to: displayIndexSeq.peek()
+                });
+            }
+
+
 
             // store this index for skipping after this
             lastIndex = numericIndex;
-        });
+        }
 
         // need to skip rows until the end of this store
         const numberOfRowsToSkip = (this.numberOfRows - 1) - lastIndex;
         this.skipDisplayIndexes(numberOfRowsToSkip, displayIndexSeq, nextRowTop);
 
+        // this is not terribly efficient, and could probs be improved
         this.purgeExcessRows();
     }
 
@@ -203,63 +300,58 @@ export class LazyCache extends BeanStub {
         this.fireStoreUpdatedEvent();
     }
 
-    public getNodeMapEntries(): [string, RowNode][] {
-        return Object.entries(this.nodeIndexMap);
+    public getNodes() {
+        return this.nodeMap;
     }
 
-    public getAllNodes(): RowNode[] {
-        return Object.values(this.nodeIndexMap);
+    public getNodeCachedByDisplayIndex(displayIndex: number): RowNode | null {
+        return this.nodeDisplayIndexMap.get(displayIndex) ?? null;
+    }
+
+    public getNodesToRefresh(): Set<RowNode> {
+        return this.nodesToRefresh;
     }
 
     /**
-     * Get or calculate the display index for this store
+     * @returns the previous and next loaded row nodes surrounding the given display index
+     */
+    public getSurroundingNodesByDisplayIndex(displayIndex: number) {
+        // iterate over the skipped display indexes to find the bound this display index belongs to
+        for (let i in this.skippedDisplayIndexes) {
+            const skippedRowBound = this.skippedDisplayIndexes[i];
+            if (skippedRowBound.from <= displayIndex && skippedRowBound.to >= displayIndex) {
+                // take the node before and after the boundary and return those
+                const previousNode = this.nodeDisplayIndexMap.get(skippedRowBound.from - 1);
+                const nextNode = this.nodeDisplayIndexMap.get(skippedRowBound.to + 1);
+                return { previousNode, nextNode };
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get or calculate the display index for a given store index
      * @param storeIndex the rows index within this store
-     * @returns the rows visible display index relative to all stores
+     * @returns the rows visible display index relative to the grid
      */
     public getDisplayIndexFromStoreIndex(storeIndex: number): number | null {
-        const nodeToReplace = this.nodeIndexMap[storeIndex];
-        const displayIndexStart = this.store.getDisplayIndexStart();
-        if (displayIndexStart == null) {
-            return null;
+        const nodesAfterThis = this.nodeMap.filter(lazyNode => lazyNode.index > storeIndex);
+
+        if (nodesAfterThis.length === 0) {
+            return this.store.getDisplayIndexEnd()! - (this.numberOfRows - storeIndex);
         }
 
-        // if node exists, we can extract its displayIndex
-        if (nodeToReplace && nodeToReplace.rowIndex != null) {
-            return nodeToReplace.rowIndex;
-        }
-
-        const allNodes = this.getNodeMapEntries();
-        let lastNode = undefined;
-        let lastIndex = -1;
-        for (let i = 0; i < allNodes.length; i++) {
-            const [stringNodeStoreIndex, node] = allNodes[i];
-            const numericNodeStoreIndex = Number(stringNodeStoreIndex);
-            if (numericNodeStoreIndex > storeIndex) {
-                break;
+        let nextNode: LazyStoreNode | undefined;
+        for (let i = 0; i < nodesAfterThis.length; i++) {
+            const lazyNode = nodesAfterThis[i];
+            if (nextNode == null || nextNode.index > lazyNode.index) {
+                nextNode = lazyNode;
             }
-
-            lastNode = node;
-            lastIndex = numericNodeStoreIndex;
         }
 
-        // unlike in getRowByDisplayIndex, we have to use getDisplayIndexStart here, as nodes may
-        // have been inserted without updating display index end yet. 
-
-        if (lastNode == null) {
-            return displayIndexStart + storeIndex;
-        }
-
-        const nodeDiff = storeIndex - lastIndex;
-        const childStoreEnd = lastNode.childStore?.getDisplayIndexEnd();
-        if (childStoreEnd != null) {
-            return childStoreEnd + nodeDiff - 1;
-        }
-
-        if (lastNode.rowIndex != null) {
-            return lastNode.rowIndex + nodeDiff;
-        }
-
-        return displayIndexStart + storeIndex;
+        const nextDisplayIndex = nextNode!.node.rowIndex!;
+        const storeIndexDiff = nextNode!.index - storeIndex;
+        return nextDisplayIndex - storeIndexDiff;
     }
 
     /**
@@ -269,45 +361,52 @@ export class LazyCache extends BeanStub {
      * @returns the new row node
      */
     private createRowAtIndex(atStoreIndex: number, data?: any, createNodeCallback?: (node: RowNode) => void): RowNode {
-        const usingRowIds = this.isUsingRowIds();
-
         // make sure an existing node isn't being overwritten
-        const existingNodeAtIndex = this.nodeIndexMap[atStoreIndex];
-        if (existingNodeAtIndex) {
-            existingNodeAtIndex.__needsRefresh = false;
-            existingNodeAtIndex.__needsRefreshWhenVisible = false;
+        const lazyNode = this.nodeMap.getBy('index', atStoreIndex);
+
+        // if node already exists, update it or destroy it
+        if (lazyNode) {
+            const { node } = lazyNode;
+            this.nodesToRefresh.delete(node);
+            node.__needsRefreshWhenVisible = false;
 
             // if the node is the same, just update the content
-            if (this.doesNodeMatch(data, existingNodeAtIndex)) {
-                this.blockUtils.updateDataIntoRowNode(existingNodeAtIndex, data);
-                return existingNodeAtIndex;
+            if (this.doesNodeMatch(data, node)) {
+                this.blockUtils.updateDataIntoRowNode(node, data);
+                return node;
             }
 
             // if there's no id and this is an open group, protect this node from changes
-            if (!usingRowIds && existingNodeAtIndex.group && existingNodeAtIndex.expanded) {
-                return existingNodeAtIndex;
+            if (this.getRowIdFunc == null && node.group && node.expanded) {
+                return node;
             }
 
             // destroy the old node, might be worth caching state here
             this.destroyRowAtIndex(atStoreIndex);
         }
 
-        // if the node already exists, update it and move it to the new location
-        if (data && usingRowIds) {
-            const allNodes = this.getNodeMapEntries();
-            const existingNodeDetails = allNodes.find(([_, node]) => this.doesNodeMatch(data, node));
+        // if the node already exists elsewhere, update it and move it to the new location
+        if (data && this.getRowIdFunc != null) {
+            const id = this.getRowId(data);
 
-            if (existingNodeDetails) {
-                const [existingStringIndex, existingNode] = existingNodeDetails;
-                const existingIndex = Number(existingStringIndex);
-                this.blockUtils.updateDataIntoRowNode(existingNode, data);
-                delete this.nodeIndexMap[existingIndex];
-                this.nodeIndexMap[atStoreIndex] = existingNode;
+            const lazyNode = this.nodeMap.getBy('id', id);
+            if (lazyNode) {
+                // delete old lazy node so we can insert it at different location
+                this.nodeMap.delete(lazyNode);
 
-                // mark all of the old block as needsVerify to trigger it for a refresh
-                this.markBlockForVerify(existingIndex);
+                const { node, index } = lazyNode;
+                this.blockUtils.updateDataIntoRowNode(node, data);
+                this.nodeMap.set({
+                    id: node.id!,
+                    node,
+                    index: atStoreIndex
+                });
 
-                return existingNode;
+                // mark all of the old block as needsVerify to trigger it for a refresh, as nodes
+                // should not be out of place
+                this.markBlockForVerify(index);
+
+                return node;
             }
         }
 
@@ -318,19 +417,17 @@ export class LazyCache extends BeanStub {
             this.blockUtils.setDataIntoRowNode(newNode, data, defaultId, undefined);
             this.blockUtils.checkOpenByDefault(newNode);
             this.nodeManager.addRowNode(newNode);
-            this.nodeIds.add(newNode.id!);
         }
 
         // add the new node to the store, has to be done after the display index is calculated so it doesn't take itself into account
-        this.nodeIndexMap[atStoreIndex] = newNode;
+        this.nodeMap.set({
+            id: newNode.id!,
+            node: newNode,
+            index: atStoreIndex,
+        });
 
         if (createNodeCallback) {
             createNodeCallback(newNode);
-        }
-
-        // if this is a stub, we need to tell the loader to load rows
-        if (newNode.stub) {
-            this.rowLoader.queueLoadAction();
         }
 
         return newNode;
@@ -341,8 +438,7 @@ export class LazyCache extends BeanStub {
         const blockStates: { [key: string]: Set<string> } = {};
         const dirtyBlocks = new Set<number>();
 
-        this.getNodeMapEntries().forEach(([stringIndex, node]) => {
-            const index = Number(stringIndex);
+        this.nodeMap.forEach(({ node, index }) => {
             const blockStart = this.rowLoader.getBlockStartIndexForIndex(index);
 
             if (!node.stub && !node.failedLoad) {
@@ -354,7 +450,7 @@ export class LazyCache extends BeanStub {
                 rowState = 'failed';
             } else if (this.rowLoader.isRowLoading(blockStart)) {
                 rowState = 'loading';
-            } else if (node.__needsRefresh) {
+            } else if (this.nodesToRefresh.has(node)) {
                 rowState = 'needsLoading';
             }
             
@@ -397,10 +493,15 @@ export class LazyCache extends BeanStub {
     }
 
     public destroyRowAtIndex(atStoreIndex: number) {
-        const node = this.nodeIndexMap[atStoreIndex];
-        this.nodeIds.delete(node.id!);
-        this.blockUtils.destroyRowNode(node);
-        delete this.nodeIndexMap[atStoreIndex];
+        const lazyNode = this.nodeMap.getBy('index', atStoreIndex);
+        if (!lazyNode) { return; }
+
+        this.nodeMap.delete(lazyNode);
+        
+        this.nodeDisplayIndexMap.delete(lazyNode.node.rowIndex!);
+        this.nodesToRefresh.delete(lazyNode.node);
+        
+        this.blockUtils.destroyRowNode(lazyNode.node);
     }
 
     public getSsrmParams() {
@@ -421,12 +522,10 @@ export class LazyCache extends BeanStub {
 
     private markBlockForVerify(rowIndex: number) {
         const [start, end] = this.rowLoader.getBlockBoundsForIndex(rowIndex);
-        for(let i = start; i < end; i++) {
-            const node = this.nodeIndexMap[i];
-            if (node) {
-                node.__needsRefreshWhenVisible = true;
-            }
-        }
+        const lazyNodesInRange = this.nodeMap.filter((lazyNode) => lazyNode.index >= start && lazyNode.index < end);
+        lazyNodesInRange.forEach(({ node }) => {
+            node.__needsRefreshWhenVisible = true;
+        });
     }
 
     private doesNodeMatch(data: any, node: RowNode): boolean {
@@ -434,7 +533,7 @@ export class LazyCache extends BeanStub {
             return false;
         }
 
-        if (this.isUsingRowIds()) {
+        if (this.getRowIdFunc != null) {
             const id: string = this.getRowId(data)!;
             return node.id === id;
         }
@@ -449,13 +548,13 @@ export class LazyCache extends BeanStub {
         const lastRow = this.api.getLastDisplayedRow();
         const firstRowBlockStart = this.rowLoader.getBlockStartIndexForIndex(firstRow);
         const [_, lastRowBlockEnd] = this.rowLoader.getBlockBoundsForIndex(lastRow);
-        this.getNodeMapEntries().forEach(([stringIndex, node]) => {
-            const numericIndex = Number(stringIndex);
-            if (this.rowLoader.isRowLoading(numericIndex)) {
+
+        this.nodeMap.forEach(lazyNode => {
+            if (this.rowLoader.isRowLoading(lazyNode.index)) {
                 return;
             }
-            if (node.stub && (numericIndex < firstRowBlockStart || numericIndex > lastRowBlockEnd)) {
-                this.destroyRowAtIndex(numericIndex);
+            if (lazyNode.node.stub && (lazyNode.index < firstRowBlockStart || lazyNode.index > lastRowBlockEnd)) {
+                this.destroyRowAtIndex(lazyNode.index);
             }
         });
     }
@@ -476,17 +575,18 @@ export class LazyCache extends BeanStub {
         return numberOfRowsToRetain;
     }
 
-    private getBlocksDistanceFromRow(nodes: [string, RowNode][], otherDisplayIndex: number) {
+    private getBlocksDistanceFromRow(nodes: LazyStoreNode[], otherDisplayIndex: number) {
         const blockDistanceToMiddle: { [key: number]: number } = {};
-        nodes.forEach(([storeIndexString, node]) => {
-            const [blockStart, blockEnd] = this.rowLoader.getBlockBoundsForIndex(Number(storeIndexString));
+        nodes.forEach(({ node, index }) => {
+            const [blockStart, blockEnd] = this.rowLoader.getBlockBoundsForIndex(index);
             if (blockStart in blockDistanceToMiddle) {
                 return;
             }
             const distStart = Math.abs(node.rowIndex! - otherDisplayIndex);
             let distEnd;
             // may not have an end node if the block came back small 
-            if (this.nodeIndexMap[blockEnd - 1]) distEnd = Math.abs(this.nodeIndexMap[blockEnd - 1].rowIndex! - otherDisplayIndex);
+            const lastLazyNode = this.nodeMap.getBy('index', [blockEnd - 1]);
+            if (lastLazyNode) distEnd = Math.abs(lastLazyNode.node.rowIndex! - otherDisplayIndex);
             const farthest = distEnd == null || distStart < distEnd ? distStart : distEnd;
 
             blockDistanceToMiddle[blockStart] = farthest;
@@ -511,32 +611,32 @@ export class LazyCache extends BeanStub {
         }
 
         // don't check the nodes that could have been cached out of necessity
-        const disposableNodes = this.getNodeMapEntries().filter(([_, node]) => !node.stub && !this.isNodeCached(node));
+        const disposableNodes = this.nodeMap.filter(({ node }) => !node.stub && !this.isNodeCached(node));
         if (disposableNodes.length <= numberOfRowsToRetain) {
             // not enough rows to bother clearing any
             return;
         }
 
-        const disposableNodesNotInViewport = disposableNodes.filter(([_, node]) => {
+        const disposableNodesNotInViewport = disposableNodes.filter(({ node }) => {
             const startRowNum = node.rowIndex;
 
-            if (!startRowNum) {
+            if (startRowNum == null || startRowNum === -1) {
                 // row is not displayed and can be disposed
                 return true;
             }
     
-            if (firstRowInViewport <= startRowNum && startRowNum < lastRowInViewport) {
+            if (firstRowBlockStart <= startRowNum && startRowNum < lastRowBlockEnd) {
                 // start row in viewport, block is in viewport
                 return false;
             }
 
             const lastRowNum = startRowNum + blockSize;
-            if (firstRowInViewport <= lastRowNum && lastRowNum < lastRowInViewport) {
+            if (firstRowBlockStart <= lastRowNum && lastRowNum < lastRowBlockEnd) {
                 // end row in viewport, block is in viewport
                 return false;
             }
 
-            if (startRowNum < firstRowInViewport && lastRowNum >= lastRowInViewport) {
+            if (startRowNum < firstRowBlockStart && lastRowNum >= lastRowBlockEnd) {
                 // full block surrounds in viewport
                 return false;
             }
@@ -563,12 +663,12 @@ export class LazyCache extends BeanStub {
 
         // sort the blocks by distance from middle of viewport
         blockDistanceArray.sort((a, b) => Math.sign(b[1] - a[1]));
-        const blocksToRemove = blockDistanceArray.length - numberOfBlocksToRetain;
+        const blocksToRemove = blockDistanceArray.length - Math.max(numberOfBlocksToRetain, 0);
         for (let i = 0; i < blocksToRemove; i++) {
             const blockStart = Number(blockDistanceArray[i][0]);
             for (let x = blockStart; x < blockStart + blockSize; x++) {
-                const node = this.nodeIndexMap[x];
-                if (!node || this.isNodeCached(node)) {
+                const lazyNode = this.nodeMap.getBy('index', x);
+                if (!lazyNode || this.isNodeCached(lazyNode.node)) {
                     continue;
                 }
                 this.destroyRowAtIndex(x);
@@ -590,7 +690,7 @@ export class LazyCache extends BeanStub {
     }
 
     private extractDuplicateIds(rows: any[]) {
-        if (!this.isUsingRowIds()) {
+        if (!this.getRowIdFunc == null) {
             return [];
         }
 
@@ -611,7 +711,7 @@ export class LazyCache extends BeanStub {
     public onLoadSuccess(firstRowIndex: number, numberOfRowsExpected: number, response: LoadSuccessParams) {
         if (!this.live) return;
 
-        if (this.isUsingRowIds()) {
+        if (this.getRowIdFunc != null) {
             const duplicates = this.extractDuplicateIds(response.rowData);
             if (duplicates.length > 0) {
                 const duplicateIdText = duplicates.join(', ');
@@ -624,22 +724,22 @@ export class LazyCache extends BeanStub {
         let wasRefreshing = false;
         response.rowData.forEach((data, responseRowIndex) => {
             const rowIndex = firstRowIndex + responseRowIndex;
-            const nodeFromCache = this.nodeIndexMap[rowIndex];
+            const nodeFromCache = this.nodeMap.getBy('index', rowIndex);
         
             // if stub, overwrite
-            if (nodeFromCache?.stub) {
+            if (nodeFromCache?.node?.stub) {
                 this.createRowAtIndex(rowIndex, data);
                 return;
             }
             
-            if (nodeFromCache?.__needsRefresh) {
+            if (nodeFromCache && this.nodesToRefresh.has(nodeFromCache?.node)) {
                 wasRefreshing = true;
             }
 
-            if (nodeFromCache && this.doesNodeMatch(data, nodeFromCache)) {
-                this.blockUtils.updateDataIntoRowNode(nodeFromCache, data);
-                nodeFromCache.__needsRefresh = false;
-                nodeFromCache.__needsRefreshWhenVisible = false;
+            if (nodeFromCache && this.doesNodeMatch(data, nodeFromCache.node)) {
+                this.blockUtils.updateDataIntoRowNode(nodeFromCache.node, data);
+                this.nodesToRefresh.delete(nodeFromCache.node);
+                nodeFromCache.node.__needsRefreshWhenVisible = false;
                 return;
             }
             // create row will handle deleting the overwritten row
@@ -668,22 +768,17 @@ export class LazyCache extends BeanStub {
 
         if (this.isLastRowKnown) {
             // delete any rows after the last index
-            const allRows = this.getNodeMapEntries();
-            for (let i = allRows.length - 1; i >= 0; i--) {
-                const numericIndex = Number(allRows[i][0]);
-                if (numericIndex < this.numberOfRows) {
-                    break;
-                }
-                this.destroyRowAtIndex(numericIndex);
-            }
+            const lazyNodesAfterStoreEnd = this.nodeMap.filter(lazyNode => lazyNode.index >= this.numberOfRows);
+            lazyNodesAfterStoreEnd.forEach(lazyNode => this.destroyRowAtIndex(lazyNode.index));
         }
 
         this.fireStoreUpdatedEvent();
     }
 
     public fireRefreshFinishedEvent() {
-        const isAnythingRefreshing = Object.values(this.nodeIndexMap).some(node => node.__needsRefresh);
-        if (isAnythingRefreshing) {
+        const finishedRefreshing = this.nodesToRefresh.size === 0;
+        // if anything refreshing currently, skip.
+        if (!finishedRefreshing) {
             return;
         }
 
@@ -696,27 +791,25 @@ export class LazyCache extends BeanStub {
 
     public onLoadFailed(firstRowIndex: number, numberOfRowsExpected: number) {
         if (!this.live) return;
-        for(let i = firstRowIndex; i < firstRowIndex + numberOfRowsExpected; i++) {
-            const nodeFromCache = this.nodeIndexMap[i];
-            if (nodeFromCache) {
-                nodeFromCache.failedLoad = true;
-            }
-        }
+        const failedNodes = this.nodeMap.filter(node => node.index >= firstRowIndex && node.index < firstRowIndex + numberOfRowsExpected);
+        failedNodes.forEach(node => node.node.failedLoad = true);
 
         this.fireStoreUpdatedEvent();
     }
 
     public markNodesForRefresh() {
-        this.getAllNodes().forEach(node => node.__needsRefresh = true);
-        this.rowLoader.queueLoadAction();
+        this.nodeMap.forEach(lazyNode => this.nodesToRefresh.add(lazyNode.node));
+        this.rowLoader.queueLoadCheck();
 
-        this.isLastRowKnown = false;
-        this.numberOfRows += 1;
-        this.fireStoreUpdatedEvent();
+        if (this.isLastRowKnown && this.numberOfRows === 0) {
+            this.numberOfRows = 1;
+            this.isLastRowKnown = false;
+            this.fireStoreUpdatedEvent();
+        }
     }
 
     public isNodeInCache(id: string): boolean {
-        return this.nodeIds.has(id);
+        return !!this.nodeMap.getBy('id', id);
     }
 
     // gets called 1) row count changed 2) cache purged 3) items inserted
@@ -726,21 +819,15 @@ export class LazyCache extends BeanStub {
         this.store.fireStoreUpdatedEvent();
     }
 
-    private isUsingRowIds() {
-        return this.gridOptionsService.getRowIdFunc() != null;
-    }
-
     private getRowId(data: any) {
-        const getRowIdFunc = this.gridOptionsService.getRowIdFunc();
-
-        if (getRowIdFunc == null) {
+        if (this.getRowIdFunc == null) {
             return null;
         }
 
         // find rowNode using id
         const { level } = this.store.getRowDetails();
         const parentKeys = this.store.getParentNode().getGroupKeys();
-        const id: string = getRowIdFunc({
+        const id: string = this.getRowIdFunc({
             data,
             parentKeys: parentKeys.length > 0 ? parentKeys : undefined,
             level,
@@ -748,24 +835,19 @@ export class LazyCache extends BeanStub {
         return String(id);
     }
 
-    private lookupRowNode(data: any): RowNode | null {
-        if (!this.isUsingRowIds()) {
+    public updateRowNodes(updates: any[]): RowNode[] {
+        if (this.getRowIdFunc == null) {
             // throw error, as this is type checked in the store. User likely abusing internal apis if here.
             throw new Error('AG Grid: Insert transactions can only be applied when row ids are supplied.');
         }
-
-        // find rowNode using id
-        const id: string = this.getRowId(data)!;
-        return this.getAllNodes().find(node => node.id === id) ?? null;
-    }
-
-    public updateRowNodes(updates: any[]): RowNode[] {
+        
         const updatedNodes: RowNode[] = [];
         updates.forEach(data => {
-            const row = this.lookupRowNode(data);
-            if (row) {
-                this.blockUtils.updateDataIntoRowNode(row, data);
-                updatedNodes.push(row);
+            const id: string = this.getRowId(data)!;
+            const lazyNode = this.nodeMap.getBy('id', id);
+            if (lazyNode) {
+                this.blockUtils.updateDataIntoRowNode(lazyNode.node, data);
+                updatedNodes.push(lazyNode.node);
             }
         });
         return updatedNodes;
@@ -780,7 +862,7 @@ export class LazyCache extends BeanStub {
             return [];
         }
 
-        if (!this.isUsingRowIds()) {
+        if (this.getRowIdFunc == null) {
             // throw error, as this is type checked in the store. User likely abusing internal apis if here.
             throw new Error('AG Grid: Insert transactions can only be applied when row ids are supplied.');
         }
@@ -803,29 +885,18 @@ export class LazyCache extends BeanStub {
             return [];
         }
 
-        // first move all the nodes after the addIndex out of the way
-        const allNodes = this.getNodeMapEntries();
-        // iterate backwards to avoid overwriting nodes which haven't been shifted yet
-        for (let i = allNodes.length - 1; i >= 0; i--) {
-            const [stringStoreIndex, node] = allNodes[i];
-            const numericStoreIndex = Number(stringStoreIndex);
-            
-            // nodes should be in order as js maps sort by numeric keys, so if index is too low can stop iterating
-            if (numericStoreIndex < addIndex) {
-                break;
-            }
-
-            const newIndex = numericStoreIndex + numberOfInserts;
-            if (this.getRowByStoreIndex(newIndex)) {
-                // this shouldn't happen, why would a row already exist here
-                throw new Error('AG Grid: Something went wrong, node in wrong place.');
-            } else {
-                this.nodeIndexMap[numericStoreIndex + numberOfInserts] = node;
-                delete this.nodeIndexMap[numericStoreIndex];
-            }
-        }
+        const nodesToMove = this.nodeMap.filter(node => node.index >= addIndex);
+        // delete all nodes which need moved first, so they don't get overwritten
+        nodesToMove.forEach(lazyNode => this.nodeMap.delete(lazyNode));
+        // then move the nodes to their new locations
+        nodesToMove.forEach(lazyNode => {
+            this.nodeMap.set({
+                node: lazyNode.node,
+                index: lazyNode.index + numberOfInserts,
+                id: lazyNode.id,
+            });
+        });
                     
-
         // increase the store size to accommodate
         this.numberOfRows += numberOfInserts;
 
@@ -833,23 +904,35 @@ export class LazyCache extends BeanStub {
         return uniqueInserts.map((data, uniqueInsertOffset) => this.createRowAtIndex(addIndex + uniqueInsertOffset, data));
     }
 
+    public getOrderedNodeMap() {
+        const obj: { [key: number]: LazyStoreNode } = {};
+        this.nodeMap.forEach(node => obj[node.index] = node);
+        return obj;
+    }
+
+    public clearDisplayIndexes() {
+        this.nodeDisplayIndexMap.clear();
+    }
+
     public removeRowNodes(idsToRemove: string[]): RowNode[] {
-        if (!this.isUsingRowIds()) {
+        if (this.getRowIdFunc == null) {
             // throw error, as this is type checked in the store. User likely abusing internal apis if here.
             throw new Error('AG Grid: Insert transactions can only be applied when row ids are supplied.');
         }
 
-        const removedNodes = [];
-
-        const allNodes = this.getNodeMapEntries();
+        const removedNodes: RowNode[] = [];
+        const nodesToVerify: RowNode[] = [];
 
         // track how many nodes have been deleted, as when we pass other nodes we need to shift them up
         let deletedNodeCount = 0;
 
         const remainingIdsToRemove = [...idsToRemove];
-        const nodesToVerify = [];
-        for (let i = 0; i < allNodes.length; i++) {
-            const [stringStoreIndex, node] = allNodes[i];
+
+        const allNodes = this.getOrderedNodeMap();
+        let contiguousIndex = -1;
+        for (let stringIndex in allNodes) {
+            contiguousIndex += 1;
+            const node = allNodes[stringIndex];
 
             // finding the index allows the use of splice which should be slightly faster than both a check and filter
             const matchIndex = remainingIdsToRemove.findIndex(idToRemove => idToRemove === node.id);
@@ -857,8 +940,8 @@ export class LazyCache extends BeanStub {
                 // found node, remove it from nodes to remove
                 remainingIdsToRemove.splice(matchIndex, 1);
 
-                this.destroyRowAtIndex(Number(stringStoreIndex));
-                removedNodes.push(node);
+                this.destroyRowAtIndex(Number(stringIndex));
+                removedNodes.push(node.node);
                 deletedNodeCount += 1;
                 continue;
             }
@@ -868,21 +951,25 @@ export class LazyCache extends BeanStub {
                 continue;
             }
 
-            const numericStoreIndex = Number(stringStoreIndex);
-            if (i !== numericStoreIndex) {
-                nodesToVerify.push(node);
+            const numericStoreIndex = Number(stringIndex);
+            if (contiguousIndex !== numericStoreIndex) {
+                nodesToVerify.push(node.node);
             }
 
             // shift normal node up by number of deleted prior to this point
-            this.nodeIndexMap[numericStoreIndex - deletedNodeCount] = this.nodeIndexMap[numericStoreIndex];
-            delete this.nodeIndexMap[numericStoreIndex];
+            this.nodeMap.delete(allNodes[stringIndex]);
+            this.nodeMap.set({
+                id: node.id!,
+                node: node.node,
+                index: numericStoreIndex - deletedNodeCount,
+            });
         }
 
         this.numberOfRows -= this.isLastRowIndexKnown() ? idsToRemove.length : deletedNodeCount;
 
         if (remainingIdsToRemove.length > 0 && nodesToVerify.length > 0) {
             nodesToVerify.forEach(node => node.__needsRefreshWhenVisible = true);
-            this.rowLoader.queueLoadAction();
+            this.rowLoader.queueLoadCheck();
         }
 
         return removedNodes;

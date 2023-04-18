@@ -5,7 +5,6 @@ import {
     RowHeightCallbackParams,
     ExcelCell,
     ExcelColumn,
-    ExcelData,
     ExcelHeaderFooterConfig,
     ExcelImage,
     ExcelRow,
@@ -94,18 +93,27 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
                 height: getHeightFromProperty(rowLen, row.height || this.config.rowHeight),
                 cells: (row.cells || []).map((cell, idx) => {
                     const image = this.addImage(rowLen, this.columnsToExport[idx], cell.data?.value as string);
-                    const ret = { ...cell };
+
+                    let excelStyles: string[] | null = null;
+                    
+                    if (cell.styleId) {
+                        excelStyles = typeof cell.styleId === 'string' ? [cell.styleId] : cell.styleId;
+                    }
+
+                    const excelStyleId = this.getStyleId(excelStyles);
 
                     if (image) {
-                        ret.data = {} as ExcelData;
-                        if (image.value != null) {
-                            ret.data.value = image.value;
-                        } else {
-                            ret.data.type = 'e';
-                            ret.data.value = null;
-                        }
+                        return this.createCell(excelStyleId, this.getDataTypeForValue(image.value), image.value == null ? '' : image.value);
                     }
-                    return ret;
+
+                    const value = cell.data?.value ?? '';
+                    const type = this.getDataTypeForValue(value);
+
+                    if (cell.mergeAcross) {
+                        return this.createMergedCell(excelStyleId, type, value, cell.mergeAcross)
+                    }
+
+                    return this.createCell(excelStyleId, type, value);
                 }),
                 outlineLevel: row.outlineLevel || undefined
             };

@@ -1,34 +1,40 @@
 import { Group } from '@tweenjs/tween.js';
-import { getHeaderCell, getHeaderCellPos } from '../agQuery';
+import { AgElementFinder } from '../agElements';
 import { AG_DND_GHOST_SELECTOR } from '../constants';
 import { Mouse } from '../createMouse';
 import { getScrollOffset } from '../dom';
 import { addPoints, minusPoint } from '../geometry';
+import { ScriptDebugger } from '../scriptDebugger';
 import { EasingFunction } from '../tween';
 import { createTween } from './createTween';
 import { moveTarget } from './move';
 
 interface DragColumnToRowGroupPanelParams {
-    containerEl?: HTMLElement;
     mouse: Mouse;
     headerCellName: string;
     duration: number;
     easing?: EasingFunction;
     tweenGroup: Group;
+    agElementFinder: AgElementFinder;
+    scriptDebugger?: ScriptDebugger;
 }
 
 export async function dragColumnToRowGroupPanel({
-    containerEl,
     mouse,
     headerCellName,
     duration,
     easing,
     tweenGroup,
+    agElementFinder,
+    scriptDebugger,
 }: DragColumnToRowGroupPanelParams) {
-    const fromPos = getHeaderCellPos({ containerEl, headerCellText: headerCellName });
+    const headerCell = agElementFinder.get('headerCell', {
+        text: headerCellName,
+    });
+    const fromPos = headerCell?.getPos();
 
     if (!fromPos) {
-        console.error('Header not found:', headerCellName);
+        scriptDebugger?.errorLog('Header not found:', headerCellName);
         return;
     }
     const rowGroupPanelOffset = {
@@ -37,7 +43,7 @@ export async function dragColumnToRowGroupPanel({
     };
     const toPos = addPoints(fromPos, rowGroupPanelOffset)!;
 
-    const headerElem = getHeaderCell({ containerEl, headerCellText: headerCellName });
+    const headerElem = headerCell?.get();
     const mouseDownEvent: MouseEvent = new MouseEvent('mousedown', {
         clientX: fromPos.x,
         clientY: fromPos.y,
@@ -79,6 +85,11 @@ export async function dragColumnToRowGroupPanel({
         });
         document.dispatchEvent(mouseUpEvent);
     } else {
-        console.error('No dragged header item:', headerCellName);
+        scriptDebugger?.errorLog('No dragged header item:', headerCellName);
     }
+
+    // Clean up any dangling drag items
+    document.querySelectorAll(AG_DND_GHOST_SELECTOR).forEach((el) => {
+        el.remove();
+    });
 }

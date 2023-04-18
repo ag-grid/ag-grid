@@ -19,7 +19,3 @@ background: {
 ### API Reference
 
 <interface-documentation interfaceName='AgChartBackground' config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
-
-## Next Up
-
-Continue to the next section to learn more about [overlays](/charts-overlays/).

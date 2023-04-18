@@ -119,6 +119,11 @@ export interface TooltipMeta {
     pageY: number;
     offsetX: number;
     offsetY: number;
+    position?: {
+        xOffset?: number;
+        yOffset?: number;
+    };
+    enableInteraction?: boolean;
     event: Event | InteractionEvent<any>;
 }
 
@@ -175,6 +180,8 @@ export class Tooltip {
     private readonly canvasElement: HTMLElement;
     private readonly tooltipRoot: HTMLElement;
 
+    private enableInteraction: boolean = false;
+
     @Validate(BOOLEAN)
     enabled: boolean = true;
 
@@ -190,9 +197,6 @@ export class Tooltip {
 
     @Validate(INTERACTION_RANGE)
     range: AgChartInteractionRange = 'nearest';
-
-    @Validate(BOOLEAN)
-    enableInteraction: boolean = false;
 
     readonly position: TooltipPosition = new TooltipPosition();
 
@@ -245,7 +249,7 @@ export class Tooltip {
         return !element.classList.contains(DEFAULT_TOOLTIP_CLASS + '-hidden');
     }
 
-    private updateClass(visible?: boolean, constrained?: boolean) {
+    private updateClass(visible?: boolean, showArrow?: boolean) {
         const { element, class: newClass, lastClass, enableInteraction } = this;
 
         const wasVisible = this.isVisible();
@@ -262,7 +266,7 @@ export class Tooltip {
         toggleClass('no-animation', !wasVisible && !!visible); // No animation on first show.
         toggleClass('no-interaction', !enableInteraction); // Prevent interaction.
         toggleClass('hidden', !visible); // Hide if not visible.
-        toggleClass('arrow', !constrained); // Add arrow if tooltip is constrained.
+        toggleClass('arrow', !!showArrow); // Add arrow if tooltip is constrained.
 
         if (newClass !== lastClass) {
             if (lastClass) {
@@ -276,13 +280,13 @@ export class Tooltip {
     }
 
     private showTimeout: number = 0;
-    private constrained = false;
+    private showArrow = true;
     /**
      * Shows tooltip at the given event's coordinates.
      * If the `html` parameter is missing, moves the existing tooltip to the new position.
      */
     show(meta: TooltipMeta, html?: string, instantly = false) {
-        const { element, canvasElement, position } = this;
+        const { element, canvasElement } = this;
 
         if (html !== undefined) {
             element.innerHTML = html;
@@ -294,9 +298,11 @@ export class Tooltip {
             return Math.max(Math.min(actual, high), low);
         };
 
+        const xOffset = meta.position?.xOffset ?? 0;
+        const yOffset = meta.position?.yOffset ?? 0;
         const canvasRect = canvasElement.getBoundingClientRect();
-        const naiveLeft = canvasRect.left + meta.offsetX - element.clientWidth / 2 + (position.xOffset ?? 0);
-        const naiveTop = canvasRect.top + meta.offsetY - element.clientHeight - 8 + (position.yOffset ?? 0);
+        const naiveLeft = canvasRect.left + meta.offsetX - element.clientWidth / 2 + xOffset;
+        const naiveTop = canvasRect.top + meta.offsetY - element.clientHeight - 8 + yOffset;
 
         const windowBounds = this.getWindowBoundingBox();
         const maxLeft = windowBounds.x + windowBounds.width - element.clientWidth - 1;
@@ -305,8 +311,12 @@ export class Tooltip {
         const left = limit(windowBounds.x, naiveLeft, maxLeft);
         const top = limit(windowBounds.y, naiveTop, maxTop);
 
-        this.constrained = left !== naiveLeft || top !== naiveTop;
+        const offsetApplied = xOffset !== 0 || yOffset !== 0;
+        const constrained = left !== naiveLeft || top !== naiveTop;
+        this.showArrow = !constrained && !offsetApplied;
         element.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
+
+        this.enableInteraction = meta.enableInteraction ?? false;
 
         if (this.delay > 0 && !instantly) {
             this.toggle(false);
@@ -327,7 +337,7 @@ export class Tooltip {
         if (!visible) {
             window.clearTimeout(this.showTimeout);
         }
-        this.updateClass(visible, this.constrained);
+        this.updateClass(visible, this.showArrow);
     }
 
     pointerLeftOntoTooltip(event: InteractionEvent<'leave'>): boolean {

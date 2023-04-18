@@ -1875,9 +1875,10 @@ export class GridApi<TData = any> {
     }
 
     /**
-     * Refresh a server-side level.
+     * Refresh a server-side store level.
      * If you pass no parameters, then the top level store is refreshed.
      * To refresh a child level, pass in the string of keys to get to the desired level.
+     * Once the store refresh is complete, the storeRefreshed event is fired.
      */
     public refreshServerSide(params?: RefreshServerSideParams): void {
         if (!this.serverSideRowModel) {

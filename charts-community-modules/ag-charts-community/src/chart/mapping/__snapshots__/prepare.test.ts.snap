@@ -723,6 +723,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "column",
@@ -1011,7 +1012,7 @@ Object {
         "size": 12,
       },
     },
-    "position": "right",
+    "position": "bottom",
     "reverseOrder": false,
     "spacing": 20,
   },
@@ -1484,6 +1485,9 @@ Object {
   "theme": Object {
     "overrides": Object {
       "line": Object {
+        "legend": Object {
+          "position": "bottom",
+        },
         "series": Object {
           "highlightStyle": Object {
             "series": Object {
@@ -1788,6 +1792,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": [Function],
       },
       "type": "column",
@@ -3493,6 +3498,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "bar",
@@ -3785,6 +3791,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "bar",
@@ -4524,7 +4531,7 @@ Object {
         "size": 12,
       },
     },
-    "position": "right",
+    "position": "bottom",
     "reverseOrder": false,
     "spacing": 20,
   },
@@ -4616,6 +4623,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "column",
@@ -4651,6 +4659,9 @@ Object {
   "theme": Object {
     "overrides": Object {
       "column": Object {
+        "legend": Object {
+          "position": "bottom",
+        },
         "series": Object {
           "highlightStyle": Object {
             "series": Object {
@@ -4932,6 +4943,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "bar",
@@ -5157,7 +5169,7 @@ Object {
         "size": 12,
       },
     },
-    "position": "right",
+    "position": "bottom",
     "reverseOrder": false,
     "spacing": 20,
   },
@@ -5260,6 +5272,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "column",
@@ -5311,6 +5324,9 @@ Object {
   "theme": Object {
     "overrides": Object {
       "column": Object {
+        "legend": Object {
+          "position": "bottom",
+        },
         "series": Object {
           "highlightStyle": Object {
             "item": Object {
@@ -5588,6 +5604,7 @@ Object {
       "strokeWidth": 1,
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": [Function],
       },
       "type": "histogram",
@@ -7314,6 +7331,7 @@ Object {
       },
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": [Function],
       },
       "type": "treemap",
@@ -7836,7 +7854,7 @@ Object {
         "size": 12,
       },
     },
-    "position": "right",
+    "position": "bottom",
     "reverseOrder": false,
     "spacing": 20,
   },
@@ -7930,6 +7948,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "bar",
@@ -7966,6 +7985,9 @@ Object {
   "theme": Object {
     "overrides": Object {
       "bar": Object {
+        "legend": Object {
+          "position": "bottom",
+        },
         "series": Object {
           "highlightStyle": Object {
             "series": Object {
@@ -8159,7 +8181,7 @@ Object {
         "size": 12,
       },
     },
-    "position": "right",
+    "position": "bottom",
     "reverseOrder": false,
     "spacing": 20,
   },
@@ -8258,6 +8280,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "column",
@@ -8303,6 +8326,9 @@ Object {
   "theme": Object {
     "overrides": Object {
       "column": Object {
+        "legend": Object {
+          "position": "bottom",
+        },
         "series": Object {
           "highlightStyle": Object {
             "series": Object {
@@ -9124,6 +9150,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": [Function],
       },
       "type": "column",
@@ -9356,6 +9383,7 @@ Object {
       },
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": [Function],
       },
       "type": "pie",
@@ -9624,6 +9652,7 @@ Object {
       "strokeWidth": 1,
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "histogram",
@@ -9814,7 +9843,7 @@ Object {
         "size": 12,
       },
     },
-    "position": "right",
+    "position": "bottom",
     "reverseOrder": false,
     "spacing": 20,
   },
@@ -9987,6 +10016,9 @@ Object {
   "theme": Object {
     "overrides": Object {
       "line": Object {
+        "legend": Object {
+          "position": "bottom",
+        },
         "series": Object {
           "highlightStyle": Object {
             "series": Object {
@@ -10184,6 +10216,7 @@ Object {
       },
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": [Function],
       },
       "type": "pie",
@@ -11095,6 +11128,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": undefined,
       },
       "type": "bar",
@@ -11412,6 +11446,7 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": [Function],
       },
       "type": "column",
@@ -11747,6 +11782,7 @@ Object {
       "strokeWidth": 1,
       "tooltip": Object {
         "enabled": true,
+        "position": Object {},
         "renderer": [Function],
       },
       "type": "histogram",

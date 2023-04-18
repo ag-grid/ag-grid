@@ -59,9 +59,24 @@ describe('Rect', () => {
             ],
             [
                 // Gradient cases.
-                { gradient: true, width: 40, height: 40, crisp: true, fill: 'blue' },
-                { gradient: true, width: 40, height: 40, crisp: true, fill: 'red' },
-                { gradient: true, width: 40, height: 40, crisp: true, fill: 'green' },
+                { width: 40, height: 40, crisp: true, fill: 'linear-gradient(180deg, #000000, #ff0000, #ffff00)' },
+                { width: 40, height: 40, crisp: true, fill: 'linear-gradient(90deg, #00FF00, white, rgb(255, 0, 0))' },
+            ],
+            [
+                // Gradient rotation
+                { width: 40, height: 80, crisp: true, fill: 'linear-gradient(0deg, white, black)' },
+                { width: 40, height: 80, crisp: true, fill: 'linear-gradient(45deg, white, black)' },
+                { width: 40, height: 80, crisp: true, fill: 'linear-gradient(90deg, white, black)' },
+                { width: 40, height: 80, crisp: true, fill: 'linear-gradient(135deg, white, black)' },
+                { width: 40, height: 80, crisp: true, fill: 'linear-gradient(180deg, white, black)' },
+                { width: 40, height: 80, crisp: true, fill: 'linear-gradient(225deg, white, black)' },
+                { width: 40, height: 80, crisp: true, fill: 'linear-gradient(270deg, white, black)' },
+                { width: 40, height: 80, crisp: true, fill: 'linear-gradient(315deg, white, black)' },
+                { width: 40, height: 80, crisp: true, fill: 'linear-gradient(360deg, white, black)' },
+                { width: 40, height: 80, crisp: true, fill: 'linear-gradient(-45deg, white, black)' },
+                { width: 40, height: 80, crisp: true, fill: 'linear-gradient(-90deg, white, black)' },
+                { width: 40, height: 80, crisp: true, fill: 'linear-gradient(-180deg, white, black)' },
+                { width: 40, height: 80, crisp: true, fill: 'linear-gradient(-270deg, white, black)' },
             ],
             // GO FOR IT!
             [{}, { lineDash: [5, 5] }, { opacity: 0.5 }].map((mixin) => ({

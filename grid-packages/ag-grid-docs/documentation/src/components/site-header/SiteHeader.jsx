@@ -68,6 +68,7 @@ const HeaderLinks = ({ path, toggleButtonRef }) => {
                                     toggleButtonRef.current?.click();
                                 }
                             }}
+                            aria-label={`AG Grid ${link.name}`}
                         >
                             {link.icon}
                             <span>{link.name}</span>

@@ -138,9 +138,6 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     /** Used by server side row model, true if this row node failed a load */
     public failedLoad: boolean;
 
-    /** Used by server side row model, true if this row node requires reload */
-    public __needsRefresh: boolean;
-
     /** Used by server side row model, true if this node needs refreshed by the server when in viewport */
     public __needsRefreshWhenVisible: boolean;
 
@@ -584,34 +581,42 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         let nonePresent = true;
         let newRowHeight = 0;
 
-        if (this.__autoHeights == null) { return; }
+        const autoHeights = this.__autoHeights!;
+        if (autoHeights == null) { return; }
 
         const displayedAutoHeightCols = this.beans.columnModel.getAllDisplayedAutoHeightCols();
         displayedAutoHeightCols.forEach(col => {
-            let cellHeight = this.__autoHeights![col.getId()];
+            let cellHeight = autoHeights[col.getId()];
 
             if (cellHeight == null) {
                 // If column spanning is active a column may not provide auto height for a row if that
                 // cell is not present for the given row due to a previous cell spanning over the auto height column.
-                let activeColsForRow: Column[] = [];
-                switch (col.getPinned()) {
-                    case 'left':
-                        activeColsForRow = this.beans.columnModel.getDisplayedLeftColumnsForRow(this);
-                        break;
-                    case 'right':
-                        activeColsForRow = this.beans.columnModel.getDisplayedRightColumnsForRow(this);
-                        break;
-                    case null:
-                        activeColsForRow = this.beans.columnModel.getViewportCenterColumnsForRow(this);
-                        break;
-                }
-                if (activeColsForRow.includes(col)) {
-                    // Column is present in the row, i.e not spanned over, but no auto height was provided so we cannot calculate the row height
+                if (this.beans.columnModel.isColSpanActive()) {
+                    let activeColsForRow: Column[] = [];
+                    switch (col.getPinned()) {
+                        case 'left':
+                            activeColsForRow = this.beans.columnModel.getDisplayedLeftColumnsForRow(this);
+                            break;
+                        case 'right':
+                            activeColsForRow = this.beans.columnModel.getDisplayedRightColumnsForRow(this);
+                            break;
+                        case null:
+                            activeColsForRow = this.beans.columnModel.getViewportCenterColumnsForRow(this);
+                            break;
+                    }
+                    if (activeColsForRow.includes(col)) {
+                        // Column is present in the row, i.e not spanned over, but no auto height was provided so we cannot calculate the row height
+                        notAllPresent = true;
+                        return;
+                    }
+                    // Ignore this column as it is spanned over and not present in the row
+                    cellHeight = -1;
+                } else {
                     notAllPresent = true;
                     return;
                 }
-                cellHeight = -1;
             } else {
+                // At least one auto height is present
                 nonePresent = false;
             }
 
@@ -721,8 +726,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         // the cell knows about the change given it's in charge of the editing.
         // this method is for the client to call, so the cell listens for the change
         // event, and also flashes the cell when the change occurs.
-        const column = this.beans.columnModel.getPrimaryColumn(colKey)!;
-        const oldValue = this.beans.valueService.getValue(column, this);
+        const column = this.beans.columnModel.getGridColumn(colKey) as Column;
+        const oldValue = this.getValueFromValueService(column);
 
         if (this.beans.gridOptionsService.is('readOnlyEdit')) {
             this.dispatchEventForSaveValueReadOnly(column, oldValue, newValue, eventSource);
@@ -735,6 +740,30 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.checkRowSelectable();
 
         return valueChanged;
+    }
+
+    public getValueFromValueService(column: Column): any {
+        // if we don't check this, then the grid will render leaf groups as open even if we are not
+        // allowing the user to open leaf groups. confused? remember for pivot mode we don't allow
+        // opening leaf groups, so we have to force leafGroups to be closed in case the user expanded
+        // them via the API, or user user expanded them in the UI before turning on pivot mode
+        const lockedClosedGroup = this.leafGroup && this.beans.columnModel.isPivotMode();
+
+        const isOpenGroup = this.group && this.expanded && !this.footer && !lockedClosedGroup;
+
+        // are we showing group footers
+        const groupFootersEnabled = this.beans.gridOptionsService.is('groupIncludeFooter');
+
+        // if doing footers, we normally don't show agg data at group level when group is open
+        const groupAlwaysShowAggData = this.beans.gridOptionsService.is('groupSuppressBlankHeader');
+
+        // if doing grouping and footers, we don't want to include the agg value
+        // in the header when the group is open
+        const ignoreAggData = (isOpenGroup && groupFootersEnabled) && !groupAlwaysShowAggData;
+
+        const value = this.beans.valueService.getValue(column, this, false, ignoreAggData);
+
+        return value;
     }
 
     private dispatchEventForSaveValueReadOnly(column: Column, oldValue: any, newValue: any, eventSource?: string): void {
@@ -910,15 +939,21 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         if (atLeastOneMixed || (atLeastOneSelected && atLeastOneDeSelected)) {
             return undefined;
-        } else if (atLeastOneSelected) {
-            return true;
-        } else if (atLeastOneDeSelected) {
-            return false;
-        } else if (!this.selectable) {
-            return null;
-        } else {
-            return this.selected;
         }
+
+        if (atLeastOneSelected) {
+            return true;
+        }
+
+        if (atLeastOneDeSelected) {
+            return false;
+        }
+
+        if (!this.selectable) {
+            return null;
+        }
+
+        return this.selected;
     }
 
     public setSelectedInitialValue(selected?: boolean): void {

@@ -70,6 +70,7 @@
   "isFieldContainsDots": {
     "type": { "arguments": {}, "returnType": "boolean" }
   },
+  "isTooltipEnabled": { "type": { "arguments": {}, "returnType": "boolean" } },
   "isTooltipFieldContainsDots": {
     "type": { "arguments": {}, "returnType": "boolean" }
   },
@@ -97,6 +98,7 @@
     "type": { "arguments": { "rowNode": "IRowNode" }, "returnType": "boolean" }
   },
   "isCellEditable": {
+    "description": "/** Returns `true` if the cell for this column is editable for the given `rowNode`, otherwise `false`.\n     */",
     "type": { "arguments": { "rowNode": "IRowNode" }, "returnType": "boolean" }
   },
   "isSuppressFillHandle": {

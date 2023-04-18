@@ -54,6 +54,40 @@ Also note that for numeric values the tooltips show two digits after the decimal
 
 <chart-example title='Default Tooltip' name='default-tooltip' type='generated'></chart-example>
 
+## Tooltip Position
+
+The tooltip position can be modified using the `tooltip.position.type` property.
+
+`tooltip.position.type` can be one of the following:
+
+- `node` - Anchors the tooltip to the highlighted node
+- `pointer` - Anchors the tooltip to the mouse pointer
+
+For series with markers, such as `line`, `area`, `scatter` and `bubble`, where each data point is represented by a marker, the default tooltip `position.type` is `node`. This means that the tooltip will be positioned above the highlighted marker node.
+
+For series without markers, such as `bar`,`column`, `histogram`, `treemap`, `pie` and `doughnut`, where each data point is represented by a fixed shape, for example a rectangle or a pie sector, the default tooltip `position.type` is `pointer`. This means that the tooltip will follow the mouse pointer as it moves over the shapes.
+
+The `xOffset` and `yOffset` properties in `tooltip.position` options define the distance in pixels from the tooltip to the anchor point:
+
+```js
+tooltip: {
+    position: {
+        type: 'pointer',
+        xOffset: 80, // positions tooltip 80px to the right of the mouse cursor
+        yOffset: 80, // positions tooltip 80px down from the start of the mouse cursor
+    }
+}
+```
+
+### Example: Tooltip Position
+
+In this example we show how to change the tooltip's default position. Note that:
+
+- Instead of the tooltip being anchored to the highlighted marker node, it is anchored 80 pixels to the left and below the mouse pointer.
+- By default, when `tooltip.position.xOffset` or `tooltip.position.yOffset` are configured, the tooltip arrow is removed.
+
+<chart-example title='Tooltip Position' name='tooltip-position' type='generated'></chart-example>
+
 ## Styling the Default Tooltip
 
 The default tooltip already uses `ag-chart-tooltip`, `ag-chart-tooltip-title` and `ag-chart-tooltip-content` CSS classes, but these classes are not meant to be used directly to add custom CSS rules to, unless you want to change the styling of all the tooltips in your app. Instead, users of the charting library should provide their own tooltip class name via the `chart.tooltip.class` config. This class name will be added to the class list of the tooltip element for only that particular chart instance.
@@ -175,15 +209,19 @@ The example below shows the three types of interaction range:
 
 <chart-example title='Tooltip Range' name='interaction-range' type='generated'></chart-example>
 
-## Interaction with a Tooltip
+## Interaction with Tooltips
 
-By default, you can not hover over a tooltip or select its text. Set the `tooltip.enableInteraction` flag to `true` to enable selecting the text and clicking links within the tooltip.
+By default, you can not hover over a tooltip or select its text. Set the `series[].tooltip.interaction.enabled` flag to `true` to enable selecting the text and clicking links within the tooltip.
 
-### Example: Interaction with a Tooltip
+### Example: Interaction with Tooltips
 
 <chart-example title='Tooltip Interaction' name='tooltip-interaction' type='generated'></chart-example>
 
 ## API Reference
+
+### All Tooltips
+
+<interface-documentation interfaceName='AgSeriesTooltip' config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
 
 ### Bar/Column Tooltips
 
@@ -208,7 +246,3 @@ By default, you can not hover over a tooltip or select its text. Set the `toolti
 ### Histogram Tooltips
 
 <interface-documentation interfaceName='AgHistogramSeriesTooltip' config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
-
-## Next Up
-
-Continue to the next section to learn about [axes](/charts-axes/).

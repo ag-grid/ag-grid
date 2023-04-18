@@ -13,6 +13,14 @@
             "pane": "left"
           },
           {
+            "title": "React Compatibility",
+            "icon": "react",
+            "url": "/react-compatibility",
+            "frameworks": [
+              "react"
+            ]
+          },
+          {
             "title": "Rendering",
             "icon": "react",
             "url": "/reactui/",
@@ -1993,31 +2001,7 @@
                 "items": [
                   {
                     "title": "Axis Types",
-                    "url": "/charts-axes-types/",
-                    "matrixExcludeChildren": true,
-                    "showInCollapsed": true,
-                    "items": [
-                      {
-                        "title": "Category",
-                        "url": "/charts-axes-category/"
-                      },
-                      {
-                        "title": "Number",
-                        "url": "/charts-axes-number/"
-                      },
-                      {
-                        "title": "Log",
-                        "url": "/charts-axes-log/"
-                      },
-                      {
-                        "title": "Time",
-                        "url": "/charts-axes-time/"
-                      }
-                    ]
-                  },
-                  {
-                    "title": "Axis Title",
-                    "url": "/charts-axes-title/"
+                    "url": "/charts-axes-types/"
                   },
                   {
                     "title": "Axis Ticks",
@@ -2032,17 +2016,8 @@
                     "url": "/charts-axes-grid-lines/"
                   },
                   {
-                    "title": "Cross Lines",
-                    "url": "/charts-axes-cross-lines/"
-                  },
-                  {
-                    "title": "Crosshairs",
-                    "url": "/charts-axes-crosshairs/",
-                    "enterprise": "charts"
-                  },
-                  {
-                    "title": "Multiple Axes",
-                    "url": "/charts-axes-multiple/"
+                    "title": "Secondary Axes",
+                    "url": "/charts-axes-secondary/"
                   }
                 ]
               },
@@ -2051,24 +2026,38 @@
                 "url": "/charts-legend/"
               },
               {
+                "title": "Series Markers",
+                "url": "/charts-markers/"
+              },
+              {
                 "title": "Series Highlighting",
                 "url": "/charts-series-highlighting/"
               },
               {
-                "title": "Navigator",
-                "url": "/charts-navigator/"
-              },
-              {
-                "title": "Markers",
-                "url": "/charts-markers/"
+                "title": "Tooltips",
+                "url": "/charts-tooltips/"
               },
               {
                 "title": "Formatters",
                 "url": "/charts-formatters/"
               },
               {
-                "title": "Tooltips",
-                "url": "/charts-tooltips/"
+                "title": "Cross Lines",
+                "url": "/charts-axes-cross-lines/"
+              },
+              {
+                "title": "Navigator",
+                "url": "/charts-navigator/"
+              },
+              {
+                "title": "Crosshairs",
+                "url": "/charts-axes-crosshairs/",
+                "enterprise": "charts"
+              },
+              {
+                "title": "Context Menu",
+                "url": "/charts-context-menu/",
+                "enterprise": "charts"
               },
               {
                 "title": "Zoom",

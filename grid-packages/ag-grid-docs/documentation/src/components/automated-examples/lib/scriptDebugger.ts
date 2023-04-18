@@ -1,5 +1,7 @@
+import { INTEGRATED_CHARTS_ID, ROW_GROUPING_ID } from './constants';
 import { createPen } from './createPen';
 import { Point } from './geometry';
+import { getStyledConsoleMessageConfig } from './getStyledConsoleMessageConfig';
 import { RunScriptState, ScriptRunner } from './scriptRunner';
 
 interface CreateScriptDebuggerParams {
@@ -15,6 +17,7 @@ export type ScriptDebuggerManager = ReturnType<typeof createScriptDebuggerManage
 type DebugPanel = ReturnType<typeof createDebugPanel>;
 
 const STATE_CLASSNAME = 'state';
+const STEP_CLASSNAME = 'step';
 const PAUSED_STATE_CLASSNAME = 'paused-state';
 const MOUSE_POSITION_CLASSNAME = 'mouse-position';
 const getCheckboxTemplate = (isChecked?: boolean) => `
@@ -62,6 +65,9 @@ function createDebugPanelSection({
     const stateEl = document.createElement('div');
     stateEl.classList.add(STATE_CLASSNAME);
 
+    const stepEl = document.createElement('div');
+    stepEl.classList.add(STEP_CLASSNAME);
+
     const pausedStateEl = document.createElement('div');
     pausedStateEl.classList.add(PAUSED_STATE_CLASSNAME);
 
@@ -96,11 +102,15 @@ function createDebugPanelSection({
     heading.innerHTML = id;
     sectionEl.appendChild(heading);
     sectionEl.appendChild(stateEl);
+    sectionEl.appendChild(stepEl);
     sectionEl.appendChild(pausedStateEl);
     sectionEl.appendChild(controlsEl);
 
     const updateStateText = (state: string) => {
         stateEl.innerHTML = state;
+    };
+    const updateStepText = ({ step, numSteps, stepName }: { step: number; numSteps: number; stepName?: string }) => {
+        stepEl.innerHTML = `<span class='index'>${step}/${numSteps}</span>${stepName ? ` ${stepName}` : ''}`;
     };
     const updatePausedStateText = (pausedState?: string) => {
         pausedStateEl.innerHTML = pausedState ? pausedState : '';
@@ -121,6 +131,7 @@ function createDebugPanelSection({
     return {
         sectionEl,
         updateStateText,
+        updateStepText,
         updatePausedStateText,
         updateButton,
     };
@@ -164,7 +175,13 @@ function createDebugPanel(classname: string) {
             getScriptRunner: () => ScriptRunner;
             onDrawChange: (checked: boolean) => void;
         }) => {
-            const { sectionEl, updateStateText, updatePausedStateText, updateButton } = createDebugPanelSection({
+            const {
+                sectionEl,
+                updateStateText,
+                updateStepText,
+                updatePausedStateText,
+                updateButton,
+            } = createDebugPanelSection({
                 id,
                 onDrawChange,
                 getScriptRunner,
@@ -174,6 +191,7 @@ function createDebugPanel(classname: string) {
 
             return {
                 updateStateText,
+                updateStepText,
                 updatePausedStateText,
                 updateButton,
             };
@@ -196,7 +214,7 @@ function createScriptDebugger({
         return scriptRunner;
     };
 
-    const { updateStateText, updatePausedStateText, updateButton } = debugPanel.addSection({
+    const { updateStateText, updateStepText, updatePausedStateText, updateButton } = debugPanel.addSection({
         id,
         initialDraw,
         getScriptRunner,
@@ -211,11 +229,33 @@ function createScriptDebugger({
         updateButton(state);
     };
 
+    const updateStep = ({ step, numSteps, stepName }) => {
+        updateStepText({ step, numSteps, stepName });
+    };
+
     const drawPoint = ({ x, y }: Point, color?: string, radius: number = 5) => {
         if (!shouldDraw) {
             return;
         }
         debugPen?.drawPoint({ x, y }, radius, color ?? DEFAULT_DRAW_COLOR);
+    };
+
+    const log = (...args: any[]) => {
+        const [prefix] = args || [];
+
+        if (prefix.startsWith && prefix.startsWith(INTEGRATED_CHARTS_ID)) {
+            const messageConfig = getStyledConsoleMessageConfig(...args);
+            console.log(messageConfig, 'background: #eee', ...args);
+        } else if (prefix.startsWith && prefix.startsWith(ROW_GROUPING_ID)) {
+            const messageConfig = getStyledConsoleMessageConfig(...args);
+            console.log(messageConfig, 'color: #eee; background: #000', ...args);
+        } else {
+            console.log(...args);
+        }
+    };
+
+    const errorLog = (...args: any[]) => {
+        console.error(...args);
     };
 
     const clear = () => {
@@ -226,7 +266,7 @@ function createScriptDebugger({
         scriptRunner = runner;
     };
 
-    return { clear, drawPoint, updateState, setScriptRunner };
+    return { log, errorLog, clear, drawPoint, updateStep, updateState, setScriptRunner };
 }
 
 export function createScriptDebuggerManager({

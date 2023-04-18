@@ -1,27 +1,29 @@
-import { getCell } from '../agQuery';
+import { AgElementFinder } from '../agElements';
 import { AG_CELL_RANGE_SINGLE_CELL_CLASSNAME } from '../constants';
 
 interface SingleCellParams {
-    containerEl?: HTMLElement;
+    agElementFinder: AgElementFinder;
     colIndex: number;
     rowIndex: number;
 }
 
-export function selectSingleCell({ containerEl, colIndex, rowIndex }: SingleCellParams) {
-    const cell = getCell({
-        containerEl,
-        colIndex,
-        rowIndex,
-    });
+export function selectSingleCell({ agElementFinder, colIndex, rowIndex }: SingleCellParams) {
+    const cell = agElementFinder
+        .get('cell', {
+            colIndex,
+            rowIndex,
+        })
+        ?.get();
     cell?.classList.add(AG_CELL_RANGE_SINGLE_CELL_CLASSNAME);
 }
 
-export function clearSingleCell({ containerEl, colIndex, rowIndex }: SingleCellParams) {
-    const cell = getCell({
-        containerEl,
-        colIndex,
-        rowIndex,
-    });
+export function clearSingleCell({ agElementFinder, colIndex, rowIndex }: SingleCellParams) {
+    const cell = agElementFinder
+        .get('cell', {
+            colIndex,
+            rowIndex,
+        })
+        ?.get();
     cell?.classList.remove(AG_CELL_RANGE_SINGLE_CELL_CLASSNAME);
 }
 

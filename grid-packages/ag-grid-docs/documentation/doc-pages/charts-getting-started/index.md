@@ -1483,9 +1483,3 @@ AG Charts Legacy is only required for apps on Angular v8-11 that wish to use AG 
 
 
 Now that you've had a taste of what it's like to use AG Charts, we encourage you to explore our documentation to learn more.
-
-
-## Next Up
-
-
-Continue to the next section to see the [API Reference](/charts-api/).

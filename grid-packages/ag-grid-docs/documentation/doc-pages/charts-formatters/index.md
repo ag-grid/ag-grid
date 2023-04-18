@@ -73,7 +73,3 @@ Applies to all series types. This formatter allows adjustment of the text label 
 item corresponding to a series
 
 <chart-example title='Legend Item Label Formatter' name='legend-item-formatter' type='generated'></chart-example>
-
-## Next Up
-
-Continue to the next section to learn about [tooltips](/charts-tooltips/).

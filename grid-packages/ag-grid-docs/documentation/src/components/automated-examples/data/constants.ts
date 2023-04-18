@@ -148,3 +148,137 @@ export const lastNames = [
 ];
 
 export const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+export const CATEGORIES = {
+    Grains: {
+        icon: 'Corn',
+        products: [
+            'Corn',
+            'Oats',
+            'Rough Rice',
+            'Soybeans',
+            'No 2. Soybean',
+            'Rapeseed',
+            'Soybean Meal',
+            'Soy Meal',
+            'Soybean Oil',
+            'Wheat',
+        ],
+    },
+    'Textile Fibers': {
+        icon: 'WatsonHealthHangingProtocol',
+        products: [
+            'Cotton No.2',
+            'Industrial Hemp',
+            'Raw Flax Fiber',
+            'Silk',
+            'Wool',
+            'Leather',
+            'Goose Down',
+            'Alpaca',
+        ],
+    },
+    'Food & Drink': {
+        icon: 'Restaurant',
+        products: [
+            'Milk',
+            'Matcha',
+            'Cocoa',
+            'Coffee C',
+            'Sugar No.11',
+            'Sugar No.14',
+            'Frozen Concentrated Orange Juice',
+            'Adzuki Bean',
+            'Robusta Coffee',
+        ],
+    },
+    'Syntetic fabrics': {
+        icon: 'HybridNetworkingAlt',
+        products: ['Nylon', 'Modacrylic', 'Olefin', 'Acrylic', 'Polyester', 'Rayon', 'Vinyon', 'Saran', 'Spandex'],
+    },
+    Fertilisers: {
+        icon: 'CropGrowth',
+        products: ['Nitrogen Fertiliser', 'Potassium Fertiliser', 'Phosphorus Fertiliser'],
+    },
+    'Lumber Products': {
+        icon: 'Cube',
+        products: ['Random Length Lumber', 'Hardwood Pulp', 'Softwood Pulp'],
+    },
+    'Livestock and Meat': {
+        icon: 'PiggyBank',
+        products: ['Lean Hogs', 'Live Cattle', 'Feeder Cattle'],
+    },
+    Energy: {
+        icon: 'FlashFilled',
+        products: [
+            'Commodity',
+            'WTI Crude Oil',
+            'Brent Crude',
+            'Ethanol',
+            'Natural Gas',
+            'Heating Oil',
+            'Gulf Coast Gasoline',
+            'RBOB Gasoline',
+            'Propane',
+            'Purified Terephthalic Acid (PTA)',
+        ],
+    },
+    'Industrial Metals': {
+        icon: 'ChartRadial',
+        products: [
+            'LME Copper',
+            'Lead',
+            'Zinc',
+            'Tin',
+            'Aluminium',
+            'Aluminium Alloy',
+            'LME Nickel',
+            'Cobalt',
+            'Molybdenum',
+        ],
+    },
+    'Precious Metals': {
+        icon: 'ChartSpiral',
+        products: ['Gold', 'Platinum', 'Palladium', 'Silver'],
+    },
+    'Construction Products': {
+        icon: 'BuildingInsights_3',
+        products: [
+            'Nonmetallic Mineral Products',
+            'Concrete Ingredients',
+            'Construction Sand',
+            'Crushed and Broken Stone',
+            'Cement',
+            'Clay Construction',
+            'Brick and Structural Clay Tile',
+            'Ceramic Floor and Wall Tile',
+            'Asphalt Felts and Coatings',
+            'Gypsum Products',
+            'Insulation Materials',
+            'Paving Mixtures and Blocks',
+            'Cut Stone and Stone Products',
+            'Gaskets, Packing, and Sealing Devices',
+        ],
+    },
+    Plastics: {
+        icon: 'Chemistry',
+        products: [
+            'Acrylonitrile Butadiene Styrene',
+            'Polyamides',
+            'Polycarbonates',
+            'Polyetherimide',
+            'Polyetherketoneketone',
+            'Polyetherketones',
+            'Polyketone',
+            'Polyethylene Terephthalate',
+            'Polyimides',
+            'Polyoxymethylene Plastic',
+            'Polyphenylene Oxide',
+            'Polysulphone',
+            'Polytetrafluoroethylene',
+            'Polymethyl Methacrylate',
+        ],
+    },
+};
+
+export const PORTFOLIOS = ['Income', 'Hybrid', 'Speculative', 'Aggressive', 'Defensive'];

@@ -18,7 +18,6 @@ const DEFAULT_COLOR = 'rgba(255,0,0,0.5)';
 
 export function createPen({ canvas, backgroundColor, width, height }: CreatePenParams): Drawer | undefined {
     if (!canvas || !canvas.getContext) {
-        console.error('Not a valid canvas:', canvas);
         return;
     }
     canvas.width = width;

@@ -840,6 +840,10 @@ export class ColumnModel extends BeanStub {
         return this.getDisplayedColumnsForRow(rowNode, this.displayedColumnsRight);
     }
 
+    public isColSpanActive(): boolean {
+        return this.colSpanActive;
+    }
+
     private getDisplayedColumnsForRow(
         rowNode: RowNode, displayedColumns: Column[],
         filterCallback?: (column: Column) => boolean,
@@ -3366,7 +3370,7 @@ export class ColumnModel extends BeanStub {
         }
         columnsForQuickFilter = columnsForQuickFilter ?? [];
         this.columnsForQuickFilter = this.gridOptionsService.is('excludeHiddenColumnsFromQuickFilter')
-            ? columnsForQuickFilter.filter(col => col.isVisible())
+            ? columnsForQuickFilter.filter(col => col.isVisible() || col.isRowGroupActive())
             : columnsForQuickFilter;
     }
 

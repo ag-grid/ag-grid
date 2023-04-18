@@ -14,12 +14,17 @@ import { waitFor } from './scriptActions/waitFor';
 import { ScriptDebugger } from './scriptDebugger';
 import { EasingFunction } from './tween';
 
-export interface PathAction {
+export interface Action {
+    name?: string;
+    type: string;
+}
+
+export interface PathAction extends Action {
     type: 'path';
     path: PathItem<any>[];
 }
 
-export interface MoveToAction {
+export interface MoveToAction extends Action {
     type: 'moveTo';
     toPos: Point | (() => Point | undefined);
     speed?: number;
@@ -27,35 +32,35 @@ export interface MoveToAction {
     easing?: EasingFunction;
 }
 
-export interface WaitAction {
+export interface WaitAction extends Action {
     type: 'wait';
     duration: number;
 }
 
-export interface ClickAction {
+export interface ClickAction extends Action {
     type: 'click';
 }
 
-export interface MouseDownAction {
+export interface MouseDownAction extends Action {
     type: 'mouseDown';
 }
 
-export interface MouseUpAction {
+export interface MouseUpAction extends Action {
     type: 'mouseUp';
 }
 
-export interface RemoveFocusAction {
+export interface RemoveFocusAction extends Action {
     type: 'removeFocus';
 }
 
-export interface CustomAction {
+export interface CustomAction extends Action {
     type: 'custom';
     action: () => Promise<void> | void;
 }
 
 export type AGAction = AGCreatorAction & {
     type: 'agAction';
-};
+} & Action;
 
 export interface ScriptRunner {
     currentState: () => RunScriptState;
@@ -92,6 +97,7 @@ export interface CreateScriptActionParams {
 }
 
 export interface CreateScriptRunnerParams {
+    id: string;
     mouse: Mouse;
     containerEl?: HTMLElement;
     script: ScriptAction[];
@@ -100,8 +106,6 @@ export interface CreateScriptRunnerParams {
     loop?: boolean;
     loopOnError?: boolean;
     onStateChange?: (state: RunScriptState) => void;
-    onPaused?: () => void;
-    onUnpaused?: () => void;
     scriptDebugger?: ScriptDebugger;
     /**
      * Default easing function used for move actions
@@ -172,7 +176,7 @@ function createScriptAction({
         const toPos = scriptAction.toPos instanceof Function ? scriptAction.toPos() : scriptAction.toPos;
 
         if (!toPos) {
-            console.error(`No 'toPos' in 'moveTo' action`, scriptAction);
+            scriptDebugger?.errorLog(`No 'toPos' in 'moveTo' action`, scriptAction);
             return;
         }
 
@@ -223,7 +227,7 @@ function createScriptActionSequence({
 
                 return result;
             } catch (error) {
-                console.error('Script action error', {
+                scriptDebugger?.errorLog('Script action error', {
                     scriptAction: JSON.stringify(scriptAction, function replacer(key, value) {
                         if (typeof value === 'function') {
                             return value.toString().replaceAll(/\s/gm, '').replace('function', '');
@@ -260,6 +264,7 @@ function createActionSequenceRunner({ actionSequence, onPreAction, onError }: Cr
 }
 
 export function createScriptRunner({
+    id,
     containerEl,
     mouse,
     script,
@@ -268,8 +273,6 @@ export function createScriptRunner({
     loopOnError,
     tweenGroup,
     onStateChange,
-    onPaused,
-    onUnpaused,
     scriptDebugger,
     defaultEasing,
 }: CreateScriptRunnerParams): ScriptRunner {
@@ -279,7 +282,6 @@ export function createScriptRunner({
     const rowExpandedState = createRowExpandedState(gridOptions);
 
     const setPausedState = (scriptIndex: number) => {
-        onPaused && onPaused();
         pausedState = {
             scriptIndex,
             columnState: gridOptions.columnApi?.getColumnState()!,
@@ -298,7 +300,6 @@ export function createScriptRunner({
     const playAgain = () => {
         let pausedScriptIndex;
         if (pausedState) {
-            onUnpaused && onUnpaused();
             gridOptions.columnApi?.applyColumnState({
                 state: pausedState.columnState,
                 applyOrder: true,
@@ -328,26 +329,47 @@ export function createScriptRunner({
     const startActionSequence = (startIndex: number = 0) => {
         updateState('playing');
         tweenUpdate();
+        const scriptFromStartIndex = script.slice(startIndex);
         const sequence = createActionSequenceRunner({
             actionSequence: actionSequence.slice(startIndex),
             onPreAction({ index }) {
+                let shouldCancel = false;
+
                 if (runScriptState === 'stopping') {
                     updateState('stopped');
-                    return { shouldCancel: true };
+                    shouldCancel = true;
                 } else if (runScriptState === 'pausing') {
                     setPausedState(index);
                     updateState('paused');
-                    return { shouldCancel: true };
+                    shouldCancel = true;
                 } else if (
                     runScriptState === 'stopped' ||
                     runScriptState === 'paused' ||
                     runScriptState === 'inactive'
                 ) {
-                    return { shouldCancel: true };
+                    shouldCancel = true;
                 }
+
+                if (shouldCancel) {
+                    scriptDebugger?.log(`${id} cancelling step from state: ${runScriptState}`);
+                } else {
+                    const scriptAction = scriptFromStartIndex[index];
+                    const stepName =
+                        scriptAction.name ||
+                        (scriptAction.type === 'agAction' ? scriptAction.actionType : scriptAction.type);
+                    const stepNum = index + 1;
+                    scriptDebugger?.updateStep({ step: stepNum, numSteps: scriptFromStartIndex.length, stepName });
+                    scriptDebugger?.log(`${id} step ${stepNum}/${scriptFromStartIndex.length}: ${stepName}`, {
+                        scriptAction,
+                    });
+                }
+
+                return {
+                    shouldCancel,
+                };
             },
             onError({ error, index }) {
-                console.error('Action error (stopping)', {
+                scriptDebugger?.errorLog('Action error (stopping)', {
                     index,
                     error,
                 });
@@ -374,7 +396,7 @@ export function createScriptRunner({
                 }
             })
             .catch((error) => {
-                console.error('Action sequence error', error);
+                scriptDebugger?.errorLog('Action sequence error', error);
                 stop();
             });
     };
@@ -397,6 +419,10 @@ export function createScriptRunner({
     };
 
     const play: ScriptRunner['play'] = ({ loop } = {}) => {
+        if (runScriptState === 'playing') {
+            return;
+        }
+
         loopScript = loop === undefined ? loopScript : Boolean(loop);
 
         playAgain();
@@ -420,7 +446,7 @@ export function createScriptRunner({
     };
 
     // Initial playState
-    updateState('inactive');
+    updateState('stopped');
 
     return {
         currentState,

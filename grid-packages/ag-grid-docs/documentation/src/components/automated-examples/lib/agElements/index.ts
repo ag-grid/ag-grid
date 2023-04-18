@@ -38,9 +38,10 @@ export function createAgElementFinder({ containerEl = document.body }: CreateAgE
                 text: targetParams.text,
             });
         } else if (agElementConfig.hasOwnProperty('find')) {
-            const config = agElementConfig as AgElementByFindConfig;
+            const config = agElementConfig as AgElementByFindConfig<any>;
             element = config.find({
                 getElement,
+                containerEl,
                 params: targetParams,
             });
         }

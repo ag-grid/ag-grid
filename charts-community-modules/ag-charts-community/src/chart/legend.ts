@@ -346,11 +346,7 @@ export class Legend {
         if (this.reverseOrder) {
             data.reverse();
         }
-        this.itemSelection.update(data, (node) => {
-            const { datum } = node;
-            const Marker = getMarker(markerShape || datum.marker.shape);
-            node.marker = new Marker();
-        });
+        this.itemSelection.update(data);
 
         // Update properties that affect the size of the legend items and measure them.
         const bboxes: BBox[] = [];
@@ -362,7 +358,12 @@ export class Legend {
         const paddedMarkerWidth = markerSize + markerPadding + paddingX;
 
         this.itemSelection.each((markerLabel, datum) => {
-            markerLabel.markerSize = markerSize;
+            const Marker = getMarker(markerShape || datum.marker.shape);
+
+            if (!(markerLabel.marker && markerLabel.marker instanceof Marker)) {
+                markerLabel.marker = new Marker();
+            }
+
             markerLabel.spacing = markerPadding;
             markerLabel.fontStyle = fontStyle;
             markerLabel.fontWeight = fontWeight;
