@@ -89,7 +89,7 @@ The `getRows()` method takes the `IGetRowsParams` parameters:
 The `getRows()` function is called by the grid to load a block of rows into the browser-side cache of blocks.
 It takes the following as parameters:
 
-- The `startRow` and `endRow` define the range expected for the call. For example, if block size is 100, the `getRows` function will be called with `startRow: 0` and `endRow: 100` and the grid will expect a result with 100 rows (rows 0 to 99).
+- The `startRow` and `endRow` define the range expected for the call. For example, if the `getRows` function is called with `startRow: 0` and `endRow: 100`, then the grid will expect a result with 100 rows (rows 0 to 99).
 
 - The `successCallback(rowsThisBlock, lastRow)` should be called when you successfully receive data from the server. The callback has the following parameters:
     - `rowsThisBlock` should be the rows you have received for the current block.
