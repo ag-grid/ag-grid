@@ -1,7 +1,12 @@
 import { AutomatedExample } from '../types';
+import { AUTOMATED_EXAMPLE_MANAGER_ID, INTEGRATED_CHARTS_ID, ROW_GROUPING_ID } from './constants';
 import { createScriptDebuggerManager } from './scriptDebugger';
 
 export type AutomatedExampleManager = ReturnType<typeof createAutomatedExampleManager>;
+
+export type AutomatedExampleState = 'idle' | 'playingRowGrouping' | 'playingIntegratedCharts';
+
+const logId = AUTOMATED_EXAMPLE_MANAGER_ID;
 
 interface Params {
     debugCanvasClassname: string;
@@ -13,10 +18,15 @@ export function createAutomatedExampleManager({ debugCanvasClassname, debugPanel
         canvasClassname: debugCanvasClassname,
         panelClassname: debugPanelClassname,
     });
-
     const automatedExamples: Record<string, AutomatedExample> = {};
     const automatedExamplesEnabled: Record<string, boolean> = {};
-    let lastPlayingExample;
+
+    let automatedExampleState: AutomatedExampleState;
+
+    const updateState = (state: AutomatedExampleState) => {
+        exampleDebuggerManager.log(`${logId} state: ${state}`);
+        automatedExampleState = state;
+    };
 
     const add = ({
         id,
@@ -42,22 +52,32 @@ export function createAutomatedExampleManager({ debugCanvasClassname, debugPanel
             return;
         }
 
-        // Start example if it's not playing and also not inactive
-        // Inactive examples are only started with there is only one example on the viewport.
-        if (automatedExample.currentState() !== 'playing' && automatedExample.currentState() !== 'inactive') {
-            // Stop last playing example, since we are going to start another one.
-            if (lastPlayingExample !== automatedExample) {
-                // Note, not setting to inactive, so that it can start again in this if statement
-                lastPlayingExample?.stop();
-            }
+        if (automatedExampleState === 'idle') {
+            automatedExample.start();
 
-            lastPlayingExample = automatedExample;
-            automatedExample.start();
-        }
-        // Initial condition when page is loaded and grid was not on the page
-        else if (automatedExample.currentState() === 'inactive' && !lastPlayingExample) {
-            lastPlayingExample = automatedExample;
-            automatedExample.start();
+            if (id === ROW_GROUPING_ID) {
+                updateState('playingRowGrouping');
+            } else if (id === INTEGRATED_CHARTS_ID) {
+                updateState('playingIntegratedCharts');
+            }
+        } else if (automatedExampleState === 'playingRowGrouping') {
+            if (id === ROW_GROUPING_ID) {
+                // Started already, ignore
+            } else if (id === INTEGRATED_CHARTS_ID) {
+                automatedExamples[ROW_GROUPING_ID].stop();
+
+                automatedExample.start();
+                updateState('playingIntegratedCharts');
+            }
+        } else if (automatedExampleState === 'playingIntegratedCharts') {
+            if (id === ROW_GROUPING_ID) {
+                automatedExamples[INTEGRATED_CHARTS_ID].stop();
+
+                automatedExample.start();
+                updateState('playingRowGrouping');
+            } else if (id === INTEGRATED_CHARTS_ID) {
+                // Started already, ignore
+            }
         }
     };
 
@@ -68,8 +88,8 @@ export function createAutomatedExampleManager({ debugCanvasClassname, debugPanel
             return;
         }
 
-        lastPlayingExample = undefined;
         automatedExample.stop();
+        updateState('idle');
     };
 
     const inactive = (id: string) => {
@@ -79,16 +99,52 @@ export function createAutomatedExampleManager({ debugCanvasClassname, debugPanel
             return;
         }
 
-        lastPlayingExample = undefined;
-        automatedExample.inactive();
+        if (automatedExampleState === 'idle') {
+            // Nothing to do, it's already idle
+        } else if (automatedExampleState === 'playingRowGrouping') {
+            if (id === ROW_GROUPING_ID) {
+                let state: AutomatedExampleState = 'idle';
+                automatedExample.inactive();
 
-        // If there is another example in the viewport, play it
-        const otherExampleKey = Object.keys(automatedExamples).find((key) => {
-            const example = automatedExamples[key];
-            const isEnabled = automatedExamplesEnabled[key];
-            return example !== automatedExample && isEnabled && example?.isInViewport();
-        });
-        otherExampleKey && automatedExamples[otherExampleKey]?.start();
+                const otherKey = INTEGRATED_CHARTS_ID;
+                const otherExample = automatedExamples[otherKey];
+                if (otherExample) {
+                    const otherExampleIsEnabled = automatedExamplesEnabled[otherKey];
+                    const otherExampleIsInViewport = otherExample.isInViewport();
+
+                    if (otherExampleIsEnabled && otherExampleIsInViewport) {
+                        otherExample.start();
+                        state = 'playingIntegratedCharts';
+                    }
+                }
+
+                updateState(state);
+            } else if (id === INTEGRATED_CHARTS_ID) {
+                automatedExample.inactive();
+                // State stays the same
+            }
+        } else if (automatedExampleState === 'playingIntegratedCharts') {
+            if (id === ROW_GROUPING_ID) {
+                automatedExample.inactive();
+                // State stays the same
+            } else if (id === INTEGRATED_CHARTS_ID) {
+                let state: AutomatedExampleState = 'idle';
+                automatedExample.inactive();
+
+                const otherKey = ROW_GROUPING_ID;
+                const otherExample = automatedExamples[otherKey];
+                if (otherExample) {
+                    const otherExampleIsEnabled = automatedExamplesEnabled[otherKey];
+                    const otherExampleIsInViewport = otherExample.isInViewport();
+
+                    if (otherExampleIsEnabled && otherExampleIsInViewport) {
+                        otherExample.start();
+                        state = 'playingRowGrouping';
+                    }
+                }
+                updateState(state);
+            }
+        }
     };
 
     const setEnabled = ({ id, isEnabled }: { id: string; isEnabled: boolean }) => {
@@ -108,6 +164,8 @@ export function createAutomatedExampleManager({ debugCanvasClassname, debugPanel
     const getDebuggerManager = () => {
         return exampleDebuggerManager;
     };
+
+    updateState('idle');
 
     return {
         add,

@@ -1,4 +1,4 @@
-import { INTEGRATED_CHARTS_ID, ROW_GROUPING_ID } from './constants';
+import { AUTOMATED_EXAMPLE_MANAGER_ID, INTEGRATED_CHARTS_ID, ROW_GROUPING_ID } from './constants';
 import { createPen } from './createPen';
 import { Point } from './geometry';
 import { getStyledConsoleMessageConfig } from './getStyledConsoleMessageConfig';
@@ -27,6 +27,27 @@ const getCheckboxTemplate = (isChecked?: boolean) => `
 `;
 
 const DEFAULT_DRAW_COLOR = 'rgba(255,0,0,0.5)'; // red
+
+const log = (...args: any[]) => {
+    const [prefix] = args || [];
+
+    if (prefix.startsWith && prefix.startsWith(INTEGRATED_CHARTS_ID)) {
+        const messageConfig = getStyledConsoleMessageConfig(...args);
+        console.log(messageConfig, 'color: #222;background: #eee', ...args);
+    } else if (prefix.startsWith && prefix.startsWith(ROW_GROUPING_ID)) {
+        const messageConfig = getStyledConsoleMessageConfig(...args);
+        console.log(messageConfig, 'color: #eee; background: #000', ...args);
+    } else if (prefix.startsWith && prefix.startsWith(AUTOMATED_EXAMPLE_MANAGER_ID)) {
+        const messageConfig = getStyledConsoleMessageConfig(...args);
+        console.log(messageConfig, 'color: #222; background: #80bdff', ...args);
+    } else {
+        console.log(...args);
+    }
+};
+
+const errorLog = (...args: any[]) => {
+    console.error(...args);
+};
 
 /**
  * Create pen to draw on the canvas, for debugging
@@ -240,24 +261,6 @@ function createScriptDebugger({
         debugPen?.drawPoint({ x, y }, radius, color ?? DEFAULT_DRAW_COLOR);
     };
 
-    const log = (...args: any[]) => {
-        const [prefix] = args || [];
-
-        if (prefix.startsWith && prefix.startsWith(INTEGRATED_CHARTS_ID)) {
-            const messageConfig = getStyledConsoleMessageConfig(...args);
-            console.log(messageConfig, 'background: #eee', ...args);
-        } else if (prefix.startsWith && prefix.startsWith(ROW_GROUPING_ID)) {
-            const messageConfig = getStyledConsoleMessageConfig(...args);
-            console.log(messageConfig, 'color: #eee; background: #000', ...args);
-        } else {
-            console.log(...args);
-        }
-    };
-
-    const errorLog = (...args: any[]) => {
-        console.error(...args);
-    };
-
     const clear = () => {
         debugPen?.clear();
     };
@@ -281,6 +284,8 @@ export function createScriptDebuggerManager({
     let initialDraw = false;
 
     return {
+        log,
+        errorLog,
         setEnabled: (enabled: boolean) => {
             isEnabled = enabled;
         },

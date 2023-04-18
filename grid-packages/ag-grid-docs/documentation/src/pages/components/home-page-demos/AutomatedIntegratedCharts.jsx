@@ -48,6 +48,7 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
     const [scriptIsEnabled, setScriptIsEnabled] = useState(true);
     const [gridIsReady, setGridIsReady] = useState(false);
     const [gridIsHoveredOver, setGridIsHoveredOver] = useState(false);
+    const debuggerManager = automatedExampleManager.getDebuggerManager();
 
     const setAllScriptEnabledVars = (isEnabled) => {
         setScriptIsEnabled(isEnabled);
@@ -58,8 +59,10 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
         elementRef: gridRef,
         onChange: ({ isIntersecting }) => {
             if (isIntersecting) {
+                debuggerManager.log(`${exampleId} intersecting - start`);
                 automatedExampleManager.start(exampleId);
             } else {
+                debuggerManager.log(`${exampleId} not intersecting - inactive`);
                 automatedExampleManager.inactive(exampleId);
             }
         },
@@ -71,16 +74,10 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
         let params = {
             gridClassname,
             mouseMaskClassname: styles.mouseMask,
-            scriptDebuggerManager: automatedExampleManager.getDebuggerManager(),
+            scriptDebuggerManager: debuggerManager,
             suppressUpdates: useStaticData,
             useStaticData,
             runOnce,
-            onStateChange(state) {
-                // Catch errors, and allow the user to use the grid
-                if (state === 'stopping') {
-                    setAllScriptEnabledVars(false);
-                }
-            },
             onGridReady() {
                 setGridIsReady(true);
             },

@@ -1,3 +1,4 @@
+export const AUTOMATED_EXAMPLE_MANAGER_ID = 'AEManager';
 export const ROW_GROUPING_ID = 'Row Grouping';
 export const INTEGRATED_CHARTS_ID = 'Integrated Charts';
 
