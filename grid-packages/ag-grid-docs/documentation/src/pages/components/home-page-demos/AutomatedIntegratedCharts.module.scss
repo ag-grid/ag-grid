@@ -210,6 +210,11 @@ $z-index-splash-contents: 10;
 
     @media screen and (min-width: ds.$breakpoint-automated-row-grouping-medium) {
         display: block;
+        margin-left: -80px;
+    }
+
+    @media screen and (min-width: ds.$max-page-width) {
+        margin-left: -100px;
     }
 }
 

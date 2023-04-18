@@ -2,14 +2,12 @@
 // @refresh reset
 
 import classNames from 'classnames';
-import { withPrefix } from 'gatsby';
 import React, { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { createAutomatedIntegratedCharts } from '../../../components/automated-examples/examples/integrated-charts';
 import { INTEGRATED_CHARTS_ID } from '../../../components/automated-examples/lib/constants';
 import { OverlayButton } from '../../../components/automated-examples/OverlayButton';
 import { ToggleAutomatedExampleButton } from '../../../components/automated-examples/ToggleAutomatedExampleButton';
-import { Icon } from '../../../components/Icon';
 import LogoMark from '../../../components/LogoMark';
 import { isProductionBuild, localPrefix } from '../../../utils/consts';
 import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
@@ -109,11 +107,6 @@ function AutomatedIntegratedCharts({
                     With a complete suite of integrated charting tools, your users can visualise their data any way they
                     choose.
                 </p>
-                <p className="font-size-large">
-                    Intuitive cell selection and simple right-click context menus let users export and chart exactly the
-                    data they need. With dazzling themes, dozens of chart types, and a multitude of settings, Integrated
-                    Charts make data beautiful.
-                </p>
             </header>
 
             <Helmet>{helmet.map((entry) => entry)}</Helmet>
@@ -147,14 +140,6 @@ function AutomatedIntegratedCharts({
                         isHoveredOver={gridIsHoveredOver}
                         scriptIsActive={scriptIsEnabled}
                     ></ToggleAutomatedExampleButton>
-                </div>
-                <div className="font-size-large">
-                    <a
-                        className={classNames('font-size-large', styles.getStartedLink)}
-                        href={withPrefix('/documentation/')}
-                    >
-                        Get Started with AG Grid <Icon name="chevronRight" />
-                    </a>
                 </div>
             </footer>
         </>
