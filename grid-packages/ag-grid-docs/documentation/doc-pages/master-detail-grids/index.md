@@ -83,9 +83,9 @@ The grid generates IDs for detail grids by prefixing the parent row's ID with `d
 
 <snippet>
 // iterate over all DetailGridInfos, and call stopEditing() on each one
-gridOptions.api.forEachDetailGridInfo(detailGridInfo => {
-    detailGridInfo.api.flashCells();
-});
+| gridOptions.api.forEachDetailGridInfo(detailGridInfo => {
+|     detailGridInfo.api.flashCells();
+| });
 </snippet>
 
 The following example shows flashing cells on the detail grids by using the Grid API `flashCells()`. Note the following:
