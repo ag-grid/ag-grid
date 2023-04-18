@@ -13,7 +13,7 @@ interface Props {
 
 export const UpdateSpeedSlider: FunctionComponent<Props> = ({ min, max, step, value, disabled, setValue }) => {
     return (
-        <div className={classnames('font-size-large', styles.slider)}>
+        <div className={classnames('font-size-extra-large', styles.slider)}>
             <label htmlFor="update-speed-slider">
                 <span className="text-secondary">Update speed:</span> <span>{value}x</span>
             </label>

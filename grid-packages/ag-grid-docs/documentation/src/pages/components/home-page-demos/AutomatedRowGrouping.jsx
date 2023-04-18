@@ -13,6 +13,7 @@ import LogoMark from '../../../components/LogoMark';
 import { isProductionBuild, localPrefix } from '../../../utils/consts';
 import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
 import styles from './AutomatedRowGrouping.module.scss';
+import { FeaturesList } from './FeaturesList';
 
 const helmet = [];
 if (!isProductionBuild()) {
@@ -114,9 +115,10 @@ function AutomatedRowGrouping({
         <>
             <header className={styles.sectionHeader}>
                 <h2 className="font-size-gargantuan">Feature Packed, Incredible Performance</h2>
-                <p className="font-size-large">
-                    All the features your users expect and more. Out of the box performance that can handle any data you
-                    can throw&nbsp;at&nbsp;it.
+                <p className="font-size-extra-large">
+                    Millions of rows, thousands of updates per second? No problem!
+                    <br />
+                    Out of the box performance that can handle any data you can throw at it.
                 </p>
             </header>
 
@@ -136,7 +138,7 @@ function AutomatedRowGrouping({
             </div>
 
             <footer className={styles.sectionFooter}>
-                <div className={classNames(styles.exploreButtonOuter, 'font-size-large')}>
+                <div className={classNames(styles.exploreButtonOuter, 'font-size-extra-large')}>
                     <span className="text-secondary">Live example:</span>
                     <ToggleAutomatedExampleButton
                         onClick={() => {
@@ -162,6 +164,8 @@ function AutomatedRowGrouping({
                     setValue={updateFrequency}
                 />
             </footer>
+
+            <FeaturesList />
         </>
     );
 }

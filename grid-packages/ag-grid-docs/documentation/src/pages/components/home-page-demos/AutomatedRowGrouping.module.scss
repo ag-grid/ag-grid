@@ -165,6 +165,14 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
     :global(.ag-charts-format-sub-level-group-container > *) {
         margin-bottom: var(--ag-widget-vertical-spacing);
     }
+
+    // Set row groups label overrides for .ag-styles specificity
+    :global(.ag-column-drop-cell-text) {
+        margin: 0 var(--ag-grid-size);
+    }
+    :global(.ag-column-drop-cell-drag-handle) {
+        margin-left: calc(var(--ag-grid-size) * 2);
+    }
 }
 
 .sectionHeader {
