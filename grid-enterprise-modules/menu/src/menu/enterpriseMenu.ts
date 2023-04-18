@@ -95,7 +95,6 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
                 nudgeY: -23,
                 position: 'under',
                 keepWithinBounds: true,
-                shouldSetMaxHeight: true
             });
 
             if (defaultTab) {
