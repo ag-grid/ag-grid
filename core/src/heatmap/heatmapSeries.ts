@@ -1,4 +1,5 @@
 import { _ModuleSupport, _Scale, _Scene, _Util } from 'ag-charts-community';
+import { GradientLegendDatum } from '../gradient-legend/gradientLegendDatum';
 
 type AgHeatmapSeriesTooltipRendererParams = any;
 type AgTooltipRendererResult = any;
@@ -467,7 +468,30 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
     }
 
     getLegendData(): any[] {
-        // Hide the current legend implementation
+        const { data, xKey, yKey } = this;
+
+        if (!(data && data.length && xKey && yKey)) {
+            return [];
+        }
+
+        const { colorKey } = this;
+        if (colorKey) {
+            let colorDomain = this.colorDomain;
+            if (!colorDomain) {
+                const colorKeyIdx = this.dataModel!.resolveProcessedDataIndex(colorKey)?.index ?? -1;
+                colorDomain = this.processedData!.domain.values[colorKeyIdx];
+            }
+            return [
+                {
+                    legendType: 'gradient',
+                    enabled: this.visible,
+                    seriesId: this.id,
+                    colorName: this.colorName,
+                    colorDomain,
+                    colorRange: this.colorRange,
+                },
+            ] as GradientLegendDatum[];
+        }
         return [];
     }
 
