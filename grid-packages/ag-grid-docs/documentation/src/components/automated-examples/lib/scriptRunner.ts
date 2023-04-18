@@ -333,7 +333,26 @@ export function createScriptRunner({
         const sequence = createActionSequenceRunner({
             actionSequence: actionSequence.slice(startIndex),
             onPreAction({ index }) {
-                if (runScriptState !== 'stopped') {
+                let shouldCancel = false;
+
+                if (runScriptState === 'stopping') {
+                    updateState('stopped');
+                    shouldCancel = true;
+                } else if (runScriptState === 'pausing') {
+                    setPausedState(index);
+                    updateState('paused');
+                    shouldCancel = true;
+                } else if (
+                    runScriptState === 'stopped' ||
+                    runScriptState === 'paused' ||
+                    runScriptState === 'inactive'
+                ) {
+                    shouldCancel = true;
+                }
+
+                if (shouldCancel) {
+                    scriptDebugger?.log(`${id} cancelling step from state: ${runScriptState}`);
+                } else {
                     const scriptAction = scriptFromStartIndex[index];
                     const stepName =
                         scriptAction.name ||
@@ -345,20 +364,9 @@ export function createScriptRunner({
                     });
                 }
 
-                if (runScriptState === 'stopping') {
-                    updateState('stopped');
-                    return { shouldCancel: true };
-                } else if (runScriptState === 'pausing') {
-                    setPausedState(index);
-                    updateState('paused');
-                    return { shouldCancel: true };
-                } else if (
-                    runScriptState === 'stopped' ||
-                    runScriptState === 'paused' ||
-                    runScriptState === 'inactive'
-                ) {
-                    return { shouldCancel: true };
-                }
+                return {
+                    shouldCancel,
+                };
             },
             onError({ error, index }) {
                 scriptDebugger?.errorLog('Action error (stopping)', {
