@@ -11,17 +11,20 @@ import styles from './FeaturesList.module.scss';
 
 const featuresListItems = [
     { name: 'Cell Editing', url: '/javascript-data-grid/cell-editing/', icon: <EditCellsIcon /> },
-    { name: 'Row Grouping', url: '/javascript-data-grid/grouping/', icon: <GroupIcon /> },
-    { name: 'Server-Side Row Model', url: '/javascript-data-grid/server-side-model/', icon: <DataIcon /> },
-    { name: 'Column Filtering', url: '/javascript-data-grid/filtering-overview/', icon: <FilterIcon /> },
-    { name: 'Pivoting', url: '/javascript-data-grid/pivoting/', icon: <GroupIcon /> },
-    { name: 'Export to Excel', url: '/javascript-data-grid/excel-export/', icon: <ImportExportIcon /> },
     { name: 'Transactions', url: '/javascript-data-grid/data-update-transactions/', icon: <DataIcon /> },
-    { name: 'Master Detail', url: '/javascript-data-grid/master-detail/', icon: <MiscIcon /> },
     { name: 'Aggregation', url: '/javascript-data-grid/aggregation/', icon: <GroupIcon /> },
+
+    { name: 'Row Grouping', url: '/javascript-data-grid/grouping/', icon: <GroupIcon /> },
+    { name: 'Master Detail', url: '/javascript-data-grid/master-detail/', icon: <MiscIcon /> },
     { name: 'Clipboard', url: '/javascript-data-grid/clipboard/', icon: <ImportExportIcon /> },
-    { name: 'Tree Data', url: '/javascript-data-grid/tree-data/', icon: <GroupIcon /> },
+
+    { name: 'Server-Side Row Model', url: '/javascript-data-grid/server-side-model/', icon: <DataIcon /> },
+    { name: 'Pivoting', url: '/javascript-data-grid/pivoting/', icon: <GroupIcon /> },
+    { name: 'Column Filtering', url: '/javascript-data-grid/filtering-overview/', icon: <FilterIcon /> },
+
+    { name: 'Export to Excel', url: '/javascript-data-grid/excel-export/', icon: <ImportExportIcon /> },
     { name: 'Context Menu', url: '/javascript-data-grid/context-menu/', icon: <AccessoriesIcon /> },
+    { name: 'Tree Data', url: '/javascript-data-grid/tree-data/', icon: <GroupIcon /> },
 ];
 
 const ItemGroup = ({ items }) => {
