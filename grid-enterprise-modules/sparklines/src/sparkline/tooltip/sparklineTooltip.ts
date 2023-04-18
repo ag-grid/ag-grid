@@ -1,8 +1,13 @@
-import { TooltipRendererResult, TooltipRendererParams } from '@ag-grid-community/core';
+import { TooltipRendererResult } from '@ag-grid-community/core';
 
-interface TooltipMeta {
+export interface SparklineTooltipMeta {
     pageX: number;
     pageY: number;
+    position?: {
+        xOffset?: number;
+        yOffset?: number;
+    };
+    container?: HTMLElement;
 }
 
 export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: TooltipRendererResult): string {
@@ -48,10 +53,6 @@ export class SparklineTooltip {
     element: HTMLElement = document.createElement('div');
 
     static class: string = 'ag-sparkline-tooltip';
-    enabled: boolean = true;
-    container?: HTMLElement = undefined;
-    xOffset: number = 10;
-    yOffset: number = 0;
 
     constructor() {
         const tooltipRoot = document.body;
@@ -83,7 +84,7 @@ export class SparklineTooltip {
         this.element.setAttribute('class', classList.join(' '));
     }
 
-    show(meta: TooltipMeta, html?: string) {
+    show(meta: SparklineTooltipMeta, html?: string) {
         this.toggle(false);
 
         const { element } = this;
@@ -94,21 +95,24 @@ export class SparklineTooltip {
             return;
         }
 
-        let left = meta.pageX + this.xOffset;
-        let top = meta.pageY + this.yOffset;
+        const xOffset = meta.position?.xOffset ?? 10;
+        const yOffset = meta.position?.yOffset ?? 0;
+
+        let left = meta.pageX + xOffset;
+        let top = meta.pageY + yOffset;
 
         const tooltipRect = element.getBoundingClientRect();
 
         let maxLeft = window.innerWidth - tooltipRect.width;
 
-        if (this.container) {
-            const containerRect = this.container.getBoundingClientRect();
+        if (meta.container) {
+            const containerRect = meta.container.getBoundingClientRect();
 
             maxLeft = containerRect.left + (containerRect.width - tooltipRect.width);
         }
 
         if (left > maxLeft) {
-            left = meta.pageX - element.clientWidth - this.xOffset;
+            left = meta.pageX - element.clientWidth - xOffset;
         }
 
         if (typeof scrollX !== 'undefined') {

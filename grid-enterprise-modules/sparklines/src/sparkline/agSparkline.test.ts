@@ -28,7 +28,6 @@ const data = [
 describe('line sparkline', () => {
     let sparkline: any;
     let containerDiv: HTMLElement = document.createElement('div');
-    let tooltipContainer: HTMLElement = document.createElement('div');
     let markerFormatter = (params: MarkerFormatterParams): MarkerFormat => {
         return {};
     };
@@ -67,10 +66,6 @@ describe('line sparkline', () => {
             fill: 'orange',
             stroke: 'orange',
             strokeWidth: 4,
-        },
-        tooltip: {
-            enabled: false,
-            container: tooltipContainer,
         },
     };
 
@@ -121,17 +116,11 @@ describe('line sparkline', () => {
         expect(highlightStyle.stroke).toBe('orange');
         expect(highlightStyle.strokeWidth).toBe(4);
     });
-    test('tooltip properties', () => {
-        const { tooltip } = sparkline;
-        expect(tooltip.enabled).toBe(false);
-        expect(tooltip.container).toBe(tooltipContainer);
-    });
 });
 
 describe('area sparkline', () => {
     let sparkline: any;
     let containerDiv: HTMLElement = document.createElement('div');
-    let tooltipContainer: HTMLElement = document.createElement('div');
     let markerFormatter = (params: MarkerFormatterParams): MarkerFormat => {
         return {};
     };
@@ -169,10 +158,6 @@ describe('area sparkline', () => {
             fill: 'brown',
             stroke: 'brown',
             strokeWidth: 1,
-        },
-        tooltip: {
-            enabled: true,
-            container: tooltipContainer,
         },
     };
 
@@ -224,17 +209,11 @@ describe('area sparkline', () => {
         expect(highlightStyle.stroke).toBe('brown');
         expect(highlightStyle.strokeWidth).toBe(1);
     });
-    test('tooltip properties', () => {
-        const { tooltip } = sparkline;
-        expect(tooltip.enabled).toBe(true);
-        expect(tooltip.container).toBe(tooltipContainer);
-    });
 });
 
 describe('column sparkline', () => {
     let sparkline: any;
     let containerDiv: HTMLElement = document.createElement('div');
-    let tooltipContainer: HTMLElement = document.createElement('div');
     let columnFormatter = (params: ColumnFormatterParams): ColumnFormat => {
         return {};
     };
@@ -265,10 +244,6 @@ describe('column sparkline', () => {
             fill: 'coral',
             stroke: 'coral',
             strokeWidth: 3,
-        },
-        tooltip: {
-            enabled: false,
-            container: tooltipContainer,
         },
     };
 
@@ -311,10 +286,5 @@ describe('column sparkline', () => {
         expect(highlightStyle.fill).toBe('coral');
         expect(highlightStyle.stroke).toBe('coral');
         expect(highlightStyle.strokeWidth).toBe(3);
-    });
-    test('tooltip properties', () => {
-        const { tooltip } = sparkline;
-        expect(tooltip.enabled).toBe(false);
-        expect(tooltip.container).toBe(tooltipContainer);
     });
 });
