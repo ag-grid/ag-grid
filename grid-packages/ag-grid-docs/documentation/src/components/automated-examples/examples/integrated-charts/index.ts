@@ -16,8 +16,6 @@ import { RunScriptState, ScriptRunner } from '../../lib/scriptRunner';
 import { AutomatedExample } from '../../types';
 import { createScriptRunner } from './createScriptRunner';
 
-const WAIT_TILL_MOUSE_ANIMATION_STARTS = 2000;
-
 let scriptRunner: ScriptRunner;
 let restartScriptTimeout;
 
@@ -30,7 +28,6 @@ interface CreateAutomatedIntegratedChartsParams {
     useStaticData?: boolean;
     runOnce: boolean;
     scriptDebuggerManager: ScriptDebuggerManager;
-    pauseOnMouseMove?: boolean;
     visibilityThreshold: number;
 }
 
@@ -114,7 +111,6 @@ export function createAutomatedIntegratedCharts({
     suppressUpdates,
     scriptDebuggerManager,
     runOnce,
-    pauseOnMouseMove,
     visibilityThreshold,
 }: CreateAutomatedIntegratedChartsParams): AutomatedExample {
     const gridSelector = `.${gridClassname}`;
@@ -156,31 +152,6 @@ export function createAutomatedIntegratedCharts({
                 scriptDebugger,
                 defaultEasing: Easing.Quadratic.InOut,
             });
-
-            const pauseScriptRunner = () => {
-                if (scriptRunner.currentState() === 'playing') {
-                    scriptRunner.pause();
-                }
-
-                clearTimeout(restartScriptTimeout);
-                restartScriptTimeout = setTimeout(() => {
-                    if (scriptRunner.currentState() !== 'playing') {
-                        scriptRunner.play();
-                    }
-                }, WAIT_TILL_MOUSE_ANIMATION_STARTS);
-            };
-
-            if (pauseOnMouseMove) {
-                gridDiv.addEventListener('mousemove', (event: MouseEvent) => {
-                    const isUserEvent = event.isTrusted;
-
-                    if (!isUserEvent) {
-                        return;
-                    }
-
-                    pauseScriptRunner();
-                });
-            }
         };
         new globalThis.agGrid.Grid(gridDiv, gridOptions);
     };

@@ -17,7 +17,6 @@ import { AutomatedExample } from '../../types';
 import { createScriptRunner } from './createScriptRunner';
 import { fixtureData } from './rowDataFixture';
 
-const WAIT_TILL_MOUSE_ANIMATION_STARTS = 2000;
 const UPDATES_PER_MESSAGE_1X = 10;
 const MESSAGE_FEQUENCY_1X = 200;
 
@@ -34,7 +33,6 @@ interface CreateAutomatedRowGroupingParams {
     useStaticData?: boolean;
     runOnce: boolean;
     scriptDebuggerManager: ScriptDebuggerManager;
-    pauseOnMouseMove?: boolean;
     visibilityThreshold: number;
 }
 
@@ -144,7 +142,6 @@ export function createAutomatedRowGrouping({
     useStaticData,
     scriptDebuggerManager,
     runOnce,
-    pauseOnMouseMove,
     visibilityThreshold,
 }: CreateAutomatedRowGroupingParams): RowGroupingAutomatedExample {
     const gridSelector = `.${gridClassname}`;
@@ -199,31 +196,6 @@ export function createAutomatedRowGrouping({
                 scriptDebugger,
                 defaultEasing: Easing.Quadratic.InOut,
             });
-
-            const pauseScriptRunner = () => {
-                if (scriptRunner.currentState() === 'playing') {
-                    scriptRunner.pause();
-                }
-
-                clearTimeout(restartScriptTimeout);
-                restartScriptTimeout = setTimeout(() => {
-                    if (scriptRunner.currentState() !== 'playing') {
-                        scriptRunner.play();
-                    }
-                }, WAIT_TILL_MOUSE_ANIMATION_STARTS);
-            };
-
-            if (pauseOnMouseMove) {
-                gridDiv.addEventListener('mousemove', (event: MouseEvent) => {
-                    const isUserEvent = event.isTrusted;
-
-                    if (!isUserEvent) {
-                        return;
-                    }
-
-                    pauseScriptRunner();
-                });
-            }
         };
         new globalThis.agGrid.Grid(gridDiv, gridOptions);
     };

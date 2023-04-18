@@ -1,8 +1,6 @@
 import { Group } from '@tweenjs/tween.js';
 import { GridOptions } from 'ag-grid-community';
 import { Mouse } from '../../lib/createMouse';
-import { removeFocus } from '../../lib/scriptActions/removeFocus';
-import { clearAllSingleCellSelections } from '../../lib/scriptActions/singleCell';
 import { ScriptDebugger } from '../../lib/scriptDebugger';
 import { createScriptRunner as createScriptRunnerCore, RunScriptState } from '../../lib/scriptRunner';
 import { EasingFunction } from '../../lib/tween';
@@ -51,14 +49,6 @@ export function createScriptRunner({
             }
 
             onStateChange && onStateChange(state);
-        },
-        onPaused: () => {
-            clearAllSingleCellSelections();
-            mouse.hide();
-        },
-        onUnpaused: () => {
-            removeFocus();
-            mouse.show();
         },
         scriptDebugger,
         defaultEasing,

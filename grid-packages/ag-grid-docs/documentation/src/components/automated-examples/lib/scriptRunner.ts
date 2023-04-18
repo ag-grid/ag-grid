@@ -105,8 +105,6 @@ export interface CreateScriptRunnerParams {
     loop?: boolean;
     loopOnError?: boolean;
     onStateChange?: (state: RunScriptState) => void;
-    onPaused?: () => void;
-    onUnpaused?: () => void;
     scriptDebugger?: ScriptDebugger;
     /**
      * Default easing function used for move actions
@@ -273,8 +271,6 @@ export function createScriptRunner({
     loopOnError,
     tweenGroup,
     onStateChange,
-    onPaused,
-    onUnpaused,
     scriptDebugger,
     defaultEasing,
 }: CreateScriptRunnerParams): ScriptRunner {
@@ -284,7 +280,6 @@ export function createScriptRunner({
     const rowExpandedState = createRowExpandedState(gridOptions);
 
     const setPausedState = (scriptIndex: number) => {
-        onPaused && onPaused();
         pausedState = {
             scriptIndex,
             columnState: gridOptions.columnApi?.getColumnState()!,
@@ -303,7 +298,6 @@ export function createScriptRunner({
     const playAgain = () => {
         let pausedScriptIndex;
         if (pausedState) {
-            onUnpaused && onUnpaused();
             gridOptions.columnApi?.applyColumnState({
                 state: pausedState.columnState,
                 applyOrder: true,

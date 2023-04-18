@@ -25,16 +25,19 @@ export function resetGrid({ gridOptions, scrollRow, scrollColumn }: Params) {
     // Send escape to clear context menu
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
 
-    if (scrollColumn !== undefined) {
-        const allColumns = gridOptions.columnApi!.getColumns();
-        if (allColumns) {
-            const column = allColumns[scrollColumn];
-            if (column) {
-                gridOptions.api!.ensureColumnVisible(column);
+    const rowCount = gridOptions.api?.getModel().getRowCount() || 0;
+    if (rowCount > 0) {
+        if (scrollColumn !== undefined) {
+            const allColumns = gridOptions.columnApi!.getColumns();
+            if (allColumns) {
+                const column = allColumns[scrollColumn];
+                if (column) {
+                    gridOptions.api!.ensureColumnVisible(column);
+                }
             }
         }
-    }
-    if (scrollRow !== undefined) {
-        gridOptions.api!.ensureIndexVisible(scrollRow);
+        if (scrollRow !== undefined) {
+            gridOptions.api!.ensureIndexVisible(scrollRow);
+        }
     }
 }
