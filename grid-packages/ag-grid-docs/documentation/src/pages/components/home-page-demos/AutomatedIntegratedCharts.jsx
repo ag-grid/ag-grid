@@ -6,6 +6,7 @@ import { withPrefix } from 'gatsby';
 import React, { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { createAutomatedIntegratedCharts } from '../../../components/automated-examples/examples/integrated-charts';
+import { INTEGRATED_CHARTS_ID } from '../../../components/automated-examples/lib/constants';
 import { OverlayButton } from '../../../components/automated-examples/OverlayButton';
 import { ToggleAutomatedExampleButton } from '../../../components/automated-examples/ToggleAutomatedExampleButton';
 import { Icon } from '../../../components/Icon';
@@ -13,8 +14,6 @@ import LogoMark from '../../../components/LogoMark';
 import { isProductionBuild, localPrefix } from '../../../utils/consts';
 import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
 import styles from './AutomatedIntegratedCharts.module.scss';
-
-const EXAMPLE_ID = 'integrated-charts';
 
 const helmet = [];
 if (!isProductionBuild()) {
@@ -51,6 +50,7 @@ function AutomatedIntegratedCharts({
     runOnce,
     visibilityThreshold,
 }) {
+    const exampleId = INTEGRATED_CHARTS_ID;
     const gridClassname = 'automated-integrated-charts-grid';
     const gridRef = useRef(null);
     const [scriptIsEnabled, setScriptIsEnabled] = useState(true);
@@ -59,16 +59,16 @@ function AutomatedIntegratedCharts({
 
     const setAllScriptEnabledVars = (isEnabled) => {
         setScriptIsEnabled(isEnabled);
-        automatedExampleManager.setEnabled({ id: EXAMPLE_ID, isEnabled });
+        automatedExampleManager.setEnabled({ id: exampleId, isEnabled });
     };
 
     useIntersectionObserver({
         elementRef: gridRef,
         onChange: ({ isIntersecting }) => {
             if (isIntersecting) {
-                automatedExampleManager.start(EXAMPLE_ID);
+                automatedExampleManager.start(exampleId);
             } else {
-                automatedExampleManager.inactive(EXAMPLE_ID);
+                automatedExampleManager.inactive(exampleId);
             }
         },
         threshold: visibilityThreshold,
@@ -96,7 +96,7 @@ function AutomatedIntegratedCharts({
         };
 
         automatedExampleManager.add({
-            id: EXAMPLE_ID,
+            id: exampleId,
             automatedExample: createAutomatedIntegratedCharts(params),
         });
     }, []);
@@ -125,7 +125,7 @@ function AutomatedIntegratedCharts({
                     onPointerOut={() => setGridIsHoveredOver(false)}
                     onClick={() => {
                         setAllScriptEnabledVars(false);
-                        automatedExampleManager.stop(EXAMPLE_ID);
+                        automatedExampleManager.stop(exampleId);
                     }}
                 />
                 {!gridIsReady && !useStaticData && <LogoMark isSpinning />}
@@ -138,10 +138,10 @@ function AutomatedIntegratedCharts({
                         onClick={() => {
                             if (scriptIsEnabled) {
                                 setAllScriptEnabledVars(false);
-                                automatedExampleManager.stop(EXAMPLE_ID);
+                                automatedExampleManager.stop(exampleId);
                             } else {
                                 setAllScriptEnabledVars(true);
-                                automatedExampleManager.start(EXAMPLE_ID);
+                                automatedExampleManager.start(exampleId);
                             }
                         }}
                         isHoveredOver={gridIsHoveredOver}

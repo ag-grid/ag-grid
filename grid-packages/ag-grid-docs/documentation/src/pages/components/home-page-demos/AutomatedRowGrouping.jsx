@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { createAutomatedRowGrouping } from '../../../components/automated-examples/examples/row-grouping';
+import { ROW_GROUPING_ID } from '../../../components/automated-examples/lib/constants';
 import { OverlayButton } from '../../../components/automated-examples/OverlayButton';
 import { ToggleAutomatedExampleButton } from '../../../components/automated-examples/ToggleAutomatedExampleButton';
 import { UpdateSpeedSlider } from '../../../components/automated-examples/UpdateSpeedSlider';
@@ -12,8 +13,6 @@ import LogoMark from '../../../components/LogoMark';
 import { isProductionBuild, localPrefix } from '../../../utils/consts';
 import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
 import styles from './AutomatedRowGrouping.module.scss';
-
-const EXAMPLE_ID = 'row-grouping';
 
 const helmet = [];
 if (!isProductionBuild()) {
@@ -50,6 +49,7 @@ function AutomatedRowGrouping({
     runOnce,
     visibilityThreshold,
 }) {
+    const exampleId = ROW_GROUPING_ID;
     const gridClassname = 'automated-row-grouping-grid';
     const gridRef = useRef(null);
     const exampleRef = useRef(null);
@@ -60,7 +60,7 @@ function AutomatedRowGrouping({
 
     const setAllScriptEnabledVars = (isEnabled) => {
         setScriptIsEnabled(isEnabled);
-        automatedExampleManager.setEnabled({ id: EXAMPLE_ID, isEnabled });
+        automatedExampleManager.setEnabled({ id: exampleId, isEnabled });
     };
     const updateFrequency = useCallback((value) => {
         if (!exampleRef.current) {
@@ -74,9 +74,9 @@ function AutomatedRowGrouping({
         elementRef: gridRef,
         onChange: ({ isIntersecting }) => {
             if (isIntersecting) {
-                automatedExampleManager.start(EXAMPLE_ID);
+                automatedExampleManager.start(exampleId);
             } else {
-                automatedExampleManager.inactive(EXAMPLE_ID);
+                automatedExampleManager.inactive(exampleId);
             }
         },
         threshold: visibilityThreshold,
@@ -105,7 +105,7 @@ function AutomatedRowGrouping({
 
         exampleRef.current = createAutomatedRowGrouping(params);
         automatedExampleManager.add({
-            id: EXAMPLE_ID,
+            id: exampleId,
             automatedExample: exampleRef.current,
         });
     }, []);
@@ -129,7 +129,7 @@ function AutomatedRowGrouping({
                     onPointerOut={() => setGridIsHoveredOver(false)}
                     onClick={() => {
                         setAllScriptEnabledVars(false);
-                        automatedExampleManager.stop(EXAMPLE_ID);
+                        automatedExampleManager.stop(exampleId);
                     }}
                 />
                 {!gridIsReady && !useStaticData && <LogoMark isSpinning />}
@@ -142,10 +142,10 @@ function AutomatedRowGrouping({
                         onClick={() => {
                             if (scriptIsEnabled) {
                                 setAllScriptEnabledVars(false);
-                                automatedExampleManager.stop(EXAMPLE_ID);
+                                automatedExampleManager.stop(exampleId);
                             } else {
                                 setAllScriptEnabledVars(true);
-                                automatedExampleManager.start(EXAMPLE_ID);
+                                automatedExampleManager.start(exampleId);
                             }
                         }}
                         isHoveredOver={gridIsHoveredOver}
