@@ -43,13 +43,6 @@ if (!isProductionBuild()) {
     );
 }
 
-const mouseStyles = `
-    .automated-row-grouping-grid .ag-root-wrapper,
-    .automated-row-grouping-grid .ag-root-wrapper * {
-        cursor: url(${hostPrefix}/images/cursor/automated-example-cursor-dark-background.svg) 22 21, pointer !important;
-    }
-`;
-
 function AutomatedRowGrouping({
     automatedExampleManager,
     scriptDebuggerManager,
@@ -123,7 +116,6 @@ function AutomatedRowGrouping({
 
             <Helmet>
                 {helmet.map((entry) => entry)}
-                <style>{mouseStyles}</style>
             </Helmet>
             <div ref={gridRef} className="automated-row-grouping-grid ag-theme-alpine-dark">
                 <OverlayButton

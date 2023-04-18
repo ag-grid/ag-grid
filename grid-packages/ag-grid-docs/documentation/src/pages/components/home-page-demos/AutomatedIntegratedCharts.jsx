@@ -10,7 +10,7 @@ import { OverlayButton } from '../../../components/automated-examples/OverlayBut
 import { ToggleAutomatedExampleButton } from '../../../components/automated-examples/ToggleAutomatedExampleButton';
 import { Icon } from '../../../components/Icon';
 import LogoMark from '../../../components/LogoMark';
-import { hostPrefix, isProductionBuild, localPrefix } from '../../../utils/consts';
+import { isProductionBuild, localPrefix } from '../../../utils/consts';
 import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
 import styles from './AutomatedIntegratedCharts.module.scss';
 
@@ -43,13 +43,6 @@ if (!isProductionBuild()) {
         />
     );
 }
-
-const mouseStyles = `
-    .automated-integrated-charts-grid .ag-root-wrapper,
-    .automated-integrated-charts-grid .ag-root-wrapper * {
-        cursor: url(${hostPrefix}/images/cursor/automated-example-cursor.svg) 22 21, pointer !important;
-    }
-`;
 
 function AutomatedIntegratedCharts({
     automatedExampleManager,
@@ -117,10 +110,7 @@ function AutomatedIntegratedCharts({
                 </p>
             </header>
 
-            <Helmet>
-                {helmet.map((entry) => entry)}
-                <style>{mouseStyles}</style>
-            </Helmet>
+            <Helmet>{helmet.map((entry) => entry)}</Helmet>
             <div ref={gridRef} className="automated-integrated-charts-grid ag-theme-alpine">
                 <OverlayButton
                     ariaLabel="Give me control"
