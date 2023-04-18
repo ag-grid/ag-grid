@@ -30,19 +30,13 @@ import styles from './doc-page.module.scss';
 
 const lzString = require('lz-string');
 
-const suppressSideMenu = (pageName) => {
-    const pagesToSuppress = ['charts-overview'];
-    return pagesToSuppress.includes(pageName);
-}
-
-
 /**
  * This template is used for documentation pages, i.e. those generated from Markdown files.
  */
 const DocPageTemplate = ({ data, pageContext: { framework, jsonDataAsString, exampleIndexData, pageName } }) => {
     const jsonData = jsonDataAsString ? JSON.parse(lzString.decompress(jsonDataAsString)) : null;
     const { markdownRemark: page } = data;
-    const [showSideMenu, setShowSideMenu] = useState(!suppressSideMenu(pageName));
+    const [showSideMenu, setShowSideMenu] = useState(page.frontmatter.sideMenu === null ? true : page.frontmatter.sideMenu);
 
     if (!page) {
         return null;
@@ -261,6 +255,7 @@ export const pageQuery = graphql`
                 title
                 version
                 enterprise
+                sideMenu
                 description
             }
             headings {
