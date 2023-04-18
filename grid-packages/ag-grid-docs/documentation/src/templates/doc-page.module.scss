@@ -225,3 +225,13 @@
         font-size: 0.8em;
     }
 }
+
+.pageSections > div > div:nth-child(2) {
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin-top: $size-2;
+    }
+}
