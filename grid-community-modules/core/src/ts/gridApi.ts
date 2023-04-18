@@ -1044,6 +1044,10 @@ export class GridApi<TData = any> {
      * Defaults to `normal` if no domLayout provided.
      */
     public setDomLayout(domLayout?: DomLayoutType) {
+        if (!this.clientSideRowModel && domLayout === 'autoHeight') {
+            console.error(`AG Grid: domLayout can only be set to 'autoHeight' when using the client side row model.`);
+            return;
+        }
         this.gridOptionsService.set('domLayout', domLayout);
     }
 
