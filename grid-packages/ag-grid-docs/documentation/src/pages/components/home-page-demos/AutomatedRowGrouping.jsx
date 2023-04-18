@@ -13,6 +13,7 @@ import LogoMark from '../../../components/LogoMark';
 import { isProductionBuild, localPrefix } from '../../../utils/consts';
 import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
 import styles from './AutomatedRowGrouping.module.scss';
+import { FeaturesList } from './FeaturesList';
 
 const helmet = [];
 if (!isProductionBuild()) {
@@ -163,6 +164,8 @@ function AutomatedRowGrouping({
                     setValue={updateFrequency}
                 />
             </footer>
+
+            <FeaturesList />
         </>
     );
 }
