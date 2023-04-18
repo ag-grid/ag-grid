@@ -39,7 +39,7 @@ const ItemGroup = ({ items }) => {
     );
 };
 
-const FeaturesList = (props) => {
+function FeaturesList() {
     return (
         <div className={classNames(styles.featuresListOuter, 'ag-styles', 'font-size-extra-large')}>
             <p>All the features your users expect and more...</p>
@@ -52,6 +52,6 @@ const FeaturesList = (props) => {
             </div>
         </div>
     );
-};
+}
 
 export default FeaturesList;
