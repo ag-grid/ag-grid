@@ -596,7 +596,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
             const padding = axis?.calculatePadding(min, max) ?? 1;
             min -= padding;
-            max -= padding;
+            max += padding;
         }
 
         if (!(isNumber(min) && isNumber(max))) {
