@@ -536,13 +536,6 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         return new SeriesNodeDoubleClickEvent(event, datum, this);
     }
 
-    /**
-     * @private
-     * Returns an array with the items of this series
-     * that should be shown in the legend. It's up to the series to determine
-     * what is considered an item. An item could be the series itself or some
-     * part of the series.
-     */
     abstract getLegendData(): LegendDatum[];
 
     toggleSeriesItem(_itemId: any, enabled: boolean): void {
