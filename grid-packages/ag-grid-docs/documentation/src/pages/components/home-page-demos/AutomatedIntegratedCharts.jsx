@@ -106,13 +106,13 @@ function AutomatedIntegratedCharts({
             <header className={styles.sectionHeader}>
                 <h2 className="font-size-gargantuan">Fully Integrated Charting</h2>
                 <p className="font-size-large">
-                    With a complete suite of integrated charting tools your users can visualise their data any way they
+                    With a complete suite of integrated charting tools, your users can visualise their data any way they
                     choose.
                 </p>
                 <p className="font-size-large">
-                    Intuitive cell selection and simple right-click context menus let users export & chart exactly the
-                    data they need. With dazzling themes, dozens of chart types, and a multitude of settings AG Grid
-                    charts make data beautiful.
+                    Intuitive cell selection and simple right-click context menus let users export and chart exactly the
+                    data they need. With dazzling themes, dozens of chart types, and a multitude of settings, Integrated
+                    Charts make data beautiful.
                 </p>
             </header>
 
