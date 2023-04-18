@@ -70,9 +70,10 @@
     &:global(.active) {
         color: var(--text-color);
         opacity: 1;
+        cursor: default;
     }
 
-    &:hover {
+    &:not(:global(.active)):hover {
         color: var(--link-color);
         opacity: 1;
     }
@@ -89,7 +90,7 @@
         transition: background-color 0.33s ease-in-out, opacity 0.33s ease-in-out;
     }
 
-    &:hover::before {
+    &:not(:global(.active)):hover::before {
         background-color: var(--link-color);
         opacity: 0.5;
     }
