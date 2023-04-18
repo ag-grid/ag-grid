@@ -1,7 +1,7 @@
 import { Path } from '../../../scene/shape/path';
 import { ContinuousScale } from '../../../scale/continuousScale';
 import { Selection } from '../../../scene/selection';
-import { SeriesNodeDatum, SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
+import { SeriesNodeDatum, SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode, valueProperty } from '../series';
 import { extent } from '../../../util/array';
 import { PointerEvents } from '../../../scene/node';
 import { Text } from '../../../scene/shape/text';
@@ -19,7 +19,6 @@ import { toTooltipHtml } from '../../tooltip/tooltip';
 import { interpolate } from '../../../util/string';
 import { Label } from '../../label';
 import { sanitizeHtml } from '../../../util/sanitize';
-import { checkDatum } from '../../../util/value';
 import { Marker } from '../../marker/marker';
 import {
     NUMBER,
@@ -38,6 +37,7 @@ import {
     FontWeight,
     AgCartesianSeriesMarkerFormat,
 } from '../../agChartOptions';
+import { DataModel, UngroupedDataItem } from '../../data/dataModel';
 
 interface LineNodeDatum extends CartesianSeriesNodeDatum {
     readonly point: SeriesNodeDatum['point'] & {
@@ -67,20 +67,10 @@ class LineSeriesTooltip extends SeriesTooltip {
     format?: string = undefined;
 }
 
-interface PointDatum {
-    xDatum: any;
-    yDatum: any;
-    datum: any;
-}
-
 type LineContext = SeriesNodeDataContext<LineNodeDatum>;
 export class LineSeries extends CartesianSeries<LineContext> {
     static className = 'LineSeries';
     static type = 'line' as const;
-
-    private xDomain: any[] = [];
-    private yDomain: any[] = [];
-    private pointsData: PointDatum[] = [];
 
     readonly marker = new CartesianSeriesMarker();
 
@@ -128,7 +118,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
     protected _xKey: string = '';
     set xKey(value: string) {
         this._xKey = value;
-        this.pointsData.splice(0);
+        this.processedData = undefined;
     }
     get xKey(): string {
         return this._xKey;
@@ -141,7 +131,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
     protected _yKey: string = '';
     set yKey(value: string) {
         this._yKey = value;
-        this.pointsData.splice(0);
+        this.processedData = undefined;
     }
     get yKey(): string {
         return this._yKey;
@@ -150,86 +140,78 @@ export class LineSeries extends CartesianSeries<LineContext> {
     @Validate(STRING)
     yName: string = '';
 
-    getDomain(direction: ChartAxisDirection): any[] {
-        if (direction === ChartAxisDirection.X) {
-            return this.xDomain;
-        }
-        return this.yDomain;
-    }
-
     async processData() {
-        const { xAxis, yAxis, xKey, yKey, pointsData } = this;
+        const { xAxis, yAxis, xKey, yKey } = this;
         const data = xKey && yKey && this.data ? this.data : [];
 
-        if (!xAxis || !yAxis) {
-            return;
-        }
+        const isContinuousX = xAxis?.scale instanceof ContinuousScale;
+        const isContinuousY = yAxis?.scale instanceof ContinuousScale;
 
-        const isContinuousX = xAxis.scale instanceof ContinuousScale;
-        const isContinuousY = yAxis.scale instanceof ContinuousScale;
+        this.dataModel = new DataModel<any>({
+            props: [
+                valueProperty(xKey, isContinuousX),
+                valueProperty(yKey, isContinuousY, { invalidValue: undefined }),
+            ],
+            dataVisible: this.visible,
+        });
+        this.processedData = this.dataModel.processData(data ?? []);
+    }
 
-        const xData: any[] = [];
-        const yData: any[] = [];
-        pointsData.splice(0);
+    getDomain(direction: ChartAxisDirection): any[] {
+        const { xKey, yKey, xAxis, yAxis, dataModel, processedData } = this;
+        if (!processedData || !dataModel) return [];
 
-        for (const datum of data) {
-            const x = datum[xKey];
-            const y = datum[yKey];
-
-            const xDatum = checkDatum(x, isContinuousX);
-
-            if (isContinuousX && xDatum === undefined) {
-                continue;
+        const xDef = dataModel.resolveProcessedDataDef(xKey);
+        if (direction === ChartAxisDirection.X) {
+            const domain = dataModel.getDomain(xKey, processedData);
+            if (xDef?.valueType === 'category') {
+                return domain;
             }
 
-            const yDatum = checkDatum(y, isContinuousY);
-            xData.push(xDatum);
-            yData.push(yDatum);
-            pointsData.push({
-                xDatum,
-                yDatum,
-                datum,
-            });
+            return this.fixNumericExtent(extent(domain), xAxis);
+        } else {
+            const domain = dataModel.getDomain(yKey, processedData);
+            return this.fixNumericExtent(domain as any, yAxis);
         }
-
-        this.validateXYData(this.xKey, this.yKey, data, xAxis, yAxis, xData, yData, 1);
-
-        this.xDomain = isContinuousX ? this.fixNumericExtent(extent(xData), xAxis) : xData;
-        this.yDomain = isContinuousY ? this.fixNumericExtent(extent(yData), yAxis) : yData;
     }
 
     async createNodeData() {
         const {
-            data,
+            processedData,
+            dataModel,
             xAxis,
             yAxis,
             marker: { enabled: markerEnabled, size: markerSize, strokeWidth },
         } = this;
 
-        if (!data || !xAxis || !yAxis) {
+        if (!processedData || !dataModel || !xAxis || !yAxis) {
             return [];
         }
 
-        const { pointsData, label, yKey, xKey, id: seriesId } = this;
+        const { label, yKey, xKey, id: seriesId } = this;
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
-        const nodeData: LineNodeDatum[] = new Array(data.length);
+        const nodeData: LineNodeDatum[] = new Array(processedData.data.length);
         const size = markerEnabled ? markerSize : 0;
+
+        const xIdx = this.dataModel?.resolveProcessedDataIndex(xKey)?.index ?? -1;
+        const yIdx = this.dataModel?.resolveProcessedDataIndex(yKey)?.index ?? -1;
 
         let moveTo = true;
         let prevXInRange: undefined | -1 | 0 | 1 = undefined;
-        let nextPoint: PointDatum | undefined = undefined;
+        let nextPoint: UngroupedDataItem<any, any> | undefined = undefined;
         let actualLength = 0;
-        for (let i = 0; i < pointsData.length; i++) {
-            const point = nextPoint || pointsData[i];
+        for (let i = 0; i < processedData.data.length; i++) {
+            const { datum, values } = nextPoint ?? processedData.data[i];
+            const xDatum = values[xIdx];
+            const yDatum = values[yIdx];
 
-            if (point.yDatum === undefined) {
+            if (yDatum === undefined) {
                 prevXInRange = undefined;
                 moveTo = true;
             } else {
-                const { xDatum, yDatum, datum } = point;
                 const x = xScale.convert(xDatum) + xOffset;
                 if (isNaN(x)) {
                     prevXInRange = undefined;
@@ -238,10 +220,11 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 }
                 const tolerance = (xScale.bandwidth || markerSize * 0.5 + (strokeWidth || 0)) + 1;
 
-                nextPoint = pointsData[i + 1]?.yDatum === undefined ? undefined : pointsData[i + 1];
+                nextPoint =
+                    processedData.data[i + 1]?.values[yIdx] === undefined ? undefined : processedData.data[i + 1];
+                const nextXDatum = processedData.data[i + 1]?.values[xIdx];
                 const xInRange = xAxis.inRangeEx(x, 0, tolerance);
-                const nextXInRange =
-                    nextPoint && xAxis.inRangeEx(xScale.convert(nextPoint.xDatum) + xOffset, 0, tolerance);
+                const nextXInRange = nextPoint && xAxis.inRangeEx(xScale.convert(nextXDatum) + xOffset, 0, tolerance);
                 if (xInRange === -1 && nextXInRange === -1) {
                     moveTo = true;
                     continue;
