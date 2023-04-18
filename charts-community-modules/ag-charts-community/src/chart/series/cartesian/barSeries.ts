@@ -13,7 +13,7 @@ import {
 } from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
-import { LegendDatum } from '../../legendDatum';
+import { LegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import {
     CartesianSeries,
     CartesianSeriesNodeClickEvent,
@@ -878,7 +878,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             return [];
         }
 
-        const legendData: LegendDatum[] = [];
+        const legendData: CategoryLegendDatum[] = [];
 
         this.yKeys.forEach((stack, stackIndex) => {
             // Column stacks should be listed in the legend in reverse order, for symmetry with the
@@ -894,6 +894,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 }
                 const colorIndex = cumYKeyCount[stackIndex] + levelIndex;
                 legendData.push({
+                    legendType: 'category',
                     id,
                     itemId: yKey,
                     seriesId: id,

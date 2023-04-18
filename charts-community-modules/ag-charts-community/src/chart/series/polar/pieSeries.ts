@@ -13,7 +13,7 @@ import { PointerEvents } from '../../../scene/node';
 import { normalizeAngle180, toRadians } from '../../../util/angle';
 import { toFixed, mod } from '../../../util/number';
 import { Layers } from '../../layers';
-import { LegendDatum } from '../../legendDatum';
+import { LegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import { Caption } from '../../../caption';
 import { PolarSeries } from './polarSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
@@ -1329,7 +1329,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         if (!data || data.length === 0 || (!legendItemKey && !calloutLabelKey)) return [];
 
         const titleText = this.title && this.title.showInLegend && this.title.text;
-        const legendData: LegendDatum[] = data.map((datum, index) => {
+        const legendData: CategoryLegendDatum[] = data.map((datum, index) => {
             const labelParts = [];
             titleText && labelParts.push(titleText);
             if (legendItemKey) {
@@ -1339,6 +1339,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             }
 
             return {
+                legendType: 'category',
                 id,
                 itemId: index,
                 seriesId: id,

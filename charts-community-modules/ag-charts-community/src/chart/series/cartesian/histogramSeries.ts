@@ -5,7 +5,7 @@ import { DropShadow } from '../../../scene/dropShadow';
 import { SeriesTooltip, Series, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
-import { LegendDatum } from '../../legendDatum';
+import { LegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import {
     CartesianSeries,
     CartesianSeriesNodeClickEvent,
@@ -587,6 +587,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
         return [
             {
+                legendType: 'category',
                 id,
                 itemId: xKey,
                 seriesId: id,
@@ -601,7 +602,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                     strokeOpacity: strokeOpacity,
                 },
             },
-        ];
+        ] as CategoryLegendDatum[];
     }
 
     protected isLabelEnabled() {

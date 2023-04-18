@@ -1,7 +1,6 @@
 import { Selection } from '../../../scene/selection';
 import { SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode, valueProperty } from '../series';
-import { LegendDatum } from '../../legendDatum';
-import { GradientLegendDatum } from '../../gradientLegendDatum';
+import { LegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import { ColorScale } from '../../../scale/colorScale';
 import { LinearScale } from '../../../scale/linearScale';
 import {
@@ -140,25 +139,6 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     colorRange: string[] = ['#ffff00', '#00ff00', '#0000ff'];
 
     colorScale = new ColorScale();
-
-    getGradientLegendData(): GradientLegendDatum | null {
-        const { data, colorKey } = this;
-        if (!(colorKey && data && data.length > 0)) {
-            return null;
-        }
-        let colorDomain = this.colorDomain;
-        if (!colorDomain) {
-            const colorKeyIdx = this.dataModel!.resolveProcessedDataIndex(colorKey)?.index ?? -1;
-            colorDomain = this.processedData!.domain.values[colorKeyIdx];
-        }
-        return {
-            enabled: this.visible,
-            seriesId: this.id,
-            colorName: this.colorName,
-            colorDomain,
-            colorRange: this.colorRange,
-        };
-    }
 
     readonly tooltip: ScatterSeriesTooltip = new ScatterSeriesTooltip();
 
@@ -538,6 +518,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         }
         return [
             {
+                legendType: 'category',
                 id,
                 itemId: yKey,
                 seriesId: id,
@@ -553,7 +534,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                     strokeOpacity: strokeOpacity ?? 1,
                 },
             },
-        ];
+        ] as CategoryLegendDatum[];
     }
 
     protected isLabelEnabled() {

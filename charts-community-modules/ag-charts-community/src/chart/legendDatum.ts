@@ -1,10 +1,29 @@
 import { Marker } from './marker/marker';
+import { Node } from '../scene/node';
+import { AgChartLegendListeners } from './agChartOptions';
+
+export interface ChartLegend {
+    attachLegend(node: Node | null): void;
+    destroy(): void;
+    data: any;
+    item: {
+        label: {
+            formatter?: (params: any) => string;
+        };
+    };
+    listeners: AgChartLegendListeners;
+}
 
 export interface LegendDatum {
+    legendType: string;
+    seriesId: string;
+    enabled: boolean;
+}
+
+export interface CategoryLegendDatum extends LegendDatum {
+    legendType: 'category';
     id: string; // component ID
     itemId: any; // sub-component ID
-    seriesId: string;
-    enabled: boolean; // the current state of the sub-component
     marker: {
         shape?: string | (new () => Marker);
         fill: string;

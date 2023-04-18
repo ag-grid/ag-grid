@@ -2,7 +2,7 @@ import { Selection } from '../../../scene/selection';
 import { DropShadow } from '../../../scene/dropShadow';
 import { SeriesTooltip, SeriesNodeDataContext, keyProperty, valueProperty, sumProperties } from '../series';
 import { PointerEvents } from '../../../scene/node';
-import { LegendDatum } from '../../legendDatum';
+import { LegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import { Path } from '../../../scene/shape/path';
 import { Marker } from '../../marker/marker';
 import {
@@ -846,13 +846,14 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             return [];
         }
 
-        const legendData: LegendDatum[] = [];
+        const legendData: CategoryLegendDatum[] = [];
 
         // Area stacks should be listed in the legend in reverse order, for symmetry with the
         // vertical stack display order.
         for (let index = yKeys.length - 1; index >= 0; index--) {
             const yKey = yKeys[index];
             legendData.push({
+                legendType: 'category',
                 id,
                 itemId: yKey,
                 seriesId: id,

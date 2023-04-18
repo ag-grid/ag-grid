@@ -1,6 +1,5 @@
 import { Group } from '../../scene/group';
 import { LegendDatum } from '../legendDatum';
-import { GradientLegendDatum } from '../gradientLegendDatum';
 import { Observable, TypedEvent } from '../../util/observable';
 import { ChartAxis } from '../chartAxis';
 import { createId } from '../../util/id';
@@ -538,10 +537,6 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     }
 
     abstract getLegendData(): LegendDatum[];
-
-    getGradientLegendData(): GradientLegendDatum | null {
-        return null;
-    }
 
     toggleSeriesItem(_itemId: any, enabled: boolean): void {
         this.visible = enabled;
