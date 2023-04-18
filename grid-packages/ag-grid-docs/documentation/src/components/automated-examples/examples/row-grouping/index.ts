@@ -9,6 +9,7 @@ import { Easing, Group } from '@tweenjs/tween.js';
 import { ColDef, GridOptions } from 'ag-grid-community';
 import { CATEGORIES, PORTFOLIOS } from '../../data/constants';
 import { createDataWorker } from '../../data/createDataWorker';
+import { ROW_GROUPING_ID } from '../../lib/constants';
 import { createMouse } from '../../lib/createMouse';
 import { isInViewport } from '../../lib/dom';
 import { ScriptDebuggerManager } from '../../lib/scriptDebugger';
@@ -167,7 +168,7 @@ export function createAutomatedRowGrouping({
             startWorkerMessages();
 
             const scriptDebugger = scriptDebuggerManager.add({
-                id: 'Row Grouping',
+                id: ROW_GROUPING_ID,
                 containerEl: gridDiv,
             });
 
@@ -179,6 +180,7 @@ export function createAutomatedRowGrouping({
             }
 
             scriptRunner = createScriptRunner({
+                id: ROW_GROUPING_ID,
                 containerEl: gridDiv,
                 mouse,
                 onStateChange(state) {

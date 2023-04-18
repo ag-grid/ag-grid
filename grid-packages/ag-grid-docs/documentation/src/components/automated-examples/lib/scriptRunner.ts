@@ -97,6 +97,7 @@ export interface CreateScriptActionParams {
 }
 
 export interface CreateScriptRunnerParams {
+    id: string;
     mouse: Mouse;
     containerEl?: HTMLElement;
     script: ScriptAction[];
@@ -263,6 +264,7 @@ function createActionSequenceRunner({ actionSequence, onPreAction, onError }: Cr
 }
 
 export function createScriptRunner({
+    id,
     containerEl,
     mouse,
     script,
@@ -331,29 +333,40 @@ export function createScriptRunner({
         const sequence = createActionSequenceRunner({
             actionSequence: actionSequence.slice(startIndex),
             onPreAction({ index }) {
-                if (runScriptState !== 'stopped') {
-                    const scriptAction = scriptFromStartIndex[index];
-                    const stepName =
-                        scriptAction.name ||
-                        (scriptAction.type === 'agAction' ? scriptAction.actionType : scriptAction.type);
-                    // NOTE: Starting from 1
-                    scriptDebugger?.updateStep({ step: index + 1, numSteps: scriptFromStartIndex.length, stepName });
-                }
+                let shouldCancel = false;
 
                 if (runScriptState === 'stopping') {
                     updateState('stopped');
-                    return { shouldCancel: true };
+                    shouldCancel = true;
                 } else if (runScriptState === 'pausing') {
                     setPausedState(index);
                     updateState('paused');
-                    return { shouldCancel: true };
+                    shouldCancel = true;
                 } else if (
                     runScriptState === 'stopped' ||
                     runScriptState === 'paused' ||
                     runScriptState === 'inactive'
                 ) {
-                    return { shouldCancel: true };
+                    shouldCancel = true;
                 }
+
+                if (shouldCancel) {
+                    scriptDebugger?.log(`${id} cancelling step from state: ${runScriptState}`);
+                } else {
+                    const scriptAction = scriptFromStartIndex[index];
+                    const stepName =
+                        scriptAction.name ||
+                        (scriptAction.type === 'agAction' ? scriptAction.actionType : scriptAction.type);
+                    const stepNum = index + 1;
+                    scriptDebugger?.updateStep({ step: stepNum, numSteps: scriptFromStartIndex.length, stepName });
+                    scriptDebugger?.log(`${id} step ${stepNum}/${scriptFromStartIndex.length}: ${stepName}`, {
+                        scriptAction,
+                    });
+                }
+
+                return {
+                    shouldCancel,
+                };
             },
             onError({ error, index }) {
                 scriptDebugger?.errorLog('Action error (stopping)', {

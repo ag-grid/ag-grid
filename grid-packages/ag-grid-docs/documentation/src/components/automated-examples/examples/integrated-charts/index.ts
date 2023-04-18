@@ -9,6 +9,7 @@ import { Easing, Group } from '@tweenjs/tween.js';
 import { ColDef, GridOptions } from 'ag-grid-community';
 import { COUNTRY_CODES } from '../../data/constants';
 import { createPeopleData } from '../../data/createPeopleData';
+import { INTEGRATED_CHARTS_ID } from '../../lib/constants';
 import { createMouse } from '../../lib/createMouse';
 import { isInViewport } from '../../lib/dom';
 import { ScriptDebuggerManager } from '../../lib/scriptDebugger';
@@ -54,9 +55,13 @@ const columnDefs: ColDef[] = [
         chartDataType: 'category',
         enableRowGroup: true,
         cellRenderer: (params) => {
+            if (params.node.group) {
+                return params.value;
+            }
+
             // put the value in bold
             return `<img border="0" width="21" height="14" alt="${params.value} flag" src='${getCountryFlagImageUrl(
-                params.data.country
+                params.data?.country
             )}' /> ${params.value}`;
         },
     },
@@ -131,7 +136,7 @@ export function createAutomatedIntegratedCharts({
             onGridReady && onGridReady();
 
             const scriptDebugger = scriptDebuggerManager.add({
-                id: 'Integrated Charts',
+                id: INTEGRATED_CHARTS_ID,
                 containerEl: gridDiv,
             });
 
@@ -143,6 +148,7 @@ export function createAutomatedIntegratedCharts({
             }
 
             scriptRunner = createScriptRunner({
+                id: INTEGRATED_CHARTS_ID,
                 containerEl: gridDiv,
                 mouse,
                 onStateChange,

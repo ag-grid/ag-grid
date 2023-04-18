@@ -7,6 +7,7 @@ import { EasingFunction } from '../../lib/tween';
 import { createScript } from './createScript';
 
 interface Params {
+    id: string;
     mouse: Mouse;
     containerEl: HTMLElement;
     onStateChange?: (state: RunScriptState) => void;
@@ -18,6 +19,7 @@ interface Params {
 }
 
 export function createScriptRunner({
+    id,
     containerEl,
     mouse,
     onStateChange,
@@ -36,6 +38,7 @@ export function createScriptRunner({
     });
 
     const scriptRunner = createScriptRunnerCore({
+        id,
         containerEl,
         mouse,
         script,
@@ -43,6 +46,8 @@ export function createScriptRunner({
         loop,
         tweenGroup,
         onStateChange: (state) => {
+            scriptDebugger?.log(`${id} state: ${state}`);
+
             if (state === 'stopping') {
                 mouse.hide();
             } else if (state === 'inactive') {
