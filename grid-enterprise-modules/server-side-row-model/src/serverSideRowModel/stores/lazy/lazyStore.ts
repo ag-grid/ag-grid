@@ -450,7 +450,10 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     getChildStore(keys: string[]): IServerSideStore | null {
         return this.storeUtils.getChildStore(keys, this, (key: string) => {
             const lazyNode = this.cache.getNodes().find(lazyNode => lazyNode.node.key == key);
-            return lazyNode!.node;
+            if (!lazyNode) {
+                return null;
+            }
+            return lazyNode.node;
         });
     }
 
