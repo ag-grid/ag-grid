@@ -30,8 +30,8 @@ export type SparklineFactoryOptions = SparklineOptions & {
 type SparklineType = LineSparkline | AreaSparkline | ColumnSparkline | BarSparkline;
 
 type Validators = {
-    [property: string] : ValidatorFunc;
-}
+    [property: string]: ValidatorFunc;
+};
 
 type ValidatorFunc = (property: string, value: any, defaultValue?: any) => boolean;
 
@@ -109,10 +109,6 @@ function initSparkline(sparkline: SparklineType, options: any) {
 
     if (options.highlightStyle) {
         initHighlightStyleOptions(sparkline.highlightStyle, options.highlightStyle);
-    }
-
-    if (options.tooltip && sparkline.tooltip) {
-        initTooltipOptions(sparkline.tooltip, options.tooltip);
     }
 }
 
@@ -208,13 +204,6 @@ function initHighlightStyleOptions(target: HighlightStyleOptions, options: any) 
     setValueIfPropertyExists(target, 'strokeWidth', options.strokeWidth, options);
 }
 
-function initTooltipOptions(target: SparklineTooltip, options: any) {
-    setValueIfPropertyExists(target, 'enabled', options.enabled, options);
-    setValueIfPropertyExists(target, 'container', options.container, options);
-    setValueIfPropertyExists(target, 'xOffset', options.xOffset, options);
-    setValueIfPropertyExists(target, 'yOffset', options.yOffset, options);
-}
-
 function initCrosshairsOptions(target: SparklineCrosshairsOptions, options: any) {
     if (target.xLine && options.xLine) {
         initCrosshairLineOptions(target.xLine, options.xLine);
@@ -233,20 +222,22 @@ function initCrosshairLineOptions(target: CrosshairLineOptions, options: any) {
     setValueIfPropertyExists(target, 'lineCap', options.lineCap, options);
 }
 
-const doOnceFlags: { [key: string]: boolean; } = {};
+const doOnceFlags: { [key: string]: boolean } = {};
 /**
  * If the key was passed before, then doesn't execute the func
  * @param {Function} func
  * @param {string} key
  */
 function doOnce(func: () => void, key: string) {
-    if (doOnceFlags[key]) { return; }
+    if (doOnceFlags[key]) {
+        return;
+    }
 
     func();
     doOnceFlags[key] = true;
 }
 
-const offsetValidator = (property: string, value: number, defaultOffset?: number) : boolean => {
+const offsetValidator = (property: string, value: number, defaultOffset?: number): boolean => {
     if (isNumber(value)) {
         return true;
     }
@@ -254,12 +245,12 @@ const offsetValidator = (property: string, value: number, defaultOffset?: number
     const message = `AG Charts: ${property} must be a number, the value you provided is not a valid number. Using the default of ${defaultOffset}px.`;
     doOnce(() => console.warn(message), `${property} not a number`);
     return false;
-}
+};
 
 const validators: Validators = {
     xOffset: offsetValidator,
-    yOffset: offsetValidator
-}
+    yOffset: offsetValidator,
+};
 
 function setValueIfPropertyExists(target: any, property: string, value: any, options: any): void {
     if (property in options) {

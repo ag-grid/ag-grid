@@ -3,7 +3,7 @@ import { _Scale, _Scene, _Util } from 'ag-charts-community';
 
 import { SparklineFactoryOptions } from './agSparkline';
 import { defaultTooltipCss } from './tooltip/defaultTooltipCss';
-import { SparklineTooltip } from './tooltip/sparklineTooltip';
+import { SparklineTooltip, SparklineTooltipMeta } from './tooltip/sparklineTooltip';
 
 const { extent, isNumber, isString, isStringObject, isDate, createId, Padding } = _Util;
 const { LinearScale, BandScale, TimeScale } = _Scale;
@@ -339,7 +339,8 @@ export abstract class Sparkline {
             this.scene.render();
         }
 
-        if (this.tooltip.enabled) {
+        const tooltipEnabled = this.processedOptions?.tooltip?.enabled ?? true;
+        if (tooltipEnabled) {
             this.handleTooltip(event, closestDatum);
         }
     }
@@ -607,23 +608,29 @@ export abstract class Sparkline {
         const { canvasElement } = this;
         const { clientX, clientY } = event;
 
-        // confine tooltip to sparkline width if tooltip container not provided.
-        if (this.processedOptions?.tooltip?.container == undefined && this.tooltip.container !== canvasElement) {
-            this.tooltip.container = canvasElement;
-        }
-
-        const meta = {
+        const tooltipOptions = this.processedOptions?.tooltip;
+        const meta: SparklineTooltipMeta = {
             pageX: clientX,
             pageY: clientY,
+            position: {
+                xOffset: tooltipOptions?.xOffset,
+                yOffset: tooltipOptions?.yOffset,
+            },
+            container: tooltipOptions?.container,
         };
+
+        // confine tooltip to sparkline width if tooltip container not provided.
+        if (meta.container == undefined) {
+            meta.container = canvasElement;
+        }
 
         const yValue = seriesDatum.y;
         const xValue = seriesDatum.x;
 
         // check if tooltip is enabled for this specific data point
-        let enabled = this.tooltip.enabled;
+        let enabled = tooltipOptions?.enabled ?? true;
 
-        const tooltipRenderer = this.processedOptions?.tooltip?.renderer;
+        const tooltipRenderer = tooltipOptions?.renderer;
         if (tooltipRenderer) {
             const tooltipRendererResult = tooltipRenderer({
                 context: this.context,
