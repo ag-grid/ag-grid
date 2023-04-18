@@ -8,7 +8,7 @@ export interface ICellEditor<TValue = any> {
     /**
      * Return the final value - called by the grid once after editing is complete
      */
-    getValue(): TValue | undefined;
+    getValue(): TValue | null | undefined;
 
     /** Gets called once after initialised. If you return true, the editor will
      * appear in a popup, so is not constrained to the boundaries of the cell.
@@ -55,7 +55,7 @@ export interface ICellEditor<TValue = any> {
 }
 
 export interface ICellEditorParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    // `value` should be `TValue | undefined`. Change in v30
+    // `value` should be `TValue | null | undefined`. Change in v30
     /** Current value of the cell */
     value: TValue;
     /** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable
@@ -88,10 +88,10 @@ export interface ICellEditorParams<TData = any, TValue = any, TContext = any> ex
      *  will live inside. Useful if you want to add event listeners or classes at this level.
      *  This is the DOM element that gets browser focus when selecting cells. */
     eGridCell: HTMLElement;
-    // `value` should be type `string`. Return should be type `TValue | undefined`. Change in v30
+    // `value` should be type `string`. Return should be type `TValue | null | undefined`. Change in v30
     /** Utility function to parse a value using the column's `colDef.valueParser` */
     parseValue: (value: any) => any;
-    // `value` should be type `TValue | undefined`. Return should be type `string`. Change in v30
+    // `value` should be type `TValue | null | undefined`. Return should be type `string`. Change in v30
     /** Utility function to format a value using the column's `colDef.valueFormatter` */
     formatValue: (value: any) => any;
 }

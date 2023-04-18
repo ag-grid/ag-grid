@@ -1312,8 +1312,8 @@
       "description": "/** Override the default sorting order by providing a custom sort comparator.\n     *\n     * - `valueA`, `valueB` are the values to compare.\n     * - `nodeA`,  `nodeB` are the corresponding RowNodes. Useful if additional details are required by the sort.\n     * - `isDescending` - `true` if sort direction is `desc`. Not to be used for inverting the return value as the grid already applies `asc` or `desc` ordering.\n     *\n     * Return:\n     *  - `0`  valueA is the same as valueB\n     *  - `> 0` Sort valueA after valueB\n     *  - `< 0` Sort valueA before valueB\n     */",
       "type": {
         "arguments": {
-          "valueA": "TValue | undefined",
-          "valueB": "TValue | undefined",
+          "valueA": "TValue | null | undefined",
+          "valueB": "TValue | null | undefined",
           "nodeA": "IRowNode<TData>",
           "nodeB": "IRowNode<TData>",
           "isDescending": "boolean"
@@ -2050,11 +2050,11 @@
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "oldValue": {
       "description": "/** The value before the change */",
-      "type": { "returnType": "TValue | undefined", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "newValue": {
       "description": "/** The value after the change */",
-      "type": { "returnType": "TValue | undefined", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "node": {
       "description": "/** Row node for the given row */",
@@ -2089,11 +2089,11 @@
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "oldValue": {
       "description": "/** The value before the change */",
-      "type": { "returnType": "TValue | undefined", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "newValue": {
       "description": "/** The value after the change */",
-      "type": { "returnType": "TValue | undefined", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "node": {
       "description": "/** Row node for the given row */",
@@ -2131,7 +2131,7 @@
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "oldValue": {
       "description": "/** The value before the change */",
-      "type": { "returnType": "TValue | undefined", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "newValue": {
       "description": "/** The value after the change */",
@@ -12423,7 +12423,7 @@
       "description": "/** Return the final value - called by the grid once after editing is complete\n     */",
       "type": {
         "arguments": {},
-        "returnType": "TValue | undefined",
+        "returnType": "TValue | null | undefined",
         "optional": false
       }
     },
@@ -12554,7 +12554,7 @@
       "description": "/** Return the final value - called by the grid once after editing is complete\n     */",
       "type": {
         "arguments": {},
-        "returnType": "TValue | undefined",
+        "returnType": "TValue | null | undefined",
         "optional": false
       }
     },
@@ -21626,7 +21626,7 @@
       "description": "/** Return the final value - called by the grid once after editing is complete\n     */",
       "type": {
         "arguments": {},
-        "returnType": "TValue | undefined",
+        "returnType": "TValue | null | undefined",
         "optional": false
       }
     },
@@ -21696,7 +21696,7 @@
       "description": "/** Return the final value - called by the grid once after editing is complete\n     */",
       "type": {
         "arguments": {},
-        "returnType": "TValue | undefined",
+        "returnType": "TValue | null | undefined",
         "optional": false
       }
     },
@@ -30595,7 +30595,7 @@
       "description": "/** Return the final value - called by the grid once after editing is complete\n     */",
       "type": {
         "arguments": {},
-        "returnType": "TValue | undefined",
+        "returnType": "TValue | null | undefined",
         "optional": false
       }
     },

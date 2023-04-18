@@ -5,7 +5,7 @@ import { BaseColDefOptionalDataParams, ValueFormatterParams, ValueParserParams }
 export type ValueParserLiteParams<TData, TValue> = Omit<ValueParserParams<TData, TValue>, 'data' | 'node' | 'oldValue'>;
 
 export interface ValueParserLiteFunc<TData, TValue> {
-    (params: ValueParserLiteParams<TData, TValue>): TValue | undefined;
+    (params: ValueParserLiteParams<TData, TValue>): TValue | null | undefined;
 }
 
 export type ValueFormatterLiteParams<TData, TValue> = Omit<ValueFormatterParams<TData, TValue>, 'data' | 'node'>;
@@ -15,7 +15,7 @@ export interface ValueFormatterLiteFunc<TData, TValue> {
 }
 
 export type DataTypeCheckerParams<TData, TValue> = Omit<BaseColDefOptionalDataParams<TData, TValue>, 'data' | 'node'> & {
-    value: TValue | undefined;
+    value: TValue | null | undefined;
 }
 
 export interface DataTypeChecker<TData, TValue> {

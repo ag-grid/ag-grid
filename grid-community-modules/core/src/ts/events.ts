@@ -544,6 +544,7 @@ export interface CellEvent<TData = any, TValue = any> extends RowEvent<TData> {
     column: Column;
     // `ColDef` should be typed `TValue`. Change in v30
     colDef: ColDef<TData>;
+    // `value` should be `TValue | null | undefined`. Change in v30
     /** The value for the cell if available otherwise undefined. */
     value: TValue | undefined;
 }
@@ -579,10 +580,10 @@ export interface CellEditingStartedEvent<TData = any, TValue = any> extends Cell
 
 // Should extend `CellEvent`. Change in v30
 export interface CellEditingStoppedEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> {
-    // `oldValue` should be type `TValue | undefined`. Change in v30
+    // `oldValue` should be type `TValue | null | undefined`. Change in v30
     /** The old value before editing */
     oldValue: any;
-    // `newValue` should be type `TValue | undefined`. Change in v30
+    // `newValue` should be type `TValue | null | undefined`. Change in v30
     /** The new value after editing */
     newValue: any;
     /** Property indicating if the value of the editor has changed */
@@ -590,17 +591,17 @@ export interface CellEditingStoppedEvent<TData = any, TValue = any> extends Cell
 }
 
 export interface CellValueChangedEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> {
-    // `oldValue` should be type `TValue | undefined`. Change in v30
+    // `oldValue` should be type `TValue | null | undefined`. Change in v30
     oldValue: any;
-    // `newValue` should be type `TValue | undefined`. Change in v30
+    // `newValue` should be type `TValue | null | undefined`. Change in v30
     newValue: any;
     source: string | undefined;
 }
 
 export interface CellEditRequestEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> {
-    // `oldValue` should be type `TValue | undefined`. Change in v30
+    // `oldValue` should be type `TValue | null | undefined`. Change in v30
     oldValue: any;
-    // `newValue` should be type `TValue | undefined`. Change in v30
+    // `newValue` should be type `TValue | null | undefined`. Change in v30
     newValue: any;
     source: string | undefined;
 }

@@ -619,7 +619,7 @@
       "sortIndex?": "number | null",
       "initialSortIndex?": "number",
       "sortingOrder?": "(SortDirection)[]",
-      "comparator?": "(valueA: TValue | undefined, valueB: TValue | undefined, nodeA: IRowNode<TData>, nodeB: IRowNode<TData>, isDescending: boolean) => number",
+      "comparator?": "(valueA: TValue | null | undefined, valueB: TValue | null | undefined, nodeA: IRowNode<TData>, nodeB: IRowNode<TData>, isDescending: boolean) => number",
       "unSortIcon?": "boolean",
       "colSpan?": "(params: ColSpanParams<TData, TValue>) => number",
       "rowSpan?": "(params: RowSpanParams<TData, TValue>) => number",
@@ -1195,7 +1195,7 @@
     },
     "type": {
       "arguments": { "params": "ValueGetterParams<TData, TValue>" },
-      "returnType": "TValue | undefined"
+      "returnType": "TValue | null | undefined"
     }
   },
   "HeaderValueGetterParams": {
@@ -1258,8 +1258,8 @@
   "NewValueParams": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "oldValue": "TValue | undefined",
-      "newValue": "TValue | undefined",
+      "oldValue": "TValue | null | undefined",
+      "newValue": "TValue | null | undefined",
       "node": "IRowNode<TData> | null",
       "data": "TData",
       "column": "Column<TValue>",
@@ -1283,8 +1283,8 @@
   "ValueSetterParams": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "oldValue": "TValue | undefined",
-      "newValue": "TValue | undefined",
+      "oldValue": "TValue | null | undefined",
+      "newValue": "TValue | null | undefined",
       "node": "IRowNode<TData> | null",
       "data": "TData",
       "column": "Column<TValue>",
@@ -1318,7 +1318,7 @@
   "ValueParserParams": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "oldValue": "TValue | undefined",
+      "oldValue": "TValue | null | undefined",
       "newValue": "any",
       "node": "IRowNode<TData> | null",
       "data": "TData",
@@ -1621,7 +1621,7 @@
     "meta": { "isCallSignature": true, "typeParams": ["TData", "TValue"] },
     "type": {
       "arguments": { "params": "ValueParserLiteParams<TData, TValue>" },
-      "returnType": "TValue | undefined"
+      "returnType": "TValue | null | undefined"
     }
   },
   "ValueFormatterLiteParams": {
@@ -1637,7 +1637,7 @@
   },
   "DataTypeCheckerParams": {
     "meta": { "isTypeAlias": true, "typeParams": ["TData", "TValue"] },
-    "type": "Omit<BaseColDefOptionalDataParams<TData, TValue>, 'data' | 'node'> & { value: TValue | undefined; }"
+    "type": "Omit<BaseColDefOptionalDataParams<TData, TValue>, 'data' | 'node'> & { value: TValue | null | undefined; }"
   },
   "DataTypeChecker": {
     "meta": { "isCallSignature": true, "typeParams": ["TData", "TValue"] },
@@ -7122,7 +7122,7 @@
   "ICellEditor": {
     "meta": { "typeParams": ["TValue = any"] },
     "type": {
-      "getValue()": "TValue | undefined",
+      "getValue()": "TValue | null | undefined",
       "isPopup?()": "boolean",
       "getPopupPosition?()": "'over' | 'under' | undefined",
       "isCancelBeforeStart?()": "boolean",
@@ -7186,7 +7186,7 @@
   "ICellEditorComp": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "getValue()": "TValue | undefined",
+      "getValue()": "TValue | null | undefined",
       "isPopup?()": "boolean",
       "getPopupPosition?()": "'over' | 'under' | undefined",
       "isCancelBeforeStart?()": "boolean",
@@ -12190,7 +12190,7 @@
     "meta": {},
     "type": {
       "agInit(params: ICellEditorParams)": "void",
-      "getValue()": "TValue | undefined",
+      "getValue()": "TValue | null | undefined",
       "isPopup?()": "boolean",
       "getPopupPosition?()": "'over' | 'under' | undefined",
       "isCancelBeforeStart?()": "boolean",
@@ -12226,7 +12226,7 @@
     "meta": {},
     "type": {
       "agInit(params: ICellEditorParams)": "void",
-      "getValue()": "TValue | undefined",
+      "getValue()": "TValue | null | undefined",
       "isPopup?()": "boolean",
       "getPopupPosition?()": "'over' | 'under' | undefined",
       "isCancelBeforeStart?()": "boolean",
@@ -14738,7 +14738,7 @@
   "ICellEditorReactComp": {
     "meta": {},
     "type": {
-      "getValue()": "TValue | undefined",
+      "getValue()": "TValue | null | undefined",
       "isPopup?()": "boolean",
       "getPopupPosition?()": "'over' | 'under' | undefined",
       "isCancelBeforeStart?()": "boolean",
