@@ -84,6 +84,7 @@ tooltip: {
 In this example we show how to change the tooltip's default position. Note that:
 
 - Instead of the tooltip being anchored to the highlighted marker node, it is anchored 80 pixels to the left and below the mouse pointer.
+- By default, when `tooltip.position.xOffset` or `tooltip.position.yOffset` are configured, the tooltip arrow is removed.
 
 <chart-example title='Tooltip Position' name='tooltip-position' type='generated'></chart-example>
 
