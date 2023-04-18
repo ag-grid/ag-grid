@@ -43,13 +43,7 @@ if (!isProductionBuild()) {
     );
 }
 
-function AutomatedRowGrouping({
-    automatedExampleManager,
-    scriptDebuggerManager,
-    useStaticData,
-    runOnce,
-    visibilityThreshold,
-}) {
+function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce, visibilityThreshold }) {
     const exampleId = ROW_GROUPING_ID;
     const gridClassname = 'automated-row-grouping-grid';
     const gridRef = useRef(null);
@@ -88,7 +82,7 @@ function AutomatedRowGrouping({
         let params = {
             gridClassname,
             mouseMaskClassname: styles.mouseMask,
-            scriptDebuggerManager,
+            scriptDebuggerManager: automatedExampleManager.getDebuggerManager(),
             suppressUpdates: useStaticData,
             useStaticData,
             runOnce,

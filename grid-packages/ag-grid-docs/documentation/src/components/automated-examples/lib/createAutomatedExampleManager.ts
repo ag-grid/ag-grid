@@ -1,8 +1,19 @@
 import { AutomatedExample } from '../types';
+import { createScriptDebuggerManager } from './scriptDebugger';
 
 export type AutomatedExampleManager = ReturnType<typeof createAutomatedExampleManager>;
 
-export function createAutomatedExampleManager() {
+interface Params {
+    debugCanvasClassname: string;
+    debugPanelClassname: string;
+}
+
+export function createAutomatedExampleManager({ debugCanvasClassname, debugPanelClassname }: Params) {
+    const exampleDebuggerManager = createScriptDebuggerManager({
+        canvasClassname: debugCanvasClassname,
+        panelClassname: debugPanelClassname,
+    });
+
     const automatedExamples: Record<string, AutomatedExample> = {};
     const automatedExamplesEnabled: Record<string, boolean> = {};
     let lastPlayingExample;
@@ -86,6 +97,18 @@ export function createAutomatedExampleManager() {
 
     const getEnabled = (id: string) => automatedExamplesEnabled[id];
 
+    const setDebugEnabled = (enabled: boolean) => {
+        exampleDebuggerManager.setEnabled(enabled);
+    };
+
+    const setDebugInitialDraw = (shouldDraw: boolean) => {
+        exampleDebuggerManager.setInitialDraw(shouldDraw);
+    };
+
+    const getDebuggerManager = () => {
+        return exampleDebuggerManager;
+    };
+
     return {
         add,
         start,
@@ -93,5 +116,8 @@ export function createAutomatedExampleManager() {
         inactive,
         setEnabled,
         getEnabled,
+        setDebugEnabled,
+        setDebugInitialDraw,
+        getDebuggerManager,
     };
 }

@@ -41,13 +41,7 @@ if (!isProductionBuild()) {
     );
 }
 
-function AutomatedIntegratedCharts({
-    automatedExampleManager,
-    scriptDebuggerManager,
-    useStaticData,
-    runOnce,
-    visibilityThreshold,
-}) {
+function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, runOnce, visibilityThreshold }) {
     const exampleId = INTEGRATED_CHARTS_ID;
     const gridClassname = 'automated-integrated-charts-grid';
     const gridRef = useRef(null);
@@ -77,7 +71,7 @@ function AutomatedIntegratedCharts({
         let params = {
             gridClassname,
             mouseMaskClassname: styles.mouseMask,
-            scriptDebuggerManager,
+            scriptDebuggerManager: automatedExampleManager.getDebuggerManager(),
             suppressUpdates: useStaticData,
             useStaticData,
             runOnce,
