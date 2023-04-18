@@ -639,7 +639,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public fullWidthCellRendererFramework: any = undefined;
     /** Customise the parameters provided to the `fullWidthCellRenderer` component.     */
     @Input() public fullWidthCellRendererParams: any = undefined;
-    /** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling.     */
+    /** Set to `true` to have the Full Width Rows embedded in grid's main container so they can be scrolled horizontally .     */
     @Input() public embedFullWidthRows: boolean | undefined = undefined;
     /** Specifies how the results of row grouping should be displayed.
          *

@@ -29,7 +29,7 @@ Pressing the <kbd>Space</kbd> key on a cell will select the cells row, or desele
 
 ## Suppress Cell Focus
 
-If you want keyboard navigation turned off, then set `suppressCellFocus=true` in the `gridOptions`.
+If you want keyboard navigation turned off, then set `suppressCellFocus=true` in the gridOptions.
 
 ## Header Navigation
 
