@@ -103,7 +103,7 @@ function AutomatedIntegratedCharts({
         <>
             <header className={styles.sectionHeader}>
                 <h2 className="font-size-gargantuan">Fully Integrated Charting</h2>
-                <p className="font-size-large">
+                <p className="font-size-extra-large">
                     With a complete suite of integrated charting tools, your users can visualise their data any way they
                     choose.
                 </p>
@@ -125,7 +125,7 @@ function AutomatedIntegratedCharts({
             </div>
 
             <footer className={styles.sectionFooter}>
-                <div className={classNames(styles.exploreButtonOuter, 'font-size-large')}>
+                <div className={classNames(styles.exploreButtonOuter, 'font-size-extra-large')}>
                     <span className="text-secondary">Live example:</span>
                     <ToggleAutomatedExampleButton
                         onClick={() => {
