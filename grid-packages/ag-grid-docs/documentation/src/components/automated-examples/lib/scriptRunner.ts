@@ -97,6 +97,7 @@ export interface CreateScriptActionParams {
 }
 
 export interface CreateScriptRunnerParams {
+    id: string;
     mouse: Mouse;
     containerEl?: HTMLElement;
     script: ScriptAction[];
@@ -263,6 +264,7 @@ function createActionSequenceRunner({ actionSequence, onPreAction, onError }: Cr
 }
 
 export function createScriptRunner({
+    id,
     containerEl,
     mouse,
     script,
@@ -336,8 +338,11 @@ export function createScriptRunner({
                     const stepName =
                         scriptAction.name ||
                         (scriptAction.type === 'agAction' ? scriptAction.actionType : scriptAction.type);
-                    // NOTE: Starting from 1
-                    scriptDebugger?.updateStep({ step: index + 1, numSteps: scriptFromStartIndex.length, stepName });
+                    const stepNum = index + 1;
+                    scriptDebugger?.updateStep({ step: stepNum, numSteps: scriptFromStartIndex.length, stepName });
+                    scriptDebugger?.log(`${id} step ${stepNum}/${scriptFromStartIndex.length}: ${stepName}`, {
+                        scriptAction,
+                    });
                 }
 
                 if (runScriptState === 'stopping') {

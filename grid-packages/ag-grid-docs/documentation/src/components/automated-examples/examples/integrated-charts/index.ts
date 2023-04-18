@@ -9,6 +9,7 @@ import { Easing, Group } from '@tweenjs/tween.js';
 import { ColDef, GridOptions } from 'ag-grid-community';
 import { COUNTRY_CODES } from '../../data/constants';
 import { createPeopleData } from '../../data/createPeopleData';
+import { INTEGRATED_CHARTS_ID } from '../../lib/constants';
 import { createMouse } from '../../lib/createMouse';
 import { isInViewport } from '../../lib/dom';
 import { ScriptDebuggerManager } from '../../lib/scriptDebugger';
@@ -131,7 +132,7 @@ export function createAutomatedIntegratedCharts({
             onGridReady && onGridReady();
 
             const scriptDebugger = scriptDebuggerManager.add({
-                id: 'Integrated Charts',
+                id: INTEGRATED_CHARTS_ID,
                 containerEl: gridDiv,
             });
 
@@ -143,6 +144,7 @@ export function createAutomatedIntegratedCharts({
             }
 
             scriptRunner = createScriptRunner({
+                id: INTEGRATED_CHARTS_ID,
                 containerEl: gridDiv,
                 mouse,
                 onStateChange,

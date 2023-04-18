@@ -1,5 +1,7 @@
+import { INTEGRATED_CHARTS_ID, ROW_GROUPING_ID } from './constants';
 import { createPen } from './createPen';
 import { Point } from './geometry';
+import { getStyledConsoleMessageConfig } from './getStyledConsoleMessageConfig';
 import { RunScriptState, ScriptRunner } from './scriptRunner';
 
 interface CreateScriptDebuggerParams {
@@ -239,7 +241,17 @@ function createScriptDebugger({
     };
 
     const log = (...args: any[]) => {
-        console.log(...args);
+        const [prefix] = args || [];
+
+        if (prefix.startsWith && prefix.startsWith(INTEGRATED_CHARTS_ID)) {
+            const messageConfig = getStyledConsoleMessageConfig(...args);
+            console.log(messageConfig, 'background: #eee', ...args);
+        } else if (prefix.startsWith && prefix.startsWith(ROW_GROUPING_ID)) {
+            const messageConfig = getStyledConsoleMessageConfig(...args);
+            console.log(messageConfig, 'color: #eee; background: #000', ...args);
+        } else {
+            console.log(...args);
+        }
     };
 
     const errorLog = (...args: any[]) => {

@@ -1,3 +1,6 @@
+export const ROW_GROUPING_ID = 'Row Grouping';
+export const INTEGRATED_CHARTS_ID = 'Integrated Charts';
+
 export const AG_ROW_SELECTOR = '[role=row]:not(.ag-header-row)';
 export const AG_ROW_HOVER_CLASSNAME = 'ag-row-hover';
 export const AG_CELL_RANGE_SINGLE_CELL_CLASSNAME = 'ag-cell-range-single-cell';
