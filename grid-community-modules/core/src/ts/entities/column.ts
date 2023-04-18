@@ -437,6 +437,9 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         return false;
     }
 
+    /**
+     * Returns `true` if the cell for this column is editable for the given `rowNode`, otherwise `false`.
+     */
     public isCellEditable(rowNode: IRowNode): boolean {
         // only allow editing of groups if the user has this option enabled
         if (rowNode.group && !this.gridOptionsService.is('enableGroupEdit')) {
