@@ -83,6 +83,12 @@ function AutomatedIntegratedCharts({
             suppressUpdates: useStaticData,
             useStaticData,
             runOnce,
+            onStateChange(state) {
+                // Catch errors, and allow the user to use the grid
+                if (state === 'stopping') {
+                    setAllScriptEnabledVars(false);
+                }
+            },
             onGridReady() {
                 setGridIsReady(true);
             },

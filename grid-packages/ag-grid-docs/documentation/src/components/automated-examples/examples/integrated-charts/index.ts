@@ -12,7 +12,7 @@ import { createPeopleData } from '../../data/createPeopleData';
 import { createMouse } from '../../lib/createMouse';
 import { isInViewport } from '../../lib/dom';
 import { ScriptDebuggerManager } from '../../lib/scriptDebugger';
-import { ScriptRunner } from '../../lib/scriptRunner';
+import { RunScriptState, ScriptRunner } from '../../lib/scriptRunner';
 import { AutomatedExample } from '../../types';
 import { createScriptRunner } from './createScriptRunner';
 
@@ -24,7 +24,7 @@ let restartScriptTimeout;
 interface CreateAutomatedIntegratedChartsParams {
     gridClassname: string;
     mouseMaskClassname: string;
-    onInactive?: () => void;
+    onStateChange?: (state: RunScriptState) => void;
     onGridReady?: () => void;
     suppressUpdates?: boolean;
     useStaticData?: boolean;
@@ -109,7 +109,7 @@ const gridOptions: GridOptions = {
 export function createAutomatedIntegratedCharts({
     gridClassname,
     mouseMaskClassname,
-    onInactive,
+    onStateChange,
     onGridReady,
     suppressUpdates,
     scriptDebuggerManager,
@@ -149,9 +149,7 @@ export function createAutomatedIntegratedCharts({
             scriptRunner = createScriptRunner({
                 containerEl: gridDiv,
                 mouse,
-                onInactive() {
-                    onInactive && onInactive();
-                },
+                onStateChange,
                 tweenGroup,
                 gridOptions,
                 loop: !runOnce,

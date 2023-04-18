@@ -9,7 +9,7 @@ import { OverlayButton } from '../../../components/automated-examples/OverlayBut
 import { ToggleAutomatedExampleButton } from '../../../components/automated-examples/ToggleAutomatedExampleButton';
 import { UpdateSpeedSlider } from '../../../components/automated-examples/UpdateSpeedSlider';
 import LogoMark from '../../../components/LogoMark';
-import { hostPrefix, isProductionBuild, localPrefix } from '../../../utils/consts';
+import { isProductionBuild, localPrefix } from '../../../utils/consts';
 import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
 import styles from './AutomatedRowGrouping.module.scss';
 
@@ -91,6 +91,12 @@ function AutomatedRowGrouping({
             suppressUpdates: useStaticData,
             useStaticData,
             runOnce,
+            onStateChange(state) {
+                // Catch errors, and allow the user to use the grid
+                if (state === 'stopping') {
+                    setAllScriptEnabledVars(false);
+                }
+            },
             onGridReady() {
                 setGridIsReady(true);
             },
@@ -114,9 +120,7 @@ function AutomatedRowGrouping({
                 </p>
             </header>
 
-            <Helmet>
-                {helmet.map((entry) => entry)}
-            </Helmet>
+            <Helmet>{helmet.map((entry) => entry)}</Helmet>
             <div ref={gridRef} className="automated-row-grouping-grid ag-theme-alpine-dark">
                 <OverlayButton
                     ariaLabel="Give me control"

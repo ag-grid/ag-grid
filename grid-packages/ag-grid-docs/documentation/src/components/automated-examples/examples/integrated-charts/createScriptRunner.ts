@@ -2,15 +2,14 @@ import { Group } from '@tweenjs/tween.js';
 import { GridOptions } from 'ag-grid-community';
 import { Mouse } from '../../lib/createMouse';
 import { ScriptDebugger } from '../../lib/scriptDebugger';
-import { createScriptRunner as createScriptRunnerCore } from '../../lib/scriptRunner';
+import { createScriptRunner as createScriptRunnerCore, RunScriptState } from '../../lib/scriptRunner';
 import { EasingFunction } from '../../lib/tween';
 import { createScript } from './createScript';
 
 interface Params {
     mouse: Mouse;
     containerEl: HTMLElement;
-    onPlaying?: () => void;
-    onInactive?: () => void;
+    onStateChange?: (state: RunScriptState) => void;
     tweenGroup: Group;
     gridOptions: GridOptions;
     loop?: boolean;
@@ -21,8 +20,7 @@ interface Params {
 export function createScriptRunner({
     containerEl,
     mouse,
-    onPlaying,
-    onInactive,
+    onStateChange,
     tweenGroup,
     gridOptions,
     loop,
@@ -45,14 +43,13 @@ export function createScriptRunner({
         loop,
         tweenGroup,
         onStateChange: (state) => {
-            if (state === 'playing') {
-                onPlaying && onPlaying();
-            } else if (state === 'stopping') {
+            if (state === 'stopping') {
                 mouse.hide();
             } else if (state === 'inactive') {
                 mouse.hide();
-                onInactive && onInactive();
             }
+
+            onStateChange && onStateChange(state);
         },
         scriptDebugger,
         defaultEasing,

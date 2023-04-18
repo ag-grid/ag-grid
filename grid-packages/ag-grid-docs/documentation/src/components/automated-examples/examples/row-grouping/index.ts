@@ -12,7 +12,7 @@ import { createDataWorker } from '../../data/createDataWorker';
 import { createMouse } from '../../lib/createMouse';
 import { isInViewport } from '../../lib/dom';
 import { ScriptDebuggerManager } from '../../lib/scriptDebugger';
-import { ScriptRunner } from '../../lib/scriptRunner';
+import { RunScriptState, ScriptRunner } from '../../lib/scriptRunner';
 import { AutomatedExample } from '../../types';
 import { createScriptRunner } from './createScriptRunner';
 import { fixtureData } from './rowDataFixture';
@@ -28,7 +28,7 @@ let restartScriptTimeout;
 interface CreateAutomatedRowGroupingParams {
     gridClassname: string;
     mouseMaskClassname: string;
-    onInactive?: () => void;
+    onStateChange?: (state: RunScriptState) => void;
     onGridReady?: () => void;
     suppressUpdates?: boolean;
     useStaticData?: boolean;
@@ -138,7 +138,7 @@ function stopWorkerMessages() {
 export function createAutomatedRowGrouping({
     gridClassname,
     mouseMaskClassname,
-    onInactive,
+    onStateChange,
     onGridReady,
     suppressUpdates,
     useStaticData,
@@ -184,13 +184,14 @@ export function createAutomatedRowGrouping({
             scriptRunner = createScriptRunner({
                 containerEl: gridDiv,
                 mouse,
-                onPlaying() {
-                    startWorkerMessages();
-                },
-                onInactive() {
-                    onInactive && onInactive();
+                onStateChange(state) {
+                    if (state === 'playing') {
+                        startWorkerMessages();
+                    } else if (state === 'inactive') {
+                        stopWorkerMessages();
+                    }
 
-                    stopWorkerMessages();
+                    onStateChange && onStateChange(state);
                 },
                 tweenGroup,
                 gridOptions,
