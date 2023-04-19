@@ -364,6 +364,7 @@ export class Legend {
                 markerLabel.marker = new Marker();
             }
 
+            markerLabel.markerSize = markerSize;
             markerLabel.spacing = markerPadding;
             markerLabel.fontStyle = fontStyle;
             markerLabel.fontWeight = fontWeight;
