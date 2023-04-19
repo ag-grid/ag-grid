@@ -1,7 +1,7 @@
 import { Group } from '@tweenjs/tween.js';
 import { createAgElementFinder } from '../../lib/agElements';
 import { Mouse } from '../../lib/createMouse';
-import { getBottomMidPos, getOffset } from '../../lib/dom';
+import { getBottomMidPos, getOffset, getScrollOffset } from '../../lib/dom';
 import { addPoints } from '../../lib/geometry';
 import { clearAllRowHighlights } from '../../lib/scriptActions/clearAllRowHighlights';
 import { createGroupColumnScriptActions } from '../../lib/scriptActions/createGroupColumnScriptActions';
@@ -42,7 +42,15 @@ export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }:
             type: 'custom',
             action: () => {
                 // Move mouse to starting position
-                moveTarget({ target: mouse.getTarget(), coords: getOffscreenPos(), scriptDebugger });
+                moveTarget({
+                    target: mouse.getTarget(),
+                    coords: getOffscreenPos(),
+                    offset: addPoints(getOffset(containerEl), getScrollOffset(), {
+                        x: 0,
+                        y: -120,
+                    }),
+                    scriptDebugger,
+                });
 
                 mouse.show();
                 clearAllRowHighlights();
