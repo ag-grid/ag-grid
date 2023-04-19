@@ -284,8 +284,18 @@ export function createScriptDebuggerManager({
     let initialDraw = false;
 
     return {
-        log,
-        errorLog,
+        log: (...args) => {
+            if (!isEnabled) {
+                return;
+            }
+            log(...args);
+        },
+        errorLog: (...args) => {
+            if (!isEnabled) {
+                return;
+            }
+            errorLog(...args);
+        },
         setEnabled: (enabled: boolean) => {
             isEnabled = enabled;
         },
