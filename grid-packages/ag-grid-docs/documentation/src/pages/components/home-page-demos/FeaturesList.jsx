@@ -1,11 +1,11 @@
 import classNames from 'classnames';
 import React from 'react';
-import AccessoriesIcon from '../../../images/inline-svgs/docs-category-icons/icon-accessories.svg';
 import DataIcon from '../../../images/inline-svgs/docs-category-icons/icon-data.svg';
+import DetailIcon from '../../../images/inline-svgs/docs-category-icons/icon-detail.svg';
 import EditCellsIcon from '../../../images/inline-svgs/docs-category-icons/icon-edit-cells.svg';
 import FilterIcon from '../../../images/inline-svgs/docs-category-icons/icon-filter.svg';
 import ImportExportIcon from '../../../images/inline-svgs/docs-category-icons/icon-import-export.svg';
-import MiscIcon from '../../../images/inline-svgs/docs-category-icons/icon-misc.svg';
+import MenuIcon from '../../../images/inline-svgs/docs-category-icons/icon-menu.svg';
 import PivotIcon from '../../../images/inline-svgs/docs-category-icons/icon-pivot.svg';
 import SigmaIcon from '../../../images/inline-svgs/docs-category-icons/icon-sigma.svg';
 import TableIcon from '../../../images/inline-svgs/docs-category-icons/icon-table.svg';
@@ -18,7 +18,7 @@ const featuresListItems = [
     { name: 'Aggregation', url: '/javascript-data-grid/aggregation/', icon: <SigmaIcon /> },
 
     { name: 'Row Grouping', url: '/javascript-data-grid/grouping/', icon: <TableIcon /> },
-    { name: 'Master Detail', url: '/javascript-data-grid/master-detail/', icon: <MiscIcon /> },
+    { name: 'Master Detail', url: '/javascript-data-grid/master-detail/', icon: <DetailIcon /> },
     { name: 'Clipboard', url: '/javascript-data-grid/clipboard/', icon: <ImportExportIcon /> },
 
     { name: 'Server-Side Row Model', url: '/javascript-data-grid/server-side-model/', icon: <DataIcon /> },
@@ -26,7 +26,7 @@ const featuresListItems = [
     { name: 'Column Filtering', url: '/javascript-data-grid/filtering-overview/', icon: <FilterIcon /> },
 
     { name: 'Export to Excel', url: '/javascript-data-grid/excel-export/', icon: <ImportExportIcon /> },
-    { name: 'Context Menu', url: '/javascript-data-grid/context-menu/', icon: <AccessoriesIcon /> },
+    { name: 'Context Menu', url: '/javascript-data-grid/context-menu/', icon: <MenuIcon /> },
     { name: 'Tree Data', url: '/javascript-data-grid/tree-data/', icon: <TreeIcon /> },
 ];
 
@@ -35,7 +35,7 @@ const ItemGroup = ({ items }) => {
         <div className={styles.itemGroup}>
             {items.map(({ name, url, icon }) => {
                 return (
-                    <a className={styles.featureItem} href={url}>
+                    <a className={styles.featureItem} href={url} key={name}>
                         <span className={styles.icon}>{icon}</span>
                         <span>{name}</span>
                     </a>
