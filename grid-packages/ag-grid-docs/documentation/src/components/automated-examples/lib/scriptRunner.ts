@@ -327,6 +327,7 @@ export function createScriptRunner({
     });
 
     const startActionSequence = (startIndex: number = 0) => {
+        const startTime = Date.now();
         updateState('playing');
         tweenUpdate();
         const scriptFromStartIndex = script.slice(startIndex);
@@ -351,7 +352,7 @@ export function createScriptRunner({
                 }
 
                 if (shouldCancel) {
-                    scriptDebugger?.log(`${id} cancelling step from state: ${runScriptState}`);
+                    scriptDebugger?.log(`${id} cancelling step from state: ${runScriptState} [${startTime}]`);
                 } else {
                     const scriptAction = scriptFromStartIndex[index];
                     const stepName =
@@ -359,9 +360,12 @@ export function createScriptRunner({
                         (scriptAction.type === 'agAction' ? scriptAction.actionType : scriptAction.type);
                     const stepNum = index + 1;
                     scriptDebugger?.updateStep({ step: stepNum, numSteps: scriptFromStartIndex.length, stepName });
-                    scriptDebugger?.log(`${id} step ${stepNum}/${scriptFromStartIndex.length}: ${stepName}`, {
-                        scriptAction,
-                    });
+                    scriptDebugger?.log(
+                        `${id} step ${stepNum}/${scriptFromStartIndex.length}: ${stepName} [${startTime}]`,
+                        {
+                            scriptAction,
+                        }
+                    );
                 }
 
                 return {
