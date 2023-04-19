@@ -423,7 +423,6 @@ Object {
     "text": "Marriage Statistics (Northern Ireland)",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -855,7 +854,6 @@ Object {
     "text": "Cattle Holdings and Beef Exports (UK)",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -1532,7 +1530,6 @@ Object {
     "text": "Taxed Alcohol Consumption (UK)",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -2139,7 +2136,6 @@ Object {
     "text": "Worldwide Earthquakes",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -2622,7 +2618,6 @@ Object {
     "text": "Earthquake Magnitudes by Source",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -3251,7 +3246,6 @@ Object {
     "text": "Changes in UK Energy Stock",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -3544,7 +3538,6 @@ Object {
 by Occupation",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -3828,7 +3821,6 @@ Object {
 (June to September)",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -4097,7 +4089,6 @@ Object {
     "text": "Punch Card of Github",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -4374,7 +4365,6 @@ Object {
     "text": "Most Populous Cities",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -4693,7 +4683,6 @@ Object {
     "text": "Changes in Prison Population",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -5012,7 +5001,6 @@ Object {
     "text": "Annual Growth in Pay",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -5349,7 +5337,6 @@ Object {
     "text": "Regular Internet Users",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -5634,7 +5621,6 @@ Object {
     "text": "Vehicle weight distribution",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -6872,7 +6858,6 @@ Object {
     "text": "Imported Banana Prices",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -7148,7 +7133,6 @@ Object {
     "text": "World Population Over Time",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -7357,7 +7341,6 @@ Object {
     "text": "S&P 500 index stocks categorized by sectors and industries.",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -7696,7 +7679,6 @@ Object {
     "text": "UK Energy Sources",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -8023,7 +8005,6 @@ Object {
     "text": "Internet Users by Geographical Location",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -8369,7 +8350,6 @@ Object {
     "text": "Ethnic Diversity of School Pupils",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -8903,7 +8883,6 @@ Object {
     "text": "Total Visitors to Tate Galleries",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -9186,7 +9165,6 @@ Object {
     "text": "Total Visitors to Museums and Galleries",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -9410,7 +9388,6 @@ Object {
     "text": "Dwelling Fires (UK)",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -9682,7 +9659,6 @@ Object {
     "text": "Engine size distribution",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -10041,7 +10017,6 @@ Object {
     "text": "Road fuel prices",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -10243,7 +10218,6 @@ Object {
     "text": "Religions of London Population",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -10514,7 +10488,6 @@ Object {
     "text": "Height vs Weight for Major League Baseball Players",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -10874,7 +10847,6 @@ Object {
     "text": "Total Visitors to Science Museums",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -11191,7 +11163,6 @@ Object {
     "text": "UK Housing Stock",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -11527,7 +11498,6 @@ Object {
     "text": "Average Station Entries",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -11812,7 +11782,6 @@ Object {
     "text": "Vehicle weight distribution",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
