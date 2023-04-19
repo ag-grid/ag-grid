@@ -1,3 +1,5 @@
+import '@ag-grid-community/styles/ag-grid.css';
+import "@ag-grid-community/styles/ag-theme-alpine.css";
 import { ColDef, Grid, GridOptions, GridReadyEvent, ICellRendererComp, ICellRendererParams, GetRowIdParams } from "@ag-grid-community/core";
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
