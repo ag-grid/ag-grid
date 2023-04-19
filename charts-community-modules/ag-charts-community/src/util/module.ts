@@ -52,8 +52,10 @@ export interface DarkThemeParams {
 }
 
 export interface LegendModuleContext {
-    addFactory(factory: (ctx: ModuleContext) => ChartLegend): void;
-    deleteFactory(): void;
+    legendFactory: {
+        add(factory: (ctx: ModuleContext) => ChartLegend): void;
+        delete(): void;
+    };
 }
 
 export interface SeriesContext {

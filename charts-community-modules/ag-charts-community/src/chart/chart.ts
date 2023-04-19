@@ -318,11 +318,13 @@ export abstract class Chart extends Observable implements AgChartInstance {
             throw new Error('AG Charts - legend module already initialised:' + module.optionsKey);
         }
         const moduleMeta = module.initialiseModule({
-            addFactory: (factory: (ctx: ModuleContext) => ChartLegend) => {
-                this.legendFactories[module.optionsKey] = factory;
-            },
-            deleteFactory: () => {
-                delete this.legendFactories[module.optionsKey];
+            legendFactory: {
+                add: (factory: (ctx: ModuleContext) => ChartLegend) => {
+                    this.legendFactories[module.optionsKey] = factory;
+                },
+                delete: () => {
+                    delete this.legendFactories[module.optionsKey];
+                },
             },
         });
         this.legendModules[module.optionsKey] = moduleMeta;

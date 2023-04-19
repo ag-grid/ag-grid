@@ -6299,15 +6299,11 @@
   },
   "SeriesFactory": {},
   "LegendModuleContext": {
-    "addFactory": {
+    "legendFactory": {
       "type": {
-        "arguments": { "factory": "(ctx: ModuleContext) => ChartLegend" },
-        "returnType": "void",
+        "returnType": "{\n        add(factory: (ctx: ModuleContext) => ChartLegend): void;\n        delete(): void;\n    }",
         "optional": false
       }
-    },
-    "deleteFactory": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
   "SeriesContext": {

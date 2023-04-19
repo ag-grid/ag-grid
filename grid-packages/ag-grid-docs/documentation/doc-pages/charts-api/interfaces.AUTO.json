@@ -4461,8 +4461,7 @@
   "LegendModuleContext": {
     "meta": {},
     "type": {
-      "addFactory(factory: (ctx: ModuleContext) => ChartLegend)": "void",
-      "deleteFactory()": "void"
+      "legendFactory": "{ add(factory: (ctx: ModuleContext) => ChartLegend): void; delete(): void; }"
     }
   },
   "SeriesContext": {
