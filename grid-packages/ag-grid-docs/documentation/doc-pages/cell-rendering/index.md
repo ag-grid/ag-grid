@@ -190,27 +190,6 @@ Here is a full example.
 
 <grid-example title='Dynamic Rendering Component' name='dynamic-rendering-component' type='mixed' options='{ "exampleHeight": 335 }'></grid-example>
 
-## Example: Rendering Order
-
-This example is configured with a custom cell render to make the order of cell rendering clear. Cells are numbered in order of rendering, and rendering function takes 10ms to execute, allowing you to see the process of incremental rendering more clearly. Note the cell values do not correspond to row or cell indexes.
-
-Notice the following in the example below:
-
-[[only-javascript-or-angular-or-vue]]
-|- The grid remains interactive while cells are rendering. For example, you can click on any row to select it while cells are still rendering.
-|- In initial rendering and when scrolling down, rows render top to bottom
-|- When scrolling up, rows render bottom to top
-|- Cells within a row render left to right regardless of scroll direction
-|- Only visible cells are rendered. The grid contains 1000 rows and 20,000 cells. If you take about 10 seconds to scroll from the top to the bottom, only a few hundred cells will actually be rendered. Any cells that are scrolled into view and then back out of view again before they have a chance to be rendered will be skipped.
-
-[[only-react]]
-|- The grid remains interactive while cells are rendering. For example, you can click on any row to select it while cells are still rendering.
-|- In initial rendering and when scrolling down, rows render top to bottom
-|- When scrolling up, rows render bottom to top
-|- Only visible cells are rendered. The grid contains 1000 rows and 20,000 cells. If you take about 10 seconds to scroll from the top to the bottom, only a few hundred cells will actually be rendered. Any cells that are scrolled into view and then back out of view again before they have a chance to be rendered will be skipped.
-
-<grid-example title='Rendering Order' name='rendering-order' type='generated' ></grid-example>
-
 ## Provided Cell Renderers
 
 The grid comes with some provided cell renderers out of the box. These cell renderers cover some common complex cell rendering requirements.
