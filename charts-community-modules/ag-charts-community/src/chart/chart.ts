@@ -263,7 +263,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.layoutService.addListener('start-layout', (e) => this.positionCaptions(e.shrinkRect));
 
         this.tooltip = new Tooltip(this.scene.canvas.element, document, document.body);
-        this.tooltipManager = new TooltipManager(this.tooltip);
+        this.tooltipManager = new TooltipManager(this.tooltip, this.interactionManager);
         this.legend = new Legend(
             this,
             this.interactionManager,
@@ -346,6 +346,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this._performUpdateType = ChartUpdateType.NONE;
         this._pendingFactoryUpdates.splice(0);
 
+        this.tooltipManager.destroy();
         this.tooltip.destroy();
         this.legend.destroy();
         SizeMonitor.unobserve(this.element);
