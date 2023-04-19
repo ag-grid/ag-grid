@@ -30,7 +30,7 @@ There are four main Provided Filters, plus the Multi Filter. These are as follow
 - [Number Filter](/filter-number/) - A filter for number comparisons.
 - [Date Filter](/filter-date/) - A filter for date comparisons.
 - [Set Filter](/filter-set/) <enterprise-icon></enterprise-icon> - A filter influenced by how filters work in Microsoft Excel. This is an AG Grid Enterprise feature.
-- [Multi Filter](/filter-multi/) <enterprise-icon></enterprise-icon>- Allows for two filters to be used together (either one of the above Provided Filters or a Custom Filter Component). This is an AG Grid Enterprise feature.
+- [Multi Filter](/filter-multi/) <enterprise-icon></enterprise-icon> - Allows for two filters to be used together (either one of the above Provided Filters or a Custom Filter Component). This is an AG Grid Enterprise feature.
 
 ## Example: Provided Filters
 

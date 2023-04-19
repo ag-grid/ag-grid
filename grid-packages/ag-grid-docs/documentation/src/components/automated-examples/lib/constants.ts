@@ -16,6 +16,7 @@ export const AG_DND_GHOST_SELECTOR = '.ag-dnd-ghost';
 export const AG_COLUMN_DROP_SELECTOR = '.ag-column-drop-wrapper';
 
 export const AG_MENU_OPTION_TEXT_SELECTOR = '.ag-menu-option-text';
+export const AG_MENU_OPTION_ACTIVE_CLASSNAME = 'ag-menu-option-active';
 
 export const AG_CHART_TOOL_PANEL_BUTTON_SELECTOR = '.ag-chart-tool-panel-button-enable .ag-chart-menu-close';
 

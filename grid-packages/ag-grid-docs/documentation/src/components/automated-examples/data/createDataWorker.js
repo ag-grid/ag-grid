@@ -93,6 +93,10 @@ export function createDataWorker() {
     let latestUpdateId = 0;
     let intervalId;
     function startUpdates(thisUpdateId) {
+        if (messageFrequency <= 0) {
+            return;
+        }
+
         function intervalFunc() {
             const updatedRecords = updateSomeRecords({
                 recordsToUpdate: currentRecords,

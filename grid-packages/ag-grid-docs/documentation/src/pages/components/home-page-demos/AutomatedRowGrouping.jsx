@@ -153,7 +153,7 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
                 </div>
 
                 <UpdateSpeedSlider
-                    min={0.1}
+                    min={0}
                     max={4}
                     step={0.1}
                     value={frequency}

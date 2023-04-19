@@ -1,7 +1,7 @@
 import { IDoesFilterPassParams, IFilter, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
 import { Autowired, PostConstruct } from '../../context/context';
 import { IRowModel } from '../../interfaces/iRowModel';
-import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
+import { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import { loadTemplate, setDisabled } from '../../utils/dom';
 import { debounce } from '../../utils/function';
 import { AgPromise } from '../../utils/promise';
@@ -417,12 +417,14 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
             this.hidePopup = params.hidePopup;
         }
 
-        const isFloatingFilter = params?.container === 'floatingFilter';
-        this.refreshFilterResizer(isFloatingFilter);
+        this.refreshFilterResizer(params?.container);
     }
 
-    private refreshFilterResizer(isFloatingFilter?: boolean): void {
-        if (!this.positionableFeature) { return; }
+    private refreshFilterResizer(containerType?: ContainerType): void {
+        // tool panel is scrollable, so don't need to size
+        if (!this.positionableFeature || containerType === 'toolPanel') { return; }
+
+        const isFloatingFilter = containerType === 'floatingFilter';
 
         const { positionableFeature, gridOptionsService } = this;
 

@@ -89,7 +89,7 @@ const processRows = (framework, rowArray, columnFields, isTree, booleanOnly, str
         if (
             (isTree && currentRow.title) === 'See Also' ||
             (currentRow.frameworks && currentRow.frameworks.indexOf(framework) === -1) ||
-            (currentRow.enterprise === 'charts' && !isProductionEnvironment())
+            (currentRow.enterprise === 'charts' && isProductionEnvironment())
         ) { exclude = true; }
 
         if (isTree && rowItems != null && !currentRow.matrixExcludeChildren && !exclude) {

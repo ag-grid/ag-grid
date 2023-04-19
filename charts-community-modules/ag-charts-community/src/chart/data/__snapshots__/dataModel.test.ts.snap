@@ -419,7 +419,7 @@ Object {
       "sumValues": Array [
         Array [
           0,
-          100.00000000000001,
+          100,
         ],
       ],
       "values": Array [

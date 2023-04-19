@@ -444,6 +444,9 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
     if (processedOptions.legend?.listeners) {
         Object.assign(chart.legend.listeners, processedOptions.legend.listeners ?? {});
     }
+    if (processedOptions.listeners) {
+        chart.updateAllSeriesListeners();
+    }
 
     chart.processedOptions = completeOptions;
     chart.userOptions = jsonMerge([chart.userOptions ?? {}, userOptions], noDataCloneMergeOptions);
