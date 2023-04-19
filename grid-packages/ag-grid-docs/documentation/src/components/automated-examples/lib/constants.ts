@@ -18,6 +18,7 @@ export const AG_MENU_OPTION_TEXT_SELECTOR = '.ag-menu-option-text';
 
 export const AG_CHART_TOOL_PANEL_BUTTON_SELECTOR = '.ag-chart-tool-panel-button-enable .ag-chart-menu-close';
 
+export const AG_POPUP_SELECTOR = '.ag-popup';
 export const AG_POPUP_DIALOG_SELECTOR = '.ag-popup [role="dialog"]';
 
 export const AG_CHART_SERIES_GROUP_TITLE_SELECTOR =

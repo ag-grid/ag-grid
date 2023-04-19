@@ -14,6 +14,7 @@ import {
     AG_MENU_OPTION_TEXT_SELECTOR,
     AG_PICKER_FIELD_SELECTOR,
     AG_PICKER_FIELD_WRAPPER_SELECTOR,
+    AG_POPUP_SELECTOR,
     AG_RANGE_FIELD_INOUT_SELECTOR,
     AG_SELECT_LIST_ITEM_SELECTOR,
     AG_SLIDER_SELECTOR,
@@ -43,6 +44,7 @@ export interface AgElementByFindConfig<Params> {
 export type AgElementsConfig = AgElementBySelectorConfig | AgElementByInnerTextConfig | AgElementByFindConfig<any>;
 
 export interface AgElementsConfigItem {
+    popup: AgElementBySelectorConfig;
     chartToolPanelButton: AgElementBySelectorConfig;
 
     contextMenuItem: AgElementByInnerTextConfig;
@@ -79,6 +81,9 @@ export type AgElementName = keyof AgElementsConfigItem;
  */
 export const agElementsConfig: AgElementsConfigItem = {
     // Find by selector
+    popup: {
+        selector: AG_POPUP_SELECTOR,
+    },
     chartToolPanelButton: {
         selector: AG_CHART_TOOL_PANEL_BUTTON_SELECTOR,
     },
