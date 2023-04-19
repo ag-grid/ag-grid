@@ -13,6 +13,7 @@ export const AG_HEADER_CELL_SELECTOR = '.ag-header-cell';
 export const AG_HEADER_CELL_TEXT_SELECTOR = '.ag-header-cell .ag-header-cell-text'; // NOTE: Need header cell, so that filter text is not selected
 
 export const AG_DND_GHOST_SELECTOR = '.ag-dnd-ghost';
+export const AG_COLUMN_DROP_SELECTOR = '.ag-column-drop-wrapper';
 
 export const AG_MENU_OPTION_TEXT_SELECTOR = '.ag-menu-option-text';
 
@@ -43,3 +44,6 @@ export const AG_GROUP_EXPANDED = '.ag-group-expanded';
 
 // Speed in pixel/ms
 export const DEFAULT_MOUSE_SPEED = 1;
+
+// Class to add to `.ag-dnd-ghost` when created by a script
+export const DRAG_COLUMN_GHOST_CLASS = 'automated-example-drag';

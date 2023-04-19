@@ -284,6 +284,11 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
     // Start off hidden
     opacity: 0;
 
+    @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
+        // Hide mouse when automated example is not interactive
+        display: none;
+    }
+
     :global(.mouse) {
         position: absolute;
         top: 6px;

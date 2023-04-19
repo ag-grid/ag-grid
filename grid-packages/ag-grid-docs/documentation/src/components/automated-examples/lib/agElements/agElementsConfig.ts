@@ -3,6 +3,7 @@ import {
     AG_CHART_SERIES_GROUP_TITLE_SELECTOR,
     AG_CHART_TOOL_PANEL_BUTTON_SELECTOR,
     AG_CHART_TOOL_PANEL_TAB_SELECTOR,
+    AG_COLUMN_DROP_SELECTOR,
     AG_GROUP_CONTRACTED,
     AG_GROUP_EXPANDED,
     AG_GROUP_ITEM_SELECTOR,
@@ -45,6 +46,7 @@ export type AgElementsConfig = AgElementBySelectorConfig | AgElementByInnerTextC
 
 export interface AgElementsConfigItem {
     popup: AgElementBySelectorConfig;
+    columnDropArea: AgElementBySelectorConfig;
     chartToolPanelButton: AgElementBySelectorConfig;
 
     contextMenuItem: AgElementByInnerTextConfig;
@@ -83,6 +85,9 @@ export const agElementsConfig: AgElementsConfigItem = {
     // Find by selector
     popup: {
         selector: AG_POPUP_SELECTOR,
+    },
+    columnDropArea: {
+        selector: AG_COLUMN_DROP_SELECTOR,
     },
     chartToolPanelButton: {
         selector: AG_CHART_TOOL_PANEL_BUTTON_SELECTOR,
