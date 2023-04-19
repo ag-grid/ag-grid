@@ -72,7 +72,9 @@ export class ChartSettingsPanel extends Component {
 
             if (currentChart) {
                 const parent = currentChart.offsetParent as HTMLElement;
-                this.eMiniChartsContainer.scrollTo(0, parent.offsetTop);
+                if (parent) {
+                    this.eMiniChartsContainer.scrollTo(0, parent.offsetTop);
+                }
             }
         }, 250);
     }
