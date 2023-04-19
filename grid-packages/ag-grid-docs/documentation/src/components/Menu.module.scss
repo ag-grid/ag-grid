@@ -173,10 +173,10 @@
     }
 
     &:focus-visible {
-        border-color: var(--bright-blue-gray) !important; // !important for .ag-styles specificity
+        border-color: var(--input-focus-border-color) !important; // !important for .ag-styles specificity
 
         &::before {
-            background-color: var(--dull-light-gray);
+            background-color: var(--input-focus-border-color);
         }
     }
 
