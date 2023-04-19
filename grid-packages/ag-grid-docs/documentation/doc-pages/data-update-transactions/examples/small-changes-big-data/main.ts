@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, GridReadyEvent, GetRowIdParams, IAggFuncParams, IDoesFilterPassParams, IFilterComp, IFilterParams, IFilterType, IsGroupOpenByDefaultParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, GetRowIdParams, IAggFuncParams, IDoesFilterPassParams, IFilterComp, IFilterParams, IFilterType, IsGroupOpenByDefaultParams } from '@ag-grid-community/core'
 
 import { createDataItem, getData } from './data'
 
