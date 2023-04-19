@@ -101,7 +101,6 @@ export const createScript = ({
                 menuItemPath: ['Chart Range', 'Column', 'Stacked'],
                 tweenGroup,
                 scriptDebugger,
-                speed: 2,
             },
         },
         {
