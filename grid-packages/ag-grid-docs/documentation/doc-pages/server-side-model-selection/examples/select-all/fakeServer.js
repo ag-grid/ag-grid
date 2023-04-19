@@ -104,7 +104,7 @@ function FakeServer(allData) {
             case 'equals':
                 return key + " = '" + item.filter + "'";
             case 'notEqual':
-                return key + "' != '" + item.filter + "'";
+                return key + " != '" + item.filter + "'";
             case 'contains':
                 return key + " LIKE '%" + item.filter + "%'";
             case 'notContains':
@@ -154,7 +154,7 @@ function FakeServer(allData) {
         if (isDoingGrouping(rowGroupCols, groupKeys)) {
             var rowGroupCol = rowGroupCols[groupKeys.length];
 
-            return ' GROUP BY ' + rowGroupCol.id;
+            return ' GROUP BY ' + rowGroupCol.id + ' HAVING count(*) > 0';
         }
 
         return '';

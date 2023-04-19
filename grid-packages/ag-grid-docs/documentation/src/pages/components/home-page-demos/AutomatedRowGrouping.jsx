@@ -43,13 +43,7 @@ if (!isProductionBuild()) {
     );
 }
 
-function AutomatedRowGrouping({
-    automatedExampleManager,
-    scriptDebuggerManager,
-    useStaticData,
-    runOnce,
-    visibilityThreshold,
-}) {
+function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce, visibilityThreshold }) {
     const exampleId = ROW_GROUPING_ID;
     const gridClassname = 'automated-row-grouping-grid';
     const gridRef = useRef(null);
@@ -58,6 +52,7 @@ function AutomatedRowGrouping({
     const [gridIsReady, setGridIsReady] = useState(false);
     const [gridIsHoveredOver, setGridIsHoveredOver] = useState(false);
     const [frequency, setFrequency] = useState(1);
+    const debuggerManager = automatedExampleManager?.getDebuggerManager();
 
     const setAllScriptEnabledVars = (isEnabled) => {
         setScriptIsEnabled(isEnabled);
@@ -75,8 +70,10 @@ function AutomatedRowGrouping({
         elementRef: gridRef,
         onChange: ({ isIntersecting }) => {
             if (isIntersecting) {
+                debuggerManager.log(`${exampleId} intersecting - start`);
                 automatedExampleManager.start(exampleId);
             } else {
+                debuggerManager.log(`${exampleId} not intersecting - inactive`);
                 automatedExampleManager.inactive(exampleId);
             }
         },
@@ -88,14 +85,14 @@ function AutomatedRowGrouping({
         let params = {
             gridClassname,
             mouseMaskClassname: styles.mouseMask,
-            scriptDebuggerManager,
+            scriptDebuggerManager: debuggerManager,
             suppressUpdates: useStaticData,
             useStaticData,
             runOnce,
             onStateChange(state) {
-                // Catch errors, and allow the user to use the grid
-                if (state === 'stopping') {
+                if (state === 'errored') {
                     setAllScriptEnabledVars(false);
+                    automatedExampleManager.errored(exampleId);
                 }
             },
             onGridReady() {

@@ -328,3 +328,12 @@ gatsby-fast-refresh {
     pointer-events: none;
     z-index: $z-index-debug-canvas;
 }
+
+:global(.automated-example-drag) {
+    pointer-events: none;
+
+    @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
+        transform-origin: center left;
+        transform: translate(-30px, 0) scale(0.5);
+    }
+}

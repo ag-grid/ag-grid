@@ -1092,7 +1092,7 @@
   },
   "AgChartOverlaysOptions": {
     "noData": {
-      "description": "/** An overlay to be displayed when there is no data, */",
+      "description": "/** An overlay to be displayed when there is no data. */",
       "type": { "returnType": "AgChartOverlayOptions", "optional": true }
     }
   },

@@ -4,6 +4,7 @@ import { faTimes, faCheck } from '@fortawesome/free-solid-svg-icons';
 import { useJsonFileNodes } from './use-json-file-nodes';
 import { convertUrl, convertMarkdown } from 'components/documentation-helpers';
 import styles from './MatrixTable.module.scss';
+import {isProductionEnvironment} from "../utils/consts";
 
 /**
  * This presents a matrix of information, e.g. to show which features are available with different versions of the grid.
@@ -87,7 +88,8 @@ const processRows = (framework, rowArray, columnFields, isTree, booleanOnly, str
 
         if (
             (isTree && currentRow.title) === 'See Also' ||
-            (currentRow.frameworks && currentRow.frameworks.indexOf(framework) === -1)
+            (currentRow.frameworks && currentRow.frameworks.indexOf(framework) === -1) ||
+            (currentRow.enterprise === 'charts' && !isProductionEnvironment())
         ) { exclude = true; }
 
         if (isTree && rowItems != null && !currentRow.matrixExcludeChildren && !exclude) {
