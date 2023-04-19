@@ -92,9 +92,6 @@ const processRows = (framework, rowArray, columnFields, isTree, booleanOnly, str
             (currentRow.enterprise === 'charts' && !isProductionEnvironment())
         ) { exclude = true; }
 
-        if(currentRow.title === 'Enterprise Placeholder')
-            debugger
-
         if (isTree && rowItems != null && !currentRow.matrixExcludeChildren && !exclude) {
             const titleField = columnFields[0];
             const title = currentRow[titleField];
