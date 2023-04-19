@@ -13,6 +13,8 @@ import { isProductionBuild, localPrefix } from '../../../utils/consts';
 import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
 import styles from './AutomatedIntegratedCharts.module.scss';
 
+const AUTOMATED_EXAMPLE_MEDIUM_WIDTH = 740; // Same as `_breakpoint.scss`
+
 const helmet = [];
 if (!isProductionBuild()) {
     helmet.push(
@@ -48,7 +50,8 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
     const [scriptIsEnabled, setScriptIsEnabled] = useState(true);
     const [gridIsReady, setGridIsReady] = useState(false);
     const [gridIsHoveredOver, setGridIsHoveredOver] = useState(false);
-    const debuggerManager = automatedExampleManager.getDebuggerManager();
+    const debuggerManager = automatedExampleManager?.getDebuggerManager();
+    const isMobile = () => window.innerWidth <= AUTOMATED_EXAMPLE_MEDIUM_WIDTH;
 
     const setAllScriptEnabledVars = (isEnabled) => {
         setScriptIsEnabled(isEnabled);
@@ -79,7 +82,7 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
             useStaticData,
             runOnce,
             onStateChange(state) {
-                if (state === 'errored') {
+                if (state === 'errored' && !isMobile()) {
                     setAllScriptEnabledVars(false);
                     automatedExampleManager.errored(exampleId);
                 }
@@ -114,8 +117,10 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
                     onPointerEnter={() => setGridIsHoveredOver(true)}
                     onPointerOut={() => setGridIsHoveredOver(false)}
                     onClick={() => {
-                        setAllScriptEnabledVars(false);
-                        automatedExampleManager.stop(exampleId);
+                        if (!isMobile()) {
+                            setAllScriptEnabledVars(false);
+                            automatedExampleManager.stop(exampleId);
+                        }
                     }}
                 />
                 {!gridIsReady && !useStaticData && <LogoMark isSpinning />}

@@ -52,7 +52,7 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
     const [gridIsReady, setGridIsReady] = useState(false);
     const [gridIsHoveredOver, setGridIsHoveredOver] = useState(false);
     const [frequency, setFrequency] = useState(1);
-    const debuggerManager = automatedExampleManager.getDebuggerManager();
+    const debuggerManager = automatedExampleManager?.getDebuggerManager();
 
     const setAllScriptEnabledVars = (isEnabled) => {
         setScriptIsEnabled(isEnabled);
@@ -153,7 +153,7 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
                 </div>
 
                 <UpdateSpeedSlider
-                    min={0.1}
+                    min={0}
                     max={4}
                     step={0.1}
                     value={frequency}

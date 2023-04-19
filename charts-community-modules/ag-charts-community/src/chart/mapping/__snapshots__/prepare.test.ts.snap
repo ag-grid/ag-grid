@@ -7119,7 +7119,7 @@ Object {
         "position": Object {
           "type": "node",
         },
-        "renderer": undefined,
+        "renderer": [Function],
       },
       "type": "line",
       "visible": true,

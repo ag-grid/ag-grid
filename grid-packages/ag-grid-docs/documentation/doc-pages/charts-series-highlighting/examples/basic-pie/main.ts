@@ -54,6 +54,7 @@ const options: AgChartOptions = {
       title: {
         text: 'Q1',
         showInLegend: true,
+        spacing: 0,
       },
       calloutLabel: {
         enabled: false,
@@ -70,6 +71,7 @@ const options: AgChartOptions = {
       title: {
         text: 'Q2',
         showInLegend: true,
+        spacing: 0,
       },
       calloutLabel: {
         enabled: false,
@@ -85,6 +87,7 @@ const options: AgChartOptions = {
       title: {
         text: 'Q3',
         showInLegend: true,
+        spacing: 0,
       },
       calloutLabel: {
         enabled: false,
@@ -100,6 +103,7 @@ const options: AgChartOptions = {
       title: {
         text: 'Q4',
         showInLegend: true,
+        spacing: 0,
       },
       calloutLabel: {
         enabled: false,
