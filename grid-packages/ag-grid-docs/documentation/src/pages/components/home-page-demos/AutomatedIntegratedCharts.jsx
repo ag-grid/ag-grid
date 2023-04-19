@@ -9,7 +9,7 @@ import { INTEGRATED_CHARTS_ID } from '../../../components/automated-examples/lib
 import { OverlayButton } from '../../../components/automated-examples/OverlayButton';
 import { ToggleAutomatedExampleButton } from '../../../components/automated-examples/ToggleAutomatedExampleButton';
 import LogoMark from '../../../components/LogoMark';
-import { isProductionBuild, localPrefix } from '../../../utils/consts';
+import { hostPrefix, isProductionBuild, localPrefix } from '../../../utils/consts';
 import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
 import styles from './AutomatedIntegratedCharts.module.scss';
 
@@ -81,6 +81,16 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
             suppressUpdates: useStaticData,
             useStaticData,
             runOnce,
+            additionalContextMenuItems: [
+                {
+                    name: 'Replay Demo',
+                    action: () => {
+                        setAllScriptEnabledVars(true);
+                        automatedExampleManager.start(exampleId);
+                    },
+                    icon: `<img src="${hostPrefix}/images/homepage/replay-demo-icon-dark.svg" />`,
+                },
+            ],
             onStateChange(state) {
                 if (state === 'errored' && !isMobile()) {
                     setAllScriptEnabledVars(false);

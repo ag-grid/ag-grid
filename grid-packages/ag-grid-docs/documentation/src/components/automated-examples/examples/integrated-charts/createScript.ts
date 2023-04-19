@@ -7,7 +7,6 @@ import { addPoints } from '../../lib/geometry';
 import { clearAllRowHighlights } from '../../lib/scriptActions/clearAllRowHighlights';
 import { dragRange } from '../../lib/scriptActions/dragRange';
 import { moveTarget } from '../../lib/scriptActions/move';
-import { updateRangeInputValue } from '../../lib/scriptActions/updateRangeInputValue';
 import { ScriptDebugger } from '../../lib/scriptDebugger';
 import { ScriptAction } from '../../lib/scriptRunner';
 
@@ -101,7 +100,6 @@ export const createScript = ({
                 menuItemPath: ['Chart Range', 'Column', 'Stacked'],
                 tweenGroup,
                 scriptDebugger,
-                speed: 2,
             },
         },
         {
@@ -295,50 +293,6 @@ export const createScript = ({
             },
         },
         { type: 'wait', duration: 300 },
-
-        // Change marker size
-        {
-            type: 'moveTo',
-            toPos: () => {
-                const sliderValue = 35;
-                // To account for the size of the input control
-                const sliderControlXOffset = -10;
-                const slider = agElementFinder.get('chartToolPanelSliderInput', {
-                    groupTitle: 'Legend',
-                    sliderLabel: 'Marker Size',
-                });
-                if (!slider) {
-                    scriptDebugger?.errorLog('Marker Size slider not found');
-                    return;
-                }
-                const sliderEl = slider?.get() as HTMLInputElement;
-                const sliderWidth = sliderEl?.clientWidth;
-                const sliderRange = parseInt(sliderEl.max) - (parseInt(sliderEl.min) || 0);
-                const sliderValueXOffset = sliderValue * (sliderWidth / sliderRange);
-                const sliderRect = sliderEl.getBoundingClientRect();
-
-                return {
-                    x: sliderRect.x + sliderValueXOffset + sliderControlXOffset,
-                    y: sliderRect.y + sliderRect.height / 2,
-                };
-            },
-        },
-        { type: 'click' },
-        { type: 'wait', duration: 300 },
-        {
-            type: 'custom',
-            action: () => {
-                const slider = agElementFinder
-                    .get('chartToolPanelSliderInput', {
-                        groupTitle: 'Legend',
-                        sliderLabel: 'Marker Size',
-                    })
-                    ?.get() as HTMLInputElement;
-
-                updateRangeInputValue({ element: slider, value: 35 });
-            },
-        },
-        { type: 'wait', duration: 500 },
 
         // Move off screen
         {

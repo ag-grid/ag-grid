@@ -23,11 +23,11 @@ const options: AgChartOptions = {
 
 const chart = AgChart.create(options);
 
-function random(n) {
+function random(n: any) {
   return Math.floor(Math.random() * (n + 1));
 }
 
-function randomColor(this: HTMLElement) {
+function randomColor() {
   const color = `rgb(${random(255)}, ${random(255)}, ${random(255)})`;
   AgChart.updateDelta(chart, {
     background: {

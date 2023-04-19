@@ -29,7 +29,7 @@ function filterProductionMenuData(data) {
 }
 
 function toElementId(str) {
-    return str.toLowerCase().replace('&', '').replace('/', '').replaceAll(' ', '-');
+    return 'menu-' + str.toLowerCase().replace('&', '').replace('/', '').replaceAll(' ', '-');
 }
 
 const menuData = filterProductionMenuData(rawMenuData);

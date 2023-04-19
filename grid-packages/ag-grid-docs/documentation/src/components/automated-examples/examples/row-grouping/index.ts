@@ -6,12 +6,13 @@
 // to prevent AG Grid from loading the code twice
 
 import { Easing, Group } from '@tweenjs/tween.js';
-import { ColDef, GridOptions } from 'ag-grid-community';
+import { ColDef, GridOptions, MenuItemDef } from 'ag-grid-community';
 import { CATEGORIES, PORTFOLIOS } from '../../data/constants';
 import { createDataWorker } from '../../data/createDataWorker';
 import { ROW_GROUPING_ID } from '../../lib/constants';
 import { createMouse } from '../../lib/createMouse';
 import { isInViewport } from '../../lib/dom';
+import { getAdditionalContextMenuItems } from '../../lib/getAdditionalContextMenuItems';
 import { ScriptDebuggerManager } from '../../lib/scriptDebugger';
 import { RunScriptState, ScriptRunner } from '../../lib/scriptRunner';
 import { AutomatedExample } from '../../types';
@@ -28,6 +29,7 @@ let restartScriptTimeout;
 interface CreateAutomatedRowGroupingParams {
     gridClassname: string;
     mouseMaskClassname: string;
+    additionalContextMenuItems?: (string | MenuItemDef)[];
     onStateChange?: (state: RunScriptState) => void;
     onGridReady?: () => void;
     suppressUpdates?: boolean;
@@ -137,6 +139,7 @@ function stopWorkerMessages() {
 export function createAutomatedRowGrouping({
     gridClassname,
     mouseMaskClassname,
+    additionalContextMenuItems,
     onStateChange,
     onGridReady,
     suppressUpdates,
@@ -158,6 +161,9 @@ export function createAutomatedRowGrouping({
             gridOptions.rowData = fixtureData;
         }
 
+        if (additionalContextMenuItems) {
+            gridOptions.getContextMenuItems = () => getAdditionalContextMenuItems(additionalContextMenuItems);
+        }
         gridOptions.onGridReady = () => {
             if (suppressUpdates) {
                 return;
