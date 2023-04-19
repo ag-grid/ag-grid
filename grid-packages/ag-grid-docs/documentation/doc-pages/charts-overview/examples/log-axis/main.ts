@@ -1,40 +1,50 @@
-import { getData } from "./data";
+import { AgCartesianChartOptions, AgChart } from "ag-charts-community"
+import { getData } from "./data"
 
-import { AgCartesianChartOptions, AgChart } from 'ag-charts-community'
+const formatter = new Intl.NumberFormat()
 
 const options: AgCartesianChartOptions = {
-  container: document.getElementById('myChart'),
+  container: document.getElementById("myChart"),
   data: getData(),
   title: {
-    text: 'World Population Over Time',
+    text: "World Population Over Time",
   },
   subtitle: {
-    text: 'log scale',
+    text: "log scale",
   },
   series: [
     {
-      type: 'line',
-      xKey: 'year',
-      yKey: 'population',
+      type: "line",
+      xKey: "year",
+      yKey: "population",
+      tooltip: {
+        renderer: params => {
+          return {
+            content: `${params.xValue} CE: ${formatter.format(
+              params.yValue ?? 0
+            )}`,
+          }
+        },
+      },
     },
   ],
   axes: [
     {
-      type: 'log',
-      position: 'left',
+      type: "log",
+      position: "left",
       title: {
-        text: 'Population',
+        text: "Population",
       },
       label: {
-        format: ',.0f',
+        format: ",.0f",
         fontSize: 10,
       },
     },
     {
-      type: 'number',
-      position: 'bottom',
+      type: "number",
+      position: "bottom",
       title: {
-        text: 'Year',
+        text: "Year",
       },
       label: {
         fontSize: 10,
@@ -50,16 +60,16 @@ var chart = AgChart.create(options)
 
 function useNumberAxis() {
   options.subtitle = {
-    text: 'linear scale',
+    text: "linear scale",
   }
   options.axes![0] = {
-    type: 'number',
-    position: 'left',
+    type: "number",
+    position: "left",
     title: {
-      text: 'Population',
+      text: "Population",
     },
     label: {
-      format: ',.0f',
+      format: ",.0f",
       fontSize: 10,
     },
   }
@@ -68,16 +78,16 @@ function useNumberAxis() {
 
 function useLogAxis() {
   options.subtitle = {
-    text: 'log scale',
+    text: "log scale",
   }
   options.axes![0] = {
-    type: 'log',
-    position: 'left',
+    type: "log",
+    position: "left",
     title: {
-      text: 'Population',
+      text: "Population",
     },
     label: {
-      format: ',.0f',
+      format: ",.0f",
       fontSize: 10,
     },
   }
