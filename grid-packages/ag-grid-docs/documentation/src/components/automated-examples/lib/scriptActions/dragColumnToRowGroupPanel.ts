@@ -40,7 +40,6 @@ export async function dragColumnToRowGroupPanel({
 
     const dropArea = agElementFinder.get('columnDropArea');
     const dropAreaY = dropArea?.getPos()?.y;
-    console.log({ dropArea, dropAreaY, pos: dropArea?.getPos() });
     const rowGroupPanelOffset = {
         x: 20,
         y: dropAreaY === undefined ? -50 : dropAreaY - fromPos.y,
