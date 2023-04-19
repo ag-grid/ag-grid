@@ -2,9 +2,8 @@
 title: "Row Selection"
 ---
 
-Select a row by clicking on it. Selecting a row will remove any previous selection unless you
-hold down <kbd>Ctrl</kbd> while clicking. Selecting a row and holding down <kbd>Shift</kbd>
-while clicking a second row will select the range.
+Select a row by clicking on it. Selecting a row will remove any previous selection unless you hold down <kbd>Ctrl</kbd> 
+while clicking. Selecting a row and holding down <kbd>Shift</kbd> while clicking a second row will select the range.
 
 Configure row selection with the following properties:
 
@@ -265,17 +264,17 @@ To select rows programmatically, use the `node.setSelected(params)` method.
 <api-documentation source='row-object/resources/methods.json' section='rowNodeMethods' names='["setSelected", "isSelected"]'></api-documentation>
 
 <snippet>
-|// set selected, keep any other selections
-|node.setSelected(true);
-|
-|// set selected, exclusively, remove any other selections
-|node.setSelected(true, true);
-|
-|// un-select
-|node.setSelected(false);
-|
-|// check status of node selection
-|const selected = node.isSelected();
+| // set selected, keep any other selections
+| node.setSelected(true);
+| 
+| // set selected, exclusively, remove any other selections
+| node.setSelected(true, true);
+| 
+| // un-select
+| node.setSelected(false);
+| 
+| // check status of node selection
+| const selected = node.isSelected();
 </snippet>
 
 The `isSelected()` method returns `true` if the node is selected, or `false` if it is not selected. If the node is a group node and the group selection is set to `'children'`, this will return `true` if all child (and grandchild) nodes are selected, `false` if all unselected, or `undefined` if a mixture.
@@ -289,11 +288,11 @@ The grid API has the following methods for selection:
 If you want to select only filtered-out row nodes, you could do this using the following:
 
 <snippet>
-// loop through each node when it is filtered out
-gridOptions.api.forEachNodeAfterFilter(node => {
-    // select the node
-    node.setSelected(true);
-});
+| // loop through each node when it is filtered out
+| gridOptions.api.forEachNodeAfterFilter(node => {
+|     // select the node
+|     node.setSelected(true);
+| });
 </snippet>
 
 ### Example: Using forEachNode
@@ -311,28 +310,28 @@ We need to provide a callback to the `navigateToNextCell` grid option to overrid
 <api-documentation source='grid-options/properties.json' section='nav' names='["navigateToNextCell"]'></api-documentation>
 
 <snippet>
-|const gridOptions = {
-|    navigateToNextCell: params => {
-|        const suggestedNextCell = params.nextCellPosition;
-|
-|        // this is some code
-|        const KEY_UP = 'ArrowUp';
-|        const KEY_DOWN = 'ArrowDown';
-|
-|        const noUpOrDownKeyPressed = params.key!==KEY_DOWN && params.key!==KEY_UP;
-|        if (noUpOrDownKeyPressed) {
-|            return suggestedNextCell;
-|        }
-|
-|        params.api.forEachNode(node => {
-|            if (node.rowIndex === suggestedNextCell.rowIndex) {
-|                node.setSelected(true);
-|            }
-|        });
-|
-|        return suggestedNextCell;
-|    },
-|}
+| const gridOptions = {
+|     navigateToNextCell: params => {
+|         const suggestedNextCell = params.nextCellPosition;
+| 
+|         // this is some code
+|         const KEY_UP = 'ArrowUp';
+|         const KEY_DOWN = 'ArrowDown';
+| 
+|         const noUpOrDownKeyPressed = params.key!==KEY_DOWN && params.key!==KEY_UP;
+|         if (noUpOrDownKeyPressed) {
+|             return suggestedNextCell;
+|         }
+| 
+|         params.api.forEachNode(node => {
+|             if (node.rowIndex === suggestedNextCell.rowIndex) {
+|                 node.setSelected(true);
+|             }
+|         });
+| 
+|         return suggestedNextCell;
+|     },
+| }
 </snippet>
 
 From the code above you can see that we iterate over each node and call the `setSelected()` method if it matches the current `rowIndex`.

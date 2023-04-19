@@ -230,17 +230,17 @@ To enable selection set `gridOptions.rowSelection` to 'single' or 'multiple' as 
 Click selection is supported with tree data. However when you are displaying tree data, clicking rows for selection is confusing as mouse clicks are also used for expanding / contracting rows. For this reason we recommend not using click selection and using checkbox selection instead.
 
 <snippet spaceBetweenProperties="true">
-|const gridOptions = {
-|    // don't have click select rows
-|    suppressRowClickSelection: true,
-|
-|    // have checkbox on the group column
-|    autoGroupColumnDef: {
-|        cellRendererParams: {
-|            checkbox: true,
-|        }
-|    }
-|}
+| const gridOptions = {
+|     // don't have click select rows
+|     suppressRowClickSelection: true,
+| 
+|     // have checkbox on the group column
+|     autoGroupColumnDef: {
+|         cellRendererParams: {
+|             checkbox: true,
+|         }
+|     }
+| }
 </snippet>
 
 ### Group Selection

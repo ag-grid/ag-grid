@@ -62,17 +62,17 @@ By the default, the Fill Handle can be dragged horizontally or vertically. If dr
 <api-documentation source='grid-api/api.json' section='selection' names='["setFillHandleDirection"]'></api-documentation>
 
 <snippet>
-const gridOptions = {
-    columnDefs: [
-        { field: 'country' },
-        { field: 'year' },
-        { field: 'sport' },
-        { field: 'total' }
-    ],
-    enableRangeSelection: true,
-    enableFillHandle: true,
-    fillHandleDirection: 'x' // Fill Handle can only be dragged horizontally
-}
+| const gridOptions = {
+|     columnDefs: [
+|         { field: 'country' },
+|         { field: 'year' },
+|         { field: 'sport' },
+|         { field: 'total' }
+|     ],
+|     enableRangeSelection: true,
+|     enableFillHandle: true,
+|     fillHandleDirection: 'x' // Fill Handle can only be dragged horizontally
+| }
 </snippet>
 
 <grid-example title='Fill Handle - Direction' name='fill-handle-direction' type='generated' options='{ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "range"] }'></grid-example>

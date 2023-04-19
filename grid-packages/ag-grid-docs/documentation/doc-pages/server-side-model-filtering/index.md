@@ -10,18 +10,18 @@ This section covers Filtering using the Server-Side Row Model (SSRM).
 Filtering is enabled in the grid via the `filter` column definition attribute.
 
 <snippet>
-|const gridOptions = {
-|    columnDefs: [
-|        // sets the 'text' filter
-|        { field: 'country', filter: 'agTextColumnFilter' },
-|
-|        // use the default 'set' filter
-|        { field: 'year', filter: true },
-|
-|        // no filter (unspecified)
-|        { field: 'sport' },
-|    ],
-|}
+| const gridOptions = {
+|     columnDefs: [
+|         // sets the 'text' filter
+|         { field: 'country', filter: 'agTextColumnFilter' },
+| 
+|         // use the default 'set' filter
+|         { field: 'year', filter: true },
+| 
+|         // no filter (unspecified)
+|         { field: 'sport' },
+|     ],
+| }
 </snippet>
 
 For more details on filtering configurations see the section on [Column Filtering](/filtering/).

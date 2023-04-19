@@ -87,10 +87,10 @@ When using selection where all selected rows may not have been loaded, it is ins
 The below snippet demonstrates how to set all nodes as selected, except for the row which has the ID `United States`, and the row with the ID `United States2004`.
 
 <snippet spaceBetweenProperties="true">
-gridOptions.api.setServerSideSelectionState({
-    selectAll: true,
-    toggledNodes: ['United States', 'United States2004'],
-});
+| gridOptions.api.setServerSideSelectionState({
+|     selectAll: true,
+|     toggledNodes: ['United States', 'United States2004'],
+| });
 </snippet>
 
 In the example below, note the following;
@@ -105,24 +105,24 @@ In the example below, note the following;
 The below snippet demonstrates how to set all nodes as selected, except for the row which has the ID `United States`, and its child row with the ID `United States2004`.
 
 <snippet spaceBetweenProperties="true">
-params.api.setServerSideSelectionState({
-    // this root level config can be used to determine a global select-all
-    selectAllChildren: true,
-    // all of the top level group nodes which do not conform with the select all value will have an entry here
-    // including indeterminate nodes
-    toggledNodes: [{
-        // as this is a group node with toggledNodes, this node will be marked as indeterminate
-        nodeId: 'United States',
-        // selectAllChildren can be used to determine whether this groups children are all selected
-        selectAllChildren: false,
-        toggledNodes: [{
-            // this group node has no toggledNodes, and so it will respect its own `selectAllChildren` property along
-            // with its descendants.
-            nodeId: 'United States2004',
-            selectAllChildren: true,
-        }],
-    }],
-});
+| params.api.setServerSideSelectionState({
+|     // this root level config can be used to determine a global select-all
+|     selectAllChildren: true,
+|     // all of the top level group nodes which do not conform with the select all value will have an entry here
+|     // including indeterminate nodes
+|     toggledNodes: [{
+|         // as this is a group node with toggledNodes, this node will be marked as indeterminate
+|         nodeId: 'United States',
+|         // selectAllChildren can be used to determine whether this groups children are all selected
+|         selectAllChildren: false,
+|         toggledNodes: [{
+|             // this group node has no toggledNodes, and so it will respect its own `selectAllChildren` property along
+|             // with its descendants.
+|             nodeId: 'United States2004',
+|             selectAllChildren: true,
+|         }],
+|     }],
+| });
 </snippet>
 
 In the example below, note the following;

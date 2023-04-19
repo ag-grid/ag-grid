@@ -54,22 +54,21 @@ interface IFiltersToolPanel {
 The code snippet below shows how to expand and collapse filter groups using the Filters Tool Panel instance:
 
 <snippet>
-|// lookup Filters Tool Panel instance by id, in this case using the default filter instance id
-|const filtersToolPanel = gridOptions.api.getToolPanelInstance('filters');
-|
-|// expands all filter groups in the Filters Tool Panel
-|filtersToolPanel.expandFilterGroups();
-|
-|// collapses all filter groups in the Filters Tool Panel
-|filtersToolPanel.collapseFilterGroups();
-|
-|// expands the 'athlete' and 'competition' filter groups in the Filters Tool Panel
-|filtersToolPanel.expandFilterGroups(['athleteGroupId', 'competitionGroupId']);
-|
-|// collapses the 'competition' filter group in the Filters Tool Panel
-|filtersToolPanel.collapseFilters(['competitionGroupId']);
+| // lookup Filters Tool Panel instance by id, in this case using the default filter instance id
+| const filtersToolPanel = gridOptions.api.getToolPanelInstance('filters');
+| 
+| // expands all filter groups in the Filters Tool Panel
+| filtersToolPanel.expandFilterGroups();
+| 
+| // collapses all filter groups in the Filters Tool Panel
+| filtersToolPanel.collapseFilterGroups();
+| 
+| // expands the 'athlete' and 'competition' filter groups in the Filters Tool Panel
+| filtersToolPanel.expandFilterGroups(['athleteGroupId', 'competitionGroupId']);
+| 
+| // collapses the 'competition' filter group in the Filters Tool Panel
+| filtersToolPanel.collapseFilters(['competitionGroupId']);
 </snippet>
-
 
 Notice in the snippet above that it's possible to target individual filter groups by supplying `groupId`s.
 
@@ -98,20 +97,20 @@ interface IFiltersToolPanel {
 The code snippet below shows how to expand and collapse filters using the Filters Tool Panel instance:
 
 <snippet>
-|// lookup Filters Tool Panel instance by id, in this case using the default filter instance id
-|const filtersToolPanel = gridOptions.api.getToolPanelInstance('filters');
-|
-|// expands all filters in the Filters Tool Panel
-|filtersToolPanel.expandFilters();
-|
-|// collapses all filters in the Filters Tool Panel
-|filtersToolPanel.collapseFilters();
-|
-|// expands 'year' and 'sport' filters in the Filters Tool Panel
-|filtersToolPanel.expandFilters(['year', 'sport']);
-|
-|// collapses the 'year' filter in the Filters Tool Panel
-|filtersToolPanel.expandFilters(['year']);
+| // lookup Filters Tool Panel instance by id, in this case using the default filter instance id
+| const filtersToolPanel = gridOptions.api.getToolPanelInstance('filters');
+| 
+| // expands all filters in the Filters Tool Panel
+| filtersToolPanel.expandFilters();
+| 
+| // collapses all filters in the Filters Tool Panel
+| filtersToolPanel.collapseFilters();
+| 
+| // expands 'year' and 'sport' filters in the Filters Tool Panel
+| filtersToolPanel.expandFilters(['year', 'sport']);
+| 
+| // collapses the 'year' filter in the Filters Tool Panel
+| filtersToolPanel.expandFilters(['year']);
 </snippet>
 
 
@@ -154,19 +153,19 @@ const gridOptions = {
 </snippet>
 
 <snippet>
-|// lookup Filters Tool Panel instance by id, in this case using the default columns instance id
-|const filtersToolPanel = gridOptions.api.getToolPanelInstance('filters');
-|
-|// set custom Filters Tool Panel layout
-|filtersToolPanel.setFilterLayout([
-|    {
-|        headerName: 'Group 1', // group doesn't appear in grid
-|        children: [
-|            { field: 'c' }, // custom column order with column "b" omitted
-|            { field: 'a' }
-|        ]
-|    }
-|]);
+| // lookup Filters Tool Panel instance by id, in this case using the default columns instance id
+| const filtersToolPanel = gridOptions.api.getToolPanelInstance('filters');
+| 
+| // set custom Filters Tool Panel layout
+| filtersToolPanel.setFilterLayout([
+|     {
+|         headerName: 'Group 1', // group doesn't appear in grid
+|         children: [
+|             { field: 'c' }, // custom column order with column "b" omitted
+|             { field: 'a' }
+|         ]
+|     }
+| ]);
 </snippet>
 
 Notice from the snippet above that it's possible to define groups in the tool panel that don't exist in the grid. Also note that filters can be omitted or positioned in a different order however note that all referenced columns (that contain filters) must already exist in the grid.
@@ -176,7 +175,6 @@ Notice from the snippet above that it's possible to define groups in the tool pa
 | tool panel params to prevent users changing the layout when moving columns in the grid.
 
 The example below shows two custom layouts for the Filters Tool Panel. Note the following:
-
 
 - When the grid is initialised the filter layout in the Filters Tool Panel matches what is supplied to the grid in `gridOptions.columnDefs`.
 - Clicking **Custom Sort Layout** invokes `setFilterLayout(colDefs)` with a list of column definitions arranged in ascending order.

@@ -116,7 +116,7 @@ The code snippet below demonstrates each of these method types.
 |             field: 'year',
 |             cellRenderer: params => {
 |                 // put the value in bold
-|                 return &lt;&gt;Value is &lt;b&gt; {params.value} &lt;/b&gt; &lt;/&gt;;
+|                 // return &lt;&gt;Value is &lt;b&gt; {params.value} &lt;/b&gt; &lt;/&gt;;
 |             }
 |         }
 |     ]
