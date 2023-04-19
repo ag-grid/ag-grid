@@ -131,7 +131,7 @@ interface CreateScriptActionSequenceParams {
     defaultEasing?: EasingFunction;
 }
 
-export type RunScriptState = 'inactive' | 'stopped' | 'stopping' | 'pausing' | 'paused' | 'playing';
+export type RunScriptState = 'inactive' | 'stopped' | 'stopping' | 'errored' | 'pausing' | 'paused' | 'playing';
 
 function createScriptAction({
     containerEl,
@@ -345,6 +345,7 @@ export function createScriptRunner({
                     shouldCancel = true;
                 } else if (
                     runScriptState === 'stopped' ||
+                    runScriptState === 'errored' ||
                     runScriptState === 'paused' ||
                     runScriptState === 'inactive'
                 ) {
@@ -379,7 +380,8 @@ export function createScriptRunner({
                 });
 
                 // Error in action, stop the script
-                updateState('stopping');
+                updateState('errored');
+                cleanUp();
             },
         });
 
@@ -390,7 +392,11 @@ export function createScriptRunner({
                     startActionSequence();
                 } else if (runScriptState === 'pausing') {
                     updateState('paused');
-                } else if (runScriptState === 'paused' || runScriptState === 'inactive') {
+                } else if (
+                    runScriptState === 'paused' ||
+                    runScriptState === 'inactive' ||
+                    runScriptState === 'errored'
+                ) {
                     // Do nothing
                 } else {
                     updateState('stopped');
@@ -412,6 +418,10 @@ export function createScriptRunner({
     };
 
     const stop: ScriptRunner['stop'] = () => {
+        if (runScriptState === 'errored') {
+            return;
+        }
+
         // Initiate stop
         updateState('stopping');
         cleanUp();

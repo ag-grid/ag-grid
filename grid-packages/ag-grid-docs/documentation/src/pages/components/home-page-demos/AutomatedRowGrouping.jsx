@@ -89,6 +89,12 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
             suppressUpdates: useStaticData,
             useStaticData,
             runOnce,
+            onStateChange(state) {
+                if (state === 'errored') {
+                    setAllScriptEnabledVars(false);
+                    automatedExampleManager.errored(exampleId);
+                }
+            },
             onGridReady() {
                 setGridIsReady(true);
             },

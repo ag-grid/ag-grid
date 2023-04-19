@@ -137,7 +137,7 @@ function createDebugPanelSection({
         pausedStateEl.innerHTML = pausedState ? pausedState : '';
     };
     const updateButton = (state: RunScriptState) => {
-        if (state === 'stopping' || state === 'stopped') {
+        if (state === 'stopping' || state === 'stopped' || state === 'errored') {
             runnerButtonEl.innerHTML = 'Play';
             runnerButtonEl.disabled = false;
         } else if (state === 'playing') {

@@ -147,6 +147,30 @@ export function createAutomatedExampleManager({ debugCanvasClassname, debugPanel
         }
     };
 
+    const errored = (id: string) => {
+        const automatedExample = automatedExamples[id];
+
+        if (!automatedExample) {
+            return;
+        }
+
+        if (automatedExampleState === 'idle') {
+            // Nothing to do, it's already idle
+        } else if (automatedExampleState === 'playingRowGrouping') {
+            if (id === ROW_GROUPING_ID) {
+                updateState('idle');
+            } else if (id === INTEGRATED_CHARTS_ID) {
+                // State stays the same
+            }
+        } else if (automatedExampleState === 'playingIntegratedCharts') {
+            if (id === ROW_GROUPING_ID) {
+                // State stays the same
+            } else if (id === INTEGRATED_CHARTS_ID) {
+                updateState('idle');
+            }
+        }
+    };
+
     const setEnabled = ({ id, isEnabled }: { id: string; isEnabled: boolean }) => {
         automatedExamplesEnabled[id] = isEnabled;
     };
@@ -172,6 +196,7 @@ export function createAutomatedExampleManager({ debugCanvasClassname, debugPanel
         start,
         stop,
         inactive,
+        errored,
         setEnabled,
         getEnabled,
         setDebugEnabled,
