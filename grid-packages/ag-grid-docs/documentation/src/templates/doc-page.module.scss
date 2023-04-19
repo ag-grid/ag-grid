@@ -85,6 +85,12 @@
         }
     }
 
+    // Required because of docs .ag-styles <div> wrapping
+    li ol,
+    li ul {
+        padding-left: 1.125em;
+    }
+
     :global(.docs-header-icon) {
         position: relative;
         padding-left: 0;
