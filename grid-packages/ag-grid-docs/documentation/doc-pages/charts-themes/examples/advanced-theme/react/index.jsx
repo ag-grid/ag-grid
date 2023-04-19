@@ -214,6 +214,4 @@ root.render(
     <div id="chart2">
       <Chart2 />
     </div>
-  </div>,
-  document.querySelector("#root")
-)
+  </div>);
