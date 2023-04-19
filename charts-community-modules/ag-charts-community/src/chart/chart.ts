@@ -946,8 +946,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
         // Handle node highlighting and tooltip toggling when pointer within `tooltip.range`
         this.handlePointerTooltip(event, disablePointer);
 
-        // Handle mouse cursor when pointer withing `series[].nodeClickRange`
-        this.handlePointerNodeCursor(event);
+        // Handle node highlighting and mouse cursor when pointer withing `series[].nodeClickRange`
+        this.handlePointerNode(event);
     }
 
     protected handlePointerTooltip(
@@ -1002,13 +1002,14 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
     }
 
-    protected handlePointerNodeCursor(event: InteractionEvent<'hover'>) {
+    protected handlePointerNode(event: InteractionEvent<'hover'>) {
         const found = this.checkSeriesNodeRange(event, (series: Series, datum: any) => {
             if (series.hasEventListener('nodeClick') || series.hasEventListener('nodeDoubleClick')) {
                 this.cursorManager.updateCursor('chart', 'pointer');
-                if (this.highlight.range === 'node') {
-                    this.highlightManager.updateHighlight(this.id, datum);
-                }
+            }
+
+            if (this.highlight.range === 'node') {
+                this.highlightManager.updateHighlight(this.id, datum);
             }
         });
 
@@ -1059,13 +1060,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         event: InteractionEvent<'click' | 'dblclick' | 'hover'>,
         callback: (series: Series, datum: any) => void
     ): boolean {
-        // If the tooltip picking uses `nearest` then, irregardless of the range of each series, the same node would
-        // be picked, so we can shortcut to using the last pick. Otherwise, we need to pick a node distinctly
-        // from the tooltip picking in case the node click range is greater than the tooltip range.
-        const nearestNode =
-            this.tooltip.range === 'nearest' && this.lastPick !== undefined
-                ? this.lastPick
-                : this.pickSeriesNode({ x: event.offsetX, y: event.offsetY }, false);
+        const nearestNode = this.pickSeriesNode({ x: event.offsetX, y: event.offsetY }, false);
 
         const datum = nearestNode?.datum;
         const nodeClickRange = datum?.series.nodeClickRange;
