@@ -1,5 +1,6 @@
 import { Group } from '@tweenjs/tween.js';
 import { AgElementFinder } from '../agElements';
+import { AG_MENU_OPTION_ACTIVE_CLASSNAME } from '../constants';
 import { Mouse } from '../createMouse';
 import { findElementWithInnerText } from '../dom';
 import { ScriptDebugger } from '../scriptDebugger';
@@ -66,6 +67,12 @@ export async function clickOnContextMenuItem({
             throw new Error(`Cannot find menu item: ${menuItemName}`);
         }
 
+        // Remove all active highlights
+        const menuList = menuItemEl.parentElement;
+        menuList?.querySelectorAll(`.${AG_MENU_OPTION_ACTIVE_CLASSNAME}`).forEach((el) => {
+            el.classList.remove(AG_MENU_OPTION_ACTIVE_CLASSNAME);
+        });
+
         await createMoveMouse({
             mouse,
             toPos: coords,
@@ -75,6 +82,8 @@ export async function clickOnContextMenuItem({
             easing,
             scriptDebugger,
         });
+        // Add active highlight
+        menuItemEl.classList.add(AG_MENU_OPTION_ACTIVE_CLASSNAME);
 
         if (isLastMenuItem) {
             mouse.click();
@@ -88,6 +97,6 @@ export async function clickOnContextMenuItem({
             menuItemEl.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
         }
 
-        await waitFor(500);
+        await waitFor(200);
     }
 }

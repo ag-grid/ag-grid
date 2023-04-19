@@ -970,6 +970,13 @@ export class Legend {
         if (this.visible && this.enabled && this.data.length) {
             const legendPadding = this.spacing;
             newShrinkRect.shrink(legendPadding, this.position);
+
+            const legendPositionedBBox = legendBBox.clone();
+            legendPositionedBBox.x += this.translationX;
+            legendPositionedBBox.y += this.translationY;
+            this.tooltipManager.updateExclusiveRect(this.id, legendPositionedBBox);
+        } else {
+            this.tooltipManager.updateExclusiveRect(this.id);
         }
 
         return { shrinkRect: newShrinkRect };

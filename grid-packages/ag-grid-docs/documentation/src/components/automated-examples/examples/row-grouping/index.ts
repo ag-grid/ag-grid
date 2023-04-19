@@ -172,7 +172,8 @@ export function createAutomatedRowGrouping({
                 containerEl: gridDiv,
             });
 
-            const mouse = createMouse({ containerEl: gridDiv, mouseMaskClassname });
+            // Add it to the body, so it can sit on top of drag and drop target
+            const mouse = createMouse({ containerEl: document.body, mouseMaskClassname });
             const tweenGroup = new Group();
 
             if (scriptRunner) {

@@ -5,18 +5,18 @@ enterprise: true
 
 The **Filters Tool Panel** allows accessing the grid's filters without needing to open up the column menu.
 
-The example below shows the filters tool panel. The following can be noted:
+The example below shows the Filters Tool Panel. The following can be noted:
 
-- Columns Athlete, Age, Country, Year and Date appear in the filter tool panel as they have filters.
-- Columns Gold, Silver, Bronze and Total do not appear in the filter tool panel as they have no filters.
-- Clicking on a column in the filter tool panel will show the filter below the column name. Clicking a second time will hide the filter again.
+- Columns Athlete, Age, Country, Year and Date appear in the Filters Tool Panel as they have filters.
+- Columns Gold, Silver, Bronze and Total do not appear in the Filters Tool Panel as they have no filters.
+- Clicking on a column in the Filters Tool Panel will show the filter below the column name. Clicking a second time will hide the filter again.
 - Columns with filters active will have the filter icon appear beside the filter name in the tool panel.
 
-<grid-example title='Filter Tool Panel' name='simple' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "menu", "setfilter", "filterpanel"]}'></grid-example> 
+<grid-example title='Filters Tool Panel' name='simple' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "menu", "setfilter", "filterpanel"]}'></grid-example> 
 
 ## Suppress Options
 
-It is possible to remove items from the Filters Tool Panel. Items are suppressed by setting one or more of the following `toolPanelParams` whenever you are using the agFiltersToolPanel component properties to `true`:
+It is possible to remove items from the Filters Tool Panel. Items are suppressed by setting one or more of the following `toolPanelParams` to `true` when you are using the `agFiltersToolPanel` component:
 
 <interface-documentation interfaceName='ToolPanelFiltersCompParams' exclude='["api", "columnApi"]' config='{"overrideBottomMargin":"1rem"}' ></interface-documentation>
 
@@ -182,8 +182,3 @@ The example below shows two custom layouts for the Filters Tool Panel. Note the 
 - Moving columns in the grid won't affect the custom layouts as `suppressSyncLayoutWithGrid` is enabled.
 
 <grid-example title='Custom Filters Layout' name='custom-layout' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "setfilter", "filterpanel"] }'></grid-example>
-
-## Next Up
-
-Now that we covered the provided Tool Panels, learn how to create [Custom Tool Panel Components](/component-tool-panel/).
-
