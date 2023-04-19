@@ -68,7 +68,7 @@ If you have multiple ranges selected (by holding down <kbd>Ctrl</kbd> while drag
 
 If the cell does not contain a simple number value, then it will not be included in average, min max or sum, however it will still be included in count.
 
-In the grid below, select a range by dragging the mouse over cells and notice the status bar showing the aggregation values as you drag.
+In the grid below, select a range by dragging the mouse over cells and notice the Status Bar showing the aggregation values as you drag.
 
 <grid-example title='Status Bar' name='status-bar' type='generated' options='{ "enterprise": true, "modules": ["clientside", "statusbar", "range"] }'></grid-example>
 

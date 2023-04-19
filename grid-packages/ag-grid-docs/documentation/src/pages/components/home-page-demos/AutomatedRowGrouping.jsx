@@ -10,7 +10,7 @@ import { OverlayButton } from '../../../components/automated-examples/OverlayBut
 import { ToggleAutomatedExampleButton } from '../../../components/automated-examples/ToggleAutomatedExampleButton';
 import { UpdateSpeedSlider } from '../../../components/automated-examples/UpdateSpeedSlider';
 import LogoMark from '../../../components/LogoMark';
-import { isProductionBuild, localPrefix } from '../../../utils/consts';
+import { hostPrefix, isProductionBuild, localPrefix } from '../../../utils/consts';
 import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
 import styles from './AutomatedRowGrouping.module.scss';
 import FeaturesList from './FeaturesList';
@@ -89,6 +89,16 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
             suppressUpdates: useStaticData,
             useStaticData,
             runOnce,
+            additionalContextMenuItems: [
+                {
+                    name: 'Replay Demo',
+                    action: () => {
+                        setAllScriptEnabledVars(true);
+                        automatedExampleManager.start(exampleId);
+                    },
+                    icon: `<img src="${hostPrefix}/images/homepage/replay-demo-icon.svg" />`,
+                },
+            ],
             onStateChange(state) {
                 if (state === 'errored') {
                     setAllScriptEnabledVars(false);

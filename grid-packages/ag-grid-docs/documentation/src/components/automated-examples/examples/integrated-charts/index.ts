@@ -6,12 +6,13 @@
 // to prevent AG Grid from loading the code twice
 
 import { Easing, Group } from '@tweenjs/tween.js';
-import { ColDef, GridOptions } from 'ag-grid-community';
+import { ColDef, GridOptions, MenuItemDef } from 'ag-grid-community';
 import { COUNTRY_CODES } from '../../data/constants';
 import { createPeopleData } from '../../data/createPeopleData';
 import { INTEGRATED_CHARTS_ID } from '../../lib/constants';
 import { createMouse } from '../../lib/createMouse';
 import { isInViewport } from '../../lib/dom';
+import { getAdditionalContextMenuItems } from '../../lib/getAdditionalContextMenuItems';
 import { ScriptDebuggerManager } from '../../lib/scriptDebugger';
 import { RunScriptState, ScriptRunner } from '../../lib/scriptRunner';
 import { AutomatedExample } from '../../types';
@@ -23,6 +24,7 @@ let restartScriptTimeout;
 interface CreateAutomatedIntegratedChartsParams {
     gridClassname: string;
     mouseMaskClassname: string;
+    additionalContextMenuItems?: (string | MenuItemDef)[];
     onStateChange?: (state: RunScriptState) => void;
     onGridReady?: () => void;
     suppressUpdates?: boolean;
@@ -111,6 +113,7 @@ const gridOptions: GridOptions = {
 export function createAutomatedIntegratedCharts({
     gridClassname,
     mouseMaskClassname,
+    additionalContextMenuItems,
     onStateChange,
     onGridReady,
     suppressUpdates,
@@ -128,6 +131,11 @@ export function createAutomatedIntegratedCharts({
         }
 
         gridOptions.rowData = createPeopleData({ randomize: !suppressUpdates });
+
+        if (additionalContextMenuItems) {
+            gridOptions.getContextMenuItems = () => getAdditionalContextMenuItems(additionalContextMenuItems);
+        }
+
         gridOptions.onGridReady = () => {
             if (suppressUpdates) {
                 return;
