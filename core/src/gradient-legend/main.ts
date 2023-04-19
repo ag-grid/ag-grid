@@ -7,13 +7,13 @@ export const GradientLegendModule: _ModuleSupport.LegendModule = {
     packageType: 'enterprise',
     chartTypes: ['cartesian', 'polar', 'hierarchy'],
     initialiseModule(ctx) {
-        ctx.addFactory((ctx) => new GradientLegend(ctx));
+        ctx.legendFactory.add((ctx) => new GradientLegend(ctx));
 
         return {
             instance: {
                 update() {},
                 destroy: () => {
-                    ctx.deleteFactory();
+                    ctx.legendFactory.delete();
                 },
             },
         };
