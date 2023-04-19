@@ -15,7 +15,6 @@ import {
     AgChartInteractionRange,
     AgTooltipPositionType,
 } from '../agChartOptions';
-import { DEFAULT_TOOLTIP_CLASS } from '../tooltip/tooltip';
 import { CHART_TYPES } from '../chartTypes';
 
 const palette: AgChartThemePalette = {
@@ -307,7 +306,6 @@ export class ChartTheme {
                 enabled: true,
                 range: 'nearest' as AgChartInteractionRange,
                 delay: 0,
-                class: DEFAULT_TOOLTIP_CLASS,
             },
             listeners: {},
         };
