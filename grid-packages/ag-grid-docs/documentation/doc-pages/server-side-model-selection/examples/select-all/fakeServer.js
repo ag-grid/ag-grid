@@ -154,7 +154,7 @@ function FakeServer(allData) {
         if (isDoingGrouping(rowGroupCols, groupKeys)) {
             var rowGroupCol = rowGroupCols[groupKeys.length];
 
-            return ' GROUP BY ' + rowGroupCol.id;
+            return ' GROUP BY ' + rowGroupCol.id + ' HAVING count(*) > 0';
         }
 
         return '';
