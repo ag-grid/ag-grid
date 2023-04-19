@@ -22,7 +22,10 @@ $z-index-splash-contents: 10;
         transform: scale(0.5);
         border-radius: calc(var(--border-radius) * 2);
         overflow: hidden;
-        pointer-events: none;
+
+        :global(.overlay-button) {
+            cursor: default;
+        }
     }
 
     @media screen and (min-width: ds.$breakpoint-automated-row-grouping-medium) {
@@ -290,6 +293,11 @@ $z-index-splash-contents: 10;
 
     // Start off hidden
     opacity: 0;
+
+    @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
+        // Hide mouse when automated example is not interactive
+        display: none;
+    }
 
     :global(.mouse) {
         position: absolute;

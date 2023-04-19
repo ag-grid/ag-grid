@@ -472,7 +472,11 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
         );
         // const normalisedRange = [-normaliseTo, normaliseTo];
         const normalise = (val: number, extent: number) => {
-            return (val * normaliseTo) / extent;
+            const result = (val * normaliseTo) / extent;
+            if (result >= 0) {
+                return Math.min(normaliseTo, result);
+            }
+            return Math.max(-normaliseTo, result);
         };
 
         for (let sumIdx = 0; sumIdx < sumDefs.length; sumIdx++) {

@@ -38,7 +38,7 @@ export const OverlayButton: FunctionComponent<Props> = ({
 
     return (
         <button
-            className={classNames('button-style-none', styles.overlay, {
+            className={classNames('button-style-none', 'overlay-button', styles.overlay, {
                 [styles.hide]: isHidden,
             })}
             ref={clickTarget}
