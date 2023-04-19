@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { createAutomatedExampleManager } from '../components/automated-examples/lib/createAutomatedExampleManager';
 import Footer from '../components/footer/Footer';
 import FrameworkSelector from '../components/FrameworkSelector';
@@ -16,12 +16,15 @@ const AutomatedIntegratedCharts = React.lazy(() => import('./components/home-pag
 const AutomatedRowGrouping = React.lazy(() => import('./components/home-page-demos/AutomatedRowGrouping'));
 const HeroGrid = React.lazy(() => import('./components/home-page-demos/HeroGrid'));
 
-const automatedExampleManager = createAutomatedExampleManager({
-    debugCanvasClassname: styles.automatedExampleDebugCanvas,
-    debugPanelClassname: styles.automatedExampleDebugPanel,
-});
-
 const Default = () => {
+    const automatedExampleManager = useMemo(
+        () =>
+            createAutomatedExampleManager({
+                debugCanvasClassname: styles.automatedExampleDebugCanvas,
+                debugPanelClassname: styles.automatedExampleDebugPanel,
+            }),
+        []
+    );
     const frameworksData = [
         {
             name: 'javascript',
