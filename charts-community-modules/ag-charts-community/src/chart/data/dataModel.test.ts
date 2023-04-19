@@ -24,55 +24,96 @@ describe('DataModel', () => {
         });
 
         describe('property tests', () => {
-            const dataModel = new DataModel<any, any>({
-                props: [
-                    { property: 'kp', type: 'key', valueType: 'range' },
-                    { property: 'vp1', type: 'value', valueType: 'range' },
-                    { property: 'vp2', type: 'value', valueType: 'range' },
-                    SMALLEST_KEY_INTERVAL,
-                ],
+            describe('simple data', () => {
+                const dataModel = new DataModel<any, any>({
+                    props: [
+                        { property: 'kp', type: 'key', valueType: 'range' },
+                        { property: 'vp1', type: 'value', valueType: 'range' },
+                        { property: 'vp2', type: 'value', valueType: 'range' },
+                        SMALLEST_KEY_INTERVAL,
+                    ],
+                });
+                const data = [
+                    { kp: 2, vp1: 5, vp2: 7 },
+                    { kp: 3, vp1: 1, vp2: 2 },
+                    { kp: 4, vp1: 6, vp2: 9 },
+                ];
+
+                it('should extract the configured keys', () => {
+                    const result = dataModel.processData(data);
+
+                    expect(result?.type).toEqual('ungrouped');
+                    expect(result?.data.length).toEqual(3);
+                    expect(result?.data[0].keys).toEqual([2]);
+                    expect(result?.data[1].keys).toEqual([3]);
+                    expect(result?.data[2].keys).toEqual([4]);
+                });
+
+                it('should extract the configured values', () => {
+                    const result = dataModel.processData(data);
+
+                    expect(result?.type).toEqual('ungrouped');
+                    expect(result?.data.length).toEqual(3);
+                    expect(result?.data[0].values).toEqual([5, 7]);
+                    expect(result?.data[1].values).toEqual([1, 2]);
+                    expect(result?.data[2].values).toEqual([6, 9]);
+                });
+
+                it('should calculate the domains', () => {
+                    const result = dataModel.processData(data);
+
+                    expect(result?.type).toEqual('ungrouped');
+                    expect(result?.domain.keys).toEqual([[2, 4]]);
+                    expect(result?.domain.values).toEqual([
+                        [1, 6],
+                        [2, 9],
+                    ]);
+                });
+
+                it('should calculate smallest X interval', () => {
+                    const result = dataModel.processData(data);
+
+                    expect(result?.reduced?.[SMALLEST_KEY_INTERVAL.property]).toEqual(1);
+                });
             });
-            const data = [
-                { kp: 2, vp1: 5, vp2: 7 },
-                { kp: 3, vp1: 1, vp2: 2 },
-                { kp: 4, vp1: 6, vp2: 9 },
-            ];
 
-            it('should extract the configured keys', () => {
-                const result = dataModel.processData(data);
+            describe('category data', () => {
+                const dataModel = new DataModel<any, any, false>({
+                    props: [
+                        { property: 'kp', type: 'key', valueType: 'category' },
+                        { property: 'vp1', type: 'value', valueType: 'range' },
+                        { property: 'vp2', type: 'value', valueType: 'range' },
+                    ],
+                    groupByKeys: false,
+                });
+                const data = [
+                    { kp: 'Q1', vp1: 5, vp2: 7 },
+                    { kp: 'Q1', vp1: 1, vp2: 2 },
+                    { kp: 'Q2', vp1: 6, vp2: 9 },
+                    { kp: 'Q2', vp1: 6, vp2: 9 },
+                ];
 
-                expect(result.type).toEqual('ungrouped');
-                expect(result.data.length).toEqual(3);
-                expect(result.data[0].keys).toEqual([2]);
-                expect(result.data[1].keys).toEqual([3]);
-                expect(result.data[2].keys).toEqual([4]);
-            });
+                it('should extract the configured keys', () => {
+                    const result = dataModel.processData(data);
 
-            it('should extract the configured values', () => {
-                const result = dataModel.processData(data);
+                    expect(result?.type).toEqual('ungrouped');
+                    expect(result?.data.length).toEqual(4);
+                    expect(result?.data[0].keys).toEqual(['Q1']);
+                    expect(result?.data[1].keys).toEqual(['Q1']);
+                    expect(result?.data[2].keys).toEqual(['Q2']);
+                    expect(result?.data[3].keys).toEqual(['Q2']);
+                });
 
-                expect(result.type).toEqual('ungrouped');
-                expect(result.data.length).toEqual(3);
-                expect(result.data[0].values).toEqual([5, 7]);
-                expect(result.data[1].values).toEqual([1, 2]);
-                expect(result.data[2].values).toEqual([6, 9]);
-            });
+                it('should extract the configured values', () => {
+                    const result = dataModel.processData(data);
 
-            it('should calculate the domains', () => {
-                const result = dataModel.processData(data);
-
-                expect(result.type).toEqual('ungrouped');
-                expect(result.domain.keys).toEqual([[2, 4]]);
-                expect(result.domain.values).toEqual([
-                    [1, 6],
-                    [2, 9],
-                ]);
-            });
-
-            it('should calculate smallest X interval', () => {
-                const result = dataModel.processData(data);
-
-                expect(result.reduced?.[SMALLEST_KEY_INTERVAL.property]).toEqual(1);
+                    expect(result?.type).toEqual('ungrouped');
+                    expect(result?.data.length).toEqual(4);
+                    expect(result?.data[0].values).toEqual([5, 7]);
+                    expect(result?.data[1].values).toEqual([1, 2]);
+                    expect(result?.data[2].values).toEqual([6, 9]);
+                    expect(result?.data[3].values).toEqual([6, 9]);
+                });
             });
         });
     });
@@ -113,22 +154,22 @@ describe('DataModel', () => {
             it('should extract the configured keys', () => {
                 const result = dataModel.processData(data);
 
-                expect(result.type).toEqual('grouped');
-                expect(result.data.length).toEqual(2);
-                expect(result.data[0].keys).toEqual(['Q1']);
-                expect(result.data[1].keys).toEqual(['Q2']);
+                expect(result?.type).toEqual('grouped');
+                expect(result?.data.length).toEqual(2);
+                expect(result?.data[0].keys).toEqual(['Q1']);
+                expect(result?.data[1].keys).toEqual(['Q2']);
             });
 
             it('should extract the configured values', () => {
                 const result = dataModel.processData(data);
 
-                expect(result.type).toEqual('grouped');
-                expect(result.data.length).toEqual(2);
-                expect(result.data[0].values).toEqual([
+                expect(result?.type).toEqual('grouped');
+                expect(result?.data.length).toEqual(2);
+                expect(result?.data[0].values).toEqual([
                     [5, 7],
                     [1, 2],
                 ]);
-                expect(result.data[1].values).toEqual([
+                expect(result?.data[1].values).toEqual([
                     [6, 9],
                     [6, 9],
                 ]);
@@ -137,9 +178,9 @@ describe('DataModel', () => {
             it('should calculate the domains', () => {
                 const result = dataModel.processData(data);
 
-                expect(result.type).toEqual('grouped');
-                expect(result.domain.keys).toEqual([['Q1', 'Q2']]);
-                expect(result.domain.values).toEqual([
+                expect(result?.type).toEqual('grouped');
+                expect(result?.domain.keys).toEqual([['Q1', 'Q2']]);
+                expect(result?.domain.values).toEqual([
                     [1, 6],
                     [2, 9],
                 ]);
@@ -148,8 +189,8 @@ describe('DataModel', () => {
             it('should not include sums', () => {
                 const result = dataModel.processData(data);
 
-                expect(result.data.filter((g) => g.sumValues != null)).toEqual([]);
-                expect(result.domain.sumValues).toBeUndefined();
+                expect(result?.data.filter((g) => g.sumValues != null)).toEqual([]);
+                expect(result?.domain.sumValues).toBeUndefined();
             });
 
             it('should only sum per data-item', () => {
@@ -171,9 +212,62 @@ describe('DataModel', () => {
 
                 const result = dataModel.processData(data);
 
-                expect(result.domain.sumValues).toEqual([[0, 15]]);
-                expect(result.data[0].sumValues).toEqual([[0, 12]]);
+                expect(result?.domain.sumValues).toEqual([[0, 15]]);
+                expect(result?.data[0].sumValues).toEqual([[0, 12]]);
                 expect(result.data[1].sumValues).toEqual([[0, 15]]);
+            });
+        });
+    });
+
+    describe('grouped processing - category objects', () => {
+        describe('property tests', () => {
+            const dataModel = new DataModel<any, any, true>({
+                props: [
+                    { property: 'kp', type: 'key', valueType: 'category' },
+                    { property: 'vp1', type: 'value', valueType: 'range' },
+                    { property: 'vp2', type: 'value', valueType: 'range' },
+                ],
+                groupByKeys: true,
+            });
+            const data = [
+                { kp: { id: 1, q: 'Q1' }, vp1: 5, vp2: 7 },
+                { kp: { id: 2, q: 'Q1' }, vp1: 1, vp2: 2 },
+                { kp: { id: 3, q: 'Q2' }, vp1: 6, vp2: 9 },
+                { kp: { id: 4, q: 'Q2' }, vp1: 6, vp2: 9 },
+            ];
+
+            it('should extract the configured keys', () => {
+                const result = dataModel.processData(data);
+
+                expect(result?.type).toEqual('grouped');
+                expect(result?.data.length).toEqual(4);
+                expect(result?.data.map((d) => d.keys[0])).toEqual(data.map((d) => d.kp));
+            });
+
+            it('should extract the configured values', () => {
+                const result = dataModel.processData(data);
+
+                expect(result?.type).toEqual('grouped');
+                expect(result?.data.length).toEqual(4);
+                expect(result?.data.map((d) => d.values)).toEqual(data.map((d) => [[d.vp1, d.vp2]]));
+            });
+
+            it('should calculate the domains', () => {
+                const result = dataModel.processData(data);
+
+                expect(result?.type).toEqual('grouped');
+                expect(result?.domain.keys[0]).toEqual(data.map((d) => d.kp));
+                expect(result?.domain.values).toEqual([
+                    [1, 6],
+                    [2, 9],
+                ]);
+            });
+
+            it('should not include sums', () => {
+                const result = dataModel.processData(data);
+
+                expect(result?.data.filter((g) => g.sumValues != null)).toEqual([]);
+                expect(result?.domain.sumValues).toBeUndefined();
             });
         });
     });
@@ -199,31 +293,31 @@ describe('DataModel', () => {
             it('should extract the configured keys', () => {
                 const result = dataModel.processData(data);
 
-                expect(result.type).toEqual('grouped');
-                expect(result.data.length).toEqual(4);
-                expect(result.data[0].keys).toEqual([new Date('2023-01-01T00:00:00.000Z')]);
-                expect(result.data[1].keys).toEqual([new Date('2023-01-02T00:00:00.000Z')]);
-                expect(result.data[2].keys).toEqual([new Date('2023-01-03T00:00:00.000Z')]);
-                expect(result.data[3].keys).toEqual([new Date('2023-01-04T00:00:00.000Z')]);
+                expect(result?.type).toEqual('grouped');
+                expect(result?.data.length).toEqual(4);
+                expect(result?.data[0].keys).toEqual([new Date('2023-01-01T00:00:00.000Z')]);
+                expect(result?.data[1].keys).toEqual([new Date('2023-01-02T00:00:00.000Z')]);
+                expect(result?.data[2].keys).toEqual([new Date('2023-01-03T00:00:00.000Z')]);
+                expect(result?.data[3].keys).toEqual([new Date('2023-01-04T00:00:00.000Z')]);
             });
 
             it('should extract the configured values', () => {
                 const result = dataModel.processData(data);
 
-                expect(result.type).toEqual('grouped');
-                expect(result.data.length).toEqual(4);
-                expect(result.data[0].values).toEqual([[5, 7]]);
-                expect(result.data[1].values).toEqual([[1, 2]]);
-                expect(result.data[2].values).toEqual([[6, 9]]);
-                expect(result.data[3].values).toEqual([[6, 9]]);
+                expect(result?.type).toEqual('grouped');
+                expect(result?.data.length).toEqual(4);
+                expect(result?.data[0].values).toEqual([[5, 7]]);
+                expect(result?.data[1].values).toEqual([[1, 2]]);
+                expect(result?.data[2].values).toEqual([[6, 9]]);
+                expect(result?.data[3].values).toEqual([[6, 9]]);
             });
 
             it('should calculate the domains', () => {
                 const result = dataModel.processData(data);
 
-                expect(result.type).toEqual('grouped');
-                expect(result.domain.keys).toEqual([[data[0].kp, data[3].kp]]);
-                expect(result.domain.values).toEqual([
+                expect(result?.type).toEqual('grouped');
+                expect(result?.domain.keys).toEqual([[data[0].kp, data[3].kp]]);
+                expect(result?.domain.values).toEqual([
                     [1, 6],
                     [2, 9],
                 ]);
@@ -232,8 +326,8 @@ describe('DataModel', () => {
             it('should not include sums', () => {
                 const result = dataModel.processData(data);
 
-                expect(result.data.filter((g) => g.sumValues != null)).toEqual([]);
-                expect(result.domain.sumValues).toBeUndefined();
+                expect(result?.data.filter((g) => g.sumValues != null)).toEqual([]);
+                expect(result?.domain.sumValues).toBeUndefined();
             });
 
             it('should only sum per data-item', () => {
@@ -255,9 +349,9 @@ describe('DataModel', () => {
 
                 const result = dataModel.processData(data);
 
-                expect(result.domain.sumValues).toEqual([[0, 15]]);
-                expect(result.data[0].sumValues).toEqual([[0, 12]]);
-                expect(result.data[1].sumValues).toEqual([[0, 15]]);
+                expect(result?.domain.sumValues).toEqual([[0, 15]]);
+                expect(result?.data[0].sumValues).toEqual([[0, 12]]);
+                expect(result?.data[1].sumValues).toEqual([[0, 15]]);
             });
         });
     });
@@ -309,22 +403,22 @@ describe('DataModel', () => {
             it('should extract the configured keys', () => {
                 const result = dataModel.processData(data);
 
-                expect(result.type).toEqual('grouped');
-                expect(result.data.length).toEqual(2);
-                expect(result.data[0].keys).toEqual(['Q1']);
-                expect(result.data[1].keys).toEqual(['Q2']);
+                expect(result?.type).toEqual('grouped');
+                expect(result?.data.length).toEqual(2);
+                expect(result?.data[0].keys).toEqual(['Q1']);
+                expect(result?.data[1].keys).toEqual(['Q2']);
             });
 
             it('should extract the configured values', () => {
                 const result = dataModel.processData(data);
 
-                expect(result.type).toEqual('grouped');
-                expect(result.data.length).toEqual(2);
-                expect(result.data[0].values).toEqual([
+                expect(result?.type).toEqual('grouped');
+                expect(result?.data.length).toEqual(2);
+                expect(result?.data[0].values).toEqual([
                     [5, 7, 1, 5],
                     [1, 2, 2, 4],
                 ]);
-                expect(result.data[1].values).toEqual([
+                expect(result?.data[1].values).toEqual([
                     [6, 9, 3, 3],
                     [6, 9, 4, 2],
                 ]);
@@ -333,9 +427,9 @@ describe('DataModel', () => {
             it('should calculate the domains', () => {
                 const result = dataModel.processData(data);
 
-                expect(result.type).toEqual('grouped');
-                expect(result.domain.keys).toEqual([['Q1', 'Q2']]);
-                expect(result.domain.values).toEqual([
+                expect(result?.type).toEqual('grouped');
+                expect(result?.domain.keys).toEqual([['Q1', 'Q2']]);
+                expect(result?.domain.values).toEqual([
                     [1, 6],
                     [2, 9],
                     [1, 4],
@@ -346,7 +440,7 @@ describe('DataModel', () => {
             it('should calculate the sums', () => {
                 const result = dataModel.processData(data);
 
-                expect(result.data.map((g) => g.sumValues)).toEqual([
+                expect(result?.data.map((g) => g.sumValues)).toEqual([
                     [
                         [0, 12],
                         [0, 6],
@@ -356,7 +450,7 @@ describe('DataModel', () => {
                         [0, 6],
                     ],
                 ]);
-                expect(result.domain.sumValues).toEqual([
+                expect(result?.domain.sumValues).toEqual([
                     [0, 15],
                     [0, 6],
                 ]);
@@ -423,7 +517,7 @@ describe('DataModel', () => {
             expect(result).toMatchSnapshot({
                 time: expect.any(Number),
             });
-            expect(result.reduced?.[SUM_VALUE_EXTENT.property]).toEqual([0, 100]);
+            expect(result?.reduced?.[SUM_VALUE_EXTENT.property]).toEqual([0, 100]);
         });
 
         describe('property tests', () => {
@@ -450,7 +544,7 @@ describe('DataModel', () => {
             it('should allow normalisation of values', () => {
                 const result = dataModel.processData(data);
 
-                expect(result.data.map((g) => g.sumValues)).toEqual([
+                expect(result?.data.map((g) => g.sumValues)).toEqual([
                     [
                         [0, 100],
                         [0, 100],
@@ -460,12 +554,12 @@ describe('DataModel', () => {
                         [0, 100],
                     ],
                 ]);
-                expect(result.domain.sumValues).toEqual([
+                expect(result?.domain.sumValues).toEqual([
                     [0, 100],
                     [0, 100],
                 ]);
 
-                expect(result.data.map((g) => g.values)).toEqual([
+                expect(result?.data.map((g) => g.values)).toEqual([
                     [
                         [41.666666666666664, 58.333333333333336, 16.666666666666668, 83.33333333333333],
                         [8.333333333333334, 16.666666666666668, 33.333333333333336, 66.66666666666667],
@@ -531,11 +625,11 @@ describe('DataModel', () => {
             it('should substitute missing value when configured', () => {
                 const result = dataModel.processData(data);
 
-                expect(result.data[0].values).toEqual([
+                expect(result?.data[0].values).toEqual([
                     [null, 7, 1],
                     [1, NaN, 2],
                 ]);
-                expect(result.data[1].values).toEqual([
+                expect(result?.data[1].values).toEqual([
                     [6, 9, null],
                     [6, 9, 4],
                 ]);
@@ -574,14 +668,14 @@ describe('DataModel', () => {
             it('should not generate data extracts', () => {
                 const result = dataModel.processData([]);
 
-                expect(result.data).toEqual([]);
+                expect(result?.data).toEqual([]);
             });
 
             it('should not generate values for domains', () => {
                 const result = dataModel.processData([]);
 
-                expect(result.domain.keys).toEqual([[]]);
-                expect(result.domain.values).toEqual([[], [], [], []]);
+                expect(result?.domain.keys).toEqual([[]]);
+                expect(result?.domain.values).toEqual([[], [], [], []]);
             });
         });
     });
