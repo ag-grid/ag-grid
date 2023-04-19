@@ -48,7 +48,7 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
     const [scriptIsEnabled, setScriptIsEnabled] = useState(true);
     const [gridIsReady, setGridIsReady] = useState(false);
     const [gridIsHoveredOver, setGridIsHoveredOver] = useState(false);
-    const debuggerManager = automatedExampleManager.getDebuggerManager();
+    const debuggerManager = automatedExampleManager?.getDebuggerManager();
 
     const setAllScriptEnabledVars = (isEnabled) => {
         setScriptIsEnabled(isEnabled);
