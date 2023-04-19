@@ -654,7 +654,7 @@
     "meta": {},
     "type": { "noData?": "AgChartOverlayOptions" },
     "docs": {
-      "noData?": "/** An overlay to be displayed when there is no data, */"
+      "noData?": "/** An overlay to be displayed when there is no data. */"
     }
   },
   "AgChartLabelOptions": {

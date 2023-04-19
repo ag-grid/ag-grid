@@ -229,7 +229,7 @@ export interface AgChartOverlayOptions {
 }
 
 export interface AgChartOverlaysOptions {
-    /** An overlay to be displayed when there is no data, */
+    /** An overlay to be displayed when there is no data. */
     noData?: AgChartOverlayOptions;
 }
 

@@ -63,8 +63,7 @@ export async function clickOnContextMenuItem({
         const menuItemEl = menuItemTextEl?.parentElement;
         const isLastMenuItem = i === menuItemPath.length - 1;
         if (!coords || !menuItemEl) {
-            scriptDebugger?.errorLog(`Cannot find menu item: ${menuItemName}`);
-            break;
+            throw new Error(`Cannot find menu item: ${menuItemName}`);
         }
 
         await createMoveMouse({
@@ -76,13 +75,18 @@ export async function clickOnContextMenuItem({
             easing,
             scriptDebugger,
         });
+
         if (isLastMenuItem) {
             mouse.click();
             await waitFor(500);
-        }
 
-        // Use keyboard event to fake a click
-        menuItemEl.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+            // Send escape to clear context menu
+            // NOTE: Not triggering keyboard event, use the Grid API instead, so it is more resilient to browser events
+            menuItemEl.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        } else {
+            // Use keyboard event to fake a click
+            menuItemEl.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+        }
 
         await waitFor(500);
     }

@@ -1,6 +1,6 @@
 import { Group } from '@tweenjs/tween.js';
 import { AgElementFinder } from '../agElements';
-import { AG_DND_GHOST_SELECTOR } from '../constants';
+import { AG_DND_GHOST_SELECTOR, DRAG_COLUMN_GHOST_CLASS } from '../constants';
 import { Mouse } from '../createMouse';
 import { getScrollOffset } from '../dom';
 import { addPoints, minusPoint } from '../geometry';
@@ -37,9 +37,12 @@ export async function dragColumnToRowGroupPanel({
         scriptDebugger?.errorLog('Header not found:', headerCellName);
         return;
     }
+
+    const dropArea = agElementFinder.get('columnDropArea');
+    const dropAreaY = dropArea?.getPos()?.y;
     const rowGroupPanelOffset = {
         x: 20,
-        y: -50,
+        y: dropAreaY === undefined ? -50 : dropAreaY - fromPos.y,
     };
     const toPos = addPoints(fromPos, rowGroupPanelOffset)!;
 
@@ -69,6 +72,11 @@ export async function dragColumnToRowGroupPanel({
                 view: document.defaultView || window,
             });
             document.dispatchEvent(mouseMoveEvent);
+
+            // Add extra class to drag and drop ghost, so it can be styled
+            document.querySelectorAll(AG_DND_GHOST_SELECTOR).forEach((el) => {
+                el.classList.add(DRAG_COLUMN_GHOST_CLASS);
+            });
 
             // Move mouse as well
             moveTarget({ target: mouse.getTarget(), coords, offset });

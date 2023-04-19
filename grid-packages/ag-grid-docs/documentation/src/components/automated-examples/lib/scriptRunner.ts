@@ -131,7 +131,7 @@ interface CreateScriptActionSequenceParams {
     defaultEasing?: EasingFunction;
 }
 
-export type RunScriptState = 'inactive' | 'stopped' | 'stopping' | 'pausing' | 'paused' | 'playing';
+export type RunScriptState = 'inactive' | 'stopped' | 'stopping' | 'errored' | 'pausing' | 'paused' | 'playing';
 
 function createScriptAction({
     containerEl,
@@ -327,6 +327,7 @@ export function createScriptRunner({
     });
 
     const startActionSequence = (startIndex: number = 0) => {
+        const startTime = Date.now();
         updateState('playing');
         tweenUpdate();
         const scriptFromStartIndex = script.slice(startIndex);
@@ -344,6 +345,7 @@ export function createScriptRunner({
                     shouldCancel = true;
                 } else if (
                     runScriptState === 'stopped' ||
+                    runScriptState === 'errored' ||
                     runScriptState === 'paused' ||
                     runScriptState === 'inactive'
                 ) {
@@ -351,7 +353,7 @@ export function createScriptRunner({
                 }
 
                 if (shouldCancel) {
-                    scriptDebugger?.log(`${id} cancelling step from state: ${runScriptState}`);
+                    scriptDebugger?.log(`${id} cancelling step from state: ${runScriptState} [${startTime}]`);
                 } else {
                     const scriptAction = scriptFromStartIndex[index];
                     const stepName =
@@ -359,9 +361,12 @@ export function createScriptRunner({
                         (scriptAction.type === 'agAction' ? scriptAction.actionType : scriptAction.type);
                     const stepNum = index + 1;
                     scriptDebugger?.updateStep({ step: stepNum, numSteps: scriptFromStartIndex.length, stepName });
-                    scriptDebugger?.log(`${id} step ${stepNum}/${scriptFromStartIndex.length}: ${stepName}`, {
-                        scriptAction,
-                    });
+                    scriptDebugger?.log(
+                        `${id} step ${stepNum}/${scriptFromStartIndex.length}: ${stepName} [${startTime}]`,
+                        {
+                            scriptAction,
+                        }
+                    );
                 }
 
                 return {
@@ -375,7 +380,8 @@ export function createScriptRunner({
                 });
 
                 // Error in action, stop the script
-                updateState('stopping');
+                updateState('errored');
+                cleanUp();
             },
         });
 
@@ -386,7 +392,11 @@ export function createScriptRunner({
                     startActionSequence();
                 } else if (runScriptState === 'pausing') {
                     updateState('paused');
-                } else if (runScriptState === 'paused' || runScriptState === 'inactive') {
+                } else if (
+                    runScriptState === 'paused' ||
+                    runScriptState === 'inactive' ||
+                    runScriptState === 'errored'
+                ) {
                     // Do nothing
                 } else {
                     updateState('stopped');
@@ -408,6 +418,10 @@ export function createScriptRunner({
     };
 
     const stop: ScriptRunner['stop'] = () => {
+        if (runScriptState === 'errored') {
+            return;
+        }
+
         // Initiate stop
         updateState('stopping');
         cleanUp();
