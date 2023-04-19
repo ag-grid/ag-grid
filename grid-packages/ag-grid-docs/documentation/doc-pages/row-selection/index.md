@@ -165,11 +165,11 @@ If `headerCheckboxSelection` is a function, the function will be called every ti
 
 The header checkbox has three modes of operation, `'normal'`, `'filtered only'` and `'current page'`.
 
-- **colDef.headerCheckboxSelectionFilteredOnly=false**: The checkbox will select all rows when checked, and un-select all rows when unchecked. The checkbox will update its state based on all rows.
+- `colDef.headerCheckboxSelectionFilteredOnly=false`: The checkbox will select all rows when checked, and un-select all rows when unchecked. The checkbox will update its state based on all rows.
 
-- **colDef.headerCheckboxSelectionFilteredOnly=true**: The checkbox will select only filtered rows when checked and un-select only filtered rows when unchecked. The checkbox will update its state based only on filtered rows.
+- `colDef.headerCheckboxSelectionFilteredOnly=true`: The checkbox will select only filtered rows when checked and un-select only filtered rows when unchecked. The checkbox will update its state based only on filtered rows.
 
-- **colDef.headerCheckboxSelectionCurrentPageOnly=true**: The checkbox will select only the rows on the current page when checked, and un-select only the rows on the current page when unchecked.
+- `colDef.headerCheckboxSelectionCurrentPageOnly=true`: The checkbox will select only the rows on the current page when checked, and un-select only the rows on the current page when unchecked.
 
 The examples below demonstrate all of these options.
 
