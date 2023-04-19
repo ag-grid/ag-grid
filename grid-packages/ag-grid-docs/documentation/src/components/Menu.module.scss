@@ -203,6 +203,7 @@
 }
 
 .menuGroup .groupLabel {
+    display: block;
     margin-left: var(--first-indent-size) !important; // !important for .ag-styles specificity
     padding-top: 5px;
     padding-bottom: 5px;
