@@ -1,7 +1,4 @@
 import { AgChartOptions, AgChart } from 'ag-charts-community';
-import { getColors } from './colors';
-
-const colors = getColors();
 
 const options: AgChartOptions = {
   container: document.getElementById('myChart'),
@@ -26,14 +23,15 @@ const options: AgChartOptions = {
 
 const chart = AgChart.create(options);
 
-let index = 0;
-setInterval(() => {
-  if (++index === colors.length) {
-    index = 0;
-  }
+function random(n) {
+  return Math.floor(Math.random() * (n + 1));
+}
+
+function randomColor(this: HTMLElement) {
+  const color = `rgb(${random(255)}, ${random(255)}, ${random(255)})`;
   AgChart.updateDelta(chart, {
     background: {
-      fill: colors[index],
+      fill: color,
     },
   });
-}, 2000);
+}
