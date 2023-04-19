@@ -104,9 +104,8 @@ export const createScript = ({
                 speed: 2,
             },
         },
-        { type: 'wait', duration: 200 },
         {
-            name: 'Context menu fallback',
+            name: 'Create range chart',
             type: 'custom',
             action: () => {
                 const chartModels = gridOptions.api?.getChartModels() || [];
