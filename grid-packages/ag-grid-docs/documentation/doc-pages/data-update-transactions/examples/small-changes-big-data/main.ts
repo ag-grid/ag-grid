@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, GetRowIdParams, IAggFuncParams, IDoesFilterPassParams, IFilterComp, IFilterParams, IFilterType, IsGroupOpenByDefaultParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, GridReadyEvent, GetRowIdParams, IAggFuncParams, IDoesFilterPassParams, IFilterComp, IFilterParams, IFilterType, IsGroupOpenByDefaultParams } from '@ag-grid-community/core'
 
 import { createDataItem, getData } from './data'
 
@@ -213,21 +213,22 @@ const gridOptions: GridOptions = {
     field: 'name',
     cellRendererParams: { checkbox: true },
   },
-  onGridReady: (params) => {
-
-    params.api.setFilterModel({
-      value: { value: '50' },
-    })
-
-    timeOperation('Initialisation', function () {
-      params.api.setRowData(getData())
-    })
-  },
+  onGridReady: onGridReady,
   isGroupOpenByDefault: isGroupOpenByDefault
 }
 
 function isGroupOpenByDefault(params: IsGroupOpenByDefaultParams<IOlympicData, any>) {
   return ['Delhi', 'Seoul'].includes(params.key);
+}
+
+function onGridReady(gridReadyParams: GridReadyEvent) {
+  gridReadyParams.api.setFilterModel({
+    value: { value: '50' },
+  });
+
+  timeOperation('Initialisation', function () {
+    gridReadyParams.api.setRowData(getData())
+  });
 }
 
 // wait for the document to be loaded, otherwise
