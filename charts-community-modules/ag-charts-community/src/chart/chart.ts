@@ -596,12 +596,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         if (!series.data) {
             series.data = this.data;
         }
-        if (this.hasEventListener('seriesNodeClick')) {
-            series.addEventListener('nodeClick', this.onSeriesNodeClick);
-        }
-        if (this.hasEventListener('seriesNodeDoubleClick')) {
-            series.addEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
-        }
+        this.addSeriesListeners(series);
     }
 
     protected freeSeries(series: Series<any>) {
@@ -616,6 +611,25 @@ export abstract class Chart extends Observable implements AgChartInstance {
             this.seriesRoot.removeChild(series.rootGroup);
         });
         this._series = []; // using `_series` instead of `series` to prevent infinite recursion
+    }
+
+    protected addSeriesListeners(series: Series<any>) {
+        if (this.hasEventListener('seriesNodeClick')) {
+            series.addEventListener('nodeClick', this.onSeriesNodeClick);
+        }
+
+        if (this.hasEventListener('seriesNodeDoubleClick')) {
+            series.addEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
+        }
+    }
+
+    updateAllSeriesListeners(): void {
+        this.series.forEach((series) => {
+            series.removeEventListener('nodeClick', this.onSeriesNodeClick);
+            series.removeEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
+
+            this.addSeriesListeners(series);
+        });
     }
 
     protected assignSeriesToAxes() {
