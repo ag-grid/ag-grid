@@ -1,0 +1,18 @@
+import { GridHeaderComp } from '../headerRendering/gridHeaderComp';
+import { Component } from '../widgets/component';
+export declare class GridBodyComp extends Component {
+    private resizeObserverService;
+    private rangeService;
+    private eBodyViewport;
+    private eStickyTop;
+    private eTop;
+    private eBottom;
+    headerRootComp: GridHeaderComp;
+    private eBodyClipper;
+    private eBody;
+    private ctrl;
+    constructor();
+    private init;
+    private setRowAnimationCssOnBodyViewport;
+    getFloatingTopBottom(): HTMLElement[];
+}
