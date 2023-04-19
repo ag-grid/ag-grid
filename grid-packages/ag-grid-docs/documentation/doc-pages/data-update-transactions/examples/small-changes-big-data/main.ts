@@ -213,22 +213,21 @@ const gridOptions: GridOptions = {
     field: 'name',
     cellRendererParams: { checkbox: true },
   },
-  onGridReady: onGridReady,
+  onGridReady: (params) => {
+
+    params.api.setFilterModel({
+      value: { value: '50' },
+    })
+
+    timeOperation('Initialisation', function () {
+      params.api.setRowData(getData())
+    })
+  },
   isGroupOpenByDefault: isGroupOpenByDefault
 }
 
 function isGroupOpenByDefault(params: IsGroupOpenByDefaultParams<IOlympicData, any>) {
   return ['Delhi', 'Seoul'].includes(params.key);
-}
-
-function onGridReady(gridReadyParams: GridReadyEvent) {
-  gridReadyParams.api.setFilterModel({
-    value: { value: '50' },
-  });
-
-  timeOperation('Initialisation', function () {
-    gridReadyParams.api.setRowData(getData())
-  });
 }
 
 // wait for the document to be loaded, otherwise
