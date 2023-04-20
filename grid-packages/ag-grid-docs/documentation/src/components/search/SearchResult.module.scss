@@ -28,11 +28,11 @@
 
     li {
         line-height: var(--line-height-tight);
-        margin-bottom: -2px;
+        margin-bottom: -2px !important; // !important needed because of .ag-styles specificity
     }
 
     li:first-child a {
-        border-top: none;
+        border-top: none !important; // !important needed because of .ag-styles specificity
     }
 
     a,
@@ -41,7 +41,7 @@
         position: relative;
         display: block;
         padding: $size-2;
-        border: 2px solid var(--border-color);
+        border: 2px solid var(--border-color) !important; // !important needed because of .ag-styles specificity
         background-color: transparent !important; // !important needed because of .ag-styles specificity
         outline: none !important; // !important needed because of .ag-styles specificity
         transition: color $default-transition-timing, background-color $default-transition-timing,
