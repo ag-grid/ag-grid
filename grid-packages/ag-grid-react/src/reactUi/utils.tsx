@@ -1,4 +1,4 @@
-import ReactDOM, { flushSync } from "react-dom";
+import ReactDOM from "react-dom";
 
 export const classesList = (...list: (string | null | undefined)[]): string => {
     const filtered = list.filter( s => s != null && s !== '');
@@ -53,7 +53,7 @@ const createRootAndFlushSyncAvailable = (ReactDOM as any).createRoot != null && 
  */
 export const agFlushSync = (fn: () => void) => {
     if (createRootAndFlushSyncAvailable) {
-        flushSync(fn);
+        (ReactDOM as any).flushSync(fn);
     } else {
         fn();
     }
