@@ -2,24 +2,34 @@ import { BeanStub } from "../context/beanStub";
 import { Autowired, PostConstruct } from "../context/context";
 import { ColumnModel } from "../columns/columnModel";
 import { Events } from "../eventKeys";
+import { ScrollVisibleService } from "./scrollVisibleService";
 
 export class CenterWidthFeature extends BeanStub {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
 
-    private callback: (width: number) => void;
-
-    constructor(callback: (width: number) => void) {
+    constructor(
+        private readonly callback: (width: number) => void,
+        private readonly addSpacer: boolean = false
+    ) {
         super();
-        this.callback = callback;
     }
 
     @PostConstruct
     private postConstruct(): void {
         const listener = this.setWidth.bind(this);
         this.addManagedPropertyListener('domLayout', listener);
+
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, listener);
+        this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, listener);
+
+        if (this.addSpacer) {
+            this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, listener);
+            this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, listener);
+            this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, listener);
+        }
 
         this.setWidth();
     }
@@ -33,7 +43,20 @@ export class CenterWidthFeature extends BeanStub {
         const leftWidth = columnModel.getDisplayedColumnsLeftWidth();
         const rightWidth = columnModel.getDisplayedColumnsRightWidth();
 
-        const totalWidth = printLayout ? centerWidth + leftWidth + rightWidth : centerWidth;
+        let totalWidth: number;
+
+        if (printLayout) {
+            totalWidth = centerWidth + leftWidth + rightWidth;
+        } else {
+            totalWidth = centerWidth;
+
+            if (this.addSpacer) {
+                const relevantWidth = this.gridOptionsService.is('enableRtl') ? leftWidth : rightWidth;
+                if (relevantWidth === 0 && this.scrollVisibleService.isVerticalScrollShowing()) {
+                    totalWidth += this.gridOptionsService.getScrollbarWidth();
+                }
+            }
+        }
 
         this.callback(totalWidth);
     }
