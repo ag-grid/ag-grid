@@ -310,3 +310,7 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
         transform: scale(1);
     }
 }
+
+:global(.align-right) {
+    text-align: right;
+}

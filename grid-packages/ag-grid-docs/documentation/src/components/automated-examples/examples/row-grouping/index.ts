@@ -61,9 +61,20 @@ const columnDefs: ColDef[] = [
         chartDataType: 'category',
         enableRowGroup: true,
     },
-    { field: 'previous', enableRowGroup: true },
-    { field: 'current', type: 'measure', enableRowGroup: true },
-    { headerName: 'Gain-DX', field: 'gainDx', type: 'measure', enableRowGroup: true },
+    { field: 'previous', enableRowGroup: true, cellClass: 'align-right' },
+    {
+        field: 'current',
+        type: 'measure',
+        enableRowGroup: true,
+        cellClass: 'align-right',
+    },
+    {
+        headerName: 'Gain-DX',
+        field: 'gainDx',
+        type: 'measure',
+        enableRowGroup: true,
+        cellClass: 'align-right',
+    },
     { field: 'dealType', enableRowGroup: true },
     { field: 'portfolio', enableRowGroup: true },
 ];
