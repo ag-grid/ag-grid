@@ -78,22 +78,23 @@ function defaultDateFormatMatcher(value: string): boolean {
 export const DEFAULT_DATA_TYPES: { [key: string]: CoreDataTypeDefinition } = {
     number: {
         baseDataType: 'number',
-        valueParser: (params: ValueParserLiteParams<any, number>) => params.newValue === '' ? undefined : Number(params.newValue),
+        valueParser: (params: ValueParserLiteParams<any, number>) => params.newValue === '' ? null : Number(params.newValue),
         valueFormatter: (params: ValueFormatterLiteParams<any, number>) => params.value == null ? '' : String(params.value),
         dataTypeChecker: (params: DataTypeCheckerParams<any, number>) => params.value == null || typeof params.value === 'number',
     },
     text: {
         baseDataType: 'text',
+        valueParser: (params: ValueParserLiteParams<any, string>) => params.newValue === '' ? null : params.newValue,
     },
     boolean: {
         baseDataType: 'boolean',
-        valueParser: (params: ValueParserLiteParams<any, boolean>) => params.newValue === '' ? undefined : String(params.newValue).toLowerCase() === 'true',
+        valueParser: (params: ValueParserLiteParams<any, boolean>) => params.newValue === '' ? null : String(params.newValue).toLowerCase() === 'true',
         valueFormatter: (params: ValueFormatterLiteParams<any, boolean>) => params.value == null ? '' : String(params.value),
         dataTypeChecker: (params: DataTypeCheckerParams<any, boolean>) => params.value == null || typeof params.value === 'boolean',
     },
     date: {
         baseDataType: 'date',
-        valueParser: (params: ValueParserLiteParams<any, Date>) => parseDateTimeFromString(params.newValue == null ? null : String(params.newValue)) ?? undefined,
+        valueParser: (params: ValueParserLiteParams<any, Date>) => parseDateTimeFromString(params.newValue == null ? null : String(params.newValue)),
         valueFormatter: (params: ValueFormatterLiteParams<any, Date>) => {
             if (params.value == null) { return ''; }
             if (!(params.value instanceof Date)) { return new Date(NaN).toString(); }
@@ -107,13 +108,13 @@ export const DEFAULT_DATA_TYPES: { [key: string]: CoreDataTypeDefinition } = {
         dateMatcher: (value: string) => defaultDateFormatMatcher(value),
         dateParser: (value: string | undefined) => parseDateTimeFromString(value) ?? undefined,
         dateFormatter: (value: Date | undefined) => serialiseDate(value ?? null, false) ?? undefined,
-        valueParser: (params: ValueParserLiteParams<any, string>) => defaultDateFormatMatcher(String(params.newValue)) ? params.newValue : undefined,
-        valueFormatter: (params: ValueFormatterLiteParams<any, string>) => defaultDateFormatMatcher(String(params.value)) ? params.value : '',
+        valueParser: (params: ValueParserLiteParams<any, string>) => defaultDateFormatMatcher(String(params.newValue)) ? params.newValue : null,
+        valueFormatter: (params: ValueFormatterLiteParams<any, string>) => defaultDateFormatMatcher(String(params.value)) ? params.value! : '',
         dataTypeChecker: (params: DataTypeCheckerParams<any, string>) => params.value == null || (typeof params.value === 'string' && defaultDateFormatMatcher(params.value)),
     },
     object: {
         baseDataType: 'object',
-        valueParser: () => undefined,
+        valueParser: () => null,
         valueFormatter: (params: ValueFormatterLiteParams<any, any>) => toStringOrNull(params.value) ?? '',
     }
 }

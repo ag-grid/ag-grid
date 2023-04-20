@@ -1025,8 +1025,11 @@
   "getValue": {
     "description": "/** Gets the value for a column for a particular `rowNode` (row).\n     * This is useful if you want the raw value of a cell e.g. if implementing your own CSV export.\n     */",
     "type": {
-      "arguments": { "colKey": "string | Column", "rowNode": "IRowNode" },
-      "returnType": "any"
+      "arguments": {
+        "colKey": "string | Column<TValue>",
+        "rowNode": "IRowNode"
+      },
+      "returnType": "TValue | null | undefined"
     }
   },
   "addEventListener": {

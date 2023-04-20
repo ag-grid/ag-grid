@@ -107,7 +107,7 @@
   },
   "valueFormatter": {
     "description": "/** A function or expression to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */",
-    "type": { "returnType": "string | ValueFormatterFunc<TData>" }
+    "type": { "returnType": "string | ValueFormatterFunc<TData, TValue>" }
   },
   "refData": {
     "description": "/** Provided a reference data map to be used to map column values to their respective value from the map. */",
@@ -116,14 +116,17 @@
   "keyCreator": {
     "description": "/** Function to return a string key for a value.\n     * This string is used for grouping, Set filtering, and searching within cell editor dropdowns.\n     * When filtering and searching the string is exposed to the user, so make sure to return a human-readable value. */",
     "type": {
-      "arguments": { "params": "KeyCreatorParams<TData>" },
+      "arguments": { "params": "KeyCreatorParams<TData, TValue>" },
       "returnType": "string"
     }
   },
   "equals": {
     "description": "/** Custom comparator for values, used by renderer to know if values have changed. Cells whose values have not changed don't get refreshed.\n     * By default the grid uses `===` which should work for most use cases.\n     */",
     "type": {
-      "arguments": { "valueA": "TValue", "valueB": "TValue" },
+      "arguments": {
+        "valueA": "TValue | null | undefined",
+        "valueB": "TValue | null | undefined"
+      },
       "returnType": "boolean"
     }
   },
@@ -264,7 +267,7 @@
   "getQuickFilterText": {
     "description": "/** A function to tell the grid what Quick Filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */",
     "type": {
-      "arguments": { "params": "GetQuickFilterTextParams<TData>" },
+      "arguments": { "params": "GetQuickFilterTextParams<TData, TValue>" },
       "returnType": "string"
     }
   },
@@ -367,15 +370,15 @@
   },
   "cellStyle": {
     "description": "/** An object of css values / or function returning an object of css values for a particular cell. */",
-    "type": { "returnType": "CellStyle | CellStyleFunc<TData>" }
+    "type": { "returnType": "CellStyle | CellStyleFunc<TData, TValue>" }
   },
   "cellClass": {
     "description": "/** Class to use for the cell. Can be string, array of strings, or function that returns a string or array of strings. */",
-    "type": { "returnType": "string | string[] | CellClassFunc<TData>" }
+    "type": { "returnType": "string | string[] | CellClassFunc<TData, TValue>" }
   },
   "cellClassRules": {
     "description": "/** Rules which can be applied to include certain CSS classes. */",
-    "type": { "returnType": "CellClassRules<TData>" }
+    "type": { "returnType": "CellClassRules<TData, TValue>" }
   },
   "cellRenderer": {
     "description": "/** Provide your own cell Renderer component for this column's cells.\n    * See [Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/) for framework specific implementation details.\n    */",

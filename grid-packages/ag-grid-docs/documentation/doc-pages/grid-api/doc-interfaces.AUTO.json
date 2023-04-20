@@ -733,15 +733,15 @@
   "IAggFuncParams": {
     "values": {
       "description": "/** Values to aggregate */",
-      "type": { "returnType": "TValue[]", "optional": false }
+      "type": { "returnType": "(TValue | null)[]", "optional": false }
     },
     "column": {
       "description": "/** Column the aggregation function is working on */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** ColDef of the aggregation column */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "pivotResultColumn": {
       "description": "/** Pivot Result Column being produced using this aggregation */",
@@ -851,7 +851,7 @@
     "valueFormatter": {
       "description": "/** A function or expression to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */",
       "type": {
-        "returnType": "string | ValueFormatterFunc<TData>",
+        "returnType": "string | ValueFormatterFunc<TData, TValue>",
         "optional": true
       }
     },
@@ -862,7 +862,7 @@
     "keyCreator": {
       "description": "/** Function to return a string key for a value.\n     * This string is used for grouping, Set filtering, and searching within cell editor dropdowns.\n     * When filtering and searching the string is exposed to the user, so make sure to return a human-readable value. */",
       "type": {
-        "arguments": { "params": "KeyCreatorParams<TData>" },
+        "arguments": { "params": "KeyCreatorParams<TData, TValue>" },
         "returnType": "string",
         "optional": true
       }
@@ -870,7 +870,10 @@
     "equals": {
       "description": "/** Custom comparator for values, used by renderer to know if values have changed. Cells whose values have not changed don't get refreshed.\n     * By default the grid uses `===` which should work for most use cases.\n     */",
       "type": {
-        "arguments": { "valueA": "TValue", "valueB": "TValue" },
+        "arguments": {
+          "valueA": "TValue | null | undefined",
+          "valueB": "TValue | null | undefined"
+        },
         "returnType": "boolean",
         "optional": true
       }
@@ -1038,7 +1041,7 @@
     "getQuickFilterText": {
       "description": "/** A function to tell the grid what Quick Filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */",
       "type": {
-        "arguments": { "params": "GetQuickFilterTextParams<TData>" },
+        "arguments": { "params": "GetQuickFilterTextParams<TData, TValue>" },
         "returnType": "string",
         "optional": true
       }
@@ -1154,20 +1157,23 @@
     "cellStyle": {
       "description": "/** An object of css values / or function returning an object of css values for a particular cell. */",
       "type": {
-        "returnType": "CellStyle | CellStyleFunc<TData>",
+        "returnType": "CellStyle | CellStyleFunc<TData, TValue>",
         "optional": true
       }
     },
     "cellClass": {
       "description": "/** Class to use for the cell. Can be string, array of strings, or function that returns a string or array of strings. */",
       "type": {
-        "returnType": "string | string[] | CellClassFunc<TData>",
+        "returnType": "string | string[] | CellClassFunc<TData, TValue>",
         "optional": true
       }
     },
     "cellClassRules": {
       "description": "/** Rules which can be applied to include certain CSS classes. */",
-      "type": { "returnType": "CellClassRules<TData>", "optional": true }
+      "type": {
+        "returnType": "CellClassRules<TData, TValue>",
+        "optional": true
+      }
     },
     "cellRenderer": {
       "description": "/** Provide your own cell Renderer component for this column's cells.\n    * See [Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/) for framework specific implementation details.\n    */",
@@ -1801,7 +1807,7 @@
   "GetQuickFilterTextParams": {
     "value": {
       "description": "/** Value for the cell. */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "node": {
       "description": "/** Row node for the given row */",
@@ -1813,11 +1819,11 @@
     },
     "column": {
       "description": "/** Column for this callback */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** ColDef provided for this column */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "api": {
@@ -2135,7 +2141,7 @@
     },
     "newValue": {
       "description": "/** The value after the change */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "string", "optional": false }
     },
     "node": {
       "description": "/** Row node for the given row */",
@@ -2172,7 +2178,7 @@
   "ValueFormatterParams": {
     "value": {
       "description": "/** Value for the cell. */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "node": {
@@ -2210,7 +2216,7 @@
   "KeyCreatorParams": {
     "value": {
       "description": "/** Value for the cell. */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "node": {
@@ -2381,15 +2387,15 @@
   "CellClassParams": {
     "column": {
       "description": "/** Column for this callback */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** The colDef associated with the column for this cell */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "value": {
       "description": "/** The value to be rendered */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "data": {
@@ -8355,11 +8361,13 @@
     }
   },
   "CellEvent": {
-    "column": { "type": { "returnType": "Column", "optional": false } },
-    "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
+    "column": { "type": { "returnType": "Column<TValue>", "optional": false } },
+    "colDef": {
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
+    },
     "value": {
       "description": "/** The value for the cell if available otherwise undefined. */",
-      "type": { "returnType": "TValue | undefined", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "data": {
@@ -8404,11 +8412,13 @@
     }
   },
   "CellWithDataEvent": {
-    "column": { "type": { "returnType": "Column", "optional": false } },
-    "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
+    "column": { "type": { "returnType": "Column<TValue>", "optional": false } },
+    "colDef": {
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
+    },
     "value": {
       "description": "/** The value for the cell */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "data": {
@@ -8454,11 +8464,13 @@
   },
   "CellKeyDownEvent": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
-    "column": { "type": { "returnType": "Column", "optional": false } },
-    "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
+    "column": { "type": { "returnType": "Column<TValue>", "optional": false } },
+    "colDef": {
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
+    },
     "value": {
       "description": "/** The value for the cell if available otherwise undefined. */",
-      "type": { "returnType": "TValue | undefined", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
@@ -8503,11 +8515,13 @@
   },
   "CellKeyPressEvent": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
-    "column": { "type": { "returnType": "Column", "optional": false } },
-    "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
+    "column": { "type": { "returnType": "Column<TValue>", "optional": false } },
+    "colDef": {
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
+    },
     "value": {
       "description": "/** The value for the cell if available otherwise undefined. */",
-      "type": { "returnType": "TValue | undefined", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
@@ -8552,11 +8566,13 @@
   },
   "CellClickedEvent": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
-    "column": { "type": { "returnType": "Column", "optional": false } },
-    "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
+    "column": { "type": { "returnType": "Column<TValue>", "optional": false } },
+    "colDef": {
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
+    },
     "value": {
       "description": "/** The value for the cell if available otherwise undefined. */",
-      "type": { "returnType": "TValue | undefined", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
@@ -8601,11 +8617,13 @@
   },
   "CellMouseDownEvent": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
-    "column": { "type": { "returnType": "Column", "optional": false } },
-    "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
+    "column": { "type": { "returnType": "Column<TValue>", "optional": false } },
+    "colDef": {
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
+    },
     "value": {
       "description": "/** The value for the cell if available otherwise undefined. */",
-      "type": { "returnType": "TValue | undefined", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
@@ -8650,11 +8668,13 @@
   },
   "CellDoubleClickedEvent": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
-    "column": { "type": { "returnType": "Column", "optional": false } },
-    "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
+    "column": { "type": { "returnType": "Column<TValue>", "optional": false } },
+    "colDef": {
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
+    },
     "value": {
       "description": "/** The value for the cell if available otherwise undefined. */",
-      "type": { "returnType": "TValue | undefined", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
@@ -8699,11 +8719,13 @@
   },
   "CellMouseOverEvent": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
-    "column": { "type": { "returnType": "Column", "optional": false } },
-    "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
+    "column": { "type": { "returnType": "Column<TValue>", "optional": false } },
+    "colDef": {
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
+    },
     "value": {
       "description": "/** The value for the cell if available otherwise undefined. */",
-      "type": { "returnType": "TValue | undefined", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
@@ -8748,11 +8770,13 @@
   },
   "CellMouseOutEvent": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
-    "column": { "type": { "returnType": "Column", "optional": false } },
-    "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
+    "column": { "type": { "returnType": "Column<TValue>", "optional": false } },
+    "colDef": {
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
+    },
     "value": {
       "description": "/** The value for the cell if available otherwise undefined. */",
-      "type": { "returnType": "TValue | undefined", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
@@ -8797,11 +8821,13 @@
   },
   "CellContextMenuEvent": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
-    "column": { "type": { "returnType": "Column", "optional": false } },
-    "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
+    "column": { "type": { "returnType": "Column<TValue>", "optional": false } },
+    "colDef": {
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
+    },
     "value": {
       "description": "/** The value for the cell if available otherwise undefined. */",
-      "type": { "returnType": "TValue | undefined", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "data": {
       "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
@@ -8846,15 +8872,17 @@
   },
   "CellEditingStartedEvent": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
-    "column": { "type": { "returnType": "Column", "optional": false } },
-    "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
+    "column": { "type": { "returnType": "Column<TValue>", "optional": false } },
+    "colDef": {
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
+    },
     "value": {
-      "description": "/** The value for the cell */",
-      "type": { "returnType": "TValue", "optional": false }
+      "description": "/** The value for the cell if available otherwise undefined. */",
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "data": {
-      "description": "/** The user provided data for the row. */",
-      "type": { "returnType": "TData", "optional": false }
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "type": { "returnType": "TData | undefined", "optional": false }
     },
     "node": {
       "description": "/** The row node. */",
@@ -8896,26 +8924,28 @@
   "CellEditingStoppedEvent": {
     "oldValue": {
       "description": "/** The old value before editing */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "newValue": {
       "description": "/** The new value after editing */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "valueChanged": {
       "description": "/** Property indicating if the value of the editor has changed */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
-    "column": { "type": { "returnType": "Column", "optional": false } },
-    "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
+    "column": { "type": { "returnType": "Column<TValue>", "optional": false } },
+    "colDef": {
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
+    },
     "value": {
-      "description": "/** The value for the cell */",
-      "type": { "returnType": "TValue", "optional": false }
+      "description": "/** The value for the cell if available otherwise undefined. */",
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "data": {
-      "description": "/** The user provided data for the row. */",
-      "type": { "returnType": "TData", "optional": false }
+      "description": "/** The user provided data for the row. Data is `undefined` for row groups. */",
+      "type": { "returnType": "TData | undefined", "optional": false }
     },
     "node": {
       "description": "/** The row node. */",
@@ -8955,17 +8985,23 @@
     }
   },
   "CellValueChangedEvent": {
-    "oldValue": { "type": { "returnType": "any", "optional": false } },
-    "newValue": { "type": { "returnType": "any", "optional": false } },
+    "oldValue": {
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
+    },
+    "newValue": {
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
+    },
     "source": {
       "type": { "returnType": "string | undefined", "optional": false }
     },
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
-    "column": { "type": { "returnType": "Column", "optional": false } },
-    "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
+    "column": { "type": { "returnType": "Column<TValue>", "optional": false } },
+    "colDef": {
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
+    },
     "value": {
       "description": "/** The value for the cell */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "data": {
       "description": "/** The user provided data for the row. */",
@@ -9009,17 +9045,23 @@
     }
   },
   "CellEditRequestEvent": {
-    "oldValue": { "type": { "returnType": "any", "optional": false } },
-    "newValue": { "type": { "returnType": "any", "optional": false } },
+    "oldValue": {
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
+    },
+    "newValue": {
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
+    },
     "source": {
       "type": { "returnType": "string | undefined", "optional": false }
     },
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
-    "column": { "type": { "returnType": "Column", "optional": false } },
-    "colDef": { "type": { "returnType": "ColDef<TData>", "optional": false } },
+    "column": { "type": { "returnType": "Column<TValue>", "optional": false } },
+    "colDef": {
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
+    },
     "value": {
       "description": "/** The value for the cell */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "data": {
       "description": "/** The user provided data for the row. */",
@@ -12464,7 +12506,7 @@
   "ICellEditorParams": {
     "value": {
       "description": "/** Current value of the cell */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "eventKey": {
       "description": "/** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable\n     *  characters appear here */",
@@ -12476,11 +12518,11 @@
     },
     "column": {
       "description": "/** Grid column */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** Column definition */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "node": {
       "description": "/** Row node for the cell */",
@@ -12521,16 +12563,16 @@
     "parseValue": {
       "description": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
       "type": {
-        "arguments": { "value": "any" },
-        "returnType": "any",
+        "arguments": { "value": "string" },
+        "returnType": "TValue | null | undefined",
         "optional": false
       }
     },
     "formatValue": {
       "description": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
       "type": {
-        "arguments": { "value": "any" },
-        "returnType": "any",
+        "arguments": { "value": "TValue | null | undefined" },
+        "returnType": "string",
         "optional": false
       }
     },
@@ -15492,7 +15534,7 @@
     },
     "value": {
       "description": "/** Current value of the cell */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "eventKey": {
       "description": "/** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable\n     *  characters appear here */",
@@ -15504,11 +15546,11 @@
     },
     "column": {
       "description": "/** Grid column */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** Column definition */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "node": {
       "description": "/** Row node for the cell */",
@@ -15549,8 +15591,8 @@
     "parseValue": {
       "description": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
       "type": {
-        "arguments": { "value": "any" },
-        "returnType": "any",
+        "arguments": { "value": "string" },
+        "returnType": "TValue | null | undefined",
         "optional": false
       }
     },
@@ -17198,7 +17240,7 @@
     },
     "value": {
       "description": "/** The value to be rendered by the tooltip. */",
-      "type": { "returnType": "TValue", "optional": true }
+      "type": { "returnType": "TValue | null", "optional": true }
     },
     "valueFormatted": {
       "description": "/** The formatted value to be rendered by the tooltip. */",
@@ -17207,13 +17249,13 @@
     "colDef": {
       "description": "/** Column / ColumnGroup definition. */",
       "type": {
-        "returnType": "ColDef<TData> | ColGroupDef<TData> | null",
+        "returnType": "ColDef<TData, TValue> | ColGroupDef<TData> | null",
         "optional": true
       }
     },
     "column": {
       "description": "/** Column / ColumnGroup */",
-      "type": { "returnType": "Column | ColumnGroup", "optional": true }
+      "type": { "returnType": "Column<TValue> | ColumnGroup", "optional": true }
     },
     "rowIndex": {
       "description": "/** The index of the row containing the cell rendering the tooltip. */",
@@ -17373,7 +17415,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "value": {
       "description": "/** Value to be rendered. */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "valueFormatted": {
       "description": "/** Formatted value to be rendered. */",
@@ -17401,11 +17443,11 @@
     },
     "colDef": {
       "description": "/** The cell's column definition. */",
-      "type": { "returnType": "ColDef", "optional": true }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": true }
     },
     "column": {
       "description": "/** The cell's column. */",
-      "type": { "returnType": "Column", "optional": true }
+      "type": { "returnType": "Column<TValue>", "optional": true }
     },
     "eGridCell": {
       "description": "/** The grid's cell, a DOM div element. */",
@@ -17417,12 +17459,16 @@
     },
     "getValue": {
       "description": "/** Convenience function to get most recent up to date value. */",
-      "type": { "arguments": {}, "returnType": "any", "optional": true }
+      "type": {
+        "arguments": {},
+        "returnType": "TValue | null | undefined",
+        "optional": true
+      }
     },
     "setValue": {
       "description": "/** Convenience function to set the value. */",
       "type": {
-        "arguments": { "value": "any" },
+        "arguments": { "value": "TValue | null | undefined" },
         "returnType": "void",
         "optional": true
       }
@@ -17430,8 +17476,8 @@
     "formatValue": {
       "description": "/** Convenience function to format a value using the column's formatter. */",
       "type": {
-        "arguments": { "value": "any" },
-        "returnType": "any",
+        "arguments": { "value": "TValue | null | undefined" },
+        "returnType": "string",
         "optional": true
       }
     },
@@ -18519,7 +18565,7 @@
     "meta": { "typeParams": ["TData = any", "TDetail = any"] },
     "value": {
       "description": "/** Value to be rendered. */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "valueFormatted": {
       "description": "/** Formatted value to be rendered. */",
@@ -18543,11 +18589,11 @@
     },
     "colDef": {
       "description": "/** The cell's column definition. */",
-      "type": { "returnType": "ColDef", "optional": true }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": true }
     },
     "column": {
       "description": "/** The cell's column. */",
-      "type": { "returnType": "Column", "optional": true }
+      "type": { "returnType": "Column<TValue>", "optional": true }
     },
     "eGridCell": {
       "description": "/** The grid's cell, a DOM div element. */",
@@ -18559,12 +18605,16 @@
     },
     "getValue": {
       "description": "/** Convenience function to get most recent up to date value. */",
-      "type": { "arguments": {}, "returnType": "any", "optional": true }
+      "type": {
+        "arguments": {},
+        "returnType": "TValue | null | undefined",
+        "optional": true
+      }
     },
     "setValue": {
       "description": "/** Convenience function to set the value. */",
       "type": {
-        "arguments": { "value": "any" },
+        "arguments": { "value": "TValue | null | undefined" },
         "returnType": "void",
         "optional": true
       }
@@ -18572,8 +18622,8 @@
     "formatValue": {
       "description": "/** Convenience function to format a value using the column's formatter. */",
       "type": {
-        "arguments": { "value": "any" },
-        "returnType": "any",
+        "arguments": { "value": "TValue | null | undefined" },
+        "returnType": "string",
         "optional": true
       }
     },
@@ -18913,7 +18963,7 @@
     },
     "value": {
       "description": "/** Current value of the cell */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "eventKey": {
       "description": "/** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable\n     *  characters appear here */",
@@ -18925,11 +18975,11 @@
     },
     "column": {
       "description": "/** Grid column */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** Column definition */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "node": {
       "description": "/** Row node for the cell */",
@@ -18970,16 +19020,16 @@
     "parseValue": {
       "description": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
       "type": {
-        "arguments": { "value": "any" },
-        "returnType": "any",
+        "arguments": { "value": "string" },
+        "returnType": "TValue | null | undefined",
         "optional": false
       }
     },
     "formatValue": {
       "description": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
       "type": {
-        "arguments": { "value": "any" },
-        "returnType": "any",
+        "arguments": { "value": "TValue | null | undefined" },
+        "returnType": "string",
         "optional": false
       }
     },
@@ -19007,7 +19057,7 @@
     },
     "value": {
       "description": "/** Current value of the cell */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "eventKey": {
       "description": "/** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable\n     *  characters appear here */",
@@ -19019,11 +19069,11 @@
     },
     "column": {
       "description": "/** Grid column */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** Column definition */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "node": {
       "description": "/** Row node for the cell */",
@@ -19064,16 +19114,16 @@
     "parseValue": {
       "description": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
       "type": {
-        "arguments": { "value": "any" },
-        "returnType": "any",
+        "arguments": { "value": "string" },
+        "returnType": "TValue | null | undefined",
         "optional": false
       }
     },
     "formatValue": {
       "description": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
       "type": {
-        "arguments": { "value": "any" },
-        "returnType": "any",
+        "arguments": { "value": "TValue | null | undefined" },
+        "returnType": "string",
         "optional": false
       }
     },
@@ -19106,7 +19156,7 @@
     },
     "value": {
       "description": "/** Current value of the cell */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "eventKey": {
       "description": "/** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable\n     *  characters appear here */",
@@ -19118,11 +19168,11 @@
     },
     "column": {
       "description": "/** Grid column */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** Column definition */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "node": {
       "description": "/** Row node for the cell */",
@@ -19163,16 +19213,16 @@
     "parseValue": {
       "description": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
       "type": {
-        "arguments": { "value": "any" },
-        "returnType": "any",
+        "arguments": { "value": "string" },
+        "returnType": "TValue | null | undefined",
         "optional": false
       }
     },
     "formatValue": {
       "description": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
       "type": {
-        "arguments": { "value": "any" },
-        "returnType": "any",
+        "arguments": { "value": "TValue | null | undefined" },
+        "returnType": "string",
         "optional": false
       }
     },
@@ -19201,7 +19251,7 @@
     },
     "value": {
       "description": "/** Current value of the cell */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "eventKey": {
       "description": "/** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable\n     *  characters appear here */",
@@ -19213,11 +19263,11 @@
     },
     "column": {
       "description": "/** Grid column */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** Column definition */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "node": {
       "description": "/** Row node for the cell */",
@@ -19258,16 +19308,16 @@
     "parseValue": {
       "description": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
       "type": {
-        "arguments": { "value": "any" },
-        "returnType": "any",
+        "arguments": { "value": "string" },
+        "returnType": "TValue | null | undefined",
         "optional": false
       }
     },
     "formatValue": {
       "description": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
       "type": {
-        "arguments": { "value": "any" },
-        "returnType": "any",
+        "arguments": { "value": "TValue | null | undefined" },
+        "returnType": "string",
         "optional": false
       }
     },
@@ -19292,7 +19342,7 @@
     },
     "value": {
       "description": "/** Current value of the cell */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "eventKey": {
       "description": "/** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable\n     *  characters appear here */",
@@ -19304,11 +19354,11 @@
     },
     "column": {
       "description": "/** Grid column */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** Column definition */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "node": {
       "description": "/** Row node for the cell */",
@@ -19349,16 +19399,16 @@
     "parseValue": {
       "description": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
       "type": {
-        "arguments": { "value": "any" },
-        "returnType": "any",
+        "arguments": { "value": "string" },
+        "returnType": "TValue | null | undefined",
         "optional": false
       }
     },
     "formatValue": {
       "description": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
       "type": {
-        "arguments": { "value": "any" },
-        "returnType": "any",
+        "arguments": { "value": "TValue | null | undefined" },
+        "returnType": "string",
         "optional": false
       }
     },
@@ -19383,7 +19433,7 @@
     },
     "value": {
       "description": "/** Current value of the cell */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "eventKey": {
       "description": "/** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable\n     *  characters appear here */",
@@ -19395,11 +19445,11 @@
     },
     "column": {
       "description": "/** Grid column */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** Column definition */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "node": {
       "description": "/** Row node for the cell */",
@@ -19440,16 +19490,16 @@
     "parseValue": {
       "description": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
       "type": {
-        "arguments": { "value": "any" },
-        "returnType": "any",
+        "arguments": { "value": "string" },
+        "returnType": "TValue | null | undefined",
         "optional": false
       }
     },
     "formatValue": {
       "description": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
       "type": {
-        "arguments": { "value": "any" },
-        "returnType": "any",
+        "arguments": { "value": "TValue | null | undefined" },
+        "returnType": "string",
         "optional": false
       }
     },
@@ -19507,7 +19557,7 @@
     },
     "value": {
       "description": "/** Current value of the cell */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "eventKey": {
       "description": "/** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable\n     *  characters appear here */",
@@ -19519,11 +19569,11 @@
     },
     "column": {
       "description": "/** Grid column */",
-      "type": { "returnType": "Column", "optional": false }
+      "type": { "returnType": "Column<TValue>", "optional": false }
     },
     "colDef": {
       "description": "/** Column definition */",
-      "type": { "returnType": "ColDef<TData>", "optional": false }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": false }
     },
     "node": {
       "description": "/** Row node for the cell */",
@@ -19564,16 +19614,16 @@
     "parseValue": {
       "description": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
       "type": {
-        "arguments": { "value": "any" },
-        "returnType": "any",
+        "arguments": { "value": "string" },
+        "returnType": "TValue | null | undefined",
         "optional": false
       }
     },
     "formatValue": {
       "description": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
       "type": {
-        "arguments": { "value": "any" },
-        "returnType": "any",
+        "arguments": { "value": "TValue | null | undefined" },
+        "returnType": "string",
         "optional": false
       }
     },
@@ -19711,7 +19761,7 @@
   "ICellRendererParams": {
     "value": {
       "description": "/** Value to be rendered. */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "valueFormatted": {
       "description": "/** Formatted value to be rendered. */",
@@ -19739,11 +19789,11 @@
     },
     "colDef": {
       "description": "/** The cell's column definition. */",
-      "type": { "returnType": "ColDef", "optional": true }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": true }
     },
     "column": {
       "description": "/** The cell's column. */",
-      "type": { "returnType": "Column", "optional": true }
+      "type": { "returnType": "Column<TValue>", "optional": true }
     },
     "eGridCell": {
       "description": "/** The grid's cell, a DOM div element. */",
@@ -19755,12 +19805,16 @@
     },
     "getValue": {
       "description": "/** Convenience function to get most recent up to date value. */",
-      "type": { "arguments": {}, "returnType": "any", "optional": true }
+      "type": {
+        "arguments": {},
+        "returnType": "TValue | null | undefined",
+        "optional": true
+      }
     },
     "setValue": {
       "description": "/** Convenience function to set the value. */",
       "type": {
-        "arguments": { "value": "any" },
+        "arguments": { "value": "TValue | null | undefined" },
         "returnType": "void",
         "optional": true
       }
@@ -19768,8 +19822,8 @@
     "formatValue": {
       "description": "/** Convenience function to format a value using the column's formatter. */",
       "type": {
-        "arguments": { "value": "any" },
-        "returnType": "any",
+        "arguments": { "value": "TValue | null | undefined" },
+        "returnType": "string",
         "optional": true
       }
     },
@@ -19878,7 +19932,7 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "value": {
       "description": "/** Value to be rendered. */",
-      "type": { "returnType": "TValue", "optional": false }
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
     },
     "valueFormatted": {
       "description": "/** Formatted value to be rendered. */",
@@ -19906,11 +19960,11 @@
     },
     "colDef": {
       "description": "/** The cell's column definition. */",
-      "type": { "returnType": "ColDef", "optional": true }
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": true }
     },
     "column": {
       "description": "/** The cell's column. */",
-      "type": { "returnType": "Column", "optional": true }
+      "type": { "returnType": "Column<TValue>", "optional": true }
     },
     "eGridCell": {
       "description": "/** The grid's cell, a DOM div element. */",
@@ -19922,12 +19976,16 @@
     },
     "getValue": {
       "description": "/** Convenience function to get most recent up to date value. */",
-      "type": { "arguments": {}, "returnType": "any", "optional": true }
+      "type": {
+        "arguments": {},
+        "returnType": "TValue | null | undefined",
+        "optional": true
+      }
     },
     "setValue": {
       "description": "/** Convenience function to set the value. */",
       "type": {
-        "arguments": { "value": "any" },
+        "arguments": { "value": "TValue | null | undefined" },
         "returnType": "void",
         "optional": true
       }
@@ -19935,8 +19993,8 @@
     "formatValue": {
       "description": "/** Convenience function to format a value using the column's formatter. */",
       "type": {
-        "arguments": { "value": "any" },
-        "returnType": "any",
+        "arguments": { "value": "TValue | null | undefined" },
+        "returnType": "string",
         "optional": true
       }
     },
@@ -20484,7 +20542,7 @@
     },
     "value": {
       "description": "/** The value to be rendered by the tooltip. */",
-      "type": { "returnType": "TValue", "optional": true }
+      "type": { "returnType": "TValue | null", "optional": true }
     },
     "valueFormatted": {
       "description": "/** The formatted value to be rendered by the tooltip. */",
@@ -20493,13 +20551,13 @@
     "colDef": {
       "description": "/** Column / ColumnGroup definition. */",
       "type": {
-        "returnType": "ColDef<TData> | ColGroupDef<TData> | null",
+        "returnType": "ColDef<TData, TValue> | ColGroupDef<TData> | null",
         "optional": true
       }
     },
     "column": {
       "description": "/** Column / ColumnGroup */",
-      "type": { "returnType": "Column | ColumnGroup", "optional": true }
+      "type": { "returnType": "Column<TValue> | ColumnGroup", "optional": true }
     },
     "rowIndex": {
       "description": "/** The index of the row containing the cell rendering the tooltip. */",

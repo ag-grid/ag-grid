@@ -163,9 +163,9 @@ const colDefs: ColDef<ICar>[] = [
 
 The `TValue` generic type is also supported for cell renderers / editors by `ICellRendererParams<TData, TValue>` and `ICellEditorParams<TData, TValue>` respectively.
 
-### Typed: TValue | undefined
+### Typed: TValue | null | undefined
 
-For a number of events and callbacks when a generic interface is provided the `value` property is typed as `TValue | undefined` instead of `any`. This is because it is possible for the `value` property to be undefined under certain grid configurations. 
+For a number of events and callbacks when a generic interface is provided the `value` property is typed as `TValue | null | undefined` instead of `any`. This is because it is possible for the `value` property to be `undefined` under certain grid configurations, and it can be `null` when cell editing is enabled and the value has been deleted.
 
 ## Context: \<TContext\>
 

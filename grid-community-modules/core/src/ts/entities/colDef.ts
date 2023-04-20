@@ -80,13 +80,11 @@ export interface IAggFunc<TData = any, TValue = any> {
 
 export interface IAggFuncParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {
     /** Values to aggregate */
-    values: TValue[];
-    // `Column` should be typed `TValue`. Change in v30
+    values: (TValue | null)[];
     /** Column the aggregation function is working on */
-    column: Column;
-    // `ColDef` should be typed `TValue`. Change in v30
+    column: Column<TValue>;
     /** ColDef of the aggregation column */
-    colDef: ColDef<TData>;
+    colDef: ColDef<TData, TValue>;
     /** Pivot Result Column being produced using this aggregation */
     pivotResultColumn?: Column;
     /** The parent RowNode, where the aggregation result will be shown */
@@ -130,22 +128,20 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     cellDataType?: string;
     /** Function or expression. Gets the value from your data for display. */
     valueGetter?: string | ValueGetterFunc<TData, TValue>;
-    // `ValueFormatterFunc` should be type `TValue`. Change in v30
     /** A function or expression to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
-    valueFormatter?: string | ValueFormatterFunc<TData>;
+    valueFormatter?: string | ValueFormatterFunc<TData, TValue>;
     /** Provided a reference data map to be used to map column values to their respective value from the map. */
     refData?: { [key: string]: string; };
-    // `KeyCreatorParams` should be typed `TValue`. Change in v30
     /**
      * Function to return a string key for a value.
      * This string is used for grouping, Set filtering, and searching within cell editor dropdowns.
      * When filtering and searching the string is exposed to the user, so make sure to return a human-readable value. */
-    keyCreator?: (params: KeyCreatorParams<TData>) => string;
+    keyCreator?: (params: KeyCreatorParams<TData, TValue>) => string;
     /**
      * Custom comparator for values, used by renderer to know if values have changed. Cells whose values have not changed don't get refreshed.
      * By default the grid uses `===` which should work for most use cases.
      */
-    equals?: (valueA: TValue, valueB: TValue) => boolean;
+    equals?: (valueA: TValue | null | undefined, valueB: TValue | null | undefined) => boolean;
     /** The field of the tooltip to apply to the cell. */
     tooltipField?: string;
     /**
@@ -236,9 +232,8 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     // *** Columns: Filtering *** //
 
-    // `GetQuickFilterTextParams` should be typed `TValue`. Change in v30
     /** A function to tell the grid what Quick Filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */
-    getQuickFilterText?: (params: GetQuickFilterTextParams<TData>) => string;
+    getQuickFilterText?: (params: GetQuickFilterTextParams<TData, TValue>) => string;
     /** Function or expression. Gets the value for filtering purposes. */
     filterValueGetter?: string | ValueGetterFunc<TData, TValue>;
     /** Whether to display a floating filter for this column. Default: `false` */
@@ -318,15 +313,12 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     // *** Columns: Rendering and Styling *** //
 
-    // `CellStyleFunc` should be typed `TValue`. Change in v30
     /** An object of css values / or function returning an object of css values for a particular cell. */
-    cellStyle?: CellStyle | CellStyleFunc<TData>;
-    // `CellClassFunc` should be typed `TValue`. Change in v30
+    cellStyle?: CellStyle | CellStyleFunc<TData, TValue>;
     /** Class to use for the cell. Can be string, array of strings, or function that returns a string or array of strings. */
-    cellClass?: string | string[] | CellClassFunc<TData>;
-    // `CellClassRules` should be typed `TValue`. Change in v30
+    cellClass?: string | string[] | CellClassFunc<TData, TValue>;
     /** Rules which can be applied to include certain CSS classes. */
-    cellClassRules?: CellClassRules<TData>;
+    cellClassRules?: CellClassRules<TData, TValue>;
 
     /**
     * Provide your own cell Renderer component for this column's cells.
@@ -392,10 +384,8 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Default: `false`
      */
     enableValue?: boolean;
-    // `IAggFunc` should be typed `TValue`. Change in v30
     /** Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. Also accepts a custom aggregation name or an aggregation function. */
     aggFunc?: string | IAggFunc<TData, TValue> | null;
-    // `IAggFunc` should be typed `TValue`. Change in v30
     /** Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions. */
     initialAggFunc?: string | IAggFunc<TData, TValue>;
     /**
@@ -555,17 +545,15 @@ export interface IsColumnFuncParams<TData = any> extends ColumnFunctionCallbackP
 
 export interface GetQuickFilterTextParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {
     /** Value for the cell. */
-    value: TValue;
+    value: TValue | null | undefined;
     /** Row node for the given row */
     node: IRowNode<TData>;
     /** Row data associated with the node. */
     data: TData;
-    // `Column` should be typed `TValue`. Change in v30
     /** Column for this callback */
-    column: Column;
-    // `ColDef` should be typed `TValue`. Change in v30
+    column: Column<TValue>;
     /** ColDef provided for this column */
-    colDef: ColDef<TData>;
+    colDef: ColDef<TData, TValue>;
 }
 
 export type ColumnMenuTab = 'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab';
@@ -627,8 +615,7 @@ export interface HeaderValueGetterParams<TData = any, TValue = any> extends AgGr
     location: string | null;
 }
 export interface HeaderValueGetterFunc<TData = any, TValue = any> {
-    // return should be type string. Change in v30
-    (params: HeaderValueGetterParams<TData, TValue>): any;
+    (params: HeaderValueGetterParams<TData, TValue>): string;
 }
 
 // In the case of parsers, the old and new values are of different types
@@ -646,29 +633,24 @@ export interface ValueSetterParams<TData = any, TValue = any> extends ChangedVal
 export interface ValueSetterFunc<TData = any, TValue = any> {
     (params: ValueSetterParams<TData, TValue>): boolean;
 }
-// `newValue` should be type `string` (no `undefined`). Change in v30
-export interface ValueParserParams<TData = any, TValue = any> extends ChangedValueParams<TData, TValue | null | undefined, any> {
+export interface ValueParserParams<TData = any, TValue = any> extends ChangedValueParams<TData, TValue | null | undefined, string> {
 }
 export interface ValueParserFunc<TData = any, TValue = any> {
-    // `ValueParserParams` should be type `TValue`. Return should be `TValue | null | undefined`. Change in v30
-    (params: ValueParserParams<TData>): TValue;
+    (params: ValueParserParams<TData, TValue>): TValue | null | undefined;
 }
 
-// `BaseColDefOptionalDataParams` should be type `TValue`. Change in v30
-export interface ValueFormatterParams<TData = any, TValue = any> extends BaseColDefOptionalDataParams<TData> {
-    // `value` should be `TValue | null | undefined`. Change in v30
+export interface ValueFormatterParams<TData = any, TValue = any> extends BaseColDefOptionalDataParams<TData, TValue> {
     /** Value for the cell. */
-    value: TValue;
+    value: TValue | null | undefined;
 }
 
 export interface ValueFormatterFunc<TData = any, TValue = any> {
     (params: ValueFormatterParams<TData, TValue>): string;
 }
 
-// `BaseColDefParams` should be typed `TValue`. Change in v30
-export interface KeyCreatorParams<TData = any, TValue = any> extends BaseColDefParams<TData> {
+export interface KeyCreatorParams<TData = any, TValue = any> extends BaseColDefParams<TData, TValue> {
     /** Value for the cell. */
-    value: TValue;
+    value: TValue | null | undefined;
 }
 
 export interface ColSpanParams<TData = any, TValue = any> extends BaseColDefOptionalDataParams<TData, TValue> {
@@ -694,15 +676,12 @@ export interface SuppressHeaderKeyboardEventParams<TData = any, TValue = any> ex
 }
 
 export interface CellClassParams<TData = any, TValue = any> extends RowClassParams<TData> {
-    // `Column` should be typed `TValue`. Change in v30
     /** Column for this callback */
-    column: Column;
-    // `ColDef` should be typed `TValue`. Change in v30
+    column: Column<TValue>;
     /** The colDef associated with the column for this cell */
-    colDef: ColDef<TData>;
-    // `value` should be typed `TValue | null | undefined`. Change in v30
+    colDef: ColDef<TData, TValue>;
     /** The value to be rendered */
-    value: TValue;
+    value: TValue | null | undefined;
 }
 export interface CellClassFunc<TData = any, TValue = any> {
     (cellClassParams: CellClassParams<TData, TValue>): string | string[] | null | undefined;

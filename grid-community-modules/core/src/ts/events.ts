@@ -540,23 +540,18 @@ export interface FullWidthCellKeyPressEvent<TData = any, TContext = any> extends
 /** CELL EVENTS */
 /**------------*/
 export interface CellEvent<TData = any, TValue = any> extends RowEvent<TData> {
-    // `Column` should be typed `TValue`. Change in v30
-    column: Column;
-    // `ColDef` should be typed `TValue`. Change in v30
-    colDef: ColDef<TData>;
-    // `value` should be `TValue | null | undefined`. Change in v30
+    column: Column<TValue>;
+    colDef: ColDef<TData, TValue>;
     /** The value for the cell if available otherwise undefined. */
-    value: TValue | undefined;
+    value: TValue | null | undefined;
 }
 
-/** Use for cell events that will always have a value and data property. */
+/** Use for cell events that will always have a data property. */
 interface CellWithDataEvent<TData = any, TValue = any> extends RowWithDataEvent<TData> {
-    // `Column` should be typed `TValue`. Change in v30
-    column: Column;
-    // `ColDef` should be typed `TValue`. Change in v30
-    colDef: ColDef<TData>;
+    column: Column<TValue>;
+    colDef: ColDef<TData, TValue>;
     /** The value for the cell */
-    value: TValue;
+    value: TValue | null | undefined;
 }
 
 export interface CellKeyDownEvent<TData = any, TValue = any> extends CellEvent<TData, TValue> { }
@@ -575,34 +570,26 @@ export interface CellMouseOutEvent<TData = any, TValue = any> extends CellEvent<
 
 export interface CellContextMenuEvent<TData = any, TValue = any> extends CellEvent<TData, TValue> { }
 
-// Should extend `CellEvent`. Change in v30
-export interface CellEditingStartedEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> { }
+export interface CellEditingStartedEvent<TData = any, TValue = any> extends CellEvent<TData, TValue> { }
 
-// Should extend `CellEvent`. Change in v30
-export interface CellEditingStoppedEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> {
-    // `oldValue` should be type `TValue | null | undefined`. Change in v30
+export interface CellEditingStoppedEvent<TData = any, TValue = any> extends CellEvent<TData, TValue> {
     /** The old value before editing */
-    oldValue: any;
-    // `newValue` should be type `TValue | null | undefined`. Change in v30
+    oldValue: TValue | null | undefined;
     /** The new value after editing */
-    newValue: any;
+    newValue: TValue | null | undefined;
     /** Property indicating if the value of the editor has changed */
     valueChanged: boolean;
 }
 
 export interface CellValueChangedEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> {
-    // `oldValue` should be type `TValue | null | undefined`. Change in v30
-    oldValue: any;
-    // `newValue` should be type `TValue | null | undefined`. Change in v30
-    newValue: any;
+    oldValue: TValue | null | undefined;
+    newValue: TValue | null | undefined;
     source: string | undefined;
 }
 
 export interface CellEditRequestEvent<TData = any, TValue = any> extends CellWithDataEvent<TData, TValue> {
-    // `oldValue` should be type `TValue | null | undefined`. Change in v30
-    oldValue: any;
-    // `newValue` should be type `TValue | null | undefined`. Change in v30
-    newValue: any;
+    oldValue: TValue | null | undefined;
+    newValue: TValue | null | undefined;
     source: string | undefined;
 }
 
