@@ -256,7 +256,7 @@ function createActionSequenceRunner({ actionSequence, onPreAction, onError }: Cr
                     })
                     .catch((error) => {
                         onError && onError({ error, index, action });
-                    });
+                    }) as Promise<void>;
             }, Promise.resolve())
             .then(resolve)
             .catch(reject);
