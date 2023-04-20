@@ -8,7 +8,6 @@ import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedPa
 import { IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
 import { LocaleService } from '../../../localeService';
 import { OptionsFactory } from '../optionsFactory';
-import { DataTypeService } from '../../../columns/dataTypeService';
 
 // The date filter model takes strings, although the filter actually works with dates. This is because a Date object
 // won't convert easily to JSON. When the model is used for doing the filtering, it's converted to a Date object.
@@ -118,7 +117,6 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     private readonly dateConditionToComps: DateCompWrapper[] = [];
 
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
-    @Autowired('dataTypeService') private readonly dataTypeService: DataTypeService;
 
     private dateFilterParams: DateFilterParams;
     private minValidYear: number = DEFAULT_MIN_YEAR;
@@ -152,13 +150,6 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     }
 
     protected comparator(): Comparator<Date> {
-        if (this.dateFilterParams.colDef.cellDataType === 'dateString') {
-            const convertToDate = this.dataTypeService.getDateParserFunction();
-            return (filterDate: Date, cellValue: any) => this.defaultComparator(
-                filterDate,
-                convertToDate(cellValue)
-            );
-        }
         return this.dateFilterParams.comparator ? this.dateFilterParams.comparator : this.defaultComparator.bind(this);
     }
 

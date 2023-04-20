@@ -39,7 +39,6 @@ import {
     CtrlsService,
     WithoutGridCommon,
     ProcessRowGroupForExportParams,
-    ExpressionService,
     ValueFormatterService,
     ValueParserService
 } from "@ag-grid-community/core";
@@ -79,7 +78,6 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
-    @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('valueParserService') private valueParserService: ValueParserService;
 

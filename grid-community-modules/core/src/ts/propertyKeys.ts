@@ -49,7 +49,7 @@ export class PropertyKeys {
         'defaultColGroupDef', 'defaultColDef', 'defaultCsvExportParams', 'defaultExcelExportParams', 'columnTypes',
         'rowClassRules', 'detailCellRendererParams', 'loadingCellRendererParams', 'loadingOverlayComponentParams',
         'noRowsOverlayComponentParams', 'popupParent', 'statusBar', 'sideBar', 'chartThemeOverrides',
-        'customChartThemes', 'chartToolPanelsDef'
+        'customChartThemes', 'chartToolPanelsDef', 'dataTypeDefinitions'
     ];
 
     public static ARRAY_PROPERTIES: KeysOfType<any[]>[] = [
@@ -89,7 +89,7 @@ export class PropertyKeys {
         'showOpenedGroup', 'suppressClipboardApi', 'suppressModelUpdateAfterUpdateTransaction', 'stopEditingWhenCellsLoseFocus', 'maintainColumnOrder', 'groupMaintainOrder',
         'columnHoverHighlight', 'reactUi', 'suppressReactUi', 'readOnlyEdit', 'suppressRowVirtualisation', 'enableCellEditingOnBackspace', 'resetRowDataOnUpdate',
         'removePivotHeaderRowWhenSingleValueColumn', 'suppressCopySingleCellRanges', 'groupRowsSticky', 'suppressServerSideInfiniteScroll', 'rowGroupPanelSuppressSort',
-        'allowShowChangeAfterFilter', 'suppressCutToClipboard'
+        'allowShowChangeAfterFilter', 'suppressCutToClipboard', 'inferCellDataTypes'
     ];
 
     /** You do not need to include event callbacks in this list, as they are generated automatically. */

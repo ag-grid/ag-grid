@@ -17,6 +17,7 @@ import { ModuleRegistry } from '../modules/moduleRegistry';
 import { ModuleNames } from '../modules/moduleNames';
 import { ValueService } from '../valueService/valueService';
 import { Column } from '../entities/column';
+import { doOnce } from '../utils/function';
 
 @Bean('dataTypeService')
 export class DataTypeService extends BeanStub {
@@ -88,7 +89,7 @@ export class DataTypeService extends BeanStub {
                 !baseDataTypeDefinition ||
                 baseDataTypeDefinition.baseDataType !== dataTypeDefinition.baseDataType
             ) {
-                // TODO - error
+                this.warnBaseDataTypesUnmatching();
                 return undefined;
             }
             mergedDataTypeDefinition = this.mergeDataTypeDefinitions(
@@ -101,7 +102,7 @@ export class DataTypeService extends BeanStub {
                 !extendedDataTypeDefinition ||
                 extendedDataTypeDefinition.baseDataType !== dataTypeDefinition.baseDataType
             ) {
-                // TODO - error
+                this.warnBaseDataTypesUnmatching();
                 return undefined;
             }
             const mergedExtendedDataTypeDefinition = this.processDataTypeDefinition(
@@ -118,6 +119,12 @@ export class DataTypeService extends BeanStub {
         }
 
         return mergedDataTypeDefinition;
+    }
+
+    private warnBaseDataTypesUnmatching(): void {
+        doOnce(() => console.warn(
+            'AG Grid: The "baseDataType" property of a data type definition must match that of its parent.'
+        ), 'dataTypeBaseTypesMatch');
     }
 
     public updateColDefAndGetColumnType(
@@ -137,12 +144,16 @@ export class DataTypeService extends BeanStub {
         }
         const dataTypeDefinition = this.dataTypeDefinitions[cellDataType];
         if (!dataTypeDefinition) {
-            // TODO - warning
+            doOnce(() => console.warn(
+                `AG Grid: Missing data type definition - "${cellDataType}"`
+            ), 'dataTypeMissing' + cellDataType);
             return undefined;
         }
         colDef.cellDataType = cellDataType;
         if (dataTypeDefinition.valueFormatter) {
-            colDef.valueFormatter = (params: ValueFormatterParams) => params.node?.group ? undefined as any : dataTypeDefinition.valueFormatter!(params as any);
+            colDef.valueFormatter = (params: ValueFormatterParams) => {
+                return params.node?.group || params.column.isRowGroupActive() ? undefined as any : dataTypeDefinition.valueFormatter!(params as any);
+            }
         }
         if (dataTypeDefinition.valueParser) {
             colDef.valueParser = dataTypeDefinition.valueParser;
@@ -303,6 +314,17 @@ export class DataTypeService extends BeanStub {
             case 'dateString': {
                 colDef.cellEditor = 'agDateStringCellEditor';
                 colDef.keyCreator = (params: KeyCreatorParams) => dataTypeDefinition.valueFormatter!(params);
+                if (!setFilterModuleLoaded) {
+                    const convertToDate = this.getDateParserFunction();
+                    colDef.filterParams = {
+                        comparator: (filterDate: Date, cellValue: string | undefined) => {
+                            const cellAsDate = convertToDate(cellValue)!;
+                            if (cellValue == null || cellAsDate < filterDate) { return -1; }
+                            if (cellAsDate > filterDate) { return 1; }
+                            return 0;
+                        }
+                    }
+                }
                 colDef.useValueFormatterForExport = true;
                 colDef.useValueParserForImport = true;
                 break;
