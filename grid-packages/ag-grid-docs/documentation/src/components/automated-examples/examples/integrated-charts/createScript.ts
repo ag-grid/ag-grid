@@ -53,9 +53,6 @@ export const createScript = ({
             },
         },
 
-        // Wait for data to load
-        { type: 'wait', duration: 1000 },
-
         // Select start cell
         {
             type: 'moveTo',

@@ -137,11 +137,12 @@ export function createAutomatedIntegratedCharts({
         }
 
         gridOptions.onGridReady = () => {
+            onGridReady && onGridReady();
+        };
+        gridOptions.onFirstDataRendered = () => {
             if (suppressUpdates) {
                 return;
             }
-
-            onGridReady && onGridReady();
 
             const scriptDebugger = scriptDebuggerManager.add({
                 id: INTEGRATED_CHARTS_ID,
@@ -167,6 +168,7 @@ export function createAutomatedIntegratedCharts({
                 defaultEasing: Easing.Quadratic.InOut,
             });
         };
+
         new globalThis.agGrid.Grid(gridDiv, gridOptions);
     };
 
