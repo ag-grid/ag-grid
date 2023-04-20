@@ -1,3 +1,5 @@
+import ReactDOM, { flushSync } from "react-dom";
+
 export const classesList = (...list: (string | null | undefined)[]): string => {
     const filtered = list.filter( s => s != null && s !== '');
 
@@ -40,4 +42,18 @@ export const isComponentStateless = (Component: any) => {
     return (
             typeof Component === 'function' && !(Component.prototype && Component.prototype.isReactComponent)
         ) || (typeof Component === 'object' && Component.$$typeof === getMemoType());
+}
+
+// CreateRoot is only available in React 18 and above, which is same as what we require for flushSync
+const createRootAvailable = (ReactDOM as any).createRoot != null;
+/**
+ * Wrapper around React 18 flushSync so that we only use it if it's available while we support React 16-17
+ * @param fn 
+ */
+export const agFlushSync = (fn: () => void) => {
+    if (createRootAvailable) {
+        flushSync(fn);
+    } else {
+        fn();
+    }
 }
