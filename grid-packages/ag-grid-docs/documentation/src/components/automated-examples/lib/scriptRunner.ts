@@ -116,6 +116,7 @@ export interface CreateScriptRunnerParams {
 }
 
 interface CreateActionSequenceRunnerParams {
+    seqId: number;
     actionSequence: ReturnType<typeof createScriptActionSequence>;
     onPreAction?: (params: { action; index: number }) => { shouldCancel: boolean } | undefined;
     onError?: (params: { error: Error; action; index: number }) => void;
@@ -129,6 +130,11 @@ interface CreateScriptActionSequenceParams {
     tweenGroup: Group;
     scriptDebugger?: ScriptDebugger;
     defaultEasing?: EasingFunction;
+}
+
+interface CancelledPromise {
+    cancelled: true;
+    cancelledSeqId: number;
 }
 
 export type RunScriptState = 'inactive' | 'stopped' | 'stopping' | 'errored' | 'pausing' | 'paused' | 'playing';
@@ -242,27 +248,6 @@ function createScriptActionSequence({
     });
 }
 
-function createActionSequenceRunner({ actionSequence, onPreAction, onError }: CreateActionSequenceRunnerParams) {
-    return new Promise((resolve, reject) => {
-        actionSequence
-            .reduce((p, action, index) => {
-                return p
-                    .then(async () => {
-                        const preActionResult = onPreAction && (await onPreAction({ action, index }));
-
-                        if (!preActionResult?.shouldCancel) {
-                            return action();
-                        }
-                    })
-                    .catch((error) => {
-                        onError && onError({ error, index, action });
-                    }) as Promise<void>;
-            }, Promise.resolve())
-            .then(resolve)
-            .catch(reject);
-    });
-}
-
 export function createScriptRunner({
     id,
     containerEl,
@@ -279,7 +264,66 @@ export function createScriptRunner({
     let runScriptState: RunScriptState;
     let loopScript = loop;
     let pausedState: PausedState | undefined;
+    let currentSeqId;
     const rowExpandedState = createRowExpandedState(gridOptions);
+
+    function createActionSequenceRunner({
+        seqId,
+        actionSequence,
+        onPreAction,
+        onError,
+    }: CreateActionSequenceRunnerParams) {
+        return new Promise((resolve, reject) => {
+            let isCancelled = false;
+            actionSequence
+                .reduce((p, action, index) => {
+                    return p
+                        .then(async () => {
+                            if (isCancelled) {
+                                return;
+                            }
+
+                            if (seqId !== currentSeqId) {
+                                isCancelled = true;
+                                scriptDebugger?.log(
+                                    `${id} old action sequence running - step ${index + 1}/${
+                                        actionSequence.length
+                                    } [${seqId}], currently ${currentSeqId}`
+                                );
+                                return resolve({
+                                    cancelled: true,
+                                    cancelledSeqId: seqId,
+                                } as CancelledPromise);
+                            }
+
+                            const preActionResult = onPreAction && (await onPreAction({ action, index }));
+
+                            if (!preActionResult?.shouldCancel) {
+                                return action();
+                            }
+                        })
+                        .catch((error) => {
+                            if (seqId !== currentSeqId) {
+                                isCancelled = true;
+                                scriptDebugger?.log(
+                                    `${id} old action sequence running - step ${index + 1}/${
+                                        actionSequence.length
+                                    } [${seqId}], currently ${currentSeqId}`,
+                                    error
+                                );
+                                return resolve({
+                                    cancelled: true,
+                                    cancelledSeqId: seqId,
+                                } as CancelledPromise);
+                            }
+
+                            onError && onError({ error, index, action });
+                        }) as Promise<void>;
+                }, Promise.resolve())
+                .then(resolve)
+                .catch(reject);
+        });
+    }
 
     const setPausedState = (scriptIndex: number) => {
         pausedState = {
@@ -327,11 +371,14 @@ export function createScriptRunner({
     });
 
     const startActionSequence = (startIndex: number = 0) => {
-        const startTime = Date.now();
+        const seqId = Date.now();
+        currentSeqId = seqId;
+
         updateState('playing');
         tweenUpdate();
         const scriptFromStartIndex = script.slice(startIndex);
         const sequence = createActionSequenceRunner({
+            seqId,
             actionSequence: actionSequence.slice(startIndex),
             onPreAction({ index }) {
                 let shouldCancel = false;
@@ -353,7 +400,7 @@ export function createScriptRunner({
                 }
 
                 if (shouldCancel) {
-                    scriptDebugger?.log(`${id} cancelling step from state: ${runScriptState} [${startTime}]`);
+                    scriptDebugger?.log(`${id} cancelling step from state: ${runScriptState} [${seqId}]`);
                 } else {
                     const scriptAction = scriptFromStartIndex[index];
                     const stepName =
@@ -362,7 +409,7 @@ export function createScriptRunner({
                     const stepNum = index + 1;
                     scriptDebugger?.updateStep({ step: stepNum, numSteps: scriptFromStartIndex.length, stepName });
                     scriptDebugger?.log(
-                        `${id} step ${stepNum}/${scriptFromStartIndex.length}: ${stepName} [${startTime}]`,
+                        `${id} step ${stepNum}/${scriptFromStartIndex.length}: ${stepName} [${seqId}]`,
                         {
                             scriptAction,
                         }
@@ -386,7 +433,12 @@ export function createScriptRunner({
         });
 
         sequence
-            .then(() => {
+            .then((result) => {
+                if ((result as CancelledPromise)?.cancelled) {
+                    scriptDebugger?.log(`${id} sequence cancelled [${(result as CancelledPromise).cancelledSeqId}]`);
+                    return;
+                }
+
                 if (loopScript && runScriptState === 'playing') {
                     updateState('stopped');
                     startActionSequence();
