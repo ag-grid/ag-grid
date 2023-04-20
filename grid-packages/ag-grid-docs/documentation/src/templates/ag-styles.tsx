@@ -1,10 +1,15 @@
-import { createElement, FunctionComponent } from 'react';
+import { createElement, FunctionComponent, ReactNode } from 'react';
 
-export const AGStyles: FunctionComponent = ({ children }) => {
+interface Props {
+    hasFontSizeResponsive: boolean;
+    children: ReactNode;
+}
+
+export const AGStyles: FunctionComponent<Props> = ({ hasFontSizeResponsive = true, children }) => {
     return createElement(
         'div',
         {
-            className: 'ag-styles font-size-responsive',
+            className: `ag-styles ${hasFontSizeResponsive && 'font-size-responsive'}`,
         },
         children
     );

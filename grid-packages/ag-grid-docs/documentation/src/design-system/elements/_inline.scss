@@ -4,6 +4,7 @@
 a {
     text-decoration: none;
     color: var(--link-color);
+    transition: color $default-transition-timing;
 
     &:hover {
         color: var(--link-hover-color);
@@ -20,7 +21,7 @@ a {
 }
 
 code {
-    font-size: 0.9rem;
+    font-size: 0.875em;
     padding: 0 0.2em;
     font-family: var(--monospace-font-family);
     white-space: normal;
@@ -28,6 +29,10 @@ code {
     color: var(--code-text-color);
     background-color: var(--inline-element-background-color);
     border: 1px solid rgba(black, 0.1);
+
+    pre & {
+        font-size: 100%;
+    }
 }
 
 kbd {

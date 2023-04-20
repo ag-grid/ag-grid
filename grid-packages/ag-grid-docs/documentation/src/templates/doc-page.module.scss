@@ -2,7 +2,8 @@
 @use '../design-system' as *;
 
 .doc-page-wrapper {
-    --horizontal-margin: #{$horizontal-margin}; // required as outside of .aq-styles
+    --horizontal-margin: #{$horizontal-margin}; // required as outside of .ag-styles
+    --docs-page-max-width: 68em;
 
     display: flex;
     justify-content: space-between;
@@ -13,6 +14,10 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) and (max-width: $breakpoint-docs-nav-large) {
         padding-right: var(--horizontal-margin);
+    }
+
+    @media screen and (min-width: $breakpoint-docs-nav-extra-large) {
+        --docs-page-max-width: 74em;
     }
 }
 
@@ -33,7 +38,7 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
         padding-right: $size-7;
-        max-width: 60em;
+        max-width: var(--docs-page-max-width);
     }
 
     &.noSideMenu {
@@ -118,31 +123,6 @@
 
         width: 1rem;
         margin-left: 0.25rem;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 3rem;
-        table-layout: fixed;
-
-        th,
-        td {
-            border-bottom: 1px solid #dee2e6;
-            border-top: 1px solid #dee2e6;
-            padding: 0.5rem 1rem;
-            vertical-align: top;
-        }
-
-        th {
-            background-color: #f9fcff;
-        }
-
-        tr:nth-child(2n) {
-            td {
-                background-color: #f9fcff;
-            }
-        }
     }
 
     a {

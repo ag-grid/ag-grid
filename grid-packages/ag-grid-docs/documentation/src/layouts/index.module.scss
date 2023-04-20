@@ -16,15 +16,23 @@ main {
 }
 
 .main-container {
-    composes: container-fluid p-0 d-flex flex-column from global;
-
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
+    padding: 0;
+    width: 100%;
 }
 
 .content-viewport {
-    composes: d-flex flex-column flex-lg-row flex-grow-1 from global;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    @media (min-width: 992px) {
+        flex-direction: row;
+    }
 }
 
 .content {

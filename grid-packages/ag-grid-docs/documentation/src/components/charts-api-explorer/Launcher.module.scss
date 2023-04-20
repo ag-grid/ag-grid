@@ -1,40 +1,35 @@
+@use "../../design-system/" as *;
+
 .launcher {
+    position: relative;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    gap: $size-1;
+    bottom: $size-half;
 
-    &__heading {
-        flex: 1;
+    // Extra specificity to override .ag-styles specificity
+    &:global(.list-style-none) {
+        margin-bottom: 0 !important; // !important for .ag-styles specificity
+    }
 
-        h2 {
-            margin: 0;
-            font-size: 1.5rem;
+    label {
+        color: var(--secondary-text-color);
+    }
+
+    select {
+        margin-right: $size-2;
+    }
+
+    button {
+        --text-color: var(--link-color);
+        --icon-size: 1.5em;
+
+        &:hover {
+            --text-color: var(--link-hover-color);
         }
     }
 
-    &__menu-item {
-        padding: 8px;
-        display: inline-block;
-    }
-
-    &__options {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        flex: 1 1 0;
-        justify-content: flex-end;
-        max-width: max-content;
-    }
-
-    &__framework-style {
-        &__select {
-            composes: form-control from global;
-
-            font-size: 0.9rem;
-            padding: 5px;
-            border-radius: 5px;
-            margin-left: 10px;
-        }
+    svg {
+        transition: fill $default-transition-timing;
     }
 }

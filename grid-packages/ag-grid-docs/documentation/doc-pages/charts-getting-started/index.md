@@ -11,80 +11,28 @@ title: "Get Started with AG Charts"
     .gatsby-resp-image-image {
         box-shadow: none !important;
     }
-
-    .code-tab pre {
-        margin-top: 0;
-    }
-
-    .code-tab .nav-item {
-        margin-bottom: 0 !important;
-    }
 </style>
 
 AG Charts is a powerful standalone component with no dependencies. The charts factory API can be used to seamlessly create and update data visualizations independently of the grid.
 
-<section class="code-tab mb-3">
-<div class="card">
-<div class="card-header">Quick Look Code Example</div>
-<div class="card-body">
-<ul class="nav nav-tabs">
-<li class="nav-item">
-<a  class="nav-link active" id="component-tab" data-toggle="tab" href="#component" role="tab" aria-controls="component" aria-selected="true">
+### Quick Look Code Example
+
+<tabs>
+
+
+
+
 
 <framework-specific-section frameworks="javascript">
-<p>main.js</p>
+<tabs-links>
+<open-in-cta type="plunkr" href="https://plnkr.co/edit/4RA1NMI4unVHfRaV?preview" />
+</tabs-links>
+|
+<div tab-label="main.js">
 </framework-specific-section>
-
-<framework-specific-section frameworks="angular">
-<p>app.component.ts</p>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<p>index.js</p>
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-<p>App.vue</p>
-</framework-specific-section>
-
-</a>
-</li>
-
-<framework-specific-section frameworks="angular">
-<li class="nav-item">
-    <a class="nav-link" id="module-tab" data-toggle="tab" href="#module" role="tab" aria-controls="module" aria-selected="false">
-        <p>app.module.ts</p>
-    </a>
-</li>
-</framework-specific-section>
-
-<li class="nav-item">
-<a class="nav-link" id="template-tab" data-toggle="tab" href="#template" role="tab" aria-controls="template" aria-selected="false">
 
 <framework-specific-section frameworks="javascript">
-<p>index.html</p>
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
-<p>app.component.html</p>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<p>index.html</p>
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-<p>main.js</p>
-</framework-specific-section>
-
-</a>
-</li>
-</ul>
-<div class="tab-content">
-<div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false}>
+<snippet transform={false} lineNumbers={true}>
 | var data = [
 |     {
 |         beverage: 'Coffee',
@@ -142,68 +90,47 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 </snippet>
 </framework-specific-section>
 
-<framework-specific-section frameworks="angular">
-<snippet language="jsx" transform={false}>
-|import { Component } from '@angular/core';
-|import { AgChartOptions } from 'ag-charts-community';
-|
-|@Component({
-|    selector: 'my-app',
-|    templateUrl: './app.component.html'
-|})
-|export class AppComponent {
-|     public options: AgChartOptions;
-|
-|     beverageSpending = [
-|         {
-|             beverage: 'Coffee',
-|             Q1: 700,
-|             Q2: 600,
-|             Q3: 560,
-|             Q4: 450
-|         },
-|         {
-|             beverage: 'Tea',
-|             Q1: 520,
-|             Q2: 450,
-|             Q3: 380,
-|             Q4: 270
-|         },
-|         {
-|             beverage: 'Milk',
-|             Q1: 200,
-|             Q2: 190,
-|             Q3: 170,
-|             Q4: 180
-|         },
-|     ];
-|     constructor() {
-|         this.options = {
-|             data: this.beverageSpending,
-|             title: {
-|                 text: 'Beverage Expenses',
-|             },
-|             subtitle: {
-|                 text: 'per quarter',
-|             },
-|             footnote: {
-|                 text: 'Based on a sample size of 200 respondents',
-|             },
-|             series: [
-|                 { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
-|                 { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
-|                 { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
-|                 { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
-|             ],
-|         };
-|     }
-| }
-</snippet>
+<framework-specific-section frameworks="javascript">
+</div>
 
+<div tab-label="index.html">
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript">
+<snippet language="html" transform={false} numberLines={true}>
+| &lt;!DOCTYPE html>
+| &lt;html lang="en">
+|     &lt;head>
+|         &lt;title>AG Charts Basic Example&lt;/title>
+|         &lt;script src="https://cdn.jsdelivr.net/npm/ag-charts-community/dist/ag-charts-community.min.js">
+|         &lt;/script>
+|     &lt;/head>
+|     &lt;body>
+|         &lt;div id="myChart" style="position: absolute; top: 0; right: 0; bottom: 0; left: 0;">&lt;/div>
+|         &lt;script src="main.js">&lt;/script>
+|     &lt;/body>
+| &lt;/html>
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript">
+</div>
+</framework-specific-section>
+
+
+
+
+
+<framework-specific-section frameworks="react">
+<tabs-links>
+<open-in-cta type="stackblitz" href="https://stackblitz.com/edit/ag-charts-react-hello-world-yduhy" />
+</tabs-links>
+|
+<div tab-label="index.js">
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<snippet language="jsx" transform={false}>
+<snippet language="jsx" transform={false} numberLines={true}>
 | import React, { Component } from 'react';
 | import { AgChartsReact } from 'ag-charts-react';
 |
@@ -259,19 +186,163 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 |     }
 |
 |     render() {
-|         return &lt;AgChartsReact options={this.state.options} />;
+|         return <AgChartsReact options={this.state.options} />;
 |     }
 | }
 </snippet>
 </framework-specific-section>
 
-<framework-specific-section frameworks="vue">
-<snippet language="html" transform={false}>
-| &lt;template>
-|    &lt;ag-charts-vue :options="options">&lt;/ag-charts-vue>
-| &lt;/template>
+<framework-specific-section frameworks="react">
+</div>
+
+<div tab-label="index.html">
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<snippet language="html" transform={false} numberLines={true}>
+| <div id="root"></div>
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+</div>
+</framework-specific-section>
+
+
+
+
+
+<framework-specific-section frameworks="angular">
+| <tabs-links>
+| <open-in-cta type="stackblitz" href="https://stackblitz.com/edit/ag-charts-angular-hello-world-gjjfpt" />
+| </tabs-links>
 |
-| &lt;script>
+| <div tab-label="app.component.ts">
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet language="jsx" transform={false} numberLines={true}>
+| import { Component } from '@angular/core';
+| import { AgChartOptions } from 'ag-charts-community';
+|
+| @Component({
+|     selector: 'my-app',
+|     templateUrl: './app.component.html'
+| })
+| export class AppComponent {
+|     public options: AgChartOptions;
+|
+|     beverageSpending = [
+|         {
+|             beverage: 'Coffee',
+|             Q1: 450,
+|             Q2: 560,
+|             Q3: 600,
+|             Q4: 700,
+|         },
+|         {
+|             beverage: 'Tea',
+|             Q1: 270,
+|             Q2: 380,
+|             Q3: 450,
+|             Q4: 520,
+|         },
+|         {
+|             beverage: 'Milk',
+|             Q1: 180,
+|             Q2: 170,
+|             Q3: 190,
+|             Q4: 200,
+|         },
+|     ];
+|     constructor() {
+|         this.options = {
+|             data: this.beverageSpending,
+|             title: {
+|                 text: 'Beverage Expenses',
+|             },
+|             subtitle: {
+|                 text: 'per quarter',
+|             },
+|             footnote: {
+|                 text: 'Based on a sample size of 200 respondents',
+|             },
+|             series: [
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
+|             ],
+|         };
+|     }
+| }
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+</div>
+
+<div tab-label="app.module.ts">
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet language="jsx" transform={false} numberLines={true}>
+| import { BrowserModule } from '@angular/platform-browser';
+| import { NgModule } from '@angular/core';
+| import { AgChartsAngularModule } from 'ag-charts-angular';
+| import { AppComponent } from './app.component';
+|
+| @NgModule({
+|     imports: [
+|         BrowserModule,
+|         AgChartsAngularModule
+|     ],
+|     declarations: [AppComponent],
+|     bootstrap: [AppComponent],
+| })
+| export class AppModule {
+| }
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+</div>
+
+<div tab-label="app.component.html">
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet language="html" transform={false} numberLines={true}> 
+| <ag-charts-angular
+|     style="position: absolute; top: 0; right: 0; bottom: 0; left: 0;"
+|     [options]="options">
+| </ag-charts-angular>
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+</div>
+</framework-specific-section>
+
+
+
+
+
+<framework-specific-section frameworks="vue">
+<tabs-links>
+<open-in-cta type="codesandbox" href="https://codesandbox.io/s/ag-charts-vue-hello-world-cfoehv" />
+</tabs-links>
+
+<div tab-label="App.vue">
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet language="html" transform={false} numberLines={true}> 
+| <template>
+|    <ag-charts-vue :options="options"></ag-charts-vue>
+| </template>
+|
+| <script>
 |     import { AgChartsVue } from "ag-charts-vue3";
 |
 |     export default {
@@ -331,117 +402,33 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 |             };
 |         },
 |     };
-| &lt;/script>
+| </script>
 |
-| &lt;style>
-| &lt;/style>
-</snippet>
-</framework-specific-section>
-
-</div>
-
-<framework-specific-section frameworks="angular">
-<div class="tab-pane" id="module" role="tabpanel" aria-labelledby="module-tab">
-
-<snippet language="jsx" transform={false}>
-|import { BrowserModule } from '@angular/platform-browser';
-|import { NgModule } from '@angular/core';
-|import { AgChartsAngularModule } from 'ag-charts-angular';
-|import { AppComponent } from './app.component';
-|
-|@NgModule({
-|     imports: [
-|         BrowserModule,
-|         AgChartsAngularModule
-|     ],
-|     declarations: [AppComponent],
-|     bootstrap: [AppComponent],
-|})
-|export class AppModule {
-|}
-</snippet>
-
-</div>
-
-</framework-specific-section>
-
-<div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
-
-<framework-specific-section frameworks="javascript">
-<snippet language="html" transform={false}>
-| &lt;!DOCTYPE html>
-| &lt;html lang="en">
-|     &lt;head>
-|         &lt;title>AG Charts Basic Example&lt;/title>
-|         &lt;script src="https://cdn.jsdelivr.net/npm/ag-charts-community/dist/ag-charts-community.min.js">
-|         &lt;/script>
-|     &lt;/head>
-|     &lt;body>
-|         &lt;div id="myChart" style="position: absolute; top: 0; right: 0; bottom: 0; left: 0;">&lt;/div>
-|         &lt;script src="main.js">&lt;/script>
-|     &lt;/body>
-| &lt;/html>
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
-<snippet language="html" transform={false}>
-| &lt;ag-charts-angular
-|     style="position: absolute; top: 0; right: 0; bottom: 0; left: 0;"
-|     [options]="options">
-| &lt;/ag-charts-angular>
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<snippet language="html" transform={false}>
-|&lt;div id="root">&lt;/div>
+| <style>
+| </style>
 </snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-<snippet language="jsx" transform={false}>
-|import { createApp } from 'vue'
-|import App from './App.vue'
+</div>
+
+<div tab-label="main.js">
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet language="jsx" transform={false} numberLines={true}>
+| import { createApp } from 'vue'
+| import App from './App.vue'
 |
-|createApp(App).mount('#app')
-|
+| createApp(App).mount('#app')
 </snippet>
 </framework-specific-section>
 
-</div>
-</div>
-</div>
-<div class="text-right" style="margin-top: -1.5rem;">
-
-<framework-specific-section frameworks="javascript">
-<a class="btn btn-dark mb-2 mr-3" href="https://plnkr.co/edit/4RA1NMI4unVHfRaV?preview" target="_blank">
-    Open in <img src="../../images/resources/charts-getting-started/plunker_icon.svg" alt="Open in Plunker" style="width: 2.5rem" /> Plunker
-</a>
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
-<a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-charts-angular-hello-world-gjjfpt" target="_blank">
-    Open in <img src="../../images/resources/charts-getting-started/stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
-</a>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-charts-react-hello-world-yduhy" target="_blank">
-    Open in <img src="../../images/resources/charts-getting-started/stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
-</a>
-</framework-specific-section>
-
-
 <framework-specific-section frameworks="vue">
-<a class="btn btn-dark mb-2 mr-3" href="https://codesandbox.io/s/ag-charts-vue-hello-world-cfoehv" target="_blank">
-    Open in <img src="../../images/resources/charts-getting-started/codesandbox_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> CodeSandbox
-</a>
+</div>
 </framework-specific-section>
 
-</div>
-</div>
-</section>
+</tabs>
 
 <framework-specific-section frameworks="vue">
 <note>

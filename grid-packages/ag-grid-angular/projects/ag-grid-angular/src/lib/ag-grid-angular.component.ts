@@ -441,7 +441,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public excludeChildrenWhenTreeDataFiltering: boolean | undefined = undefined;
     /** Set to `true` to Enable Charts. Default: `false`     */
     @Input() public enableCharts: boolean | undefined = undefined;
-    /** The list of chart themes to be used.     */
+    /** The list of chart themes that a user can chose from in the chart settings panel.
+         * Default: `['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar' ]`
+         */
     @Input() public chartThemes: string[] | undefined = undefined;
     /** A map containing custom chart themes.     */
     @Input() public customChartThemes: { [name: string]: AgChartTheme } | undefined = undefined;
