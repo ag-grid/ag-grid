@@ -17,7 +17,7 @@ export class CheckboxCellEditor extends PopupComponent implements ICellEditorCom
 
     public init(params: ICellEditorParams<any, boolean>): void {
         this.params = params;
-        this.eCheckbox.setValue(params.value);
+        this.eCheckbox.setValue(params.value ?? undefined);
     }
 
     public getValue(): boolean | undefined {

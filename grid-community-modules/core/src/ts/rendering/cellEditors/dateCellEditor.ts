@@ -1,16 +1,18 @@
+import { ICellEditorParams } from "../../interfaces/iCellEditor";
 import { serialiseDate } from "../../utils/date";
 import { AgInputDateField } from "../../widgets/agInputDateField";
-import { CellEditorInput, ISimpleCellEditorParams, SimpleCellEditor } from "./simpleCellEditor";
+import { CellEditorInput, SimpleCellEditor } from "./simpleCellEditor";
+import { exists } from "../../utils/generic";
 
-export interface IDateCellEditorParams extends ISimpleCellEditorParams {
+export interface IDateCellEditorParams<TData = any, TContext = any> extends ICellEditorParams<TData, Date, TContext> {
     min?: string | Date;
     max?: string | Date;
     step?: number;
 }
 
 class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams, AgInputDateField> {
-    eInput: AgInputDateField;
-    params: IDateCellEditorParams;
+    private eInput: AgInputDateField;
+    private params: IDateCellEditorParams;
 
     public getTemplate() {
         return /* html */`<ag-input-date-field class="ag-cell-editor" ref="eInput"></ag-input-date-field>`;
@@ -30,16 +32,20 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
         }
     }
 
-    getValue(): Date {
-        return this.eInput.getDate()!;
+    getValue(): Date | null | undefined {
+        const value = this.eInput.getDate();
+        if (!exists(value) && !exists(this.params.value)) {
+            return this.params.value;
+        }
+        return value ?? null;
     }
 
-    public getStartValue(): string | undefined {
+    public getStartValue(): string | null | undefined {
         const { value } = this.params;
         if (!(value instanceof Date)) {
             return undefined
         }
-        return serialiseDate(value, false) ?? undefined;
+        return serialiseDate(value, false);
     }
 }
 

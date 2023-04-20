@@ -51,7 +51,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
         if (params.node.group) {
             isSelected = params.value == null || (params.value as any) === '' ? undefined : (params.value as any) === 'true';
         } else {
-            isSelected = params.value;
+            isSelected = params.value ?? undefined;
         }
         this.eCheckbox.setValue(isSelected);
         this.eCheckbox.setDisabled(!params.column?.isCellEditable(params.node));

@@ -2,26 +2,18 @@ import { PopupComponent } from "../../widgets/popupComponent";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { AgInputTextField } from "../../widgets/agInputTextField";
 import { RefSelector } from "../../widgets/componentAnnotations";
-import { exists } from "../../utils/generic";
 import { isBrowserSafari } from "../../utils/browser";
 import { KeyCode } from '../../constants/keyCode';
-import { ITextCellEditorParams } from "./textCellEditor";
 
-export interface ISimpleCellEditorParams extends ICellEditorParams {
-    /** If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor.
-     * Used when the cell value needs formatting prior to editing, such as when using reference data and you
-     * want to display text rather than code. */
-    useFormatter: boolean;
-}
-
-export interface CellEditorInput<TValue, P extends ISimpleCellEditorParams, I extends AgInputTextField> {
+export interface CellEditorInput<TValue, P extends ICellEditorParams, I extends AgInputTextField> {
     getTemplate(): string;
     init(eInput: I, params: P): void;
-    getValue(): TValue;
-    getStartValue(): string | undefined;
+    getValue(): TValue | null | undefined;
+    getStartValue(): string | null | undefined;
+    setCaret?(): void
 }
 
-export class SimpleCellEditor<TValue, P extends ISimpleCellEditorParams, I extends AgInputTextField> extends PopupComponent implements ICellEditorComp {
+export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgInputTextField> extends PopupComponent implements ICellEditorComp {
     private highlightAllOnFocus: boolean;
     private focusAfterAttached: boolean;
     protected params: ICellEditorParams;
@@ -40,7 +32,7 @@ export class SimpleCellEditor<TValue, P extends ISimpleCellEditorParams, I exten
 
         const eInput = this.eInput;
         this.cellEditorInput.init(eInput, params);
-        let startValue: string | undefined;
+        let startValue: string | null | undefined;
 
         // cellStartedEdit is only false if we are doing fullRow editing
         if (params.cellStartedEdit) {
@@ -51,7 +43,7 @@ export class SimpleCellEditor<TValue, P extends ISimpleCellEditorParams, I exten
             } else if (params.charPress) {
                 startValue = params.charPress;
             } else {
-                startValue = this.getStartValue(params);
+                startValue = this.cellEditorInput.getStartValue();
 
                 if (params.eventKey !== KeyCode.F2) {
                     this.highlightAllOnFocus = true;
@@ -60,7 +52,7 @@ export class SimpleCellEditor<TValue, P extends ISimpleCellEditorParams, I exten
 
         } else {
             this.focusAfterAttached = false;
-            startValue = this.getStartValue(params);
+            startValue = this.cellEditorInput.getStartValue();
         }
 
         if (startValue != null) {
@@ -95,20 +87,11 @@ export class SimpleCellEditor<TValue, P extends ISimpleCellEditorParams, I exten
         if (this.highlightAllOnFocus) {
             inputEl.select();
         } else {
-            // when we started editing, we want the caret at the end, not the start.
-            // this comes into play in two scenarios:
-            //   a) when user hits F2
-            //   b) when user hits a printable character
-            const value = eInput.getValue();
-            const len = (exists(value) && value.length) || 0;
-
-            if (len) {
-                inputEl.setSelectionRange(len, len);
-            }
+            this.cellEditorInput.setCaret?.();
         }
     }
 
-    // gets called when tabbing trough cells and in full row edit mode
+    // gets called when tabbing through cells and in full row edit mode
     public focusIn(): void {
         const eInput = this.eInput;
         const focusEl = eInput.getFocusableElement();
@@ -118,14 +101,10 @@ export class SimpleCellEditor<TValue, P extends ISimpleCellEditorParams, I exten
         inputEl.select();
     }
 
-    public getValue(): any {
+    public getValue(): TValue | null | undefined {
         return this.cellEditorInput.getValue();
     }
 
-    private getStartValue(params: ITextCellEditorParams): string | undefined {
-        const formatValue = params.useFormatter || params.column.getColDef().refData;
-        return formatValue ? params.formatValue(params.value) : this.cellEditorInput.getStartValue();
-    }
     public isPopup() {
         return false;
     }

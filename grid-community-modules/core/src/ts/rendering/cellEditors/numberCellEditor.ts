@@ -1,7 +1,9 @@
+import { ICellEditorParams } from "../../interfaces/iCellEditor";
 import { AgInputNumberField } from "../../widgets/agInputNumberField";
-import { CellEditorInput, ISimpleCellEditorParams, SimpleCellEditor } from "./simpleCellEditor";
+import { CellEditorInput, SimpleCellEditor } from "./simpleCellEditor";
+import { exists } from "../../utils/generic";
 
-export interface INumberCellEditorParams extends ISimpleCellEditorParams {
+export interface INumberCellEditorParams<TData = any, TContext = any> extends ICellEditorParams<TData, number, TContext> {
     min?: number;
     max?: number;
     precision?: number;
@@ -9,8 +11,8 @@ export interface INumberCellEditorParams extends ISimpleCellEditorParams {
 }
 
 class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditorParams, AgInputNumberField> {
-    eInput: AgInputNumberField;
-    params: INumberCellEditorParams;
+    private eInput: AgInputNumberField;
+    private params: INumberCellEditorParams;
 
     public getTemplate() {
         return /* html */`<ag-input-number-field class="ag-cell-editor" ref="eInput"></ag-input-number-field>`;
@@ -33,12 +35,16 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
         }
     }
 
-    public getValue(): number {
-        return this.params.parseValue(this.eInput.getValue());
+    public getValue(): number | null | undefined {
+        const value = this.eInput.getValue();
+        if (!exists(value) && !exists(this.params.value)) {
+            return this.params.value;
+        }
+        return this.params.parseValue(value!);
     }
 
-    public getStartValue(): string | undefined {
-        return this.params.value;
+    public getStartValue(): string | null | undefined {
+        return this.params.value as any;
     }
 }
 
