@@ -165,6 +165,8 @@ export function prepareOptions<T extends AgChartOptions>(
         defaultOverrides = DEFAULT_CARTESIAN_CHART_OVERRIDES;
     }
 
+    removeDisabledOptions<T>(options);
+
     const { context, mergedOptions, axesThemes, seriesThemes } = prepareMainOptions<T>(defaultOverrides as T, options);
 
     // Special cases where we have arrays of elements which need their own defaults.
@@ -369,6 +371,23 @@ function prepareAxis<T extends AxesOptionsTypes>(
     const cleanTheme = { crossLines: DELETE };
 
     return jsonMerge([axisTheme, cleanTheme, axis, removeOptions], noDataCloneMergeOptions);
+}
+
+function removeDisabledOptions<T extends AgChartOptions>(options: T) {
+    // Remove configurations from all option objects with a `false` value for the `enabled` property.
+    jsonWalk(
+        options,
+        (_, visitingUserOpts) => {
+            if (!('enabled' in visitingUserOpts)) return;
+            if (visitingUserOpts.enabled === false) {
+                Object.entries(visitingUserOpts).forEach(([key]) => {
+                    if (key === 'enabled') return;
+                    delete visitingUserOpts[key];
+                });
+            }
+        },
+        { skip: ['data', 'theme'] }
+    );
 }
 
 function prepareEnabledOptions<T extends AgChartOptions>(options: T, mergedOptions: any) {
