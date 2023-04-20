@@ -125,8 +125,6 @@ export const createScript = ({
                     return;
                 }
 
-                scriptDebugger?.log('Context menu chart creation failed, creating chart using grid API');
-
                 gridOptions?.api?.createRangeChart({
                     chartType: 'stackedColumn',
                     cellRange: {
