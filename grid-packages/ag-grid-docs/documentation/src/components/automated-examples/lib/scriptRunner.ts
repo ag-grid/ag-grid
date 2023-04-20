@@ -400,7 +400,7 @@ export function createScriptRunner({
                 }
 
                 if (shouldCancel) {
-                    scriptDebugger?.log(`${id} cancelling step from state: ${runScriptState} [${seqId}]`);
+                    scriptDebugger?.infoLog(`${id} cancelling step from state: ${runScriptState} [${seqId}]`);
                 } else {
                     const scriptAction = scriptFromStartIndex[index];
                     const stepName =
@@ -408,7 +408,7 @@ export function createScriptRunner({
                         (scriptAction.type === 'agAction' ? scriptAction.actionType : scriptAction.type);
                     const stepNum = index + 1;
                     scriptDebugger?.updateStep({ step: stepNum, numSteps: scriptFromStartIndex.length, stepName });
-                    scriptDebugger?.log(
+                    scriptDebugger?.infoLog(
                         `${id} step ${stepNum}/${scriptFromStartIndex.length}: ${stepName} [${seqId}]`,
                         {
                             scriptAction,

@@ -47,17 +47,19 @@ const Default = () => {
             url: '/react-data-grid/solidjs/',
         },
     ];
-    let debugValue, isCI, runAutomatedExamplesOnce;
+    let debugValue, debugLogLevel, isCI, runAutomatedExamplesOnce;
 
     if (!IS_SSR) {
         const searchParams = new URLSearchParams(window.location.search);
         debugValue = searchParams.get('debug');
+        debugLogLevel = searchParams.get('debugLogLevel');
         isCI = searchParams.get('isCI') === 'true';
         runAutomatedExamplesOnce = searchParams.get('runOnce') === 'true';
     }
 
     useEffect(() => {
         automatedExampleManager.setDebugEnabled(Boolean(debugValue));
+        automatedExampleManager.setDebugLogLevel(debugLogLevel);
         automatedExampleManager.setDebugInitialDraw(debugValue === 'draw');
     }, []);
 

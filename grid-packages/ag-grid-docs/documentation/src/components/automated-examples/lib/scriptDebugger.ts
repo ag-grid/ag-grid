@@ -10,11 +10,19 @@ interface CreateScriptDebuggerParams {
     initialDraw: boolean;
     debugPanel: DebugPanel;
     canvasClassname: string;
+    getLogLevel: () => LogLevel;
 }
 
 export type ScriptDebugger = ReturnType<typeof createScriptDebugger>;
 export type ScriptDebuggerManager = ReturnType<typeof createScriptDebuggerManager>;
 type DebugPanel = ReturnType<typeof createDebugPanel>;
+
+export const LOG_LEVELS = {
+    info: 0,
+    log: 1,
+    error: 2,
+};
+export type LogLevel = keyof typeof LOG_LEVELS;
 
 const STATE_CLASSNAME = 'state';
 const STEP_CLASSNAME = 'step';
@@ -27,6 +35,10 @@ const getCheckboxTemplate = (isChecked?: boolean) => `
 `;
 
 const DEFAULT_DRAW_COLOR = 'rgba(255,0,0,0.5)'; // red
+
+const isValidLogLevel = (logLevel: LogLevel, comparisonLogLevel: LogLevel) => {
+    return LOG_LEVELS[logLevel] >= LOG_LEVELS[comparisonLogLevel];
+};
 
 const log = (...args: any[]) => {
     const [prefix] = args || [];
@@ -226,6 +238,7 @@ function createScriptDebugger({
     initialDraw,
     debugPanel,
     canvasClassname,
+    getLogLevel,
 }: CreateScriptDebuggerParams) {
     let shouldDraw = initialDraw;
     let scriptRunner;
@@ -269,7 +282,32 @@ function createScriptDebugger({
         scriptRunner = runner;
     };
 
-    return { log, errorLog, clear, drawPoint, updateStep, updateState, setScriptRunner };
+    return {
+        infoLog: (...args) => {
+            if (!isValidLogLevel('info', getLogLevel())) {
+                return;
+            }
+            log(...args);
+        },
+        log: (...args) => {
+            if (!isValidLogLevel('log', getLogLevel())) {
+                return;
+            }
+            log(...args);
+        },
+        errorLog: (...args) => {
+            if (!isValidLogLevel('error', getLogLevel())) {
+                return;
+            }
+            errorLog(...args);
+        },
+
+        clear,
+        drawPoint,
+        updateStep,
+        updateState,
+        setScriptRunner,
+    };
 }
 
 export function createScriptDebuggerManager({
@@ -280,17 +318,37 @@ export function createScriptDebuggerManager({
     panelClassname: string;
 }) {
     let debugPanel; // Create debug panel lazily
+    let debugLogLevel: LogLevel = 'log';
     let isEnabled = false;
     let initialDraw = false;
 
+    const getLogLevel = () => {
+        return debugLogLevel;
+    };
+
     return {
+        infoLog: (...args) => {
+            if (!isValidLogLevel('info', debugLogLevel)) {
+                return;
+            }
+            if (!isEnabled) {
+                return;
+            }
+            log(...args);
+        },
         log: (...args) => {
+            if (!isValidLogLevel('log', debugLogLevel)) {
+                return;
+            }
             if (!isEnabled) {
                 return;
             }
             log(...args);
         },
         errorLog: (...args) => {
+            if (!isValidLogLevel('error', debugLogLevel)) {
+                return;
+            }
             if (!isEnabled) {
                 return;
             }
@@ -298,6 +356,11 @@ export function createScriptDebuggerManager({
         },
         setEnabled: (enabled: boolean) => {
             isEnabled = enabled;
+        },
+        setDebugLogLevel: (logLevel?: LogLevel) => {
+            if (logLevel && Object.keys(LOG_LEVELS).includes(logLevel)) {
+                debugLogLevel = logLevel;
+            }
         },
         setInitialDraw: (draw: boolean) => {
             initialDraw = draw;
@@ -317,6 +380,7 @@ export function createScriptDebuggerManager({
                 debugPanel,
                 initialDraw,
                 canvasClassname,
+                getLogLevel,
             });
 
             return scriptDebugger;
