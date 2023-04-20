@@ -145,7 +145,7 @@ class Chart extends observable_1.Observable {
         this.layoutService.addListener('start-layout', (e) => this.positionPadding(e.shrinkRect));
         this.layoutService.addListener('start-layout', (e) => this.positionCaptions(e.shrinkRect));
         this.tooltip = new tooltip_1.Tooltip(this.scene.canvas.element, document, document.body);
-        this.tooltipManager = new tooltipManager_1.TooltipManager(this.tooltip);
+        this.tooltipManager = new tooltipManager_1.TooltipManager(this.tooltip, this.interactionManager);
         this.legend = new legend_1.Legend(this, this.interactionManager, this.cursorManager, this.highlightManager, this.tooltipManager, this.layoutService);
         this.overlays = new chartOverlays_1.ChartOverlays(this.element);
         this.highlight = new chartHighlight_1.ChartHighlight();
@@ -242,6 +242,7 @@ class Chart extends observable_1.Observable {
         let result = undefined;
         this._performUpdateType = chartUpdateType_1.ChartUpdateType.NONE;
         this._pendingFactoryUpdates.splice(0);
+        this.tooltipManager.destroy();
         this.tooltip.destroy();
         this.legend.destroy();
         sizeMonitor_1.SizeMonitor.unobserve(this.element);
@@ -446,12 +447,7 @@ class Chart extends observable_1.Observable {
         if (!series.data) {
             series.data = this.data;
         }
-        if (this.hasEventListener('seriesNodeClick')) {
-            series.addEventListener('nodeClick', this.onSeriesNodeClick);
-        }
-        if (this.hasEventListener('seriesNodeDoubleClick')) {
-            series.addEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
-        }
+        this.addSeriesListeners(series);
     }
     freeSeries(series) {
         series.chart = undefined;
@@ -464,6 +460,21 @@ class Chart extends observable_1.Observable {
             this.seriesRoot.removeChild(series.rootGroup);
         });
         this._series = []; // using `_series` instead of `series` to prevent infinite recursion
+    }
+    addSeriesListeners(series) {
+        if (this.hasEventListener('seriesNodeClick')) {
+            series.addEventListener('nodeClick', this.onSeriesNodeClick);
+        }
+        if (this.hasEventListener('seriesNodeDoubleClick')) {
+            series.addEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
+        }
+    }
+    updateAllSeriesListeners() {
+        this.series.forEach((series) => {
+            series.removeEventListener('nodeClick', this.onSeriesNodeClick);
+            series.removeEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
+            this.addSeriesListeners(series);
+        });
     }
     assignSeriesToAxes() {
         this.axes.forEach((axis) => {
@@ -707,8 +718,8 @@ class Chart extends observable_1.Observable {
         }
         // Handle node highlighting and tooltip toggling when pointer within `tooltip.range`
         this.handlePointerTooltip(event, disablePointer);
-        // Handle mouse cursor when pointer withing `series[].nodeClickRange`
-        this.handlePointerNodeCursor(event);
+        // Handle node highlighting and mouse cursor when pointer withing `series[].nodeClickRange`
+        this.handlePointerNode(event);
     }
     handlePointerTooltip(event, disablePointer) {
         var _a, _b;
@@ -752,13 +763,13 @@ class Chart extends observable_1.Observable {
             this.tooltipManager.updateTooltip(this.id, meta, html);
         }
     }
-    handlePointerNodeCursor(event) {
+    handlePointerNode(event) {
         const found = this.checkSeriesNodeRange(event, (series, datum) => {
             if (series.hasEventListener('nodeClick') || series.hasEventListener('nodeDoubleClick')) {
                 this.cursorManager.updateCursor('chart', 'pointer');
-                if (this.highlight.range === 'node') {
-                    this.highlightManager.updateHighlight(this.id, datum);
-                }
+            }
+            if (this.highlight.range === 'node') {
+                this.highlightManager.updateHighlight(this.id, datum);
             }
         });
         if (!found) {
@@ -795,12 +806,7 @@ class Chart extends observable_1.Observable {
         return this.checkSeriesNodeRange(event, (series, datum) => series.fireNodeDoubleClickEvent(event.sourceEvent, datum));
     }
     checkSeriesNodeRange(event, callback) {
-        // If the tooltip picking uses `nearest` then, irregardless of the range of each series, the same node would
-        // be picked, so we can shortcut to using the last pick. Otherwise, we need to pick a node distinctly
-        // from the tooltip picking in case the node click range is greater than the tooltip range.
-        const nearestNode = this.tooltip.range === 'nearest' && this.lastPick !== undefined
-            ? this.lastPick
-            : this.pickSeriesNode({ x: event.offsetX, y: event.offsetY }, false);
+        const nearestNode = this.pickSeriesNode({ x: event.offsetX, y: event.offsetY }, false);
         const datum = nearestNode === null || nearestNode === void 0 ? void 0 : nearestNode.datum;
         const nodeClickRange = datum === null || datum === void 0 ? void 0 : datum.series.nodeClickRange;
         // First check if we should trigger the callback based on nearest node

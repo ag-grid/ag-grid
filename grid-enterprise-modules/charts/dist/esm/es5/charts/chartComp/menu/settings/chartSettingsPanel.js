@@ -55,7 +55,9 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
             var currentChart = currentMiniChartContainer.getGui().querySelector('.ag-selected');
             if (currentChart) {
                 var parent_1 = currentChart.offsetParent;
-                _this.eMiniChartsContainer.scrollTo(0, parent_1.offsetTop);
+                if (parent_1) {
+                    _this.eMiniChartsContainer.scrollTo(0, parent_1.offsetTop);
+                }
             }
         }, 250);
     };

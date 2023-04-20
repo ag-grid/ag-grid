@@ -93,6 +93,22 @@ function sumValues(values, accumulator) {
     }
     return accumulator;
 }
+function toKeyString(keys) {
+    return keys
+        .map(function (v) {
+        if (v == null) {
+            return v;
+        }
+        else if (typeof v === 'number' || typeof v === 'string' || typeof v === 'boolean') {
+            return v;
+        }
+        else if (typeof v === 'object') {
+            return JSON.stringify(v);
+        }
+        return v;
+    })
+        .join('-');
+}
 export var SMALLEST_KEY_INTERVAL = {
     type: 'reducer',
     property: 'smallestKeyInterval',
@@ -380,7 +396,7 @@ var DataModel = /** @class */ (function () {
         try {
             for (var _c = __values(data.data), _d = _c.next(); !_d.done; _d = _c.next()) {
                 var _e = _d.value, keys = _e.keys, values = _e.values, datum = _e.datum;
-                var keyStr = keys.join('-');
+                var keyStr = toKeyString(keys);
                 if (processedData.has(keyStr)) {
                     var existingData = processedData.get(keyStr);
                     existingData.values.push(values);
@@ -496,7 +512,11 @@ var DataModel = /** @class */ (function () {
         });
         // const normalisedRange = [-normaliseTo, normaliseTo];
         var normalise = function (val, extent) {
-            return (val * normaliseTo) / extent;
+            var result = (val * normaliseTo) / extent;
+            if (result >= 0) {
+                return Math.min(normaliseTo, result);
+            }
+            return Math.max(-normaliseTo, result);
         };
         for (var sumIdx = 0; sumIdx < sumDefs.length; sumIdx++) {
             var sums = sumValues === null || sumValues === void 0 ? void 0 : sumValues[sumIdx];

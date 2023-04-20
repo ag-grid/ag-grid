@@ -38,7 +38,9 @@ export class ChartSettingsPanel extends Component {
             const currentChart = currentMiniChartContainer.getGui().querySelector('.ag-selected');
             if (currentChart) {
                 const parent = currentChart.offsetParent;
-                this.eMiniChartsContainer.scrollTo(0, parent.offsetTop);
+                if (parent) {
+                    this.eMiniChartsContainer.scrollTo(0, parent.offsetTop);
+                }
             }
         }, 250);
     }

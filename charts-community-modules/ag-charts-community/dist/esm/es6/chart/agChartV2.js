@@ -309,6 +309,9 @@ function applyChartOptions(chart, processedOptions, userOptions) {
     if ((_b = processedOptions.legend) === null || _b === void 0 ? void 0 : _b.listeners) {
         Object.assign(chart.legend.listeners, (_c = processedOptions.legend.listeners) !== null && _c !== void 0 ? _c : {});
     }
+    if (processedOptions.listeners) {
+        chart.updateAllSeriesListeners();
+    }
     chart.processedOptions = completeOptions;
     chart.userOptions = jsonMerge([(_d = chart.userOptions) !== null && _d !== void 0 ? _d : {}, userOptions], noDataCloneMergeOptions);
     const majorChange = forceNodeDataRefresh || modulesChanged;

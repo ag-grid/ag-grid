@@ -1292,7 +1292,7 @@ var __decorate$J = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __values$s = (undefined && undefined.__values) || function(o) {
+var __values$t = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -1417,7 +1417,7 @@ var Node = /** @class */ (function (_super) {
         this._layerManager = value;
         this._debug = value === null || value === void 0 ? void 0 : value.debug;
         try {
-            for (var _b = __values$s(this.children), _c = _b.next(); !_c.done; _c = _b.next()) {
+            for (var _b = __values$t(this.children), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var child = _c.value;
                 child._setLayerManager(value);
             }
@@ -1467,7 +1467,7 @@ var Node = /** @class */ (function (_super) {
             nodes = [nodes];
         }
         try {
-            for (var nodes_1 = __values$s(nodes), nodes_1_1 = nodes_1.next(); !nodes_1_1.done; nodes_1_1 = nodes_1.next()) {
+            for (var nodes_1 = __values$t(nodes), nodes_1_1 = nodes_1.next(); !nodes_1_1.done; nodes_1_1 = nodes_1.next()) {
                 var node = nodes_1_1.value;
                 if (node.parent) {
                     throw new Error(node + " already belongs to another parent: " + node.parent + ".");
@@ -1622,7 +1622,7 @@ var Node = /** @class */ (function (_super) {
         var e_3, _a;
         var result = predicate(this) ? [this] : [];
         try {
-            for (var _b = __values$s(this.children), _c = _b.next(); !_c.done; _c = _b.next()) {
+            for (var _b = __values$t(this.children), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var child = _c.value;
                 var childResult = child.findNodes(predicate);
                 if (childResult) {
@@ -1721,7 +1721,7 @@ var Node = /** @class */ (function (_super) {
         this._dirty = RedrawType.NONE;
         if (recursive) {
             try {
-                for (var _e = __values$s(this.children), _f = _e.next(); !_f.done; _f = _e.next()) {
+                for (var _e = __values$t(this.children), _f = _e.next(); !_f.done; _f = _e.next()) {
                     var child = _f.value;
                     child.markClean();
                 }
@@ -1745,7 +1745,7 @@ var Node = /** @class */ (function (_super) {
             var dirtyCount = this._dirty >= RedrawType.NONE || this._dirtyTransform ? 1 : 0;
             var visibleCount = this.visible ? 1 : 0;
             try {
-                for (var _b = __values$s(this._children), _c = _b.next(); !_c.done; _c = _b.next()) {
+                for (var _b = __values$t(this._children), _c = _b.next(); !_c.done; _c = _b.next()) {
                     var child = _c.value;
                     var _d = child.nodeCount, childCount = _d.count, childVisibleCount = _d.visibleCount, childDirtyCount = _d.dirtyCount;
                     count += childCount;
@@ -1950,7 +1950,7 @@ var __decorate$I = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __values$r = (undefined && undefined.__values) || function(o) {
+var __values$s = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -2160,7 +2160,7 @@ var Group = /** @class */ (function (_super) {
         // Render visible children.
         var skipped = 0;
         try {
-            for (var children_1 = __values$r(children), children_1_1 = children_1.next(); !children_1_1.done; children_1_1 = children_1.next()) {
+            for (var children_1 = __values$s(children), children_1_1 = children_1.next(); !children_1_1.done; children_1_1 = children_1.next()) {
                 var child = children_1_1.value;
                 if (!child.visible || !groupVisible) {
                     // Skip invisible children, but make sure their dirty flag is reset.
@@ -2431,7 +2431,7 @@ var __spread$n = (undefined && undefined.__spread) || function () {
     for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$B(arguments[i]));
     return ar;
 };
-var __values$q = (undefined && undefined.__values) || function(o) {
+var __values$r = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -2649,7 +2649,7 @@ var Scene = /** @class */ (function () {
         var e_1, _a;
         var layers = this.layers;
         try {
-            for (var layers_1 = __values$q(layers), layers_1_1 = layers_1.next(); !layers_1_1.done; layers_1_1 = layers_1.next()) {
+            for (var layers_1 = __values$r(layers), layers_1_1 = layers_1.next(); !layers_1_1.done; layers_1_1 = layers_1.next()) {
                 var layer = layers_1_1.value;
                 layer.canvas.destroy();
                 delete layer['canvas'];
@@ -2800,7 +2800,7 @@ var Scene = /** @class */ (function () {
             ctx.fillStyle = 'black';
             var index = 0;
             try {
-                for (var stats_1 = __values$q(stats), stats_1_1 = stats_1.next(); !stats_1_1.done; stats_1_1 = stats_1.next()) {
+                for (var stats_1 = __values$r(stats), stats_1_1 = stats_1.next(); !stats_1_1.done; stats_1_1 = stats_1.next()) {
                     var stat = stats_1_1.value;
                     ctx.fillText(stat, 2, 10 + index++ * lineHeight);
                 }
@@ -2831,7 +2831,7 @@ var Scene = /** @class */ (function () {
             return n instanceof Group && n.name != null && match === n.name;
         }; };
         try {
-            for (var sceneNodeHighlight_1 = __values$q(sceneNodeHighlight), sceneNodeHighlight_1_1 = sceneNodeHighlight_1.next(); !sceneNodeHighlight_1_1.done; sceneNodeHighlight_1_1 = sceneNodeHighlight_1.next()) {
+            for (var sceneNodeHighlight_1 = __values$r(sceneNodeHighlight), sceneNodeHighlight_1_1 = sceneNodeHighlight_1.next(); !sceneNodeHighlight_1_1.done; sceneNodeHighlight_1_1 = sceneNodeHighlight_1.next()) {
                 var next = sceneNodeHighlight_1_1.value;
                 if (typeof next === 'string' && debugNodes[next] != null)
                     continue;
@@ -2842,7 +2842,7 @@ var Scene = /** @class */ (function () {
                     continue;
                 }
                 try {
-                    for (var nodes_1 = (e_4 = void 0, __values$q(nodes)), nodes_1_1 = nodes_1.next(); !nodes_1_1.done; nodes_1_1 = nodes_1.next()) {
+                    for (var nodes_1 = (e_4 = void 0, __values$r(nodes)), nodes_1_1 = nodes_1.next(); !nodes_1_1.done; nodes_1_1 = nodes_1.next()) {
                         var node = nodes_1_1.value;
                         if (node instanceof Group && node.name) {
                             debugNodes[node.name] = node;
@@ -2870,7 +2870,7 @@ var Scene = /** @class */ (function () {
         }
         ctx.save();
         try {
-            for (var _e = __values$q(Object.entries(debugNodes)), _f = _e.next(); !_f.done; _f = _e.next()) {
+            for (var _e = __values$r(Object.entries(debugNodes)), _f = _e.next(); !_f.done; _f = _e.next()) {
                 var _g = __read$B(_f.value, 2), name_1 = _g[0], node = _g[1];
                 var bbox = node.computeTransformedBBox();
                 if (!bbox) {
@@ -3028,7 +3028,7 @@ function checkDatum(value, isContinuousScale) {
 }
 var isNumber = function (v) { return typeof v === 'number' && Number.isFinite(v); };
 
-var __values$p = (undefined && undefined.__values) || function(o) {
+var __values$q = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -3058,7 +3058,7 @@ function initialiseConfig(target, propertyKeyOrSymbol, propertyKey, valueStoreKe
         var _b, _c;
         var value = prevGet ? prevGet.call(this) : this[valueStoreKey];
         try {
-            for (var _d = __values$p((_c = (_b = config[propertyKey]) === null || _b === void 0 ? void 0 : _b.getters) !== null && _c !== void 0 ? _c : []), _e = _d.next(); !_e.done; _e = _d.next()) {
+            for (var _d = __values$q((_c = (_b = config[propertyKey]) === null || _b === void 0 ? void 0 : _b.getters) !== null && _c !== void 0 ? _c : []), _e = _d.next(); !_e.done; _e = _d.next()) {
                 var transformFn = _e.value;
                 value = transformFn(this, propertyKeyOrSymbol, value);
                 if (value === BREAK_TRANSFORM_CHAIN) {
@@ -3085,7 +3085,7 @@ function initialiseConfig(target, propertyKeyOrSymbol, propertyKey, valueStoreKe
             oldValue = prevGet ? prevGet.call(this) : this[valueStoreKey];
         }
         try {
-            for (var setters_1 = __values$p(setters), setters_1_1 = setters_1.next(); !setters_1_1.done; setters_1_1 = setters_1.next()) {
+            for (var setters_1 = __values$q(setters), setters_1_1 = setters_1.next(); !setters_1_1.done; setters_1_1 = setters_1.next()) {
                 var transformFn = setters_1_1.value;
                 value = transformFn(this, propertyKeyOrSymbol, value, oldValue);
                 if (value === BREAK_TRANSFORM_CHAIN) {
@@ -3845,7 +3845,7 @@ var __decorate$H = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __values$o = (undefined && undefined.__values) || function(o) {
+var __values$p = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -3913,7 +3913,7 @@ var Tooltip = /** @class */ (function () {
             var observer = new IntersectionObserver(function (entries) {
                 var e_1, _a;
                 try {
-                    for (var entries_1 = __values$o(entries), entries_1_1 = entries_1.next(); !entries_1_1.done; entries_1_1 = entries_1.next()) {
+                    for (var entries_1 = __values$p(entries), entries_1_1 = entries_1.next(); !entries_1_1.done; entries_1_1 = entries_1.next()) {
                         var entry = entries_1_1.value;
                         if (entry.target === _this.canvasElement && entry.intersectionRatio === 0) {
                             _this.toggle(false);
@@ -4087,7 +4087,7 @@ var __decorate$G = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __values$n = (undefined && undefined.__values) || function(o) {
+var __values$o = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -4367,7 +4367,7 @@ var Series = /** @class */ (function (_super) {
                 array[_i] = arguments[_i];
             }
             try {
-                for (var array_1 = __values$n(array), array_1_1 = array_1.next(); !array_1_1.done; array_1_1 = array_1.next()) {
+                for (var array_1 = __values$o(array), array_1_1 = array_1.next(); !array_1_1.done; array_1_1 = array_1.next()) {
                     var value = array_1_1.value;
                     addValue(value);
                 }
@@ -4469,7 +4469,7 @@ var Series = /** @class */ (function (_super) {
             return;
         }
         try {
-            for (var pickModes_1 = __values$n(pickModes), pickModes_1_1 = pickModes_1.next(); !pickModes_1_1.done; pickModes_1_1 = pickModes_1.next()) {
+            for (var pickModes_1 = __values$o(pickModes), pickModes_1_1 = pickModes_1.next(); !pickModes_1_1.done; pickModes_1_1 = pickModes_1.next()) {
                 var pickMode = pickModes_1_1.value;
                 if (limitPickModes && !limitPickModes.includes(pickMode)) {
                     continue;
@@ -5449,7 +5449,7 @@ function cubicRoots(a, b, c, d) {
     return roots;
 }
 
-var __values$m = (undefined && undefined.__values) || function(o) {
+var __values$n = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -5503,7 +5503,7 @@ function cubicSegmentIntersections(px1, py1, px2, py2, px3, py3, px4, py4, x1, y
     var roots = cubicRoots(a, b, c, d);
     try {
         // Verify that the roots are within bounds of the linear segment.
-        for (var roots_1 = __values$m(roots), roots_1_1 = roots_1.next(); !roots_1_1.done; roots_1_1 = roots_1.next()) {
+        for (var roots_1 = __values$n(roots), roots_1_1 = roots_1.next(); !roots_1_1.done; roots_1_1 = roots_1.next()) {
             var t = roots_1_1.value;
             var tt = t * t;
             var ttt = t * tt;
@@ -5592,7 +5592,7 @@ function arcIntersections(cx, cy, r, startAngle, endAngle, counterClockwise, x1,
     return intersections;
 }
 
-var __values$l = (undefined && undefined.__values) || function(o) {
+var __values$m = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -5652,7 +5652,7 @@ var Path2D = /** @class */ (function () {
         var j = 0;
         ctx.beginPath();
         try {
-            for (var commands_1 = __values$l(commands), commands_1_1 = commands_1.next(); !commands_1_1.done; commands_1_1 = commands_1.next()) {
+            for (var commands_1 = __values$m(commands), commands_1_1 = commands_1.next(); !commands_1_1.done; commands_1_1 = commands_1.next()) {
                 var command = commands_1_1.value;
                 switch (command) {
                     case Command.Move:
@@ -5979,7 +5979,7 @@ var __decorate$B = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __values$k = (undefined && undefined.__values) || function(o) {
+var __values$l = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -6010,7 +6010,7 @@ var Marker = /** @class */ (function (_super) {
         var _b = this, x = _b.x, y = _b.y;
         path.clear();
         try {
-            for (var moves_1 = __values$k(moves), moves_1_1 = moves_1.next(); !moves_1_1.done; moves_1_1 = moves_1.next()) {
+            for (var moves_1 = __values$l(moves), moves_1_1 = moves_1.next(); !moves_1_1.done; moves_1_1 = moves_1.next()) {
                 var _c = moves_1_1.value, mx = _c.x, my = _c.y, t = _c.t;
                 x += mx * s;
                 y += my * s;
@@ -6489,7 +6489,7 @@ var ChartUpdateType;
     ChartUpdateType[ChartUpdateType["NONE"] = 6] = "NONE";
 })(ChartUpdateType || (ChartUpdateType = {}));
 
-var __values$j = (undefined && undefined.__values) || function(o) {
+var __values$k = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -6652,7 +6652,7 @@ function transpose(data) {
     var e_1, _a;
     var result = [];
     try {
-        for (var _b = __values$j(data[0]), _c = _b.next(); !_c.done; _c = _b.next()) {
+        for (var _b = __values$k(data[0]), _c = _b.next(); !_c.done; _c = _b.next()) {
             var _ = _c.value;
             result.push([]);
         }
@@ -7057,7 +7057,7 @@ var __spread$l = (undefined && undefined.__spread) || function () {
     for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$y(arguments[i]));
     return ar;
 };
-var __values$i = (undefined && undefined.__values) || function(o) {
+var __values$j = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -7361,6 +7361,7 @@ var Legend = /** @class */ (function () {
             if (!(markerLabel.marker && markerLabel.marker instanceof Marker)) {
                 markerLabel.marker = new Marker();
             }
+            markerLabel.markerSize = markerSize;
             markerLabel.spacing = markerPadding;
             markerLabel.fontStyle = fontStyle;
             markerLabel.fontWeight = fontWeight;
@@ -7414,7 +7415,7 @@ var Legend = /** @class */ (function () {
             var characterWidths = this.getCharacterWidths(font);
             var cumulativeWidth = paddedMarkerWidth + characterWidths[ellipsis];
             try {
-                for (var textChars_1 = __values$i(textChars), textChars_1_1 = textChars_1.next(); !textChars_1_1.done; textChars_1_1 = textChars_1.next()) {
+                for (var textChars_1 = __values$j(textChars), textChars_1_1 = textChars_1.next(); !textChars_1_1.done; textChars_1_1 = textChars_1.next()) {
                     var char = textChars_1_1.value;
                     if (!characterWidths[char]) {
                         characterWidths[char] = HdpiCanvas.getTextSize(char, font).width;
@@ -7608,7 +7609,7 @@ var Legend = /** @class */ (function () {
         var visibleChildBBoxes = [];
         var closestLeftTop = { dist: Infinity, datum: undefined };
         try {
-            for (var _b = __values$i(this.group.children), _c = _b.next(); !_c.done; _c = _b.next()) {
+            for (var _b = __values$j(this.group.children), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var child = _c.value;
                 if (!child.visible)
                     continue;
@@ -7848,6 +7849,13 @@ var Legend = /** @class */ (function () {
         if (this.visible && this.enabled && this.data.length) {
             var legendPadding = this.spacing;
             newShrinkRect.shrink(legendPadding, this.position);
+            var legendPositionedBBox = legendBBox.clone();
+            legendPositionedBBox.x += this.translationX;
+            legendPositionedBBox.y += this.translationY;
+            this.tooltipManager.updateExclusiveRect(this.id, legendPositionedBBox);
+        }
+        else {
+            this.tooltipManager.updateExclusiveRect(this.id);
         }
         return { shrinkRect: newShrinkRect };
     };
@@ -7908,7 +7916,7 @@ var Legend = /** @class */ (function () {
     return Legend;
 }());
 
-var __values$h = (undefined && undefined.__values) || function(o) {
+var __values$i = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -7929,7 +7937,7 @@ var SizeMonitor = /** @class */ (function () {
             this.resizeObserver = new NativeResizeObserver(function (entries) {
                 var e_1, _a;
                 try {
-                    for (var entries_1 = __values$h(entries), entries_1_1 = entries_1.next(); !entries_1_1.done; entries_1_1 = entries_1.next()) {
+                    for (var entries_1 = __values$i(entries), entries_1_1 = entries_1.next(); !entries_1_1.done; entries_1_1 = entries_1.next()) {
                         var entry = entries_1_1.value;
                         var _b = entry.contentRect, width = _b.width, height = _b.height;
                         _this.checkSize(_this.elements.get(entry.target), entry.target, width, height);
@@ -9205,7 +9213,7 @@ var __extends$I = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __values$g = (undefined && undefined.__values) || function(o) {
+var __values$h = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -9334,7 +9342,7 @@ var TimeScale = /** @class */ (function (_super) {
             }
         };
         try {
-            for (var ticks_1 = __values$g(ticks), ticks_1_1 = ticks_1.next(); !ticks_1_1.done; ticks_1_1 = ticks_1.next()) {
+            for (var ticks_1 = __values$h(ticks), ticks_1_1 = ticks_1.next(); !ticks_1_1.done; ticks_1_1 = ticks_1.next()) {
                 var value = ticks_1_1.value;
                 var format = this.getLowestGranularityFormat(value);
                 updateFormat(format);
@@ -11463,7 +11471,7 @@ var __spread$g = (undefined && undefined.__spread) || function () {
     for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$q(arguments[i]));
     return ar;
 };
-var __values$f = (undefined && undefined.__values) || function(o) {
+var __values$g = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -11620,7 +11628,7 @@ var ChartAxis = /** @class */ (function (_super) {
         var e_1, _a;
         _super.prototype.destroy.call(this);
         try {
-            for (var _b = __values$f(Object.entries(this.modules)), _c = _b.next(); !_c.done; _c = _b.next()) {
+            for (var _b = __values$g(Object.entries(this.modules)), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var _d = __read$q(_c.value, 2), key = _d[0], module_1 = _d[1];
                 module_1.instance.destroy();
                 delete this.modules[key];
@@ -11769,7 +11777,7 @@ var __spread$e = (undefined && undefined.__spread) || function () {
     for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$o(arguments[i]));
     return ar;
 };
-var __values$e = (undefined && undefined.__values) || function(o) {
+var __values$f = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -11863,7 +11871,7 @@ function jsonDiff(source, target) {
         }
     };
     try {
-        for (var allProps_1 = __values$e(allProps), allProps_1_1 = allProps_1.next(); !allProps_1_1.done; allProps_1_1 = allProps_1.next()) {
+        for (var allProps_1 = __values$f(allProps), allProps_1_1 = allProps_1.next(); !allProps_1_1.done; allProps_1_1 = allProps_1.next()) {
             var prop = allProps_1_1.value;
             _loop_1(prop);
         }
@@ -11949,7 +11957,7 @@ function jsonMerge(json, opts) {
         }
     };
     try {
-        for (var props_1 = __values$e(props), props_1_1 = props_1.next(); !props_1_1.done; props_1_1 = props_1.next()) {
+        for (var props_1 = __values$f(props), props_1_1 = props_1.next(); !props_1_1.done; props_1_1 = props_1.next()) {
             var nextProp = props_1_1.value;
             _loop_2(nextProp);
         }
@@ -12203,7 +12211,7 @@ var __spread$d = (undefined && undefined.__spread) || function () {
     for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$n(arguments[i]));
     return ar;
 };
-var __values$d = (undefined && undefined.__values) || function(o) {
+var __values$e = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -12442,7 +12450,7 @@ var CartesianSeries = /** @class */ (function (_super) {
                             contentGroup.removeChild(labelGroup);
                         }
                         try {
-                            for (var paths_1 = __values$d(paths), paths_1_1 = paths_1.next(); !paths_1_1.done; paths_1_1 = paths_1.next()) {
+                            for (var paths_1 = __values$e(paths), paths_1_1 = paths_1.next(); !paths_1_1.done; paths_1_1 = paths_1.next()) {
                                 var path = paths_1_1.value;
                                 contentGroup.removeChild(path);
                             }
@@ -12573,7 +12581,7 @@ var CartesianSeries = /** @class */ (function (_super) {
                                                 labelGroup.opacity = subGroupOpacity;
                                             }
                                             try {
-                                                for (paths_2 = __values$d(paths), paths_2_1 = paths_2.next(); !paths_2_1.done; paths_2_1 = paths_2.next()) {
+                                                for (paths_2 = __values$e(paths), paths_2_1 = paths_2.next(); !paths_2_1.done; paths_2_1 = paths_2.next()) {
                                                     path = paths_2_1.value;
                                                     if (!renderLayerPerSubSeries) {
                                                         path.opacity = subGroupOpacity;
@@ -12634,7 +12642,7 @@ var CartesianSeries = /** @class */ (function (_super) {
                         if (this.isLabelEnabled() && item != null) {
                             _d = item.itemId, itemId_1 = _d === void 0 ? undefined : _d;
                             try {
-                                for (contextNodeData_1 = __values$d(contextNodeData), contextNodeData_1_1 = contextNodeData_1.next(); !contextNodeData_1_1.done; contextNodeData_1_1 = contextNodeData_1.next()) {
+                                for (contextNodeData_1 = __values$e(contextNodeData), contextNodeData_1_1 = contextNodeData_1.next(); !contextNodeData_1_1.done; contextNodeData_1_1 = contextNodeData_1.next()) {
                                     labelData = contextNodeData_1_1.value.labelData;
                                     labelItem = labelData.find(function (ld) { return ld.datum === item.datum && ld.itemId === itemId_1; });
                                     if (labelItem != null) {
@@ -12671,7 +12679,7 @@ var CartesianSeries = /** @class */ (function (_super) {
         var x = point.x, y = point.y;
         var hasMarkers = this.opts.hasMarkers;
         try {
-            for (var _b = __values$d(this.subGroups), _c = _b.next(); !_c.done; _c = _b.next()) {
+            for (var _b = __values$e(this.subGroups), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var _d = _c.value, dataNodeGroup = _d.dataNodeGroup, markerGroup = _d.markerGroup;
                 var match = dataNodeGroup.pickNode(x, y);
                 if (!match && hasMarkers) {
@@ -12699,10 +12707,10 @@ var CartesianSeries = /** @class */ (function (_super) {
         var minDistance = Infinity;
         var closestDatum;
         try {
-            for (var contextNodeData_2 = __values$d(contextNodeData), contextNodeData_2_1 = contextNodeData_2.next(); !contextNodeData_2_1.done; contextNodeData_2_1 = contextNodeData_2.next()) {
+            for (var contextNodeData_2 = __values$e(contextNodeData), contextNodeData_2_1 = contextNodeData_2.next(); !contextNodeData_2_1.done; contextNodeData_2_1 = contextNodeData_2.next()) {
                 var context = contextNodeData_2_1.value;
                 try {
-                    for (var _f = (e_6 = void 0, __values$d(context.nodeData)), _g = _f.next(); !_g.done; _g = _f.next()) {
+                    for (var _f = (e_6 = void 0, __values$e(context.nodeData)), _g = _f.next(); !_g.done; _g = _f.next()) {
                         var datum = _g.value;
                         var _h = datum.point, _j = _h === void 0 ? {} : _h, _k = _j.x, datumX = _k === void 0 ? NaN : _k, _l = _j.y, datumY = _l === void 0 ? NaN : _l;
                         if (isNaN(datumX) || isNaN(datumY)) {
@@ -12761,10 +12769,10 @@ var CartesianSeries = /** @class */ (function (_super) {
         var minDistance = [Infinity, Infinity];
         var closestDatum = undefined;
         try {
-            for (var contextNodeData_3 = __values$d(contextNodeData), contextNodeData_3_1 = contextNodeData_3.next(); !contextNodeData_3_1.done; contextNodeData_3_1 = contextNodeData_3.next()) {
+            for (var contextNodeData_3 = __values$e(contextNodeData), contextNodeData_3_1 = contextNodeData_3.next(); !contextNodeData_3_1.done; contextNodeData_3_1 = contextNodeData_3.next()) {
                 var context = contextNodeData_3_1.value;
                 try {
-                    for (var _h = (e_8 = void 0, __values$d(context.nodeData)), _j = _h.next(); !_j.done; _j = _h.next()) {
+                    for (var _h = (e_8 = void 0, __values$e(context.nodeData)), _j = _h.next(); !_j.done; _j = _h.next()) {
                         var datum = _j.value;
                         var _k = datum.point, _l = _k === void 0 ? {} : _k, _m = _l.x, datumX = _m === void 0 ? NaN : _m, _o = _l.y, datumY = _o === void 0 ? NaN : _o;
                         if (isNaN(datumX) || isNaN(datumY)) {
@@ -12827,7 +12835,7 @@ var CartesianSeries = /** @class */ (function (_super) {
         var e_9, _a;
         if (this.seriesItemEnabled.size > 0) {
             try {
-                for (var _b = __values$d(this.seriesItemEnabled), _c = _b.next(); !_c.done; _c = _b.next()) {
+                for (var _b = __values$e(this.seriesItemEnabled), _c = _b.next(); !_c.done; _c = _b.next()) {
                     var _d = __read$n(_c.value, 2), enabled = _d[1];
                     if (enabled) {
                         return true;
@@ -12855,7 +12863,7 @@ var CartesianSeries = /** @class */ (function (_super) {
     CartesianSeries.prototype.isAnySeriesVisible = function () {
         var e_10, _a;
         try {
-            for (var _b = __values$d(this.seriesItemEnabled.values()), _c = _b.next(); !_c.done; _c = _b.next()) {
+            for (var _b = __values$e(this.seriesItemEnabled.values()), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var visible = _c.value;
                 if (visible) {
                     return true;
@@ -13078,7 +13086,7 @@ var __spread$c = (undefined && undefined.__spread) || function () {
     for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$m(arguments[i]));
     return ar;
 };
-var __values$c = (undefined && undefined.__values) || function(o) {
+var __values$d = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -13121,7 +13129,7 @@ var Listeners = /** @class */ (function () {
         var listeners = (_b = this.registeredListeners[type]) !== null && _b !== void 0 ? _b : [];
         var results = [];
         try {
-            for (var listeners_1 = __values$c(listeners), listeners_1_1 = listeners_1.next(); !listeners_1_1.done; listeners_1_1 = listeners_1.next()) {
+            for (var listeners_1 = __values$d(listeners), listeners_1_1 = listeners_1.next(); !listeners_1_1.done; listeners_1_1 = listeners_1.next()) {
                 var listener = listeners_1_1.value;
                 if (cancelled())
                     break;
@@ -13147,7 +13155,7 @@ var Listeners = /** @class */ (function () {
         var listeners = (_b = this.registeredListeners[type]) !== null && _b !== void 0 ? _b : [];
         var listenerResult = undefined;
         try {
-            for (var listeners_2 = __values$c(listeners), listeners_2_1 = listeners_2.next(); !listeners_2_1.done; listeners_2_1 = listeners_2.next()) {
+            for (var listeners_2 = __values$d(listeners), listeners_2_1 = listeners_2.next(); !listeners_2_1.done; listeners_2_1 = listeners_2.next()) {
                 var listener = listeners_2_1.value;
                 listenerResult = listener.handler.apply(listener, __spread$c(params));
                 params = reduceFn.apply(void 0, __spread$c([listenerResult], params));
@@ -13250,7 +13258,7 @@ var __generator$c = (undefined && undefined.__generator) || function (thisArg, b
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __values$b = (undefined && undefined.__values) || function(o) {
+var __values$c = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -13291,7 +13299,7 @@ var InteractionManager = /** @class */ (function (_super) {
         _this.rootElement = doc.body;
         _this.element = element;
         try {
-            for (var EVENT_HANDLERS_1 = __values$b(EVENT_HANDLERS), EVENT_HANDLERS_1_1 = EVENT_HANDLERS_1.next(); !EVENT_HANDLERS_1_1.done; EVENT_HANDLERS_1_1 = EVENT_HANDLERS_1.next()) {
+            for (var EVENT_HANDLERS_1 = __values$c(EVENT_HANDLERS), EVENT_HANDLERS_1_1 = EVENT_HANDLERS_1.next(); !EVENT_HANDLERS_1_1.done; EVENT_HANDLERS_1_1 = EVENT_HANDLERS_1.next()) {
                 var type = EVENT_HANDLERS_1_1.value;
                 if (type.startsWith('touch')) {
                     element.addEventListener(type, _this.eventHandler, { passive: true });
@@ -13309,7 +13317,7 @@ var InteractionManager = /** @class */ (function (_super) {
             finally { if (e_1) throw e_1.error; }
         }
         try {
-            for (var WINDOW_EVENT_HANDLERS_1 = __values$b(WINDOW_EVENT_HANDLERS), WINDOW_EVENT_HANDLERS_1_1 = WINDOW_EVENT_HANDLERS_1.next(); !WINDOW_EVENT_HANDLERS_1_1.done; WINDOW_EVENT_HANDLERS_1_1 = WINDOW_EVENT_HANDLERS_1.next()) {
+            for (var WINDOW_EVENT_HANDLERS_1 = __values$c(WINDOW_EVENT_HANDLERS), WINDOW_EVENT_HANDLERS_1_1 = WINDOW_EVENT_HANDLERS_1.next(); !WINDOW_EVENT_HANDLERS_1_1.done; WINDOW_EVENT_HANDLERS_1_1 = WINDOW_EVENT_HANDLERS_1.next()) {
                 var type = WINDOW_EVENT_HANDLERS_1_1.value;
                 window.addEventListener(type, _this.eventHandler);
             }
@@ -13332,7 +13340,7 @@ var InteractionManager = /** @class */ (function (_super) {
     InteractionManager.prototype.destroy = function () {
         var e_3, _a, e_4, _b;
         try {
-            for (var WINDOW_EVENT_HANDLERS_2 = __values$b(WINDOW_EVENT_HANDLERS), WINDOW_EVENT_HANDLERS_2_1 = WINDOW_EVENT_HANDLERS_2.next(); !WINDOW_EVENT_HANDLERS_2_1.done; WINDOW_EVENT_HANDLERS_2_1 = WINDOW_EVENT_HANDLERS_2.next()) {
+            for (var WINDOW_EVENT_HANDLERS_2 = __values$c(WINDOW_EVENT_HANDLERS), WINDOW_EVENT_HANDLERS_2_1 = WINDOW_EVENT_HANDLERS_2.next(); !WINDOW_EVENT_HANDLERS_2_1.done; WINDOW_EVENT_HANDLERS_2_1 = WINDOW_EVENT_HANDLERS_2.next()) {
                 var type = WINDOW_EVENT_HANDLERS_2_1.value;
                 window.removeEventListener(type, this.eventHandler);
             }
@@ -13345,7 +13353,7 @@ var InteractionManager = /** @class */ (function (_super) {
             finally { if (e_3) throw e_3.error; }
         }
         try {
-            for (var EVENT_HANDLERS_2 = __values$b(EVENT_HANDLERS), EVENT_HANDLERS_2_1 = EVENT_HANDLERS_2.next(); !EVENT_HANDLERS_2_1.done; EVENT_HANDLERS_2_1 = EVENT_HANDLERS_2.next()) {
+            for (var EVENT_HANDLERS_2 = __values$c(EVENT_HANDLERS), EVENT_HANDLERS_2_1 = EVENT_HANDLERS_2.next(); !EVENT_HANDLERS_2_1.done; EVENT_HANDLERS_2_1 = EVENT_HANDLERS_2.next()) {
                 var type = EVENT_HANDLERS_2_1.value;
                 this.element.removeEventListener(type, this.eventHandler);
             }
@@ -13380,7 +13388,7 @@ var InteractionManager = /** @class */ (function (_super) {
                 };
                 this_1 = this;
                 try {
-                    for (types_1 = __values$b(types), types_1_1 = types_1.next(); !types_1_1.done; types_1_1 = types_1.next()) {
+                    for (types_1 = __values$c(types), types_1_1 = types_1.next(); !types_1_1.done; types_1_1 = types_1.next()) {
                         type = types_1_1.value;
                         _loop_1(type);
                     }
@@ -13671,6 +13679,17 @@ var HighlightManager = /** @class */ (function (_super) {
     return HighlightManager;
 }(BaseManager));
 
+var __values$b = (undefined && undefined.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 var __read$j = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
@@ -13692,9 +13711,14 @@ var __read$j = (undefined && undefined.__read) || function (o, n) {
  * handles conflicting tooltip requests.
  */
 var TooltipManager = /** @class */ (function () {
-    function TooltipManager(tooltip) {
+    function TooltipManager(tooltip, interactionManager) {
+        var _this = this;
         this.states = {};
+        this.exclusiveAreas = {};
+        this.destroyFns = [];
         this.tooltip = tooltip;
+        var hoverRef = interactionManager.addListener('hover', function (e) { return _this.checkExclusiveRects(e); });
+        this.destroyFns.push(function () { return interactionManager.removeListener(hoverRef); });
     }
     TooltipManager.prototype.updateTooltip = function (callerId, meta, content) {
         var _a;
@@ -13704,6 +13728,14 @@ var TooltipManager = /** @class */ (function () {
         this.states[callerId] = { content: content, meta: meta };
         this.applyStates();
     };
+    TooltipManager.prototype.updateExclusiveRect = function (callerId, area) {
+        if (area) {
+            this.exclusiveAreas[callerId] = area;
+        }
+        else {
+            delete this.exclusiveAreas[callerId];
+        }
+    };
     TooltipManager.prototype.removeTooltip = function (callerId) {
         delete this.states[callerId];
         this.applyStates();
@@ -13712,16 +13744,60 @@ var TooltipManager = /** @class */ (function () {
         var _a;
         return (_a = this.states[callerId]) === null || _a === void 0 ? void 0 : _a.meta;
     };
+    TooltipManager.prototype.destroy = function () {
+        var e_1, _a;
+        try {
+            for (var _b = __values$b(this.destroyFns), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var destroyFn = _c.value;
+                destroyFn();
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+    };
+    TooltipManager.prototype.checkExclusiveRects = function (e) {
+        var e_2, _a;
+        var newAppliedExclusiveArea;
+        try {
+            for (var _b = __values$b(Object.entries(this.exclusiveAreas)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var _d = __read$j(_c.value, 2), entryId = _d[0], area = _d[1];
+                if (!area.containsPoint(e.offsetX, e.offsetY)) {
+                    continue;
+                }
+                newAppliedExclusiveArea = entryId;
+                break;
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_2) throw e_2.error; }
+        }
+        if (newAppliedExclusiveArea === this.appliedExclusiveArea) {
+            return;
+        }
+        this.appliedExclusiveArea = newAppliedExclusiveArea;
+        this.applyStates();
+    };
     TooltipManager.prototype.applyStates = function () {
+        var _this = this;
         var _a;
+        var ids = this.appliedExclusiveArea ? [this.appliedExclusiveArea] : Object.keys(this.states);
         var contentToApply = undefined;
         var metaToApply = undefined;
         // Last added entry wins.
-        Object.entries(this.states)
-            .reverse()
+        ids.reverse()
             .slice(0, 1)
-            .forEach(function (_a) {
-            var _b = __read$j(_a, 2); _b[0]; var _c = _b[1], content = _c.content, meta = _c.meta;
+            .forEach(function (id) {
+            var _a;
+            var _b = (_a = _this.states[id]) !== null && _a !== void 0 ? _a : {}, content = _b.content, meta = _b.meta;
             contentToApply = content;
             metaToApply = meta;
         });
@@ -14150,7 +14226,7 @@ var Chart = /** @class */ (function (_super) {
         _this.layoutService.addListener('start-layout', function (e) { return _this.positionPadding(e.shrinkRect); });
         _this.layoutService.addListener('start-layout', function (e) { return _this.positionCaptions(e.shrinkRect); });
         _this.tooltip = new Tooltip(_this.scene.canvas.element, document, document.body);
-        _this.tooltipManager = new TooltipManager(_this.tooltip);
+        _this.tooltipManager = new TooltipManager(_this.tooltip, _this.interactionManager);
         _this.legend = new Legend(_this, _this.interactionManager, _this.cursorManager, _this.highlightManager, _this.tooltipManager, _this.layoutService);
         _this.overlays = new ChartOverlays(_this.element);
         _this.highlight = new ChartHighlight();
@@ -14259,6 +14335,7 @@ var Chart = /** @class */ (function (_super) {
         var result = undefined;
         this._performUpdateType = ChartUpdateType.NONE;
         this._pendingFactoryUpdates.splice(0);
+        this.tooltipManager.destroy();
         this.tooltip.destroy();
         this.legend.destroy();
         SizeMonitor.unobserve(this.element);
@@ -14553,12 +14630,7 @@ var Chart = /** @class */ (function (_super) {
         if (!series.data) {
             series.data = this.data;
         }
-        if (this.hasEventListener('seriesNodeClick')) {
-            series.addEventListener('nodeClick', this.onSeriesNodeClick);
-        }
-        if (this.hasEventListener('seriesNodeDoubleClick')) {
-            series.addEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
-        }
+        this.addSeriesListeners(series);
     };
     Chart.prototype.freeSeries = function (series) {
         series.chart = undefined;
@@ -14572,6 +14644,22 @@ var Chart = /** @class */ (function (_super) {
             _this.seriesRoot.removeChild(series.rootGroup);
         });
         this._series = []; // using `_series` instead of `series` to prevent infinite recursion
+    };
+    Chart.prototype.addSeriesListeners = function (series) {
+        if (this.hasEventListener('seriesNodeClick')) {
+            series.addEventListener('nodeClick', this.onSeriesNodeClick);
+        }
+        if (this.hasEventListener('seriesNodeDoubleClick')) {
+            series.addEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
+        }
+    };
+    Chart.prototype.updateAllSeriesListeners = function () {
+        var _this = this;
+        this.series.forEach(function (series) {
+            series.removeEventListener('nodeClick', _this.onSeriesNodeClick);
+            series.removeEventListener('nodeDoubleClick', _this.onSeriesNodeDoubleClick);
+            _this.addSeriesListeners(series);
+        });
     };
     Chart.prototype.assignSeriesToAxes = function () {
         var _this = this;
@@ -14882,8 +14970,8 @@ var Chart = /** @class */ (function (_super) {
         }
         // Handle node highlighting and tooltip toggling when pointer within `tooltip.range`
         this.handlePointerTooltip(event, disablePointer);
-        // Handle mouse cursor when pointer withing `series[].nodeClickRange`
-        this.handlePointerNodeCursor(event);
+        // Handle node highlighting and mouse cursor when pointer withing `series[].nodeClickRange`
+        this.handlePointerNode(event);
     };
     Chart.prototype.handlePointerTooltip = function (event, disablePointer) {
         var _a, _b;
@@ -14927,14 +15015,14 @@ var Chart = /** @class */ (function (_super) {
             this.tooltipManager.updateTooltip(this.id, meta, html);
         }
     };
-    Chart.prototype.handlePointerNodeCursor = function (event) {
+    Chart.prototype.handlePointerNode = function (event) {
         var _this = this;
         var found = this.checkSeriesNodeRange(event, function (series, datum) {
             if (series.hasEventListener('nodeClick') || series.hasEventListener('nodeDoubleClick')) {
                 _this.cursorManager.updateCursor('chart', 'pointer');
-                if (_this.highlight.range === 'node') {
-                    _this.highlightManager.updateHighlight(_this.id, datum);
-                }
+            }
+            if (_this.highlight.range === 'node') {
+                _this.highlightManager.updateHighlight(_this.id, datum);
             }
         });
         if (!found) {
@@ -14975,12 +15063,7 @@ var Chart = /** @class */ (function (_super) {
         });
     };
     Chart.prototype.checkSeriesNodeRange = function (event, callback) {
-        // If the tooltip picking uses `nearest` then, irregardless of the range of each series, the same node would
-        // be picked, so we can shortcut to using the last pick. Otherwise, we need to pick a node distinctly
-        // from the tooltip picking in case the node click range is greater than the tooltip range.
-        var nearestNode = this.tooltip.range === 'nearest' && this.lastPick !== undefined
-            ? this.lastPick
-            : this.pickSeriesNode({ x: event.offsetX, y: event.offsetY }, false);
+        var nearestNode = this.pickSeriesNode({ x: event.offsetX, y: event.offsetY }, false);
         var datum = nearestNode === null || nearestNode === void 0 ? void 0 : nearestNode.datum;
         var nodeClickRange = datum === null || datum === void 0 ? void 0 : datum.series.nodeClickRange;
         // First check if we should trigger the callback based on nearest node
@@ -17074,6 +17157,22 @@ function sumValues(values, accumulator) {
     }
     return accumulator;
 }
+function toKeyString(keys) {
+    return keys
+        .map(function (v) {
+        if (v == null) {
+            return v;
+        }
+        else if (typeof v === 'number' || typeof v === 'string' || typeof v === 'boolean') {
+            return v;
+        }
+        else if (typeof v === 'object') {
+            return JSON.stringify(v);
+        }
+        return v;
+    })
+        .join('-');
+}
 var SMALLEST_KEY_INTERVAL = {
     type: 'reducer',
     property: 'smallestKeyInterval',
@@ -17361,7 +17460,7 @@ var DataModel = /** @class */ (function () {
         try {
             for (var _c = __values$7(data.data), _d = _c.next(); !_d.done; _d = _c.next()) {
                 var _e = _d.value, keys = _e.keys, values = _e.values, datum = _e.datum;
-                var keyStr = keys.join('-');
+                var keyStr = toKeyString(keys);
                 if (processedData.has(keyStr)) {
                     var existingData = processedData.get(keyStr);
                     existingData.values.push(values);
@@ -17477,7 +17576,11 @@ var DataModel = /** @class */ (function () {
         });
         // const normalisedRange = [-normaliseTo, normaliseTo];
         var normalise = function (val, extent) {
-            return (val * normaliseTo) / extent;
+            var result = (val * normaliseTo) / extent;
+            if (result >= 0) {
+                return Math.min(normaliseTo, result);
+            }
+            return Math.max(-normaliseTo, result);
         };
         for (var sumIdx = 0; sumIdx < sumDefs.length; sumIdx++) {
             var sums = sumValues === null || sumValues === void 0 ? void 0 : sumValues[sumIdx];
@@ -24207,7 +24310,6 @@ var ChartTheme = /** @class */ (function () {
                 enabled: true,
                 range: 'nearest',
                 delay: 0,
-                class: DEFAULT_TOOLTIP_CLASS,
             },
             listeners: {},
         };
@@ -28167,6 +28269,9 @@ function applyChartOptions(chart, processedOptions, userOptions) {
     }
     if ((_b = processedOptions.legend) === null || _b === void 0 ? void 0 : _b.listeners) {
         Object.assign(chart.legend.listeners, (_c = processedOptions.legend.listeners) !== null && _c !== void 0 ? _c : {});
+    }
+    if (processedOptions.listeners) {
+        chart.updateAllSeriesListeners();
     }
     chart.processedOptions = completeOptions;
     chart.userOptions = jsonMerge([(_d = chart.userOptions) !== null && _d !== void 0 ? _d : {}, userOptions], noDataCloneMergeOptions);

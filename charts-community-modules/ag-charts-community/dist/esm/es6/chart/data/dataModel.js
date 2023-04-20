@@ -27,6 +27,22 @@ function sumValues(values, accumulator = [0, 0]) {
     }
     return accumulator;
 }
+function toKeyString(keys) {
+    return keys
+        .map((v) => {
+        if (v == null) {
+            return v;
+        }
+        else if (typeof v === 'number' || typeof v === 'string' || typeof v === 'boolean') {
+            return v;
+        }
+        else if (typeof v === 'object') {
+            return JSON.stringify(v);
+        }
+        return v;
+    })
+        .join('-');
+}
 export const SMALLEST_KEY_INTERVAL = {
     type: 'reducer',
     property: 'smallestKeyInterval',
@@ -221,7 +237,7 @@ export class DataModel {
     groupData(data) {
         const processedData = new Map();
         for (const { keys, values, datum } of data.data) {
-            const keyStr = keys.join('-');
+            const keyStr = toKeyString(keys);
             if (processedData.has(keyStr)) {
                 const existingData = processedData.get(keyStr);
                 existingData.values.push(values);
@@ -280,7 +296,11 @@ export class DataModel {
         const resultSumValueIndices = sumDefs.map((defs) => defs.properties.map((prop) => valueDefs.findIndex((def) => def.property === prop)));
         // const normalisedRange = [-normaliseTo, normaliseTo];
         const normalise = (val, extent) => {
-            return (val * normaliseTo) / extent;
+            const result = (val * normaliseTo) / extent;
+            if (result >= 0) {
+                return Math.min(normaliseTo, result);
+            }
+            return Math.max(-normaliseTo, result);
         };
         for (let sumIdx = 0; sumIdx < sumDefs.length; sumIdx++) {
             const sums = sumValues === null || sumValues === void 0 ? void 0 : sumValues[sumIdx];

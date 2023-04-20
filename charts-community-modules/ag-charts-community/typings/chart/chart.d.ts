@@ -110,6 +110,8 @@ export declare abstract class Chart extends Observable implements AgChartInstanc
     protected initSeries(series: Series<any>): void;
     protected freeSeries(series: Series<any>): void;
     removeAllSeries(): void;
+    protected addSeriesListeners(series: Series<any>): void;
+    updateAllSeriesListeners(): void;
     protected assignSeriesToAxes(): void;
     protected assignAxesToSeries(force?: boolean): void;
     private findMatchingAxis;
@@ -134,7 +136,7 @@ export declare abstract class Chart extends Observable implements AgChartInstanc
     private pointerScheduler;
     protected handlePointer(event: InteractionEvent<'hover'>): void;
     protected handlePointerTooltip(event: InteractionEvent<'hover'>, disablePointer: (highlightOnly?: boolean) => void): void;
-    protected handlePointerNodeCursor(event: InteractionEvent<'hover'>): void;
+    protected handlePointerNode(event: InteractionEvent<'hover'>): void;
     protected onClick(event: InteractionEvent<'click'>): void;
     protected onDoubleClick(event: InteractionEvent<'dblclick'>): void;
     private checkSeriesNodeClick;

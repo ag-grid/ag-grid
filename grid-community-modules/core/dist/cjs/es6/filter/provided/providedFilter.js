@@ -277,13 +277,14 @@ class ProvidedFilter extends component_1.Component {
         if (params) {
             this.hidePopup = params.hidePopup;
         }
-        const isFloatingFilter = (params === null || params === void 0 ? void 0 : params.container) === 'floatingFilter';
-        this.refreshFilterResizer(isFloatingFilter);
+        this.refreshFilterResizer(params === null || params === void 0 ? void 0 : params.container);
     }
-    refreshFilterResizer(isFloatingFilter) {
-        if (!this.positionableFeature) {
+    refreshFilterResizer(containerType) {
+        // tool panel is scrollable, so don't need to size
+        if (!this.positionableFeature || containerType === 'toolPanel') {
             return;
         }
+        const isFloatingFilter = containerType === 'floatingFilter';
         const { positionableFeature, gridOptionsService } = this;
         if (isFloatingFilter) {
             positionableFeature.restoreLastSize();

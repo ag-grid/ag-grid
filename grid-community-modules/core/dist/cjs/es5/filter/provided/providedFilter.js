@@ -293,13 +293,14 @@ var ProvidedFilter = /** @class */ (function (_super) {
         if (params) {
             this.hidePopup = params.hidePopup;
         }
-        var isFloatingFilter = (params === null || params === void 0 ? void 0 : params.container) === 'floatingFilter';
-        this.refreshFilterResizer(isFloatingFilter);
+        this.refreshFilterResizer(params === null || params === void 0 ? void 0 : params.container);
     };
-    ProvidedFilter.prototype.refreshFilterResizer = function (isFloatingFilter) {
-        if (!this.positionableFeature) {
+    ProvidedFilter.prototype.refreshFilterResizer = function (containerType) {
+        // tool panel is scrollable, so don't need to size
+        if (!this.positionableFeature || containerType === 'toolPanel') {
             return;
         }
+        var isFloatingFilter = containerType === 'floatingFilter';
         var _a = this, positionableFeature = _a.positionableFeature, gridOptionsService = _a.gridOptionsService;
         if (isFloatingFilter) {
             positionableFeature.restoreLastSize();

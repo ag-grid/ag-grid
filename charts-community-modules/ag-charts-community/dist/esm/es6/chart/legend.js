@@ -282,6 +282,7 @@ export class Legend {
             if (!(markerLabel.marker && markerLabel.marker instanceof Marker)) {
                 markerLabel.marker = new Marker();
             }
+            markerLabel.markerSize = markerSize;
             markerLabel.spacing = markerPadding;
             markerLabel.fontStyle = fontStyle;
             markerLabel.fontWeight = fontWeight;
@@ -745,6 +746,13 @@ export class Legend {
         if (this.visible && this.enabled && this.data.length) {
             const legendPadding = this.spacing;
             newShrinkRect.shrink(legendPadding, this.position);
+            const legendPositionedBBox = legendBBox.clone();
+            legendPositionedBBox.x += this.translationX;
+            legendPositionedBBox.y += this.translationY;
+            this.tooltipManager.updateExclusiveRect(this.id, legendPositionedBBox);
+        }
+        else {
+            this.tooltipManager.updateExclusiveRect(this.id);
         }
         return { shrinkRect: newShrinkRect };
     }

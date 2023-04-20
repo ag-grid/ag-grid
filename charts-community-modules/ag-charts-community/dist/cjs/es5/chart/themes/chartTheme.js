@@ -29,7 +29,6 @@ var __read = (this && this.__read) || function (o, n) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChartTheme = void 0;
 var object_1 = require("../../util/object");
-var tooltip_1 = require("../tooltip/tooltip");
 var chartTypes_1 = require("../chartTypes");
 var palette = {
     fills: ['#f3622d', '#fba71b', '#57b757', '#41a9c9', '#4258c9', '#9a42c8', '#c84164', '#888888'],
@@ -292,7 +291,6 @@ var ChartTheme = /** @class */ (function () {
                 enabled: true,
                 range: 'nearest',
                 delay: 0,
-                class: tooltip_1.DEFAULT_TOOLTIP_CLASS,
             },
             listeners: {},
         };

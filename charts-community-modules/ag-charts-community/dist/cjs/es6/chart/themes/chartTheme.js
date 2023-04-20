@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChartTheme = void 0;
 const object_1 = require("../../util/object");
-const tooltip_1 = require("../tooltip/tooltip");
 const chartTypes_1 = require("../chartTypes");
 const palette = {
     fills: ['#f3622d', '#fba71b', '#57b757', '#41a9c9', '#4258c9', '#9a42c8', '#c84164', '#888888'],
@@ -264,7 +263,6 @@ class ChartTheme {
                 enabled: true,
                 range: 'nearest',
                 delay: 0,
-                class: tooltip_1.DEFAULT_TOOLTIP_CLASS,
             },
             listeners: {},
         };

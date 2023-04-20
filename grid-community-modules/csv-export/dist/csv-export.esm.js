@@ -3770,7 +3770,7 @@ function logDeprecation(version, oldProp, newProp, message) {
             this.pickOneWarning('groupRemoveSingleChildren', 'groupHideOpenParents');
         }
         if (this.gridOptionsService.get('domLayout') === 'autoHeight' && !this.gridOptionsService.isRowModelType('clientSide')) {
-            console.warn("AG Grid: domLayout='autoHeight' is only supported by the Client-Side row model.");
+            console.warn("AG Grid: domLayout='autoHeight' was ignored as it is only supported by the Client-Side row model.");
             this.gridOptions.domLayout = 'normal';
         }
         if (this.gridOptionsService.isRowModelType('serverSide')) {
@@ -12072,13 +12072,14 @@ var ProvidedFilter = /** @class */ (function (_super) {
         if (params) {
             this.hidePopup = params.hidePopup;
         }
-        var isFloatingFilter = (params === null || params === void 0 ? void 0 : params.container) === 'floatingFilter';
-        this.refreshFilterResizer(isFloatingFilter);
+        this.refreshFilterResizer(params === null || params === void 0 ? void 0 : params.container);
     };
-    ProvidedFilter.prototype.refreshFilterResizer = function (isFloatingFilter) {
-        if (!this.positionableFeature) {
+    ProvidedFilter.prototype.refreshFilterResizer = function (containerType) {
+        // tool panel is scrollable, so don't need to size
+        if (!this.positionableFeature || containerType === 'toolPanel') {
             return;
         }
+        var isFloatingFilter = containerType === 'floatingFilter';
         var _a = this, positionableFeature = _a.positionableFeature, gridOptionsService = _a.gridOptionsService;
         if (isFloatingFilter) {
             positionableFeature.restoreLastSize();
@@ -17081,11 +17082,20 @@ var RowNode = /** @class */ (function () {
      * @returns `True` if the value was changed, otherwise `False`.
      */
     RowNode.prototype.setDataValue = function (colKey, newValue, eventSource) {
+        var _this = this;
+        var getColumnFromKey = function () {
+            var _a;
+            if (typeof colKey !== 'string') {
+                return colKey;
+            }
+            // if in pivot mode, grid columns wont include primary columns
+            return (_a = _this.beans.columnModel.getGridColumn(colKey)) !== null && _a !== void 0 ? _a : _this.beans.columnModel.getPrimaryColumn(colKey);
+        };
         // When it is done via the editors, no 'cell changed' event gets fired, as it's assumed that
         // the cell knows about the change given it's in charge of the editing.
         // this method is for the client to call, so the cell listens for the change
         // event, and also flashes the cell when the change occurs.
-        var column = this.beans.columnModel.getGridColumn(colKey);
+        var column = getColumnFromKey();
         var oldValue = this.getValueFromValueService(column);
         if (this.beans.gridOptionsService.is('readOnlyEdit')) {
             this.dispatchEventForSaveValueReadOnly(column, oldValue, newValue, eventSource);
@@ -17526,7 +17536,6 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
     }
     CheckboxSelectionComponent.prototype.postConstruct = function () {
         this.eCheckbox.setPassive(true);
-        setAriaLive(this.eCheckbox.getInputElement(), 'polite');
     };
     CheckboxSelectionComponent.prototype.getCheckboxId = function () {
         return this.eCheckbox.getInputElement().id;

@@ -19,7 +19,6 @@ const events_1 = require("../events");
 const componentAnnotations_1 = require("../widgets/componentAnnotations");
 const rowNode_1 = require("../entities/rowNode");
 const event_1 = require("../utils/event");
-const aria_1 = require("../utils/aria");
 class CheckboxSelectionComponent extends component_1.Component {
     constructor() {
         super(/* html*/ `
@@ -29,7 +28,6 @@ class CheckboxSelectionComponent extends component_1.Component {
     }
     postConstruct() {
         this.eCheckbox.setPassive(true);
-        aria_1.setAriaLive(this.eCheckbox.getInputElement(), 'polite');
     }
     getCheckboxId() {
         return this.eCheckbox.getInputElement().id;

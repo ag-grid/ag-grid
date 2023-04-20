@@ -489,11 +489,20 @@ var RowNode = /** @class */ (function () {
      * @returns `True` if the value was changed, otherwise `False`.
      */
     RowNode.prototype.setDataValue = function (colKey, newValue, eventSource) {
+        var _this = this;
+        var getColumnFromKey = function () {
+            var _a;
+            if (typeof colKey !== 'string') {
+                return colKey;
+            }
+            // if in pivot mode, grid columns wont include primary columns
+            return (_a = _this.beans.columnModel.getGridColumn(colKey)) !== null && _a !== void 0 ? _a : _this.beans.columnModel.getPrimaryColumn(colKey);
+        };
         // When it is done via the editors, no 'cell changed' event gets fired, as it's assumed that
         // the cell knows about the change given it's in charge of the editing.
         // this method is for the client to call, so the cell listens for the change
         // event, and also flashes the cell when the change occurs.
-        var column = this.beans.columnModel.getGridColumn(colKey);
+        var column = getColumnFromKey();
         var oldValue = this.getValueFromValueService(column);
         if (this.beans.gridOptionsService.is('readOnlyEdit')) {
             this.dispatchEventForSaveValueReadOnly(column, oldValue, newValue, eventSource);

@@ -40,7 +40,6 @@ import { Events } from '../events';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { RowNode } from '../entities/rowNode';
 import { stopPropagationForAgGrid } from '../utils/event';
-import { setAriaLive } from '../utils/aria';
 var CheckboxSelectionComponent = /** @class */ (function (_super) {
     __extends(CheckboxSelectionComponent, _super);
     function CheckboxSelectionComponent() {
@@ -48,7 +47,6 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
     }
     CheckboxSelectionComponent.prototype.postConstruct = function () {
         this.eCheckbox.setPassive(true);
-        setAriaLive(this.eCheckbox.getInputElement(), 'polite');
     };
     CheckboxSelectionComponent.prototype.getCheckboxId = function () {
         return this.eCheckbox.getInputElement().id;

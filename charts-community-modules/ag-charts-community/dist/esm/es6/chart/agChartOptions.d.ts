@@ -166,7 +166,7 @@ export interface AgChartOverlayOptions {
     renderer?: () => string;
 }
 export interface AgChartOverlaysOptions {
-    /** An overlay to be displayed when there is no data, */
+    /** An overlay to be displayed when there is no data. */
     noData?: AgChartOverlayOptions;
 }
 export interface AgChartLabelOptions {

@@ -344,6 +344,7 @@ var Legend = /** @class */ (function () {
             if (!(markerLabel.marker && markerLabel.marker instanceof Marker)) {
                 markerLabel.marker = new Marker();
             }
+            markerLabel.markerSize = markerSize;
             markerLabel.spacing = markerPadding;
             markerLabel.fontStyle = fontStyle;
             markerLabel.fontWeight = fontWeight;
@@ -831,6 +832,13 @@ var Legend = /** @class */ (function () {
         if (this.visible && this.enabled && this.data.length) {
             var legendPadding = this.spacing;
             newShrinkRect.shrink(legendPadding, this.position);
+            var legendPositionedBBox = legendBBox.clone();
+            legendPositionedBBox.x += this.translationX;
+            legendPositionedBBox.y += this.translationY;
+            this.tooltipManager.updateExclusiveRect(this.id, legendPositionedBBox);
+        }
+        else {
+            this.tooltipManager.updateExclusiveRect(this.id);
         }
         return { shrinkRect: newShrinkRect };
     };

@@ -25,6 +25,7 @@ class SetFilter extends core_1.ProvidedFilter {
         this.treeDataTreeList = false;
         this.groupingTreeList = false;
         this.hardRefreshVirtualList = false;
+        this.noValueFormatterSupplied = false;
         // To make the filtering super fast, we store the keys in an Set rather than using the default array
         this.appliedModelKeys = null;
         this.noAppliedModelKeys = false;
@@ -200,6 +201,7 @@ class SetFilter extends core_1.ProvidedFilter {
             if (keyCreator && !convertValuesToStrings && !treeList) {
                 throw new Error('AG Grid: Must supply a Value Formatter in Set Filter params when using a Key Creator unless convertValuesToStrings is enabled');
             }
+            this.noValueFormatterSupplied = true;
             // ref data is handled by ValueFormatterService
             if (!isRefData) {
                 valueFormatter = params => core_1._.toStringOrNull(params.value);
@@ -227,7 +229,11 @@ class SetFilter extends core_1.ProvidedFilter {
     }
     getFormattedValue(key) {
         var _a;
-        const value = this.valueModel.getValue(key);
+        let value = this.valueModel.getValue(key);
+        if (this.noValueFormatterSupplied && (this.treeDataTreeList || this.groupingTreeList) && Array.isArray(value)) {
+            // essentially get back the cell value
+            value = core_1._.last(value);
+        }
         const formattedValue = this.valueFormatterService.formatValue(this.setFilterParams.column, null, value, this.valueFormatter, false);
         return (_a = (formattedValue == null ? core_1._.toStringOrNull(value) : formattedValue)) !== null && _a !== void 0 ? _a : this.translateForSetFilter('blanks');
     }

@@ -7946,6 +7946,7 @@ var Legend = /** @class */ (function () {
             if (!(markerLabel.marker && markerLabel.marker instanceof Marker)) {
                 markerLabel.marker = new Marker();
             }
+            markerLabel.markerSize = markerSize;
             markerLabel.spacing = markerPadding;
             markerLabel.fontStyle = fontStyle;
             markerLabel.fontWeight = fontWeight;
@@ -8433,6 +8434,13 @@ var Legend = /** @class */ (function () {
         if (this.visible && this.enabled && this.data.length) {
             var legendPadding = this.spacing;
             newShrinkRect.shrink(legendPadding, this.position);
+            var legendPositionedBBox = legendBBox.clone();
+            legendPositionedBBox.x += this.translationX;
+            legendPositionedBBox.y += this.translationY;
+            this.tooltipManager.updateExclusiveRect(this.id, legendPositionedBBox);
+        }
+        else {
+            this.tooltipManager.updateExclusiveRect(this.id);
         }
         return { shrinkRect: newShrinkRect };
     };
@@ -14256,6 +14264,17 @@ var HighlightManager = /** @class */ (function (_super) {
     return HighlightManager;
 }(BaseManager));
 
+var __values$j = (undefined && undefined.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 var __read$o = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
     if (!m) return o;
@@ -14277,9 +14296,14 @@ var __read$o = (undefined && undefined.__read) || function (o, n) {
  * handles conflicting tooltip requests.
  */
 var TooltipManager = /** @class */ (function () {
-    function TooltipManager(tooltip) {
+    function TooltipManager(tooltip, interactionManager) {
+        var _this = this;
         this.states = {};
+        this.exclusiveAreas = {};
+        this.destroyFns = [];
         this.tooltip = tooltip;
+        var hoverRef = interactionManager.addListener('hover', function (e) { return _this.checkExclusiveRects(e); });
+        this.destroyFns.push(function () { return interactionManager.removeListener(hoverRef); });
     }
     TooltipManager.prototype.updateTooltip = function (callerId, meta, content) {
         var _a;
@@ -14289,6 +14313,14 @@ var TooltipManager = /** @class */ (function () {
         this.states[callerId] = { content: content, meta: meta };
         this.applyStates();
     };
+    TooltipManager.prototype.updateExclusiveRect = function (callerId, area) {
+        if (area) {
+            this.exclusiveAreas[callerId] = area;
+        }
+        else {
+            delete this.exclusiveAreas[callerId];
+        }
+    };
     TooltipManager.prototype.removeTooltip = function (callerId) {
         delete this.states[callerId];
         this.applyStates();
@@ -14297,16 +14329,60 @@ var TooltipManager = /** @class */ (function () {
         var _a;
         return (_a = this.states[callerId]) === null || _a === void 0 ? void 0 : _a.meta;
     };
+    TooltipManager.prototype.destroy = function () {
+        var e_1, _a;
+        try {
+            for (var _b = __values$j(this.destroyFns), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var destroyFn = _c.value;
+                destroyFn();
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+    };
+    TooltipManager.prototype.checkExclusiveRects = function (e) {
+        var e_2, _a;
+        var newAppliedExclusiveArea;
+        try {
+            for (var _b = __values$j(Object.entries(this.exclusiveAreas)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var _d = __read$o(_c.value, 2), entryId = _d[0], area = _d[1];
+                if (!area.containsPoint(e.offsetX, e.offsetY)) {
+                    continue;
+                }
+                newAppliedExclusiveArea = entryId;
+                break;
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_2) throw e_2.error; }
+        }
+        if (newAppliedExclusiveArea === this.appliedExclusiveArea) {
+            return;
+        }
+        this.appliedExclusiveArea = newAppliedExclusiveArea;
+        this.applyStates();
+    };
     TooltipManager.prototype.applyStates = function () {
+        var _this = this;
         var _a;
+        var ids = this.appliedExclusiveArea ? [this.appliedExclusiveArea] : Object.keys(this.states);
         var contentToApply = undefined;
         var metaToApply = undefined;
         // Last added entry wins.
-        Object.entries(this.states)
-            .reverse()
+        ids.reverse()
             .slice(0, 1)
-            .forEach(function (_a) {
-            var _b = __read$o(_a, 2), _ = _b[0], _c = _b[1], content = _c.content, meta = _c.meta;
+            .forEach(function (id) {
+            var _a;
+            var _b = (_a = _this.states[id]) !== null && _a !== void 0 ? _a : {}, content = _b.content, meta = _b.meta;
             contentToApply = content;
             metaToApply = meta;
         });
@@ -14351,7 +14427,7 @@ var __assign$7 = (undefined && undefined.__assign) || function () {
     };
     return __assign$7.apply(this, arguments);
 };
-var __values$j = (undefined && undefined.__values) || function(o) {
+var __values$k = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -14420,7 +14496,7 @@ var ZoomManager = /** @class */ (function (_super) {
         var zoomToApply = {};
         try {
             // Last added entry wins.
-            for (var _b = __values$j(Object.entries(this.states)), _c = _b.next(); !_c.done; _c = _b.next()) {
+            for (var _b = __values$k(Object.entries(this.states)), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var _d = __read$p(_c.value, 2), _ = _d[0], _e = _d[1], x = _e.x, y = _e.y;
                 zoomToApply.x = x !== null && x !== void 0 ? x : zoomToApply.x;
                 zoomToApply.y = y !== null && y !== void 0 ? y : zoomToApply.y;
@@ -14585,7 +14661,7 @@ var __generator$4 = (undefined && undefined.__generator) || function (thisArg, b
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __values$k = (undefined && undefined.__values) || function(o) {
+var __values$l = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -14735,7 +14811,7 @@ var Chart = /** @class */ (function (_super) {
         _this.layoutService.addListener('start-layout', function (e) { return _this.positionPadding(e.shrinkRect); });
         _this.layoutService.addListener('start-layout', function (e) { return _this.positionCaptions(e.shrinkRect); });
         _this.tooltip = new Tooltip(_this.scene.canvas.element, document, document.body);
-        _this.tooltipManager = new TooltipManager(_this.tooltip);
+        _this.tooltipManager = new TooltipManager(_this.tooltip, _this.interactionManager);
         _this.legend = new Legend(_this, _this.interactionManager, _this.cursorManager, _this.highlightManager, _this.tooltipManager, _this.layoutService);
         _this.overlays = new ChartOverlays(_this.element);
         _this.highlight = new ChartHighlight();
@@ -14844,11 +14920,12 @@ var Chart = /** @class */ (function (_super) {
         var result = undefined;
         this._performUpdateType = ChartUpdateType.NONE;
         this._pendingFactoryUpdates.splice(0);
+        this.tooltipManager.destroy();
         this.tooltip.destroy();
         this.legend.destroy();
         SizeMonitor.unobserve(this.element);
         try {
-            for (var _b = __values$k(Object.entries(this.modules)), _c = _b.next(); !_c.done; _c = _b.next()) {
+            for (var _b = __values$l(Object.entries(this.modules)), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var _d = __read$q(_c.value, 2), key = _d[0], module_1 = _d[1];
                 module_1.instance.destroy();
                 delete this.modules[key];
@@ -14980,7 +15057,7 @@ var Chart = /** @class */ (function (_super) {
             this.series.forEach(function (series) { return series.markNodeDataDirty(); });
         }
         try {
-            for (var seriesToUpdate_1 = __values$k(seriesToUpdate), seriesToUpdate_1_1 = seriesToUpdate_1.next(); !seriesToUpdate_1_1.done; seriesToUpdate_1_1 = seriesToUpdate_1.next()) {
+            for (var seriesToUpdate_1 = __values$l(seriesToUpdate), seriesToUpdate_1_1 = seriesToUpdate_1.next(); !seriesToUpdate_1_1.done; seriesToUpdate_1_1 = seriesToUpdate_1.next()) {
                 var series = seriesToUpdate_1_1.value;
                 this.seriesToUpdate.add(series);
             }
@@ -15138,12 +15215,7 @@ var Chart = /** @class */ (function (_super) {
         if (!series.data) {
             series.data = this.data;
         }
-        if (this.hasEventListener('seriesNodeClick')) {
-            series.addEventListener('nodeClick', this.onSeriesNodeClick);
-        }
-        if (this.hasEventListener('seriesNodeDoubleClick')) {
-            series.addEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
-        }
+        this.addSeriesListeners(series);
     };
     Chart.prototype.freeSeries = function (series) {
         series.chart = undefined;
@@ -15157,6 +15229,22 @@ var Chart = /** @class */ (function (_super) {
             _this.seriesRoot.removeChild(series.rootGroup);
         });
         this._series = []; // using `_series` instead of `series` to prevent infinite recursion
+    };
+    Chart.prototype.addSeriesListeners = function (series) {
+        if (this.hasEventListener('seriesNodeClick')) {
+            series.addEventListener('nodeClick', this.onSeriesNodeClick);
+        }
+        if (this.hasEventListener('seriesNodeDoubleClick')) {
+            series.addEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
+        }
+    };
+    Chart.prototype.updateAllSeriesListeners = function () {
+        var _this = this;
+        this.series.forEach(function (series) {
+            series.removeEventListener('nodeClick', _this.onSeriesNodeClick);
+            series.removeEventListener('nodeDoubleClick', _this.onSeriesNodeDoubleClick);
+            _this.addSeriesListeners(series);
+        });
     };
     Chart.prototype.assignSeriesToAxes = function () {
         var _this = this;
@@ -15206,7 +15294,7 @@ var Chart = /** @class */ (function (_super) {
     Chart.prototype.findMatchingAxis = function (directionAxes, directionKeys) {
         var e_4, _a, e_5, _b;
         try {
-            for (var directionAxes_1 = __values$k(directionAxes), directionAxes_1_1 = directionAxes_1.next(); !directionAxes_1_1.done; directionAxes_1_1 = directionAxes_1.next()) {
+            for (var directionAxes_1 = __values$l(directionAxes), directionAxes_1_1 = directionAxes_1.next(); !directionAxes_1_1.done; directionAxes_1_1 = directionAxes_1.next()) {
                 var axis = directionAxes_1_1.value;
                 var axisKeys = axis.keys;
                 if (!axisKeys.length) {
@@ -15216,7 +15304,7 @@ var Chart = /** @class */ (function (_super) {
                     continue;
                 }
                 try {
-                    for (var directionKeys_1 = (e_5 = void 0, __values$k(directionKeys)), directionKeys_1_1 = directionKeys_1.next(); !directionKeys_1_1.done; directionKeys_1_1 = directionKeys_1.next()) {
+                    for (var directionKeys_1 = (e_5 = void 0, __values$l(directionKeys)), directionKeys_1_1 = directionKeys_1.next(); !directionKeys_1_1.done; directionKeys_1_1 = directionKeys_1.next()) {
                         var directionKey = directionKeys_1_1.value;
                         if (axisKeys.indexOf(directionKey) >= 0) {
                             return axis;
@@ -15273,7 +15361,7 @@ var Chart = /** @class */ (function (_super) {
         var visibleSeries = [];
         var data = [];
         try {
-            for (var _b = __values$k(this.series), _c = _b.next(); !_c.done; _c = _b.next()) {
+            for (var _b = __values$l(this.series), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var series = _c.value;
                 if (!series.visible) {
                     continue;
@@ -15410,7 +15498,7 @@ var Chart = /** @class */ (function (_super) {
         var reverseSeries = __spread$f(this.series).reverse();
         var result = undefined;
         try {
-            for (var reverseSeries_1 = __values$k(reverseSeries), reverseSeries_1_1 = reverseSeries_1.next(); !reverseSeries_1_1.done; reverseSeries_1_1 = reverseSeries_1.next()) {
+            for (var reverseSeries_1 = __values$l(reverseSeries), reverseSeries_1_1 = reverseSeries_1.next(); !reverseSeries_1_1.done; reverseSeries_1_1 = reverseSeries_1.next()) {
                 var series = reverseSeries_1_1.value;
                 if (!series.visible || !series.rootGroup.visible) {
                     continue;
@@ -15467,8 +15555,8 @@ var Chart = /** @class */ (function (_super) {
         }
         // Handle node highlighting and tooltip toggling when pointer within `tooltip.range`
         this.handlePointerTooltip(event, disablePointer);
-        // Handle mouse cursor when pointer withing `series[].nodeClickRange`
-        this.handlePointerNodeCursor(event);
+        // Handle node highlighting and mouse cursor when pointer withing `series[].nodeClickRange`
+        this.handlePointerNode(event);
     };
     Chart.prototype.handlePointerTooltip = function (event, disablePointer) {
         var _a, _b;
@@ -15512,14 +15600,14 @@ var Chart = /** @class */ (function (_super) {
             this.tooltipManager.updateTooltip(this.id, meta, html);
         }
     };
-    Chart.prototype.handlePointerNodeCursor = function (event) {
+    Chart.prototype.handlePointerNode = function (event) {
         var _this = this;
         var found = this.checkSeriesNodeRange(event, function (series, datum) {
             if (series.hasEventListener('nodeClick') || series.hasEventListener('nodeDoubleClick')) {
                 _this.cursorManager.updateCursor('chart', 'pointer');
-                if (_this.highlight.range === 'node') {
-                    _this.highlightManager.updateHighlight(_this.id, datum);
-                }
+            }
+            if (_this.highlight.range === 'node') {
+                _this.highlightManager.updateHighlight(_this.id, datum);
             }
         });
         if (!found) {
@@ -15560,12 +15648,7 @@ var Chart = /** @class */ (function (_super) {
         });
     };
     Chart.prototype.checkSeriesNodeRange = function (event, callback) {
-        // If the tooltip picking uses `nearest` then, irregardless of the range of each series, the same node would
-        // be picked, so we can shortcut to using the last pick. Otherwise, we need to pick a node distinctly
-        // from the tooltip picking in case the node click range is greater than the tooltip range.
-        var nearestNode = this.tooltip.range === 'nearest' && this.lastPick !== undefined
-            ? this.lastPick
-            : this.pickSeriesNode({ x: event.offsetX, y: event.offsetY }, false);
+        var nearestNode = this.pickSeriesNode({ x: event.offsetX, y: event.offsetY }, false);
         var datum = nearestNode === null || nearestNode === void 0 ? void 0 : nearestNode.datum;
         var nodeClickRange = datum === null || datum === void 0 ? void 0 : datum.series.nodeClickRange;
         // First check if we should trigger the callback based on nearest node
@@ -16521,7 +16604,7 @@ var __generator$5 = (undefined && undefined.__generator) || function (thisArg, b
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __values$l = (undefined && undefined.__values) || function(o) {
+var __values$m = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -16618,7 +16701,7 @@ var CartesianChart = /** @class */ (function (_super) {
         // never being able to find a stable result).
         var liveAxisWidths = new Set(this._axes.map(function (a) { return a.position; }));
         try {
-            for (var _c = __values$l(Object.keys(axisWidths)), _d = _c.next(); !_d.done; _d = _c.next()) {
+            for (var _c = __values$m(Object.keys(axisWidths)), _d = _c.next(); !_d.done; _d = _c.next()) {
                 var position = _d.value;
                 if (!liveAxisWidths.has(position)) {
                     delete axisWidths[position];
@@ -16759,7 +16842,7 @@ var CartesianChart = /** @class */ (function (_super) {
         });
         try {
             // Reduce cross-line padding to account for overlap with axes.
-            for (var _c = __values$l(Object.entries(crossLinePadding)), _d = _c.next(); !_d.done; _d = _c.next()) {
+            for (var _c = __values$m(Object.entries(crossLinePadding)), _d = _c.next(); !_d.done; _d = _c.next()) {
                 var _e = __read$s(_d.value, 2), side = _e[0], _f = _e[1], padding = _f === void 0 ? 0 : _f;
                 crossLinePadding[side] = Math.max(padding - ((_b = axisWidths[side]) !== null && _b !== void 0 ? _b : 0), 0);
             }
@@ -17576,7 +17659,7 @@ var __assign$b = (undefined && undefined.__assign) || function () {
     };
     return __assign$b.apply(this, arguments);
 };
-var __values$m = (undefined && undefined.__values) || function(o) {
+var __values$n = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -17611,7 +17694,7 @@ function extendDomain(values, domain) {
     var e_1, _a;
     if (domain === void 0) { domain = [Infinity, -Infinity]; }
     try {
-        for (var values_1 = __values$m(values), values_1_1 = values_1.next(); !values_1_1.done; values_1_1 = values_1.next()) {
+        for (var values_1 = __values$n(values), values_1_1 = values_1.next(); !values_1_1.done; values_1_1 = values_1.next()) {
             var value = values_1_1.value;
             if (typeof value !== 'number') {
                 continue;
@@ -17637,7 +17720,7 @@ function sumValues(values, accumulator) {
     var e_2, _a;
     if (accumulator === void 0) { accumulator = [0, 0]; }
     try {
-        for (var values_2 = __values$m(values), values_2_1 = values_2.next(); !values_2_1.done; values_2_1 = values_2.next()) {
+        for (var values_2 = __values$n(values), values_2_1 = values_2.next(); !values_2_1.done; values_2_1 = values_2.next()) {
             var value = values_2_1.value;
             if (typeof value !== 'number') {
                 continue;
@@ -17658,6 +17741,22 @@ function sumValues(values, accumulator) {
         finally { if (e_2) throw e_2.error; }
     }
     return accumulator;
+}
+function toKeyString(keys) {
+    return keys
+        .map(function (v) {
+        if (v == null) {
+            return v;
+        }
+        else if (typeof v === 'number' || typeof v === 'string' || typeof v === 'boolean') {
+            return v;
+        }
+        else if (typeof v === 'object') {
+            return JSON.stringify(v);
+        }
+        return v;
+    })
+        .join('-');
 }
 var SMALLEST_KEY_INTERVAL = {
     type: 'reducer',
@@ -17684,7 +17783,7 @@ var SUM_VALUE_EXTENT = {
         var _b, _c, _d, _e;
         var result = __spread$h(((_c = (_b = processedData.domain.sumValues) === null || _b === void 0 ? void 0 : _b[0]) !== null && _c !== void 0 ? _c : [0, 0]));
         try {
-            for (var _f = __values$m((_e = (_d = processedData.domain.sumValues) === null || _d === void 0 ? void 0 : _d.slice(1)) !== null && _e !== void 0 ? _e : []), _g = _f.next(); !_g.done; _g = _f.next()) {
+            for (var _f = __values$n((_e = (_d = processedData.domain.sumValues) === null || _d === void 0 ? void 0 : _d.slice(1)) !== null && _e !== void 0 ? _e : []), _g = _f.next(); !_g.done; _g = _f.next()) {
                 var _h = __read$v(_g.value, 2), min = _h[0], max = _h[1];
                 if (min < result[0]) {
                     result[0] = min;
@@ -17715,7 +17814,7 @@ var DataModel = /** @class */ (function () {
         // on configuration ordering, but we process keys before values.
         var keys = true;
         try {
-            for (var props_1 = __values$m(props), props_1_1 = props_1.next(); !props_1_1.done; props_1_1 = props_1.next()) {
+            for (var props_1 = __values$n(props), props_1_1 = props_1.next(); !props_1_1.done; props_1_1 = props_1.next()) {
                 var next = props_1_1.value;
                 if (next.type === 'key' && !keys) {
                     throw new Error('AG Charts - internal config error: keys must come before values.');
@@ -17743,7 +17842,7 @@ var DataModel = /** @class */ (function () {
         this.reducers = props.filter(function (def) { return def.type === 'reducer'; });
         this.processors = props.filter(function (def) { return def.type === 'processor'; });
         try {
-            for (var _d = __values$m((_c = this.sums) !== null && _c !== void 0 ? _c : []), _e = _d.next(); !_e.done; _e = _d.next()) {
+            for (var _d = __values$n((_c = this.sums) !== null && _c !== void 0 ? _c : []), _e = _d.next(); !_e.done; _e = _d.next()) {
                 var properties = _e.value.properties;
                 if (properties.length === 0)
                     continue;
@@ -17788,7 +17887,7 @@ var DataModel = /** @class */ (function () {
         var _c = this, _d = _c.opts, groupByKeys = _d.groupByKeys, normaliseTo = _d.normaliseTo, sums = _c.sums, reducers = _c.reducers, processors = _c.processors;
         var start = performance.now();
         try {
-            for (var _e = __values$m(__spread$h(this.keys, this.values)), _f = _e.next(); !_f.done; _f = _e.next()) {
+            for (var _e = __values$n(__spread$h(this.keys, this.values)), _f = _e.next(); !_f.done; _f = _e.next()) {
                 var def = _f.value;
                 def.missing = false;
             }
@@ -17820,7 +17919,7 @@ var DataModel = /** @class */ (function () {
             this.postProcessData(processedData);
         }
         try {
-            for (var _g = __values$m(__spread$h(this.keys, this.values)), _h = _g.next(); !_h.done; _h = _g.next()) {
+            for (var _g = __values$n(__spread$h(this.keys, this.values)), _h = _g.next(); !_h.done; _h = _g.next()) {
                 var def = _h.value;
                 if (def.missing) {
                     Logger.warnOnce("the key '" + def.property + "' was not found in at least one data element.");
@@ -17845,12 +17944,12 @@ var DataModel = /** @class */ (function () {
         var resultData = new Array(dataVisible ? data.length : 0);
         var resultDataIdx = 0;
         try {
-            dataLoop: for (var data_1 = __values$m(data), data_1_1 = data_1.next(); !data_1_1.done; data_1_1 = data_1.next()) {
+            dataLoop: for (var data_1 = __values$n(data), data_1_1 = data_1.next(); !data_1_1.done; data_1_1 = data_1.next()) {
                 var datum = data_1_1.value;
                 var keys = dataVisible ? new Array(keyDefs.length) : undefined;
                 var keyIdx = 0;
                 try {
-                    for (var keyDefs_1 = (e_9 = void 0, __values$m(keyDefs)), keyDefs_1_1 = keyDefs_1.next(); !keyDefs_1_1.done; keyDefs_1_1 = keyDefs_1.next()) {
+                    for (var keyDefs_1 = (e_9 = void 0, __values$n(keyDefs)), keyDefs_1_1 = keyDefs_1.next(); !keyDefs_1_1.done; keyDefs_1_1 = keyDefs_1.next()) {
                         var def = keyDefs_1_1.value;
                         var key = processValue(def, datum);
                         if (key === INVALID_VALUE) {
@@ -17871,7 +17970,7 @@ var DataModel = /** @class */ (function () {
                 var values = dataVisible ? new Array(valueDefs.length) : undefined;
                 var valueIdx = 0;
                 try {
-                    for (var valueDefs_1 = (e_10 = void 0, __values$m(valueDefs)), valueDefs_1_1 = valueDefs_1.next(); !valueDefs_1_1.done; valueDefs_1_1 = valueDefs_1.next()) {
+                    for (var valueDefs_1 = (e_10 = void 0, __values$n(valueDefs)), valueDefs_1_1 = valueDefs_1.next(); !valueDefs_1_1.done; valueDefs_1_1 = valueDefs_1.next()) {
                         var def = valueDefs_1_1.value;
                         var value = processValue(def, datum);
                         if (value === INVALID_VALUE) {
@@ -17944,9 +18043,9 @@ var DataModel = /** @class */ (function () {
         var e_11, _a, e_12, _b;
         var processedData = new Map();
         try {
-            for (var _c = __values$m(data.data), _d = _c.next(); !_d.done; _d = _c.next()) {
+            for (var _c = __values$n(data.data), _d = _c.next(); !_d.done; _d = _c.next()) {
                 var _e = _d.value, keys = _e.keys, values = _e.values, datum = _e.datum;
-                var keyStr = keys.join('-');
+                var keyStr = toKeyString(keys);
                 if (processedData.has(keyStr)) {
                     var existingData = processedData.get(keyStr);
                     existingData.values.push(values);
@@ -17967,7 +18066,7 @@ var DataModel = /** @class */ (function () {
         var resultData = new Array(processedData.size);
         var dataIndex = 0;
         try {
-            for (var _f = __values$m(processedData.entries()), _g = _f.next(); !_g.done; _g = _f.next()) {
+            for (var _f = __values$n(processedData.entries()), _g = _f.next(); !_g.done; _g = _f.next()) {
                 var _h = __read$v(_g.value, 2), _j = _h[1], keys = _j.keys, values = _j.values, datum = _j.datum;
                 resultData[dataIndex++] = {
                     keys: keys,
@@ -17996,7 +18095,7 @@ var DataModel = /** @class */ (function () {
             return defs.properties.map(function (prop) { return valueDefs.findIndex(function (def) { return def.property === prop; }); });
         });
         try {
-            for (var _f = __values$m(processedData.data), _g = _f.next(); !_g.done; _g = _f.next()) {
+            for (var _f = __values$n(processedData.data), _g = _f.next(); !_g.done; _g = _f.next()) {
                 var group = _g.value;
                 var values = group.values;
                 (_d = group.sumValues) !== null && _d !== void 0 ? _d : (group.sumValues = new Array(resultSumValueIndices.length));
@@ -18005,7 +18104,7 @@ var DataModel = /** @class */ (function () {
                 }
                 var resultIdx = 0;
                 try {
-                    for (var resultSumValueIndices_1 = (e_14 = void 0, __values$m(resultSumValueIndices)), resultSumValueIndices_1_1 = resultSumValueIndices_1.next(); !resultSumValueIndices_1_1.done; resultSumValueIndices_1_1 = resultSumValueIndices_1.next()) {
+                    for (var resultSumValueIndices_1 = (e_14 = void 0, __values$n(resultSumValueIndices)), resultSumValueIndices_1_1 = resultSumValueIndices_1.next(); !resultSumValueIndices_1_1.done; resultSumValueIndices_1_1 = resultSumValueIndices_1.next()) {
                         var indices = resultSumValueIndices_1_1.value;
                         var groupDomain = extendDomain([]);
                         var _loop_1 = function (distinctValues) {
@@ -18016,7 +18115,7 @@ var DataModel = /** @class */ (function () {
                             }
                         };
                         try {
-                            for (var values_3 = (e_15 = void 0, __values$m(values)), values_3_1 = values_3.next(); !values_3_1.done; values_3_1 = values_3.next()) {
+                            for (var values_3 = (e_15 = void 0, __values$n(values)), values_3_1 = values_3.next(); !values_3_1.done; values_3_1 = values_3.next()) {
                                 var distinctValues = values_3_1.value;
                                 _loop_1(distinctValues);
                             }
@@ -18062,7 +18161,11 @@ var DataModel = /** @class */ (function () {
         });
         // const normalisedRange = [-normaliseTo, normaliseTo];
         var normalise = function (val, extent) {
-            return (val * normaliseTo) / extent;
+            var result = (val * normaliseTo) / extent;
+            if (result >= 0) {
+                return Math.min(normaliseTo, result);
+            }
+            return Math.max(-normaliseTo, result);
         };
         for (var sumIdx = 0; sumIdx < sumDefs.length; sumIdx++) {
             var sums = sumValues === null || sumValues === void 0 ? void 0 : sumValues[sumIdx];
@@ -18070,7 +18173,7 @@ var DataModel = /** @class */ (function () {
                 continue;
             var sumAbsExtent = -Infinity;
             try {
-                for (var sums_1 = (e_16 = void 0, __values$m(sums)), sums_1_1 = sums_1.next(); !sums_1_1.done; sums_1_1 = sums_1.next()) {
+                for (var sums_1 = (e_16 = void 0, __values$n(sums)), sums_1_1 = sums_1.next(); !sums_1_1.done; sums_1_1 = sums_1.next()) {
                     var sum = sums_1_1.value;
                     var sumAbs = Math.abs(sum);
                     if (sumAbsExtent < sumAbs) {
@@ -18087,7 +18190,7 @@ var DataModel = /** @class */ (function () {
             }
             var sumRangeIdx = 0;
             try {
-                for (var sums_2 = (e_17 = void 0, __values$m(sums)), sums_2_1 = sums_2.next(); !sums_2_1.done; sums_2_1 = sums_2.next()) {
+                for (var sums_2 = (e_17 = void 0, __values$n(sums)), sums_2_1 = sums_2.next(); !sums_2_1.done; sums_2_1 = sums_2.next()) {
                     var _ = sums_2_1.value;
                     sums[sumRangeIdx] = normalise(sums[sumRangeIdx], sumAbsExtent);
                     sumRangeIdx++;
@@ -18101,7 +18204,7 @@ var DataModel = /** @class */ (function () {
                 finally { if (e_17) throw e_17.error; }
             }
             try {
-                for (var _k = (e_18 = void 0, __values$m(processedData.data)), _l = _k.next(); !_l.done; _l = _k.next()) {
+                for (var _k = (e_18 = void 0, __values$n(processedData.data)), _l = _k.next(); !_l.done; _l = _k.next()) {
                     var next = _l.value;
                     var sumValues_1 = next.sumValues;
                     var values = next.values;
@@ -18110,7 +18213,7 @@ var DataModel = /** @class */ (function () {
                     }
                     var valuesSumExtent = 0;
                     try {
-                        for (var _m = (e_19 = void 0, __values$m((_h = sumValues_1 === null || sumValues_1 === void 0 ? void 0 : sumValues_1[sumIdx]) !== null && _h !== void 0 ? _h : [])), _o = _m.next(); !_o.done; _o = _m.next()) {
+                        for (var _m = (e_19 = void 0, __values$n((_h = sumValues_1 === null || sumValues_1 === void 0 ? void 0 : sumValues_1[sumIdx]) !== null && _h !== void 0 ? _h : [])), _o = _m.next(); !_o.done; _o = _m.next()) {
                             var sum = _o.value;
                             var sumAbs = Math.abs(sum);
                             if (valuesSumExtent < sumAbs) {
@@ -18126,10 +18229,10 @@ var DataModel = /** @class */ (function () {
                         finally { if (e_19) throw e_19.error; }
                     }
                     try {
-                        for (var values_4 = (e_20 = void 0, __values$m(values)), values_4_1 = values_4.next(); !values_4_1.done; values_4_1 = values_4.next()) {
+                        for (var values_4 = (e_20 = void 0, __values$n(values)), values_4_1 = values_4.next(); !values_4_1.done; values_4_1 = values_4.next()) {
                             var row = values_4_1.value;
                             try {
-                                for (var _p = (e_21 = void 0, __values$m(resultSumValueIndices[sumIdx])), _q = _p.next(); !_q.done; _q = _p.next()) {
+                                for (var _p = (e_21 = void 0, __values$n(resultSumValueIndices[sumIdx])), _q = _p.next(); !_q.done; _q = _p.next()) {
                                     var indices = _q.value;
                                     row[indices] = normalise(row[indices], valuesSumExtent);
                                 }
@@ -18154,7 +18257,7 @@ var DataModel = /** @class */ (function () {
                         continue;
                     sumRangeIdx = 0;
                     try {
-                        for (var _r = (e_22 = void 0, __values$m(sumValues_1[sumIdx])), _s = _r.next(); !_s.done; _s = _r.next()) {
+                        for (var _r = (e_22 = void 0, __values$n(sumValues_1[sumIdx])), _s = _r.next(); !_s.done; _s = _r.next()) {
                             var _ = _s.value;
                             sumValues_1[sumIdx][sumRangeIdx] = normalise(sumValues_1[sumIdx][sumRangeIdx], valuesSumExtent);
                             sumRangeIdx++;
@@ -18185,11 +18288,11 @@ var DataModel = /** @class */ (function () {
         var reducers = reducerDefs.map(function (def) { return def.reducer(); });
         var accValues = reducerDefs.map(function (def) { return def.initialValue; });
         try {
-            for (var _d = __values$m(processedData.data), _e = _d.next(); !_e.done; _e = _d.next()) {
+            for (var _d = __values$n(processedData.data), _e = _d.next(); !_e.done; _e = _d.next()) {
                 var group = _e.value;
                 var reducerIndex = 0;
                 try {
-                    for (var reducers_1 = (e_24 = void 0, __values$m(reducers)), reducers_1_1 = reducers_1.next(); !reducers_1_1.done; reducers_1_1 = reducers_1.next()) {
+                    for (var reducers_1 = (e_24 = void 0, __values$n(reducers)), reducers_1_1 = reducers_1.next(); !reducers_1_1.done; reducers_1_1 = reducers_1.next()) {
                         var reducer = reducers_1_1.value;
                         accValues[reducerIndex] = reducer(accValues[reducerIndex], group);
                         reducerIndex++;
@@ -18221,7 +18324,7 @@ var DataModel = /** @class */ (function () {
         var _b;
         var processorDefs = this.processors;
         try {
-            for (var processorDefs_1 = __values$m(processorDefs), processorDefs_1_1 = processorDefs_1.next(); !processorDefs_1_1.done; processorDefs_1_1 = processorDefs_1.next()) {
+            for (var processorDefs_1 = __values$n(processorDefs), processorDefs_1_1 = processorDefs_1.next(); !processorDefs_1_1.done; processorDefs_1_1 = processorDefs_1.next()) {
                 var def = processorDefs_1_1.value;
                 (_b = processedData.reduced) !== null && _b !== void 0 ? _b : (processedData.reduced = {});
                 processedData.reduced[def.property] = def.calculate(processedData);
@@ -18454,7 +18557,7 @@ var __spread$i = (undefined && undefined.__spread) || function () {
     for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$w(arguments[i]));
     return ar;
 };
-var __values$n = (undefined && undefined.__values) || function(o) {
+var __values$o = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -18848,7 +18951,7 @@ var AreaSeries = /** @class */ (function (_super) {
                     path.clear({ trackChanges: true });
                     i = 0;
                     try {
-                        for (points_1 = __values$n(points), points_1_1 = points_1.next(); !points_1_1.done; points_1_1 = points_1.next()) {
+                        for (points_1 = __values$o(points), points_1_1 = points_1.next(); !points_1_1.done; points_1_1 = points_1.next()) {
                             p = points_1_1.value;
                             if (i++ > 0) {
                                 path.lineTo(p.x, p.y);
@@ -18880,7 +18983,7 @@ var AreaSeries = /** @class */ (function (_super) {
                     path.clear({ trackChanges: true });
                     i = 0;
                     try {
-                        for (points_2 = __values$n(points), points_2_1 = points_2.next(); !points_2_1.done; points_2_1 = points_2.next()) {
+                        for (points_2 = __values$o(points), points_2_1 = points_2.next(); !points_2_1.done; points_2_1 = points_2.next()) {
                             p = points_2_1.value;
                             if (yValues[i++] === undefined) {
                                 moveTo_1 = true;
@@ -20851,7 +20954,7 @@ var __generator$b = (undefined && undefined.__generator) || function (thisArg, b
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __values$o = (undefined && undefined.__values) || function(o) {
+var __values$p = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -20983,7 +21086,7 @@ var LineSeries = /** @class */ (function (_super) {
                 yData = [];
                 pointsData.splice(0);
                 try {
-                    for (data_1 = __values$o(data), data_1_1 = data_1.next(); !data_1_1.done; data_1_1 = data_1.next()) {
+                    for (data_1 = __values$p(data), data_1_1 = data_1.next(); !data_1_1.done; data_1_1 = data_1.next()) {
                         datum = data_1_1.value;
                         x = datum[xKey];
                         y = datum[yKey];
@@ -21118,7 +21221,7 @@ var LineSeries = /** @class */ (function (_super) {
                 lineNode.pointerEvents = PointerEvents.None;
                 linePath.clear({ trackChanges: true });
                 try {
-                    for (nodeData_1 = __values$o(nodeData), nodeData_1_1 = nodeData_1.next(); !nodeData_1_1.done; nodeData_1_1 = nodeData_1.next()) {
+                    for (nodeData_1 = __values$p(nodeData), nodeData_1_1 = nodeData_1.next(); !nodeData_1_1.done; nodeData_1_1 = nodeData_1.next()) {
                         data = nodeData_1_1.value;
                         if (data.point.moveTo) {
                             linePath.moveTo(data.point.x, data.point.y);
@@ -21485,7 +21588,7 @@ var __spread$l = (undefined && undefined.__spread) || function () {
     for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$A(arguments[i]));
     return ar;
 };
-var __values$p = (undefined && undefined.__values) || function(o) {
+var __values$q = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -21664,7 +21767,7 @@ var ScatterSeries = /** @class */ (function (_super) {
                 font = label.getFont();
                 actualLength = 0;
                 try {
-                    for (_j = __values$p((_f = (_e = this.processedData) === null || _e === void 0 ? void 0 : _e.data) !== null && _f !== void 0 ? _f : []), _k = _j.next(); !_k.done; _k = _j.next()) {
+                    for (_j = __values$q((_f = (_e = this.processedData) === null || _e === void 0 ? void 0 : _e.data) !== null && _f !== void 0 ? _f : []), _k = _j.next(); !_k.done; _k = _j.next()) {
                         _l = _k.value, values = _l.values, datum = _l.datum;
                         x = xScale.convert(values[xDataIdx.index]) + xOffset;
                         y = yScale.convert(values[yDataIdx.index]) + yOffset;
@@ -24792,7 +24895,6 @@ var ChartTheme = /** @class */ (function () {
                 enabled: true,
                 range: 'nearest',
                 delay: 0,
-                class: DEFAULT_TOOLTIP_CLASS,
             },
             listeners: {},
         };
@@ -25211,7 +25313,7 @@ var DarkTheme = /** @class */ (function (_super) {
     return DarkTheme;
 }(ChartTheme));
 
-var __values$q = (undefined && undefined.__values) || function(o) {
+var __values$r = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -25229,7 +25331,7 @@ var BaseModuleInstance = /** @class */ (function () {
     BaseModuleInstance.prototype.destroy = function () {
         var e_1, _a;
         try {
-            for (var _b = __values$q(this.destroyFns), _c = _b.next(); !_c.done; _c = _b.next()) {
+            for (var _b = __values$r(this.destroyFns), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var destroyFn = _c.value;
                 destroyFn();
             }
@@ -26901,7 +27003,7 @@ var __assign$k = (undefined && undefined.__assign) || function () {
     };
     return __assign$k.apply(this, arguments);
 };
-var __values$r = (undefined && undefined.__values) || function(o) {
+var __values$s = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -26941,7 +27043,7 @@ function groupSeriesByType(seriesOptions) {
     var indexMap = {};
     var result = [];
     try {
-        for (var seriesOptions_1 = __values$r(seriesOptions), seriesOptions_1_1 = seriesOptions_1.next(); !seriesOptions_1_1.done; seriesOptions_1_1 = seriesOptions_1.next()) {
+        for (var seriesOptions_1 = __values$s(seriesOptions), seriesOptions_1_1 = seriesOptions_1.next(); !seriesOptions_1_1.done; seriesOptions_1_1 = seriesOptions_1.next()) {
             var s = seriesOptions_1_1.value;
             if (s.type !== 'column' && s.type !== 'bar' && (s.type !== 'area' || s.stacked !== true)) {
                 // No need to use index for these cases.
@@ -27084,7 +27186,7 @@ function processSeriesOptions(seriesOptions) {
         return series;
     });
     try {
-        for (var _b = __values$r(groupSeriesByType(preprocessed)), _c = _b.next(); !_c.done; _c = _b.next()) {
+        for (var _b = __values$s(groupSeriesByType(preprocessed)), _c = _b.next(); !_c.done; _c = _b.next()) {
             var series = _c.value;
             switch (series[0].type) {
                 case 'column':
@@ -27139,7 +27241,7 @@ var __assign$l = (undefined && undefined.__assign) || function () {
     };
     return __assign$l.apply(this, arguments);
 };
-var __values$s = (undefined && undefined.__values) || function(o) {
+var __values$t = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -27223,7 +27325,7 @@ function countArrayElements(input) {
     var e_1, _a;
     var count = 0;
     try {
-        for (var input_1 = __values$s(input), input_1_1 = input_1.next(); !input_1_1.done; input_1_1 = input_1.next()) {
+        for (var input_1 = __values$t(input), input_1_1 = input_1.next(); !input_1_1.done; input_1_1 = input_1.next()) {
             var next = input_1_1.value;
             if (next instanceof Array) {
                 count += countArrayElements(next);
@@ -27268,7 +27370,7 @@ function prepareOptions(newOptions, fallbackOptions, seriesDefaults) {
     };
     checkSeriesType(type);
     try {
-        for (var _g = __values$s((_d = options.series) !== null && _d !== void 0 ? _d : []), _h = _g.next(); !_h.done; _h = _g.next()) {
+        for (var _g = __values$t((_d = options.series) !== null && _d !== void 0 ? _d : []), _h = _g.next(); !_h.done; _h = _g.next()) {
             var seriesType = _h.value.type;
             if (seriesType == null)
                 continue;
@@ -27334,7 +27436,7 @@ function prepareOptions(newOptions, fallbackOptions, seriesDefaults) {
     if (isAgCartesianChartOptions(mergedOptions)) {
         var validAxesTypes = true;
         try {
-            for (var _k = __values$s((_e = mergedOptions.axes) !== null && _e !== void 0 ? _e : []), _l = _k.next(); !_l.done; _l = _k.next()) {
+            for (var _k = __values$t((_e = mergedOptions.axes) !== null && _e !== void 0 ? _e : []), _l = _k.next(); !_l.done; _l = _k.next()) {
                 var axisType = _l.value.type;
                 if (!checkAxisType(axisType)) {
                     validAxesTypes = false;
@@ -28410,7 +28512,7 @@ var __spread$q = (undefined && undefined.__spread) || function () {
     for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$G(arguments[i]));
     return ar;
 };
-var __values$t = (undefined && undefined.__values) || function(o) {
+var __values$u = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -28755,6 +28857,9 @@ function applyChartOptions(chart, processedOptions, userOptions) {
     if ((_b = processedOptions.legend) === null || _b === void 0 ? void 0 : _b.listeners) {
         Object.assign(chart.legend.listeners, (_c = processedOptions.legend.listeners) !== null && _c !== void 0 ? _c : {});
     }
+    if (processedOptions.listeners) {
+        chart.updateAllSeriesListeners();
+    }
     chart.processedOptions = completeOptions;
     chart.userOptions = jsonMerge([(_d = chart.userOptions) !== null && _d !== void 0 ? _d : {}, userOptions], noDataCloneMergeOptions);
     var majorChange = forceNodeDataRefresh || modulesChanged;
@@ -28772,7 +28877,7 @@ function applyModules(chart, options) {
     var modulesChanged = false;
     var rootModules = REGISTERED_MODULES.filter(function (m) { return m.type === 'root'; });
     try {
-        for (var rootModules_1 = __values$t(rootModules), rootModules_1_1 = rootModules_1.next(); !rootModules_1_1.done; rootModules_1_1 = rootModules_1.next()) {
+        for (var rootModules_1 = __values$u(rootModules), rootModules_1_1 = rootModules_1.next(); !rootModules_1_1.done; rootModules_1_1 = rootModules_1.next()) {
             var next = rootModules_1_1.value;
             var shouldBeEnabled = matchingChartType(next) && options[next.optionsKey] != null;
             var isEnabled = chart.isModuleEnabled(next);
@@ -28849,7 +28954,7 @@ function createSeries(options) {
     var series = [];
     var index = 0;
     try {
-        for (var _b = __values$t(options || []), _c = _b.next(); !_c.done; _c = _b.next()) {
+        for (var _b = __values$u(options || []), _c = _b.next(); !_c.done; _c = _b.next()) {
             var seriesOptions = _c.value;
             var path = "series[" + index++ + "]";
             var seriesInstance = getSeries(seriesOptions.type);
@@ -28873,7 +28978,7 @@ function createAxis(chart, options) {
     var moduleContext = chart.getModuleContext();
     var index = 0;
     try {
-        for (var _b = __values$t(options || []), _c = _b.next(); !_c.done; _c = _b.next()) {
+        for (var _b = __values$u(options || []), _c = _b.next(); !_c.done; _c = _b.next()) {
             var axisOptions = _c.value;
             var axis = void 0;
             switch (axisOptions.type) {
@@ -28915,7 +29020,7 @@ function applyAxisModules(axis, options) {
     var modulesChanged = false;
     var rootModules = REGISTERED_MODULES.filter(function (m) { return m.type === 'axis'; });
     try {
-        for (var rootModules_2 = __values$t(rootModules), rootModules_2_1 = rootModules_2.next(); !rootModules_2_1.done; rootModules_2_1 = rootModules_2.next()) {
+        for (var rootModules_2 = __values$u(rootModules), rootModules_2_1 = rootModules_2.next(); !rootModules_2_1.done; rootModules_2_1 = rootModules_2.next()) {
             var next = rootModules_2_1.value;
             var shouldBeEnabled = options[next.optionsKey] != null;
             var isEnabled = axis.isModuleEnabled(next);
@@ -30511,7 +30616,7 @@ var __spread$s = (undefined && undefined.__spread) || function () {
     for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$J(arguments[i]));
     return ar;
 };
-var __values$u = (undefined && undefined.__values) || function(o) {
+var __values$v = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -30886,7 +30991,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
         }
         var mouseEvent = draggingEvent.event;
         try {
-            for (var _b = __values$u(this.columnComps.values()), _c = _b.next(); !_c.done; _c = _b.next()) {
+            for (var _b = __values$v(this.columnComps.values()), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var comp = _c.value;
                 var eGui = comp.getGui();
                 if (!eGui.querySelector('.ag-chart-data-column-drag-handle')) {
@@ -34478,7 +34583,9 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
             var currentChart = currentMiniChartContainer.getGui().querySelector('.ag-selected');
             if (currentChart) {
                 var parent_1 = currentChart.offsetParent;
-                _this.eMiniChartsContainer.scrollTo(0, parent_1.offsetTop);
+                if (parent_1) {
+                    _this.eMiniChartsContainer.scrollTo(0, parent_1.offsetTop);
+                }
             }
         }, 250);
     };
@@ -35092,7 +35199,7 @@ var __decorate$19 = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __values$v = (undefined && undefined.__values) || function(o) {
+var __values$w = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -35134,7 +35241,7 @@ var TitleEdit = /** @class */ (function (_super) {
         this.chartController = chartController;
         this.chartOptionsService = chartOptionsService;
         try {
-            for (var _b = __values$v(this.destroyableChartListeners), _c = _b.next(); !_c.done; _c = _b.next()) {
+            for (var _b = __values$w(this.destroyableChartListeners), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var destroyFn = _c.value;
                 destroyFn();
             }
@@ -35984,7 +36091,7 @@ var __assign$w = (undefined && undefined.__assign) || function () {
     };
     return __assign$w.apply(this, arguments);
 };
-var __values$w = (undefined && undefined.__values) || function(o) {
+var __values$x = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -36062,7 +36169,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
             var markerDomain = [Infinity, -Infinity];
             if (sizeKey != null) {
                 try {
-                    for (var data_1 = __values$w(data), data_1_1 = data_1.next(); !data_1_1.done; data_1_1 = data_1.next()) {
+                    for (var data_1 = __values$x(data), data_1_1 = data_1.next(); !data_1_1.done; data_1_1 = data_1.next()) {
                         var datum = data_1_1.value;
                         var value = (_b = datum[sizeKey]) !== null && _b !== void 0 ? _b : datum[filteredOutKey(sizeKey)];
                         if (value < markerDomain[0]) {
@@ -36871,7 +36978,7 @@ var __read$Q = (undefined && undefined.__read) || function (o, n) {
     }
     return ar;
 };
-var __values$x = (undefined && undefined.__values) || function(o) {
+var __values$y = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -37170,7 +37277,7 @@ function jsonMutate(path, json, mutator) {
     else if (pathElements[0].startsWith('{')) {
         var pathOptions = pathElements[0].substring(1, pathElements[0].lastIndexOf('}')).split(',');
         try {
-            for (var pathOptions_1 = __values$x(pathOptions), pathOptions_1_1 = pathOptions_1.next(); !pathOptions_1_1.done; pathOptions_1_1 = pathOptions_1.next()) {
+            for (var pathOptions_1 = __values$y(pathOptions), pathOptions_1_1 = pathOptions_1.next(); !pathOptions_1_1.done; pathOptions_1_1 = pathOptions_1.next()) {
                 var pathOption = pathOptions_1_1.value;
                 if (json[pathOption] != null) {
                     json[pathOption] = jsonMutate(pathElements.slice(1), json[pathOption], mutator);
@@ -37831,7 +37938,7 @@ var __spread$v = (undefined && undefined.__spread) || function () {
     for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$R(arguments[i]));
     return ar;
 };
-var __values$y = (undefined && undefined.__values) || function(o) {
+var __values$z = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -38206,7 +38313,7 @@ var RangeService = /** @class */ (function (_super) {
         });
         var columnsString;
         try {
-            for (var _b = __values$y(rowToColumnMap.values()), _c = _b.next(); !_c.done; _c = _b.next()) {
+            for (var _b = __values$z(rowToColumnMap.values()), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var val = _c.value;
                 var currentValString = val.sort().join();
                 if (columnsString === undefined) {
@@ -40748,7 +40855,7 @@ var XmlFactory = /** @class */ (function () {
     return XmlFactory;
 }());
 
-var __values$z = (undefined && undefined.__values) || function(o) {
+var __values$A = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -40848,7 +40955,7 @@ var ZipContainer = /** @class */ (function () {
         var lL = 0;
         var cL = 0;
         try {
-            for (var totalFiles_1 = __values$z(totalFiles), totalFiles_1_1 = totalFiles_1.next(); !totalFiles_1_1.done; totalFiles_1_1 = totalFiles_1.next()) {
+            for (var totalFiles_1 = __values$A(totalFiles), totalFiles_1_1 = totalFiles_1.next(); !totalFiles_1_1.done; totalFiles_1_1 = totalFiles_1.next()) {
                 var currentFile = totalFiles_1_1.value;
                 var _b = this.getHeader(currentFile, lL), fileHeader = _b.fileHeader, folderHeader = _b.folderHeader, content = _b.content;
                 lL += fileHeader.length + content.length;
@@ -40993,7 +41100,7 @@ var __decorate$1l = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __values$A = (undefined && undefined.__values) || function(o) {
+var __values$B = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -41507,10 +41614,10 @@ var ClipboardService = /** @class */ (function (_super) {
         var selected = this.selectionService.getSelectedNodes();
         var columns = this.columnModel.getAllDisplayedColumns();
         try {
-            for (var selected_1 = __values$A(selected), selected_1_1 = selected_1.next(); !selected_1_1.done; selected_1_1 = selected_1.next()) {
+            for (var selected_1 = __values$B(selected), selected_1_1 = selected_1.next(); !selected_1_1.done; selected_1_1 = selected_1.next()) {
                 var row = selected_1_1.value;
                 try {
-                    for (var columns_1 = (e_2 = void 0, __values$A(columns)), columns_1_1 = columns_1.next(); !columns_1_1.done; columns_1_1 = columns_1.next()) {
+                    for (var columns_1 = (e_2 = void 0, __values$B(columns)), columns_1_1 = columns_1.next(); !columns_1_1.done; columns_1_1 = columns_1.next()) {
                         var col = columns_1_1.value;
                         this.clearCellValue(row, col);
                     }
@@ -42109,7 +42216,7 @@ var __spread$x = (undefined && undefined.__spread) || function () {
     for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$V(arguments[i]));
     return ar;
 };
-var __values$B = (undefined && undefined.__values) || function(o) {
+var __values$C = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -42276,7 +42383,7 @@ var ToolPanelContextMenu = /** @class */ (function (_super) {
         };
         var this_1 = this;
         try {
-            for (var _b = __values$B(this.menuItemMap.values()), _c = _b.next(); !_c.done; _c = _b.next()) {
+            for (var _b = __values$C(this.menuItemMap.values()), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var val = _c.value;
                 _loop_1(val);
             }
@@ -60915,7 +61022,7 @@ var SetFilterDisplayValue = /** @class */ (function () {
     return SetFilterDisplayValue;
 }());
 
-var __values$C = (undefined && undefined.__values) || function(o) {
+var __values$D = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -60942,7 +61049,7 @@ var FlatSetDisplayValueModel = /** @class */ (function () {
         var e_1, _a;
         this.displayedKeys = [];
         try {
-            for (var availableKeys_1 = __values$C(availableKeys), availableKeys_1_1 = availableKeys_1.next(); !availableKeys_1_1.done; availableKeys_1_1 = availableKeys_1.next()) {
+            for (var availableKeys_1 = __values$D(availableKeys), availableKeys_1_1 = availableKeys_1.next(); !availableKeys_1_1.done; availableKeys_1_1 = availableKeys_1.next()) {
                 var key = availableKeys_1_1.value;
                 if (key == null) {
                     if (nullMatchesFilter) {
@@ -61014,7 +61121,7 @@ var __spread$J = (undefined && undefined.__spread) || function () {
     for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read$1b(arguments[i]));
     return ar;
 };
-var __values$D = (undefined && undefined.__values) || function(o) {
+var __values$E = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -61106,7 +61213,7 @@ var TreeSetDisplayValueModel = /** @class */ (function () {
         };
         var this_1 = this;
         try {
-            for (var allKeys_1 = __values$D(allKeys), allKeys_1_1 = allKeys_1.next(); !allKeys_1_1.done; allKeys_1_1 = allKeys_1.next()) {
+            for (var allKeys_1 = __values$E(allKeys), allKeys_1_1 = allKeys_1.next(); !allKeys_1_1.done; allKeys_1_1 = allKeys_1.next()) {
                 var key = allKeys_1_1.value;
                 _loop_1(key);
             }
@@ -61134,7 +61241,7 @@ var TreeSetDisplayValueModel = /** @class */ (function () {
         // infer from data
         var isDate = false;
         try {
-            for (var availableKeys_1 = __values$D(availableKeys), availableKeys_1_1 = availableKeys_1.next(); !availableKeys_1_1.done; availableKeys_1_1 = availableKeys_1.next()) {
+            for (var availableKeys_1 = __values$E(availableKeys), availableKeys_1_1 = availableKeys_1.next(); !availableKeys_1_1.done; availableKeys_1_1 = availableKeys_1.next()) {
                 var availableKey = availableKeys_1_1.value;
                 // find the first non-null value
                 var value = getValue(availableKey);
@@ -61263,7 +61370,7 @@ var TreeSetDisplayValueModel = /** @class */ (function () {
         var recursiveExpansionCheck = function (items, someTrue, someFalse) {
             var e_3, _a;
             try {
-                for (var items_1 = __values$D(items), items_1_1 = items_1.next(); !items_1_1.done; items_1_1 = items_1.next()) {
+                for (var items_1 = __values$E(items), items_1_1 = items_1.next(); !items_1_1.done; items_1_1 = items_1.next()) {
                     var item_1 = items_1_1.value;
                     if (!item_1.filterPasses || !item_1.available || !item_1.children) {
                         continue;
@@ -62078,6 +62185,7 @@ var SetFilter = /** @class */ (function (_super) {
         _this.treeDataTreeList = false;
         _this.groupingTreeList = false;
         _this.hardRefreshVirtualList = false;
+        _this.noValueFormatterSupplied = false;
         // To make the filtering super fast, we store the keys in an Set rather than using the default array
         _this.appliedModelKeys = null;
         _this.noAppliedModelKeys = false;
@@ -62250,6 +62358,7 @@ var SetFilter = /** @class */ (function (_super) {
             if (keyCreator && !convertValuesToStrings && !treeList) {
                 throw new Error('AG Grid: Must supply a Value Formatter in Set Filter params when using a Key Creator unless convertValuesToStrings is enabled');
             }
+            this.noValueFormatterSupplied = true;
             // ref data is handled by ValueFormatterService
             if (!isRefData) {
                 valueFormatter = function (params) { return agGridCommunity._.toStringOrNull(params.value); };
@@ -62280,6 +62389,10 @@ var SetFilter = /** @class */ (function (_super) {
     SetFilter.prototype.getFormattedValue = function (key) {
         var _a;
         var value = this.valueModel.getValue(key);
+        if (this.noValueFormatterSupplied && (this.treeDataTreeList || this.groupingTreeList) && Array.isArray(value)) {
+            // essentially get back the cell value
+            value = agGridCommunity._.last(value);
+        }
         var formattedValue = this.valueFormatterService.formatValue(this.setFilterParams.column, null, value, this.valueFormatter, false);
         return (_a = (formattedValue == null ? agGridCommunity._.toStringOrNull(value) : formattedValue)) !== null && _a !== void 0 ? _a : this.translateForSetFilter('blanks');
     };
@@ -63228,7 +63341,7 @@ var SetFilterModule = {
 
 var defaultTooltipCss$1 = "\n.ag-sparkline-tooltip-wrapper {\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n}\n\n.ag-sparkline-tooltip {\n    position: relative;\n    font: 12px arial,sans-serif;\n    border-radius: 2px;\n    box-shadow: 0 1px 3px rgb(0 0 0 / 20%), 0 1px 1px rgb(0 0 0 / 14%);\n    line-height: 1.7em;\n    overflow: hidden;\n    white-space: nowrap;\n    z-index: 99999;\n    background-color: rgb(255, 255, 255);\n    color: rgba(0,0,0, 0.67);\n}\n\n.ag-sparkline-tooltip-content {\n    padding: 0 7px;\n    opacity: 1;\n}\n\n.ag-sparkline-tooltip-title {\n    padding-left: 7px;\n    opacity: 1;\n}\n\n.ag-sparkline-tooltip-wrapper-hidden {\n    top: -10000px !important;\n}\n\n.ag-sparkline-wrapper {\n    box-sizing: border-box;\n    overflow: hidden;\n}\n";
 
-var __values$E = (undefined && undefined.__values) || function(o) {
+var __values$F = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
@@ -63625,7 +63738,7 @@ var Sparkline = /** @class */ (function () {
     Sparkline.prototype.getDataType = function (data) {
         var e_1, _a;
         try {
-            for (var data_1 = __values$E(data), data_1_1 = data_1.next(); !data_1_1.done; data_1_1 = data_1.next()) {
+            for (var data_1 = __values$F(data), data_1_1 = data_1.next(); !data_1_1.done; data_1_1 = data_1.next()) {
                 var datum = data_1_1.value;
                 if (datum != undefined) {
                     if (isNumber$1(datum)) {

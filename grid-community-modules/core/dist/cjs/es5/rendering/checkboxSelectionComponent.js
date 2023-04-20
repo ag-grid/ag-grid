@@ -43,7 +43,6 @@ var events_1 = require("../events");
 var componentAnnotations_1 = require("../widgets/componentAnnotations");
 var rowNode_1 = require("../entities/rowNode");
 var event_1 = require("../utils/event");
-var aria_1 = require("../utils/aria");
 var CheckboxSelectionComponent = /** @class */ (function (_super) {
     __extends(CheckboxSelectionComponent, _super);
     function CheckboxSelectionComponent() {
@@ -51,7 +50,6 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
     }
     CheckboxSelectionComponent.prototype.postConstruct = function () {
         this.eCheckbox.setPassive(true);
-        aria_1.setAriaLive(this.eCheckbox.getInputElement(), 'polite');
     };
     CheckboxSelectionComponent.prototype.getCheckboxId = function () {
         return this.eCheckbox.getInputElement().id;

@@ -3,9 +3,13 @@
  * handles conflicting tooltip requests.
  */
 export class TooltipManager {
-    constructor(tooltip) {
+    constructor(tooltip, interactionManager) {
         this.states = {};
+        this.exclusiveAreas = {};
+        this.destroyFns = [];
         this.tooltip = tooltip;
+        const hoverRef = interactionManager.addListener('hover', (e) => this.checkExclusiveRects(e));
+        this.destroyFns.push(() => interactionManager.removeListener(hoverRef));
     }
     updateTooltip(callerId, meta, content) {
         var _a;
@@ -15,6 +19,14 @@ export class TooltipManager {
         this.states[callerId] = { content, meta };
         this.applyStates();
     }
+    updateExclusiveRect(callerId, area) {
+        if (area) {
+            this.exclusiveAreas[callerId] = area;
+        }
+        else {
+            delete this.exclusiveAreas[callerId];
+        }
+    }
     removeTooltip(callerId) {
         delete this.states[callerId];
         this.applyStates();
@@ -23,15 +35,37 @@ export class TooltipManager {
         var _a;
         return (_a = this.states[callerId]) === null || _a === void 0 ? void 0 : _a.meta;
     }
+    destroy() {
+        for (const destroyFn of this.destroyFns) {
+            destroyFn();
+        }
+    }
+    checkExclusiveRects(e) {
+        let newAppliedExclusiveArea;
+        for (const [entryId, area] of Object.entries(this.exclusiveAreas)) {
+            if (!area.containsPoint(e.offsetX, e.offsetY)) {
+                continue;
+            }
+            newAppliedExclusiveArea = entryId;
+            break;
+        }
+        if (newAppliedExclusiveArea === this.appliedExclusiveArea) {
+            return;
+        }
+        this.appliedExclusiveArea = newAppliedExclusiveArea;
+        this.applyStates();
+    }
     applyStates() {
         var _a;
+        const ids = this.appliedExclusiveArea ? [this.appliedExclusiveArea] : Object.keys(this.states);
         let contentToApply = undefined;
         let metaToApply = undefined;
         // Last added entry wins.
-        Object.entries(this.states)
-            .reverse()
+        ids.reverse()
             .slice(0, 1)
-            .forEach(([_, { content, meta }]) => {
+            .forEach((id) => {
+            var _a;
+            const { content, meta } = (_a = this.states[id]) !== null && _a !== void 0 ? _a : {};
             contentToApply = content;
             metaToApply = meta;
         });

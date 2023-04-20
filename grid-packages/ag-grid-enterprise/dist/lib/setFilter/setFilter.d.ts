@@ -18,6 +18,7 @@ export declare class SetFilter<V = string> extends ProvidedFilter<SetFilterModel
     private getDataPath?;
     private groupingTreeList;
     private hardRefreshVirtualList;
+    private noValueFormatterSupplied;
     private appliedModelKeys;
     private noAppliedModelKeys;
     private createKey;

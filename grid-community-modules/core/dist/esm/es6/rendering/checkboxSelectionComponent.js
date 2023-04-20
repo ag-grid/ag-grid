@@ -16,7 +16,6 @@ import { Events } from '../events';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { RowNode } from '../entities/rowNode';
 import { stopPropagationForAgGrid } from '../utils/event';
-import { setAriaLive } from '../utils/aria';
 export class CheckboxSelectionComponent extends Component {
     constructor() {
         super(/* html*/ `
@@ -26,7 +25,6 @@ export class CheckboxSelectionComponent extends Component {
     }
     postConstruct() {
         this.eCheckbox.setPassive(true);
-        setAriaLive(this.eCheckbox.getInputElement(), 'polite');
     }
     getCheckboxId() {
         return this.eCheckbox.getInputElement().id;

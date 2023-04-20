@@ -247,7 +247,7 @@ var Chart = /** @class */ (function (_super) {
         _this.layoutService.addListener('start-layout', function (e) { return _this.positionPadding(e.shrinkRect); });
         _this.layoutService.addListener('start-layout', function (e) { return _this.positionCaptions(e.shrinkRect); });
         _this.tooltip = new tooltip_1.Tooltip(_this.scene.canvas.element, document, document.body);
-        _this.tooltipManager = new tooltipManager_1.TooltipManager(_this.tooltip);
+        _this.tooltipManager = new tooltipManager_1.TooltipManager(_this.tooltip, _this.interactionManager);
         _this.legend = new legend_1.Legend(_this, _this.interactionManager, _this.cursorManager, _this.highlightManager, _this.tooltipManager, _this.layoutService);
         _this.overlays = new chartOverlays_1.ChartOverlays(_this.element);
         _this.highlight = new chartHighlight_1.ChartHighlight();
@@ -356,6 +356,7 @@ var Chart = /** @class */ (function (_super) {
         var result = undefined;
         this._performUpdateType = chartUpdateType_1.ChartUpdateType.NONE;
         this._pendingFactoryUpdates.splice(0);
+        this.tooltipManager.destroy();
         this.tooltip.destroy();
         this.legend.destroy();
         sizeMonitor_1.SizeMonitor.unobserve(this.element);
@@ -650,12 +651,7 @@ var Chart = /** @class */ (function (_super) {
         if (!series.data) {
             series.data = this.data;
         }
-        if (this.hasEventListener('seriesNodeClick')) {
-            series.addEventListener('nodeClick', this.onSeriesNodeClick);
-        }
-        if (this.hasEventListener('seriesNodeDoubleClick')) {
-            series.addEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
-        }
+        this.addSeriesListeners(series);
     };
     Chart.prototype.freeSeries = function (series) {
         series.chart = undefined;
@@ -669,6 +665,22 @@ var Chart = /** @class */ (function (_super) {
             _this.seriesRoot.removeChild(series.rootGroup);
         });
         this._series = []; // using `_series` instead of `series` to prevent infinite recursion
+    };
+    Chart.prototype.addSeriesListeners = function (series) {
+        if (this.hasEventListener('seriesNodeClick')) {
+            series.addEventListener('nodeClick', this.onSeriesNodeClick);
+        }
+        if (this.hasEventListener('seriesNodeDoubleClick')) {
+            series.addEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
+        }
+    };
+    Chart.prototype.updateAllSeriesListeners = function () {
+        var _this = this;
+        this.series.forEach(function (series) {
+            series.removeEventListener('nodeClick', _this.onSeriesNodeClick);
+            series.removeEventListener('nodeDoubleClick', _this.onSeriesNodeDoubleClick);
+            _this.addSeriesListeners(series);
+        });
     };
     Chart.prototype.assignSeriesToAxes = function () {
         var _this = this;
@@ -979,8 +991,8 @@ var Chart = /** @class */ (function (_super) {
         }
         // Handle node highlighting and tooltip toggling when pointer within `tooltip.range`
         this.handlePointerTooltip(event, disablePointer);
-        // Handle mouse cursor when pointer withing `series[].nodeClickRange`
-        this.handlePointerNodeCursor(event);
+        // Handle node highlighting and mouse cursor when pointer withing `series[].nodeClickRange`
+        this.handlePointerNode(event);
     };
     Chart.prototype.handlePointerTooltip = function (event, disablePointer) {
         var _a, _b;
@@ -1024,14 +1036,14 @@ var Chart = /** @class */ (function (_super) {
             this.tooltipManager.updateTooltip(this.id, meta, html);
         }
     };
-    Chart.prototype.handlePointerNodeCursor = function (event) {
+    Chart.prototype.handlePointerNode = function (event) {
         var _this = this;
         var found = this.checkSeriesNodeRange(event, function (series, datum) {
             if (series.hasEventListener('nodeClick') || series.hasEventListener('nodeDoubleClick')) {
                 _this.cursorManager.updateCursor('chart', 'pointer');
-                if (_this.highlight.range === 'node') {
-                    _this.highlightManager.updateHighlight(_this.id, datum);
-                }
+            }
+            if (_this.highlight.range === 'node') {
+                _this.highlightManager.updateHighlight(_this.id, datum);
             }
         });
         if (!found) {
@@ -1072,12 +1084,7 @@ var Chart = /** @class */ (function (_super) {
         });
     };
     Chart.prototype.checkSeriesNodeRange = function (event, callback) {
-        // If the tooltip picking uses `nearest` then, irregardless of the range of each series, the same node would
-        // be picked, so we can shortcut to using the last pick. Otherwise, we need to pick a node distinctly
-        // from the tooltip picking in case the node click range is greater than the tooltip range.
-        var nearestNode = this.tooltip.range === 'nearest' && this.lastPick !== undefined
-            ? this.lastPick
-            : this.pickSeriesNode({ x: event.offsetX, y: event.offsetY }, false);
+        var nearestNode = this.pickSeriesNode({ x: event.offsetX, y: event.offsetY }, false);
         var datum = nearestNode === null || nearestNode === void 0 ? void 0 : nearestNode.datum;
         var nodeClickRange = datum === null || datum === void 0 ? void 0 : datum.series.nodeClickRange;
         // First check if we should trigger the callback based on nearest node

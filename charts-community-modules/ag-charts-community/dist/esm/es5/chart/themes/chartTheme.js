@@ -26,7 +26,6 @@ var __read = (this && this.__read) || function (o, n) {
     return ar;
 };
 import { deepMerge } from '../../util/object';
-import { DEFAULT_TOOLTIP_CLASS } from '../tooltip/tooltip';
 import { CHART_TYPES } from '../chartTypes';
 var palette = {
     fills: ['#f3622d', '#fba71b', '#57b757', '#41a9c9', '#4258c9', '#9a42c8', '#c84164', '#888888'],
@@ -289,7 +288,6 @@ var ChartTheme = /** @class */ (function () {
                 enabled: true,
                 range: 'nearest',
                 delay: 0,
-                class: DEFAULT_TOOLTIP_CLASS,
             },
             listeners: {},
         };
