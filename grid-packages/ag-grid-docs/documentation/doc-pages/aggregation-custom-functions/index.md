@@ -130,45 +130,45 @@ also be resolved by the grid to a single value. This is shown in the code snippe
 
 
 <snippet spaceBetweenProperties="true">
-|const gridOptions = {
-|    columnDefs: [
-|        { field: 'gold', aggFunc: 'sum' },
-|        { field: 'silver', aggFunc: 'sum' },
-|        {
-|            headerName: 'Ratio',
-|            colId: 'ratio',
-|            valueGetter: params => {
-|                if (!params.node.group) {
-|                    // no need to handle group levels - calculated in the 'ratioAggFunc'
-|                    return {
-|                        gold: params.data.gold,
-|                        silver: params.data.silver,
-|                        toString: () => (gold && silver) ? gold / silver : 0,
-|                    }
-|                }
-|            },
-|            aggFunc: (params) => {
-|                var goldSum = 0;
-|                var silverSum = 0;
-|                params.values.forEach(value => {
-|                    if (value && value.gold) {
-|                        goldSum += value.gold;
-|                    }
-|                    if (value && value.silver) {
-|                        silverSum += value.silver;
-|                    }
-|                });
-|                return {
-|                    gold: goldSum,
-|                    silver: silverSum,
-|                    toString: () => {
-|                        return goldSum && silverSum ? goldSum / silverSum : 0;
-|                    },
-|                }
-|            }
-|        }
-|    ]
-|}
+| const gridOptions = {
+|     columnDefs: [
+|         { field: 'gold', aggFunc: 'sum' },
+|         { field: 'silver', aggFunc: 'sum' },
+|         {
+|             headerName: 'Ratio',
+|             colId: 'ratio',
+|             valueGetter: params => {
+|                 if (!params.node.group) {
+|                     // no need to handle group levels - calculated in the 'ratioAggFunc'
+|                     return {
+|                         gold: params.data.gold,
+|                         silver: params.data.silver,
+|                         toString: () => (gold && silver) ? gold / silver : 0,
+|                     }
+|                 }
+|             },
+|             aggFunc: (params) => {
+|                 var goldSum = 0;
+|                 var silverSum = 0;
+|                 params.values.forEach(value => {
+|                     if (value && value.gold) {
+|                         goldSum += value.gold;
+|                     }
+|                     if (value && value.silver) {
+|                         silverSum += value.silver;
+|                     }
+|                 });
+|                 return {
+|                     gold: goldSum,
+|                     silver: silverSum,
+|                     toString: () => {
+|                         return goldSum && silverSum ? goldSum / silverSum : 0;
+|                     },
+|                 }
+|             }
+|         }
+|     ]
+| }
 </snippet>
 
 The following example demonstrates this approach in action:

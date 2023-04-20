@@ -55,21 +55,21 @@ please refer to the [Grouped Column Definition Docs](../column-groups/).
 A Header Component allows customising the inside part of the header. The component is wrapped inside a header cell so that the grid can take care of some complex logic that you should not be worried about, eg the resizing and moving of columns. The HTML of the header cell is similar to the following:
  
 ```html
-    <!-- the ag-header-cell is always provided by AG Grid -->
-    <!-- column moving and resize logic is put on this element by the grid -->
-    <div class="ag-header-cell">
+<!-- the ag-header-cell is always provided by AG Grid -->
+<!-- column moving and resize logic is put on this element by the grid -->
+<div class="ag-header-cell">
 
-    <!-- AG Grid will also always provide a resize bar (if column resizing
-    is enabled) and take care of all the resize logic. the grid usually
-    floats this element to the right.-->
-    <div class="ag-header-cell-resize"></div>
+<!-- AG Grid will also always provide a resize bar (if column resizing
+is enabled) and take care of all the resize logic. the grid usually
+floats this element to the right.-->
+<div class="ag-header-cell-resize"></div>
 
-    <!-- checkbox for selection, if turned on.
-    the grid usually floats this element to the left. -->
-    <div class="ag-header-select-all"></div>
+<!-- checkbox for selection, if turned on.
+the grid usually floats this element to the left. -->
+<div class="ag-header-select-all"></div>
 
-    <!-- the header component - this is the piece that you can customise -->
-    <div class="ag-header-component"></div>
+<!-- the header component - this is the piece that you can customise -->
+<div class="ag-header-component"></div>
 ```
 
 The grid is always responsible for the following:

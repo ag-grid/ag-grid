@@ -3,12 +3,19 @@ import {
     AG_CHART_SERIES_GROUP_TITLE_SELECTOR,
     AG_CHART_TOOL_PANEL_BUTTON_SELECTOR,
     AG_CHART_TOOL_PANEL_TAB_SELECTOR,
+    AG_COLUMN_DROP_SELECTOR,
+    AG_GROUP_CONTRACTED,
+    AG_GROUP_EXPANDED,
     AG_GROUP_ITEM_SELECTOR,
     AG_GROUP_SELECTOR,
     AG_GROUP_TITLE_BAR_SELECTOR,
+    AG_HEADER_CELL_SELECTOR,
+    AG_HEADER_CELL_TEXT_SELECTOR,
     AG_LABEL_SELECTOR,
+    AG_MENU_OPTION_TEXT_SELECTOR,
     AG_PICKER_FIELD_SELECTOR,
     AG_PICKER_FIELD_WRAPPER_SELECTOR,
+    AG_POPUP_SELECTOR,
     AG_RANGE_FIELD_INOUT_SELECTOR,
     AG_SELECT_LIST_ITEM_SELECTOR,
     AG_SLIDER_SELECTOR,
@@ -23,25 +30,51 @@ export interface AgElementByInnerTextConfig {
     innerTextSelector: string;
 }
 
-export interface AgElementByFindConfig {
-    find: ({ getElement, params }: { getElement: GetElement; params: Record<string, any> }) => HTMLElement | undefined;
+export interface AgElementByFindConfig<Params> {
+    find: ({
+        getElement,
+        containerEl,
+        params,
+    }: {
+        getElement: GetElement;
+        containerEl: HTMLElement;
+        params: Params;
+    }) => HTMLElement | undefined;
 }
 
-export type AgElementsConfig = AgElementBySelectorConfig | AgElementByInnerTextConfig | AgElementByFindConfig;
+export type AgElementsConfig = AgElementBySelectorConfig | AgElementByInnerTextConfig | AgElementByFindConfig<any>;
 
 export interface AgElementsConfigItem {
+    popup: AgElementBySelectorConfig;
+    columnDropArea: AgElementBySelectorConfig;
     chartToolPanelButton: AgElementBySelectorConfig;
 
+    contextMenuItem: AgElementByInnerTextConfig;
     chartToolPanelTab: AgElementByInnerTextConfig;
     chartToolPanelGroupTitle: AgElementByInnerTextConfig;
     chartToolPanelGroupItem: AgElementByInnerTextConfig;
     chartToolSeriesGroupTitle: AgElementByInnerTextConfig;
     chartToolPanelSelectListItem: AgElementByInnerTextConfig;
 
-    chartToolPanelGroupItemInput: AgElementByFindConfig;
-    chartSeriesButton: AgElementByFindConfig;
-    chartToolPanelPickerField: AgElementByFindConfig;
-    chartToolPanelSliderInput: AgElementByFindConfig;
+    cell: AgElementByFindConfig<{ colIndex: number; rowIndex: number }>;
+    groupCellToggle: AgElementByFindConfig<{ colIndex: number; rowIndex: number }>;
+    headerCell: AgElementByFindConfig<{ text: string }>;
+    chartToolPanelGroupItemInput: AgElementByFindConfig<{
+        groupTitle: string;
+        itemTitle: string;
+    }>;
+    chartSeriesButton: AgElementByFindConfig<{
+        groupTitle: string;
+        seriesTitle: string;
+    }>;
+    chartToolPanelPickerField: AgElementByFindConfig<{
+        groupTitle: string;
+        selectLabel: string;
+    }>;
+    chartToolPanelSliderInput: AgElementByFindConfig<{
+        groupTitle: string;
+        sliderLabel: string;
+    }>;
 }
 export type AgElementName = keyof AgElementsConfigItem;
 
@@ -50,11 +83,20 @@ export type AgElementName = keyof AgElementsConfigItem;
  */
 export const agElementsConfig: AgElementsConfigItem = {
     // Find by selector
+    popup: {
+        selector: AG_POPUP_SELECTOR,
+    },
+    columnDropArea: {
+        selector: AG_COLUMN_DROP_SELECTOR,
+    },
     chartToolPanelButton: {
         selector: AG_CHART_TOOL_PANEL_BUTTON_SELECTOR,
     },
 
     // Find by inner text
+    contextMenuItem: {
+        innerTextSelector: AG_MENU_OPTION_TEXT_SELECTOR,
+    },
     chartToolPanelTab: {
         innerTextSelector: AG_CHART_TOOL_PANEL_TAB_SELECTOR,
     },
@@ -72,6 +114,51 @@ export const agElementsConfig: AgElementsConfigItem = {
     },
 
     // Find by custom function
+    cell: {
+        find: ({ containerEl, params }) => {
+            const { colIndex, rowIndex } = params;
+            const rowEl = containerEl.querySelector(`div[row-index="${rowIndex}"]`);
+            if (!rowEl) {
+                return;
+            }
+
+            const cellEl = rowEl.children[colIndex] as HTMLElement;
+            if (!cellEl) {
+                return;
+            }
+
+            return cellEl;
+        },
+    },
+    groupCellToggle: {
+        find: ({ getElement, params }) => {
+            const { colIndex, rowIndex } = params;
+            const cellEl = getElement('cell', { colIndex, rowIndex })?.get();
+            if (!cellEl) {
+                return;
+            }
+            const contractedEl = cellEl.querySelector(`${AG_GROUP_CONTRACTED}:not(.ag-hidden)`);
+            const expandedEl = cellEl.querySelector(`${AG_GROUP_EXPANDED}:not(.ag-hidden)`);
+            const toggleEl = (contractedEl || expandedEl) as HTMLElement;
+
+            return toggleEl;
+        },
+    },
+    headerCell: {
+        find: ({ containerEl, params }) => {
+            const { text } = params;
+            // Get inner text label element
+            const headerTextElem = findElementWithInnerText({
+                containerEl,
+                selector: AG_HEADER_CELL_TEXT_SELECTOR,
+                text,
+            });
+
+            // Get parent header cell element
+            const parentHeader = headerTextElem?.closest(AG_HEADER_CELL_SELECTOR) as HTMLElement;
+            return parentHeader;
+        },
+    },
     chartToolPanelGroupItemInput: {
         find: ({ getElement, params }) => {
             const { groupTitle, itemTitle } = params;

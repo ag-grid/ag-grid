@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useMemo, memo, useContext, useLayoutEffect } from 'react';
 import { CellCtrl, RowContainerType, IRowComp, RowCtrl, UserCompDetails, ICellRenderer, CssClassManager, RowStyle } from '@ag-grid-community/core';
 import { showJsComp } from '../jsComp';
-import { isComponentStateless } from '../utils';
+import { isComponentStateless, agFlushSync } from '../utils';
 import { BeansContext } from '../beansContext';
 import CellComp from '../cells/cellComp';
 import { useLayoutEffectOnce } from '../useEffectOnce';
@@ -126,7 +126,11 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
             setRole: value => setRole(value),
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
-            setCellCtrls: next => setCellCtrls(prev => maintainOrderOnColumns(prev, next, domOrder)),
+            setCellCtrls: next => {
+                agFlushSync(() => {
+                    setCellCtrls(prev => maintainOrderOnColumns(prev, next, domOrder));
+                });
+            },
             showFullWidth: compDetails => setFullWidthCompDetails(compDetails),
             getFullWidthCellRenderer: ()=> fullWidthCompRef.current,
         };

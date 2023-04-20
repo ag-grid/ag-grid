@@ -83,16 +83,16 @@ As mentioned above, the Pivot Result Columns in the grid are created by the grid
 <api-documentation source='column-api/api.json' section='Pivoting' names='["getPivotResultColumn"]'></api-documentation>
 
 <snippet>
-|// look up the Column that pivots on country Ireland and aggregates Gold
-|const irelandGoldColumn = gridOptions.columnApi.getPivotResultColumn(['Ireland'],'gold');
-|
-|// change the width of the Pivot Result Column
-|gridOptions.columnApi.setColumnWidth(irelandGoldColumn, newWidth);
-|
-|// look up the Column that pivots on country SausageKingdom and year 2002 and aggregates silver
-|const sausageKingdomColumn = gridOptions.columnApi.getPivotResultColumn(['SausageKingdom','2002'],'silver');
-|
-|console.log('found column with id ' + sausageKingdomColumn.getId());
+| // look up the Column that pivots on country Ireland and aggregates Gold
+| const irelandGoldColumn = gridOptions.columnApi.getPivotResultColumn(['Ireland'],'gold');
+| 
+| // change the width of the Pivot Result Column
+| gridOptions.columnApi.setColumnWidth(irelandGoldColumn, newWidth);
+| 
+| // look up the Column that pivots on country SausageKingdom and year 2002 and aggregates silver
+| const sausageKingdomColumn = gridOptions.columnApi.getPivotResultColumn(['SausageKingdom','2002'],'silver');
+| 
+| console.log('found column with id ' + sausageKingdomColumn.getId());
 </snippet>
 
 ## Pivot Result Column Definitions
@@ -103,19 +103,19 @@ It is possible to manipulate the [Column Definition](/column-definitions/) of th
 | The `field` and `colId` properties of the Pivot Result Column definitions should not be overwritten.
 
 <snippet>
-|const gridOptions = {
-|    processPivotResultColDef: (colDef) => {
-|        if (colDef.pivotValueColumn.getId() === 'gold') {
-|            colDef.headerName = colDef.headerName.toUpperCase();
-|        }
-|    },
-|    processPivotResultColGroupDef: (colGroupDef) => {
-|        if (colGroupDef.pivotKeys.length && colGroupDef.pivotKeys[0] === '2010') {
-|            colGroupDef.headerClass = 'color-background'
-|        }
-|        colGroupDef.headerName = 'Year ' + colGroupDef.headerName
-|    },
-|}
+const gridOptions = {
+    processPivotResultColDef: (colDef) => {
+        if (colDef.pivotValueColumn.getId() === 'gold') {
+            colDef.headerName = colDef.headerName.toUpperCase();
+        }
+    },
+    processPivotResultColGroupDef: (colGroupDef) => {
+        if (colGroupDef.pivotKeys.length && colGroupDef.pivotKeys[0] === '2010') {
+            colGroupDef.headerClass = 'color-background'
+        }
+        colGroupDef.headerName = 'Year ' + colGroupDef.headerName
+    },
+}
 </snippet>
 
 In the example below, notice how applying these functions can be used to manipulate the headers
@@ -142,18 +142,18 @@ These filters are applied to the data before it is pivoted, as such a change in 
 values and rows, but also the columns generated from the pivot.
 
 <snippet>
-|const gridOptions = {
-|   columnDefs: [
-|       { field: 'country', rowGroup: true, filter: true },
-|       { field: 'year', pivot: true, filter: true },
-|       { field: 'sport', filter: true },
-|       { field: 'gold', aggFunc: 'sum' },
-|       { field: 'silver', aggFunc: 'sum' },
-|       { field: 'bronze', aggFunc: 'sum' },
-|   ],
-|   pivotMode: true,
-|   sideBar: 'filters',
-|}
+| const gridOptions = {
+|    columnDefs: [
+|        { field: 'country', rowGroup: true, filter: true },
+|        { field: 'year', pivot: true, filter: true },
+|        { field: 'sport', filter: true },
+|        { field: 'gold', aggFunc: 'sum' },
+|        { field: 'silver', aggFunc: 'sum' },
+|        { field: 'bronze', aggFunc: 'sum' },
+|    ],
+|    pivotMode: true,
+|    sideBar: 'filters',
+| }
 </snippet>
 
 The snippet above has been used to construct the example below, demonstrating the effects of applying filters to the columns in the grid options while pivot mode is enabled.
@@ -180,17 +180,17 @@ Filtering on any other column:
 When pivot mode is enabled, you may also [Filter](/filtering-overview/) on the generated pivot result columns using the column menu, or [Floating Filters](/floating-filters/). As pivot values are all aggregates, filtering pivot result columns shares the same behaviour as [Filtering Group Aggregations](/aggregation-filtering/#filtering-group-aggregations). This means that when filtering pivoting result columns, the aggregated values on any level will not change because of child rows being filtered out.
 
 <snippet>
-|const gridOptions = {
-|   columnDefs: [
-|       { field: 'country', rowGroup: true },
-|       { field: 'year', pivot: true },
-|       { field: 'sport' },
-|       { field: 'gold', aggFunc: 'sum', filter: true },
-|       { field: 'silver', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
-|       { field: 'bronze', aggFunc: 'sum' },
-|   ],
-|   pivotMode: true,
-|}
+| const gridOptions = {
+|    columnDefs: [
+|        { field: 'country', rowGroup: true },
+|        { field: 'year', pivot: true },
+|        { field: 'sport' },
+|        { field: 'gold', aggFunc: 'sum', filter: true },
+|        { field: 'silver', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+|        { field: 'bronze', aggFunc: 'sum' },
+|    ],
+|    pivotMode: true,
+| }
 </snippet>
 
 As shown in the snippet above, filters are enabled on pivot result columns by inheriting properties from the underlying value column. The below example demonstrates this behaviour.
@@ -214,17 +214,17 @@ Filtering on a pivot result column:
 When pivot mode is enabled, you may also [Filter](/filtering-overview/) on both the pivot result columns, and the regular columns using the [Filter API](/filter-api/).
 
 <snippet>
-|const filterNotBlank2000Silvers = () => {
-|  const targetCol = gridOptions.columnApi.getPivotResultColumn(['2000'], 'silver');
-|  if (targetCol) {
-|    gridOptions.api.setFilterModel({
-|      [targetCol.getId()]: {
-|        filterType: 'number',
-|        type: 'notBlank'
-|      },
-|    })
-|  }
-|}
+| const filterNotBlank2000Silvers = () => {
+|   const targetCol = gridOptions.columnApi.getPivotResultColumn(['2000'], 'silver');
+|   if (targetCol) {
+|     gridOptions.api.setFilterModel({
+|       [targetCol.getId()]: {
+|         filterType: 'number',
+|         type: 'notBlank'
+|       },
+|     })
+|   }
+| }
 </snippet>
 
 As shown in the snippet above, you can also set filters on pivot result columns using the API.
@@ -265,7 +265,6 @@ The example below demonstrates Pivot Row Totals as follows:
 ## Pivot Column Group Totals
 
 When in pivot mode you can also include automatically calculated total pivot columns. These total columns will use the provided aggregation function on the value columns to 'roll-up' each group level.
-
 
 Pivot column groups that contain more than one child will have a total column included. Expanding this group will reveal the columns that make up this total value.
 

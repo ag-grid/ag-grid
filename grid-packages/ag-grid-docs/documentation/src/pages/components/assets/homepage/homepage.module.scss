@@ -235,7 +235,8 @@ gatsby-fast-refresh {
 
     img {
         grid-area: icon;
-        width: 100%;
+        width: var(--icon-size);
+        height: var(--icon-size);
     }
 
     h3 {
@@ -252,7 +253,7 @@ gatsby-fast-refresh {
     position: fixed;
     top: 0;
     right: 0;
-    width: 200px;
+    width: 220px;
     height: fit-content;
     border-left: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
@@ -270,6 +271,18 @@ gatsby-fast-refresh {
         &::before {
             content: 'State: ';
             color: var(--dull-light-gray);
+        }
+    }
+
+    :global(.step) {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        :global(.index) {
+            &::after {
+                content: ':';
+            }
         }
     }
 
@@ -314,4 +327,13 @@ gatsby-fast-refresh {
     height: 100%;
     pointer-events: none;
     z-index: $z-index-debug-canvas;
+}
+
+:global(.automated-example-drag) {
+    pointer-events: none;
+
+    @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
+        transform-origin: center left;
+        transform: translate(-30px, 0) scale(0.5);
+    }
 }

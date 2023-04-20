@@ -26,6 +26,7 @@
             display: block;
             text-decoration: none;
             height: 100%;
+            font-size: larger;
         }
 
         &__thumbnail {
@@ -44,8 +45,8 @@
     }
 
     &__title {
-        border-bottom: 2px solid $border-color;
-        padding-bottom: 0.5rem;
-        margin-bottom: 1rem;
+        font-size: xx-large;
+        padding-top: 1.2rem;
+        padding-bottom: 0.1rem;
     }
 }

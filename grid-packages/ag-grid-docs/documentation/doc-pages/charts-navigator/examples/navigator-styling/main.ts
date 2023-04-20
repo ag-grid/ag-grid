@@ -1,5 +1,19 @@
-import { AgChart, AgChartOptions } from "ag-charts-community"
+import {
+  AgAreaSeriesTooltip,
+  AgChart,
+  AgChartOptions,
+} from "ag-charts-community"
 import { getData } from "./data"
+
+const tooltip: AgAreaSeriesTooltip = {
+  renderer: ({ xValue, yValue }) => ({
+    content: `${xValue.toLocaleString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    })}: ${yValue}`,
+  }),
+}
 
 const options: AgChartOptions = {
   container: document.getElementById("myChart"),
@@ -14,6 +28,7 @@ const options: AgChartOptions = {
       yKey: "Tate Modern",
       fill: "#c16068",
       stroke: "#874349",
+      tooltip,
     },
     {
       type: "area",
@@ -21,6 +36,7 @@ const options: AgChartOptions = {
       yKey: "Tate Britain",
       fill: "#a2bf8a",
       stroke: "#718661",
+      tooltip,
     },
     {
       type: "area",
@@ -28,6 +44,7 @@ const options: AgChartOptions = {
       yKey: "Tate Liverpool",
       fill: "#ebcc87",
       stroke: "#a48f5f",
+      tooltip,
     },
     {
       type: "area",
@@ -35,6 +52,7 @@ const options: AgChartOptions = {
       yKey: "Tate St Ives",
       fill: "#80a0c3",
       stroke: "#5a7088",
+      tooltip,
     },
   ],
   axes: [

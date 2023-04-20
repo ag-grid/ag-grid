@@ -1,20 +1,16 @@
 import { Group } from '@tweenjs/tween.js';
 import { GridOptions } from 'ag-grid-community';
 import { Mouse } from '../../lib/createMouse';
-import { Point } from '../../lib/geometry';
-import { removeFocus } from '../../lib/scriptActions/removeFocus';
-import { clearAllSingleCellSelections } from '../../lib/scriptActions/singleCell';
 import { ScriptDebugger } from '../../lib/scriptDebugger';
-import { createScriptRunner as createScriptRunnerCore } from '../../lib/scriptRunner';
+import { createScriptRunner as createScriptRunnerCore, RunScriptState } from '../../lib/scriptRunner';
 import { EasingFunction } from '../../lib/tween';
 import { createScript } from './createScript';
 
 interface Params {
+    id: string;
     mouse: Mouse;
-    containerEl?: HTMLElement;
-    offScreenPos: Point;
-    onPlaying?: () => void;
-    onInactive?: () => void;
+    containerEl: HTMLElement;
+    onStateChange?: (state: RunScriptState) => void;
     tweenGroup: Group;
     gridOptions: GridOptions;
     loop?: boolean;
@@ -23,11 +19,10 @@ interface Params {
 }
 
 export function createScriptRunner({
+    id,
     containerEl,
     mouse,
-    offScreenPos,
-    onPlaying,
-    onInactive,
+    onStateChange,
     tweenGroup,
     gridOptions,
     loop,
@@ -37,12 +32,12 @@ export function createScriptRunner({
     const script = createScript({
         containerEl,
         mouse,
-        offScreenPos,
         tweenGroup,
         scriptDebugger,
     });
 
     const scriptRunner = createScriptRunnerCore({
+        id,
         containerEl,
         mouse,
         script,
@@ -50,22 +45,13 @@ export function createScriptRunner({
         loop,
         tweenGroup,
         onStateChange: (state) => {
-            if (state === 'playing') {
-                onPlaying && onPlaying();
-            } else if (state === 'stopping') {
+            scriptDebugger?.log(`${id} state: ${state}`);
+
+            if (state === 'stopping' || state === 'inactive' || state === 'errored') {
                 mouse.hide();
-            } else if (state === 'inactive') {
-                mouse.hide();
-                onInactive && onInactive();
             }
-        },
-        onPaused: () => {
-            clearAllSingleCellSelections();
-            mouse.hide();
-        },
-        onUnpaused: () => {
-            removeFocus();
-            mouse.show();
+
+            onStateChange && onStateChange(state);
         },
         scriptDebugger,
         defaultEasing,

@@ -930,10 +930,6 @@
       "description": "/** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "type": { "returnType": "string", "optional": true }
     },
-    "legendItemKey": {
-      "description": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */",
-      "type": { "returnType": "string", "optional": true }
-    },
     "fills": {
       "description": "/** The colours to cycle through for the fills of the sectors. */",
       "type": { "returnType": "CssColor[]", "optional": true }
@@ -1096,7 +1092,7 @@
   },
   "AgChartOverlaysOptions": {
     "noData": {
-      "description": "/** An overlay to be displayed when there is no data, */",
+      "description": "/** An overlay to be displayed when there is no data. */",
       "type": { "returnType": "AgChartOverlayOptions", "optional": true }
     }
   },
@@ -1663,10 +1659,6 @@
     "delay": {
       "description": "/** The time interval (in milliseconds) after which the tooltip is shown. */",
       "type": { "returnType": "number", "optional": true }
-    },
-    "enableInteraction": {
-      "description": "/** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */",
-      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "AgTooltipPositionType": {},
@@ -2004,10 +1996,6 @@
     }
   },
   "AgAxisBaseTickOptions": {
-    "enabled": {
-      "description": "/** Set to false to hide the axis tick lines. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "width": {
       "description": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "type": { "returnType": "PixelSize", "optional": true }
@@ -2034,10 +2022,6 @@
     }
   },
   "AgAxisCategoryTickOptions": {
-    "enabled": {
-      "description": "/** Set to false to hide the axis tick lines. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "width": {
       "description": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "type": { "returnType": "PixelSize", "optional": true }
@@ -2072,10 +2056,6 @@
       "description": "/** The step value between ticks specified as a number. If the configured interval results in too many ticks given the chart size, it will be ignored.\n     */",
       "type": { "returnType": "number", "optional": true }
     },
-    "enabled": {
-      "description": "/** Set to false to hide the axis tick lines. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "width": {
       "description": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "type": { "returnType": "PixelSize", "optional": true }
@@ -2109,10 +2089,6 @@
     "interval": {
       "description": "/** The step value between ticks specified as a TimeInterval or a number. If the configured interval results in dense ticks given the data domain, the ticks will be removed.\n     */",
       "type": { "returnType": "any", "optional": true }
-    },
-    "enabled": {
-      "description": "/** Set to false to hide the axis tick lines. */",
-      "type": { "returnType": "boolean", "optional": true }
     },
     "width": {
       "description": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
@@ -2152,10 +2128,6 @@
     }
   },
   "AgAxisLabelOptions": {
-    "enabled": {
-      "description": "/** Set to false to hide the axis labels. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "fontStyle": {
       "description": "/** The font style to use for the labels. */",
       "type": { "returnType": "FontStyle", "optional": true }
@@ -3074,6 +3046,16 @@
     "position": {
       "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
+    },
+    "interaction": {
+      "description": "/** Configuration for tooltip interaction. */",
+      "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
+    }
+  },
+  "AgSeriesTooltipInteraction": {
+    "enabled": {
+      "description": "/** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */",
+      "type": { "returnType": "boolean", "optional": false }
     }
   },
   "AgCartesianSeriesLabelFormatterParams": {
@@ -3137,6 +3119,10 @@
     "position": {
       "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
+    },
+    "interaction": {
+      "description": "/** Configuration for tooltip interaction. */",
+      "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
     }
   },
   "AgLineSeriesOptions": {
@@ -3248,6 +3234,10 @@
     "position": {
       "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
+    },
+    "interaction": {
+      "description": "/** Configuration for tooltip interaction. */",
+      "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
     }
   },
   "AgScatterSeriesLabelOptions": {
@@ -3432,6 +3422,10 @@
     "position": {
       "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
+    },
+    "interaction": {
+      "description": "/** Configuration for tooltip interaction. */",
+      "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
     }
   },
   "AgAreaSeriesOptions": {
@@ -3656,6 +3650,10 @@
     "position": {
       "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
+    },
+    "interaction": {
+      "description": "/** Configuration for tooltip interaction. */",
+      "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
     }
   },
   "AgBarSeriesOptions": {
@@ -3866,6 +3864,10 @@
     "position": {
       "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
+    },
+    "interaction": {
+      "description": "/** Configuration for tooltip interaction. */",
+      "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
     }
   },
   "AgHistogramBinDatum": {
@@ -4110,6 +4112,10 @@
     "position": {
       "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
+    },
+    "interaction": {
+      "description": "/** Configuration for tooltip interaction. */",
+      "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
     }
   },
   "AgPieTitleOptions": {
@@ -4300,10 +4306,6 @@
     },
     "sectorLabelName": {
       "description": "/** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "legendItemKey": {
-      "description": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */",
       "type": { "returnType": "string", "optional": true }
     },
     "fills": {
@@ -4649,6 +4651,10 @@
     "position": {
       "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
+    },
+    "interaction": {
+      "description": "/** Configuration for tooltip interaction. */",
+      "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
     }
   },
   "AgTreemapSeriesLabelsOptions": {
@@ -5940,6 +5946,9 @@
         "returnType": "{\n        xOffset?: number;\n        yOffset?: number;\n    }",
         "optional": true
       }
+    },
+    "enableInteraction": {
+      "type": { "returnType": "boolean", "optional": true }
     },
     "event": {
       "type": {

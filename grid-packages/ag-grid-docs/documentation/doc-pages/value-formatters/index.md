@@ -33,4 +33,8 @@ The answer is that value formatters are for text formatting and cell renderers a
 
 The example below shows value formatters in action.
 
+ - Columns `A` and `B` display the value of the `field` property
+ - Columns `£A` and `£B` use a `currencyFormatter` to display the value as a currency
+ - Columns`(A)` and `(B)` use a `bracketsFormatter` to display the value inside brackets
+
 <grid-example title='Value Formatters' name='value-formatters' type='generated'></grid-example>

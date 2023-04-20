@@ -4,10 +4,10 @@ const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'country', rowGroup: true, hide: true },
     { field: 'sport', rowGroup: true, hide: true },
-    { field: 'year', minWidth: 100, filter: 'agNumberColumnFilter' },
-    { field: 'gold', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
-    { field: 'silver', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
-    { field: 'bronze', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
+    { field: 'year', minWidth: 100, filter: 'agNumberColumnFilter', floatingFilter: true },
+    { field: 'gold', aggFunc: 'sum', filter: 'agNumberColumnFilter', floatingFilter: true },
+    { field: 'silver', aggFunc: 'sum', filter: 'agNumberColumnFilter', floatingFilter: true },
+    { field: 'bronze', aggFunc: 'sum', filter: 'agNumberColumnFilter', floatingFilter: true },
   ],
   defaultColDef: {
     flex: 1,

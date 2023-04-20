@@ -1,3 +1,7 @@
+export const AUTOMATED_EXAMPLE_MANAGER_ID = 'AEManager';
+export const ROW_GROUPING_ID = 'Row Grouping';
+export const INTEGRATED_CHARTS_ID = 'Integrated Charts';
+
 export const AG_ROW_SELECTOR = '[role=row]:not(.ag-header-row)';
 export const AG_ROW_HOVER_CLASSNAME = 'ag-row-hover';
 export const AG_CELL_RANGE_SINGLE_CELL_CLASSNAME = 'ag-cell-range-single-cell';
@@ -9,11 +13,14 @@ export const AG_HEADER_CELL_SELECTOR = '.ag-header-cell';
 export const AG_HEADER_CELL_TEXT_SELECTOR = '.ag-header-cell .ag-header-cell-text'; // NOTE: Need header cell, so that filter text is not selected
 
 export const AG_DND_GHOST_SELECTOR = '.ag-dnd-ghost';
+export const AG_COLUMN_DROP_SELECTOR = '.ag-column-drop-wrapper';
 
 export const AG_MENU_OPTION_TEXT_SELECTOR = '.ag-menu-option-text';
+export const AG_MENU_OPTION_ACTIVE_CLASSNAME = 'ag-menu-option-active';
 
 export const AG_CHART_TOOL_PANEL_BUTTON_SELECTOR = '.ag-chart-tool-panel-button-enable .ag-chart-menu-close';
 
+export const AG_POPUP_SELECTOR = '.ag-popup';
 export const AG_POPUP_DIALOG_SELECTOR = '.ag-popup [role="dialog"]';
 
 export const AG_CHART_SERIES_GROUP_TITLE_SELECTOR =
@@ -39,5 +46,5 @@ export const AG_GROUP_EXPANDED = '.ag-group-expanded';
 // Speed in pixel/ms
 export const DEFAULT_MOUSE_SPEED = 1;
 
-// Visibility of automated example for it to start playing
-export const DEFAULT_AUTOMATED_EXAMPLE_VISIBILITY_THRESHOLD = 0.2;
+// Class to add to `.ag-dnd-ghost` when created by a script
+export const DRAG_COLUMN_GHOST_CLASS = 'automated-example-drag';

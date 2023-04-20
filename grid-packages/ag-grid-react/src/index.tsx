@@ -8,8 +8,6 @@ import '@ag-grid-community/styles/ag-theme-alpine.css';
 
 
 const App = () => {
-    const [gridApi, setGridApi] = useState(null);
-    const [gridColumnApi, setGridColumnApi] = useState(null);
 
     const [rowData, setRowData] = useState([
         { make: 'Toyota', model: 'Celica', price: 35000 },
@@ -22,9 +20,7 @@ const App = () => {
         { field: 'price' },
     ]);
 
-    const onGridReady = (params:any) => {
-        setGridApi(params.api);
-        setGridColumnApi(params.columnApi);
+    const onGridReady = (params: any) => {
         setTimeout(() => setRowData([...rowData, ...rowData]), 2000);
     }
 

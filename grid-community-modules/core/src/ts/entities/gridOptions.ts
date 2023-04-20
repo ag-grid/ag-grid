@@ -522,6 +522,7 @@ export interface GridOptions<TData = any> {
     rowDragText?: (params: IRowDragItem, dragItemCount: number) => string;
 
     // *** Row Full Width *** //
+
     /**
     * Provide your own cell renderer component to use for full width rows.
     * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details.
@@ -532,10 +533,11 @@ export interface GridOptions<TData = any> {
     /** Customise the parameters provided to the `fullWidthCellRenderer` component. */
     fullWidthCellRendererParams?: any;
 
-    /** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling. */
+    /** Set to `true` to have the Full Width Rows embedded in grid's main container so they can be scrolled horizontally . */
     embedFullWidthRows?: boolean;
 
     // *** Row Grouping *** //
+
     /**
      * Specifies how the results of row grouping should be displayed.
      *

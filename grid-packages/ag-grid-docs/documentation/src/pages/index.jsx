@@ -1,8 +1,6 @@
 import classNames from 'classnames';
-import React, { useEffect } from 'react';
-import { DEFAULT_AUTOMATED_EXAMPLE_VISIBILITY_THRESHOLD } from '../components/automated-examples/lib/constants';
+import React, { useEffect, useMemo } from 'react';
 import { createAutomatedExampleManager } from '../components/automated-examples/lib/createAutomatedExampleManager';
-import { createScriptDebuggerManager } from '../components/automated-examples/lib/scriptDebugger';
 import Footer from '../components/footer/Footer';
 import FrameworkSelector from '../components/FrameworkSelector';
 import { Quotes } from '../components/quotes/Quotes';
@@ -18,10 +16,15 @@ const AutomatedIntegratedCharts = React.lazy(() => import('./components/home-pag
 const AutomatedRowGrouping = React.lazy(() => import('./components/home-page-demos/AutomatedRowGrouping'));
 const HeroGrid = React.lazy(() => import('./components/home-page-demos/HeroGrid'));
 
-const automatedExampleManager = createAutomatedExampleManager();
-
 const Default = () => {
-    const automatedExampleVisiblityThreshold = DEFAULT_AUTOMATED_EXAMPLE_VISIBILITY_THRESHOLD;
+    const automatedExampleManager = useMemo(
+        () =>
+            createAutomatedExampleManager({
+                debugCanvasClassname: styles.automatedExampleDebugCanvas,
+                debugPanelClassname: styles.automatedExampleDebugPanel,
+            }),
+        []
+    );
     const frameworksData = [
         {
             name: 'javascript',
@@ -52,14 +55,10 @@ const Default = () => {
         isCI = searchParams.get('isCI') === 'true';
         runAutomatedExamplesOnce = searchParams.get('runOnce') === 'true';
     }
-    const scriptDebuggerManager = createScriptDebuggerManager({
-        canvasClassname: styles.automatedExampleDebugCanvas,
-        panelClassname: styles.automatedExampleDebugPanel,
-    });
 
     useEffect(() => {
-        scriptDebuggerManager.setEnabled(Boolean(debugValue));
-        scriptDebuggerManager.setInitialDraw(debugValue === 'draw');
+        automatedExampleManager.setDebugEnabled(Boolean(debugValue));
+        automatedExampleManager.setDebugInitialDraw(debugValue === 'draw');
     }, []);
 
     return (
@@ -111,10 +110,9 @@ const Default = () => {
                                 <React.Suspense fallback={<></>}>
                                     <AutomatedRowGrouping
                                         automatedExampleManager={automatedExampleManager}
-                                        scriptDebuggerManager={scriptDebuggerManager}
                                         useStaticData={isCI}
                                         runOnce={runAutomatedExamplesOnce}
-                                        visibilityThreshold={automatedExampleVisiblityThreshold}
+                                        visibilityThreshold={0.2}
                                     />
                                 </React.Suspense>
                             )}
@@ -129,10 +127,9 @@ const Default = () => {
                                 <React.Suspense fallback={<></>}>
                                     <AutomatedIntegratedCharts
                                         automatedExampleManager={automatedExampleManager}
-                                        scriptDebuggerManager={scriptDebuggerManager}
                                         useStaticData={isCI}
                                         runOnce={runAutomatedExamplesOnce}
-                                        visibilityThreshold={automatedExampleVisiblityThreshold}
+                                        visibilityThreshold={0.8}
                                     />
                                 </React.Suspense>
                             )}

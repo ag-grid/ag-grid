@@ -423,7 +423,6 @@ Object {
     "text": "Marriage Statistics (Northern Ireland)",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -855,7 +854,6 @@ Object {
     "text": "Cattle Holdings and Beef Exports (UK)",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -1012,7 +1010,7 @@ Object {
         "size": 12,
       },
     },
-    "position": "right",
+    "position": "bottom",
     "reverseOrder": false,
     "spacing": 20,
   },
@@ -1485,6 +1483,9 @@ Object {
   "theme": Object {
     "overrides": Object {
       "line": Object {
+        "legend": Object {
+          "position": "bottom",
+        },
         "series": Object {
           "highlightStyle": Object {
             "series": Object {
@@ -1529,7 +1530,6 @@ Object {
     "text": "Taxed Alcohol Consumption (UK)",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -2136,7 +2136,6 @@ Object {
     "text": "Worldwide Earthquakes",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -2619,7 +2618,6 @@ Object {
     "text": "Earthquake Magnitudes by Source",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -3248,7 +3246,6 @@ Object {
     "text": "Changes in UK Energy Stock",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -3541,7 +3538,6 @@ Object {
 by Occupation",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -3825,7 +3821,6 @@ Object {
 (June to September)",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -4094,7 +4089,6 @@ Object {
     "text": "Punch Card of Github",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -4371,7 +4365,6 @@ Object {
     "text": "Most Populous Cities",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -4528,7 +4521,7 @@ Object {
         "size": 12,
       },
     },
-    "position": "right",
+    "position": "bottom",
     "reverseOrder": false,
     "spacing": 20,
   },
@@ -4656,6 +4649,9 @@ Object {
   "theme": Object {
     "overrides": Object {
       "column": Object {
+        "legend": Object {
+          "position": "bottom",
+        },
         "series": Object {
           "highlightStyle": Object {
             "series": Object {
@@ -4687,7 +4683,6 @@ Object {
     "text": "Changes in Prison Population",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -5006,7 +5001,6 @@ Object {
     "text": "Annual Growth in Pay",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -5163,7 +5157,7 @@ Object {
         "size": 12,
       },
     },
-    "position": "right",
+    "position": "bottom",
     "reverseOrder": false,
     "spacing": 20,
   },
@@ -5318,6 +5312,9 @@ Object {
   "theme": Object {
     "overrides": Object {
       "column": Object {
+        "legend": Object {
+          "position": "bottom",
+        },
         "series": Object {
           "highlightStyle": Object {
             "item": Object {
@@ -5340,7 +5337,6 @@ Object {
     "text": "Regular Internet Users",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -5625,7 +5621,6 @@ Object {
     "text": "Vehicle weight distribution",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -6863,7 +6858,6 @@ Object {
     "text": "Imported Banana Prices",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -7110,7 +7104,7 @@ Object {
         "position": Object {
           "type": "node",
         },
-        "renderer": undefined,
+        "renderer": [Function],
       },
       "type": "line",
       "visible": true,
@@ -7139,7 +7133,6 @@ Object {
     "text": "World Population Over Time",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -7348,7 +7341,6 @@ Object {
     "text": "S&P 500 index stocks categorized by sectors and industries.",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -7687,7 +7679,6 @@ Object {
     "text": "UK Energy Sources",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -7845,7 +7836,7 @@ Object {
         "size": 12,
       },
     },
-    "position": "right",
+    "position": "bottom",
     "reverseOrder": false,
     "spacing": 20,
   },
@@ -7976,6 +7967,9 @@ Object {
   "theme": Object {
     "overrides": Object {
       "bar": Object {
+        "legend": Object {
+          "position": "bottom",
+        },
         "series": Object {
           "highlightStyle": Object {
             "series": Object {
@@ -8011,7 +8005,6 @@ Object {
     "text": "Internet Users by Geographical Location",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -8169,7 +8162,7 @@ Object {
         "size": 12,
       },
     },
-    "position": "right",
+    "position": "bottom",
     "reverseOrder": false,
     "spacing": 20,
   },
@@ -8314,6 +8307,9 @@ Object {
   "theme": Object {
     "overrides": Object {
       "column": Object {
+        "legend": Object {
+          "position": "bottom",
+        },
         "series": Object {
           "highlightStyle": Object {
             "series": Object {
@@ -8354,7 +8350,6 @@ Object {
     "text": "Ethnic Diversity of School Pupils",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -8888,7 +8883,6 @@ Object {
     "text": "Total Visitors to Tate Galleries",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -9171,7 +9165,6 @@ Object {
     "text": "Total Visitors to Museums and Galleries",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -9395,7 +9388,6 @@ Object {
     "text": "Dwelling Fires (UK)",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -9667,7 +9659,6 @@ Object {
     "text": "Engine size distribution",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -9828,7 +9819,7 @@ Object {
         "size": 12,
       },
     },
-    "position": "right",
+    "position": "bottom",
     "reverseOrder": false,
     "spacing": 20,
   },
@@ -10001,6 +9992,9 @@ Object {
   "theme": Object {
     "overrides": Object {
       "line": Object {
+        "legend": Object {
+          "position": "bottom",
+        },
         "series": Object {
           "highlightStyle": Object {
             "series": Object {
@@ -10023,7 +10017,6 @@ Object {
     "text": "Road fuel prices",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -10225,7 +10218,6 @@ Object {
     "text": "Religions of London Population",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -10496,7 +10488,6 @@ Object {
     "text": "Height vs Weight for Major League Baseball Players",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -10856,7 +10847,6 @@ Object {
     "text": "Total Visitors to Science Museums",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -11173,7 +11163,6 @@ Object {
     "text": "UK Housing Stock",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -11509,7 +11498,6 @@ Object {
     "text": "Average Station Entries",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",
@@ -11794,7 +11782,6 @@ Object {
     "text": "Vehicle weight distribution",
   },
   "tooltip": Object {
-    "class": "ag-chart-tooltip",
     "delay": 0,
     "enabled": true,
     "range": "nearest",

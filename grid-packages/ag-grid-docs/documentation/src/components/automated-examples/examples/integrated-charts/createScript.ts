@@ -1,29 +1,28 @@
 import { Group } from '@tweenjs/tween.js';
+import { GridOptions } from 'ag-grid-community';
 import { createAgElementFinder } from '../../lib/agElements';
-import { getCellPos } from '../../lib/agQuery';
 import { Mouse } from '../../lib/createMouse';
-import { getOffset } from '../../lib/dom';
-import { addPoints, Point } from '../../lib/geometry';
+import { getBottomMidPos, getOffset } from '../../lib/dom';
+import { addPoints } from '../../lib/geometry';
 import { clearAllRowHighlights } from '../../lib/scriptActions/clearAllRowHighlights';
 import { dragRange } from '../../lib/scriptActions/dragRange';
 import { moveTarget } from '../../lib/scriptActions/move';
-import { updateRangeInputValue } from '../../lib/scriptActions/updateRangeInputValue';
 import { ScriptDebugger } from '../../lib/scriptDebugger';
 import { ScriptAction } from '../../lib/scriptRunner';
 
 interface Params {
-    containerEl?: HTMLElement;
+    containerEl: HTMLElement;
     mouse: Mouse;
-    offScreenPos: Point;
     tweenGroup: Group;
+    gridOptions: GridOptions;
     scriptDebugger?: ScriptDebugger;
 }
 
 export const createScript = ({
     containerEl,
     mouse,
-    offScreenPos,
     tweenGroup,
+    gridOptions,
     scriptDebugger,
 }: Params): ScriptAction[] => {
     const START_CELL_COL_INDEX = 0;
@@ -32,13 +31,14 @@ export const createScript = ({
     const END_CELL_ROW_INDEX = 3;
 
     const agElementFinder = createAgElementFinder({ containerEl });
+    const getOffscreenPos = () => getBottomMidPos(containerEl);
 
     return [
         {
             type: 'custom',
             action: () => {
                 // Move mouse to starting position
-                moveTarget({ target: mouse.getTarget(), coords: offScreenPos, scriptDebugger });
+                moveTarget({ target: mouse.getTarget(), coords: getOffscreenPos(), scriptDebugger });
 
                 mouse.show();
                 clearAllRowHighlights();
@@ -47,15 +47,22 @@ export const createScript = ({
         {
             type: 'agAction',
             actionType: 'reset',
+            actionParams: {
+                scrollRow: 0,
+                scrollColumn: 0,
+            },
         },
-
-        // Wait for data to load
-        { type: 'wait', duration: 1000 },
 
         // Select start cell
         {
             type: 'moveTo',
-            toPos: () => getCellPos({ containerEl, colIndex: START_CELL_COL_INDEX, rowIndex: START_CELL_ROW_INDEX }),
+            toPos: () =>
+                agElementFinder
+                    .get('cell', {
+                        colIndex: START_CELL_COL_INDEX,
+                        rowIndex: START_CELL_ROW_INDEX,
+                    })
+                    ?.getPos(),
             speed: 2,
         },
         { type: 'mouseDown' },
@@ -65,7 +72,7 @@ export const createScript = ({
             type: 'custom',
             action() {
                 return dragRange({
-                    containerEl,
+                    agElementFinder,
                     mouse,
                     startCol: START_CELL_COL_INDEX,
                     startRow: START_CELL_ROW_INDEX,
@@ -90,10 +97,45 @@ export const createScript = ({
                 menuItemPath: ['Chart Range', 'Column', 'Stacked'],
                 tweenGroup,
                 scriptDebugger,
-                speed: 2,
+                speed: 0.5,
             },
         },
-        { type: 'wait', duration: 200 },
+        {
+            name: 'Create range chart',
+            type: 'custom',
+            action: () => {
+                const chartModels = gridOptions.api?.getChartModels() || [];
+
+                if (chartModels.length) {
+                    return; // Chart created, no need for fallback
+                }
+
+                const allColumns = gridOptions.columnApi?.getColumns() || [];
+                const colStartIndex = START_CELL_COL_INDEX;
+                const colEndIndex = END_CELL_COL_INDEX;
+                const columnStart = allColumns[colStartIndex];
+                const columnEnd = allColumns[colEndIndex];
+
+                if (!columnStart) {
+                    scriptDebugger?.errorLog('Column start not found for index', colStartIndex);
+                    return;
+                }
+                if (!columnEnd) {
+                    scriptDebugger?.errorLog('Column end not found for index', colEndIndex);
+                    return;
+                }
+
+                gridOptions?.api?.createRangeChart({
+                    chartType: 'stackedColumn',
+                    cellRange: {
+                        rowStartIndex: START_CELL_ROW_INDEX,
+                        rowEndIndex: END_CELL_ROW_INDEX,
+                        columnStart,
+                        columnEnd,
+                    },
+                });
+            },
+        },
 
         {
             type: 'agAction',
@@ -248,56 +290,12 @@ export const createScript = ({
         },
         { type: 'wait', duration: 300 },
 
-        // Change marker size
-        {
-            type: 'moveTo',
-            toPos: () => {
-                const sliderValue = 35;
-                // To account for the size of the input control
-                const sliderControlXOffset = -10;
-                const slider = agElementFinder.get('chartToolPanelSliderInput', {
-                    groupTitle: 'Legend',
-                    sliderLabel: 'Marker Size',
-                });
-                if (!slider) {
-                    console.error('Marker Size slider not found');
-                    return;
-                }
-                const sliderEl = slider?.get() as HTMLInputElement;
-                const sliderWidth = sliderEl?.clientWidth;
-                const sliderRange = parseInt(sliderEl.max) - (parseInt(sliderEl.min) || 0);
-                const sliderValueXOffset = sliderValue * (sliderWidth / sliderRange);
-                const sliderRect = sliderEl.getBoundingClientRect();
-
-                return {
-                    x: sliderRect.x + sliderValueXOffset + sliderControlXOffset,
-                    y: sliderRect.y + sliderRect.height / 2,
-                };
-            },
-        },
-        { type: 'click' },
-        { type: 'wait', duration: 300 },
-        {
-            type: 'custom',
-            action: () => {
-                const slider = agElementFinder
-                    .get('chartToolPanelSliderInput', {
-                        groupTitle: 'Legend',
-                        sliderLabel: 'Marker Size',
-                    })
-                    ?.get() as HTMLInputElement;
-
-                updateRangeInputValue({ element: slider, value: 35 });
-            },
-        },
-        { type: 'wait', duration: 500 },
-
         // Move off screen
         {
             type: 'moveTo',
             toPos: () => {
                 const offset = containerEl ? getOffset(containerEl) : undefined;
-                return addPoints(offScreenPos, offset)!;
+                return addPoints(getOffscreenPos(), offset)!;
             },
             speed: 2,
         },
@@ -315,6 +313,10 @@ export const createScript = ({
         {
             type: 'agAction',
             actionType: 'reset',
+            actionParams: {
+                scrollRow: 0,
+                scrollColumn: 0,
+            },
         },
         {
             type: 'custom',

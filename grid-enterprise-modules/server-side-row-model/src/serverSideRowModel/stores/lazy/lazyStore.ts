@@ -184,7 +184,8 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     clearDisplayIndexes(): void {
         this.displayIndexStart = undefined;
         this.displayIndexEnd = undefined;
-        this.cache.getAllNodes().forEach(rowNode => this.blockUtils.clearDisplayIndex(rowNode));
+        this.cache.getNodes().forEach(lazyNode => this.blockUtils.clearDisplayIndex(lazyNode.node));
+        this.cache.clearDisplayIndexes();
     }
 
     /**
@@ -249,12 +250,12 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     /**
      * Recursively applies a provided function to every node
      * 
-     * For the purpose of exclusively server side filtered stores, this is the same as forEachNodeDeepAfterFilterAndSort
+     * For the purpose of exclusively server side filtered stores, this is the same as getNodes().forEachDeepAfterFilterAndSort
      */
     forEachStoreDeep(callback: (store: IServerSideStore, index: number) => void, sequence = new NumberSequence()): void {
         callback(this, sequence.next());
-        this.cache.getAllNodes().forEach(rowNode => {
-            const childCache = rowNode.childStore;
+        this.cache.getNodes().forEach(lazyNode => {
+            const childCache = lazyNode.node.childStore;
             if (childCache) {
                 childCache.forEachStoreDeep(callback, sequence);
             }
@@ -264,12 +265,12 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     /**
      * Recursively applies a provided function to every node
      * 
-     * For the purpose of exclusively server side filtered stores, this is the same as forEachNodeDeepAfterFilterAndSort
+     * For the purpose of exclusively server side filtered stores, this is the same as getNodes().forEachDeepAfterFilterAndSort
      */
     forEachNodeDeep(callback: (rowNode: RowNode<any>, index: number) => void, sequence = new NumberSequence()): void {
-        this.cache.getAllNodes().forEach(rowNode => {
-            callback(rowNode, sequence.next());
-            const childCache = rowNode.childStore;
+        this.cache.getNodes().forEach(lazyNode => {
+            callback(lazyNode.node, sequence.next());
+            const childCache = lazyNode.node.childStore;
             if (childCache) {
                 childCache.forEachNodeDeep(callback, sequence);
             }
@@ -279,23 +280,25 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     /**
      * Recursively applies a provided function to every node
      * 
-     * For the purpose of exclusively server side filtered stores, this is the same as forEachNodeDeep
+     * For the purpose of exclusively server side filtered stores, this is the same as getNodes().forEachDeep
      */
     forEachNodeDeepAfterFilterAndSort(callback: (rowNode: RowNode<any>, index: number) => void, sequence = new NumberSequence()): void {
-        this.cache.getAllNodes().forEach(rowNode => {
-            callback(rowNode, sequence.next());
-            const childCache = rowNode.childStore;
+        const orderedNodes = this.cache.getOrderedNodeMap();
+        for (let key in orderedNodes) {
+            const lazyNode = orderedNodes[key];
+            callback(lazyNode.node, sequence.next());
+            const childCache = lazyNode.node.childStore;
             if (childCache) {
                 childCache.forEachNodeDeepAfterFilterAndSort(callback, sequence);
             }
-        });
+        }
     }
 
     /**
      * Removes the failed status from all nodes, and marks them as stub to encourage reloading
      */
     retryLoads(): void {
-        this.cache.getAllNodes().forEach(node => {
+        this.cache.getNodes().forEach(({ node }) => {
             if (node.failedLoad) {
                 node.failedLoad = false;
                 node.__needsRefreshWhenVisible = true;
@@ -326,18 +329,16 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         if (!this.isDisplayIndexInStore(displayIndex)) {
             return null;
         }
-    
-        const allNodes = this.cache.getAllNodes();
-        let previousNode: RowNode | null = null;
-        let nextNode: RowNode | null = null;
-        for (let i = 0; i < allNodes.length; i++) {
-            const node = allNodes[i];
-            if (node.rowIndex! > displayIndex) {
-                nextNode = node;
-                break;
+
+        const thisNode = this.cache.getNodeCachedByDisplayIndex(displayIndex);
+        if (thisNode) {
+            const boundsFromRow = this.blockUtils.extractRowBounds(thisNode, displayIndex);
+            if (boundsFromRow) {
+                return boundsFromRow;
             }
-            previousNode = node;
         }
+
+        const { previousNode, nextNode } = this.cache.getSurroundingNodesByDisplayIndex(displayIndex) ?? {};
 
         // previous node may equal, or catch via detail node or child of group
         if (previousNode) {
@@ -346,7 +347,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 return boundsFromRow;
             }
         }
-
+    
         const defaultRowHeight = this.gridOptionsService.getRowHeightAsNumber();
         // if node after this, can calculate backwards (and ignore detail/grouping)
         if (nextNode) {
@@ -391,23 +392,38 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             return this.getDisplayIndexEnd()! - 1;
         }
     
-        const allNodes = this.cache.getAllNodes();
+        let distToPreviousNodeTop: number = Number.MAX_SAFE_INTEGER;
         let previousNode: RowNode | null = null;
+        let distToNextNodeTop: number = Number.MAX_SAFE_INTEGER;
         let nextNode: RowNode | null = null;
-        for (let i = 0; i < allNodes.length; i++) {
-            const node = allNodes[i];
-            if (node.rowTop! > pixel) {
-                nextNode = node;
-                break;
+
+        this.cache.getNodes().forEach(({ node }) => {
+            const distBetween = Math.abs(pixel - node.rowTop!);
+    
+            // previous node
+            if (node.rowTop! < pixel) {
+                if (distBetween < distToPreviousNodeTop) {
+                    distToPreviousNodeTop = distBetween;
+                    previousNode = node;
+                }
+                return;
             }
-            previousNode = node;
-        }
+            // next node
+            if (distBetween < distToNextNodeTop) {
+                distToNextNodeTop = distBetween;
+                nextNode = node;
+            }
+        });
+
+        // cast these back as typescript doesn't understand the forEach above
+        previousNode = previousNode as RowNode | null;
+        nextNode = nextNode as RowNode | null;
 
         // previous node may equal, or catch via detail node or child of group
         if (previousNode) {
             const indexOfRow = this.blockUtils.getIndexAtPixel(previousNode, pixel);
             if (indexOfRow != null) {
-            return indexOfRow;
+                return indexOfRow;
             }
         }
 
@@ -433,8 +449,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      */
     getChildStore(keys: string[]): IServerSideStore | null {
         return this.storeUtils.getChildStore(keys, this, (key: string) => {
-            const allNodes = this.cache.getAllNodes();
-            return allNodes.find(currentRowNode => currentRowNode.key == key)!;
+            const lazyNode = this.cache.getNodes().find(lazyNode => lazyNode.node.key == key);
+            if (!lazyNode) {
+                return null;
+            }
+            return lazyNode.node;
         });
     }
 
@@ -444,7 +463,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @param cb the callback to execute
      */
     private forEachChildStoreShallow(cb: (store: IServerSideStore) => void) {
-        this.cache.getAllNodes().forEach(node => {
+        this.cache.getNodes().forEach(({ node }) => {
             if (node.childStore) {
                 cb(node.childStore);
             }
@@ -545,20 +564,9 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             inActiveRange = true;
         }
 
-        this.cache.getAllNodes().forEach(rowNode => {
-            const hitFirstOrLast = rowNode === firstInRange || rowNode === lastInRange;
-            if (inActiveRange || hitFirstOrLast) {
-                result.push(rowNode);
-            }
-
-            if (hitFirstOrLast) {
-                inActiveRange = !inActiveRange;
-            }
-        });
-
-        // inActiveRange will be still true if we never hit the second rowNode
-        const invalidRange = inActiveRange;
-        return invalidRange ? [] : result;
+        return this.cache.getNodes().filter(({ node }) => {
+            return node.rowIndex! >= firstInRange.rowIndex! &&  node.rowIndex! <= lastInRange.rowIndex!;
+        }).map(({ node }) => node);
     }
 
     /**

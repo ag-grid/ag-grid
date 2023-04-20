@@ -23,9 +23,9 @@ If you don't specify a `menuTabs` for a `colDef` the default is: `['generalMenuT
 
 ## Customising the General Menu Tab
 
-The main menu panel, by default, will show a set of items. You can adjust which of these items get display, or you can start from scratch and provide your own items. To customise the menu, provide the `getMainMenuItems()` callback.
+The main menu panel, by default, will show a set of items. You can adjust which of these items get displayed, or you can start from scratch and provide your own items. To customise the menu, provide the `getMainMenuItems()` callback.
 
-The result of `getMainMenuItems()` should be a list with each item either a) a string or b) a MenuItem description. Use 'string' to pick from built in menu items (listed below) and use MenuItem descriptions for your own menu items.
+The result of `getMainMenuItems()` should be a list with each item either a) a string or b) a `MenuItemDef` description. Use 'string' to pick from built in menu items (listed below) and use `MenuItemDef` descriptions for your own menu items.
 
 <api-documentation source='grid-options/properties.json' section='accessories' names='["getMainMenuItems"]'  ></api-documentation>
 
@@ -33,15 +33,15 @@ The result of `getMainMenuItems()` should be a list with each item either a) a s
 
 The following is a list of all the default built in menu items with the rules about when they are shown.
 
-- `pinSubMenu`: Submenu for pinning. Always shown.
-- `valueAggSubMenu`: Submenu for value aggregation. Always shown.
+- `pinSubMenu`: Sub-menu for pinning. Always shown.
+- `valueAggSubMenu`: Sub-menu for value aggregation. Always shown.
 - `autoSizeThis`: Auto-size the current column. Always shown.
 - `autoSizeAll`: Auto-size all columns. Always shown.
 - `rowGroup`: Group by this column. Only shown if column is not grouped. Note this will appear once there is row grouping.
 - `rowUnGroup`: Un-group by this column. Only shown if column is grouped. Note this will appear once there is row grouping.
 - `resetColumns`: Reset column details. Always shown.
 - `expandAll`: Expand all groups. Only shown if grouping by at least one column.
-- `contractAll`: Contract all groups. Only shown if grouping by at least one column.
+- `contractAll`: Collapse all groups. Only shown if grouping by at least one column.
 
 Reading the list above it can be understood that the list `defaultItems` changes on different calls to the `getMainMenuItems()` callback, depending on, for example, what columns are current used for grouping.
 
@@ -57,20 +57,20 @@ menuItems.push('separator')
 
 ## Repositioning the Popup
 
-If not happy with the position of the popup, you can override it's position using `postProcessPopup(params)` callback. This gives you the popup HTML element so you can change it's position should you wish to.
+If not happy with the position of the popup, you can override its position using the `postProcessPopup(params)` callback. This gives you the popup HTML element so you can change its position should you wish to.
 
 <api-documentation source='grid-options/properties.json' section='accessories' names='["postProcessPopup"]'  ></api-documentation>
 
 ## Hiding the Column Menu
 
-Hide the column menu with the grid API `hidePopupMenu()`, which will hide either the [context menu](/context-menu/) or the column menu, whichever is showing.
+Hide the column menu with the grid API `hidePopupMenu()`, which will hide either the [Context Menu](/context-menu/) or the column menu, whichever is showing.
 
 ## Example Column Menu
 
-The example below shows the `getMainMenuItems()` in action. To demonstrate different scenarios, the callback returns something different based on the selected column as follows:
+The example below shows the `getMainMenuItems()` callback in action. To demonstrate different scenarios, the callback returns something different based on the selected column as follows:
 
 - Athlete column appends custom items to the list of built in items.
-- Athlete column contains a sub menu.
+- Athlete column contains a sub-menu.
 - Age column provides custom items and adds one built in default item.
 - Country column trims down the default items by removing values.
 - Date column changes the order of the tabs to `['filterMenuTab', 'generalMenuTab', 'columnsMenuTab']`
@@ -140,4 +140,4 @@ The following example demonstrates providing custom column layouts in the column
 
 Under most scenarios, the menu will fit inside the grid. However if the grid is small and / or the menu is very large, then the menu will not fit inside the grid and it will be clipped. This will lead to a bad user experience.
 
-To fix this, you should set property `popupParent` which is explained in the [popup parent](/context-menu/#popup-parent) for context menus.
+To fix this, you should set the [Popup Parent](/context-menu/#popup-parent) property.

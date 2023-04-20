@@ -19,13 +19,13 @@ Cross-Filter charts are created programmatically using `createCrossFilterChart(p
 The following snippet shows how a cross-filtering pie chart can be created:
 
 <snippet>
-gridOptions.api.createCrossFilterChart({
-    chartType: 'pie',
-    cellRange: {
-        columns: ['salesRep', 'sale'],
-    },
-    aggFunc: 'sum',
-});
+| gridOptions.api.createCrossFilterChart({
+|     chartType: 'pie',
+|     cellRange: {
+|         columns: ['salesRep', 'sale'],
+|     },
+|     aggFunc: 'sum',
+| });
 </snippet>
 
 Note in the snippet above that the `sale` values are aggregated by the `salesRep` category as `aggFunc: 'sum'` is specified.
@@ -33,12 +33,12 @@ Note in the snippet above that the `sale` values are aggregated by the `salesRep
 A corresponding column configuration for the chart above is shown in the following snippet:
 
 <snippet>
-const gridOptions = {
-    columnDefs: [
-        { field: 'salesRep', filter: 'agSetColumnFilter', chartDataType: 'category' },
-        { field: 'sale', chartDataType: 'series' },
-    ],
-}
+| const gridOptions = {
+|     columnDefs: [
+|         { field: 'salesRep', filter: 'agSetColumnFilter', chartDataType: 'category' },
+|         { field: 'sale', chartDataType: 'series' },
+|     ],
+| }
 </snippet>
 
 [[note]]

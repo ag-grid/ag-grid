@@ -599,7 +599,7 @@
     "type": { "returnType": "any" }
   },
   "embedFullWidthRows": {
-    "description": "/** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling. */",
+    "description": "/** Set to `true` to have the Full Width Rows embedded in grid's main container so they can be scrolled horizontally . */",
     "type": { "returnType": "boolean" }
   },
   "groupDisplayType": {

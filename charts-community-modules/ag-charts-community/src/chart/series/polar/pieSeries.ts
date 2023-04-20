@@ -827,7 +827,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const outerRadius = Math.max(0, radius);
             const label = datum.calloutLabel;
 
-            if (label && !label.hidden && outerRadius !== 0) {
+            if (label && label.text && !label.hidden && outerRadius !== 0) {
                 line.visible = true;
                 line.strokeWidth = calloutStrokeWidth;
                 line.stroke = calloutColors[index % calloutColors.length];
@@ -1025,7 +1025,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const radius = radiusScale.convert(datum.radius);
             const outerRadius = Math.max(0, radius);
 
-            if (!label || outerRadius === 0 || label.hidden) {
+            if (!label || !label.text || outerRadius === 0 || label.hidden) {
                 text.visible = false;
                 return;
             }

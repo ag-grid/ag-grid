@@ -22,7 +22,10 @@ $z-index-splash-contents: 10;
         transform: scale(0.5);
         border-radius: calc(var(--border-radius) * 2);
         overflow: hidden;
-        pointer-events: none;
+
+        :global(.overlay-button) {
+            cursor: default;
+        }
     }
 
     @media screen and (min-width: ds.$breakpoint-automated-row-grouping-medium) {
@@ -42,6 +45,31 @@ $z-index-splash-contents: 10;
         left: 50%;
         transform: translate(-60px, -48px) scale(1.5);
         z-index: 1;
+    }
+
+    // Copy default theme slider styles to deal with .ag-styles specificity issues
+    input[type='range'] {
+        &::-webkit-slider-runnable-track {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            height: 3px !important;
+            background-color: var(--ag-border-color) !important;
+            border-radius: var(--ag-border-radius) !important;
+            border-radius: var(--ag-checkbox-border-radius) !important;
+        }
+
+        &::-webkit-slider-thumb {
+            margin: 0 !important;
+            padding: 0 !important;
+            -webkit-appearance: none !important;
+            width: var(--ag-icon-size) !important;
+            height: var(--ag-icon-size) !important;
+            background-color: var(--ag-background-color) !important;
+            border: 1px solid !important;
+            border-color: var(--ag-checkbox-unchecked-color) !important;
+            border-radius: var(--ag-icon-size) !important;
+        }
     }
 
     // Button overrides for .ag-styles specificity
@@ -86,6 +114,17 @@ $z-index-splash-contents: 10;
 
         &:hover {
             color: var(--ag-alpine-active-color);
+        }
+    }
+
+    // Set chart thumbnail overrides for .ag-styles specificity
+    :global(.ag-chart-mini-thumbnail) {
+        border: 1px solid var(--ag-secondary-border-color);
+        border-radius: 5px;
+        margin: 5px;
+
+        &:global(.ag-selected) {
+            border-color: var(--ag-minichart-selected-chart-color);
         }
     }
 
@@ -174,6 +213,11 @@ $z-index-splash-contents: 10;
 
     @media screen and (min-width: ds.$breakpoint-automated-row-grouping-medium) {
         display: block;
+        margin-left: -80px;
+    }
+
+    @media screen and (min-width: ds.$max-page-width) {
+        margin-left: -100px;
     }
 }
 
@@ -242,13 +286,17 @@ $z-index-splash-contents: 10;
     height: 100%;
     top: 0;
     left: 0;
-    margin: 41px 1rem 1rem;
     overflow: hidden;
     z-index: $z-index-mouse-mask;
     pointer-events: none;
 
     // Start off hidden
     opacity: 0;
+
+    @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
+        // Hide mouse when automated example is not interactive
+        display: none;
+    }
 
     :global(.mouse) {
         position: absolute;

@@ -535,7 +535,6 @@
       "calloutLabelName?": "string",
       "sectorLabelKey?": "string",
       "sectorLabelName?": "string",
-      "legendItemKey?": "string",
       "fills?": "CssColor[]",
       "strokes?": "CssColor[]",
       "fillOpacity?": "Opacity",
@@ -580,7 +579,6 @@
       "calloutLabelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "sectorLabelKey?": "/** The key to use to retrieve sector label values from the data. */",
       "sectorLabelName?": "/** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
-      "legendItemKey?": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */",
       "fills?": "/** The colours to cycle through for the fills of the sectors. */",
       "strokes?": "/** The colours to cycle through for the strokes of the sectors. */",
       "fillOpacity?": "/** The opacity of the fill for the sectors. */",
@@ -656,7 +654,7 @@
     "meta": {},
     "type": { "noData?": "AgChartOverlayOptions" },
     "docs": {
-      "noData?": "/** An overlay to be displayed when there is no data, */"
+      "noData?": "/** An overlay to be displayed when there is no data. */"
     }
   },
   "AgChartLabelOptions": {
@@ -1070,8 +1068,7 @@
       "tracking?": "boolean",
       "range?": "AgChartInteractionRange",
       "position?": "AgTooltipPositionOptions",
-      "delay?": "number",
-      "enableInteraction?": "boolean"
+      "delay?": "number"
     },
     "docs": {
       "enabled?": "/** Set to false to disable tooltips for all series in the chart. */",
@@ -1079,8 +1076,7 @@
       "tracking?": "/** @deprecated since v7.2.0 (ag-grid v29.2.0) If true, for series with markers the tooltip will be shown to the closest marker. */",
       "range?": "/** Range from a point that triggers the tooltip to show. */",
       "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
-      "delay?": "/** The time interval (in milliseconds) after which the tooltip is shown. */",
-      "enableInteraction?": "/** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */"
+      "delay?": "/** The time interval (in milliseconds) after which the tooltip is shown. */"
     }
   },
   "AgTooltipPositionType": {
@@ -1315,7 +1311,6 @@
   "AgAxisBaseTickOptions": {
     "meta": {},
     "type": {
-      "enabled?": "boolean",
       "width?": "PixelSize",
       "size?": "PixelSize",
       "color?": "CssColor",
@@ -1324,7 +1319,6 @@
       "maxSpacing?": "number"
     },
     "docs": {
-      "enabled?": "/** Set to false to hide the axis tick lines. */",
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
       "color?": "/** The colour of the axis ticks. */",
@@ -1336,7 +1330,6 @@
   "AgAxisCategoryTickOptions": {
     "meta": {},
     "type": {
-      "enabled?": "boolean",
       "width?": "PixelSize",
       "size?": "PixelSize",
       "color?": "CssColor",
@@ -1345,7 +1338,6 @@
       "maxSpacing?": "number"
     },
     "docs": {
-      "enabled?": "/** Set to false to hide the axis tick lines. */",
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
       "color?": "/** The colour of the axis ticks. */",
@@ -1359,7 +1351,6 @@
     "type": {
       "count?": "number",
       "interval?": "number",
-      "enabled?": "boolean",
       "width?": "PixelSize",
       "size?": "PixelSize",
       "color?": "CssColor",
@@ -1370,7 +1361,6 @@
     "docs": {
       "count?": "/** A hint of how many ticks to use across an axis.\n     * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.\n     * @deprecated since v7.1.0 (ag-grid v29.1.0) Use tick.interval or tick.minSpacing and tick.maxSpacing instead.\n     */",
       "interval?": "/** The step value between ticks specified as a number. If the configured interval results in too many ticks given the chart size, it will be ignored.\n     */",
-      "enabled?": "/** Set to false to hide the axis tick lines. */",
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
       "color?": "/** The colour of the axis ticks. */",
@@ -1384,7 +1374,6 @@
     "type": {
       "count?": "any",
       "interval?": "any",
-      "enabled?": "boolean",
       "width?": "PixelSize",
       "size?": "PixelSize",
       "color?": "CssColor",
@@ -1395,7 +1384,6 @@
     "docs": {
       "count?": "/** A hint of how many ticks to use across an axis.\n     * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.\n     * The following intervals from the `agCharts.time` namespace can be used:\n     * `millisecond, second, minute, hour, day, sunday, monday, tuesday, wednesday, thursday, friday, saturday, month, year, utcMinute, utcHour, utcDay, utcMonth, utcYear`.\n     * Derived intervals can be created by using the `every` method on the default ones. For example, `agCharts.time.month.every(2)` will return a derived interval that will make the axis place ticks for every other month. */",
       "interval?": "/** The step value between ticks specified as a TimeInterval or a number. If the configured interval results in dense ticks given the data domain, the ticks will be removed.\n     */",
-      "enabled?": "/** Set to false to hide the axis tick lines. */",
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
       "color?": "/** The colour of the axis ticks. */",
@@ -1416,7 +1404,6 @@
   "AgAxisLabelOptions": {
     "meta": {},
     "type": {
-      "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
       "fontSize?": "FontSize",
@@ -1432,7 +1419,6 @@
       "formatter?": "(params: AgAxisLabelFormatterParams) => string | undefined"
     },
     "docs": {
-      "enabled?": "/** Set to false to hide the axis labels. */",
       "fontStyle?": "/** The font style to use for the labels. */",
       "fontWeight?": "/** The font weight to use for the labels. */",
       "fontSize?": "/** The font size in pixels to use for the labels. */",
@@ -2041,10 +2027,22 @@
   },
   "AgSeriesTooltip": {
     "meta": {},
-    "type": { "enabled?": "boolean", "position?": "AgTooltipPositionOptions" },
+    "type": {
+      "enabled?": "boolean",
+      "position?": "AgTooltipPositionOptions",
+      "interaction?": "AgSeriesTooltipInteraction"
+    },
     "docs": {
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */"
+      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "interaction?": "/** Configuration for tooltip interaction. */"
+    }
+  },
+  "AgSeriesTooltipInteraction": {
+    "meta": {},
+    "type": { "enabled": "boolean" },
+    "docs": {
+      "enabled": "/** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */"
     }
   },
   "AgCartesianSeriesLabelFormatterParams": {
@@ -2082,12 +2080,14 @@
       "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "format?": "string",
       "enabled?": "boolean",
-      "position?": "AgTooltipPositionOptions"
+      "position?": "AgTooltipPositionOptions",
+      "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */"
+      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
   "AgLineSeriesOptions": {
@@ -2147,12 +2147,14 @@
     "type": {
       "renderer?": "(params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "enabled?": "boolean",
-      "position?": "AgTooltipPositionOptions"
+      "position?": "AgTooltipPositionOptions",
+      "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */"
+      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
   "AgScatterSeriesLabelOptions": {
@@ -2261,11 +2263,13 @@
       "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "format?": "string",
       "enabled?": "boolean",
-      "position?": "AgTooltipPositionOptions"
+      "position?": "AgTooltipPositionOptions",
+      "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */"
+      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
   "AgAreaSeriesOptions": {
@@ -2410,12 +2414,14 @@
     "type": {
       "renderer?": "(params: AgBarSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "enabled?": "boolean",
-      "position?": "AgTooltipPositionOptions"
+      "position?": "AgTooltipPositionOptions",
+      "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */"
+      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
   "AgBarSeriesOptions": {
@@ -2537,12 +2543,14 @@
     "type": {
       "renderer?": "(params: AgHistogramSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "enabled?": "boolean",
-      "position?": "AgTooltipPositionOptions"
+      "position?": "AgTooltipPositionOptions",
+      "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */"
+      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
   "AgHistogramBinDatum": {
@@ -2695,12 +2703,14 @@
     "type": {
       "renderer?": "(params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "enabled?": "boolean",
-      "position?": "AgTooltipPositionOptions"
+      "position?": "AgTooltipPositionOptions",
+      "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */"
+      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
   "AgPieTitleOptions": {
@@ -2811,7 +2821,6 @@
       "calloutLabelName?": "string",
       "sectorLabelKey?": "string",
       "sectorLabelName?": "string",
-      "legendItemKey?": "string",
       "fills?": "CssColor[]",
       "strokes?": "CssColor[]",
       "fillOpacity?": "Opacity",
@@ -2857,7 +2866,6 @@
       "calloutLabelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "sectorLabelKey?": "/** The key to use to retrieve sector label values from the data. */",
       "sectorLabelName?": "/** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
-      "legendItemKey?": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */",
       "fills?": "/** The colours to cycle through for the fills of the sectors. */",
       "strokes?": "/** The colours to cycle through for the strokes of the sectors. */",
       "fillOpacity?": "/** The opacity of the fill for the sectors. */",
@@ -3020,12 +3028,14 @@
     "type": {
       "renderer?": "(params: AgTreemapSeriesTooltipRendererParams<DatumType>) => string | AgTooltipRendererResult",
       "enabled?": "boolean",
-      "position?": "AgTooltipPositionOptions"
+      "position?": "AgTooltipPositionOptions",
+      "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */"
+      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
   "AgTreemapSeriesLabelsOptions": {
@@ -4129,6 +4139,7 @@
       "offsetX": "number",
       "offsetY": "number",
       "position?": "{ xOffset?: number; yOffset?: number; }",
+      "enableInteraction?": "boolean",
       "event": "Event | InteractionEvent<any>"
     }
   },

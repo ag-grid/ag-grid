@@ -12,6 +12,9 @@ const options: AgChartOptions = {
     },
     overrides: {
       column: {
+        legend: {
+          position: "bottom",
+        },
         axes: {
           category: {
             gridStyle: [],

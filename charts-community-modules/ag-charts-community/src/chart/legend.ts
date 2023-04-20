@@ -346,11 +346,7 @@ export class Legend {
         if (this.reverseOrder) {
             data.reverse();
         }
-        this.itemSelection.update(data, (node) => {
-            const { datum } = node;
-            const Marker = getMarker(markerShape || datum.marker.shape);
-            node.marker = new Marker();
-        });
+        this.itemSelection.update(data);
 
         // Update properties that affect the size of the legend items and measure them.
         const bboxes: BBox[] = [];
@@ -362,6 +358,12 @@ export class Legend {
         const paddedMarkerWidth = markerSize + markerPadding + paddingX;
 
         this.itemSelection.each((markerLabel, datum) => {
+            const Marker = getMarker(markerShape || datum.marker.shape);
+
+            if (!(markerLabel.marker && markerLabel.marker instanceof Marker)) {
+                markerLabel.marker = new Marker();
+            }
+
             markerLabel.markerSize = markerSize;
             markerLabel.spacing = markerPadding;
             markerLabel.fontStyle = fontStyle;
@@ -968,6 +970,13 @@ export class Legend {
         if (this.visible && this.enabled && this.data.length) {
             const legendPadding = this.spacing;
             newShrinkRect.shrink(legendPadding, this.position);
+
+            const legendPositionedBBox = legendBBox.clone();
+            legendPositionedBBox.x += this.translationX;
+            legendPositionedBBox.y += this.translationY;
+            this.tooltipManager.updateExclusiveRect(this.id, legendPositionedBBox);
+        } else {
+            this.tooltipManager.updateExclusiveRect(this.id);
         }
 
         return { shrinkRect: newShrinkRect };

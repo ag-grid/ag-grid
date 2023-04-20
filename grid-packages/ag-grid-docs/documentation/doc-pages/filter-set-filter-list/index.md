@@ -54,10 +54,10 @@ A [Value Formatter](/value-formatters/) is a good choice when the string value d
 be modified, for example adding country codes in parentheses after a country name, as shown below:
 
 <snippet>
-const countryValueFormatter = params => {
-    const country = params.value;
-    return country + ' (' + COUNTRY_CODES[country].toUpperCase() + ')';
-}
+| const countryValueFormatter = params => {
+|     const country = params.value;
+|     return country + ' (' + COUNTRY_CODES[country].toUpperCase() + ')';
+| }
 </snippet>
 
 The following snippet shows how to provide the `countryValueFormatter` to the Set Filter:

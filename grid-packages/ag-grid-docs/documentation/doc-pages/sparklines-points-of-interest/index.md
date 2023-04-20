@@ -60,17 +60,17 @@ Let's say we have a line sparkline where the markers are all `'skyblue'` but we 
 
 We can do this by adding the following formatter to the `marker` options.
 
-<snippet>
-|const markerFormatter = (params) => {
-|    const { first, last } = params;
-|
-|    return {
-|        size: first || last ? 5 : 3,
-|        fill: first || last ? '#9a60b4' : 'skyblue',
-|        stroke: first || last ? '#9a60b4' : 'skyblue'
-|    }
-|}
-</snippet>
+```js
+const markerFormatter = (params) => {
+    const { first, last } = params;
+
+    return {
+        size: first || last ? 5 : 3,
+        fill: first || last ? '#9a60b4' : 'skyblue',
+        stroke: first || last ? '#9a60b4' : 'skyblue'
+    }
+}
+```
 
 - In the snippet above, `first` and `last` boolean values are extracted from the params object and used to conditionally set the `size`, `fill` and `stroke` of the markers.
 - If the given data point is the first or last point i.e. if `first` or `last` is `true`, the `size` of the marker is set to `5`px. All other markers will be `3`px.
@@ -92,17 +92,17 @@ See the result of adding this formatter in the sparklines on the right below, co
 
 Similar to first and last, to emphasise the min and max data points, the `min` and `max` booleans from the formatter params can be used to conditionally style the markers.
 
-<snippet>
-|const markerFormatter = (params) => {
-|    const { min, max } = params;
-|
-|    return {
-|        size: min || max ? 5 : 3,
-|        fill: min ? '#ee6666' : max ? '#3ba272' : 'skyBlue',
-|        stroke: min ? '#ee6666' : max ? '#3ba272' : 'skyBlue',
-|    }
-|}
-</snippet>
+```js
+const markerFormatter = (params) => {
+    const { min, max } = params;
+
+    return {
+        size: min || max ? 5 : 3,
+        fill: min ? '#ee6666' : max ? '#3ba272' : 'skyBlue',
+        stroke: min ? '#ee6666' : max ? '#3ba272' : 'skyBlue',
+    }
+}
+```
 
 - If the data point is a minimum or a maximum point – if `min` or `max` is `true` – the size is set to `5`px, otherwise it is set to`3`px.
 - If the marker represents a minimum point, the `fill` and `stroke` are set to red, if the marker represents a maximum point, the `fill` and `stroke` are set to green. Otherwise the fill and stroke are set to sky blue.
@@ -127,17 +127,17 @@ The positive and negative values can be distinguished by adding a `formatter` wh
 
 This is demonstrated in the snippet below.
 
-<snippet>
-|const markerFormatter = (params) => {
-|    const { yValue } = params;
-|
-|    return {
-|        // if yValue is negative, the marker should be 'red', otherwise it should be 'green'
-|        fill: yValue < 0 ? 'red' : 'green',
-|        stroke: yValue < 0 ? 'red' : 'green'
-|    }
-|}
-</snippet>
+```js
+const markerFormatter = (params) => {
+    const { yValue } = params;
+
+    return {
+        // if yValue is negative, the marker should be 'red', otherwise it should be 'green'
+        fill: yValue < 0 ? 'red' : 'green',
+        stroke: yValue < 0 ? 'red' : 'green'
+    }
+}
+```
 
 See the result of adding this formatter in the sparklines on the right below, compared with the ones on the left which are using global styles in `marker` options:
 
@@ -186,16 +186,16 @@ Let's say we want to make the first and last columns in our column sparklines st
 
 We can do this by adding the following formatter to the `sparklineOptions`.
 
-<snippet>
-|const columnFormatter = (params) => {
-|    const { first, last } = params;
-|
-|    return {
-|        fill: first || last ? '#ea7ccc' : 'skyblue',
-|        stroke: first || last ? '#ea7ccc' : 'skyblue'
-|    }
-|}
-</snippet>
+```js
+const columnFormatter = (params) => {
+    const { first, last } = params;
+
+    return {
+        fill: first || last ? '#ea7ccc' : 'skyblue',
+        stroke: first || last ? '#ea7ccc' : 'skyblue'
+    }
+}
+```
 
 Here is the result of  adding this formatter compared with setting global styles in `sparklineOptions`:
 
@@ -209,16 +209,16 @@ Here is the result of  adding this formatter compared with setting global styles
 
 Similar to first and last, to emphasise the min and max data points, the `min` and `max` booleans from the formatter params can be used to conditionally style the markers.
 
-<snippet>
-|const columnFormatter = (params) => {
-|    const { min, max } = params;
-|
-|    return {
-|        fill: min ? '#ee6666' : max ? '#3ba272' : 'skyBlue',
-|        stroke: min ? '#ee6666' : max ? '#3ba272' : 'skyBlue',
-|    }
-|}
-</snippet>
+```js
+const columnFormatter = (params) => {
+    const { min, max } = params;
+
+    return {
+        fill: min ? '#ee6666' : max ? '#3ba272' : 'skyBlue',
+        stroke: min ? '#ee6666' : max ? '#3ba272' : 'skyBlue',
+    }
+}
+```
 
 Here is the result of adding this formatter compared with setting global styles in `sparklineOptions`:
 
@@ -233,17 +233,17 @@ The positive and negative values can be distinguished by adding a formatter whic
 
 This is demonstrated in the snippet below.
 
-<snippet>
-|const columnFormatter = (params) => {
-|    const { yValue } = params;
-|
-|    return {
-|        // if yValue is negative, the column should be dark red, otherwise it should be purple
-|        fill: yValue < 0 ? '#a90000' : '#5470c6',
-|        stroke: yValue < 0 ? '#a90000' : '#5470c6'
-|    }
-|}
-</snippet>
+```js
+const columnFormatter = (params) => {
+    const { yValue } = params;
+
+    return {
+        // if yValue is negative, the column should be dark red, otherwise it should be purple
+        fill: yValue < 0 ? '#a90000' : '#5470c6',
+        stroke: yValue < 0 ? '#a90000' : '#5470c6'
+    }
+}
+```
 
 Here is the result of adding this formatter compared with setting global styles in `sparklineOptions`:
 

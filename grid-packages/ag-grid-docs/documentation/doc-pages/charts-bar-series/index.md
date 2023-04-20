@@ -124,7 +124,3 @@ With this simple change we go from [stacked columns](#stacked-columns) to stacke
 ## API Reference
 
 <interface-documentation interfaceName='AgBarSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
-
-## Next Up
-
-Continue to the next section to learn about [histogram series](/charts-histogram-series/).

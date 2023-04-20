@@ -40,8 +40,8 @@ for (const group of Object.values(galleryOpts)) {
 }
 
 const genThumbnails = async () => {
-    const width = 800;
-    const height = 570;
+    const width = 900;
+    const height = 700;
     const optionOverrides: Partial<AgChartOptions> = {
         autoSize: false,
         width,

@@ -38,7 +38,6 @@ series: [{
     angleKey: 'value',
 
 +   calloutLabelKey: 'label',
-+   legendItemKey: 'label',
 +   sectorLabelKey: 'value',
 +   sectorLabel: {
 +       color: 'white',
@@ -49,13 +48,9 @@ series: [{
 
 This example demonstrates:
 
-- Use of `legendItemKey`, enabling:
-  - Labels for use in the legend.
 - Use of `calloutLabelKey`, enabling:
   - Display of a per-sector callout label.
-  - A fallback label for use in the legend if `legendItemKey` is not provided.
   - Tooltips on segment hover including the callout label and sector value.
-  - Some callout labels are not displayed, where the sector is smaller than `calloutLabel.minAngle` (defaults to `20`).
 - Use of `sectorLabelKey` and `sectorLabel`, enabling:
   - Display of a per-sector inside label.
   - Some sector labels are not displayed, where the sector is too small to fit the label text.
@@ -175,32 +170,6 @@ The example below uses one pie series to plot the market share of each operating
 
 <chart-example title='Multi-Doughnut Chart' name='multi-doughnut' type='generated'></chart-example>
 
-### Multiple Doughnuts with a Shared Legend
-
-Providing a matching `legendItemKey` allows us to create multiple doughnut series that share a single legend. When a legend item is clicked, the items in all the series that have a matching `legendItemKey` will be toggled together.
-
-```js
-series: [
-    {
-        type: 'pie',
-        calloutLabelKey: 'os',
-        legendItemKey: 'os',
-    },
-    {
-        type: 'pie',
-        legendItemKey: 'os',
-    }
-]
-```
-
-In the example below, we match the series with a `legendItemKey` of `'os'` comparing the market share of each operating system in two different years.
-
-<chart-example title='Multi-Doughnut Chart with Shared Series' name='multi-doughnut-shared' type='generated'></chart-example>
-
 ## API Reference
 
 <interface-documentation interfaceName='AgPieSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
-
-## Next Up
-
-Continue to the next section to learn about [treemap](../treemap-series/).

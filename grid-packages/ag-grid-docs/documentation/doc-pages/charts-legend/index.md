@@ -225,7 +225,3 @@ This example demonstrates toggling the visiblity of series via clicks and double
 ## API Reference
 
 <interface-documentation interfaceName='AgChartLegendOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
-
-## Next Up
-
-Continue to the next section to learn about the [series](../series-highlighting/).

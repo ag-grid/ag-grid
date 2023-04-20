@@ -1044,6 +1044,10 @@ export class GridApi<TData = any> {
      * Defaults to `normal` if no domLayout provided.
      */
     public setDomLayout(domLayout?: DomLayoutType) {
+        if (!this.clientSideRowModel && domLayout === 'autoHeight') {
+            console.error(`AG Grid: domLayout can only be set to 'autoHeight' when using the client side row model.`);
+            return;
+        }
         this.gridOptionsService.set('domLayout', domLayout);
     }
 
@@ -1875,9 +1879,10 @@ export class GridApi<TData = any> {
     }
 
     /**
-     * Refresh a server-side level.
+     * Refresh a server-side store level.
      * If you pass no parameters, then the top level store is refreshed.
      * To refresh a child level, pass in the string of keys to get to the desired level.
+     * Once the store refresh is complete, the storeRefreshed event is fired.
      */
     public refreshServerSide(params?: RefreshServerSideParams): void {
         if (!this.serverSideRowModel) {

@@ -6,20 +6,20 @@
 // to prevent AG Grid from loading the code twice
 
 import { Easing, Group } from '@tweenjs/tween.js';
-import { ColDef, GridOptions } from 'ag-grid-community';
+import { ColDef, GridOptions, MenuItemDef } from 'ag-grid-community';
 import { CATEGORIES, PORTFOLIOS } from '../../data/constants';
 import { createDataWorker } from '../../data/createDataWorker';
+import { ROW_GROUPING_ID } from '../../lib/constants';
 import { createMouse } from '../../lib/createMouse';
-import { getBottomMidPos, isInViewport } from '../../lib/dom';
-import { Point } from '../../lib/geometry';
+import { isInViewport } from '../../lib/dom';
+import { getAdditionalContextMenuItems } from '../../lib/getAdditionalContextMenuItems';
 import { ScriptDebuggerManager } from '../../lib/scriptDebugger';
-import { ScriptRunner } from '../../lib/scriptRunner';
+import { RunScriptState, ScriptRunner } from '../../lib/scriptRunner';
 import { AutomatedExample } from '../../types';
 import { createScriptRunner } from './createScriptRunner';
 import { fixtureData } from './rowDataFixture';
 
-const WAIT_TILL_MOUSE_ANIMATION_STARTS = 2000;
-const UPDATES_PER_MESSAGE_1X = 100;
+const UPDATES_PER_MESSAGE_1X = 10;
 const MESSAGE_FEQUENCY_1X = 200;
 
 let dataWorker;
@@ -29,13 +29,13 @@ let restartScriptTimeout;
 interface CreateAutomatedRowGroupingParams {
     gridClassname: string;
     mouseMaskClassname: string;
-    onInactive?: () => void;
+    additionalContextMenuItems?: (string | MenuItemDef)[];
+    onStateChange?: (state: RunScriptState) => void;
     onGridReady?: () => void;
     suppressUpdates?: boolean;
     useStaticData?: boolean;
     runOnce: boolean;
     scriptDebuggerManager: ScriptDebuggerManager;
-    pauseOnMouseMove?: boolean;
     visibilityThreshold: number;
 }
 
@@ -61,9 +61,22 @@ const columnDefs: ColDef[] = [
         chartDataType: 'category',
         enableRowGroup: true,
     },
-    { field: 'previous', enableRowGroup: true },
-    { field: 'current', type: 'measure', enableRowGroup: true },
-    { headerName: 'Gain-DX', field: 'gainDx', type: 'measure', enableRowGroup: true },
+    {
+        field: 'previous',
+        enableRowGroup: true,
+        type: 'numericColumn',
+    },
+    {
+        field: 'current',
+        type: ['measure', 'numericColumn'],
+        enableRowGroup: true,
+    },
+    {
+        headerName: 'Gain-DX',
+        field: 'gainDx',
+        type: ['measure', 'numericColumn'],
+        enableRowGroup: true,
+    },
     { field: 'dealType', enableRowGroup: true },
     { field: 'portfolio', enableRowGroup: true },
 ];
@@ -84,7 +97,6 @@ const gridOptions: GridOptions = {
         measure: {
             aggFunc: 'sum',
             chartDataType: 'series',
-            cellClass: 'number',
             valueFormatter: numberCellFormatter,
             cellRenderer: 'agAnimateShowChangeCellRenderer',
         },
@@ -139,13 +151,13 @@ function stopWorkerMessages() {
 export function createAutomatedRowGrouping({
     gridClassname,
     mouseMaskClassname,
-    onInactive,
+    additionalContextMenuItems,
+    onStateChange,
     onGridReady,
     suppressUpdates,
     useStaticData,
     scriptDebuggerManager,
     runOnce,
-    pauseOnMouseMove,
     visibilityThreshold,
 }: CreateAutomatedRowGroupingParams): RowGroupingAutomatedExample {
     const gridSelector = `.${gridClassname}`;
@@ -157,11 +169,13 @@ export function createAutomatedRowGrouping({
             return;
         }
 
-        const offScreenPos: Point = getBottomMidPos(gridDiv);
         if (useStaticData) {
             gridOptions.rowData = fixtureData;
         }
 
+        if (additionalContextMenuItems) {
+            gridOptions.getContextMenuItems = () => getAdditionalContextMenuItems(additionalContextMenuItems);
+        }
         gridOptions.onGridReady = () => {
             if (suppressUpdates) {
                 return;
@@ -172,11 +186,12 @@ export function createAutomatedRowGrouping({
             startWorkerMessages();
 
             const scriptDebugger = scriptDebuggerManager.add({
-                id: 'Row Grouping',
+                id: ROW_GROUPING_ID,
                 containerEl: gridDiv,
             });
 
-            const mouse = createMouse({ containerEl: gridDiv, mouseMaskClassname });
+            // Add it to the body, so it can sit on top of drag and drop target
+            const mouse = createMouse({ containerEl: document.body, mouseMaskClassname });
             const tweenGroup = new Group();
 
             if (scriptRunner) {
@@ -184,16 +199,17 @@ export function createAutomatedRowGrouping({
             }
 
             scriptRunner = createScriptRunner({
+                id: ROW_GROUPING_ID,
                 containerEl: gridDiv,
                 mouse,
-                offScreenPos,
-                onPlaying() {
-                    startWorkerMessages();
-                },
-                onInactive() {
-                    onInactive && onInactive();
+                onStateChange(state) {
+                    if (state === 'playing') {
+                        startWorkerMessages();
+                    } else if (state === 'inactive') {
+                        stopWorkerMessages();
+                    }
 
-                    stopWorkerMessages();
+                    onStateChange && onStateChange(state);
                 },
                 tweenGroup,
                 gridOptions,
@@ -201,31 +217,6 @@ export function createAutomatedRowGrouping({
                 scriptDebugger,
                 defaultEasing: Easing.Quadratic.InOut,
             });
-
-            const pauseScriptRunner = () => {
-                if (scriptRunner.currentState() === 'playing') {
-                    scriptRunner.pause();
-                }
-
-                clearTimeout(restartScriptTimeout);
-                restartScriptTimeout = setTimeout(() => {
-                    if (scriptRunner.currentState() !== 'playing') {
-                        scriptRunner.play();
-                    }
-                }, WAIT_TILL_MOUSE_ANIMATION_STARTS);
-            };
-
-            if (pauseOnMouseMove) {
-                gridDiv.addEventListener('mousemove', (event: MouseEvent) => {
-                    const isUserEvent = event.isTrusted;
-
-                    if (!isUserEvent) {
-                        return;
-                    }
-
-                    pauseScriptRunner();
-                });
-            }
         };
         new globalThis.agGrid.Grid(gridDiv, gridOptions);
     };

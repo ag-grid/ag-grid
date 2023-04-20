@@ -52,22 +52,22 @@ If the grid is editing, `getEditingCells()` returns back details of the editing 
 Below is a code example of using the editing API methods.
 
 <snippet>
-|// start editing country cell on first row
-|gridOptions.api.startEditingCell({
-|    rowIndex: 0,
-|    colKey: 'country'
-|});
-|
-|// stop editing
-|gridOptions.api.stopEditing();
-|
-|// print details of editing cell
-|const cellDefs = gridOptions.api.getEditingCells();
-|cellDefs.forEach(cellDef => {
-|    console.log(cellDef.rowIndex);
-|    console.log(cellDef.column.getId());
-|    console.log(cellDef.floating);
-|});
+| // start editing country cell on first row
+| gridOptions.api.startEditingCell({
+|     rowIndex: 0,
+|     colKey: 'country'
+| });
+| 
+| // stop editing
+| gridOptions.api.stopEditing();
+| 
+| // print details of editing cell
+| const cellDefs = gridOptions.api.getEditingCells();
+| cellDefs.forEach(cellDef => {
+|     console.log(cellDef.rowIndex);
+|     console.log(cellDef.column.getId());
+|     console.log(cellDef.floating);
+| });
 </snippet>
 
 The example below illustrates different parts of the editing API. Each button starts editing the 'Last Name' column of the first row with the following differences:

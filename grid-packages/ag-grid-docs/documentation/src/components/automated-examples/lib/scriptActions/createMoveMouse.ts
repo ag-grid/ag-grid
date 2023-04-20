@@ -27,7 +27,6 @@ interface CreateMoveMouseParams {
 
 function getTargetPos(target: HTMLElement): Point | undefined {
     if (!target) {
-        console.error('No target');
         return;
     }
 
@@ -62,7 +61,7 @@ export const createMoveMouse = ({
     const coords = { ...fromPos } as Point;
 
     if (!fromPos) {
-        console.error(`No 'fromPos'`, {
+        scriptDebugger?.errorLog(`No 'fromPos'`, {
             startingFromPos,
             target: mouse.getTarget(),
             toPos,

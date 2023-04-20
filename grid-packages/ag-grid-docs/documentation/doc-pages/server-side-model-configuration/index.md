@@ -85,17 +85,17 @@ To handle this scenario, the grid provides `parentKeys` and `level` properties i
 These can be used to create unique group id's as shown below:
 
 <snippet>
-|const gridOptions = {
-|   getRowId: params => {
-|       const parentKeysJoined = (params.parentKeys || []).join('-');
-|       if (params.data.id != null) {
-|           parentKeysJoined + params.data.id;
-|       }
-|       const rowGroupCols = params.columnApi.getRowGroupColumns();
-|       const thisGroupCol = rowGroupCols[params.level];
-|       parentKeysJoined + params.data[thisGroupCol.getColDef().field];
-|    }
-|}
+| const gridOptions = {
+|    getRowId: params => {
+|        const parentKeysJoined = (params.parentKeys || []).join('-');
+|        if (params.data.id != null) {
+|            parentKeysJoined + params.data.id;
+|        }
+|        const rowGroupCols = params.columnApi.getRowGroupColumns();
+|        const thisGroupCol = rowGroupCols[params.level];
+|        parentKeysJoined + params.data[thisGroupCol.getColDef().field];
+|     }
+| }
 </snippet>
 
 ## Debug Info

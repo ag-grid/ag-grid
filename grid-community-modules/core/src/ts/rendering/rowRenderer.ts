@@ -1011,7 +1011,8 @@ export class RowRenderer extends BeanStub {
 
     public getFullWidthRowCtrls(rowNodes?: IRowNode[]): RowCtrl[] {
         const rowNodesMap = this.mapRowNodes(rowNodes);
-        return getAllValuesInObject(this.rowCtrlsByRowIndex).filter((rowCtrl: RowCtrl) => {
+        
+        return this.getAllRowCtrls().filter((rowCtrl: RowCtrl) => {
             // include just full width
             if (!rowCtrl.isFullWidth()) { return false; }
 
@@ -1034,7 +1035,11 @@ export class RowRenderer extends BeanStub {
             return;
         }
 
-        this.removeRowCtrls([rowNode.rowIndex!]);
+        if (rowNode.sticky) {
+            this.stickyRowFeature.refreshStickyNode(rowNode);
+        } else {
+            this.removeRowCtrls([rowNode.rowIndex!]);
+        }
         this.redrawAfterScroll();
     }
 

@@ -24,7 +24,7 @@ const Version: FunctionComponent<Props> = ({ date, version, blogUrl, highlights 
             <header>
                 <b className="font-size-large">Version {version}</b>
                 <span className="text-secondary font-size-large">{date}</span>
-                <a href={blogHref}>What's new in AG Grid {version}?</a>
+                <a href={blogHref}>What's new in AG Grid {version}</a>
             </header>
 
             <p className="font-size-small">

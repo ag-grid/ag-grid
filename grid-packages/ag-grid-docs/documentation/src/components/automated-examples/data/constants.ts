@@ -281,4 +281,4 @@ export const CATEGORIES = {
     },
 };
 
-export const PORTFOLIOS = ['Aggressive', 'Defensive', 'Income', 'Speculative', 'Hybrid'];
+export const PORTFOLIOS = ['Income', 'Hybrid', 'Speculative', 'Aggressive', 'Defensive'];

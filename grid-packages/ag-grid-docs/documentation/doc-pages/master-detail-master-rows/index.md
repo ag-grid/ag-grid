@@ -27,15 +27,14 @@ To specify which rows should expand, provide the grid callback `isRowMaster`. Th
 <api-documentation source='grid-options/properties.json' section='masterDetail' names='["isRowMaster"]'></api-documentation>
 
 <snippet spaceBetweenProperties="true">
-|const gridOptions = {
-|    // turn on master detail
-|    masterDetail: true,
-|
-|    // specify which rows to expand
-|    isRowMaster: dataItem => {
-|        return expandThisRow ? true : false;
-|    }
-|}
+const gridOptions = {
+    // turn on master detail
+    masterDetail: true,
+    // specify which rows to expand
+    isRowMaster: dataItem => {
+        return expandThisRow ? true : false;
+    }
+}
 </snippet>
 
 The following example only shows detail rows when there are corresponding child records.

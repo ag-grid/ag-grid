@@ -157,8 +157,6 @@ To sort a group row, you can apply a sort to the underlying column. In the examp
 
 <grid-example title='Sorting Group Rows' name='sorting-group-rows' type='mixed' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
-
-
 ## Next Up
 
 Continue to the next section to learn about the [Custom Group Columns](../grouping-custom-group-columns/) display type.

@@ -54,30 +54,28 @@ There are two approaches you can take: 1) Providing Row IDs, or 2) Using Object 
   For removing rows, the grid will find the row with the same key and remove it. For this reason, the
   provided records within the `remove` array only need to have a key present.
 
-  <snippet>
-  const gridOptions = {
-      getRowId: (params) => params.data.employeeId
-  }
-  </snippet>
+<snippet>
+const gridOptions = {
+    getRowId: (params) => params.data.employeeId
+}
+</snippet>
 
-  ```js
-  const myTransaction = {
+```js
+const myTransaction = {
       add: [
           // adding a row, there should be no row with ID = 4 already
           {employeeId: '4', name: 'Billy', age: 55}
-      ],
-      
+      ],   
       update: [
           // updating a row, the grid will look for the row with ID = 2 to update
           {employeeId: '2', name: 'Bob', age: 23}
       ],
-      
       remove: [
           // deleting a row, only the ID is needed, other attributes (name, age) don't serve any purpose
           {employeeId: '5'}
       ]
-  }
-  ```
+ }
+```
 
 
 - ### Using Object References (Slower)
@@ -130,7 +128,7 @@ The example below demonstrates Changed Path Selection. The example is best viewe
 
 - [Suppressing Top Level Aggregations](/aggregation/#suppressing-top-level-aggregations) is enabled via `suppressAggAtRootLevel=true` to improve performance.
 
-<grid-example title='Small Changes Big Data' name='small-changes-big-data' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+<grid-example title='Small Changes Big Data' name='small-changes-big-data' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 [[note]]
 | Note that [Header Checkbox Selection](/row-selection/#header-checkbox-selection)

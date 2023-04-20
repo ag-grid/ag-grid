@@ -339,7 +339,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         this.dataModel = new DataModel<any, any, true>({
             props: [
                 keyProperty(xKey, isContinuousX),
-                ...activeSeriesItems.map((yKey) => valueProperty(yKey, isContinuousY)),
+                ...activeSeriesItems.map((yKey) => valueProperty(yKey, isContinuousY, { invalidValue: null })),
                 ...activeStacks.map((stack) => sumProperties(stack)),
                 ...(isContinuousX ? [SMALLEST_KEY_INTERVAL] : []),
                 SUM_VALUE_EXTENT,

@@ -79,7 +79,7 @@
 |</section>
 |
 | [[note]]
-| | Please refer to our [Compatibility Chart](#ag-grid--react-compatibility-chart) for Supported Versions of React & AG Grid.
+| | Please refer to our [Compatibility Chart](/react-compatibility) for Supported Versions of React & AG Grid.
 |
 | ## Getting Started with Community Video
 |
@@ -399,14 +399,3 @@
 |    {field: 'price'}
 |]);
 |```
-|
-| <br/>
-| <br/>
-|
-| ## AG Grid & React Compatibility Chart
-|
-| | React Version | AG Grid Versions |
-| | ------------- | ---------------- |
-| | 15.x          | 18 - 21.2.0      |
-| | 16.3+ / 17+   | 22+              |
-| | 18+           | 27.2.0+          |

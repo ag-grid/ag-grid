@@ -4,7 +4,6 @@ import { Observable, TypedEvent } from '../../util/observable';
 import { ChartAxis } from '../chartAxis';
 import { createId } from '../../util/id';
 import { checkDatum, isNumber } from '../../util/value';
-import { TimeAxis } from '../axis/timeAxis';
 import { createDeprecationWarning } from '../../util/deprecation';
 import {
     BOOLEAN,
@@ -160,7 +159,14 @@ export class SeriesTooltip {
     @Validate(BOOLEAN)
     enabled = true;
 
+    interaction?: SeriesTooltipInteraction = new SeriesTooltipInteraction();
+
     readonly position: TooltipPosition = new TooltipPosition();
+}
+
+export class SeriesTooltipInteraction {
+    @Validate(BOOLEAN)
+    enabled = false;
 }
 
 export type SeriesNodeDataContext<S = SeriesNodeDatum, L = S> = {
@@ -530,13 +536,6 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         return new SeriesNodeDoubleClickEvent(event, datum, this);
     }
 
-    /**
-     * @private
-     * Returns an array with the items of this series
-     * that should be shown in the legend. It's up to the series to determine
-     * what is considered an item. An item could be the series itself or some
-     * part of the series.
-     */
     abstract getLegendData(): LegendDatum[];
 
     toggleSeriesItem(_itemId: any, enabled: boolean): void {
@@ -588,16 +587,9 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         if (min === max) {
             // domain has zero length, there is only a single valid value in data
 
-            if (axis instanceof TimeAxis) {
-                // numbers in domain correspond to Unix timestamps
-                // automatically expand domain by 1 in each direction
-                min -= 1;
-                max += 1;
-            } else {
-                const padding = Math.abs(min * 0.01);
-                min -= padding;
-                max += padding;
-            }
+            const padding = axis?.calculatePadding(min, max) ?? 1;
+            min -= padding;
+            max += padding;
         }
 
         if (!(isNumber(min) && isNumber(max))) {

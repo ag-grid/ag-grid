@@ -263,7 +263,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.layoutService.addListener('start-layout', (e) => this.positionCaptions(e.shrinkRect));
 
         this.tooltip = new Tooltip(this.scene.canvas.element, document, document.body);
-        this.tooltipManager = new TooltipManager(this.tooltip);
+        this.tooltipManager = new TooltipManager(this.tooltip, this.interactionManager);
         this.legend = new Legend(
             this,
             this.interactionManager,
@@ -282,6 +282,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.interactionManager.addListener('hover', (event) => this.onMouseMove(event));
         this.interactionManager.addListener('leave', (event) => this.onLeave(event));
         this.interactionManager.addListener('page-left', () => this.destroy());
+        this.interactionManager.addListener('wheel', () => this.disablePointer());
 
         this.zoomManager.addListener('zoom-change', (_) =>
             this.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true })
@@ -345,6 +346,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this._performUpdateType = ChartUpdateType.NONE;
         this._pendingFactoryUpdates.splice(0);
 
+        this.tooltipManager.destroy();
         this.tooltip.destroy();
         this.legend.destroy();
         SizeMonitor.unobserve(this.element);
@@ -595,12 +597,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         if (!series.data) {
             series.data = this.data;
         }
-        if (this.hasEventListener('seriesNodeClick')) {
-            series.addEventListener('nodeClick', this.onSeriesNodeClick);
-        }
-        if (this.hasEventListener('seriesNodeDoubleClick')) {
-            series.addEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
-        }
+        this.addSeriesListeners(series);
     }
 
     protected freeSeries(series: Series<any>) {
@@ -615,6 +612,25 @@ export abstract class Chart extends Observable implements AgChartInstance {
             this.seriesRoot.removeChild(series.rootGroup);
         });
         this._series = []; // using `_series` instead of `series` to prevent infinite recursion
+    }
+
+    protected addSeriesListeners(series: Series<any>) {
+        if (this.hasEventListener('seriesNodeClick')) {
+            series.addEventListener('nodeClick', this.onSeriesNodeClick);
+        }
+
+        if (this.hasEventListener('seriesNodeDoubleClick')) {
+            series.addEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
+        }
+    }
+
+    updateAllSeriesListeners(): void {
+        this.series.forEach((series) => {
+            series.removeEventListener('nodeClick', this.onSeriesNodeClick);
+            series.removeEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
+
+            this.addSeriesListeners(series);
+        });
     }
 
     protected assignSeriesToAxes() {
@@ -931,8 +947,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
         // Handle node highlighting and tooltip toggling when pointer within `tooltip.range`
         this.handlePointerTooltip(event, disablePointer);
 
-        // Handle mouse cursor when pointer withing `series[].nodeClickRange`
-        this.handlePointerNodeCursor(event);
+        // Handle node highlighting and mouse cursor when pointer withing `series[].nodeClickRange`
+        this.handlePointerNode(event);
     }
 
     protected handlePointerTooltip(
@@ -980,19 +996,21 @@ export abstract class Chart extends Observable implements AgChartInstance {
         };
 
         const meta = this.mergePointerDatum({ pageX, pageY, offsetX, offsetY, event: event, position }, pick.datum);
+        meta.enableInteraction = pick.series.tooltip.interaction?.enabled ?? false;
 
         if (shouldUpdateTooltip) {
             this.tooltipManager.updateTooltip(this.id, meta, html);
         }
     }
 
-    protected handlePointerNodeCursor(event: InteractionEvent<'hover'>) {
+    protected handlePointerNode(event: InteractionEvent<'hover'>) {
         const found = this.checkSeriesNodeRange(event, (series: Series, datum: any) => {
             if (series.hasEventListener('nodeClick') || series.hasEventListener('nodeDoubleClick')) {
                 this.cursorManager.updateCursor('chart', 'pointer');
-                if (this.highlight.range === 'node') {
-                    this.highlightManager.updateHighlight(this.id, datum);
-                }
+            }
+
+            if (this.highlight.range === 'node') {
+                this.highlightManager.updateHighlight(this.id, datum);
             }
         });
 
@@ -1043,13 +1061,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         event: InteractionEvent<'click' | 'dblclick' | 'hover'>,
         callback: (series: Series, datum: any) => void
     ): boolean {
-        // If the tooltip picking uses `nearest` then, irregardless of the range of each series, the same node would
-        // be picked, so we can shortcut to using the last pick. Otherwise, we need to pick a node distinctly
-        // from the tooltip picking in case the node click range is greater than the tooltip range.
-        const nearestNode =
-            this.tooltip.range === 'nearest' && this.lastPick !== undefined
-                ? this.lastPick
-                : this.pickSeriesNode({ x: event.offsetX, y: event.offsetY }, false);
+        const nearestNode = this.pickSeriesNode({ x: event.offsetX, y: event.offsetY }, false);
 
         const datum = nearestNode?.datum;
         const nodeClickRange = datum?.series.nodeClickRange;

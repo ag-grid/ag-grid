@@ -8,9 +8,6 @@ import {ensureGridApiHasBeenSet} from "./utils";
 const CellRenderer = props => <>{props.value}</>;
 
 const App = () => {
-    const [gridApi, setGridApi] = useState(null);
-    const [gridColumnApi, setGridColumnApi] = useState(null);
-
     const [rowData, setRowData] = useState([
         {
             value: 10
@@ -23,8 +20,6 @@ const App = () => {
         { field: 'value', cellRendererComp: 'cellRenderer' }
     ]);
     function onGridReady(params) {
-        setGridApi(params.api);
-        setGridColumnApi(params.columnApi);
     }
 
     return (

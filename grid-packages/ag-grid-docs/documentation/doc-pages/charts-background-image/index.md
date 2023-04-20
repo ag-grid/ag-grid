@@ -25,8 +25,6 @@ background: {
 
 [Custom Background Image Example](https://plnkr.co/edit/b24vwpgBhAqQO1kq?open=main.js)
 
-<!-- <chart-example title='Background Image' name='background-image' type='generated'></chart-example> -->
-
 ### API Reference
 
 <!-- TODO: replace with usual api reference component -->
@@ -69,7 +67,3 @@ interface AgChartBackgroundImage {
 ```
 
 <!-- <interface-documentation interfaceName='AgChartBackground' config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation> -->
-
-## Next Up
-
-Continue to the next section to learn more about [overlays](/charts-overlays/).

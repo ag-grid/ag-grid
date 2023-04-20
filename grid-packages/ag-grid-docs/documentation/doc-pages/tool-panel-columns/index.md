@@ -3,13 +3,13 @@ title: "Columns Tool Panel"
 enterprise: true
 ---
 
-The columns tool panel provides functions for managing the grid's columns.
+The Columns Tool Panel provides functions for managing the grid's columns.
 
 ## Simple Example
 
-Below shows a simple example of the columns tool panel. The following can be noted:
+Below shows a simple example of the Columns Tool Panel. The following can be noted:
 
-- Grid property `toolPanel='columns'` which shows only the columns tool panel.
+- Grid property `toolPanel='columns'` which shows only the Columns Tool Panel.
 - Grid property `defaultColDef` has `enableValue`, `enableRowGroup` and `enablePivot` set. This means all columns can be dragged to any of the Row Groups, Values and Column sections. Although each column can be dragged to these sections, it does not make sense to do so. For example, it does not make sense to aggregate the country column, but it does make sense to group rows by country.
 
 Things to try:
@@ -40,15 +40,15 @@ Selecting columns means different things depending on whether the grid is in piv
 - **Pivot Mode Off**: When pivot mode is off, selecting a column toggles the visibility of the column. A selected column is visible and an unselected column is hidden. With `allowDragFromColumnsToolPanel=true` you can drag a column from the tool panel onto the grid it will become visible.
 - **Pivot Mode On**: When pivot mode is on, selecting a column will trigger the column to be either aggregated, grouped or pivoted depending on what is allowed for that column.
 
-## Column Tool Panel Sections
+## Columns Tool Panel Sections
 
-The column tool panel is split into different sections as follows:
+The Columns Tool Panel is split into different sections as follows:
 
 - **Pivot Mode Section**: Check the 'Pivot Mode' checkbox to turn the grid into [Pivot Mode](/pivoting/). Uncheck to take the grid out of pivot mode.
 - **Expand / Collapse All**: Toggle to expand or collapse all column groups.
 - **Columns Section**: Display all columns, grouped by column groups, that are available to be displayed in the grid. By default the order of the columns is kept in sync with the order they are shown in the grid, but this behaviour can be disabled.
-- **Select / Un-select All**: Toggle to select or un-select all columns in the columns section.
-- **Select / Un-Select Column (or Group)**: Each column can be individually selected. What selection means depends on pivot mode and is explained below*.
+- **Select / Unselect All**: Toggle to select or unselect all columns in the columns section.
+- **Select / Unselect Column (or Group)**: Each column can be individually selected. The [Selection Action](#selection-action) depends on pivot mode.
 - **Drag Handle**: Each column can be dragged either with the mouse or via touch on touch devices. The column can then be dragged to one of the following:
     1. Row Groups Section
     2. Values (Pivot) Section
@@ -59,7 +59,7 @@ The column tool panel is split into different sections as follows:
 - **Values Section**: Columns here will form the grid's [Aggregations](/aggregation/). The grid calls this function 'Aggregations', however for the UI we follow the Excel naming convention and call it 'Values'.
 - **Column Labels (Pivot) Section**: Columns here will form the grid's [Pivot](/pivoting/). The grid calls this function 'Pivot', however for the UI we follow the Excel naming convention and call it 'Column Labels'.
 
-<image-caption src="tool-panel-columns/resources/screenshot.png" alt="AG Grid Tool Panel Section" width="50rem" centered="true" constrained="true"></image-caption>
+<image-caption src="tool-panel-columns/resources/screenshot.png" alt="AG Grid Tool Panel Section" width="46rem" centered="true" constrained="true"></image-caption>
 
 ## Section Visibility
 
@@ -71,7 +71,7 @@ To remove a particular column from the tool panel, set the column property `supp
 
 <api-documentation source='column-properties/properties.json' section='columns' names='["suppressColumnsToolPanel"]'></api-documentation>
 
-It is also possible to show and hide the sections of the Column Tool Panel using the following methods provided in the `IColumnToolPanel` interface:
+It is also possible to show and hide the sections of the Columns Tool Panel using the following methods provided in the `IColumnToolPanel` interface:
 
 ```ts
 interface IColumnToolPanel {
@@ -85,12 +85,12 @@ interface IColumnToolPanel {
 
 The example below demonstrates the suppress options / methods described above. Note the following:
 
-- The following sections are not present in the tool panel: Row Groups, Values, Column Labels, Pivot Mode, Side Buttons, Column Filter, Select / Un-select All, Expand / Collapse All.
+- The following sections are not present in the tool panel: Row Groups, Values, Column Labels, Pivot Mode, Side Buttons, Column Filter, Select / Unselect All, Expand / Collapse All.
 - The date column is hidden from the tool panel using: `colDef.suppressColumnsToolPanel=true`.
-- Clicking **Show Pivot Mode Section** invokes `setPivotModeSectionVisible(true)` on the column tool panel instance.
-- Clicking **Show Row Groups Section** invokes `showRowGroupsSection(true)` on the column tool panel instance.
-- Clicking **Show Values Section** invokes `showValuesSection(true)` on the column tool panel instance.
-- Clicking **Show Pivot Section** invokes `showPivotSection(true)` on the column tool panel instance.
+- Clicking **Show Pivot Mode Section** invokes `setPivotModeSectionVisible(true)` on the Columns Tool Panel instance.
+- Clicking **Show Row Groups Section** invokes `showRowGroupsSection(true)` on the Columns Tool Panel instance.
+- Clicking **Show Values Section** invokes `showValuesSection(true)` on the Columns Tool Panel instance.
+- Clicking **Show Pivot Section** invokes `showPivotSection(true)` on the Columns Tool Panel instance.
 
 <grid-example title='Section Visibility' name='section-visibility' type='generated' options='{ "enterprise": true, "exampleHeight": 630, "modules": ["clientside", "menu", "columnpanel"] }'></grid-example>
 
@@ -116,7 +116,7 @@ const gridOptions = {
                 toolPanelParams: {
                   // tool panel columns won't move when columns are reordered in the grid
                   suppressSyncLayoutWithGrid: true, 
-                  // prevents columns being reordered from the columns tool panel
+                  // prevents columns being reordered from the Columns Tool Panel
                   suppressColumnMove: true,
                 },
               },
@@ -131,8 +131,8 @@ separate properties.
 
 The following example demonstrates the results of enabling both of these properties. Note the following:
 
-- Moving columns in the grid won't reorder columns in the columns tool panel as `suppressSyncLayoutWithGrid=true`.
-- It is not possible to reorder columns from the columns tool panel as `suppressColumnMove=true`.
+- Moving columns in the grid won't reorder columns in the Columns Tool Panel as `suppressSyncLayoutWithGrid=true`.
+- It is not possible to reorder columns from the Columns Tool Panel as `suppressColumnMove=true`.
 
 <grid-example title='Suppress Column Reordering' name='suppress-column-reordering' type='generated' options='{ "enterprise": true, "exampleHeight": 670, "modules": ["clientside", "menu", "columnpanel"] }'></grid-example>
 
@@ -141,28 +141,28 @@ The following example demonstrates the results of enabling both of these propert
 You can add a CSS class to the columns in the tool panel by specifying `toolPanelClass` in the column definition as follows:
 
 <snippet spaceBetweenProperties="true">
-|const gridOptions = {
-|    columnDefs: [
-|        // set as string
-|        { field: 'gold', toolPanelClass: 'tp-gold' },
-|
-|        // set as array of strings
-|        { field: 'silver', toolPanelClass: ['tp-silver'] },
-|
-|        // set as function returning string or array of strings
-|        {
-|            field: 'bronze',
-|            toolPanelClass: params => {
-|                return 'tp-bronze';
-|            },
-|        }
-|    ]
-|}
+| const gridOptions = {
+|     columnDefs: [
+|         // set as string
+|         { field: 'gold', toolPanelClass: 'tp-gold' },
+| 
+|         // set as array of strings
+|         { field: 'silver', toolPanelClass: ['tp-silver'] },
+| 
+|         // set as function returning string or array of strings
+|         {
+|             field: 'bronze',
+|             toolPanelClass: params => {
+|                 return 'tp-bronze';
+|             },
+|         }
+|     ]
+| }
 </snippet>
 
-## Column Tool Panel Example
+## Columns Tool Panel Example
 
-The example below demonstrates the column tool panel using a mixture of items explained above. Note the following:
+The example below demonstrates the Columns Tool Panel using a mixture of items explained above. Note the following:
 
 - The `country`, `year`, `date` and `sport` columns all have `enableRowGroup=true` and `enablePivot=true`. This means you can drag the columns to the group and pivot sections, but you cannot drag them to the values sections.
 - The `gold`, `silver` and `bronze` columns all have `enableValue=true`. This means you can drag the columns to the values section, but you cannot drag them to the group or pivot sections.
@@ -192,20 +192,20 @@ interface IColumnToolPanel {
 The code snippet below shows how to expand and collapse column groups using the Columns Tool Panel instance:
 
 <snippet>
-|// lookup Columns Tool Panel instance by id, in this case using the default columns instance id
-|const columnsToolPanel = gridOptions.api.getToolPanelInstance('columns');
-|
-|// expands all column groups in the Columns Tool Panel
-|columnsToolPanel.expandColumnGroups();
-|
-|// collapses all column groups in the Columns Tool Panel
-|columnsToolPanel.collapseColumnGroups();
-|
-|// expands the 'Athlete' and 'Competition' column groups in the Columns Tool Panel
-|columnsToolPanel.expandColumnGroups(['athleteGroupId', 'competitionGroupId']);
-|
-|// collapses the 'Competition' column group in the Columns Tool Panel
-|columnsToolPanel.collapseFilters(['age', 'sport']);
+| // lookup Columns Tool Panel instance by id, in this case using the default columns instance id
+| const columnsToolPanel = gridOptions.api.getToolPanelInstance('columns');
+| 
+| // expands all column groups in the Columns Tool Panel
+| columnsToolPanel.expandColumnGroups();
+| 
+| // collapses all column groups in the Columns Tool Panel
+| columnsToolPanel.collapseColumnGroups();
+| 
+| // expands the 'Athlete' and 'Competition' column groups in the Columns Tool Panel
+| columnsToolPanel.expandColumnGroups(['athleteGroupId', 'competitionGroupId']);
+| 
+| // collapses the 'Competition' column group in the Columns Tool Panel
+| columnsToolPanel.collapseFilters(['age', 'sport']);
 </snippet>
 
 Notice in the snippet above that it's possible to target individual column groups by supplying `groupId`s.
@@ -247,19 +247,19 @@ const gridOptions = {
 </snippet>
 
 <snippet>
-|// lookup Columns Tool Panel instance by id, in this case using the default columns instance id
-|const columnsToolPanel = gridOptions.api.getToolPanelInstance('columns');
-|
-|// set custom Columns Tool Panel layout
-|columnsToolPanel.setColumnLayout([
-|    {
-|        headerName: 'Group 1', // group doesn't appear in grid
-|        children: [
-|            { field: 'c' }, // custom column order with column "b" omitted
-|            { field: 'a' }
-|        ]
-|    }
-|]);
+| // lookup Columns Tool Panel instance by id, in this case using the default columns instance id
+| const columnsToolPanel = gridOptions.api.getToolPanelInstance('columns');
+| 
+| // set custom Columns Tool Panel layout
+| columnsToolPanel.setColumnLayout([
+|     {
+|         headerName: 'Group 1', // group doesn't appear in grid
+|         children: [
+|             { field: 'c' }, // custom column order with column "b" omitted
+|             { field: 'a' }
+|         ]
+|     }
+| ]);
 </snippet>
 
 Notice from the snippet above that it's possible to define column groups in the tool panel that don't exist in the grid. Also note that columns can be omitted or positioned in a different order but all referenced columns must already exist in the grid.
@@ -280,4 +280,3 @@ The example below shows two custom layouts for the Columns Tool Panel. Note the 
 ## Next Up
 
 Now that we covered the Columns Tool Panel, continue to the next section to learn about the [Filters Tool Panel](/tool-panel-filters/).
-

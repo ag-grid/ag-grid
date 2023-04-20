@@ -872,7 +872,7 @@
     },
     "aggregation": {
       "default": "sum",
-      "options": ["sum", "mean"]
+      "options": ["count", "sum", "mean"]
     },
     "lineDashOffset": {
       "default": 0,

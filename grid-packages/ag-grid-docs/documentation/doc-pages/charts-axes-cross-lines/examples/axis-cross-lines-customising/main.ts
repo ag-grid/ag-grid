@@ -1,8 +1,8 @@
-import { AgChart, AgChartOptions, time } from 'ag-charts-community';
-import { getData } from './data';
+import { AgChart, AgChartOptions, time } from "ag-charts-community"
+import { getData } from "./data"
 
 const options: AgChartOptions = {
-  container: document.getElementById('myChart'),
+  container: document.getElementById("myChart"),
   autoSize: true,
   data: getData(),
   theme: {
@@ -14,9 +14,18 @@ const options: AgChartOptions = {
           },
           time: {
             gridStyle: [],
-          }
+          },
         },
         series: {
+          tooltip: {
+            renderer: ({ xValue, yValue }) => ({
+              content: `${xValue.toLocaleString("en-GB", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}: ${yValue}`,
+            }),
+          },
           highlightStyle: {
             series: {
               strokeWidth: 3,
@@ -29,30 +38,30 @@ const options: AgChartOptions = {
   },
   series: [
     {
-      type: 'line',
-      xKey: 'date',
-      yKey: 'petrol',
-      stroke: '#01c185',
+      type: "line",
+      xKey: "date",
+      yKey: "petrol",
+      stroke: "#01c185",
       marker: {
-        stroke: '#01c185',
-        fill: '#01c185',
+        stroke: "#01c185",
+        fill: "#01c185",
       },
     },
     {
-      type: 'line',
-      xKey: 'date',
-      yKey: 'diesel',
-      stroke: '#000000',
+      type: "line",
+      xKey: "date",
+      yKey: "diesel",
+      stroke: "#000000",
       marker: {
-        stroke: '#000000',
-        fill: '#000000',
+        stroke: "#000000",
+        fill: "#000000",
       },
     },
   ],
   axes: [
     {
-      position: 'bottom',
-      type: 'time',
+      position: "bottom",
+      type: "time",
       label: {
         autoRotate: true,
       },
@@ -60,81 +69,81 @@ const options: AgChartOptions = {
         interval: time.month.every(2),
       },
       title: {
-        text: 'Date',
+        text: "Date",
       },
       crossLines: [
         {
-          type: 'range',
+          type: "range",
           range: [new Date(2019, 4, 1), new Date(2019, 6, 1)],
           strokeWidth: 0,
-          fill: '#7290C4',
+          fill: "#7290C4",
           fillOpacity: 0.4,
           label: {
-            text: 'Price Peak',
-            position: 'top',
+            text: "Price Peak",
+            position: "top",
             fontSize: 14,
           },
         },
       ],
     },
     {
-      position: 'left',
-      type: 'number',
+      position: "left",
+      type: "number",
       title: {
-        text: 'Price in pence',
+        text: "Price in pence",
       },
       crossLines: [
         {
-          type: 'line',
+          type: "line",
           value: 142.45,
-          stroke: '#7290C4',
+          stroke: "#7290C4",
           lineDash: [6, 12],
           label: {
-            text: '142.4',
-            position: 'right',
+            text: "142.4",
+            position: "right",
             fontSize: 12,
-            color: '#000000',
+            color: "#000000",
           },
         },
         {
-          type: 'line',
-          value: 133.80,
-          stroke: '#7290C4',
+          type: "line",
+          value: 133.8,
+          stroke: "#7290C4",
           lineDash: [6, 12],
           label: {
-            text: '133.8',
-            position: 'right',
+            text: "133.8",
+            position: "right",
             fontSize: 12,
-            color: '#01c185',
+            color: "#01c185",
           },
         },
         {
-          type: 'line',
+          type: "line",
           value: 135.35,
-          stroke: '#D21E75',
+          stroke: "#D21E75",
           lineDash: [2, 4],
           label: {
-            text: '135.3',
-            position: 'right',
+            text: "135.3",
+            position: "right",
             fontSize: 12,
-            color: '#000000',
+            color: "#000000",
           },
         },
         {
-          type: 'line',
+          type: "line",
           value: 123.97,
-          stroke: '#D21E75',
+          stroke: "#D21E75",
           lineDash: [2, 4],
           label: {
-            text: '124.0',
-            position: 'right',
+            text: "124.0",
+            position: "right",
             fontSize: 12,
-            color: '#01c185',
+            color: "#01c185",
           },
         },
       ],
     },
   ],
-};
+}
 
-var chart = AgChart.create(options);
+var chart = AgChart.create(options)
