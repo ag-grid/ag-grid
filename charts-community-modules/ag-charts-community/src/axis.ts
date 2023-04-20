@@ -1100,7 +1100,6 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         const wrapLabels = autoWrap && !rotated;
 
         if (wrapLabels) {
-            labelData = [];
             labelSelection.each((node, datum, index) => {
                 const formattedText = this.formatTickDatum(datum.tick, index);
                 const labelText = Text.wrap(formattedText, maxLabelWidth, font, label.fontSize);
