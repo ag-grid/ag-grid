@@ -24,7 +24,7 @@ const Announcements = ({ framework }) => (
                     },
                     {
                         text: 'Chart Tooltip Positioning',
-                        url: 'https://ag-grid.com/javascript-data-grid/tooltips/#tooltip-position',
+                        url: 'https://ag-grid.com/javascript-charts/tooltips/#tooltip-position',
                     },
                 ]}
             ></Version>
