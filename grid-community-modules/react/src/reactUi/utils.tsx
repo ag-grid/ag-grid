@@ -44,14 +44,15 @@ export const isComponentStateless = (Component: any) => {
         ) || (typeof Component === 'object' && Component.$$typeof === getMemoType());
 }
 
-// CreateRoot is only available in React 18 and above, which is same as what we require for flushSync
-const createRootAvailable = (ReactDOM as any).createRoot != null;
+// CreateRoot is only available from React 18, which if used requires us to use flushSync.
+const createRootAndFlushSyncAvailable = (ReactDOM as any).createRoot != null && (ReactDOM as any).flushSync != null;
+
 /**
- * Wrapper around React 18 flushSync so that we only use it if it's available while we support React 16-17
+ * Wrapper around flushSync to provide backwards compatibility with React 16-17
  * @param fn 
  */
 export const agFlushSync = (fn: () => void) => {
-    if (createRootAvailable) {
+    if (createRootAndFlushSyncAvailable) {
         flushSync(fn);
     } else {
         fn();
