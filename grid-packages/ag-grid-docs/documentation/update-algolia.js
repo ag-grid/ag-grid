@@ -47,6 +47,18 @@ const cleanContents = contents => {
         .trim();
 };
 
+const extractTitle = titleTag => {
+    let title = titleTag.firstChild.textContent;
+
+    let sibling = titleTag.firstChild.nextSibling;
+    while(sibling) {
+        title += ` ${sibling.textContent}`;
+        sibling = sibling.nextSibling;
+    }
+
+    return title;
+}
+
 const createRecords = async (browser, url, framework, breadcrumb, rank, loadFromAgGrid) => {
     const records = [];
     const path = convertToFrameworkUrl(url, framework);
@@ -79,6 +91,8 @@ const createRecords = async (browser, url, framework, breadcrumb, rank, loadFrom
     let text = '';
 
     const titleTag = dom.window.document.querySelector('h1');
+    const title = extractTitle(titleTag);
+
     let positionInPage = 0;
 
     const createRecord = () => {
@@ -98,7 +112,7 @@ const createRecords = async (browser, url, framework, breadcrumb, rank, loadFrom
         records.push({
             objectID: hashPath,
             breadcrumb,
-            title: titleTag.textContent,
+            title,
             heading,
             subHeading,
             path: hashPath,
@@ -167,7 +181,7 @@ const createRecords = async (browser, url, framework, breadcrumb, rank, loadFrom
         }
     };
 
-    parseContent(titleTag.nextElementSibling);
+    parseContent(dom.window.document.querySelector('#doc-content').firstChild.nextElementSibling);
     createRecord();
 
     return records;
