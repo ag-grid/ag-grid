@@ -9,6 +9,8 @@ import { isProductionEnvironment } from '../utils/consts';
 import { findParentItems } from './menu-find-parent-items';
 import styles from './Menu.module.scss';
 
+const WAIT_FOR_SCROLL_INTO_VIEW = 300;
+
 function filterProductionMenuData(data) {
     if (!isProductionEnvironment()) {
         // No filtering needed for non-production builds.
@@ -33,6 +35,12 @@ function toElementId(str) {
 }
 
 const menuData = filterProductionMenuData(rawMenuData);
+
+const isInView = (element) => {
+    const rect = element?.getBoundingClientRect();
+    if (!rect) return;
+    return rect.top <= window.innerHeight && rect.bottom >= 0;
+};
 
 const MenuSection = ({ title, items, currentFramework, isActive, toggleActive, activeParentItems }) => {
     return (
@@ -201,6 +209,20 @@ const Menu = ({ currentFramework, currentPage, path }) => {
 
                     const toggleActive = (event) => {
                         setActiveSection(isActive ? null : title);
+
+                        // Scroll to title if it moves out of view eg, for menu
+                        // sections with long lists which close and scroll the page to
+                        // the bottom
+                        setTimeout(() => {
+                            const titleElem = document.getElementById(toElementId(title));
+                            if (isInView(titleElem)) {
+                                return;
+                            }
+                            titleElem.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'center',
+                            });
+                        }, WAIT_FOR_SCROLL_INTO_VIEW);
                     };
 
                     return (
