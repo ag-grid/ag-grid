@@ -1,4 +1,4 @@
-// @ag-grid-community/react v29.3.0
+// @ag-grid-community/react v29.3.1
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createSyncJsComp = exports.showJsComp = void 0;
