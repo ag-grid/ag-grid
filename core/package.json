@@ -86,7 +86,7 @@
         "lint-staged": "^13.1.2",
         "prettier": "^2.8.3",
         "rimraf": "3.0.2",
-        "typescript": "~4.0.8",
+        "typescript": "~4.3.5",
         "@types/jest": "^27.4.1",
         "@types/jest-image-snapshot": "^5.1.0",
         "@types/pixelmatch": "^5.2.4",
