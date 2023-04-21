@@ -50,8 +50,8 @@
     "@ag-grid-community/core": ""
   },
   "devDependencies": {
-    "typescript": "~4.0.8",
-    "rimraf": "3.0.2"
+      "typescript": "~4.3.5",
+      "rimraf": "3.0.2"
   },
   "publishConfig": {
     "access": "private"
