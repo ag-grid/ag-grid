@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.1
+ * @version v29.3.2
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -154,7 +154,7 @@ var HeaderRowContainerCtrl = /** @class */ (function (_super) {
         if (this.pinned != null) {
             return;
         }
-        this.createManagedBean(new CenterWidthFeature(function (width) { return _this.comp.setCenterWidth(width + "px"); }));
+        this.createManagedBean(new CenterWidthFeature(function (width) { return _this.comp.setCenterWidth(width + "px"); }, true));
     };
     HeaderRowContainerCtrl.prototype.setHorizontalScroll = function (offset) {
         this.comp.setViewportScrollLeft(offset);

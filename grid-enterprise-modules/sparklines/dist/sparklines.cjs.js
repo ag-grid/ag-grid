@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/sparklines - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.1
+          * @ag-grid-enterprise/sparklines - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.2
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -29258,7 +29258,7 @@ var SparklineTooltipSingleton = /** @class */ (function (_super) {
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '29.3.1';
+var VERSION = '29.3.2';
 
 var SparklinesModule = {
     version: VERSION,

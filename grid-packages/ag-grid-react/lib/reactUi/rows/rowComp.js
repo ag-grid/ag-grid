@@ -1,4 +1,4 @@
-// ag-grid-react v29.3.1
+// ag-grid-react v29.3.2
 "use strict";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
@@ -153,7 +153,11 @@ var RowComp = function (params) {
             setRole: function (value) { return setRole(value); },
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
-            setCellCtrls: function (next) { return setCellCtrls(function (prev) { return maintainOrderOnColumns(prev, next, domOrder); }); },
+            setCellCtrls: function (next) {
+                utils_1.agFlushSync(function () {
+                    setCellCtrls(function (prev) { return maintainOrderOnColumns(prev, next, domOrder); });
+                });
+            },
             showFullWidth: function (compDetails) { return setFullWidthCompDetails(compDetails); },
             getFullWidthCellRenderer: function () { return fullWidthCompRef.current; },
         };

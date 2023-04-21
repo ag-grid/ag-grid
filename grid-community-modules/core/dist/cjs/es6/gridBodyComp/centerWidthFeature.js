@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.1
+ * @version v29.3.2
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -17,15 +17,22 @@ const beanStub_1 = require("../context/beanStub");
 const context_1 = require("../context/context");
 const eventKeys_1 = require("../eventKeys");
 class CenterWidthFeature extends beanStub_1.BeanStub {
-    constructor(callback) {
+    constructor(callback, addSpacer = false) {
         super();
         this.callback = callback;
+        this.addSpacer = addSpacer;
     }
     postConstruct() {
         const listener = this.setWidth.bind(this);
         this.addManagedPropertyListener('domLayout', listener);
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, listener);
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, listener);
+        if (this.addSpacer) {
+            this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, listener);
+            this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_SCROLL_VISIBILITY_CHANGED, listener);
+            this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_SCROLLBAR_WIDTH_CHANGED, listener);
+        }
         this.setWidth();
     }
     setWidth() {
@@ -34,13 +41,28 @@ class CenterWidthFeature extends beanStub_1.BeanStub {
         const centerWidth = columnModel.getBodyContainerWidth();
         const leftWidth = columnModel.getDisplayedColumnsLeftWidth();
         const rightWidth = columnModel.getDisplayedColumnsRightWidth();
-        const totalWidth = printLayout ? centerWidth + leftWidth + rightWidth : centerWidth;
+        let totalWidth;
+        if (printLayout) {
+            totalWidth = centerWidth + leftWidth + rightWidth;
+        }
+        else {
+            totalWidth = centerWidth;
+            if (this.addSpacer) {
+                const relevantWidth = this.gridOptionsService.is('enableRtl') ? leftWidth : rightWidth;
+                if (relevantWidth === 0 && this.scrollVisibleService.isVerticalScrollShowing()) {
+                    totalWidth += this.gridOptionsService.getScrollbarWidth();
+                }
+            }
+        }
         this.callback(totalWidth);
     }
 }
 __decorate([
     context_1.Autowired('columnModel')
 ], CenterWidthFeature.prototype, "columnModel", void 0);
+__decorate([
+    context_1.Autowired('scrollVisibleService')
+], CenterWidthFeature.prototype, "scrollVisibleService", void 0);
 __decorate([
     context_1.PostConstruct
 ], CenterWidthFeature.prototype, "postConstruct", null);

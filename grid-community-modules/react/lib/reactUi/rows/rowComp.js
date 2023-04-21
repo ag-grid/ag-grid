@@ -1,4 +1,4 @@
-// @ag-grid-community/react v29.3.1
+// @ag-grid-community/react v29.3.2
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -135,7 +135,11 @@ const RowComp = (params) => {
             setRole: value => setRole(value),
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
-            setCellCtrls: next => setCellCtrls(prev => maintainOrderOnColumns(prev, next, domOrder)),
+            setCellCtrls: next => {
+                utils_1.agFlushSync(() => {
+                    setCellCtrls(prev => maintainOrderOnColumns(prev, next, domOrder));
+                });
+            },
             showFullWidth: compDetails => setFullWidthCompDetails(compDetails),
             getFullWidthCellRenderer: () => fullWidthCompRef.current,
         };

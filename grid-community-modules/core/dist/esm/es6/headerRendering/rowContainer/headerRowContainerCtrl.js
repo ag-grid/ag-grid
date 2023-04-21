@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v29.3.1
+ * @version v29.3.2
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -116,7 +116,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
         if (this.pinned != null) {
             return;
         }
-        this.createManagedBean(new CenterWidthFeature(width => this.comp.setCenterWidth(`${width}px`)));
+        this.createManagedBean(new CenterWidthFeature(width => this.comp.setCenterWidth(`${width}px`), true));
     }
     setHorizontalScroll(offset) {
         this.comp.setViewportScrollLeft(offset);

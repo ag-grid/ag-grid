@@ -1,4 +1,4 @@
-// @ag-grid-community/react v29.3.1
+// @ag-grid-community/react v29.3.2
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -55,16 +55,18 @@ const RowContainerComp = (params) => {
     // if domOrder=true, then we just copy rowCtrls into rowCtrlsOrdered observing order,
     // however if false, then we need to keep the order as they are in the dom, otherwise rowAnimation breaks
     function updateRowCtrlsOrdered() {
-        setRowCtrlsOrdered(prev => {
-            const rowCtrls = rowCtrlsRef.current;
-            if (domOrderRef.current) {
-                return rowCtrls;
-            }
-            // if dom order not important, we don't want to change the order
-            // of the elements in the dom, as this would break transition styles
-            const oldRows = prev.filter(r => rowCtrls.indexOf(r) >= 0);
-            const newRows = rowCtrls.filter(r => oldRows.indexOf(r) < 0);
-            return [...oldRows, ...newRows];
+        utils_1.agFlushSync(() => {
+            setRowCtrlsOrdered(prev => {
+                const rowCtrls = rowCtrlsRef.current;
+                if (domOrderRef.current) {
+                    return rowCtrls;
+                }
+                // if dom order not important, we don't want to change the order
+                // of the elements in the dom, as this would break transition styles
+                const oldRows = prev.filter(r => rowCtrls.indexOf(r) >= 0);
+                const newRows = rowCtrls.filter(r => oldRows.indexOf(r) < 0);
+                return [...oldRows, ...newRows];
+            });
         });
     }
     useEffectOnce_1.useLayoutEffectOnce(() => {
