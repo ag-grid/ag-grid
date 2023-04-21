@@ -82,7 +82,7 @@ export class Text extends Shape {
         let baselineDistance = 0;
 
         for (let i = 0; i < this.lines.length; i++) {
-            const metrics = HdpiCanvas.measureText(this.lines[i], this.font, this.textBaseline, this.textAlign);
+            const metrics: any = HdpiCanvas.measureText(this.lines[i], this.font, this.textBaseline, this.textAlign);
 
             left = Math.max(left, metrics.actualBoundingBoxLeft);
             width = Math.max(width, metrics.width);
@@ -181,7 +181,7 @@ export class Text extends Shape {
         if (this.lineHeight) return this.lineHeight;
 
         if (HdpiCanvas.has.textMetrics) {
-            const metrics = HdpiCanvas.measureText(line, this.font, this.textBaseline, this.textAlign);
+            const metrics: any = HdpiCanvas.measureText(line, this.font, this.textBaseline, this.textAlign);
 
             return (
                 (metrics.fontBoundingBoxAscent ?? metrics.emHeightAscent) +
