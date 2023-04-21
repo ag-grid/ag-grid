@@ -110,7 +110,10 @@ const MenuItem = ({ item, currentFramework, activeParentItems }) => {
         </>
     );
 
-    const isActiveParent = activeParentItems.some((parentItem) => parentItem.url === item.url);
+    const isActiveParent = activeParentItems.some((parentItem) => {
+        const hasUrl = Boolean(parentItem.url);
+        return hasUrl ? parentItem.url === item.url : parentItem.title === item.title;
+    });
 
     return (
         <li key={item.title}>
