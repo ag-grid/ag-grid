@@ -3,7 +3,7 @@ import { ChartLegendDatum } from '../legendDatum';
 import { Observable, TypedEvent } from '../../util/observable';
 import { ChartAxis } from '../chartAxis';
 import { createId } from '../../util/id';
-import { checkDatum, isNumber } from '../../util/value';
+import { checkDatum } from '../../util/value';
 import {
     BOOLEAN,
     OPT_BOOLEAN,
@@ -20,7 +20,7 @@ import { BBox } from '../../scene/bbox';
 import { HighlightManager } from '../interaction/highlightManager';
 import { ChartAxisDirection } from '../chartAxisDirection';
 import { AgChartInteractionRange } from '../agChartOptions';
-import { DatumPropertyDefinition, OutputPropertyDefinition } from '../data/dataModel';
+import { DatumPropertyDefinition, fixNumericExtent, OutputPropertyDefinition } from '../data/dataModel';
 import { TooltipPosition } from '../tooltip/tooltip';
 
 /**
@@ -547,41 +547,19 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     readonly highlightStyle = new HighlightStyle();
 
     protected fixNumericExtent(extent?: [number | Date, number | Date], axis?: ChartAxis): number[] {
-        if (extent === undefined) {
-            // Don't return a range, there is no range.
-            return [];
+        const fixedExtent = fixNumericExtent(extent);
+
+        if (fixedExtent.length === 0) {
+            return fixedExtent;
         }
 
-        let [min, max] = extent;
-        min = +min;
-        max = +max;
-
-        if (min === 0 && max === 0) {
-            // domain has zero length and the single valid value is 0. Use the default of [0, 1].
-            return [0, 1];
-        }
-
-        if (min === Infinity && max === -Infinity) {
-            // There's no data in the domain.
-            return [];
-        }
-        if (min === Infinity) {
-            min = 0;
-        }
-        if (max === -Infinity) {
-            max = 0;
-        }
-
+        let [min, max] = fixedExtent;
         if (min === max) {
             // domain has zero length, there is only a single valid value in data
 
             const padding = axis?.calculatePadding(min, max) ?? 1;
             min -= padding;
             max += padding;
-        }
-
-        if (!(isNumber(min) && isNumber(max))) {
-            return [];
         }
 
         return [min, max];

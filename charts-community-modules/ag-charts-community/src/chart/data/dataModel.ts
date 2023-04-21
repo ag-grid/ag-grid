@@ -1,4 +1,5 @@
 import { Logger } from '../../util/logger';
+import { isNumber } from '../../util/value';
 
 export type UngroupedDataItem<D, V> = {
     keys: any[];
@@ -102,6 +103,39 @@ function toKeyString(keys: any[]) {
             return v;
         })
         .join('-');
+}
+
+export function fixNumericExtent(extent?: (number | Date)[]): [] | [number, number] {
+    if (extent === undefined) {
+        // Don't return a range, there is no range.
+        return [];
+    }
+
+    let [min, max] = extent;
+    min = +min;
+    max = +max;
+
+    if (min === 0 && max === 0) {
+        // domain has zero length and the single valid value is 0. Use the default of [0, 1].
+        return [0, 1];
+    }
+
+    if (min === Infinity && max === -Infinity) {
+        // There's no data in the domain.
+        return [];
+    }
+    if (min === Infinity) {
+        min = 0;
+    }
+    if (max === -Infinity) {
+        max = 0;
+    }
+
+    if (!(isNumber(min) && isNumber(max))) {
+        return [];
+    }
+
+    return [min, max];
 }
 
 export const SMALLEST_KEY_INTERVAL: ReducerOutputPropertyDefinition<number> = {
