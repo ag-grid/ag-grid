@@ -57,7 +57,6 @@ interface SeriesOpts {
     pathsPerSeries: number;
     pathsZIndexSubOrderOffset: number[];
     hasMarkers: boolean;
-    renderLayerPerSubSeries: boolean;
 }
 
 const DEFAULT_DIRECTION_KEYS: { [key in ChartAxisDirection]?: string[] } = {
@@ -129,13 +128,8 @@ export abstract class CartesianSeries<
             directionKeys: opts.directionKeys ?? DEFAULT_DIRECTION_KEYS,
         });
 
-        const {
-            pathsPerSeries = 1,
-            hasMarkers = false,
-            pathsZIndexSubOrderOffset = [],
-            renderLayerPerSubSeries = true,
-        } = opts;
-        this.opts = { pathsPerSeries, hasMarkers, pathsZIndexSubOrderOffset, renderLayerPerSubSeries };
+        const { pathsPerSeries = 1, hasMarkers = false, pathsZIndexSubOrderOffset = [] } = opts;
+        this.opts = { pathsPerSeries, hasMarkers, pathsZIndexSubOrderOffset };
     }
 
     destroy() {
@@ -250,7 +244,7 @@ export abstract class CartesianSeries<
             _contextNodeData: contextNodeData,
             contentGroup,
             subGroups,
-            opts: { pathsPerSeries, hasMarkers, pathsZIndexSubOrderOffset, renderLayerPerSubSeries },
+            opts: { pathsPerSeries, hasMarkers, pathsZIndexSubOrderOffset },
         } = this;
         if (contextNodeData.length === subGroups.length) {
             return;
@@ -273,7 +267,7 @@ export abstract class CartesianSeries<
 
         const totalGroups = contextNodeData.length;
         while (totalGroups > subGroups.length) {
-            const layer = renderLayerPerSubSeries;
+            const layer = false;
             const subGroupId = this.subGroupId++;
             const subGroupZOffset = subGroupId;
             const dataNodeGroup = new Group({
@@ -303,7 +297,6 @@ export abstract class CartesianSeries<
                 contentGroup.appendChild(markerGroup);
             }
 
-            const pathParentGroup = renderLayerPerSubSeries ? dataNodeGroup : contentGroup;
             const paths: Path[] = [];
             for (let index = 0; index < pathsPerSeries; index++) {
                 paths[index] = new Path();
@@ -312,7 +305,7 @@ export abstract class CartesianSeries<
                     () => this._declarationOrder,
                     (pathsZIndexSubOrderOffset[index] ?? 0) + subGroupZOffset,
                 ];
-                pathParentGroup.appendChild(paths[index]);
+                contentGroup.appendChild(paths[index]);
             }
 
             subGroups.push({
@@ -333,7 +326,7 @@ export abstract class CartesianSeries<
             highlightLabelSelection,
             _contextNodeData: contextNodeData,
             seriesItemEnabled,
-            opts: { hasMarkers, renderLayerPerSubSeries },
+            opts: { hasMarkers },
         } = this;
 
         const visible = this.visible && this._contextNodeData?.length > 0 && anySeriesItemEnabled;
@@ -394,10 +387,8 @@ export abstract class CartesianSeries<
                 }
 
                 for (const path of paths) {
-                    if (!renderLayerPerSubSeries) {
-                        path.opacity = subGroupOpacity;
-                        path.visible = subGroupVisible;
-                    }
+                    path.opacity = subGroupOpacity;
+                    path.visible = subGroupVisible;
                 }
 
                 if (!dataNodeGroup.visible) {

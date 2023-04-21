@@ -1,4 +1,4 @@
-import { HdpiCanvas } from '../canvas/hdpiCanvas';
+import { HdpiCanvas, Size } from '../canvas/hdpiCanvas';
 import { Node, RedrawType, RenderContext } from './node';
 import { createId } from '../util/id';
 import { Group } from './group';
@@ -429,15 +429,19 @@ export class Scene {
                 this.debug.stats === 'detailed' ? `Layers: ${pct(layersRendered, layersSkipped)}` : null,
                 this.debug.stats === 'detailed' ? `Nodes: ${pct(nodesRendered, nodesSkipped)}` : null,
             ].filter((v): v is string => v != null);
-            const lineHeight = 15;
+            const statsSize: [string, Size][] = stats.map((t) => [t, HdpiCanvas.getTextSize(t, ctx.font)]);
+            const width = Math.max(...statsSize.map(([, { width }]) => width));
+            const height = statsSize.reduce((total, [, { height }]) => total + height, 0);
 
             ctx.save();
             ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, 200, 10 + lineHeight * stats.length);
+            ctx.fillRect(0, 0, width, height);
+
             ctx.fillStyle = 'black';
-            let index = 0;
-            for (const stat of stats) {
-                ctx.fillText(stat, 2, 10 + index++ * lineHeight);
+            let y = 0;
+            for (const [stat, size] of statsSize) {
+                y += size.height;
+                ctx.fillText(stat, 2, y);
             }
             ctx.restore();
         }

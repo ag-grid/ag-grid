@@ -3926,8 +3926,7 @@
     "type": {
       "pathsPerSeries": "number",
       "pathsZIndexSubOrderOffset": "number[]",
-      "hasMarkers": "boolean",
-      "renderLayerPerSubSeries": "boolean"
+      "hasMarkers": "boolean"
     }
   },
   "HistogramSeriesNodeTag": {

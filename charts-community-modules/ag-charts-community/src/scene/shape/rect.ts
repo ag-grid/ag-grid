@@ -138,7 +138,8 @@ export class Rect extends Path {
 
     protected applyFillAlpha(ctx: CanvasRenderingContext2D) {
         const { fillOpacity, microPixelEffectOpacity, opacity } = this;
-        ctx.globalAlpha = opacity * fillOpacity * microPixelEffectOpacity;
+        const { globalAlpha } = ctx;
+        ctx.globalAlpha = globalAlpha * opacity * fillOpacity * microPixelEffectOpacity;
     }
 
     protected renderStroke(ctx: CanvasRenderingContext2D) {

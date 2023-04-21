@@ -5706,10 +5706,7 @@
     "pathsZIndexSubOrderOffset": {
       "type": { "returnType": "number[]", "optional": false }
     },
-    "hasMarkers": { "type": { "returnType": "boolean", "optional": false } },
-    "renderLayerPerSubSeries": {
-      "type": { "returnType": "boolean", "optional": false }
-    }
+    "hasMarkers": { "type": { "returnType": "boolean", "optional": false } }
   },
   "HistogramSeriesNodeTag": {},
   "HistogramNodeDatum": {
