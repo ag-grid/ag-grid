@@ -3580,6 +3580,16 @@
     "meta": { "isTypeAlias": true, "typeParams": ["R"] },
     "type": "{ type: 'processor'; property: string; calculate: (data: ProcessedData<any>) => R; }"
   },
+  "Series": {
+    "meta": {},
+    "type": {
+      "id": "string",
+      "type": "string",
+      "toggleSeriesItem(itemId: string, enabled: boolean)": "void",
+      "toggleOtherSeriesItems(series: { id: string; type: string; }, itemId: string, enabled?: boolean, preferredEnabled?: boolean)": "void",
+      "getLegendData()": "any[]"
+    }
+  },
   "SeriesGetter": { "meta": { "isTypeAlias": true }, "type": "() => Series[]" },
   "Page": {
     "meta": { "isTypeAlias": true },
@@ -3738,7 +3748,7 @@
       "listeners": "AgChartLegendListeners"
     }
   },
-  "LegendDatum": {
+  "ChartLegendDatum": {
     "meta": {},
     "type": {
       "legendType": "string",

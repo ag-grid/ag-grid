@@ -1,6 +1,6 @@
 import { Selection } from '../../../scene/selection';
 import { SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode, valueProperty } from '../series';
-import { LegendDatum, CategoryLegendDatum } from '../../legendDatum';
+import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import { ColorScale } from '../../../scale/colorScale';
 import { LinearScale } from '../../../scale/linearScale';
 import {
@@ -509,14 +509,15 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         return toTooltipHtml(defaults);
     }
 
-    getLegendData(): LegendDatum[] {
+    getLegendData(): ChartLegendDatum[] {
         const { id, data, xKey, yKey, yName, title, visible, marker } = this;
         const { fill, stroke, fillOpacity, strokeOpacity } = marker;
 
         if (!(data && data.length && xKey && yKey)) {
             return [];
         }
-        return [
+
+        const legendData: CategoryLegendDatum[] = [
             {
                 legendType: 'category',
                 id,
@@ -534,7 +535,8 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                     strokeOpacity: strokeOpacity ?? 1,
                 },
             },
-        ] as CategoryLegendDatum[];
+        ];
+        return legendData;
     }
 
     protected isLabelEnabled() {

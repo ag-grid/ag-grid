@@ -785,7 +785,7 @@ export class Legend {
                 if (s.id === series.id) {
                     s.toggleSeriesItem(itemId, newEnabled);
                 } else {
-                    s.toggleOtherSeriesItems(series, datum, newEnabled);
+                    s.toggleOtherSeriesItems(series, datum.itemId, newEnabled);
                 }
             });
         }
@@ -877,7 +877,7 @@ export class Legend {
                 });
 
                 if (s.id !== series.id) {
-                    s.toggleOtherSeriesItems(series, datum, undefined, singleEnabledInEachSeriesWasNotClicked);
+                    s.toggleOtherSeriesItems(series, datum.itemId, undefined, singleEnabledInEachSeriesWasNotClicked);
                 }
             });
         }

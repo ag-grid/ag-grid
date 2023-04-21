@@ -14,13 +14,13 @@ export interface ChartLegend {
     listeners: AgChartLegendListeners;
 }
 
-export interface LegendDatum {
+export interface ChartLegendDatum {
     legendType: string;
     seriesId: string;
     enabled: boolean;
 }
 
-export interface CategoryLegendDatum extends LegendDatum {
+export interface CategoryLegendDatum extends ChartLegendDatum {
     legendType: 'category';
     id: string; // component ID
     itemId: any; // sub-component ID

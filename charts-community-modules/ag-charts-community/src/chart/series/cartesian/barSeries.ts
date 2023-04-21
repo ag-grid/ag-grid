@@ -13,7 +13,7 @@ import {
 } from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
-import { LegendDatum, CategoryLegendDatum } from '../../legendDatum';
+import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import {
     CartesianSeries,
     CartesianSeriesNodeClickEvent,
@@ -857,7 +857,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         return toTooltipHtml(defaults);
     }
 
-    getLegendData(): LegendDatum[] {
+    getLegendData(): ChartLegendDatum[] {
         const {
             id,
             data,

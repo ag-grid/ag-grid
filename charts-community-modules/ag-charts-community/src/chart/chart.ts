@@ -32,7 +32,7 @@ import { LayoutService } from './layout/layoutService';
 import { DataService } from './dataService';
 import { UpdateService } from './updateService';
 import { ChartUpdateType } from './chartUpdateType';
-import { LegendDatum, ChartLegend } from './legendDatum';
+import { ChartLegendDatum, ChartLegend } from './legendDatum';
 import { Logger } from '../util/logger';
 import { ActionOnSet } from '../util/proxy';
 import { ChartHighlight } from './chartHighlight';
@@ -784,26 +784,25 @@ export abstract class Chart extends Observable implements AgChartInstance {
         if (this.legendType === legendType || !(legendType in this.legendFactories)) {
             return;
         }
+
         const legendFactory = this.legendFactories[legendType];
         this.legend?.destroy();
+        this.legend = undefined;
+
         const ctx = this.getModuleContext();
         this.legend = legendFactory(ctx);
         this.legend.attachLegend(this.scene.root);
     }
 
     private async updateLegend() {
-        const legendData: LegendDatum[] = [];
-        let legendType = 'category';
+        const legendData: ChartLegendDatum[] = [];
         this.series
             .filter((s) => s.showInLegend)
-            .forEach((series, i) => {
+            .forEach((series) => {
                 const data = series.getLegendData();
-                if (data && data.length > 0 && (i === 0 || data[0].legendType === legendType)) {
-                    legendData.push(...data);
-                    legendType = data[0].legendType;
-                }
+                legendData.push(...data);
             });
-
+        const legendType = legendData.length > 0 ? legendData[0].legendType : 'category';
         this.attachLegend(legendType);
         this.legend!.data = legendData;
     }

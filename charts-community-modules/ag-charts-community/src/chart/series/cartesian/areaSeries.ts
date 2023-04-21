@@ -2,7 +2,7 @@ import { Selection } from '../../../scene/selection';
 import { DropShadow } from '../../../scene/dropShadow';
 import { SeriesTooltip, SeriesNodeDataContext, keyProperty, valueProperty, sumProperties } from '../series';
 import { PointerEvents } from '../../../scene/node';
-import { LegendDatum, CategoryLegendDatum } from '../../legendDatum';
+import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import { Path } from '../../../scene/shape/path';
 import { Marker } from '../../marker/marker';
 import {
@@ -838,7 +838,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         return toTooltipHtml(defaults);
     }
 
-    getLegendData(): LegendDatum[] {
+    getLegendData(): ChartLegendDatum[] {
         const { data, id, xKey, yKeys, yNames, seriesItemEnabled, marker, fills, strokes, fillOpacity, strokeOpacity } =
             this;
 

@@ -5387,6 +5387,32 @@
   "OutputPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "ReducerOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
   "ProcessorOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
+  "Series": {
+    "id": { "type": { "returnType": "string", "optional": false } },
+    "type": { "type": { "returnType": "string", "optional": false } },
+    "toggleSeriesItem": {
+      "type": {
+        "arguments": { "itemId": "string", "enabled": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "toggleOtherSeriesItems": {
+      "type": {
+        "arguments": {
+          "series": "{ id: string; type: string; }",
+          "itemId": "string",
+          "enabled?": "boolean",
+          "preferredEnabled?": "boolean"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "getLegendData": {
+      "type": { "arguments": {}, "returnType": "any[]", "optional": false }
+    }
+  },
   "SeriesGetter": {},
   "Page": {},
   "Column": {},
@@ -5536,7 +5562,7 @@
       "type": { "returnType": "AgChartLegendListeners", "optional": false }
     }
   },
-  "LegendDatum": {
+  "ChartLegendDatum": {
     "legendType": { "type": { "returnType": "string", "optional": false } },
     "seriesId": { "type": { "returnType": "string", "optional": false } },
     "enabled": { "type": { "returnType": "boolean", "optional": false } }

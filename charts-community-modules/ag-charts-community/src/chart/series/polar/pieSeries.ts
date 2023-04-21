@@ -7,13 +7,13 @@ import { DropShadow } from '../../../scene/dropShadow';
 import { LinearScale } from '../../../scale/linearScale';
 import { Sector } from '../../../scene/shape/sector';
 import { BBox } from '../../../scene/bbox';
-import { SeriesNodeDatum, HighlightStyle, SeriesTooltip, SeriesNodeBaseClickEvent, Series } from './../series';
+import { SeriesNodeDatum, HighlightStyle, SeriesTooltip, SeriesNodeBaseClickEvent } from './../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { normalizeAngle180, toRadians } from '../../../util/angle';
 import { toFixed, mod } from '../../../util/number';
 import { Layers } from '../../layers';
-import { LegendDatum, CategoryLegendDatum } from '../../legendDatum';
+import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import { Caption } from '../../../caption';
 import { PolarSeries } from './polarSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
@@ -1323,7 +1323,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         return toTooltipHtml(defaults);
     }
 
-    getLegendData(): LegendDatum[] {
+    getLegendData(): ChartLegendDatum[] {
         const { calloutLabelKey, legendItemKey, data, id, sectorFormatData } = this;
 
         if (!data || data.length === 0 || (!legendItemKey && !calloutLabelKey)) return [];
@@ -1365,8 +1365,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     toggleOtherSeriesItems(
-        seriesToggled: Series<any>,
-        datumToggled: any,
+        seriesToggled: { id: string; type: string },
+        datumIdToggled: any,
         enabled?: boolean,
         suggestedEnabled?: boolean
     ): void {
@@ -1376,9 +1376,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         const pieSeriesToggled = seriesToggled as PieSeries;
         const datumToggledLegendItemValue =
-            datumToggled &&
+            datumIdToggled &&
             pieSeriesToggled.legendItemKey &&
-            pieSeriesToggled.data?.find((_, index) => index === datumToggled.itemId)[pieSeriesToggled.legendItemKey];
+            pieSeriesToggled.data?.find((_, index) => index === datumIdToggled)[pieSeriesToggled.legendItemKey];
 
         if (!datumToggledLegendItemValue) return;
 
