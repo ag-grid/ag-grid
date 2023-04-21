@@ -48,7 +48,7 @@ describe('Chart', () => {
                 xKey: 'year',
                 yKey: 'person',
                 colorKey: 'spending',
-                colorRange: ['yellow', 'red', 'blue'],
+                colorRange: ['white', 'yellow', 'red', 'blue', 'black'],
             },
         ],
     };
