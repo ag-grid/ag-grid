@@ -5765,11 +5765,6 @@
       "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
-  "PointDatum": {
-    "xDatum": { "type": { "returnType": "any", "optional": false } },
-    "yDatum": { "type": { "returnType": "any", "optional": false } },
-    "datum": { "type": { "returnType": "any", "optional": false } }
-  },
   "LineContext": {},
   "ScatterNodeDatum": {
     "label": { "type": { "returnType": "MeasuredLabel", "optional": false } },
