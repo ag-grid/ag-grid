@@ -792,6 +792,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         const ctx = this.getModuleContext();
         this.legend = legendFactory(ctx);
         this.legend.attachLegend(this.scene.root);
+        this.legendType = legendType;
     }
 
     private async updateLegend() {
