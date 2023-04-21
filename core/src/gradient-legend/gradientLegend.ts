@@ -78,14 +78,7 @@ export class GradientLegend {
     private readonly textSelection: _Scene.Selection<_Scene.Text, number>;
 
     @Validate(BOOLEAN)
-    private _enabled = true;
-    set enabled(value: boolean) {
-        this._enabled = value;
-        this.group.visible = value;
-    }
-    get enabled() {
-        return this._enabled;
-    }
+    enabled = true;
 
     @Validate(POSITION)
     position: AgChartLegendPosition = 'right';
