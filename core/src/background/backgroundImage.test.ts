@@ -82,8 +82,8 @@ describe('backgroundImage', () => {
             expect(position).toEqual({ x: 120, y: 50, width: 160, height: 100 });
         });
 
-        it(`If left, right and width specified, width ignored`, () => {
-            const position = calculatePosition({ left: 50, width: 250, right: 50 });
+        it(`If left, right and width specified, right ignored`, () => {
+            const position = calculatePosition({ left: 50, width: 200, right: 50 });
 
             expect(position).toEqual({ x: 50, y: 37, width: 200, height: 125 });
         });
@@ -118,10 +118,10 @@ describe('backgroundImage', () => {
             expect(position).toEqual({ x: 70, y: 80, width: 160, height: 100 });
         });
 
-        it(`If top, bottom and height specified, height ignored`, () => {
-            const position = calculatePosition({ top: 50, height: 350, bottom: 50 });
+        it(`If top, bottom and height specified, bottom ignored`, () => {
+            const position = calculatePosition({ top: 50, height: 125, bottom: 50 });
 
-            expect(position).toEqual({ x: 70, y: 50, width: 160, height: 100 });
+            expect(position).toEqual({ x: 50, y: 50, width: 200, height: 125 });
         });
 
         it(`If all sides specified, natural proportion ignored`, () => {

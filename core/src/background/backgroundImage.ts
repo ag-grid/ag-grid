@@ -63,10 +63,10 @@ export class BackgroundImage {
         let height = this.height;
 
         if (left != null) {
-            if (right != null) {
-                width = this.containerWidth - left - right;
-            } else if (width != null) {
+            if (width != null) {
                 right = this.containerWidth - left + width;
+            } else if (right != null) {
+                width = this.containerWidth - left - right;
             }
         } else if (right != null) {
             if (width != null) {
@@ -74,10 +74,10 @@ export class BackgroundImage {
             }
         }
         if (top != null) {
-            if (bottom != null) {
-                height = this.containerHeight - bottom - top;
-            } else if (height != null) {
+            if (height != null) {
                 bottom = this.containerHeight - top - height;
+            } else if (bottom != null) {
+                height = this.containerHeight - bottom - top;
             }
         } else if (bottom != null) {
             if (height != null) {
