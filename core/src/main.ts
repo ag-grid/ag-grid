@@ -8,6 +8,7 @@ import {
 import { AgChartBackgroundImage, BackgroundModule } from './background/main';
 import { AgContextMenuOptions, ContextMenuModule } from './context-menu/main';
 import { AgCrosshairOptions, CrosshairModule } from './crosshair/main';
+import { GradientLegendModule } from './gradient-legend/main';
 import * as Heatmap from './heatmap/main';
 import { AgNavigatorOptions } from './navigator/main';
 import { AgZoomOptions, ZoomModule } from './zoom/main';
@@ -17,6 +18,7 @@ export * from 'ag-charts-community';
 _ModuleSupport.registerModule(BackgroundModule);
 _ModuleSupport.registerModule(ContextMenuModule);
 _ModuleSupport.registerModule(CrosshairModule);
+_ModuleSupport.registerModule(GradientLegendModule);
 _ModuleSupport.registerModule(Heatmap.HeatmapModule);
 _ModuleSupport.registerModule(ZoomModule);
 
