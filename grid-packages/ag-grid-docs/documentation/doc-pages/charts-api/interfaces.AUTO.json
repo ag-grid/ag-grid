@@ -4436,7 +4436,8 @@
       "tooltipManager": "TooltipManager",
       "dataService": "DataService",
       "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>",
-      "updateService": "UpdateService"
+      "updateService": "UpdateService",
+      "optionsConstructors": "{ add(path: string, constructor: new () => any): void; delete(path: string): void; }"
     }
   },
   "ModuleContextWithParent": {
@@ -4452,7 +4453,8 @@
       "tooltipManager": "TooltipManager",
       "dataService": "DataService",
       "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>",
-      "updateService": "UpdateService"
+      "updateService": "UpdateService",
+      "optionsConstructors": "{ add(path: string, constructor: new () => any): void; delete(path: string): void; }"
     }
   },
   "AxisContext": {

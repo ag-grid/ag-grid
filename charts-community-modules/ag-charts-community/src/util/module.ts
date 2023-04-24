@@ -22,6 +22,10 @@ export interface ModuleContext {
     dataService: DataService;
     layoutService: Pick<LayoutService, 'addListener' | 'removeListener'>;
     updateService: UpdateService;
+    optionsConstructors: {
+        add(path: string, constructor: new () => any): void;
+        delete(path: string): void;
+    };
 }
 
 export interface ModuleContextWithParent<P> extends ModuleContext {

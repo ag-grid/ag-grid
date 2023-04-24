@@ -15,7 +15,6 @@ import {
 import { CartesianChart } from './cartesianChart';
 import { PolarChart } from './polarChart';
 import { HierarchyChart } from './hierarchyChart';
-import { Caption } from '../caption';
 import { Series } from './series/series';
 import { getSeries, initialiseSeriesModules, seriesDefaults } from './series/seriesTypes';
 import { AreaSeries } from './series/cartesian/areaSeries';
@@ -23,7 +22,7 @@ import { BarSeries } from './series/cartesian/barSeries';
 import { HistogramSeries } from './series/cartesian/histogramSeries';
 import { LineSeries } from './series/cartesian/lineSeries';
 import { ScatterSeries } from './series/cartesian/scatterSeries';
-import { PieSeries, PieTitle, DoughnutInnerLabel, DoughnutInnerCircle } from './series/polar/pieSeries';
+import { PieSeries, PieTitle } from './series/polar/pieSeries';
 import { TreemapSeries } from './series/hierarchy/treemapSeries';
 import { ChartAxis } from './chartAxis';
 import { LogAxis } from './axis/logAxis';
@@ -34,7 +33,6 @@ import { TimeAxis } from './axis/timeAxis';
 import { Chart } from './chart';
 import { ChartUpdateType } from './chartUpdateType';
 import { TypedEventListener } from '../util/observable';
-import { DropShadow } from '../scene/dropShadow';
 import { jsonDiff, jsonMerge, jsonApply } from '../util/json';
 import {
     prepareOptions,
@@ -45,11 +43,10 @@ import {
     noDataCloneMergeOptions,
 } from './mapping/prepare';
 import { SeriesOptionsTypes } from './mapping/defaults';
-import { CrossLine } from './crossline/crossLine';
 import { windowValue } from '../util/window';
 import { AxisModule, LegendModule, Module, RootModule } from '../util/module';
 import { Logger } from '../util/logger';
-import { BackgroundImage } from './background/backgroundImage';
+import { getJsonApplyOptions } from './chartOptions';
 
 // Deliberately imported via `module-support` so that internal module registration happens.
 import { REGISTERED_MODULES } from '../module-support';
@@ -641,27 +638,9 @@ function registerListeners<T extends ObservableLike>(source: T, listeners?: {}) 
     }
 }
 
-const JSON_APPLY_OPTIONS: Parameters<typeof jsonApply>[2] = {
-    constructors: {
-        title: Caption,
-        subtitle: Caption,
-        footnote: Caption,
-        shadow: DropShadow,
-        innerCircle: DoughnutInnerCircle,
-        'axes[].crossLines[]': CrossLine,
-        'series[].innerLabels[]': DoughnutInnerLabel,
-        'background.image': BackgroundImage,
-    },
-    allowedTypes: {
-        'legend.pagination.marker.shape': ['primitive', 'function'],
-        'series[].marker.shape': ['primitive', 'function'],
-        'axis[].tick.count': ['primitive', 'class-instance'],
-    },
-};
-
 function applyOptionValues<T, S>(target: T, options?: S, { skip, path }: { skip?: string[]; path?: string } = {}): T {
     const applyOpts = {
-        ...JSON_APPLY_OPTIONS,
+        ...getJsonApplyOptions(),
         skip,
         ...(path ? { path } : {}),
     };
@@ -674,7 +653,8 @@ function applySeriesValues(
     { path, index }: { path?: string; index?: number } = {}
 ): Series<any> {
     const skip: string[] = ['series[].listeners'];
-    const ctrs = JSON_APPLY_OPTIONS?.constructors || {};
+    const jsonApplyOptions = getJsonApplyOptions();
+    const ctrs = jsonApplyOptions.constructors || {};
     const seriesTypeOverrides = {
         constructors: {
             ...ctrs,
@@ -683,7 +663,7 @@ function applySeriesValues(
     };
 
     const applyOpts = {
-        ...JSON_APPLY_OPTIONS,
+        ...jsonApplyOptions,
         ...seriesTypeOverrides,
         skip: ['series[].type', ...(skip || [])],
         ...(path ? { path } : {}),
