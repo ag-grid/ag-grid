@@ -47,6 +47,16 @@ $z-index-splash-contents: 10;
         z-index: 1;
     }
 
+    :global(.country) {
+        display: flex;
+        align-items: center;
+        gap: ds.$size-half;
+    }
+
+    :global(.flag) {
+        font-size: 1.75rem;
+    }
+
     // Copy default theme slider styles to deal with .ag-styles specificity issues
     input[type='range'] {
         &::-webkit-slider-runnable-track {

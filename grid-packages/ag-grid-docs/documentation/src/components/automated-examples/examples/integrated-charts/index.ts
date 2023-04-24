@@ -7,7 +7,6 @@
 
 import { Easing, Group } from '@tweenjs/tween.js';
 import { ColDef, GridOptions, MenuItemDef } from 'ag-grid-community';
-import { COUNTRY_CODES } from '../../data/constants';
 import { createPeopleData } from '../../data/createPeopleData';
 import { INTEGRATED_CHARTS_ID } from '../../lib/constants';
 import { createMouse } from '../../lib/createMouse';
@@ -40,11 +39,6 @@ function numberCellFormatter(params) {
         .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
-function getCountryFlagImageUrl(country: string) {
-    const countryCode = COUNTRY_CODES[country];
-    return `https://flags.fmcdn.net/data/flags/mini/${countryCode}.png`;
-}
-
 const columnDefs: ColDef[] = [
     {
         field: 'name',
@@ -53,18 +47,18 @@ const columnDefs: ColDef[] = [
         enableRowGroup: true,
     },
     {
+        headerName: 'Country',
         field: 'country',
         chartDataType: 'category',
         enableRowGroup: true,
+        minWidth: 200,
         cellRenderer: (params) => {
             if (params.node.group) {
                 return params.value;
             }
 
             // put the value in bold
-            return `<img border="0" width="21" height="14" alt="${params.value} flag" src='${getCountryFlagImageUrl(
-                params.data?.country
-            )}' /> ${params.value}`;
+            return `<div class='country'><span class='flag'>${params.data.flag}</span><span>${params.value}</span></div>`;
         },
     },
     { field: 'jan', type: ['measure', 'numericColumn'], enableRowGroup: true },

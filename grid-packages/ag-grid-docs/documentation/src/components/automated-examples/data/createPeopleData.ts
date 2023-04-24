@@ -25,6 +25,7 @@ interface YearRecord {
 
 interface PersonRecord extends YearRecord {
     name: string;
+    flag: string;
     country: string;
     continent: string;
     language: string;
@@ -49,6 +50,7 @@ function createPersonRecord({ row, randomize }: { row: number; randomize?: boole
     const countriesToPickFrom = Math.floor(countries.length * (((row % 3) + 1) / 3));
     const countryData = countries[(row * 19) % countriesToPickFrom];
     const country = countryData.country;
+    const flag = countryData.flag;
     const continent = countryData.continent;
     const language = countryData.language;
 
@@ -63,6 +65,7 @@ function createPersonRecord({ row, randomize }: { row: number; randomize?: boole
     const rowItem: PersonRecord = {
         name,
         country,
+        flag,
         continent,
         language,
         ...yearRecord,
