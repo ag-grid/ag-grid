@@ -1,15 +1,19 @@
-'use strict'
+'use strict';
 
-import React, {Component} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import React, { Component } from 'react';
+import { createRoot } from 'react-dom/client';
+import { AgGridReact } from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import "@ag-grid-community/styles/ag-grid.css";
+import "@ag-grid-community/styles/ag-theme-alpine.css";
 import DaysFrostRenderer from './daysFrostRenderer.jsx';
 
+import { ModuleRegistry } from '@ag-grid-community/core';
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 /*
-* It's unlikely you'll use functions that create and manipulate DOM elements like this in a React application, but it
+* It's unlikely you'll use functions that create and manipulate DOM elements like this in an React application, but it
 * demonstrates what is at least possible, and may be preferable in certain use cases
 */
 const createImageSpan = (imageMultiplier, image) => {
@@ -22,85 +26,93 @@ const createImageSpan = (imageMultiplier, image) => {
     return resultElement;
 };
 
-const deltaIndicator = params => {
-    const element = document.createElement('span');
-    const imageElement = document.createElement('img');
-    if (params.value > 15) {
-        imageElement.src = 'https://www.ag-grid.com/example-assets/weather/fire-plus.png';
-    } else {
-        imageElement.src = 'https://www.ag-grid.com/example-assets/weather/fire-minus.png';
+// This is a plain JS (not React) component
+class DeltaIndicator {
+    init(params) {
+        const element = document.createElement('span');
+        const imageElement = document.createElement('img');
+        if (params.value > 15) {
+            imageElement.src = 'https://www.ag-grid.com/example-assets/weather/fire-plus.png';
+        } else {
+            imageElement.src = 'https://www.ag-grid.com/example-assets/weather/fire-minus.png';
+        }
+        element.appendChild(imageElement);
+        element.appendChild(document.createTextNode(params.value));
+        this.eGui = element;
     }
-    element.appendChild(imageElement);
-    element.appendChild(document.createTextNode(params.value));
-    return element;
-};
+    getGui() {
+        return this.eGui;
+    }
+}
 
-const daysSunshineRenderer = params => {
-    const daysSunshine = params.value / 24;
-    return createImageSpan(daysSunshine, params.rendererImage);
-};
+// This is a plain JS (not React) component
+class DaysSunshineRenderer {
+    init(params) {
+        const daysSunshine = params.value / 24;
+        this.eGui = createImageSpan(daysSunshine, params.rendererImage);
+    }
+    getGui() {
+        return this.eGui;
+    }
+}
 
-const rainPerTenMmRenderer = params => {
-    const rainPerTenMm = params.value / 10;
-    return createImageSpan(rainPerTenMm, params.rendererImage);
-};
-
+// This is a plain JS (not React) component
+class RainPerTenMmRenderer {
+    init(params) {
+        const rainPerTenMm = params.value / 10;
+        this.eGui = createImageSpan(rainPerTenMm, params.rendererImage);
+    }
+    getGui() {
+        return this.eGui;
+    }
+}
 class GridExample extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            modules: AllCommunityModules,
             columnDefs: [
                 {
                     headerName: "Month",
                     field: "Month",
                     width: 75,
-                    cellStyle: {color: "darkred"}
+                    cellStyle: { color: "darkred" }
                 },
                 {
                     headerName: "Max Temp (\u02DAC)",
                     field: "Max temp (C)",
                     width: 120,
-                    cellRenderer: "deltaIndicator"
+                    cellRenderer: DeltaIndicator
                 },
                 {
                     headerName: "Min Temp (\u02DAC)",
                     field: "Min temp (C)",
                     width: 120,
-                    cellRenderer: "deltaIndicator"
+                    cellRenderer: DeltaIndicator
                 },
                 {
                     headerName: "Days of Air Frost",
                     field: "Days of air frost (days)",
                     width: 233,
-                    cellRenderer: "daysFrostRenderer",
-                    cellRendererParams: {rendererImage: "frost.png"}
+                    cellRenderer: DaysFrostRenderer,
+                    cellRendererParams: { rendererImage: "frost.png" }
                 },
                 {
                     headerName: "Days Sunshine",
                     field: "Sunshine (hours)",
                     width: 190,
-                    cellRenderer: "daysSunshineRenderer",
-                    cellRendererParams: {rendererImage: "sun.png"}
+                    cellRenderer: DaysSunshineRenderer,
+                    cellRendererParams: { rendererImage: "sun.png" }
                 },
                 {
                     headerName: "Rainfall (10mm)",
                     field: "Rainfall (mm)",
                     width: 180,
-                    cellRenderer: "rainPerTenMmRenderer",
-                    cellRendererParams: {rendererImage: "rain.png"}
+                    cellRenderer: RainPerTenMmRenderer,
+                    cellRendererParams: { rendererImage: "rain.png" }
                 }
             ],
             rowData: null,
-            components: {
-                deltaIndicator: deltaIndicator,
-                daysSunshineRenderer: daysSunshineRenderer,
-                rainPerTenMmRenderer: rainPerTenMmRenderer
-            },
-            frameworkComponents: {
-                "daysFrostRenderer": DaysFrostRenderer,
-            },
             defaultColDef: {
                 editable: true,
                 sortable: true,
@@ -138,11 +150,11 @@ class GridExample extends Component {
 
     render() {
         return (
-            <div style={{width: '100%', height: '100%'}}>
+            <div style={{ width: '100%', height: '100%' }}>
                 <div className="example-wrapper">
-                    <div style={{"marginBottom": "5px"}}>
+                    <div style={{ "marginBottom": "5px" }}>
                         <input type="button" defaultValue="Frostier Year"
-                               onClick={() => this.frostierYear(Math.floor(Math.random() * 2) + 1)}/>
+                            onClick={() => this.frostierYear(Math.floor(Math.random() * 2) + 1)} />
                     </div>
 
                     <div
@@ -152,11 +164,8 @@ class GridExample extends Component {
                         }}
                         className="ag-theme-alpine">
                         <AgGridReact
-                            modules={this.state.modules}
                             columnDefs={this.state.columnDefs}
                             rowData={this.state.rowData}
-                            components={this.state.components}
-                            frameworkComponents={this.state.frameworkComponents}
                             defaultColDef={this.state.defaultColDef}
                             onGridReady={this.onGridReady}
                         />
@@ -167,7 +176,5 @@ class GridExample extends Component {
     }
 }
 
-render(
-    <GridExample></GridExample>,
-    document.querySelector('#root')
-)
+const root = createRoot(document.getElementById('root'));
+root.render(<GridExample />);

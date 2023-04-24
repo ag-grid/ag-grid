@@ -22,6 +22,9 @@ const processChildren = (node, framework) => node.reduce((children, child) => {
     return [...children, child];
 }, []);
 
+/**
+ * This will strip out sections from the AST that are not relevant to the specified framework.
+ */
 const processFrameworkSpecificSections = (ast, framework) => {
     return {
         ...ast,

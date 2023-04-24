@@ -1,11 +1,10 @@
 ---
-title: "Markers"
+title: "Series Markers"
 ---
 
-This section explores the markers used by line, area and scatter series.
+Data points in `line`, `area` and `scatter` series can be represented by markers.
 
-The shape of the markers can be changed by using the `shape` config. The `size`, `fill` and `stroke` are also valid configs:
-
+Marker attributes such as `shape`, `size`, `fill` and `stroke` are configurable via the chart `options`:
 
 ```js
 marker: {
@@ -76,9 +75,5 @@ The final result is shown in the example below.
 
 ## API Reference
 
-<api-documentation source='charts-api/api.json' section='line.marker'></api-documentation>
-
-## Next Up
-
-Continue to the next section to learn about [formatters](../charts-formatters/).
+<interface-documentation interfaceName='AgCartesianSeriesMarker' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
 

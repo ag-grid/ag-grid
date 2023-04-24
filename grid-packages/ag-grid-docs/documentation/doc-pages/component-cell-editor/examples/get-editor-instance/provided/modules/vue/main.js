@@ -1,9 +1,13 @@
 import Vue from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue';
-import {AllModules} from '@ag-grid-enterprise/all-modules';
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import { AgGridVue } from '@ag-grid-community/vue';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import "@ag-grid-community/styles/ag-grid.css";
+import "@ag-grid-community/styles/ag-theme-alpine.css";
 import MySimpleEditor from './mySimpleEditorVue.js';
+
+import { ModuleRegistry } from '@ag-grid-community/core';
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
     template: `
@@ -14,14 +18,13 @@ const VueExample = {
               :columnDefs="columnDefs"
               :defaultColDef="defaultColDef"
               :rowData="rowData"
-              :frameworkComponents="frameworkComponents"
-              :modules="modules"
               @grid-ready="onGridReady">
           </ag-grid-vue>
       </div>
     `,
     components: {
-        'ag-grid-vue': AgGridVue
+        'ag-grid-vue': AgGridVue,
+        mySimpleEditor: MySimpleEditor
     },
     data: function () {
         return {
@@ -60,7 +63,7 @@ const VueExample = {
                 },
                 {
                     field: "address",
-                    width: 502,
+                    minWidth: 502,
                     cellEditor: "mySimpleEditor"
                 }
             ],
@@ -72,8 +75,6 @@ const VueExample = {
                 filter: true,
                 resizable: true
             },
-            frameworkComponents: {mySimpleEditor: MySimpleEditor},
-            modules: AllModules,
             rowData: this.createRowData(),
             interval: null
         }
@@ -86,7 +87,7 @@ const VueExample = {
             this.interval = setInterval(() => {
                 const instances = params.api.getCellEditorInstances();
                 if (instances.length > 0) {
-                    const instance = instances[0].getFrameworkComponentInstance();
+                    const instance = instances[0];
                     if (instance.myCustomFunction) {
                         const result = instance.myCustomFunction();
                         console.log(`found editing cell: row index = ${result.rowIndex}, column = ${result.colId}.`);
@@ -120,7 +121,7 @@ const VueExample = {
                     country: 'Ireland'
                 },
                 {
-                    first_name: 'Sadiq',
+                    first_name: 'Zahid',
                     last_name: 'Khan',
                     gender: 'Male',
                     age: 12,

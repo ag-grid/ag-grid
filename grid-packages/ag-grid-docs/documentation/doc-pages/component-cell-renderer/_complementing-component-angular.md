@@ -3,14 +3,21 @@
 |```js
 |// define cellRenderer to be reused
 |@Component({
-|    selector: 'my-app',
+|    selector: 'colour-cell',
 |    template: `<span [style.colour]="params.color">{{params.value}}</span>`
 |})
-|class ColourCellRenderer {
-|    params: ICellRendererParams;
+|class ColourCellRenderer implements ICellRendererAngularComp {
+|    params!: ICellRendererParams;
 |
-|    agInit(ICellRendererParams) {
+|    agInit(params: ICellRendererParams) {
 |        this.params = params;
+|    }
+|
+|    refresh(params: ICellRendererParams) {
+|        this.params = params;
+|        // As we have updated the params we return true to let AG Grid know we have handled the refresh.
+|        // So AG Grid will not recreate the cell renderer from scratch.
+|        return true;
 |    }
 |}
 |
@@ -20,7 +27,6 @@
 |        <ag-grid-angular
 |                class="ag-theme-alpine"
 |                [columnDefs]="columnDefs"
-|                [frameworkComponents]="frameworkComponents"
 |                ...other properties>        
 |        </ag-grid-angular>`
 |})
@@ -29,6 +35,7 @@
 |        {
 |            headerName: "Colour 1",
 |            field: "value",
+|            cellRenderer: ColourCellRenderer,
 |            cellRendererParams: {
 |               color: 'guinnessBlack'
 |            }
@@ -36,15 +43,12 @@
 |        {
 |            headerName: "Colour 2",
 |            field: "value",
+|            cellRenderer: ColourCellRenderer,
 |            cellRendererParams: {
 |               color: 'irishGreen'
 |            }
 |        }
 |    ];
-|
-|   private frameworkComponents = {
-|       'colourCellRenderer': ColourCellRenderer
-|   };
 |
 |   ..other methods
 |}

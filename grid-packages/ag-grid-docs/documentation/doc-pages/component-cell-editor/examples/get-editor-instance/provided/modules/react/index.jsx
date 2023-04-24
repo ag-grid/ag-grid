@@ -1,19 +1,22 @@
-'use strict'
+'use strict';
 
-import React, {Component} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
-import {AllModules} from '@ag-grid-enterprise/all-modules';
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import React, { Component } from 'react';
+import { createRoot } from 'react-dom/client';
+import { AgGridReact } from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import "@ag-grid-community/styles/ag-grid.css";
+import "@ag-grid-community/styles/ag-theme-alpine.css";
 import MySimpleEditor from './mySimpleEditor.jsx';
+
+import { ModuleRegistry } from '@ag-grid-community/core';
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 class GridExample extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            modules: AllModules,
             columnDefs: [
                 {
                     field: "first_name",
@@ -30,27 +33,27 @@ class GridExample extends Component {
                 {
                     field: "gender",
                     width: 100,
-                    cellEditor: "mySimpleEditor"
+                    cellEditor: MySimpleEditor
                 },
                 {
                     field: "age",
                     width: 80,
-                    cellEditor: "mySimpleEditor"
+                    cellEditor: MySimpleEditor
                 },
                 {
                     field: "mood",
                     width: 90,
-                    cellEditor: "mySimpleEditor"
+                    cellEditor: MySimpleEditor
                 },
                 {
                     field: "country",
                     width: 110,
-                    cellEditor: "mySimpleEditor"
+                    cellEditor: MySimpleEditor
                 },
                 {
                     field: "address",
-                    width: 502,
-                    cellEditor: "mySimpleEditor"
+                    minWidth: 502,
+                    cellEditor: MySimpleEditor
                 }
             ],
             defaultColDef: {
@@ -61,8 +64,7 @@ class GridExample extends Component {
                 filter: true,
                 resizable: true
             },
-            rowData: this.createRowData(),
-            frameworkComponents: {mySimpleEditor: MySimpleEditor}
+            rowData: this.createRowData()
         };
     }
 
@@ -71,7 +73,7 @@ class GridExample extends Component {
             interval: window.setInterval(() => {
                 const instances = params.api.getCellEditorInstances();
                 if (instances.length > 0) {
-                    const instance = instances[0].getFrameworkComponentInstance();
+                    const instance = instances[0];
                     if (instance.myCustomFunction) {
                         const result = instance.myCustomFunction();
                         console.log(`found editing cell: row index = ${result.rowIndex}, column = ${result.colId}.`);
@@ -110,7 +112,7 @@ class GridExample extends Component {
                 country: 'Ireland'
             },
             {
-                first_name: 'Sadiq',
+                first_name: 'Zahid',
                 last_name: 'Khan',
                 gender: 'Male',
                 age: 12,
@@ -142,7 +144,7 @@ class GridExample extends Component {
 
     render() {
         return (
-            <div style={{width: '100%', height: '100%'}}>
+            <div style={{ width: '100%', height: '100%' }}>
                 <div
                     style={{
                         height: '100%',
@@ -150,11 +152,9 @@ class GridExample extends Component {
                     }}
                     className="ag-theme-alpine">
                     <AgGridReact
-                        modules={this.state.modules}
                         columnDefs={this.state.columnDefs}
                         defaultColDef={this.state.defaultColDef}
                         rowData={this.state.rowData}
-                        frameworkComponents={this.state.frameworkComponents}
                         onGridReady={this.onGridReady}
                     />
                 </div>
@@ -163,7 +163,5 @@ class GridExample extends Component {
     }
 }
 
-render(
-    <GridExample></GridExample>,
-    document.querySelector('#root')
-)
+const root = createRoot(document.getElementById('root'));
+root.render(<GridExample />);

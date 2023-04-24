@@ -1,20 +1,16 @@
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
     template: `
-        <div class="ag-input-wrapper custom-date-filter" role="presentation" ref="flatpickr">
-            <input type="text" ref="eInput" data-input style="width: 100%;" />
-            <a class="input-button" title="clear" data-clear>
-                <i class="fa fa-times"></i>
-            </a>
-        </div>
+      <div class="ag-input-wrapper custom-date-filter" role="presentation" ref="flatpickr">
+      <input type="text" ref="eInput" data-input style="width: 100%;"/>
+      <a class="input-button" title="clear" data-clear>
+        <i class="fa fa-times"></i>
+      </a>
+      </div>
     `,
     data: function () {
         return {
             date: null
         };
-    },
-    beforeMount() {
     },
     mounted() {
         this.picker = flatpickr(this.$refs['flatpickr'], {
@@ -50,4 +46,4 @@ export default Vue.extend({
             this.eInput.setAttribute('aria-label', label);
         }
     }
-});
+};

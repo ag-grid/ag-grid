@@ -1,13 +1,17 @@
 import Vue from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue';
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import { AgGridVue } from '@ag-grid-community/vue';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import "@ag-grid-community/styles/ag-grid.css";
+import "@ag-grid-community/styles/ag-theme-alpine.css";
 import ChildMessageRenderer from './childMessageRendererVue.js';
 import CubeRenderer from './cubeRendererVue.js';
 import CurrencyRenderer from './currencyRendererVue.js';
 import ParamsRenderer from './paramsRendererVue.js';
 import SquareRenderer from './squareRendererVue.js';
+
+import { ModuleRegistry } from '@ag-grid-community/core';
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
     template: `
@@ -25,7 +29,7 @@ const VueExample = {
                     :rowData="rowData"
                     :context="context"
                     :defaultColDef="defaultColDef"
-                    :modules="modules"></ag-grid-vue>
+                    ></ag-grid-vue>
         </div>
         </div>
     `,
@@ -50,7 +54,7 @@ const VueExample = {
                 {
                     headerName: "Square",
                     field: "value",
-                    cellRendererFramework: "squareRenderer",
+                    cellRenderer: "squareRenderer",
                     editable: true,
                     colId: "square",
                     width: 150
@@ -58,28 +62,28 @@ const VueExample = {
                 {
                     headerName: "Cube",
                     field: "value",
-                    cellRendererFramework: "cubeRenderer",
+                    cellRenderer: "cubeRenderer",
                     colId: "cube",
                     width: 150
                 },
                 {
                     headerName: "Row Params",
                     field: "row",
-                    cellRendererFramework: "paramsRenderer",
+                    cellRenderer: "paramsRenderer",
                     colId: "params",
                     width: 150
                 },
                 {
                     headerName: "Currency (Pipe)",
                     field: "currency",
-                    cellRendererFramework: "currencyRenderer",
+                    cellRenderer: "currencyRenderer",
                     colId: "currency",
                     width: 120
                 },
                 {
                     headerName: "Child/Parent",
                     field: "value",
-                    cellRendererFramework: "childMessageRenderer",
+                    cellRenderer: "childMessageRenderer",
                     colId: "params",
                     editable: false,
                     minWidth: 150
@@ -95,13 +99,11 @@ const VueExample = {
                 filter: true,
                 resizable: true
             }
-            ,
-            modules: AllCommunityModules
         }
     },
     beforeMount() {
         this.rowData = this.createRowData();
-        this.context = {componentParent: this};
+        this.context = { componentParent: this };
     },
     methods: {
         createRowData() {
@@ -121,7 +123,7 @@ const VueExample = {
                     rowNode.setDataValue('currency', rowNode.data.value + Number(Math.random().toFixed(2)));
                 }
             });
-            this.gridApi.refreshCells({columns: ['currency']});
+            this.gridApi.refreshCells({ columns: ['currency'] });
         },
         onGridReady(params) {
             this.gridApi = params.api;

@@ -13,11 +13,11 @@ The default height of each detail section (ie the row containing the Detail Grid
 To change the height of the details section from the default you have the following options:
 
 
-- [Fixed Height](../master-detail-height/#fixed-height): a custom fixed height can be provided for all detail sections instead of the default `300px`.
+- [Fixed Height](/master-detail-height/#fixed-height): a custom fixed height can be provided for all detail sections instead of the default `300px`.
 
-- [Auto Height](../master-detail-height/#auto-height): detail sections can auto-size to fit based off the contents.
+- [Auto Height](/master-detail-height/#auto-height): detail sections can auto-size to fit based off the contents.
 
-- [Dynamic Height](../master-detail-height/#dynamic-height): different heights can be provided for each detail section.
+- [Dynamic Height](/master-detail-height/#dynamic-height): different heights can be provided for each detail section.
 
 ## Fixed Height
 
@@ -54,11 +54,11 @@ Detail Cell Renderer has the correct height, as this is what the grid checks and
 So make sure the CSS on the top most element is set so that its height is correct.
 
 [[only-angular]]
-| This can be a particular concern if providing a Detail Cell Renderer in Angular. Be aware that by default 
-| custom Angular tags will not inherit the height of their children. This can be fixed by adding 
+| This can be a particular concern if providing a Detail Cell Renderer in Angular. Be aware that by default
+| custom Angular tags will not inherit the height of their children. This can be fixed by adding
 | `display: inline-block` style to the top most element of your component. This is done as follows:
-| 
-| 
+|
+|
 | ```ts
 | @Component({
 |   styles: [':host { display: inline-block; }'],
@@ -68,7 +68,7 @@ So make sure the CSS on the top most element is set so that its height is correc
 
 [[note]]
 | When using Auto Height feature, the Detail Grid will render all of it's rows all the time.
-| [Row Virtualisation](../dom-virtualisation/) will not happen.
+| [Row Virtualisation](/dom-virtualisation/) will not happen.
 | This means if the Detail Grid has many rows, it could slow down your application and could
 | result in stalling he browser.
 | <br/><br/>
@@ -78,25 +78,26 @@ So make sure the CSS on the top most element is set so that its height is correc
 
 ## Dynamic Height
 
-Use the callback `getRowHeight()` to set height for each row individually. This is a specific use of the callback that is explained in more detail in
-[Get Row Height](../row-height/#getrowheight-callback)
+Use the callback `getRowHeight(params)` to set height for each row individually. This is a specific use of the callback that is explained in more detail in
+[Get Row Height](/row-height/#getrowheight-callback)
+
+<api-documentation source='grid-options/properties.json' section='styling' names='["getRowHeight"]'></api-documentation>
 
 Note that this callback gets called for **all rows** in the Master Grid, not just rows containing Detail Grids. If you do not want to set row heights explicitly for other rows simply return `undefined / null` and the grid will ignore the result for that particular row.
 
 <snippet>
-|const gridOptions = {
-|    // dynamically assigning detail row height
-|    getRowHeight: params => {
-|        const isDetailRow = params.node.detail;
-|    
-|        // for all rows that are not detail rows, return nothing
-|        if (!isDetailRow) { return undefined; }
-|    
-|        // otherwise return height based on number of rows in detail grid
-|        const detailPanelHeight = params.data.children.length * 50;
-|        return detailPanelHeight;
-|    }
-|}
+| const gridOptions = {
+|     // dynamically assigning detail row height
+|     getRowHeight: params => {
+|         const isDetailRow = params.node.detail;
+|         // for all rows that are not detail rows, return nothing
+|         if (!isDetailRow) { return undefined; }
+|
+|         // otherwise return height based on number of rows in detail grid
+|         const detailPanelHeight = params.data.children.length * 50;
+|         return detailPanelHeight;
+|     }
+| }
 </snippet>
 
 The following example demonstrates dynamic detail row heights:

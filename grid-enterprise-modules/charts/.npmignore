@@ -1,0 +1,12 @@
+node_modules
+src
+test
+.npmignore
+gulpfile.js
+jest.config.js
+tsconfig.json
+tsconfig.es6.json
+tsconfig.json
+
+dist/**/*.test.*
+*.map

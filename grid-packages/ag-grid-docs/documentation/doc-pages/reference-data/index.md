@@ -47,14 +47,14 @@ const gridOptions = {
             field: 'make',
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
-                values: extractValues(carMappings)
+                values: extractKeys(carMappings) 
             },
             // convert code to value
-            valueFormatter: params => { 
+            valueFormatter: params => {
                 return lookupValue(carMappings, params.value);
             },
             // convert value to code
-            valueParser: params => { 
+            valueParser: params => {
                 return lookupKey(carMappings, params.newValue);
             }
         }
@@ -65,7 +65,7 @@ const gridOptions = {
 [[note]]
 | When editing using Cell Editors it's important to ensure the underlying data is updated with the codes (keys) rather than the values that are displayed in the cells.
 
-When using the `TextCellEditor` with reference data, you may want to display the formatted text rather than the code. In this case you should also include the `useFormatter` property as follows:
+When using the `TextCellEditor` with a `valueFormatter`, you may want to display the formatted text rather than the code when editing. In this case you should also include the `useFormatter` property as follows:
 
 ```js
 cellEditor: 'agTextCellEditor',
@@ -82,18 +82,19 @@ The following example demonstrates how `Value Handlers` can be combined to work 
 
 - **'Exterior Colour' Column:** uses the built-in `'richSelect'` Cell Editor. Mapped names are displayed in the dropdown list and selections are saved as `'colour'` codes in the underlying data.
 
-- **'Interior Colour' Column:** uses a Text Cell Editor with `useFormatter=true`. Mapped names are displayed in the cells and edited values are saved as `'colour'` codes in the underlying data. (Note: a valid name must be entered.)
+- **'Interior Colour' Column:** uses a Text Cell Editor with `useFormatter=true`. Mapped names are displayed in the cells and edited values are saved as `'colour'` codes in the underlying data. (Note: a valid name must be entered or the value will be saved as undefined.)
 
 - **Set Filters:** display a list of names rather than codes.
 
 - **'Price' Columns:** additionally demonstrate the use of `valueGetters` and `valueSetters`.
 
-
 <grid-example title='Value Handlers' name='ref-data-value-handler' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect", "setfilter", "menu", "columnpanel"] }'></grid-example>
 
 ## Using the 'refData' Property
 
-Here we present the same example but this time using the `refData` `ColDef` property. This approach requires less coding and is more straightforward, but might not be flexible enough for scenarios involving more complex reference data formats.
+Here we present the same example but this time using the `refData` ColDef property. This approach requires less coding and is more straightforward, but might not be flexible enough for scenarios involving more complex reference data formats.
+
+<api-documentation source='column-properties/properties.json' section='columns' names='["refData"]'></api-documentation>
 
 All that is required with this approach is to specify the `refData` and the grid will take care of the
 rest, as shown below:
@@ -101,11 +102,11 @@ rest, as shown below:
 <snippet>
 const gridOptions = {
     columnDefs: [
-        { 
+        {
             field: 'make',
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
-               values: extractValues(carMappings)
+               values: extractKeys(carMappings)
             },
             refData: carMappings
         }
@@ -123,11 +124,10 @@ The following example demonstrates how the `refData` property simplifies working
 
 - **'Exterior Colour' Column:** uses the built-in `'richSelect'` Cell Editor with the `refData` property specified. Mapped names are displayed in the dropdown list and selections are saved as `'colour'` codes in the underlying data.
 
-- **'Interior Colour' Column:** uses a Text Cell Editor with the `refData` property specified. Mapped names are displayed in the cells and edited values are saved as `'colour'` codes in the underlying data. (Note: a valid name must be entered.)
+- **'Interior Colour' Column:** uses a Text Cell Editor (not recommended) with `refData`. Mapped names are displayed in the cells but when editing, colour codes (`cb`,`bw`,`fg`) must be entered directly. As users should not know codes, the Text Cell Editor is not recommended for use with `refData` in real world applications.
 
 - **Set Filters:** display a list of names rather than codes.
 
 - **'Price' Columns:** additionally demonstrate the use of `valueGetters` and `valueSetters`.
 
 <grid-example title='Ref Data Property' name='ref-data-property' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect", "setfilter", "menu", "columnpanel"] }'></grid-example>
-

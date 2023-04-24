@@ -1,19 +1,19 @@
-import {AfterViewInit, Component, ViewChild, ViewContainerRef} from "@angular/core";
-import {ICellEditorParams} from "@ag-grid-community/core";
-import {AgEditorComponent} from "@ag-grid-community/angular";
+import { AfterViewInit, Component, ViewChild, ViewContainerRef } from "@angular/core";
+import { ICellEditorParams } from "@ag-grid-community/core";
+import { ICellEditorAngularComp } from "@ag-grid-community/angular";
 
-const KEY_BACKSPACE = 8;
-const KEY_DELETE = 46;
+// backspace starts the editor on Windows
+const KEY_BACKSPACE = 'Backspace';
 
 @Component({
     selector: 'editor-cell',
     template: `<input class="my-simple-editor" [value]="value" #input /> `
 })
-export class MySimpleEditor implements AgEditorComponent, AfterViewInit {
-    private params: ICellEditorParams;
-    private value: any;
+export class MySimpleEditor implements ICellEditorAngularComp, AfterViewInit {
+    private params!: ICellEditorParams;
+    public value: any;
 
-    @ViewChild('input', {read: ViewContainerRef}) public input;
+    @ViewChild('input', { read: ViewContainerRef }) public input!: ViewContainerRef;
 
     agInit(params: ICellEditorParams): void {
         this.params = params;
@@ -28,8 +28,8 @@ export class MySimpleEditor implements AgEditorComponent, AfterViewInit {
     getInitialValue(params: ICellEditorParams): any {
         let startValue = params.value;
 
-        const keyPressBackspaceOrDelete = params.keyPress === KEY_BACKSPACE || params.keyPress === KEY_DELETE;
-        if (keyPressBackspaceOrDelete) {
+        const isBackspace = params.eventKey === KEY_BACKSPACE;
+        if (isBackspace) {
             startValue = '';
         } else if (params.charPress) {
             startValue = params.charPress;

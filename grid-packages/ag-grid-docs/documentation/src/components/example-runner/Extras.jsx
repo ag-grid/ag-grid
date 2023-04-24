@@ -2,10 +2,9 @@ import React from 'react';
 import Styles from './Styles';
 import Scripts from './Scripts';
 
+var ANGULAR_VERSION = "14.2.6";
+
 const extrasMap = {
-    xlsx: {
-        scripts: ['https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.3/xlsx.core.min.js']
-    },
     jquery: {
         scripts: ['https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js']
     },
@@ -16,12 +15,6 @@ const extrasMap = {
     rxjs: {
         scripts: ['https://cdnjs.cloudflare.com/ajax/libs/rxjs/5.4.0/Rx.min.js']
     },
-    bluebirdjs: {
-        scripts: [
-            'https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.7.2/bluebird.core.min.js',
-            'https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.7.2/bluebird.min.js'
-        ]
-    },
     lodash: {
         scripts: ['https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js']
     },
@@ -30,12 +23,6 @@ const extrasMap = {
     },
     alasql: {
         scripts: ['https://cdnjs.cloudflare.com/ajax/libs/alasql/0.5.5/alasql.min.js']
-    },
-    d3: {
-        scripts: ['https://d3js.org/d3.v4.min.js']
-    },
-    sparkline: {
-        scripts: ['https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js']
     },
     bootstrap: {
         scripts: ['https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js'],
@@ -51,33 +38,28 @@ const extrasMap = {
             'https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.5.2/themes/material_blue.css'
         ]
     },
-    roboto: {
-        styles: ['https://fonts.googleapis.com/css?family=Roboto']
-    },
     fontawesome: {
         styles: ['https://use.fontawesome.com/releases/v5.6.3/css/all.css']
     },
     'xlsx-style': {
-        scripts: ['https://unpkg.com/xlsx-style@0.8.13/dist/xlsx.full.min.js']
-    },
-    angularjs1: {
-        scripts: ['https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js']
-    },
-    'ui-bootstrap': {
-        scripts: ['//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.5.0.js'],
-        styles: ['//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css']
+        scripts: ['https://cdn.jsdelivr.net/npm/xlsx-style@0.8.13/dist/xlsx.full.min.js']
     },
     materialdesign: {
         styles: [
-            'https://unpkg.com/@angular/material/prebuilt-themes/indigo-pink.css',
+            `https://cdn.jsdelivr.net/npm/@angular/material@${ANGULAR_VERSION}/prebuilt-themes/indigo-pink.css`,
             'https://fonts.googleapis.com/icon?family=Material+Icons'
         ]
     },
-    'ngx-bootstrap': {
-        styles: ['https://unpkg.com/bootstrap/dist/css/bootstrap.min.css']
+    materialdesignicons: {
+        styles: [
+            'https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.css'
+        ]
     }
 };
 
+/**
+ * These are the extra scripts or styles that an example can import.
+ */
 const Extras = ({ options }) => {
     const { extras } = options;
 

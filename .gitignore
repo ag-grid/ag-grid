@@ -6,6 +6,9 @@
 /.idea/atlassian-ide-plugin.xml
 .vscode
 
+
+doc-pages_orig
+
 .lernaBuildChain.cache.json
 
 .DS_Store
@@ -23,7 +26,8 @@ docs_are_running
 
 .hash
 
-archive*.zip
 release*.zip
+archive*.zip
 
-grid-packages/ag-grid-docs/documentation/algolia-ag-grid-dev_*.json
+*.tsbuildinfo
+

@@ -3,8 +3,11 @@ import { Helmet } from 'react-helmet';
 import { getChartsVersionMessage, getGridVersionMessage, getHeaderTitle } from 'utils/page-header';
 import isDevelopment from 'utils/is-development';
 
+/**
+ * This is used for adding SEO information to pages.
+ */
 export const SEO = ({ title, description, framework, pageName }) => {
-    const isCharts = pageName === 'charts' || pageName.indexOf('charts-') === 0;
+    const isCharts = pageName.startsWith('charts-');
     const metaTitle = getHeaderTitle(title, framework, isCharts);
     const versionMessage = isCharts ? getChartsVersionMessage(framework) : getGridVersionMessage(framework);
 
@@ -15,7 +18,7 @@ export const SEO = ({ title, description, framework, pageName }) => {
 
         if (description.length > targetLength) {
             if (isDevelopment()) {
-                console.warn(`Page description is too long and was truncated.`);
+                console.log(`WARNING: Page description is too long and was truncated.`);
             }
 
             const parts = description.split('.');

@@ -1,9 +1,9 @@
 .participant-group {
-    background-color: #00E7B1;
+    background-color: #00E7B1 !important;
 }
 
 .medals-group {
-    background-color: #5b9bd5;
+    background-color: #5b9bd5 !important;
 }
 
 .test-grid {

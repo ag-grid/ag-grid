@@ -1,0 +1,6 @@
+@use './core' as *;
+
+.page-margin {
+    @include page-max-width();
+    @include page-horizontal-margins();
+}

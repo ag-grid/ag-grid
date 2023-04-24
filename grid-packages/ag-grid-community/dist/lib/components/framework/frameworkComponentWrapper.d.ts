@@ -7,20 +7,21 @@ import { ComponentType } from "./componentTypes";
 export interface FrameworkComponentWrapper {
     wrap<A extends IComponent<any>>(frameworkComponent: {
         new (): any;
-    } | null, methodList: string[], optionalMethodList: string[], componentType: ComponentType, componentName?: string | null): A;
+    } | null, methodList: string[], optionalMethodList: string[], componentType: ComponentType): A;
 }
-export interface WrapableInterface {
+export interface WrappableInterface {
     hasMethod(name: string): boolean;
     callMethod(name: string, args: IArguments): void;
     addMethod(name: string, callback: Function): void;
 }
-export declare abstract class BaseComponentWrapper<F extends WrapableInterface> implements FrameworkComponentWrapper {
+export declare abstract class BaseComponentWrapper<F extends WrappableInterface> implements FrameworkComponentWrapper {
     wrap<A extends IComponent<any>>(OriginalConstructor: {
         new (): any;
-    }, mandatoryMethodList: string[], optionalMethodList: string[] | undefined, componentType: ComponentType, componentName?: string): A;
+    }, mandatoryMethodList: string[], optionalMethodList: string[] | undefined, componentType: ComponentType): A;
+    unwrap(comp: any): any;
     abstract createWrapper(OriginalConstructor: {
         new (): any;
-    }, componentType: ComponentType, componentName?: string): F;
+    }, componentType: ComponentType): F;
     private createMethod;
     protected createMethodProxy(wrapper: F, methodName: string, mandatory: boolean): Function;
 }

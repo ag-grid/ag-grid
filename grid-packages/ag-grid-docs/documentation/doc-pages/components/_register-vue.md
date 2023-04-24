@@ -7,11 +7,12 @@
 |
 |There are generally two ways to register custom components ("inline" components can only be registered by name):
 |
-|- By name.
-|- Direct reference.
+|- By name
+|- Direct reference (deprecated)
 |
-|Both options are fully supported by the grid, however registering by name is AG Grid's preferred option as it's more flexible.
-|All of the examples in the documentation use this approach.
+|Both options are fully supported by the grid - however we recommend referencing by name as registering by Direct Reference is deprecated. 
+| It's also the case that registering by name is the more flexible of the two options - given this, all of the examples in the documentation 
+| use registering by name.
 |The direct reference approach is kept for backwards compatibility as this was the original way to do it in AG Grid.
 |
 |## Registering Inline Custom Components
@@ -26,7 +27,7 @@
 |
 |<script>
 |//...other imports
-|import {AgGridVue} from "@ag-grid-community/vue";
+|import {AgGridVue} from "ag-grid-vue3";
 |
 |export default {
 |   components: {
@@ -46,7 +47,7 @@
 |                {
 |                   headerName: "Cube",
 |                   field: "value",
-|                   cellRendererFramework: 'CubeComponent',     
+|                   cellRenderer: 'CubeComponent',     
 |               }
 |           ]
 |       }
@@ -70,7 +71,7 @@
 |
 |<script>
 |//...other imports
-|import {AgGridVue} from "@ag-grid-community/vue";
+|import {AgGridVue} from "ag-grid-vue3";
 |import CubeComponent from './CubeComponent.vue';
 |
 |export default {
@@ -84,7 +85,7 @@
 |                {
 |                   headerName: "Cube",
 |                   field: "value",
-|                   cellRendererFramework: 'CubeComponent'     
+|                   cellRenderer: 'CubeComponent'     
 |               }
 |           ]
 |       }
@@ -95,7 +96,13 @@
 |```
 |### 2. By Direct Reference
 |
-|When registering components within the Grid by direct reference the target components *must* be wrapped in `Vue.extend(...)`:
+|[[note]]
+||<strong>Deprecated.</strong>
+||
+||This approach is supported but not recommend and will be removed in a future release.
+||
+|When registering components within the Grid by direct reference the target components *must* be wrapped in `Vue.extend(...)` (for Vue 2), or
+|`defineComponent(...)` (for Vue 3):
 |
 |```js
 |<template>
@@ -106,7 +113,7 @@
 |<script>
 |//...other imports
 |import Vue from "vue";
-|import {AgGridVue} from "@ag-grid-community/vue";
+|import {AgGridVue} from "ag-grid-vue3";
 |
 |// component wrapped in Vue.extend for direct reference
 |const CubeComponent = Vue.extend({
@@ -130,7 +137,7 @@
 |                {
 |                   headerName: "Cube",
 |                   field: "value",
-|                   cellRendererFramework: CubeComponent
+|                   cellRenderer: CubeComponent
 |               }
 |           ]
 |       }

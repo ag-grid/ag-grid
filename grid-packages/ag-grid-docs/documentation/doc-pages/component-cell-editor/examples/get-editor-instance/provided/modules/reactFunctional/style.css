@@ -1,4 +1,6 @@
 .my-simple-editor {
+    box-sizing: border-box;
+    padding-left: var(--ag-grid-size);
     width: 100%;
     height: 100%;
 }

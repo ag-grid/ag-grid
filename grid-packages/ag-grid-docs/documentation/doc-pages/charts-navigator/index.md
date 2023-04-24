@@ -26,7 +26,6 @@ The visible range is normalized to the `[0, 1]` interval. For example, to show t
 
 ```js
 navigator: {
-    enabled: true,
     min: 0.75,
     max: 1
 }
@@ -40,7 +39,6 @@ The navigator's `height` is configurable and affects chart's layout by leaving m
 
 ```js
 navigator: {
-    enabled: true,
     height: 50
 }
 ```
@@ -68,8 +66,4 @@ The example below uses various navigator configs (in a deliberately exaggerated 
 
 ## API Reference
 
-<api-documentation source='charts-api/api.json' section='chart.navigator'></api-documentation>
-
-## Next Up
-
-Continue to the next section to learn more about [markers](../charts-markers/).
+<interface-documentation interfaceName='AgNavigatorOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>

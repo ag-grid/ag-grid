@@ -1,11 +1,11 @@
 {
   "name": "ag-grid-community",
-  "version": "25.1.0",
+  "version": "29.3.2",
   "homepage": "http://www.ag-grid.com/",
   "authors": [
     "Niall Crosby <niall.crosby@ag-grid.com>"
   ],
-  "description": "Advanced Javascript Datagrid. Supports raw Javascript, React, AngularJS 1.x, AngularJS 2.0 and Web Components",
+  "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": [
     "./main.js"
   ],
@@ -20,7 +20,8 @@
     "react",
     "reactjs",
     "angular",
-    "angularjs"
+    "vue",
+    "vuejs"
   ],
   "license": "MIT",
   "ignore": [

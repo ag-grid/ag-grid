@@ -3,30 +3,26 @@ title: "Chart Container"
 enterprise: true
 ---
 
-This section describes how to specify an alternative chart container to the default grid-provided popup window.
+This section shows how to specify an alternative chart container to the default grid-provided popup window.
 
 
-Displaying the generated chart within the grid-provided popup window will suit most needs. However you may wish to display the chart in a different location. For example, your application may already have popup windows and you wish to use the same library for consistency.
+Displaying the generated chart within the grid-provided popup window will suit most needs. However, you may wish to 
+display the chart in a different location. For example, your application may already have popup windows, and you wish
+to use the same library for consistency.
 
 ## Specifying Chart Container
 
-To provide an alternative container for popup windows use the grid callback `createChartContainer(chartRef)`. The interface is as follows:
+To provide an alternative container for popup windows use the grid callback `createChartContainer(chartRef)`.
 
-```ts
-function createChartContainer(chartRef: ChartRef): void;
+<api-documentation source='grid-options/properties.json' section='charts' names='["createChartContainer"]'></api-documentation>
 
-interface ChartRef {
-    chartElement: HTMLElement;
-    destroyChart: () => void;
-}
-```
+The callback is called each time the user elects to create a chart via the grid UI. The callback is provided with a `ChartRef` implementation:
 
-The callback is called each time the user elects to create a chart via the grid UI. The callback is provided with a `ChartRef` containing the following:
+<interface-documentation interfaceName='ChartRef' ></interface-documentation>
 
-- `chartElement`: The chart DOM element, which the application is responsible for placing into the DOM.
-- `destroyChart`: The application is responsible for calling this when the chart is no longer needed.
-
-The example below demonstrates the `createChartContainer()` callback. The example does not use an alternative popup window, but instead places the charts into the DOM below the grid. This crude approach is on purpose to minimise the complexity of the example and focus on just the callback and the interactions of the grid.
+The example below demonstrates the `createChartContainer(chartRef)` callback. The example does not use an alternative 
+popup window, but instead places the charts into the DOM below the grid. This crude approach is on purpose to minimise 
+the complexity of the example and focus on just the callback and the interactions of the grid.
 
 
 [[note]]
@@ -35,12 +31,12 @@ The example below demonstrates the `createChartContainer()` callback. The exampl
 From the example below, the following can be noted:
 
 - Select a range of numbers (medal columns) and create a chart from the context menu.
-- The chart appears below the grid rather than in a popup window. This is because the `createChartContainer()` is implemented.
+- The chart appears below the grid rather than in a popup window. This is because the `createChartContainer(chartRef)` is implemented.
 - Each chart is displayed alongside a 'Destroy' button. The logic behind the destroy button calls `destroyChart()` to destroy the chart instance.
 
-<grid-example title='Provided Container' name='provided-container' type='generated' options='{ "exampleHeight": 750, "enterprise": true }'></grid-example>
+<grid-example title='Provided Container' name='provided-container' type='generated' options='{ "exampleHeight": 750, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
 ## Next Up
 
-Continue to the next section to learn about: [Cross Filtering](../integrated-charts-cross-filtering/).
+Continue to the next section to learn about: [Application Created Charts](/integrated-charts-application-created/).
 

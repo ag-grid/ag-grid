@@ -1,39 +1,32 @@
 [[only-vue]]
-|Below is a simple example of cell renderer class:
+|Below is a simple example of cell renderer component:
 |
 |```js
-|const MedalCellRenderer = {
-|    template: `
-|        <span>
-|           <span>{{cellValue}}</span>
-|           <button @click="buttonClicked()">Push For Total</button>
-|        </span>
-|    `,
+|export default {
+|    template: `<span>{{ displayValue }}</span>`,
 |    data: function () {
 |        return {
-|            cellValue: null
+|            displayValue: ''
 |        };
 |    },
 |    beforeMount() {
-|        // this.params contains the cell & row information and is made available to this component at creation time
-|        // see ICellRendererParams below for more details
-|        this.cellValue = this.getValueToDisplay(this.params);
+|        this.displayValue = new Array(this.params.value).fill('#').join('');
 |    },
-|    methods: {
-|        // gets called whenever the user gets the cell to refresh
-|        refresh(params) {
-|            // set value into cell again
-|            this.cellValue = this.getValueToDisplay(params);
-|        },
+|};
+|```
 |
-|        buttonClicked() {
-|            alert(`${this.cellValue} medals won!`)
-|        },
+|And below is the example using Vue 3's Composition API:
 |
-|        getValueToDisplay(params) {
-|            return params.valueFormatted ? params.valueFormatted : params.value;
+|```js
+|export default {
+|    template: `<span>{{ displayValue }}</span>`,
+|    setup(props) {
+|        const displayValue = new Array(props.params.value).fill('#').join('');
+|        return {
+|            displayValue
 |        }
 |    }
-|}
+|};
 |```
+|
  

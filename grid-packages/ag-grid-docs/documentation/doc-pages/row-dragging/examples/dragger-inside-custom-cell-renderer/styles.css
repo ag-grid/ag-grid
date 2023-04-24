@@ -1,4 +1,4 @@
-.ag-ltr .ag-has-focus .ag-cell.custom-athlete-cell.ag-cell-focus:not(.ag-cell-range-selected) {
+.ag-ltr .ag-cell.custom-athlete-cell.ag-cell-focus:not(.ag-cell-range-selected):focus-within {
     border: 1px solid #ff7b7b;
 }
 .ag-cell.custom-athlete-cell {

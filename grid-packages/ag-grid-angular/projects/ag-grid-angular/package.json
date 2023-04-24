@@ -1,11 +1,17 @@
 {
   "name": "ag-grid-angular",
-  "version": "25.1.0",
+  "version": "29.3.2",
   "license": "MIT",
   "peerDependencies": {
-    "ag-grid-community": "~25.1.0",
-    "@angular/common": "^9.0.0 || ^10.0.0 || ^11.0.0",
-    "@angular/core": "^9.0.0 || ^10.0.0 || ^11.0.0",
-    "tslib": "^1.10.0"
+    "ag-grid-community": "~29.3.2",
+    "@angular/common": ">= 12.0.0",
+    "@angular/core": ">= 12.0.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-grid.git"
   }
 }

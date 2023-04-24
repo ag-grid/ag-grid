@@ -17,6 +17,7 @@ export declare class AgList extends Component {
     private handleKeyDown;
     addOptions(listOptions: ListOption[]): this;
     addOption(listOption: ListOption): this;
+    private updateIndices;
     private renderOption;
     setValue(value?: string | null, silent?: boolean): this;
     setValueByIndex(idx: number): this;

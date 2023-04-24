@@ -8,14 +8,15 @@ Row customisation can be achieved in the following ways:
 - **Row Class:** Providing a CSS class for the rows.
 - **Row Class Rules:** Providing rules for applying CSS classes.
 
-Each of these approaches are presented in the following sections.
+Each of these approaches are presented in the following sections. 
+
+Some row styles may also be overridden with CSS variables. See the [full variable reference](/global-style-customisation-variables/).
 
 ## Row Style
 
 You can add CSS styles to each row in the following ways:
 
-- `rowStyle`: Property to set style for all rows. Set to an object of key (style names) and values (style values).
-- `getRowStyle`: Callback to set style for each row individually.
+<api-documentation source='grid-options/properties.json' section='styling' names='["rowStyle", "getRowStyle"]' ></api-documentation>
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
@@ -34,9 +35,7 @@ const gridOptions = {
 
 You can add CSS classes to each row in the following ways:
 
-- `rowClass`: Property to set CSS class for all rows. Provide either a string (class name) or array of strings (array
-    of class names).
-- `getRowClass`: Callback to set class for each row individually.
+<api-documentation source='grid-options/properties.json' section='styling' names='["rowClass", "getRowClass"]'></api-documentation>
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
@@ -55,44 +54,29 @@ const gridOptions = {
 
 You can define rules which can be applied to include certain CSS classes via the grid option `rowClassRules`. These rules are provided as a JavaScript map where the keys are class names and the values are expressions that if evaluated to `true`, the class gets used. The expression can either be a JavaScript function, or a string which is treated as a shorthand for a function by the grid.
 
+<api-documentation source='grid-options/properties.json' section='styling' names='["rowClassRules"]' ></api-documentation>
+
 The following snippet shows `rowClassRules` that use functions and the value from the year column:
 
 <snippet>
-|const gridOptions = {
-|    rowClassRules: {
-|        // apply green to 2008
-|        'rag-green-outer': function(params) { return params.data.year === 2008; },
-|
-|        // apply amber 2004
-|        'rag-amber-outer': function(params) { return params.data.year === 2004; },
-|
-|        // apply red to 2000
-|        'rag-red-outer': function(params) { return params.data.year === 2000; }
-|    }
-|}
+| const gridOptions = {
+|     rowClassRules: {
+|         // apply green to 2008
+|         'rag-green-outer': function(params) { return params.data.year === 2008; },
+| 
+|         // apply amber 2004
+|         'rag-amber-outer': function(params) { return params.data.year === 2004; },
+| 
+|         // apply red to 2000
+|         'rag-red-outer': function(params) { return params.data.year === 2000; }
+|     }
+| }
 </snippet>
 
-All rowStyle, rowClass and rowClassRules functions take a params object that implements the following interface:
+All rowStyle, rowClass and rowClassRules functions take a `RowClassParams` params object.
 
+<interface-documentation interfaceName='RowClassParams' ></interface-documentation>
 
-```ts
-interface RowClassParams {
-    // The row (from the rowData array, where value was taken) been rendered.
-    data: any;
-    // The node associated to this row
-    node: RowNode;
-    // The index of the row about to be rendered
-    rowIndex: number;
-    // If compiling to Angular, is the row's child scope, otherwise null.
-    $scope: any;
-    // A reference to the AG Grid API.
-    api: GridApi;
-    // A reference to the AG Grid Column API.
-    columnApi: ColumnApi;
-    // If provided in gridOptions, a context object
-    context: any;
-}
-```
 
 As an alternative, you can also provide shorthands of the functions using an expression.
 An expression is evaluated by the grid by executing the string as if it were a Javascript expression. The expression has the following attributes available to it (mapping the the attributes of the equivalent
@@ -120,10 +104,9 @@ const gridOptions = {
 
 If you refresh a row, or a cell is updated due to editing, the `rowStyle`, `rowClass` and `rowClassRules` are all applied again. This has the following effect:
 
-- **rowStyle**: All new styles are applied. If a new style is the
-    same as an old style, the new style overwrites the old style.
+- **rowStyle**: All new styles are applied. If a new style is the same as an old style, the new style overwrites the old style.
 - **rowClass**: All new classes are applied. Old classes are not removed so be aware that classes will accumulate. If you want to remove old classes, then use rowClassRules.
-- **rowClassRules**: Rules that return true will have the class applied the second time. Rules tha return false will have the class removed second time.
+- **rowClassRules**: Rules that return true will have the class applied the second time. Rules that return false will have the class removed second time.
 
 ## Example Row Class Rules
 
@@ -133,20 +116,40 @@ The example below demonstrates `rowClassRules`:
 - `rowClassRules` are used to apply the class `sick-days-warning` when the number of sick days > 5 and <= 7, and the class `sick-days-breach` is applied when the number of sick days >= 8.
 
 - The grid re-evaluates the rowClassRules when the data is changed. The example
-shows changing the data in the three different ways: `rowNode.setDataValue`, `rowNode.setData` and `api.applyTransaction`. See [Updating Data](../data-update/) for details on these update functions.
+shows changing the data in the three different ways: `rowNode.setDataValue`, `rowNode.setData` and `api.applyTransaction`. See [Updating Data](/data-update/) for details on these update functions.
 
 <grid-example title='Row Class Rules' name='row-class-rules' type='generated'></grid-example>
 
 ## Highlighting Rows and Columns
 
-The classes `ag-row-hover` and `ag-column-hover` are added to cells as the mouse is hovered over a cell's row or column.
+The grid can highlight both Rows and Columns as the mouse hovers over them. 
 
-The example below demonstrates the following:
+Highlighting Rows is on by default. To turn it off, set the grid property `suppressRowHoverHighlight=true`.
 
-- CSS class `ag-row-hover` has background colour added to it, so when you hover over a cell, the row will be highlighted.
+Highlighting Columns is off by default. To turn it on, set the grid property `columnHoverHighlight=true`.
 
-- CSS class `ag-column-hover` has background colour added to it, so when you hover over a cell or a header, the column will be highlighted.
+<snippet>
+const gridOptions = {
+    // turns OFF row hover, it's on by default
+    suppressRowHoverHighlight: true,
+    // turns ON column hover, it's off by default
+    columnHoverHighlight: true
+}
+</snippet>
 
-- If you hover over a header group, all columns in the group will be highlighted.
+In this example Rows and Columns are highlighted.
+
+Note if you hover over a header group, all columns in the group will be highlighted.
 
 <grid-example title='Highlight Rows And Columns' name='highlight-rows-and-columns' type='generated'></grid-example>
+
+In this example both Rows and Columns are not highlighted by setting.
+
+<grid-example title='No Highlighting Rows And Columns' name='highlight-nothing' type='generated'></grid-example>
+
+Rows highlight by default as this is a common requirement. Column highlighting is less common and as such needs to be opted it.
+
+Row Highlighting works by the grid adding the CSS class `ag-row-hover` to the row's getting hovered. The grid cannot depend on using CSS `:hover` selector as this will not highlight the entire row if Columns are pinned.
+
+Column Highlighting works by the grid adding the CSS class `ag-column-hover`
+to all Cells to be highlighted.

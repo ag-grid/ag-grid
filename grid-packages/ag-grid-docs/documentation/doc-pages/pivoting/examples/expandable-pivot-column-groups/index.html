@@ -1,1 +1,8 @@
-<div id="myGrid" style="height: 100%;" class="ag-theme-alpine"></div>
+<div style="display: flex; flex-direction: column; height: 100%">
+    <div>
+        <button onclick="expandAll(true)">Expand All</button>
+        <button onclick="expandAll(false)">Contract All</button>
+        <button onclick="expandRoute(['Alpine Skiing', '2002', '24/02/2002'])">Expand Alpine Skiing, 2002</button>
+    </div>
+    <div id="myGrid" style="height: 100%;" class="ag-theme-alpine"></div>
+</div>

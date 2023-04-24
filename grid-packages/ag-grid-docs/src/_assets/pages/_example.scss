@@ -131,7 +131,7 @@ button[disabled] {
                 &:hover {
                     text-decoration: none;
                 }
-                &:before {
+                &::before {
                     content: '';
                     display: inline-block;
                     background: transparent url('../../images/YouTubeSmall.png') no-repeat;
@@ -153,7 +153,7 @@ button[disabled] {
         flex: 1 1 auto;
         padding-left: 10px;
     }
-    > div span:before {
+    > div span::before {
         content: '\2191'
     }
     > div {
@@ -174,7 +174,7 @@ button[disabled] {
     }
 }
 .collapsed {
-    + .options-expander > div span:before {
+    + .options-expander > div span::before {
         content: '\2193'
     }
 }

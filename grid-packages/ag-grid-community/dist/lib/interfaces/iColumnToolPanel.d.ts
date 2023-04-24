@@ -1,5 +1,6 @@
 import { ColDef, ColGroupDef } from '../entities/colDef';
-export interface IColumnToolPanel {
+import { IToolPanel } from './iToolPanel';
+export interface IColumnToolPanel extends IToolPanel {
     expandColumnGroups(groupIds?: string[]): void;
     collapseColumnGroups(groupIds?: string[]): void;
     setColumnLayout(colDefs: (ColDef | ColGroupDef)[]): void;

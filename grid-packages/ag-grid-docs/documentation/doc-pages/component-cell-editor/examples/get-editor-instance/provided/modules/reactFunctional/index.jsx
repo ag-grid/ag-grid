@@ -1,74 +1,117 @@
-'use strict'
+'use strict';
 
-import React, {useEffect, useState} from 'react';
-import {render} from 'react-dom';
-import {AgGridColumn, AgGridReact} from '@ag-grid-community/react';
-import {AllModules} from '@ag-grid-enterprise/all-modules';
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import { AgGridReact } from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import "@ag-grid-community/styles/ag-grid.css";
+import "@ag-grid-community/styles/ag-theme-alpine.css";
 import MySimpleEditor from './mySimpleEditor.jsx';
 
+import { ModuleRegistry } from '@ag-grid-community/core';
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
+const createRowData = () => {
+    const cloneObject = obj => JSON.parse(JSON.stringify(obj));
+    const students = [
+        {
+            first_name: 'Bob',
+            last_name: 'Harrison',
+            gender: 'Male',
+            address: '1197 Thunder Wagon Common, Cataract, RI, 02987-1016, US, (401) 747-0763',
+            mood: 'Happy',
+            country: 'Ireland'
+        },
+        {
+            first_name: 'Mary',
+            last_name: 'Wilson',
+            gender: 'Female',
+            age: 11,
+            address: '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215',
+            mood: 'Sad',
+            country: 'Ireland'
+        },
+        {
+            first_name: 'Zahid',
+            last_name: 'Khan',
+            gender: 'Male',
+            age: 12,
+            address: '3235 High Forest, Glen Campbell, MS, 39035-6845, US, (601) 638-8186',
+            mood: 'Happy',
+            country: 'Ireland'
+        },
+        {
+            first_name: 'Jerry',
+            last_name: 'Mane',
+            gender: 'Male',
+            age: 12,
+            address: '2234 Sleepy Pony Mall , Drain, DC, 20078-4243, US, (202) 948-3634',
+            mood: 'Happy',
+            country: 'Ireland'
+        }
+    ];
+    students.forEach(item => {
+        students.push(cloneObject(item));
+    });
+    students.forEach(item => {
+        students.push(cloneObject(item));
+    });
+    students.forEach(item => {
+        students.push(cloneObject(item));
+    });
+    return students;
+}
+
 const GridExample = () => {
-    const createRowData = () => {
-        const cloneObject = obj => JSON.parse(JSON.stringify(obj));
-        const students = [
-            {
-                first_name: 'Bob',
-                last_name: 'Harrison',
-                gender: 'Male',
-                address: '1197 Thunder Wagon Common, Cataract, RI, 02987-1016, US, (401) 747-0763',
-                mood: 'Happy',
-                country: 'Ireland'
-            },
-            {
-                first_name: 'Mary',
-                last_name: 'Wilson',
-                gender: 'Female',
-                age: 11,
-                address: '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215',
-                mood: 'Sad',
-                country: 'Ireland'
-            },
-            {
-                first_name: 'Sadiq',
-                last_name: 'Khan',
-                gender: 'Male',
-                age: 12,
-                address: '3235 High Forest, Glen Campbell, MS, 39035-6845, US, (601) 638-8186',
-                mood: 'Happy',
-                country: 'Ireland'
-            },
-            {
-                first_name: 'Jerry',
-                last_name: 'Mane',
-                gender: 'Male',
-                age: 12,
-                address: '2234 Sleepy Pony Mall , Drain, DC, 20078-4243, US, (202) 948-3634',
-                mood: 'Happy',
-                country: 'Ireland'
-            }
-        ];
-        students.forEach(item => {
-            students.push(cloneObject(item));
-        });
-        students.forEach(item => {
-            students.push(cloneObject(item));
-        });
-        students.forEach(item => {
-            students.push(cloneObject(item));
-        });
-        return students;
-    }
+    const gridRef = useRef(null);
+    const [rowData] = useState(createRowData());
+    const columnDefs = useMemo(() => [
+        {
+            field: "first_name",
+            headerName: "First Name",
+            width: 120,
+            editable: true
+        },
+        {
+            field: "last_name",
+            headerName: "Last Name",
+            width: 120,
+            editable: true
+        },
+        {
+            field: "gender",
+            width: 100,
+            cellEditor: MySimpleEditor
+        },
+        {
+            field: "age",
+            width: 80,
+            cellEditor: MySimpleEditor
+        },
+        {
+            field: "mood",
+            width: 90,
+            cellEditor: MySimpleEditor
+        },
+        {
+            field: "country",
+            width: 110,
+            cellEditor: MySimpleEditor
+        },
+        {
+            field: "address",
+            minWidth: 502,
+            cellEditor: MySimpleEditor
+        }
+    ]);
 
-    const [gridApi, setGridApi] = useState(null);
-    const [rowData, setRowData] = useState(createRowData());
-
-    useEffect(() => {
-        if (gridApi) {
+    const onGridReady = useCallback((params) => {
+        if (gridRef.current) {
             const interval = window.setInterval(() => {
-                const instances = gridApi.getCellEditorInstances();
+                const instances = params.api.getCellEditorInstances();
                 if (instances.length > 0) {
-                    const instance = instances[0].getFrameworkComponentInstance();
+                    const instance = instances[0];
                     if (instance.myCustomFunction) {
                         const result = instance.myCustomFunction();
                         console.log(`found editing cell: row index = ${result.rowIndex}, column = ${result.colId}.`);
@@ -82,10 +125,10 @@ const GridExample = () => {
 
             return () => clearInterval(interval);
         }
-    }, [gridApi])
+    }, [])
 
     return (
-        <div style={{width: '100%', height: '100%'}}>
+        <div style={{ width: '100%', height: '100%' }}>
             <div
                 style={{
                     height: '100%',
@@ -93,7 +136,7 @@ const GridExample = () => {
                 }}
                 className="ag-theme-alpine">
                 <AgGridReact
-                    modules={AllModules}
+                    ref={gridRef}
                     defaultColDef={{
                         editable: true,
                         sortable: true,
@@ -103,21 +146,13 @@ const GridExample = () => {
                         resizable: true
                     }}
                     rowData={rowData}
-                    frameworkComponents={{mySimpleEditor: MySimpleEditor}}
-                    onGridReady={params => setGridApi(params.api)}
-                >
-                    <AgGridColumn field="first_name" headerName="First Name" width={120} editable={true}/><AgGridColumn
-                    field="last_name" headerName="Last Name" width={120} editable={true}/><AgGridColumn field="gender"
-                                                                                                        width={100}
-                                                                                                        cellEditor="mySimpleEditor"/><AgGridColumn
-                    field="age" width={80} cellEditor="mySimpleEditor"/><AgGridColumn field="mood" width={90}
-                                                                                      cellEditor="mySimpleEditor"/><AgGridColumn
-                    field="country" width={110} cellEditor="mySimpleEditor"/><AgGridColumn field="address" width={502}
-                                                                                           cellEditor="mySimpleEditor"/>
-                </AgGridReact>
+                    columnDefs={columnDefs}
+                    onGridReady={onGridReady}
+                />
             </div>
         </div>
     );
 }
 
-render(<GridExample></GridExample>, document.querySelector('#root'))
+const root = createRoot(document.getElementById('root'));
+root.render(<GridExample />);

@@ -1,0 +1,73 @@
+{
+  "name": "ag-charts-angular-legacy",
+  "version": "7.3.0",
+  "scripts": {
+    "clean": "rimraf dist .hash",
+    "ng": "ng",
+    "build": "ng build --prod && npm run hash",
+    "build-prod": "npm run build",
+    "test:e2e": "ng test --watch false --browsers ChromeHeadless",
+    "lint": "ng lint",
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-grid.git"
+  },
+  "keywords": [
+    "angular-component",
+    "charts",
+    "data",
+    "chart",
+    "angular"
+  ],
+  "author": "Sean Landsman <sean@thelandsmans.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-grid/issues"
+  },
+  "homepage": "https://www.ag-grid.com/",
+  "private": false,
+  "main": "./dist/ag-charts-angular/bundles/ag-charts-angular-legacy.umd.js",
+  "module": "./dist/ag-charts-angular/fesm5/ag-charts-angular-legacy.js",
+  "typings": "./dist/ag-charts-angular/ag-charts-angular-legacy.d.ts",
+  "dependencies": {
+    "@angular/animations": "~10.2.5",
+    "@angular/common": "~10.2.5",
+    "@angular/compiler": "~10.2.5",
+    "@angular/core": "~10.2.5",
+    "@angular/forms": "~10.2.5",
+    "@angular/platform-browser": "~10.2.5",
+    "@angular/platform-browser-dynamic": "~10.2.5",
+    "@angular/router": "~10.2.5",
+    "rxjs": "~6.5.4",
+    "tslib": "^2.0.0",
+    "zone.js": "~0.10.2",
+    "ag-charts-community": "~7.3.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "~0.1002.4",
+    "@angular-devkit/build-ng-packagr": "~0.1002.4",
+    "@angular/cli": "~10.2.4",
+    "@angular/compiler-cli": "~10.2.5",
+    "@angular/language-service": "~10.2.5",
+    "@types/node": "~8.9.4",
+    "@types/jasmine": "~3.3.8",
+    "@types/jasminewd2": "~2.0.3",
+    "codelyzer": "^5.0.0",
+    "jasmine-core": "~3.5.0",
+    "jasmine-spec-reporter": "~5.0.0",
+    "karma": "~5.0.0",
+    "karma-chrome-launcher": "~3.1.0",
+    "karma-coverage-istanbul-reporter": "~3.0.2",
+    "karma-jasmine": "~4.0.0",
+    "karma-jasmine-html-reporter": "^1.5.0",
+    "ng-packagr": "^10.1.0",
+    "protractor": "~7.0.0",
+    "ts-node": "~8.3.0",
+    "tslint": "~6.1.0",
+    "tsickle": "^0.39.1",
+    "typescript": "~4.0.8",
+    "rimraf": "3.0.2"
+  }
+}

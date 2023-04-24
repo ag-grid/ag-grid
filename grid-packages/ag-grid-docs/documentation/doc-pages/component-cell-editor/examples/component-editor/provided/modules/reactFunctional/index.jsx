@@ -1,26 +1,31 @@
 'use strict';
 
-import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
-import ReactDOM, {render} from 'react-dom';
-import {AgGridColumn, AgGridReact} from '@ag-grid-community/react';
+import React, { forwardRef, useEffect, useImperativeHandle, useMemo, memo, useRef, useState } from 'react';
+import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
+import { AgGridReact } from '@ag-grid-community/react';
 
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import "@ag-grid-community/styles/ag-grid.css";
+import "@ag-grid-community/styles/ag-theme-alpine.css";
 
-const KEY_BACKSPACE = 8;
-const KEY_DELETE = 46;
-const KEY_F2 = 113;
-const KEY_ENTER = 13;
-const KEY_TAB = 9;
+import { ModuleRegistry } from '@ag-grid-community/core';
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-const DoublingEditor = forwardRef((props, ref) => {
+// backspace starts the editor on Windows
+const KEY_BACKSPACE = 'Backspace';
+const KEY_F2 = 'F2';
+const KEY_ENTER = 'Enter';
+const KEY_TAB = 'Tab';
+
+const DoublingEditor = memo(forwardRef((props, ref) => {
     const [value, setValue] = useState(parseInt(props.value));
     const refInput = useRef(null);
 
     useEffect(() => {
         // focus on the input
-        setTimeout(() => refInput.current.focus());
+        refInput.current.focus()
     }, []);
 
     /* Component Editor Lifecycle methods */
@@ -38,7 +43,7 @@ const DoublingEditor = forwardRef((props, ref) => {
                 return false;
             },
 
-            // Gets called once when editing is finished (eg if enter is pressed).
+            // Gets called once when editing is finished (eg if Enter is pressed).
             // If you return true, then the result of the edit will be ignored.
             isCancelAfterEnd() {
                 // our editor will reject any value greater than 1000
@@ -49,49 +54,48 @@ const DoublingEditor = forwardRef((props, ref) => {
 
     return (
         <input type="number"
-               ref={refInput}
-               value={value}
-               onChange={event => setValue(event.target.value)}
-               style={{width: "100%"}}
+            ref={refInput}
+            value={value}
+            onChange={event => setValue(event.target.value)}
+            className="doubling-input"
         />
     );
-});
+}));
 
-const MoodRenderer = forwardRef((props, ref) => {
+const MoodRenderer = memo(props => {
     const imageForMood = mood => 'https://www.ag-grid.com/example-assets/smileys/' + (mood === 'Happy' ? 'happy.png' : 'sad.png');
 
-    const [mood, setMood] = useState(imageForMood(props.value));
-
-    useImperativeHandle(ref, () => {
-        return {
-            refresh(params) {
-                setMood(imageForMood(params.value));
-            }
-        };
-    });
+    const mood = useMemo(() => imageForMood(props.value), [props.value]);
 
     return (
-        <img width="20px" src={mood}/>
+        <img width="20px" src={mood} />
     );
 });
 
-const MoodEditor = forwardRef((props, ref) => {
+const MoodEditor = memo(forwardRef((props, ref) => {
     const isHappy = value => value === 'Happy';
 
-    const [happy, setHappy] = useState(isHappy(props.value));
-    const [editing, setEditing] = useState(true);
+    const [ready, setReady] = useState(false);
+    const [interimValue, setInterimValue] = useState(isHappy(props.value));
+    const [happy, setHappy] = useState(null);
     const refContainer = useRef(null);
 
-    useEffect(() => {
-        focus();
-    }, []);
-
     const checkAndToggleMoodIfLeftRight = (event) => {
-        if ([37, 39].indexOf(event.keyCode) > -1) { // left and right
-            setHappy(!happy);
-            event.stopPropagation();
+        if (ready) {
+            if (['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1) { // left and right
+                setInterimValue(!interimValue);
+                event.stopPropagation();
+            } else if (event.key === KEY_ENTER) {
+                setHappy(interimValue)
+                event.stopPropagation();
+            }
         }
     };
+
+    useEffect(() => {
+        ReactDOM.findDOMNode(refContainer.current).focus();
+        setReady(true);
+    }, [])
 
     useEffect(() => {
         window.addEventListener('keydown', checkAndToggleMoodIfLeftRight);
@@ -99,34 +103,21 @@ const MoodEditor = forwardRef((props, ref) => {
         return () => {
             window.removeEventListener('keydown', checkAndToggleMoodIfLeftRight);
         };
-    }, [checkAndToggleMoodIfLeftRight]);
+    }, [checkAndToggleMoodIfLeftRight, ready]);
+
+    useEffect(() => {
+        if (happy !== null) {
+            props.stopEditing();
+        }
+    }, [happy])
 
     useImperativeHandle(ref, () => {
         return {
             getValue() {
                 return happy ? 'Happy' : 'Sad';
-            },
-
-            isPopup() {
-                return true;
             }
         };
     });
-
-    useEffect(() => {
-        if (!editing) {
-            props.api.stopEditing();
-        }
-    }, [editing]);
-
-    const focus = () => {
-        window.setTimeout(() => {
-            let container = ReactDOM.findDOMNode(refContainer.current);
-            if (container) {
-                container.focus();
-            }
-        });
-    };
 
     const mood = {
         borderRadius: 15,
@@ -151,32 +142,30 @@ const MoodEditor = forwardRef((props, ref) => {
         padding: 4
     };
 
-    const happyStyle = happy ? selected : unselected;
-    const sadStyle = !happy ? selected : unselected;
+    const happyStyle = interimValue ? selected : unselected;
+    const sadStyle = !interimValue ? selected : unselected;
 
     return (
         <div ref={refContainer}
-             style={mood}
-             tabIndex={1} // important - without this the key presses wont be caught
+            style={mood}
+            tabIndex={1} // important - without this the key presses wont be caught
         >
             <img src="https://www.ag-grid.com/example-assets/smileys/happy.png" onClick={() => {
                 setHappy(true);
-                setEditing(false);
-            }} style={happyStyle}/>
+            }} style={happyStyle} />
             <img src="https://www.ag-grid.com/example-assets/smileys/sad.png" onClick={() => {
                 setHappy(false);
-                setEditing(false);
-            }} style={sadStyle}/>
+            }} style={sadStyle} />
         </div>
     );
-});
+}));
 
-const NumericEditor = forwardRef((props, ref) => {
+const NumericEditor = memo(forwardRef((props, ref) => {
     const createInitialState = () => {
         let startValue;
         let highlightAllOnFocus = true;
 
-        if (props.keyPress === KEY_BACKSPACE || props.keyPress === KEY_DELETE) {
+        if (props.eventKey === KEY_BACKSPACE) {
             // if backspace or delete pressed, we clear the cell
             startValue = '';
         } else if (props.charPress) {
@@ -186,7 +175,7 @@ const NumericEditor = forwardRef((props, ref) => {
         } else {
             // otherwise we start with the current value
             startValue = props.value;
-            if (props.keyPress === KEY_F2) {
+            if (props.eventKey === KEY_F2) {
                 highlightAllOnFocus = false;
             }
         }
@@ -212,27 +201,22 @@ const NumericEditor = forwardRef((props, ref) => {
 
             setHighlightAllOnFocus(false);
         } else {
-            // when we started editing, we want the carot at the end, not the start.
-            // comes into play in two scenarios: a) when user hits F2 and b)
-            // when user hits a printable character, then on IE (and only IE) the carot
-            // was placed after the first character, thus 'apply' would end up as 'pplea'
+            // when we started editing, we want the caret at the end, not the start.
+            // this comes into play in two scenarios: 
+            //   a) when user hits F2 
+            //   b) when user hits a printable character
             const length = eInput.value ? eInput.value.length : 0;
             if (length > 0) {
                 eInput.setSelectionRange(length, length);
             }
         }
-    }, [])
+    }, []);
 
     /* Utility Methods */
     const cancelBeforeStart = props.charPress && ('1234567890'.indexOf(props.charPress) < 0);
 
     const isLeftOrRight = event => {
-        return [37, 39].indexOf(event.keyCode) > -1;
-    };
-
-    const getCharCodeFromEvent = event => {
-        event = event || window.event;
-        return (typeof event.which === "undefined") ? event.keyCode : event.which;
+        return ['ArrowLeft', 'ArrowLeft'].indexOf(event.key) > -1;
     };
 
     const isCharNumeric = charStr => {
@@ -240,28 +224,31 @@ const NumericEditor = forwardRef((props, ref) => {
     };
 
     const isKeyPressedNumeric = event => {
-        const charCode = getCharCodeFromEvent(event);
-        const charStr = event.key ? event.key : String.fromCharCode(charCode);
+        const charStr = event.key;
         return isCharNumeric(charStr);
     };
 
-    const deleteOrBackspace = event => {
-        return [KEY_DELETE, KEY_BACKSPACE].indexOf(event.keyCode) > -1;
+    const isBackspace = event => {
+        return event.key === KEY_BACKSPACE;
     };
 
     const finishedEditingPressed = event => {
-        const charCode = getCharCodeFromEvent(event);
-        return charCode === KEY_ENTER || charCode === KEY_TAB;
+        const key = event.key;
+        return key === KEY_ENTER || key === KEY_TAB;
     };
 
     const onKeyDown = event => {
-        if (isLeftOrRight(event) || deleteOrBackspace(event)) {
+        if (isLeftOrRight(event) || isBackspace(event)) {
             event.stopPropagation();
             return;
         }
 
         if (!finishedEditingPressed(event) && !isKeyPressedNumeric(event)) {
             if (event.preventDefault) event.preventDefault();
+        }
+
+        if (finishedEditingPressed(event)) {
+            props.stopEditing();
         }
     };
 
@@ -279,7 +266,7 @@ const NumericEditor = forwardRef((props, ref) => {
                 return cancelBeforeStart;
             },
 
-            // Gets called once when editing is finished (eg if enter is pressed).
+            // Gets called once when editing is finished (eg if Enter is pressed).
             // If you return true, then the result of the edit will be ignored.
             isCancelAfterEnd() {
                 // will reject the number if it greater than 1,000,000
@@ -291,33 +278,58 @@ const NumericEditor = forwardRef((props, ref) => {
 
     return (
         <input ref={refInput}
-               value={value}
-               onChange={event => setValue(event.target.value)}
-               onKeyDown={event => onKeyDown(event)}
-               style={{width: "100%"}}
+            value={value}
+            onChange={event => setValue(event.target.value)}
+            onKeyDown={event => onKeyDown(event)}
+            className="numeric-input"
         />
     );
-});
+}));
 
 const GridExample = () => {
-    const rowData = [
-        {name: "Bob", mood: "Happy", number: 10},
-        {name: "Harry", mood: "Sad", number: 3},
-        {name: "Sally", mood: "Happy", number: 20},
-        {name: "Mary", mood: "Sad", number: 5},
-        {name: "John", mood: "Happy", number: 15},
-        {name: "Jack", mood: "Happy", number: 25},
-        {name: "Sue", mood: "Sad", number: 43},
-        {name: "Sean", mood: "Sad", number: 1335},
-        {name: "Niall", mood: "Happy", number: 2},
-        {name: "Alberto", mood: "Happy", number: 123},
-        {name: "Fred", mood: "Sad", number: 532},
-        {name: "Jenny", mood: "Happy", number: 34},
-        {name: "Larry", mood: "Happy", number: 13},
-    ];
+    const [rowData] = useState([
+        { name: "Bob", mood: "Happy", number: 10 },
+        { name: "Harry", mood: "Sad", number: 3 },
+        { name: "Sally", mood: "Happy", number: 20 },
+        { name: "Mary", mood: "Sad", number: 5 },
+        { name: "John", mood: "Happy", number: 15 },
+        { name: "Jack", mood: "Happy", number: 25 },
+        { name: "Sue", mood: "Sad", number: 43 },
+        { name: "Sean", mood: "Sad", number: 1335 },
+        { name: "Niall", mood: "Happy", number: 2 },
+        { name: "Alberto", mood: "Happy", number: 123 },
+        { name: "Fred", mood: "Sad", number: 532 },
+        { name: "Jenny", mood: "Happy", number: 34 },
+        { name: "Larry", mood: "Happy", number: 13 },
+    ]);
+
+    const columnDefs = useMemo(() => [
+        {
+            headerName: 'Doubling',
+            field: 'number',
+            cellEditor: DoublingEditor,
+            editable: true,
+            width: 300,
+        },
+        {
+            field: 'mood',
+            cellRenderer: MoodRenderer,
+            cellEditor: MoodEditor,
+            cellEditorPopup: true,
+            editable: true,
+            width: 300,
+        },
+        {
+            headerName: 'Numeric',
+            field: 'number',
+            cellEditor: NumericEditor,
+            editable: true,
+            width: 280,
+        },
+    ], [])
 
     return (
-        <div style={{width: '100%', height: '100%'}}>
+        <div style={{ width: '100%', height: '100%' }}>
             <div
                 style={{
                     height: '100%',
@@ -325,14 +337,8 @@ const GridExample = () => {
                 }}
                 className="ag-theme-alpine test-grid">
                 <AgGridReact
-                    modules={AllCommunityModules}
+                    columnDefs={columnDefs}
                     rowData={rowData}
-                    frameworkComponents={{
-                        doublingEditor: DoublingEditor,
-                        moodRenderer: MoodRenderer,
-                        moodEditor: MoodEditor,
-                        numericEditor: NumericEditor
-                    }}
                     defaultColDef={{
                         editable: true,
                         sortable: true,
@@ -341,25 +347,11 @@ const GridExample = () => {
                         filter: true,
                         resizable: true
                     }}>
-                    <AgGridColumn headerName="Doubling"
-                                  field="number"
-                                  cellEditor="doublingEditor"
-                                  editable={true}/>
-                    <AgGridColumn field="mood"
-                                  cellRenderer="moodRenderer"
-                                  cellEditor="moodEditor"
-                                  editable={true}/>
-                    <AgGridColumn headerName="Numeric"
-                                  field="number"
-                                  cellEditor="numericEditor"
-                                  editable={true}/>
                 </AgGridReact>
             </div>
         </div>
     );
 };
 
-render(
-    <GridExample/>,
-    document.querySelector('#root')
-);
+const root = createRoot(document.getElementById('root'));
+root.render(<GridExample />);

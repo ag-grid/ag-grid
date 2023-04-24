@@ -1,0 +1,28 @@
+.page-wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.grid-wrapper {
+    flex: 1 1 0px;
+}
+
+.greenBackground {
+    background-color: #b5e6b5;
+}
+
+.redFont {
+    color: red;
+    font-style: italic;
+    text-decoration: underline;
+}
+
+.darkGreyBackground {
+    background-color: #888888;
+    color: #fff;
+}
+
+.notInExcel {
+    color: #1b6d85;
+}

@@ -1,11 +1,14 @@
-import Vue from "vue";
-
-export default Vue.extend({
-    template: `<input style="height: 20px" :ref="'input'" v-model="text">`,
+export default {
+    template: `
+      <div style="border: 2px solid #22ff22;border-radius: 5px; background-color: #bbffbb; width: 200px; height: 50px">
+      <div style="margin-left: 20px">
+        Partial Match Filter: <input style="height: 20px" :ref="'input'" v-model="text">
+      </div>
+      </div>
+    `,
     data() {
         return {
             text: '',
-            valueGetter: null
         }
     },
     methods: {
@@ -13,22 +16,35 @@ export default Vue.extend({
             return this.text !== null && this.text !== undefined && this.text !== '';
         },
 
-        doesFilterPass(params){
+        doesFilterPass(params) {
+            const { api, colDef, column, columnApi, context, valueGetter } = this.params;
+            const { node } = params;
+            const value = valueGetter({
+                api,
+                colDef,
+                column,
+                columnApi,
+                context,
+                data: node.data,
+                getValue: (field) => node.data[field],
+                node,
+            }).toString().toLowerCase();
+
             return !this.text || this.text.toLowerCase()
                 .split(" ")
                 .every((filterWord) => {
-                    return this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) >= 0;
+                    return value.indexOf(filterWord) >= 0;
                 });
         },
 
         getModel() {
-            return {value: this.text};
+            if (!this.isFilterActive()) { return null; }
+
+            return { value: this.text };
         },
 
         setModel(model) {
-            if(model) {
-                this.text = model.value;
-            }
+            this.text = model == null ? null : model.value;
         },
 
         afterGuiAttached() {
@@ -40,14 +56,10 @@ export default Vue.extend({
         },
     },
     watch: {
-        'text': function(val, oldVal) {
+        'text': function (val, oldVal) {
             if (val !== oldVal) {
                 this.params.filterChangedCallback();
             }
         }
     },
-    created()
-    {
-        this.valueGetter = this.params.valueGetter;
-    }
-})
+}

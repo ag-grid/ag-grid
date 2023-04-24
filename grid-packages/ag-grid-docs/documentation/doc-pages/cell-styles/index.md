@@ -11,10 +11,14 @@ Cell customisation is done a the column level via the column definition. You can
 
 Each of these approaches are presented in the following sections.
 
+Some cell styles may also be overridden with CSS variables. See the full [CSS variables reference](/global-style-customisation-variables/).
+
 ## Cell Style
 
 Used to provide CSS styles directly (not using a class) to the cell. Can be either an object
 of CSS styles, or a function returning an object of CSS styles.
+
+<api-documentation source='column-properties/properties.json' section='styling' names='["cellStyle"]' ></api-documentation>
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
@@ -47,6 +51,8 @@ const gridOptions = {
 
 Provides a class for the cells in this column. Can be a string (a class), array of strings
 (array of classes), or a function (that returns a string or an array of strings).
+
+<api-documentation source='column-properties/properties.json' section='styling' names='["cellClass"]' ></api-documentation>
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
@@ -84,59 +90,41 @@ const gridOptions = {
 ## Cell Class Rules
 
 
-You can define rules which can be applied to include certain CSS classes via via `colDef.cellClassRules`.
+You can define rules which can be applied to include certain CSS classes via `colDef.cellClassRules`.
 These rules are provided as a JavaScript map where the keys are the class names and the values are expressions
 that if evaluated to true, the class gets used. The expression can either be a JavaScript function,
 or a string which is treated as a shorthand for a function by the grid.
 
 
+<api-documentation source='column-properties/properties.json' section='styling' names='["cellClassRules"]' ></api-documentation>
 
 The following snippet is cellClassRules using functions on a year column:
 
 
 <snippet suppressFrameworkContext="true">
-|const gridOptions = {
-|    cellClassRules: {
-|        // apply green to 2008
-|        'rag-green-outer': params => params.value === 2008,
-|
-|        // apply amber 2004
-|        'rag-amber-outer': params => params.value === 2004,
-|
-|        // apply red to 2000
-|        'rag-red-outer': params => params.value === 2000,
-|    }
-|}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'year',
+            cellClassRules: {
+                // apply green to 2008
+                'rag-green-outer': params => params.value === 2008,
+                // apply amber 2004
+                'rag-amber-outer': params => params.value === 2004,
+                // apply red to 2000
+                'rag-red-outer': params => params.value === 2000,
+            }
+        }
+    ]
+}
 </snippet>
 
 ## Cell Style, Cell Class & Cell Class Rules Params
 
 
-All cellClass cellStyle and cellClassRules functions take a params object that implements the following interface:
+All cellClass cellStyle and cellClassRules functions take a `CellClassParams`.
 
-
-```ts
-interface CellClassParams {
-    // The value to be rendered.
-    value: any,
-    // The row (from the rowData array, where value was taken) been rendered.
-    data: any,
-    // The node associated to this row
-    node: RowNode,
-    // The colDef been rendered
-    colDef: ColDef,
-    // The index of the row about to be rendered
-    rowIndex: number,
-    // If compiling to Angular, is the row's child scope, otherwise null.
-    $scope: any,
-    // A reference to the AG Grid API.
-    api: GridApi,
-    // A reference to the AG Grid Column API.
-    columnApi: ColumnApi;
-    // If provided in gridOptions, a context object
-    context: any,
-}
-```
+<interface-documentation interfaceName='CellClassParams' ></interface-documentation>
 
 As an alternative, you can also provide shorthands of the functions using an expression.
 The column Age in the example uses expressions. An expression is evaluated by the grid
@@ -158,11 +146,16 @@ The following snippet is cellClassRules using expressions on an age column:
 
 <snippet suppressFrameworkContext="true">
 const gridOptions = {
-    cellClassRules: {
-        'rag-green': 'x < 20',
-        'rag-amber': 'x >= 20 && x < 25',
-        'rag-red': 'x >= 25',
-    }
+    columnDefs: [
+        {
+            field: 'age',
+            cellClassRules: {
+                'rag-green': 'x < 20',
+                'rag-amber': 'x >= 20 && x < 25',
+                'rag-red': 'x >= 25',
+            }
+        }
+    ]
 }
 </snippet>
 
@@ -189,7 +182,7 @@ effect:
 | cellStyle: params => params.value > 80 ? { color: 'red' } : { color: 'black' }
 | ```
 
-## Example Cell Styling
+## Cell Styling Example
 
 Below shows both cssClassRules snippets above in a full working example. The example demonstrates the following:
 
@@ -199,4 +192,4 @@ Below shows both cssClassRules snippets above in a full working example. The exa
 - Gold sets `cellStyle` implicitly. It is not dependent on the cell value.
 - Silver and Bronze set `cellStyle` using a function and depends on the value. Editing will update the cellStyle.
 
-<grid-example title='Cell Styling' name='cell-styling' type='generated'></grid-example>
+<grid-example title='Cell Styling' name='cell-styling' type='mixed'></grid-example>

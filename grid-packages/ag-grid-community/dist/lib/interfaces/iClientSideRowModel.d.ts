@@ -2,50 +2,55 @@ import { IRowModel } from './iRowModel';
 import { RowNodeTransaction } from './rowNodeTransaction';
 import { RowDataTransaction } from './rowDataTransaction';
 import { RowNode } from '../entities/rowNode';
+import { RowHighlightPosition } from '../interfaces/iRowNode';
 import { ChangedPath } from '../utils/changedPath';
+export declare type ClientSideRowModelStep = 'everything' | 'group' | 'filter' | 'pivot' | 'aggregate' | 'sort' | 'map';
 export declare enum ClientSideRowModelSteps {
     EVERYTHING = "group",
     FILTER = "filter",
     SORT = "sort",
     MAP = "map",
     AGGREGATE = "aggregate",
+    FILTER_AGGREGATES = "filter_aggregates",
     PIVOT = "pivot",
     NOTHING = "nothing"
 }
-export interface IClientSideRowModel extends IRowModel {
-    updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder?: {
+export interface IClientSideRowModel<TData = any> extends IRowModel {
+    onRowGroupOpened(): void;
+    updateRowData(rowDataTran: RowDataTransaction<TData>, rowNodeOrder?: {
         [id: string]: number;
-    } | null): RowNodeTransaction | null;
+    } | null): RowNodeTransaction<TData> | null;
     setRowData(rowData: any[]): void;
-    refreshModel(params: RefreshModelParams): void;
+    refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void;
     expandOrCollapseAll(expand: boolean): void;
     forEachLeafNode(callback: (node: RowNode, index: number) => void): void;
-    forEachNode(callback: (node: RowNode, index: number) => void): void;
-    forEachNodeAfterFilter(callback: (node: RowNode, index: number) => void): void;
-    forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void): void;
+    forEachNodeAfterFilter(callback: (node: RowNode, index: number) => void, includeFooterNodes?: boolean): void;
+    forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void, includeFooterNodes?: boolean): void;
+    forEachPivotNode(callback: (node: RowNode, index: number) => void, includeFooterNodes?: boolean): void;
     resetRowHeights(): void;
     onRowHeightChanged(): void;
-    batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void;
+    onRowHeightChangedDebounced(): void;
+    batchUpdateRowData(rowDataTransaction: RowDataTransaction<TData>, callback?: (res: RowNodeTransaction<TData>) => void): void;
     flushAsyncTransactions(): void;
     getRootNode(): RowNode;
     doAggregate(changedPath?: ChangedPath): void;
     getTopLevelNodes(): RowNode[] | null;
-    forEachPivotNode(callback: (node: RowNode, index: number) => void): void;
     ensureRowsAtPixel(rowNode: RowNode[], pixel: number, increment: number): boolean;
     highlightRowAtPixel(rowNode: RowNode | null, pixel?: number): void;
-    getHighlightPosition(pixel: number, rowNode?: RowNode): 'above' | 'below';
+    getHighlightPosition(pixel: number, rowNode?: RowNode): RowHighlightPosition;
     getLastHighlightedRowNode(): RowNode | null;
 }
-export interface RefreshModelParams {
+export interface RefreshModelParams<TData = any> {
     step: ClientSideRowModelSteps;
     groupState?: any;
     keepRenderedRows?: boolean;
     animate?: boolean;
     keepEditingRows?: boolean;
-    rowNodeTransactions?: RowNodeTransaction[];
+    rowNodeTransactions?: RowNodeTransaction<TData>[];
     rowNodeOrder?: {
         [id: string]: number;
     };
     newData?: boolean;
     afterColumnsChanged?: boolean;
+    keepUndoRedoStack?: boolean;
 }

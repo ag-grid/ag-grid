@@ -34,6 +34,7 @@ export declare class AgGroupComponent extends Component {
     private static getTemplate;
     private postConstruct;
     private setupExpandContract;
+    private refreshAriaStatus;
     private refreshChildDisplay;
     isExpanded(): boolean;
     setAlignItems(alignment: AgGroupComponentParams['alignItems']): this;

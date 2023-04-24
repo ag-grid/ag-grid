@@ -1,42 +1,38 @@
 import { BeanStub } from "../context/beanStub";
-import { Component } from "./component";
+import { Column } from "../entities/column";
+import { ColumnGroup } from "../entities/columnGroup";
+import { RowNode } from "../entities/rowNode";
+import { Beans } from "../rendering/beans";
 import { ITooltipParams } from "../rendering/tooltipComponent";
-export interface TooltipParentComp extends Component {
-    getTooltipParams(): ITooltipParams;
+import { ColDef, ColGroupDef } from "../entities/colDef";
+import { WithoutGridCommon } from "../interfaces/iCommon";
+export interface ITooltipFeatureCtrl {
+    getTooltipValue(): any;
+    getGui(): HTMLElement;
+    getLocation(): string;
+    getColumn?(): Column | ColumnGroup;
+    getColDef?(): ColDef | ColGroupDef;
+    getRowIndex?(): number;
+    getRowNode?(): RowNode;
+    getValueFormatted?(): string;
+}
+export interface ITooltipFeatureComp {
+    setTitle(title: string | undefined): void;
 }
 export declare class TooltipFeature extends BeanStub {
-    private readonly DEFAULT_HIDE_TOOLTIP_TIMEOUT;
-    private readonly SHOW_QUICK_TOOLTIP_DIFF;
-    private readonly FADE_OUT_TOOLTIP_TIMEOUT;
-    private static lastTooltipHideTime;
-    private popupService;
-    private userComponentFactory;
-    private columnApi;
-    private gridApi;
-    private tooltipShowDelay;
-    private parentComp;
-    private showTooltipTimeoutId;
-    private hideTooltipTimeoutId;
-    private state;
-    private lastMouseEvent;
-    private tooltipComp;
-    private tooltipPopupDestroyFunc;
-    private tooltipInstanceCount;
-    private tooltipMouseTrack;
-    constructor(parentComp: TooltipParentComp);
-    private postConstruct;
-    protected destroy(): void;
-    onMouseEnter(e: MouseEvent): void;
-    onMouseLeave(): void;
-    private onKeyDown;
-    private setToDoNothing;
-    onMouseMove(e: MouseEvent): void;
-    onMouseDown(): void;
-    private hideTooltip;
-    private destroyTooltipComp;
-    private isLastTooltipHiddenRecently;
-    private showTooltip;
-    private newTooltipComponentCallback;
-    private positionTooltipUnderLastMouseEvent;
-    private clearTimeouts;
+    private readonly ctrl;
+    private readonly beans;
+    private comp;
+    private tooltip;
+    private genericTooltipFeature;
+    private browserTooltips;
+    constructor(ctrl: ITooltipFeatureCtrl, beans: Beans);
+    setComp(comp: ITooltipFeatureComp): void;
+    private setupTooltip;
+    private updateTooltipText;
+    private createTooltipFeatureIfNeeded;
+    refreshToolTip(): void;
+    getTooltipParams(): WithoutGridCommon<ITooltipParams>;
+    private getTooltipText;
+    destroy(): void;
 }

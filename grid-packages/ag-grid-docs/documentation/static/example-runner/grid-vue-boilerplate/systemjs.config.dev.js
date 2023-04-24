@@ -1,42 +1,27 @@
-(function(global) {
-    // simplified version of Object.assign for es3
-    function assign() {
-        var result = {};
-        for (var i = 0, len = arguments.length; i < len; i++) {
-            var arg = arguments[i];
-            for (var prop in arg) {
-                result[prop] = arg[prop];
-            }
-        }
-        return result;
-    }
-
+(function (global) {
     System.config({
         transpiler: 'plugin-babel',
         defaultExtension: 'js',
         paths: {
-            'npm:': 'https://unpkg.com/'
+            'npm:': 'https://cdn.jsdelivr.net/npm/'
         },
-        map: assign(
-            {
-                // babel transpiler
-                'plugin-babel': 'npm:systemjs-plugin-babel@0.0.25/plugin-babel.js',
-                'systemjs-babel-build': 'npm:systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
+        map: {
+            // babel transpiler
+            'plugin-babel': 'npm:systemjs-plugin-babel@0.0.25/plugin-babel.js',
+            'systemjs-babel-build': 'npm:systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
 
-                // css plugin
-                'css': 'npm:systemjs-plugin-css/css.js',
+            css: boilerplatePath + "css.js",
 
-                // vuejs
-                'vue': 'npm:vue@2.6.12/dist/vue.min.js',
+            // vuejs
+            'vue': 'npm:vue@2.6.12/dist/vue.min.js',
+            // vue property decorator
+            'vue-class-component': 'npm:vue-class-component@6.3.2/dist/vue-class-component.min.js',
+            'vue-property-decorator': 'npm:vue-property-decorator@7.2.0/lib/vue-property-decorator.umd.js',
 
-                // vue property decorator
-                'vue-class-component': 'npm:vue-class-component@6.3.2/dist/vue-class-component.min.js',
-                'vue-property-decorator': 'npm:vue-property-decorator@7.2.0/lib/vue-property-decorator.umd.js',
-
-                app: appLocation + 'app'
-            },
-            systemJsMap
-        ), // systemJsMap comes from index.html
+            app: appLocation + 'app',
+            // systemJsMap comes from index.html
+            ...systemJsMap
+        },
 
         packages: {
             'vue': {
@@ -68,113 +53,113 @@
                 defaultExtension: 'js'
             },
             // these are a little different in that they're in a directory and sjs doesn't default to the index.js inside...
-            '@ag-grid-community/core/dist/cjs/utils': {
+            '@ag-grid-community/core/dist/cjs/es5/utils': {
                 main: './index.js',
                 defaultExtension: 'js'
             },
-            '@ag-grid-enterprise/charts/dist/cjs/charts/chartComp/menu/settings/miniCharts': {
+            '@ag-grid-enterprise/charts/dist/cjs/es5/charts/chartComp/menu/settings/miniCharts': {
                 main: './index.js',
                 defaultExtension: 'js'
             },
             /* START OF MODULES - DO NOT DELETE */
             '@ag-grid-community/all-modules': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-community/client-side-row-model': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-community/core': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-community/csv-export': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-community/infinite-row-model': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             'ag-charts-community': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/all-modules': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/charts': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/clipboard': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/column-tool-panel': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/core': {
-                main: './dist/cjs/main.js',
-                defaultExtension: 'js'
-            },
-            '@ag-grid-enterprise/date-time-cell-editor': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/excel-export': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/filter-tool-panel': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/master-detail': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/menu': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/multi-filter': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/range-selection': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/rich-select': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/row-grouping': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/server-side-row-model': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/set-filter': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/side-bar': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
+                defaultExtension: 'js'
+            },
+            '@ag-grid-enterprise/sparklines': {
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/status-bar': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/viewport-row-model': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             /* END OF MODULES - DO NOT DELETE */

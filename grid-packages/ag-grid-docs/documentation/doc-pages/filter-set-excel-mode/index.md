@@ -36,10 +36,10 @@ The example below demonstrates the differences between the different modes:
 
 ## Differences Between Modes
 
-The table below shows the differences in behaviour alongside the default behaviour of the grid for comparison. Note that the behaviour of the grid can be changed from the defaults in many ways using the other options detailed on the [Set Filter](../filter-set/) page. These options can also be used in conjunction with the Excel Mode to give you the maximum amount of flexibility.
+The table below shows the differences in behaviour alongside the default behaviour of the grid for comparison. Note that the behaviour of the grid can be changed from the defaults in many ways using the other options detailed on the [Set Filter](/filter-set/) page. These options can also be used in conjunction with the Excel Mode to give you the maximum amount of flexibility.
 
-<matrix-table src='filter-set-excel-mode/resources/excelMode.json' rootnode='behaviours' columns='{ "behaviour": "Behaviour", "agGrid": "Default", "windowsExcel": "Excel (Windows)", "macExcel": "Excel (Max)" }'></matrix-table>
+<matrix-table src='filter-set-excel-mode/resources/excel-mode.json' rootnode='behaviours' columns='{ "behaviour": "Behaviour", "agGrid": "Default", "windowsExcel": "Excel (Windows)", "macExcel": "Excel (Mac)" }'></matrix-table>
 
 ## Next Up
 
-Continue to the next section: [API](../filter-set-api/).
+Continue to the next section to learn about the [Set Filter API](/filter-set-api/).

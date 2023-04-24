@@ -2,7 +2,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
@@ -21,7 +21,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Bean, ComponentUtil, Grid } from 'ag-grid-community';
 import { VueFrameworkComponentWrapper } from './VueFrameworkComponentWrapper';
 import { getAgGridProperties } from './Utils';
-import { AgGridColumn } from './AgGridColumn';
+import { VueFrameworkOverrides } from './VueFrameworkOverrides';
 var _a = getAgGridProperties(), props = _a[0], watch = _a[1], model = _a[2];
 var AgGridVue = /** @class */ (function (_super) {
     __extends(AgGridVue, _super);
@@ -69,7 +69,7 @@ var AgGridVue = /** @class */ (function (_super) {
                 currentValue: currentValue,
                 previousValue: previousValue,
             };
-            ComponentUtil.processOnChange(changes, this.gridOptions, this.gridOptions.api, this.gridOptions.columnApi);
+            ComponentUtil.processOnChange(changes, this.gridOptions.api);
         }
     };
     // noinspection JSUnusedGlobalSymbols
@@ -81,14 +81,12 @@ var AgGridVue = /** @class */ (function (_super) {
             _this.$emit('data-model-changed', Object.freeze(_this.getRowData()));
         }, 20);
         var frameworkComponentWrapper = new VueFrameworkComponentWrapper(this);
-        var gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
+        var gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this, true);
         this.checkForBindingConflicts();
         gridOptions.rowData = this.getRowDataBasedOnBindings();
-        if (AgGridColumn.hasChildColumns(this.$slots)) {
-            gridOptions.columnDefs = AgGridColumn.mapChildColumnDefs(this.$slots);
-        }
         var gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
+            frameworkOverrides: new VueFrameworkOverrides(this),
             providedBeanInstances: {
                 frameworkComponentWrapper: frameworkComponentWrapper,
             },
@@ -110,7 +108,7 @@ var AgGridVue = /** @class */ (function (_super) {
         var thisAsAny = this;
         if ((thisAsAny.rowData || this.gridOptions.rowData) &&
             thisAsAny.rowDataModel) {
-            console.warn('ag-grid: Using both rowData and rowDataModel. rowData will be ignored.');
+            console.warn('AG Grid: Using both rowData and rowDataModel. rowData will be ignored.');
         }
     };
     AgGridVue.prototype.getRowData = function () {

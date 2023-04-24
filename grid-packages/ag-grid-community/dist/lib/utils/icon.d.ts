@@ -1,5 +1,5 @@
-import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { Column } from '../entities/column';
+import { GridOptionsService } from '../gridOptionsService';
 export declare const iconNameClassMap: {
     [key: string]: string;
 };
@@ -7,9 +7,9 @@ export declare const iconNameClassMap: {
  * If icon provided, use this (either a string, or a function callback).
  * if not, then use the default icon from the theme
  * @param {string} iconName
- * @param {GridOptionsWrapper} gridOptionsWrapper
+ * @param {GridOptionsService} gridOptionsService
  * @param {Column | null} [column]
- * @returns {HTMLElement}
+ * @returns {Element}
  */
-export declare function createIcon(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column: Column | null): HTMLElement;
-export declare function createIconNoSpan(iconName: string, gridOptionsWrapper: GridOptionsWrapper, column?: Column | null, forceCreate?: boolean): HTMLElement | undefined;
+export declare function createIcon(iconName: string, gridOptionsService: GridOptionsService, column: Column | null): Element;
+export declare function createIconNoSpan(iconName: string, gridOptionsService: GridOptionsService, column?: Column | null, forceCreate?: boolean): Element | undefined;

@@ -9,17 +9,25 @@
 
 if [ "$#" -lt 1 ]
   then
-    echo "You must supply a release filename"
-    echo "For example: deployAgGridReleaseRemote.sh release_20191210.zip"
+    echo "You must supply a release version"
+    echo "For example: deployAgGridReleaseRemote.sh 28.0.0"
     exit 1
 fi
 
-FILENAME=$1
+RAW_VERSION=$1
+VERSION=""${RAW_VERSION//./}""
+TIMESTAMP=`date +%Y%m%d`
+FILENAME=release_"$TIMESTAMP"_v"$VERSION".zip
+
+PUBLIC_HTML_FOLDER="@HTML_FOLDER_NAME@"
+WORKING_DIR_ROOT="@WORKING_DIR_ROOT@"
+
+cd $WORKING_DIR_ROOT
 
 # delete old temp folder if it exists
-rm -f public_html_tmp > /dev/null
+rm -rf public_html_tmp > /dev/null
 
-# create a new folder - this will become public_html
+# create a new folder - this will become $HTML_FOLDER_NAME
 mkdir public_html_tmp
 
 # unzip release
@@ -28,22 +36,16 @@ mv ./$FILENAME public_html_tmp/
 cd public_html_tmp/ && unzip $FILENAME
 cd ..
 
-# copy non versionsed files & directories over
+# copy non versioned files & directories over
 echo "Copying non-versioned directories"
-cp -R ./public_html/support public_html_tmp/
-cp -R ./public_html/example-assets public_html_tmp/
-cp -R ./public_html/ecommerce public_html_tmp/
-cp -R ./public_html/ecommerce-uat public_html_tmp/
-cp -R ./public_html/zendesk public_html_tmp/
-cp -R ./public_html/services public_html_tmp/
-cp -R ./public_html/robots.txt public_html_tmp/
-cp -R ./public_html/__shared public_html_tmp/
-
-# jira stuff
-echo "Copying JIRA stuff"
-cp -R public_html/jira_reports/prod public_html_tmp/jira_reports/
-cp -R public_html/jira_reports/jira_config.json public_html_tmp/jira_reports/
-cp -R public_html/dist/aui public_html_tmp/dist
+cp -R ./$PUBLIC_HTML_FOLDER/support public_html_tmp/
+cp -R ./$PUBLIC_HTML_FOLDER/example-assets public_html_tmp/
+cp -R ./$PUBLIC_HTML_FOLDER/ecommerce public_html_tmp/
+cp -R ./$PUBLIC_HTML_FOLDER/ecommerce-uat public_html_tmp/
+cp -R ./$PUBLIC_HTML_FOLDER/zendesk public_html_tmp/
+cp -R ./$PUBLIC_HTML_FOLDER/services public_html_tmp/
+cp -R ./$PUBLIC_HTML_FOLDER/robots.txt public_html_tmp/
+cp -R ./$PUBLIC_HTML_FOLDER/__shared public_html_tmp/
 
 #update folder permissions (default is 777 - change to 755)
 echo "Updating folder permissions"

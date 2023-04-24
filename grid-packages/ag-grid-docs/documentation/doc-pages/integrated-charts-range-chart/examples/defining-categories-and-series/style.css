@@ -9,6 +9,16 @@
     height: auto !important;
 }
 
- .my-chart {
-     flex: 1;
- }
+.my-chart {
+    margin-top: 0.5rem;
+    border: 1px solid var(--ag-border-color);
+    flex: 1;
+}
+
+.ag-theme-alpine {
+    /* pink category range */
+    --ag-range-selection-chart-category-background-color: rgba(255, 0, 132, 0.1);
+    
+    /* orange data range */
+    --ag-range-selection-chart-background-color: rgba(255, 115, 0, 0.1);
+}

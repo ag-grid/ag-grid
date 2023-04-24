@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="25px" height="25px" viewBox="0 0 25 25" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.1 (47250) - http://www.bohemiancoding.com/sketch -->
+    <title>diagonal-tile</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="diagonal-tile" fill="#FFFFFF">
+            <polygon id="Path-3" points="3.46944695e-18 25 25 0 14.4833518 0 -0.00832607527 14.4916779"></polygon>
+            <polygon id="Path-3-Copy" points="11 39 36 14 25.4833518 14 10.9916739 28.4916779"></polygon>
+        </g>
+    </g>
+</svg>

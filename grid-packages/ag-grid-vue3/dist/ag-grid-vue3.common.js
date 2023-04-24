@@ -106,58 +106,64 @@ module.exports = require("agGrid");
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {/* unused harmony export EMPTY_ARR */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return EMPTY_OBJ; });
+/* unused harmony export EMPTY_OBJ */
 /* unused harmony export NO */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return NOOP; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return NOOP; });
 /* unused harmony export PatchFlagNames */
-/* unused harmony export babelParserDefaultPlugins */
 /* unused harmony export camelize */
 /* unused harmony export capitalize */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return def; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return def; });
 /* unused harmony export escapeHtml */
 /* unused harmony export escapeHtmlComment */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return extend; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return extend; });
+/* unused harmony export genPropsAccessExp */
 /* unused harmony export generateCodeFrame */
 /* unused harmony export getGlobalThis */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return hasChanged; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return hasOwn; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return hasChanged; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return hasOwn; });
 /* unused harmony export hyphenate */
+/* unused harmony export includeBooleanAttr */
 /* unused harmony export invokeArrayFns */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return isArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return isArray; });
 /* unused harmony export isBooleanAttr */
+/* unused harmony export isBuiltInDirective */
 /* unused harmony export isDate */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "h", function() { return isFunction; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return isFunction; });
 /* unused harmony export isGloballyWhitelisted */
 /* unused harmony export isHTMLTag */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "i", function() { return isIntegerKey; });
-/* unused harmony export isKnownAttr */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "j", function() { return isMap; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "h", function() { return isIntegerKey; });
+/* unused harmony export isKnownHtmlAttr */
+/* unused harmony export isKnownSvgAttr */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "i", function() { return isMap; });
 /* unused harmony export isModelListener */
-/* unused harmony export isNoUnitNumericStyleProp */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "k", function() { return isObject; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "j", function() { return isObject; });
 /* unused harmony export isOn */
 /* unused harmony export isPlainObject */
 /* unused harmony export isPromise */
+/* unused harmony export isRegExp */
 /* unused harmony export isReservedProp */
 /* unused harmony export isSSRSafeAttrName */
 /* unused harmony export isSVGTag */
 /* unused harmony export isSet */
 /* unused harmony export isSpecialBooleanAttr */
 /* unused harmony export isString */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "l", function() { return isSymbol; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "k", function() { return isSymbol; });
 /* unused harmony export isVoidTag */
 /* unused harmony export looseEqual */
-/* unused harmony export looseHas */
 /* unused harmony export looseIndexOf */
-/* unused harmony export makeMap */
+/* unused harmony export looseToNumber */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "l", function() { return makeMap; });
 /* unused harmony export normalizeClass */
+/* unused harmony export normalizeProps */
 /* unused harmony export normalizeStyle */
 /* unused harmony export objectToString */
 /* unused harmony export parseStringStyle */
 /* unused harmony export propsToAttrMap */
 /* unused harmony export remove */
+/* unused harmony export slotFlagsText */
 /* unused harmony export stringifyStyle */
 /* unused harmony export toDisplayString */
+/* unused harmony export toHandlerKey */
 /* unused harmony export toNumber */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "m", function() { return toRawType; });
 /* unused harmony export toTypeString */
@@ -177,40 +183,56 @@ function makeMap(str, expectsLowerCase) {
     return expectsLowerCase ? val => !!map[val.toLowerCase()] : val => !!map[val];
 }
 
-// Patch flags are optimization hints generated by the compiler.
-// when a block with dynamicChildren is encountered during diff, the algorithm
-// enters "optimized mode". In this mode, we know that the vdom is produced by
-// a render function generated by the compiler, so the algorithm only needs to
-// handle updates explicitly marked by these patch flags.
-// dev only flag -> name mapping
+/**
+ * dev only flag -> name mapping
+ */
 const PatchFlagNames = {
-    [1 /* TEXT */]: `TEXT`,
-    [2 /* CLASS */]: `CLASS`,
-    [4 /* STYLE */]: `STYLE`,
-    [8 /* PROPS */]: `PROPS`,
-    [16 /* FULL_PROPS */]: `FULL_PROPS`,
-    [32 /* HYDRATE_EVENTS */]: `HYDRATE_EVENTS`,
-    [64 /* STABLE_FRAGMENT */]: `STABLE_FRAGMENT`,
-    [128 /* KEYED_FRAGMENT */]: `KEYED_FRAGMENT`,
-    [256 /* UNKEYED_FRAGMENT */]: `UNKEYED_FRAGMENT`,
-    [1024 /* DYNAMIC_SLOTS */]: `DYNAMIC_SLOTS`,
-    [512 /* NEED_PATCH */]: `NEED_PATCH`,
-    [-1 /* HOISTED */]: `HOISTED`,
-    [-2 /* BAIL */]: `BAIL`
+    [1 /* PatchFlags.TEXT */]: `TEXT`,
+    [2 /* PatchFlags.CLASS */]: `CLASS`,
+    [4 /* PatchFlags.STYLE */]: `STYLE`,
+    [8 /* PatchFlags.PROPS */]: `PROPS`,
+    [16 /* PatchFlags.FULL_PROPS */]: `FULL_PROPS`,
+    [32 /* PatchFlags.HYDRATE_EVENTS */]: `HYDRATE_EVENTS`,
+    [64 /* PatchFlags.STABLE_FRAGMENT */]: `STABLE_FRAGMENT`,
+    [128 /* PatchFlags.KEYED_FRAGMENT */]: `KEYED_FRAGMENT`,
+    [256 /* PatchFlags.UNKEYED_FRAGMENT */]: `UNKEYED_FRAGMENT`,
+    [512 /* PatchFlags.NEED_PATCH */]: `NEED_PATCH`,
+    [1024 /* PatchFlags.DYNAMIC_SLOTS */]: `DYNAMIC_SLOTS`,
+    [2048 /* PatchFlags.DEV_ROOT_FRAGMENT */]: `DEV_ROOT_FRAGMENT`,
+    [-1 /* PatchFlags.HOISTED */]: `HOISTED`,
+    [-2 /* PatchFlags.BAIL */]: `BAIL`
+};
+
+/**
+ * Dev only
+ */
+const slotFlagsText = {
+    [1 /* SlotFlags.STABLE */]: 'STABLE',
+    [2 /* SlotFlags.DYNAMIC */]: 'DYNAMIC',
+    [3 /* SlotFlags.FORWARDED */]: 'FORWARDED'
 };
 
 const GLOBALS_WHITE_LISTED = 'Infinity,undefined,NaN,isFinite,isNaN,parseFloat,parseInt,decodeURI,' +
     'decodeURIComponent,encodeURI,encodeURIComponent,Math,Number,Date,Array,' +
-    'Object,Boolean,String,RegExp,Map,Set,JSON,Intl';
+    'Object,Boolean,String,RegExp,Map,Set,JSON,Intl,BigInt';
 const isGloballyWhitelisted = /*#__PURE__*/ makeMap(GLOBALS_WHITE_LISTED);
 
 const range = 2;
 function generateCodeFrame(source, start = 0, end = source.length) {
-    const lines = source.split(/\r?\n/);
+    // Split the content into individual lines but capture the newline sequence
+    // that separated each line. This is important because the actual sequence is
+    // needed to properly take into account the full line length for offset
+    // comparison
+    let lines = source.split(/(\r?\n)/);
+    // Separate the lines and newline sequences into separate arrays for easier referencing
+    const newlineSequences = lines.filter((_, idx) => idx % 2 === 1);
+    lines = lines.filter((_, idx) => idx % 2 === 0);
     let count = 0;
     const res = [];
     for (let i = 0; i < lines.length; i++) {
-        count += lines[i].length + 1;
+        count +=
+            lines[i].length +
+                ((newlineSequences[i] && newlineSequences[i].length) || 0);
         if (count >= start) {
             for (let j = i - range; j <= i + range || end > count; j++) {
                 if (j < 0 || j >= lines.length)
@@ -218,9 +240,10 @@ function generateCodeFrame(source, start = 0, end = source.length) {
                 const line = j + 1;
                 res.push(`${line}${' '.repeat(Math.max(3 - String(line).length, 0))}|  ${lines[j]}`);
                 const lineLength = lines[j].length;
+                const newLineSeqLength = (newlineSequences[j] && newlineSequences[j].length) || 0;
                 if (j === i) {
                     // push underline
-                    const pad = start - (count - lineLength) + 1;
+                    const pad = start - (count - (lineLength + newLineSeqLength));
                     const length = Math.max(1, end > count ? lineLength - pad : end - start);
                     res.push(`   |  ` + ' '.repeat(pad) + '^'.repeat(length));
                 }
@@ -229,7 +252,7 @@ function generateCodeFrame(source, start = 0, end = source.length) {
                         const length = Math.max(Math.min(end - count, lineLength), 1);
                         res.push(`   |  ` + '^'.repeat(length));
                     }
-                    count += lineLength + 1;
+                    count += lineLength + newLineSeqLength;
                 }
             }
             break;
@@ -237,6 +260,134 @@ function generateCodeFrame(source, start = 0, end = source.length) {
     }
     return res.join('\n');
 }
+
+function normalizeStyle(value) {
+    if (isArray(value)) {
+        const res = {};
+        for (let i = 0; i < value.length; i++) {
+            const item = value[i];
+            const normalized = isString(item)
+                ? parseStringStyle(item)
+                : normalizeStyle(item);
+            if (normalized) {
+                for (const key in normalized) {
+                    res[key] = normalized[key];
+                }
+            }
+        }
+        return res;
+    }
+    else if (isString(value)) {
+        return value;
+    }
+    else if (isObject(value)) {
+        return value;
+    }
+}
+const listDelimiterRE = /;(?![^(]*\))/g;
+const propertyDelimiterRE = /:([^]+)/;
+const styleCommentRE = /\/\*.*?\*\//gs;
+function parseStringStyle(cssText) {
+    const ret = {};
+    cssText
+        .replace(styleCommentRE, '')
+        .split(listDelimiterRE)
+        .forEach(item => {
+        if (item) {
+            const tmp = item.split(propertyDelimiterRE);
+            tmp.length > 1 && (ret[tmp[0].trim()] = tmp[1].trim());
+        }
+    });
+    return ret;
+}
+function stringifyStyle(styles) {
+    let ret = '';
+    if (!styles || isString(styles)) {
+        return ret;
+    }
+    for (const key in styles) {
+        const value = styles[key];
+        const normalizedKey = key.startsWith(`--`) ? key : hyphenate(key);
+        if (isString(value) || typeof value === 'number') {
+            // only render valid values
+            ret += `${normalizedKey}:${value};`;
+        }
+    }
+    return ret;
+}
+function normalizeClass(value) {
+    let res = '';
+    if (isString(value)) {
+        res = value;
+    }
+    else if (isArray(value)) {
+        for (let i = 0; i < value.length; i++) {
+            const normalized = normalizeClass(value[i]);
+            if (normalized) {
+                res += normalized + ' ';
+            }
+        }
+    }
+    else if (isObject(value)) {
+        for (const name in value) {
+            if (value[name]) {
+                res += name + ' ';
+            }
+        }
+    }
+    return res.trim();
+}
+function normalizeProps(props) {
+    if (!props)
+        return null;
+    let { class: klass, style } = props;
+    if (klass && !isString(klass)) {
+        props.class = normalizeClass(klass);
+    }
+    if (style) {
+        props.style = normalizeStyle(style);
+    }
+    return props;
+}
+
+// These tag configs are shared between compiler-dom and runtime-dom, so they
+// https://developer.mozilla.org/en-US/docs/Web/HTML/Element
+const HTML_TAGS = 'html,body,base,head,link,meta,style,title,address,article,aside,footer,' +
+    'header,hgroup,h1,h2,h3,h4,h5,h6,nav,section,div,dd,dl,dt,figcaption,' +
+    'figure,picture,hr,img,li,main,ol,p,pre,ul,a,b,abbr,bdi,bdo,br,cite,code,' +
+    'data,dfn,em,i,kbd,mark,q,rp,rt,ruby,s,samp,small,span,strong,sub,sup,' +
+    'time,u,var,wbr,area,audio,map,track,video,embed,object,param,source,' +
+    'canvas,script,noscript,del,ins,caption,col,colgroup,table,thead,tbody,td,' +
+    'th,tr,button,datalist,fieldset,form,input,label,legend,meter,optgroup,' +
+    'option,output,progress,select,textarea,details,dialog,menu,' +
+    'summary,template,blockquote,iframe,tfoot';
+// https://developer.mozilla.org/en-US/docs/Web/SVG/Element
+const SVG_TAGS = 'svg,animate,animateMotion,animateTransform,circle,clipPath,color-profile,' +
+    'defs,desc,discard,ellipse,feBlend,feColorMatrix,feComponentTransfer,' +
+    'feComposite,feConvolveMatrix,feDiffuseLighting,feDisplacementMap,' +
+    'feDistantLight,feDropShadow,feFlood,feFuncA,feFuncB,feFuncG,feFuncR,' +
+    'feGaussianBlur,feImage,feMerge,feMergeNode,feMorphology,feOffset,' +
+    'fePointLight,feSpecularLighting,feSpotLight,feTile,feTurbulence,filter,' +
+    'foreignObject,g,hatch,hatchpath,image,line,linearGradient,marker,mask,' +
+    'mesh,meshgradient,meshpatch,meshrow,metadata,mpath,path,pattern,' +
+    'polygon,polyline,radialGradient,rect,set,solidcolor,stop,switch,symbol,' +
+    'text,textPath,title,tspan,unknown,use,view';
+const VOID_TAGS = 'area,base,br,col,embed,hr,img,input,link,meta,param,source,track,wbr';
+/**
+ * Compiler only.
+ * Do NOT use in runtime code paths unless behind `(process.env.NODE_ENV !== 'production')` flag.
+ */
+const isHTMLTag = /*#__PURE__*/ makeMap(HTML_TAGS);
+/**
+ * Compiler only.
+ * Do NOT use in runtime code paths unless behind `(process.env.NODE_ENV !== 'production')` flag.
+ */
+const isSVGTag = /*#__PURE__*/ makeMap(SVG_TAGS);
+/**
+ * Compiler only.
+ * Do NOT use in runtime code paths unless behind `(process.env.NODE_ENV !== 'production')` flag.
+ */
+const isVoidTag = /*#__PURE__*/ makeMap(VOID_TAGS);
 
 /**
  * On the client we only need to offer special cases for boolean attributes that
@@ -258,6 +409,13 @@ const isBooleanAttr = /*#__PURE__*/ makeMap(specialBooleanAttrs +
     `,async,autofocus,autoplay,controls,default,defer,disabled,hidden,` +
     `loop,open,required,reversed,scoped,seamless,` +
     `checked,muted,multiple,selected`);
+/**
+ * Boolean attributes should be included if the value is truthy or ''.
+ * e.g. `<select multiple>` compiles to `{ multiple: '' }`
+ */
+function includeBooleanAttr(value) {
+    return !!value || value === '';
+}
 const unsafeAttrCharRE = /[>/="'\u0009\u000a\u000c\u0020]/;
 const attrValidationCache = {};
 function isSSRSafeAttrName(name) {
@@ -277,24 +435,12 @@ const propsToAttrMap = {
     httpEquiv: 'http-equiv'
 };
 /**
- * CSS properties that accept plain numbers
- */
-const isNoUnitNumericStyleProp = /*#__PURE__*/ makeMap(`animation-iteration-count,border-image-outset,border-image-slice,` +
-    `border-image-width,box-flex,box-flex-group,box-ordinal-group,column-count,` +
-    `columns,flex,flex-grow,flex-positive,flex-shrink,flex-negative,flex-order,` +
-    `grid-row,grid-row-end,grid-row-span,grid-row-start,grid-column,` +
-    `grid-column-end,grid-column-span,grid-column-start,font-weight,line-clamp,` +
-    `line-height,opacity,order,orphans,tab-size,widows,z-index,zoom,` +
-    // SVG
-    `fill-opacity,flood-opacity,stop-opacity,stroke-dasharray,stroke-dashoffset,` +
-    `stroke-miterlimit,stroke-opacity,stroke-width`);
-/**
  * Known attributes, this is used for stringification of runtime static nodes
  * so that we don't stringify bindings that cannot be set from HTML.
  * Don't also forget to allow `data-*` and `aria-*`!
  * Generated from https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes
  */
-const isKnownAttr = /*#__PURE__*/ makeMap(`accept,accept-charset,accesskey,action,align,allow,alt,async,` +
+const isKnownHtmlAttr = /*#__PURE__*/ makeMap(`accept,accept-charset,accesskey,action,align,allow,alt,async,` +
     `autocapitalize,autocomplete,autofocus,autoplay,background,bgcolor,` +
     `border,buffered,capture,challenge,charset,checked,cite,class,code,` +
     `codebase,color,cols,colspan,content,contenteditable,contextmenu,controls,` +
@@ -309,99 +455,48 @@ const isKnownAttr = /*#__PURE__*/ makeMap(`accept,accept-charset,accesskey,actio
     `selected,shape,size,sizes,slot,span,spellcheck,src,srcdoc,srclang,srcset,` +
     `start,step,style,summary,tabindex,target,title,translate,type,usemap,` +
     `value,width,wrap`);
-
-function normalizeStyle(value) {
-    if (isArray(value)) {
-        const res = {};
-        for (let i = 0; i < value.length; i++) {
-            const item = value[i];
-            const normalized = normalizeStyle(isString(item) ? parseStringStyle(item) : item);
-            if (normalized) {
-                for (const key in normalized) {
-                    res[key] = normalized[key];
-                }
-            }
-        }
-        return res;
-    }
-    else if (isObject(value)) {
-        return value;
-    }
-}
-const listDelimiterRE = /;(?![^(]*\))/g;
-const propertyDelimiterRE = /:(.+)/;
-function parseStringStyle(cssText) {
-    const ret = {};
-    cssText.split(listDelimiterRE).forEach(item => {
-        if (item) {
-            const tmp = item.split(propertyDelimiterRE);
-            tmp.length > 1 && (ret[tmp[0].trim()] = tmp[1].trim());
-        }
-    });
-    return ret;
-}
-function stringifyStyle(styles) {
-    let ret = '';
-    if (!styles) {
-        return ret;
-    }
-    for (const key in styles) {
-        const value = styles[key];
-        const normalizedKey = key.startsWith(`--`) ? key : hyphenate(key);
-        if (isString(value) ||
-            (typeof value === 'number' && isNoUnitNumericStyleProp(normalizedKey))) {
-            // only render valid values
-            ret += `${normalizedKey}:${value};`;
-        }
-    }
-    return ret;
-}
-function normalizeClass(value) {
-    let res = '';
-    if (isString(value)) {
-        res = value;
-    }
-    else if (isArray(value)) {
-        for (let i = 0; i < value.length; i++) {
-            res += normalizeClass(value[i]) + ' ';
-        }
-    }
-    else if (isObject(value)) {
-        for (const name in value) {
-            if (value[name]) {
-                res += name + ' ';
-            }
-        }
-    }
-    return res.trim();
-}
-
-// These tag configs are shared between compiler-dom and runtime-dom, so they
-// https://developer.mozilla.org/en-US/docs/Web/HTML/Element
-const HTML_TAGS = 'html,body,base,head,link,meta,style,title,address,article,aside,footer,' +
-    'header,h1,h2,h3,h4,h5,h6,hgroup,nav,section,div,dd,dl,dt,figcaption,' +
-    'figure,picture,hr,img,li,main,ol,p,pre,ul,a,b,abbr,bdi,bdo,br,cite,code,' +
-    'data,dfn,em,i,kbd,mark,q,rp,rt,rtc,ruby,s,samp,small,span,strong,sub,sup,' +
-    'time,u,var,wbr,area,audio,map,track,video,embed,object,param,source,' +
-    'canvas,script,noscript,del,ins,caption,col,colgroup,table,thead,tbody,td,' +
-    'th,tr,button,datalist,fieldset,form,input,label,legend,meter,optgroup,' +
-    'option,output,progress,select,textarea,details,dialog,menu,' +
-    'summary,template,blockquote,iframe,tfoot';
-// https://developer.mozilla.org/en-US/docs/Web/SVG/Element
-const SVG_TAGS = 'svg,animate,animateMotion,animateTransform,circle,clipPath,color-profile,' +
-    'defs,desc,discard,ellipse,feBlend,feColorMatrix,feComponentTransfer,' +
-    'feComposite,feConvolveMatrix,feDiffuseLighting,feDisplacementMap,' +
-    'feDistanceLight,feDropShadow,feFlood,feFuncA,feFuncB,feFuncG,feFuncR,' +
-    'feGaussianBlur,feImage,feMerge,feMergeNode,feMorphology,feOffset,' +
-    'fePointLight,feSpecularLighting,feSpotLight,feTile,feTurbulence,filter,' +
-    'foreignObject,g,hatch,hatchpath,image,line,linearGradient,marker,mask,' +
-    'mesh,meshgradient,meshpatch,meshrow,metadata,mpath,path,pattern,' +
-    'polygon,polyline,radialGradient,rect,set,solidcolor,stop,switch,symbol,' +
-    'text,textPath,title,tspan,unknown,use,view';
-const VOID_TAGS = 'area,base,br,col,embed,hr,img,input,link,meta,param,source,track,wbr';
-const isHTMLTag = /*#__PURE__*/ makeMap(HTML_TAGS);
-const isSVGTag = /*#__PURE__*/ makeMap(SVG_TAGS);
-const isVoidTag = /*#__PURE__*/ makeMap(VOID_TAGS);
+/**
+ * Generated from https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute
+ */
+const isKnownSvgAttr = /*#__PURE__*/ makeMap(`xmlns,accent-height,accumulate,additive,alignment-baseline,alphabetic,amplitude,` +
+    `arabic-form,ascent,attributeName,attributeType,azimuth,baseFrequency,` +
+    `baseline-shift,baseProfile,bbox,begin,bias,by,calcMode,cap-height,class,` +
+    `clip,clipPathUnits,clip-path,clip-rule,color,color-interpolation,` +
+    `color-interpolation-filters,color-profile,color-rendering,` +
+    `contentScriptType,contentStyleType,crossorigin,cursor,cx,cy,d,decelerate,` +
+    `descent,diffuseConstant,direction,display,divisor,dominant-baseline,dur,dx,` +
+    `dy,edgeMode,elevation,enable-background,end,exponent,fill,fill-opacity,` +
+    `fill-rule,filter,filterRes,filterUnits,flood-color,flood-opacity,` +
+    `font-family,font-size,font-size-adjust,font-stretch,font-style,` +
+    `font-variant,font-weight,format,from,fr,fx,fy,g1,g2,glyph-name,` +
+    `glyph-orientation-horizontal,glyph-orientation-vertical,glyphRef,` +
+    `gradientTransform,gradientUnits,hanging,height,href,hreflang,horiz-adv-x,` +
+    `horiz-origin-x,id,ideographic,image-rendering,in,in2,intercept,k,k1,k2,k3,` +
+    `k4,kernelMatrix,kernelUnitLength,kerning,keyPoints,keySplines,keyTimes,` +
+    `lang,lengthAdjust,letter-spacing,lighting-color,limitingConeAngle,local,` +
+    `marker-end,marker-mid,marker-start,markerHeight,markerUnits,markerWidth,` +
+    `mask,maskContentUnits,maskUnits,mathematical,max,media,method,min,mode,` +
+    `name,numOctaves,offset,opacity,operator,order,orient,orientation,origin,` +
+    `overflow,overline-position,overline-thickness,panose-1,paint-order,path,` +
+    `pathLength,patternContentUnits,patternTransform,patternUnits,ping,` +
+    `pointer-events,points,pointsAtX,pointsAtY,pointsAtZ,preserveAlpha,` +
+    `preserveAspectRatio,primitiveUnits,r,radius,referrerPolicy,refX,refY,rel,` +
+    `rendering-intent,repeatCount,repeatDur,requiredExtensions,requiredFeatures,` +
+    `restart,result,rotate,rx,ry,scale,seed,shape-rendering,slope,spacing,` +
+    `specularConstant,specularExponent,speed,spreadMethod,startOffset,` +
+    `stdDeviation,stemh,stemv,stitchTiles,stop-color,stop-opacity,` +
+    `strikethrough-position,strikethrough-thickness,string,stroke,` +
+    `stroke-dasharray,stroke-dashoffset,stroke-linecap,stroke-linejoin,` +
+    `stroke-miterlimit,stroke-opacity,stroke-width,style,surfaceScale,` +
+    `systemLanguage,tabindex,tableValues,target,targetX,targetY,text-anchor,` +
+    `text-decoration,text-rendering,textLength,to,transform,transform-origin,` +
+    `type,u1,u2,underline-position,underline-thickness,unicode,unicode-bidi,` +
+    `unicode-range,units-per-em,v-alphabetic,v-hanging,v-ideographic,` +
+    `v-mathematical,values,vector-effect,version,vert-adv-y,vert-origin-x,` +
+    `vert-origin-y,viewBox,viewTarget,visibility,width,widths,word-spacing,` +
+    `writing-mode,x,x-height,x1,x2,xChannelSelector,xlink:actuate,xlink:arcrole,` +
+    `xlink:href,xlink:role,xlink:show,xlink:title,xlink:type,xml:base,xml:lang,` +
+    `xml:space,y,y1,y2,yChannelSelector,z,zoomAndPan`);
 
 const escapeRE = /["'&<>]/;
 function escapeHtml(string) {
@@ -435,12 +530,12 @@ function escapeHtml(string) {
                 continue;
         }
         if (lastIndex !== index) {
-            html += str.substring(lastIndex, index);
+            html += str.slice(lastIndex, index);
         }
         lastIndex = index + 1;
         html += escaped;
     }
-    return lastIndex !== index ? html + str.substring(lastIndex, index) : html;
+    return lastIndex !== index ? html + str.slice(lastIndex, index) : html;
 }
 // https://www.w3.org/TR/html52/syntax.html#comments
 const commentStripRE = /^-?>|<!--|-->|--!>|<!-$/g;
@@ -464,6 +559,11 @@ function looseEqual(a, b) {
     let bValidType = isDate(b);
     if (aValidType || bValidType) {
         return aValidType && bValidType ? a.getTime() === b.getTime() : false;
+    }
+    aValidType = isSymbol(a);
+    bValidType = isSymbol(b);
+    if (aValidType || bValidType) {
+        return a === b;
     }
     aValidType = isArray(a);
     bValidType = isArray(b);
@@ -497,27 +597,28 @@ function looseEqual(a, b) {
 function looseIndexOf(arr, val) {
     return arr.findIndex(item => looseEqual(item, val));
 }
-function looseHas(set, val) {
-    for (let item of set) {
-        if (looseEqual(item, val))
-            return true;
-    }
-    return false;
-}
 
 /**
  * For converting {{ interpolation }} values to displayed strings.
  * @private
  */
 const toDisplayString = (val) => {
-    return val == null
-        ? ''
-        : isObject(val)
-            ? JSON.stringify(val, replacer, 2)
-            : String(val);
+    return isString(val)
+        ? val
+        : val == null
+            ? ''
+            : isArray(val) ||
+                (isObject(val) &&
+                    (val.toString === objectToString || !isFunction(val.toString)))
+                ? JSON.stringify(val, replacer, 2)
+                : String(val);
 };
 const replacer = (_key, val) => {
-    if (isMap(val)) {
+    // can't use isRef here since @vue/shared has no deps
+    if (val && val.__v_isRef) {
+        return replacer(_key, val.value);
+    }
+    else if (isMap(val)) {
         return {
             [`Map(${val.size})`]: [...val.entries()].reduce((entries, [key, val]) => {
                 entries[`${key} =>`] = val;
@@ -536,21 +637,10 @@ const replacer = (_key, val) => {
     return val;
 };
 
-/**
- * List of @babel/parser plugins that are used for template expression
- * transforms and SFC script transforms. By default we enable proposals slated
- * for ES2020. This will need to be updated as the spec moves forward.
- * Full list at https://babeljs.io/docs/en/next/babel-parser#plugins
- */
-const babelParserDefaultPlugins = [
-    'bigInt',
-    'optionalChaining',
-    'nullishCoalescingOperator'
-];
 const EMPTY_OBJ = ( false)
     ? undefined
     : {};
-const EMPTY_ARR = [];
+const EMPTY_ARR = ( false) ? undefined : [];
 const NOOP = () => { };
 /**
  * Always return false.
@@ -571,7 +661,8 @@ const hasOwn = (val, key) => hasOwnProperty.call(val, key);
 const isArray = Array.isArray;
 const isMap = (val) => toTypeString(val) === '[object Map]';
 const isSet = (val) => toTypeString(val) === '[object Set]';
-const isDate = (val) => val instanceof Date;
+const isDate = (val) => toTypeString(val) === '[object Date]';
+const isRegExp = (val) => toTypeString(val) === '[object RegExp]';
 const isFunction = (val) => typeof val === 'function';
 const isString = (val) => typeof val === 'string';
 const isSymbol = (val) => typeof val === 'symbol';
@@ -582,6 +673,7 @@ const isPromise = (val) => {
 const objectToString = Object.prototype.toString;
 const toTypeString = (value) => objectToString.call(value);
 const toRawType = (value) => {
+    // extract "RawType" from strings like "[object RawType]"
     return toTypeString(value).slice(8, -1);
 };
 const isPlainObject = (val) => toTypeString(val) === '[object Object]';
@@ -589,10 +681,13 @@ const isIntegerKey = (key) => isString(key) &&
     key !== 'NaN' &&
     key[0] !== '-' &&
     '' + parseInt(key, 10) === key;
-const isReservedProp = /*#__PURE__*/ makeMap('key,ref,' +
+const isReservedProp = /*#__PURE__*/ makeMap(
+// the leading comma is intentional so empty string "" is also included
+',key,ref,ref_for,ref_key,' +
     'onVnodeBeforeMount,onVnodeMounted,' +
     'onVnodeBeforeUpdate,onVnodeUpdated,' +
     'onVnodeBeforeUnmount,onVnodeUnmounted');
+const isBuiltInDirective = /*#__PURE__*/ makeMap('bind,cloak,else-if,else,for,html,if,model,on,once,pre,show,slot,text,memo');
 const cacheStringFunction = (fn) => {
     const cache = Object.create(null);
     return ((str) => {
@@ -611,17 +706,17 @@ const hyphenateRE = /\B([A-Z])/g;
 /**
  * @private
  */
-const hyphenate = cacheStringFunction((str) => {
-    return str.replace(hyphenateRE, '-$1').toLowerCase();
-});
+const hyphenate = cacheStringFunction((str) => str.replace(hyphenateRE, '-$1').toLowerCase());
 /**
  * @private
  */
-const capitalize = cacheStringFunction((str) => {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-});
+const capitalize = cacheStringFunction((str) => str.charAt(0).toUpperCase() + str.slice(1));
+/**
+ * @private
+ */
+const toHandlerKey = cacheStringFunction((str) => str ? `on${capitalize(str)}` : ``);
 // compare whether a value has changed, accounting for NaN.
-const hasChanged = (value, oldValue) => value !== oldValue && (value === value || oldValue === oldValue);
+const hasChanged = (value, oldValue) => !Object.is(value, oldValue);
 const invokeArrayFns = (fns, arg) => {
     for (let i = 0; i < fns.length; i++) {
         fns[i](arg);
@@ -634,8 +729,20 @@ const def = (obj, key, value) => {
         value
     });
 };
-const toNumber = (val) => {
+/**
+ * "123-foo" will be parsed to 123
+ * This is used for the .number modifier in v-model
+ */
+const looseToNumber = (val) => {
     const n = parseFloat(val);
+    return isNaN(n) ? val : n;
+};
+/**
+ * Only conerces number-like strings
+ * "123-foo" will be returned as-is
+ */
+const toNumber = (val) => {
+    const n = isString(val) ? Number(val) : NaN;
     return isNaN(n) ? val : n;
 };
 let _globalThis;
@@ -652,6 +759,12 @@ const getGlobalThis = () => {
                             ? global
                             : {}));
 };
+const identRE = /^[_$a-zA-Z\xA0-\uFFFF][_$a-zA-Z0-9\xA0-\uFFFF]*$/;
+function genPropsAccessExp(name) {
+    return identRE.test(name)
+        ? `__props.${name}`
+        : `__props[${JSON.stringify(name)}]`;
+}
 
 
 
@@ -686,49 +799,6 @@ module.exports = g;
 
 /***/ }),
 
-/***/ "f6fd":
-/***/ (function(module, exports) {
-
-// document.currentScript polyfill by Adam Miller
-
-// MIT license
-
-(function(document){
-  var currentScript = "currentScript",
-      scripts = document.getElementsByTagName('script'); // Live NodeList collection
-
-  // If browser needs currentScript polyfill, add get currentScript() to the document object
-  if (!(currentScript in document)) {
-    Object.defineProperty(document, currentScript, {
-      get: function(){
-
-        // IE 6-10 supports script readyState
-        // IE 10+ support stack trace
-        try { throw new Error(); }
-        catch (err) {
-
-          // Find the second match for the "at" string to get file src url from stack.
-          // Specifically works with the format of stack traces in IE.
-          var i, res = ((/.*at [^\(]*\((.*):.+:.+\)$/ig).exec(err.stack) || [false])[1];
-
-          // For all scripts on the page, if src matches or if ready state is interactive, return the script tag
-          for(i in scripts){
-            if(scripts[i].src == res || scripts[i].readyState == "interactive"){
-              return scripts[i];
-            }
-          }
-
-          // If no match, return null
-          return null;
-        }
-      }
-    });
-  }
-})(document);
-
-
-/***/ }),
-
 /***/ "fae3":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -737,1055 +807,26 @@ module.exports = g;
 __webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
-__webpack_require__.d(__webpack_exports__, "AgGridVue", function() { return /* reexport */ AgGridVue_AgGridVue; });
+__webpack_require__.d(__webpack_exports__, "AgGridVue", function() { return /* reexport */ AgGridVue; });
 
 // CONCATENATED MODULE: ./node_modules/@vue/cli-service/lib/commands/build/setPublicPath.js
 // This file is imported into lib/wc client bundles.
 
 if (typeof window !== 'undefined') {
-  if (true) {
-    __webpack_require__("f6fd")
-  }
+  var currentScript = window.document.currentScript
+  if (false) { var getCurrentScript; }
 
-  var i
-  if ((i = window.document.currentScript) && (i = i.src.match(/(.+\/)[^/]+\.js(\?.*)?$/))) {
-    __webpack_require__.p = i[1] // eslint-disable-line
+  var src = currentScript && currentScript.src.match(/(.+\/)[^/]+\.js(\?.*)?$/)
+  if (src) {
+    __webpack_require__.p = src[1] // eslint-disable-line
   }
 }
 
 // Indicate to webpack that this file can be concatenated
 /* harmony default export */ var setPublicPath = (null);
 
-// CONCATENATED MODULE: ./node_modules/tslib/tslib.es6.js
-/*! *****************************************************************************
-Copyright (c) Microsoft Corporation.
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-PERFORMANCE OF THIS SOFTWARE.
-***************************************************************************** */
-/* global Reflect, Promise */
-
-var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return extendStatics(d, b);
-};
-
-function __extends(d, b) {
-    extendStatics(d, b);
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-}
-
-var __assign = function() {
-    __assign = Object.assign || function __assign(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-        }
-        return t;
-    }
-    return __assign.apply(this, arguments);
-}
-
-function __rest(s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-}
-
-function __decorate(decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-}
-
-function __param(paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-}
-
-function __metadata(metadataKey, metadataValue) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(metadataKey, metadataValue);
-}
-
-function __awaiter(thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-}
-
-function __generator(thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-}
-
-function __createBinding(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}
-
-function __exportStar(m, exports) {
-    for (var p in m) if (p !== "default" && !exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-
-function __values(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-    if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
-}
-
-function __read(o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-}
-
-function __spread() {
-    for (var ar = [], i = 0; i < arguments.length; i++)
-        ar = ar.concat(__read(arguments[i]));
-    return ar;
-}
-
-function __spreadArrays() {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
-
-function __await(v) {
-    return this instanceof __await ? (this.v = v, this) : new __await(v);
-}
-
-function __asyncGenerator(thisArg, _arguments, generator) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var g = generator.apply(thisArg, _arguments || []), i, q = [];
-    return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i;
-    function verb(n) { if (g[n]) i[n] = function (v) { return new Promise(function (a, b) { q.push([n, v, a, b]) > 1 || resume(n, v); }); }; }
-    function resume(n, v) { try { step(g[n](v)); } catch (e) { settle(q[0][3], e); } }
-    function step(r) { r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r); }
-    function fulfill(value) { resume("next", value); }
-    function reject(value) { resume("throw", value); }
-    function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
-}
-
-function __asyncDelegator(o) {
-    var i, p;
-    return i = {}, verb("next"), verb("throw", function (e) { throw e; }), verb("return"), i[Symbol.iterator] = function () { return this; }, i;
-    function verb(n, f) { i[n] = o[n] ? function (v) { return (p = !p) ? { value: __await(o[n](v)), done: n === "return" } : f ? f(v) : v; } : f; }
-}
-
-function __asyncValues(o) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m = o[Symbol.asyncIterator], i;
-    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
-    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
-    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
-}
-
-function __makeTemplateObject(cooked, raw) {
-    if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
-    return cooked;
-};
-
-function __importStar(mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result.default = mod;
-    return result;
-}
-
-function __importDefault(mod) {
-    return (mod && mod.__esModule) ? mod : { default: mod };
-}
-
-function __classPrivateFieldGet(receiver, privateMap) {
-    if (!privateMap.has(receiver)) {
-        throw new TypeError("attempted to get private field on non-instance");
-    }
-    return privateMap.get(receiver);
-}
-
-function __classPrivateFieldSet(receiver, privateMap, value) {
-    if (!privateMap.has(receiver)) {
-        throw new TypeError("attempted to set private field on non-instance");
-    }
-    privateMap.set(receiver, value);
-    return value;
-}
-
 // EXTERNAL MODULE: external {"commonjs":"vue","commonjs2":"vue","root":"Vue"}
 var external_commonjs_vue_commonjs2_vue_root_Vue_ = __webpack_require__("8bbf");
-
-// CONCATENATED MODULE: ./node_modules/vue-class-component/dist/vue-class-component.esm-bundler.js
-/**
-  * vue-class-component v8.0.0-rc.1
-  * (c) 2015-present Evan You
-  * @license MIT
-  */
-
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _defineProperties(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
-  }
-}
-
-function _createClass(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties(Constructor, staticProps);
-  return Constructor;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread2(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _inherits(subClass, superClass) {
-  if (typeof superClass !== "function" && superClass !== null) {
-    throw new TypeError("Super expression must either be null or a function");
-  }
-
-  subClass.prototype = Object.create(superClass && superClass.prototype, {
-    constructor: {
-      value: subClass,
-      writable: true,
-      configurable: true
-    }
-  });
-  if (superClass) _setPrototypeOf(subClass, superClass);
-}
-
-function _getPrototypeOf(o) {
-  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
-    return o.__proto__ || Object.getPrototypeOf(o);
-  };
-  return _getPrototypeOf(o);
-}
-
-function _setPrototypeOf(o, p) {
-  _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
-    o.__proto__ = p;
-    return o;
-  };
-
-  return _setPrototypeOf(o, p);
-}
-
-function _isNativeReflectConstruct() {
-  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
-  if (Reflect.construct.sham) return false;
-  if (typeof Proxy === "function") return true;
-
-  try {
-    Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
-function _construct(Parent, args, Class) {
-  if (_isNativeReflectConstruct()) {
-    _construct = Reflect.construct;
-  } else {
-    _construct = function _construct(Parent, args, Class) {
-      var a = [null];
-      a.push.apply(a, args);
-      var Constructor = Function.bind.apply(Parent, a);
-      var instance = new Constructor();
-      if (Class) _setPrototypeOf(instance, Class.prototype);
-      return instance;
-    };
-  }
-
-  return _construct.apply(null, arguments);
-}
-
-function _assertThisInitialized(self) {
-  if (self === void 0) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return self;
-}
-
-function _possibleConstructorReturn(self, call) {
-  if (call && (typeof call === "object" || typeof call === "function")) {
-    return call;
-  }
-
-  return _assertThisInitialized(self);
-}
-
-function _createSuper(Derived) {
-  var hasNativeReflectConstruct = _isNativeReflectConstruct();
-
-  return function _createSuperInternal() {
-    var Super = _getPrototypeOf(Derived),
-        result;
-
-    if (hasNativeReflectConstruct) {
-      var NewTarget = _getPrototypeOf(this).constructor;
-
-      result = Reflect.construct(Super, arguments, NewTarget);
-    } else {
-      result = Super.apply(this, arguments);
-    }
-
-    return _possibleConstructorReturn(this, result);
-  };
-}
-
-function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
-}
-
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
-}
-
-function _iterableToArray(iter) {
-  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
-}
-
-function _unsupportedIterableToArray(o, minLen) {
-  if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-  var n = Object.prototype.toString.call(o).slice(8, -1);
-  if (n === "Object" && o.constructor) n = o.constructor.name;
-  if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
-}
-
-function _arrayLikeToArray(arr, len) {
-  if (len == null || len > arr.length) len = arr.length;
-
-  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
-
-  return arr2;
-}
-
-function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-}
-
-function defineGetter(obj, key, getter) {
-  Object.defineProperty(obj, key, {
-    get: getter,
-    enumerable: false,
-    configurable: true
-  });
-}
-
-function defineProxy(proxy, key, target) {
-  Object.defineProperty(proxy, key, {
-    get: function get() {
-      return target[key].value;
-    },
-    set: function set(value) {
-      target[key].value = value;
-    },
-    enumerable: true,
-    configurable: true
-  });
-}
-
-function getSuper(Ctor) {
-  var superProto = Object.getPrototypeOf(Ctor.prototype);
-
-  if (!superProto) {
-    return undefined;
-  }
-
-  return superProto.constructor;
-}
-
-function getOwn(value, key) {
-  return value.hasOwnProperty(key) ? value[key] : undefined;
-}
-
-var vue_class_component_esm_bundler_VueImpl = /*#__PURE__*/function () {
-  function VueImpl(props, ctx) {
-    var _this = this;
-
-    _classCallCheck(this, VueImpl);
-
-    defineGetter(this, '$props', function () {
-      return props;
-    });
-    defineGetter(this, '$attrs', function () {
-      return ctx.attrs;
-    });
-    defineGetter(this, '$slots', function () {
-      return ctx.slots;
-    });
-    defineGetter(this, '$emit', function () {
-      return ctx.emit;
-    });
-    Object.keys(props).forEach(function (key) {
-      Object.defineProperty(_this, key, {
-        enumerable: false,
-        configurable: true,
-        writable: true,
-        value: props[key]
-      });
-    });
-  }
-
-  _createClass(VueImpl, null, [{
-    key: "registerHooks",
-    value: function registerHooks(keys) {
-      var _this$__h;
-
-      (_this$__h = this.__h).push.apply(_this$__h, _toConsumableArray(keys));
-    }
-  }, {
-    key: "with",
-    value: function _with(Props) {
-      var propsMeta = new Props();
-      var props = {};
-      Object.keys(propsMeta).forEach(function (key) {
-        var meta = propsMeta[key];
-        props[key] = meta !== null && meta !== void 0 ? meta : null;
-      });
-
-      var PropsMixin = /*#__PURE__*/function (_this2) {
-        _inherits(PropsMixin, _this2);
-
-        var _super = _createSuper(PropsMixin);
-
-        function PropsMixin() {
-          _classCallCheck(this, PropsMixin);
-
-          return _super.apply(this, arguments);
-        }
-
-        return PropsMixin;
-      }(this);
-
-      PropsMixin.__b = {
-        props: props
-      };
-      return PropsMixin;
-    }
-  }, {
-    key: "__vccOpts",
-    get: function get() {
-      // Early return if `this` is base class as it does not have any options
-      if (this === Vue) {
-        return {};
-      }
-
-      var Ctor = this;
-      var cache = getOwn(Ctor, '__c');
-
-      if (cache) {
-        return cache;
-      } // If the options are provided via decorator use it as a base
-
-
-      var options = _objectSpread2({}, getOwn(Ctor, '__o'));
-
-      Ctor.__c = options; // Handle super class options
-
-      var Super = getSuper(Ctor);
-
-      if (Super) {
-        options["extends"] = Super.__vccOpts;
-      } // Inject base options as a mixin
-
-
-      var base = getOwn(Ctor, '__b');
-
-      if (base) {
-        options.mixins = options.mixins || [];
-        options.mixins.unshift(base);
-      }
-
-      options.methods = _objectSpread2({}, options.methods);
-      options.computed = _objectSpread2({}, options.computed);
-      var proto = Ctor.prototype;
-      Object.getOwnPropertyNames(proto).forEach(function (key) {
-        if (key === 'constructor') {
-          return;
-        } // hooks
-
-
-        if (Ctor.__h.indexOf(key) > -1) {
-          options[key] = proto[key];
-          return;
-        }
-
-        var descriptor = Object.getOwnPropertyDescriptor(proto, key); // methods
-
-        if (typeof descriptor.value === 'function') {
-          options.methods[key] = descriptor.value;
-          return;
-        } // computed properties
-
-
-        if (descriptor.get || descriptor.set) {
-          options.computed[key] = {
-            get: descriptor.get,
-            set: descriptor.set
-          };
-          return;
-        }
-      });
-
-      options.setup = function (props, ctx) {
-        var _promise;
-
-        var data = new Ctor(props, ctx);
-        var dataKeys = Object.keys(data);
-        var plainData = {};
-        var promise = null; // Initialize reactive data and convert constructor `this` to a proxy
-
-        dataKeys.forEach(function (key) {
-          // Skip if the value is undefined not to make it reactive.
-          // If the value has `__s`, it's a value from `setup` helper, proceed it later.
-          if (data[key] === undefined || data[key] && data[key].__s) {
-            return;
-          }
-
-          plainData[key] = Object(external_commonjs_vue_commonjs2_vue_root_Vue_["ref"])(data[key]);
-          defineProxy(data, key, plainData);
-        }); // Invoke composition functions
-
-        dataKeys.forEach(function (key) {
-          if (data[key] && data[key].__s) {
-            var setupState = data[key].__s();
-
-            if (setupState instanceof Promise) {
-              if (!promise) {
-                promise = Promise.resolve(plainData);
-              }
-
-              promise = promise.then(function () {
-                return setupState.then(function (value) {
-                  plainData[key] = Object(external_commonjs_vue_commonjs2_vue_root_Vue_["proxyRefs"])(value);
-                  return plainData;
-                });
-              });
-            } else {
-              plainData[key] = Object(external_commonjs_vue_commonjs2_vue_root_Vue_["proxyRefs"])(setupState);
-            }
-          }
-        });
-        return (_promise = promise) !== null && _promise !== void 0 ? _promise : plainData;
-      };
-
-      var decorators = getOwn(Ctor, '__d');
-
-      if (decorators) {
-        decorators.forEach(function (fn) {
-          return fn(options);
-        });
-      } // from Vue Loader
-
-
-      var injections = ['render', 'ssrRender', '__file', '__cssModules', '__scopeId', '__hmrId'];
-      injections.forEach(function (key) {
-        if (Ctor[key]) {
-          options[key] = Ctor[key];
-        }
-      });
-      return options;
-    }
-  }]);
-
-  return VueImpl;
-}();
-
-vue_class_component_esm_bundler_VueImpl.__h = ['data', 'beforeCreate', 'created', 'beforeMount', 'mounted', 'beforeUnmount', 'unmounted', 'beforeUpdate', 'updated', 'activated', 'deactivated', 'render', 'errorCaptured', 'serverPrefetch'];
-var Vue = vue_class_component_esm_bundler_VueImpl;
-
-function Options(options) {
-  return function (Component) {
-    Component.__o = options;
-    return Component;
-  };
-}
-function createDecorator(factory) {
-  return function (target, key, index) {
-    var Ctor = typeof target === 'function' ? target : target.constructor;
-
-    if (!Ctor.__d) {
-      Ctor.__d = [];
-    }
-
-    if (typeof index !== 'number') {
-      index = undefined;
-    }
-
-    Ctor.__d.push(function (options) {
-      return factory(options, key, index);
-    });
-  };
-}
-function mixins() {
-  for (var _len = arguments.length, Ctors = new Array(_len), _key = 0; _key < _len; _key++) {
-    Ctors[_key] = arguments[_key];
-  }
-
-  var _a;
-
-  return _a = /*#__PURE__*/function (_Vue) {
-    _inherits(MixedVue, _Vue);
-
-    var _super = _createSuper(MixedVue);
-
-    function MixedVue() {
-      var _this;
-
-      for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        args[_key2] = arguments[_key2];
-      }
-
-      _classCallCheck(this, MixedVue);
-
-      _this = _super.call.apply(_super, [this].concat(args));
-      Ctors.forEach(function (Ctor) {
-        var data = _construct(Ctor, args);
-
-        Object.keys(data).forEach(function (key) {
-          _this[key] = data[key];
-        });
-      });
-      return _this;
-    }
-
-    return MixedVue;
-  }(Vue), _a.__b = {
-    mixins: Ctors.map(function (Ctor) {
-      return Ctor.__vccOpts;
-    })
-  }, _a;
-}
-function setup(setupFn) {
-  // Hack to delay the invocation of setup function.
-  // Will be called after dealing with class properties.
-  return {
-    __s: setupFn
-  };
-}
-
-// Actual implementation
-function prop(options) {
-  return options;
-}
-
-
-
-// EXTERNAL MODULE: external "agGrid"
-var external_agGrid_ = __webpack_require__("8bd4");
-
-// CONCATENATED MODULE: ./src/VueComponentFactory.ts
-
-
-var VueComponentFactory_VueComponentFactory = /** @class */ (function () {
-    function VueComponentFactory() {
-    }
-    VueComponentFactory.getComponentDefinition = function (component, parent) {
-        var componentDefinition;
-        // when referencing components by name - ie: cellRendererFramework: 'MyComponent'
-        if (typeof component === 'string') {
-            // look up the definition in Vue
-            componentDefinition = this.searchForComponentInstance(parent, component);
-            // it's probably an SFC, but if it has template attribute it's probably
-            // an inline/non-sfc component (ie an object a template property)
-            if (componentDefinition.template) {
-                // inline / non sfc component
-                componentDefinition = __assign({}, Object(external_commonjs_vue_commonjs2_vue_root_Vue_["defineComponent"])(componentDefinition));
-            }
-            else {
-                // SFC
-                componentDefinition = { extends: Object(external_commonjs_vue_commonjs2_vue_root_Vue_["defineComponent"])(componentDefinition) };
-            }
-        }
-        else {
-            componentDefinition = { extends: Object(external_commonjs_vue_commonjs2_vue_root_Vue_["defineComponent"])(__assign({}, component)) };
-        }
-        if (!componentDefinition) {
-            console.error("Could not find component with name of " + component + ". Is it in Vue.components?");
-        }
-        return componentDefinition;
-    };
-    VueComponentFactory.createComponentParams = function (params, parent) {
-        var extendedParams = {
-            params: Object.freeze(params),
-            parent: parent,
-        };
-        if (parent.componentDependencies) {
-            parent.componentDependencies.forEach(function (dependency) {
-                return extendedParams[dependency] = parent[dependency];
-            });
-        }
-        return extendedParams;
-    };
-    VueComponentFactory.createAndMountComponent = function (component, params, parent) {
-        var componentDefinition = VueComponentFactory.getComponentDefinition(component, parent);
-        if (!componentDefinition) {
-            return;
-        }
-        var componentParams = VueComponentFactory.createComponentParams(params, parent);
-        // the inner defineComponent allows us to re-declare the component, with the outer one allowing us to
-        // provide the grid's params and capture the resulting component instance
-        var componentInstance = null;
-        var extendedComponentDefinition = Object(external_commonjs_vue_commonjs2_vue_root_Vue_["defineComponent"])(__assign(__assign({}, componentDefinition), { data: function () { return componentParams; }, created: function () {
-                componentInstance = this.$root;
-            } }));
-        // with vue 3 we need to provide a container to mount into (not necessary in vue 2), so create a wrapper div here
-        var container = document.createElement('div');
-        var mountedComponent = Object(external_commonjs_vue_commonjs2_vue_root_Vue_["createApp"])(extendedComponentDefinition);
-        mountedComponent.mount(container);
-        // note that the component creation is synchronous so that componentInstance is set by this point
-        return { mountedComponent: mountedComponent, componentInstance: componentInstance };
-    };
-    VueComponentFactory.searchForComponentInstance = function (parent, component, maxDepth) {
-        if (maxDepth === void 0) { maxDepth = 10; }
-        var componentInstance = null;
-        var currentParent = parent.$parent;
-        var depth = 0;
-        while (!componentInstance &&
-            currentParent &&
-            currentParent.$options &&
-            (++depth < maxDepth)) {
-            componentInstance = currentParent.$options.components[component];
-            currentParent = currentParent.$parent;
-        }
-        if (!componentInstance) {
-            console.error("Could not find component with name of " + component + ". Is it in Vue.components?");
-            return null;
-        }
-        return componentInstance;
-    };
-    return VueComponentFactory;
-}());
-
-
-// CONCATENATED MODULE: ./src/VueFrameworkComponentWrapper.ts
-
-
-
-var VueFrameworkComponentWrapper_VueFrameworkComponentWrapper = /** @class */ (function (_super) {
-    __extends(VueFrameworkComponentWrapper, _super);
-    function VueFrameworkComponentWrapper(parent) {
-        var _this = _super.call(this) || this;
-        _this.parent = parent;
-        return _this;
-    }
-    VueFrameworkComponentWrapper.prototype.createWrapper = function (component) {
-        var that = this;
-        var DynamicComponent = /** @class */ (function (_super) {
-            __extends(DynamicComponent, _super);
-            function DynamicComponent() {
-                return _super !== null && _super.apply(this, arguments) || this;
-            }
-            DynamicComponent.prototype.init = function (params) {
-                _super.prototype.init.call(this, params);
-            };
-            DynamicComponent.prototype.hasMethod = function (name) {
-                return wrapper.getFrameworkComponentInstance()[name] != null;
-            };
-            DynamicComponent.prototype.callMethod = function (name, args) {
-                var componentInstance = this.getFrameworkComponentInstance();
-                var frameworkComponentInstance = wrapper.getFrameworkComponentInstance();
-                return frameworkComponentInstance[name].apply(componentInstance, args);
-            };
-            DynamicComponent.prototype.addMethod = function (name, callback) {
-                wrapper[name] = callback;
-            };
-            DynamicComponent.prototype.overrideProcessing = function (methodName) {
-                return that.parent.autoParamsRefresh && methodName === 'refresh';
-            };
-            DynamicComponent.prototype.processMethod = function (methodName, args) {
-                if (methodName === 'refresh') {
-                    this.getFrameworkComponentInstance().params = args[0];
-                }
-                if (this.hasMethod(methodName)) {
-                    return this.callMethod(methodName, args);
-                }
-                return methodName === 'refresh';
-            };
-            DynamicComponent.prototype.createComponent = function (params) {
-                return that.createComponent(component, params);
-            };
-            return DynamicComponent;
-        }(VueComponent));
-        var wrapper = new DynamicComponent();
-        return wrapper;
-    };
-    VueFrameworkComponentWrapper.prototype.createComponent = function (component, params) {
-        return VueComponentFactory_VueComponentFactory.createAndMountComponent(component, params, this.parent);
-    };
-    VueFrameworkComponentWrapper.prototype.createMethodProxy = function (wrapper, methodName, mandatory) {
-        return function () {
-            if (wrapper.overrideProcessing(methodName)) {
-                return wrapper.processMethod(methodName, arguments);
-            }
-            if (wrapper.hasMethod(methodName)) {
-                return wrapper.callMethod(methodName, arguments);
-            }
-            if (mandatory) {
-                console.warn('AG Grid: Framework component is missing the method ' + methodName + '()');
-            }
-            return null;
-        };
-    };
-    VueFrameworkComponentWrapper.prototype.destroy = function () {
-        this.parent = null;
-    };
-    VueFrameworkComponentWrapper = __decorate([
-        Object(external_agGrid_["Bean"])('frameworkComponentWrapper')
-    ], VueFrameworkComponentWrapper);
-    return VueFrameworkComponentWrapper;
-}(external_agGrid_["BaseComponentWrapper"]));
-
-var VueComponent = /** @class */ (function () {
-    function VueComponent() {
-    }
-    VueComponent.prototype.getGui = function () {
-        return this.componentInstance.$el;
-    };
-    VueComponent.prototype.destroy = function () {
-        this.mountedComponent.unmount();
-    };
-    VueComponent.prototype.getFrameworkComponentInstance = function () {
-        return this.componentInstance;
-    };
-    VueComponent.prototype.init = function (params) {
-        var _a = this.createComponent(params), mountedComponent = _a.mountedComponent, componentInstance = _a.componentInstance;
-        this.mountedComponent = mountedComponent;
-        this.componentInstance = componentInstance;
-    };
-    return VueComponent;
-}());
-
-// CONCATENATED MODULE: ./src/Utils.ts
-
-var kebabProperty = function (property) {
-    return property.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-};
-var kebabNameToAttrEventName = function (kebabName) {
-    // grid-ready for example would become onGrid-ready in Vue
-    return "on" + kebabName.charAt(0).toUpperCase() + kebabName.substring(1, kebabName.length);
-};
-var getAgGridProperties = function () {
-    var props = {
-        gridOptions: {
-            default: function () {
-                return {};
-            },
-        },
-        autoParamsRefresh: false,
-        componentDependencies: {
-            default: function () {
-                return [];
-            }
-        },
-        modules: {
-            default: function () {
-                return [];
-            }
-        },
-        rowDataModel: undefined
-    };
-    // for example, 'grid-ready' would become 'onGrid-ready': undefined
-    // without this emitting events results in a warning
-    // and adding 'grid-ready' (and variations of this to the emits option in AgGridVue doesn't help either)
-    var eventNameAsProps = external_agGrid_["ComponentUtil"].EVENTS.map(function (eventName) { return kebabNameToAttrEventName(kebabProperty(eventName)); });
-    eventNameAsProps.reduce(function (accumulator, eventName) {
-        accumulator[eventName] = undefined;
-        return accumulator;
-    }, props);
-    var watch = {
-        rowDataModel: function (currentValue, previousValue) {
-            this.processChanges('rowData', currentValue, previousValue);
-        },
-    };
-    external_agGrid_["ComponentUtil"].ALL_PROPERTIES.forEach(function (propertyName) {
-        props[propertyName] = {};
-        watch[propertyName] = function (currentValue, previousValue) {
-            this.processChanges(propertyName, currentValue, previousValue);
-        };
-    });
-    var model = {
-        prop: 'rowDataModel',
-        event: 'data-model-changed',
-    };
-    return [props, watch, model];
-};
-
-// CONCATENATED MODULE: ./src/AgGridColumn.ts
-
-var AgGridColumn_AgGridColumn = /** @class */ (function () {
-    function AgGridColumn() {
-    }
-    AgGridColumn.hasChildColumns = function (slots) {
-        return slots && slots.default && slots.default.length > 0;
-    };
-    AgGridColumn.mapChildColumnDefs = function (slots) {
-        return slots.default.map(function (column) {
-            return AgGridColumn.toColDef(column);
-        });
-    };
-    AgGridColumn.toColDef = function (column) {
-        var colDef = AgGridColumn.createColDefFromGridColumn(column);
-        if (column.children && column.children.length > 0) {
-            colDef.children = AgGridColumn.getChildColDefs(column.children);
-        }
-        return colDef;
-    };
-    AgGridColumn.getChildColDefs = function (columnChildren) {
-        return columnChildren.map(function (column) {
-            return AgGridColumn.createColDefFromGridColumn(column);
-        });
-    };
-    AgGridColumn.createColDefFromGridColumn = function (column) {
-        var colDef = {};
-        AgGridColumn.assign(colDef, column.data.attrs);
-        delete colDef.children;
-        // booleans passed down just as is are here as property=""
-        // convert boolean props to a boolean here
-        external_agGrid_["ColDefUtil"].BOOLEAN_PROPERTIES.forEach(function (property) {
-            var colDefAsAny = colDef;
-            if (colDefAsAny[property] === '') {
-                colDefAsAny[property] = true;
-            }
-        });
-        return colDef;
-    };
-    AgGridColumn.assign = function (colDef, from) {
-        // effectively Object.assign - here for IE compatibility
-        return [from].reduce(function (r, o) {
-            Object.keys(o).forEach(function (k) {
-                r[k] = o[k];
-            });
-            return r;
-        }, colDef);
-    };
-    return AgGridColumn;
-}());
-
 
 // EXTERNAL MODULE: ./node_modules/@vue/shared/dist/shared.esm-bundler.js
 var shared_esm_bundler = __webpack_require__("9ff4");
@@ -1793,63 +834,218 @@ var shared_esm_bundler = __webpack_require__("9ff4");
 // CONCATENATED MODULE: ./node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js
 
 
-const targetMap = new WeakMap();
-const effectStack = [];
-let activeEffect;
-const ITERATE_KEY = Symbol(( false) ? undefined : '');
-const MAP_KEY_ITERATE_KEY = Symbol(( false) ? undefined : '');
-function isEffect(fn) {
-    return fn && fn._isEffect === true;
+function warn(msg, ...args) {
+    console.warn(`[Vue warn] ${msg}`, ...args);
 }
-function reactivity_esm_bundler_effect(fn, options = shared_esm_bundler["a" /* EMPTY_OBJ */]) {
-    if (isEffect(fn)) {
-        fn = fn.raw;
-    }
-    const effect = createReactiveEffect(fn, options);
-    if (!options.lazy) {
-        effect();
-    }
-    return effect;
-}
-function stop(effect) {
-    if (effect.active) {
-        cleanup(effect);
-        if (effect.options.onStop) {
-            effect.options.onStop();
+
+let activeEffectScope;
+class EffectScope {
+    constructor(detached = false) {
+        this.detached = detached;
+        /**
+         * @internal
+         */
+        this._active = true;
+        /**
+         * @internal
+         */
+        this.effects = [];
+        /**
+         * @internal
+         */
+        this.cleanups = [];
+        this.parent = activeEffectScope;
+        if (!detached && activeEffectScope) {
+            this.index =
+                (activeEffectScope.scopes || (activeEffectScope.scopes = [])).push(this) - 1;
         }
-        effect.active = false;
     }
-}
-let uid = 0;
-function createReactiveEffect(fn, options) {
-    const effect = function reactiveEffect() {
-        if (!effect.active) {
-            return options.scheduler ? undefined : fn();
-        }
-        if (!effectStack.includes(effect)) {
-            cleanup(effect);
+    get active() {
+        return this._active;
+    }
+    run(fn) {
+        if (this._active) {
+            const currentEffectScope = activeEffectScope;
             try {
-                enableTracking();
-                effectStack.push(effect);
-                activeEffect = effect;
+                activeEffectScope = this;
                 return fn();
             }
             finally {
-                effectStack.pop();
-                resetTracking();
-                activeEffect = effectStack[effectStack.length - 1];
+                activeEffectScope = currentEffectScope;
             }
         }
-    };
-    effect.id = uid++;
-    effect._isEffect = true;
-    effect.active = true;
-    effect.raw = fn;
-    effect.deps = [];
-    effect.options = options;
-    return effect;
+        else if ((false)) {}
+    }
+    /**
+     * This should only be called on non-detached scopes
+     * @internal
+     */
+    on() {
+        activeEffectScope = this;
+    }
+    /**
+     * This should only be called on non-detached scopes
+     * @internal
+     */
+    off() {
+        activeEffectScope = this.parent;
+    }
+    stop(fromParent) {
+        if (this._active) {
+            let i, l;
+            for (i = 0, l = this.effects.length; i < l; i++) {
+                this.effects[i].stop();
+            }
+            for (i = 0, l = this.cleanups.length; i < l; i++) {
+                this.cleanups[i]();
+            }
+            if (this.scopes) {
+                for (i = 0, l = this.scopes.length; i < l; i++) {
+                    this.scopes[i].stop(true);
+                }
+            }
+            // nested scope, dereference from parent to avoid memory leaks
+            if (!this.detached && this.parent && !fromParent) {
+                // optimized O(1) removal
+                const last = this.parent.scopes.pop();
+                if (last && last !== this) {
+                    this.parent.scopes[this.index] = last;
+                    last.index = this.index;
+                }
+            }
+            this.parent = undefined;
+            this._active = false;
+        }
+    }
 }
-function cleanup(effect) {
+function effectScope(detached) {
+    return new EffectScope(detached);
+}
+function recordEffectScope(effect, scope = activeEffectScope) {
+    if (scope && scope.active) {
+        scope.effects.push(effect);
+    }
+}
+function getCurrentScope() {
+    return activeEffectScope;
+}
+function onScopeDispose(fn) {
+    if (activeEffectScope) {
+        activeEffectScope.cleanups.push(fn);
+    }
+    else if ((false)) {}
+}
+
+const createDep = (effects) => {
+    const dep = new Set(effects);
+    dep.w = 0;
+    dep.n = 0;
+    return dep;
+};
+const wasTracked = (dep) => (dep.w & trackOpBit) > 0;
+const newTracked = (dep) => (dep.n & trackOpBit) > 0;
+const initDepMarkers = ({ deps }) => {
+    if (deps.length) {
+        for (let i = 0; i < deps.length; i++) {
+            deps[i].w |= trackOpBit; // set was tracked
+        }
+    }
+};
+const finalizeDepMarkers = (effect) => {
+    const { deps } = effect;
+    if (deps.length) {
+        let ptr = 0;
+        for (let i = 0; i < deps.length; i++) {
+            const dep = deps[i];
+            if (wasTracked(dep) && !newTracked(dep)) {
+                dep.delete(effect);
+            }
+            else {
+                deps[ptr++] = dep;
+            }
+            // clear bits
+            dep.w &= ~trackOpBit;
+            dep.n &= ~trackOpBit;
+        }
+        deps.length = ptr;
+    }
+};
+
+const targetMap = new WeakMap();
+// The number of effects currently being tracked recursively.
+let effectTrackDepth = 0;
+let trackOpBit = 1;
+/**
+ * The bitwise track markers support at most 30 levels of recursion.
+ * This value is chosen to enable modern JS engines to use a SMI on all platforms.
+ * When recursion depth is greater, fall back to using a full cleanup.
+ */
+const maxMarkerBits = 30;
+let activeEffect;
+const ITERATE_KEY = Symbol(( false) ? undefined : '');
+const MAP_KEY_ITERATE_KEY = Symbol(( false) ? undefined : '');
+class ReactiveEffect {
+    constructor(fn, scheduler = null, scope) {
+        this.fn = fn;
+        this.scheduler = scheduler;
+        this.active = true;
+        this.deps = [];
+        this.parent = undefined;
+        recordEffectScope(this, scope);
+    }
+    run() {
+        if (!this.active) {
+            return this.fn();
+        }
+        let parent = activeEffect;
+        let lastShouldTrack = shouldTrack;
+        while (parent) {
+            if (parent === this) {
+                return;
+            }
+            parent = parent.parent;
+        }
+        try {
+            this.parent = activeEffect;
+            activeEffect = this;
+            shouldTrack = true;
+            trackOpBit = 1 << ++effectTrackDepth;
+            if (effectTrackDepth <= maxMarkerBits) {
+                initDepMarkers(this);
+            }
+            else {
+                cleanupEffect(this);
+            }
+            return this.fn();
+        }
+        finally {
+            if (effectTrackDepth <= maxMarkerBits) {
+                finalizeDepMarkers(this);
+            }
+            trackOpBit = 1 << --effectTrackDepth;
+            activeEffect = this.parent;
+            shouldTrack = lastShouldTrack;
+            this.parent = undefined;
+            if (this.deferStop) {
+                this.stop();
+            }
+        }
+    }
+    stop() {
+        // stopped while running itself - defer the cleanup
+        if (activeEffect === this) {
+            this.deferStop = true;
+        }
+        else if (this.active) {
+            cleanupEffect(this);
+            if (this.onStop) {
+                this.onStop();
+            }
+            this.active = false;
+        }
+    }
+}
+function cleanupEffect(effect) {
     const { deps } = effect;
     if (deps.length) {
         for (let i = 0; i < deps.length; i++) {
@@ -1857,6 +1053,26 @@ function cleanup(effect) {
         }
         deps.length = 0;
     }
+}
+function effect(fn, options) {
+    if (fn.effect) {
+        fn = fn.effect.fn;
+    }
+    const _effect = new ReactiveEffect(fn);
+    if (options) {
+        Object(shared_esm_bundler["c" /* extend */])(_effect, options);
+        if (options.scope)
+            recordEffectScope(_effect, options.scope);
+    }
+    if (!options || !options.lazy) {
+        _effect.run();
+    }
+    const runner = _effect.run.bind(_effect);
+    runner.effect = _effect;
+    return runner;
+}
+function stop(runner) {
+    runner.effect.stop();
 }
 let shouldTrack = true;
 const trackStack = [];
@@ -1873,18 +1089,34 @@ function resetTracking() {
     shouldTrack = last === undefined ? true : last;
 }
 function track(target, type, key) {
-    if (!shouldTrack || activeEffect === undefined) {
-        return;
+    if (shouldTrack && activeEffect) {
+        let depsMap = targetMap.get(target);
+        if (!depsMap) {
+            targetMap.set(target, (depsMap = new Map()));
+        }
+        let dep = depsMap.get(key);
+        if (!dep) {
+            depsMap.set(key, (dep = createDep()));
+        }
+        const eventInfo = ( false)
+            ? undefined
+            : undefined;
+        trackEffects(dep, eventInfo);
     }
-    let depsMap = targetMap.get(target);
-    if (!depsMap) {
-        targetMap.set(target, (depsMap = new Map()));
+}
+function trackEffects(dep, debuggerEventExtraInfo) {
+    let shouldTrack = false;
+    if (effectTrackDepth <= maxMarkerBits) {
+        if (!newTracked(dep)) {
+            dep.n |= trackOpBit; // set newly tracked
+            shouldTrack = !wasTracked(dep);
+        }
     }
-    let dep = depsMap.get(key);
-    if (!dep) {
-        depsMap.set(key, (dep = new Set()));
+    else {
+        // Full cleanup mode.
+        shouldTrack = !dep.has(activeEffect);
     }
-    if (!dep.has(activeEffect)) {
+    if (shouldTrack) {
         dep.add(activeEffect);
         activeEffect.deps.push(dep);
         if (false) {}
@@ -1896,144 +1128,203 @@ function trigger(target, type, key, newValue, oldValue, oldTarget) {
         // never been tracked
         return;
     }
-    const effects = new Set();
-    const add = (effectsToAdd) => {
-        if (effectsToAdd) {
-            effectsToAdd.forEach(effect => {
-                if (effect !== activeEffect || effect.options.allowRecurse) {
-                    effects.add(effect);
-                }
-            });
-        }
-    };
-    if (type === "clear" /* CLEAR */) {
+    let deps = [];
+    if (type === "clear" /* TriggerOpTypes.CLEAR */) {
         // collection being cleared
         // trigger all effects for target
-        depsMap.forEach(add);
+        deps = [...depsMap.values()];
     }
-    else if (key === 'length' && Object(shared_esm_bundler["g" /* isArray */])(target)) {
+    else if (key === 'length' && Object(shared_esm_bundler["f" /* isArray */])(target)) {
+        const newLength = Number(newValue);
         depsMap.forEach((dep, key) => {
-            if (key === 'length' || key >= newValue) {
-                add(dep);
+            if (key === 'length' || key >= newLength) {
+                deps.push(dep);
             }
         });
     }
     else {
         // schedule runs for SET | ADD | DELETE
         if (key !== void 0) {
-            add(depsMap.get(key));
+            deps.push(depsMap.get(key));
         }
         // also run for iteration key on ADD | DELETE | Map.SET
         switch (type) {
-            case "add" /* ADD */:
-                if (!Object(shared_esm_bundler["g" /* isArray */])(target)) {
-                    add(depsMap.get(ITERATE_KEY));
-                    if (Object(shared_esm_bundler["j" /* isMap */])(target)) {
-                        add(depsMap.get(MAP_KEY_ITERATE_KEY));
+            case "add" /* TriggerOpTypes.ADD */:
+                if (!Object(shared_esm_bundler["f" /* isArray */])(target)) {
+                    deps.push(depsMap.get(ITERATE_KEY));
+                    if (Object(shared_esm_bundler["i" /* isMap */])(target)) {
+                        deps.push(depsMap.get(MAP_KEY_ITERATE_KEY));
                     }
                 }
-                else if (Object(shared_esm_bundler["i" /* isIntegerKey */])(key)) {
+                else if (Object(shared_esm_bundler["h" /* isIntegerKey */])(key)) {
                     // new index added to array -> length changes
-                    add(depsMap.get('length'));
+                    deps.push(depsMap.get('length'));
                 }
                 break;
-            case "delete" /* DELETE */:
-                if (!Object(shared_esm_bundler["g" /* isArray */])(target)) {
-                    add(depsMap.get(ITERATE_KEY));
-                    if (Object(shared_esm_bundler["j" /* isMap */])(target)) {
-                        add(depsMap.get(MAP_KEY_ITERATE_KEY));
+            case "delete" /* TriggerOpTypes.DELETE */:
+                if (!Object(shared_esm_bundler["f" /* isArray */])(target)) {
+                    deps.push(depsMap.get(ITERATE_KEY));
+                    if (Object(shared_esm_bundler["i" /* isMap */])(target)) {
+                        deps.push(depsMap.get(MAP_KEY_ITERATE_KEY));
                     }
                 }
                 break;
-            case "set" /* SET */:
-                if (Object(shared_esm_bundler["j" /* isMap */])(target)) {
-                    add(depsMap.get(ITERATE_KEY));
+            case "set" /* TriggerOpTypes.SET */:
+                if (Object(shared_esm_bundler["i" /* isMap */])(target)) {
+                    deps.push(depsMap.get(ITERATE_KEY));
                 }
                 break;
         }
     }
-    const run = (effect) => {
+    const eventInfo = ( false)
+        ? undefined
+        : undefined;
+    if (deps.length === 1) {
+        if (deps[0]) {
+            if ((false)) {}
+            else {
+                triggerEffects(deps[0]);
+            }
+        }
+    }
+    else {
+        const effects = [];
+        for (const dep of deps) {
+            if (dep) {
+                effects.push(...dep);
+            }
+        }
+        if ((false)) {}
+        else {
+            triggerEffects(createDep(effects));
+        }
+    }
+}
+function triggerEffects(dep, debuggerEventExtraInfo) {
+    // spread into array for stabilization
+    const effects = Object(shared_esm_bundler["f" /* isArray */])(dep) ? dep : [...dep];
+    for (const effect of effects) {
+        if (effect.computed) {
+            triggerEffect(effect, debuggerEventExtraInfo);
+        }
+    }
+    for (const effect of effects) {
+        if (!effect.computed) {
+            triggerEffect(effect, debuggerEventExtraInfo);
+        }
+    }
+}
+function triggerEffect(effect, debuggerEventExtraInfo) {
+    if (effect !== activeEffect || effect.allowRecurse) {
         if (false) {}
-        if (effect.options.scheduler) {
-            effect.options.scheduler(effect);
+        if (effect.scheduler) {
+            effect.scheduler();
         }
         else {
-            effect();
+            effect.run();
         }
-    };
-    effects.forEach(run);
+    }
+}
+function getDepFromReactive(object, key) {
+    var _a;
+    return (_a = targetMap.get(object)) === null || _a === void 0 ? void 0 : _a.get(key);
 }
 
-const builtInSymbols = new Set(Object.getOwnPropertyNames(Symbol)
+const isNonTrackableKeys = /*#__PURE__*/ Object(shared_esm_bundler["l" /* makeMap */])(`__proto__,__v_isRef,__isVue`);
+const builtInSymbols = new Set(
+/*#__PURE__*/
+Object.getOwnPropertyNames(Symbol)
+    // ios10.x Object.getOwnPropertyNames(Symbol) can enumerate 'arguments' and 'caller'
+    // but accessing them on Symbol leads to TypeError because Symbol is a strict mode
+    // function
+    .filter(key => key !== 'arguments' && key !== 'caller')
     .map(key => Symbol[key])
-    .filter(shared_esm_bundler["l" /* isSymbol */]));
-const reactivity_esm_bundler_get = /*#__PURE__*/ createGetter();
+    .filter(shared_esm_bundler["k" /* isSymbol */]));
+const get$1 = /*#__PURE__*/ createGetter();
 const shallowGet = /*#__PURE__*/ createGetter(false, true);
 const readonlyGet = /*#__PURE__*/ createGetter(true);
 const shallowReadonlyGet = /*#__PURE__*/ createGetter(true, true);
-const arrayInstrumentations = {};
-['includes', 'indexOf', 'lastIndexOf'].forEach(key => {
-    const method = Array.prototype[key];
-    arrayInstrumentations[key] = function (...args) {
-        const arr = toRaw(this);
-        for (let i = 0, l = this.length; i < l; i++) {
-            track(arr, "get" /* GET */, i + '');
-        }
-        // we run the method using the original args first (which may be reactive)
-        const res = method.apply(arr, args);
-        if (res === -1 || res === false) {
-            // if that didn't work, run it again using raw values.
-            return method.apply(arr, args.map(toRaw));
-        }
-        else {
+const arrayInstrumentations = /*#__PURE__*/ createArrayInstrumentations();
+function createArrayInstrumentations() {
+    const instrumentations = {};
+    ['includes', 'indexOf', 'lastIndexOf'].forEach(key => {
+        instrumentations[key] = function (...args) {
+            const arr = toRaw(this);
+            for (let i = 0, l = this.length; i < l; i++) {
+                track(arr, "get" /* TrackOpTypes.GET */, i + '');
+            }
+            // we run the method using the original args first (which may be reactive)
+            const res = arr[key](...args);
+            if (res === -1 || res === false) {
+                // if that didn't work, run it again using raw values.
+                return arr[key](...args.map(toRaw));
+            }
+            else {
+                return res;
+            }
+        };
+    });
+    ['push', 'pop', 'shift', 'unshift', 'splice'].forEach(key => {
+        instrumentations[key] = function (...args) {
+            pauseTracking();
+            const res = toRaw(this)[key].apply(this, args);
+            resetTracking();
             return res;
-        }
-    };
-});
-['push', 'pop', 'shift', 'unshift', 'splice'].forEach(key => {
-    const method = Array.prototype[key];
-    arrayInstrumentations[key] = function (...args) {
-        pauseTracking();
-        const res = method.apply(this, args);
-        enableTracking();
-        return res;
-    };
-});
+        };
+    });
+    return instrumentations;
+}
+function reactivity_esm_bundler_hasOwnProperty(key) {
+    const obj = toRaw(this);
+    track(obj, "has" /* TrackOpTypes.HAS */, key);
+    return obj.hasOwnProperty(key);
+}
 function createGetter(isReadonly = false, shallow = false) {
     return function get(target, key, receiver) {
-        if (key === "__v_isReactive" /* IS_REACTIVE */) {
+        if (key === "__v_isReactive" /* ReactiveFlags.IS_REACTIVE */) {
             return !isReadonly;
         }
-        else if (key === "__v_isReadonly" /* IS_READONLY */) {
+        else if (key === "__v_isReadonly" /* ReactiveFlags.IS_READONLY */) {
             return isReadonly;
         }
-        else if (key === "__v_raw" /* RAW */ &&
-            receiver === (isReadonly ? readonlyMap : reactiveMap).get(target)) {
+        else if (key === "__v_isShallow" /* ReactiveFlags.IS_SHALLOW */) {
+            return shallow;
+        }
+        else if (key === "__v_raw" /* ReactiveFlags.RAW */ &&
+            receiver ===
+                (isReadonly
+                    ? shallow
+                        ? shallowReadonlyMap
+                        : readonlyMap
+                    : shallow
+                        ? shallowReactiveMap
+                        : reactiveMap).get(target)) {
             return target;
         }
-        const targetIsArray = Object(shared_esm_bundler["g" /* isArray */])(target);
-        if (targetIsArray && Object(shared_esm_bundler["f" /* hasOwn */])(arrayInstrumentations, key)) {
-            return Reflect.get(arrayInstrumentations, key, receiver);
+        const targetIsArray = Object(shared_esm_bundler["f" /* isArray */])(target);
+        if (!isReadonly) {
+            if (targetIsArray && Object(shared_esm_bundler["e" /* hasOwn */])(arrayInstrumentations, key)) {
+                return Reflect.get(arrayInstrumentations, key, receiver);
+            }
+            if (key === 'hasOwnProperty') {
+                return reactivity_esm_bundler_hasOwnProperty;
+            }
         }
         const res = Reflect.get(target, key, receiver);
-        const keyIsSymbol = Object(shared_esm_bundler["l" /* isSymbol */])(key);
-        if (keyIsSymbol
-            ? builtInSymbols.has(key)
-            : key === `__proto__` || key === `__v_isRef`) {
+        if (Object(shared_esm_bundler["k" /* isSymbol */])(key) ? builtInSymbols.has(key) : isNonTrackableKeys(key)) {
             return res;
         }
         if (!isReadonly) {
-            track(target, "get" /* GET */, key);
+            track(target, "get" /* TrackOpTypes.GET */, key);
         }
         if (shallow) {
             return res;
         }
         if (isRef(res)) {
-            // ref unwrapping - does not apply for Array + integer key.
-            const shouldUnwrap = !targetIsArray || !Object(shared_esm_bundler["i" /* isIntegerKey */])(key);
-            return shouldUnwrap ? res.value : res;
+            // ref unwrapping - skip unwrap for Array + integer key.
+            return targetIsArray && Object(shared_esm_bundler["h" /* isIntegerKey */])(key) ? res : res.value;
         }
-        if (Object(shared_esm_bundler["k" /* isObject */])(res)) {
+        if (Object(shared_esm_bundler["j" /* isObject */])(res)) {
             // Convert returned value into a proxy as well. we do the isObject check
             // here to avoid invalid value warning. Also need to lazy access readonly
             // and reactive here to avoid circular dependency.
@@ -2042,60 +1333,66 @@ function createGetter(isReadonly = false, shallow = false) {
         return res;
     };
 }
-const reactivity_esm_bundler_set = /*#__PURE__*/ createSetter();
+const set$1 = /*#__PURE__*/ createSetter();
 const shallowSet = /*#__PURE__*/ createSetter(true);
 function createSetter(shallow = false) {
     return function set(target, key, value, receiver) {
-        const oldValue = target[key];
+        let oldValue = target[key];
+        if (reactivity_esm_bundler_isReadonly(oldValue) && isRef(oldValue) && !isRef(value)) {
+            return false;
+        }
         if (!shallow) {
-            value = toRaw(value);
-            if (!Object(shared_esm_bundler["g" /* isArray */])(target) && isRef(oldValue) && !isRef(value)) {
+            if (!reactivity_esm_bundler_isShallow(value) && !reactivity_esm_bundler_isReadonly(value)) {
+                oldValue = toRaw(oldValue);
+                value = toRaw(value);
+            }
+            if (!Object(shared_esm_bundler["f" /* isArray */])(target) && isRef(oldValue) && !isRef(value)) {
                 oldValue.value = value;
                 return true;
             }
         }
-        const hadKey = Object(shared_esm_bundler["g" /* isArray */])(target) && Object(shared_esm_bundler["i" /* isIntegerKey */])(key)
+        const hadKey = Object(shared_esm_bundler["f" /* isArray */])(target) && Object(shared_esm_bundler["h" /* isIntegerKey */])(key)
             ? Number(key) < target.length
-            : Object(shared_esm_bundler["f" /* hasOwn */])(target, key);
+            : Object(shared_esm_bundler["e" /* hasOwn */])(target, key);
         const result = Reflect.set(target, key, value, receiver);
         // don't trigger if target is something up in the prototype chain of original
         if (target === toRaw(receiver)) {
             if (!hadKey) {
-                trigger(target, "add" /* ADD */, key, value);
+                trigger(target, "add" /* TriggerOpTypes.ADD */, key, value);
             }
-            else if (Object(shared_esm_bundler["e" /* hasChanged */])(value, oldValue)) {
-                trigger(target, "set" /* SET */, key, value, oldValue);
+            else if (Object(shared_esm_bundler["d" /* hasChanged */])(value, oldValue)) {
+                trigger(target, "set" /* TriggerOpTypes.SET */, key, value, oldValue);
             }
         }
         return result;
     };
 }
 function deleteProperty(target, key) {
-    const hadKey = Object(shared_esm_bundler["f" /* hasOwn */])(target, key);
+    const hadKey = Object(shared_esm_bundler["e" /* hasOwn */])(target, key);
     const oldValue = target[key];
     const result = Reflect.deleteProperty(target, key);
     if (result && hadKey) {
-        trigger(target, "delete" /* DELETE */, key, undefined, oldValue);
+        trigger(target, "delete" /* TriggerOpTypes.DELETE */, key, undefined, oldValue);
     }
     return result;
 }
-function reactivity_esm_bundler_has(target, key) {
+function has$1(target, key) {
     const result = Reflect.has(target, key);
-    if (!Object(shared_esm_bundler["l" /* isSymbol */])(key) || !builtInSymbols.has(key)) {
-        track(target, "has" /* HAS */, key);
+    if (!Object(shared_esm_bundler["k" /* isSymbol */])(key) || !builtInSymbols.has(key)) {
+        track(target, "has" /* TrackOpTypes.HAS */, key);
     }
     return result;
 }
-function reactivity_esm_bundler_ownKeys(target) {
-    track(target, "iterate" /* ITERATE */, ITERATE_KEY);
+function ownKeys(target) {
+    track(target, "iterate" /* TrackOpTypes.ITERATE */, Object(shared_esm_bundler["f" /* isArray */])(target) ? 'length' : ITERATE_KEY);
     return Reflect.ownKeys(target);
 }
 const mutableHandlers = {
-    get: reactivity_esm_bundler_get,
-    set: reactivity_esm_bundler_set,
+    get: get$1,
+    set: set$1,
     deleteProperty,
-    has: reactivity_esm_bundler_has,
-    ownKeys: reactivity_esm_bundler_ownKeys
+    has: has$1,
+    ownKeys
 };
 const readonlyHandlers = {
     get: readonlyGet,
@@ -2108,69 +1405,76 @@ const readonlyHandlers = {
         return true;
     }
 };
-const shallowReactiveHandlers = Object(shared_esm_bundler["d" /* extend */])({}, mutableHandlers, {
+const shallowReactiveHandlers = /*#__PURE__*/ Object(shared_esm_bundler["c" /* extend */])({}, mutableHandlers, {
     get: shallowGet,
     set: shallowSet
 });
 // Props handlers are special in the sense that it should not unwrap top-level
 // refs (in order to allow refs to be explicitly passed down), but should
 // retain the reactivity of the normal readonly object.
-const shallowReadonlyHandlers = Object(shared_esm_bundler["d" /* extend */])({}, readonlyHandlers, {
+const shallowReadonlyHandlers = /*#__PURE__*/ Object(shared_esm_bundler["c" /* extend */])({}, readonlyHandlers, {
     get: shallowReadonlyGet
 });
 
-const toReactive = (value) => Object(shared_esm_bundler["k" /* isObject */])(value) ? reactive(value) : value;
-const toReadonly = (value) => Object(shared_esm_bundler["k" /* isObject */])(value) ? readonly(value) : value;
 const toShallow = (value) => value;
 const getProto = (v) => Reflect.getPrototypeOf(v);
-function get$1(target, key, isReadonly = false, isShallow = false) {
+function reactivity_esm_bundler_get(target, key, isReadonly = false, isShallow = false) {
     // #1772: readonly(reactive(Map)) should return readonly + reactive version
     // of the value
-    target = target["__v_raw" /* RAW */];
+    target = target["__v_raw" /* ReactiveFlags.RAW */];
     const rawTarget = toRaw(target);
     const rawKey = toRaw(key);
-    if (key !== rawKey) {
-        !isReadonly && track(rawTarget, "get" /* GET */, key);
+    if (!isReadonly) {
+        if (key !== rawKey) {
+            track(rawTarget, "get" /* TrackOpTypes.GET */, key);
+        }
+        track(rawTarget, "get" /* TrackOpTypes.GET */, rawKey);
     }
-    !isReadonly && track(rawTarget, "get" /* GET */, rawKey);
     const { has } = getProto(rawTarget);
-    const wrap = isReadonly ? toReadonly : isShallow ? toShallow : toReactive;
+    const wrap = isShallow ? toShallow : isReadonly ? toReadonly : toReactive;
     if (has.call(rawTarget, key)) {
         return wrap(target.get(key));
     }
     else if (has.call(rawTarget, rawKey)) {
         return wrap(target.get(rawKey));
     }
+    else if (target !== rawTarget) {
+        // #3602 readonly(reactive(Map))
+        // ensure that the nested reactive `Map` can do tracking for itself
+        target.get(key);
+    }
 }
-function has$1(key, isReadonly = false) {
-    const target = this["__v_raw" /* RAW */];
+function reactivity_esm_bundler_has(key, isReadonly = false) {
+    const target = this["__v_raw" /* ReactiveFlags.RAW */];
     const rawTarget = toRaw(target);
     const rawKey = toRaw(key);
-    if (key !== rawKey) {
-        !isReadonly && track(rawTarget, "has" /* HAS */, key);
+    if (!isReadonly) {
+        if (key !== rawKey) {
+            track(rawTarget, "has" /* TrackOpTypes.HAS */, key);
+        }
+        track(rawTarget, "has" /* TrackOpTypes.HAS */, rawKey);
     }
-    !isReadonly && track(rawTarget, "has" /* HAS */, rawKey);
     return key === rawKey
         ? target.has(key)
         : target.has(key) || target.has(rawKey);
 }
 function size(target, isReadonly = false) {
-    target = target["__v_raw" /* RAW */];
-    !isReadonly && track(toRaw(target), "iterate" /* ITERATE */, ITERATE_KEY);
+    target = target["__v_raw" /* ReactiveFlags.RAW */];
+    !isReadonly && track(toRaw(target), "iterate" /* TrackOpTypes.ITERATE */, ITERATE_KEY);
     return Reflect.get(target, 'size', target);
 }
-function reactivity_esm_bundler_add(value) {
+function add(value) {
     value = toRaw(value);
     const target = toRaw(this);
     const proto = getProto(target);
     const hadKey = proto.has.call(target, value);
-    const result = target.add(value);
     if (!hadKey) {
-        trigger(target, "add" /* ADD */, value, value);
+        target.add(value);
+        trigger(target, "add" /* TriggerOpTypes.ADD */, value, value);
     }
-    return result;
+    return this;
 }
-function set$1(key, value) {
+function reactivity_esm_bundler_set(key, value) {
     value = toRaw(value);
     const target = toRaw(this);
     const { has, get } = getProto(target);
@@ -2181,14 +1485,14 @@ function set$1(key, value) {
     }
     else if ((false)) {}
     const oldValue = get.call(target, key);
-    const result = target.set(key, value);
+    target.set(key, value);
     if (!hadKey) {
-        trigger(target, "add" /* ADD */, key, value);
+        trigger(target, "add" /* TriggerOpTypes.ADD */, key, value);
     }
-    else if (Object(shared_esm_bundler["e" /* hasChanged */])(value, oldValue)) {
-        trigger(target, "set" /* SET */, key, value, oldValue);
+    else if (Object(shared_esm_bundler["d" /* hasChanged */])(value, oldValue)) {
+        trigger(target, "set" /* TriggerOpTypes.SET */, key, value, oldValue);
     }
-    return result;
+    return this;
 }
 function deleteEntry(key) {
     const target = toRaw(this);
@@ -2203,7 +1507,7 @@ function deleteEntry(key) {
     // forward the operation before queueing reactions
     const result = target.delete(key);
     if (hadKey) {
-        trigger(target, "delete" /* DELETE */, key, undefined, oldValue);
+        trigger(target, "delete" /* TriggerOpTypes.DELETE */, key, undefined, oldValue);
     }
     return result;
 }
@@ -2216,17 +1520,17 @@ function clear() {
     // forward the operation before queueing reactions
     const result = target.clear();
     if (hadItems) {
-        trigger(target, "clear" /* CLEAR */, undefined, undefined, oldTarget);
+        trigger(target, "clear" /* TriggerOpTypes.CLEAR */, undefined, undefined, oldTarget);
     }
     return result;
 }
 function createForEach(isReadonly, isShallow) {
     return function forEach(callback, thisArg) {
         const observed = this;
-        const target = observed["__v_raw" /* RAW */];
+        const target = observed["__v_raw" /* ReactiveFlags.RAW */];
         const rawTarget = toRaw(target);
-        const wrap = isReadonly ? toReadonly : isShallow ? toShallow : toReactive;
-        !isReadonly && track(rawTarget, "iterate" /* ITERATE */, ITERATE_KEY);
+        const wrap = isShallow ? toShallow : isReadonly ? toReadonly : toReactive;
+        !isReadonly && track(rawTarget, "iterate" /* TrackOpTypes.ITERATE */, ITERATE_KEY);
         return target.forEach((value, key) => {
             // important: make sure the callback is
             // 1. invoked with the reactive map as `this` and 3rd arg
@@ -2237,15 +1541,15 @@ function createForEach(isReadonly, isShallow) {
 }
 function createIterableMethod(method, isReadonly, isShallow) {
     return function (...args) {
-        const target = this["__v_raw" /* RAW */];
+        const target = this["__v_raw" /* ReactiveFlags.RAW */];
         const rawTarget = toRaw(target);
-        const targetIsMap = Object(shared_esm_bundler["j" /* isMap */])(rawTarget);
+        const targetIsMap = Object(shared_esm_bundler["i" /* isMap */])(rawTarget);
         const isPair = method === 'entries' || (method === Symbol.iterator && targetIsMap);
         const isKeyOnly = method === 'keys' && targetIsMap;
         const innerIterator = target[method](...args);
-        const wrap = isReadonly ? toReadonly : isShallow ? toShallow : toReactive;
+        const wrap = isShallow ? toShallow : isReadonly ? toReadonly : toReactive;
         !isReadonly &&
-            track(rawTarget, "iterate" /* ITERATE */, isKeyOnly ? MAP_KEY_ITERATE_KEY : ITERATE_KEY);
+            track(rawTarget, "iterate" /* TrackOpTypes.ITERATE */, isKeyOnly ? MAP_KEY_ITERATE_KEY : ITERATE_KEY);
         // return a wrapped iterator which returns observed versions of the
         // values emitted from the real iterator
         return {
@@ -2269,95 +1573,126 @@ function createIterableMethod(method, isReadonly, isShallow) {
 function createReadonlyMethod(type) {
     return function (...args) {
         if ((false)) {}
-        return type === "delete" /* DELETE */ ? false : this;
+        return type === "delete" /* TriggerOpTypes.DELETE */ ? false : this;
     };
 }
-const mutableInstrumentations = {
-    get(key) {
-        return get$1(this, key);
-    },
-    get size() {
-        return size(this);
-    },
-    has: has$1,
-    add: reactivity_esm_bundler_add,
-    set: set$1,
-    delete: deleteEntry,
-    clear,
-    forEach: createForEach(false, false)
-};
-const shallowInstrumentations = {
-    get(key) {
-        return get$1(this, key, false, true);
-    },
-    get size() {
-        return size(this);
-    },
-    has: has$1,
-    add: reactivity_esm_bundler_add,
-    set: set$1,
-    delete: deleteEntry,
-    clear,
-    forEach: createForEach(false, true)
-};
-const readonlyInstrumentations = {
-    get(key) {
-        return get$1(this, key, true);
-    },
-    get size() {
-        return size(this, true);
-    },
-    has(key) {
-        return has$1.call(this, key, true);
-    },
-    add: createReadonlyMethod("add" /* ADD */),
-    set: createReadonlyMethod("set" /* SET */),
-    delete: createReadonlyMethod("delete" /* DELETE */),
-    clear: createReadonlyMethod("clear" /* CLEAR */),
-    forEach: createForEach(true, false)
-};
-const iteratorMethods = ['keys', 'values', 'entries', Symbol.iterator];
-iteratorMethods.forEach(method => {
-    mutableInstrumentations[method] = createIterableMethod(method, false, false);
-    readonlyInstrumentations[method] = createIterableMethod(method, true, false);
-    shallowInstrumentations[method] = createIterableMethod(method, false, true);
-});
+function createInstrumentations() {
+    const mutableInstrumentations = {
+        get(key) {
+            return reactivity_esm_bundler_get(this, key);
+        },
+        get size() {
+            return size(this);
+        },
+        has: reactivity_esm_bundler_has,
+        add,
+        set: reactivity_esm_bundler_set,
+        delete: deleteEntry,
+        clear,
+        forEach: createForEach(false, false)
+    };
+    const shallowInstrumentations = {
+        get(key) {
+            return reactivity_esm_bundler_get(this, key, false, true);
+        },
+        get size() {
+            return size(this);
+        },
+        has: reactivity_esm_bundler_has,
+        add,
+        set: reactivity_esm_bundler_set,
+        delete: deleteEntry,
+        clear,
+        forEach: createForEach(false, true)
+    };
+    const readonlyInstrumentations = {
+        get(key) {
+            return reactivity_esm_bundler_get(this, key, true);
+        },
+        get size() {
+            return size(this, true);
+        },
+        has(key) {
+            return reactivity_esm_bundler_has.call(this, key, true);
+        },
+        add: createReadonlyMethod("add" /* TriggerOpTypes.ADD */),
+        set: createReadonlyMethod("set" /* TriggerOpTypes.SET */),
+        delete: createReadonlyMethod("delete" /* TriggerOpTypes.DELETE */),
+        clear: createReadonlyMethod("clear" /* TriggerOpTypes.CLEAR */),
+        forEach: createForEach(true, false)
+    };
+    const shallowReadonlyInstrumentations = {
+        get(key) {
+            return reactivity_esm_bundler_get(this, key, true, true);
+        },
+        get size() {
+            return size(this, true);
+        },
+        has(key) {
+            return reactivity_esm_bundler_has.call(this, key, true);
+        },
+        add: createReadonlyMethod("add" /* TriggerOpTypes.ADD */),
+        set: createReadonlyMethod("set" /* TriggerOpTypes.SET */),
+        delete: createReadonlyMethod("delete" /* TriggerOpTypes.DELETE */),
+        clear: createReadonlyMethod("clear" /* TriggerOpTypes.CLEAR */),
+        forEach: createForEach(true, true)
+    };
+    const iteratorMethods = ['keys', 'values', 'entries', Symbol.iterator];
+    iteratorMethods.forEach(method => {
+        mutableInstrumentations[method] = createIterableMethod(method, false, false);
+        readonlyInstrumentations[method] = createIterableMethod(method, true, false);
+        shallowInstrumentations[method] = createIterableMethod(method, false, true);
+        shallowReadonlyInstrumentations[method] = createIterableMethod(method, true, true);
+    });
+    return [
+        mutableInstrumentations,
+        readonlyInstrumentations,
+        shallowInstrumentations,
+        shallowReadonlyInstrumentations
+    ];
+}
+const [mutableInstrumentations, readonlyInstrumentations, shallowInstrumentations, shallowReadonlyInstrumentations] = /* #__PURE__*/ createInstrumentations();
 function createInstrumentationGetter(isReadonly, shallow) {
     const instrumentations = shallow
-        ? shallowInstrumentations
+        ? isReadonly
+            ? shallowReadonlyInstrumentations
+            : shallowInstrumentations
         : isReadonly
             ? readonlyInstrumentations
             : mutableInstrumentations;
     return (target, key, receiver) => {
-        if (key === "__v_isReactive" /* IS_REACTIVE */) {
+        if (key === "__v_isReactive" /* ReactiveFlags.IS_REACTIVE */) {
             return !isReadonly;
         }
-        else if (key === "__v_isReadonly" /* IS_READONLY */) {
+        else if (key === "__v_isReadonly" /* ReactiveFlags.IS_READONLY */) {
             return isReadonly;
         }
-        else if (key === "__v_raw" /* RAW */) {
+        else if (key === "__v_raw" /* ReactiveFlags.RAW */) {
             return target;
         }
-        return Reflect.get(Object(shared_esm_bundler["f" /* hasOwn */])(instrumentations, key) && key in target
+        return Reflect.get(Object(shared_esm_bundler["e" /* hasOwn */])(instrumentations, key) && key in target
             ? instrumentations
             : target, key, receiver);
     };
 }
 const mutableCollectionHandlers = {
-    get: createInstrumentationGetter(false, false)
+    get: /*#__PURE__*/ createInstrumentationGetter(false, false)
 };
 const shallowCollectionHandlers = {
-    get: createInstrumentationGetter(false, true)
+    get: /*#__PURE__*/ createInstrumentationGetter(false, true)
 };
 const readonlyCollectionHandlers = {
-    get: createInstrumentationGetter(true, false)
+    get: /*#__PURE__*/ createInstrumentationGetter(true, false)
+};
+const shallowReadonlyCollectionHandlers = {
+    get: /*#__PURE__*/ createInstrumentationGetter(true, true)
 };
 function checkIdentityKeys(target, has, key) {
     const rawKey = toRaw(key);
     if (rawKey !== key && has.call(target, rawKey)) {
         const type = Object(shared_esm_bundler["m" /* toRawType */])(target);
         console.warn(`Reactive ${type} contains both the raw and reactive ` +
-            `versions of the same object${type === `Map` ? `as keys` : ``}, ` +
+            `versions of the same object${type === `Map` ? ` as keys` : ``}, ` +
             `which can lead to inconsistencies. ` +
             `Avoid differentiating between the raw and reactive versions ` +
             `of an object and only use the reactive version if possible.`);
@@ -2365,132 +1700,168 @@ function checkIdentityKeys(target, has, key) {
 }
 
 const reactiveMap = new WeakMap();
+const shallowReactiveMap = new WeakMap();
 const readonlyMap = new WeakMap();
+const shallowReadonlyMap = new WeakMap();
 function targetTypeMap(rawType) {
     switch (rawType) {
         case 'Object':
         case 'Array':
-            return 1 /* COMMON */;
+            return 1 /* TargetType.COMMON */;
         case 'Map':
         case 'Set':
         case 'WeakMap':
         case 'WeakSet':
-            return 2 /* COLLECTION */;
+            return 2 /* TargetType.COLLECTION */;
         default:
-            return 0 /* INVALID */;
+            return 0 /* TargetType.INVALID */;
     }
 }
 function getTargetType(value) {
-    return value["__v_skip" /* SKIP */] || !Object.isExtensible(value)
-        ? 0 /* INVALID */
+    return value["__v_skip" /* ReactiveFlags.SKIP */] || !Object.isExtensible(value)
+        ? 0 /* TargetType.INVALID */
         : targetTypeMap(Object(shared_esm_bundler["m" /* toRawType */])(value));
 }
 function reactive(target) {
     // if trying to observe a readonly proxy, return the readonly version.
-    if (target && target["__v_isReadonly" /* IS_READONLY */]) {
+    if (reactivity_esm_bundler_isReadonly(target)) {
         return target;
     }
-    return createReactiveObject(target, false, mutableHandlers, mutableCollectionHandlers);
+    return createReactiveObject(target, false, mutableHandlers, mutableCollectionHandlers, reactiveMap);
 }
-// Return a reactive-copy of the original object, where only the root level
-// properties are reactive, and does NOT unwrap refs nor recursively convert
-// returned properties.
+/**
+ * Return a shallowly-reactive copy of the original object, where only the root
+ * level properties are reactive. It also does not auto-unwrap refs (even at the
+ * root level).
+ */
 function shallowReactive(target) {
-    return createReactiveObject(target, false, shallowReactiveHandlers, shallowCollectionHandlers);
+    return createReactiveObject(target, false, shallowReactiveHandlers, shallowCollectionHandlers, shallowReactiveMap);
 }
+/**
+ * Creates a readonly copy of the original object. Note the returned copy is not
+ * made reactive, but `readonly` can be called on an already reactive object.
+ */
 function readonly(target) {
-    return createReactiveObject(target, true, readonlyHandlers, readonlyCollectionHandlers);
+    return createReactiveObject(target, true, readonlyHandlers, readonlyCollectionHandlers, readonlyMap);
 }
-// Return a reactive-copy of the original object, where only the root level
-// properties are readonly, and does NOT unwrap refs nor recursively convert
-// returned properties.
-// This is used for creating the props proxy object for stateful components.
+/**
+ * Returns a reactive-copy of the original object, where only the root level
+ * properties are readonly, and does NOT unwrap refs nor recursively convert
+ * returned properties.
+ * This is used for creating the props proxy object for stateful components.
+ */
 function shallowReadonly(target) {
-    return createReactiveObject(target, true, shallowReadonlyHandlers, readonlyCollectionHandlers);
+    return createReactiveObject(target, true, shallowReadonlyHandlers, shallowReadonlyCollectionHandlers, shallowReadonlyMap);
 }
-function createReactiveObject(target, isReadonly, baseHandlers, collectionHandlers) {
-    if (!Object(shared_esm_bundler["k" /* isObject */])(target)) {
+function createReactiveObject(target, isReadonly, baseHandlers, collectionHandlers, proxyMap) {
+    if (!Object(shared_esm_bundler["j" /* isObject */])(target)) {
         if ((false)) {}
         return target;
     }
     // target is already a Proxy, return it.
     // exception: calling readonly() on a reactive object
-    if (target["__v_raw" /* RAW */] &&
-        !(isReadonly && target["__v_isReactive" /* IS_REACTIVE */])) {
+    if (target["__v_raw" /* ReactiveFlags.RAW */] &&
+        !(isReadonly && target["__v_isReactive" /* ReactiveFlags.IS_REACTIVE */])) {
         return target;
     }
     // target already has corresponding Proxy
-    const proxyMap = isReadonly ? readonlyMap : reactiveMap;
     const existingProxy = proxyMap.get(target);
     if (existingProxy) {
         return existingProxy;
     }
-    // only a whitelist of value types can be observed.
+    // only specific value types can be observed.
     const targetType = getTargetType(target);
-    if (targetType === 0 /* INVALID */) {
+    if (targetType === 0 /* TargetType.INVALID */) {
         return target;
     }
-    const proxy = new Proxy(target, targetType === 2 /* COLLECTION */ ? collectionHandlers : baseHandlers);
+    const proxy = new Proxy(target, targetType === 2 /* TargetType.COLLECTION */ ? collectionHandlers : baseHandlers);
     proxyMap.set(target, proxy);
     return proxy;
 }
 function isReactive(value) {
     if (reactivity_esm_bundler_isReadonly(value)) {
-        return isReactive(value["__v_raw" /* RAW */]);
+        return isReactive(value["__v_raw" /* ReactiveFlags.RAW */]);
     }
-    return !!(value && value["__v_isReactive" /* IS_REACTIVE */]);
+    return !!(value && value["__v_isReactive" /* ReactiveFlags.IS_REACTIVE */]);
 }
 function reactivity_esm_bundler_isReadonly(value) {
-    return !!(value && value["__v_isReadonly" /* IS_READONLY */]);
+    return !!(value && value["__v_isReadonly" /* ReactiveFlags.IS_READONLY */]);
+}
+function reactivity_esm_bundler_isShallow(value) {
+    return !!(value && value["__v_isShallow" /* ReactiveFlags.IS_SHALLOW */]);
 }
 function isProxy(value) {
     return isReactive(value) || reactivity_esm_bundler_isReadonly(value);
 }
 function toRaw(observed) {
-    return ((observed && toRaw(observed["__v_raw" /* RAW */])) || observed);
+    const raw = observed && observed["__v_raw" /* ReactiveFlags.RAW */];
+    return raw ? toRaw(raw) : observed;
 }
 function markRaw(value) {
-    Object(shared_esm_bundler["c" /* def */])(value, "__v_skip" /* SKIP */, true);
+    Object(shared_esm_bundler["b" /* def */])(value, "__v_skip" /* ReactiveFlags.SKIP */, true);
     return value;
 }
+const toReactive = (value) => Object(shared_esm_bundler["j" /* isObject */])(value) ? reactive(value) : value;
+const toReadonly = (value) => Object(shared_esm_bundler["j" /* isObject */])(value) ? readonly(value) : value;
 
-const convert = (val) => Object(shared_esm_bundler["k" /* isObject */])(val) ? reactive(val) : val;
+function trackRefValue(ref) {
+    if (shouldTrack && activeEffect) {
+        ref = toRaw(ref);
+        if ((false)) {}
+        else {
+            trackEffects(ref.dep || (ref.dep = createDep()));
+        }
+    }
+}
+function triggerRefValue(ref, newVal) {
+    ref = toRaw(ref);
+    const dep = ref.dep;
+    if (dep) {
+        if ((false)) {}
+        else {
+            triggerEffects(dep);
+        }
+    }
+}
 function isRef(r) {
-    return Boolean(r && r.__v_isRef === true);
+    return !!(r && r.__v_isRef === true);
 }
 function ref(value) {
-    return createRef(value);
+    return createRef(value, false);
 }
 function shallowRef(value) {
     return createRef(value, true);
 }
-class reactivity_esm_bundler_RefImpl {
-    constructor(_rawValue, _shallow = false) {
-        this._rawValue = _rawValue;
-        this._shallow = _shallow;
-        this.__v_isRef = true;
-        this._value = _shallow ? _rawValue : convert(_rawValue);
-    }
-    get value() {
-        track(toRaw(this), "get" /* GET */, 'value');
-        return this._value;
-    }
-    set value(newVal) {
-        if (Object(shared_esm_bundler["e" /* hasChanged */])(toRaw(newVal), this._rawValue)) {
-            this._rawValue = newVal;
-            this._value = this._shallow ? newVal : convert(newVal);
-            trigger(toRaw(this), "set" /* SET */, 'value', newVal);
-        }
-    }
-}
-function createRef(rawValue, shallow = false) {
+function createRef(rawValue, shallow) {
     if (isRef(rawValue)) {
         return rawValue;
     }
     return new reactivity_esm_bundler_RefImpl(rawValue, shallow);
 }
+class reactivity_esm_bundler_RefImpl {
+    constructor(value, __v_isShallow) {
+        this.__v_isShallow = __v_isShallow;
+        this.dep = undefined;
+        this.__v_isRef = true;
+        this._rawValue = __v_isShallow ? value : toRaw(value);
+        this._value = __v_isShallow ? value : toReactive(value);
+    }
+    get value() {
+        trackRefValue(this);
+        return this._value;
+    }
+    set value(newVal) {
+        const useDirectValue = this.__v_isShallow || reactivity_esm_bundler_isShallow(newVal) || reactivity_esm_bundler_isReadonly(newVal);
+        newVal = useDirectValue ? newVal : toRaw(newVal);
+        if (Object(shared_esm_bundler["d" /* hasChanged */])(newVal, this._rawValue)) {
+            this._rawValue = newVal;
+            this._value = useDirectValue ? newVal : toReactive(newVal);
+            triggerRefValue(this, newVal);
+        }
+    }
+}
 function triggerRef(ref) {
-    trigger(ref, "set" /* SET */, 'value', ( false) ? undefined : void 0);
+    triggerRefValue(ref, ( false) ? undefined : void 0);
 }
 function unref(ref) {
     return isRef(ref) ? ref.value : ref;
@@ -2515,8 +1886,9 @@ function proxyRefs(objectWithRefs) {
 }
 class CustomRefImpl {
     constructor(factory) {
+        this.dep = undefined;
         this.__v_isRef = true;
-        const { get, set } = factory(() => track(this, "get" /* GET */, 'value'), () => trigger(this, "set" /* SET */, 'value'));
+        const { get, set } = factory(() => trackRefValue(this), () => triggerRefValue(this));
         this._get = get;
         this._set = set;
     }
@@ -2532,240 +1904,594 @@ function customRef(factory) {
 }
 function toRefs(object) {
     if (false) {}
-    const ret = Object(shared_esm_bundler["g" /* isArray */])(object) ? new Array(object.length) : {};
+    const ret = Object(shared_esm_bundler["f" /* isArray */])(object) ? new Array(object.length) : {};
     for (const key in object) {
         ret[key] = toRef(object, key);
     }
     return ret;
 }
 class ObjectRefImpl {
-    constructor(_object, _key) {
+    constructor(_object, _key, _defaultValue) {
         this._object = _object;
         this._key = _key;
+        this._defaultValue = _defaultValue;
         this.__v_isRef = true;
     }
     get value() {
-        return this._object[this._key];
+        const val = this._object[this._key];
+        return val === undefined ? this._defaultValue : val;
     }
     set value(newVal) {
         this._object[this._key] = newVal;
     }
+    get dep() {
+        return getDepFromReactive(toRaw(this._object), this._key);
+    }
 }
-function toRef(object, key) {
-    return isRef(object[key])
-        ? object[key]
-        : new ObjectRefImpl(object, key);
+function toRef(object, key, defaultValue) {
+    const val = object[key];
+    return isRef(val)
+        ? val
+        : new ObjectRefImpl(object, key, defaultValue);
 }
 
+var _a$1;
 class ComputedRefImpl {
-    constructor(getter, _setter, isReadonly) {
+    constructor(getter, _setter, isReadonly, isSSR) {
         this._setter = _setter;
-        this._dirty = true;
+        this.dep = undefined;
         this.__v_isRef = true;
-        this.effect = reactivity_esm_bundler_effect(getter, {
-            lazy: true,
-            scheduler: () => {
-                if (!this._dirty) {
-                    this._dirty = true;
-                    trigger(toRaw(this), "set" /* SET */, 'value');
-                }
+        this[_a$1] = false;
+        this._dirty = true;
+        this.effect = new ReactiveEffect(getter, () => {
+            if (!this._dirty) {
+                this._dirty = true;
+                triggerRefValue(this);
             }
         });
-        this["__v_isReadonly" /* IS_READONLY */] = isReadonly;
+        this.effect.computed = this;
+        this.effect.active = this._cacheable = !isSSR;
+        this["__v_isReadonly" /* ReactiveFlags.IS_READONLY */] = isReadonly;
     }
     get value() {
-        if (this._dirty) {
-            this._value = this.effect();
-            this._dirty = false;
+        // the computed ref may get wrapped by other proxies e.g. readonly() #3376
+        const self = toRaw(this);
+        trackRefValue(self);
+        if (self._dirty || !self._cacheable) {
+            self._dirty = false;
+            self._value = self.effect.run();
         }
-        track(toRaw(this), "get" /* GET */, 'value');
-        return this._value;
+        return self._value;
     }
     set value(newValue) {
         this._setter(newValue);
     }
 }
-function computed(getterOrOptions) {
+_a$1 = "__v_isReadonly" /* ReactiveFlags.IS_READONLY */;
+function computed(getterOrOptions, debugOptions, isSSR = false) {
     let getter;
     let setter;
-    if (Object(shared_esm_bundler["h" /* isFunction */])(getterOrOptions)) {
+    const onlyGetter = Object(shared_esm_bundler["g" /* isFunction */])(getterOrOptions);
+    if (onlyGetter) {
         getter = getterOrOptions;
         setter = ( false)
             ? undefined
-            : shared_esm_bundler["b" /* NOOP */];
+            : shared_esm_bundler["a" /* NOOP */];
     }
     else {
         getter = getterOrOptions.get;
         setter = getterOrOptions.set;
     }
-    return new ComputedRefImpl(getter, setter, Object(shared_esm_bundler["h" /* isFunction */])(getterOrOptions) || !getterOrOptions.set);
+    const cRef = new ComputedRefImpl(getter, setter, onlyGetter || !setter, isSSR);
+    if (false) {}
+    return cRef;
+}
+
+var _a;
+const tick = /*#__PURE__*/ Promise.resolve();
+const queue = [];
+let queued = false;
+const scheduler = (fn) => {
+    queue.push(fn);
+    if (!queued) {
+        queued = true;
+        tick.then(flush);
+    }
+};
+const flush = () => {
+    for (let i = 0; i < queue.length; i++) {
+        queue[i]();
+    }
+    queue.length = 0;
+    queued = false;
+};
+class DeferredComputedRefImpl {
+    constructor(getter) {
+        this.dep = undefined;
+        this._dirty = true;
+        this.__v_isRef = true;
+        this[_a] = true;
+        let compareTarget;
+        let hasCompareTarget = false;
+        let scheduled = false;
+        this.effect = new ReactiveEffect(getter, (computedTrigger) => {
+            if (this.dep) {
+                if (computedTrigger) {
+                    compareTarget = this._value;
+                    hasCompareTarget = true;
+                }
+                else if (!scheduled) {
+                    const valueToCompare = hasCompareTarget ? compareTarget : this._value;
+                    scheduled = true;
+                    hasCompareTarget = false;
+                    scheduler(() => {
+                        if (this.effect.active && this._get() !== valueToCompare) {
+                            triggerRefValue(this);
+                        }
+                        scheduled = false;
+                    });
+                }
+                // chained upstream computeds are notified synchronously to ensure
+                // value invalidation in case of sync access; normal effects are
+                // deferred to be triggered in scheduler.
+                for (const e of this.dep) {
+                    if (e.computed instanceof DeferredComputedRefImpl) {
+                        e.scheduler(true /* computedTrigger */);
+                    }
+                }
+            }
+            this._dirty = true;
+        });
+        this.effect.computed = this;
+    }
+    _get() {
+        if (this._dirty) {
+            this._dirty = false;
+            return (this._value = this.effect.run());
+        }
+        return this._value;
+    }
+    get value() {
+        trackRefValue(this);
+        // the computed ref may get wrapped by other proxies e.g. readonly() #3376
+        return toRaw(this)._get();
+    }
+}
+_a = "__v_isReadonly" /* ReactiveFlags.IS_READONLY */;
+function deferredComputed(getter) {
+    return new DeferredComputedRefImpl(getter);
 }
 
 
 
-// CONCATENATED MODULE: ./src/AgGridVue.ts
+// EXTERNAL MODULE: external "agGrid"
+var external_agGrid_ = __webpack_require__("8bd4");
 
-// import {Prop} from 'vue-property-decorator';
+// CONCATENATED MODULE: ./src/VueComponentFactory.ts
 
-
-
-
-
-
-
-var _a = getAgGridProperties(), AgGridVue_props = _a[0], AgGridVue_watch = _a[1], AgGridVue_model = _a[2];
-var AgGridVue_AgGridVue = /** @class */ (function (_super) {
-    __extends(AgGridVue, _super);
-    function AgGridVue() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.gridCreated = false;
-        _this.isDestroyed = false;
-        _this.gridReadyFired = false;
-        _this.emitRowModel = null;
-        return _this;
+class VueComponentFactory_VueComponentFactory {
+    static getComponentDefinition(component, parent) {
+        let componentDefinition;
+        // when referencing components by name - ie: cellRenderer: 'MyComponent'
+        if (typeof component === 'string') {
+            // look up the definition in Vue
+            componentDefinition = this.searchForComponentInstance(parent, component);
+        }
+        else {
+            componentDefinition = { extends: Object(external_commonjs_vue_commonjs2_vue_root_Vue_["defineComponent"])(Object.assign({}, component)) };
+        }
+        if (!componentDefinition) {
+            console.error(`Could not find component with name of ${component}. Is it in Vue.components?`);
+        }
+        if (componentDefinition.extends) {
+            if (componentDefinition.extends.setup) {
+                componentDefinition.setup = componentDefinition.extends.setup;
+            }
+            componentDefinition.extends.props = this.addParamsToProps(componentDefinition.extends.props);
+        }
+        else {
+            componentDefinition.props = this.addParamsToProps(componentDefinition.props);
+        }
+        return componentDefinition;
     }
-    AgGridVue_1 = AgGridVue;
-    // noinspection JSUnusedGlobalSymbols, JSMethodCanBeStatic
-    AgGridVue.prototype.render = function () {
-        return Object(external_commonjs_vue_commonjs2_vue_root_Vue_["h"])('div');
-    };
-    AgGridVue.prototype.globalEventListener = function (eventType, event) {
-        if (this.isDestroyed) {
+    static addParamsToProps(props) {
+        if (!props || (Array.isArray(props) && props.indexOf('params') === -1)) {
+            props = ['params', ...(props ? props : [])];
+        }
+        else if (typeof props === 'object' && !props.params) {
+            /* tslint:disable:no-string-literal */
+            props['params'] = {
+                type: Object
+            };
+        }
+        return props;
+    }
+    static createAndMountComponent(component, params, parent, provides) {
+        const componentDefinition = VueComponentFactory_VueComponentFactory.getComponentDefinition(component, parent);
+        if (!componentDefinition) {
             return;
         }
-        if (eventType === 'gridReady') {
-            this.gridReadyFired = true;
+        const { vNode, destroy, el } = this.mount(componentDefinition, { params: Object.freeze(params) }, parent, provides || {});
+        // note that the component creation is synchronous so that componentInstance is set by this point
+        return {
+            componentInstance: vNode.component.proxy,
+            element: el,
+            destroy,
+        };
+    }
+    static mount(component, props, parent, provides) {
+        let vNode = Object(external_commonjs_vue_commonjs2_vue_root_Vue_["createVNode"])(component, props);
+        vNode.appContext = parent.$.appContext;
+        vNode.appContext.provides = Object.assign(Object.assign(Object.assign({}, provides), (vNode.appContext.provides ? vNode.appContext.provides : {})), (parent.$parent.$options.provide ? parent.$parent.$options.provide : {}));
+        let el = document.createElement('div');
+        Object(external_commonjs_vue_commonjs2_vue_root_Vue_["render"])(vNode, el);
+        const destroy = () => {
+            if (el) {
+                Object(external_commonjs_vue_commonjs2_vue_root_Vue_["render"])(null, el);
+            }
+            el = null;
+            vNode = null;
+        };
+        return { vNode, destroy, el };
+    }
+    static searchForComponentInstance(parent, component, maxDepth = 10, suppressError = false) {
+        let componentInstance = null;
+        let currentParent = parent.$parent;
+        let depth = 0;
+        while (!componentInstance &&
+            currentParent &&
+            currentParent.$options &&
+            (++depth < maxDepth)) {
+            const currentParentAsThis = currentParent;
+            componentInstance = currentParentAsThis.$options && currentParentAsThis.$options.components ? currentParentAsThis.$options.components[component] : null;
+            currentParent = currentParent.$parent;
         }
-        this.updateModelIfUsed(eventType);
-    };
-    AgGridVue.prototype.processChanges = function (propertyName, currentValue, previousValue) {
-        if (this.gridCreated) {
-            if (this.skipChange(propertyName, currentValue, previousValue)) {
+        // then search in globally registered components of app
+        if (!componentInstance) {
+            const components = parent.$.appContext.components;
+            if (components && components[component]) {
+                componentInstance = components[component];
+            }
+        }
+        if (!componentInstance && !suppressError) {
+            console.error(`Could not find component with name of ${component}. Is it in Vue.components?`);
+            return null;
+        }
+        return componentInstance;
+    }
+}
+
+// CONCATENATED MODULE: ./src/VueFrameworkComponentWrapper.ts
+
+
+class VueFrameworkComponentWrapper_VueFrameworkComponentWrapper extends external_agGrid_["BaseComponentWrapper"] {
+    constructor(parent, provides) {
+        super();
+        this.parent = parent;
+        // when using master detail things provides to the master (like urlql) will not be available to the child components
+        // we capture the parent provides here (the first one will be the parent) - and re-use this when creating child components in VueComponentFactory
+        if (!VueFrameworkComponentWrapper_VueFrameworkComponentWrapper.provides) {
+            VueFrameworkComponentWrapper_VueFrameworkComponentWrapper.provides = provides;
+        }
+    }
+    createWrapper(component) {
+        const that = this;
+        class DynamicComponent extends VueComponent {
+            init(params) {
+                super.init(params);
+            }
+            hasMethod(name) {
+                return wrapper.getFrameworkComponentInstance()[name] != null;
+            }
+            callMethod(name, args) {
+                const componentInstance = this.getFrameworkComponentInstance();
+                const frameworkComponentInstance = wrapper.getFrameworkComponentInstance();
+                return frameworkComponentInstance[name].apply(componentInstance, args);
+            }
+            addMethod(name, callback) {
+                wrapper[name] = callback;
+            }
+            overrideProcessing(methodName) {
+                return that.parent.autoParamsRefresh && methodName === 'refresh';
+            }
+            processMethod(methodName, args) {
+                if (methodName === 'refresh') {
+                    this.getFrameworkComponentInstance().params = args[0];
+                }
+                if (this.hasMethod(methodName)) {
+                    return this.callMethod(methodName, args);
+                }
+                return methodName === 'refresh';
+            }
+            createComponent(params) {
+                return that.createComponent(component, params);
+            }
+        }
+        const wrapper = new DynamicComponent();
+        return wrapper;
+    }
+    createComponent(component, params) {
+        return VueComponentFactory_VueComponentFactory.createAndMountComponent(component, params, this.parent, VueFrameworkComponentWrapper_VueFrameworkComponentWrapper.provides);
+    }
+    createMethodProxy(wrapper, methodName, mandatory) {
+        return function () {
+            if (wrapper.overrideProcessing(methodName)) {
+                return wrapper.processMethod(methodName, arguments);
+            }
+            if (wrapper.hasMethod(methodName)) {
+                return wrapper.callMethod(methodName, arguments);
+            }
+            if (mandatory) {
+                console.warn('AG Grid: Framework component is missing the method ' + methodName + '()');
+            }
+            return null;
+        };
+    }
+    destroy() {
+        this.parent = null;
+    }
+}
+class VueComponent {
+    getGui() {
+        return this.element;
+    }
+    destroy() {
+        if (this.getFrameworkComponentInstance() && typeof this.getFrameworkComponentInstance().destroy === 'function') {
+            this.getFrameworkComponentInstance().destroy();
+        }
+        this.unmount();
+    }
+    getFrameworkComponentInstance() {
+        return this.componentInstance;
+    }
+    init(params) {
+        const { componentInstance, element, destroy: unmount } = this.createComponent(params);
+        this.componentInstance = componentInstance;
+        this.unmount = unmount;
+        // the element is the parent div we're forced to created when dynamically creating vnodes
+        // the first child is the user supplied component
+        this.element = element.firstElementChild;
+    }
+}
+
+// CONCATENATED MODULE: ./src/Utils.ts
+
+const kebabProperty = (property) => {
+    return property.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+};
+const kebabNameToAttrEventName = (kebabName) => {
+    // grid-ready for example would become onGrid-ready in Vue
+    return `on${kebabName.charAt(0).toUpperCase()}${kebabName.substring(1, kebabName.length)}`;
+};
+const getAgGridProperties = () => {
+    const props = {};
+    // for example, 'grid-ready' would become 'onGrid-ready': undefined
+    // without this emitting events results in a warning
+    // and adding 'grid-ready' (and variations of this to the emits option in AgGridVue doesn't help either)
+    const eventNameAsProps = external_agGrid_["ComponentUtil"].PUBLIC_EVENTS.map((eventName) => kebabNameToAttrEventName(kebabProperty(eventName)));
+    eventNameAsProps.forEach((eventName) => props[eventName] = undefined);
+    const watch = {};
+    external_agGrid_["ComponentUtil"].ALL_PROPERTIES
+        .filter((propertyName) => propertyName != 'gridOptions') // dealt with in AgGridVue itself
+        .forEach((propertyName) => {
+        props[propertyName] = {};
+        watch[propertyName] = {
+            handler(currentValue, previousValue) {
+                this.processChanges(propertyName, currentValue, previousValue);
+            },
+            deep: propertyName !== 'popupParent' && propertyName !== 'context'
+        };
+    });
+    return [props, watch];
+};
+
+// CONCATENATED MODULE: ./src/VueFrameworkOverrides.ts
+
+
+class VueFrameworkOverrides_VueFrameworkOverrides extends external_agGrid_["VanillaFrameworkOverrides"] {
+    constructor(parent) {
+        super();
+        this.parent = parent;
+    }
+    /*
+     * vue components are specified in the "components" part of the vue component - as such we need a way to determine
+     * if a given component is within that context - this method provides this
+     * Note: This is only really used/necessary with cellRendererSelectors
+     */
+    frameworkComponent(name, components) {
+        let result = !!VueComponentFactory_VueComponentFactory.searchForComponentInstance(this.parent, name, 10, true) ? name : null;
+        if (!result && components && components[name]) {
+            const indirectName = components[name];
+            result = !!VueComponentFactory_VueComponentFactory.searchForComponentInstance(this.parent, indirectName, 10, true) ? indirectName : null;
+        }
+        return result;
+    }
+    isFrameworkComponent(comp) {
+        return typeof comp === 'object';
+    }
+}
+
+// CONCATENATED MODULE: ./src/AgGridVue.ts
+
+
+
+
+
+
+const ROW_DATA_EVENTS = ['rowDataChanged', 'rowDataUpdated', 'cellValueChanged', 'rowValueChanged'];
+const DATA_MODEL_ATTR_NAME = 'onUpdate:modelValue'; // emit name would be update:ModelValue
+const DATA_MODEL_EMIT_NAME = 'update:modelValue';
+const [AgGridVue_props, AgGridVue_watch] = getAgGridProperties();
+const AgGridVue = Object(external_commonjs_vue_commonjs2_vue_root_Vue_["defineComponent"])({
+    render() {
+        return Object(external_commonjs_vue_commonjs2_vue_root_Vue_["h"])('div');
+    },
+    props: Object.assign({ gridOptions: {
+            type: Object,
+            default: () => ({}),
+        }, autoParamsRefresh: {
+            type: Boolean,
+            default: () => false,
+        }, componentDependencies: {
+            type: Array,
+            default: () => [],
+        }, plugins: [], modules: {
+            type: Array,
+            default: () => [],
+        }, modelValue: {
+            type: Array,
+            default: undefined,
+            required: false
+        } }, AgGridVue_props),
+    data() {
+        return {
+            gridCreated: false,
+            isDestroyed: false,
+            gridReadyFired: false,
+            emitRowModel: undefined
+        };
+    },
+    watch: Object.assign({ modelValue: {
+            handler(currentValue, previousValue) {
+                this.processChanges('rowData', currentValue, previousValue);
+            },
+            deep: true
+        } }, AgGridVue_watch),
+    methods: {
+        globalEventListener(eventType, event) {
+            if (this.isDestroyed) {
                 return;
             }
-            var changes = {};
-            changes[propertyName] = {
-                currentValue: currentValue,
-                previousValue: previousValue,
+            if (eventType === 'gridReady') {
+                this.gridReadyFired = true;
+            }
+            this.updateModelIfUsed(eventType);
+        },
+        processChanges(propertyName, currentValue, previousValue) {
+            if (this.gridCreated) {
+                if (this.skipChange(propertyName, currentValue, previousValue)) {
+                    return;
+                }
+                const changes = {};
+                changes[propertyName] = {
+                    // decouple the row data - if we don't when the grid changes row data directly that'll trigger this component to react to rowData changes,
+                    // which can reset grid state (ie row selection)
+                    currentValue: propertyName === 'rowData' ? (Object.isFrozen(currentValue) ? currentValue : markRaw(toRaw(currentValue))) : currentValue,
+                    previousValue,
+                };
+                external_agGrid_["ComponentUtil"].processOnChange(changes, this.gridOptions.api);
+            }
+        },
+        checkForBindingConflicts() {
+            const thisAsAny = this;
+            if ((thisAsAny.rowData || this.gridOptions.rowData) &&
+                thisAsAny.modelValue) {
+                console.warn('AG Grid: Using both rowData and v-model. rowData will be ignored.');
+            }
+        },
+        getRowData() {
+            const rowData = [];
+            this.gridOptions.api.forEachNode((rowNode) => {
+                rowData.push(rowNode.data);
+            });
+            return rowData;
+        },
+        updateModelIfUsed(eventType) {
+            if (this.gridReadyFired &&
+                this.$attrs[DATA_MODEL_ATTR_NAME] &&
+                ROW_DATA_EVENTS.indexOf(eventType) !== -1) {
+                if (this.emitRowModel) {
+                    this.emitRowModel();
+                }
+            }
+        },
+        getRowDataBasedOnBindings() {
+            const thisAsAny = this;
+            const rowData = thisAsAny.modelValue;
+            return rowData ? rowData :
+                thisAsAny.rowData ? thisAsAny.rowData : thisAsAny.gridOptions.rowData;
+        },
+        getProvides() {
+            let instance = Object(external_commonjs_vue_commonjs2_vue_root_Vue_["getCurrentInstance"])();
+            let provides = {};
+            while (instance) {
+                if (instance && instance.provides) {
+                    provides = Object.assign(Object.assign({}, provides), instance.provides);
+                }
+                instance = instance.parent;
+            }
+            return provides;
+        },
+        /*
+        * Prevents an infinite loop when using v-model for the rowData
+        */
+        skipChange(propertyName, currentValue, previousValue) {
+            if (this.gridReadyFired &&
+                propertyName === 'rowData' &&
+                this.$attrs[DATA_MODEL_ATTR_NAME]) {
+                if (currentValue === previousValue) {
+                    return true;
+                }
+                if (currentValue && previousValue) {
+                    const currentRowData = currentValue;
+                    const previousRowData = previousValue;
+                    if (currentRowData.length === previousRowData.length) {
+                        for (let i = 0; i < currentRowData.length; i++) {
+                            if (currentRowData[i] !== previousRowData[i]) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+                }
+            }
+            return false;
+        },
+        debounce(func, delay) {
+            let timeout;
+            return () => {
+                const later = function () {
+                    func();
+                };
+                window.clearTimeout(timeout);
+                timeout = window.setTimeout(later, delay);
             };
-            external_agGrid_["ComponentUtil"].processOnChange(changes, this.gridOptions, this.gridOptions.api, this.gridOptions.columnApi);
         }
-    };
-    // noinspection JSUnusedGlobalSymbols
-    AgGridVue.prototype.mounted = function () {
-        var _this = this;
+    },
+    mounted() {
         // we debounce the model update to prevent a flood of updates in the event there are many individual
         // cell/row updates
-        this.emitRowModel = this.debounce(function () {
-            _this.$emit(AgGridVue_1.DATA_MODEL_ATTR_NAME, Object.freeze(_this.getRowData()));
+        this.emitRowModel = this.debounce(() => {
+            this.$emit(DATA_MODEL_EMIT_NAME, Object.freeze(this.getRowData()));
         }, 20);
-        var frameworkComponentWrapper = new VueFrameworkComponentWrapper_VueFrameworkComponentWrapper(this);
+        const provides = this.getProvides();
+        const frameworkComponentWrapper = new VueFrameworkComponentWrapper_VueFrameworkComponentWrapper(this, provides);
         // the gridOptions we pass to the grid don't need to be reactive (and shouldn't be - it'll cause issues
         // with mergeDeep for example
-        var gridOptions = markRaw(external_agGrid_["ComponentUtil"].copyAttributesToGridOptions(toRaw(this.gridOptions), this));
+        const gridOptions = markRaw(external_agGrid_["ComponentUtil"].copyAttributesToGridOptions(toRaw(this.gridOptions), this, true));
         this.checkForBindingConflicts();
-        gridOptions.rowData = this.getRowDataBasedOnBindings();
-        if (AgGridColumn_AgGridColumn.hasChildColumns(this.$slots)) {
-            gridOptions.columnDefs = AgGridColumn_AgGridColumn.mapChildColumnDefs(this.$slots);
-        }
-        var gridParams = {
+        const rowData = this.getRowDataBasedOnBindings();
+        gridOptions.rowData = rowData ? (Object.isFrozen(rowData) ? rowData : markRaw(toRaw(rowData))) : rowData;
+        const gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
+            frameworkOverrides: new VueFrameworkOverrides_VueFrameworkOverrides(this),
             providedBeanInstances: {
-                frameworkComponentWrapper: frameworkComponentWrapper,
+                frameworkComponentWrapper,
             },
             modules: this.modules,
         };
         new external_agGrid_["Grid"](this.$el, gridOptions, gridParams);
         this.gridCreated = true;
-    };
-    // noinspection JSUnusedGlobalSymbols
-    AgGridVue.prototype.destroyed = function () {
+    },
+    unmounted() {
         if (this.gridCreated) {
             if (this.gridOptions.api) {
                 this.gridOptions.api.destroy();
             }
             this.isDestroyed = true;
         }
-    };
-    AgGridVue.prototype.checkForBindingConflicts = function () {
-        var thisAsAny = this;
-        if ((thisAsAny.rowData || this.gridOptions.rowData) &&
-            thisAsAny.rowDataModel) {
-            console.warn('ag-grid: Using both rowData and rowDataModel. rowData will be ignored.');
-        }
-    };
-    AgGridVue.prototype.getRowData = function () {
-        var rowData = [];
-        this.gridOptions.api.forEachNode(function (rowNode) {
-            rowData.push(rowNode.data);
-        });
-        return rowData;
-    };
-    AgGridVue.prototype.updateModelIfUsed = function (eventType) {
-        if (this.gridReadyFired &&
-            this.$attrs[AgGridVue_1.DATA_MODEL_ATTR_NAME] &&
-            AgGridVue_1.ROW_DATA_EVENTS.indexOf(eventType) !== -1) {
-            if (this.emitRowModel) {
-                this.emitRowModel();
-            }
-        }
-    };
-    AgGridVue.prototype.getRowDataBasedOnBindings = function () {
-        var thisAsAny = this;
-        var rowDataModel = thisAsAny.rowDataModel;
-        return rowDataModel ? rowDataModel :
-            thisAsAny.rowData ? thisAsAny.rowData : thisAsAny.gridOptions.rowData;
-    };
-    /*
-     * Prevents an infinite loop when using v-model for the rowData
-     */
-    AgGridVue.prototype.skipChange = function (propertyName, currentValue, previousValue) {
-        if (this.gridReadyFired &&
-            propertyName === 'rowData' &&
-            this.$attrs[AgGridVue_1.DATA_MODEL_ATTR_NAME]) {
-            if (currentValue === previousValue) {
-                return true;
-            }
-            if (currentValue && previousValue) {
-                var currentRowData = currentValue;
-                var previousRowData = previousValue;
-                if (currentRowData.length === previousRowData.length) {
-                    for (var i = 0; i < currentRowData.length; i++) {
-                        if (currentRowData[i] !== previousRowData[i]) {
-                            return false;
-                        }
-                    }
-                    return true;
-                }
-            }
-        }
-        return false;
-    };
-    AgGridVue.prototype.debounce = function (func, delay) {
-        var timeout;
-        return function () {
-            var later = function () {
-                func();
-            };
-            window.clearTimeout(timeout);
-            timeout = window.setTimeout(later, delay);
-        };
-    };
-    var AgGridVue_1;
-    AgGridVue.VERSION = 'Vue 3+';
-    AgGridVue.ROW_DATA_EVENTS = ['rowDataChanged', 'rowDataUpdated', 'cellValueChanged', 'rowValueChanged'];
-    AgGridVue.DATA_MODEL_ATTR_NAME = kebabNameToAttrEventName(kebabProperty('data-model-changed'));
-    AgGridVue = AgGridVue_1 = __decorate([
-        Object(external_agGrid_["Bean"])('agGridVue'),
-        Options({
-            props: AgGridVue_props,
-            watch: AgGridVue_watch,
-            model: AgGridVue_model,
-        })
-    ], AgGridVue);
-    return AgGridVue;
-}(Vue));
-
+    }
+});
 
 // CONCATENATED MODULE: ./node_modules/@vue/cli-service/lib/commands/build/entry-lib-no-default.js
 

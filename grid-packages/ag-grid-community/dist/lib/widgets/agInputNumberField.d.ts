@@ -6,11 +6,12 @@ export declare class AgInputNumberField extends AgInputTextField {
     private max?;
     constructor(config?: ITextInputField);
     postConstruct(): void;
+    private onWheel;
     normalizeValue(value: string): string;
     private adjustPrecision;
     setMin(min: number | undefined): this;
     setMax(max: number | undefined): this;
     setPrecision(precision: number): this;
     setStep(step?: number): this;
-    setValue(value: string, silent?: boolean): this;
+    setValue(value?: string | null, silent?: boolean): this;
 }

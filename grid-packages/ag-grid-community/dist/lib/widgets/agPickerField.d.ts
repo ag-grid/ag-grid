@@ -13,7 +13,7 @@ export declare abstract class AgPickerField<TElement extends HTMLElement, TValue
     protected readonly eWrapper: HTMLElement;
     protected readonly eDisplayField: TElement;
     private readonly eIcon;
-    constructor(config?: IAgLabel, className?: string, pickerIcon?: string | undefined, popupRole?: string);
+    constructor(config?: IAgLabel, className?: string, pickerIcon?: string | undefined, ariaRole?: string);
     protected postConstruct(): void;
     protected refreshLabel(): void;
     setAriaLabel(label: string): this;

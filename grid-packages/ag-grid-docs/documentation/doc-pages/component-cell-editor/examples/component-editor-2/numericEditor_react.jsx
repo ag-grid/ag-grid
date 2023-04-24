@@ -1,10 +1,10 @@
-import React, {Component, createRef} from "react";
+import React, { Component, createRef } from "react";
 
-const KEY_BACKSPACE = 8;
-const KEY_DELETE = 46;
-const KEY_F2 = 113;
-const KEY_ENTER = 13;
-const KEY_TAB = 9;
+// backspace starts the editor on Windows
+const KEY_BACKSPACE = 'Backspace';
+const KEY_F2 = 'F2';
+const KEY_ENTER = 'Enter';
+const KEY_TAB = 'Tab';
 
 export default class NumericEditor extends Component {
     constructor(props) {
@@ -21,16 +21,16 @@ export default class NumericEditor extends Component {
     }
 
     componentDidMount() {
-        this.setCarot();
+        this.setCaret();
     }
 
     render() {
         return (
             <input ref={this.inputRef}
-                   value={this.state.value}
-                   onKeyDown={this.onKeyDown}
-                   onChange={this.handleChange}
-                   style={{width: "100%"}}
+                value={this.state.value}
+                onKeyDown={this.onKeyDown}
+                onChange={this.handleChange}
+                className='numeric-input'
             />
         );
     }
@@ -47,7 +47,7 @@ export default class NumericEditor extends Component {
         return this.cancelBeforeStart;
     }
 
-    // Gets called once when editing is finished (eg if enter is pressed).
+    // Gets called once when editing is finished (eg if Enter is pressed).
     // If you return true, then the result of the edit will be ignored.
     isCancelAfterEnd() {
         // will reject the number if it greater than 1,000,000
@@ -60,7 +60,7 @@ export default class NumericEditor extends Component {
         let startValue;
         let highlightAllOnFocus = true;
 
-        if (props.keyPress === KEY_BACKSPACE || props.keyPress === KEY_DELETE) {
+        if (props.eventKey === KEY_BACKSPACE) {
             // if backspace or delete pressed, we clear the cell
             startValue = '';
         } else if (props.charPress) {
@@ -70,7 +70,7 @@ export default class NumericEditor extends Component {
         } else {
             // otherwise we start with the current value
             startValue = props.value;
-            if (props.keyPress === KEY_F2) {
+            if (props.eventKey === KEY_F2) {
                 highlightAllOnFocus = false;
             }
         }
@@ -78,11 +78,11 @@ export default class NumericEditor extends Component {
         return {
             value: startValue,
             highlightAllOnFocus
-        }
+        };
     }
 
     onKeyDown(event) {
-        if (this.isLeftOrRight(event) || this.deleteOrBackspace(event)) {
+        if (this.isLeftOrRight(event) || this.isBackspace(event)) {
             event.stopPropagation();
             return;
         }
@@ -93,16 +93,11 @@ export default class NumericEditor extends Component {
     }
 
     isLeftOrRight(event) {
-        return [37, 39].indexOf(event.keyCode) > -1;
+        return ['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1;
     }
 
     handleChange(event) {
-        this.setState({value: event.target.value});
-    }
-
-    getCharCodeFromEvent(event) {
-        event = event || window.event;
-        return (typeof event.which === "undefined") ? event.keyCode : event.which;
+        this.setState({ value: event.target.value });
     }
 
     isCharNumeric(charStr) {
@@ -110,21 +105,20 @@ export default class NumericEditor extends Component {
     }
 
     isKeyPressedNumeric(event) {
-        const charCode = this.getCharCodeFromEvent(event);
-        const charStr = event.key ? event.key : String.fromCharCode(charCode);
+        const charStr = event.key;
         return this.isCharNumeric(charStr);
     }
 
-    deleteOrBackspace(event) {
-        return [KEY_DELETE, KEY_BACKSPACE].indexOf(event.keyCode) > -1;
+    isBackspace(event) {
+        return event.key === KEY_BACKSPACE;
     }
 
     finishedEditingPressed(event) {
-        const charCode = this.getCharCodeFromEvent(event);
-        return charCode === KEY_ENTER || charCode === KEY_TAB;
+        const key = event.key;
+        return key === KEY_ENTER || key === KEY_TAB;
     }
 
-    setCarot() {
+    setCaret() {
         // https://github.com/facebook/react/issues/7835#issuecomment-395504863
         setTimeout(() => {
             const currentInput = this.inputRef.current;
@@ -134,17 +128,17 @@ export default class NumericEditor extends Component {
 
                 this.setState({
                     highlightAllOnFocus: false
-                })
+                });
             } else {
-                // when we started editing, we want the carot at the end, not the start.
-                // this comes into play in two scenarios: a) when user hits F2 and b)
-                // when user hits a printable character, then on IE (and only IE) the carot
-                // was placed after the first character, thus 'apply' would end up as 'pplea'
+                // when we started editing, we want the caret at the end, not the start.
+                // this comes into play in two scenarios: 
+                //   a) when user hits F2 
+                //   b) when user hits a printable character
                 const length = currentInput.value ? currentInput.value.length : 0;
                 if (length > 0) {
                     currentInput.setSelectionRange(length, length);
                 }
             }
-        })
+        });
     }
 }

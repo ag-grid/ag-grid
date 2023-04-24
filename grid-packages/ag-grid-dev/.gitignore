@@ -4,3 +4,5 @@ bundles
 !test-src/dist
 
 bundle-size-tests/*.js
+
+package-lock.json

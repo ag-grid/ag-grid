@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 26.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 413.4 260" style="enable-background:new 0 0 413.4 260;" xml:space="preserve">
+<style type="text/css">
+	.st0{font-family:'MyriadPro-Regular';}
+	.st1{font-size:12px;}
+	.st2{fill:#C9F2FF;}
+	.st3{fill:#AAFFB3;}
+	.st4{font-family:'Arial-Black';}
+	.st5{fill:#FFFFFF;stroke:#000000;stroke-miterlimit:10;}
+	.st6{font-size:9.2402px;}
+	.st7{fill:none;}
+	.st8{fill:none;stroke:#000000;stroke-miterlimit:10;}
+</style>
+<text transform="matrix(1 0 0 1 138.8018 67.9636)" class="st0 st1">C9F2FF</text>
+<text transform="matrix(1 0 0 1 138.8018 67.9636)" class="st0 st1">C9F2FF</text>
+<g>
+	<rect x="128.3" y="95.5" class="st2" width="284.5" height="164"/>
+	<path d="M412.3,96v163H128.9V96H412.3 M413.4,95H127.8v165h285.6V95L413.4,95z"/>
+</g>
+<g>
+	<rect x="128.3" y="24.5" class="st3" width="284.5" height="73"/>
+	<path d="M412.3,25v72H128.9V25H412.3 M413.4,24H127.8v74h285.6V24L413.4,24z"/>
+</g>
+<text transform="matrix(1 0 0 1 208.7865 117.7776)" class="st0 st1">AG Grid Services / Feature Logic</text>
+<text transform="matrix(1 0 0 1 218.3021 42.4144)" class="st0 st1">AG Grid React Components</text>
+<text transform="matrix(1 0 0 1 84.6924 10.2961)" class="st4 st1">AG Grid with 100% React Rendering</text>
+<g>
+	<rect x="158.3" y="139.5" class="st5" width="60" height="28"/>
+	<text transform="matrix(1 0 0 1 168.383 155.9636)" class="st0 st1">Filtering</text>
+</g>
+<g>
+	<rect x="139.3" y="179.5" class="st5" width="60" height="28"/>
+	<text transform="matrix(1 0 0 1 149.383 195.9636)" class="st0 st1">Pivoting</text>
+</g>
+<g>
+	<rect x="240.3" y="133.5" class="st5" width="60" height="28"/>
+	<text transform="matrix(1 0 0 1 250.383 149.9636)" class="st0 st1">Sorting</text>
+</g>
+<g>
+	<rect x="221.3" y="176.5" class="st5" width="79" height="28"/>
+	<text transform="matrix(1 0 0 1 231.383 192.9636)" class="st0 st1">Row Models</text>
+</g>
+<g>
+	<rect x="315.3" y="147.5" class="st5" width="60" height="28"/>
+	<text transform="matrix(1 0 0 1 322.3829 163.9636)" class="st0 st1">Selection</text>
+</g>
+<g>
+	<rect x="319.3" y="190.5" class="st5" width="67" height="56"/>
+	<text transform="matrix(1 0 0 1 326.3829 206.9636)" class="st0 st1">Lots of</text>
+	<text transform="matrix(1 0 0 1 326.3829 221.3636)" class="st0 st1">other</text>
+	<text transform="matrix(1 0 0 1 326.3829 235.7637)" class="st0 st1">Services...</text>
+</g>
+<g>
+	<rect x="160.3" y="216.5" class="st5" width="60" height="28"/>
+	<text transform="matrix(1 0 0 1 170.383 232.9636)" class="st0 st1">Export</text>
+</g>
+<g>
+	<rect x="240.3" y="213.5" class="st5" width="68" height="28"/>
+	<text transform="matrix(1 0 0 1 250.383 229.9636)" class="st0 st1">Clipboard</text>
+</g>
+<g>
+	<rect x="325.1" y="58" class="st5" width="84.7" height="32.5"/>
+	<text transform="matrix(1 0 0 1 345.2803 72.4293)" class="st0 st1">CellComp</text>
+	<text transform="matrix(1 0 0 1 330.6644 85.4838)" class="st0 st6">(React Component)</text>
+</g>
+<g>
+	<rect x="232.7" y="58" class="st5" width="84.7" height="32.5"/>
+	<text transform="matrix(1 0 0 1 252.8893 72.4293)" class="st0 st1">RowComp</text>
+	<text transform="matrix(1 0 0 1 238.2732 85.4838)" class="st0 st6">(React Component)</text>
+</g>
+<g>
+	<rect x="140.3" y="58" class="st5" width="84.7" height="32.5"/>
+	<text transform="matrix(1 0 0 1 160.4879 72.4293)" class="st0 st1">GridComp</text>
+	<text transform="matrix(1 0 0 1 145.8719 85.4838)" class="st0 st6">(React Component)</text>
+</g>
+<g>
+	<line class="st7" x1="117.4" y1="58.1" x2="72.3" y2="57.9"/>
+	<g>
+		<line class="st8" x1="111.4" y1="58.1" x2="72.3" y2="57.9"/>
+		<g>
+			<path d="M117.4,58.1c-2.8-1-6.3-2.9-8.5-4.8l1.7,4.8l-1.8,4.8C111,61,114.5,59.2,117.4,58.1z"/>
+		</g>
+	</g>
+</g>
+<g>
+	<line class="st7" x1="117.4" y1="172.8" x2="72.3" y2="172.6"/>
+	<g>
+		<line class="st8" x1="111.4" y1="172.7" x2="72.3" y2="172.6"/>
+		<g>
+			<path d="M117.4,172.8c-2.8-1-6.3-2.9-8.5-4.8l1.7,4.8l-1.8,4.8C111,175.6,114.5,173.8,117.4,172.8z"/>
+		</g>
+	</g>
+</g>
+<text transform="matrix(1 0 0 1 -1.818848e-02 57.9485)" class="st0 st1">React Logic</text>
+<text transform="matrix(1 0 0 1 -3.068542e-02 175.5414)" class="st0 st1">Shared Logic</text>
+</svg>

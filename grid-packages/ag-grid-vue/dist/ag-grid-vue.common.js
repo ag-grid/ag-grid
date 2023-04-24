@@ -391,9 +391,9 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
     return value;
 }
 
-// EXTERNAL MODULE: external {"commonjs":"vue","commonjs2":"vue","root":"Vue"}
-var external_commonjs_vue_commonjs2_vue_root_Vue_ = __webpack_require__("8bbf");
-var external_commonjs_vue_commonjs2_vue_root_Vue_default = /*#__PURE__*/__webpack_require__.n(external_commonjs_vue_commonjs2_vue_root_Vue_);
+// EXTERNAL MODULE: external {"commonjs":"vue","commonjs2":"vue","root":"Vue","amd":"vue"}
+var external_commonjs_vue_commonjs2_vue_root_Vue_amd_vue_ = __webpack_require__("8bbf");
+var external_commonjs_vue_commonjs2_vue_root_Vue_amd_vue_default = /*#__PURE__*/__webpack_require__.n(external_commonjs_vue_commonjs2_vue_root_Vue_amd_vue_);
 
 // CONCATENATED MODULE: ./node_modules/vue-class-component/dist/vue-class-component.esm.js
 /**
@@ -507,7 +507,7 @@ function mixins() {
     Ctors[_key] = arguments[_key];
   }
 
-  return external_commonjs_vue_commonjs2_vue_root_Vue_default.a.extend({
+  return external_commonjs_vue_commonjs2_vue_root_Vue_amd_vue_default.a.extend({
     mixins: Ctors
   });
 }
@@ -627,7 +627,7 @@ function componentFactory(Component) {
 
 
   var superProto = Object.getPrototypeOf(Component.prototype);
-  var Super = superProto instanceof external_commonjs_vue_commonjs2_vue_root_Vue_default.a ? superProto.constructor : external_commonjs_vue_commonjs2_vue_root_Vue_default.a;
+  var Super = superProto instanceof external_commonjs_vue_commonjs2_vue_root_Vue_amd_vue_default.a ? superProto.constructor : external_commonjs_vue_commonjs2_vue_root_Vue_amd_vue_default.a;
   var Extended = Super.extend(options);
   forwardStaticMembers(Extended, Component, Super);
 
@@ -1008,7 +1008,7 @@ var VueComponentFactory_VueComponentFactory = /** @class */ (function () {
                 console.error("Could not find component with name of " + component + ". Is it in Vue.components?");
                 return null;
             }
-            return external_commonjs_vue_commonjs2_vue_root_Vue_default.a.extend(componentInstance);
+            return external_commonjs_vue_commonjs2_vue_root_Vue_amd_vue_default.a.extend(componentInstance);
         }
         else {
             // assume a type
@@ -1031,8 +1031,9 @@ var VueComponentFactory_VueComponentFactory = /** @class */ (function () {
         component.$mount();
         return component;
     };
-    VueComponentFactory.searchForComponentInstance = function (parent, component, maxDepth) {
+    VueComponentFactory.searchForComponentInstance = function (parent, component, maxDepth, suppressError) {
         if (maxDepth === void 0) { maxDepth = 10; }
+        if (suppressError === void 0) { suppressError = false; }
         var componentInstance = null;
         var currentParent = parent.$parent;
         var depth = 0;
@@ -1043,7 +1044,7 @@ var VueComponentFactory_VueComponentFactory = /** @class */ (function () {
             componentInstance = currentParent.$options.components[component];
             currentParent = currentParent.$parent;
         }
-        if (!componentInstance) {
+        if (!componentInstance && !suppressError) {
             console.error("Could not find component with name of " + component + ". Is it in Vue.components?");
             return null;
         }
@@ -1142,6 +1143,10 @@ var VueComponent = /** @class */ (function () {
         return this.component.$el;
     };
     VueComponent.prototype.destroy = function () {
+        if (this.getFrameworkComponentInstance() &&
+            typeof this.getFrameworkComponentInstance().destroy === 'function') {
+            this.getFrameworkComponentInstance().destroy();
+        }
         this.component.$destroy();
     };
     VueComponent.prototype.getFrameworkComponentInstance = function () {
@@ -1182,56 +1187,37 @@ var getAgGridProperties = function () {
     return [props, watch, model];
 };
 
-// CONCATENATED MODULE: ./src/AgGridColumn.ts
+// CONCATENATED MODULE: ./src/VueFrameworkOverrides.ts
 
-var AgGridColumn_AgGridColumn = /** @class */ (function () {
-    function AgGridColumn() {
+
+
+var VueFrameworkOverrides_VueFrameworkOverrides = /** @class */ (function (_super) {
+    __extends(VueFrameworkOverrides, _super);
+    function VueFrameworkOverrides(parent) {
+        var _this = _super.call(this) || this;
+        _this.parent = parent;
+        return _this;
     }
-    AgGridColumn.hasChildColumns = function (slots) {
-        return slots && slots.default && slots.default.length > 0;
-    };
-    AgGridColumn.mapChildColumnDefs = function (slots) {
-        return slots.default.map(function (column) {
-            return AgGridColumn.toColDef(column);
-        });
-    };
-    AgGridColumn.toColDef = function (column) {
-        var colDef = AgGridColumn.createColDefFromGridColumn(column);
-        if (column.children && column.children.length > 0) {
-            colDef.children = AgGridColumn.getChildColDefs(column.children);
+    /*
+     * vue components are specified in the "components" part of the vue component - as such we need a way to determine
+     * if a given component is within that context - this method provides this
+     * Note: This is only really used/necessary with cellRendererSelectors
+     */
+    VueFrameworkOverrides.prototype.frameworkComponent = function (name, components) {
+        var foundInstance = !!VueComponentFactory_VueComponentFactory.searchForComponentInstance(this.parent, name, 10, true);
+        var result = foundInstance ? name : null;
+        if (!result && components && components[name]) {
+            var indirectName = components[name];
+            foundInstance = !!VueComponentFactory_VueComponentFactory.searchForComponentInstance(this.parent, indirectName, 10, true);
+            result = foundInstance ? indirectName : null;
         }
-        return colDef;
+        return result;
     };
-    AgGridColumn.getChildColDefs = function (columnChildren) {
-        return columnChildren.map(function (column) {
-            return AgGridColumn.createColDefFromGridColumn(column);
-        });
+    VueFrameworkOverrides.prototype.isFrameworkComponent = function (comp) {
+        return typeof comp === 'object';
     };
-    AgGridColumn.createColDefFromGridColumn = function (column) {
-        var colDef = {};
-        AgGridColumn.assign(colDef, column.data.attrs);
-        delete colDef.children;
-        // booleans passed down just as is are here as property=""
-        // convert boolean props to a boolean here
-        external_agGrid_["ColDefUtil"].BOOLEAN_PROPERTIES.forEach(function (property) {
-            var colDefAsAny = colDef;
-            if (colDefAsAny[property] === '') {
-                colDefAsAny[property] = true;
-            }
-        });
-        return colDef;
-    };
-    AgGridColumn.assign = function (colDef, from) {
-        // effectively Object.assign - here for IE compatibility
-        return [from].reduce(function (r, o) {
-            Object.keys(o).forEach(function (k) {
-                r[k] = o[k];
-            });
-            return r;
-        }, colDef);
-    };
-    return AgGridColumn;
-}());
+    return VueFrameworkOverrides;
+}(external_agGrid_["VanillaFrameworkOverrides"]));
 
 
 // CONCATENATED MODULE: ./src/AgGridVue.ts
@@ -1288,7 +1274,7 @@ var AgGridVue_AgGridVue = /** @class */ (function (_super) {
                 currentValue: currentValue,
                 previousValue: previousValue,
             };
-            external_agGrid_["ComponentUtil"].processOnChange(changes, this.gridOptions, this.gridOptions.api, this.gridOptions.columnApi);
+            external_agGrid_["ComponentUtil"].processOnChange(changes, this.gridOptions.api);
         }
     };
     // noinspection JSUnusedGlobalSymbols
@@ -1300,14 +1286,12 @@ var AgGridVue_AgGridVue = /** @class */ (function (_super) {
             _this.$emit('data-model-changed', Object.freeze(_this.getRowData()));
         }, 20);
         var frameworkComponentWrapper = new VueFrameworkComponentWrapper_VueFrameworkComponentWrapper(this);
-        var gridOptions = external_agGrid_["ComponentUtil"].copyAttributesToGridOptions(this.gridOptions, this);
+        var gridOptions = external_agGrid_["ComponentUtil"].copyAttributesToGridOptions(this.gridOptions, this, true);
         this.checkForBindingConflicts();
         gridOptions.rowData = this.getRowDataBasedOnBindings();
-        if (AgGridColumn_AgGridColumn.hasChildColumns(this.$slots)) {
-            gridOptions.columnDefs = AgGridColumn_AgGridColumn.mapChildColumnDefs(this.$slots);
-        }
         var gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
+            frameworkOverrides: new VueFrameworkOverrides_VueFrameworkOverrides(this),
             providedBeanInstances: {
                 frameworkComponentWrapper: frameworkComponentWrapper,
             },
@@ -1329,7 +1313,7 @@ var AgGridVue_AgGridVue = /** @class */ (function (_super) {
         var thisAsAny = this;
         if ((thisAsAny.rowData || this.gridOptions.rowData) &&
             thisAsAny.rowDataModel) {
-            console.warn('ag-grid: Using both rowData and rowDataModel. rowData will be ignored.');
+            console.warn('AG Grid: Using both rowData and rowDataModel. rowData will be ignored.');
         }
     };
     AgGridVue.prototype.getRowData = function () {
@@ -1409,7 +1393,7 @@ var AgGridVue_AgGridVue = /** @class */ (function (_super) {
         })
     ], AgGridVue);
     return AgGridVue;
-}(external_commonjs_vue_commonjs2_vue_root_Vue_default.a));
+}(external_commonjs_vue_commonjs2_vue_root_Vue_amd_vue_default.a));
 
 
 // CONCATENATED MODULE: ./node_modules/@vue/cli-service/lib/commands/build/entry-lib-no-default.js

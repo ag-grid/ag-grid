@@ -12,6 +12,8 @@ const AG_GRID_LOCALE_EN = {
     filterOoo: 'Filter...',
     equals: 'Equals',
     notEqual: 'Not equal',
+    blank: 'Blank',
+    notBlank: 'Not blank',
     empty: 'Choose One',
 
     // Number Filter
@@ -20,8 +22,8 @@ const AG_GRID_LOCALE_EN = {
     lessThanOrEqual: 'Less than or equal',
     greaterThanOrEqual: 'Greater than or equal',
     inRange: 'In range',
-    inRangeStart: 'to',
-    inRangeEnd: 'from',
+    inRangeStart: 'from',
+    inRangeEnd: 'to',
 
     // Text Filter
     contains: 'Contains',
@@ -48,6 +50,9 @@ const AG_GRID_LOCALE_EN = {
     dateFilter: 'Date Filter',
     setFilter: 'Set Filter',
 
+    // Group Column Filter
+    groupFilterSelect: 'Select field:',
+
     // Side Bar
     columns: 'Columns',
     filters: 'Filters',
@@ -64,8 +69,13 @@ const AG_GRID_LOCALE_EN = {
     // Header of the Default Group Column
     group: 'Group',
 
+    // Row Drag
+    rowDragRow: 'row',
+    rowDragRows:'rows',
+
     // Other
     loadingOoo: 'Loading...',
+    loadingError: 'ERR',
     noRowsToShow: 'No Rows To Show',
     enabled: 'Enabled',
 
@@ -75,25 +85,34 @@ const AG_GRID_LOCALE_EN = {
     pinRight: 'Pin Right',
     noPin: 'No Pin',
     valueAggregation: 'Value Aggregation',
+    noAggregation: 'None',
     autosizeThiscolumn: 'Autosize This Column',
     autosizeAllColumns: 'Autosize All Columns',
     groupBy: 'Group by',
     ungroupBy: 'Un-Group by',
+    addToValues: 'Add ${variable} to values',
+    removeFromValues: 'Remove ${variable} from values',
+    addToLabels: 'Add ${variable} to labels',
+    removeFromLabels: 'Remove ${variable} from labels',
     resetColumns: 'Reset Columns',
     expandAll: 'Expand All',
     collapseAll: 'Close All',
     copy: 'Copy',
     ctrlC: 'Ctrl+C',
+    ctrlX: 'Ctrl+X',
     copyWithHeaders: 'Copy With Headers',
+    copyWithGroupHeaders: 'Copy with Group Headers',
+    cut: 'Cut',
     paste: 'Paste',
     ctrlV: 'Ctrl+V',
     export: 'Export',
     csvExport: 'CSV Export',
-    excelExport: 'Excel Export (.xlsx)',
-    excelXmlExport: 'Excel Export (.xml)',
+    excelExport: 'Excel Export',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Sum',
+    first: 'First',
+    last: 'Last',
     min: 'Min',
     max: 'Max',
     none: 'None',
@@ -107,10 +126,14 @@ const AG_GRID_LOCALE_EN = {
     to: 'to',
     of: 'of',
     page: 'Page',
+    pageLastRowUnknown: '?',
     nextPage: 'Next Page',
     lastPage: 'Last Page',
     firstPage: 'First Page',
     previousPage: 'Previous Page',
+
+    // Pivoting
+    pivotColumnGroupTotals: 'Total',
 
     // Enterprise Menu (Charts)
     pivotChartAndPivotMode: 'Pivot Chart & Pivot Mode',
@@ -143,6 +166,11 @@ const AG_GRID_LOCALE_EN = {
     normalizedArea: '100% Stacked',
 
     histogramChart: 'Histogram',
+    histogramFrequency: "Frequency",
+
+    combinationChart: 'Combination',
+    columnLineCombo: 'Column & Line',
+    AreaColumnCombo: 'Area & Column',
 
     // Charts
     pivotChartTitle: 'Pivot Chart',
@@ -164,6 +192,7 @@ const AG_GRID_LOCALE_EN = {
     category: 'Category',
     number: 'Number',
     time: 'Time',
+    autoRotate: 'Auto Rotate',
     xRotation: 'X Rotation',
     yRotation: 'Y Rotation',
     ticks: 'Ticks',
@@ -196,6 +225,7 @@ const AG_GRID_LOCALE_EN = {
     layoutHorizontalSpacing: 'Horizontal Spacing',
     layoutVerticalSpacing: 'Vertical Spacing',
     strokeWidth: 'Stroke Width',
+    lineDash: 'Line Dash',
     offset: 'Offset',
     offsets: 'Offsets',
     tooltips: 'Tooltips',
@@ -221,6 +251,7 @@ const AG_GRID_LOCALE_EN = {
     scatterGroup: 'X Y (Scatter)',
     areaGroup: 'Area',
     histogramGroup: 'Histogram',
+    combinationGroup: 'Combination',
     groupedColumnTooltip: 'Grouped',
     stackedColumnTooltip: 'Stacked',
     normalizedColumnTooltip: '100% Stacked',
@@ -236,34 +267,74 @@ const AG_GRID_LOCALE_EN = {
     scatterTooltip: 'Scatter',
     bubbleTooltip: 'Bubble',
     histogramTooltip: 'Histogram',
+    columnLineComboTooltip: 'Column & Line',
+    areaColumnComboTooltip: 'Area & Column',
+    customComboTooltip: 'Custom Combination',
     noDataToChart: 'No data available to be charted.',
     pivotChartRequiresPivotMode: 'Pivot Chart requires Pivot Mode enabled.',
     chartSettingsToolbarTooltip: 'Menu',
     chartLinkToolbarTooltip: 'Linked to Grid',
     chartUnlinkToolbarTooltip: 'Unlinked from Grid',
     chartDownloadToolbarTooltip: 'Download Chart',
+    seriesChartType: 'Series Chart Type',
+    seriesType: 'Series Type',
+    secondaryAxis: 'Secondary Axis',
 
     // ARIA
-    ariaHidden: 'hidden',
-    ariaVisible: 'visible',
     ariaChecked: 'checked',
-    ariaUnchecked: 'unchecked',
-    ariaIndeterminate:'indeterminate',
+    ariaColumn: 'Column',
+    ariaColumnGroup: 'Column Group',
+    ariaColumnList: 'Column List',
     ariaColumnSelectAll: 'Toggle Select All Columns',
-    ariaInputEditor: 'Input Editor',
     ariaDateFilterInput: 'Date Filter Input',
-    ariaFilterInput: 'Filter Input',
+    ariaDefaultListName: 'List',
     ariaFilterColumnsInput: 'Filter Columns Input',
-    ariaFilterValue: 'Filter Value',
     ariaFilterFromValue: 'Filter from value',
+    ariaFilterInput: 'Filter Input',
+    ariaFilterList: 'Filter List',
     ariaFilterToValue: 'Filter to value',
+    ariaFilterValue: 'Filter Value',
     ariaFilteringOperator: 'Filtering Operator',
-    ariaColumnToggleVisibility: 'column toggle visibility',
-    ariaColumnGroupToggleVisibility: 'column group toggle visibility',
-    ariaRowSelect: 'Press SPACE to select this row',
+    ariaHidden: 'hidden',
+    ariaIndeterminate:'indeterminate',
+    ariaInputEditor: 'Input Editor',
+    ariaMenuColumn: 'Press CTRL ENTER to open column menu.',
     ariaRowDeselect: 'Press SPACE to deselect this row',
-    ariaRowToggleSelection: 'Press Space to toggle row selection',
     ariaRowSelectAll: 'Press Space to toggle all rows selection',
+    ariaRowToggleSelection: 'Press Space to toggle row selection',
+    ariaRowSelect: 'Press SPACE to select this row',
     ariaSearch: 'Search',
-    ariaSearchFilterValues: 'Search filter values'
+    ariaSortableColumn: 'Press ENTER to sort',
+    ariaToggleVisibility: 'Press SPACE to toggle visibility',
+    ariaUnchecked: 'unchecked',
+    ariaVisible: 'visible',
+    ariaSearchFilterValues: 'Search filter values',
+
+    // ARIA Labels for Drop Zones
+
+    ariaRowGroupDropZonePanelLabel: 'Row Groups',
+    ariaValuesDropZonePanelLabel: 'Values',
+    ariaPivotDropZonePanelLabel: 'Column Labels',
+    ariaDropZoneColumnComponentDescription: 'Press DELETE to remove',
+    ariaDropZoneColumnValueItemDescription: 'Press ENTER to change the aggregation type',
+    ariaDropZoneColumnGroupItemDescription: 'Press ENTER to sort',
+    // used for aggregate drop zone, format: {aggregation}{ariaDropZoneColumnComponentAggFuncSeperator}{column name}
+    ariaDropZoneColumnComponentAggFuncSeperator: ' of ',
+    ariaDropZoneColumnComponentSortAscending: 'ascending',
+    ariaDropZoneColumnComponentSortDescending: 'descending',
+
+    // ARIA Labels for Dialogs
+    ariaLabelColumnMenu: 'Column Menu',
+    ariaLabelCellEditor: 'Cell Editor',
+    ariaLabelDialog: 'Dialog',
+    ariaLabelSelectField: 'Select Field',
+    ariaLabelTooltip: 'Tooltip',
+    ariaLabelContextMenu: 'Context Menu',
+    ariaLabelSubMenu: 'SubMenu',
+    ariaLabelAggregationFunction: 'Aggregation Function',
+
+    // Number Format (Status Bar, Pagination Panel)
+    thousandSeparator: ',',
+    decimalSeparator: '.'
+
 }

@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "node build.js"
+  },
+  "devDependencies": {
+    "@vusion/webfonts-generator": "^0.8.0"
+  }
+}

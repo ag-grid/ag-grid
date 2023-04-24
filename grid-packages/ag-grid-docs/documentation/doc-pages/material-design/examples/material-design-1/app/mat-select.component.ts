@@ -1,5 +1,6 @@
 import { Component, ViewChild, ViewContainerRef } from "@angular/core";
 import { ICellEditorAngularComp } from "@ag-grid-community/angular";
+import { ICellEditorParams } from "@ag-grid-community/core";
 
 @Component({
     selector: "radio-cell",
@@ -30,16 +31,16 @@ import { ICellEditorAngularComp } from "@ag-grid-community/angular";
     ]
 })
 export class MatSelectComponent implements ICellEditorAngularComp {
-    private params: any;
+    private params!: ICellEditorParams & { vegetables: string[] };
 
-    private vegetables: string[];
-    private favouriteVegetable: string;
-    private selectedIndex: number;
+    public vegetables!: string[];
+    public favouriteVegetable!: string;
+    private selectedIndex!: number;
 
     @ViewChild("group", { read: ViewContainerRef })
-    public group;
+    public group!: ViewContainerRef;
 
-    agInit(params: any): void {
+    agInit(params: ICellEditorParams & { vegetables: string[] }): void {
         this.params = params;
 
         this.favouriteVegetable = this.params.value;
@@ -74,15 +75,15 @@ export class MatSelectComponent implements ICellEditorAngularComp {
      * A little over complicated for what it is, but the idea is to illustrate how you might navigate through the radio
      * buttons with up & down keys (instead of finishing editing)
      */
-    onKeyDown(event): void {
-        let key = event.which || event.keyCode;
-        if (key === 38 || key === 40) {
+    onKeyDown(event: any): void {
+        const key = event.key;
+        if (key === 'ArrowUp' || key === 'ArrowDown') {
             this.preventDefaultAndPropagation(event);
 
-            if (key == 38) {
+            if (key == 'ArrowUp') {
                 // up
                 this.selectedIndex = this.selectedIndex === 0 ? this.vegetables.length - 1 : this.selectedIndex - 1;
-            } else if (key == 40) {
+            } else if (key == 'ArrowDown') {
                 // down
                 this.selectedIndex = this.selectedIndex === this.vegetables.length - 1 ? 0 : this.selectedIndex + 1;
             }
@@ -90,7 +91,7 @@ export class MatSelectComponent implements ICellEditorAngularComp {
         }
     }
 
-    private preventDefaultAndPropagation(event) {
+    private preventDefaultAndPropagation(event: any) {
         event.preventDefault();
         event.stopPropagation();
     }

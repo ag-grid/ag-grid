@@ -36,7 +36,7 @@ const initialState = {
         {
             field: 'price',
             cellClass: 'align-right',
-            cellRendererFramework: PriceRenderer
+            cellRenderer: PriceRenderer
         }
     ]
 };
@@ -95,6 +95,7 @@ const GridComponent = () => {
                 ref={(element) => {
                     window.gridComponentInstance = element
                 }}
+                suppressReactUi={true}
                 columnDefs={columnDefs}
                 rowData={rowData}
                 onGridReady={onGridReady}>
@@ -143,8 +144,8 @@ describe('Context/Reducer Example', () => {
 
         mount(<SimpleContextHookExample/>, {
             stylesheets: [
-                'https://unpkg.com/@ag-grid-community/core/dist/styles/ag-grid.css',
-                'https://unpkg.com/@ag-grid-community/core/dist/styles/ag-theme-alpine.css'
+                'https://cdn.jsdelivr.net/npm/@ag-grid-community/styles/ag-grid.css',
+                'https://cdn.jsdelivr.net/npm/@ag-grid-community/styles/ag-theme-alpine.css'
             ]
         })
 

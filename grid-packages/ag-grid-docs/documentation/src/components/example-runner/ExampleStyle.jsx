@@ -1,5 +1,8 @@
 import React from 'react';
 
+/**
+ * These are the CSS styles shared by all examples.
+ */
 const ExampleStyle = ({ rootId }) => <style media="only screen">
     {`
             html, body${rootId ? `, #${rootId}` : ''} {

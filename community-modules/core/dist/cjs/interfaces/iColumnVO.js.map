@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../src/ts/interfaces/iColumnVO.ts"],"names":[],"mappings":";;;;;;AAAA;AACA;AACA","file":"iColumnVO.js","sourcesContent":["export interface ColumnVO {\n    id: string;\n    displayName: string;\n    field?: string;\n    aggFunc?: string;\n}"]}

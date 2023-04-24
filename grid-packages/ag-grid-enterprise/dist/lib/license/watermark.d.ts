@@ -1,5 +1,5 @@
 import { Component } from 'ag-grid-community';
-import { LicenseManager } from '../licenseManager';
+import { GridLicenseManager as LicenseManager } from './gridLicenseManager';
 export declare class WatermarkComp extends Component {
     licenseManager: LicenseManager;
     private eLicenseTextRef;

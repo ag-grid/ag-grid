@@ -1,0 +1,17 @@
+{
+    "_config_": {},
+    "INumberFilterParams": {
+        "filterOptions": {
+            "more": {
+                "url": "/filter-number/#number-filter-options",
+                "name": "Filter Options"
+            }
+        },
+        "readOnly": {
+            "more": {
+                "url": "/filter-api/#read-only-filter-ui",
+                "name": "Read-only Filter UI"
+            }
+        }
+    }
+}

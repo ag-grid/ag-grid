@@ -1,0 +1,16 @@
+.ag-theme-alpine {
+    --ag-column-select-indent-size: 40px
+}
+
+.ag-theme-alpine .ag-column-drop-cell {
+    background-color: purple;
+}
+
+.ag-theme-alpine .ag-column-drop-cell .ag-icon {
+    color: white;
+}
+
+.ag-theme-alpine .ag-column-drop-cell-text {
+    color: white;
+    font-weight: bold;
+}

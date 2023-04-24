@@ -25,6 +25,16 @@ const extractDependencies = (projectPackageJson, dependencies, devDependencies, 
         return accumulator;
     }, {});
 
+const extractPeerDependencies = (projectPackageJson, dependencies, depFilter) =>
+    dependencies.filter(depFilter)
+        .map(dependency => ({
+            [dependency]: projectPackageJson.peerDependencies[dependency]
+        })).reduce((accumulator, current) => {
+        const dependency = Object.keys(current)[0];
+        accumulator[dependency] = current[dependency];
+        return accumulator;
+    }, {});
+
 // only angular projects have "sub" projects
 const extractSubAngularProjectDependencies = (packageDirectory, directory) => {
     const CWD = process.cwd();
@@ -75,14 +85,17 @@ const getPackageInformation = () => {
         .filter(packageDirectory => !exclude.includes(packageDirectory))
         .forEach(packageDirectory => {
             fs.readdirSync(packageDirectory)
+                .filter(directory => !directory.includes('.git'))
                 .forEach(directory => {
                     const projectRoot = `./${packageDirectory}/${directory}`;
                     const projectPackageJson = readFile(`${projectRoot}/package.json`);
 
                     const dependencies = getAgDependencies(projectPackageJson).filter(dependency => dependency !== 'ag-grid-testing');
+                    const peerDependencies = getAgPeerDependencies(projectPackageJson).filter(dependency => dependency !== 'ag-grid-testing');
                     const devDependencies = getAgDevDependencies(projectPackageJson).filter(dependency => dependency !== 'ag-grid-testing');
 
                     const agGridDeps = extractDependencies(projectPackageJson, dependencies, devDependencies, gridDependency);
+                    const agGridPeerDeps = projectPackageJson.peerDependencies ? extractPeerDependencies(projectPackageJson, peerDependencies, gridDependency) : {};
                     const agChartDeps = extractDependencies(projectPackageJson, dependencies, devDependencies, chartDependency);
                     const {agSubAngularVersion, agSubAngularGridDeps, agSubAngularChartDeps} = extractSubAngularProjectDependencies(packageDirectory, directory);
 
@@ -92,6 +105,7 @@ const getPackageInformation = () => {
                         publicPackage: !projectPackageJson.private,
                         isGridPackage: gridDependency(projectPackageJson.name),
                         agGridDeps,
+                        agGridPeerDeps,
                         agChartDeps,
                         agSubAngularVersion,
                         agSubAngularGridDeps,

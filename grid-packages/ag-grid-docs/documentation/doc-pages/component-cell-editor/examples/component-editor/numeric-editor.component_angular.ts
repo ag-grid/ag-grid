@@ -1,39 +1,40 @@
-import {AfterViewInit, Component, ViewChild, ViewContainerRef} from "@angular/core";
+import { AfterViewInit, Component, ViewChild, ViewContainerRef } from "@angular/core";
 
-import {AgEditorComponent} from "@ag-grid-community/angular";
+import { ICellEditorAngularComp } from "@ag-grid-community/angular";
+import { ICellEditorParams } from "@ag-grid-community/core";
 
-const KEY_BACKSPACE = 8;
-const KEY_DELETE = 46;
-const KEY_F2 = 113;
-const KEY_ENTER = 13;
-const KEY_TAB = 9;
+// backspace starts the editor on Windows
+const KEY_BACKSPACE = 'Backspace';
+const KEY_F2 = 'F2';
+const KEY_ENTER = 'Enter';
+const KEY_TAB = 'Tab';
 
 @Component({
     selector: 'numeric-cell',
-    template: `<input #input (keydown)="onKeyDown($event)" [(ngModel)]="value" style="width: 100%">`
+    template: `<input #input (keydown)="onKeyDown($event)" [(ngModel)]="value" class="numeric-input">`
 })
-export class NumericEditor implements AgEditorComponent, AfterViewInit {
+export class NumericEditor implements ICellEditorAngularComp, AfterViewInit {
     private params: any;
-    public value: number;
-    public highlightAllOnFocus: boolean = true;
-    private cancelBeforeStart: boolean = false;
+    public value!: number;
+    public highlightAllOnFocus = true;
+    private cancelBeforeStart = false;
 
-    @ViewChild('input', {read: ViewContainerRef}) public input: any;
+    @ViewChild('input', { read: ViewContainerRef }) public input!: ViewContainerRef;
 
 
-    agInit(params: any): void {
+    agInit(params: ICellEditorParams): void {
         this.params = params;
         this.setInitialState(this.params);
 
         // only start edit if key pressed is a number, not a letter
-        this.cancelBeforeStart = params.charPress && ('1234567890'.indexOf(params.charPress) < 0);
+        this.cancelBeforeStart = !!(params.charPress && ('1234567890'.indexOf(params.charPress) < 0));
     }
 
-    setInitialState(params: any) {
+    setInitialState(params: ICellEditorParams) {
         let startValue;
         let highlightAllOnFocus = true;
 
-        if (params.keyPress === KEY_BACKSPACE || params.keyPress === KEY_DELETE) {
+        if (params.eventKey === KEY_BACKSPACE) {
             // if backspace or delete pressed, we clear the cell
             startValue = '';
         } else if (params.charPress) {
@@ -43,7 +44,7 @@ export class NumericEditor implements AgEditorComponent, AfterViewInit {
         } else {
             // otherwise we start with the current value
             startValue = params.value;
-            if (params.keyPress === KEY_F2) {
+            if (params.eventKey === KEY_F2) {
                 highlightAllOnFocus = false;
             }
         }
@@ -64,10 +65,10 @@ export class NumericEditor implements AgEditorComponent, AfterViewInit {
     // not very practical, but demonstrates the method.
     isCancelAfterEnd(): boolean {
         return this.value > 1000000;
-    };
+    }
 
     onKeyDown(event: any): void {
-        if (this.isLeftOrRight(event) || this.deleteOrBackspace(event)) {
+        if (this.isLeftOrRight(event) || this.isBackspace(event)) {
             event.stopPropagation();
             return;
         }
@@ -86,10 +87,10 @@ export class NumericEditor implements AgEditorComponent, AfterViewInit {
 
                 this.highlightAllOnFocus = false;
             } else {
-                // when we started editing, we want the carot at the end, not the start.
-                // this comes into play in two scenarios: a) when user hits F2 and b)
-                // when user hits a printable character, then on IE (and only IE) the carot
-                // was placed after the first character, thus 'apply' would end up as 'pplea'
+                // when we started editing, we want the caret at the end, not the start.
+                // this comes into play in two scenarios: 
+                //   a) when user hits F2 
+                //   b) when user hits a printable character
                 const length = this.input.element.nativeElement.value ? this.input.element.nativeElement.value.length : 0;
                 if (length > 0) {
                     this.input.element.nativeElement.setSelectionRange(length, length);
@@ -100,31 +101,25 @@ export class NumericEditor implements AgEditorComponent, AfterViewInit {
         })
     }
 
-    private getCharCodeFromEvent(event: any): any {
-        event = event || window.event;
-        return (typeof event.which == "undefined") ? event.keyCode : event.which;
-    }
-
     private isCharNumeric(charStr: string): boolean {
         return !!/\d/.test(charStr);
     }
 
     private isKeyPressedNumeric(event: any): boolean {
-        const charCode = this.getCharCodeFromEvent(event);
-        const charStr = event.key ? event.key : String.fromCharCode(charCode);
+        const charStr = event.key;
         return this.isCharNumeric(charStr);
     }
 
-    private deleteOrBackspace(event: any) {
-        return [KEY_DELETE, KEY_BACKSPACE].indexOf(this.getCharCodeFromEvent(event)) > -1;
+    private isBackspace(event: any) {
+        return event.key === KEY_BACKSPACE;
     }
 
-    private isLeftOrRight(event:any) {
-        return [37, 39].indexOf(this.getCharCodeFromEvent(event)) > -1;
+    private isLeftOrRight(event: any) {
+        return ['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1;
     }
 
     private finishedEditingPressed(event: any) {
-        const charCode = this.getCharCodeFromEvent(event);
-        return charCode === KEY_ENTER || charCode === KEY_TAB;
+        const key = event.key;
+        return key === KEY_ENTER || key === KEY_TAB;
     }
 }

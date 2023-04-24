@@ -1,11 +1,11 @@
 {
   "name": "ag-grid-enterprise",
-  "version": "25.1.0",
+  "version": "29.3.2",
   "homepage": "http://www.ag-grid.com/",
   "authors": [
     "Niall Crosby <niall.crosby@ag-grid.com>"
   ],
-  "description": "Enterprise features for ag-Grid",
+  "description": "Enterprise features for AG Grid",
   "main": [
     "./main.js"
   ],

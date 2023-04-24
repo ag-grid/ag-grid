@@ -46,7 +46,7 @@ requirejs(['agGrid'], function (agGrid) {
     var rowData = [
         { make: "Toyota", model: "Celica", price: 35000 },
         { make: "Ford", model: "Mondeo", price: 32000 },
-        { make: "Porsche", model: "Boxter", price: 72000 }
+        { make: "Porsche", model: "Boxster", price: 72000 }
     ];
 
     // let the grid know which columns and what data to use
@@ -72,7 +72,7 @@ requirejs(['agGrid'], function (agGrid) {
 </html>
 ```
 
-Now we can either serve the HTML file above which will result in the following grid.
+Now we can serve the HTML file above which will result in the following grid.
 
 <image-caption src="building-amd/resources/ts-grid.png" alt="Datagrid" width="40rem" centered="true" constrained="true"></image-caption>
 

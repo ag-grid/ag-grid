@@ -2,13 +2,13 @@
 
 
 # This script is a temporary measure as a step towards faster recompilation
-# Run docs with `AG_NO_CSS=1 npm run docs` then run this file to 
+# Run docs with `AG_NO_CSS=1 npm run docs` then run this file to
 
 cd `dirname "$0"`
 command="./node_modules/.bin/node-sass --watch "
-srcFolder="../../community-modules/core/src/styles"
+srcFolder="../../grid-community-modules/core/src/styles"
 patchedSrcFolder=".patched-styles/"
-destFolder="../../community-modules/all-modules/dist/styles"
+destFolder="../../grid-community-modules/all-modules/dist/styles"
 filterString="$1"
 
 mkdir -p $patchedSrcFolder

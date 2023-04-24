@@ -1,0 +1,59 @@
+<style>
+    label, .row {
+        box-sizing: border-box;
+        display: block;
+        padding: 2px;
+    }
+
+    .row label {
+        display: inline;
+        padding: 0;
+    }
+
+    button {
+        display: inline-block;
+        font-weight: bold;
+    }
+
+    #gridContainer {
+        height: 100%;
+        width: 47%;
+        display: block;
+    }
+
+    #csvResult {
+        height: 100%;
+        width: 47%;
+        margin-left: 5%;
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-size: 1em;
+    }
+</style>
+
+<div style="display: flex; flex-direction: column; height: 100%;">
+    <div style="display: flex;">
+        <div class="row">
+            <label>columnSeparator = </label>
+            <select id="columnSeparator">
+                <option value="none">(default)</option>
+                <option value="tab">tab</option>
+                <option value="|">bar (|)</option>
+            </select>
+        </div>
+    </div>
+
+    <div style="margin: 10px 0;">
+        <button onclick="onBtnUpdate()">Show CSV export content text</button>
+        <button onclick="onBtnExport()">Download CSV export file</button>
+    </div>
+
+    <div style="flex: 1 1 0px; position: relative;">
+        <div id="gridContainer">
+            <div id="myGrid" style="width:100%;height: 100%;display: block;" class="ag-theme-alpine"></div>
+        </div>
+        <textarea id="csvResult">Click the Show CSV export content button to view exported CSV here</textarea>
+    </div>
+</div>
+

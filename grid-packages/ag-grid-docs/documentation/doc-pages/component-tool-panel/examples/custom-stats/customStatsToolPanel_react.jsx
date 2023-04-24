@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 
 export default class CustomStatsToolPanel extends Component {
-
     constructor(props) {
         super(props);
 
@@ -30,18 +29,17 @@ export default class CustomStatsToolPanel extends Component {
     }
 
     updateTotals() {
-        var numGold = 0, numSilver = 0, numBronze = 0;
+        let numGold = 0, numSilver = 0, numBronze = 0;
 
-        this.props.api.forEachNode(function (rowNode) {
-            let data = rowNode.data;
-            
+        this.props.api.forEachNode(rowNode => {
+            const data = rowNode.data;
+
             if (data.gold) numGold += data.gold;
             if (data.silver) numSilver += data.silver;
             if (data.bronze) numBronze += data.bronze;
         });
 
-        let numMedals = numGold + numSilver + numBronze;
-        this.setState({numMedals: numMedals, numGold: numGold, numSilver: numSilver, numBronze: numBronze});
+        const numMedals = numGold + numSilver + numBronze;
+        this.setState({numMedals, numGold, numSilver, numBronze});
     }
-
 }

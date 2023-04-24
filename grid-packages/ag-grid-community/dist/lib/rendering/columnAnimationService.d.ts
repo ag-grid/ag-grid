@@ -1,12 +1,12 @@
-import { GridPanel } from "../gridPanel/gridPanel";
 import { BeanStub } from "../context/beanStub";
 export declare class ColumnAnimationService extends BeanStub {
-    private gridPanel;
+    private ctrlsService;
+    private gridBodyCtrl;
     private executeNextFuncs;
     private executeLaterFuncs;
     private active;
     private animationThreadCount;
-    registerGridComp(gridPanel: GridPanel): void;
+    private postConstruct;
     isActive(): boolean;
     start(): void;
     finish(): void;

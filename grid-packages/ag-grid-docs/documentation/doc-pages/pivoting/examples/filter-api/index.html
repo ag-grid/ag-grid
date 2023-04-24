@@ -1,0 +1,31 @@
+<div class="test-container" style="height:100%; display: flex; flex-direction: column">
+    <div class="test-header">
+        <div style="margin-bottom: 10px">
+            <button onclick="clearFilter()">Clear Filters</button>
+        </div>
+        <div>Primary Column Filters</div>
+        <div style="margin-bottom: 10px">
+            <div style="margin-bottom: 5px">
+                <button onclick="filterUsRussiaAustralia()">Country: US, Russia &amp; Australia</button>
+                <button onclick="filterCanadaNorwayChinaZimbabweNetherlands()">Country: Canada, Norway, China, Zimbabwe &amp; Netherlands</button>
+            </div>
+            <div style="margin-bottom: 5px">
+                <button onclick="filter20042006()">Year: 2004 &amp; 2006</button>
+                <button onclick="filter200820102012()">Year: 2008, 2010 &amp; 2012</button>
+                <button onclick="filterClearYears()">Year: Clear filter</button>
+            </div>
+            <div>
+                <button onclick="filterSwimmingHockey()">Sport: Swimming &amp; Hockey</button>
+                <button onclick="filterHockeyIceHockey()">Sport: Hockey &amp; Ice Hockey</button>
+            </div>
+        </div>
+        <div>Secondary Column Filters</div>
+        <div style="margin-bottom: 10px">
+            <div style="margin-bottom: 5px">
+                <button onclick="filterEveryYearGold()">All gold: > 0</button>
+                <button onclick="filter2000Silver()">Year 2000, Silver: Not blank</button>
+            </div>
+        </div>
+    </div>
+    <div id="myGrid" style="flex-grow: 1;" class="ag-theme-alpine"></div>
+</div>

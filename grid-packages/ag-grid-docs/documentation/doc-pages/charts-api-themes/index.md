@@ -1,7 +1,9 @@
 ---
-title: "Themes API Reference"
+title: "Themes Reference"
 ---
+A comprehensive interactive explorer for the `AgChartOptions.theme.overrides` structure.
 
-This page documents the AG Charts Themes API. You can find more details about AG Charts themes in the [Themes](../charts-themes/) section.
+Read more about how to use this structure in the [Themes](/charts-themes/) section.
 
-<api-documentation source='themes.json' config='{ "showSnippets": true }'></api-documentation>
+<expandable-snippet interfaceName='AgChartTheme' overrideSrc="charts-api/api.json" breadcrumbs='["options", "theme"]' config='{"excludeProperties": ["theme", "data", "container"], "expandedProperties": ["overrides"], "lookupRoot": "charts-api"}'></expandable-snippet>
+

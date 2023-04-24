@@ -1,10 +1,16 @@
 import { Column } from "../entities/column";
-import { GridCore } from "../gridCore";
+export interface IClipboardCopyParams {
+    includeHeaders?: boolean;
+    includeGroupHeaders?: boolean;
+}
+export interface IClipboardCopyRowsParams extends IClipboardCopyParams {
+    columnKeys?: (string | Column)[];
+}
 export interface IClipboardService {
-    registerGridCore(gridCore: GridCore): void;
     pasteFromClipboard(): void;
-    copyToClipboard(includeHeader?: boolean): void;
-    copySelectedRowsToClipboard(includeHeader?: boolean, columnKeys?: (string | Column)[]): void;
-    copySelectedRangeToClipboard(includeHeader?: boolean): void;
+    copyToClipboard(params?: IClipboardCopyParams): void;
+    cutToClipboard(params?: IClipboardCopyParams): void;
+    copySelectedRowsToClipboard(params?: IClipboardCopyRowsParams): void;
+    copySelectedRangeToClipboard(params?: IClipboardCopyParams): void;
     copyRangeDown(): void;
 }

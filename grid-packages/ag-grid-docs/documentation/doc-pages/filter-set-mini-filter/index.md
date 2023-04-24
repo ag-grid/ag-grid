@@ -11,7 +11,7 @@ The Mini Filter allows the user to search for particular values in the Filter Li
 
 ## Keyboard Shortcuts
 
-When the `Enter` key is pressed while on the Mini Filter, the Set Filter will exclusively select all values in the Filter List that pass the Mini Filter and apply the filter immediately (note that even if an Apply Button is used, hitting `Enter` applies the filter).
+When the <kbd>Enter</kbd> key is pressed while on the Mini Filter, the Set Filter will exclusively select all values in the Filter List that pass the Mini Filter and apply the filter immediately (note that even if an Apply Button is used, hitting <kbd>Enter</kbd> applies the filter).
 
 Alternatively, you can choose to have the Mini Filter applied as the user is typing, i.e. as the Filter List is filtered, the Set Filter will be applied as described above so that the results in the grid will also be filtered at the same time. To enable this behaviour, use the following:
 
@@ -31,8 +31,7 @@ const gridOptions = {
 
 The following example demonstrates this behaviour. Note the following:
 
-- The Athlete column's Set Filter shows the Mini Filter with default behaviour. Try typing in the Mini Filter to search the Filter List, and then hit the `Enter` key and notice how the grid is filtered using the displayed values.
-
+- The Athlete column's Set Filter shows the Mini Filter with default behaviour. Try typing in the Mini Filter to search the Filter List, and then hit the <kbd>Enter</kbd> key and notice how the grid is filtered using the displayed values.
 - The Country column's Set Filter applies the Mini Filter as you type because `filterParams.applyMiniFilterWhileTyping = true`.
 
 <grid-example title='Mini Filter Keyboard Shortcuts' name='mini-filter-keyboard-shortcuts' type='generated' options='{ "enterprise": true, "exampleHeight": 565, "modules": ["clientside", "setfilter", "menu"] }'></grid-example>
@@ -41,7 +40,7 @@ The following example demonstrates this behaviour. Note the following:
 
 Sometimes it is necessary to provide custom handling for Mini Filter searches, for example to substitute accented characters.
 
-As with the [Text Filter](../filter-text/#text-formatter) it is possible to supply a Text Formatter to the Set Filter which formats the text before applying the Mini Filter compare logic. The snippet below shows how this can be configured:
+As with the [Text Filter](/filter-text/#text-formatter) it is possible to supply a Text Formatter to the Set Filter which formats the text before applying the Mini Filter compare logic. The snippet below shows how this can be configured:
 
 <snippet>
 const gridOptions = {
@@ -78,15 +77,43 @@ The following example demonstrates searching when there are accented characters.
 
 <grid-example title='Mini Filter Text Formatter' name='mini-filter-text-formatter' type='generated' options='{ "enterprise": true, "exampleHeight": 565, "modules": ["clientside", "setfilter", "menu", "columnpanel"] }'></grid-example>
 
+## Enabling Case-Sensitive Searches
+
+By default the Mini Filter is case-insensitive. Practically this means that searching for `bl` would match Filter List values of `Black`, `blue` and `BLONDE`.
+
+Case-sensitive searches can be enabled by using the `caseSensitive` filter parameter:
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'colour',
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                caseSensitive: true
+            }
+        }
+    ]
+}
+</snippet>
+
+[[note]]
+| The `caseSensitive` option also affects the values presented in the [Filter List](/filter-set-filter-list/#enabling-value-case-sensitivity) and [API](/filter-set-api/#enabling-case-sensitivity) behaviours.
+
+See [Example: Filter List Case-Sensitivity](/filter-set-filter-list/#example-case-sensitive-set-filter-list) for a demonstration of the change in behaviour.
+
 ## Text Customisation
 
-Text used in the Mini Filter can be customised using [Localisation](../localisation/).
+Text used in the Mini Filter can be customised using [Localisation](/localisation/).
 
 The text shown as a placeholder in the Mini Filter textbox can be customised by setting `'searchOoo'`.
 
 When no matching values are found when typing in the Mini Filter, a message is displayed. This can be customised by setting `'noMatches'`.
 
-The example below shows this text being customised.
+The example below shows this text being customised:
+
+- `searchOOO` is set so that the Mini Filter textbox displays `'Search values...'` instead of the default text `'Search...'`
+- `noMatches` is set so that when no matches are found for the Mini Filter search, the message displays `'No matches could be found.'` instead of `'No matches.'`
 
 <grid-example title='Text Customisation' name='text-customisation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "setfilter", "menu"] }'></grid-example>
 
@@ -117,4 +144,4 @@ The following example demonstrates hiding the mini filter. Note the following:
 
 ## Next Up
 
-Continue to the next section: [Excel Mode](../filter-set-excel-mode/).
+Continue to the next section to learn about [Excel Mode](/filter-set-excel-mode/).

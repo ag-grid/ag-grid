@@ -41,7 +41,7 @@ class GridWithNoComponentContainerSpecified extends Component {
         this.state = {
             columnDefs: [{
                 field: "age",
-                cellRendererFramework: CellRenderer,
+                cellRenderer: CellRenderer,
             }],
             rowData: [{age: 24}]
         };
@@ -56,6 +56,7 @@ class GridWithNoComponentContainerSpecified extends Component {
             <div
                 className="ag-theme-balham">
                 <AgGridReact
+                    suppressReactUi={true}
                     columnDefs={this.state.columnDefs}
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData}

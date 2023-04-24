@@ -1,0 +1,53 @@
+@use "ag";
+
+@mixin output {
+    .ag-paging-panel {
+        border-top: 1px solid;
+        border-top-color: var(--ag-border-color);
+        color: var(--ag-secondary-foreground-color);
+        height: var(--ag-header-height);
+
+        > * {
+            margin: 0 var(--ag-cell-horizontal-padding);
+        }
+    }
+
+
+    .ag-paging-button {
+        cursor: pointer;
+    }
+
+    .ag-paging-button.ag-disabled  {
+        cursor: default;
+        color: var(--ag-disabled-foreground-color);
+    }
+
+    @include ag.keyboard-focus((ag-paging-button), 0px);
+
+    .ag-paging-button, .ag-paging-description {
+        margin: 0 var(--ag-grid-size);
+    }
+
+    .ag-status-bar {
+        border-top: var(--ag-borders) var(--ag-border-color);
+        color: var(--ag-disabled-foreground-color);
+        padding-right: calc(var(--ag-grid-size) * 4);
+        padding-left: calc(var(--ag-grid-size) * 4);
+        line-height: 1.5;
+    }
+
+    .ag-status-name-value-value {
+        color: var(--ag-foreground-color);
+    }
+
+    .ag-status-bar-center {
+        text-align: center;
+    }
+
+    .ag-status-name-value {
+        margin-left: var(--ag-grid-size);
+        margin-right: var(--ag-grid-size);
+        padding-top: calc(var(--ag-grid-size) * 2);
+        padding-bottom: calc(var(--ag-grid-size) * 2);
+    }
+}

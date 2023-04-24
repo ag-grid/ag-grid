@@ -1,0 +1,50 @@
+{
+    "_config_": {},
+    "CreatePivotChartParams": {
+        "meta": {
+            "displayName": "createPivotChart params"
+        },
+        "chartType": {
+            "isRequired": true,
+            "interfaceHierarchyOverrides": {
+                "exclude": [],
+                "include": [
+                    "ChartType"
+                ]
+            }
+        },
+        "chartThemeName": {
+            "options": [
+                "ag-default",
+                "ag-default-dark",
+                "ag-material",
+                "ag-material-dark",
+                "ag-pastel",
+                "ag-pastel-dark",
+                "ag-vivid",
+                "ag-vivid-dark",
+                "ag-solar",
+                "ag-solar-dark"
+            ],
+            "description": "The default theme to use for the created chart. In addition to the default options you listed, you can also provide your own [custom chart themes](/integrated-charts-customisation/#custom-chart-themes)."
+        },
+        "chartContainer": {
+            "description": "If the chart is to be displayed outside of the grid then a chart container should be provided. If the chart is to be displayed using the grid's popup window mechanism then leave as `undefined`."
+        },
+        "chartThemeOverrides": {
+            "description": "Allows specific chart options in the current theme to be overridden.",
+            "more": {
+                "name": "Overriding Existing Themes",
+                "url": "/integrated-charts-customisation/#overriding-existing-themes"
+            }
+        },
+        "unlinkChart": {
+            "default": false,
+            "description": "When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart.",
+            "more": {
+                "name": "Unlinking Charts",
+                "url": "/integrated-charts-toolbar/#unlinking-charts"
+            }
+        }
+    }
+}

@@ -3,15 +3,11 @@ title: "Redux Integration - Part 1"
 frameworks: ["react"]
 ---
 
-This section introduces how React components using the AG Grid Data Table can take advantage of a Redux store to
+This section introduces how React components using the AG Grid Data Grid can take advantage of a Redux store to
 simplify state management.
 
-
-[[note]]
-| Be sure to refer to the [React/Redux More Details](../framework-apis/#redux--higher-order-components-hoc) section for more details around configuration.
-
-We will use the concrete example of a file view component to demonstrate how to move local 
-component state to a Redux store. Updates to the files state will be retrieved from the Redux store, 
+We will use the concrete example of a file view component to demonstrate how to move local
+component state to a Redux store. Updates to the files state will be retrieved from the Redux store,
 while UI events to add and delete files will be dispatched to the Redux store for processing.
 
 <image-caption src="redux-integration-pt1/resources/redux-file-view.png" alt="Redux Integration File View"></image-caption>
@@ -23,25 +19,25 @@ As shown above, files are grouped by folder, and files can be added or deleted v
 
 ## Do I need Redux?
 
-Redux excels in applications with complex state interactions. If you are passing unrelated data through 
-several layers of components or data is shared and synchronized between different parts your application, 
+Redux excels in applications with complex state interactions. If you are passing unrelated data through
+several layers of components or data is shared and synchronized between different parts your application,
 you could benefit from Redux.
 
-When using Redux, you move state from your components into a single immutable store, where state is 
-replaced rather than mutated. This combined with its unidirectional data flow can make it easier to 
+When using Redux, you move state from your components into a single immutable store, where state is
+replaced rather than mutated. This combined with its unidirectional data flow can make it easier to
 test and reason about state changes in your application.
 
 ## Redux Architecture
 
-Redux has a single store which contains all application state. It has one Root Reducer which is 
-responsible for transforming the application state and is typically created by combining several 
+Redux has a single store which contains all application state. It has one Root Reducer which is
+responsible for transforming the application state and is typically created by combining several
 smaller reducers.
 
 
 <img src="resources/redux-store.png" alt="Redux Store" />
 
-Actions describe the operation the reducer should perform on the state. They may also contain 
-an optional payload containing data used by the reducer to transform the state. For example 
+Actions describe the operation the reducer should perform on the state. They may also contain
+an optional payload containing data used by the reducer to transform the state. For example
 an action to create a new file might look like this:
 
 ```js
@@ -57,18 +53,18 @@ Actions are dispatched to the store from UI components as illustrated below:
 
 <img src="resources/redux-data-flow.png" alt="Redux Data Flow" />
 
-The reducer that is associated with the action type will then transform the state which is saved 
-in the store. Reducers are pure functions which receive the current application state along with 
+The reducer that is associated with the action type will then transform the state which is saved
+in the store. Reducers are pure functions which receive the current application state along with
 the action to be performed on that state to produce some new state.
 
 <span style="font-weight: bold; margin-left: 20%; font-size: 1.2rem;">(currentState, action) => newState</span>
 
-UI components can subscribe to the store for specific parts of the state in order to be notified 
+UI components can subscribe to the store for specific parts of the state in order to be notified
 when there are changes to the store. This allows components to retrieve the latest state to refresh the view.
 
 ## Creating our Redux File Store
 
-To create our Redux File Store we will use the `createStore` factory method from the redux module. 
+To create our Redux File Store we will use the `createStore` factory method from the redux module.
 In our example we just require a single reducer which is supplied along with the initial state as shown below:
 
 ```jsx
@@ -89,12 +85,12 @@ const initialState = {
 export default createStore(fileReducer, initialState);
 ```
 
-Note that in larger applications there will typically be several reducers which are combined 
+Note that in larger applications there will typically be several reducers which are combined
 to create a single root reducer. This is done using the `combineReducers` function also from Redux.
 
-Our File View will allow users to add and delete files. The logic for handling these operations 
+Our File View will allow users to add and delete files. The logic for handling these operations
 will be defined in the `fileReducer` shown below:
-    
+
 ```jsx
 // reducers/fileReducer.jsx
 
@@ -118,12 +114,12 @@ export default function fileReducer(state = {}, action) {
 }
 ```
 
-The `fileReducer` handles each action type with a case clause within a switch statement. It's important 
-to understand that the reducer doesn't modify the state directly but instead returns a new version for 
+The `fileReducer` handles each action type with a case clause within a switch statement. It's important
+to understand that the reducer doesn't modify the state directly but instead returns a new version for
 the store to persist. As a result there must not be any side effects contained within the reducer.
 
 [[note]]
-| The helper methods used in the reducer are omitted for brevity but can be examined in the code 
+| The helper methods used in the reducer are omitted for brevity but can be examined in the code
 | tab provided in the example at the end of this section.
 
 Rather than create action objects directly, a more elegant approach is to create helper functions referred to as
@@ -151,29 +147,28 @@ export const actions = {
 
 ## Adding the Provider Component
 
-Now that we have created our Redux store, we need to make it available to our React `FileView` 
+Now that we have created our Redux store, we need to make it available to our React `FileView`
 component. This is achieved through the `Provider` component from the react-redux project.
 
 
-In the entry point of our application we wrap the `FileView` component in the `Provider` 
+In the entry point of our application we wrap the `FileView` component in the `Provider`
 component as shown below:
 
 ```jsx
 // index.jsx
 
 import React from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 
 import store from './store.jsx';
 import FileView from './FileView.jsx';
 
-render(
+const root = createRoot(document.getElementById('root'));
+root.render(
     <Provider store={store}>
         <FileView/>
-    </Provider>,
-    document.getElementById('root')
-);
+    </Provider>);
 ```
 
 The `Provider` accepts the store as property and makes it available via props to all child components.
@@ -222,11 +217,11 @@ export default connect(
 )(FileView);
 ```
 
-In the code above we pass two functions to `connect` to map the required state (mapStateToProps) and 
-actions (mapDispatchToProps). When binding our actions we are using the `bindActionCreators` utility 
+In the code above we pass two functions to `connect` to map the required state (mapStateToProps) and
+actions (mapDispatchToProps). When binding our actions we are using the `bindActionCreators` utility
 which wraps our action creators into a `dispatch` call.
 
-Now that our stateless `FileView` component is connected to our Redux store, whenever the file state 
+Now that our stateless `FileView` component is connected to our Redux store, whenever the file state
 in the store changes, our component will re-render with the latest file state available in `this.props.files`.
 
 
@@ -235,7 +230,7 @@ in the store changes, our component will re-render with the latest file state av
 
 ## Adding the Data Table
 
-Now that the Redux store is now connected to our stateless React component, all that remains is 
+Now that the Redux store is now connected to our stateless React component, all that remains is
 to implement the view, which just consists of the AG Grid Data Table in our File View.
 
 Before discussing the grid features in our File View, here are all of the grid options we are using:
@@ -247,20 +242,18 @@ render() {
     return (
         <div className="ag-theme-alpine">
             <AgGridReact
-                // provide column definitions
+                {/* provide column definitions */}                 
                 columnDefs={this.colDefs}
-                // specify auto group column definition
+                {/* specify auto group column definition */}
                 autoGroupColumnDef={this.autoGroupColumnDef}
-                // row data provided via props from the file store
+                {/* row data provided via props from the file store */}
                 rowData={this.props.files}
-                // expand groups by default
+                {/* expand groups by default */}
                 groupDefaultExpanded={-1}
-                // provide context menu callback
+                {/* provide context menu callback */}
                 getContextMenuItems={this.getContextMenuItems}
-                // enable immutable data
-                immutableData={true}
-                // return id required for immutable data
-                getRowNodeId={data => data.id}>
+                {/* return key required for immutable data */}
+                getRowId={params => params.data.id}>
             </AgGridReact>
         </div>
     )
@@ -269,7 +262,7 @@ render() {
 
 ## Row Grouping
 
-To keep our File View example simple, we'll let the grid manage row grouping. This is achieved 
+To keep our File View example simple, we'll let the grid manage row grouping. This is achieved
 via the following configuration:
 
 ```js
@@ -289,22 +282,22 @@ autoGroupColumnDef = {
 };
 ```
 
-Here we are grouping files by folder with `rowGroup: true` on the folder column definition. We 
+Here we are grouping files by folder with `rowGroup: true` on the folder column definition. We
 also override some of the defaults on our auto group column through the `autoGroupColumnDef` property.
 
-For more details see our documentation on [Row Grouping](../grouping/).
+For more details see our documentation on [Row Grouping](/grouping/).
 
 ## Row Data Updates
 
-The initial file state along with all subsequent state updates will be provided to the grid 
+The initial file state along with all subsequent state updates will be provided to the grid
 component via `rowData={this.props.files}` from our Redux file store.
 
-This means the grid does not change the state of the files internally but instead receives 
+This means the grid does not change the state of the files internally but instead receives
 the new state from the Redux store!
 
 ## Context Menu Actions
 
-As shown above, `getContextMenuItems={this.getContextMenuItems}` supplies a function to the 
+As shown above, `getContextMenuItems={this.getContextMenuItems}` supplies a function to the
 grid to retrieve the context menu items. Here is the implementation:
 
 ```js
@@ -323,32 +316,26 @@ getContextMenuItems = (params) => {
 };
 ```
 
-Notice that we are simply dispatching actions to the Redux store here. For example, when the 
+Notice that we are simply dispatching actions to the Redux store here. For example, when the
 new file menu item is selected: `action: () => this.props.actions.newFile(folder)`.
 
 
-It is important to note that nothing will happen inside the grid when a menu item is selected 
+It is important to note that nothing will happen inside the grid when a menu item is selected
 until the Redux store triggers a re-render of the grid component with the updated state.
 
-For more details see our documentation on [Context Menu](../context-menu/).
+For more details see our documentation on [Context Menu](/context-menu/).
 
 ## Immutable Data
 
-One consequence of using Redux is that when part of the state is updated in the store, the 
-entire state is replaced with a new version. The grid has a "Immutable Data" mode that is 
-designed to work specifically with immutable stores such as Redux to ensure only the rows 
+One consequence of using Redux is that when part of the state is updated in the store, the
+entire state is replaced with a new version. The grid uses Row IDs to work specifically with immutable stores such as Redux to ensure only the rows
 that have been updated will be re-rendered inside the grid.
 
-The File View enables this feature using: `immutableData={true}`, along with a required row 
-id using: `getRowNodeId={data => data.id}`.
-
-
-This feature can lead to noticeable performance improvements in applications which contain 
-a lot of row data. For more details see our documentation on [Immutable Data](../immutable-data/).
+The File View enables this feature using `getRowId={params => params.data.id}`.
 
 ## Demo - Redux File View
 
-Now we are ready to enjoy the fruits of our labour! The completed Redux File View with source code 
+Now we are ready to enjoy the fruits of our labour! The completed Redux File View with source code
 is shown below. In this example you can:
 
 - **Folder 'Right Click':** reveals option to add a new file under the selected folder.
@@ -359,9 +346,9 @@ is shown below. In this example you can:
 
 ## Conclusion
 
-While implementing the Redux File View, we have demonstrated how we can move local 
-state out of our components, along with all the associated state operations, to a 
-Redux state container. This led to a nice separation of concerns, allowing our 
+While implementing the Redux File View, we have demonstrated how we can move local
+state out of our components, along with all the associated state operations, to a
+Redux state container. This led to a nice separation of concerns, allowing our
 view component to focus on presentation detail.
 
 In this example we just touched on a few grid features to keep the example simple. These features included:
@@ -370,6 +357,6 @@ In this example we just touched on a few grid features to keep the example simpl
 - Immutable Data
 - Custom Context Menu
 
-Next up in [Redux Integration Part 2](../redux-integration-pt2/) we take things further and 
+Next up in [Redux Integration Part 2](/redux-integration-pt2/) we take things further and
 implement a feature rich File Browser which builds upon this File View example.
 

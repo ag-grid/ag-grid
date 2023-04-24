@@ -5,9 +5,12 @@ import { getIndexHtmlUrl } from './helpers';
 import { getIndexHtml } from './index-html-helper';
 import isDevelopment from 'utils/is-development';
 
+/**
+ * This executes the given example in an iframe.
+ */
 const ExampleRunnerResult = ({ isOnScreen = true, resultFrameIsVisible = true, exampleInfo }) => {
     const [isExecuting, setExecuting] = useState(isOnScreen && resultFrameIsVisible);
-    const { pageName, name, internalFramework, importType } = exampleInfo;
+    const { pageName, name, internalFramework, importType, type } = exampleInfo;
 
     useEffect(() => {
         // trigger the example to execute when it is on screen and the result pane is visible

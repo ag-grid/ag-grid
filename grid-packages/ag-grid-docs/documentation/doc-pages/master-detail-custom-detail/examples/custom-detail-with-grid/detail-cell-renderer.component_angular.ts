@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ICellRendererAngularComp } from "@ag-grid-community/angular";
+import { ColDef, GridApi, GridReadyEvent, ICellRendererParams } from '@ag-grid-community/core';
 
 @Component({
     selector: 'app-detail-cell-renderer',
@@ -23,12 +24,19 @@ import { ICellRendererAngularComp } from "@ag-grid-community/angular";
         </div>`
 })
 export class DetailCellRenderer implements ICellRendererAngularComp {
+    params!: ICellRendererParams;
+    masterGridApi!: GridApi;
+    rowId!: string;
+    colDefs!: ColDef[];
+    defaultColDef!: ColDef;
+    rowData!: any[];
+
     // called on init
-    agInit(params: any): void {
+    agInit(params: ICellRendererParams): void {
         this.params = params;
 
         this.masterGridApi = params.api;
-        this.rowId = params.node.id;
+        this.rowId = params.node.id!;
 
         this.colDefs = [
             { field: 'callId' },
@@ -47,11 +55,11 @@ export class DetailCellRenderer implements ICellRendererAngularComp {
     }
 
     // called when the cell is refreshed
-    refresh(params: any): boolean {
+    refresh(params: ICellRendererParams): boolean {
         return false;
     }
 
-    onGridReady(params) {
+    onGridReady(params: GridReadyEvent) {
         var gridInfo = {
             id: this.rowId,
             api: params.api,

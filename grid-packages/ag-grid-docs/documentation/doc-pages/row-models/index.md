@@ -48,8 +48,9 @@ deal with server-side data. The following is a summary of each:
     </li>
 </ul>
 
-Which row model you use is set as a grid property `rowModelType`. Set it to one of `'clientSide'`,
-`'infinite'`, `'viewport'`, or `'serverSide'`. The default is `'clientSide'`.
+Which row model you use is set by the grid property `rowModelType`. 
+
+<api-documentation source='grid-options/properties.json' section='rowModels' names='["rowModelType"]'></api-documentation>
 
 ## When to Use
 
@@ -61,10 +62,10 @@ Which row model you use will depend on your application. Here are some quick rul
 
 Here are more detailed rules of thumb.
 
-- If you are not sure, use default **[Client-Side](../client-side-model/)**. The grid can handle massive amounts of data (100k+ rows). The grid will only render what's visible on the screen (40 rows approximately, depending on your screen size) even if you have thousands of rows returned from your server. You will not kill the grid with too much data - rather your browser will run out of memory before the grid gets into problems. So if you are unsure, go with Client-Side Row Model first and only change if you need to. With Client-Side, you get sorting, filtering, grouping, pivoting and aggregation all done for you by the grid. All of the examples in the documentation use the Client-Side model unless specified otherwise.
+- If you are not sure, use default **[Client-Side](/client-side-model/)**. The grid can handle massive amounts of data (100k+ rows). The grid will only render what's visible on the screen (40 rows approximately, depending on your screen size) even if you have thousands of rows returned from your server. You will not kill the grid with too much data - rather your browser will run out of memory before the grid gets into problems. So if you are unsure, go with Client-Side Row Model first and only change if you need to. With Client-Side, you get sorting, filtering, grouping, pivoting and aggregation all done for you by the grid. All of the examples in the documentation use the Client-Side model unless specified otherwise.
 - If you do not want to shift all the data from your server to your client, as the amount of data is too large to shift over the network or to extract from the underlying datasource, then use either Infinite, Server-Side or Viewport. Each one takes data from the server in different ways.
-- Use **[Infinite](../infinite-scrolling/)** or **[Server-Side](../server-side-model/)** to bring back a list of data one block at a time from the server. As the user scrolls, the grid will ask for more rows. Server-Side has more features than Infinite and will allow row grouping, aggregation, lazy-loading of groups and slice and dice of data.
-- Use **[Viewport](../viewport/)** if you want the server to know exactly what the user is looking at. This is best when you have a large amount of changing data and want to push updates to the client when the server-side data changes. Knowing exactly what the user is looking at means you only have to push updates to the relevant users. All the row models can receive updates but only the Viewport row model provides the server with the information of the rows the users currently sees on screen without scrolling.
+- Use **[Infinite](/infinite-scrolling/)** or **[Server-Side](/server-side-model/)** to bring back a list of data one block at a time from the server. As the user scrolls, the grid will ask for more rows. Server-Side has more features than Infinite and will allow row grouping, aggregation, lazy-loading of groups and slice and dice of data.
+- Use **[Viewport](/viewport/)** if you want the server to know exactly what the user is looking at. This is best when you have a large amount of changing data and want to push updates to the client when the server-side data changes. Knowing exactly what the user is looking at means you only have to push updates to the relevant users. All the row models can receive updates but only the Viewport row model provides the server with the information of the rows the users currently sees on screen without scrolling.
 
 ## Row Model Comparisons
 
@@ -97,4 +98,4 @@ Pagination can be applied to any of the row model types. The documentation on ea
 
 ## Grid Datasource
 
-The [Client-Side](../client-side-model/) row model does not need a datasource. [Infinite](../infinite-scrolling/), [Viewport](../viewport/) and [Server-Side](../server-side-model/) all use a datasource. The documentation on each row model type explains how to configure the datasource for the particular row model.
+The [Client-Side](/client-side-model/) row model does not need a datasource. [Infinite](/infinite-scrolling/), [Viewport](/viewport/) and [Server-Side](/server-side-model/) all use a datasource. The documentation on each row model type explains how to configure the datasource for the particular row model.

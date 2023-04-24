@@ -9,6 +9,7 @@ export declare class DefaultDateComponent extends Component implements IDateComp
     getDate(): Date | null;
     setDate(date: Date): void;
     setInputPlaceholder(placeholder: string): void;
+    setDisabled(disabled: boolean): void;
     afterGuiAttached(params?: IAfterGuiAttachedParams): void;
     private shouldUseBrowserDatePicker;
 }

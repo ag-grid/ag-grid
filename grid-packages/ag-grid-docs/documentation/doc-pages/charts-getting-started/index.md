@@ -21,7 +21,7 @@ title: "Get Started with AG Charts"
     }
 </style>
 
-AG Charts is an exciting new addition to the AG Grid family, offering both integrated as well as standalone fully functional charting capabilities.
+AG Charts is a powerful standalone component with no dependencies. The charts factory API can be used to seamlessly create and update data visualizations independently of the grid.
 
 <section class="code-tab mb-3">
 <div class="card">
@@ -97,7 +97,7 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 |         Q2: 170,
 |         Q3: 190,
 |         Q4: 200
-|     }
+|     },
 | ];
 |
 | var options = {
@@ -109,20 +109,24 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 |     subtitle: {
 |         text: 'per quarter'
 |     },
+|     footnote: {
+|         text: 'Based on a sample size of 200 respondents'
+|     },
 |     padding: {
 |         top: 40,
 |         right: 40,
 |         bottom: 40,
 |         left: 40
 |     },
-|     series: [{
-|         type: 'column',
-|         xKey: 'beverage',
-|         yKeys: ['Q1', 'Q2', 'Q3', 'Q4']
-|     }],
+|     series: [
+|         { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
+|         { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|         { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|         { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
+|     ],
 |     legend: {
 |         spacing: 40
-|     }
+|     },
 | };
 |
 | agCharts.AgChart.create(options);
@@ -131,14 +135,15 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 [[only-angular]]
 | ```jsx
 | import { Component } from '@angular/core';
-| 
+| import { AgChartOptions } from 'ag-charts-community';
+|
 | @Component({
 |     selector: 'my-app',
 |     templateUrl: './app.component.html'
 | })
 | export class AppComponent {
-|     private options: any;
-| 
+|     public options: AgChartOptions;
+|
 |     beverageSpending = [
 |         {
 |             beverage: 'Coffee',
@@ -171,12 +176,15 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 |             subtitle: {
 |                 text: 'per quarter',
 |             },
-|             series: [{
-|                 type: 'column',
-|                 xKey: 'beverage',
-|                 yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-|                 label: {},
-|             }],
+|             footnote: {
+|                 text: 'Based on a sample size of 200 respondents',
+|             },
+|             series: [
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
+|             ],
 |         };
 |     }
 | }
@@ -186,7 +194,7 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 | ```jsx
 | import React, { Component } from 'react';
 | import { AgChartsReact } from 'ag-charts-react';
-| 
+|
 | export default class ChartExample extends Component {
 |     data = [
 |         {
@@ -211,15 +219,16 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 |             Q4: 200,
 |         },
 |     ];
-| 
+|
 |     constructor(props) {
 |         super(props);
-| 
+|
 |         this.state = {
 |             options: {
 |                 data: this.data,
 |                 title: { text: 'Beverage Expenses' },
 |                 subtitle: { text: 'per quarter' },
+|                 footnote: { text: 'Based on a sample size of 200 respondents' },
 |                 padding: {
 |                     top: 40,
 |                     right: 40,
@@ -227,17 +236,16 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 |                     left: 40,
 |                 },
 |                 series: [
-|                     {
-|                         type: 'column',
-|                         xKey: 'beverage',
-|                         yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-|                     },
+|                     { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
+|                     { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|                     { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|                     { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
 |                 ],
 |                 legend: { spacing: 40 },
 |             },
 |         };
 |     }
-| 
+|
 |     render() {
 |         return <AgChartsReact options={this.state.options} />;
 |     }
@@ -247,66 +255,71 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 [[only-vue]]
 | ```html
 | <template>
-|     <div id="app">
-|         <ag-charts-vue :options="options"></ag-charts-vue>
-|     </div>
+|    <ag-charts-vue :options="options"></ag-charts-vue>
 | </template>
-| 
+|
 | <script>
-|     import {AgChartsVue} from 'ag-charts-vue';
-| 
+|     import { AgChartsVue } from "ag-charts-vue3";
+|
 |     export default {
 |         name: 'App',
 |         components: {
 |             AgChartsVue,
 |         },
-|         data() {
+|         data: function () {
 |             return {
-|                 options: null,
-|                 data: [
-|                     {
+|                 options: {
+|                     data: [
+|                       {
 |                         beverage: 'Coffee',
 |                         Q1: 450,
 |                         Q2: 560,
 |                         Q3: 600,
 |                         Q4: 700,
-|                     },
-|                     {
+|                       },
+|                       {
 |                         beverage: 'Tea',
 |                         Q1: 270,
 |                         Q2: 380,
 |                         Q3: 450,
 |                         Q4: 520,
-|                     },
-|                     {
+|                       },
+|                       {
 |                         beverage: 'Milk',
 |                         Q1: 180,
 |                         Q2: 170,
 |                         Q3: 190,
 |                         Q4: 200,
+|                       },
+|                     ],
+|                     title: {
+|                       text: 'Beverage Expenses',
 |                     },
-|                 ]
+|                     subtitle: {
+|                       text: 'per quarter',
+|                     },
+|                     footnote: {
+|                       text: 'Based on a sample size of 200 respondents',
+|                     },
+|                     padding: {
+|                       top: 40,
+|                       right: 40,
+|                       bottom: 40,
+|                       left: 40,
+|                     },
+|                     series: [
+|                       { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
+|                       { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|                       { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|                       { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
+|                     ],
+|                     legend: { spacing: 40 },
+|                 },
 |             };
 |         },
-|         beforeMount() {
-|             this.options = {
-|                 data: this.data,
-|                 title: {
-|                     text: 'Beverage Expenses',
-|                 },
-|                 subtitle: {
-|                     text: 'per quarter',
-|                 }, series: [{
-|                     type: 'column',
-|                     xKey: 'beverage',
-|                     yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-|                     label: {},
-|                 }],
-|             };
-|         }
 |     };
 | </script>
-| 
+|
 | <style>
 | </style>
 | ```
@@ -321,7 +334,7 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 | import { NgModule } from '@angular/core';
 | import { AgChartsAngularModule } from 'ag-charts-angular';
 | import { AppComponent } from './app.component';
-| 
+|
 | @NgModule({
 |     imports: [
 |         BrowserModule,
@@ -343,7 +356,7 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 | <html lang="en">
 |     <head>
 |         <title>AG Charts Basic Example</title>
-|         <script src="https://unpkg.com/ag-charts-community/dist/ag-charts-community.min.js">
+|         <script src="https://cdn.jsdelivr.net/npm/ag-charts-community/dist/ag-charts-community.min.js">
 |         </script>
 |     </head>
 |     <body>
@@ -368,14 +381,10 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 
 [[only-vue]]
 | ```jsx
-| import Vue from 'vue'
+| import { createApp } from 'vue'
 | import App from './App.vue'
-| 
-| Vue.config.productionTip = false
-| 
-| new Vue({
-|   render: h => h(App),
-| }).$mount('#app')
+|
+| createApp(App).mount('#app')
 | ```
 
 </div>
@@ -384,34 +393,38 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 <div class="text-right" style="margin-top: -1.5rem;">
 
 [[only-javascript]]
-| <a class="btn btn-dark mb-2 mr-3" href="https://plnkr.co/edit/OYoLfV7OfOXHyOAOiR86?p=preview" target="_blank">
+| <a class="btn btn-dark mb-2 mr-3" href="https://plnkr.co/edit/4RA1NMI4unVHfRaV?preview" target="_blank">
 |     Open in <img src="plunker_icon.svg" alt="Open in Plunker" style="width: 2.5rem" /> Plunker
 | </a>
 
 [[only-angular]]
-| <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-charts-angular-hello-world-cxth9c" target="_blank">
+| <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-charts-angular-hello-world-gjjfpt" target="_blank">
 |     Open in <img src="stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
 | </a>
 
 [[only-react]]
-| <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-charts-react-hello-world-daq5bw" target="_blank">
+| <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-charts-react-hello-world-yduhy" target="_blank">
 |     Open in <img src="stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
 | </a>
 
 
 [[only-vue]]
-| <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-charts-vue-hello-world-uqr6hk" target="_blank">
-|     Open in <img src="stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
+| <a class="btn btn-dark mb-2 mr-3" href="https://codesandbox.io/s/ag-charts-vue-hello-world-cfoehv" target="_blank">
+|     Open in <img src="codesandbox_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> CodeSandbox
 | </a>
 
 </div>
 </div>
 </section>
 
+[[only-vue]]
+| [[note]]
+| | The "Quick Look Code" above is different to the code that runs in Stackblitz - this is because Stackblitz doesn't support .vue files at this time.
+
 ## Getting Started
 
 [[only-javascript]]
-| In this article we will walk through the necessary steps to add AG Charts to an existing JavaScript project and produce your first charts.
+| In this article we will walk through the necessary steps to add AG Charts to an existing JavaScript project and produce your first chart.
 |
 | ## Your First Chart
 |
@@ -475,7 +488,8 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 |
 | If everything goes well, `ng serve` has started the web server. You can open your app at <a href="http://localhost:4200" target="_blank">localhost:4200</a>.
 |
-| As a next step, let's add the AG Charts NPM packages. Run the following command in `my-app` (you may need a new instance of the terminal):
+|
+| As a next step, let's add the AG Charts NPM packages. If you are not using the latest version of Angular check the [compatibility table](#compatible-versions) below. Run the following command in `my-app` (you may need a new instance of the terminal):
 |
 | ```bash
 | npm install --save ag-charts-community ag-charts-angular
@@ -547,7 +561,7 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 |
 | Here we'll provide the `options` we want to use for our chart, including the `series` to use to plot the data.
 |
-| The series `type` defaults to `'line'`, so the only series configuration we need to specify is to tell the series which keys to use to fetch the data to be plotted along the horizontal (x) and | vertical (y) axes.
+| The series `type` defaults to `'line'`, so the only series configuration we need to specify is to tell the series which keys to use to fetch the data to be plotted along the horizontal (x) and vertical (y) axes.
 |
 | Finally, let's add the component definition to our template. Edit `app/app.component.html` and remove the scaffold code:
 |
@@ -574,9 +588,6 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 | cd my-app
 | npm start
 | ```
-|
-| [[note]]
-| | <a href="https://medium.com/@maybekatz/introducing-npx-an-npm-package-runner-55f7d4bd282b" rel="nofollow">npx</a> comes with npm 5.2+ and higher, for older npm versions use [these instructions](https://gist.github.com/gaearon/4064d3c23a77c74a3614c498a8bb1c5f)
 |
 | If everything goes well, `npm start` has started the web server and conveniently opened a browser pointing to <a href="http://localhost:3000" target="_blank">localhost:3000</a>.
 |
@@ -634,13 +645,10 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 |
 | Here we'll provide the `options` we want to use for our chart, including the `series` to use to plot the data.
 |
-| The series `type` defaults to `'line'` so the only series configuration we need to specify is to tell the series which keys to use to fetch the data to be plotted along the horizontal (x) and | vertical (y) axes.
+| The series `type` defaults to `'line'` so the only series configuration we need to specify is to tell the series which keys to use to fetch the data to be plotted along the horizontal (x) and vertical (y) axes.
 
 [[only-vue]]
 | In this article we will walk through the necessary steps to add AG Charts to an existing Vue project and produce your first charts.
-|
-| [[note]]
-| | The "Quick Look Code" above is different to the code that runs in Stackblitz - this is because Stackblitz doesn't support .vue files at this time.
 |
 | ## Add AG Charts to Your Project
 |
@@ -671,10 +679,10 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 | Let's add the AG Charts NPM packages. Run the following command in `my-project` (you may need a new instance of the terminal):
 |
 | ```bash
-| npm install --save ag-charts-community ag-charts-vue vue-property-decorator
+| npm install --save ag-charts-community ag-charts-vue3 vue-property-decorator
 | ```
 |
-| After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step, let's add the AG Charts module. As this will be a simple example we can delete the `src/| components` directory. Our example application will live in `src/App.vue`.
+| After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step, let's add the AG Charts module. As this will be a simple example we can delete the `src/components` directory. Our example application will live in `src/App.vue`.
 |
 | Let's add the component definition to our template. Edit `src/App.vue` and replace the scaffold code:
 |
@@ -690,7 +698,7 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 |
 | ```html
 | <script>
-|   import { AgChartsVue } from 'ag-charts-vue';
+|   import { AgChartsVue } from 'ag-charts-vue3';
 |
 |   export default {
 |     name: 'App',
@@ -699,43 +707,39 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 |     },
 |     data() {
 |       return {
-|         options: null,
-|         data: [
-|           {
-|             quarter: 'Q1',
-|             spending: 450,
-|           },
-|           {
-|             quarter: 'Q2',
-|             spending: 560,
-|           },
-|           {
-|             quarter: 'Q3',
-|             spending: 600,
-|           },
-|           {
-|             quarter: 'Q4',
-|             spending: 700,
-|           },
-|         ]
+|         options: {
+|           data: [
+|             {
+|                   quarter: 'Q1',
+|                   spending: 450,
+|             },
+|             {
+|                   quarter: 'Q2',
+|                   spending: 560,
+|             },
+|             {
+|                   quarter: 'Q3',
+|                   spending: 600,
+|             },
+|             {
+|                   quarter: 'Q4',
+|                   spending: 700,
+|             },
+|           ],
+|           series: [{
+|             xKey: 'quarter',
+|             yKey: 'spending',
+|           }],
+|         },
 |       };
 |     },
-|     beforeMount() {
-|       this.options = {
-|         data: this.data,
-|         series: [{
-|           xKey: 'quarter',
-|           yKey: 'spending',
-|         }]
-|       };
-|     }
 |   };
 | </script>
 | ```
 |
 | Here we'll provide the `options` we want to use for our chart, including the `series` to use to plot the data.
 |
-| The series `type` defaults to `'line'` so the only series configuration we need to specify is to tell the series which keys to use to fetch the data to be plotted along the horizontal (x) and | vertical (y) axes.</p>
+| The series `type` defaults to `'line'` so the only series configuration we need to specify is to tell the series which keys to use to fetch the data to be plotted along the horizontal (x) and vertical (y) axes.</p>
 |
 
 The `series` property is an array because it is possible to supply multiple series (including mixed kinds!) into a single chart.
@@ -808,18 +812,37 @@ This name is more descriptive but also longer, so let's position the legend on t
 
 [[only-vue]]
 | ```diff
-| beforeMount() {
-|     this.options = {
-|         data: this.data,
-|         series: [{
-|             xKey: 'quarter',
-|             yKey: 'spending',
-| +           yName: 'Coffee Spending',
-|         }],
-| +       legend: {
-| +           position: 'bottom',
-| +       },
-|     };
+| data() {
+|   return {
+|     options: {
+|       data: [
+|         {
+|           quarter: 'Q1',
+|           spending: 450,
+|         },
+|         {
+|           quarter: 'Q2',
+|           spending: 560,
+|         },
+|         {
+|           quarter: 'Q3',
+|           spending: 600,
+|         },
+|         {
+|           quarter: 'Q4',
+|           spending: 700,
+|         },
+|       ],
+|       series: [{
+|         xKey: 'quarter',
+|         yKey: 'spending',
+| +       yName: 'Coffee Spending',
+|       }],
+| +     legend: {
+| +       position: 'bottom',
+| +     },
+|     },
+|   };
 | }
 | ```
 
@@ -890,11 +913,12 @@ Now let's try something more interesting. Let's say you want to visualise how mu
 | agCharts.AgChart.create({
 |     data: data,
 |     container: document.querySelector('#myChart'),
-|     series: [{
-|         type: 'column',
-|         xKey: 'beverage',
-|         yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-|     }],
+|     series: [
+|         { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
+|         { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|         { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|         { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
+|     ],
 | });
 | ```
 
@@ -906,11 +930,12 @@ Now let's try something more interesting. Let's say you want to visualise how mu
 | constructor() {
 |     this.options = {
 |         data: this.data,
-|         series: [{
-|             type: 'column',
-|             xKey: 'beverage',
-|             yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-|         }],
+|         series: [
+|             { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
+|             { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|             { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|             { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
+|         ],
 |     };
 | }
 | ```
@@ -923,11 +948,12 @@ Now let's try something more interesting. Let's say you want to visualise how mu
 |     this.state = {
 |         options: {
 |             data: this.data,
-|             series: [{
-|                 type: 'column',
-|                 xKey: 'beverage',
-|                 yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-|             }],
+|             series: [
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
+|             ],
 |         }
 |     }
 | }
@@ -935,19 +961,42 @@ Now let's try something more interesting. Let's say you want to visualise how mu
 
 [[only-vue]]
 | ```js
-| beforeMount() {
-|     this.options = {
-|         data: this.data,
-|         series: [{
-|             type: 'column',
-|             xKey: 'beverage',
-|             yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-|         }],
-|     };
+| data() {
+|   return {
+|     options: {
+|       data: [
+|         {
+|           beverage: 'Coffee',
+|           Q1: 450,
+|           Q2: 560,
+|           Q3: 600,
+|           Q4: 700,
+|         },
+|         {
+|           beverage: 'Tea',
+|           Q1: 270,
+|           Q2: 380,
+|           Q3: 450,
+|           Q4: 520,
+|         },
+|         {
+|           beverage: 'Milk',
+|           Q1: 180,
+|           Q2: 170,
+|           Q3: 190,
+|           Q4: 200,
+|         },
+|       ],
+|       series: [
+|           { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
+|           { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|           { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|           { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
+|       ],
+|     },
+|   };
 | }
 | ```
-
-Unlike `'line'` series charts, `'column'` series can have multiple `yKeys` which allow for stacking, in our case one block per quarter.
 
 Chart tooltips are enabled by default so you can hover over a block to see its value.
 
@@ -962,12 +1011,36 @@ We can enhance our chart by providing a label for each block segment. We can set
 | agCharts.AgChart.create({
 |     data: data,
 |     container: document.querySelector('#myChart'),
-|     series: [{
-|         type: 'column',
-|         xKey: 'beverage',
-|         yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-| +       label: {},
-|     }],
+|     series: [
+|         {
+|             type: 'column',
+|             xKey: 'beverage',
+|             yKey: 'Q4',
+|             stacked: true,
+| +           label: {},
+|         },
+|         {
+|             type: 'column',
+|             xKey: 'beverage',
+|             yKey: 'Q3',
+|             stacked: true,
+| +           label: {},
+|         },
+|         {
+|             type: 'column',
+|             xKey: 'beverage',
+|             yKey: 'Q2',
+|             stacked: true,
+| +           label: {},
+|         },
+|         {
+|             type: 'column',
+|             xKey: 'beverage',
+|             yKey: 'Q1',
+|             stacked: true,
+| +           label: {},
+|         },
+|     ],
 | });
 | ```
 
@@ -976,12 +1049,36 @@ We can enhance our chart by providing a label for each block segment. We can set
 | constructor() {
 |     this.options = {
 |         data: this.data,
-|         series: [{
-|             type: 'column',
-|             xKey: 'beverage',
-|             yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-| +           label: {},
-|         }],
+|         series: [
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q4',
+|                 stacked: true,
+| +               label: {},
+|             },
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q3',
+|                 stacked: true,
+| +               label: {},
+|             },
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q2',
+|                 stacked: true,
+| +               label: {},
+|             },
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q1',
+|                 stacked: true,
+| +               label: {},
+|             },
+|         ],
 |     };
 | }
 | ```
@@ -994,12 +1091,36 @@ We can enhance our chart by providing a label for each block segment. We can set
 |     this.state = {
 |         options: {
 |             data: this.data,
-|             series: [{
-|                 type: 'column',
-|                 xKey: 'beverage',
-|                 yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-| +               label: {},
-|             }],
+|             series: [
+|                 {
+|                     type: 'column',
+|                     xKey: 'beverage',
+|                     yKey: 'Q4',
+|                     stacked: true,
+| +                   label: {},
+|                 },
+|                 {
+|                     type: 'column',
+|                     xKey: 'beverage',
+|                     yKey: 'Q3',
+|                     stacked: true,
+| +                   label: {},
+|                 },
+|                 {
+|                     type: 'column',
+|                     xKey: 'beverage',
+|                     yKey: 'Q2',
+|                     stacked: true,
+| +                   label: {},
+|                 },
+|                 {
+|                     type: 'column',
+|                     xKey: 'beverage',
+|                     yKey: 'Q1',
+|                     stacked: true,
+| +                   label: {},
+|                 },
+|             ],
 |         }
 |     }
 | }
@@ -1007,16 +1128,64 @@ We can enhance our chart by providing a label for each block segment. We can set
 
 [[only-vue]]
 | ```diff
-| beforeMount() {
-|     this.options = {
-|         data: this.data,
-|         series: [{
-|             type: 'column',
-|             xKey: 'beverage',
-|             yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-| +           label: {},
-|         }],
-|     };
+| data() {
+|   return {
+|     options: {
+|       data: [
+|         {
+|           beverage: 'Coffee',
+|           Q1: 450,
+|           Q2: 560,
+|           Q3: 600,
+|           Q4: 700,
+|         },
+|         {
+|           beverage: 'Tea',
+|           Q1: 270,
+|           Q2: 380,
+|           Q3: 450,
+|           Q4: 520,
+|         },
+|         {
+|           beverage: 'Milk',
+|           Q1: 180,
+|           Q2: 170,
+|           Q3: 190,
+|           Q4: 200,
+|         },
+|       ],
+|       series: [
+|         {
+|           type: 'column',
+|           xKey: 'beverage',
+|           yKey: 'Q4',
+|           stacked: true,
+| +         label: {},
+|         },
+|         {
+|           type: 'column',
+|           xKey: 'beverage',
+|           yKey: 'Q3',
+|           stacked: true,
+| +         label: {},
+|         },
+|         {
+|           type: 'column',
+|           xKey: 'beverage',
+|           yKey: 'Q2',
+|           stacked: true,
+| +         label: {},
+|         },
+|         {
+|           type: 'column',
+|           xKey: 'beverage',
+|           yKey: 'Q1',
+|           stacked: true,
+| +         label: {},
+|         },
+|       ],
+|     },
+|   };
 | }
 | ```
 
@@ -1035,12 +1204,39 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 | +   subtitle: {
 | +       text: 'per quarter',
 | +   },
-|     series: [{
-|         type: 'column',
-|         xKey: 'beverage',
-|         yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-|         label: {},
-|     }],
+| +   footnote: {
+| +       text: 'Based on a sample size of 200 respondents',
+| +   },
+|     series: [
+|         {
+|             type: 'column',
+|             xKey: 'beverage',
+|             yKey: 'Q4',
+|             stacked: true,
+|             label: {},
+|         },
+|         {
+|             type: 'column',
+|             xKey: 'beverage',
+|             yKey: 'Q3',
+|             stacked: true,
+|             label: {},
+|         },
+|         {
+|             type: 'column',
+|             xKey: 'beverage',
+|             yKey: 'Q2',
+|             stacked: true,
+|             label: {},
+|         },
+|         {
+|             type: 'column',
+|             xKey: 'beverage',
+|             yKey: 'Q1',
+|             stacked: true,
+|             label: {},
+|         },
+|     ],
 | });
 | ```
 
@@ -1055,12 +1251,39 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 | +       subtitle: {
 | +           text: 'per quarter',
 | +       },
-|         series: [{
-|             type: 'column',
-|             xKey: 'beverage',
-|             yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-|             label: {},
-|         }],
+| +       footnote: {
+| +           text: 'Based on a sample size of 200 respondents',
+| +       },
+|         series: [
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q4',
+|                 stacked: true,
+|                 label: {},
+|             },
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q3',
+|                 stacked: true,
+|                 label: {},
+|             },
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q2',
+|                 stacked: true,
+|                 label: {},
+|             },
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q1',
+|                 stacked: true,
+|                 label: {},
+|             },
+|         ],
 |     };
 | }
 | ```
@@ -1079,12 +1302,39 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 | +           subtitle: {
 | +               text: 'per quarter',
 | +           },
-|             series: [{
-|                 type: 'column',
-|                 xKey: 'beverage',
-|                 yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-|                 label: {},
-|             }],
+| +           footnote: {
+| +               text: 'Based on a sample size of 200 respondents',
+| +           },
+|             series: [
+|                 {
+|                     type: 'column',
+|                     xKey: 'beverage',
+|                     yKey: 'Q4',
+|                     stacked: true,
+|                     label: {},
+|                 },
+|                 {
+|                     type: 'column',
+|                     xKey: 'beverage',
+|                     yKey: 'Q3',
+|                     stacked: true,
+|                     label: {},
+|                 },
+|                 {
+|                     type: 'column',
+|                     xKey: 'beverage',
+|                     yKey: 'Q2',
+|                     stacked: true,
+|                     label: {},
+|                 },
+|                 {
+|                     type: 'column',
+|                     xKey: 'beverage',
+|                     yKey: 'Q1',
+|                     stacked: true,
+|                     label: {},
+|                 },
+|             ],
 |         }
 |     }
 | }
@@ -1092,22 +1342,73 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 
 [[only-vue]]
 | ```diff
-| beforeMount() {
-|     this.options = {
-|         data: this.data,
-| +       title: {
-| +           text: 'Beverage Expenses',
-| +       },
-| +       subtitle: {
-| +           text: 'per quarter',
-| +       },
-|         series: [{
-|             type: 'column',
-|             xKey: 'beverage',
-|             yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-|             label: {},
-|         }],
-|     };
+| data() {
+|   return {
+|     options: {
+|       data: [
+|         {
+|           beverage: 'Coffee',
+|           Q1: 450,
+|           Q2: 560,
+|           Q3: 600,
+|           Q4: 700,
+|         },
+|         {
+|           beverage: 'Tea',
+|           Q1: 270,
+|           Q2: 380,
+|           Q3: 450,
+|           Q4: 520,
+|         },
+|         {
+|           beverage: 'Milk',
+|           Q1: 180,
+|           Q2: 170,
+|           Q3: 190,
+|           Q4: 200,
+|         },
+|       ],
+| +     title: {
+| +       text: 'Beverage Expenses',
+| +     },
+| +     subtitle: {
+| +       text: 'per quarter',
+| +     },
+| +     footnote: {
+| +       text: 'Based on a sample size of 200 respondents',
+| +     },
+|       series: [
+|         {
+|           type: 'column',
+|           xKey: 'beverage',
+|           yKey: 'Q4',
+|           stacked: true,
+|           label: {},
+|         },
+|         {
+|           type: 'column',
+|           xKey: 'beverage',
+|           yKey: 'Q3',
+|           stacked: true,
+|           label: {},
+|         },
+|         {
+|           type: 'column',
+|           xKey: 'beverage',
+|           yKey: 'Q2',
+|           stacked: true,
+|           label: {},
+|         },
+|         {
+|           type: 'column',
+|           xKey: 'beverage',
+|           yKey: 'Q1',
+|           stacked: true,
+|           label: {},
+|         },
+|       ],
+|     },
+|   };
 | }
 | ```
 
@@ -1128,14 +1429,25 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 | import * as agCharts from 'ag-charts-community';
 | ```
 |
-| Creating charts is the done using the `agCharts.AgChart` factory as shown in the example above, i.e.
+| Creating charts is done using the `agCharts.AgChart` factory as shown in the example above, i.e.
 |
 | ```js
 | agCharts.AgChart.create(options);
 | ```
 
+[[only-angular]]
+|## Compatible Versions
+|
+|The table below gives the ranges of compatible versions of AG Charts with Angular versions.
+|
+| [[note]]
+| | AG Charts Legacy is only required for apps on Angular v8-11 that wish to use AG Charts v6+. See [AG Grid Legacy](/angular-compatibility/#ag-grid-legacy) for more details about our legacy packages.
+|
+| | Angular | AG Charts | AG Charts Package   |
+| | --------| --------- | --------------------|
+| | 8 - 11  | 2 - 5     | ag-charts-angular   |
+| | 8 - 11  | 6+        | ag-charts-angular-legacy   |
+| | 12+     | 6+        | ag-charts-angular   |
+|
+
 Now that you've had a taste of what it's like to use AG Charts, we encourage you to explore our documentation to learn more.
-
-## Next Up
-
-Continue to the next section to see the [API Reference](../charts-api/).

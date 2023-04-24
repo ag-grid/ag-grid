@@ -1,20 +1,25 @@
-import React, {Component} from 'react';
-import * as PropTypes from "prop-types";
-import {connect} from "react-redux";
-import {bindActionCreators} from 'redux';
-import {AgGridReact} from "@ag-grid-community/react";
-import {actions} from './actions/fileActions.jsx'
+import React, { Component } from 'react';
+import { connect } from "react-redux";
+import { bindActionCreators } from 'redux';
+import { AgGridReact } from "@ag-grid-community/react";
+import { actions } from './actions/fileActions.jsx'
 
-import {AllModules} from "@ag-grid-enterprise/all-modules";
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-grid.css";
+import "@ag-grid-community/styles/ag-theme-alpine.css";
 
 import FileCellRenderer from './FileCellRenderer.jsx';
 
+import { ModuleRegistry } from '@ag-grid-community/core';
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, MenuModule]);
+
 class FileBrowser extends Component {
 
-  colDefs = [{field: "dateModified"}, {field: "size"}];
+  colDefs = [{ field: "dateModified" }, { field: "size" }];
 
   autoGroupColumnDef = {
     headerName: "Files",
@@ -23,19 +28,13 @@ class FileBrowser extends Component {
     width: 250,
     cellRendererParams: {
       suppressCount: true,
-      innerRenderer: "fileCellRenderer"
+      innerRenderer: FileCellRenderer
     }
-  };
-
-  modules = AllModules;
-
-  frameworkComponents = {
-    fileCellRenderer: FileCellRenderer
   };
 
   render() {
     return (
-      <div style={{height: '100%'}} className="ag-theme-alpine">
+      <div style={{ height: '100%' }} className="ag-theme-alpine">
         <AgGridReact
           columnDefs={this.colDefs}
           rowData={this.props.files}
@@ -45,11 +44,8 @@ class FileBrowser extends Component {
           autoGroupColumnDef={this.autoGroupColumnDef}
           onGridReady={params => params.api.sizeColumnsToFit()}
           getContextMenuItems={this.getContextMenuItems}
-          immutableData={true}
-          modules={this.modules}
-          getRowNodeId={data => data.id}
+          getRowId={params => params.data.id}
           onRowDragEnd={this.onRowDragEnd}
-          frameworkComponents={this.frameworkComponents}
         >
         </AgGridReact>
       </div>
@@ -57,7 +53,7 @@ class FileBrowser extends Component {
   }
 
   onRowDragEnd = (event) => {
-    if(event.overNode.data.file) return;
+    if (event.overNode.data.file) return;
 
     let movingFilePath = event.node.data.filePath;
     let targetPath = event.overNode.data.filePath;
@@ -83,11 +79,7 @@ class FileBrowser extends Component {
   };
 }
 
-FileBrowser.contextTypes = {
-    store: PropTypes.object                         // must be supplied when using redux with AgGridReact
-};
-
-const mapStateToProps = (state) => ({files: state.files});
-const mapDispatchToProps = (dispatch) => ({actions: bindActionCreators(actions, dispatch)});
+const mapStateToProps = (state) => ({ files: state.files });
+const mapDispatchToProps = (dispatch) => ({ actions: bindActionCreators(actions, dispatch) });
 
 export default connect(mapStateToProps, mapDispatchToProps)(FileBrowser);

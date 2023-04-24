@@ -1,0 +1,62 @@
+.buttons-bar {
+    display: inline-block;
+}
+
+.buttons-bar button {
+    margin-bottom: 10px;
+    margin-right: 10px;
+}
+
+.top-level {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.my-grid {
+    flex-grow: 1;
+}
+
+.my-tool-panel {
+    padding: 20px;
+}
+
+.my-tool-panel-value {
+    padding: 20px;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.my-status-panel {
+    padding: 10px;
+}
+
+.my-status-panel-value {
+    padding: 10px;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.my-loading-overlay {
+    font-weight: bold;
+    font-size: 30px;
+}
+
+.my-no-rows-overlay {
+    font-weight: bold;
+    font-size: 30px;
+    background-color: white;
+    border: 1px solid black;
+    padding: 20px;
+}
+
+.my-spinner {
+    width: 100px;
+}
+
+.my-tooltip {
+    border: 1px solid black;
+    border-radius: 4pm;
+    background-color: white;
+    padding: 10px;
+}

@@ -32,8 +32,9 @@ var VueComponentFactory = /** @class */ (function () {
         component.$mount();
         return component;
     };
-    VueComponentFactory.searchForComponentInstance = function (parent, component, maxDepth) {
+    VueComponentFactory.searchForComponentInstance = function (parent, component, maxDepth, suppressError) {
         if (maxDepth === void 0) { maxDepth = 10; }
+        if (suppressError === void 0) { suppressError = false; }
         var componentInstance = null;
         var currentParent = parent.$parent;
         var depth = 0;
@@ -44,7 +45,7 @@ var VueComponentFactory = /** @class */ (function () {
             componentInstance = currentParent.$options.components[component];
             currentParent = currentParent.$parent;
         }
-        if (!componentInstance) {
+        if (!componentInstance && !suppressError) {
             console.error("Could not find component with name of " + component + ". Is it in Vue.components?");
             return null;
         }

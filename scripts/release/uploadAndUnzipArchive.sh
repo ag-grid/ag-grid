@@ -1,9 +1,9 @@
 #!/bin/bash
 
-if [ "$#" -lt 2 ]
+if [ "$#" -lt 1 ]
   then
-    echo "You must supply a release version and archive file"
-    echo "For example: ./scripts/release/uploadAndUnzipArchive.sh.sh 19.1.2 archive_20181120_19.1.3.zip"
+    echo "You must supply a release version"
+    echo "For example: ./scripts/release/uploadAndUnzipArchive.sh 19.1.2"
     exit 1
 fi
 
@@ -12,27 +12,31 @@ function checkFileExists {
     if ! [[ -f "$file" ]]
     then
         echo "File [$file] doesn't exist - exiting script.";
-        exit;
+        exit 1;
     fi
 }
 
 VERSION=$1
-ARCHIVE=$2
 
-# a little safety check
+export SSH_LOCATION=$SSH_FILE
+
+# a few safety checks
 if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
 then
     echo "Version isn't in the expected format. Valid format is: Number.Number.number. For example 19.1.2";
-    exit;
+    exit 1;
 fi
 
-checkFileExists $ARCHIVE
-#checkFileExists ~/aggrid/aggrid.txt
-checkFileExists ~/.ssh/ag_ssh
-checkFileExists ~/Documents/aggrid/aggrid/.creds
+if [ -z "$SSH_LOCATION" ]
+then
+      echo "\$SSH_LOCATION is not set"
+      exit 1;
+fi
+
+ARCHIVE="archive_`date +%Y%m%d`_$VERSION.tar.gz"
 
 # $3 is optional skipWarning argument
-if [ "$3" != "skipWarning" ]; then
+if [ "$2" != "skipWarning" ]; then
     while true; do
         echo    "*********************************** WARNING ************************************************"
         read -p "This script will DELETE the existing archive of $VERSION (if it exists) and will REPLACE it. Do you wish to continue [y/n]? " yn
@@ -44,17 +48,23 @@ if [ "$3" != "skipWarning" ]; then
     done
 fi
 
-#USERNAME=`awk '{print $1}' ~/aggrid/aggrid.txt`
-#PASSWORD=`awk '{print $2}' ~/aggrid/aggrid.txt`
-
 # delete dir if it exists - can ignore dir not found error
-ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "cd public_html/archive/ && rm -r $VERSION"
+echo "ssh -i $SSH_LOCATION -p $SSH_PORT $HOST \"cd $PUBLIC_HTML_PATH/archive/ && [[ -d $VERSION ]] && rm -r $VERSION\""
+ssh -i $SSH_LOCATION -p $SSH_PORT $HOST "cd $PUBLIC_HTML_PATH/archive/ && [[ -d $VERSION ]] && rm -r $VERSION"
 
 # upload file
-curl --netrc-file ~/Documents/aggrid/aggrid/.creds --ftp-create-dirs -T $ARCHIVE ftp://ag-grid.com/$VERSION/
+echo "ssh -i $SSH_LOCATION -p $SSH_PORT $HOST \"mkdir -p $PUBLIC_HTML_PATH/archive/$VERSION\""
+ssh -i $SSH_LOCATION -p $SSH_PORT $HOST "mkdir -p $PUBLIC_HTML_PATH/archive/$VERSION"
+echo "scp -i $SSH_LOCATION -P $SSH_PORT $ARCHIVE $HOST:$PUBLIC_HTML_PATH/archive/$VERSION/"
+scp -i $SSH_LOCATION -P $SSH_PORT $ARCHIVE $HOST:$PUBLIC_HTML_PATH/archive/$VERSION/
 
-#unzip archive
-ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "cd public_html/archive/$VERSION && unzip $ARCHIVE"
+# unzip archive
+echo "ssh -i $SSH_LOCATION -p $SSH_PORT $HOST \"cd $PUBLIC_HTML_PATH/archive/$VERSION && tar -m -xf $ARCHIVE\""
+ssh -i $SSH_LOCATION -p $SSH_PORT $HOST "cd $PUBLIC_HTML_PATH/archive/$VERSION && tar -m -xf $ARCHIVE"
 
 #update folder permissions (default is 777 - change to 755)
-ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "chmod -R 755 public_html/archive/$VERSION"
+echo "ssh -i $SSH_LOCATION -p $SSH_PORT $HOST \"chmod -R 755 $PUBLIC_HTML_PATH/archive/$VERSION\""
+ssh -i $SSH_LOCATION -p $SSH_PORT $HOST "chmod -R 755 $PUBLIC_HTML_PATH/archive/$VERSION"
+
+
+

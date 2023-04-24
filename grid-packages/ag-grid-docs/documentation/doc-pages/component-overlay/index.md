@@ -4,61 +4,18 @@ title: "Overlay Component"
 
 Overlay components allow you to add your own overlays to AG Grid. Use these when the provided overlays do not meet your requirements.
 
-## Loading Rows Overlay Interface
+## Simple Loading Overlay Component
 
-Implement this interface to provide a custom overlay when loading rows.
-
-```ts
-interface ILoadingOverlayComp {
-    // mandatory methods
-
-    // The init(params) method is called on the overlay once. See below for details on the parameters.
-    init(params: ILoadingOverlayParams): void;
-
-    // Returns the DOM element for this overlay
-    getGui(): HTMLElement;
-}
-```
-
-```ts
-interface ILoadingOverlayParams {
-    // an optional template for the loading rows overlay
-    loadingRowsTemplate?: string
-
-    // The grid API
-    api: any;
-}
-```
-
-## No Rows Overlay Interface
-
-Implement this interface to provide a custom overlay when no rows loaded.
-
-```ts
-interface INoRowsOverlayComp {
-    // mandatory methods
-
-    // The init(params) method is called on the overlay once. See below for details on the parameters.
-    init(params: INoRowsOverlayParams): void;
-
-    // Returns the DOM element for this overlay
-    getGui(): HTMLElement;
-}
-```
-
-```ts
-interface INoRowsOverlayParams {
-    // an optional template for the no rows overlay
-    noRowsTemplate?: string
-
-    // The grid API
-    api: any;
-}
-```
-
-## Registering Overlay Components
-
-See the section [registering custom components](../components/#registering-custom-components) for details on registering and using custom overlays.
+md-include:simple-loading-overlay-javascript.md
+md-include:simple-loading-overlay-angular.md
+md-include:simple-loading-overlay-react.md
+md-include:simple-loading-overlay-vue.md
+ 
+## Simple No-Rows Overlay Component
+md-include:simple-no-rows-overlay-javascript.md
+md-include:simple-no-rows-overlay-angular.md
+md-include:simple-no-rows-overlay-react.md
+md-include:simple-no-rows-overlay-vue.md
 
 ## Example: Custom Overlay Components
 
@@ -70,4 +27,16 @@ The example below demonstrates how to provide custom overlay components to the g
 - **Custom No Rows Overlay Renderer Parameters** are supplied using `gridOptions.noRowsOverlayComponentParams`.
 
 <grid-example title='Custom Overlay Components' name='custom-overlay-components' type='generated' options='{ "extras": ["fontawesome"] }'></grid-example>
+  
+md-include:component-interface-javascript.md
+md-include:component-interface-angular.md
+md-include:component-interface-react.md
+md-include:component-interface-vue.md
+ 
+<interface-documentation interfaceName='ILoadingOverlayParams' config='{"hideHeader":false, "headerLevel":3}' ></interface-documentation>
+<interface-documentation interfaceName='INoRowsOverlayParams' config='{"hideHeader":false, "headerLevel":3}' ></interface-documentation>
+
+## Registering Overlay Components
+
+See the section [registering custom components](/components/#registering-custom-components) for details on registering and using custom overlays.
 

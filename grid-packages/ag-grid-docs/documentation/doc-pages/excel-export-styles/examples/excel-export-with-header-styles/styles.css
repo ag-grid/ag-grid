@@ -1,0 +1,26 @@
+.page-wrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.grid-wrapper {
+    flex: 1 1 0px;
+}
+
+.ag-header-group-cell,
+.ag-header-cell {
+    border-bottom: 1px solid #ffab00;
+}
+
+.gold-header {
+    background-color: gold;
+}
+
+.silver-header {
+    background-color: silver
+}
+
+.bronze-header {
+    background-color: chocolate;
+}

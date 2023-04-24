@@ -1,3 +1,29 @@
+// Fix styles for heading anchor lists whilst working on .ag-styles
+.apiDocumentationOuter {
+    :global(.anchor) {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: translateX(-100%);
+        padding-right: 4px;
+
+        svg {
+            visibility: hidden;
+        }
+    }
+
+    h1:hover,
+    h2:hover,
+    h3:hover,
+    h4:hover,
+    h5:hover,
+    h6:hover {
+        :global(.anchor) svg {
+            visibility: visible;
+        }
+    }
+}
+
 .breadcrumbs {
     margin-bottom: 1rem;
 
@@ -7,13 +33,103 @@
 }
 
 .reference {
+    height: 1px; // needed for divs to fit table cell heights correctly
+
     &__name {
         font-weight: bold;
         color: inherit;
         word-break: keep-all;
+        word-wrap: normal;
+    }
+
+    &__name__wrap {
+        word-break: break-word;
     }
 
     &__required {
         color: red;
+    }
+
+    &__type {
+        color: $primary;
+        font-size: 0.9rem;
+        white-space: nowrap;
+    }
+
+    &__property {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__property-type {
+        color: $primary;
+        font-size: 0.9rem;
+        white-space: break-spaces;
+    }
+
+    &__expander-cell {
+        padding: 0 !important;
+        width: 1.1rem !important;
+
+        + td {
+            width: 280px;
+        }
+    }
+
+    &__name-cell__wrap {
+        width: 100%;
+    }
+
+    &__expander {
+        composes: pt-2 from global;
+
+        background-color: $light;
+        height: 100%;
+        padding: 0 1px;
+        cursor: pointer;
+
+        svg {
+            width: 1em;
+            margin-left: 0.05em;
+            vertical-align: middle;
+            transition: transform 0.33s ease-in-out;
+        }
+
+        &.isExpanded svg {
+            transform: rotate(90deg);
+        }
+    }
+
+    &__code-sample {
+        composes: my-2 from global;
+    }
+
+    // Fix styles for heading anchor links whilst working on .ag-styles
+    :global(.anchor) {
+        margin-left: 4px;
+
+        svg {
+            visibility: hidden;
+        }
+    }
+
+    // Fix styles for heading anchor links whilst working on .ag-styles
+    h1:hover,
+    h2:hover,
+    h3:hover,
+    h4:hover,
+    h5:hover,
+    h6:hover {
+        :global(.anchor) svg {
+            visibility: visible;
+        }
+    }
+
+    :global(a.docs-header-icon) {
+        font-size: var(--font-size-large) !important; // !important for .ag-styles specificity
+
+        svg {
+            top: -0.5em;
+        }
     }
 }

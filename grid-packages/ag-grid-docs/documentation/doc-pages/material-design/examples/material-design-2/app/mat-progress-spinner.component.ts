@@ -1,5 +1,6 @@
-import {Component} from "@angular/core";
-import {ICellRendererAngularComp} from "@ag-grid-community/angular";
+import { Component } from "@angular/core";
+import { ICellRendererAngularComp } from "@ag-grid-community/angular";
+import { ICellRendererParams } from "@ag-grid-community/core";
 
 @Component({
     selector: 'progress-component',
@@ -30,13 +31,13 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
     `]
 })
 export class MatProgressSpinnerComponent implements ICellRendererAngularComp {
-    params: any;
+    params!: ICellRendererParams;
     value: any = null;
 
     color = 'primary';
     mode = 'indeterminate';
 
-    agInit(params: any): void {
+    agInit(params: ICellRendererParams): void {
         this.params = params;
         this.value = this.params.value;
     }

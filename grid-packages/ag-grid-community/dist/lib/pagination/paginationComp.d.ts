@@ -1,7 +1,6 @@
 import { Component } from "../widgets/component";
 export declare class PaginationComp extends Component {
     private paginationProxy;
-    private rowModel;
     private rowNodeBlockLoader;
     private btFirst;
     private btPrevious;
@@ -15,9 +14,11 @@ export declare class PaginationComp extends Component {
     private previousAndFirstButtonsDisabled;
     private nextButtonDisabled;
     private lastButtonDisabled;
+    private areListenersSetup;
     constructor();
     protected postConstruct(): void;
     private onPaginationChanged;
+    private setupListeners;
     private onBtFirst;
     private setCurrentPageLabel;
     private formatNumber;
@@ -26,7 +27,9 @@ export declare class PaginationComp extends Component {
     private onBtPrevious;
     private onBtLast;
     private enableOrDisableButtons;
+    private toggleButtonDisabled;
     private updateRowLabels;
     private isZeroPagesToDisplay;
     private setTotalLabels;
+    private setTotalLabelsToZero;
 }

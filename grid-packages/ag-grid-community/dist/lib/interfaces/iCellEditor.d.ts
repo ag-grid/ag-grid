@@ -1,9 +1,8 @@
-import { Column } from "../entities/column";
-import { RowNode } from "../entities/rowNode";
-import { GridApi } from "../gridApi";
-import { ColumnApi } from "../columnController/columnApi";
 import { ColDef } from "../entities/colDef";
+import { Column } from "../entities/column";
+import { AgGridCommon } from "./iCommon";
 import { IPopupComponent } from "./iPopupComponent";
+import { IRowNode } from "./iRowNode";
 export interface ICellEditor {
     /**
      * Return the final value - called by the grid once after editing is complete
@@ -19,7 +18,7 @@ export interface ICellEditor {
      * should cover the cell, or "under" if it should be positioned below leaving the
      * cell value visible. If this method is not present, the default is "over".
      */
-    getPopupPosition?(): string | undefined;
+    getPopupPosition?(): 'over' | 'under' | undefined;
     /** Gets called once after initialised. If you return true, the editor will not be
      * used and the grid will continue editing. Use this to make a decision on editing
      * inside the init() function, eg maybe you want to only start editing if the user
@@ -39,30 +38,50 @@ export interface ICellEditor {
      * If doing full line edit, then gets called when focus is leaving the editor
      */
     focusOut?(): void;
-    /** If using a framework this returns the underlying component instance, so you can call
-     * methods on it if you want.
+    /**
+     * A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.
+     * This method is called each time the edit component is activated.
+     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.
      */
-    getFrameworkComponentInstance?(): any;
+    afterGuiAttached?(): void;
 }
-export interface ICellEditorParams {
-    value: any;
-    keyPress: number | null;
+export interface ICellEditorParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** Current value of the cell */
+    value: TValue;
+    /** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable
+     *  characters appear here */
+    eventKey: string | null;
+    /** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if
+     *  shift + letter 'a' only printable characters appear here */
     charPress: string | null;
+    /** Grid column */
     column: Column;
-    colDef: ColDef;
-    node: RowNode;
-    data: any;
+    /** Column definition */
+    colDef: ColDef<TData>;
+    /** Row node for the cell */
+    node: IRowNode<TData>;
+    /** Row data */
+    data: TData;
+    /** Editing row index */
     rowIndex: number;
-    api: GridApi | null | undefined;
-    columnApi: ColumnApi | null | undefined;
+    /** If doing full row edit, this is true if the cell is the one that started the edit
+     *  (eg it is the cell the use double clicked on, or pressed a key on etc). */
     cellStartedEdit: boolean;
-    context: any;
-    $scope: any;
+    /** callback to tell grid a key was pressed - useful to pass control key events (tab,
+     *  arrows etc) back to grid - however you do */
     onKeyDown: (event: KeyboardEvent) => void;
+    /** Callback to tell grid to stop editing the current cell. Call with input parameter
+     * true to prevent focus from moving to the next cell after editing stops in case the
+     * grid property `enterMovesDownAfterEdit=true` */
     stopEditing: (suppressNavigateAfterEdit?: boolean) => void;
+    /** A reference to the DOM element representing the grid cell that your component
+     *  will live inside. Useful if you want to add event listeners or classes at this level.
+     *  This is the DOM element that gets browser focus when selecting cells. */
     eGridCell: HTMLElement;
+    /** Utility function to parse a value using the column's `colDef.valueParser` */
     parseValue: (value: any) => any;
+    /** Utility function to format a value using the column's `colDef.valueFormatter` */
     formatValue: (value: any) => any;
 }
-export interface ICellEditorComp extends ICellEditor, IPopupComponent<ICellEditorParams> {
+export interface ICellEditorComp<TData = any> extends ICellEditor, IPopupComponent<ICellEditorParams<TData>> {
 }

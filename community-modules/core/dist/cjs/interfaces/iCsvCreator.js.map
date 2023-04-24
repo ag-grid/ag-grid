@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../src/ts/interfaces/iCsvCreator.ts"],"names":[],"mappings":";;;;;;AAAA;AACA;AACA","file":"iCsvCreator.js","sourcesContent":["import { CsvExportParams } from \"./exportParams\";\n\nexport interface ICsvCreator {\n    getDataAsCsv(params?: CsvExportParams): string;\n    exportDataAsCsv(params?: CsvExportParams): string;\n}\n"]}

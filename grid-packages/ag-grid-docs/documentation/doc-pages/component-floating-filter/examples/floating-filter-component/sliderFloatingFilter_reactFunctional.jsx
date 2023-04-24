@@ -1,12 +1,7 @@
-import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useState } from 'react';
 
 export default forwardRef((props, ref) => {
     const [currentValue, setCurrentValue] = useState(0);
-
-    useEffect(() => {
-        let valueToUse = (currentValue === "0") ? null : currentValue;
-        props.parentFilterInstance(instance => instance.onFloatingFilterChanged('greaterThan', valueToUse));
-    }, [currentValue]);
 
     useImperativeHandle(ref, () => {
         return {
@@ -20,14 +15,10 @@ export default forwardRef((props, ref) => {
 
     const valueChanged = event => {
         setCurrentValue(event.target.value);
-    };
-
-    const style = {
-        border: '2px solid #22ff22',
-        borderRadius: '5px',
-        backgroundColor: '#bbffbb',
-        width: '200px',
-        height: '50px'
+        let valueForMainFilter = (event.target.value === "0") ? null : event.target.value;
+        props.parentFilterInstance(instance => {
+            instance.onFloatingFilterChanged('greaterThan', valueForMainFilter);
+        });
     };
 
     return (

@@ -1,16 +1,9 @@
 const gulp = require('gulp');
-const {series} = gulp;
-const gridToNg = require('./updateGridAndColumnProperties');
 const replace = require('gulp-replace');
 var childProcess = require('child_process');
 
-
-const updateProperties = (callback) => {
-    gridToNg.updatePropertiesSrc(callback);
-};
-
 const copyFromModuleSource = () => {
-    return gulp.src(["**/*"], {cwd: '../../community-modules/angular/projects/ag-grid-angular/src'})
+    return gulp.src(["**/*"], {cwd: '../../grid-community-modules/angular/projects/ag-grid-angular/src'})
         .pipe(replace('@ag-grid-community/core', 'ag-grid-community'))
         .pipe(gulp.dest("./projects/ag-grid-angular/src", {cwd: '.'}));
 };
@@ -28,6 +21,4 @@ const watch = () => {
 };
 
 gulp.task('copy-from-module-source', copyFromModuleSource);
-gulp.task('update-properties', updateProperties);
-gulp.task('watch', series('update-properties', watch));
-gulp.task('default', series('watch'));
+gulp.task('default', watch);

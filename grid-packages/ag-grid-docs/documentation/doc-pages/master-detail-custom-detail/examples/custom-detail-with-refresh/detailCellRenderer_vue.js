@@ -1,6 +1,4 @@
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
     template: `
         <div>
             <form>
@@ -14,19 +12,18 @@ export default Vue.extend({
                     <p>
                         <label>
                             Last Updated:<br>
-                            {{now}}
+                            {{ now }}
                         </label>
                     </p>
                 </div>
             </form>
         </div>
-    `,data: function () {
+    `,
+    data: function () {
         return {
             callsCount: 0,
             now: ''
         };
-    },
-    beforeMount() {
     },
     mounted() {
         this.callsCount = this.params.data.calls;
@@ -37,11 +34,7 @@ export default Vue.extend({
         refresh(params) {
             // check and see if we need to get the grid to tear this
             // component down and update it again
-            if (params.data.calls!=this._data.callsCount) {
-                return false;
-            } else {
-                return true;
-            }
+            return params.data.calls === this.params.data.callsCount;
         }
     }
-});
+};

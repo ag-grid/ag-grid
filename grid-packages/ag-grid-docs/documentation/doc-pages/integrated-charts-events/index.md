@@ -1,100 +1,38 @@
 ---
 title: "Chart Events"
+enterprise: true
 ---
 
 There are several events which are raised at different points in the lifecycle of a chart.
 
 ## ChartCreated
 
-This event is raised whenever a chart is first created.
+The `ChartCreated` event is raised whenever a chart is first created.
 
-```ts
-interface ChartCreated {
-    type: string; // 'chartCreated'
-    chartId: string;
-    chartModel: ChartModel;
-    api: GridApi;
-    columnApi: ColumnApi;
-}
-```
+<interface-documentation interfaceName='ChartCreated' ></interface-documentation>
 
-## `ChartRangeSelectionChanged`
+## ChartRangeSelectionChanged
 
 This is raised any time that the data range used to render the chart from is changed, e.g. by using the range selection handle or by making changes in the Data tab of the configuration sidebar. This event contains a `cellRange` object that gives you information about the range, allowing you to recreate the chart.
 
-```ts
-interface ChartRangeSelectionChanged {
-    type: string; // 'chartRangeSelectionChanged'
-    id: string;
-    chartId: string;
-    cellRange: CellRangeParams;
-    api: GridApi;
-    columnApi: ColumnApi;
-}
-
-interface CellRangeParams {
-    // start row
-    rowStartIndex: number | null;
-    rowStartPinned?: string;
-
-    // end row
-    rowEndIndex: number | null;
-    rowEndPinned?: string;
-
-    // columns
-    columns: (string | Column)[];
-}
-```
+<interface-documentation interfaceName='ChartRangeSelectionChanged' ></interface-documentation>
 
 ## ChartOptionsChanged
 
 Formatting changes made by users through the Format Panel will raise the `ChartOptionsChanged` event:
 
+<interface-documentation interfaceName='ChartOptionsChanged' ></interface-documentation>
 
-```ts
-interface ChartOptionsChanged {
-    type: string; // 'chartOptionsChanged'
-    chartId: string;
-    chartType: ChartType;
-    chartThemeName: string;
-    chartOptions: ChartOptions;
-    api: GridApi;
-    columnApi: ColumnApi;
-}
-
-type ChartType =
-    'groupedColumn' |
-    'stackedColumn' |
-    'normalizedColumn' |
-    'groupedBar' |
-    'stackedBar' |
-    'normalizedBar' |
-    'line' |
-    'scatter' |
-    'bubble' |
-    'pie' |
-    'doughnut' |
-    'area' |
-    'stackedArea' |
-    'normalizedArea';
-```
 
 Here the `chartThemeName` will be set to the name of the currently selected theme, which will be either
-one of the [Provided Themes](../integrated-charts-customisation/#provided-themes) or
-a [Custom Theme](../integrated-charts-customisation/#custom-chart-themes) if used.
+one of the [Provided Themes](/integrated-charts-customisation/#provided-themes) or
+a [Custom Theme](/integrated-charts-customisation/#custom-chart-themes) if used.
 
 ## ChartDestroyed
 
 This is raised when a chart is destroyed.
 
-```ts
-interface ChartDestroyed {
-    type: string; // 'chartDestroyed'
-    chartId: string;
-    api: GridApi;
-    columnApi: ColumnApi;
-}
-```
+<interface-documentation interfaceName='ChartDestroyed' ></interface-documentation>
 
 ## Example: Chart Events
 
@@ -104,29 +42,54 @@ The following example demonstrates when the described events occur by writing to
 
 - Shrink or expand the selection by a few cells to see the "Changed range selection of chart with ID id-xxxxxxxxxxxx" logged.
 
-- Click the hamburger icon inside the chart dialog to show chart settings and switch to a column chart. Notice that a "Changed options of chart with ID id-xxxxxxxxxxxxx" message has been logged to the console.
+- Click the [Chart Tool Panels Button](/integrated-charts-chart-tool-panels) inside the chart dialog to show chart settings and switch to a column chart. Notice that a "Changed options of chart with ID id-xxxxxxxxxxxxx" message has been logged to the console.
 
 - Close the chart dialog to see the "Destroyed chart with ID id-xxxxxxxxxxx" message logged.
 
-<grid-example title='Events' name='events' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Events' name='events' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
 ## Accessing Chart Instance
 
-Charts in the grid are produced by the [AG Charts](../charts/) library, which is integrated
+Charts in the grid are produced by the [Standalone Charts](/charts-overview/) library, which is integrated
 directly into the grid for your convenience. In some advanced use cases, you may wish to access the chart
-instance that is produced by AG Charts, in order to interact with the chart directly.
+instance that is produced by Standalone Charts, in order to interact with the chart directly.
 
-The chart instance can be found inside the `ChartModel`, which is provided in the [`ChartCreated`](#chartcreated) event.
+The chart instance can be obtained from the `chartRef` using the `getChartRef(chartId)` API.
+
+<api-documentation source='grid-api/api.json' section='charts' names='["getChartRef"]'></api-documentation>
+
+Here is the implementation:
+
+```js
+function onChartCreated(event) {
+    const chartRef = gridOptions.api.getChartRef(event.chartId);
+    const chart = chartRef.chart;
+}
+```
+Note in the snippet above, the `chartId` is obtained from the [`ChartCreated`](#chartcreated) event which is supplied to the `onChartCreated` callback. The `chartId` is provided in all chart events.
+
+## Updating Chart Instance
+
+[[only-javascript]]
+|The chart instance can be updated using the `AgChart.updateDelta()` method, as described in the [Standalone Charts - API > Create/Update](/charts-api-create-update/#delta-options-update) section.
+
+[[only-frameworks]]
+|The chart instance can be updated using the `AgChart.updateDelta()` method, as described in the [Standalone Charts - API > Create/Update](/charts-api-create-update/#delta-options-update-1) section.
 
 The example below shows how the chart instance can be used, creating a subtitle and updating
 it dynamically as you change the range selection.
 
-<grid-example title='Accessing Chart Instance' name='accessing-chart-instance' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Accessing & Updating Chart Instance' name='accessing-chart-instance' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"], "enableChartApi": true }'></grid-example>
+
+The example below shows how we can subscribe to [Standalone Charts Events](/charts-events/):
+
+- Click on the bars in the series and observe that the `seriesNodeClick` listener emits a console message.
+- Click on a legend item and observe that the `legendItemClick` listener emits a console message.
+- Change chart type from the Settings panel, and observe that the `seriesNodeClick` and `legendItemClick`
+  listeners are working as before.
+
+<grid-example title='Subscribing to Standalone Charts Events' name='standalone-events' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"], "enableChartApi": true }'></grid-example>
 
 ## Other Resources
 
-To learn about series events refer to the standalone charting library [documentation](../integrated-charts-events/).
-
-## Next Up
-
-Continue to the next section to learn about: [Third-Party Charting](../third-party-charting/).
+To learn about events see [Standalone Chart Events](/charts-events/).

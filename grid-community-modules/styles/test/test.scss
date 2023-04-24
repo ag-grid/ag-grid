@@ -1,0 +1,115 @@
+@use "sass:meta";
+@use "sass:string";
+@use "../index" as ag;
+
+@mixin expect-no-error($params) {
+    $params: ag.internal-preprocess-params($params);
+    $error: ag.internal-get-params-error($params);
+    @if $error {
+        @warn "Params that caused error: #{meta.inspect($params)}";
+        @error $error;
+    }
+}
+
+@mixin expect-error($params, $error-message) {
+    $processed: ag.internal-preprocess-params($params);
+    $error: ag.internal-get-params-error($processed);
+    @if not $error {
+        @error "Expected error but got none for #{meta.inspect($params)}";
+    }
+    @else if string.index($error, $error-message) == null {
+        @error "Error message did not contain \"#{$error-message}\" for params #{meta.inspect($params)} (actual error: \"#{$error}\")"
+    }
+}
+
+@mixin test-suite($property, $ok, $error, $error-message) {
+    @each $value in $ok {
+        @include expect-no-error(($property: $value));
+    }
+    @each $value in $error {
+        @include expect-error(($property: $value), $error-message);
+    }
+}
+
+//
+// Display validation
+//
+
+@include test-suite(
+    --ag-header-column-separator-display,
+    $ok: (none, block, true, false),
+    $error: (0, 10px, "string"),
+    $error-message: "CSS display value"
+);
+
+//
+// Color validation
+//
+
+@include test-suite(
+    --ag-foreground-color,
+    $ok: (red, transparent, null, var(--anything)),
+    $error: ("red", 7, red blue),
+    $error-message: "CSS color"
+);
+
+//
+// Size validation
+//
+
+@include test-suite(
+    --ag-header-column-resize-handle-height,
+    $ok: (20px, 50%, 0, var(--anything)),
+    $error: (20, 20px 50%, "50", red),
+    $error-message: "CSS length"
+);
+
+//
+// Border style validation
+//
+
+@include test-suite(
+    --ag-range-selection-border-style,
+    $ok: (solid, dashed, none, var(--anything)),
+    $error: ("solid", 4),
+    $error-message: "CSS border style"
+);
+
+@include test-suite(
+    --ag-borders,
+    $ok: (false, var(--anything)),
+    $error: ("solid", 4),
+    $error-message: "CSS border-style and size"
+);
+
+//
+// Border style and color validation
+//
+
+@include test-suite(
+    --ag-cell-horizontal-border,
+    $ok: (solid red, red solid, dashed blue, dotted transparent, var(--anything)),
+    $error: ("solid" red, dashed "blue", 1px, solid 2),
+    $error-message: "CSS border-style and color"
+);
+
+//
+// Duration validation
+//
+
+@include test-suite(
+    --ag-selected-tab-underline-transition-speed,
+    $ok: (0, 5ms, 8s, var(--anything)),
+    $error: ("0", 5, 5px, red),
+    $error-message: "a number with time duration units"
+);
+
+//
+// Any validation
+//
+@include test-suite(
+    --ag-card-shadow,
+    $ok: (foo bar baz, 0, none, 4px, var(--anything)),
+    $error: (),
+    $error-message: "(should never error)"
+);

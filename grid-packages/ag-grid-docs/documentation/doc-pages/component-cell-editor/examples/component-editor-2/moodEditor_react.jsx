@@ -27,7 +27,7 @@ export default class MoodEditor extends Component {
     }
 
     checkAndToggleMoodIfLeftRight = (event) => {
-        if ([37, 39].indexOf(event.keyCode) > -1) { // left and right
+        if (['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1) { // left and right
             this.toggleMood();
             event.stopPropagation();
         }
@@ -47,6 +47,7 @@ export default class MoodEditor extends Component {
     }
 
     getValue() {
+        // renderer is updated but not re-rendered in grid
         return this.state.happy ? 'Happy' : 'Sad';
     }
 
@@ -64,7 +65,7 @@ export default class MoodEditor extends Component {
         this.setState({
             happy: true
         },
-            () => this.props.api.stopEditing()
+            () => this.props.stopEditing()
         );
     }
 
@@ -72,7 +73,7 @@ export default class MoodEditor extends Component {
         this.setState({
             happy: false
         },
-            () => this.props.api.stopEditing()
+            () => this.props.stopEditing()
         );
     }
 

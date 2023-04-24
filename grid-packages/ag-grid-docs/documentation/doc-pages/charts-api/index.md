@@ -1,7 +1,12 @@
 ---
-title: "API Reference"
+title: "Options Reference"
 ---
+A comprehensive interactive explorer for the `AgChartOptions` structure.
 
-This page documents the AG Charts API. You can find more details about getting started with AG Charts in the [Getting Started](../charts/) section. You can also explore the API and see in real-time how different options affect charts using the [API Explorer](../charts-api-explorer/).
+Read more about how to use this structure in the [Create/Update](/charts-api-create-update/) section.
 
-<api-documentation source='api.json' config='{ "showSnippets": true }'></api-documentation>
+<tabs>
+    <expandable-snippet label="Cartesian" interfaceName='AgCartesianChartOptions' overrideSrc="charts-api/api.json" breadcrumbs='["options"]' config='{ "lookupRoot": "charts-api" }'></expandable-snippet>
+    <expandable-snippet label="Polar" interfaceName='AgPolarChartOptions' overrideSrc="charts-api/api.json" breadcrumbs='["options"]' config='{ "lookupRoot": "charts-api" }'></expandable-snippet>
+    <expandable-snippet label="Hierarchy" interfaceName='AgHierarchyChartOptions' overrideSrc="charts-api/api.json" breadcrumbs='["options"]' config='{ "lookupRoot": "charts-api" }'></expandable-snippet>
+</tabs>

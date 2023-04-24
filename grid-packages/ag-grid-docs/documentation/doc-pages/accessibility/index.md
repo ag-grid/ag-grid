@@ -10,8 +10,8 @@ Even if you are not mandated to conform to any particular accessibility standard
 
 Currently the most commonly encountered conformance guidelines are:
 
-- [ADA](https://www.ada.gov) - US Department of Justice
-- [Section 508](https://www.section508.gov) - US federal agencies
+- [ADA](https://www.ada.gov/) - US Department of Justice
+- [Section 508](https://www.section508.gov/) - US federal agencies
 - [WCAG 2.0](https://www.w3.org/WAI/intro/wcag) - globally accepted standard
 
 WCAG 2.0 has 3 levels of conformance; A, AA and AAA (in order of conformance)
@@ -22,17 +22,17 @@ As meeting WCAG 2.0 level AA guidelines also meets the ADA and Section 508 stand
 
 For users that are visually impaired due to colour deficiencies, care should be taken when using colours to provide information.
 
-Using our demo page as an example, the chrome plugin [Colorblinding](https://chrome.google.com/webstore/detail/colorblinding/dgbgleaofjainknadoffbjkclicbbgaa?hl=en) shows how cells with colour indicators might appear to someone with total colour blindness (Monochromacy).
+Using our demo page as an example, the chrome plugin [Colorblindly](https://chrome.google.com/webstore/detail/colorblindly/floniaahmccleoclneebhhmnjgdfijgg/related?hl=en) shows how cells with colour indicators might appear to someone with total colour blindness (Monochromacy / Achromatopsia).
 
 <image-caption src="accessibility/resources/accessibility-colour-contrast.png" alt="High Contrast Theme" maxwidth="50rem" constrained="true"></image-caption>
 
-To create a high contrast theme please check out the [Themes](../themes/) documentation for details.
+To create a high contrast theme please check out the [Themes](/themes/) documentation for details.
 
 ## Keyboard navigation
 
 Users who have motor disabilities, as well as visually impaired users, often rely on keyboards for navigation.
 
-For details on how to navigate the grid without using a mouse refer to the [Keyboard Navigation](../keyboard-navigation/) documentation. Note that it is possible to provide custom navigation which could come in useful for some accessibility requirements.
+For details on how to navigate the grid without using a mouse refer to the [Keyboard Navigation](/keyboard-navigation/) documentation. Note that it is possible to provide custom navigation which could come in useful for some accessibility requirements.
 
 ## Screen Readers
 
@@ -53,8 +53,8 @@ In order to give screen readers the contextual information they require to inter
 
 When inspecting the DOM you'll notice the following roles and properties have been added:
 
-- **role="grid"** - marks the enclosing element of the grid.<br>
-    **Note:** You can set any aria property in the panel (role="grid") by using the `setGridAriaProperty` method in the [Grid Api](../grid-api/).
+- **role="treegrid"** - marks the enclosing element of the grid.<br>
+    **Note:** You can set any aria property in the panel (role="treegrid") by using the `setGridAriaProperty` method in the [Grid Api](/grid-api/).
     - **aria-rowcount** - announces the number of rows.
     - **aria-colcount** - announces the number of rows.
     - **aria-multiselectable="true"** - marks the grid as being able to select multiple rows.
@@ -72,8 +72,8 @@ When inspecting the DOM you'll notice the following roles and properties have be
     - **aria-colindex** - announces the visible index of the cell.
     - **aria-selected** - only present if the cell is selectable, it announces the selection state.
     - **aria-expanded** - only present in a group cell, it announces the expand state.
-- **role="menu"** - element that serve as a container for a single levels of menu items.
-- **role="menuitem"** - marks an element as a menu item.
+- **role="tablist"** - element that serve as a container for a single levels of tab items.
+- **role="tab"** - marks an element as a tablist item.
 - **role="tree"** - element that serve as a container for items that could have multiple levels.
 - **role="treeitem"** - marks an element as an item of a tree.
     - **aria-level** - announces the current level of the tree.
@@ -118,7 +118,7 @@ const gridOptions = {
 
 ### Ensure all grid elements are always rendered
 
-In order to ensure all grid elements are loaded, you need to disable column and row virtualization. The best way to do this is to use [pagination](../row-pagination/). This way you can reduce the initial loading time and memory footprint while ensuring all elements for these rows are loaded for screen readers.
+In order to ensure all grid elements are loaded, you need to disable column and row virtualization. The best way to do this is to use [pagination](/row-pagination/). This way you can reduce the initial loading time and memory footprint while ensuring all elements for these rows are loaded for screen readers.
 
 If your requirement is to use scrolling instead of pagination, you can disable row virtualisation at the expense  of increasing the memory footprint. Please test the performance of this and if it's not satisfactory, switch to  using pagination instead.
 
@@ -132,15 +132,13 @@ const gridOptions = {
 
 This means if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered.
 
-There is no property to suppress row virtualisation however if you want to do this you can set the rowBuffer property to be very large as follows:
+Row virtualisation can be disabled as follows:
 
 <snippet>
 const gridOptions = {
-    rowBuffer: 9999,
+    suppressRowVirtualisation: true,
 }
 </snippet>
-
-This sets number of rows rendered outside the scrollable viewable area the grid renders. The defaults is 20.
 
 However note that lots of rendered rows will mean a very large amount of rendering in the DOM which will slow things down.
 
@@ -149,16 +147,15 @@ However note that lots of rendered rows will mean a very large amount of renderi
 The example below presents a simple grid layout with the following properties enabled:
 
 - `ensureDomOrder` - ensures the rows and columns in the DOM always appear in the same order as displayed in the grid.
-- `suppressColumnVirtualisation` - ensures all columns are rendered, i.e. appears in the DOM.
-- `rowBuffer` - sets the number of rows rendered outside of the scrollable viewable area.
+- `suppressColumnVirtualisation` and `suppressRowVirtualisation` - ensure all column and rows appear in the DOM.
 
-<grid-example title='Grid Customised for Accessibility' name='accessibility' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Grid Customised for Accessibility' name='accessibility' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "setfilter"] }'></grid-example>
 
 ## Customising ARIA Labels
 
 The grid has default ARIA labels for areas like `rows`, `group cells`, `filters`, `search fields` and so on. If there is a need to
-customise these labels, this could be achieved by changing the [localisation variables](../localisation/#creating-a-locale) for ARIA.
-See the [localisation example](../localisation/#example--localisation), inspect the items or use a screen reader to see the 
+customise these labels, this could be achieved by changing the [localisation variables](/localisation/#creating-a-locale) for ARIA.
+See the [localisation example](/localisation/#example--localisation), inspect the items or use a screen reader to see the
 customisation in action.
 
 ## Known Limitations
@@ -169,7 +166,7 @@ Using advanced functionality in AG Grid makes the DOM structure incompatible wit
     Screen readers assume that the visual and DOM element order are identical. Specifically, when you pin a row/column, it  causes elements to be rendered in different containers. This is why you cannot use screen readers to navigate into a  pinned row/column cells, as in fact, this means they're rendered in a different element from the rest of the columns/rows which are scrollable.
 
 - ### Limitations announcing the correct column name in grouped columns
-    Even though all aria tags have been applied to th necessary elements, some screen readers have trouble navigating the tags when the structure of the grid gets more complex (eg. grouped columns). This is the reason why there are some limitations announcing the correct column names.
+    Even though all aria tags have been applied to the necessary elements, some screen readers have trouble navigating the tags when the structure of the grid gets more complex (eg. grouped columns). This is the reason why there are some limitations announcing the correct column names.
 
 - ### No announcements of state change of a gridcell or gridheader
     Some screen readers will not recognise changes that happen to an element that is currently focused (including children of this element). So in order to detect changes (eg. sorted state, updated labels, etc...) you will need to move focus to another element and back.

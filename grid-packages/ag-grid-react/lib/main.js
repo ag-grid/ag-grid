@@ -1,9 +1,10 @@
-// ag-grid-react v25.1.0
+// ag-grid-react v29.3.2
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.AgGridReactFire = exports.AgGridReactLegacy = exports.AgGridReact = void 0;
 var agGridReact_1 = require("./agGridReact");
-exports.AgGridReact = agGridReact_1.AgGridReact;
-var agGridColumn_1 = require("./agGridColumn");
-exports.AgGridColumn = agGridColumn_1.AgGridColumn;
-var changeDetectionService_1 = require("./changeDetectionService");
-exports.ChangeDetectionStrategyType = changeDetectionService_1.ChangeDetectionStrategyType;
+Object.defineProperty(exports, "AgGridReact", { enumerable: true, get: function () { return agGridReact_1.AgGridReact; } });
+var agGridReactLegacy_1 = require("./legacy/agGridReactLegacy");
+Object.defineProperty(exports, "AgGridReactLegacy", { enumerable: true, get: function () { return agGridReactLegacy_1.AgGridReactLegacy; } });
+var agGridReactUi_1 = require("./reactUi/agGridReactUi");
+Object.defineProperty(exports, "AgGridReactFire", { enumerable: true, get: function () { return agGridReactUi_1.AgGridReactUi; } });

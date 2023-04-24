@@ -1,0 +1,11 @@
+{
+  "name": "videos",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "axios": "^0.18.0"
+  },
+  "scripts": {
+    "download": "node src/youtube.js"
+  }
+}

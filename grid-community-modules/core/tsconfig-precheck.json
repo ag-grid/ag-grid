@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.cjs.es5.json",
+  "compilerOptions": {
+    "noEmit": true
+  }
+}

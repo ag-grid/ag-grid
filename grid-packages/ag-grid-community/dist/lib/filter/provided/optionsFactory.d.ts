@@ -1,12 +1,13 @@
 import { IFilterOptionDef } from '../../interfaces/iFilter';
-import { IScalarFilterParams } from './scalarFilter';
+import { ScalarFilterParams } from './scalarFilter';
 export declare class OptionsFactory {
     protected customFilterOptions: {
         [name: string]: IFilterOptionDef;
     };
     protected filterOptions: (IFilterOptionDef | string)[];
     protected defaultOption: string;
-    init(params: IScalarFilterParams, defaultOptions: string[]): void;
+    init(params: ScalarFilterParams, defaultOptions: string[]): void;
+    private checkForDeprecatedParams;
     getFilterOptions(): (IFilterOptionDef | string)[];
     private mapCustomOptions;
     private selectDefaultItem;

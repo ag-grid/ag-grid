@@ -1,15 +1,15 @@
-import { BaseComponentWrapper, WrapableInterface } from 'ag-grid-community';
+import { BaseComponentWrapper, WrappableInterface } from 'ag-grid-community';
 import { AgGridVue } from './AgGridVue';
-interface VueWrapableInterface extends WrapableInterface {
+interface VueWrappableInterface extends WrappableInterface {
     overrideProcessing(methodName: string): boolean;
     processMethod(methodName: string, args: IArguments): any;
 }
-export declare class VueFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterface> {
+export declare class VueFrameworkComponentWrapper extends BaseComponentWrapper<WrappableInterface> {
     private parent;
     constructor(parent: AgGridVue);
-    createWrapper(component: any): WrapableInterface;
+    createWrapper(component: any): WrappableInterface;
     createComponent<T>(component: any, params: any): any;
-    protected createMethodProxy(wrapper: VueWrapableInterface, methodName: string, mandatory: boolean): () => any;
+    protected createMethodProxy(wrapper: VueWrappableInterface, methodName: string, mandatory: boolean): () => any;
     protected destroy(): void;
 }
 export {};

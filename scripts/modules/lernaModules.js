@@ -3,15 +3,17 @@ const path = require('path');
 const {spawn} = require('child_process');
 const docsLock = require('./../docsLock');
 
-const getModuleDirNames = (type, postfix = '-modules') => fs.readdirSync(path.resolve(__dirname, `${type}${postfix}`)).filter(entry => entry !== '.DS_Store');
+const getModuleDirNames = (type, postfix = '-modules') => fs.readdirSync(path.resolve(__dirname, `${type}${postfix}`)).filter(entry => entry !== '.DS_Store' && entry !== '.scannerwork');
 
 const flattenArray = array => [].concat.apply([], array);
 
-const mapToBarrelledScopes = (barrelName, moduleDirNames) => flattenArray(moduleDirNames.map(moduleDirName => ['--scope', `@ag-grid-${barrelName}/${moduleDirName}`]));
-const mapToScopes = (rootDirectory, moduleDirNames) => flattenArray(moduleDirNames.map(moduleDirName => ['--scope', require(`${rootDirectory}/${moduleDirName}/package.json`).name]));
+const mapToBarrelledScopes = (barrelName, moduleDirNames) => flattenArray(moduleDirNames.filter(moduleDirName => moduleDirName !== '.git').map(moduleDirName => ['--scope', `@ag-${barrelName}/${moduleDirName}`]));
+const mapToScopes = (rootDirectory, moduleDirNames) => flattenArray(moduleDirNames.filter(moduleDirName => moduleDirName !== '.git').map(moduleDirName => ['--scope', require(`${rootDirectory}/${moduleDirName}/package.json`).name]));
+const mapToCommonScopes = (rootDirectory, moduleDirNames) => flattenArray(moduleDirNames.filter(moduleDirName => moduleDirName !== '.git').map(moduleDirName => ['--scope', require(`${rootDirectory}/${moduleDirName}/package.json`).name]));
 
 const getScopeForBarrelledModules = rootDirectories => flattenArray(rootDirectories.map(rootDirectory => mapToBarrelledScopes(rootDirectory.replace('../../', ''), getModuleDirNames(rootDirectory))));
 const getScopeForModules = rootDirectory => mapToScopes(rootDirectory, getModuleDirNames(rootDirectory, ''));
+const getCommonScopeForModules = rootDirectory => mapToCommonScopes(rootDirectory, getModuleDirNames(rootDirectory, ''));
 
 const executeLernaCommand = (arguments) => {
     if (docsLock.isLocked()) {
@@ -37,10 +39,10 @@ const executeLernaCommand = (arguments) => {
 };
 
 
-const getCommunityScopes = () => flattenArray(getScopeForBarrelledModules(['../../community']));
-const getEnterpriseScopes = () => flattenArray(getScopeForBarrelledModules(['../../enterprise']));
-const getModuleScopes = () => flattenArray(getScopeForBarrelledModules(['../../community', '../../enterprise']));
-const getChartsModuleScopes = () => flattenArray(getScopeForModules('../../charts-packages'));
+const getCommunityScopes = () => flattenArray(getScopeForBarrelledModules(['../../common', '../../grid-community']));
+const getEnterpriseScopes = () => flattenArray(getScopeForBarrelledModules(['../../grid-enterprise']));
+const getModuleScopes = () => flattenArray(getScopeForBarrelledModules(['../../grid-community', '../../grid-enterprise']));
+const getChartsModuleScopes = () => flattenArray(getScopeForModules('../../charts-community-modules')).concat(getScopeForModules('../../charts-enterprise-modules'))
 
 module.exports.cleanCommunityModules = () => executeLernaCommand(['clean', '--yes', getCommunityScopes()]);
 module.exports.cleanEnterpriseModules = () => executeLernaCommand(['clean', '--yes', getEnterpriseScopes()]);
@@ -56,6 +58,10 @@ module.exports.buildModules = () => executeLernaCommand(['run', 'build', getModu
 
 module.exports.buildChartsModules = () => executeLernaCommand(['run', 'build', getChartsModuleScopes()]);
 
+module.exports.packageModules = () => executeLernaCommand(['run', 'package', getModuleScopes()]);
+module.exports.packageCharts = () => executeLernaCommand(['run', 'package', getChartsModuleScopes()]);
+
 module.exports.testCommunityModules = () => executeLernaCommand(['run', 'test', getCommunityScopes()]);
 module.exports.testEnterpriseModules = () => executeLernaCommand(['run', 'test', getEnterpriseScopes()]);
 module.exports.testModules = () => executeLernaCommand(['run', 'test', getModuleScopes()]);
+

@@ -7,12 +7,14 @@ const LERNA_JSON = 'lerna.json';
 
 if (process.argv.length < 5) {
     console.log("Usage: node scripts/release/versionModules.js [New Version] [Dependency Version] [package directories] [charts version]");
-    console.log("For example: node scripts/release/versionModules.js 19.1.0 ^19.1.0 '[\"charts-packages\", \"examples-charts\"]' 1.0.0");
+    console.log("For example: node scripts/release/versionModules.js 19.1.0 ^19.1.0 '[\"charts-community-modules\", \"charts-examples\"]' 1.0.0");
     console.log("Note: This script should be run from the root of the monorepo");
     process.exit(1);
 }
 
-const [exec, scriptPath, gridNewVersion, dependencyVersion, packageDirsRaw, chartsDependencyVersion] = process.argv;
+const [exec, scriptPath, gridNewVersion, dependencyVersion, packageDirsRaw, modulesToVersion, chartsDependencyVersion] = process.argv;
+
+const resolvedModulesToVersion = modulesToVersion === "all" ? modulesToVersion : modulesToVersion.split(',')
 
 const packageDirs = JSON.parse(packageDirsRaw);
 
@@ -31,23 +33,43 @@ function updateAngularProject(CWD, packageDirectory, directory) {
 function updatePackageBowserJsonFiles() {
     const CWD = process.cwd();
 
+    const packageMatchesResolvedModuleToVersion = packageName => {
+        if (resolvedModulesToVersion === "all") {
+            return true;
+        }
+
+        // so vue will match ag-grid-vue but not ag-grid-vue3, for example
+        return resolvedModulesToVersion.some(resolvedModuleToVersion => packageName.match(new RegExp(`${resolvedModuleToVersion}$`)) !== null);
+    }
+
     packageDirs.forEach(packageDirectory => {
         fs.readdirSync(packageDirectory)
+            .filter(packageMatchesResolvedModuleToVersion)
+            .filter(directory => !directory.includes('.git'))
             .forEach(directory => {
-                    // update all package.json files
-                    let currentPackageJsonFile = `${CWD}/${packageDirectory}/${directory}/package.json`;
-                    updateFileWithNewVersions(currentPackageJsonFile);
+                // update all package.json files
+                const currentPackageJsonFile = `${CWD}/${packageDirectory}/${directory}/package.json`;
+                updateFileWithNewVersions(currentPackageJsonFile);
 
-                    // angular projects have "sub" projects which we need to update
-                    if (directory.includes("angular") && !directory.includes("example")) {
-                        updateAngularProject(CWD, packageDirectory, directory);
-                    }
-
-                    // update all bower.json files, if they exist
-                    let currentBowerFile = `${CWD}/${packageDirectory}/${directory}/bower.json`;
-                    updateFileWithNewVersions(currentBowerFile, true);
+                // angular projects have "sub" projects which we need to update
+                if (directory.includes("angular") && !directory.includes("example")) {
+                    updateAngularProject(CWD, packageDirectory, directory);
                 }
-            );
+
+                // docs has a documentation sub dir that we need to handle too
+                if (directory === 'ag-grid-docs') {
+                    updateFileWithNewVersions(`${CWD}/${packageDirectory}/${directory}/documentation/package.json`);
+                }
+
+                // update version.ts file
+                const currentVersionFile = `${CWD}/${packageDirectory}/${directory}/src/version.ts`;
+                updateVersionFile(currentVersionFile);
+
+                // update all bower.json files, if they exist
+                const currentBowerFile = `${CWD}/${packageDirectory}/${directory}/bower.json`;
+                updateFileWithNewVersions(currentBowerFile, true);
+            }
+        );
     })
 }
 
@@ -85,6 +107,26 @@ function updateFileWithNewVersions(currentFile, optional = false) {
             JSON.stringify(updatedPackageJson, null, 2),
             "utf8");
     });
+}
+
+/**
+ * Update `version.ts` file with version number if it exists
+ */
+function updateVersionFile(currentFile) {
+    if (!fs.existsSync(currentFile)) {
+        return;
+    }
+
+    fs.readFile(currentFile, 'utf8', (err, contents) => {
+        const regex = /(export const VERSION =)(.*)$/m;
+        const substitute = `$1 '${gridNewVersion}';`;
+        const replacement = contents.replace(regex, substitute)
+
+        fs.writeFileSync(currentFile,
+            replacement,
+            "utf8");
+    });
+
 }
 
 function updateVersion(packageJson) {
@@ -128,7 +170,7 @@ function updateDependency(fileContents, property, dependencyVersion, chartsDepen
             return key !== 'ag-grid-testing'
         })
         .forEach(([key, value]) => {
-            if(chartsDependencyVersion) {
+            if (chartsDependencyVersion) {
                 dependencyContents[key] = chartDependency(key) ? chartsDependencyVersion : dependencyVersion;
             } else {
                 dependencyContents[key] = dependencyVersion;
@@ -139,3 +181,4 @@ function updateDependency(fileContents, property, dependencyVersion, chartsDepen
 }
 
 main();
+

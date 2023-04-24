@@ -6,30 +6,19 @@ import { doOnEnter } from 'components/key-handlers';
 import styles from './CodeViewer.module.scss';
 import Code from '../Code';
 
-const updateFiles = (exampleInfo, setFiles, setActiveFile) => {
-    if (isServerSideRendering()) { return; }
-
-    const { framework } = exampleInfo;
-
-    getExampleFiles(exampleInfo).then(files => {
-        setFiles(files);
-
-        const entryFile = getEntryFile(framework);
-
-        if (files[entryFile]) {
-            setActiveFile(entryFile);
-        } else {
-            setActiveFile(Object.keys(files).sort()[0]);
-        }
-    });
-};
-
+/**
+ * This renders the code viewer in the example runner.
+ */
 const CodeViewer = ({ isActive, exampleInfo }) => {
     const [files, setFiles] = useState(null);
     const [activeFile, setActiveFile] = useState(null);
 
+    let unmount = false;
+    const didUnmount = () => unmount;
+
     useEffect(() => {
-        updateFiles(exampleInfo, setFiles, setActiveFile);
+        updateFiles(exampleInfo, setFiles, setActiveFile, didUnmount);
+        return () => unmount = true;
     }, [exampleInfo]);
 
     const keys = files ? Object.keys(files).sort() : [];
@@ -48,9 +37,29 @@ const CodeViewer = ({ isActive, exampleInfo }) => {
         </div>
         <div className={styles['code-viewer__code']}>
             {!files && <FileView path={'loading.js'} code={'// Loading...'} />}
-            {files && activeFile && <FileView key={activeFile} path={activeFile} code={files[activeFile].source} />}
+            {files && activeFile && files[activeFile] && <FileView key={activeFile} path={activeFile} code={files[activeFile].source} />}
         </div>
     </div>;
+};
+
+const updateFiles = (exampleInfo, setFiles, setActiveFile, didUnmount) => {
+    if (isServerSideRendering()) { return; }
+
+    const { framework, internalFramework } = exampleInfo;
+
+    getExampleFiles(exampleInfo).then(files => {
+        if (didUnmount()) { return; }
+
+        setFiles(files);
+
+        const entryFile = getEntryFile(framework, internalFramework);
+
+        if (files[entryFile]) {
+            setActiveFile(entryFile);
+        } else {
+            setActiveFile(Object.keys(files).sort()[0]);
+        }
+    });
 };
 
 const FileItem = ({ path, isActive, onClick }) =>
@@ -67,6 +76,8 @@ const FileItem = ({ path, isActive, onClick }) =>
 const ExtensionMap = {
     sh: 'bash',
     vue: 'html',
+    tsx: 'jsx',
+    json: 'js'
 };
 
 const FileView = ({ path, code }) => {

@@ -6,7 +6,7 @@ By default, the grid will display rows with a height of `25px`. You can change t
 individually to give each row a different height.
 
 [[note]]
-| You cannot use variable row height when using [Viewport Row Model](../viewport/).
+| You cannot use variable row height when using either the [Viewport Row Model](/viewport/) or [Infinite Row Model](/infinite-scrolling/).
 | This is because this row model needs to work out the position of rows that are not loaded and hence needs to assume the row height is fixed.
 
 ## rowHeight Property
@@ -24,9 +24,11 @@ Changing the property will set a new row height for all rows, including pinned r
 
 ## getRowHeight Callback
 
+<api-documentation source='grid-options/properties.json' section='styling' names='["getRowHeight"]' ></api-documentation>
+
 To change the row height so that each row can have a different height,
-implement the `getRowHeight()` callback. For example, to set the height
-to 50px for all non-pinned rows and 25px for pinned rows, do the following:
+implement the `getRowHeight(params)` callback. For example, to set the height
+to 50px for all group rows and 25px for all other rows, do the following:
 
 <snippet>
 const gridOptions = {
@@ -34,106 +36,26 @@ const gridOptions = {
 }
 </snippet>
 
-The params object passed to the callback has the following values:
-
-- **node:** The [rowNode](../row-object/) in question.
-- **data:** The data for the row.
-- **api:** The [grid API](../grid-api/).
-- **context:** The [grid context](../context/).
-
-The example below shows dynamic row height, specifying a different row height for each row. It uses the `getRowHeight()` callback to achieve this.
+The example below shows dynamic row height, specifying a different row height for each row. It uses the `getRowHeight(params)` callback to achieve this.
 
 <grid-example title='Row Height Simple' name='row-height-simple' type='generated'></grid-example>
-
-## Text Wrapping
-
-If you want text to wrap inside cells rather than truncating, add the flag `wrapText=true` to the Column Definition.
-
-The example below has `wrapText=true` set on the **Latin Text** column.
-Behind the scenes, this results in the CSS property `white-space: normal`
-being applied to the cell, which causes the text to wrap.
-
-<grid-example title='Row Height Complex' name='row-height-complex' type='generated'></grid-example>
-
-[[note]]
-| If you are providing a custom [Cell Renderer Component](../component-cell-renderer/),
-| you can implement text wrapping in the custom component in your own way. The property `wrapText`
-| is intended to be used when you are not using a custom Cell Renderer.
-
-## Auto Row Height
-
-It is possible to set the row height based on the contents of the cells.
-To do this, set `autoHeight=true` on each column where
-height should be calculated from. For example, if one column is showing
-description text over multiple lines, then you may choose to select only
-that column to determine the line height.
-
-`autoHeight` is typically used with `wrapText`.
-If `wrapText` is not set, and no custom
-[Cell Renderer Component](../component-cell-renderer/)
-is used, then the cell will display all it's contents on one line. This is probably not
-the intention if using Auto Row Height.
-
-If multiple columns are marked with `autoHeight=true` then the
-height of the largest column is used.
-
-The height is calculated once when the data is first given to the grid. If the data changes, or the width of a column changes, then you may require the grid to calculate the height again by calling `api.resetRowHeights()`.
-
-The example below shows auto height in action. The following can be noted:
-
-- All columns have `wrapText=true` and `autoHeight=true`, so the height of each row is such that it fits all contents from all columns.
--  The example listens for the grid event `onColumnResized`. When a column is resized, the grid re-calculates the row heights after the resize is finished.
-
-- The example listens for the grid event `onColumnVisible` When a column is shown or hidden, the grid re-calculates the row heights afte the resize is finished.
-
-<!-- this example uses a timeout to set data - the runner doesn't currently support this sort of thing -->
-<grid-example title='Auto Row Height' name='auto-row-height' type='generated' options=' { "enterprise": true }'></grid-example>
-
-### Lazy Height Calculation
-
-Auto height works by the grid creating an off-screen (not visible to the user)
-temporary row with all the
-auto height columns rendered into it. The grid then measures the height of the
-temporary row. Because DOM interaction is required for each row this can be an
-intensive process. For this reason the grid only calculates the height of the
-row when it is needed - e.g. rows not yet visible due to vertical scrolling do not
-have their heights calculated, similarly child rows of groups where the group
-is not open do not have their heights calculated until the group is opened and
-the child rows are visible.
-
-
-Because the heights of rows are changing as you scroll rows into view, the vertical scrollbar
-and the row positions change as the grid is scrolling vertically. This leads to the following
-behaviours:
-
-
-- The vertical scroll range (how much you can scroll over) will change dynamically to fit the rows. If scrolling by dragging the scroll thumb with the mouse, the scroll thumb will not follow the mouse. It will either lag behind or jump ahead, depending on whether the row height calculations are increasing or decreasing the vertical scroll range.
-
--  If scrolling up and showing rows for the first time (e.g. the user jumps to the bottom scroll position and then starts slowly scrolling up), then the row positions will jump as the rows coming into view at the top will get resized and the new height will impact the position of all rows beneath it. For example if the row gets resized to be 10 pixels taller, rows below it will get pushed down by 10 rows. If scrolling down this isn't observed as rows below are not in view.
-
-The above are results of Lazy Height Calculation. It is not possible to avoid these effects.
-
-
-### Auto Height Performance Consideration
-
-Because auto-height is a DOM intensive operation, consideration should be given for
-when and how to use it. Only apply auto-height to columns where it makes sense. For example, if you have
-many columns that do not require a variable height, then do not set them to auto-height.
 
 
 ## Changing Row Height
 
 Setting the row height is done once for each row. Once set, the grid will not ask you
 for the row height again. You can change the row height after it is initially set
-using a combination of `api.resetRowHeights()`, `rowNode.setRowHeight()` and
+using a combination of `api.resetRowHeights()`, `rowNode.setRowHeight(height)` and
 `api.onRowHeightChanged()`.
 
 ### api.resetRowHeights()
 
 Call this API to have the grid clear all the row
-heights and work them all out again from scratch - if you provide a `getRowHeight()`
+heights and work them all out again from scratch - if you provide a `getRowHeight(params)`
 callback, it will be called again for each row. The grid will then resize and
 reposition all rows again. This is the shotgun approach.
+
+<api-documentation source='grid-api/api.json' section='rendering' names='["resetRowHeights"]' ></api-documentation>
 
 ### rowNode.setRowHeight(height) and api.onRowHeightChanged()
 
@@ -149,22 +71,86 @@ once at the end.
 When calling `rowNode.setRowHeight(height)`, you can either pass in a new height
 or `null` or `undefined`. If you pass a height, that height will be used for the row.
 If you pass in `null` or `undefined`, the grid will then calculate the row height in the
-usual way, either using the provided `rowHeight` property or `getRowHeight()`
+usual way, either using the provided `rowHeight` property or `getRowHeight(params)`
 callback.
+
+<api-documentation source='row-object/resources/methods.json' section='rowNodeMethods' names='["setRowHeight"]' config='{"overrideBottomMargin":"0rem"}' ></api-documentation>
+<api-documentation source='grid-api/api.json' section='rendering' names='["onRowHeightChanged"]' ></api-documentation>
+
 
 ### Example Changing Row Height
 
 The example below changes the row height in the different ways described above.
 
-- **Top Level Groups:** The row height for the groups is changed by calling `api.resetRowHeights()`. This gets the grid to call `gridOptions.getRowHeight()` again for each row.
+- **Top Level Groups:** The row height for the groups is changed by calling `api.resetRowHeights()`. This gets the grid to call `gridOptions.getRowHeight(params)` again for each row.
 - **Swimming Leaf Rows:** Same technique is used here as above. You will need to expand a group with swimming (e.g. United States) and the grid works out all row heights again.
-- **Russia Leaf Rows:** The row height is set directly on the `rowNode`, and then the grid is told to reposition all rows again by calling `api.onRowHeightChanged()`.
+- **United States Leaf Rows:** The row height is set directly on the `rowNode`, and then the grid is told to reposition all rows again by calling `api.onRowHeightChanged()`.
 
 Note that this example uses AG Grid Enterprise as it uses grouping. Setting the row
 height is an AG Grid Community feature, we just demonstrate it against groups and normal
 rows below.
 
 <grid-example title='Changing Row Height' name='row-height-change' type='generated' options=' { "enterprise": true, "exampleHeight": 590, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
+
+
+## Text Wrapping
+
+If you want text to wrap inside cells rather than truncating, add the flag `wrapText=true` to the Column Definition.
+
+The example below has `wrapText=true` set on the **Latin Text** column.
+Behind the scenes, this results in the CSS property `white-space: normal`
+being applied to the cell, which causes the text to wrap.
+
+<grid-example title='Row Height Complex' name='row-height-complex' type='generated'></grid-example>
+
+[[note]]
+| If you are providing a custom [Cell Renderer Component](/component-cell-renderer/),
+| you can implement text wrapping in the custom component in your own way. The property `wrapText`
+| is intended to be used when you are not using a custom Cell Renderer.
+
+## Auto Row Height
+
+It is possible to set the row height based on the contents of the cells.
+To do this, set `autoHeight=true` on each column where
+height should be calculated from. For example, if one column is showing
+description text over multiple lines, then you may choose to select only
+that column to determine the line height.
+
+`autoHeight` is typically used with `wrapText`.
+If `wrapText` is not set, and no custom
+[Cell Renderer Component](/component-cell-renderer/)
+is used, then the cell will display all its contents on one line. This is probably not the intention if using Auto Row Height.
+
+If multiple columns are marked with `autoHeight=true` then the
+height of the largest column is used.
+
+The example below shows Auto Height. Column A has Auto Height enabled by setting both `wrapText=true` and `autoHeight=true`. Column B only has `wrapText=true` set so its contents are clipped if content doesn't fit.
+
+<!-- this example uses a timeout to set data - the runner doesn't currently support this sort of thing -->
+<grid-example title='Auto Row Height' name='auto-row-height' type='generated' options=' { "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
+
+### Lazy Height Calculation
+
+Auto Height works by the grid listening for height changes for all Cells configured for Auto Height.
+As such it is only looking at rows that are currently rendered into the DOM.
+As the grid scrolls vertically and more rows are displayed, the height of those rows will be calculated on the fly.
+
+This means the row heights and row positions are changing as the grid is scrolling vertically. This leads to the following behaviours:
+
+- The vertical scroll range (how much you can scroll over) will change dynamically to fit the rows. If scrolling by dragging the scroll thumb with the mouse, the scroll thumb will not follow the mouse. It will either lag behind or jump ahead, depending on whether the row height calculations are increasing or decreasing the vertical scroll range.
+
+-  If scrolling up and showing rows for the first time (e.g. the user jumps to the bottom scroll position and then starts slowly scrolling up), then the row positions will jump as the rows coming into view at the top will get resized and the new height will impact the position of all rows beneath it. For example if the row gets resized to be 10 pixels taller, rows below it will get pushed down by 10 rows. If scrolling down this isn't observed as rows below are not in view.
+
+The above are results of Lazy Height Calculation. It is not possible to avoid these effects.
+
+### Auto Height and Column Virtualisation
+
+Columns with Auto Height will always be rendered. The grid needs to have all Auto Height Columns rendered in order to correctly set the height of the row.
+
+### Auto Height Performance Consideration
+
+Because Auto Height adds size listeners to cells and stops Column Virtualisation, consideration should be given for when and how to use it. Only apply Auto Height to columns where it makes sense. For example, if you have many columns that do not require a variable height, then do not set them to Auto Height.
+
 
 ## Height for Pinned Rows
 

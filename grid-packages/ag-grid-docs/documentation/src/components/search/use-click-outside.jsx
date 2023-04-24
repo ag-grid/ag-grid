@@ -2,6 +2,9 @@ import { useEffect } from 'react';
 
 const events = ['mousedown', 'touchstart'];
 
+/**
+ * This registers a method to be triggered when the user clicks outside the element associated with the provided ref.
+ */
 const useClickOutside = (ref, onClickOutside) => {
     const isOutside = element => !ref.current || !ref.current.contains(element);
 

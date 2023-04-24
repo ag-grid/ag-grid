@@ -1,9 +1,9 @@
 import {ComponentFactoryResolver, ComponentRef, Injectable, ViewContainerRef} from "@angular/core";
-import {BaseComponentWrapper, FrameworkComponentWrapper, WrapableInterface} from 'ag-grid-community';
+import {BaseComponentWrapper, FrameworkComponentWrapper, WrappableInterface} from 'ag-grid-community';
 import {AgFrameworkComponent} from "./interfaces";
 
 @Injectable()
-export class AngularFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterface> implements FrameworkComponentWrapper {
+export class AngularFrameworkComponentWrapper extends BaseComponentWrapper<WrappableInterface> implements FrameworkComponentWrapper {
     private viewContainerRef: ViewContainerRef;
     private componentFactoryResolver: ComponentFactoryResolver;
 
@@ -15,10 +15,10 @@ export class AngularFrameworkComponentWrapper extends BaseComponentWrapper<Wrapa
         this.componentFactoryResolver = componentFactoryResolver;
     }
 
-    createWrapper(OriginalConstructor: { new(): any }): WrapableInterface {
+    createWrapper(OriginalConstructor: { new(): any }): WrappableInterface {
         let that = this;
 
-        class DynamicAgNg2Component extends BaseGuiComponent<any, AgFrameworkComponent<any>> implements WrapableInterface {
+        class DynamicAgNg2Component extends BaseGuiComponent<any, AgFrameworkComponent<any>> implements WrappableInterface {
             init(params: any): void {
                 super.init(params);
                 this._componentRef.changeDetectorRef.detectChanges();
@@ -39,7 +39,7 @@ export class AngularFrameworkComponentWrapper extends BaseComponentWrapper<Wrapa
             }
 
             addMethod(name: string, callback: Function): void {
-                wrapper[name] = callback
+                (wrapper as any)[name] = callback
             }
         }
 
@@ -79,6 +79,9 @@ abstract class BaseGuiComponent<P, T extends AgFrameworkComponent<P>> {
     }
 
     public destroy(): void {
+        if(this._frameworkComponentInstance && typeof this._frameworkComponentInstance.destroy === 'function') {
+            this._frameworkComponentInstance.destroy();
+        }
         if (this._componentRef) {
             this._componentRef.destroy();
         }

@@ -20,7 +20,7 @@ export declare class TouchListener implements IEventEmitter {
     private lastTapTime;
     private eventService;
     private preventMouseClick;
-    constructor(eElement: HTMLElement, preventMouseClick?: boolean);
+    constructor(eElement: Element, preventMouseClick?: boolean);
     private getActiveTouch;
     addEventListener(eventType: string, listener: Function): void;
     removeEventListener(eventType: string, listener: Function): void;

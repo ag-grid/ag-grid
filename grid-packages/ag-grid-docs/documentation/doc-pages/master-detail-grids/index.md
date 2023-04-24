@@ -30,22 +30,11 @@ The example below shows configuring a Detail Grid with some additional Grid Opti
 
 Row data is provided to the Detail Grid by implementing the `getDetailRowData` callback of the Detail Cell Renderer Params. The interface of this callback is as follows:
 
-```ts
-function getDetailRowData(params: GetDetailRowDataParams): void;
-
-interface GetDetailRowDataParams {
-    // details for the request,
-    node: RowNode;
-    data: any;
-
-    // success callback, pass the rows back the grid asked for
-    successCallback(rowData: any[]): void;
-}
-```
+<interface-documentation interfaceName='IDetailCellRendererParams' names='["getDetailRowData"]' config='{"overrideBottomMargin":"1rem"}' ></interface-documentation>
 
 The `successCallback` can be called immediately in a synchronous fashion (typical if the data is already available) or asynchronously at a later time (typical if the data needs to be fetched remotely).
 
-The Master Grid in turn will call `api.setRowData()` on the Detail Grid with the data provided.
+The Master Grid in turn will call `api.setRowData(data)` on the Detail Grid with the data provided.
 
 All the previous examples on Master Detail provided the result synchronously and as such another specific example is not given here.
 
@@ -68,121 +57,41 @@ Below shows an example of this, where the Detail Grids are configured with diffe
 
 <grid-example title='Dynamic Params' name='dynamic-params' type='generated' options='{ "enterprise": true, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
-## Changing the Template
-
-By default the Detail Cell Renderer does not include any other information around the Detail Grid. It is possible to change this to allow additional details, such as header information, around the Detail Grid. This is done by providing an alternative Detail Template.
-
-If providing an alternative template, you **must** include an element with `ref="eDetailGrid"`. This tells the grid where to place the Detail Grid.
-
-For comparison, the default template is as follows. It is simplistic, only intended for allowing spacing around the Detail Grid.
-
-```html
-<!-- for when fixed height (normal) -->
-<div class="ag-details-row ag-details-row-fixed-height">
-    <div ref="eDetailGrid" class="ag-details-grid ag-details-grid-fixed-height"/>
-</div>
-
-<!-- for when auto-height (detailCellRendererParams.autoHeight=true) -->
-<div class="ag-details-row ag-details-row-auto-height">
-    <div ref="eDetailGrid" class="ag-details-grid ag-details-grid-auto-height"/>
-</div>
-```
-
-To change the Detail Template, set the `template` inside the Detail Cell Renderer Params. The Detail Template can be a String or Function depending on whether you want to provide the template statically or dynamically:
-
-- **String Template** - Statically overrides the template used by the grid. The same fixed template is used for each row. This is useful for styling or generic information.
-
-    ```js
-    // example override using string template
-    detailCellRendererParams: {
-        template:
-        '<div style="background-color: #edf6ff;">' +
-            '  <div style="height: 10%;">Call Details</div>' +
-            '  <div ref="eDetailGrid" style="height: 90%;"></div>' +
-            '</div>'
-    }
-    ```
-
-- **Function Template** - Called each time a detail row is shown to dynamically provide a template based on the data. Useful for displaying information specific to the Detail Grid dataset
-
-    ```js
-    // override using template callback
-    detailCellRendererParams: {
-        template: params => {
-            const personName = params.data.name;
-            return '<div style="height: 100%; background-color: #EDF6FF;">' +
-            '  <div style="height: 10%;">Name: ' + personName + '</div>' +
-            '  <div ref="eDetailGrid" style="height: 90%;"></div>' +
-            '</div>';
-        }
-    }
-    ```
-
-The following two examples demonstrate both approaches.
-
-### Example Static Template
-
-In this first example, the template is set statically. Note the following:
-
-- All Detail Grids have a spacing with blue background.
-- All Detail Grids have the same static title 'Call Details'.
-
-<grid-example title='Customising via String Template' name='string-template-customisation' type='generated' options='{ "enterprise": true, "exampleHeight": 550, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
-
-### Example Dynamic Template
-
-In this second example, the template is set dynamically. Note the following:
-
-- All Detail Grids have a spacing with blue background.
-- All Detail Grids have the a different dynamic title including the persons name e.g. 'Mila Smith'.
-
-<grid-example title='Customising via Template Callback' name='template-callback-customisation' type='generated' options='{ "enterprise": true, "exampleHeight": 550, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
+md-include:changing-the-template.md
 
 ## Accessing Detail Grids
 
 The Master Grid manages all the Detail Grid instances. You can access the API of the underlying Detail Grids to call API methods directly on those grids. The Master Grid stores references to the Detail Grid API's in Detail Grid Info objects.
 
-The Detail Grid Info objects contain a reference to the underlying [Grid API](../grid-api/) and [Column API](../column-api/) for each detail grid. The interface for Detail Grid Info is as follows:
+The Detail Grid Info objects contain a reference to the underlying [Grid API](/grid-api/) and [Column API](/column-api/) for each detail grid. The interface for Detail Grid Info is as follows:
 
-```ts
-interface DetailGridInfo {
-    // id of the detail grid, the format is detail_&lt;row-id>
-    // where row-id is the id of the parent row.
-    id: string;
-
-    // the grid API of the detail grid
-    api: GridApi;
-
-    // the column API of the detail grid
-    columnApi: ColumnApi;
-}
-```
+<interface-documentation interfaceName='DetailGridInfo' ></interface-documentation>
 
 The Detail Grid Info objects are accessed via the Master Grid's API via the following methods:
 
-- `getDetailGridInfo(id)`: Returns back the Detail Grid Info for the Detail Grid with the provided ID.
+<api-documentation source='grid-api/api.json' section='masterDetail' names='["getDetailGridInfo"]'></api-documentation>
 
-    <snippet>
-    // lookup a specific DetailGridInfo by id, and then call stopEditing() on it
-    const detailGridInfo = gridOptions.api.getDetailGridInfo('detail_someId');
-    detailGridInfo.api.flashCells();
-    </snippet>
+<snippet>
+// lookup a specific DetailGridInfo by id, and then call stopEditing() on it
+const detailGridInfo = gridOptions.api.getDetailGridInfo('detail_someId');
+detailGridInfo.api.flashCells();
+</snippet>
 
-    The grid generates IDs for detail grids by prefixing the parent row's ID with `detail_`. For example if the ID of the expanded Master Row is "88", then the ID of the Detail Grid / row will be "detail_88".
+The grid generates IDs for detail grids by prefixing the parent row's ID with `detail_{ROW-ID}`. For example if the ID of the expanded Master Row is `"88"`, then the ID of the Detail Grid / row will be `"detail_88"`.
 
-- `forEachDetailGridInfo(callback)`: Calls the callback for each existing instance of a Detail Grid.
+<api-documentation source='grid-api/api.json' section='masterDetail' names='["forEachDetailGridInfo"]'></api-documentation>
 
-    <snippet>
-    // iterate over all DetailGridInfos, and call stopEditing() on each one
-    gridOptions.api.forEachDetailGridInfo(detailGridInfo => {
-        detailGridInfo.api.flashCells();
-    });
-    </snippet>
+<snippet>
+// iterate over all DetailGridInfos, and call stopEditing() on each one
+| gridOptions.api.forEachDetailGridInfo(detailGridInfo => {
+|     detailGridInfo.api.flashCells();
+| });
+</snippet>
 
 The following example shows flashing cells on the detail grids by using the Grid API `flashCells()`. Note the following:
 
 - The example is made more compact by a) setting Detail Row Height to 200 pixels and b) setting CSS to reduce padding around the Detail Grid.
-- The callback `getRowNodeId` is implemented in the Master Grid to give each row an ID. In this instance the `account` attribute is used.
+- The callback `getRowId` is implemented in the Master Grid to give each row an ID. In this instance the `account` attribute is used.
 - Button 'Flash Mila Smith' uses `getDetailGridInfo` to get access to the Grid API for the Mila Smith Detail Grid.
 - Button 'Flash All' uses `forEachDetailGridInfo` to access all existing Detail Grids.
 
@@ -194,7 +103,7 @@ When a Master Row is expanded a Detail Row is created. When the Master Row is co
 
 To prevent losing the context of Details Rows, the grid provides two properties to cache the Details Rows to be reused the next time the row is shows. The properties are as follows:
 
-<api-documentation source='grid-properties/properties.json' section='masterDetail' names='["keepDetailRows", "keepDetailRowsCount"]'></api-documentation>
+<api-documentation source='grid-options/properties.json' section='masterDetail' names='["keepDetailRows", "keepDetailRowsCount"]'></api-documentation>
 
 The example below demonstrates keeping Detail Rows. Note the following:
 
@@ -207,10 +116,14 @@ The example below demonstrates keeping Detail Rows. Note the following:
 
 ## Detail Parameters
 
-The full list of Detail Cell Renderer Params are as follows:
+<!-- Below we don't show 'template' for React, hence listing the properties twice -->
 
-<api-documentation source='master-detail-grids/resources/properties.json' section='detailCellRenderer'></api-documentation>
+[[only-javascript-or-angular-or-vue]]
+|<interface-documentation interfaceName='IDetailCellRendererParams' names='["detailGridOptions", "getDetailRowData", "template", "refreshStrategy"]' ></interface-documentation>
 
-The pattern of setting components such as Cell Renderers and providing parameters to those components is consistent across the grid and explained in [Grid Components](../components/).
+[[only-react]]
+|<interface-documentation interfaceName='IDetailCellRendererParams' names='["detailGridOptions", "getDetailRowData", "refreshStrategy"]' ></interface-documentation>
+
+The pattern of setting components such as Cell Renderers and providing parameters to those components is consistent across the grid and explained in [Grid Components](/components/).
 
 As with all components, the parameters object (in this case `detailCellRendererParams`) can either be a JSON Object, or it can be a function that returns a JSON Object. The latter allows providing different parameters for each Detail Grid, allowing Detail Grids to be configured differently.

@@ -7,18 +7,31 @@
 |const GridExample = () => {
 |   // other properties & methods
 |
-|   frameworkComponents = {
-|       'colourCellRenderer': ColourCellRenderer    
-|   };
+|   const [columnDefs] = useState([
+|        {
+|            headerName: "Colour 1",
+|            field: "value",
+|            cellRenderer: ColourCellRenderer,
+|            cellRendererParams: {
+|               color: 'guinnessBlack'
+|            }
+|        },
+|        {
+|            headerName: "Colour 2",
+|            field: "value",
+|            cellRenderer: ColourCellRenderer,
+|            cellRendererParams: {
+|               color: 'irishGreen'
+|            }
+|        }
+|   ]);
 |
 |   return (
 |       <div className="ag-theme-alpine">
 |           <AgGridReact
-|           frameworkComponents={frameworkComponents}
-|           ...other properties>
-|               <AgGridColumn headerName="Colour 1" field="value" cellRenderer="colourCellRenderer" cellRendererParams={{ color: 'guinnessBlack' }} />
-|               <AgGridColumn headerName="Colour 2" field="value" cellRenderer="colourCellRenderer" cellRendererParams={{ color: 'irishGreen' }} />
-|           </AgGridReact>
+|              columnDefs={columnDefs}
+|              ...other properties
+|           />
 |       </div>
 |   );
 |};

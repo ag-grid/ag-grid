@@ -39,11 +39,11 @@ import { ICellEditorAngularComp } from "@ag-grid-community/angular";
 export class MatSliderComponent implements ICellEditorAngularComp {
     private params: any;
 
-    private max: number;
-    private min: number;
-    private step: number;
-    private thumbLabel: boolean;
-    private value: number;
+    public max!: number;
+    public min!: number;
+    public step!: number;
+    public thumbLabel!: boolean;
+    public value!: number;
 
     agInit(params: any): void {
         this.params = params;
@@ -56,11 +56,11 @@ export class MatSliderComponent implements ICellEditorAngularComp {
         this.value = this.params.value;
     }
 
-    constructor(private elRef: ElementRef) {}
+    constructor(private elRef: ElementRef) { }
 
     // don't use afterGuiAttached for post gui events - hook into ngAfterViewInit instead for this
     ngAfterViewInit() {
-        let sliderThumb = this.elRef.nativeElement.querySelector(".mat-slider-thumb");
+        const sliderThumb = this.elRef.nativeElement.querySelector(".mat-slider-thumb");
         sliderThumb.tabIndex = 0;
         window.setTimeout(() => {
             sliderThumb.focus();
@@ -75,9 +75,9 @@ export class MatSliderComponent implements ICellEditorAngularComp {
         return true;
     }
 
-    onKeyDown(event): void {
-        let key = event.which || event.keyCode;
-        if (key === 39 || key === 37) {
+    onKeyDown(event: any): void {
+        const key = event.key;
+        if (key === 'ArrowLeft' || key === 'ArrowRight') {
             // left/right
             event.stopPropagation();
         }

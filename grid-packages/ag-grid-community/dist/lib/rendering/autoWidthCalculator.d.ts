@@ -1,15 +1,17 @@
-import { GridPanel } from "../gridPanel/gridPanel";
 import { Column } from "../entities/column";
-import { HeaderRootComp } from "../headerRendering/headerRootComp";
 import { BeanStub } from "../context/beanStub";
+import { RowCssClassCalculator } from "./row/rowCssClassCalculator";
+import { ColumnGroup } from "../entities/columnGroup";
 export declare class AutoWidthCalculator extends BeanStub {
     private rowRenderer;
-    private gridPanel;
-    private headerRootComp;
-    registerGridComp(gridPanel: GridPanel): void;
-    registerHeaderRootComp(headerRootComp: HeaderRootComp): void;
+    private ctrlsService;
+    rowCssClassCalculator: RowCssClassCalculator;
+    private centerRowContainerCtrl;
+    private postConstruct;
     getPreferredWidthForColumn(column: Column, skipHeader?: boolean): number;
+    getPreferredWidthForColumnGroup(columnGroup: ColumnGroup): number;
+    private addElementsToContainerAndGetWidth;
+    private getAutoSizePadding;
     private getHeaderCellForColumn;
-    private putRowCellsIntoDummyContainer;
     private cloneItemIntoDummy;
 }

@@ -1,10 +1,13 @@
 import { Component } from "../../widgets/component";
-import { ICellRenderer, ICellRendererParams } from "./iCellRenderer";
-export interface ILoadingCellRendererParams extends ICellRendererParams {
+import { ICellRendererParams } from "./iCellRenderer";
+import { IComponent } from "../../interfaces/iComponent";
+export interface ILoadingCellRendererParams<TData = any, TContext = any> extends ICellRendererParams<TData, TContext> {
 }
-export interface ILoadingCellRenderer extends ICellRenderer {
+export interface ILoadingCellRenderer {
 }
-export declare class LoadingCellRenderer extends Component implements ILoadingCellRenderer {
+export interface ILoadingCellRendererComp extends ILoadingCellRenderer, IComponent<ILoadingCellRendererParams> {
+}
+export declare class LoadingCellRenderer extends Component implements ILoadingCellRendererComp {
     private static TEMPLATE;
     private eLoadingIcon;
     private eLoadingText;
@@ -12,5 +15,6 @@ export declare class LoadingCellRenderer extends Component implements ILoadingCe
     init(params: ILoadingCellRendererParams): void;
     private setupFailed;
     private setupLoading;
-    refresh(params: any): boolean;
+    refresh(params: ILoadingCellRendererParams): boolean;
+    destroy(): void;
 }

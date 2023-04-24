@@ -1,1 +1,1 @@
-module.exports = ['javascript', 'angular', 'react', 'vue'];
+module.exports = ['javascript', 'react', 'angular', 'vue'];

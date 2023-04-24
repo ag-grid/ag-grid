@@ -1,19 +1,17 @@
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
     template: `
-        <div>
-            <div class="year-filter">
-                <label>
-                    <input type="radio" value="false" v-model="isActive" v-on:change="toggleFilter(false)" /> All
-                </label>
-                <label>
-                    <input type="radio" value="true" v-model="isActive" v-on:change="toggleFilter(true)" /> After 2004
-                </label>
-            </div>
-        </div>
+      <div>
+          <div class="year-filter">
+            <label>
+              <input type="radio" value="false" v-model="isActive" v-on:change="toggleFilter(false)"/> All
+            </label>
+            <label>
+              <input type="radio" value="true" v-model="isActive" v-on:change="toggleFilter(true)"/> After 2004
+            </label>
+          </div>
+      </div>
     `,
-    data: function() {
+    data: function () {
         return {
             isActive: false
         };
@@ -39,4 +37,4 @@ export default Vue.extend({
             this.setModel(value);
         }
     }
-});
+};

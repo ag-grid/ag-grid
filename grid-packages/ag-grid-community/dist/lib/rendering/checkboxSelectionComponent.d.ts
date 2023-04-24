@@ -1,9 +1,13 @@
+import { Column } from '../entities/column';
 import { Component } from '../widgets/component';
+import { RowNode } from '../entities/rowNode';
+import { CheckboxSelectionCallback } from '../entities/colDef';
+import { GroupCheckboxSelectionCallback } from './cellRenderers/groupCellRendererCtrl';
 export declare class CheckboxSelectionComponent extends Component {
     private eCheckbox;
     private rowNode;
     private column;
-    private isRowSelectableFunc;
+    private overrides?;
     constructor();
     private postConstruct;
     getCheckboxId(): string;
@@ -12,7 +16,15 @@ export declare class CheckboxSelectionComponent extends Component {
     private onSelectionChanged;
     private onCheckedClicked;
     private onUncheckedClicked;
-    init(params: any): void;
+    init(params: {
+        rowNode: RowNode;
+        column?: Column;
+        overrides?: {
+            isVisible: boolean | CheckboxSelectionCallback | GroupCheckboxSelectionCallback | undefined;
+            callbackParams: any;
+            removeHidden: boolean;
+        };
+    }): void;
     private showOrHideSelect;
-    private checkboxCallbackExists;
+    private getIsVisible;
 }

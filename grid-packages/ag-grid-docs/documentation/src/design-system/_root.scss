@@ -1,0 +1,43 @@
+@use 'core' as *;
+
+#{$css-variables-root} {
+    // create a CSS variable for every abstract color
+    @each $name, $hex in $abstract-colors {
+        --#{$name}: #{$hex};
+    }
+    // create a CSS variable for every semantic color
+    @each $name, $var-name in $semantic-colors {
+        --#{$name}: var(--#{$var-name});
+    }
+
+    --max-page-width: #{$max-page-width};
+    --horizontal-margin: #{$horizontal-margin};
+
+    --border-radius: #{$border-radius};
+
+    --font-family: #{$font-family};
+    --monospace-font-family: #{$monospace-font-family};
+
+    --font-size-extra-small: #{$font-size-extra-small};
+    --font-size-small: #{$font-size-small};
+    --font-size-medium: #{$font-size-medium};
+    --font-size-large: #{$font-size-large};
+    --font-size-extra-large: #{$font-size-extra-large};
+    --font-size-massive: #{$font-size-massive};
+    --font-size-gigantic: #{$font-size-gigantic};
+    --font-size-gargantuan: #{$font-size-gargantuan};
+
+    --font-weight-thin: #{$font-weight-thin};
+    --font-weight-normal: #{$font-weight-normal};
+    --font-weight-bold: #{$font-weight-bold};
+
+    --line-height-normal: #{$line-height-normal};
+    --line-height-tight: #{$line-height-tight};
+    --line-height-ultra-tight: #{$line-height-ultra-tight};
+
+    --font-size: var(--font-size-medium);
+    --font-weight: var(--font-weight-normal);
+    --line-height: var(--line-height-normal);
+
+    --icon-size: #{$icon-size};
+}

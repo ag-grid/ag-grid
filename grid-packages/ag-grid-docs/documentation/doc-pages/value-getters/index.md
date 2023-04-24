@@ -2,28 +2,14 @@
 title: "Value Getters"
 ---
 
-Normally columns are configured with `field` attributes, so the column knows what field to take values from in the data. Instead of providing `field` it is possible to provide `valueGetter` instead. A Value Getter is a function that gets called allowing values to be pulled from literally anywhere, including executing any expressions you wish along the way.
+Normally columns are configured with `field` attributes, so the column knows what field to take values from in the data. Instead of providing `field` it is possible to provide a `valueGetter` instead. A Value Getter is a function that gets called allowing values to be pulled from literally anywhere, including executing any expressions you wish along the way.
 
 You should use `colDef.field` most of the time. Use value getters when retrieving the data requires more logic, including executing your own expressions (similar to what a spreadsheet would do).
 
-The interface for value getters is as follows:
+<api-documentation source='column-properties/properties.json' section="columns" names='["valueGetter"]'></api-documentation>
+
 
 ```ts
-// function for valueGetter
-function valueGetter(params: ValueGetterParams) => any;
-
-// interface for params
-interface ValueGetterParams {
-    data: any, // the data you provided for this row
-    node: RowNode, // the row node for this row
-    colDef: ColDef, // the column def for this column
-    column: Column, // the column for this column
-    api: GridApi, // the grid API
-    columnApi: ColumnApi, // the grid Column API
-    context: any,  // the context
-    getValue: (colId: string) => any  // a utility method, for getting other column values
-}
-
 // example value getter, adds two fields together
 colDef.valueGetter = params => {
     return params.data.firstName + params.data.lastName;
@@ -38,9 +24,6 @@ colDef.valueGetter = params => {
 | to an aggregation function when grouping, or can be used as input to another valueGetter via the
 | `params.getValue()` function.
 
-Below shows the column definition properties for value getters.
-
-<api-documentation source='column-properties/properties.json' section="columnsOnly" names='["valueGetter(params)", "headerValueGetter(params)", "filterValueGetter(params)"]'></api-documentation>
 
 ### Example Value Getters
 
@@ -49,7 +32,7 @@ The example below demonstrates `valueGetter`. The following can be noted from th
 - Columns A and B are simple columns using `field`
 
 - Value Getters are used in all subsequent columns as follows:
-    - Column 'Row Num' prints the row number, taken from the [Row Node](../row-object/).
+    - Column '#' prints the row number, taken from the [Row Node](/row-object/).
     - Column 'A+B' adds A and B.
     - Column 'A * 1000' multiplies A by 1000.
     - Column 'B * 137' multiplies B by 137.
@@ -63,16 +46,20 @@ The example below demonstrates `valueGetter`. The following can be noted from th
 
 Use `headerValueGetter` instead of `colDef.headerName` to allow dynamic header names.
 
+<api-documentation source='column-properties/properties.json' section="header" names='["headerValueGetter"]' ></api-documentation>
+
 The parameters for `headerValueGetter` differ from standard `valueGetter` as follows:
 
 - Only one of column or columnGroup will be present, depending on whether it's a column or a column group.
 - Parameter `location` allows you to have different column names depending on where the column is appearing, eg you might want to have a different name when the column is in the column drop zone or the toolbar.
 
-See the [Column Tool Panel Example](../tool-panel-columns/#column-tool-panel-example) for an example of `headerValueGetter` used in different locations, where you can change the header name depending on where the name appears.
+See the [Column Tool Panel Example](/tool-panel-columns/#column-tool-panel-example) for an example of `headerValueGetter` used in different locations, where you can change the header name depending on where the name appears.
 
 ### Filter Value Getters
 
-See [Filtering in Row Grouping](../grouping/#filtering-on-group-columns) for more information on Filter Value Getters.
+By default, the values supplied to the filter are retrieved from the data based on the `field` attribute. This can be overridden by providing a `filterValueGetter` in the Column Definition as shown below. This is similar to using a normal Value Getter, but is specific to the filter.
+
+<api-documentation source='column-properties/properties.json' section="filtering" names='["filterValueGetter"]' ></api-documentation>
 
 ## Value Cache
 
@@ -108,7 +95,7 @@ that has a `console.log()` statement. This will allow us to see exactly when the
 - As you **open and close groups**, the value getters are executed, as the DOM needs values for rendering.
 - Now turn the value cache **on** by selecting the radio button at the top. The grid gets reset and then works with the value cache on. Notice in the console that the value getter gets executed exactly 100 times, once for each row. Even through the value getter result is used in two places (aggregation and rendering the row), the value getter is only called once. Even scrolling and opening / closing the groups does not result in the value getter getting executed again.
 
-<grid-example title='Value Cache' name='value-cache' type='vanilla' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Value Cache' name='value-cache' type='typescript' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"]  }'></grid-example>
 
 [[note]]
 | Note that the example still works fast when the value cache is turned off. This emphasises you don't need to turn the value cache on if your application is not getting slowed down by your value getters.
@@ -117,13 +104,13 @@ that has a `console.log()` statement. This will allow us to see exactly when the
 
 The following are the grid properties related to the value cache.
 
-<api-documentation source='grid-properties/properties.json' section="miscellaneous" names='["valueCache", "valueCacheNeverExpires"]'></api-documentation>
+<api-documentation source='grid-options/properties.json' section="miscellaneous" names='["valueCache", "valueCacheNeverExpires"]'></api-documentation>
 
 ### Expiring the Value Cache
 
 The value cache starts empty. Then as value getters execute, their results are stored and the value cache fills up. Certain events trigger the value cache to be emptied. This is called expiring the value cache. Once expired, every value getter will get executed again next time the value is needed. The events that cause the value cache to expire are the following:
 
-- New row data is set into the grid via `setRowData()` API or changing the `rowData` framework bound property*.
+- New row data is set into the grid via `setRowData(newData)` API or changing the `rowData` framework bound property*.
 - New columns are set into the grid via `setColumnDefs()` API or changing the `columnDefs` framework bound property*.
 - Data is modified using the `rowNode.setData(data)` or `rowNode.setDataValue(col,value)` node API methods.
 - A value is modified in the grid using the grid's UI editing feature, e.g. the user double clicks a cell and enters a new value.
@@ -145,15 +132,15 @@ As before, we focus on the value getter of the **'Total'** column and can see ho
 
 - The values in the **Total** column are used many times as follows:
     - For inserting the value into the DOM (i.e. what's visible in the cell).
-    - For calculating the group total for the total column (ie the figure 87,040 is a sum of the 5 values below it).
+    - For calculating the group total for the total column (ie the figure 870,400 is a sum of the 5 values below it).
     - For calculating the **'Total x 10'** column, as that value getter also references the values in the **'Total'** column.
 - Despite the values getting used multiple times, each value getter is executed exactly once. This can be observed by opening the development console and observing the log message the value getter prints.
 - If you close and then re-open a group, the value getters are not re-executed, even though the values are needed to re-create the DOM elements that represent the cells.
 - Hitting **'Refresh Cells'** will refresh all the cells, but again the value getters will not get re-executed.
 - Hitting **'Invalidate Cache'** and then **'Refresh Cells'** will result in the value getters getting re-executed, as the cell refresh operation requires the values and the cache was invalidated. You will notice invalidating and then refreshing doesn't do anything noticeable to the grid, the data is the same, the only hint that anything happened is the value getter's console messages.
-- Changing any value in the grid, either editing via the UI directly or hitting the **'Change One Value'** button, will result in the value cache getting cleared and all cells getting refreshed (where [change detection](../change-detection/) then updates any changes cells and only changed cells).
+- Changing any value in the grid, either editing via the UI directly or hitting the **'Change One Value'** button, will result in the value cache getting cleared and all cells getting refreshed (where [change detection](/change-detection/) then updates any changes cells and only changed cells).
 
-<grid-example title='Expiring Cache through Editing' name='expiring-through-editing' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Expiring Cache through Editing' name='expiring-through-editing' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"]  }'></grid-example>
 
 [[note]]
 | It is not possible to partially invalidate the cache, eg it is not possible to invalidate only a
@@ -174,11 +161,11 @@ If you have `valueCacheNeverExpires=true`, then the only event that will expire 
 This example is again almost identical to the example above. The difference here is the value cache is turned on but
 to never invalidate. Note the following:
 
-- When the grid initialises, there are 12 value getter calls. The values are getting cached.<p/>
+- When the grid initialises, there are 10 value getter calls. The values are getting cached.<p/>
 
 - After you edit a cell, either through the UI or through the API by pressing **'Update One Value'**,
-  the value getters are not called again, so the total columns are not correctly refreshed.
-  Because the grid already executed the value getters for this column, it will not do it again,
+  the value getters are not called again, so the **Total** and **Total x 10** columns are not correctly refreshed.
+  The grid already executed the value getters for this column, it will not do it again,
   it will instead take values from the value cache.<p/>
 
 - To get the total column to update after edits, press **'Expire Value Cache'**

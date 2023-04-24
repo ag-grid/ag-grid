@@ -1,7 +1,7 @@
 // noinspection ES6UnusedImports
 import React, {Component, forwardRef, useImperativeHandle, useState} from 'react'
 import {mount} from 'cypress-react-unit-test'
-import {AgGridColumn, AgGridReact} from "../..";
+import { AgGridReact } from "../..";
 import {ensureGridApiHasBeenSet} from "./utils";
 
 const CellEditor = forwardRef((props, ref) => {
@@ -52,7 +52,9 @@ const GridComponent = () => {
     const [rowData, setRowData] = useState([
         {value: 1}
     ]);
-
+    const [colDefs, setColDefs] = useState([
+        { field: 'value', cellEditor: 'cellEditor', editable: true }
+    ]);
     return (
         <div style={{height: 400, width: 900, marginTop: 15}}
              className="ag-theme-alpine">
@@ -60,11 +62,13 @@ const GridComponent = () => {
                 ref={(element) => {
                     window.gridComponentInstance = element
                 }}
+                suppressReactUi={true}
                 frameworkComponents={{
                     cellEditor: CellEditor
                 }}
-                rowData={rowData}>
-                <AgGridColumn field="value" editable={true} cellEditor="cellEditor"></AgGridColumn>
+                rowData={rowData}
+                columnDefs={colDefs}
+            >                
             </AgGridReact>
         </div>
     )
@@ -77,8 +81,8 @@ describe('Cell Editor', () => {
 
         mount(<GridComponent/>, {
             stylesheets: [
-                'https://unpkg.com/@ag-grid-community/core/dist/styles/ag-grid.css',
-                'https://unpkg.com/@ag-grid-community/core/dist/styles/ag-theme-alpine.css'
+                'https://cdn.jsdelivr.net/npm/@ag-grid-community/styles/ag-grid.css',
+                'https://cdn.jsdelivr.net/npm/@ag-grid-community/styles/ag-theme-alpine.css'
             ]
         })
 

@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 
-import { IStatusPanelParams } from "@ag-grid-community/all-modules";
+import { IStatusPanelParams } from "@ag-grid-community/core";
+import { IStatusPanelAngularComp } from "@ag-grid-community/angular";
 
 @Component({
     selector: 'status-component',
@@ -11,9 +12,9 @@ import { IStatusPanelParams } from "@ag-grid-community/all-modules";
         </div>
     `
 })
-export class CountStatusBarComponent {
-    private params: IStatusPanelParams;
-    private count: null;
+export class CountStatusBarComponent implements IStatusPanelAngularComp {
+    private params!: IStatusPanelParams;
+    public count: number | null = null;
 
     agInit(params: IStatusPanelParams): void {
         this.params = params;
@@ -22,6 +23,6 @@ export class CountStatusBarComponent {
     }
 
     onGridReady() {
-        this.count = this.params.api.getModel().rowsToDisplay.length;
+        this.count = this.params.api.getModel().getRowCount();
     }
 }

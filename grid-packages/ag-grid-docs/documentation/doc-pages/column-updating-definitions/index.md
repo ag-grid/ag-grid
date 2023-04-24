@@ -2,7 +2,7 @@
 title: "Updating Column Definitions"
 ---
 
-The section [Column Definitions](../column-definitions/) explained how to configure columns. It is possible to change the
+The section [Column Definitions](/column-definitions/) explained how to configure columns. It is possible to change the
 configuration of the Columns after they are initially set. This section goes through how to update Column Definitions.
 
 ## Adding & Removing Columns {#adding-removing-columns}
@@ -18,11 +18,10 @@ The example below demonstrates adding and removing columns from a grid. Note the
 
 <grid-example title='Add & Remove Columns' name='add-remove-columns' type='mixed' options='{ "modules": true }'></grid-example>
 
-In the example above, note that any state applied to any column (e.g. sort, filter, width, column position) will be kept
+In the example above, note that any state applied to any column (e.g. sort, filter, width) will be kept
 if the column still exists after the new definitions are applied. For example try the following:
 
 - Resize Country column. Note changing columns doesn't impact its width.
-- Move Country column. Note changing columns doesn't impact its position.
 - Sort Country column. Note changing columns doesn't impact its sort.
 
 ## Updating Column Definitions {#changing-column-definition}
@@ -40,10 +39,7 @@ The example below demonstrates updating column definitions to change how columns
 Columns.
 - 'Set Value Formatter' and 'Remove Value Formatter' sets and then subsequently removes the `valueFormatter` attribute
 on all Columns.
-- Headers refresh whenever new columns are set. However cells do not refresh, thus a call to
-`api.refreshCells({ force: true })` is required. The refresh is forced so cells will be refreshed even though the
-underlying value for that cell hasn't changed.
-- Note that any resizing, reordering, sorting etc of the Columns is kept intact between updates to the Column Definitions.
+- Note that any resizing, sorting etc of the Columns is kept intact between updates to the Column Definitions.
 
 <grid-example title='Updating Column Definition' name='update-column-definition' type='mixed' options='{ "modules": true }'></grid-example>
 
@@ -70,14 +66,13 @@ All stateful attributes of Column Definitions are as follows:
 
 [[note]]
 | If you are interested in changing Column State only and not the other parts of the column definitions, then consider
-| working with the [Column State](../column-state/) API instead.
+| working with the [Column State](/column-state/) API instead.
 |
 | Column State is provided as part of Column Definitions to enable these properties to be reactive. Some developers wish
 | to update Column Definitions and expect the grid to respond. Other developers may find this non-intuitive and will
-| prefer interacting with [Column State](../column-state/) directly.
+| prefer interacting with [Column State](/column-state/) directly.
 
-The **Initial Attribute** will be used only when the **Column is Created** only. The **Stateful Attribute** will be used
-when the **Column is Created or Updated**.
+The **Initial Attribute** will be used only when the **Column is Created**. The **Stateful Attribute** will be used when the **Column is Created or Updated**.
 
 <snippet suppressFrameworkContext=true>
 const gridOptions = {
@@ -92,7 +87,7 @@ const gridOptions = {
 
 The example below shows Column Definitions using **initial attributes**. Note the following:
 
-- The `initialWidth`, `initialSort` and `initialPinned` is applied only when the columns are created.
+- The `initialWidth`, `initialSort` and `initialPinned` are applied only when the columns are created.
 - If you update the width, sort or pinned of a column by interacting with the grid's UI and then hit 'Set Columns with
 Initials', the columns state will not change.
 - Removing the columns first and then setting them again will use the initial values again.
@@ -123,26 +118,13 @@ If you don't want to upset any column state (e.g. if you don't want to undo any 
 via the grid's UI, such as applying a sort by clicking on a header, or dragging a column's width) then do not set the
 state attributes as by default they will be `undefined`.
 
-## Applying Column Order
-
-When Column Definitions are provided for existing Columns, the order of the Columns inside the grid is not changed to
-match the order of the newly provided Column Definitions. This is by design so that any reordering of the columns a user
-does to the grid is not lost when the Column Definitions get updated.
-
-If the desired behaviour is that Columns should be ordered to match the new set of Column Definitions, set the grid
-property `applyColumnDefOrder=true`.
-
-The example below demonstrates applying the Column Definitions order to the grid Columns after new Column Definitions
-are set. Both buttons Medals First and Medals Last set the same Columns but in a different order.
-
-<grid-example title='Column Definition Order' name='col-def-order' type='mixed' options='{ "modules": true }'></grid-example>
 
 ## Matching Columns
 
 When a new Column Definition is passed to the grid, the grid needs to work out if it's an update of a Column or a new
 Column.
 
-Most of the time the `field` attribute to match the Column. However `field` is both an optional and non-unique
+Most of the time the `field` attribute will match the Column. However `field` is both an optional and non-unique
 attribute, e.g. a `valueGetter` could be used instead of field, or two columns could share the same field.
 
 Given the `field` is not a unique identifier, the grid uses the following rules to match columns:
@@ -155,15 +137,43 @@ In other words, to have the grid correctly match Columns make sure each Column h
 
 The example below demonstrates the different matching strategies. Note the following:
 
-- All columns, with the exception of Country, are matched correctly. This means any column width, sort, position etc
+- All columns, with the exception of Country, are matched correctly. This means any column width, sort etc
 will be kept between changes to the columns. Country will have its state reset, as it will be treated as a new column
 each time.
 - Athlete column is matched by object equality as the same column definition instance is provided to the grid each time.
 - Age column is matched by `colId`. The `colId` is needed as the column has no `field` attribute.
 - All other columns except Country are matched using the `field` attribute.
-- Country column is not matched as it's a different object instance and has not `colId` or `field` attributes.
+- Country column is not matched as it's a different object instance and has no `colId` or `field` attributes.
 
 <grid-example title='Matching Columns' name='matching-columns' type='mixed' options='{ "modules": true }'></grid-example>
+
+
+## Maintain Column Order
+
+When Column Definitions are provided to the grid, the order of the Columns inside the grid is set to
+match the order of the newly provided Column Definitions. This means every time Columns are set, the order
+is guaranteed to match the order of the definitions. This is usually the desired and expected behaviour.
+
+You may wish for the order of the Columns to not match the Column Definitions. For example suppose the user
+has rearranged Columns to their desired order, and then the application updates the Column Definitions (e.g.
+changes the Cell Renderer used), then it would be undesirable to reset the Column order, as the user's
+arranged order would be lost.
+
+If the desired behaviour is that Column's order should be maintained, set the grid
+property `maintainColumnOrder=true`.
+
+The example below demonstrates suppressing the Column order when Column Definitions are updated. The example has two sets of Columns, A and B. The order of the Column Definitions are different, however when switching between the Column sets, the order in the grid is maintained. 
+
+If the Columns are cleared out (clicking Clear) then when columns are set again the order will match the Column Definition order.
+
+<grid-example title='Column Definition Order' name='col-def-order' type='mixed' options='{ "modules": true }'></grid-example>
+
+If there are new Columns added (eg the new set of Column Definitions has additional Columns to those currently
+present), then these new Columns will always be added at the end.
+
+In order for the Column Order to be maintained, the grid needs to match the Columns. This can be done by ensuring
+each Column has a `field` or `colId` defined. Any Columns that can't be matched will be treated as new Columns and
+placed at the end.
 
 ## Column Events
 
@@ -173,11 +183,11 @@ Column Events will get raised when setting new Column Definitions that update th
 The example below demonstrates events getting raised based on Column Definition changes. The example logs event
 information to the console, so best open the example in a new tab and observe the dev console.
 
-<grid-example title='Column Events' name='column-events' type='mixed' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Column Events' name='column-events' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Refreshing Headers
 
-If you are creating your own [Header Components](../component-header/) then you will need to be aware of
+If you are creating your own [Header Components](/component-header/) then you will need to be aware of
 how Header Components are refreshed.
 
 All Header Components that still exist after the new Column Definitions are applied (in other words, the Column still
@@ -188,11 +198,9 @@ It is up to the Header Component to update based on any changes it may find in t
 The example below demonstrates refreshing of the headers. Note the following:
 
 - Each column is configured to use a custom Header Component.
-- The Header Component logs to the console when its methods `init`, `refresh` and `destroy` are called.
-- Toggling between 'Upper Header Names' and 'Lower Header Names' causes the Header Component to refresh. The Header
-Component refreshes itself and returns `true`.
-- Toggling between 'Filter On' and 'Filter Off' causes the Header Component to refresh. The Header Component returns
-`false` which results in the component getting destroyed and recreated.
+- The Header Component logs to the console when its lifecycle methods/functions are called.
+- Toggling between 'Upper Header Names' and 'Lower Header Names' causes the Header Component to refresh.
+- Toggling between 'Filter On' and 'Filter Off' causes the Header Component to refresh. For frameworks where possible, the Header Component returns `false` which results in the component getting destroyed and recreated.
 - Toggling between 'Resize On' and 'Resize Off' causes the Header Component to refresh. However there is no change to
 the Header Component as it doesn't depend on resize - the resize UI is provided by the grid.
 
@@ -241,7 +249,7 @@ const gridOptions = {
 </snippet>
 
 In the example below, note the following:
-1. Clicking the top buttons alternatives the columns from two sets of definitions.
+1. Clicking the top buttons alternates the columns from two sets of definitions.
 1. Column Group A - `groupId` is provided, so expand / collapse is preserved. The Header Name also changes.
 1. Column Group B - `groupId` is NOT provided, so expand / collapse is lost, group always closes when updates happen.
 1. Column Group C - `groupId` is provided, so expand / collapse is preserved. Child columns are changed.

@@ -1,5 +1,6 @@
 import { ColDef } from "../entities/colDef";
-export interface IFiltersToolPanel {
+import { IToolPanel } from "./iToolPanel";
+export interface IFiltersToolPanel extends IToolPanel {
     setFilterLayout(colDefs: ColDef[]): void;
     expandFilterGroups(groupIds?: string[]): void;
     collapseFilterGroups(groupIds?: string[]): void;

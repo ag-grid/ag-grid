@@ -1,10 +1,9 @@
 import { BeanStub } from "../context/beanStub";
-import { GridPanel } from "../gridPanel/gridPanel";
 export declare class PaginationAutoPageSizeService extends BeanStub {
-    private gridPanel;
-    registerGridComp(gridPanel: GridPanel): void;
+    private ctrlsService;
+    private centerRowContainerCon;
+    private isBodyRendered;
+    private postConstruct;
     private notActive;
-    private onScrollVisibilityChanged;
-    private onBodyHeightChanged;
     private checkPageSize;
 }

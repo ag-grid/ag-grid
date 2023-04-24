@@ -9,9 +9,9 @@ A Viewport is a row model that allows showing a 'window' of data in your client.
 | Don't use Viewport Row Model unless you understand what advantages it offers and whether or not you need them.<br/><br/>
 | We find many of our users are using Viewport Row Model when they don't need to and end up with unnecessarily
 | complicated applications as a result. We'd recommend taking a look at our most powerful row model, the
-| [Server-Side Row Model](../server-side-model/), as an alternative.
+| [Server-Side Row Model](/server-side-model/), as an alternative.
 | <br/><br/>
-| The differences between row models can be found in our [row models summary page](../row-models/)
+| The differences between row models can be found in our [row models summary page](/row-models/)
 
 To enable the Viewport Row Model, set the grid property `rowModelType='viewport'`.
 
@@ -36,39 +36,13 @@ The diagram below shows how the viewport maps to a connection to your dataset. T
 
 ## Interface IViewportDatasource
 
-To use the viewportRowModel you provide the grid with a `viewportDatasource`, which should look like the following:
+To use the viewportRowModel you provide the grid with an implementation of `IViewportDatasource` to the property `viewportDatasource`:
 
+<api-documentation source='grid-options/properties.json' section='viewportRowModel' names='["viewportDatasource"]'></api-documentation>
 
-```ts
-interface IViewportDatasource {
-    // Gets called exactly once before viewPort is used.
-    // Passes methods to be used to tell viewPort of data loads / changes.
-    init(params: IViewportDatasourceParams): void;
+The grid will call the `init` method once, passing you a params object with the following methods. 
 
-    // Tell the viewport what the scroll position of the grid is, so it knows what
-    // rows it has to get
-    setViewportRange(firstRow: number, lastRow: number): void;
-
-    // Gets called once when viewPort is no longer used. If you need to do any
-    // cleanup, do it here.
-    destroy?(): void;
-}
-
-interface IViewportDatasourceParams {
-    // datasource calls this method when the total row count changes.
-    // This in turn sets the height of the grids vertical scroll.
-    // Set 'keepRenderedRows = true' to prevent unwanted row redraws.
-    setRowCount: (count:number, keepRenderedRows?: boolean) => void;
-
-    // datasource calls this when new data arrives. The grid then updates
-    // the provided rows. The rows are mapped from rowIndex to rowData.
-    setRowData: (rowData: { [key: number]: any }) => void;
-
-    // datasource calls this when it wants a row node - typically used
-    // when it wants to update the row node data
-    getRow: (rowIndex: number) => RowNode;
-}
-```
+<interface-documentation interfaceName='IViewportDatasourceParams' ></interface-documentation>
 
 ## Example Sequence
 
@@ -99,21 +73,21 @@ If your data changes, you should get a reference to the node by calling `params.
 
 ## Replacing Data
 
-You may want to completely change data in the viewport, for example if you are showing 'latest 10 trades over 10k' which changes over time as to what the trades are, then you just call `setRowData()` again with the new data. The grid doesn't care how many times you call `setRowData()` with new data. You could alternatively call `rowNode.setData(data)` on the individual row nodes, it will have the same effect.
+You may want to completely change data in the viewport, for example if you are showing 'latest 10 trades over 10k' which changes over time as to what the trades are, then you just call `setRowData(rowData)` again with the new data. The grid doesn't care how many times you call `setRowData(rowData)` with new data. You could alternatively call `rowNode.setData(data)` on the individual row nodes, it will have the same effect.
 
 If you want to change the length of data (e.g. you apply a filter, or the result set otherwise grows or shrinks) then you call `setRowCount()` again. The grid doesn't care how many times you call `setRowCount()`.
 
 ## Sorting
 
-Only server-side sorting is supported, so if you want sorting you have to do it yourself on the server. This is done by listening for the `sortChanged` event and then calling `setRowData()` with the new data when it arrives.
+Only server-side sorting is supported, so if you want sorting you have to do it yourself on the server. This is done by listening for the `sortChanged` event and then calling `setRowData(data)` with the new data when it arrives.
 
 ## Filtering
 
-As with sorting, filtering also must be done on the server. To implement, listen for the `filterChanged` event and apply the filter to your server-side set of data. Then call `setRowCount()` and `setRowData()` to display the new data.
+As with sorting, filtering also must be done on the server. To implement, listen for the `filterChanged` event and apply the filter to your server-side set of data. Then call `setRowCount()` and `setRowData(data)` to display the new data.
 
 ## Selection
 
-Selection works with viewport. It is recommended that you implement `getRowNodeId()` to give a unique key to each row. That way, should the same row appear again but in a different location, it will keep its selection value. See the example below for setting up `getRowNodeId()`.
+Selection works with viewport. It is recommended that you implement `getRowId()` to give a unique key to each row. That way, should the same row appear again but in a different location, it will keep its selection value. See the example below for setting up `getRowId()`.
 
 [[note]]
 | Performing multiple row selections using 'shift-click' is only possible for rows that are available within the viewport.
@@ -142,7 +116,7 @@ Two built-in cell renderers are used: `animateShowChange` (bid, mid and ask colu
 
 The example uses a `mockServer`. This is because all of the examples in this documentation work without any dependencies on any server. In your application, instead of using a mock server, you should connect to your real server. However the code in the `mockServer` example can be used to observe what your server code should be doing - it demonstrates keeping a connection open that is aware of the viewport position and pushes data to the client based on the viewport position.
 
-<grid-example title='Viewport Example' name='viewport' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Viewport Example' name='viewport' type='generated' options='{ "enterprise": true, "modules":["viewport"] }'></grid-example>
 
 ## Example Viewport with Pagination
 
@@ -153,5 +127,5 @@ The example below is almost identical to the above example with the following di
 - `viewportRowModelPageSize = 1`: Because we are showing exact pages, the user will not be scrolling, so there is no need to set a minimum page size. Setting page size to `1` means the grid will always ask from the top row through to the bottom row.
 - `viewportRowModelBufferSize = 0`: Likewise because there is no scrolling, there is no sense in bringing back extra rows to act as a buffer.
 
-<grid-example title='Pagination Viewport Example' name='pagination-viewport' type='generated' options='{ "enterprise": true, "exampleHeight": 570 }'></grid-example>
+<grid-example title='Pagination Viewport Example' name='pagination-viewport' type='generated' options='{ "enterprise": true, "modules":["viewport"], "exampleHeight": 570 }'></grid-example>
 

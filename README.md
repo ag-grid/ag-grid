@@ -1,8 +1,8 @@
-![alt text](./github-banner.png "AG Grid")
-
+![AG Grid HTML5 Grid trusted by the community, built for enterprise](./github-banner.png "AG Grid")
+ 
 [![CDNJS](https://img.shields.io/cdnjs/v/ag-grid)](https://cdnjs.com/libraries/ag-grid) [![Github Stars](https://img.shields.io/github/stars/ag-grid/ag-grid?style=social)](https://github.com/ag-grid/ag-grid) [![Twitter](https://img.shields.io/twitter/follow/ag_grid?style=social)](https://twitter.com/ag_grid)
-
-| Module              | SonarCloud Status |
+ 
+| Module              | Info |
 | --------------------|------------------:|
 | ag-grid-community   | [![npm](https://img.shields.io/npm/dm/ag-grid-community)](https://www.npmjs.com/package/ag-grid-community) <br> [![Bundle Phobia](https://badgen.net/bundlephobia/minzip/ag-grid-community)](https://bundlephobia.com/result?p=ag-grid-community) <br> [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ag-grid-community&metric=alert_status)](https://sonarcloud.io/dashboard?id=ag-grid-community) <br> |
 | ag-grid-enterprise  | [![npm](https://img.shields.io/npm/dm/ag-grid-enterprise)](https://www.npmjs.com/package/ag-grid-enterprise) <br> [![Bundle Phobia](https://badgen.net/bundlephobia/minzip/ag-grid-enterprise)](https://bundlephobia.com/result?p=ag-grid-enterprise) <br> [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ag-grid-enterprise&metric=alert_status)](https://sonarcloud.io/dashboard?id=ag-grid-enterprise) |
@@ -10,13 +10,13 @@
 # AG Grid
 
 AG Grid is a fully-featured and highly customizable JavaScript data grid.
-It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github), has no third-party dependencies and [integrates smoothly with all major JavaScript frameworks](https://www.ag-grid.com/documentation/javascript/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github).
+It delivers [outstanding performance](https://www.ag-grid.com/example?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github), has no third-party dependencies and [integrates smoothly with all major JavaScript frameworks](https://www.ag-grid.com/javascript-data-grid/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github).
 
 Here's how our grid looks with multiple filters and grouping enabled:
 
-![alt text](./github-grid-demo.jpg "AG Grid demo")
+![Image of AG Grid showing filtering and grouping enabled.](./github-grid-demo.jpg "AG Grid demo")
 
-## Features
+## Features 
 
 In addition to the standard set of features you'd expect from any grid:
 
@@ -28,6 +28,7 @@ In addition to the standard set of features you'd expect from any grid:
 Here are some of the features that make AG Grid stand out:
 
 * Grouping / Aggregation *
+* Accessibility support
 * Custom Filtering
 * In-place Cell Editing
 * Records Lazy Loading *
@@ -36,27 +37,28 @@ Here are some of the features that make AG Grid stand out:
 * Hierarchical Data Support & Tree View *
 * Customizable Appearance
 * Customizable Cell Contents
-* Excel-like Pivoting *
 * State Persistence
 * Keyboard Navigation
 * Data Export to CSV
 * Data Export to Excel *
+* Excel-like Pivoting *
 * Row Reordering
 * Copy / Paste
 * Column Spanning
 * Pinned Rows
 * Full Width Rows
+* Integrated Charting
+* Sparklines
 
-\* The features marked with an asterisk are available in the [Enterprise version](https://www.ag-grid.com/license-pricing.php?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) only.
+\* The features marked with an asterisk are available in the [Enterprise version](https://www.ag-grid.com/license-pricing?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) only.
 
 Check out the [developer documentation](https://www.ag-grid.com/documentation/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) for a complete list of features or visit [our official docs](https://www.ag-grid.com/features-overview/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github) for tutorials and feature demos.
 
 ## Looking for a framework specific solution?
 
-* [Get Started with Angular](https://www.ag-grid.com/documentation/angular/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with React](https://www.ag-grid.com/documentation/react/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with Vue](https://www.ag-grid.com/documentation/vue/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
-* [Get Started with AngularJS](https://www.ag-grid.com/documentation/angular/angularjs/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with Angular](https://www.ag-grid.com/angular-data-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with React](https://www.ag-grid.com/react-data-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with Vue](https://www.ag-grid.com/vue-data-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
 
 ## Getting started
 
@@ -77,8 +79,8 @@ $ npm install --save ag-grid-community
 ```js
 import { Grid } from 'ag-grid-community';
 
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
 ```
 
 ### Set configuration
@@ -93,7 +95,7 @@ var gridOptions = {
 	rowData: [
 		{ make: 'Toyota', model: 'Celica', price: 35000 },
 		{ make: 'Ford', model: 'Mondeo', price: 32000 },
-		{ make: 'Porsche', model: 'Boxter', price: 72000 }
+		{ make: 'Porsche', model: 'Boxster', price: 72000 }
 	]
 };
 ```
@@ -105,11 +107,11 @@ var eGridDiv = document.querySelector('#myGrid');
 new Grid(eGridDiv, this.gridOptions);
 ```
 
-For more information on how to integrate the grid into your project see [TypeScript - Building with Webpack 2](https://www.ag-grid.com/documentation/javascript/building-typescript/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github).
+For more information on how to integrate the grid into your project see [Building AG Grid Applications](https://www.ag-grid.com/javascript-data-grid/building/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github).
 
 ## Issue Reporting
 
-If you have found a bug, please report it in this repository's [issues](https://github.com/ag-grid/ag-grid/issues) section. If you're using the Enterprise version, please use the private ticketing system to do that. For more information on support please see our [dedicated support page](https://www.ag-grid.com/support.php?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github).
+If you have found a bug, please report it in this repository's [issues](https://github.com/ag-grid/ag-grid/issues) section. If you're using the Enterprise version, please use the [private ticketing](https://ag-grid.zendesk.com/) system to do that.
 
 ## Asking Questions
 

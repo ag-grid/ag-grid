@@ -1,0 +1,57 @@
+{
+    "_config_": {},
+    "CreateCrossFilterChartParams": {
+        "chartType": {
+            "isRequired": true,
+            "description": "The type of cross-filtering chart to create.",
+            "interfaceHierarchyOverrides": {
+                "exclude": [],
+                "include": []
+            }
+        },
+        "cellRange": {
+            "isRequired": true,
+            "description": "Defines the list of columns to be charted. Note that cross-filter charts include all rows in the grid so there is no need to specify the range of rows."
+        },
+        "chartThemeName": {
+            "options": [
+                "ag-default",
+                "ag-default-dark",
+                "ag-material",
+                "ag-material-dark",
+                "ag-pastel",
+                "ag-pastel-dark",
+                "ag-vivid",
+                "ag-vivid-dark",
+                "ag-solar",
+                "ag-solar-dark"
+            ],
+            "description": "The default theme to use for the created chart. In addition to the default options you listed, you can also provide your own [custom chart themes](/integrated-charts-customisation/#custom-chart-themes)."
+        },
+        "chartContainer": {
+            "description": "If the chart is to be displayed outside of the grid then a chart container should be provided. If the chart is to be displayed using the grid's popup window mechanism then leave as `undefined`."
+        },
+        "suppressChartRanges": {
+            "default": true,
+            "description": "By default, when a cross-filter chart is displayed using the grid, the grid will not highlight the range the chart is charting when the chart gets focus. To show the chart range set `suppressChartRanges=false`."
+        },
+        "aggFunc": {
+            "description": "The aggregation function that should be applied to all series data. The built-in aggregation functions are `'sum'`, `'min'`, `'max'`, `'count'`, `'avg'`, `'first'`, `'last'`. Alternatively, custom aggregation functions can be provided if they conform to the `IAggFunc` interface shown here."
+        },
+        "unlinkChart": {
+            "default": false,
+            "description": "When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart.",
+            "more": {
+                "name": "Unlinking Charts",
+                "url": "/integrated-charts-toolbar/#unlinking-charts"
+            }
+        },
+        "chartThemeOverrides": {
+            "description": "Allows specific chart options in the current theme to be overridden.",
+            "more": {
+                "name": "Overriding Existing Themes",
+                "url": "/integrated-charts-customisation/#overriding-existing-themes"
+            }
+        }
+    }
+}

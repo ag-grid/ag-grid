@@ -1,19 +1,22 @@
 {
   "packages": [
-    "community-modules/*",
-    "enterprise-modules/*",
-    "charts-packages/*",
+    "grid-community-modules/*",
+    "grid-enterprise-modules/*",
+    "charts-community-modules/*",
+    "charts-enterprise-modules/*",
     "grid-packages/*",
-    "examples-charts/*",
-    "examples-grid/*",
+    "charts-examples/*",
+    "grid-examples/*",
     "grid-packages/ag-grid-docs/documentation/"
   ],
+  "useNx": false,
   "command": {
     "bootstrap": {
       "npmClientArgs": [
-        "--no-package-lock"
+        "--no-package-lock",
+        "--force"
       ]
     }
   },
-  "version": "25.1.0"
+  "version": "29.3.2"
 }

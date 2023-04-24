@@ -11,7 +11,7 @@ export declare class ChangedPath {
     isActive(): boolean;
     private depthFirstSearchChangedPath;
     private depthFirstSearchEverything;
-    forEachChangedNodeDepthFirst(callback: (rowNode: RowNode) => void, traverseLeafNodes?: boolean): void;
+    forEachChangedNodeDepthFirst(callback: (rowNode: RowNode) => void, traverseLeafNodes?: boolean, includeUnchangedNodes?: boolean): void;
     executeFromRootNode(callback: (rowNode: RowNode) => void): void;
     private createPathItems;
     private populateColumnsMap;

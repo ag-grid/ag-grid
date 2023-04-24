@@ -10,11 +10,16 @@
 }
 
 .column-group-g {
-    background-color: #1b6d85;
+    background-color: #1b6d85 !important;
 }
 
 .column-group-c {
-    background-color: #67b168;
+    background-color: #67b168 !important;
+}
+
+.ag-keyboard-focus .column-group-g:focus::after,
+.ag-keyboard-focus .column-group-c:focus::after {
+    border-color: azure;
 }
 
 .button-bar {

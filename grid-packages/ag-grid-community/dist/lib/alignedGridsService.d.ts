@@ -1,14 +1,12 @@
-import { GridPanel } from "./gridPanel/gridPanel";
 import { AgEvent, ColumnEvent } from "./events";
 import { Column } from "./entities/column";
 import { BeanStub } from "./context/beanStub";
 export declare class AlignedGridsService extends BeanStub {
-    private columnController;
+    private columnModel;
+    private ctrlsService;
     private logger;
-    private gridPanel;
     private consuming;
     private setBeans;
-    registerGridComp(gridPanel: GridPanel): void;
     private init;
     private fireEvent;
     private onEvent;

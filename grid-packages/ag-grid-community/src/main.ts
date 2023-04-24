@@ -8,3 +8,4 @@ ModuleRegistry.register(InfiniteRowModelModule, false);
 ModuleRegistry.register(CsvExportModule, false);
 
 export * from "@ag-grid-community/core";
+export * from "@ag-grid-community/csv-export";

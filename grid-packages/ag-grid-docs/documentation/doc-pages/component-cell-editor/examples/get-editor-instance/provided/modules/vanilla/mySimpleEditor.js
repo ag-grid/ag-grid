@@ -1,6 +1,6 @@
-const KEY_BACKSPACE = 8;
-const KEY_F2 = 113;
-const KEY_DELETE = 46;
+// backspace starts the editor on Windows
+const KEY_BACKSPACE = 'Backspace';
+const KEY_F2 = 'F2';
 
 class MySimpleEditor {
     init(params) {
@@ -12,8 +12,8 @@ class MySimpleEditor {
 
         let startValue = params.value;
 
-        const keyPressBackspaceOrDelete = params.keyPress === KEY_BACKSPACE || params.keyPress === KEY_DELETE;
-        if (keyPressBackspaceOrDelete) {
+        const isBackspace = params.eventKey === KEY_BACKSPACE;
+        if (isBackspace) {
             startValue = '';
         } else if (params.charPress) {
             startValue = params.charPress;

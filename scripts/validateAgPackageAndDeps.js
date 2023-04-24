@@ -25,6 +25,7 @@ packageNames
 
         checkDependency(packageName, version, isGridPackage ? gridNewVersion : chartNewVersion);
         Object.keys(agPackage.agGridDeps).forEach(dependencyName => checkDependency(dependencyName, agGridDeps[dependencyName], gridDependencyVersion));
+        Object.keys(agPackage.agGridPeerDeps).forEach(dependencyName => checkDependency(dependencyName, agPackage.agGridPeerDeps[dependencyName], gridDependencyVersion));
         Object.keys(agPackage.agChartDeps).forEach(dependencyName => checkDependency(dependencyName, agChartDeps[dependencyName], chartDependencyVersion));
 
         if (agSubAngularVersion) {

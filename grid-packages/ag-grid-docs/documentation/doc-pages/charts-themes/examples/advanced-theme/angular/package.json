@@ -1,0 +1,8 @@
+{
+    "name": "ag-chart-packages",
+    "description": "NOTE: This package.json file is solely used by Plunker to look up type definitions.",
+    "dependencies": {
+        "@angular/core": "*",
+        "ag-charts-community": "*"
+    }
+}

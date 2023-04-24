@@ -4,12 +4,13 @@ export interface RowBounds {
     rowHeight: number;
     rowIndex?: number;
 }
+export declare type RowModelType = 'infinite' | 'viewport' | 'clientSide' | 'serverSide';
 export interface IRowModel {
     /** Returns the rowNode at the given index. */
-    getRow(index: number): RowNode | null;
+    getRow(index: number): RowNode | undefined;
     /** Returns the rowNode for given id. */
-    getRowNode(id: string): RowNode | null;
-    /** This is legacy, not used by AG Grid, but keeping for backward compatibility */
+    getRowNode(id: string): RowNode | undefined;
+    /** Returns the number of rows */
     getRowCount(): number;
     getTopLevelRowCount(): number;
     getTopLevelRowDisplayedIndex(topLevelIndex: number): number;
@@ -30,11 +31,11 @@ export interface IRowModel {
      *  then no rows should be returned  */
     getNodesInRangeForSelection(first: RowNode, last: RowNode | null): RowNode[];
     /** Iterate through each node. What this does depends on the model type. For clientSide, goes through
-     * all nodes. For pagination, goes through current page. For virtualPage, goes through what's loaded in memory. */
-    forEachNode(callback: (rowNode: RowNode, index: number) => void): void;
+     * all nodes. For serverSide, goes through what's loaded in memory. */
+    forEachNode(callback: (rowNode: RowNode, index: number) => void, includeFooterNodes?: boolean): void;
     /** The base class returns the type. We use this instead of 'instanceof' as the client might provide
      * their own implementation of the models in the future. */
-    getType(): string;
+    getType(): RowModelType;
     /**
      * It tells us if this row model knows about the last row that it can produce. This is used by the
      * PaginationPanel, if last row is not found, then the 'last' button is disabled and the last page is

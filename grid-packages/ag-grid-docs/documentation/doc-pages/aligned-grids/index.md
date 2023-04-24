@@ -6,22 +6,37 @@ Aligning two or more grids means columns will be kept aligned in all grids. In o
 
 ## Configuration
 
-To have one (the first) grid reflect column changes in another (the second), place the first grid's options in `alignedGrids` property of the second grids.
+[[only-react]]
+|To have one (the first) grid react to column changes in another grid (the second), provide the second grid with a reference to the first grid.
+|
+|```js
+|const gridOne = useRef<AgGridReact>(null);
+|
+|return (
+|   <>
+|       <AgGridReact ref={gridOne} />
+|       <AgGridReact alignedGrids={gridOne.current ? [gridOne.current] : undefined} />    
+|   </>
+|);
+|```
 
-```js
-gridOptionsFirst = {
-    // some grid options here
-        ...
-};
-
-gridOptionsSecond = {
-    // register first grid to receive events from the second
-    alignedGrids: [gridOptionsFirst]
-
-    // other grid options here
-    ...
-}
-```
+[[only-javascript-or-angular-or-vue]]
+|To have one (the first) grid reflect column changes in another (the second), place the first grid's options in `alignedGrids` property of the second grids.
+|
+|```js
+|gridOptionsFirst = {
+|    // some grid options here
+|        ...
+|};
+|
+|gridOptionsSecond = {
+|    // register first grid to receive events from the second
+|    alignedGrids: [gridOptionsFirst]
+|
+|    // other grid options here
+|    ...
+|}
+|```
 
 ## Example: Aligned Grids
 
@@ -34,7 +49,7 @@ Below shows two grids, both aligned with the other (so any column change to one 
 
 The grids don't serve much purpose (why would you show the same grid twice???) however it demonstrates the features in an easy to understand way.
 
-<grid-example title='Aligned Grids' name='aligned-grids' type='multi'></grid-example>
+<grid-example title='Aligned Grids' name='aligned-grids' type='mixed'></grid-example>
 
 ## Events
 
@@ -61,21 +76,13 @@ This example is a bit more useful. In the bottom grid, we show a summary row. Al
 - The bottom grid has no header, suppressed via a grid option.
 - sizeColumnsToFit is only called on the top grid, the bottom grid receives the new column widths from the top grid.
 
-<grid-example title='Aligned Grid as Footer' name='aligned-floating-footer' type='multi'></grid-example>
-
-[[note]]
-| * The property `suppressHorizontalScroll` does not work with the browser Edge.
-| If you are targeting Edge there is currently no way to hide the scrollbar.
-| The technique AG Grid uses is to set the CSS overflow
-| property to 'hidden' (rather than 'auto'). In all other browsers, this technique works, however
-| in Edge it does not. The problem with Edge is demonstrated in the following
-| [Plunker](https://plnkr.co/edit/MHgT6Rrp9LpOu7jddzVr?p=preview).
+<grid-example title='Aligned Grid as Footer' name='aligned-floating-footer' type='mixed'></grid-example>
 
 ## Example: Align Column Groups
 
 It is possible that you have column groups that are split because of pinning or the order of the columns. The grid below has only two groups that are split, displayed as many split groups. The column aligning also works here in that a change to a split group will open / close all the instances of that group in both tables.
 
-<grid-example title='Aligned Column Groups' name='aligned-column-groups' type='multi'></grid-example>
+<grid-example title='Aligned Column Groups' name='aligned-column-groups' type='mixed'></grid-example>
 
 ## Event Propagation
 

@@ -7,7 +7,7 @@ This section shows how Tree Data can be used with the Server-Side Row Model.
 
 ## Tree Data
 
-Tree Data is defined as data that has parent / child relationships where the parent / child relationships are 
+Tree Data is defined as data that has parent / child relationships where the parent / child relationships are
 provided as part of the data. This is in contrast to Row Grouping where the parent / child relationships are
 the result of grouping. When working with Tree Data, there are no columns getting grouped.
 
@@ -42,73 +42,105 @@ An example of a Tree Data JSON structure is shown below:
 }]
 ```
 
-It is expected that the data set will be too large to send over the network, hence the SSRM is used to 
+It is expected that the data set will be too large to send over the network, hence the SSRM is used to
 lazy-load child row as the parent rows are expanded.
 
 ## Tree Data Mode
 
-In order to set the grid to work with Tree Data, simply enable Tree Data mode via the Grid Options 
+In order to set the grid to work with Tree Data, simply enable Tree Data mode via the Grid Options
 using: `gridOptions.treeData = true`.
 
 ## Supplying Tree Data
 
-Tree Data is supplied via the [Server-Side Datasource](../server-side-model-datasource/) just like flat data, 
-however there are two additional gridOptions callbacks: `isServerSideGroup(dataItem)` 
+Tree Data is supplied via the [Server-Side Datasource](/server-side-model-datasource/) just like flat data,
+however there are two additional gridOptions callbacks: `isServerSideGroup(dataItem)`
 and `getServerSideGroupKey(dataItem)`.
 
-The following code snippet shows the relevant `gridOptions` entries for configuring tree data with the 
+<api-documentation source='grid-options/properties.json' section='serverSideRowModel' names='["isServerSideGroup", "getServerSideGroupKey"]' ></api-documentation>
+
+The following code snippet shows the relevant `gridOptions` entries for configuring tree data with the
 server-side row model:
 
 <snippet spaceBetweenProperties="true">
-|const gridOptions = {
-|    // choose Server-Side Row Model
-|    rowModelType: 'serverSide',
-|    // enable Tree Data
-|    treeData: true,
-|    // indicate if row is a group node
-|    isServerSideGroup: dataItem => {
-|        return dataItem.group;
-|    },
-|    // specify which group key to use
-|    getServerSideGroupKey: dataItem => {
-|        return dataItem.employeeId;
-|    },
-|}
+| const gridOptions = {
+|     // choose Server-Side Row Model
+|     rowModelType: 'serverSide',
+|     // enable Tree Data
+|     treeData: true,
+|     // indicate if row is a group node
+|     isServerSideGroup: dataItem => {
+|         return dataItem.group;
+|     },
+|     // specify which group key to use
+|     getServerSideGroupKey: dataItem => {
+|         return dataItem.employeeId;
+|     },
+| }
 </snippet>
 
 [[note]]
-| Be careful not to get mixed up with the [Client-Side Tree Data](../tree-data/) configurations by mistake.
+| Be careful not to get mixed up with the [Client-Side Tree Data](/tree-data/) configurations by mistake.
 
-The example below shows this in action where the following can be noted: 333
+The example below shows this in action where the following can be noted:
 
 - Tree Data is enabled with the Server-Side Row Model using `gridOptions.treeData = true`.
-- Group nodes are determined using the callback `gridOptions.isServerSideGroup()`.
-- Group keys are returned from the callback `gridOptions.getServerSideGroupKey()`.
+- Group nodes are determined using the callback `gridOptions.isServerSideGroup(dataItem)`.
+- Group keys are returned from the callback `gridOptions.getServerSideGroupKey(dataItem)`.
 
-<grid-example title='Tree Data' name='tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["lodash"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
-
-[[note]]
-| The examples on this page use a simple method for expanding group nodes, however a 
-| better approach is covered in the section 
-[Preserving Group State](../server-side-model-grouping/#preserving-group-state).
+<grid-example title='Tree Data' name='tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
 ## Refreshing Tree Data
 
 Tree Data can be refreshed in the same way as groups are refreshed when not using Tree Data. This is
-explained in the [SSRM Refresh](../server-side-model-refresh/).
+explained in the [SSRM Refresh](/server-side-model-refresh/).
 
 The example below shows this in action where the following can be noted:
 
-- Click **Purge Everything** to clear all caches by calling `gridOptions.api.refreshServerSideStore({ route: [], purge: true })`.
-- Click **Purge ['Kathryn Powers','Mabel Ward']** to clear a single cache by calling `gridOptions.api.refreshServerSideStore({ route: ['Kathryn Powers','Mabel Ward'], purge: true })`.
+- Click **Refresh Everything** to clear all caches by calling `gridOptions.api.refreshServerSide({ route: [], purge: true })`.
+- Click **Refresh ['Kathryn Powers','Mabel Ward']** to clear a single cache by calling `gridOptions.api.refreshServerSide({ route: ['Kathryn Powers','Mabel Ward'], purge: true })`.
 
-<grid-example title='Purging Tree Data' name='purging-tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "extras": ["lodash"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Purging Tree Data' name='purging-tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
-## Sorting
+## Transactions with Tree Data
 
-Sorting works in the same way when using Tree Data as when not using Tree Data with one exception. If using the Partial Store, a change in sort will refresh (reload) the data. If using the Full Store, a change in sort will result in the grid sorting the data without requiring a reload.
+Tree Data can have transactions applied in the same way as row groups. This is explained in the [SSRM Transactions](/server-side-model-updating-transactions/) section.
 
-## Filtering
+The example below demonstrates transactions with Tree Data. Note the following:
+- **Add Child to Selected** adds a child under the selected row, even if it wasn't originally a group.
+- **Update Selected** changes the selected row's `Employment Type`.
+- **Delete Selected** removes the selected row, and all of its child rows.
+- **Move Selected to Robert Peterson** moves the selected row and its children directly under `Robert Peterson`. 
 
-Changing the filter applied to a column will always refresh (reload) the data. This is true for both the Partial Store and Full Store.
+<grid-example title='Transactions with Tree Data' name='transactions-tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
+## Selection with Tree Data
+
+Tree Data can have row selection applied in the same way as row groups. This is explained in the [SSRM Row Selection](/server-side-model-selection/) section.
+
+The example below demonstrates row selection with Tree Data. Note the following:
+- `groupSelectsChildren` has been enabled, alongside `rowSelection='multiple'`.
+- Selecting a row with children also selects all of its children.
+- Selecting some, but not all, of a rows children places that row in the indeterminate state.
+
+<grid-example title='Selection with Tree Data' name='selecting-tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 615, "modules": ["serverside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
+
+## Filtering Tree Data
+
+Server-Side Tree Data Filtering should behave the same as Client-Side [Tree Data Filtering](/tree-data/#tree-data-filtering). A group will be included if:
+
+<ol style="list-style-type: lower-latin;">
+    <li>it has any children that pass the filter, or</li>
+    <li>it has a parent that passes the filter, or</li>
+    <li>its own data passes the filter</li>
+</ol>
+
+The following example demonstrates Server-Side Tree Data Filtering using the [Set Filter Tree List](/filter-set-tree-list/), which replicates the Tree Data structure in the filter.
+
+- The **Group** column has the Set Filter Tree List enabled via `filterParams.treeList = true`. A Key Creator is specified to convert the path into a string.
+- The **Group** column has the filter values supplied asynchronously as a nested array of strings that matches the data paths. The supplied values are at the child level only.
+- The **Date** column has the Set Filter Tree List enabled via `filterParams.treeList = true`, and is grouped by year -> month -> day.
+- The **Date** column has the filter values supplied asynchronously as an array of `Date` objects.
+- The **Date** column has a `filterParams.keyCreator` provided to convert the `Date` values into the (string) format the server is expecting in the Filter Model.
+- The **Group** and **Date** columns both have `filterParams.excelMode = 'windows'`, which allows changes to the tree filter to be applied in batches.
+
+<grid-example title='Filtering Tree Data' name='filtering-tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>

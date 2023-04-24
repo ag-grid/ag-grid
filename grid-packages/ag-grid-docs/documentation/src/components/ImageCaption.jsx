@@ -4,15 +4,29 @@ import Gif from './Gif';
 import { useImageFileNodes, getImage } from './use-image-file-nodes';
 import styles from './ImageCaption.module.scss';
 
-const ImageCaption = ({ pageName, src, alt, centered, children, constrained, descriptiontop: descriptionTop, height, maxwidth: maxWidth, minwidth: minWidth, width }) => {
+/**
+ * This can be used to show an image in a box, along with text if provided, and provides various options for configuring
+ * the appearance.
+ */
+const ImageCaption = ({
+    pageName,
+    src,
+    alt,
+    centered,
+    children,
+    constrained,
+    descriptiontop: descriptionTop,
+    height,
+    maxwidth: maxWidth,
+    minwidth: minWidth,
+    width }) => {
     const { fluidImages, images } = useImageFileNodes();
 
     let imgSrc;
-
     const fluidImage = getImage(fluidImages, pageName, src);
 
     if (fluidImage) {
-        imgSrc = fluidImage.childImageSharp.fluid.src;
+        imgSrc = fluidImage.childImageSharp.gatsbyImageData.images.fallback.src;
     } else {
         const image = getImage(images, pageName, src);
 
@@ -45,7 +59,7 @@ const ImageCaption = ({ pageName, src, alt, centered, children, constrained, des
         });
 
     return (
-        <div className={classnames(styles['image-caption'], { [styles['image-caption--centered']]: centered })} style={style}>
+        <div className={classnames(styles['image-caption'], { [styles['image-caption--centered']]: centered, [styles['image-caption--constrained']]: constrained })} style={style}>
             {descriptionTop && description}
             {src.endsWith('.gif') ?
                 <Gif src={src} alt={alt} className={imageClasses} wrapped={true} /> :

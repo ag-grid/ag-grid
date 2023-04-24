@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../src/ts/interfaces/rowNodeTransaction.ts"],"names":[],"mappings":";;;;;;AAAA;AACA;AACA","file":"rowNodeTransaction.js","sourcesContent":["import { RowNode } from \"../entities/rowNode\";\n\nexport interface RowNodeTransaction {\n    add: RowNode[];\n    remove: RowNode[];\n    update: RowNode[];\n}\n"]}

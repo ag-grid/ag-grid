@@ -1,8 +1,13 @@
 .image-caption {
     composes: card mx-3 my-3 from global;
+    border: none;
 
     &--centered {
         composes: mx-auto from global;
+    }
+
+    &--constrained {
+        max-width: 100%;
     }
 
     &__image {

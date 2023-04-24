@@ -1,17 +1,33 @@
+/**
+ * This script is used to update our Algolia instance. It loads the HTML from the statically-rendered website, processes
+ * it into records, and pushes these records to Algolia. It should be run whenever the website is deployed.
+ */
+
 require('dotenv').config();
 
 const fs = require('fs-extra');
-const jsdom = require('jsdom');
+const {JSDOM} = require('jsdom');
 const algoliasearch = require('algoliasearch');
+const commander = require("commander");
+
 const menu = require('./doc-pages/licensing/menu.json');
 const supportedFrameworks = require('./src/utils/supported-frameworks');
+const convertToFrameworkUrl = require('./src/utils/convert-to-framework-url');
+const puppeteer = require("puppeteer-core");
 
-const debug = true;
-const clearIndices = true;
-const indexNamePrefix = 'ag-grid-dev';
+const options = commander
+    .option('-d, --debug <debug>', 'if debug = true (not provided - it\'ll default to true), the script writes the records it would upload into JSON files for inspection', true)
+    .option("-i, --indexNamePrefix <prefix>", 'if indexNamePrefix = "ag-grid-dev" we\'ll update development indices, and for "ag-grid" production', 'ag-grid-dev')
+    .parse(process.argv)
+    .opts();
 
-const { JSDOM } = jsdom;
 
+const clearIndices = true; // to ensure a clean index, you should clear existing records before inserting new ones
+const debug = options.debug === true;
+const indexNamePrefix = options.indexNamePrefix;
+
+console.log("Updating Algolia Indices");
+console.log(`debug: ${debug}, indexNamePrefix: ${indexNamePrefix}`);
 console.log(`Updating Algolia using App ID ${process.env.GATSBY_ALGOLIA_APP_ID} and admin key ${process.env.ALGOLIA_ADMIN_KEY}`);
 
 const algoliaClient = algoliasearch(process.env.GATSBY_ALGOLIA_APP_ID, process.env.ALGOLIA_ADMIN_KEY);
@@ -31,16 +47,43 @@ const cleanContents = contents => {
         .trim();
 };
 
-const createRecords = async (url, framework, breadcrumb, rank) => {
-    const records = [];
-    const path = url.replace('../', `/${framework}/`);
-    const filePath = `public${path}index.html`;
+const extractTitle = titleTag => {
+    let title = titleTag.firstChild.textContent;
 
-    if (!fs.existsSync(filePath)) {
-        return records;
+    let sibling = titleTag.firstChild.nextSibling;
+    while(sibling) {
+        title += ` ${sibling.textContent}`;
+        sibling = sibling.nextSibling;
     }
 
-    const dom = await JSDOM.fromFile(filePath);
+    return title;
+}
+
+const createRecords = async (browser, url, framework, breadcrumb, rank, loadFromAgGrid) => {
+    const records = [];
+    const path = convertToFrameworkUrl(url, framework);
+
+    let dom = null;
+    if (loadFromAgGrid) {
+        const prodUrl = `https://www.ag-grid.com${path}`;
+
+        const page = await browser.newPage();
+        await page.setViewport({width: 800, height: 570});
+
+        await page.goto(prodUrl, {waitUntil: 'networkidle2'});
+        await page.waitForFunction(() => document.querySelectorAll("[id^='reference-']").length > 5)
+
+        const content = await page.content();
+        dom = await new JSDOM(content);
+    } else {
+        const filePath = `public${path}index.html`;
+
+        if (!fs.existsSync(filePath)) {
+            return records;
+        }
+
+        dom = await JSDOM.fromFile(filePath);
+    }
 
     let key = undefined;
     let heading = undefined;
@@ -48,6 +91,8 @@ const createRecords = async (url, framework, breadcrumb, rank) => {
     let text = '';
 
     const titleTag = dom.window.document.querySelector('h1');
+    const title = extractTitle(titleTag);
+
     let positionInPage = 0;
 
     const createRecord = () => {
@@ -58,14 +103,16 @@ const createRecords = async (url, framework, breadcrumb, rank) => {
 
         const cleanText = cleanContents(text);
 
-        if (cleanText === '') { return; }
+        if (cleanText === '') {
+            return;
+        }
 
         const hashPath = `${path}${key ? `#${key}` : ''}`;
 
         records.push({
             objectID: hashPath,
             breadcrumb,
-            title: titleTag.textContent,
+            title,
             heading,
             subHeading,
             path: hashPath,
@@ -79,6 +126,10 @@ const createRecords = async (url, framework, breadcrumb, rank) => {
         positionInPage++;
     };
 
+    /**
+     * We split the page into sections based on H2 and H3 tags, which keeps the record size manageable and returns
+     * more accurate results for users, as they will be taken to specific parts of a page.
+     */
     const parseContent = startingElement => {
         for (let currentTag = startingElement; currentTag != null; currentTag = currentTag.nextElementSibling) {
             try {
@@ -130,34 +181,54 @@ const createRecords = async (url, framework, breadcrumb, rank) => {
         }
     };
 
-    parseContent(titleTag.nextElementSibling);
+    parseContent(dom.window.document.querySelector('#doc-content').firstChild.nextElementSibling);
     createRecord();
 
     return records;
 };
 
+// we read these pages from ag-grid.com and parse them as these pages no longer have
+// the page content statically - they're loaded via JS
+// we'll run this after we deploy to ag-grid.com so the indices will be accurate
+const readFromAgGrid = url => url === '/grid-options/' ||
+    url === '/grid-api/' ||
+    url === '/grid-events/' ||
+    url === '/row-object/' ||
+    url === '/column-properties/' ||
+    url === '/column-api/' ||
+    url === '/column-object/';
+
 const processIndexForFramework = async framework => {
-    let rank = 10000;
+    let rank = 10000; // using this rank ensures that pages that are earlier in the menu will rank higher in results
     const records = [];
     const indexName = `${indexNamePrefix}_${framework}`;
 
+    const exclusions = ["charts-api-themes", "charts-api", "charts-api-explorer"];
+
+    const browser = await puppeteer.launch({
+        executablePath: indexNamePrefix === 'ag-grid-dev' ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' : '/usr/bin/google-chrome',
+        ignoreHTTPSErrors: true
+    });
+
     console.log(`Generating records for ${indexName}...`);
 
-    const iterateItems = async (items, prefix) => {
-        if (!items) { return; }
+    const iterateItems = async (items, prefix, parentTitle) => {
+        if (!items) {
+            return;
+        }
 
         const breadcrumbPrefix = prefix ? `${prefix} > ` : '';
 
         for (const item of items) {
             const breadcrumb = breadcrumbPrefix + item.title;
 
-            if (item.url) {
-                records.push(...await createRecords(item.url, framework, breadcrumb, rank));
+            if (item.url && !exclusions.some(exclusion => exclusion === item.url.replace(/\//g, ''))) {
+                records.push(...await createRecords(browser, item.url, framework, breadcrumb, rank, readFromAgGrid(item.url)));
 
                 rank -= 10;
             }
 
-            await iterateItems(item.items, breadcrumb);
+            await iterateItems(item.items, breadcrumb, parentTitle);
         }
     };
 
@@ -171,20 +242,20 @@ const processIndexForFramework = async framework => {
 
         console.log(`Wrote Algolia records for ${indexName} to ${fileName}`);
     } else {
-        console.log(`Pushing records for ${indexName} to Algolia...`);
+        console.log(`Pushing records for ${indexName} to Algolia ...`);
 
         const index = algoliaClient.initIndex(indexName);
 
         index.setSettings({
-            searchableAttributes: ['title', 'heading', 'subHeading', 'text'],
-            disableExactOnAttributes: ['text'],
-            attributesToSnippet: ['text:40'],
-            distinct: 1,
-            attributeForDistinct: 'breadcrumb',
-            customRanking: ['desc(rank)', 'asc(positionInPage)'],
-            camelCaseAttributes: ['heading', 'subHeading', 'text'],
-            hitsPerPage: 10,
-            snippetEllipsisText: '…',
+            searchableAttributes: ['title', 'heading', 'subHeading', 'text'], // attributes used for searching
+            disableExactOnAttributes: ['text'], // don't allow "exact matches" in the text
+            attributesToSnippet: ['text:40'], // configure snippet length shown in results
+            distinct: 1, // only allow each page to appear in the results once
+            attributeForDistinct: 'breadcrumb', // configure what is used to decide if a page is the same
+            customRanking: ['desc(rank)', 'asc(positionInPage)'], // custom tweaks to the ranking
+            camelCaseAttributes: ['heading', 'subHeading', 'text'], // split camelCased text so it can match regular text
+            hitsPerPage: 10, // how many results should be returned per page
+            snippetEllipsisText: '…', // the character used when truncating content for snippets
         });
 
         try {
@@ -199,6 +270,8 @@ const processIndexForFramework = async framework => {
             console.error(`Failed to save records.`, e);
         }
     }
+
+    browser.close();
 };
 
 const run = async () => {
@@ -208,3 +281,4 @@ const run = async () => {
 };
 
 run();
+

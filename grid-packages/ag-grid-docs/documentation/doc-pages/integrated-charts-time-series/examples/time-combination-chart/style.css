@@ -1,0 +1,16 @@
+.wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.wrapper > .ag-theme-alpine {
+    flex: 2 2 0;
+}
+
+.wrapper #myChart {
+    margin-top: 0.5rem;
+    border: 1px solid var(--ag-border-color);
+}

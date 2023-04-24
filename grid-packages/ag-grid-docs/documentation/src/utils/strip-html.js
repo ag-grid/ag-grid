@@ -2,6 +2,9 @@ const visit = require('unist-util-visit');
 
 module.exports = stripHtml;
 
+/**
+ * Returns the text contents from a tree of HTML.
+ */
 function stripHtml(tree) {
     let fragments = [];
 
@@ -22,6 +25,9 @@ function stripHtml(tree) {
     return fragments.join(' ');
 }
 
+/**
+ * Removes tags with the specified names from the tree.
+ */
 function removeElements(node, tagsToRemove = []) {
     return node.reduce(function(children, child) {
         if (child.children) {

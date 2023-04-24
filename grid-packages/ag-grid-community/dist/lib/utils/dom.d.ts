@@ -1,6 +1,5 @@
-export declare function addCssClass(element: HTMLElement, className: string): HTMLElement | undefined;
-export declare function removeCssClass(element: HTMLElement, className: string): void;
-export declare function addOrRemoveCssClass(element: HTMLElement, className: string, addOrRemove: boolean): void;
+import { RowStyle } from '../entities/gridOptions';
+import { CellStyle } from '../entities/colDef';
 /**
  * This method adds a class to an element and remove that class from all siblings.
  * Useful for toggling state.
@@ -9,15 +8,24 @@ export declare function addOrRemoveCssClass(element: HTMLElement, className: str
  * @param {boolean} otherElementClass The class to be assigned to siblings of the element, but not the element itself
  */
 export declare function radioCssClass(element: HTMLElement, elementClass: string | null, otherElementClass?: string | null): void;
-export declare function containsClass(element: HTMLElement, className: string): boolean;
+export declare const FOCUSABLE_SELECTOR = "[tabindex], input, select, button, textarea, [href]";
+export declare const FOCUSABLE_EXCLUDE = ".ag-hidden, .ag-hidden *, [disabled], .ag-disabled, .ag-disabled *";
 export declare function isFocusableFormField(element: HTMLElement): boolean;
-export declare function setDisplayed(element: HTMLElement, displayed: boolean): void;
-export declare function setVisible(element: HTMLElement, visible: boolean): void;
+export declare function setDisplayed(element: Element, displayed: boolean, options?: {
+    skipAriaHidden?: boolean;
+}): void;
+export declare function setVisible(element: HTMLElement, visible: boolean, options?: {
+    skipAriaHidden?: boolean;
+}): void;
 export declare function setDisabled(element: HTMLElement, disabled: boolean): void;
-export declare function isElementChildOfClass(element: HTMLElement | null, cls: string, maxNest?: number): boolean;
+export declare function isElementChildOfClass(element: HTMLElement | null, cls: string, maxNest?: HTMLElement | number): boolean;
 export declare function getElementSize(el: HTMLElement): {
     height: number;
     width: number;
+    borderTopWidth: number;
+    borderRightWidth: number;
+    borderBottomWidth: number;
+    borderLeftWidth: number;
     paddingTop: number;
     paddingRight: number;
     paddingBottom: number;
@@ -54,10 +62,10 @@ export declare function offsetHeight(element: HTMLElement): number;
 export declare function offsetWidth(element: HTMLElement): number;
 export declare function ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore?: HTMLElement | null): void;
 export declare function setDomChildOrder(eContainer: HTMLElement, orderedChildren: (HTMLElement | null)[]): void;
-export declare function insertTemplateWithDomOrder(eContainer: HTMLElement, htmlTemplate: string, eChildBefore: HTMLElement | null): HTMLElement;
+export declare function insertWithDomOrder(eContainer: HTMLElement, eToInsert: HTMLElement, eChildBefore: HTMLElement | null): void;
 /** @deprecated */
 export declare function prependDC(parent: HTMLElement, documentFragment: DocumentFragment): void;
-export declare function addStylesToElement(eElement: any, styles: any): void;
+export declare function addStylesToElement(eElement: any, styles: RowStyle | CellStyle | null | undefined): void;
 export declare function isHorizontalScrollShowing(element: HTMLElement): boolean;
 export declare function isVerticalScrollShowing(element: HTMLElement): boolean;
 export declare function setElementWidth(element: HTMLElement, width: string | number): void;
@@ -65,20 +73,6 @@ export declare function setFixedWidth(element: HTMLElement, width: string | numb
 export declare function setElementHeight(element: HTMLElement, height: string | number): void;
 export declare function setFixedHeight(element: HTMLElement, height: string | number): void;
 export declare function formatSize(size: number | string): string;
-/**
- * Returns true if it is a DOM node
- * taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
- * @param {any} o
- * @return {boolean}
- */
-export declare function isNode(o: any): boolean;
-/**
- * Returns true if it is a DOM element
- * taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
- * @param {any} o
- * @returns {boolean}
- */
-export declare function isElement(o: any): boolean;
 export declare function isNodeOrElement(o: any): boolean;
 /**
  * Makes a copy of a node list into a list
@@ -87,7 +81,5 @@ export declare function isNodeOrElement(o: any): boolean;
  */
 export declare function copyNodeList(nodeList: NodeListOf<Node> | null): Node[];
 export declare function iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void;
-/** @deprecated */
-export declare function setCheckboxState(eCheckbox: HTMLInputElement, state: any): void;
 export declare function addOrRemoveAttribute(element: HTMLElement, name: string, value: any): void;
 export declare function nodeListForEach<T extends Node>(nodeList: NodeListOf<T> | null, action: (value: T) => void): void;

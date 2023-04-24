@@ -18,6 +18,8 @@ export interface IFilterLocaleText {
     notContains: string;
     startsWith: string;
     endsWith: string;
+    blank: string;
+    notBlank: string;
     andCondition: string;
     orCondition: string;
     dateFormatOoo: string;

@@ -1,7 +1,5 @@
-import Vue from "vue";
-
-export default Vue.extend({
-    template: `<span>{{displayValue}}</span>`,
+export default {
+    template: `<span>{{ displayValue }}</span>`,
     data: function () {
         return {
             displayValue: ''
@@ -15,4 +13,4 @@ export default Vue.extend({
             console.log(`user function called for medal column: row = ${this.params.rowIndex}, column = ${this.params.column.getId()}`);
         }
     }
-});
+};

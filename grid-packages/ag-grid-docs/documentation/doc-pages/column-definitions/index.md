@@ -1,7 +1,15 @@
 ---
 title: "Column Definitions"
 ---
-Each column in the grid is defined using a Column Definition (`ColDef`). Columns are positioned in the grid according to the order the Column Definitions are specified in the Grid Options.
+
+[[only-javascript-or-angular-or-vue]]
+|Each column in the grid is defined using a Column Definition (`ColDef`). Columns are positioned in the grid according to the order the Column Definitions are specified in the Grid Options.
+
+[[only-react]]
+|<video-section id="aDCepyF_DUY" title="React Column Definitions" header="true">
+|Each column in the grid is defined using a Column Definition (<code>ColDef</code>). Columns are positioned in the grid according to the order the Column Definitions are specified in the Grid Options.
+|</video-section>
+
 
 The following example shows a simple grid with 3 columns defined:
 
@@ -9,14 +17,14 @@ The following example shows a simple grid with 3 columns defined:
 const gridOptions = {
     // define 3 columns
     columnDefs: [
-        { headerName: 'Athlete', field: 'athlete' },
-        { headerName: 'Sport', field: 'sport' },
-        { headerName: 'Age', field: 'age' },
+        { field: 'athlete' },
+        { field: 'sport' },
+        { field: 'age' },
     ]
 }
 </snippet>
 
-See [Column Properties](../column-properties/) for a list of all properties that can be applied to a column.
+See [Column Properties](/column-properties/) for a list of all properties that can be applied to a column.
 
 If you want the columns to be grouped, you can include them as children like so:
 
@@ -27,69 +35,49 @@ const gridOptions = {
         {
             headerName: 'Group A',
             children: [
-                { headerName: 'Athlete', field: 'athlete' },
-                { headerName: 'Sport', field: 'sport' },
-                { headerName: 'Age', field: 'age' },
+                { field: 'athlete' },
+                { field: 'sport' },
+                { field: 'age' }
             ]
         }
     ]
 }
 </snippet>
 
-Groups are explained in more detail in the section [Column Groups](../column-groups/).
+Groups are explained in more detail in the section [Column Groups](/column-groups/).
 
-[[only-react]]
-| ## Declarative Columns
-|
-| You can use the `AgGridColumn` element to declare your column definitions declaratively if you prefer.
+## Accessing Row Data Values
 
-[[only-vue]]
-| ## Declarative Columns
-|
-| You can also define your grid column definition decoratively if you would prefer.
-|
-| You declare the grid as normal:
-|
-| ```jsx
-| <ag-grid-vue
-|         class="ag-theme-alpine"
-|         style="width: 700px; height: 400px;"
-|         :rowData="rowData"
-|         //...rest of definition
-| ```
-|
-| And within this component you can then define your column definitions:
-|
-| ```jsx
-| <ag-grid-vue
-|     //...rest of definition
-| >
-|     <ag-grid-column headerName="IT Skills">
-|         <ag-grid-column
-|             field="skills"
-|             :width="120"
-|             suppressSorting
-|             cellRendererFramework="SkillsCellRenderer"
-|             :menuTabs="['filterMenuTab']">
-|         </ag-grid-column>
-|         <ag-grid-column
-|             field="proficiency"
-|             :width="135"
-|             cellRendererFramework="ProficiencyCellRenderer"
-|             :menuTabs="['filterMenuTab']">
-|         </ag-grid-column>
-|     </ag-grid-column>
-| </ag-grid-vue>
-| ```
-|
-| In this example we're defining a grouped column with `IT Skills` having two
-| child columns `Skills and Proficiency`.
-|
-| Not that anything other than a string value will need to be bound (i.e. `:width="120"`) as
-| Vue will default to providing values as Strings.
-|
-| A full working example of defining a grid declaratively can be found in the
-| [Vue Playground Repo](https://github.com/seanlandsman/ag-grid-vue-playground).
+The `colDef.field` property is used to access values from the row data object. In most cases the `field` will be a property name from the row data object.
+If, however, the row data contains nested objects, you can use dot notation to reference deep property values. 
+
+For example, if the row data has an object property `medals` that contains the individual medal counts, then to display gold medals won use the field value `'medals.gold'`.
+
+<snippet>
+const gridOptions = {
+    rowData: [
+        {
+            athlete: 'Michael Phelps',
+            medals: {
+                gold: 8, silver: 1, bronze: 0
+            }
+        }
+    ],
+    columnDefs: [
+        { field: 'athlete' },
+        // Using dot notation to access nested property
+        { field: 'medals.gold', headerName: 'Gold' },
+    ],
+}
+</snippet>
+
+For alternative ways to provide cell data, such as value getters, see the documentation on [Value Getters](/value-getters/).
+
+<grid-example title='Nested Row Data Example' name='column-fields' type='generated'></grid-example>
+
+### Suppress Field Dot Notation
+
+If your row data objects have dots in their property names, that should *not* be treated as deep references, then set the grid property `suppressFieldDotNotation` to `true`. This prevents the dots being interpreted as deep references across all column definitions.
 
 ## Custom Column Types {#default-column-definitions}
 
@@ -99,7 +87,7 @@ In addition to the above, the grid provides additional ways to help simplify and
 - `defaultColGroupDef`: contains properties that all column groups will inherit.
 - `columnTypes`: specific column types containing properties that column definitions can inherit.
 
-Default columns and column types can specify any of the [column properties](../column-properties/) available on a column.
+Default columns and column types can specify any of the [column properties](/column-properties/) available on a column.
 
 [[note]]
 | Column Types are designed to work on Columns only, i.e. they won't be applied to Column Groups.
@@ -141,7 +129,9 @@ const gridOptions = {
 }
 </snippet>
 
-When the grid creates a column it starts with the default column definition, then adds in anything from the column type, then finally adds in items from the specific column definition.
+When the grid creates a column it starts with the default column definition, then adds properties defined via column types and then finally adds in properties from the specific column definition.
+
+At each stage if a column property already exists, the latter will override the existing value. For example, if the `defaultColDef` sets `editable: true` but a `columnType` sets `editable: false` then this column will not be editable. 
 
 For example, the following is an outline of the steps used when creating 'Col C' shown above:
 
@@ -152,10 +142,10 @@ For example, the following is an outline of the steps used when creating 'Col C'
 // Step 2: default column properties are merged in
 { width: 100, editable: true, filter: 'agTextColumnFilter' }
 
-// Step 3: column type properties are merged in (using the 'type' property)
+// Step 3: column type properties are merged in (using the 'type' property), overriding where necessary
 { width: 100, editable: false, filter: 'agTextColumnFilter' }
 
-// Step 4: finally column definition properties are merged in
+// Step 4: finally column definition properties are merged in, overriding where necessary
 { headerName: 'Col C', field: 'c', width: 100, editable: false, filter: 'agTextColumnFilter' }
 ```
 
@@ -180,11 +170,21 @@ const gridOptions = {
 }
 </snippet>
 
+
+The `rightAligned` column type works by setting the header and cell class properties as follows. If you manually set either `headerClass` or `cellClass` then you may need to include the right aligned CSS classes yourself as column type properties are overridden by explicitly defined column properties.
+
+```ts
+rightAligned: {
+    headerClass: 'ag-right-aligned-header',
+    cellClass: 'ag-right-aligned-cell'
+}
+```
+
 ## Column IDs
 
 Each column generated by the grid is given a unique Column ID, which is used in parts of the Grid API.
 
-If you are using the API and the columns IDs are a little complex (e.g. if two columns have the same `field`, or if you are using `valueGetter` instead of `field`) then it is useful to understand how columns IDs are generated.
+If you are using the API and the column IDs are a little complex (e.g. if two columns have the same `field`, or if you are using `valueGetter` instead of `field`) then it is useful to understand how column IDs are generated.
 
 If the user provides `colId` in the column definition, then this is used, otherwise the `field` is used. If both `colId` and `field` exist then `colId` gets preference. If neither `colId` nor `field` exists then a number is assigned. Finally, the ID is ensured to be unique by appending `'_n'` if necessary, where `n` is the first positive number that allows uniqueness.
 

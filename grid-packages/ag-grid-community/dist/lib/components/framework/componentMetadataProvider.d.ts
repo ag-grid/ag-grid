@@ -1,10 +1,9 @@
 import { IComponent } from "../../interfaces/iComponent";
-import { AgGridComponentFunctionInput } from "./userComponentRegistry";
 import { BeanStub } from "../../context/beanStub";
 export interface ComponentMetadata {
     mandatoryMethodList: string[];
     optionalMethodList: string[];
-    functionAdapter?: (callback: AgGridComponentFunctionInput) => {
+    functionAdapter?: (callback: any) => {
         new (): IComponent<any>;
     };
 }

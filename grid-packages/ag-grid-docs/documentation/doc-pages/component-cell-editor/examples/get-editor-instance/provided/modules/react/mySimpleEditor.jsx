@@ -1,7 +1,7 @@
 import React, {Component, createRef} from 'react';
 
-const KEY_BACKSPACE = 8;
-const KEY_DELETE = 46;
+// backspace starts the editor on Windows
+const KEY_BACKSPACE = 'Backspace';
 
 export default class MySimpleEditor extends Component {
     constructor(props) {
@@ -21,8 +21,8 @@ export default class MySimpleEditor extends Component {
     getInitialValue(props) {
         let startValue = props.value;
 
-        const keyPressBackspaceOrDelete = props.keyPress === KEY_BACKSPACE || props.keyPress === KEY_DELETE;
-        if (keyPressBackspaceOrDelete) {
+        const isBackspace = props.eventKey === KEY_BACKSPACE;
+        if (isBackspace) {
             startValue = '';
         } else if (props.charPress) {
             startValue = props.charPress;
@@ -49,7 +49,8 @@ export default class MySimpleEditor extends Component {
     render() {
         return (
             <input value={this.state.value} ref={this.inputRef}
-                   onChange={event => this.setState({value: event.target.value})}/>
+                   onChange={event => this.setState({value: event.target.value})}
+                   className="my-simple-editor" />
         );
     }
 }

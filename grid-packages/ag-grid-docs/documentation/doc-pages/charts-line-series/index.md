@@ -2,13 +2,11 @@
 title: "Line Series"
 ---
 
-This section covers the most common series type &mdash; Line series.
-
-Line series can be used in many situations. It's the series of choice when you need to spot a trend, render large amounts of data or create a real-time chart. Line series is also the preferred choice for rendering continuous data with irregular intervals or incomplete data that has some values missing.
+The Line series is a good choice when you need to spot a trend, render large amounts of data or create a real-time chart. Line series is also the preferred choice for rendering continuous data with irregular intervals or incomplete data that has some values missing.
 
 ## Single Series
 
-Since `'line'` series type is so common, the chart factory (`AgChart.create` method) uses it as the default type, so it doesn't have to be specified explicitly.
+Since the `'line'` series type is so common, it doesn't have to be specified explicitly. The chart factory method, `AgChart.create`, uses it as the default type.
 
 The simplest line series config therefore only requires two properties, `xKey` and `yKey`:
 
@@ -22,7 +20,26 @@ series: [{
 
 <chart-example title='Single Line Series' name='basic-line' type='generated'></chart-example>
 
-The chart expects the data (`chart.data` property) to be an array of objects, where each object is a table row or a database record and each key is a column. To plot anything on a plane, we need at least two coordinates: `x` and `y`. The `xKey` and `yKey` line series configs tell the series which keys should be used to fetch the values of these coordinates from each object in the `data` array.
+The chart expects the data (`chart.data` property) to be an array of objects, where each object is a table row or a database record and each key is a column.
+
+To plot anything on a plane, we need at least two coordinates: `x` and `y`. The `xKey` and `yKey` series configs tell the series which keys should be used to fetch the values of these coordinates from each object in the `data` array.
+
+Showing labels on top of data points is also an option with the `label` config. Labels can be enabled independently of series markers.
+For example, to show bold labels on top of each data point (and in this case a marker) we would use the following config:
+
+```js
+series: [{
+    ...
+    label: {
+        enabled: true,
+        fontWeight: 'bold'
+    }
+}]
+```
+
+The above config is used in the example below. Feel free to open it in Pluker and experiment with other [label options](#reference-line.label).
+
+<chart-example title='Line Series With Labels' name='basic-line-labels' type='generated'></chart-example>
 
 ## Multiple Series
 
@@ -84,7 +101,7 @@ The provided `yName` will also show up in tooltip titles:
 
 ## Line and Marker Colours
 
-The chart above is not complicated, but it could still benefit from more visual separation. Currently both series use the same colours. Let's change that by making diesel look more like diesel. If we just add the following two configs to the second series:
+The chart above is not complicated, but it could still benefit from more visual separation. Let's make the diesel series look more like diesel. Just add the following two configs to the second series:
 
 ```js
 stroke: 'black',
@@ -98,7 +115,7 @@ We'll get a result like this:
 
 <chart-example title='Line and Marker Colours' name='line-marker-colors' type='generated'></chart-example>
 
-There are many other customisations you can make to the markers; see the [markers section](../charts-markers/) for more information.
+There are many other customisations you can make to the markers; see the [markers section](/charts-markers/) for more information.
 
 ## Missing Data
 
@@ -106,11 +123,13 @@ In a perfect world all data would be 100% complete. Unfortunately, in the real o
 
 <chart-example title='Line Series with Incomplete Data' name='gap-line' type='generated'></chart-example>
 
-If the `yKey` value of a data point is positive or negative `Infinity`, `null`, `undefined` or `NaN`, that data point will be rendered as a gap. The same is true for the `xKey`, if the bottom axis is also continuous (for example, if it's a `'number'` axis too).
+If the `yKey` value of a data point is positive or negative `Infinity`, `null`, `undefined` or `NaN`, that data point will be rendered as a gap.
+
+If the bottom axis is also continuous (for example, if it's a `'number'` axis too), rather than being rendered as a gap, invalid `xKey` values from the data will be skipped all together.
 
 ## Continuous Data
 
-By default, the bottom axis is a `'category'` axis, but this can be changed if you have continuous data that you would like to plot. See the [axes section](../charts-axes/) for more information on configuring axes.
+By default, the bottom axis is a `'category'` axis, but this can be changed if you have continuous data that you would like to plot. See the [axes section](/charts-axes/) for more information on configuring axes.
 
 <chart-example title='Continuous Data: Spiral Curve' name='two-number-axes' type='generated' options='{ "exampleHeight": 600 }'></chart-example>
 
@@ -161,14 +180,10 @@ The time axis automatically selects an appropriate label format depending on the
 
 The chart will update whenever new data is supplied via the chart's or series' `data` property.
 
-<chart-example title='Real-Time Chart: Core Voltage' name='real-time' type='generated'></chart-example>
+<chart-example title='Real-Time Chart: Core Voltage' name='real-time' type='mixed'></chart-example>
 
 This example uses the `'time'` axis which is configured to show a tick every 5 seconds and to use the `%H:%M:%S` label format to show colon separated hours, minutes and seconds.
 
 ## API Reference
 
-<api-documentation source='charts-api/api.json' section='line' options='{ "showSnippets": true }'></api-documentation>
-
-## Next Up
-
-Continue to the next section to learn about [bar and column series](../charts-bar-series/).
+<interface-documentation interfaceName='AgLineSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>

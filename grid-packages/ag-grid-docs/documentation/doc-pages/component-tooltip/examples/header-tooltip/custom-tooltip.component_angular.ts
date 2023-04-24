@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ITooltipAngularComp } from "@ag-grid-community/angular";
+import { ITooltipParams } from '@ag-grid-community/core';
 
 @Component({
     selector: 'tooltip-component',
@@ -21,8 +22,8 @@ import { ITooltipAngularComp } from "@ag-grid-community/angular";
         `
             :host {
                 position: absolute;
-                width: 150px;
-                height: 70px;
+                width: 165px;
+                height: 80px;
                 border: 1px solid cornflowerblue;
                 overflow: hidden;
                 pointer-events: none;
@@ -46,15 +47,15 @@ import { ITooltipAngularComp } from "@ag-grid-community/angular";
 })
 export class CustomTooltip implements ITooltipAngularComp {
 
-    private params: any;
-    private valueToDisplay: string;
-    private isHeader: boolean;
-    private isGroupedHeader: boolean;
+    public params!: ITooltipParams;
+    public valueToDisplay!: string;
+    public isHeader!: boolean;
+    public isGroupedHeader!: boolean;
 
-    agInit(params): void {
+    agInit(params: ITooltipParams): void {
         this.params = params;
         this.isHeader = params.rowIndex === undefined;
-        this.isGroupedHeader = !!params.colDef.children;
+        this.isGroupedHeader = !!(params.colDef && (params.colDef as any).children);
         this.valueToDisplay = params.value.value ? params.value.value : '- Missing -';
     }
 }

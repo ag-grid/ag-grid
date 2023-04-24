@@ -1,0 +1,33 @@
+.top-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel-body > input:not(:first-of-type) {
+    margin-left: 10px;
+}
+
+.grid-wrapper {
+    display: flex;
+    flex: 1 1 auto;
+    margin-top: 5px;
+}
+
+.grid-wrapper .panel {
+    flex: 1 1 50%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.grid-wrapper .panel-body {
+    flex: 1 1 auto;
+    overflow: hidden;
+    padding: 0;
+    display: flex;
+}
+
+.grid-wrapper .panel-body > div {
+    width: 100%;
+}

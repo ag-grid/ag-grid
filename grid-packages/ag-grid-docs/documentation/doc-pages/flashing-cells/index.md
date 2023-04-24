@@ -8,6 +8,8 @@ To enable cell flashing on data changes for a particular column, set the attribu
 
 You can also explicitly flash cells using the grid API `flashCells(params)`. The params takes a list of columns and rows to flash, the flashDelay and the fadeDelay values e.g. to flash one cell pass in one column and one row that identifies that cell.
 
+<api-documentation source='grid-api/api.json' section='refresh' names='["flashCells"]'></api-documentation>
+
 The example below demonstrates cell flashing. The following can be noted:
 
 - All columns have `enableCellChangeFlash=true` so changes to the columns values will flash.
@@ -16,7 +18,7 @@ The example below demonstrates cell flashing. The following can be noted:
 - Clicking **Flash Two Rows** provides the API `flashCells()` with two row nodes only to flash the two rows.
 - Clicking **Flash Two Columns** provides the API `flashCells()` with two columns only to flash the two columns.
 
-<grid-example title='Flashing Data Changes' name='flashing-data-changes' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Flashing Data Changes' name='flashing-data-changes' type='generated' options='{  }'></grid-example>
 
 ## How Flashing Works
 
@@ -34,16 +36,17 @@ The example below demonstrates flashing delay changes. The following can be note
 - The `cellFadeDelay` value has been changed to 500ms, so the fading animation will happen faster than what it normally would (1 second).
 - Clicking **Update Some Data** will update some data to demonstrate the changes mentioned above.
 - Clicking **Flash Two Rows** will pass a custom `flashDelay` of 3000ms and a custom `fadeDelay` delay of 2000ms to demonstrate default values can be overridden.
+- The example demonstrates how to change the default colour of the flash using the `--ag-value-change-value-highlight-background-color` CSS variable.
 
-<grid-example title='Changing Flashing Delay' name='flashing-delay-changes' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Changing Flashing Delay' name='flashing-delay-changes' type='generated' options='{  }'></grid-example>
 
 ## Filtering & Aggregations
 
-One exception to the above is changes due to filtering. If you are [Row Grouping](../grouping/) the data with [Aggregations](../aggregation/), then the aggregated values will change as filtering adds and removes rows contained within the groups. It typically doesn't make sense to flash these changes when it's due to a filter change, as filtering would impact many (possibly all) cells at once, thus not usefully bringing the users attention to any particular cell. If you do not like this exception and would like to flash changes even when it's the result of a filter change, then set grid property `allowShowChangeAfterFilter=true`.
+One exception to the above is changes due to filtering. If you are [Row Grouping](/grouping/) the data with [Aggregations](/aggregation/), then the aggregated values will change as filtering adds and removes rows contained within the groups. It typically doesn't make sense to flash these changes when it's due to a filter change, as filtering would impact many (possibly all) cells at once, thus not usefully bringing the users attention to any particular cell. If you do not like this exception and would like to flash changes even when it's the result of a filter change, then set grid property `allowShowChangeAfterFilter=true`.
 
 ## Flashing Cells vs Custom Cell Renderers
 
-Flashing cells is a simple and quick way to visually show to the user that the data has changed. It is also possible to have more intelligent animations by putting animations into custom [Cell Renderers](../component-cell-renderer/). Cell Renderers have a `refresh` method that gets called when data changes, allowing custom animations to highlight data changes.
+Flashing cells is a simple and quick way to visually show to the user that the data has changed. It is also possible to have more intelligent animations by putting animations into custom [Cell Renderers](/component-cell-renderer/). Cell Renderers have a `refresh` method that gets called when data changes, allowing custom animations to highlight data changes.
 
 
-The grid comes with two such Cell Renderers for showing data changes which are detailed in the [Change Cell Renderers](../change-cell-renderers/) section.
+The grid comes with two such Cell Renderers for showing data changes which are detailed in the [Change Cell Renderers](/change-cell-renderers/) section.

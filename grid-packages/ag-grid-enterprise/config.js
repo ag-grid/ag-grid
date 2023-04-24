@@ -15,20 +15,20 @@ const banner = ['/**',
     ''].join('\n');
 
 const builds = {
-    'community-cjs-dev': {
+    'enterprise-cjs-dev': {
         entry: path.resolve(__dirname, './src/main.ts'),
         dest: path.resolve(__dirname, './dist/ag-grid-enterprise.cjs.js'),
         format: 'cjs',
         env: 'development',
         banner
     },
-    /*    'community-cjs-prod': {
-            entry: path.resolve(__dirname, '../dist/es6/main.js'),
-            dest: path.resolve(__dirname, '../dist/ag-grid-community.cjs.min.js'),
-            format: 'cjs',
-            env: 'production',
-            banner
-        }*/
+    'enterprise-cjs-prod': {
+        entry: path.resolve(__dirname, './src/main.ts'),
+        dest: path.resolve(__dirname, './dist/ag-grid-enterprise.cjs.min.js'),
+        format: 'cjs',
+        env: 'production',
+        banner
+    }
 };
 
 function genConfig(name) {

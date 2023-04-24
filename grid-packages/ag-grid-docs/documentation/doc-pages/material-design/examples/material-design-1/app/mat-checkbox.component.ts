@@ -33,7 +33,7 @@ import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 export class MatCheckboxComponent implements ICellRendererAngularComp {
     private params: any;
 
-    private checked: boolean = false;
+    private checked = false;
 
     agInit(params: any): void {
         this.params = params;

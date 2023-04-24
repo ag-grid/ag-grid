@@ -3,34 +3,44 @@ title: "Range Selection"
 enterprise: true
 ---
 
-Range selection allows Excel-like range selection of cells. Range selections are useful for visually highlighting data, copying data to the [Clipboard](../clipboard/), or for doing aggregations using the [Status Bar](../status-bar/).
+Range selection allows Excel-like range selection of cells. Range selections are useful for visually highlighting data, copying data to the [Clipboard](/clipboard/), or for doing aggregations using the [Status Bar](/status-bar/).
 
 ## Selecting Ranges
 
-Ranges can be selected in the following ways:
+Range Selection is enabled using the following grid option property `enableRangeSelection=true`.
+When enabled, ranges can be selected in the following ways:
 
 - **Mouse Drag:** Click the mouse down on a cell and drag and release the mouse over another cell. A range will be created between the two cells and clear any existing ranges.
 
-- **Ctrl & Mouse Drag:** Holding **Ctrl** key while creating a range using mouse drag will create a new range selection and keep any existing ranges.
+- **Ctrl & Mouse Drag:** Holding <kbd>Ctrl</kbd> key while creating a range using mouse drag <b>outside an existing range</b> will create a new range selection and keep any existing ranges.
 
-- **Shift & Click:** Clicking on one cell to focus that cell, then holding down **Shift** while clicking another cell, will create a range between both cells.
+- **Shift & Click:** Clicking on one cell to focus that cell, then holding down <kbd>Shift</kbd> while clicking another cell, will create a range between both cells.
 
-- **Shift & Arrow Keys:** Focusing a cell and then holding down **Shift** and using the arrow keys will create a range starting from the focused cell.
+- **Shift & Arrow Keys:** Focusing a cell and then holding down <kbd>Shift</kbd> and using the arrow keys will create a range starting from the focused cell.
 
-Range Selection is enabled using the following grid option property `enableRangeSelection=true`.
+- **Ctrl & Shift & Arrow Keys:** Focusing a cell and then holding down <kbd>Ctrl</kbd> + <kbd>Shift</kbd> and using the arrow keys will create a range starting from the focused cell to the last cell in the direction of the Arrow pressed.
+
+### Range Deselection
+
+It is possible to deselect part of existing ranges in the following ways:
+
+- **Ctrl & Mouse Drag:** Holding <kbd>Ctrl</kbd> and dragging a range starting <b>within an existing range</b> will cause any cells covered by the new range to be deselected.
+
+- **Ctrl & Click:**  Holding <kbd>Ctrl</kbd> and clicking a cell will deselect just that cell.
+
+Note that deselecting part of a range can split the range into multiple ranges, since individual ranges have the limitation of being rectangular.
 
 The example below demonstrates simple range selection. Ranges can be selected in all the ways described above.
 
-<grid-example title='Range Selection' name='range-selection' type='generated' options='{ "enterprise": true, "modules": ["clientside", "range"] }'></grid-example>
+<grid-example title='Range Selection / Deselection' name='range-selection' type='generated' options='{ "enterprise": true, "modules": ["clientside", "range", "menu", "clipboard"] }'></grid-example>
 
 ## Suppress Multi Range Selection
 
-
-By default multiple ranges can be selected. To restrict range selection to a single range, even if the **Ctrl** key is held down, enable the following grid options property: `suppressMultiRangeSelection=true`.
+By default multiple ranges can be selected. To restrict range selection to a single range, even if the <kbd>Ctrl</kbd> key is held down, enable the following grid options property: `suppressMultiRangeSelection=true`.
 
 The following example demonstrates single range selection:
 
-<grid-example title='Range Selection Suppress Multi' name='range-selection-suppress-multi' type='generated' options='{ "enterprise": true, "modules": ["clientside", "range"] }'></grid-example>
+<grid-example title='Range Selection Suppress Multi' name='range-selection-suppress-multi' type='generated' options='{ "enterprise": true, "modules": ["clientside", "range", "menu", "clipboard"] }'></grid-example>
 
 ## Ranges with Pinning and Floating
 
@@ -44,85 +54,44 @@ The above two (pinning and floating) can be thought of as follows: if you have a
 
 The `rangeSelectionChanged` event tells you that the range selection has changed. The event has two properties, `started` and `finished`, which are `true` when the selection is starting or finishing. For example, if selecting a range of 10 cells in a row, the user will click the first cell and drag to the last cell. This will result in up to 11 events. The first event will have `started=true`, the last will have `finished=true`, and all the intermediary events will have both of these values as `false`.
 
-<snippet>
-gridOptions.api.addEventListener('rangeSelectionChanged', event => {
-    // this prints true for first event only
-    console.log('has changed, started = ' + event.started);
-    // this prints true for last event only
-    console.log('has changed, finished = ' + event.finished);
-});
-</snippet>
+<api-documentation source='grid-events/events.json' section='selection' names='["rangeSelectionChanged"]' ></api-documentation>
 
 ## Range Selection API
 
-### api.getCellRanges()
+The following methods are available on the `GridApi` for managing range selection.
 
-Get the selected ranges using `api.getCellRanges()`. This will return back a list of cell range objects, each of which contains the details of one range. The structure of the cell range object is as follows:
+### getCellRanges()
 
-```ts
-interface CellRange {
-    startRow: RowPosition; // the start row of the range
-    endRow: RowPosition; // the end row of the range
-    columns: Column[]; // the columns in the range
-}
-
-interface RowPosition {
-    rowIndex: number;
-    rowPinned: string | undefined;
-}
-```
+Get the selected ranges using `api.getCellRanges()`. This will return back a list of cell range objects, each of which contains the details of one range. 
 
 The start is the first cell the user clicked on and the end is the cell where the user stopped dragging. Do not assume that the start cell's index is numerically before the end cell, as the user could have dragged up.
 
-### api.clearRangeSelection()
+<api-documentation source='grid-api/api.json' section='selection' names='["getCellRanges"]' ></api-documentation>
 
+### clearRangeSelection()
 
-Clears the range selection.
+<api-documentation source='grid-api/api.json' section='selection' names='["clearRangeSelection"]' ></api-documentation>
 
-### api.addCellRange(rangeSelection)
+### addCellRange(rangeSelection)
 
+Adds a range to the selection. This keeps any previous ranges. If you wish to only have the new range selected, then call `clearRangeSelection()` first. The method takes the params of type `CellRangeParams`.
 
-Adds a range to the selection. This keeps any previous ranges. If you wish to only have the new range selected, then call `clearRangeSelection()` first. The method takes the following params:
-
-```ts
-interface AddCellRangeParams {
-    // start row
-    rowStartIndex: number | null;
-    rowStartPinned?: string; // either 'top', 'bottom' or undefined
-    
-    // end row
-    rowEndIndex: number | null;
-    rowEndPinned?: string; // either 'top', 'bottom' or undefined
-    
-    // columns
-    columnStart?: string | Column;
-    columnEnd?: string | Column;
-    columns?: (string | Column)[];
-}
-```
+<api-documentation source='grid-api/api.json' section='selection' names='["addCellRange"]' ></api-documentation>
 
 Ranges are normally bounded by a start and end row. However it is also possible to define a range unbounded by rows (i.e. to contain all rows). For an unbounded range, do not provide start or end row positions.
 
-
-Row positions are defined by a row index and pinned. Row indexes start at zero and increment. Pinned can be either `'top'` (row is in pinned top section), `'bottom'` (row is in pinned bottom section) or `undefined` (row is in the main body). See [Row Pinning](../row-pinning/) for information on row pinning.
+Row positions are defined by a row index and pinned. Row indexes start at zero and increment. Pinned can be either `'top'` (row is in pinned top section), `'bottom'` (row is in pinned bottom section) or `null` (row is in the main body). See [Row Pinning](/row-pinning/) for information on row pinning.
 
 Ranges are defined by a list of columns. Pass in either a) a list of columns or b) a start and end column and let the grid work out the columns in between. Passing a list of columns instead of a start and end column has the advantage that the columns do not need to be contiguous.
 
-### Callback `processCellForClipboard()`
-
-There is a grid callback `processCellForClipboard()` that allows you to format cells before going to the clipboard. This can be useful if, for example, you are pasting to Excel and you need to format dates so that Excel can understand them.
-
-The callback params has the following attributes: `value, node, column, api, columnApi, context, type`.
-
 ## Copy Range Down
 
-When you have more than one row selected in a range, pressing keys **Ctrl + D** will copy the range down.
+When you have more than one row selected in a range, pressing keys <kbd>Ctrl</kbd>+<kbd>D</kbd> will copy the top row values to all other rows in the selected range.
 
 ## Example: Advanced Range Selection
 
-
 The example below demonstrates a more complex range selection scenario. The example listens for the `rangeSelectionChanged` event and creates a sum of all the number values that are in the range (it ignores all non-number values). The `finished` flag is used to update the eager and lazy figures separately.
 
-The example also shows use of `processCellForClipboard()` and `processCellFromClipboard()` by making all the athlete names uppercase when copying into the clipboard and lowercase when copying from the clipboard.
+The example also shows use of the `processCellForClipboard` and `processCellFromClipboard` [callbacks](/clipboard/#processing-clipboard-data) by making all the athlete names uppercase when copying into the clipboard and lowercase when copying from the clipboard.
 
-<grid-example title='Advanced Range Selection' name='range-selection-advanced' type='generated' options='{ "enterprise": true, "exampleHeight": 700, "modules": ["clientside", "range", "clipboard"] }'></grid-example>
+<grid-example title='Advanced Range Selection' name='range-selection-advanced' type='generated' options='{ "enterprise": true, "exampleHeight": 700, "modules": ["clientside", "range", "menu", "clipboard"] }'></grid-example>

@@ -4,23 +4,24 @@ frameworks: ["angular", "vue"]
 ---
 
 [[only-angular]]
-|There are a variety of ways to manage component communication in Angular (shared service, 
-|local variables etc), but you often need a simple way to let a "parent" component know 
-|that something has happened on a "child" component. In this case the simplest route is 
-|to use the Grid's `context` feature to hold a reference to the parent, which the child can 
+|There are a variety of ways to manage component communication in Angular (shared service,
+|local variables etc), but you often need a simple way to let a "parent" component know
+|that something has happened on a "child" component. In this case the simplest route is
+|to use the Grid's `context` feature to hold a reference to the parent, which the child can
 |then access.
 |
 |```tsx
 |//...other imports
 |import {Component} from '@angular/core';
-|import CubeComponent from './CubeComponent';
+|import {ICellRendererAngularComp} from 'ag-grid-angular';
+|import {CubeComponent} from './cube.component';
 |
 |@Component({
-|selector: 'app-root',
-|template: `
-|   <ag-grid-angular [context]="context" ...other properties>
-|   </ag-grid-angular>
-|`
+|   selector: 'app-root',
+|   template: `
+|       <ag-grid-angular [context]="context" ...other properties>
+|       </ag-grid-angular>
+|   `
 |})
 |export class AppComponent {
 |   constructor() {
@@ -36,12 +37,12 @@ frameworks: ["angular", "vue"]
 |}
 |
 |@Component({
-|selector: 'cell-renderer',
-|template: `
-|   ...component template...
-|`
+|   selector: 'cell-renderer',
+|   template: `
+|       ...component template...
+|   `
 |})
-|export class CellRendererComponent {
+|export class CellRendererComponent implements ICellRendererAngularComp {
 |   params: any;
 |   componentParent: any;
 |
@@ -54,16 +55,16 @@ frameworks: ["angular", "vue"]
 |   //...other properties & methods
 |}
 |```
-|Note that although we've used `componentParent` as the property name here it can 
-|be anything - the main point is that you can use the `context` mechanism to share 
+|Note that although we've used `componentParent` as the property name here it can
+|be anything - the main point is that you can use the `context` mechanism to share
 |information between the components.
-|A working example of this can be found in the [Cell Renderer](../component-cell-renderer#example-dynamic-components) docs.
+|A working example of this can be found in the [Cell Renderer](/component-cell-renderer/#example-dynamic-components) docs.
 
 [[only-vue]]
-|There are a variety of ways to manage component communication in Vue (shared service, 
-|local variables etc), but you often need a simple way to let a "parent" component know 
-|that something has happened on a "child" component. In this case the simplest route is 
-|to use the Grid's `context` feature to hold a reference to the parent, which the child can 
+|There are a variety of ways to manage component communication in Vue (shared service,
+|local variables etc), but you often need a simple way to let a "parent" component know
+|that something has happened on a "child" component. In this case the simplest route is
+|to use the Grid's `context` feature to hold a reference to the parent, which the child can
 |then access.
 |
 |```js
@@ -75,7 +76,7 @@ frameworks: ["angular", "vue"]
 |
 |<script>
 |//...other imports
-|import {AgGridVue} from "@ag-grid-community/vue";
+|import {AgGridVue} from "ag-grid-vue3";
 |import CubeComponent from './CubeComponent.vue';
 |
 |export default {
@@ -121,8 +122,8 @@ frameworks: ["angular", "vue"]
 |}
 |</script>
 |```
-|Note that although we've used `componentParent` as the property name here it can 
-|be anything - the main point is that you can use the `context` mechanism to share 
+|Note that although we've used `componentParent` as the property name here it can
+|be anything - the main point is that you can use the `context` mechanism to share
 |information between the components.
 |
-|A working example of this can be found in the [Cell Renderer](../component-cell-renderer#example-dynamic-components) docs.
+|A working example of this can be found in the [Cell Renderer](/component-cell-renderer/#example-dynamic-components) docs.

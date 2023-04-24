@@ -1,20 +1,35 @@
+@use '../design-system' as *;
+
 .docs-home {
-    composes: container-lg px-0 from global;
+    --max-page-width: #{$max-page-width}; // required as outside of .aq-styles
+    --horizontal-margin: #{$horizontal-margin}; // required as outside of .aq-styles
 
-    margin-left: 0;
+    @media screen and (max-width: $breakpoint-docs-nav-medium) {
+        @include page-horizontal-margins();
+    }
 
-    @media (min-width: 2075px) {
-        margin-left: calc((100% - 300px) / 2 - 730px);
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        padding-left: $size-2; // Should be $size-4 but waiting until docs home re-style
+        padding-right: max(var(--horizontal-margin), calc(50vw - var(--max-page-width) / 2));
     }
 
     h2 {
-        background-color: $grey-2;
-        color: $white;
+        color: #6a7576;
+        font-size: 1.95rem;
+        font-weight: 500;
+    }
+
+    h4 {
+        color: #6a7576;
+        font-size: 1rem;
+        font-weight: normal;
+        margin-top: 0;
     }
 
     @include media-breakpoint-down(md) {
         h2 {
             font-size: 1.5rem;
+            background-color: white;
         }
     }
 
@@ -23,9 +38,12 @@
 
         &__title {
             composes: mb-0 p-2 from global;
-            font-size: 2.5rem;
-            font-weight: 400;
+            font-size: 2rem;
+            font-weight: 500;
             text-align: left;
+            text-transform: capitalize;
+            margin: 10px;
+            border-radius: 0.3rem;
         }
 
         &__row {
@@ -36,20 +54,23 @@
             display: flex;
             flex-grow: 1;
             flex-wrap: wrap;
+            margin-left: 10px;
+            margin-top: -5px;
+            margin-bottom: 20px;
         }
 
         &__item {
             composes: d-flex flex-column justify-content-center align-items-center m-2 p-2 from global;
-            background-color: transparentize($secondary, 0.7);
+            border: 1px solid $ag-light-grey;
             border-radius: 5px;
-            width: 8.5rem;
-            height: 8.5rem;
-            color: $dark;
+            width: 11.5rem;
+            height: 11.5rem;
+
             &:hover {
-                background-color: $grey-2;
+                background-color: #ebebeb;
                 text-decoration: none;
-                color: white;
             }
+
             @include media-breakpoint-down(sm) {
                 width: 6.5rem;
                 height: 6.5rem;
@@ -61,6 +82,7 @@
             position: relative;
             width: 5rem;
             height: 5rem;
+
             @include media-breakpoint-down(sm) {
                 width: 4.5rem;
                 height: 4.5rem;
@@ -75,9 +97,29 @@
         &__item_label {
             text-align: center;
             white-space: nowrap;
-            font-size: 0.9rem;
+            font-size: 1rem;
+
             @include media-breakpoint-down(sm) {
                 font-size: 0.65rem;
+            }
+        }
+    }
+
+    &__video-panel {
+        &__videos {
+            &__video-player {
+                &__title {
+                    font-size: smaller;
+                }
+            }
+
+            &__all-videos {
+                composes: d-flex from global;
+
+                &__title {
+                    width: 80%;
+                    margin: 0 auto;
+                }
             }
         }
     }

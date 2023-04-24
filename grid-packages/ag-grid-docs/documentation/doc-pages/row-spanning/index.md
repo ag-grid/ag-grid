@@ -14,11 +14,12 @@ Row spanning is then configured at the column definition level. To have a cell
 span more than one row, return how many rows to span in the callback
 `colDef.rowSpan`.
 
+<api-documentation source='column-properties/properties.json' section='spanning' names='["rowSpan"]' ></api-documentation>
 
 <snippet spaceBetweenProperties="true">
-const gridOptions = { 
+const gridOptions = {
     // turn off row translation
-    suppressRowTransform: true, 
+    suppressRowTransform: true,
     columnDefs: [
         {
             field: 'country',
@@ -43,27 +44,9 @@ const gridOptions = {
 | (after sort or filter) will be slower.
 
 
-The interface for the `rowSpan` callback is as follows:
-
-
-```ts
-// function you implement on the column definition
-function rowSpan(params: rowSpanParams) => number;
-
-interface RowSpanParams {
-    node: any, // row node in question
-    data: RowNode, // data for the row
-    colDef: ColDef, // the col def for the column
-    column: Column, // the column object in question
-    api: GridApi, // the grid's API
-    columnApi: ColumnApi, // the grid's column API
-    context: any // the provided context
-}
-```
-
 ## Row Spanning Simple Example
 
-Below shows a simple example using row spanning. The example doesn't make much sense,
+Below is a simple example using row spanning. The example doesn't make much sense,
 it just arbitrarily sets row span on some cells for demonstration purposes.
 
 - The **Athlete** column is configured to span 2 rows for 'Aleksey Nemov' and 4 rows for 'Ryan Lochte'.
@@ -102,4 +85,4 @@ If using Row Spanning, be aware of the following:
 
 - Sorting and filtering will provide strange results when row spanning. For example a cell may span 4 rows, however applying a filter or a sort will probably change the requirements of what rows should be spanned.
 
-- [Range Selection](../range-selection/) will not work correctly when spanning cells. This is because it is not possible to cover all scenarios, as a range is no longer a perfect rectangle.
+- [Range Selection](/range-selection/) will not work correctly when spanning cells. This is because it is not possible to cover all scenarios, as a range is no longer a perfect rectangle.

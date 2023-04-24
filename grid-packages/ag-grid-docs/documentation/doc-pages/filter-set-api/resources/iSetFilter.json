@@ -1,0 +1,14 @@
+{
+    "_config_": {},
+    "ISetFilter": {
+        "setModel": {
+            "description": "Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter.<br/><br/> **Note:** if you are [providing values asynchronously](/filter-set-filter-list/#asynchronous-values) to the Set Filter, you need to wait for these changes to be applied before performing any further actions by waiting on the returned grid promise, e.g. `filter.setModel({ values: ['a', 'b'] }).then(function() { gridApi.onFilterChanged(); });`"
+        },
+        "refreshFilterValues": {
+            "more": {
+                "name": "Refreshing Values",
+                "url": "/filter-set-filter-list/#refreshing-values"
+            }
+        }
+    }
+}

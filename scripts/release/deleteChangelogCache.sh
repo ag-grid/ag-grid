@@ -5,13 +5,12 @@ function checkFileExists {
     if ! [[ -f "$file" ]]
     then
         echo "File [$file] doesn't exist - exiting script.";
-        exit;
+        exit 1;
     fi
 }
 
 checkFileExists ~/Documents/aggrid/aggrid/aggrid.txt
-checkFileExists ~/.ssh/ag_ssh
-checkFileExists ~/Documents/aggrid/aggrid/.creds
+checkFileExists ~/.ag_deploy/.ssh/ag_grid_site
 
 while true; do
     echo    ""
@@ -26,5 +25,5 @@ while true; do
     esac
 done
 
-# delete the cache
-ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "rm public_html/jira_reports/cache/changelog.json"
+# download the new changelog information
+ssh -i ~/.ag_deploy/.ssh/ag_grid_site aggrid@ag-grid.com "/opt/cpanel/ea-nodejs10/bin/node /home/aggrid/jira_reports/getChangelog.js"

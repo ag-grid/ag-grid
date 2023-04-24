@@ -16,9 +16,6 @@ export declare function attrToString(value?: string): string | undefined;
 export declare function referenceCompare<T>(left: T, right: T): boolean;
 export declare function jsonEquals<T1, T2>(val1: T1, val2: T2): boolean;
 export declare function defaultComparator(valueA: any, valueB: any, accentedCompare?: boolean): number;
-export declare function find<T>(collection: T[] | {
-    [id: string]: T;
-} | null, predicate: string | boolean | ((item: T) => boolean), value?: any): T | null;
 export declare function values<T>(object: {
     [key: string]: T;
 } | Set<T> | Map<any, T>): T[];

@@ -1,0 +1,10 @@
+{
+    "extends": "./tsconfig.json",
+    "exclude": [
+        "./node_modules",
+        "./doc-pages/**/_gen/packages/**/*.ts",
+        "./doc-pages/**/provided/packages/**/*.ts",
+        "./doc-pages/**/_gen/packages/**/*.tsx",
+        "./doc-pages/**/provided/packages/**/*.tsx"
+    ]
+}

@@ -1,8 +1,8 @@
 import {Component, Prop, Vue} from 'vue-property-decorator';
 import {Bean, ComponentUtil, Grid, GridOptions, Module} from 'ag-grid-community';
 import {VueFrameworkComponentWrapper} from './VueFrameworkComponentWrapper';
-import {getAgGridProperties, Properties} from './Utils';
-import {AgGridColumn} from './AgGridColumn';
+import { getAgGridProperties, Properties } from './Utils';
+import {VueFrameworkOverrides} from './VueFrameworkOverrides';
 
 const [props, watch, model] = getAgGridProperties();
 
@@ -74,10 +74,7 @@ export class AgGridVue extends Vue {
                 currentValue,
                 previousValue,
             };
-            ComponentUtil.processOnChange(changes,
-                this.gridOptions,
-                this.gridOptions.api!,
-                this.gridOptions.columnApi!);
+            ComponentUtil.processOnChange(changes, this.gridOptions.api!);
         }
     }
 
@@ -90,17 +87,14 @@ export class AgGridVue extends Vue {
         }, 20);
 
         const frameworkComponentWrapper = new VueFrameworkComponentWrapper(this);
-        const gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
+        const gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this, true);
 
         this.checkForBindingConflicts();
         gridOptions.rowData = this.getRowDataBasedOnBindings();
 
-        if (AgGridColumn.hasChildColumns(this.$slots)) {
-            gridOptions.columnDefs = AgGridColumn.mapChildColumnDefs(this.$slots);
-        }
-
         const gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
+            frameworkOverrides: new VueFrameworkOverrides(this),
             providedBeanInstances: {
                 frameworkComponentWrapper,
             },
@@ -126,7 +120,7 @@ export class AgGridVue extends Vue {
         const thisAsAny = (this as any);
         if ((thisAsAny.rowData || this.gridOptions.rowData) &&
             thisAsAny.rowDataModel) {
-            console.warn('ag-grid: Using both rowData and rowDataModel. rowData will be ignored.');
+            console.warn('AG Grid: Using both rowData and rowDataModel. rowData will be ignored.');
         }
     }
 

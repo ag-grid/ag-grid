@@ -44,19 +44,3 @@ footer#site-footer {
     }
 }
 
-#cookie-warning {
-    @extend .container-fluid;
-    background-color: $blue-2;
-    color: $offwhite;
-    z-index: 1000;
-    position: fixed;
-    bottom: 0;
-
-    & > div {
-        @extend .full-width-row, .text-center, .py-3;
-
-        a {
-            @extend .btn, .btn-light, .mx-5;
-        }
-    }
-}

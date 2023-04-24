@@ -1,19 +1,9 @@
 import { PopupComponent } from "../../widgets/popupComponent";
-import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
-export declare class PopupEditorWrapper extends PopupComponent implements ICellEditorComp {
-    private cellEditor;
-    private params;
-    private getGuiCalledOnChild;
+import { ICellEditorParams } from "../../interfaces/iCellEditor";
+export declare class PopupEditorWrapper extends PopupComponent {
+    private readonly params;
     static DOM_KEY_POPUP_EDITOR_WRAPPER: string;
-    constructor(cellEditor: ICellEditorComp);
-    private onKeyDown;
-    getGui(): HTMLElement;
-    init(params: ICellEditorParams): void;
-    afterGuiAttached(): void;
-    getValue(): any;
-    isCancelBeforeStart(): boolean;
-    isCancelAfterEnd(): boolean;
-    getPopupPosition(): string | undefined;
-    focusIn(): void;
-    focusOut(): void;
+    constructor(params: ICellEditorParams);
+    private postConstruct;
+    private addKeyDownListener;
 }

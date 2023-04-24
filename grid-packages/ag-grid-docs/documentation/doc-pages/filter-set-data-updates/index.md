@@ -3,14 +3,14 @@ title: "Set Filter - Data Updates"
 enterprise: true
 ---
 
-This section describes how changing data through [Cell Editing](../cell-editing/) and the application [Updating Data](../data-update/) impacts the Set Filter's values. This is only applicable when the Set Filter is taking its values form the grid's data.
+This section describes how changing data through [Cell Editing](/cell-editing/) and the application [Updating Data](/data-update/) impacts the Set Filter's values. This is only applicable when the Set Filter is taking its values from the grid's data.
 
 ## Row / Cell Updates
 
 Row / Cell updates refers to any of the following:
 
-- All edits via the grid's UI such as [Cell Editing](../cell-editing/) and [Clipboard Operations](../clipboard/).
-- Using the grid's [Single Row / Cell Update API](../data-update-single-row-cell/) i.e. `rowNode.setData()` and `rowNode.setDataValue()` API methods.
+- All edits via the grid's UI such as [Cell Editing](/cell-editing/) and [Clipboard Operations](/clipboard/).
+- Using the grid's [Single Row / Cell Update API](/data-update-single-row-cell/) i.e. `rowNode.setData(data)` and `rowNode.setDataValue(col,value)` API methods.
 
 Filter Values will be refreshed when data is updated through any of these methods.
 
@@ -22,6 +22,8 @@ Here are the rules that determine how Filter Values are selected:
 Cell editing does not re-execute filtering by default, so the row will not be filtered out even though the value in the cell is not selected in the filter. This default behaviour mimics how Excel works.
 
 To execute filtering on cell edits, listen to `CellValueChanged` events and trigger filtering as shown below:
+
+<api-documentation source='grid-events/events.json' section='editing' names='["cellValueChanged"]'></api-documentation>
 
 <snippet>
 const gridOptions = {
@@ -50,9 +52,9 @@ The following example demonstrates Cell Editing with the Set Filter. Try the fol
 Transaction Updates refers to any of the following:
 
 
-- Updating data via [Transactions](../data-update-transactions/) API.
-- Updating data via [Async Transactions](../data-update-high-frequency/) API.
-- Changes when using [Immutable Data](../immutable-data/) (as this uses Transactions underneath the hood).
+- Updating data via [Transactions](/data-update-transactions/) API.
+- Updating data via [Async Transactions](/data-update-high-frequency/) API.
+- Changes to Row Data and providing [Row ID](/row-ids/) (as this uses Transactions underneath the hood).
 
 Filter values are refreshed when data is updated using any of these methods.
 
@@ -81,34 +83,13 @@ The following example demonstrates these rules. Try the following:
 
 ## Setting New Data
 
-By default, when `api.setRowData()` is called, all Set Filter selections will be lost.
+When `api.setRowData(data)` is called existing filter selections are kept when new rows are added. However it is possible to clear filter selections using: `api.setFilterModel([])`.
 
-It is recommended that `newRowsAction='keep'` is set on the filter params to keep existing filter selections when new rows are added, as shown below:
-
-<snippet>
-const gridOptions = {
-    columnDefs: [
-        {
-            field: 'country',
-            filter: 'agSetColumnFilter',
-            filterParams: {
-                newRowsAction: 'keep'
-            }
-        }
-    ]
-}
-</snippet>
-
-[[note]]
-| `newRowsAction` is deprecated, and `newRowsAction='keep'` will become the default behaviour in v24.
-
-However it is still possible to clear filter selections using: `api.setFilterModel([])`.
-
-The following example demonstrates how `api.setRowData()` affects filter selections. Try the following:
+The following example demonstrates how `api.setRowData(data)` affects filter selections. Try the following:
 
 - Deselect value 'B' from the set filter list and click the **Set New Data** button which calls `api.setRowData(newData)` to add new data with extra rows to the grid.
 
-- Notice 'B' remains deselected after new data is supplied to the grid as the set filter has set `newRowsAction='keep'` in the filter params.
+- Notice 'B' remains deselected after new data is supplied to the grid.
 
 - Clicking **Reset** invokes `api.setRowData(origData)` to restore the original data but also clears any selections using `api.setFilterModel([])`.
 
@@ -116,5 +97,5 @@ The following example demonstrates how `api.setRowData()` affects filter selecti
 
 ## Next Up
 
-Continue to the next section: [Mini Filter](../filter-set-mini-filter/).
+Continue to the next section to learn about the [Tree List](/filter-set-tree-list/).
 

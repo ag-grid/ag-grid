@@ -1,0 +1,34 @@
+@use '../design-system' as *;
+
+.topBar {
+    background-color: var(--toolbar-background);
+    border-bottom: 1px solid var(--border-color);
+
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        position: sticky;
+        top: 0;
+        z-index: 3;
+    }
+}
+
+.topBarInner {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $size-1;
+    padding-top: $size-1;
+    padding-bottom: $size-1;
+}
+
+.topBarNavButton {
+    --icon-size: 1.25em;
+
+    :global(.icon) {
+        margin-right: -0.25em !important; // !important for .ag-styles specificity
+        margin-left: 0.625em !important; // !important for .ag-styles specificity
+    }
+
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        display: none !important; // !important for .ag-styles specificity
+    }
+}

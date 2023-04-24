@@ -9,6 +9,10 @@ const languages = {
     vue: 'ts',
 };
 
+/**
+ * This takes a code snippet written in JavaScript and transforms it into an idiomatic code snippet for the selected
+ * framework.
+ */
 export const Snippet = props => {
     const snippetToTransform = props.children.toString();
 
@@ -27,5 +31,6 @@ const extractOptions = props => {
     return {
         suppressFrameworkContext: asBoolean(props['suppressframeworkcontext']),
         spaceBetweenProperties: asBoolean(props['spacebetweenproperties']),
+        inlineReactProperties: asBoolean(props['inlinereactproperties']),
     };
 };

@@ -6,8 +6,10 @@ import { RowNode } from '../entities/rowNode';
  * don't have order id's
  * @param {RowNode[]} rowNodes
  * @param {Object} rowNodeOrder
+ *
+ * @returns a boolean representing whether nodes were reordered
  */
 export declare function sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: {
     [id: string]: number;
-}): void;
+}): boolean;
 export declare function traverseNodesWithKey(nodes: RowNode[] | null, callback: (node: RowNode, key: string) => void): void;

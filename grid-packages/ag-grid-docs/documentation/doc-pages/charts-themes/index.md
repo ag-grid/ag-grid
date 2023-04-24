@@ -8,7 +8,6 @@ Themes allow you customise the appearance of your charts. They provide defaults 
 
 Every chart uses the `'ag-default'` theme unless configured otherwise:
 
-
 ```js
 AgChart.create({
     theme: 'ag-default', // optional, implied
@@ -47,7 +46,6 @@ The `overrides` object is similar in its structure to the chart's options, with 
 
 For example, the following snippet demonstrates a custom theme that uses the `'ag-default-dark'` theme as the base to inherit the dark background and bright strokes, but substitutes the palette and changes some fonts, as well as a few other options.
 
-
 ```js
 var myTheme = {
     baseTheme: 'ag-default-dark',
@@ -84,17 +82,10 @@ var myTheme = {
 
 The theme shown in the above snippet is applied to the chart in the example below:
 
-<chart-example title='Custom Theme' name='custom-theme' type='generated'></chart-example>
+<chart-example title='Custom Theme' name='custom-theme' type='generated' ></chart-example>
 
 ### Example: Advanced Theme
 
 This example demonstrates a more advanced theme, providing different settings for different series and axis types.
 
-<chart-example title='Advanced Theme' name='advanced-theme' type='generated'></chart-example>
-
-
-## Next Up
-
-Continue to the next section to learn more about the [navigator](../charts-navigator/) component.
-
-
+<chart-example title='Advanced Themes' name='advanced-theme' type='multi'></chart-example>

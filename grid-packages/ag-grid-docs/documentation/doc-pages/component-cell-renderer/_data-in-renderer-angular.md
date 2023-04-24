@@ -5,14 +5,19 @@
 |```js
 |// cell renderer component  
 |@Component({
-|    selector: 'my-app',
+|    selector: 'cell-renderer',
 |    template: `<span>{{params?.data?.theBoldValue}}</span>`
 |})
-|class CellRendererComponent {
-|    params: ICellRendererParams;
+|class CellRendererComponent implements ICellRendererAngularComp {
+|    params!: ICellRendererParams;
 |
-|    agInit(ICellRendererParams) {
+|    agInit(params: ICellRendererParams) {
 |        this.params = params;
+|    }
+|
+|    refresh(ICellRendererParams) {
+|        // Let AG Grid take care of refreshing by recreating our cell renderer.
+|        return false;
 |    }
 |}
 |```

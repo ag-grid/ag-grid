@@ -1,7 +1,7 @@
 export declare function iterateObject<T>(object: {
     [p: string]: T;
 } | T[] | null | undefined, callback: (key: string, value: T) => void): void;
-export declare function cloneObject<T>(object: T): T;
+export declare function cloneObject<T extends {}>(object: T): T;
 export declare function deepCloneObject<T>(object: T): T;
 export declare function deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | undefined;
 export declare function getProperty<T, K extends keyof T>(object: T, key: K): any;
@@ -19,13 +19,9 @@ export declare function copyPropertyIfPresent<S, T extends S, K extends keyof S>
 export declare function getAllKeysInObjects(objects: any[]): string[];
 export declare function getAllValuesInObject<T extends Object>(obj: T): any[];
 export declare function mergeDeep(dest: any, source: any, copyUndefined?: boolean, makeCopyOfSimpleObjects?: boolean): void;
-export declare function assign<T, U>(target: T, source: U): T & U;
-export declare function assign<T, U, V>(target: T, source1: U, source2: V): T & U & V;
-export declare function assign<T, U, V, W>(target: T, source1: U, source2: V, source3: W): T & U & V & W;
 export declare function missingOrEmptyObject(value: any): boolean;
 export declare function get(source: any, expression: string, defaultValue: any): any;
 export declare function set(target: any, expression: string, value: any): void;
-export declare function deepFreeze(object: any): any;
 export declare function getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any;
 export declare function removeAllReferences(obj: any, objectName: string): void;
 export declare function isNonNullObject(value: any): boolean;

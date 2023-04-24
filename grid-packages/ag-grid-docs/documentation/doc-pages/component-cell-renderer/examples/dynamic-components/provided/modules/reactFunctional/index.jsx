@@ -1,12 +1,15 @@
 'use strict';
 
-import React, {forwardRef, useImperativeHandle, useState} from 'react';
-import {render} from 'react-dom';
-import {AgGridColumn, AgGridReact} from '@ag-grid-community/react';
+import React, { useMemo, useRef, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import { AgGridReact } from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import "@ag-grid-community/styles/ag-grid.css";
+import "@ag-grid-community/styles/ag-theme-alpine.css";
 
-import {AllCommunityModules} from "@ag-grid-community/all-modules";
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import { ModuleRegistry } from '@ag-grid-community/core';
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const SquareRenderer = props => {
     const valueSquared = (value) => {
@@ -28,33 +31,22 @@ const ParamsRenderer = props => {
     return <span>Field: {props.colDef.field}, Value: {props.value}</span>;
 };
 
-const CurrencyRenderer = forwardRef((props, ref) => {
-    const [value, setValue] = useState(props.value);
+const CurrencyRenderer = props => {
+    const value = useMemo(() => props.value, [props.value]);
 
     const formatValueToCurrency = (currency, value) => {
         return `${currency}${value.toFixed(2)}`;
     };
 
-    useImperativeHandle(ref, () => {
-        return {
-            refresh: (params) => {
-                if (params.value !== value) {
-                    setValue(params.value);
-                }
-                return true;
-            }
-        };
-    });
-
     return <span>{formatValueToCurrency('EUR', value)}</span>;
-});
+};
 
 const ChildMessageRenderer = props => {
     const invokeParentMethod = () => {
         props.context.methodFromParent(`Row: ${props.node.rowIndex}, Col: ${props.colDef.field}`);
     };
 
-    return <span><button style={{height: 20, lineHeight: 0.5}} onClick={invokeParentMethod} className="btn btn-info">Invoke Parent</button></span>;
+    return <span><button style={{ height: 20, lineHeight: 0.5 }} onClick={invokeParentMethod} className="btn btn-info">Invoke Parent</button></span>;
 };
 
 const createRowData = () => {
@@ -71,17 +63,61 @@ const createRowData = () => {
 
 const GridExample = () => {
     const [rowData, setRowData] = useState(createRowData());
+    const gridRef = useRef();
+
+    const columnDefs = useMemo(() => [
+        {
+            headerName: "Row",
+            field: "row",
+            width: 150
+        },
+        {
+            headerName: "Square",
+            field: "value",
+            cellRenderer: SquareRenderer,
+            editable: true,
+            colId: "square",
+            width: 150
+        },
+        {
+            headerName: "Cube",
+            field: "value",
+            cellRenderer: CubeRenderer,
+            colId: "cube",
+            width: 150
+        },
+        {
+            headerName: "Row Params",
+            field: "row",
+            cellRenderer: ParamsRenderer,
+            colId: "params",
+            width: 150
+        },
+        {
+            headerName: "Currency (Pipe)",
+            field: "currency",
+            cellRenderer: CurrencyRenderer,
+            colId: "currency",
+            width: 120
+        },
+        {
+            headerName: "Child/Parent",
+            field: "value",
+            cellRenderer: ChildMessageRenderer,
+            colId: "params",
+            editable: false,
+            minWidth: 150
+        }
+    ], []);
 
     const refreshEvenRowsCurrencyData = () => {
-        const newRowData = [];
-        for (const data of rowData) {
-            let newData = {...data};
-            if (newData.value % 2 === 0) {
-                newData.currency = newData.value + Number(Math.random().toFixed(2));
+        gridRef.current.api.forEachNode(rowNode => {
+            if (rowNode.data.value % 2 === 0) {
+                rowNode.setDataValue('currency', rowNode.data.value + Number(Math.random().toFixed(2)));
             }
-            newRowData.push(newData);
-        }
-        setRowData(newRowData);
+        });
+
+        gridRef.current.api.refreshCells({ columns: ['currency'] })
     };
 
     const methodFromParent = cell => {
@@ -89,10 +125,10 @@ const GridExample = () => {
     };
 
     return (
-        <div style={{width: '100%', height: '100%'}}>
+        <div style={{ width: '100%', height: '100%' }}>
             <div className="example-wrapper">
-                <button onClick={() => refreshEvenRowsCurrencyData()} style={{"marginBottom": "10px"}}
-                        className="btn btn-primary">
+                <button onClick={() => refreshEvenRowsCurrencyData()} style={{ "marginBottom": "10px" }}
+                    className="btn btn-primary">
                     Refresh Even Row Currency Data
                 </button>
                 <div
@@ -103,21 +139,12 @@ const GridExample = () => {
                     }}
                     className="ag-theme-alpine">
                     <AgGridReact
-                        modules={AllCommunityModules}
+                        ref={gridRef}
                         rowData={rowData}
-                        // we use immutableData here to ensure that we only re-render what has changed in the grid
-                        // see https://www.ag-grid.com/javascript/immutable-data/ for more information
-                        immutableData={true}
-                        getRowNodeId={data => data.row}
+                        columnDefs={columnDefs}
+                        getRowId={params => params.data.row}
                         context={{
                             methodFromParent
-                        }}
-                        frameworkComponents={{
-                            squareRenderer: SquareRenderer,
-                            cubeRenderer: CubeRenderer,
-                            paramsRenderer: ParamsRenderer,
-                            currencyRenderer: CurrencyRenderer,
-                            childMessageRenderer: ChildMessageRenderer
                         }}
                         defaultColDef={{
                             editable: true,
@@ -127,12 +154,6 @@ const GridExample = () => {
                             filter: true,
                             resizable: true
                         }}>
-                        <AgGridColumn field="row" width={150}/>
-                        <AgGridColumn field="value" cellRenderer='squareRenderer' editable={true} colId="square"/>
-                        <AgGridColumn field="value" cellRenderer='cubeRenderer' colId="cube"/>
-                        <AgGridColumn field="row" cellRenderer='paramsRenderer' colId="params"/>
-                        <AgGridColumn field="currency" cellRenderer='currencyRenderer' colId="currency"/>
-                        <AgGridColumn field="value" cellRenderer='childMessageRenderer' colId="params"/>
                     </AgGridReact>
                 </div>
             </div>
@@ -140,7 +161,5 @@ const GridExample = () => {
     );
 };
 
-render(
-    <GridExample/>,
-    document.querySelector('#root')
-);
+const root = createRoot(document.getElementById('root'));
+root.render(<GridExample />);

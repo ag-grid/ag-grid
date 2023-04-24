@@ -1,50 +1,76 @@
-import { GridPanel } from "../gridPanel/gridPanel";
-import { RowComp } from "./row/rowComp";
+import { RowCtrl } from "./row/rowCtrl";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
-import { CellComp } from "./cellComp";
-import { GridCore } from "../gridCore";
-import { LoggerFactory } from "../logger";
-import { CellPosition } from "../entities/cellPosition";
+import { CellPosition } from "../entities/cellPositionUtils";
 import { BeanStub } from "../context/beanStub";
-import { FlashCellsParams, GetCellRendererInstancesParams, RefreshCellsParams } from "../gridApi";
-import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
-import { ICellEditorComp } from "../interfaces/iCellEditor";
-import { RowPosition } from "../entities/rowPosition";
+import { ICellRenderer } from "./cellRenderers/iCellRenderer";
+import { ICellEditor } from "../interfaces/iCellEditor";
+import { RowPosition } from "../entities/rowPositionUtils";
+import { CellCtrl } from "./cell/cellCtrl";
+import { IRowNode } from "../interfaces/iRowNode";
+export interface RowCtrlMap {
+    [key: string]: RowCtrl;
+}
+export interface GetCellsParams<TData = any> {
+    /** Optional list of row nodes to restrict operation to */
+    rowNodes?: IRowNode<TData>[];
+    /** Optional list of columns to restrict operation to */
+    columns?: (string | Column)[];
+}
+export interface RefreshCellsParams<TData = any> extends GetCellsParams<TData> {
+    /** Skip change detection, refresh everything. */
+    force?: boolean;
+    /** Skip cell flashing, if cell flashing is enabled. */
+    suppressFlash?: boolean;
+}
+export interface FlashCellsParams<TData = any> extends GetCellsParams<TData> {
+    flashDelay?: number;
+    fadeDelay?: number;
+}
+export interface GetCellRendererInstancesParams<TData = any> extends GetCellsParams<TData> {
+}
+export interface GetCellEditorInstancesParams<TData = any> extends GetCellsParams<TData> {
+}
+export interface RedrawRowsParams<TData = any> {
+    /** Row nodes to redraw */
+    rowNodes?: IRowNode<TData>[];
+}
 export declare class RowRenderer extends BeanStub {
+    private animationFrameService;
     private paginationProxy;
-    private columnController;
-    private $scope;
+    private columnModel;
     private pinnedRowModel;
     private rowModel;
-    private focusController;
-    private cellNavigationService;
-    private columnApi;
-    private gridApi;
+    private focusService;
     private beans;
-    private maxDivHeightScaler;
-    private animationFrameService;
-    private rowPositionUtils;
-    private rangeController;
-    private gridPanel;
+    private rowContainerHeightService;
+    private ctrlsService;
+    private gridBodyCtrl;
     private destroyFuncsForColumnListeners;
     private firstRenderedRow;
     private lastRenderedRow;
-    private rowCompsByIndex;
-    private floatingTopRowComps;
-    private floatingBottomRowComps;
-    private rowContainers;
+    private rowCtrlsByRowIndex;
+    private zombieRowCtrls;
+    private cachedRowCtrls;
+    private allRowCtrls;
+    private topRowCtrls;
+    private bottomRowCtrls;
     private pinningLeft;
     private pinningRight;
+    private firstVisibleVPixel;
     private refreshInProgress;
-    private logger;
     private printLayout;
     private embedFullWidthRows;
-    private gridCore;
-    registerGridCore(gridCore: GridCore): void;
-    getGridCore(): GridCore;
-    agWire(loggerFactory: LoggerFactory): void;
-    registerGridComp(gridPanel: GridPanel): void;
+    private stickyRowFeature;
+    private dataFirstRenderedFired;
+    private postConstruct;
+    private initialise;
+    private initialiseCache;
+    private getKeepDetailRowsCount;
+    getRowCtrls(): RowCtrl[];
+    getStickyTopRowCtrls(): RowCtrl[];
+    private updateAllRowCtrls;
+    private onCellFocusChanged;
     private registerCellEventListeners;
     private removeGridColumnListeners;
     private refreshListenersToColumnsForCellComps;
@@ -53,69 +79,66 @@ export declare class RowRenderer extends BeanStub {
     private onPageLoaded;
     getAllCellsForColumn(column: Column): HTMLElement[];
     refreshFloatingRowComps(): void;
+    getTopRowCtrls(): RowCtrl[];
+    getBottomRowCtrls(): RowCtrl[];
     private refreshFloatingRows;
     private onPinnedRowDataChanged;
-    private onModelUpdated;
     private getRenderedIndexesForRowNodes;
-    redrawRows(rowNodes: RowNode[]): void;
+    redrawRows(rowNodes?: IRowNode[]): void;
     private getCellToRestoreFocusToAfterRefresh;
-    redrawAfterModelUpdate(params?: RefreshViewParams): void;
+    private redrawAfterModelUpdate;
     private scrollToTopIfNewData;
-    private sizeContainerToPageHeight;
+    private updateContainerHeights;
     private getLockOnRefresh;
     private releaseLockOnRefresh;
+    isRefreshInProgress(): boolean;
     private restoreFocusedCell;
     stopEditing(cancel?: boolean): void;
-    forEachCellComp(callback: (cellComp: CellComp) => void): void;
-    private forEachRowComp;
+    getAllCellCtrls(): CellCtrl[];
+    private getAllRowCtrls;
     addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void;
     flashCells(params?: FlashCellsParams): void;
     refreshCells(params?: RefreshCellsParams): void;
-    getCellRendererInstances(params: GetCellRendererInstancesParams): ICellRendererComp[];
-    getCellEditorInstances(params: GetCellRendererInstancesParams): ICellEditorComp[];
+    getCellRendererInstances(params: GetCellRendererInstancesParams): ICellRenderer[];
+    getCellEditorInstances(params: GetCellRendererInstancesParams): ICellEditor[];
     getEditingCells(): CellPosition[];
-    private forEachCellCompFiltered;
+    private mapRowNodes;
+    private isRowInMap;
+    private getCellCtrls;
     protected destroy(): void;
-    private binRowComps;
-    private removeRowComps;
+    private removeAllRowComps;
+    private recycleRows;
+    private removeRowCtrls;
+    private onBodyScroll;
     redrawAfterScroll(): void;
     private removeRowCompsNotToDraw;
     private calculateIndexesToDraw;
     private redraw;
-    private flushContainers;
+    private dispatchDisplayedRowsChanged;
     private onDisplayedColumnsChanged;
     private redrawFullWidthEmbeddedRows;
-    refreshFullWidthRows(rowNodesToRefresh?: RowNode[]): void;
-    private createOrUpdateRowComp;
-    private destroyRowComps;
-    private checkAngularCompile;
+    getFullWidthRowCtrls(rowNodes?: IRowNode[]): RowCtrl[];
+    refreshFullWidthRow(rowNode: RowNode): void;
+    private createOrUpdateRowCtrl;
+    private destroyRowCtrls;
+    private getRowBuffer;
+    private getRowBufferInPixels;
     private workOutFirstAndLastRowsToRender;
+    /**
+     * This event will only be fired once, and is queued until after the browser next renders.
+     * This allows us to fire an event during the start of the render cycle, when we first see data being rendered
+     * but not execute the event until all of the data has finished being rendered to the dom.
+     */
+    dispatchFirstDataRenderedEvent(): void;
     private ensureAllRowsInRangeHaveHeightsCalculated;
+    getFirstVisibleVerticalPixel(): number;
     getFirstVirtualRenderedRow(): number;
     getLastVirtualRenderedRow(): number;
     private doNotUnVirtualiseRow;
-    private createRowComp;
-    getRenderedNodes(): RowNode[];
-    navigateToNextCell(event: KeyboardEvent | null, key: number, currentCell: CellPosition, allowUserOverride: boolean): void;
-    private getNormalisedPosition;
-    private tryToFocusFullWidthRow;
-    private focusPosition;
-    private isValidNavigateCell;
-    private getLastCellOfColSpan;
-    ensureCellVisible(gridCell: CellPosition): void;
-    startEditingCell(gridCell: CellPosition, keyPress?: number | null, charPress?: string | null): void;
-    private getRowCompByPosition;
-    getComponentForCell(cellPosition: CellPosition): CellComp | null;
-    getRowNode(gridRow: RowPosition): RowNode | null;
-    onTabKeyDown(previousRenderedCell: CellComp | RowComp, keyboardEvent: KeyboardEvent): void;
-    tabToNextCell(backwards: boolean): boolean;
-    private moveToCellAfter;
-    private moveToNextEditingCell;
-    private moveToNextEditingRow;
-    private moveToNextCellNotEditing;
-    private moveEditToNextCellOrRow;
-    private findNextCellToFocusOn;
-    private lookupRowNodeForCell;
+    private createRowCon;
+    getRenderedNodes(): RowNode<any>[];
+    getRowByPosition(rowPosition: RowPosition): RowCtrl | null;
+    getRowNode(gridRow: RowPosition): RowNode | undefined;
     isRangeInRenderedViewport(startIndex: number, endIndex: number): boolean;
 }
 export interface RefreshViewParams {
@@ -125,4 +148,5 @@ export interface RefreshViewParams {
     onlyBody?: boolean;
     newData?: boolean;
     newPage?: boolean;
+    domLayoutChanged?: boolean;
 }

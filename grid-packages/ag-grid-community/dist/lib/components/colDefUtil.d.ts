@@ -1,10 +1,8 @@
+import { ColDef, ColGroupDef } from "../entities/colDef";
+declare type ColKey = keyof (ColDef) | (keyof ColGroupDef);
 export declare class ColDefUtil {
-    static STRING_PROPERTIES: string[];
-    static OBJECT_PROPERTIES: string[];
-    static ARRAY_PROPERTIES: string[];
-    static NUMBER_PROPERTIES: string[];
-    static BOOLEAN_PROPERTIES: string[];
-    static FUNCTION_PROPERTIES: string[];
-    static ALL_PROPERTIES: string[];
+    private static ColDefPropertyMap;
+    static ALL_PROPERTIES: ColKey[];
     static FRAMEWORK_PROPERTIES: string[];
 }
+export {};

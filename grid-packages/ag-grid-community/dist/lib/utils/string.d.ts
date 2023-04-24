@@ -5,27 +5,11 @@
  * @returns {string}
  */
 export declare function utf8_encode(s: string | null): string;
-/**
- * Converts a camelCase string into hyphenated string
- * from https://gist.github.com/youssman/745578062609e8acac9f
- * @param {string} str
- * @return {string}
- */
-export declare function camelCaseToHyphen(str: string): string | null;
-/**
- * Converts a hyphenated string into camelCase string
- * from https://stackoverflow.com/questions/6660977/convert-hyphens-to-camel-case-camelcase
- * @param {string} str
- * @return {string}
- */
-export declare function hyphenToCamelCase(str: string): string | null;
 export declare function capitalise(str: string): string;
-export declare function escapeString(toEscape: string | null): string | null;
+export declare function escapeString(toEscape?: string | null, skipEscapingHtmlChars?: boolean): string | null;
 /**
- * Converts a camelCase string into regular text
- * from: https://stackoverflow.com/questions/15369566/putting-space-in-camel-case-string-using-regular-expression
+ * Converts a camelCase string into startCase
  * @param {string} camelCase
  * @return {string}
  */
 export declare function camelCaseToHumanText(camelCase: string | undefined): string | null;
-export declare function startsWith(str: string, matchStart: string): boolean;

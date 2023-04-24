@@ -1,1 +1,0 @@
-export { GridChartsModule } from "./gridChartsModule";

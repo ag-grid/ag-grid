@@ -1,0 +1,17 @@
+{
+    "_config_": {},
+    "ColumnSparklineOptions": {
+        "axis": {
+            "more": {
+                "name": "SparklineAxisOptions",
+                "url": "/sparklines-column-customisation/#sparklineaxisoptions"
+            }
+        },
+        "label": {
+            "more": {
+                "name": "SparklineLabelOptions",
+                "url": "/sparklines-bar-customisation/#sparklinelabeloptions"
+            }
+        }
+    }
+}

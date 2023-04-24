@@ -1,5 +1,4 @@
 import {
-    IAfterGuiAttachedParams,
     ICellEditor,
     ICellEditorParams,
     ICellRenderer,
@@ -23,40 +22,43 @@ import {
 } from "ag-grid-community";
 
 export interface AgFrameworkComponent<T> {
+    /** Mandatory - Params for rendering this component. */
     agInit(params: T): void;
 
-    /* deprecated */
-    afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 }
 
-export interface IHeaderGroupAngularComp extends IHeaderGroup, AgFrameworkComponent<IHeaderGroupParams> {
+export interface IHeaderGroupAngularComp extends AgFrameworkComponent<IHeaderGroupParams>, IHeaderGroup {
 }
 
-export interface IHeaderAngularComp extends IHeader, AgFrameworkComponent<IHeaderParams> {
+export interface IHeaderAngularComp extends AgFrameworkComponent<IHeaderParams>, IHeader {
 }
 
-export interface IFloatingFilterComp extends IFloatingFilter, AgFrameworkComponent<IFloatingFilterParams> {
+export interface IFloatingFilterAngularComp<P = any> extends AgFrameworkComponent<IFloatingFilterParams<P>>, IFloatingFilter {
 }
 
-export interface IDateAngularComp extends IDate, AgFrameworkComponent<IDateParams> {
+export interface IDateAngularComp extends AgFrameworkComponent<IDateParams>, IDate {
 }
 
-export interface IFilterAngularComp extends IFilter, AgFrameworkComponent<IFilterParams> {
+export interface IFilterAngularComp extends AgFrameworkComponent<IFilterParams>, IFilter {
 }
 
-export interface ICellRendererAngularComp extends ICellRenderer, AgFrameworkComponent<ICellRendererParams> {
+export interface ICellRendererAngularComp extends AgFrameworkComponent<ICellRendererParams>, ICellRenderer {
 }
 
-export interface ICellEditorAngularComp extends ICellEditor, AgFrameworkComponent<ICellEditorParams> {
+export interface ICellEditorAngularComp extends AgFrameworkComponent<ICellEditorParams>, ICellEditor {
 }
 
 export interface AgRendererComponent extends ICellRendererAngularComp {
 }
 
+
 export interface AgEditorComponent extends ICellEditorAngularComp {
 }
 
 export interface AgFilterComponent extends IFilterAngularComp {
+}
+
+export interface AgFloatingFilterComponent extends IFloatingFilterAngularComp {
 }
 
 export interface ILoadingCellRendererAngularComp extends AgFrameworkComponent<ILoadingCellRendererParams> {
@@ -75,5 +77,5 @@ export interface IToolPanelAngularComp extends AgFrameworkComponent<IToolPanelPa
 }
 
 export interface ITooltipAngularComp extends AgFrameworkComponent<ITooltipParams> {
-    
+
 }

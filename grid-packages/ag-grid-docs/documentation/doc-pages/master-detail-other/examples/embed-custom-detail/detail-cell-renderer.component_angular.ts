@@ -1,5 +1,6 @@
-import {Component} from '@angular/core';
-import {ICellRendererAngularComp} from "@ag-grid-community/angular";
+import { Component } from '@angular/core';
+import { ICellRendererAngularComp } from "@ag-grid-community/angular";
+import { ICellRendererParams } from '@ag-grid-community/core';
 
 @Component({
     selector: 'app-detail-cell-renderer',
@@ -7,11 +8,11 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
 })
 export class DetailCellRenderer implements ICellRendererAngularComp {
 
-    pinned: string;
+    public pinned!: string;
 
-    agInit(params: any): void {
+    agInit(params: ICellRendererParams): void {
         this.pinned = params.pinned ? params.pinned : 'center';
     }
 
-    refresh(params: any): boolean { return false; }
+    refresh(params: ICellRendererParams): boolean { return false; }
 }

@@ -1,0 +1,397 @@
+{
+    "modelType": "range",
+    "chartId": "id-l0fdjgo876e",
+    "chartType": "normalizedArea",
+    "chartThemeName": "ag-default",
+    "chartOptions": {
+        "area": {
+            "width": 600,
+            "height": 300,
+            "autoSize": true,
+            "background": {
+                "visible": true,
+                "fill": "white"
+            },
+            "padding": {
+                "top": 20,
+                "right": 20,
+                "bottom": 20,
+                "left": 20
+            },
+            "title": {
+                "enabled": false,
+                "padding": {
+                    "top": 10,
+                    "right": 10,
+                    "bottom": 10,
+                    "left": 10
+                },
+                "text": "Title",
+                "fontWeight": "bold",
+                "fontSize": 16,
+                "fontFamily": "Verdana, sans-serif",
+                "color": "rgb(70, 70, 70)"
+            },
+            "subtitle": {
+                "enabled": false,
+                "padding": {
+                    "top": 10,
+                    "right": 10,
+                    "bottom": 10,
+                    "left": 10
+                },
+                "text": "Subtitle",
+                "fontSize": 12,
+                "fontFamily": "Verdana, sans-serif",
+                "color": "rgb(140, 140, 140)"
+            },
+            "legend": {
+                "enabled": true,
+                "position": "right",
+                "spacing": 20,
+                "item": {
+                    "paddingX": 16,
+                    "paddingY": 8,
+                    "marker": {
+                        "size": 15,
+                        "strokeWidth": 1,
+                        "padding": 8
+                    },
+                    "label": {
+                        "color": "black",
+                        "fontSize": 12,
+                        "fontFamily": "Verdana, sans-serif"
+                    }
+                }
+            },
+            "tooltip": {
+                "enabled": true,
+                "tracking": true,
+                "delay": 0,
+                "class": "ag-chart-tooltip"
+            },
+            "axes": {
+                "number": {
+                    "top": {},
+                    "right": {},
+                    "bottom": {},
+                    "left": {},
+                    "thickness": 0,
+                    "title": {
+                        "padding": {
+                            "top": 10,
+                            "right": 10,
+                            "bottom": 10,
+                            "left": 10
+                        },
+                        "text": "Axis Title",
+                        "fontWeight": "bold",
+                        "fontSize": 12,
+                        "fontFamily": "Verdana, sans-serif",
+                        "color": "rgb(70, 70, 70)"
+                    },
+                    "label": {
+                        "fontSize": 12,
+                        "fontFamily": "Verdana, sans-serif",
+                        "padding": 5,
+                        "rotation": 0,
+                        "color": "rgb(87, 87, 87)"
+                    },
+                    "line": {
+                        "width": 1,
+                        "color": "rgb(195, 195, 195)"
+                    },
+                    "tick": {
+                        "width": 1,
+                        "size": 6,
+                        "color": "rgb(195, 195, 195)",
+                        "count": 10
+                    },
+                    "gridStyle": [
+                        {
+                            "stroke": "rgb(219, 219, 219)",
+                            "lineDash": [
+                                4,
+                                2
+                            ]
+                        }
+                    ]
+                },
+                "log": {
+                    "top": {},
+                    "right": {},
+                    "bottom": {},
+                    "left": {},
+                    "thickness": 0,
+                    "title": {
+                        "padding": {
+                            "top": 10,
+                            "right": 10,
+                            "bottom": 10,
+                            "left": 10
+                        },
+                        "text": "Axis Title",
+                        "fontWeight": "bold",
+                        "fontSize": 12,
+                        "fontFamily": "Verdana, sans-serif",
+                        "color": "rgb(70, 70, 70)"
+                    },
+                    "label": {
+                        "fontSize": 12,
+                        "fontFamily": "Verdana, sans-serif",
+                        "padding": 5,
+                        "rotation": 0,
+                        "color": "rgb(87, 87, 87)"
+                    },
+                    "line": {
+                        "width": 1,
+                        "color": "rgb(195, 195, 195)"
+                    },
+                    "tick": {
+                        "width": 1,
+                        "size": 6,
+                        "color": "rgb(195, 195, 195)",
+                        "count": 10
+                    },
+                    "gridStyle": [
+                        {
+                            "stroke": "rgb(219, 219, 219)",
+                            "lineDash": [
+                                4,
+                                2
+                            ]
+                        }
+                    ],
+                    "base": 10
+                },
+                "category": {
+                    "top": {},
+                    "right": {},
+                    "bottom": {},
+                    "left": {},
+                    "thickness": 0,
+                    "title": {
+                        "padding": {
+                            "top": 10,
+                            "right": 10,
+                            "bottom": 10,
+                            "left": 10
+                        },
+                        "text": "Axis Title",
+                        "fontWeight": "bold",
+                        "fontSize": 12,
+                        "fontFamily": "Verdana, sans-serif",
+                        "color": "rgb(70, 70, 70)"
+                    },
+                    "label": {
+                        "fontSize": 12,
+                        "fontFamily": "Verdana, sans-serif",
+                        "padding": 5,
+                        "rotation": 0,
+                        "color": "rgb(87, 87, 87)"
+                    },
+                    "line": {
+                        "width": 1,
+                        "color": "rgb(195, 195, 195)"
+                    },
+                    "tick": {
+                        "width": 1,
+                        "size": 6,
+                        "color": "rgb(195, 195, 195)",
+                        "count": 10
+                    },
+                    "gridStyle": [
+                        {
+                            "stroke": "rgb(219, 219, 219)",
+                            "lineDash": [
+                                4,
+                                2
+                            ]
+                        }
+                    ]
+                },
+                "groupedCategory": {
+                    "top": {},
+                    "right": {},
+                    "bottom": {},
+                    "left": {},
+                    "thickness": 0,
+                    "title": {
+                        "padding": {
+                            "top": 10,
+                            "right": 10,
+                            "bottom": 10,
+                            "left": 10
+                        },
+                        "text": "Axis Title",
+                        "fontWeight": "bold",
+                        "fontSize": 12,
+                        "fontFamily": "Verdana, sans-serif",
+                        "color": "rgb(70, 70, 70)"
+                    },
+                    "label": {
+                        "fontSize": 12,
+                        "fontFamily": "Verdana, sans-serif",
+                        "padding": 5,
+                        "rotation": 0,
+                        "color": "rgb(87, 87, 87)"
+                    },
+                    "line": {
+                        "width": 1,
+                        "color": "rgb(195, 195, 195)"
+                    },
+                    "tick": {
+                        "width": 1,
+                        "size": 6,
+                        "color": "rgb(195, 195, 195)",
+                        "count": 10
+                    },
+                    "gridStyle": [
+                        {
+                            "stroke": "rgb(219, 219, 219)",
+                            "lineDash": [
+                                4,
+                                2
+                            ]
+                        }
+                    ]
+                },
+                "time": {
+                    "top": {},
+                    "right": {},
+                    "bottom": {},
+                    "left": {},
+                    "thickness": 0,
+                    "title": {
+                        "padding": {
+                            "top": 10,
+                            "right": 10,
+                            "bottom": 10,
+                            "left": 10
+                        },
+                        "text": "Axis Title",
+                        "fontWeight": "bold",
+                        "fontSize": 12,
+                        "fontFamily": "Verdana, sans-serif",
+                        "color": "rgb(70, 70, 70)"
+                    },
+                    "label": {
+                        "fontSize": 12,
+                        "fontFamily": "Verdana, sans-serif",
+                        "padding": 5,
+                        "rotation": 0,
+                        "color": "rgb(87, 87, 87)"
+                    },
+                    "line": {
+                        "width": 1,
+                        "color": "rgb(195, 195, 195)"
+                    },
+                    "tick": {
+                        "width": 1,
+                        "size": 6,
+                        "color": "rgb(195, 195, 195)",
+                        "count": 10
+                    },
+                    "gridStyle": [
+                        {
+                            "stroke": "rgb(219, 219, 219)",
+                            "lineDash": [
+                                4,
+                                2
+                            ]
+                        }
+                    ]
+                }
+            },
+            "series": {
+                "tooltip": {
+                    "enabled": true
+                },
+                "visible": true,
+                "showInLegend": true,
+                "cursor": "default",
+                "highlightStyle": {
+                    "item": {
+                        "fill": "yellow"
+                    },
+                    "series": {
+                        "dimOpacity": 1
+                    }
+                },
+                "xKey": "",
+                "xName": "",
+                "yKeys": [],
+                "yNames": [],
+                "fillOpacity": 0.8,
+                "strokeOpacity": 1,
+                "strokeWidth": 2,
+                "lineDash": [
+                    0
+                ],
+                "lineDashOffset": 0,
+                "shadow": {
+                    "enabled": false,
+                    "color": "rgba(0, 0, 0, 0.5)",
+                    "xOffset": 3,
+                    "yOffset": 3,
+                    "blur": 5
+                },
+                "marker": {
+                    "enabled": false,
+                    "shape": "circle",
+                    "size": 6,
+                    "maxSize": 30,
+                    "strokeWidth": 1
+                },
+                "label": {
+                    "enabled": false,
+                    "fontSize": 12,
+                    "fontFamily": "Verdana, sans-serif",
+                    "color": "rgb(70, 70, 70)"
+                }
+            },
+            "navigator": {
+                "enabled": false,
+                "height": 30,
+                "min": 0,
+                "max": 1,
+                "mask": {
+                    "fill": "#999999",
+                    "stroke": "#999999",
+                    "strokeWidth": 1,
+                    "fillOpacity": 0.2
+                },
+                "minHandle": {
+                    "fill": "#f2f2f2",
+                    "stroke": "#999999",
+                    "strokeWidth": 1,
+                    "width": 8,
+                    "height": 16,
+                    "gripLineGap": 2,
+                    "gripLineLength": 8
+                },
+                "maxHandle": {
+                    "fill": "#f2f2f2",
+                    "stroke": "#999999",
+                    "strokeWidth": 1,
+                    "width": 8,
+                    "height": 16,
+                    "gripLineGap": 2,
+                    "gripLineLength": 8
+                }
+            }
+        }
+    },
+    "cellRange": {
+        "rowStartIndex": 0,
+        "rowEndIndex": 7,
+        "columns": [
+            "country",
+            "sugar",
+            "fat",
+            "weight"
+        ]
+    },
+    "suppressChartRanges": false,
+    "unlinkChart": false
+}

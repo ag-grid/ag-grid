@@ -1,11 +1,12 @@
 ---
 title: "Server-Side Operations With Node.js"
+enterprise: true
 ---
 
 Learn how to perform server-side operations using Node.js with a complete reference implementation that uses the MySQL database.
 
 
-This guide is intended as a starting point when learning how to use the [Server-Side Row Model](../server-side-model/), as it provides a simple grid implementation that uses a limited set of features and grid configurations.
+This guide is intended as a starting point when learning how to use the [Server-Side Row Model](/server-side-model/), as it provides a simple grid implementation that uses a limited set of features and grid configurations.
 
 
 The sample Olympic Medals application is developed using a Node.js server that connects to a MySQL database and will demonstrate how data can be lazy-loaded as required, even when performing group, filter and sort operations when working with large datasets.
@@ -90,7 +91,7 @@ const gridOptions = {
         { field: 'athlete' },
         { field: 'country', rowGroup: true, hide: true },
         { field: 'sport', rowGroup: true, hide: true },
-        { field: 'year', filter: 'number', filterParams: { newRowsAction: 'keep' } },
+        { field: 'year', filter: 'number' },
         { field: 'gold', aggFunc: 'sum' },
         { field: 'silver', aggFunc: 'sum' },
         { field: 'bronze', aggFunc: 'sum' },
@@ -105,9 +106,9 @@ const gridOptions = {
 In the code snippet above, the grid is configured to use the Server-Side Row Model by setting: `gridOptions.rowModelType = 'serverSide'`.
 
 
-Sorting is enabled via `defaultColDef.sortable = true` property. A simple number filter is also added to the 'year' column. The example has `filterParams.newRowsAction = 'keep'` set to ensure that as new data is loaded the applied filters are kept, however since v21 of AG Grid, `newRowsAction` defaults to `'keep'` for Server Side Row Model so this property no longer needs to be set.
+Sorting is enabled via `defaultColDef.sortable = true` property. A simple number filter is also added to the 'year' column. Note that as new data is loaded the applied filters are kept.
 
-To demonstrate [Row Grouping](../server-side-model-grouping/), the 'country' and 'sport' columns have been configured with `rowGroup = true`. Finally, to ensure the medal values are aggregated up the group hierarchy, the value columns have been set up with an aggregation function: `aggFunc='sum'`.
+To demonstrate [Row Grouping](/server-side-model-grouping/), the 'country' and 'sport' columns have been configured with `rowGroup = true`. Finally, to ensure the medal values are aggregated up the group hierarchy, the value columns have been set up with an aggregation function: `aggFunc='sum'`.
 
 ## Server-Side Datasource
 

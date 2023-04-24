@@ -1,6 +1,4 @@
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
     template: `<span><img v-for="img in value" :src="rendererImage"/></span>`,
     data: function () {
         return {
@@ -21,4 +19,4 @@ export default Vue.extend({
             this.updateImage();
         }
     }
-});
+};

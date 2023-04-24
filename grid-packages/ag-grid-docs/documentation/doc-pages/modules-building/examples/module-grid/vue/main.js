@@ -8,8 +8,8 @@ import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule]);
 
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-alpine.css';
 
 const VueExample = {
     template: `
@@ -23,7 +23,7 @@ const VueExample = {
     components: {
         'ag-grid-vue': AgGridVue
     },
-    data: function() {
+    data: function () {
         return {
             columnDefs: null,
             rowData: null
@@ -39,7 +39,7 @@ const VueExample = {
         this.rowData = [
             { make: 'Toyota', model: 'Celica', price: 35000 },
             { make: 'Ford', model: 'Mondeo', price: 32000 },
-            { make: 'Porsche', model: 'Boxter', price: 72000 }
+            { make: 'Porsche', model: 'Boxster', price: 72000 }
         ];
     },
     methods: {

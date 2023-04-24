@@ -21,6 +21,6 @@ export declare abstract class AgAbstractInputField<TElement extends FieldElement
     getFocusableElement(): HTMLElement;
     setMaxLength(length: number): this;
     setInputPlaceholder(placeholder: string): this;
-    setInputAriaLabel(label: string): this;
+    setInputAriaLabel(label?: string | null): this;
     setDisabled(disabled: boolean): this;
 }

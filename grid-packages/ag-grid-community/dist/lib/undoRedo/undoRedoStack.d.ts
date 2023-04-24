@@ -1,13 +1,14 @@
-import { CellRange } from "../interfaces/iRangeController";
+import { RowPinnedType } from "../interfaces/iRowNode";
+import { CellRange } from "../interfaces/IRangeService";
 export interface CellValueChange {
-    rowPinned?: string;
+    rowPinned: RowPinnedType;
     rowIndex: number;
     columnId: string;
     oldValue: any;
     newValue: any;
 }
 export interface LastFocusedCell {
-    rowPinned?: string | null;
+    rowPinned: RowPinnedType;
     rowIndex: number;
     columnId: string;
 }
@@ -15,10 +16,11 @@ export declare class UndoRedoAction {
     cellValueChanges: CellValueChange[];
     constructor(cellValueChanges: CellValueChange[]);
 }
-export declare class FillUndoRedoAction extends UndoRedoAction {
-    initialRange: CellRange;
-    finalRange: CellRange;
-    constructor(cellValueChanges: CellValueChange[], initialRange: CellRange, finalRange: CellRange);
+export declare class RangeUndoRedoAction extends UndoRedoAction {
+    readonly initialRange?: CellRange | undefined;
+    readonly finalRange?: CellRange | undefined;
+    readonly ranges?: CellRange[] | undefined;
+    constructor(cellValueChanges: CellValueChange[], initialRange?: CellRange | undefined, finalRange?: CellRange | undefined, ranges?: CellRange[] | undefined);
 }
 export declare class UndoRedoStack {
     private static DEFAULT_STACK_SIZE;

@@ -1,9 +1,9 @@
-import {Component} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {AllCommunityModules, GridApi, Module, RowNode} from '@ag-grid-community/all-modules';
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
-import {DaysFrostRenderer} from './days-frost-renderer.component';
+import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import "@ag-grid-community/styles/ag-grid.css";
+import "@ag-grid-community/styles/ag-theme-alpine.css";
+import { DaysFrostRenderer } from './days-frost-renderer.component';
+import { ColDef, GridApi, ICellRenderer, ICellRendererParams, IRowNode } from '@ag-grid-community/core';
 
 /*
 * It's unlikely you'll use functions that create and manipulate DOM elements like this in an Angular application, but it
@@ -18,26 +18,54 @@ const createImageSpan = (imageMultiplier: number, image: string) => {
     }
     return resultElement;
 };
-const deltaIndicator = (params: any) => {
-    const element = document.createElement('span');
-    const imageElement = document.createElement('img');
-    if (params.value > 15) {
-        imageElement.src = 'https://www.ag-grid.com/example-assets/weather/fire-plus.png';
-    } else {
-        imageElement.src = 'https://www.ag-grid.com/example-assets/weather/fire-minus.png';
+
+// This is a plain JS (not Angular) component
+class DeltaIndicator implements ICellRenderer {
+    private eGui!: HTMLElement;
+    init(params: ICellRendererParams) {
+        const element = document.createElement('span');
+        const imageElement = document.createElement('img');
+        if (params.value > 15) {
+            imageElement.src = 'https://www.ag-grid.com/example-assets/weather/fire-plus.png';
+        } else {
+            imageElement.src = 'https://www.ag-grid.com/example-assets/weather/fire-minus.png';
+        }
+        element.appendChild(imageElement);
+        element.appendChild(document.createTextNode(params.value));
+        this.eGui = element;
     }
-    element.appendChild(imageElement);
-    element.appendChild(document.createTextNode(params.value));
-    return element;
-};
-const daysSunshineRenderer = (params: any) => {
-    const daysSunshine = params.value / 24;
-    return createImageSpan(daysSunshine, params.rendererImage);
-};
-const rainPerTenMmRenderer = (params: any) => {
-    const rainPerTenMm = params.value / 10;
-    return createImageSpan(rainPerTenMm, params.rendererImage);
-};
+    getGui() {
+        return this.eGui;
+    }
+    refresh() { return false; }
+}
+
+// This is a plain JS (not Angular) component
+class DaysSunshineRenderer implements ICellRenderer {
+    private eGui!: HTMLElement;
+    init(params: ICellRendererParams) {
+        const pAny = params as any;
+        const daysSunshine = params.value / 24;
+        this.eGui = createImageSpan(daysSunshine, pAny.rendererImage);
+    }
+    getGui() {
+        return this.eGui;
+    }
+    refresh() { return false; }
+}
+
+// This is a plain JS (not Angular) component
+class RainPerTenMmRenderer implements ICellRenderer {
+    private eGui!: HTMLElement;
+    init(params: ICellRendererParams & { rendererImage: string }) {
+        const rainPerTenMm = params.value / 10;
+        this.eGui = createImageSpan(rainPerTenMm, params.rendererImage);
+    }
+    getGui() {
+        return this.eGui;
+    }
+    refresh() { return false; }
+}
 
 @Component({
     selector: 'my-app',
@@ -50,11 +78,7 @@ const rainPerTenMmRenderer = (params: any) => {
                 #agGrid
                 style="width: 100%; height: 100%;"
                 class="ag-theme-alpine"
-                [modules]="modules"
                 [columnDefs]="columnDefs"
-                [rowData]="rowData"
-                [components]="components"
-                [frameworkComponents]="frameworkComponents"
                 [defaultColDef]="defaultColDef"
                 (gridReady)="onGridReady($event)"
         ></ag-grid-angular>
@@ -63,56 +87,52 @@ const rainPerTenMmRenderer = (params: any) => {
 })
 
 export class AppComponent {
-    private gridApi: GridApi;
 
-    public modules: Module[] = AllCommunityModules;
+    private gridApi!: GridApi;
 
-    private columnDefs = [
+    public columnDefs: ColDef[] = [
         {
             headerName: "Month",
             field: "Month",
             width: 75,
-            cellStyle: {color: "darkred"}
+            cellStyle: { color: "darkred" }
         },
         {
             headerName: "Max Temp (\u02DAC)",
             field: "Max temp (C)",
             width: 120,
-            cellRenderer: "deltaIndicator"
+            cellRenderer: DeltaIndicator
         },
         {
             headerName: "Min Temp (\u02DAC)",
             field: "Min temp (C)",
             width: 120,
-            cellRenderer: "deltaIndicator"
+            cellRenderer: DeltaIndicator
         },
         {
             headerName: "Days of Air Frost",
             field: "Days of air frost (days)",
             width: 233,
-            cellRenderer: "daysFrostRenderer",
-            cellRendererParams: {rendererImage: "frost.png"}
+            cellRenderer: DaysFrostRenderer,
+            cellRendererParams: { rendererImage: "frost.png" }
         },
         {
             headerName: "Days Sunshine",
             field: "Sunshine (hours)",
             width: 190,
-            cellRenderer: "daysSunshineRenderer",
-            cellRendererParams: {rendererImage: "sun.png"}
+            cellRenderer: DaysSunshineRenderer,
+            cellRendererParams: { rendererImage: "sun.png" }
         },
         {
             headerName: "Rainfall (10mm)",
             field: "Rainfall (mm)",
             width: 180,
-            cellRenderer: "rainPerTenMmRenderer",
-            cellRendererParams: {rendererImage: "rain.png"}
+            cellRenderer: RainPerTenMmRenderer,
+            cellRendererParams: { rendererImage: "rain.png" }
         }
     ];
 
-    private frameworkComponents: {};
-    private components: {};
-
-    private defaultColDef: {
+    public defaultColDef: ColDef = {
         editable: true,
         sortable: true,
         flex: 1,
@@ -121,17 +141,7 @@ export class AppComponent {
         resizable: true
     };
 
-    private rowData: []
-
     constructor(private http: HttpClient) {
-        this.components = {
-            'deltaIndicator': deltaIndicator,
-            'daysSunshineRenderer': daysSunshineRenderer,
-            'rainPerTenMmRenderer': rainPerTenMmRenderer
-        };
-        this.frameworkComponents = {
-            'daysFrostRenderer': DaysFrostRenderer,
-        }
     }
 
     /**
@@ -142,7 +152,7 @@ export class AppComponent {
         const extraDaysFrost = Math.floor(Math.random() * 2) + 1;
 
         // iterate over the rows and make each "days of air frost"
-        this.gridApi.forEachNode((rowNode: RowNode) => {
+        this.gridApi.forEachNode((rowNode: IRowNode) => {
             rowNode.setDataValue('Days of air frost (days)', rowNode.data['Days of air frost (days)'] + extraDaysFrost);
         });
     }

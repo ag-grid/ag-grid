@@ -69,7 +69,7 @@ If the width and / or height change after the grid is initialised, the grid will
 
 The example below shows setting the grid size and then changing it as the user selects the buttons.
 
-<grid-example title='Width & Height' name='width-and-height' type='multi'></grid-example>
+<grid-example title='Width & Height' name='width-and-height' type='mixed'></grid-example>
 
 ## Grid Auto Height
 
@@ -103,7 +103,15 @@ The example below demonstrates the autoHeight feature. Notice the following:
 | The following test is best viewed if you open it in a new tab, so it is obvious that there are no scroll bars.
 | Note that if you use the example inlined the scroll bars shown are for the containing `iframe`, not the grid.
 
-<grid-example title='Auto Height' name='auto-height' type='generated' options='{ "enterprise": true, "exampleHeight": 660, "noStyle": 1, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Auto Height' name='auto-height' type='generated' options='{ "enterprise": true, "exampleHeight": 660, "noStyle": 1, "myGridReference": 1, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
+
+When using Auto Height, there is a minimum of 150px set to the grid rows section. This is to avoid an empty grid which would look weird. To remove this minimum height, add the following CSS:
+
+```css
+.ag-center-cols-clipper {
+    min-height: unset !important;
+}
+```
 
 ## DOM Layout
 
@@ -111,7 +119,7 @@ There are three DOM Layout values the grid can have 'normal', 'autoHeight' and '
 
 - **normal**: This is the default if nothing is specified. The grid fits the width and height of the div you provide and scrolls in both directions.
 - **autoHeight**: The grid's height is set to fit the number of rows so no vertical scrollbar is provided by the grid. The grid scrolls horizontally as normal.
-- **print**: No scroll bars are used and the grid renders all rows and columns. This layout is explained in [Printing](../printing/).
+- **print**: No scroll bars are used and the grid renders all rows and columns. This layout is explained in [Printing](/printing/).
 
 ## Min Height with Auto Height
 

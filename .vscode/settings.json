@@ -2,25 +2,31 @@
     "editor.insertSpaces": true,
     "editor.tabSize": 4,
     "search.exclude": {
-        "**/node_modules": true,
+        "**/ag-grid-docs/_dev/**": true,
+        "**/ag-grid-docs/.cache/**": true,
+        "**/ag-grid-docs/public/**": true,
         "**/build": true,
-        "**/dist": true
+        "**/dist": true,
+        "**/node_modules": true,
+        "**/typings": true
     },
     "typescript.tsdk": "node_modules/typescript/lib",
+    "[typescript]": {
+        "editor.autoClosingBrackets": "always"
+    },
     "cSpell.language": "en-GB",
     "cSpell.words": [
         "autowire",
         "autowired",
         "csrm",
+        "Sparkline",
+        "sparklines",
         "tran",
-        "trans"
+        "trans",
+        "treemap"
     ],
+    "git.detectSubmodulesLimit": 20,
     "files.exclude": {
-        "grid-packages/ag-grid-community": true,
-        "grid-packages/ag-grid-enterprise": true,
-        "grid-packages/ag-grid-angular": true,
-        "grid-packages/ag-grid-react": true,
-        "grid-packages/ag-grid-vue": true,
         "**/.git": true,
         "**/.DS_Store": true,
         "**/node_modules": true,
@@ -29,5 +35,26 @@
     "[scss]": {
         "editor.detectIndentation": false,
         "editor.tabSize": 4
-    }
+    },
+    "sonarlint.connectedMode.project": {
+        "projectKey": "ag-grid-community"
+    },
+    "gitlens.autolinks": [
+        {
+            "prefix": "AG-",
+            "url": "https://ag-grid.atlassian.net/browse/AG-<num>"
+        },
+        {
+            "prefix": "RTI-",
+            "url": "https://ag-grid.atlassian.net/browse/RTI-<num>"
+        }
+    ],
+    "peacock.color": "#f9e64f",
+    "git.autoRepositoryDetection": "subFolders",
+    "git.repositoryScanIgnoredFolders": [
+        "node_modules",
+        "dist",
+        "typings"
+    ],
+    "typescript.enablePromptUseWorkspaceTsdk": true
 }

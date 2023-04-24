@@ -12,7 +12,7 @@ The basic information on Content Security Policy can be found on the [MDN web do
 
 The `script-src` policy will work only with `'self'` rule. If you are working with expressions / code parsing inside of the grid instead of functions, it will be necessary to add the `unsafe-eval` rule to your policy.
 
-Using expressions instead of functions is an option for many grid properties such as [Cell Class Rules](../cell-styles/#cell-class-rules) and [Value Getters](../value-getters/). Below demonstrates the difference where expressions are used instead of functions.
+Using expressions instead of functions is an option for many grid properties such as [Cell Class Rules](/cell-styles/#cell-class-rules) and [Value Getters](/value-getters/). Below demonstrates the difference where expressions are used instead of functions.
 
 <snippet>
 const gridOptions = {
@@ -41,7 +41,14 @@ const gridOptions = {
 
 ### style-src
 
-The `style-src` policy requires the `unsafe-inline` due to the [DOM Row and Column Virtualisation](../dom-virtualisation/). The technique the grid uses to display position rows requires explicit positioning of the rows and columns. This positioning is only possible using CSS style attributes to set explicit X and Y positions. This is a feature that all data grids have. Without it, the data grid would have a very low limit on the amount of data that could be displayed.
+The `style-src` policy requires the `unsafe-inline` due to the [DOM Row and Column Virtualisation](/dom-virtualisation/). The technique the grid uses to display position rows requires explicit positioning of the rows and columns. This positioning is only possible using CSS style attributes to set explicit X and Y positions. This is a feature that all data grids have. Without it, the data grid would have a very low limit on the amount of data that could be displayed.
+
+[[note]]
+| Even though the `style-src` policy requires `unsafe-inline`, the specific way AG Grid uses it causes no actual security vulnerability.
+|
+| The reason is that AG Grid doesn’t require `unsafe-inline` for scripts, but only for styles. The inline-style injection is only a problem if you allow users to upload their own content to your servers and then they can use injected styles to show that content over your page.
+|
+| Also, as styles aren't executed, a user would need to upload their own content to your servers and then reference it from an injected style. In order to fully prevent this scenario from occurring, we recommend sanitising user-uploaded content in your application to ensure that only valid content gets uploaded and fully prevent this risk.
 
 ### img-src
 
@@ -73,9 +80,10 @@ AG Grid is tested for a wide variety of security vulnerabilities using the [Sona
 
 ## SonarQube Results
 
-The SonarQube security test results for `ag-grid-community` and `ag-grid-enterprise` are shown below:
+The SonarQube security test results for our main NPM packages are shown below:
 
-| Ag-Grid Package | Result |
-| --------------- | ------ |
-| ag-grid-community | [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ag-grid-community)](https://sonarcloud.io/dashboard?id=ag-grid-community) |
-| ag-grid-enterprise | [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ag-grid-enterprise)](https://sonarcloud.io/dashboard?id=ag-grid-enterprise) |
+| AG-Grid Package     | Result |
+| ------------------- | ------ |
+| ag-grid-community   | [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ag-grid-community)](https://sonarcloud.io/dashboard?id=ag-grid-community) |
+| ag-grid-enterprise  | [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ag-grid-enterprise)](https://sonarcloud.io/dashboard?id=ag-grid-enterprise) |
+| ag-charts-community | [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ag-charts-community)](https://sonarcloud.io/dashboard?id=ag-charts-community) |

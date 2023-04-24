@@ -1,8 +1,6 @@
-import { Column } from "../entities/column";
 import { BeanStub } from "../context/beanStub";
+import { Column } from "../entities/column";
 export declare class ColumnHoverService extends BeanStub {
-    private columnApi;
-    private gridApi;
     private selectedColumns;
     setMouseOver(columns: Column[]): void;
     clearMouseOver(): void;

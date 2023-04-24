@@ -1,7 +1,7 @@
 // noinspection ES6UnusedImports
 import React, {useState} from 'react'
 import {mount} from 'cypress-react-unit-test'
-import {AgGridColumn, AgGridReact} from "../..";
+import { AgGridReact } from "../..";
 import {cssProperty, ensureGridApiHasBeenSet, getTextWidth} from "./utils";
 
 class CRF extends React.Component {
@@ -20,6 +20,9 @@ const App = () => {
         {value: "Porsche"}
     ]);
 
+    const [colDefs, setColDefs] = useState([
+        { field: 'value', cellRenderer: 'crf', cellStyle={ "white-space": "normal" }, autoHeight: true }
+    ]);
     function onGridReady(params) {
         setGridApi(params.api);
         setGridColumnApi(params.columnApi);
@@ -31,17 +34,13 @@ const App = () => {
                 ref={(element) => {
                     window.gridComponentInstance = element
                 }}
+                suppressReactUi={true}
                 onGridReady={onGridReady}
                 rowData={rowData}
+                columnDefs={colDefs}
                 frameworkComponents={{
                     crf: CRF
-                }}>
-                <AgGridColumn
-                    field="value"
-                    cellRenderer='crf'
-                    cellStyle={{"white-space": "normal"}}
-                    autoHeight
-                ></AgGridColumn>
+                }}>                
             </AgGridReact>
         </div>
     );
@@ -53,8 +52,8 @@ describe('Autoheight Grid', () => {
 
         mount(<App/>, {
             stylesheets: [
-                'https://unpkg.com/@ag-grid-community/core/dist/styles/ag-grid.css',
-                'https://unpkg.com/@ag-grid-community/core/dist/styles/ag-theme-alpine.css'
+                'https://cdn.jsdelivr.net/npm/@ag-grid-community/styles/ag-grid.css',
+                'https://cdn.jsdelivr.net/npm/@ag-grid-community/styles/ag-theme-alpine.css'
             ]
         })
 

@@ -6,12 +6,15 @@ import Styles from './Styles';
 import SystemJs from './SystemJs';
 import MetaData from './MetaData';
 
-const VueTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath, appLocation, options, scriptFiles, styleFiles }) =>
+/**
+ * This is the template for executing Vue examples in the example runner.
+ */
+const VueTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath, appLocation, options, scriptFiles, styleFiles, type, importType }) =>
     <html lang="en">
         <head>
-            <MetaData title="Vue example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} />
+            <MetaData title="Vue example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} options={options}/>
             <ExampleStyle rootId="app" />
-            <Styles files={styleFiles} />
+            {(type !== "generated" || library !== "grid") && <Styles files={styleFiles}/>}
             <Extras options={options} />
         </head>
         <body>
@@ -23,6 +26,8 @@ const VueTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath, ap
                 boilerplatePath={boilerplatePath}
                 appLocation={appLocation}
                 startFile={appLocation + 'main.js'}
+                framework={'vue'}
+                importType={importType}
                 options={options} />
         </body>
     </html>;

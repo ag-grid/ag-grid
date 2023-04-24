@@ -1,20 +1,26 @@
-import React, {Component} from 'react';
-import {connect} from "react-redux";
-import {bindActionCreators} from 'redux';
-import {AgGridReact} from "@ag-grid-community/react";
-import {actions} from './actions/fileActions.jsx'
+import React, { Component } from 'react';
+import { connect } from "react-redux";
+import { bindActionCreators } from 'redux';
+import { AgGridReact } from "@ag-grid-community/react";
+import { actions } from './actions/fileActions.jsx'
 
-import {AllModules} from "@ag-grid-enterprise/all-modules";
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-grid.css";
+import "@ag-grid-community/styles/ag-theme-alpine.css";
+
+import { ModuleRegistry } from '@ag-grid-community/core';
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, MenuModule]);
 
 class FileView extends Component {
   colDefs = [
-    {field: "file"},
-    {field: "folder", rowGroup: true, hide: true},
-    {field: "dateModified"},
-    {field: "size"}
+    { field: "file" },
+    { field: "folder", rowGroup: true, hide: true },
+    { field: "dateModified" },
+    { field: "size" }
   ];
 
   autoGroupColumnDef = {
@@ -25,18 +31,14 @@ class FileView extends Component {
     }
   };
 
-  modules = AllModules;
-
   render() {
     return (
       <div id='myGrid' style={{ flex: 1 }} className="ag-theme-alpine">
         <AgGridReact
           columnDefs={this.colDefs}
           rowData={this.props.files}
-          immutableData={true}
-          getRowNodeId={data => data.id}
+          getRowId={params => params.data.id}
           autoGroupColumnDef={this.autoGroupColumnDef}
-          modules={this.modules}
           groupDefaultExpanded={-1}
           onFirstDataRendered={params => params.api.sizeColumnsToFit()}
           getContextMenuItems={this.getContextMenuItems}>

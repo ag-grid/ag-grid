@@ -4,20 +4,7 @@ title: "Row Dragging Between Grids"
 
 Row Drag Between Grids is concerned with seamless integration among different grids, allowing records to be dragged from one grid and dropped at a specific index on another grid.
 
-
-```ts
-function addRowDropZone(params: RowDropZoneParams) => void;
-function removeRowDropZone(params: RowDropZoneParams) => void;
-function getRowDropZoneParams(events: RowDropZoneEvents) => RowDropZoneParams;
-
-// interface for events
-interface RowDropZoneEvents {
-    onDragEnter?: (params: RowDragEnterEvent) => void;
-    onDragLeave?: (params: RowDragLeaveEvent) => void;
-    onDragging?: (params: RowDragMoveEvent) => void;
-    onDragStop?: (params: RowDragEndEvent) => void;
-}
-```
+<api-documentation source='grid-api/api.json' section='rowDrag' names='["addRowDropZone", "removeRowDropZone", "getRowDropZoneParams"]'></api-documentation>
 
 ## Adding a Grid as Target
 
@@ -25,20 +12,16 @@ To allow adding a grid as DropZone, the `getRowDropZoneParams` API method should
 
 
 ```js
-// example usage:
-new agGrid.Grid(gridElement, gridOptions);
-new agGrid.Grid(gridElement, gridOptions2);
-
-var dropZoneParams = GridApi2.getRowDropZoneParams({
+var dropZoneParams = targetGridApi.getRowDropZoneParams({
     onDragStop: function() {
         alert('Record Dropped!');
     }
 });
 
-gridApi.addRowDropZone(dropZoneParams);
+sourceGridApi.addRowDropZone(dropZoneParams);
 
 // when the DropZone above is no longer needed
-gridApi.removeRowDropZone(dropZoneParams);
+sourceGridApi.removeRowDropZone(dropZoneParams);
 ```
 
 In the example below, note the following:
@@ -53,7 +36,7 @@ from the other grid.
 
 - New rows can be created by clicking on the red, green and blue buttons.
 
-<grid-example title='Two Grids with Drop Position' name='two-grids-with-drop-position' type='multi' options='{ "extras": ["fontawesome"] }'></grid-example>
+<grid-example title='Two Grids with Drop Position' name='two-grids-with-drop-position' type='mixed' options='{ "extras": ["fontawesome"] }'></grid-example>
 
 ## Dragging Multiple Records Between Grids
 
@@ -61,9 +44,9 @@ It is possible to drag multiple records at once from one grid to another.
 
 In the example below, note the following:
 
-- This example allows for `enableMultiRowDragging`, between grids. For more info on `multiRowDrag` within the grid see the [Multi-Row Dragging](../row-dragging/#multi-row-dragging) section in the Row Dragging documentation.
+- This example allows for `rowDragMultiRow`, between grids. For more info on `multiRowDrag` within the grid see the [Multi-Row Dragging](/row-dragging/#multi-row-dragging) section in the Row Dragging documentation.
 
-- This example allows you to toggle between regular `multiRow` selection and `checkboxSelection`. For more info see the [Row Selection](../row-selection/) documentation.
+- This example allows you to toggle between regular `multiRow` selection and `checkboxSelection`. For more info see the [Row Selection](/row-selection/) documentation.
 
 - When `Remove Source Rows` is selected, the rows will be removed from the **Athletes** grid once they are dropped onto the **Selected Athletes** grid.
 
@@ -71,5 +54,5 @@ In the example below, note the following:
 
 - If `None` is selected, the rows will be copied from one grid to another and the source grid will stay as is.
 
-<grid-example title='Multiple Records with Drop Position' name='two-grids-with-multiple-records' type='multi' options='{ "extras": ["fontawesome", "bootstrap"] }'></grid-example>
+<grid-example title='Multiple Records with Drop Position' name='two-grids-with-multiple-records' type='mixed' options='{ "extras": ["fontawesome", "bootstrap"] }'></grid-example>
 

@@ -1,17 +1,12 @@
-import { agGridVersion, agChartsVersion } from 'utils/consts';
+import { agChartsVersion, agGridVersion } from 'utils/consts';
 
-export const getHeaderTitle = (title, framework = 'javascript', isCharts = false) =>
-    `${isCharts ? 'AG Charts' : 'AG Grid'} (${getFrameworkPart(framework, isCharts)}): ${title}`;
+export const getHeaderTitle = (title, framework = 'javascript', isCharts = false, version = '') =>
+    `${getProductType(framework, isCharts, version)}: ${title}`;
 
-const getFrameworkPart = (framework, isCharts = false) => {
-    if (framework === 'react' && !isCharts) {
-        return 'React Table';
-    }
+export const getProductType = (framework, isCharts = false, version = '') =>
+    `${getFrameworkName(framework)}${version} ${isCharts ? 'Charts' : 'Data Grid'}`;
 
-    return `${getFrameworkName(framework)} ${isCharts ? 'Charts' : 'Grid'}`;
-};
-
-export const getFrameworkName = framework => {
+export const getFrameworkName = (framework) => {
     const mappings = {
         javascript: 'JavaScript',
         angular: 'Angular',
@@ -19,8 +14,10 @@ export const getFrameworkName = framework => {
         vue: 'Vue',
     };
 
-    return mappings[framework];
+    return mappings[framework] || '';
 };
 
-export const getGridVersionMessage = framework => `Download v${agGridVersion.split('.')[0]} of the best ${getFrameworkPart(framework, false)} in the world now.`;
-export const getChartsVersionMessage = framework => `Download v${agChartsVersion.split('.')[0]} of our ${getFrameworkPart(framework, true)} now.`;
+export const getGridVersionMessage = (framework) =>
+    `Download v${agGridVersion.split('.')[0]} of the best ${getProductType(framework, false)} in the world now.`;
+export const getChartsVersionMessage = (framework) =>
+    `Download v${agChartsVersion.split('.')[0]} of our ${getProductType(framework, true)} now.`;

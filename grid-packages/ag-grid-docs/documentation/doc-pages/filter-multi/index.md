@@ -3,7 +3,7 @@ title: "Multi Filter"
 enterprise: true
 ---
 
-The Multi Filter allows multiple [Provided Filters](../filter-provided/) or [Custom Filters](../component-filter/) to be used on the same column. This provides greater flexibility when filtering data in the grid.
+The Multi Filter allows multiple [Provided Filters](/filtering/#column-filter-types) or [Custom Filters](/component-filter/) to be used on the same column. This provides greater flexibility when filtering data in the grid.
 
 <image-caption src="filter-multi/resources/multi-filter.png" alt="Multi Filter" width="34rem" centered="true"></image-caption>
 
@@ -20,13 +20,12 @@ const gridOptions = {
 }
 </snippet>
 
-By default the Multi Filter will show a [Text Filter](../filter-text/) and [Set Filter](../filter-set/), but you can specify which filters you would like to use in the `filters` array. The filters will be displayed in the same order as they are specified.
+By default the Multi Filter will show a [Text Filter](/filter-text/) and [Set Filter](/filter-set/), but you can specify which filters you would like to use in the `filters` array. The filters will be displayed in the same order as they are specified.
 
 The example below shows the Multi Filter in action. Note the following:
 
-
-- The **Athlete** has a Multi Filter with default behaviour.
-- The **Country**, **Gold** and **Date** columns have Multi Filters with the child filters configured explicitly, using the [Text](../filter-text/), [Number](../filter-number/) and [Date](../filter-date/) Simple Filters respectively.
+- The **Athlete** column has a Multi Filter with default behaviour.
+- The **Country**, **Gold** and **Date** columns have Multi Filters with the child filters configured explicitly, using the [Text](/filter-text/), [Number](/filter-number/) and [Date](/filter-date/) Simple Filters respectively.
 - Different `filterParams` can be supplied to each child filter:<br />
     - The Text Filter in the Country column has a different default option (`'startsWith'`)
     - The Date Filter in the Date column has a custom comparator to compare dates correctly
@@ -36,7 +35,7 @@ The example below shows the Multi Filter in action. Note the following:
 
 ## Floating Filters
 
-When [Floating Filters](../floating-filters/) are used, the Floating Filter shown is for the child filter in the Multi Filter that was most recently applied and is still active. If no child filters are active, the Floating Filter for the first child filter in the Multi Filter is shown instead.
+When [Floating Filters](/floating-filters/) are used, the Floating Filter shown is for the child filter in the Multi Filter that was most recently applied and is still active. If no child filters are active, the Floating Filter for the first child filter in the Multi Filter is shown instead.
 
 The example below shows Floating Filters enabled for all columns. Note how the Floating Filters change when you apply different child filters from the Multi Filter.
 
@@ -86,22 +85,18 @@ The following example demonstrates the different display styles.
 
 ## Custom Filters
 
-You can use your own [Custom Filters](../filter-custom/) with the Multi Filter.
+You can use your own [Custom Filters](/component-filter/) with the Multi Filter.
 
-The example below shows a Custom Filter in use on the **Year** column, used alongside the grid-provided [Number Filter](../filter-number/).
+The example below shows a Custom Filter in use on the **Year** column, used alongside the grid-provided [Number Filter](/filter-number/).
 
-<grid-example title='Custom Filters' name='custom-filter' type='generated' options='{ "enterprise": true, "exampleHeight": 635 }'></grid-example>
+<grid-example title='Custom Filters' name='custom-filter' type='generated' options='{ "enterprise": true, "modules": ["clientside", "multifilter", "setfilter", "menu", "clipboard", "filterpanel"], "exampleHeight": 635 }'></grid-example>
 
 ## Multi Filter Model
 
-The model for the Multi Filter wraps the models for all the child filters inside it. It has the following interface:
+The model for the Multi Filter wraps the models for all the child filters inside it. It has the `IMultiFilterModel` interface:
 
-```ts
-interface IMultiFilterModel {
-    filterType: string;
-    filterModels: any[];
-}
-```
+<interface-documentation interfaceName='IMultiFilterModel' config='{"overrideBottomMargin":"1rem"}' ></interface-documentation>
+
 
 The `filterType` will always be set to `'multi'`. The models array is the same length as the number of child filters, containing the models for the child filters in the same order as the filters were specified in the `filterParams`. Each array entry will either be set to `null` if the corresponding child filter is not active, or to the current model for the child filter if it is active.
 
@@ -131,15 +126,23 @@ The Multi Filter acts as a wrapper around a list of child filters inside it. The
 
 The example below shows how you can access child filter instances and call methods on them:
 
-- Clicking the **Print Text Filter model** button will access the Text Filter inside the Multi Filter and print the model for the current UI to the console.
+- Clicking the **Print Text Filter model** button will access the Text Filter inside the Multi Filter and print the current model to the console.
 - Clicking the **Print Set Filter search text** button will access the Set Filter inside the Multi Filter and print the current search text to the console.
 
 <grid-example title='Accessing Child Filters' name='accessing-child-filters' type='generated' options='{ "enterprise": true, "exampleHeight": 624, "modules": ["clientside", "multifilter", "setfilter", "menu", "clipboard"] }'></grid-example>
 
 ## Multi Filter Parameters
 
-<api-documentation source='filter-multi/resources/multiFilter.json' section='filterParams'></api-documentation>
+<interface-documentation interfaceName='IMultiFilterParams' overrideSrc='filter-multi/resources/multi-filter.json'></interface-documentation>
+
+### IMultiFilterDef
+
+<interface-documentation interfaceName='IMultiFilterDef' overrideSrc='filter-multi/resources/multi-filter.json' ></interface-documentation>
 
 ## Multi Filter API
 
-<api-documentation sources='["filter-api/resources/filterApi.json", "filter-multi/resources/multiFilter.json"]' section='api'></api-documentation>
+<interface-documentation interfaceName='IMultiFilterComp' overrideSrc='filter-multi/resources/multi-filter.json' ></interface-documentation>
+
+## Next Up
+
+Continue to the next section to learn about [Filter Conditions](/filter-conditions/).

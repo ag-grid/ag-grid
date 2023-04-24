@@ -5,6 +5,5 @@ export declare class SelectableService extends BeanStub {
     private isRowSelectableFunc?;
     init(): void;
     updateSelectableAfterGrouping(rowNode: RowNode): void;
-    updateSelectableAfterFiltering(rowNode: RowNode): void;
     private recurseDown;
 }

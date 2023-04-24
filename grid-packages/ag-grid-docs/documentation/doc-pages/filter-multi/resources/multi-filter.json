@@ -1,0 +1,65 @@
+{
+    "_config_": {},
+    "IMultiFilterParams": {
+        "filters": {
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "IFilterType",
+                    "IFloatingFilterType",
+                    "IFloatingFilterComp"
+                ],
+                "include": []
+            }
+        },
+        "readOnly": {
+            "more": {
+                "url": "/filter-api/#read-only-filter-ui",
+                "name": "Read-only Filter UI"
+            }
+        }
+    },
+    "IMultiFilterDef": {
+        "filter": {
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "IFilterComp"
+                ],
+                "include": []
+            }
+        },
+        "floatingFilterComponent": {
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "IFloatingFilterComp"
+                ],
+                "include": []
+            }
+        },
+        "display": {
+            "more": {
+                "url": "/filter-multi/#display-style",
+                "name": "Display Style"
+            }
+        }
+    },
+    "IMultiFilterComp": {
+        "getChildFilterInstance": {
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "IFilterComp"
+                ],
+                "include": []
+            },
+            "more": {
+                "url": "/filter-multi/#accessing-child-filters",
+                "name": "Accessing Child Filters"
+            }
+        },
+        "setModel": {
+            "more": {
+                "url": "/filter-set-filter-list/#asynchronous-values",
+                "name": "Set Filter Asynchronous Values"
+            }
+        }
+    }
+}

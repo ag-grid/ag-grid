@@ -2,17 +2,17 @@
 title: "Change Detection"
 ---
 
-The grid has built in change detection. When a value in the grid changes, either via the UI or via the grid API, the grid will check all cells to see which ones need updating and update exactly only those cells, so minimal changes are made to the DOM.
+The grid has built in change detection. When a value in the grid changes, either via the UI or via the grid API, the grid will check all cells to see which ones need updating and update only those cells, so minimal changes are made to the DOM.
 
 Change detection can be broken down into the following two categories:
 
 
-1. **Value Change Detection:** When a value for any cell changes (e.g. after an edit), the grid goes through every cell in the grid and compares the current value to the previous value. If the values differ, the cell is refreshed. This allows all cells using `valueGetters` to be kept up to date where a change to one cell (that was edited) may impact the value of another cell (that references the first cell) - just like Excel!
+1. **Value Change Detection:** When a value for any cell changes (e.g. after an edit), the grid goes through every cell in the grid and compares the current value to the previous value. If the values differ, the cell is refreshed. This allows all cells using `valueGetters` to be kept up to date where a change to one cell (that was edited) may impact the value of another cell (that references the first cell).
 
-1. **Aggregation Change Detection:** When a value for any cell changes, the grid will recalculate all [aggregations](../aggregation/) that are impacted by the changed value. This means the grid will automatically keep aggregation results (the values in the grouped row) up to date as the data beneath it changes.
+1. **Aggregation Change Detection:** When a value for any cell changes, the grid will recalculate all [aggregations](/aggregation/) that are impacted by the changed value. This means the grid will automatically keep aggregation results (the values in the grouped row) up to date as the data beneath it changes.
 
 [[note]]
-| If you are using Angular or React to build your cells (eg using an Angular or React cellRenderer), then you will be already benefiting from binding and change detection that your framework provides. In this scenario, your component's `refresh()` method will get called with the new value when the value changes. It is your component's responsibility to save this new value to the components state so it will be picked up as a change from the frameworks change detection.
+| If you are using a custom cell renderer see [Component Refresh](/component-cell-renderer/#component-refresh) for more details on how to update your component following change detection.
 
 ## Example: Change Detection and Value Getters
 
@@ -25,24 +25,17 @@ a refresh. Notice the following:
 
 - The 'Total' column gets automatically refreshed and flashes.
 
-<grid-example title='Change Detection and Value Getters' name='change-detection-value-getters' type='generated' options='{ "enterprise": true, "exampleHeight": 550 }'></grid-example>
+<grid-example title='Change Detection and Value Getters' name='change-detection-value-getters' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
 ## 1. Value Change Detection
 
 The grid keeps a local copy of all values rendered in each cell. When a refresh of the cell is requested, the cell will only be refreshed if the value has changed.
 
 [[note]]
-| You might ask, is checking every cell against it's value a performance problem? The answer is no.
-| What AG Grid does is similar to the change detection algorithm's in frameworks such as React or Angular.
-| Doing this many check's in JavaScript is not a problem. Slowness comes when the DOM is updated
+| You might ask, is checking every cell against its value a performance problem? The answer is no.
+| What AG Grid does is similar to the change detection algorithms in frameworks.
+| Doing this many checks in JavaScript is not a problem. Slowness comes when the DOM is updated
 | many times. AG Grid minimises the DOM updates by only updating the DOM where changes are detected.
-| <br/>
-| <br/>
-| You might also ask, does AG Grid have a cool Virtual DOM like React does? The answer is no. The grid has
-| state stored in the Row Model. So rather than comparing the actual DOM with a virtual DOM,
-| the grid compares 'the value that was rendered last time into the DOM' with with the value's
-| in the Row Model. Having a virtual DOM in this case would be redundant as the grid already has
-| data structures to compare.
 
 ### Comparing Values
 
@@ -58,7 +51,7 @@ If you do need to provide custom comparison of objects, use the `colDef.equals(v
 const gridOptions = {
     columnDefs: [
         {
-            field: 'person',    
+            field: 'person',
             // method returns true if first and last names are equal
             equals: (person1, person2) => {
                 const firstNameEqual = person1.firstName === person2.firstName;
@@ -79,33 +72,33 @@ The following operations will **automatically** trigger change detection on all 
 1. Using the `api.applyTransaction(transaction)` API method.
 
 
-If you do not want change detection to be automatically done, then set the grid property 
-`suppressChangeDetection=true`. This will stop the change detection process firing when the above events happen. 
-Ideally you should not want to turn off change detection, however the option is there if you choose to turn it off. 
-One thing that may entice you to turn it off is if you have some custom Value Getters or Cell Class Rules that are 
-doing some time intensive calculations, you may want limit the number of times they are called and have more 
+If you do not want change detection to be automatically done, then set the grid property
+`suppressChangeDetection=true`. This will stop the change detection process firing when the above events happen.
+Ideally you should not want to turn off change detection, however the option is there if you choose to turn it off.
+One thing that may entice you to turn it off is if you have some custom Value Getters or Cell Class Rules that are
+doing some time intensive calculations, you may want limit the number of times they are called and have more
 control over when refreshing is done.
 
-To **manually** run Value Change Detection to refresh all visible cells call [api.refreshCells()](../view-refresh/).
+To **manually** run Value Change Detection to refresh all visible cells call [api.refreshCells()](/view-refresh/).
 
 ## 2. Aggregation Change Detection
 
-Aggregation change detection means rerunning [aggregations](../aggregation/) when a value changes. So for example, if you are grouping by a column and summing by a value, and one of those values change, then the summed value should also change.
+Aggregation change detection means rerunning [aggregations](/aggregation/) when a value changes. So for example, if you are grouping by a column and summing by a value, and one of those values change, then the summed value should also change.
 
 ### Example: Re-Aggregation of Groups
 
 The example below shows change detection impacting the result of groups. The grid is doing all the refresh by itself with no need for the client application explicitly requesting a refresh. Notice the following:
 
 
-- Column 'Group' is marked as a [Row Group](../grouping/) and columns A to D are marked as [Aggregation](../aggregation/) columns so that their values are summed into the group level.
+- Column 'Group' is marked as a [Row Group](/grouping/) and columns A to D are marked as [Aggregation](/aggregation/) columns so that their values are summed into the group level.
 
 - Column 'Total' has a valueGetter which gives a sum of all columns A to D.
 
 - Columns A to D are editable. If you edit a cells value, then the aggregate value at the group level is also updated to reflect the change. This is because the grid is recalculating the aggregations as a result of the change.
 
-- All cells are configured to use one of the grids [animation cell renderer](../change-cell-renderers/) instead of flashing cells.
+- All cells are configured to use one of the grids [animation cell renderer](/change-cell-renderers/) instead of flashing cells.
 
-<grid-example title='Change Detection with Groups' name='change-detection-groups' type='generated' options='{ "enterprise": true, "exampleHeight": 590 }'></grid-example>
+<grid-example title='Change Detection with Groups' name='change-detection-groups' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"], "exampleHeight": 590 }'></grid-example>
 
 Notice above that the group column is also editable (eg you can change one of the rows from group 'A' to group 'G'), however the row does **not** move into the correct group after this change is made. This is discussed below in the section [Change Detection and Sorting, Filtering, Grouping](#sorting-filtering-grouping).
 
@@ -117,7 +110,7 @@ The following operations will **automatically** trigger aggregation change detec
 1. Using the `rowNode.setDataValue(col,value)` Row Node method.
 1. Using the `api.applyTransaction(transaction)` API method.
 
-To **manually** run aggregation change detection to re-compute the aggregated values, then call [api.refreshClientSideRowModel('aggregate')](../client-side-model/#refreshing-the-client-side-model).
+To **manually** run aggregation change detection to re-compute the aggregated values, then call [api.refreshClientSideRowModel('aggregate')](/client-side-model/#refreshing-the-client-side-model).
 
 ## Change Detection and Sorting, Filtering, Grouping
 
@@ -134,7 +127,7 @@ The grid will **not**:
 
 The reason why sorting, filtering and grouping is not done automatically is that it would be considered bad user experience in most use cases to change the displayed rows while editing. For example, if a user edits a cell, then the row should not jump location (due to sorting and grouping) or even worse, disappear altogether (if the filter removes the row due to the new value failing the filter).
 
-For this reason, if you want to update the sorting, filtering or group grouping after an update, you should listen for the event `cellValueChanged` and call [api.applyTransaction(transaction)](../client-side-model/#refreshing-the-client-side-model) with the rows that were updated.
+For this reason, if you want to update the sorting, filtering or group grouping after an update, you should listen for the event `cellValueChanged` and call [api.applyTransaction(transaction)](/client-side-model/#refreshing-the-client-side-model) with the rows that were updated.
 
 ### Example: Change Detection and Filter / Sort / Group
 
@@ -149,7 +142,7 @@ The following example is the same as the example above [Change Detection and Gro
 
 - If you set a filter (eg filter 'A' to be 'less than 50') and then change the data so that a row no longer passes the filter, the grid will fix itself so that the filtering is maintained. In other words, the updated row will be removed if it no longer passes the filter.
 
-<grid-example title='Change Detection with Filter / Sort / Group' name='change-detection-filter-sort-group' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Change Detection with Filter / Sort / Group' name='change-detection-filter-sort-group' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "setfilter"] }'></grid-example>
 
 ## Aggregation Path Selection
 
@@ -159,7 +152,7 @@ When data in the grid updates and aggregations are active, the grid will not rec
 
 When a value changes, the grid will recompute the immediate group the row is in, and then any parent group, all the way to the root. This is known as 'tree path selection' - only the part of the tree that need to be recalculated are recalculated.
 
-If you are updating many rows at the same time using an [Update Transaction](../data-update-transactions/), the grid will do all updates first, then recompute all aggregations against the combined impacted paths only.
+If you are updating many rows at the same time using an [Update Transaction](/data-update-transactions/), the grid will do all updates first, then recompute all aggregations against the combined impacted paths only.
 
 ## Column Path Selection
 
@@ -186,11 +179,11 @@ So with the example below, open up the console and notice the following:
 
 - When some values change via a transactions using any of the other buttons, then all columns are recomputed but only on the changed path.
 
-<grid-example title='Change Detection with Delta Aggregation' name='change-detection-delta-aggregation' type='generated' options='{ "enterprise": true, "exampleHeight": 590 }'></grid-example>
+<grid-example title='Change Detection with Delta Aggregation' name='change-detection-delta-aggregation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "setfilter"], "exampleHeight": 590 }'></grid-example>
 
 ## Change Detection and Pivot
 
-Everything above stands for when you are doing [pivoting](../pivoting/). There are no new concepts to introduce, so let's just get stuck into an example.
+Everything above stands for when you are doing [pivoting](/pivoting/). There are no new concepts to introduce, so let's just get stuck into an example.
 
 When you click any of the buttons below, remember you are not changing the displayed cells values, as when you pivot, each cell is an aggregation of underlying data and the underlying data is no longer displayed in the grid (doing a pivot removes leaf nodes).
 
@@ -199,7 +192,7 @@ From the example, you can observe:
 
 - Uncheck '**Group & Pivot**' to see what the data looks like when it is flat. You can see it's a list of student records showing student scores and age. For seeing the impact of value changes on pivots, keep this checked while selecting the other buttons.
 
-- Button '**Set One Value**' updates one value using `rowNode.setDataValue()`. The grid aggregates the new value for display.
+- Button '**Set One Value**' updates one value using `rowNode.setDataValue(col,value)`. The grid aggregates the new value for display.
 
 - Button '**Update Points**' updates one record using `api.applyTransaction(transaction)`. The grid aggregates the new value for display.
 
@@ -211,4 +204,4 @@ From the example, you can observe:
 
 - Button '**Move Course**' updates a row's course using `api.applyTransaction(transaction)`. This results in the aggregations changing in two locations, once where the course was removed, and another where the course was added.
 
-<grid-example title='Change Detection Pivot' name='change-detection-pivot' type='generated' options='{ "enterprise": true, "exampleHeight": 590}'></grid-example>
+<grid-example title='Change Detection Pivot' name='change-detection-pivot' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping" ], "exampleHeight": 590}'></grid-example>

@@ -6,7 +6,10 @@ import { AgInputTextField } from "../../widgets/agInputTextField";
  *               want to display text rather than code.
 */
 export interface ITextCellEditorParams extends ICellEditorParams {
+    /** If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor. */
     useFormatter: boolean;
+    /** Max number of characters to allow. Default: `524288` */
+    maxLength?: number;
 }
 export declare class TextCellEditor extends PopupComponent implements ICellEditorComp {
     private static TEMPLATE;
@@ -18,7 +21,6 @@ export declare class TextCellEditor extends PopupComponent implements ICellEdito
     init(params: ITextCellEditorParams): void;
     afterGuiAttached(): void;
     focusIn(): void;
-    focusOut(): void;
     getValue(): any;
     private getStartValue;
     isPopup(): boolean;

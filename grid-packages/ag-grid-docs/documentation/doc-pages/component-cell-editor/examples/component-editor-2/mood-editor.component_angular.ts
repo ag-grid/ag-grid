@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ViewChild, ViewContainerRef } from "@angular/core";
-import { AgEditorComponent } from "@ag-grid-community/angular";
+import { ICellEditorAngularComp } from "@ag-grid-community/angular";
 
 @Component({
     selector: 'editor-cell',
@@ -36,11 +36,11 @@ import { AgEditorComponent } from "@ag-grid-community/angular";
         }
     `]
 })
-export class MoodEditor implements AgEditorComponent, AfterViewInit {
+export class MoodEditor implements ICellEditorAngularComp, AfterViewInit {
     private params: any;
 
-    @ViewChild('container', { read: ViewContainerRef }) public container;
-    public happy: boolean = false;
+    @ViewChild('container', { read: ViewContainerRef }) public container!: ViewContainerRef;
+    public happy = false;
 
     // dont use afterGuiAttached for post gui events - hook into ngAfterViewInit instead for this
     ngAfterViewInit() {
@@ -72,13 +72,13 @@ export class MoodEditor implements AgEditorComponent, AfterViewInit {
 
     onClick(happy: boolean) {
         this.setHappy(happy);
-        this.params.api.stopEditing();
+        this.params.stopEditing();
     }
 
-    onKeyDown(event): void {
-        let key = event.which || event.keyCode;
-        if (key == 37 ||  // left
-            key == 39) {  // right
+    onKeyDown(event: any): void {
+        const key = event.key;
+        if (key == 'ArrowLeft' ||  // left
+            key == 'ArrowRight') {  // right
             this.toggleMood();
             event.stopPropagation();
         }

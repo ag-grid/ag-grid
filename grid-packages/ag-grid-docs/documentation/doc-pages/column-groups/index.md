@@ -39,23 +39,25 @@ Below shows an example of column group configuration.
 
 ## Column Definitions vs Column Group Definitions
 
-The list of columns in `gridOptions.columnDefs` can be a mix of columns and column groups. You can mix and match at will, every level can have any number of columns and groups and in any order. What you need to understand when defining as follows:
+The list of Columns in `gridOptions.columnDefs` can be a mix of Columns and Column Groups.
+You can mix and match at will, every level can have any number of Columns and Column Groups and in any order.
+The difference in Column vs Column Group definitions is as follows:
 
-- The 'children' attribute is mandatory for groups and not applicable for columns.
-- If a definition has a 'children' attribute, it is treated as a group. If it does not have a 'children' attribute, it is treated as a column.
-- Most other attributes are not common across groups and columns (eg 'groupId' is only used for groups). If you provide attributes that are not applicable (eg you give a column a 'groupId') they will be ignored.
+- The `children` attribute is mandatory for Column Groups and not applicable for Columns.
+- If a definition has a `children` attribute, it is treated as a Column Group. If it does not have a `children` attribute, it is treated as a Column.
+- Most other attributes are not common across groups and columns (eg `groupId` is only used for groups). If you provide attributes that are not applicable (eg you give a column a `groupId`) they will be ignored.
 
 ## Showing / Hiding Columns
 
-A group can have children initially hidden. If you want to show or hide children, set `columnGroupShow` to either `'open'` or `'closed'` to one or more of the children. When a children set has `columnGroupShow` set, it behaves in the following way:
+A group can have children shown or hidden based on the open / closed state of the group. This is controlled by setting `columnGroupShow` on one or more of the children. When a child has `columnGroupShow` set, it behaves in the following way:
 
-- **open:** The child is only shown when the group is open.
-- **closed:** The child is only shown when the group is closed.
-- **everything else:** Any other value, including `null` and `undefined`, the child is always shown.
+- **`open`:** The child is only shown when the group is open.
+- **`closed`:** The child is only shown when the group is closed.
+- **`null`, `undefined`:** The child is always shown.
 
-If a group has any child that is dependent on the open / closed state, the open / close icon will appear. Otherwise the icon will not be shown.
+If a group has any child with `columnGroupShow` set as `open` / `closed`, then the open / close icon will appear in the group header. Otherwise the icon will not be shown.
 
-Having columns only show when closed is useful when you want to replace a column with others. For example, in the code snippet above (and the example below), the 'Total' columns is replaced with other columns when the group is opened.
+Having columns only show when closed is useful when you want to replace a column with others. For example, in the code snippet above (and the example below), the 'Total' column is replaced with other columns when the group is opened.
 
 If a group has an 'incompatible' set of children, then the group opening / closing will not be activated. An incompatible set is one which will have no columns visible at some point (i.e. all are set to 'open' or 'closed').
 
@@ -108,6 +110,15 @@ Sometimes you want columns of the group to always stick together. To achieve thi
 
 <grid-example title='Marry Children' name='marry-children' type='generated' options='{ "exampleHeight": 560 }'></grid-example>
 
+## Sticky Label
+
+When Column Groups are too wide, it might be useful to have the **Header Label** to be always visible while scrolling the grid horizontally. To achieve this, set the column group property `stickyLabel=true`. The example below demonstrates the following:
+
+- Both 'Athlete Details' and 'Sport Results' have `stickyLabel=true`.
+- If you scroll the grid horizontally, the header label will always be visible until it's completely out of view.
+
+<grid-example title='Sticky Label' name='sticky-label' type='generated' options='{ "exampleHeight": 560 }'></grid-example>
+
 ## Advanced Grouping Example
 
 And here, to hammer in the 'no limit to the number of levels or groups', we have a more complex example. The grid here doesn't make much sense, it's just using the same Olympic Winners data and going crazy with the column groups. The example also demonstrates the following features:
@@ -120,7 +131,7 @@ And here, to hammer in the 'no limit to the number of levels or groups', we have
 
 ## Group Changes
 
-Similar to adding and removing columns, you can also add and remove column groups. If the column definitions passed in have column groups, then the columns will grouped to the new configuration.
+Similar to adding and removing columns, you can also add and remove column groups. If the column definitions passed in have column groups, then the columns will be grouped to the new configuration.
 
 The example below shows adding and removing groups to columns. Note the following:
 
@@ -136,8 +147,44 @@ The example above shows adding and removing groups. It is also possible to add a
 
 - The example has two groups: **Athlete Details** and **Sports Results**
 - The example has two sets of columns, **Normal Cols** and **Extra Cols**.
-- When you moved from **Normal Cols** to **Extra Cols**, three new columns are added to the list. Two belong to the **Athlete Details** group, the other belongs to no group.
-- When a column is added to the grid that is not in a group, it is always added to the end of the list of columns. In this example the **Distance** column is always added to the end.
-- When a column is added to the grid that is part of a group, it is always added after the last column belonging to that group. In this example columns **Region1** and **Region2** are always added after either **Athlete** or **Country**, whichever appears last in the grid.
+- When you move from **Normal Cols** to **Extra Cols**, three new columns are added to the list. Two belong to the **Athlete Details** group, the other belongs to no group.
 
 <grid-example title='Group Changes 2' name='group-changes-2' type='generated'></grid-example>
+
+## Span Header Height
+
+By default the Grid will balance the column headers with different number of levels with an empty column group header cell, as shown in the example below. Note the following:
+
+- The **Age** column has an empty column group header cell above it (shown with red borders).
+
+<grid-example title='Padded Header' name='padded-header' type='generated' options='{ "exampleHeight": 300 }'></grid-example>
+
+Using the **Column Property** `spanHeaderHeight` will allow the header cell to span the whole height of the header container instead of using padding.
+
+<snippet>
+const gridOptions = {
+  columnDefs: [
+    {
+      headerName: 'Athlete Details',
+      children: [
+        { field: 'athlete' },
+        { field: 'country' },
+      ],
+    },
+    {
+      field: 'age',
+      width: 90,
+      spanHeaderHeight: true
+    }
+  ]
+}
+</snippet>
+
+In the example below, note the following: 
+
+- The **Age** column header cell is not under a column group cell, but spans the entire height of the header container.
+
+<grid-example title='Span Header Height' name='span-header-height' type='generated' options='{ "exampleHeight": 300 }'></grid-example>
+
+[[warning]]
+| The property `spanHeaderHeight`  does not work with `autoHeaderHeight`.

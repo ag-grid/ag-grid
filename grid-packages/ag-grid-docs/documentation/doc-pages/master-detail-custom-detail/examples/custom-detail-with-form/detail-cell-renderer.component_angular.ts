@@ -1,5 +1,5 @@
-import {Component} from '@angular/core';
-import {ICellRendererAngularComp} from "@ag-grid-community/angular";
+import { Component } from '@angular/core';
+import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 
 @Component({
     selector: 'app-detail-cell-renderer',
@@ -31,6 +31,7 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
     `
 })
 export class DetailCellRenderer implements ICellRendererAngularComp {
+    firstRecord!: any;
     // called on init
     agInit(params: any): void {
         this.firstRecord = params.data.callRecords[0];

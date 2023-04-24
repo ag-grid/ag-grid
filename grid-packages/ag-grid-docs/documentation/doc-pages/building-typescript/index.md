@@ -16,13 +16,13 @@ npm init --yes
 ## Install Dependencies
 
 ```bash
-npm i --save @ag-grid-community/all-modules
+npm i --save @ag-grid-community/client-side-row-model
 
-# or, if using Enterprise features
-# npm i --save @ag-grid-enterprise/all-modules
+# If using Enterprise features i.e row grouping add those too
+# npm i --save @ag-grid-enterprise/row-grouping
 
 npm i --save-dev typescript ts-loader webpack webpack-dev-server webpack-cli
-npm i --save-dev sass-loader node-sass style-loader css-loader html-webpack-plugin
+npm i --save-dev sass-loader sass style-loader css-loader html-webpack-plugin
 ```
 
 ## Create Application
@@ -30,12 +30,13 @@ npm i --save-dev sass-loader node-sass style-loader css-loader html-webpack-plug
 Our application will be a very simple one, consisting of a single class that will render a simple grid:
 
 ```js
-import { Grid, GridOptions, ModuleRegistry } from "@ag-grid-community/all-modules";
+import { Grid, GridOptions, ModuleRegistry } from "@ag-grid-community/core";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 
 // or, if using Enterprise features
-// import {Grid, GridOptions, ModuleRegistry} from "@ag-grid-enterprise/all-modules";
-// import {ClientSideRowModelModule} from "@ag-grid-enterprise/all-modules";
+// import {Grid, GridOptions, ModuleRegistry} from "@ag-grid-enterprise/core";
+// import {RowGroupingModule} from '@ag-grid-enterprise/row-grouping';
+// import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model";
 
 ModuleRegistry.register(ClientSideRowModelModule);
 
@@ -68,7 +69,7 @@ class SimpleGrid {
         return [
             { make: "Toyota", model: "Celica", price: 35000 },
             { make: "Ford", model: "Mondeo", price: 32000 },
-            { make: "Porsche", model: "Boxter", price: 72000 }
+            { make: "Porsche", model: "Boxster", price: 72000 }
         ];
     }
 }
@@ -132,19 +133,18 @@ This serves as our entry point for our application.
 
 ### resolve
 
-As our imports done specify what file extension to use, we need to specify what file types we want to match on - in this case we're looking at TypeScript and JavaScript files, but you could also add CSS & HTML files too.
+As our imports specify what file extension to use, we need to specify what file types we want to match on - in this case we're looking at TypeScript and JavaScript files, but you could also add CSS & HTML files too.
 
 ### module.rules
 
 Loaders tell Webpack how & what to do with certain types of file - we have specified a few here to deal with Typescript, HTML, CSS and Images:
 
 - ts-loader: transpile Typescript to ES5
-- html
 - scss: process and bundle imported SCSS
 
 ### plugins
 
-- HtmlWebpackPlugin: takes our supplied template index.html and inserts the generates JS file for us
+- `HtmlWebpackPlugin`: takes our supplied template `index.html` and inserts the generated JS file for us
 
 ## Typescript Configuration
 
@@ -154,8 +154,8 @@ With all this in place, we can now add the following npm scripts to our package.
 
 ```js
 "scripts": {
-    "start": "webpack-dev-server --inline --progress --port 8080",
-    "build": "webpack --progress --profile --bail"
+    "start": "webpack-dev-server --progress --port 8080 --mode development",
+    "build": "webpack --mode production"
 },
 ```
 

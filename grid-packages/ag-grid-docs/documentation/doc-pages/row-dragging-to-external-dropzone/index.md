@@ -2,33 +2,16 @@
 title: "Row Dragging to an External DropZone"
 ---
 
-Row Dragging to an External DropZone is concerned with moving rows from the grid to different components within the same application. When using row drag with an external DropZone, the data is moved or copied around using the grid events; this is in contrast to standard [Drag &amp; Drop](../drag-and-drop/) which uses browser events.
+Row Dragging to an External DropZone is concerned with moving rows from the grid to different components within the same application. When using row drag with an external DropZone, the data is moved or copied around using the grid events; this is in contrast to standard [Drag &amp; Drop](/drag-and-drop/) which uses browser events.
 
 The Row Drag to an External DropZone uses the grid's internal Managed Row Dragging system combined with row selection
 to create a seamless data drag and drop experience.
 
-```ts
-function addRowDropZone(params: RowDropZoneParams) => void;
-function removeRowDropZone(params: RowDropZoneParams) => void;
+<api-documentation source='grid-api/api.json' section='rowDrag' names='["addRowDropZone", "removeRowDropZone"]'></api-documentation>
 
-// interface for params
-interface RowDropZoneParams {
-    // A callback method that returns the DropZone HTMLElement
-    getContainer: () => HTMLElement;
-    // callback function that will be executed when the rowDrag enters the target
-    onDragEnter?: (params: RowDragEnterEvent) => void;
-    // callback function that will be executed when the rowDrag leaves the target
-    onDragLeave?: (params: RowDragLeaveEvent) => void;
-    // callback function that will be executed when the rowDrag is dragged inside the target
-    // note: this gets called multiple times
-    onDragging?: (params: RowDragMoveEvent) => void;
-    // callback function that will be executed when the rowDrag drops rows within the target
-    onDragStop?: (params: RowDragEndEvent) => void;
-}
-```
 
 [[note]]
-| If you read the [Managed Dragging](../row-dragging/#managed-dragging) section of the Row Dragging
+| If you read the [Managed Dragging](/row-dragging/#managed-dragging) section of the Row Dragging
 | documentation you probably noticed that when you `sort`, `filter` and
 | `rowGroup` the Grid, the managed Row Dragging stops working. The only exception to this
 | rule is when you register external drop zones using `addRowDropZone`. In this case, you
@@ -63,14 +46,14 @@ In the example below, note the following:
 
 - You can move rows inside the grid.
 - You can move rows to the container on the right hand side.
-- Toggle the checkbox to enable or disable [suppressMoveWhenRowDragging](../row-dragging/#suppress-move-when-dragging)
+- Toggle the checkbox to enable or disable [suppressMoveWhenRowDragging](/row-dragging/#suppress-move-when-dragging)
 
 <grid-example title='Simple' name='simple' type='generated'></grid-example>
 
 ## Dragging Between Grids
 
 It is possible to use a generic `DropZone` to Drag and Drop rows from one grid to another. However, this approach will treat the target grid as a generic `HTMLElement` and adding the rows should be handled by the `onDragStop` callback. If you wish the grid to manage the Drag and Drop across grids and also handle where the record should be dropped, take a look at
-[Row Dragging - Grid to Grid](../row-dragging-to-grid/)
+[Row Dragging - Grid to Grid](/row-dragging-to-grid/)
 
 In the example below, note the following:
 
@@ -83,4 +66,4 @@ In the example below, note the following:
 - New rows can be created by clicking on the red, green and blue buttons.
 
 
-<grid-example title='Two Grids' name='two-grids' type='multi' options='{ "extras": ["fontawesome"] }'></grid-example>
+<grid-example title='Two Grids' name='two-grids' type='mixed' options='{ "extras": ["fontawesome"] }'></grid-example>

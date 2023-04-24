@@ -1,7 +1,7 @@
 [[only-javascript]]
 | ## Grid Options
 |
-| The `gridOptions` object is a 'one stop shop' for the entire interface into the grid. 
+| The `gridOptions` object is a 'one stop shop' for the entire interface into the grid. The GridOptions interface supports a generic parameter for row data as detailed in [Typescript Generics](/typescript-generics).
 |
 | The example below shows the different types of items available on `gridOptions`.
 |
@@ -21,7 +21,7 @@
 |     onGridReady: event => console.log('The grid is now ready'),
 |
 |     // CALLBACKS
-|     isScrollLag: () => false
+|     getRowHeight: (params) => 25
 | }
 | ```
 |
@@ -29,13 +29,13 @@
 |
 | ```js
 | // refresh the grid
-| gridOptions.api.refreshView();
+| gridOptions.api.redrawRows();
 |
 | // resize columns in the grid to fit the available space
 | gridOptions.columnApi.sizeColumnsToFit();
 | ```
 |
-| ### Grid API
+| ### Access the Grid & Column API
 |
 | The Grid API (both `api` and `columnApi`) will only be available after the `gridReady` event has been fired.
 |
@@ -46,7 +46,7 @@
 |
 | ## Listening to Events
 |
-| In addition to adding event listeners directly via the `gridOptions` object, it is possible to register for events, similar to registering for events on native DOM elements. This means there are two ways to listen for events: either to use the `onXXX()` method on the API (where XXX is replaced with the event name), or to register for the event. The latter option allows you to add multiple handlers  for the same event. The following example demonstrates the two options:
+| In addition to adding event listeners directly via the `gridOptions` object, it is possible to register for events, similar to registering for events on native DOM elements. This means there are two ways to listen for events: either use the `onXXX()` method on the API (where XXX is replaced with the event name), or register a listener for the event. The latter option allows you to add multiple handlers for the same event. The following example demonstrates the two options:
 |
 | ```js
 | // create handler function

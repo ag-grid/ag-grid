@@ -11,7 +11,7 @@ function FakeServer(allData) {
             return {
                 success: true,
                 rows: results,
-                lastRow: getLastRowIndex(request, results)
+                lastRow: getLastRowIndex(request)
             };
         },
         getAthletes: function() {
@@ -79,7 +79,7 @@ function FakeServer(allData) {
         if (isDoingGrouping(rowGroupCols, groupKeys)) {
             var rowGroupCol = rowGroupCols[groupKeys.length];
 
-            return ' GROUP BY ' + rowGroupCol.id;
+            return ' GROUP BY ' + rowGroupCol.id + ' HAVING count(*) > 0';
         }
 
         return '';
@@ -98,9 +98,11 @@ function FakeServer(allData) {
     }
 
     function limitSql(request) {
+        if (request.endRow == undefined || request.startRow == undefined) { return ''; }
+
         var blockSize = request.endRow - request.startRow;
 
-        return ' LIMIT ' + (blockSize + 1) + ' OFFSET ' + request.startRow;
+        return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
     }
 
     function isDoingGrouping(rowGroupCols, groupKeys) {
@@ -108,11 +110,7 @@ function FakeServer(allData) {
         return rowGroupCols.length > groupKeys.length;
     }
 
-    function getLastRowIndex(request, results) {
-        if (!results || results.length === 0) { return null; };
-
-        var currentLastRow = request.startRow + results.length;
-
-        return currentLastRow <= request.endRow ? currentLastRow : -1;
+    function getLastRowIndex(request) {
+        return executeQuery({ ...request, startRow: undefined, endRow: undefined }).length;
     }
 }

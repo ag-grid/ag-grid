@@ -1,8 +1,9 @@
-import { IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
+import { IFloatingFilterComp, IFloatingFilterParams, IFloatingFilterParent } from '../floatingFilter';
 import { Component } from '../../../widgets/component';
-export declare class ReadOnlyFloatingFilter extends Component implements IFloatingFilterComp {
+import { IFilter } from '../../../interfaces/iFilter';
+export declare class ReadOnlyFloatingFilter extends Component implements IFloatingFilterComp<IFilter & IFloatingFilterParent> {
     private eFloatingFilterText;
-    private columnController;
+    private columnModel;
     private params;
     constructor();
     destroy(): void;

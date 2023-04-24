@@ -1,11 +1,9 @@
-import { RowBounds } from "../interfaces/iRowModel";
+import { RowBounds, RowModelType } from "../interfaces/iRowModel";
 import { BeanStub } from "../context/beanStub";
 import { RowNode } from "../entities/rowNode";
-import { RowPosition } from "../entities/rowPosition";
+import { RowPosition } from "../entities/rowPositionUtils";
 export declare class PaginationProxy extends BeanStub {
     private rowModel;
-    private columnApi;
-    private gridApi;
     private active;
     private paginateChildRows;
     private pageSize;
@@ -19,12 +17,13 @@ export declare class PaginationProxy extends BeanStub {
     private masterRowCount;
     private postConstruct;
     ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean;
+    private isPaginateChildRows;
     private onModelUpdated;
     private onPaginationPageSizeChanged;
     goToPage(page: number): void;
     getPixelOffset(): number;
-    getRow(index: number): RowNode | null;
-    getRowNode(id: string): RowNode | null;
+    getRow(index: number): RowNode | undefined;
+    getRowNode(id: string): RowNode | undefined;
     getRowIndexAtPixel(pixel: number): number;
     getCurrentPageHeight(): number;
     getCurrentPagePixelRange(): {
@@ -34,9 +33,9 @@ export declare class PaginationProxy extends BeanStub {
     isRowPresent(rowNode: RowNode): boolean;
     isEmpty(): boolean;
     isRowsToRender(): boolean;
-    getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[];
     forEachNode(callback: (rowNode: RowNode, index: number) => void): void;
-    getType(): string;
+    forEachNodeOnPage(callback: (rowNode: RowNode) => void): void;
+    getType(): RowModelType;
     getRowBounds(index: number): RowBounds;
     getPageFirstRow(): number;
     getPageLastRow(): number;
@@ -56,6 +55,7 @@ export declare class PaginationProxy extends BeanStub {
     private calculatePages;
     private setPixelOffset;
     private setZeroRows;
+    private adjustCurrentPageIfInvalid;
     private calculatePagesMasterRowsOnly;
     getMasterRowCount(): number;
     private calculatePagesAllRows;

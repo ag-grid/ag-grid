@@ -9,9 +9,9 @@ The ability to nest grids within grids is commonly referred to as Master / Detai
 Here the top-level grid is referred to as the 'master grid' and the nested grid is referred to as the 'detail grid'.
 
 Master / Details is configured the same way for the Server-Side Row Model and the Client-Side Row Model.
-For a comprehensive look at Master / Detail configurations, see: [Client-Side Master / Detail](../master-detail/).
+For a comprehensive look at Master / Detail configurations, see: [Client-Side Master / Detail](/master-detail/).
 
-Because the configuation is already discussed in [Client-Side Master / Detail](../master-detail/),
+Because the configuation is already discussed in [Client-Side Master / Detail](/master-detail/),
 this pages focuses on areas that are of particular interest to this Server-Side version.
 
 ## Enabling Master / Detail
@@ -26,30 +26,27 @@ These grid options are illustrated below:
 
 
 <snippet spaceBetweenProperties="true">
-|const gridOptions = {
-|    // master grid columns
-|    columnDefs: [],
-|
-|    // use the server-side row model
-|    rowModelType: 'serverSide',
-|
-|    // choose store type
-|    serverSideStoreType: 'partial',
-|
-|    // enable master detail
-|    masterDetail: true,
-|
-|    detailCellRendererParams: {
-|        detailGridOptions: {
-|            // detail grid columns
-|            columnDefs: [],
-|        },
-|        getDetailRowData: params => {
-|            // supply data to the detail grid
-|            params.successCallback(params.data);
-|        }
-|    },
-|}
+| const gridOptions = {
+|     // master grid columns
+|     columnDefs: [],
+| 
+|     // use the server-side row model
+|     rowModelType: 'serverSide',
+| 
+|     // enable master detail
+|     masterDetail: true,
+| 
+|     detailCellRendererParams: {
+|         detailGridOptions: {
+|             // detail grid columns
+|             columnDefs: [],
+|         },
+|         getDetailRowData: params => {
+|             // supply data to the detail grid
+|             params.successCallback(params.data);
+|         }
+|     },
+| }
 </snippet>
 
 [[note]]
@@ -57,28 +54,28 @@ These grid options are illustrated below:
 
 ## Example: Infinite Scrolling with Master / Detail
 
-This example shows a simple Master / Detail setup which includes the infinite scrolling capabilities provided with the Server-Side Row Model. From this example notice the following:
+This example shows a simple Master / Detail with the Server-Side Row Model. From this example notice the following:
 
 - **masterDetail** - is set to `true` in the master grid options.
 - **detailCellRendererParams** - specifies the `detailGridOptions` to use and `getDetailRowData` extracts the data for the detail row.
 - **cellRenderer: 'agGroupCellRenderer'** - is used to provide expand / collapse icons on the master rows.
 
-<grid-example title='Infinite Scrolling with Master / Detail' name='infinite-scrolling' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["lodash"], "modules": ["serverside", "clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Infinite Scrolling with Master / Detail' name='infinite-scrolling' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "modules": ["serverside", "clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
 ## Combining Row Grouping with Master Detail
 
-It is possible to combine [Server-Side Grouping](../server-side-model-grouping/) with Master Detail.
+It is possible to combine [Server-Side Grouping](/server-side-model-grouping/) with Master Detail.
 
 The following snippet shows row grouping on the 'country' column by setting `rowGroup = true`:
 
 <snippet suppressFrameworkContext="true">
-|const gridOptions = {
-|    columnDefs: [
-|        { field: 'country', rowGroup: true },
-|
-|        // more column definitions
-|    ]
-|}
+| const gridOptions = {
+|     columnDefs: [
+|         { field: 'country', rowGroup: true },
+| 
+|         // more column definitions
+|     ]
+| }
 </snippet>
 
 ## Example: Row Grouping with Master Detail
@@ -103,14 +100,14 @@ Rather than use the `autoGroupColumnDef` for the master rows as shown in the exa
 This is shown in the code snippet below:
 
 <snippet suppressFrameworkContext="true">
-|const gridOptions = {
-|    columnDefs: [
-|        { field: 'country', rowGroup: true },
-|        { field: 'accountId', maxWidth: 200, cellRenderer: 'agGroupCellRenderer' },
-|
-|        // more column definitions
-|    ]
-|}
+| const gridOptions = {
+|     columnDefs: [
+|         { field: 'country', rowGroup: true },
+|         { field: 'accountId', maxWidth: 200, cellRenderer: 'agGroupCellRenderer' },
+| 
+|         // more column definitions
+|     ]
+| }
 </snippet>
 
 ## Detail Row Height
@@ -119,7 +116,7 @@ The height of detail rows can be configured in one of the following ways:
 
 1. Using the `detailRowHeight` grid option property to set a fixed height for each detail row.
 1. Using the `getRowHeight()` grid option callback to explicitly set height for each row individually. This callback will need to work out the pixel height of each detail row.
-1. Using the `detailCellRendererParams.autoHeight=true` property to let the grid automatically size the detail rows / grids to fit their rows.
+1. Using the `detailRowAutoHeight=true` property to let the grid automatically size the detail rows / grids to fit their rows.
 
 The following snippets compares these approaches:
 
@@ -132,28 +129,28 @@ const gridOptions = {
 
 Option 2 - dynamic detail row height, dynamically sets height for all rows
 <snippet>
-|const gridOptions = {
-|    getRowHeight: params => {
-|        const isDetailRow = params.node.detail;
-|
-|        // not that this callback gets called for all rows, not just the detail row
-|        if (isDetailRow) {
-|            // dynamically calculate detail row height
-|            return params.data.children.length * 50;
-|        }
-|        // for all non-detail rows, return 25, the default row height
-|        return 25;
-|    }
-|}
+| const gridOptions = {
+|     getRowHeight: params => {
+|         const isDetailRow = params.node.detail;
+| 
+|         // not that this callback gets called for all rows, not just the detail row
+|         if (isDetailRow) {
+|             // dynamically calculate detail row height
+|             return params.data.children.length * 50;
+|         }
+|         // for all non-detail rows, return 25, the default row height
+|         return 25;
+|     }
+| }
 </snippet>
 
 Option 3 - use autoHeight
 <snippet>
-|const gridOptions = {
-|    detailCellRendererParams: {
-|        autoHeight: true,
-|    }
-|}
+| const gridOptions = {
+|     detailCellRendererParams: {
+|         autoHeight: true,
+|     }
+| }
 </snippet>
 
 [[note]]
@@ -167,28 +164,27 @@ The following example explicitly sets detail row heights based on the number of 
 - **getRowHeight()** - is implemented to size detail rows according to the number of records.
 - **node.detail** - is used to identify 'detail' row nodes.
 
-
 <grid-example title='Dynamic Detail Row Height' name='dynamic-detail-row-height' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
-See [Master Detail Dynamic Height](../master-detail-height/#dynamic-height) for more details.
+See [Master Detail Dynamic Height](/master-detail-height/#dynamic-height) for more details.
 
 ### Example Using Property autoHeight
 
-The following example gets the grid to auto-size all details sections to fit their rows. This is done by setting `masterGridOptions.detailCellRendererParams.autoHeight = true`.
+The following example gets the grid to auto-size all details sections to fit their rows. This is done by setting `masterGridOptions.detailRowAutoHeight = true`.
 
 
 <grid-example title='Auto Detail Row Height' name='auto-detail-row-height' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
-See [Master Detail Auto Height](../master-detail-height/#auto-height) for more details.
+See [Master Detail Auto Height](/master-detail-height/#auto-height) for more details.
 
 
 ## Lazy Loading Detail Rows
 
-In the examples above, the data for the detail grid was returned with the master row. However it is also possible to lazy-load data for the detail row, see: [Providing Rows](../master-detail-grids/#providing-rows).
+In the examples above, the data for the detail grid was returned with the master row. However it is also possible to lazy-load data for the detail row, see: [Providing Rows](/master-detail-grids/#providing-rows).
 
 However note that detail rows will be purged once the master row is closed, or if the detail row leaves the viewport through scrolling. In both cases data will need to be fetched again.
 
 ## Next Up
 
-Continue to the next section to learn how to work with [Tree Data](../server-side-model-tree-data/).
+Continue to the next section to learn how to work with [Tree Data](/server-side-model-tree-data/).
 

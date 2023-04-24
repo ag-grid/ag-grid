@@ -1,14 +1,15 @@
-import { BaseComponentWrapper, Bean, WrapableInterface } from 'ag-grid-community';
-import { AgGridVue} from './AgGridVue';
+import { BaseComponentWrapper, Bean, WrappableInterface } from 'ag-grid-community';
+import { AgGridVue } from './AgGridVue';
 import { VueComponentFactory } from './VueComponentFactory';
 
-interface VueWrapableInterface extends WrapableInterface {
+interface VueWrappableInterface extends WrappableInterface {
     overrideProcessing(methodName: string): boolean;
+
     processMethod(methodName: string, args: IArguments): any;
 }
 
 @Bean('frameworkComponentWrapper')
-export class VueFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterface> {
+export class VueFrameworkComponentWrapper extends BaseComponentWrapper<WrappableInterface> {
     private parent: AgGridVue | null;
 
     constructor(parent: AgGridVue) {
@@ -17,10 +18,10 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<WrapableI
         this.parent = parent;
     }
 
-    public createWrapper(component: any): WrapableInterface {
+    public createWrapper(component: any): WrappableInterface {
         const that = this;
 
-        class DynamicComponent extends VueComponent<any, any> implements WrapableInterface {
+        class DynamicComponent extends VueComponent<any, any> implements WrappableInterface {
             public init(params: any): void {
                 super.init(params);
             }
@@ -72,7 +73,7 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<WrapableI
         return VueComponentFactory.createAndMountComponent(params, componentType, this.parent!);
     }
 
-    protected createMethodProxy(wrapper: VueWrapableInterface, methodName: string, mandatory: boolean): () => any {
+    protected createMethodProxy(wrapper: VueWrappableInterface, methodName: string, mandatory: boolean): () => any {
         return function() {
             if (wrapper.overrideProcessing(methodName)) {
                 return wrapper.processMethod(methodName, arguments);
@@ -102,6 +103,10 @@ abstract class VueComponent<P, T> {
     }
 
     public destroy(): void {
+        if (this.getFrameworkComponentInstance() &&
+            typeof this.getFrameworkComponentInstance().destroy === 'function') {
+            this.getFrameworkComponentInstance().destroy();
+        }
         this.component.$destroy();
     }
 

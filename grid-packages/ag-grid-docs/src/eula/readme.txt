@@ -8,6 +8,6 @@ License files are stored here. When a new license file is ready, this is what yo
    This is what the website display when user clicks to view
    license. It's also the license that gets used by online eComm.
 
-3) Copy file into \enterprise-modules\core\LICENSE.html.
+3) Copy file into \grid-enterprise-modules\core\LICENSE.html.
    This will then get copied into all enterprise modules during
    the build cycle.

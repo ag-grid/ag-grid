@@ -1,23 +1,26 @@
-'use strict'
+'use strict';
 
-import React, {Component} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import React, { Component, createRef } from 'react';
+import { createRoot } from 'react-dom/client';
+import { AgGridReact } from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import "@ag-grid-community/styles/ag-grid.css";
+import "@ag-grid-community/styles/ag-theme-alpine.css";
 import ChildMessageRenderer from './childMessageRenderer.jsx';
 import CubeRenderer from './cubeRenderer.jsx';
 import CurrencyRenderer from './currencyRenderer.jsx';
 import ParamsRenderer from './paramsRenderer.jsx';
 import SquareRenderer from './squareRenderer.jsx';
 
+import { ModuleRegistry } from '@ag-grid-community/core';
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 class GridExample extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            modules: AllCommunityModules,
             columnDefs: [
                 {
                     headerName: "Row",
@@ -27,7 +30,7 @@ class GridExample extends Component {
                 {
                     headerName: "Square",
                     field: "value",
-                    cellRenderer: "squareRenderer",
+                    cellRenderer: SquareRenderer,
                     editable: true,
                     colId: "square",
                     width: 150
@@ -35,42 +38,35 @@ class GridExample extends Component {
                 {
                     headerName: "Cube",
                     field: "value",
-                    cellRenderer: "cubeRenderer",
+                    cellRenderer: CubeRenderer,
                     colId: "cube",
                     width: 150
                 },
                 {
                     headerName: "Row Params",
                     field: "row",
-                    cellRenderer: "paramsRenderer",
+                    cellRenderer: ParamsRenderer,
                     colId: "params",
                     width: 150
                 },
                 {
                     headerName: "Currency (Pipe)",
                     field: "currency",
-                    cellRenderer: "currencyRenderer",
+                    cellRenderer: CurrencyRenderer,
                     colId: "currency",
                     width: 120
                 },
                 {
                     headerName: "Child/Parent",
                     field: "value",
-                    cellRenderer: "childMessageRenderer",
+                    cellRenderer: ChildMessageRenderer,
                     colId: "params",
                     editable: false,
                     minWidth: 150
                 }
             ],
             rowData: this.createRowData(),
-            context: {componentParent: this},
-            frameworkComponents: {
-                squareRenderer: SquareRenderer,
-                cubeRenderer: CubeRenderer,
-                paramsRenderer: ParamsRenderer,
-                currencyRenderer: CurrencyRenderer,
-                childMessageRenderer: ChildMessageRenderer
-            },
+            context: { componentParent: this },
             defaultColDef: {
                 editable: true,
                 sortable: true,
@@ -80,22 +76,19 @@ class GridExample extends Component {
                 resizable: true
             }
         };
-    }
 
-    onGridReady = params => {
-        this.gridApi = params.api;
-        this.gridColumnApi = params.columnApi;
-
+        this.gridRef = createRef();
     }
 
     refreshEvenRowsCurrencyData = () => {
-        this.gridApi.forEachNode(rowNode => {
+        this.gridRef.current.api.forEachNode(rowNode => {
             if (rowNode.data.value % 2 === 0) {
                 rowNode.setDataValue('currency', rowNode.data.value + Number(Math.random().toFixed(2)));
             }
         });
-        this.gridApi.refreshCells({columns: ['currency']});
-    }
+
+        this.gridRef.current.api.refreshCells({ columns: ['currency'] })
+    };
 
     methodFromParent = (cell) => {
         alert("Parent Component Method from " + cell + "!");
@@ -115,10 +108,10 @@ class GridExample extends Component {
 
     render() {
         return (
-            <div style={{width: '100%', height: '100%'}}>
+            <div style={{ width: '100%', height: '100%' }}>
                 <div className="example-wrapper">
-                    <button onClick={() => this.refreshEvenRowsCurrencyData()} style={{"marginBottom": "10px"}}
-                            className="btn btn-primary">
+                    <button onClick={() => this.refreshEvenRowsCurrencyData()} style={{ "marginBottom": "10px" }}
+                        className="btn btn-primary">
                         Refresh Even Row Currency Data
                     </button>
                     <div
@@ -129,11 +122,10 @@ class GridExample extends Component {
                         }}
                         className="ag-theme-alpine">
                         <AgGridReact
-                            modules={this.state.modules}
+                            ref={this.gridRef}
                             columnDefs={this.state.columnDefs}
                             rowData={this.state.rowData}
                             context={this.state.context}
-                            frameworkComponents={this.state.frameworkComponents}
                             defaultColDef={this.state.defaultColDef}
                             onGridReady={this.onGridReady}
                         />
@@ -144,7 +136,5 @@ class GridExample extends Component {
     }
 }
 
-render(
-    <GridExample></GridExample>,
-    document.querySelector('#root')
-)
+const root = createRoot(document.getElementById('root'));
+root.render(<GridExample />);

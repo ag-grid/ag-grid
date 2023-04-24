@@ -1,19 +1,20 @@
 import { BeanStub } from "../context/beanStub";
-import { GridPanel } from "../gridPanel/gridPanel";
 export declare class AnimationFrameService extends BeanStub {
+    private ctrlsService;
+    private paginationProxy;
     private createTasksP1;
     private createTasksP2;
     private destroyTasks;
     private ticking;
     private useAnimationFrame;
     private scrollGoingDown;
+    private lastPage;
     private lastScrollTop;
     private taskCount;
     private cancelledTasks;
-    private gridPanel;
     setScrollTop(scrollTop: number): void;
     private init;
-    registerGridComp(gridPanel: GridPanel): void;
+    isOn(): boolean;
     private verifyAnimationFrameOn;
     createTask(task: () => void, index: number, list: 'createTasksP1' | 'createTasksP2'): void;
     cancelTask(task: () => void): void;
@@ -26,4 +27,5 @@ export declare class AnimationFrameService extends BeanStub {
     schedule(): void;
     private requestFrame;
     isQueueEmpty(): boolean;
+    debounce(func: () => void): () => void;
 }

@@ -21,10 +21,6 @@
 |    eDiv.innerHTML = '<span class="my-css-class"><button class="btn-simple">Push Me</button></span>';
 |    const eButton = eDiv.querySelectorAll('.btn-simple')[0];
 |
-|    eButton.addEventListener('click', () => {
-|        console.log('button was clicked!!');
-|    });
-|
 |    return eDiv;
 |}
 |```

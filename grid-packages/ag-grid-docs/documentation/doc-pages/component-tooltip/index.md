@@ -1,70 +1,49 @@
 ---
 title: "Tooltip Component"
 ---
-
+ 
 Tooltip components allow you to add your own tooltips to the grid's column headers and cells. Use these when the provided tooltip component or the default browser tooltip do not meet your requirements.
 
-## Tooltip Component Interface
+## Simple Tooltip Component
 
-Implement this interface to provide a custom tooltip.
-
-```ts
-interface ITooltipComp {
-    // The init(params) method is called on the tooltip component once. See below for details on the parameters.
-    init(params: ITooltipParams): void;
-
-    // Returns the DOM element for this tooltip
-    getGui(): HTMLElement;
-}
-```
-
-```ts
-interface ITooltipParams {
-    location: string; // what part of the application is showing the tooltip, e.g. 'cell', 'header', 'menuItem' etc
-    api: any; // the grid API
-    columnApi: any; // the column API
-    context: any; // the grid context
-
-    value?: any; // the value to be rendered by the tooltip
-
-    /* Column Params (N/A within some components like the Menu Item) */
-
-    colDef?: any; // the grid colDef
-    column?: any; // the column bound to this tooltip
-
-    /* Row and Cell Params (N/A with headerTooltips) */
-
-    valueFormatted?: any; // the formatted value to be rendered by the tooltip
-    rowIndex?: number; // the index of the row containing the cell rendering the tooltip
-    node?: any; // the row node
-    data?: any; // the row node data
-}
-```
-
-## Registering Custom Tooltip Components
-
-See the [registering custom components](../components/#registering-custom-components) section for details on registering and using custom tooltip components.
-
-## Default Browser Tooltip
-
-If you don't want to use the grid's tooltip component, you can use the `enableBrowserTooltips` config to use the browser's default tooltip. The grid will simply set an element's title attribute to display the tooltip.
-
-## Tooltip Show Delay
-
-By default, when you hover on an item, it will take 2 seconds for the tooltip to be displayed. If you need to change this delay, the `tooltipShowDelay` config should be used, which is set in milliseconds.
-
-[[note]]
-| The show delay will have no effect if you are using browser tooltips, as they are controlled entirely by the browser.
+md-include:simple-tooltip-javascript.md
+md-include:simple-tooltip-angular.md
+md-include:simple-tooltip-react.md
+md-include:simple-tooltip-vue.md
 
 ## Example: Custom Tooltip
 
 The example below demonstrates how to provide custom tooltips to the grid. Notice the following:
 
 - The **Custom Tooltip Component** is supplied by name via `colDef.tooltipComponent`.
-- The **Custom Tooltip Parameters** are supplied using `colDef.tooltipComponentParams`.
+- The **Custom Tooltip Parameters** (for tooltip background color) are supplied using `colDef.tooltipComponentParams`.
 - Tooltips are displayed instantly by setting `tooltipShowDelay` to `0`.
+- Tooltips hide in 2000ms by setting `tooltipHideDelay` to `2000`.
+- Tooltips will be shown for the `athlete` and `country` columns
 
 <grid-example title='Custom Tooltip Component' name='custom-tooltip-component' type='generated'></grid-example>
+
+md-include:component-interface-javascript.md
+md-include:component-interface-angular.md
+md-include:component-interface-react.md
+md-include:component-interface-vue.md
+
+<interface-documentation interfaceName='ITooltipParams' ></interface-documentation>
+
+## Registering Custom Tooltip Components
+
+See the [registering custom components](/components/#registering-custom-components) section for details on registering and using custom tooltip components.
+
+## Default Browser Tooltip
+
+If you don't want to use the grid's tooltip component, you can use the `enableBrowserTooltips` config to use the browser's default tooltip. The grid will simply set an element's title attribute to display the tooltip.
+
+## Tooltip Show and Hide Delay
+
+By default, when you hover on an item, it will take 2 seconds for the tooltip to be displayed and then 10 seconds for the tooltip to hide. If you need to change these delays, the `tooltipShowDelay` and `tooltipHideDelay` configs should be used, which are set in milliseconds.
+
+[[note]]
+| The delays will have no effect if you are using browser tooltips, as they are controlled entirely by the browser.
 
 ## Showing Blank Values
 
@@ -83,7 +62,6 @@ The example below shows both displaying and not displaying the tooltip for blank
 ## Header Tooltip with Custom Tooltip
 
 When we want to display a header tooltip, we set the `headerTooltip` config as a `string`, and that string will be displayed as the tooltip. However, when working with custom tooltips we set `colDef.tooltipComponent` to assign the column's tooltip component and the `headerTooltip` value will passed to the `params` object.
-
 
 [[note]]
 | If `headerTooltip` is not present, the tooltip will not be rendered.

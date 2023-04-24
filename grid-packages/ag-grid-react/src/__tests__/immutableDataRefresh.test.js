@@ -125,8 +125,8 @@ class GridComponent extends Component {
         };
     }
 
-    getRowNodeId(row) {
-        return row.id;
+    getRowId(params) {
+        return params.data.id;
     }
 
     onGridReady(params) {
@@ -170,6 +170,7 @@ class GridComponent extends Component {
                 <button onClick={this.addNew}>Add New Row</button>
                 <button onClick={this.modifyRow}>Modify Row</button>
                 <AgGridReact
+                    suppressReactUi={true}
                     columnDefs={this.state.columnDefs}
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData}

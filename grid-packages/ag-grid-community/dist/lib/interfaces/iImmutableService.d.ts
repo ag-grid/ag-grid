@@ -1,6 +1,4 @@
-import { RowDataTransaction } from "./rowDataTransaction";
 export interface IImmutableService {
-    createTransactionForRowData(data: any[]): ([RowDataTransaction, {
-        [id: string]: number;
-    } | null]) | undefined;
+    setRowData(data: any[]): void;
+    isActive(): boolean;
 }

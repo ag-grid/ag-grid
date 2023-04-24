@@ -18,7 +18,7 @@ The grid will reorder the columns so that 'left pinned' columns come first and '
 
 ## Jump To & Pinning
 
-Below shows jumping to rows and columns via the API. Jumping to a pinned column makes no sense, as the pinned columns, by definition, are always visible. So below, if you try to jump to a pinned column, the grid will print a warning to the console.
+Below shows jumping to rows and columns via the API. Jumping to a pinned column makes no sense, as the pinned columns, by definition, are always visible. So below, if you try to jump to a pinned column no action will be taken.
 
 ## Example Pinning
 

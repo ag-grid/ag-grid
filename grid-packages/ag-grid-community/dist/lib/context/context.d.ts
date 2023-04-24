@@ -9,6 +9,10 @@ export interface ComponentMeta {
     componentClass: new () => Object;
     componentName: string;
 }
+export interface ControllerMeta {
+    controllerClass: new () => Object;
+    controllerName: string;
+}
 export declare class Context {
     private beanWrappers;
     private contextParams;

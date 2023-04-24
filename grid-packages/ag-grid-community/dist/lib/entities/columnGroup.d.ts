@@ -1,27 +1,26 @@
-import { ColumnGroupChild } from "./columnGroupChild";
+import { IHeaderColumn } from "../interfaces/iHeaderColumn";
 import { ColGroupDef } from "./colDef";
-import { Column } from "./column";
+import { Column, ColumnPinnedType } from "./column";
 import { AbstractColDef } from "./colDef";
-import { OriginalColumnGroup } from "./originalColumnGroup";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-export declare class ColumnGroup implements ColumnGroupChild {
-    static HEADER_GROUP_SHOW_OPEN: string;
-    static HEADER_GROUP_SHOW_CLOSED: string;
+import { ProvidedColumnGroup } from "./providedColumnGroup";
+import { GridOptionsService } from "../gridOptionsService";
+export declare type ColumnGroupShowType = 'open' | 'closed';
+export declare class ColumnGroup implements IHeaderColumn {
     static EVENT_LEFT_CHANGED: string;
     static EVENT_DISPLAYED_CHILDREN_CHANGED: string;
     static createUniqueId(groupId: string, instanceId: number): string;
-    gridOptionsWrapper: GridOptionsWrapper;
+    gridOptionsService: GridOptionsService;
     private children;
     private displayedChildren;
     private readonly groupId;
-    private readonly instanceId;
-    private readonly originalColumnGroup;
+    private readonly partId;
+    private readonly providedColumnGroup;
     private readonly pinned;
     private left;
     private oldLeft;
     private localEventService;
     private parent;
-    constructor(originalColumnGroup: OriginalColumnGroup, groupId: string, instanceId: number, pinned: 'left' | 'right' | null);
+    constructor(providedColumnGroup: ProvidedColumnGroup, groupId: string, partId: number, pinned: ColumnPinnedType);
     reset(): void;
     getParent(): ColumnGroup;
     setParent(parent: ColumnGroup): void;
@@ -32,18 +31,18 @@ export declare class ColumnGroup implements ColumnGroupChild {
     getLeft(): number | null;
     getOldLeft(): number | null;
     setLeft(left: number | null): void;
-    getPinned(): 'left' | 'right' | null;
+    getPinned(): ColumnPinnedType;
     private createAgEvent;
     addEventListener(eventType: string, listener: Function): void;
     removeEventListener(eventType: string, listener: Function): void;
     getGroupId(): string;
-    getInstanceId(): number;
-    isChildInThisGroupDeepSearch(wantedChild: ColumnGroupChild): boolean;
+    getPartId(): number;
+    isChildInThisGroupDeepSearch(wantedChild: IHeaderColumn): boolean;
     getActualWidth(): number;
     isResizable(): boolean;
     getMinWidth(): number;
-    addChild(child: ColumnGroupChild): void;
-    getDisplayedChildren(): ColumnGroupChild[] | null;
+    addChild(child: IHeaderColumn): void;
+    getDisplayedChildren(): IHeaderColumn[] | null;
     getLeafColumns(): Column[];
     getDisplayedLeafColumns(): Column[];
     getDefinition(): AbstractColDef | null;
@@ -54,9 +53,11 @@ export declare class ColumnGroup implements ColumnGroupChild {
     setExpanded(expanded: boolean): void;
     private addDisplayedLeafColumns;
     private addLeafColumns;
-    getChildren(): ColumnGroupChild[] | null;
-    getColumnGroupShow(): string | undefined;
-    getOriginalColumnGroup(): OriginalColumnGroup;
+    getChildren(): IHeaderColumn[] | null;
+    getColumnGroupShow(): ColumnGroupShowType | undefined;
+    getProvidedColumnGroup(): ProvidedColumnGroup;
+    /** @deprecated v27 getOriginalColumnGroup is deprecated, use getProvidedColumnGroup. */
+    getOriginalColumnGroup(): ProvidedColumnGroup;
     getPaddingLevel(): number;
     calculateDisplayedColumns(): void;
 }

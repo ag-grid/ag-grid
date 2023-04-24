@@ -1,5 +1,5 @@
 import { Component, ViewChild, ViewContainerRef } from '@angular/core';
-import { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams, RowNode } from '@ag-grid-community/all-modules';
+import { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams } from '@ag-grid-community/core';
 import { IFilterAngularComp } from '@ag-grid-community/angular';
 
 @Component({
@@ -10,7 +10,7 @@ import { IFilterAngularComp } from '@ag-grid-community/angular';
         </div>
     `, styles: [
         `
-            .container {
+           .container {
                 border: 2px solid #22ff22;
                 border-radius: 5px;
                 background-color: #bbffbb;
@@ -25,15 +25,13 @@ import { IFilterAngularComp } from '@ag-grid-community/angular';
     ]
 })
 export class PartialMatchFilter implements IFilterAngularComp {
-    private params: IFilterParams;
-    private valueGetter: (rowNode: RowNode) => any;
-    public text: string = '';
+    private params!: IFilterParams;
+    public text = '';
 
-    @ViewChild('input', { read: ViewContainerRef }) public input;
+    @ViewChild('input', { read: ViewContainerRef }) public input!: ViewContainerRef;
 
     agInit(params: IFilterParams): void {
         this.params = params;
-        this.valueGetter = params.valueGetter;
     }
 
     isFilterActive(): boolean {
@@ -41,12 +39,27 @@ export class PartialMatchFilter implements IFilterAngularComp {
     }
 
     doesFilterPass(params: IDoesFilterPassParams): boolean {
+        const { api, colDef, column, columnApi, context, valueGetter } = this.params;
+        const { node } = params;
+        const value = valueGetter({
+            api,
+            colDef,
+            column,
+            columnApi,
+            context,
+            data: node.data,
+            getValue: (field) => node.data[field],
+            node,
+        }).toString().toLowerCase();
+
         return this.text.toLowerCase()
             .split(' ')
-            .every(filterWord => this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) >= 0);
+            .every(filterWord => value.indexOf(filterWord) >= 0);
     }
 
     getModel(): any {
+        if (!this.isFilterActive()) { return null; }
+
         return { value: this.text };
     }
 
@@ -58,12 +71,11 @@ export class PartialMatchFilter implements IFilterAngularComp {
         window.setTimeout(() => this.input.element.nativeElement.focus());
     }
 
-    // noinspection JSMethodCanBeStatic
     componentMethod(message: string): void {
         alert(`Alert from PartialMatchFilterComponent: ${message}`);
     }
 
-    onChange(newValue): void {
+    onChange(newValue: any): void {
         if (this.text !== newValue) {
             this.text = newValue;
             this.params.filterChangedCallback();

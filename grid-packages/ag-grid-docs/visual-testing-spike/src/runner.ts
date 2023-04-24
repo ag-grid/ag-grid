@@ -10,9 +10,9 @@ import { Spec, SpecResult, SpecDefinition, SpecStep } from './types';
 import { getReportHtml } from './reporting';
 import { wait, getElement, addErrorMessage, saveErrorFile } from './utils';
 
-const defaultSpecPath = '/example.php';
+const defaultSpecPath = '/example';
 const defaultSelector = '.ag-root-wrapper';
-const exampleBasePath = '/example-runner/grid-vanilla.php';
+const exampleBasePath = '/example-runner/';
 const maxParallelPageLoads = 8;
 const failedTestsFile = 'tmp-failed-tests.txt';
 
@@ -108,7 +108,7 @@ const initInBrowser = (theme: string) => {
         Math.random = () => {
             return (seed = (seed * 16807) % limit) / limit;
         };
-    } catch (e) {
+    } catch (e: any) {
         (window as any).initInBrowserError = e.stack || e.message;
     }
 };
@@ -186,7 +186,7 @@ export const runSpec = async (spec: Spec, context: RunContext) => {
                 await context.handler(screenshot, testCaseName);
             }
         }
-    } catch (e) {
+    } catch (e: any) {
         addErrorMessage(e, `Error in spec ${spec.name}`);
         if (page) {
             const message = await saveErrorFile(page);
@@ -212,16 +212,16 @@ const ensureEmptyFolder = async (folder: string, deleteImages: boolean) => {
     await fs.mkdir(folder, { recursive: true });
     if (deleteImages) {
         const existing = await glob(path.join(folder, '*.png'));
-        await Promise.all(existing.map(file => fs.unlink(file)));
+        await Promise.all(existing.map((file: any) => fs.unlink(file)));
     }
 };
 
 interface ImageAnalysisResult {
     isSameDimensions: boolean;
-    dimensionDifference: { width: number; height: number };
+    dimensionDifference: { width: number; height: number; };
     rawMisMatchPercentage: number;
     misMatchPercentage: string;
-    diffBounds: { top: number; left: number; bottom: number; right: number };
+    diffBounds: { top: number; left: number; bottom: number; right: number; };
     analysisTime: number;
     getImageDataUrl: () => string;
     getBuffer: () => Buffer;
@@ -296,13 +296,13 @@ export const runSuite = async (params: RunSuiteParams) => {
         .flatMap(spec =>
             spec.autoRtl
                 ? [
-                      spec,
-                      {
-                          ...spec,
-                          name: `${spec.name}-rtl`,
-                          urlParams: { ...spec.urlParams, rtl: true }
-                      }
-                  ]
+                    spec,
+                    {
+                        ...spec,
+                        name: `${spec.name}-rtl`,
+                        urlParams: { ...spec.urlParams, rtl: true }
+                    }
+                ]
                 : spec
         )
         // generate alternate theme versions of provided specs

@@ -1,12 +1,16 @@
 ---
 title: "Community and Enterprise"
+enterprise: true
 ---
 
 AG Grid comes in two forms: AG Grid Community (free for everyone, including production use) and AG Grid Enterprise (you need a license to use).
 
 <div style="display: flex;">
     <div>
-        The Enterprise version of AG Grid comes with more features and <a href="https://ag-grid.zendesk.com/" target="_blank">support via Zendesk</a>. The features that are only available in AG Grid Enterprise are marked with the Enterprise icon<enterprise-icon></enterprise-icon> as demonstrated in the image to the right. See <a href="../../../license-pricing.php">Pricing</a> for details on purchasing an AG Grid Enterprise license.
+        The Enterprise version of AG Grid comes with more features and <a href="https://ag-grid.zendesk.com/" target="_blank">support via Zendesk</a>. The features that are only available in AG Grid Enterprise are marked with the Enterprise icon<enterprise-icon></enterprise-icon> as demonstrated in the image to the right and in the <a href="/licensing/#feature-comparison">feature comparison</a> below. 
+        <br/>
+        <br/>
+        See <a href="https://www.ag-grid.com/license-pricing">Pricing</a> for details on purchasing an AG Grid Enterprise license.
     </div>
     <image-caption src="licensing/resources/enterprise-features.png" alt="Enterprise Features" minwidth="15rem" width="15rem" maxwidth="15rem" height="10rem" constrained="true"></image-caption>
 </div>
@@ -15,78 +19,95 @@ AG Grid comes in two forms: AG Grid Community (free for everyone, including prod
 
 It is free to try out AG Grid Enterprise. Please take AG Grid Enterprise for a test run. You do not need to contact us. All that we ask when trialing is that you don't use AG Grid Enterprise in a project intended for production.
 
-## Feature Comparison
-
-The below table summarizes the features included in AG Grid Community and AG Grid Enterprise. Note that AG Grid Enterprise builds on AG Grid Community, it offers everything AG Grid Community offers plus more.
-
-<matrix-table src='licensing/menu.json' tree='true' childpropertyname='items' booleanonly='true' columns='{ "title": "", "not(enterprise)": "Community", "enterprise": "Enterprise<enterprise-icon></enterprise-icon>" }'></matrix-table>
-
 ## Installing AG Grid Enterprise
 
-Each of the [Getting Started](../getting-started/) guides gives step by step instructions on how
+Each of the [Getting Started](/getting-started/) guides gives step by step instructions on how
 to get started using AG Grid Enterprise for the framework in question. In most cases, you do one of
 the following:
 
-1. If using node modules and ES6 imports, firstly reference the `@ag-grid-enterprise/all-modules` module in your `package.json`:
+### Via Bundled Script
 
-    ```js
-    "dependencies": {
-        "@ag-grid-enterprise/all-modules": "~25.1.0"
-        ...
-    }
-    ```
+If including the bundled AG Grid script directly into your webpage, then reference `ag-grid-enterprise/dist/ag-grid-enterprise.js` instead of `ag-grid-community/dist/ag-grid-community.js`.
 
-    Then reference the AG Grid Enterprise module:
+As before, you use AG Grid in the same way, but including the enterprise script will enable AG Grid to have all enterprise features at your disposal.
 
-    ```js
-    import { AllModules } from '@ag-grid-enterprise/all-modules';
-    ```
+### Via Grid Packages
 
-    Then depending on your choice of framework you'll need to provide the modules to the grid:
+If using node modules and grid packages include the enterprise package `ag-grid-enterprise`.
+    
+```js
+"dependencies": {
+    "ag-grid-community": "~@AG_GRID_VERSION@",
+    "ag-grid-enterprise": "~@AG_GRID_VERSION@"
+    ...
+}
+```
+Then import the AG Grid Enterprise package in your application before any grid instance is created.
 
-    [[only-javascript]]
-    | ```js
-    | new Grid(<dom element>, gridOptions, { modules: AllModules});
-    | ```
+```js
+import 'ag-grid-enterprise';
+```
 
-    [[only-angular]]
-    | ```tsx
-    | public modules: Module[] = AllModules;
-    | <ag-grid-angular
-    |     [rowData]="rowData"
-    |     [columnDefs]="columnDefs"
-    |     [modules]="modules">
-    | </ag-grid-angular>
-    | ```
+[[note]]
+| The versions of `ag-grid-community` and `ag-grid-enterprise` should match. They are released in tandem and expect to be on the same version.
 
-    [[only-react]]
-    | ```tsx
-    | <ag-grid-react
-    |     rowData={rowData}
-    |     columnDefs={columnDefs}
-    |     modules={AllModules}>
-    | </ag-grid-react>
-    | ```
 
-    [[only-vue]]
-    | ```tsx
-    | <ag-grid-vue
-    |     :rowData="rowData"
-    |     :columnDefs="columnDefs"
-    |     :modules="AllModules"
-    | </ag-grid-vue>
-    | ```
+### Via Grid Modules
 
-    Here we are including all modules provided by AG Grid - if you want to only pull in the modules you need (and thus reduce your overall bundle size) then please refer to the [modules](../modules/) documentation. How you use AG Grid (eg how you create a grid) does not change. With the one 'import' line of code above the grid will have all of the enterprise features at your disposal.
+If using node modules and grid modules, include the enterprise feature modules for the features that you require. For example to add the enterprise Row Grouping feature along with Server Side row model add the following packages to your `package.json` file:
 
-    [[note]]
-    | The versions of the modules you use (for example `@ag-grid-community/all-modules` and `@ag-grid-enterprise/all-modules` should match. They are released in tandem and expect the same version of each other.
+```js
+"dependencies": {    
+    "@ag-grid-enterprise/row-grouping": "~@AG_GRID_VERSION@",
+    "@ag-grid-enterprise/server-side-row-model": "~@AG_GRID_VERSION@",
+    ...
+}
+```
 
-    **-OR-**
+Then reference and import the AG Grid Enterprise modules:
 
-1. If including the bundled AG Grid script directly into your webpage, then reference `@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js` instead of `@ag-grid-community/all-modules/dist/ag-grid-community.js`.
+```js
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
+```
 
-    As before, you use AG Grid in the same way, but including the enterprise script will enable AG Grid to have all enterprise features at your disposal.
+Then depending on your choice of framework you'll need to provide the modules to the grid or register them globally (see [Installing Grid Modules](/modules/#installing-ag-grid-modules) for full details.). Please refer to the [modules](/modules/) documentation for all the enterprise modules.
+
+[[only-javascript]]
+| ```js
+| new Grid(<dom element>, gridOptions, { modules: [ServerSideRowModelModule, RowGroupingModule]});
+| ```
+
+[[only-angular]]
+| ```tsx
+| public modules: Module[] = [ServerSideRowModelModule, RowGroupingModule];
+| <ag-grid-angular
+|     [rowData]="rowData"
+|     [columnDefs]="columnDefs"
+|     [modules]="modules">
+| </ag-grid-angular>
+| ```
+
+[[only-react]]
+| ```tsx
+| <ag-grid-react
+|     rowData={rowData}
+|     columnDefs={columnDefs}
+|     modules={[ServerSideRowModelModule, RowGroupingModule]}>
+| </ag-grid-react>
+| ```
+
+[[only-vue]]
+| ```tsx
+| <ag-grid-vue
+|     :rowData="rowData"
+|     :columnDefs="columnDefs"
+|     :modules="[ServerSideRowModelModule, RowGroupingModule]"
+| </ag-grid-vue>
+| ```
+
+[[note]]
+| The versions of the modules you use, `@ag-grid-community/**` and `@ag-grid-enterprise/**` should match. They are released in tandem and expect to be on the same version.
 
 ## Trial License Key
 
@@ -107,25 +128,45 @@ Note that you must pass the key exactly as provided by AG Grid - do not modify t
 | If you are distributing your product and including AG Grid Enterprise, we realise that your license key will be
 | visible to others. We appreciate that this is happening and just ask that you don't advertise it. Given our
 | product is JavaScript, there is little we can do to prevent this.
-
-[[only-javascript]]
-| Use this if you are using the bundled version of AG Grid (e.g. you are using `@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js`).
-|
-| ```js
-| agGrid.LicenseManager.setLicenseKey("your license key");
-| ```
-
-### CommonJS
-
-[[note]]
-| If you're using _any_ Enterprise feature then `@ag-grid-enterprise/core` will be available - you do not need to specify it as a dependency.
-
+### Via CommonJS
 Use this if you are using CommonJS to load AG Grid.
 
 ```js
 var enterprise = require("@ag-grid-enterprise/core");
 enterprise.LicenseManager.setLicenseKey("your license key");
 ```
+
+[[only-javascript]]
+| ### Via Grid Packages
+|
+| If you are using the bundled version of AG Grid (e.g. you are using `ag-grid-enterprise/dist/ag-grid-enterprise.js`) set the license like this.
+|
+| ```js
+| agGrid.LicenseManager.setLicenseKey("your license key");
+| ```
+[[only-frameworks]]
+| ### Via Grid Packages
+|
+| If you are using grid packages (e.g. you are using `import ag-grid-enterprise`) set the license like this.
+|
+| ```js
+| import { LicenseManager } from  'ag-grid-enterprise'
+|
+| LicenseManager.setLicenseKey("your license key")
+| ```
+
+### Via Grid Modules
+
+If you are using grid modules (e.g. you are using `import { RowGroupingModule } from @ag-grid-enterprise/row-grouping`) set the license like this.
+
+```js
+import { LicenseManager } from '@ag-grid-enterprise/core'
+
+LicenseManager.setLicenseKey("your license key")
+```
+[[note]]
+| If you're using _any_ Enterprise feature then `@ag-grid-enterprise/core` will be available - you do not need to specify it as a dependency.
+
 
 ### Do Not Mix Loading Mechanisms
 
@@ -155,8 +196,8 @@ If you mix the methods above (eg if you are using CommonJS in your application, 
 | import React from "react";
 | import {render} from "react-dom";
 |
-| import "@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css";
-| import "@ag-grid-enterprise/all-modules/dist/styles/ag-theme-alpine.css";
+| import "@ag-grid-enterprise/core/styles/ag-grid.css";
+| import "@ag-grid-enterprise/core/styles/ag-theme-alpine.css";
 |
 | import {LicenseManager} from "@ag-grid-enterprise/core";
 | LicenseManager.setLicenseKey("your license key");
@@ -179,15 +220,12 @@ If you mix the methods above (eg if you are using CommonJS in your application, 
 | ```jsx
 | import Vue from "vue";
 |
-| import "../node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css";
-| import "../node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-theme-alpine.css";
+| import "@ag-grid-enterprise/styles/ag-grid.css";
+| import "@ag-grid-enterprise/styles/ag-theme-alpine.css";
 |
-| import { AllModules } from "@ag-grid-enterprise/all-modules";
 | import { LicenseManager } from "@ag-grid-enterprise/core";
 |
 | LicenseManager.setLicenseKey("your license key");
-|
-| // provide the AllModules array to the vue grid...
 |
 | new Vue({
 |     el: "#el",
@@ -197,5 +235,11 @@ If you mix the methods above (eg if you are using CommonJS in your application, 
 
 ### Invalid License
 If you have an enterprise grid running with an invalid license (no license, expired license) your console log will display a series of warnings and the grid will show a watermark for 5 seconds.
+ 
+<grid-example title='Invalid License' name='forceWatermark' type='generated' options='{ "enterprise": true, "licenseKey":true, "modules": ["clientside",  "rowgrouping"] }'></grid-example>
 
-<grid-example title='Invalid License' name='forceWatermark' type='vanilla' options='{ "enterprise": true }'></grid-example>
+## Feature Comparison
+
+The below table summarizes the features included in AG Grid Community and AG Grid Enterprise. Note that AG Grid Enterprise builds on AG Grid Community, it offers everything AG Grid Community offers plus more.
+
+<matrix-table src='licensing/menu.json' tree='true' childpropertyname='items' booleanonly='true' columns='{ "title": "", "not(enterprise)": "Community", "enterprise": "Enterprise<enterprise-icon></enterprise-icon>" }'></matrix-table>

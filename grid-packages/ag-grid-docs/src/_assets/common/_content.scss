@@ -22,7 +22,7 @@
 }
 
 .heading-enterprise {
-    &:after {
+    &::after {
         @include enterprise-icon;
         margin-left: 6px;
     }

@@ -4,12 +4,12 @@ title: "View Refresh"
 
 The grid has change detection. So as long as you are updating the data via the grid's API, the values displayed should be the most recent up to date values.
 
-However sometimes you may be updating the data outside of the grids control. When you give data to the grid, the grid will not make a copy. Thus if you change the valu of the data outside of the grid, the grid will also be impacted by that data change.
+However sometimes you may be updating the data outside of the grids control. When you give data to the grid, the grid will not make a copy. Thus if you change the value of the data outside of the grid, the grid will not be impacted by that data change.
 
-To deal with the scenario where the row data is changed without the grid been aware, the grid provides the following methods:
+To deal with the scenario where the row data is changed without the grid being aware, the grid provides the following methods:
 
 
-- **Refresh Cells**: `api.refreshCells(cellRefreshParams)` - Gets the grid to refresh all cells. Change detection will be used to refresh only cells whose display cell values are out of sync with the actual value. If using a [cellRenderer](../component-cell-renderer/) with a refresh method, the refresh method will get called.
+- **Refresh Cells**: `api.refreshCells(cellRefreshParams)` - Gets the grid to refresh all cells. Change detection will be used to refresh only cells whose display cell values are out of sync with the actual value. If using a [cellRenderer](/component-cell-renderer/) with a refresh method, the refresh method will get called.
 
 - **Redraw Rows**: `api.redrawRows(redrawRowsParams)` - Removes the rows from the DOM and draws them again from scratch. The cells are created again from scratch. No change detection is done. No refreshing of cells is done.
 
@@ -19,21 +19,10 @@ Your preference should be to use `refreshCells()` over `redrawRows()`. Only use 
 
 To get the grid to refresh the cells, call `api.refreshCells()`. The interface is as follows:
 
-```ts
-// method for refreshing cells
-function refreshCells(params: RefreshCellsParams = {}): void;
-
-// params for refresh cells
-interface RefreshCellsParams {
-    rowNodes?: RowNode[]; // specify rows, or all rows by default
-    columns?: (string|Column)[]; // specify columns, or all columns by default
-    force?: boolean; // skips change detection, refresh everything
-    suppressFlash?: boolean; // skips cell flashing, if cell flashing is enabled
-}
-```
+<api-documentation source='grid-api/api.json' section='refresh' names='["refreshCells"]' ></api-documentation>
 
 
-Each parameter is optional. The simplest is to call with no parameters which will refresh all cells using [change detection](../change-detection/) (change detection means it will only refresh cells whose values have changed).
+Each parameter is optional. The simplest is to call with no parameters which will refresh all cells using [change detection](/change-detection/) (change detection means it will only refresh cells whose values have changed).
 
 ### Example Refresh Cells
 
@@ -53,7 +42,7 @@ Below shows calling `api.refreshCells()` with different scenarios using a mixtur
 
 - The **Scramble & Refresh Top to Bottom** button will scramble as before, then call `api.refreshCells({rowNodes})` 20 times, 100ms apart, once for each row (including pinned rows). This will show the grid refreshing one row at a time from top to bottom.
 
-- The checkbox **Force Refresh** impacts how the above three refreshes work. If checked, all the cells will get refreshed regardless of whether they have changes. In other words, change detection will not but used as part of the refresh.
+- The checkbox **Force Refresh** impacts how the above three refreshes work. If checked, all the cells will get refreshed regardless of whether they have changes. In other words, change detection will not be used as part of the refresh.
 
 - The checkbox **Suppress Flash** impacts how the above three refreshes work. If checked, flashing will not occur on any cell.
 
@@ -74,21 +63,13 @@ Redraw rows is a much heavier operation than refreshing cells. If refreshing cel
 Use redraw row if you want to create the row again from scratch. This is useful when you have changed property that only gets used when the row is created for the first time such as:
 
 
-- Whether the row is [fullWidth](../full-width-rows/) or not.
+- Whether the row is [fullWidth](/full-width-rows/) or not.
 - The cellRenderer used for any cell (as this is specified once when the cell is created).
 - You want to specify different styles for the row via the callbacks `getRowStyle()` or `getRowClass()`.
 
 To get the grid to redraw rows, call `api.redrawRows()`. The interface is as follows:
 
-```ts
-// method for redraw rows
-function redrawRows(params: RedrawRowsParams = {})
-
-// params for redraw rows
-interface RedrawRowsParams {
-    rowNodes?: RowNode[]; // the row nodes to redraw
-}
-```
+<api-documentation source='grid-api/api.json' section='refresh' names='["redrawRows"]'></api-documentation>
 
 ### Example Redraw Nodes
 

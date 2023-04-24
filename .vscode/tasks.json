@@ -9,15 +9,15 @@
         },
         {
             "type": "npm",
-            "script": "buildCore"
+            "script": "buildCommunityModules"
         },
         {
             "type": "npm",
-            "script": "buildVanilla"
+            "script": "buildEnterpriseModules"
         },
         {
             "type": "npm",
-            "script": "updateDependencies"
+            "script": "updateAndRebuild"
         },
         {
             "type": "npm",

@@ -1,15 +1,19 @@
-'use strict'
+'use strict';
 
-import React, {useState} from 'react';
-import {render} from 'react-dom';
-import {AgGridColumn, AgGridReact} from '@ag-grid-community/react';
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import React, { useState, useRef } from 'react';
+import { createRoot } from 'react-dom/client';
+import { AgGridReact } from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import "@ag-grid-community/styles/ag-grid.css";
+import "@ag-grid-community/styles/ag-theme-alpine.css";
 import DaysFrostRenderer from './daysFrostRenderer.jsx';
 
+import { ModuleRegistry } from '@ag-grid-community/core';
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
 /*
-* It's unlikely you'll use functions that create and manipulate DOM elements like this in a React application, but it
+* It's unlikely you'll use functions that create and manipulate DOM elements like this in an React application, but it
 * demonstrates what is at least possible, and may be preferable in certain use cases
 */
 const createImageSpan = (imageMultiplier, image) => {
@@ -21,39 +25,99 @@ const createImageSpan = (imageMultiplier, image) => {
     }
     return resultElement;
 };
-const deltaIndicator = params => {
-    const element = document.createElement('span');
-    const imageElement = document.createElement('img');
-    if (params.value > 15) {
-        imageElement.src = 'https://www.ag-grid.com/example-assets/weather/fire-plus.png';
-    } else {
-        imageElement.src = 'https://www.ag-grid.com/example-assets/weather/fire-minus.png';
+
+// This is a plain JS (not React) component
+class DeltaIndicator {
+    init(params) {
+        const element = document.createElement('span');
+        const imageElement = document.createElement('img');
+        if (params.value > 15) {
+            imageElement.src = 'https://www.ag-grid.com/example-assets/weather/fire-plus.png';
+        } else {
+            imageElement.src = 'https://www.ag-grid.com/example-assets/weather/fire-minus.png';
+        }
+        element.appendChild(imageElement);
+        element.appendChild(document.createTextNode(params.value));
+        this.eGui = element;
     }
-    element.appendChild(imageElement);
-    element.appendChild(document.createTextNode(params.value));
-    return element;
-};
-const daysSunshineRenderer = params => {
-    const daysSunshine = params.value / 24;
-    return createImageSpan(daysSunshine, params.rendererImage);
-};
-const rainPerTenMmRenderer = params => {
-    const rainPerTenMm = params.value / 10;
-    return createImageSpan(rainPerTenMm, params.rendererImage);
-};
+    getGui() {
+        return this.eGui;
+    }
+}
+
+// This is a plain JS (not React) component
+class DaysSunshineRenderer {
+    init(params) {
+        const daysSunshine = params.value / 24;
+        this.eGui = createImageSpan(daysSunshine, params.rendererImage);
+    }
+    getGui() {
+        return this.eGui;
+    }
+}
+
+// This is a plain JS (not React) component
+class RainPerTenMmRenderer {
+    init(params) {
+        const rainPerTenMm = params.value / 10;
+        this.eGui = createImageSpan(rainPerTenMm, params.rendererImage);
+    }
+    getGui() {
+        return this.eGui;
+    }
+}
 
 const GridExample = () => {
-    const [gridApi, setGridApi] = useState(null);
-    const [rowData, setRowData] = useState(null);
+    const [rowData, setRowData] = useState();
 
-    const onGridReady = (params) => {
-        setGridApi(params.api);
+    const [columnDefs] = useState([
+        {
+            headerName: "Month",
+            field: "Month",
+            width: 75,
+            cellStyle: { color: "darkred" }
+        },
+        {
+            headerName: "Max Temp (\u02DAC)",
+            field: "Max temp (C)",
+            width: 120,
+            cellRenderer: DeltaIndicator
+        },
+        {
+            headerName: "Min Temp (\u02DAC)",
+            field: "Min temp (C)",
+            width: 120,
+            cellRenderer: DeltaIndicator
+        },
+        {
+            headerName: "Days of Air Frost",
+            field: "Days of air frost (days)",
+            width: 233,
+            cellRenderer: DaysFrostRenderer,
+            cellRendererParams: { rendererImage: "frost.png" }
+        },
+        {
+            headerName: "Days Sunshine",
+            field: "Sunshine (hours)",
+            width: 190,
+            cellRenderer: DaysSunshineRenderer,
+            cellRendererParams: { rendererImage: "sun.png" }
+        },
+        {
+            headerName: "Rainfall (10mm)",
+            field: "Rainfall (mm)",
+            width: 180,
+            cellRenderer: RainPerTenMmRenderer,
+            cellRendererParams: { rendererImage: "rain.png" }
+        }
+    ]);
 
-        const updateData = (data) => params.api.setRowData(data);
+    const gridRef = useRef(null);
 
+    const onGridReady = () => {
         fetch('https://www.ag-grid.com/example-assets/weather-se-england.json')
             .then(resp => resp.json())
-            .then(data => updateData(data));
+            .then(data => setRowData(data));
     }
 
     /**
@@ -64,17 +128,17 @@ const GridExample = () => {
         const extraDaysFrost = Math.floor(Math.random() * 2) + 1;
 
         // iterate over the rows and make each "days of air frost"
-        gridApi.forEachNode(rowNode => {
+        gridRef.current.api.forEachNode(rowNode => {
             rowNode.setDataValue('Days of air frost (days)', rowNode.data['Days of air frost (days)'] + extraDaysFrost);
         });
     }
 
     return (
-        <div style={{width: '100%', height: '100%'}}>
+        <div style={{ width: '100%', height: '100%' }}>
             <div className="example-wrapper">
-                <div style={{"marginBottom": "5px"}}>
+                <div style={{ "marginBottom": "5px" }}>
                     <input type="button" value="Frostier Year"
-                           onClick={() => frostierYear(Math.floor(Math.random() * 2) + 1)}/>
+                        onClick={() => frostierYear(Math.floor(Math.random() * 2) + 1)} />
                 </div>
 
                 <div
@@ -85,16 +149,9 @@ const GridExample = () => {
                     }}
                     className="ag-theme-alpine">
                     <AgGridReact
-                        modules={AllCommunityModules}
+                        ref={gridRef}
                         rowData={rowData}
-                        components={{
-                            deltaIndicator: deltaIndicator,
-                            daysSunshineRenderer: daysSunshineRenderer,
-                            rainPerTenMmRenderer: rainPerTenMmRenderer
-                        }}
-                        frameworkComponents={{
-                            "daysFrostRenderer": DaysFrostRenderer,
-                        }}
+                        columnDefs={columnDefs}
                         defaultColDef={{
                             editable: true,
                             sortable: true,
@@ -103,26 +160,13 @@ const GridExample = () => {
                             filter: true,
                             resizable: true
                         }}
-                        onGridReady={onGridReady}>
-                        <AgGridColumn headerName="Month" field="Month" width={75} cellStyle={{"color": "darkred"}}/>
-                        <AgGridColumn headerName="Max Temp (˚C)" field="Max temp (C)" width={120}
-                                      cellRenderer="deltaIndicator"/>
-                        <AgGridColumn headerName="Min Temp (˚C)" field="Min temp (C)" width={120}
-                                      cellRenderer="deltaIndicator"/>
-                        <AgGridColumn headerName="Days of Air Frost" field="Days of air frost (days)" width={233}
-                                      cellRenderer="daysFrostRenderer"
-                                      cellRendererParams={{"rendererImage": "frost.png"}}/>
-                        <AgGridColumn headerName="Days Sunshine" field="Sunshine (hours)" width={190}
-                                      cellRenderer="daysSunshineRenderer"
-                                      cellRendererParams={{"rendererImage": "sun.png"}}/>
-                        <AgGridColumn headerName="Rainfall (10mm)" field="Rainfall (mm)" width={180}
-                                      cellRenderer="rainPerTenMmRenderer"
-                                      cellRendererParams={{"rendererImage": "rain.png"}}/>
-                    </AgGridReact>
+                        onGridReady={onGridReady}
+                    />
                 </div>
             </div>
         </div>
     );
 }
 
-render(<GridExample></GridExample>, document.querySelector('#root'))
+const root = createRoot(document.getElementById('root'));
+root.render(<GridExample />);

@@ -11,6 +11,7 @@ export declare abstract class AgAbstractLabel<TConfig extends IAgLabel = IAgLabe
     protected readonly config: TConfig;
     protected labelSeparator: string;
     protected labelAlignment: LabelAlignment;
+    protected disabled: boolean;
     private label;
     constructor(config?: TConfig, template?: string);
     protected postConstruct(): void;
@@ -20,5 +21,8 @@ export declare abstract class AgAbstractLabel<TConfig extends IAgLabel = IAgLabe
     getLabel(): HTMLElement | string;
     setLabel(label: HTMLElement | string): this;
     setLabelAlignment(alignment: LabelAlignment): this;
+    setLabelEllipsis(hasEllipsis: boolean): this;
     setLabelWidth(width: number | 'flex'): this;
+    setDisabled(disabled: boolean): this;
+    isDisabled(): boolean;
 }

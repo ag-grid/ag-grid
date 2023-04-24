@@ -96,6 +96,8 @@
 | ```
 |[[note]]
 ||All of the above works if you're going to register components by Name (see below). If you wish to register components
-||by direct reference then you will need to wrap your component with `Vue.extend(...your component...)`.
+||by direct reference then you will need to wrap your component with `Vue.extend(...your component...)` (for Vue 2), or `defineComponent(...your component...)`
+||(for Vue 3).
 ||
-||Examples of this are demonstrated in the "registering by name" section below.
+||We highly recommend registration by name for the flexibility it provides - all of our examples use registration by name.
+||

@@ -1,6 +1,5 @@
 import { BeanStub } from "./context/beanStub";
 export declare class TemplateService extends BeanStub {
-    private $scope;
     private templateCache;
     private waitingCallbacks;
     getTemplate(url: any, callback: any): any;

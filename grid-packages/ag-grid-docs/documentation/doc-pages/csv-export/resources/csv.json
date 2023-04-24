@@ -1,12 +1,24 @@
 {
-    "exportProperties": {
-        "suppressQuotes": {
-            "default": false,
-            "description": "By default cell values are encoded according to CSV format rules: values are wrapped in double quotes, and any double quotes within the values are escaped, so <code>my\"value</code> becomes <code>\"my\"\"value\"</code>. Pass <code>true</code> to insert the value into the CSV file without escaping. In this case it is your responsibility to ensure that no cells contain the <code>columnSeparator</code> character."
+    "_config_": {},
+    "CsvExportParams": {
+        "prependContent": {
+            "description": "Content to put at the top of the file export. A 2D array of CsvCell objects (see [Prepending and Appending Content](#prepending-and-appending-content)). Alternatively, you can pass a multi-line string that is simply appended to the top of the file content."
         },
-        "columnSeparator": {
-            "default": ",",
-            "description": "Delimiter to insert between cell values."
+        "appendContent": {
+            "description": "Content to put at the bottom of the file export. A 2D array of CsvCell objects (see [Prepending and Appending Content](#prepending-and-appending-content)). Alternatively, you can pass a multi-line string that is simply appended to the bottom of the file content."
+        },
+        "fileName": {
+            "default": "export.csv"
+        }
+    },
+    "CsvCell": {
+        "data": {
+            "isRequired": true
+        }
+    },
+    "CsvCellData": {
+        "value": {
+            "isRequired": true
         }
     }
 }

@@ -4,15 +4,16 @@ title: "Printing"
 
 This section explains how to use the Print Layout feature of the grid.
 
-A grid using print layout will not use any scrollbars so all rows and columns will get printed. The grid will auto-size width and height to fit all contents. This means if the grid is printed on paper all the cells will get included, as apposed to printing a grid with scrollbars and only cells within the visible area will get printed.
-
+A grid using print layout will not use any scrollbars so all rows and columns will get printed. The grid will auto-size 
+width and height to fit all contents. This means if the grid is printed on paper all the cells will get included, as 
+opposed to printing a grid with scrollbars and only cells within the visible area will get printed.
 
 The example below shows print layout. The following can be noted:
 
 - Pressing the button 'Printer Friendly Layout' turns the grid into print layout and removes all scrolls.
 - Pressing the button 'Normal Layout' returns the grid back to normal.
 
-<grid-example title='For Print Simple' name='for-print-simple' type='generated'></grid-example>
+<grid-example title='For Print Simple' name='for-print-simple' type='generated' options='{ "myGridReference": 1 }'></grid-example>
 
 ## Toggling Print Layout
 
@@ -22,7 +23,7 @@ Print layout can be turned on by setting the property `domLayout='print'` or by 
 // setting the grid layout to 'print'
 gridOptions.api.setDomLayout('print');
 // resetting the layout back to normal
-gridOptions.api.setDomLayout(null);
+gridOptions.api.setDomLayout();
 </snippet>
 
 ## Toggling Grid Size
@@ -50,7 +51,7 @@ Below shows a more detailed example and also automatically shows the print dialo
 
 - The data is grouped and the group row spans the width of the grid. This group row is included in print layout as normal.
 
-<grid-example title='For Print Complex' name='for-print-complex' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+<grid-example title='For Print Complex' name='for-print-complex' type='generated' options='{ "enterprise": true, "myGridReference": 1, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Animations & Redraw
 
@@ -70,6 +71,6 @@ When the grid is in print layout, it will be rendering all cells without using r
 
 ## Row Models
 
-The only [Row Model](../row-models/) that print layout works with is the default [Client Side](../client-side-model/) row model. It will not work with the others ([Infinite](../infinite-scrolling/), [Server-Side](../server-side-model/) or [Viewport](../viewport/)). This is because the grid will render the entire data-set which goes against the philosophy of the other row models which lazy load data.
+The only [Row Model](/row-models/) that print layout works with is the default [Client Side](/client-side-model/) row model. It will not work with the others ([Infinite](/infinite-scrolling/), [Server-Side](/server-side-model/) or [Viewport](/viewport/)). This is because the grid will render the entire data-set which goes against the philosophy of the other row models which lazy load data.
 
 

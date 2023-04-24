@@ -1,0 +1,19 @@
+@use "../variables" as *;
+@use "../breakpoints" as breakpoints;
+
+@mixin page-max-width() {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: calc(var(--max-page-width) + var(--horizontal-margin) * 2);
+}
+
+@mixin page-horizontal-margins() {
+    padding-left: $size-2;
+    padding-right: $size-2;
+
+    @media screen and (min-width: breakpoints.$page-margin-padding) {
+        padding-left: var(--horizontal-margin);
+        padding-right: var(--horizontal-margin);
+    }
+}

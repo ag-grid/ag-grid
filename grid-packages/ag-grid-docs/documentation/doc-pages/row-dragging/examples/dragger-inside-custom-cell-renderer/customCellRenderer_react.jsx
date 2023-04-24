@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 
 export default class CustomCellRenderer extends Component {
     myRef = React.createRef();
@@ -10,7 +10,7 @@ export default class CustomCellRenderer extends Component {
     render() {
         return (
             <div className="my-custom-cell-renderer">
-                <div class="athlete-info">
+                <div className="athlete-info">
                     <span>{this.props.data.athlete}</span>
                     <span>{this.props.data.country}</span>
                 </div>

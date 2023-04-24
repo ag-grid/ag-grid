@@ -1,6 +1,6 @@
-import { DateFilterModel } from './dateFilter';
+import { DateFilter } from './dateFilter';
 import { IFloatingFilterParams } from '../../floating/floatingFilter';
-import { ISimpleFilterModel } from '../simpleFilter';
+import { ISimpleFilterModel, SimpleFilterModelFormatter } from '../simpleFilter';
 import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
 import { FilterChangedEvent } from '../../../events';
 export declare class DateFloatingFilter extends SimpleFloatingFilter {
@@ -9,12 +9,14 @@ export declare class DateFloatingFilter extends SimpleFloatingFilter {
     private readonly eDateWrapper;
     private dateComp;
     private params;
+    private filterParams;
+    private filterModelFormatter;
     constructor();
     protected getDefaultFilterOptions(): string[];
-    protected conditionToString(condition: DateFilterModel): string;
-    init(params: IFloatingFilterParams): void;
+    init(params: IFloatingFilterParams<DateFilter>): void;
     protected setEditable(editable: boolean): void;
     onParentModelChanged(model: ISimpleFilterModel, event: FilterChangedEvent): void;
     private onDateChanged;
     private createDateComponent;
+    protected getFilterModelFormatter(): SimpleFilterModelFormatter;
 }

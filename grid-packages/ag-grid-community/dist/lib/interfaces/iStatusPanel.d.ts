@@ -1,19 +1,14 @@
-import { GridApi } from "../gridApi";
-import { ColumnApi } from "../columnController/columnApi";
 import { IComponent } from "./iComponent";
+import { AgGridCommon } from "./iCommon";
 export interface StatusPanelDef {
-    statusPanel?: {
-        new (): IStatusPanelComp;
-    } | string;
+    statusPanel?: any;
+    /** @deprecated As of v27, you can use statusPanel instead for Framework Components.  */
     statusPanelFramework?: any;
     align?: string;
     key?: string;
     statusPanelParams?: any;
 }
-export interface IStatusPanelParams {
-    api: GridApi;
-    columnApi: ColumnApi;
-    context: any;
+export interface IStatusPanelParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
 }
 export interface IStatusPanel {
 }

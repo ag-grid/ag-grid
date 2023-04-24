@@ -10,4 +10,6 @@ The spreadsheet contains a few rows of simple data, which the example parses and
 
 The spreadsheet can be downloaded [here](https://www.ag-grid.com/example-assets/olympic-data.xlsx).
 
-<grid-example title='Import Excel into AG Grid' name='excel-import' type='vanilla' options='{ "enterprise": true, "exampleHeight": 500, "extras": ["xlsx-style"] }'></grid-example>
+## Example Import
+
+<grid-example title='Import Excel into AG Grid' name='excel-import' type='typescript' options='{ "enterprise": true,"modules": ["clientside", "menu", "excel"], "exampleHeight": 500, "extras": ["xlsx-style"] }'></grid-example>

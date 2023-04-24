@@ -1,21 +1,20 @@
 .chart-wrapper {
     display: flex;
     flex-direction: column;
-    border: 2px solid darkslategray;
     height: 410px;
     overflow: hidden;
+    margin-top: 0.5rem;
+    border: 1px solid var(--ag-border-color);
 }
 
 .chart-wrapper-top {
-    height: 50px;
-    padding: 10px;
-    text-align: center;
-}
-
-.chart-wrapper-title {
-    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
 }
 
 .chart-wrapper-body {
+    border-top: 1px solid var(--ag-border-color);
     height: 100%;
 }

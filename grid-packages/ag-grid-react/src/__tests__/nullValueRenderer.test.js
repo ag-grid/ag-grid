@@ -1,7 +1,6 @@
 // noinspection ES6UnusedImports
 import React, {Component} from 'react';
 import {AgGridReact} from '../agGridReact';
-import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model";
 
 import {ensureGridApiHasBeenSet, htmlForSelector, wait} from "./utils";
 
@@ -26,7 +25,6 @@ afterEach(() => {
 it('null value cell renderer test', async () => {
     // null values are checked just as we're about to timeout waiting for a comp - currently 500ms
     await wait(1050);
-
 
     const renderedOutput = component.render();
 
@@ -74,6 +72,7 @@ class GridComponent extends Component {
                 className="ag-theme-balham"
                 style={{height: 100}}>
                 <AgGridReact
+                    suppressReactUi={true}
                     columnDefs={this.state.columnDefs}
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData}

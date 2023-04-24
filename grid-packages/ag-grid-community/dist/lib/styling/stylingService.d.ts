@@ -7,5 +7,6 @@ export declare class StylingService extends BeanStub {
     processClassRules(classRules: {
         [cssClassName: string]: (Function | string);
     } | undefined, params: RowClassParams | CellClassParams, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void;
-    processStaticCellClasses(colDef: ColDef, params: CellClassParams, onApplicableClass: (className: string) => void): void;
+    getStaticCellClasses(colDef: ColDef, params: CellClassParams): string[];
+    private processStaticCellClasses;
 }

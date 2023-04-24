@@ -1,0 +1,20 @@
+{
+    "_config_": {},
+    "IDateParams": {
+        "filterParams": {
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "IRowModel",
+                    "IDateComparatorFunc",
+                    "IFilterOptionDef",
+                    "ISimpleFilterModelType",
+                    "JoinOperator",
+                    "FilterButtonType",
+                    "ValueGetterFunc",
+                    "ValueGetterParams"
+                ],
+                "include": []
+            }
+        }
+    }
+}

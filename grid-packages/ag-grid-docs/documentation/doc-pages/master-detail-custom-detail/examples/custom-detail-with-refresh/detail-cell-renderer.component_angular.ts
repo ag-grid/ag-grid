@@ -1,5 +1,6 @@
-import {Component} from '@angular/core';
-import {ICellRendererAngularComp} from "@ag-grid-community/angular";
+import { Component } from '@angular/core';
+import { ICellRendererAngularComp } from "@ag-grid-community/angular";
+import { ICellRendererParams } from '@ag-grid-community/core';
 
 @Component({
     selector: 'app-detail-cell-renderer',
@@ -26,20 +27,20 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
 })
 export class DetailCellRenderer implements ICellRendererAngularComp {
 
-    private callsCount: number;
-    private now: string;
+    public callsCount!: number;
+    public now!: string;
 
     // called on init
-    agInit(params: any): void {
+    agInit(params: ICellRendererParams): void {
         this.callsCount = params.data.calls;
         this.now = new Date().toLocaleTimeString();
     }
 
     // called when the cell is refreshed
-    refresh(params: any): boolean {
+    refresh(params: ICellRendererParams): boolean {
         // check and see if we need to get the grid to tear this
         // component down and update it again
-        if (params.data.calls!=this.callsCount) {
+        if (params.data.calls != this.callsCount) {
             return false;
         } else {
             return true;

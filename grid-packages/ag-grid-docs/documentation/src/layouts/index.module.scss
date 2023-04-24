@@ -1,9 +1,11 @@
-@import "~bootstrap/scss/type";
-@import "~bootstrap/scss/alert";
+@use '../design-system' as ds; // .ag-styles - remove namespace after bootstrap removed.
+
+@import '~bootstrap/scss/type';
+@import '~bootstrap/scss/alert';
 
 html {
     @include media-breakpoint-up(lg) {
-        scroll-padding-top: 64px;
+        scroll-padding-top: 72px;
     }
     overflow-x: hidden;
 }
@@ -15,111 +17,14 @@ main {
 
 .main-container {
     composes: container-fluid p-0 d-flex flex-column from global;
+
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
 }
 
 .content-viewport {
     composes: d-flex flex-column flex-lg-row flex-grow-1 from global;
-}
-
-.header {
-    composes: d-flex align-items-center px-2 px-md-3 py-1 from global;
-    position: relative;
-
-    background-image: linear-gradient(to top left, $primary, darken($primary, 25%));
-
-    &__wrapper {
-        composes: container-lg my-2 px-0 d-flex from global;
-    }
-
-    &__logo {
-        composes: d-block from global;
-
-        background-image: url("../images/ag-grid.svg");
-        background-repeat: no-repeat;
-        background-size: contain;
-        min-width: 15rem;
-    }
-}
-
-.top-bar {
-    composes: px-2 px-md-3 from global;
-    position: relative;
-    background-color: transparentize($light, 0.05);
-    border-bottom: 1px solid lighten($secondary, 40%);
-
-    @include media-breakpoint-up(lg) {
-        @supports (position: sticky) {
-            position: sticky;
-            top: 0;
-            z-index: 3;
-        }
-    }
-
-    &__wrapper {
-        composes: d-flex w-100 justify-content-end justify-content-lg-between flex-wrap container-lg px-0 from global;
-    }
-
-    &__search {
-        composes: pl-0 pr-2 py-2 navbar navbar-expand-lg flex-nowrap navbar-light from global;
-        width: 290px;
-        margin: auto 0;
-
-        @include media-breakpoint-down(md) {
-            flex: 1 1 auto;
-        }
-    }
-
-    &__nav-button {
-        composes: navbar-toggler mr-2 from global;
-
-        &-icon {
-            composes: navbar-toggler-icon from global;
-        }
-    }
-
-    &__framework-selector {
-        composes: p-2 from global;
-    }
-}
-
-.main-menu {
-    composes: d-flex from global;
-
-    position: relative;
-    top: 0;
-    flex: none;
-    width: auto;
-    border-width: 1px;
-    border-color: lighten($secondary, 40%);
-    border-bottom-style: solid;
-    background-color: $white;
-}
-
-@include media-breakpoint-up(lg) {
-    .main-menu {
-        width: 300px;
-        border-bottom-style: none;
-        border-right-style: solid;
-    }
-
-    @supports (position: sticky) {
-        .main-menu {
-            position: sticky;
-            z-index: 2;
-            top: 64px;
-            height: calc(100vh - 64px);
-        }
-    }
-}
-
-@media all and (-ms-high-contrast: none) {
-    .main-menu {
-        form svg {
-            top: 10px;
-            left: 0;
-        }
-    }
 }
 
 .content {
@@ -137,12 +42,16 @@ main {
     &:global(.note) {
         @extend .alert, .alert-primary;
 
-        background-image: url("../images/info.svg");
+        background-image: url('../images/info.svg');
         background-size: 3rem;
         background-repeat: no-repeat;
         background-position: 1rem 1rem;
         padding-left: 5rem;
         min-height: 5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
 
         :global(code.language-text) {
             background-color: $pink;
@@ -159,7 +68,7 @@ main {
 
         &:global(.warning) {
             @extend .alert-warning;
-            background-image: url("../images/warning.svg");
+            background-image: url('../images/warning.svg');
         }
     }
 

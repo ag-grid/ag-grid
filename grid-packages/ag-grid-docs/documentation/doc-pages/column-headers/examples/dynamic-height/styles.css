@@ -18,3 +18,7 @@
 .hidden {
     display: none;
 }
+
+td {
+    width: 250px;
+}

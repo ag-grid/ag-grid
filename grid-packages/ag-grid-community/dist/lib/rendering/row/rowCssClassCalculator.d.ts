@@ -1,6 +1,7 @@
 import { RowNode } from "../../entities/rowNode";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { GridOptionsService } from "../../gridOptionsService";
 import { StylingService } from "../../styling/stylingService";
+import { ColumnPinnedType } from "../../entities/column";
 export interface RowCssClassCalculatorParams {
     rowNode: RowNode;
     rowIsEven: boolean;
@@ -10,20 +11,17 @@ export interface RowCssClassCalculatorParams {
     lastRowOnPage: boolean;
     printLayout: boolean;
     expandable: boolean;
+    pinned: ColumnPinnedType;
     extraCssClass?: string;
     rowFocused?: boolean;
     fadeRowIn?: boolean;
-    scope?: any;
 }
-/**
- * Common logic for RowComp and AutoHeightCalculator
- */
 export declare class RowCssClassCalculator {
     stylingService: StylingService;
-    gridOptionsWrapper: GridOptionsWrapper;
+    gridOptionsService: GridOptionsService;
     getInitialRowClasses(params: RowCssClassCalculatorParams): string[];
-    processClassesFromGridOptions(rowNode: RowNode, scope: any): string[];
+    processClassesFromGridOptions(rowNode: RowNode): string[];
     private preProcessRowClassRules;
-    processRowClassRules(rowNode: RowNode, scope: any, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void;
+    processRowClassRules(rowNode: RowNode, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void;
     calculateRowLevel(rowNode: RowNode): number;
 }

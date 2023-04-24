@@ -11,9 +11,7 @@ Columns can be moved in the grid in the following ways:
 
 The column API methods for moving columns are as follows:
 
-- `moveColumn(key, toIndex)`: Move one column to specific index.
-- `moveColumns(keys, toIndex)`: Move list of columns to specific index.
-- `moveColumnByIndex(fromIndex, toIndex)`: Move column from `fromIndex` to `toIndex`.
+<api-documentation source='column-api/api.json' section='Moving' names='["moveColumn", "moveColumns", "moveColumnByIndex"]'></api-documentation>
 
 ## Simple Example
 
@@ -45,16 +43,18 @@ The column property `suppressMovable` changes whether the column can be dragged.
 
 ## Lock Position
 
-The column property `lockPosition` locks columns to the first position in the grid. When `lockPosition=true`, the column will always appear first, cannot be dragged by the user, and cannot be moved out of position by dragging other columns.
+The column property `lockPosition` locks columns to one side of the grid. When `lockPosition` is set as either `"left"` or `"right"`, the column will always be locked to that position, cannot be dragged by the user, and cannot be moved out of position by dragging other columns.
 
 ## Suppress Movable &amp; Lock Position Example
 
 The example below demonstrates these properties as follows:
 
-- The **Age** column is locked as the first column in the scrollable area of the grid. It is not possible to move this column, or have other columns moved over it to impact its position. As a result the **Age** column marks the beginning of the scrollable area regardless of its position.
+- The **Age** column is locked `"left"` as the first column in the scrollable area of the grid. It is not possible to move this column, or have other columns moved over it to impact its position. As a result the **Age** column marks the beginning of the scrollable area regardless of its position within the column definitions.
+- The **Total** column is locked `"right"` and likewise its position can not be impacted by moving other columns.
 - The **Athlete** column has moving suppressed. It is not possible to move this column, but it is possible to move other columns around it.
-- The grid has `suppressDragLeaveHidesColumns=true` so columns dragged outside of the grid are not hidden (normally dragging a column out of the grid will hide the column).
-- The **Age** and **Athlete** columns have the user provided `locked-col` and `suppress-movable-col` CSS classes applied to them respectively to change the background colour.
+- The grid has `suppressDragLeaveHidesColumns` set to `true` so columns dragged outside of the grid are not hidden (normally dragging a column out of the grid will hide the column).
+- The `defaultColDef` has `lockPinned` set to `true` so it is not possible to pin columns to the left or right of the locked columns. 
+- The **Age** **Total** and **Athlete** columns have the user provided `locked-col` and `suppress-movable-col` CSS classes applied to them respectively to change the background colour.
 
 <grid-example title='Column Suppress & Lock' name='suppress-and-lock' type='generated'></grid-example>
 
@@ -65,7 +65,7 @@ Below is a more real-world example of where locked columns would be used. The fi
 From the example the following can be noted:
 
 
-- The first two columns are locked into first position by setting `colDef.lockPosition=true`. This means they cannot be moved out of place, and other columns cannot be moved around them.
+- The first two columns are locked into first position by setting `colDef.lockPosition='left'`. This means they cannot be moved out of place, and other columns cannot be moved around them.
 - The first two columns have the user provided `locked-col` CSS class applied to them to change the background colour.
 - The sample application listens for column pinned events. If any column is pinned, then the locked columns are also pinned. This is to keep the locked columns at the first position.
     - Clicking **Pin Athlete** will pin the Athlete column, which will result in locked columns being pinned.
@@ -78,9 +78,9 @@ From the example the following can be noted:
 When you move columns around it is possible to change their visibility as follows:
 
 - You can hide a column by dragging it outside of the grid.
-- You can show a column by dragging it from the [tool panel](../tool-panel/) onto the grid.
+- You can show a column by dragging it from the [tool panel](/tool-panel/) onto the grid.
 
-The column property `lockVisible` will stop individual columns from been made visible or hidden via the UI. When `lockVisible=true`, the column will not hide when it is dragged out of the grid, and columns dragged from the tool panel onto the grid will not become visible.
+The column property `lockVisible` will stop individual columns from being made visible or hidden via the UI. When `lockVisible=true`, the column will not hide when it is dragged out of the grid, and columns dragged from the tool panel onto the grid will not become visible.
 
 There is a slight overlap with the property `suppressDragLeaveHidesColumns`. When `suppressDragLeaveHidesColumns=true` all columns remain visible if they are dragged outside of the grid. This is a good way to block all columns from hiding as the user reorders the columns via dragging. The `lockVisible` property is at the column level and blocks all UI functions that change a column's visibility.
 
@@ -93,5 +93,5 @@ The example below shows lock visible. The following can be noted:
 - If you make a group visible or hidden in the tool panel, the locked columns are not impacted.
 - If you drag a group (e.g. the **Athlete** group) out of the grid, all normal columns in the group are removed and all locked columns in the group are left intact.
 
-<grid-example title='Lock Visible' name='lock-visible' type='generated' options='{ "enterprise": true, "exampleHeight": 550 }'></grid-example>
+<grid-example title='Lock Visible' name='lock-visible' type='generated' options='{ "exampleHeight": 550, "enterprise": true, "modules": ["clientside", "columnpanel", "filterpanel" ] }'></grid-example>
 

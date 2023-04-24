@@ -1,0 +1,260 @@
+@use "../design-system/" as *;
+
+.container {
+    margin-top: $size-6 !important; // !important for .ag-styles specificity
+    margin-bottom: calc($size-6 * 4) !important; // !important for .ag-styles specificity
+}
+
+.topSection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $size-4;
+    margin-top: $size-8 !important; // !important for .ag-styles specificity
+
+    @media screen and (min-width: $breakpoint-pricing-large) {
+        flex-wrap: nowrap;
+    }
+
+    h1 {
+        font-size: 44px !important; // !important for .ag-styles specificit
+        font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificit
+        margin-bottom: $size-1 !important; // !important for .ag-styles specificit
+        line-height: $line-height-ultra-tight !important; // !important for .ag-styles specificit
+    }
+}
+
+.intro {
+    width: 100%;
+    margin-bottom: $size-4 !important; // !important for .ag-styles specificit
+    text-align: center;
+    
+    @media screen and (min-width: $breakpoint-pricing-large) {
+        margin-top: $size-8 !important; // !important for .ag-styles specificit
+        text-align: left;
+    }
+
+    p:global(.font-size-large) {
+        max-width: 44rem;
+        margin: 0 auto !important; // !important for .ag-styles specificit
+    }
+}
+
+.salesEmail {
+    margin-top: $size-2 !important; // !important for .ag-styles specificit
+    margin-bottom: $size-2 !important; // !important for .ag-styles specificit
+
+    a {
+        @media screen and (max-width: $breakpoint-pricing-small) {
+            font-size: $font-size-medium !important; // !important for .ag-styles specificit
+        }
+    }
+}
+
+.videoPrompt {
+    --line-height: $line-height-tight !important; // !important for .ag-styles specificity
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: $size-1 $size-2;
+    margin-top: $size-7 !important; // !important for .ag-styles specificity
+
+    @media screen and (min-width: $breakpoint-pricing-small) {
+        text-align: left;
+    }
+
+    @media screen and (min-width: $breakpoint-pricing-large) {
+        justify-content: flex-start;
+    }
+
+    h3,
+    p {
+        margin: 0 !important; // !important for .ag-styles specificity
+    }
+}
+
+.thumbnail {
+    width: 33.333%;
+    min-width: 160px;
+    max-width: 220px;
+    border-radius: var(--border-radius);
+
+    img {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        margin-top: $size-1 !important; // !important for .ag-styles specificity
+        object-fit: cover;
+        border-radius: var(--border-radius);
+    }
+}
+
+.bulkLicenses,
+.communityEnterprise,
+.videoExplainer,
+.licensesInDetail {
+    margin-bottom: $size-8 !important; // !important for .ag-styles specificity
+}
+
+.bulkLicenses {
+    margin-top: $size-5 !important; // !important for .ag-styles specificity
+    text-align: center;
+
+    p {
+        max-width: 48em;
+        margin: 0 auto $size-1 !important; // !important for .ag-styles specificity
+    }
+}
+
+.ukraineNotice {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $size-2;
+    max-width: 48em;
+    margin: $size-7 auto $size-8 !important; // !important for .ag-styles specificity
+
+    @media screen and (min-width: $breakpoint-alert-flag-small) {
+        flex-direction: row;
+    }
+
+    img {
+        width: 80px;
+    }
+}
+
+.communityEnterprise {
+    grid-template-columns: 1fr 2fr;
+    gap: $size-3;
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        display: grid;
+    }
+
+    :global(.button-secondary):not(:last-child) {
+        margin-bottom: $size-1;
+    }
+}
+
+.community {
+    margin-bottom: $size-4 !important; // !important for .ag-styles specificity
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        margin-bottom: 0 !important; // !important for .ag-styles specificity
+    }
+}
+
+.enterprise h3 {
+    position: relative;
+    display: inline-block;
+    padding-right: 32px;
+
+    svg {
+        --text-color: red;
+
+        position: re;
+        width: 26px;
+        bottom: 1px;
+        right: 2px;
+    }
+}
+
+.NpmButton svg {
+    display: inline-block;
+    height: 2.5em;
+    margin: -1.15em 0.33em -1em 0;
+    fill: var(--button-text-color);
+}
+
+.videoExplainer {
+    display: grid;
+
+    @media screen and (min-width: $breakpoint-pricing-large) {
+        grid-template-columns: 2fr 1fr;
+        grid-auto-flow: dense;
+        gap: $size-3;
+    }
+
+    div {
+        margin-bottom: $size-4 !important; // !important for .ag-styles specificity
+
+        @media screen and (min-width: $breakpoint-pricing-large) {
+            grid-column: 2;
+        }
+    }
+
+    h3 {
+        --line-height: $line-height-tight !important; // !important for .ag-styles specificity
+
+        font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity
+
+        @media screen and (min-width: $breakpoint-pricing-large) {
+            margin-top: -$size-1 !important; // !important for .ag-styles specificity
+        }
+    }
+
+    iframe {
+        width: 100%;
+        aspect-ratio: 16/9;
+        border-radius: var(--border-radius);
+        border: none;
+    }
+}
+
+.licensesInDetail {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: $size-3;
+
+    @media screen and (min-width: $breakpoint-pricing-large) {
+        flex-direction: row;
+    }
+
+    > h3 {
+        width: 100%;
+        text-align: center;
+        font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity
+    }
+
+    ul {
+        --line-height: $line-height-tight !important; // !important for .ag-styles specificity
+    }
+
+    li:not(:last-child) {
+        margin-bottom: $size-half !important; // !important for .ag-styles specificity
+    }
+
+    .singleApplicationLicense,
+    .multipleApplicationsLicense {
+        @media screen and (min-width: $breakpoint-pricing-large) {
+            width: calc(50% - $size-3 / 2);
+        }
+    }
+
+    // Needs review after <ul> styling
+    .deploymentLicense ul {
+        @media screen and (min-width: $breakpoint-pricing-large) {
+            columns: 2;
+            gap: $size-3;
+        }
+    }
+}
+
+.contactSales {
+    margin-bottom: $size-10 !important; // !important for .ag-styles specificity
+    text-align: center;
+
+    p {
+        max-width: 740px;
+        margin-right: auto;
+        margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+        margin-left: auto;
+    }
+
+    a {
+        font-size: $font-size-extra-large !important; // !important for .ag-styles specificity
+        display: inline-block;
+    }
+}

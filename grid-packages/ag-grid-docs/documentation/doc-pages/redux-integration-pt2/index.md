@@ -3,23 +3,19 @@ title: "Redux Integration - Part 2"
 frameworks: ["react"]
 ---
 
-This section takes a deeper look at integrating AG Grid with a Redux store by implementing a 
+This section takes a deeper look at integrating AG Grid with a Redux store by implementing a
 feature rich File Browser that uses Tree Data.
 
 
-Following on from [Redux Integration Part 1](../redux-integration-pt1/) we will implement a 
-Redux File Browser to demonstrate how the feature rich AG Grid can be combined with a Redux 
+Following on from [Redux Integration Part 1](/redux-integration-pt1/) we will implement a
+Redux File Browser to demonstrate how the feature rich AG Grid can be combined with a Redux
 store to achieve elegant and powerful grid implementations.
 
 <image-caption src="redux-integration-pt2/resources/redux-file-browser.png" alt="Redux File Browser"></image-caption>
 
-[[note]]
-| This section assumes the reader has already covered [Redux Integration Part 1](../redux-integration-pt1/)
-| and is familiar with React and ES6 Javascript features.
-
 ## Creating our Redux File Store
 
-Like in Part 1, our Redux File Store is created using the `createStore` factory method 
+Like in Part 1, our Redux File Store is created using the `createStore` factory method
 from the redux module, and just a single reducer is required:
 
 ```jsx
@@ -39,7 +35,7 @@ const initialState = {
 export default createStore(fileReducer, initialState);
 ```
 
-Our file browser will allow users to create, move and delete files and folders. 
+Our file browser will allow users to create, move and delete files and folders.
 The logic for handling these operations is defined in the `fileReducer` shown below:
 
 ```jsx
@@ -70,7 +66,7 @@ export function fileReducer(state = {}, action) {
 ```
 
 [[note]]
-| The helper methods used in the reducer are omitted for brevity but can be examined in the code 
+| The helper methods used in the reducer are omitted for brevity but can be examined in the code
 | tab provided in the example at the end of this section.
 
 Rather than create action objects directly we shall use the following _Action Creators_ as shown below:
@@ -102,29 +98,28 @@ export const actions = {
 
 ## Adding the Provider Component
 
-Now that we have created our Redux store we need to make it available to our React `FileBrowser` 
+Now that we have created our Redux store we need to make it available to our React `FileBrowser`
 component. This is achieved through the `Provider` component from the react-redux project.
 
 
-In the entry point of our application we wrap the `FileBrowser` component in the `Provider` 
+In the entry point of our application we wrap the `FileBrowser` component in the `Provider`
 component as shown below:
 
 ```jsx
 // index.jsx
 
 import React from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 
 import store from './store.jsx';
 import FileBrowser from './FileBrowser.jsx';
 
-render(
-    <Provider store={ store }>
-        <FileBrowser/>
-    </Provider>,
-    document.getElementById('root')
-);
+const root = createRoot(document.getElementById('root'));
+root.render(
+    <Provider store={store}>
+        <FileView/>
+    </Provider>);
 ```
 
 The `Provider` accepts the store as property and makes it available via props to all child components.
@@ -171,17 +166,17 @@ export default connect(
 )(FileBrowser);
 ```
 
-In the code above we pass two functions to `connect` to map the required state 
-(mapStateToProps) and actions (mapDispatchToProps). When binding our actions we 
+In the code above we pass two functions to `connect` to map the required state
+(mapStateToProps) and actions (mapDispatchToProps). When binding our actions we
 are using the `bindActionCreators` utility which wraps our action creators into a `dispatch` call.
 
-Now that our stateless `FileBrowser` component is connected to our Redux store, whenever the file 
-state in the store changes, our component will re-render with the latest file state available 
+Now that our stateless `FileBrowser` component is connected to our Redux store, whenever the file
+state in the store changes, our component will re-render with the latest file state available
 in `this.props.files`.
 
 ## Adding the Data Table
 
-Now that the Redux store is now connected to our stateless React component, all that remains 
+Now that the Redux store is now connected to our stateless React component, all that remains
 is to implement the view, which just consists of the AG Grid Data Table in our File Browser.
 
 Before discussing the grid features in our file browser, here are all of the grid options we are using:
@@ -193,30 +188,28 @@ render() {
     return (
         <div className="ag-theme-alpine">
             <AgGridReact
-                // provide column definitions
+                {/* provide column definitions */}
                 columnDefs={this.colDefs}
-                // specify auto group column definition
+                {/* specify auto group column definition */}
                 autoGroupColumnDef={this.autoGroupColumnDef}
-                // row data provided via props from the file store
+                {/* row data provided via props from the file store */}
                 rowData={this.props.files}
-                // enable tree data
+                {/* enable tree data */}
                 treeData={true}
-                // return tree hierarchy from supplied data
+                {/* return tree hierarchy from supplied data */}
                 getDataPath={data => data.filePath}
-                // expand tree by default
+                {/* expand tree by default */}
                 groupDefaultExpanded={-1}
-                // fit grid columns
+                {/* fit grid columns */}
                 onGridReady={params => params.api.sizeColumnsToFit()}
-                // provide context menu callback
+                {/* provide context menu callback */}
                 getContextMenuItems={this.getContextMenuItems}
-                // provide row drag end callback
+                {/* provide row drag end callback */}
                 onRowDragEnd={this.onRowDragEnd}
-                // enable immutable data
-                immutableData={true}
-                // return id required for tree data and immutable data
-                getRowNodeId={data => data.id}
-                // specify our FileCellRenderer component
-                frameworkComponents={this.frameworkComponents}>
+                {/* return id required for tree data and immutable data */}
+                getRowId={params => params.data.id}
+                {/* specify our FileCellRenderer component */}
+                components={this.components}>
             </AgGridReact>
         </div>
     )
@@ -225,10 +218,10 @@ render() {
 
 ## Tree Data
 
-As the data is implicitly hierarchical, with a parent / child relationship between folders 
+As the data is implicitly hierarchical, with a parent / child relationship between folders
 and files, we will use the grids Tree Data feature by setting `treeData={true}`.
 
-The file structure in the file browser is captured in the state as an array of files, where 
+The file structure in the file browser is captured in the state as an array of files, where
 each array entry contains it's hierarchy in the `filePath` attribute.
 
 ```jsx
@@ -243,20 +236,20 @@ files: [
 
 This is supplied to the grid via the callback: `getDataPath={data => data.filePath}`.
 
-For more details see our documentation on [Tree Data](../tree-data/). The mechanism for connecting 
+For more details see our documentation on [Tree Data](/tree-data/). The mechanism for connecting
 Redux to AG Grid applies equally to when the Tree Data feature is not used.
 
 ## Row Data Updates
 
-The initial file state along with all subsequent state updates will be provided to the grid 
+The initial file state along with all subsequent state updates will be provided to the grid
 component via `rowData={this.props.files}` from our Redux file store.
 
-This means the grid does not change the state of the files internally but instead receives the 
+This means the grid does not change the state of the files internally but instead receives the
 new state from the Redux store!
 
 ## Context Menu Actions
 
-As shown above, `getContextMenuItems={this.getContextMenuItems}` supplies a function to the 
+As shown above, `getContextMenuItems={this.getContextMenuItems}` supplies a function to the
 grid to retrieve the context menu items. Here is the implementation:
 
 ```js
@@ -278,17 +271,17 @@ getContextMenuItems = (params) => {
 };
 ```
 
-Notice that we are simply just dispatching actions to the Redux store here. 
+Notice that we are simply just dispatching actions to the Redux store here.
 For example, when the new file menu item is selected: `action: () => this.props.actions.newFile(filePath)`.
 
-It is important to note that nothing will happen inside the grid when a menu item is selected 
+It is important to note that nothing will happen inside the grid when a menu item is selected
 until the Redux store triggers a re-render of the grid component with the updated state.
 
-For more details see our documentation on [Context Menu](../context-menu/).
+For more details see our documentation on [Context Menu](/context-menu/).
 
 ## Row Drag Action
 
-Just like the context menu above, we supply a callback function to handle dragging rows 
+Just like the context menu above, we supply a callback function to handle dragging rows
 via: `onRowDragEnd={this.onRowDragEnd}`. Here is the implementation:
 
 ```js
@@ -302,26 +295,21 @@ onRowDragEnd = (event) => {
 };
 ```
 
-Once again, dragging rows doesn't directly impact the state of the grid. Instead an action is 
+Once again, dragging rows doesn't directly impact the state of the grid. Instead an action is
 dispatched to the Redux store using: `this.props.actions.moveFiles(movingFilePath, targetPath)`.
 
-For more details see our documentation on [Row Dragging](../row-dragging/).
+For more details see our documentation on [Row Dragging](/row-dragging/).
 
 ## Immutable Data
 
-One consequence of using Redux is that when part of the state is updated in the store, the entire 
-state is replaced with a new version. The grid has an "Immutable Data" mode that is designed to work specifically with immutable stores such as Redux to ensure only the rows that have been updated will be re-rendered inside the grid.
+One consequence of using Redux is that when part of the state is updated in the store, the entire
+state is replaced with a new version. The grid uses Row IDs to ensure only the rows that have been updated will be re-rendered inside the grid.
 
-The file browser enables this feature using: `immutableData={true}`, along with a required 
-row id using: `getRowNodeId={data => data.id}`.
-
-
-This feature can lead to noticeable performance improvements in applications which contain a
-lot of row data. For more details see our documentation on [Immutable Data](../immutable-data/).
+The file browser enables this feature using: `getRowId={params => params.data.id}`.
 
 ## Custom File Cell Renderer
 
-To make our file browser more realistic we will provide a custom Cell Renderer for our files 
+To make our file browser more realistic we will provide a custom Cell Renderer for our files
 and folders. This is implemented as a react component as follows:
 
 ```jsx
@@ -347,12 +335,12 @@ export default class FileCellRenderer extends Component {
 }
 ```
 
-The Cell Renderer is supplied to the grid through: `frameworkComponents={this.frameworkComponents}`. Where `frameworkComponents` is just an object referencing the imported component:
+The Cell Renderer is supplied to the grid through: `components={this.components}`. Where `components` is just an object referencing the imported component:
 
 ```js
 import FileCellRenderer from './FileCellRenderer.jsx';
 
-frameworkComponents = {
+components = {
     fileCellRenderer: FileCellRenderer
 };
 ```
@@ -373,27 +361,27 @@ autoGroupColumnDef = {
 };
 ```
 
-For more details see our documentation on [Custom Cell Renderer Components](../component-cell-renderer/).
+For more details see our documentation on [Custom Cell Renderer Components](/component-cell-renderer/).
 
 ## Demo - Redux File Browser
 
-Now we are ready to enjoy the fruits of our labour! The completed Redux File Browser 
+Now we are ready to enjoy the fruits of our labour! The completed Redux File Browser
 with source code is shown below. In this example you can:
 
 - Right Click on a folder for options to delete the folder or add a new file.
 - Right Click on a file for the option to delete the file.
 - Click and Drag on the move icon to move files and folders.
 
-<grid-example title='Redux File Browser' name='redux-file-browser' type='react' options=' { "enterprise": true, "showImportsDropdown": false, "extras": ["fontawesome"] }'></grid-example>
+<grid-example title='Redux File Browser' name='redux-file-browser' type='react' options=' { "enterprise": true,  "showImportsDropdown": false, "extras": ["fontawesome"] }'></grid-example>
 
 ## Conclusion
 
-In this section we extended the Redux file store introduced in Part 1, to support the 
-additional functionality required by the File Browser, while still maintaining a nice 
-separation of concerns allowing our view components to remain stateless and focused 
+In this section we extended the Redux file store introduced in Part 1, to support the
+additional functionality required by the File Browser, while still maintaining a nice
+separation of concerns allowing our view components to remain stateless and focused
 on presentational detail.
 
-We also explored numerous powerful grid features that support complex grid implementations 
+We also explored numerous powerful grid features that support complex grid implementations
 with the minimal of effort, while proving to be extremely flexible. These features included:
 
 - Tree Data

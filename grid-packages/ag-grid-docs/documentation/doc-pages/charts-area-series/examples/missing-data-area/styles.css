@@ -1,0 +1,22 @@
+.wrapper {
+    height: 100%;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+}
+
+#toolPanel {
+    text-align: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.spacer {
+    display: inline-block;
+    min-width: 20px;
+}
+
+#myChart {
+    height: 100%;
+}

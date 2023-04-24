@@ -1,30 +1,11 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
 
 export default class FullWidthCellRenderer extends Component {
-    constructor(props) {
-        super(props);
-    }
-
-    componentDidMount() {
-        // to allow for inner scrolling
-        ReactDOM.findDOMNode(this).addEventListener('mousewheel', (event) => {
-            event.stopPropagation();
-        }, false);
-    }
-
-    getReactContainerStyle() {
-        return {
-            display: 'inline-block',
-            height: '100%'
-        };
-    }
-
     render() {
         return (
             <div className="full-width-panel">
                 <div className="full-width-flag">
-                    <img border="0"
+                    <img
                         src={`https://www.ag-grid.com/example-assets/large-flags/${this.props.node.data.code}.png`} />
                 </div>
                 <div className="full-width-summary">
@@ -41,9 +22,7 @@ export default class FullWidthCellRenderer extends Component {
                     </label>
                     <br />
                 </div>
-                <div className="full-width-center">
-                    {this.latinText()}
-                </div>
+                <div className="full-width-center" dangerouslySetInnerHTML={{__html: this.latinText()}}></div>
             </div>
         );
     }

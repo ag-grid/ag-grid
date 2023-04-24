@@ -1,15 +1,13 @@
-import Vue from "vue";
-
-export default Vue.extend({
+export default {
     template: `
         <div style="display: flex">
-            <span v-if="params.enableMenu" ref="menuButton" class="ag-icon ag-icon-menu" @click="onMenuClicked($event)"></span>
-            <div class="customHeaderLabel">{{params.displayName}}</div>
-            <div v-if="params.enableSorting" @click="onSortRequested('asc', $event)" :class="ascSort"
+            <span v-if="enableMenu" ref="menuButton" class="ag-icon ag-icon-menu" @click="onMenuClicked($event)"></span>
+            <div class="customHeaderLabel">{{ displayName }}</div>
+            <div v-if="enableSorting" @click="onSortRequested('asc', $event)" :class="ascSort"
                  class="customSortDownLabel"><i class="fa fa-long-arrow-alt-down"></i></div>
-            <div v-if="params.enableSorting" @click="onSortRequested('desc', $event)" :class="descSort"
+            <div v-if="enableSorting" @click="onSortRequested('desc', $event)" :class="descSort"
                  class="customSortUpLabel"><i class="fa fa-long-arrow-alt-up"></i></div>
-            <div v-if="params.enableSorting" @click="onSortRequested('', $event)" :class="noSort"
+            <div v-if="enableSorting" @click="onSortRequested('', $event)" :class="noSort"
                  class="customSortRemoveLabel"><i class="fa fa-times"></i></div>
         </div>
     `,
@@ -17,14 +15,25 @@ export default Vue.extend({
         return {
             ascSort: null,
             descSort: null,
-            noSort: null
+            noSort: null,
+            enableMenu: false,
+            enableSorting: false,
+            displayName: null
         };
     },
     beforeMount() {
+        this.enableMenu = this.params.enableMenu;
+        this.enableSorting = this.params.enableSorting;
+        this.displayName = this.params.displayName;
     },
     mounted() {
+        console.log('CustomHeader - mounted() -> ' + this.params.column.getId());
+
         this.params.column.addEventListener('sortChanged', this.onSortChanged);
         this.onSortChanged();
+    },
+    unmounted() {
+        console.log('CustomHeader unmounted() -> ' + this.params.column.getId());
     },
     methods: {
         onMenuClicked() {
@@ -47,8 +56,12 @@ export default Vue.extend({
         },
 
         refresh(params) {
-            this.params = params;
+            console.log('CustomHeader refresh() -> ' + this.params.column.getId());
+
+            this.enableMenu = params.enableMenu;
+            this.enableSorting = params.enableSorting;
+            this.displayName = params.displayName;
             return true;
         }
     }
-});
+};
