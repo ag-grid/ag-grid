@@ -1987,6 +1987,11 @@
               {
                 "title": "Combination",
                 "url": "/charts-combination-series/"
+              },
+              {
+                "title": "Heatmap",
+                "url": "/charts-heatmap-series/",
+                "enterprise": "charts"
               }
             ]
           },
