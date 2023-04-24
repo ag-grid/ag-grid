@@ -31,6 +31,7 @@ $colorFlowBreakpoint: 1050px;
     display: grid;
     grid-template-columns: 100px 1fr;
     gap: 0 $size-2;
+    margin-bottom: $size-1 !important; // !important for .ag-styles specificity
     grid-template-areas:
         'color name'
         'color sassName'
