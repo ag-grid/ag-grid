@@ -101,6 +101,7 @@ const gridOptions: GridOptions = {
             cellRenderer: 'agAnimateShowChangeCellRenderer',
         },
     },
+    chartThemes: ['ag-default-dark'],
     animateRows: true,
     enableCharts: true,
     enableRangeSelection: true,
