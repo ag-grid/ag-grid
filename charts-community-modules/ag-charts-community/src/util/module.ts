@@ -1,4 +1,5 @@
 import { AgCartesianAxisPosition } from '../chart/agChartOptions';
+import { DataService } from '../chart/dataService';
 import { CursorManager } from '../chart/interaction/cursorManager';
 import { HighlightManager } from '../chart/interaction/highlightManager';
 import { InteractionManager } from '../chart/interaction/interactionManager';
@@ -8,14 +9,17 @@ import { LayoutService } from '../chart/layout/layoutService';
 import { UpdateService } from '../chart/updateService';
 import { Scene } from '../integrated-charts-scene';
 import { Series } from '../chart/series/series';
+import { ChartLegend } from '../chart/legendDatum';
 
 export interface ModuleContext {
     scene: Scene;
+    mode: 'standalone' | 'integrated';
     interactionManager: InteractionManager;
     highlightManager: HighlightManager;
     cursorManager: CursorManager;
     zoomManager: ZoomManager;
     tooltipManager: TooltipManager;
+    dataService: DataService;
     layoutService: Pick<LayoutService, 'addListener' | 'removeListener'>;
     updateService: UpdateService;
 }
@@ -45,6 +49,13 @@ export interface ChartThemeParams {
 
 export interface DarkThemeParams {
     seriesLabelDefaults: any;
+}
+
+export interface LegendModuleContext {
+    legendFactory: {
+        add(factory: (ctx: ModuleContext) => ChartLegend): void;
+        delete(): void;
+    };
 }
 
 export interface SeriesContext {
@@ -94,12 +105,21 @@ export interface AxisModule<M extends ModuleInstance = ModuleInstance> extends B
     initialiseModule(ctx: ModuleContextWithParent<AxisContext>): ModuleInstanceMeta<M>;
 }
 
+export interface LegendModule<M extends ModuleInstance = ModuleInstance> extends BaseModule {
+    type: 'legend';
+    initialiseModule(ctx: LegendModuleContext): ModuleInstanceMeta<M>;
+}
+
 export interface SeriesModule<M extends ModuleInstance = ModuleInstance> extends BaseModule {
     type: 'series';
     initialiseModule(ctx: SeriesContext): ModuleInstanceMeta<M>;
 }
 
-export type Module<M extends ModuleInstance = ModuleInstance> = RootModule<M> | AxisModule<M> | SeriesModule<M>;
+export type Module<M extends ModuleInstance = ModuleInstance> =
+    | RootModule<M>
+    | AxisModule<M>
+    | LegendModule<M>
+    | SeriesModule<M>;
 
 export abstract class BaseModuleInstance {
     protected readonly destroyFns: (() => void)[] = [];

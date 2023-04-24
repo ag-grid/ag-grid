@@ -54,7 +54,7 @@ export class Rect extends Path {
      * and crisp mode is on, the rectangle will still fit into the pixel,
      * but will be less opaque to make an effect of holding less space.
      */
-    private microPixelEffectOpacity: number = 1;
+    protected microPixelEffectOpacity: number = 1;
 
     updatePath() {
         const { path, borderPath, crisp } = this;

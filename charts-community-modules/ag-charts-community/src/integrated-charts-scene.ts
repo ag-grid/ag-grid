@@ -10,7 +10,7 @@ export { Path } from './scene/shape/path';
 export { Rect } from './scene/shape/rect';
 export { Sector } from './scene/shape/sector';
 export { Shape, ShapeLineCap } from './scene/shape/shape';
-export { Text } from './scene/shape/text';
+export { Text, getFont } from './scene/shape/text';
 export { BandScale } from './scale/bandScale';
 export { LinearScale } from './scale/linearScale';
 export { toRadians } from './util/angle';

@@ -3590,6 +3590,17 @@
     "meta": { "isTypeAlias": true, "typeParams": ["R"] },
     "type": "{ type: 'processor'; property: string; calculate: (data: ProcessedData<any>) => R; }"
   },
+  "Series": {
+    "meta": {},
+    "type": {
+      "id": "string",
+      "type": "string",
+      "toggleSeriesItem(itemId: string, enabled: boolean)": "void",
+      "toggleOtherSeriesItems(series: { id: string; type: string; }, itemId: string, enabled?: boolean, preferredEnabled?: boolean)": "void",
+      "getLegendData()": "any[]"
+    }
+  },
+  "SeriesGetter": { "meta": { "isTypeAlias": true }, "type": "() => Series[]" },
   "Page": {
     "meta": { "isTypeAlias": true },
     "type": "{ columns: Column[]; pageWidth: number; pageHeight: number; startIndex: number; endIndex: number; }"
@@ -3737,15 +3748,34 @@
     "meta": { "isTypeAlias": true, "typeParams": ["T extends EventTypes"] },
     "type": "T extends LayoutStage ? LayoutProcessor : LayoutListener"
   },
-  "LegendDatum": {
+  "ChartLegend": {
     "meta": {},
     "type": {
+      "attachLegend(node: Node | null)": "void",
+      "destroy()": "void",
+      "data": "any",
+      "item": "{ label: { formatter?: (params: any) => string; }; }",
+      "listeners": "AgChartLegendListeners"
+    }
+  },
+  "ChartLegendDatum": {
+    "meta": {},
+    "type": {
+      "legendType": "string",
+      "seriesId": "string",
+      "enabled": "boolean"
+    }
+  },
+  "CategoryLegendDatum": {
+    "meta": {},
+    "type": {
+      "legendType": "'category'",
       "id": "string",
       "itemId": "any",
-      "seriesId": "string",
-      "enabled": "boolean",
       "marker": "{ shape?: string | (new () => Marker); fill: string; stroke: string; fillOpacity: number; strokeOpacity: number; }",
-      "label": "{ text: string; }"
+      "label": "{ text: string; }",
+      "seriesId": "string",
+      "enabled": "boolean"
     }
   },
   "SeriesOptionsTypes": {
@@ -3996,6 +4026,7 @@
     "meta": {},
     "type": {
       "label": "MeasuredLabel",
+      "fill": "string | undefined",
       "xKey": "string",
       "yKey": "string",
       "series": "Series<any>",
@@ -4151,6 +4182,10 @@
   "TooltipPositionType": {
     "meta": { "isTypeAlias": true },
     "type": "'pointer' | 'node'"
+  },
+  "UpdateCallback": {
+    "meta": { "isTypeAlias": true },
+    "type": "(type: ChartUpdateType, options: { forceNodeDataRefresh?: boolean; }) => void"
   },
   "Tick": { "meta": {}, "type": { "labels": "string[]" } },
   "ScaleClampParams": {
@@ -4393,11 +4428,13 @@
     "meta": {},
     "type": {
       "scene": "Scene",
+      "mode": "'standalone' | 'integrated'",
       "interactionManager": "InteractionManager",
       "highlightManager": "HighlightManager",
       "cursorManager": "CursorManager",
       "zoomManager": "ZoomManager",
       "tooltipManager": "TooltipManager",
+      "dataService": "DataService",
       "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>",
       "updateService": "UpdateService"
     }
@@ -4407,11 +4444,13 @@
     "type": {
       "parent": "P",
       "scene": "Scene",
+      "mode": "'standalone' | 'integrated'",
       "interactionManager": "InteractionManager",
       "highlightManager": "HighlightManager",
       "cursorManager": "CursorManager",
       "zoomManager": "ZoomManager",
       "tooltipManager": "TooltipManager",
+      "dataService": "DataService",
       "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>",
       "updateService": "UpdateService"
     }
@@ -4433,6 +4472,12 @@
   "SeriesFactory": {
     "meta": { "isTypeAlias": true },
     "type": "() => Series<any>"
+  },
+  "LegendModuleContext": {
+    "meta": {},
+    "type": {
+      "legendFactory": "{ add(factory: (ctx: ModuleContext) => ChartLegend): void; delete(): void; }"
+    }
   },
   "SeriesContext": {
     "meta": {},
@@ -4478,6 +4523,16 @@
       "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
     }
   },
+  "LegendModule": {
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "type": {
+      "type": "'legend'",
+      "initialiseModule(ctx: LegendModuleContext)": "ModuleInstanceMeta<M>",
+      "optionsKey": "string",
+      "packageType": "'community' | 'enterprise'",
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
+    }
+  },
   "SeriesModule": {
     "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
     "type": {
@@ -4493,7 +4548,7 @@
       "isTypeAlias": true,
       "typeParams": ["M extends ModuleInstance = ModuleInstance"]
     },
-    "type": "RootModule<M> | AxisModule<M> | SeriesModule<M>"
+    "type": "RootModule<M> | AxisModule<M> | LegendModule<M> | SeriesModule<M>"
   },
   "FormatterOptions": {
     "meta": {},

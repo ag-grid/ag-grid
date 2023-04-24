@@ -5407,6 +5407,33 @@
   "OutputPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "ReducerOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
   "ProcessorOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
+  "Series": {
+    "id": { "type": { "returnType": "string", "optional": false } },
+    "type": { "type": { "returnType": "string", "optional": false } },
+    "toggleSeriesItem": {
+      "type": {
+        "arguments": { "itemId": "string", "enabled": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "toggleOtherSeriesItems": {
+      "type": {
+        "arguments": {
+          "series": "{ id: string; type: string; }",
+          "itemId": "string",
+          "enabled?": "boolean",
+          "preferredEnabled?": "boolean"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "getLegendData": {
+      "type": { "arguments": {}, "returnType": "any[]", "optional": false }
+    }
+  },
+  "SeriesGetter": {},
   "Page": {},
   "Column": {},
   "DimensionProps": {
@@ -5533,11 +5560,37 @@
   "LayoutListener": {},
   "LayoutProcessor": {},
   "Handler": { "meta": { "typeParams": ["T extends EventTypes"] } },
-  "LegendDatum": {
+  "ChartLegend": {
+    "attachLegend": {
+      "type": {
+        "arguments": { "node": "Node | null" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "destroy": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "data": { "type": { "returnType": "any", "optional": false } },
+    "item": {
+      "type": {
+        "returnType": "{\n        label: {\n            formatter?: (params: any) => string;\n        };\n    }",
+        "optional": false
+      }
+    },
+    "listeners": {
+      "type": { "returnType": "AgChartLegendListeners", "optional": false }
+    }
+  },
+  "ChartLegendDatum": {
+    "legendType": { "type": { "returnType": "string", "optional": false } },
+    "seriesId": { "type": { "returnType": "string", "optional": false } },
+    "enabled": { "type": { "returnType": "boolean", "optional": false } }
+  },
+  "CategoryLegendDatum": {
+    "legendType": { "type": { "returnType": "'category'", "optional": false } },
     "id": { "type": { "returnType": "string", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": false } },
-    "seriesId": { "type": { "returnType": "string", "optional": false } },
-    "enabled": { "type": { "returnType": "boolean", "optional": false } },
     "marker": {
       "type": {
         "returnType": "{\n        shape?: string | (new () => Marker);\n        fill: string;\n        stroke: string;\n        fillOpacity: number;\n        strokeOpacity: number;\n    }",
@@ -5549,7 +5602,9 @@
         "returnType": "{\n        text: string; // display name for the sub-component\n    }",
         "optional": false
       }
-    }
+    },
+    "seriesId": { "type": { "returnType": "string", "optional": false } },
+    "enabled": { "type": { "returnType": "boolean", "optional": false } }
   },
   "SeriesOptionsTypes": {},
   "AxesOptionsTypes": {},
@@ -5788,6 +5843,9 @@
   "LineContext": {},
   "ScatterNodeDatum": {
     "label": { "type": { "returnType": "MeasuredLabel", "optional": false } },
+    "fill": {
+      "type": { "returnType": "string | undefined", "optional": false }
+    },
     "xKey": { "type": { "returnType": "string", "optional": false } },
     "yKey": { "type": { "returnType": "string", "optional": false } },
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
@@ -5970,6 +6028,7 @@
     }
   },
   "TooltipPositionType": {},
+  "UpdateCallback": {},
   "Tick": {
     "labels": { "type": { "returnType": "string[]", "optional": false } }
   },
@@ -6175,6 +6234,9 @@
   "Listener": { "meta": { "typeParams": ["H extends Function"] } },
   "ModuleContext": {
     "scene": { "type": { "returnType": "Scene", "optional": false } },
+    "mode": {
+      "type": { "returnType": "'standalone' | 'integrated'", "optional": false }
+    },
     "interactionManager": {
       "type": { "returnType": "InteractionManager", "optional": false }
     },
@@ -6189,6 +6251,9 @@
     },
     "tooltipManager": {
       "type": { "returnType": "TooltipManager", "optional": false }
+    },
+    "dataService": {
+      "type": { "returnType": "DataService", "optional": false }
     },
     "layoutService": {
       "type": {
@@ -6204,6 +6269,9 @@
     "parent": { "type": { "returnType": "P", "optional": false } },
     "meta": { "typeParams": ["P"] },
     "scene": { "type": { "returnType": "Scene", "optional": false } },
+    "mode": {
+      "type": { "returnType": "'standalone' | 'integrated'", "optional": false }
+    },
     "interactionManager": {
       "type": { "returnType": "InteractionManager", "optional": false }
     },
@@ -6218,6 +6286,9 @@
     },
     "tooltipManager": {
       "type": { "returnType": "TooltipManager", "optional": false }
+    },
+    "dataService": {
+      "type": { "returnType": "DataService", "optional": false }
     },
     "layoutService": {
       "type": {
@@ -6265,6 +6336,14 @@
     }
   },
   "SeriesFactory": {},
+  "LegendModuleContext": {
+    "legendFactory": {
+      "type": {
+        "returnType": "{\n        add(factory: (ctx: ModuleContext) => ChartLegend): void;\n        delete(): void;\n    }",
+        "optional": false
+      }
+    }
+  },
   "SeriesContext": {
     "seriesFactory": {
       "type": {
@@ -6335,6 +6414,27 @@
     "initialiseModule": {
       "type": {
         "arguments": { "ctx": "ModuleContextWithParent<AxisContext>" },
+        "returnType": "ModuleInstanceMeta<M>",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "optionsKey": { "type": { "returnType": "string", "optional": false } },
+    "packageType": {
+      "type": { "returnType": "'community' | 'enterprise'", "optional": false }
+    },
+    "chartTypes": {
+      "type": {
+        "returnType": "('cartesian' | 'polar' | 'hierarchy')[]",
+        "optional": false
+      }
+    }
+  },
+  "LegendModule": {
+    "type": { "type": { "returnType": "'legend'", "optional": false } },
+    "initialiseModule": {
+      "type": {
+        "arguments": { "ctx": "LegendModuleContext" },
         "returnType": "ModuleInstanceMeta<M>",
         "optional": false
       }

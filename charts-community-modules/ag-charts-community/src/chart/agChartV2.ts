@@ -47,7 +47,7 @@ import {
 import { SeriesOptionsTypes } from './mapping/defaults';
 import { CrossLine } from './crossline/crossLine';
 import { windowValue } from '../util/window';
-import { AxisModule, Module, RootModule } from '../util/module';
+import { AxisModule, LegendModule, Module, RootModule } from '../util/module';
 import { Logger } from '../util/logger';
 import { BackgroundImage } from './background/backgroundImage';
 
@@ -442,7 +442,7 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
         chart.autoSize = processedOptions.autoSize;
     }
     if (processedOptions.legend?.listeners) {
-        Object.assign(chart.legend.listeners, processedOptions.legend.listeners ?? {});
+        Object.assign(chart.legend!.listeners, processedOptions.legend.listeners ?? {});
     }
     if (processedOptions.listeners) {
         chart.updateAllSeriesListeners();
@@ -481,6 +481,13 @@ function applyModules(chart: Chart, options: AgChartOptions) {
             chart.removeModule(next);
         }
     }
+
+    const legendModules = REGISTERED_MODULES.filter((m): m is LegendModule => m.type === 'legend');
+    legendModules.forEach((next) => {
+        if (!chart.isLegendModuleEnabled(next)) {
+            chart.addLegendModule(next);
+        }
+    });
 
     return modulesChanged;
 }

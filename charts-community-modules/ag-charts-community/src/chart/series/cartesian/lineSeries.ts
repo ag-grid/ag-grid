@@ -5,7 +5,7 @@ import { SeriesNodeDatum, SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMo
 import { extent } from '../../../util/array';
 import { PointerEvents } from '../../../scene/node';
 import { Text } from '../../../scene/shape/text';
-import { LegendDatum } from '../../legendDatum';
+import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import {
     CartesianSeries,
     CartesianSeriesMarker,
@@ -537,14 +537,16 @@ export class LineSeries extends CartesianSeries<LineContext> {
         return toTooltipHtml(defaults);
     }
 
-    getLegendData(): LegendDatum[] {
+    getLegendData(): ChartLegendDatum[] {
         const { id, data, xKey, yKey, yName, visible, title, marker, stroke, strokeOpacity } = this;
 
         if (!(data && data.length && xKey && yKey)) {
             return [];
         }
-        return [
+
+        const legendData: CategoryLegendDatum[] = [
             {
+                legendType: 'category',
                 id: id,
                 itemId: yKey,
                 seriesId: id,
@@ -561,6 +563,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 },
             },
         ];
+        return legendData;
     }
 
     protected isLabelEnabled() {
