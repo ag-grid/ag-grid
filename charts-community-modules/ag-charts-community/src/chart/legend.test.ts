@@ -101,11 +101,6 @@ describe('Legend', () => {
         });
     });
 
-    // Coords for `Chrome` legend item
-    const legendItemCoords = { x: 720, y: 284 };
-    const clickLegendItem = clickAction(legendItemCoords.x, legendItemCoords.y);
-    const doubleClickLegendItem = doubleClickAction(legendItemCoords.x, legendItemCoords.y);
-
     describe('Clicking a legend', () => {
         it('should hide the related series', async () => {
             const options = {
@@ -117,7 +112,9 @@ describe('Legend', () => {
             chart = deproxy(AgChart.create(options)) as CartesianChart;
 
             await waitForChartStability(chart);
-            await clickLegendItem(chart);
+
+            const { x, y } = chart.legend.computeBBox();
+            await clickAction(x, y)(chart);
 
             await compare(chart);
         });
@@ -132,9 +129,11 @@ describe('Legend', () => {
             chart = deproxy(AgChart.create(options)) as CartesianChart;
 
             await waitForChartStability(chart);
-            await clickLegendItem(chart);
+            const { x, y } = chart.legend.computeBBox();
+
+            await clickAction(x, y)(chart);
             await waitForChartStability(chart);
-            await clickLegendItem(chart);
+            await clickAction(x, y)(chart);
 
             await compare(chart);
         });
@@ -151,7 +150,9 @@ describe('Legend', () => {
             chart = deproxy(AgChart.create(options)) as CartesianChart;
 
             await waitForChartStability(chart);
-            await doubleClickLegendItem(chart);
+            const { x, y } = chart.legend.computeBBox();
+
+            await doubleClickAction(x, y)(chart);
 
             await compare(chart);
         });
@@ -166,14 +167,16 @@ describe('Legend', () => {
             chart = deproxy(AgChart.create(options)) as CartesianChart;
 
             await waitForChartStability(chart);
-            await doubleClickLegendItem(chart);
+            const { x, y } = chart.legend.computeBBox();
+
+            await doubleClickAction(x, y)(chart);
             await waitForChartStability(chart);
 
             // Click the legend item again for some reason... why does this test require this?
-            await clickLegendItem(chart);
+            await clickAction(x, y)(chart);
             await waitForChartStability(chart);
 
-            await doubleClickLegendItem(chart);
+            await doubleClickAction(x, y)(chart);
 
             await compare(chart);
         });

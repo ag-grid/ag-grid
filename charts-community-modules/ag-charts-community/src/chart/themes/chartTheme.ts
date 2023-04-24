@@ -38,7 +38,7 @@ export interface ChartThemeParams {
 
 const BOLD: FontWeight = 'bold';
 const INSIDE: AgBarSeriesLabelOptions['placement'] = 'inside';
-const RIGHT: AgChartLegendPosition = 'right';
+const BOTTOM: AgChartLegendPosition = 'bottom';
 export class ChartTheme {
     readonly palette: AgChartThemePalette;
 
@@ -262,7 +262,7 @@ export class ChartTheme {
             },
             legend: {
                 enabled: true,
-                position: RIGHT,
+                position: BOTTOM,
                 spacing: 20,
                 listeners: {},
                 item: {
