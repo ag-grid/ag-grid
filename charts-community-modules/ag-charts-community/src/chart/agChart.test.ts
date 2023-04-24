@@ -135,8 +135,8 @@ describe('update', () => {
         expect(chart.title!.fontFamily).toBe(theme.config.cartesian.title.fontFamily);
         expect(chart.title!.fontStyle).toBe(theme.config.cartesian.title.fontStyle);
         expect(chart.title!.fontWeight).toBe(theme.config.cartesian.title.fontWeight);
-        expect(chart.subtitle!.text).toBe('My Subtitle');
-        expect(chart.subtitle!.fontSize).toBe(20);
+        expect(chart.subtitle!.text).toBe(theme.config.cartesian.subtitle.text);
+        expect(chart.subtitle!.fontSize).toBe(theme.config.cartesian.subtitle.fontSize);
         expect(chart.subtitle!.enabled).toBe(false);
         expect((chart as any).background.fill).toBe('red');
         expect((chart as any).background.visible).toBe(false);
@@ -173,8 +173,8 @@ describe('update', () => {
         expect(chart.title!.fontWeight).toBe(theme.config.cartesian.title.fontWeight);
 
         expect(chart.subtitle!.enabled).toBe(false);
-        expect(chart.subtitle!.text).toBe('My Subtitle');
-        expect(chart.subtitle!.fontSize).toBe(20);
+        expect(chart.subtitle!.text).toBe(theme.config.cartesian.subtitle.text);
+        expect(chart.subtitle!.fontSize).toBe(theme.config.cartesian.subtitle.fontSize);
     });
 
     test('series', async () => {
