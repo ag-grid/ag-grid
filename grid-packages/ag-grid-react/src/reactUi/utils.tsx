@@ -52,13 +52,18 @@ export const FlushSyncToggle = {
     off: () => agFlushSyncActive = false
 }
 
+// Avoid using nested flushSync calls, as this causes error messages in the console.
+let activeFlushSyncs = 0;
+
 /**
  * Wrapper around flushSync to provide backwards compatibility with React 16-17
  * @param fn 
  */
 export const agFlushSync = (fn: () => void) => {
-    if (createRootAndFlushSyncAvailable && agFlushSyncActive) {
+    if (createRootAndFlushSyncAvailable && agFlushSyncActive && activeFlushSyncs === 0) {
+        activeFlushSyncs++;
         (ReactDOM as any).flushSync(fn);
+        activeFlushSyncs--;
     } else {
         fn();
     }
