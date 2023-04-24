@@ -100,13 +100,15 @@ export class GradientLegend {
     @Validate(NUMBER(0))
     spacing = 20;
 
-    gradientBar = new GradientBar();
+    private gradientBar = new GradientBar();
 
     readonly item = new GradientLegendItem();
 
     data: GradientLegendDatum[] = [];
 
     listeners: any = {};
+
+    private destroyFns: Function[] = [];
 
     private readonly layoutService: _ModuleSupport.ModuleContext['layoutService'];
 
@@ -126,8 +128,6 @@ export class GradientLegend {
     destroy() {
         this.destroyFns.forEach((f) => f());
     }
-
-    private destroyFns: Function[] = [];
 
     attachLegend(node: _Scene.Node) {
         node.append(this.group);
