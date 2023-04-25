@@ -6263,6 +6263,12 @@
     },
     "updateService": {
       "type": { "returnType": "UpdateService", "optional": false }
+    },
+    "optionsConstructors": {
+      "type": {
+        "returnType": "{\n        add(path: string, constructor: new () => any): void;\n        delete(path: string): void;\n    }",
+        "optional": false
+      }
     }
   },
   "ModuleContextWithParent": {
@@ -6298,6 +6304,12 @@
     },
     "updateService": {
       "type": { "returnType": "UpdateService", "optional": false }
+    },
+    "optionsConstructors": {
+      "type": {
+        "returnType": "{\n        add(path: string, constructor: new () => any): void;\n        delete(path: string): void;\n    }",
+        "optional": false
+      }
     }
   },
   "AxisContext": {

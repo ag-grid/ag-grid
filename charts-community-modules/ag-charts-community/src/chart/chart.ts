@@ -36,6 +36,7 @@ import { ChartLegendDatum, ChartLegend } from './legendDatum';
 import { Logger } from '../util/logger';
 import { ActionOnSet } from '../util/proxy';
 import { ChartHighlight } from './chartHighlight';
+import { jsonApplyPlugins } from './chartOptions';
 
 type OptionalHTMLElement = HTMLElement | undefined | null;
 
@@ -363,6 +364,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
             layoutService,
             updateService,
             mode,
+            optionsConstructors: {
+                add: (path, ctor) => (jsonApplyPlugins.constructors[path] = ctor),
+                delete: (path) => delete jsonApplyPlugins.constructors[path],
+            },
         };
     }
 
