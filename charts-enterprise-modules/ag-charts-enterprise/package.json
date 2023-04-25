@@ -1,5 +1,5 @@
 {
-    "name": "@ag-charts-enterprise/core",
+    "name": "@ag-charts-enterprise/ag-charts-enterprise",
     "version": "7.3.0",
     "description": "Advanced Charting / Charts supporting Javascript / Typescript / React / Angular / Vue",
     "main": "./dist/cjs/es5/main.js",
@@ -17,7 +17,7 @@
         "build": "npx gulp copy-license-files && npm run build-cjs && npm run build-esm && npm run hash",
         "build-prod": "npx gulp copy-license-files && npm run build-cjs-prod && npm run build-esm-prod && npm run hash",
         "hash": "sh ../../scripts/hashDirectory.sh > .hash",
-        "install-hooks": "cd .. && husky install core/.husky",
+        "install-hooks": "cd ../.. && husky install charts-enterprise-modules/core/.husky",
         "lint": "run-s lint:*",
         "lint:prettier": "npx prettier -c .",
         "lint:eslint": "npx eslint src/ --ext .js,.ts",
