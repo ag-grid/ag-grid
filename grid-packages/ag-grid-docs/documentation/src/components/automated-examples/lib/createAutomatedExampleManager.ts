@@ -25,6 +25,7 @@ export function createAutomatedExampleManager({ debugCanvasClassname, debugPanel
 
     const updateState = (state: AutomatedExampleState) => {
         exampleDebuggerManager.log(`${logId} state: ${state}`);
+        exampleDebuggerManager.updateManagerState(state);
         automatedExampleState = state;
     };
 

@@ -1,4 +1,5 @@
 import { AUTOMATED_EXAMPLE_MANAGER_ID, INTEGRATED_CHARTS_ID, ROW_GROUPING_ID } from './constants';
+import { AutomatedExampleState } from './createAutomatedExampleManager';
 import { createPen } from './createPen';
 import { Point } from './geometry';
 import { getStyledConsoleMessageConfig } from './getStyledConsoleMessageConfig';
@@ -28,6 +29,7 @@ const STATE_CLASSNAME = 'state';
 const STEP_CLASSNAME = 'step';
 const PAUSED_STATE_CLASSNAME = 'paused-state';
 const MOUSE_POSITION_CLASSNAME = 'mouse-position';
+const MANAGER_STATE_CLASSNAME = 'manager-state';
 const getCheckboxTemplate = (isChecked?: boolean) => `
     <label class="draw-checkbox">
         <input type="checkbox" ${isChecked ? 'checked' : ''} /> Draw
@@ -193,10 +195,18 @@ function createDebugPanel(classname: string) {
         mousePositionEl.innerHTML = `${pos.x}, ${pos.y}`;
     });
 
+    const managerStateEl = document.createElement('div');
+    managerStateEl.classList.add(MANAGER_STATE_CLASSNAME);
+    const updateManagerStateText = (state: string) => {
+        managerStateEl.innerHTML = state;
+    };
+
     debugPanelEl.appendChild(mousePositionEl);
+    debugPanelEl.appendChild(managerStateEl);
 
     return {
         debugPanelEl,
+        updateManagerStateText,
         addSection: ({
             id,
             initialDraw,
@@ -326,6 +336,12 @@ export function createScriptDebuggerManager({
         return debugLogLevel;
     };
 
+    const ensureDebugPanel = () => {
+        if (!debugPanel) {
+            debugPanel = createDebugPanel(panelClassname);
+        }
+    };
+
     return {
         infoLog: (...args) => {
             if (!isValidLogLevel('info', debugLogLevel)) {
@@ -370,9 +386,7 @@ export function createScriptDebuggerManager({
                 return;
             }
 
-            if (!debugPanel) {
-                debugPanel = createDebugPanel(panelClassname);
-            }
+            ensureDebugPanel();
 
             const scriptDebugger = createScriptDebugger({
                 id,
@@ -384,6 +398,15 @@ export function createScriptDebuggerManager({
             });
 
             return scriptDebugger;
+        },
+        updateManagerState: (state: AutomatedExampleState) => {
+            if (!isEnabled) {
+                return;
+            }
+
+            ensureDebugPanel();
+
+            debugPanel.updateManagerStateText(state);
         },
     };
 }

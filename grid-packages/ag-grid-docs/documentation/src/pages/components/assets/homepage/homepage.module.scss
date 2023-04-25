@@ -317,6 +317,17 @@ gatsby-fast-refresh {
             color: var(--dull-light-gray);
         }
     }
+
+    :global(.manager-state) {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        &::before {
+            content: 'Manager: ';
+            color: var(--dull-light-gray);
+        }
+    }
 }
 
 .automatedExampleDebugCanvas {
