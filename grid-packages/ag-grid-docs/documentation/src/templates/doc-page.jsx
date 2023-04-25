@@ -24,7 +24,6 @@ import { getProductType } from 'utils/page-header';
 import stripHtml from 'utils/strip-html';
 import DocumentationLink from '../components/DocumentationLink';
 import LearningVideos from '../components/LearningVideos';
-import { addNonBreakingSpaceBetweenLastWords } from '../utils/add-non-breaking-space-between-last-words';
 import { AGStyles } from './ag-styles';
 import styles from './doc-page.module.scss';
 
@@ -41,30 +40,6 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
 
     // handles [[only-xxxx blocks
     const ast = processFrameworkSpecificSections(page.htmlAst, framework);
-
-    const avoidOrphans = (child) => {
-        if (child.children && child.children.length > 0) {
-            const lastChild = child.children.slice(-1)[0];
-
-            if (lastChild.type === 'text') {
-                lastChild.value = addNonBreakingSpaceBetweenLastWords(lastChild.value);
-            }
-
-            child.children = child.children.map((child) => {
-                return avoidOrphans(child);
-            });
-        }
-
-        return child;
-    };
-
-    // Process ast, adding `&nbsp;` between last words to avoid typographic orphans
-    const orphanlessAst = {
-        ...ast,
-        children: ast.children.map((child) => {
-            return avoidOrphans(child);
-        }),
-    };
 
     const getExampleRunnerProps = (props, library) => ({
         ...props,
@@ -228,7 +203,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
                 </AGStyles>
 
                 {/* Wrapping div is a hack to target "intro" section of docs page */}
-                <div className={styles.pageSections}>{renderAst(orphanlessAst)}</div>
+                <div className={styles.pageSections}>{renderAst(ast)}</div>
             </div>
 
             {showSideMenu && <SideMenu
