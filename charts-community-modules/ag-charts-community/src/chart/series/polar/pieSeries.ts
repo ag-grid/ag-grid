@@ -747,6 +747,11 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     private datumSectorRefs = new WeakMap<PieNodeDatum, Sector>();
 
     private async updateNodes() {
+        const seriesBox = this.chart?.getSeriesRect();
+        if (seriesBox == null) {
+            return;
+        }
+
         const highlightedDatum = this.highlightManager?.getActiveHighlight();
         const isVisible = this.seriesItemEnabled.indexOf(true) >= 0;
         this.rootGroup.visible = isVisible;
@@ -809,7 +814,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         });
 
         this.updateCalloutLineNodes();
-        this.updateCalloutLabelNodes();
+        this.updateCalloutLabelNodes(seriesBox);
         this.updateSectorLabelNodes();
         this.updateInnerLabelNodes();
     }
@@ -865,12 +870,11 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         });
     }
 
-    private getLabelOverflow(text: string, box: BBox) {
-        const seriesBox = this.chart!.getSeriesRect()!;
-        const seriesLeft = seriesBox.x - this.centerX;
-        const seriesRight = seriesBox.x + seriesBox.width - this.centerX;
-        const seriesTop = seriesBox.y - this.centerY;
-        const seriesBottom = seriesBox.y + seriesBox.height - this.centerY;
+    private getLabelOverflow(text: string, box: BBox, seriesRect: BBox) {
+        const seriesLeft = seriesRect.x - this.centerX;
+        const seriesRight = seriesRect.x + seriesRect.width - this.centerX;
+        const seriesTop = seriesRect.y - this.centerY;
+        const seriesBottom = seriesRect.y + seriesRect.height - this.centerY;
         const errPx = 1; // Prevents errors related to floating point calculations
         let visibleTextPart = 1;
         if (box.x + errPx < seriesLeft) {
@@ -1012,7 +1016,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         avoidXCollisions(bottomLabels);
     }
 
-    updateCalloutLabelNodes() {
+    private updateCalloutLabelNodes(seriesRect: BBox) {
         const { radiusScale, calloutLabel, calloutLine } = this;
         const calloutLength = calloutLine.length;
         const { offset, color } = calloutLabel;
@@ -1037,7 +1041,11 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             // Detect text overflow
             this.setTextDimensionalProps(tempTextNode, x, y, this.calloutLabel, label);
             const box = tempTextNode.computeBBox();
-            const { visibleTextPart, textLength, hasVerticalOverflow } = this.getLabelOverflow(label.text, box);
+            const { visibleTextPart, textLength, hasVerticalOverflow } = this.getLabelOverflow(
+                label.text,
+                box,
+                seriesRect
+            );
             const displayText = visibleTextPart === 1 ? label.text : `${label.text.substring(0, textLength)}…`;
 
             this.setTextDimensionalProps(text, x, y, this.calloutLabel, { ...label, text: displayText });
@@ -1046,7 +1054,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         });
     }
 
-    computeLabelsBBox(options: { hideWhenNecessary: boolean }): BBox | null {
+    computeLabelsBBox(options: { hideWhenNecessary: boolean }, seriesRect: BBox): BBox | null {
         const { radiusScale, calloutLabel, calloutLine } = this;
         const calloutLength = calloutLine.length;
         const { offset, maxCollisionOffset } = calloutLabel;
@@ -1076,7 +1084,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 }
 
                 if (options.hideWhenNecessary) {
-                    const { textLength, hasVerticalOverflow } = this.getLabelOverflow(label.text, box);
+                    const { textLength, hasVerticalOverflow } = this.getLabelOverflow(label.text, box, seriesRect);
                     const isTooShort = label.text.length > 2 && textLength < 2;
 
                     if (hasVerticalOverflow || isTooShort) {

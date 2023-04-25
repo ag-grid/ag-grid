@@ -68,7 +68,7 @@ export class PolarChart extends Chart {
 
         const shake = ({ hideWhenNecessary = false } = {}) => {
             const labelBoxes = polarSeries
-                .map((series) => series.computeLabelsBBox({ hideWhenNecessary }))
+                .map((series) => series.computeLabelsBBox({ hideWhenNecessary }, seriesBox))
                 .filter((box) => box != null) as BBox[];
             if (labelBoxes.length === 0) {
                 setSeriesCircle(centerX, centerY, initialRadius);
