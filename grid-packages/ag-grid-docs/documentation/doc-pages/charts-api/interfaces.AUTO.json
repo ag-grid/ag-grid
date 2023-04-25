@@ -3751,6 +3751,7 @@
   "ChartLegend": {
     "meta": {},
     "type": {
+      "computeBBox()": "BBox",
       "attachLegend(node: Node | null)": "void",
       "destroy()": "void",
       "data": "any",

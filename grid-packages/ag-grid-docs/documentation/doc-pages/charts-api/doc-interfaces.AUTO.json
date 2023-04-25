@@ -5561,6 +5561,9 @@
   "LayoutProcessor": {},
   "Handler": { "meta": { "typeParams": ["T extends EventTypes"] } },
   "ChartLegend": {
+    "computeBBox": {
+      "type": { "arguments": {}, "returnType": "BBox", "optional": false }
+    },
     "attachLegend": {
       "type": {
         "arguments": { "node": "Node | null" },

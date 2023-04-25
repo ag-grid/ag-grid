@@ -19,7 +19,7 @@ import { seedRandom } from './test/random';
 
 expect.extend({ toMatchImageSnapshot });
 
-function buildSeries(data) {
+function buildSeries(data: { x: number; y: number }) {
     return {
         data: [data],
         xKey: 'x',
@@ -28,7 +28,7 @@ function buildSeries(data) {
     };
 }
 
-const SERIES = [];
+const SERIES: { data: { x: number; y: number }[]; xKey: string; yKey: string; yName: string }[] = [];
 const seriesDataRandom = seedRandom(10763960837);
 
 for (let i = 0; i < 200; i++) {
@@ -113,7 +113,7 @@ describe('Legend', () => {
 
             await waitForChartStability(chart);
 
-            const { x, y } = chart.legend.computeBBox();
+            const { x = 0, y = 0 } = chart.legend?.computeBBox() ?? {};
             await clickAction(x, y)(chart);
 
             await compare(chart);
@@ -129,7 +129,7 @@ describe('Legend', () => {
             chart = deproxy(AgChart.create(options)) as CartesianChart;
 
             await waitForChartStability(chart);
-            const { x, y } = chart.legend.computeBBox();
+            const { x = 0, y = 0 } = chart.legend?.computeBBox() ?? {};
 
             await clickAction(x, y)(chart);
             await waitForChartStability(chart);
@@ -150,7 +150,7 @@ describe('Legend', () => {
             chart = deproxy(AgChart.create(options)) as CartesianChart;
 
             await waitForChartStability(chart);
-            const { x, y } = chart.legend.computeBBox();
+            const { x = 0, y = 0 } = chart.legend?.computeBBox() ?? {};
 
             await doubleClickAction(x, y)(chart);
 
@@ -167,7 +167,7 @@ describe('Legend', () => {
             chart = deproxy(AgChart.create(options)) as CartesianChart;
 
             await waitForChartStability(chart);
-            const { x, y } = chart.legend.computeBBox();
+            const { x = 0, y = 0 } = chart.legend?.computeBBox() ?? {};
 
             await doubleClickAction(x, y)(chart);
             await waitForChartStability(chart);
