@@ -43,6 +43,7 @@ export function prepareTestOptions<T extends AgChartOptions<any, any>>(options: 
     options.width = CANVAS_WIDTH;
     options.height = CANVAS_HEIGHT;
     options.container = container;
+    return options;
 }
 
 export function deproxy(chartOrProxy: Chart | AgChartInstance): Chart {

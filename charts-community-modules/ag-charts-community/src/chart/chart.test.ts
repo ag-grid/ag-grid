@@ -1,5 +1,9 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
+import { Node } from '../scene/node';
+import { Selection } from '../scene/selection';
+import { Rect } from '../scene/shape/rect';
+import { Sector } from '../scene/shape/sector';
 import {
     AgAreaSeriesOptions,
     AgBarSeriesOptions,
@@ -13,6 +17,7 @@ import {
 } from './agChartOptions';
 import { AgChart } from './agChartV2';
 import { Chart } from './chart';
+import { Circle } from './marker/circle';
 import {
     waitForChartStability,
     setupMockCanvas,
@@ -376,6 +381,95 @@ describe('Chart', () => {
                 return series.highlightGroup.children.find((child: any) => child?.datum === highlightedDatum)
                     .children[0];
             },
+        });
+    });
+
+    describe('Chart data change', () => {
+        const testDataUpdate = async (testOptions: { seriesOptions: any; getNodes: (chart: Chart) => Node[] }) => {
+            const chartOptions = prepareTestOptions({
+                data: [],
+                series: [testOptions.seriesOptions],
+            });
+            const chartProxy = AgChart.create(chartOptions);
+            const chart = deproxy(chartProxy);
+            await waitForChartStability(chart);
+            expect(testOptions.getNodes(chart).length).toEqual(0);
+
+            AgChart.updateDelta(chartProxy, {
+                data: datasets.economy.data,
+            });
+            await waitForChartStability(chart);
+            expect(testOptions.getNodes(chart).length).toEqual(3);
+
+            AgChart.updateDelta(chartProxy, {
+                data: datasets.economy.data.slice(0, 2),
+            });
+            await waitForChartStability(chart);
+            expect(testOptions.getNodes(chart).length).toEqual(2);
+
+            AgChart.updateDelta(chartProxy, {
+                data: datasets.economy.data,
+            });
+            await waitForChartStability(chart);
+            expect(testOptions.getNodes(chart).length).toEqual(3);
+        };
+
+        it('Line Chart should render correctly after update', async () => {
+            await testDataUpdate({
+                seriesOptions: {
+                    type: 'line',
+                    xKey: datasets.economy.categoryKey,
+                    yKey: datasets.economy.valueKey,
+                },
+                getNodes: (chart) => Selection.selectByClass(chart.series[0].rootGroup, Circle),
+            });
+        });
+
+        it('Column Chart should render correctly after update', async () => {
+            await testDataUpdate({
+                seriesOptions: {
+                    type: 'column',
+                    xKey: datasets.economy.categoryKey,
+                    yKey: datasets.economy.valueKey,
+                },
+                getNodes: (chart) => Selection.selectByClass(chart.series[0].rootGroup, Rect),
+            });
+        });
+
+        it('Area Chart should render correctly after update', async () => {
+            await testDataUpdate({
+                seriesOptions: {
+                    type: 'area',
+                    xKey: datasets.economy.categoryKey,
+                    yKey: datasets.economy.valueKey,
+                    marker: {
+                        enabled: true,
+                    },
+                },
+                getNodes: (chart) => Selection.selectByClass(chart.series[0].rootGroup, Circle),
+            });
+        });
+
+        it('Scatter Chart should render correctly after update', async () => {
+            await testDataUpdate({
+                seriesOptions: {
+                    type: 'scatter',
+                    xKey: datasets.economy.valueKey,
+                    yKey: datasets.economy.valueKey,
+                },
+                getNodes: (chart) => Selection.selectByClass(chart.series[0].rootGroup, Circle),
+            });
+        });
+
+        it('Pie Chart should render correctly after update', async () => {
+            await testDataUpdate({
+                seriesOptions: {
+                    type: 'pie',
+                    calloutLabelKey: datasets.economy.categoryKey,
+                    angleKey: datasets.economy.valueKey,
+                },
+                getNodes: (chart) => Selection.selectByClass(chart.series[0].contentGroup, Sector),
+            });
         });
     });
 });
