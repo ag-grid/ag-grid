@@ -54,6 +54,7 @@ var newReactComponent_1 = require("../shared/newReactComponent");
 var portalManager_1 = require("../shared/portalManager");
 var gridComp_1 = __importDefault(require("./gridComp"));
 var reactFrameworkOverrides_1 = require("../shared/reactFrameworkOverrides");
+var utils_1 = require("./utils");
 function debug(msg, obj) {
     // console.log(msg, obj);
 }
@@ -80,6 +81,8 @@ var AgGridReactUi = /** @class */ (function (_super) {
         if (this.state.context) {
             this.renderedAfterMount = true;
         }
+        utils_1.FlushSyncToggle.off();
+        setTimeout(function () { return utils_1.FlushSyncToggle.on(); }, 0);
         return (react_1.default.createElement("div", { style: this.createStyleForDiv(), className: this.props.className, ref: this.eGui },
             this.state.context && react_1.default.createElement(gridComp_1.default, { context: this.state.context }),
             this.portalManager.getPortals()));

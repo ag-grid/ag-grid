@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.agFlushSync = exports.isComponentStateless = exports.CssClasses = exports.classesList = void 0;
+exports.agFlushSync = exports.FlushSyncToggle = exports.isComponentStateless = exports.CssClasses = exports.classesList = void 0;
 const react_dom_1 = __importDefault(require("react-dom"));
 exports.classesList = (...list) => {
     const filtered = list.filter(s => s != null && s !== '');
@@ -42,13 +42,22 @@ exports.isComponentStateless = (Component) => {
 };
 // CreateRoot is only available from React 18, which if used requires us to use flushSync.
 const createRootAndFlushSyncAvailable = react_dom_1.default.createRoot != null && react_dom_1.default.flushSync != null;
+var agFlushSyncActive = true;
+exports.FlushSyncToggle = {
+    on: () => agFlushSyncActive = true,
+    off: () => agFlushSyncActive = false
+};
+// Avoid using nested flushSync calls, as this causes error messages in the console.
+let activeFlushSyncs = 0;
 /**
  * Wrapper around flushSync to provide backwards compatibility with React 16-17
  * @param fn
  */
 exports.agFlushSync = (fn) => {
-    if (createRootAndFlushSyncAvailable) {
+    if (createRootAndFlushSyncAvailable && agFlushSyncActive && activeFlushSyncs === 0) {
+        activeFlushSyncs++;
         react_dom_1.default.flushSync(fn);
+        activeFlushSyncs--;
     }
     else {
         fn();
