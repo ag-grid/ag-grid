@@ -197,7 +197,7 @@ export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }:
                         })
                         ?.getPos(),
                     {
-                        x: -40,
+                        x: 40,
                         y: 10,
                     }
                 );
@@ -215,7 +215,7 @@ export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }:
                         })
                         ?.getPos(),
                     {
-                        x: 0,
+                        x: 10,
                         y: 10,
                     }
                 ),
@@ -233,7 +233,7 @@ export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }:
                         })
                         ?.getPos(),
                     {
-                        x: -40,
+                        x: 40,
                         y: 10,
                     }
                 ),
