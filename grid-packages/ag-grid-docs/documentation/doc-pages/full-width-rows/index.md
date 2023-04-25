@@ -51,18 +51,15 @@ The `isFullWidthRow(params)` callback receives a `params` object containing the 
 
 ## Sorting and Filtering
 
-
 Sorting and Filtering are NOT impacted by full width. Full width is a rendering time feature. The sorting
 and filtering applied to the data is done before rendering and is not impacted.
 
 ## Detailed Full Width Example
 
 Below shows a detailed full width example including pinned rows and columns.
-The example's data is minimalistic to focus on how
-the full width impacts rows. For demonstration, the pinned rows are shaded blue (with
-full width a darker shade of blue) and body full width rows are green.
-The following points should be noted:
+The example's data is minimalistic to focus on how the full width impacts rows. For demonstration, the pinned rows are shaded blue (with full width a darker shade of blue) and body full width rows are green.
 
+The following points should be noted:
 
 - Full width can be applied to any row, including pinned rows. The example demonstrates full width in pinned top, pinned bottom and body rows.
 
@@ -78,6 +75,20 @@ The following points should be noted:
 
 <grid-example title='Basic Full Width' name='basic-full-width' type='generated' options=' { "exampleHeight" : 595 }'></grid-example>
 
+## Embedded Full Width Rows
+
+By default, Full Width Rows remain in place while the grid is scrolled horizontally. However, this may be undesirable 
+for some applications which need to horizontally scroll the full-width rows together the rest of the rows.
+
+In order to have Full Width Rows scroll like normal rows, set `embedFullWidthRows=true` in the gridOptions.
+
+The example below demonstrates the behaviour when Full Width Rows are embedded in the same container as regular rows. Note the following:
+
+- A different instance of the Full Width Cell Renderer is created for each one of the following sections: **Pinned Left**, **Pinned Right**, **Non Pinned**.
+- Full Width Rows in the **non pinned** section take the whole width of the section and scroll horizontally.
+- Full Width Rows in the **pinned** sections take the whole width of the section.
+
+<grid-example title='Embedded Full Width Rows' name='embedded-full-width' type='generated' options=' { "exampleHeight" : 595 }'></grid-example>
 
 ## Full Width Keyboard Navigation
 

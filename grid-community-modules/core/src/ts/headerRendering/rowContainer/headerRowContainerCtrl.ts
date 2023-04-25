@@ -167,7 +167,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
     private setupCenterWidth(): void {
         if (this.pinned != null) { return; }
 
-        this.createManagedBean(new CenterWidthFeature(width => this.comp.setCenterWidth(`${width}px`)));
+        this.createManagedBean(new CenterWidthFeature(width => this.comp.setCenterWidth(`${width}px`), true));
     }
 
     public setHorizontalScroll(offset: number): void {

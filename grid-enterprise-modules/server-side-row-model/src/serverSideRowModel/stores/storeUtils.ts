@@ -74,7 +74,7 @@ export class StoreUtils extends BeanStub {
         }, 0);
     }
 
-    public getChildStore(keys: string[], currentCache: IServerSideStore, findNodeFunc: (key: string) => RowNode): IServerSideStore | null {
+    public getChildStore(keys: string[], currentCache: IServerSideStore, findNodeFunc: (key: string) => RowNode | null): IServerSideStore | null {
         if (_.missingOrEmpty(keys)) { return currentCache; }
 
         const nextKey = keys[0];

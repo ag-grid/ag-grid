@@ -10,7 +10,7 @@
     }
 
     nav li:not(:last-child) {
-        margin-bottom: ds.$size-half;
+        margin-bottom: ds.$size-half !important; // !important for .ag-styles specificity
     }
 
     hr {
@@ -29,7 +29,7 @@
         }
 
         nav li:not(:last-child) {
-            margin-bottom: ds.$size-1;
+            margin-bottom: ds.$size-1 !important; // !important for .ag-styles specificity
             line-height: var(--line-height-tight);
         }
     }

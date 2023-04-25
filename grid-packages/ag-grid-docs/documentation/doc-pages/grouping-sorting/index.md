@@ -95,21 +95,21 @@ For example, consider the following column definition:
 <api-documentation source='column-properties/properties.json' section='sort' names='["comparator"]'></api-documentation>
 
 <snippet>
-|const gridOptions = {
-|    columnDefs: [
-|        {
-|            field: 'month',
-|            rowGroup: true,
-|            comparator: (a, b) => {
-|                const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 
-|                                'August', 'September','October', 'November', 'December'];
-|
-|                // sorts 'months' in chronological order
-|                return months.indexOf(a) - months.indexOf(b);
-|            },
-|        },
-|    ],
-|}
+| const gridOptions = {
+|     columnDefs: [
+|         {
+|             field: 'month',
+|             rowGroup: true,
+|             comparator: (a, b) => {
+|                 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 
+|                                 'August', 'September','October', 'November', 'December'];
+| 
+|                 // sorts 'months' in chronological order
+|                 return months.indexOf(a) - months.indexOf(b);
+|             },
+|         },
+|     ],
+| }
 </snippet>
 
 As `rowGroup = true` is defined on this column, the supplied `comparator` will be used to sort the `month` column and 
@@ -130,7 +130,7 @@ The following example demonstrates custom group sorting. Note the following:
 When sorting on non-group columns it may be desirable to maintain the existing group order. This behaviour can be
 enabled through the `groupMaintainOrder` grid option as shown below:
 
-<snippet>
+<snippet spaceBetweenProperties="true">
 const gridOptions = {
     columnDefs: [
         { field: 'assignee', rowGroup: true, hide: true },

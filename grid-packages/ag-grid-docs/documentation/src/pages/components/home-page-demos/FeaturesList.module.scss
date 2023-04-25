@@ -1,0 +1,67 @@
+@use '../../../design-system' as *;
+
+.featuresListOuter {
+    margin-top: $size-8 !important; // !important for .ag-styles specificity
+
+    p {
+        text-align: center;
+        margin-bottom: $size-4 !important; // !important for .ag-styles specificity
+    }
+}
+
+.featuresList {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: $size-2 0;
+}
+
+.itemGroup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $size-2 0;
+    width: 100%;
+
+    @media screen and (min-width: 600px) {
+        width: 50%;
+
+        &:nth-child(odd) {
+            align-items: flex-start;
+        }
+
+        &:nth-child(even) {
+            align-items: flex-end;
+        }
+    }
+
+    @media screen and (min-width: 1020px) {
+        width: auto;
+
+        &:nth-child(even) {
+            align-items: flex-start;
+        }
+    }
+}
+
+.featureItem {
+    display: flex;
+    gap: 0 $size-half;
+    transition: color $default-transition-timing;
+}
+
+.icon {
+    width: $size-5;
+    height: $size-5;
+    fill: var(--medium-electric-blue);
+    transition: fill $default-transition-timing;
+
+    .featureItem:hover & {
+        fill: var(--ag-grid-orange);
+    }
+
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+}

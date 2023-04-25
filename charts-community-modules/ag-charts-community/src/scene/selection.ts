@@ -61,7 +61,7 @@ export class Selection<TChild extends Node = Node, TDatum = any> {
         return this;
     }
 
-    select<T extends Node = Node>(predicate: (node: Node) => boolean): T[] {
+    static selectAll<T extends Node = Node>(parent: Node, predicate: (node: Node) => boolean): T[] {
         const results: T[] = [];
         const traverse = (node: Node) => {
             if (predicate(node)) {
@@ -69,8 +69,20 @@ export class Selection<TChild extends Node = Node, TDatum = any> {
             }
             node.children.forEach(traverse);
         };
-        traverse(this._parent);
+        traverse(parent);
         return results;
+    }
+
+    static selectByClass<T extends Node = Node>(node: Node, Class: new () => T): T[] {
+        return Selection.selectAll(node, (node) => node instanceof Class);
+    }
+
+    static selectByTag<T extends Node = Node>(node: Node, tag: number): T[] {
+        return Selection.selectAll(node, (node) => node.tag === tag);
+    }
+
+    select<T extends Node = Node>(predicate: (node: Node) => boolean): T[] {
+        return Selection.selectAll(this._parent, predicate);
     }
 
     selectByClass<T extends Node = Node>(Class: new () => T): T[] {

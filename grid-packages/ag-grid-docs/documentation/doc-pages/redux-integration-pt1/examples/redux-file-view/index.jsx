@@ -19,11 +19,14 @@ const comp =
     </Provider>
   </div>;
 
-const root = createRoot(rootDiv);
+let root = createRoot(rootDiv);
 root.render(comp);
 
 function reloadComponent() {
-  ReactDOM.unmountComponentAtNode(rootDiv);
+  root.unmount(rootDiv);
   // adding a slight delay so that reloading is noticeable!
-  setTimeout(() => render(comp, rootDiv), 50);
+  setTimeout(() => {
+    root = createRoot(rootDiv);
+    root.render(comp);
+  }, 50);
 }

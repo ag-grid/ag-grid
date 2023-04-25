@@ -93,6 +93,10 @@ export function createDataWorker() {
     let latestUpdateId = 0;
     let intervalId;
     function startUpdates(thisUpdateId) {
+        if (messageFrequency <= 0) {
+            return;
+        }
+
         function intervalFunc() {
             const updatedRecords = updateSomeRecords({
                 recordsToUpdate: currentRecords,
@@ -107,6 +111,7 @@ export function createDataWorker() {
             }
         }
 
+        clearInterval(intervalId);
         intervalId = setInterval(intervalFunc, messageFrequency);
     }
 
@@ -119,6 +124,8 @@ export function createDataWorker() {
                 return;
             }
             startUpdates(latestUpdateId);
+        } else if (message.type === 'stop') {
+            clearInterval(intervalId);
         } else if (message.type === 'updateConfig') {
             updatesPerMessage = message.data?.updatesPerMessage ?? updatesPerMessage;
             messageFrequency = message.data?.messageFrequency ?? messageFrequency;

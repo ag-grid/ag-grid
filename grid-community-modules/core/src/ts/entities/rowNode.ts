@@ -722,11 +722,18 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
      * @returns `True` if the value was changed, otherwise `False`.
      */
     public setDataValue(colKey: string | Column, newValue: any, eventSource?: string): boolean {
+        const getColumnFromKey = () => {
+            if (typeof colKey !== 'string') {
+                return colKey;
+            }
+            // if in pivot mode, grid columns wont include primary columns
+            return this.beans.columnModel.getGridColumn(colKey) ?? this.beans.columnModel.getPrimaryColumn(colKey);
+        }
         // When it is done via the editors, no 'cell changed' event gets fired, as it's assumed that
         // the cell knows about the change given it's in charge of the editing.
         // this method is for the client to call, so the cell listens for the change
         // event, and also flashes the cell when the change occurs.
-        const column = this.beans.columnModel.getGridColumn(colKey) as Column;
+        const column = getColumnFromKey()!;
         const oldValue = this.getValueFromValueService(column);
 
         if (this.beans.gridOptionsService.is('readOnlyEdit')) {

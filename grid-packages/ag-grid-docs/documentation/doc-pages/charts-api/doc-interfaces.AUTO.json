@@ -1092,7 +1092,7 @@
   },
   "AgChartOverlaysOptions": {
     "noData": {
-      "description": "/** An overlay to be displayed when there is no data, */",
+      "description": "/** An overlay to be displayed when there is no data. */",
       "type": { "returnType": "AgChartOverlayOptions", "optional": true }
     }
   },
@@ -1996,6 +1996,10 @@
     }
   },
   "AgAxisBaseTickOptions": {
+    "enabled": {
+      "description": "/** Set to false to hide the axis tick lines. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "width": {
       "description": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "type": { "returnType": "PixelSize", "optional": true }
@@ -2022,6 +2026,10 @@
     }
   },
   "AgAxisCategoryTickOptions": {
+    "enabled": {
+      "description": "/** Set to false to hide the axis tick lines. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "width": {
       "description": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "type": { "returnType": "PixelSize", "optional": true }
@@ -2056,6 +2064,10 @@
       "description": "/** The step value between ticks specified as a number. If the configured interval results in too many ticks given the chart size, it will be ignored.\n     */",
       "type": { "returnType": "number", "optional": true }
     },
+    "enabled": {
+      "description": "/** Set to false to hide the axis tick lines. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "width": {
       "description": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "type": { "returnType": "PixelSize", "optional": true }
@@ -2089,6 +2101,10 @@
     "interval": {
       "description": "/** The step value between ticks specified as a TimeInterval or a number. If the configured interval results in dense ticks given the data domain, the ticks will be removed.\n     */",
       "type": { "returnType": "any", "optional": true }
+    },
+    "enabled": {
+      "description": "/** Set to false to hide the axis tick lines. */",
+      "type": { "returnType": "boolean", "optional": true }
     },
     "width": {
       "description": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
@@ -2128,6 +2144,10 @@
     }
   },
   "AgAxisLabelOptions": {
+    "enabled": {
+      "description": "/** Set to false to hide the axis labels. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "fontStyle": {
       "description": "/** The font style to use for the labels. */",
       "type": { "returnType": "FontStyle", "optional": true }
@@ -5387,6 +5407,33 @@
   "OutputPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "ReducerOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
   "ProcessorOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
+  "Series": {
+    "id": { "type": { "returnType": "string", "optional": false } },
+    "type": { "type": { "returnType": "string", "optional": false } },
+    "toggleSeriesItem": {
+      "type": {
+        "arguments": { "itemId": "string", "enabled": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "toggleOtherSeriesItems": {
+      "type": {
+        "arguments": {
+          "series": "{ id: string; type: string; }",
+          "itemId": "string",
+          "enabled?": "boolean",
+          "preferredEnabled?": "boolean"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "getLegendData": {
+      "type": { "arguments": {}, "returnType": "any[]", "optional": false }
+    }
+  },
+  "SeriesGetter": {},
   "Page": {},
   "Column": {},
   "DimensionProps": {
@@ -5513,11 +5560,37 @@
   "LayoutListener": {},
   "LayoutProcessor": {},
   "Handler": { "meta": { "typeParams": ["T extends EventTypes"] } },
-  "LegendDatum": {
+  "ChartLegend": {
+    "attachLegend": {
+      "type": {
+        "arguments": { "node": "Node | null" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "destroy": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "data": { "type": { "returnType": "any", "optional": false } },
+    "item": {
+      "type": {
+        "returnType": "{\n        label: {\n            formatter?: (params: any) => string;\n        };\n    }",
+        "optional": false
+      }
+    },
+    "listeners": {
+      "type": { "returnType": "AgChartLegendListeners", "optional": false }
+    }
+  },
+  "ChartLegendDatum": {
+    "legendType": { "type": { "returnType": "string", "optional": false } },
+    "seriesId": { "type": { "returnType": "string", "optional": false } },
+    "enabled": { "type": { "returnType": "boolean", "optional": false } }
+  },
+  "CategoryLegendDatum": {
+    "legendType": { "type": { "returnType": "'category'", "optional": false } },
     "id": { "type": { "returnType": "string", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": false } },
-    "seriesId": { "type": { "returnType": "string", "optional": false } },
-    "enabled": { "type": { "returnType": "boolean", "optional": false } },
     "marker": {
       "type": {
         "returnType": "{\n        shape?: string | (new () => Marker);\n        fill: string;\n        stroke: string;\n        fillOpacity: number;\n        strokeOpacity: number;\n    }",
@@ -5529,7 +5602,9 @@
         "returnType": "{\n        text: string; // display name for the sub-component\n    }",
         "optional": false
       }
-    }
+    },
+    "seriesId": { "type": { "returnType": "string", "optional": false } },
+    "enabled": { "type": { "returnType": "boolean", "optional": false } }
   },
   "SeriesOptionsTypes": {},
   "AxesOptionsTypes": {},
@@ -5706,10 +5781,7 @@
     "pathsZIndexSubOrderOffset": {
       "type": { "returnType": "number[]", "optional": false }
     },
-    "hasMarkers": { "type": { "returnType": "boolean", "optional": false } },
-    "renderLayerPerSubSeries": {
-      "type": { "returnType": "boolean", "optional": false }
-    }
+    "hasMarkers": { "type": { "returnType": "boolean", "optional": false } }
   },
   "HistogramSeriesNodeTag": {},
   "HistogramNodeDatum": {
@@ -5768,14 +5840,12 @@
       "type": { "returnType": "Readonly<Point>", "optional": true }
     }
   },
-  "PointDatum": {
-    "xDatum": { "type": { "returnType": "any", "optional": false } },
-    "yDatum": { "type": { "returnType": "any", "optional": false } },
-    "datum": { "type": { "returnType": "any", "optional": false } }
-  },
   "LineContext": {},
   "ScatterNodeDatum": {
     "label": { "type": { "returnType": "MeasuredLabel", "optional": false } },
+    "fill": {
+      "type": { "returnType": "string | undefined", "optional": false }
+    },
     "xKey": { "type": { "returnType": "string", "optional": false } },
     "yKey": { "type": { "returnType": "string", "optional": false } },
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
@@ -5958,6 +6028,7 @@
     }
   },
   "TooltipPositionType": {},
+  "UpdateCallback": {},
   "Tick": {
     "labels": { "type": { "returnType": "string[]", "optional": false } }
   },
@@ -6163,6 +6234,9 @@
   "Listener": { "meta": { "typeParams": ["H extends Function"] } },
   "ModuleContext": {
     "scene": { "type": { "returnType": "Scene", "optional": false } },
+    "mode": {
+      "type": { "returnType": "'standalone' | 'integrated'", "optional": false }
+    },
     "interactionManager": {
       "type": { "returnType": "InteractionManager", "optional": false }
     },
@@ -6178,6 +6252,9 @@
     "tooltipManager": {
       "type": { "returnType": "TooltipManager", "optional": false }
     },
+    "dataService": {
+      "type": { "returnType": "DataService", "optional": false }
+    },
     "layoutService": {
       "type": {
         "returnType": "Pick<LayoutService, 'addListener' | 'removeListener'>",
@@ -6186,12 +6263,21 @@
     },
     "updateService": {
       "type": { "returnType": "UpdateService", "optional": false }
+    },
+    "optionsConstructors": {
+      "type": {
+        "returnType": "{\n        add(path: string, constructor: new () => any): void;\n        delete(path: string): void;\n    }",
+        "optional": false
+      }
     }
   },
   "ModuleContextWithParent": {
     "parent": { "type": { "returnType": "P", "optional": false } },
     "meta": { "typeParams": ["P"] },
     "scene": { "type": { "returnType": "Scene", "optional": false } },
+    "mode": {
+      "type": { "returnType": "'standalone' | 'integrated'", "optional": false }
+    },
     "interactionManager": {
       "type": { "returnType": "InteractionManager", "optional": false }
     },
@@ -6207,6 +6293,9 @@
     "tooltipManager": {
       "type": { "returnType": "TooltipManager", "optional": false }
     },
+    "dataService": {
+      "type": { "returnType": "DataService", "optional": false }
+    },
     "layoutService": {
       "type": {
         "returnType": "Pick<LayoutService, 'addListener' | 'removeListener'>",
@@ -6215,6 +6304,12 @@
     },
     "updateService": {
       "type": { "returnType": "UpdateService", "optional": false }
+    },
+    "optionsConstructors": {
+      "type": {
+        "returnType": "{\n        add(path: string, constructor: new () => any): void;\n        delete(path: string): void;\n    }",
+        "optional": false
+      }
     }
   },
   "AxisContext": {
@@ -6253,6 +6348,14 @@
     }
   },
   "SeriesFactory": {},
+  "LegendModuleContext": {
+    "legendFactory": {
+      "type": {
+        "returnType": "{\n        add(factory: (ctx: ModuleContext) => ChartLegend): void;\n        delete(): void;\n    }",
+        "optional": false
+      }
+    }
+  },
   "SeriesContext": {
     "seriesFactory": {
       "type": {
@@ -6323,6 +6426,27 @@
     "initialiseModule": {
       "type": {
         "arguments": { "ctx": "ModuleContextWithParent<AxisContext>" },
+        "returnType": "ModuleInstanceMeta<M>",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "optionsKey": { "type": { "returnType": "string", "optional": false } },
+    "packageType": {
+      "type": { "returnType": "'community' | 'enterprise'", "optional": false }
+    },
+    "chartTypes": {
+      "type": {
+        "returnType": "('cartesian' | 'polar' | 'hierarchy')[]",
+        "optional": false
+      }
+    }
+  },
+  "LegendModule": {
+    "type": { "type": { "returnType": "'legend'", "optional": false } },
+    "initialiseModule": {
+      "type": {
+        "arguments": { "ctx": "LegendModuleContext" },
         "returnType": "ModuleInstanceMeta<M>",
         "optional": false
       }

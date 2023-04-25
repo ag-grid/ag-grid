@@ -6,13 +6,11 @@
 }
 
 .button {
-    $replay-small-width: 188px;
-    $control-small-width: 215px;
-    $replay-large-width: 224px;
-    $control-large-width: 254px;
+    $replay-width: 224px;
+    $control-width: 254px;
 
     position: relative;
-    width: $replay-small-width;
+    width: $replay-width;
     padding: 0.25em 0.5em 0.4em 0.5em !important; // !important for .ag-styles specificity;
     text-align: left;
     transition: background-color $default-transition-timing, border $default-transition-timing,
@@ -20,11 +18,6 @@
 
     @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
         display: none !important; // !important for .ag-styles specificity;
-    }
-
-    @media screen and (min-width: $breakpoint-automated-row-grouping-large) {
-        font-size: var(--font-size-extra-large) !important; // !important for .ag-styles specificity;
-        width: $replay-large-width;
     }
 
     :global(.icon) {
@@ -38,11 +31,7 @@
     }
 
     &.isActive {
-        width: $control-small-width;
-
-        @media screen and (min-width: $breakpoint-automated-row-grouping-large) {
-            width: $control-large-width;
-        }
+        width: $control-width;
     }
 }
 

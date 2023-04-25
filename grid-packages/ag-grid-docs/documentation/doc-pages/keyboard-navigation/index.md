@@ -29,7 +29,7 @@ Pressing the <kbd>Space</kbd> key on a cell will select the cells row, or desele
 
 ## Suppress Cell Focus
 
-If you want keyboard navigation turned off, then set `suppressCellFocus=true` in the `gridOptions`.
+If you want keyboard navigation turned off, then set `suppressCellFocus=true` in the gridOptions.
 
 ## Header Navigation
 
@@ -136,28 +136,28 @@ In applications where the grid is embedded into a larger page, by default, when 
 You could override this behaviour to focus the first grid cell, if that is a preferred scenario using a combination of DOM event listeners and Grid API calls shown in the following code snippet:
 
 <snippet>
-|// obtain reference to input element
-|const myInput = document.getElementById("my-input");
-|
-|// intercept key strokes within input element
-|myInput.addEventListener("keydown", event => {
-|    // ignore non tab key strokes
-|    if(event.key !== 'Tab') return;
-|
-|    // prevents tabbing into the url section
-|    event.preventDefault();
-|
-|    // scrolls to the first row
-|    gridApi.ensureIndexVisible(0);
-|
-|    // scrolls to the first column
-|    const firstCol = columnApi.getAllDisplayedColumns()[0];
-|    gridApi.ensureColumnVisible(firstCol);
-|
-|    // sets focus into the first grid cell
-|    gridApi.setFocusedCell(0, firstCol);
-|
-|}, true);
+| // obtain reference to input element
+| const myInput = document.getElementById("my-input");
+| 
+| // intercept key strokes within input element
+| myInput.addEventListener("keydown", event => {
+|     // ignore non tab key strokes
+|     if(event.key !== 'Tab') return;
+| 
+|     // prevents tabbing into the url section
+|     event.preventDefault();
+| 
+|     // scrolls to the first row
+|     gridApi.ensureIndexVisible(0);
+| 
+|     // scrolls to the first column
+|     const firstCol = columnApi.getAllDisplayedColumns()[0];
+|     gridApi.ensureColumnVisible(firstCol);
+| 
+|     // sets focus into the first grid cell
+|     gridApi.setFocusedCell(0, firstCol);
+| 
+| }, true);
 </snippet>
 
 ### Example: Tabbing into the Grid

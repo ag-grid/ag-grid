@@ -13,32 +13,32 @@ Master / Detail can be enabled using the `masterDetail` grid option with detail 
 `detailCellRendererParams` as shown below:
 
 <snippet spaceBetweenProperties="true">
-|const gridOptions = {
-|    // enable Master / Detail
-|    masterDetail: true,
-|
-|    // the first Column is configured to use agGroupCellRenderer
-|    columnDefs: [
-|        { field: 'name', cellRenderer: 'agGroupCellRenderer' },
-|        { field: 'account' }
-|    ],
-|
-|    // provide Detail Cell Renderer Params
-|    detailCellRendererParams: {
-|        // provide the Grid Options to use on the Detail Grid
-|        detailGridOptions: {
-|            columnDefs: [
-|                { field: 'callId' },
-|                { field: 'direction' },
-|                { field: 'number'}
-|            ]
-|        },
-|        // get the rows for each Detail Grid
-|        getDetailRowData: params => {
-|            params.successCallback(params.data.callRecords);
-|        }
-|    }
-|}
+| const gridOptions = {
+|     // enable Master / Detail
+|     masterDetail: true,
+| 
+|     // the first Column is configured to use agGroupCellRenderer
+|     columnDefs: [
+|         { field: 'name', cellRenderer: 'agGroupCellRenderer' },
+|         { field: 'account' }
+|     ],
+| 
+|     // provide Detail Cell Renderer Params
+|     detailCellRendererParams: {
+|         // provide the Grid Options to use on the Detail Grid
+|         detailGridOptions: {
+|             columnDefs: [
+|                 { field: 'callId' },
+|                 { field: 'direction' },
+|                 { field: 'number'}
+|             ]
+|         },
+|         // get the rows for each Detail Grid
+|         getDetailRowData: params => {
+|             params.successCallback(params.data.callRecords);
+|         }
+|     }
+| }
 </snippet>
 
 The example below shows a simple Master / Detail with all the above configured.

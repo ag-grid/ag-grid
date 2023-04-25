@@ -203,9 +203,7 @@ It is also possible to display the Set Filter List as a [Set Filter Tree List](/
 
 The Tree List also works with complex objects, which is demonstrated in the [Tree List Complex Objects Example](/filter-set-tree-list/#complex-objects).
 
-#### Tree List Example
-
-The following example demonstrates using the Set Filter Tree List with Tree Data:
+The example below demonstrates using the Set Filter Tree List with Tree Data. Note the following:
 
 1. The **Employee** group column has the Set Filter Tree List enabled via `filterParams.treeList = true`. A Key Creator is specified to convert the path into a string.
 2. The Filter List displayed for the **Employee** column matches the format of the Tree Data structure.
@@ -230,17 +228,17 @@ To enable selection set `gridOptions.rowSelection` to 'single' or 'multiple' as 
 Click selection is supported with tree data. However when you are displaying tree data, clicking rows for selection is confusing as mouse clicks are also used for expanding / contracting rows. For this reason we recommend not using click selection and using checkbox selection instead.
 
 <snippet spaceBetweenProperties="true">
-|const gridOptions = {
-|    // don't have click select rows
-|    suppressRowClickSelection: true,
-|
-|    // have checkbox on the group column
-|    autoGroupColumnDef: {
-|        cellRendererParams: {
-|            checkbox: true,
-|        }
-|    }
-|}
+| const gridOptions = {
+|     // don't have click select rows
+|     suppressRowClickSelection: true,
+| 
+|     // have checkbox on the group column
+|     autoGroupColumnDef: {
+|         cellRendererParams: {
+|             checkbox: true,
+|         }
+|     }
+| }
 </snippet>
 
 ### Group Selection

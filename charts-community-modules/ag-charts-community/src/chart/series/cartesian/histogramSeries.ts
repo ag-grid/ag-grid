@@ -5,7 +5,7 @@ import { DropShadow } from '../../../scene/dropShadow';
 import { SeriesTooltip, Series, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
-import { LegendDatum } from '../../legendDatum';
+import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import {
     CartesianSeries,
     CartesianSeriesNodeClickEvent,
@@ -578,15 +578,16 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         return toTooltipHtml(defaults);
     }
 
-    getLegendData(): LegendDatum[] {
+    getLegendData(): ChartLegendDatum[] {
         const { id, data, xKey, yName, visible, fill, stroke, fillOpacity, strokeOpacity } = this;
 
         if (!data || data.length === 0) {
             return [];
         }
 
-        return [
+        const legendData: CategoryLegendDatum[] = [
             {
+                legendType: 'category',
                 id,
                 itemId: xKey,
                 seriesId: id,
@@ -602,6 +603,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                 },
             },
         ];
+        return legendData;
     }
 
     protected isLabelEnabled() {

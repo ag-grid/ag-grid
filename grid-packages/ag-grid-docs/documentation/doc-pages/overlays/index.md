@@ -2,27 +2,27 @@
 title: "Overlays"
 ---
 
-At present, there are two overlays for the grid when using [Client-side Data Row Model](/client-side-model/):
+At present, there are two overlays for the grid when using the [Client-Side Row Model](/client-side-model/):
 
 - **Loading**: Gets displayed when the grid is loading data.
-- **No Rows**: Gets displayed when loading has complete but no rows to show.
+- **No Rows**: Gets displayed when loading has completed but there are no rows to show.
 
 The grid manages showing and hiding of the overlays for you. When the table is first initialised, the loading panel is displayed if `rowData` is set to `null` or `undefined`. When the API function `setRowData` is called, the loading panel is hidden.
 
 [[note]]
-| Overlays are not used when using [Server-side Data Row Models](/row-models/). This is because data is
+| Overlays are not used when using [Row Models](/row-models/) other than the Client-Side Row Model. This is because data is
 | loaded differently.
 |
-| The Loading overlay doesn't make sense as rows are loaded in sections, access to the entire grid shouldn't
+| The Loading overlay doesn't make sense as rows are loaded in sections. Access to the entire grid shouldn't
 | be blocked as some rows will be loaded while others are loading.
 |
 | The No Rows overlay doesn't make sense as there could be rows on the server, but a filter could be applied
-| that filters out all rows. This would be equivalent to the Client Side Row Model and applying a filter to
+| that filters out all rows. This would be equivalent to the Client-Side Row Model and applying a filter to
 | some data (no overlay would be shown, and a grid with a filter and no rows would be shown).
 
 ## Overlay API
 
-At any point, you can show or hide any of the overlays using the methods below. You may never use these methods, as the grid manages the overlays for you. However you may find some edge cases where you need complete control (such as showing 'loading' if an option outside the grid is changed).
+At any point, you can show or hide any of the overlays using the methods below. You may never need to use these methods, as the grid manages the overlays for you. However you may find some edge cases where you need complete control (such as showing 'loading' if an option outside the grid is changed).
 
 <api-documentation source='grid-api/api.json' section='overlays' config='{"overrideBottomMargin":"1rem"}'></api-documentation>
 

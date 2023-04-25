@@ -89,6 +89,21 @@ function sumValues(values: any[], accumulator = [0, 0] as ContinuousDomain<numbe
     return accumulator;
 }
 
+function toKeyString(keys: any[]) {
+    return keys
+        .map((v) => {
+            if (v == null) {
+                return v;
+            } else if (typeof v === 'number' || typeof v === 'string' || typeof v === 'boolean') {
+                return v;
+            } else if (typeof v === 'object') {
+                return JSON.stringify(v);
+            }
+            return v;
+        })
+        .join('-');
+}
+
 export const SMALLEST_KEY_INTERVAL: ReducerOutputPropertyDefinition<number> = {
     type: 'reducer',
     property: 'smallestKeyInterval',
@@ -377,7 +392,7 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
         const processedData = new Map<string, { keys: D[K][]; values: D[K][][]; datum: D[] }>();
 
         for (const { keys, values, datum } of data.data) {
-            const keyStr = keys.join('-');
+            const keyStr = toKeyString(keys);
 
             if (processedData.has(keyStr)) {
                 const existingData = processedData.get(keyStr)!;
@@ -457,7 +472,11 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
         );
         // const normalisedRange = [-normaliseTo, normaliseTo];
         const normalise = (val: number, extent: number) => {
-            return (val * normaliseTo) / extent;
+            const result = (val * normaliseTo) / extent;
+            if (result >= 0) {
+                return Math.min(normaliseTo, result);
+            }
+            return Math.max(-normaliseTo, result);
         };
 
         for (let sumIdx = 0; sumIdx < sumDefs.length; sumIdx++) {

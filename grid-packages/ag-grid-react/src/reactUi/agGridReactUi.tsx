@@ -5,6 +5,7 @@ import { NewReactComponent } from '../shared/newReactComponent';
 import { PortalManager } from '../shared/portalManager';
 import GridComp from './gridComp';
 import { ReactFrameworkOverrides } from '../shared/reactFrameworkOverrides';
+import { FlushSyncToggle } from './utils';
 
 function debug(msg: string, obj?: any) {
     // console.log(msg, obj);
@@ -42,7 +43,8 @@ export class AgGridReactUi<TData = any> extends Component<AgReactUiProps<TData>,
         if (this.state.context) {
             this.renderedAfterMount = true;
         }
-
+        FlushSyncToggle.off();
+        setTimeout(() => FlushSyncToggle.on(), 0);
         return (
             <div style={ this.createStyleForDiv() } className={ this.props.className } ref={ this.eGui }>
                 { this.state.context && <GridComp context={ this.state.context }/> }

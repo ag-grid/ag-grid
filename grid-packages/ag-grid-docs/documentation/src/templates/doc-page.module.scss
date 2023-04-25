@@ -1,3 +1,4 @@
+@use "sass:map";
 @use '../design-system' as *;
 
 .doc-page-wrapper {
@@ -84,6 +85,12 @@
         }
     }
 
+    // Required because of docs .ag-styles <div> wrapping
+    li ol,
+    li ul {
+        padding-left: 1.125em;
+    }
+
     :global(.docs-header-icon) {
         position: relative;
         padding-left: 0;
@@ -154,6 +161,20 @@
     ul li > p {
         margin-bottom: 0.25rem;
     }
+
+    // Required to overwrite bootstrap styles
+    kbd {
+        color: map.get($abstract-colors, map.get($semantic-colors, text-color));
+        display: inline-block;
+        margin: 0.1em 0.1em;
+        padding: 0.1em 0.6em;
+        border-radius: 0.25em;
+        font-family: $font-family;
+        background-color: white;
+        border: 1px solid #ccc;
+        box-shadow: 0 1px 0 rgb(0 0 0 / 20%), inset 0 0 0 2px white;
+        text-shadow: 0 1px 0 white;
+    }
 }
 
 .docsPageHeader {
@@ -223,5 +244,25 @@
 
     code {
         font-size: 0.8em;
+    }
+}
+
+// Reduce spacing between page intro & first heading
+.pageSections > div > div:nth-child(2) {
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin-top: $size-2;
+    }
+
+    // Fix for tables that are directly below page intro
+    table h2,
+    table h3,
+    table h4,
+    table h5,
+    table h6 {
+        margin-top: 0;
     }
 }

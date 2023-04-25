@@ -19,6 +19,7 @@ export const TopBar = ({ frameworks, currentFramework, path }) => {
             <div className="page-margin">
                 <div className={styles.topBarInner}>
                     <button
+                        id="top-bar-docs-button"
                         className={classNames(styles.topBarNavButton, 'button-input')}
                         type="button"
                         data-toggle="collapse"

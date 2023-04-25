@@ -46,9 +46,9 @@ The Chart Toolbar items can be omitted and ordered using the `getChartToolbarIte
 which toolbar items should be shown and the order in which they appear: 
 
 <snippet>
-const gridOptions = { 
-    getChartToolbarItems: () => ['chartUnlink', 'chartDownload'] // default items and order
-}
+| const gridOptions = { 
+|     getChartToolbarItems: () => ['chartUnlink', 'chartDownload'] // default items and order
+| }
 </snippet>
 
 The example below shows how the toolbar can be customised to only show the 'Download Chart' toolbar item.

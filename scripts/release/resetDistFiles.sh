@@ -74,12 +74,9 @@ git reset grid-community-modules/vue/lib
 
 git reset grid-community-modules/all-modules/styles
 git reset grid-enterprise-modules/all-modules/styles
-git reset grid-community-modules/angular-legacy/dist
 git reset grid-community-modules/styles/*.css
 git reset grid-community-modules/styles/_css-content.scss
 
-git reset grid-packages/ag-grid-angular-legacy/dist
 git reset grid-packages/ag-grid-community/styles
 git reset grid-packages/ag-grid-enterprise/styles
-git reset charts-community-modules/ag-charts-angular-legacy/dist
 git reset grid-packages/ag-grid-docs/documentation/cypress.config.AUTO.json

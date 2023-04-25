@@ -335,23 +335,40 @@ export class LazyCache extends BeanStub {
      * @returns the rows visible display index relative to the grid
      */
     public getDisplayIndexFromStoreIndex(storeIndex: number): number | null {
-        const nodesAfterThis = this.nodeMap.filter(lazyNode => lazyNode.index > storeIndex);
 
-        if (nodesAfterThis.length === 0) {
-            return this.store.getDisplayIndexEnd()! - (this.numberOfRows - storeIndex);
+        const nodeAtIndex = this.nodeMap.getBy('index', storeIndex);
+        if (nodeAtIndex) {
+            return nodeAtIndex.node.rowIndex!;
         }
 
         let nextNode: LazyStoreNode | undefined;
-        for (let i = 0; i < nodesAfterThis.length; i++) {
-            const lazyNode = nodesAfterThis[i];
+        let previousNode: LazyStoreNode | undefined;
+        this.nodeMap.forEach(lazyNode => {
+            // previous node
+            if (storeIndex > lazyNode.index) {
+                // get the largest previous node
+                if (previousNode == null || previousNode.index < lazyNode.index) {
+                    previousNode = lazyNode;
+                }
+                return;
+            }
+            // next node
+            // get the smallest next node
             if (nextNode == null || nextNode.index > lazyNode.index) {
                 nextNode = lazyNode;
+                return;
             }
+        });
+
+        if (!nextNode) {
+            return this.store.getDisplayIndexEnd()! - (this.numberOfRows - storeIndex);
         }
 
-        const nextDisplayIndex = nextNode!.node.rowIndex!;
-        const storeIndexDiff = nextNode!.index - storeIndex;
-        return nextDisplayIndex - storeIndexDiff;
+        if (!previousNode) {
+            return this.store.getDisplayIndexStart()! + storeIndex;
+        }
+
+        return previousNode.node.childStore?.getDisplayIndexEnd() ?? previousNode.node.rowIndex! + 1;
     }
 
     /**
@@ -711,6 +728,9 @@ export class LazyCache extends BeanStub {
     public onLoadSuccess(firstRowIndex: number, numberOfRowsExpected: number, response: LoadSuccessParams) {
         if (!this.live) return;
 
+        const info = response.groupLevelInfo ?? response.storeInfo;
+        this.store.setStoreInfo(info);
+    
         if (this.getRowIdFunc != null) {
             const duplicates = this.extractDuplicateIds(response.rowData);
             if (duplicates.length > 0) {
@@ -721,7 +741,7 @@ export class LazyCache extends BeanStub {
             }
         }
         
-        let wasRefreshing = false;
+        const wasRefreshing = this.nodesToRefresh.size > 0;
         response.rowData.forEach((data, responseRowIndex) => {
             const rowIndex = firstRowIndex + responseRowIndex;
             const nodeFromCache = this.nodeMap.getBy('index', rowIndex);
@@ -730,10 +750,6 @@ export class LazyCache extends BeanStub {
             if (nodeFromCache?.node?.stub) {
                 this.createRowAtIndex(rowIndex, data);
                 return;
-            }
-            
-            if (nodeFromCache && this.nodesToRefresh.has(nodeFromCache?.node)) {
-                wasRefreshing = true;
             }
 
             if (nodeFromCache && this.doesNodeMatch(data, nodeFromCache.node)) {
@@ -746,7 +762,8 @@ export class LazyCache extends BeanStub {
             this.createRowAtIndex(rowIndex, data);
         });
 
-        if (wasRefreshing) {
+        const finishedRefreshing = this.nodesToRefresh.size === 0;
+        if (wasRefreshing && finishedRefreshing) {
             this.fireRefreshFinishedEvent();
         }
 
@@ -798,7 +815,12 @@ export class LazyCache extends BeanStub {
     }
 
     public markNodesForRefresh() {
-        this.nodeMap.forEach(lazyNode => this.nodesToRefresh.add(lazyNode.node));
+        this.nodeMap.forEach(lazyNode => {
+            if (lazyNode.node.stub) {
+                return;
+            }
+            this.nodesToRefresh.add(lazyNode.node);
+        });
         this.rowLoader.queueLoadCheck();
 
         if (this.isLastRowKnown && this.numberOfRows === 0) {

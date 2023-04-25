@@ -10,15 +10,15 @@ This section shows how Range Charts can be created via the Grid API.
 Range Charts can be created through `gridApi.createRangeChart()` as shown below:
 
 <snippet>
-gridOptions.api.createRangeChart({
-    chartType: 'groupedColumn',
-    cellRange: {
-        rowStartIndex: 0,
-        rowEndIndex: 4,
-        columns: ['country', 'gold', 'silver'],
-    },
-    // other options...
-});
+| gridOptions.api.createRangeChart({
+|     chartType: 'groupedColumn',
+|     cellRange: {
+|         rowStartIndex: 0,
+|         rowEndIndex: 4,
+|         columns: ['country', 'gold', 'silver'],
+|     },
+|     // other options...
+| });
 </snippet>
 
 The snippet above creates a Range Chart with the `groupedColumn` chart type using data from the first 4 and the `country`,
@@ -69,18 +69,18 @@ is supplied.
 The `seriesChartTypes` property accepts an array of `SeriesChartType` objects as shown below:
 
 <snippet>
-api.createRangeChart({
-    chartType: 'customCombo',
-    cellRange: {
-      columns: ['month', 'rain', 'pressure', 'temp'],
-    }, 
-    seriesChartTypes: [
-      { colId: 'rain', chartType: 'groupedColumn', secondaryAxis: false },
-      { colId: 'pressure', chartType: 'line', secondaryAxis: true },
-      { colId: 'temp', chartType: 'line', secondaryAxis: true }
-    ], 
-    aggFunc: 'sum',
-  });
+| api.createRangeChart({
+|     chartType: 'customCombo',
+|     cellRange: {
+|       columns: ['month', 'rain', 'pressure', 'temp'],
+|     }, 
+|     seriesChartTypes: [
+|       { colId: 'rain', chartType: 'groupedColumn', secondaryAxis: false },
+|       { colId: 'pressure', chartType: 'line', secondaryAxis: true },
+|       { colId: 'temp', chartType: 'line', secondaryAxis: true }
+|     ], 
+|     aggFunc: 'sum',
+| });
 </snippet>
 
 The following series chart types are supported with combination charts:

@@ -1,4 +1,4 @@
-import { INTEGRATED_CHARTS_ID, ROW_GROUPING_ID } from './constants';
+import { AUTOMATED_EXAMPLE_MANAGER_ID, INTEGRATED_CHARTS_ID, ROW_GROUPING_ID } from './constants';
 import { createPen } from './createPen';
 import { Point } from './geometry';
 import { getStyledConsoleMessageConfig } from './getStyledConsoleMessageConfig';
@@ -10,11 +10,19 @@ interface CreateScriptDebuggerParams {
     initialDraw: boolean;
     debugPanel: DebugPanel;
     canvasClassname: string;
+    getLogLevel: () => LogLevel;
 }
 
 export type ScriptDebugger = ReturnType<typeof createScriptDebugger>;
 export type ScriptDebuggerManager = ReturnType<typeof createScriptDebuggerManager>;
 type DebugPanel = ReturnType<typeof createDebugPanel>;
+
+export const LOG_LEVELS = {
+    info: 0,
+    log: 1,
+    error: 2,
+};
+export type LogLevel = keyof typeof LOG_LEVELS;
 
 const STATE_CLASSNAME = 'state';
 const STEP_CLASSNAME = 'step';
@@ -27,6 +35,31 @@ const getCheckboxTemplate = (isChecked?: boolean) => `
 `;
 
 const DEFAULT_DRAW_COLOR = 'rgba(255,0,0,0.5)'; // red
+
+const isValidLogLevel = (logLevel: LogLevel, comparisonLogLevel: LogLevel) => {
+    return LOG_LEVELS[logLevel] >= LOG_LEVELS[comparisonLogLevel];
+};
+
+const log = (...args: any[]) => {
+    const [prefix] = args || [];
+
+    if (prefix.startsWith && prefix.startsWith(INTEGRATED_CHARTS_ID)) {
+        const messageConfig = getStyledConsoleMessageConfig(...args);
+        console.log(messageConfig, 'color: #222;background: #eee', ...args);
+    } else if (prefix.startsWith && prefix.startsWith(ROW_GROUPING_ID)) {
+        const messageConfig = getStyledConsoleMessageConfig(...args);
+        console.log(messageConfig, 'color: #eee; background: #000', ...args);
+    } else if (prefix.startsWith && prefix.startsWith(AUTOMATED_EXAMPLE_MANAGER_ID)) {
+        const messageConfig = getStyledConsoleMessageConfig(...args);
+        console.log(messageConfig, 'color: #222; background: #80bdff', ...args);
+    } else {
+        console.log(...args);
+    }
+};
+
+const errorLog = (...args: any[]) => {
+    console.error(...args);
+};
 
 /**
  * Create pen to draw on the canvas, for debugging
@@ -116,7 +149,7 @@ function createDebugPanelSection({
         pausedStateEl.innerHTML = pausedState ? pausedState : '';
     };
     const updateButton = (state: RunScriptState) => {
-        if (state === 'stopping' || state === 'stopped') {
+        if (state === 'stopping' || state === 'stopped' || state === 'errored') {
             runnerButtonEl.innerHTML = 'Play';
             runnerButtonEl.disabled = false;
         } else if (state === 'playing') {
@@ -205,6 +238,7 @@ function createScriptDebugger({
     initialDraw,
     debugPanel,
     canvasClassname,
+    getLogLevel,
 }: CreateScriptDebuggerParams) {
     let shouldDraw = initialDraw;
     let scriptRunner;
@@ -240,24 +274,6 @@ function createScriptDebugger({
         debugPen?.drawPoint({ x, y }, radius, color ?? DEFAULT_DRAW_COLOR);
     };
 
-    const log = (...args: any[]) => {
-        const [prefix] = args || [];
-
-        if (prefix.startsWith && prefix.startsWith(INTEGRATED_CHARTS_ID)) {
-            const messageConfig = getStyledConsoleMessageConfig(...args);
-            console.log(messageConfig, 'background: #eee', ...args);
-        } else if (prefix.startsWith && prefix.startsWith(ROW_GROUPING_ID)) {
-            const messageConfig = getStyledConsoleMessageConfig(...args);
-            console.log(messageConfig, 'color: #eee; background: #000', ...args);
-        } else {
-            console.log(...args);
-        }
-    };
-
-    const errorLog = (...args: any[]) => {
-        console.error(...args);
-    };
-
     const clear = () => {
         debugPen?.clear();
     };
@@ -266,7 +282,32 @@ function createScriptDebugger({
         scriptRunner = runner;
     };
 
-    return { log, errorLog, clear, drawPoint, updateStep, updateState, setScriptRunner };
+    return {
+        infoLog: (...args) => {
+            if (!isValidLogLevel('info', getLogLevel())) {
+                return;
+            }
+            log(...args);
+        },
+        log: (...args) => {
+            if (!isValidLogLevel('log', getLogLevel())) {
+                return;
+            }
+            log(...args);
+        },
+        errorLog: (...args) => {
+            if (!isValidLogLevel('error', getLogLevel())) {
+                return;
+            }
+            errorLog(...args);
+        },
+
+        clear,
+        drawPoint,
+        updateStep,
+        updateState,
+        setScriptRunner,
+    };
 }
 
 export function createScriptDebuggerManager({
@@ -277,12 +318,49 @@ export function createScriptDebuggerManager({
     panelClassname: string;
 }) {
     let debugPanel; // Create debug panel lazily
+    let debugLogLevel: LogLevel = 'log';
     let isEnabled = false;
     let initialDraw = false;
 
+    const getLogLevel = () => {
+        return debugLogLevel;
+    };
+
     return {
+        infoLog: (...args) => {
+            if (!isValidLogLevel('info', debugLogLevel)) {
+                return;
+            }
+            if (!isEnabled) {
+                return;
+            }
+            log(...args);
+        },
+        log: (...args) => {
+            if (!isValidLogLevel('log', debugLogLevel)) {
+                return;
+            }
+            if (!isEnabled) {
+                return;
+            }
+            log(...args);
+        },
+        errorLog: (...args) => {
+            if (!isValidLogLevel('error', debugLogLevel)) {
+                return;
+            }
+            if (!isEnabled) {
+                return;
+            }
+            errorLog(...args);
+        },
         setEnabled: (enabled: boolean) => {
             isEnabled = enabled;
+        },
+        setDebugLogLevel: (logLevel?: LogLevel) => {
+            if (logLevel && Object.keys(LOG_LEVELS).includes(logLevel)) {
+                debugLogLevel = logLevel;
+            }
         },
         setInitialDraw: (draw: boolean) => {
             initialDraw = draw;
@@ -302,6 +380,7 @@ export function createScriptDebuggerManager({
                 debugPanel,
                 initialDraw,
                 canvasClassname,
+                getLogLevel,
             });
 
             return scriptDebugger;

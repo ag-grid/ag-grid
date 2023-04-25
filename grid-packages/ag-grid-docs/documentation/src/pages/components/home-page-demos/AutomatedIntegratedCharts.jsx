@@ -2,18 +2,18 @@
 // @refresh reset
 
 import classNames from 'classnames';
-import { withPrefix } from 'gatsby';
 import React, { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { createAutomatedIntegratedCharts } from '../../../components/automated-examples/examples/integrated-charts';
 import { INTEGRATED_CHARTS_ID } from '../../../components/automated-examples/lib/constants';
 import { OverlayButton } from '../../../components/automated-examples/OverlayButton';
 import { ToggleAutomatedExampleButton } from '../../../components/automated-examples/ToggleAutomatedExampleButton';
-import { Icon } from '../../../components/Icon';
 import LogoMark from '../../../components/LogoMark';
-import { isProductionBuild, localPrefix } from '../../../utils/consts';
+import { hostPrefix, isProductionBuild, localPrefix } from '../../../utils/consts';
 import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
 import styles from './AutomatedIntegratedCharts.module.scss';
+
+const AUTOMATED_EXAMPLE_MEDIUM_WIDTH = 740; // Same as `_breakpoint.scss`
 
 const helmet = [];
 if (!isProductionBuild()) {
@@ -43,19 +43,15 @@ if (!isProductionBuild()) {
     );
 }
 
-function AutomatedIntegratedCharts({
-    automatedExampleManager,
-    scriptDebuggerManager,
-    useStaticData,
-    runOnce,
-    visibilityThreshold,
-}) {
+function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, runOnce, visibilityThreshold }) {
     const exampleId = INTEGRATED_CHARTS_ID;
     const gridClassname = 'automated-integrated-charts-grid';
     const gridRef = useRef(null);
     const [scriptIsEnabled, setScriptIsEnabled] = useState(true);
     const [gridIsReady, setGridIsReady] = useState(false);
     const [gridIsHoveredOver, setGridIsHoveredOver] = useState(false);
+    const debuggerManager = automatedExampleManager?.getDebuggerManager();
+    const isMobile = () => window.innerWidth <= AUTOMATED_EXAMPLE_MEDIUM_WIDTH;
 
     const setAllScriptEnabledVars = (isEnabled) => {
         setScriptIsEnabled(isEnabled);
@@ -66,8 +62,10 @@ function AutomatedIntegratedCharts({
         elementRef: gridRef,
         onChange: ({ isIntersecting }) => {
             if (isIntersecting) {
+                debuggerManager.log(`${exampleId} intersecting - start`);
                 automatedExampleManager.start(exampleId);
             } else {
+                debuggerManager.log(`${exampleId} not intersecting - inactive`);
                 automatedExampleManager.inactive(exampleId);
             }
         },
@@ -79,14 +77,24 @@ function AutomatedIntegratedCharts({
         let params = {
             gridClassname,
             mouseMaskClassname: styles.mouseMask,
-            scriptDebuggerManager,
+            scriptDebuggerManager: debuggerManager,
             suppressUpdates: useStaticData,
             useStaticData,
             runOnce,
+            additionalContextMenuItems: [
+                {
+                    name: 'Replay Demo',
+                    action: () => {
+                        setAllScriptEnabledVars(true);
+                        automatedExampleManager.start(exampleId);
+                    },
+                    icon: `<img src="${hostPrefix}/images/homepage/replay-demo-icon-dark.svg" />`,
+                },
+            ],
             onStateChange(state) {
-                // Catch errors, and allow the user to use the grid
-                if (state === 'stopping') {
+                if (state === 'errored' && !isMobile()) {
                     setAllScriptEnabledVars(false);
+                    automatedExampleManager.errored(exampleId);
                 }
             },
             onGridReady() {
@@ -105,14 +113,9 @@ function AutomatedIntegratedCharts({
         <>
             <header className={styles.sectionHeader}>
                 <h2 className="font-size-gargantuan">Fully Integrated Charting</h2>
-                <p className="font-size-large">
+                <p className="font-size-extra-large">
                     With a complete suite of integrated charting tools, your users can visualise their data any way they
                     choose.
-                </p>
-                <p className="font-size-large">
-                    Intuitive cell selection and simple right-click context menus let users export and chart exactly the
-                    data they need. With dazzling themes, dozens of chart types, and a multitude of settings, Integrated
-                    Charts make data beautiful.
                 </p>
             </header>
 
@@ -124,15 +127,17 @@ function AutomatedIntegratedCharts({
                     onPointerEnter={() => setGridIsHoveredOver(true)}
                     onPointerOut={() => setGridIsHoveredOver(false)}
                     onClick={() => {
-                        setAllScriptEnabledVars(false);
-                        automatedExampleManager.stop(exampleId);
+                        if (!isMobile()) {
+                            setAllScriptEnabledVars(false);
+                            automatedExampleManager.stop(exampleId);
+                        }
                     }}
                 />
                 {!gridIsReady && !useStaticData && <LogoMark isSpinning />}
             </div>
 
             <footer className={styles.sectionFooter}>
-                <div className={classNames(styles.exploreButtonOuter, 'font-size-large')}>
+                <div className={classNames(styles.exploreButtonOuter, 'font-size-extra-large')}>
                     <span className="text-secondary">Live example:</span>
                     <ToggleAutomatedExampleButton
                         onClick={() => {
@@ -147,14 +152,6 @@ function AutomatedIntegratedCharts({
                         isHoveredOver={gridIsHoveredOver}
                         scriptIsActive={scriptIsEnabled}
                     ></ToggleAutomatedExampleButton>
-                </div>
-                <div className="font-size-large">
-                    <a
-                        className={classNames('font-size-large', styles.getStartedLink)}
-                        href={withPrefix('/documentation/')}
-                    >
-                        Get Started with AG Grid <Icon name="chevronRight" />
-                    </a>
                 </div>
             </footer>
         </>

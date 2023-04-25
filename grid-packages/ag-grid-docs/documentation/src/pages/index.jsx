@@ -1,7 +1,6 @@
 import classNames from 'classnames';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { createAutomatedExampleManager } from '../components/automated-examples/lib/createAutomatedExampleManager';
-import { createScriptDebuggerManager } from '../components/automated-examples/lib/scriptDebugger';
 import Footer from '../components/footer/Footer';
 import FrameworkSelector from '../components/FrameworkSelector';
 import { Quotes } from '../components/quotes/Quotes';
@@ -17,9 +16,15 @@ const AutomatedIntegratedCharts = React.lazy(() => import('./components/home-pag
 const AutomatedRowGrouping = React.lazy(() => import('./components/home-page-demos/AutomatedRowGrouping'));
 const HeroGrid = React.lazy(() => import('./components/home-page-demos/HeroGrid'));
 
-const automatedExampleManager = createAutomatedExampleManager();
-
 const Default = () => {
+    const automatedExampleManager = useMemo(
+        () =>
+            createAutomatedExampleManager({
+                debugCanvasClassname: styles.automatedExampleDebugCanvas,
+                debugPanelClassname: styles.automatedExampleDebugPanel,
+            }),
+        []
+    );
     const frameworksData = [
         {
             name: 'javascript',
@@ -42,22 +47,20 @@ const Default = () => {
             url: '/react-data-grid/solidjs/',
         },
     ];
-    let debugValue, isCI, runAutomatedExamplesOnce;
+    let debugValue, debugLogLevel, isCI, runAutomatedExamplesOnce;
 
     if (!IS_SSR) {
         const searchParams = new URLSearchParams(window.location.search);
         debugValue = searchParams.get('debug');
+        debugLogLevel = searchParams.get('debugLogLevel');
         isCI = searchParams.get('isCI') === 'true';
         runAutomatedExamplesOnce = searchParams.get('runOnce') === 'true';
     }
-    const scriptDebuggerManager = createScriptDebuggerManager({
-        canvasClassname: styles.automatedExampleDebugCanvas,
-        panelClassname: styles.automatedExampleDebugPanel,
-    });
 
     useEffect(() => {
-        scriptDebuggerManager.setEnabled(Boolean(debugValue));
-        scriptDebuggerManager.setInitialDraw(debugValue === 'draw');
+        automatedExampleManager.setDebugEnabled(Boolean(debugValue));
+        automatedExampleManager.setDebugLogLevel(debugLogLevel);
+        automatedExampleManager.setDebugInitialDraw(debugValue === 'draw');
     }, []);
 
     return (
@@ -109,7 +112,6 @@ const Default = () => {
                                 <React.Suspense fallback={<></>}>
                                     <AutomatedRowGrouping
                                         automatedExampleManager={automatedExampleManager}
-                                        scriptDebuggerManager={scriptDebuggerManager}
                                         useStaticData={isCI}
                                         runOnce={runAutomatedExamplesOnce}
                                         visibilityThreshold={0.2}
@@ -127,7 +129,6 @@ const Default = () => {
                                 <React.Suspense fallback={<></>}>
                                     <AutomatedIntegratedCharts
                                         automatedExampleManager={automatedExampleManager}
-                                        scriptDebuggerManager={scriptDebuggerManager}
                                         useStaticData={isCI}
                                         runOnce={runAutomatedExamplesOnce}
                                         visibilityThreshold={0.8}

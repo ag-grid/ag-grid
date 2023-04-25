@@ -8,7 +8,7 @@ ENTERPRISE_ROOTS=("grid-enterprise-modules" "charts-enterprise-modules")
 SOURCE_COMMUNITY_LICENSE=./grid-community-modules/core/LICENSE.txt
 SOURCE_ENTERPRISE_LICENSE=./grid-enterprise-modules/core/LICENSE.txt
 
-LEGACY_COMMUNITY_DIRS=("ag-grid-angular" "ag-grid-angular-legacy" "ag-grid-community" "ag-grid-react" "ag-grid-vue" "ag-grid-solid")
+LEGACY_COMMUNITY_DIRS=("ag-grid-angular" "ag-grid-community" "ag-grid-react" "ag-grid-vue" "ag-grid-solid")
 
 ENTERPRISE_ROOT=./grid-enterprise-modules
 SOURCE_ENTERPRISE_LICENSE=$ENTERPRISE_ROOT/core/LICENSE.html

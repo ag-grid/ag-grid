@@ -72,26 +72,26 @@ If [Read Only Edit](/value-setters/#read-only-edit) is enabled, undo / redo will
 The example below has the following grid options enabled to demonstrate undo / redo:
 
 <snippet spaceBetweenProperties="true">
-|const gridOptions = {
-|    defaultColDef: {
-|        // makes all cells editable
-|        editable: true
-|    },
-|    // allows copy / paste using cell ranges
-|    enableRangeSelection: true,
-|
-|    // enables the fill handle
-|    enableFillHandle: true,
-|
-|    // enables undo / redo
-|    undoRedoCellEditing: true,
-|
-|    // restricts the number of undo / redo steps to 5
-|    undoRedoCellEditingLimit: 5,
-|
-|    // enables flashing to help see cell changes
-|    enableCellChangeFlash: true,
-|}
+| const gridOptions = {
+|     defaultColDef: {
+|         // makes all cells editable
+|         editable: true
+|     },
+|     // allows copy / paste using cell ranges
+|     enableRangeSelection: true,
+| 
+|     // enables the fill handle
+|     enableFillHandle: true,
+| 
+|     // enables undo / redo
+|     undoRedoCellEditing: true,
+| 
+|     // restricts the number of undo / redo steps to 5
+|     undoRedoCellEditingLimit: 5,
+| 
+|     // enables flashing to help see cell changes
+|     enableCellChangeFlash: true,
+| }
 </snippet>
 
 To see undo / redo in action, try the following:

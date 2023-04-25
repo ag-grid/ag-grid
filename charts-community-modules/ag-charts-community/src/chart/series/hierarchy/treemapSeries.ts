@@ -10,7 +10,7 @@ import { Rect } from '../../../scene/shape/rect';
 import { DropShadow } from '../../../scene/dropShadow';
 import { ColorScale } from '../../../scale/colorScale';
 import { ChartAxisDirection } from '../../chartAxisDirection';
-import { LegendDatum } from '../../legendDatum';
+import { ChartLegendDatum } from '../../legendDatum';
 import { toFixed } from '../../../util/number';
 import { Path2D } from '../../../scene/path2D';
 import { BBox } from '../../../scene/bbox';
@@ -852,7 +852,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         return toTooltipHtml(defaults);
     }
 
-    getLegendData(): LegendDatum[] {
+    getLegendData(): ChartLegendDatum[] {
         // Override point for subclasses.
         return [];
     }

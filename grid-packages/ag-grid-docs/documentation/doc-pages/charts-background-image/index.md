@@ -9,7 +9,7 @@ This section describes how to add a background image to a chart.
 
 The `url` is required for the background image.
 
-It is positioned in the center by default. The `left`, `top`, `right` and `bottom` properties specify the distance between the chart borders and the image. The `width` and `height` properties override the size of the image.
+It is positioned in the center by default. The `left`, `top`, `right` and `bottom` properties specify the position of the image and the distance to the chart border. The `width` and `height` properties override the size of the image.
 
 ```js
 background: {
@@ -24,8 +24,6 @@ background: {
 ```
 
 [Custom Background Image Example](https://plnkr.co/edit/b24vwpgBhAqQO1kq?open=main.js)
-
-<!-- <chart-example title='Background Image' name='background-image' type='generated'></chart-example> -->
 
 ### API Reference
 

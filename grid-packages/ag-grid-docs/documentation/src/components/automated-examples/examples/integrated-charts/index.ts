@@ -6,12 +6,12 @@
 // to prevent AG Grid from loading the code twice
 
 import { Easing, Group } from '@tweenjs/tween.js';
-import { ColDef, GridOptions } from 'ag-grid-community';
-import { COUNTRY_CODES } from '../../data/constants';
+import { ColDef, GridOptions, MenuItemDef } from 'ag-grid-community';
 import { createPeopleData } from '../../data/createPeopleData';
 import { INTEGRATED_CHARTS_ID } from '../../lib/constants';
 import { createMouse } from '../../lib/createMouse';
 import { isInViewport } from '../../lib/dom';
+import { getAdditionalContextMenuItems } from '../../lib/getAdditionalContextMenuItems';
 import { ScriptDebuggerManager } from '../../lib/scriptDebugger';
 import { RunScriptState, ScriptRunner } from '../../lib/scriptRunner';
 import { AutomatedExample } from '../../types';
@@ -23,6 +23,7 @@ let restartScriptTimeout;
 interface CreateAutomatedIntegratedChartsParams {
     gridClassname: string;
     mouseMaskClassname: string;
+    additionalContextMenuItems?: (string | MenuItemDef)[];
     onStateChange?: (state: RunScriptState) => void;
     onGridReady?: () => void;
     suppressUpdates?: boolean;
@@ -38,11 +39,6 @@ function numberCellFormatter(params) {
         .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
-function getCountryFlagImageUrl(country: string) {
-    const countryCode = COUNTRY_CODES[country];
-    return `https://flags.fmcdn.net/data/flags/mini/${countryCode}.png`;
-}
-
 const columnDefs: ColDef[] = [
     {
         field: 'name',
@@ -51,33 +47,33 @@ const columnDefs: ColDef[] = [
         enableRowGroup: true,
     },
     {
+        headerName: 'Country',
         field: 'country',
         chartDataType: 'category',
         enableRowGroup: true,
+        minWidth: 200,
         cellRenderer: (params) => {
             if (params.node.group) {
                 return params.value;
             }
 
             // put the value in bold
-            return `<img border="0" width="21" height="14" alt="${params.value} flag" src='${getCountryFlagImageUrl(
-                params.data?.country
-            )}' /> ${params.value}`;
+            return `<div class='country'><span class='flag'>${params.data.flag}</span><span>${params.value}</span></div>`;
         },
     },
-    { field: 'jan', type: 'measure', enableRowGroup: true },
-    { field: 'feb', type: 'measure', enableRowGroup: true },
-    { field: 'mar', type: 'measure', enableRowGroup: true },
-    { field: 'apr', type: 'measure', enableRowGroup: true },
-    { field: 'may', type: 'measure', enableRowGroup: true },
-    { field: 'jun', type: 'measure', enableRowGroup: true },
-    { field: 'jul', type: 'measure', enableRowGroup: true },
-    { field: 'aug', type: 'measure', enableRowGroup: true },
-    { field: 'sep', type: 'measure', enableRowGroup: true },
-    { field: 'oct', type: 'measure', enableRowGroup: true },
-    { field: 'nov', type: 'measure', enableRowGroup: true },
-    { field: 'dec', type: 'measure', enableRowGroup: true },
-    { field: 'totalWinnings', type: 'measure', enableRowGroup: true },
+    { field: 'jan', type: ['measure', 'numericColumn'], enableRowGroup: true },
+    { field: 'feb', type: ['measure', 'numericColumn'], enableRowGroup: true },
+    { field: 'mar', type: ['measure', 'numericColumn'], enableRowGroup: true },
+    { field: 'apr', type: ['measure', 'numericColumn'], enableRowGroup: true },
+    { field: 'may', type: ['measure', 'numericColumn'], enableRowGroup: true },
+    { field: 'jun', type: ['measure', 'numericColumn'], enableRowGroup: true },
+    { field: 'jul', type: ['measure', 'numericColumn'], enableRowGroup: true },
+    { field: 'aug', type: ['measure', 'numericColumn'], enableRowGroup: true },
+    { field: 'sep', type: ['measure', 'numericColumn'], enableRowGroup: true },
+    { field: 'oct', type: ['measure', 'numericColumn'], enableRowGroup: true },
+    { field: 'nov', type: ['measure', 'numericColumn'], enableRowGroup: true },
+    { field: 'dec', type: ['measure', 'numericColumn'], enableRowGroup: true },
+    { field: 'totalWinnings', type: ['measure', 'numericColumn'], enableRowGroup: true },
 ];
 
 const gridOptions: GridOptions = {
@@ -96,7 +92,6 @@ const gridOptions: GridOptions = {
         measure: {
             aggFunc: 'sum',
             chartDataType: 'series',
-            cellClass: 'number',
             valueFormatter: numberCellFormatter,
             cellRenderer: 'agAnimateShowChangeCellRenderer',
         },
@@ -111,6 +106,7 @@ const gridOptions: GridOptions = {
 export function createAutomatedIntegratedCharts({
     gridClassname,
     mouseMaskClassname,
+    additionalContextMenuItems,
     onStateChange,
     onGridReady,
     suppressUpdates,
@@ -128,12 +124,18 @@ export function createAutomatedIntegratedCharts({
         }
 
         gridOptions.rowData = createPeopleData({ randomize: !suppressUpdates });
+
+        if (additionalContextMenuItems) {
+            gridOptions.getContextMenuItems = () => getAdditionalContextMenuItems(additionalContextMenuItems);
+        }
+
         gridOptions.onGridReady = () => {
+            onGridReady && onGridReady();
+        };
+        gridOptions.onFirstDataRendered = () => {
             if (suppressUpdates) {
                 return;
             }
-
-            onGridReady && onGridReady();
 
             const scriptDebugger = scriptDebuggerManager.add({
                 id: INTEGRATED_CHARTS_ID,
@@ -159,6 +161,7 @@ export function createAutomatedIntegratedCharts({
                 defaultEasing: Easing.Quadratic.InOut,
             });
         };
+
         new globalThis.agGrid.Grid(gridDiv, gridOptions);
     };
 

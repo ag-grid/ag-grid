@@ -22,7 +22,10 @@ $z-index-splash-contents: 10;
         transform: scale(0.5);
         border-radius: calc(var(--border-radius) * 2);
         overflow: hidden;
-        pointer-events: none;
+
+        :global(.overlay-button) {
+            cursor: default;
+        }
     }
 
     @media screen and (min-width: ds.$breakpoint-automated-row-grouping-medium) {
@@ -42,6 +45,16 @@ $z-index-splash-contents: 10;
         left: 50%;
         transform: translate(-60px, -48px) scale(1.5);
         z-index: 1;
+    }
+
+    :global(.country) {
+        display: flex;
+        align-items: center;
+        gap: ds.$size-half;
+    }
+
+    :global(.flag) {
+        font-size: 1.75rem;
     }
 
     // Copy default theme slider styles to deal with .ag-styles specificity issues
@@ -210,6 +223,11 @@ $z-index-splash-contents: 10;
 
     @media screen and (min-width: ds.$breakpoint-automated-row-grouping-medium) {
         display: block;
+        margin-left: -80px;
+    }
+
+    @media screen and (min-width: ds.$max-page-width) {
+        margin-left: -100px;
     }
 }
 
@@ -278,13 +296,17 @@ $z-index-splash-contents: 10;
     height: 100%;
     top: 0;
     left: 0;
-    margin: 41px 1rem 1rem;
     overflow: hidden;
     z-index: $z-index-mouse-mask;
     pointer-events: none;
 
     // Start off hidden
     opacity: 0;
+
+    @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
+        // Hide mouse when automated example is not interactive
+        display: none;
+    }
 
     :global(.mouse) {
         position: absolute;

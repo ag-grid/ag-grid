@@ -48,9 +48,7 @@ export function createScriptRunner({
         onStateChange: (state) => {
             scriptDebugger?.log(`${id} state: ${state}`);
 
-            if (state === 'stopping') {
-                mouse.hide();
-            } else if (state === 'inactive') {
+            if (state === 'stopping' || state === 'inactive' || state === 'errored') {
                 mouse.hide();
             }
 

@@ -30,16 +30,16 @@ The example below demonstrates a basic example, using the API's `forEachNode` fu
 The following code snippet outlines the general approach of iterating through all loaded row nodes and then updating target rows with `rowNode.updateData(data)`:
 
 <snippet>
-|gridOptions.api.forEachNode(rowNode => {
-|    if (idsToUpdate.indexOf(rowNode.data.id) >= 0) {
-|        // arbitrarily update some data
-|        const updated = rowNode.data;
-|        updated.gold += 1;
-|
-|        // directly update data in rowNode
-|        rowNode.updateData(updated);
-|    }
-|});
+| gridOptions.api.forEachNode(rowNode => {
+|     if (idsToUpdate.indexOf(rowNode.data.id) >= 0) {
+|         // arbitrarily update some data
+|         const updated = rowNode.data;
+|         updated.gold += 1;
+| 
+|         // directly update data in rowNode
+|         rowNode.updateData(updated);
+|     }
+| });
 </snippet>
 
 The example below demonstrates this snippet in action;

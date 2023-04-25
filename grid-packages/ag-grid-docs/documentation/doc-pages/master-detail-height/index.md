@@ -86,19 +86,18 @@ Use the callback `getRowHeight(params)` to set height for each row individually.
 Note that this callback gets called for **all rows** in the Master Grid, not just rows containing Detail Grids. If you do not want to set row heights explicitly for other rows simply return `undefined / null` and the grid will ignore the result for that particular row.
 
 <snippet>
-|const gridOptions = {
-|    // dynamically assigning detail row height
-|    getRowHeight: params => {
-|        const isDetailRow = params.node.detail;
+| const gridOptions = {
+|     // dynamically assigning detail row height
+|     getRowHeight: params => {
+|         const isDetailRow = params.node.detail;
+|         // for all rows that are not detail rows, return nothing
+|         if (!isDetailRow) { return undefined; }
 |
-|        // for all rows that are not detail rows, return nothing
-|        if (!isDetailRow) { return undefined; }
-|
-|        // otherwise return height based on number of rows in detail grid
-|        const detailPanelHeight = params.data.children.length * 50;
-|        return detailPanelHeight;
-|    }
-|}
+|         // otherwise return height based on number of rows in detail grid
+|         const detailPanelHeight = params.data.children.length * 50;
+|         return detailPanelHeight;
+|     }
+| }
 </snippet>
 
 The following example demonstrates dynamic detail row heights:

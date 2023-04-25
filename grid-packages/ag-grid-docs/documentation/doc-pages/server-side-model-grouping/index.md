@@ -97,10 +97,11 @@ To enable sticky groups, set the `groupRowsSticky` property to true. This behavi
 It is possible to expand and collapse all group rows using the `expandAll()` and `collapseAll()` grid API's.
 
 <snippet>
-// Expand all group rows
-gridOptions.api.expandAll();
-// Collapse all group rows
-gridOptions.api.collapseAll();
+| // Expand all group rows
+| gridOptions.api.expandAll();
+|
+| // Collapse all group rows
+| gridOptions.api.collapseAll();
 </snippet>
 
 Calling `expandAll()` and `collapseAll()` will impact **all loaded group nodes**, including those not visible due to their containing group been closed. This means there could potentially be a huge number of groups expanded, so this method should be used very wisely to not create massive amount of server requests and loading a large amount of data.
@@ -110,12 +111,12 @@ Calling `expandAll()` and `collapseAll()` will have no impact on rows yet to be 
 To open only specific groups, e.g. only groups at the top level, then use the `forEachNode()` callback and open / close the row using `setExpanded()` as follows:
 
 <snippet>
-// Expand all top level row nodes
-gridOptions.api.forEachNode(node => {
-    if (node.group && node.level == 0) {
-        node.setExpanded(true);
-    }
-});
+| // Expand all top level row nodes
+| gridOptions.api.forEachNode(node => {
+|     if (node.group && node.level == 0) {
+|         node.setExpanded(true);
+|     }
+| });
 </snippet>
 
 The example below demonstrates these techniques. Note the following:

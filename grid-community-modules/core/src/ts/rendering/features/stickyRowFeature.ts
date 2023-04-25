@@ -127,6 +127,19 @@ export class StickyRowFeature extends BeanStub {
         this.refreshNodesAndContainerHeight(stickyRows, height);
     }
 
+    public refreshStickyNode(stickRowNode:  RowNode): void {
+        const allStickyNodes: RowNode[] = [];
+        for (let i = 0; i < this.stickyRowCtrls.length; i++) {
+            const currentNode = this.stickyRowCtrls[i].getRowNode();
+            if (currentNode !== stickRowNode) {
+                allStickyNodes.push(currentNode);
+            }
+        }
+
+        this.refreshNodesAndContainerHeight(allStickyNodes, this.containerHeight);
+        this.checkStickyRows();
+    }
+
     private refreshNodesAndContainerHeight(allStickyNodes: RowNode[], height: number): void {
         const removedCtrls = this.stickyRowCtrls.filter(ctrl => allStickyNodes.indexOf(ctrl.getRowNode()) === -1);
         const addedNodes = allStickyNodes.filter(rowNode => this.stickyRowCtrls.findIndex(ctrl => ctrl.getRowNode() === rowNode) === -1);

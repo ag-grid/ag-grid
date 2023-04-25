@@ -654,7 +654,7 @@
     "meta": {},
     "type": { "noData?": "AgChartOverlayOptions" },
     "docs": {
-      "noData?": "/** An overlay to be displayed when there is no data, */"
+      "noData?": "/** An overlay to be displayed when there is no data. */"
     }
   },
   "AgChartLabelOptions": {
@@ -1311,6 +1311,7 @@
   "AgAxisBaseTickOptions": {
     "meta": {},
     "type": {
+      "enabled?": "boolean",
       "width?": "PixelSize",
       "size?": "PixelSize",
       "color?": "CssColor",
@@ -1319,6 +1320,7 @@
       "maxSpacing?": "number"
     },
     "docs": {
+      "enabled?": "/** Set to false to hide the axis tick lines. */",
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
       "color?": "/** The colour of the axis ticks. */",
@@ -1330,6 +1332,7 @@
   "AgAxisCategoryTickOptions": {
     "meta": {},
     "type": {
+      "enabled?": "boolean",
       "width?": "PixelSize",
       "size?": "PixelSize",
       "color?": "CssColor",
@@ -1338,6 +1341,7 @@
       "maxSpacing?": "number"
     },
     "docs": {
+      "enabled?": "/** Set to false to hide the axis tick lines. */",
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
       "color?": "/** The colour of the axis ticks. */",
@@ -1351,6 +1355,7 @@
     "type": {
       "count?": "number",
       "interval?": "number",
+      "enabled?": "boolean",
       "width?": "PixelSize",
       "size?": "PixelSize",
       "color?": "CssColor",
@@ -1361,6 +1366,7 @@
     "docs": {
       "count?": "/** A hint of how many ticks to use across an axis.\n     * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.\n     * @deprecated since v7.1.0 (ag-grid v29.1.0) Use tick.interval or tick.minSpacing and tick.maxSpacing instead.\n     */",
       "interval?": "/** The step value between ticks specified as a number. If the configured interval results in too many ticks given the chart size, it will be ignored.\n     */",
+      "enabled?": "/** Set to false to hide the axis tick lines. */",
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
       "color?": "/** The colour of the axis ticks. */",
@@ -1374,6 +1380,7 @@
     "type": {
       "count?": "any",
       "interval?": "any",
+      "enabled?": "boolean",
       "width?": "PixelSize",
       "size?": "PixelSize",
       "color?": "CssColor",
@@ -1384,6 +1391,7 @@
     "docs": {
       "count?": "/** A hint of how many ticks to use across an axis.\n     * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.\n     * The following intervals from the `agCharts.time` namespace can be used:\n     * `millisecond, second, minute, hour, day, sunday, monday, tuesday, wednesday, thursday, friday, saturday, month, year, utcMinute, utcHour, utcDay, utcMonth, utcYear`.\n     * Derived intervals can be created by using the `every` method on the default ones. For example, `agCharts.time.month.every(2)` will return a derived interval that will make the axis place ticks for every other month. */",
       "interval?": "/** The step value between ticks specified as a TimeInterval or a number. If the configured interval results in dense ticks given the data domain, the ticks will be removed.\n     */",
+      "enabled?": "/** Set to false to hide the axis tick lines. */",
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
       "color?": "/** The colour of the axis ticks. */",
@@ -1404,6 +1412,7 @@
   "AgAxisLabelOptions": {
     "meta": {},
     "type": {
+      "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
       "fontSize?": "FontSize",
@@ -1419,6 +1428,7 @@
       "formatter?": "(params: AgAxisLabelFormatterParams) => string | undefined"
     },
     "docs": {
+      "enabled?": "/** Set to false to hide the axis labels. */",
       "fontStyle?": "/** The font style to use for the labels. */",
       "fontWeight?": "/** The font weight to use for the labels. */",
       "fontSize?": "/** The font size in pixels to use for the labels. */",
@@ -3580,6 +3590,17 @@
     "meta": { "isTypeAlias": true, "typeParams": ["R"] },
     "type": "{ type: 'processor'; property: string; calculate: (data: ProcessedData<any>) => R; }"
   },
+  "Series": {
+    "meta": {},
+    "type": {
+      "id": "string",
+      "type": "string",
+      "toggleSeriesItem(itemId: string, enabled: boolean)": "void",
+      "toggleOtherSeriesItems(series: { id: string; type: string; }, itemId: string, enabled?: boolean, preferredEnabled?: boolean)": "void",
+      "getLegendData()": "any[]"
+    }
+  },
+  "SeriesGetter": { "meta": { "isTypeAlias": true }, "type": "() => Series[]" },
   "Page": {
     "meta": { "isTypeAlias": true },
     "type": "{ columns: Column[]; pageWidth: number; pageHeight: number; startIndex: number; endIndex: number; }"
@@ -3727,15 +3748,34 @@
     "meta": { "isTypeAlias": true, "typeParams": ["T extends EventTypes"] },
     "type": "T extends LayoutStage ? LayoutProcessor : LayoutListener"
   },
-  "LegendDatum": {
+  "ChartLegend": {
     "meta": {},
     "type": {
+      "attachLegend(node: Node | null)": "void",
+      "destroy()": "void",
+      "data": "any",
+      "item": "{ label: { formatter?: (params: any) => string; }; }",
+      "listeners": "AgChartLegendListeners"
+    }
+  },
+  "ChartLegendDatum": {
+    "meta": {},
+    "type": {
+      "legendType": "string",
+      "seriesId": "string",
+      "enabled": "boolean"
+    }
+  },
+  "CategoryLegendDatum": {
+    "meta": {},
+    "type": {
+      "legendType": "'category'",
       "id": "string",
       "itemId": "any",
-      "seriesId": "string",
-      "enabled": "boolean",
       "marker": "{ shape?: string | (new () => Marker); fill: string; stroke: string; fillOpacity: number; strokeOpacity: number; }",
-      "label": "{ text: string; }"
+      "label": "{ text: string; }",
+      "seriesId": "string",
+      "enabled": "boolean"
     }
   },
   "SeriesOptionsTypes": {
@@ -3926,8 +3966,7 @@
     "type": {
       "pathsPerSeries": "number",
       "pathsZIndexSubOrderOffset": "number[]",
-      "hasMarkers": "boolean",
-      "renderLayerPerSubSeries": "boolean"
+      "hasMarkers": "boolean"
     }
   },
   "HistogramSeriesNodeTag": {
@@ -3979,10 +4018,6 @@
       "nodeMidPoint?": "Readonly<Point>"
     }
   },
-  "PointDatum": {
-    "meta": {},
-    "type": { "xDatum": "any", "yDatum": "any", "datum": "any" }
-  },
   "LineContext": {
     "meta": { "isTypeAlias": true },
     "type": "SeriesNodeDataContext<LineNodeDatum>"
@@ -3991,6 +4026,7 @@
     "meta": {},
     "type": {
       "label": "MeasuredLabel",
+      "fill": "string | undefined",
       "xKey": "string",
       "yKey": "string",
       "series": "Series<any>",
@@ -4146,6 +4182,10 @@
   "TooltipPositionType": {
     "meta": { "isTypeAlias": true },
     "type": "'pointer' | 'node'"
+  },
+  "UpdateCallback": {
+    "meta": { "isTypeAlias": true },
+    "type": "(type: ChartUpdateType, options: { forceNodeDataRefresh?: boolean; }) => void"
   },
   "Tick": { "meta": {}, "type": { "labels": "string[]" } },
   "ScaleClampParams": {
@@ -4388,13 +4428,16 @@
     "meta": {},
     "type": {
       "scene": "Scene",
+      "mode": "'standalone' | 'integrated'",
       "interactionManager": "InteractionManager",
       "highlightManager": "HighlightManager",
       "cursorManager": "CursorManager",
       "zoomManager": "ZoomManager",
       "tooltipManager": "TooltipManager",
+      "dataService": "DataService",
       "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>",
-      "updateService": "UpdateService"
+      "updateService": "UpdateService",
+      "optionsConstructors": "{ add(path: string, constructor: new () => any): void; delete(path: string): void; }"
     }
   },
   "ModuleContextWithParent": {
@@ -4402,13 +4445,16 @@
     "type": {
       "parent": "P",
       "scene": "Scene",
+      "mode": "'standalone' | 'integrated'",
       "interactionManager": "InteractionManager",
       "highlightManager": "HighlightManager",
       "cursorManager": "CursorManager",
       "zoomManager": "ZoomManager",
       "tooltipManager": "TooltipManager",
+      "dataService": "DataService",
       "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>",
-      "updateService": "UpdateService"
+      "updateService": "UpdateService",
+      "optionsConstructors": "{ add(path: string, constructor: new () => any): void; delete(path: string): void; }"
     }
   },
   "AxisContext": {
@@ -4428,6 +4474,12 @@
   "SeriesFactory": {
     "meta": { "isTypeAlias": true },
     "type": "() => Series<any>"
+  },
+  "LegendModuleContext": {
+    "meta": {},
+    "type": {
+      "legendFactory": "{ add(factory: (ctx: ModuleContext) => ChartLegend): void; delete(): void; }"
+    }
   },
   "SeriesContext": {
     "meta": {},
@@ -4473,6 +4525,16 @@
       "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
     }
   },
+  "LegendModule": {
+    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "type": {
+      "type": "'legend'",
+      "initialiseModule(ctx: LegendModuleContext)": "ModuleInstanceMeta<M>",
+      "optionsKey": "string",
+      "packageType": "'community' | 'enterprise'",
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
+    }
+  },
   "SeriesModule": {
     "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
     "type": {
@@ -4488,7 +4550,7 @@
       "isTypeAlias": true,
       "typeParams": ["M extends ModuleInstance = ModuleInstance"]
     },
-    "type": "RootModule<M> | AxisModule<M> | SeriesModule<M>"
+    "type": "RootModule<M> | AxisModule<M> | LegendModule<M> | SeriesModule<M>"
   },
   "FormatterOptions": {
     "meta": {},
