@@ -4511,6 +4511,7 @@
     "type": {
       "type": "'root'",
       "initialiseModule(ctx: ModuleContext)": "ModuleInstanceMeta<M>",
+      "destroyModule?(ctx: ModuleContext)": "void",
       "optionsKey": "string",
       "packageType": "'community' | 'enterprise'",
       "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"

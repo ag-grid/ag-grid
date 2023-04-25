@@ -304,8 +304,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
         (this as any)[module.optionsKey] = moduleMeta.instance;
     }
 
-    removeModule(module: Module) {
+    removeModule(module: RootModule) {
         this.modules[module.optionsKey]?.instance?.destroy();
+        module.destroyModule?.(this.getModuleContext());
         delete this.modules[module.optionsKey];
         delete (this as any)[module.optionsKey];
     }

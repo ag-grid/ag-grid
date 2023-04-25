@@ -6412,6 +6412,13 @@
         "optional": false
       }
     },
+    "destroyModule": {
+      "type": {
+        "arguments": { "ctx": "ModuleContext" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
     "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
     "optionsKey": { "type": { "returnType": "string", "optional": false } },
     "packageType": {

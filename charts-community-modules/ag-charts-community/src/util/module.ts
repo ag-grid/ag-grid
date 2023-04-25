@@ -102,6 +102,7 @@ interface BaseModule {
 export interface RootModule<M extends ModuleInstance = ModuleInstance> extends BaseModule {
     type: 'root';
     initialiseModule(ctx: ModuleContext): ModuleInstanceMeta<M>;
+    destroyModule?(ctx: ModuleContext): void;
 }
 
 export interface AxisModule<M extends ModuleInstance = ModuleInstance> extends BaseModule {
