@@ -257,4 +257,8 @@ export class GradientLegend {
         const maxHeight = Math.max(...boxes.map((b) => b.height));
         return [maxWidth, maxHeight];
     }
+
+    computeBBox(): _Scene.BBox {
+        return this.group.computeBBox();
+    }
 }
