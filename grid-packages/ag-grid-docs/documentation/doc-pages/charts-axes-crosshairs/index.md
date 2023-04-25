@@ -2,9 +2,10 @@
 title: "Crosshairs"
 enterprise: true
 ---
+
 Crosshairs show a reference line on the chart, along with the corresponding axis value at a specific position.
 
-When hovering over the chart, the crosshairs can either follow the mouse pointer position or snap to the highlighted 
+When hovering over the chart, the crosshairs can either follow the mouse pointer position or snap to the highlighted
 item's position to display the axis value at that specific point.
 
 ## Enabling Crosshairs
@@ -85,6 +86,20 @@ crosshair: {
 ```
 
 [Crosshair Label Offset Example](https://plnkr.co/edit/cMwlh8WT7VSTD1pg?open=main.js)
+
+## Crosshair Label format
+
+The `crosshair.label.format` property can be used to format the crosshair label.
+
+If a format string is not provided, the `axis.label.format` string will be used.
+
+If neither is present, default formatting will be used: one granularity above axis tick fraction digits for number axes and no formatting for category and time axes.
+
+The example below demonstrates this behaviour.
+
+Notice how when you click on one of the buttons in the example to change the provided configuration, the crosshair label format changes.
+
+[Crosshair Label Format](https://plnkr.co/edit/BbqRxe8q057BITE5?open=main.js)
 
 ## Crosshair Label Renderer
 
