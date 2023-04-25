@@ -58,9 +58,10 @@ The size of the parent nodes will be automatically determined.
 The `labelKey`, `sizeKey` and `colorKey` configs can be omitted, if the node objects in your data
 happen to have the `label`, `size` and `color` fields.
 
-[[note]]
-| Any treemap series covers the whole series area of a chart, so it doesn't make sense to have more than
-| a single treemap series in a chart, even though it's technically supported.
+<note>
+Any treemap series covers the whole series area of a chart, so it doesn't make sense to have more than
+a single treemap series in a chart, even though it's technically supported.
+</note>
 
 Let's take a look at how we can use the treemap series to render a snapshot of the S&P 500 stock market index.
 Feel free to open this example in Plunker to enlarge the size of the component and notice how the treemap reveals more data as it grows bigger.

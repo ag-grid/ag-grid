@@ -12,10 +12,10 @@ Learn about creating and updating charts in more detail.
 | Mutations to the previously used options object are not automatically picked up by the chart implementation,
 | `AgChart.update()` should be called for changes to be applied.
 |
-| [[note]]
+| <note>
 | | NOTE: We expect the options supplied to `AgChart.update()` to be the full configuration state to update
 | | to, not a partial configuration. Use `AgChart.updateDelta()` to apply partial updates.
-|
+| </note>
 | `AgChart` has the following API:
 | <api-documentation source='charts-api/doc-interfaces.AUTO.json' section="AgChart" names='["create", "update"]' config='{ "showSnippets": false, "lookupRoot": "charts-api", "suppressTypes": ["AgChartInstance", "AgChartOptions", "DeepPartial"] }'></api-documentation>
 

@@ -76,11 +76,12 @@ function myEventListener(event) {
 
 You might have noticed that we are attaching arbitrary attributes (`__col` and `__row`) onto the DOM element and might be wondering is this safe? I hope so, as AG Grid is used for air traffic control over Australia as far as I know. In other words, AG Grid has done this for a long time and has been tested in the field.
 
-[[note]]
-| This is a similar pattern used by React using React's Synthetic Events.
-| React uses event delegation and listens for events at the
-| root of the application. React keeps track of which rendered nodes have listeners.
-| The synthetic event system implements its own bubbling and calls the appropriate handlers.
+<note>
+This is a similar pattern used by React using React's Synthetic Events.
+React uses event delegation and listens for events at the
+root of the application. React keeps track of which rendered nodes have listeners.
+The synthetic event system implements its own bubbling and calls the appropriate handlers.
+</note>
 
 ## Hack 4 - Throw Away DOM
 

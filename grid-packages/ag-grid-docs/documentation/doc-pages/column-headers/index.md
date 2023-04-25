@@ -175,8 +175,9 @@ When you provide your own template, everything should work as expected as long a
 
 The ref parameters are used by the grid to identify elements to add functionality to. If you leave an element out of your template, the functionality will not be added. For example if you do not specify `eLabel` then the column will not react to click events for sorting.
 
-[[note]]
-| Templates are not meant to let you configure icons. If you are looking to change the icons, check our [icon docs](/custom-icons/).
+<note>
+Templates are not meant to let you configure icons. If you are looking to change the icons, check our [icon docs](/custom-icons/).
+</note>
 
 ### Example: Simple Header Templates
 

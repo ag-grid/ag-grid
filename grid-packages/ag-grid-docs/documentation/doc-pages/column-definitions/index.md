@@ -89,8 +89,9 @@ In addition to the above, the grid provides additional ways to help simplify and
 
 Default columns and column types can specify any of the [column properties](/column-properties/) available on a column.
 
-[[note]]
-| Column Types are designed to work on Columns only, i.e. they won't be applied to Column Groups.
+<note>
+Column Types are designed to work on Columns only, i.e. they won't be applied to Column Groups.
+</note>
 
 The following code snippet demonstrates these three properties:
 
@@ -157,8 +158,9 @@ The following example demonstrates the different configuration properties in act
 
 The grid provides a handy shortcut for aligning columns to the right. Setting the column definition type to `rightAligned` aligns the column header and contents to the right, which makes the scanning of the data easier for the user.
 
-[[note]]
-| Because right alignment is used for numbers, we also provided an alias `numericColumn` that can be used to align the header and cell text to the right.
+<note>
+Because right alignment is used for numbers, we also provided an alias `numericColumn` that can be used to align the header and cell text to the right.
+</note>
 
 <snippet>
 const gridOptions = {

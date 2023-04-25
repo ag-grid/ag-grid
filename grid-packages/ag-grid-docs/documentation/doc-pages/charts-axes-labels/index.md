@@ -112,9 +112,10 @@ Where:
   - `x` - Hexadecimal notation, using lower-case letters, rounded to integer.
   - `X` - Hexadecimal notation, using upper-case letters, rounded to integer.
 
-[[note]]
-|If you want to have a formatted value in the middle of some string, you have to wrap it in `#{}`,
-| so that it's clear where the number format begins and ends. For example: `I'm #{0>2.0f} years old`.
+<note>
+If you want to have a formatted value in the middle of some string, you have to wrap it in `#{}`,
+so that it's clear where the number format begins and ends. For example: `I'm #{0>2.0f} years old`.
+</note>
 
 The `label` config of the left axis in the example below uses the `'🌧️ #{0>2.1f} °C'` specifier string for the `format` property to format numbers as integers padded to left with zeros to achieve a consistent 2-digit width.
 

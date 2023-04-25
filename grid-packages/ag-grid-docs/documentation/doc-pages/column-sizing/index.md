@@ -53,22 +53,30 @@ the result is deterministic and does not depend on any Column resizing the user 
 
 The function can receive a parameters object with minimum and maximum widths, either for all columns or for specific columns, to further restrain the column's resulting width from that function call. These widths will not exceed the column's defined minimum and maximum widths.
 
-[[note]]
-| For example assuming a grid with three Columns, the algorithm will be as follows:<br/>
+<note>
+| For example assuming a grid with three Columns, the algorithm will be as follows:
 |
-| scale = availableWidth / (w1 + w2 + w3)<br/>
-| w1 = round(w1 * scale)<br/>
-| w2 = round(w2 * scale)<br/>
-| w3 = totalGridWidth - (w1 + w2)<br/>
+| scale = availableWidth / (w1 + w2 + w3)
+|
+| w1 = round(w1 * scale)
+|
+| w2 = round(w2 * scale)
+|
+| w3 = totalGridWidth - (w1 + w2)
 |
 | Assuming the grid is 1,200 pixels wide and the Columns have default widths of 50, 120 and 300,
 | then the calculation is as follows:
 |
-| availableWidth = 1,198 (available width is typically smaller as the grid typically has left and right borders)<br/>
-| scale = 1198 / (50 + 120 + 300) = 2.548936170212766<br/>
-| col 1 = 50 * 2.54 = 127.44 -> rounded = 127<br/>
-| col 2 = 120 * 2.54 = 305.87 -> rounded = 306<br/>
-| col 3 = 1198 - (127 + 306) = 765 // last col gets the space that's left, which ensures all space is used, no rounding issues<br/>
+| availableWidth = 1,198 (available width is typically smaller as the grid typically has left and right borders)
+|
+| scale = 1198 / (50 + 120 + 300) = 2.548936170212766
+|
+| col 1 = 50 * 2.54 = 127.44 -> rounded = 127
+|
+| col 2 = 120 * 2.54 = 305.87 -> rounded = 306
+|
+| col 3 = 1198 - (127 + 306) = 765 // last col gets the space that's left, which ensures all space is used, no rounding issues
+</note>
 
 In the following example, after clicking the button, note the following:
 - The `athlete` column has `suppressSizeToFit` and is not resized.
@@ -121,15 +129,17 @@ It's often required that one or more columns fill the entire available space in 
 
 Flex sizing works by dividing the remaining space in the grid among all flex columns in proportion to their flex value. For example, suppose the grid has a total width of 450px and it has three columns: the first with `width: 150`; the second with `flex: 1`; and third with `flex: 2`. The first column will be 150px wide, leaving 300px remaining. The column with `flex: 2` has twice the size with `flex: 1`. So final sizes will be: 150px, 100px, 200px.
 
-[[note]]
-| The flex config does **not** work with a `width` config
-| in the same column. If you need to provide a minimum width for a column,
-| you should use flex and the `minWidth` config. Flex will also take `maxWidth`
-| into account.
+<note>
+The flex config does **not** work with a `width` config
+in the same column. If you need to provide a minimum width for a column,
+you should use flex and the `minWidth` config. Flex will also take `maxWidth`
+into account.
+</note>
 
-[[note]]
-| If you manually resize a column with flex either via the API or by dragging the resize handle,
-| flex will automatically be disabled for that column.
+<note>
+If you manually resize a column with flex either via the API or by dragging the resize handle,
+flex will automatically be disabled for that column.
+</note>
 
 The example below shows flex in action. Things to note are as follows:
 
