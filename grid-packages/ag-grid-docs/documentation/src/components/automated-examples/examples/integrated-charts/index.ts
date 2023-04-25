@@ -12,7 +12,7 @@ import { INTEGRATED_CHARTS_ID } from '../../lib/constants';
 import { createMouse } from '../../lib/createMouse';
 import { isInViewport } from '../../lib/dom';
 import { getAdditionalContextMenuItems } from '../../lib/getAdditionalContextMenuItems';
-import { ScriptDebuggerManager } from '../../lib/scriptDebugger';
+import { ScriptDebugger, ScriptDebuggerManager } from '../../lib/scriptDebugger';
 import { RunScriptState, ScriptRunner } from '../../lib/scriptRunner';
 import { AutomatedExample } from '../../types';
 import { createScriptRunner } from './createScriptRunner';
@@ -116,6 +116,7 @@ export function createAutomatedIntegratedCharts({
 }: CreateAutomatedIntegratedChartsParams): AutomatedExample {
     const gridSelector = `.${gridClassname}`;
     let gridDiv: HTMLElement;
+    let scriptDebugger: ScriptDebugger | undefined;
 
     const init = () => {
         gridDiv = document.querySelector(gridSelector) as HTMLElement;
@@ -137,7 +138,7 @@ export function createAutomatedIntegratedCharts({
                 return;
             }
 
-            const scriptDebugger = scriptDebuggerManager.add({
+            scriptDebugger = scriptDebuggerManager.add({
                 id: INTEGRATED_CHARTS_ID,
                 containerEl: gridDiv,
             });
@@ -183,6 +184,7 @@ export function createAutomatedIntegratedCharts({
         isInViewport: () => {
             return isInViewport(gridDiv, visibilityThreshold);
         },
+        getDebugger: () => scriptDebugger,
     };
 }
 

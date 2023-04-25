@@ -30,6 +30,7 @@ const STEP_CLASSNAME = 'step';
 const PAUSED_STATE_CLASSNAME = 'paused-state';
 const MOUSE_POSITION_CLASSNAME = 'mouse-position';
 const MANAGER_STATE_CLASSNAME = 'manager-state';
+const DISABLED_CLASSNAME = 'disabled';
 const getCheckboxTemplate = (isChecked?: boolean) => `
     <label class="draw-checkbox">
         <input type="checkbox" ${isChecked ? 'checked' : ''} /> Draw
@@ -162,6 +163,13 @@ function createDebugPanelSection({
             runnerButtonEl.innerHTML = 'Stop';
         }
     };
+    const updateIsEnabled = (isEnabled: boolean) => {
+        if (isEnabled) {
+            sectionEl.classList.remove(DISABLED_CLASSNAME);
+        } else {
+            sectionEl.classList.add(DISABLED_CLASSNAME);
+        }
+    };
 
     return {
         sectionEl,
@@ -169,6 +177,7 @@ function createDebugPanelSection({
         updateStepText,
         updatePausedStateText,
         updateButton,
+        updateIsEnabled,
     };
 }
 
@@ -224,6 +233,7 @@ function createDebugPanel(classname: string) {
                 updateStepText,
                 updatePausedStateText,
                 updateButton,
+                updateIsEnabled,
             } = createDebugPanelSection({
                 id,
                 onDrawChange,
@@ -237,6 +247,7 @@ function createDebugPanel(classname: string) {
                 updateStepText,
                 updatePausedStateText,
                 updateButton,
+                updateIsEnabled,
             };
         },
     };
@@ -258,7 +269,13 @@ function createScriptDebugger({
         return scriptRunner;
     };
 
-    const { updateStateText, updateStepText, updatePausedStateText, updateButton } = debugPanel.addSection({
+    const {
+        updateStateText,
+        updateStepText,
+        updatePausedStateText,
+        updateButton,
+        updateIsEnabled,
+    } = debugPanel.addSection({
         id,
         initialDraw,
         getScriptRunner,
@@ -316,6 +333,9 @@ function createScriptDebugger({
         drawPoint,
         updateStep,
         updateState,
+        updateIsEnabled: (isEnabled: boolean) => {
+            updateIsEnabled(isEnabled);
+        },
         setScriptRunner,
     };
 }
@@ -381,7 +401,7 @@ export function createScriptDebuggerManager({
         setInitialDraw: (draw: boolean) => {
             initialDraw = draw;
         },
-        add: ({ id, containerEl }: { id: string; containerEl: HTMLElement }) => {
+        add: ({ id, containerEl }: { id: string; containerEl: HTMLElement }): ScriptDebugger | undefined => {
             if (!isEnabled) {
                 return;
             }
