@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/side-bar - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.2
+          * @ag-grid-enterprise/side-bar - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.3
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -907,7 +907,7 @@ var ToolPanelColDefService = /** @class */ (function (_super) {
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '29.3.2';
+var VERSION = '29.3.3';
 
 var SideBarModule = {
     version: VERSION,

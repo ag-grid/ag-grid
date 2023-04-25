@@ -1,4 +1,4 @@
-// ag-grid-react v29.3.2
+// ag-grid-react v29.3.3
 import { Component, ReactPortal } from "react";
 import { ReactComponent } from "./reactComponent";
 export declare class PortalManager {

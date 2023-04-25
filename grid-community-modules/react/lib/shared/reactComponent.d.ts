@@ -1,4 +1,4 @@
-// @ag-grid-community/react v29.3.2
+// @ag-grid-community/react v29.3.3
 import { ReactPortal } from 'react';
 import { ComponentType, IComponent, WrappableInterface } from '@ag-grid-community/core';
 import { PortalManager } from './portalManager';
