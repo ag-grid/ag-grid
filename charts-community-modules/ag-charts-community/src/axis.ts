@@ -3,7 +3,7 @@ import { Node } from './scene/node';
 import { Group } from './scene/group';
 import { Selection } from './scene/selection';
 import { Line } from './scene/shape/line';
-import { Text } from './scene/shape/text';
+import { getFont, Text } from './scene/shape/text';
 import { Arc } from './scene/shape/arc';
 import { BBox } from './scene/bbox';
 import { Caption } from './caption';
@@ -149,6 +149,14 @@ export class AxisLabel {
     @Validate(BOOLEAN)
     enabled = true;
 
+    /** If set to `false`, axis labels will not be wrapped on multiple lines.*/
+    @Validate(OPT_BOOLEAN)
+    autoWrap: boolean = false;
+
+    /** Used to constrain the width of the label, if the label text width exceeds the `maxWidth`, it will be wrapped on multiple lines automatically. */
+    @Validate(OPT_NUMBER(0))
+    maxWidth?: number = undefined;
+
     @Validate(OPT_FONT_STYLE)
     fontStyle?: FontStyle = undefined;
 
@@ -244,6 +252,10 @@ export class AxisLabel {
 
     @Validate(OPT_STRING)
     format: string | undefined = undefined;
+
+    getFont(): string {
+        return getFont(this.fontSize, this.fontFamily, this.fontStyle, this.fontWeight);
+    }
 }
 
 /**
@@ -796,12 +808,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         maxTickCount: number;
         defaultTickCount: number;
     } {
-        const { requestedRange } = this;
-
-        const min = Math.min(...requestedRange);
-        const max = Math.max(...requestedRange);
-
-        const availableRange = max - min;
+        const availableRange = this.calculateAvailableRange();
 
         const defaultMinSpacing = Math.max(
             Axis.defaultTickMinSpacing,
@@ -845,6 +852,14 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         return { minTickCount, maxTickCount, defaultTickCount };
     }
 
+    private calculateAvailableRange(): number {
+        const { requestedRange } = this;
+
+        const min = Math.min(...requestedRange);
+        const max = Math.max(...requestedRange);
+
+        return max - min;
+    }
     private getLabelSpacing(rotated?: boolean): number {
         const { label } = this;
         if (!isNaN(label.minSpacing)) {
@@ -1009,7 +1024,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     }): { labelData: PointLabelDatum[]; rotated: boolean } {
         const {
             label,
-            label: { enabled: labelsEnabled, parallel, rotation },
+            label: { enabled: labelsEnabled, parallel, rotation, autoWrap, maxWidth },
             tick,
         } = this;
 
@@ -1049,35 +1064,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             node.text = this.formatTickDatum(tick, index);
 
             const userHidden = node.text === '' || node.text == undefined;
-
             const bbox = node.computeBBox();
-            const { width, height } = bbox;
-
-            const translatedBBox = new BBox(labelX, translationY, 0, 0);
-            labelMatrix.transformBBox(translatedBBox, bbox);
-
-            const { x = 0, y = 0 } = bbox;
-            bbox.width = width;
-            bbox.height = height;
-
-            labelBboxes.set(index, userHidden ? null : bbox);
-
-            if (userHidden) {
-                return;
-            }
-
-            labelData.push({
-                point: {
-                    x,
-                    y,
-                    size: 0,
-                },
-                label: {
-                    width,
-                    height,
-                    text: '',
-                },
-            });
+            this.calculateLabelBBox(bbox, index, labelX, translationY, labelBboxes, userHidden, labelMatrix, labelData);
         });
 
         const labelSpacing = this.getLabelSpacing();
@@ -1102,6 +1090,38 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         const labelAutoRotated = labelAutoRotation > 0 && labelAutoRotation <= Math.PI;
         const alignFlag = labelRotated || labelAutoRotated ? -1 : 1;
 
+        const font = label.getFont();
+        const defaultMaxLabelWidth = parallel
+            ? Math.round(this.calculateAvailableRange() / labelData.length)
+            : this.maxThickness;
+        const maxLabelWidth = maxWidth ?? defaultMaxLabelWidth;
+
+        const rotated = !!(labelRotation || labelAutoRotation);
+        const wrapLabels = autoWrap && !rotated;
+
+        if (wrapLabels) {
+            labelData = [];
+            labelSelection.each((node, datum, index) => {
+                const { tick, translationY } = datum;
+                const formattedText = this.formatTickDatum(tick, index);
+                const labelText = Text.wrap(formattedText, maxLabelWidth, font, label.fontSize);
+                node.text = labelText;
+
+                const userHidden = node.text === '' || node.text == undefined;
+                const bbox = node.computeBBox();
+                this.calculateLabelBBox(
+                    bbox,
+                    index,
+                    labelX,
+                    translationY,
+                    labelBboxes,
+                    userHidden,
+                    labelMatrix,
+                    labelData
+                );
+            });
+        }
+
         let labelTextAlign: 'start' | 'end' | 'center' = 'start';
         if (parallel) {
             if (labelRotation || labelAutoRotation) {
@@ -1122,7 +1142,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
         labelData = [];
         labelSelection.each((label, datum, index) => {
-            if (label.text === '' || label.text == undefined) {
+            const userHidden = label.text === '' || label.text == undefined;
+            if (userHidden) {
                 label.visible = false; // hide empty labels
                 return;
             }
@@ -1133,38 +1154,11 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             label.rotationCenterX = labelX;
             label.rotation = combinedRotation;
 
-            // Text.computeBBox() does not take into account any of the transformations that have been applied to the label nodes, only the width and height are useful.
-            // Rather than taking into account all transformations including those of parent nodes which would be the result of `computeTransformedBBox()`, giving the x and y in the entire axis coordinate space,
-            // take into account only the rotation and translation applied to individual label nodes to get the x y coordinates of the labels relative to each other
-            // this makes label collision detection a lot simpler
-
-            const bbox = labelBboxes.get(index);
-            if (!bbox) {
-                return;
-            }
-
             label.visible = true;
-
-            const { width = 0, height = 0 } = bbox;
-
             const { translationY } = datum;
-            const translatedBBox = new BBox(labelX, translationY, 0, 0);
-            labelMatrix.transformBBox(translatedBBox, bbox);
 
-            const { x = 0, y = 0 } = bbox;
-
-            labelData.push({
-                point: {
-                    x,
-                    y,
-                    size: 0,
-                },
-                label: {
-                    width,
-                    height,
-                    text: label.text,
-                },
-            });
+            const bbox = label.computeBBox();
+            this.calculateLabelBBox(bbox, index, labelX, translationY, labelBboxes, userHidden, labelMatrix, labelData);
         });
 
         this.layout.label = {
@@ -1176,7 +1170,51 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             format: this.label.format,
         };
 
-        return { labelData, rotated: !!(labelRotation || labelAutoRotation) };
+        return { labelData, rotated };
+    }
+
+    private calculateLabelBBox(
+        bbox: BBox,
+        index: number,
+        labelX: number,
+        translationY: number,
+        labelBboxes: Map<number, BBox | null>,
+        userHidden: boolean,
+        labelMatrix: Matrix,
+        labelData: PointLabelDatum[]
+    ) {
+        // Text.computeBBox() does not take into account any of the transformations that have been applied to the label nodes, only the width and height are useful.
+        // Rather than taking into account all transformations including those of parent nodes which would be the result of `computeTransformedBBox()`, giving the x and y in the entire axis coordinate space,
+        // take into account only the rotation and translation applied to individual label nodes to get the x y coordinates of the labels relative to each other
+        // this makes label collision detection a lot simpler
+
+        const { width, height } = bbox;
+
+        const translatedBBox = new BBox(labelX, translationY, 0, 0);
+        labelMatrix.transformBBox(translatedBBox, bbox);
+
+        const { x = 0, y = 0 } = bbox;
+        bbox.width = width;
+        bbox.height = height;
+
+        labelBboxes.set(index, userHidden ? null : bbox);
+
+        if (userHidden) {
+            return;
+        }
+
+        labelData.push({
+            point: {
+                x,
+                y,
+                size: 0,
+            },
+            label: {
+                width,
+                height,
+                text: '',
+            },
+        });
     }
 
     private updateLine() {
@@ -1257,6 +1295,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
     @Validate(NUMBER(0))
     thickness: number = 0;
+    maxThickness: number = Infinity;
 
     computeBBox(): BBox {
         return this.axisGroup.computeBBox();

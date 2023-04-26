@@ -215,6 +215,7 @@ export class CartesianChart extends Chart {
             } = this.calculateAxisDimensions({
                 axis,
                 seriesRect,
+                paddedBounds,
                 axisWidths,
                 newAxisWidths,
                 primaryTickCounts,
@@ -329,13 +330,15 @@ export class CartesianChart extends Chart {
     private calculateAxisDimensions(opts: {
         axis: ChartAxis;
         seriesRect: BBox;
+        paddedBounds: BBox;
         axisWidths: Partial<Record<AgCartesianAxisPosition, number>>;
         newAxisWidths: Partial<Record<AgCartesianAxisPosition, number>>;
         primaryTickCounts: Partial<Record<ChartAxisDirection, number>>;
         clipSeries: boolean;
         addInterAxisPadding: boolean;
     }) {
-        const { axis, seriesRect, axisWidths, newAxisWidths, primaryTickCounts, addInterAxisPadding } = opts;
+        const { axis, seriesRect, paddedBounds, axisWidths, newAxisWidths, primaryTickCounts, addInterAxisPadding } =
+            opts;
         let { clipSeries } = opts;
         const { position, direction } = axis;
 
@@ -371,6 +374,8 @@ export class CartesianChart extends Chart {
         }
 
         let primaryTickCount = axis.nice ? primaryTickCounts[direction] : undefined;
+        const paddedBoundsCoefficient = 0.3;
+        axis.maxThickness = axis.thickness > 0 ? axis.thickness : paddedBounds.width * paddedBoundsCoefficient;
         primaryTickCount = axis.update(primaryTickCount);
         primaryTickCounts[direction] = primaryTickCounts[direction] ?? primaryTickCount;
 
