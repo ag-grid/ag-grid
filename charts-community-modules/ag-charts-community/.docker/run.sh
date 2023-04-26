@@ -9,7 +9,7 @@ fi
 MODULE_PATH=$(echo $PWD | sed s:${LOCAL_REPO_ROOT}/::)
 MODULE_NAME=$(basename $MODULE_PATH)
 CHARTS_PATH=charts-community-modules/ag-charts-community
-ENTERPRISE_PATH=charts-enterprise-modules/core
+ENTERPRISE_PATH=charts-enterprise-modules/ag-charts-enterprise
 
 DOCKER_REPO_ROOT=/workspace/ag-grid
 DOCKER_MODULE_PATH=${DOCKER_REPO_ROOT}/${MODULE_PATH}
