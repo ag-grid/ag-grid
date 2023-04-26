@@ -24,7 +24,7 @@ export interface AgZoomOptions {
     enablePanning?: boolean;
     /** Set to true to enable zooming with the mouse wheel, defaults to true. */
     enableScrolling?: boolean;
-    /** Set to true to enable selecting an area of the chart to zoom into, defaults to true. */
+    /** Set to true to enable selecting an area of the chart to zoom into, defaults to false. */
     enableSelecting?: boolean;
     /** The minimum amount of the chart to show in the x-axis as a ratio of the full chart, defaults to `0.2`. */
     minXRatio?: number;

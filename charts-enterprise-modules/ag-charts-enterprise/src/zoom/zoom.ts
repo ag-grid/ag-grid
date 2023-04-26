@@ -28,7 +28,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     public enableScrolling = true;
 
     @Validate(BOOLEAN)
-    public enableSelecting = true;
+    public enableSelecting = false;
 
     @Validate(BOOLEAN)
     public enablePanning = true;
@@ -37,7 +37,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     public panKey: 'alt' | 'ctrl' | 'meta' | 'shift' = 'alt';
 
     @Validate(STRING_UNION('xy', 'x', 'y'))
-    public axes: 'xy' | 'x' | 'y' = 'xy';
+    public axes: 'xy' | 'x' | 'y' = 'x';
 
     @Validate(NUMBER(0, 1))
     public scrollingStep = 0.1;
@@ -124,22 +124,21 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     }
 
     private onDrag(event: _ModuleSupport.InteractionEvent<'drag'>) {
-        const isWithinSeriesRect = this.seriesRect?.containsPoint(event.offsetX, event.offsetY);
-        const isPrimaryMouseButton = (event.sourceEvent as MouseEvent).button === 0;
+        const sourceEvent = event.sourceEvent as DragEvent;
 
-        if (!isWithinSeriesRect || !isPrimaryMouseButton) return;
+        const isPrimaryMouseButton = sourceEvent.button === 0;
+        if (!isPrimaryMouseButton) return;
 
         this.isDragging = true;
 
-        const zoom = this.zoomManager.getZoom();
-        const isZoomed =
-            zoom && zoom.x && zoom.y && (zoom.x.min !== 0 || zoom.x.max !== 1 || zoom.y.min !== 0 || zoom.y.max !== 1);
+        const zoom = definedZoomState(this.zoomManager.getZoom());
 
+        // Allow panning if not at the maximum zoom and either selection is disabled or the panning key is pressed.
         if (
             this.enablePanning &&
             this.seriesRect &&
-            isZoomed &&
-            this.isPanningKeyPressed(event.sourceEvent as DragEvent)
+            !this.isMaxZoom(zoom) &&
+            (!this.enableSelecting || this.isPanningKeyPressed(sourceEvent))
         ) {
             const newZoom = this.panner.update(event, this.seriesRect, zoom);
             this.updateZoom(newZoom);
@@ -148,7 +147,14 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
 
         // If the user stops pressing the panKey but continues dragging, we shouldn't go to selection until they stop
         // dragging and click to start a new drag.
-        if (!this.enableSelecting || this.panner.isPanning) return;
+        if (
+            !this.enableSelecting ||
+            this.isPanningKeyPressed(sourceEvent) ||
+            this.panner.isPanning ||
+            this.isMinZoom(zoom)
+        ) {
+            return;
+        }
 
         this.selector.update(
             event,
@@ -159,6 +165,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
             this.seriesRect,
             zoom
         );
+
         this.updateService.update(_ModuleSupport.ChartUpdateType.PERFORM_LAYOUT);
     }
 
@@ -166,10 +173,12 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         // Stop single clicks from triggering drag end and resetting the zoom
         if (!this.isDragging) return;
 
+        const zoom = definedZoomState(this.zoomManager.getZoom());
+
         if (this.enablePanning && this.panner.isPanning) {
             this.panner.stop();
-        } else if (this.enableSelecting) {
-            const newZoom = this.selector.stop(this.seriesRect, this.zoomManager.getZoom());
+        } else if (this.enableSelecting && !this.isMinZoom(zoom)) {
+            const newZoom = this.selector.stop(this.seriesRect, zoom);
             this.updateZoom(newZoom);
         }
 
@@ -225,8 +234,8 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         const scaleX = zoom.x.max - zoom.x.min;
         const scaleY = zoom.y.max - zoom.y.min;
 
-        const scaledOriginX = origin.x * (zoom.x.max - zoom.x.min);
-        const scaledOriginY = origin.y * (zoom.y.max - zoom.y.min);
+        const scaledOriginX = origin.x * scaleX;
+        const scaledOriginY = origin.y * scaleY;
 
         let newZoom = {
             x: { min: origin.x - 0.5, max: origin.x + 0.5 },
@@ -261,10 +270,18 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     }
 
     private isMinZoom(zoom: DefinedZoomState): boolean {
-        return (
-            Math.round((zoom.x.max - zoom.x.min) * 100) / 100 <= this.minXRatio &&
-            Math.round((zoom.y.max - zoom.y.min) * 100) / 100 <= this.minYRatio
-        );
+        const minXCheckValue = this.enableScrolling
+            ? (zoom.x.max - zoom.x.min) * (1 - this.scrollingStep)
+            : Math.round((zoom.x.max - zoom.x.min) * 100) / 100;
+
+        const minYCheckValue = this.enableScrolling
+            ? (zoom.y.max - zoom.y.min) * (1 - this.scrollingStep)
+            : Math.round((zoom.y.max - zoom.y.min) * 100) / 100;
+
+        const isMinXZoom = !this.isScalingX() || minXCheckValue <= this.minXRatio;
+        const isMinYZoom = !this.isScalingY() || minYCheckValue <= this.minXRatio;
+
+        return isMinXZoom && isMinYZoom;
     }
 
     private isMaxZoom(zoom: DefinedZoomState): boolean {

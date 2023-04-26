@@ -1,6 +1,6 @@
 import { _ModuleSupport, _Scene } from 'ag-charts-community';
 
-import { definedZoomState, pointToRatio, translateZoom, scaleZoom, constrainZoom } from './zoomTransformers';
+import { definedZoomState, pointToRatio, translateZoom, constrainZoom } from './zoomTransformers';
 import { DefinedZoomState } from './zoomTypes';
 
 export class ZoomScroller {
@@ -21,12 +21,9 @@ export class ZoomScroller {
 
         // Scale the zoom bounding box
         const dir = sourceEvent.deltaY < 0 ? -1 : 1;
-        const zoomFactor = 1 + step * dir;
-
-        const xFactor = isScalingX ? zoomFactor : 1;
-        const yFactor = isScalingY ? zoomFactor : 1;
-
-        let newZoom = scaleZoom(oldZoom, xFactor, yFactor);
+        let newZoom = definedZoomState(oldZoom);
+        newZoom.x.max += isScalingX ? step * dir : 0;
+        newZoom.y.max += isScalingY ? step * dir : 0;
 
         // Translate the zoom bounding box such that the cursor remains over the same position as before
         const scaledOriginX = origin.x * (1 - (oldZoom.x.max - oldZoom.x.min - (newZoom.x.max - newZoom.x.min)));

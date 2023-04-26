@@ -59,6 +59,9 @@ export function scaleZoom(zoom: DefinedZoomState, sx: number, sy: number): Defin
     };
 }
 
+/**
+ * Scale a zoom bounding box from the center.
+ */
 export function scaleZoomCenter(zoom: DefinedZoomState, sx: number, sy: number): DefinedZoomState {
     const dx = zoom.x.max - zoom.x.min;
     const dy = zoom.y.max - zoom.y.min;
