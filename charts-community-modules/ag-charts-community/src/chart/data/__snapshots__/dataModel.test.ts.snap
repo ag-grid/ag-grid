@@ -71,10 +71,989 @@ Object {
 }
 `;
 
+exports[`DataModel grouped processing - calculated grouping should generated the expected results for simple histogram example with hard-coded buckets 1`] = `
+Object {
+  "data": Array [
+    Object {
+      "aggValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
+      "datum": Array [
+        Object {
+          "engine-size": 130,
+        },
+        Object {
+          "engine-size": 130,
+        },
+        Object {
+          "engine-size": 109,
+        },
+        Object {
+          "engine-size": 136,
+        },
+        Object {
+          "engine-size": 136,
+        },
+        Object {
+          "engine-size": 136,
+        },
+        Object {
+          "engine-size": 136,
+        },
+        Object {
+          "engine-size": 131,
+        },
+        Object {
+          "engine-size": 131,
+        },
+        Object {
+          "engine-size": 108,
+        },
+        Object {
+          "engine-size": 108,
+        },
+        Object {
+          "engine-size": 122,
+        },
+        Object {
+          "engine-size": 110,
+        },
+        Object {
+          "engine-size": 110,
+        },
+        Object {
+          "engine-size": 110,
+        },
+        Object {
+          "engine-size": 110,
+        },
+        Object {
+          "engine-size": 110,
+        },
+        Object {
+          "engine-size": 110,
+        },
+        Object {
+          "engine-size": 111,
+        },
+        Object {
+          "engine-size": 119,
+        },
+        Object {
+          "engine-size": 122,
+        },
+        Object {
+          "engine-size": 122,
+        },
+        Object {
+          "engine-size": 122,
+        },
+        Object {
+          "engine-size": 122,
+        },
+        Object {
+          "engine-size": 122,
+        },
+        Object {
+          "engine-size": 122,
+        },
+        Object {
+          "engine-size": 140,
+        },
+        Object {
+          "engine-size": 134,
+        },
+        Object {
+          "engine-size": 140,
+        },
+        Object {
+          "engine-size": 110,
+        },
+        Object {
+          "engine-size": 122,
+        },
+        Object {
+          "engine-size": 122,
+        },
+        Object {
+          "engine-size": 122,
+        },
+        Object {
+          "engine-size": 110,
+        },
+        Object {
+          "engine-size": 110,
+        },
+        Object {
+          "engine-size": 103,
+        },
+        Object {
+          "engine-size": 120,
+        },
+        Object {
+          "engine-size": 120,
+        },
+        Object {
+          "engine-size": 120,
+        },
+        Object {
+          "engine-size": 120,
+        },
+        Object {
+          "engine-size": 120,
+        },
+        Object {
+          "engine-size": 120,
+        },
+        Object {
+          "engine-size": 120,
+        },
+        Object {
+          "engine-size": 134,
+        },
+        Object {
+          "engine-size": 122,
+        },
+        Object {
+          "engine-size": 132,
+        },
+        Object {
+          "engine-size": 132,
+        },
+        Object {
+          "engine-size": 121,
+        },
+        Object {
+          "engine-size": 121,
+        },
+        Object {
+          "engine-size": 121,
+        },
+        Object {
+          "engine-size": 121,
+        },
+        Object {
+          "engine-size": 121,
+        },
+        Object {
+          "engine-size": 121,
+        },
+        Object {
+          "engine-size": 108,
+        },
+        Object {
+          "engine-size": 108,
+        },
+        Object {
+          "engine-size": 108,
+        },
+        Object {
+          "engine-size": 108,
+        },
+        Object {
+          "engine-size": 108,
+        },
+        Object {
+          "engine-size": 108,
+        },
+        Object {
+          "engine-size": 108,
+        },
+        Object {
+          "engine-size": 108,
+        },
+        Object {
+          "engine-size": 108,
+        },
+        Object {
+          "engine-size": 108,
+        },
+        Object {
+          "engine-size": 108,
+        },
+        Object {
+          "engine-size": 110,
+        },
+        Object {
+          "engine-size": 110,
+        },
+        Object {
+          "engine-size": 146,
+        },
+        Object {
+          "engine-size": 146,
+        },
+        Object {
+          "engine-size": 146,
+        },
+        Object {
+          "engine-size": 146,
+        },
+        Object {
+          "engine-size": 146,
+        },
+        Object {
+          "engine-size": 146,
+        },
+        Object {
+          "engine-size": 122,
+        },
+        Object {
+          "engine-size": 110,
+        },
+        Object {
+          "engine-size": 122,
+        },
+        Object {
+          "engine-size": 122,
+        },
+        Object {
+          "engine-size": 122,
+        },
+        Object {
+          "engine-size": 109,
+        },
+        Object {
+          "engine-size": 109,
+        },
+        Object {
+          "engine-size": 109,
+        },
+        Object {
+          "engine-size": 109,
+        },
+        Object {
+          "engine-size": 109,
+        },
+        Object {
+          "engine-size": 109,
+        },
+        Object {
+          "engine-size": 136,
+        },
+        Object {
+          "engine-size": 109,
+        },
+        Object {
+          "engine-size": 141,
+        },
+        Object {
+          "engine-size": 141,
+        },
+        Object {
+          "engine-size": 141,
+        },
+        Object {
+          "engine-size": 141,
+        },
+        Object {
+          "engine-size": 130,
+        },
+        Object {
+          "engine-size": 130,
+        },
+        Object {
+          "engine-size": 141,
+        },
+        Object {
+          "engine-size": 141,
+        },
+        Object {
+          "engine-size": 145,
+        },
+        Object {
+          "engine-size": 141,
+        },
+      ],
+      "keys": Array [
+        "100 - 150",
+      ],
+      "values": Array [
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+      ],
+    },
+    Object {
+      "aggValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
+      "datum": Array [
+        Object {
+          "engine-size": 152,
+        },
+        Object {
+          "engine-size": 164,
+        },
+        Object {
+          "engine-size": 164,
+        },
+        Object {
+          "engine-size": 164,
+        },
+        Object {
+          "engine-size": 209,
+        },
+        Object {
+          "engine-size": 209,
+        },
+        Object {
+          "engine-size": 209,
+        },
+        Object {
+          "engine-size": 156,
+        },
+        Object {
+          "engine-size": 258,
+        },
+        Object {
+          "engine-size": 258,
+        },
+        Object {
+          "engine-size": 326,
+        },
+        Object {
+          "engine-size": 183,
+        },
+        Object {
+          "engine-size": 183,
+        },
+        Object {
+          "engine-size": 183,
+        },
+        Object {
+          "engine-size": 183,
+        },
+        Object {
+          "engine-size": 234,
+        },
+        Object {
+          "engine-size": 234,
+        },
+        Object {
+          "engine-size": 308,
+        },
+        Object {
+          "engine-size": 304,
+        },
+        Object {
+          "engine-size": 156,
+        },
+        Object {
+          "engine-size": 156,
+        },
+        Object {
+          "engine-size": 156,
+        },
+        Object {
+          "engine-size": 181,
+        },
+        Object {
+          "engine-size": 181,
+        },
+        Object {
+          "engine-size": 181,
+        },
+        Object {
+          "engine-size": 181,
+        },
+        Object {
+          "engine-size": 181,
+        },
+        Object {
+          "engine-size": 181,
+        },
+        Object {
+          "engine-size": 152,
+        },
+        Object {
+          "engine-size": 152,
+        },
+        Object {
+          "engine-size": 152,
+        },
+        Object {
+          "engine-size": 152,
+        },
+        Object {
+          "engine-size": 152,
+        },
+        Object {
+          "engine-size": 156,
+        },
+        Object {
+          "engine-size": 151,
+        },
+        Object {
+          "engine-size": 194,
+        },
+        Object {
+          "engine-size": 194,
+        },
+        Object {
+          "engine-size": 194,
+        },
+        Object {
+          "engine-size": 203,
+        },
+        Object {
+          "engine-size": 171,
+        },
+        Object {
+          "engine-size": 171,
+        },
+        Object {
+          "engine-size": 171,
+        },
+        Object {
+          "engine-size": 161,
+        },
+        Object {
+          "engine-size": 173,
+        },
+      ],
+      "keys": Array [
+        ">150",
+      ],
+      "values": Array [
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+      ],
+    },
+    Object {
+      "aggValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
+      "datum": Array [
+        Object {
+          "engine-size": 61,
+        },
+        Object {
+          "engine-size": 90,
+        },
+        Object {
+          "engine-size": 90,
+        },
+        Object {
+          "engine-size": 90,
+        },
+        Object {
+          "engine-size": 90,
+        },
+        Object {
+          "engine-size": 98,
+        },
+        Object {
+          "engine-size": 90,
+        },
+        Object {
+          "engine-size": 90,
+        },
+        Object {
+          "engine-size": 90,
+        },
+        Object {
+          "engine-size": 98,
+        },
+        Object {
+          "engine-size": 92,
+        },
+        Object {
+          "engine-size": 92,
+        },
+        Object {
+          "engine-size": 79,
+        },
+        Object {
+          "engine-size": 92,
+        },
+        Object {
+          "engine-size": 92,
+        },
+        Object {
+          "engine-size": 92,
+        },
+        Object {
+          "engine-size": 92,
+        },
+        Object {
+          "engine-size": 90,
+        },
+        Object {
+          "engine-size": 90,
+        },
+        Object {
+          "engine-size": 91,
+        },
+        Object {
+          "engine-size": 91,
+        },
+        Object {
+          "engine-size": 91,
+        },
+        Object {
+          "engine-size": 91,
+        },
+        Object {
+          "engine-size": 91,
+        },
+        Object {
+          "engine-size": 70,
+        },
+        Object {
+          "engine-size": 70,
+        },
+        Object {
+          "engine-size": 70,
+        },
+        Object {
+          "engine-size": 80,
+        },
+        Object {
+          "engine-size": 92,
+        },
+        Object {
+          "engine-size": 92,
+        },
+        Object {
+          "engine-size": 92,
+        },
+        Object {
+          "engine-size": 98,
+        },
+        Object {
+          "engine-size": 97,
+        },
+        Object {
+          "engine-size": 97,
+        },
+        Object {
+          "engine-size": 97,
+        },
+        Object {
+          "engine-size": 97,
+        },
+        Object {
+          "engine-size": 97,
+        },
+        Object {
+          "engine-size": 97,
+        },
+        Object {
+          "engine-size": 97,
+        },
+        Object {
+          "engine-size": 97,
+        },
+        Object {
+          "engine-size": 97,
+        },
+        Object {
+          "engine-size": 90,
+        },
+        Object {
+          "engine-size": 98,
+        },
+        Object {
+          "engine-size": 90,
+        },
+        Object {
+          "engine-size": 90,
+        },
+        Object {
+          "engine-size": 98,
+        },
+        Object {
+          "engine-size": 97,
+        },
+        Object {
+          "engine-size": 92,
+        },
+        Object {
+          "engine-size": 92,
+        },
+        Object {
+          "engine-size": 92,
+        },
+        Object {
+          "engine-size": 92,
+        },
+        Object {
+          "engine-size": 92,
+        },
+        Object {
+          "engine-size": 92,
+        },
+        Object {
+          "engine-size": 98,
+        },
+        Object {
+          "engine-size": 98,
+        },
+        Object {
+          "engine-size": 98,
+        },
+        Object {
+          "engine-size": 98,
+        },
+        Object {
+          "engine-size": 98,
+        },
+        Object {
+          "engine-size": 98,
+        },
+        Object {
+          "engine-size": 98,
+        },
+        Object {
+          "engine-size": 98,
+        },
+        Object {
+          "engine-size": 98,
+        },
+        Object {
+          "engine-size": 97,
+        },
+        Object {
+          "engine-size": 97,
+        },
+        Object {
+          "engine-size": 97,
+        },
+        Object {
+          "engine-size": 97,
+        },
+      ],
+      "keys": Array [
+        "<100",
+      ],
+      "values": Array [
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+      ],
+    },
+  ],
+  "defs": Object {
+    "keys": Array [
+      Object {
+        "index": 0,
+        "missing": false,
+        "property": "engine-size",
+        "type": "key",
+        "valueType": "category",
+      },
+    ],
+    "values": Array [],
+  },
+  "domain": Object {
+    "aggValues": Array [
+      Array [
+        0,
+        100,
+      ],
+    ],
+    "groups": Array [
+      Array [
+        "100 - 150",
+      ],
+      Array [
+        ">150",
+      ],
+      Array [
+        "<100",
+      ],
+    ],
+    "keys": Array [
+      Array [
+        130,
+        152,
+        109,
+        136,
+        131,
+        108,
+        164,
+        209,
+        61,
+        90,
+        98,
+        122,
+        156,
+        92,
+        79,
+        110,
+        111,
+        119,
+        258,
+        326,
+        91,
+        70,
+        80,
+        140,
+        134,
+        183,
+        234,
+        308,
+        304,
+        97,
+        103,
+        120,
+        181,
+        151,
+        194,
+        203,
+        132,
+        121,
+        146,
+        171,
+        161,
+        141,
+        173,
+        145,
+      ],
+    ],
+    "values": Array [],
+  },
+  "indices": Object {
+    "keys": Object {
+      "engine-size": 0,
+    },
+    "values": Object {},
+  },
+  "reduced": Object {
+    "sortedGroupDomain": Array [
+      Array [
+        "100 - 150",
+      ],
+      Array [
+        ">150",
+      ],
+      Array [
+        "<100",
+      ],
+    ],
+  },
+  "time": Any<Number>,
+  "type": "grouped",
+}
+`;
+
 exports[`DataModel grouped processing - grouped example should generated the expected results 1`] = `
 Object {
   "data": Array [
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          6.1,
+        ],
+      ],
       "datum": Array [
         Object {
           "regular": 3.2,
@@ -93,6 +1072,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          7.9,
+        ],
+      ],
       "datum": Array [
         Object {
           "regular": 4.2,
@@ -111,6 +1096,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          6.699999999999999,
+        ],
+      ],
       "datum": Array [
         Object {
           "regular": 3.4,
@@ -129,6 +1120,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          6.800000000000001,
+        ],
+      ],
       "datum": Array [
         Object {
           "regular": 3.6,
@@ -147,6 +1144,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          5.9,
+        ],
+      ],
       "datum": Array [
         Object {
           "regular": 3.2,
@@ -165,6 +1168,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          5.6,
+        ],
+      ],
       "datum": Array [
         Object {
           "regular": 2.9,
@@ -183,6 +1192,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          2.6,
+        ],
+      ],
       "datum": Array [
         Object {
           "regular": 1.5,
@@ -229,6 +1244,35 @@ Object {
     ],
   },
   "domain": Object {
+    "aggValues": Array [
+      Array [
+        0,
+        7.9,
+      ],
+    ],
+    "groups": Array [
+      Array [
+        "Whole economy",
+      ],
+      Array [
+        "Finance and business services",
+      ],
+      Array [
+        "Public sector",
+      ],
+      Array [
+        "Construction",
+      ],
+      Array [
+        "Private sector",
+      ],
+      Array [
+        "Manufacturing",
+      ],
+      Array [
+        "Wholesaling, retailing, hotels and restaurants",
+      ],
+    ],
     "keys": Array [
       Array [
         "Whole economy",
@@ -269,6 +1313,12 @@ exports[`DataModel grouped processing - stacked and normalised example should ge
 Object {
   "data": Array [
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
       "datum": Array [
         Object {
           "bioenergyWaste": 1.6,
@@ -284,12 +1334,6 @@ Object {
       "keys": Array [
         "Jan",
       ],
-      "sumValues": Array [
-        Array [
-          0,
-          100,
-        ],
-      ],
       "values": Array [
         Array [
           29.946524064171125,
@@ -302,6 +1346,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
       "datum": Array [
         Object {
           "bioenergyWaste": 1.6,
@@ -317,12 +1367,6 @@ Object {
       "keys": Array [
         "Feb",
       ],
-      "sumValues": Array [
-        Array [
-          0,
-          100,
-        ],
-      ],
       "values": Array [
         Array [
           31.46067415730337,
@@ -335,6 +1379,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
       "datum": Array [
         Object {
           "bioenergyWaste": 1.6,
@@ -350,12 +1400,6 @@ Object {
       "keys": Array [
         "Mar",
       ],
-      "sumValues": Array [
-        Array [
-          0,
-          100,
-        ],
-      ],
       "values": Array [
         Array [
           30.167597765363126,
@@ -368,6 +1412,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
       "datum": Array [
         Object {
           "bioenergyWaste": 1.3,
@@ -383,12 +1433,6 @@ Object {
       "keys": Array [
         "Apr",
       ],
-      "sumValues": Array [
-        Array [
-          0,
-          100,
-        ],
-      ],
       "values": Array [
         Array [
           38.56209150326798,
@@ -401,6 +1445,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
       "datum": Array [
         Object {
           "bioenergyWaste": 1.3,
@@ -416,12 +1466,6 @@ Object {
       "keys": Array [
         "May",
       ],
-      "sumValues": Array [
-        Array [
-          0,
-          100,
-        ],
-      ],
       "values": Array [
         Array [
           42.10526315789474,
@@ -434,6 +1478,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
       "datum": Array [
         Object {
           "bioenergyWaste": 1.3,
@@ -449,12 +1499,6 @@ Object {
       "keys": Array [
         "Jun",
       ],
-      "sumValues": Array [
-        Array [
-          0,
-          100,
-        ],
-      ],
       "values": Array [
         Array [
           46.03174603174603,
@@ -467,6 +1511,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
       "datum": Array [
         Object {
           "bioenergyWaste": 1.3,
@@ -482,12 +1532,6 @@ Object {
       "keys": Array [
         "Jul",
       ],
-      "sumValues": Array [
-        Array [
-          0,
-          100,
-        ],
-      ],
       "values": Array [
         Array [
           44.44444444444444,
@@ -500,6 +1544,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
       "datum": Array [
         Object {
           "bioenergyWaste": 1.3,
@@ -515,12 +1565,6 @@ Object {
       "keys": Array [
         "Aug",
       ],
-      "sumValues": Array [
-        Array [
-          0,
-          100,
-        ],
-      ],
       "values": Array [
         Array [
           46.456692913385815,
@@ -533,6 +1577,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
       "datum": Array [
         Object {
           "bioenergyWaste": 1.3,
@@ -548,12 +1598,6 @@ Object {
       "keys": Array [
         "Sep",
       ],
-      "sumValues": Array [
-        Array [
-          0,
-          100,
-        ],
-      ],
       "values": Array [
         Array [
           44.27480916030535,
@@ -566,6 +1610,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
       "datum": Array [
         Object {
           "bioenergyWaste": 1.6,
@@ -581,12 +1631,6 @@ Object {
       "keys": Array [
         "Oct",
       ],
-      "sumValues": Array [
-        Array [
-          0,
-          100,
-        ],
-      ],
       "values": Array [
         Array [
           37.41496598639456,
@@ -599,6 +1643,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
       "datum": Array [
         Object {
           "bioenergyWaste": 1.6,
@@ -614,12 +1664,6 @@ Object {
       "keys": Array [
         "Nov",
       ],
-      "sumValues": Array [
-        Array [
-          0,
-          100,
-        ],
-      ],
       "values": Array [
         Array [
           35.54216867469879,
@@ -632,6 +1676,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
       "datum": Array [
         Object {
           "bioenergyWaste": 1.6,
@@ -646,12 +1696,6 @@ Object {
       ],
       "keys": Array [
         "Dec",
-      ],
-      "sumValues": Array [
-        Array [
-          0,
-          100,
-        ],
       ],
       "values": Array [
         Array [
@@ -721,6 +1765,50 @@ Object {
     ],
   },
   "domain": Object {
+    "aggValues": Array [
+      Array [
+        0,
+        100,
+      ],
+    ],
+    "groups": Array [
+      Array [
+        "Jan",
+      ],
+      Array [
+        "Feb",
+      ],
+      Array [
+        "Mar",
+      ],
+      Array [
+        "Apr",
+      ],
+      Array [
+        "May",
+      ],
+      Array [
+        "Jun",
+      ],
+      Array [
+        "Jul",
+      ],
+      Array [
+        "Aug",
+      ],
+      Array [
+        "Sep",
+      ],
+      Array [
+        "Oct",
+      ],
+      Array [
+        "Nov",
+      ],
+      Array [
+        "Dec",
+      ],
+    ],
     "keys": Array [
       Array [
         "Jan",
@@ -735,12 +1823,6 @@ Object {
         "Oct",
         "Nov",
         "Dec",
-      ],
-    ],
-    "sumValues": Array [
-      Array [
-        0,
-        100,
       ],
     ],
     "values": Array [
@@ -784,7 +1866,7 @@ Object {
     },
   },
   "reduced": Object {
-    "sumValueExtent": Array [
+    "aggValuesExtent": Array [
       0,
       100,
     ],
@@ -798,6 +1880,12 @@ exports[`DataModel grouped processing - stacked and normalised example should ge
 Object {
   "data": Array [
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
       "datum": Array [
         Object {
           "asian": 7317,
@@ -812,12 +1900,6 @@ Object {
       "keys": Array [
         "Nursery",
       ],
-      "sumValues": Array [
-        Array [
-          0,
-          100,
-        ],
-      ],
       "values": Array [
         Array [
           59.712524678576585,
@@ -830,6 +1912,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
       "datum": Array [
         Object {
           "asian": 527391,
@@ -844,12 +1932,6 @@ Object {
       "keys": Array [
         "Primary",
       ],
-      "sumValues": Array [
-        Array [
-          0,
-          100,
-        ],
-      ],
       "values": Array [
         Array [
           74.28693389376268,
@@ -862,6 +1944,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
       "datum": Array [
         Object {
           "asian": 377168,
@@ -876,12 +1964,6 @@ Object {
       "keys": Array [
         "Secondary",
       ],
-      "sumValues": Array [
-        Array [
-          0,
-          100,
-        ],
-      ],
       "values": Array [
         Array [
           74.49944393701765,
@@ -894,6 +1976,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
       "datum": Array [
         Object {
           "asian": 12328,
@@ -908,12 +1996,6 @@ Object {
       "keys": Array [
         "Special",
       ],
-      "sumValues": Array [
-        Array [
-          0,
-          100,
-        ],
-      ],
       "values": Array [
         Array [
           74.84837848647854,
@@ -926,6 +2008,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          100,
+        ],
+      ],
       "datum": Array [
         Object {
           "asian": 605,
@@ -939,12 +2027,6 @@ Object {
       ],
       "keys": Array [
         "Referral units",
-      ],
-      "sumValues": Array [
-        Array [
-          0,
-          100,
-        ],
       ],
       "values": Array [
         Array [
@@ -1014,6 +2096,29 @@ Object {
     ],
   },
   "domain": Object {
+    "aggValues": Array [
+      Array [
+        0,
+        100,
+      ],
+    ],
+    "groups": Array [
+      Array [
+        "Nursery",
+      ],
+      Array [
+        "Primary",
+      ],
+      Array [
+        "Secondary",
+      ],
+      Array [
+        "Special",
+      ],
+      Array [
+        "Referral units",
+      ],
+    ],
     "keys": Array [
       Array [
         "Nursery",
@@ -1021,12 +2126,6 @@ Object {
         "Secondary",
         "Special",
         "Referral units",
-      ],
-    ],
-    "sumValues": Array [
-      Array [
-        0,
-        100,
       ],
     ],
     "values": Array [
@@ -1070,7 +2169,7 @@ Object {
     },
   },
   "reduced": Object {
-    "sumValueExtent": Array [
+    "aggValuesExtent": Array [
       0,
       100,
     ],
@@ -1084,6 +2183,12 @@ exports[`DataModel grouped processing - stacked example should generated the exp
 Object {
   "data": Array [
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          6002,
+        ],
+      ],
       "datum": Array [
         Object {
           "housingAssociation": 388,
@@ -1096,12 +2201,6 @@ Object {
       "keys": Array [
         "Semi-detached house",
       ],
-      "sumValues": Array [
-        Array [
-          0,
-          6002,
-        ],
-      ],
       "values": Array [
         Array [
           4567,
@@ -1112,6 +2211,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          4433,
+        ],
+      ],
       "datum": Array [
         Object {
           "housingAssociation": 422,
@@ -1124,12 +2229,6 @@ Object {
       "keys": Array [
         "Medium/large terraced house",
       ],
-      "sumValues": Array [
-        Array [
-          0,
-          4433,
-        ],
-      ],
       "values": Array [
         Array [
           2842,
@@ -1140,6 +2239,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          3972,
+        ],
+      ],
       "datum": Array [
         Object {
           "housingAssociation": 19,
@@ -1152,12 +2257,6 @@ Object {
       "keys": Array [
         "Detached house",
       ],
-      "sumValues": Array [
-        Array [
-          0,
-          3972,
-        ],
-      ],
       "values": Array [
         Array [
           3655,
@@ -1168,6 +2267,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          3584,
+        ],
+      ],
       "datum": Array [
         Object {
           "housingAssociation": 919,
@@ -1180,12 +2285,6 @@ Object {
       "keys": Array [
         "Purpose-built flat low rise",
       ],
-      "sumValues": Array [
-        Array [
-          0,
-          3584,
-        ],
-      ],
       "values": Array [
         Array [
           905,
@@ -1196,6 +2295,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          2298,
+        ],
+      ],
       "datum": Array [
         Object {
           "housingAssociation": 295,
@@ -1208,12 +2313,6 @@ Object {
       "keys": Array [
         "Small terraced house",
       ],
-      "sumValues": Array [
-        Array [
-          0,
-          2298,
-        ],
-      ],
       "values": Array [
         Array [
           1013,
@@ -1224,6 +2323,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          2108,
+        ],
+      ],
       "datum": Array [
         Object {
           "housingAssociation": 228,
@@ -1236,12 +2341,6 @@ Object {
       "keys": Array [
         "Bungalow",
       ],
-      "sumValues": Array [
-        Array [
-          0,
-          2108,
-        ],
-      ],
       "values": Array [
         Array [
           1486,
@@ -1252,6 +2351,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          928,
+        ],
+      ],
       "datum": Array [
         Object {
           "housingAssociation": 100,
@@ -1264,12 +2369,6 @@ Object {
       "keys": Array [
         "Converted flat",
       ],
-      "sumValues": Array [
-        Array [
-          0,
-          928,
-        ],
-      ],
       "values": Array [
         Array [
           252,
@@ -1280,6 +2379,12 @@ Object {
       ],
     },
     Object {
+      "aggValues": Array [
+        Array [
+          0,
+          408,
+        ],
+      ],
       "datum": Array [
         Object {
           "housingAssociation": 68,
@@ -1291,12 +2396,6 @@ Object {
       ],
       "keys": Array [
         "Purpose-built flat high rise",
-      ],
-      "sumValues": Array [
-        Array [
-          0,
-          408,
-        ],
       ],
       "values": Array [
         Array [
@@ -1350,6 +2449,38 @@ Object {
     ],
   },
   "domain": Object {
+    "aggValues": Array [
+      Array [
+        0,
+        6002,
+      ],
+    ],
+    "groups": Array [
+      Array [
+        "Semi-detached house",
+      ],
+      Array [
+        "Medium/large terraced house",
+      ],
+      Array [
+        "Detached house",
+      ],
+      Array [
+        "Purpose-built flat low rise",
+      ],
+      Array [
+        "Small terraced house",
+      ],
+      Array [
+        "Bungalow",
+      ],
+      Array [
+        "Converted flat",
+      ],
+      Array [
+        "Purpose-built flat high rise",
+      ],
+    ],
     "keys": Array [
       Array [
         "Semi-detached house",
@@ -1360,12 +2491,6 @@ Object {
         "Bungalow",
         "Converted flat",
         "Purpose-built flat high rise",
-      ],
-    ],
-    "sumValues": Array [
-      Array [
-        0,
-        6002,
       ],
     ],
     "values": Array [
@@ -1399,7 +2524,7 @@ Object {
     },
   },
   "reduced": Object {
-    "sumValueExtent": Array [
+    "aggValuesExtent": Array [
       0,
       6002,
     ],

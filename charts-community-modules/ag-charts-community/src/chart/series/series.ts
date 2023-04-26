@@ -20,7 +20,7 @@ import { BBox } from '../../scene/bbox';
 import { HighlightManager } from '../interaction/highlightManager';
 import { ChartAxisDirection } from '../chartAxisDirection';
 import { AgChartInteractionRange } from '../agChartOptions';
-import { DatumPropertyDefinition, fixNumericExtent, OutputPropertyDefinition } from '../data/dataModel';
+import { DatumPropertyDefinition, fixNumericExtent } from '../data/dataModel';
 import { TooltipPosition } from '../tooltip/tooltip';
 
 /**
@@ -76,15 +76,6 @@ export function valueProperty<K>(propName: K, continuous: boolean, opts = {} as 
         valueType: continuous ? 'range' : 'category',
         validation: (v) => checkDatum(v, continuous) != null,
     };
-    return result;
-}
-
-export function sumProperties<K>(props: K[]) {
-    const result: OutputPropertyDefinition<K> = {
-        properties: props,
-        type: 'sum',
-    };
-
     return result;
 }
 

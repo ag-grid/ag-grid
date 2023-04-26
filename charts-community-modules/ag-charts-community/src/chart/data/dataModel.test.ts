@@ -4,7 +4,8 @@ import { DATA_BROWSER_MARKET_SHARE } from '../test/data';
 
 import * as examples from '../test/examples';
 
-import { DataModel, SMALLEST_KEY_INTERVAL, SUM_VALUE_EXTENT } from './dataModel';
+import { AGG_VALUES_EXTENT, DataModel, SMALLEST_KEY_INTERVAL, SORT_DOMAIN_GROUPS } from './dataModel';
+import { groupCount, sum } from './aggregateFunctions';
 
 describe('DataModel', () => {
     describe('ungrouped processing', () => {
@@ -126,6 +127,7 @@ describe('DataModel', () => {
                     { property: 'type', type: 'key', valueType: 'category' },
                     { property: 'total', type: 'value', valueType: 'range' },
                     { property: 'regular', type: 'value', valueType: 'range' },
+                    sum(['total', 'regular']),
                 ],
                 groupByKeys: true,
             });
@@ -189,8 +191,8 @@ describe('DataModel', () => {
             it('should not include sums', () => {
                 const result = dataModel.processData(data);
 
-                expect(result?.data.filter((g) => g.sumValues != null)).toEqual([]);
-                expect(result?.domain.sumValues).toBeUndefined();
+                expect(result?.data.filter((g) => g.aggValues != null)).toEqual([]);
+                expect(result?.domain.aggValues).toBeUndefined();
             });
 
             it('should only sum per data-item', () => {
@@ -199,7 +201,7 @@ describe('DataModel', () => {
                         { property: 'kp', type: 'key', valueType: 'category' },
                         { property: 'vp1', type: 'value', valueType: 'range' },
                         { property: 'vp2', type: 'value', valueType: 'range' },
-                        { type: 'sum', properties: ['vp1', 'vp2'] },
+                        sum(['vp1', 'vp2']),
                     ],
                     groupByKeys: true,
                 });
@@ -212,9 +214,9 @@ describe('DataModel', () => {
 
                 const result = dataModel.processData(data);
 
-                expect(result?.domain.sumValues).toEqual([[0, 15]]);
-                expect(result?.data[0].sumValues).toEqual([[0, 12]]);
-                expect(result.data[1].sumValues).toEqual([[0, 15]]);
+                expect(result?.domain.aggValues).toEqual([[0, 15]]);
+                expect(result?.data[0].aggValues).toEqual([[0, 12]]);
+                expect(result?.data[1].aggValues).toEqual([[0, 15]]);
             });
         });
     });
@@ -266,8 +268,8 @@ describe('DataModel', () => {
             it('should not include sums', () => {
                 const result = dataModel.processData(data);
 
-                expect(result?.data.filter((g) => g.sumValues != null)).toEqual([]);
-                expect(result?.domain.sumValues).toBeUndefined();
+                expect(result?.data.filter((g) => g.aggValues != null)).toEqual([]);
+                expect(result?.domain.aggValues).toBeUndefined();
             });
         });
     });
@@ -326,8 +328,8 @@ describe('DataModel', () => {
             it('should not include sums', () => {
                 const result = dataModel.processData(data);
 
-                expect(result?.data.filter((g) => g.sumValues != null)).toEqual([]);
-                expect(result?.domain.sumValues).toBeUndefined();
+                expect(result?.data.filter((g) => g.aggValues != null)).toEqual([]);
+                expect(result?.domain.aggValues).toBeUndefined();
             });
 
             it('should only sum per data-item', () => {
@@ -336,7 +338,7 @@ describe('DataModel', () => {
                         { property: 'kp', type: 'key', valueType: 'category' },
                         { property: 'vp1', type: 'value', valueType: 'range' },
                         { property: 'vp2', type: 'value', valueType: 'range' },
-                        { type: 'sum', properties: ['vp1', 'vp2'] },
+                        sum(['vp1', 'vp2']),
                     ],
                     groupByKeys: true,
                 });
@@ -349,9 +351,9 @@ describe('DataModel', () => {
 
                 const result = dataModel.processData(data);
 
-                expect(result?.domain.sumValues).toEqual([[0, 15]]);
-                expect(result?.data[0].sumValues).toEqual([[0, 12]]);
-                expect(result?.data[1].sumValues).toEqual([[0, 15]]);
+                expect(result?.domain.aggValues).toEqual([[0, 15]]);
+                expect(result?.data[0].aggValues).toEqual([[0, 12]]);
+                expect(result?.data[1].aggValues).toEqual([[0, 15]]);
             });
         });
     });
@@ -366,11 +368,8 @@ describe('DataModel', () => {
                     { property: 'privateRented', type: 'value', valueType: 'range' },
                     { property: 'localAuthority', type: 'value', valueType: 'range' },
                     { property: 'housingAssociation', type: 'value', valueType: 'range' },
-                    {
-                        properties: ['ownerOccupied', 'privateRented', 'localAuthority', 'housingAssociation'],
-                        type: 'sum',
-                    },
-                    SUM_VALUE_EXTENT,
+                    sum(['ownerOccupied', 'privateRented', 'localAuthority', 'housingAssociation']),
+                    AGG_VALUES_EXTENT,
                 ],
                 groupByKeys: true,
             });
@@ -388,8 +387,8 @@ describe('DataModel', () => {
                     { property: 'vp2', type: 'value', valueType: 'range' },
                     { property: 'vp3', type: 'value', valueType: 'range' },
                     { property: 'vp4', type: 'value', valueType: 'range' },
-                    { properties: ['vp1', 'vp2'], type: 'sum' },
-                    { properties: ['vp3', 'vp4'], type: 'sum' },
+                    sum(['vp1', 'vp2']),
+                    sum(['vp3', 'vp4']),
                 ],
                 groupByKeys: true,
             });
@@ -440,7 +439,7 @@ describe('DataModel', () => {
             it('should calculate the sums', () => {
                 const result = dataModel.processData(data);
 
-                expect(result?.data.map((g) => g.sumValues)).toEqual([
+                expect(result?.data.map((g) => g.aggValues)).toEqual([
                     [
                         [0, 12],
                         [0, 6],
@@ -450,7 +449,7 @@ describe('DataModel', () => {
                         [0, 6],
                     ],
                 ]);
-                expect(result?.domain.sumValues).toEqual([
+                expect(result?.domain.aggValues).toEqual([
                     [0, 15],
                     [0, 6],
                 ]);
@@ -470,11 +469,8 @@ describe('DataModel', () => {
                     { property: 'black', type: 'value', valueType: 'range' },
                     { property: 'chinese', type: 'value', valueType: 'range' },
                     { property: 'other', type: 'value', valueType: 'range' },
-                    {
-                        properties: ['white', 'mixed', 'asian', 'black', 'chinese', 'other'],
-                        type: 'sum',
-                    },
-                    SUM_VALUE_EXTENT,
+                    sum(['white', 'mixed', 'asian', 'black', 'chinese', 'other']),
+                    AGG_VALUES_EXTENT,
                 ],
                 groupByKeys: true,
                 normaliseTo: 100,
@@ -496,18 +492,8 @@ describe('DataModel', () => {
                     { property: 'nuclear', type: 'value', valueType: 'range' },
                     { property: 'windSolarHydro', type: 'value', valueType: 'range' },
                     { property: 'imported', type: 'value', valueType: 'range' },
-                    {
-                        properties: [
-                            'petroleum',
-                            'naturalGas',
-                            'bioenergyWaste',
-                            'nuclear',
-                            'windSolarHydro',
-                            'imported',
-                        ],
-                        type: 'sum',
-                    },
-                    SUM_VALUE_EXTENT,
+                    sum(['petroleum', 'naturalGas', 'bioenergyWaste', 'nuclear', 'windSolarHydro', 'imported']),
+                    AGG_VALUES_EXTENT,
                 ],
                 groupByKeys: true,
                 normaliseTo: 100,
@@ -517,7 +503,8 @@ describe('DataModel', () => {
             expect(result).toMatchSnapshot({
                 time: expect.any(Number),
             });
-            expect(result?.reduced?.[SUM_VALUE_EXTENT.property]).toEqual([0, 100]);
+            expect(result?.domain.aggValues).toEqual([[0, 100]]);
+            expect(result?.reduced?.[AGG_VALUES_EXTENT.property]).toEqual([0, 100]);
         });
 
         describe('property tests', () => {
@@ -528,8 +515,8 @@ describe('DataModel', () => {
                     { property: 'vp2', type: 'value', valueType: 'range' },
                     { property: 'vp3', type: 'value', valueType: 'range' },
                     { property: 'vp4', type: 'value', valueType: 'range' },
-                    { properties: ['vp1', 'vp2'], type: 'sum' },
-                    { properties: ['vp3', 'vp4'], type: 'sum' },
+                    sum(['vp1', 'vp2']),
+                    sum(['vp3', 'vp4']),
                 ],
                 groupByKeys: true,
                 normaliseTo: 100,
@@ -544,7 +531,7 @@ describe('DataModel', () => {
             it('should allow normalisation of values', () => {
                 const result = dataModel.processData(data);
 
-                expect(result?.data.map((g) => g.sumValues)).toEqual([
+                expect(result?.data.map((g) => g.aggValues)).toEqual([
                     [
                         [0, 100],
                         [0, 100],
@@ -554,7 +541,7 @@ describe('DataModel', () => {
                         [0, 100],
                     ],
                 ]);
-                expect(result?.domain.sumValues).toEqual([
+                expect(result?.domain.aggValues).toEqual([
                     [0, 100],
                     [0, 100],
                 ]);
@@ -569,6 +556,34 @@ describe('DataModel', () => {
                         [40, 60, 66.66666666666667, 33.333333333333336],
                     ],
                 ]);
+            });
+        });
+    });
+
+    describe('grouped processing - calculated grouping', () => {
+        it('should generated the expected results for simple histogram example with hard-coded buckets', () => {
+            const data = examples.SIMPLE_HISTOGRAM_CHART_EXAMPLE.data!;
+            const dataModel = new DataModel<any, any, true>({
+                props: [
+                    { property: 'engine-size', type: 'key', valueType: 'category' },
+                    groupCount(),
+                    SORT_DOMAIN_GROUPS,
+                ],
+                groupByFn: () => {
+                    return (item) => {
+                        if (item.keys[0] < 100) {
+                            return ['<100'];
+                        } else if (item.keys[0] <= 150) {
+                            return ['100 - 150'];
+                        }
+                        return ['>150'];
+                    };
+                },
+                normaliseTo: 100,
+            });
+
+            expect(dataModel.processData(data)).toMatchSnapshot({
+                time: expect.any(Number),
             });
         });
     });
@@ -611,7 +626,7 @@ describe('DataModel', () => {
                     { property: 'vp1', type: 'value', valueType: 'range', ...validated },
                     { property: 'vp2', type: 'value', valueType: 'range', ...validated },
                     { property: 'vp3', type: 'value', valueType: 'range', ...defaults },
-                    { properties: ['vp1', 'vp2'], type: 'sum' },
+                    sum(['vp1', 'vp2']),
                 ],
                 groupByKeys: true,
             });

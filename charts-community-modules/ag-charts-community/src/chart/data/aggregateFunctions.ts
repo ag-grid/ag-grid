@@ -1,0 +1,97 @@
+import { AggregatePropertyDefinition } from './dataModel';
+
+type ContinuousDomain<T extends number | Date> = [T, T];
+
+export function sumValues(values: any[], accumulator = [0, 0] as ContinuousDomain<number>) {
+    for (const value of values) {
+        if (typeof value !== 'number') {
+            continue;
+        }
+        if (value < 0) {
+            accumulator[0] += value;
+        }
+        if (value > 0) {
+            accumulator[1] += value;
+        }
+    }
+
+    return accumulator;
+}
+
+export function sum<K>(props: K[]) {
+    const result: AggregatePropertyDefinition<any, any> = {
+        properties: props,
+        type: 'aggregate',
+        aggregateFunction: (values) => sumValues(values),
+    };
+
+    return result;
+}
+
+export function groupSum<K>(props: K[]): AggregatePropertyDefinition<any, any> {
+    return {
+        ...sum(props),
+        groupAggregateFunction: (next, acc = [0, 0]) => {
+            acc[0] += next?.[0] ?? 0;
+            acc[1] += next?.[1] ?? 0;
+            return acc;
+        },
+    };
+}
+
+export function count() {
+    const result: AggregatePropertyDefinition<any, any> = {
+        properties: [],
+        type: 'aggregate',
+        aggregateFunction: () => [0, 1],
+    };
+
+    return result;
+}
+
+export function groupCount(): AggregatePropertyDefinition<any, any> {
+    return {
+        ...count(),
+        groupAggregateFunction: (next, acc = [0, 0]) => {
+            acc[0] += next?.[0] ?? 0;
+            acc[1] += next?.[1] ?? 0;
+            return acc;
+        },
+    };
+}
+
+export function average<K>(props: K[]) {
+    const result: AggregatePropertyDefinition<any, any> = {
+        properties: props,
+        type: 'aggregate',
+        aggregateFunction: (values) => sumValues(values).map((v) => v / values.length) as [number, number],
+    };
+
+    return result;
+}
+
+// export function groupAverage<K>(props: K[]): AggregatePropertyDefinition<any, any> {
+//     return {
+//         properties: props,
+//         type: 'aggregate',
+//         aggregateFunction: (values) => [...sumValues(values), 1],
+//         groupAggregateFunction: (next, acc = [0, 0, 0]) => {
+//             acc[0] += next?.[0] ?? 0;
+//             acc[1] += next?.[1] ?? 0;
+//             return acc;
+//         },
+//     };
+// }
+
+export function area<K>(props: K[], aggFn: (values: any[]) => [number, number] = sumValues) {
+    const result: AggregatePropertyDefinition<any, any> = {
+        properties: props,
+        type: 'aggregate',
+        aggregateFunction: (values, keyRange = []) => {
+            const keyWidth = keyRange[1] - keyRange[0];
+            return aggFn(values).map((v) => v / keyWidth) as [number, number];
+        },
+    };
+
+    return result;
+}

@@ -2,7 +2,14 @@ import { Selection } from '../../../scene/selection';
 import { Rect } from '../../../scene/shape/rect';
 import { Text } from '../../../scene/shape/text';
 import { DropShadow } from '../../../scene/dropShadow';
-import { SeriesTooltip, Series, SeriesNodeDataContext, SeriesNodePickMode } from '../series';
+import {
+    SeriesTooltip,
+    Series,
+    SeriesNodeDataContext,
+    SeriesNodePickMode,
+    valueProperty,
+    keyProperty,
+} from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
@@ -14,7 +21,6 @@ import {
 } from './cartesianSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
-import { extent } from '../../../util/array';
 import ticks, { tickStep } from '../../../util/ticks';
 import { sanitizeHtml } from '../../../util/sanitize';
 import {
@@ -37,6 +43,8 @@ import {
     FontWeight,
     AgHistogramSeriesTooltipRendererParams,
 } from '../../agChartOptions';
+import { DataModel, fixNumericExtent, GroupByFn, PropertyDefinition, SORT_DOMAIN_GROUPS } from '../../data/dataModel';
+import { area, average, count, sum } from '../../data/aggregateFunctions';
 
 const HISTOGRAM_AGGREGATIONS = ['count', 'sum', 'mean'];
 const HISTOGRAM_AGGREGATION = predicateWithMessage(
@@ -65,6 +73,7 @@ interface HistogramNodeDatum extends CartesianSeriesNodeDatum {
     readonly stroke?: string;
     readonly strokeWidth: number;
     readonly aggregatedValue: number;
+    readonly frequency: number;
     readonly domain: [number, number];
     readonly label?: {
         readonly text: string;
@@ -79,53 +88,6 @@ interface HistogramNodeDatum extends CartesianSeriesNodeDatum {
 }
 
 type HistogramAggregation = NonNullable<AgHistogramSeriesOptions['aggregation']>;
-type AggregationFunction = (bin: HistogramBin, yKey: string) => number;
-
-const aggregationFunctions: { [key in HistogramAggregation]: AggregationFunction } = {
-    count: (bin) => bin.data.length,
-    sum: (bin, yKey) => bin.data.reduce((acc, datum) => acc + datum[yKey], 0),
-    mean: (bin, yKey) => aggregationFunctions.sum(bin, yKey) / aggregationFunctions.count(bin, yKey),
-};
-
-class HistogramBin {
-    data: any[] = [];
-    aggregatedValue: number = 0;
-    frequency: number = 0;
-    domain: [number, number];
-
-    constructor([domainMin, domainMax]: [number, number]) {
-        this.domain = [domainMin, domainMax];
-    }
-
-    addDatum(datum: any) {
-        this.data.push(datum);
-        this.frequency++;
-    }
-
-    get domainWidth(): number {
-        const [domainMin, domainMax] = this.domain;
-        return domainMax - domainMin;
-    }
-
-    get relativeHeight(): number {
-        return this.aggregatedValue / this.domainWidth;
-    }
-
-    calculateAggregatedValue(aggregationName: HistogramAggregation, yKey: string) {
-        if (!yKey) {
-            // not having a yKey forces us into a frequency plot
-            aggregationName = 'count';
-        }
-
-        const aggregationFunction = aggregationFunctions[aggregationName];
-
-        this.aggregatedValue = aggregationFunction(this, yKey);
-    }
-
-    getY(areaPlot: boolean) {
-        return areaPlot ? this.relativeHeight : this.aggregatedValue;
-    }
-}
 
 class HistogramSeriesTooltip extends SeriesTooltip {
     @Validate(OPT_FUNCTION)
@@ -135,10 +97,6 @@ class HistogramSeriesTooltip extends SeriesTooltip {
 export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<HistogramNodeDatum>, Rect> {
     static className = 'HistogramSeries';
     static type = 'histogram' as const;
-
-    private binnedData: HistogramBin[] = [];
-    private xDomain: number[] = [];
-    private yDomain: number[] = [];
 
     readonly label = new HistogramSeriesLabel();
 
@@ -201,21 +159,8 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
     // During processData phase, used to unify different ways of the user specifying
     // the bins. Returns bins in format[[min1, max1], [min2, max2], ... ].
-    private deriveBins(): [number, number][] {
-        const { bins } = this;
-
-        if (!this.data) {
-            return [];
-        }
-
-        const xData = this.data.map((datum) => datum[this.xKey]);
-        const xDomain = this.fixNumericExtent(extent(xData));
-
+    private deriveBins(xDomain: [number, number]): [number, number][] {
         if (this.binCount === undefined) {
-            if (bins) {
-                return bins;
-            }
-
             const binStarts = ticks(xDomain[0], xDomain[1], defaultBinCount);
             const binSize = tickStep(xDomain[0], xDomain[1], defaultBinCount);
             const firstBinEnd = binStarts[0];
@@ -267,75 +212,72 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         };
     }
 
-    private placeDataInBins(data: any[]): HistogramBin[] {
-        const { xKey } = this;
-        const derivedBins = this.deriveBins();
-        this.bins = derivedBins;
+    async processData() {
+        const { xKey, yKey, data, areaPlot, aggregation } = this;
 
-        // creating a sorted copy allows binning in O(n) rather than O(n²)
-        // but at the expense of more temporary memory
-        const sortedData = data.slice().sort((a, b) => {
-            if (a[xKey] < b[xKey]) {
-                return -1;
+        const props: PropertyDefinition<any>[] = [keyProperty(xKey, true), SORT_DOMAIN_GROUPS];
+        if (yKey) {
+            let aggProp;
+            if (aggregation === 'count') {
+                aggProp = count();
+            } else if (aggregation === 'sum') {
+                aggProp = sum([yKey]);
+            } else {
+                aggProp = average([yKey]);
             }
-            if (a[xKey] > b[xKey]) {
-                return 1;
+            if (areaPlot) {
+                props.push(area([yKey], aggProp.aggregateFunction));
             }
-            return 0;
-        });
-
-        const bins: HistogramBin[] = [new HistogramBin(derivedBins[0])];
-
-        let currentBin = 0;
-        for (let i = 0; i < sortedData.length && currentBin < derivedBins.length; i++) {
-            const datum = sortedData[i];
-            while (datum[xKey] > derivedBins[currentBin][1] && currentBin < derivedBins.length) {
-                currentBin++;
-                bins.push(new HistogramBin(derivedBins[currentBin]));
-            }
-
-            if (currentBin < derivedBins.length) {
-                bins[currentBin].addDatum(datum);
-            }
+            props.push(valueProperty(yKey, true, { invalidValue: undefined }), aggProp);
+        } else {
+            props.push(count());
         }
 
-        bins.forEach((b) => b.calculateAggregatedValue(this.aggregation, this.yKey));
+        const groupByFn: GroupByFn = (dataSet) => {
+            const xExtent = fixNumericExtent(dataSet.domain.keys[0]);
+            if (xExtent.length === 0) {
+                // No buckets can be calculated.
+                dataSet.domain.groups = [];
+                return () => [];
+            }
 
-        return bins;
-    }
+            const bins = this.bins ?? this.deriveBins(xExtent);
 
-    get xMax(): number {
-        return (
-            this.data &&
-            this.data.reduce((acc, datum) => {
-                return Math.max(acc, datum[this.xKey]);
-            }, Number.NEGATIVE_INFINITY)
-        );
-    }
+            return (item) => {
+                const xValue = item.keys[0];
+                for (const nextBin of bins) {
+                    if (xValue >= nextBin[0] && xValue < nextBin[1]) {
+                        return nextBin;
+                    }
+                }
 
-    async processData() {
-        const { xKey, data } = this;
+                return [];
+            };
+        };
 
-        this.binnedData = this.placeDataInBins(xKey && data ? data : []);
-
-        const yData = this.binnedData.map((b) => b.getY(this.areaPlot));
-        const yMinMax = extent(yData);
-
-        this.yDomain = this.fixNumericExtent([0, yMinMax ? yMinMax[1] : 1]);
-
-        const firstBin = this.binnedData[0];
-        const lastBin = this.binnedData[this.binnedData.length - 1];
-        const xMin = firstBin.domain[0];
-        const xMax = lastBin.domain[1];
-        this.xDomain = [xMin, xMax];
+        this.dataModel = new DataModel<any>({
+            props,
+            dataVisible: this.visible,
+            groupByFn,
+        });
+        this.processedData = this.dataModel.processData(data ?? []);
+        this.processedData?.domain.groups?.sort((a, b) => a[0] - b[0]);
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
+        const { processedData } = this;
+
+        if (!processedData) return [];
+
+        const xBins = processedData.reduced?.[SORT_DOMAIN_GROUPS.property] ?? [[0, 0]];
+        const xDomainMin = xBins?.[0][0];
+        const xDomainMax = xBins?.[(xBins?.length ?? 0) - 1][1];
         if (direction === ChartAxisDirection.X) {
-            return this.xDomain;
-        } else {
-            return this.yDomain;
+            return fixNumericExtent([xDomainMin, xDomainMax]);
         }
+
+        const yDomain = processedData.domain.aggValues?.[0];
+        return fixNumericExtent(yDomain);
     }
 
     protected getNodeClickEvent(event: MouseEvent, datum: HistogramNodeDatum): CartesianSeriesNodeClickEvent<any> {
@@ -350,9 +292,9 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     }
 
     async createNodeData() {
-        const { xAxis, yAxis } = this;
+        const { xAxis, yAxis, processedData } = this;
 
-        if (!this.seriesItemEnabled || !xAxis || !yAxis) {
+        if (!this.seriesItemEnabled || !xAxis || !yAxis || !processedData || processedData.type !== 'grouped') {
             return [];
         }
 
@@ -374,27 +316,29 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             },
         } = this;
 
-        this.binnedData.forEach((binOfData) => {
+        processedData.data.forEach((group) => {
             const {
-                aggregatedValue: total,
-                frequency,
-                domain: [xDomainMin, xDomainMax],
-                relativeHeight,
-            } = binOfData;
+                aggValues: [[negativeAgg, positiveAgg]] = [[0, 0]],
+                datum,
+                datum: { length: frequency },
+                keys: domain,
+                keys: [xDomainMin, xDomainMax],
+            } = group;
 
-            const xMinPx = xScale.convert(xDomainMin),
-                xMaxPx = xScale.convert(xDomainMax),
-                // note: assuming can't be negative:
-                y = this.areaPlot ? relativeHeight : yKey ? total : frequency,
-                yZeroPx = yScale.convert(0),
-                yMaxPx = yScale.convert(y),
-                w = xMaxPx - xMinPx,
-                h = Math.abs(yMaxPx - yZeroPx);
+            const xMinPx = xScale.convert(xDomainMin);
+            const xMaxPx = xScale.convert(xDomainMax);
+
+            const total = negativeAgg + positiveAgg;
+
+            const yZeroPx = yScale.convert(0);
+            const yMaxPx = yScale.convert(total);
+            const w = xMaxPx - xMinPx;
+            const h = Math.abs(yMaxPx - yZeroPx);
 
             const selectionDatumLabel =
-                y !== 0
+                total !== 0
                     ? {
-                          text: labelFormatter({ value: binOfData.aggregatedValue, seriesId }),
+                          text: labelFormatter({ value: total, seriesId }),
                           fontStyle: labelFontStyle,
                           fontWeight: labelFontWeight,
                           fontSize: labelFontSize,
@@ -412,10 +356,11 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
             nodeData.push({
                 series: this,
-                datum: binOfData, // required by SeriesNodeDatum, but might not make sense here
+                datum, // required by SeriesNodeDatum, but might not make sense here
                 // since each selection is an aggregation of multiple data.
-                aggregatedValue: binOfData.aggregatedValue,
-                domain: binOfData.domain,
+                aggregatedValue: total,
+                frequency,
+                domain: domain as [number, number],
                 yKey,
                 xKey,
                 x: xMinPx,
@@ -538,12 +483,12 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
         const { xName, yName, fill: color, tooltip, aggregation, id: seriesId } = this;
         const { renderer: tooltipRenderer } = tooltip;
-        const bin: HistogramBin = nodeDatum.datum;
         const {
             aggregatedValue,
             frequency,
+            domain,
             domain: [rangeMin, rangeMax],
-        } = bin;
+        } = nodeDatum;
         const title = `${sanitizeHtml(xName || xKey)}: ${xAxis.formatDatum(rangeMin)} - ${xAxis.formatDatum(rangeMax)}`;
         let content = yKey
             ? `<b>${sanitizeHtml(yName || yKey)} (${aggregation})</b>: ${yAxis.formatDatum(aggregatedValue)}<br>`
@@ -560,12 +505,12 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         if (tooltipRenderer) {
             return toTooltipHtml(
                 tooltipRenderer({
-                    datum: bin,
+                    datum: nodeDatum.datum,
                     xKey,
-                    xValue: bin.domain,
+                    xValue: domain,
                     xName,
                     yKey,
-                    yValue: bin.aggregatedValue,
+                    yValue: aggregatedValue,
                     yName,
                     color,
                     title,

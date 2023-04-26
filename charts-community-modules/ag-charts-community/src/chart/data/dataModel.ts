@@ -4,7 +4,7 @@ import { isNumber } from '../../util/value';
 export type UngroupedDataItem<D, V> = {
     keys: any[];
     values: V;
-    sumValues?: [number, number][];
+    aggValues?: [number, number][];
     datum: D;
 };
 
@@ -14,7 +14,8 @@ export interface UngroupedData<D> {
     domain: {
         keys: any[][];
         values: any[][];
-        sumValues?: [number, number][];
+        groups?: any[][];
+        aggValues?: [number, number][];
     };
     indices: {
         keys: Record<keyof D, number>;
@@ -28,23 +29,15 @@ export interface UngroupedData<D> {
     time: number;
 }
 
+type GroupedDataItem<D> = UngroupedDataItem<D[], any[][]> & { area?: number };
+
 export interface GroupedData<D> {
     type: 'grouped';
-    data: UngroupedDataItem<D[], any[][]>[];
-    domain: {
-        keys: any[][];
-        values: any[][];
-        sumValues?: [number, number][];
-    };
-    indices: {
-        keys: Record<keyof D, number>;
-        values: Record<keyof D, number>;
-    };
-    reduced?: Record<string, any>;
-    defs: {
-        keys: DatumPropertyDefinition<keyof D>[];
-        values: DatumPropertyDefinition<keyof D>[];
-    };
+    data: GroupedDataItem<D>[];
+    domain: UngroupedData<D>['domain'];
+    indices: UngroupedData<D>['indices'];
+    reduced?: UngroupedData<D>['reduced'];
+    defs: UngroupedData<D>['defs'];
     time: number;
 }
 
@@ -72,22 +65,6 @@ function extendDomain<T extends number | Date>(
     }
 
     return domain;
-}
-
-function sumValues(values: any[], accumulator = [0, 0] as ContinuousDomain<number>) {
-    for (const value of values) {
-        if (typeof value !== 'number') {
-            continue;
-        }
-        if (value < 0) {
-            accumulator[0] += value;
-        }
-        if (value > 0) {
-            accumulator[1] += value;
-        }
-    }
-
-    return accumulator;
 }
 
 function toKeyString(keys: any[]) {
@@ -156,13 +133,13 @@ export const SMALLEST_KEY_INTERVAL: ReducerOutputPropertyDefinition<number> = {
     },
 };
 
-export const SUM_VALUE_EXTENT: ProcessorOutputPropertyDefinition<[number, number]> = {
+export const AGG_VALUES_EXTENT: ProcessorOutputPropertyDefinition<[number, number]> = {
     type: 'processor',
-    property: 'sumValueExtent',
+    property: 'aggValuesExtent',
     calculate: (processedData) => {
-        const result: [number, number] = [...(processedData.domain.sumValues?.[0] ?? [0, 0])];
+        const result: [number, number] = [...(processedData.domain.aggValues?.[0] ?? [0, 0])];
 
-        for (const [min, max] of processedData.domain.sumValues?.slice(1) ?? []) {
+        for (const [min, max] of processedData.domain.aggValues?.slice(1) ?? []) {
             if (min < result[0]) {
                 result[0] = min;
             }
@@ -175,16 +152,38 @@ export const SUM_VALUE_EXTENT: ProcessorOutputPropertyDefinition<[number, number
     },
 };
 
+export const SORT_DOMAIN_GROUPS: ProcessorOutputPropertyDefinition<any> = {
+    type: 'processor',
+    property: 'sortedGroupDomain',
+    calculate: ({ domain: { groups } }) => {
+        if (groups == null) return undefined;
+
+        return [...groups].sort((a, b) => {
+            for (let i = 0; i < a.length; i++) {
+                const result = a[i] - b[i];
+                if (result !== 0) {
+                    return result;
+                }
+            }
+
+            return 0;
+        });
+    },
+};
+
+type GroupingFn<K> = (data: UngroupedDataItem<K, any[]>) => K[];
+export type GroupByFn = (extractedData: UngroupedData<any>) => GroupingFn<any>;
 type Options<K, Grouped extends boolean | undefined> = {
     readonly props: PropertyDefinition<K>[];
     readonly groupByKeys?: Grouped;
+    readonly groupByFn?: GroupByFn;
     readonly normaliseTo?: number;
     readonly dataVisible?: boolean;
 };
 
 export type PropertyDefinition<K> =
     | DatumPropertyDefinition<K>
-    | OutputPropertyDefinition<K>
+    | AggregatePropertyDefinition<any, any>
     | ReducerOutputPropertyDefinition<any>
     | ProcessorOutputPropertyDefinition<any>;
 
@@ -202,8 +201,10 @@ type InternalDatumPropertyDefinition<K> = DatumPropertyDefinition<K> & {
     missing: boolean;
 };
 
-export type OutputPropertyDefinition<K> = {
-    type: 'sum';
+export type AggregatePropertyDefinition<D, K extends keyof D> = {
+    type: 'aggregate';
+    aggregateFunction: (values: D[K][], keys?: D[K][]) => [number, number];
+    groupAggregateFunction?: (next?: [number, number], acc?: [number, number]) => [number, number];
     properties: K[];
 };
 
@@ -226,7 +227,7 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
     private readonly opts: Options<K, Grouped>;
     private readonly keys: InternalDatumPropertyDefinition<K>[];
     private readonly values: InternalDatumPropertyDefinition<K>[];
-    private readonly sums: OutputPropertyDefinition<K>[];
+    private readonly aggregates: AggregatePropertyDefinition<D, K>[];
     private readonly reducers: ReducerOutputPropertyDefinition<any>[];
     private readonly processors: ProcessorOutputPropertyDefinition<any>[];
 
@@ -252,13 +253,13 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
         this.values = props
             .filter((def): def is DatumPropertyDefinition<K> => def.type === 'value')
             .map((def, index) => ({ ...def, index, missing: false }));
-        this.sums = props.filter((def): def is OutputPropertyDefinition<K> => def.type === 'sum');
+        this.aggregates = props.filter((def): def is AggregatePropertyDefinition<D, K> => def.type === 'aggregate');
         this.reducers = props.filter((def): def is ReducerOutputPropertyDefinition<unknown> => def.type === 'reducer');
         this.processors = props.filter(
             (def): def is ProcessorOutputPropertyDefinition<unknown> => def.type === 'processor'
         );
 
-        for (const { properties } of this.sums ?? []) {
+        for (const { properties } of this.aggregates ?? []) {
             if (properties.length === 0) continue;
 
             if (!properties.some((prop) => this.values.some((def) => def.property === prop))) {
@@ -298,8 +299,8 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
 
     processData(data: D[]): (Grouped extends true ? GroupedData<D> : UngroupedData<D>) | undefined {
         const {
-            opts: { groupByKeys, normaliseTo },
-            sums,
+            opts: { groupByKeys, groupByFn, normaliseTo },
+            aggregates: sums,
             reducers,
             processors,
         } = this;
@@ -316,9 +317,11 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
         let processedData: ProcessedData<D> = this.extractData(data);
         if (groupByKeys) {
             processedData = this.groupData(processedData);
+        } else if (groupByFn) {
+            processedData = this.groupData(processedData, groupByFn(processedData));
         }
         if (sums.length > 0) {
-            this.sumData(processedData);
+            this.aggregateData(processedData);
         }
         if (typeof normaliseTo === 'number') {
             this.normaliseData(processedData);
@@ -366,7 +369,7 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
                 }
             }
 
-            const values = dataVisible ? new Array(valueDefs.length) : undefined;
+            const values = dataVisible && valueDefs.length > 0 ? new Array(valueDefs.length) : undefined;
             let valueIdx = 0;
             for (const def of valueDefs) {
                 const value = processValue(def, datum);
@@ -422,24 +425,28 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
         };
     }
 
-    private groupData(data: UngroupedData<D>): GroupedData<D> {
+    private groupData(data: UngroupedData<D>, groupingFn?: GroupingFn<D>): GroupedData<D> {
         const processedData = new Map<string, { keys: D[K][]; values: D[K][][]; datum: D[] }>();
 
-        for (const { keys, values, datum } of data.data) {
-            const keyStr = toKeyString(keys);
+        for (const dataEntry of data.data) {
+            const { keys, values, datum } = dataEntry;
+            const group = groupingFn ? groupingFn(dataEntry) : keys;
+            const groupStr = toKeyString(group);
 
-            if (processedData.has(keyStr)) {
-                const existingData = processedData.get(keyStr)!;
+            if (processedData.has(groupStr)) {
+                const existingData = processedData.get(groupStr)!;
                 existingData.values.push(values);
                 existingData.datum.push(datum);
             } else {
-                processedData.set(keyStr, { keys, values: [values], datum: [datum] });
+                processedData.set(groupStr, { keys: group, values: [values], datum: [datum] });
             }
         }
 
         const resultData = new Array(processedData.size);
+        const resultGroups = new Array(processedData.size);
         let dataIndex = 0;
         for (const [, { keys, values, datum }] of processedData.entries()) {
+            resultGroups[dataIndex] = keys;
             resultData[dataIndex++] = {
                 keys,
                 values,
@@ -451,57 +458,65 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
             ...data,
             type: 'grouped',
             data: resultData,
+            domain: {
+                ...data.domain,
+                groups: resultGroups,
+            },
         };
     }
 
-    private sumData(processedData: ProcessedData<any>) {
-        const { values: valueDefs, sums: sumDefs } = this;
+    private aggregateData(processedData: ProcessedData<any>) {
+        const { values: valueDefs, aggregates: aggDefs } = this;
 
-        if (!sumDefs) return;
+        if (!aggDefs) return;
 
-        const resultSumValues = sumDefs.map((): ContinuousDomain<number> => [Infinity, -Infinity]);
-        const resultSumValueIndices = sumDefs.map((defs) =>
+        const resultAggValues = aggDefs.map((): ContinuousDomain<number> => [Infinity, -Infinity]);
+        const resultAggValueIndices = aggDefs.map((defs) =>
             defs.properties.map((prop) => valueDefs.findIndex((def) => def.property === prop))
         );
+        const resultAggFns = aggDefs.map((def) => def.aggregateFunction);
+        const resultGroupAggFns = aggDefs.map((def) => def.groupAggregateFunction);
 
         for (const group of processedData.data) {
             let { values } = group;
-            group.sumValues ??= new Array(resultSumValueIndices.length);
+            group.aggValues ??= new Array(resultAggValueIndices.length);
 
             if (processedData.type === 'ungrouped') {
                 values = [values];
             }
 
             let resultIdx = 0;
-            for (const indices of resultSumValueIndices) {
-                const groupDomain = extendDomain([]);
+            for (const indices of resultAggValueIndices) {
+                let groupAggValues = resultGroupAggFns[resultIdx]?.() ?? extendDomain([]);
                 for (const distinctValues of values) {
-                    const valuesToSum = indices.map((valueIdx) => distinctValues[valueIdx] as D[K]);
-                    const range = sumValues(valuesToSum);
-                    if (range) {
-                        extendDomain(range, groupDomain);
+                    const valuesToAgg = indices.map((valueIdx) => distinctValues[valueIdx] as D[K]);
+                    const valuesAgg = resultAggFns[resultIdx](valuesToAgg, group.keys);
+                    if (valuesAgg) {
+                        groupAggValues =
+                            resultGroupAggFns[resultIdx]?.(valuesAgg, groupAggValues) ??
+                            extendDomain(valuesAgg, groupAggValues);
                     }
                 }
 
-                extendDomain(groupDomain, resultSumValues[resultIdx]);
-                group.sumValues[resultIdx++] = groupDomain;
+                extendDomain(groupAggValues, resultAggValues[resultIdx]);
+                group.aggValues[resultIdx++] = groupAggValues;
             }
         }
 
-        processedData.domain.sumValues = resultSumValues;
+        processedData.domain.aggValues = resultAggValues;
     }
 
     private normaliseData(processedData: ProcessedData<D>) {
         const {
-            sums: sumDefs,
+            aggregates: aggDefs,
             values: valueDefs,
             opts: { normaliseTo },
         } = this;
 
         if (normaliseTo == null) return;
 
-        const sumValues = processedData.domain.sumValues;
-        const resultSumValueIndices = sumDefs.map((defs) =>
+        const aggDomain = processedData.domain.aggValues;
+        const resultAggValueIndices = aggDefs.map((defs) =>
             defs.properties.map((prop) => valueDefs.findIndex((def) => def.property === prop))
         );
         // const normalisedRange = [-normaliseTo, normaliseTo];
@@ -513,52 +528,52 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
             return Math.max(-normaliseTo, result);
         };
 
-        for (let sumIdx = 0; sumIdx < sumDefs.length; sumIdx++) {
-            const sums = sumValues?.[sumIdx];
-            if (sums == null) continue;
+        for (let aggIdx = 0; aggIdx < aggDefs.length; aggIdx++) {
+            const aggValue = aggDomain?.[aggIdx];
+            if (aggValue == null) continue;
 
             let sumAbsExtent = -Infinity;
-            for (const sum of sums) {
+            for (const sum of aggValue) {
                 const sumAbs = Math.abs(sum);
                 if (sumAbsExtent < sumAbs) {
                     sumAbsExtent = sumAbs;
                 }
             }
 
-            let sumRangeIdx = 0;
-            for (const _ of sums) {
-                sums[sumRangeIdx] = normalise(sums[sumRangeIdx], sumAbsExtent);
-                sumRangeIdx++;
+            let aggRangeIdx = 0;
+            for (const _ of aggValue) {
+                aggValue[aggRangeIdx] = normalise(aggValue[aggRangeIdx], sumAbsExtent);
+                aggRangeIdx++;
             }
 
             for (const next of processedData.data) {
-                const { sumValues } = next;
+                const { aggValues } = next;
                 let { values } = next;
 
                 if (processedData.type === 'ungrouped') {
                     values = [values];
                 }
 
-                let valuesSumExtent = 0;
-                for (const sum of sumValues?.[sumIdx] ?? []) {
+                let valuesAggExtent = 0;
+                for (const sum of aggValues?.[aggIdx] ?? []) {
                     const sumAbs = Math.abs(sum);
-                    if (valuesSumExtent < sumAbs) {
-                        valuesSumExtent = sumAbs;
+                    if (valuesAggExtent < sumAbs) {
+                        valuesAggExtent = sumAbs;
                     }
                 }
 
                 for (const row of values) {
-                    for (const indices of resultSumValueIndices[sumIdx]) {
-                        row[indices] = normalise(row[indices], valuesSumExtent);
+                    for (const indices of resultAggValueIndices[aggIdx]) {
+                        row[indices] = normalise(row[indices], valuesAggExtent);
                     }
                 }
 
-                if (sumValues == null) continue;
+                if (aggValues == null) continue;
 
-                sumRangeIdx = 0;
-                for (const _ of sumValues[sumIdx]) {
-                    sumValues[sumIdx][sumRangeIdx] = normalise(sumValues[sumIdx][sumRangeIdx], valuesSumExtent);
-                    sumRangeIdx++;
+                aggRangeIdx = 0;
+                for (const _ of aggValues[aggIdx]) {
+                    aggValues[aggIdx][aggRangeIdx] = normalise(aggValues[aggIdx][aggRangeIdx], valuesAggExtent);
+                    aggRangeIdx++;
                 }
             }
         }

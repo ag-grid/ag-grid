@@ -1,6 +1,6 @@
 import { Selection } from '../../../scene/selection';
 import { DropShadow } from '../../../scene/dropShadow';
-import { SeriesTooltip, SeriesNodeDataContext, keyProperty, valueProperty, sumProperties } from '../series';
+import { SeriesTooltip, SeriesNodeDataContext, keyProperty, valueProperty } from '../series';
 import { PointerEvents } from '../../../scene/node';
 import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import { Path } from '../../../scene/shape/path';
@@ -45,8 +45,9 @@ import {
     AgCartesianSeriesMarkerFormat,
 } from '../../agChartOptions';
 import { LogAxis } from '../../axis/logAxis';
-import { DataModel, SUM_VALUE_EXTENT } from '../../data/dataModel';
+import { DataModel } from '../../data/dataModel';
 import { TimeAxis } from '../../axis/timeAxis';
+import { sum } from '../../data/aggregateFunctions';
 
 interface FillSelectionDatum {
     readonly itemId: string;
@@ -242,8 +243,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                         invalidValue: undefined,
                     })
                 ),
-                sumProperties(enabledYKeys),
-                SUM_VALUE_EXTENT,
+                sum(enabledYKeys),
             ],
             groupByKeys: true,
             dataVisible: this.visible && enabledYKeys.length > 0,
@@ -264,8 +264,8 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             domain: {
                 keys: [keys],
                 values: [yExtent],
+                aggValues: [ySumExtent],
             },
-            reduced: { [SUM_VALUE_EXTENT.property]: ySumExtent } = {},
         } = processedData;
 
         if (direction === ChartAxisDirection.X) {
