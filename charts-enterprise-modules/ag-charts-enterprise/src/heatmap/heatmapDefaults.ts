@@ -1,6 +1,6 @@
 import { AgCartesianChartOptions } from 'ag-charts-community';
 
-export const heatmapDefaults: AgCartesianChartOptions = {
+export const HEATMAP_DEFAULTS: AgCartesianChartOptions = {
     axes: [
         {
             type: 'category',

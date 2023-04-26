@@ -10,6 +10,7 @@ import { UpdateService } from '../chart/updateService';
 import { Scene } from '../integrated-charts-scene';
 import { Series } from '../chart/series/series';
 import { ChartLegend } from '../chart/legendDatum';
+import { JsonApplyParams } from './json';
 
 export interface ModuleContext {
     scene: Scene;
@@ -22,10 +23,6 @@ export interface ModuleContext {
     dataService: DataService;
     layoutService: Pick<LayoutService, 'addListener' | 'removeListener'>;
     updateService: UpdateService;
-    optionsConstructors: {
-        add(path: string, constructor: new () => any): void;
-        delete(path: string): void;
-    };
 }
 
 export interface ModuleContextWithParent<P> extends ModuleContext {
@@ -44,87 +41,55 @@ export interface AxisContext {
     scaleInvert(position: number): any;
 }
 
-export type SeriesFactory = () => Series<any>;
-
-export interface ChartThemeParams {
-    seriesDefaults: any;
-    defaultFontFamily: string;
-}
-
-export interface DarkThemeParams {
-    seriesLabelDefaults: any;
-}
-
-export interface LegendModuleContext {
-    legendFactory: {
-        add(factory: (ctx: ModuleContext) => ChartLegend): void;
-        delete(): void;
-    };
-}
-
-export interface SeriesContext {
-    seriesFactory: {
-        add(factory: SeriesFactory): void;
-        delete(): void;
-    };
-    defaults: {
-        add(defaultOptions: any): void;
-        delete(): void;
-    };
-    themes: {
-        chartTheme: {
-            add(fn: (params: ChartThemeParams) => any): void;
-            delete(): void;
-        };
-        darkTheme: {
-            add(fn: (params: DarkThemeParams) => any): void;
-            delete(): void;
-        };
-    };
-}
+export type SeriesConstructor = new () => Series<any>;
+export type LegendConstructor = new (moduleContext: ModuleContext) => ChartLegend;
 
 export interface ModuleInstance {
-    update(): void;
-
     destroy(): void;
-}
-
-export interface ModuleInstanceMeta<M extends ModuleInstance = ModuleInstance> {
-    instance: M;
 }
 
 interface BaseModule {
     optionsKey: string;
     packageType: 'community' | 'enterprise';
     chartTypes: ('cartesian' | 'polar' | 'hierarchy')[];
+
+    factoryConstructors?: JsonApplyParams['constructors'];
 }
 
 export interface RootModule<M extends ModuleInstance = ModuleInstance> extends BaseModule {
     type: 'root';
-    initialiseModule(ctx: ModuleContext): ModuleInstanceMeta<M>;
-    destroyModule?(ctx: ModuleContext): void;
+
+    instanceConstructor: new (ctx: ModuleContext) => M;
 }
 
 export interface AxisModule<M extends ModuleInstance = ModuleInstance> extends BaseModule {
     type: 'axis';
-    initialiseModule(ctx: ModuleContextWithParent<AxisContext>): ModuleInstanceMeta<M>;
+
+    instanceConstructor: new (ctx: ModuleContextWithParent<AxisContext>) => M;
 }
 
-export interface LegendModule<M extends ModuleInstance = ModuleInstance> extends BaseModule {
+export interface LegendModule extends BaseModule {
     type: 'legend';
-    initialiseModule(ctx: LegendModuleContext): ModuleInstanceMeta<M>;
+
+    identifier: string;
+    instanceConstructor: LegendConstructor;
 }
 
-export interface SeriesModule<M extends ModuleInstance = ModuleInstance> extends BaseModule {
+export interface SeriesModule extends BaseModule {
     type: 'series';
-    initialiseModule(ctx: SeriesContext): ModuleInstanceMeta<M>;
+
+    identifier: string;
+    instanceConstructor: SeriesConstructor;
+
+    seriesDefaults: {};
+    themeTemplate: {};
 }
 
 export type Module<M extends ModuleInstance = ModuleInstance> =
     | RootModule<M>
     | AxisModule<M>
-    | LegendModule<M>
-    | SeriesModule<M>;
+    | LegendModule
+    | SeriesModule;
 
 export abstract class BaseModuleInstance {
     protected readonly destroyFns: (() => void)[] = [];

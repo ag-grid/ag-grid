@@ -7,15 +7,10 @@ export const BackgroundModule: _ModuleSupport.RootModule = {
     optionsKey: 'background',
     packageType: 'enterprise',
     chartTypes: ['cartesian', 'polar', 'hierarchy'],
-    initialiseModule: (ctx) => {
-        ctx.optionsConstructors.add('background.image', BackgroundImage);
-        return {
-            instance: new Background(ctx),
-        };
+    factoryConstructors: {
+        'background.image': BackgroundImage,
     },
-    destroyModule: (ctx) => {
-        ctx.optionsConstructors.delete('background.image');
-    },
+    instanceConstructor: Background,
 };
 
 export interface AgChartBackgroundImage {

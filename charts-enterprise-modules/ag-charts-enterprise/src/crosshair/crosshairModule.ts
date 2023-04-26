@@ -6,11 +6,7 @@ export const CrosshairModule: _ModuleSupport.AxisModule = {
     optionsKey: 'crosshair',
     packageType: 'enterprise',
     chartTypes: ['cartesian'],
-    initialiseModule: (ctx) => {
-        return {
-            instance: new Crosshair(ctx),
-        };
-    },
+    instanceConstructor: Crosshair,
 };
 
 export interface AgCrosshairLabelFormatterParams {

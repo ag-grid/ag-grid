@@ -18,8 +18,9 @@ import { applySeriesTransform } from './transforms';
 import { getChartTheme } from './themes';
 import { processSeriesOptions, SeriesOptions } from './prepareSeries';
 import { Logger } from '../../util/logger';
-import { CHART_TYPES } from '../chartTypes';
+import { CHART_TYPES } from '../factory/chartTypes';
 import { CHART_AXES_TYPES } from '../chartAxesTypes';
+import { getSeriesDefaults } from '../factory/seriesTypes';
 
 type AxesOptionsTypes = NonNullable<AgCartesianChartOptions['axes']>[number];
 
@@ -118,11 +119,7 @@ export const noDataCloneMergeOptions: JsonMergeOptions = {
     avoidDeepClone: ['data'],
 };
 
-export function prepareOptions<T extends AgChartOptions>(
-    newOptions: T,
-    fallbackOptions?: T,
-    seriesDefaults?: Record<string, any>
-): T {
+export function prepareOptions<T extends AgChartOptions>(newOptions: T, fallbackOptions?: T): T {
     let options: T = jsonMerge([fallbackOptions, newOptions], noDataCloneMergeOptions)!;
     sanityCheckOptions(options);
 
@@ -133,7 +130,7 @@ export function prepareOptions<T extends AgChartOptions>(
     const globalTooltipPositionOptions = options.tooltip?.position || {};
 
     const checkSeriesType = (type?: string) => {
-        if (type != null && !(isSeriesOptionType(type) || seriesDefaults?.[type])) {
+        if (type != null && !(isSeriesOptionType(type) || getSeriesDefaults(type))) {
             throw new Error(`AG Charts - unknown series type: ${type}; expected one of: ${CHART_TYPES.seriesTypes}`);
         }
     };
@@ -155,8 +152,9 @@ export function prepareOptions<T extends AgChartOptions>(
     }
 
     let defaultOverrides = {};
-    if (seriesDefaults && Object.prototype.hasOwnProperty.call(seriesDefaults, type)) {
-        defaultOverrides = seriesDefaults[type];
+    const seriesDefaults = getSeriesDefaults(type);
+    if (seriesDefaults) {
+        defaultOverrides = seriesDefaults;
     } else if (type === 'bar') {
         defaultOverrides = DEFAULT_BAR_CHART_OVERRIDES;
     } else if (type === 'scatter' || type === 'histogram') {

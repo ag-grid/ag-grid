@@ -6,10 +6,7 @@ export const ZoomModule: _ModuleSupport.Module = {
     optionsKey: 'zoom',
     packageType: 'enterprise',
     chartTypes: ['cartesian'],
-    initialiseModule(ctx: _ModuleSupport.ModuleContext) {
-        const instance = new Zoom(ctx);
-        return { instance };
-    },
+    instanceConstructor: Zoom,
 };
 
 export type AgZoomAxes = 'x' | 'y' | 'xy';

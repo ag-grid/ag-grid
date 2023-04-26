@@ -6,7 +6,7 @@ import { ContinuousScale } from '../scale/continuousScale';
 import { POSITION, STRING_ARRAY, Validate } from '../util/validation';
 import { AgCartesianAxisPosition, AgCartesianAxisType } from './agChartOptions';
 import { AxisLayout } from './layout/layoutService';
-import { AxisContext, AxisModule, ModuleContext, ModuleInstanceMeta } from '../util/module';
+import { AxisContext, AxisModule, ModuleContext, ModuleInstance } from '../util/module';
 
 export function flipChartAxisDirection(direction: ChartAxisDirection): ChartAxisDirection {
     if (direction === ChartAxisDirection.X) {
@@ -37,7 +37,7 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
     linkedTo?: ChartAxis;
     includeInvisibleDomains: boolean = false;
 
-    protected readonly modules: Record<string, ModuleInstanceMeta> = {};
+    protected readonly modules: Record<string, { instance: ModuleInstance }> = {};
 
     get type(): AgCartesianAxisType {
         return (this.constructor as any).type || '';
@@ -161,13 +161,13 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
             };
         }
 
-        const moduleMeta = module.initialiseModule({
+        const moduleInstance = new module.instanceConstructor({
             ...this.moduleCtx,
             parent: this.axisContext,
         });
-        this.modules[module.optionsKey] = moduleMeta;
+        this.modules[module.optionsKey] = { instance: moduleInstance };
 
-        (this as any)[module.optionsKey] = moduleMeta.instance;
+        (this as any)[module.optionsKey] = moduleInstance;
     }
 
     removeModule(module: AxisModule) {
