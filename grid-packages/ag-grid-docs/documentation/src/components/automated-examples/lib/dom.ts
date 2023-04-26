@@ -3,7 +3,7 @@ import { Point } from './geometry';
 export function getOffset(element: HTMLElement | SVGElement): Point {
     let offset;
     if (element instanceof SVGElement) {
-        const parentRect = element.parentElement.getBoundingClientRect();
+        const parentRect = element.parentElement!.getBoundingClientRect();
         const elementRect = element.getBoundingClientRect();
         offset = {
             x: -parentRect.x - elementRect.width / 2,
@@ -100,20 +100,35 @@ export function isElementChildOfClass({
     return false;
 }
 
-export function isInViewport(element: HTMLElement, threshold: number): boolean {
+export function isInViewport({
+    element,
+    threshold,
+    scrollContainer,
+}: {
+    element: HTMLElement;
+    threshold: number;
+    scrollContainer?: HTMLElement;
+}): boolean {
     if (!element) {
         return false;
     }
 
-    const containerEl = window;
-    const { top, bottom, height } = element.getBoundingClientRect();
-    const amountInView = (containerEl.innerHeight - top) / height;
+    const windowHeight = window.innerHeight;
+    const elRect = element.getBoundingClientRect();
+    const amountInView = (windowHeight - elRect.top) / elRect.height;
 
-    if (top >= 0 && bottom <= containerEl.innerHeight) {
-        return true;
-    } else if (top < containerEl.innerHeight && bottom >= 0 && amountInView > threshold) {
-        return true;
+    const withinWindow = elRect.top >= 0 && elRect.bottom <= windowHeight;
+    const withinVisibilityThreshold = elRect.top < windowHeight && elRect.bottom >= 0 && amountInView > threshold;
+    const isWithinWindow = withinWindow || withinVisibilityThreshold;
+
+    let isWithinViewport = isWithinWindow;
+    if (scrollContainer) {
+        const scrollContainerRect = scrollContainer.getBoundingClientRect();
+        const scrollYDiff = elRect.y - scrollContainerRect.y;
+        const withinScrollY = scrollYDiff > 0 && scrollYDiff < scrollContainerRect.height;
+
+        isWithinViewport = isWithinViewport && withinScrollY;
     }
 
-    return false;
+    return isWithinViewport;
 }

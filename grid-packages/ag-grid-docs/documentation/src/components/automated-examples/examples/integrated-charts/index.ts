@@ -182,7 +182,7 @@ export function createAutomatedIntegratedCharts({
         inactive: () => scriptRunner?.inactive(),
         currentState: () => scriptRunner?.currentState(),
         isInViewport: () => {
-            return isInViewport(gridDiv, visibilityThreshold);
+            return isInViewport({ element: gridDiv, threshold: visibilityThreshold });
         },
         getDebugger: () => scriptDebugger,
     };

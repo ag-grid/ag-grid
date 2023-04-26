@@ -249,7 +249,7 @@ export function createAutomatedRowGrouping({
         inactive: () => scriptRunner?.inactive(),
         currentState: () => scriptRunner?.currentState(),
         isInViewport: () => {
-            return isInViewport(gridDiv, visibilityThreshold);
+            return isInViewport({ element: gridDiv, threshold: visibilityThreshold });
         },
         setUpdateFrequency,
         getDebugger: () => scriptDebugger,

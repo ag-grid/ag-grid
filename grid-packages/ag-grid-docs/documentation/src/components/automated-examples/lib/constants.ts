@@ -22,6 +22,7 @@ export const AG_CHART_TOOL_PANEL_BUTTON_SELECTOR = '.ag-chart-tool-panel-button-
 
 export const AG_POPUP_SELECTOR = '.ag-popup';
 export const AG_POPUP_DIALOG_SELECTOR = '.ag-popup [role="dialog"]';
+export const AG_SCROLLABLE_CONTAINER_SELECTOR = '.ag-scrollable-container';
 
 export const AG_CHART_SERIES_GROUP_TITLE_SELECTOR =
     '.ag-chart-settings-mini-wrapper:not(.ag-hidden) .ag-charts-settings-group-title';
