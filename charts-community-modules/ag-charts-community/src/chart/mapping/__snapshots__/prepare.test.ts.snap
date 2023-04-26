@@ -7283,6 +7283,7 @@ Object {
         },
       },
       "nodeClickRange": "exact",
+      "nodeGap": 0,
       "nodePadding": 2,
       "showInLegend": false,
       "sizeKey": "valuation",

@@ -597,6 +597,7 @@ export class ChartTheme {
                 },
                 highlightGroups: true,
                 nodePadding: 2,
+                nodeGap: 0,
                 title: {
                     enabled: true,
                     color: 'white',
