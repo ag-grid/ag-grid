@@ -3260,7 +3260,33 @@
       "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
     }
   },
+  "AgScatterSeriesLabelFormatterParams": {
+    "datum": {
+      "description": "/** Datum from the series data array. */",
+      "type": { "returnType": "DatumType", "optional": false }
+    },
+    "meta": { "typeParams": ["DatumType"] },
+    "seriesId": {
+      "description": "/** The ID of the series. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "value": {
+      "description": "/** The value of yKey as specified on series options. */",
+      "type": { "returnType": "number", "optional": false }
+    }
+  },
   "AgScatterSeriesLabelOptions": {
+    "formatter": {
+      "description": "/** Function to modify the text displayed by the label. By default the values are simply stringified. */",
+      "type": {
+        "arguments": {
+          "params": "AgScatterSeriesLabelFormatterParams<DatumType>"
+        },
+        "returnType": "string",
+        "optional": true
+      }
+    },
+    "meta": { "typeParams": ["DatumType"] },
     "enabled": {
       "description": "/** Whether or not the labels should be shown. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -3350,7 +3376,10 @@
     },
     "label": {
       "description": "/** Configuration for the labels shown on top of data points.  */",
-      "type": { "returnType": "AgScatterSeriesLabelOptions", "optional": true }
+      "type": {
+        "returnType": "AgScatterSeriesLabelOptions<DatumType>",
+        "optional": true
+      }
     },
     "xKey": {
       "description": "/** The key to use to retrieve x-values from the data.  */",
