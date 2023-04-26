@@ -5561,6 +5561,9 @@
   "LayoutProcessor": {},
   "Handler": { "meta": { "typeParams": ["T extends EventTypes"] } },
   "ChartLegend": {
+    "computeBBox": {
+      "type": { "arguments": {}, "returnType": "BBox", "optional": false }
+    },
     "attachLegend": {
       "type": {
         "arguments": { "node": "Node | null" },
@@ -6407,6 +6410,13 @@
         "arguments": { "ctx": "ModuleContext" },
         "returnType": "ModuleInstanceMeta<M>",
         "optional": false
+      }
+    },
+    "destroyModule": {
+      "type": {
+        "arguments": { "ctx": "ModuleContext" },
+        "returnType": "void",
+        "optional": true
       }
     },
     "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },

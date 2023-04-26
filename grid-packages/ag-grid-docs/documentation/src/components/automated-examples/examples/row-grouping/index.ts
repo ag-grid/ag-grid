@@ -13,7 +13,7 @@ import { ROW_GROUPING_ID } from '../../lib/constants';
 import { createMouse } from '../../lib/createMouse';
 import { isInViewport } from '../../lib/dom';
 import { getAdditionalContextMenuItems } from '../../lib/getAdditionalContextMenuItems';
-import { ScriptDebuggerManager } from '../../lib/scriptDebugger';
+import { ScriptDebugger, ScriptDebuggerManager } from '../../lib/scriptDebugger';
 import { RunScriptState, ScriptRunner } from '../../lib/scriptRunner';
 import { AutomatedExample } from '../../types';
 import { createScriptRunner } from './createScriptRunner';
@@ -163,6 +163,7 @@ export function createAutomatedRowGrouping({
 }: CreateAutomatedRowGroupingParams): RowGroupingAutomatedExample {
     const gridSelector = `.${gridClassname}`;
     let gridDiv: HTMLElement;
+    let scriptDebugger: ScriptDebugger | undefined;
 
     const init = () => {
         gridDiv = document.querySelector(gridSelector) as HTMLElement;
@@ -186,7 +187,7 @@ export function createAutomatedRowGrouping({
             initWorker();
             startWorkerMessages();
 
-            const scriptDebugger = scriptDebuggerManager.add({
+            scriptDebugger = scriptDebuggerManager.add({
                 id: ROW_GROUPING_ID,
                 containerEl: gridDiv,
             });
@@ -251,6 +252,7 @@ export function createAutomatedRowGrouping({
             return isInViewport(gridDiv, visibilityThreshold);
         },
         setUpdateFrequency,
+        getDebugger: () => scriptDebugger,
     };
 }
 

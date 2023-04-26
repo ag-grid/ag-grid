@@ -1,8 +1,10 @@
 import { Marker } from './marker/marker';
 import { Node } from '../scene/node';
+import { BBox } from '../scene/bbox';
 import { AgChartLegendListeners } from './agChartOptions';
 
 export interface ChartLegend {
+    computeBBox(): BBox;
     attachLegend(node: Node | null): void;
     destroy(): void;
     data: any;
