@@ -724,6 +724,9 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                 return;
             }
 
+            const availTextWidth = box.width - 2 * nodePadding;
+            const availTextHeight = box.height - 2 * nodePadding;
+
             let labelText = datum.isLeaf ? datum.label : datum.label.toUpperCase();
 
             let labelStyle: Label;
@@ -732,7 +735,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                 labelStyle =
                     [labels.large, labels.medium, labels.small].find((s) => {
                         const { width, height } = getTextSize(labelText, s);
-                        return width < box.width && height < box.height;
+                        return width < availTextWidth && height < availTextHeight;
                     }) || labels.small;
             } else if (datum.depth === 1) {
                 labelStyle = title;
@@ -741,10 +744,11 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             }
 
             const labelSize = getTextSize(labelText, labelStyle);
-            const availTextWidth = box.width - 2 * nodePadding;
-            const availTextHeight = box.height - 2 * nodePadding;
             const minSizeRatio = 3;
-            if (labelStyle.fontSize > box.width / minSizeRatio || labelStyle.fontSize > box.height / minSizeRatio) {
+            if (
+                labelStyle.fontSize > availTextWidth / minSizeRatio ||
+                labelStyle.fontSize > availTextHeight / minSizeRatio
+            ) {
                 // Avoid labels on too small tiles
                 return;
             }
