@@ -106,4 +106,4 @@ Please note that when `minSpacing` and `maxSpacing` are very close in value, the
 
 ## Next Up
 
-Continue to the next section to learn about [Axis Labels](/charts-axes-labels/).
+Continue to the next section to learn about [Axis Domain](/charts-axes-domain/).
