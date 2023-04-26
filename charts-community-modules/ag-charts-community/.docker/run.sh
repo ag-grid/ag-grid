@@ -27,7 +27,7 @@ case "$MODULE_NAME" in
         INIT_CMD="npm i --no-package-lock"
     ;;
 
-    core)
+    ag-charts-enterprise)
         SCOPE="@ag-charts-enterprise/ag-charts-enterprise"
         INIT_CMD="npx lerna bootstrap --include-dependencies --scope=${SCOPE}"
     ;;
