@@ -11,7 +11,7 @@ import { DropShadow } from '../../../scene/dropShadow';
 import { ColorScale } from '../../../scale/colorScale';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { ChartLegendDatum } from '../../legendDatum';
-import { toFixed } from '../../../util/number';
+import { toFixed, isEqual } from '../../../util/number';
 import { Path2D } from '../../../scene/path2D';
 import { BBox } from '../../../scene/bbox';
 import { Color } from '../../../util/color';
@@ -40,6 +40,8 @@ type TreeDatum = {
     [prop: string]: any;
     children?: TreeDatum[];
 };
+
+type Side = 'left' | 'right' | 'top' | 'bottom';
 
 interface TreemapNodeDatum extends SeriesNodeDatum {
     datum: TreeDatum;
@@ -193,6 +195,9 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
     @Validate(NUMBER(0))
     nodePadding = 2;
 
+    @Validate(NUMBER(0))
+    nodeGap = 0;
+
     @Validate(STRING)
     labelKey: string = 'label';
 
@@ -286,12 +291,15 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         nodeDatum: TreemapNodeDatum,
         bbox: BBox,
         outputNodesBoxes: Map<TreemapNodeDatum, BBox> = new Map()
-    ) {
-        const targetTileAspectRatio = 1; // The width and height will tend to this ratio
+    ): typeof outputNodesBoxes {
+        if (bbox.width <= 0 || bbox.height <= 0) {
+            return outputNodesBoxes;
+        }
 
-        const padding = this.getNodePadding(nodeDatum, bbox);
         outputNodesBoxes.set(nodeDatum, bbox);
 
+        const targetTileAspectRatio = 1; // The width and height will tend to this ratio
+        const padding = this.getNodePadding(nodeDatum, bbox);
         const width = bbox.width - padding.left - padding.right;
         const height = bbox.height - padding.top - padding.bottom;
         if (width <= 0 || height <= 0 || nodeDatum.value <= 0) {
@@ -303,7 +311,8 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         let minRatioDiff = Infinity;
         let partitionSum = nodeDatum.value;
         const children = nodeDatum.children;
-        const partition = new BBox(bbox.x + padding.left, bbox.y + padding.top, width, height);
+        const innerBox = new BBox(bbox.x + padding.left, bbox.y + padding.top, width, height);
+        const partition = innerBox.clone();
 
         for (let i = 0; i < children.length; i++) {
             const value = children[i].value;
@@ -337,6 +346,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                 const height = isVertical ? stackThickness : length;
 
                 const childBox = new BBox(x, y, width, height);
+                this.applyGap(innerBox, childBox);
                 this.squarify(child, childBox, outputNodesBoxes);
 
                 partitionSum -= child.value;
@@ -366,11 +376,32 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             const width = partition.width * (isVertical ? part : 1);
             const height = partition.height * (isVertical ? 1 : part);
             const childBox = new BBox(x, y, width, height);
+            this.applyGap(innerBox, childBox);
             this.squarify(children[i], childBox, outputNodesBoxes);
             start += isVertical ? width : height;
         }
 
         return outputNodesBoxes;
+    }
+
+    private applyGap(innerBox: BBox, childBox: BBox) {
+        const gap = this.nodeGap / 2;
+        const getBounds = (box: BBox): Record<Side, number> => {
+            return {
+                left: box.x,
+                top: box.y,
+                right: box.x + box.width,
+                bottom: box.y + box.height,
+            };
+        };
+        const innerBounds = getBounds(innerBox);
+        const childBounds = getBounds(childBox);
+        const sides = Object.keys(innerBounds) as Side[];
+        sides.forEach((side) => {
+            if (!isEqual(innerBounds[side], childBounds[side])) {
+                childBox.shrink(gap, side);
+            }
+        });
     }
 
     async processData() {

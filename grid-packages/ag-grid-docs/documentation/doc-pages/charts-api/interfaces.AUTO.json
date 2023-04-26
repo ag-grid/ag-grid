@@ -3105,6 +3105,7 @@
       "tileStrokeWidth?": "number",
       "tooltip?": "AgTreemapSeriesTooltip<DatumType>",
       "nodePadding?": "PixelSize",
+      "nodeGap?": "PixelSize",
       "gradient?": "boolean",
       "tileShadow?": "AgDropShadowOptions",
       "labelShadow?": "AgDropShadowOptions",
@@ -3135,6 +3136,7 @@
       "tileStrokeWidth?": "/** The tile's stroke width. */",
       "tooltip?": "/** Series-specific tooltip configuration. */",
       "nodePadding?": "/** The amount of padding in pixels inside of each treemap tile. Increasing `nodePadding` will reserve more space for parent labels. */",
+      "nodeGap?": "/** The amount of gap in pixels between treemap tiles. */",
       "gradient?": "/** Whether or not to use gradients for treemap tiles. */",
       "tileShadow?": "/** Configuration for the shadow used behind the treemap tiles. */",
       "labelShadow?": "/** Configuration for the shadow used behind the treemap labels. */",
@@ -4040,6 +4042,10 @@
   "TreeDatum": {
     "meta": { "isTypeAlias": true },
     "type": "{ [prop: string]: any; children?: TreeDatum[]; }"
+  },
+  "Side": {
+    "meta": { "isTypeAlias": true },
+    "type": "'left' | 'right' | 'top' | 'bottom'"
   },
   "TreemapNodeDatum": {
     "meta": {},
