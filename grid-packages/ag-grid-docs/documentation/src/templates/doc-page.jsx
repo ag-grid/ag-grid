@@ -24,6 +24,7 @@ import { getProductType } from 'utils/page-header';
 import stripHtml from 'utils/strip-html';
 import DocumentationLink from '../components/DocumentationLink';
 import LearningVideos from '../components/LearningVideos';
+import { addNonBreakingSpaceBetweenLastWords } from '../utils/add-non-breaking-space-between-last-words';
 import { AGStyles } from './ag-styles';
 import styles from './doc-page.module.scss';
 
@@ -32,7 +33,9 @@ import styles from './doc-page.module.scss';
  */
 const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pageName } }) => {
     const { markdownRemark: page } = data;
-    const [showSideMenu, setShowSideMenu] = useState(page.frontmatter.sideMenu === null ? true : page.frontmatter.sideMenu);
+    const [showSideMenu, setShowSideMenu] = useState(
+        page.frontmatter.sideMenu === null ? true : page.frontmatter.sideMenu
+    );
 
     if (!page) {
         return null;
@@ -206,12 +209,14 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
                 <div className={styles.pageSections}>{renderAst(ast)}</div>
             </div>
 
-            {showSideMenu && <SideMenu
-                headings={page.headings || []}
-                pageName={pageName}
-                pageTitle={title}
-                hideMenu={() => setShowSideMenu(false)}
-            />}
+            {showSideMenu && (
+                <SideMenu
+                    headings={page.headings || []}
+                    pageName={pageName}
+                    pageTitle={title}
+                    hideMenu={() => setShowSideMenu(false)}
+                />
+            )}
         </div>
     );
 };
