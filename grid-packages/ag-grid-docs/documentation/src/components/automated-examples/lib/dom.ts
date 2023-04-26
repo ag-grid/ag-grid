@@ -1,5 +1,16 @@
 import { Point } from './geometry';
 
+export type PositionLocation =
+    | 'topLeft'
+    | 'topCenter'
+    | 'topRight'
+    | 'centerLeft'
+    | 'center'
+    | 'centerRight'
+    | 'bottomLeft'
+    | 'bottomCenter'
+    | 'bottomRight';
+
 export function getOffset(element: HTMLElement | SVGElement): Point {
     let offset;
     if (element instanceof SVGElement) {
@@ -27,12 +38,65 @@ export function getScrollOffset(): Point {
     };
 }
 
-export function getBoundingClientRectMidpoint(element: HTMLElement): Point {
+export function getBoundingClientPosition({
+    element,
+    positionLocation = 'center',
+}: {
+    element: HTMLElement;
+    positionLocation?: PositionLocation;
+}): Point {
+    let position: Point;
+
     const { x, y, width, height } = element.getBoundingClientRect();
-    return {
-        x: x + width / 2,
-        y: y + height / 2,
-    };
+
+    if (positionLocation === 'topLeft') {
+        position = {
+            x,
+            y,
+        };
+    } else if (positionLocation === 'topCenter') {
+        position = {
+            x: x + width / 2,
+            y,
+        };
+    } else if (positionLocation === 'topRight') {
+        position = {
+            x: x + width,
+            y,
+        };
+    } else if (positionLocation === 'centerLeft') {
+        position = {
+            x: x,
+            y: y + height / 2,
+        };
+    } else if (positionLocation === 'center') {
+        position = {
+            x: x + width / 2,
+            y: y + height / 2,
+        };
+    } else if (positionLocation === 'centerRight') {
+        position = {
+            x: x + width,
+            y: y + height / 2,
+        };
+    } else if (positionLocation === 'bottomLeft') {
+        position = {
+            x,
+            y: y + height,
+        };
+    } else if (positionLocation === 'bottomCenter') {
+        position = {
+            x: x + width / 2,
+            y: y + height,
+        };
+    } else if (positionLocation === 'bottomRight') {
+        position = {
+            x: x + width,
+            y: y + height,
+        };
+    }
+
+    return position!;
 }
 
 export function findElementWithInnerText({
