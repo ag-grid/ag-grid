@@ -189,54 +189,36 @@ export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }:
         {
             type: 'moveTo',
             toPos: () => {
-                return addPoints(
-                    agElementFinder
-                        .get('cell', {
-                            colIndex: TARGET_GROUP_ITEM_CELL_COL_INDEX,
-                            rowIndex: TARGET_GROUP_ITEM_CELL_ROW_INDEX,
-                        })
-                        ?.getPos(),
-                    {
-                        x: 40,
-                        y: 10,
-                    }
-                );
+                return agElementFinder
+                    .get('cell', {
+                        colIndex: TARGET_GROUP_ITEM_CELL_COL_INDEX,
+                        rowIndex: TARGET_GROUP_ITEM_CELL_ROW_INDEX,
+                    })
+                    ?.getPos('bottomCenter');
             },
         },
         { type: 'wait', duration: 200 },
         {
             type: 'moveTo',
             toPos: () =>
-                addPoints(
-                    agElementFinder
-                        .get('cell', {
-                            colIndex: TARGET_GROUP_ITEM_CELL_COL_INDEX,
-                            rowIndex: TARGET_GROUP_ITEM_CELL_ROW_INDEX,
-                        })
-                        ?.getPos(),
-                    {
-                        x: 10,
-                        y: 10,
-                    }
-                ),
+                agElementFinder
+                    .get('cell', {
+                        colIndex: TARGET_GROUP_ITEM_CELL_COL_INDEX,
+                        rowIndex: TARGET_GROUP_ITEM_CELL_ROW_INDEX,
+                    })
+                    ?.getPos('bottomRight'),
             duration: 200,
         },
         { type: 'wait', duration: 200 },
         {
             type: 'moveTo',
             toPos: () =>
-                addPoints(
-                    agElementFinder
-                        .get('cell', {
-                            colIndex: TARGET_GROUP_ITEM_CELL_COL_INDEX,
-                            rowIndex: TARGET_GROUP_ITEM_CELL_ROW_INDEX,
-                        })
-                        ?.getPos(),
-                    {
-                        x: 40,
-                        y: 10,
-                    }
-                ),
+                agElementFinder
+                    .get('cell', {
+                        colIndex: TARGET_GROUP_ITEM_CELL_COL_INDEX,
+                        rowIndex: TARGET_GROUP_ITEM_CELL_ROW_INDEX,
+                    })
+                    ?.getPos('bottomCenter'),
             duration: 200,
         },
         { type: 'wait', duration: 300 },
