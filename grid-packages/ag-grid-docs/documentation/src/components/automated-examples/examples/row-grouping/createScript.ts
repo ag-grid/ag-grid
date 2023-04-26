@@ -3,7 +3,6 @@ import { createAgElementFinder } from '../../lib/agElements';
 import { Mouse } from '../../lib/createMouse';
 import { getBottomMidPos, getOffset, getScrollOffset } from '../../lib/dom';
 import { addPoints } from '../../lib/geometry';
-import { clearAllRowHighlights } from '../../lib/scriptActions/clearAllRowHighlights';
 import { createGroupColumnScriptActions } from '../../lib/scriptActions/createGroupColumnScriptActions';
 import { moveTarget } from '../../lib/scriptActions/move';
 import { ScriptDebugger } from '../../lib/scriptDebugger';
@@ -53,7 +52,6 @@ export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }:
                 });
 
                 mouse.show();
-                clearAllRowHighlights();
             },
         },
         {

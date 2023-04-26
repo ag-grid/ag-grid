@@ -4,7 +4,6 @@ import { createAgElementFinder } from '../../lib/agElements';
 import { Mouse } from '../../lib/createMouse';
 import { getBottomMidPos, getOffset } from '../../lib/dom';
 import { addPoints } from '../../lib/geometry';
-import { clearAllRowHighlights } from '../../lib/scriptActions/clearAllRowHighlights';
 import { dragRange } from '../../lib/scriptActions/dragRange';
 import { moveTarget } from '../../lib/scriptActions/move';
 import { ScriptDebugger } from '../../lib/scriptDebugger';
@@ -41,7 +40,6 @@ export const createScript = ({
                 moveTarget({ target: mouse.getTarget(), coords: getOffscreenPos(), scriptDebugger });
 
                 mouse.show();
-                clearAllRowHighlights();
             },
         },
         {
