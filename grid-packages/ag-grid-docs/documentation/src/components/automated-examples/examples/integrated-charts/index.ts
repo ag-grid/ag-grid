@@ -23,6 +23,7 @@ let restartScriptTimeout;
 interface CreateAutomatedIntegratedChartsParams {
     gridClassname: string;
     mouseMaskClassname: string;
+    getOverlay: () => HTMLElement;
     additionalContextMenuItems?: (string | MenuItemDef)[];
     onStateChange?: (state: RunScriptState) => void;
     onGridReady?: () => void;
@@ -106,6 +107,7 @@ const gridOptions: GridOptions = {
 export function createAutomatedIntegratedCharts({
     gridClassname,
     mouseMaskClassname,
+    getOverlay,
     additionalContextMenuItems,
     onStateChange,
     onGridReady,
@@ -153,6 +155,7 @@ export function createAutomatedIntegratedCharts({
             scriptRunner = createScriptRunner({
                 id: INTEGRATED_CHARTS_ID,
                 containerEl: gridDiv,
+                getOverlay,
                 mouse,
                 onStateChange,
                 tweenGroup,

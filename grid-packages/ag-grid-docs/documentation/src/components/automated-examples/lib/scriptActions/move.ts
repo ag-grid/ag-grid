@@ -23,10 +23,10 @@ export interface MoveMouseParams {
 
 interface MoveToParams {
     mouse: Mouse;
+    getOverlay: () => HTMLElement;
     toPos: Point | (() => Point | undefined);
     speed?: number;
     duration?: number;
-    hoverOver?: boolean;
     tweenGroup: Group;
     easing?: EasingFunction;
     scriptDebugger?: ScriptDebugger;
@@ -51,10 +51,10 @@ export function moveMouse({ mouse, coords, offset, scriptDebugger }: MoveMousePa
 
 export function moveTo({
     mouse,
+    getOverlay,
     toPos: toPosValue,
     speed,
     duration,
-    hoverOver,
     tweenGroup,
     easing,
     scriptDebugger,
@@ -66,6 +66,8 @@ export function moveTo({
         return;
     }
 
+    const overlay = getOverlay && getOverlay();
+
     return createMoveMouse({
         mouse,
         toPos,
@@ -74,15 +76,21 @@ export function moveTo({
         tweenGroup,
         easing,
         tweenOnChange: ({ coords }) => {
-            if (hoverOver) {
-                const hoverOverEl = document.elementFromPoint(coords.x, coords.y);
-                if (hoverOverEl) {
-                    clearAllRowHighlights();
+            let prevPointerEventsValue;
+            if (overlay) {
+                prevPointerEventsValue = overlay.style.pointerEvents;
+                overlay.style.pointerEvents = 'none';
+            }
+            const hoverOverEl = document.elementFromPoint(coords.x, coords.y);
+            if (overlay) {
+                overlay.style.pointerEvents = prevPointerEventsValue;
+            }
+            if (hoverOverEl) {
+                clearAllRowHighlights();
 
-                    const row = hoverOverEl.closest(AG_ROW_SELECTOR);
-                    if (row) {
-                        row.classList.add(AG_ROW_HOVER_CLASSNAME);
-                    }
+                const row = hoverOverEl.closest(AG_ROW_SELECTOR);
+                if (row) {
+                    row.classList.add(AG_ROW_HOVER_CLASSNAME);
                 }
             }
         },

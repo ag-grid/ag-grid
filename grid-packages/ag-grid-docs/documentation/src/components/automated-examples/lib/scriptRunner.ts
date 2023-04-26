@@ -29,7 +29,6 @@ export interface MoveToAction extends Action {
     toPos: Point | (() => Point | undefined);
     speed?: number;
     duration?: number;
-    hoverOver?: boolean;
     easing?: EasingFunction;
 }
 
@@ -90,6 +89,7 @@ interface PausedState {
 export interface CreateScriptActionParams {
     mouse: Mouse;
     containerEl?: HTMLElement;
+    getOverlay: () => HTMLElement;
     action: ScriptAction;
     gridOptions: GridOptions;
     tweenGroup: Group;
@@ -101,6 +101,7 @@ export interface CreateScriptRunnerParams {
     id: string;
     mouse: Mouse;
     containerEl?: HTMLElement;
+    getOverlay: () => HTMLElement;
     script: ScriptAction[];
     gridOptions: GridOptions;
     tweenGroup: Group;
@@ -126,6 +127,7 @@ interface CreateActionSequenceRunnerParams {
 interface CreateScriptActionSequenceParams {
     script: ScriptAction[];
     containerEl?: HTMLElement;
+    getOverlay: () => HTMLElement;
     mouse: Mouse;
     gridOptions: GridOptions;
     tweenGroup: Group;
@@ -142,6 +144,7 @@ export type RunScriptState = 'inactive' | 'stopped' | 'stopping' | 'errored' | '
 
 function createScriptAction({
     containerEl,
+    getOverlay,
     mouse,
     action,
     tweenGroup,
@@ -182,10 +185,10 @@ function createScriptAction({
         const scriptAction = action as MoveToAction;
         return moveTo({
             mouse,
+            getOverlay,
             toPos: scriptAction.toPos,
             speed: scriptAction.speed,
             duration: scriptAction.duration,
-            hoverOver: scriptAction.hoverOver,
             tweenGroup,
             easing: scriptAction.easing || defaultEasing,
             scriptDebugger,
@@ -207,6 +210,7 @@ function createScriptAction({
 function createScriptActionSequence({
     script,
     containerEl,
+    getOverlay,
     mouse,
     gridOptions,
     tweenGroup,
@@ -218,6 +222,7 @@ function createScriptActionSequence({
             try {
                 const result = createScriptAction({
                     containerEl,
+                    getOverlay,
                     mouse,
                     action: scriptAction,
                     gridOptions,
@@ -246,6 +251,7 @@ function createScriptActionSequence({
 export function createScriptRunner({
     id,
     containerEl,
+    getOverlay,
     mouse,
     script,
     gridOptions,
@@ -358,6 +364,7 @@ export function createScriptRunner({
     const actionSequence = createScriptActionSequence({
         script,
         containerEl,
+        getOverlay,
         mouse,
         gridOptions,
         tweenGroup,
