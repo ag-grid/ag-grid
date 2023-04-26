@@ -17,6 +17,7 @@ import { PlacedLabel, PointLabelDatum } from '../../util/labelPlacement';
 import { Layers } from '../layers';
 import { SizedPoint, Point } from '../../scene/point';
 import { BBox } from '../../scene/bbox';
+import { AnimationManager } from '../interaction/animationManager';
 import { ChartEventManager } from '../interaction/chartEventManager';
 import { HighlightManager } from '../interaction/highlightManager';
 import { ChartAxisDirection } from '../chartAxisDirection';
@@ -190,6 +191,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         placeLabels(): Map<Series<any>, PlacedLabel[]>;
         getSeriesRect(): Readonly<BBox> | undefined;
     };
+    animationManager?: AnimationManager;
     chartEventManager?: ChartEventManager;
     highlightManager?: HighlightManager;
     xAxis?: ChartAxis;
