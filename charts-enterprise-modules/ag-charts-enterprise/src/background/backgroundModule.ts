@@ -1,5 +1,6 @@
 import { _ModuleSupport, PixelSize, Opacity } from 'ag-charts-community';
 import { Background } from './background';
+import { BackgroundImage } from './backgroundImage';
 
 export const BackgroundModule: _ModuleSupport.RootModule = {
     type: 'root',
@@ -7,9 +8,13 @@ export const BackgroundModule: _ModuleSupport.RootModule = {
     packageType: 'enterprise',
     chartTypes: ['cartesian', 'polar', 'hierarchy'],
     initialiseModule: (ctx) => {
+        ctx.optionsConstructors.add('background.image', BackgroundImage);
         return {
             instance: new Background(ctx),
         };
+    },
+    destroyModule: (ctx) => {
+        ctx.optionsConstructors.delete('background.image');
     },
 };
 
