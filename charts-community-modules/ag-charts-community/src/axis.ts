@@ -611,7 +611,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             scale,
             gridLength,
             tick,
-            label: { enabled: enabledLabels, parallel: parallelLabels, mirrored, avoidCollisions },
+            label: { enabled: enabledLabels, parallel: parallelLabels, mirrored, avoidCollisions, autoWrap },
             requestedRange,
         } = this;
         const requestedRangeMin = Math.min(...requestedRange);
@@ -680,7 +680,10 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
                 const tickCount = Math.max(defaultTickCount - i, minTickCount);
 
                 const filterTicks =
-                    checkForOverlap && !(continuous && this.tick.count === undefined) && (tickSpacing || i !== 0);
+                    !autoWrap &&
+                    checkForOverlap &&
+                    !(continuous && this.tick.count === undefined) &&
+                    (tickSpacing || i !== 0);
 
                 if (this.tick.values) {
                     ticks = this.tick.values;
@@ -1044,9 +1047,6 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
         this.fractionDigits = (ticks as any).fractionDigits >= 0 ? (ticks as any).fractionDigits : 0;
 
-        // Update properties that affect the size of the axis labels and measure the labels
-        const labelBboxes: Map<number, BBox | null> = new Map();
-
         const labelX = sideFlag * (tick.size + label.padding + this.seriesAreaPadding);
 
         const labelMatrix = new Matrix();
@@ -1065,7 +1065,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
             const userHidden = node.text === '' || node.text == undefined;
             const bbox = node.computeBBox();
-            this.calculateLabelBBox(bbox, index, labelX, translationY, labelBboxes, userHidden, labelMatrix, labelData);
+            this.calculateLabelBBox(bbox, labelX, translationY, userHidden, labelMatrix, labelData);
         });
 
         const labelSpacing = this.getLabelSpacing();
@@ -1102,23 +1102,9 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         if (wrapLabels) {
             labelData = [];
             labelSelection.each((node, datum, index) => {
-                const { tick, translationY } = datum;
-                const formattedText = this.formatTickDatum(tick, index);
+                const formattedText = this.formatTickDatum(datum.tick, index);
                 const labelText = Text.wrap(formattedText, maxLabelWidth, font, label.fontSize);
                 node.text = labelText;
-
-                const userHidden = node.text === '' || node.text == undefined;
-                const bbox = node.computeBBox();
-                this.calculateLabelBBox(
-                    bbox,
-                    index,
-                    labelX,
-                    translationY,
-                    labelBboxes,
-                    userHidden,
-                    labelMatrix,
-                    labelData
-                );
             });
         }
 
@@ -1141,7 +1127,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         }
 
         labelData = [];
-        labelSelection.each((label, datum, index) => {
+        labelSelection.each((label, datum) => {
             const userHidden = label.text === '' || label.text == undefined;
             if (userHidden) {
                 label.visible = false; // hide empty labels
@@ -1158,7 +1144,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             const { translationY } = datum;
 
             const bbox = label.computeBBox();
-            this.calculateLabelBBox(bbox, index, labelX, translationY, labelBboxes, userHidden, labelMatrix, labelData);
+            this.calculateLabelBBox(bbox, labelX, translationY, userHidden, labelMatrix, labelData);
         });
 
         this.layout.label = {
@@ -1175,10 +1161,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
     private calculateLabelBBox(
         bbox: BBox,
-        index: number,
         labelX: number,
         translationY: number,
-        labelBboxes: Map<number, BBox | null>,
         userHidden: boolean,
         labelMatrix: Matrix,
         labelData: PointLabelDatum[]
@@ -1196,8 +1180,6 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         const { x = 0, y = 0 } = bbox;
         bbox.width = width;
         bbox.height = height;
-
-        labelBboxes.set(index, userHidden ? null : bbox);
 
         if (userHidden) {
             return;
