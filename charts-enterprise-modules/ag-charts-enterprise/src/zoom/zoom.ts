@@ -19,6 +19,7 @@ const { BOOLEAN, NUMBER, STRING_UNION, Validate } = _ModuleSupport;
 
 const CONTEXT_ZOOM_ACTION_ID = 'zoom-action';
 const CONTEXT_PAN_ACTION_ID = 'pan-action';
+const CURSOR_ID = 'zoom-cursor';
 
 export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
     @Validate(BOOLEAN)
@@ -53,6 +54,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     private seriesRect?: _Scene.BBox;
 
     // Module context
+    private readonly cursorManager: _ModuleSupport.CursorManager;
     private readonly zoomManager: _ModuleSupport.ZoomManager;
     private readonly updateService: _ModuleSupport.UpdateService;
 
@@ -68,6 +70,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         super();
 
         this.scene = ctx.scene;
+        this.cursorManager = ctx.cursorManager;
         this.zoomManager = ctx.zoomManager;
         this.updateService = ctx.updateService;
 
@@ -142,6 +145,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         ) {
             const newZoom = this.panner.update(event, this.seriesRect, zoom);
             this.updateZoom(newZoom);
+            this.cursorManager.updateCursor(CURSOR_ID, 'grabbing');
             return;
         }
 
@@ -177,6 +181,7 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
 
         if (this.enablePanning && this.panner.isPanning) {
             this.panner.stop();
+            this.cursorManager.updateCursor(CURSOR_ID);
         } else if (this.enableSelecting && !this.isMinZoom(zoom)) {
             const newZoom = this.selector.stop(this.seriesRect, zoom);
             this.updateZoom(newZoom);
