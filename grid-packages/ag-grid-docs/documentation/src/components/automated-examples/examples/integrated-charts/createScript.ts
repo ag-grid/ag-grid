@@ -289,7 +289,7 @@ export const createScript = ({
             actionParams: {
                 target: 'chartToolPanelSelectListItem',
                 targetParams: {
-                    text: 'Bottom',
+                    text: 'Top',
                 },
             },
         },
