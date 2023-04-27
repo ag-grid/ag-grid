@@ -52,10 +52,18 @@ $z-index-splash-contents: 10;
         display: flex;
         align-items: center;
         gap: ds.$size-half;
+
+        @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
+            gap: ds.$size-1;
+        }
     }
 
     :global(.flag) {
         font-size: 1.75rem;
+
+        @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
+            font-size: 1.25rem;
+        }
     }
 
     // Copy default theme slider styles to deal with .ag-styles specificity issues
