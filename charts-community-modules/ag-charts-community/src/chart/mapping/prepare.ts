@@ -220,6 +220,7 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, fallback
                 return prepareAxis(axis, axesTheme);
             });
         }
+        prepareLegendEnabledOption<T>(options, mergedOptions);
     }
 
     prepareEnabledOptions<T>(options, mergedOptions);
@@ -386,6 +387,14 @@ function removeDisabledOptions<T extends AgChartOptions>(options: T) {
         },
         { skip: ['data', 'theme'] }
     );
+}
+
+function prepareLegendEnabledOption<T extends AgChartOptions>(options: T, mergedOptions: any) {
+    // Disable legend by default for single series cartesian charts
+    if (options.legend || (options.series ?? []).length > 1) {
+        return;
+    }
+    mergedOptions.legend.enabled = false;
 }
 
 function prepareEnabledOptions<T extends AgChartOptions>(options: T, mergedOptions: any) {
