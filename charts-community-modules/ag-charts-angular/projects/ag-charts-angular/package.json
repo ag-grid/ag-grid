@@ -12,7 +12,6 @@
     "chart",
     "angular"
   ],
-  "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/ag-grid/ag-grid/issues"
