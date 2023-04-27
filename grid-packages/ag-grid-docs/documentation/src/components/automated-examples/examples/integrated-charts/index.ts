@@ -24,6 +24,7 @@ interface CreateAutomatedIntegratedChartsParams {
     gridClassname: string;
     mouseMaskClassname: string;
     getOverlay: () => HTMLElement;
+    getContainerScale?: () => number;
     additionalContextMenuItems?: (string | MenuItemDef)[];
     onStateChange?: (state: RunScriptState) => void;
     onGridReady?: () => void;
@@ -107,6 +108,7 @@ const gridOptions: GridOptions = {
 export function createAutomatedIntegratedCharts({
     gridClassname,
     mouseMaskClassname,
+    getContainerScale,
     getOverlay,
     additionalContextMenuItems,
     onStateChange,
@@ -145,7 +147,7 @@ export function createAutomatedIntegratedCharts({
                 containerEl: gridDiv,
             });
 
-            const mouse = createMouse({ containerEl: gridDiv, mouseMaskClassname });
+            const mouse = createMouse({ containerEl: document.body, mouseMaskClassname });
             const tweenGroup = new Group();
 
             if (scriptRunner) {
@@ -155,6 +157,7 @@ export function createAutomatedIntegratedCharts({
             scriptRunner = createScriptRunner({
                 id: INTEGRATED_CHARTS_ID,
                 containerEl: gridDiv,
+                getContainerScale,
                 getOverlay,
                 mouse,
                 onStateChange,

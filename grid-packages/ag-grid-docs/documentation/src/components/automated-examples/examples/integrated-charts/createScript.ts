@@ -2,8 +2,8 @@ import { Group } from '@tweenjs/tween.js';
 import { GridOptions } from 'ag-grid-community';
 import { createAgElementFinder } from '../../lib/agElements';
 import { Mouse } from '../../lib/createMouse';
-import { getBottomMidPos, getOffset } from '../../lib/dom';
-import { addPoints } from '../../lib/geometry';
+import { getBottomMidPos, getOffset, getScrollOffset } from '../../lib/dom';
+import { addPoints, scalePoint } from '../../lib/geometry';
 import { clearAllRowHighlights } from '../../lib/scriptActions/clearAllRowHighlights';
 import { dragRange } from '../../lib/scriptActions/dragRange';
 import { moveTarget } from '../../lib/scriptActions/move';
@@ -12,6 +12,10 @@ import { ScriptAction } from '../../lib/scriptRunner';
 
 interface Params {
     containerEl: HTMLElement;
+    /**
+     * Whether the container element is scaled or not, and by how much
+     */
+    getContainerScale?: () => number;
     mouse: Mouse;
     tweenGroup: Group;
     gridOptions: GridOptions;
@@ -20,6 +24,7 @@ interface Params {
 
 export const createScript = ({
     containerEl,
+    getContainerScale = () => 1,
     mouse,
     tweenGroup,
     gridOptions,
@@ -38,7 +43,22 @@ export const createScript = ({
             type: 'custom',
             action: () => {
                 // Move mouse to starting position
-                moveTarget({ target: mouse.getTarget(), coords: getOffscreenPos(), scriptDebugger });
+                moveTarget({
+                    target: mouse.getTarget(),
+                    coords: scalePoint(getOffscreenPos(), getContainerScale()),
+                    offset: addPoints(
+                        getOffset(containerEl),
+                        getScrollOffset(),
+                        scalePoint(
+                            {
+                                x: 0,
+                                y: -120,
+                            },
+                            getContainerScale()
+                        )
+                    ),
+                    scriptDebugger,
+                });
 
                 mouse.show();
             },

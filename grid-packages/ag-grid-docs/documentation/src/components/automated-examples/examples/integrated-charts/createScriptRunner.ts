@@ -10,6 +10,7 @@ interface Params {
     id: string;
     mouse: Mouse;
     containerEl: HTMLElement;
+    getContainerScale?: () => number;
     getOverlay: () => HTMLElement;
     onStateChange?: (state: RunScriptState) => void;
     tweenGroup: Group;
@@ -22,6 +23,7 @@ interface Params {
 export function createScriptRunner({
     id,
     containerEl,
+    getContainerScale,
     getOverlay,
     mouse,
     onStateChange,
@@ -33,6 +35,7 @@ export function createScriptRunner({
 }: Params) {
     const script = createScript({
         containerEl,
+        getContainerScale,
         mouse,
         tweenGroup,
         gridOptions,
