@@ -139,6 +139,17 @@ const gridOptions = {
 }
 </snippet>
 
+To hide the Chart Tool Panels, the `chartToolPanelsDef.panels` grid option can be set to an empty array:
+
+<snippet>
+const gridOptions = {
+    chartToolPanelsDef: {
+        panels: [], // No Chart Tool Panels are shown and the button is also hidden
+    },
+}
+</snippet>
+
+
 The following example shows how the Chart Tool Panels can be omitted and ordered. Note the following:
 
 * The **Format** Tool Panel has been omitted.

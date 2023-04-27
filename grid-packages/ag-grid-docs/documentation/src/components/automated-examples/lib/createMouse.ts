@@ -1,5 +1,6 @@
 import { getOffset } from './dom';
 import { Point } from './geometry';
+import automatedExamplesVars from './vars.module.scss';
 
 export interface CreateMouseElementsParams {
     containerEl: HTMLElement;
@@ -9,8 +10,8 @@ export interface CreateMouseElementsParams {
 export type Mouse = ReturnType<typeof createMouse>;
 
 const MOUSE_CLASSNAME = 'mouse';
-const MOUSE_WIDTH = 74 * 1.25;
-const MOUSE_HEIGHT = 84 * 1.25;
+const MOUSE_WIDTH = parseInt(automatedExamplesVars['mouse-base-width']) * 1.25;
+const MOUSE_HEIGHT = parseInt(automatedExamplesVars['mouse-base-height']) * 1.25;
 
 const MOUSE_SVG_TEMPLATE = `
     <svg class="${MOUSE_CLASSNAME}" width="${MOUSE_WIDTH}" height="${MOUSE_HEIGHT}" viewBox="0 0 74 84">

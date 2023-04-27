@@ -2,7 +2,7 @@ import { Group } from '@tweenjs/tween.js';
 import { createAgElementFinder } from '../../lib/agElements';
 import { Mouse } from '../../lib/createMouse';
 import { getBottomMidPos, getOffset, getScrollOffset } from '../../lib/dom';
-import { addPoints } from '../../lib/geometry';
+import { addPoints, scalePoint } from '../../lib/geometry';
 import { createGroupColumnScriptActions } from '../../lib/scriptActions/createGroupColumnScriptActions';
 import { moveTarget } from '../../lib/scriptActions/move';
 import { ScriptDebugger } from '../../lib/scriptDebugger';
@@ -10,12 +10,22 @@ import { ScriptAction } from '../../lib/scriptRunner';
 
 interface Params {
     containerEl: HTMLElement;
+    /**
+     * Whether the container element is scaled or not, and by how much
+     */
+    getContainerScale?: () => number;
     mouse: Mouse;
     tweenGroup: Group;
     scriptDebugger?: ScriptDebugger;
 }
 
-export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }: Params): ScriptAction[] => {
+export const createScript = ({
+    containerEl,
+    getContainerScale = () => 1,
+    mouse,
+    tweenGroup,
+    scriptDebugger,
+}: Params): ScriptAction[] => {
     const GROUP_1_HEADER_CELL_NAME = 'Category';
     const GROUP_1_COL_ID = 'category';
     const GROUP_1_GROUP_INDEX = 0;
@@ -43,11 +53,18 @@ export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }:
                 // Move mouse to starting position
                 moveTarget({
                     target: mouse.getTarget(),
-                    coords: getOffscreenPos(),
-                    offset: addPoints(getOffset(containerEl), getScrollOffset(), {
-                        x: 0,
-                        y: -120,
-                    }),
+                    coords: scalePoint(getOffscreenPos(), getContainerScale()),
+                    offset: addPoints(
+                        getOffset(containerEl),
+                        getScrollOffset(),
+                        scalePoint(
+                            {
+                                x: 0,
+                                y: -120,
+                            },
+                            getContainerScale()
+                        )
+                    ),
                     scriptDebugger,
                 });
 
