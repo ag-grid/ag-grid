@@ -47,6 +47,7 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
     const exampleId = INTEGRATED_CHARTS_ID;
     const gridClassname = 'automated-integrated-charts-grid';
     const gridRef = useRef(null);
+    const overlayRef = useRef(null);
     const [scriptIsEnabled, setScriptIsEnabled] = useState(true);
     const [gridIsReady, setGridIsReady] = useState(false);
     const [gridIsHoveredOver, setGridIsHoveredOver] = useState(false);
@@ -76,6 +77,9 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
     useEffect(() => {
         let params = {
             gridClassname,
+            getOverlay: () => {
+                return overlayRef.current;
+            },
             mouseMaskClassname: styles.mouseMask,
             scriptDebuggerManager: debuggerManager,
             suppressUpdates: useStaticData,
@@ -122,6 +126,7 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
             <Helmet>{helmet.map((entry) => entry)}</Helmet>
             <div ref={gridRef} className="automated-integrated-charts-grid ag-theme-alpine">
                 <OverlayButton
+                    ref={overlayRef}
                     ariaLabel="Give me control"
                     isHidden={!scriptIsEnabled}
                     onPointerEnter={() => setGridIsHoveredOver(true)}

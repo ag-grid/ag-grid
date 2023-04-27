@@ -9,7 +9,8 @@ const options: AgChartOptions = {
       type: 'treemap',
       labelKey: 'orgHierarchy',
       gradient: false,
-      nodePadding: 5,
+      nodePadding: 10,
+      nodeGap: 10,
       sizeKey: undefined, // make all siblings within a parent the same size
       colorKey: undefined, // if undefined, depth will be used an the value, where root has 0 depth
       colorDomain: [0, 2, 4, 5],

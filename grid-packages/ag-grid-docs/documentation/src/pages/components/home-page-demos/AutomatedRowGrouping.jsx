@@ -48,6 +48,7 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
     const gridClassname = 'automated-row-grouping-grid';
     const gridRef = useRef(null);
     const exampleRef = useRef(null);
+    const overlayRef = useRef(null);
     const [scriptIsEnabled, setScriptIsEnabled] = useState(true);
     const [gridIsReady, setGridIsReady] = useState(false);
     const [gridIsHoveredOver, setGridIsHoveredOver] = useState(false);
@@ -84,6 +85,9 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
     useEffect(() => {
         let params = {
             gridClassname,
+            getOverlay: () => {
+                return overlayRef.current;
+            },
             mouseMaskClassname: styles.mouseMask,
             scriptDebuggerManager: debuggerManager,
             suppressUpdates: useStaticData,
@@ -132,6 +136,7 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
             <Helmet>{helmet.map((entry) => entry)}</Helmet>
             <div ref={gridRef} className="automated-row-grouping-grid ag-theme-alpine-dark">
                 <OverlayButton
+                    ref={overlayRef}
                     ariaLabel="Give me control"
                     isHidden={!scriptIsEnabled}
                     onPointerEnter={() => setGridIsHoveredOver(true)}

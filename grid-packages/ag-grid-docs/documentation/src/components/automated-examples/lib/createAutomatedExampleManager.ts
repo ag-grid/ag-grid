@@ -25,6 +25,7 @@ export function createAutomatedExampleManager({ debugCanvasClassname, debugPanel
 
     const updateState = (state: AutomatedExampleState) => {
         exampleDebuggerManager.log(`${logId} state: ${state}`);
+        exampleDebuggerManager.updateManagerState(state);
         automatedExampleState = state;
     };
 
@@ -173,6 +174,9 @@ export function createAutomatedExampleManager({ debugCanvasClassname, debugPanel
 
     const setEnabled = ({ id, isEnabled }: { id: string; isEnabled: boolean }) => {
         automatedExamplesEnabled[id] = isEnabled;
+
+        const automatedExample = automatedExamples[id];
+        automatedExample?.getDebugger()?.updateIsEnabled(isEnabled);
     };
 
     const getEnabled = (id: string) => automatedExamplesEnabled[id];

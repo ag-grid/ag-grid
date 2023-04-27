@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { FunctionComponent, useEffect, useRef } from 'react';
+import React, { forwardRef, FunctionComponent, useEffect } from 'react';
 import { initForwardMouseEventsThroughElement } from './lib/initForwardMouseEventsThroughElement';
 import styles from './OverlayButton.module.scss';
 
@@ -11,41 +11,35 @@ interface Props {
     onClick?: () => void;
 }
 
-export const OverlayButton: FunctionComponent<Props> = ({
-    ariaLabel,
-    isHidden,
-    onPointerEnter,
-    onPointerOut,
-    onClick,
-}) => {
-    const clickTarget = useRef<HTMLButtonElement>(null);
+export const OverlayButton: FunctionComponent<Props> = forwardRef(
+    ({ ariaLabel, isHidden, onPointerEnter, onPointerOut, onClick }, ref: any) => {
+        useEffect(() => {
+            if (!ref?.current) {
+                return;
+            }
 
-    useEffect(() => {
-        if (!clickTarget.current) {
-            return;
-        }
+            const { cleanUp } = initForwardMouseEventsThroughElement({
+                element: ref?.current,
+                // Only forward script generated event
+                condition: (event) => !event.isTrusted,
+            });
 
-        const { cleanUp } = initForwardMouseEventsThroughElement({
-            element: clickTarget.current,
-            // Only forward script generated event
-            condition: (event) => !event.isTrusted,
-        });
+            return () => {
+                cleanUp();
+            };
+        }, [ref?.current]);
 
-        return () => {
-            cleanUp();
-        };
-    }, [clickTarget.current]);
-
-    return (
-        <button
-            className={classNames('button-style-none', 'overlay-button', styles.overlay, {
-                [styles.hide]: isHidden,
-            })}
-            ref={clickTarget}
-            aria-label={ariaLabel}
-            onPointerEnter={() => onPointerEnter && onPointerEnter()}
-            onPointerOut={() => onPointerOut && onPointerOut()}
-            onClick={() => onClick && onClick()}
-        ></button>
-    );
-};
+        return (
+            <button
+                className={classNames('button-style-none', 'overlay-button', styles.overlay, {
+                    [styles.hide]: isHidden,
+                })}
+                ref={ref}
+                aria-label={ariaLabel}
+                onPointerEnter={() => onPointerEnter && onPointerEnter()}
+                onPointerOut={() => onPointerOut && onPointerOut()}
+                onClick={() => onClick && onClick()}
+            ></button>
+        );
+    }
+);

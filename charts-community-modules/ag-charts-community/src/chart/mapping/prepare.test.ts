@@ -335,8 +335,6 @@ describe('prepare', () => {
             const preparedOptions = prepareOptions(options);
             const theme = new ChartTheme();
 
-            console.log(theme.config.cartesian);
-
             expect(preparedOptions.title!.enabled).toBe(false);
             expect(preparedOptions.title!.text).toBe(theme.config.cartesian.title.text);
             expect(preparedOptions.title!.fontSize).toBe(theme.config.cartesian.title.fontSize);

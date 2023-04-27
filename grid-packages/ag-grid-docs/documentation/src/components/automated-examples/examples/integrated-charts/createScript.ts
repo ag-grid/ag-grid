@@ -41,7 +41,6 @@ export const createScript = ({
                 moveTarget({ target: mouse.getTarget(), coords: getOffscreenPos(), scriptDebugger });
 
                 mouse.show();
-                clearAllRowHighlights();
             },
         },
         {
@@ -66,6 +65,12 @@ export const createScript = ({
             speed: 2,
         },
         { type: 'mouseDown' },
+        {
+            type: 'custom',
+            action: () => {
+                clearAllRowHighlights();
+            },
+        },
 
         // Range selection
         {

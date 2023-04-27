@@ -12,7 +12,7 @@ import { INTEGRATED_CHARTS_ID } from '../../lib/constants';
 import { createMouse } from '../../lib/createMouse';
 import { isInViewport } from '../../lib/dom';
 import { getAdditionalContextMenuItems } from '../../lib/getAdditionalContextMenuItems';
-import { ScriptDebuggerManager } from '../../lib/scriptDebugger';
+import { ScriptDebugger, ScriptDebuggerManager } from '../../lib/scriptDebugger';
 import { RunScriptState, ScriptRunner } from '../../lib/scriptRunner';
 import { AutomatedExample } from '../../types';
 import { createScriptRunner } from './createScriptRunner';
@@ -23,6 +23,7 @@ let restartScriptTimeout;
 interface CreateAutomatedIntegratedChartsParams {
     gridClassname: string;
     mouseMaskClassname: string;
+    getOverlay: () => HTMLElement;
     additionalContextMenuItems?: (string | MenuItemDef)[];
     onStateChange?: (state: RunScriptState) => void;
     onGridReady?: () => void;
@@ -106,6 +107,7 @@ const gridOptions: GridOptions = {
 export function createAutomatedIntegratedCharts({
     gridClassname,
     mouseMaskClassname,
+    getOverlay,
     additionalContextMenuItems,
     onStateChange,
     onGridReady,
@@ -116,6 +118,7 @@ export function createAutomatedIntegratedCharts({
 }: CreateAutomatedIntegratedChartsParams): AutomatedExample {
     const gridSelector = `.${gridClassname}`;
     let gridDiv: HTMLElement;
+    let scriptDebugger: ScriptDebugger | undefined;
 
     const init = () => {
         gridDiv = document.querySelector(gridSelector) as HTMLElement;
@@ -137,7 +140,7 @@ export function createAutomatedIntegratedCharts({
                 return;
             }
 
-            const scriptDebugger = scriptDebuggerManager.add({
+            scriptDebugger = scriptDebuggerManager.add({
                 id: INTEGRATED_CHARTS_ID,
                 containerEl: gridDiv,
             });
@@ -152,6 +155,7 @@ export function createAutomatedIntegratedCharts({
             scriptRunner = createScriptRunner({
                 id: INTEGRATED_CHARTS_ID,
                 containerEl: gridDiv,
+                getOverlay,
                 mouse,
                 onStateChange,
                 tweenGroup,
@@ -181,8 +185,9 @@ export function createAutomatedIntegratedCharts({
         inactive: () => scriptRunner?.inactive(),
         currentState: () => scriptRunner?.currentState(),
         isInViewport: () => {
-            return isInViewport(gridDiv, visibilityThreshold);
+            return isInViewport({ element: gridDiv, threshold: visibilityThreshold });
         },
+        getDebugger: () => scriptDebugger,
     };
 }
 
