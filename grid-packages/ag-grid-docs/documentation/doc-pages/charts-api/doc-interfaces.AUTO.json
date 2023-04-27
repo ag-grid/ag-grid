@@ -861,13 +861,6 @@
       "description": "/** Configuration for the series title. */",
       "type": { "returnType": "AgPieTitleOptions", "optional": true }
     },
-    "label": {
-      "description": "/** Configuration for the labels used outside of the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabel instead.\n     */",
-      "type": {
-        "returnType": "AgPieSeriesLabelOptions<DatumType>",
-        "optional": true
-      }
-    },
     "calloutLabel": {
       "description": "/** Configuration for the labels used outside of the sectors. */",
       "type": {
@@ -881,10 +874,6 @@
         "returnType": "AgPieSeriesSectorLabelOptions<DatumType>",
         "optional": true
       }
-    },
-    "callout": {
-      "description": "/** Configuration for the callout lines used with the labels for the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLine instead.\n     */",
-      "type": { "returnType": "AgPieSeriesCalloutOptions", "optional": true }
     },
     "calloutLine": {
       "description": "/** Configuration for the callout lines used with the labels for the sectors. */",
@@ -904,14 +893,6 @@
     },
     "radiusName": {
       "description": "/** A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "labelKey": {
-      "description": "/** The key to use to retrieve label values from the data.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "labelName": {
-      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": {
@@ -1379,10 +1360,6 @@
     }
   },
   "AgChartLegendLabelFormatterParams": {
-    "id": {
-      "description": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId. */",
-      "type": { "returnType": "string", "optional": false }
-    },
     "seriesId": { "type": { "returnType": "string", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": false } },
     "value": { "type": { "returnType": "string", "optional": false } }
@@ -1697,10 +1674,6 @@
       "description": "/** Event type. */",
       "type": { "returnType": "T", "optional": false }
     },
-    "series": {
-      "description": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "seriesId": {
       "description": "/** Series ID, as specified in series.id (or generated if not specified) */",
       "type": { "returnType": "string", "optional": false }
@@ -1753,10 +1726,6 @@
       "description": "/** Event type. */",
       "type": { "returnType": "T", "optional": false }
     },
-    "series": {
-      "description": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "seriesId": {
       "description": "/** Series ID, as specified in series.id (or generated if not specified) */",
       "type": { "returnType": "string", "optional": false }
@@ -1807,10 +1776,6 @@
     "type": {
       "description": "/** Event type. */",
       "type": { "returnType": "T", "optional": false }
-    },
-    "series": {
-      "description": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
-      "type": { "returnType": "any", "optional": false }
     },
     "seriesId": {
       "description": "/** Series ID, as specified in series.id (or generated if not specified) */",
@@ -2614,10 +2579,6 @@
     "type": {
       "description": "/** Event type. */",
       "type": { "returnType": "'nodeClick'", "optional": false }
-    },
-    "series": {
-      "description": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
-      "type": { "returnType": "any", "optional": false }
     },
     "seriesId": {
       "description": "/** Series ID, as specified in series.id (or generated if not specified) */",
@@ -4259,13 +4220,6 @@
       "description": "/** Configuration for the series title. */",
       "type": { "returnType": "AgPieTitleOptions", "optional": true }
     },
-    "label": {
-      "description": "/** Configuration for the labels used outside of the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabel instead.\n     */",
-      "type": {
-        "returnType": "AgPieSeriesLabelOptions<DatumType>",
-        "optional": true
-      }
-    },
     "calloutLabel": {
       "description": "/** Configuration for the labels used outside of the sectors. */",
       "type": {
@@ -4279,10 +4233,6 @@
         "returnType": "AgPieSeriesSectorLabelOptions<DatumType>",
         "optional": true
       }
-    },
-    "callout": {
-      "description": "/** Configuration for the callout lines used with the labels for the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLine instead.\n     */",
-      "type": { "returnType": "AgPieSeriesCalloutOptions", "optional": true }
     },
     "calloutLine": {
       "description": "/** Configuration for the callout lines used with the labels for the sectors. */",
@@ -4302,14 +4252,6 @@
     },
     "radiusName": {
       "description": "/** A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "labelKey": {
-      "description": "/** The key to use to retrieve label values from the data.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "labelName": {
-      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": {
@@ -4443,14 +4385,6 @@
     }
   },
   "AgPieSeriesTooltipRendererParams": {
-    "labelKey": {
-      "description": "/** labelKey as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "labelName": {
-      "description": "/** labelName as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
-      "type": { "returnType": "string", "optional": true }
-    },
     "calloutLabelKey": {
       "description": "/** calloutLabelKey as specified on series options. */",
       "type": { "returnType": "string", "optional": true }
@@ -4513,18 +4447,6 @@
       "description": "/** Datum from the series data array that the label is being rendered for. */",
       "type": { "returnType": "DatumType", "optional": false }
     },
-    "labelKey": {
-      "description": "/** labelKey as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelKey instead.\n     */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "labelValue": {
-      "description": "/** labelValue as read from series data via the labelKey property.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelValue instead.\n     */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "labelName": {
-      "description": "/** labelName as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelName instead.\n     */",
-      "type": { "returnType": "string", "optional": true }
-    },
     "calloutLabelKey": {
       "description": "/** calloutLabelKey as specified on series options. */",
       "type": { "returnType": "string", "optional": true }
@@ -4572,10 +4494,6 @@
     "radiusName": {
       "description": "/** radiusName as specified on series options. */",
       "type": { "returnType": "string", "optional": true }
-    },
-    "value": {
-      "description": "/** The value of labelKey as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use item.datum instead.\n     */",
-      "type": { "returnType": "any", "optional": true }
     },
     "seriesId": {
       "description": "/** The ID of the series. */",

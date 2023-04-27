@@ -19,7 +19,6 @@ import { PolarSeries } from './polarSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { isPointInSector, boxCollidesSector } from '../../../util/sector';
-import { DeprecatedAndRenamedTo } from '../../../util/deprecation';
 import {
     BOOLEAN,
     NUMBER,
@@ -40,12 +39,9 @@ import {
     AgPieSeriesFormat,
     AgPieSeriesFormatterParams,
 } from '../../agChartOptions';
-import { Logger } from '../../../util/logger';
 
 class PieSeriesNodeBaseClickEvent extends SeriesNodeBaseClickEvent<any> {
     readonly angleKey: string;
-    @DeprecatedAndRenamedTo('calloutLabelKey')
-    readonly labelKey?: string;
     readonly calloutLabelKey?: string;
     readonly sectorLabelKey?: string;
     readonly radiusKey?: string;
@@ -225,15 +221,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     calloutLabel = new PieSeriesCalloutLabel();
 
-    @DeprecatedAndRenamedTo('calloutLabel')
-    label = this.calloutLabel;
-
     readonly sectorLabel = new PieSeriesSectorLabel();
 
     calloutLine = new PieSeriesCalloutLine();
-
-    @DeprecatedAndRenamedTo('calloutLine')
-    callout = this.calloutLine;
 
     tooltip: PieSeriesTooltip = new PieSeriesTooltip();
 
@@ -306,12 +296,6 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     @Validate(OPT_STRING)
     calloutLabelName?: string = undefined;
-
-    @DeprecatedAndRenamedTo('calloutLabelKey')
-    labelKey?: string = undefined;
-
-    @DeprecatedAndRenamedTo('calloutLabelName')
-    labelName?: string = undefined;
 
     @Validate(OPT_STRING)
     sectorLabelKey?: string = undefined;
@@ -449,9 +433,6 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 radiusKey,
                 radiusValue: radiusKey ? datum[radiusKey] : undefined,
                 radiusName: this.radiusName,
-                labelKey,
-                labelValue: labelKey ? datum[labelKey] : undefined,
-                labelName: this.calloutLabelName,
                 calloutLabelKey: labelKey,
                 calloutLabelValue: labelKey ? datum[labelKey] : undefined,
                 calloutLabelName: this.calloutLabelName,
@@ -464,25 +445,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         if (labelKey) {
             if (labelFormatter) {
-                const showValueDeprecationWarning = () =>
-                    Logger.warnOnce(
-                        'the use of { value } in the pie chart label formatter function is deprecated. Please use { datum, labelKey, ... } instead.'
-                    );
-                labelData = data.map((datum) => {
-                    let deprecatedValue = datum[labelKey];
-                    const formatterParams: AgPieSeriesLabelFormatterParams<any> = {
-                        ...getLabelFormatterParams(datum),
-                        get value() {
-                            showValueDeprecationWarning();
-                            return deprecatedValue;
-                        },
-                        set value(v) {
-                            showValueDeprecationWarning();
-                            deprecatedValue = v;
-                        },
-                    };
-                    return labelFormatter(formatterParams);
-                });
+                labelData = data.map((datum) => labelFormatter(getLabelFormatterParams(datum)));
             } else {
                 labelData = data.map((datum) => String(datum[labelKey]));
             }
@@ -1314,8 +1277,6 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                     radiusKey,
                     radiusValue: radiusKey ? datum[radiusKey] : undefined,
                     radiusName,
-                    labelKey: calloutLabelKey,
-                    labelName: calloutLabelName,
                     calloutLabelKey,
                     calloutLabelName,
                     sectorLabelKey,
