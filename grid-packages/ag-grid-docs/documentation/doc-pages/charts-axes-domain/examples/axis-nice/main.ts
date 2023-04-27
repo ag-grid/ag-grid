@@ -34,9 +34,6 @@ const options: AgCartesianChartOptions = {
       nice: true
     },
   ],
-  legend: {
-    enabled: false,
-  },
 }
 
 const chart = AgChart.create(options);

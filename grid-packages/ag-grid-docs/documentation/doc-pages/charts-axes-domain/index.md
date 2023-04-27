@@ -10,7 +10,7 @@ For the [Category](/charts-axes-types/#category) axis, the domain consists of th
 
 ## Nice Domain
 
-By default, for a continuous axis, the domain is extended to have nice start and stop values.
+By default, a continuous axis is extended to have start and stop values that are visually pleasing, intuitive, and aligned with the tick interval. This makes the axis more user-friendly, and the plotted data is easier to analyse and understand.
 
 To prevent this and use the exact data domain as the axis domain, set the `axis.nice` property to `false`:
 
