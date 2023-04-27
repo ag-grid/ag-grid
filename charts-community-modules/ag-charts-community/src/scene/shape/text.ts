@@ -346,8 +346,13 @@ export class Text extends Shape {
             cumulativeHeight += height;
 
             if (truncate && cumulativeHeight > maxHeight) {
-                lines.push(result.slice(0, result.length - 3).concat(ellipsis));
                 truncated = true;
+                const lastLine = lines.pop();
+                if (!lastLine) {
+                    return;
+                }
+
+                lines.push(lastLine.slice(0, lastLine.length - 3).concat(ellipsis));
                 return;
             }
 
