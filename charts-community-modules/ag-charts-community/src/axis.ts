@@ -688,10 +688,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
                 const tickCount = Math.max(defaultTickCount - i, minTickCount);
 
                 const filterTicks =
-                    !autoWrap &&
-                    checkForOverlap &&
-                    !(continuous && this.tick.count === undefined) &&
-                    (tickSpacing || i !== 0);
+                    checkForOverlap && !(continuous && this.tick.count === undefined) && (tickSpacing || i !== 0);
 
                 if (this.tick.values) {
                     ticks = this.tick.values;
@@ -1043,8 +1040,6 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             return { labelData: [], rotated: false };
         }
 
-        let labelAutoRotation = 0;
-
         const { autoRotation, labelRotation, parallelFlipFlag, regularFlipFlag } = calculateLabelRotation({
             rotation,
             parallel,
@@ -1077,12 +1072,18 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         });
 
         const labelSpacing = this.getLabelSpacing();
-        const rotate = axisLabelsOverlap(labelData, labelSpacing);
+        const labelsOverlap = axisLabelsOverlap(labelData, labelSpacing);
+        const autoRotateLabels = label.rotation === undefined && label.autoRotate === true && labelsOverlap;
 
-        if (label.rotation === undefined && label.autoRotate === true && rotate) {
-            // When no user label rotation angle has been specified and the width of any label exceeds the average tick gap (`rotate` is `true`),
-            // automatically rotate the labels
-            labelAutoRotation = normalizeAngle360(toRadians(label.autoRotateAngle));
+        // When no user label rotation angle has been specified and the width of any label exceeds the average tick gap (`autoRotateLabels` is `true`),
+        // automatically rotate the labels
+        const labelAutoRotation = autoRotateLabels ? normalizeAngle360(toRadians(label.autoRotateAngle)) : 0;
+
+        const rotated = !!(labelRotation || labelAutoRotation);
+
+        const autoWrapLabels = autoWrap && !rotated;
+        if (autoWrapLabels) {
+            this.wrapLabels(labelSelection, labelData.length);
         }
 
         let labelTextBaseline: 'hanging' | 'bottom' | 'middle' = 'middle';
@@ -1097,13 +1098,6 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         const labelRotated = labelRotation > 0 && labelRotation <= Math.PI;
         const labelAutoRotated = labelAutoRotation > 0 && labelAutoRotation <= Math.PI;
         const alignFlag = labelRotated || labelAutoRotated ? -1 : 1;
-
-        const rotated = !!(labelRotation || labelAutoRotation);
-        const wrapLabels = autoWrap && !rotated;
-
-        if (wrapLabels) {
-            this.wrapLabels(labelSelection, labelData.length);
-        }
 
         let labelTextAlign: 'start' | 'end' | 'center' = 'start';
         if (parallel) {
