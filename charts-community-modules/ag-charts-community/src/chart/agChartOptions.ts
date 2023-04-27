@@ -1685,6 +1685,8 @@ export interface AgTreemapSeriesLabelsOptions {
     medium?: AgChartLabelOptions;
     /** The label configuration for the small leaf tiles. */
     small?: AgChartLabelOptions;
+    /** A function to generate a label/title for the cell. */
+    formatter?: (params: { datum: any }) => string;
     /** The configuration for the cell value label. */
     value?: {
         /** A property to be used as a key to retrieve a value from datum. */
@@ -1692,7 +1694,7 @@ export interface AgTreemapSeriesLabelsOptions {
         /** A name of a datum value. */
         name?: string;
         /** A function to generate a value label from datum. */
-        formatter?: (params: { datum: any }) => string | undefined;
+        formatter?: (params: { datum: any }) => string;
         /** The label's font and color style. */
         style?: AgChartLabelOptions;
     };

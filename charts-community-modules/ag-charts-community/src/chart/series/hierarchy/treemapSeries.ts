@@ -189,6 +189,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             label.fontSize = 10;
             return label;
         })(),
+        formatter: undefined as ((params: { datum: any }) => string) | undefined,
         value: new TreemapValueLabel(),
     };
 
@@ -410,13 +411,14 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         }
 
         const { data, sizeKey, labelKey, colorKey, colorDomain, colorRange, groupFill } = this;
+        const labelFormatter = this.labels.formatter;
 
         const colorScale = new ColorScale();
         colorScale.domain = colorDomain;
         colorScale.range = colorRange;
 
         const createTreeNodeDatum = (datum: TreeDatum, depth = 0, parent?: TreemapNodeDatum) => {
-            const label = (labelKey && (datum[labelKey] as string)) || '';
+            const label = (labelFormatter ? labelFormatter({ datum }) : labelKey && (datum[labelKey] as string)) || '';
             let colorScaleValue = colorKey ? datum[colorKey] ?? depth : depth;
             colorScaleValue = validateColor(colorScaleValue);
             const isLeaf = !datum.children;

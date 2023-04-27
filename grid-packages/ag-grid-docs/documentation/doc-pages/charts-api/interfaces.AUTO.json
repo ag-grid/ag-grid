@@ -3065,12 +3065,14 @@
       "large?": "AgChartLabelOptions",
       "medium?": "AgChartLabelOptions",
       "small?": "AgChartLabelOptions",
-      "value?": "{ key?: string; name?: string; formatter?: (params: { datum: any; }) => string | undefined; style?: AgChartLabelOptions; }"
+      "formatter?": "(params: { datum: any; }) => string",
+      "value?": "{ key?: string; name?: string; formatter?: (params: { datum: any; }) => string; style?: AgChartLabelOptions; }"
     },
     "docs": {
       "large?": "/** The label configuration for the large leaf tiles. */",
       "medium?": "/** The label configuration for the medium-sized leaf tiles. */",
       "small?": "/** The label configuration for the small leaf tiles. */",
+      "formatter?": "/** A function to generate a label/title for the cell. */",
       "value?": "/** The configuration for the cell value label. */"
     }
   },
