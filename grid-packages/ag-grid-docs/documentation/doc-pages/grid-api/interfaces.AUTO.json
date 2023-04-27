@@ -514,6 +514,21 @@
     "meta": { "isTypeAlias": true, "typeParams": ["TData = any"] },
     "type": "string | string[] | ((params: ToolPanelClassParams<TData>) => string | string[] | undefined)"
   },
+  "StringOrNumKeys": {
+    "meta": { "isTypeAlias": true, "typeParams": ["TObj"] },
+    "type": "keyof TObj & (string | number)"
+  },
+  "NestedPath": {
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["TValue", "Prefix extends string"]
+    },
+    "type": "TValue extends object ? `${Prefix}.${NestedFieldPaths<TValue>}` : never"
+  },
+  "NestedFieldPaths": {
+    "meta": { "isTypeAlias": true, "typeParams": ["TData"] },
+    "type": "{ [TKey in StringOrNumKeys<TData>]: `${TKey}` | NestedPath<TData[TKey], `${TKey}`>; }[StringOrNumKeys<TData>]"
+  },
   "ColDef": {
     "meta": {
       "typeParams": ["TData = any"],
@@ -521,14 +536,14 @@
     },
     "type": {
       "colId?": "string",
-      "field?": "string",
+      "field?": "NestedFieldPaths<TData>",
       "type?": "string | string[]",
       "valueGetter?": "string | ValueGetterFunc<TData>",
       "valueFormatter?": "string | ValueFormatterFunc<TData>",
       "refData?": "{ [key: string]: string; }",
       "keyCreator?": "(params: KeyCreatorParams<TData>) => string",
       "equals?": "(valueA: any, valueB: any) => boolean",
-      "tooltipField?": "string",
+      "tooltipField?": "NestedFieldPaths<TData>",
       "tooltipValueGetter?": "(params: ITooltipParams<TData>) => string | any",
       "checkboxSelection?": "boolean | CheckboxSelectionCallback<TData>",
       "showDisabledCheckboxes?": "boolean",

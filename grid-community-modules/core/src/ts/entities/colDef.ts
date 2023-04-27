@@ -106,6 +106,20 @@ export interface ToolPanelClassParams<TData = any> extends AgGridCommon<TData, a
 }
 export type ToolPanelClass<TData = any> = string | string[] | ((params: ToolPanelClassParams<TData>) => string | string[] | undefined);
 
+type StringOrNumKeys<TObj> = keyof TObj & (string | number);
+type NestedPath<TValue, Prefix extends string> =
+    TValue extends object
+    ? `${Prefix}.${NestedFieldPaths<TValue>}`
+    : never;
+
+/**
+ * Returns a union of all possible paths to nested fields in `TData`.
+ */
+export type NestedFieldPaths<TData> = {
+    [TKey in StringOrNumKeys<TData>]: `${TKey}` | NestedPath<TData[TKey], `${TKey}`>;
+}[StringOrNumKeys<TData>];
+
+
 /** Configuration options for columns in AG Grid. */
 export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
 
@@ -119,7 +133,7 @@ export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
      * The field of the row object to get the cell's data from.
      * Deep references into a row object is supported via dot notation, i.e `'address.firstLine'`.
      */
-    field?: string;
+    field?: NestedFieldPaths<TData>;
     /**
      * A comma separated string or array of strings containing `ColumnType` keys which can be used as a template for a column.
      * This helps to reduce duplication of properties when you have a lot of common column properties.
@@ -142,7 +156,7 @@ export interface ColDef<TData = any> extends AbstractColDef<TData>, IFilterDef {
      */
     equals?: (valueA: any, valueB: any) => boolean;
     /** The field of the tooltip to apply to the cell. */
-    tooltipField?: string;
+    tooltipField?: NestedFieldPaths<TData>;
     /**
      * Callback that should return the string to use for a tooltip, `tooltipField` takes precedence if set.
      * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component.
