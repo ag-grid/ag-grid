@@ -29,6 +29,7 @@ import {
     Validate,
 } from '../../../util/validation';
 import {
+    AgTreemapSeriesLabelsOptions,
     AgTreemapSeriesTooltipRendererParams,
     AgTooltipRendererResult,
     AgTreemapSeriesFormatterParams,
@@ -189,7 +190,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             label.fontSize = 10;
             return label;
         })(),
-        formatter: undefined as ((params: { datum: any }) => string) | undefined,
+        formatter: undefined as AgTreemapSeriesLabelsOptions['formatter'],
         value: new TreemapValueLabel(),
     };
 

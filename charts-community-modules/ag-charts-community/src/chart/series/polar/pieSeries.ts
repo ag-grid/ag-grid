@@ -40,7 +40,6 @@ import {
     AgPieSeriesFormat,
     AgPieSeriesFormatterParams,
 } from '../../agChartOptions';
-import { Logger } from '../../../util/logger';
 
 class PieSeriesNodeBaseClickEvent extends SeriesNodeBaseClickEvent<any> {
     readonly angleKey: string;
@@ -464,25 +463,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         if (labelKey) {
             if (labelFormatter) {
-                const showValueDeprecationWarning = () =>
-                    Logger.warnOnce(
-                        'the use of { value } in the pie chart label formatter function is deprecated. Please use { datum, labelKey, ... } instead.'
-                    );
                 labelData = data.map((datum) => {
-                    let deprecatedValue = datum[labelKey];
                     const formatterParams = getLabelFormatterParams(datum);
-                    Object.defineProperty(formatterParams, 'value', {
-                        enumerable: true,
-                        configurable: true,
-                        get() {
-                            showValueDeprecationWarning();
-                            return deprecatedValue;
-                        },
-                        set(v) {
-                            showValueDeprecationWarning();
-                            deprecatedValue = v;
-                        },
-                    });
                     return labelFormatter(formatterParams);
                 });
             } else {
