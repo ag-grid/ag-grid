@@ -1,0 +1,6 @@
+// The amount the grid is scaled by on mobile sizes
+$mobile-grid-scale: 0.5;
+
+:export {
+    mobile-grid-scale: $mobile-grid-scale;
+}

@@ -9,11 +9,12 @@ import { INTEGRATED_CHARTS_ID } from '../../../components/automated-examples/lib
 import { OverlayButton } from '../../../components/automated-examples/OverlayButton';
 import { ToggleAutomatedExampleButton } from '../../../components/automated-examples/ToggleAutomatedExampleButton';
 import LogoMark from '../../../components/LogoMark';
+import breakpoints from '../../../design-system/breakpoint.module.scss';
 import { hostPrefix, isProductionBuild, localPrefix } from '../../../utils/consts';
 import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
 import styles from './AutomatedIntegratedCharts.module.scss';
 
-const AUTOMATED_EXAMPLE_MEDIUM_WIDTH = 740; // Same as `_breakpoint.scss`
+const AUTOMATED_EXAMPLE_MEDIUM_WIDTH = parseInt(breakpoints['automated-row-grouping-medium'], 10);
 
 const helmet = [];
 if (!isProductionBuild()) {
