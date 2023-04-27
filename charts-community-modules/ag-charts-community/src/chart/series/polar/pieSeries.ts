@@ -470,17 +470,19 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                     );
                 labelData = data.map((datum) => {
                     let deprecatedValue = datum[labelKey];
-                    const formatterParams: AgPieSeriesLabelFormatterParams<any> = {
-                        ...getLabelFormatterParams(datum),
-                        get value() {
+                    const formatterParams = getLabelFormatterParams(datum);
+                    Object.defineProperty(formatterParams, 'value', {
+                        enumerable: true,
+                        configurable: true,
+                        get() {
                             showValueDeprecationWarning();
                             return deprecatedValue;
                         },
-                        set value(v) {
+                        set(v) {
                             showValueDeprecationWarning();
                             deprecatedValue = v;
                         },
-                    };
+                    });
                     return labelFormatter(formatterParams);
                 });
             } else {
