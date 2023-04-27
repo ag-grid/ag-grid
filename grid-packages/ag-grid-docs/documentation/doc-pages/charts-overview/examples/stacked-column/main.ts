@@ -111,9 +111,6 @@ const options: AgChartOptions = {
       },
     },
   ],
-  legend: {
-    position: "bottom",
-  },
   padding: {
     bottom: 40,
   },

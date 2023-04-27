@@ -1483,9 +1483,6 @@ Object {
   "theme": Object {
     "overrides": Object {
       "line": Object {
-        "legend": Object {
-          "position": "bottom",
-        },
         "series": Object {
           "highlightStyle": Object {
             "series": Object {
@@ -4649,9 +4646,6 @@ Object {
   "theme": Object {
     "overrides": Object {
       "column": Object {
-        "legend": Object {
-          "position": "bottom",
-        },
         "series": Object {
           "highlightStyle": Object {
             "series": Object {
@@ -5312,9 +5306,6 @@ Object {
   "theme": Object {
     "overrides": Object {
       "column": Object {
-        "legend": Object {
-          "position": "bottom",
-        },
         "series": Object {
           "highlightStyle": Object {
             "item": Object {
@@ -7968,9 +7959,6 @@ Object {
   "theme": Object {
     "overrides": Object {
       "bar": Object {
-        "legend": Object {
-          "position": "bottom",
-        },
         "series": Object {
           "highlightStyle": Object {
             "series": Object {
@@ -8308,9 +8296,6 @@ Object {
   "theme": Object {
     "overrides": Object {
       "column": Object {
-        "legend": Object {
-          "position": "bottom",
-        },
         "series": Object {
           "highlightStyle": Object {
             "series": Object {
@@ -9993,9 +9978,6 @@ Object {
   "theme": Object {
     "overrides": Object {
       "line": Object {
-        "legend": Object {
-          "position": "bottom",
-        },
         "series": Object {
           "highlightStyle": Object {
             "series": Object {
