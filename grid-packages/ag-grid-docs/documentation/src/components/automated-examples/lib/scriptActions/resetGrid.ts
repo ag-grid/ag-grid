@@ -1,5 +1,6 @@
 import { GridOptions } from 'ag-grid-community';
 import { AG_DND_GHOST_SELECTOR } from '../constants';
+import { clearAllMenuOptionHighlights } from './clearAllMenuOptionHighlights';
 import { clearAllRowHighlights } from './clearAllRowHighlights';
 import { destoryAllCharts } from './destroyAllCharts';
 import { clearAllSingleCellSelections } from './singleCell';
@@ -23,6 +24,7 @@ export function resetGrid({ gridOptions, scrollRow, scrollColumn }: Params) {
     document.querySelector(AG_DND_GHOST_SELECTOR)?.remove();
     clearAllSingleCellSelections();
     clearAllRowHighlights();
+    clearAllMenuOptionHighlights();
 
     // Send escape to clear context menu
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));

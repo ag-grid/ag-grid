@@ -155,7 +155,7 @@ function createScriptAction({
     const { type } = action;
     const agElementFinder = createAgElementFinder({ containerEl });
     const agActionCreator = createAGActionCreator({
-        containerEl,
+        getOverlay,
         gridOptions,
         agElementFinder,
         mouse,
