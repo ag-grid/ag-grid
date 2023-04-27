@@ -4491,7 +4491,7 @@
       "optionsKey": "string",
       "packageType": "'community' | 'enterprise'",
       "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
-      "factoryConstructors?": "JsonApplyParams['constructors']"
+      "optionConstructors?": "JsonApplyParams['constructors']"
     }
   },
   "RootModule": {
@@ -4502,7 +4502,7 @@
       "optionsKey": "string",
       "packageType": "'community' | 'enterprise'",
       "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
-      "factoryConstructors?": "JsonApplyParams['constructors']"
+      "optionConstructors?": "JsonApplyParams['constructors']"
     }
   },
   "AxisModule": {
@@ -4513,7 +4513,7 @@
       "optionsKey": "string",
       "packageType": "'community' | 'enterprise'",
       "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
-      "factoryConstructors?": "JsonApplyParams['constructors']"
+      "optionConstructors?": "JsonApplyParams['constructors']"
     }
   },
   "LegendModule": {
@@ -4525,7 +4525,7 @@
       "optionsKey": "string",
       "packageType": "'community' | 'enterprise'",
       "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
-      "factoryConstructors?": "JsonApplyParams['constructors']"
+      "optionConstructors?": "JsonApplyParams['constructors']"
     }
   },
   "SeriesModule": {
@@ -4539,7 +4539,7 @@
       "optionsKey": "string",
       "packageType": "'community' | 'enterprise'",
       "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
-      "factoryConstructors?": "JsonApplyParams['constructors']"
+      "optionConstructors?": "JsonApplyParams['constructors']"
     }
   },
   "Module": {

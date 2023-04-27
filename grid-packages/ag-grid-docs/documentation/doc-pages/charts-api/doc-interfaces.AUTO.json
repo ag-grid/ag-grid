@@ -6356,7 +6356,7 @@
         "optional": false
       }
     },
-    "factoryConstructors": {
+    "optionConstructors": {
       "type": {
         "returnType": "JsonApplyParams['constructors']",
         "optional": true
@@ -6383,7 +6383,7 @@
         "optional": false
       }
     },
-    "factoryConstructors": {
+    "optionConstructors": {
       "type": {
         "returnType": "JsonApplyParams['constructors']",
         "optional": true
@@ -6410,7 +6410,7 @@
         "optional": false
       }
     },
-    "factoryConstructors": {
+    "optionConstructors": {
       "type": {
         "returnType": "JsonApplyParams['constructors']",
         "optional": true
@@ -6433,7 +6433,7 @@
         "optional": false
       }
     },
-    "factoryConstructors": {
+    "optionConstructors": {
       "type": {
         "returnType": "JsonApplyParams['constructors']",
         "optional": true
@@ -6458,7 +6458,7 @@
         "optional": false
       }
     },
-    "factoryConstructors": {
+    "optionConstructors": {
       "type": {
         "returnType": "JsonApplyParams['constructors']",
         "optional": true

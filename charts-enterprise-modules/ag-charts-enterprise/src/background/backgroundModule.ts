@@ -7,7 +7,7 @@ export const BackgroundModule: _ModuleSupport.RootModule = {
     optionsKey: 'background',
     packageType: 'enterprise',
     chartTypes: ['cartesian', 'polar', 'hierarchy'],
-    factoryConstructors: {
+    optionConstructors: {
         'background.image': BackgroundImage,
     },
     instanceConstructor: Background,

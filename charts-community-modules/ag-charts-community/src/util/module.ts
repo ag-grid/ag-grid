@@ -53,7 +53,7 @@ interface BaseModule {
     packageType: 'community' | 'enterprise';
     chartTypes: ('cartesian' | 'polar' | 'hierarchy')[];
 
-    factoryConstructors?: JsonApplyParams['constructors'];
+    optionConstructors?: JsonApplyParams['constructors'];
 }
 
 export interface RootModule<M extends ModuleInstance = ModuleInstance> extends BaseModule {
