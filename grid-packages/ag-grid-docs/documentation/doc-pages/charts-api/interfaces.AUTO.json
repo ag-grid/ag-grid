@@ -520,17 +520,13 @@
       "innerLabels?": "AgDoughnutInnerLabelThemeOptions",
       "type?": "'pie'",
       "title?": "AgPieTitleOptions",
-      "label?": "AgPieSeriesLabelOptions<DatumType>",
       "calloutLabel?": "AgPieSeriesLabelOptions<DatumType>",
       "sectorLabel?": "AgPieSeriesSectorLabelOptions<DatumType>",
-      "callout?": "AgPieSeriesCalloutOptions",
       "calloutLine?": "AgPieSeriesCalloutOptions",
       "angleKey?": "string",
       "angleName?": "string",
       "radiusKey?": "string",
       "radiusName?": "string",
-      "labelKey?": "string",
-      "labelName?": "string",
       "calloutLabelKey?": "string",
       "calloutLabelName?": "string",
       "sectorLabelKey?": "string",
@@ -564,17 +560,13 @@
     },
     "docs": {
       "title?": "/** Configuration for the series title. */",
-      "label?": "/** Configuration for the labels used outside of the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabel instead.\n     */",
       "calloutLabel?": "/** Configuration for the labels used outside of the sectors. */",
       "sectorLabel?": "/** Configuration for the labels used inside the sectors. */",
-      "callout?": "/** Configuration for the callout lines used with the labels for the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLine instead.\n     */",
       "calloutLine?": "/** Configuration for the callout lines used with the labels for the sectors. */",
       "angleKey?": "/** The key to use to retrieve angle values from the data. */",
       "angleName?": "/** A human-readable description of the angle values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "radiusKey?": "/** The key to use to retrieve radius values from the data. */",
       "radiusName?": "/** A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
-      "labelKey?": "/** The key to use to retrieve label values from the data.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
-      "labelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
       "calloutLabelKey?": "/** The key to use to retrieve label values from the data. */",
       "calloutLabelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "sectorLabelKey?": "/** The key to use to retrieve sector label values from the data. */",
@@ -867,15 +859,7 @@
   },
   "AgChartLegendLabelFormatterParams": {
     "meta": {},
-    "type": {
-      "id": "string",
-      "seriesId": "string",
-      "itemId": "any",
-      "value": "string"
-    },
-    "docs": {
-      "id": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId. */"
-    }
+    "type": { "seriesId": "string", "itemId": "any", "value": "string" }
   },
   "AgChartLegendLabelOptions": {
     "meta": {},
@@ -1116,7 +1100,6 @@
     "meta": { "typeParams": ["T extends string"] },
     "type": {
       "type": "T",
-      "series": "any",
       "seriesId": "string",
       "datum": "any",
       "xKey?": "string",
@@ -1132,7 +1115,6 @@
     },
     "docs": {
       "type": "/** Event type. */",
-      "series": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
       "seriesId": "/** Series ID, as specified in series.id (or generated if not specified) */",
       "datum": "/** Datum from the chart or series data array. */",
       "xKey?": "/** xKey as specified on series options */",
@@ -1150,7 +1132,6 @@
     "meta": {},
     "type": {
       "type": "T",
-      "series": "any",
       "seriesId": "string",
       "datum": "any",
       "xKey?": "string",
@@ -1166,7 +1147,6 @@
     },
     "docs": {
       "type": "/** Event type. */",
-      "series": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
       "seriesId": "/** Series ID, as specified in series.id (or generated if not specified) */",
       "datum": "/** Datum from the chart or series data array. */",
       "xKey?": "/** xKey as specified on series options */",
@@ -1184,7 +1164,6 @@
     "meta": {},
     "type": {
       "type": "T",
-      "series": "any",
       "seriesId": "string",
       "datum": "any",
       "xKey?": "string",
@@ -1200,7 +1179,6 @@
     },
     "docs": {
       "type": "/** Event type. */",
-      "series": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
       "seriesId": "/** Series ID, as specified in series.id (or generated if not specified) */",
       "datum": "/** Datum from the chart or series data array. */",
       "xKey?": "/** xKey as specified on series options */",
@@ -1735,7 +1713,6 @@
     "meta": { "typeParams": ["DatumType"] },
     "type": {
       "type": "'nodeClick'",
-      "series": "any",
       "seriesId": "string",
       "datum": "DatumType",
       "xKey?": "string",
@@ -1750,7 +1727,6 @@
     },
     "docs": {
       "type": "/** Event type. */",
-      "series": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
       "seriesId": "/** Series ID, as specified in series.id (or generated if not specified) */",
       "datum": "/** Datum from the series data array. */",
       "xKey?": "/** xKey as specified on series options */",
@@ -2816,17 +2792,13 @@
     "type": {
       "type?": "'pie'",
       "title?": "AgPieTitleOptions",
-      "label?": "AgPieSeriesLabelOptions<DatumType>",
       "calloutLabel?": "AgPieSeriesLabelOptions<DatumType>",
       "sectorLabel?": "AgPieSeriesSectorLabelOptions<DatumType>",
-      "callout?": "AgPieSeriesCalloutOptions",
       "calloutLine?": "AgPieSeriesCalloutOptions",
       "angleKey?": "string",
       "angleName?": "string",
       "radiusKey?": "string",
       "radiusName?": "string",
-      "labelKey?": "string",
-      "labelName?": "string",
       "calloutLabelKey?": "string",
       "calloutLabelName?": "string",
       "sectorLabelKey?": "string",
@@ -2861,17 +2833,13 @@
     },
     "docs": {
       "title?": "/** Configuration for the series title. */",
-      "label?": "/** Configuration for the labels used outside of the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabel instead.\n     */",
       "calloutLabel?": "/** Configuration for the labels used outside of the sectors. */",
       "sectorLabel?": "/** Configuration for the labels used inside the sectors. */",
-      "callout?": "/** Configuration for the callout lines used with the labels for the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLine instead.\n     */",
       "calloutLine?": "/** Configuration for the callout lines used with the labels for the sectors. */",
       "angleKey?": "/** The key to use to retrieve angle values from the data. */",
       "angleName?": "/** A human-readable description of the angle values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "radiusKey?": "/** The key to use to retrieve radius values from the data. */",
       "radiusName?": "/** A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
-      "labelKey?": "/** The key to use to retrieve label values from the data.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
-      "labelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
       "calloutLabelKey?": "/** The key to use to retrieve label values from the data. */",
       "calloutLabelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "sectorLabelKey?": "/** The key to use to retrieve sector label values from the data. */",
@@ -2908,8 +2876,6 @@
   "AgPieSeriesTooltipRendererParams": {
     "meta": {},
     "type": {
-      "labelKey?": "string",
-      "labelName?": "string",
       "calloutLabelKey?": "string",
       "calloutLabelName?": "string",
       "sectorLabelKey?": "string",
@@ -2926,8 +2892,6 @@
       "seriesId": "string"
     },
     "docs": {
-      "labelKey?": "/** labelKey as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
-      "labelName?": "/** labelName as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
       "calloutLabelKey?": "/** calloutLabelKey as specified on series options. */",
       "calloutLabelName?": "/** calloutLabelName as specified on series options. */",
       "sectorLabelKey?": "/** sectorLabelKey as specified on series options. */",
@@ -2948,9 +2912,6 @@
     "meta": { "typeParams": ["DatumType"] },
     "type": {
       "datum": "DatumType",
-      "labelKey?": "string",
-      "labelValue?": "string",
-      "labelName?": "string",
       "calloutLabelKey?": "string",
       "calloutLabelValue?": "string",
       "calloutLabelName?": "string",
@@ -2963,14 +2924,10 @@
       "radiusKey?": "string",
       "radiusValue?": "any",
       "radiusName?": "string",
-      "value?": "any",
       "seriesId": "string"
     },
     "docs": {
       "datum": "/** Datum from the series data array that the label is being rendered for. */",
-      "labelKey?": "/** labelKey as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelKey instead.\n     */",
-      "labelValue?": "/** labelValue as read from series data via the labelKey property.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelValue instead.\n     */",
-      "labelName?": "/** labelName as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelName instead.\n     */",
       "calloutLabelKey?": "/** calloutLabelKey as specified on series options. */",
       "calloutLabelValue?": "/** calloutLabelValue as read from series data via the calloutLabelKey property. */",
       "calloutLabelName?": "/** calloutLabelName as specified on series options. */",
@@ -2983,7 +2940,6 @@
       "radiusKey?": "/** radiusKey as specified on series options. */",
       "radiusValue?": "/** radiusValue as read from series data via the radiusKey property. */",
       "radiusName?": "/** radiusName as specified on series options. */",
-      "value?": "/** The value of labelKey as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use item.datum instead.\n     */",
       "seriesId": "/** The ID of the series. */"
     }
   },

@@ -4,7 +4,6 @@ import { Observable, TypedEvent } from '../../util/observable';
 import { ChartAxis } from '../chartAxis';
 import { createId } from '../../util/id';
 import { checkDatum, isNumber } from '../../util/value';
-import { createDeprecationWarning } from '../../util/deprecation';
 import {
     BOOLEAN,
     OPT_BOOLEAN,
@@ -58,9 +57,6 @@ export type SeriesNodePickMatch = {
     distance: number;
 };
 
-const warnDeprecated = createDeprecationWarning();
-const warnSeriesDeprecated = () => warnDeprecated('series', 'Use seriesId to get the series ID');
-
 export function keyProperty<K>(propName: K, continuous: boolean, opts = {} as Partial<DatumPropertyDefinition<K>>) {
     const result: DatumPropertyDefinition<K> = {
         ...opts,
@@ -98,18 +94,10 @@ export class SeriesNodeBaseClickEvent<Datum extends { datum: any }> implements T
     readonly event: Event;
     readonly seriesId: string;
 
-    private readonly _series: Series;
-    /** @deprecated */
-    get series() {
-        warnSeriesDeprecated();
-        return this._series;
-    }
-
     constructor(nativeEvent: Event, datum: Datum, series: Series) {
         this.event = nativeEvent;
         this.datum = datum.datum;
         this.seriesId = series.id;
-        this._series = series;
     }
 }
 

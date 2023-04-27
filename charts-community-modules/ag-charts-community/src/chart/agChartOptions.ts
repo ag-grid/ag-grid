@@ -361,8 +361,6 @@ export interface AgChartLegendMarkerOptions {
 }
 
 export interface AgChartLegendLabelFormatterParams {
-    /** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId. */
-    id: string;
     seriesId: string;
     itemId: any;
     value: string;
@@ -533,8 +531,6 @@ interface AgChartEvent<T extends string> {
 export interface AgNodeBaseClickEvent<T extends string> extends AgChartEvent<T> {
     /** Event type. */
     type: T;
-    /** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */
-    series: any;
     /** Series ID, as specified in series.id (or generated if not specified) */
     seriesId: string;
     /** Datum from the chart or series data array. */
@@ -911,8 +907,6 @@ export interface AgSeriesHighlightStyle {
 export interface AgSeriesNodeClickParams<DatumType> {
     /** Event type. */
     type: 'nodeClick';
-    /** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */
-    series: any;
     /** Series ID, as specified in series.id (or generated if not specified) */
     seriesId: string;
     /** Datum from the series data array. */
@@ -1466,22 +1460,10 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     type?: 'pie';
     /** Configuration for the series title. */
     title?: AgPieTitleOptions;
-    /**
-     * Configuration for the labels used outside of the sectors.
-     *
-     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabel instead.
-     */
-    label?: AgPieSeriesLabelOptions<DatumType>;
     /** Configuration for the labels used outside of the sectors. */
     calloutLabel?: AgPieSeriesLabelOptions<DatumType>;
     /** Configuration for the labels used inside the sectors. */
     sectorLabel?: AgPieSeriesSectorLabelOptions<DatumType>;
-    /**
-     * Configuration for the callout lines used with the labels for the sectors.
-     *
-     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLine instead.
-     */
-    callout?: AgPieSeriesCalloutOptions;
     /** Configuration for the callout lines used with the labels for the sectors. */
     calloutLine?: AgPieSeriesCalloutOptions;
     /** The key to use to retrieve angle values from the data. */
@@ -1492,18 +1474,6 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     radiusKey?: string;
     /** A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
     radiusName?: string;
-    /**
-     * The key to use to retrieve label values from the data.
-     *
-     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.
-     */
-    labelKey?: string;
-    /**
-     * A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.
-     *
-     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.
-     */
-    labelName?: string;
     /** The key to use to retrieve label values from the data. */
     calloutLabelKey?: string;
     /** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
@@ -1555,18 +1525,6 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
 }
 
 export interface AgPieSeriesTooltipRendererParams extends AgPolarSeriesTooltipRendererParams {
-    /**
-     * labelKey as specified on series options.
-     *
-     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.
-     */
-    labelKey?: string;
-    /**
-     * labelName as specified on series options.
-     *
-     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.
-     */
-    labelName?: string;
     /** calloutLabelKey as specified on series options. */
     calloutLabelKey?: string;
     /** calloutLabelName as specified on series options. */
@@ -1580,25 +1538,6 @@ export interface AgPieSeriesTooltipRendererParams extends AgPolarSeriesTooltipRe
 export interface AgPieSeriesLabelFormatterParams<DatumType> {
     /** Datum from the series data array that the label is being rendered for. */
     readonly datum: DatumType;
-
-    /**
-     * labelKey as specified on series options.
-     *
-     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelKey instead.
-     */
-    readonly labelKey?: string;
-    /**
-     * labelValue as read from series data via the labelKey property.
-     *
-     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelValue instead.
-     */
-    readonly labelValue?: string;
-    /**
-     * labelName as specified on series options.
-     *
-     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelName instead.
-     */
-    readonly labelName?: string;
 
     /** calloutLabelKey as specified on series options. */
     readonly calloutLabelKey?: string;
@@ -1627,13 +1566,6 @@ export interface AgPieSeriesLabelFormatterParams<DatumType> {
     readonly radiusValue?: any;
     /** radiusName as specified on series options. */
     readonly radiusName?: string;
-
-    /**
-     * The value of labelKey as specified on series options.
-     *
-     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use item.datum instead.
-     */
-    readonly value?: any;
 
     /** The ID of the series. */
     readonly seriesId: string;
