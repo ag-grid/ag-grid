@@ -1,3 +1,5 @@
+import { jsonMerge } from '../../util/json';
+
 export type ChartType = 'cartesian' | 'polar' | 'hierarchy';
 
 const TYPES: Record<string, ChartType> = {
@@ -10,6 +12,8 @@ const TYPES: Record<string, ChartType> = {
     treemap: 'hierarchy',
     pie: 'polar',
 };
+
+const DEFAULTS: Record<string, {}> = {};
 
 export const CHART_TYPES = {
     has(seriesType: string) {
@@ -42,4 +46,12 @@ export const CHART_TYPES = {
 
 export function registerChartSeriesType(seriesType: string, chartType: ChartType) {
     TYPES[seriesType] = chartType;
+}
+
+export function registerChartDefaults(defaults: {}, chartType: ChartType) {
+    DEFAULTS[chartType] = jsonMerge([DEFAULTS[chartType] ?? {}, defaults]);
+}
+
+export function getChartDefaults(chartType: ChartType) {
+    return DEFAULTS[chartType] ?? {};
 }

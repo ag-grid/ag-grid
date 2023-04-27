@@ -1,5 +1,6 @@
-import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
+import { describe, expect, it, beforeAll, beforeEach, afterEach, jest } from '@jest/globals';
 import { AgCartesianChartOptions, AgChartOptions, AgLineSeriesOptions } from '../agChartOptions';
+import { setupModules } from '../factory/setupModules';
 import * as examples from '../test/examples';
 import { ChartTheme } from '../themes/chartTheme';
 import { prepareOptions } from './prepare';
@@ -266,6 +267,10 @@ const ENABLED_FALSE_OPTIONS: AgCartesianChartOptions = {
 };
 
 describe('prepare', () => {
+    beforeAll(() => {
+        setupModules();
+    });
+
     describe('#prepareOptions', () => {
         beforeEach(() => {
             console.warn = jest.fn();
