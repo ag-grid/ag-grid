@@ -7,12 +7,6 @@ $z-index-mouse-mask: 10000; // NOTE: Above .ag-dnd-ghost z-index of 9999
 $z-index-debug-canvas: $z-index-mouse-mask + 10;
 $z-index-debug-panel: $z-index-debug-canvas + 10;
 
-// Same as `createMouse`
-$mouse-width: 74px;
-$mouse-height: 84px;
-$mouse-offset-top: 6px;
-$mouse-offset-left: 4px;
-
 :global(.automated-row-grouping-grid.ag-theme-alpine-dark) {
     position: relative;
     width: 100%;
@@ -300,8 +294,8 @@ $mouse-offset-left: 4px;
         @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
             top: calc(#{$mouse-offset-top} * var(--mobile-mouse-scale));
             left: calc(#{$mouse-offset-left} * var(--mobile-mouse-scale));
-            width: calc(#{$mouse-width} * var(--mobile-mouse-scale));
-            height: calc(#{$mouse-height} * var(--mobile-mouse-scale));
+            width: calc(#{$mouse-base-width} * var(--mobile-mouse-scale));
+            height: calc(#{$mouse-base-height} * var(--mobile-mouse-scale));
         }
     }
 
