@@ -262,10 +262,10 @@ const EXAMPLES_LABEL_AUTO_WRAPPING: Record<string, TestCase> = {
         options: applyAutoWrapping(switchToColumn(examples.ONE_HUNDRED_PERCENT_STACKED_BAR_EXAMPLE)),
         assertions: cartesianChartAssertions(),
     },
-    // COLUMN_CHART_WITH_LABELS_EXAMPLE: {
-    //     options: applyAutoWrapping(switchToColumn(examples.BAR_CHART_WITH_LABELS_EXAMPLE)),
-    //     assertions: cartesianChartAssertions(),
-    // },
+    COLUMN_CHART_WITH_LABELS_EXAMPLE: {
+        options: applyAutoWrapping(switchToColumn(examples.BAR_CHART_WITH_LABELS_EXAMPLE)),
+        assertions: cartesianChartAssertions(),
+    },
     SIMPLE_LINE_CHART_EXAMPLE: {
         options: applyAutoWrapping(examples.SIMPLE_LINE_CHART_EXAMPLE, 80),
         assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line', 'line'] }),
