@@ -3471,10 +3471,6 @@
     "type": ["X = 'x'", "Y = 'y'"],
     "docs": [null, null]
   },
-  "ChartType": {
-    "meta": { "isTypeAlias": true },
-    "type": "'cartesian' | 'polar' | 'hierarchy'"
-  },
   "ChartUpdateType": {
     "meta": { "isEnum": true },
     "type": [
@@ -3603,6 +3599,14 @@
     }
   },
   "SeriesGetter": { "meta": { "isTypeAlias": true }, "type": "() => Series[]" },
+  "ChartType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'cartesian' | 'polar' | 'hierarchy'"
+  },
+  "SeriesConstructor": {
+    "meta": { "isTypeAlias": true },
+    "type": "new () => Series<any>"
+  },
   "Page": {
     "meta": { "isTypeAlias": true },
     "type": "{ columns: Column[]; pageWidth: number; pageHeight: number; startIndex: number; endIndex: number; }"
@@ -4168,10 +4172,6 @@
     "meta": { "isTypeAlias": true },
     "type": "{ cartesian: AgCartesianThemeOptions; groupedCategory: AgCartesianThemeOptions; polar: AgPolarThemeOptions; hierarchy: AgHierarchyThemeOptions; } & { [key in keyof AgCartesianSeriesTheme]?: AgCartesianThemeOptions; } & { [key in keyof AgPolarSeriesTheme]?: AgPolarThemeOptions; } & { [key in keyof AgHierarchySeriesTheme]?: AgHierarchyThemeOptions; }"
   },
-  "ChartThemeParams": {
-    "meta": {},
-    "type": { "seriesDefaults": "any", "defaultFontFamily": "string" }
-  },
   "DarkThemeParams": { "meta": {}, "type": { "seriesLabelDefaults": "any" } },
   "EventTarget": { "meta": {}, "type": { "classList": "DOMTokenList" } },
   "TooltipMeta": {
@@ -4394,6 +4394,10 @@
       "avoidDeepClone": "/** Contains a list of properties where deep clones should be avoided\n     */"
     }
   },
+  "JsonApplyParams": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ constructors?: Record<string, new () => any>; allowedTypes?: Record<string, ReturnType<typeof classify>[]>; }"
+  },
   "Classification": {
     "meta": { "isTypeAlias": true },
     "type": "'array' | 'object' | 'primitive'"
@@ -4443,8 +4447,7 @@
       "tooltipManager": "TooltipManager",
       "dataService": "DataService",
       "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>",
-      "updateService": "UpdateService",
-      "optionsConstructors": "{ add(path: string, constructor: new () => any): void; delete(path: string): void; }"
+      "updateService": "UpdateService"
     }
   },
   "ModuleContextWithParent": {
@@ -4460,8 +4463,7 @@
       "tooltipManager": "TooltipManager",
       "dataService": "DataService",
       "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>",
-      "updateService": "UpdateService",
-      "optionsConstructors": "{ add(path: string, constructor: new () => any): void; delete(path: string): void; }"
+      "updateService": "UpdateService"
     }
   },
   "AxisContext": {
@@ -4478,79 +4480,66 @@
       "scaleInvert(position: number)": "any"
     }
   },
-  "SeriesFactory": {
+  "LegendConstructor": {
     "meta": { "isTypeAlias": true },
-    "type": "() => Series<any>"
+    "type": "new (moduleContext: ModuleContext) => ChartLegend"
   },
-  "LegendModuleContext": {
-    "meta": {},
-    "type": {
-      "legendFactory": "{ add(factory: (ctx: ModuleContext) => ChartLegend): void; delete(): void; }"
-    }
-  },
-  "SeriesContext": {
-    "meta": {},
-    "type": {
-      "seriesFactory": "{ add(factory: SeriesFactory): void; delete(): void; }",
-      "defaults": "{ add(defaultOptions: any): void; delete(): void; }",
-      "themes": "{ chartTheme: { add(fn: (params: ChartThemeParams) => any): void; delete(): void; }; darkTheme: { add(fn: (params: DarkThemeParams) => any): void; delete(): void; }; }"
-    }
-  },
-  "ModuleInstance": {
-    "meta": {},
-    "type": { "update()": "void", "destroy()": "void" }
-  },
-  "ModuleInstanceMeta": {
-    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
-    "type": { "instance": "M" }
-  },
+  "ModuleInstance": { "meta": {}, "type": { "destroy()": "void" } },
   "BaseModule": {
     "meta": {},
     "type": {
       "optionsKey": "string",
       "packageType": "'community' | 'enterprise'",
-      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
+      "optionConstructors?": "JsonApplyParams['constructors']"
     }
   },
   "RootModule": {
     "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
     "type": {
       "type": "'root'",
-      "initialiseModule(ctx: ModuleContext)": "ModuleInstanceMeta<M>",
-      "destroyModule?(ctx: ModuleContext)": "void",
+      "instanceConstructor": "new (ctx: ModuleContext) => M",
       "optionsKey": "string",
       "packageType": "'community' | 'enterprise'",
-      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
+      "optionConstructors?": "JsonApplyParams['constructors']"
     }
   },
   "AxisModule": {
     "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
     "type": {
       "type": "'axis'",
-      "initialiseModule(ctx: ModuleContextWithParent<AxisContext>)": "ModuleInstanceMeta<M>",
+      "instanceConstructor": "new (ctx: ModuleContextWithParent<AxisContext>) => M",
       "optionsKey": "string",
       "packageType": "'community' | 'enterprise'",
-      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
+      "optionConstructors?": "JsonApplyParams['constructors']"
     }
   },
   "LegendModule": {
-    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "meta": {},
     "type": {
       "type": "'legend'",
-      "initialiseModule(ctx: LegendModuleContext)": "ModuleInstanceMeta<M>",
+      "identifier": "string",
+      "instanceConstructor": "LegendConstructor",
       "optionsKey": "string",
       "packageType": "'community' | 'enterprise'",
-      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
+      "optionConstructors?": "JsonApplyParams['constructors']"
     }
   },
   "SeriesModule": {
-    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "meta": {},
     "type": {
       "type": "'series'",
-      "initialiseModule(ctx: SeriesContext)": "ModuleInstanceMeta<M>",
+      "identifier": "string",
+      "instanceConstructor": "SeriesConstructor",
+      "seriesDefaults": "{}",
+      "themeTemplate": "{}",
       "optionsKey": "string",
       "packageType": "'community' | 'enterprise'",
-      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
+      "optionConstructors?": "JsonApplyParams['constructors']"
     }
   },
   "Module": {
@@ -4558,7 +4547,7 @@
       "isTypeAlias": true,
       "typeParams": ["M extends ModuleInstance = ModuleInstance"]
     },
-    "type": "RootModule<M> | AxisModule<M> | LegendModule<M> | SeriesModule<M>"
+    "type": "RootModule<M> | AxisModule<M> | LegendModule | SeriesModule"
   },
   "FormatterOptions": {
     "meta": {},

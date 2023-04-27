@@ -48,8 +48,6 @@ export class Background extends _ModuleSupport.BaseModuleInstance implements _Mo
         this.destroyFns.push(() => ctx.layoutService.removeListener(layoutHandle));
     }
 
-    update(): void {}
-
     private onLayoutComplete = (event: _ModuleSupport.LayoutCompleteEvent) => {
         const { width, height } = event.chart;
         this.rectNode.width = width;

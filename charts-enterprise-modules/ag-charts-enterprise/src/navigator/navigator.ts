@@ -120,10 +120,6 @@ export class Navigator extends _ModuleSupport.BaseModuleInstance implements _Mod
         this.visible = visible;
     }
 
-    public update(): void {
-        // Nothing to do!
-    }
-
     private onDragStart(offset: Offset) {
         if (!this.enabled) {
             return;

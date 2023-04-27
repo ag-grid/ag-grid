@@ -1,3 +1,4 @@
+import { jsonMerge, jsonWalk } from '../../util/json';
 import { deepMerge } from '../../util/object';
 import {
     FontWeight,
@@ -15,7 +16,8 @@ import {
     AgChartInteractionRange,
     AgTooltipPositionType,
 } from '../agChartOptions';
-import { CHART_TYPES } from '../chartTypes';
+import { CHART_TYPES } from '../factory/chartTypes';
+import { getSeriesThemeTemplate } from '../factory/seriesTypes';
 
 const palette: AgChartThemePalette = {
     fills: ['#f3622d', '#fba71b', '#57b757', '#41a9c9', '#4258c9', '#9a42c8', '#c84164', '#888888'],
@@ -31,10 +33,9 @@ type ChartThemeDefaults = {
     [key in keyof AgPolarSeriesTheme]?: AgPolarThemeOptions;
 } & { [key in keyof AgHierarchySeriesTheme]?: AgHierarchyThemeOptions };
 
-export interface ChartThemeParams {
-    seriesDefaults: any;
-    defaultFontFamily: string;
-}
+export const EXTENDS_SERIES_DEFAULTS = Symbol('extends-series-defaults');
+export const OVERRIDE_SERIES_LABEL_DEFAULTS = Symbol('override-series-label-defaults');
+export const DEFAULT_FONT_FAMILY = Symbol('default-font');
 
 const BOLD: FontWeight = 'bold';
 const INSIDE: AgBarSeriesLabelOptions['placement'] = 'inside';
@@ -310,8 +311,6 @@ export class ChartTheme {
             listeners: {},
         };
     }
-
-    static seriesThemeOverrides: Record<string, (params: ChartThemeParams) => any> = {};
 
     private static readonly cartesianDefaults: AgCartesianThemeOptions = {
         ...ChartTheme.getChartDefaults(),
@@ -738,11 +737,14 @@ export class ChartTheme {
         const getOverridesByType = (seriesTypes: string[]) => {
             const result = {} as any;
             result.series = seriesTypes.reduce((obj, seriesType) => {
-                if (Object.prototype.hasOwnProperty.call(ChartTheme.seriesThemeOverrides, seriesType)) {
-                    obj[seriesType] = ChartTheme.seriesThemeOverrides[seriesType]({
-                        seriesDefaults: ChartTheme.getSeriesDefaults(),
-                        defaultFontFamily: ChartTheme.fontFamily,
-                    });
+                const template = getSeriesThemeTemplate(seriesType);
+                if (template) {
+                    obj[seriesType] = this.templateSeriesDefaults(
+                        template,
+                        ChartTheme.getSeriesDefaults(),
+                        {},
+                        ChartTheme.fontFamily
+                    );
                 }
                 return obj;
             }, {} as Record<string, any>);
@@ -755,6 +757,37 @@ export class ChartTheme {
             hierarchy: getOverridesByType(CHART_TYPES.hierarchyTypes),
         };
         return deepMerge(defaults, extension);
+    }
+
+    protected templateSeriesDefaults(
+        themeTemplate: {},
+        defaultSeriesOptions: {},
+        overrideSeriesLabels: {},
+        defaultFontFamily: string
+    ): {} {
+        const themeInstance = jsonMerge([themeTemplate]);
+
+        jsonWalk(
+            themeInstance,
+            (_, node) => {
+                if (node['__extends__'] === EXTENDS_SERIES_DEFAULTS) {
+                    Object.assign(node, defaultSeriesOptions, node);
+                    delete node['__extends__'];
+                }
+                if (node['__overrides__'] === OVERRIDE_SERIES_LABEL_DEFAULTS) {
+                    Object.assign(node, overrideSeriesLabels);
+                    delete node['__overrides__'];
+                }
+                for (const [name, value] of Object.entries(node)) {
+                    if (value === DEFAULT_FONT_FAMILY) {
+                        node[name] = defaultFontFamily;
+                    }
+                }
+            },
+            {}
+        );
+
+        return themeInstance;
     }
 
     protected mergeWithParentDefaults(

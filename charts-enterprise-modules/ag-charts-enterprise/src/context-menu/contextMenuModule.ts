@@ -8,10 +8,7 @@ export const ContextMenuModule: _ModuleSupport.Module = {
     packageType: 'enterprise',
     chartTypes: ['cartesian', 'polar', 'hierarchy'],
     optionsKey: 'contextMenu',
-    initialiseModule(ctx: _ModuleSupport.ModuleContext) {
-        const instance = new ContextMenu(ctx);
-        return { instance };
-    },
+    instanceConstructor: ContextMenu,
 };
 
 export function _registerDefaultAction(

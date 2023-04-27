@@ -227,6 +227,11 @@ export function jsonMerge<T>(json: T[], opts?: JsonMergeOptions): T {
     return result;
 }
 
+export type JsonApplyParams = {
+    constructors?: Record<string, new () => any>;
+    allowedTypes?: Record<string, ReturnType<typeof classify>[]>;
+};
+
 /**
  * Recursively apply a JSON object into a class-hierarchy, optionally instantiating certain classes
  * by property name.
@@ -247,10 +252,8 @@ export function jsonApply<Target, Source extends DeepPartial<Target>>(
         path?: string;
         matcherPath?: string;
         skip?: string[];
-        constructors?: Record<string, new () => any>;
-        allowedTypes?: Record<string, ReturnType<typeof classify>[]>;
         idx?: number;
-    } = {}
+    } & JsonApplyParams = {}
 ): Target {
     const {
         path = undefined,

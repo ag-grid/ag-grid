@@ -1,6 +1,7 @@
 import { AgChartThemeOptions } from '../agChartOptions';
 import { ChartTheme } from './chartTheme';
-import { CHART_TYPES } from '../chartTypes';
+import { CHART_TYPES } from '../factory/chartTypes';
+import { getSeriesThemeTemplate } from '../factory/seriesTypes';
 
 export interface DarkThemeParams {
     seriesLabelDefaults: any;
@@ -15,8 +16,6 @@ export class DarkTheme extends ChartTheme {
             color: DarkTheme.fontColor,
         },
     };
-
-    static seriesDarkThemeOverrides: Record<string, (params: DarkThemeParams) => any> = {};
 
     protected getDefaults(): (typeof ChartTheme)['defaults'] {
         const fontColor = DarkTheme.fontColor;
@@ -92,10 +91,14 @@ export class DarkTheme extends ChartTheme {
 
         const getOverridesByType = (seriesTypes: string[]) => {
             return seriesTypes.reduce((obj, seriesType) => {
-                if (Object.prototype.hasOwnProperty.call(DarkTheme.seriesDarkThemeOverrides, seriesType)) {
-                    obj[seriesType] = DarkTheme.seriesDarkThemeOverrides[seriesType]({
-                        seriesLabelDefaults: DarkTheme.seriesLabelDefaults,
-                    });
+                const template = getSeriesThemeTemplate(seriesType);
+                if (template) {
+                    obj[seriesType] = this.templateSeriesDefaults(
+                        template,
+                        ChartTheme.getSeriesDefaults(),
+                        DarkTheme.seriesLabelDefaults.label,
+                        ChartTheme.fontFamily
+                    );
                 }
                 return obj;
             }, {} as Record<string, any>);
@@ -106,6 +109,9 @@ export class DarkTheme extends ChartTheme {
                 ...chartDefaults,
                 ...chartAxesDefaults,
                 series: {
+                    line: {
+                        ...seriesLabelDefaults,
+                    },
                     bar: {
                         ...seriesLabelDefaults,
                     },

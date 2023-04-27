@@ -3,19 +3,10 @@ import { GradientLegend } from './gradientLegend';
 
 export const GradientLegendModule: _ModuleSupport.LegendModule = {
     type: 'legend',
-    optionsKey: 'gradient',
+    optionsKey: 'legend',
     packageType: 'enterprise',
     chartTypes: ['cartesian', 'polar', 'hierarchy'],
-    initialiseModule(ctx) {
-        ctx.legendFactory.add((ctx) => new GradientLegend(ctx));
 
-        return {
-            instance: {
-                update() {},
-                destroy: () => {
-                    ctx.legendFactory.delete();
-                },
-            },
-        };
-    },
+    identifier: 'gradient',
+    instanceConstructor: GradientLegend,
 };

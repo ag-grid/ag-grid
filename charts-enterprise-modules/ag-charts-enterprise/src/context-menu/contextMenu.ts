@@ -304,10 +304,6 @@ export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _M
         }
     }
 
-    public update() {
-        //
-    }
-
     public destroy() {
         super.destroy();
 

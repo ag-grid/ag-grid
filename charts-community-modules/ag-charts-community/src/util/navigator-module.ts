@@ -6,11 +6,7 @@ export const CHART_NAVIGATOR_MODULE: Module = {
     optionsKey: 'navigator',
     packageType: 'community',
     chartTypes: ['cartesian'],
-    initialiseModule(ctx) {
-        return {
-            instance: new Navigator(ctx),
-        };
-    },
+    instanceConstructor: Navigator,
 };
 
 registerModule(CHART_NAVIGATOR_MODULE);
