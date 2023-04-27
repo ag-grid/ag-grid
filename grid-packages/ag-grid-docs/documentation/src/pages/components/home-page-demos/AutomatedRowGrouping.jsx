@@ -6,14 +6,19 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { createAutomatedRowGrouping } from '../../../components/automated-examples/examples/row-grouping';
 import { ROW_GROUPING_ID } from '../../../components/automated-examples/lib/constants';
+import automatedExamplesVars from '../../../components/automated-examples/lib/vars.module.scss';
 import { OverlayButton } from '../../../components/automated-examples/OverlayButton';
 import { ToggleAutomatedExampleButton } from '../../../components/automated-examples/ToggleAutomatedExampleButton';
 import { UpdateSpeedSlider } from '../../../components/automated-examples/UpdateSpeedSlider';
 import LogoMark from '../../../components/LogoMark';
+import breakpoints from '../../../design-system/breakpoint.module.scss';
 import { hostPrefix, isProductionBuild, localPrefix } from '../../../utils/consts';
 import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
 import styles from './AutomatedRowGrouping.module.scss';
 import FeaturesList from './FeaturesList';
+
+const AUTOMATED_EXAMPLE_MEDIUM_WIDTH = parseInt(breakpoints['automated-row-grouping-medium'], 10);
+const AUTOMATED_EXAMPLE_MOBILE_SCALE = parseFloat(automatedExamplesVars['mobile-grid-scale']);
 
 const helmet = [];
 if (!isProductionBuild()) {
@@ -87,6 +92,10 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
             gridClassname,
             getOverlay: () => {
                 return overlayRef.current;
+            },
+            getContainerScale: () => {
+                const isMobileWidth = window.innerWidth <= AUTOMATED_EXAMPLE_MEDIUM_WIDTH;
+                return isMobileWidth ? AUTOMATED_EXAMPLE_MOBILE_SCALE : 1;
             },
             mouseMaskClassname: styles.mouseMask,
             scriptDebuggerManager: debuggerManager,

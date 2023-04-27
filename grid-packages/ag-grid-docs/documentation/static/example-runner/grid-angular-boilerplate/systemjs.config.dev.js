@@ -238,6 +238,10 @@
                 main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
+            'ag-charts-enterprise': {
+                main: './dist/cjs/es5/main.js',
+                defaultExtension: 'js'
+            },
             /* END OF MODULES - DO NOT DELETE */
             rxjs: {
                 defaultExtension: false

@@ -57,8 +57,9 @@ const getAllModules = () => {
     const gridEnterpriseModules = mapModules('grid-enterprise-modules');
 
     const chartCommunityModules = mapModules('charts-community-modules');
+    const chartEnterpriseModules = mapModules('charts-enterprise-modules');
 
-    return { gridCommunityModules, gridEnterpriseModules, chartCommunityModules };
+    return { gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules };
 };
 
 function updateBetweenStrings(

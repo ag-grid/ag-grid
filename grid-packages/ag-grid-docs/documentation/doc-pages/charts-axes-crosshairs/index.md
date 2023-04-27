@@ -23,6 +23,8 @@ axes: [
 ]
 ```
 
+<chart-example title='Basic Crosshair' name='basic-crosshairs' type='generated' options='{ "enterprise": true }'></chart-example> 
+ 
 [Crosshair Example](https://plnkr.co/edit/CIja77MQKhSnePn4?open=main.js)
 
 ## Crosshair Snap
