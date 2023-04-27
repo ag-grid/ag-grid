@@ -110,10 +110,6 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
         ContextMenu._disableAction(CONTEXT_PAN_ACTION_ID);
     }
 
-    update(): void {
-        // TODO: handle any updates from somewhere?
-    }
-
     private onDoubleClick(event: _ModuleSupport.InteractionEvent<'dblclick'>) {
         if (!this.seriesRect?.containsPoint(event.offsetX, event.offsetY)) {
             return;

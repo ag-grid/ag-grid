@@ -7,8 +7,6 @@ const { Group, Line, BBox } = _Scene;
 const { Validate, NUMBER, BOOLEAN, OPT_COLOR_STRING, OPT_LINE_DASH, Layers } = _ModuleSupport;
 
 export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
-    public update(): void {}
-
     @Validate(BOOLEAN)
     enabled = false;
 
