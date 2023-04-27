@@ -1636,13 +1636,6 @@ export interface AgPieSeriesLabelFormatterParams<DatumType> {
     /** radiusName as specified on series options. */
     readonly radiusName?: string;
 
-    /**
-     * The value of labelKey as specified on series options.
-     *
-     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use item.datum instead.
-     */
-    readonly value?: any;
-
     /** The ID of the series. */
     readonly seriesId: string;
 }

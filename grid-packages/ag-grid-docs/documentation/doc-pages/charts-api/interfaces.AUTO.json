@@ -2974,7 +2974,6 @@
       "radiusKey?": "string",
       "radiusValue?": "any",
       "radiusName?": "string",
-      "value?": "any",
       "seriesId": "string"
     },
     "docs": {
@@ -2994,7 +2993,6 @@
       "radiusKey?": "/** radiusKey as specified on series options. */",
       "radiusValue?": "/** radiusValue as read from series data via the radiusKey property. */",
       "radiusName?": "/** radiusName as specified on series options. */",
-      "value?": "/** The value of labelKey as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use item.datum instead.\n     */",
       "seriesId": "/** The ID of the series. */"
     }
   },

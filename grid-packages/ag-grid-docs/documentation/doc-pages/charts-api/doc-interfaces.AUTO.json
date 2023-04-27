@@ -4602,10 +4602,6 @@
       "description": "/** radiusName as specified on series options. */",
       "type": { "returnType": "string", "optional": true }
     },
-    "value": {
-      "description": "/** The value of labelKey as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use item.datum instead.\n     */",
-      "type": { "returnType": "any", "optional": true }
-    },
     "seriesId": {
       "description": "/** The ID of the series. */",
       "type": { "returnType": "string", "optional": false }
