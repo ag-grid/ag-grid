@@ -6372,6 +6372,7 @@
         "optional": false
       }
     },
+    "themeTemplate": { "type": { "returnType": "{}", "optional": true } },
     "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
     "optionsKey": { "type": { "returnType": "string", "optional": false } },
     "packageType": {

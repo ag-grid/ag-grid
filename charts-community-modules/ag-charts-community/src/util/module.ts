@@ -60,6 +60,8 @@ export interface RootModule<M extends ModuleInstance = ModuleInstance> extends B
     type: 'root';
 
     instanceConstructor: new (ctx: ModuleContext) => M;
+
+    themeTemplate?: {};
 }
 
 export interface AxisModule<M extends ModuleInstance = ModuleInstance> extends BaseModule {

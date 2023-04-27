@@ -1,5 +1,5 @@
 import { AgChartThemeOptions } from '../agChartOptions';
-import { ChartTheme } from './chartTheme';
+import { ChartTheme, OVERRIDE_SERIES_LABEL_DEFAULTS } from './chartTheme';
 import { CHART_TYPES } from '../factory/chartTypes';
 import { getSeriesThemeTemplate } from '../factory/seriesTypes';
 
@@ -93,12 +93,7 @@ export class DarkTheme extends ChartTheme {
             return seriesTypes.reduce((obj, seriesType) => {
                 const template = getSeriesThemeTemplate(seriesType);
                 if (template) {
-                    obj[seriesType] = this.templateSeriesDefaults(
-                        template,
-                        ChartTheme.getSeriesDefaults(),
-                        DarkTheme.seriesLabelDefaults.label,
-                        ChartTheme.fontFamily
-                    );
+                    obj[seriesType] = this.templateTheme(template);
                 }
                 return obj;
             }, {} as Record<string, any>);
@@ -193,6 +188,14 @@ export class DarkTheme extends ChartTheme {
                 },
             },
         });
+    }
+
+    protected getTemplateParameters() {
+        const result = super.getTemplateParameters();
+
+        result.extensions.set(OVERRIDE_SERIES_LABEL_DEFAULTS, DarkTheme.seriesLabelDefaults.label);
+
+        return result;
     }
 
     constructor(options?: AgChartThemeOptions) {

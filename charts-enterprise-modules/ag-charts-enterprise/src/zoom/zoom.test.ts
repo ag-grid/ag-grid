@@ -31,6 +31,7 @@ describe('Zoom', () => {
         series: [{ type: 'line', xKey: 'x', yKey: 'y' }],
         zoom: {
             enabled: true,
+            axes: 'xy',
             scrollingStep: 0.5, // Make sure we zoom enough in a single step so we can detect it
         },
     };

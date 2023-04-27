@@ -4499,6 +4499,7 @@
     "type": {
       "type": "'root'",
       "instanceConstructor": "new (ctx: ModuleContext) => M",
+      "themeTemplate?": "{}",
       "optionsKey": "string",
       "packageType": "'community' | 'enterprise'",
       "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
