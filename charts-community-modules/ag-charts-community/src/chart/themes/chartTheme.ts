@@ -772,9 +772,11 @@ export class ChartTheme {
             (_, node) => {
                 if (node['__extends__'] === EXTENDS_SERIES_DEFAULTS) {
                     Object.assign(node, defaultSeriesOptions, node);
+                    delete node['__extends__'];
                 }
                 if (node['__overrides__'] === OVERRIDE_SERIES_LABEL_DEFAULTS) {
                     Object.assign(node, overrideSeriesLabels);
+                    delete node['__overrides__'];
                 }
                 for (const [name, value] of Object.entries(node)) {
                     if (value === DEFAULT_FONT_FAMILY) {
