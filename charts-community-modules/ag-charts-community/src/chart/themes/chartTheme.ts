@@ -176,9 +176,6 @@ export class ChartTheme {
             tooltip: {
                 ...seriesDefaults.tooltip,
                 format: undefined,
-                position: {
-                    type: 'node' as AgTooltipPositionType,
-                },
             },
         };
     }
@@ -188,25 +185,6 @@ export class ChartTheme {
         return {
             ...seriesDefaults,
             nodeClickRange: 'nearest' as AgChartInteractionRange,
-            tooltip: {
-                ...seriesDefaults.tooltip,
-                position: {
-                    type: 'node' as AgTooltipPositionType,
-                },
-            },
-        };
-    }
-
-    private static getScatterSeriesDefaults() {
-        const seriesDefaults = this.getSeriesDefaults();
-        return {
-            ...seriesDefaults,
-            tooltip: {
-                ...seriesDefaults.tooltip,
-                position: {
-                    type: 'node' as AgTooltipPositionType,
-                },
-            },
         };
     }
 
@@ -307,6 +285,9 @@ export class ChartTheme {
                 enabled: true,
                 range: 'nearest' as AgChartInteractionRange,
                 delay: 0,
+                position: {
+                    type: 'pointer' as AgTooltipPositionType,
+                },
             },
             listeners: {},
         };
@@ -373,7 +354,7 @@ export class ChartTheme {
                 },
             },
             scatter: {
-                ...ChartTheme.getScatterSeriesDefaults(),
+                ...ChartTheme.getSeriesDefaults(),
                 title: undefined,
                 xKey: '',
                 yKey: '',
