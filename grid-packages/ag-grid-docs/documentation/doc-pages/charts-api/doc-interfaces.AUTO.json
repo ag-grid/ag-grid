@@ -2320,6 +2320,10 @@
       "description": "/** Used to constrain the width of the label. If `autoWrap` is `true` and the label text exceeds the `maxWidth`, it will be wrapped on multiple lines automatically. */",
       "type": { "returnType": "PixelSize", "optional": true }
     },
+    "maxHeight": {
+      "description": "/** Used to constrain the height of the label. If `autoWrap` is `true` and the label text exceeds the `maxHeight`, it will be truncated automatically. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
     "rotation": {
       "description": "/** The rotation of the axis labels in degrees. Note: for integrated charts the default is 335 degrees, unless the axis shows grouped or default categories (indexes). The first row of labels in a grouped category axis is rotated perpendicular to the axis line. */",
       "type": { "returnType": "number", "optional": true }
