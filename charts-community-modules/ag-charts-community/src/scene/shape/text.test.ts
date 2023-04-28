@@ -149,17 +149,13 @@ describe('Text', () => {
                 for (const testCase of testCaseRow) {
                     const textNode = Object.assign(new Text(), testCase);
 
-                    // Position Rect.
                     textNode.x = currX;
                     textNode.y = currY;
                     textNode._setLayerManager(mockLayerManager);
 
-                    // Render.
                     ctx.save();
                     textNode.render({ ctx, forceRender: true, resized: false, debugNodes: {} });
                     ctx.restore();
-
-                    // Prepare for next case.
 
                     const { x, y, width, height } = textNode.computeBBox();
 
@@ -170,7 +166,6 @@ describe('Text', () => {
                 }
             }
 
-            // Check rendering.
             const imageData = extractImageData(canvasCtx);
             (expect(imageData) as any).toMatchImageSnapshot();
         });
@@ -194,7 +189,6 @@ describe('Text', () => {
                 for (const testCase of testCaseRow.textOptions) {
                     const textNode = Object.assign(new Text(), testCase);
 
-                    // Position Rect.
                     textNode.x = currX;
                     textNode.y = currY;
                     textNode.text = Text.wrap(
@@ -207,12 +201,9 @@ describe('Text', () => {
                     );
                     textNode._setLayerManager(mockLayerManager);
 
-                    // Render.
                     ctx.save();
                     textNode.render({ ctx, forceRender: true, resized: false, debugNodes: {} });
                     ctx.restore();
-
-                    // Prepare for next case.
 
                     const { x, y } = textNode.computeBBox();
 
@@ -223,7 +214,6 @@ describe('Text', () => {
                 }
             }
 
-            // Check rendering.
             const imageData = extractImageData(canvasCtx);
             (expect(imageData) as any).toMatchImageSnapshot();
         });
