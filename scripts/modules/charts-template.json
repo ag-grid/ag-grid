@@ -94,13 +94,13 @@
     },
     "dependencies": {
         "ag-charts-community": "~7.1.0",
-        "@ag-charts-enterprise/ag-charts-enterprise": "~7.1.0"
+        "ag-charts-enterprise": "~7.1.0"
     },
     "publishConfig": {
         "access": "private"
     },
     "lint-staged": {
-        "*.{ts,js,md,json}": "./node_modules/@ag-charts-enterprise/ag-charts-enterprise/.lint-staged/run.sh prettier",
-        "*.{ts,js}": "./node_modules/@ag-charts-enterprise/ag-charts-enterprise/.lint-staged/run.sh eslint"
+        "*.{ts,js,md,json}": "./node_modules/ag-charts-enterprise/.lint-staged/run.sh prettier",
+        "*.{ts,js}": "./node_modules/ag-charts-enterprise/.lint-staged/run.sh eslint"
     }
 }
