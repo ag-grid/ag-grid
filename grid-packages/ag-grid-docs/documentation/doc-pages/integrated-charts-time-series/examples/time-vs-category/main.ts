@@ -28,9 +28,6 @@ const gridOptions: GridOptions = {
         enabled: true,
         text: 'Average Daily Temperatures',
       },
-      legend: {
-        enabled: false,
-      },
       navigator: {
         enabled: true,
         height: 20,

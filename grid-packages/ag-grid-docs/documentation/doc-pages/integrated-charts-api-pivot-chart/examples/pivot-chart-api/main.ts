@@ -35,7 +35,6 @@ function onFirstDataRendered(event: FirstDataRenderedEvent) {
       common: {
         legend: {
           enabled: true,
-          position: 'bottom',
         },
         navigator: {
           enabled: true,

@@ -104,6 +104,9 @@ function createSalesByRefChart(gridApi: GridApi) {
         },
       },
       pie: {
+        legend: {
+          position: 'right',
+        },
         series: {
           title: {
             enabled: false,
@@ -130,9 +133,6 @@ function createHandsetSalesChart(gridApi: GridApi) {
         title: {
           enabled: true,
           text: 'Handsets Sold (Units)',
-        },
-        legend: {
-          enabled: false,
         },
       }
     },
