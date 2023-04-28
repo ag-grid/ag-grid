@@ -6,7 +6,7 @@ A legend makes it easier to tell at a glance which series or series items corres
 
 ## Position
 
-A legend is shown by default but can be hidden using the `enabled` config:
+By default, a legend is displayed for all charts with more than one series present. However, it can be hidden by using the `enabled` configuration option:
 
 ```js
 legend: {
