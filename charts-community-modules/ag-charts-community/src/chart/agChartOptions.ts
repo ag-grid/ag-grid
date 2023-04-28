@@ -1151,7 +1151,15 @@ export interface AgScatterSeriesTooltip extends AgSeriesTooltip {
     renderer?: (params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 
-export interface AgScatterSeriesLabelOptions extends AgChartLabelOptions {}
+export interface AgScatterSeriesLabelFormatterParams<DatumType> extends AgCartesianSeriesLabelFormatterParams {
+    /** Datum from the series data array. */
+    datum: DatumType;
+}
+
+export interface AgScatterSeriesLabelOptions<DatumType> extends AgChartLabelOptions {
+    /** Function to modify the text displayed by the label. By default the values are simply stringified. */
+    formatter?: (params: AgScatterSeriesLabelFormatterParams<DatumType>) => string;
+}
 
 export interface AgScatterSeriesMarker<DatumType> extends AgCartesianSeriesMarker<DatumType> {
     /** If sizeKey is used, explicitly specifies the extent of the domain of it's values. */
@@ -1165,7 +1173,7 @@ export interface AgScatterSeriesOptions<DatumType = any> extends AgBaseSeriesOpt
     /** Configuration for the markers used in the series.  */
     marker?: AgScatterSeriesMarker<DatumType>;
     /** Configuration for the labels shown on top of data points.  */
-    label?: AgScatterSeriesLabelOptions;
+    label?: AgScatterSeriesLabelOptions<DatumType>;
     /** The key to use to retrieve x-values from the data.  */
     xKey?: string;
     /** The key to use to retrieve y-values from the data.  */
@@ -1609,6 +1617,8 @@ export interface AgTreemapSeriesLabelsOptions {
     medium?: AgChartLabelOptions;
     /** The label configuration for the small leaf tiles. */
     small?: AgChartLabelOptions;
+    /** A function to generate a label/title for the cell. */
+    formatter?: (params: { datum: any }) => string;
     /** The configuration for the cell value label. */
     value?: {
         /** A property to be used as a key to retrieve a value from datum. */
@@ -1616,7 +1626,7 @@ export interface AgTreemapSeriesLabelsOptions {
         /** A name of a datum value. */
         name?: string;
         /** A function to generate a value label from datum. */
-        formatter?: (params: { datum: any }) => string | undefined;
+        formatter?: (params: { datum: any }) => string;
         /** The label's font and color style. */
         style?: AgChartLabelOptions;
     };

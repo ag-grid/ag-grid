@@ -28,6 +28,7 @@ import {
     Validate,
 } from '../../../util/validation';
 import {
+    AgScatterSeriesLabelFormatterParams,
     AgScatterSeriesTooltipRendererParams,
     AgTooltipRendererResult,
     AgCartesianSeriesMarkerFormat,
@@ -37,6 +38,11 @@ import { DataModel } from '../../data/dataModel';
 interface ScatterNodeDatum extends Required<CartesianSeriesNodeDatum> {
     readonly label: MeasuredLabel;
     readonly fill: string | undefined;
+}
+
+class ScatterSeriesLabel extends Label {
+    @Validate(OPT_FUNCTION)
+    formatter?: (params: AgScatterSeriesLabelFormatterParams<any>) => string = undefined;
 }
 
 class ScatterSeriesNodeBaseClickEvent extends CartesianSeriesNodeBaseClickEvent<any> {
@@ -76,7 +82,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
     readonly marker = new CartesianSeriesMarker();
 
-    readonly label = new Label();
+    readonly label = new ScatterSeriesLabel();
 
     @Validate(OPT_STRING)
     title?: string = undefined;
@@ -223,7 +229,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             return [];
         }
 
-        const { colorScale, sizeKey, colorKey } = this;
+        const { colorScale, sizeKey, colorKey, id: seriesId } = this;
 
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
@@ -237,14 +243,22 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         const font = label.getFont();
         let actualLength = 0;
         for (const { values, datum } of this.processedData?.data ?? []) {
-            const x = xScale.convert(values[xDataIdx.index]) + xOffset;
-            const y = yScale.convert(values[yDataIdx.index]) + yOffset;
+            const xDatum = values[xDataIdx.index];
+            const yDatum = values[yDataIdx.index];
+            const x = xScale.convert(xDatum) + xOffset;
+            const y = yScale.convert(yDatum) + yOffset;
 
             if (!this.checkRangeXY(x, y, xAxis, yAxis)) {
                 continue;
             }
 
-            const text = labelKey ? String(datum[labelKey]) : '';
+            let text: string;
+            if (label.formatter) {
+                text = label.formatter({ value: yDatum, seriesId, datum });
+            } else {
+                text = labelKey ? String(datum[labelKey]) : '';
+            }
+
             const size = HdpiCanvas.getTextSize(text, font);
             const markerSize = sizeKey ? sizeScale.convert(values[2]) : marker.size;
             const fill = colorKey ? colorScale.convert(values[sizeKey ? 3 : 2]) : undefined;

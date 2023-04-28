@@ -2143,9 +2143,19 @@
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
+  "AgScatterSeriesLabelFormatterParams": {
+    "meta": { "typeParams": ["DatumType"] },
+    "type": { "datum": "DatumType", "seriesId": "string", "value": "number" },
+    "docs": {
+      "datum": "/** Datum from the series data array. */",
+      "seriesId": "/** The ID of the series. */",
+      "value": "/** The value of yKey as specified on series options. */"
+    }
+  },
   "AgScatterSeriesLabelOptions": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
+      "formatter?": "(params: AgScatterSeriesLabelFormatterParams<DatumType>) => string",
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -2154,6 +2164,7 @@
       "color?": "CssColor"
     },
     "docs": {
+      "formatter?": "/** Function to modify the text displayed by the label. By default the values are simply stringified. */",
       "enabled?": "/** Whether or not the labels should be shown. */",
       "fontStyle?": "/** The font style to use for the labels. */",
       "fontWeight?": "/** The font weight to use for the labels. */",
@@ -2199,7 +2210,7 @@
     "type": {
       "type?": "'scatter'",
       "marker?": "AgScatterSeriesMarker<DatumType>",
-      "label?": "AgScatterSeriesLabelOptions",
+      "label?": "AgScatterSeriesLabelOptions<DatumType>",
       "xKey?": "string",
       "yKey?": "string",
       "xName?": "string",
@@ -3010,12 +3021,14 @@
       "large?": "AgChartLabelOptions",
       "medium?": "AgChartLabelOptions",
       "small?": "AgChartLabelOptions",
-      "value?": "{ key?: string; name?: string; formatter?: (params: { datum: any; }) => string | undefined; style?: AgChartLabelOptions; }"
+      "formatter?": "(params: { datum: any; }) => string",
+      "value?": "{ key?: string; name?: string; formatter?: (params: { datum: any; }) => string; style?: AgChartLabelOptions; }"
     },
     "docs": {
       "large?": "/** The label configuration for the large leaf tiles. */",
       "medium?": "/** The label configuration for the medium-sized leaf tiles. */",
       "small?": "/** The label configuration for the small leaf tiles. */",
+      "formatter?": "/** A function to generate a label/title for the cell. */",
       "value?": "/** The configuration for the cell value label. */"
     }
   },
