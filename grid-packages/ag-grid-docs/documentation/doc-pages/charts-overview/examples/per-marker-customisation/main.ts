@@ -96,9 +96,6 @@ const options: AgChartOptions = {
       },
     },
   ],
-  legend: {
-    enabled: false,
-  },
   seriesAreaPadding: {
     left: 20,
     bottom: 15,
