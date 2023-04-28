@@ -404,6 +404,8 @@ export function jsonWalk(
     }
 }
 
+const isBrowser = typeof window !== 'undefined';
+
 type Classification = 'array' | 'object' | 'primitive';
 /**
  * Classify the type of a value to assist with handling for merge purposes.
@@ -411,7 +413,7 @@ type Classification = 'array' | 'object' | 'primitive';
 function classify(value: any): 'array' | 'object' | 'function' | 'primitive' | 'class-instance' | null {
     if (value == null) {
         return null;
-    } else if (value instanceof HTMLElement) {
+    } else if (isBrowser && value instanceof HTMLElement) {
         return 'primitive';
     } else if (value instanceof Array) {
         return 'array';
