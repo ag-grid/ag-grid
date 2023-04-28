@@ -1,12 +1,15 @@
 import { _ModuleSupport, CssColor, PixelSize, Opacity } from 'ag-charts-community';
 import { Crosshair } from './crosshair';
+import { AXIS_CROSSHAIR_THEME } from './crosshairTheme';
 
 export const CrosshairModule: _ModuleSupport.AxisModule = {
     type: 'axis',
     optionsKey: 'crosshair',
     packageType: 'enterprise',
     chartTypes: ['cartesian'],
+    axisTypes: ['category', 'number', 'log', 'time'],
     instanceConstructor: Crosshair,
+    themeTemplate: AXIS_CROSSHAIR_THEME,
 };
 
 export interface AgCrosshairLabelFormatterParams {
@@ -28,6 +31,8 @@ export interface AgCrosshairOptions {
     strokeOpacity?: Opacity;
     /** Defines how the line stroke is rendered. Every number in the array specifies the length in pixels of alternating dashes and gaps. For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels. */
     lineDash?: PixelSize[];
+    /** The initial offset of the dashed line in pixels. */
+    lineDashOffset?: PixelSize;
     /** The crosshair label configuration */
     label?: AgCrosshairLabel;
 }

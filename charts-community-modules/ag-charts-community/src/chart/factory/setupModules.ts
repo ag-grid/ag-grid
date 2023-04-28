@@ -1,4 +1,5 @@
 import { REGISTERED_MODULES } from '../../util/module';
+import { registerAxisThemeTemplate } from '../chartAxesTypes';
 import { JSON_APPLY_PLUGINS } from '../chartOptions';
 import { registerChartDefaults } from './chartTypes';
 import { registerLegend } from './legendTypes';
@@ -13,7 +14,7 @@ export function setupModules() {
         if (m.type === 'root') {
             if (m.themeTemplate) {
                 for (const chartType of m.chartTypes) {
-                    registerChartDefaults(m.themeTemplate, chartType);
+                    registerChartDefaults(chartType, m.themeTemplate);
                 }
             }
         }
@@ -22,6 +23,14 @@ export function setupModules() {
             if (m.chartTypes.length > 1) throw new Error('AG Charts - Module definition error: ' + m.identifier);
 
             registerSeries(m.identifier, m.chartTypes[0], m.instanceConstructor, m.seriesDefaults, m.themeTemplate);
+        }
+
+        if (m.type === 'axis') {
+            if (m.themeTemplate) {
+                for (const axisType of m.axisTypes) {
+                    registerAxisThemeTemplate(axisType, m.themeTemplate);
+                }
+            }
         }
 
         if (m.type === 'legend') {

@@ -6,6 +6,8 @@ import {
     AgChartOptions,
     AgCartesianAxisOptions,
     AgEnterpriseCharts,
+    AgBarSeriesOptions,
+    AgAreaSeriesOptions,
     _ModuleSupport,
 } from '../main';
 import {
@@ -55,7 +57,6 @@ function applyCrosshairSnap<T>(opts: T, snap: boolean): T {
 }
 
 const CROSSHAIR_OPTIONS = {
-    enabled: true,
     stroke: '#5470C6',
     strokeWidth: 3,
     lineDash: [10, 5],
@@ -156,7 +157,7 @@ const SIMPLE_LINE_OPTIONS: AgCartesianChartOptions = {
 const SIMPLE_COLUMN_OPTIONS: AgCartesianChartOptions = {
     ...BASE_OPTIONS,
     axes: CATEGORY_AXIS_OPTIONS,
-    series: BASE_OPTIONS.series?.map((s) => ({ ...s, type: 'column' })),
+    series: BASE_OPTIONS.series?.map((s) => ({ ...s, type: 'column' })) as AgBarSeriesOptions[],
 };
 
 const LINE_SECONDARY_AXIS_OPTIONS: AgCartesianChartOptions = {
@@ -167,19 +168,19 @@ const LINE_SECONDARY_AXIS_OPTIONS: AgCartesianChartOptions = {
 const STACKED_COLUMN_OPTIONS: AgCartesianChartOptions = {
     ...BASE_OPTIONS,
     axes: SIMPLE_AXIS_OPTIONS,
-    series: BASE_OPTIONS.series?.map((s) => ({ ...s, type: 'column', stacked: true })),
+    series: BASE_OPTIONS.series?.map((s) => ({ ...s, type: 'column', stacked: true })) as AgBarSeriesOptions[],
 };
 
 const GROUPED_COLUMN_OPTIONS: AgCartesianChartOptions = {
     ...BASE_OPTIONS,
     axes: CATEGORY_AXIS_OPTIONS,
-    series: BASE_OPTIONS.series?.map((s) => ({ ...s, type: 'column', stacked: false })),
+    series: BASE_OPTIONS.series?.map((s) => ({ ...s, type: 'column', stacked: false })) as AgBarSeriesOptions[],
 };
 
 const STACKED_BAR_OPTIONS: AgCartesianChartOptions = {
     ...BASE_OPTIONS,
     axes: SIMPLE_AXIS_OPTIONS,
-    series: BASE_OPTIONS.series?.map((s) => ({ ...s, type: 'bar', stacked: true })),
+    series: BASE_OPTIONS.series?.map((s) => ({ ...s, type: 'bar', stacked: true })) as AgBarSeriesOptions[],
 };
 
 const GROUPED_BAR_OPTIONS: AgCartesianChartOptions = {
@@ -202,13 +203,13 @@ const GROUPED_BAR_OPTIONS: AgCartesianChartOptions = {
             crosshair: CROSSHAIR_OPTIONS,
         },
     ],
-    series: BASE_OPTIONS.series?.map((s) => ({ ...s, type: 'bar', stacked: false })),
+    series: BASE_OPTIONS.series?.map((s) => ({ ...s, type: 'bar', stacked: false })) as AgBarSeriesOptions[],
 };
 
 const STACKED_AREA_OPTIONS: AgCartesianChartOptions = {
     ...BASE_OPTIONS,
     axes: SIMPLE_AXIS_OPTIONS,
-    series: BASE_OPTIONS.series?.map((s) => ({ ...s, type: 'area', stacked: true })),
+    series: BASE_OPTIONS.series?.map((s) => ({ ...s, type: 'area', stacked: true })) as AgAreaSeriesOptions[],
 };
 
 const HISTOGRAM_OPTIONS: AgCartesianChartOptions = {
