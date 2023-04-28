@@ -977,9 +977,6 @@
     "angleKey": {
       "isRequired": true
     },
-    "labelKey": {
-      "isRequired": true
-    },
     "lineDashOffset": {
       "default": 0,
       "min": 0,
@@ -1045,29 +1042,6 @@
       "min": 0,
       "max": 20,
       "unit": "px"
-    },
-    "label": {
-      "offset": {
-        "default": 3,
-        "min": 0,
-        "max": 20,
-        "unit": "px"
-      },
-      "minAngle": {
-        "default": 20,
-        "min": 0,
-        "max": 360,
-        "unit": "&deg;"
-      },
-      "formatter": {
-        "type": {
-          "parameters": {
-            "value": "string"
-          },
-          "returnType": "string"
-        },
-        "description": "Function used to turn 'labelKey' values into text to be displayed next to each pie sector. Be default the values are simply stringified."
-      }
     }
   },
   "AgPieSeriesSectorLabelOptions": {
