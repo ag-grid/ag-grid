@@ -375,7 +375,12 @@ export class CartesianChart extends Chart {
 
         let primaryTickCount = axis.nice ? primaryTickCounts[direction] : undefined;
         const paddedBoundsCoefficient = 0.3;
-        axis.maxThickness = axis.thickness > 0 ? axis.thickness : paddedBounds.width * paddedBoundsCoefficient;
+        axis.maxThickness =
+            axis.thickness > 0
+                ? axis.thickness
+                : direction === ChartAxisDirection.Y
+                ? paddedBounds.width * paddedBoundsCoefficient
+                : paddedBounds.height * paddedBoundsCoefficient;
         primaryTickCount = axis.update(primaryTickCount);
         primaryTickCounts[direction] = primaryTickCounts[direction] ?? primaryTickCount;
 

@@ -157,6 +157,10 @@ export class AxisLabel {
     @Validate(OPT_NUMBER(0))
     maxWidth?: number = undefined;
 
+    /** Used to constrain the height of the multiline label, if the label text height exceeds the `maxHeight`, it will be truncated automatically. */
+    @Validate(OPT_NUMBER(0))
+    maxHeight?: number = undefined;
+
     @Validate(OPT_FONT_STYLE)
     fontStyle?: FontStyle = undefined;
 
@@ -1031,7 +1035,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     }): { labelData: PointLabelDatum[]; rotated: boolean } {
         const {
             label,
-            label: { enabled: labelsEnabled, parallel, rotation, autoWrap, maxWidth },
+            label: { enabled: labelsEnabled, parallel, rotation, autoWrap },
             tick,
         } = this;
 
@@ -1094,21 +1098,11 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         const labelAutoRotated = labelAutoRotation > 0 && labelAutoRotation <= Math.PI;
         const alignFlag = labelRotated || labelAutoRotated ? -1 : 1;
 
-        const font = label.getFont();
-        const defaultMaxLabelWidth = parallel
-            ? Math.round(this.calculateAvailableRange() / labelData.length)
-            : this.maxThickness;
-        const maxLabelWidth = maxWidth ?? defaultMaxLabelWidth;
-
         const rotated = !!(labelRotation || labelAutoRotation);
         const wrapLabels = autoWrap && !rotated;
 
         if (wrapLabels) {
-            labelSelection.each((node, datum, index) => {
-                const formattedText = this.formatTickDatum(datum.tick, index);
-                const labelText = Text.wrap(formattedText, maxLabelWidth, font, label.fontSize);
-                node.text = labelText;
-            });
+            this.wrapLabels(labelSelection, labelData.length);
         }
 
         let labelTextAlign: 'start' | 'end' | 'center' = 'start';
@@ -1160,6 +1154,31 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         };
 
         return { labelData, rotated };
+    }
+
+    private wrapLabels(labelSelection: Selection<Text, any>, labelCount: number) {
+        const {
+            label,
+            label: { parallel, maxWidth, maxHeight },
+        } = this;
+
+        const font = label.getFont();
+
+        const defaultMaxLabelWidth = parallel
+            ? Math.round(this.calculateAvailableRange() / labelCount)
+            : this.maxThickness;
+        const maxLabelWidth = maxWidth ?? defaultMaxLabelWidth;
+
+        const defaultMaxLabelHeight = parallel
+            ? this.maxThickness
+            : Math.round(this.calculateAvailableRange() / labelCount);
+        const maxLabelHeight = maxHeight ?? defaultMaxLabelHeight;
+
+        labelSelection.each((node, datum, index) => {
+            const formattedText = this.formatTickDatum(datum.tick, index);
+            const labelText = Text.wrap(formattedText, maxLabelWidth, maxLabelHeight, font, label.fontSize, true);
+            node.text = labelText;
+        });
     }
 
     private calculateLabelBBox(
