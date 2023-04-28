@@ -51,8 +51,9 @@ function onSelection() {
 }
 ```
 
-[[note]]
-| You do not need to explicitly type callbacks and events that are defined as part of `GridOptions`. Typescript will correctly pass the generic type down the interface hierarchy.
+<note>
+You do not need to explicitly type callbacks and events that are defined as part of `GridOptions`. Typescript will correctly pass the generic type down the interface hierarchy.
+</note>
 
 ### Configure via Interfaces
 

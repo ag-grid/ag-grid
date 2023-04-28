@@ -48,13 +48,14 @@ Below shows calling `api.refreshCells()` with different scenarios using a mixtur
 
 <grid-example title='Refresh Cells' name='refresh-cells' type='generated'></grid-example>
 
-[[note]]
-| You may be wondering why would you want to force refresh, what is the point in refreshing a cell that
-| has no changes? The answer is to do with cells that don't show underlying data or depend on something other
-| than just the underlying data. One example is a cell that might contain action buttons (add, delete, send
-| etc) and you might want to disable the action buttons if the logged in user changes role (if roles are tied
-| to the functions), or if it's past 5pm and you don't want to allow such operations past a certain time. In
-| this case you may wish to update the cells even though the underlying data has not changed.
+<note>
+You may be wondering why would you want to force refresh, what is the point in refreshing a cell that
+has no changes? The answer is to do with cells that don't show underlying data or depend on something other
+than just the underlying data. One example is a cell that might contain action buttons (add, delete, send
+etc) and you might want to disable the action buttons if the logged in user changes role (if roles are tied
+to the functions), or if it's past 5pm and you don't want to allow such operations past a certain time. In
+this case you may wish to update the cells even though the underlying data has not changed.
+</note>
 
 ## Redraw Rows
 

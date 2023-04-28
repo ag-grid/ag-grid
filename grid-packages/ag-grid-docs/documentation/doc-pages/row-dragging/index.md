@@ -85,11 +85,12 @@ Unmanaged dragging is the default dragging for the grid. To use it, do not set t
 - Dragging is allowed while filter is applied.
 - Dragging is allowed while row group or pivot is applied.
 
-[[note]]
-| It is not possible for the grid to provide a generic solution for row
-| dragging that fits all usage scenarios. The way around this is the grid
-| fires events and the application is responsible for implementing what
-| meets the application's requirements.
+<note>
+It is not possible for the grid to provide a generic solution for row
+dragging that fits all usage scenarios. The way around this is the grid
+fires events and the application is responsible for implementing what
+meets the application's requirements.
+</note>
 
 ### Row Drag Events
 
@@ -147,8 +148,9 @@ The simple example doesn't add anything that managed dragging gives (the first
 example on this page). Things get interesting when we introduce complex scenarios
 such as row grouping or tree data, which are explained below.
 
-[[note]]
-|Dragging Multiple Rows with unmanaged row dragging, the application is in control of what gets dragged, so it is possible to use the events to drag more than one row at a time, e.g. to move all selected rows in one go if using row selection.
+<note>
+Dragging Multiple Rows with unmanaged row dragging, the application is in control of what gets dragged, so it is possible to use the events to drag more than one row at a time, e.g. to move all selected rows in one go if using row selection.
+</note>
 
 ## Entire Row Dragging
 

@@ -6,8 +6,9 @@ enterprise: true
 Selecting rows and groups in the Server-Side Row Model is supported.
 Just set the property `rowSelection` to either `'single'` or `'multiple'` as with any other row model.
 
-[[note]]
-| Server-Side Row Selection requires [Row ID's](/server-side-model-configuration/#providing-row-ids) to be supplied to grid.
+<note>
+Server-Side Row Selection requires [Row ID's](../server-side-model-configuration/#providing-row-ids) to be supplied to grid.
+</note>
 
 ## Enabling Row Selection
 
@@ -44,8 +45,9 @@ The following example demonstrates select-all with the SSRM. Note the following;
 
 <grid-example title='Header Checkbox Selection' name='select-all' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
-[[note]]
-| When using header checkbox selection with the server-side row model, you should **not** use the api functions `getSelectedNodes()` or `getSelectedRows()`. See the [Selection API](/server-side-model-selection/#selection-api) section below for suggested alternatives.
+<note>
+When using header checkbox selection with the server-side row model, you should **not** use the api functions `getSelectedNodes()` or `getSelectedRows()`. See the [Selection API](../server-side-model-selection/#selection-api) section below for suggested alternatives.
+</note>
 
 ## Group Selection
 
@@ -59,8 +61,9 @@ The following example demonstrates `groupSelectsChildren` with the SSRM. Note th
 
 <grid-example title='Group Selection' name='group-selects-children' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
-[[note]]
-| When using group selection with the server-side row model, you should **not** use the api functions `getSelectedNodes()` or `getSelectedRows()`. See the [Selection API](/server-side-model-selection/#selection-api) section below for suggested alternatives.
+<note>
+When using group selection with the server-side row model, you should **not** use the api functions `getSelectedNodes()` or `getSelectedRows()`. See the [Selection API](../server-side-model-selection/#selection-api) section below for suggested alternatives.
+</note>
 
 ### Transactions
 

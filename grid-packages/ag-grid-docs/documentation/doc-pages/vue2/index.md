@@ -131,7 +131,7 @@ new Vue({
 
 <br/><br/>
 
-[[note]]
+<note>
 | We offer two versions of Vue support - one for Vue 2 and one for Vue 3. The only difference
 | in use is how you import the dependency:
 |
@@ -149,6 +149,7 @@ new Vue({
 |
 | For the Vue 3 version of this tutorial please see the documentation [here.](/getting-started/)
 |
+</note>
 
 ## Add AG Grid to Your Project
 
@@ -270,9 +271,10 @@ The code above imports the grid "structure" stylesheet (`ag-grid.css`), and one 
 available grid themes: (`ag-theme-alpine.css`). AG Grid ships several different themes - pick one that
 matches your project design.
 
-[[note]]
-| In a later section we documentation on how you can [Customise the Theme Look](#customise-the-theme-look-2)
-| using SCSS, which is our recommended approach.
+<note>
+In a later section we documentation on how you can [Customise the Theme Look](#customise-the-theme-look-2)
+using SCSS, which is our recommended approach.
+</note>
 
 As this will be a simple example we can delete the `src/components` directory - our example
 application will live in `src/App.vue`.
@@ -547,10 +549,11 @@ done with the tutorial.
 
 ## Grouping (enterprise)
 
-[[note]]
-| Grouping is a feature exclusive to AG Grid Enterprise. You are free to trial AG Grid Enterprise
-| to see what you think. You only need to get in touch if you want to start using AG Grid Enterprise
-| in a project intended for production.
+<note>
+Grouping is a feature exclusive to AG Grid Enterprise. You are free to trial AG Grid Enterprise
+to see what you think. You only need to get in touch if you want to start using AG Grid Enterprise
+in a project intended for production.
+</note>
 
 In addition to filtering and sorting, [grouping](/grouping/) is another effective way for the user
 to make sense out of large amounts of data.
@@ -664,10 +667,11 @@ checkbox that selects/deselects all items in the group.
 Note that we also removed `checkboxSelection: true` from the `make` column definition as the `autoGroupColumnDef` definition allows for checkbox selection
 at both the group and leaf level.
 
-[[note]]
-| Don't worry if this step feels a bit overwhelming - the  grouping feature is very powerful and
-| supports complex interaction scenarios which you might not need initially. The grouping documentation
-| section contains plenty of real-world runnable examples that can get you started for your particular case.
+<note>
+Don't worry if this step feels a bit overwhelming - the  grouping feature is very powerful and
+supports complex interaction scenarios which you might not need initially. The grouping documentation
+section contains plenty of real-world runnable examples that can get you started for your particular case.
+</note>
 
 ## Customise the Theme Look
 

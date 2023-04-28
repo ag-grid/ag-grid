@@ -15,8 +15,9 @@ We will develop an Olympic Medals application that demonstrates how data can be 
 
 <image-caption src="server-side-operations-spark/resources/spark-enterprise-app.png" alt="Spark" constrained="true"></image-caption>
 
-[[note]]
-| The reference implementation covered in this guide is for demonstration purposes only. If you use this in production it comes with no warranty or support.
+<note>
+The reference implementation covered in this guide is for demonstration purposes only. If you use this in production it comes with no warranty or support.
+</note>
 
 The source code can be found here: [https://github.com/ag-grid/ag-grid-server-side-apache-spark-example](https://github.com/ag-grid/ag-grid-server-side-apache-spark-example)
 

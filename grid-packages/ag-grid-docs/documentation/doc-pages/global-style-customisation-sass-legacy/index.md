@@ -14,8 +14,9 @@ In order to opt in to the Legacy Sass API, set your project up to compile Sass a
 1. `@import` the structural styles from `ag-grid-community/src/styles/ag-grid.scss`
 2. `@import` the theme mixin from `ag-grid-community/src/styles/ag-theme-{themename}/sass/ag-theme-{themename}-mixin.scss`
 
-[[note]]
-| Both stylesheets need to be included with the structural styles (`ag-grid.css`) loaded before theme styles (`ag-theme-{theme-name}.css`).
+<note>
+Both stylesheets need to be included with the structural styles (`ag-grid.css`) loaded before theme styles (`ag-theme-{theme-name}.css`).
+</note>
 
 It's up to you how to integrate Sass into your project build, but we like to use webpack, since it provides various loaders that optimise and reduce the final size of the bundle. We provide a [general webpack example](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/legacy/vanilla) appropriate for Vanilla JS and React projects, and an [angular example](https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/legacy/angular) using Angular CLI.
 
@@ -90,8 +91,9 @@ layout. The grid uses several strategies to work out the right size:
 
 ## Setting colour parameters using CSS variables
 
-[[note]]
-| Using the Legacy Sass API means that only color parameters can be overridden using CSS variables, instead of the full set of variables supported when using CSS themes or the new Sass Styling API..
+<note>
+Using the Legacy Sass API means that only color parameters can be overridden using CSS variables, instead of the full set of variables supported when using CSS themes or the new Sass Styling API..
+</note>
 
 CSS variables (officially known to as "CSS Custom Properties") allow a named property to be set in one place and used in many places. Any parameter whose name ends with `-color` is available as a CSS variable with the prefix `--ag-`. For example the `foreground-color` parameter can be set as follows:
 
@@ -133,9 +135,10 @@ parameters alone. For example, there is no parameter to set the `font-style: ita
 }
 ```
 
-[[note]]
-| It is important to include the name of the theme in the rule: `.ag-theme-alpine .ag-header-cell-label { ... } `.
-| Without the theme name, your styles will not override the theme's built-in styles due to CSS selector specificity rules.
+<note>
+It is important to include the name of the theme in the rule: `.ag-theme-alpine .ag-header-cell-label { ... } `.
+Without the theme name, your styles will not override the theme's built-in styles due to CSS selector specificity rules.
+</note>
 
 The best way to find the right class name to use in a CSS rule is using the browser's developer tools. You will notice that components often have multiple class names, some more general than others. For example, the [row grouping panel](/tool-panel-columns/#column-tool-panel-example) is a component onto which you can drag columns to group them. The internal name for this is the "column drop" component, and there are two kinds - a horizontal one at the top of the header and a vertical one in the columns tool panel. You can use the class name `ag-column-drop` to target either kind, or `ag-column-drop-vertical` / `ag-column-drop-horizontal` to target one only.
 

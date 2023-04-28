@@ -23,11 +23,12 @@ A [cell renderer](/component-cell-renderer/) allows you to put whatever HTML you
 
 The answer is that value formatters are for text formatting and cell renderers are for when you want to include HTML markup and potentially functionality to the cell. So for example, if you want to put punctuation into a value, use a value formatter, but if you want to put buttons or HTML links use a cell renderer. It is possible to use a combination of both, in which case the result of the value formatter will be passed to the cell renderer.
 
-[[note]]
-| Be aware that the Value Formatter params won't always have 'data' and 'node' supplied, e.g. the
-| params supplied to the Value Formatter in the [Set Filter](/filter-set/).
-| As a result favour formatter implementations that rely upon the 'value' argument instead, as this
-| will lead to better reuse of your Value Formatters.
+<note>
+Be aware that the Value Formatter params won't always have 'data' and 'node' supplied, e.g. the
+params supplied to the Value Formatter in the [Set Filter](../filter-set/).
+As a result favour formatter implementations that rely upon the 'value' argument instead, as this
+will lead to better reuse of your Value Formatters.
+</note>
 
 ## Value Formatter Example
 

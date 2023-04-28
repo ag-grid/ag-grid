@@ -28,10 +28,11 @@ Things to try:
 
 <grid-example title='Tool Panel Simple' name='simple' type='generated' options='{ "enterprise": true, "exampleHeight": 630, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel"] }'></grid-example>
 
-[[note]]
-| Remember to mark the column definitions with `enableRowGroup` for grouping, `enablePivot`
-| for pivoting and `enableValue` for aggregation, otherwise you won't be able to drag and drop the
-| columns to the desired sections.
+<note>
+Remember to mark the column definitions with `enableRowGroup` for grouping, `enablePivot`
+for pivoting and `enableValue` for aggregation, otherwise you won't be able to drag and drop the
+columns to the desired sections.
+</note>
 
 ## Selection Action
 
@@ -264,8 +265,9 @@ const gridOptions = {
 
 Notice from the snippet above that it's possible to define column groups in the tool panel that don't exist in the grid. Also note that columns can be omitted or positioned in a different order but all referenced columns must already exist in the grid.
 
-[[note]]
-| When providing a custom layout it is recommended to enable both `suppressSyncLayoutWithGrid` and `suppressColumnMove` (see [Suppress Column Reordering](/tool-panel-columns/#suppress-column-reordering) for more details).
+<note>
+When providing a custom layout it is recommended to enable both `suppressSyncLayoutWithGrid` and `suppressColumnMove` (see [Suppress Column Reordering](../tool-panel-columns/#suppress-column-reordering) for more details).
+</note>
 
 The example below shows two custom layouts for the Columns Tool Panel. Note the following:
 

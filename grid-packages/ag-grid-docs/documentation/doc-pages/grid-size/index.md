@@ -99,9 +99,10 @@ The example below demonstrates the autoHeight feature. Notice the following:
 - Vertical scrolling will not happen, however horizontal scrolling, including pinned columns, will work as normal.
 - It is possible to move the grid into and out of 'full height' mode by using the `api.setDomLayout()` or by changing the bound property `domLayout`.
 
-[[note]]
-| The following test is best viewed if you open it in a new tab, so it is obvious that there are no scroll bars.
-| Note that if you use the example inlined the scroll bars shown are for the containing `iframe`, not the grid.
+<note>
+The following test is best viewed if you open it in a new tab, so it is obvious that there are no scroll bars.
+Note that if you use the example inlined the scroll bars shown are for the containing `iframe`, not the grid.
+</note>
 
 <grid-example title='Auto Height' name='auto-height' type='generated' options='{ "enterprise": true, "exampleHeight": 660, "noStyle": 1, "myGridReference": 1, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
@@ -127,17 +128,19 @@ There is a minimum height of 50px for displaying the rows for autoheight. This i
 
 It is not possible to specify a max height when using auto-height.
 
-[[note]]
-| Users ask is it possible to set a max height when using auto-height? The answer is no.
-| If using auto-height, the grid is set up to work in a different way. It is not possible to switch.
-| If you do need to switch, you will need to turn auto-height off.
+<note>
+Users ask is it possible to set a max height when using auto-height? The answer is no.
+If using auto-height, the grid is set up to work in a different way. It is not possible to switch.
+If you do need to switch, you will need to turn auto-height off.
+</note>
 
 ## Resize with Parent Container
 
 We can dynamically react to screen changes by making use of the grid API features. In this section we describe a few recommended approaches to resize the grid and show/hide columns based on screen size changes.
 
-[[note]]
-| These recipes below are suggestions - as the grid can be placed & positioned in your application in many ways and with many frameworks the suggestions below may not work out of the box in your particular application, but they should serve to help point you in the right direction.
+<note>
+These recipes below are suggestions - as the grid can be placed & positioned in your application in many ways and with many frameworks the suggestions below may not work out of the box in your particular application, but they should serve to help point you in the right direction.
+</note>
 
 ### Inside Flexbox Container
 

@@ -9,8 +9,9 @@ The Legacy Sass API is deprecated and will be removed from the Grid in a future 
 | 
 | Follow the instructions in this document to upgrade.
 
-[[note]]
-| If you need to make changes to an app that is still using the legacy API, you can consult the [Archived Documentation for the Legacy API](/global-style-customisation-sass-legacy/).
+<note>
+If you need to make changes to an app that is still using the legacy API, you can consult the [Archived Documentation for the Legacy API](/global-style-customisation-sass-legacy/).
+</note>
 
 ### Benefits of the new API
 

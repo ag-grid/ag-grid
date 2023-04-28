@@ -48,8 +48,9 @@ Then import the AG Grid Enterprise package in your application before any grid i
 import 'ag-grid-enterprise';
 ```
 
-[[note]]
-| The versions of `ag-grid-community` and `ag-grid-enterprise` should match. They are released in tandem and expect to be on the same version.
+<note>
+The versions of `ag-grid-community` and `ag-grid-enterprise` should match. They are released in tandem and expect to be on the same version.
+</note>
 
 
 ### Via Grid Modules
@@ -106,8 +107,9 @@ Then depending on your choice of framework you'll need to provide the modules to
 | </ag-grid-vue>
 | ```
 
-[[note]]
-| The versions of the modules you use, `@ag-grid-community/**` and `@ag-grid-enterprise/**` should match. They are released in tandem and expect to be on the same version.
+<note>
+The versions of the modules you use, `@ag-grid-community/**` and `@ag-grid-enterprise/**` should match. They are released in tandem and expect to be on the same version.
+</note>
 
 ## Trial License Key
 
@@ -124,10 +126,12 @@ Set the license key via the JavaScript method as described below. AG Grid checks
 
 Note that you must pass the key exactly as provided by AG Grid - do not modify the key in any way.
 
-[[note]]
-| If you are distributing your product and including AG Grid Enterprise, we realise that your license key will be
-| visible to others. We appreciate that this is happening and just ask that you don't advertise it. Given our
-| product is JavaScript, there is little we can do to prevent this.
+<note>
+If you are distributing your product and including AG Grid Enterprise, we realise that your license key will be
+visible to others. We appreciate that this is happening and just ask that you don't advertise it. Given our
+product is JavaScript, there is little we can do to prevent this.
+</note>
+
 ### Via CommonJS
 Use this if you are using CommonJS to load AG Grid.
 
@@ -164,9 +168,10 @@ import { LicenseManager } from '@ag-grid-enterprise/core'
 
 LicenseManager.setLicenseKey("your license key")
 ```
-[[note]]
-| If you're using _any_ Enterprise feature then `@ag-grid-enterprise/core` will be available - you do not need to specify it as a dependency.
 
+<note>
+If you're using _any_ Enterprise feature then `@ag-grid-enterprise/core` will be available - you do not need to specify it as a dependency.
+</note>
 
 ### Do Not Mix Loading Mechanisms
 
