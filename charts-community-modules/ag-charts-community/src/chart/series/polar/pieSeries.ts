@@ -11,6 +11,7 @@ import { SeriesNodeDatum, HighlightStyle, SeriesTooltip, SeriesNodeBaseClickEven
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { normalizeAngle180, toRadians } from '../../../util/angle';
+import { paramsFunction } from '../../../util/function';
 import { toFixed, mod } from '../../../util/number';
 import { Layers } from '../../layers';
 import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
@@ -26,6 +27,7 @@ import {
     OPT_LINE_DASH,
     OPT_NUMBER,
     OPT_STRING,
+    OPT_STRING_OR_FUNCTION,
     STRING,
     COLOR_STRING_ARRAY,
     OPT_COLOR_STRING_ARRAY,
@@ -110,8 +112,8 @@ class PieSeriesCalloutLabel extends Label {
     @Validate(NUMBER(0))
     minAngle = 0; // in degrees
 
-    @Validate(OPT_FUNCTION)
-    formatter?: (params: AgPieSeriesLabelFormatterParams<any>) => string = undefined;
+    @Validate(OPT_STRING_OR_FUNCTION)
+    formatter?: ((params: AgPieSeriesLabelFormatterParams<any>) => string) | string = undefined;
 
     @Validate(NUMBER(0))
     minSpacing = 4;
@@ -127,8 +129,8 @@ class PieSeriesSectorLabel extends Label {
     @Validate(NUMBER(0, 1))
     positionRatio = 0.5;
 
-    @Validate(OPT_FUNCTION)
-    formatter?: (params: AgPieSeriesLabelFormatterParams<any>) => string = undefined;
+    @Validate(OPT_STRING_OR_FUNCTION)
+    formatter?: ((params: AgPieSeriesLabelFormatterParams<any>) => string) | string = undefined;
 }
 
 class PieSeriesCalloutLine {
@@ -324,8 +326,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     @Validate(NUMBER(0))
     lineDashOffset: number = 0;
 
-    @Validate(OPT_FUNCTION)
-    formatter?: (params: AgPieSeriesFormatterParams<any>) => AgPieSeriesFormat = undefined;
+    @Validate(OPT_STRING_OR_FUNCTION)
+    formatter?: ((params: AgPieSeriesFormatterParams<any>) => AgPieSeriesFormat) | string = undefined;
 
     /**
      * The series rotation in degrees.
@@ -417,7 +419,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             return angleData.map((datum) => (sum += datum / angleDataTotal));
         })();
 
-        const labelFormatter = calloutLabel.formatter;
+        const labelFormatter = paramsFunction(calloutLabel.formatter);
         const labelKey = calloutLabel.enabled ? this.calloutLabelKey : undefined;
         const sectorLabelKey = sectorLabel.enabled ? this.sectorLabelKey : undefined;
         let labelData: string[] = [];
@@ -451,7 +453,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             }
         }
 
-        const sectorLabelFormatter = sectorLabel.formatter;
+        const sectorLabelFormatter = paramsFunction(sectorLabel.formatter);
 
         if (sectorLabelKey) {
             if (sectorLabelFormatter) {
@@ -556,7 +558,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     private getSectorFormat(datum: any, itemId: any, index: number, highlight: any): AgPieSeriesFormat {
-        const { angleKey, radiusKey, fills, strokes, fillOpacity: seriesFillOpacity, formatter, id: seriesId } = this;
+        const { angleKey, radiusKey, fills, strokes, fillOpacity: seriesFillOpacity, id: seriesId } = this;
+        const formatter = paramsFunction(this.formatter);
 
         const highlightedDatum = this.highlightManager?.getActiveHighlight();
         const isDatumHighlighted = highlight && highlightedDatum?.series === this && itemId === highlightedDatum.itemId;

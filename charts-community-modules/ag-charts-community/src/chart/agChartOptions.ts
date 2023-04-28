@@ -1380,7 +1380,7 @@ export interface AgPieSeriesLabelOptions<DatumType> extends AgChartLabelOptions 
     /** Minimum angle in degrees required for a sector to show a label. */
     minAngle?: number;
     /** A function that allows the modification of the label text based on input parameters. */
-    formatter?: (params: AgPieSeriesLabelFormatterParams<DatumType>) => string;
+    formatter?: ((params: AgPieSeriesLabelFormatterParams<DatumType>) => string) | string;
 }
 
 export interface AgPieSeriesSectorLabelOptions<DatumType> extends AgChartLabelOptions {
@@ -1389,7 +1389,7 @@ export interface AgPieSeriesSectorLabelOptions<DatumType> extends AgChartLabelOp
     /** Position of labels as a ratio proportional to pie radius (or doughnut thickness). Additional offset in pixels can be applied by using positionOffset. */
     positionRatio?: Ratio;
     /** A function that allows the modification of the label text based on input parameters. */
-    formatter?: (params: AgPieSeriesLabelFormatterParams<DatumType>) => string;
+    formatter?: ((params: AgPieSeriesLabelFormatterParams<DatumType>) => string) | string;
 }
 
 export interface AgPieSeriesFormatterParams<DatumType> {
@@ -1519,7 +1519,7 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     /** Configuration for the area inside the series, only visible when rendering a doughnut chart by using innerRadiusOffset or innerRadiusRatio */
     innerCircle?: AgDoughnutInnerCircle;
     /** A formatter function for adjusting the styling of the pie sectors. */
-    formatter?: (params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat;
+    formatter?: ((params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat) | string;
     /** A map of event names to event listeners. */
     listeners?: AgSeriesListeners<DatumType>;
 }

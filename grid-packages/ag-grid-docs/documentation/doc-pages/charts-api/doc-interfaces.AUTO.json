@@ -982,8 +982,7 @@
     "formatter": {
       "description": "/** A formatter function for adjusting the styling of the pie sectors. */",
       "type": {
-        "arguments": { "params": "AgPieSeriesFormatterParams<DatumType>" },
-        "returnType": "AgPieSeriesFormat",
+        "returnType": "((params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat) | string",
         "optional": true
       }
     },
@@ -3985,8 +3984,7 @@
     "formatter": {
       "description": "/** A function that allows the modification of the label text based on input parameters. */",
       "type": {
-        "arguments": { "params": "AgPieSeriesLabelFormatterParams<DatumType>" },
-        "returnType": "string",
+        "returnType": "((params: AgPieSeriesLabelFormatterParams<DatumType>) => string) | string",
         "optional": true
       }
     },
@@ -4028,8 +4026,7 @@
     "formatter": {
       "description": "/** A function that allows the modification of the label text based on input parameters. */",
       "type": {
-        "arguments": { "params": "AgPieSeriesLabelFormatterParams<DatumType>" },
-        "returnType": "string",
+        "returnType": "((params: AgPieSeriesLabelFormatterParams<DatumType>) => string) | string",
         "optional": true
       }
     },
@@ -4345,8 +4342,7 @@
     "formatter": {
       "description": "/** A formatter function for adjusting the styling of the pie sectors. */",
       "type": {
-        "arguments": { "params": "AgPieSeriesFormatterParams<DatumType>" },
-        "returnType": "AgPieSeriesFormat",
+        "returnType": "((params: AgPieSeriesFormatterParams<DatumType>) => AgPieSeriesFormat) | string",
         "optional": true
       }
     },

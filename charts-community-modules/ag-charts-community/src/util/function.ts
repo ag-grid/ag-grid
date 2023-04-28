@@ -18,3 +18,14 @@ export function clearDoOnceFlags() {
         delete doOnceFlags[key];
     }
 }
+
+export function createFunctionFromString(args: string[], body: string) {
+    return new Function(args.join(', '), body.includes('return ') ? body : `return ${body};`);
+}
+
+export function paramsFunction<F extends (params: any) => any>(fn: F | string | undefined): F | undefined {
+    if (!fn || typeof fn === 'function') {
+        return fn as F | undefined;
+    }
+    return createFunctionFromString(['params'], fn) as F;
+}
