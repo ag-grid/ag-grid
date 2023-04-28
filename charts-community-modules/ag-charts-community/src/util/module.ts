@@ -67,7 +67,7 @@ export interface RootModule<M extends ModuleInstance = ModuleInstance> extends B
 export interface AxisModule<M extends ModuleInstance = ModuleInstance> extends BaseModule {
     type: 'axis';
 
-    axisTypes: ('category' | 'groupedCategory' | 'number' | 'log' | 'time')[];
+    axisTypes: ('category' | 'number' | 'log' | 'time')[];
 
     instanceConstructor: new (ctx: ModuleContextWithParent<AxisContext>) => M;
 

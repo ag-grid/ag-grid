@@ -7,7 +7,7 @@ export const CrosshairModule: _ModuleSupport.AxisModule = {
     optionsKey: 'crosshair',
     packageType: 'enterprise',
     chartTypes: ['cartesian'],
-    axisTypes: ['category', 'groupedCategory', 'number', 'log', 'time'],
+    axisTypes: ['category', 'number', 'log', 'time'],
     instanceConstructor: Crosshair,
     themeTemplate: AXIS_CROSSHAIR_THEME,
 };

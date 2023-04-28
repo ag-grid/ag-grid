@@ -4479,7 +4479,7 @@
     "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
     "type": {
       "type": "'axis'",
-      "axisTypes": "('category' | 'groupedCategory' | 'number' | 'log' | 'time')[]",
+      "axisTypes": "('category' | 'number' | 'log' | 'time')[]",
       "instanceConstructor": "new (ctx: ModuleContextWithParent<AxisContext>) => M",
       "themeTemplate": "{}",
       "optionsKey": "string",

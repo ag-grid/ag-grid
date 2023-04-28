@@ -6350,7 +6350,7 @@
     "type": { "type": { "returnType": "'axis'", "optional": false } },
     "axisTypes": {
       "type": {
-        "returnType": "('category' | 'groupedCategory' | 'number' | 'log' | 'time')[]",
+        "returnType": "('category' | 'number' | 'log' | 'time')[]",
         "optional": false
       }
     },
