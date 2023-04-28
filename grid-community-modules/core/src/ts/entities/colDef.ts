@@ -115,7 +115,7 @@ type NestedPath<TValue, Prefix extends string> =
 /**
  * Returns a union of all possible paths to nested fields in `TData`.
  */
-export type NestedFieldPaths<TData> = {
+export type NestedFieldPaths<TData = any> = {
     [TKey in StringOrNumKeys<TData>]: `${TKey}` | NestedPath<TData[TKey], `${TKey}`>;
 }[StringOrNumKeys<TData>];
 
