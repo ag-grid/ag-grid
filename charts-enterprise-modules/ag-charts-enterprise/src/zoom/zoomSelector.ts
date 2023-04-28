@@ -136,7 +136,9 @@ export class ZoomSelector {
         if (!bbox) return;
 
         const { rect } = this;
-        let { x, y, width, height } = this.getNormalisedDimensions();
+        const normal = this.getNormalisedDimensions();
+        const { width, height } = normal;
+        let { x, y } = normal;
 
         x = Math.max(x, bbox.x);
         x -= Math.max(0, x + width - (bbox.x + bbox.width));
