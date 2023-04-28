@@ -809,7 +809,7 @@
   "NestedPath": {
     "meta": { "typeParams": ["TValue", "Prefix extends string"] }
   },
-  "NestedFieldPaths": { "meta": { "typeParams": ["TData"] } },
+  "NestedFieldPaths": { "meta": { "typeParams": ["TData = any"] } },
   "ColDef": {
     "colId": {
       "description": "/** The unique ID to give the column. This is optional. If missing, the ID will default to the field.\n     *  If both field and colId are missing, a unique ID will be generated.\n     *  This ID is used to identify the column in the API for sorting, filtering etc. */",

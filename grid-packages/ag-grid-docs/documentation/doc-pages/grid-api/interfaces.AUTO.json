@@ -526,7 +526,7 @@
     "type": "TValue extends object ? `${Prefix}.${NestedFieldPaths<TValue>}` : never"
   },
   "NestedFieldPaths": {
-    "meta": { "isTypeAlias": true, "typeParams": ["TData"] },
+    "meta": { "isTypeAlias": true, "typeParams": ["TData = any"] },
     "type": "{ [TKey in StringOrNumKeys<TData>]: `${TKey}` | NestedPath<TData[TKey], `${TKey}`>; }[StringOrNumKeys<TData>]"
   },
   "ColDef": {
