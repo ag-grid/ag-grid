@@ -281,15 +281,41 @@ export class Text extends Shape {
         }
     }
 
-    static wrap(text: string, maxWidth: number, font: string, fontSize: number): string {
+    static wrap(
+        text: string,
+        maxWidth: number,
+        maxHeight: number,
+        font: string,
+        fontSize: number,
+        truncate: boolean
+    ): string {
         const lines: string[] = text.split(/\r?\n/g);
-        const result = lines.map((l) => Text.wrapLine(l, maxWidth, font, fontSize));
+        const result: string[] = [];
+        let cumulativeHeight = 0;
+        for (const line of lines) {
+            const wrappedLine = Text.wrapLine(line, maxWidth, maxHeight, font, fontSize, truncate, cumulativeHeight);
+            result.push(wrappedLine.result);
+            cumulativeHeight = wrappedLine.cumulativeHeight;
+            if (wrappedLine.truncated) {
+                break;
+            }
+        }
         return result.join('\n');
     }
 
-    static wrapLine(text: string, maxWidth: number, font: string, fontSize: number) {
+    static wrapLine(
+        text: string,
+        maxWidth: number,
+        maxHeight: number,
+        font: string,
+        fontSize: number,
+        truncate: boolean,
+        cumulativeHeight: number
+    ): { result: string; truncated: boolean; cumulativeHeight: number } {
         const lines: string[] = [];
         const guesstimate = Math.max(1, Math.round(maxWidth / fontSize));
+        const ellipsis = '\u2026';
+        let truncated = false;
 
         const sliceText = (text: string, startIndex: number) => {
             const whiteSpaceIndex = text.indexOf(' ', startIndex);
@@ -307,14 +333,22 @@ export class Text extends Shape {
             let result = text;
             let index = text.length;
             let addHyphen = false;
-            let width = HdpiCanvas.getTextSize(text, font).width;
+            let { width, height } = HdpiCanvas.getTextSize(text, font);
 
             const maxCount = 10;
             let count: number = 0;
             while (width > maxWidth && count < maxCount) {
                 ({ result, index, addHyphen } = sliceText(result, Math.min(guesstimate, index)));
-                width = HdpiCanvas.getTextSize(result.concat(addHyphen ? '-' : ''), font).width;
+                ({ width, height } = HdpiCanvas.getTextSize(result.concat(addHyphen ? '-' : ''), font));
                 count++;
+            }
+
+            cumulativeHeight += height;
+
+            if (truncate && cumulativeHeight > maxHeight) {
+                lines.push(result.slice(0, result.length - 3).concat(ellipsis));
+                truncated = true;
+                return;
             }
 
             lines.push(result.concat(addHyphen ? '-' : ''));
@@ -326,7 +360,7 @@ export class Text extends Shape {
         }
 
         processText(text.trim());
-        return lines.join('\n');
+        return { result: lines.join('\n'), truncated, cumulativeHeight };
     }
 }
 
