@@ -126,8 +126,8 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
             setRole: value => setRole(value),
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
-            setCellCtrls: (next, forceFlush) => {
-                agFlushSync(forceFlush, () => {
+            setCellCtrls: (next, useFlushSync) => {
+                agFlushSync(useFlushSync, () => {
                     setCellCtrls(prev => maintainOrderOnColumns(prev, next, domOrder));
                 });
             },

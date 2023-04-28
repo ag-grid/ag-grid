@@ -49,10 +49,11 @@ const createRootAndFlushSyncAvailable = (ReactDOM as any).createRoot != null && 
 
 /**
  * Wrapper around flushSync to provide backwards compatibility with React 16-17
- * @param fn 
+ * Also allows us to control via the `useFlushSync` param whether we want to use flushSync or not
+ * as we do not want to use flushSync when we are likely to already be in a render cycle
  */
-export const agFlushSync = (forceFlush: boolean, fn: () => void) => {
-    if (createRootAndFlushSyncAvailable && forceFlush) { // agFlushSyncActive activeFlushSyncs === 0
+export const agFlushSync = (useFlushSync: boolean, fn: () => void) => {
+    if (createRootAndFlushSyncAvailable && useFlushSync) {
         (ReactDOM as any).flushSync(fn);
     } else {
         fn();

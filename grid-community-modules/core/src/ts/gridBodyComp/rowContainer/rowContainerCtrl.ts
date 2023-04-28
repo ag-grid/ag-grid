@@ -112,7 +112,7 @@ const WrapperCssClasses: Map<RowContainerName, string> = convertToMap([
 
 export interface IRowContainerComp {
     setViewportHeight(height: string): void;
-    setRowCtrls(rowCtrls: RowCtrl[], flushSync: boolean): void;
+    setRowCtrls(rowCtrls: RowCtrl[], useFlushSync: boolean): void;
     setDomOrder(domOrder: boolean): void;
     setContainerWidth(width: string): void;
 }
@@ -286,7 +286,7 @@ export class RowContainerCtrl extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, () => this.onScrollVisibilityChanged());
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, () => this.onDisplayedColumnsChanged());
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => this.onDisplayedColumnsWidthChanged());
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, (params: DisplayedRowsChangedEvent) => this.onDisplayedRowsChanged(params.flushSync));
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, (params: DisplayedRowsChangedEvent) => this.onDisplayedRowsChanged(params.afterScroll));
 
         this.onScrollVisibilityChanged();
         this.onDisplayedColumnsChanged();
@@ -436,7 +436,7 @@ export class RowContainerCtrl extends BeanStub {
         }
     }
 
-    private onDisplayedRowsChanged(flushSync: boolean = false): void {
+    private onDisplayedRowsChanged(useFlushSync: boolean = false): void {
         if (this.visible) {
             const printLayout = this.gridOptionsService.isDomLayout('print');
             const doesRowMatch = (rowCtrl: RowCtrl) => {
@@ -452,7 +452,7 @@ export class RowContainerCtrl extends BeanStub {
             // this list contains either all pinned top, center or pinned bottom rows
             // this filters out rows not for this container, eg if it's a full with row, but we are not full with container
             const rowsThisContainer = this.getRowCtrls().filter(doesRowMatch);
-            this.comp.setRowCtrls(rowsThisContainer, flushSync);
+            this.comp.setRowCtrls(rowsThisContainer, useFlushSync);
         } else {
             this.comp.setRowCtrls(this.EMPTY_CTRLS, false);
         }

@@ -38,7 +38,7 @@ let instanceIdSequence = 0;
 export interface IRowComp {
     setDomOrder(domOrder: boolean): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
-    setCellCtrls(cellCtrls: CellCtrl[], flushSync: boolean): void;
+    setCellCtrls(cellCtrls: CellCtrl[], useFlushSync: boolean): void;
     showFullWidth(compDetails: UserCompDetails): void;
     getFullWidthCellRenderer(): ICellRenderer | null | undefined;
     setTop(top: string): void;
@@ -427,7 +427,7 @@ export class RowCtrl extends BeanStub {
         }
     }
 
-    private updateColumnLists(suppressAnimationFrame = false, flushSync = false): void {
+    private updateColumnLists(suppressAnimationFrame = false, useFlushSync = false): void {
 
         if (this.isFullWidth()) { return; }
 
@@ -436,7 +436,7 @@ export class RowCtrl extends BeanStub {
             || this.printLayout;
 
         if (noAnimation) {
-            this.updateColumnListsImpl(flushSync);
+            this.updateColumnListsImpl(useFlushSync);
             return;
         }
 
@@ -491,7 +491,7 @@ export class RowCtrl extends BeanStub {
         return res;
     }
 
-    private updateColumnListsImpl(flushSync = false): void {
+    private updateColumnListsImpl(useFlushSync = false): void {
         this.updateColumnListsPending = false;
         const columnModel = this.beans.columnModel;
         if (this.printLayout) {
@@ -512,7 +512,7 @@ export class RowCtrl extends BeanStub {
         this.allRowGuis.forEach(item => {
             const cellControls = item.containerType === RowContainerType.LEFT ? this.leftCellCtrls :
                 item.containerType === RowContainerType.RIGHT ? this.rightCellCtrls : this.centerCellCtrls;
-            item.rowComp.setCellCtrls(cellControls.list, flushSync);
+            item.rowComp.setCellCtrls(cellControls.list, useFlushSync);
         });
     }
 

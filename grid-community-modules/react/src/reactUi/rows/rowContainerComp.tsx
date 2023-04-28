@@ -40,9 +40,9 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
     // if domOrder=true, then we just copy rowCtrls into rowCtrlsOrdered observing order,
     // however if false, then we need to keep the order as they are in the dom, otherwise rowAnimation breaks
-    function updateRowCtrlsOrdered(forceFlush: boolean) {
+    function updateRowCtrlsOrdered(useFlushSync: boolean) {
 
-        agFlushSync(forceFlush, () => {
+        agFlushSync(useFlushSync, () => {
             setRowCtrlsOrdered(prev => {
                 const rowCtrls = rowCtrlsRef.current;
 
@@ -66,10 +66,10 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
         const compProxy: IRowContainerComp = {
             setViewportHeight: (height: string) => eViewport.current!.style.height = height,
-            setRowCtrls: (rowCtrls, forceFlush) => {
+            setRowCtrls: (rowCtrls, useFlushSync) => {
                 if(rowCtrlsRef.current !== rowCtrls){
                     rowCtrlsRef.current = rowCtrls;
-                    updateRowCtrlsOrdered(forceFlush);
+                    updateRowCtrlsOrdered(useFlushSync);
                 }
             },
             setDomOrder: domOrder => {

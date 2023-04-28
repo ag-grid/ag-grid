@@ -4993,7 +4993,7 @@
   "DisplayedRowsChangedEvent": {
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
-      "flushSync": "boolean",
+      "afterScroll": "boolean",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "TContext",
@@ -5776,7 +5776,7 @@
     "meta": {},
     "type": {
       "setViewportHeight(height: string)": "void",
-      "setRowCtrls(rowCtrls: RowCtrl[], flushSync: boolean)": "void",
+      "setRowCtrls(rowCtrls: RowCtrl[], useFlushSync: boolean)": "void",
       "setDomOrder(domOrder: boolean)": "void",
       "setContainerWidth(width: string)": "void"
     }
@@ -10921,7 +10921,7 @@
     "type": {
       "setDomOrder(domOrder: boolean)": "void",
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
-      "setCellCtrls(cellCtrls: CellCtrl[], flushSync: boolean)": "void",
+      "setCellCtrls(cellCtrls: CellCtrl[], useFlushSync: boolean)": "void",
       "showFullWidth(compDetails: UserCompDetails)": "void",
       "getFullWidthCellRenderer()": "ICellRenderer | null | undefined",
       "setTop(top: string)": "void",
