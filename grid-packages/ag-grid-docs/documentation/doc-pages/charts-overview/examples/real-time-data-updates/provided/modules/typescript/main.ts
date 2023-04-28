@@ -86,9 +86,6 @@ const options: AgCartesianChartOptions = {
       max: 100,
     },
   ],
-  legend: {
-    position: "bottom",
-  },
 }
 
 var chart = AgChart.create(options)
