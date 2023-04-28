@@ -6348,6 +6348,12 @@
   },
   "AxisModule": {
     "type": { "type": { "returnType": "'axis'", "optional": false } },
+    "axisTypes": {
+      "type": {
+        "returnType": "('category' | 'groupedCategory' | 'number' | 'log' | 'time')[]",
+        "optional": false
+      }
+    },
     "instanceConstructor": {
       "type": {
         "arguments": { "ctx": "ModuleContextWithParent<AxisContext>" },
@@ -6355,6 +6361,7 @@
         "optional": false
       }
     },
+    "themeTemplate": { "type": { "returnType": "{}", "optional": false } },
     "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
     "optionsKey": { "type": { "returnType": "string", "optional": false } },
     "packageType": {

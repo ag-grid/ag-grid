@@ -16,6 +16,7 @@ import {
     AgChartInteractionRange,
     AgTooltipPositionType,
 } from '../agChartOptions';
+import { CHART_AXES_TYPES, getAxisThemeTemplate } from '../chartAxesTypes';
 import { ChartType, CHART_TYPES, getChartDefaults } from '../factory/chartTypes';
 import { getSeriesThemeTemplate } from '../factory/seriesTypes';
 
@@ -692,6 +693,16 @@ export class ChartTheme {
                 }
                 return obj;
             }, {} as Record<string, any>);
+
+            if (chartType === 'cartesian') {
+                result.axes = CHART_AXES_TYPES.axesTypes.reduce((obj, axisType) => {
+                    const template = getAxisThemeTemplate(axisType);
+                    if (template) {
+                        obj[axisType] = this.templateTheme(template);
+                    }
+                    return obj;
+                }, {} as Record<string, any>);
+            }
             return result;
         };
 
