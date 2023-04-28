@@ -861,13 +861,6 @@
       "description": "/** Configuration for the series title. */",
       "type": { "returnType": "AgPieTitleOptions", "optional": true }
     },
-    "label": {
-      "description": "/** Configuration for the labels used outside of the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabel instead.\n     */",
-      "type": {
-        "returnType": "AgPieSeriesLabelOptions<DatumType>",
-        "optional": true
-      }
-    },
     "calloutLabel": {
       "description": "/** Configuration for the labels used outside of the sectors. */",
       "type": {
@@ -881,10 +874,6 @@
         "returnType": "AgPieSeriesSectorLabelOptions<DatumType>",
         "optional": true
       }
-    },
-    "callout": {
-      "description": "/** Configuration for the callout lines used with the labels for the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLine instead.\n     */",
-      "type": { "returnType": "AgPieSeriesCalloutOptions", "optional": true }
     },
     "calloutLine": {
       "description": "/** Configuration for the callout lines used with the labels for the sectors. */",
@@ -904,14 +893,6 @@
     },
     "radiusName": {
       "description": "/** A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "labelKey": {
-      "description": "/** The key to use to retrieve label values from the data.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "labelName": {
-      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": {
@@ -1379,10 +1360,6 @@
     }
   },
   "AgChartLegendLabelFormatterParams": {
-    "id": {
-      "description": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId. */",
-      "type": { "returnType": "string", "optional": false }
-    },
     "seriesId": { "type": { "returnType": "string", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": false } },
     "value": { "type": { "returnType": "string", "optional": false } }
@@ -1697,10 +1674,6 @@
       "description": "/** Event type. */",
       "type": { "returnType": "T", "optional": false }
     },
-    "series": {
-      "description": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "seriesId": {
       "description": "/** Series ID, as specified in series.id (or generated if not specified) */",
       "type": { "returnType": "string", "optional": false }
@@ -1753,10 +1726,6 @@
       "description": "/** Event type. */",
       "type": { "returnType": "T", "optional": false }
     },
-    "series": {
-      "description": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
-      "type": { "returnType": "any", "optional": false }
-    },
     "seriesId": {
       "description": "/** Series ID, as specified in series.id (or generated if not specified) */",
       "type": { "returnType": "string", "optional": false }
@@ -1807,10 +1776,6 @@
     "type": {
       "description": "/** Event type. */",
       "type": { "returnType": "T", "optional": false }
-    },
-    "series": {
-      "description": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
-      "type": { "returnType": "any", "optional": false }
     },
     "seriesId": {
       "description": "/** Series ID, as specified in series.id (or generated if not specified) */",
@@ -2614,10 +2579,6 @@
     "type": {
       "description": "/** Event type. */",
       "type": { "returnType": "'nodeClick'", "optional": false }
-    },
-    "series": {
-      "description": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
-      "type": { "returnType": "any", "optional": false }
     },
     "seriesId": {
       "description": "/** Series ID, as specified in series.id (or generated if not specified) */",
@@ -4288,13 +4249,6 @@
       "description": "/** Configuration for the series title. */",
       "type": { "returnType": "AgPieTitleOptions", "optional": true }
     },
-    "label": {
-      "description": "/** Configuration for the labels used outside of the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabel instead.\n     */",
-      "type": {
-        "returnType": "AgPieSeriesLabelOptions<DatumType>",
-        "optional": true
-      }
-    },
     "calloutLabel": {
       "description": "/** Configuration for the labels used outside of the sectors. */",
       "type": {
@@ -4308,10 +4262,6 @@
         "returnType": "AgPieSeriesSectorLabelOptions<DatumType>",
         "optional": true
       }
-    },
-    "callout": {
-      "description": "/** Configuration for the callout lines used with the labels for the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLine instead.\n     */",
-      "type": { "returnType": "AgPieSeriesCalloutOptions", "optional": true }
     },
     "calloutLine": {
       "description": "/** Configuration for the callout lines used with the labels for the sectors. */",
@@ -4331,14 +4281,6 @@
     },
     "radiusName": {
       "description": "/** A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "labelKey": {
-      "description": "/** The key to use to retrieve label values from the data.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "labelName": {
-      "description": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
       "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": {
@@ -4472,14 +4414,6 @@
     }
   },
   "AgPieSeriesTooltipRendererParams": {
-    "labelKey": {
-      "description": "/** labelKey as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "labelName": {
-      "description": "/** labelName as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
-      "type": { "returnType": "string", "optional": true }
-    },
     "calloutLabelKey": {
       "description": "/** calloutLabelKey as specified on series options. */",
       "type": { "returnType": "string", "optional": true }
@@ -4541,18 +4475,6 @@
     "datum": {
       "description": "/** Datum from the series data array that the label is being rendered for. */",
       "type": { "returnType": "DatumType", "optional": false }
-    },
-    "labelKey": {
-      "description": "/** labelKey as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelKey instead.\n     */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "labelValue": {
-      "description": "/** labelValue as read from series data via the labelKey property.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelValue instead.\n     */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "labelName": {
-      "description": "/** labelName as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelName instead.\n     */",
-      "type": { "returnType": "string", "optional": true }
     },
     "calloutLabelKey": {
       "description": "/** calloutLabelKey as specified on series options. */",
@@ -5356,7 +5278,6 @@
     }
   },
   "ChartAxisDirection": {},
-  "ChartType": {},
   "ChartUpdateType": {},
   "NodeData": {},
   "CrossLineType": {},
@@ -5471,6 +5392,8 @@
     }
   },
   "SeriesGetter": {},
+  "ChartType": {},
+  "SeriesConstructor": {},
   "Page": {},
   "Column": {},
   "DimensionProps": {
@@ -6033,12 +5956,6 @@
     }
   },
   "ChartThemeDefaults": {},
-  "ChartThemeParams": {
-    "seriesDefaults": { "type": { "returnType": "any", "optional": false } },
-    "defaultFontFamily": {
-      "type": { "returnType": "string", "optional": false }
-    }
-  },
   "DarkThemeParams": {
     "seriesLabelDefaults": {
       "type": { "returnType": "any", "optional": false }
@@ -6244,6 +6161,7 @@
       "type": { "returnType": "string[]", "optional": false }
     }
   },
+  "JsonApplyParams": {},
   "Classification": {},
   "MeasuredLabel": {
     "text": { "type": { "returnType": "string", "optional": false } },
@@ -6304,12 +6222,6 @@
     },
     "updateService": {
       "type": { "returnType": "UpdateService", "optional": false }
-    },
-    "optionsConstructors": {
-      "type": {
-        "returnType": "{\n        add(path: string, constructor: new () => any): void;\n        delete(path: string): void;\n    }",
-        "optional": false
-      }
     }
   },
   "ModuleContextWithParent": {
@@ -6345,12 +6257,6 @@
     },
     "updateService": {
       "type": { "returnType": "UpdateService", "optional": false }
-    },
-    "optionsConstructors": {
-      "type": {
-        "returnType": "{\n        add(path: string, constructor: new () => any): void;\n        delete(path: string): void;\n    }",
-        "optional": false
-      }
     }
   },
   "AxisContext": {
@@ -6388,46 +6294,11 @@
       }
     }
   },
-  "SeriesFactory": {},
-  "LegendModuleContext": {
-    "legendFactory": {
-      "type": {
-        "returnType": "{\n        add(factory: (ctx: ModuleContext) => ChartLegend): void;\n        delete(): void;\n    }",
-        "optional": false
-      }
-    }
-  },
-  "SeriesContext": {
-    "seriesFactory": {
-      "type": {
-        "returnType": "{\n        add(factory: SeriesFactory): void;\n        delete(): void;\n    }",
-        "optional": false
-      }
-    },
-    "defaults": {
-      "type": {
-        "returnType": "{\n        add(defaultOptions: any): void;\n        delete(): void;\n    }",
-        "optional": false
-      }
-    },
-    "themes": {
-      "type": {
-        "returnType": "{\n        chartTheme: {\n            add(fn: (params: ChartThemeParams) => any): void;\n            delete(): void;\n        };\n        darkTheme: {\n            add(fn: (params: DarkThemeParams) => any): void;\n            delete(): void;\n        };\n    }",
-        "optional": false
-      }
-    }
-  },
+  "LegendConstructor": {},
   "ModuleInstance": {
-    "update": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
-    },
     "destroy": {
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
-  },
-  "ModuleInstanceMeta": {
-    "instance": { "type": { "returnType": "M", "optional": false } },
-    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] }
   },
   "BaseModule": {
     "optionsKey": { "type": { "returnType": "string", "optional": false } },
@@ -6439,24 +6310,24 @@
         "returnType": "('cartesian' | 'polar' | 'hierarchy')[]",
         "optional": false
       }
+    },
+    "optionConstructors": {
+      "type": {
+        "returnType": "JsonApplyParams['constructors']",
+        "optional": true
+      }
     }
   },
   "RootModule": {
     "type": { "type": { "returnType": "'root'", "optional": false } },
-    "initialiseModule": {
+    "instanceConstructor": {
       "type": {
         "arguments": { "ctx": "ModuleContext" },
-        "returnType": "ModuleInstanceMeta<M>",
+        "returnType": "M",
         "optional": false
       }
     },
-    "destroyModule": {
-      "type": {
-        "arguments": { "ctx": "ModuleContext" },
-        "returnType": "void",
-        "optional": true
-      }
-    },
+    "themeTemplate": { "type": { "returnType": "{}", "optional": true } },
     "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
     "optionsKey": { "type": { "returnType": "string", "optional": false } },
     "packageType": {
@@ -6466,15 +6337,21 @@
       "type": {
         "returnType": "('cartesian' | 'polar' | 'hierarchy')[]",
         "optional": false
+      }
+    },
+    "optionConstructors": {
+      "type": {
+        "returnType": "JsonApplyParams['constructors']",
+        "optional": true
       }
     }
   },
   "AxisModule": {
     "type": { "type": { "returnType": "'axis'", "optional": false } },
-    "initialiseModule": {
+    "instanceConstructor": {
       "type": {
         "arguments": { "ctx": "ModuleContextWithParent<AxisContext>" },
-        "returnType": "ModuleInstanceMeta<M>",
+        "returnType": "M",
         "optional": false
       }
     },
@@ -6487,19 +6364,21 @@
       "type": {
         "returnType": "('cartesian' | 'polar' | 'hierarchy')[]",
         "optional": false
+      }
+    },
+    "optionConstructors": {
+      "type": {
+        "returnType": "JsonApplyParams['constructors']",
+        "optional": true
       }
     }
   },
   "LegendModule": {
     "type": { "type": { "returnType": "'legend'", "optional": false } },
-    "initialiseModule": {
-      "type": {
-        "arguments": { "ctx": "LegendModuleContext" },
-        "returnType": "ModuleInstanceMeta<M>",
-        "optional": false
-      }
+    "identifier": { "type": { "returnType": "string", "optional": false } },
+    "instanceConstructor": {
+      "type": { "returnType": "LegendConstructor", "optional": false }
     },
-    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
     "optionsKey": { "type": { "returnType": "string", "optional": false } },
     "packageType": {
       "type": { "returnType": "'community' | 'enterprise'", "optional": false }
@@ -6508,19 +6387,23 @@
       "type": {
         "returnType": "('cartesian' | 'polar' | 'hierarchy')[]",
         "optional": false
+      }
+    },
+    "optionConstructors": {
+      "type": {
+        "returnType": "JsonApplyParams['constructors']",
+        "optional": true
       }
     }
   },
   "SeriesModule": {
     "type": { "type": { "returnType": "'series'", "optional": false } },
-    "initialiseModule": {
-      "type": {
-        "arguments": { "ctx": "SeriesContext" },
-        "returnType": "ModuleInstanceMeta<M>",
-        "optional": false
-      }
+    "identifier": { "type": { "returnType": "string", "optional": false } },
+    "instanceConstructor": {
+      "type": { "returnType": "SeriesConstructor", "optional": false }
     },
-    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "seriesDefaults": { "type": { "returnType": "{}", "optional": false } },
+    "themeTemplate": { "type": { "returnType": "{}", "optional": false } },
     "optionsKey": { "type": { "returnType": "string", "optional": false } },
     "packageType": {
       "type": { "returnType": "'community' | 'enterprise'", "optional": false }
@@ -6529,6 +6412,12 @@
       "type": {
         "returnType": "('cartesian' | 'polar' | 'hierarchy')[]",
         "optional": false
+      }
+    },
+    "optionConstructors": {
+      "type": {
+        "returnType": "JsonApplyParams['constructors']",
+        "optional": true
       }
     }
   },

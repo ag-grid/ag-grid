@@ -29,6 +29,8 @@ let restartScriptTimeout;
 interface CreateAutomatedRowGroupingParams {
     gridClassname: string;
     mouseMaskClassname: string;
+    getOverlay: () => HTMLElement;
+    getContainerScale?: () => number;
     additionalContextMenuItems?: (string | MenuItemDef)[];
     onStateChange?: (state: RunScriptState) => void;
     onGridReady?: () => void;
@@ -152,6 +154,8 @@ function stopWorkerMessages() {
 export function createAutomatedRowGrouping({
     gridClassname,
     mouseMaskClassname,
+    getContainerScale,
+    getOverlay,
     additionalContextMenuItems,
     onStateChange,
     onGridReady,
@@ -203,6 +207,8 @@ export function createAutomatedRowGrouping({
             scriptRunner = createScriptRunner({
                 id: ROW_GROUPING_ID,
                 containerEl: gridDiv,
+                getContainerScale,
+                getOverlay,
                 mouse,
                 onStateChange(state) {
                     if (state === 'playing') {

@@ -1,5 +1,4 @@
 import React from 'react';
-import { AgChartOptions } from 'ag-charts-community';
 import classnames from 'classnames';
 
 import { data, series } from './templates';
@@ -12,7 +11,7 @@ import { faCompress } from '@fortawesome/free-solid-svg-icons';
 /**
  * This renders the chart inside the Standalone Charts API Explorer.
  */
-export class Chart extends React.Component<{ options: AgChartOptions, fullScreen: boolean, setFullScreen(o: boolean) }> {
+export class Chart extends React.Component<{ options: {}, fullScreen: boolean, setFullScreen(o: boolean) }> {
     chart: React.RefObject<HTMLDivElement>;
     chartInstance = undefined;
     AgChart = undefined;

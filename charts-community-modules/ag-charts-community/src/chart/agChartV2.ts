@@ -16,7 +16,7 @@ import { CartesianChart } from './cartesianChart';
 import { PolarChart } from './polarChart';
 import { HierarchyChart } from './hierarchyChart';
 import { Series } from './series/series';
-import { getSeries, initialiseSeriesModules, seriesDefaults } from './series/seriesTypes';
+import { getSeries } from './factory/seriesTypes';
 import { AreaSeries } from './series/cartesian/areaSeries';
 import { BarSeries } from './series/cartesian/barSeries';
 import { HistogramSeries } from './series/cartesian/histogramSeries';
@@ -44,12 +44,13 @@ import {
 } from './mapping/prepare';
 import { SeriesOptionsTypes } from './mapping/defaults';
 import { windowValue } from '../util/window';
-import { AxisModule, LegendModule, Module, RootModule } from '../util/module';
+import { AxisModule, Module, RootModule } from '../util/module';
 import { Logger } from '../util/logger';
 import { getJsonApplyOptions } from './chartOptions';
 
 // Deliberately imported via `module-support` so that internal module registration happens.
 import { REGISTERED_MODULES } from '../module-support';
+import { setupModules } from './factory/setupModules';
 
 type SeriesOptionType<T extends Series> = T extends LineSeries
     ? AgLineSeriesOptions
@@ -212,10 +213,21 @@ class AgChartInstanceProxy implements AgChartInstance {
 abstract class AgChartInternal {
     static DEBUG = () => windowValue('agChartsDebug') ?? false;
 
+    static initialised = false;
+    static initialiseModules() {
+        if (AgChartInternal.initialised) return;
+
+        setupModules();
+
+        AgChartInternal.initialised = true;
+    }
+
     static createOrUpdate(
         userOptions: AgChartOptions & { overrideDevicePixelRatio?: number },
         proxy?: AgChartInstanceProxy
     ) {
+        AgChartInternal.initialiseModules();
+
         debug('>>> createOrUpdate() user options', userOptions);
         const mixinOpts: any = {};
         if (AgChartInternal.DEBUG() === true) {
@@ -225,9 +237,7 @@ abstract class AgChartInternal {
         const { overrideDevicePixelRatio } = userOptions;
         delete userOptions['overrideDevicePixelRatio'];
 
-        initialiseSeriesModules();
-
-        const processedOptions = prepareOptions(userOptions, mixinOpts, seriesDefaults);
+        const processedOptions = prepareOptions(userOptions, mixinOpts);
         let chart = proxy?.chart;
         if (chart == null || chartType(userOptions as any) !== chartType(chart.processedOptions as any)) {
             chart = AgChartInternal.createChartInstance(processedOptions, overrideDevicePixelRatio, chart);
@@ -478,13 +488,6 @@ function applyModules(chart: Chart, options: AgChartOptions) {
             chart.removeModule(next);
         }
     }
-
-    const legendModules = REGISTERED_MODULES.filter((m): m is LegendModule => m.type === 'legend');
-    legendModules.forEach((next) => {
-        if (!chart.isLegendModuleEnabled(next)) {
-            chart.addLegendModule(next);
-        }
-    });
 
     return modulesChanged;
 }

@@ -18,9 +18,6 @@ const extrasMap = {
     lodash: {
         scripts: ['https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js']
     },
-    momentjs: {
-        scripts: ['https://momentjs.com/downloads/moment-with-locales.min.js']
-    },
     alasql: {
         scripts: ['https://cdnjs.cloudflare.com/ajax/libs/alasql/0.5.5/alasql.min.js']
     },

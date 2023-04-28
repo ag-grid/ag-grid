@@ -805,6 +805,11 @@
     }
   },
   "ToolPanelClass": { "meta": { "typeParams": ["TData = any"] } },
+  "StringOrNumKeys": { "meta": { "typeParams": ["TObj"] } },
+  "NestedPath": {
+    "meta": { "typeParams": ["TValue", "Prefix extends string"] }
+  },
+  "NestedFieldPaths": { "meta": { "typeParams": ["TData = any"] } },
   "ColDef": {
     "colId": {
       "description": "/** The unique ID to give the column. This is optional. If missing, the ID will default to the field.\n     *  If both field and colId are missing, a unique ID will be generated.\n     *  This ID is used to identify the column in the API for sorting, filtering etc. */",
@@ -812,7 +817,7 @@
     },
     "field": {
       "description": "/** The field of the row object to get the cell's data from.\n     * Deep references into a row object is supported via dot notation, i.e `'address.firstLine'`.\n     */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "NestedFieldPaths<TData>", "optional": true }
     },
     "type": {
       "description": "/** A comma separated string or array of strings containing `ColumnType` keys which can be used as a template for a column.\n     * This helps to reduce duplication of properties when you have a lot of common column properties.\n     */",
@@ -854,7 +859,7 @@
     },
     "tooltipField": {
       "description": "/** The field of the tooltip to apply to the cell. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "NestedFieldPaths<TData>", "optional": true }
     },
     "tooltipValueGetter": {
       "description": "/** Callback that should return the string to use for a tooltip, `tooltipField` takes precedence if set.\n     * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component.\n     */",

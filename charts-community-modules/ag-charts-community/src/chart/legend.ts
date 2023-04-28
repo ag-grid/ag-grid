@@ -332,10 +332,6 @@ export class Legend {
         const { formatter } = this.item.label;
         if (formatter) {
             return formatter({
-                get id() {
-                    Logger.warnOnce(`LegendLabelFormatterParams.id is deprecated, use seriesId instead`);
-                    return datum.seriesId;
-                },
                 itemId: datum.itemId,
                 value: datum.label.text,
                 seriesId: datum.seriesId,

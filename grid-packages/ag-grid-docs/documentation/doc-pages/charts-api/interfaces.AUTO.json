@@ -520,17 +520,13 @@
       "innerLabels?": "AgDoughnutInnerLabelThemeOptions",
       "type?": "'pie'",
       "title?": "AgPieTitleOptions",
-      "label?": "AgPieSeriesLabelOptions<DatumType>",
       "calloutLabel?": "AgPieSeriesLabelOptions<DatumType>",
       "sectorLabel?": "AgPieSeriesSectorLabelOptions<DatumType>",
-      "callout?": "AgPieSeriesCalloutOptions",
       "calloutLine?": "AgPieSeriesCalloutOptions",
       "angleKey?": "string",
       "angleName?": "string",
       "radiusKey?": "string",
       "radiusName?": "string",
-      "labelKey?": "string",
-      "labelName?": "string",
       "calloutLabelKey?": "string",
       "calloutLabelName?": "string",
       "sectorLabelKey?": "string",
@@ -564,17 +560,13 @@
     },
     "docs": {
       "title?": "/** Configuration for the series title. */",
-      "label?": "/** Configuration for the labels used outside of the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabel instead.\n     */",
       "calloutLabel?": "/** Configuration for the labels used outside of the sectors. */",
       "sectorLabel?": "/** Configuration for the labels used inside the sectors. */",
-      "callout?": "/** Configuration for the callout lines used with the labels for the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLine instead.\n     */",
       "calloutLine?": "/** Configuration for the callout lines used with the labels for the sectors. */",
       "angleKey?": "/** The key to use to retrieve angle values from the data. */",
       "angleName?": "/** A human-readable description of the angle values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "radiusKey?": "/** The key to use to retrieve radius values from the data. */",
       "radiusName?": "/** A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
-      "labelKey?": "/** The key to use to retrieve label values from the data.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
-      "labelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
       "calloutLabelKey?": "/** The key to use to retrieve label values from the data. */",
       "calloutLabelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "sectorLabelKey?": "/** The key to use to retrieve sector label values from the data. */",
@@ -867,15 +859,7 @@
   },
   "AgChartLegendLabelFormatterParams": {
     "meta": {},
-    "type": {
-      "id": "string",
-      "seriesId": "string",
-      "itemId": "any",
-      "value": "string"
-    },
-    "docs": {
-      "id": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId. */"
-    }
+    "type": { "seriesId": "string", "itemId": "any", "value": "string" }
   },
   "AgChartLegendLabelOptions": {
     "meta": {},
@@ -1116,7 +1100,6 @@
     "meta": { "typeParams": ["T extends string"] },
     "type": {
       "type": "T",
-      "series": "any",
       "seriesId": "string",
       "datum": "any",
       "xKey?": "string",
@@ -1132,7 +1115,6 @@
     },
     "docs": {
       "type": "/** Event type. */",
-      "series": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
       "seriesId": "/** Series ID, as specified in series.id (or generated if not specified) */",
       "datum": "/** Datum from the chart or series data array. */",
       "xKey?": "/** xKey as specified on series options */",
@@ -1150,7 +1132,6 @@
     "meta": {},
     "type": {
       "type": "T",
-      "series": "any",
       "seriesId": "string",
       "datum": "any",
       "xKey?": "string",
@@ -1166,7 +1147,6 @@
     },
     "docs": {
       "type": "/** Event type. */",
-      "series": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
       "seriesId": "/** Series ID, as specified in series.id (or generated if not specified) */",
       "datum": "/** Datum from the chart or series data array. */",
       "xKey?": "/** xKey as specified on series options */",
@@ -1184,7 +1164,6 @@
     "meta": {},
     "type": {
       "type": "T",
-      "series": "any",
       "seriesId": "string",
       "datum": "any",
       "xKey?": "string",
@@ -1200,7 +1179,6 @@
     },
     "docs": {
       "type": "/** Event type. */",
-      "series": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
       "seriesId": "/** Series ID, as specified in series.id (or generated if not specified) */",
       "datum": "/** Datum from the chart or series data array. */",
       "xKey?": "/** xKey as specified on series options */",
@@ -1735,7 +1713,6 @@
     "meta": { "typeParams": ["DatumType"] },
     "type": {
       "type": "'nodeClick'",
-      "series": "any",
       "seriesId": "string",
       "datum": "DatumType",
       "xKey?": "string",
@@ -1750,7 +1727,6 @@
     },
     "docs": {
       "type": "/** Event type. */",
-      "series": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
       "seriesId": "/** Series ID, as specified in series.id (or generated if not specified) */",
       "datum": "/** Datum from the series data array. */",
       "xKey?": "/** xKey as specified on series options */",
@@ -2827,17 +2803,13 @@
     "type": {
       "type?": "'pie'",
       "title?": "AgPieTitleOptions",
-      "label?": "AgPieSeriesLabelOptions<DatumType>",
       "calloutLabel?": "AgPieSeriesLabelOptions<DatumType>",
       "sectorLabel?": "AgPieSeriesSectorLabelOptions<DatumType>",
-      "callout?": "AgPieSeriesCalloutOptions",
       "calloutLine?": "AgPieSeriesCalloutOptions",
       "angleKey?": "string",
       "angleName?": "string",
       "radiusKey?": "string",
       "radiusName?": "string",
-      "labelKey?": "string",
-      "labelName?": "string",
       "calloutLabelKey?": "string",
       "calloutLabelName?": "string",
       "sectorLabelKey?": "string",
@@ -2872,17 +2844,13 @@
     },
     "docs": {
       "title?": "/** Configuration for the series title. */",
-      "label?": "/** Configuration for the labels used outside of the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabel instead.\n     */",
       "calloutLabel?": "/** Configuration for the labels used outside of the sectors. */",
       "sectorLabel?": "/** Configuration for the labels used inside the sectors. */",
-      "callout?": "/** Configuration for the callout lines used with the labels for the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLine instead.\n     */",
       "calloutLine?": "/** Configuration for the callout lines used with the labels for the sectors. */",
       "angleKey?": "/** The key to use to retrieve angle values from the data. */",
       "angleName?": "/** A human-readable description of the angle values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "radiusKey?": "/** The key to use to retrieve radius values from the data. */",
       "radiusName?": "/** A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
-      "labelKey?": "/** The key to use to retrieve label values from the data.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
-      "labelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
       "calloutLabelKey?": "/** The key to use to retrieve label values from the data. */",
       "calloutLabelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "sectorLabelKey?": "/** The key to use to retrieve sector label values from the data. */",
@@ -2919,8 +2887,6 @@
   "AgPieSeriesTooltipRendererParams": {
     "meta": {},
     "type": {
-      "labelKey?": "string",
-      "labelName?": "string",
       "calloutLabelKey?": "string",
       "calloutLabelName?": "string",
       "sectorLabelKey?": "string",
@@ -2937,8 +2903,6 @@
       "seriesId": "string"
     },
     "docs": {
-      "labelKey?": "/** labelKey as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
-      "labelName?": "/** labelName as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
       "calloutLabelKey?": "/** calloutLabelKey as specified on series options. */",
       "calloutLabelName?": "/** calloutLabelName as specified on series options. */",
       "sectorLabelKey?": "/** sectorLabelKey as specified on series options. */",
@@ -2959,9 +2923,6 @@
     "meta": { "typeParams": ["DatumType"] },
     "type": {
       "datum": "DatumType",
-      "labelKey?": "string",
-      "labelValue?": "string",
-      "labelName?": "string",
       "calloutLabelKey?": "string",
       "calloutLabelValue?": "string",
       "calloutLabelName?": "string",
@@ -2978,9 +2939,6 @@
     },
     "docs": {
       "datum": "/** Datum from the series data array that the label is being rendered for. */",
-      "labelKey?": "/** labelKey as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelKey instead.\n     */",
-      "labelValue?": "/** labelValue as read from series data via the labelKey property.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelValue instead.\n     */",
-      "labelName?": "/** labelName as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelName instead.\n     */",
       "calloutLabelKey?": "/** calloutLabelKey as specified on series options. */",
       "calloutLabelValue?": "/** calloutLabelValue as read from series data via the calloutLabelKey property. */",
       "calloutLabelName?": "/** calloutLabelName as specified on series options. */",
@@ -3482,10 +3440,6 @@
     "type": ["X = 'x'", "Y = 'y'"],
     "docs": [null, null]
   },
-  "ChartType": {
-    "meta": { "isTypeAlias": true },
-    "type": "'cartesian' | 'polar' | 'hierarchy'"
-  },
   "ChartUpdateType": {
     "meta": { "isEnum": true },
     "type": [
@@ -3614,6 +3568,14 @@
     }
   },
   "SeriesGetter": { "meta": { "isTypeAlias": true }, "type": "() => Series[]" },
+  "ChartType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'cartesian' | 'polar' | 'hierarchy'"
+  },
+  "SeriesConstructor": {
+    "meta": { "isTypeAlias": true },
+    "type": "new () => Series<any>"
+  },
   "Page": {
     "meta": { "isTypeAlias": true },
     "type": "{ columns: Column[]; pageWidth: number; pageHeight: number; startIndex: number; endIndex: number; }"
@@ -4179,10 +4141,6 @@
     "meta": { "isTypeAlias": true },
     "type": "{ cartesian: AgCartesianThemeOptions; groupedCategory: AgCartesianThemeOptions; polar: AgPolarThemeOptions; hierarchy: AgHierarchyThemeOptions; } & { [key in keyof AgCartesianSeriesTheme]?: AgCartesianThemeOptions; } & { [key in keyof AgPolarSeriesTheme]?: AgPolarThemeOptions; } & { [key in keyof AgHierarchySeriesTheme]?: AgHierarchyThemeOptions; }"
   },
-  "ChartThemeParams": {
-    "meta": {},
-    "type": { "seriesDefaults": "any", "defaultFontFamily": "string" }
-  },
   "DarkThemeParams": { "meta": {}, "type": { "seriesLabelDefaults": "any" } },
   "EventTarget": { "meta": {}, "type": { "classList": "DOMTokenList" } },
   "TooltipMeta": {
@@ -4405,6 +4363,10 @@
       "avoidDeepClone": "/** Contains a list of properties where deep clones should be avoided\n     */"
     }
   },
+  "JsonApplyParams": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ constructors?: Record<string, new () => any>; allowedTypes?: Record<string, ReturnType<typeof classify>[]>; }"
+  },
   "Classification": {
     "meta": { "isTypeAlias": true },
     "type": "'array' | 'object' | 'primitive'"
@@ -4454,8 +4416,7 @@
       "tooltipManager": "TooltipManager",
       "dataService": "DataService",
       "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>",
-      "updateService": "UpdateService",
-      "optionsConstructors": "{ add(path: string, constructor: new () => any): void; delete(path: string): void; }"
+      "updateService": "UpdateService"
     }
   },
   "ModuleContextWithParent": {
@@ -4471,8 +4432,7 @@
       "tooltipManager": "TooltipManager",
       "dataService": "DataService",
       "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>",
-      "updateService": "UpdateService",
-      "optionsConstructors": "{ add(path: string, constructor: new () => any): void; delete(path: string): void; }"
+      "updateService": "UpdateService"
     }
   },
   "AxisContext": {
@@ -4489,79 +4449,67 @@
       "scaleInvert(position: number)": "any"
     }
   },
-  "SeriesFactory": {
+  "LegendConstructor": {
     "meta": { "isTypeAlias": true },
-    "type": "() => Series<any>"
+    "type": "new (moduleContext: ModuleContext) => ChartLegend"
   },
-  "LegendModuleContext": {
-    "meta": {},
-    "type": {
-      "legendFactory": "{ add(factory: (ctx: ModuleContext) => ChartLegend): void; delete(): void; }"
-    }
-  },
-  "SeriesContext": {
-    "meta": {},
-    "type": {
-      "seriesFactory": "{ add(factory: SeriesFactory): void; delete(): void; }",
-      "defaults": "{ add(defaultOptions: any): void; delete(): void; }",
-      "themes": "{ chartTheme: { add(fn: (params: ChartThemeParams) => any): void; delete(): void; }; darkTheme: { add(fn: (params: DarkThemeParams) => any): void; delete(): void; }; }"
-    }
-  },
-  "ModuleInstance": {
-    "meta": {},
-    "type": { "update()": "void", "destroy()": "void" }
-  },
-  "ModuleInstanceMeta": {
-    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
-    "type": { "instance": "M" }
-  },
+  "ModuleInstance": { "meta": {}, "type": { "destroy()": "void" } },
   "BaseModule": {
     "meta": {},
     "type": {
       "optionsKey": "string",
       "packageType": "'community' | 'enterprise'",
-      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
+      "optionConstructors?": "JsonApplyParams['constructors']"
     }
   },
   "RootModule": {
     "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
     "type": {
       "type": "'root'",
-      "initialiseModule(ctx: ModuleContext)": "ModuleInstanceMeta<M>",
-      "destroyModule?(ctx: ModuleContext)": "void",
+      "instanceConstructor": "new (ctx: ModuleContext) => M",
+      "themeTemplate?": "{}",
       "optionsKey": "string",
       "packageType": "'community' | 'enterprise'",
-      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
+      "optionConstructors?": "JsonApplyParams['constructors']"
     }
   },
   "AxisModule": {
     "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
     "type": {
       "type": "'axis'",
-      "initialiseModule(ctx: ModuleContextWithParent<AxisContext>)": "ModuleInstanceMeta<M>",
+      "instanceConstructor": "new (ctx: ModuleContextWithParent<AxisContext>) => M",
       "optionsKey": "string",
       "packageType": "'community' | 'enterprise'",
-      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
+      "optionConstructors?": "JsonApplyParams['constructors']"
     }
   },
   "LegendModule": {
-    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "meta": {},
     "type": {
       "type": "'legend'",
-      "initialiseModule(ctx: LegendModuleContext)": "ModuleInstanceMeta<M>",
+      "identifier": "string",
+      "instanceConstructor": "LegendConstructor",
       "optionsKey": "string",
       "packageType": "'community' | 'enterprise'",
-      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
+      "optionConstructors?": "JsonApplyParams['constructors']"
     }
   },
   "SeriesModule": {
-    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
+    "meta": {},
     "type": {
       "type": "'series'",
-      "initialiseModule(ctx: SeriesContext)": "ModuleInstanceMeta<M>",
+      "identifier": "string",
+      "instanceConstructor": "SeriesConstructor",
+      "seriesDefaults": "{}",
+      "themeTemplate": "{}",
       "optionsKey": "string",
       "packageType": "'community' | 'enterprise'",
-      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
+      "optionConstructors?": "JsonApplyParams['constructors']"
     }
   },
   "Module": {
@@ -4569,7 +4517,7 @@
       "isTypeAlias": true,
       "typeParams": ["M extends ModuleInstance = ModuleInstance"]
     },
-    "type": "RootModule<M> | AxisModule<M> | LegendModule<M> | SeriesModule<M>"
+    "type": "RootModule<M> | AxisModule<M> | LegendModule | SeriesModule"
   },
   "FormatterOptions": {
     "meta": {},

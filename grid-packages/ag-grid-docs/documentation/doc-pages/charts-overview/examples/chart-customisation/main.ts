@@ -109,7 +109,6 @@ const options: AgChartOptions = {
     },
   ],
   legend: {
-    position: "bottom",
     item: {
       marker: {
         strokeWidth: 0,

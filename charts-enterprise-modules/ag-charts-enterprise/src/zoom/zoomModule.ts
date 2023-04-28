@@ -6,14 +6,12 @@ export const ZoomModule: _ModuleSupport.Module = {
     optionsKey: 'zoom',
     packageType: 'enterprise',
     chartTypes: ['cartesian'],
-    initialiseModule(ctx: _ModuleSupport.ModuleContext) {
-        const instance = new Zoom(ctx);
-        return { instance };
-    },
+    instanceConstructor: Zoom,
 };
 
 export type AgZoomAxes = 'x' | 'y' | 'xy';
 export type AgZoomPanKey = 'alt' | 'ctrl' | 'meta' | 'shift';
+export type AgZoomScrollingPivot = 'pointer' | 'start' | 'end';
 
 export interface AgZoomOptions {
     /** The axes on which to zoom, one of 'xy', 'x', or 'y'. */
@@ -24,7 +22,7 @@ export interface AgZoomOptions {
     enablePanning?: boolean;
     /** Set to true to enable zooming with the mouse wheel, defaults to true. */
     enableScrolling?: boolean;
-    /** Set to true to enable selecting an area of the chart to zoom into, defaults to true. */
+    /** Set to true to enable selecting an area of the chart to zoom into, defaults to false. */
     enableSelecting?: boolean;
     /** The minimum amount of the chart to show in the x-axis as a ratio of the full chart, defaults to `0.2`. */
     minXRatio?: number;
@@ -34,4 +32,6 @@ export interface AgZoomOptions {
     panKey?: AgZoomPanKey;
     /** The amount to zoom when scrolling with the mouse wheel, as a ratio of the full chart, defaults to `0.1`. */
     scrollingStep?: number;
+    /** The pivot about which to zoom into when scrolling, defaults to `end`. */
+    scrollingPivot?: AgZoomScrollingPivot;
 }

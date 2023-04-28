@@ -2013,6 +2013,10 @@
                     "url": "/charts-axes-ticks/"
                   },
                   {
+                    "title": "Axis Domain",
+                    "url": "/charts-axes-domain/"
+                  },
+                  {
                     "title": "Axis Labels",
                     "url": "/charts-axes-labels/"
                   },

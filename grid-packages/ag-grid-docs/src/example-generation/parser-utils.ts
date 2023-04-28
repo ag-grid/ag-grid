@@ -583,6 +583,8 @@ export function addBindingImports(bindingImports: any, imports: string[], conver
     let workingImports = {};
     let namespacedImports = [];
 
+    const chartsEnterprise = bindingImports.some(i => i.module.includes('ag-charts-enterprise'));
+
     bindingImports.forEach((i: BindingImport) => {
 
         const path = convertImportPath(i.module, convertToPackage)
@@ -625,6 +627,10 @@ export function addBindingImports(bindingImports: any, imports: string[], conver
     })
     if (hasEnterpriseModules && convertToPackage) {
         imports.push(`import 'ag-grid-enterprise';`)
+    }
+
+    if (chartsEnterprise) {
+        imports.push(`import 'ag-charts-enterprise';`)
     }
 }
 

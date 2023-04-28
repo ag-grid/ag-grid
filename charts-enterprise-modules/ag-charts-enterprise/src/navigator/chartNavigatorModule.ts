@@ -6,11 +6,7 @@ export const CHART_NAVIGATOR_MODULE: _ModuleSupport.Module = {
     optionsKey: 'navigator',
     packageType: 'enterprise',
     chartTypes: ['cartesian'],
-    initialiseModule(ctx) {
-        return {
-            instance: new Navigator(ctx),
-        };
-    },
+    instanceConstructor: Navigator,
 };
 
 export interface AgNavigatorMaskOptions {

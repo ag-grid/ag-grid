@@ -1,5 +1,4 @@
 import { Selection } from '../../../scene/selection';
-import { HdpiCanvas } from '../../../canvas/hdpiCanvas';
 import { Label } from '../../label';
 import { SeriesNodeDatum, SeriesTooltip, HighlightStyle, SeriesNodeBaseClickEvent } from '../series';
 import { HierarchySeries } from './hierarchySeries';
@@ -115,8 +114,21 @@ enum TextNodeTag {
     Value,
 }
 
-function getTextSize(text: string, style: Label) {
-    return HdpiCanvas.getTextSize(text, [style.fontWeight, `${style.fontSize}px`, style.fontFamily].join(' '));
+const tempText = new Text();
+
+function getTextSize(text: string, style: Label): { width: number; height: number } {
+    const { fontStyle, fontWeight, fontSize, fontFamily } = style;
+    tempText.fontStyle = fontStyle;
+    tempText.fontWeight = fontWeight;
+    tempText.fontSize = fontSize;
+    tempText.fontFamily = fontFamily;
+    tempText.text = text;
+    tempText.x = 0;
+    tempText.y = 0;
+    tempText.textAlign = 'left';
+    tempText.textBaseline = 'top';
+    const { width, height } = tempText.computeBBox();
+    return { width, height };
 }
 
 function validateColor(color?: string): string | undefined {
@@ -761,7 +773,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             // Crop text if not enough space
             if (labelSize.width > availTextWidth) {
                 const textLength = Math.floor((labelText.length * availTextWidth) / labelSize.width) - 1;
-                labelText = `${labelText.substring(0, textLength)}…`;
+                labelText = `${labelText.substring(0, textLength).trim()}…`;
             }
 
             const valueConfig = labels.value;
