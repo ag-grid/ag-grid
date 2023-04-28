@@ -48,7 +48,7 @@ export function registerChartSeriesType(seriesType: string, chartType: ChartType
     TYPES[seriesType] = chartType;
 }
 
-export function registerChartDefaults(defaults: {}, chartType: ChartType) {
+export function registerChartDefaults(chartType: ChartType, defaults: {}) {
     DEFAULTS[chartType] = jsonMerge([DEFAULTS[chartType] ?? {}, defaults]);
 }
 

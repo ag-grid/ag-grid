@@ -41,9 +41,6 @@ const gridOptions: GridOptions = {
       padding: {
         top: 45,
       },
-      legend: {
-        position: 'bottom',
-      },
       axes: {
         number: {
           title: {

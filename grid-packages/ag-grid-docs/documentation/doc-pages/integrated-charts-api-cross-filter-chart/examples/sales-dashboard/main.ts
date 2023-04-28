@@ -35,6 +35,9 @@ const gridOptions: GridOptions = {
   chartThemes: ['ag-default-dark'],
   chartThemeOverrides: {
     cartesian: {
+      legend: {
+        enabled: false,
+      },
       axes: {
         category: {
           label: {
@@ -112,6 +115,9 @@ function createSalesByRefChart(gridApi: GridApi) {
             enabled: false,
           },
         },
+        legend: {
+          position: 'right',
+        },
       },
     },
     chartContainer: document.querySelector('#pieChart') as any,
@@ -130,9 +136,6 @@ function createHandsetSalesChart(gridApi: GridApi) {
         title: {
           enabled: true,
           text: 'Handsets Sold (Units)',
-        },
-        legend: {
-          enabled: false,
         },
       },
     },
