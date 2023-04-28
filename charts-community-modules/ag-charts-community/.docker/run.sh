@@ -28,7 +28,7 @@ case "$MODULE_NAME" in
     ;;
 
     ag-charts-enterprise)
-        SCOPE="@ag-charts-enterprise/ag-charts-enterprise"
+        SCOPE="ag-charts-enterprise"
         INIT_CMD="npx lerna bootstrap --include-dependencies --scope=${SCOPE}"
     ;;
 
