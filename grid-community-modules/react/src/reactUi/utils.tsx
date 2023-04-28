@@ -46,24 +46,14 @@ export const isComponentStateless = (Component: any) => {
 
 // CreateRoot is only available from React 18, which if used requires us to use flushSync.
 const createRootAndFlushSyncAvailable = (ReactDOM as any).createRoot != null && (ReactDOM as any).flushSync != null;
-var agFlushSyncActive = true;
-export const FlushSyncToggle = {
-    on: () => agFlushSyncActive = true,
-    off: () => agFlushSyncActive = false
-}
-
-// Avoid using nested flushSync calls, as this causes error messages in the console.
-let activeFlushSyncs = 0;
 
 /**
  * Wrapper around flushSync to provide backwards compatibility with React 16-17
  * @param fn 
  */
-export const agFlushSync = (fn: () => void) => {
-    if (createRootAndFlushSyncAvailable && agFlushSyncActive && activeFlushSyncs === 0) {
-        activeFlushSyncs++;
+export const agFlushSync = (forceFlush: boolean, fn: () => void) => {
+    if (createRootAndFlushSyncAvailable && forceFlush) { // agFlushSyncActive activeFlushSyncs === 0
         (ReactDOM as any).flushSync(fn);
-        activeFlushSyncs--;
     } else {
         fn();
     }

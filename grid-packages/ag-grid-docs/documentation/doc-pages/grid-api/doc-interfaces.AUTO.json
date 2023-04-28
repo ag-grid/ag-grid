@@ -8916,6 +8916,7 @@
     }
   },
   "DisplayedRowsChangedEvent": {
+    "flushSync": { "type": { "returnType": "boolean", "optional": false } },
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
@@ -10087,7 +10088,7 @@
     },
     "setRowCtrls": {
       "type": {
-        "arguments": { "rowCtrls": "RowCtrl[]" },
+        "arguments": { "rowCtrls": "RowCtrl[]", "flushSync": "boolean" },
         "returnType": "void",
         "optional": false
       }
@@ -19458,7 +19459,7 @@
     },
     "setCellCtrls": {
       "type": {
-        "arguments": { "cellCtrls": "CellCtrl[]" },
+        "arguments": { "cellCtrls": "CellCtrl[]", "flushSync": "boolean" },
         "returnType": "void",
         "optional": false
       }
