@@ -280,6 +280,93 @@ export class Text extends Shape {
             offsetY += lineHeights[i];
         }
     }
+
+    static wrap(
+        text: string,
+        maxWidth: number,
+        maxHeight: number,
+        font: string,
+        fontSize: number,
+        truncate: boolean
+    ): string {
+        const lines: string[] = text.split(/\r?\n/g);
+        const result: string[] = [];
+        let cumulativeHeight = 0;
+        for (const line of lines) {
+            const wrappedLine = Text.wrapLine(line, maxWidth, maxHeight, font, fontSize, truncate, cumulativeHeight);
+            result.push(wrappedLine.result);
+            cumulativeHeight = wrappedLine.cumulativeHeight;
+            if (wrappedLine.truncated) {
+                break;
+            }
+        }
+        return result.join('\n');
+    }
+
+    static wrapLine(
+        text: string,
+        maxWidth: number,
+        maxHeight: number,
+        font: string,
+        fontSize: number,
+        truncate: boolean,
+        cumulativeHeight: number
+    ): { result: string; truncated: boolean; cumulativeHeight: number } {
+        const lines: string[] = [];
+        const guesstimate = Math.max(1, Math.round(maxWidth / fontSize));
+        const ellipsis = '\u2026';
+        let truncated = false;
+
+        const sliceText = (text: string, startIndex: number) => {
+            const whiteSpaceIndex = text.indexOf(' ', startIndex);
+            const lastWhiteSpaceIndex = whiteSpaceIndex > 0 ? whiteSpaceIndex : text.lastIndexOf(' ');
+            const noWhiteSpace = lastWhiteSpaceIndex < 0;
+            const index = noWhiteSpace ? Math.max(1, startIndex) : lastWhiteSpaceIndex;
+            return {
+                result: text.slice(0, index),
+                index,
+                addHyphen: noWhiteSpace,
+            };
+        };
+
+        function processText(text: string) {
+            let result = text;
+            let index = text.length;
+            let addHyphen = false;
+            let { width, height } = HdpiCanvas.getTextSize(text, font);
+
+            const maxCount = 10;
+            let count: number = 0;
+            while (width > maxWidth && count < maxCount) {
+                ({ result, index, addHyphen } = sliceText(result, Math.min(guesstimate, index)));
+                ({ width, height } = HdpiCanvas.getTextSize(result.concat(addHyphen ? '-' : ''), font));
+                count++;
+            }
+
+            cumulativeHeight += height;
+
+            if (truncate && cumulativeHeight > maxHeight) {
+                truncated = true;
+                const lastLine = lines.pop();
+                if (!lastLine) {
+                    return;
+                }
+
+                lines.push(lastLine.slice(0, lastLine.length - 3).concat(ellipsis));
+                return;
+            }
+
+            lines.push(result.concat(addHyphen ? '-' : ''));
+
+            const remainder = text.slice(index);
+            if (remainder && remainder.length > 1 && remainder !== text) {
+                processText(remainder.trim());
+            }
+        }
+
+        processText(text.trim());
+        return { result: lines.join('\n'), truncated, cumulativeHeight };
+    }
 }
 
 export function getFont(fontSize: number, fontFamily: string, fontStyle?: string, fontWeight?: string): string {

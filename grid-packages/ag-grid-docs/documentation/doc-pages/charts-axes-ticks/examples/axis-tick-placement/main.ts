@@ -27,9 +27,6 @@ const options: AgCartesianChartOptions & { axes: AgNumberAxisThemeOptions[] } = 
       },
     },
   ],
-  legend: {
-    enabled: false,
-  },
 }
 
 var chart = AgChart.create(options)

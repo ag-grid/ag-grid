@@ -62,7 +62,7 @@ By default, the Quick Filter checks each column's value, including running value
 
 When the cache is enabled, a 'Quick Filter text' is generated for each node by concatenating all the values for each column. For example, a table with columns of "Employee Name" and "Job" could have a row with Quick Filter text of `'NIALL CROSBY\nCOFFEE MAKER'`. The grid then performs a simple string search, so if you search for `'Niall'`, it will find our example text. Joining all the column values into one string gives a performance boost. The values are joined after the Quick Filter is requested for the first time and stored in the `rowNode` - the original data that you provide is not changed.
 
-## Reset Cache Text
+### Reset Cache Text
 
 When in use, the Quick Filter cache text can be manually reset in one of the following ways:
 

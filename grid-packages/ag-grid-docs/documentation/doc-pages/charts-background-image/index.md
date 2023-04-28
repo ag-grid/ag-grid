@@ -53,12 +53,16 @@ interface AgChartBackgroundImage {
     /** Distance from the bottom border of the chart to the bottom border of the image. If neither top nor bottom specified, the image is centred vertically. */
     bottom?: PixelSize;
 
-    /** Width of the image. If both left and right specified, width is ignored. If width is not determined but height does,
-     * width computed to preserve the original width/height ratio. Otherwise the original width is used. */
+    /**
+     * Width of the image. If both left and width are specified, right is ignored. If only height is provided,
+     * width will be computed to preserve the original width/height ratio. If neither is provided, the original width is used.
+     */
     width?: PixelSize;
 
-    /** Height of the image. If both top and bottom specified, height is ignored. If height is not determined but width does,
-     * height computed to preserve the original width/height ratio. Otherwise the original height is used. */
+    /**
+     * Height of the image. If both top and height are specified, bottom is ignored. If only width is provided,
+     * height will be computed to preserve the original width/height ratio.  If neither is provided, the original height is used.
+     */
     height?: PixelSize;
 
     /** Opacity of the image. */

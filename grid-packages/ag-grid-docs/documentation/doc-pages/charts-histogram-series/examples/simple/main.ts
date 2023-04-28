@@ -14,9 +14,6 @@ const options: AgChartOptions = {
       xName: 'Participant Age',
     },
   ],
-  legend: {
-    enabled: false,
-  },
   axes: [
     {
       type: 'number',

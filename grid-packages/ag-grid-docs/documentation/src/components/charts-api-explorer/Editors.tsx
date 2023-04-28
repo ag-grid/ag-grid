@@ -3,13 +3,19 @@
  * type of the particular option.
  */
 
-import { FontFamily, FontSize, FontStyle, FontWeight, Opacity, Ratio } from 'ag-charts-community';
 import classnames from 'classnames';
 import React, { useState } from 'react';
 import { AlphaPicker, HuePicker } from 'react-color';
 import { JsonModelProperty, JsonProperty } from '../expandable-snippet/model';
 import { doOnEnter } from '../key-handlers';
 import styles from './Editors.module.scss';
+
+type FontFamily = string;
+type FontSize = number;
+type FontStyle = string;
+type FontWeight = string;
+type Opacity = number;
+type Ratio = number;
 
 type AliasTypeProps<T> = {
     default?: T;

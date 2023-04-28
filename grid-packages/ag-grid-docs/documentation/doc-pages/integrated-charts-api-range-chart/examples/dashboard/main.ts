@@ -100,7 +100,6 @@ function onFirstDataRendered(event: FirstDataRenderedEvent) {
         },
         legend: {
           enabled: true,
-          position: 'bottom',
         },
       },
     },
@@ -126,7 +125,6 @@ function onFirstDataRendered(event: FirstDataRenderedEvent) {
         },
         legend: {
           enabled: true,
-          position: 'bottom',
         },
       },
     },

@@ -6,7 +6,7 @@ import { Mouse } from './createMouse';
 import { createRowExpandedState, RowExpandedState } from './createRowExpandedState';
 import { Point } from './geometry';
 import { PathItem } from './pathRecorder';
-import { createMoveMouse } from './scriptActions/createMoveMouse';
+import { moveTo } from './scriptActions/move';
 import { playPath } from './scriptActions/playPath';
 import { removeFocus } from './scriptActions/removeFocus';
 import { clearAllSingleCellSelections } from './scriptActions/singleCell';
@@ -89,6 +89,7 @@ interface PausedState {
 export interface CreateScriptActionParams {
     mouse: Mouse;
     containerEl?: HTMLElement;
+    getOverlay: () => HTMLElement;
     action: ScriptAction;
     gridOptions: GridOptions;
     tweenGroup: Group;
@@ -100,6 +101,7 @@ export interface CreateScriptRunnerParams {
     id: string;
     mouse: Mouse;
     containerEl?: HTMLElement;
+    getOverlay: () => HTMLElement;
     script: ScriptAction[];
     gridOptions: GridOptions;
     tweenGroup: Group;
@@ -125,6 +127,7 @@ interface CreateActionSequenceRunnerParams {
 interface CreateScriptActionSequenceParams {
     script: ScriptAction[];
     containerEl?: HTMLElement;
+    getOverlay: () => HTMLElement;
     mouse: Mouse;
     gridOptions: GridOptions;
     tweenGroup: Group;
@@ -141,6 +144,7 @@ export type RunScriptState = 'inactive' | 'stopped' | 'stopping' | 'errored' | '
 
 function createScriptAction({
     containerEl,
+    getOverlay,
     mouse,
     action,
     tweenGroup,
@@ -151,7 +155,7 @@ function createScriptAction({
     const { type } = action;
     const agElementFinder = createAgElementFinder({ containerEl });
     const agActionCreator = createAGActionCreator({
-        containerEl,
+        getOverlay,
         gridOptions,
         agElementFinder,
         mouse,
@@ -179,21 +183,15 @@ function createScriptAction({
         return waitFor(scriptAction.duration);
     } else if (type === 'moveTo') {
         const scriptAction = action as MoveToAction;
-        const toPos = scriptAction.toPos instanceof Function ? scriptAction.toPos() : scriptAction.toPos;
-
-        if (!toPos) {
-            scriptDebugger?.errorLog(`No 'toPos' in 'moveTo' action`, scriptAction);
-            return;
-        }
-
-        return createMoveMouse({
+        return moveTo({
             mouse,
-            toPos,
+            getOverlay,
+            toPos: scriptAction.toPos,
             speed: scriptAction.speed,
             duration: scriptAction.duration,
-            scriptDebugger,
             tweenGroup,
             easing: scriptAction.easing || defaultEasing,
+            scriptDebugger,
         });
     } else if (type === 'agAction') {
         const scriptAction = action as AGAction;
@@ -212,6 +210,7 @@ function createScriptAction({
 function createScriptActionSequence({
     script,
     containerEl,
+    getOverlay,
     mouse,
     gridOptions,
     tweenGroup,
@@ -223,6 +222,7 @@ function createScriptActionSequence({
             try {
                 const result = createScriptAction({
                     containerEl,
+                    getOverlay,
                     mouse,
                     action: scriptAction,
                     gridOptions,
@@ -251,6 +251,7 @@ function createScriptActionSequence({
 export function createScriptRunner({
     id,
     containerEl,
+    getOverlay,
     mouse,
     script,
     gridOptions,
@@ -363,6 +364,7 @@ export function createScriptRunner({
     const actionSequence = createScriptActionSequence({
         script,
         containerEl,
+        getOverlay,
         mouse,
         gridOptions,
         tweenGroup,

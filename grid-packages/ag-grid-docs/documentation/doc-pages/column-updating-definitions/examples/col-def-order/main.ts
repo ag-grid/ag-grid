@@ -1,6 +1,6 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions, ColDef } from '@ag-grid-community/core'
 
-function getColumnDefsA() {
+function getColumnDefsA(): ColDef[] {
   return [
     { field: 'athlete', headerName: 'A Athlete' },
     { field: 'age', headerName: 'A Age' },
@@ -15,7 +15,7 @@ function getColumnDefsA() {
   ]
 }
 
-function getColumnDefsB() {
+function getColumnDefsB(): ColDef[] {
   return [
     { field: 'gold', headerName: 'B Gold' },
     { field: 'silver', headerName: 'B Silver' },

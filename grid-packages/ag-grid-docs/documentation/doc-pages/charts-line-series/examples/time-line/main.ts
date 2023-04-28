@@ -102,9 +102,6 @@ const options: AgChartOptions = {
       },
     },
   ],
-  legend: {
-    position: 'bottom',
-  },
 }
 
 AgChart.create(options)

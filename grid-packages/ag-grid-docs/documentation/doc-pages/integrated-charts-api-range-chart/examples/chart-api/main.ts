@@ -78,9 +78,6 @@ function onChart2() {
           enabled: true,
           text: 'Bronze Medal by Country',
         },
-        legend: {
-          enabled: false,
-        },
       },
     },
     unlinkChart: true,

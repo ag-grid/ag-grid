@@ -227,6 +227,11 @@ export function jsonMerge<T>(json: T[], opts?: JsonMergeOptions): T {
     return result;
 }
 
+export type JsonApplyParams = {
+    constructors?: Record<string, new () => any>;
+    allowedTypes?: Record<string, ReturnType<typeof classify>[]>;
+};
+
 /**
  * Recursively apply a JSON object into a class-hierarchy, optionally instantiating certain classes
  * by property name.
@@ -247,10 +252,8 @@ export function jsonApply<Target, Source extends DeepPartial<Target>>(
         path?: string;
         matcherPath?: string;
         skip?: string[];
-        constructors?: Record<string, new () => any>;
-        allowedTypes?: Record<string, ReturnType<typeof classify>[]>;
         idx?: number;
-    } = {}
+    } & JsonApplyParams = {}
 ): Target {
     const {
         path = undefined,
@@ -401,6 +404,8 @@ export function jsonWalk(
     }
 }
 
+const isBrowser = typeof window !== 'undefined';
+
 type Classification = 'array' | 'object' | 'primitive';
 /**
  * Classify the type of a value to assist with handling for merge purposes.
@@ -408,7 +413,7 @@ type Classification = 'array' | 'object' | 'primitive';
 function classify(value: any): 'array' | 'object' | 'function' | 'primitive' | 'class-instance' | null {
     if (value == null) {
         return null;
-    } else if (value instanceof HTMLElement) {
+    } else if (isBrowser && value instanceof HTMLElement) {
         return 'primitive';
     } else if (value instanceof Array) {
         return 'array';

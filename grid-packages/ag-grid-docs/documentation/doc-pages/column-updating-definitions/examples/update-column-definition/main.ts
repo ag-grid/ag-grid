@@ -1,6 +1,6 @@
 import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
 
-function getColumnDefs() {
+function getColumnDefs(): ColDef[] {
   return [
     { field: 'athlete' },
     { field: 'age' },

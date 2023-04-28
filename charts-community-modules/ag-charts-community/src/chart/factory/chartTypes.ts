@@ -1,6 +1,8 @@
+import { jsonMerge } from '../../util/json';
+
 export type ChartType = 'cartesian' | 'polar' | 'hierarchy';
 
-const types: Record<string, ChartType> = {
+const TYPES: Record<string, ChartType> = {
     area: 'cartesian',
     bar: 'cartesian',
     column: 'cartesian',
@@ -11,29 +13,25 @@ const types: Record<string, ChartType> = {
     pie: 'polar',
 };
 
+const DEFAULTS: Record<string, {}> = {};
+
 export const CHART_TYPES = {
-    add(seriesType: string, chartType: ChartType) {
-        types[seriesType] = chartType;
-    },
-    delete(seriesType: string) {
-        delete types[seriesType];
-    },
     has(seriesType: string) {
-        return Object.prototype.hasOwnProperty.call(types, seriesType);
+        return Object.prototype.hasOwnProperty.call(TYPES, seriesType);
     },
 
     isCartesian(seriesType: string) {
-        return types[seriesType] === 'cartesian';
+        return TYPES[seriesType] === 'cartesian';
     },
     isPolar(seriesType: string) {
-        return types[seriesType] === 'polar';
+        return TYPES[seriesType] === 'polar';
     },
     isHierarchy(seriesType: string) {
-        return types[seriesType] === 'hierarchy';
+        return TYPES[seriesType] === 'hierarchy';
     },
 
     get seriesTypes() {
-        return Object.keys(types);
+        return Object.keys(TYPES);
     },
     get cartesianTypes() {
         return this.seriesTypes.filter((t) => this.isCartesian(t));
@@ -45,3 +43,15 @@ export const CHART_TYPES = {
         return this.seriesTypes.filter((t) => this.isHierarchy(t));
     },
 };
+
+export function registerChartSeriesType(seriesType: string, chartType: ChartType) {
+    TYPES[seriesType] = chartType;
+}
+
+export function registerChartDefaults(defaults: {}, chartType: ChartType) {
+    DEFAULTS[chartType] = jsonMerge([DEFAULTS[chartType] ?? {}, defaults]);
+}
+
+export function getChartDefaults(chartType: ChartType) {
+    return DEFAULTS[chartType] ?? {};
+}

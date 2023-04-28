@@ -1,4 +1,4 @@
-import { Grid, ChartMenuOptions, ColDef, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions, ValueFormatterParams } from '@ag-grid-community/core'
+import { Grid, ColDef, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions, ValueFormatterParams } from '@ag-grid-community/core'
 
 declare var moment: any;
 
@@ -7,6 +7,10 @@ function getColumnDefs() {
     { field: 'date', valueFormatter: dateFormatter },
     { field: 'avgTemp' },
   ]
+}
+
+function formatDate(date: Date | number) {
+  return Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: undefined }).format(new Date(date))
 }
 
 const gridOptions: GridOptions = {
@@ -24,9 +28,6 @@ const gridOptions: GridOptions = {
         enabled: true,
         text: 'Average Daily Temperatures',
       },
-      legend: {
-        enabled: false,
-      },
       navigator: {
         enabled: true,
         height: 20,
@@ -43,7 +44,7 @@ const gridOptions: GridOptions = {
           label: {
             rotation: 0,
             formatter: (params) => {
-              return moment(new Date(params.value)).format('DD MMM')
+              return formatDate(params.value);
             },
           },
         },
@@ -60,7 +61,7 @@ const gridOptions: GridOptions = {
           renderer: ({ xValue, yValue }) => {
             xValue = xValue instanceof Date ? xValue : new Date(xValue);
             return {
-              content: `${moment(xValue).format('DD MMM')}: ${Math.round(yValue)}°C`,
+              content: `${formatDate(xValue)}: ${Math.round(yValue)}°C`,
             };
           },
         },

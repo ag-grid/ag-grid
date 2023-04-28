@@ -1,6 +1,5 @@
 import { faChartLine, faCompress, faExternalLinkAlt, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { AgChartOptions } from 'ag-charts-community';
 import React, { useMemo } from 'react';
 import GlobalContextConsumer from '../../components/GlobalContext';
 import isServerSideRendering from '../../utils/is-server-side-rendering';
@@ -11,7 +10,7 @@ import styles from './Launcher.module.scss';
 
 interface LauncherProps {
     framework: string;
-    options: AgChartOptions;
+    options: {};
 
     fullScreen: boolean;
     setFullScreen(fullScreen: boolean): void;
