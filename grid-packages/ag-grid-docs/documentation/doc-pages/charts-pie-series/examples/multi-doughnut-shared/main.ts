@@ -24,6 +24,7 @@ const options: AgChartOptions = {
       angleKey: "2020",
       outerRadiusRatio: 0.6,
       innerRadiusRatio: 0.3,
+      showInLegend: false,
     },
   ],
 }

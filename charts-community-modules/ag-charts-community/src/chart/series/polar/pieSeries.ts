@@ -39,6 +39,7 @@ import {
     AgPieSeriesFormat,
     AgPieSeriesFormatterParams,
 } from '../../agChartOptions';
+import { LegendItemClickChartEvent } from '../../interaction/chartEventManager';
 
 class PieSeriesNodeBaseClickEvent extends SeriesNodeBaseClickEvent<any> {
     readonly angleKey: string;
@@ -372,6 +373,10 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.calloutLabelSelection = Selection.select(pieCalloutLabels, Group);
         this.sectorLabelSelection = Selection.select(pieSectorLabels, Text);
         this.innerLabelsSelection = Selection.select(innerLabels, Text);
+    }
+
+    addChartEventListeners(): void {
+        this.chartEventManager?.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
     }
 
     visibleChanged() {
@@ -1328,34 +1333,36 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         return legendData;
     }
 
+    onLegendItemClick(event: LegendItemClickChartEvent) {
+        const { enabled, itemId, series } = event;
+
+        if (series.id === this.id) {
+            this.toggleSeriesItem(itemId, enabled);
+        } else if (series.type === 'pie') {
+            this.toggleOtherSeriesItems(series, itemId, enabled);
+        }
+    }
+
     toggleSeriesItem(itemId: number, enabled: boolean): void {
         this.seriesItemEnabled[itemId] = enabled;
         this.nodeDataRefresh = true;
     }
 
-    toggleOtherSeriesItems(
-        seriesToggled: { id: string; type: string },
-        datumIdToggled: any,
-        enabled?: boolean,
-        suggestedEnabled?: boolean
-    ): void {
+    toggleOtherSeriesItems(series: PieSeries, itemId: any, enabled: boolean): void {
         const { legendItemKey } = this;
-        if (seriesToggled.type !== 'pie') return;
-        if (legendItemKey === undefined) return;
 
-        const pieSeriesToggled = seriesToggled as PieSeries;
+        if (!legendItemKey) return;
+
         const datumToggledLegendItemValue =
-            datumIdToggled &&
-            pieSeriesToggled.legendItemKey &&
-            pieSeriesToggled.data?.find((_, index) => index === datumIdToggled)[pieSeriesToggled.legendItemKey];
+            itemId != null &&
+            series.legendItemKey &&
+            series.data?.find((_, index) => index === itemId)[series.legendItemKey];
 
         if (!datumToggledLegendItemValue) return;
 
-        this.data?.forEach((d, itemId) => {
-            if (enabled !== undefined && d[legendItemKey] === datumToggledLegendItemValue) {
-                this.toggleSeriesItem(itemId, enabled);
-            } else if (suggestedEnabled !== undefined) {
-                this.toggleSeriesItem(itemId, suggestedEnabled || d[legendItemKey] === datumToggledLegendItemValue);
+        this.data?.forEach((datum, datumItemId) => {
+            if (datum[legendItemKey] === datumToggledLegendItemValue) {
+                this.toggleSeriesItem(datumItemId, enabled);
             }
         });
     }

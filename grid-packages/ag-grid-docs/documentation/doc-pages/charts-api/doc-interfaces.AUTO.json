@@ -5411,6 +5411,7 @@
     "padding": { "type": { "returnType": "number", "optional": false } }
   },
   "ChartEventType": {},
+  "ChartEvents": {},
   "ChartEvent": {
     "type": { "type": { "returnType": "ChartEventType", "optional": false } },
     "meta": { "typeParams": ["ChartEventType"] }

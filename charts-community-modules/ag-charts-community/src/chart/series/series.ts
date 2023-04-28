@@ -17,6 +17,7 @@ import { PlacedLabel, PointLabelDatum } from '../../util/labelPlacement';
 import { Layers } from '../layers';
 import { SizedPoint, Point } from '../../scene/point';
 import { BBox } from '../../scene/bbox';
+import { ChartEventManager } from '../interaction/chartEventManager';
 import { HighlightManager } from '../interaction/highlightManager';
 import { ChartAxisDirection } from '../chartAxisDirection';
 import { AgChartInteractionRange } from '../agChartOptions';
@@ -186,6 +187,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         placeLabels(): Map<Series<any>, PlacedLabel[]>;
         getSeriesRect(): Readonly<BBox> | undefined;
     };
+    chartEventManager?: ChartEventManager;
     highlightManager?: HighlightManager;
     xAxis?: ChartAxis;
     yAxis?: ChartAxis;
@@ -284,6 +286,10 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
                 })
             );
         }
+    }
+
+    addChartEventListeners(): void {
+        return;
     }
 
     destroy(): void {

@@ -605,6 +605,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
             series.data = this.data;
         }
         this.addSeriesListeners(series);
+
+        series.chartEventManager = this.chartEventManager;
+        series.addChartEventListeners();
     }
 
     protected freeSeries(series: Series<any>) {

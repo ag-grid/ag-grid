@@ -3615,6 +3615,10 @@
     "meta": { "isTypeAlias": true },
     "type": "'legend-item-click' | 'node-click'"
   },
+  "ChartEvents": {
+    "meta": { "isTypeAlias": true },
+    "type": "LegendItemClickChartEvent | NodeClickChartEvent"
+  },
   "ChartEvent": {
     "meta": { "typeParams": ["ChartEventType"] },
     "type": { "type": "ChartEventType" }

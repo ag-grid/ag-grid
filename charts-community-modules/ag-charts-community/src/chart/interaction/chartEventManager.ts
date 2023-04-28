@@ -1,6 +1,7 @@
 import { BaseManager } from './baseManager';
 
 type ChartEventType = 'legend-item-click' | 'node-click';
+type ChartEvents = LegendItemClickChartEvent | NodeClickChartEvent;
 
 interface ChartEvent<ChartEventType> {
     type: ChartEventType;
@@ -16,7 +17,7 @@ export interface NodeClickChartEvent extends ChartEvent<'node-click'> {
     type: 'node-click';
 }
 
-export class ChartEventManager extends BaseManager<ChartEventType, ChartEvent<ChartEventType>> {
+export class ChartEventManager extends BaseManager<ChartEventType, ChartEvents> {
     legendItemClick(series: any, itemId: any, enabled: boolean) {
         const event: LegendItemClickChartEvent = {
             type: 'legend-item-click',
