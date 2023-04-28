@@ -5410,6 +5410,22 @@
     },
     "padding": { "type": { "returnType": "number", "optional": false } }
   },
+  "ChartEventType": {},
+  "ChartEvent": {
+    "type": { "type": { "returnType": "ChartEventType", "optional": false } },
+    "meta": { "typeParams": ["ChartEventType"] }
+  },
+  "LegendItemClickChartEvent": {
+    "series": { "type": { "returnType": "any", "optional": false } },
+    "itemId": { "type": { "returnType": "any", "optional": false } },
+    "enabled": { "type": { "returnType": "boolean", "optional": false } },
+    "type": {
+      "type": { "returnType": "'legend-item-click'", "optional": false }
+    }
+  },
+  "NodeClickChartEvent": {
+    "type": { "type": { "returnType": "'node-click'", "optional": false } }
+  },
   "CursorState": {
     "style": { "type": { "returnType": "string", "optional": false } }
   },
@@ -6199,14 +6215,17 @@
     "mode": {
       "type": { "returnType": "'standalone' | 'integrated'", "optional": false }
     },
-    "interactionManager": {
-      "type": { "returnType": "InteractionManager", "optional": false }
+    "chartEventManager": {
+      "type": { "returnType": "ChartEventManager", "optional": false }
+    },
+    "cursorManager": {
+      "type": { "returnType": "CursorManager", "optional": false }
     },
     "highlightManager": {
       "type": { "returnType": "HighlightManager", "optional": false }
     },
-    "cursorManager": {
-      "type": { "returnType": "CursorManager", "optional": false }
+    "interactionManager": {
+      "type": { "returnType": "InteractionManager", "optional": false }
     },
     "zoomManager": {
       "type": { "returnType": "ZoomManager", "optional": false }
@@ -6234,14 +6253,17 @@
     "mode": {
       "type": { "returnType": "'standalone' | 'integrated'", "optional": false }
     },
-    "interactionManager": {
-      "type": { "returnType": "InteractionManager", "optional": false }
+    "chartEventManager": {
+      "type": { "returnType": "ChartEventManager", "optional": false }
+    },
+    "cursorManager": {
+      "type": { "returnType": "CursorManager", "optional": false }
     },
     "highlightManager": {
       "type": { "returnType": "HighlightManager", "optional": false }
     },
-    "cursorManager": {
-      "type": { "returnType": "CursorManager", "optional": false }
+    "interactionManager": {
+      "type": { "returnType": "InteractionManager", "optional": false }
     },
     "zoomManager": {
       "type": { "returnType": "ZoomManager", "optional": false }

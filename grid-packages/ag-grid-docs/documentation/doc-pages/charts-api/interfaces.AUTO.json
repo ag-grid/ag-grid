@@ -3611,6 +3611,24 @@
       "padding": "number"
     }
   },
+  "ChartEventType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'legend-item-click' | 'node-click'"
+  },
+  "ChartEvent": {
+    "meta": { "typeParams": ["ChartEventType"] },
+    "type": { "type": "ChartEventType" }
+  },
+  "LegendItemClickChartEvent": {
+    "meta": {},
+    "type": {
+      "series": "any",
+      "itemId": "any",
+      "enabled": "boolean",
+      "type": "'legend-item-click'"
+    }
+  },
+  "NodeClickChartEvent": { "meta": {}, "type": { "type": "'node-click'" } },
   "CursorState": { "meta": {}, "type": { "style": "string" } },
   "HighlightState": {
     "meta": {},
@@ -4425,9 +4443,10 @@
     "type": {
       "scene": "Scene",
       "mode": "'standalone' | 'integrated'",
-      "interactionManager": "InteractionManager",
-      "highlightManager": "HighlightManager",
+      "chartEventManager": "ChartEventManager",
       "cursorManager": "CursorManager",
+      "highlightManager": "HighlightManager",
+      "interactionManager": "InteractionManager",
       "zoomManager": "ZoomManager",
       "tooltipManager": "TooltipManager",
       "dataService": "DataService",
@@ -4441,9 +4460,10 @@
       "parent": "P",
       "scene": "Scene",
       "mode": "'standalone' | 'integrated'",
-      "interactionManager": "InteractionManager",
-      "highlightManager": "HighlightManager",
+      "chartEventManager": "ChartEventManager",
       "cursorManager": "CursorManager",
+      "highlightManager": "HighlightManager",
+      "interactionManager": "InteractionManager",
       "zoomManager": "ZoomManager",
       "tooltipManager": "TooltipManager",
       "dataService": "DataService",

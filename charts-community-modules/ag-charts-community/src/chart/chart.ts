@@ -22,11 +22,12 @@ import { ChartOverlays } from './overlay/chartOverlays';
 import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { jsonMerge } from '../util/json';
 import { Layers } from './layers';
-import { CursorManager } from './interaction/cursorManager';
+import { ChartEventManager } from './interaction/chartEventManager';
 import { HighlightChangeEvent, HighlightManager } from './interaction/highlightManager';
+import { CursorManager } from './interaction/cursorManager';
 import { TooltipManager } from './interaction/tooltipManager';
-import { Module, ModuleContext, ModuleInstance, RootModule } from '../util/module';
 import { ZoomManager } from './interaction/zoomManager';
+import { Module, ModuleContext, ModuleInstance, RootModule } from '../util/module';
 import { LayoutService } from './layout/layoutService';
 import { DataService } from './dataService';
 import { UpdateService } from './updateService';
@@ -194,9 +195,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return this._destroyed;
     }
 
-    protected readonly interactionManager: InteractionManager;
+    protected readonly chartEventManager: ChartEventManager;
     protected readonly cursorManager: CursorManager;
     protected readonly highlightManager: HighlightManager;
+    protected readonly interactionManager: InteractionManager;
     protected readonly tooltipManager: TooltipManager;
     protected readonly zoomManager: ZoomManager;
     protected readonly layoutService: LayoutService;
@@ -238,9 +240,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.scene.container = element;
         this.autoSize = true;
 
-        this.interactionManager = new InteractionManager(element);
+        this.chartEventManager = new ChartEventManager();
         this.cursorManager = new CursorManager(element);
         this.highlightManager = new HighlightManager();
+        this.interactionManager = new InteractionManager(element);
         this.zoomManager = new ZoomManager();
         this.dataService = new DataService(() => this.series);
         this.layoutService = new LayoutService();
@@ -313,11 +316,12 @@ export abstract class Chart extends Observable implements AgChartInstance {
     getModuleContext(): ModuleContext {
         const {
             scene,
-            interactionManager,
-            zoomManager,
+            chartEventManager,
             cursorManager,
             highlightManager,
+            interactionManager,
             tooltipManager,
+            zoomManager,
             dataService,
             layoutService,
             updateService,
@@ -325,11 +329,12 @@ export abstract class Chart extends Observable implements AgChartInstance {
         } = this;
         return {
             scene,
-            interactionManager,
-            zoomManager,
+            chartEventManager,
             cursorManager,
             highlightManager,
+            interactionManager,
             tooltipManager,
+            zoomManager,
             dataService,
             layoutService,
             updateService,

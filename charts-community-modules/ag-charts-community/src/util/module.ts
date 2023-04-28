@@ -1,5 +1,6 @@
 import { AgCartesianAxisPosition } from '../chart/agChartOptions';
 import { DataService } from '../chart/dataService';
+import { ChartEventManager } from '../chart/interaction/chartEventManager';
 import { CursorManager } from '../chart/interaction/cursorManager';
 import { HighlightManager } from '../chart/interaction/highlightManager';
 import { InteractionManager } from '../chart/interaction/interactionManager';
@@ -15,9 +16,10 @@ import { JsonApplyParams } from './json';
 export interface ModuleContext {
     scene: Scene;
     mode: 'standalone' | 'integrated';
-    interactionManager: InteractionManager;
-    highlightManager: HighlightManager;
+    chartEventManager: ChartEventManager;
     cursorManager: CursorManager;
+    highlightManager: HighlightManager;
+    interactionManager: InteractionManager;
     zoomManager: ZoomManager;
     tooltipManager: TooltipManager;
     dataService: DataService;
