@@ -80,6 +80,7 @@ export interface IChartService {
     downloadChart(params: ChartDownloadParams): void;
     openChartToolPanel(params: OpenChartToolPanelParams): void;
     closeChartToolPanel(chartId: string): void;
+    updateChart(chartId: string, chartThemeOverrides: AgChartThemeOverrides): void;
 }
 
 interface CreateChartParams {

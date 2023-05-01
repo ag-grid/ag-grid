@@ -8,8 +8,9 @@ import {
     AgToggleButton,
     AutoScrollService,
     Autowired,
-    ChartType,
     ChartDataPanel as ChartDataPanelType,
+    ChartDataPanelGroup,
+    ChartType,
     Column,
     Component,
     DragAndDropService,
@@ -18,11 +19,10 @@ import {
     DragSourceType,
     DropTarget,
     PostConstruct,
-    SeriesChartType,
-    ChartDataPanelGroup
+    SeriesChartType
 } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
-import { ColState } from "../../chartDataModel";
+import { ColState } from "../../model/chartDataModel";
 import { ChartTranslationService } from "../../services/chartTranslationService";
 import { ChartOptionsService } from "../../services/chartOptionsService";
 

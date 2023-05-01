@@ -3,6 +3,7 @@ import {
     AgDialog,
     Autowired,
     CellRange,
+    CHART_TOOL_PANEL_MENU_OPTIONS,
     ChartCreated,
     ChartDestroyed,
     ChartModel,
@@ -17,13 +18,12 @@ import {
     RefSelector,
     SeriesChartType,
     WithoutGridCommon,
-    CHART_TOOL_PANEL_MENU_OPTIONS,
 } from "@ag-grid-community/core";
-import { AgChartThemeOverrides, AgChartThemePalette, AgChartInstance } from "ag-charts-community";
+import { AgChartInstance, AgChartThemeOverrides, AgChartThemePalette } from "ag-charts-community";
 import { ChartMenu } from "./menu/chartMenu";
 import { TitleEdit } from "./chartTitle/titleEdit";
 import { ChartController, DEFAULT_THEMES } from "./chartController";
-import { ChartDataModel, ChartModelParams } from "./chartDataModel";
+import { ChartDataModel, ChartModelParams } from "./model/chartDataModel";
 import { BarChartProxy } from "./chartProxies/cartesian/barChartProxy";
 import { AreaChartProxy } from "./chartProxies/cartesian/areaChartProxy";
 import { ChartProxy, ChartProxyParams } from "./chartProxies/chartProxy";
@@ -424,6 +424,10 @@ export class GridChartComp extends Component {
 
     public getChartId(): string {
         return this.chartController.getChartId();
+    }
+
+    public getChartController(): ChartController {
+        return this.chartController;
     }
 
     public getUnderlyingChart() {

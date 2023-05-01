@@ -3,7 +3,7 @@ import { AgChartThemeName } from 'ag-charts-community';
 // @ts-ignore
 import { getSeriesType } from './chartComp/utils/seriesTypeMapper';
 // @ts-ignore
-import { getLegacyAxisType, ALL_AXIS_TYPES } from './chartComp/utils/axisTypeMapper';
+import { ALL_AXIS_TYPES, getLegacyAxisType } from './chartComp/utils/axisTypeMapper';
 // @ts-ignore
 import { VERSION } from '../version';
 

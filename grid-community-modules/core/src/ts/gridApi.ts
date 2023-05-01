@@ -41,8 +41,7 @@ import {
     TabToNextCellParams,
     TabToNextHeaderParams
 } from "./interfaces/iCallbackParams";
-import { RowNode } from "./entities/rowNode";
-import { RowPinnedType, IRowNode } from "./interfaces/iRowNode";
+import { IRowNode, RowPinnedType } from "./interfaces/iRowNode";
 import { AgEvent, ColumnEventType, SelectionEventSourceType } from "./events";
 import { EventService } from "./eventService";
 import { FilterManager } from "./filter/filterManager";
@@ -57,11 +56,17 @@ import { CsvExportParams, ProcessCellForExportParams } from "./interfaces/export
 import { IAggFuncService } from "./interfaces/iAggFuncService";
 import { ICellEditor } from "./interfaces/iCellEditor";
 import {
-    ChartDownloadParams, ChartModel, CloseChartToolPanelParams, GetChartImageDataUrlParams,
-    IChartService, OpenChartToolPanelParams,
-    CreateCrossFilterChartParams, CreatePivotChartParams, CreateRangeChartParams,
+    ChartDownloadParams,
+    ChartModel,
+    CloseChartToolPanelParams,
+    CreateCrossFilterChartParams,
+    CreatePivotChartParams,
+    CreateRangeChartParams,
+    GetChartImageDataUrlParams,
+    IChartService,
+    OpenChartToolPanelParams,
 } from './interfaces/IChartService';
-import { ClientSideRowModelSteps, IClientSideRowModel, ClientSideRowModelStep } from "./interfaces/iClientSideRowModel";
+import { ClientSideRowModelStep, ClientSideRowModelSteps, IClientSideRowModel } from "./interfaces/iClientSideRowModel";
 import { IClipboardCopyParams, IClipboardCopyRowsParams, IClipboardService } from "./interfaces/iClipboardService";
 import { IColumnToolPanel } from "./interfaces/iColumnToolPanel";
 import { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
@@ -102,7 +107,14 @@ import { PaginationProxy } from "./pagination/paginationProxy";
 import { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
 import { ICellRenderer } from "./rendering/cellRenderers/iCellRenderer";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
-import { FlashCellsParams, GetCellEditorInstancesParams, GetCellRendererInstancesParams, RedrawRowsParams, RefreshCellsParams, RowRenderer } from "./rendering/rowRenderer";
+import {
+    FlashCellsParams,
+    GetCellEditorInstancesParams,
+    GetCellRendererInstancesParams,
+    RedrawRowsParams,
+    RefreshCellsParams,
+    RowRenderer
+} from "./rendering/rowRenderer";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { SortController } from "./sortController";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
@@ -112,6 +124,7 @@ import { ValueCache } from "./valueService/valueCache";
 import { ValueService } from "./valueService/valueService";
 import { ISelectionService } from "./interfaces/iSelectionService";
 import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./interfaces/iServerSideSelection";
+import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 
 export interface DetailGridInfo {
     /**
@@ -1593,6 +1606,12 @@ export class GridApi<TData = any> {
     public closeChartToolPanel(params: CloseChartToolPanelParams) {
         if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.closeChartToolPanel')) {
             return this.chartService.closeChartToolPanel(params.chartId);
+        }
+    }
+
+    public updateChart(chartId: string, chartThemeOverrides: AgChartThemeOverrides): void {
+        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.updateChart')) {
+             this.chartService.updateChart(chartId, chartThemeOverrides);
         }
     }
 
