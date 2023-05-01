@@ -1123,15 +1123,6 @@
     "description": "/** Close the Chart Tool Panel. */",
     "type": { "arguments": { "params": "CloseChartToolPanelParams" } }
   },
-  "updateChart": {
-    "type": {
-      "arguments": {
-        "chartId": "string",
-        "chartThemeOverrides": "AgChartThemeOverrides"
-      },
-      "returnType": "void"
-    }
-  },
   "createRangeChart": {
     "description": "/** Used to programmatically create charts from a range. */",
     "type": {

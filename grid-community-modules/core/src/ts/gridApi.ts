@@ -124,7 +124,6 @@ import { ValueCache } from "./valueService/valueCache";
 import { ValueService } from "./valueService/valueService";
 import { ISelectionService } from "./interfaces/iSelectionService";
 import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./interfaces/iServerSideSelection";
-import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 
 export interface DetailGridInfo {
     /**
@@ -1606,12 +1605,6 @@ export class GridApi<TData = any> {
     public closeChartToolPanel(params: CloseChartToolPanelParams) {
         if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.closeChartToolPanel')) {
             return this.chartService.closeChartToolPanel(params.chartId);
-        }
-    }
-
-    public updateChart(chartId: string, chartThemeOverrides: AgChartThemeOverrides): void {
-        if (ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.updateChart')) {
-             this.chartService.updateChart(chartId, chartThemeOverrides);
         }
     }
 
