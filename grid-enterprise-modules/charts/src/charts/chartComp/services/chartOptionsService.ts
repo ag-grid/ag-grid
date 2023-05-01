@@ -1,11 +1,4 @@
-import {
-    _,
-    BeanStub,
-    ChartOptionsChanged,
-    ChartType,
-    Events,
-    WithoutGridCommon
-} from "@ag-grid-community/core";
+import { _, BeanStub, ChartOptionsChanged, ChartType, Events, WithoutGridCommon } from "@ag-grid-community/core";
 import { AgCartesianAxisType, AgChart, AgChartOptions } from "ag-charts-community";
 import { ChartController } from "../chartController";
 import { AgChartActual } from "../utils/integration";

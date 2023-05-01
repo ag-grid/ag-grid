@@ -7160,7 +7160,8 @@
       "getChartImageDataURL(params: GetChartImageDataUrlParams)": "string | undefined",
       "downloadChart(params: ChartDownloadParams)": "void",
       "openChartToolPanel(params: OpenChartToolPanelParams)": "void",
-      "closeChartToolPanel(chartId: string)": "void"
+      "closeChartToolPanel(chartId: string)": "void",
+      "updateChart(chartId: string, chartThemeOverrides: AgChartThemeOverrides)": "void"
     }
   },
   "CreateChartParams": {

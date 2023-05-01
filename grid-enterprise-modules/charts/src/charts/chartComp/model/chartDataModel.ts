@@ -6,17 +6,15 @@ import {
     CellRangeType,
     ChartType,
     Column,
-    ColumnModel,
     IAggFunc,
     IRangeService,
     PostConstruct,
-    RowNode,
-    RowRenderer,
     SeriesChartType,
-    ValueService
 } from "@ag-grid-community/core";
-import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
-import { ChartTranslationService } from './services/chartTranslationService';
+import { ChartDatasource, ChartDatasourceParams } from "../datasource/chartDatasource";
+import { ChartTranslationService } from '../services/chartTranslationService';
+import { ChartColumnService } from "../services/chartColumnService";
+import { ComboChartModel } from "./comboChartModel";
 
 export interface ColState {
     column?: Column;
@@ -44,12 +42,11 @@ export class ChartDataModel extends BeanStub {
     public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
     public static SUPPORTED_COMBO_CHART_TYPES = ['line', 'groupedColumn', 'stackedColumn', 'area', 'stackedArea'];
 
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('valueService') private readonly valueService: ValueService;
     @Autowired('rangeService') private readonly rangeService: IRangeService;
-    @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
 
     @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
+
+    public readonly params: ChartModelParams;
 
     // this is used to associate chart ranges with charts
     public readonly chartId: string;
@@ -57,6 +54,7 @@ export class ChartDataModel extends BeanStub {
     public readonly suppressChartRanges: boolean;
     public readonly aggFunc?: string | IAggFunc;
     public readonly pivotChart: boolean;
+
     public chartType: ChartType;
     public chartThemeName: string;
     public unlinked = false;
@@ -64,26 +62,25 @@ export class ChartDataModel extends BeanStub {
     public valueColState: ColState[] = [];
     public dimensionColState: ColState[] = [];
     public columnNames: { [p: string]: string[]; } = {};
-    public seriesChartTypes: SeriesChartType[];
-    public savedCustomSeriesChartTypes: SeriesChartType[];
 
     public valueCellRange?: CellRange;
     public dimensionCellRange?: CellRange;
 
+    public comboChartModel: ComboChartModel;
+    private chartColumnService: ChartColumnService;
+    private datasource: ChartDatasource;
+
     private referenceCellRange: CellRange;
     private suppliedCellRange: CellRange;
 
-    private datasource: ChartDatasource;
-
     private grouping = false;
-    private crossFiltering = false;
 
-    // this control flag is used to only log warning for the initial user config
-    private suppressComboChartWarnings = false;
+    private crossFiltering = false;
 
     public constructor(params: ChartModelParams) {
         super();
 
+        this.params = params;
         this.chartId = params.chartId;
         this.chartType = params.chartType;
         this.pivotChart = params.pivotChart;
@@ -94,26 +91,13 @@ export class ChartDataModel extends BeanStub {
         this.suppressChartRanges = params.suppressChartRanges;
         this.unlinked = !!params.unlinkChart;
         this.crossFiltering = !!params.crossFiltering;
-        this.seriesChartTypes = params.seriesChartTypes || [];
-
-        this.initComboCharts(params);
-    }
-
-    private initComboCharts(params: ChartModelParams) {
-        const seriesChartTypesExist = this.seriesChartTypes && this.seriesChartTypes.length > 0;
-        const customCombo = params.chartType === 'customCombo' || seriesChartTypesExist;
-        if (customCombo) {
-            // it is not necessary to supply a chart type for combo charts when `seriesChartTypes` is supplied
-            this.chartType = 'customCombo';
-
-            // cache supplied `seriesChartTypes` to allow switching between different chart types in the settings panel
-            this.savedCustomSeriesChartTypes = this.seriesChartTypes || [];
-        }
     }
 
     @PostConstruct
     private init(): void {
         this.datasource = this.createManagedBean(new ChartDatasource());
+        this.chartColumnService = this.createManagedBean(new ChartColumnService());
+        this.comboChartModel = this.createManagedBean(new ComboChartModel(this));
         this.updateCellRanges();
     }
 
@@ -122,7 +106,7 @@ export class ChartDataModel extends BeanStub {
             this.referenceCellRange = this.valueCellRange;
         }
 
-        const { dimensionCols, valueCols } = this.getAllChartColumns();
+        const { dimensionCols, valueCols } = this.chartColumnService.getChartColumns();
         const allColsFromRanges = this.getAllColumnsFromRanges();
 
         if (updatedColState) {
@@ -138,87 +122,8 @@ export class ChartDataModel extends BeanStub {
             this.syncDimensionCellRange();
         }
 
-        this.updateSeriesChartTypes();
+        this.comboChartModel.updateSeriesChartTypes();
         this.updateData();
-    }
-
-    public updateSeriesChartTypes(): void {
-        if(!this.isComboChart()) {
-            return;
-        }
-
-        // ensure primary only chart types are not placed on secondary axis
-        this.seriesChartTypes = this.seriesChartTypes.map(seriesChartType => {
-            const primaryOnly = ['groupedColumn', 'stackedColumn', 'stackedArea'].includes(seriesChartType.chartType);
-            seriesChartType.secondaryAxis = primaryOnly ? false : seriesChartType.secondaryAxis;
-            return seriesChartType;
-        });
-
-        // note that when seriesChartTypes are supplied the chart type is also changed to 'customCombo'
-        if (this.chartType === 'customCombo') {
-            this.updateSeriesChartTypesForCustomCombo();
-            return;
-        }
-
-        this.updateChartSeriesTypesForBuiltInCombos();
-    }
-
-    public updateSeriesChartTypesForCustomCombo() {
-        const seriesChartTypesSupplied = this.seriesChartTypes && this.seriesChartTypes.length > 0;
-        if (!seriesChartTypesSupplied && !this.suppressComboChartWarnings) {
-            console.warn(`AG Grid: 'seriesChartTypes' are required when the 'customCombo' chart type is specified.`);
-        }
-
-        // ensure correct chartTypes are supplied
-        this.seriesChartTypes = this.seriesChartTypes.map(s => {
-            if (!ChartDataModel.SUPPORTED_COMBO_CHART_TYPES.includes(s.chartType)) {
-                console.warn(`AG Grid: invalid chartType '${s.chartType}' supplied in 'seriesChartTypes', converting to 'line' instead.`);
-                s.chartType = 'line';
-            }
-            return s;
-        });
-
-        const getSeriesChartType = (valueCol: ColState): SeriesChartType => {
-            if (!this.savedCustomSeriesChartTypes || this.savedCustomSeriesChartTypes.length === 0) {
-                this.savedCustomSeriesChartTypes = this.seriesChartTypes;
-            }
-
-            const providedSeriesChartType = this.savedCustomSeriesChartTypes.find(s => s.colId === valueCol.colId);
-            if (!providedSeriesChartType) {
-                if (valueCol.selected && !this.suppressComboChartWarnings) {
-                    console.warn(`AG Grid: no 'seriesChartType' found for colId = '${valueCol.colId}', defaulting to 'line'.`);
-                }
-                return {
-                    colId: valueCol.colId,
-                    chartType: 'line',
-                    secondaryAxis: false
-                };
-            }
-
-            return providedSeriesChartType;
-        }
-
-        const updatedSeriesChartTypes = this.valueColState.map(getSeriesChartType);
-
-        this.seriesChartTypes = updatedSeriesChartTypes;
-
-        // also cache custom `seriesChartTypes` to allow for switching between different chart types
-        this.savedCustomSeriesChartTypes = updatedSeriesChartTypes;
-
-        // turn off warnings as first combo chart attempt has completed
-        this.suppressComboChartWarnings = true;
-    }
-
-    public updateChartSeriesTypesForBuiltInCombos() {
-        let primaryChartType: ChartType = this.chartType === 'columnLineCombo' ? 'groupedColumn' : 'stackedArea';
-        let secondaryChartType: ChartType = this.chartType === 'columnLineCombo' ? 'line' : 'groupedColumn';
-
-        const selectedCols = this.valueColState.filter(cs => cs.selected);
-        const lineIndex = Math.ceil(selectedCols.length / 2);
-        this.seriesChartTypes = selectedCols.map((valueCol: ColState, i: number) => {
-            const seriesType = (i >= lineIndex) ? secondaryChartType : primaryChartType;
-            return {colId: valueCol.colId, chartType: seriesType, secondaryAxis: false};
-        });
     }
 
     public updateData(): void {
@@ -250,12 +155,12 @@ export class ChartDataModel extends BeanStub {
 
     public isGrouping(): boolean {
         const usingTreeData = this.gridOptionsService.isTreeData();
-        const groupedCols = usingTreeData ? null : this.columnModel.getRowGroupColumns();
+        const groupedCols = usingTreeData ? null : this.chartColumnService.getRowGroupColumns();
         const isGroupActive = usingTreeData || (groupedCols && groupedCols.length > 0);
 
         // charts only group when the selected category is a group column
         const colId = this.getSelectedDimension().colId;
-        const displayedGroupCols = this.columnModel.getGroupDisplayColumns();
+        const displayedGroupCols = this.chartColumnService.getGroupDisplayColumns();
         const groupDimensionSelected = displayedGroupCols.map(col => col.getColId()).some(id => id === colId);
         return !!isGroupActive && groupDimensionSelected;
     }
@@ -269,20 +174,20 @@ export class ChartDataModel extends BeanStub {
     }
 
     public getColDisplayName(col: Column): string | null {
-        return this.columnModel.getDisplayNameForColumn(col, 'chart');
+        return this.chartColumnService.getColDisplayName(col);
     }
 
     public isPivotMode(): boolean {
-        return this.columnModel.isPivotMode();
+        return this.chartColumnService.isPivotMode();
     }
 
     public getChartDataType(colId: string): string | undefined {
-        const column = this.columnModel.getPrimaryColumn(colId);
+        const column = this.chartColumnService.getColumn(colId);
         return column ? column.getColDef().chartDataType : undefined;
     }
 
     private isPivotActive(): boolean {
-        return this.columnModel.isPivotActive();
+        return this.chartColumnService.isPivotActive();
     }
 
     private createCellRange(type: CellRangeType, ...columns: Column[]): CellRange {
@@ -298,7 +203,7 @@ export class ChartDataModel extends BeanStub {
 
     private getAllColumnsFromRanges(): Set<Column> {
         if (this.pivotChart) {
-            return _.convertToSet(this.columnModel.getAllDisplayedColumns());
+            return _.convertToSet(this.chartColumnService.getAllDisplayedColumns());
         }
 
         const columns = this.dimensionCellRange || this.valueCellRange ? [] : this.referenceCellRange.columns;
@@ -316,105 +221,22 @@ export class ChartDataModel extends BeanStub {
 
     private getRowIndexes(): { startRow: number; endRow: number; } {
         let startRow = 0, endRow = 0;
-        const { rangeService } = this;
-        const { valueCellRange: range } = this;
+        const { rangeService, valueCellRange } = this;
 
-        if (rangeService && range) {
-            startRow = rangeService.getRangeStartRow(range).rowIndex;
+        if (rangeService && valueCellRange) {
+            startRow = rangeService.getRangeStartRow(valueCellRange).rowIndex;
 
             // when the last row the cell range is a pinned 'bottom' row, the `endRow` index is set to -1 which results
             // in the ChartDatasource processing all non pinned rows from the `startRow` index.
-            const endRowPosition = rangeService.getRangeEndRow(range);
+            const endRowPosition = rangeService.getRangeEndRow(valueCellRange);
             endRow = endRowPosition.rowPinned === 'bottom' ? -1 : endRowPosition.rowIndex;
         }
 
         return { startRow, endRow };
     }
 
-    private getAllChartColumns(): { dimensionCols: Set<Column>; valueCols: Set<Column>; } {
-        const displayedCols = this.columnModel.getAllDisplayedColumns();
-
-        const dimensionCols = new Set<Column>();
-        const valueCols = new Set<Column>();
-
-        displayedCols.forEach(col => {
-            const colDef = col.getColDef();
-            const chartDataType = colDef.chartDataType;
-
-            if (chartDataType) {
-                // chart data type was specified explicitly
-                switch (chartDataType) {
-                    case 'category':
-                    case 'time':
-                        dimensionCols.add(col);
-                        return;
-                    case 'series':
-                        valueCols.add(col);
-                        return;
-                    case 'excluded':
-                        return;
-                    default:
-                        console.warn(`AG Grid: unexpected chartDataType value '${chartDataType}' supplied, instead use 'category', 'series' or 'excluded'`);
-                        break;
-                }
-            }
-
-            if (colDef.colId === 'ag-Grid-AutoColumn') {
-                dimensionCols.add(col);
-                return;
-            }
-
-            if (!col.isPrimary()) {
-                valueCols.add(col);
-                return;
-            }
-
-            // if 'chartDataType' is not provided then infer type based data contained in first row
-            (this.isNumberCol(col) ? valueCols : dimensionCols).add(col);
-        });
-
-        return { dimensionCols, valueCols };
-    }
-
-    private isNumberCol(col: Column): boolean {
-        if (col.getColId() === 'ag-Grid-AutoColumn') {
-            return false;
-        }
-
-        const row = this.rowRenderer.getRowNode({ rowIndex: 0, rowPinned: null });
-
-        if (!row) { return false; }
-
-        let cellValue = this.valueService.getValue(col, row);
-
-        if (cellValue == null) {
-            cellValue = this.extractLeafData(row, col);
-        }
-
-        if (cellValue != null && typeof cellValue.toNumber === 'function') {
-            cellValue = cellValue.toNumber();
-        }
-
-        return typeof cellValue === 'number';
-    }
-
-    private extractLeafData(row: RowNode, col: Column): any {
-        if (!row.allLeafChildren) { return null; }
-
-        for (let i = 0; i < row.allLeafChildren.length; i++) {
-            const childRow = row.allLeafChildren[i];
-            const value = this.valueService.getValue(col, childRow);
-
-            if (value != null) {
-                return value;
-            }
-        }
-
-        return null;
-    }
-
     private resetColumnState(): void {
-        const { dimensionCols, valueCols } = this.getAllChartColumns();
+        const { dimensionCols, valueCols } = this.chartColumnService.getChartColumns();
         const allCols = this.getAllColumnsFromRanges();
         const isInitialising = this.valueColState.length < 1;
 
