@@ -18,8 +18,9 @@ import { applySeriesTransform } from './transforms';
 import { getChartTheme } from './themes';
 import { processSeriesOptions, SeriesOptions } from './prepareSeries';
 import { Logger } from '../../util/logger';
-import { CHART_TYPES } from '../chartTypes';
+import { CHART_TYPES } from '../factory/chartTypes';
 import { CHART_AXES_TYPES } from '../chartAxesTypes';
+import { getSeriesDefaults } from '../factory/seriesTypes';
 
 type AxesOptionsTypes = NonNullable<AgCartesianChartOptions['axes']>[number];
 
@@ -118,11 +119,7 @@ export const noDataCloneMergeOptions: JsonMergeOptions = {
     avoidDeepClone: ['data'],
 };
 
-export function prepareOptions<T extends AgChartOptions>(
-    newOptions: T,
-    fallbackOptions?: T,
-    seriesDefaults?: Record<string, any>
-): T {
+export function prepareOptions<T extends AgChartOptions>(newOptions: T, fallbackOptions?: T): T {
     let options: T = jsonMerge([fallbackOptions, newOptions], noDataCloneMergeOptions)!;
     sanityCheckOptions(options);
 
@@ -133,7 +130,7 @@ export function prepareOptions<T extends AgChartOptions>(
     const globalTooltipPositionOptions = options.tooltip?.position || {};
 
     const checkSeriesType = (type?: string) => {
-        if (type != null && !(isSeriesOptionType(type) || seriesDefaults?.[type])) {
+        if (type != null && !(isSeriesOptionType(type) || getSeriesDefaults(type))) {
             throw new Error(`AG Charts - unknown series type: ${type}; expected one of: ${CHART_TYPES.seriesTypes}`);
         }
     };
@@ -155,8 +152,9 @@ export function prepareOptions<T extends AgChartOptions>(
     }
 
     let defaultOverrides = {};
-    if (seriesDefaults && Object.prototype.hasOwnProperty.call(seriesDefaults, type)) {
-        defaultOverrides = seriesDefaults[type];
+    const seriesDefaults = getSeriesDefaults(type);
+    if (seriesDefaults) {
+        defaultOverrides = seriesDefaults;
     } else if (type === 'bar') {
         defaultOverrides = DEFAULT_BAR_CHART_OVERRIDES;
     } else if (type === 'scatter' || type === 'histogram') {
@@ -164,6 +162,8 @@ export function prepareOptions<T extends AgChartOptions>(
     } else if (isAgCartesianChartOptions(options)) {
         defaultOverrides = DEFAULT_CARTESIAN_CHART_OVERRIDES;
     }
+
+    removeDisabledOptions<T>(options);
 
     const { context, mergedOptions, axesThemes, seriesThemes } = prepareMainOptions<T>(defaultOverrides as T, options);
 
@@ -220,6 +220,7 @@ export function prepareOptions<T extends AgChartOptions>(
                 return prepareAxis(axis, axesTheme);
             });
         }
+        prepareLegendEnabledOption<T>(options, mergedOptions);
     }
 
     prepareEnabledOptions<T>(options, mergedOptions);
@@ -369,6 +370,31 @@ function prepareAxis<T extends AxesOptionsTypes>(
     const cleanTheme = { crossLines: DELETE };
 
     return jsonMerge([axisTheme, cleanTheme, axis, removeOptions], noDataCloneMergeOptions);
+}
+
+function removeDisabledOptions<T extends AgChartOptions>(options: T) {
+    // Remove configurations from all option objects with a `false` value for the `enabled` property.
+    jsonWalk(
+        options,
+        (_, visitingUserOpts) => {
+            if (!('enabled' in visitingUserOpts)) return;
+            if (visitingUserOpts.enabled === false) {
+                Object.entries(visitingUserOpts).forEach(([key]) => {
+                    if (key === 'enabled') return;
+                    delete visitingUserOpts[key];
+                });
+            }
+        },
+        { skip: ['data', 'theme'] }
+    );
+}
+
+function prepareLegendEnabledOption<T extends AgChartOptions>(options: T, mergedOptions: any) {
+    // Disable legend by default for single series cartesian charts
+    if (options.legend || (options.series ?? []).length > 1) {
+        return;
+    }
+    mergedOptions.legend.enabled = false;
 }
 
 function prepareEnabledOptions<T extends AgChartOptions>(options: T, mergedOptions: any) {

@@ -1,0 +1,6 @@
+@use 'core' as *;
+
+// Export breakpoints for JavaScript
+:export {
+    automated-row-grouping-medium: $breakpoint-automated-row-grouping-medium;
+}

@@ -1,6 +1,6 @@
 import { AutomatedExample } from '../types';
 import { AUTOMATED_EXAMPLE_MANAGER_ID, INTEGRATED_CHARTS_ID, ROW_GROUPING_ID } from './constants';
-import { createScriptDebuggerManager } from './scriptDebugger';
+import { createScriptDebuggerManager, LogLevel } from './scriptDebugger';
 
 export type AutomatedExampleManager = ReturnType<typeof createAutomatedExampleManager>;
 
@@ -25,6 +25,7 @@ export function createAutomatedExampleManager({ debugCanvasClassname, debugPanel
 
     const updateState = (state: AutomatedExampleState) => {
         exampleDebuggerManager.log(`${logId} state: ${state}`);
+        exampleDebuggerManager.updateManagerState(state);
         automatedExampleState = state;
     };
 
@@ -173,12 +174,19 @@ export function createAutomatedExampleManager({ debugCanvasClassname, debugPanel
 
     const setEnabled = ({ id, isEnabled }: { id: string; isEnabled: boolean }) => {
         automatedExamplesEnabled[id] = isEnabled;
+
+        const automatedExample = automatedExamples[id];
+        automatedExample?.getDebugger()?.updateIsEnabled(isEnabled);
     };
 
     const getEnabled = (id: string) => automatedExamplesEnabled[id];
 
     const setDebugEnabled = (enabled: boolean) => {
         exampleDebuggerManager.setEnabled(enabled);
+    };
+
+    const setDebugLogLevel = (logLevel?: LogLevel) => {
+        exampleDebuggerManager.setDebugLogLevel(logLevel);
     };
 
     const setDebugInitialDraw = (shouldDraw: boolean) => {
@@ -200,6 +208,7 @@ export function createAutomatedExampleManager({ debugCanvasClassname, debugPanel
         setEnabled,
         getEnabled,
         setDebugEnabled,
+        setDebugLogLevel,
         setDebugInitialDraw,
         getDebuggerManager,
     };

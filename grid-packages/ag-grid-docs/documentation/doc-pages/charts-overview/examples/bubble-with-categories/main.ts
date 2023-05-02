@@ -64,9 +64,6 @@ const options: AgChartOptions = {
       },
     },
   ],
-  legend: {
-    enabled: false,
-  },
 }
 
 var chart = AgChart.create(options)

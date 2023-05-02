@@ -28,10 +28,10 @@
         },
         packages: {
             react: {
-                main: './umd/react.profiling.min.js'
+                main: './umd/react.development.min.js'
             },
             'react-dom': {
-                main: './umd/react-dom.profiling.min.js'
+                main: './umd/react-dom.development.min.js'
             },
             'react-dom/server': {
                 main: '../umd/react-dom-server.browser.production.min.js'
@@ -175,6 +175,10 @@
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/viewport-row-model': {
+                main: './dist/cjs/es5/main.js',
+                defaultExtension: 'js'
+            },
+            'ag-charts-enterprise': {
                 main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },

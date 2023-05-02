@@ -1,7 +1,7 @@
 import { AgCartesianAxisOptions, AgScatterSeriesMarker, AgScatterSeriesOptions } from "ag-charts-community";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
-import { ChartDataModel } from "../../chartDataModel";
+import { ChartDataModel } from "../../model/chartDataModel";
 
 interface SeriesDefinition {
     xField: FieldDefinition;

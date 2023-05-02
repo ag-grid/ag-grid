@@ -129,7 +129,7 @@ const main = async () => {
     templatePackageJson.license = enterprise ? 'Commercial' : 'MIT';
     templatePackageJson.dependencies[grid ? '@ag-grid-community/core' : 'ag-charts-community'] = `~${packageVersionNumber}`;
     if (enterprise) {
-        templatePackageJson.dependencies[grid ? '@ag-grid-enterprise/core' : '@ag-charts-enterprise/core'] = `~${packageVersionNumber}`;
+        templatePackageJson.dependencies[grid ? '@ag-grid-enterprise/core' : 'ag-charts-enterprise'] = `~${packageVersionNumber}`;
     }
     const templatePackageJsonLintStaged = templatePackageJson['lint-staged'];
     if (templatePackageJsonLintStaged) {

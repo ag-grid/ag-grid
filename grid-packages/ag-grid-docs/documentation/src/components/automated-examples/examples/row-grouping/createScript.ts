@@ -2,8 +2,7 @@ import { Group } from '@tweenjs/tween.js';
 import { createAgElementFinder } from '../../lib/agElements';
 import { Mouse } from '../../lib/createMouse';
 import { getBottomMidPos, getOffset, getScrollOffset } from '../../lib/dom';
-import { addPoints } from '../../lib/geometry';
-import { clearAllRowHighlights } from '../../lib/scriptActions/clearAllRowHighlights';
+import { addPoints, scalePoint } from '../../lib/geometry';
 import { createGroupColumnScriptActions } from '../../lib/scriptActions/createGroupColumnScriptActions';
 import { moveTarget } from '../../lib/scriptActions/move';
 import { ScriptDebugger } from '../../lib/scriptDebugger';
@@ -11,12 +10,22 @@ import { ScriptAction } from '../../lib/scriptRunner';
 
 interface Params {
     containerEl: HTMLElement;
+    /**
+     * Whether the container element is scaled or not, and by how much
+     */
+    getContainerScale?: () => number;
     mouse: Mouse;
     tweenGroup: Group;
     scriptDebugger?: ScriptDebugger;
 }
 
-export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }: Params): ScriptAction[] => {
+export const createScript = ({
+    containerEl,
+    getContainerScale = () => 1,
+    mouse,
+    tweenGroup,
+    scriptDebugger,
+}: Params): ScriptAction[] => {
     const GROUP_1_HEADER_CELL_NAME = 'Category';
     const GROUP_1_COL_ID = 'category';
     const GROUP_1_GROUP_INDEX = 0;
@@ -44,16 +53,22 @@ export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }:
                 // Move mouse to starting position
                 moveTarget({
                     target: mouse.getTarget(),
-                    coords: getOffscreenPos(),
-                    offset: addPoints(getOffset(containerEl), getScrollOffset(), {
-                        x: 0,
-                        y: -120,
-                    }),
+                    coords: scalePoint(getOffscreenPos(), getContainerScale()),
+                    offset: addPoints(
+                        getOffset(containerEl),
+                        getScrollOffset(),
+                        scalePoint(
+                            {
+                                x: 0,
+                                y: -120,
+                            },
+                            getContainerScale()
+                        )
+                    ),
                     scriptDebugger,
                 });
 
                 mouse.show();
-                clearAllRowHighlights();
             },
         },
         {
@@ -189,54 +204,36 @@ export const createScript = ({ containerEl, mouse, tweenGroup, scriptDebugger }:
         {
             type: 'moveTo',
             toPos: () => {
-                return addPoints(
-                    agElementFinder
-                        .get('cell', {
-                            colIndex: TARGET_GROUP_ITEM_CELL_COL_INDEX,
-                            rowIndex: TARGET_GROUP_ITEM_CELL_ROW_INDEX,
-                        })
-                        ?.getPos(),
-                    {
-                        x: -40,
-                        y: 10,
-                    }
-                );
+                return agElementFinder
+                    .get('cell', {
+                        colIndex: TARGET_GROUP_ITEM_CELL_COL_INDEX,
+                        rowIndex: TARGET_GROUP_ITEM_CELL_ROW_INDEX,
+                    })
+                    ?.getPos('bottomCenter');
             },
         },
         { type: 'wait', duration: 200 },
         {
             type: 'moveTo',
             toPos: () =>
-                addPoints(
-                    agElementFinder
-                        .get('cell', {
-                            colIndex: TARGET_GROUP_ITEM_CELL_COL_INDEX,
-                            rowIndex: TARGET_GROUP_ITEM_CELL_ROW_INDEX,
-                        })
-                        ?.getPos(),
-                    {
-                        x: 0,
-                        y: 10,
-                    }
-                ),
+                agElementFinder
+                    .get('cell', {
+                        colIndex: TARGET_GROUP_ITEM_CELL_COL_INDEX,
+                        rowIndex: TARGET_GROUP_ITEM_CELL_ROW_INDEX,
+                    })
+                    ?.getPos('bottomRight'),
             duration: 200,
         },
         { type: 'wait', duration: 200 },
         {
             type: 'moveTo',
             toPos: () =>
-                addPoints(
-                    agElementFinder
-                        .get('cell', {
-                            colIndex: TARGET_GROUP_ITEM_CELL_COL_INDEX,
-                            rowIndex: TARGET_GROUP_ITEM_CELL_ROW_INDEX,
-                        })
-                        ?.getPos(),
-                    {
-                        x: -40,
-                        y: 10,
-                    }
-                ),
+                agElementFinder
+                    .get('cell', {
+                        colIndex: TARGET_GROUP_ITEM_CELL_COL_INDEX,
+                        rowIndex: TARGET_GROUP_ITEM_CELL_ROW_INDEX,
+                    })
+                    ?.getPos('bottomCenter'),
             duration: 200,
         },
         { type: 'wait', duration: 300 },

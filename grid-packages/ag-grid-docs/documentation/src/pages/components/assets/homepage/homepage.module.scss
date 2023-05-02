@@ -261,10 +261,24 @@ gatsby-fast-refresh {
     padding: ds.$size-2;
     z-index: $z-index-debug-panel;
 
+    :global(.disabled) {
+        h2 {
+            color: var(--ag-grid-grey);
+
+            &::after {
+                content: ' (disabled)';
+            }
+        }
+    }
+
     h2 {
         font-size: ds.$font-size-medium !important; // !important for .ag-styles specificity
         margin-bottom: ds.$size-half !important; // !important for .ag-styles specificity
         margin-top: ds.$size-1 !important; // !important for .ag-styles specificity
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     :global(.state) {
@@ -314,6 +328,17 @@ gatsby-fast-refresh {
 
         &::before {
             content: 'Mouse: ';
+            color: var(--dull-light-gray);
+        }
+    }
+
+    :global(.manager-state) {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        &::before {
+            content: 'Manager: ';
             color: var(--dull-light-gray);
         }
     }

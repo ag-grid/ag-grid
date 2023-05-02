@@ -1,6 +1,6 @@
 import { Grid, GridOptions, IServerSideDatasource } from '@ag-grid-community/core'
 declare var FakeServer: any;
-const gridOptions: GridOptions<IOlympicData> = {
+const gridOptions: GridOptions<IOlympicDataWithId> = {
   columnDefs: [
     { field: 'id', maxWidth: 75 },
     { field: 'athlete', minWidth: 190 },

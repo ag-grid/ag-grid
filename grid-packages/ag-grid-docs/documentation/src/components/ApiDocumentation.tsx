@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import { Icon } from 'components/Icon';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from './ApiDocumentation.module.scss';
 import {
     ApiProps,
@@ -432,10 +432,20 @@ const Section: React.FC<SectionProps> = ({
 
 const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, config }) => {
     const [isExpanded, setExpanded] = useState(config.defaultExpand);
-
+    const propertyRef = useRef<HTMLElement>(null);
+    const idName = `reference-${id}-${name}`;
     let description = '';
     let isObject = false;
     let gridParams = config.gridOpProp;
+
+    useEffect(() => {
+        const hashId = location.hash.slice(1); // Remove the '#' symbol
+
+        if (idName === hashId) {
+            setExpanded(true);
+            propertyRef.current?.scrollIntoView();
+        }
+    }, []);
 
     if (
         !gridParams &&
@@ -534,7 +544,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
     const wrap = !!config.maxLeftColumnWidth;
 
     return (
-        <tr>
+        <tr ref={propertyRef}>
             <td
                 className={styles['reference__expander-cell']}
                 onClick={() => setExpanded(!isExpanded)}
@@ -547,7 +557,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                 )}
             </td>
             <td role="presentation">
-                <h6 id={`reference-${id}-${name}`} style={{ display: 'inline-flex' }} className="side-menu-exclude">
+                <h6 id={idName} style={{ display: 'inline-flex' }} className="side-menu-exclude">
                     <code
                         onClick={() => setExpanded(!isExpanded)}
                         dangerouslySetInnerHTML={{ __html: displayName }}
@@ -557,11 +567,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                                 : styles['reference__name']
                         }
                     ></code>
-                    <a
-                        href={`#reference-${id}-${name}`}
-                        className="docs-header-icon ag-styles"
-                        style={{ fontSize: 'small' }}
-                    >
+                    <a href={`#${idName}`} className="docs-header-icon ag-styles" style={{ fontSize: 'small' }}>
                         <Icon name="link" />
                     </a>
                 </h6>

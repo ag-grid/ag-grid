@@ -2,10 +2,9 @@ import {
     Autowired,
     Bean,
     BeanStub,
-    ChartDownloadParams,
-    OpenChartToolPanelParams,
     CellRange,
     CellRangeParams,
+    ChartDownloadParams,
     ChartModel,
     ChartRef,
     ChartType,
@@ -17,6 +16,7 @@ import {
     IAggFunc,
     IChartService,
     IRangeService,
+    OpenChartToolPanelParams,
     Optional,
     PreDestroy,
     SeriesChartType
@@ -48,6 +48,9 @@ export class ChartService extends BeanStub implements IChartService {
         lastSelectedChartId: '',
     };
 
+    public updateChart(chartId: string, chartThemeOverrides: AgChartThemeOverrides): void {
+    }
+
     public getChartModels(): ChartModel[] {
         const models: ChartModel[] = [];
 
@@ -61,14 +64,22 @@ export class ChartService extends BeanStub implements IChartService {
 
     public getChartRef(chartId: string): ChartRef | undefined {
         let chartRef;
-
         this.activeCharts.forEach(cr => {
             if (cr.chartId === chartId) {
                 chartRef = cr;
             }
         });
-
         return chartRef;
+    }
+
+    public getChartComp(chartId: string): GridChartComp | undefined {
+        let chartComp;
+        this.activeChartComps.forEach(comp => {
+            if (comp.getChartId() === chartId) {
+                chartComp = comp;
+            }
+        });
+        return chartComp;
     }
 
     public getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined {
@@ -330,7 +341,7 @@ export class ChartService extends BeanStub implements IChartService {
                 container.classList.add(theme.theme!);
             }
         } else if (createChartContainerFunc) {
-            // otherwise user created chart via grid UI, check if developer provides containers (eg if the application
+            // otherwise, user created chart via grid UI, check if developer provides containers (eg if the application
             // is using its own dialogs rather than the grid provided dialogs)
             createChartContainerFunc(chartRef);
         } else {

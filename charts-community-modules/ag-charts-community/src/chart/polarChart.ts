@@ -12,9 +12,6 @@ export class PolarChart extends Chart {
 
     constructor(document = window.document, overrideDevicePixelRatio?: number, resources?: TransferableResources) {
         super(document, overrideDevicePixelRatio, resources);
-
-        const root = this.scene.root!;
-        this.legend.attachLegend(root);
     }
 
     async performLayout() {
@@ -71,7 +68,7 @@ export class PolarChart extends Chart {
 
         const shake = ({ hideWhenNecessary = false } = {}) => {
             const labelBoxes = polarSeries
-                .map((series) => series.computeLabelsBBox({ hideWhenNecessary }))
+                .map((series) => series.computeLabelsBBox({ hideWhenNecessary }, seriesBox))
                 .filter((box) => box != null) as BBox[];
             if (labelBoxes.length === 0) {
                 setSeriesCircle(centerX, centerY, initialRadius);

@@ -56,9 +56,6 @@ const ChartExample = () => {
         max: 100,
       },
     ],
-    legend: {
-      position: "bottom",
-    },
   })
   useEffect(() => {
     setInterval(updateData, refreshRateInMilliseconds);

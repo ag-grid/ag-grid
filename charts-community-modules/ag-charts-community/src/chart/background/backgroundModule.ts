@@ -6,11 +6,7 @@ export const CHART_BACKGROUND_MODULE: Module = {
     optionsKey: 'background',
     packageType: 'community',
     chartTypes: ['cartesian', 'polar', 'hierarchy'],
-    initialiseModule(ctx) {
-        return {
-            instance: new Background(ctx),
-        };
-    },
+    instanceConstructor: Background,
 };
 
 registerModule(CHART_BACKGROUND_MODULE);

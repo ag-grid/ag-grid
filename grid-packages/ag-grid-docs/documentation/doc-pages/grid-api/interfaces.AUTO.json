@@ -520,6 +520,21 @@
     },
     "type": "string | string[] | ((params: ToolPanelClassParams<TData, TValue>) => string | string[] | undefined)"
   },
+  "StringOrNumKeys": {
+    "meta": { "isTypeAlias": true, "typeParams": ["TObj"] },
+    "type": "keyof TObj & (string | number)"
+  },
+  "NestedPath": {
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["TValue", "Prefix extends string"]
+    },
+    "type": "TValue extends object ? `${Prefix}.${NestedFieldPaths<TValue>}` : never"
+  },
+  "NestedFieldPaths": {
+    "meta": { "isTypeAlias": true, "typeParams": ["TData = any"] },
+    "type": "{ [TKey in StringOrNumKeys<TData>]: `${TKey}` | NestedPath<TData[TKey], `${TKey}`>; }[StringOrNumKeys<TData>]"
+  },
   "ColDef": {
     "meta": {
       "typeParams": ["TData = any", "TValue = any"],
@@ -527,7 +542,7 @@
     },
     "type": {
       "colId?": "string",
-      "field?": "string",
+      "field?": "NestedFieldPaths<TData>",
       "type?": "string | string[]",
       "cellDataType?": "string",
       "valueGetter?": "string | ValueGetterFunc<TData, TValue>",
@@ -535,7 +550,7 @@
       "refData?": "{ [key: string]: string; }",
       "keyCreator?": "(params: KeyCreatorParams<TData, TValue>) => string",
       "equals?": "(valueA: TValue | null | undefined, valueB: TValue | null | undefined) => boolean",
-      "tooltipField?": "string",
+      "tooltipField?": "NestedFieldPaths<TData>",
       "tooltipValueGetter?": "(params: ITooltipParams<TData, TValue>) => string | any",
       "checkboxSelection?": "boolean | CheckboxSelectionCallback<TData, TValue>",
       "showDisabledCheckboxes?": "boolean",
@@ -5209,6 +5224,7 @@
   "DisplayedRowsChangedEvent": {
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
+      "afterScroll": "boolean",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "TContext",
@@ -5991,7 +6007,7 @@
     "meta": {},
     "type": {
       "setViewportHeight(height: string)": "void",
-      "setRowCtrls(rowCtrls: RowCtrl[])": "void",
+      "setRowCtrls(rowCtrls: RowCtrl[], useFlushSync: boolean)": "void",
       "setDomOrder(domOrder: boolean)": "void",
       "setContainerWidth(width: string)": "void"
     }
@@ -7380,7 +7396,8 @@
       "getChartImageDataURL(params: GetChartImageDataUrlParams)": "string | undefined",
       "downloadChart(params: ChartDownloadParams)": "void",
       "openChartToolPanel(params: OpenChartToolPanelParams)": "void",
-      "closeChartToolPanel(chartId: string)": "void"
+      "closeChartToolPanel(chartId: string)": "void",
+      "updateChart(chartId: string, chartThemeOverrides: AgChartThemeOverrides)": "void"
     }
   },
   "CreateChartParams": {
@@ -11287,7 +11304,7 @@
     "type": {
       "setDomOrder(domOrder: boolean)": "void",
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
-      "setCellCtrls(cellCtrls: CellCtrl[])": "void",
+      "setCellCtrls(cellCtrls: CellCtrl[], useFlushSync: boolean)": "void",
       "showFullWidth(compDetails: UserCompDetails)": "void",
       "getFullWidthCellRenderer()": "ICellRenderer | null | undefined",
       "setTop(top: string)": "void",

@@ -38,9 +38,6 @@ const options: AgChartOptions = {
     bottom: 20,
     left: 20,
   },
-  legend: {
-    enabled: false,
-  },
   data: [
     {
       date: new Date('01 Jan 2019 00:00:00 GMT'),

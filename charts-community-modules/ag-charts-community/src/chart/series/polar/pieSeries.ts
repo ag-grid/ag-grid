@@ -7,19 +7,18 @@ import { DropShadow } from '../../../scene/dropShadow';
 import { LinearScale } from '../../../scale/linearScale';
 import { Sector } from '../../../scene/shape/sector';
 import { BBox } from '../../../scene/bbox';
-import { SeriesNodeDatum, HighlightStyle, SeriesTooltip, SeriesNodeBaseClickEvent, Series } from './../series';
+import { SeriesNodeDatum, HighlightStyle, SeriesTooltip, SeriesNodeBaseClickEvent } from './../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { normalizeAngle180, toRadians } from '../../../util/angle';
 import { toFixed, mod } from '../../../util/number';
 import { Layers } from '../../layers';
-import { LegendDatum } from '../../legendDatum';
+import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import { Caption } from '../../../caption';
 import { PolarSeries } from './polarSeries';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { isPointInSector, boxCollidesSector } from '../../../util/sector';
-import { DeprecatedAndRenamedTo } from '../../../util/deprecation';
 import {
     BOOLEAN,
     NUMBER,
@@ -40,12 +39,9 @@ import {
     AgPieSeriesFormat,
     AgPieSeriesFormatterParams,
 } from '../../agChartOptions';
-import { Logger } from '../../../util/logger';
 
 class PieSeriesNodeBaseClickEvent extends SeriesNodeBaseClickEvent<any> {
     readonly angleKey: string;
-    @DeprecatedAndRenamedTo('calloutLabelKey')
-    readonly labelKey?: string;
     readonly calloutLabelKey?: string;
     readonly sectorLabelKey?: string;
     readonly radiusKey?: string;
@@ -225,15 +221,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     calloutLabel = new PieSeriesCalloutLabel();
 
-    @DeprecatedAndRenamedTo('calloutLabel')
-    label = this.calloutLabel;
-
     readonly sectorLabel = new PieSeriesSectorLabel();
 
     calloutLine = new PieSeriesCalloutLine();
-
-    @DeprecatedAndRenamedTo('calloutLine')
-    callout = this.calloutLine;
 
     tooltip: PieSeriesTooltip = new PieSeriesTooltip();
 
@@ -306,12 +296,6 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     @Validate(OPT_STRING)
     calloutLabelName?: string = undefined;
-
-    @DeprecatedAndRenamedTo('calloutLabelKey')
-    labelKey?: string = undefined;
-
-    @DeprecatedAndRenamedTo('calloutLabelName')
-    labelName?: string = undefined;
 
     @Validate(OPT_STRING)
     sectorLabelKey?: string = undefined;
@@ -449,9 +433,6 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 radiusKey,
                 radiusValue: radiusKey ? datum[radiusKey] : undefined,
                 radiusName: this.radiusName,
-                labelKey,
-                labelValue: labelKey ? datum[labelKey] : undefined,
-                labelName: this.calloutLabelName,
                 calloutLabelKey: labelKey,
                 calloutLabelValue: labelKey ? datum[labelKey] : undefined,
                 calloutLabelName: this.calloutLabelName,
@@ -464,25 +445,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         if (labelKey) {
             if (labelFormatter) {
-                const showValueDeprecationWarning = () =>
-                    Logger.warnOnce(
-                        'the use of { value } in the pie chart label formatter function is deprecated. Please use { datum, labelKey, ... } instead.'
-                    );
-                labelData = data.map((datum) => {
-                    let deprecatedValue = datum[labelKey];
-                    const formatterParams: AgPieSeriesLabelFormatterParams<any> = {
-                        ...getLabelFormatterParams(datum),
-                        get value() {
-                            showValueDeprecationWarning();
-                            return deprecatedValue;
-                        },
-                        set value(v) {
-                            showValueDeprecationWarning();
-                            deprecatedValue = v;
-                        },
-                    };
-                    return labelFormatter(formatterParams);
-                });
+                labelData = data.map((datum) => labelFormatter(getLabelFormatterParams(datum)));
             } else {
                 labelData = data.map((datum) => String(datum[labelKey]));
             }
@@ -747,6 +710,11 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     private datumSectorRefs = new WeakMap<PieNodeDatum, Sector>();
 
     private async updateNodes() {
+        const seriesBox = this.chart?.getSeriesRect();
+        if (seriesBox == null) {
+            return;
+        }
+
         const highlightedDatum = this.highlightManager?.getActiveHighlight();
         const isVisible = this.seriesItemEnabled.indexOf(true) >= 0;
         this.rootGroup.visible = isVisible;
@@ -809,7 +777,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         });
 
         this.updateCalloutLineNodes();
-        this.updateCalloutLabelNodes();
+        this.updateCalloutLabelNodes(seriesBox);
         this.updateSectorLabelNodes();
         this.updateInnerLabelNodes();
     }
@@ -865,12 +833,11 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         });
     }
 
-    private getLabelOverflow(text: string, box: BBox) {
-        const seriesBox = this.chart!.getSeriesRect()!;
-        const seriesLeft = seriesBox.x - this.centerX;
-        const seriesRight = seriesBox.x + seriesBox.width - this.centerX;
-        const seriesTop = seriesBox.y - this.centerY;
-        const seriesBottom = seriesBox.y + seriesBox.height - this.centerY;
+    private getLabelOverflow(text: string, box: BBox, seriesRect: BBox) {
+        const seriesLeft = seriesRect.x - this.centerX;
+        const seriesRight = seriesRect.x + seriesRect.width - this.centerX;
+        const seriesTop = seriesRect.y - this.centerY;
+        const seriesBottom = seriesRect.y + seriesRect.height - this.centerY;
         const errPx = 1; // Prevents errors related to floating point calculations
         let visibleTextPart = 1;
         if (box.x + errPx < seriesLeft) {
@@ -1012,7 +979,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         avoidXCollisions(bottomLabels);
     }
 
-    updateCalloutLabelNodes() {
+    private updateCalloutLabelNodes(seriesRect: BBox) {
         const { radiusScale, calloutLabel, calloutLine } = this;
         const calloutLength = calloutLine.length;
         const { offset, color } = calloutLabel;
@@ -1037,7 +1004,11 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             // Detect text overflow
             this.setTextDimensionalProps(tempTextNode, x, y, this.calloutLabel, label);
             const box = tempTextNode.computeBBox();
-            const { visibleTextPart, textLength, hasVerticalOverflow } = this.getLabelOverflow(label.text, box);
+            const { visibleTextPart, textLength, hasVerticalOverflow } = this.getLabelOverflow(
+                label.text,
+                box,
+                seriesRect
+            );
             const displayText = visibleTextPart === 1 ? label.text : `${label.text.substring(0, textLength)}…`;
 
             this.setTextDimensionalProps(text, x, y, this.calloutLabel, { ...label, text: displayText });
@@ -1046,7 +1017,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         });
     }
 
-    computeLabelsBBox(options: { hideWhenNecessary: boolean }): BBox | null {
+    computeLabelsBBox(options: { hideWhenNecessary: boolean }, seriesRect: BBox): BBox | null {
         const { radiusScale, calloutLabel, calloutLine } = this;
         const calloutLength = calloutLine.length;
         const { offset, maxCollisionOffset } = calloutLabel;
@@ -1076,7 +1047,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 }
 
                 if (options.hideWhenNecessary) {
-                    const { textLength, hasVerticalOverflow } = this.getLabelOverflow(label.text, box);
+                    const { textLength, hasVerticalOverflow } = this.getLabelOverflow(label.text, box, seriesRect);
                     const isTooShort = label.text.length > 2 && textLength < 2;
 
                     if (hasVerticalOverflow || isTooShort) {
@@ -1306,8 +1277,6 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                     radiusKey,
                     radiusValue: radiusKey ? datum[radiusKey] : undefined,
                     radiusName,
-                    labelKey: calloutLabelKey,
-                    labelName: calloutLabelName,
                     calloutLabelKey,
                     calloutLabelName,
                     sectorLabelKey,
@@ -1323,13 +1292,13 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         return toTooltipHtml(defaults);
     }
 
-    getLegendData(): LegendDatum[] {
+    getLegendData(): ChartLegendDatum[] {
         const { calloutLabelKey, legendItemKey, data, id, sectorFormatData } = this;
 
         if (!data || data.length === 0 || (!legendItemKey && !calloutLabelKey)) return [];
 
         const titleText = this.title && this.title.showInLegend && this.title.text;
-        const legendData: LegendDatum[] = data.map((datum, index) => {
+        const legendData: CategoryLegendDatum[] = data.map((datum, index) => {
             const labelParts = [];
             titleText && labelParts.push(titleText);
             if (legendItemKey) {
@@ -1339,6 +1308,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             }
 
             return {
+                legendType: 'category',
                 id,
                 itemId: index,
                 seriesId: id,
@@ -1364,8 +1334,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     toggleOtherSeriesItems(
-        seriesToggled: Series<any>,
-        datumToggled: any,
+        seriesToggled: { id: string; type: string },
+        datumIdToggled: any,
         enabled?: boolean,
         suggestedEnabled?: boolean
     ): void {
@@ -1375,9 +1345,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         const pieSeriesToggled = seriesToggled as PieSeries;
         const datumToggledLegendItemValue =
-            datumToggled &&
+            datumIdToggled &&
             pieSeriesToggled.legendItemKey &&
-            pieSeriesToggled.data?.find((_, index) => index === datumToggled.itemId)[pieSeriesToggled.legendItemKey];
+            pieSeriesToggled.data?.find((_, index) => index === datumIdToggled)[pieSeriesToggled.legendItemKey];
 
         if (!datumToggledLegendItemValue) return;
 

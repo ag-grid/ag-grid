@@ -1,4 +1,5 @@
 import { AgCartesianAxisPosition } from '../chart/agChartOptions';
+import { DataService } from '../chart/dataService';
 import { CursorManager } from '../chart/interaction/cursorManager';
 import { HighlightManager } from '../chart/interaction/highlightManager';
 import { InteractionManager } from '../chart/interaction/interactionManager';
@@ -8,14 +9,18 @@ import { LayoutService } from '../chart/layout/layoutService';
 import { UpdateService } from '../chart/updateService';
 import { Scene } from '../integrated-charts-scene';
 import { Series } from '../chart/series/series';
+import { ChartLegend } from '../chart/legendDatum';
+import { JsonApplyParams } from './json';
 
 export interface ModuleContext {
     scene: Scene;
+    mode: 'standalone' | 'integrated';
     interactionManager: InteractionManager;
     highlightManager: HighlightManager;
     cursorManager: CursorManager;
     zoomManager: ZoomManager;
     tooltipManager: TooltipManager;
+    dataService: DataService;
     layoutService: Pick<LayoutService, 'addListener' | 'removeListener'>;
     updateService: UpdateService;
 }
@@ -36,70 +41,61 @@ export interface AxisContext {
     scaleInvert(position: number): any;
 }
 
-export type SeriesFactory = () => Series<any>;
-
-export interface ChartThemeParams {
-    seriesDefaults: any;
-    defaultFontFamily: string;
-}
-
-export interface DarkThemeParams {
-    seriesLabelDefaults: any;
-}
-
-export interface SeriesContext {
-    seriesFactory: {
-        add(factory: SeriesFactory): void;
-        delete(): void;
-    };
-    defaults: {
-        add(defaultOptions: any): void;
-        delete(): void;
-    };
-    themes: {
-        chartTheme: {
-            add(fn: (params: ChartThemeParams) => any): void;
-            delete(): void;
-        };
-        darkTheme: {
-            add(fn: (params: DarkThemeParams) => any): void;
-            delete(): void;
-        };
-    };
-}
+export type SeriesConstructor = new () => Series<any>;
+export type LegendConstructor = new (moduleContext: ModuleContext) => ChartLegend;
 
 export interface ModuleInstance {
-    update(): void;
-
     destroy(): void;
-}
-
-export interface ModuleInstanceMeta<M extends ModuleInstance = ModuleInstance> {
-    instance: M;
 }
 
 interface BaseModule {
     optionsKey: string;
     packageType: 'community' | 'enterprise';
     chartTypes: ('cartesian' | 'polar' | 'hierarchy')[];
+
+    optionConstructors?: JsonApplyParams['constructors'];
 }
 
 export interface RootModule<M extends ModuleInstance = ModuleInstance> extends BaseModule {
     type: 'root';
-    initialiseModule(ctx: ModuleContext): ModuleInstanceMeta<M>;
+
+    instanceConstructor: new (ctx: ModuleContext) => M;
+
+    themeTemplate?: {};
 }
 
 export interface AxisModule<M extends ModuleInstance = ModuleInstance> extends BaseModule {
     type: 'axis';
-    initialiseModule(ctx: ModuleContextWithParent<AxisContext>): ModuleInstanceMeta<M>;
+
+    axisTypes: ('category' | 'number' | 'log' | 'time')[];
+
+    instanceConstructor: new (ctx: ModuleContextWithParent<AxisContext>) => M;
+
+    themeTemplate: {};
 }
 
-export interface SeriesModule<M extends ModuleInstance = ModuleInstance> extends BaseModule {
+export interface LegendModule extends BaseModule {
+    type: 'legend';
+
+    identifier: string;
+    instanceConstructor: LegendConstructor;
+}
+
+export interface SeriesModule extends BaseModule {
     type: 'series';
-    initialiseModule(ctx: SeriesContext): ModuleInstanceMeta<M>;
+
+    identifier: string;
+    instanceConstructor: SeriesConstructor;
+
+    seriesDefaults: {};
+    themeTemplate: {};
 }
 
-export type Module<M extends ModuleInstance = ModuleInstance> = RootModule<M> | AxisModule<M> | SeriesModule<M>;
+export type Module<M extends ModuleInstance = ModuleInstance> =
+    | RootModule<M>
+    | AxisModule<M>
+    | LegendModule
+    | SeriesModule;
 
 export abstract class BaseModuleInstance {
     protected readonly destroyFns: (() => void)[] = [];

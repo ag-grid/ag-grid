@@ -65,6 +65,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         this.level = parentRowNode.level + 1;
         this.group = ssrmParams.rowGroupCols ? this.level < ssrmParams.rowGroupCols.length : false;
         this.leafGroup = ssrmParams.rowGroupCols ? this.level === ssrmParams.rowGroupCols.length - 1 : false;
+        this.info = {};
     }
 
 
@@ -611,7 +612,9 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     }
 
     public setStoreInfo(info: any) {
-        this.info = info;
+        if (info) {
+            Object.assign(this.info, info);
+        }
     }
 
     // gets called 1) row count changed 2) cache purged

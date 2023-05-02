@@ -384,6 +384,7 @@ export {
     ToolPanelClass,
     KeyCreatorParams,
     SortDirection,
+    NestedFieldPaths,
     // deprecated params
     IsColumnFunc,
     IsColumnFuncParams

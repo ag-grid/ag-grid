@@ -1987,6 +1987,11 @@
               {
                 "title": "Combination",
                 "url": "/charts-combination-series/"
+              },
+              {
+                "title": "Heatmap",
+                "url": "/charts-heatmap-series/",
+                "enterprise": "charts"
               }
             ]
           },
@@ -2006,6 +2011,10 @@
                   {
                     "title": "Axis Ticks",
                     "url": "/charts-axes-ticks/"
+                  },
+                  {
+                    "title": "Axis Domain",
+                    "url": "/charts-axes-domain/"
                   },
                   {
                     "title": "Axis Labels",

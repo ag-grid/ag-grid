@@ -27,8 +27,6 @@ export class Background extends BaseModuleInstance implements ModuleInstance {
         this.destroyFns.push(() => ctx.layoutService.removeListener(layoutHandle));
     }
 
-    update(): void {}
-
     @Validate(BOOLEAN)
     @ProxyPropertyOnWrite('node', 'visible')
     visible: boolean;

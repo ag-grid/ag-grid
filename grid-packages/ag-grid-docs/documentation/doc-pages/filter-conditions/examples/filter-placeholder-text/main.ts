@@ -1,6 +1,6 @@
-import { Grid, GridOptions, IFilterPlaceholderFunctionParams, INumberFilterParams, ITextFilterParams } from '@ag-grid-community/core'
+import { ColDef, Grid, GridOptions, IFilterPlaceholderFunctionParams, INumberFilterParams, ITextFilterParams } from '@ag-grid-community/core'
 
-const columnDefs = [
+const columnDefs: ColDef<IOlympicData>[] = [
   {
     field: 'athlete'
   },

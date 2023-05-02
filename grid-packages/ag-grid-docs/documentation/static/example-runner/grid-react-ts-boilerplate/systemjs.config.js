@@ -27,7 +27,7 @@
             'prop-types': 'npm:prop-types@15.8.1',
 
             ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
-            typescript: "npm:typescript@4.0.8/lib/typescript.min.js",
+            typescript: "npm:typescript@4.3.5/lib/typescript.min.js",
 
             app: appLocation,
             // systemJsMap comes from index.html
@@ -37,10 +37,10 @@
             css: {
             },
             react: {
-                main: './umd/react.profiling.min.js',
+                main: './umd/react.development.min.js',
             },
             'react-dom': {
-                main: './umd/react-dom.profiling.min.js',
+                main: './umd/react-dom.development.min.js',
             },
             'react-dom/server': {
                 main: '../umd/react-dom-server.browser.production.min.js',

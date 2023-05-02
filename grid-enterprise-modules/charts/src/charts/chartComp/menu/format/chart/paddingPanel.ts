@@ -12,9 +12,7 @@ import { ChartTranslationService } from "../../../services/chartTranslationServi
 import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { getMaxValue } from "../formatPanel";
 import { AgChartPaddingOptions } from "ag-charts-community";
-import { getSeriesType } from "../../../utils/seriesTypeMapper";
 import { ChartController } from "../../../chartController";
-import { AgChartOptions } from "ag-charts-community";
 
 export class PaddingPanel extends Component {
 

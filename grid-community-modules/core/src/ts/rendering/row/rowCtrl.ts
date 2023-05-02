@@ -38,7 +38,7 @@ let instanceIdSequence = 0;
 export interface IRowComp {
     setDomOrder(domOrder: boolean): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
-    setCellCtrls(cellCtrls: CellCtrl[]): void;
+    setCellCtrls(cellCtrls: CellCtrl[], useFlushSync: boolean): void;
     showFullWidth(compDetails: UserCompDetails): void;
     getFullWidthCellRenderer(): ICellRenderer | null | undefined;
     setTop(top: string): void;
@@ -427,7 +427,7 @@ export class RowCtrl extends BeanStub {
         }
     }
 
-    private updateColumnLists(suppressAnimationFrame = false): void {
+    private updateColumnLists(suppressAnimationFrame = false, useFlushSync = false): void {
 
         if (this.isFullWidth()) { return; }
 
@@ -436,7 +436,7 @@ export class RowCtrl extends BeanStub {
             || this.printLayout;
 
         if (noAnimation) {
-            this.updateColumnListsImpl();
+            this.updateColumnListsImpl(useFlushSync);
             return;
         }
 
@@ -444,7 +444,7 @@ export class RowCtrl extends BeanStub {
         this.beans.animationFrameService.createTask(
             () => {
                 if (!this.active) { return; }
-                this.updateColumnListsImpl();
+                this.updateColumnListsImpl(true);
             },
             this.rowNode.rowIndex!,
             'createTasksP1'
@@ -491,7 +491,7 @@ export class RowCtrl extends BeanStub {
         return res;
     }
 
-    private updateColumnListsImpl(): void {
+    private updateColumnListsImpl(useFlushSync = false): void {
         this.updateColumnListsPending = false;
         const columnModel = this.beans.columnModel;
         if (this.printLayout) {
@@ -512,7 +512,7 @@ export class RowCtrl extends BeanStub {
         this.allRowGuis.forEach(item => {
             const cellControls = item.containerType === RowContainerType.LEFT ? this.leftCellCtrls :
                 item.containerType === RowContainerType.RIGHT ? this.rightCellCtrls : this.centerCellCtrls;
-            item.rowComp.setCellCtrls(cellControls.list);
+            item.rowComp.setCellCtrls(cellControls.list, useFlushSync);
         });
     }
 
@@ -732,7 +732,7 @@ export class RowCtrl extends BeanStub {
     private onDisplayedColumnsChanged(): void {
         // we skip animations for onDisplayedColumnChanged, as otherwise the client could remove columns and
         // then set data, and any old valueGetter's (ie from cols that were removed) would still get called.
-        this.updateColumnLists(true);
+        this.updateColumnLists(true, true);
 
         if (this.beans.columnModel.wasAutoRowHeightEverActive()) {
             this.rowNode.checkAutoHeights();
@@ -740,7 +740,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private onVirtualColumnsChanged(): void {
-        this.updateColumnLists();
+        this.updateColumnLists(false, true);
     }
 
     public getRowPosition(): RowPosition {
@@ -1550,6 +1550,17 @@ export class RowCtrl extends BeanStub {
     }
 
     private updateRowIndexes(gui?: RowGui): void {
+        /**
+         * When using the SSRM, applying a filter and then synchronously changing
+         * pinned columns, with row animations, the rows are waiting to be removed
+         * after the animation. Because a column is synchronously being made pinned,
+         * init is being called again causing updateRowIndexes to be called for a destroyed
+         * row, with null row index.
+         */
+        if (!this.rowNode.displayed) {
+            return;
+        }
+
         const rowIndexStr = this.rowNode.getRowIndexString();
         const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
         const rowIsEven = this.rowNode.rowIndex! % 2 === 0;

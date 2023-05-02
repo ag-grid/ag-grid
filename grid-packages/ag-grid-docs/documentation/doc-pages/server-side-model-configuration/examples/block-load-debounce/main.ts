@@ -1,6 +1,6 @@
 import { Grid, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest } from '@ag-grid-community/core'
 
-const gridOptions: GridOptions<IOlympicData> = {
+const gridOptions: GridOptions<IOlympicDataWithId> = {
   columnDefs: [
     { field: 'id', maxWidth: 80 },
     { field: 'athlete', minWidth: 220 },

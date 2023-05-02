@@ -119,7 +119,7 @@ interface CreateRangeChartAction {
 
 interface ClickOnContextMenuItemAction {
     actionType: 'clickOnContextMenuItem';
-    actionParams: Omit<ClickOnContextMenuItemParams, 'agElementFinder'>;
+    actionParams: Omit<ClickOnContextMenuItemParams, 'agElementFinder' | 'getOverlay'>;
 }
 
 interface MoveToElementAndClickAction {
@@ -152,7 +152,7 @@ export type AGCreatorAction =
     | MoveToElementAndClickAction;
 
 export function createAGActionCreator({
-    containerEl,
+    getOverlay,
     gridOptions,
     agElementFinder,
     mouse,
@@ -160,7 +160,7 @@ export function createAGActionCreator({
     defaultEasing,
     scriptDebugger,
 }: {
-    containerEl?: HTMLElement;
+    getOverlay: () => HTMLElement;
     gridOptions: GridOptions;
     agElementFinder: AgElementFinder;
     mouse: Mouse;
@@ -235,7 +235,7 @@ export function createAGActionCreator({
         } else if (actionType === 'clickOnContextMenuItem') {
             const action = agAction as ClickOnContextMenuItemAction;
             // NOTE: Need to return promise, so that it gets resolved downstream
-            return clickOnContextMenuItem({ agElementFinder, scriptDebugger, ...action.actionParams });
+            return clickOnContextMenuItem({ agElementFinder, scriptDebugger, getOverlay, ...action.actionParams });
         } else if (actionType === 'moveToElementAndClick') {
             const action = agAction as MoveToElementAndClickAction;
             return moveToElementAndClick({

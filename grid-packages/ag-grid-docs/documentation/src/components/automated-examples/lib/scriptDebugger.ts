@@ -1,4 +1,5 @@
 import { AUTOMATED_EXAMPLE_MANAGER_ID, INTEGRATED_CHARTS_ID, ROW_GROUPING_ID } from './constants';
+import { AutomatedExampleState } from './createAutomatedExampleManager';
 import { createPen } from './createPen';
 import { Point } from './geometry';
 import { getStyledConsoleMessageConfig } from './getStyledConsoleMessageConfig';
@@ -10,16 +11,26 @@ interface CreateScriptDebuggerParams {
     initialDraw: boolean;
     debugPanel: DebugPanel;
     canvasClassname: string;
+    getLogLevel: () => LogLevel;
 }
 
 export type ScriptDebugger = ReturnType<typeof createScriptDebugger>;
 export type ScriptDebuggerManager = ReturnType<typeof createScriptDebuggerManager>;
 type DebugPanel = ReturnType<typeof createDebugPanel>;
 
+export const LOG_LEVELS = {
+    info: 0,
+    log: 1,
+    error: 2,
+};
+export type LogLevel = keyof typeof LOG_LEVELS;
+
 const STATE_CLASSNAME = 'state';
 const STEP_CLASSNAME = 'step';
 const PAUSED_STATE_CLASSNAME = 'paused-state';
 const MOUSE_POSITION_CLASSNAME = 'mouse-position';
+const MANAGER_STATE_CLASSNAME = 'manager-state';
+const DISABLED_CLASSNAME = 'disabled';
 const getCheckboxTemplate = (isChecked?: boolean) => `
     <label class="draw-checkbox">
         <input type="checkbox" ${isChecked ? 'checked' : ''} /> Draw
@@ -27,6 +38,10 @@ const getCheckboxTemplate = (isChecked?: boolean) => `
 `;
 
 const DEFAULT_DRAW_COLOR = 'rgba(255,0,0,0.5)'; // red
+
+const isValidLogLevel = (logLevel: LogLevel, comparisonLogLevel: LogLevel) => {
+    return LOG_LEVELS[logLevel] >= LOG_LEVELS[comparisonLogLevel];
+};
 
 const log = (...args: any[]) => {
     const [prefix] = args || [];
@@ -148,6 +163,13 @@ function createDebugPanelSection({
             runnerButtonEl.innerHTML = 'Stop';
         }
     };
+    const updateIsEnabled = (isEnabled: boolean) => {
+        if (isEnabled) {
+            sectionEl.classList.remove(DISABLED_CLASSNAME);
+        } else {
+            sectionEl.classList.add(DISABLED_CLASSNAME);
+        }
+    };
 
     return {
         sectionEl,
@@ -155,6 +177,7 @@ function createDebugPanelSection({
         updateStepText,
         updatePausedStateText,
         updateButton,
+        updateIsEnabled,
     };
 }
 
@@ -181,10 +204,18 @@ function createDebugPanel(classname: string) {
         mousePositionEl.innerHTML = `${pos.x}, ${pos.y}`;
     });
 
+    const managerStateEl = document.createElement('div');
+    managerStateEl.classList.add(MANAGER_STATE_CLASSNAME);
+    const updateManagerStateText = (state: string) => {
+        managerStateEl.innerHTML = state;
+    };
+
     debugPanelEl.appendChild(mousePositionEl);
+    debugPanelEl.appendChild(managerStateEl);
 
     return {
         debugPanelEl,
+        updateManagerStateText,
         addSection: ({
             id,
             initialDraw,
@@ -202,6 +233,7 @@ function createDebugPanel(classname: string) {
                 updateStepText,
                 updatePausedStateText,
                 updateButton,
+                updateIsEnabled,
             } = createDebugPanelSection({
                 id,
                 onDrawChange,
@@ -215,6 +247,7 @@ function createDebugPanel(classname: string) {
                 updateStepText,
                 updatePausedStateText,
                 updateButton,
+                updateIsEnabled,
             };
         },
     };
@@ -226,6 +259,7 @@ function createScriptDebugger({
     initialDraw,
     debugPanel,
     canvasClassname,
+    getLogLevel,
 }: CreateScriptDebuggerParams) {
     let shouldDraw = initialDraw;
     let scriptRunner;
@@ -235,7 +269,13 @@ function createScriptDebugger({
         return scriptRunner;
     };
 
-    const { updateStateText, updateStepText, updatePausedStateText, updateButton } = debugPanel.addSection({
+    const {
+        updateStateText,
+        updateStepText,
+        updatePausedStateText,
+        updateButton,
+        updateIsEnabled,
+    } = debugPanel.addSection({
         id,
         initialDraw,
         getScriptRunner,
@@ -269,7 +309,35 @@ function createScriptDebugger({
         scriptRunner = runner;
     };
 
-    return { log, errorLog, clear, drawPoint, updateStep, updateState, setScriptRunner };
+    return {
+        infoLog: (...args) => {
+            if (!isValidLogLevel('info', getLogLevel())) {
+                return;
+            }
+            log(...args);
+        },
+        log: (...args) => {
+            if (!isValidLogLevel('log', getLogLevel())) {
+                return;
+            }
+            log(...args);
+        },
+        errorLog: (...args) => {
+            if (!isValidLogLevel('error', getLogLevel())) {
+                return;
+            }
+            errorLog(...args);
+        },
+
+        clear,
+        drawPoint,
+        updateStep,
+        updateState,
+        updateIsEnabled: (isEnabled: boolean) => {
+            updateIsEnabled(isEnabled);
+        },
+        setScriptRunner,
+    };
 }
 
 export function createScriptDebuggerManager({
@@ -280,17 +348,43 @@ export function createScriptDebuggerManager({
     panelClassname: string;
 }) {
     let debugPanel; // Create debug panel lazily
+    let debugLogLevel: LogLevel = 'log';
     let isEnabled = false;
     let initialDraw = false;
 
+    const getLogLevel = () => {
+        return debugLogLevel;
+    };
+
+    const ensureDebugPanel = () => {
+        if (!debugPanel) {
+            debugPanel = createDebugPanel(panelClassname);
+        }
+    };
+
     return {
+        infoLog: (...args) => {
+            if (!isValidLogLevel('info', debugLogLevel)) {
+                return;
+            }
+            if (!isEnabled) {
+                return;
+            }
+            log(...args);
+        },
         log: (...args) => {
+            if (!isValidLogLevel('log', debugLogLevel)) {
+                return;
+            }
             if (!isEnabled) {
                 return;
             }
             log(...args);
         },
         errorLog: (...args) => {
+            if (!isValidLogLevel('error', debugLogLevel)) {
+                return;
+            }
             if (!isEnabled) {
                 return;
             }
@@ -299,17 +393,20 @@ export function createScriptDebuggerManager({
         setEnabled: (enabled: boolean) => {
             isEnabled = enabled;
         },
+        setDebugLogLevel: (logLevel?: LogLevel) => {
+            if (logLevel && Object.keys(LOG_LEVELS).includes(logLevel)) {
+                debugLogLevel = logLevel;
+            }
+        },
         setInitialDraw: (draw: boolean) => {
             initialDraw = draw;
         },
-        add: ({ id, containerEl }: { id: string; containerEl: HTMLElement }) => {
+        add: ({ id, containerEl }: { id: string; containerEl: HTMLElement }): ScriptDebugger | undefined => {
             if (!isEnabled) {
                 return;
             }
 
-            if (!debugPanel) {
-                debugPanel = createDebugPanel(panelClassname);
-            }
+            ensureDebugPanel();
 
             const scriptDebugger = createScriptDebugger({
                 id,
@@ -317,9 +414,19 @@ export function createScriptDebuggerManager({
                 debugPanel,
                 initialDraw,
                 canvasClassname,
+                getLogLevel,
             });
 
             return scriptDebugger;
+        },
+        updateManagerState: (state: AutomatedExampleState) => {
+            if (!isEnabled) {
+                return;
+            }
+
+            ensureDebugPanel();
+
+            debugPanel.updateManagerStateText(state);
         },
     };
 }

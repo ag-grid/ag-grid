@@ -1,5 +1,12 @@
-import { Grid, ChartMenuOptions, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
-declare var moment: any;
+import { Grid, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
+
+function formatTime(date: Date | number) {
+  return Intl.DateTimeFormat("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  }).format(new Date(date))
+}
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -48,7 +55,7 @@ const gridOptions: GridOptions = {
           renderer: ({ xValue, yValue }) => {
             xValue = xValue instanceof Date ? xValue : new Date(xValue);
             return {
-              content: `${moment(xValue).format('HH:mm:ss')}: ${yValue}%`,
+              content: `${formatTime(xValue)}: ${yValue}%`,
             };
           },
         },

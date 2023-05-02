@@ -1,16 +1,22 @@
 import { Group } from '@tweenjs/tween.js';
 import { AgElementFinder } from '../agElements';
-import { AG_MENU_OPTION_ACTIVE_CLASSNAME } from '../constants';
+import {
+    AG_MENU_OPTION_ACTIVE_CLASSNAME,
+    AG_MENU_OPTION_DISABLED_CLASSNAME,
+    AG_MENU_OPTION_SELECTOR,
+} from '../constants';
 import { Mouse } from '../createMouse';
 import { findElementWithInnerText } from '../dom';
 import { ScriptDebugger } from '../scriptDebugger';
 import { EasingFunction } from '../tween';
+import { clearAllMenuOptionHighlights } from './clearAllMenuOptionHighlights';
 import { createMoveMouse } from './createMoveMouse';
 import { mouseClick } from './mouseClick';
 import { waitFor } from './waitFor';
 
 export interface ClickOnContextMenuItemParams {
     mouse: Mouse;
+    getOverlay: () => HTMLElement;
     cellColIndex: number;
     cellRowIndex: number;
     menuItemPath: string[];
@@ -29,6 +35,7 @@ export interface ClickOnContextMenuItemParams {
 
 export async function clickOnContextMenuItem({
     mouse,
+    getOverlay,
     cellColIndex,
     cellRowIndex,
     menuItemPath,
@@ -52,6 +59,7 @@ export async function clickOnContextMenuItem({
     });
     await waitFor(200);
 
+    const overlay = getOverlay && getOverlay();
     for (let i = 0; i < menuItemPath.length; i++) {
         const menuItemName = menuItemPath[i];
 
@@ -80,6 +88,25 @@ export async function clickOnContextMenuItem({
             duration,
             tweenGroup,
             easing,
+            tweenOnChange: ({ coords }) => {
+                let prevPointerEventsValue;
+                if (overlay) {
+                    prevPointerEventsValue = overlay.style.pointerEvents;
+                    overlay.style.pointerEvents = 'none';
+                }
+                const hoverOverEl = document.elementFromPoint(coords.x, coords.y);
+                if (overlay) {
+                    overlay.style.pointerEvents = prevPointerEventsValue;
+                }
+                if (hoverOverEl) {
+                    clearAllMenuOptionHighlights();
+
+                    const menuOption = hoverOverEl.closest(AG_MENU_OPTION_SELECTOR);
+                    if (menuOption && !menuOption.classList.contains(AG_MENU_OPTION_DISABLED_CLASSNAME)) {
+                        menuOption.classList.add(AG_MENU_OPTION_ACTIVE_CLASSNAME);
+                    }
+                }
+            },
             scriptDebugger,
         });
         // Add active highlight

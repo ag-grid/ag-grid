@@ -119,10 +119,6 @@ export class Navigator extends BaseModuleInstance implements ModuleInstance {
         this.visible = visible;
     }
 
-    public update(): void {
-        // Nothing to do!
-    }
-
     private onDragStart(offset: Offset) {
         if (!this.enabled) {
             return;

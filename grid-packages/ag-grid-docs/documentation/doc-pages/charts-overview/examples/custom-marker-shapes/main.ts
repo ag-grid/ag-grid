@@ -32,9 +32,6 @@ const options: AgChartOptions = {
     },
     overrides: {
       line: {
-        legend: {
-          position: "bottom",
-        },
         series: {
           highlightStyle: {
             series: {

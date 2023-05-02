@@ -68,7 +68,9 @@ const localConfiguration = {
         "@ag-grid-enterprise/status-bar": `${localPrefix}/@ag-grid-enterprise/status-bar/dist/status-bar.cjs.js`,
         "@ag-grid-enterprise/viewport-row-model": `${localPrefix}/@ag-grid-enterprise/viewport-row-model/dist/viewport-row-model.cjs.js`,
         /* END OF GRID ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */
-        "ag-charts-community": `${localPrefix}/ag-charts-community/dist/ag-charts-community.cjs.js`
+        "ag-charts-community": `${localPrefix}/ag-charts-community/dist/ag-charts-community.cjs.js`,
+        "ag-charts-enterprise": `${localPrefix}/ag-charts-enterprise/dist/ag-charts-enterprise.cjs.js`,
+
     },
     chartMap: {
         "ag-charts-react": `${localPrefix}/ag-charts-react`,
@@ -78,6 +80,7 @@ const localConfiguration = {
     },
     chartPaths: {
         "ag-charts-community": `${localPrefix}/ag-charts-community/dist/ag-charts-community.cjs.js`,
+        "ag-charts-enterprise": `${localPrefix}/ag-charts-enterprise/dist/ag-charts-enterprise.cjs.js`,
     }
 };
 
@@ -137,6 +140,7 @@ const publishedConfiguration = {
         "ag-charts-vue": `${NPM_CDN}/ag-charts-vue@${agChartsVueVersion}/`,
         "ag-charts-vue3": `${NPM_CDN}/ag-charts-vue3@${agChartsVueVersion}/`,
         "ag-charts-community": `${NPM_CDN}/ag-charts-community@${agChartsVersion}/dist/ag-charts-community.cjs.min.js`,
+        "ag-charts-enterprise": `${NPM_CDN}/ag-charts-enterprise@${agChartsVersion}/dist/ag-charts-enterprise.cjs.min.js`,
     },
     chartPaths: {}
 };
@@ -242,12 +246,14 @@ const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options, f
             "@ag-grid-enterprise/sparklines": `${localPrefix}/@ag-grid-enterprise/sparklines`,
             "@ag-grid-enterprise/status-bar": `${localPrefix}/@ag-grid-enterprise/status-bar`,
             "@ag-grid-enterprise/viewport-row-model": `${localPrefix}/@ag-grid-enterprise/viewport-row-model`,
+            "ag-charts-enterprise": `${localPrefix}/ag-charts-enterprise`,
             /* END OF GRID MODULES DEV - DO NOT DELETE */
         };
 
         configuration.chartMap = {
             ...configuration.chartMap,
             "ag-charts-community": `${localPrefix}/ag-charts-community`,
+            "ag-charts-enterprise": `${localPrefix}/ag-charts-enterprise`,
         };
     }
     configuration = getRelevantConfig(configuration, framework);

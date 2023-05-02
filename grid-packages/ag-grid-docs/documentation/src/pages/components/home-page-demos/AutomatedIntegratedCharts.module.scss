@@ -1,5 +1,6 @@
 @use "sass:map";
 @use '../../../design-system' as ds;
+@use '../../../components/automated-examples/lib/vars.module' as *;
 
 $z-index-grid: 0;
 $z-index-mouse-mask: 10000; // NOTE: Above .ag-dnd-ghost z-index of 9999
@@ -45,6 +46,24 @@ $z-index-splash-contents: 10;
         left: 50%;
         transform: translate(-60px, -48px) scale(1.5);
         z-index: 1;
+    }
+
+    :global(.country) {
+        display: flex;
+        align-items: center;
+        gap: ds.$size-half;
+
+        @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
+            gap: ds.$size-1;
+        }
+    }
+
+    :global(.flag) {
+        font-size: 1.75rem;
+
+        @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
+            font-size: 1.25rem;
+        }
     }
 
     // Copy default theme slider styles to deal with .ag-styles specificity issues
@@ -293,15 +312,19 @@ $z-index-splash-contents: 10;
     // Start off hidden
     opacity: 0;
 
-    @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
-        // Hide mouse when automated example is not interactive
-        display: none;
-    }
-
     :global(.mouse) {
+        --mobile-mouse-scale: #{$mobile-grid-scale};
+
         position: absolute;
-        top: 6px;
-        left: 4px;
+        top: $mouse-offset-top;
+        left: $mouse-offset-left;
+
+        @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
+            top: calc(#{$mouse-offset-top} * var(--mobile-mouse-scale));
+            left: calc(#{$mouse-offset-left} * var(--mobile-mouse-scale));
+            width: calc(#{$mouse-base-width} * var(--mobile-mouse-scale));
+            height: calc(#{$mouse-base-height} * var(--mobile-mouse-scale));
+        }
     }
 
     // Override inline styles for 'dark-mode' automated cursor

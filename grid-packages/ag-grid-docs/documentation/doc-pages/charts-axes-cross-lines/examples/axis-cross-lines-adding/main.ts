@@ -39,9 +39,6 @@ const options: AgChartOptions = {
       ],
     },
   ],
-  legend: {
-    enabled: false
-  }
 };
 
 
