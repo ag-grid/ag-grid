@@ -52,6 +52,7 @@ import {
 import { LogAxis } from '../../axis/logAxis';
 import { DataModel, SMALLEST_KEY_INTERVAL, AGG_VALUES_EXTENT } from '../../data/dataModel';
 import { sum } from '../../data/aggregateFunctions';
+import { LegendItemClickChartEvent } from '../../interaction/chartEventManager';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
@@ -909,8 +910,19 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         return legendData;
     }
 
-    toggleSeriesItem(itemId: string, enabled: boolean): void {
+    onLegendItemClick(event: LegendItemClickChartEvent) {
+        const { itemId, enabled } = event;
+
         super.toggleSeriesItem(itemId, enabled);
+
+        // Toggle items where the yName matches the yName of the clicked item
+        Object.keys(this.yNames)
+            .filter((id) => this.yNames[id] === this.yNames[itemId])
+            .forEach((yKey) => {
+                if (yKey !== itemId) {
+                    super.toggleSeriesItem(yKey, enabled);
+                }
+            });
 
         const yKeys = this.yKeys.map((stack) => stack.slice()); // deep clone
 
