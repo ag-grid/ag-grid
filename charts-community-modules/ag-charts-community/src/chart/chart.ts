@@ -806,16 +806,21 @@ export abstract class Chart extends Observable implements AgChartInstance {
     private positionCaptions(shrinkRect: BBox) {
         const { title, subtitle, footnote } = this;
         const newShrinkRect = shrinkRect.clone();
-        const defaultCaptionHeight = shrinkRect.height / 10;
+
+        const updateCaption = (caption: Caption) => {
+            const defaultCaptionHeight = shrinkRect.height / 10;
+            const captionLineHeight = caption.lineHeight ?? caption.fontSize * caption.lineHeightRatio;
+            const maxWidth = shrinkRect.width;
+            const maxHeight = Math.max(captionLineHeight, defaultCaptionHeight);
+            caption.computeTextWrap(maxWidth, maxHeight);
+        };
 
         const positionTopAndShrinkBBox = (caption: Caption) => {
             const baseY = newShrinkRect.y;
             caption.node.x = newShrinkRect.x + newShrinkRect.width / 2;
             caption.node.y = baseY;
             caption.node.textBaseline = 'top';
-            caption.maxWidth = shrinkRect.width;
-            const captionLineHeight = caption.lineHeight ?? caption.fontSize * caption.lineHeightRatio;
-            caption.maxHeight = Math.max(captionLineHeight, defaultCaptionHeight);
+            updateCaption(caption);
             const bbox = caption.node.computeBBox();
 
             // As the bbox (x,y) ends up at a different location than specified above, we need to
@@ -830,9 +835,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             caption.node.x = newShrinkRect.x + newShrinkRect.width / 2;
             caption.node.y = baseY;
             caption.node.textBaseline = 'bottom';
-            caption.maxWidth = shrinkRect.width;
-            const captionLineHeight = caption.lineHeight ?? caption.fontSize * caption.lineHeightRatio;
-            caption.maxHeight = Math.max(captionLineHeight, defaultCaptionHeight);
+            updateCaption(caption);
             const bbox = caption.node.computeBBox();
 
             const bboxHeight = Math.ceil(baseY - bbox.y + (caption.spacing ?? 0));

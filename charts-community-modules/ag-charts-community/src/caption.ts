@@ -11,7 +11,7 @@ import {
     Validate,
 } from './util/validation';
 import { FontStyle, FontWeight } from './chart/agChartOptions';
-import { ActionOnSet, ProxyPropertyOnWrite } from './util/proxy';
+import { ProxyPropertyOnWrite } from './util/proxy';
 
 export class Caption {
     static readonly PADDING = 10;
@@ -22,11 +22,7 @@ export class Caption {
     enabled = false;
 
     @Validate(STRING)
-    @ActionOnSet<Caption>({
-        newValue(text: string) {
-            this.updateWrapping(text, this.maxWidth ?? Infinity, this.maxHeight ?? Infinity);
-        },
-    })
+    @ProxyPropertyOnWrite('node')
     text: string = '';
 
     @Validate(OPT_FONT_STYLE)
@@ -58,18 +54,10 @@ export class Caption {
     @Validate(NUMBER(0))
     lineHeightRatio: number = 1.15;
 
-    @ActionOnSet<Caption>({
-        newValue(maxWidth: number | undefined) {
-            this.updateWrapping(this.text, maxWidth ?? Infinity, this.maxHeight ?? Infinity);
-        },
-    })
+    @Validate(OPT_NUMBER(0))
     maxWidth?: number = undefined;
 
-    @ActionOnSet<Caption>({
-        newValue(maxHeight: number | undefined) {
-            this.updateWrapping(this.text, this.maxWidth ?? Infinity, maxHeight ?? Infinity);
-        },
-    })
+    @Validate(OPT_NUMBER(0))
     maxHeight?: number = undefined;
 
     constructor() {
@@ -78,7 +66,10 @@ export class Caption {
         node.pointerEvents = PointerEvents.None;
     }
 
-    private updateWrapping(text: string, maxWidth: number, maxHeight: number) {
+    computeTextWrap(containerWidth: number, containerHeight: number) {
+        const { text } = this;
+        const maxWidth = this.maxWidth == null ? containerWidth : Math.min(this.maxWidth, containerWidth);
+        const maxHeight = this.maxHeight == null ? containerHeight : Math.min(this.maxHeight, containerHeight);
         if (!isFinite(maxWidth) && !isFinite(maxHeight)) {
             this.node.text = text;
             return;
