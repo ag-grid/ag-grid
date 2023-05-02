@@ -112,6 +112,7 @@ import { ValueCache } from "./valueService/valueCache";
 import { ValueService } from "./valueService/valueService";
 import { ISelectionService } from "./interfaces/iSelectionService";
 import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./interfaces/iServerSideSelection";
+import { DataTypeDefinition } from "./entities/dataType";
 
 export interface DetailGridInfo {
     /**
@@ -1956,6 +1957,12 @@ export class GridApi<TData = any> {
     /** Returns the total number of displayed rows. */
     public getDisplayedRowCount(): number {
         return this.rowModel.getRowCount();
+    }
+
+    public setDataTypeDefinitions(dataTypeDefinitions: {
+        [cellDataType: string]: DataTypeDefinition<TData>;
+    }): void {
+        this.gridOptionsService.set('dataTypeDefinitions', dataTypeDefinitions);
     }
 
     /**

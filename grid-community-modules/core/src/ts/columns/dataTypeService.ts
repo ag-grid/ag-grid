@@ -26,22 +26,16 @@ export class DataTypeService extends BeanStub {
     @Autowired('valueService') private valueService: ValueService;
 
     private dataTypeDefinitions: { [cellDataType: string]: DataTypeDefinition | CoreDataTypeDefinition } = {};
+    private isWaitingForRowData = false;
 
     @PostConstruct
     public init(): void {
         this.processDataTypeDefinitions();
 
-        this.addManagedPropertyListener('dataTypeDefinitions', () => this.processDataTypeDefinitions());
-
-        if (this.gridOptionsService.is('inferCellDataTypes') && !this.gridOptionsService.get('rowData')) {
-            const destroyFunc = this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, () => {
-                destroyFunc?.();
-                setTimeout(() => {
-                    // ensure event handled async
-                    this.columnModel.recreateColumnDefs('rowDataUpdated');
-                });
-            });
-        }
+        this.addManagedPropertyListener('dataTypeDefinitions', () => {
+            this.processDataTypeDefinitions();
+            this.columnModel.recreateColumnDefs('gridOptionsChanged');
+        });
     }
 
     private processDataTypeDefinitions(): void {
@@ -132,13 +126,13 @@ export class DataTypeService extends BeanStub {
         cellDataType: string | undefined,
         field: string | undefined
     ): string | string[] | undefined {
+        cellDataType = cellDataType ?? colDef.cellDataType;
         if (!cellDataType) {
-            if (this.gridOptionsService.is('inferCellDataTypes')) {
-                cellDataType = this.inferCellDataType(field);
-                if (!cellDataType) {
-                    return undefined;
-                }
-            } else {
+            return undefined;
+        }
+        if (cellDataType === 'auto') {
+            cellDataType = this.inferCellDataType(field);
+            if (!cellDataType) {
                 return undefined;
             }
         }
@@ -178,6 +172,8 @@ export class DataTypeService extends BeanStub {
                 .allLeafChildren;
             if (rowNodes?.length) {
                 value = rowNodes[0].data?.[field];
+            } else {
+                this.initWaitForRowData();
             }
         }
         if (value == null) {
@@ -197,6 +193,21 @@ export class DataTypeService extends BeanStub {
             return 'date';
         }
         return 'object';
+    }
+
+    private initWaitForRowData(): void {
+        if (this.isWaitingForRowData) {
+            return;
+        }
+        this.isWaitingForRowData = true;
+        const destroyFunc = this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, () => {
+            destroyFunc?.();
+            this.isWaitingForRowData = false;
+            setTimeout(() => {
+                // ensure event handled async
+                this.columnModel.recreateColumnDefs('rowDataUpdated');
+            });
+        });
     }
 
     public convertColumnTypes(type: string | string[]): string[] {

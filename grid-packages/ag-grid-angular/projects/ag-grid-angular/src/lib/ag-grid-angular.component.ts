@@ -354,7 +354,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public dataTypeDefinitions: {
         [cellDataType: string]: DataTypeDefinition<TData>;
     } | undefined = undefined;
-    @Input() public inferCellDataTypes: boolean | undefined = undefined;
     /** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false`     */
     @Input() public maintainColumnOrder: boolean | undefined = undefined;
     /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false`     */
@@ -1295,6 +1294,5 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_rowGroupPanelSuppressSort: boolean | null | '';
     static ngAcceptInputType_allowShowChangeAfterFilter: boolean | null | '';
     static ngAcceptInputType_suppressCutToClipboard: boolean | null | '';
-    static ngAcceptInputType_inferCellDataTypes: boolean | null | '';
     // @END@
 }

@@ -2872,9 +2872,6 @@
         "optional": true
       }
     },
-    "inferCellDataTypes": {
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "maintainColumnOrder": {
       "description": "/** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
@@ -21982,9 +21979,6 @@
         "optional": true
       }
     },
-    "inferCellDataTypes": {
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "maintainColumnOrder": {
       "description": "/** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
@@ -24819,9 +24813,6 @@
         "returnType": "{\n        [cellDataType: string]: DataTypeDefinition<TData>;\n    }",
         "optional": true
       }
-    },
-    "inferCellDataTypes": {
-      "type": { "returnType": "boolean", "optional": true }
     },
     "maintainColumnOrder": {
       "description": "/** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */",
@@ -27663,9 +27654,6 @@
         "returnType": "{\n        [cellDataType: string]: DataTypeDefinition<TData>;\n    }",
         "optional": true
       }
-    },
-    "inferCellDataTypes": {
-      "type": { "returnType": "boolean", "optional": true }
     },
     "maintainColumnOrder": {
       "description": "/** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */",

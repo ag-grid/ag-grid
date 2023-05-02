@@ -171,7 +171,6 @@ export interface GridOptions<TData = any> {
     dataTypeDefinitions?: {
         [cellDataType: string]: DataTypeDefinition<TData>;
     }
-    inferCellDataTypes?: boolean;
     /** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */
     maintainColumnOrder?: boolean;
     /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */

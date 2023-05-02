@@ -104,7 +104,6 @@
       "returnType": "{\n        [cellDataType: string]: DataTypeDefinition<TData>;\n    }"
     }
   },
-  "inferCellDataTypes": { "type": { "returnType": "boolean" } },
   "maintainColumnOrder": {
     "description": "/** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */",
     "type": { "returnType": "boolean" }
