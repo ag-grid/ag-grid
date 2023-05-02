@@ -201,10 +201,11 @@ type InternalDatumPropertyDefinition<K> = DatumPropertyDefinition<K> & {
     missing: boolean;
 };
 
-export type AggregatePropertyDefinition<D, K extends keyof D> = {
+export type AggregatePropertyDefinition<D, K extends keyof D, R = [number, number], R2 = R> = {
     type: 'aggregate';
-    aggregateFunction: (values: D[K][], keys?: D[K][]) => [number, number];
-    groupAggregateFunction?: (next?: [number, number], acc?: [number, number]) => [number, number];
+    aggregateFunction: (values: D[K][], keys?: D[K][]) => R;
+    groupAggregateFunction?: (next?: R, acc?: R2) => R2;
+    finalFunction?: (result: R2) => [number, number];
     properties: K[];
 };
 
@@ -476,6 +477,7 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
         );
         const resultAggFns = aggDefs.map((def) => def.aggregateFunction);
         const resultGroupAggFns = aggDefs.map((def) => def.groupAggregateFunction);
+        const resultFinalFns = aggDefs.map((def) => def.finalFunction);
 
         for (const group of processedData.data) {
             let { values } = group;
@@ -498,8 +500,9 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
                     }
                 }
 
-                extendDomain(groupAggValues, resultAggValues[resultIdx]);
-                group.aggValues[resultIdx++] = groupAggValues;
+                const finalValues = resultFinalFns[resultIdx]?.(groupAggValues) ?? groupAggValues;
+                extendDomain(finalValues, resultAggValues[resultIdx]);
+                group.aggValues[resultIdx++] = finalValues;
             }
         }
 

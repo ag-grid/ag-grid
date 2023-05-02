@@ -5354,7 +5354,9 @@
   "DatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "InternalDatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "AggregatePropertyDefinition": {
-    "meta": { "typeParams": ["D", "K extends keyof D"] }
+    "meta": {
+      "typeParams": ["D", "K extends keyof D", "R = [number, number]", "R2 = R"]
+    }
   },
   "ReducerOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
   "ProcessorOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },

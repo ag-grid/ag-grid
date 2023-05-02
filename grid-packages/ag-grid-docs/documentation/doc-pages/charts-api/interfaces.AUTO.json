@@ -3558,8 +3558,11 @@
     "type": "DatumPropertyDefinition<K> & { index: number; missing: boolean; }"
   },
   "AggregatePropertyDefinition": {
-    "meta": { "isTypeAlias": true, "typeParams": ["D", "K extends keyof D"] },
-    "type": "{ type: 'aggregate'; aggregateFunction: (values: D[K][], keys?: D[K][]) => [ number, number ]; groupAggregateFunction?: (next?: [ number, number ], acc?: [ number, number ]) => [ number, number ]; properties: K[]; }"
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["D", "K extends keyof D", "R = [number, number]", "R2 = R"]
+    },
+    "type": "{ type: 'aggregate'; aggregateFunction: (values: D[K][], keys?: D[K][]) => R; groupAggregateFunction?: (next?: R, acc?: R2) => R2; finalFunction?: (result: R2) => [ number, number ]; properties: K[]; }"
   },
   "ReducerOutputPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["R"] },

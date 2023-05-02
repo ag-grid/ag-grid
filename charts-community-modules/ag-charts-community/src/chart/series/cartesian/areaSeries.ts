@@ -264,7 +264,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             domain: {
                 keys: [keys],
                 values: [yExtent],
-                aggValues: [ySumExtent],
+                aggValues: [ySumExtent] = [],
             },
         } = processedData;
 

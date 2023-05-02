@@ -43,8 +43,15 @@ import {
     FontWeight,
     AgHistogramSeriesTooltipRendererParams,
 } from '../../agChartOptions';
-import { DataModel, fixNumericExtent, GroupByFn, PropertyDefinition, SORT_DOMAIN_GROUPS } from '../../data/dataModel';
-import { area, average, count, sum } from '../../data/aggregateFunctions';
+import {
+    AggregatePropertyDefinition,
+    DataModel,
+    fixNumericExtent,
+    GroupByFn,
+    PropertyDefinition,
+    SORT_DOMAIN_GROUPS,
+} from '../../data/dataModel';
+import { area, groupAverage, groupCount, sum } from '../../data/aggregateFunctions';
 
 const HISTOGRAM_AGGREGATIONS = ['count', 'sum', 'mean'];
 const HISTOGRAM_AGGREGATION = predicateWithMessage(
@@ -217,20 +224,26 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
         const props: PropertyDefinition<any>[] = [keyProperty(xKey, true), SORT_DOMAIN_GROUPS];
         if (yKey) {
-            let aggProp;
+            let aggProp: AggregatePropertyDefinition<any, any, any> = groupCount();
+
             if (aggregation === 'count') {
-                aggProp = count();
+                // Nothing to do.
             } else if (aggregation === 'sum') {
                 aggProp = sum([yKey]);
-            } else {
-                aggProp = average([yKey]);
+            } else if (aggregation === 'mean') {
+                aggProp = groupAverage([yKey]);
             }
             if (areaPlot) {
-                props.push(area([yKey], aggProp.aggregateFunction));
+                aggProp = area([yKey], aggProp);
             }
             props.push(valueProperty(yKey, true, { invalidValue: undefined }), aggProp);
         } else {
-            props.push(count());
+            let aggProp = groupCount();
+
+            if (areaPlot) {
+                aggProp = area([], aggProp);
+            }
+            props.push(aggProp);
         }
 
         const groupByFn: GroupByFn = (dataSet) => {
@@ -269,14 +282,16 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
         if (!processedData) return [];
 
-        const xBins = processedData.reduced?.[SORT_DOMAIN_GROUPS.property] ?? [[0, 0]];
+        const {
+            reduced: { [SORT_DOMAIN_GROUPS.property]: xBins = [[0, 0]] } = {},
+            domain: { aggValues: [yDomain] = [] },
+        } = processedData;
         const xDomainMin = xBins?.[0][0];
         const xDomainMax = xBins?.[(xBins?.length ?? 0) - 1][1];
         if (direction === ChartAxisDirection.X) {
             return fixNumericExtent([xDomainMin, xDomainMax]);
         }
 
-        const yDomain = processedData.domain.aggValues?.[0];
         return fixNumericExtent(yDomain);
     }
 
@@ -505,7 +520,12 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         if (tooltipRenderer) {
             return toTooltipHtml(
                 tooltipRenderer({
-                    datum: nodeDatum.datum,
+                    datum: {
+                        data: nodeDatum.datum,
+                        aggregatedValue: nodeDatum.aggregatedValue,
+                        domain: nodeDatum.domain,
+                        frequency: nodeDatum.frequency,
+                    },
                     xKey,
                     xValue: domain,
                     xName,
