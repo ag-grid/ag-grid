@@ -924,6 +924,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 }
             });
 
+        // Calculate the new visible domain to be displayed
         const yKeys = this.yKeys.map((stack) => stack.slice()); // deep clone
 
         this.seriesItemEnabled.forEach((enabled, yKey) => {
