@@ -1673,9 +1673,15 @@ export interface AgTreemapSeriesOptions<DatumType = any> extends AgBaseSeriesOpt
     tileStrokeWidth?: number;
     /** Series-specific tooltip configuration. */
     tooltip?: AgTreemapSeriesTooltip<DatumType>;
-    /** The amount of padding in pixels inside of each treemap tile. Increasing `nodePadding` will reserve more space for parent labels. */
+    /**
+     * The amount of padding in pixels inside of each treemap tile.
+     * Default: `20`
+     */
     nodePadding?: PixelSize;
-    /** The amount of gap in pixels between treemap tiles. */
+    /**
+     * The amount of gap in pixels between treemap tiles.
+     * Default: `0`
+     */
     nodeGap?: PixelSize;
     /** Whether or not to use gradients for treemap tiles. */
     gradient?: boolean;

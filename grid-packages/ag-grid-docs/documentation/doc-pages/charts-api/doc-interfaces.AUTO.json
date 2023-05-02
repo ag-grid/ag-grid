@@ -4738,11 +4738,11 @@
       }
     },
     "nodePadding": {
-      "description": "/** The amount of padding in pixels inside of each treemap tile. Increasing `nodePadding` will reserve more space for parent labels. */",
+      "description": "/** The amount of padding in pixels inside of each treemap tile.\n     * Default: `20`\n     */",
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "nodeGap": {
-      "description": "/** The amount of gap in pixels between treemap tiles. */",
+      "description": "/** The amount of gap in pixels between treemap tiles.\n     * Default: `0`\n     */",
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "gradient": {
