@@ -732,7 +732,7 @@ export class RowCtrl extends BeanStub {
     private onDisplayedColumnsChanged(): void {
         // we skip animations for onDisplayedColumnChanged, as otherwise the client could remove columns and
         // then set data, and any old valueGetter's (ie from cols that were removed) would still get called.
-        this.updateColumnLists(true, true);
+        this.updateColumnLists(true);
 
         if (this.beans.columnModel.wasAutoRowHeightEverActive()) {
             this.rowNode.checkAutoHeights();
