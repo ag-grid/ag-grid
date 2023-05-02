@@ -22,8 +22,8 @@
             react: 'npm:react@18.2.0',
             'react-dom': 'npm:react-dom@18.2.0',
             'react-dom/client': 'npm:react-dom@18.2.0',
-            redux: 'npm:redux@3.6.0',
-            'react-redux': 'npm:react-redux@5.0.6',
+            redux: 'npm:redux@4.2.1',
+            'react-redux': 'npm:react-redux@8.0.5',
             'prop-types': 'npm:prop-types@15.8.1',
 
             ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
