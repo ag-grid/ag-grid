@@ -12457,6 +12457,16 @@
         "returnType": "void",
         "optional": false
       }
+    },
+    "updateChart": {
+      "type": {
+        "arguments": {
+          "chartId": "string",
+          "chartThemeOverrides": "AgChartThemeOverrides"
+        },
+        "returnType": "void",
+        "optional": false
+      }
     }
   },
   "CreateChartParams": {

@@ -18,7 +18,7 @@ import {
     SortController,
     ValueService,
 } from "@ag-grid-community/core";
-import { ChartDataModel, ColState } from "./chartDataModel";
+import { ChartDataModel, ColState } from "../model/chartDataModel";
 
 export interface ChartDatasourceParams {
     dimensionCols: ColState[];
