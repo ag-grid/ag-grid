@@ -2,13 +2,15 @@
 title: "Column Definitions"
 ---
 
-[[only-javascript-or-angular-or-vue]]
+<framework-specific-section frameworks="javascript,angular,vue">
 |Each column in the grid is defined using a Column Definition (`ColDef`). Columns are positioned in the grid according to the order the Column Definitions are specified in the Grid Options.
+</framework-specific-section>
 
-[[only-react]]
-|<video-section id="aDCepyF_DUY" title="React Column Definitions" header="true">
-|Each column in the grid is defined using a Column Definition (<code>ColDef</code>). Columns are positioned in the grid according to the order the Column Definitions are specified in the Grid Options.
-|</video-section>
+<framework-specific-section frameworks="react">
+<video-section id="aDCepyF_DUY" title="React Column Definitions" header="true">
+Each column in the grid is defined using a Column Definition (<code>ColDef</code>). Columns are positioned in the grid according to the order the Column Definitions are specified in the Grid Options.
+</video-section>
+</framework-specific-section>
 
 
 The following example shows a simple grid with 3 columns defined:
@@ -136,19 +138,19 @@ At each stage if a column property already exists, the latter will override the 
 
 For example, the following is an outline of the steps used when creating 'Col C' shown above:
 
-```js
-// Step 1: the grid starts with an empty definition
-{}
-
-// Step 2: default column properties are merged in
-{ width: 100, editable: true, filter: 'agTextColumnFilter' }
-
-// Step 3: column type properties are merged in (using the 'type' property), overriding where necessary
-{ width: 100, editable: false, filter: 'agTextColumnFilter' }
-
-// Step 4: finally column definition properties are merged in, overriding where necessary
-{ headerName: 'Col C', field: 'c', width: 100, editable: false, filter: 'agTextColumnFilter' }
-```
+<snippet transform="false">
+|// Step 1: the grid starts with an empty definition
+|{}
+|
+|// Step 2: default column properties are merged in
+|{ width: 100, editable: true, filter: 'agTextColumnFilter' }
+|
+|// Step 3: column type properties are merged in (using the 'type' property), overriding where necessary
+|{ width: 100, editable: false, filter: 'agTextColumnFilter' }
+|
+|// Step 4: finally column definition properties are merged in, overriding where necessary
+|{ headerName: 'Col C', field: 'c', width: 100, editable: false, filter: 'agTextColumnFilter' }
+</snippet>
 
 The following example demonstrates the different configuration properties in action.
 

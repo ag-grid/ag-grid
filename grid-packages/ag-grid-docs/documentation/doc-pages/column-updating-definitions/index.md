@@ -214,20 +214,23 @@ perhaps retrieve, alter and then re-apply the modified columns.
 
 The current column definitions can be retrieved with `getColumnDefs`:
 
-[[only-javascript]]
-| ```js
+<framework-specific-section frameworks="javascript">
+<snippet transform={false}>
 | gridOptions.api.getColumnDefs();
-| ```
+</snippet>
+</framework-specific-section>
 
-[[only-angular-or-vue]]
-| ```js
+<framework-specific-section frameworks="angular,vue">
+<snippet transform={false}>
 | this.gridApi.getColumnDefs();
-| ```
+</snippet>
+</framework-specific-section>
 
-[[only-react]]
-| ```js
+<framework-specific-section frameworks="react">
+<snippet transform={false}>
 | gridApi.getColumnDefs();
-| ```
+</snippet>
+</framework-specific-section>
 
 ## Column Groups
 

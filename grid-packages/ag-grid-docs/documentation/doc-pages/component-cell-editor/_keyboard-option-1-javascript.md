@@ -1,6 +1,5 @@
-[[only-javascript]]
-|
-|```js
+<framework-specific-section frameworks="javascript">
+<snippet transform={false}>
 |const KEY_LEFT = 'ArrowLeft';
 |const KEY_UP = 'ArrowUp';
 |const KEY_RIGHT = 'ArrowRight';
@@ -27,4 +26,5 @@
 |        event.stopPropagation();
 |    }
 |})
-|```
+</snippet>
+</framework-specific-section>

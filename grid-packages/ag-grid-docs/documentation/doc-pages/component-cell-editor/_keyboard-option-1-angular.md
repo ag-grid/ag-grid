@@ -1,6 +1,5 @@
-[[only-angular]]
-|
-|```js
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
 |const KEY_LEFT = 'ArrowLeft';
 |const KEY_UP = 'ArrowUp';
 |const KEY_RIGHT = 'ArrowRight';
@@ -40,5 +39,5 @@
 |   
 |    ..rest of the component
 |})
-|
-|```
+</snippet>
+</framework-specific-section>

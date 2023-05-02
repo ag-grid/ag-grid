@@ -1,6 +1,5 @@
-[[only-vue]]
-|
-|```js
+<framework-specific-section frameworks="vue">
+<snippet transform={false}>
 |const KEY_UP = 'ArrowUp';
 |const KEY_DOWN = 'ArrowDown';
 |
@@ -36,4 +35,5 @@
 |
 |    // rest of the component
 |}
-|```
+</snippet>
+</framework-specific-section>
