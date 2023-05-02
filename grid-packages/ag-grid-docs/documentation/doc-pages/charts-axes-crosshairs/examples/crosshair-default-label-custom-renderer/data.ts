@@ -1,4 +1,3 @@
-// Source: https://exoplanetarchive.ipac.caltech.edu/
 export function getData() {
   return [
     {
