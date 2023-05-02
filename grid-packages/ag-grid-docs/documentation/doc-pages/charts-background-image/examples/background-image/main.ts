@@ -1,6 +1,6 @@
 import { AgEnterpriseCharts } from 'ag-charts-enterprise'
 
-const options = {
+const options: any = {
     container: document.getElementById('myChart'),
     data: [
         {value: 56.9},

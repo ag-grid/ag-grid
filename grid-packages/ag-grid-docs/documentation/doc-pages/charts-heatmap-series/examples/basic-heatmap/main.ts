@@ -1,7 +1,7 @@
 import { AgEnterpriseCharts } from 'ag-charts-enterprise';
 import { getData } from './data';
 
-const options = {
+const options: any = {
     container: document.getElementById('myChart'),
     data: getData(),
     title: {
