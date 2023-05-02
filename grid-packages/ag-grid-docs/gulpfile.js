@@ -18,7 +18,7 @@ const SKIP_INLINE = true;
 const DEV_DIR = 'dev';
 const distFolder = './dist';
 
-const { gridCommunityModules, gridEnterpriseModules, chartCommunityModules } = getAllModules();
+const { gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules } = getAllModules();
 
 // copy core project libs (community, enterprise, angular etc) to dist/dev folder
 const populateDevFolder = () => {
@@ -31,6 +31,7 @@ const populateDevFolder = () => {
     const moduleCopyTasks = gridCommunityModules
         .concat(gridEnterpriseModules)
         .concat(chartCommunityModules)
+        .concat(chartEnterpriseModules)
         .map(module => createCopyTask(`${module.rootDir}/**/*.*`, `${module.rootDir}/`, module.publishedName));
 
     const react = createCopyTask('../../grid-community-modules/react/**/*.*', '../../grid-community-modules/react/', '@ag-grid-community/react');

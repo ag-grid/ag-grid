@@ -11,7 +11,6 @@ import { ColorScale } from '../../../scale/colorScale';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { ChartLegendDatum } from '../../legendDatum';
 import { toFixed, isEqual } from '../../../util/number';
-import { Path2D } from '../../../scene/path2D';
 import { BBox } from '../../../scene/bbox';
 import { Color } from '../../../util/color';
 import {
@@ -586,6 +585,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         const seriesRect = this.chart.getSeriesRect()!;
         const boxes = this.squarify(this.dataRoot!, new BBox(0, 0, seriesRect.width, seriesRect.height));
         const labelMeta = this.buildLabelMeta(boxes);
+        const highlightedSubtree = this.getHighlightedSubtree();
 
         this.updateNodeMidPoint(boxes);
 
@@ -632,33 +632,12 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             rect.width = box.width;
             rect.height = box.height;
             rect.visible = true;
-
-            if (isDatumHighlighted && !datum.isLeaf) {
-                const padding = this.getNodePadding(datum, box);
-                const x0 = box.x + padding.left;
-                const x1 = box.x + box.width - padding.right;
-                const y0 = box.y + padding.top;
-                const y1 = box.y + box.height - padding.bottom;
-
-                if (rect.clipPath) {
-                    rect.clipPath.clear();
-                } else {
-                    rect.clipPath = new Path2D();
-                }
-                rect.clipMode = 'punch-out';
-                rect.clipPath.moveTo(x0, y0);
-                rect.clipPath.lineTo(x1, y0);
-                rect.clipPath.lineTo(x1, y1);
-                rect.clipPath.lineTo(x0, y1);
-                rect.clipPath.lineTo(x0, y0);
-                rect.clipPath.closePath();
-            }
         };
         this.groupSelection.selectByClass(Rect).forEach((rect) => updateRectFn(rect, rect.datum, false));
         this.highlightSelection.selectByClass(Rect).forEach((rect) => {
             const isDatumHighlighted = this.isDatumHighlighted(rect.datum);
 
-            rect.visible = isDatumHighlighted;
+            rect.visible = isDatumHighlighted || highlightedSubtree.has(rect.datum);
             if (rect.visible) {
                 updateRectFn(rect, rect.datum, isDatumHighlighted);
             }
@@ -691,7 +670,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         this.highlightSelection.selectByTag<Text>(TextNodeTag.Name).forEach((text) => {
             const isDatumHighlighted = this.isDatumHighlighted(text.datum);
 
-            text.visible = isDatumHighlighted;
+            text.visible = isDatumHighlighted || highlightedSubtree.has(text.datum);
             if (text.visible) {
                 updateLabelFn(text, text.datum, isDatumHighlighted, 'label');
             }
@@ -703,7 +682,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         this.highlightSelection.selectByTag<Text>(TextNodeTag.Value).forEach((text) => {
             const isDatumHighlighted = this.isDatumHighlighted(text.datum);
 
-            text.visible = isDatumHighlighted;
+            text.visible = isDatumHighlighted || highlightedSubtree.has(text.datum);
             if (text.visible) {
                 updateLabelFn(text, text.datum, isDatumHighlighted, 'value');
             }
@@ -717,6 +696,18 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                 y: box.y,
             };
         });
+    }
+
+    private getHighlightedSubtree(): Set<TreemapNodeDatum> {
+        const items = new Set<TreemapNodeDatum>();
+        const traverse = (datum: TreemapNodeDatum) => {
+            if (this.isDatumHighlighted(datum) || (datum.parent && items.has(datum.parent))) {
+                items.add(datum);
+            }
+            datum.children?.forEach(traverse);
+        };
+        traverse(this.dataRoot!);
+        return items;
     }
 
     buildLabelMeta(boxes: Map<TreemapNodeDatum, BBox>) {

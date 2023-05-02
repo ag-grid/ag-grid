@@ -22,7 +22,7 @@ series: [{
 }]
 ```
 
-[Heatmap Chart Example](https://plnkr.co/edit/qqb9ysmw6q4MR4sM?open=main.js)
+<chart-example title='Basic Heatmap' name='basic-heatmap' type='generated' options='{ "enterprise": true }'></chart-example> 
 
 ### API Reference
 
