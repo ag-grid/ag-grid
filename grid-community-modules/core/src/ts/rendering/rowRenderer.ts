@@ -868,7 +868,7 @@ export class RowRenderer extends BeanStub {
         this.getLockOnRefresh();
         this.redraw(null, false, true);
         this.releaseLockOnRefresh();
-        this.dispatchDisplayedRowsChanged();
+        this.dispatchDisplayedRowsChanged(true);
 
         if (cellFocused != null) {
             const newFocusedCell = this.getCellToRestoreFocusToAfterRefresh();
@@ -972,8 +972,8 @@ export class RowRenderer extends BeanStub {
         this.updateAllRowCtrls();
     }
 
-    private dispatchDisplayedRowsChanged(): void {
-        const event: WithoutGridCommon<DisplayedRowsChangedEvent> = { type: Events.EVENT_DISPLAYED_ROWS_CHANGED };
+    private dispatchDisplayedRowsChanged(afterScroll: boolean = false): void {
+        const event: WithoutGridCommon<DisplayedRowsChangedEvent> = { type: Events.EVENT_DISPLAYED_ROWS_CHANGED, afterScroll };
         this.eventService.dispatchEvent(event);
     }
 
