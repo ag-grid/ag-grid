@@ -232,7 +232,7 @@ class GridExample extends Component {
     render = () => (
         <div className="top-container">
             {this.getTopToolBar()}
-            <div class="grid-wrapper ag-theme-alpine">
+            <div className="grid-wrapper ag-theme-alpine">
                 {this.getGridWrapper(0)}
                 {this.getGridWrapper(1)}
             </div>
