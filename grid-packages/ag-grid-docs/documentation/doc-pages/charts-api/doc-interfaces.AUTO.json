@@ -5424,9 +5424,6 @@
       "type": { "returnType": "'legend-item-click'", "optional": false }
     }
   },
-  "NodeClickChartEvent": {
-    "type": { "type": { "returnType": "'node-click'", "optional": false } }
-  },
   "CursorState": {
     "style": { "type": { "returnType": "string", "optional": false } }
   },
