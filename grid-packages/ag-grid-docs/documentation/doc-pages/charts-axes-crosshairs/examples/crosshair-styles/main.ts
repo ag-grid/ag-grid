@@ -27,7 +27,6 @@ const options : AgCartesianChartOptions = {
         text: 'Eccentricity',
       },
       crosshair: {
-        enabled: true,
         stroke: '#330066',
         strokeWidth: 2,
         lineDash: [5, 10],

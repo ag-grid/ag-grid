@@ -27,7 +27,6 @@ const options: AgCartesianChartOptions = {
         formatter: (params) => `${params.value / 1000000}M`,
       },
       crosshair: {
-        enabled: true,
         snap: false,
       },
     },
@@ -38,7 +37,6 @@ const options: AgCartesianChartOptions = {
         text: "Year",
       },
       crosshair: {
-        enabled: true,
         snap: false,
       },
     },

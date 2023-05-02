@@ -31,7 +31,6 @@ const options : AgCartesianChartOptions = {
         text: 'Equilibrium Temperature [K]',
       },
       crosshair: {
-        enabled: true,
         label: {
           xOffset: -55,
         }
@@ -44,7 +43,6 @@ const options : AgCartesianChartOptions = {
         text: 'Planet Radius [Earth Radius]',
       },
       crosshair: {
-        enabled: true,
         label: {
           yOffset: 40,
         }

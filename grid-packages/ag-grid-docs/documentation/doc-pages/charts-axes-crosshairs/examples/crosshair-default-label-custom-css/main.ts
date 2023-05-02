@@ -34,7 +34,6 @@ const options: AgCartesianChartOptions = {
         text: "Equilibrium Temperature [K]",
       },
       crosshair: {
-        enabled: true,
         label: {
           className: "custom-crosshair-label",
           xOffset: 60,
@@ -48,7 +47,6 @@ const options: AgCartesianChartOptions = {
         text: "Distance [pc]",
       },
       crosshair: {
-        enabled: true,
         label: {
           className: "custom-crosshair-label",
           yOffset: 35,

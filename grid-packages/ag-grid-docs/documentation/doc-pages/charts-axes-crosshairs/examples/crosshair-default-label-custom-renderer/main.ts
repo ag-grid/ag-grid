@@ -42,7 +42,6 @@ const options : AgCartesianChartOptions = {
         formatter: (params) => `${params.value / 1000000}M`,
       },
       crosshair: {
-        enabled: true,
         label: {
           xOffset: 60,
           renderer: corsshairLabelRenderer,
@@ -53,7 +52,6 @@ const options : AgCartesianChartOptions = {
       type: 'time',
       position: 'bottom',
       crosshair: {
-        enabled: true,
         label : {
           format: `%b %d`
         }
