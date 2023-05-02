@@ -97,19 +97,6 @@ export function groupAverage<K>(props: K[]) {
     return result;
 }
 
-// export function groupAverage<K>(props: K[]): AggregatePropertyDefinition<any, any> {
-//     return {
-//         properties: props,
-//         type: 'aggregate',
-//         aggregateFunction: (values) => [...sumValues(values), 1],
-//         groupAggregateFunction: (next, acc = [0, 0, 0]) => {
-//             acc[0] += next?.[0] ?? 0;
-//             acc[1] += next?.[1] ?? 0;
-//             return acc;
-//         },
-//     };
-// }
-
 export function area<K>(props: K[], aggFn: AggregatePropertyDefinition<any, any>) {
     const result: AggregatePropertyDefinition<any, any> = {
         properties: props,
