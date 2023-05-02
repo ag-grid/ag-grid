@@ -1,4 +1,4 @@
-import { Text } from './scene/shape/text';
+import { Text, getFont } from './scene/shape/text';
 import { PointerEvents } from './scene/node';
 import {
     BOOLEAN,
@@ -11,7 +11,7 @@ import {
     Validate,
 } from './util/validation';
 import { FontStyle, FontWeight } from './chart/agChartOptions';
-import { ProxyPropertyOnWrite } from './util/proxy';
+import { ActionOnSet, ProxyPropertyOnWrite } from './util/proxy';
 
 export class Caption {
     static readonly PADDING = 10;
@@ -22,7 +22,11 @@ export class Caption {
     enabled = false;
 
     @Validate(STRING)
-    @ProxyPropertyOnWrite('node')
+    @ActionOnSet<Caption>({
+        newValue(text: string) {
+            this.updateWrapping(text, this.maxWidth ?? Infinity, this.maxHeight ?? Infinity);
+        },
+    })
     text: string = '';
 
     @Validate(OPT_FONT_STYLE)
@@ -49,18 +53,47 @@ export class Caption {
     public spacing?: number = Caption.PADDING;
 
     @Validate(OPT_NUMBER(0))
-    private _lineHeight: number | undefined = undefined;
-    get lineHeight(): number | undefined {
-        return this._lineHeight;
-    }
-    set lineHeight(value: number | undefined) {
-        this._lineHeight = value;
-        this.node.lineHeight = value;
-    }
+    lineHeight: number | undefined = undefined;
+
+    @Validate(NUMBER(0))
+    lineHeightRatio: number = 1.15;
+
+    @ActionOnSet<Caption>({
+        newValue(maxWidth: number | undefined) {
+            this.updateWrapping(this.text, maxWidth ?? Infinity, this.maxHeight ?? Infinity);
+        },
+    })
+    maxWidth?: number = undefined;
+
+    @ActionOnSet<Caption>({
+        newValue(maxHeight: number | undefined) {
+            this.updateWrapping(this.text, this.maxWidth ?? Infinity, maxHeight ?? Infinity);
+        },
+    })
+    maxHeight?: number = undefined;
 
     constructor() {
         const node = this.node;
         node.textAlign = 'center';
         node.pointerEvents = PointerEvents.None;
+    }
+
+    private updateWrapping(text: string, maxWidth: number, maxHeight: number) {
+        if (!isFinite(maxWidth) && !isFinite(maxHeight)) {
+            this.node.text = text;
+            return;
+        }
+        const { fontSize, fontFamily, fontStyle, fontWeight } = this;
+        const lineHeight = this.lineHeight ?? fontSize * this.lineHeightRatio;
+        const wrapped = Text.wrap(
+            text,
+            maxWidth,
+            maxHeight,
+            getFont(fontSize, fontFamily, fontStyle, fontWeight),
+            fontSize,
+            lineHeight,
+            true
+        );
+        this.node.text = wrapped;
     }
 }

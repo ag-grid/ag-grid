@@ -287,28 +287,39 @@ export class Text extends Shape {
         maxHeight: number,
         font: string,
         fontSize: number,
+        lineHeight: number,
         truncate: boolean
     ): string {
         const lines: string[] = text.split(/\r?\n/g);
         const result: string[] = [];
         let cumulativeHeight = 0;
         for (const line of lines) {
-            const wrappedLine = Text.wrapLine(line, maxWidth, maxHeight, font, fontSize, truncate, cumulativeHeight);
+            const wrappedLine = Text.wrapLine(
+                line,
+                maxWidth,
+                maxHeight,
+                font,
+                fontSize,
+                lineHeight,
+                truncate,
+                cumulativeHeight
+            );
             result.push(wrappedLine.result);
             cumulativeHeight = wrappedLine.cumulativeHeight;
             if (wrappedLine.truncated) {
                 break;
             }
         }
-        return result.join('\n');
+        return result.join('\n').trim();
     }
 
-    static wrapLine(
+    private static wrapLine(
         text: string,
         maxWidth: number,
         maxHeight: number,
         font: string,
         fontSize: number,
+        lineHeight: number,
         truncate: boolean,
         cumulativeHeight: number
     ): { result: string; truncated: boolean; cumulativeHeight: number } {
@@ -317,7 +328,7 @@ export class Text extends Shape {
         const ellipsis = '\u2026';
         let truncated = false;
 
-        const sliceText = (text: string, startIndex: number) => {
+        const sliceText = (text: string, startIndex: number, isLastLine: boolean) => {
             const whiteSpaceIndex = text.indexOf(' ', startIndex);
             const lastWhiteSpaceIndex = whiteSpaceIndex > 0 ? whiteSpaceIndex : text.lastIndexOf(' ');
             const noWhiteSpace = lastWhiteSpaceIndex < 0;
@@ -325,7 +336,7 @@ export class Text extends Shape {
             return {
                 result: text.slice(0, index),
                 index,
-                addHyphen: noWhiteSpace,
+                addHyphen: !isLastLine && noWhiteSpace,
             };
         };
 
@@ -333,17 +344,23 @@ export class Text extends Shape {
             let result = text;
             let index = text.length;
             let addHyphen = false;
-            let { width, height } = HdpiCanvas.getTextSize(text, font);
+            let { width } = HdpiCanvas.getTextSize(text, font);
 
             const maxCount = 10;
             let count: number = 0;
+            let prev = result;
             while (width > maxWidth && count < maxCount) {
-                ({ result, index, addHyphen } = sliceText(result, Math.min(guesstimate, index)));
-                ({ width, height } = HdpiCanvas.getTextSize(result.concat(addHyphen ? '-' : ''), font));
+                const isLastLine = cumulativeHeight + 2 * lineHeight > maxHeight;
+                ({ result, index, addHyphen } = sliceText(result, Math.min(guesstimate, index), isLastLine));
+                ({ width } = HdpiCanvas.getTextSize(result.concat(addHyphen ? '-' : ''), font));
+                if (result === prev) {
+                    break;
+                }
                 count++;
+                prev = result;
             }
 
-            cumulativeHeight += height;
+            cumulativeHeight += lineHeight;
 
             if (truncate && cumulativeHeight > maxHeight) {
                 truncated = true;
@@ -352,7 +369,12 @@ export class Text extends Shape {
                     return;
                 }
 
-                lines.push(lastLine.slice(0, lastLine.length - 3).concat(ellipsis));
+                const ellipsisWidth = HdpiCanvas.getTextSize(result.concat(addHyphen ? '-' : ''), font).width;
+                const truncatedLine =
+                    width + ellipsisWidth < maxWidth
+                        ? `${lastLine.substring(0, lastLine.length - 3)}${ellipsis}`
+                        : `${lastLine}${ellipsis}`;
+                lines.push(truncatedLine);
                 return;
             }
 
