@@ -182,8 +182,8 @@ const GridExample = () => {
                 <input type="checkbox" id="toggleCheck" checked={checkBoxSelected} onChange={onCheckboxChange} />
                 <label htmlFor="toggleCheck">Checkbox Select</label>
                 <span className="input-group-button">
-                    <button type="button" className="btn btn-default reset" style={{ marginLeft: '5px;' }} onClick={reset}>
-                        <i className="fas fa-redo" style={{ marginRight: '5px;' }}></i>Reset
+                    <button type="button" className="btn btn-default reset" style={{ marginLeft: '5px' }} onClick={reset}>
+                        <i className="fas fa-redo" style={{ marginRight: '5px' }}></i>Reset
                     </button>
                 </span>
             </div>
