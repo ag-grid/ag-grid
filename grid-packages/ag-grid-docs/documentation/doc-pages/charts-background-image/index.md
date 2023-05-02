@@ -23,7 +23,7 @@ background: {
 },
 ```
 
-[Custom Background Image Example](https://plnkr.co/edit/b24vwpgBhAqQO1kq?open=main.js)
+<chart-example title='Background Image' name='background-image' type='generated' options='{ "enterprise": true }'></chart-example> 
 
 ### API Reference
 
