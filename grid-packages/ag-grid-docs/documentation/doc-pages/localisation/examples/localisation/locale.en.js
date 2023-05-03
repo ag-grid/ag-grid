@@ -306,6 +306,7 @@ const AG_GRID_LOCALE_EN = {
     ariaSearch: 'Search',
     ariaSortableColumn: 'Press ENTER to sort',
     ariaToggleVisibility: 'Press SPACE to toggle visibility',
+    ariaToggleCellValue: 'Press SPACE to toggle cell value',
     ariaUnchecked: 'unchecked',
     ariaVisible: 'visible',
     ariaSearchFilterValues: 'Search filter values',

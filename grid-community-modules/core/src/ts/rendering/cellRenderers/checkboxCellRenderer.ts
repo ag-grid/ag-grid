@@ -5,6 +5,8 @@ import { AgCheckbox } from "../../widgets/agCheckbox";
 import { stopPropagationForAgGrid } from "../../utils/event";
 import { CellEditingStartedEvent, CellEditingStoppedEvent, Events } from "../../events";
 import { WithoutGridCommon } from "../../interfaces/iCommon";
+import { KeyCode } from "../../constants/keyCode";
+import { getAriaCheckboxStateName } from "../../utils/aria";
 
 export class CheckboxCellRenderer extends Component implements ICellRenderer {
     private static TEMPLATE = /* html*/`
@@ -22,21 +24,33 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
     public init(params: ICellRendererParams<any, boolean>): void {
         this.params = params;
         this.updateCheckbox(params);
+        this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
 
-        this.addManagedListener(this.eCheckbox.getInputElement(), 'click', (event) => {
+        this.addManagedListener(this.eCheckbox.getInputElement(), 'click', (event: Event) => {
             stopPropagationForAgGrid(event);
 
             if (this.eCheckbox.isDisabled()) {
                 return;
             }
-
+    
             const isSelected = this.eCheckbox.getValue();
-
+    
             this.onCheckboxChanged(isSelected)
         });
 
-        this.addManagedListener(this.eCheckbox.getInputElement(), 'dblclick', (event) => {
+        this.addManagedListener(this.eCheckbox.getInputElement(), 'dblclick', (event: Event) => {
             stopPropagationForAgGrid(event);
+        });
+
+        const eDocument = this.gridOptionsService.getDocument();
+        this.addManagedListener(this.params.eGridCell, 'keydown', (event: KeyboardEvent) => {
+            if (event.key === KeyCode.SPACE && !this.eCheckbox.isDisabled()) {
+                if (this.params.eGridCell === eDocument.activeElement) {
+                    this.eCheckbox.toggle();
+                }
+                const isSelected = this.eCheckbox.getValue();
+                this.onCheckboxChanged(isSelected)
+            }
         });
     }
 
@@ -54,11 +68,19 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
             isSelected = params.value ?? undefined;
         }
         this.eCheckbox.setValue(isSelected);
-        this.eCheckbox.setDisabled(!params.column?.isCellEditable(params.node));
+        const disabled = !params.column?.isCellEditable(params.node);
+        this.eCheckbox.setDisabled(disabled);
+
+        const translate = this.localeService.getLocaleTextFunc();
+        const stateName = getAriaCheckboxStateName(translate, isSelected);
+        const ariaLabel = disabled
+            ? stateName
+            : `${translate('ariaToggleCellValue', 'Press SPACE to toggle cell value')} (${stateName})`;
+        this.eCheckbox.setInputAriaLabel(ariaLabel);
     }
 
     private onCheckboxChanged(isSelected?: boolean): void {
-        const { column, node, rowIndex, pinned: rowPinned, value } = this.params;
+        const { column, node, rowIndex, value } = this.params;
         const eventStarted: WithoutGridCommon<CellEditingStartedEvent> = {
             type: Events.EVENT_CELL_EDITING_STARTED,
             column: column!,

@@ -1,6 +1,12 @@
 import { Autowired, Bean, PostConstruct } from '../context/context';
 import { BeanStub } from '../context/beanStub';
-import { ColDef, KeyCreatorParams, ValueFormatterParams, ValueGetterParams } from '../entities/colDef';
+import {
+    ColDef,
+    KeyCreatorParams,
+    SuppressKeyboardEventParams,
+    ValueFormatterParams,
+    ValueGetterParams,
+} from '../entities/colDef';
 import {
     CoreDataTypeDefinition,
     DataTypeDefinition,
@@ -12,12 +18,13 @@ import { IRowModel } from '../interfaces/iRowModel';
 import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import { Events } from '../eventKeys';
 import { ColumnModel } from './columnModel';
-import { iterateObject } from '../utils/object';
+import { getValueUsingField, iterateObject } from '../utils/object';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { ModuleNames } from '../modules/moduleNames';
 import { ValueService } from '../valueService/valueService';
 import { Column } from '../entities/column';
 import { doOnce } from '../utils/function';
+import { KeyCode } from '../constants/keyCode';
 
 @Bean('dataTypeService')
 export class DataTypeService extends BeanStub {
@@ -164,14 +171,15 @@ export class DataTypeService extends BeanStub {
         }
         const rowData = this.gridOptionsService.get('rowData');
         let value: any;
+        const fieldContainsDots = field.indexOf('.') >= 0 && !this.gridOptionsService.is('suppressFieldDotNotation');
         if (rowData?.length) {
-            value = rowData[0][field];
+            value = getValueUsingField(rowData[0], field, fieldContainsDots);
         } else if (this.rowModel.getType() === 'clientSide') {
             const rowNodes = (this.rowModel as IClientSideRowModel)
                 .getRootNode()
                 .allLeafChildren;
             if (rowNodes?.length) {
-                value = rowNodes[0].data?.[field];
+                value = getValueUsingField(rowNodes[0].data, field, fieldContainsDots);
             } else {
                 this.initWaitForRowData();
             }
@@ -276,6 +284,7 @@ export class DataTypeService extends BeanStub {
             case 'boolean': {
                 colDef.cellEditor = 'agCheckboxCellEditor';
                 colDef.cellRenderer = 'agCheckboxCellRenderer';
+                colDef.suppressKeyboardEvent = (params: SuppressKeyboardEventParams<any, boolean>) => !!params.colDef.editable && params.event.key === KeyCode.SPACE;
                 if (setFilterModuleLoaded) {
                     colDef.filterParams = {
                         valueFormatter: (params: ValueFormatterParams) => {

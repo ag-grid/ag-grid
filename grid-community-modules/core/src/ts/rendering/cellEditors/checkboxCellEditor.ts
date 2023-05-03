@@ -2,6 +2,7 @@ import { PopupComponent } from "../../widgets/popupComponent";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { AgCheckbox } from "../../widgets/agCheckbox";
+import { getAriaCheckboxStateName } from "../../utils/aria";
 
 export class CheckboxCellEditor extends PopupComponent implements ICellEditorComp {
     constructor() {
@@ -17,7 +18,19 @@ export class CheckboxCellEditor extends PopupComponent implements ICellEditorCom
 
     public init(params: ICellEditorParams<any, boolean>): void {
         this.params = params;
-        this.eCheckbox.setValue(params.value ?? undefined);
+        const isSelected = params.value ?? undefined;
+
+        this.eCheckbox.setValue(isSelected);
+
+        this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
+
+        this.setAriaLabel(isSelected);
+
+        this.addManagedListener(
+            this.eCheckbox,
+            AgCheckbox.EVENT_CHANGED,
+            (event: { selected?: boolean }) => this.setAriaLabel(event.selected)
+        );
     }
 
     public getValue(): boolean | undefined {
@@ -36,5 +49,12 @@ export class CheckboxCellEditor extends PopupComponent implements ICellEditorCom
 
     public isPopup() {
         return false;
+    }
+
+    private setAriaLabel(isSelected?: boolean): void {
+        const translate = this.localeService.getLocaleTextFunc();
+        const stateName = getAriaCheckboxStateName(translate, isSelected);
+        const ariaLabel = translate('ariaToggleCellValue', 'Press SPACE to toggle cell value');
+        this.eCheckbox.setInputAriaLabel(`${ariaLabel} (${stateName})`);
     }
 }
