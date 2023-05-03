@@ -75,10 +75,6 @@ class LegendLabel {
 
     @Validate(OPT_FUNCTION)
     formatter?: (params: AgChartLegendLabelFormatterParams) => string = undefined;
-
-    getFont(): string {
-        return getFont(this.fontSize, this.fontFamily, this.fontStyle, this.fontWeight);
-    }
 }
 
 class LegendMarker {
@@ -370,7 +366,7 @@ export class Legend {
         // Update properties that affect the size of the legend items and measure them.
         const bboxes: BBox[] = [];
 
-        const font = label.getFont();
+        const font = getFont(label);
 
         const itemMaxWidthPercentage = 0.8;
         const maxItemWidth = maxWidth ?? width * itemMaxWidthPercentage;

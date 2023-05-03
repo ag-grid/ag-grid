@@ -4,6 +4,14 @@ import { HdpiCanvas } from '../../canvas/hdpiCanvas';
 import { RedrawType, SceneChangeDetection, RenderContext } from '../node';
 import { FontStyle, FontWeight } from '../../chart/agChartOptions';
 
+export interface TextSizeProperties {
+    fontFamily: string;
+    fontSize: number;
+    fontStyle?: FontStyle;
+    fontWeight?: FontWeight;
+    lineHeight?: number;
+}
+
 function SceneFontChangeDetection(opts?: { redraw?: RedrawType; changeCb?: (t: any) => any }) {
     const { redraw = RedrawType.MAJOR, changeCb } = opts || {};
 
@@ -43,7 +51,7 @@ export class Text extends Shape {
     get font(): string {
         if (this._dirtyFont) {
             this._dirtyFont = false;
-            this._font = getFont(this.fontSize, this.fontFamily, this.fontStyle, this.fontWeight);
+            this._font = getFont(this);
         }
 
         return this._font!;
@@ -288,25 +296,14 @@ export class Text extends Shape {
         text: string,
         maxWidth: number,
         maxHeight: number,
-        font: string,
-        fontSize: number,
-        lineHeight: number,
+        textProps: TextSizeProperties,
         truncate: boolean
     ): string {
         const lines: string[] = text.split(/\r?\n/g);
         const result: string[] = [];
         let cumulativeHeight = 0;
         for (const line of lines) {
-            const wrappedLine = Text.wrapLine(
-                line,
-                maxWidth,
-                maxHeight,
-                font,
-                fontSize,
-                lineHeight,
-                truncate,
-                cumulativeHeight
-            );
+            const wrappedLine = Text.wrapLine(line, maxWidth, maxHeight, textProps, truncate, cumulativeHeight);
             result.push(wrappedLine.result);
             cumulativeHeight = wrappedLine.cumulativeHeight;
             if (wrappedLine.truncated) {
@@ -320,12 +317,12 @@ export class Text extends Shape {
         text: string,
         maxWidth: number,
         maxHeight: number,
-        font: string,
-        fontSize: number,
-        lineHeight: number,
+        textProps: TextSizeProperties,
         truncate: boolean,
         cumulativeHeight: number
     ): { result: string; truncated: boolean; cumulativeHeight: number } {
+        const { fontSize, lineHeight = fontSize * Text.defaultLineHeightRatio } = textProps;
+        const font = getFont(textProps);
         const lines: string[] = [];
         const guesstimate = Math.max(1, Math.round(maxWidth / fontSize));
         const ellipsis = '\u2026';
@@ -396,6 +393,7 @@ export class Text extends Shape {
     }
 }
 
-export function getFont(fontSize: number, fontFamily: string, fontStyle?: string, fontWeight?: string): string {
+export function getFont(fontProps: TextSizeProperties): string {
+    const { fontFamily, fontSize, fontStyle, fontWeight } = fontProps;
     return [fontStyle || '', fontWeight || '', fontSize + 'px', fontFamily].join(' ').trim();
 }

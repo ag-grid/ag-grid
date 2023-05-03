@@ -4,7 +4,7 @@ import { SeriesNodeDatum, SeriesTooltip, HighlightStyle, SeriesNodeBaseClickEven
 import { HierarchySeries } from './hierarchySeries';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { Group } from '../../../scene/group';
-import { Text, getFont } from '../../../scene/shape/text';
+import { Text } from '../../../scene/shape/text';
 import { Rect } from '../../../scene/shape/rect';
 import { DropShadow } from '../../../scene/dropShadow';
 import { ColorScale } from '../../../scale/colorScale';
@@ -755,17 +755,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                         labelStyle = s;
                         break;
                     }
-                    const lineHeight = s.fontSize * Text.defaultLineHeightRatio;
-                    const font = getFont(s.fontSize, s.fontFamily, s.fontStyle, s.fontWeight);
-                    const wrapped = Text.wrap(
-                        labelText,
-                        availTextWidth,
-                        availTextHeight,
-                        font,
-                        s.fontSize,
-                        lineHeight,
-                        true
-                    );
+                    const wrapped = Text.wrap(labelText, availTextWidth, availTextHeight, s, true);
                     if (wrapped.match(/-$/m)) {
                         // Avoid hyphens
                         continue;
