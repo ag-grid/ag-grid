@@ -1,4 +1,4 @@
-import { Text } from './scene/shape/text';
+import { Text, getFont } from './scene/shape/text';
 import { PointerEvents } from './scene/node';
 import {
     BOOLEAN,
@@ -49,18 +49,42 @@ export class Caption {
     public spacing?: number = Caption.PADDING;
 
     @Validate(OPT_NUMBER(0))
-    private _lineHeight: number | undefined = undefined;
-    get lineHeight(): number | undefined {
-        return this._lineHeight;
-    }
-    set lineHeight(value: number | undefined) {
-        this._lineHeight = value;
-        this.node.lineHeight = value;
-    }
+    lineHeight: number | undefined = undefined;
+
+    @Validate(NUMBER(0))
+    lineHeightRatio: number = Text.defaultLineHeightRatio;
+
+    @Validate(OPT_NUMBER(0))
+    maxWidth?: number = undefined;
+
+    @Validate(OPT_NUMBER(0))
+    maxHeight?: number = undefined;
 
     constructor() {
         const node = this.node;
         node.textAlign = 'center';
         node.pointerEvents = PointerEvents.None;
+    }
+
+    computeTextWrap(containerWidth: number, containerHeight: number) {
+        const { text } = this;
+        const maxWidth = this.maxWidth == null ? containerWidth : Math.min(this.maxWidth, containerWidth);
+        const maxHeight = this.maxHeight == null ? containerHeight : Math.min(this.maxHeight, containerHeight);
+        if (!isFinite(maxWidth) && !isFinite(maxHeight)) {
+            this.node.text = text;
+            return;
+        }
+        const { fontSize, fontFamily, fontStyle, fontWeight } = this;
+        const lineHeight = this.lineHeight ?? fontSize * this.lineHeightRatio;
+        const wrapped = Text.wrap(
+            text,
+            maxWidth,
+            maxHeight,
+            getFont(fontSize, fontFamily, fontStyle, fontWeight),
+            fontSize,
+            lineHeight,
+            true
+        );
+        this.node.text = wrapped;
     }
 }
