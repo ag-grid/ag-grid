@@ -197,7 +197,7 @@ describe('Text', () => {
                         maxHeight,
                         textNode.font,
                         textNode.fontSize,
-                        textNode.lineHeight ?? textNode.fontSize * 1.15,
+                        textNode.lineHeight ?? textNode.fontSize * Text.defaultLineHeightRatio,
                         truncate
                     );
                     textNode._setLayerManager(mockLayerManager);

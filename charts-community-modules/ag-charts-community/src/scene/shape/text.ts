@@ -12,6 +12,9 @@ function SceneFontChangeDetection(opts?: { redraw?: RedrawType; changeCb?: (t: a
 export class Text extends Shape {
     static className = 'Text';
 
+    // The default line spacing for document editors is usually 1.15
+    static defaultLineHeightRatio = 1.15;
+
     protected static defaultStyles = Object.assign({}, Shape.defaultStyles, {
         textAlign: 'start' as CanvasTextAlign,
         fontStyle: undefined,

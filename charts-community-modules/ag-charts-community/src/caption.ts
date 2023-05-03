@@ -52,7 +52,7 @@ export class Caption {
     lineHeight: number | undefined = undefined;
 
     @Validate(NUMBER(0))
-    lineHeightRatio: number = 1.15;
+    lineHeightRatio: number = Text.defaultLineHeightRatio;
 
     @Validate(OPT_NUMBER(0))
     maxWidth?: number = undefined;
