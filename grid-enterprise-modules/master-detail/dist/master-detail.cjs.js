@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/master-detail - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.3
+          * @ag-grid-enterprise/master-detail - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.4
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -324,7 +324,7 @@ var DetailCellRenderer = /** @class */ (function (_super) {
 }(core.Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '29.3.3';
+var VERSION = '29.3.4';
 
 var MasterDetailModule = {
     version: VERSION,

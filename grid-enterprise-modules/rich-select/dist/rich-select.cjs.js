@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/rich-select - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.3
+          * @ag-grid-enterprise/rich-select - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.4
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -366,7 +366,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
 }(core.PopupComponent));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '29.3.3';
+var VERSION = '29.3.4';
 
 var RichSelectModule = {
     version: VERSION,

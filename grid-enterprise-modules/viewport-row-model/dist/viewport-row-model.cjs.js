@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/viewport-row-model - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.3
+          * @ag-grid-enterprise/viewport-row-model - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.4
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -11,7 +11,7 @@ var core = require('@ag-grid-community/core');
 var core$1 = require('@ag-grid-enterprise/core');
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '29.3.3';
+var VERSION = '29.3.4';
 
 var __extends = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {

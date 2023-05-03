@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v29.3.3
+// Type definitions for @ag-grid-community/core v29.3.4
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridHeaderComp } from '../headerRendering/gridHeaderComp';
