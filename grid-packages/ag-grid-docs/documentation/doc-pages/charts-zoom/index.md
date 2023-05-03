@@ -16,25 +16,73 @@ zoom: {
 A user will now be able to use the zooming features as in the following example, including:
 
 - Scroll in and out with the mouse wheel.
-- Click and drag a box to select an area to zoom into.
-- Press `alt` while clicking and dragging to pan around the zoomed in chart.
+- Clicking and dragging to pan around the zoomed in chart.
+- Double click anywhere to reset the zoom.
+- Click and drag a box to select an area to zoom into (not enabled by default).
 
-[Zoom Default Example](https://plnkr.co/edit/KznL1NS8lPEvtbba?open=main.js&preview)
+<chart-example title='Zoom' name='zoom' type='generated'></chart-example>
 
-## Axes
+## Enabling and disabling features
 
-Zooming can be enabled for either the `x` or `y` axis, or for both at the same time with `xy` using the `zoom.axes` property.
+You can enable and disable each feature of the zoom module separately if they are not appropriate for your chart. These can be toggled with the `enablePanning`, `enableScrolling` and `enableSelecting` options.
 
-In the example below, we enable zoom on only the `x` axis. This can be useful for charts displaying data over a long period of time.
+In the example below, we only enable selecting an area.
 
 ```ts
 zoom: {
-    axes: 'x',
-    ...
+    enablePanning: false,
+    enableScrolling: false,
+    enableSelecting: true,
 }
 ```
 
-[Zoom Axes Example](https://plnkr.co/edit/0uBhpVmIrqvn5ABD?open=main.js&preview)
+<chart-example title='Zoom Enabling and Disabling Features' name='zoom-selecting' type='generated'></chart-example>
+
+## Axes
+
+Zooming can be enabled for either the `x` or `y` axis, or for both at the same time with `xy` using the `axes` property. By default, zooming is only enabled on the `x` axis.
+
+In the example below, we enable zoom on the `y` axis.
+
+```ts
+zoom: {
+    axes: 'y',
+}
+```
+
+<chart-example title='Zoom Axes' name='zoom-axes' type='generated'></chart-example>
+
+## Scrolling pivot
+
+By default, the chart will zoom while keeping the right side of the x-axis pinned. You can change this pivot point with the `scrollingPivot` property, setting it one of:
+
+- `end` (default), the right or top of the chart when scrolling on the x or y axis respectively,
+- `start`, the left or bottom of the chart when scrolling on the x or y axis respectively,
+- `pointer`, keep the mouse pointer above the same position on the chart when zooming.
+
+In the example below, we set pivoting to about the pointer.
+
+```ts
+zoom: {
+    scrollingPivot: 'pointer',
+}
+```
+
+<chart-example title='Zoom Scrolling Pivot' name='zoom-scrolling-pivot' type='generated'></chart-example>
+
+## Scrolling step
+
+When scrolling the chart zooms in by a step for each movement of the scroll wheel or on the trackpad. By default `scrollingStep` is set to `0.1`, or 10% of the chart at a time.
+
+In the example below, we change the step to `0.4`.
+
+```ts
+zoom: {
+    scrollingStep: 0.4,
+}
+```
+
+<chart-example title='Zoom Scrolling Step' name='zoom-scrolling-step' type='generated'></chart-example>
 
 ## Min x/y ratio
 
@@ -46,54 +94,26 @@ The example below demonstrates setting both these properties to `0.4`, preventin
 zoom: {
     minXRatio: 0.4,
     minYRatio: 0.4,
-    ...
 }
 ```
 
-[Zoom Min Ratio Example](https://plnkr.co/edit/Q3dfsaBlcbS0FzrR?open=main.js&preview)
+<chart-example title='Zoom Min Ratio' name='zoom-min-ratio' type='generated'></chart-example>
 
 ## Pan key
 
-While zoomed in to the chart, a user can pan around by holding down the `panKey` and clicking and dragging. This key defaults to `alt` but can be set to one of `alt`, `ctrl`, `shift` or `meta` (the command key on MacOS or start key on Windows).
+While zoomed in to the chart, a user can pan around by clicking and dragging.
+
+If you have enabled selecting an area to zoom as well using `enableSelecting: true`, clicking and dragging will no longer pan by default. Instead the user will need to hold down a key to switch to panning mode.
+
+This key defaults to `alt` but can be set on the `panKey` property to one of `alt`, `ctrl`, `shift` or `meta` (the command key on MacOS or start key on Windows).
 
 ```ts
 zoom: {
     panKey: 'shift',
-    ...
 }
 ```
 
-[Zoom Pan Key Example](https://plnkr.co/edit/CTWmJq8KzlJwGQxN?open=main.js&preview)
-
-## Scrolling step
-
-When scrolling the chart zooms in by a step for each movement of the scroll wheel or on the trackpad.
-
-```ts
-zoom: {
-    scrollingStep: 0.4,
-    ...
-}
-```
-
-[Zoom Scrolling Step Example](https://plnkr.co/edit/Ld2LHkVCS7Q998FF?open=main.js&preview)
-
-## Disabling panning / scrolling / selecting
-
-You can enable and disable each feature of the zoom module separately if they are not appropriate for your chart. These can be toggled with the `enablePanning`, `enableScrolling` and `enableSelecting` options.
-
-In the example below, we disable zooming through selecting a box. <!-- Since dragging is now only used to pan the chart, we can set the `panKey` to `false`. -->
-
-```ts
-zoom: {
-    enablePanning: true,
-    enableScrolling: true,
-    enableSelecting: false,
-    ...
-}
-```
-
-[Zoom Disable Selecting Example](https://plnkr.co/edit/QjuAvu5fi8yCTbYQ?open=main.js&preview)
+<chart-example title='Zoom Pan Key' name='zoom-pan-key' type='generated'></chart-example>
 
 ## API Reference
 
@@ -106,6 +126,7 @@ interface AgCartesianChartOptions {
 
 type AgZoomAxes = "x" | "y" | "xy"
 type AgZoomPanKey = "alt" | "ctrl" | "meta" | "shift"
+type AgZoomScrollingPivot = "pointer" | "start" | "end"
 
 interface AgZoomOptions {
   axes?: AgZoomAxes
@@ -117,6 +138,7 @@ interface AgZoomOptions {
   minYRatio?: number
   panKey?: AgZoomPanKey
   scrollingStep?: number
+  scrollingPivot?: AgZoomScrollingPivot
 }
 ```
 
