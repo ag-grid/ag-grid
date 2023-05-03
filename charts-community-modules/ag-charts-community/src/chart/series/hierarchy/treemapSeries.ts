@@ -840,7 +840,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         const { datum } = nodeDatum;
         const { renderer: tooltipRenderer } = tooltip;
 
-        const title: string | undefined = nodeDatum.depth ? datum[labelKey] : rootName || datum[labelKey];
+        const title: string | undefined = nodeDatum.depth ? datum[labelKey] : datum[labelKey] ?? rootName;
         let content = '';
         const format = this.getTileFormat(nodeDatum, false);
         const color = format?.fill || nodeDatum.fill || 'gray';

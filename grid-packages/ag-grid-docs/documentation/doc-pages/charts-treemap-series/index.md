@@ -265,6 +265,16 @@ There are some properties to control the density of Treemap tiles:
 - `nodeGap` controls the spacing between Treemap tiles.
 - `nodePadding` sets the indentation of inner content of Treemap tiles (padding between the tile borders and its label and nested tiles).
 
+```js
+series: [{
+    ...
+    nodeGap: 10,
+    nodePadding: 20,
+}]
+```
+
+<chart-example title='Tile Padding' name='tile-padding' type='generated'></chart-example>
+
 ## API Reference
 
 <interface-documentation interfaceName='AgTreemapSeriesOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
