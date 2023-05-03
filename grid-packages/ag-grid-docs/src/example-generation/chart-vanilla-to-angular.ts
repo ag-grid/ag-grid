@@ -8,10 +8,10 @@ export function processFunction(code: string): string {
 }
 
 function getImports(bindings, componentFileNames: string[], { typeParts }): string[] {
-    const bImports = [...(bindings.imports || [])];
+    const { imports: bImports = [], chartSettings: { enterprise = false } } = bindings;
 
     bImports.push({
-        module: `'ag-charts-community'`,
+        module: enterprise? 'ag-charts-community' : 'ag-charts-enterprise',
         isNamespaced: false,
         imports: typeParts
     })
@@ -23,7 +23,7 @@ function getImports(bindings, componentFileNames: string[], { typeParts }): stri
         imports.push("import { AgChartsAngular } from 'ag-charts-angular';")
     }
 
-    addBindingImports(bImports, imports, true, true);
+    addBindingImports([...bImports], imports, true, true);
 
     if (componentFileNames) {
         imports.push(...componentFileNames.map(getImport));
@@ -105,6 +105,7 @@ ${bindings.globals.join('\n')}
 `
         if (bindings.usesChartApi) {
             appComponent = appComponent.replace(/AgChart.(\w*)\((\w*)(,|\))/g, 'AgChart.$1(this.agChart.chart!$3');
+            appComponent = appComponent.replace(/AgEnterpriseCharts.(\w*)\((\w*)(,|\))/g, 'AgEnterpriseCharts.$1(this.agChart.chart!$3');
             appComponent = appComponent.replace(/\(this.agChart.chart!, options/g, '(this.agChart.chart!, this.options');
         }
         return appComponent;

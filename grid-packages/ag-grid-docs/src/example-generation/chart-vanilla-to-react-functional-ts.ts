@@ -21,6 +21,10 @@ function getImports(componentFilenames: string[], bindings): string[] {
         "import { AgChartsReact } from 'ag-charts-react';",
     ];
 
+    if (bindings.chartSettings.enterprise) {
+        imports.push("import 'ag-charts-enterprise';");
+    }
+
     if (bindings.imports.length > 0) {
         addBindingImports(bindings.imports, imports, false, true);
     }
