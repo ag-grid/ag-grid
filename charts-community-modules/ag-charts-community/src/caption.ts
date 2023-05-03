@@ -71,7 +71,7 @@ export class Caption {
             this.node.text = text;
             return;
         }
-        const wrapped = Text.wrap(text, maxWidth, maxHeight, this, true);
+        const wrapped = Text.wrap(text, maxWidth, maxHeight, this);
         this.node.text = wrapped;
     }
 }

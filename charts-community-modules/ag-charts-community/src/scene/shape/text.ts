@@ -292,18 +292,12 @@ export class Text extends Shape {
         }
     }
 
-    static wrap(
-        text: string,
-        maxWidth: number,
-        maxHeight: number,
-        textProps: TextSizeProperties,
-        truncate: boolean
-    ): string {
+    static wrap(text: string, maxWidth: number, maxHeight: number, textProps: TextSizeProperties): string {
         const lines: string[] = text.split(/\r?\n/g);
         const result: string[] = [];
         let cumulativeHeight = 0;
         for (const line of lines) {
-            const wrappedLine = Text.wrapLine(line, maxWidth, maxHeight, textProps, truncate, cumulativeHeight);
+            const wrappedLine = Text.wrapLine(line, maxWidth, maxHeight, textProps, cumulativeHeight);
             result.push(wrappedLine.result);
             cumulativeHeight = wrappedLine.cumulativeHeight;
             if (wrappedLine.truncated) {
@@ -318,7 +312,6 @@ export class Text extends Shape {
         maxWidth: number,
         maxHeight: number,
         textProps: TextSizeProperties,
-        truncate: boolean,
         cumulativeHeight: number
     ): { result: string; truncated: boolean; cumulativeHeight: number } {
         const { fontSize, lineHeight = fontSize * Text.defaultLineHeightRatio } = textProps;
@@ -349,8 +342,8 @@ export class Text extends Shape {
             const maxCount = 10;
             let count: number = 0;
             let prev = result;
+            const isLastLine = cumulativeHeight + 2 * lineHeight > maxHeight;
             while (width > maxWidth && count < maxCount) {
-                const isLastLine = cumulativeHeight + 2 * lineHeight > maxHeight;
                 ({ result, index, addHyphen } = sliceText(result, Math.min(guesstimate, index), isLastLine));
                 ({ width } = HdpiCanvas.getTextSize(result.concat(addHyphen ? '-' : ''), font));
                 if (result === prev) {
@@ -362,7 +355,7 @@ export class Text extends Shape {
 
             cumulativeHeight += lineHeight;
 
-            if (truncate && cumulativeHeight > maxHeight) {
+            if (cumulativeHeight > maxHeight) {
                 truncated = true;
                 const lastLine = lines.pop();
                 if (!lastLine) {

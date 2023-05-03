@@ -755,7 +755,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                         labelStyle = s;
                         break;
                     }
-                    const wrapped = Text.wrap(labelText, availTextWidth, availTextHeight, s, true);
+                    const wrapped = Text.wrap(labelText, availTextWidth, availTextHeight, s);
                     if (wrapped.match(/-$/m)) {
                         // Avoid hyphens
                         continue;

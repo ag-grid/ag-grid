@@ -191,7 +191,7 @@ describe('Text', () => {
 
                     textNode.x = currX;
                     textNode.y = currY;
-                    textNode.text = Text.wrap(textNode.text, maxWidth, maxHeight, textNode, truncate);
+                    textNode.text = Text.wrap(textNode.text, maxWidth, truncate ? maxHeight : Infinity, textNode);
                     textNode._setLayerManager(mockLayerManager);
 
                     ctx.save();
