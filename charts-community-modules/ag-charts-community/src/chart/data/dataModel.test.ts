@@ -7,16 +7,16 @@ import * as examples from '../test/examples';
 import { AGG_VALUES_EXTENT, DataModel, GroupByFn, SMALLEST_KEY_INTERVAL, SORT_DOMAIN_GROUPS } from './dataModel';
 import { area, groupAverage, groupCount, sum } from './aggregateFunctions';
 
+const rangeKey = (property: string) => ({ property, type: 'key' as const, valueType: 'range' as const });
+const categoryKey = (property: string) => ({ property, type: 'key' as const, valueType: 'category' as const });
+const value = (property: string) => ({ property, type: 'value' as const, valueType: 'range' as const });
+
 describe('DataModel', () => {
     describe('ungrouped processing', () => {
         it('should generated the expected results', () => {
             const data = examples.SIMPLE_LINE_CHART_EXAMPLE.data!;
             const dataModel = new DataModel<any, any>({
-                props: [
-                    { property: 'date', type: 'key', valueType: 'range' },
-                    { property: 'petrol', type: 'value', valueType: 'range' },
-                    { property: 'diesel', type: 'value', valueType: 'range' },
-                ],
+                props: [rangeKey('date'), value('petrol'), value('diesel')],
             });
 
             expect(dataModel.processData(data)).toMatchSnapshot({
@@ -27,12 +27,7 @@ describe('DataModel', () => {
         describe('property tests', () => {
             describe('simple data', () => {
                 const dataModel = new DataModel<any, any>({
-                    props: [
-                        { property: 'kp', type: 'key', valueType: 'range' },
-                        { property: 'vp1', type: 'value', valueType: 'range' },
-                        { property: 'vp2', type: 'value', valueType: 'range' },
-                        SMALLEST_KEY_INTERVAL,
-                    ],
+                    props: [rangeKey('kp'), value('vp1'), value('vp2'), SMALLEST_KEY_INTERVAL],
                 });
                 const data = [
                     { kp: 2, vp1: 5, vp2: 7 },
@@ -80,11 +75,7 @@ describe('DataModel', () => {
 
             describe('category data', () => {
                 const dataModel = new DataModel<any, any, false>({
-                    props: [
-                        { property: 'kp', type: 'key', valueType: 'category' },
-                        { property: 'vp1', type: 'value', valueType: 'range' },
-                        { property: 'vp2', type: 'value', valueType: 'range' },
-                    ],
+                    props: [categoryKey('kp'), value('vp1'), value('vp2')],
                     groupByKeys: false,
                 });
                 const data = [
@@ -123,12 +114,7 @@ describe('DataModel', () => {
         it('should generated the expected results', () => {
             const data = examples.GROUPED_BAR_CHART_EXAMPLE.data!;
             const dataModel = new DataModel<any, any, true>({
-                props: [
-                    { property: 'type', type: 'key', valueType: 'category' },
-                    { property: 'total', type: 'value', valueType: 'range' },
-                    { property: 'regular', type: 'value', valueType: 'range' },
-                    sum(['total', 'regular']),
-                ],
+                props: [categoryKey('type'), value('total'), value('regular'), sum(['total', 'regular'])],
                 groupByKeys: true,
             });
 
@@ -139,11 +125,7 @@ describe('DataModel', () => {
 
         describe('property tests', () => {
             const dataModel = new DataModel<any, any, true>({
-                props: [
-                    { property: 'kp', type: 'key', valueType: 'category' },
-                    { property: 'vp1', type: 'value', valueType: 'range' },
-                    { property: 'vp2', type: 'value', valueType: 'range' },
-                ],
+                props: [categoryKey('kp'), value('vp1'), value('vp2')],
                 groupByKeys: true,
             });
             const data = [
@@ -197,12 +179,7 @@ describe('DataModel', () => {
 
             it('should only sum per data-item', () => {
                 const dataModel = new DataModel<any, any, true>({
-                    props: [
-                        { property: 'kp', type: 'key', valueType: 'category' },
-                        { property: 'vp1', type: 'value', valueType: 'range' },
-                        { property: 'vp2', type: 'value', valueType: 'range' },
-                        sum(['vp1', 'vp2']),
-                    ],
+                    props: [categoryKey('kp'), value('vp1'), value('vp2'), sum(['vp1', 'vp2'])],
                     groupByKeys: true,
                 });
                 const data = [
@@ -224,11 +201,7 @@ describe('DataModel', () => {
     describe('grouped processing - category objects', () => {
         describe('property tests', () => {
             const dataModel = new DataModel<any, any, true>({
-                props: [
-                    { property: 'kp', type: 'key', valueType: 'category' },
-                    { property: 'vp1', type: 'value', valueType: 'range' },
-                    { property: 'vp2', type: 'value', valueType: 'range' },
-                ],
+                props: [categoryKey('kp'), value('vp1'), value('vp2')],
                 groupByKeys: true,
             });
             const data = [
@@ -277,11 +250,7 @@ describe('DataModel', () => {
     describe('grouped processing - time-series example', () => {
         describe('property tests', () => {
             const dataModel = new DataModel<any, any, true>({
-                props: [
-                    { property: 'kp', type: 'key', valueType: 'range', validation: (v) => v instanceof Date },
-                    { property: 'vp1', type: 'value', valueType: 'range' },
-                    { property: 'vp2', type: 'value', valueType: 'range' },
-                ],
+                props: [{ ...rangeKey('kp'), validation: (v) => v instanceof Date }, value('vp1'), value('vp2')],
                 groupByKeys: true,
             });
             const data = [
@@ -334,12 +303,7 @@ describe('DataModel', () => {
 
             it('should only sum per data-item', () => {
                 const dataModel = new DataModel<any, any, true>({
-                    props: [
-                        { property: 'kp', type: 'key', valueType: 'category' },
-                        { property: 'vp1', type: 'value', valueType: 'range' },
-                        { property: 'vp2', type: 'value', valueType: 'range' },
-                        sum(['vp1', 'vp2']),
-                    ],
+                    props: [categoryKey('kp'), value('vp1'), value('vp2'), sum(['vp1', 'vp2'])],
                     groupByKeys: true,
                 });
                 const data = [
@@ -363,11 +327,11 @@ describe('DataModel', () => {
             const data = examples.STACKED_BAR_CHART_EXAMPLE.data!;
             const dataModel = new DataModel<any, any, true>({
                 props: [
-                    { property: 'type', type: 'key', valueType: 'category' },
-                    { property: 'ownerOccupied', type: 'value', valueType: 'range' },
-                    { property: 'privateRented', type: 'value', valueType: 'range' },
-                    { property: 'localAuthority', type: 'value', valueType: 'range' },
-                    { property: 'housingAssociation', type: 'value', valueType: 'range' },
+                    categoryKey('type'),
+                    value('ownerOccupied'),
+                    value('privateRented'),
+                    value('localAuthority'),
+                    value('housingAssociation'),
                     sum(['ownerOccupied', 'privateRented', 'localAuthority', 'housingAssociation']),
                     AGG_VALUES_EXTENT,
                 ],
@@ -382,11 +346,11 @@ describe('DataModel', () => {
         describe('property tests', () => {
             const dataModel = new DataModel<any, any, true>({
                 props: [
-                    { property: 'kp', type: 'key', valueType: 'category' },
-                    { property: 'vp1', type: 'value', valueType: 'range' },
-                    { property: 'vp2', type: 'value', valueType: 'range' },
-                    { property: 'vp3', type: 'value', valueType: 'range' },
-                    { property: 'vp4', type: 'value', valueType: 'range' },
+                    categoryKey('kp'),
+                    value('vp1'),
+                    value('vp2'),
+                    value('vp3'),
+                    value('vp4'),
                     sum(['vp1', 'vp2']),
                     sum(['vp3', 'vp4']),
                 ],
@@ -462,13 +426,13 @@ describe('DataModel', () => {
             const data = examples.ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE.data!;
             const dataModel = new DataModel<any, any, true>({
                 props: [
-                    { property: 'type', type: 'key', valueType: 'category' },
-                    { property: 'white', type: 'value', valueType: 'range' },
-                    { property: 'mixed', type: 'value', valueType: 'range' },
-                    { property: 'asian', type: 'value', valueType: 'range' },
-                    { property: 'black', type: 'value', valueType: 'range' },
-                    { property: 'chinese', type: 'value', valueType: 'range' },
-                    { property: 'other', type: 'value', valueType: 'range' },
+                    categoryKey('type'),
+                    value('white'),
+                    value('mixed'),
+                    value('asian'),
+                    value('black'),
+                    value('chinese'),
+                    value('other'),
                     sum(['white', 'mixed', 'asian', 'black', 'chinese', 'other']),
                     AGG_VALUES_EXTENT,
                 ],
@@ -485,13 +449,13 @@ describe('DataModel', () => {
             const data = examples.ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAMPLE.data!;
             const dataModel = new DataModel<any, any, true>({
                 props: [
-                    { property: 'month', type: 'key', valueType: 'category' },
-                    { property: 'petroleum', type: 'value', valueType: 'range' },
-                    { property: 'naturalGas', type: 'value', valueType: 'range' },
-                    { property: 'bioenergyWaste', type: 'value', valueType: 'range' },
-                    { property: 'nuclear', type: 'value', valueType: 'range' },
-                    { property: 'windSolarHydro', type: 'value', valueType: 'range' },
-                    { property: 'imported', type: 'value', valueType: 'range' },
+                    categoryKey('month'),
+                    value('petroleum'),
+                    value('naturalGas'),
+                    value('bioenergyWaste'),
+                    value('nuclear'),
+                    value('windSolarHydro'),
+                    value('imported'),
                     sum(['petroleum', 'naturalGas', 'bioenergyWaste', 'nuclear', 'windSolarHydro', 'imported']),
                     AGG_VALUES_EXTENT,
                 ],
@@ -510,11 +474,11 @@ describe('DataModel', () => {
         describe('property tests', () => {
             const dataModel = new DataModel<any, any, true>({
                 props: [
-                    { property: 'kp', type: 'key', valueType: 'category' },
-                    { property: 'vp1', type: 'value', valueType: 'range' },
-                    { property: 'vp2', type: 'value', valueType: 'range' },
-                    { property: 'vp3', type: 'value', valueType: 'range' },
-                    { property: 'vp4', type: 'value', valueType: 'range' },
+                    categoryKey('kp'),
+                    value('vp1'),
+                    value('vp2'),
+                    value('vp3'),
+                    value('vp4'),
                     sum(['vp1', 'vp2']),
                     sum(['vp3', 'vp4']),
                 ],
@@ -575,11 +539,7 @@ describe('DataModel', () => {
         it('should generated the expected results for simple histogram example with hard-coded buckets', () => {
             const data = examples.SIMPLE_HISTOGRAM_CHART_EXAMPLE.data!.slice(0, 20);
             const dataModel = new DataModel<any, any, true>({
-                props: [
-                    { property: 'engine-size', type: 'key', valueType: 'category' },
-                    groupCount(),
-                    SORT_DOMAIN_GROUPS,
-                ],
+                props: [categoryKey('engine-size'), groupCount(), SORT_DOMAIN_GROUPS],
                 groupByFn,
                 normaliseTo: 100,
             });
@@ -593,8 +553,8 @@ describe('DataModel', () => {
             const data = examples.XY_HISTOGRAM_WITH_MEAN_EXAMPLE.data!.slice(0, 20);
             const dataModel = new DataModel<any, any, true>({
                 props: [
-                    { property: 'curb-weight', type: 'key', valueType: 'category' },
-                    { property: 'highway-mpg', type: 'value', valueType: 'range' },
+                    categoryKey('engine-size'),
+                    value('highway-mpg'),
                     groupAverage(['highway-mpg']),
                     SORT_DOMAIN_GROUPS,
                 ],
@@ -609,12 +569,7 @@ describe('DataModel', () => {
         it('should generated the expected results for simple histogram example with area bucket calculation', () => {
             const data = examples.HISTOGRAM_WITH_SPECIFIED_BINS_EXAMPLE.data!.slice(0, 20);
             const dataModel = new DataModel<any, any, true>({
-                props: [
-                    { property: 'curb-weight', type: 'key', valueType: 'range' },
-                    { property: 'curb-weight', type: 'value', valueType: 'range' },
-                    area([], groupCount()),
-                    SORT_DOMAIN_GROUPS,
-                ],
+                props: [rangeKey('curb-weight'), value('curb-weight'), area([], groupCount()), SORT_DOMAIN_GROUPS],
                 groupByFn: () => {
                     return (item) => {
                         if (item.keys[0] < 2000) {
@@ -643,11 +598,11 @@ describe('DataModel', () => {
             };
             const dataModel = new DataModel<any, any>({
                 props: [
-                    { property: 'year', type: 'key', valueType: 'category' },
-                    { ...DEFAULTS, property: 'ie', type: 'value', valueType: 'range' },
-                    { ...DEFAULTS, property: 'chrome', type: 'value', valueType: 'range' },
-                    { ...DEFAULTS, property: 'firefox', type: 'value', valueType: 'range' },
-                    { ...DEFAULTS, property: 'safari', type: 'value', valueType: 'range' },
+                    categoryKey('year'),
+                    { ...DEFAULTS, ...value('ie') },
+                    { ...DEFAULTS, ...value('chrome') },
+                    { ...DEFAULTS, ...value('firefox') },
+                    { ...DEFAULTS, ...value('safari') },
                 ],
             });
             data.forEach((datum, idx) => {
@@ -667,10 +622,10 @@ describe('DataModel', () => {
             const validated = { ...defaults, validation: (v) => typeof v === 'number' };
             const dataModel = new DataModel<any, any, true>({
                 props: [
-                    { property: 'kp', type: 'key', valueType: 'category' },
-                    { property: 'vp1', type: 'value', valueType: 'range', ...validated },
-                    { property: 'vp2', type: 'value', valueType: 'range', ...validated },
-                    { property: 'vp3', type: 'value', valueType: 'range', ...defaults },
+                    categoryKey('kp'),
+                    { ...value('vp1'), ...validated },
+                    { ...value('vp2'), ...validated },
+                    { ...value('vp3'), ...defaults },
                     sum(['vp1', 'vp2']),
                 ],
                 groupByKeys: true,
@@ -700,13 +655,7 @@ describe('DataModel', () => {
     describe('empty data set processing', () => {
         it('should generated the expected results', () => {
             const dataModel = new DataModel<any, any>({
-                props: [
-                    { property: 'year', type: 'key', valueType: 'category' },
-                    { property: 'ie', type: 'value', valueType: 'range' },
-                    { property: 'chrome', type: 'value', valueType: 'range' },
-                    { property: 'firefox', type: 'value', valueType: 'range' },
-                    { property: 'safari', type: 'value', valueType: 'range' },
-                ],
+                props: [categoryKey('year'), value('ie'), value('chrome'), value('firefox'), value('safari')],
             });
 
             expect(dataModel.processData([])).toMatchSnapshot({
@@ -716,13 +665,7 @@ describe('DataModel', () => {
 
         describe('property tests', () => {
             const dataModel = new DataModel<any, any>({
-                props: [
-                    { property: 'year', type: 'key', valueType: 'category' },
-                    { property: 'ie', type: 'value', valueType: 'range' },
-                    { property: 'chrome', type: 'value', valueType: 'range' },
-                    { property: 'firefox', type: 'value', valueType: 'range' },
-                    { property: 'safari', type: 'value', valueType: 'range' },
-                ],
+                props: [categoryKey('year'), value('ie'), value('chrome'), value('firefox'), value('safari')],
             });
 
             it('should not generate data extracts', () => {

@@ -333,7 +333,7 @@ Object {
       "aggValues": Array [
         Array [
           0,
-          27.4,
+          25.545454545454547,
         ],
       ],
       "datum": Array [
@@ -344,10 +344,6 @@ Object {
         Object {
           "engine-size": 130,
           "highway-mpg": 27,
-        },
-        Object {
-          "engine-size": 152,
-          "highway-mpg": 26,
         },
         Object {
           "engine-size": 109,
@@ -385,41 +381,9 @@ Object {
           "engine-size": 108,
           "highway-mpg": 29,
         },
-        Object {
-          "engine-size": 164,
-          "highway-mpg": 28,
-        },
-        Object {
-          "engine-size": 164,
-          "highway-mpg": 28,
-        },
-        Object {
-          "engine-size": 164,
-          "highway-mpg": 25,
-        },
-        Object {
-          "engine-size": 209,
-          "highway-mpg": 22,
-        },
-        Object {
-          "engine-size": 209,
-          "highway-mpg": 22,
-        },
-        Object {
-          "engine-size": 209,
-          "highway-mpg": 20,
-        },
-        Object {
-          "engine-size": 61,
-          "highway-mpg": 53,
-        },
-        Object {
-          "engine-size": 90,
-          "highway-mpg": 43,
-        },
       ],
       "keys": Array [
-        ">150",
+        "100 - 150",
       ],
       "values": Array [
         Array [
@@ -427,9 +391,6 @@ Object {
         ],
         Array [
           27,
-        ],
-        Array [
-          26,
         ],
         Array [
           30,
@@ -458,6 +419,52 @@ Object {
         Array [
           29,
         ],
+      ],
+    },
+    Object {
+      "aggValues": Array [
+        Array [
+          0,
+          24.428571428571427,
+        ],
+      ],
+      "datum": Array [
+        Object {
+          "engine-size": 152,
+          "highway-mpg": 26,
+        },
+        Object {
+          "engine-size": 164,
+          "highway-mpg": 28,
+        },
+        Object {
+          "engine-size": 164,
+          "highway-mpg": 28,
+        },
+        Object {
+          "engine-size": 164,
+          "highway-mpg": 25,
+        },
+        Object {
+          "engine-size": 209,
+          "highway-mpg": 22,
+        },
+        Object {
+          "engine-size": 209,
+          "highway-mpg": 22,
+        },
+        Object {
+          "engine-size": 209,
+          "highway-mpg": 20,
+        },
+      ],
+      "keys": Array [
+        ">150",
+      ],
+      "values": Array [
+        Array [
+          26,
+        ],
         Array [
           28,
         ],
@@ -476,6 +483,29 @@ Object {
         Array [
           20,
         ],
+      ],
+    },
+    Object {
+      "aggValues": Array [
+        Array [
+          0,
+          48,
+        ],
+      ],
+      "datum": Array [
+        Object {
+          "engine-size": 61,
+          "highway-mpg": 53,
+        },
+        Object {
+          "engine-size": 90,
+          "highway-mpg": 43,
+        },
+      ],
+      "keys": Array [
+        "<100",
+      ],
+      "values": Array [
         Array [
           53,
         ],
@@ -489,8 +519,8 @@ Object {
     "keys": Array [
       Object {
         "index": 0,
-        "missing": true,
-        "property": "curb-weight",
+        "missing": false,
+        "property": "engine-size",
         "type": "key",
         "valueType": "category",
       },
@@ -509,17 +539,32 @@ Object {
     "aggValues": Array [
       Array [
         0,
-        27.4,
+        48,
       ],
     ],
     "groups": Array [
       Array [
+        "100 - 150",
+      ],
+      Array [
         ">150",
+      ],
+      Array [
+        "<100",
       ],
     ],
     "keys": Array [
       Array [
-        undefined,
+        130,
+        152,
+        109,
+        136,
+        131,
+        108,
+        164,
+        209,
+        61,
+        90,
       ],
     ],
     "values": Array [
@@ -531,7 +576,7 @@ Object {
   },
   "indices": Object {
     "keys": Object {
-      "curb-weight": 0,
+      "engine-size": 0,
     },
     "values": Object {
       "highway-mpg": 0,
@@ -540,7 +585,13 @@ Object {
   "reduced": Object {
     "sortedGroupDomain": Array [
       Array [
+        "100 - 150",
+      ],
+      Array [
         ">150",
+      ],
+      Array [
+        "<100",
       ],
     ],
   },
