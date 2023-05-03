@@ -5378,18 +5378,6 @@
         "optional": false
       }
     },
-    "toggleOtherSeriesItems": {
-      "type": {
-        "arguments": {
-          "series": "{ id: string; type: string; }",
-          "itemId": "string",
-          "enabled?": "boolean",
-          "preferredEnabled?": "boolean"
-        },
-        "returnType": "void",
-        "optional": false
-      }
-    },
     "getLegendData": {
       "type": { "arguments": {}, "returnType": "any[]", "optional": false }
     }

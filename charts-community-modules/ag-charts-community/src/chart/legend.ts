@@ -869,7 +869,7 @@ export class Legend {
                 });
 
                 if (s.id !== series.id) {
-                    s.toggleOtherSeriesItems(series, datum.itemId, undefined, singleEnabledInEachSeriesWasNotClicked);
+                    // s.toggleOtherSeriesItems(series, datum.itemId, undefined, singleEnabledInEachSeriesWasNotClicked);
                 }
             });
         }
