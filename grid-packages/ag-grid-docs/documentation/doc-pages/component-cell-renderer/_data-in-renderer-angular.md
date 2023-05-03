@@ -1,8 +1,9 @@
-[[only-angular]]
-|
+<framework-specific-section frameworks="angular">
 |Here we use the safe navigation operator (`?`) to ensure that both `params` and `data` are valid before attempting to access `theBoldValue`:
-|
-|```js
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false}>
 |// cell renderer component  
 |@Component({
 |    selector: 'cell-renderer',
@@ -20,4 +21,5 @@
 |        return false;
 |    }
 |}
-|```
+</snippet>
+</framework-specific-section>
