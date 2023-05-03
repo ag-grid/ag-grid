@@ -372,12 +372,14 @@ export class Text extends Shape {
                     return;
                 }
 
-                const ellipsisWidth = HdpiCanvas.getTextSize(result.concat(addHyphen ? '-' : ''), font).width;
-                const truncatedLine =
-                    width + ellipsisWidth < maxWidth
-                        ? `${lastLine.substring(0, lastLine.length - 3)}${ellipsis}`
-                        : `${lastLine}${ellipsis}`;
-                lines.push(truncatedLine);
+                for (let len = lastLine.length; len >= 0; len--) {
+                    const truncatedLine = `${lastLine.substring(0, len)}${ellipsis}`;
+                    const lastLineWidth = HdpiCanvas.getTextSize(truncatedLine, font).width;
+                    if (lastLineWidth <= maxWidth) {
+                        lines.push(truncatedLine);
+                        return;
+                    }
+                }
                 return;
             }
 
