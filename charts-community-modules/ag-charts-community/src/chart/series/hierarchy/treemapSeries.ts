@@ -742,20 +742,64 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             let labelText = datum.isLeaf ? datum.label : datum.label.toUpperCase();
 
             let labelStyle: Label;
+            let wrappedText = '';
             if (datum.isLeaf) {
                 // Choose the font size that fits
-                labelStyle =
-                    [labels.large, labels.medium, labels.small].find((s) => {
-                        const { width, height } = getTextSize(labelText, s);
-                        return width < availTextWidth && height < availTextHeight && !isBoxTooSmall(s);
-                    }) || labels.small;
+                labelStyle = labels.small;
+                fontSizeLoop: for (const s of [labels.large, labels.medium, labels.small]) {
+                    if (isBoxTooSmall(s)) {
+                        continue;
+                    }
+                    const { width, height } = getTextSize(labelText, s);
+                    if (height > availTextHeight) {
+                        continue;
+                    }
+                    if (width <= availTextWidth) {
+                        labelStyle = s;
+                        break;
+                    }
+                    const parts = labelText.split(/\s+/g);
+                    const spaceWidth = getTextSize(' ', s).width;
+                    const lineHeight = s.fontSize * Text.defaultLineHeightRatio;
+                    const lines: string[][] = [];
+                    let lineWidth = 0;
+                    let totalHeight = 0;
+                    let currentLine: string[] = [];
+                    let partIndex = -1;
+                    while (++partIndex < parts.length) {
+                        const part = parts[partIndex];
+                        const width = getTextSize(part, s).width;
+                        if (width > availTextWidth) {
+                            continue fontSizeLoop;
+                        }
+                        if (partIndex === 0) {
+                            lines.push(currentLine);
+                            totalHeight = lineHeight;
+                        }
+                        const expectedLineWidth = lineWidth + (currentLine.length === 0 ? 0 : spaceWidth) + width;
+                        if (expectedLineWidth > availTextWidth) {
+                            currentLine = [part];
+                            lines.push(currentLine);
+                            totalHeight += lineHeight;
+                            if (totalHeight > availTextHeight) {
+                                continue fontSizeLoop;
+                            }
+                        } else {
+                            currentLine.push(part);
+                            lineWidth = expectedLineWidth;
+                        }
+                    }
+                    wrappedText = lines.map((ln) => ln.join(' ')).join('\n');
+                    labelStyle = s;
+                    break;
+                }
             } else if (datum.depth === 1) {
                 labelStyle = title;
             } else {
                 labelStyle = subtitle;
             }
 
-            const labelSize = getTextSize(labelText, labelStyle);
+            const labelSize = getTextSize(wrappedText || labelText, labelStyle);
             if (isBoxTooSmall(labelStyle)) {
                 // Avoid labels on too small tiles
                 return;
@@ -787,7 +831,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
 
             labelMeta.set(datum, {
                 label: {
-                    text: labelText,
+                    text: wrappedText || labelText,
                     style: labelStyle,
                     ...(datum.isLeaf
                         ? {
