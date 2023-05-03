@@ -192,6 +192,9 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     private onWheel(event: _ModuleSupport.InteractionEvent<'wheel'>) {
         if (!this.enableScrolling || !this.seriesRect) return;
 
+        event.consume();
+        event.sourceEvent.preventDefault();
+
         const currentZoom = this.zoomManager.getZoom();
         const newZoom = this.scroller.update(
             event,
