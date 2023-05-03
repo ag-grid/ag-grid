@@ -46,7 +46,7 @@ function getTemplate(bindings: any, attributes: string[]): string {
 export function vanillaToAngular(bindings: any, componentFileNames: string[]): () => string {
     return () => {
         const { properties, declarations, optionsTypeInfo } = bindings;
-        const opsTypeInfo = optionsTypeInfo || { typeParts: ['AgChartOptions'], typeStr: 'AgChartOptions' };
+        const opsTypeInfo = optionsTypeInfo;
         const imports = getImports(bindings, componentFileNames, opsTypeInfo);
 
         const propertyAttributes = [];

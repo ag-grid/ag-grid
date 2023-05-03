@@ -303,6 +303,9 @@ export function usesChartApi(node: ts.Node) {
         if (node.getText()?.match(/AgChart.(?!create)/)) {
             return true;
         }
+        if (node.getText()?.match(/AgEnterpriseCharts.(?!create)/)) {
+            return true;
+        }
     }
 
     node.forEachChild(ct => {
