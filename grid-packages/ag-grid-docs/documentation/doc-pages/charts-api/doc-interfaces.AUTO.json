@@ -5288,6 +5288,7 @@
   "LabelTranslationDirection": {},
   "CrossLineTranslationDirection": {},
   "CrossLinesRangeConfig": {},
+  "ContinuousDomain": { "meta": { "typeParams": ["T extends number | Date"] } },
   "UngroupedDataItem": { "meta": { "typeParams": ["D", "V"] } },
   "UngroupedData": {
     "type": { "type": { "returnType": "'ungrouped'", "optional": false } },
@@ -5299,7 +5300,7 @@
     },
     "domain": {
       "type": {
-        "returnType": "{\n        keys: any[][];\n        values: any[][];\n        sumValues?: [number, number][];\n    }",
+        "returnType": "{\n        keys: any[][];\n        values: any[][];\n        groups?: any[][];\n        aggValues?: [number, number][];\n    }",
         "optional": false
       }
     },
@@ -5321,48 +5322,42 @@
     "time": { "type": { "returnType": "number", "optional": false } },
     "meta": { "typeParams": ["D"] }
   },
+  "GroupedDataItem": { "meta": { "typeParams": ["D"] } },
   "GroupedData": {
     "type": { "type": { "returnType": "'grouped'", "optional": false } },
     "data": {
-      "type": {
-        "returnType": "UngroupedDataItem<D[], any[][]>[]",
-        "optional": false
-      }
+      "type": { "returnType": "GroupedDataItem<D>[]", "optional": false }
     },
     "domain": {
-      "type": {
-        "returnType": "{\n        keys: any[][];\n        values: any[][];\n        sumValues?: [number, number][];\n    }",
-        "optional": false
-      }
+      "type": { "returnType": "UngroupedData<D>['domain']", "optional": false }
     },
     "indices": {
-      "type": {
-        "returnType": "{\n        keys: Record<keyof D, number>;\n        values: Record<keyof D, number>;\n    }",
-        "optional": false
-      }
+      "type": { "returnType": "UngroupedData<D>['indices']", "optional": false }
     },
     "reduced": {
-      "type": { "returnType": "Record<string, any>", "optional": true }
+      "type": { "returnType": "UngroupedData<D>['reduced']", "optional": true }
     },
     "defs": {
-      "type": {
-        "returnType": "{\n        keys: DatumPropertyDefinition<keyof D>[];\n        values: DatumPropertyDefinition<keyof D>[];\n    }",
-        "optional": false
-      }
+      "type": { "returnType": "UngroupedData<D>['defs']", "optional": false }
     },
     "time": { "type": { "returnType": "number", "optional": false } },
     "meta": { "typeParams": ["D"] }
   },
   "ProcessedData": { "meta": { "typeParams": ["D"] } },
   "DatumPropertyType": {},
-  "ContinuousDomain": { "meta": { "typeParams": ["T extends number | Date"] } },
+  "GroupingFn": { "meta": { "typeParams": ["K"] } },
+  "GroupByFn": {},
   "Options": {
     "meta": { "typeParams": ["K", "Grouped extends boolean | undefined"] }
   },
   "PropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "DatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "InternalDatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
-  "OutputPropertyDefinition": { "meta": { "typeParams": ["K"] } },
+  "AggregatePropertyDefinition": {
+    "meta": {
+      "typeParams": ["D", "K extends keyof D", "R = [number, number]", "R2 = R"]
+    }
+  },
   "ReducerOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
   "ProcessorOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
   "Series": {
@@ -5758,6 +5753,7 @@
     "aggregatedValue": {
       "type": { "returnType": "number", "optional": false }
     },
+    "frequency": { "type": { "returnType": "number", "optional": false } },
     "domain": {
       "type": { "returnType": "[number, number]", "optional": false }
     },
@@ -5780,7 +5776,6 @@
     }
   },
   "HistogramAggregation": {},
-  "AggregationFunction": {},
   "LineNodeDatum": {
     "point": {
       "type": {

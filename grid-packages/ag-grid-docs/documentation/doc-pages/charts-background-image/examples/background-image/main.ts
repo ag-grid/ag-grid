@@ -1,6 +1,6 @@
-import { AgEnterpriseCharts } from 'ag-charts-enterprise'
+import { AgEnterpriseCharts, AgPolarChartOptions } from 'ag-charts-enterprise'
 
-const options: any = {
+const options: AgPolarChartOptions = {
     container: document.getElementById('myChart'),
     data: [
         {value: 56.9},
