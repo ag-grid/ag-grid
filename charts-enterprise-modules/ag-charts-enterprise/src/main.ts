@@ -7,7 +7,13 @@ import {
 
 import { AgChartBackgroundImage, BackgroundModule } from './background/main';
 import { AgContextMenuOptions, ContextMenuModule } from './context-menu/main';
-import { AgCrosshairOptions, CrosshairModule } from './crosshair/main';
+import {
+    AgCrosshairOptions,
+    CrosshairModule,
+    AgCrosshairLabel,
+    AgCrosshairLabelRendererParams,
+    AgCrosshairLabelRendererResult,
+} from './crosshair/main';
 import { GradientLegendModule } from './gradient-legend/main';
 import * as Heatmap from './heatmap/main';
 import { AgNavigatorOptions } from './navigator/main';
@@ -21,6 +27,8 @@ _ModuleSupport.registerModule(CrosshairModule);
 _ModuleSupport.registerModule(GradientLegendModule);
 _ModuleSupport.registerModule(Heatmap.HeatmapModule);
 _ModuleSupport.registerModule(ZoomModule);
+
+export { AgCrosshairOptions, AgCrosshairLabel, AgCrosshairLabelRendererParams, AgCrosshairLabelRendererResult };
 
 declare module 'ag-charts-community' {
     export interface AgCartesianChartOptions {
@@ -64,5 +72,9 @@ export class AgEnterpriseCharts {
         new LicenseManager(options.container as any).validateLicense();
 
         return AgChart.create(options as any);
+    }
+
+    public static update(chart: AgChartInstance, options: AgChartOptions) {
+        return AgChart.update(chart, options as any);
     }
 }

@@ -5,11 +5,11 @@ import {
     AgCartesianChartOptions,
     AgChartOptions,
     AgCartesianAxisOptions,
-    AgEnterpriseCharts,
     AgBarSeriesOptions,
     AgAreaSeriesOptions,
-    _ModuleSupport,
-} from '../main';
+} from 'ag-charts-community';
+
+import { AgEnterpriseCharts, _ModuleSupport } from '../main';
 import {
     waitForChartStability,
     setupMockCanvas,
