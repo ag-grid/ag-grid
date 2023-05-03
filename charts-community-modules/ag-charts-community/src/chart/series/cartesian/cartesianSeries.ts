@@ -29,6 +29,7 @@ import { ChartAxisDirection } from '../../chartAxisDirection';
 import { getMarker } from '../../marker/util';
 import { Logger } from '../../../util/logger';
 import { DataModel, ProcessedData } from '../../data/dataModel';
+import { LegendItemClickChartEvent } from '../../interaction/chartEventManager';
 
 type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<
     N,
@@ -130,6 +131,10 @@ export abstract class CartesianSeries<
 
         const { pathsPerSeries = 1, hasMarkers = false, pathsZIndexSubOrderOffset = [] } = opts;
         this.opts = { pathsPerSeries, hasMarkers, pathsZIndexSubOrderOffset };
+    }
+
+    addChartEventListeners(): void {
+        this.chartEventManager?.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
     }
 
     destroy() {
@@ -558,6 +563,12 @@ export abstract class CartesianSeries<
                 0
             );
             return { datum: closestDatum, distance };
+        }
+    }
+
+    onLegendItemClick(event: LegendItemClickChartEvent) {
+        if (event.series.id === this.id) {
+            this.toggleSeriesItem(event.itemId, event.enabled);
         }
     }
 

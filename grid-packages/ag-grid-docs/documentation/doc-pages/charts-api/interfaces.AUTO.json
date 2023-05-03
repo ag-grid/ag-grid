@@ -531,6 +531,7 @@
       "calloutLabelName?": "string",
       "sectorLabelKey?": "string",
       "sectorLabelName?": "string",
+      "legendItemKey?": "string",
       "fills?": "CssColor[]",
       "strokes?": "CssColor[]",
       "fillOpacity?": "Opacity",
@@ -571,6 +572,7 @@
       "calloutLabelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "sectorLabelKey?": "/** The key to use to retrieve sector label values from the data. */",
       "sectorLabelName?": "/** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "legendItemKey?": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */",
       "fills?": "/** The colours to cycle through for the fills of the sectors. */",
       "strokes?": "/** The colours to cycle through for the strokes of the sectors. */",
       "fillOpacity?": "/** The opacity of the fill for the sectors. */",
@@ -2814,6 +2816,7 @@
       "calloutLabelName?": "string",
       "sectorLabelKey?": "string",
       "sectorLabelName?": "string",
+      "legendItemKey?": "string",
       "fills?": "CssColor[]",
       "strokes?": "CssColor[]",
       "fillOpacity?": "Opacity",
@@ -2855,6 +2858,7 @@
       "calloutLabelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "sectorLabelKey?": "/** The key to use to retrieve sector label values from the data. */",
       "sectorLabelName?": "/** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "legendItemKey?": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */",
       "fills?": "/** The colours to cycle through for the fills of the sectors. */",
       "strokes?": "/** The colours to cycle through for the strokes of the sectors. */",
       "fillOpacity?": "/** The opacity of the fill for the sectors. */",
@@ -3578,7 +3582,6 @@
       "id": "string",
       "type": "string",
       "toggleSeriesItem(itemId: string, enabled: boolean)": "void",
-      "toggleOtherSeriesItems(series: { id: string; type: string; }, itemId: string, enabled?: boolean, preferredEnabled?: boolean)": "void",
       "getLegendData()": "any[]"
     }
   },
@@ -3605,6 +3608,27 @@
       "max": "number",
       "fn": "(bbox: BBox) => number",
       "padding": "number"
+    }
+  },
+  "ChartEventType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'legend-item-click'"
+  },
+  "ChartEvents": {
+    "meta": { "isTypeAlias": true },
+    "type": "LegendItemClickChartEvent"
+  },
+  "ChartEvent": {
+    "meta": { "typeParams": ["ChartEventType"] },
+    "type": { "type": "ChartEventType" }
+  },
+  "LegendItemClickChartEvent": {
+    "meta": {},
+    "type": {
+      "series": "any",
+      "itemId": "any",
+      "enabled": "boolean",
+      "type": "'legend-item-click'"
     }
   },
   "CursorState": { "meta": {}, "type": { "style": "string" } },
@@ -4421,9 +4445,10 @@
     "type": {
       "scene": "Scene",
       "mode": "'standalone' | 'integrated'",
-      "interactionManager": "InteractionManager",
-      "highlightManager": "HighlightManager",
+      "chartEventManager": "ChartEventManager",
       "cursorManager": "CursorManager",
+      "highlightManager": "HighlightManager",
+      "interactionManager": "InteractionManager",
       "zoomManager": "ZoomManager",
       "tooltipManager": "TooltipManager",
       "dataService": "DataService",
@@ -4437,9 +4462,10 @@
       "parent": "P",
       "scene": "Scene",
       "mode": "'standalone' | 'integrated'",
-      "interactionManager": "InteractionManager",
-      "highlightManager": "HighlightManager",
+      "chartEventManager": "ChartEventManager",
       "cursorManager": "CursorManager",
+      "highlightManager": "HighlightManager",
+      "interactionManager": "InteractionManager",
       "zoomManager": "ZoomManager",
       "tooltipManager": "TooltipManager",
       "dataService": "DataService",

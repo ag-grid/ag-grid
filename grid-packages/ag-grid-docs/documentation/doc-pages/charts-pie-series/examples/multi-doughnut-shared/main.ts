@@ -14,14 +14,17 @@ const options: AgChartOptions = {
     {
       type: "pie",
       calloutLabelKey: "os",
+      legendItemKey: "os",
       angleKey: "2023",
       innerRadiusRatio: 0.7,
     },
     {
       type: "pie",
+      legendItemKey: "os",
       angleKey: "2020",
       outerRadiusRatio: 0.6,
       innerRadiusRatio: 0.3,
+      showInLegend: false,
     },
   ],
 }

@@ -911,6 +911,10 @@
       "description": "/** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "type": { "returnType": "string", "optional": true }
     },
+    "legendItemKey": {
+      "description": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "fills": {
       "description": "/** The colours to cycle through for the fills of the sectors. */",
       "type": { "returnType": "CssColor[]", "optional": true }
@@ -4299,6 +4303,10 @@
       "description": "/** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "type": { "returnType": "string", "optional": true }
     },
+    "legendItemKey": {
+      "description": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "fills": {
       "description": "/** The colours to cycle through for the fills of the sectors. */",
       "type": { "returnType": "CssColor[]", "optional": true }
@@ -5370,18 +5378,6 @@
         "optional": false
       }
     },
-    "toggleOtherSeriesItems": {
-      "type": {
-        "arguments": {
-          "series": "{ id: string; type: string; }",
-          "itemId": "string",
-          "enabled?": "boolean",
-          "preferredEnabled?": "boolean"
-        },
-        "returnType": "void",
-        "optional": false
-      }
-    },
     "getLegendData": {
       "type": { "arguments": {}, "returnType": "any[]", "optional": false }
     }
@@ -5401,6 +5397,20 @@
       }
     },
     "padding": { "type": { "returnType": "number", "optional": false } }
+  },
+  "ChartEventType": {},
+  "ChartEvents": {},
+  "ChartEvent": {
+    "type": { "type": { "returnType": "ChartEventType", "optional": false } },
+    "meta": { "typeParams": ["ChartEventType"] }
+  },
+  "LegendItemClickChartEvent": {
+    "series": { "type": { "returnType": "any", "optional": false } },
+    "itemId": { "type": { "returnType": "any", "optional": false } },
+    "enabled": { "type": { "returnType": "boolean", "optional": false } },
+    "type": {
+      "type": { "returnType": "'legend-item-click'", "optional": false }
+    }
   },
   "CursorState": {
     "style": { "type": { "returnType": "string", "optional": false } }
@@ -6191,14 +6201,17 @@
     "mode": {
       "type": { "returnType": "'standalone' | 'integrated'", "optional": false }
     },
-    "interactionManager": {
-      "type": { "returnType": "InteractionManager", "optional": false }
+    "chartEventManager": {
+      "type": { "returnType": "ChartEventManager", "optional": false }
+    },
+    "cursorManager": {
+      "type": { "returnType": "CursorManager", "optional": false }
     },
     "highlightManager": {
       "type": { "returnType": "HighlightManager", "optional": false }
     },
-    "cursorManager": {
-      "type": { "returnType": "CursorManager", "optional": false }
+    "interactionManager": {
+      "type": { "returnType": "InteractionManager", "optional": false }
     },
     "zoomManager": {
       "type": { "returnType": "ZoomManager", "optional": false }
@@ -6226,14 +6239,17 @@
     "mode": {
       "type": { "returnType": "'standalone' | 'integrated'", "optional": false }
     },
-    "interactionManager": {
-      "type": { "returnType": "InteractionManager", "optional": false }
+    "chartEventManager": {
+      "type": { "returnType": "ChartEventManager", "optional": false }
+    },
+    "cursorManager": {
+      "type": { "returnType": "CursorManager", "optional": false }
     },
     "highlightManager": {
       "type": { "returnType": "HighlightManager", "optional": false }
     },
-    "cursorManager": {
-      "type": { "returnType": "CursorManager", "optional": false }
+    "interactionManager": {
+      "type": { "returnType": "InteractionManager", "optional": false }
     },
     "zoomManager": {
       "type": { "returnType": "ZoomManager", "optional": false }
