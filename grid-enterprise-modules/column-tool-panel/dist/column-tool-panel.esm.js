@@ -26567,9 +26567,10 @@ var RowCtrl = /** @class */ (function (_super) {
             this.rowType = RowType.Normal;
         }
     };
-    RowCtrl.prototype.updateColumnLists = function (suppressAnimationFrame) {
+    RowCtrl.prototype.updateColumnLists = function (suppressAnimationFrame, useFlushSync) {
         var _this = this;
         if (suppressAnimationFrame === void 0) { suppressAnimationFrame = false; }
+        if (useFlushSync === void 0) { useFlushSync = false; }
         if (this.isFullWidth()) {
             return;
         }
@@ -26577,7 +26578,7 @@ var RowCtrl = /** @class */ (function (_super) {
             || this.beans.gridOptionsService.is('suppressAnimationFrame')
             || this.printLayout;
         if (noAnimation) {
-            this.updateColumnListsImpl();
+            this.updateColumnListsImpl(useFlushSync);
             return;
         }
         if (this.updateColumnListsPending) {
@@ -26587,7 +26588,7 @@ var RowCtrl = /** @class */ (function (_super) {
             if (!_this.active) {
                 return;
             }
-            _this.updateColumnListsImpl();
+            _this.updateColumnListsImpl(true);
         }, this.rowNode.rowIndex, 'createTasksP1');
         this.updateColumnListsPending = true;
     };
@@ -26627,8 +26628,9 @@ var RowCtrl = /** @class */ (function (_super) {
         });
         return res;
     };
-    RowCtrl.prototype.updateColumnListsImpl = function () {
+    RowCtrl.prototype.updateColumnListsImpl = function (useFlushSync) {
         var _this = this;
+        if (useFlushSync === void 0) { useFlushSync = false; }
         this.updateColumnListsPending = false;
         var columnModel = this.beans.columnModel;
         if (this.printLayout) {
@@ -26647,7 +26649,7 @@ var RowCtrl = /** @class */ (function (_super) {
         this.allRowGuis.forEach(function (item) {
             var cellControls = item.containerType === RowContainerType.LEFT ? _this.leftCellCtrls :
                 item.containerType === RowContainerType.RIGHT ? _this.rightCellCtrls : _this.centerCellCtrls;
-            item.rowComp.setCellCtrls(cellControls.list);
+            item.rowComp.setCellCtrls(cellControls.list, useFlushSync);
         });
     };
     RowCtrl.prototype.isCellEligibleToBeRemoved = function (cellCtrl, nextContainerPinned) {
@@ -26841,7 +26843,7 @@ var RowCtrl = /** @class */ (function (_super) {
         }
     };
     RowCtrl.prototype.onVirtualColumnsChanged = function () {
-        this.updateColumnLists();
+        this.updateColumnLists(false, true);
     };
     RowCtrl.prototype.getRowPosition = function () {
         return {
@@ -28677,7 +28679,7 @@ var RowContainerCtrl = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, function () { return _this.onScrollVisibilityChanged(); });
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, function () { return _this.onDisplayedColumnsChanged(); });
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, function () { return _this.onDisplayedColumnsWidthChanged(); });
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, function () { return _this.onDisplayedRowsChanged(); });
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, function (params) { return _this.onDisplayedRowsChanged(params.afterScroll); });
         this.onScrollVisibilityChanged();
         this.onDisplayedColumnsChanged();
         this.onDisplayedColumnsWidthChanged();
@@ -28806,8 +28808,9 @@ var RowContainerCtrl = /** @class */ (function (_super) {
             this.refreshPaddingForFakeScrollbar();
         }
     };
-    RowContainerCtrl.prototype.onDisplayedRowsChanged = function () {
+    RowContainerCtrl.prototype.onDisplayedRowsChanged = function (useFlushSync) {
         var _this = this;
+        if (useFlushSync === void 0) { useFlushSync = false; }
         if (this.visible) {
             var printLayout_1 = this.gridOptionsService.isDomLayout('print');
             var doesRowMatch = function (rowCtrl) {
@@ -28821,10 +28824,10 @@ var RowContainerCtrl = /** @class */ (function (_super) {
             // this list contains either all pinned top, center or pinned bottom rows
             // this filters out rows not for this container, eg if it's a full with row, but we are not full with container
             var rowsThisContainer = this.getRowCtrls().filter(doesRowMatch);
-            this.comp.setRowCtrls(rowsThisContainer);
+            this.comp.setRowCtrls(rowsThisContainer, useFlushSync);
         }
         else {
-            this.comp.setRowCtrls(this.EMPTY_CTRLS);
+            this.comp.setRowCtrls(this.EMPTY_CTRLS, false);
         }
     };
     RowContainerCtrl.prototype.getRowCtrls = function () {
@@ -36633,7 +36636,7 @@ var DEFAULT_KEEP_DETAIL_ROW_COUNT = 10;
         this.getLockOnRefresh();
         this.redraw(null, false, true);
         this.releaseLockOnRefresh();
-        this.dispatchDisplayedRowsChanged();
+        this.dispatchDisplayedRowsChanged(true);
         if (cellFocused != null) {
             var newFocusedCell = this.getCellToRestoreFocusToAfterRefresh();
             if (cellFocused != null && newFocusedCell == null) {
@@ -36717,8 +36720,9 @@ var DEFAULT_KEEP_DETAIL_ROW_COUNT = 10;
         }
         this.updateAllRowCtrls();
     };
-    RowRenderer.prototype.dispatchDisplayedRowsChanged = function () {
-        var event = { type: Events.EVENT_DISPLAYED_ROWS_CHANGED };
+    RowRenderer.prototype.dispatchDisplayedRowsChanged = function (afterScroll) {
+        if (afterScroll === void 0) { afterScroll = false; }
+        var event = { type: Events.EVENT_DISPLAYED_ROWS_CHANGED, afterScroll: afterScroll };
         this.eventService.dispatchEvent(event);
     };
     RowRenderer.prototype.onDisplayedColumnsChanged = function () {

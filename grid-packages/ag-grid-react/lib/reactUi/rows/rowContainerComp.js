@@ -61,8 +61,8 @@ var RowContainerComp = function (params) {
     reactComment_1.default(' AG Row Container ' + name + ' ', topLevelRef);
     // if domOrder=true, then we just copy rowCtrls into rowCtrlsOrdered observing order,
     // however if false, then we need to keep the order as they are in the dom, otherwise rowAnimation breaks
-    function updateRowCtrlsOrdered() {
-        utils_1.agFlushSync(function () {
+    function updateRowCtrlsOrdered(useFlushSync) {
+        utils_1.agFlushSync(useFlushSync, function () {
             setRowCtrlsOrdered(function (prev) {
                 var rowCtrls = rowCtrlsRef.current;
                 if (domOrderRef.current) {
@@ -80,16 +80,17 @@ var RowContainerComp = function (params) {
         var beansToDestroy = [];
         var compProxy = {
             setViewportHeight: function (height) { return eViewport.current.style.height = height; },
-            setRowCtrls: function (rowCtrls) {
+            setRowCtrls: function (rowCtrls, useFlushSync) {
                 if (rowCtrlsRef.current !== rowCtrls) {
+                    var useFlush = useFlushSync && rowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
                     rowCtrlsRef.current = rowCtrls;
-                    updateRowCtrlsOrdered();
+                    updateRowCtrlsOrdered(useFlush);
                 }
             },
             setDomOrder: function (domOrder) {
                 if (domOrderRef.current != domOrder) {
                     domOrderRef.current = domOrder;
-                    updateRowCtrlsOrdered();
+                    updateRowCtrlsOrdered(false);
                 }
             },
             setContainerWidth: function (width) { return eContainer.current.style.width = width; }

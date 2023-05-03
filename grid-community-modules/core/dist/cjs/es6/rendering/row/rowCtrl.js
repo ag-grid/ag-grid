@@ -304,7 +304,7 @@ class RowCtrl extends beanStub_1.BeanStub {
             this.rowType = RowType.Normal;
         }
     }
-    updateColumnLists(suppressAnimationFrame = false) {
+    updateColumnLists(suppressAnimationFrame = false, useFlushSync = false) {
         if (this.isFullWidth()) {
             return;
         }
@@ -312,7 +312,7 @@ class RowCtrl extends beanStub_1.BeanStub {
             || this.beans.gridOptionsService.is('suppressAnimationFrame')
             || this.printLayout;
         if (noAnimation) {
-            this.updateColumnListsImpl();
+            this.updateColumnListsImpl(useFlushSync);
             return;
         }
         if (this.updateColumnListsPending) {
@@ -322,7 +322,7 @@ class RowCtrl extends beanStub_1.BeanStub {
             if (!this.active) {
                 return;
             }
-            this.updateColumnListsImpl();
+            this.updateColumnListsImpl(true);
         }, this.rowNode.rowIndex, 'createTasksP1');
         this.updateColumnListsPending = true;
     }
@@ -360,7 +360,7 @@ class RowCtrl extends beanStub_1.BeanStub {
         });
         return res;
     }
-    updateColumnListsImpl() {
+    updateColumnListsImpl(useFlushSync = false) {
         this.updateColumnListsPending = false;
         const columnModel = this.beans.columnModel;
         if (this.printLayout) {
@@ -379,7 +379,7 @@ class RowCtrl extends beanStub_1.BeanStub {
         this.allRowGuis.forEach(item => {
             const cellControls = item.containerType === rowContainerCtrl_1.RowContainerType.LEFT ? this.leftCellCtrls :
                 item.containerType === rowContainerCtrl_1.RowContainerType.RIGHT ? this.rightCellCtrls : this.centerCellCtrls;
-            item.rowComp.setCellCtrls(cellControls.list);
+            item.rowComp.setCellCtrls(cellControls.list, useFlushSync);
         });
     }
     isCellEligibleToBeRemoved(cellCtrl, nextContainerPinned) {
@@ -568,7 +568,7 @@ class RowCtrl extends beanStub_1.BeanStub {
         }
     }
     onVirtualColumnsChanged() {
-        this.updateColumnLists();
+        this.updateColumnLists(false, true);
     }
     getRowPosition() {
         return {

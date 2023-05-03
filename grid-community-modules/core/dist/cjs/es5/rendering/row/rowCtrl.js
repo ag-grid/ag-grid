@@ -352,9 +352,10 @@ var RowCtrl = /** @class */ (function (_super) {
             this.rowType = RowType.Normal;
         }
     };
-    RowCtrl.prototype.updateColumnLists = function (suppressAnimationFrame) {
+    RowCtrl.prototype.updateColumnLists = function (suppressAnimationFrame, useFlushSync) {
         var _this = this;
         if (suppressAnimationFrame === void 0) { suppressAnimationFrame = false; }
+        if (useFlushSync === void 0) { useFlushSync = false; }
         if (this.isFullWidth()) {
             return;
         }
@@ -362,7 +363,7 @@ var RowCtrl = /** @class */ (function (_super) {
             || this.beans.gridOptionsService.is('suppressAnimationFrame')
             || this.printLayout;
         if (noAnimation) {
-            this.updateColumnListsImpl();
+            this.updateColumnListsImpl(useFlushSync);
             return;
         }
         if (this.updateColumnListsPending) {
@@ -372,7 +373,7 @@ var RowCtrl = /** @class */ (function (_super) {
             if (!_this.active) {
                 return;
             }
-            _this.updateColumnListsImpl();
+            _this.updateColumnListsImpl(true);
         }, this.rowNode.rowIndex, 'createTasksP1');
         this.updateColumnListsPending = true;
     };
@@ -412,8 +413,9 @@ var RowCtrl = /** @class */ (function (_super) {
         });
         return res;
     };
-    RowCtrl.prototype.updateColumnListsImpl = function () {
+    RowCtrl.prototype.updateColumnListsImpl = function (useFlushSync) {
         var _this = this;
+        if (useFlushSync === void 0) { useFlushSync = false; }
         this.updateColumnListsPending = false;
         var columnModel = this.beans.columnModel;
         if (this.printLayout) {
@@ -432,7 +434,7 @@ var RowCtrl = /** @class */ (function (_super) {
         this.allRowGuis.forEach(function (item) {
             var cellControls = item.containerType === rowContainerCtrl_1.RowContainerType.LEFT ? _this.leftCellCtrls :
                 item.containerType === rowContainerCtrl_1.RowContainerType.RIGHT ? _this.rightCellCtrls : _this.centerCellCtrls;
-            item.rowComp.setCellCtrls(cellControls.list);
+            item.rowComp.setCellCtrls(cellControls.list, useFlushSync);
         });
     };
     RowCtrl.prototype.isCellEligibleToBeRemoved = function (cellCtrl, nextContainerPinned) {
@@ -626,7 +628,7 @@ var RowCtrl = /** @class */ (function (_super) {
         }
     };
     RowCtrl.prototype.onVirtualColumnsChanged = function () {
-        this.updateColumnLists();
+        this.updateColumnLists(false, true);
     };
     RowCtrl.prototype.getRowPosition = function () {
         return {

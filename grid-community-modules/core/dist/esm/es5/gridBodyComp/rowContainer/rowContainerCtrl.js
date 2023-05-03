@@ -288,7 +288,7 @@ var RowContainerCtrl = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, function () { return _this.onScrollVisibilityChanged(); });
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, function () { return _this.onDisplayedColumnsChanged(); });
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, function () { return _this.onDisplayedColumnsWidthChanged(); });
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, function () { return _this.onDisplayedRowsChanged(); });
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, function (params) { return _this.onDisplayedRowsChanged(params.afterScroll); });
         this.onScrollVisibilityChanged();
         this.onDisplayedColumnsChanged();
         this.onDisplayedColumnsWidthChanged();
@@ -417,8 +417,9 @@ var RowContainerCtrl = /** @class */ (function (_super) {
             this.refreshPaddingForFakeScrollbar();
         }
     };
-    RowContainerCtrl.prototype.onDisplayedRowsChanged = function () {
+    RowContainerCtrl.prototype.onDisplayedRowsChanged = function (useFlushSync) {
         var _this = this;
+        if (useFlushSync === void 0) { useFlushSync = false; }
         if (this.visible) {
             var printLayout_1 = this.gridOptionsService.isDomLayout('print');
             var doesRowMatch = function (rowCtrl) {
@@ -432,10 +433,10 @@ var RowContainerCtrl = /** @class */ (function (_super) {
             // this list contains either all pinned top, center or pinned bottom rows
             // this filters out rows not for this container, eg if it's a full with row, but we are not full with container
             var rowsThisContainer = this.getRowCtrls().filter(doesRowMatch);
-            this.comp.setRowCtrls(rowsThisContainer);
+            this.comp.setRowCtrls(rowsThisContainer, useFlushSync);
         }
         else {
-            this.comp.setRowCtrls(this.EMPTY_CTRLS);
+            this.comp.setRowCtrls(this.EMPTY_CTRLS, false);
         }
     };
     RowContainerCtrl.prototype.getRowCtrls = function () {

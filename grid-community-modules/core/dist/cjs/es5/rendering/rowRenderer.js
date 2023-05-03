@@ -727,7 +727,7 @@ var RowRenderer = /** @class */ (function (_super) {
         this.getLockOnRefresh();
         this.redraw(null, false, true);
         this.releaseLockOnRefresh();
-        this.dispatchDisplayedRowsChanged();
+        this.dispatchDisplayedRowsChanged(true);
         if (cellFocused != null) {
             var newFocusedCell = this.getCellToRestoreFocusToAfterRefresh();
             if (cellFocused != null && newFocusedCell == null) {
@@ -815,8 +815,9 @@ var RowRenderer = /** @class */ (function (_super) {
         }
         this.updateAllRowCtrls();
     };
-    RowRenderer.prototype.dispatchDisplayedRowsChanged = function () {
-        var event = { type: events_1.Events.EVENT_DISPLAYED_ROWS_CHANGED };
+    RowRenderer.prototype.dispatchDisplayedRowsChanged = function (afterScroll) {
+        if (afterScroll === void 0) { afterScroll = false; }
+        var event = { type: events_1.Events.EVENT_DISPLAYED_ROWS_CHANGED, afterScroll: afterScroll };
         this.eventService.dispatchEvent(event);
     };
     RowRenderer.prototype.onDisplayedColumnsChanged = function () {

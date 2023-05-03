@@ -30,7 +30,6 @@ const newReactComponent_1 = require("../shared/newReactComponent");
 const portalManager_1 = require("../shared/portalManager");
 const gridComp_1 = __importDefault(require("./gridComp"));
 const reactFrameworkOverrides_1 = require("../shared/reactFrameworkOverrides");
-const utils_1 = require("./utils");
 function debug(msg, obj) {
     // console.log(msg, obj);
 }
@@ -55,8 +54,6 @@ class AgGridReactUi extends react_1.Component {
         if (this.state.context) {
             this.renderedAfterMount = true;
         }
-        utils_1.FlushSyncToggle.off();
-        setTimeout(() => utils_1.FlushSyncToggle.on(), 0);
         return (react_1.default.createElement("div", { style: this.createStyleForDiv(), className: this.props.className, ref: this.eGui },
             this.state.context && react_1.default.createElement(gridComp_1.default, { context: this.state.context }),
             this.portalManager.getPortals()));

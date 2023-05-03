@@ -254,7 +254,7 @@ class RowContainerCtrl extends beanStub_1.BeanStub {
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_SCROLL_VISIBILITY_CHANGED, () => this.onScrollVisibilityChanged());
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, () => this.onDisplayedColumnsChanged());
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => this.onDisplayedColumnsWidthChanged());
-        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_DISPLAYED_ROWS_CHANGED, () => this.onDisplayedRowsChanged());
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_DISPLAYED_ROWS_CHANGED, (params) => this.onDisplayedRowsChanged(params.afterScroll));
         this.onScrollVisibilityChanged();
         this.onDisplayedColumnsChanged();
         this.onDisplayedColumnsWidthChanged();
@@ -378,7 +378,7 @@ class RowContainerCtrl extends beanStub_1.BeanStub {
             this.refreshPaddingForFakeScrollbar();
         }
     }
-    onDisplayedRowsChanged() {
+    onDisplayedRowsChanged(useFlushSync = false) {
         if (this.visible) {
             const printLayout = this.gridOptionsService.isDomLayout('print');
             const doesRowMatch = (rowCtrl) => {
@@ -392,10 +392,10 @@ class RowContainerCtrl extends beanStub_1.BeanStub {
             // this list contains either all pinned top, center or pinned bottom rows
             // this filters out rows not for this container, eg if it's a full with row, but we are not full with container
             const rowsThisContainer = this.getRowCtrls().filter(doesRowMatch);
-            this.comp.setRowCtrls(rowsThisContainer);
+            this.comp.setRowCtrls(rowsThisContainer, useFlushSync);
         }
         else {
-            this.comp.setRowCtrls(this.EMPTY_CTRLS);
+            this.comp.setRowCtrls(this.EMPTY_CTRLS, false);
         }
     }
     getRowCtrls() {

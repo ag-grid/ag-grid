@@ -153,8 +153,8 @@ var RowComp = function (params) {
             setRole: function (value) { return setRole(value); },
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
-            setCellCtrls: function (next) {
-                utils_1.agFlushSync(function () {
+            setCellCtrls: function (next, useFlushSync) {
+                utils_1.agFlushSync(useFlushSync, function () {
                     setCellCtrls(function (prev) { return maintainOrderOnColumns(prev, next, domOrder); });
                 });
             },

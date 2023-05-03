@@ -29,7 +29,7 @@ export declare enum RowContainerType {
 export declare function getRowContainerTypeForName(name: RowContainerName): RowContainerType;
 export interface IRowContainerComp {
     setViewportHeight(height: string): void;
-    setRowCtrls(rowCtrls: RowCtrl[]): void;
+    setRowCtrls(rowCtrls: RowCtrl[], useFlushSync: boolean): void;
     setDomOrder(domOrder: boolean): void;
     setContainerWidth(width: string): void;
 }

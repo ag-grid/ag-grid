@@ -515,6 +515,7 @@ export interface RightPinnedWidthChangedEvent<TData = any, TContext = any> exten
 export interface RowContainerHeightChanged<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
 }
 export interface DisplayedRowsChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    afterScroll: boolean;
 }
 export interface CssVariablesChanged<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
 }

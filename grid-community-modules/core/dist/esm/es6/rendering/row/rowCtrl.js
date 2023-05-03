@@ -301,7 +301,7 @@ export class RowCtrl extends BeanStub {
             this.rowType = RowType.Normal;
         }
     }
-    updateColumnLists(suppressAnimationFrame = false) {
+    updateColumnLists(suppressAnimationFrame = false, useFlushSync = false) {
         if (this.isFullWidth()) {
             return;
         }
@@ -309,7 +309,7 @@ export class RowCtrl extends BeanStub {
             || this.beans.gridOptionsService.is('suppressAnimationFrame')
             || this.printLayout;
         if (noAnimation) {
-            this.updateColumnListsImpl();
+            this.updateColumnListsImpl(useFlushSync);
             return;
         }
         if (this.updateColumnListsPending) {
@@ -319,7 +319,7 @@ export class RowCtrl extends BeanStub {
             if (!this.active) {
                 return;
             }
-            this.updateColumnListsImpl();
+            this.updateColumnListsImpl(true);
         }, this.rowNode.rowIndex, 'createTasksP1');
         this.updateColumnListsPending = true;
     }
@@ -357,7 +357,7 @@ export class RowCtrl extends BeanStub {
         });
         return res;
     }
-    updateColumnListsImpl() {
+    updateColumnListsImpl(useFlushSync = false) {
         this.updateColumnListsPending = false;
         const columnModel = this.beans.columnModel;
         if (this.printLayout) {
@@ -376,7 +376,7 @@ export class RowCtrl extends BeanStub {
         this.allRowGuis.forEach(item => {
             const cellControls = item.containerType === RowContainerType.LEFT ? this.leftCellCtrls :
                 item.containerType === RowContainerType.RIGHT ? this.rightCellCtrls : this.centerCellCtrls;
-            item.rowComp.setCellCtrls(cellControls.list);
+            item.rowComp.setCellCtrls(cellControls.list, useFlushSync);
         });
     }
     isCellEligibleToBeRemoved(cellCtrl, nextContainerPinned) {
@@ -565,7 +565,7 @@ export class RowCtrl extends BeanStub {
         }
     }
     onVirtualColumnsChanged() {
-        this.updateColumnLists();
+        this.updateColumnLists(false, true);
     }
     getRowPosition() {
         return {

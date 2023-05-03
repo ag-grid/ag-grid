@@ -656,7 +656,7 @@ let RowRenderer = class RowRenderer extends BeanStub {
         this.getLockOnRefresh();
         this.redraw(null, false, true);
         this.releaseLockOnRefresh();
-        this.dispatchDisplayedRowsChanged();
+        this.dispatchDisplayedRowsChanged(true);
         if (cellFocused != null) {
             const newFocusedCell = this.getCellToRestoreFocusToAfterRefresh();
             if (cellFocused != null && newFocusedCell == null) {
@@ -740,8 +740,8 @@ let RowRenderer = class RowRenderer extends BeanStub {
         }
         this.updateAllRowCtrls();
     }
-    dispatchDisplayedRowsChanged() {
-        const event = { type: Events.EVENT_DISPLAYED_ROWS_CHANGED };
+    dispatchDisplayedRowsChanged(afterScroll = false) {
+        const event = { type: Events.EVENT_DISPLAYED_ROWS_CHANGED, afterScroll };
         this.eventService.dispatchEvent(event);
     }
     onDisplayedColumnsChanged() {

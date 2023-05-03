@@ -7,12 +7,9 @@ export declare class CssClasses {
     toString(): string;
 }
 export declare const isComponentStateless: (Component: any) => boolean;
-export declare const FlushSyncToggle: {
-    on: () => boolean;
-    off: () => boolean;
-};
 /**
  * Wrapper around flushSync to provide backwards compatibility with React 16-17
- * @param fn
+ * Also allows us to control via the `useFlushSync` param whether we want to use flushSync or not
+ * as we do not want to use flushSync when we are likely to already be in a render cycle
  */
-export declare const agFlushSync: (fn: () => void) => void;
+export declare const agFlushSync: (useFlushSync: boolean, fn: () => void) => void;
