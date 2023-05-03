@@ -3,14 +3,7 @@ import { Rect } from '../../../scene/shape/rect';
 import { Text } from '../../../scene/shape/text';
 import { BandScale } from '../../../scale/bandScale';
 import { DropShadow } from '../../../scene/dropShadow';
-import {
-    SeriesNodeDataContext,
-    SeriesTooltip,
-    SeriesNodePickMode,
-    keyProperty,
-    valueProperty,
-    sumProperties,
-} from '../series';
+import { SeriesNodeDataContext, SeriesTooltip, SeriesNodePickMode, keyProperty, valueProperty } from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
@@ -57,7 +50,8 @@ import {
     FontWeight,
 } from '../../agChartOptions';
 import { LogAxis } from '../../axis/logAxis';
-import { DataModel, SMALLEST_KEY_INTERVAL, SUM_VALUE_EXTENT } from '../../data/dataModel';
+import { DataModel, SMALLEST_KEY_INTERVAL, AGG_VALUES_EXTENT } from '../../data/dataModel';
+import { sum } from '../../data/aggregateFunctions';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
@@ -340,9 +334,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             props: [
                 keyProperty(xKey, isContinuousX),
                 ...activeSeriesItems.map((yKey) => valueProperty(yKey, isContinuousY, { invalidValue: null })),
-                ...activeStacks.map((stack) => sumProperties(stack)),
+                ...activeStacks.map((stack) => sum(stack)),
                 ...(isContinuousX ? [SMALLEST_KEY_INTERVAL] : []),
-                SUM_VALUE_EXTENT,
+                AGG_VALUES_EXTENT,
             ],
             groupByKeys: true,
             dataVisible: this.visible && activeSeriesItems.length > 0,
@@ -373,7 +367,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 keys: [keys],
                 values: [yExtent],
             },
-            reduced: { [SMALLEST_KEY_INTERVAL.property]: smallestX, [SUM_VALUE_EXTENT.property]: ySumExtent } = {},
+            reduced: { [SMALLEST_KEY_INTERVAL.property]: smallestX, [AGG_VALUES_EXTENT.property]: ySumExtent } = {},
         } = processedData;
 
         if (direction === ChartAxisDirection.X) {

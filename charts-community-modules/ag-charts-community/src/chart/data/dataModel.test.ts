@@ -4,18 +4,19 @@ import { DATA_BROWSER_MARKET_SHARE } from '../test/data';
 
 import * as examples from '../test/examples';
 
-import { DataModel, SMALLEST_KEY_INTERVAL, SUM_VALUE_EXTENT } from './dataModel';
+import { AGG_VALUES_EXTENT, DataModel, GroupByFn, SMALLEST_KEY_INTERVAL, SORT_DOMAIN_GROUPS } from './dataModel';
+import { area, groupAverage, groupCount, sum } from './aggregateFunctions';
+
+const rangeKey = (property: string) => ({ property, type: 'key' as const, valueType: 'range' as const });
+const categoryKey = (property: string) => ({ property, type: 'key' as const, valueType: 'category' as const });
+const value = (property: string) => ({ property, type: 'value' as const, valueType: 'range' as const });
 
 describe('DataModel', () => {
     describe('ungrouped processing', () => {
         it('should generated the expected results', () => {
             const data = examples.SIMPLE_LINE_CHART_EXAMPLE.data!;
             const dataModel = new DataModel<any, any>({
-                props: [
-                    { property: 'date', type: 'key', valueType: 'range' },
-                    { property: 'petrol', type: 'value', valueType: 'range' },
-                    { property: 'diesel', type: 'value', valueType: 'range' },
-                ],
+                props: [rangeKey('date'), value('petrol'), value('diesel')],
             });
 
             expect(dataModel.processData(data)).toMatchSnapshot({
@@ -26,12 +27,7 @@ describe('DataModel', () => {
         describe('property tests', () => {
             describe('simple data', () => {
                 const dataModel = new DataModel<any, any>({
-                    props: [
-                        { property: 'kp', type: 'key', valueType: 'range' },
-                        { property: 'vp1', type: 'value', valueType: 'range' },
-                        { property: 'vp2', type: 'value', valueType: 'range' },
-                        SMALLEST_KEY_INTERVAL,
-                    ],
+                    props: [rangeKey('kp'), value('vp1'), value('vp2'), SMALLEST_KEY_INTERVAL],
                 });
                 const data = [
                     { kp: 2, vp1: 5, vp2: 7 },
@@ -79,11 +75,7 @@ describe('DataModel', () => {
 
             describe('category data', () => {
                 const dataModel = new DataModel<any, any, false>({
-                    props: [
-                        { property: 'kp', type: 'key', valueType: 'category' },
-                        { property: 'vp1', type: 'value', valueType: 'range' },
-                        { property: 'vp2', type: 'value', valueType: 'range' },
-                    ],
+                    props: [categoryKey('kp'), value('vp1'), value('vp2')],
                     groupByKeys: false,
                 });
                 const data = [
@@ -122,11 +114,7 @@ describe('DataModel', () => {
         it('should generated the expected results', () => {
             const data = examples.GROUPED_BAR_CHART_EXAMPLE.data!;
             const dataModel = new DataModel<any, any, true>({
-                props: [
-                    { property: 'type', type: 'key', valueType: 'category' },
-                    { property: 'total', type: 'value', valueType: 'range' },
-                    { property: 'regular', type: 'value', valueType: 'range' },
-                ],
+                props: [categoryKey('type'), value('total'), value('regular'), sum(['total', 'regular'])],
                 groupByKeys: true,
             });
 
@@ -137,11 +125,7 @@ describe('DataModel', () => {
 
         describe('property tests', () => {
             const dataModel = new DataModel<any, any, true>({
-                props: [
-                    { property: 'kp', type: 'key', valueType: 'category' },
-                    { property: 'vp1', type: 'value', valueType: 'range' },
-                    { property: 'vp2', type: 'value', valueType: 'range' },
-                ],
+                props: [categoryKey('kp'), value('vp1'), value('vp2')],
                 groupByKeys: true,
             });
             const data = [
@@ -189,18 +173,13 @@ describe('DataModel', () => {
             it('should not include sums', () => {
                 const result = dataModel.processData(data);
 
-                expect(result?.data.filter((g) => g.sumValues != null)).toEqual([]);
-                expect(result?.domain.sumValues).toBeUndefined();
+                expect(result?.data.filter((g) => g.aggValues != null)).toEqual([]);
+                expect(result?.domain.aggValues).toBeUndefined();
             });
 
             it('should only sum per data-item', () => {
                 const dataModel = new DataModel<any, any, true>({
-                    props: [
-                        { property: 'kp', type: 'key', valueType: 'category' },
-                        { property: 'vp1', type: 'value', valueType: 'range' },
-                        { property: 'vp2', type: 'value', valueType: 'range' },
-                        { type: 'sum', properties: ['vp1', 'vp2'] },
-                    ],
+                    props: [categoryKey('kp'), value('vp1'), value('vp2'), sum(['vp1', 'vp2'])],
                     groupByKeys: true,
                 });
                 const data = [
@@ -212,9 +191,9 @@ describe('DataModel', () => {
 
                 const result = dataModel.processData(data);
 
-                expect(result?.domain.sumValues).toEqual([[0, 15]]);
-                expect(result?.data[0].sumValues).toEqual([[0, 12]]);
-                expect(result.data[1].sumValues).toEqual([[0, 15]]);
+                expect(result?.domain.aggValues).toEqual([[0, 15]]);
+                expect(result?.data[0].aggValues).toEqual([[0, 12]]);
+                expect(result?.data[1].aggValues).toEqual([[0, 15]]);
             });
         });
     });
@@ -222,11 +201,7 @@ describe('DataModel', () => {
     describe('grouped processing - category objects', () => {
         describe('property tests', () => {
             const dataModel = new DataModel<any, any, true>({
-                props: [
-                    { property: 'kp', type: 'key', valueType: 'category' },
-                    { property: 'vp1', type: 'value', valueType: 'range' },
-                    { property: 'vp2', type: 'value', valueType: 'range' },
-                ],
+                props: [categoryKey('kp'), value('vp1'), value('vp2')],
                 groupByKeys: true,
             });
             const data = [
@@ -266,8 +241,8 @@ describe('DataModel', () => {
             it('should not include sums', () => {
                 const result = dataModel.processData(data);
 
-                expect(result?.data.filter((g) => g.sumValues != null)).toEqual([]);
-                expect(result?.domain.sumValues).toBeUndefined();
+                expect(result?.data.filter((g) => g.aggValues != null)).toEqual([]);
+                expect(result?.domain.aggValues).toBeUndefined();
             });
         });
     });
@@ -275,11 +250,7 @@ describe('DataModel', () => {
     describe('grouped processing - time-series example', () => {
         describe('property tests', () => {
             const dataModel = new DataModel<any, any, true>({
-                props: [
-                    { property: 'kp', type: 'key', valueType: 'range', validation: (v) => v instanceof Date },
-                    { property: 'vp1', type: 'value', valueType: 'range' },
-                    { property: 'vp2', type: 'value', valueType: 'range' },
-                ],
+                props: [{ ...rangeKey('kp'), validation: (v) => v instanceof Date }, value('vp1'), value('vp2')],
                 groupByKeys: true,
             });
             const data = [
@@ -326,18 +297,13 @@ describe('DataModel', () => {
             it('should not include sums', () => {
                 const result = dataModel.processData(data);
 
-                expect(result?.data.filter((g) => g.sumValues != null)).toEqual([]);
-                expect(result?.domain.sumValues).toBeUndefined();
+                expect(result?.data.filter((g) => g.aggValues != null)).toEqual([]);
+                expect(result?.domain.aggValues).toBeUndefined();
             });
 
             it('should only sum per data-item', () => {
                 const dataModel = new DataModel<any, any, true>({
-                    props: [
-                        { property: 'kp', type: 'key', valueType: 'category' },
-                        { property: 'vp1', type: 'value', valueType: 'range' },
-                        { property: 'vp2', type: 'value', valueType: 'range' },
-                        { type: 'sum', properties: ['vp1', 'vp2'] },
-                    ],
+                    props: [categoryKey('kp'), value('vp1'), value('vp2'), sum(['vp1', 'vp2'])],
                     groupByKeys: true,
                 });
                 const data = [
@@ -349,9 +315,9 @@ describe('DataModel', () => {
 
                 const result = dataModel.processData(data);
 
-                expect(result?.domain.sumValues).toEqual([[0, 15]]);
-                expect(result?.data[0].sumValues).toEqual([[0, 12]]);
-                expect(result?.data[1].sumValues).toEqual([[0, 15]]);
+                expect(result?.domain.aggValues).toEqual([[0, 15]]);
+                expect(result?.data[0].aggValues).toEqual([[0, 12]]);
+                expect(result?.data[1].aggValues).toEqual([[0, 15]]);
             });
         });
     });
@@ -361,16 +327,13 @@ describe('DataModel', () => {
             const data = examples.STACKED_BAR_CHART_EXAMPLE.data!;
             const dataModel = new DataModel<any, any, true>({
                 props: [
-                    { property: 'type', type: 'key', valueType: 'category' },
-                    { property: 'ownerOccupied', type: 'value', valueType: 'range' },
-                    { property: 'privateRented', type: 'value', valueType: 'range' },
-                    { property: 'localAuthority', type: 'value', valueType: 'range' },
-                    { property: 'housingAssociation', type: 'value', valueType: 'range' },
-                    {
-                        properties: ['ownerOccupied', 'privateRented', 'localAuthority', 'housingAssociation'],
-                        type: 'sum',
-                    },
-                    SUM_VALUE_EXTENT,
+                    categoryKey('type'),
+                    value('ownerOccupied'),
+                    value('privateRented'),
+                    value('localAuthority'),
+                    value('housingAssociation'),
+                    sum(['ownerOccupied', 'privateRented', 'localAuthority', 'housingAssociation']),
+                    AGG_VALUES_EXTENT,
                 ],
                 groupByKeys: true,
             });
@@ -383,13 +346,13 @@ describe('DataModel', () => {
         describe('property tests', () => {
             const dataModel = new DataModel<any, any, true>({
                 props: [
-                    { property: 'kp', type: 'key', valueType: 'category' },
-                    { property: 'vp1', type: 'value', valueType: 'range' },
-                    { property: 'vp2', type: 'value', valueType: 'range' },
-                    { property: 'vp3', type: 'value', valueType: 'range' },
-                    { property: 'vp4', type: 'value', valueType: 'range' },
-                    { properties: ['vp1', 'vp2'], type: 'sum' },
-                    { properties: ['vp3', 'vp4'], type: 'sum' },
+                    categoryKey('kp'),
+                    value('vp1'),
+                    value('vp2'),
+                    value('vp3'),
+                    value('vp4'),
+                    sum(['vp1', 'vp2']),
+                    sum(['vp3', 'vp4']),
                 ],
                 groupByKeys: true,
             });
@@ -440,7 +403,7 @@ describe('DataModel', () => {
             it('should calculate the sums', () => {
                 const result = dataModel.processData(data);
 
-                expect(result?.data.map((g) => g.sumValues)).toEqual([
+                expect(result?.data.map((g) => g.aggValues)).toEqual([
                     [
                         [0, 12],
                         [0, 6],
@@ -450,7 +413,7 @@ describe('DataModel', () => {
                         [0, 6],
                     ],
                 ]);
-                expect(result?.domain.sumValues).toEqual([
+                expect(result?.domain.aggValues).toEqual([
                     [0, 15],
                     [0, 6],
                 ]);
@@ -463,18 +426,15 @@ describe('DataModel', () => {
             const data = examples.ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE.data!;
             const dataModel = new DataModel<any, any, true>({
                 props: [
-                    { property: 'type', type: 'key', valueType: 'category' },
-                    { property: 'white', type: 'value', valueType: 'range' },
-                    { property: 'mixed', type: 'value', valueType: 'range' },
-                    { property: 'asian', type: 'value', valueType: 'range' },
-                    { property: 'black', type: 'value', valueType: 'range' },
-                    { property: 'chinese', type: 'value', valueType: 'range' },
-                    { property: 'other', type: 'value', valueType: 'range' },
-                    {
-                        properties: ['white', 'mixed', 'asian', 'black', 'chinese', 'other'],
-                        type: 'sum',
-                    },
-                    SUM_VALUE_EXTENT,
+                    categoryKey('type'),
+                    value('white'),
+                    value('mixed'),
+                    value('asian'),
+                    value('black'),
+                    value('chinese'),
+                    value('other'),
+                    sum(['white', 'mixed', 'asian', 'black', 'chinese', 'other']),
+                    AGG_VALUES_EXTENT,
                 ],
                 groupByKeys: true,
                 normaliseTo: 100,
@@ -489,25 +449,15 @@ describe('DataModel', () => {
             const data = examples.ONE_HUNDRED_PERCENT_STACKED_AREA_GRAPH_EXAMPLE.data!;
             const dataModel = new DataModel<any, any, true>({
                 props: [
-                    { property: 'month', type: 'key', valueType: 'category' },
-                    { property: 'petroleum', type: 'value', valueType: 'range' },
-                    { property: 'naturalGas', type: 'value', valueType: 'range' },
-                    { property: 'bioenergyWaste', type: 'value', valueType: 'range' },
-                    { property: 'nuclear', type: 'value', valueType: 'range' },
-                    { property: 'windSolarHydro', type: 'value', valueType: 'range' },
-                    { property: 'imported', type: 'value', valueType: 'range' },
-                    {
-                        properties: [
-                            'petroleum',
-                            'naturalGas',
-                            'bioenergyWaste',
-                            'nuclear',
-                            'windSolarHydro',
-                            'imported',
-                        ],
-                        type: 'sum',
-                    },
-                    SUM_VALUE_EXTENT,
+                    categoryKey('month'),
+                    value('petroleum'),
+                    value('naturalGas'),
+                    value('bioenergyWaste'),
+                    value('nuclear'),
+                    value('windSolarHydro'),
+                    value('imported'),
+                    sum(['petroleum', 'naturalGas', 'bioenergyWaste', 'nuclear', 'windSolarHydro', 'imported']),
+                    AGG_VALUES_EXTENT,
                 ],
                 groupByKeys: true,
                 normaliseTo: 100,
@@ -517,19 +467,20 @@ describe('DataModel', () => {
             expect(result).toMatchSnapshot({
                 time: expect.any(Number),
             });
-            expect(result?.reduced?.[SUM_VALUE_EXTENT.property]).toEqual([0, 100]);
+            expect(result?.domain.aggValues).toEqual([[0, 100]]);
+            expect(result?.reduced?.[AGG_VALUES_EXTENT.property]).toEqual([0, 100]);
         });
 
         describe('property tests', () => {
             const dataModel = new DataModel<any, any, true>({
                 props: [
-                    { property: 'kp', type: 'key', valueType: 'category' },
-                    { property: 'vp1', type: 'value', valueType: 'range' },
-                    { property: 'vp2', type: 'value', valueType: 'range' },
-                    { property: 'vp3', type: 'value', valueType: 'range' },
-                    { property: 'vp4', type: 'value', valueType: 'range' },
-                    { properties: ['vp1', 'vp2'], type: 'sum' },
-                    { properties: ['vp3', 'vp4'], type: 'sum' },
+                    categoryKey('kp'),
+                    value('vp1'),
+                    value('vp2'),
+                    value('vp3'),
+                    value('vp4'),
+                    sum(['vp1', 'vp2']),
+                    sum(['vp3', 'vp4']),
                 ],
                 groupByKeys: true,
                 normaliseTo: 100,
@@ -544,7 +495,7 @@ describe('DataModel', () => {
             it('should allow normalisation of values', () => {
                 const result = dataModel.processData(data);
 
-                expect(result?.data.map((g) => g.sumValues)).toEqual([
+                expect(result?.data.map((g) => g.aggValues)).toEqual([
                     [
                         [0, 100],
                         [0, 100],
@@ -554,7 +505,7 @@ describe('DataModel', () => {
                         [0, 100],
                     ],
                 ]);
-                expect(result?.domain.sumValues).toEqual([
+                expect(result?.domain.aggValues).toEqual([
                     [0, 100],
                     [0, 100],
                 ]);
@@ -573,6 +524,70 @@ describe('DataModel', () => {
         });
     });
 
+    describe('grouped processing - calculated grouping', () => {
+        const groupByFn: GroupByFn = () => {
+            return (item) => {
+                if (item.keys[0] < 100) {
+                    return ['<100'];
+                } else if (item.keys[0] <= 150) {
+                    return ['100 - 150'];
+                }
+                return ['>150'];
+            };
+        };
+
+        it('should generated the expected results for simple histogram example with hard-coded buckets', () => {
+            const data = examples.SIMPLE_HISTOGRAM_CHART_EXAMPLE.data!.slice(0, 20);
+            const dataModel = new DataModel<any, any, true>({
+                props: [categoryKey('engine-size'), groupCount(), SORT_DOMAIN_GROUPS],
+                groupByFn,
+                normaliseTo: 100,
+            });
+
+            expect(dataModel.processData(data)).toMatchSnapshot({
+                time: expect.any(Number),
+            });
+        });
+
+        it('should generated the expected results for simple histogram example with average bucket calculation', () => {
+            const data = examples.XY_HISTOGRAM_WITH_MEAN_EXAMPLE.data!.slice(0, 20);
+            const dataModel = new DataModel<any, any, true>({
+                props: [
+                    categoryKey('engine-size'),
+                    value('highway-mpg'),
+                    groupAverage(['highway-mpg']),
+                    SORT_DOMAIN_GROUPS,
+                ],
+                groupByFn,
+            });
+
+            expect(dataModel.processData(data)).toMatchSnapshot({
+                time: expect.any(Number),
+            });
+        });
+
+        it('should generated the expected results for simple histogram example with area bucket calculation', () => {
+            const data = examples.HISTOGRAM_WITH_SPECIFIED_BINS_EXAMPLE.data!.slice(0, 20);
+            const dataModel = new DataModel<any, any, true>({
+                props: [rangeKey('curb-weight'), value('curb-weight'), area([], groupCount()), SORT_DOMAIN_GROUPS],
+                groupByFn: () => {
+                    return (item) => {
+                        if (item.keys[0] < 2000) {
+                            return [0, 2000];
+                        } else if (item.keys[0] <= 3000) {
+                            return [2000, 3000];
+                        }
+                        return [3000, 4500];
+                    };
+                },
+            });
+
+            expect(dataModel.processData(data)).toMatchSnapshot({
+                time: expect.any(Number),
+            });
+        });
+    });
+
     describe('missing and invalid data processing', () => {
         it('should generated the expected results', () => {
             const data = [...DATA_BROWSER_MARKET_SHARE.map((v) => ({ ...v }))];
@@ -583,11 +598,11 @@ describe('DataModel', () => {
             };
             const dataModel = new DataModel<any, any>({
                 props: [
-                    { property: 'year', type: 'key', valueType: 'category' },
-                    { ...DEFAULTS, property: 'ie', type: 'value', valueType: 'range' },
-                    { ...DEFAULTS, property: 'chrome', type: 'value', valueType: 'range' },
-                    { ...DEFAULTS, property: 'firefox', type: 'value', valueType: 'range' },
-                    { ...DEFAULTS, property: 'safari', type: 'value', valueType: 'range' },
+                    categoryKey('year'),
+                    { ...DEFAULTS, ...value('ie') },
+                    { ...DEFAULTS, ...value('chrome') },
+                    { ...DEFAULTS, ...value('firefox') },
+                    { ...DEFAULTS, ...value('safari') },
                 ],
             });
             data.forEach((datum, idx) => {
@@ -607,11 +622,11 @@ describe('DataModel', () => {
             const validated = { ...defaults, validation: (v) => typeof v === 'number' };
             const dataModel = new DataModel<any, any, true>({
                 props: [
-                    { property: 'kp', type: 'key', valueType: 'category' },
-                    { property: 'vp1', type: 'value', valueType: 'range', ...validated },
-                    { property: 'vp2', type: 'value', valueType: 'range', ...validated },
-                    { property: 'vp3', type: 'value', valueType: 'range', ...defaults },
-                    { properties: ['vp1', 'vp2'], type: 'sum' },
+                    categoryKey('kp'),
+                    { ...value('vp1'), ...validated },
+                    { ...value('vp2'), ...validated },
+                    { ...value('vp3'), ...defaults },
+                    sum(['vp1', 'vp2']),
                 ],
                 groupByKeys: true,
             });
@@ -640,13 +655,7 @@ describe('DataModel', () => {
     describe('empty data set processing', () => {
         it('should generated the expected results', () => {
             const dataModel = new DataModel<any, any>({
-                props: [
-                    { property: 'year', type: 'key', valueType: 'category' },
-                    { property: 'ie', type: 'value', valueType: 'range' },
-                    { property: 'chrome', type: 'value', valueType: 'range' },
-                    { property: 'firefox', type: 'value', valueType: 'range' },
-                    { property: 'safari', type: 'value', valueType: 'range' },
-                ],
+                props: [categoryKey('year'), value('ie'), value('chrome'), value('firefox'), value('safari')],
             });
 
             expect(dataModel.processData([])).toMatchSnapshot({
@@ -656,13 +665,7 @@ describe('DataModel', () => {
 
         describe('property tests', () => {
             const dataModel = new DataModel<any, any>({
-                props: [
-                    { property: 'year', type: 'key', valueType: 'category' },
-                    { property: 'ie', type: 'value', valueType: 'range' },
-                    { property: 'chrome', type: 'value', valueType: 'range' },
-                    { property: 'firefox', type: 'value', valueType: 'range' },
-                    { property: 'safari', type: 'value', valueType: 'range' },
-                ],
+                props: [categoryKey('year'), value('ie'), value('chrome'), value('firefox'), value('safari')],
             });
 
             it('should not generate data extracts', () => {
