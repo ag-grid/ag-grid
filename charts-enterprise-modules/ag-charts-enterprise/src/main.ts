@@ -75,8 +75,6 @@ export class AgEnterpriseCharts {
     }
 
     public static update(chart: AgChartInstance, options: AgChartOptions) {
-        new LicenseManager(options.container as any).validateLicense();
-
         return AgChart.update(chart, options as any);
     }
 }
