@@ -183,7 +183,7 @@ type Options<K, Grouped extends boolean | undefined> = {
 
 export type PropertyDefinition<K> =
     | DatumPropertyDefinition<K>
-    | AggregatePropertyDefinition<any, any>
+    | AggregatePropertyDefinition<any, any, any>
     | ReducerOutputPropertyDefinition<any>
     | ProcessorOutputPropertyDefinition<any>;
 

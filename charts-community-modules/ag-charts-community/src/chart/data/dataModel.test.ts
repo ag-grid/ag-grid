@@ -4,8 +4,8 @@ import { DATA_BROWSER_MARKET_SHARE } from '../test/data';
 
 import * as examples from '../test/examples';
 
-import { AGG_VALUES_EXTENT, DataModel, SMALLEST_KEY_INTERVAL, SORT_DOMAIN_GROUPS } from './dataModel';
-import { groupCount, sum } from './aggregateFunctions';
+import { AGG_VALUES_EXTENT, DataModel, GroupByFn, SMALLEST_KEY_INTERVAL, SORT_DOMAIN_GROUPS } from './dataModel';
+import { area, groupAverage, groupCount, sum } from './aggregateFunctions';
 
 describe('DataModel', () => {
     describe('ungrouped processing', () => {
@@ -561,25 +561,70 @@ describe('DataModel', () => {
     });
 
     describe('grouped processing - calculated grouping', () => {
+        const groupByFn: GroupByFn = () => {
+            return (item) => {
+                if (item.keys[0] < 100) {
+                    return ['<100'];
+                } else if (item.keys[0] <= 150) {
+                    return ['100 - 150'];
+                }
+                return ['>150'];
+            };
+        };
+
         it('should generated the expected results for simple histogram example with hard-coded buckets', () => {
-            const data = examples.SIMPLE_HISTOGRAM_CHART_EXAMPLE.data!;
+            const data = examples.SIMPLE_HISTOGRAM_CHART_EXAMPLE.data!.slice(0, 20);
             const dataModel = new DataModel<any, any, true>({
                 props: [
                     { property: 'engine-size', type: 'key', valueType: 'category' },
                     groupCount(),
                     SORT_DOMAIN_GROUPS,
                 ],
+                groupByFn,
+                normaliseTo: 100,
+            });
+
+            expect(dataModel.processData(data)).toMatchSnapshot({
+                time: expect.any(Number),
+            });
+        });
+
+        it('should generated the expected results for simple histogram example with average bucket calculation', () => {
+            const data = examples.XY_HISTOGRAM_WITH_MEAN_EXAMPLE.data!.slice(0, 20);
+            const dataModel = new DataModel<any, any, true>({
+                props: [
+                    { property: 'curb-weight', type: 'key', valueType: 'category' },
+                    { property: 'highway-mpg', type: 'value', valueType: 'range' },
+                    groupAverage(['highway-mpg']),
+                    SORT_DOMAIN_GROUPS,
+                ],
+                groupByFn,
+            });
+
+            expect(dataModel.processData(data)).toMatchSnapshot({
+                time: expect.any(Number),
+            });
+        });
+
+        it('should generated the expected results for simple histogram example with area bucket calculation', () => {
+            const data = examples.HISTOGRAM_WITH_SPECIFIED_BINS_EXAMPLE.data!.slice(0, 20);
+            const dataModel = new DataModel<any, any, true>({
+                props: [
+                    { property: 'curb-weight', type: 'key', valueType: 'range' },
+                    { property: 'curb-weight', type: 'value', valueType: 'range' },
+                    area([], groupCount()),
+                    SORT_DOMAIN_GROUPS,
+                ],
                 groupByFn: () => {
                     return (item) => {
-                        if (item.keys[0] < 100) {
-                            return ['<100'];
-                        } else if (item.keys[0] <= 150) {
-                            return ['100 - 150'];
+                        if (item.keys[0] < 2000) {
+                            return [0, 2000];
+                        } else if (item.keys[0] <= 3000) {
+                            return [2000, 3000];
                         }
-                        return ['>150'];
+                        return [3000, 4500];
                     };
                 },
-                normaliseTo: 100,
             });
 
             expect(dataModel.processData(data)).toMatchSnapshot({

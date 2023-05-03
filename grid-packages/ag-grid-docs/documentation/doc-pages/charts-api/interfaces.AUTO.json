@@ -3547,7 +3547,7 @@
   },
   "PropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
-    "type": "DatumPropertyDefinition<K> | AggregatePropertyDefinition<any, any> | ReducerOutputPropertyDefinition<any> | ProcessorOutputPropertyDefinition<any>"
+    "type": "DatumPropertyDefinition<K> | AggregatePropertyDefinition<any, any, any> | ReducerOutputPropertyDefinition<any> | ProcessorOutputPropertyDefinition<any>"
   },
   "DatumPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },

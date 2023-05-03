@@ -71,6 +71,484 @@ Object {
 }
 `;
 
+exports[`DataModel grouped processing - calculated grouping should generated the expected results for simple histogram example with area bucket calculation 1`] = `
+Object {
+  "data": Array [
+    Object {
+      "aggValues": Array [
+        Array [
+          0,
+          0.012000000000000004,
+        ],
+      ],
+      "datum": Array [
+        Object {
+          "curb-weight": 2548,
+        },
+        Object {
+          "curb-weight": 2548,
+        },
+        Object {
+          "curb-weight": 2823,
+        },
+        Object {
+          "curb-weight": 2337,
+        },
+        Object {
+          "curb-weight": 2824,
+        },
+        Object {
+          "curb-weight": 2507,
+        },
+        Object {
+          "curb-weight": 2844,
+        },
+        Object {
+          "curb-weight": 2954,
+        },
+        Object {
+          "curb-weight": 2395,
+        },
+        Object {
+          "curb-weight": 2395,
+        },
+        Object {
+          "curb-weight": 2710,
+        },
+        Object {
+          "curb-weight": 2765,
+        },
+      ],
+      "keys": Array [
+        2000,
+        3000,
+      ],
+      "values": Array [
+        Array [
+          2548,
+        ],
+        Array [
+          2548,
+        ],
+        Array [
+          2823,
+        ],
+        Array [
+          2337,
+        ],
+        Array [
+          2824,
+        ],
+        Array [
+          2507,
+        ],
+        Array [
+          2844,
+        ],
+        Array [
+          2954,
+        ],
+        Array [
+          2395,
+        ],
+        Array [
+          2395,
+        ],
+        Array [
+          2710,
+        ],
+        Array [
+          2765,
+        ],
+      ],
+    },
+    Object {
+      "aggValues": Array [
+        Array [
+          0,
+          0.004,
+        ],
+      ],
+      "datum": Array [
+        Object {
+          "curb-weight": 3086,
+        },
+        Object {
+          "curb-weight": 3053,
+        },
+        Object {
+          "curb-weight": 3055,
+        },
+        Object {
+          "curb-weight": 3230,
+        },
+        Object {
+          "curb-weight": 3380,
+        },
+        Object {
+          "curb-weight": 3505,
+        },
+      ],
+      "keys": Array [
+        3000,
+        4500,
+      ],
+      "values": Array [
+        Array [
+          3086,
+        ],
+        Array [
+          3053,
+        ],
+        Array [
+          3055,
+        ],
+        Array [
+          3230,
+        ],
+        Array [
+          3380,
+        ],
+        Array [
+          3505,
+        ],
+      ],
+    },
+    Object {
+      "aggValues": Array [
+        Array [
+          0,
+          0.001,
+        ],
+      ],
+      "datum": Array [
+        Object {
+          "curb-weight": 1488,
+        },
+        Object {
+          "curb-weight": 1874,
+        },
+      ],
+      "keys": Array [
+        0,
+        2000,
+      ],
+      "values": Array [
+        Array [
+          1488,
+        ],
+        Array [
+          1874,
+        ],
+      ],
+    },
+  ],
+  "defs": Object {
+    "keys": Array [
+      Object {
+        "index": 0,
+        "missing": false,
+        "property": "curb-weight",
+        "type": "key",
+        "valueType": "range",
+      },
+    ],
+    "values": Array [
+      Object {
+        "index": 0,
+        "missing": false,
+        "property": "curb-weight",
+        "type": "value",
+        "valueType": "range",
+      },
+    ],
+  },
+  "domain": Object {
+    "aggValues": Array [
+      Array [
+        0,
+        0.012000000000000004,
+      ],
+    ],
+    "groups": Array [
+      Array [
+        2000,
+        3000,
+      ],
+      Array [
+        3000,
+        4500,
+      ],
+      Array [
+        0,
+        2000,
+      ],
+    ],
+    "keys": Array [
+      Array [
+        1488,
+        3505,
+      ],
+    ],
+    "values": Array [
+      Array [
+        1488,
+        3505,
+      ],
+    ],
+  },
+  "indices": Object {
+    "keys": Object {
+      "curb-weight": 0,
+    },
+    "values": Object {
+      "curb-weight": 0,
+    },
+  },
+  "reduced": Object {
+    "sortedGroupDomain": Array [
+      Array [
+        0,
+        2000,
+      ],
+      Array [
+        2000,
+        3000,
+      ],
+      Array [
+        3000,
+        4500,
+      ],
+    ],
+  },
+  "time": Any<Number>,
+  "type": "grouped",
+}
+`;
+
+exports[`DataModel grouped processing - calculated grouping should generated the expected results for simple histogram example with average bucket calculation 1`] = `
+Object {
+  "data": Array [
+    Object {
+      "aggValues": Array [
+        Array [
+          0,
+          27.4,
+        ],
+      ],
+      "datum": Array [
+        Object {
+          "engine-size": 130,
+          "highway-mpg": 27,
+        },
+        Object {
+          "engine-size": 130,
+          "highway-mpg": 27,
+        },
+        Object {
+          "engine-size": 152,
+          "highway-mpg": 26,
+        },
+        Object {
+          "engine-size": 109,
+          "highway-mpg": 30,
+        },
+        Object {
+          "engine-size": 136,
+          "highway-mpg": 22,
+        },
+        Object {
+          "engine-size": 136,
+          "highway-mpg": 25,
+        },
+        Object {
+          "engine-size": 136,
+          "highway-mpg": 25,
+        },
+        Object {
+          "engine-size": 136,
+          "highway-mpg": 25,
+        },
+        Object {
+          "engine-size": 131,
+          "highway-mpg": 20,
+        },
+        Object {
+          "engine-size": 131,
+          "highway-mpg": 22,
+        },
+        Object {
+          "engine-size": 108,
+          "highway-mpg": 29,
+        },
+        Object {
+          "engine-size": 108,
+          "highway-mpg": 29,
+        },
+        Object {
+          "engine-size": 164,
+          "highway-mpg": 28,
+        },
+        Object {
+          "engine-size": 164,
+          "highway-mpg": 28,
+        },
+        Object {
+          "engine-size": 164,
+          "highway-mpg": 25,
+        },
+        Object {
+          "engine-size": 209,
+          "highway-mpg": 22,
+        },
+        Object {
+          "engine-size": 209,
+          "highway-mpg": 22,
+        },
+        Object {
+          "engine-size": 209,
+          "highway-mpg": 20,
+        },
+        Object {
+          "engine-size": 61,
+          "highway-mpg": 53,
+        },
+        Object {
+          "engine-size": 90,
+          "highway-mpg": 43,
+        },
+      ],
+      "keys": Array [
+        ">150",
+      ],
+      "values": Array [
+        Array [
+          27,
+        ],
+        Array [
+          27,
+        ],
+        Array [
+          26,
+        ],
+        Array [
+          30,
+        ],
+        Array [
+          22,
+        ],
+        Array [
+          25,
+        ],
+        Array [
+          25,
+        ],
+        Array [
+          25,
+        ],
+        Array [
+          20,
+        ],
+        Array [
+          22,
+        ],
+        Array [
+          29,
+        ],
+        Array [
+          29,
+        ],
+        Array [
+          28,
+        ],
+        Array [
+          28,
+        ],
+        Array [
+          25,
+        ],
+        Array [
+          22,
+        ],
+        Array [
+          22,
+        ],
+        Array [
+          20,
+        ],
+        Array [
+          53,
+        ],
+        Array [
+          43,
+        ],
+      ],
+    },
+  ],
+  "defs": Object {
+    "keys": Array [
+      Object {
+        "index": 0,
+        "missing": true,
+        "property": "curb-weight",
+        "type": "key",
+        "valueType": "category",
+      },
+    ],
+    "values": Array [
+      Object {
+        "index": 0,
+        "missing": false,
+        "property": "highway-mpg",
+        "type": "value",
+        "valueType": "range",
+      },
+    ],
+  },
+  "domain": Object {
+    "aggValues": Array [
+      Array [
+        0,
+        27.4,
+      ],
+    ],
+    "groups": Array [
+      Array [
+        ">150",
+      ],
+    ],
+    "keys": Array [
+      Array [
+        undefined,
+      ],
+    ],
+    "values": Array [
+      Array [
+        20,
+        53,
+      ],
+    ],
+  },
+  "indices": Object {
+    "keys": Object {
+      "curb-weight": 0,
+    },
+    "values": Object {
+      "highway-mpg": 0,
+    },
+  },
+  "reduced": Object {
+    "sortedGroupDomain": Array [
+      Array [
+        ">150",
+      ],
+    ],
+  },
+  "time": Any<Number>,
+  "type": "grouped",
+}
+`;
+
 exports[`DataModel grouped processing - calculated grouping should generated the expected results for simple histogram example with hard-coded buckets 1`] = `
 Object {
   "data": Array [
@@ -115,347 +593,11 @@ Object {
         Object {
           "engine-size": 108,
         },
-        Object {
-          "engine-size": 122,
-        },
-        Object {
-          "engine-size": 110,
-        },
-        Object {
-          "engine-size": 110,
-        },
-        Object {
-          "engine-size": 110,
-        },
-        Object {
-          "engine-size": 110,
-        },
-        Object {
-          "engine-size": 110,
-        },
-        Object {
-          "engine-size": 110,
-        },
-        Object {
-          "engine-size": 111,
-        },
-        Object {
-          "engine-size": 119,
-        },
-        Object {
-          "engine-size": 122,
-        },
-        Object {
-          "engine-size": 122,
-        },
-        Object {
-          "engine-size": 122,
-        },
-        Object {
-          "engine-size": 122,
-        },
-        Object {
-          "engine-size": 122,
-        },
-        Object {
-          "engine-size": 122,
-        },
-        Object {
-          "engine-size": 140,
-        },
-        Object {
-          "engine-size": 134,
-        },
-        Object {
-          "engine-size": 140,
-        },
-        Object {
-          "engine-size": 110,
-        },
-        Object {
-          "engine-size": 122,
-        },
-        Object {
-          "engine-size": 122,
-        },
-        Object {
-          "engine-size": 122,
-        },
-        Object {
-          "engine-size": 110,
-        },
-        Object {
-          "engine-size": 110,
-        },
-        Object {
-          "engine-size": 103,
-        },
-        Object {
-          "engine-size": 120,
-        },
-        Object {
-          "engine-size": 120,
-        },
-        Object {
-          "engine-size": 120,
-        },
-        Object {
-          "engine-size": 120,
-        },
-        Object {
-          "engine-size": 120,
-        },
-        Object {
-          "engine-size": 120,
-        },
-        Object {
-          "engine-size": 120,
-        },
-        Object {
-          "engine-size": 134,
-        },
-        Object {
-          "engine-size": 122,
-        },
-        Object {
-          "engine-size": 132,
-        },
-        Object {
-          "engine-size": 132,
-        },
-        Object {
-          "engine-size": 121,
-        },
-        Object {
-          "engine-size": 121,
-        },
-        Object {
-          "engine-size": 121,
-        },
-        Object {
-          "engine-size": 121,
-        },
-        Object {
-          "engine-size": 121,
-        },
-        Object {
-          "engine-size": 121,
-        },
-        Object {
-          "engine-size": 108,
-        },
-        Object {
-          "engine-size": 108,
-        },
-        Object {
-          "engine-size": 108,
-        },
-        Object {
-          "engine-size": 108,
-        },
-        Object {
-          "engine-size": 108,
-        },
-        Object {
-          "engine-size": 108,
-        },
-        Object {
-          "engine-size": 108,
-        },
-        Object {
-          "engine-size": 108,
-        },
-        Object {
-          "engine-size": 108,
-        },
-        Object {
-          "engine-size": 108,
-        },
-        Object {
-          "engine-size": 108,
-        },
-        Object {
-          "engine-size": 110,
-        },
-        Object {
-          "engine-size": 110,
-        },
-        Object {
-          "engine-size": 146,
-        },
-        Object {
-          "engine-size": 146,
-        },
-        Object {
-          "engine-size": 146,
-        },
-        Object {
-          "engine-size": 146,
-        },
-        Object {
-          "engine-size": 146,
-        },
-        Object {
-          "engine-size": 146,
-        },
-        Object {
-          "engine-size": 122,
-        },
-        Object {
-          "engine-size": 110,
-        },
-        Object {
-          "engine-size": 122,
-        },
-        Object {
-          "engine-size": 122,
-        },
-        Object {
-          "engine-size": 122,
-        },
-        Object {
-          "engine-size": 109,
-        },
-        Object {
-          "engine-size": 109,
-        },
-        Object {
-          "engine-size": 109,
-        },
-        Object {
-          "engine-size": 109,
-        },
-        Object {
-          "engine-size": 109,
-        },
-        Object {
-          "engine-size": 109,
-        },
-        Object {
-          "engine-size": 136,
-        },
-        Object {
-          "engine-size": 109,
-        },
-        Object {
-          "engine-size": 141,
-        },
-        Object {
-          "engine-size": 141,
-        },
-        Object {
-          "engine-size": 141,
-        },
-        Object {
-          "engine-size": 141,
-        },
-        Object {
-          "engine-size": 130,
-        },
-        Object {
-          "engine-size": 130,
-        },
-        Object {
-          "engine-size": 141,
-        },
-        Object {
-          "engine-size": 141,
-        },
-        Object {
-          "engine-size": 145,
-        },
-        Object {
-          "engine-size": 141,
-        },
       ],
       "keys": Array [
         "100 - 150",
       ],
       "values": Array [
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
         undefined,
         undefined,
         undefined,
@@ -498,159 +640,11 @@ Object {
         Object {
           "engine-size": 209,
         },
-        Object {
-          "engine-size": 156,
-        },
-        Object {
-          "engine-size": 258,
-        },
-        Object {
-          "engine-size": 258,
-        },
-        Object {
-          "engine-size": 326,
-        },
-        Object {
-          "engine-size": 183,
-        },
-        Object {
-          "engine-size": 183,
-        },
-        Object {
-          "engine-size": 183,
-        },
-        Object {
-          "engine-size": 183,
-        },
-        Object {
-          "engine-size": 234,
-        },
-        Object {
-          "engine-size": 234,
-        },
-        Object {
-          "engine-size": 308,
-        },
-        Object {
-          "engine-size": 304,
-        },
-        Object {
-          "engine-size": 156,
-        },
-        Object {
-          "engine-size": 156,
-        },
-        Object {
-          "engine-size": 156,
-        },
-        Object {
-          "engine-size": 181,
-        },
-        Object {
-          "engine-size": 181,
-        },
-        Object {
-          "engine-size": 181,
-        },
-        Object {
-          "engine-size": 181,
-        },
-        Object {
-          "engine-size": 181,
-        },
-        Object {
-          "engine-size": 181,
-        },
-        Object {
-          "engine-size": 152,
-        },
-        Object {
-          "engine-size": 152,
-        },
-        Object {
-          "engine-size": 152,
-        },
-        Object {
-          "engine-size": 152,
-        },
-        Object {
-          "engine-size": 152,
-        },
-        Object {
-          "engine-size": 156,
-        },
-        Object {
-          "engine-size": 151,
-        },
-        Object {
-          "engine-size": 194,
-        },
-        Object {
-          "engine-size": 194,
-        },
-        Object {
-          "engine-size": 194,
-        },
-        Object {
-          "engine-size": 203,
-        },
-        Object {
-          "engine-size": 171,
-        },
-        Object {
-          "engine-size": 171,
-        },
-        Object {
-          "engine-size": 171,
-        },
-        Object {
-          "engine-size": 161,
-        },
-        Object {
-          "engine-size": 173,
-        },
       ],
       "keys": Array [
         ">150",
       ],
       "values": Array [
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
         undefined,
         undefined,
         undefined,
@@ -674,267 +668,11 @@ Object {
         Object {
           "engine-size": 90,
         },
-        Object {
-          "engine-size": 90,
-        },
-        Object {
-          "engine-size": 90,
-        },
-        Object {
-          "engine-size": 90,
-        },
-        Object {
-          "engine-size": 98,
-        },
-        Object {
-          "engine-size": 90,
-        },
-        Object {
-          "engine-size": 90,
-        },
-        Object {
-          "engine-size": 90,
-        },
-        Object {
-          "engine-size": 98,
-        },
-        Object {
-          "engine-size": 92,
-        },
-        Object {
-          "engine-size": 92,
-        },
-        Object {
-          "engine-size": 79,
-        },
-        Object {
-          "engine-size": 92,
-        },
-        Object {
-          "engine-size": 92,
-        },
-        Object {
-          "engine-size": 92,
-        },
-        Object {
-          "engine-size": 92,
-        },
-        Object {
-          "engine-size": 90,
-        },
-        Object {
-          "engine-size": 90,
-        },
-        Object {
-          "engine-size": 91,
-        },
-        Object {
-          "engine-size": 91,
-        },
-        Object {
-          "engine-size": 91,
-        },
-        Object {
-          "engine-size": 91,
-        },
-        Object {
-          "engine-size": 91,
-        },
-        Object {
-          "engine-size": 70,
-        },
-        Object {
-          "engine-size": 70,
-        },
-        Object {
-          "engine-size": 70,
-        },
-        Object {
-          "engine-size": 80,
-        },
-        Object {
-          "engine-size": 92,
-        },
-        Object {
-          "engine-size": 92,
-        },
-        Object {
-          "engine-size": 92,
-        },
-        Object {
-          "engine-size": 98,
-        },
-        Object {
-          "engine-size": 97,
-        },
-        Object {
-          "engine-size": 97,
-        },
-        Object {
-          "engine-size": 97,
-        },
-        Object {
-          "engine-size": 97,
-        },
-        Object {
-          "engine-size": 97,
-        },
-        Object {
-          "engine-size": 97,
-        },
-        Object {
-          "engine-size": 97,
-        },
-        Object {
-          "engine-size": 97,
-        },
-        Object {
-          "engine-size": 97,
-        },
-        Object {
-          "engine-size": 90,
-        },
-        Object {
-          "engine-size": 98,
-        },
-        Object {
-          "engine-size": 90,
-        },
-        Object {
-          "engine-size": 90,
-        },
-        Object {
-          "engine-size": 98,
-        },
-        Object {
-          "engine-size": 97,
-        },
-        Object {
-          "engine-size": 92,
-        },
-        Object {
-          "engine-size": 92,
-        },
-        Object {
-          "engine-size": 92,
-        },
-        Object {
-          "engine-size": 92,
-        },
-        Object {
-          "engine-size": 92,
-        },
-        Object {
-          "engine-size": 92,
-        },
-        Object {
-          "engine-size": 98,
-        },
-        Object {
-          "engine-size": 98,
-        },
-        Object {
-          "engine-size": 98,
-        },
-        Object {
-          "engine-size": 98,
-        },
-        Object {
-          "engine-size": 98,
-        },
-        Object {
-          "engine-size": 98,
-        },
-        Object {
-          "engine-size": 98,
-        },
-        Object {
-          "engine-size": 98,
-        },
-        Object {
-          "engine-size": 98,
-        },
-        Object {
-          "engine-size": 97,
-        },
-        Object {
-          "engine-size": 97,
-        },
-        Object {
-          "engine-size": 97,
-        },
-        Object {
-          "engine-size": 97,
-        },
       ],
       "keys": Array [
         "<100",
       ],
       "values": Array [
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
         undefined,
         undefined,
       ],
@@ -982,40 +720,6 @@ Object {
         209,
         61,
         90,
-        98,
-        122,
-        156,
-        92,
-        79,
-        110,
-        111,
-        119,
-        258,
-        326,
-        91,
-        70,
-        80,
-        140,
-        134,
-        183,
-        234,
-        308,
-        304,
-        97,
-        103,
-        120,
-        181,
-        151,
-        194,
-        203,
-        132,
-        121,
-        146,
-        171,
-        161,
-        141,
-        173,
-        145,
       ],
     ],
     "values": Array [],
