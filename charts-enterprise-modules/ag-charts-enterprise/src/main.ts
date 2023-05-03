@@ -15,7 +15,15 @@ import {
     AgCrosshairLabelRendererResult,
 } from './crosshair/main';
 import { GradientLegendModule } from './gradient-legend/main';
-import * as Heatmap from './heatmap/main';
+import {
+    AgHeatmapSeriesFormat,
+    AgHeatmapSeriesFormatterParams,
+    AgHeatmapSeriesLabelOptions,
+    AgHeatmapSeriesOptions,
+    AgHeatmapSeriesTooltip,
+    AgHeatmapSeriesTooltipRendererParams,
+    HeatmapModule,
+} from './heatmap/main';
 import { AgNavigatorOptions } from './navigator/main';
 import { AgZoomOptions, ZoomModule } from './zoom/main';
 
@@ -25,10 +33,18 @@ _ModuleSupport.registerModule(BackgroundModule);
 _ModuleSupport.registerModule(ContextMenuModule);
 _ModuleSupport.registerModule(CrosshairModule);
 _ModuleSupport.registerModule(GradientLegendModule);
-_ModuleSupport.registerModule(Heatmap.HeatmapModule);
+_ModuleSupport.registerModule(HeatmapModule);
 _ModuleSupport.registerModule(ZoomModule);
 
 export { AgCrosshairOptions, AgCrosshairLabel, AgCrosshairLabelRendererParams, AgCrosshairLabelRendererResult };
+export {
+    AgHeatmapSeriesFormat,
+    AgHeatmapSeriesFormatterParams,
+    AgHeatmapSeriesLabelOptions,
+    AgHeatmapSeriesOptions,
+    AgHeatmapSeriesTooltip,
+    AgHeatmapSeriesTooltipRendererParams,
+};
 
 declare module 'ag-charts-community' {
     export interface AgCartesianChartOptions {
@@ -47,13 +63,6 @@ declare module 'ag-charts-community' {
         contextMenu?: AgContextMenuOptions;
     }
 
-    export type AgHeatmapSeriesFormat = Heatmap.AgHeatmapSeriesFormat;
-    export type AgHeatmapSeriesFormatterParams<T> = Heatmap.AgHeatmapSeriesFormatterParams<T>;
-    export type AgHeatmapSeriesLabelOptions = Heatmap.AgHeatmapSeriesLabelOptions;
-    export type AgHeatmapSeriesOptions = Heatmap.AgHeatmapSeriesOptions;
-    export type AgHeatmapSeriesTooltip = Heatmap.AgHeatmapSeriesTooltip;
-    export type AgHeatmapSeriesTooltipRendererParams = Heatmap.AgHeatmapSeriesTooltipRendererParams;
-
     export interface AgHierarchyChartOptions {
         contextMenu?: AgContextMenuOptions;
     }
@@ -66,7 +75,7 @@ declare module 'ag-charts-community' {
 
 import { LicenseManager } from './license/licenseManager';
 
-export type AgChartOptions = AgCommunityChartOptions<'heatmap', Heatmap.AgHeatmapSeriesOptions>;
+export type AgChartOptions = AgCommunityChartOptions<'heatmap', AgHeatmapSeriesOptions>;
 export class AgEnterpriseCharts {
     public static create(options: AgChartOptions): AgChartInstance {
         new LicenseManager(options.container as any).validateLicense();

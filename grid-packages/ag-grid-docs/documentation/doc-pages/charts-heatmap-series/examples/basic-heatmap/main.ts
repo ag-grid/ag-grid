@@ -1,7 +1,7 @@
-import { AgEnterpriseCharts, AgCartesianChartOptions } from 'ag-charts-enterprise';
+import { AgEnterpriseCharts, AgChartOptions } from 'ag-charts-enterprise';
 import { getData } from './data';
 
-const options: AgCartesianChartOptions = {
+const options: AgChartOptions = {
     container: document.getElementById('myChart'),
     data: getData(),
     title: {
