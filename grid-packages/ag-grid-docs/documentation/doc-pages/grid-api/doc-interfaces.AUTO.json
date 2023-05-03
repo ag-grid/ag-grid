@@ -8911,6 +8911,7 @@
     }
   },
   "DisplayedRowsChangedEvent": {
+    "afterScroll": { "type": { "returnType": "boolean", "optional": false } },
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
@@ -10082,7 +10083,7 @@
     },
     "setRowCtrls": {
       "type": {
-        "arguments": { "rowCtrls": "RowCtrl[]" },
+        "arguments": { "rowCtrls": "RowCtrl[]", "useFlushSync": "boolean" },
         "returnType": "void",
         "optional": false
       }
@@ -19453,7 +19454,7 @@
     },
     "setCellCtrls": {
       "type": {
-        "arguments": { "cellCtrls": "CellCtrl[]" },
+        "arguments": { "cellCtrls": "CellCtrl[]", "useFlushSync": "boolean" },
         "returnType": "void",
         "optional": false
       }
