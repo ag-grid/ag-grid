@@ -1,5 +1,5 @@
-[[only-angular]]
-|```js
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
 |// a list of column definitions
 |const colDefs = [{
 |
@@ -23,4 +23,5 @@
 |        ]
 |    }
 |}]
-|```
+</snippet>
+</framework-specific-section>
