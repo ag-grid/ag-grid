@@ -1,7 +1,7 @@
 ---
 title: "Tooltip Component"
 ---
- 
+  
 Tooltip components allow you to add your own tooltips to the grid's column headers and cells. Use these when the provided tooltip component or the default browser tooltip do not meet your requirements.
 
 ## Simple Tooltip Component
