@@ -1617,6 +1617,10 @@
       "description": "/** Set to false to disable tooltips for all series in the chart. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "showArrow": {
+      "description": "/** Set to false to remove the arrow attached to the tooltip. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "class": {
       "description": "/** A class name to be added to the tooltip element of the chart. */",
       "type": { "returnType": "string", "optional": true }
@@ -3024,6 +3028,10 @@
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "showArrow": {
+      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "position": {
       "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
@@ -3095,6 +3103,10 @@
     "format": { "type": { "returnType": "string", "optional": true } },
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "showArrow": {
+      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
@@ -3210,6 +3222,10 @@
     },
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "showArrow": {
+      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
@@ -3427,6 +3443,10 @@
     "format": { "type": { "returnType": "string", "optional": true } },
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "showArrow": {
+      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
@@ -3657,6 +3677,10 @@
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "showArrow": {
+      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "position": {
       "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
@@ -3869,6 +3893,10 @@
     },
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "showArrow": {
+      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
@@ -4117,6 +4145,10 @@
     },
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "showArrow": {
+      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
@@ -4613,6 +4645,10 @@
     "meta": { "typeParams": ["DatumType"] },
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "showArrow": {
+      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
@@ -5964,6 +6000,7 @@
     "pageY": { "type": { "returnType": "number", "optional": false } },
     "offsetX": { "type": { "returnType": "number", "optional": false } },
     "offsetY": { "type": { "returnType": "number", "optional": false } },
+    "showArrow": { "type": { "returnType": "boolean", "optional": false } },
     "position": {
       "type": {
         "returnType": "{\n        xOffset?: number;\n        yOffset?: number;\n    }",

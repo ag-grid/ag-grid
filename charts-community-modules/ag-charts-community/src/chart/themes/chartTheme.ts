@@ -118,6 +118,7 @@ export class ChartTheme {
         return {
             tooltip: {
                 enabled: true,
+                showArrow: true,
                 renderer: undefined,
             },
             visible: true,
@@ -284,6 +285,7 @@ export class ChartTheme {
             },
             tooltip: {
                 enabled: true,
+                showArrow: true,
                 range: 'nearest' as AgChartInteractionRange,
                 delay: 0,
                 position: {

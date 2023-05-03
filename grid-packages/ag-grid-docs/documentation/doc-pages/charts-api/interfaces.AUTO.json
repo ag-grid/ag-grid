@@ -1048,6 +1048,7 @@
     "meta": {},
     "type": {
       "enabled?": "boolean",
+      "showArrow?": "boolean",
       "class?": "string",
       "tracking?": "boolean",
       "range?": "AgChartInteractionRange",
@@ -1056,6 +1057,7 @@
     },
     "docs": {
       "enabled?": "/** Set to false to disable tooltips for all series in the chart. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the tooltip. */",
       "class?": "/** A class name to be added to the tooltip element of the chart. */",
       "tracking?": "/** @deprecated since v7.2.0 (ag-grid v29.2.0) If true, for series with markers the tooltip will be shown to the closest marker. */",
       "range?": "/** Range from a point that triggers the tooltip to show. */",
@@ -2015,11 +2017,13 @@
     "meta": {},
     "type": {
       "enabled?": "boolean",
+      "showArrow?": "boolean",
       "position?": "AgTooltipPositionOptions",
       "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
@@ -2066,12 +2070,14 @@
       "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "format?": "string",
       "enabled?": "boolean",
+      "showArrow?": "boolean",
       "position?": "AgTooltipPositionOptions",
       "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
@@ -2133,12 +2139,14 @@
     "type": {
       "renderer?": "(params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "enabled?": "boolean",
+      "showArrow?": "boolean",
       "position?": "AgTooltipPositionOptions",
       "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
@@ -2260,11 +2268,13 @@
       "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "format?": "string",
       "enabled?": "boolean",
+      "showArrow?": "boolean",
       "position?": "AgTooltipPositionOptions",
       "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
@@ -2411,12 +2421,14 @@
     "type": {
       "renderer?": "(params: AgBarSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "enabled?": "boolean",
+      "showArrow?": "boolean",
       "position?": "AgTooltipPositionOptions",
       "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
@@ -2540,12 +2552,14 @@
     "type": {
       "renderer?": "(params: AgHistogramSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "enabled?": "boolean",
+      "showArrow?": "boolean",
       "position?": "AgTooltipPositionOptions",
       "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
@@ -2700,12 +2714,14 @@
     "type": {
       "renderer?": "(params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "enabled?": "boolean",
+      "showArrow?": "boolean",
       "position?": "AgTooltipPositionOptions",
       "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
@@ -3005,12 +3021,14 @@
     "type": {
       "renderer?": "(params: AgTreemapSeriesTooltipRendererParams<DatumType>) => string | AgTooltipRendererResult",
       "enabled?": "boolean",
+      "showArrow?": "boolean",
       "position?": "AgTooltipPositionOptions",
       "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
@@ -4162,6 +4180,7 @@
       "pageY": "number",
       "offsetX": "number",
       "offsetY": "number",
+      "showArrow": "boolean",
       "position?": "{ xOffset?: number; yOffset?: number; }",
       "enableInteraction?": "boolean",
       "event": "Event | InteractionEvent<any>"
