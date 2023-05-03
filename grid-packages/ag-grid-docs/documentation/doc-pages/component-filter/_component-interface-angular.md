@@ -1,9 +1,11 @@
-[[only-angular]]
+<framework-specific-section frameworks="angular">
 |## Custom Filter Interface
 |
 |The interface for a custom filter component is as follows:
-|
-|```ts
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false} language="ts">
 |interface IFilterAngularComp {
 |    // Mandatory - params for filter operations (see below for more details)
 |    agInit(params: IFilterParams): void;
@@ -68,10 +70,12 @@
 |    // value here.
 |    getModelAsString?(model: any): string;
 |}
-|```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
 |### Custom Filter Parameters
 |
 |The `agInit(params)` method takes a params object with the items listed below. If custom params are provided via the `colDef.filterParams` property, these
 |will be additionally added to the params object, overriding items of the same name if a name clash exists.
-|
+</framework-specific-section>
