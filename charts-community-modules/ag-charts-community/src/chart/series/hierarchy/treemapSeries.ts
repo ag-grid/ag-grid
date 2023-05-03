@@ -4,7 +4,7 @@ import { SeriesNodeDatum, SeriesTooltip, HighlightStyle, SeriesNodeBaseClickEven
 import { HierarchySeries } from './hierarchySeries';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { Group } from '../../../scene/group';
-import { Text } from '../../../scene/shape/text';
+import { Text, getFont } from '../../../scene/shape/text';
 import { Rect } from '../../../scene/shape/rect';
 import { DropShadow } from '../../../scene/dropShadow';
 import { ColorScale } from '../../../scale/colorScale';
@@ -746,50 +746,31 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             if (datum.isLeaf) {
                 // Choose the font size that fits
                 labelStyle = labels.small;
-                fontSizeLoop: for (const s of [labels.large, labels.medium, labels.small]) {
-                    if (isBoxTooSmall(s)) {
-                        continue;
-                    }
+                for (const s of [labels.large, labels.medium, labels.small]) {
                     const { width, height } = getTextSize(labelText, s);
-                    if (height > availTextHeight) {
+                    if (height > availTextHeight || isBoxTooSmall(s)) {
                         continue;
                     }
                     if (width <= availTextWidth) {
                         labelStyle = s;
                         break;
                     }
-                    const parts = labelText.split(/\s+/g);
-                    const spaceWidth = getTextSize(' ', s).width;
                     const lineHeight = s.fontSize * Text.defaultLineHeightRatio;
-                    const lines: string[][] = [];
-                    let lineWidth = 0;
-                    let totalHeight = 0;
-                    let currentLine: string[] = [];
-                    let partIndex = -1;
-                    while (++partIndex < parts.length) {
-                        const part = parts[partIndex];
-                        const width = getTextSize(part, s).width;
-                        if (width > availTextWidth) {
-                            continue fontSizeLoop;
-                        }
-                        if (partIndex === 0) {
-                            lines.push(currentLine);
-                            totalHeight = lineHeight;
-                        }
-                        const expectedLineWidth = lineWidth + (currentLine.length === 0 ? 0 : spaceWidth) + width;
-                        if (expectedLineWidth > availTextWidth) {
-                            currentLine = [part];
-                            lines.push(currentLine);
-                            totalHeight += lineHeight;
-                            if (totalHeight > availTextHeight) {
-                                continue fontSizeLoop;
-                            }
-                        } else {
-                            currentLine.push(part);
-                            lineWidth = expectedLineWidth;
-                        }
+                    const font = getFont(s.fontSize, s.fontFamily, s.fontStyle, s.fontWeight);
+                    const wrapped = Text.wrap(
+                        labelText,
+                        availTextWidth,
+                        availTextHeight,
+                        font,
+                        s.fontSize,
+                        lineHeight,
+                        true
+                    );
+                    if (wrapped.match(/-$/m)) {
+                        // Avoid hyphens
+                        continue;
                     }
-                    wrappedText = lines.map((ln) => ln.join(' ')).join('\n');
+                    wrappedText = wrapped;
                     labelStyle = s;
                     break;
                 }
