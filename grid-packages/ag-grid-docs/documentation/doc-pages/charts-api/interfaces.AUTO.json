@@ -3612,11 +3612,11 @@
   },
   "ChartEventType": {
     "meta": { "isTypeAlias": true },
-    "type": "'legend-item-click'"
+    "type": "'legend-item-click' | 'legend-item-double-click'"
   },
   "ChartEvents": {
     "meta": { "isTypeAlias": true },
-    "type": "LegendItemClickChartEvent"
+    "type": "LegendItemClickChartEvent | LegendItemDoubleClickChartEvent"
   },
   "ChartEvent": {
     "meta": { "typeParams": ["ChartEventType"] },
@@ -3625,10 +3625,20 @@
   "LegendItemClickChartEvent": {
     "meta": {},
     "type": {
-      "series": "any",
+      "series": "Series",
       "itemId": "any",
       "enabled": "boolean",
       "type": "'legend-item-click'"
+    }
+  },
+  "LegendItemDoubleClickChartEvent": {
+    "meta": {},
+    "type": {
+      "series": "Series",
+      "itemId": "any",
+      "enabled": "boolean",
+      "numVisibleItems": "{ [key: string]: number; }",
+      "type": "'legend-item-double-click'"
     }
   },
   "CursorState": { "meta": {}, "type": { "style": "string" } },
