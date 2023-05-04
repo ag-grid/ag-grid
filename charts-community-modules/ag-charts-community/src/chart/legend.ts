@@ -192,7 +192,7 @@ export class Legend {
     }
 
     @Validate(POSITION)
-    position: AgChartLegendPosition = 'right';
+    position: AgChartLegendPosition = 'bottom';
 
     private getOrientation(): AgChartOrientation {
         if (this.orientation !== undefined) {

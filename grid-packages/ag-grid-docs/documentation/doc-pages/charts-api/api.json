@@ -223,7 +223,7 @@
       "default": true
     },
     "position": {
-      "default": "right",
+      "default": "bottom",
       "options": ["top", "right", "bottom", "left"]
     },
     "spacing": {
