@@ -11,7 +11,7 @@ function getImports(bindings, componentFileNames: string[], { typeParts }): stri
     const { imports: bImports = [], chartSettings: { enterprise = false } } = bindings;
 
     bImports.push({
-        module: enterprise? `'ag-charts-community'` : `'ag-charts-enterprise'`,
+        module: enterprise ? `'ag-charts-community'` : `'ag-charts-enterprise'`,
         isNamespaced: false,
         imports: typeParts
     })
