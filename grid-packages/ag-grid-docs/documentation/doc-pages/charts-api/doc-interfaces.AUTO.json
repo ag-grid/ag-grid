@@ -1494,7 +1494,7 @@
   },
   "AgChartLegendOptions": {
     "enabled": {
-      "description": "/** Whether or not to show the legend. */",
+      "description": "/** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {

@@ -971,7 +971,7 @@
       "pagination?": "AgChartLegendPaginationOptions"
     },
     "docs": {
-      "enabled?": "/** Whether or not to show the legend. */",
+      "enabled?": "/** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */",
       "position?": "/** Where the legend should show in relation to the chart. */",
       "orientation?": "/** How the legend items should be arranged. */",
       "maxWidth?": "/** Used to constrain the width of the legend. */",
