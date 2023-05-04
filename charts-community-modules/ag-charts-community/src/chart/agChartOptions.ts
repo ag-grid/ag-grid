@@ -492,6 +492,8 @@ export interface AgPaginationLabelOptions {
 export interface AgChartTooltipOptions {
     /** Set to false to disable tooltips for all series in the chart. */
     enabled?: boolean;
+    /** Set to false to remove the arrow attached to the tooltip. */
+    showArrow?: boolean;
     /** A class name to be added to the tooltip element of the chart. */
     class?: string;
     /** @deprecated since v7.2.0 (ag-grid v29.2.0) If true, for series with markers the tooltip will be shown to the closest marker. */
@@ -1086,6 +1088,8 @@ export interface AgAreaSeriesMarker<DatumType> extends AgCartesianSeriesMarker<D
 export interface AgSeriesTooltip {
     /** Whether or not to show tooltips when the series are hovered over. */
     enabled?: boolean;
+    /** Set to false to remove the arrow attached to the series tooltip. */
+    showArrow?: boolean;
     /** The position of the tooltip. By default the tooltip follows the mouse pointer. */
     position?: AgTooltipPositionOptions;
     /** Configuration for tooltip interaction. */

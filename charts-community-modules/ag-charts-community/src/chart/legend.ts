@@ -913,7 +913,7 @@ export class Legend {
             const labelText = this.getItemLabel(datum);
             this.tooltipManager.updateTooltip(
                 this.id,
-                { pageX, pageY, offsetX, offsetY, event },
+                { pageX, pageY, offsetX, offsetY, event, showArrow: false },
                 toTooltipHtml({ content: labelText })
             );
         } else {

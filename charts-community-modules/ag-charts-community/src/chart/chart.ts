@@ -1015,7 +1015,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
             yOffset: pick.datum.series.tooltip.position.yOffset,
         };
 
-        const meta = this.mergePointerDatum({ pageX, pageY, offsetX, offsetY, event: event, position }, pick.datum);
+        const meta = this.mergePointerDatum(
+            { pageX, pageY, offsetX, offsetY, event: event, showArrow: pick.series.tooltip.showArrow, position },
+            pick.datum
+        );
         meta.enableInteraction = pick.series.tooltip.interaction?.enabled ?? false;
 
         if (shouldUpdateTooltip) {
