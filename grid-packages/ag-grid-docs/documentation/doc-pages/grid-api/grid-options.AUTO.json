@@ -100,6 +100,7 @@
     "type": { "returnType": "{ [key: string]: ColDef<TData>; }" }
   },
   "dataTypeDefinitions": {
+    "description": "/** An object map of cell data types to their definitions.\n     * Cell data types can either override/update the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`),\n     * or can be custom data types.\n     */",
     "type": {
       "returnType": "{\n        [cellDataType: string]: DataTypeDefinition<TData>;\n    }"
     }

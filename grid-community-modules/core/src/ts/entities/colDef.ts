@@ -141,6 +141,15 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * This helps to reduce duplication of properties when you have a lot of common column properties.
      */
     type?: string | string[];
+    /**
+     * The data type of the cell values for this column.
+     * Can either be one of the pre-defined data types
+     * `'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`,
+     * or a custom data type that has been defined in the `dataTypeDefinitions` grid option.
+     *  
+     * The data type can also be inferred from the row data by using the `'auto'` type.
+     * Data type inference only works for the Client-Side Row Model, and requires non-null data.
+     */
     cellDataType?: string;
     /** Function or expression. Gets the value from your data for display. */
     valueGetter?: string | ValueGetterFunc<TData, TValue>;
@@ -490,9 +499,15 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     /** Set to `true` if you want this column header for this column to span the whole height of the header container. Default: `false` */
     spanHeaderHeight?: boolean;
-
+    /**
+     * Set to true to format values using the column's `valueFormatter` when exporting data from the grid.
+     * This applies to CSV and Excel export, as well as clipboard operations and the fill handle.
+     */
     useValueFormatterForExport?: boolean;
-
+    /**
+     * Set to true to parse values using the column's `valueParser` when importing data to the grid.
+     * This applies to clipboard operations and the fill handle.
+     */
     useValueParserForImport?: boolean;
 }
 export interface ColumnFunctionCallbackParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {

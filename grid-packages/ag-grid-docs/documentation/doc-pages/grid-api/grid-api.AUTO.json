@@ -1388,6 +1388,7 @@
     "type": { "arguments": {}, "returnType": "number" }
   },
   "setDataTypeDefinitions": {
+    "description": "/** Resets the data type definitions. This will update the columns in the grid. */",
     "type": {
       "arguments": {
         "dataTypeDefinitions": "{ [cellDataType: string]: DataTypeDefinition<TData>; }"

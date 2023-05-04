@@ -168,6 +168,12 @@ export interface GridOptions<TData = any> {
     defaultColGroupDef?: Partial<ColGroupDef<TData>>;
     /** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property. */
     columnTypes?: { [key: string]: ColDef<TData>; };
+    /**
+     * An object map of cell data types to their definitions.
+     * Cell data types can either override/update the pre-defined data types
+     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`),
+     * or can be custom data types.
+     */
     dataTypeDefinitions?: {
         [cellDataType: string]: DataTypeDefinition<TData>;
     }

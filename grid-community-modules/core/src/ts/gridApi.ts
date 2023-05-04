@@ -1971,6 +1971,7 @@ export class GridApi<TData = any> {
         return this.rowModel.getRowCount();
     }
 
+    /** Resets the data type definitions. This will update the columns in the grid. */
     public setDataTypeDefinitions(dataTypeDefinitions: {
         [cellDataType: string]: DataTypeDefinition<TData>;
     }): void {
