@@ -780,8 +780,8 @@ let GridApi = class GridApi {
      * Defaults to `normal` if no domLayout provided.
      */
     setDomLayout(domLayout) {
-        if (!this.clientSideRowModel && domLayout === 'autoHeight') {
-            console.error(`AG Grid: domLayout can only be set to 'autoHeight' when using the client side row model.`);
+        if (!this.clientSideRowModel && domLayout === 'autoHeight' && !this.gridOptionsService.is('pagination')) {
+            console.error(`AG Grid: domLayout can only be set to 'autoHeight' when using the client side row model or when using pagination.`);
             return;
         }
         this.gridOptionsService.set('domLayout', domLayout);
@@ -1561,6 +1561,10 @@ let GridApi = class GridApi {
      *  - `false` to disable pagination
      */
     setPagination(value) {
+        if (!this.clientSideRowModel && this.gridOptionsService.get('domLayout') === 'autoHeight' && !value) {
+            console.error(`AG Grid: Pagination cannot be disabled when using domLayout set to 'autoHeight' unless using the client-side row model.`);
+            return;
+        }
         this.gridOptionsService.set('pagination', value);
     }
     /**

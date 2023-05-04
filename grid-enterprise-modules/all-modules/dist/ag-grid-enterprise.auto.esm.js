@@ -56046,20 +56046,36 @@ var LazyCache = /** @class */ (function (_super) {
      * @returns the rows visible display index relative to the grid
      */
     LazyCache.prototype.getDisplayIndexFromStoreIndex = function (storeIndex) {
-        var nodesAfterThis = this.nodeMap.filter(function (lazyNode) { return lazyNode.index > storeIndex; });
-        if (nodesAfterThis.length === 0) {
-            return this.store.getDisplayIndexEnd() - (this.numberOfRows - storeIndex);
+        var _a, _b;
+        var nodeAtIndex = this.nodeMap.getBy('index', storeIndex);
+        if (nodeAtIndex) {
+            return nodeAtIndex.node.rowIndex;
         }
         var nextNode;
-        for (var i = 0; i < nodesAfterThis.length; i++) {
-            var lazyNode = nodesAfterThis[i];
+        var previousNode;
+        this.nodeMap.forEach(function (lazyNode) {
+            // previous node
+            if (storeIndex > lazyNode.index) {
+                // get the largest previous node
+                if (previousNode == null || previousNode.index < lazyNode.index) {
+                    previousNode = lazyNode;
+                }
+                return;
+            }
+            // next node
+            // get the smallest next node
             if (nextNode == null || nextNode.index > lazyNode.index) {
                 nextNode = lazyNode;
+                return;
             }
+        });
+        if (!nextNode) {
+            return this.store.getDisplayIndexEnd() - (this.numberOfRows - storeIndex);
         }
-        var nextDisplayIndex = nextNode.node.rowIndex;
-        var storeIndexDiff = nextNode.index - storeIndex;
-        return nextDisplayIndex - storeIndexDiff;
+        if (!previousNode) {
+            return this.store.getDisplayIndexStart() + storeIndex;
+        }
+        return (_b = (_a = previousNode.node.childStore) === null || _a === void 0 ? void 0 : _a.getDisplayIndexEnd()) !== null && _b !== void 0 ? _b : previousNode.node.rowIndex + 1;
     };
     /**
      * Creates a new row and inserts it at the given index

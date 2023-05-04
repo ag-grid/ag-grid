@@ -3642,8 +3642,10 @@ function logDeprecation(version, oldProp, newProp, message) {
             this.pickOneWarning('groupRemoveSingleChildren', 'groupHideOpenParents');
         }
         if (this.gridOptionsService.get('domLayout') === 'autoHeight' && !this.gridOptionsService.isRowModelType('clientSide')) {
-            console.warn("AG Grid: domLayout='autoHeight' was ignored as it is only supported by the Client-Side row model.");
-            this.gridOptions.domLayout = 'normal';
+            if (!this.gridOptionsService.is('pagination')) {
+                console.warn("AG Grid: domLayout='autoHeight' was ignored as it is only supported by the Client-Side row model, unless using pagination.");
+                this.gridOptions.domLayout = 'normal';
+            }
         }
         if (this.gridOptionsService.isRowModelType('serverSide')) {
             var msg = function (prop, alt) { return ("AG Grid: '" + prop + "' is not supported on the Server-Side Row Model." + (alt ? " Please use " + alt + " instead." : '')); };
@@ -20816,8 +20818,8 @@ function unwrapUserComp(comp) {
      * Defaults to `normal` if no domLayout provided.
      */
     GridApi.prototype.setDomLayout = function (domLayout) {
-        if (!this.clientSideRowModel && domLayout === 'autoHeight') {
-            console.error("AG Grid: domLayout can only be set to 'autoHeight' when using the client side row model.");
+        if (!this.clientSideRowModel && domLayout === 'autoHeight' && !this.gridOptionsService.is('pagination')) {
+            console.error("AG Grid: domLayout can only be set to 'autoHeight' when using the client side row model or when using pagination.");
             return;
         }
         this.gridOptionsService.set('domLayout', domLayout);
@@ -21600,6 +21602,10 @@ function unwrapUserComp(comp) {
      *  - `false` to disable pagination
      */
     GridApi.prototype.setPagination = function (value) {
+        if (!this.clientSideRowModel && this.gridOptionsService.get('domLayout') === 'autoHeight' && !value) {
+            console.error("AG Grid: Pagination cannot be disabled when using domLayout set to 'autoHeight' unless using the client-side row model.");
+            return;
+        }
         this.gridOptionsService.set('pagination', value);
     };
     /**

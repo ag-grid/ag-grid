@@ -3642,8 +3642,10 @@ function logDeprecation(version, oldProp, newProp, message) {
             this.pickOneWarning('groupRemoveSingleChildren', 'groupHideOpenParents');
         }
         if (this.gridOptionsService.get('domLayout') === 'autoHeight' && !this.gridOptionsService.isRowModelType('clientSide')) {
-            console.warn("AG Grid: domLayout='autoHeight' was ignored as it is only supported by the Client-Side row model.");
-            this.gridOptions.domLayout = 'normal';
+            if (!this.gridOptionsService.is('pagination')) {
+                console.warn("AG Grid: domLayout='autoHeight' was ignored as it is only supported by the Client-Side row model, unless using pagination.");
+                this.gridOptions.domLayout = 'normal';
+            }
         }
         if (this.gridOptionsService.isRowModelType('serverSide')) {
             var msg = function (prop, alt) { return ("AG Grid: '" + prop + "' is not supported on the Server-Side Row Model." + (alt ? " Please use " + alt + " instead." : '')); };
@@ -20816,8 +20818,8 @@ function unwrapUserComp(comp) {
      * Defaults to `normal` if no domLayout provided.
      */
     GridApi.prototype.setDomLayout = function (domLayout) {
-        if (!this.clientSideRowModel && domLayout === 'autoHeight') {
-            console.error("AG Grid: domLayout can only be set to 'autoHeight' when using the client side row model.");
+        if (!this.clientSideRowModel && domLayout === 'autoHeight' && !this.gridOptionsService.is('pagination')) {
+            console.error("AG Grid: domLayout can only be set to 'autoHeight' when using the client side row model or when using pagination.");
             return;
         }
         this.gridOptionsService.set('domLayout', domLayout);
@@ -21600,6 +21602,10 @@ function unwrapUserComp(comp) {
      *  - `false` to disable pagination
      */
     GridApi.prototype.setPagination = function (value) {
+        if (!this.clientSideRowModel && this.gridOptionsService.get('domLayout') === 'autoHeight' && !value) {
+            console.error("AG Grid: Pagination cannot be disabled when using domLayout set to 'autoHeight' unless using the client-side row model.");
+            return;
+        }
         this.gridOptionsService.set('pagination', value);
     };
     /**
@@ -49616,20 +49622,36 @@ var LazyCache = /** @class */ (function (_super) {
      * @returns the rows visible display index relative to the grid
      */
     LazyCache.prototype.getDisplayIndexFromStoreIndex = function (storeIndex) {
-        var nodesAfterThis = this.nodeMap.filter(function (lazyNode) { return lazyNode.index > storeIndex; });
-        if (nodesAfterThis.length === 0) {
-            return this.store.getDisplayIndexEnd() - (this.numberOfRows - storeIndex);
+        var _a, _b;
+        var nodeAtIndex = this.nodeMap.getBy('index', storeIndex);
+        if (nodeAtIndex) {
+            return nodeAtIndex.node.rowIndex;
         }
         var nextNode;
-        for (var i = 0; i < nodesAfterThis.length; i++) {
-            var lazyNode = nodesAfterThis[i];
+        var previousNode;
+        this.nodeMap.forEach(function (lazyNode) {
+            // previous node
+            if (storeIndex > lazyNode.index) {
+                // get the largest previous node
+                if (previousNode == null || previousNode.index < lazyNode.index) {
+                    previousNode = lazyNode;
+                }
+                return;
+            }
+            // next node
+            // get the smallest next node
             if (nextNode == null || nextNode.index > lazyNode.index) {
                 nextNode = lazyNode;
+                return;
             }
+        });
+        if (!nextNode) {
+            return this.store.getDisplayIndexEnd() - (this.numberOfRows - storeIndex);
         }
-        var nextDisplayIndex = nextNode.node.rowIndex;
-        var storeIndexDiff = nextNode.index - storeIndex;
-        return nextDisplayIndex - storeIndexDiff;
+        if (!previousNode) {
+            return this.store.getDisplayIndexStart() + storeIndex;
+        }
+        return (_b = (_a = previousNode.node.childStore) === null || _a === void 0 ? void 0 : _a.getDisplayIndexEnd()) !== null && _b !== void 0 ? _b : previousNode.node.rowIndex + 1;
     };
     /**
      * Creates a new row and inserts it at the given index
