@@ -126,8 +126,9 @@ const MenuItem = ({ item, currentFramework, activeParentItems }) => {
                     className={isActiveParent ? styles.activeItemParent : undefined}
                     onClick={() => {
                         const docsButton = document.getElementById(DOCS_BUTTON_ID);
+                        const docsButtonIsVisible = Boolean(docsButton.offsetWidth || docsButton.offsetHeight || docsButton.getClientRects().length);
                         const isOpen = !docsButton.classList.contains('collapsed');
-                        if (isOpen) {
+                        if (isOpen && docsButtonIsVisible) {
                             docsButton.click();
                         }
                     }}
