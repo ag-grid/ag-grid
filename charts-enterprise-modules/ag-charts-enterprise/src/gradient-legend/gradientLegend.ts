@@ -77,7 +77,7 @@ export class GradientLegend {
     enabled = true;
 
     @Validate(POSITION)
-    position: AgChartLegendPosition = 'right';
+    position: AgChartLegendPosition = 'bottom';
 
     private getOrientation(): AgChartOrientation {
         switch (this.position) {

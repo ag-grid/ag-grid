@@ -746,15 +746,11 @@ The `series` property is an array because it is possible to supply multiple seri
 
 The default `axes` configuration is a `category` axis on the bottom and `number` axis on the left of a chart, both of which are exactly what we need in this case, so we don't need to supply these here.
 
-The chart also features a legend by default which uses the `yKey` for the series, which in this case is `'spending'`.
+## Legend
 
-![Line chart](line-chart.png)
+By default, the chart displays a legend when there is more than one series present. To enable the legend for a chart with a single series, set `legend.enabled` to `true`.
 
-## Customising the Legend
-
-If we don't want the legend to show the `yKey` itself we can give it a name, for example `'Coffee Spending'`.
-
-This name is more descriptive but also longer, so let's position the legend on the bottom of the chart to make more space for the series:
+The chart legend uses the `yKey` for the series, which in this case is `'spending'`. This can be renamed using the `yName` property.
 
 [[only-javascript]]
 | ```diff
@@ -767,7 +763,7 @@ This name is more descriptive but also longer, so let's position the legend on t
 | +       yName: 'Coffee Spending',
 |     }],
 | +   legend: {
-| +       position: 'bottom',
+| +       enabled: true,
 | +   },
 | });
 | ```
@@ -783,7 +779,7 @@ This name is more descriptive but also longer, so let's position the legend on t
 | +           yName: 'Coffee Spending',
 |         }],
 | +       legend: {
-| +           position: 'bottom',
+| +           enabled: true,
 | +       },
 |     };
 | }
@@ -803,7 +799,7 @@ This name is more descriptive but also longer, so let's position the legend on t
 | +               yName: 'Coffee Spending',
 |             }],
 | +           legend: {
-| +               position: 'bottom',
+| +               enabled: true,
 | +           },
 |         }
 |     }
@@ -839,7 +835,7 @@ This name is more descriptive but also longer, so let's position the legend on t
 | +       yName: 'Coffee Spending',
 |       }],
 | +     legend: {
-| +       position: 'bottom',
+| +       enabled: true,
 | +     },
 |     },
 |   };

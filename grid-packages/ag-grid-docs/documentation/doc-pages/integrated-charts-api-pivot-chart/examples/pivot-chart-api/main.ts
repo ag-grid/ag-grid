@@ -33,9 +33,6 @@ function onFirstDataRendered(event: FirstDataRenderedEvent) {
     chartThemeName: 'ag-vivid',
     chartThemeOverrides: {
       common: {
-        legend: {
-          enabled: true,
-        },
         navigator: {
           enabled: true,
           height: 10,
