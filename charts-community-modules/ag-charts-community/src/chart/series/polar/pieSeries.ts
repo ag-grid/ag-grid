@@ -1366,7 +1366,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 wasClicked ||
                 singleEnabledWasClicked ||
                 matchesClickedLegendValue ||
-                (enabled && singleEnabledInEachSeries);
+                (singleEnabledInEachSeries && enabled);
 
             this.toggleSeriesItem(index, newEnabled);
         });

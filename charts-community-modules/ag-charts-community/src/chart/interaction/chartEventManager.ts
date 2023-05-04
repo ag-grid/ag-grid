@@ -33,12 +33,7 @@ export class ChartEventManager extends BaseManager<ChartEventType, ChartEvents> 
         this.listeners.dispatch('legend-item-click', event);
     }
 
-    legendItemDoubleClick(
-        series: Series,
-        itemId: string | number,
-        enabled: boolean,
-        numVisibleItems: { [key: string]: number }
-    ) {
+    legendItemDoubleClick(series: Series, itemId: any, enabled: boolean, numVisibleItems: { [key: string]: number }) {
         const event: LegendItemDoubleClickChartEvent = {
             type: 'legend-item-double-click',
             series,
