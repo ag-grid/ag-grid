@@ -112,12 +112,12 @@ export class CrosshairLabel {
             return Math.max(Math.min(actual, high), low);
         };
 
-        const windowBounds = this.getWindowBoundingBox();
-        const maxLeft = windowBounds.x + windowBounds.width - element.clientWidth - 1;
-        const maxTop = windowBounds.y + windowBounds.height - element.clientHeight;
+        const containerBounds = this.getContainerBoundingBox();
+        const maxLeft = containerBounds.x + containerBounds.width - element.clientWidth - 1;
+        const maxTop = containerBounds.y + containerBounds.height - element.clientHeight;
 
-        left = limit(windowBounds.x, left, maxLeft);
-        top = limit(windowBounds.y, top, maxTop);
+        left = limit(containerBounds.x, left, maxLeft);
+        top = limit(containerBounds.y, top, maxTop);
 
         element.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
 
@@ -135,8 +135,9 @@ export class CrosshairLabel {
         return new _Scene.BBox(element.clientLeft, element.clientTop, element.clientWidth, element.clientHeight);
     }
 
-    private getWindowBoundingBox(): _Scene.BBox {
-        return new BBox(0, 0, window.innerWidth, window.innerHeight);
+    private getContainerBoundingBox(): _Scene.BBox {
+        const { width, height } = this.labelRoot.getBoundingClientRect();
+        return new BBox(0, 0, width, height);
     }
 
     toggle(visible?: boolean) {
