@@ -54,8 +54,10 @@ export class GridOptionsValidator {
         }
 
         if (this.gridOptionsService.get('domLayout') === 'autoHeight' && !this.gridOptionsService.isRowModelType('clientSide')) {
-            console.warn(`AG Grid: domLayout='autoHeight' was ignored as it is only supported by the Client-Side row model.`);
-            this.gridOptions.domLayout = 'normal';
+            if (!this.gridOptionsService.is('pagination')) {
+                console.warn(`AG Grid: domLayout='autoHeight' was ignored as it is only supported by the Client-Side row model, unless using pagination.`);
+                this.gridOptions.domLayout = 'normal';
+            }
         }
 
         if (this.gridOptionsService.isRowModelType('serverSide')) {
