@@ -416,26 +416,26 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 
 <framework-specific-section frameworks="javascript">
 <a class="btn btn-dark mb-2 mr-3" href="https://plnkr.co/edit/4RA1NMI4unVHfRaV?preview" target="_blank">
-    Open in <img src="../../images/plunker_icon.svg" alt="Open in Plunker" style="width: 2.5rem" /> Plunker
+    Open in <img src="../../images/resources/charts-getting-started/plunker_icon.svg" alt="Open in Plunker" style="width: 2.5rem" /> Plunker
 </a>
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
 <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-charts-angular-hello-world-gjjfpt" target="_blank">
-    Open in <img src="../../images/stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
+    Open in <img src="../../images/resources/charts-getting-started/stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
 </a>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
 <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-charts-react-hello-world-yduhy" target="_blank">
-    Open in <img src="../../images/stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
+    Open in <img src="../../images/resources/charts-getting-started/stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
 </a>
 </framework-specific-section>
 
 
 <framework-specific-section frameworks="vue">
 <a class="btn btn-dark mb-2 mr-3" href="https://codesandbox.io/s/ag-charts-vue-hello-world-cfoehv" target="_blank">
-    Open in <img src="../../images/codesandbox_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> CodeSandbox
+    Open in <img src="../../images/resources/charts-getting-started/codesandbox_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> CodeSandbox
 </a>
 </framework-specific-section>
 
@@ -779,7 +779,7 @@ The `series` property is an array because it is possible to supply multiple seri
 
 The default `axes` configuration is a `category` axis on the bottom and `number` axis on the left of a chart, both of which are exactly what we need in this case, so we don't need to supply these here.
 
-The chart also features a legend by default which uses the `yKey` for the series, which in this case is `'spending'`.
+The chart also features a legend by default which uses the `yKey` for the series, which in this case is `'spending'`. 
 
 ![Line chart](line-chart.png)
 

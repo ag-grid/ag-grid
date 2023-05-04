@@ -10,9 +10,11 @@ The example below shows the data with two sets of data. Clicking the buttons tog
 
 The example below is identical to the above except [Row IDs](/row-ids/) are provided via the `getRowId()` callback. This results in Row Selection being maintained across Row Data changes (assuming the Row exists in both sets) and the HTML is not redrawn from scratch, resulting in a Row Animation (`animateRows=true`) of the rows.
 
-[[only-react]]
-|[[note]]
-|| Provide Row ID's to avoid flicker when refreshing. If you do not provide Row ID's, then the HTML for all Rows is redrawn from scratch.
+<framework-specific-section frameworks="react">
+<note>
+| Provide Row ID's to avoid flicker when refreshing. If you do not provide Row ID's, then the HTML for all Rows is redrawn from scratch.
+</note>
+</framework-specific-section>
 
 <grid-example title='Simple Row ID' name='simple-row-id' type='generated' options=' { "modules": ["clientside"] }'></grid-example>
 
