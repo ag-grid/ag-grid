@@ -697,7 +697,9 @@
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
       "color?": "CssColor",
-      "spacing?": "number"
+      "spacing?": "number",
+      "maxWidth?": "PixelSize",
+      "maxHeight?": "PixelSize"
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",
@@ -707,7 +709,9 @@
       "fontSize?": "/** The font size in pixels to use for the text. */",
       "fontFamily?": "/** The font family to use for the text. */",
       "color?": "/** The colour to use for the text. */",
-      "spacing?": "/** Spacing added to help position the text. */"
+      "spacing?": "/** Spacing added to help position the text. */",
+      "maxWidth?": "/** Used to constrain the width of the title. */",
+      "maxHeight?": "/** Used to constrain the height of the title. */"
     }
   },
   "AgChartSubtitleOptions": {
@@ -720,7 +724,9 @@
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
       "color?": "CssColor",
-      "spacing?": "number"
+      "spacing?": "number",
+      "maxWidth?": "PixelSize",
+      "maxHeight?": "PixelSize"
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",
@@ -730,7 +736,9 @@
       "fontSize?": "/** The font size in pixels to use for the text. */",
       "fontFamily?": "/** The font family to use for the text. */",
       "color?": "/** The colour to use for the text. */",
-      "spacing?": "/** Spacing added to help position the text. */"
+      "spacing?": "/** Spacing added to help position the text. */",
+      "maxWidth?": "/** Used to constrain the width of the title. */",
+      "maxHeight?": "/** Used to constrain the height of the title. */"
     }
   },
   "AgChartFooterOptions": {
@@ -743,7 +751,9 @@
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
       "color?": "CssColor",
-      "spacing?": "number"
+      "spacing?": "number",
+      "maxWidth?": "PixelSize",
+      "maxHeight?": "PixelSize"
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",
@@ -753,7 +763,9 @@
       "fontSize?": "/** The font size in pixels to use for the text. */",
       "fontFamily?": "/** The font family to use for the text. */",
       "color?": "/** The colour to use for the text. */",
-      "spacing?": "/** Spacing added to help position the text. */"
+      "spacing?": "/** Spacing added to help position the text. */",
+      "maxWidth?": "/** Used to constrain the width of the title. */",
+      "maxHeight?": "/** Used to constrain the height of the title. */"
     }
   },
   "AgAxisCaptionOptions": {
@@ -2739,7 +2751,9 @@
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
       "color?": "CssColor",
-      "spacing?": "number"
+      "spacing?": "number",
+      "maxWidth?": "PixelSize",
+      "maxHeight?": "PixelSize"
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",
@@ -2749,7 +2763,9 @@
       "fontSize?": "/** The font size in pixels to use for the text. */",
       "fontFamily?": "/** The font family to use for the text. */",
       "color?": "/** The colour to use for the text. */",
-      "spacing?": "/** Spacing added to help position the text. */"
+      "spacing?": "/** Spacing added to help position the text. */",
+      "maxWidth?": "/** Used to constrain the width of the title. */",
+      "maxHeight?": "/** Used to constrain the height of the title. */"
     }
   },
   "AgPieSeriesCalloutOptions": {

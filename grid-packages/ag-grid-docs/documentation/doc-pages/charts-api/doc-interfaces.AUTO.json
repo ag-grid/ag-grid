@@ -1161,6 +1161,14 @@
     "spacing": {
       "description": "/** Spacing added to help position the text. */",
       "type": { "returnType": "number", "optional": true }
+    },
+    "maxWidth": {
+      "description": "/** Used to constrain the width of the title. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "maxHeight": {
+      "description": "/** Used to constrain the height of the title. */",
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgChartSubtitleOptions": {
@@ -1195,6 +1203,14 @@
     "spacing": {
       "description": "/** Spacing added to help position the text. */",
       "type": { "returnType": "number", "optional": true }
+    },
+    "maxWidth": {
+      "description": "/** Used to constrain the width of the title. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "maxHeight": {
+      "description": "/** Used to constrain the height of the title. */",
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgChartFooterOptions": {
@@ -1229,6 +1245,14 @@
     "spacing": {
       "description": "/** Spacing added to help position the text. */",
       "type": { "returnType": "number", "optional": true }
+    },
+    "maxWidth": {
+      "description": "/** Used to constrain the width of the title. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "maxHeight": {
+      "description": "/** Used to constrain the height of the title. */",
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgAxisCaptionOptions": {
@@ -4197,6 +4221,14 @@
     "spacing": {
       "description": "/** Spacing added to help position the text. */",
       "type": { "returnType": "number", "optional": true }
+    },
+    "maxWidth": {
+      "description": "/** Used to constrain the width of the title. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "maxHeight": {
+      "description": "/** Used to constrain the height of the title. */",
+      "type": { "returnType": "PixelSize", "optional": true }
     }
   },
   "AgPieSeriesCalloutOptions": {
