@@ -742,20 +742,35 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             let labelText = datum.isLeaf ? datum.label : datum.label.toUpperCase();
 
             let labelStyle: Label;
+            let wrappedText = '';
             if (datum.isLeaf) {
                 // Choose the font size that fits
-                labelStyle =
-                    [labels.large, labels.medium, labels.small].find((s) => {
-                        const { width, height } = getTextSize(labelText, s);
-                        return width < availTextWidth && height < availTextHeight && !isBoxTooSmall(s);
-                    }) || labels.small;
+                labelStyle = labels.small;
+                for (const s of [labels.large, labels.medium, labels.small]) {
+                    const { width, height } = getTextSize(labelText, s);
+                    if (height > availTextHeight || isBoxTooSmall(s)) {
+                        continue;
+                    }
+                    if (width <= availTextWidth) {
+                        labelStyle = s;
+                        break;
+                    }
+                    const wrapped = Text.wrap(labelText, availTextWidth, availTextHeight, s);
+                    if (wrapped.match(/-$/m)) {
+                        // Avoid hyphens
+                        continue;
+                    }
+                    wrappedText = wrapped;
+                    labelStyle = s;
+                    break;
+                }
             } else if (datum.depth === 1) {
                 labelStyle = title;
             } else {
                 labelStyle = subtitle;
             }
 
-            const labelSize = getTextSize(labelText, labelStyle);
+            const labelSize = getTextSize(wrappedText || labelText, labelStyle);
             if (isBoxTooSmall(labelStyle)) {
                 // Avoid labels on too small tiles
                 return;
@@ -787,7 +802,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
 
             labelMeta.set(datum, {
                 label: {
-                    text: labelText,
+                    text: wrappedText || labelText,
                     style: labelStyle,
                     ...(datum.isLeaf
                         ? {

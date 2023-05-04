@@ -1,5 +1,6 @@
 import { Scene } from '../scene/scene';
 import { Group } from '../scene/group';
+import { Text } from '../scene/shape/text';
 import { Series, SeriesNodeDatum, SeriesNodePickMode } from './series/series';
 import { Padding } from '../util/padding';
 
@@ -817,7 +818,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         const updateCaption = (caption: Caption) => {
             const defaultCaptionHeight = shrinkRect.height / 10;
-            const captionLineHeight = caption.lineHeight ?? caption.fontSize * caption.lineHeightRatio;
+            const captionLineHeight = caption.lineHeight ?? caption.fontSize * Text.defaultLineHeightRatio;
             const maxWidth = shrinkRect.width;
             const maxHeight = Math.max(captionLineHeight, defaultCaptionHeight);
             caption.computeTextWrap(maxWidth, maxHeight);

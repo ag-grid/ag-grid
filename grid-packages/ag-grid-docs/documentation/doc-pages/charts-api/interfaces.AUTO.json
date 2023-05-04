@@ -4360,6 +4360,16 @@
     "meta": { "isTypeAlias": true },
     "type": "CanvasFillStrokeStyles & CanvasCompositing & CanvasShadowStyles & CanvasPathDrawingStyles & CanvasDrawPath"
   },
+  "TextSizeProperties": {
+    "meta": {},
+    "type": {
+      "fontFamily": "string",
+      "fontSize": "number",
+      "fontStyle?": "FontStyle",
+      "fontWeight?": "FontWeight",
+      "lineHeight?": "number"
+    }
+  },
   "Comparator": {
     "meta": { "isTypeAlias": true, "typeParams": ["T"] },
     "type": "(a: T, b: T) => number"

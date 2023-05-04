@@ -6150,6 +6150,13 @@
   "ShapeLineCap": {},
   "ShapeLineJoin": {},
   "CanvasContext": {},
+  "TextSizeProperties": {
+    "fontFamily": { "type": { "returnType": "string", "optional": false } },
+    "fontSize": { "type": { "returnType": "number", "optional": false } },
+    "fontStyle": { "type": { "returnType": "FontStyle", "optional": true } },
+    "fontWeight": { "type": { "returnType": "FontWeight", "optional": true } },
+    "lineHeight": { "type": { "returnType": "number", "optional": true } }
+  },
   "Comparator": { "meta": { "typeParams": ["T"] } },
   "LiteralOrFn": { "meta": { "typeParams": ["T"] } },
   "TransformFn": {},
