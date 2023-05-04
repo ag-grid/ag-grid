@@ -1,6 +1,6 @@
-import { AgChart, AgChartOptions } from "ag-charts-community"
+import { AgChart, AgPolarChartOptions } from "ag-charts-community"
 
-const options: AgChartOptions = {
+const options: AgPolarChartOptions = {
   container: document.getElementById("myChart"),
   data: [
     { os: "Android", "2020": 56.9, "2023": 63.9 },
