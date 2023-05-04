@@ -94,7 +94,7 @@
   },
   "field": {
     "description": "/** The field of the row object to get the cell's data from.\n     * Deep references into a row object is supported via dot notation, i.e `'address.firstLine'`.\n     */",
-    "type": { "returnType": "NestedFieldPaths<TData>" }
+    "type": { "returnType": "NestedFieldPaths<TData, TValue>" }
   },
   "type": {
     "description": "/** A comma separated string or array of strings containing `ColumnType` keys which can be used as a template for a column.\n     * This helps to reduce duplication of properties when you have a lot of common column properties.\n     */",

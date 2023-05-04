@@ -107,16 +107,18 @@ export interface ToolPanelClassParams<TData = any, TValue = any> extends AgGridC
 export type ToolPanelClass<TData = any, TValue = any> = string | string[] | ((params: ToolPanelClassParams<TData, TValue>) => string | string[] | undefined);
 
 type StringOrNumKeys<TObj> = keyof TObj & (string | number);
-type NestedPath<TValue, Prefix extends string> =
+type NestedPath<TValue, Prefix extends string, TValueNestedChild> =
     TValue extends object
-    ? `${Prefix}.${NestedFieldPaths<TValue>}`
+    ? `${Prefix}.${NestedFieldPaths<TValue, TValueNestedChild>}`
     : never;
 
 /**
  * Returns a union of all possible paths to nested fields in `TData`.
  */
-export type NestedFieldPaths<TData = any> = {
-    [TKey in StringOrNumKeys<TData>]: `${TKey}` | NestedPath<TData[TKey], `${TKey}`>;
+export type NestedFieldPaths<TData = any, TValue = any> = {
+    [TKey in StringOrNumKeys<TData>]:
+        | (TData[TKey] extends TValue ? `${TKey}` : never)
+        | NestedPath<TData[TKey], `${TKey}`, TValue>;
 }[StringOrNumKeys<TData>];
 
 
@@ -133,7 +135,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * The field of the row object to get the cell's data from.
      * Deep references into a row object is supported via dot notation, i.e `'address.firstLine'`.
      */
-    field?: NestedFieldPaths<TData>;
+    field?: NestedFieldPaths<TData, TValue>;
     /**
      * A comma separated string or array of strings containing `ColumnType` keys which can be used as a template for a column.
      * This helps to reduce duplication of properties when you have a lot of common column properties.

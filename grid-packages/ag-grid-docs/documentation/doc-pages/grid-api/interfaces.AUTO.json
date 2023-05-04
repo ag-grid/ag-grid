@@ -527,13 +527,16 @@
   "NestedPath": {
     "meta": {
       "isTypeAlias": true,
-      "typeParams": ["TValue", "Prefix extends string"]
+      "typeParams": ["TValue", "Prefix extends string", "TValueNestedChild"]
     },
-    "type": "TValue extends object ? `${Prefix}.${NestedFieldPaths<TValue>}` : never"
+    "type": "TValue extends object ? `${Prefix}.${NestedFieldPaths<TValue, TValueNestedChild>}` : never"
   },
   "NestedFieldPaths": {
-    "meta": { "isTypeAlias": true, "typeParams": ["TData = any"] },
-    "type": "{ [TKey in StringOrNumKeys<TData>]: `${TKey}` | NestedPath<TData[TKey], `${TKey}`>; }[StringOrNumKeys<TData>]"
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
+    "type": "{ [TKey in StringOrNumKeys<TData>]: (TData[TKey] extends TValue ? `${TKey}` : never) | NestedPath<TData[TKey], `${TKey}`, TValue>; }[StringOrNumKeys<TData>]"
   },
   "ColDef": {
     "meta": {
@@ -542,7 +545,7 @@
     },
     "type": {
       "colId?": "string",
-      "field?": "NestedFieldPaths<TData>",
+      "field?": "NestedFieldPaths<TData, TValue>",
       "type?": "string | string[]",
       "cellDataType?": "string",
       "valueGetter?": "string | ValueGetterFunc<TData, TValue>",
