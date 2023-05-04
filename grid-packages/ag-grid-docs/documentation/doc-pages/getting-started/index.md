@@ -18,9 +18,10 @@ title: "Get Started with AG Grid"
     .code-tab .nav-item { 
         margin-bottom: 0 !important;
     }   
-</style>   
+</style>    
  
 md-include:javascript.md
-md-include:angular.md    
-  
+md-include:angular.md   
+md-include:react.md
+      
  

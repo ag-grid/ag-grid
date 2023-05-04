@@ -30,7 +30,6 @@
 <div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
 </framework-specific-section>
 
-
 <framework-specific-section frameworks="angular">
 <snippet transform={false} language="ts">
 |import { Component } from '@angular/core';
@@ -460,6 +459,7 @@
 |   this.agGrid.api.deselectAll();
 | }
 </snippet>
+</framework-specific-section>
 
 <framework-specific-section frameworks="angular">
 | ### Consuming Grid Events
@@ -476,6 +476,7 @@
 |    ...
 |/>
 </snippet>
+</framework-specific-section>
 
 <framework-specific-section frameworks="angular">
 |
