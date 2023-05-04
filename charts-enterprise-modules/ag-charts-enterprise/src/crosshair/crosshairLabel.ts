@@ -116,7 +116,7 @@ export class CrosshairLabel {
         const maxLeft = containerBounds.x + containerBounds.width - element.clientWidth - 1;
         const maxTop = containerBounds.y + containerBounds.height - element.clientHeight;
 
-        left = limit(containerBounds.x, left, maxLeft);
+        left = limit(containerBounds.x + 1, left, maxLeft);
         top = limit(containerBounds.y, top, maxTop);
 
         element.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
