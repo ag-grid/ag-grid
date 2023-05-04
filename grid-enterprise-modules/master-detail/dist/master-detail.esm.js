@@ -47802,7 +47802,7 @@ var GridOptionsService = /** @class */ (function () {
     GridOptionsService.prototype.isColumnsSortingCoupledToGroup = function () {
         var autoGroupColumnDef = this.gridOptions.autoGroupColumnDef;
         var isClientSideRowModel = this.isRowModelType('clientSide');
-        return isClientSideRowModel && !(autoGroupColumnDef === null || autoGroupColumnDef === void 0 ? void 0 : autoGroupColumnDef.comparator);
+        return isClientSideRowModel && !(autoGroupColumnDef === null || autoGroupColumnDef === void 0 ? void 0 : autoGroupColumnDef.comparator) && !this.isTreeData();
     };
     GridOptionsService.prototype.getGroupAggFiltering = function () {
         var userValue = this.gridOptions.groupAggFiltering;

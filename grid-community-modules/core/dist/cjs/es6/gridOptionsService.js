@@ -316,7 +316,7 @@ let GridOptionsService = class GridOptionsService {
     isColumnsSortingCoupledToGroup() {
         const autoGroupColumnDef = this.gridOptions.autoGroupColumnDef;
         const isClientSideRowModel = this.isRowModelType('clientSide');
-        return isClientSideRowModel && !(autoGroupColumnDef === null || autoGroupColumnDef === void 0 ? void 0 : autoGroupColumnDef.comparator);
+        return isClientSideRowModel && !(autoGroupColumnDef === null || autoGroupColumnDef === void 0 ? void 0 : autoGroupColumnDef.comparator) && !this.isTreeData();
     }
     getGroupAggFiltering() {
         const userValue = this.gridOptions.groupAggFiltering;
