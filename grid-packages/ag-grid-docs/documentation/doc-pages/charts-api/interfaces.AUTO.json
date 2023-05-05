@@ -2462,7 +2462,6 @@
       "yKey?": "string",
       "xName?": "string",
       "yName?": "string",
-      "flipXY?": "boolean",
       "fill?": "CssColor",
       "stroke?": "CssColor",
       "strokeWidth?": "PixelSize",

@@ -142,7 +142,6 @@ export class ChartTheme {
     private static getBarSeriesDefaults() {
         return {
             ...this.getSeriesDefaults(),
-            flipXY: false,
             fillOpacity: 1,
             strokeOpacity: 1,
             xKey: '',
@@ -324,11 +323,9 @@ export class ChartTheme {
         series: {
             column: {
                 ...ChartTheme.getBarSeriesDefaults(),
-                flipXY: false,
             },
             bar: {
                 ...ChartTheme.getBarSeriesDefaults(),
-                flipXY: true,
             },
             line: {
                 ...ChartTheme.getLineSeriesDefaults(),

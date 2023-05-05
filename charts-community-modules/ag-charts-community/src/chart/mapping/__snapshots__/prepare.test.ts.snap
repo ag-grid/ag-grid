@@ -677,7 +677,6 @@ Object {
         "#c16068",
         "#a2bf8a",
       ],
-      "flipXY": false,
       "grouped": true,
       "hideInLegend": Array [],
       "highlightStyle": Object {
@@ -1737,7 +1736,6 @@ Object {
         "#c84164",
         "#888888",
       ],
-      "flipXY": false,
       "hideInLegend": Array [],
       "highlightStyle": Object {
         "item": Object {
@@ -3453,7 +3451,6 @@ Object {
       "fills": Array [
         "#f3622d",
       ],
-      "flipXY": true,
       "grouped": true,
       "hideInLegend": Array [],
       "highlightStyle": Object {
@@ -3750,7 +3747,6 @@ Object {
       "fills": Array [
         "rgba(0, 117, 163, 0.9)",
       ],
-      "flipXY": true,
       "grouped": true,
       "hideInLegend": Array [],
       "highlightStyle": Object {
@@ -4589,7 +4585,6 @@ Object {
         "#19A0AA",
         "#F15F36",
       ],
-      "flipXY": false,
       "grouped": true,
       "hideInLegend": Array [],
       "highlightStyle": Object {
@@ -4909,7 +4904,6 @@ Object {
         "rgba(0, 117, 163, 0.9)",
         "rgba(226, 188, 34, 0.9)",
       ],
-      "flipXY": true,
       "grouped": true,
       "hideInLegend": Array [],
       "highlightStyle": Object {
@@ -5237,7 +5231,6 @@ Object {
         "#9a42c8",
         "#c84164",
       ],
-      "flipXY": false,
       "grouped": true,
       "hideInLegend": Array [],
       "highlightStyle": Object {
@@ -7919,7 +7912,6 @@ Object {
         "#ffbb33",
         "#ff4444",
       ],
-      "flipXY": true,
       "hideInLegend": Array [],
       "highlightStyle": Object {
         "item": Object {
@@ -8250,7 +8242,6 @@ Object {
         "#9b59b6",
         "#34495e",
       ],
-      "flipXY": false,
       "hideInLegend": Array [],
       "highlightStyle": Object {
         "item": Object {
@@ -9124,7 +9115,6 @@ Object {
       "fills": Array [
         "#0084e7",
       ],
-      "flipXY": false,
       "grouped": true,
       "hideInLegend": Array [],
       "highlightStyle": Object {
@@ -11117,7 +11107,6 @@ Object {
         "#57b757",
         "#41a9c9",
       ],
-      "flipXY": true,
       "hideInLegend": Array [],
       "highlightStyle": Object {
         "item": Object {
@@ -11438,7 +11427,6 @@ Object {
         "#E55934",
         "#FA7921",
       ],
-      "flipXY": false,
       "hideInLegend": Array [],
       "highlightStyle": Object {
         "item": Object {
