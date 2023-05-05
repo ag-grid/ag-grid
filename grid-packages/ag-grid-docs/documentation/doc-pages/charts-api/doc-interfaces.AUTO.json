@@ -4699,6 +4699,35 @@
       "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
     }
   },
+  "AgTreemapSeriesLabelFormatterParams": {
+    "datum": { "type": { "returnType": "DatumType", "optional": false } },
+    "meta": { "typeParams": ["DatumType"] }
+  },
+  "AgTreemapSeriesValueLabelOptions": {
+    "key": {
+      "description": "/** A property to be used as a key to retrieve a value from datum. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "name": {
+      "description": "/** A name of a datum value. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "formatter": {
+      "description": "/** A function to generate a value label from datum. */",
+      "type": {
+        "arguments": {
+          "params": "AgTreemapSeriesLabelFormatterParams<DatumType>"
+        },
+        "returnType": "string",
+        "optional": true
+      }
+    },
+    "style": {
+      "description": "/** The label's font and color style. */",
+      "type": { "returnType": "AgChartLabelOptions", "optional": true }
+    },
+    "meta": { "typeParams": ["DatumType"] }
+  },
   "AgTreemapSeriesLabelsOptions": {
     "large": {
       "description": "/** The label configuration for the large leaf tiles. */",
@@ -4715,7 +4744,9 @@
     "formatter": {
       "description": "/** A function to generate a label/title for the cell. */",
       "type": {
-        "arguments": { "params": "{ datum: any; }" },
+        "arguments": {
+          "params": "AgTreemapSeriesLabelFormatterParams<DatumType>"
+        },
         "returnType": "string",
         "optional": true
       }
@@ -4723,10 +4754,11 @@
     "value": {
       "description": "/** The configuration for the cell value label. */",
       "type": {
-        "returnType": "{\n        /** A property to be used as a key to retrieve a value from datum. */\n        key?: string;\n        /** A name of a datum value. */\n        name?: string;\n        /** A function to generate a value label from datum. */\n        formatter?: (params: { datum: any }) => string;\n        /** The label's font and color style. */\n        style?: AgChartLabelOptions;\n    }",
+        "returnType": "AgTreemapSeriesValueLabelOptions<DatumType>",
         "optional": true
       }
-    }
+    },
+    "meta": { "typeParams": ["DatumType"] }
   },
   "AgTreemapSeriesHighlightTextStyle": {
     "color": {
@@ -4763,7 +4795,10 @@
     },
     "labels": {
       "description": "/** Configuration for the tile labels. */",
-      "type": { "returnType": "AgTreemapSeriesLabelsOptions", "optional": true }
+      "type": {
+        "returnType": "AgTreemapSeriesLabelsOptions<DatumType>",
+        "optional": true
+      }
     },
     "labelKey": {
       "description": "/** The name of the node key containing the label. */",

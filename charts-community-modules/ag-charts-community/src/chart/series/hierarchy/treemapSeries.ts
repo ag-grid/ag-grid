@@ -201,7 +201,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             label.fontSize = 10;
             return label;
         })(),
-        formatter: undefined as AgTreemapSeriesLabelsOptions['formatter'],
+        formatter: undefined as AgTreemapSeriesLabelsOptions<any>['formatter'],
         value: new TreemapValueLabel(),
     };
 

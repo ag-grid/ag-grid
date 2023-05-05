@@ -3052,14 +3052,33 @@
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
+  "AgTreemapSeriesLabelFormatterParams": {
+    "meta": { "typeParams": ["DatumType"] },
+    "type": { "datum": "DatumType" }
+  },
+  "AgTreemapSeriesValueLabelOptions": {
+    "meta": { "typeParams": ["DatumType"] },
+    "type": {
+      "key?": "string",
+      "name?": "string",
+      "formatter?": "(params: AgTreemapSeriesLabelFormatterParams<DatumType>) => string",
+      "style?": "AgChartLabelOptions"
+    },
+    "docs": {
+      "key?": "/** A property to be used as a key to retrieve a value from datum. */",
+      "name?": "/** A name of a datum value. */",
+      "formatter?": "/** A function to generate a value label from datum. */",
+      "style?": "/** The label's font and color style. */"
+    }
+  },
   "AgTreemapSeriesLabelsOptions": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
       "large?": "AgChartLabelOptions",
       "medium?": "AgChartLabelOptions",
       "small?": "AgChartLabelOptions",
-      "formatter?": "(params: { datum: any; }) => string",
-      "value?": "{ key?: string; name?: string; formatter?: (params: { datum: any; }) => string; style?: AgChartLabelOptions; }"
+      "formatter?": "(params: AgTreemapSeriesLabelFormatterParams<DatumType>) => string",
+      "value?": "AgTreemapSeriesValueLabelOptions<DatumType>"
     },
     "docs": {
       "large?": "/** The label configuration for the large leaf tiles. */",
@@ -3098,7 +3117,7 @@
       "type?": "'treemap'",
       "title?": "AgTreemapSeriesLabelOptions",
       "subtitle?": "AgTreemapSeriesLabelOptions",
-      "labels?": "AgTreemapSeriesLabelsOptions",
+      "labels?": "AgTreemapSeriesLabelsOptions<DatumType>",
       "labelKey?": "string",
       "sizeKey?": "string",
       "colorKey?": "string",

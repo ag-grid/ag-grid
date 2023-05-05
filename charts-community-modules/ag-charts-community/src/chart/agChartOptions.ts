@@ -1619,7 +1619,22 @@ export interface AgTreemapSeriesTooltip<DatumType> extends AgSeriesTooltip {
     renderer?: (params: AgTreemapSeriesTooltipRendererParams<DatumType>) => string | AgTooltipRendererResult;
 }
 
-export interface AgTreemapSeriesLabelsOptions {
+export interface AgTreemapSeriesLabelFormatterParams<DatumType> {
+    datum: DatumType;
+}
+
+export interface AgTreemapSeriesValueLabelOptions<DatumType> {
+    /** A property to be used as a key to retrieve a value from datum. */
+    key?: string;
+    /** A name of a datum value. */
+    name?: string;
+    /** A function to generate a value label from datum. */
+    formatter?: (params: AgTreemapSeriesLabelFormatterParams<DatumType>) => string;
+    /** The label's font and color style. */
+    style?: AgChartLabelOptions;
+}
+
+export interface AgTreemapSeriesLabelsOptions<DatumType> {
     /** The label configuration for the large leaf tiles. */
     large?: AgChartLabelOptions;
     /** The label configuration for the medium-sized leaf tiles. */
@@ -1627,18 +1642,9 @@ export interface AgTreemapSeriesLabelsOptions {
     /** The label configuration for the small leaf tiles. */
     small?: AgChartLabelOptions;
     /** A function to generate a label/title for the cell. */
-    formatter?: (params: { datum: any }) => string;
+    formatter?: (params: AgTreemapSeriesLabelFormatterParams<DatumType>) => string;
     /** The configuration for the cell value label. */
-    value?: {
-        /** A property to be used as a key to retrieve a value from datum. */
-        key?: string;
-        /** A name of a datum value. */
-        name?: string;
-        /** A function to generate a value label from datum. */
-        formatter?: (params: { datum: any }) => string;
-        /** The label's font and color style. */
-        style?: AgChartLabelOptions;
-    };
+    value?: AgTreemapSeriesValueLabelOptions<DatumType>;
 }
 
 export interface AgTreemapSeriesHighlightTextStyle {
@@ -1659,7 +1665,7 @@ export interface AgTreemapSeriesOptions<DatumType = any> extends AgBaseSeriesOpt
     /** The label configuration for the children of the top-level parent tiles. */
     subtitle?: AgTreemapSeriesLabelOptions;
     /** Configuration for the tile labels. */
-    labels?: AgTreemapSeriesLabelsOptions;
+    labels?: AgTreemapSeriesLabelsOptions<DatumType>;
     /** The name of the node key containing the label. */
     labelKey?: string;
     /** The name of the node key containing the size value. */
