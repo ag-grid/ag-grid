@@ -68,8 +68,9 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
             setViewportHeight: (height: string) => eViewport.current!.style.height = height,
             setRowCtrls: (rowCtrls, useFlushSync) => {
                 if(rowCtrlsRef.current !== rowCtrls){
+                    const useFlush = useFlushSync && rowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
                     rowCtrlsRef.current = rowCtrls;
-                    updateRowCtrlsOrdered(useFlushSync);
+                    updateRowCtrlsOrdered(useFlush);
                 }
             },
             setDomOrder: domOrder => {

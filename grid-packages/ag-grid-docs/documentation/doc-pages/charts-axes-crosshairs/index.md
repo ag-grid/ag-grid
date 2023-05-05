@@ -24,9 +24,7 @@ axes: [
 ]
 ```
 
-<chart-example title='Basic Crosshair' name='basic-crosshairs' type='generated' options='{ "enterprise": true }'></chart-example> 
- 
-[Crosshair Example](https://plnkr.co/edit/CIja77MQKhSnePn4?open=main.js)
+<chart-example title='Enabling Crosshairs' name='enabling-crosshairs' type='generated' options='{ "enterprise": true }'></chart-example>
 
 ## Crosshair Snap
 
@@ -46,7 +44,7 @@ axes: [
 ]
 ```
 
-[Crosshair Snap False Example](https://plnkr.co/edit/KIZfPMY3yG31rScl?open=main.js)
+<chart-example title='Crosshair Snap False' name='crosshair-snap' type='generated' options='{ "enterprise": true }'></chart-example>
 
 ## Crosshair Styles
 
@@ -60,7 +58,7 @@ crosshair: {
 },
 ```
 
-[Crosshair Styles Example](https://plnkr.co/edit/WWShmKEk4U2EiOoU?open=main.js)
+<chart-example title='Crosshair Styles' name='crosshair-styles' type='generated' options='{ "enterprise": true }'></chart-example>
 
 ## Crosshair Label
 
@@ -86,8 +84,7 @@ crosshair: {
   }
 }
 ```
-
-[Crosshair Label Offset Example](https://plnkr.co/edit/cMwlh8WT7VSTD1pg?open=main.js)
+<chart-example title='Crosshair Label Offset' name='crosshair-label-offset' type='generated' options='{ "enterprise": true }'></chart-example>
 
 ## Crosshair Label format
 
@@ -101,7 +98,7 @@ The example below demonstrates this behaviour.
 
 Notice how when you click on one of the buttons in the example to change the provided configuration, the crosshair label format changes.
 
-[Crosshair Label Format](https://plnkr.co/edit/BbqRxe8q057BITE5?open=main.js)
+<chart-example title='Crosshair Label Format' name='crosshair-label-format' type='generated' options='{ "enterprise": true }'></chart-example>
 
 ## Crosshair Label Renderer
 
@@ -131,7 +128,7 @@ const labelRenderer = ({ value, fractionDigits }) => {
 }
 ```
 
-[Crosshair Default Label Custom Renderer Styles Example](https://plnkr.co/edit/emFruynNi7HiwDae?open=main.js)
+<chart-example title='Crosshair Default Label With Custom Renderer' name='crosshair-default-label-custom-renderer' type='generated' options='{ "enterprise": true }'></chart-example>
 
 The default label HTML element uses CSS class name `ag-crosshair-label`. Custom CSS styling can be applied by providing a class name via the `crosshair.label.className` config. This class name will be added to the class list of the label's element.
 
@@ -157,7 +154,7 @@ This is shown in the example below. Note that:
 
 - The default label template is used and the style definitions are overriden in the styles.css file.
 
-[Crosshair Default Label Custom CSS Example](https://plnkr.co/edit/BJ0UoCFvMknL2jN7?open=main.js)
+<chart-example title='Crosshair Default Label With Custom CSS' name='crosshair-default-label-custom-css' type='generated' options='{ "enterprise": true }'></chart-example>
 
 ### Custom Label
 
@@ -180,4 +177,4 @@ Note that:
 - The elements have custom CSS class attributes, but the default class names can also be used so that the label gets the default styling.
 - The styles for the elements are defined in the external styles.css file.
 
-[Crosshair Custom Label Style Example](https://plnkr.co/edit/7uBJFVUN75sL625M?open=main.js)
+<chart-example title='Crosshair Custom Label' name='crosshair-custom-label' type='generated' options='{ "enterprise": true }'></chart-example>

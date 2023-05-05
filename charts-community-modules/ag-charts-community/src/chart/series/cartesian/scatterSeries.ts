@@ -13,6 +13,7 @@ import { ChartAxisDirection } from '../../chartAxisDirection';
 import { getMarker } from '../../marker/util';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { ContinuousScale } from '../../../scale/continuousScale';
+import { extent } from '../../../util/array';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { Label } from '../../label';
 import { Text } from '../../../scene/shape/text';
@@ -197,18 +198,17 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
-        const xDataIdx = this.dataModel?.resolveProcessedDataIndex(this.xKey);
-        const yDataIdx = this.dataModel?.resolveProcessedDataIndex(this.yKey);
+        const { dataModel, processedData } = this;
+        if (!processedData || !dataModel) return [];
 
-        if (!xDataIdx || !yDataIdx) {
-            return [];
+        const key = direction === ChartAxisDirection.X ? this.xKey : this.yKey;
+        const dataDef = dataModel.resolveProcessedDataDef(key);
+        const domain = dataModel.getDomain(key, processedData);
+        if (dataDef?.valueType === 'category') {
+            return domain;
         }
-
-        if (direction === ChartAxisDirection.X) {
-            return this.processedData?.domain.values[0] ?? [];
-        } else {
-            return this.processedData?.domain.values[1] ?? [];
-        }
+        const axis = direction === ChartAxisDirection.X ? this.xAxis : this.yAxis;
+        return this.fixNumericExtent(extent(domain), axis);
     }
 
     protected getNodeClickEvent(event: MouseEvent, datum: ScatterNodeDatum): ScatterSeriesNodeClickEvent {

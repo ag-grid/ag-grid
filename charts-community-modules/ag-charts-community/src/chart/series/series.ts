@@ -3,7 +3,7 @@ import { ChartLegendDatum } from '../legendDatum';
 import { Observable, TypedEvent } from '../../util/observable';
 import { ChartAxis } from '../chartAxis';
 import { createId } from '../../util/id';
-import { checkDatum, isNumber } from '../../util/value';
+import { checkDatum } from '../../util/value';
 import {
     BOOLEAN,
     OPT_BOOLEAN,
@@ -17,10 +17,11 @@ import { PlacedLabel, PointLabelDatum } from '../../util/labelPlacement';
 import { Layers } from '../layers';
 import { SizedPoint, Point } from '../../scene/point';
 import { BBox } from '../../scene/bbox';
+import { ChartEventManager } from '../interaction/chartEventManager';
 import { HighlightManager } from '../interaction/highlightManager';
 import { ChartAxisDirection } from '../chartAxisDirection';
 import { AgChartInteractionRange } from '../agChartOptions';
-import { DatumPropertyDefinition, OutputPropertyDefinition } from '../data/dataModel';
+import { DatumPropertyDefinition, fixNumericExtent } from '../data/dataModel';
 import { TooltipPosition } from '../tooltip/tooltip';
 
 /**
@@ -76,15 +77,6 @@ export function valueProperty<K>(propName: K, continuous: boolean, opts = {} as 
         valueType: continuous ? 'range' : 'category',
         validation: (v) => checkDatum(v, continuous) != null,
     };
-    return result;
-}
-
-export function sumProperties<K>(props: K[]) {
-    const result: OutputPropertyDefinition<K> = {
-        properties: props,
-        type: 'sum',
-    };
-
     return result;
 }
 
@@ -145,7 +137,10 @@ export class HighlightStyle {
 
 export class SeriesTooltip {
     @Validate(BOOLEAN)
-    enabled = true;
+    enabled: boolean = true;
+
+    @Validate(BOOLEAN)
+    showArrow: boolean = true;
 
     interaction?: SeriesTooltipInteraction = new SeriesTooltipInteraction();
 
@@ -195,6 +190,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         placeLabels(): Map<Series<any>, PlacedLabel[]>;
         getSeriesRect(): Readonly<BBox> | undefined;
     };
+    chartEventManager?: ChartEventManager;
     highlightManager?: HighlightManager;
     xAxis?: ChartAxis;
     yAxis?: ChartAxis;
@@ -293,6 +289,10 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
                 })
             );
         }
+    }
+
+    addChartEventListeners(): void {
+        return;
     }
 
     destroy(): void {
@@ -531,15 +531,6 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         this.nodeDataRefresh = true;
     }
 
-    toggleOtherSeriesItems(
-        _seriesToggled: { id: string; type: string },
-        _datumIdToggled: any,
-        _enabled?: boolean,
-        _suggestedEnabled?: boolean
-    ): void {
-        return;
-    }
-
     isEnabled() {
         return this.visible;
     }
@@ -547,41 +538,19 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     readonly highlightStyle = new HighlightStyle();
 
     protected fixNumericExtent(extent?: [number | Date, number | Date], axis?: ChartAxis): number[] {
-        if (extent === undefined) {
-            // Don't return a range, there is no range.
-            return [];
+        const fixedExtent = fixNumericExtent(extent);
+
+        if (fixedExtent.length === 0) {
+            return fixedExtent;
         }
 
-        let [min, max] = extent;
-        min = +min;
-        max = +max;
-
-        if (min === 0 && max === 0) {
-            // domain has zero length and the single valid value is 0. Use the default of [0, 1].
-            return [0, 1];
-        }
-
-        if (min === Infinity && max === -Infinity) {
-            // There's no data in the domain.
-            return [];
-        }
-        if (min === Infinity) {
-            min = 0;
-        }
-        if (max === -Infinity) {
-            max = 0;
-        }
-
+        let [min, max] = fixedExtent;
         if (min === max) {
             // domain has zero length, there is only a single valid value in data
 
             const padding = axis?.calculatePadding(min, max) ?? 1;
             min -= padding;
             max += padding;
-        }
-
-        if (!(isNumber(min) && isNumber(max))) {
-            return [];
         }
 
         return [min, max];

@@ -45,11 +45,11 @@ export default props => {
             {img}
             <span className="groupTitle">{countryName}</span>
             <span className="medal gold" aria-label={`${countryName} - ${goldCount} gold medals`}><i
-                class="fas fa-medal"></i>{goldCount}</span>
+                className="fas fa-medal"></i>{goldCount}</span>
             <span className="medal silver" aria-label={`${countryName} - ${silverCount} silver medals`}><i
-                class="fas fa-medal"></i>{silverCount}</span>
+                className="fas fa-medal"></i>{silverCount}</span>
             <span className="medal bronze" aria-label={`${countryName} - ${bronzeCount} bronze medals`}><i
-                class="fas fa-medal"></i>{bronzeCount}</span>
+                className="fas fa-medal"></i>{bronzeCount}</span>
         </div>
     );
 };

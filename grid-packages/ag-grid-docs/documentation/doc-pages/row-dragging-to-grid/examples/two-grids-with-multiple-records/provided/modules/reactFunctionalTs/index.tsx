@@ -182,8 +182,8 @@ const GridExample = () => {
                 <input type="checkbox" id="toggleCheck" checked={checkBoxSelected} onChange={onCheckboxChange} />
                 <label htmlFor="toggleCheck">Checkbox Select</label>
                 <span className="input-group-button">
-                    <button type="button" className="btn btn-default reset" style={{ marginLeft: '5px;' }} onClick={reset}>
-                        <i className="fas fa-redo" style={{ marginRight: '5px;' }}></i>Reset
+                    <button type="button" className="btn btn-default reset" style={{ marginLeft: '5px' }} onClick={reset}>
+                        <i className="fas fa-redo" style={{ marginRight: '5px' }}></i>Reset
                     </button>
                 </span>
             </div>
@@ -193,7 +193,7 @@ const GridExample = () => {
     const getGridWrapper = (id: number) => (
         <div className="panel panel-primary" style={{ marginRight: '10px' }}>
             <div className="panel-heading">{id === 0 ? 'Athletes' : 'Selected Athletes'}</div>
-            <div className="panel-body" style={{ height: '100%;' }}>
+            <div className="panel-body" style={{ height: '100%' }}>
                 <AgGridReact
                     defaultColDef={defaultColDef}
                     getRowId={getRowId}

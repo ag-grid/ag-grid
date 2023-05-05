@@ -118,6 +118,7 @@ export class ChartTheme {
         return {
             tooltip: {
                 enabled: true,
+                showArrow: true,
                 renderer: undefined,
             },
             visible: true,
@@ -141,7 +142,6 @@ export class ChartTheme {
     private static getBarSeriesDefaults() {
         return {
             ...this.getSeriesDefaults(),
-            flipXY: false,
             fillOpacity: 1,
             strokeOpacity: 1,
             xKey: '',
@@ -284,6 +284,7 @@ export class ChartTheme {
             },
             tooltip: {
                 enabled: true,
+                showArrow: true,
                 range: 'nearest' as AgChartInteractionRange,
                 delay: 0,
                 position: {
@@ -322,11 +323,9 @@ export class ChartTheme {
         series: {
             column: {
                 ...ChartTheme.getBarSeriesDefaults(),
-                flipXY: false,
             },
             bar: {
                 ...ChartTheme.getBarSeriesDefaults(),
-                flipXY: true,
             },
             line: {
                 ...ChartTheme.getLineSeriesDefaults(),

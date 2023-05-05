@@ -49,18 +49,29 @@ export class Caption {
     public spacing?: number = Caption.PADDING;
 
     @Validate(OPT_NUMBER(0))
-    private _lineHeight: number | undefined = undefined;
-    get lineHeight(): number | undefined {
-        return this._lineHeight;
-    }
-    set lineHeight(value: number | undefined) {
-        this._lineHeight = value;
-        this.node.lineHeight = value;
-    }
+    lineHeight: number | undefined = undefined;
+
+    @Validate(OPT_NUMBER(0))
+    maxWidth?: number = undefined;
+
+    @Validate(OPT_NUMBER(0))
+    maxHeight?: number = undefined;
 
     constructor() {
         const node = this.node;
         node.textAlign = 'center';
         node.pointerEvents = PointerEvents.None;
+    }
+
+    computeTextWrap(containerWidth: number, containerHeight: number) {
+        const { text } = this;
+        const maxWidth = this.maxWidth == null ? containerWidth : Math.min(this.maxWidth, containerWidth);
+        const maxHeight = this.maxHeight == null ? containerHeight : this.maxHeight;
+        if (!isFinite(maxWidth) && !isFinite(maxHeight)) {
+            this.node.text = text;
+            return;
+        }
+        const wrapped = Text.wrap(text, maxWidth, maxHeight, this);
+        this.node.text = wrapped;
     }
 }

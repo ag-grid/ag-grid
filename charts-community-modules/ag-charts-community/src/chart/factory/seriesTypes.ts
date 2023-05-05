@@ -1,6 +1,6 @@
 import { Series } from '../series/series';
 import { AreaSeries } from '../series/cartesian/areaSeries';
-import { BarSeries } from '../series/cartesian/barSeries';
+import { BarSeries, ColumnSeries } from '../series/cartesian/barSeries';
 import { HistogramSeries } from '../series/cartesian/histogramSeries';
 import { LineSeries } from '../series/cartesian/lineSeries';
 import { ScatterSeries } from '../series/cartesian/scatterSeries';
@@ -12,7 +12,7 @@ type SeriesConstructor = new () => Series<any>;
 const BUILT_IN_SERIES_FACTORIES: Record<string, SeriesConstructor> = {
     area: AreaSeries,
     bar: BarSeries,
-    column: BarSeries,
+    column: ColumnSeries,
     histogram: HistogramSeries,
     line: LineSeries,
     pie: PieSeries,

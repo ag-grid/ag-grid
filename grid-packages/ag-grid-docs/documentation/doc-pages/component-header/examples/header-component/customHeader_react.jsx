@@ -36,15 +36,15 @@ export default class CustomHeader extends Component {
                 <div style={{display: "inline-block"}}>
                     <div onClick={this.onSortRequested.bind(this, 'asc')} onTouchEnd={this.onSortRequested.bind(this, 'asc')}
                          className={`customSortDownLabel ${this.state.ascSort}`}>
-                        <i class="fa fa-long-arrow-alt-down"></i>
+                    <i className="fa fa-long-arrow-alt-down"></i>
                     </div>
                     <div onClick={this.onSortRequested.bind(this, 'desc')} onTouchEnd={this.onSortRequested.bind(this, 'desc')}
                          className={`customSortUpLabel ${this.state.descSort}`}>
-                        <i class="fa fa-long-arrow-alt-up"></i>
+                    <i className="fa fa-long-arrow-alt-up"></i>
                     </div>
                     <div onClick={this.onSortRequested.bind(this, '')} onTouchEnd={this.onSortRequested.bind(this, '')}
                          className={`customSortRemoveLabel ${this.state.noSort}`}>
-                        <i class="fa fa-times"></i>
+                    <i className="fa fa-times"></i>
                     </div>
                 </div>;
         }

@@ -21,19 +21,18 @@ Under normal usage, your application should set the width and height of the grid
 |     &lt;ag-grid-angular style="width: 100%; height: 100%;">&lt;/ag-grid-angular>
 | &lt;/div>
 |
-| &lt;!-- OR set width using fixed pixels -->
-| &lt;div class="ag-theme-alpine">
-|     &lt;ag-grid-angular style="width: 500px; height: 200px">&lt;/ag-grid-angular>
-| &lt;/div>
-</snippet>
-</framework-specific-section>
+| <!-- OR set width using fixed pixels -->
+| <div class="ag-theme-alpine">
+|     <ag-grid-angular style="width: 500px; height: 200px"></ag-grid-angular>
+| </div>
+| ```
 
-<framework-specific-section frameworks="react">
-<snippet transform={false} language="jsx">
-| &lt;!-- set width using percentages -->
-| &lt;div class="ag-theme-alpine">
-|     &lt;AgGridReact style={{ width: '100%', height: '100%;' }} />
-| &lt;/div>
+[[only-react]]
+| ```jsx
+| <!-- set width using percentages -->
+| <div class="ag-theme-alpine">
+|     <AgGridReact style={{ width: '100%', height: '100%' }} />
+| </div>
 |
 | &lt;!-- OR set width using fixed pixels -->
 | &lt;div class="ag-theme-alpine">

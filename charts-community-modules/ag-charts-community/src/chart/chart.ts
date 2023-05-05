@@ -1,5 +1,6 @@
 import { Scene } from '../scene/scene';
 import { Group } from '../scene/group';
+import { Text } from '../scene/shape/text';
 import { Series, SeriesNodeDatum, SeriesNodePickMode } from './series/series';
 import { Padding } from '../util/padding';
 
@@ -22,11 +23,12 @@ import { ChartOverlays } from './overlay/chartOverlays';
 import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { jsonMerge } from '../util/json';
 import { Layers } from './layers';
-import { CursorManager } from './interaction/cursorManager';
+import { ChartEventManager } from './interaction/chartEventManager';
 import { HighlightChangeEvent, HighlightManager } from './interaction/highlightManager';
+import { CursorManager } from './interaction/cursorManager';
 import { TooltipManager } from './interaction/tooltipManager';
-import { Module, ModuleContext, ModuleInstance, RootModule } from '../util/module';
 import { ZoomManager } from './interaction/zoomManager';
+import { Module, ModuleContext, ModuleInstance, RootModule } from '../util/module';
 import { LayoutService } from './layout/layoutService';
 import { DataService } from './dataService';
 import { UpdateService } from './updateService';
@@ -194,9 +196,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return this._destroyed;
     }
 
-    protected readonly interactionManager: InteractionManager;
+    protected readonly chartEventManager: ChartEventManager;
     protected readonly cursorManager: CursorManager;
     protected readonly highlightManager: HighlightManager;
+    protected readonly interactionManager: InteractionManager;
     protected readonly tooltipManager: TooltipManager;
     protected readonly zoomManager: ZoomManager;
     protected readonly layoutService: LayoutService;
@@ -238,9 +241,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.scene.container = element;
         this.autoSize = true;
 
-        this.interactionManager = new InteractionManager(element);
+        this.chartEventManager = new ChartEventManager();
         this.cursorManager = new CursorManager(element);
         this.highlightManager = new HighlightManager();
+        this.interactionManager = new InteractionManager(element);
         this.zoomManager = new ZoomManager();
         this.dataService = new DataService(() => this.series);
         this.layoutService = new LayoutService();
@@ -313,11 +317,12 @@ export abstract class Chart extends Observable implements AgChartInstance {
     getModuleContext(): ModuleContext {
         const {
             scene,
-            interactionManager,
-            zoomManager,
+            chartEventManager,
             cursorManager,
             highlightManager,
+            interactionManager,
             tooltipManager,
+            zoomManager,
             dataService,
             layoutService,
             updateService,
@@ -325,11 +330,12 @@ export abstract class Chart extends Observable implements AgChartInstance {
         } = this;
         return {
             scene,
-            interactionManager,
-            zoomManager,
+            chartEventManager,
             cursorManager,
             highlightManager,
+            interactionManager,
             tooltipManager,
+            zoomManager,
             dataService,
             layoutService,
             updateService,
@@ -600,6 +606,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
             series.data = this.data;
         }
         this.addSeriesListeners(series);
+
+        series.chartEventManager = this.chartEventManager;
+        series.addChartEventListeners();
     }
 
     protected freeSeries(series: Series<any>) {
@@ -807,11 +816,20 @@ export abstract class Chart extends Observable implements AgChartInstance {
         const { title, subtitle, footnote } = this;
         const newShrinkRect = shrinkRect.clone();
 
+        const updateCaption = (caption: Caption) => {
+            const defaultCaptionHeight = shrinkRect.height / 10;
+            const captionLineHeight = caption.lineHeight ?? caption.fontSize * Text.defaultLineHeightRatio;
+            const maxWidth = shrinkRect.width;
+            const maxHeight = Math.max(captionLineHeight, defaultCaptionHeight);
+            caption.computeTextWrap(maxWidth, maxHeight);
+        };
+
         const positionTopAndShrinkBBox = (caption: Caption) => {
             const baseY = newShrinkRect.y;
             caption.node.x = newShrinkRect.x + newShrinkRect.width / 2;
             caption.node.y = baseY;
             caption.node.textBaseline = 'top';
+            updateCaption(caption);
             const bbox = caption.node.computeBBox();
 
             // As the bbox (x,y) ends up at a different location than specified above, we need to
@@ -826,6 +844,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             caption.node.x = newShrinkRect.x + newShrinkRect.width / 2;
             caption.node.y = baseY;
             caption.node.textBaseline = 'bottom';
+            updateCaption(caption);
             const bbox = caption.node.computeBBox();
 
             const bboxHeight = Math.ceil(baseY - bbox.y + (caption.spacing ?? 0));
@@ -996,7 +1015,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
             yOffset: pick.datum.series.tooltip.position.yOffset,
         };
 
-        const meta = this.mergePointerDatum({ pageX, pageY, offsetX, offsetY, event: event, position }, pick.datum);
+        const meta = this.mergePointerDatum(
+            { pageX, pageY, offsetX, offsetY, event: event, showArrow: pick.series.tooltip.showArrow, position },
+            pick.datum
+        );
         meta.enableInteraction = pick.series.tooltip.interaction?.enabled ?? false;
 
         if (shouldUpdateTooltip) {

@@ -24,7 +24,7 @@ const {
     POSITION,
     STRING,
 } = _ModuleSupport;
-const { Group, Rect, Selection, Text, getFont } = _Scene;
+const { Group, Rect, Selection, Text } = _Scene;
 const { createId } = _Util;
 
 class GradientLegendLabel {
@@ -48,10 +48,6 @@ class GradientLegendLabel {
 
     @Validate(OPT_FUNCTION)
     formatter?: (params: AgChartLegendLabelFormatterParams) => string = undefined;
-
-    getFont(): string {
-        return getFont(this.fontSize, this.fontFamily, this.fontStyle, this.fontWeight);
-    }
 }
 
 class GradientLegendItem {
@@ -81,7 +77,7 @@ export class GradientLegend {
     enabled = true;
 
     @Validate(POSITION)
-    position: AgChartLegendPosition = 'right';
+    position: AgChartLegendPosition = 'bottom';
 
     private getOrientation(): AgChartOrientation {
         switch (this.position) {
