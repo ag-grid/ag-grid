@@ -1355,10 +1355,10 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             series.legendItemKey && series.data?.find((_, index) => index === itemId)[series.legendItemKey];
         const totalVisibleItems = Object.values(numVisibleItems).reduce((p, v) => p + v, 0);
         const singleEnabledInEachSeries = Object.values(numVisibleItems).filter((v) => v > 1).length === 0;
+        const singleEnabledWasClicked = totalVisibleItems === 1 && enabled;
 
         this.data?.forEach((datum, index) => {
             const wasClicked = series.id === this.id && itemId === index;
-            const singleEnabledWasClicked = totalVisibleItems === 1 && enabled;
             const matchesClickedLegendValue =
                 series.id !== this.id && this.legendItemKey != null && datum[this.legendItemKey] === clickedLegendValue;
 
