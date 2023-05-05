@@ -101,7 +101,11 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
         }
 
         for (const type of WINDOW_EVENT_HANDLERS) {
-            window.addEventListener(type, this.eventHandler, { passive: false });
+            if (type === 'wheel') {
+                window.addEventListener(type, this.eventHandler, { passive: false });
+            } else {
+                window.addEventListener(type, this.eventHandler);
+            }
         }
 
         if (InteractionManager.interactionDocuments.indexOf(doc) < 0) {
