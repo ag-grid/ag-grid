@@ -27,12 +27,12 @@ Under normal usage, your application should set the width and height of the grid
 | </div>
 | ```
 
-[[only-react]]
-| ```jsx
-| <!-- set width using percentages -->
-| <div class="ag-theme-alpine">
-|     <AgGridReact style={{ width: '100%', height: '100%' }} />
-| </div>
+<framework-specific-section frameworks="react">
+<snippet transform={false} language="jsx">
+| &lt;!-- set width using percentages -->
+| &lt;div class="ag-theme-alpine">
+|     &lt;AgGridReact style={{ width: '100%', height: '100%' }} />
+| &lt;/div>
 |
 | &lt;!-- OR set width using fixed pixels -->
 | &lt;div class="ag-theme-alpine">
