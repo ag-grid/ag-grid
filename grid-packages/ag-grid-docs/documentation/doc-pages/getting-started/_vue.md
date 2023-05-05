@@ -1,40 +1,41 @@
-[[only-vue]]
-|
-|<section class="code-tab mb-3">
-|<div class="card">
-|<div class="card-header">Quick Look Code Example</div>
-|<div class="card-body">
-|<ul class="nav nav-tabs">
-|<li class="nav-item">
-|<a  class="nav-link active" id="component-tab" data-toggle="tab" href="#component" role="tab" aria-controls="component" aria-selected="true">
-|
-|App.vue
-|
-|</a>
-|</li>
-|<li class="nav-item">
-|<a class="nav-link" id="template-tab" data-toggle="tab" href="#template" role="tab" aria-controls="template" aria-selected="false">
-|
-|main.js
-|
-|</a>
-|</li>
-|</ul>
-|<div class="tab-content">
-|<div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
-|
-|```jsx
-|<template>
-|   <ag-grid-vue
+<framework-specific-section frameworks="vue">
+<section class="code-tab mb-3">
+<div class="card">
+<div class="card-header">Quick Look Code Example</div>
+<div class="card-body">
+<ul class="nav nav-tabs">
+<li class="nav-item">
+<a  class="nav-link active" id="component-tab" data-toggle="tab" href="#component" role="tab" aria-controls="component" aria-selected="true">
+
+App.vue
+
+</a>
+</li>
+<li class="nav-item">
+<a class="nav-link" id="template-tab" data-toggle="tab" href="#template" role="tab" aria-controls="template" aria-selected="false">
+
+main.js
+
+</a>
+</li>
+</ul>
+<div class="tab-content">
+<div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="jsx">
+|&lt;template>
+|   &lt;ag-grid-vue
 |     style="width: 500px; height: 200px"
 |     class="ag-theme-alpine"
 |     :columnDefs="columnDefs"
 |     :rowData="rowData"
 |   >
-|   </ag-grid-vue>
-|</template>
+|   &lt;/ag-grid-vue>
+|&lt;/template>
 |
-|<script>
+|&lt;script>
 |import "ag-grid-community/styles/ag-grid.css";
 |import "ag-grid-community/styles/ag-theme-alpine.css";
 |import { AgGridVue } from "ag-grid-vue3";
@@ -59,80 +60,117 @@
 |     };
 |   },
 |};
-|</script>
-|```
-|
-|</div>
-|<div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
-|
-|[[only-vue]]
-|```jsx
+|&lt;/script>
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+</div>
+<div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="jsx">
 |import { createApp } from "vue";
 |import App from "./App.vue";
 |
 |createApp(App).mount("#app");
-|```
-|
-|</div>
-|</div>
-|</div>
-|    <div class="text-right" style="margin-top: -1.5rem;">
-|        <a class="btn btn-dark mb-2 mr-3" href="https://codesandbox.io/s/ag-grid-vue-3-example-bvwik?file=/src/App.vue" target="_blank">Open in CodeSandbox</a>
-|    </div>
-|</div>
-|</section>
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+</div>
+</div>
+</div>
+    <div class="text-right" style="margin-top: -1.5rem;">
+        <a class="btn btn-dark mb-2 mr-3" href="https://codesandbox.io/s/ag-grid-vue-3-example-bvwik?file=/src/App.vue" target="_blank">Open in CodeSandbox</a>
+    </div>
+</div>
+</section>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 | ## Getting Started with Community Video
-|
-| <video-section id="V14w_NFuZB4" title="Video Tutorial for Getting Started with AG Grid Community">
-| <p>
-|     In this video we detail the steps to get an application working with Vue and AG Grid Community. We show how to set up Rows and Columns, set some Grid Properties, use the Grid's API and listen to Grid events.
-| </p>
-| </video-section>
-| <br/>
-| <br/>
-|
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+ <video-section id="V14w_NFuZB4" title="Video Tutorial for Getting Started with AG Grid Community">
+ <p>
+     In this video we detail the steps to get an application working with Vue and AG Grid Community. We show how to set up Rows and Columns, set some Grid Properties, use the Grid's API and listen to Grid events.
+ </p>
+ </video-section>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 | ## Getting Started with Enterprise Video
-|
-| <video-section id="9WnYqSxTuE8" title="Getting Started with AG Grid Enterprise">
-| <p>
-|     The video then follows showing how to get started with <a href="../licensing/">AG Grid Enterprise</a>. Please take a look at Enterprise, you don't need a license to trial AG Grid Enterprise, you only need to get in touch if you decide to use it in your project.
-| </p>
-| <br/>
-| </video-section>
-| <br/>
-| <br/>
-|
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+ <video-section id="9WnYqSxTuE8" title="Getting Started with AG Grid Enterprise">
+ <p>
+     The video then follows showing how to get started with <a href="../licensing/">AG Grid Enterprise</a>. Please take a look at Enterprise, you don't need a license to trial AG Grid Enterprise, you only need to get in touch if you decide to use it in your project.
+ </p>
+ </video-section>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 |## Vue 2 vs Vue 3
 | There are two versions of Vue support, one for Vue 2 and one for Vue 3. The only difference
 | in use is how you import the dependency:
 |
-| | Version | Package Import          | Module Import          |
-| | ------- | ----------------------- | ----------------------- |
-| | Vue 2   | ag-grid-vue             | @ag-grid-community/vue  |
-| | Vue 3   | ag-grid-vue3            | @ag-grid-community/vue3 |
-|
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<div class="ag-styles font-size-responsive">
+    <table>
+        <thead>
+        <tr>
+            <th>Version</th>
+            <th>Package Import</th>
+            <th>Module Import</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Vue 2</td>
+            <td>ag-grid-vue</td>
+            <td>@ag-grid-community/vue</td>
+        </tr>
+        <tr>
+            <td>Vue 3</td>
+            <td>ag-grid-vue3</td>
+            <td>@ag-grid-community/vue3</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 | If you are unsure between Package Import and Module Import, you should use the Package Import
 | (i.e. `ag-grid-vue`/ `ag-grid-vue3`). For more information on import types please refer to the 
-| documentation [here.](/modules/)
+| documentation [here.](../modules/)
 |
-| This tutorial covers the use of Vue 3 with AG Grid - for the Vue 2 version of this tutorial please see the documentaiton [here.](/vue2/)
-|
-| <br/>
+| This tutorial covers the use of Vue 3 with AG Grid - for the Vue 2 version of this tutorial please see the documentation [here.](/vue2/)
 |
 | ## Getting Started with AG Grid Community
 |
 | Below we provide code for a simple AG Grid Vue application. To get this working locally,
 | create a new Vue application as follows (when prompted select Vue 3):
 |
-| ```bash
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="bash">
 | npx -p @vue/cli vue create this-place
 | cd this-place
 | npm install --save ag-grid-community
 | npm install --save ag-grid-vue3
 | npm run serve
-| ```
-|
+</snippet>
+</framework-specific-section> 
+
+<framework-specific-section frameworks="vue">
 | If everything went well `npm run serve` started the web server and conveniently opened a browser
 | pointing to [localhost:8080](http://localhost:8080) (if the browser wasn't automatically launched simply navigate to [localhost:8080](http://localhost:8080)
 | in your browser of choice.
@@ -141,24 +179,32 @@
 |
 | Note the `package.json` has the following dependencies:
 |
-| ```jsx
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false}>
 |"dependencies": {
 |    "ag-grid-community": "@AG_GRID_VERSION@",
 |    "ag-grid-vue3": "@AG_GRID_VERSION@",
 |    ...
-| ```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 | `ag-grid-community` is the core logic of the Grid, and `ag-grid-vue3` is the Vue Rendering Engine.
-| Both are needed for the grid to work with Vue and their versions <b>must</b> match.
+| Both are needed for the grid to work with Vue and their versions **must** match.
 |
 | ### Copy in Application Code
 |
 | Copy the content below into the file `src/App.vue`:
 |
-|```html
-|<template>
-|  <button @click="deselectRows">deselect rows</button>
-|  <ag-grid-vue
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="html">
+|&lt;template>
+|  &lt;button @click="deselectRows">deselect rows&lt;/button>
+|  &lt;ag-grid-vue
 |    class="ag-theme-alpine"
 |    style="height: 500px"
 |    :columnDefs="columnDefs.value"
@@ -169,10 +215,10 @@
 |    @cell-clicked="cellWasClicked"
 |    @grid-ready="onGridReady"
 |  >
-|  </ag-grid-vue>
-|</template>
+|  &lt;/ag-grid-vue>
+|&lt;/template>
 |
-|<script>
+|&lt;script>
 |import { AgGridVue } from "ag-grid-vue3";  // the AG Grid Vue Component
 |import { reactive, onMounted, ref } from "vue";
 |
@@ -231,49 +277,64 @@
 |    };
 |  },
 |};
-|</script>
+|&lt;/script>
 |
-|<style lang="scss"></style>
-|```
-|
-| If everything is correct, you should see a simple grid that looks like this:<br/><br/>
-| ![AG Grid in its simplest form](resources/step1.png)
-|
+|&lt;style lang="scss">&lt;/style>
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+| If everything is correct, you should see a simple grid that looks like this:
+</framework-specific-section>
+<framework-specific-section frameworks="vue">
+| ![AG Grid in its simplest form](../../images/resources/getting-started/step1.png)
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 | We will now break this file down and explain the different parts...
-|
-| <br/>
 |
 | ### Grid CSS and Themes
 |
 | Two CSS files were loaded as follows:
 |
-| ```js
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="jsx">
 |import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS, always needed
 |import 'ag-grid-community/styles/ag-theme-alpine.css'; // Optional theme CSS
-| ```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 | The first `ag-grid.css` is always needed. It's the core structural CSS needed by the grid. Without this, the Grid will not work.
 |
 | The second `ag-theme-alpine.css` is the chosen [Grid Theme](/themes/). This is then subsequently applied to the Grid by including the Theme's CSS Class in the Grid's element `class="ag-theme-alpine"`.
 |
-| ```js
-| <ag-grid-vue
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="jsx">
+| &lt;ag-grid-vue
 |    class="ag-theme-alpine"
-| ```
-|
-| You can select from any of the [Grid Provided Themes](/themes/). If you don't like the provided themes you can [Customise the Provided Theme](/themes/) or do not use a Theme and style the grid yourself from scratch.
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+| You can select from any of the [Grid Provided Themes](../themes/). If you don't like the provided themes you can [Customise the Provided Theme](/themes/) or do not use a Theme and style the grid yourself from scratch.
 |
 | The dimension of the Grid is also set on the grid's element `style="height: 500px"`.
-|
-| <br/>
 |
 | ### Setting Row Data
 |
 | The Grid is provided Row Data via the `rowData` Grid Property. This is wired up using `reactive`
 | so that it can be updated to data loaded from the server.
 |
-| ```jsx
-|  <ag-grid-vue
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="jsx">
+|  &lt;ag-grid-vue
 |    :rowData="rowData.value"
 |...
 |
@@ -288,17 +349,20 @@
 |     .then((remoteRowData) => (rowData.value = remoteRowData));
 | });
 |
-|```
-|
-| <br/>
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 | ### Setting Column Definitions
 |
-| Columns are defined by setting [Column definitions](/column-definitions/). Each Column Definition
+| Columns are defined by setting [Column definitions](../column-definitions/). Each Column Definition
 | defines one Column. Properties can be set for all Columns using the Default Column Definition.
 |
-| ```jsx
-|  <ag-grid-vue
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="jsx">
+|  &lt;ag-grid-vue
 |    :columnDefs="columnDefs.value"
 |    :defaultColDef="defaultColDef"
 |
@@ -317,15 +381,18 @@
 |   flex: 1
 | };
 |
-| ```
-|
-| <br/>
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 | ### Accessing the Grid's API
 |
-| The grid's API is provided in the ```onGridReady`` event. Save a reference to it and then use it later.
+| The grid's API is provided in the `onGridReady` event. Save a reference to it and then use it later.
 |
-|```jsx
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="jsx">
 | const gridApi = ref(null); // Optional - for accessing Grid's API
 | ...
 |
@@ -340,38 +407,44 @@
 |   gridApi.value.deselectAll()
 | }
 |
-|```
-|
-| <br/>
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 | ### Consuming Grid Events
 |
-| Listen to [Grid Events](/grid-events/) by adding a callback to the appropriate `@[event-name]` property.
+| Listen to [Grid Events](../grid-events/) by adding a callback to the appropriate `@[event-name]` property.
 | This example demonstrates consuming the Cell Clicked event via the `@cell-clicked` property.
 |
-|```jsx
-|  <ag-grid-vue
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="jsx">
+|  &lt;ag-grid-vue
 |    @cell-clicked="cellWasClicked"
-|```
-|
-| <br/>
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 | ### Grid Properties
 |
 | Set other [Grid Options](/grid-options/) by adding parameters to `<ag-grid-vue/>` component.
 | This example demonstrates setting `animateRows` and `rowSelection`.
 |
-|```jsx
-|  <ag-grid-vue
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="jsx">
+|  &lt;ag-grid-vue
 |    rowSelection="multiple"
 |    animateRows="true"
 |    ...
 |/>
-|```
-|
-| <br/>
-| <br/>
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="jsx">
 | ## Getting Started with AG Grid Enterprise
 |
 | We would love for you to try out AG Grid Enterprise. There is no cost to trial.
@@ -380,47 +453,62 @@
 |
 | The following steps continues from above and installs AG Grid Enterprise.
 |
-| <br/>
-|
 | ### Install Dependency
 |
 | In addition to `ag-grid-community` and `ag-grid-vue3`, AG Grid Enterprise also needs
 | `ag-grid-enterprise`.
 |
-| ```bash
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="bash">
 | npm install --save ag-grid-enterprise
-| ```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 | The `package.json` should now contain the following dependencies:
 |
-| ```jsx
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="jsx">
 |"dependencies": {
 |    "ag-grid-community": "@AG_GRID_VERSION@",
 |    "ag-grid-enterprise": "@AG_GRID_VERSION@",
 |    "ag-grid-vue3": "@AG_GRID_VERSION@",
 |    ...
-| ```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 | `ag-grid-enterprise` contains the Enterprise features only, it does not contain the core grid,
-| hence you still need `ag-grid-community` and `ag-grid-vue3`. Versions of all three <b>must</b> match.
-|
-| <br/>
+| hence you still need `ag-grid-community` and `ag-grid-vue3`. Versions of all three **must** match.
 |
 | ### Import Enterprise
 |
 | Import AG Grid Enterprise intro your application as follows:
 |
-|```jsx
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="jsx">
 |import 'ag-grid-enterprise';
-|```
-|
-| And that is all, you use the same `<ag-grid-vue/>` component, except this time it comes installed
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+| And that is all, you use the same `&lt;ag-grid-vue/>` component, except this time it comes installed
 | with all the Enterprise features.
 |
 | For example, you can now Row Group (an Enterprise Feature) by a particular Column by
 | setting `rowGroup=true` on the Column Definition.
 |
-|```jsx
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="jsx">
 |// Each Column Definition results in one Column.
 | const columnDefs = reactive({
 |   value: [
@@ -429,4 +517,5 @@
 |        { field: "price" }
 |   ]});
 |
-|```
+</snippet>
+</framework-specific-section>

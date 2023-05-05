@@ -18,7 +18,7 @@ const FrameworkSpecificSection = ({frameworks, currentFramework, children}) => {
     }
 
     const contentAsString = children.toString();
-    if(contentAsString.startsWith("\n|") || contentAsString.startsWith("|")) {
+    if (contentAsString.startsWith("\n|") || contentAsString.startsWith("|")) {
         return <ReactMarkdown children={contentAsString.replace(/^\|/gm, '').trim()}/>;
     }
 
