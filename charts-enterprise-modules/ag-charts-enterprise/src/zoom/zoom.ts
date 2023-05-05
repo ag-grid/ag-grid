@@ -8,13 +8,6 @@ import { constrainZoom, definedZoomState, pointToRatio, scaleZoomCenter, transla
 import { DefinedZoomState } from './zoomTypes';
 import { ZoomRect } from './scenes/zoomRect';
 
-declare global {
-    interface EventTarget {
-        readonly clientHeight: number;
-        readonly clientWidth: number;
-    }
-}
-
 const { BOOLEAN, NUMBER, STRING_UNION, Validate } = _ModuleSupport;
 
 const CONTEXT_ZOOM_ACTION_ID = 'zoom-action';

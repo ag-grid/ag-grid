@@ -6068,9 +6068,6 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "EventTarget": {
-    "classList": { "type": { "returnType": "DOMTokenList", "optional": false } }
-  },
   "TooltipMeta": {
     "pageX": { "type": { "returnType": "number", "optional": false } },
     "pageY": { "type": { "returnType": "number", "optional": false } },
