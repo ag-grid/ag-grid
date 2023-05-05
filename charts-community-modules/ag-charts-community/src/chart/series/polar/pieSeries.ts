@@ -187,38 +187,13 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     private groupSelectionData: PieNodeDatum[] = [];
     private sectorFormatData: AgPieSeriesFormat[] = [];
 
-    private angleScale: LinearScale = (() => {
-        const scale = new LinearScale();
-        // Each sector is a ratio of the whole, where all ratios add up to 1.
-        scale.domain = [0, 1];
-        // Add 90 deg to start the first pie at 12 o'clock.
-        scale.range = [-Math.PI, Math.PI].map((angle) => angle + Math.PI / 2);
-        return scale;
-    })();
+    private angleScale: LinearScale;
 
     // When a user toggles a series item (e.g. from the legend), its boolean state is recorded here.
     public seriesItemEnabled: boolean[] = [];
 
-    private _title?: PieTitle;
-    set title(value: PieTitle | undefined) {
-        const oldTitle = this._title;
-
-        if (oldTitle !== value) {
-            if (oldTitle) {
-                this.labelGroup?.removeChild(oldTitle.node);
-            }
-
-            if (value) {
-                value.node.textBaseline = 'bottom';
-                this.labelGroup?.appendChild(value.node);
-            }
-
-            this._title = value;
-        }
-    }
-    get title(): PieTitle | undefined {
-        return this._title;
-    }
+    title?: PieTitle = undefined;
+    private oldTitle?: PieTitle;
 
     calloutLabel = new PieSeriesCalloutLabel();
 
@@ -248,32 +223,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     readonly innerLabels: DoughnutInnerLabel[] = [];
 
-    private _innerCircleConfig?: DoughnutInnerCircle;
-    private _innerCircleNode?: Circle;
-    get innerCircle(): DoughnutInnerCircle | undefined {
-        return this._innerCircleConfig;
-    }
-    set innerCircle(value: DoughnutInnerCircle | undefined) {
-        const oldCircleCfg = this._innerCircleConfig;
-
-        if (oldCircleCfg !== value) {
-            const oldNode = this._innerCircleNode;
-            let circle: Circle | undefined;
-            if (oldNode) {
-                this.backgroundGroup.removeChild(oldNode);
-            }
-
-            if (value) {
-                circle = new Circle();
-                circle.fill = value.fill;
-                circle.fillOpacity = value.fillOpacity ?? 1;
-                this.backgroundGroup.appendChild(circle);
-            }
-
-            this._innerCircleConfig = value;
-            this._innerCircleNode = circle;
-        }
-    }
+    innerCircle?: DoughnutInnerCircle = undefined;
+    private oldInnerCircle?: DoughnutInnerCircle;
+    private innerCircleNode?: Circle;
 
     /**
      * The key of the numeric field to use to determine the radii of pie sectors.
@@ -355,6 +307,12 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     constructor() {
         super({ useLabelLayer: true });
+
+        this.angleScale = new LinearScale();
+        // Each sector is a ratio of the whole, where all ratios add up to 1.
+        this.angleScale.domain = [0, 1];
+        // Add 90 deg to start the first pie at 12 o'clock.
+        this.angleScale.range = [-Math.PI, Math.PI].map((angle) => angle + Math.PI / 2);
 
         this.backgroundGroup = this.rootGroup.appendChild(
             new Group({
@@ -636,7 +594,10 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     async update() {
         const { title } = this;
+
+        this.updateTitleNodes();
         this.updateRadiusScale();
+        this.updateInnerCircleNodes();
 
         this.rootGroup.translationX = this.centerX;
         this.rootGroup.translationY = this.centerY;
@@ -655,6 +616,43 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         await this.updateSelections();
         await this.updateNodes();
+    }
+
+    private updateTitleNodes() {
+        const { title, oldTitle } = this;
+
+        if (oldTitle !== title) {
+            if (oldTitle) {
+                this.labelGroup?.removeChild(oldTitle.node);
+            }
+
+            if (title) {
+                title.node.textBaseline = 'bottom';
+                this.labelGroup?.appendChild(title.node);
+            }
+
+            this.oldTitle = title;
+        }
+    }
+
+    private updateInnerCircleNodes() {
+        const { innerCircle, oldInnerCircle, innerCircleNode: oldNode } = this;
+        if (oldInnerCircle !== innerCircle) {
+            let circle: Circle | undefined;
+            if (oldNode) {
+                this.backgroundGroup.removeChild(oldNode);
+            }
+
+            if (innerCircle) {
+                circle = new Circle();
+                circle.fill = innerCircle.fill;
+                circle.fillOpacity = innerCircle.fillOpacity ?? 1;
+                this.backgroundGroup.appendChild(circle);
+            }
+
+            this.oldInnerCircle = innerCircle;
+            this.innerCircleNode = circle;
+        }
     }
 
     private updateNodeMidPoint() {
@@ -1160,7 +1158,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     private updateInnerCircle() {
-        const circle = this._innerCircleNode;
+        const circle = this.innerCircleNode;
         if (!circle) {
             return;
         }
