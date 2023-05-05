@@ -41,7 +41,7 @@ export class Context {
     private contextParams: ContextParams;
     private logger: ILogger;
 
-    private destroyed = false;
+    public destroyed = false;
 
     public constructor(params: ContextParams, logger: ILogger) {
         if (!params || !params.beanClasses) {
@@ -68,7 +68,11 @@ export class Context {
 
     public createBean<T extends any>(bean: T, afterPreCreateCallback?: (comp: Component) => void): T {
         if (!bean) {
-            throw Error(`Can't wire to bean since it is null`);
+            throw Error(` Can't wire to bean since it is null`);
+        }
+        if (this.destroyed) {
+            console.warn('Tried to create a bean on a destroyed context. Bean is', bean);
+            return null as any;
         }
         this.wireBeans([bean], afterPreCreateCallback);
         return bean;

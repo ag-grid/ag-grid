@@ -92,8 +92,10 @@ const GridBodyComp = () => {
             setCellSelectableCss: setCellSelectableCss,
             setBodyViewportWidth: (width) => eBodyViewport.current!.style.width = width,
             registerBodyViewportResizeListener: listener => {
-                const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport.current!, listener);
-                destroyFuncs.push(() => unsubscribeFromResize());
+                if (eBodyViewport.current) {
+                    const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport.current!, listener);
+                    destroyFuncs.push(() => unsubscribeFromResize());
+                }
             }
         };
 

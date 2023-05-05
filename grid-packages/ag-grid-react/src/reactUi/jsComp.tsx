@@ -11,7 +11,7 @@ export const showJsComp = (
     ref?: MutableRefObject<any> | ((ref: any)=>void)
 )  => {
 
-    const doNothing = !compDetails || compDetails.componentFromFramework;
+    const doNothing = !compDetails || compDetails.componentFromFramework || context.destroyed;
     if (doNothing) { return; }
 
     const promise = compDetails.newAgStackInstance();

@@ -110,6 +110,35 @@ export class CtrlsService extends BeanStub {
             const p = this.createReadyParams();
             this.readyCallbacks.forEach(c => c(p));
             this.readyCallbacks.length = 0;
+        } else {
+            console.log('not ready', {
+                gridCtrl: this.gridCtrl,
+                gridBodyCtrl: this.gridBodyCtrl,
+
+                centerRowContainerCtrl: this.centerRowContainerCtrl,
+                leftRowContainerCtrl: this.leftRowContainerCtrl,
+                rightRowContainerCtrl: this.rightRowContainerCtrl,
+
+                bottomCenterRowContainerCtrl: this.bottomCenterRowContainerCtrl,
+                bottomLeftRowContainerCtrl: this.bottomLeftRowContainerCtrl,
+                bottomRightRowContainerCtrl: this.bottomRightRowContainerCtrl,
+
+                topCenterRowContainerCtrl: this.topCenterRowContainerCtrl,
+                topLeftRowContainerCtrl: this.topLeftRowContainerCtrl,
+                topRightRowContainerCtrl: this.topRightRowContainerCtrl,
+
+                stickyTopCenterRowContainerCtrl: this.stickyTopCenterRowContainerCtrl,
+                stickyTopLeftRowContainerCtrl: this.stickyTopLeftRowContainerCtrl,
+                stickyTopRightRowContainerCtrl: this.stickyTopRightRowContainerCtrl,
+
+                centerHeaderRowContainerCtrl: this.centerHeaderRowContainerCtrl,
+                leftHeaderRowContainerCtrl: this.leftHeaderRowContainerCtrl,
+                rightHeaderRowContainerCtrl: this.rightHeaderRowContainerCtrl,
+
+                fakeHScrollComp: this.fakeHScrollComp,
+                fakeVScrollComp: this.fakeVScrollComp,
+                gridHeaderCtrl: this.gridHeaderCtrl
+            })
         }
     }
 

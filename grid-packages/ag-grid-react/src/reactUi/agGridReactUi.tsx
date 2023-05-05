@@ -7,7 +7,7 @@ import GridComp from './gridComp';
 import { ReactFrameworkOverrides } from '../shared/reactFrameworkOverrides';
 
 function debug(msg: string, obj?: any) {
-    // console.log(msg, obj);
+    console.log(msg, obj);
 }
 
 export class AgGridReactUi<TData = any> extends Component<AgReactUiProps<TData>, { context: Context | undefined }> {
@@ -38,7 +38,7 @@ export class AgGridReactUi<TData = any> extends Component<AgReactUiProps<TData>,
     }
 
     public render() {
-        debug('AgGridReactUi.render, context = ' + (this.state.context));
+        debug('AgGridReactUi.render, context = ' + ((this.state as any)?.context?.contextID));
         if (this.state.context) {
             this.renderedAfterMount = true;
         }
@@ -124,6 +124,8 @@ export class AgGridReactUi<TData = any> extends Component<AgReactUiProps<TData>,
             debug('AgGridReactUi.componentWillUnmount - executing');
             this.destroyFuncs.forEach(f => f());
             this.destroyFuncs.length = 0;
+            this.mounted = false;
+            this.renderedAfterMount = false;
         } else {
             debug('AgGridReactUi.componentWillUnmount - skipping');
         }

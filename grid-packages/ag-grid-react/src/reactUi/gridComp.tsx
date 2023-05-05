@@ -4,7 +4,7 @@ import {
     GridCtrl,
     IGridComp
 } from 'ag-grid-community';
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from './beansContext';
 import GridBodyComp from './gridBodyComp';
 import useReactCommentEffect from './reactComment';
@@ -34,22 +34,25 @@ const GridComp = ({ context }: GridCompProps) => {
 
     const onTabKeyDown = useCallback(() => undefined, []);
 
-    const beans = useMemo( ()=> context.getBean('beans') as Beans, []);
+    const beans = useMemo(() => context.getBean('beans') as Beans, [context]);
 
     useReactCommentEffect(' AG Grid ', eRootWrapperRef);
 
     // create shared controller.
-    useLayoutEffectOnce(() => {
+    useLayoutEffect(() => {
+        if (context.destroyed) { return; }
+
         const currentController = gridCtrlRef.current = context.createBean(new GridCtrl());
 
         return () => {
             context.destroyBean(currentController);
             gridCtrlRef.current = null;
         }
-    });
+    }, [context]);
 
     // initialise the UI
-    useLayoutEffectOnce(() => {
+    useEffect(() => {
+        if (context.destroyed) { return; }
         const gridCtrl = gridCtrlRef.current!;
 
         focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
@@ -87,11 +90,12 @@ const GridComp = ({ context }: GridCompProps) => {
         gridCtrl.setComp(compProxy, eRootWrapperRef.current!, eRootWrapperRef.current!);
 
         setInitialised(true);
-    });
+    }, [context]);
 
     // initialise the extra components
     useEffect(() => {
         if (!tabGuardReady) { return; }
+        if (context.destroyed) { return; }
 
         const gridCtrl = gridCtrlRef.current!;
         const beansToDestroy: any[] = [];
