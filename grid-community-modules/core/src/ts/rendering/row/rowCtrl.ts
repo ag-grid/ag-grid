@@ -6,7 +6,7 @@ import { CellPosition } from "../../entities/cellPositionUtils";
 import { Column, ColumnPinnedType } from "../../entities/column";
 import { RowClassParams, RowStyle } from "../../entities/gridOptions";
 import { RowNode } from "../../entities/rowNode";
-import { DataChangedEvent, RowHighlightPosition } from "../../interfaces/iRowNode";
+import { DataChangedEvent, IRowNode, RowHighlightPosition } from "../../interfaces/iRowNode";
 import { RowPosition } from "../../entities/rowPositionUtils";
 import { CellFocusedEvent, Events, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowEvent, RowValueChangedEvent, VirtualRowRemovedEvent } from "../../events";
 import { RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
@@ -121,6 +121,7 @@ export class RowCtrl extends BeanStub {
     private updateColumnListsPending = false;
 
     private businessKeySanitised: string | null = null;
+    private businessKeyForNodeFunc: ((node: IRowNode<any>) => string) | undefined;
 
     constructor(
         rowNode: RowNode,
@@ -150,10 +151,26 @@ export class RowCtrl extends BeanStub {
     }
 
     private initRowBusinessKey(): void {
-        const businessKeyForNodeFunc = this.beans.gridOptionsService.get('getBusinessKeyForNode');
-        if (typeof businessKeyForNodeFunc !== 'function') { return; }
-        const businessKey = businessKeyForNodeFunc(this.rowNode);
+        this.businessKeyForNodeFunc = this.beans.gridOptionsService.get('getBusinessKeyForNode');
+        this.updateRowBusinessKey();
+    }
+
+    private updateRowBusinessKey(): void {
+        if (typeof this.businessKeyForNodeFunc !== 'function') { return; }
+        const businessKey = this.businessKeyForNodeFunc(this.rowNode);
         this.businessKeySanitised = escapeString(businessKey!);
+    }
+    private setRowBusinessKey(comp: IRowComp): void {
+        if (this.businessKeySanitised != null) {
+            comp.setRowBusinessKey(this.businessKeySanitised);
+        }
+    }
+
+    private setRowId(comp: IRowComp) {
+        const rowIdSanitised = escapeString(this.rowNode.id);
+        if (rowIdSanitised != null) {
+            comp.setRowId(rowIdSanitised);
+        }
     }
 
     public isSticky(): boolean {
@@ -242,14 +259,8 @@ export class RowCtrl extends BeanStub {
             setAriaExpanded(gui.element, this.rowNode.expanded == true);
         }
 
-        const rowIdSanitised = escapeString(this.rowNode.id);
-
-        if (rowIdSanitised != null) {
-            comp.setRowId(rowIdSanitised);
-        }
-        if (this.businessKeySanitised != null) {
-            comp.setRowBusinessKey(this.businessKeySanitised);
-        }
+        this.setRowId(comp);
+        this.setRowBusinessKey(comp);
 
         if (this.isFullWidth() && !this.beans.gridOptionsService.is('suppressCellFocus')) {
             comp.setTabIndex(-1);
@@ -672,6 +683,13 @@ export class RowCtrl extends BeanStub {
                 newData: !event.update
             })
         );
+
+        // as data has changed update the dom row id attributes
+        this.allRowGuis.forEach(gui => {
+            this.setRowId(gui.rowComp);
+            this.updateRowBusinessKey();
+            this.setRowBusinessKey(gui.rowComp);
+        });
 
         // check for selected also, as this could be after lazy loading of the row data, in which case
         // the id might of just gotten set inside the row and the row selected state may of changed
