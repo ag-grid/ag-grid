@@ -25,7 +25,7 @@ import {
     HeatmapModule,
 } from './heatmap/main';
 import { AgNavigatorOptions } from './navigator/main';
-import { AgZoomOptions, ZoomModule } from './zoom/main';
+import { AgZoomAxes, AgZoomOptions, AgZoomPanKey, AgZoomScrollingPivot, ZoomModule } from './zoom/main';
 
 export * from 'ag-charts-community';
 
@@ -45,12 +45,14 @@ export {
     AgHeatmapSeriesTooltip,
     AgHeatmapSeriesTooltipRendererParams,
 };
+export { AgZoomAxes, AgZoomOptions, AgZoomPanKey, AgZoomScrollingPivot };
 
 declare module 'ag-charts-community' {
     export interface AgCartesianChartOptions {
         contextMenu?: AgContextMenuOptions;
         /** Configuration for the chart navigator. */
         navigator?: AgNavigatorOptions;
+        /** Configuration for zoom. */
         zoom?: AgZoomOptions;
     }
 
