@@ -532,6 +532,19 @@ const Request = require("../../living/helpers/http-request");
             './node_modules/remark-prism/node_modules/jsdom/package.json');
 };
 
+const addAgStylesToReactMarkdown = () => {
+    // adds ag styles to blocks created by FrameworkSpecificSelection
+
+    return applyCustomisation('react-markdown', '5.0.3', {
+        name: `Add ag styles to framework specific blocks`,
+        apply: () => updateFileContents(
+            './node_modules/react-markdown/lib/renderers.js',
+            'var className = props.className;',
+            'var className = "ag-styles font-size-responsive";'
+        )
+    });
+};
+
 console.log(`--------------------------------------------------------------------------------`);
 console.log(`Applying customisations...`);
 
@@ -544,6 +557,7 @@ const success = [
     ignoreFsUsages(),
     jsxErrorProcessingIssue(),
     excludeDodgyLintRules(),
+    addAgStylesToReactMarkdown(),
     // disableSharedArray(),
     // disableJsDomNodeNetResources()
 ].every(x => x);

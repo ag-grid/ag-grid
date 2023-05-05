@@ -1,5 +1,6 @@
 import React from 'react';
-import ReactMarkdown from 'react-markdown'
+import ReactMarkdown, {uriTransformer} from 'react-markdown'
+import convertToFrameworkUrl from '../utils/convert-to-framework-url';
 
 const displayChildren = (frameworks, currentFramework) => {
     if (frameworks === 'frameworks') {
@@ -19,7 +20,9 @@ const FrameworkSpecificSection = ({frameworks, currentFramework, children}) => {
 
     const contentAsString = children.toString();
     if (contentAsString.startsWith("\n|") || contentAsString.startsWith("|")) {
-        return <ReactMarkdown children={contentAsString.replace(/^\|/gm, '').trim()}/>;
+        return <ReactMarkdown
+            transformLinkUri={(uri) => uriTransformer(convertToFrameworkUrl(uri, currentFramework))}
+            children={contentAsString.replace(/^\|/gm, '').trim()}/>;
     }
 
     return <>{children}</>;

@@ -72,11 +72,11 @@ Note in the snippet above, the `chartId` is obtained from the [`ChartCreated`](#
 ## Updating Chart Instance
 
 <framework-specific-section frameworks="javascript">
-|The chart instance can be updated using the `AgChart.updateDelta()` method, as described in the [Standalone Charts - API > Create/Update](../charts-api-create-update/#delta-options-update) section.
+|The chart instance can be updated using the `AgChart.updateDelta()` method, as described in the [Standalone Charts - API > Create/Update](/charts-api-create-update/#delta-options-update) section.
 </framework-specific-section>
 
 <framework-specific-section frameworks="frameworks">
-|The chart instance can be updated using the `AgChart.updateDelta()` method, as described in the [Standalone Charts - API > Create/Update](../charts-api-create-update/#delta-options-update-1) section.
+|The chart instance can be updated using the `AgChart.updateDelta()` method, as described in the [Standalone Charts - API > Create/Update](/charts-api-create-update/#delta-options-update-1) section.
 </framework-specific-section>
 
 The example below shows how the chart instance can be used, creating a subtitle and updating
