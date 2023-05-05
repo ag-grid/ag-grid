@@ -20,7 +20,8 @@ import { graphql } from 'gatsby';
 import React, { useState } from 'react';
 import rehypeReact from 'rehype-react';
 import FrameworkSpecificSection from 'components/FrameworkSpecificSection';
-import StyledSection from 'components/StyledSection';
+import Note from 'components/Note';
+import Warning from 'components/Warning';
 import { getProductType } from 'utils/page-header';
 import stripHtml from 'utils/strip-html';
 import DocumentationLink from '../components/DocumentationLink';
@@ -97,9 +98,8 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
             'video-link': VideoLink,
             'chart-gallery': ChartGallery,
             'charts-api-explorer': (props) => ChartsApiExplorer({ ...props, framework, jsonData, exampleIndexData }),
-            'note': (props) => StyledSection({...props, styling: 'note'}),
-            'warning': (props) => StyledSection({...props, styling: 'warning'}),
-            'styled-section': StyledSection,
+            'note': Note,
+            'warning': Warning,
             'framework-specific-section': props => FrameworkSpecificSection({...props, currentFramework: framework}),
 
             // AG Styles wrapper - wrap markdown -> html elements with `.ag-styles` to apply the new design system.
