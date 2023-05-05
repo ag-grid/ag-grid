@@ -57,7 +57,7 @@ Below shows an example of this, where the Detail Grids are configured with diffe
 
 <grid-example title='Dynamic Params' name='dynamic-params' type='generated' options='{ "enterprise": true, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
-md-include:changing-the-template.md
+md-include:changing-the-template.md 
 
 ## Accessing Detail Grids
 
