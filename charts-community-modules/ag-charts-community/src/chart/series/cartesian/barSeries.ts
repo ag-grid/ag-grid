@@ -873,14 +873,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const legendData: CategoryLegendDatum[] = [];
 
         this.yKeys.forEach((stack, stackIndex) => {
-            // Column stacks should be listed in the legend in reverse order, for symmetry with the
-            // vertical stack display order. Bar stacks are already consistent left-to-right with
-            // the legend.
-            const barAlongX = this.getBarDirection() === ChartAxisDirection.X;
-            const startLevel = barAlongX ? 0 : stack.length - 1;
-            const direction = barAlongX ? 1 : -1;
-
-            for (let levelIndex = startLevel, step = 0; step < stack.length; levelIndex += direction, step++) {
+            for (let levelIndex = 0; levelIndex < stack.length; levelIndex++) {
                 const yKey = stack[levelIndex];
                 if (hideInLegend.indexOf(yKey) >= 0) {
                     return;
