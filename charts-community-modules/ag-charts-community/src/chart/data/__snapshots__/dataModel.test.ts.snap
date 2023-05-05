@@ -2289,6 +2289,664 @@ Object {
 }
 `;
 
+exports[`DataModel grouped processing - stacked with accumulation and normalised example should generated the expected results 1`] = `
+Object {
+  "data": Array [
+    Object {
+      "aggValues": Array [
+        Array [
+          76.09130289903365,
+          100,
+        ],
+      ],
+      "datum": Array [
+        Object {
+          "housingAssociation": 388,
+          "localAuthority": 274,
+          "ownerOccupied": 4567,
+          "privateRented": 773,
+          "type": "Semi-detached house",
+        },
+      ],
+      "keys": Array [
+        "Semi-detached house",
+      ],
+      "values": Array [
+        Array [
+          76.09130289903365,
+          88.97034321892703,
+          93.5354881706098,
+          100,
+        ],
+      ],
+    },
+    Object {
+      "aggValues": Array [
+        Array [
+          64.11008346492217,
+          100,
+        ],
+      ],
+      "datum": Array [
+        Object {
+          "housingAssociation": 422,
+          "localAuthority": 231,
+          "ownerOccupied": 2842,
+          "privateRented": 938,
+          "type": "Medium/large terraced house",
+        },
+      ],
+      "keys": Array [
+        "Medium/large terraced house",
+      ],
+      "values": Array [
+        Array [
+          64.11008346492217,
+          85.26956914053689,
+          90.48048725468081,
+          100,
+        ],
+      ],
+    },
+    Object {
+      "aggValues": Array [
+        Array [
+          92.01913393756294,
+          100,
+        ],
+      ],
+      "datum": Array [
+        Object {
+          "housingAssociation": 19,
+          "localAuthority": 4,
+          "ownerOccupied": 3655,
+          "privateRented": 294,
+          "type": "Detached house",
+        },
+      ],
+      "keys": Array [
+        "Detached house",
+      ],
+      "values": Array [
+        Array [
+          92.01913393756294,
+          99.42094662638469,
+          99.52165156092649,
+          100,
+        ],
+      ],
+    },
+    Object {
+      "aggValues": Array [
+        Array [
+          25.251116071428573,
+          100,
+        ],
+      ],
+      "datum": Array [
+        Object {
+          "housingAssociation": 919,
+          "localAuthority": 621,
+          "ownerOccupied": 905,
+          "privateRented": 1139,
+          "type": "Purpose-built flat low rise",
+        },
+      ],
+      "keys": Array [
+        "Purpose-built flat low rise",
+      ],
+      "values": Array [
+        Array [
+          25.251116071428573,
+          57.03125,
+          74.35825892857143,
+          100,
+        ],
+      ],
+    },
+    Object {
+      "aggValues": Array [
+        Array [
+          44.081810269799824,
+          100,
+        ],
+      ],
+      "datum": Array [
+        Object {
+          "housingAssociation": 295,
+          "localAuthority": 168,
+          "ownerOccupied": 1013,
+          "privateRented": 822,
+          "type": "Small terraced house",
+        },
+      ],
+      "keys": Array [
+        "Small terraced house",
+      ],
+      "values": Array [
+        Array [
+          44.081810269799824,
+          79.852045256745,
+          87.16275021758051,
+          100,
+        ],
+      ],
+    },
+    Object {
+      "aggValues": Array [
+        Array [
+          70.4933586337761,
+          100,
+        ],
+      ],
+      "datum": Array [
+        Object {
+          "housingAssociation": 228,
+          "localAuthority": 180,
+          "ownerOccupied": 1486,
+          "privateRented": 214,
+          "type": "Bungalow",
+        },
+      ],
+      "keys": Array [
+        "Bungalow",
+      ],
+      "values": Array [
+        Array [
+          70.4933586337761,
+          80.64516129032258,
+          89.18406072106262,
+          100,
+        ],
+      ],
+    },
+    Object {
+      "aggValues": Array [
+        Array [
+          27.155172413793103,
+          100,
+        ],
+      ],
+      "datum": Array [
+        Object {
+          "housingAssociation": 100,
+          "localAuthority": 37,
+          "ownerOccupied": 252,
+          "privateRented": 539,
+          "type": "Converted flat",
+        },
+      ],
+      "keys": Array [
+        "Converted flat",
+      ],
+      "values": Array [
+        Array [
+          27.155172413793103,
+          85.23706896551724,
+          89.22413793103448,
+          100,
+        ],
+      ],
+    },
+    Object {
+      "aggValues": Array [
+        Array [
+          23.774509803921568,
+          100,
+        ],
+      ],
+      "datum": Array [
+        Object {
+          "housingAssociation": 68,
+          "localAuthority": 109,
+          "ownerOccupied": 97,
+          "privateRented": 134,
+          "type": "Purpose-built flat high rise",
+        },
+      ],
+      "keys": Array [
+        "Purpose-built flat high rise",
+      ],
+      "values": Array [
+        Array [
+          23.774509803921568,
+          56.61764705882353,
+          83.33333333333333,
+          100,
+        ],
+      ],
+    },
+  ],
+  "defs": Object {
+    "keys": Array [
+      Object {
+        "index": 0,
+        "missing": false,
+        "property": "type",
+        "type": "key",
+        "valueType": "category",
+      },
+    ],
+    "values": Array [
+      Object {
+        "index": 0,
+        "missing": false,
+        "processor": [Function],
+        "property": "ownerOccupied",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "index": 1,
+        "missing": false,
+        "processor": [Function],
+        "property": "privateRented",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "index": 2,
+        "missing": false,
+        "processor": [Function],
+        "property": "localAuthority",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "index": 3,
+        "missing": false,
+        "processor": [Function],
+        "property": "housingAssociation",
+        "type": "value",
+        "valueType": "range",
+      },
+    ],
+  },
+  "domain": Object {
+    "aggValues": Array [
+      Array [
+        1.6161279573475509,
+        100,
+      ],
+    ],
+    "groups": Array [
+      Array [
+        "Semi-detached house",
+      ],
+      Array [
+        "Medium/large terraced house",
+      ],
+      Array [
+        "Detached house",
+      ],
+      Array [
+        "Purpose-built flat low rise",
+      ],
+      Array [
+        "Small terraced house",
+      ],
+      Array [
+        "Bungalow",
+      ],
+      Array [
+        "Converted flat",
+      ],
+      Array [
+        "Purpose-built flat high rise",
+      ],
+    ],
+    "keys": Array [
+      Array [
+        "Semi-detached house",
+        "Medium/large terraced house",
+        "Detached house",
+        "Purpose-built flat low rise",
+        "Small terraced house",
+        "Bungalow",
+        "Converted flat",
+        "Purpose-built flat high rise",
+      ],
+    ],
+    "values": Array [
+      Array [
+        97,
+        4567,
+      ],
+      Array [
+        231,
+        5340,
+      ],
+      Array [
+        340,
+        5614,
+      ],
+      Array [
+        408,
+        6002,
+      ],
+    ],
+  },
+  "indices": Object {
+    "keys": Object {
+      "type": 0,
+    },
+    "values": Object {
+      "housingAssociation": 3,
+      "localAuthority": 2,
+      "ownerOccupied": 0,
+      "privateRented": 1,
+    },
+  },
+  "reduced": Object {
+    "aggValuesExtent": Array [
+      1.6161279573475509,
+      100,
+    ],
+  },
+  "time": Any<Number>,
+  "type": "grouped",
+}
+`;
+
+exports[`DataModel grouped processing - stacked with accumulation example should generated the expected results 1`] = `
+Object {
+  "data": Array [
+    Object {
+      "datum": Array [
+        Object {
+          "housingAssociation": 388,
+          "localAuthority": 274,
+          "ownerOccupied": 4567,
+          "privateRented": 773,
+          "type": "Semi-detached house",
+        },
+      ],
+      "keys": Array [
+        "Semi-detached house",
+      ],
+      "values": Array [
+        Array [
+          4567,
+          5340,
+          5614,
+          6002,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "housingAssociation": 422,
+          "localAuthority": 231,
+          "ownerOccupied": 2842,
+          "privateRented": 938,
+          "type": "Medium/large terraced house",
+        },
+      ],
+      "keys": Array [
+        "Medium/large terraced house",
+      ],
+      "values": Array [
+        Array [
+          2842,
+          3780,
+          4011,
+          4433,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "housingAssociation": 19,
+          "localAuthority": 4,
+          "ownerOccupied": 3655,
+          "privateRented": 294,
+          "type": "Detached house",
+        },
+      ],
+      "keys": Array [
+        "Detached house",
+      ],
+      "values": Array [
+        Array [
+          3655,
+          3949,
+          3953,
+          3972,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "housingAssociation": 919,
+          "localAuthority": 621,
+          "ownerOccupied": 905,
+          "privateRented": 1139,
+          "type": "Purpose-built flat low rise",
+        },
+      ],
+      "keys": Array [
+        "Purpose-built flat low rise",
+      ],
+      "values": Array [
+        Array [
+          905,
+          2044,
+          2665,
+          3584,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "housingAssociation": 295,
+          "localAuthority": 168,
+          "ownerOccupied": 1013,
+          "privateRented": 822,
+          "type": "Small terraced house",
+        },
+      ],
+      "keys": Array [
+        "Small terraced house",
+      ],
+      "values": Array [
+        Array [
+          1013,
+          1835,
+          2003,
+          2298,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "housingAssociation": 228,
+          "localAuthority": 180,
+          "ownerOccupied": 1486,
+          "privateRented": 214,
+          "type": "Bungalow",
+        },
+      ],
+      "keys": Array [
+        "Bungalow",
+      ],
+      "values": Array [
+        Array [
+          1486,
+          1700,
+          1880,
+          2108,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "housingAssociation": 100,
+          "localAuthority": 37,
+          "ownerOccupied": 252,
+          "privateRented": 539,
+          "type": "Converted flat",
+        },
+      ],
+      "keys": Array [
+        "Converted flat",
+      ],
+      "values": Array [
+        Array [
+          252,
+          791,
+          828,
+          928,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "housingAssociation": 68,
+          "localAuthority": 109,
+          "ownerOccupied": 97,
+          "privateRented": 134,
+          "type": "Purpose-built flat high rise",
+        },
+      ],
+      "keys": Array [
+        "Purpose-built flat high rise",
+      ],
+      "values": Array [
+        Array [
+          97,
+          231,
+          340,
+          408,
+        ],
+      ],
+    },
+  ],
+  "defs": Object {
+    "keys": Array [
+      Object {
+        "index": 0,
+        "missing": false,
+        "property": "type",
+        "type": "key",
+        "valueType": "category",
+      },
+    ],
+    "values": Array [
+      Object {
+        "index": 0,
+        "missing": false,
+        "processor": [Function],
+        "property": "ownerOccupied",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "index": 1,
+        "missing": false,
+        "processor": [Function],
+        "property": "privateRented",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "index": 2,
+        "missing": false,
+        "processor": [Function],
+        "property": "localAuthority",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "index": 3,
+        "missing": false,
+        "processor": [Function],
+        "property": "housingAssociation",
+        "type": "value",
+        "valueType": "range",
+      },
+    ],
+  },
+  "domain": Object {
+    "groups": Array [
+      Array [
+        "Semi-detached house",
+      ],
+      Array [
+        "Medium/large terraced house",
+      ],
+      Array [
+        "Detached house",
+      ],
+      Array [
+        "Purpose-built flat low rise",
+      ],
+      Array [
+        "Small terraced house",
+      ],
+      Array [
+        "Bungalow",
+      ],
+      Array [
+        "Converted flat",
+      ],
+      Array [
+        "Purpose-built flat high rise",
+      ],
+    ],
+    "keys": Array [
+      Array [
+        "Semi-detached house",
+        "Medium/large terraced house",
+        "Detached house",
+        "Purpose-built flat low rise",
+        "Small terraced house",
+        "Bungalow",
+        "Converted flat",
+        "Purpose-built flat high rise",
+      ],
+    ],
+    "values": Array [
+      Array [
+        97,
+        4567,
+      ],
+      Array [
+        231,
+        5340,
+      ],
+      Array [
+        340,
+        5614,
+      ],
+      Array [
+        408,
+        6002,
+      ],
+    ],
+  },
+  "indices": Object {
+    "keys": Object {
+      "type": 0,
+    },
+    "values": Object {
+      "housingAssociation": 3,
+      "localAuthority": 2,
+      "ownerOccupied": 0,
+      "privateRented": 1,
+    },
+  },
+  "time": Any<Number>,
+  "type": "grouped",
+}
+`;
+
 exports[`DataModel missing and invalid data processing should generated the expected results 1`] = `
 Object {
   "data": Array [

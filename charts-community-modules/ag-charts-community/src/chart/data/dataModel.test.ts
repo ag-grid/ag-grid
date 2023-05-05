@@ -5,11 +5,15 @@ import { DATA_BROWSER_MARKET_SHARE } from '../test/data';
 import * as examples from '../test/examples';
 
 import { AGG_VALUES_EXTENT, DataModel, GroupByFn, SMALLEST_KEY_INTERVAL, SORT_DOMAIN_GROUPS } from './dataModel';
-import { area, groupAverage, groupCount, sum } from './aggregateFunctions';
+import { area, groupAverage, groupCount, range, sum } from './aggregateFunctions';
 
 const rangeKey = (property: string) => ({ property, type: 'key' as const, valueType: 'range' as const });
 const categoryKey = (property: string) => ({ property, type: 'key' as const, valueType: 'category' as const });
 const value = (property: string) => ({ property, type: 'value' as const, valueType: 'range' as const });
+const accumulatedValue = (property: string) => ({
+    ...value(property),
+    processor: (next, total) => next + (total ?? 0),
+});
 
 describe('DataModel', () => {
     describe('ungrouped processing', () => {
@@ -421,6 +425,82 @@ describe('DataModel', () => {
         });
     });
 
+    describe('grouped processing - stacked with accumulation example', () => {
+        it('should generated the expected results', () => {
+            const data = examples.STACKED_BAR_CHART_EXAMPLE.data!;
+            const dataModel = new DataModel<any, any, true>({
+                props: [
+                    categoryKey('type'),
+                    accumulatedValue('ownerOccupied'),
+                    accumulatedValue('privateRented'),
+                    accumulatedValue('localAuthority'),
+                    accumulatedValue('housingAssociation'),
+                ],
+                groupByKeys: true,
+            });
+
+            expect(dataModel.processData(data)).toMatchSnapshot({
+                time: expect.any(Number),
+            });
+        });
+
+        describe('property tests', () => {
+            const dataModel = new DataModel<any, any, true>({
+                props: [
+                    categoryKey('kp'),
+                    accumulatedValue('vp1'),
+                    accumulatedValue('vp2'),
+                    accumulatedValue('vp3'),
+                    accumulatedValue('vp4'),
+                ],
+                groupByKeys: true,
+            });
+            const data = [
+                { kp: 'Q1', vp1: 5, vp2: 7, vp3: 1, vp4: 5 },
+                { kp: 'Q1', vp1: 1, vp2: 2, vp3: 2, vp4: 4 },
+                { kp: 'Q2', vp1: 6, vp2: 9, vp3: 3, vp4: 3 },
+                { kp: 'Q2', vp1: 6, vp2: 9, vp3: 4, vp4: 2 },
+            ];
+
+            it('should extract the configured keys', () => {
+                const result = dataModel.processData(data);
+
+                expect(result?.type).toEqual('grouped');
+                expect(result?.data.length).toEqual(2);
+                expect(result?.data[0].keys).toEqual(['Q1']);
+                expect(result?.data[1].keys).toEqual(['Q2']);
+            });
+
+            it('should extract the configured accumulated values', () => {
+                const result = dataModel.processData(data);
+
+                expect(result?.type).toEqual('grouped');
+                expect(result?.data.length).toEqual(2);
+                expect(result?.data[0].values).toEqual([
+                    [5, 12, 13, 18],
+                    [1, 3, 5, 9],
+                ]);
+                expect(result?.data[1].values).toEqual([
+                    [6, 15, 18, 21],
+                    [6, 15, 19, 21],
+                ]);
+            });
+
+            it('should calculate the domains', () => {
+                const result = dataModel.processData(data);
+
+                expect(result?.type).toEqual('grouped');
+                expect(result?.domain.keys).toEqual([['Q1', 'Q2']]);
+                expect(result?.domain.values).toEqual([
+                    [1, 6],
+                    [3, 15],
+                    [5, 19],
+                    [9, 21],
+                ]);
+            });
+        });
+    });
+
     describe('grouped processing - stacked and normalised example', () => {
         it('should generated the expected results for 100% stacked columns example', () => {
             const data = examples.ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE.data!;
@@ -519,6 +599,88 @@ describe('DataModel', () => {
                         [40, 60, 50, 50],
                         [40, 60, 66.66666666666667, 33.333333333333336],
                     ],
+                ]);
+            });
+        });
+    });
+
+    describe('grouped processing - stacked with accumulation and normalised example', () => {
+        it('should generated the expected results', () => {
+            const data = examples.STACKED_BAR_CHART_EXAMPLE.data!;
+            const dataModel = new DataModel<any, any, true>({
+                props: [
+                    categoryKey('type'),
+                    accumulatedValue('ownerOccupied'),
+                    accumulatedValue('privateRented'),
+                    accumulatedValue('localAuthority'),
+                    accumulatedValue('housingAssociation'),
+                    range(['ownerOccupied', 'privateRented', 'localAuthority', 'housingAssociation']),
+                    AGG_VALUES_EXTENT,
+                ],
+                groupByKeys: true,
+                normaliseTo: 100,
+            });
+
+            expect(dataModel.processData(data)).toMatchSnapshot({
+                time: expect.any(Number),
+            });
+        });
+
+        describe('property tests', () => {
+            const dataModel = new DataModel<any, any, true>({
+                props: [
+                    categoryKey('kp'),
+                    accumulatedValue('vp1'),
+                    accumulatedValue('vp2'),
+                    accumulatedValue('vp3'),
+                    accumulatedValue('vp4'),
+                    range(['vp1', 'vp2', 'vp3', 'vp4']),
+                    AGG_VALUES_EXTENT,
+                ],
+                groupByKeys: true,
+                normaliseTo: 100,
+            });
+            const data = [
+                { kp: 'Q1', vp1: 5, vp2: 7, vp3: 1, vp4: 5 },
+                { kp: 'Q1', vp1: 1, vp2: 2, vp3: 2, vp4: 4 },
+                { kp: 'Q2', vp1: 6, vp2: 9, vp3: 3, vp4: 3 },
+                { kp: 'Q2', vp1: 6, vp2: 9, vp3: 4, vp4: 2 },
+            ];
+
+            it('should extract the configured keys', () => {
+                const result = dataModel.processData(data);
+
+                expect(result?.type).toEqual('grouped');
+                expect(result?.data.length).toEqual(2);
+                expect(result?.data[0].keys).toEqual(['Q1']);
+                expect(result?.data[1].keys).toEqual(['Q2']);
+            });
+
+            it('should extract the configured accumulated values', () => {
+                const result = dataModel.processData(data);
+
+                expect(result?.type).toEqual('grouped');
+                expect(result?.data.length).toEqual(2);
+                expect(result?.data[0].values).toEqual([
+                    [27.77777777777778, 66.66666666666667, 72.22222222222223, 100],
+                    [5.555555555555555, 16.666666666666668, 27.77777777777778, 50],
+                ]);
+                expect(result?.data[1].values).toEqual([
+                    [28.571428571428573, 71.42857142857143, 85.71428571428571, 100],
+                    [28.571428571428573, 71.42857142857143, 90.47619047619048, 100],
+                ]);
+            });
+
+            it('should calculate the domains', () => {
+                const result = dataModel.processData(data);
+
+                expect(result?.type).toEqual('grouped');
+                expect(result?.domain.keys).toEqual([['Q1', 'Q2']]);
+                expect(result?.domain.values).toEqual([
+                    [1, 6],
+                    [3, 15],
+                    [5, 19],
+                    [9, 21],
                 ]);
             });
         });

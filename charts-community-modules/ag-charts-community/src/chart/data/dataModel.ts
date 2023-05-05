@@ -1,5 +1,6 @@
 import { Logger } from '../../util/logger';
 import { isNumber } from '../../util/value';
+import { ContinuousDomain, extendDomain } from './utilFunctions';
 
 export type UngroupedDataItem<D, V> = {
     keys: any[];
@@ -44,28 +45,6 @@ export interface GroupedData<D> {
 export type ProcessedData<D> = UngroupedData<D> | GroupedData<D>;
 
 export type DatumPropertyType = 'range' | 'category';
-
-type ContinuousDomain<T extends number | Date> = [T, T];
-
-function extendDomain<T extends number | Date>(
-    values: T[],
-    domain: ContinuousDomain<T> = [Infinity as T, -Infinity as T]
-) {
-    for (const value of values) {
-        if (typeof value !== 'number') {
-            continue;
-        }
-
-        if (value < domain[0]) {
-            domain[0] = value;
-        }
-        if (value > domain[1]) {
-            domain[1] = value;
-        }
-    }
-
-    return domain;
-}
 
 function toKeyString(keys: any[]) {
     return keys
@@ -194,6 +173,7 @@ export type DatumPropertyDefinition<K> = {
     invalidValue?: any;
     missingValue?: any;
     validation?: (datum: any) => boolean;
+    processor?: (datum: any, previousDatum?: any) => any;
 };
 
 type InternalDatumPropertyDefinition<K> = DatumPropertyDefinition<K> & {
@@ -360,8 +340,9 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
         dataLoop: for (const datum of data) {
             const keys = dataVisible ? new Array(keyDefs.length) : undefined;
             let keyIdx = 0;
+            let key;
             for (const def of keyDefs) {
-                const key = processValue(def, datum);
+                key = processValue(def, datum, key);
                 if (key === INVALID_VALUE) {
                     continue dataLoop;
                 }
@@ -372,8 +353,9 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
 
             const values = dataVisible && valueDefs.length > 0 ? new Array(valueDefs.length) : undefined;
             let valueIdx = 0;
+            let value;
             for (const def of valueDefs) {
-                const value = processValue(def, datum);
+                value = processValue(def, datum, value);
                 if (value === INVALID_VALUE) {
                     continue dataLoop;
                 }
@@ -629,15 +611,15 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
         };
         initDataDomain();
 
-        const processValue = (def: InternalDatumPropertyDefinition<K>, datum: any, updateDataDomain = dataDomain) => {
+        const processValue = (def: InternalDatumPropertyDefinition<K>, datum: any, previousDatum?: any) => {
             const valueInDatum = def.property in datum;
             const missingValueDef = 'missingValue' in def;
             if (!def.missing && !valueInDatum && !missingValueDef) {
                 def.missing = true;
             }
 
-            if (!updateDataDomain.has(def.property)) {
-                initDataDomain(updateDataDomain);
+            if (!dataDomain.has(def.property)) {
+                initDataDomain(dataDomain);
             }
 
             let value = valueInDatum ? datum[def.property] : def.missingValue;
@@ -653,7 +635,11 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
                 }
             }
 
-            const meta = updateDataDomain.get(def.property);
+            if (def.processor) {
+                value = def.processor(value, previousDatum !== INVALID_VALUE ? previousDatum : undefined);
+            }
+
+            const meta = dataDomain.get(def.property);
             if (meta?.type === 'category') {
                 meta.domain.add(value);
             } else if (meta?.type === 'range') {

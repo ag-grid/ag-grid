@@ -1,4 +1,5 @@
 import { AggregatePropertyDefinition } from './dataModel';
+import { extendDomain } from './utilFunctions';
 
 type ContinuousDomain<T extends number | Date> = [T, T];
 
@@ -39,6 +40,16 @@ export function groupSum<K>(props: K[]): AggregatePropertyDefinition<any, any, [
             return acc;
         },
     };
+}
+
+export function range<K>(props: K[]) {
+    const result: AggregatePropertyDefinition<any, any> = {
+        properties: props,
+        type: 'aggregate',
+        aggregateFunction: (values) => extendDomain(values),
+    };
+
+    return result;
 }
 
 export function count() {

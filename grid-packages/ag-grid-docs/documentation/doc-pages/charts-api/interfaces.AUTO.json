@@ -3690,7 +3690,7 @@
   },
   "DatumPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
-    "type": "{ type: 'key' | 'value'; valueType: DatumPropertyType; property: K; invalidValue?: any; missingValue?: any; validation?: (datum: any) => boolean; }"
+    "type": "{ type: 'key' | 'value'; valueType: DatumPropertyType; property: K; invalidValue?: any; missingValue?: any; validation?: (datum: any) => boolean; processor?: (datum: any, previousDatum?: any) => any; }"
   },
   "InternalDatumPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
