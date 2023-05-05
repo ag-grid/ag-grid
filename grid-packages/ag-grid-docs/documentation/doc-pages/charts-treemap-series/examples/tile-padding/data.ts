@@ -31,11 +31,11 @@ export function getData() {
                         size: 900000000,
                     },
                     {
-                        name: 'Kowalski Security',
+                        name: 'Kowalski Antivirus',
                         size: 720000000,
                     },
                     {
-                        name: 'PS Office',
+                        name: 'Macrosoft Office',
                         size: 1200000000,
                     },
                     {

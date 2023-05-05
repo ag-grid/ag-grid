@@ -137,7 +137,10 @@ export class HighlightStyle {
 
 export class SeriesTooltip {
     @Validate(BOOLEAN)
-    enabled = true;
+    enabled: boolean = true;
+
+    @Validate(BOOLEAN)
+    showArrow: boolean = true;
 
     interaction?: SeriesTooltipInteraction = new SeriesTooltipInteraction();
 

@@ -1,5 +1,6 @@
 import { Scene } from '../scene/scene';
 import { Group } from '../scene/group';
+import { Text } from '../scene/shape/text';
 import { Series, SeriesNodeDatum, SeriesNodePickMode } from './series/series';
 import { Padding } from '../util/padding';
 
@@ -817,7 +818,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         const updateCaption = (caption: Caption) => {
             const defaultCaptionHeight = shrinkRect.height / 10;
-            const captionLineHeight = caption.lineHeight ?? caption.fontSize * caption.lineHeightRatio;
+            const captionLineHeight = caption.lineHeight ?? caption.fontSize * Text.defaultLineHeightRatio;
             const maxWidth = shrinkRect.width;
             const maxHeight = Math.max(captionLineHeight, defaultCaptionHeight);
             caption.computeTextWrap(maxWidth, maxHeight);
@@ -1014,7 +1015,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
             yOffset: pick.datum.series.tooltip.position.yOffset,
         };
 
-        const meta = this.mergePointerDatum({ pageX, pageY, offsetX, offsetY, event: event, position }, pick.datum);
+        const meta = this.mergePointerDatum(
+            { pageX, pageY, offsetX, offsetY, event: event, showArrow: pick.series.tooltip.showArrow, position },
+            pick.datum
+        );
         meta.enableInteraction = pick.series.tooltip.interaction?.enabled ?? false;
 
         if (shouldUpdateTooltip) {

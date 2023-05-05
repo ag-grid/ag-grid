@@ -35,9 +35,6 @@ const gridOptions: GridOptions = {
   chartThemes: ['ag-default-dark'],
   chartThemeOverrides: {
     cartesian: {
-      legend: {
-        enabled: false,
-      },
       axes: {
         category: {
           label: {
@@ -66,11 +63,7 @@ function createQuarterlySalesChart(gridApi: GridApi) {
     chartThemeOverrides: {
       common: {
         title: {
-          enabled: true,
           text: 'Quarterly Sales ($)',
-        },
-        legend: {
-          enabled: false,
         },
         axes: {
           category: {
@@ -102,7 +95,6 @@ function createSalesByRefChart(gridApi: GridApi) {
     chartThemeOverrides: {
       common: {
         title: {
-          enabled: true,
           text: 'Sales by Representative ($)',
         },
       },
@@ -134,7 +126,6 @@ function createHandsetSalesChart(gridApi: GridApi) {
     chartThemeOverrides: {
       common: {
         title: {
-          enabled: true,
           text: 'Handsets Sold (Units)',
         },
       },

@@ -1,4 +1,4 @@
-import { Text, getFont } from './scene/shape/text';
+import { Text } from './scene/shape/text';
 import { PointerEvents } from './scene/node';
 import {
     BOOLEAN,
@@ -51,9 +51,6 @@ export class Caption {
     @Validate(OPT_NUMBER(0))
     lineHeight: number | undefined = undefined;
 
-    @Validate(NUMBER(0))
-    lineHeightRatio: number = Text.defaultLineHeightRatio;
-
     @Validate(OPT_NUMBER(0))
     maxWidth?: number = undefined;
 
@@ -69,22 +66,12 @@ export class Caption {
     computeTextWrap(containerWidth: number, containerHeight: number) {
         const { text } = this;
         const maxWidth = this.maxWidth == null ? containerWidth : Math.min(this.maxWidth, containerWidth);
-        const maxHeight = this.maxHeight == null ? containerHeight : Math.min(this.maxHeight, containerHeight);
+        const maxHeight = this.maxHeight == null ? containerHeight : this.maxHeight;
         if (!isFinite(maxWidth) && !isFinite(maxHeight)) {
             this.node.text = text;
             return;
         }
-        const { fontSize, fontFamily, fontStyle, fontWeight } = this;
-        const lineHeight = this.lineHeight ?? fontSize * this.lineHeightRatio;
-        const wrapped = Text.wrap(
-            text,
-            maxWidth,
-            maxHeight,
-            getFont(fontSize, fontFamily, fontStyle, fontWeight),
-            fontSize,
-            lineHeight,
-            true
-        );
+        const wrapped = Text.wrap(text, maxWidth, maxHeight, this);
         this.node.text = wrapped;
     }
 }

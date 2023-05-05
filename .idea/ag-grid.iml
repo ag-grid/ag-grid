@@ -143,7 +143,6 @@
       <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/ag-charts-vue/dist" />
       <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/ag-charts-angular/dist" />
       <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/ag-charts-react/lib" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/documentation/doc-pages" />
     </content>
     <content url="file://$MODULE_DIR$/grid-community-modules/react/dev" />
     <content url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/node_modules" />

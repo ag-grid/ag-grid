@@ -55,7 +55,6 @@ const gridOptions: GridOptions = {
             fill: '#e5e5e5',
           },
           title: {
-            enabled: true,
             fontStyle: 'italic',
             fontWeight: '600',
             fontSize: 18,
@@ -63,7 +62,6 @@ const gridOptions: GridOptions = {
             color: '#414182',
           },
           legend: {
-            enabled: true,
             position: 'left',
             spacing: 2,
             item: {

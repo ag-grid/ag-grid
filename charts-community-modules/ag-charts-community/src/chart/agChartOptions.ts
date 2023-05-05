@@ -278,6 +278,10 @@ export interface AgChartCaptionOptions {
     color?: CssColor;
     /** Spacing added to help position the text. */
     spacing?: number;
+    /** Used to constrain the width of the title. */
+    maxWidth?: PixelSize;
+    /** Used to constrain the height of the title. */
+    maxHeight?: PixelSize;
 }
 export interface AgChartSubtitleOptions extends AgChartCaptionOptions {}
 export interface AgChartFooterOptions extends AgChartCaptionOptions {}
@@ -420,7 +424,7 @@ export interface AgChartLegendListeners {
 }
 
 export interface AgChartLegendOptions {
-    /** Whether or not to show the legend. */
+    /** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */
     enabled?: boolean;
     /** Where the legend should show in relation to the chart. */
     position?: AgChartLegendPosition;
@@ -492,6 +496,8 @@ export interface AgPaginationLabelOptions {
 export interface AgChartTooltipOptions {
     /** Set to false to disable tooltips for all series in the chart. */
     enabled?: boolean;
+    /** Set to false to remove the arrow attached to the tooltip. */
+    showArrow?: boolean;
     /** A class name to be added to the tooltip element of the chart. */
     class?: string;
     /** @deprecated since v7.2.0 (ag-grid v29.2.0) If true, for series with markers the tooltip will be shown to the closest marker. */
@@ -1086,6 +1092,8 @@ export interface AgAreaSeriesMarker<DatumType> extends AgCartesianSeriesMarker<D
 export interface AgSeriesTooltip {
     /** Whether or not to show tooltips when the series are hovered over. */
     enabled?: boolean;
+    /** Set to false to remove the arrow attached to the series tooltip. */
+    showArrow?: boolean;
     /** The position of the tooltip. By default the tooltip follows the mouse pointer. */
     position?: AgTooltipPositionOptions;
     /** Configuration for tooltip interaction. */
@@ -1294,7 +1302,6 @@ export interface AgBarSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     xName?: string;
     /** Human-readable description of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     yName?: string;
-    flipXY?: boolean;
     /** The colour to use for the fill of the bars. */
     fill?: CssColor;
     /** The colours to use for the stroke of the bars. */

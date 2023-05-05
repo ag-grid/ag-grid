@@ -261,9 +261,9 @@ For more advanced configuration see the [Tooltips](../tooltips/) section.
 
 ## Padding
 
-There are some properties to control the density of Treemap tiles:
-- `nodeGap` controls the spacing between Treemap tiles.
-- `nodePadding` sets the indentation of inner content of Treemap tiles (padding between the tile borders and its label and nested tiles).
+There are some properties to control the spacing of treemap tiles:
+- `nodeGap` controls the gap between the treemap tiles. This is the space between the sibling tiles within their parent.
+- `nodePadding` controls the padding of the inner content of treemap tiles. This is the space between the border of each tile and the contained labels and tiles.
 
 ```js
 series: [{

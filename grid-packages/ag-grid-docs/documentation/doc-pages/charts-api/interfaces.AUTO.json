@@ -697,7 +697,9 @@
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
       "color?": "CssColor",
-      "spacing?": "number"
+      "spacing?": "number",
+      "maxWidth?": "PixelSize",
+      "maxHeight?": "PixelSize"
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",
@@ -707,7 +709,9 @@
       "fontSize?": "/** The font size in pixels to use for the text. */",
       "fontFamily?": "/** The font family to use for the text. */",
       "color?": "/** The colour to use for the text. */",
-      "spacing?": "/** Spacing added to help position the text. */"
+      "spacing?": "/** Spacing added to help position the text. */",
+      "maxWidth?": "/** Used to constrain the width of the title. */",
+      "maxHeight?": "/** Used to constrain the height of the title. */"
     }
   },
   "AgChartSubtitleOptions": {
@@ -720,7 +724,9 @@
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
       "color?": "CssColor",
-      "spacing?": "number"
+      "spacing?": "number",
+      "maxWidth?": "PixelSize",
+      "maxHeight?": "PixelSize"
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",
@@ -730,7 +736,9 @@
       "fontSize?": "/** The font size in pixels to use for the text. */",
       "fontFamily?": "/** The font family to use for the text. */",
       "color?": "/** The colour to use for the text. */",
-      "spacing?": "/** Spacing added to help position the text. */"
+      "spacing?": "/** Spacing added to help position the text. */",
+      "maxWidth?": "/** Used to constrain the width of the title. */",
+      "maxHeight?": "/** Used to constrain the height of the title. */"
     }
   },
   "AgChartFooterOptions": {
@@ -743,7 +751,9 @@
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
       "color?": "CssColor",
-      "spacing?": "number"
+      "spacing?": "number",
+      "maxWidth?": "PixelSize",
+      "maxHeight?": "PixelSize"
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",
@@ -753,7 +763,9 @@
       "fontSize?": "/** The font size in pixels to use for the text. */",
       "fontFamily?": "/** The font family to use for the text. */",
       "color?": "/** The colour to use for the text. */",
-      "spacing?": "/** Spacing added to help position the text. */"
+      "spacing?": "/** Spacing added to help position the text. */",
+      "maxWidth?": "/** Used to constrain the width of the title. */",
+      "maxHeight?": "/** Used to constrain the height of the title. */"
     }
   },
   "AgAxisCaptionOptions": {
@@ -971,7 +983,7 @@
       "pagination?": "AgChartLegendPaginationOptions"
     },
     "docs": {
-      "enabled?": "/** Whether or not to show the legend. */",
+      "enabled?": "/** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */",
       "position?": "/** Where the legend should show in relation to the chart. */",
       "orientation?": "/** How the legend items should be arranged. */",
       "maxWidth?": "/** Used to constrain the width of the legend. */",
@@ -1050,6 +1062,7 @@
     "meta": {},
     "type": {
       "enabled?": "boolean",
+      "showArrow?": "boolean",
       "class?": "string",
       "tracking?": "boolean",
       "range?": "AgChartInteractionRange",
@@ -1058,6 +1071,7 @@
     },
     "docs": {
       "enabled?": "/** Set to false to disable tooltips for all series in the chart. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the tooltip. */",
       "class?": "/** A class name to be added to the tooltip element of the chart. */",
       "tracking?": "/** @deprecated since v7.2.0 (ag-grid v29.2.0) If true, for series with markers the tooltip will be shown to the closest marker. */",
       "range?": "/** Range from a point that triggers the tooltip to show. */",
@@ -2017,11 +2031,13 @@
     "meta": {},
     "type": {
       "enabled?": "boolean",
+      "showArrow?": "boolean",
       "position?": "AgTooltipPositionOptions",
       "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
@@ -2068,12 +2084,14 @@
       "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "format?": "string",
       "enabled?": "boolean",
+      "showArrow?": "boolean",
       "position?": "AgTooltipPositionOptions",
       "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
@@ -2135,12 +2153,14 @@
     "type": {
       "renderer?": "(params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "enabled?": "boolean",
+      "showArrow?": "boolean",
       "position?": "AgTooltipPositionOptions",
       "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
@@ -2262,11 +2282,13 @@
       "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "format?": "string",
       "enabled?": "boolean",
+      "showArrow?": "boolean",
       "position?": "AgTooltipPositionOptions",
       "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
@@ -2413,12 +2435,14 @@
     "type": {
       "renderer?": "(params: AgBarSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "enabled?": "boolean",
+      "showArrow?": "boolean",
       "position?": "AgTooltipPositionOptions",
       "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
@@ -2438,7 +2462,6 @@
       "yKey?": "string",
       "xName?": "string",
       "yName?": "string",
-      "flipXY?": "boolean",
       "fill?": "CssColor",
       "stroke?": "CssColor",
       "strokeWidth?": "PixelSize",
@@ -2542,12 +2565,14 @@
     "type": {
       "renderer?": "(params: AgHistogramSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "enabled?": "boolean",
+      "showArrow?": "boolean",
       "position?": "AgTooltipPositionOptions",
       "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
@@ -2702,12 +2727,14 @@
     "type": {
       "renderer?": "(params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "enabled?": "boolean",
+      "showArrow?": "boolean",
       "position?": "AgTooltipPositionOptions",
       "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
@@ -2723,7 +2750,9 @@
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
       "color?": "CssColor",
-      "spacing?": "number"
+      "spacing?": "number",
+      "maxWidth?": "PixelSize",
+      "maxHeight?": "PixelSize"
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",
@@ -2733,7 +2762,9 @@
       "fontSize?": "/** The font size in pixels to use for the text. */",
       "fontFamily?": "/** The font family to use for the text. */",
       "color?": "/** The colour to use for the text. */",
-      "spacing?": "/** Spacing added to help position the text. */"
+      "spacing?": "/** Spacing added to help position the text. */",
+      "maxWidth?": "/** Used to constrain the width of the title. */",
+      "maxHeight?": "/** Used to constrain the height of the title. */"
     }
   },
   "AgPieSeriesCalloutOptions": {
@@ -3009,12 +3040,14 @@
     "type": {
       "renderer?": "(params: AgTreemapSeriesTooltipRendererParams<DatumType>) => string | AgTooltipRendererResult",
       "enabled?": "boolean",
+      "showArrow?": "boolean",
       "position?": "AgTooltipPositionOptions",
       "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
@@ -4186,6 +4219,7 @@
       "pageY": "number",
       "offsetX": "number",
       "offsetY": "number",
+      "showArrow": "boolean",
       "position?": "{ xOffset?: number; yOffset?: number; }",
       "enableInteraction?": "boolean",
       "event": "Event | InteractionEvent<any>"
@@ -4359,6 +4393,16 @@
   "CanvasContext": {
     "meta": { "isTypeAlias": true },
     "type": "CanvasFillStrokeStyles & CanvasCompositing & CanvasShadowStyles & CanvasPathDrawingStyles & CanvasDrawPath"
+  },
+  "TextSizeProperties": {
+    "meta": {},
+    "type": {
+      "fontFamily": "string",
+      "fontSize": "number",
+      "fontStyle?": "FontStyle",
+      "fontWeight?": "FontWeight",
+      "lineHeight?": "number"
+    }
   },
   "Comparator": {
     "meta": { "isTypeAlias": true, "typeParams": ["T"] },

@@ -23,7 +23,7 @@ export class Label {
     color = 'rgba(70, 70, 70, 1)';
 
     getFont(): string {
-        return getFont(this.fontSize, this.fontFamily, this.fontStyle, this.fontWeight);
+        return getFont(this);
     }
 }
 

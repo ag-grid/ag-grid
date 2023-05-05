@@ -13,7 +13,6 @@ const options: AgChartOptions = {
       type: 'scatter',
       xKey: 'time',
       yKey: 'mm',
-      showInLegend: false,
     },
   ],
 }
