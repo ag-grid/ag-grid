@@ -65,6 +65,7 @@ function createQuarterlySalesChart(gridApi: GridApi) {
         title: {
           text: 'Quarterly Sales ($)',
         },
+        legend: { enabled: false },
         axes: {
           category: {
             label: {
@@ -98,7 +99,7 @@ function createSalesByRefChart(gridApi: GridApi) {
           text: 'Sales by Representative ($)',
         },
       },
-      pie: {
+      pie: { 
         series: {
           title: {
             enabled: false,
@@ -128,6 +129,7 @@ function createHandsetSalesChart(gridApi: GridApi) {
         title: {
           text: 'Handsets Sold (Units)',
         },
+        legend: { enabled: false },
       },
     },
     chartContainer: document.querySelector('#barChart') as any,
