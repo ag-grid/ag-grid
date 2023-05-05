@@ -1,4 +1,3 @@
-import { Series } from '../series/series';
 import { BaseManager } from './baseManager';
 
 type ChartEventType = 'legend-item-click' | 'legend-item-double-click';
@@ -9,20 +8,20 @@ interface ChartEvent<ChartEventType> {
 }
 
 export interface LegendItemClickChartEvent extends ChartEvent<'legend-item-click'> {
-    series: Series;
+    series: any;
     itemId: any;
     enabled: boolean;
 }
 
 export interface LegendItemDoubleClickChartEvent extends ChartEvent<'legend-item-double-click'> {
-    series: Series;
+    series: any;
     itemId: any;
     enabled: boolean;
     numVisibleItems: { [key: string]: number };
 }
 
 export class ChartEventManager extends BaseManager<ChartEventType, ChartEvents> {
-    legendItemClick(series: Series, itemId: any, enabled: boolean) {
+    legendItemClick(series: any, itemId: any, enabled: boolean) {
         const event: LegendItemClickChartEvent = {
             type: 'legend-item-click',
             series,
@@ -33,7 +32,7 @@ export class ChartEventManager extends BaseManager<ChartEventType, ChartEvents> 
         this.listeners.dispatch('legend-item-click', event);
     }
 
-    legendItemDoubleClick(series: Series, itemId: any, enabled: boolean, numVisibleItems: { [key: string]: number }) {
+    legendItemDoubleClick(series: any, itemId: any, enabled: boolean, numVisibleItems: { [key: string]: number }) {
         const event: LegendItemDoubleClickChartEvent = {
             type: 'legend-item-double-click',
             series,

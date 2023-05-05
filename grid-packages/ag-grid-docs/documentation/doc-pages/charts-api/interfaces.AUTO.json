@@ -3677,7 +3677,7 @@
   "LegendItemClickChartEvent": {
     "meta": {},
     "type": {
-      "series": "Series",
+      "series": "any",
       "itemId": "any",
       "enabled": "boolean",
       "type": "'legend-item-click'"
@@ -3686,7 +3686,7 @@
   "LegendItemDoubleClickChartEvent": {
     "meta": {},
     "type": {
-      "series": "Series",
+      "series": "any",
       "itemId": "any",
       "enabled": "boolean",
       "numVisibleItems": "{ [key: string]: number; }",

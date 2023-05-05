@@ -5507,7 +5507,7 @@
     "meta": { "typeParams": ["ChartEventType"] }
   },
   "LegendItemClickChartEvent": {
-    "series": { "type": { "returnType": "Series", "optional": false } },
+    "series": { "type": { "returnType": "any", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": false } },
     "enabled": { "type": { "returnType": "boolean", "optional": false } },
     "type": {
@@ -5515,7 +5515,7 @@
     }
   },
   "LegendItemDoubleClickChartEvent": {
-    "series": { "type": { "returnType": "Series", "optional": false } },
+    "series": { "type": { "returnType": "any", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": false } },
     "enabled": { "type": { "returnType": "boolean", "optional": false } },
     "numVisibleItems": {
