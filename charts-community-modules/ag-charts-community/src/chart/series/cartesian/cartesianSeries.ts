@@ -29,7 +29,7 @@ import { ChartAxisDirection } from '../../chartAxisDirection';
 import { getMarker } from '../../marker/util';
 import { Logger } from '../../../util/logger';
 import { DataModel, ProcessedData } from '../../data/dataModel';
-import { LegendItemClickChartEvent } from '../../interaction/chartEventManager';
+import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
 
 type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<
     N,
@@ -135,6 +135,7 @@ export abstract class CartesianSeries<
 
     addChartEventListeners(): void {
         this.chartEventManager?.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
+        this.chartEventManager?.addListener('legend-item-double-click', (event) => this.onLegendItemDoubleClick(event));
     }
 
     destroy() {
@@ -567,9 +568,22 @@ export abstract class CartesianSeries<
     }
 
     onLegendItemClick(event: LegendItemClickChartEvent) {
-        if (event.series.id === this.id) {
-            this.toggleSeriesItem(event.itemId, event.enabled);
+        const { enabled, itemId, series } = event;
+
+        if (series.id === this.id) {
+            this.toggleSeriesItem(itemId, enabled);
         }
+    }
+
+    onLegendItemDoubleClick(event: LegendItemDoubleClickChartEvent) {
+        const { enabled, itemId, series, numVisibleItems } = event;
+
+        const totalVisibleItems = Object.values(numVisibleItems).reduce((p, v) => p + v, 0);
+
+        const wasClicked = series.id === this.id;
+        const newEnabled = wasClicked || (enabled && totalVisibleItems === 1);
+
+        this.toggleSeriesItem(itemId, newEnabled);
     }
 
     toggleSeriesItem(itemId: string, enabled: boolean): void {

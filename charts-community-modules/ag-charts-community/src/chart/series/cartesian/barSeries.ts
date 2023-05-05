@@ -52,7 +52,7 @@ import {
 import { LogAxis } from '../../axis/logAxis';
 import { DataModel, SMALLEST_KEY_INTERVAL, AGG_VALUES_EXTENT } from '../../data/dataModel';
 import { sum } from '../../data/aggregateFunctions';
-import { LegendItemClickChartEvent } from '../../interaction/chartEventManager';
+import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
@@ -915,7 +915,44 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 }
             });
 
-        // Calculate the new visible domain to be displayed
+        this.calculateVisibleDomain();
+    }
+
+    onLegendItemDoubleClick(event: LegendItemDoubleClickChartEvent) {
+        const { enabled, itemId, numVisibleItems } = event;
+
+        const totalVisibleItems = Object.values(numVisibleItems).reduce((p, v) => p + v, 0);
+        const singleEnabledInEachSeries =
+            Object.values(numVisibleItems).filter((v) => v === 1).length === Object.keys(numVisibleItems).length;
+
+        const newEnableds: { [key: string]: boolean } = {};
+
+        this.yKeys.forEach((stack) => {
+            stack.forEach((yKey) => {
+                const matches = yKey === itemId;
+                const singleEnabledWasClicked = totalVisibleItems === 1 && enabled;
+
+                const newEnabled = matches || singleEnabledWasClicked || (singleEnabledInEachSeries && enabled);
+
+                newEnableds[yKey] = newEnableds[yKey] ?? newEnabled;
+
+                // Toggle other items that have matching yNames which have not already been processed.
+                Object.keys(this.yNames)
+                    .filter((id) => this.yNames[id] === this.yNames[yKey])
+                    .forEach((nameYKey) => {
+                        newEnableds[nameYKey] = newEnableds[nameYKey] ?? newEnabled;
+                    });
+            });
+        });
+
+        Object.keys(newEnableds).forEach((yKey) => {
+            super.toggleSeriesItem(yKey, newEnableds[yKey]);
+        });
+
+        this.calculateVisibleDomain();
+    }
+
+    calculateVisibleDomain() {
         const yKeys = this.yKeys.map((stack) => stack.slice()); // deep clone
 
         this.seriesItemEnabled.forEach((enabled, yKey) => {

@@ -5507,11 +5507,22 @@
     "meta": { "typeParams": ["ChartEventType"] }
   },
   "LegendItemClickChartEvent": {
-    "series": { "type": { "returnType": "any", "optional": false } },
+    "series": { "type": { "returnType": "Series", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": false } },
     "enabled": { "type": { "returnType": "boolean", "optional": false } },
     "type": {
       "type": { "returnType": "'legend-item-click'", "optional": false }
+    }
+  },
+  "LegendItemDoubleClickChartEvent": {
+    "series": { "type": { "returnType": "Series", "optional": false } },
+    "itemId": { "type": { "returnType": "any", "optional": false } },
+    "enabled": { "type": { "returnType": "boolean", "optional": false } },
+    "numVisibleItems": {
+      "type": { "returnType": "{ [key: string]: number }", "optional": false }
+    },
+    "type": {
+      "type": { "returnType": "'legend-item-double-click'", "optional": false }
     }
   },
   "CursorState": {
