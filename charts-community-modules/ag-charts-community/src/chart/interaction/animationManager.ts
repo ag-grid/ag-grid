@@ -72,6 +72,7 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
             ...opts,
             autoplay: this.isPlaying ? opts.autoplay : false,
             driver: this.createDriver(id),
+            duration: this.skipAnimations ? 0 : opts.duration,
         };
         const controller = baseAnimate(optsExtra);
 

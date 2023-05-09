@@ -201,10 +201,6 @@
       "description": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "animation": {
-      "description": "/** Configuration for chart animations. */",
-      "type": { "returnType": "AgChartAnimationOptions", "optional": true }
-    },
     "padding": {
       "description": "/** Configuration for the padding shown around the chart. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
@@ -280,10 +276,6 @@
       "description": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "animation": {
-      "description": "/** Configuration for chart animations. */",
-      "type": { "returnType": "AgChartAnimationOptions", "optional": true }
-    },
     "padding": {
       "description": "/** Configuration for the padding shown around the chart. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
@@ -358,10 +350,6 @@
     "autoSize": {
       "description": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "animation": {
-      "description": "/** Configuration for chart animations. */",
-      "type": { "returnType": "AgChartAnimationOptions", "optional": true }
     },
     "padding": {
       "description": "/** Configuration for the padding shown around the chart. */",
@@ -1039,12 +1027,6 @@
   "AgHierarchySeriesTheme": {
     "treemap": {
       "type": { "returnType": "AgTreemapSeriesOptions", "optional": true }
-    }
-  },
-  "AgChartAnimationOptions": {
-    "enabled": {
-      "description": "/** Whether or not animation is enabled on the chart. */",
-      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "AgChartPaddingOptions": {
@@ -1942,10 +1924,6 @@
     "autoSize": {
       "description": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "animation": {
-      "description": "/** Configuration for chart animations. */",
-      "type": { "returnType": "AgChartAnimationOptions", "optional": true }
     },
     "padding": {
       "description": "/** Configuration for the padding shown around the chart. */",
@@ -5035,10 +5013,6 @@
       "description": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "animation": {
-      "description": "/** Configuration for chart animations. */",
-      "type": { "returnType": "AgChartAnimationOptions", "optional": true }
-    },
     "padding": {
       "description": "/** Configuration for the padding shown around the chart. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
@@ -5117,10 +5091,6 @@
       "description": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "animation": {
-      "description": "/** Configuration for chart animations. */",
-      "type": { "returnType": "AgChartAnimationOptions", "optional": true }
-    },
     "padding": {
       "description": "/** Configuration for the padding shown around the chart. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
@@ -5195,10 +5165,6 @@
     "autoSize": {
       "description": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "animation": {
-      "description": "/** Configuration for chart animations. */",
-      "type": { "returnType": "AgChartAnimationOptions", "optional": true }
     },
     "padding": {
       "description": "/** Configuration for the padding shown around the chart. */",

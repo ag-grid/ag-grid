@@ -37,7 +37,6 @@ import { ChartUpdateType } from './chartUpdateType';
 import { ChartLegendDatum, ChartLegend } from './legendDatum';
 import { Logger } from '../util/logger';
 import { ActionOnSet } from '../util/proxy';
-import { ChartAnimation } from './chartAnimation';
 import { ChartHighlight } from './chartHighlight';
 import { getLegend } from './factory/legendTypes';
 
@@ -71,7 +70,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
     legend: ChartLegend | undefined;
     readonly tooltip: Tooltip;
     readonly overlays: ChartOverlays;
-    readonly animation: ChartAnimation;
     readonly highlight: ChartHighlight;
 
     @ActionOnSet<Chart>({
@@ -255,6 +253,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.layoutService = new LayoutService();
         this.updateService = new UpdateService((type = ChartUpdateType.FULL) => this.update(type));
 
+        this.animationManager.skipAnimations = true;
+        this.animationManager.play();
+
         SizeMonitor.observe(this.element, (size) => {
             const { width, height } = size;
 
@@ -280,7 +281,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.tooltipManager = new TooltipManager(this.tooltip, this.interactionManager);
         this.attachLegend('category');
         this.overlays = new ChartOverlays(this.element);
-        this.animation = new ChartAnimation(this.animationManager);
         this.highlight = new ChartHighlight();
         this.container = container;
 
@@ -612,9 +612,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     protected initSeries(series: Series<any>) {
         series.chart = this;
         series.highlightManager = this.highlightManager;
-        if (this.animation.enabled) {
-            series.animationManager = this.animationManager;
-        }
+        series.animationManager = this.animationManager;
         if (!series.data) {
             series.data = this.data;
         }

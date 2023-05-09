@@ -5,6 +5,7 @@ import {
     _ModuleSupport,
 } from 'ag-charts-community';
 
+import { AgAnimationOptions, AnimationModule } from './animation/main';
 import { AgChartBackgroundImage, BackgroundModule } from './background/main';
 import { AgContextMenuOptions, ContextMenuModule } from './context-menu/main';
 import {
@@ -29,6 +30,7 @@ import { AgZoomOptions, ZoomModule } from './zoom/main';
 
 export * from 'ag-charts-community';
 
+_ModuleSupport.registerModule(AnimationModule);
 _ModuleSupport.registerModule(BackgroundModule);
 _ModuleSupport.registerModule(ContextMenuModule);
 _ModuleSupport.registerModule(CrosshairModule);
@@ -48,6 +50,7 @@ export {
 
 declare module 'ag-charts-community' {
     export interface AgCartesianChartOptions {
+        animation: AgAnimationOptions;
         contextMenu?: AgContextMenuOptions;
         /** Configuration for the chart navigator. */
         navigator?: AgNavigatorOptions;
