@@ -16,14 +16,14 @@ colDef.valueGetter = params => {
 }
 ```
 
-[[note]]
-| All valueGetters must be pure functions. That means, given the same state of your
-| data, it should consistently return the same result. This is important as the grid will only call your
-| valueGetter once during a redraw, even though the value may be used multiple times. For example, the
-| value will be used to display the cell value, however it can additionally be used to provide values
-| to an aggregation function when grouping, or can be used as input to another valueGetter via the
-| `params.getValue()` function.
-
+<note>
+All valueGetters must be pure functions. That means, given the same state of your
+data, it should consistently return the same result. This is important as the grid will only call your
+valueGetter once during a redraw, even though the value may be used multiple times. For example, the
+value will be used to display the cell value, however it can additionally be used to provide values
+to an aggregation function when grouping, or can be used as input to another valueGetter via the
+`params.getValue()` function.
+</note>
 
 ### Example Value Getters
 
@@ -71,16 +71,17 @@ When the value cache is turned on, each time a value getter is executed, its res
 
 This value cache is for advanced users who have time-consuming value getters and want to speed up their applications by introducing a cache to reduce the number of times value getters get executed.
 
-[[note]]
-| One client of AG Grid had 1,000 rows and 20 columns in a grid. A lot of the columns were doing advanced
-| maths, using third-party maths API in the valueGetter for 8 of the columns. The client was also grouping
-| and the summing by the columns containing the value getters. This meant, if more rows were added, the grid
-| recomputed the aggregations, resulting in all the value getters getting called again, causing the grid to
-| stall for around 1,000ms as rows were added.
-| <br/><br/>
-| Introducing the value cache meant the value getters were execute once when the initial data was loaded, so
-| the 1,000ms happened once. Then when delta changes came in, the value getters were only executed on the
-| new records, giving an almost seamless experience to the user.
+<note>
+One client of AG Grid had 1,000 rows and 20 columns in a grid. A lot of the columns were doing advanced
+maths, using third-party maths API in the valueGetter for 8 of the columns. The client was also grouping
+and the summing by the columns containing the value getters. This meant, if more rows were added, the grid
+recomputed the aggregations, resulting in all the value getters getting called again, causing the grid to
+stall for around 1,000ms as rows were added.
+
+Introducing the value cache meant the value getters were execute once when the initial data was loaded, so
+the 1,000ms happened once. Then when delta changes came in, the value getters were only executed on the
+new records, giving an almost seamless experience to the user.
+</note>
 
 ### Example: Value Cache
 
@@ -97,8 +98,9 @@ that has a `console.log()` statement. This will allow us to see exactly when the
 
 <grid-example title='Value Cache' name='value-cache' type='typescript' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"]  }'></grid-example>
 
-[[note]]
-| Note that the example still works fast when the value cache is turned off. This emphasises you don't need to turn the value cache on if your application is not getting slowed down by your value getters.
+<note>
+Note that the example still works fast when the value cache is turned off. This emphasises you don't need to turn the value cache on if your application is not getting slowed down by your value getters.
+</note>
 
 ### Value Cache Properties
 
@@ -116,8 +118,9 @@ The value cache starts empty. Then as value getters execute, their results are s
 - A value is modified in the grid using the grid's UI editing feature, e.g. the user double clicks a cell and enters a new value.
 - The `expireValueCache()` grid API method gets called by the application.
 
-[[note]]
-| \* Assuming your framework allows binding properties and this is what you are using.
+<note>
+* Assuming your framework allows binding properties and this is what you are using.
+</note>
 
 ### Example: Expiring through Editing
 
@@ -142,13 +145,14 @@ As before, we focus on the value getter of the **'Total'** column and can see ho
 
 <grid-example title='Expiring Cache through Editing' name='expiring-through-editing' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"]  }'></grid-example>
 
-[[note]]
-| It is not possible to partially invalidate the cache, eg it is not possible to invalidate only a
-| portion of the cells. You might think that if you update a cell, then you only need to invalidate
-| that row's data as the value getters can only access that row. That is not true - a value getter
-| is a function where you can take data from anywhere in the grid and the grid is none the wiser.
-| So if you change any value, then every single value getter is potentially impacted as far as the grid
-| is concerned so the whole value cache is invalidated.
+<note>
+It is not possible to partially invalidate the cache, eg it is not possible to invalidate only a
+portion of the cells. You might think that if you update a cell, then you only need to invalidate
+that row's data as the value getters can only access that row. That is not true - a value getter
+is a function where you can take data from anywhere in the grid and the grid is none the wiser.
+So if you change any value, then every single value getter is potentially impacted as far as the grid
+is concerned so the whole value cache is invalidated.
+</note>
 
 ### Setting to Never Expire
 

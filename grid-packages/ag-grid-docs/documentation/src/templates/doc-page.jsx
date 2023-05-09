@@ -19,7 +19,9 @@ import VideoSection from 'components/VideoSection';
 import { graphql } from 'gatsby';
 import React, { useState } from 'react';
 import rehypeReact from 'rehype-react';
-import processFrameworkSpecificSections from 'utils/framework-specific-sections';
+import FrameworkSpecificSection from 'components/FrameworkSpecificSection';
+import Note from 'components/Note';
+import Warning from 'components/Warning';
 import { getProductType } from 'utils/page-header';
 import stripHtml from 'utils/strip-html';
 import DocumentationLink from '../components/DocumentationLink';
@@ -41,8 +43,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
         return null;
     }
 
-    // handles [[only-xxxx blocks
-    const ast = processFrameworkSpecificSections(page.htmlAst, framework);
+    const ast = page.htmlAst;
 
     const getExampleRunnerProps = (props, library) => ({
         ...props,
@@ -96,7 +97,10 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
             'video-section': VideoSection,
             'video-link': VideoLink,
             'chart-gallery': ChartGallery,
-            'charts-api-explorer': (props) => ChartsApiExplorer({ ...props, framework, exampleIndexData }),
+            'charts-api-explorer': (props) => ChartsApiExplorer({ ...props, framework, jsonData, exampleIndexData }),
+            'note': Note,
+            'warning': Warning,
+            'framework-specific-section': props => FrameworkSpecificSection({...props, currentFramework: framework}),
 
             // AG Styles wrapper - wrap markdown -> html elements with `.ag-styles` to apply the new design system.
             // Can be removed when the new design system is applied to everything

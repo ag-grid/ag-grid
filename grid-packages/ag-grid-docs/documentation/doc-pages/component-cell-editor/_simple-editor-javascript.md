@@ -1,7 +1,7 @@
-[[only-javascript]]
-|Below is a simple example of cell renderer class:
-|
-|```js
+<framework-specific-section frameworks="javascript">
+Below is a simple example of cell renderer class:
+
+<snippet transform={false}>
 |class DoublingEditor {
 |    init(params) {
 |        this.value = params.value;
@@ -47,4 +47,5 @@
 |    }
 |}
 |
-|```
+</snippet>
+</framework-specific-section>

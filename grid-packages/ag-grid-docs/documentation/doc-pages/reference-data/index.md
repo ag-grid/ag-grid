@@ -4,10 +4,11 @@ title: "Reference Data"
 
 This section describes two different strategies for managing reference data in your application. Both approaches implement the same grid example so they can be easily compared.
 
-[[note]]
-| The term **Reference Data** is used here in a general way to describe data which can be defined using
-| a key / value pair relationship (e.g. `'tyt': 'Toyota'`). This data is typically static in nature, i.e.
-| it is not expected to change between server requests.
+<note>
+The term **Reference Data** is used here in a general way to describe data which can be defined using
+a key / value pair relationship (e.g. `'tyt': 'Toyota'`). This data is typically static in nature, i.e.
+it is not expected to change between server requests.
+</note>
 
 The examples contained within this section use the following reference data. Note that the data returned from the server only contains codes (keys) which must be mapped to names (values) for display purposes.
 
@@ -62,8 +63,9 @@ const gridOptions = {
 }
 </snippet>
 
-[[note]]
-| When editing using Cell Editors it's important to ensure the underlying data is updated with the codes (keys) rather than the values that are displayed in the cells.
+<note>
+When editing using Cell Editors it's important to ensure the underlying data is updated with the codes (keys) rather than the values that are displayed in the cells.
+</note>
 
 When using the `TextCellEditor` with a `valueFormatter`, you may want to display the formatted text rather than the code when editing. In this case you should also include the `useFormatter` property as follows:
 

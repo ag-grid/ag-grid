@@ -64,7 +64,7 @@ Specified with `agSelectCellEditor` and configured with `ILargeTextEditorParams`
 
 <interface-documentation interfaceName='ISelectCellEditorParams' names='["values"]'></interface-documentation>
 
-```js
+<snippet transform={false}>
 columnDefs: [
     {
         cellEditor: 'agSelectCellEditor',
@@ -74,25 +74,26 @@ columnDefs: [
         // ...other props
     }
 ]
-```
+</snippet>
 
 Note there is no need to specify `cellEditorPopup=true` for Select Cell Editor as the browsers Select widget will appear on top of the grid.
 
-[[note]]
-| We have found the standard HTML Select doesn't have an API that's rich enough to play
-| properly with the grid. When a cell is double clicked to start editing, it is desired that
-| the Select is a) shown and b) opened ready for selection. There is no API to open a browsers
-| Select. For this reason to edit there are two interactions needed 1) double click to start
-| editing and 2) single click to open the Select.
+<note>
+|We have found the standard HTML Select doesn't have an API that's rich enough to play
+|properly with the grid. When a cell is double clicked to start editing, it is desired that
+|the Select is a) shown and b) opened ready for selection. There is no API to open a browsers
+|Select. For this reason to edit there are two interactions needed 1) double click to start
+|editing and 2) single click to open the Select.
 |
-| We also observed different results while using keyboard navigation to control editing, e.g.
-| while using <kbd>Enter</kbd> to start editing. Some browsers would open the Select, others would not.
-| This is down to the browser implementation and given there is no API for opening the
-| Select, there is nothing the grid can do.
+|We also observed different results while using keyboard navigation to control editing, e.g.
+|while using <kbd>Enter</kbd> to start editing. Some browsers would open the Select, others would not.
+|This is down to the browser implementation and given there is no API for opening the
+|Select, there is nothing the grid can do.
 |
-| If you are unhappy with the additional click required, we advise you don't depend on the
-| browsers standard Select (ie avoid `agSelectCellEditor`) and instead use `agRichSelectCellEditor` or
-| create your own using a [Cell Editor Component](/component-cell-editor/).
+|If you are unhappy with the additional click required, we advise you don't depend on the
+|browsers standard Select (ie avoid `agSelectCellEditor`) and instead use `agRichSelectCellEditor` or
+|create your own using a [Cell Editor Component](../component-cell-editor/).
+</note>
 
 ## Rich Select Cell Editor
 
@@ -105,14 +106,15 @@ Benefits over browser's `select` are as follows:
 - Uses HTML to render the values: you can provide cell renderers to customise what each value looks like.
 - FuzzySearch of values: You can type within the Editor to select a specific record.
 
-[[only-react]]
+<framework-specific-section frameworks="react">
 |Should always set `cellEditorPopup=true`. Otherwise the editor will be clipped to the cell contents.
+</framework-specific-section>
 
 Specified with `agRichSelectCellEditor` and configured with `IRichCellEditorParams`.
 
 <interface-documentation interfaceName='IRichCellEditorParams' names='["values", "cellHeight", "formatValue", "cellRenderer", "searchDebounceDelay" ]'></interface-documentation>
 
-```js
+<snippet transform={false}>
 columnDefs: [
     {
         cellEditor: 'agRichSelectCellEditor',
@@ -127,4 +129,4 @@ columnDefs: [
         // ...other props
     }
 ]
-```
+</snippet>

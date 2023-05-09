@@ -85,11 +85,12 @@ Unmanaged dragging is the default dragging for the grid. To use it, do not set t
 - Dragging is allowed while filter is applied.
 - Dragging is allowed while row group or pivot is applied.
 
-[[note]]
-| It is not possible for the grid to provide a generic solution for row
-| dragging that fits all usage scenarios. The way around this is the grid
-| fires events and the application is responsible for implementing what
-| meets the application's requirements.
+<note>
+It is not possible for the grid to provide a generic solution for row
+dragging that fits all usage scenarios. The way around this is the grid
+fires events and the application is responsible for implementing what
+meets the application's requirements.
+</note>
 
 ### Row Drag Events
 
@@ -147,8 +148,9 @@ The simple example doesn't add anything that managed dragging gives (the first
 example on this page). Things get interesting when we introduce complex scenarios
 such as row grouping or tree data, which are explained below.
 
-[[note]]
-|Dragging Multiple Rows with unmanaged row dragging, the application is in control of what gets dragged, so it is possible to use the events to drag more than one row at a time, e.g. to move all selected rows in one go if using row selection.
+<note>
+Dragging Multiple Rows with unmanaged row dragging, the application is in control of what gets dragged, so it is possible to use the events to drag more than one row at a time, e.g. to move all selected rows in one go if using row selection.
+</note>
 
 ## Entire Row Dragging
 
@@ -327,18 +329,19 @@ The example below shows dragging with custom text and multiple column draggers. 
 
 Due to the complexity of some applications, it could be handy to render the Row Drag Component inside of a Custom Cell Renderer. This can be achieved, by using the `registerRowDragger` method in the [ICellRendererParams](/component-cell-renderer/#cell-renderer-component) as follows:
 
-[[only-javascript]]
-| ```js
+<framework-specific-section frameworks="javascript">
+<snippet transform={false}>
 | // your custom cell renderer init code
 | const rowDragger = document.createElement('div')
 | this.eGui.appendChild(rowDragger);
 |
 | // register it as a row dragger
 | params.registerRowDragger(rowDragger);
-| ```
+</snippet>
+</framework-specific-section>
 
-[[only-angular]]
-| ```js
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
 | // your custom cell renderer code
 | @ViewChild('myref') myRef;
 |
@@ -349,10 +352,11 @@ Due to the complexity of some applications, it could be handy to render the Row 
 | ngAfterViewInit() {
 |     this.cellRendererParams.registerRowDragger(this.myRef.nativeElement);
 | }
-| ```
+</snippet>
+</framework-specific-section>
 
-[[only-react]]
-| ```js
+<framework-specific-section frameworks="react">
+<snippet transform={false}>
 | // your custom cell renderer code
 |
 | // this will hold the reference to the element you want to
@@ -362,20 +366,22 @@ Due to the complexity of some applications, it could be handy to render the Row 
 | componentDidMount() {
 |     this.props.registerRowDragger(this.myRef.current);
 | }
-| ```
+</snippet>
+</framework-specific-section>
 
-
-[[only-vue]]
-| ```js
+<framework-specific-section frameworks="vue">
+<snippet transform={false}>
 | // your custom cell renderer code
 | mounted() {
-|     this.params.registerRowDragger(this.$refs.myRef);
+|     this.params.registerRhahaowDragger(this.$refs.myRef);
 | }
-| ```
+</snippet>
+</framework-specific-section>
 
-[[warning]]
+<warning>
 | When using `registerRowDragger` you should **not** set the property `rowDrag=true` in the Column Definition.
 | Doing that will cause the cell to have two row draggers.
+</warning>
 
 The example below shows a custom cell renderer, with using the `registerRowDragger` callback to render the Row Dragger inside itself.
 

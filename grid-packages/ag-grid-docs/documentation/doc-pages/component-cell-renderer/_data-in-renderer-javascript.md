@@ -1,5 +1,5 @@
-[[only-javascript]]
-|```js
+<framework-specific-section frameworks="javascript">
+<snippet transform={false}>
 |colDef.cellRenderer = params => {
 |    // check the data exists, to avoid error
 |    if (params.data) {
@@ -9,4 +9,5 @@
 |    // when we return null, the grid will display a blank cell
 |    return null;
 |};
-|```
+</snippet>
+</framework-specific-section>

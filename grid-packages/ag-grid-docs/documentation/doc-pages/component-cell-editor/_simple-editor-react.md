@@ -1,7 +1,7 @@
-[[only-react]]
-|Below is a simple example of Cell Editor as a Hook:
-|
-|```jsx
+<framework-specific-section frameworks="react">
+Below is a simple example of Cell Editor as a Hook:
+
+<snippet transform={false} language="jsx">
 |const DoublingEditor = forwardRef((props, ref) => {
 |    const [value, setValue] = useState(parseInt(props.value));
 |    const refInput = useRef(null);
@@ -44,11 +44,11 @@
 |        />
 |    );
 |});
-|```
-|
-|And here is the same example as a Class-based Component:
-|
-|```jsx
+</snippet>
+
+And here is the same example as a Class-based Component:
+
+<snippet transform={false} language="jsx">
 |export default class DoublingEditor extends Component {
 |    constructor(props) {
 |        super(props);
@@ -94,4 +94,5 @@
 |        );
 |    }
 |}
-|```
+</snippet>
+</framework-specific-section>

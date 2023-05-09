@@ -1,4 +1,4 @@
-[[only-react]]
+<framework-specific-section frameworks="react">
 |## Cell Renderer Component
 |
 |When a React component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell &
@@ -6,4 +6,4 @@
 |
 |The interface for values available on both the initial `props` value, as well as on future `props` updates or subsequent `refresh` calls
 |(see below for details on `refresh`) are as follows:
-|
+</framework-specific-section>

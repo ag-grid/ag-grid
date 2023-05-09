@@ -5,8 +5,9 @@ enterprise: true
 
 This section covers how to take charge of displaying the row groups without using the built-in display types. 
 
-[[note]]
-| We advise against using your own group columns. Only do this if the Auto Group Columns do not meet your requirements. Otherwise defining your own group columns will add unnecessary complexity to your code.
+<note>
+We advise against using your own group columns. Only do this if the Auto Group Columns do not meet your requirements. Otherwise defining your own group columns will add unnecessary complexity to your code.
+</note>
 
 When using the [Single Group Column](../grouping-single-group-column/), [Multiple Group Columns](../grouping-multiple-group-columns/)
 and [Group Rows](../grouping-group-rows/) display types, the grid automatically adds Auto Group Columns to display the groups.
@@ -93,10 +94,11 @@ Adding leaf nodes data can also be achieved even if you provide your own group c
 
 <grid-example title='Adding Values To Leaf Nodes for Groups' name='adding-values-to-leaf-nodes-for-groups' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"]}'></grid-example>
 
-[[note]]
-| Remember these examples are achieving the same that you can achieve with
-| the auto groups columns, but their configuration is not as straight forward. We are keeping this for edge cases
-| and for backwards compatibility for when we only supported this style of configuration.
+<note>
+Remember these examples are achieving the same that you can achieve with
+the auto groups columns, but their configuration is not as straight forward. We are keeping this for edge cases
+and for backwards compatibility for when we only supported this style of configuration.
+</note>
 
 ## Next Up
 

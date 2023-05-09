@@ -3,8 +3,9 @@ title: "Axis Ticks"
 ---
 Axis ticks are markers placed at regular intervals along each axis, and are also used to determine where and how often to show the axis labels and grid lines.
 
-[[note]]
-| Category axes show a tick for every category. Number and time axes will display around 5 ticks depending on the available space.
+<note>
+Category axes show a tick for every category. Number and time axes will display around 5 ticks depending on the available space.
+</note>
 
 ## Tick Placement
 
@@ -49,8 +50,9 @@ Other available `time` intervals are: `year`, `month`, `day`, `hour`, `minute`, 
 
 If the `interval` property of a time axis is set to a `number`, this will be interpreted as milliseconds.
 
-[[note]]
-| If the configured `interval` results in too many ticks given the data domain and chart size, it will be ignored and the default tick behaviour will be applied.
+<note>
+If the configured `interval` results in too many ticks given the data domain and chart size, it will be ignored and the default tick behaviour will be applied.
+</note>
 
 The example below demonstrates the usage of time intervals:
 - `time.month` will produce monthly ticks.
@@ -102,8 +104,7 @@ The following example demonstrates how to specify min / max tick spacing. Note t
 
 <chart-example title='Min / Max Spacing' name='axis-tick-min-max-spacing' type='generated'></chart-example>
 
-[[note]]
-| When `minSpacing` and `maxSpacing` are very close in value, the actual spacing between the ticks may be outside the requested range. This is because the specified constraints may result in ticks with non-standard intervals rather than round intervals such as 1x, 2x, 5x, and 10x. To avoid this set `maxSpacing` to be 2-3 times larger than `minSpacing`.
+Please note that when `minSpacing` and `maxSpacing` are very close in value, the actual spacing between the ticks may be outside of the requested range. This is because the specified constraints may result in ticks with non-standard intervals. Ticks are generated using nice, round intervals such as 1x, 2x, 5x, and 10x (or minute, hour, 12 hours, etc. for time axis). To avoid this issue, it’s recommended to set `maxSpacing` to be 2-3 times larger than `minSpacing`, or use `tick.interval` or `tick.values` options instead.
 
 ## Next Up
 

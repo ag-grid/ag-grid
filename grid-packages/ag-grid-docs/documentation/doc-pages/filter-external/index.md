@@ -21,8 +21,9 @@ The example below shows external filters in action. There are two methods on `gr
 `doesExternalFilterPass` is called once for each row node in the grid. If you return `false`, the node will be excluded from the final set.
 
 
-[[note]]
-| If the external filter changes, you need to call `api.onFilterChanged()` to tell the grid.
+<note>
+If the external filter changes, you need to call `api.onFilterChanged()` to tell the grid.
+</note>
 
 ## Example
 
