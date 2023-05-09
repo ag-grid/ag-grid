@@ -51,7 +51,7 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
         if (!this.isPlaying) return;
 
         this.isPlaying = false;
-        if (this.requestId) cancelAnimationFrame(this.requestId);
+        this.cancelAnimationFrame();
 
         for (const id in this.controllers) {
             this.controllers[id].pause();
@@ -60,7 +60,7 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
 
     public stop() {
         this.isPlaying = false;
-        if (this.requestId) cancelAnimationFrame(this.requestId);
+        this.cancelAnimationFrame();
 
         for (const id in this.controllers) {
             this.controllers[id].stop();
@@ -110,7 +110,7 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
 
         const controls = {
             get isPlaying() {
-                return drivers.filter((driver) => driver.isPlaying).length > 0;
+                return drivers.some((driver) => driver.isPlaying);
             },
             play() {
                 drivers.forEach((driver) => driver.play());
@@ -167,7 +167,7 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
     }
 
     private requestAnimationFrame() {
-        this.requestId = requestAnimationFrame((time) => {
+        const frame = (time: number) => {
             if (this.lastTime === undefined) this.lastTime = time;
             const delta = time - this.lastTime;
             this.lastTime = time;
@@ -179,6 +179,15 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
             this.listeners.dispatch('animation-frame', { type: 'animation-frame', delta });
 
             this.requestAnimationFrame();
-        });
+        };
+
+        this.requestId = requestAnimationFrame(frame);
+    }
+
+    private cancelAnimationFrame() {
+        if (!this.requestId) return;
+
+        cancelAnimationFrame(this.requestId);
+        this.requestId = undefined;
     }
 }
