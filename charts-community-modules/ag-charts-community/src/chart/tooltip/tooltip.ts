@@ -4,13 +4,6 @@ import { Validate, BOOLEAN, NUMBER, OPT_STRING, INTERACTION_RANGE, predicateWith
 import { AgChartInteractionRange, AgTooltipRendererResult } from '../agChartOptions';
 import { InteractionEvent } from '../interaction/interactionManager';
 
-// Extend EventTarget to to provide `classList` for `relatedTarget`
-declare global {
-    interface EventTarget {
-        readonly classList: DOMTokenList;
-    }
-}
-
 export const DEFAULT_TOOLTIP_CLASS = 'ag-chart-tooltip';
 
 const defaultTooltipCss = `
@@ -347,7 +340,7 @@ export class Tooltip {
     pointerLeftOntoTooltip(event: InteractionEvent<'leave'>): boolean {
         if (!this.enableInteraction) return false;
 
-        const classList = (event.sourceEvent as MouseEvent).relatedTarget?.classList;
+        const classList = ((event.sourceEvent as MouseEvent).relatedTarget as any)?.classList as DOMTokenList;
         const classes = ['', '-title', '-content'];
         const classListContains = Boolean(classes.filter((c) => classList?.contains(`${DEFAULT_TOOLTIP_CLASS}${c}`)));
 

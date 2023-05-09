@@ -39,7 +39,7 @@ import {
     AgPieSeriesFormat,
     AgPieSeriesFormatterParams,
 } from '../../agChartOptions';
-import { LegendItemClickChartEvent } from '../../interaction/chartEventManager';
+import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
 
 class PieSeriesNodeBaseClickEvent extends SeriesNodeBaseClickEvent<any> {
     readonly angleKey: string;
@@ -335,6 +335,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     addChartEventListeners(): void {
         this.chartEventManager?.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
+        this.chartEventManager?.addListener('legend-item-double-click', (event) => this.onLegendItemDoubleClick(event));
     }
 
     visibleChanged() {
@@ -1337,8 +1338,36 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         if (series.id === this.id) {
             this.toggleSeriesItem(itemId, enabled);
         } else if (series.type === 'pie') {
-            this.toggleOtherSeriesItems(series, itemId, enabled);
+            this.toggleOtherSeriesItems(series as PieSeries, itemId, enabled);
         }
+    }
+
+    onLegendItemDoubleClick(event: LegendItemDoubleClickChartEvent) {
+        const { enabled, itemId, series: maybeSeries, numVisibleItems } = event;
+
+        if (maybeSeries.type !== 'pie') return;
+
+        const series = maybeSeries as PieSeries;
+
+        const clickedLegendValue =
+            series.legendItemKey && series.data?.find((_, index) => index === itemId)[series.legendItemKey];
+        const totalVisibleItems = Object.values(numVisibleItems).reduce((p, v) => p + v, 0);
+        const singleEnabledInEachSeries = Object.values(numVisibleItems).filter((v) => v > 1).length === 0;
+        const singleEnabledWasClicked = totalVisibleItems === 1 && enabled;
+
+        this.data?.forEach((datum, index) => {
+            const wasClicked = series.id === this.id && itemId === index;
+            const matchesClickedLegendValue =
+                series.id !== this.id && this.legendItemKey != null && datum[this.legendItemKey] === clickedLegendValue;
+
+            const newEnabled =
+                wasClicked ||
+                singleEnabledWasClicked ||
+                matchesClickedLegendValue ||
+                (singleEnabledInEachSeries && enabled);
+
+            this.toggleSeriesItem(index, newEnabled);
+        });
     }
 
     toggleSeriesItem(itemId: number, enabled: boolean): void {
@@ -1346,15 +1375,13 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.nodeDataRefresh = true;
     }
 
-    toggleOtherSeriesItems(series: PieSeries, itemId: any, enabled: boolean): void {
+    toggleOtherSeriesItems(series: PieSeries, itemId: number, enabled: boolean): void {
         const { legendItemKey } = this;
 
         if (!legendItemKey) return;
 
         const datumToggledLegendItemValue =
-            itemId != null &&
-            series.legendItemKey &&
-            series.data?.find((_, index) => index === itemId)[series.legendItemKey];
+            series.legendItemKey && series.data?.find((_, index) => index === itemId)[series.legendItemKey];
 
         if (!datumToggledLegendItemValue) return;
 
