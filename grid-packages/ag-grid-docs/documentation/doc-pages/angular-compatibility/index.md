@@ -40,32 +40,32 @@ If you are using [AG Grid Modules](https://ag-grid.com/angular-data-grid/package
 
 To migrate applications on Angular v12+ to AG Grid v28+ requires no dependency changes. There are [breaking changes](https://ag-grid.com/changelog/?fixVersion=28.0.0), notably `AgGridModule` no longer supports `.withComponents()` as it is not required any more.
 
- ```diff
- @NgModule({
-     imports: [
--         AgGridModule.withComponents([SquareComponent]),
-+         AgGridModule,
-     ]
- })
- ```
+<snippet transform={false} language="diff">
+| @NgModule({
+|     imports: [
+|-         AgGridModule.withComponents([SquareComponent]),
+|+         AgGridModule,
+|     ]
+| })
+</snippet>
 
 #### Angular v8-11
 To migrate an application on Angular v8-11 to AG Grid v28+ the following changes are required in `package.json`.
 
- ```diff
-"dependencies": {
-    ...
--    "ag-grid-angular": "^27.3.0",
-+    "ag-grid-angular-legacy": "^28.0.0",
-    ...
- ```
+<snippet transform={false} language="diff">
+|"dependencies": {
+|    ...
+|-    "ag-grid-angular": "^27.3.0",
+|+    "ag-grid-angular-legacy": "^28.0.0",
+|    ...
+</snippet>
 
 Import paths will also need to be updated to match the new dependency.
 
-```diff
-- import { AgGridModule } from 'ag-grid-angular';
-+ import { AgGridModule } from 'ag-grid-angular-legacy';
-```
+<snippet transform={false} language="diff">
+|- import { AgGridModule } from 'ag-grid-angular';
+|+ import { AgGridModule } from 'ag-grid-angular-legacy';
+</snippet>
 
 The only difference between the standard and legacy packages is the Angular distribution format, so aside from standard major version breaking changes, the legacy package should act like a drop in replacement.
 
@@ -73,12 +73,12 @@ The only difference between the standard and legacy packages is the Angular dist
 
 If using Angular 12+ and versions of AG Grid up to v27 the following warning may be present in the build output. To avoid this, upgrade to v28 of AG Grid which is published as an Ivy distribution.
 
-```bash
-Generating browser application bundles (phase: setup)...
-Processing legacy "View Engine" libraries:
-- ag-grid-angular [es2015/esm2015]
-Encourage the library authors to publish an Ivy distribution.
-```
+<snippet transform={false} language="bash">
+|Generating browser application bundles (phase: setup)...
+|Processing legacy "View Engine" libraries:
+|- ag-grid-angular [es2015/esm2015]
+|Encourage the library authors to publish an Ivy distribution.
+</snippet>
 
 ## Notes on Angular 10
 

@@ -379,7 +379,6 @@
 |&lt;ag-grid-angular
 |    style="width: 100%; height: 100%"
 |    class="ag-theme-alpine"/>
-| ```
 </snippet>
 </framework-specific-section>
 
@@ -407,8 +406,6 @@
 |&lt;ag-grid-angular
 |    [rowData]="rowData$ | async"
 |    ...
-| ```
-|
 </snippet>
 </framework-specific-section>
 

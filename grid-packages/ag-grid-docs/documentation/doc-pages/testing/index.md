@@ -373,7 +373,7 @@ title: "Testing AG Grid"
 </snippet>
 </framework-specific-section>
 
-[[only-angular]]
+<framework-specific-section frameworks="angular">
 | We will walk through how you can use testing AG Grid as part of your Angular application,
 | using default build tools provided when using the [Angular CLI](https://cli.angular.io/).
 |
@@ -381,7 +381,10 @@ title: "Testing AG Grid"
 |
 | The first thing we need to do is to add AG Grid's `AgGridModule` to the `TestBed.configureTestingModule`:
 |
-| ```ts
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false} language="ts">
 | beforeEach(async(() => {
 |     TestBed.configureTestingModule({
 |         imports: [
@@ -395,12 +398,17 @@ title: "Testing AG Grid"
 |     component = fixture.componentInstance;
 |
 | }));
-| ```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
 | Now that the test bed is aware of AG Grid we can continue with our testing. If however you wish
 | to add any user provided components to the grid then you'll need to declare them here too.
 |
-| ```diff
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false} language="diff">
 | beforeEach(async(() => {
 |     TestBed.configureTestingModule({
 |         imports: [
@@ -413,37 +421,49 @@ title: "Testing AG Grid"
 |     fixture = TestBed.createComponent(TestHostComponent);
 |     component = fixture.componentInstance;
 | }));
-| ```
-|[[note]]
-|| If you are using our [legacy](/components/#view-engine-declaring-custom-components) packages and Angular <= v8 or if Ivy has been disabled you additionally need to provide your components to the grid via `AgGridModule.withComponents([RendererComponent, EditorComponent])`.
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<note>
+| If you are using our [legacy](../components/#view-engine-declaring-custom-components) packages and Angular <= v8 or if Ivy has been disabled you additionally need to provide your components to the grid via `AgGridModule.withComponents([RendererComponent, EditorComponent])`.
+</note>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
 | ## Testing via the Grid API
 |
 | The grid's API will only be ready after `detectChanges` has been run:
 |
-| ```js
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
 | it('grid API is not available until  `detectChanges`', () => {
 |     expect(component.gridOptions.api).not.toBeTruthy();
 | });
-| ```
 |
-| ```js
 | it('grid API is available after `detectChanges`', () => {
-|     // Setup template bindings and run ngOInit. This causes the <ag-grid-angular> component to be created.
+|     // Setup template bindings and run ngOInit. This causes the &lt;ag-grid-angular> component to be created.
 |     // As part of the creation the grid apis will be attached to the gridOptions property.
 |     fixture.detectChanges();
 |     expect(component.gridOptions.api).toBeTruthy();
 | });
-| ```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
 | ## Testing Grid Contents
 |
 | One way to check the grid contents is to access the `nativeElement` and query DOM elements from there:
 |
-| ```js
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
 | it('the grid cells should be as expected', () => {
 |
-|     // Setup template bindings and run ngOInit. This causes the <ag-grid-angular> component to be created.
+|     // Setup template bindings and run ngOInit. This causes the &lt;ag-grid-angular> component to be created.
 |     // As part of the creation the grid apis will be attached to the gridOptions property.
 |     fixture.detectChanges();
 |
@@ -455,18 +475,23 @@ title: "Testing AG Grid"
 |     expect(cellElements[1].textContent).toEqual("42");
 |     expect(cellElements[2].textContent).toEqual("84");
 | });
-| ```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
 | ## Testing User Supplied Components
 |
 | To test user supplied components you can access them via the grid API.
 |
 | For example, given the following code:
 |
-| ```tsx
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false} language="ts">
 | @Component({
 |     selector: 'editor-cell',
-|     template: `<input #input [(ngModel)]="value" style="width: 100%">`
+|     template: `&lt;input #input [(ngModel)]="value" style="width: 100%">`
 |     }
 | )
 | export class EditorComponent implements ICellEditorAngularComp {
@@ -500,16 +525,16 @@ title: "Testing AG Grid"
 |
 | @Component({
 |     template:
-|         `<div>
-|             <ag-grid-angular
+|         `&lt;div>
+|             &lt;ag-grid-angular
 |                 style="width: 100%; height: 350px;" class="ag-theme-alpine"
 |                 [columnDefs]="columnDefs"
 |                 [rowData]="rowData"
 |                 [stopEditingWhenCellsLoseFocus]="false"
 |                 [components]="components"
 |                 (gridReady)="onGridReady($event)">
-|             </ag-grid-angular>
-|         </div>`
+|             &lt;/ag-grid-angular>
+|         &lt;/div>`
 | })
 | class TestHostComponent {
 |     rowData: any[] = [{name: 'Test Name', number: 42}];
@@ -532,13 +557,17 @@ title: "Testing AG Grid"
 |         this.columnApi = params.columnApi;
 |     }
 | }
-| ```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
 | We can test that the `EditorComponent` works as follows:
-|
-| ```js
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false} >
 | it('cell should be editable and editor component usable', () => {
-|     // Setup template bindings and run ngOInit. This causes the <ag-grid-angular> component to be created.
+|     // Setup template bindings and run ngOInit. This causes the &lt;ag-grid-angular> component to be created.
 |     // As part of the creation the grid apis will be attached to the gridOptions property.
 |     fixture.detectChanges();
 |
@@ -563,27 +592,34 @@ title: "Testing AG Grid"
 |     expect(cellElements[1].textContent).toEqual("100");
 |     expect(cellElements[2].textContent).toEqual("200");
 | });
-| ```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
 | ## Applying Styles To The Grid When Testing
 |
 | Although not strictly necessary when unit testing the grid, it is still useful to see the grid
 | rendered when debugging. In order for this to work you need to provide the CSS to `karma.conf.js`:
 |
-| ```js
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
 | // not strictly required for testing but useful when debugging the grid in action
 | files: [
 |     '../node_modules/ag-grid-community/styles/ag-grid.css',
 |     '../node_modules/ag-grid-community/styles/ag-theme-alpine.css'
 | ]
-| ```
-|
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
 |## Next Up
 |
-|Continue to the next section to learn about [Testing with FakeAsync](/testing-async/) parts of the grid.
+|Continue to the next section to learn about [Testing with FakeAsync](../testing-async/) parts of the grid.
+</framework-specific-section>
 
-[[only-react]]
+<framework-specific-section frameworks="react">
 | We will walk through how you can use testing AG Grid as part of your React application, using default
 | build tools provided when using the [Create React App](https://github.com/facebook/create-react-app) utility.
 |
@@ -600,7 +636,10 @@ title: "Testing AG Grid"
 |
 | We can create a utility function that will wait for the Grid API to be set for a set amount of time/attempts:
 |
-| ```js
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<snippet transform={false}>
 | export const ensureGridApiHasBeenSet = component => {
 |     return waitForAsyncCondition(() => {
 |         return component.instance().api !== undefined
@@ -627,17 +666,21 @@ title: "Testing AG Grid"
 |         setTimeout(waitForCondition, 10);
 |     })();
 | });
-| ```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
 | The first function is what we'll use to wait for the Grid API - the 2nd one is more generic and will be
 | useful for waiting for Grid components to be ready (see later).
 |
 | We can use `ensureGridApiHasBeenSet` before our tests are executed, typically in the `beforeEach`
 | hook:
-|
-| ```jsx
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<snippet transform={false} language="jsx">
 | beforeEach((done) => {
-|     component = mount((<GridWithStatefullComponent/>));
+|     component = mount((&lt;GridWithStatefullComponent/>));
 |     agGridReact = component.find(AgGridReact).instance();
 |     // don't start our tests until the grid is ready
 |     ensureGridApiHasBeenSet(component).then(() => done(), () => fail("Grid API not set within expected time limits"));
@@ -649,8 +692,10 @@ title: "Testing AG Grid"
 |
 |     // ..use the Grid API...
 | });
-| ```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
 | We can now safely test the Grid component safe in the knowledge that it's been fully initialised.
 |
 | ## Waiting for Grid Components to be Instantiated
@@ -660,8 +705,10 @@ title: "Testing AG Grid"
 |
 | For example, let us suppose a user provides a custom [Editor Component](/component-cell-editor/) and wants
 | to test this within the context of the Grid.
-|
-| ```jsx
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<snippet transform={false} language="jsx">
 | class EditorComponent extends Component {
 |     constructor(props) {
 |         super(props);
@@ -673,7 +720,7 @@ title: "Testing AG Grid"
 |
 |     render() {
 |         return (
-|             <input type="text"
+|             &lt;input type="text"
 |                    value={this.state.value}
 |                    onChange={this.handleChange}
 |                    style={{width: "100%"}} />
@@ -724,21 +771,25 @@ title: "Testing AG Grid"
 |
 |     render() {
 |         return (
-|             <div className="ag-theme-balham">
-|                 <AgGridReact
+|             &lt;div className="ag-theme-balham">
+|                 &lt;AgGridReact
 |                     columnDefs={this.state.columnDefs}
 |                     onGridReady={this.onGridReady.bind(this)}
 |                     rowData={this.state.rowData} />
-|             </div>
+|             &lt;/div>
 |         );
 |     }
 | }
-| ```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
 | We can now test this Editor Component by using the Grid API to initiate testing, gain access to the
 | created Editor Instance and then invoke methods on it:
-|
-| ```js
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<snippet transform={false}>
 | it('cell should be editable and editor component usable', async() => {
 |     expect(component.render().find('.ag-cell-value').html()).toEqual(`<div>Age: 24</div>`);
 |
@@ -769,8 +820,11 @@ title: "Testing AG Grid"
 |
 |     expect(component.render().find('.ag-cell-value').html()).toEqual(`<div>Age: 50</div>`);
 | });
-| ```
-|
+</snippet>
+</framework-specific-section>
+
+
+<framework-specific-section frameworks="react">
 | Note that we make use of the `waitForAsyncCondition` utility described above to wait for
 | the Editor Component to be instantiated.
 |
@@ -782,7 +836,10 @@ title: "Testing AG Grid"
 |By default testing libraries won't return an accessible instance of a hook - in order to get access to methods you'll need
 |to wrap your component with a `forwardRef` and then expose methods you want to test with the `useImperativeHandle` hook.
 |
-|```jsx
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<snippet transform={false} language="jsx">
 |import React, {forwardRef, useImperativeHandle, useState} from 'react';
 |import {AgGridReact} from 'ag-grid-react';
 |
@@ -805,18 +862,22 @@ title: "Testing AG Grid"
 |    });
 |
 |    return (
-|        <AgGridReact
+|        &lt;AgGridReact
 |            columnDefs={columnDefs}
 |            onGridReady={onGridReady}
 |            rowData={rowData}
 |        />
 |    );
 |});
-|```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
 |You can then test this hook by accessing it via a `ref`:
-|
-|```jsx
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<snippet transform={false}>
 |const ensureGridApiHasBeenSet = async (componentRef) => {
 |    await act(async () => {
 |        await new Promise(function (resolve, reject) {
@@ -837,17 +898,21 @@ title: "Testing AG Grid"
 |
 |beforeEach(async () => {
 |    const ref = React.createRef()
-|    component = mount(<App ref={ref}/>);
+|    component = mount(&lt;App ref={ref}/>);
 |    agGridReact = component.find(AgGridReact).instance();
 |    await ensureGridApiHasBeenSet(ref);
 |});
-|```
-|
+</snippet>
+</framework-specific-section>
+
+
+<framework-specific-section frameworks="react">
 |Note that we're accessing exposed `getApi` method via the `ref`:  `componentRef.current.getApi()`.
 |
 |A full working example can be found in the following [GitHub Repo](https://github.com/seanlandsman/ag-grid-react-hook-testing).
-|
-[[only-vue]]
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 | We will walk through how you can use testing AG Grid as part of your Vue application, using default
 | build tools provided when using the [Vue CLI](https://cli.vuejs.org/) utility.
 |
@@ -862,7 +927,10 @@ title: "Testing AG Grid"
 |
 | We can create a utility function that will wait for the Grid API to be set for a set amount of time/attempts:
 |
-| ```js
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false}>
 | const ensureGridApiHasBeenSet = vm => new Promise(function (resolve, reject) {
 |     (function waitForGridReady() {
 |         // we need to wait for the gridReady event before we can start interacting with the grid
@@ -877,12 +945,16 @@ title: "Testing AG Grid"
 |         setTimeout(waitForGridReady, 10);
 |     })();
 | });
-| ```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 | We can now use this utility method before each test or in the `beforeEach` to ensure the Grid is fully ready
 | before continuing with out test:
-|
-| ```js
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false}>
 | beforeEach((done) => {
 |     wrapper = mount(GridExample, {});
 |
@@ -891,20 +963,26 @@ title: "Testing AG Grid"
 |         // after the component is ready
 |         ensureGridApiHasBeenSet(wrapper.vm).then(() => done());
 | });
-| ```
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 |
 | ## Testing User Supplied Components
 |
 | For example, let us suppose a user provides a custom [Editor Component](/component-cell-editor/) and wants
 | to test this within the context of the Grid.
 |
-| ```jsx
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="jsx">
 | // Editor Component - Editor.vue
-| <template>
-|     <input v-model="value" type="number" style="width: 100%">
-| </template>
+| &lt;template>
+|     &lt;input v-model="value" type="number" style="width: 100%">
+| &lt;/template>
 |
-| <script>
+| &lt;script>
 |     export default {
 |         name: 'Editor',
 |         data() {
@@ -934,18 +1012,18 @@ title: "Testing AG Grid"
 |             }
 |         }
 |     }
-| </script>
+| &lt;/script>
 |
-| <template>
-|     <ag-grid-vue style="width: 500px; height: 500px;"
+| &lt;template>
+|     &lt;ag-grid-vue style="width: 500px; height: 500px;"
 |                  class="ag-theme-balham"
 |                  @grid-ready="onGridReady"
 |                  :columnDefs="columnDefs"
 |                  :rowData="rowData">
-|     </ag-grid-vue>
-| </template>
+|     &lt;/ag-grid-vue>
+| &lt;/template>
 |
-| <script>
+| &lt;script>
 |     import {AgGridVue} from "ag-grid-vue3";
 |     import Editor from './Editor.vue';
 |
@@ -982,12 +1060,16 @@ title: "Testing AG Grid"
 |             }
 |         }
 |     }
-| </script>
-| ```
-|
+| &lt;/script>
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 | We can test the interaction between the Grid and the Editor component via the Grid API:
-|
-| ```js
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false}>
 | it('grid renders as expected', () => {
 |     const cells = wrapper.findAll('.ag-cell-value');
 |     expect(cells.length).toEqual(2);
@@ -1023,8 +1105,10 @@ title: "Testing AG Grid"
 |     expect(cells.at(0).text()).toEqual('Toyota');
 |     expect(cells.at(1).text()).toEqual('200000');
 | });
-| ```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 | We use the Grid API to initiate and end testing as we're can't readily perform double clicks in a
 | unit testing environment (but could if doing e2e with something like Protractor for example).
 |
@@ -1035,11 +1119,15 @@ title: "Testing AG Grid"
 | If you experience the error above then depending on your build configuration you may need to exclude either
 | `ag-grid-vue` or `@ag-grid-community/vue` (or `ag-grid-vue3` / `@ag-grid-community/vue3` if using Vue 3) in your Jest configuration:
 |
-| ```js
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false}>
 | module.exports = {
 |   ...other configuration...
 |   transformIgnorePatterns: ["/node_modules/(?!ag-grid-vue)"],
 |   ..or, if using modules:
 |   transformIgnorePatterns: ["/node_modules/(?!@ag-grid-community/vue)"],
 | }
-| ```
+</snippet>
+</framework-specific-section>
