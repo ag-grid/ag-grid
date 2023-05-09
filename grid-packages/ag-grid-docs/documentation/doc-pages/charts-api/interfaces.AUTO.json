@@ -43,6 +43,7 @@
   "Opacity": { "meta": { "isTypeAlias": true }, "type": "number" },
   "PixelSize": { "meta": { "isTypeAlias": true }, "type": "number" },
   "Ratio": { "meta": { "isTypeAlias": true }, "type": "number" },
+  "TextWrap": { "meta": { "isTypeAlias": true }, "type": "'always' | 'never'" },
   "DataValue": { "meta": { "isTypeAlias": true }, "type": "any" },
   "AgChartInteractionRange": {
     "meta": { "isTypeAlias": true },
@@ -699,7 +700,8 @@
       "color?": "CssColor",
       "spacing?": "number",
       "maxWidth?": "PixelSize",
-      "maxHeight?": "PixelSize"
+      "maxHeight?": "PixelSize",
+      "wrapping?": "TextWrap"
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",
@@ -711,7 +713,8 @@
       "color?": "/** The colour to use for the text. */",
       "spacing?": "/** Spacing added to help position the text. */",
       "maxWidth?": "/** Used to constrain the width of the title. */",
-      "maxHeight?": "/** Used to constrain the height of the title. */"
+      "maxHeight?": "/** Used to constrain the height of the title. */",
+      "wrapping?": "/** Text wrapping strategy for long titles. */"
     }
   },
   "AgChartSubtitleOptions": {
@@ -726,7 +729,8 @@
       "color?": "CssColor",
       "spacing?": "number",
       "maxWidth?": "PixelSize",
-      "maxHeight?": "PixelSize"
+      "maxHeight?": "PixelSize",
+      "wrapping?": "TextWrap"
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",
@@ -738,7 +742,8 @@
       "color?": "/** The colour to use for the text. */",
       "spacing?": "/** Spacing added to help position the text. */",
       "maxWidth?": "/** Used to constrain the width of the title. */",
-      "maxHeight?": "/** Used to constrain the height of the title. */"
+      "maxHeight?": "/** Used to constrain the height of the title. */",
+      "wrapping?": "/** Text wrapping strategy for long titles. */"
     }
   },
   "AgChartFooterOptions": {
@@ -753,7 +758,8 @@
       "color?": "CssColor",
       "spacing?": "number",
       "maxWidth?": "PixelSize",
-      "maxHeight?": "PixelSize"
+      "maxHeight?": "PixelSize",
+      "wrapping?": "TextWrap"
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",
@@ -765,7 +771,8 @@
       "color?": "/** The colour to use for the text. */",
       "spacing?": "/** Spacing added to help position the text. */",
       "maxWidth?": "/** Used to constrain the width of the title. */",
-      "maxHeight?": "/** Used to constrain the height of the title. */"
+      "maxHeight?": "/** Used to constrain the height of the title. */",
+      "wrapping?": "/** Text wrapping strategy for long titles. */"
     }
   },
   "AgAxisCaptionOptions": {
@@ -2752,7 +2759,8 @@
       "color?": "CssColor",
       "spacing?": "number",
       "maxWidth?": "PixelSize",
-      "maxHeight?": "PixelSize"
+      "maxHeight?": "PixelSize",
+      "wrapping?": "TextWrap"
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",
@@ -2764,7 +2772,8 @@
       "color?": "/** The colour to use for the text. */",
       "spacing?": "/** Spacing added to help position the text. */",
       "maxWidth?": "/** Used to constrain the width of the title. */",
-      "maxHeight?": "/** Used to constrain the height of the title. */"
+      "maxHeight?": "/** Used to constrain the height of the title. */",
+      "wrapping?": "/** Text wrapping strategy for long titles. */"
     }
   },
   "AgPieSeriesCalloutOptions": {

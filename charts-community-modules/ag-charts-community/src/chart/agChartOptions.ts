@@ -42,6 +42,8 @@ export type PixelSize = number;
 /** Alias to denote that a value is a ratio, usually in the range [0, 1]. */
 export type Ratio = number;
 
+export type TextWrap = 'always' | 'never';
+
 /** Alias to denote that a value is a data value. */
 export type DataValue = any;
 
@@ -282,6 +284,8 @@ export interface AgChartCaptionOptions {
     maxWidth?: PixelSize;
     /** Used to constrain the height of the title. */
     maxHeight?: PixelSize;
+    /** Text wrapping strategy for long titles. */
+    wrapping?: TextWrap;
 }
 export interface AgChartSubtitleOptions extends AgChartCaptionOptions {}
 export interface AgChartFooterOptions extends AgChartCaptionOptions {}

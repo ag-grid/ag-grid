@@ -16,6 +16,7 @@
   "Opacity": {},
   "PixelSize": {},
   "Ratio": {},
+  "TextWrap": {},
   "DataValue": {},
   "AgChartInteractionRange": {},
   "AgChartThemePalette": {
@@ -1169,6 +1170,10 @@
     "maxHeight": {
       "description": "/** Used to constrain the height of the title. */",
       "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "wrapping": {
+      "description": "/** Text wrapping strategy for long titles. */",
+      "type": { "returnType": "TextWrap", "optional": true }
     }
   },
   "AgChartSubtitleOptions": {
@@ -1211,6 +1216,10 @@
     "maxHeight": {
       "description": "/** Used to constrain the height of the title. */",
       "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "wrapping": {
+      "description": "/** Text wrapping strategy for long titles. */",
+      "type": { "returnType": "TextWrap", "optional": true }
     }
   },
   "AgChartFooterOptions": {
@@ -1253,6 +1262,10 @@
     "maxHeight": {
       "description": "/** Used to constrain the height of the title. */",
       "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "wrapping": {
+      "description": "/** Text wrapping strategy for long titles. */",
+      "type": { "returnType": "TextWrap", "optional": true }
     }
   },
   "AgAxisCaptionOptions": {
@@ -4228,6 +4241,10 @@
     "maxHeight": {
       "description": "/** Used to constrain the height of the title. */",
       "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "wrapping": {
+      "description": "/** Text wrapping strategy for long titles. */",
+      "type": { "returnType": "TextWrap", "optional": true }
     }
   },
   "AgPieSeriesCalloutOptions": {

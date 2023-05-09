@@ -220,6 +220,7 @@ export class ChartTheme {
                 fontSize: 16,
                 fontFamily: this.fontFamily,
                 color: 'rgb(70, 70, 70)',
+                wrapping: 'always' as const,
             },
             subtitle: {
                 enabled: false,
@@ -229,6 +230,7 @@ export class ChartTheme {
                 fontSize: 12,
                 fontFamily: this.fontFamily,
                 color: 'rgb(140, 140, 140)',
+                wrapping: 'always' as const,
             },
             footnote: {
                 enabled: false,
@@ -239,6 +241,7 @@ export class ChartTheme {
                 fontFamily: this.fontFamily,
                 color: 'rgb(140, 140, 140)',
                 spacing: 30,
+                wrapping: 'always' as const,
             },
             legend: {
                 enabled: true,

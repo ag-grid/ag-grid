@@ -7,10 +7,11 @@ import {
     OPT_FONT_STYLE,
     OPT_FONT_WEIGHT,
     OPT_NUMBER,
+    OPT_STRING,
     STRING,
     Validate,
 } from './util/validation';
-import { FontStyle, FontWeight } from './chart/agChartOptions';
+import { FontStyle, FontWeight, TextWrap } from './chart/agChartOptions';
 import { ProxyPropertyOnWrite } from './util/proxy';
 
 export class Caption {
@@ -57,6 +58,9 @@ export class Caption {
     @Validate(OPT_NUMBER(0))
     maxHeight?: number = undefined;
 
+    @Validate(OPT_STRING)
+    wrapping?: TextWrap = 'always';
+
     constructor() {
         const node = this.node;
         node.textAlign = 'center';
@@ -64,10 +68,10 @@ export class Caption {
     }
 
     computeTextWrap(containerWidth: number, containerHeight: number) {
-        const { text } = this;
+        const { text, wrapping } = this;
         const maxWidth = this.maxWidth == null ? containerWidth : Math.min(this.maxWidth, containerWidth);
         const maxHeight = this.maxHeight == null ? containerHeight : this.maxHeight;
-        if (!isFinite(maxWidth) && !isFinite(maxHeight)) {
+        if (wrapping === 'never' || (!isFinite(maxWidth) && !isFinite(maxHeight))) {
             this.node.text = text;
             return;
         }
