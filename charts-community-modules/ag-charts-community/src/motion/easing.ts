@@ -23,7 +23,11 @@ export const easeIn = createEase<any>((x) => 1 - Math.cos((x * Math.PI) / 2));
 export const easeOut = createEase<any>((x) => Math.sin((x * Math.PI) / 2));
 export const easeInOut = createEase<any>((x) => -(Math.cos(x * Math.PI) - 1) / 2);
 export const easeOutElastic = createEase<any>((x) => {
-    const c4 = (2 * Math.PI) / 3;
     if (x === 0 || x === 1) return x;
-    return Math.pow(2, -10 * x) * Math.sin((x * 10 - 0.75) * c4) + 1;
+
+    const scale = Math.pow(2, -10 * x);
+    const position = x * 10 - 0.75;
+    const arc = (2 * Math.PI) / 3;
+
+    return scale * Math.sin(position * arc) + 1;
 });
