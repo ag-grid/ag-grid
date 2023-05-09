@@ -50,7 +50,7 @@ export {
 
 declare module 'ag-charts-community' {
     export interface AgCartesianChartOptions {
-        animation: AgAnimationOptions;
+        animation?: AgAnimationOptions;
         contextMenu?: AgContextMenuOptions;
         /** Configuration for the chart navigator. */
         navigator?: AgNavigatorOptions;
