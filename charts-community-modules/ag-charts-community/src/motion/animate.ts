@@ -1,9 +1,9 @@
 import { Easing, linear } from './easing';
 
 export interface KeyframesOptions<T> {
+    duration: number;
     from: T;
     to: T;
-    duration: number;
     ease?: Easing<T>;
 }
 
@@ -13,9 +13,9 @@ export enum RepeatType {
 }
 
 export interface AnimationOptions<T> extends KeyframesOptions<T> {
+    driver: Driver;
     autoplay?: boolean;
     delay?: number;
-    driver?: Driver;
     repeat?: number;
     repeatType?: RepeatType;
     onComplete?: () => void;
@@ -42,12 +42,12 @@ export interface DriverControls {
 export type Driver = (update: (time: number) => void) => DriverControls;
 
 export function animate<T = number>({
+    driver,
+    duration,
     from,
     to,
-    duration,
     autoplay = true,
     delay = 0,
-    driver = requestAnimationFrameDriver,
     ease = linear,
     repeat: repeatMax = Infinity,
     repeatType = RepeatType.Loop,
@@ -144,7 +144,9 @@ export function animate<T = number>({
     return controls;
 }
 
-export interface TweenOptions<T> extends KeyframesOptions<T> {}
+export interface TweenOptions<T> extends KeyframesOptions<T> {
+    driver: Driver;
+}
 
 export interface TweenControls<T> {
     start: (onUpdate?: (value: T) => void) => TweenControls<T>;
@@ -180,30 +182,4 @@ export function tween<T>(opts: TweenOptions<T>): TweenControls<T> {
     };
 
     return controls;
-}
-
-function requestAnimationFrameDriver(update: (time: number) => void) {
-    let requestId: number | undefined;
-    let lastTime: number | undefined;
-
-    function frame(time: number) {
-        if (lastTime === undefined) lastTime = time;
-        const delta = time - lastTime;
-        lastTime = time;
-        update(delta);
-
-        requestId = requestAnimationFrame(frame);
-    }
-
-    return {
-        start: () => {
-            requestId = requestAnimationFrame(frame);
-        },
-        stop: () => {
-            if (requestId) cancelAnimationFrame(requestId);
-        },
-        reset: () => {
-            lastTime = undefined;
-        },
-    };
 }

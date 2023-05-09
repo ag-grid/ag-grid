@@ -5476,9 +5476,9 @@
   },
   "AnimationManyOptions": {
     "meta": { "typeParams": ["T"] },
+    "driver": { "type": { "returnType": "Driver", "optional": false } },
     "autoplay": { "type": { "returnType": "boolean", "optional": true } },
     "delay": { "type": { "returnType": "number", "optional": true } },
-    "driver": { "type": { "returnType": "Driver", "optional": true } },
     "repeat": { "type": { "returnType": "number", "optional": true } },
     "repeatType": { "type": { "returnType": "RepeatType", "optional": true } },
     "onComplete": {
@@ -6093,17 +6093,17 @@
     "labels": { "type": { "returnType": "string[]", "optional": false } }
   },
   "KeyframesOptions": {
+    "duration": { "type": { "returnType": "number", "optional": false } },
     "from": { "type": { "returnType": "T", "optional": false } },
     "to": { "type": { "returnType": "T", "optional": false } },
-    "duration": { "type": { "returnType": "number", "optional": false } },
     "ease": { "type": { "returnType": "Easing<T>", "optional": true } },
     "meta": { "typeParams": ["T"] }
   },
   "RepeatType": {},
   "AnimationOptions": {
+    "driver": { "type": { "returnType": "Driver", "optional": false } },
     "autoplay": { "type": { "returnType": "boolean", "optional": true } },
     "delay": { "type": { "returnType": "number", "optional": true } },
-    "driver": { "type": { "returnType": "Driver", "optional": true } },
     "repeat": { "type": { "returnType": "number", "optional": true } },
     "repeatType": { "type": { "returnType": "RepeatType", "optional": true } },
     "onComplete": {
@@ -6126,9 +6126,9 @@
       }
     },
     "meta": { "typeParams": ["T"] },
+    "duration": { "type": { "returnType": "number", "optional": false } },
     "from": { "type": { "returnType": "T", "optional": false } },
     "to": { "type": { "returnType": "T", "optional": false } },
-    "duration": { "type": { "returnType": "number", "optional": false } },
     "ease": { "type": { "returnType": "Easing<T>", "optional": true } }
   },
   "AnimationControls": {
@@ -6175,10 +6175,11 @@
   },
   "Driver": {},
   "TweenOptions": {
+    "driver": { "type": { "returnType": "Driver", "optional": false } },
     "meta": { "typeParams": ["T"] },
+    "duration": { "type": { "returnType": "number", "optional": false } },
     "from": { "type": { "returnType": "T", "optional": false } },
     "to": { "type": { "returnType": "T", "optional": false } },
-    "duration": { "type": { "returnType": "number", "optional": false } },
     "ease": { "type": { "returnType": "Easing<T>", "optional": true } }
   },
   "TweenControls": {

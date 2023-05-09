@@ -3655,9 +3655,9 @@
   "AnimationManyOptions": {
     "meta": { "typeParams": ["T"] },
     "type": {
+      "driver": "Driver",
       "autoplay?": "boolean",
       "delay?": "number",
-      "driver?": "Driver",
       "repeat?": "number",
       "repeatType?": "RepeatType",
       "onComplete?": "() => void",
@@ -4261,9 +4261,9 @@
   "KeyframesOptions": {
     "meta": { "typeParams": ["T"] },
     "type": {
+      "duration": "number",
       "from": "T",
       "to": "T",
-      "duration": "number",
       "ease?": "Easing<T>"
     }
   },
@@ -4275,9 +4275,9 @@
   "AnimationOptions": {
     "meta": { "typeParams": ["T"] },
     "type": {
+      "driver": "Driver",
       "autoplay?": "boolean",
       "delay?": "number",
-      "driver?": "Driver",
       "repeat?": "number",
       "repeatType?": "RepeatType",
       "onComplete?": "() => void",
@@ -4285,9 +4285,9 @@
       "onRepeat?": "() => void",
       "onStop?": "() => void",
       "onUpdate?": "(v: T) => void",
+      "duration": "number",
       "from": "T",
       "to": "T",
-      "duration": "number",
       "ease?": "Easing<T>"
     }
   },
@@ -4316,9 +4316,10 @@
   "TweenOptions": {
     "meta": { "typeParams": ["T"] },
     "type": {
+      "driver": "Driver",
+      "duration": "number",
       "from": "T",
       "to": "T",
-      "duration": "number",
       "ease?": "Easing<T>"
     }
   },
