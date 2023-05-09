@@ -15,7 +15,7 @@ contextMenu: {
 
 A user will now be able to use the context menu by right clicking anywhere on the chart, as in the following example.
 
-[Context Menu Default Example](https://plnkr.co/edit/X6S0PRHImP6YIfaN?open=main.js&preview)
+<chart-example title='Context Menu' name='context-menu' type='generated'></chart-example>
 
 ## Custom Actions
 
@@ -36,7 +36,7 @@ contextMenu: {
 }
 ```
 
-[Context Menu Extra Actions Example](https://plnkr.co/edit/cDJ3D6Z6N1sCgnBB?open=main.js&preview)
+<chart-example title='Context Menu Custom Actions' name='context-menu-actions' type='generated'></chart-example>
 
 ## API Reference
 
