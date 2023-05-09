@@ -38,7 +38,7 @@ export class AgGridReactUi<TData = any> extends Component<AgReactUiProps<TData>,
     }
 
     public render() {
-        debug('AgGridReactUi.render, context = ' + ((this.state as any)?.context?.contextID));
+        debug('AgGridReactUi.render, context = ' + (this.state.context));
         if (this.state.context) {
             this.renderedAfterMount = true;
         }
