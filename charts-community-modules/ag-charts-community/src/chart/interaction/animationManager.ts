@@ -1,22 +1,30 @@
 import { BaseManager } from './baseManager';
-import * as Animate from '../../motion/animate';
+import {
+    animate as baseAnimate,
+    AnimationControls,
+    AnimationOptions,
+    Driver,
+    tween,
+    TweenControls,
+    TweenOptions,
+} from '../../motion/animate';
 
 type AnimationId = string;
-type AnimationType = 'animation-frame';
+type AnimationEventType = 'animation-frame';
 
-interface AnimationEvent<AnimationType> {
-    type: AnimationType;
+interface AnimationEvent<AnimationEventType> {
+    type: AnimationEventType;
     delta: number;
 }
 
-interface AnimationManyOptions<T> extends Omit<Animate.AnimationOptions<T>, 'from' | 'to' | 'onUpdate'> {
+interface AnimationManyOptions<T> extends Omit<AnimationOptions<T>, 'from' | 'to' | 'onUpdate'> {
     onUpdate: (props: Array<T>) => void;
 }
 
 const DEBOUNCE_DELAY = 300;
 
-export class AnimationManager extends BaseManager<AnimationType, AnimationEvent<AnimationType>> {
-    private readonly controllers: Record<AnimationId, Animate.AnimationControls> = {};
+export class AnimationManager extends BaseManager<AnimationEventType, AnimationEvent<AnimationEventType>> {
+    private readonly controllers: Record<AnimationId, AnimationControls> = {};
     private debouncers: Record<AnimationId, number> = {};
 
     private updaters: Array<[AnimationId, FrameRequestCallback]> = [];
@@ -59,13 +67,13 @@ export class AnimationManager extends BaseManager<AnimationType, AnimationEvent<
         }
     }
 
-    public animate<T>(id: AnimationId, opts: Animate.AnimationOptions<T>): Animate.AnimationControls {
+    public animate<T>(id: AnimationId, opts: AnimationOptions<T>): AnimationControls {
         const optsExtra = {
             ...opts,
             autoplay: this.isPlaying ? opts.autoplay : false,
             driver: this.createDriver(id),
         };
-        const controller = Animate.animate(optsExtra);
+        const controller = baseAnimate(optsExtra);
 
         if (this.controllers[id]) {
             this.controllers[id].stop();
@@ -79,9 +87,9 @@ export class AnimationManager extends BaseManager<AnimationType, AnimationEvent<
 
     public animateMany<T>(
         id: AnimationId,
-        props: Array<Pick<Animate.AnimationOptions<T>, 'from' | 'to'>>,
+        props: Array<Pick<AnimationOptions<T>, 'from' | 'to'>>,
         opts: AnimationManyOptions<T>
-    ): Animate.AnimationControls {
+    ): AnimationControls {
         const state = props.map((prop) => prop.from);
 
         let updateBatch = 0;
@@ -124,7 +132,7 @@ export class AnimationManager extends BaseManager<AnimationType, AnimationEvent<
         return controls;
     }
 
-    public debouncedAnimate<T>(id: AnimationId, opts: Animate.AnimationOptions<T>): Animate.AnimationControls {
+    public debouncedAnimate<T>(id: AnimationId, opts: AnimationOptions<T>): AnimationControls {
         if (this.debouncers[id] && Date.now() - this.debouncers[id] < (opts.duration ?? DEBOUNCE_DELAY)) {
             return this.controllers[id];
         }
@@ -133,17 +141,17 @@ export class AnimationManager extends BaseManager<AnimationType, AnimationEvent<
         return this.animate(id, opts);
     }
 
-    public tween<T>(opts: Animate.TweenOptions<T>): Animate.TweenControls<T> {
+    public tween<T>(opts: TweenOptions<T>): TweenControls<T> {
         const id = `tween-${btoa(JSON.stringify(opts))}`;
         const optsExtra = {
             ...opts,
             driver: this.createDriver(id),
         };
 
-        return Animate.tween(optsExtra);
+        return tween(optsExtra);
     }
 
-    private createDriver(id: AnimationId): Animate.Driver {
+    private createDriver(id: AnimationId): Driver {
         return (update: (time: number) => void) => {
             return {
                 start: () => {

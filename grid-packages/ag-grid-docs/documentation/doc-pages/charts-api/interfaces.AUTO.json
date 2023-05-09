@@ -146,6 +146,7 @@
       "width?": "PixelSize",
       "height?": "PixelSize",
       "autoSize?": "boolean",
+      "animation?": "AgChartAnimationOptions",
       "padding?": "AgChartPaddingOptions",
       "seriesAreaPadding?": "AgSeriesAreaPaddingOptions",
       "background?": "AgChartBackground",
@@ -168,6 +169,7 @@
       "width?": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "height?": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
+      "animation?": "/** Configuration for chart animations. */",
       "padding?": "/** Configuration for the padding shown around the chart. */",
       "seriesAreaPadding?": "/** Configuration for the padding around the series area. */",
       "background?": "/** Configuration for the background shown behind the chart. */",
@@ -191,6 +193,7 @@
       "width?": "PixelSize",
       "height?": "PixelSize",
       "autoSize?": "boolean",
+      "animation?": "AgChartAnimationOptions",
       "padding?": "AgChartPaddingOptions",
       "seriesAreaPadding?": "AgSeriesAreaPaddingOptions",
       "background?": "AgChartBackground",
@@ -211,6 +214,7 @@
       "width?": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "height?": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
+      "animation?": "/** Configuration for chart animations. */",
       "padding?": "/** Configuration for the padding shown around the chart. */",
       "seriesAreaPadding?": "/** Configuration for the padding around the series area. */",
       "background?": "/** Configuration for the background shown behind the chart. */",
@@ -234,6 +238,7 @@
       "width?": "PixelSize",
       "height?": "PixelSize",
       "autoSize?": "boolean",
+      "animation?": "AgChartAnimationOptions",
       "padding?": "AgChartPaddingOptions",
       "seriesAreaPadding?": "AgSeriesAreaPaddingOptions",
       "background?": "AgChartBackground",
@@ -254,6 +259,7 @@
       "width?": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "height?": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
+      "animation?": "/** Configuration for chart animations. */",
       "padding?": "/** Configuration for the padding shown around the chart. */",
       "seriesAreaPadding?": "/** Configuration for the padding around the series area. */",
       "background?": "/** Configuration for the background shown behind the chart. */",
@@ -605,6 +611,13 @@
   "AgHierarchySeriesTheme": {
     "meta": {},
     "type": { "treemap?": "AgTreemapSeriesOptions" }
+  },
+  "AgChartAnimationOptions": {
+    "meta": {},
+    "type": { "enabled?": "boolean" },
+    "docs": {
+      "enabled?": "/** Whether or not animation is enabled on the chart. */"
+    }
   },
   "AgChartPaddingOptions": {
     "meta": {},
@@ -1250,6 +1263,7 @@
       "width?": "PixelSize",
       "height?": "PixelSize",
       "autoSize?": "boolean",
+      "animation?": "AgChartAnimationOptions",
       "padding?": "AgChartPaddingOptions",
       "seriesAreaPadding?": "AgSeriesAreaPaddingOptions",
       "background?": "AgChartBackground",
@@ -1269,6 +1283,7 @@
       "width?": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "height?": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
+      "animation?": "/** Configuration for chart animations. */",
       "padding?": "/** Configuration for the padding shown around the chart. */",
       "seriesAreaPadding?": "/** Configuration for the padding around the series area. */",
       "background?": "/** Configuration for the background shown behind the chart. */",
@@ -3239,6 +3254,7 @@
       "width?": "PixelSize",
       "height?": "PixelSize",
       "autoSize?": "boolean",
+      "animation?": "AgChartAnimationOptions",
       "padding?": "AgChartPaddingOptions",
       "seriesAreaPadding?": "AgSeriesAreaPaddingOptions",
       "background?": "AgChartBackground",
@@ -3262,6 +3278,7 @@
       "width?": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "height?": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
+      "animation?": "/** Configuration for chart animations. */",
       "padding?": "/** Configuration for the padding shown around the chart. */",
       "seriesAreaPadding?": "/** Configuration for the padding around the series area. */",
       "background?": "/** Configuration for the background shown behind the chart. */",
@@ -3286,6 +3303,7 @@
       "width?": "PixelSize",
       "height?": "PixelSize",
       "autoSize?": "boolean",
+      "animation?": "AgChartAnimationOptions",
       "padding?": "AgChartPaddingOptions",
       "seriesAreaPadding?": "AgSeriesAreaPaddingOptions",
       "background?": "AgChartBackground",
@@ -3307,6 +3325,7 @@
       "width?": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "height?": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
+      "animation?": "/** Configuration for chart animations. */",
       "padding?": "/** Configuration for the padding shown around the chart. */",
       "seriesAreaPadding?": "/** Configuration for the padding around the series area. */",
       "background?": "/** Configuration for the background shown behind the chart. */",
@@ -3331,6 +3350,7 @@
       "width?": "PixelSize",
       "height?": "PixelSize",
       "autoSize?": "boolean",
+      "animation?": "AgChartAnimationOptions",
       "padding?": "AgChartPaddingOptions",
       "seriesAreaPadding?": "AgSeriesAreaPaddingOptions",
       "background?": "AgChartBackground",
@@ -3352,6 +3372,7 @@
       "width?": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "height?": "/** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
       "autoSize?": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
+      "animation?": "/** Configuration for chart animations. */",
       "padding?": "/** Configuration for the padding shown around the chart. */",
       "seriesAreaPadding?": "/** Configuration for the padding around the series area. */",
       "background?": "/** Configuration for the background shown behind the chart. */",
@@ -3641,6 +3662,30 @@
       "max": "number",
       "fn": "(bbox: BBox) => number",
       "padding": "number"
+    }
+  },
+  "AnimationId": { "meta": { "isTypeAlias": true }, "type": "string" },
+  "AnimationEventType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'animation-frame'"
+  },
+  "AnimationEvent": {
+    "meta": { "typeParams": ["AnimationEventType"] },
+    "type": { "type": "AnimationEventType", "delta": "number" }
+  },
+  "AnimationManyOptions": {
+    "meta": { "typeParams": ["T"] },
+    "type": {
+      "autoplay?": "boolean",
+      "delay?": "number",
+      "driver?": "Driver",
+      "repeat?": "number",
+      "repeatType?": "RepeatType",
+      "onComplete?": "() => void",
+      "onPlay?": "() => void",
+      "onRepeat?": "() => void",
+      "onStop?": "() => void",
+      "onUpdate?": "(v: AnimationOptions<T>) => void"
     }
   },
   "ChartEventType": {
@@ -4234,6 +4279,85 @@
     "type": "(type: ChartUpdateType, options: { forceNodeDataRefresh?: boolean; }) => void"
   },
   "Tick": { "meta": {}, "type": { "labels": "string[]" } },
+  "KeyframesOptions": {
+    "meta": { "typeParams": ["T"] },
+    "type": {
+      "from": "T",
+      "to": "T",
+      "duration": "number",
+      "ease?": "Easing<T>"
+    }
+  },
+  "RepeatType": {
+    "meta": { "isEnum": true },
+    "type": ["Loop = 'loop'", "Reverse = 'reverse'"],
+    "docs": [null, null]
+  },
+  "AnimationOptions": {
+    "meta": { "typeParams": ["T"] },
+    "type": {
+      "autoplay?": "boolean",
+      "delay?": "number",
+      "driver?": "Driver",
+      "repeat?": "number",
+      "repeatType?": "RepeatType",
+      "onComplete?": "() => void",
+      "onPlay?": "() => void",
+      "onRepeat?": "() => void",
+      "onStop?": "() => void",
+      "onUpdate?": "(v: T) => void",
+      "from": "T",
+      "to": "T",
+      "duration": "number",
+      "ease?": "Easing<T>"
+    }
+  },
+  "AnimationControls": {
+    "meta": {},
+    "type": {
+      "isPlaying": "boolean",
+      "play": "() => AnimationControls",
+      "pause": "() => AnimationControls",
+      "stop": "() => AnimationControls",
+      "reset": "() => AnimationControls"
+    }
+  },
+  "DriverControls": {
+    "meta": {},
+    "type": {
+      "start": "() => void",
+      "stop": "() => void",
+      "reset": "() => void"
+    }
+  },
+  "Driver": {
+    "meta": { "isTypeAlias": true },
+    "type": "(update: (time: number) => void) => DriverControls"
+  },
+  "TweenOptions": {
+    "meta": { "typeParams": ["T"] },
+    "type": {
+      "from": "T",
+      "to": "T",
+      "duration": "number",
+      "ease?": "Easing<T>"
+    }
+  },
+  "TweenControls": {
+    "meta": { "typeParams": ["T"] },
+    "type": {
+      "start": "(onUpdate?: (value: T) => void) => TweenControls<T>",
+      "stop": "() => TweenControls<T>"
+    }
+  },
+  "EasingOpts": {
+    "meta": { "typeParams": ["T"] },
+    "type": { "from": "T", "to": "T" }
+  },
+  "Easing": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
+    "type": "(opts: EasingOpts<T>) => (time: number) => T"
+  },
   "ScaleClampParams": {
     "meta": {},
     "type": { "strict": "boolean" },
@@ -4489,12 +4613,13 @@
     "type": {
       "scene": "Scene",
       "mode": "'standalone' | 'integrated'",
+      "animationManager": "AnimationManager",
       "chartEventManager": "ChartEventManager",
       "cursorManager": "CursorManager",
       "highlightManager": "HighlightManager",
       "interactionManager": "InteractionManager",
-      "zoomManager": "ZoomManager",
       "tooltipManager": "TooltipManager",
+      "zoomManager": "ZoomManager",
       "dataService": "DataService",
       "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>",
       "updateService": "UpdateService"
@@ -4506,12 +4631,13 @@
       "parent": "P",
       "scene": "Scene",
       "mode": "'standalone' | 'integrated'",
+      "animationManager": "AnimationManager",
       "chartEventManager": "ChartEventManager",
       "cursorManager": "CursorManager",
       "highlightManager": "HighlightManager",
       "interactionManager": "InteractionManager",
-      "zoomManager": "ZoomManager",
       "tooltipManager": "TooltipManager",
+      "zoomManager": "ZoomManager",
       "dataService": "DataService",
       "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>",
       "updateService": "UpdateService"

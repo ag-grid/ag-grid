@@ -201,6 +201,10 @@
       "description": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "animation": {
+      "description": "/** Configuration for chart animations. */",
+      "type": { "returnType": "AgChartAnimationOptions", "optional": true }
+    },
     "padding": {
       "description": "/** Configuration for the padding shown around the chart. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
@@ -276,6 +280,10 @@
       "description": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "animation": {
+      "description": "/** Configuration for chart animations. */",
+      "type": { "returnType": "AgChartAnimationOptions", "optional": true }
+    },
     "padding": {
       "description": "/** Configuration for the padding shown around the chart. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
@@ -350,6 +358,10 @@
     "autoSize": {
       "description": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "animation": {
+      "description": "/** Configuration for chart animations. */",
+      "type": { "returnType": "AgChartAnimationOptions", "optional": true }
     },
     "padding": {
       "description": "/** Configuration for the padding shown around the chart. */",
@@ -1027,6 +1039,12 @@
   "AgHierarchySeriesTheme": {
     "treemap": {
       "type": { "returnType": "AgTreemapSeriesOptions", "optional": true }
+    }
+  },
+  "AgChartAnimationOptions": {
+    "enabled": {
+      "description": "/** Whether or not animation is enabled on the chart. */",
+      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "AgChartPaddingOptions": {
@@ -1924,6 +1942,10 @@
     "autoSize": {
       "description": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "animation": {
+      "description": "/** Configuration for chart animations. */",
+      "type": { "returnType": "AgChartAnimationOptions", "optional": true }
     },
     "padding": {
       "description": "/** Configuration for the padding shown around the chart. */",
@@ -5013,6 +5035,10 @@
       "description": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "animation": {
+      "description": "/** Configuration for chart animations. */",
+      "type": { "returnType": "AgChartAnimationOptions", "optional": true }
+    },
     "padding": {
       "description": "/** Configuration for the padding shown around the chart. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
@@ -5091,6 +5117,10 @@
       "description": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "animation": {
+      "description": "/** Configuration for chart animations. */",
+      "type": { "returnType": "AgChartAnimationOptions", "optional": true }
+    },
     "padding": {
       "description": "/** Configuration for the padding shown around the chart. */",
       "type": { "returnType": "AgChartPaddingOptions", "optional": true }
@@ -5165,6 +5195,10 @@
     "autoSize": {
       "description": "/** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If either the `width` or `height` are set, auto-sizing will be disabled unless this is explicitly set to `true`.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "animation": {
+      "description": "/** Configuration for chart animations. */",
+      "type": { "returnType": "AgChartAnimationOptions", "optional": true }
     },
     "padding": {
       "description": "/** Configuration for the padding shown around the chart. */",
@@ -5464,6 +5498,35 @@
       }
     },
     "padding": { "type": { "returnType": "number", "optional": false } }
+  },
+  "AnimationId": {},
+  "AnimationEventType": {},
+  "AnimationEvent": {
+    "type": {
+      "type": { "returnType": "AnimationEventType", "optional": false }
+    },
+    "delta": { "type": { "returnType": "number", "optional": false } },
+    "meta": { "typeParams": ["AnimationEventType"] }
+  },
+  "AnimationManyOptions": {
+    "meta": { "typeParams": ["T"] },
+    "autoplay": { "type": { "returnType": "boolean", "optional": true } },
+    "delay": { "type": { "returnType": "number", "optional": true } },
+    "driver": { "type": { "returnType": "Driver", "optional": true } },
+    "repeat": { "type": { "returnType": "number", "optional": true } },
+    "repeatType": { "type": { "returnType": "RepeatType", "optional": true } },
+    "onComplete": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onPlay": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onRepeat": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onStop": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    }
   },
   "ChartEventType": {},
   "ChartEvents": {},
@@ -6063,6 +6126,118 @@
   "Tick": {
     "labels": { "type": { "returnType": "string[]", "optional": false } }
   },
+  "KeyframesOptions": {
+    "from": { "type": { "returnType": "T", "optional": false } },
+    "to": { "type": { "returnType": "T", "optional": false } },
+    "duration": { "type": { "returnType": "number", "optional": false } },
+    "ease": { "type": { "returnType": "Easing<T>", "optional": true } },
+    "meta": { "typeParams": ["T"] }
+  },
+  "RepeatType": {},
+  "AnimationOptions": {
+    "autoplay": { "type": { "returnType": "boolean", "optional": true } },
+    "delay": { "type": { "returnType": "number", "optional": true } },
+    "driver": { "type": { "returnType": "Driver", "optional": true } },
+    "repeat": { "type": { "returnType": "number", "optional": true } },
+    "repeatType": { "type": { "returnType": "RepeatType", "optional": true } },
+    "onComplete": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onPlay": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onRepeat": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onStop": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onUpdate": {
+      "type": {
+        "arguments": { "v": "T" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "meta": { "typeParams": ["T"] },
+    "from": { "type": { "returnType": "T", "optional": false } },
+    "to": { "type": { "returnType": "T", "optional": false } },
+    "duration": { "type": { "returnType": "number", "optional": false } },
+    "ease": { "type": { "returnType": "Easing<T>", "optional": true } }
+  },
+  "AnimationControls": {
+    "isPlaying": { "type": { "returnType": "boolean", "optional": false } },
+    "play": {
+      "type": {
+        "arguments": {},
+        "returnType": "AnimationControls",
+        "optional": false
+      }
+    },
+    "pause": {
+      "type": {
+        "arguments": {},
+        "returnType": "AnimationControls",
+        "optional": false
+      }
+    },
+    "stop": {
+      "type": {
+        "arguments": {},
+        "returnType": "AnimationControls",
+        "optional": false
+      }
+    },
+    "reset": {
+      "type": {
+        "arguments": {},
+        "returnType": "AnimationControls",
+        "optional": false
+      }
+    }
+  },
+  "DriverControls": {
+    "start": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "stop": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "reset": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    }
+  },
+  "Driver": {},
+  "TweenOptions": {
+    "meta": { "typeParams": ["T"] },
+    "from": { "type": { "returnType": "T", "optional": false } },
+    "to": { "type": { "returnType": "T", "optional": false } },
+    "duration": { "type": { "returnType": "number", "optional": false } },
+    "ease": { "type": { "returnType": "Easing<T>", "optional": true } }
+  },
+  "TweenControls": {
+    "start": {
+      "type": {
+        "arguments": { "onUpdate?": "(value: T) => void" },
+        "returnType": "TweenControls<T>",
+        "optional": false
+      }
+    },
+    "stop": {
+      "type": {
+        "arguments": {},
+        "returnType": "TweenControls<T>",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["T"] }
+  },
+  "EasingOpts": {
+    "from": { "type": { "returnType": "T", "optional": false } },
+    "to": { "type": { "returnType": "T", "optional": false } },
+    "meta": { "typeParams": ["T"] }
+  },
+  "Easing": { "meta": { "typeParams": ["T"] } },
   "ScaleClampParams": {
     "strict": {
       "description": "/** If `true` the values outside of the domain will become `NaN`.\n     * If `false` such values will be clamped to the domain edges.\n     */",
@@ -6276,6 +6451,9 @@
     "mode": {
       "type": { "returnType": "'standalone' | 'integrated'", "optional": false }
     },
+    "animationManager": {
+      "type": { "returnType": "AnimationManager", "optional": false }
+    },
     "chartEventManager": {
       "type": { "returnType": "ChartEventManager", "optional": false }
     },
@@ -6288,11 +6466,11 @@
     "interactionManager": {
       "type": { "returnType": "InteractionManager", "optional": false }
     },
-    "zoomManager": {
-      "type": { "returnType": "ZoomManager", "optional": false }
-    },
     "tooltipManager": {
       "type": { "returnType": "TooltipManager", "optional": false }
+    },
+    "zoomManager": {
+      "type": { "returnType": "ZoomManager", "optional": false }
     },
     "dataService": {
       "type": { "returnType": "DataService", "optional": false }
@@ -6314,6 +6492,9 @@
     "mode": {
       "type": { "returnType": "'standalone' | 'integrated'", "optional": false }
     },
+    "animationManager": {
+      "type": { "returnType": "AnimationManager", "optional": false }
+    },
     "chartEventManager": {
       "type": { "returnType": "ChartEventManager", "optional": false }
     },
@@ -6326,11 +6507,11 @@
     "interactionManager": {
       "type": { "returnType": "InteractionManager", "optional": false }
     },
-    "zoomManager": {
-      "type": { "returnType": "ZoomManager", "optional": false }
-    },
     "tooltipManager": {
       "type": { "returnType": "TooltipManager", "optional": false }
+    },
+    "zoomManager": {
+      "type": { "returnType": "ZoomManager", "optional": false }
     },
     "dataService": {
       "type": { "returnType": "DataService", "optional": false }
