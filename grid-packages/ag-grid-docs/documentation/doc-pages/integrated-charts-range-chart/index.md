@@ -37,8 +37,9 @@ The chart range handle will only appear when all series columns are contiguous. 
 
 There are several ways for columns to be classified as chart categories or series. Columns can be explicitly configured or left for the grid to infer the type based on the data contained in the cells.
 
-[[warning]]
-| It is recommended that `ColDef.chartDataType` is specified rather than relying on the grid to infer the chart data type as `null` and `undefined` values can yield unexpected results. 
+<warning>
+| It is recommended that `ColDef.chartDataType` is specified rather than relying on the grid to infer the chart data type as `null` and `undefined` values can yield unexpected results.
+</warning>
 
 ### ColDef.chartDataType
 

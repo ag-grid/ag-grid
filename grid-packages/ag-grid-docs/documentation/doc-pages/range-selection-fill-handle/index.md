@@ -121,8 +121,9 @@ When the `fillOperation` function returns `params.currentCellValue` that value i
 
 <grid-example title='Skipping Columns' name='skipping-columns' type='generated' options='{ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "range"] }'></grid-example>
 
-[[warning]]
+<warning>
 | Non editable cells will **not** be changed by the Fill Handle, so there is no need to add custom logic to skip columns that aren't editable.
+</warning>
 
 ## Read Only Edit
 

@@ -4,8 +4,9 @@ title: "Legacy Sass API"
 
 In v28, the [Sass Styling API](/global-style-customisation-sass) was introduced as the preferred way for Sass users to control themes and design customisations. The Legacy Sass API is deprecated and will be removed from the Grid in a future major release.
 
-[[warning]]
+<warning>
 | This page describes the Legacy Sass API. New applications should not use it. This page is for applications that have not yet upgraded to the new Sass API, and need to make changes to code using the Legacy API.
+</warning>
 
 ## Loading the Legacy Sass API
 
