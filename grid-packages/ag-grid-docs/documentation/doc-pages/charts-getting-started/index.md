@@ -1012,7 +1012,7 @@ This time, let's choose another series type to plot the data: stacked columns. H
 
 Chart tooltips are enabled by default so you can hover over a block to see its value.
 
-![Column chart](beverage-expenses-no-captions.png)
+![Column chart](beverage-expenses-no-labels.png)
 
 ## Labels and Titles
 
@@ -1433,7 +1433,7 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 </snippet>
 </framework-specific-section>
 
-![Column chart with captions](beverage-expenses-with-captions.png)
+![Column chart with captions](beverage-expenses-captions.png)
 
 
 <framework-specific-section frameworks="javascript">
