@@ -5500,6 +5500,35 @@
     },
     "padding": { "type": { "returnType": "number", "optional": false } }
   },
+  "AnimationId": {},
+  "AnimationEventType": {},
+  "AnimationEvent": {
+    "type": {
+      "type": { "returnType": "AnimationEventType", "optional": false }
+    },
+    "delta": { "type": { "returnType": "number", "optional": false } },
+    "meta": { "typeParams": ["AnimationEventType"] }
+  },
+  "AnimationManyOptions": {
+    "meta": { "typeParams": ["T"] },
+    "driver": { "type": { "returnType": "Driver", "optional": false } },
+    "autoplay": { "type": { "returnType": "boolean", "optional": true } },
+    "delay": { "type": { "returnType": "number", "optional": true } },
+    "repeat": { "type": { "returnType": "number", "optional": true } },
+    "repeatType": { "type": { "returnType": "RepeatType", "optional": true } },
+    "onComplete": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onPlay": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onRepeat": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onStop": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    }
+  },
   "ChartEventType": {},
   "ChartEvents": {},
   "ChartEvent": {
@@ -6106,6 +6135,119 @@
   "Tick": {
     "labels": { "type": { "returnType": "string[]", "optional": false } }
   },
+  "KeyframesOptions": {
+    "duration": { "type": { "returnType": "number", "optional": false } },
+    "from": { "type": { "returnType": "T", "optional": false } },
+    "to": { "type": { "returnType": "T", "optional": false } },
+    "ease": { "type": { "returnType": "Easing<T>", "optional": true } },
+    "meta": { "typeParams": ["T"] }
+  },
+  "RepeatType": {},
+  "AnimationOptions": {
+    "driver": { "type": { "returnType": "Driver", "optional": false } },
+    "autoplay": { "type": { "returnType": "boolean", "optional": true } },
+    "delay": { "type": { "returnType": "number", "optional": true } },
+    "repeat": { "type": { "returnType": "number", "optional": true } },
+    "repeatType": { "type": { "returnType": "RepeatType", "optional": true } },
+    "onComplete": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onPlay": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onRepeat": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onStop": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onUpdate": {
+      "type": {
+        "arguments": { "v": "T" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "meta": { "typeParams": ["T"] },
+    "duration": { "type": { "returnType": "number", "optional": false } },
+    "from": { "type": { "returnType": "T", "optional": false } },
+    "to": { "type": { "returnType": "T", "optional": false } },
+    "ease": { "type": { "returnType": "Easing<T>", "optional": true } }
+  },
+  "AnimationControls": {
+    "isPlaying": { "type": { "returnType": "boolean", "optional": false } },
+    "play": {
+      "type": {
+        "arguments": {},
+        "returnType": "AnimationControls",
+        "optional": false
+      }
+    },
+    "pause": {
+      "type": {
+        "arguments": {},
+        "returnType": "AnimationControls",
+        "optional": false
+      }
+    },
+    "stop": {
+      "type": {
+        "arguments": {},
+        "returnType": "AnimationControls",
+        "optional": false
+      }
+    },
+    "reset": {
+      "type": {
+        "arguments": {},
+        "returnType": "AnimationControls",
+        "optional": false
+      }
+    }
+  },
+  "DriverControls": {
+    "start": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "stop": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "reset": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    }
+  },
+  "Driver": {},
+  "TweenOptions": {
+    "driver": { "type": { "returnType": "Driver", "optional": false } },
+    "meta": { "typeParams": ["T"] },
+    "duration": { "type": { "returnType": "number", "optional": false } },
+    "from": { "type": { "returnType": "T", "optional": false } },
+    "to": { "type": { "returnType": "T", "optional": false } },
+    "ease": { "type": { "returnType": "Easing<T>", "optional": true } }
+  },
+  "TweenControls": {
+    "start": {
+      "type": {
+        "arguments": { "onUpdate?": "(value: T) => void" },
+        "returnType": "TweenControls<T>",
+        "optional": false
+      }
+    },
+    "stop": {
+      "type": {
+        "arguments": {},
+        "returnType": "TweenControls<T>",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["T"] }
+  },
+  "EasingOpts": {
+    "from": { "type": { "returnType": "T", "optional": false } },
+    "to": { "type": { "returnType": "T", "optional": false } },
+    "meta": { "typeParams": ["T"] }
+  },
+  "Easing": { "meta": { "typeParams": ["T"] } },
   "ScaleClampParams": {
     "strict": {
       "description": "/** If `true` the values outside of the domain will become `NaN`.\n     * If `false` such values will be clamped to the domain edges.\n     */",
@@ -6319,6 +6461,9 @@
     "mode": {
       "type": { "returnType": "'standalone' | 'integrated'", "optional": false }
     },
+    "animationManager": {
+      "type": { "returnType": "AnimationManager", "optional": false }
+    },
     "chartEventManager": {
       "type": { "returnType": "ChartEventManager", "optional": false }
     },
@@ -6331,11 +6476,11 @@
     "interactionManager": {
       "type": { "returnType": "InteractionManager", "optional": false }
     },
-    "zoomManager": {
-      "type": { "returnType": "ZoomManager", "optional": false }
-    },
     "tooltipManager": {
       "type": { "returnType": "TooltipManager", "optional": false }
+    },
+    "zoomManager": {
+      "type": { "returnType": "ZoomManager", "optional": false }
     },
     "dataService": {
       "type": { "returnType": "DataService", "optional": false }
@@ -6357,6 +6502,9 @@
     "mode": {
       "type": { "returnType": "'standalone' | 'integrated'", "optional": false }
     },
+    "animationManager": {
+      "type": { "returnType": "AnimationManager", "optional": false }
+    },
     "chartEventManager": {
       "type": { "returnType": "ChartEventManager", "optional": false }
     },
@@ -6369,11 +6517,11 @@
     "interactionManager": {
       "type": { "returnType": "InteractionManager", "optional": false }
     },
-    "zoomManager": {
-      "type": { "returnType": "ZoomManager", "optional": false }
-    },
     "tooltipManager": {
       "type": { "returnType": "TooltipManager", "optional": false }
+    },
+    "zoomManager": {
+      "type": { "returnType": "ZoomManager", "optional": false }
     },
     "dataService": {
       "type": { "returnType": "DataService", "optional": false }

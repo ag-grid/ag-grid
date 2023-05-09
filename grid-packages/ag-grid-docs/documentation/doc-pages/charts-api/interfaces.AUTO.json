@@ -3662,6 +3662,30 @@
       "padding": "number"
     }
   },
+  "AnimationId": { "meta": { "isTypeAlias": true }, "type": "string" },
+  "AnimationEventType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'animation-frame'"
+  },
+  "AnimationEvent": {
+    "meta": { "typeParams": ["AnimationEventType"] },
+    "type": { "type": "AnimationEventType", "delta": "number" }
+  },
+  "AnimationManyOptions": {
+    "meta": { "typeParams": ["T"] },
+    "type": {
+      "driver": "Driver",
+      "autoplay?": "boolean",
+      "delay?": "number",
+      "repeat?": "number",
+      "repeatType?": "RepeatType",
+      "onComplete?": "() => void",
+      "onPlay?": "() => void",
+      "onRepeat?": "() => void",
+      "onStop?": "() => void",
+      "onUpdate?": "(v: AnimationOptions<T>) => void"
+    }
+  },
   "ChartEventType": {
     "meta": { "isTypeAlias": true },
     "type": "'legend-item-click' | 'legend-item-double-click'"
@@ -4262,6 +4286,86 @@
     "type": "(type: ChartUpdateType, options: { forceNodeDataRefresh?: boolean; }) => void"
   },
   "Tick": { "meta": {}, "type": { "labels": "string[]" } },
+  "KeyframesOptions": {
+    "meta": { "typeParams": ["T"] },
+    "type": {
+      "duration": "number",
+      "from": "T",
+      "to": "T",
+      "ease?": "Easing<T>"
+    }
+  },
+  "RepeatType": {
+    "meta": { "isEnum": true },
+    "type": ["Loop = 'loop'", "Reverse = 'reverse'"],
+    "docs": [null, null]
+  },
+  "AnimationOptions": {
+    "meta": { "typeParams": ["T"] },
+    "type": {
+      "driver": "Driver",
+      "autoplay?": "boolean",
+      "delay?": "number",
+      "repeat?": "number",
+      "repeatType?": "RepeatType",
+      "onComplete?": "() => void",
+      "onPlay?": "() => void",
+      "onRepeat?": "() => void",
+      "onStop?": "() => void",
+      "onUpdate?": "(v: T) => void",
+      "duration": "number",
+      "from": "T",
+      "to": "T",
+      "ease?": "Easing<T>"
+    }
+  },
+  "AnimationControls": {
+    "meta": {},
+    "type": {
+      "isPlaying": "boolean",
+      "play": "() => AnimationControls",
+      "pause": "() => AnimationControls",
+      "stop": "() => AnimationControls",
+      "reset": "() => AnimationControls"
+    }
+  },
+  "DriverControls": {
+    "meta": {},
+    "type": {
+      "start": "() => void",
+      "stop": "() => void",
+      "reset": "() => void"
+    }
+  },
+  "Driver": {
+    "meta": { "isTypeAlias": true },
+    "type": "(update: (time: number) => void) => DriverControls"
+  },
+  "TweenOptions": {
+    "meta": { "typeParams": ["T"] },
+    "type": {
+      "driver": "Driver",
+      "duration": "number",
+      "from": "T",
+      "to": "T",
+      "ease?": "Easing<T>"
+    }
+  },
+  "TweenControls": {
+    "meta": { "typeParams": ["T"] },
+    "type": {
+      "start": "(onUpdate?: (value: T) => void) => TweenControls<T>",
+      "stop": "() => TweenControls<T>"
+    }
+  },
+  "EasingOpts": {
+    "meta": { "typeParams": ["T"] },
+    "type": { "from": "T", "to": "T" }
+  },
+  "Easing": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
+    "type": "(opts: EasingOpts<T>) => (time: number) => T"
+  },
   "ScaleClampParams": {
     "meta": {},
     "type": { "strict": "boolean" },
@@ -4517,12 +4621,13 @@
     "type": {
       "scene": "Scene",
       "mode": "'standalone' | 'integrated'",
+      "animationManager": "AnimationManager",
       "chartEventManager": "ChartEventManager",
       "cursorManager": "CursorManager",
       "highlightManager": "HighlightManager",
       "interactionManager": "InteractionManager",
-      "zoomManager": "ZoomManager",
       "tooltipManager": "TooltipManager",
+      "zoomManager": "ZoomManager",
       "dataService": "DataService",
       "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>",
       "updateService": "UpdateService"
@@ -4534,12 +4639,13 @@
       "parent": "P",
       "scene": "Scene",
       "mode": "'standalone' | 'integrated'",
+      "animationManager": "AnimationManager",
       "chartEventManager": "ChartEventManager",
       "cursorManager": "CursorManager",
       "highlightManager": "HighlightManager",
       "interactionManager": "InteractionManager",
-      "zoomManager": "ZoomManager",
       "tooltipManager": "TooltipManager",
+      "zoomManager": "ZoomManager",
       "dataService": "DataService",
       "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>",
       "updateService": "UpdateService"

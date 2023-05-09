@@ -20,12 +20,13 @@ import { BOOLEAN, STRING_UNION, Validate } from '../util/validation';
 import { sleep } from '../util/async';
 import { Tooltip, TooltipMeta as PointerMeta } from './tooltip/tooltip';
 import { ChartOverlays } from './overlay/chartOverlays';
-import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { jsonMerge } from '../util/json';
 import { Layers } from './layers';
+import { AnimationManager } from './interaction/animationManager';
+import { CursorManager } from './interaction/cursorManager';
 import { ChartEventManager } from './interaction/chartEventManager';
 import { HighlightChangeEvent, HighlightManager } from './interaction/highlightManager';
-import { CursorManager } from './interaction/cursorManager';
+import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { TooltipManager } from './interaction/tooltipManager';
 import { ZoomManager } from './interaction/zoomManager';
 import { Module, ModuleContext, ModuleInstance, RootModule } from '../util/module';
@@ -196,6 +197,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return this._destroyed;
     }
 
+    protected readonly animationManager: AnimationManager;
     protected readonly chartEventManager: ChartEventManager;
     protected readonly cursorManager: CursorManager;
     protected readonly highlightManager: HighlightManager;
@@ -241,6 +243,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.scene.container = element;
         this.autoSize = true;
 
+        this.animationManager = new AnimationManager();
         this.chartEventManager = new ChartEventManager();
         this.cursorManager = new CursorManager(element);
         this.highlightManager = new HighlightManager();
@@ -249,6 +252,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.dataService = new DataService(() => this.series);
         this.layoutService = new LayoutService();
         this.updateService = new UpdateService((type = ChartUpdateType.FULL) => this.update(type));
+
+        this.animationManager.skipAnimations = true;
+        this.animationManager.play();
 
         SizeMonitor.observe(this.element, (size) => {
             const { width, height } = size;
@@ -286,11 +292,13 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.interactionManager.addListener('page-left', () => this.destroy());
         this.interactionManager.addListener('wheel', () => this.disablePointer());
 
+        this.animationManager.addListener('animation-frame', (_) => {
+            this.update(ChartUpdateType.SCENE_RENDER);
+        });
+        this.highlightManager.addListener('highlight-change', (event) => this.changeHighlightDatum(event));
         this.zoomManager.addListener('zoom-change', (_) =>
             this.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true })
         );
-
-        this.highlightManager.addListener('highlight-change', (event) => this.changeHighlightDatum(event));
     }
 
     addModule(module: RootModule) {
@@ -317,6 +325,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     getModuleContext(): ModuleContext {
         const {
             scene,
+            animationManager,
             chartEventManager,
             cursorManager,
             highlightManager,
@@ -330,6 +339,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         } = this;
         return {
             scene,
+            animationManager,
             chartEventManager,
             cursorManager,
             highlightManager,
@@ -602,6 +612,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     protected initSeries(series: Series<any>) {
         series.chart = this;
         series.highlightManager = this.highlightManager;
+        series.animationManager = this.animationManager;
         if (!series.data) {
             series.data = this.data;
         }
