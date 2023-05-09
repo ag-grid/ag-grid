@@ -44,7 +44,7 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
             this.controllers[id].play();
         }
 
-        this.requestAnimationFrame();
+        this.startAnimationCycle();
     }
 
     public pause() {
@@ -166,7 +166,7 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
         };
     }
 
-    private requestAnimationFrame() {
+    private startAnimationCycle() {
         const frame = (time: number) => {
             if (this.lastTime === undefined) this.lastTime = time;
             const delta = time - this.lastTime;
@@ -178,7 +178,7 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
 
             this.listeners.dispatch('animation-frame', { type: 'animation-frame', delta });
 
-            this.requestAnimationFrame();
+            this.requestId = requestAnimationFrame(frame);
         };
 
         this.requestId = requestAnimationFrame(frame);
