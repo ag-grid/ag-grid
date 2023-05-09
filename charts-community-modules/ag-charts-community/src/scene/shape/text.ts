@@ -314,75 +314,171 @@ export class Text extends Shape {
         textProps: TextSizeProperties,
         cumulativeHeight: number
     ): { result: string; truncated: boolean; cumulativeHeight: number } {
+        text = text.trim();
+        if (!text) {
+            return { result: '', truncated: false, cumulativeHeight };
+        }
+
         const { fontSize, lineHeight = fontSize * Text.defaultLineHeightRatio } = textProps;
         const font = getFont(textProps);
-        const lines: string[] = [];
-        const guesstimate = Math.max(1, Math.round(maxWidth / fontSize));
-        const ellipsis = '\u2026';
-        let truncated = false;
+        const initialSize = HdpiCanvas.getTextSize(text, font);
+        if (initialSize.width <= maxWidth) {
+            // Text fits into a single line
+            return { result: text, truncated: false, cumulativeHeight: cumulativeHeight + initialSize.height };
+        }
+        if (initialSize.height > maxHeight) {
+            // Not enough space for a single line
+            return { result: '', truncated: true, cumulativeHeight };
+        }
 
-        const sliceText = (text: string, startIndex: number, isLastLine: boolean) => {
-            const whiteSpaceIndex = text.indexOf(' ', startIndex);
-            const lastWhiteSpaceIndex = whiteSpaceIndex > 0 ? whiteSpaceIndex : text.lastIndexOf(' ');
-            const noWhiteSpace = lastWhiteSpaceIndex < 0;
-            const index = noWhiteSpace ? Math.max(1, startIndex) : lastWhiteSpaceIndex;
-            return {
-                result: text.slice(0, index),
-                index,
-                addHyphen: !isLastLine && noWhiteSpace,
-            };
-        };
-
-        function processText(text: string) {
-            let result = text;
-            let index = text.length;
-            let addHyphen = false;
-            let { width } = HdpiCanvas.getTextSize(text, font);
-
-            const maxCount = 10;
-            let count: number = 0;
-            let prev = result;
-            const isLastLine = cumulativeHeight + 2 * lineHeight > maxHeight;
-            while (width > maxWidth && count < maxCount) {
-                ({ result, index, addHyphen } = sliceText(result, Math.min(guesstimate, index), isLastLine));
-                ({ width } = HdpiCanvas.getTextSize(result.concat(addHyphen ? '-' : ''), font));
-                if (result === prev) {
-                    break;
-                }
-                count++;
-                prev = result;
+        const lines: string[][] = [];
+        const words = text.split(/\s+/g);
+        const spaceWidth = HdpiCanvas.getTextSize(' ', font).width;
+        const wordsWidths = new Map<string, number>();
+        const hyphenate = true;
+        let lineWidth = 0;
+        let currentLine: string[] = [];
+        let wordIndex = -1;
+        let needsTruncation = false;
+        let wordBroken = false;
+        while (++wordIndex < words.length) {
+            const word = words[wordIndex];
+            const wordSize = HdpiCanvas.getTextSize(word, font);
+            wordsWidths.set(word, wordSize.width);
+            if (wordIndex === 0) {
+                // Add first line
+                lines.push(currentLine);
+                cumulativeHeight += lineHeight;
             }
-
-            cumulativeHeight += lineHeight;
-
-            if (cumulativeHeight > maxHeight) {
-                truncated = true;
-                const lastLine = lines.pop();
-                if (!lastLine) {
-                    return;
+            if (wordSize.width > maxWidth) {
+                // Break word
+                wordBroken = true;
+                const h = hyphenate ? '-' : '';
+                let availWidth = maxWidth - spaceWidth - lineWidth;
+                const singleCharacterWidth = HdpiCanvas.getTextSize(`${word.charAt(0)}${h}`, font).width;
+                const canRenderSingleCharacter = singleCharacterWidth <= maxWidth;
+                if (!canRenderSingleCharacter) {
+                    // The width is too small for a single character, return empty string
+                    return { result: '', truncated: true, cumulativeHeight };
+                }
+                if (availWidth < singleCharacterWidth) {
+                    // Add new line
+                    if (cumulativeHeight + lineHeight >= maxHeight) {
+                        // Truncate last word
+                        needsTruncation = true;
+                        currentLine.push(word);
+                        break;
+                    }
+                    currentLine = [];
+                    lines.push(currentLine);
+                    cumulativeHeight += lineHeight;
+                    lineWidth = 0;
+                    availWidth = maxWidth;
                 }
 
-                for (let len = lastLine.length; len >= 0; len--) {
-                    const truncatedLine = `${lastLine.substring(0, len)}${ellipsis}`;
-                    const lastLineWidth = HdpiCanvas.getTextSize(truncatedLine, font).width;
-                    if (lastLineWidth <= maxWidth) {
-                        lines.push(truncatedLine);
-                        return;
+                let len = word.length;
+                for (; len >= 1; len--) {
+                    const truncWord = `${word.substring(0, len)}${h}`;
+                    const truncWidth = HdpiCanvas.getTextSize(truncWord, font).width;
+                    if (truncWidth <= availWidth) {
+                        // Put the truncated word into the current line
+                        // and put the remaining part onto a separate line
+                        currentLine.push(truncWord);
+                        const remainder = word.substring(len);
+                        words.splice(wordIndex + 1, 0, remainder);
+                        lineWidth = maxWidth;
+                        break;
                     }
                 }
-                return;
+                continue;
             }
+            const expectedLineWidth = lineWidth + (currentLine.length === 0 ? 0 : spaceWidth) + wordSize.width;
+            if (expectedLineWidth > maxWidth) {
+                if (cumulativeHeight + lineHeight >= maxHeight) {
+                    // Truncate last word
+                    needsTruncation = true;
+                    currentLine.push(word);
+                    break;
+                }
 
-            lines.push(result.concat(addHyphen ? '-' : ''));
+                // Add new line
+                currentLine = [word];
+                lines.push(currentLine);
+                if (wordIndex === words.length - 1) {
+                    break;
+                }
 
-            const remainder = text.slice(index);
-            if (remainder && remainder.length > 1 && remainder !== text) {
-                processText(remainder.trim());
+                lineWidth = wordSize.width;
+                cumulativeHeight += lineHeight;
+            } else {
+                // Add a word to the current line
+                currentLine.push(word);
+                lineWidth = expectedLineWidth;
             }
         }
 
-        processText(text.trim());
-        return { result: lines.join('\n'), truncated, cumulativeHeight };
+        if (!needsTruncation && !wordBroken) {
+            // Balance lines
+            const linesCount = lines.length;
+            const wordsCount = words.length;
+            const totalWordsWidth = words.reduce((sum, w) => sum + wordsWidths.get(w)!, 0);
+            const totalSpaceWidth = spaceWidth * (wordsCount - linesCount - 2);
+            const averageLineWidth = (totalWordsWidth + totalSpaceWidth) / linesCount;
+            let currentLine: string[] = [];
+            const balanced: string[][] = [];
+            let lineWidth = wordsWidths.get(words[0])!;
+            let newLine = true;
+            for (let i = 0; i < wordsCount; i++) {
+                const word = words[i];
+                const width = wordsWidths.get(word)!;
+                if (newLine) {
+                    // New line
+                    currentLine = [];
+                    currentLine.push(word);
+                    lineWidth = width;
+                    newLine = false;
+                    balanced.push(currentLine);
+                    continue;
+                }
+                const expectedLineWidth = lineWidth + spaceWidth + width;
+                if (balanced.length === linesCount || expectedLineWidth <= averageLineWidth) {
+                    // Keep adding words to the line
+                    currentLine.push(word);
+                    lineWidth = expectedLineWidth;
+                    continue;
+                }
+                if (expectedLineWidth <= maxWidth) {
+                    // Add the last word to the line
+                    currentLine.push(word);
+                    newLine = true;
+                } else {
+                    // Put the word onto the next line
+                    currentLine = [word];
+                    lineWidth = width;
+                    balanced.push(currentLine);
+                }
+            }
+            lines.splice(0);
+            lines.push(...balanced);
+        }
+
+        const joinedLines = lines.map((ln) => ln.join(' '));
+        if (needsTruncation) {
+            const ellipsis = '\u2026';
+            const lastIndex = joinedLines.length - 1;
+            const [lastLine] = joinedLines.splice(lastIndex, 1, ellipsis);
+            for (let len = lastLine.length; len >= 0; len--) {
+                const truncLine = `${lastLine.substring(0, len)}${ellipsis}`;
+                const truncWidth = HdpiCanvas.getTextSize(truncLine, font).width;
+                if (truncWidth <= maxWidth) {
+                    joinedLines[lastIndex] = truncLine;
+                    break;
+                }
+            }
+        }
+
+        const wrappedText = joinedLines.join('\n');
+        return { result: wrappedText, truncated: needsTruncation, cumulativeHeight };
     }
 }
 
