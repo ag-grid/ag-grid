@@ -329,18 +329,19 @@ The example below shows dragging with custom text and multiple column draggers. 
 
 Due to the complexity of some applications, it could be handy to render the Row Drag Component inside of a Custom Cell Renderer. This can be achieved, by using the `registerRowDragger` method in the [ICellRendererParams](/component-cell-renderer/#cell-renderer-component) as follows:
 
-[[only-javascript]]
-| ```js
+<framework-specific-section frameworks="javascript">
+<snippet transform={false}>
 | // your custom cell renderer init code
 | const rowDragger = document.createElement('div')
 | this.eGui.appendChild(rowDragger);
 |
 | // register it as a row dragger
 | params.registerRowDragger(rowDragger);
-| ```
+</snippet>
+</framework-specific-section>
 
-[[only-angular]]
-| ```js
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
 | // your custom cell renderer code
 | @ViewChild('myref') myRef;
 |
@@ -351,10 +352,11 @@ Due to the complexity of some applications, it could be handy to render the Row 
 | ngAfterViewInit() {
 |     this.cellRendererParams.registerRowDragger(this.myRef.nativeElement);
 | }
-| ```
+</snippet>
+</framework-specific-section>
 
-[[only-react]]
-| ```js
+<framework-specific-section frameworks="react">
+<snippet transform={false}>
 | // your custom cell renderer code
 |
 | // this will hold the reference to the element you want to
@@ -364,20 +366,22 @@ Due to the complexity of some applications, it could be handy to render the Row 
 | componentDidMount() {
 |     this.props.registerRowDragger(this.myRef.current);
 | }
-| ```
+</snippet>
+</framework-specific-section>
 
-
-[[only-vue]]
-| ```js
+<framework-specific-section frameworks="vue">
+<snippet transform={false}>
 | // your custom cell renderer code
 | mounted() {
-|     this.params.registerRowDragger(this.$refs.myRef);
+|     this.params.registerRhahaowDragger(this.$refs.myRef);
 | }
-| ```
+</snippet>
+</framework-specific-section>
 
-[[warning]]
+<warning>
 | When using `registerRowDragger` you should **not** set the property `rowDrag=true` in the Column Definition.
 | Doing that will cause the cell to have two row draggers.
+</warning>
 
 The example below shows a custom cell renderer, with using the `registerRowDragger` callback to render the Row Dragger inside itself.
 

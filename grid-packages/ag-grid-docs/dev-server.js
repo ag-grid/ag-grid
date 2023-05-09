@@ -795,21 +795,21 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
 
             serveModuleAndPackages(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
 
-            if (skipExampleGeneration) {
-                console.log("Skipping Example Generation");
-            } else {
-                console.time("Generating examples");
-
-                // regenerate examples and then watch them
-                console.log("Watch and Generate Examples");
-                await watchAndGenerateExamples(chartsOnly);
-                console.log("Examples Generated");
-
-                console.log("Watch Typescript examples...");
-                await watchValidateExampleTypes();
-
-                console.timeEnd("Generating examples");
-            }
+            // if (skipExampleGeneration) {
+            //     console.log("Skipping Example Generation");
+            // } else {
+            //     console.time("Generating examples");
+            //
+            //     // regenerate examples and then watch them
+            //     console.log("Watch and Generate Examples");
+            //     await watchAndGenerateExamples(chartsOnly);
+            //     console.log("Examples Generated");
+            //
+            //     console.log("Watch Typescript examples...");
+            //     await watchValidateExampleTypes();
+            //
+            //     console.timeEnd("Generating examples");
+            // }
 
             // todo - iterate everything under src and serve it
             // ...or use app.get('/' and handle it that way
