@@ -45,8 +45,6 @@ import {
 import { FrameworkComponentWrapper } from "./frameworkComponentWrapper";
 import { UserComponentRegistry } from "./userComponentRegistry";
 import { FloatingFilterMapper } from '../../filter/floating/floatingFilterMapper';
-import { ModuleNames } from '../../modules/moduleNames';
-import { ModuleRegistry } from '../../modules/moduleRegistry';
 import { doOnce } from "../../utils/function";
 import { AgGridCommon, WithoutGridCommon } from "../../interfaces/iCommon";
 
@@ -359,7 +357,7 @@ export class UserComponentFactory extends BeanStub {
         return component.init(params);
     }
 
-    public getDefaultFloatingFilterType(def: IFilterDef): string | null {
+    public getDefaultFloatingFilterType(def: IFilterDef, getFromDefault: () => string): string | null {
         if (def == null) { return null; }
 
         let defaultFloatingFilterType: string | null = null;
@@ -373,19 +371,7 @@ export class UserComponentFactory extends BeanStub {
         } else {
             const usingDefaultFilter = (jsComp == null && fwComp == null) && (def.filter === true);
             if (usingDefaultFilter) {
-                const setFilterModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule);
-                if (setFilterModuleLoaded) {
-                    defaultFloatingFilterType = 'agSetColumnFloatingFilter';
-                } else {
-                    const cellDataType = (def as any).cellDataType;
-                    if (cellDataType === 'number') {
-                        defaultFloatingFilterType = 'agNumberColumnFloatingFilter';
-                    } else if (cellDataType === 'date' || cellDataType === 'dateString') {
-                        defaultFloatingFilterType = 'agDateColumnFloatingFilter';
-                    } else {
-                        defaultFloatingFilterType = 'agTextColumnFloatingFilter';
-                    }
-                }
+                defaultFloatingFilterType = getFromDefault();
             }
         }
 

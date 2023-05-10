@@ -269,7 +269,7 @@ export class DataTypeService extends BeanStub {
     }
 
     private setColDefPropertiesForBaseDataType(colDef: ColDef, dataTypeDefinition: DataTypeDefinition | CoreDataTypeDefinition): void {
-        const setFilterModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule);
+        const usingSetFilter = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule);
         const translate = this.localeService.getLocaleTextFunc();
         switch (dataTypeDefinition.baseDataType) {
             case 'number': {
@@ -277,6 +277,14 @@ export class DataTypeService extends BeanStub {
                 colDef.cellClass = 'ag-right-aligned-cell';
                 colDef.cellEditor = 'agNumberCellEditor';
                 colDef.keyCreator = (params: KeyCreatorParams) => dataTypeDefinition.valueFormatter!(params);
+                if (usingSetFilter) {
+                    colDef.filterParams = {
+                        valueFormatter: (params: ValueFormatterParams) => {
+                            const valueFormatted = dataTypeDefinition.valueFormatter!(params);
+                            return valueFormatted === '' ? translate('blanks', '(Blanks)') : valueFormatted;
+                        }
+                    };
+                }
                 colDef.useValueFormatterForExport = true;
                 colDef.useValueParserForImport = true;
                 break;
@@ -285,7 +293,7 @@ export class DataTypeService extends BeanStub {
                 colDef.cellEditor = 'agCheckboxCellEditor';
                 colDef.cellRenderer = 'agCheckboxCellRenderer';
                 colDef.suppressKeyboardEvent = (params: SuppressKeyboardEventParams<any, boolean>) => !!params.colDef.editable && params.event.key === KeyCode.SPACE;
-                if (setFilterModuleLoaded) {
+                if (usingSetFilter) {
                     colDef.filterParams = {
                         valueFormatter: (params: ValueFormatterParams) => {
                             if (params.value == null) {
@@ -294,7 +302,7 @@ export class DataTypeService extends BeanStub {
                             const value = String(params.value);
                             return translate(value, value);
                         }
-                    }
+                    };
                 } else {
                     colDef.filterParams = {
                         maxNumConditions: 1,
@@ -322,10 +330,13 @@ export class DataTypeService extends BeanStub {
             case 'date': {
                 colDef.cellEditor = 'agDateCellEditor';
                 colDef.keyCreator = (params: KeyCreatorParams) => dataTypeDefinition.valueFormatter!(params);
-                if (setFilterModuleLoaded) {
+                if (usingSetFilter) {
                     colDef.filterParams = {
-                        valueFormatter: dataTypeDefinition.valueFormatter
-                    }
+                        valueFormatter: (params: ValueFormatterParams) => {
+                            const valueFormatted = dataTypeDefinition.valueFormatter!(params);
+                            return valueFormatted === '' ? translate('blanks', '(Blanks)') : valueFormatted;
+                        }
+                    };
                 }
                 colDef.useValueFormatterForExport = true;
                 colDef.useValueParserForImport = true;
@@ -334,7 +345,14 @@ export class DataTypeService extends BeanStub {
             case 'dateString': {
                 colDef.cellEditor = 'agDateStringCellEditor';
                 colDef.keyCreator = (params: KeyCreatorParams) => dataTypeDefinition.valueFormatter!(params);
-                if (!setFilterModuleLoaded) {
+                if (usingSetFilter) {
+                    colDef.filterParams = {
+                        valueFormatter: (params: ValueFormatterParams) => {
+                            const valueFormatted = dataTypeDefinition.valueFormatter!(params);
+                            return valueFormatted === '' ? translate('blanks', '(Blanks)') : valueFormatted;
+                        }
+                    };
+                } else {
                     const convertToDate = this.getDateParserFunction();
                     colDef.filterParams = {
                         comparator: (filterDate: Date, cellValue: string | undefined) => {
@@ -343,7 +361,7 @@ export class DataTypeService extends BeanStub {
                             if (cellAsDate > filterDate) { return 1; }
                             return 0;
                         }
-                    }
+                    };
                 }
                 colDef.useValueFormatterForExport = true;
                 colDef.useValueParserForImport = true;
@@ -354,10 +372,13 @@ export class DataTypeService extends BeanStub {
                     useFormatter: true,
                 };
                 colDef.keyCreator = (params: KeyCreatorParams) => dataTypeDefinition.valueFormatter!(params);
-                if (setFilterModuleLoaded) {
+                if (usingSetFilter) {
                     colDef.filterParams = {
-                        valueFormatter: dataTypeDefinition.valueFormatter
-                    }
+                        valueFormatter: (params: ValueFormatterParams) => {
+                            const valueFormatted = dataTypeDefinition.valueFormatter!(params);
+                            return valueFormatted === '' ? translate('blanks', '(Blanks)') : valueFormatted;
+                        }
+                    };
                 } else {
                     colDef.filterValueGetter = (params: ValueGetterParams) => dataTypeDefinition.valueFormatter!({
                         ...params,
