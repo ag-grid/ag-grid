@@ -175,9 +175,8 @@ The example below demonstrates entire row dragging with [Multi-Row Dragging](/ro
 
 <grid-example title='Entire Row Dragging' name='entire-row-dragging' type='generated' options='{ "enterprise": true, "modules": ["clientside"] }'></grid-example>
 
-<warning>
-|[Range Selection](../range-selection/) is not supported when `rowDragEntireRow` is enabled.
-</warning>
+[[warning]]
+|[Range Selection](/range-selection/) is not supported when `rowDragEntireRow` is enabled.
 
 ## Suppress Row Drag
 

@@ -5,9 +5,8 @@ frameworks: ["react"]
 
 This page explains best practices for using React Hooks with AG Grid.
 
-<warning>
+[[warning]]
 | This page assumes you are using [React Hooks](https://react.dev/reference/react) and not [React Classes](https://react.dev/reference/react/Component).
-</warning>
 
 ## Row Data
 

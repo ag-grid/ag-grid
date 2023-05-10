@@ -37,9 +37,8 @@ It's important to note that images can only be exported as `base64` strings, and
 [[note]]
 | Every image is required to have an `id`. This way, if you're exporting the same image multiple times as part of the same export operation, the `id` will be used to access the image data, so the image file is imported only once.
 
-<warning>
+[[warning]]
 | At the moment, it's only possible the export one image per cell.
-</warning>
 
 ## Cells with Images
 

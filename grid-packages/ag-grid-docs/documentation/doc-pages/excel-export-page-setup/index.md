@@ -28,9 +28,8 @@ const gridOptions = {
 }
 </snippet>
 
-<warning>
+[[warning]]
 | The value of the margins must be provided in `inches`.
-</warning>
 
 Note the following:
 

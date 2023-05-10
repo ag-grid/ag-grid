@@ -56,9 +56,8 @@ series: [{
 }]
 ```
 
-<warning>
+[[warning]]
 | Note that if you give the `bins` property you should not also give `binCount`, but if both are present `binCount` takes precedence.
-</warning>
 
 <chart-example title='Irregular Intervals' name='irregular-intervals' type='generated'></chart-example>
 

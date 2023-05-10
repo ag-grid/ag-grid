@@ -4,9 +4,8 @@ title: "External Filter"
 
 External filtering allows you to mix your own filtering logic with the grid's inbuilt filtering, without creating column-based filter components.
 
-<warning>
-| This form of filtering is only compatible with the Client-Side Row Model, see [Row Models](../row-models/) for more details.
-</warning>
+[[warning]]
+| This form of filtering is only compatible with the Client-Side Row Model, see [Row Models](/row-models/) for more details.
 
 ## Implementing External Filtering
 
