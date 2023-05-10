@@ -8,14 +8,6 @@ import { AgCartesianAxisPosition, AgCartesianAxisType } from './agChartOptions';
 import { AxisLayout } from './layout/layoutService';
 import { AxisContext, AxisModule, ModuleContext, ModuleInstance } from '../util/module';
 
-export function flipChartAxisDirection(direction: ChartAxisDirection): ChartAxisDirection {
-    if (direction === ChartAxisDirection.X) {
-        return ChartAxisDirection.Y;
-    } else {
-        return ChartAxisDirection.X;
-    }
-}
-
 interface BoundSeries {
     type: string;
     getDomain(direction: ChartAxisDirection): any[];

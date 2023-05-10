@@ -27,8 +27,6 @@
             react: 'npm:react@18.2.0',
             'react-dom': 'npm:react-dom@18.2.0',
             'react-dom/client': 'npm:react-dom@18.2.0',
-            redux: 'npm:redux@3.6.0',
-            'react-redux': 'npm:react-redux@5.0.6',
             'prop-types': 'npm:prop-types@15.8.1',
 
             ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
@@ -42,21 +40,13 @@
             css: {
             },
             react: {
-                main: './umd/react.development.min.js',
+                main: './umd/react.profiling.min.js',
             },
             'react-dom': {
-                main: './umd/react-dom.development.min.js',
+                main: './umd/react-dom.profiling.min.js',
             },
             'react-dom/server': {
                 main: '../umd/react-dom-server.browser.production.min.js',
-            },
-            redux: {
-                main: './dist/redux.min.js',
-                defaultExtension: 'js',
-            },
-            'react-redux': {
-                main: './dist/react-redux.min.js',
-                defaultExtension: 'js',
             },
             'prop-types': {
                 main: './prop-types.min.js',

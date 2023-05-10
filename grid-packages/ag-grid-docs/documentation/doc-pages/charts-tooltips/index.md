@@ -86,6 +86,26 @@ This example demonstrates how to change the default position of the tooltip. Not
 
 <chart-example title='Tooltip Position' name='tooltip-position' type='generated'></chart-example>
 
+## Tooltip Arrow
+
+The chart tooltip shows an arrow underneath it to indicate its exact point of origin when it's not constrained by the container.
+
+To remove the arrow, set `tooltip.showArrow` to false.
+
+```js
+tooltip: {
+    showArrow: false
+}
+```
+
+This can be useful if the tooltip's [position](#tooltip-position) has been modified and the arrow is no longer needed.
+
+### Example: Removing the Tooltip Arrow
+
+In this example, the button above the chart can be used to show or hide the tooltip arrow.
+
+<chart-example title='Removing the Tooltip Arrow' name='default-tooltip-arrow' type='generated'></chart-example>
+
 ## Styling the Default Tooltip
 
 The default tooltip already uses `ag-chart-tooltip`, `ag-chart-tooltip-title` and `ag-chart-tooltip-content` CSS classes, but these classes are not meant to be used directly to add custom CSS rules to, unless you want to change the styling of all the tooltips in your app. Instead, users of the charting library should provide their own tooltip class name via the `chart.tooltip.class` config. This class name will be added to the class list of the tooltip element for only that particular chart instance.
@@ -176,8 +196,9 @@ series: [
 
 The tooltip renderer function receives the `params` object as a single parameter. Inside that object you get the `xValue` and `yValue` for the highlighted data point as well as the reference to the raw `datum` element from the `chart.data` or `series.data` array. You can then process the raw values however you like before using them as a part of the returned HTML string.
 
-[[note]]
-| Different series types get different tooltip renderer parameters. You can find out which parameters are supported by which series using the [API reference](#api-reference) below.
+<note>
+Different series types get different tooltip renderer parameters. You can find out which parameters are supported by which series using the [API reference](#api-reference) below.
+</note>
 
 The effect of applying the tooltip renderer from the snippet above can be seen in the example below.
 

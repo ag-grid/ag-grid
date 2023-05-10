@@ -45,8 +45,9 @@ The following example demonstrates sorting Set Filter values using a comparator.
 
 This section covers different ways to format the displayed Filter List values in the Set Filter.
 
-[[note]]
-| Formatting Filter List values will not change the underlying value or Filter Model.
+<note>
+Formatting Filter List values will not change the underlying value or Filter Model.
+</note>
 
 ### Value Formatter
 
@@ -115,8 +116,9 @@ const gridOptions = {
 }
 </snippet>
 
-[[note]]
-| A custom [Cell Renderer Component](/component-cell-renderer/#cell-renderer-component) can also be supplied to `filterParams.cellRenderer`.
+<note>
+A custom [Cell Renderer Component](/component-cell-renderer/#cell-renderer-component) can also be supplied to `filterParams.cellRenderer`.
+</note>
 
 
 The following example shows how Set Filter values are rendered using a Cell Renderer. Note the following:
@@ -156,8 +158,9 @@ const gridOptions = {
 
 Note that if there are missing values in the row data, the filter list will display all provided values. This could give users the impression that filtering is broken.
 
-[[note]]
-| When providing filter values which are already sorted it is often useful to disable the default filter list sorting using `filterParams.suppressSorting=true`.
+<note>
+When providing filter values which are already sorted it is often useful to disable the default filter list sorting using `filterParams.suppressSorting=true`.
+</note>
 
 The following example demonstrates providing filter values using `filterParams.values`. Note the following:
 
@@ -199,13 +202,14 @@ The interface for this parameter object is `SetFilterValuesFuncParams`:
 
 <interface-documentation interfaceName='SetFilterValuesFuncParams' config='{"description":""}'></interface-documentation>
 
-[[note]]
+<note>
 | If you are providing values to the Set Filter asynchronously, when setting the model using `setModel` you need to wait for changes to be applied before performing any further actions by waiting on the returned grid promise, e.g.:
 |
 | ```js
 | filter.setModel({ values: ['a', 'b'] })
 |   .then(() => gridApi.onFilterChanged(); );
 | ```
+</note>
 
 The following example demonstrates loading set filter values asynchronously. Note the following:
 
@@ -278,8 +282,9 @@ const gridOptions = {
 }
 </snippet>
 
-[[note]]
-| The `caseSensitive` option also affects [Mini-Filter](/filter-set-mini-filter/#enabling-case-sensitive-searches) searches and [API](/filter-set-api/#enabling-case-sensitivity) behaviours.
+<note>
+The `caseSensitive` option also affects [Mini-Filter](/filter-set-mini-filter/#enabling-case-sensitive-searches) searches and [API](/filter-set-api/#enabling-case-sensitivity) behaviours.
+</note>
 
 The following example demonstrates the difference in behaviour between `caseSensitive: false` (the default) and `caseSensitive: true`:
 - The case insensitive column's Filter List has seven distinct values with unique colours.

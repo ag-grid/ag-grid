@@ -20,7 +20,7 @@ export default class CustomHeaderGroup extends Component {
             <div className="ag-header-group-cell-label">
                 <div className="customHeaderLabel">{this.props.displayName}</div>
                 <div className={`customExpandButton ${this.state.expandState}`} onClick={this.expandOrCollapse.bind(this)}>
-                    <i class="fa fa-arrow-right"></i>
+                    <i className="fa fa-arrow-right"></i>
                 </div>
             </div>
 

@@ -1,14 +1,16 @@
-[[only-angular]]
+<framework-specific-section frameworks="angular">
 |## Custom Floating Filter Interface
 |
 |The interface for a custom filter component is as follows:
-|
-|```ts
-|interface IFloatingFilterAngularComp<ParentFilter = any> {
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false} language="ts">
+|interface IFloatingFilterAngularComp&lt;ParentFilter = any> {
 |
 |    // Mandatory - The agInit(params) method is called on the floating filter once.
 |    // See below for details on the parameters.
-|    agInit(params: IFloatingFilterParams<ParentFilter>): void;
+|    agInit(params: IFloatingFilterParams&lt;ParentFilter>): void;
 |
 |    // Gets called every time the parent filter changes. Your floating
 |    // filter would typically refresh its UI to reflect the new filter
@@ -23,10 +25,12 @@
 |    // before executing, such as putting focus on a particular DOM element. 
 |    afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 |}
-|```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
 |### Custom Filter Parameters
 |
 |The `agInit(params)` method takes a params object with the items listed below. If custom params are provided via the `colDef.floatingFilterComponentParams` property, these
 |will be additionally added to the params object, overriding items of the same name if a name clash exists.
-|
+</framework-specific-section>

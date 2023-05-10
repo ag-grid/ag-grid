@@ -1,4 +1,4 @@
-[[only-angular]]
+<framework-specific-section frameworks="angular">
 |## Cell Renderer Component Lifecycle
 |
 |The lifecycle of the cell renderer is as follows:
@@ -11,3 +11,4 @@
 |
 |In other words, component instantiation, `agInit` and destruction are always called exactly once. The component's GUI will 
 |typically get rendered once unless the component is destroyed first. `refresh()` is optionally called multiple times.
+</framework-specific-section>

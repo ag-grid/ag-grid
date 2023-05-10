@@ -35,12 +35,13 @@ import {
 } from '../util/validation';
 import { Layers } from './layers';
 import { ChartUpdateType } from './chartUpdateType';
-import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
+import { ChartEventManager } from './interaction/chartEventManager';
 import { CursorManager } from './interaction/cursorManager';
 import { HighlightManager } from './interaction/highlightManager';
+import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
+import { TooltipManager } from './interaction/tooltipManager';
 import { gridLayout, Page } from './gridLayout';
 import { Pagination } from './pagination/pagination';
-import { TooltipManager } from './interaction/tooltipManager';
 import { toTooltipHtml } from './tooltip/tooltip';
 import { CategoryLegendDatum } from './legendDatum';
 import { DataService } from './dataService';
@@ -75,10 +76,6 @@ class LegendLabel {
 
     @Validate(OPT_FUNCTION)
     formatter?: (params: AgChartLegendLabelFormatterParams) => string = undefined;
-
-    getFont(): string {
-        return getFont(this.fontSize, this.fontFamily, this.fontStyle, this.fontWeight);
-    }
 }
 
 class LegendMarker {
@@ -195,7 +192,7 @@ export class Legend {
     }
 
     @Validate(POSITION)
-    position: AgChartLegendPosition = 'right';
+    position: AgChartLegendPosition = 'bottom';
 
     private getOrientation(): AgChartOrientation {
         if (this.orientation !== undefined) {
@@ -229,9 +226,10 @@ export class Legend {
     private destroyFns: Function[] = [];
 
     private readonly chartMode: 'standalone' | 'integrated';
-    private readonly interactionManager: InteractionManager;
+    private readonly chartEventManager: ChartEventManager;
     private readonly cursorManager: CursorManager;
     private readonly highlightManager: HighlightManager;
+    private readonly interactionManager: InteractionManager;
     private readonly tooltipManager: TooltipManager;
     private readonly dataService: DataService;
     private readonly layoutService: ModuleContext['layoutService'];
@@ -239,9 +237,10 @@ export class Legend {
 
     constructor(ctx: ModuleContext) {
         this.chartMode = ctx.mode;
-        this.interactionManager = ctx.interactionManager;
+        this.chartEventManager = ctx.chartEventManager;
         this.cursorManager = ctx.cursorManager;
         this.highlightManager = ctx.highlightManager;
+        this.interactionManager = ctx.interactionManager;
         this.tooltipManager = ctx.tooltipManager;
         this.dataService = ctx.dataService;
         this.layoutService = ctx.layoutService;
@@ -370,7 +369,7 @@ export class Legend {
         // Update properties that affect the size of the legend items and measure them.
         const bboxes: BBox[] = [];
 
-        const font = label.getFont();
+        const font = getFont(label);
 
         const itemMaxWidthPercentage = 0.8;
         const maxItemWidth = maxWidth ?? width * itemMaxWidthPercentage;
@@ -776,14 +775,7 @@ export class Legend {
         let newEnabled = enabled;
         if (toggleSeriesVisible) {
             newEnabled = !enabled;
-
-            chartSeries.forEach((s) => {
-                if (s.id === series.id) {
-                    s.toggleSeriesItem(itemId, newEnabled);
-                } else {
-                    s.toggleOtherSeriesItems(series, datum.itemId, newEnabled);
-                }
-            });
+            this.chartEventManager.legendItemClick(series, itemId, newEnabled);
         }
 
         if (!newEnabled) {
@@ -836,46 +828,19 @@ export class Legend {
                 [] as CategoryLegendDatum[]
             );
 
-            const visibleItemsCount = legendData.filter((d) => d.enabled).length;
+            const numVisibleItems: any = {};
+            legendData.forEach((d) => {
+                numVisibleItems[d.seriesId] ??= 0;
+                if (d.enabled) numVisibleItems[d.seriesId]++;
+            });
             const clickedItem = legendData.find((d) => d.itemId === itemId && d.seriesId === seriesId);
 
-            const seriesItemCounts = legendData.reduce((acc, d) => {
-                acc[d.seriesId] ??= 0;
-                acc[d.seriesId]++;
-                return acc;
-            }, {} as any);
-            const seriesItemEnabledCounts = legendData.reduce((acc, d) => {
-                if (!d.enabled) return acc;
-                acc[d.seriesId] ??= 0;
-                acc[d.seriesId]++;
-                return acc;
-            }, {} as any);
-
-            const eachSeriesHasSingleItem = Object.values(seriesItemCounts).filter((c: any) => c > 1).length === 0;
-            const singleEnabledInEachSeries =
-                Object.values(seriesItemEnabledCounts).filter((count: any) => count > 1).length === 0;
-
-            const singleSelectedWasNotClicked = visibleItemsCount === 1 && (clickedItem?.enabled ?? false);
-            const singleEnabledInEachSeriesWasNotClicked = singleEnabledInEachSeries && (clickedItem?.enabled ?? false);
-
-            chartSeries.forEach((s) => {
-                const legendData = s
-                    .getLegendData()
-                    .filter((d): d is CategoryLegendDatum => d.legendType === 'category');
-
-                legendData.forEach((d) => {
-                    const wasClicked = d.itemId === itemId && d.seriesId === seriesId;
-                    const newEnabled =
-                        wasClicked ||
-                        (eachSeriesHasSingleItem && singleSelectedWasNotClicked) ||
-                        (!eachSeriesHasSingleItem && singleEnabledInEachSeriesWasNotClicked);
-                    s.toggleSeriesItem(d.itemId, newEnabled);
-                });
-
-                if (s.id !== series.id) {
-                    s.toggleOtherSeriesItems(series, datum.itemId, undefined, singleEnabledInEachSeriesWasNotClicked);
-                }
-            });
+            this.chartEventManager.legendItemDoubleClick(
+                series,
+                itemId,
+                clickedItem?.enabled ?? false,
+                numVisibleItems
+            );
         }
 
         this.updateService.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true });
@@ -921,7 +886,7 @@ export class Legend {
             const labelText = this.getItemLabel(datum);
             this.tooltipManager.updateTooltip(
                 this.id,
-                { pageX, pageY, offsetX, offsetY, event },
+                { pageX, pageY, offsetX, offsetY, event, showArrow: false },
                 toTooltipHtml({ content: labelText })
             );
         } else {

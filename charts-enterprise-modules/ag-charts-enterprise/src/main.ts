@@ -5,28 +5,57 @@ import {
     _ModuleSupport,
 } from 'ag-charts-community';
 
+import { AgAnimationOptions, AnimationModule } from './animation/main';
 import { AgChartBackgroundImage, BackgroundModule } from './background/main';
 import { AgContextMenuOptions, ContextMenuModule } from './context-menu/main';
-import { AgCrosshairOptions, CrosshairModule } from './crosshair/main';
+import {
+    AgCrosshairOptions,
+    CrosshairModule,
+    AgCrosshairLabel,
+    AgCrosshairLabelRendererParams,
+    AgCrosshairLabelRendererResult,
+} from './crosshair/main';
 import { GradientLegendModule } from './gradient-legend/main';
-import * as Heatmap from './heatmap/main';
+import {
+    AgHeatmapSeriesFormat,
+    AgHeatmapSeriesFormatterParams,
+    AgHeatmapSeriesLabelOptions,
+    AgHeatmapSeriesOptions,
+    AgHeatmapSeriesTooltip,
+    AgHeatmapSeriesTooltipRendererParams,
+    HeatmapModule,
+} from './heatmap/main';
 import { AgNavigatorOptions } from './navigator/main';
-import { AgZoomOptions, ZoomModule } from './zoom/main';
+import { AgZoomAxes, AgZoomOptions, AgZoomPanKey, AgZoomScrollingPivot, ZoomModule } from './zoom/main';
 
 export * from 'ag-charts-community';
 
+_ModuleSupport.registerModule(AnimationModule);
 _ModuleSupport.registerModule(BackgroundModule);
 _ModuleSupport.registerModule(ContextMenuModule);
 _ModuleSupport.registerModule(CrosshairModule);
 _ModuleSupport.registerModule(GradientLegendModule);
-_ModuleSupport.registerModule(Heatmap.HeatmapModule);
+_ModuleSupport.registerModule(HeatmapModule);
 _ModuleSupport.registerModule(ZoomModule);
+
+export { AgCrosshairOptions, AgCrosshairLabel, AgCrosshairLabelRendererParams, AgCrosshairLabelRendererResult };
+export {
+    AgHeatmapSeriesFormat,
+    AgHeatmapSeriesFormatterParams,
+    AgHeatmapSeriesLabelOptions,
+    AgHeatmapSeriesOptions,
+    AgHeatmapSeriesTooltip,
+    AgHeatmapSeriesTooltipRendererParams,
+};
+export { AgZoomAxes, AgZoomOptions, AgZoomPanKey, AgZoomScrollingPivot };
 
 declare module 'ag-charts-community' {
     export interface AgCartesianChartOptions {
+        animation?: AgAnimationOptions;
         contextMenu?: AgContextMenuOptions;
         /** Configuration for the chart navigator. */
         navigator?: AgNavigatorOptions;
+        /** Configuration for zoom. */
         zoom?: AgZoomOptions;
     }
 
@@ -38,13 +67,6 @@ declare module 'ag-charts-community' {
     export interface AgPolarChartOptions {
         contextMenu?: AgContextMenuOptions;
     }
-
-    export type AgHeatmapSeriesFormat = Heatmap.AgHeatmapSeriesFormat;
-    export type AgHeatmapSeriesFormatterParams<T> = Heatmap.AgHeatmapSeriesFormatterParams<T>;
-    export type AgHeatmapSeriesLabelOptions = Heatmap.AgHeatmapSeriesLabelOptions;
-    export type AgHeatmapSeriesOptions = Heatmap.AgHeatmapSeriesOptions;
-    export type AgHeatmapSeriesTooltip = Heatmap.AgHeatmapSeriesTooltip;
-    export type AgHeatmapSeriesTooltipRendererParams = Heatmap.AgHeatmapSeriesTooltipRendererParams;
 
     export interface AgHierarchyChartOptions {
         contextMenu?: AgContextMenuOptions;
@@ -58,11 +80,15 @@ declare module 'ag-charts-community' {
 
 import { LicenseManager } from './license/licenseManager';
 
-export type AgChartOptions = AgCommunityChartOptions<'heatmap', Heatmap.AgHeatmapSeriesOptions>;
+export type AgChartOptions = AgCommunityChartOptions<'heatmap', AgHeatmapSeriesOptions>;
 export class AgEnterpriseCharts {
     public static create(options: AgChartOptions): AgChartInstance {
         new LicenseManager(options.container as any).validateLicense();
 
         return AgChart.create(options as any);
+    }
+
+    public static update(chart: AgChartInstance, options: AgChartOptions) {
+        return AgChart.update(chart, options as any);
     }
 }

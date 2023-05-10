@@ -265,8 +265,9 @@ It should be noted that
 
 <grid-example title='Sparkline Special Points' name='sparkline-special-points' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
-[[note]]
-| All formatters will receive the highlighted property in the input. If the current data point is highlighted, the highlighted property will be set to true; make sure to check this if you want to differentiate between the highlighted and un-highlighted states when customising the special points.
+<note>
+All formatters will receive the highlighted property in the input. If the current data point is highlighted, the highlighted property will be set to true; make sure to check this if you want to differentiate between the highlighted and un-highlighted states when customising the special points.
+</note>
 
 
 ## Interfaces

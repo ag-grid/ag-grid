@@ -4,13 +4,6 @@ import { Validate, BOOLEAN, NUMBER, OPT_STRING, INTERACTION_RANGE, predicateWith
 import { AgChartInteractionRange, AgTooltipRendererResult } from '../agChartOptions';
 import { InteractionEvent } from '../interaction/interactionManager';
 
-// Extend EventTarget to to provide `classList` for `relatedTarget`
-declare global {
-    interface EventTarget {
-        readonly classList: DOMTokenList;
-    }
-}
-
 export const DEFAULT_TOOLTIP_CLASS = 'ag-chart-tooltip';
 
 const defaultTooltipCss = `
@@ -119,6 +112,7 @@ export interface TooltipMeta {
     pageY: number;
     offsetX: number;
     offsetY: number;
+    showArrow: boolean;
     position?: {
         xOffset?: number;
         yOffset?: number;
@@ -184,6 +178,9 @@ export class Tooltip {
 
     @Validate(BOOLEAN)
     enabled: boolean = true;
+
+    @Validate(BOOLEAN)
+    showArrow: boolean = true;
 
     @Validate(OPT_STRING)
     class?: string = undefined;
@@ -280,7 +277,7 @@ export class Tooltip {
     }
 
     private showTimeout: number = 0;
-    private showArrow = true;
+    private _showArrow = true;
     /**
      * Shows tooltip at the given event's coordinates.
      * If the `html` parameter is missing, moves the existing tooltip to the new position.
@@ -311,9 +308,9 @@ export class Tooltip {
         const left = limit(windowBounds.x, naiveLeft, maxLeft);
         const top = limit(windowBounds.y, naiveTop, maxTop);
 
-        const offsetApplied = xOffset !== 0 || yOffset !== 0;
         const constrained = left !== naiveLeft || top !== naiveTop;
-        this.showArrow = !constrained && !offsetApplied;
+        const showArrow = !constrained && meta.showArrow;
+        this.updateShowArrow(showArrow);
         element.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
 
         this.enableInteraction = meta.enableInteraction ?? false;
@@ -337,16 +334,20 @@ export class Tooltip {
         if (!visible) {
             window.clearTimeout(this.showTimeout);
         }
-        this.updateClass(visible, this.showArrow);
+        this.updateClass(visible, this._showArrow);
     }
 
     pointerLeftOntoTooltip(event: InteractionEvent<'leave'>): boolean {
         if (!this.enableInteraction) return false;
 
-        const classList = (event.sourceEvent as MouseEvent).relatedTarget?.classList;
+        const classList = ((event.sourceEvent as MouseEvent).relatedTarget as any)?.classList as DOMTokenList;
         const classes = ['', '-title', '-content'];
         const classListContains = Boolean(classes.filter((c) => classList?.contains(`${DEFAULT_TOOLTIP_CLASS}${c}`)));
 
         return classList !== undefined && classListContains;
+    }
+
+    private updateShowArrow(show: boolean) {
+        this._showArrow = this.showArrow && show;
     }
 }

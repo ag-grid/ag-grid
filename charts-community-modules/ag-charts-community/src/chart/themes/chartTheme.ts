@@ -118,6 +118,7 @@ export class ChartTheme {
         return {
             tooltip: {
                 enabled: true,
+                showArrow: true,
                 renderer: undefined,
             },
             visible: true,
@@ -141,7 +142,6 @@ export class ChartTheme {
     private static getBarSeriesDefaults() {
         return {
             ...this.getSeriesDefaults(),
-            flipXY: false,
             fillOpacity: 1,
             strokeOpacity: 1,
             xKey: '',
@@ -220,6 +220,7 @@ export class ChartTheme {
                 fontSize: 16,
                 fontFamily: this.fontFamily,
                 color: 'rgb(70, 70, 70)',
+                wrapping: 'always' as const,
             },
             subtitle: {
                 enabled: false,
@@ -229,6 +230,7 @@ export class ChartTheme {
                 fontSize: 12,
                 fontFamily: this.fontFamily,
                 color: 'rgb(140, 140, 140)',
+                wrapping: 'always' as const,
             },
             footnote: {
                 enabled: false,
@@ -239,6 +241,7 @@ export class ChartTheme {
                 fontFamily: this.fontFamily,
                 color: 'rgb(140, 140, 140)',
                 spacing: 30,
+                wrapping: 'always' as const,
             },
             legend: {
                 enabled: true,
@@ -284,6 +287,7 @@ export class ChartTheme {
             },
             tooltip: {
                 enabled: true,
+                showArrow: true,
                 range: 'nearest' as AgChartInteractionRange,
                 delay: 0,
                 position: {
@@ -322,11 +326,9 @@ export class ChartTheme {
         series: {
             column: {
                 ...ChartTheme.getBarSeriesDefaults(),
-                flipXY: false,
             },
             bar: {
                 ...ChartTheme.getBarSeriesDefaults(),
-                flipXY: true,
             },
             line: {
                 ...ChartTheme.getLineSeriesDefaults(),

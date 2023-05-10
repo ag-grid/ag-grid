@@ -26,7 +26,7 @@ function getImports(componentFilenames: string[], bindings): string[] {
         imports.push(...componentFilenames.map(getImport));
     }
 
-    if(bindings.chartSettings.enterprise) {
+    if (bindings.chartSettings.enterprise) {
         imports.push("import 'ag-charts-enterprise';");
     }
 

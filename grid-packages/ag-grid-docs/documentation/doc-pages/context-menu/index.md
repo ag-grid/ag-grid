@@ -5,14 +5,15 @@ enterprise: true
 
 The user can bring up the context menu by right clicking on a cell. By default, the context menu provides 'copy', 'paste' and 'export'. Copy will copy the selected cells or rows to the clipboard. Paste will always, forever, be disabled.
 
-[[note]]
-| The 'paste' operation in the context menu is not possible and hence always disabled.
-| It is not possible because of a browser security restriction that JavaScript cannot
-| take data from the clipboard without the user explicitly doing a paste command from the browser
-| (e.g. <kbd>Ctrl</kbd>+<kbd>V</kbd> or from the browser menu). If JavaScript could do this, then websites could steal
-| data from the client by accessing the clipboard maliciously. The reason why the grid keeps
-| the disabled paste option in the menu is to indicate to the user that paste is possible and it provides
-| the keyboard shortcut as a hint to the user.
+<note>
+The 'paste' operation in the context menu is not possible and hence always disabled.
+It is not possible because of a browser security restriction that JavaScript cannot
+take data from the clipboard without the user explicitly doing a paste command from the browser
+(e.g. <kbd>Ctrl</kbd>+<kbd>V</kbd> or from the browser menu). If JavaScript could do this, then websites could steal
+data from the client by accessing the clipboard maliciously. The reason why the grid keeps
+the disabled paste option in the menu is to indicate to the user that paste is possible and it provides
+the keyboard shortcut as a hint to the user.
+</note>
 
 ## Configuring the Context Menu
 

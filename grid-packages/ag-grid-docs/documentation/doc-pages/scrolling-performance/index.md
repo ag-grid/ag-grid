@@ -4,14 +4,13 @@ title: "Scrolling Performance"
 
 The grid is fast. However, the grid can also be configured and extended in many ways. This page explains how you can make the grid go faster.
 
-[[only-react]]
-| [[warning]]
-| | ### **React Dev vs Prod Mode**
-| |
-| | React in Production Mode works faster than Dev Mode. Given the DOM complexity of the grid, React Production Mode will
-| | allow the grid to perform optimally without any overhead introduced by Dev Mode. Performance testing should be 
-| | performed in Production Mode only.
-| |
+<framework-specific-section frameworks="react">
+<warning title="React Dev vs Prod Mode">
+| React in Production Mode works faster than Dev Mode. Given the DOM complexity of the grid, React Production Mode will
+| allow the grid to perform optimally without any overhead introduced by Dev Mode. Performance testing should be 
+| performed in Production Mode only.
+</warning>
+</framework-specific-section>
 
 ## Setting Expectations
 
@@ -21,21 +20,23 @@ The grid can be as fast as demonstrated in the demo application [Demo Applicatio
 
 The grid can be slowed down by custom [Cell Renderers](/component-cell-renderer/). To test this, remove all Cell Renderers from the grid and compare the speed again. If the grid does improve it's speed by removing Cell Renderers, introduce the Cell Renderers one by one to find out which ones are adding the most overhead.
 
-[[only-angular]]
+<framework-specific-section frameworks="angular">
 | 
 | ## Consider JavaScript Cell Renderers
 |
 | The grid's rendering uses AG Grid's own internal rendering engine which does not use Angular. As such, each time an Angular Cell Renderer is used, the grid switches context into an Angular application. This context switching can be time consuming when done multiple times (i.e. each cell).
 |
 | Consider using JavaScript Cell Renderers instead of Angular Cell Renderers to see if it makes your rendering faster.
+</framework-specific-section>
 
-[[only-vue]]
+<framework-specific-section frameworks="vue">
 | 
 | ## Consider JavaScript Cell Renderers
 |
 | The grid's rendering uses AG Grid's own internal rendering engine which does not use Vue. As such, each time a Vue Cell Renderer is used, the grid switches context into a Vue application. This context switching can be time consuming when done multiple times (i.e. each cell).
 |
 | Consider using JavaScript Cell Renderers instead of Vue Cell Renderers to see if it makes your rendering faster.
+</framework-specific-section>
 
 ## If Possible, Avoid Cell Renderers
 

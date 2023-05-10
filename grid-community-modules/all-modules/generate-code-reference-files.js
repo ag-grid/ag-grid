@@ -233,8 +233,7 @@ function applyInheritance(extensions, interfaces, isDocStyle) {
                 // Omit: https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
                 // Special logic to handle the removing of properties via the Omit utility when a type is defined via extension.
                 // e.g. export interface AgNumberAxisThemeOptions extends Omit<AgNumberAxisOptions, 'type'> { }
-                extended = a.params[0];
-                const fullInterface = interfaces[extended];
+                extended = a.params[0].replace(/<.*>/, '');
                 a.params.slice(1).forEach(toRemove => {
                     toRemove.split("|").forEach(property => {
                         const typeName = property.replace(/'/g, "").trim();

@@ -1,21 +1,23 @@
 ---
 title: "Column State"
 ---
-[[only-javascript-or-angular-or-vue]]
+<framework-specific-section frameworks="javascript,angular,vue">
 |Column Definitions contain both stateful and non-stateful attributes. Stateful attributes can have their values changed by the grid (e.g. Column sort can be changed by the user clicking on the column header). Non-stateful attributes do not change from what is set in the Column Definition (e.g. once the Header Name is set as part of a Column Definition, it typically does not change).
+</framework-specific-section>
 
-[[only-react]]
-|<video-section id="d9Kohpbt42M" title="React Column State" header="true">
-|Column Definitions contain both stateful and non-stateful attributes. Stateful attributes can have their values changed by the grid (e.g. Column sort can be changed by the user clicking on the column header). Non-stateful attributes do not change from what is set in the Column Definition (e.g. once the Header Name is set as part of a Column Definition, it typically does not change).
-|</video-section>
+<framework-specific-section frameworks="react">
+<video-section id="d9Kohpbt42M" title="React Column State" header="true">
+Column Definitions contain both stateful and non-stateful attributes. Stateful attributes can have their values changed by the grid (e.g. Column sort can be changed by the user clicking on the column header). Non-stateful attributes do not change from what is set in the Column Definition (e.g. once the Header Name is set as part of a Column Definition, it typically does not change).
+</video-section>
+</framework-specific-section>
 
-[[note]]
-| The DOM also has stateful vs non-stateful attributes. For example consider a DOM element and setting 
-| `element.style.width="100px"` will indefinitely set width to 100 pixels, the browser will not change this value. 
-| However setting `element.scrollTop=200` will set the scroll position, but the browser can change the scroll
-| position further following user interaction, thus scroll position is stateful as the browser can change
-| the state.
-
+<note>
+The DOM also has stateful vs non-stateful attributes. For example consider a DOM element and setting 
+`element.style.width="100px"` will indefinitely set width to 100 pixels, the browser will not change this value. 
+However setting `element.scrollTop=200` will set the scroll position, but the browser can change the scroll
+position further following user interaction, thus scroll position is stateful as the browser can change
+the state.
+</note>
 
 The full list of stateful attributes of Columns are represented by the `ColumnStateParams` interface:
 

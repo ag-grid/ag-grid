@@ -8,12 +8,13 @@ This section describes the Server-Side Datasource and demonstrates how it is use
 The Server-Side Row Model requires a datasource to fetch rows for the grid. When users scroll or perform grid operations
 such as sorting or grouping, more data will be requested via the datasource.
 
-[[note]]
-| Most of the Server-Side Row Model examples include a fake server that generates SQL to imitate how a real server
-| might use the requests sent from the grid. These examples use [AlaSQL](http://alasql.org/) which is a
-| JavaScript SQL database that works in browsers.
-|
-| However, note that the Server-Side Row Model does not impose any restrictions on the server-side technologies used.
+<note>
+Most of the Server-Side Row Model examples include a fake server that generates SQL to imitate how a real server
+might use the requests sent from the grid. These examples use [AlaSQL](http://alasql.org/) which is a
+JavaScript SQL database that works in browsers.
+
+However, note that the Server-Side Row Model does not impose any restrictions on the server-side technologies used.
+</note>
 
 ## Enabling Server-Side Row Model
 

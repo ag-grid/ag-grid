@@ -16,10 +16,11 @@ Pivot mode is required to be turned on for pivoting to work. When the grid is in
 
 If pivot mode is off, then adding or removing pivot columns will have no effect.
 
-[[note]]
-| To allow a column to be used as pivot column via the [Tool Panel](/tool-panel/),
-| set `enablePivot=true` on the required columns. Otherwise you won't be able to drag
-| and drop the columns to the pivot drop zone from the Tool Panel.
+<note>
+To allow a column to be used as pivot column via the [Tool Panel](../tool-panel/),
+set `enablePivot=true` on the required columns. Otherwise you won't be able to drag
+and drop the columns to the pivot drop zone from the Tool Panel.
+</note>
 
 ## Specifying Pivot Columns
 
@@ -99,8 +100,9 @@ As mentioned above, the Pivot Result Columns in the grid are created by the grid
 
 It is possible to manipulate the [Column Definition](/column-definitions/) of the Pivot Result Columns using the `processPivotResultColDef` callback (or `processPivotResultColGroupDef` callback for Column Groups).
 
-[[note]]
-| The `field` and `colId` properties of the Pivot Result Column definitions should not be overwritten.
+<note>
+The `field` and `colId` properties of the Pivot Result Column definitions should not be overwritten.
+</note>
 
 <snippet>
 const gridOptions = {
@@ -135,8 +137,9 @@ some differences in how users can filter on both column types. These differences
 When pivoting is active in the grid,  [Filtering](/filtering-overview/) on columns supplied in the grid options is possible through the 
 [Filters Tool Panel](/tool-panel-filters/) and the [Filter API](/grid-api/#reference-filter).
 
-[[note]]
-| When pivoting is active, it is not possible to filter on regular columns using [Column Filters](/filtering/) as the grid only displays group and pivot result columns.
+<note>
+When pivoting is active, it is not possible to filter on regular columns using [Column Filters](../filtering/) as the grid only displays group and pivot result columns.
+</note>
 
 These filters are applied to the data before it is pivoted, as such a change in these filters can effect not only the resulting
 values and rows, but also the columns generated from the pivot.
@@ -195,11 +198,12 @@ When pivot mode is enabled, you may also [Filter](/filtering-overview/) on the g
 
 As shown in the snippet above, filters are enabled on pivot result columns by inheriting properties from the underlying value column. The below example demonstrates this behaviour.
 
-[[note]]
-| While pivot result columns inherit the properties of the value column from which they are generated, setting `filter: true` will instead
-| default to a [Number Filter](/filter-number/) in the case of a pivot result column.
-| You can use [Text Filter](/filter-text/) or [Date Filter](/filter-date/). However, [Set Filter](/filter-set/) cannot
-| be used for filtering pivot result columns.
+<note>
+While pivot result columns inherit the properties of the value column from which they are generated, setting `filter: true` will instead
+default to a [Number Filter](../filter-number/) in the case of a pivot result column.
+You can use [Text Filter](../filter-text/) or [Date Filter](../filter-date/). However, [Set Filter](../filter-set/) cannot
+be used for filtering pivot result columns.
+</note>
 
 Filtering on a pivot result column:
 - Using the floating filters, apply the filter **Not Blank** to the **2000, gold** column

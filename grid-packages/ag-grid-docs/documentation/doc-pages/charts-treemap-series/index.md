@@ -58,9 +58,10 @@ The size of the parent nodes will be automatically determined.
 The `labelKey`, `sizeKey` and `colorKey` configs can be omitted, if the node objects in your data
 happen to have the `label`, `size` and `color` fields.
 
-[[note]]
-| Any treemap series covers the whole series area of a chart, so it doesn't make sense to have more than
-| a single treemap series in a chart, even though it's technically supported.
+<note>
+Any treemap series covers the whole series area of a chart, so it doesn't make sense to have more than
+a single treemap series in a chart, even though it's technically supported.
+</note>
 
 Let's take a look at how we can use the treemap series to render a snapshot of the S&P 500 stock market index.
 Feel free to open this example in Plunker to enlarge the size of the component and notice how the treemap reveals more data as it grows bigger.
@@ -261,9 +262,19 @@ For more advanced configuration see the [Tooltips](../tooltips/) section.
 
 ## Padding
 
-There are some properties to control the density of Treemap tiles:
-- `nodeGap` controls the spacing between Treemap tiles.
-- `nodePadding` sets the indentation of inner content of Treemap tiles (padding between the tile borders and its label and nested tiles).
+There are some properties to control the spacing of treemap tiles:
+- `nodeGap` controls the gap between the treemap tiles. This is the space between the sibling tiles within their parent.
+- `nodePadding` controls the padding of the inner content of treemap tiles. This is the space between the border of each tile and the contained labels and tiles.
+
+```js
+series: [{
+    ...
+    nodeGap: 10,
+    nodePadding: 20,
+}]
+```
+
+<chart-example title='Tile Padding' name='tile-padding' type='generated'></chart-example>
 
 ## API Reference
 

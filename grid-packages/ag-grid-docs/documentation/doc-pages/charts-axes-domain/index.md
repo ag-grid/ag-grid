@@ -52,9 +52,10 @@ Use the buttons to set a specific domain minimum and maximum, or use the reset b
 
 <chart-example title='Number Axis Min & Max' name='axis-min-max' type='generated'></chart-example>
 
-[[note]]
-| If the axis options have been configured with the [Tick Placement](/charts-axes-ticks/#tick-placement) properties, they take priority over the `axis.min` and `axis.max` properties.
-| To enforce the axis domain minimum and maximum configurations while also respecting the [Tick Placement](/charts-axes-ticks/#tick-placement) configurations, set the `axis.nice` property to `false`.
+<note>    
+| If the axis options have been configured with the [Tick Placement](../charts-axes-ticks/#tick-placement) properties, they take priority over the `axis.min` and `axis.max` properties.
+| To enforce the axis domain minimum and maximum configurations while also respecting the [Tick Placement](../charts-axes-ticks/#tick-placement) configurations, set the `axis.nice` property to `false`.
+</note>
 
 ## Next Up
 

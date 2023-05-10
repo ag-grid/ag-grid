@@ -170,7 +170,7 @@ class GridExample extends Component {
             <div className="panel-heading">{id === 0 ? 'Athletes' : 'Selected Athletes'}</div>
             <div className="panel-body">
                 <AgGridReact
-                    style={{ height: '100%;' }}
+                    style={{ height: '100%' }}
                     defaultColDef={defaultColDef}
                     getRowId={this.getRowId}
                     rowDragManaged={true}
@@ -191,7 +191,7 @@ class GridExample extends Component {
     render = () => (
         <div className="top-container">
             {this.getTopToolBar()}
-            <div class="grid-wrapper ag-theme-alpine">
+            <div className="grid-wrapper ag-theme-alpine">
                 {this.getGridWrapper(0)}
                 {this.getGridWrapper(1)}
             </div>

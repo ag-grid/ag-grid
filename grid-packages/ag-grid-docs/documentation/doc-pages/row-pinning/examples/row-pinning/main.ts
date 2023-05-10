@@ -25,7 +25,7 @@ const columnDefs: ColDef[] = [
         return {
           component: CustomPinnedRowRenderer,
           params: {
-            style: { 'font-style': 'italic' },
+            style: { fontStyle: 'italic' },
           },
         }
       } else {
@@ -51,7 +51,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   rowData: null,
   getRowStyle: (params: RowClassParams): RowStyle | undefined => {
     if (params.node.rowPinned) {
-      return { 'font-weight': 'bold' }
+      return { fontWeight: 'bold' }
     }
   },
   // no rows to pin to start with

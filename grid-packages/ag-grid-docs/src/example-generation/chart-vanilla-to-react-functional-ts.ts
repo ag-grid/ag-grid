@@ -18,8 +18,13 @@ function getImports(componentFilenames: string[], bindings): string[] {
     const imports = [
         `import React, { useState${useCallback ? ', useCallback ' : ''}${bindings.usesChartApi ? ', useRef ' : ''}} from 'react';`,
         "import { createRoot } from 'react-dom/client';",
-        "import { AgChartsReact } from 'ag-charts-react';",
     ];
+
+    if (bindings.chartSettings.enterprise) {
+        imports.push("import 'ag-charts-enterprise';");
+    }
+
+    imports.push("import { AgChartsReact } from 'ag-charts-react';");
 
     if (bindings.imports.length > 0) {
         addBindingImports(bindings.imports, imports, false, true);
@@ -45,7 +50,7 @@ function getTemplate(bindings: any, componentAttributes: string[]): string {
 
 export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: string[]): () => string {
     return () => {
-        const { properties, optionsTypeInfo } = bindings;
+        const { properties, optionsTypeInfo, chartSettings: { enterprise = false } } = bindings;
         const imports = getImports(componentFilenames, bindings);
         const stateProperties = [];
         const componentAttributes = [];
@@ -66,8 +71,13 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
                 if (isInstanceMethod(bindings.instanceMethods, property)) {
                     instanceBindings.push(`this.${property.name}=${property.value}`);
                 } else {
+                    let propertyValue = property.name;
+                    if (property.name === 'options' && enterprise) {
+                        // @todo(AG-8492): Temporary workaround for typings mismatch.
+                        propertyValue += ' as any';
+                    }
                     stateProperties.push(`const [${property.name}, set${toTitleCase(property.name)}] = useState${property.name === 'options' ? `<${opsTypeInfo.typeStr}>` : ''}(${property.value});`);
-                    componentAttributes.push(`${property.name}={${property.name}}`);
+                    componentAttributes.push(`${property.name}={${propertyValue}}`);
                 }
             }
         });
@@ -100,6 +110,7 @@ root.render(<ChartExample />);
 
         if (bindings.usesChartApi) {
             indexFile = indexFile.replace(/AgChart.(\w*)\((\w*)(,|\))/g, 'AgChart.$1(chartRef.current!.chart$3');
+            indexFile = indexFile.replace(/AgEnterpriseCharts.(\w*)\((\w*)(,|\))/g, 'AgEnterpriseCharts.$1(chartRef.current!.chart$3');
             indexFile = indexFile.replace(/\(this.chartRef.current.chart, options/g, '(chartRef.current!.chart, options');
         }
 

@@ -16,6 +16,7 @@
   "Opacity": {},
   "PixelSize": {},
   "Ratio": {},
+  "TextWrap": {},
   "DataValue": {},
   "AgChartInteractionRange": {},
   "AgChartThemePalette": {
@@ -176,6 +177,13 @@
       "description": "/** Series configurations. */",
       "type": { "returnType": "S", "optional": true }
     },
+    "legend": {
+      "description": "/** Configuration for the chart legend. */",
+      "type": {
+        "returnType": "AgCartesianChartLegendOptions",
+        "optional": true
+      }
+    },
     "navigator": {
       "description": "/** Configuration for the chart navigator. */",
       "type": { "returnType": "AgNavigatorOptions", "optional": true }
@@ -229,10 +237,6 @@
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
     },
-    "legend": {
-      "description": "/** Configuration for the chart legend. */",
-      "type": { "returnType": "AgChartLegendOptions", "optional": true }
-    },
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
@@ -254,6 +258,10 @@
     "series": {
       "description": "/** Series configurations. */",
       "type": { "returnType": "S", "optional": true }
+    },
+    "legend": {
+      "description": "/** Configuration for the chart legend. */",
+      "type": { "returnType": "AgPolarChartLegendOptions", "optional": true }
     },
     "meta": { "typeParams": ["S = AgPolarSeriesTheme"] },
     "data": {
@@ -304,10 +312,6 @@
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
     },
-    "legend": {
-      "description": "/** Configuration for the chart legend. */",
-      "type": { "returnType": "AgChartLegendOptions", "optional": true }
-    },
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
@@ -329,6 +333,13 @@
     "series": {
       "description": "/** Series configurations. */",
       "type": { "returnType": "S", "optional": true }
+    },
+    "legend": {
+      "description": "/** Configuration for the chart legend. */",
+      "type": {
+        "returnType": "AgHierarchyChartLegendOptions",
+        "optional": true
+      }
     },
     "meta": { "typeParams": ["S = AgHierarchySeriesTheme"] },
     "data": {
@@ -378,10 +389,6 @@
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
-    },
-    "legend": {
-      "description": "/** Configuration for the chart legend. */",
-      "type": { "returnType": "AgChartLegendOptions", "optional": true }
     },
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
@@ -911,6 +918,10 @@
       "description": "/** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "type": { "returnType": "string", "optional": true }
     },
+    "legendItemKey": {
+      "description": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "fills": {
       "description": "/** The colours to cycle through for the fills of the sectors. */",
       "type": { "returnType": "CssColor[]", "optional": true }
@@ -1157,6 +1168,18 @@
     "spacing": {
       "description": "/** Spacing added to help position the text. */",
       "type": { "returnType": "number", "optional": true }
+    },
+    "maxWidth": {
+      "description": "/** Used to constrain the width of the title. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "maxHeight": {
+      "description": "/** Used to constrain the height of the title. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "wrapping": {
+      "description": "/** Text wrapping strategy for long titles. */",
+      "type": { "returnType": "TextWrap", "optional": true }
     }
   },
   "AgChartSubtitleOptions": {
@@ -1191,6 +1214,18 @@
     "spacing": {
       "description": "/** Spacing added to help position the text. */",
       "type": { "returnType": "number", "optional": true }
+    },
+    "maxWidth": {
+      "description": "/** Used to constrain the width of the title. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "maxHeight": {
+      "description": "/** Used to constrain the height of the title. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "wrapping": {
+      "description": "/** Text wrapping strategy for long titles. */",
+      "type": { "returnType": "TextWrap", "optional": true }
     }
   },
   "AgChartFooterOptions": {
@@ -1225,6 +1260,18 @@
     "spacing": {
       "description": "/** Spacing added to help position the text. */",
       "type": { "returnType": "number", "optional": true }
+    },
+    "maxWidth": {
+      "description": "/** Used to constrain the width of the title. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "maxHeight": {
+      "description": "/** Used to constrain the height of the title. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "wrapping": {
+      "description": "/** Text wrapping strategy for long titles. */",
+      "type": { "returnType": "TextWrap", "optional": true }
     }
   },
   "AgAxisCaptionOptions": {
@@ -1488,9 +1535,137 @@
       }
     }
   },
-  "AgChartLegendOptions": {
+  "AgChartBaseLegendOptions": {
+    "position": {
+      "description": "/** Where the legend should show in relation to the chart. */",
+      "type": { "returnType": "AgChartLegendPosition", "optional": true }
+    },
+    "orientation": {
+      "description": "/** How the legend items should be arranged. */",
+      "type": { "returnType": "AgChartOrientation", "optional": true }
+    },
+    "maxWidth": {
+      "description": "/** Used to constrain the width of the legend. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "maxHeight": {
+      "description": "/** Used to constrain the height of the legend. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "spacing": {
+      "description": "/** The spacing in pixels to use outside the legend. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "item": {
+      "description": "/** Configuration for the legend items that consist of a marker and a label. */",
+      "type": { "returnType": "AgChartLegendItemOptions", "optional": true }
+    },
+    "reverseOrder": {
+      "description": "/** Reverse the display order of legend items if `true`. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "listeners": {
+      "description": "/** Optional callbacks for specific legend-related events. */",
+      "type": { "returnType": "AgChartLegendListeners", "optional": true }
+    },
+    "pagination": {
+      "type": {
+        "returnType": "AgChartLegendPaginationOptions",
+        "optional": true
+      }
+    }
+  },
+  "AgCartesianChartLegendOptions": {
     "enabled": {
-      "description": "/** Whether or not to show the legend. */",
+      "description": "/** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "position": {
+      "description": "/** Where the legend should show in relation to the chart. */",
+      "type": { "returnType": "AgChartLegendPosition", "optional": true }
+    },
+    "orientation": {
+      "description": "/** How the legend items should be arranged. */",
+      "type": { "returnType": "AgChartOrientation", "optional": true }
+    },
+    "maxWidth": {
+      "description": "/** Used to constrain the width of the legend. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "maxHeight": {
+      "description": "/** Used to constrain the height of the legend. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "spacing": {
+      "description": "/** The spacing in pixels to use outside the legend. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "item": {
+      "description": "/** Configuration for the legend items that consist of a marker and a label. */",
+      "type": { "returnType": "AgChartLegendItemOptions", "optional": true }
+    },
+    "reverseOrder": {
+      "description": "/** Reverse the display order of legend items if `true`. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "listeners": {
+      "description": "/** Optional callbacks for specific legend-related events. */",
+      "type": { "returnType": "AgChartLegendListeners", "optional": true }
+    },
+    "pagination": {
+      "type": {
+        "returnType": "AgChartLegendPaginationOptions",
+        "optional": true
+      }
+    }
+  },
+  "AgHierarchyChartLegendOptions": {
+    "enabled": {
+      "description": "/** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "position": {
+      "description": "/** Where the legend should show in relation to the chart. */",
+      "type": { "returnType": "AgChartLegendPosition", "optional": true }
+    },
+    "orientation": {
+      "description": "/** How the legend items should be arranged. */",
+      "type": { "returnType": "AgChartOrientation", "optional": true }
+    },
+    "maxWidth": {
+      "description": "/** Used to constrain the width of the legend. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "maxHeight": {
+      "description": "/** Used to constrain the height of the legend. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "spacing": {
+      "description": "/** The spacing in pixels to use outside the legend. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "item": {
+      "description": "/** Configuration for the legend items that consist of a marker and a label. */",
+      "type": { "returnType": "AgChartLegendItemOptions", "optional": true }
+    },
+    "reverseOrder": {
+      "description": "/** Reverse the display order of legend items if `true`. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "listeners": {
+      "description": "/** Optional callbacks for specific legend-related events. */",
+      "type": { "returnType": "AgChartLegendListeners", "optional": true }
+    },
+    "pagination": {
+      "type": {
+        "returnType": "AgChartLegendPaginationOptions",
+        "optional": true
+      }
+    }
+  },
+  "AgPolarChartLegendOptions": {
+    "enabled": {
+      "description": "/** Whether or not to show the legend. The legend is shown by default. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
@@ -1615,6 +1790,10 @@
   "AgChartTooltipOptions": {
     "enabled": {
       "description": "/** Set to false to disable tooltips for all series in the chart. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "showArrow": {
+      "description": "/** Set to false to remove the arrow attached to the tooltip. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "class": {
@@ -1920,10 +2099,6 @@
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
-    },
-    "legend": {
-      "description": "/** Configuration for the chart legend. */",
-      "type": { "returnType": "AgChartLegendOptions", "optional": true }
     },
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
@@ -3024,6 +3199,10 @@
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "showArrow": {
+      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "position": {
       "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
@@ -3095,6 +3274,10 @@
     "format": { "type": { "returnType": "string", "optional": true } },
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "showArrow": {
+      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
@@ -3210,6 +3393,10 @@
     },
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "showArrow": {
+      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
@@ -3427,6 +3614,10 @@
     "format": { "type": { "returnType": "string", "optional": true } },
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "showArrow": {
+      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
@@ -3657,6 +3848,10 @@
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "showArrow": {
+      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "position": {
       "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
@@ -3700,7 +3895,6 @@
       "description": "/** Human-readable description of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
       "type": { "returnType": "string", "optional": true }
     },
-    "flipXY": { "type": { "returnType": "boolean", "optional": true } },
     "fill": {
       "description": "/** The colour to use for the fill of the bars. */",
       "type": { "returnType": "CssColor", "optional": true }
@@ -3869,6 +4063,10 @@
     },
     "enabled": {
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "showArrow": {
+      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
@@ -4119,6 +4317,10 @@
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "showArrow": {
+      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "position": {
       "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
@@ -4161,6 +4363,18 @@
     "spacing": {
       "description": "/** Spacing added to help position the text. */",
       "type": { "returnType": "number", "optional": true }
+    },
+    "maxWidth": {
+      "description": "/** Used to constrain the width of the title. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "maxHeight": {
+      "description": "/** Used to constrain the height of the title. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "wrapping": {
+      "description": "/** Text wrapping strategy for long titles. */",
+      "type": { "returnType": "TextWrap", "optional": true }
     }
   },
   "AgPieSeriesCalloutOptions": {
@@ -4297,6 +4511,10 @@
     },
     "sectorLabelName": {
       "description": "/** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "legendItemKey": {
+      "description": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */",
       "type": { "returnType": "string", "optional": true }
     },
     "fills": {
@@ -4615,6 +4833,10 @@
       "description": "/** Whether or not to show tooltips when the series are hovered over. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "showArrow": {
+      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "position": {
       "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
@@ -4623,6 +4845,35 @@
       "description": "/** Configuration for tooltip interaction. */",
       "type": { "returnType": "AgSeriesTooltipInteraction", "optional": true }
     }
+  },
+  "AgTreemapSeriesLabelFormatterParams": {
+    "datum": { "type": { "returnType": "DatumType", "optional": false } },
+    "meta": { "typeParams": ["DatumType"] }
+  },
+  "AgTreemapSeriesValueLabelOptions": {
+    "key": {
+      "description": "/** A property to be used as a key to retrieve a value from datum. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "name": {
+      "description": "/** A name of a datum value. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "formatter": {
+      "description": "/** A function to generate a value label from datum. */",
+      "type": {
+        "arguments": {
+          "params": "AgTreemapSeriesLabelFormatterParams<DatumType>"
+        },
+        "returnType": "string",
+        "optional": true
+      }
+    },
+    "style": {
+      "description": "/** The label's font and color style. */",
+      "type": { "returnType": "AgChartLabelOptions", "optional": true }
+    },
+    "meta": { "typeParams": ["DatumType"] }
   },
   "AgTreemapSeriesLabelsOptions": {
     "large": {
@@ -4640,7 +4891,9 @@
     "formatter": {
       "description": "/** A function to generate a label/title for the cell. */",
       "type": {
-        "arguments": { "params": "{ datum: any; }" },
+        "arguments": {
+          "params": "AgTreemapSeriesLabelFormatterParams<DatumType>"
+        },
         "returnType": "string",
         "optional": true
       }
@@ -4648,10 +4901,11 @@
     "value": {
       "description": "/** The configuration for the cell value label. */",
       "type": {
-        "returnType": "{\n        /** A property to be used as a key to retrieve a value from datum. */\n        key?: string;\n        /** A name of a datum value. */\n        name?: string;\n        /** A function to generate a value label from datum. */\n        formatter?: (params: { datum: any }) => string;\n        /** The label's font and color style. */\n        style?: AgChartLabelOptions;\n    }",
+        "returnType": "AgTreemapSeriesValueLabelOptions<DatumType>",
         "optional": true
       }
-    }
+    },
+    "meta": { "typeParams": ["DatumType"] }
   },
   "AgTreemapSeriesHighlightTextStyle": {
     "color": {
@@ -4688,7 +4942,10 @@
     },
     "labels": {
       "description": "/** Configuration for the tile labels. */",
-      "type": { "returnType": "AgTreemapSeriesLabelsOptions", "optional": true }
+      "type": {
+        "returnType": "AgTreemapSeriesLabelsOptions<DatumType>",
+        "optional": true
+      }
     },
     "labelKey": {
       "description": "/** The name of the node key containing the label. */",
@@ -4913,6 +5170,13 @@
         "optional": true
       }
     },
+    "legend": {
+      "description": "/** Configuration for the chart legend. */",
+      "type": {
+        "returnType": "AgCartesianChartLegendOptions",
+        "optional": true
+      }
+    },
     "navigator": {
       "description": "/** Configuration for the chart navigator. */",
       "type": { "returnType": "AgNavigatorOptions", "optional": true }
@@ -4966,10 +5230,6 @@
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
     },
-    "legend": {
-      "description": "/** Configuration for the chart legend. */",
-      "type": { "returnType": "AgChartLegendOptions", "optional": true }
-    },
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
@@ -4995,6 +5255,10 @@
     "series": {
       "description": "/** Series configurations. */",
       "type": { "returnType": "AgPolarSeriesOptions[]", "optional": true }
+    },
+    "legend": {
+      "description": "/** Configuration for the chart legend. */",
+      "type": { "returnType": "AgPolarChartLegendOptions", "optional": true }
     },
     "data": {
       "description": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
@@ -5044,10 +5308,6 @@
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
     },
-    "legend": {
-      "description": "/** Configuration for the chart legend. */",
-      "type": { "returnType": "AgChartLegendOptions", "optional": true }
-    },
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
@@ -5074,6 +5334,13 @@
     "series": {
       "description": "/** Series configurations. */",
       "type": { "returnType": "AgHierarchySeriesOptions[]", "optional": true }
+    },
+    "legend": {
+      "description": "/** Configuration for the chart legend. */",
+      "type": {
+        "returnType": "AgHierarchyChartLegendOptions",
+        "optional": true
+      }
     },
     "container": {
       "description": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
@@ -5118,10 +5385,6 @@
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
-    },
-    "legend": {
-      "description": "/** Configuration for the chart legend. */",
-      "type": { "returnType": "AgChartLegendOptions", "optional": true }
     },
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
@@ -5288,6 +5551,7 @@
   "LabelTranslationDirection": {},
   "CrossLineTranslationDirection": {},
   "CrossLinesRangeConfig": {},
+  "ContinuousDomain": { "meta": { "typeParams": ["T extends number | Date"] } },
   "UngroupedDataItem": { "meta": { "typeParams": ["D", "V"] } },
   "UngroupedData": {
     "type": { "type": { "returnType": "'ungrouped'", "optional": false } },
@@ -5299,7 +5563,7 @@
     },
     "domain": {
       "type": {
-        "returnType": "{\n        keys: any[][];\n        values: any[][];\n        sumValues?: [number, number][];\n    }",
+        "returnType": "{\n        keys: any[][];\n        values: any[][];\n        groups?: any[][];\n        aggValues?: [number, number][];\n    }",
         "optional": false
       }
     },
@@ -5321,48 +5585,42 @@
     "time": { "type": { "returnType": "number", "optional": false } },
     "meta": { "typeParams": ["D"] }
   },
+  "GroupedDataItem": { "meta": { "typeParams": ["D"] } },
   "GroupedData": {
     "type": { "type": { "returnType": "'grouped'", "optional": false } },
     "data": {
-      "type": {
-        "returnType": "UngroupedDataItem<D[], any[][]>[]",
-        "optional": false
-      }
+      "type": { "returnType": "GroupedDataItem<D>[]", "optional": false }
     },
     "domain": {
-      "type": {
-        "returnType": "{\n        keys: any[][];\n        values: any[][];\n        sumValues?: [number, number][];\n    }",
-        "optional": false
-      }
+      "type": { "returnType": "UngroupedData<D>['domain']", "optional": false }
     },
     "indices": {
-      "type": {
-        "returnType": "{\n        keys: Record<keyof D, number>;\n        values: Record<keyof D, number>;\n    }",
-        "optional": false
-      }
+      "type": { "returnType": "UngroupedData<D>['indices']", "optional": false }
     },
     "reduced": {
-      "type": { "returnType": "Record<string, any>", "optional": true }
+      "type": { "returnType": "UngroupedData<D>['reduced']", "optional": true }
     },
     "defs": {
-      "type": {
-        "returnType": "{\n        keys: DatumPropertyDefinition<keyof D>[];\n        values: DatumPropertyDefinition<keyof D>[];\n    }",
-        "optional": false
-      }
+      "type": { "returnType": "UngroupedData<D>['defs']", "optional": false }
     },
     "time": { "type": { "returnType": "number", "optional": false } },
     "meta": { "typeParams": ["D"] }
   },
   "ProcessedData": { "meta": { "typeParams": ["D"] } },
   "DatumPropertyType": {},
-  "ContinuousDomain": { "meta": { "typeParams": ["T extends number | Date"] } },
+  "GroupingFn": { "meta": { "typeParams": ["K"] } },
+  "GroupByFn": {},
   "Options": {
     "meta": { "typeParams": ["K", "Grouped extends boolean | undefined"] }
   },
   "PropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "DatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "InternalDatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
-  "OutputPropertyDefinition": { "meta": { "typeParams": ["K"] } },
+  "AggregatePropertyDefinition": {
+    "meta": {
+      "typeParams": ["D", "K extends keyof D", "R = [number, number]", "R2 = R"]
+    }
+  },
   "ReducerOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
   "ProcessorOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
   "Series": {
@@ -5371,18 +5629,6 @@
     "toggleSeriesItem": {
       "type": {
         "arguments": { "itemId": "string", "enabled": "boolean" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "toggleOtherSeriesItems": {
-      "type": {
-        "arguments": {
-          "series": "{ id: string; type: string; }",
-          "itemId": "string",
-          "enabled?": "boolean",
-          "preferredEnabled?": "boolean"
-        },
         "returnType": "void",
         "optional": false
       }
@@ -5406,6 +5652,60 @@
       }
     },
     "padding": { "type": { "returnType": "number", "optional": false } }
+  },
+  "AnimationId": {},
+  "AnimationEventType": {},
+  "AnimationEvent": {
+    "type": {
+      "type": { "returnType": "AnimationEventType", "optional": false }
+    },
+    "delta": { "type": { "returnType": "number", "optional": false } },
+    "meta": { "typeParams": ["AnimationEventType"] }
+  },
+  "AnimationManyOptions": {
+    "meta": { "typeParams": ["T"] },
+    "driver": { "type": { "returnType": "Driver", "optional": false } },
+    "autoplay": { "type": { "returnType": "boolean", "optional": true } },
+    "delay": { "type": { "returnType": "number", "optional": true } },
+    "repeat": { "type": { "returnType": "number", "optional": true } },
+    "repeatType": { "type": { "returnType": "RepeatType", "optional": true } },
+    "onComplete": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onPlay": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onRepeat": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onStop": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    }
+  },
+  "ChartEventType": {},
+  "ChartEvents": {},
+  "ChartEvent": {
+    "type": { "type": { "returnType": "ChartEventType", "optional": false } },
+    "meta": { "typeParams": ["ChartEventType"] }
+  },
+  "LegendItemClickChartEvent": {
+    "series": { "type": { "returnType": "any", "optional": false } },
+    "itemId": { "type": { "returnType": "any", "optional": false } },
+    "enabled": { "type": { "returnType": "boolean", "optional": false } },
+    "type": {
+      "type": { "returnType": "'legend-item-click'", "optional": false }
+    }
+  },
+  "LegendItemDoubleClickChartEvent": {
+    "series": { "type": { "returnType": "any", "optional": false } },
+    "itemId": { "type": { "returnType": "any", "optional": false } },
+    "enabled": { "type": { "returnType": "boolean", "optional": false } },
+    "numVisibleItems": {
+      "type": { "returnType": "{ [key: string]: number }", "optional": false }
+    },
+    "type": {
+      "type": { "returnType": "'legend-item-double-click'", "optional": false }
+    }
   },
   "CursorState": {
     "style": { "type": { "returnType": "string", "optional": false } }
@@ -5758,6 +6058,7 @@
     "aggregatedValue": {
       "type": { "returnType": "number", "optional": false }
     },
+    "frequency": { "type": { "returnType": "number", "optional": false } },
     "domain": {
       "type": { "returnType": "[number, number]", "optional": false }
     },
@@ -5780,7 +6081,6 @@
     }
   },
   "HistogramAggregation": {},
-  "AggregationFunction": {},
   "LineNodeDatum": {
     "point": {
       "type": {
@@ -5961,14 +6261,12 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "EventTarget": {
-    "classList": { "type": { "returnType": "DOMTokenList", "optional": false } }
-  },
   "TooltipMeta": {
     "pageX": { "type": { "returnType": "number", "optional": false } },
     "pageY": { "type": { "returnType": "number", "optional": false } },
     "offsetX": { "type": { "returnType": "number", "optional": false } },
     "offsetY": { "type": { "returnType": "number", "optional": false } },
+    "showArrow": { "type": { "returnType": "boolean", "optional": false } },
     "position": {
       "type": {
         "returnType": "{\n        xOffset?: number;\n        yOffset?: number;\n    }",
@@ -5990,6 +6288,119 @@
   "Tick": {
     "labels": { "type": { "returnType": "string[]", "optional": false } }
   },
+  "KeyframesOptions": {
+    "duration": { "type": { "returnType": "number", "optional": false } },
+    "from": { "type": { "returnType": "T", "optional": false } },
+    "to": { "type": { "returnType": "T", "optional": false } },
+    "ease": { "type": { "returnType": "Easing<T>", "optional": true } },
+    "meta": { "typeParams": ["T"] }
+  },
+  "RepeatType": {},
+  "AnimationOptions": {
+    "driver": { "type": { "returnType": "Driver", "optional": false } },
+    "autoplay": { "type": { "returnType": "boolean", "optional": true } },
+    "delay": { "type": { "returnType": "number", "optional": true } },
+    "repeat": { "type": { "returnType": "number", "optional": true } },
+    "repeatType": { "type": { "returnType": "RepeatType", "optional": true } },
+    "onComplete": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onPlay": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onRepeat": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onStop": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onUpdate": {
+      "type": {
+        "arguments": { "v": "T" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "meta": { "typeParams": ["T"] },
+    "duration": { "type": { "returnType": "number", "optional": false } },
+    "from": { "type": { "returnType": "T", "optional": false } },
+    "to": { "type": { "returnType": "T", "optional": false } },
+    "ease": { "type": { "returnType": "Easing<T>", "optional": true } }
+  },
+  "AnimationControls": {
+    "isPlaying": { "type": { "returnType": "boolean", "optional": false } },
+    "play": {
+      "type": {
+        "arguments": {},
+        "returnType": "AnimationControls",
+        "optional": false
+      }
+    },
+    "pause": {
+      "type": {
+        "arguments": {},
+        "returnType": "AnimationControls",
+        "optional": false
+      }
+    },
+    "stop": {
+      "type": {
+        "arguments": {},
+        "returnType": "AnimationControls",
+        "optional": false
+      }
+    },
+    "reset": {
+      "type": {
+        "arguments": {},
+        "returnType": "AnimationControls",
+        "optional": false
+      }
+    }
+  },
+  "DriverControls": {
+    "start": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "stop": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "reset": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    }
+  },
+  "Driver": {},
+  "TweenOptions": {
+    "driver": { "type": { "returnType": "Driver", "optional": false } },
+    "meta": { "typeParams": ["T"] },
+    "duration": { "type": { "returnType": "number", "optional": false } },
+    "from": { "type": { "returnType": "T", "optional": false } },
+    "to": { "type": { "returnType": "T", "optional": false } },
+    "ease": { "type": { "returnType": "Easing<T>", "optional": true } }
+  },
+  "TweenControls": {
+    "start": {
+      "type": {
+        "arguments": { "onUpdate?": "(value: T) => void" },
+        "returnType": "TweenControls<T>",
+        "optional": false
+      }
+    },
+    "stop": {
+      "type": {
+        "arguments": {},
+        "returnType": "TweenControls<T>",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["T"] }
+  },
+  "EasingOpts": {
+    "from": { "type": { "returnType": "T", "optional": false } },
+    "to": { "type": { "returnType": "T", "optional": false } },
+    "meta": { "typeParams": ["T"] }
+  },
+  "Easing": { "meta": { "typeParams": ["T"] } },
   "ScaleClampParams": {
     "strict": {
       "description": "/** If `true` the values outside of the domain will become `NaN`.\n     * If `false` such values will be clamped to the domain edges.\n     */",
@@ -6145,6 +6556,13 @@
   "ShapeLineCap": {},
   "ShapeLineJoin": {},
   "CanvasContext": {},
+  "TextSizeProperties": {
+    "fontFamily": { "type": { "returnType": "string", "optional": false } },
+    "fontSize": { "type": { "returnType": "number", "optional": false } },
+    "fontStyle": { "type": { "returnType": "FontStyle", "optional": true } },
+    "fontWeight": { "type": { "returnType": "FontWeight", "optional": true } },
+    "lineHeight": { "type": { "returnType": "number", "optional": true } }
+  },
   "Comparator": { "meta": { "typeParams": ["T"] } },
   "LiteralOrFn": { "meta": { "typeParams": ["T"] } },
   "TransformFn": {},
@@ -6196,20 +6614,26 @@
     "mode": {
       "type": { "returnType": "'standalone' | 'integrated'", "optional": false }
     },
-    "interactionManager": {
-      "type": { "returnType": "InteractionManager", "optional": false }
+    "animationManager": {
+      "type": { "returnType": "AnimationManager", "optional": false }
     },
-    "highlightManager": {
-      "type": { "returnType": "HighlightManager", "optional": false }
+    "chartEventManager": {
+      "type": { "returnType": "ChartEventManager", "optional": false }
     },
     "cursorManager": {
       "type": { "returnType": "CursorManager", "optional": false }
     },
-    "zoomManager": {
-      "type": { "returnType": "ZoomManager", "optional": false }
+    "highlightManager": {
+      "type": { "returnType": "HighlightManager", "optional": false }
+    },
+    "interactionManager": {
+      "type": { "returnType": "InteractionManager", "optional": false }
     },
     "tooltipManager": {
       "type": { "returnType": "TooltipManager", "optional": false }
+    },
+    "zoomManager": {
+      "type": { "returnType": "ZoomManager", "optional": false }
     },
     "dataService": {
       "type": { "returnType": "DataService", "optional": false }
@@ -6231,20 +6655,26 @@
     "mode": {
       "type": { "returnType": "'standalone' | 'integrated'", "optional": false }
     },
-    "interactionManager": {
-      "type": { "returnType": "InteractionManager", "optional": false }
+    "animationManager": {
+      "type": { "returnType": "AnimationManager", "optional": false }
     },
-    "highlightManager": {
-      "type": { "returnType": "HighlightManager", "optional": false }
+    "chartEventManager": {
+      "type": { "returnType": "ChartEventManager", "optional": false }
     },
     "cursorManager": {
       "type": { "returnType": "CursorManager", "optional": false }
     },
-    "zoomManager": {
-      "type": { "returnType": "ZoomManager", "optional": false }
+    "highlightManager": {
+      "type": { "returnType": "HighlightManager", "optional": false }
+    },
+    "interactionManager": {
+      "type": { "returnType": "InteractionManager", "optional": false }
     },
     "tooltipManager": {
       "type": { "returnType": "TooltipManager", "optional": false }
+    },
+    "zoomManager": {
+      "type": { "returnType": "ZoomManager", "optional": false }
     },
     "dataService": {
       "type": { "returnType": "DataService", "optional": false }

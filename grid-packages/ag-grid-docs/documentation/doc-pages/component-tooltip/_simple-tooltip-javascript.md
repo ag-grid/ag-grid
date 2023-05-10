@@ -1,8 +1,9 @@
-[[only-javascript]]
-|
+<framework-specific-section frameworks="javascript">
 |Below is a simple example of a tooltip component:
-|
-|```js
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript">
+<snippet transform={false} language="ts">
 |class CustomTooltip {
 |    init(params) {
 |        const eGui = this.eGui = document.createElement('div');
@@ -12,17 +13,17 @@
 |        eGui.classList.add('custom-tooltip');
 |        eGui.style['background-color'] = color;
 |        eGui.innerHTML = `
-|            <p>
-|                <span class"name">${data.athlete}</span>
-|            </p>
-|            <p>
-|                <span>Country: </span>
+|            &lt;p>
+|                &lt;span class"name">${data.athlete}&lt;/span>
+|            &lt;/p>
+|            &lt;p>
+|                &lt;span>Country: &lt;/span>
 |                ${data.country}
-|            </p>
-|            <p>
-|                <span>Total: </span>
+|            &lt;/p>
+|            &lt;p>
+|                &lt;span>Total: &lt;/span>
 |                ${data.total}
-|            </p>
+|            &lt;/p>
 |        `;
 |    }
 |
@@ -30,4 +31,5 @@
 |        return this.eGui;
 |    }
 |}
-|```
+</snippet>
+</framework-specific-section>

@@ -3,8 +3,9 @@ title: "Axis Ticks"
 ---
 Axis ticks are markers placed at regular intervals along each axis, and are also used to determine where and how often to show the axis labels and grid lines.
 
-[[note]]
-| Category axes show a tick for every category. Number and time axes will display around 5 ticks depending on the available space.
+<note>
+Category axes show a tick for every category. Number and time axes will display around 5 ticks depending on the available space.
+</note>
 
 ## Tick Placement
 
@@ -49,8 +50,9 @@ Other available `time` intervals are: `year`, `month`, `day`, `hour`, `minute`, 
 
 If the `interval` property of a time axis is set to a `number`, this will be interpreted as milliseconds.
 
-[[note]]
-| If the configured `interval` results in too many ticks given the data domain and chart size, it will be ignored and the default tick behaviour will be applied.
+<note>
+If the configured `interval` results in too many ticks given the data domain and chart size, it will be ignored and the default tick behaviour will be applied.
+</note>
 
 The example below demonstrates the usage of time intervals:
 - `time.month` will produce monthly ticks.

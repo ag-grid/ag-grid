@@ -1,15 +1,17 @@
-[[only-javascript]]
+<framework-specific-section frameworks="javascript">
 |## Custom Floating Filter Interface
 |
 |The interface for a custom filter component is as follows:
-|
-|```ts
-|interface IFloatingFilterComp<ParentFilter = any> {
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript">
+<snippet transform={false} language="ts">
+|interface IFloatingFilterComp&lt;ParentFilter = any> {
 |    // Mandatory methods
 |
 |    // The init(params) method is called on the floating filter once.
 |    // See below for details on the parameters.
-|    init(params: IFloatingFilterParams<ParentFilter>): void;
+|    init(params: IFloatingFilterParams&lt;ParentFilter>): void;
 |
 |    // Gets called every time the parent filter changes. Your floating
 |    // filter would typically refresh its UI to reflect the new filter
@@ -35,10 +37,12 @@
 |    // scrolls the column out of view with horizontal scrolling.
 |    destroy?(): void;
 |}
-|```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript">
 |### Custom Filter Parameters
 |
 |The `init(params)` method takes a params object with the items listed below. If custom params are provided via the `colDef.floatingFilterComponentParams` property, these 
 |will be additionally added to the params object, overriding items of the same name if a name clash exists.
-|
+</framework-specific-section>

@@ -1,12 +1,14 @@
-[[only-vue]]
+<framework-specific-section frameworks="vue">
 |Below is a example of loading overlay class with a custom `loadingMessage` param:
-|
-|```js
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false}>
 |const MyOverlay = {
 |    template: `
-|      <div class="ag-overlay-loading-center" style="background-color: lightsteelblue;">
-|          <i class="fas fa-hourglass-half"> {{ params.loadingMessage }} </i>
-|      </div>
+|      &lt;div class="ag-overlay-loading-center" style="background-color: lightsteelblue;">
+|          &lt;i class="fas fa-hourglass-half"> {{ params.loadingMessage }} &lt;/i>
+|      &lt;/div>
 |    `
 |}
 |
@@ -17,5 +19,5 @@
 |    loadingMessage: 'One moment please...',
 |  },
 |}
-|```
- 
+</snippet>
+</framework-specific-section>

@@ -1,4 +1,4 @@
-[[only-vue]]
+<framework-specific-section frameworks="vue">
 |## Mixing JavaScript and Vue
 |When providing Custom Components you have a choice of the following:
 |
@@ -9,14 +9,17 @@
 |
 |The following code snippet shows how both JavaScript and Vue Components can be used at the same time:
 |
-|```js
-|<template>
-|   <ag-grid-vue :components="components" 
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false}>
+|&lt;template>
+|   &lt;ag-grid-vue :components="components" 
 |                ...other properties>
-|   </ag-grid-vue>
-|</template>
+|   &lt;/ag-grid-vue>
+|&lt;/template>
 |
-|<script>
+|&lt;script>
 |//...other imports
 |import {AgGridVue} from "ag-grid-vue3";
 |import JavascriptComponent from './JavascriptComponent.js';
@@ -56,6 +59,6 @@
 |   }
 |   //...other properties & methods
 |}
-|</script>
-|```
-|
+|&lt;/script>
+</snippet>
+</framework-specific-section>

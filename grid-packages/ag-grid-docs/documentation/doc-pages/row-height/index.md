@@ -5,9 +5,10 @@ title: "Row Height"
 By default, the grid will display rows with a height of `25px`. You can change this for each row
 individually to give each row a different height.
 
-[[note]]
-| You cannot use variable row height when using either the [Viewport Row Model](/viewport/) or [Infinite Row Model](/infinite-scrolling/).
-| This is because this row model needs to work out the position of rows that are not loaded and hence needs to assume the row height is fixed.
+<note>
+You cannot use variable row height when using either the [Viewport Row Model](../viewport/) or [Infinite Row Model](../infinite-scrolling/).
+This is because this row model needs to work out the position of rows that are not loaded and hence needs to assume the row height is fixed.
+</note>
 
 ## rowHeight Property
 
@@ -103,10 +104,11 @@ being applied to the cell, which causes the text to wrap.
 
 <grid-example title='Row Height Complex' name='row-height-complex' type='generated'></grid-example>
 
-[[note]]
-| If you are providing a custom [Cell Renderer Component](/component-cell-renderer/),
-| you can implement text wrapping in the custom component in your own way. The property `wrapText`
-| is intended to be used when you are not using a custom Cell Renderer.
+<note>
+If you are providing a custom [Cell Renderer Component](../component-cell-renderer/),
+you can implement text wrapping in the custom component in your own way. The property `wrapText`
+is intended to be used when you are not using a custom Cell Renderer.
+</note>
 
 ## Auto Row Height
 

@@ -4,6 +4,14 @@ import { HdpiCanvas } from '../../canvas/hdpiCanvas';
 import { RedrawType, SceneChangeDetection, RenderContext } from '../node';
 import { FontStyle, FontWeight } from '../../chart/agChartOptions';
 
+export interface TextSizeProperties {
+    fontFamily: string;
+    fontSize: number;
+    fontStyle?: FontStyle;
+    fontWeight?: FontWeight;
+    lineHeight?: number;
+}
+
 function SceneFontChangeDetection(opts?: { redraw?: RedrawType; changeCb?: (t: any) => any }) {
     const { redraw = RedrawType.MAJOR, changeCb } = opts || {};
 
@@ -11,6 +19,9 @@ function SceneFontChangeDetection(opts?: { redraw?: RedrawType; changeCb?: (t: a
 }
 export class Text extends Shape {
     static className = 'Text';
+
+    // The default line spacing for document editors is usually 1.15
+    static defaultLineHeightRatio = 1.15;
 
     protected static defaultStyles = Object.assign({}, Shape.defaultStyles, {
         textAlign: 'start' as CanvasTextAlign,
@@ -40,7 +51,7 @@ export class Text extends Shape {
     get font(): string {
         if (this._dirtyFont) {
             this._dirtyFont = false;
-            this._font = getFont(this.fontSize, this.fontFamily, this.fontStyle, this.fontWeight);
+            this._font = getFont(this);
         }
 
         return this._font!;
@@ -281,43 +292,36 @@ export class Text extends Shape {
         }
     }
 
-    static wrap(
-        text: string,
-        maxWidth: number,
-        maxHeight: number,
-        font: string,
-        fontSize: number,
-        truncate: boolean
-    ): string {
+    static wrap(text: string, maxWidth: number, maxHeight: number, textProps: TextSizeProperties): string {
         const lines: string[] = text.split(/\r?\n/g);
         const result: string[] = [];
         let cumulativeHeight = 0;
         for (const line of lines) {
-            const wrappedLine = Text.wrapLine(line, maxWidth, maxHeight, font, fontSize, truncate, cumulativeHeight);
+            const wrappedLine = Text.wrapLine(line, maxWidth, maxHeight, textProps, cumulativeHeight);
             result.push(wrappedLine.result);
             cumulativeHeight = wrappedLine.cumulativeHeight;
             if (wrappedLine.truncated) {
                 break;
             }
         }
-        return result.join('\n');
+        return result.join('\n').trim();
     }
 
-    static wrapLine(
+    private static wrapLine(
         text: string,
         maxWidth: number,
         maxHeight: number,
-        font: string,
-        fontSize: number,
-        truncate: boolean,
+        textProps: TextSizeProperties,
         cumulativeHeight: number
     ): { result: string; truncated: boolean; cumulativeHeight: number } {
+        const { fontSize, lineHeight = fontSize * Text.defaultLineHeightRatio } = textProps;
+        const font = getFont(textProps);
         const lines: string[] = [];
         const guesstimate = Math.max(1, Math.round(maxWidth / fontSize));
         const ellipsis = '\u2026';
         let truncated = false;
 
-        const sliceText = (text: string, startIndex: number) => {
+        const sliceText = (text: string, startIndex: number, isLastLine: boolean) => {
             const whiteSpaceIndex = text.indexOf(' ', startIndex);
             const lastWhiteSpaceIndex = whiteSpaceIndex > 0 ? whiteSpaceIndex : text.lastIndexOf(' ');
             const noWhiteSpace = lastWhiteSpaceIndex < 0;
@@ -325,7 +329,7 @@ export class Text extends Shape {
             return {
                 result: text.slice(0, index),
                 index,
-                addHyphen: noWhiteSpace,
+                addHyphen: !isLastLine && noWhiteSpace,
             };
         };
 
@@ -333,26 +337,39 @@ export class Text extends Shape {
             let result = text;
             let index = text.length;
             let addHyphen = false;
-            let { width, height } = HdpiCanvas.getTextSize(text, font);
+            let { width } = HdpiCanvas.getTextSize(text, font);
 
             const maxCount = 10;
             let count: number = 0;
+            let prev = result;
+            const isLastLine = cumulativeHeight + 2 * lineHeight > maxHeight;
             while (width > maxWidth && count < maxCount) {
-                ({ result, index, addHyphen } = sliceText(result, Math.min(guesstimate, index)));
-                ({ width, height } = HdpiCanvas.getTextSize(result.concat(addHyphen ? '-' : ''), font));
+                ({ result, index, addHyphen } = sliceText(result, Math.min(guesstimate, index), isLastLine));
+                ({ width } = HdpiCanvas.getTextSize(result.concat(addHyphen ? '-' : ''), font));
+                if (result === prev) {
+                    break;
+                }
                 count++;
+                prev = result;
             }
 
-            cumulativeHeight += height;
+            cumulativeHeight += lineHeight;
 
-            if (truncate && cumulativeHeight > maxHeight) {
+            if (cumulativeHeight > maxHeight) {
                 truncated = true;
                 const lastLine = lines.pop();
                 if (!lastLine) {
                     return;
                 }
 
-                lines.push(lastLine.slice(0, lastLine.length - 3).concat(ellipsis));
+                for (let len = lastLine.length; len >= 0; len--) {
+                    const truncatedLine = `${lastLine.substring(0, len)}${ellipsis}`;
+                    const lastLineWidth = HdpiCanvas.getTextSize(truncatedLine, font).width;
+                    if (lastLineWidth <= maxWidth) {
+                        lines.push(truncatedLine);
+                        return;
+                    }
+                }
                 return;
             }
 
@@ -369,6 +386,7 @@ export class Text extends Shape {
     }
 }
 
-export function getFont(fontSize: number, fontFamily: string, fontStyle?: string, fontWeight?: string): string {
+export function getFont(fontProps: TextSizeProperties): string {
+    const { fontFamily, fontSize, fontStyle, fontWeight } = fontProps;
     return [fontStyle || '', fontWeight || '', fontSize + 'px', fontFamily].join(' ').trim();
 }

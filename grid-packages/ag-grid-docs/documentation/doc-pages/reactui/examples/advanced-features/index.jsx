@@ -21,7 +21,7 @@ function MyRenderer(params) {
             {params.value != null &&
                 <React.Fragment>
                     <img src="https://d1yk6z6emsz7qy.cloudfront.net/static/images/loading.gif" className="my-spinner" />
-                    <span class="my-renderer-value">
+                <span className="my-renderer-value">
                         {params.value}
                     </span>
                 </React.Fragment>

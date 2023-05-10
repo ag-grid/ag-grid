@@ -34,7 +34,7 @@ The following example demonstrates how Range Charts can be created programmatica
 
 ## Range Chart Dashboard
 
-The following example passes a [Chart Container](/integrated-charts-container/) to the API to place the chart in a 
+The following example passes a [Chart Container](/integrated-charts-container/) to the API to place the chart in a
 location other than the grid's popup window. Note the following:
 
 - The charts are placed in `div` elements outside the grid.
@@ -42,7 +42,7 @@ location other than the grid's popup window. Note the following:
 - Clicking on a chart highlights the range in the grid for which the chart is based.
 - The bar chart is sensitive to changes in the rows. For example if you sort, the chart updates to always chart the first five rows.
 - All data is editable in the grid. Changes to the grid data is reflected in the charts.
-- The two pie charts have legends beneath. This is configured in the `chartThemeOverrides`.
+- The pie charts have legends on the right side. This is configured in the `chartThemeOverrides`.
 
 <grid-example title='Charts in Dashboard' name='dashboard' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts", "rowgrouping"], "exampleHeight": 700 }'></grid-example>
 
@@ -63,7 +63,7 @@ It is possible to create the following combination chart types via `gridApi.crea
 - Custom Combination (`chartType: 'customCombo'`)
 
 When the `customCombo` chart type is specified a new `CreateRangeChartParams.seriesChartTypes` must also be supplied.
-Also note that when `seriesChartTypes` is present a `customCombo` chart type is assumed, regardless of which `chartType` 
+Also note that when `seriesChartTypes` is present a `customCombo` chart type is assumed, regardless of which `chartType`
 is supplied.
 
 The `seriesChartTypes` property accepts an array of `SeriesChartType` objects as shown below:
@@ -73,12 +73,12 @@ The `seriesChartTypes` property accepts an array of `SeriesChartType` objects as
 |     chartType: 'customCombo',
 |     cellRange: {
 |       columns: ['month', 'rain', 'pressure', 'temp'],
-|     }, 
+|     },
 |     seriesChartTypes: [
 |       { colId: 'rain', chartType: 'groupedColumn', secondaryAxis: false },
 |       { colId: 'pressure', chartType: 'line', secondaryAxis: true },
 |       { colId: 'temp', chartType: 'line', secondaryAxis: true }
-|     ], 
+|     ],
 |     aggFunc: 'sum',
 | });
 </snippet>
@@ -97,7 +97,7 @@ The following example demonstrates the above configuration, note the following:
 
 - The 'Rain' series uses a `groupedColumn` chart type and is plotted against the primary Y axis (`secondaryAxis=false`)
 - 'Pressure' and 'Temp' use a `line` chart type and are plotted against separate secondary Y axes (`secondaryAxis=true`)
-- Values are aggregated by the 'Month' category by setting `aggFunc: 'sum'` 
+- Values are aggregated by the 'Month' category by setting `aggFunc: 'sum'`
 - Chart Ranges are hidden using `suppressChartRanges=true`
 
 <grid-example title='Combination Chart' name='combination-chart' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts", "rowgrouping"], "exampleHeight": 790 }'></grid-example>

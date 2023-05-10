@@ -3,14 +3,7 @@ import { Rect } from '../../../scene/shape/rect';
 import { Text } from '../../../scene/shape/text';
 import { BandScale } from '../../../scale/bandScale';
 import { DropShadow } from '../../../scene/dropShadow';
-import {
-    SeriesNodeDataContext,
-    SeriesTooltip,
-    SeriesNodePickMode,
-    keyProperty,
-    valueProperty,
-    sumProperties,
-} from '../series';
+import { SeriesNodeDataContext, SeriesTooltip, SeriesNodePickMode, keyProperty, valueProperty } from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
 import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
@@ -20,7 +13,7 @@ import {
     CartesianSeriesNodeDatum,
     CartesianSeriesNodeDoubleClickEvent,
 } from './cartesianSeries';
-import { ChartAxis, flipChartAxisDirection } from '../../chartAxis';
+import { ChartAxis } from '../../chartAxis';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { extent } from '../../../util/array';
@@ -57,7 +50,9 @@ import {
     FontWeight,
 } from '../../agChartOptions';
 import { LogAxis } from '../../axis/logAxis';
-import { DataModel, SMALLEST_KEY_INTERVAL, SUM_VALUE_EXTENT } from '../../data/dataModel';
+import { DataModel, SMALLEST_KEY_INTERVAL, AGG_VALUES_EXTENT } from '../../data/dataModel';
+import { sum } from '../../data/aggregateFunctions';
+import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
@@ -115,9 +110,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
     tooltip: BarSeriesTooltip = new BarSeriesTooltip();
 
-    @Validate(BOOLEAN)
-    flipXY = false;
-
     @Validate(COLOR_STRING_ARRAY)
     fills: string[] = ['#c16068', '#a2bf8a', '#ebcc87', '#80a0c3', '#b58dae', '#85c0d1'];
 
@@ -158,7 +150,13 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     private groupScale = new BandScale<string>();
 
     protected resolveKeyDirection(direction: ChartAxisDirection) {
-        return this.flipXY ? flipChartAxisDirection(direction) : direction;
+        if (this.getBarDirection() === ChartAxisDirection.X) {
+            if (direction === ChartAxisDirection.X) {
+                return ChartAxisDirection.Y;
+            }
+            return ChartAxisDirection.X;
+        }
+        return direction;
     }
 
     @Validate(STRING)
@@ -340,9 +338,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             props: [
                 keyProperty(xKey, isContinuousX),
                 ...activeSeriesItems.map((yKey) => valueProperty(yKey, isContinuousY, { invalidValue: null })),
-                ...activeStacks.map((stack) => sumProperties(stack)),
+                ...activeStacks.map((stack) => sum(stack)),
                 ...(isContinuousX ? [SMALLEST_KEY_INTERVAL] : []),
-                SUM_VALUE_EXTENT,
+                AGG_VALUES_EXTENT,
             ],
             groupByKeys: true,
             dataVisible: this.visible && activeSeriesItems.length > 0,
@@ -358,12 +356,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
-        const { flipXY, processedData } = this;
+        const { processedData } = this;
         if (!processedData) return [];
-
-        if (flipXY) {
-            direction = flipChartAxisDirection(direction);
-        }
 
         const {
             defs: {
@@ -373,16 +367,16 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 keys: [keys],
                 values: [yExtent],
             },
-            reduced: { [SMALLEST_KEY_INTERVAL.property]: smallestX, [SUM_VALUE_EXTENT.property]: ySumExtent } = {},
+            reduced: { [SMALLEST_KEY_INTERVAL.property]: smallestX, [AGG_VALUES_EXTENT.property]: ySumExtent } = {},
         } = processedData;
 
-        if (direction === ChartAxisDirection.X) {
+        if (direction === this.getCategoryDirection()) {
             if (keyDef.valueType === 'category') {
                 return keys;
             }
 
             const keysExtent = extent(keys) || [NaN, NaN];
-            if (flipXY) {
+            if (direction === ChartAxisDirection.Y) {
                 return [keysExtent[0] + -smallestX, keysExtent[1]];
             }
             return [keysExtent[0], keysExtent[1] + smallestX];
@@ -405,11 +399,11 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }
 
     private getCategoryAxis(): ChartAxis<Scale<any, number>> | undefined {
-        return this.flipXY ? this.yAxis : this.xAxis;
+        return this.getCategoryDirection() === ChartAxisDirection.Y ? this.yAxis : this.xAxis;
     }
 
     private getValueAxis(): ChartAxis<Scale<any, number>> | undefined {
-        return this.flipXY ? this.xAxis : this.yAxis;
+        return this.getBarDirection() === ChartAxisDirection.Y ? this.yAxis : this.xAxis;
     }
 
     private calculateStep(range: number): number | undefined {
@@ -458,7 +452,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             strokeWidth,
             seriesItemEnabled,
             label,
-            flipXY,
             id: seriesId,
             processedData,
         } = this;
@@ -559,7 +552,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     let labelX: number;
                     let labelY: number;
 
-                    if (flipXY) {
+                    const barAlongX = this.getBarDirection() === ChartAxisDirection.X;
+                    if (barAlongX) {
                         labelY = barX + barWidth / 2;
                         if (labelPlacement === 'inside') {
                             labelX = y + ((yValue >= 0 ? -1 : 1) * Math.abs(bottomY - y)) / 2;
@@ -582,16 +576,16 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                         labelTextAlign = 'center';
                         labelTextBaseline = 'middle';
                     } else {
-                        labelTextAlign = flipXY ? (yValue >= 0 ? 'start' : 'end') : 'center';
-                        labelTextBaseline = flipXY ? 'middle' : yValue >= 0 ? 'bottom' : 'top';
+                        labelTextAlign = barAlongX ? (yValue >= 0 ? 'start' : 'end') : 'center';
+                        labelTextBaseline = barAlongX ? 'middle' : yValue >= 0 ? 'bottom' : 'top';
                     }
 
                     const colorIndex = cumYKeyCount[stackIndex] + levelIndex;
                     const rect = {
-                        x: flipXY ? Math.min(y, bottomY) : barX,
-                        y: flipXY ? barX : Math.min(y, bottomY),
-                        width: flipXY ? Math.abs(bottomY - y) : barWidth,
-                        height: flipXY ? barWidth : Math.abs(bottomY - y),
+                        x: barAlongX ? Math.min(y, bottomY) : barX,
+                        y: barAlongX ? barX : Math.min(y, bottomY),
+                        width: barAlongX ? Math.abs(bottomY - y) : barWidth,
+                        height: barAlongX ? barWidth : Math.abs(bottomY - y),
                     };
                     const nodeMidPoint = {
                         x: rect.x + rect.width / 2,
@@ -668,7 +662,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             shadow,
             formatter,
             xKey,
-            flipXY,
             highlightStyle: {
                 item: {
                     fill: highlightedFill,
@@ -728,7 +721,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             rect.lineDashOffset = this.lineDashOffset;
             rect.fillShadow = shadow;
             // Prevent stroke from rendering for zero height columns and zero width bars.
-            rect.visible = flipXY ? datum.width > 0 : datum.height > 0;
+            rect.visible = this.getCategoryDirection() === ChartAxisDirection.X ? datum.width > 0 : datum.height > 0;
         });
     }
 
@@ -871,7 +864,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             strokes,
             fillOpacity,
             strokeOpacity,
-            flipXY,
         } = this;
 
         if (!data || !data.length || !xKey || !yKeys.length) {
@@ -881,13 +873,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const legendData: CategoryLegendDatum[] = [];
 
         this.yKeys.forEach((stack, stackIndex) => {
-            // Column stacks should be listed in the legend in reverse order, for symmetry with the
-            // vertical stack display order. Bar stacks are already consistent left-to-right with
-            // the legend.
-            const startLevel = flipXY ? 0 : stack.length - 1;
-            const direction = flipXY ? 1 : -1;
-
-            for (let levelIndex = startLevel, step = 0; step < stack.length; levelIndex += direction, step++) {
+            for (let levelIndex = 0; levelIndex < stack.length; levelIndex++) {
                 const yKey = stack[levelIndex];
                 if (hideInLegend.indexOf(yKey) >= 0) {
                     return;
@@ -915,9 +901,58 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         return legendData;
     }
 
-    toggleSeriesItem(itemId: string, enabled: boolean): void {
+    onLegendItemClick(event: LegendItemClickChartEvent) {
+        const { itemId, enabled } = event;
+
         super.toggleSeriesItem(itemId, enabled);
 
+        // Toggle items where the yName matches the yName of the clicked item
+        Object.keys(this.yNames)
+            .filter((id) => this.yNames[id] === this.yNames[itemId])
+            .forEach((yKey) => {
+                if (yKey !== itemId) {
+                    super.toggleSeriesItem(yKey, enabled);
+                }
+            });
+
+        this.calculateVisibleDomain();
+    }
+
+    onLegendItemDoubleClick(event: LegendItemDoubleClickChartEvent) {
+        const { enabled, itemId, numVisibleItems } = event;
+
+        const totalVisibleItems = Object.values(numVisibleItems).reduce((p, v) => p + v, 0);
+        const singleEnabledInEachSeries =
+            Object.values(numVisibleItems).filter((v) => v === 1).length === Object.keys(numVisibleItems).length;
+
+        const newEnableds: { [key: string]: boolean } = {};
+
+        this.yKeys.forEach((stack) => {
+            stack.forEach((yKey) => {
+                const matches = yKey === itemId;
+                const singleEnabledWasClicked = totalVisibleItems === 1 && enabled;
+
+                const newEnabled = matches || singleEnabledWasClicked || (singleEnabledInEachSeries && enabled);
+
+                newEnableds[yKey] = newEnableds[yKey] ?? newEnabled;
+
+                // Toggle other items that have matching yNames which have not already been processed.
+                Object.keys(this.yNames)
+                    .filter((id) => this.yNames[id] === this.yNames[yKey])
+                    .forEach((nameYKey) => {
+                        newEnableds[nameYKey] = newEnableds[nameYKey] ?? newEnabled;
+                    });
+            });
+        });
+
+        Object.keys(newEnableds).forEach((yKey) => {
+            super.toggleSeriesItem(yKey, newEnableds[yKey]);
+        });
+
+        this.calculateVisibleDomain();
+    }
+
+    calculateVisibleDomain() {
         const yKeys = this.yKeys.map((stack) => stack.slice()); // deep clone
 
         this.seriesItemEnabled.forEach((enabled, yKey) => {
@@ -948,5 +983,23 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
     getBandScalePadding() {
         return { inner: 0.2, outer: 0.3 };
+    }
+
+    protected getBarDirection() {
+        return ChartAxisDirection.X;
+    }
+
+    protected getCategoryDirection() {
+        return ChartAxisDirection.Y;
+    }
+}
+
+export class ColumnSeries extends BarSeries {
+    protected getBarDirection() {
+        return ChartAxisDirection.Y;
+    }
+
+    protected getCategoryDirection() {
+        return ChartAxisDirection.X;
     }
 }

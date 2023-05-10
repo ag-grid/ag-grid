@@ -47,12 +47,14 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         super();
 
         const mouseMove = ctx.interactionManager.addListener('hover', (event) => this.onMouseMove(event));
+        const mouseOut = ctx.interactionManager.addListener('leave', () => this.onMouseOut());
         const highlight = ctx.highlightManager.addListener('highlight-change', (event) =>
             this.onHighlightChange(event)
         );
         const layout = ctx.layoutService.addListener('layout-complete', (event) => this.layout(event));
 
         this.destroyFns.push(() => ctx.interactionManager.removeListener(mouseMove));
+        this.destroyFns.push(() => ctx.interactionManager.removeListener(mouseOut));
         this.destroyFns.push(() => ctx.highlightManager.removeListener(highlight));
         this.destroyFns.push(() => ctx.layoutService.removeListener(layout));
 
@@ -189,6 +191,11 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         } else {
             this.hideCrosshair();
         }
+    }
+
+    private onMouseOut() {
+        this.hideLabel();
+        this.hideCrosshair();
     }
 
     private onHighlightChange(event: _ModuleSupport.HighlightChangeEvent) {

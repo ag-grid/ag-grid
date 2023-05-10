@@ -25,7 +25,7 @@ export default props => {
         <div className="ag-header-group-cell-label">
             <div className="customHeaderLabel">{props.displayName}</div>
             <div className={`customExpandButton ${expandState}`} onClick={() => expandOrCollapse()}>
-                <i class="fa fa-arrow-right"></i>
+                <i className="fa fa-arrow-right"></i>
             </div>
         </div>
 

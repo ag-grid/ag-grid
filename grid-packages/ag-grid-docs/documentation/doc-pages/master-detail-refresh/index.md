@@ -11,8 +11,9 @@ The update actions that cause the Detail Rows to refresh are as follows:
 - A [Transaction Update](/data-update-transactions/) updates the parent row.
 - The method `rowNode.setRowData(data)` is called on the parent row's [Row Node](/row-object/).
 
-[[note]]
-| *If Row ID's are not provided, the grid will not match rows and treat the new Row Data as a new set. In this case, all rows are destroyed and re-created.
+<note>
+*If Row ID's are not provided, the grid will not match rows and treat the new Row Data as a new set. In this case, all rows are destroyed and re-created.
+</note>
 
 How the refresh occurs depends on the Refresh Strategy set on the Detail Cell Renderer. There are three Refresh Strategies which are as follows:
 

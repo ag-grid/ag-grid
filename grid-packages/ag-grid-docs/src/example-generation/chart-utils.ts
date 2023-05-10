@@ -23,7 +23,6 @@ export function getChartImports(imports: BindingImport[], usesChartApi: boolean)
         // But if AgChart.download is used we mustn't remove it.
         const extraImports = chartsImport.imports.filter(i => usesChartApi || (i !== 'AgChart' && i !== 'AgEnterpriseCharts'));
 
-        let result = [];
         if (extraImports.length > 0) {
             return `import { ${extraImports.join(', ')} } from 'ag-charts-${enterpriseCharts ? 'enterprise' : 'community'}';`;
         }

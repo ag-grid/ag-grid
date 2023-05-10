@@ -8,13 +8,6 @@ import { constrainZoom, definedZoomState, pointToRatio, scaleZoomCenter, transla
 import { DefinedZoomState } from './zoomTypes';
 import { ZoomRect } from './scenes/zoomRect';
 
-declare global {
-    interface EventTarget {
-        readonly clientHeight: number;
-        readonly clientWidth: number;
-    }
-}
-
 const { BOOLEAN, NUMBER, STRING_UNION, Validate } = _ModuleSupport;
 
 const CONTEXT_ZOOM_ACTION_ID = 'zoom-action';
@@ -192,6 +185,9 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
     private onWheel(event: _ModuleSupport.InteractionEvent<'wheel'>) {
         if (!this.enableScrolling || !this.seriesRect) return;
 
+        event.consume();
+        event.sourceEvent.preventDefault();
+
         const currentZoom = this.zoomManager.getZoom();
         const newZoom = this.scroller.update(
             event,
@@ -224,7 +220,11 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
             y: { min: origin.y - 0.5, max: origin.y + 0.5 },
         };
 
-        newZoom = scaleZoomCenter(newZoom, this.minXRatio, this.minYRatio);
+        newZoom = scaleZoomCenter(
+            newZoom,
+            this.isScalingX() ? this.minXRatio : 1,
+            this.isScalingY() ? this.minYRatio : 1
+        );
         newZoom = translateZoom(newZoom, zoom.x.min - origin.x + scaledOriginX, zoom.y.min - origin.y + scaledOriginY);
 
         this.updateZoom(constrainZoom(newZoom));

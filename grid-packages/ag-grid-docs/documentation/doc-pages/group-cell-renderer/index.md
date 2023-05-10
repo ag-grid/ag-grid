@@ -65,8 +65,9 @@ The example is built up as follows:
 
 <grid-example title='Group Cell Renderer Configuration' name='group-renderer' type='mixed' options='{"enterprise": true, "modules": ["clientside", "rowgrouping"]}'></grid-example>
 
-[[note]]
-| If you require functionality that is not provided by the `agGroupCellRenderer`, you can use a [Custom Cell Renderer](/component-cell-renderer/#custom-group-cell-renderer-example) to provide your own extended functionality.
+<note>
+If you require functionality that is not provided by the `agGroupCellRenderer`, you can use a [Custom Cell Renderer](/component-cell-renderer/#custom-group-cell-renderer-example) to provide your own extended functionality.
+</note>
 
 ## Conditionally Hide Group Cell Renderer
 
