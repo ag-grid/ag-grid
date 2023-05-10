@@ -43,7 +43,6 @@
   "Opacity": { "meta": { "isTypeAlias": true }, "type": "number" },
   "PixelSize": { "meta": { "isTypeAlias": true }, "type": "number" },
   "Ratio": { "meta": { "isTypeAlias": true }, "type": "number" },
-  "TextWrap": { "meta": { "isTypeAlias": true }, "type": "'always' | 'never'" },
   "DataValue": { "meta": { "isTypeAlias": true }, "type": "any" },
   "AgChartInteractionRange": {
     "meta": { "isTypeAlias": true },
@@ -701,7 +700,7 @@
       "spacing?": "number",
       "maxWidth?": "PixelSize",
       "maxHeight?": "PixelSize",
-      "wrapping?": "TextWrap"
+      "wrapping?": "AgChartCaptionWrappingOptions"
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",
@@ -730,7 +729,7 @@
       "spacing?": "number",
       "maxWidth?": "PixelSize",
       "maxHeight?": "PixelSize",
-      "wrapping?": "TextWrap"
+      "wrapping?": "AgChartCaptionWrappingOptions"
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",
@@ -759,7 +758,7 @@
       "spacing?": "number",
       "maxWidth?": "PixelSize",
       "maxHeight?": "PixelSize",
-      "wrapping?": "TextWrap"
+      "wrapping?": "AgChartCaptionWrappingOptions"
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",
@@ -773,6 +772,19 @@
       "maxWidth?": "/** Used to constrain the width of the title. */",
       "maxHeight?": "/** Used to constrain the height of the title. */",
       "wrapping?": "/** Text wrapping strategy for long titles. */"
+    }
+  },
+  "AgChartCaptionWrappingOptions": {
+    "meta": {},
+    "type": {
+      "enabled?": "boolean",
+      "breakWord?": "boolean",
+      "hyphens?": "boolean"
+    },
+    "docs": {
+      "enabled?": "/** Enables or disables text wrapping. */",
+      "breakWord?": "/** If true, long words will be split into parts, when there is not enough space to fit them. */",
+      "hyphens?": "/** Determines if the hyphens should be inserted when breaking long words. */"
     }
   },
   "AgAxisCaptionOptions": {
@@ -2760,7 +2772,7 @@
       "spacing?": "number",
       "maxWidth?": "PixelSize",
       "maxHeight?": "PixelSize",
-      "wrapping?": "TextWrap"
+      "wrapping?": "AgChartCaptionWrappingOptions"
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",

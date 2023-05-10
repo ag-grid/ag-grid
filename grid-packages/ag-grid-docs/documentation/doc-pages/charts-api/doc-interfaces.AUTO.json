@@ -16,7 +16,6 @@
   "Opacity": {},
   "PixelSize": {},
   "Ratio": {},
-  "TextWrap": {},
   "DataValue": {},
   "AgChartInteractionRange": {},
   "AgChartThemePalette": {
@@ -1173,7 +1172,10 @@
     },
     "wrapping": {
       "description": "/** Text wrapping strategy for long titles. */",
-      "type": { "returnType": "TextWrap", "optional": true }
+      "type": {
+        "returnType": "AgChartCaptionWrappingOptions",
+        "optional": true
+      }
     }
   },
   "AgChartSubtitleOptions": {
@@ -1219,7 +1221,10 @@
     },
     "wrapping": {
       "description": "/** Text wrapping strategy for long titles. */",
-      "type": { "returnType": "TextWrap", "optional": true }
+      "type": {
+        "returnType": "AgChartCaptionWrappingOptions",
+        "optional": true
+      }
     }
   },
   "AgChartFooterOptions": {
@@ -1265,7 +1270,24 @@
     },
     "wrapping": {
       "description": "/** Text wrapping strategy for long titles. */",
-      "type": { "returnType": "TextWrap", "optional": true }
+      "type": {
+        "returnType": "AgChartCaptionWrappingOptions",
+        "optional": true
+      }
+    }
+  },
+  "AgChartCaptionWrappingOptions": {
+    "enabled": {
+      "description": "/** Enables or disables text wrapping. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "breakWord": {
+      "description": "/** If true, long words will be split into parts, when there is not enough space to fit them. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "hyphens": {
+      "description": "/** Determines if the hyphens should be inserted when breaking long words. */",
+      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "AgAxisCaptionOptions": {
@@ -4244,7 +4266,10 @@
     },
     "wrapping": {
       "description": "/** Text wrapping strategy for long titles. */",
-      "type": { "returnType": "TextWrap", "optional": true }
+      "type": {
+        "returnType": "AgChartCaptionWrappingOptions",
+        "optional": true
+      }
     }
   },
   "AgPieSeriesCalloutOptions": {

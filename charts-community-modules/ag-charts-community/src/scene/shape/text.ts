@@ -2,7 +2,7 @@ import { Shape } from './shape';
 import { BBox } from '../bbox';
 import { HdpiCanvas } from '../../canvas/hdpiCanvas';
 import { RedrawType, SceneChangeDetection, RenderContext } from '../node';
-import { FontStyle, FontWeight } from '../../chart/agChartOptions';
+import { FontStyle, FontWeight, AgChartCaptionWrappingOptions } from '../../chart/agChartOptions';
 
 export interface TextSizeProperties {
     fontFamily: string;
@@ -12,11 +12,14 @@ export interface TextSizeProperties {
     lineHeight?: number;
 }
 
+const ellipsis = '\u2026';
+
 function SceneFontChangeDetection(opts?: { redraw?: RedrawType; changeCb?: (t: any) => any }) {
     const { redraw = RedrawType.MAJOR, changeCb } = opts || {};
 
     return SceneChangeDetection({ redraw, type: 'font', changeCb });
 }
+
 export class Text extends Shape {
     static className = 'Text';
 
@@ -292,12 +295,18 @@ export class Text extends Shape {
         }
     }
 
-    static wrap(text: string, maxWidth: number, maxHeight: number, textProps: TextSizeProperties): string {
+    static wrap(
+        text: string,
+        maxWidth: number,
+        maxHeight: number,
+        textProps: TextSizeProperties,
+        wrapProps: AgChartCaptionWrappingOptions
+    ): string {
         const lines: string[] = text.split(/\r?\n/g);
         const result: string[] = [];
         let cumulativeHeight = 0;
         for (const line of lines) {
-            const wrappedLine = Text.wrapLine(line, maxWidth, maxHeight, textProps, cumulativeHeight);
+            const wrappedLine = Text.wrapLine(line, maxWidth, maxHeight, textProps, wrapProps, cumulativeHeight);
             result.push(wrappedLine.result);
             cumulativeHeight = wrappedLine.cumulativeHeight;
             if (wrappedLine.truncated) {
@@ -312,6 +321,7 @@ export class Text extends Shape {
         maxWidth: number,
         maxHeight: number,
         textProps: TextSizeProperties,
+        wrapProps: AgChartCaptionWrappingOptions,
         cumulativeHeight: number
     ): { result: string; truncated: boolean; cumulativeHeight: number } {
         text = text.trim();
@@ -335,13 +345,12 @@ export class Text extends Shape {
         const words = text.split(/\s+/g);
         const spaceWidth = HdpiCanvas.getTextSize(' ', font).width;
         const wordsWidths = new Map<string, number>();
-        const hyphenate = true;
         let lineWidth = 0;
         let currentLine: string[] = [];
         let wordIndex = -1;
         let needsTruncation = false;
         let wordBroken = false;
-        while (++wordIndex < words.length) {
+        wordLoop: while (++wordIndex < words.length) {
             const word = words[wordIndex];
             const wordSize = HdpiCanvas.getTextSize(word, font);
             wordsWidths.set(word, wordSize.width);
@@ -351,43 +360,65 @@ export class Text extends Shape {
                 cumulativeHeight += lineHeight;
             }
             if (wordSize.width > maxWidth) {
-                // Break word
-                wordBroken = true;
-                const h = hyphenate ? '-' : '';
-                let availWidth = maxWidth - spaceWidth - lineWidth;
-                const singleCharacterWidth = HdpiCanvas.getTextSize(`${word.charAt(0)}${h}`, font).width;
-                const canRenderSingleCharacter = singleCharacterWidth <= maxWidth;
-                if (!canRenderSingleCharacter) {
-                    // The width is too small for a single character, return empty string
-                    return { result: '', truncated: true, cumulativeHeight };
-                }
-                if (availWidth < singleCharacterWidth) {
-                    // Add new line
-                    if (cumulativeHeight + lineHeight >= maxHeight) {
-                        // Truncate last word
-                        needsTruncation = true;
-                        currentLine.push(word);
-                        break;
+                if (wrapProps.breakWord) {
+                    // Break word
+                    wordBroken = true;
+                    const h = wrapProps.hyphens ? '-' : '';
+                    let availWidth = maxWidth - spaceWidth - lineWidth;
+                    const singleCharacterWidth = HdpiCanvas.getTextSize(`${word.charAt(0)}${h}`, font).width;
+                    const canRenderSingleCharacter = singleCharacterWidth <= maxWidth;
+                    if (!canRenderSingleCharacter) {
+                        // The width is too small for a single character, return empty string
+                        return { result: '', truncated: true, cumulativeHeight };
                     }
-                    currentLine = [];
-                    lines.push(currentLine);
-                    cumulativeHeight += lineHeight;
-                    lineWidth = 0;
-                    availWidth = maxWidth;
-                }
+                    if (availWidth < singleCharacterWidth) {
+                        // Add new line
+                        if (cumulativeHeight + lineHeight >= maxHeight) {
+                            // Truncate last word
+                            needsTruncation = true;
+                            currentLine.push(word);
+                            break;
+                        }
+                        currentLine = [];
+                        lines.push(currentLine);
+                        cumulativeHeight += lineHeight;
+                        lineWidth = 0;
+                        availWidth = maxWidth;
+                    }
 
-                let len = word.length;
-                for (; len >= 1; len--) {
-                    const truncWord = `${word.substring(0, len)}${h}`;
-                    const truncWidth = HdpiCanvas.getTextSize(truncWord, font).width;
-                    if (truncWidth <= availWidth) {
-                        // Put the truncated word into the current line
-                        // and put the remaining part onto a separate line
-                        currentLine.push(truncWord);
-                        const remainder = word.substring(len);
-                        words.splice(wordIndex + 1, 0, remainder);
-                        lineWidth = maxWidth;
-                        break;
+                    for (let len = word.length; len >= 1; len--) {
+                        const truncWord = `${word.substring(0, len)}${h}`;
+                        const truncWidth = HdpiCanvas.getTextSize(truncWord, font).width;
+                        if (truncWidth <= availWidth) {
+                            // Put the truncated word into the current line
+                            // and put the remaining part onto a separate line
+                            currentLine.push(truncWord);
+                            const remainder = word.substring(len);
+                            words.splice(wordIndex + 1, 0, remainder);
+                            lineWidth = maxWidth;
+                            break;
+                        }
+                    }
+                } else {
+                    // Truncate the long word
+                    wordBroken = true;
+                    for (let len = word.length; len >= 0; len--) {
+                        const truncWord = `${word.substring(0, len)}${ellipsis}`;
+                        const truncWidth = HdpiCanvas.getTextSize(truncWord, font).width;
+                        if (truncWidth <= maxWidth) {
+                            // Put the truncated word onto a new line
+                            if (cumulativeHeight + lineHeight >= maxHeight) {
+                                // Truncate last word
+                                needsTruncation = true;
+                                currentLine.push(word);
+                                break wordLoop;
+                            }
+                            currentLine = [truncWord];
+                            lines.push(currentLine);
+                            cumulativeHeight += lineHeight;
+                            lineWidth = maxWidth;
+                            break;
+                        }
                     }
                 }
                 continue;
@@ -464,7 +495,6 @@ export class Text extends Shape {
 
         const joinedLines = lines.map((ln) => ln.join(' '));
         if (needsTruncation) {
-            const ellipsis = '\u2026';
             const lastIndex = joinedLines.length - 1;
             const [lastLine] = joinedLines.splice(lastIndex, 1, ellipsis);
             for (let len = lastLine.length; len >= 0; len--) {

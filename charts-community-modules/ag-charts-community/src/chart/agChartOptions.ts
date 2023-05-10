@@ -42,8 +42,6 @@ export type PixelSize = number;
 /** Alias to denote that a value is a ratio, usually in the range [0, 1]. */
 export type Ratio = number;
 
-export type TextWrap = 'always' | 'never';
-
 /** Alias to denote that a value is a data value. */
 export type DataValue = any;
 
@@ -285,10 +283,19 @@ export interface AgChartCaptionOptions {
     /** Used to constrain the height of the title. */
     maxHeight?: PixelSize;
     /** Text wrapping strategy for long titles. */
-    wrapping?: TextWrap;
+    wrapping?: AgChartCaptionWrappingOptions;
 }
 export interface AgChartSubtitleOptions extends AgChartCaptionOptions {}
 export interface AgChartFooterOptions extends AgChartCaptionOptions {}
+
+export interface AgChartCaptionWrappingOptions {
+    /** Enables or disables text wrapping. */
+    enabled?: boolean;
+    /** If true, long words will be split into parts, when there is not enough space to fit them. */
+    breakWord?: boolean;
+    /** Determines if the hyphens should be inserted when breaking long words. */
+    hyphens?: boolean;
+}
 
 export interface AgAxisCaptionOptions {
     /** Whether or not the title should be shown. */

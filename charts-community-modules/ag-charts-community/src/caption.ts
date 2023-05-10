@@ -3,16 +3,27 @@ import { PointerEvents } from './scene/node';
 import {
     BOOLEAN,
     NUMBER,
+    OPT_BOOLEAN,
     OPT_COLOR_STRING,
     OPT_FONT_STYLE,
     OPT_FONT_WEIGHT,
     OPT_NUMBER,
-    OPT_STRING,
     STRING,
     Validate,
 } from './util/validation';
-import { FontStyle, FontWeight, TextWrap } from './chart/agChartOptions';
+import { FontStyle, FontWeight, AgChartCaptionWrappingOptions } from './chart/agChartOptions';
 import { ProxyPropertyOnWrite } from './util/proxy';
+
+class TextWrapping implements AgChartCaptionWrappingOptions {
+    @Validate(OPT_BOOLEAN)
+    enabled? = true;
+
+    @Validate(OPT_BOOLEAN)
+    breakWord? = true;
+
+    @Validate(OPT_BOOLEAN)
+    hyphens? = true;
+}
 
 export class Caption {
     static readonly PADDING = 10;
@@ -58,8 +69,7 @@ export class Caption {
     @Validate(OPT_NUMBER(0))
     maxHeight?: number = undefined;
 
-    @Validate(OPT_STRING)
-    wrapping?: TextWrap = 'always';
+    wrapping = new TextWrapping();
 
     constructor() {
         const node = this.node;
@@ -71,11 +81,11 @@ export class Caption {
         const { text, wrapping } = this;
         const maxWidth = this.maxWidth == null ? containerWidth : Math.min(this.maxWidth, containerWidth);
         const maxHeight = this.maxHeight == null ? containerHeight : this.maxHeight;
-        if (wrapping === 'never' || (!isFinite(maxWidth) && !isFinite(maxHeight))) {
+        if (!wrapping.enabled || (!isFinite(maxWidth) && !isFinite(maxHeight))) {
             this.node.text = text;
             return;
         }
-        const wrapped = Text.wrap(text, maxWidth, maxHeight, this);
+        const wrapped = Text.wrap(text, maxWidth, maxHeight, this, wrapping);
         this.node.text = wrapped;
     }
 }
