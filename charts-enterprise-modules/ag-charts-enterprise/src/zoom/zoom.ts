@@ -220,7 +220,11 @@ export class Zoom extends _ModuleSupport.BaseModuleInstance implements _ModuleSu
             y: { min: origin.y - 0.5, max: origin.y + 0.5 },
         };
 
-        newZoom = scaleZoomCenter(newZoom, this.minXRatio, this.minYRatio);
+        newZoom = scaleZoomCenter(
+            newZoom,
+            this.isScalingX() ? this.minXRatio : 1,
+            this.isScalingY() ? this.minYRatio : 1
+        );
         newZoom = translateZoom(newZoom, zoom.x.min - origin.x + scaledOriginX, zoom.y.min - origin.y + scaledOriginY);
 
         this.updateZoom(constrainZoom(newZoom));

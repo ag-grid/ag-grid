@@ -115,6 +115,12 @@ zoom: {
 
 <chart-example title='Zoom Pan Key' name='zoom-pan-key' type='generated'></chart-example>
 
+## Context menu
+
+When both the zoom and context menu are enabled, additional zoom actions are added into the context menu for zooming and panning to the clicked location.
+
+<chart-example title='Zoom Context Menu' name='zoom-context-menu' type='generated'></chart-example>
+
 ## API Reference
 
 <!-- TODO: replace with usual api reference component -->
