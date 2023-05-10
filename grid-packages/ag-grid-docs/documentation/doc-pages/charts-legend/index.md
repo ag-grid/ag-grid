@@ -224,4 +224,11 @@ This example demonstrates toggling the visiblity of series via clicks and double
 
 ## API Reference
 
-<interface-documentation interfaceName='AgChartLegendOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
+### Cartesian Chart Legend Options
+<interface-documentation interfaceName='AgCartesianChartLegendOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
+
+### Polar Chart Legend Options
+<interface-documentation interfaceName='AgPolarChartLegendOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
+
+### Hierarchy Chart Legend Options
+<interface-documentation interfaceName='AgHierarchyChartLegendOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
