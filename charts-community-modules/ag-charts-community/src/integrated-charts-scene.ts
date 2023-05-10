@@ -6,6 +6,7 @@ export { Node, PointerEvents, RenderContext, RedrawType } from './scene/node';
 export { Selection } from './scene/selection';
 export { Arc } from './scene/shape/arc';
 export { Line } from './scene/shape/line';
+export { Range } from './scene/shape/range';
 export { Path } from './scene/shape/path';
 export { Rect } from './scene/shape/rect';
 export { Sector } from './scene/shape/sector';

@@ -3,7 +3,7 @@ import { CrosshairLabel, LabelMeta } from './crosshairLabel';
 
 type AgCrosshairLabelRendererResult = any;
 
-const { Group, Line, BBox } = _Scene;
+const { Group, Range, BBox } = _Scene;
 const { Validate, NUMBER, BOOLEAN, OPT_COLOR_STRING, OPT_LINE_DASH, Layers } = _ModuleSupport;
 
 export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
@@ -39,8 +39,8 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
     };
     private labelFormatter?: (value: any) => string;
 
-    private crosshairGroup: _Scene.Group = new Group({ layer: true, zIndex: Layers.SERIES_CROSSHAIR_ZINDEX });
-    private lineNode: _Scene.Line = this.crosshairGroup.appendChild(new Line());
+    private crosshairGroup: _Scene.Group = new Group({ layer: true });
+    private crosshairNode: _Scene.Range = this.crosshairGroup.appendChild(new Range());
 
     private activeHighlight?: _ModuleSupport.HighlightChangeEvent['currentHighlight'] = undefined;
     constructor(ctx: _ModuleSupport.ModuleContextWithParent<_ModuleSupport.AxisContext>) {
@@ -69,6 +69,14 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         this.destroyFns.push(() => this.label.destroy());
     }
 
+    private getZIndex(isBand: boolean = false): number {
+        if (isBand) {
+            return Layers.SERIES_CROSSHAIR_BAND_ZINDEX;
+        }
+
+        return Layers.SERIES_CROSSHAIR_LINE_ZINDEX;
+    }
+
     private layout({ series: { rect, hoverRect, visible }, axes }: _ModuleSupport.LayoutCompleteEvent) {
         this.hideCrosshair();
 
@@ -94,6 +102,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         this.bounds = this.buildBounds(rect, axisPosition, padding);
 
         const { crosshairGroup, bounds } = this;
+        crosshairGroup.zIndex = this.getZIndex(this.axisCtx.scaleBandwidth() > 0);
         crosshairGroup.translationX = Math.round(bounds.x);
         crosshairGroup.translationY = Math.round(
             axisPosition === 'top' || axisPosition === 'bottom' ? bounds.y + bounds.height : bounds.y
@@ -120,7 +129,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
 
     private updateLine() {
         const {
-            lineNode: line,
+            crosshairNode: node,
             bounds,
             stroke,
             strokeWidth,
@@ -134,15 +143,25 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         if (!axisLayout) {
             return;
         }
-        line.stroke = stroke;
-        line.strokeWidth = strokeWidth;
-        line.strokeOpacity = strokeOpacity;
-        line.lineDash = lineDash;
-        line.lineDashOffset = lineDashOffset;
 
-        line.y1 = line.y2 = 0;
-        line.x1 = 0;
-        line.x2 = axisCtx.direction === 'x' ? bounds.height : bounds.width;
+        const bandwidth = axisCtx.scaleBandwidth();
+
+        node.stroke = stroke;
+        node.strokeWidth = strokeWidth;
+        node.strokeOpacity = strokeOpacity;
+        node.lineDash = lineDash;
+        node.lineDashOffset = lineDashOffset;
+        node.fill = `rgb(166,166,166, 0.2)`;
+        node.y1 = 0 - bandwidth / 2;
+        node.y2 = 0 + bandwidth / 2;
+        node.x1 = 0;
+        node.x2 = axisCtx.direction === 'x' ? bounds.height : bounds.width;
+
+        const isBand = bandwidth > 0;
+
+        node.isRange = isBand;
+        node.startLine = true;
+        node.endLine = isBand;
     }
 
     private formatValue(val: any): string {
@@ -265,6 +284,10 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         }
 
         const key = isYValue ? yKey : xKey;
+        if (axisCtx.scaleBandwidth() > 0) {
+            return { value: datum[key], position: axisCtx.scaleConvert(datum[key]) + halfBandwidth };
+        }
+
         const position = (axisCtx.direction === 'x' ? nodeMidPoint?.x : nodeMidPoint?.y) ?? 0;
         const value = axisCtx.continuous ? axisCtx.scaleInvert(position) : datum[key];
         return { value, position };
