@@ -455,7 +455,6 @@ export class LazyCache extends BeanStub {
     public getBlockStates() {
         const blockCounts: { [key: string]: number } = {};
         const blockStates: { [key: string]: Set<string> } = {};
-        const dirtyBlocks = new Set<number>();
 
         this.nodeMap.forEach(({ node, index }) => {
             const blockStart = this.rowLoader.getBlockStartIndexForIndex(index);
@@ -469,12 +468,8 @@ export class LazyCache extends BeanStub {
                 rowState = 'failed';
             } else if (this.rowLoader.isRowLoading(blockStart)) {
                 rowState = 'loading';
-            } else if (this.nodesToRefresh.has(node)) {
+            } else if (this.nodesToRefresh.has(node) || node.stub) {
                 rowState = 'needsLoading';
-            }
-            
-            if (node.__needsRefreshWhenVisible || node.stub) {
-                dirtyBlocks.add(blockStart);
             }
 
             if (!blockStates[blockStart]) {
