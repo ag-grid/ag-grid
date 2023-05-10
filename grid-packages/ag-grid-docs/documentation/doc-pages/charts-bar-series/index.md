@@ -15,11 +15,13 @@ To create a column chart, we need to use series type `'column'`. We also have to
 A minimal `'column'` series config would therefore look like this:
 
 ```js
-series: [{
-    type: 'column',
-    xKey: 'quarter',
-    yKey: 'iphone'
-}]
+series: [
+  {
+    type: "column",
+    xKey: "quarter",
+    yKey: "iphone",
+  },
+]
 ```
 
 In the snippet above we are using `'iphone'` as the `yKey`, to show revenue per quarter for this product. Using this simple series config produces the following chart:
@@ -33,15 +35,16 @@ by adding more `column`-type series.
 
 ```js
 series: [
-    { type: 'column', xKey: 'quarter', yKey: 'iphone', stacked: true },
-    { type: 'column', xKey: 'quarter', yKey: 'mac', stacked: true },
-    { type: 'column', xKey: 'quarter', yKey: 'ipad', stacked: true },
-    { type: 'column', xKey: 'quarter', yKey: 'wearables', stacked: true },
-    { type: 'column', xKey: 'quarter', yKey: 'services', stacked: true },
+  { type: "column", xKey: "quarter", yKey: "iphone", stacked: true },
+  { type: "column", xKey: "quarter", yKey: "mac", stacked: true },
+  { type: "column", xKey: "quarter", yKey: "ipad", stacked: true },
+  { type: "column", xKey: "quarter", yKey: "wearables", stacked: true },
+  { type: "column", xKey: "quarter", yKey: "services", stacked: true },
 ]
 ```
 
 This example demonstrates stacked columns using the `series` configuration above. Additionally:
+
 - We set `yName` on each series to configure the display names to provide tooltip headers and legend entries.
 
 <chart-example title='Stacked Column Series' name='stacked-column' type='generated'></chart-example>
@@ -53,6 +56,12 @@ If we want to show quarterly revenue for each product category as grouped column
 This will produce the following chart:</p>
 
 <chart-example title='Grouped Column Series' name='grouped-column' type='generated'></chart-example>
+
+### Grouped Stacks with a Shared Legend
+
+Providing a matching `legendItemName` allows us to merge matching legend items. When a legend item is clicked, all items that have a matching `legendItemName` will be toggled together.
+
+<chart-example title='Clustered' name='grouped-stack-shared' type='generated'></chart-example>
 
 ### Grouped Stacks
 

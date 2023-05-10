@@ -3741,7 +3741,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "yKey": {
-      "description": "/** The keys to use to retrieve y-values from the data. */",
+      "description": "/** The key to use to retrieve y-values from the data. */",
       "type": { "returnType": "string", "optional": true }
     },
     "xName": {
@@ -3750,6 +3750,10 @@
     },
     "yName": {
       "description": "/** Human-readable description of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "legendItemName": {
+      "description": "/** Human-readable description of the y-values. If supplied, matching items with the same value will be toggled together. Falls back to `yName` if not provided, but does not merge. */",
       "type": { "returnType": "string", "optional": true }
     },
     "fill": {

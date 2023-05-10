@@ -295,6 +295,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         }
     }
 
+    legendItemNames: { [key in string]: string } = {};
+
     /**
      * The value to normalize the bars to.
      * Should be a finite positive value or `undefined`.
@@ -857,6 +859,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             xKey,
             yKeys,
             yNames,
+            legendItemNames,
             cumYKeyCount,
             seriesItemEnabled,
             hideInLegend,
@@ -886,7 +889,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     seriesId: id,
                     enabled: seriesItemEnabled.get(yKey) || false,
                     label: {
-                        text: yNames[yKey] || yKey,
+                        text: legendItemNames[yKey] || yNames[yKey] || yKey,
                     },
                     marker: {
                         fill: fills[colorIndex % fills.length],
@@ -906,9 +909,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         super.toggleSeriesItem(itemId, enabled);
 
-        // Toggle items where the yName matches the yName of the clicked item
-        Object.keys(this.yNames)
-            .filter((id) => this.yNames[id] === this.yNames[itemId])
+        // Toggle items where the legendItemName matches the legendItemName of the clicked item
+        Object.keys(this.legendItemNames)
+            .filter((id) => this.legendItemNames[id] === this.legendItemNames[itemId])
             .forEach((yKey) => {
                 if (yKey !== itemId) {
                     super.toggleSeriesItem(yKey, enabled);
@@ -936,9 +939,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
                 newEnableds[yKey] = newEnableds[yKey] ?? newEnabled;
 
-                // Toggle other items that have matching yNames which have not already been processed.
-                Object.keys(this.yNames)
-                    .filter((id) => this.yNames[id] === this.yNames[yKey])
+                // Toggle other items that have matching legendItemNames which have not already been processed.
+                Object.keys(this.legendItemNames)
+                    .filter((id) => this.legendItemNames[id] === this.legendItemNames[yKey])
                     .forEach((nameYKey) => {
                         newEnableds[nameYKey] = newEnableds[nameYKey] ?? newEnabled;
                     });
