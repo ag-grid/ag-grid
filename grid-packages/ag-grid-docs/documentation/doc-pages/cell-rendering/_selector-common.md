@@ -31,6 +31,10 @@
 |    return undefined;
 |}
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+|```
+>>>>>>> parent of ab4f23e65a (AG-7941 Gatsby 4 upgrade)
 </snippet>
 </framework-specific-section>
 =======

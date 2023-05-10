@@ -316,6 +316,10 @@
 |    style="width: 100%; height: 100%"
 |    class="ag-theme-alpine"/>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+| ```
+>>>>>>> parent of ab4f23e65a (AG-7941 Gatsby 4 upgrade)
 </snippet>
 </framework-specific-section>
 
@@ -346,6 +350,11 @@
 |    [rowData]="rowData$ | async"
 |    ...
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+| ```
+|
+>>>>>>> parent of ab4f23e65a (AG-7941 Gatsby 4 upgrade)
 </snippet>
 </framework-specific-section>
 

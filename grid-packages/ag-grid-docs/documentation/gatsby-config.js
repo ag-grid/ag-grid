@@ -136,18 +136,18 @@ const plugins = [
                     },
                 },
 
-                'gatsby-remark-copy-linked-files', // This copies files that are linked to from Markdown to the public folder
-                'gatsby-remark-embed-snippet', // This allows files to be embedded as code snippets, e.g. on the Localisation page
-                {
-                    // This uses Prism to highlight code snippets
-                    resolve: 'gatsby-remark-prismjs',
-                    options: {
-                        aliases: {
-                            sh: 'bash',
-                        },
-                        noInlineHighlight: true,
-                    }
-                }
+                // 'gatsby-remark-copy-linked-files', // This copies files that are linked to from Markdown to the public folder
+                // 'gatsby-remark-embed-snippet', // This allows files to be embedded as code snippets, e.g. on the Localisation page
+                // {
+                //     // This uses Prism to highlight code snippets
+                //     resolve: 'gatsby-remark-prismjs',
+                //     options: {
+                //         aliases: {
+                //             sh: 'bash',
+                //         },
+                //         noInlineHighlight: true,
+                //     }
+                // }
             ]
         },
         remarkPlugins: ['remark-preprocessor']

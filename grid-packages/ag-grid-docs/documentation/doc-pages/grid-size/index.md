@@ -24,8 +24,7 @@ Under normal usage, your application should set the width and height of the grid
 | <div class="ag-theme-alpine">
 |     <ag-grid-angular style="width: 500px; height: 200px"></ag-grid-angular>
 | </div>
-</snippet>
-</framework-specific-section>
+| ```
 
 [[only-react]]
 | ```jsx

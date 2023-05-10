@@ -206,7 +206,6 @@ The interface for this parameter object is `SetFilterValuesFuncParams`:
 | filter.setModel({ values: ['a', 'b'] })
 |   .then(() => gridApi.onFilterChanged(); );
 | ```
-</note>
 
 The following example demonstrates loading set filter values asynchronously. Note the following:
 
