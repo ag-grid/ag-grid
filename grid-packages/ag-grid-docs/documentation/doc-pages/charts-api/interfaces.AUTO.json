@@ -141,6 +141,7 @@
     "type": {
       "axes?": "AgCartesianAxesTheme",
       "series?": "S",
+      "legend?": "AgCartesianChartLegendOptions",
       "navigator?": "AgNavigatorOptions",
       "data?": "any[]",
       "container?": "HTMLElement | null",
@@ -154,7 +155,6 @@
       "subtitle?": "AgChartSubtitleOptions",
       "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
-      "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
@@ -163,6 +163,7 @@
     "docs": {
       "axes?": "/** Axis configurations. */",
       "series?": "/** Series configurations. */",
+      "legend?": "/** Configuration for the chart legend. */",
       "navigator?": "/** Configuration for the chart navigator. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
@@ -176,7 +177,6 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
-      "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -187,6 +187,7 @@
     "meta": { "typeParams": ["S = AgPolarSeriesTheme"] },
     "type": {
       "series?": "S",
+      "legend?": "AgPolarChartLegendOptions",
       "data?": "any[]",
       "container?": "HTMLElement | null",
       "width?": "PixelSize",
@@ -199,7 +200,6 @@
       "subtitle?": "AgChartSubtitleOptions",
       "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
-      "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
@@ -207,6 +207,7 @@
     },
     "docs": {
       "series?": "/** Series configurations. */",
+      "legend?": "/** Configuration for the chart legend. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
       "width?": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
@@ -219,7 +220,6 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
-      "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -230,6 +230,7 @@
     "meta": { "typeParams": ["S = AgHierarchySeriesTheme"] },
     "type": {
       "series?": "S",
+      "legend?": "AgHierarchyChartLegendOptions",
       "data?": "any[]",
       "container?": "HTMLElement | null",
       "width?": "PixelSize",
@@ -242,7 +243,6 @@
       "subtitle?": "AgChartSubtitleOptions",
       "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
-      "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
@@ -250,6 +250,7 @@
     },
     "docs": {
       "series?": "/** Series configurations. */",
+      "legend?": "/** Configuration for the chart legend. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
       "width?": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
@@ -262,7 +263,6 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
-      "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -975,7 +975,31 @@
       "legendItemDoubleClick?": "/** The listener to call when a legend item is double clicked. */"
     }
   },
-  "AgChartLegendOptions": {
+  "AgChartBaseLegendOptions": {
+    "meta": {},
+    "type": {
+      "position?": "AgChartLegendPosition",
+      "orientation?": "AgChartOrientation",
+      "maxWidth?": "PixelSize",
+      "maxHeight?": "PixelSize",
+      "spacing?": "PixelSize",
+      "item?": "AgChartLegendItemOptions",
+      "reverseOrder?": "boolean",
+      "listeners?": "AgChartLegendListeners",
+      "pagination?": "AgChartLegendPaginationOptions"
+    },
+    "docs": {
+      "position?": "/** Where the legend should show in relation to the chart. */",
+      "orientation?": "/** How the legend items should be arranged. */",
+      "maxWidth?": "/** Used to constrain the width of the legend. */",
+      "maxHeight?": "/** Used to constrain the height of the legend. */",
+      "spacing?": "/** The spacing in pixels to use outside the legend. */",
+      "item?": "/** Configuration for the legend items that consist of a marker and a label. */",
+      "reverseOrder?": "/** Reverse the display order of legend items if `true`. */",
+      "listeners?": "/** Optional callbacks for specific legend-related events. */"
+    }
+  },
+  "AgCartesianChartLegendOptions": {
     "meta": {},
     "type": {
       "enabled?": "boolean",
@@ -991,6 +1015,58 @@
     },
     "docs": {
       "enabled?": "/** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */",
+      "position?": "/** Where the legend should show in relation to the chart. */",
+      "orientation?": "/** How the legend items should be arranged. */",
+      "maxWidth?": "/** Used to constrain the width of the legend. */",
+      "maxHeight?": "/** Used to constrain the height of the legend. */",
+      "spacing?": "/** The spacing in pixels to use outside the legend. */",
+      "item?": "/** Configuration for the legend items that consist of a marker and a label. */",
+      "reverseOrder?": "/** Reverse the display order of legend items if `true`. */",
+      "listeners?": "/** Optional callbacks for specific legend-related events. */"
+    }
+  },
+  "AgHierarchyChartLegendOptions": {
+    "meta": {},
+    "type": {
+      "enabled?": "boolean",
+      "position?": "AgChartLegendPosition",
+      "orientation?": "AgChartOrientation",
+      "maxWidth?": "PixelSize",
+      "maxHeight?": "PixelSize",
+      "spacing?": "PixelSize",
+      "item?": "AgChartLegendItemOptions",
+      "reverseOrder?": "boolean",
+      "listeners?": "AgChartLegendListeners",
+      "pagination?": "AgChartLegendPaginationOptions"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */",
+      "position?": "/** Where the legend should show in relation to the chart. */",
+      "orientation?": "/** How the legend items should be arranged. */",
+      "maxWidth?": "/** Used to constrain the width of the legend. */",
+      "maxHeight?": "/** Used to constrain the height of the legend. */",
+      "spacing?": "/** The spacing in pixels to use outside the legend. */",
+      "item?": "/** Configuration for the legend items that consist of a marker and a label. */",
+      "reverseOrder?": "/** Reverse the display order of legend items if `true`. */",
+      "listeners?": "/** Optional callbacks for specific legend-related events. */"
+    }
+  },
+  "AgPolarChartLegendOptions": {
+    "meta": {},
+    "type": {
+      "enabled?": "boolean",
+      "position?": "AgChartLegendPosition",
+      "orientation?": "AgChartOrientation",
+      "maxWidth?": "PixelSize",
+      "maxHeight?": "PixelSize",
+      "spacing?": "PixelSize",
+      "item?": "AgChartLegendItemOptions",
+      "reverseOrder?": "boolean",
+      "listeners?": "AgChartLegendListeners",
+      "pagination?": "AgChartLegendPaginationOptions"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not to show the legend. The legend is shown by default. */",
       "position?": "/** Where the legend should show in relation to the chart. */",
       "orientation?": "/** How the legend items should be arranged. */",
       "maxWidth?": "/** Used to constrain the width of the legend. */",
@@ -1264,7 +1340,6 @@
       "subtitle?": "AgChartSubtitleOptions",
       "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
-      "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
@@ -1283,7 +1358,6 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
-      "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -3261,6 +3335,7 @@
       "type?": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram' | TAddonType",
       "axes?": "AgCartesianAxisOptions[]",
       "series?": "AgCartesianSeriesOptions<TAddonSeries>[]",
+      "legend?": "AgCartesianChartLegendOptions",
       "navigator?": "AgNavigatorOptions",
       "data?": "any[]",
       "container?": "HTMLElement | null",
@@ -3274,7 +3349,6 @@
       "subtitle?": "AgChartSubtitleOptions",
       "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
-      "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
@@ -3284,6 +3358,7 @@
       "type?": "/** If specified overrides the default series type. */",
       "axes?": "/** Axis configurations. */",
       "series?": "/** Series configurations. */",
+      "legend?": "/** Configuration for the chart legend. */",
       "navigator?": "/** Configuration for the chart navigator. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
@@ -3297,7 +3372,6 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
-      "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -3309,6 +3383,7 @@
     "type": {
       "type?": "'pie'",
       "series?": "AgPolarSeriesOptions[]",
+      "legend?": "AgPolarChartLegendOptions",
       "data?": "any[]",
       "container?": "HTMLElement | null",
       "width?": "PixelSize",
@@ -3321,7 +3396,6 @@
       "subtitle?": "AgChartSubtitleOptions",
       "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
-      "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
@@ -3330,6 +3404,7 @@
     "docs": {
       "type?": "/** If specified overrides the default series type. */",
       "series?": "/** Series configurations. */",
+      "legend?": "/** Configuration for the chart legend. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
       "width?": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
@@ -3342,7 +3417,6 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
-      "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -3355,6 +3429,7 @@
       "type?": "'treemap'",
       "data?": "any",
       "series?": "AgHierarchySeriesOptions[]",
+      "legend?": "AgHierarchyChartLegendOptions",
       "container?": "HTMLElement | null",
       "width?": "PixelSize",
       "height?": "PixelSize",
@@ -3366,7 +3441,6 @@
       "subtitle?": "AgChartSubtitleOptions",
       "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
-      "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
@@ -3375,6 +3449,7 @@
     "docs": {
       "type?": "/** If specified overrides the default series type. */",
       "series?": "/** Series configurations. */",
+      "legend?": "/** Configuration for the chart legend. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
       "width?": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
@@ -3387,7 +3462,6 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
-      "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",

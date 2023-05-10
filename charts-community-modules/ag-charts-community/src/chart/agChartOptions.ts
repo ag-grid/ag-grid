@@ -126,6 +126,8 @@ export interface AgCartesianThemeOptions<S = AgCartesianSeriesTheme> extends AgB
     axes?: AgCartesianAxesTheme;
     /** Series configurations. */
     series?: S;
+    /** Configuration for the chart legend. */
+    legend?: AgCartesianChartLegendOptions;
     /** Configuration for the chart navigator. */
     navigator?: AgNavigatorOptions;
 }
@@ -133,11 +135,15 @@ export interface AgCartesianThemeOptions<S = AgCartesianSeriesTheme> extends AgB
 export interface AgPolarThemeOptions<S = AgPolarSeriesTheme> extends AgBaseChartOptions {
     /** Series configurations. */
     series?: S;
+    /** Configuration for the chart legend. */
+    legend?: AgPolarChartLegendOptions;
 }
 
 export interface AgHierarchyThemeOptions<S = AgHierarchySeriesTheme> extends AgBaseChartOptions {
     /** Series configurations. */
     series?: S;
+    /** Configuration for the chart legend. */
+    legend?: AgHierarchyChartLegendOptions;
 }
 
 export interface AgCrossLineThemeOptions extends Omit<AgCrossLineOptions, 'type'> {}
@@ -427,9 +433,7 @@ export interface AgChartLegendListeners {
     legendItemDoubleClick?: (event: AgChartLegendDoubleClickEvent) => void;
 }
 
-export interface AgChartLegendOptions {
-    /** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */
-    enabled?: boolean;
+export interface AgChartBaseLegendOptions {
     /** Where the legend should show in relation to the chart. */
     position?: AgChartLegendPosition;
     /** How the legend items should be arranged. */
@@ -447,6 +451,21 @@ export interface AgChartLegendOptions {
     /** Optional callbacks for specific legend-related events. */
     listeners?: AgChartLegendListeners;
     pagination?: AgChartLegendPaginationOptions;
+}
+
+export interface AgCartesianChartLegendOptions extends AgChartBaseLegendOptions {
+    /** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */
+    enabled?: boolean;
+}
+
+export interface AgHierarchyChartLegendOptions extends AgChartBaseLegendOptions {
+    /** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */
+    enabled?: boolean;
+}
+
+export interface AgPolarChartLegendOptions extends AgChartBaseLegendOptions {
+    /** Whether or not to show the legend. The legend is shown by default. */
+    enabled?: boolean;
 }
 
 export interface AgChartLegendPaginationOptions {
@@ -615,8 +634,6 @@ export interface AgBaseChartOptions {
     footnote?: AgChartFooterOptions;
     /** Global configuration that applies to all tooltips in the chart. */
     tooltip?: AgChartTooltipOptions;
-    /** Configuration for the chart legend. */
-    legend?: AgChartLegendOptions;
     /** A map of event names to event listeners. */
     listeners?: AgBaseChartListeners;
     /** Configuration for the chart highlighting. */
@@ -1785,6 +1802,8 @@ export interface AgCartesianChartOptions<TAddonType = never, TAddonSeries = neve
     axes?: AgCartesianAxisOptions[];
     /** Series configurations. */
     series?: AgCartesianSeriesOptions<TAddonSeries>[];
+    /** Configuration for the chart legend. */
+    legend?: AgCartesianChartLegendOptions;
     /** Configuration for the chart navigator. */
     navigator?: AgNavigatorOptions;
 }
@@ -1794,6 +1813,8 @@ export interface AgPolarChartOptions extends AgBaseChartOptions {
     type?: 'pie';
     /** Series configurations. */
     series?: AgPolarSeriesOptions[];
+    /** Configuration for the chart legend. */
+    legend?: AgPolarChartLegendOptions;
 }
 
 export interface AgHierarchyChartOptions extends AgBaseChartOptions {
@@ -1802,6 +1823,8 @@ export interface AgHierarchyChartOptions extends AgBaseChartOptions {
     data?: any;
     /** Series configurations. */
     series?: AgHierarchySeriesOptions[];
+    /** Configuration for the chart legend. */
+    legend?: AgHierarchyChartLegendOptions;
 }
 
 export type AgChartOptions<TAddonType = never, TAddonSeries = never> =

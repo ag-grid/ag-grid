@@ -218,21 +218,6 @@
       ]
     }
   },
-  "AgChartLegendOptions": {
-    "enabled": {
-      "description": "Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present."
-    },
-    "position": {
-      "default": "bottom",
-      "options": ["top", "right", "bottom", "left"]
-    },
-    "spacing": {
-      "default": 20,
-      "min": 0,
-      "max": 40,
-      "unit": "px"
-    }
-  },
   "AgChartLegendItemOptions": {
     "paddingX": {
       "default": 16,
@@ -451,6 +436,21 @@
         "ag-vivid-dark"
       ],
       "breakIndex": 5
+    },
+    "AgCartesianChartLegendOptions": {
+      "enabled": {
+        "description": "Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present."
+      },
+      "position": {
+        "default": "bottom",
+        "options": ["top", "right", "bottom", "left"]
+      },
+      "spacing": {
+        "default": 20,
+        "min": 0,
+        "max": 40,
+        "unit": "px"
+      }
     }
   },
   "AgPolarChartOptions": {
@@ -498,6 +498,22 @@
         "ag-vivid-dark"
       ],
       "breakIndex": 5
+    },
+    "AgPolarChartLegendOptions": {
+      "enabled": {
+        "description": "Whether or not to show the legend.",
+        "default": "true"
+      },
+      "position": {
+        "default": "bottom",
+        "options": ["top", "right", "bottom", "left"]
+      },
+      "spacing": {
+        "default": 20,
+        "min": 0,
+        "max": 40,
+        "unit": "px"
+      }
     }
   },
   "AgHierarchyChartOptions": {
@@ -545,6 +561,21 @@
         "ag-vivid-dark"
       ],
       "breakIndex": 5
+    },
+    "AgHierarchyChartLegendOptions": {
+      "enabled": {
+        "description": "Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present."
+      },
+      "position": {
+        "default": "bottom",
+        "options": ["top", "right", "bottom", "left"]
+      },
+      "spacing": {
+        "default": 20,
+        "min": 0,
+        "max": 40,
+        "unit": "px"
+      }
     }
   },
   "AgNumberAxisOptions": {

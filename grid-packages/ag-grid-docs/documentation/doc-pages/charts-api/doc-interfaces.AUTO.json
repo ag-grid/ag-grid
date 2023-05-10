@@ -177,6 +177,13 @@
       "description": "/** Series configurations. */",
       "type": { "returnType": "S", "optional": true }
     },
+    "legend": {
+      "description": "/** Configuration for the chart legend. */",
+      "type": {
+        "returnType": "AgCartesianChartLegendOptions",
+        "optional": true
+      }
+    },
     "navigator": {
       "description": "/** Configuration for the chart navigator. */",
       "type": { "returnType": "AgNavigatorOptions", "optional": true }
@@ -230,10 +237,6 @@
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
     },
-    "legend": {
-      "description": "/** Configuration for the chart legend. */",
-      "type": { "returnType": "AgChartLegendOptions", "optional": true }
-    },
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
@@ -255,6 +258,10 @@
     "series": {
       "description": "/** Series configurations. */",
       "type": { "returnType": "S", "optional": true }
+    },
+    "legend": {
+      "description": "/** Configuration for the chart legend. */",
+      "type": { "returnType": "AgPolarChartLegendOptions", "optional": true }
     },
     "meta": { "typeParams": ["S = AgPolarSeriesTheme"] },
     "data": {
@@ -305,10 +312,6 @@
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
     },
-    "legend": {
-      "description": "/** Configuration for the chart legend. */",
-      "type": { "returnType": "AgChartLegendOptions", "optional": true }
-    },
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
@@ -330,6 +333,13 @@
     "series": {
       "description": "/** Series configurations. */",
       "type": { "returnType": "S", "optional": true }
+    },
+    "legend": {
+      "description": "/** Configuration for the chart legend. */",
+      "type": {
+        "returnType": "AgHierarchyChartLegendOptions",
+        "optional": true
+      }
     },
     "meta": { "typeParams": ["S = AgHierarchySeriesTheme"] },
     "data": {
@@ -379,10 +389,6 @@
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
-    },
-    "legend": {
-      "description": "/** Configuration for the chart legend. */",
-      "type": { "returnType": "AgChartLegendOptions", "optional": true }
     },
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
@@ -1529,9 +1535,137 @@
       }
     }
   },
-  "AgChartLegendOptions": {
+  "AgChartBaseLegendOptions": {
+    "position": {
+      "description": "/** Where the legend should show in relation to the chart. */",
+      "type": { "returnType": "AgChartLegendPosition", "optional": true }
+    },
+    "orientation": {
+      "description": "/** How the legend items should be arranged. */",
+      "type": { "returnType": "AgChartOrientation", "optional": true }
+    },
+    "maxWidth": {
+      "description": "/** Used to constrain the width of the legend. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "maxHeight": {
+      "description": "/** Used to constrain the height of the legend. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "spacing": {
+      "description": "/** The spacing in pixels to use outside the legend. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "item": {
+      "description": "/** Configuration for the legend items that consist of a marker and a label. */",
+      "type": { "returnType": "AgChartLegendItemOptions", "optional": true }
+    },
+    "reverseOrder": {
+      "description": "/** Reverse the display order of legend items if `true`. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "listeners": {
+      "description": "/** Optional callbacks for specific legend-related events. */",
+      "type": { "returnType": "AgChartLegendListeners", "optional": true }
+    },
+    "pagination": {
+      "type": {
+        "returnType": "AgChartLegendPaginationOptions",
+        "optional": true
+      }
+    }
+  },
+  "AgCartesianChartLegendOptions": {
     "enabled": {
       "description": "/** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "position": {
+      "description": "/** Where the legend should show in relation to the chart. */",
+      "type": { "returnType": "AgChartLegendPosition", "optional": true }
+    },
+    "orientation": {
+      "description": "/** How the legend items should be arranged. */",
+      "type": { "returnType": "AgChartOrientation", "optional": true }
+    },
+    "maxWidth": {
+      "description": "/** Used to constrain the width of the legend. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "maxHeight": {
+      "description": "/** Used to constrain the height of the legend. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "spacing": {
+      "description": "/** The spacing in pixels to use outside the legend. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "item": {
+      "description": "/** Configuration for the legend items that consist of a marker and a label. */",
+      "type": { "returnType": "AgChartLegendItemOptions", "optional": true }
+    },
+    "reverseOrder": {
+      "description": "/** Reverse the display order of legend items if `true`. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "listeners": {
+      "description": "/** Optional callbacks for specific legend-related events. */",
+      "type": { "returnType": "AgChartLegendListeners", "optional": true }
+    },
+    "pagination": {
+      "type": {
+        "returnType": "AgChartLegendPaginationOptions",
+        "optional": true
+      }
+    }
+  },
+  "AgHierarchyChartLegendOptions": {
+    "enabled": {
+      "description": "/** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "position": {
+      "description": "/** Where the legend should show in relation to the chart. */",
+      "type": { "returnType": "AgChartLegendPosition", "optional": true }
+    },
+    "orientation": {
+      "description": "/** How the legend items should be arranged. */",
+      "type": { "returnType": "AgChartOrientation", "optional": true }
+    },
+    "maxWidth": {
+      "description": "/** Used to constrain the width of the legend. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "maxHeight": {
+      "description": "/** Used to constrain the height of the legend. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "spacing": {
+      "description": "/** The spacing in pixels to use outside the legend. */",
+      "type": { "returnType": "PixelSize", "optional": true }
+    },
+    "item": {
+      "description": "/** Configuration for the legend items that consist of a marker and a label. */",
+      "type": { "returnType": "AgChartLegendItemOptions", "optional": true }
+    },
+    "reverseOrder": {
+      "description": "/** Reverse the display order of legend items if `true`. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "listeners": {
+      "description": "/** Optional callbacks for specific legend-related events. */",
+      "type": { "returnType": "AgChartLegendListeners", "optional": true }
+    },
+    "pagination": {
+      "type": {
+        "returnType": "AgChartLegendPaginationOptions",
+        "optional": true
+      }
+    }
+  },
+  "AgPolarChartLegendOptions": {
+    "enabled": {
+      "description": "/** Whether or not to show the legend. The legend is shown by default. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
@@ -1965,10 +2099,6 @@
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
-    },
-    "legend": {
-      "description": "/** Configuration for the chart legend. */",
-      "type": { "returnType": "AgChartLegendOptions", "optional": true }
     },
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
@@ -5040,6 +5170,13 @@
         "optional": true
       }
     },
+    "legend": {
+      "description": "/** Configuration for the chart legend. */",
+      "type": {
+        "returnType": "AgCartesianChartLegendOptions",
+        "optional": true
+      }
+    },
     "navigator": {
       "description": "/** Configuration for the chart navigator. */",
       "type": { "returnType": "AgNavigatorOptions", "optional": true }
@@ -5093,10 +5230,6 @@
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
     },
-    "legend": {
-      "description": "/** Configuration for the chart legend. */",
-      "type": { "returnType": "AgChartLegendOptions", "optional": true }
-    },
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
@@ -5122,6 +5255,10 @@
     "series": {
       "description": "/** Series configurations. */",
       "type": { "returnType": "AgPolarSeriesOptions[]", "optional": true }
+    },
+    "legend": {
+      "description": "/** Configuration for the chart legend. */",
+      "type": { "returnType": "AgPolarChartLegendOptions", "optional": true }
     },
     "data": {
       "description": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
@@ -5171,10 +5308,6 @@
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
     },
-    "legend": {
-      "description": "/** Configuration for the chart legend. */",
-      "type": { "returnType": "AgChartLegendOptions", "optional": true }
-    },
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
       "type": { "returnType": "AgBaseChartListeners", "optional": true }
@@ -5201,6 +5334,13 @@
     "series": {
       "description": "/** Series configurations. */",
       "type": { "returnType": "AgHierarchySeriesOptions[]", "optional": true }
+    },
+    "legend": {
+      "description": "/** Configuration for the chart legend. */",
+      "type": {
+        "returnType": "AgHierarchyChartLegendOptions",
+        "optional": true
+      }
     },
     "container": {
       "description": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
@@ -5245,10 +5385,6 @@
     "tooltip": {
       "description": "/** Global configuration that applies to all tooltips in the chart. */",
       "type": { "returnType": "AgChartTooltipOptions", "optional": true }
-    },
-    "legend": {
-      "description": "/** Configuration for the chart legend. */",
-      "type": { "returnType": "AgChartLegendOptions", "optional": true }
     },
     "listeners": {
       "description": "/** A map of event names to event listeners. */",
