@@ -4,11 +4,25 @@ import { CrosshairLabel, LabelMeta } from './crosshairLabel';
 type AgCrosshairLabelRendererResult = any;
 
 const { Group, Range, BBox } = _Scene;
-const { Validate, NUMBER, BOOLEAN, OPT_COLOR_STRING, OPT_LINE_DASH, Layers } = _ModuleSupport;
+const { Validate, predicateWithMessage, OPTIONAL, NUMBER, BOOLEAN, OPT_COLOR_STRING, OPT_LINE_DASH, Layers } =
+    _ModuleSupport;
+
+const OPT_CROSSHAIR_TYPE = predicateWithMessage(
+    (v: any, ctx) => OPTIONAL(v, ctx, (v: any) => v === 'band' || v === 'line'),
+    `expecting a crosshair type keyword such as 'band' or 'line'`
+);
+
+type CrosshairType = 'line' | 'band';
 
 export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
     @Validate(BOOLEAN)
     enabled = false;
+
+    @Validate(OPT_CROSSHAIR_TYPE)
+    type?: CrosshairType = 'line';
+
+    @Validate(OPT_COLOR_STRING)
+    fill?: string = `rgb(166,166,166, 0.2)`;
 
     @Validate(OPT_COLOR_STRING)
     stroke?: string = 'rgb(195, 195, 195)';
@@ -102,7 +116,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         this.bounds = this.buildBounds(rect, axisPosition, padding);
 
         const { crosshairGroup, bounds } = this;
-        crosshairGroup.zIndex = this.getZIndex(this.axisCtx.scaleBandwidth() > 0);
+        crosshairGroup.zIndex = this.getZIndex(this.isBand());
         crosshairGroup.translationX = Math.round(bounds.x);
         crosshairGroup.translationY = Math.round(
             axisPosition === 'top' || axisPosition === 'bottom' ? bounds.y + bounds.height : bounds.y
@@ -115,6 +129,10 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
 
         const format = this.label.format ?? axisLayout.label.format;
         this.labelFormatter = format ? this.axisCtx.scaleValueFormatter(format) : undefined;
+    }
+
+    private isBand(): boolean {
+        return this.snap && this.type === 'band';
     }
 
     private buildBounds(rect: _Scene.BBox, axisPosition: AgCartesianAxisPosition, padding: number): _Scene.BBox {
@@ -132,6 +150,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
             crosshairNode: node,
             bounds,
             stroke,
+            fill,
             strokeWidth,
             strokeOpacity,
             lineDash,
@@ -145,19 +164,18 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         }
 
         const bandwidth = axisCtx.scaleBandwidth();
+        const isBand = this.isBand();
 
         node.stroke = stroke;
         node.strokeWidth = strokeWidth;
         node.strokeOpacity = strokeOpacity;
         node.lineDash = lineDash;
         node.lineDashOffset = lineDashOffset;
-        node.fill = `rgb(166,166,166, 0.2)`;
-        node.y1 = 0 - bandwidth / 2;
-        node.y2 = 0 + bandwidth / 2;
+        node.fill = fill;
+        node.y1 = 0 - (isBand ? bandwidth / 2 : 0);
+        node.y2 = 0 + (isBand ? bandwidth / 2 : 0);
         node.x1 = 0;
         node.x2 = axisCtx.direction === 'x' ? bounds.height : bounds.width;
-
-        const isBand = bandwidth > 0;
 
         node.isRange = isBand;
         node.startLine = true;
@@ -284,7 +302,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
         }
 
         const key = isYValue ? yKey : xKey;
-        if (axisCtx.scaleBandwidth() > 0) {
+        if (this.isBand()) {
             return { value: datum[key], position: axisCtx.scaleConvert(datum[key]) + halfBandwidth };
         }
 
