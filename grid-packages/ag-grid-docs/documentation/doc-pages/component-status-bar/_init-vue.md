@@ -1,5 +1,5 @@
-<framework-specific-section frameworks="vue">
-<snippet transform={false}>
+[[only-vue]]
+|```js
 | export default {
 |   methods: {
 |     updateStatusBar() { ... },
@@ -12,5 +12,4 @@
 |     );
 |   },
 | };
-</snippet>
-</framework-specific-section>
+|```

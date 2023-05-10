@@ -20,9 +20,8 @@ In the snippet above we are using `'ie'` as the `yKey` to show market share of t
 
 <chart-example title='Single Area Series' name='single-area' type='generated'></chart-example>
 
-<note>
-Even though area series support markers, they are turned off by default for this series type, as this stylisation is the most common.
-</note>
+[[note]]
+| Even though area series support markers, they are turned off by default for this series type, as this stylisation is the most common.
 
 To enable area markers, all we need to do is add this to the series config:
 
@@ -84,9 +83,8 @@ series: [
 ]
 ```
 
-<note>
-Since multiple area series can overlap, it is a good idea to make the fill translucent, for example using `fillOpacity: 0.7`.
-</note>
+[[note]]
+| Since multiple area series can overlap, it is a good idea to make the fill translucent, for example using `fillOpacity: 0.7`.
 
 Note that in the example below we also:
 
@@ -122,9 +120,8 @@ Following on from our [stacked area series](#example-stacked-area-series) exampl
 normalizedTo: 100
 ```
 
-<note>
-It's possible to use any non-zero value to normalize to.
-</note>
+[[note]]
+| It's possible to use any non-zero value to normalize to.
 
 <chart-example title='Normalized Stacked Area Series' name='normalized-area' type='generated'></chart-example>
 

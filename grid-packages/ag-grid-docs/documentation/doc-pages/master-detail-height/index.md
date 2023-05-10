@@ -53,31 +53,28 @@ If you are providing your own Detail Cell Renderer, then you need to make sure t
 Detail Cell Renderer has the correct height, as this is what the grid checks and matches the row height to this.
 So make sure the CSS on the top most element is set so that its height is correct.
 
-<framework-specific-section frameworks="angular">
+[[only-angular]]
 | This can be a particular concern if providing a Detail Cell Renderer in Angular. Be aware that by default
 | custom Angular tags will not inherit the height of their children. This can be fixed by adding
 | `display: inline-block` style to the top most element of your component. This is done as follows:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
-<snippet transform={false}>
+|
+| ```ts
 | @Component({
 |   styles: [':host { display: inline-block; }'],
 |   // other items here
 | }
-</snippet>
-</framework-specific-section>
+| ```
 
-<note>
-|When using Auto Height feature, the Detail Grid will render all of it's rows all the time.
-|[Row Virtualisation](../dom-virtualisation/) will not happen.
-|This means if the Detail Grid has many rows, it could slow down your application and could
-|result in stalling he tbrowser.
-|
-|Do not use Auto Height if you have many rows (eg 100+) in the Detail Grid's. To know if this
-|is a concern for your grid and dataset, try it out and check the performance.
-</note>
+[[note]]
+| When using Auto Height feature, the Detail Grid will render all of it's rows all the time.
+| [Row Virtualisation](/dom-virtualisation/) will not happen.
+| This means if the Detail Grid has many rows, it could slow down your application and could
+| result in stalling he browser.
+| <br/><br/>
+| Do not use Auto Height if you have many rows (eg 100+) in the Detail Grid's. To know if this
+| is a concern for your grid and dataset, try it out and check the performance.
+
 
 ## Dynamic Height
 

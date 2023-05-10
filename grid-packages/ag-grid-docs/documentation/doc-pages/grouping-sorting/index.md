@@ -121,10 +121,9 @@ The following example demonstrates custom group sorting. Note the following:
 
 <grid-example title='Custom Group Sort' name='custom-group-sort' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
 
-<note>
-It is also possible to define a comparator that will be used across all group levels using; `autoGroupColumnDef.comparator`.
-This 'shared group comparator' will override over any comparators defined on the underlying columns.
-</note>
+[[note]]
+| It is also possible to define a comparator that will be used across all group levels using; `autoGroupColumnDef.comparator`.
+| This 'shared group comparator' will override over any comparators defined on the underlying columns.
 
 ## Maintain Group Order
 

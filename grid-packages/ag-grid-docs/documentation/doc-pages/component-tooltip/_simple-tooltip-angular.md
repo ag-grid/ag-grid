@@ -1,11 +1,8 @@
-<framework-specific-section frameworks="angular">
+[[only-angular]]
 |
 |Below is a simple example of a tooltip component:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
-<snippet transform={false} language="ts">
+|```js
 |import {Component} from '@angular/core';
 |import {ITooltipParams} from "ag-grid-community";
 |import {ITooltipAngularComp} from "ag-grid-angular";
@@ -13,11 +10,11 @@
 |@Component({
 |    selector: 'tooltip-component',
 |    template: `
-|      &lt;div class="custom-tooltip" [style.background-color]="color">
-|          &lt;p>&lt;span>{{ data.athlete }}&lt;/span>&lt;/p>
-|          &lt;p>&lt;span>Country: &lt;/span>{{ data.country }}&lt;/p>
-|          &lt;p>&lt;span>Total: &lt;/span>{{ data.total }}&lt;/p>
-|      &lt;/div>`,
+|      <div class="custom-tooltip" [style.background-color]="color">
+|          <p><span>{{ data.athlete }}</span></p>
+|          <p><span>Country: </span>{{ data.country }}</p>
+|          <p><span>Total: </span>{{ data.total }}</p>
+|      </div>`,
 |    styles: [
 |        `
 |            :host {
@@ -55,5 +52,4 @@
 |        this.color = this.params.color || 'white';
 |    }
 |}
-</snippet>
-</framework-specific-section>
+|```

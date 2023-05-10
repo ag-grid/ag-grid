@@ -1,10 +1,7 @@
-<framework-specific-section frameworks="angular">
+[[only-angular]]
 |Below is a example of loading overlay class with a custom `loadingMessage` param:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
-<snippet transform={false} language="ts">
+|```js
 |import {Component} from '@angular/core';
 |import {ILoadingOverlayParams} from "ag-grid-community";
 |import {ILoadingOverlayAngularComp} from "ag-grid-angular";
@@ -12,9 +9,9 @@
 |@Component({
 |    selector: 'app-loading-overlay',
 |    template: `
-|      &lt;div class="ag-overlay-loading-center" style="background-color: lightsteelblue;">
-|        &lt;i class="fas fa-hourglass-half">{{ params.loadingMessage }} &lt;/i>
-|      &lt;/div>
+|      <div class="ag-overlay-loading-center" style="background-color: lightsteelblue;">
+|        <i class="fas fa-hourglass-half">{{ params.loadingMessage }} </i>
+|      </div>
 |    `
 |})
 |export class CustomLoadingOverlay implements ILoadingOverlayAngularComp {
@@ -32,5 +29,4 @@
 |    loadingMessage: 'One moment please...',
 |  },
 |}
-</snippet>
-</framework-specific-section>
+|```

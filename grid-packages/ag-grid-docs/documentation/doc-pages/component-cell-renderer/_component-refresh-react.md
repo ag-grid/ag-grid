@@ -1,4 +1,4 @@
-<framework-specific-section frameworks="react">
+[[only-react]]
 |### Events Causing Refresh
 |
 |When the grid can refresh a cell (instead of replacing it altogether) then the update will occur as follows:
@@ -29,4 +29,3 @@
 |If you choose to implement the `refresh` method, then note that this method returns a boolean value. If you do not
 |want to handle the refresh in the cell renderer, just return `false` from an otherwise empty method. This will
 |indicate to the grid that you did not refresh and the grid will instead destroy the component and create another instance of your component from scratch instead.
-</framework-specific-section>

@@ -65,10 +65,9 @@ export function fileReducer(state = {}, action) {
 }
 ```
 
-<note>
-The helper methods used in the reducer are omitted for brevity but can be examined in the code
-tab provided in the example at the end of this section.
-</note>
+[[note]]
+| The helper methods used in the reducer are omitted for brevity but can be examined in the code
+| tab provided in the example at the end of this section.
 
 Rather than create action objects directly we shall use the following _Action Creators_ as shown below:
 

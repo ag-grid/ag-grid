@@ -98,9 +98,8 @@ By default, user created charts are displayed inside the grid's own popup window
 
 It is also possible to display user created charts in a location or application dialog. For more details see the section on [providing a chart container](/integrated-charts-container/).
 
-<note>
-If using the grid's own popup window, you will probably want to use the grid option `popupParent` so that the popup windows are not constrained to the bounds of the grid. Typically, users set `popupParent=document.body` to achieve this.
-</note>
+[[note]]
+| If using the grid's own popup window, you will probably want to use the grid option `popupParent` so that the popup windows are not constrained to the bounds of the grid. Typically, users set `popupParent=document.body` to achieve this.
 
 ## Next Up
 

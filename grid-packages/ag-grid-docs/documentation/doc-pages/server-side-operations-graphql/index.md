@@ -12,9 +12,8 @@ The following screenshot shows what the finished application looks like:
 
 <image-caption src="server-side-operations-graphql/resources/graphql-app.png" alt="GraphQL" constrained="true"/></image-caption>
 
-<note>
-The reference implementation covered in this guide is for demonstration purposes only. If you use this in production it comes with no warranty or support.
-</note>
+[[note]]
+| The reference implementation covered in this guide is for demonstration purposes only. If you use this in production it comes with no warranty or support.
 
 The source code can be found here: [https://github.com/ag-grid/ag-grid-server-side-graphql-example](https://github.com/ag-grid/ag-grid-server-side-graphql-example).
 

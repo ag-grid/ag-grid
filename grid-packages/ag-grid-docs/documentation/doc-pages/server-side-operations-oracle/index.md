@@ -14,9 +14,8 @@ We will develop a financial reporting application that demonstrates how data can
 
 <image-caption src="server-side-operations-oracle/resources/oracle-enterprise.png" alt="Oracle" constrained="true"></image-caption>
 
-<note>
-The reference implementation covered in this guide is for demonstration purposes only. If you use this in production it comes with no warranty or support.
-</note>
+[[note]]
+| The reference implementation covered in this guide is for demonstration purposes only. If you use this in production it comes with no warranty or support.
 
 The source code can be found here: [https://github.com/ag-grid/ag-grid-server-side-oracle-example](https://github.com/ag-grid/ag-grid-server-side-oracle-example)
 

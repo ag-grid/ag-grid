@@ -6,27 +6,24 @@ Aligning two or more grids means columns will be kept aligned in all grids. In o
 
 ## Configuration
 
-<framework-specific-section frameworks="react">
-To have one (the first) grid react to column changes in another grid (the second), provide the second grid with a reference to the first grid.
-
-<snippet language="jsx" transform={false}>
-|const gridOne = useRef&lt;AgGridReact>(null);
+[[only-react]]
+|To have one (the first) grid react to column changes in another grid (the second), provide the second grid with a reference to the first grid.
+|
+|```js
+|const gridOne = useRef<AgGridReact>(null);
 |
 |return (
-|   &lt;>
-|       &lt;AgGridReact ref={gridOne} />
-|       &lt;AgGridReact alignedGrids={gridOne.current ? [gridOne.current] : undefined} />    
-|   &lt;/>
+|   <>
+|       <AgGridReact ref={gridOne} />
+|       <AgGridReact alignedGrids={gridOne.current ? [gridOne.current] : undefined} />    
+|   </>
 |);
-</snippet>
-</framework-specific-section>
+|```
 
-
-<framework-specific-section frameworks="javascript,angular,vue">
-
-To have one (the first) grid reflect column changes in another (the second), place the first grid's options in `alignedGrids` property of the second grids.
-
-<snippet transform={false}>
+[[only-javascript-or-angular-or-vue]]
+|To have one (the first) grid reflect column changes in another (the second), place the first grid's options in `alignedGrids` property of the second grids.
+|
+|```js
 |gridOptionsFirst = {
 |    // some grid options here
 |        ...
@@ -39,8 +36,7 @@ To have one (the first) grid reflect column changes in another (the second), pla
 |    // other grid options here
 |    ...
 |}
-</snippet>
-</framework-specific-section>
+|```
 
 ## Example: Aligned Grids
 

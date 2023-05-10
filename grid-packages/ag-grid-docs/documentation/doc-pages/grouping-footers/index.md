@@ -66,9 +66,8 @@ non-footer cells differently.
 
 <grid-example title='Customising Footer Cells' name='customising-footer-cells' type='mixed' options='{ "enterprise": true, "exampleHeight": 503, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
-<note>
-It is also possible to customise footer cells using: `cellRendererParams.innerRendererSelector`. For more details see the [Group Cell Renderer](/group-cell-renderer/) section.
-</note>
+[[note]]
+| It is also possible to customise footer cells using: `cellRendererParams.innerRendererSelector`. For more details see the [Group Cell Renderer](/group-cell-renderer/) section.
 
 ## Group Footer Limitations
 

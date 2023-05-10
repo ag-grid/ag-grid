@@ -1,4 +1,4 @@
-<framework-specific-section frameworks="angular">
+[[only-angular]]
 |## Cell Renderer Function
 |
 |Instead of using an Angular component, it's possible to use a simple function for a cell renderer.
@@ -7,10 +7,8 @@
 |component.
 |
 |In the example below we're outputting a simple string value that depends on the cell value:
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
-<snippet transform={false}>
+|
+|```js
 |@Component({
 |    selector: 'my-app',
 |    template: `
@@ -29,9 +27,6 @@
 |     ];
 |     ..other methods
 |}
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
+|```
+|
 | It is also possible to write a JavaScript-based cell renderer function - refer to the [docs here](../../javascript-data-grid/component-cell-renderer/#cell-renderer-function) for more information
-</framework-specific-section>

@@ -1,4 +1,4 @@
-<framework-specific-section frameworks="angular">
+[[only-angular]]
 |
 |## Registering Custom Components
 |
@@ -13,10 +13,7 @@
 |
 |In this example we're specifying that we want our Angular `CubeComponent` as a Cell Renderer in the `Cube` column:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
-<snippet transform={false} language="ts">
+|```tsx
 |//...other imports
 |import { Component } from '@angular/core';
 |import { CubeComponent } from './cube.component';
@@ -24,9 +21,9 @@
 |@Component({
 |selector: 'app-root',
 |template: `
-|   &lt;ag-grid-angular [columnDefs]="columnDefs"
+|   <ag-grid-angular [columnDefs]="columnDefs"
 |                    ...other properties>
-|   &lt;/ag-grid-angular>
+|   </ag-grid-angular>
 |`
 |})
 |export class AppComponent {
@@ -39,10 +36,8 @@
 |
 |   //...other properties & methods
 |}
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
+|```
+|
 |The advantage of referencing Components directly is cleaner code, without the extra level of indirection added when referencing by name.
 |
 |### 2. By Name
@@ -53,10 +48,7 @@
 |In this example we've registered our Angular `CubeComponent` and given it a name of `cubeComponent` (this can be any name you choose).
 |We then specify that we want the previously registered `cubeComponent` to be used as a Cell Renderer in the `Cube` column:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
-<snippet transform={false} language="ts">
+|```tsx
 |//...other imports
 |import { Component } from '@angular/core';
 |import { CubeComponent } from './cube.component';
@@ -64,9 +56,9 @@
 |@Component({
 |selector: 'app-root',
 |template: `
-|   &lt;ag-grid-angular [columnDefs]="columnDefs" [components]="components"
+|   <ag-grid-angular [columnDefs]="columnDefs" [components]="components"
 |                    ...other properties>
-|   &lt;/ag-grid-angular>
+|   </ag-grid-angular>
 |`
 |})
 |export class AppComponent {
@@ -82,10 +74,7 @@
 |
 |   //...other properties & methods
 |}
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
+|```
+|
 |The advantage of referencing components by name is definitions (eg Column Definitions) can be composed of simple types (ie JSON), which is useful should you wish to persist Column Definitions.
-</framework-specific-section>
-
+|

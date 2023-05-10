@@ -1,9 +1,7 @@
-<framework-specific-section frameworks="react">
+[[only-react]]
 |Below is an example of floating filter component as a Hook:
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<snippet transform={false} language="jsx">
+|
+|```jsx
 |export default forwardRef((props, ref) => {
 |    const [currentValue, setCurrentValue] = useState(null);
 |    const inputRef = useRef(null);
@@ -47,20 +45,16 @@
 |    };
 |
 |    return (
-|        &lt;Fragment>
-|            &gt; &lt;input ref={inputRef} style={style} type="number" min="0" onInput={onInputBoxChanged}/>
-|        &lt;/Fragment>
+|        <Fragment>
+|            &gt; <input ref={inputRef} style={style} type="number" min="0" onInput={onInputBoxChanged}/>
+|        </Fragment>
 |    );
 |});
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
+|```
+|
 |And here is the same example as a Class-based Component:
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<snippet transform={false} language="jsx">
+|
+|```jsx
 |export default class NumberFloatingFilterComponent extends Component {
 |    constructor(props) {
 |        super(props);
@@ -105,11 +99,10 @@
 |        };
 |
 |        return (
-|            &lt;Fragment>
-|                &gt; &lt;input ref={this.inputRef} style={style} type="number" min="0" onInput={this.onInputBoxChanged}/>
-|            &lt;/Fragment>
+|            <Fragment>
+|                &gt; <input ref={this.inputRef} style={style} type="number" min="0" onInput={this.onInputBoxChanged}/>
+|            </Fragment>
 |        );
 |    }
 |}
-</snippet> 
-</framework-specific-section>
+|```

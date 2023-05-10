@@ -34,87 +34,80 @@ As before, you use AG Grid in the same way, but including the enterprise script 
 ### Via Grid Packages
 
 If using node modules and grid packages include the enterprise package `ag-grid-enterprise`.
-
-<snippet transform={false}>
+    
+```js
 "dependencies": {
     "ag-grid-community": "~@AG_GRID_VERSION@",
     "ag-grid-enterprise": "~@AG_GRID_VERSION@"
     ...
 }
-</snippet>
-
+```
 Then import the AG Grid Enterprise package in your application before any grid instance is created.
 
-<snippet transform={false}>
+```js
 import 'ag-grid-enterprise';
-</snippet>
+```
 
-<note>
-The versions of `ag-grid-community` and `ag-grid-enterprise` should match. They are released in tandem and expect to be on the same version.
-</note>
+[[note]]
+| The versions of `ag-grid-community` and `ag-grid-enterprise` should match. They are released in tandem and expect to be on the same version.
 
 
 ### Via Grid Modules
 
 If using node modules and grid modules, include the enterprise feature modules for the features that you require. For example to add the enterprise Row Grouping feature along with Server Side row model add the following packages to your `package.json` file:
 
-<snippet transform={false}>
+```js
 "dependencies": {    
     "@ag-grid-enterprise/row-grouping": "~@AG_GRID_VERSION@",
     "@ag-grid-enterprise/server-side-row-model": "~@AG_GRID_VERSION@",
     ...
 }
-</snippet>
+```
 
 Then reference and import the AG Grid Enterprise modules:
 
-<snippet transform={false}>
+```js
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
-</snippet>
+```
 
 Then depending on your choice of framework you'll need to provide the modules to the grid or register them globally (see [Installing Grid Modules](/modules/#installing-ag-grid-modules) for full details.). Please refer to the [modules](/modules/) documentation for all the enterprise modules.
 
-<framework-specific-section frameworks="javascript">
-<snippet transform={false}>
-| new Grid(&lt;dom element>, gridOptions, { modules: [ServerSideRowModelModule, RowGroupingModule]});
-</snippet>
-</framework-specific-section>
+[[only-javascript]]
+| ```js
+| new Grid(<dom element>, gridOptions, { modules: [ServerSideRowModelModule, RowGroupingModule]});
+| ```
 
-<framework-specific-section frameworks="angular">
-<snippet transform={false} language="ts">
+[[only-angular]]
+| ```tsx
 | public modules: Module[] = [ServerSideRowModelModule, RowGroupingModule];
-| &lt;ag-grid-angular
+| <ag-grid-angular
 |     [rowData]="rowData"
 |     [columnDefs]="columnDefs"
 |     [modules]="modules">
-| &lt;/ag-grid-angular>
-</snippet>
-</framework-specific-section>
+| </ag-grid-angular>
+| ```
 
-<framework-specific-section frameworks="react">
-<snippet transform={false}>
-| &lt;ag-grid-react
+[[only-react]]
+| ```tsx
+| <ag-grid-react
 |     rowData={rowData}
 |     columnDefs={columnDefs}
 |     modules={[ServerSideRowModelModule, RowGroupingModule]}>
-| &lt;/ag-grid-react>
-</snippet>
-</framework-specific-section>
+| </ag-grid-react>
+| ```
 
-<framework-specific-section frameworks="vue">
-<snippet transform={false}>
-| &lt;ag-grid-vue
+[[only-vue]]
+| ```tsx
+| <ag-grid-vue
 |     :rowData="rowData"
 |     :columnDefs="columnDefs"
 |     :modules="[ServerSideRowModelModule, RowGroupingModule]"
-| &lt;/ag-grid-vue>
-</snippet>
-</framework-specific-section>
+| </ag-grid-vue>
+| ```
 
-<note>
-The versions of the modules you use, `@ag-grid-community/**` and `@ag-grid-enterprise/**` should match. They are released in tandem and expect to be on the same version.
-</note>
+[[note]]
+| The versions of the modules you use, `@ag-grid-community/**` and `@ag-grid-enterprise/**` should match. They are released in tandem and expect to be on the same version.
 
 ## Trial License Key
 
@@ -131,94 +124,75 @@ Set the license key via the JavaScript method as described below. AG Grid checks
 
 Note that you must pass the key exactly as provided by AG Grid - do not modify the key in any way.
 
-<note>
-If you are distributing your product and including AG Grid Enterprise, we realise that your license key will be
-visible to others. We appreciate that this is happening and just ask that you don't advertise it. Given our
-product is JavaScript, there is little we can do to prevent this.
-</note>
-
+[[note]]
+| If you are distributing your product and including AG Grid Enterprise, we realise that your license key will be
+| visible to others. We appreciate that this is happening and just ask that you don't advertise it. Given our
+| product is JavaScript, there is little we can do to prevent this.
 ### Via CommonJS
 Use this if you are using CommonJS to load AG Grid.
 
-<snippet transform={false}>
-|var enterprise = require("@ag-grid-enterprise/core");
-|enterprise.LicenseManager.setLicenseKey("your license key");
-</snippet>
+```js
+var enterprise = require("@ag-grid-enterprise/core");
+enterprise.LicenseManager.setLicenseKey("your license key");
+```
 
-<framework-specific-section frameworks="javascript">
+[[only-javascript]]
 | ### Via Grid Packages
 |
 | If you are using the bundled version of AG Grid (e.g. you are using `ag-grid-enterprise/dist/ag-grid-enterprise.js`) set the license like this.
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false}>
+| ```js
 | agGrid.LicenseManager.setLicenseKey("your license key");
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="frameworks">
+| ```
+[[only-frameworks]]
 | ### Via Grid Packages
 |
 | If you are using grid packages (e.g. you are using `import ag-grid-enterprise`) set the license like this.
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="frameworks">
-<snippet transform={false}>
+| ```js
 | import { LicenseManager } from  'ag-grid-enterprise'
 |
 | LicenseManager.setLicenseKey("your license key")
-</snippet>
-</framework-specific-section>
+| ```
 
 ### Via Grid Modules
 
 If you are using grid modules (e.g. you are using `import { RowGroupingModule } from @ag-grid-enterprise/row-grouping`) set the license like this.
 
-<snippet transform={false}>
-|import { LicenseManager } from '@ag-grid-enterprise/core'
-|
-|LicenseManager.setLicenseKey("your license key")
-</snippet>
+```js
+import { LicenseManager } from '@ag-grid-enterprise/core'
 
-<note>
-If you're using _any_ Enterprise feature then `@ag-grid-enterprise/core` will be available - you do not need to specify it as a dependency.
-</note>
+LicenseManager.setLicenseKey("your license key")
+```
+[[note]]
+| If you're using _any_ Enterprise feature then `@ag-grid-enterprise/core` will be available - you do not need to specify it as a dependency.
+
 
 ### Do Not Mix Loading Mechanisms
 
 If you mix the methods above (eg if you are using CommonJS in your application, but use the JavaScript approach above to set license key) then it will not work. This is because the AG Grid library will be loaded twice, one will have the license key and the other will be used in your application without the license key.
 
-<framework-specific-section frameworks="angular">
+[[only-angular]]
 | We recommend setting the license key in your main boot files (typically named either `main.ts` or `boot.ts`, before you
 | bootstrap your application.
 |
 | For example:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
-<snippet transform={false}>
+| ```js
 | // other imports...
 |
 | import {LicenseManager} from "@ag-grid-enterprise/core";
 | LicenseManager.setLicenseKey("your license key");
 |
 | // bootstrap your angular application. ie: platformBrowser().bootstrapModuleFactory(..)
-</snippet>
-</framework-specific-section>
+| ```
 
-<framework-specific-section frameworks="react">
+[[only-react]]
 | We recommend setting the license key in your main bootstrap file (typically named `index.js`), before you bootstrap your application.
 |
 | For example:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<snippet transform={false}>
+| ```js
 | import React from "react";
 | import {render} from "react-dom";
 |
@@ -232,22 +206,18 @@ If you mix the methods above (eg if you are using CommonJS in your application, 
 |
 | document.addEventListener('DOMContentLoaded', () => {
 |     render(
-|         &lt;App/>,
+|         <App/>,
 |         document.querySelector('#app')
 |     );
 | });
-</snippet>
-</framework-specific-section>
+| ```
 
-<framework-specific-section frameworks="vue">
+[[only-vue]]
 | We recommend setting the license key in your main bootstrap file (typically named `main.js`), before you bootstrap your application.
 |
 | For example:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-<snippet transform={false}>
+| ```jsx
 | import Vue from "vue";
 |
 | import "@ag-grid-enterprise/styles/ag-grid.css";
@@ -261,8 +231,7 @@ If you mix the methods above (eg if you are using CommonJS in your application, 
 |     el: "#el",
 |     ...
 | });
-</snippet>
-</framework-specific-section>
+| ```
 
 ### Invalid License
 If you have an enterprise grid running with an invalid license (no license, expired license) your console log will display a series of warnings and the grid will show a watermark for 5 seconds.

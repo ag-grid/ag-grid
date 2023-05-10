@@ -2,7 +2,7 @@
 title: "Testing AG Grid"
 ---
 
-<framework-specific-section frameworks="javascript">
+[[only-javascript]]
 | We will walk through how you can use `Protractor` and `Jasmine` to do Unit & End to End (e2e)
 | testing with AG Grid in this section.
 |
@@ -12,10 +12,8 @@ title: "Testing AG Grid"
 | best way to do this is to set a flag when the Grid's `gridReady` event fires, but this requires an application code change.
 |
 | An alternative is to use a utility function that polls until the API has been set on the `GridOptions`:
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false}>
+|
+| ```js
 | function waitForGridApiToBeAvailable(gridOptions, success) {
 |     // recursive without a terminating condition,
 |     // but jasmines default test timeout will kill it (jasmine.DEFAULT_TIMEOUT_INTERVAL)
@@ -27,88 +25,58 @@ title: "Testing AG Grid"
 |         }, 500);
 |     }
 | }
-</snippet> 
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+| ```
+|
 | Once the API is ready, we can then invoke Grid `API` and `ColumnApi` methods:
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform="{false}">
+|
+| ```js
 | it('select all button selects all rows', () => {
 |     selectAllRows();  // selectAllRows is a global function created in the application code
 |     expect(gridOptionsUnderTest.api.getSelectedNodes().length).toEqual(3);
 | });
-</snippet> 
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+| ```
+|
 | ## End to End (e2e) Testing
 |
 | These recipes below are suggestions - there are many ways to do End to End testing, what we document
 | below is what we use here at AG Grid.
 |
 | We do not document how to use either `Protractor` and `Jasmine` in depth here - please see either the
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<a href="http://www.protractortest.org/#/" target="_blank">Protractor</a> or
-<a href="https://jasmine.github.io/" target="_blank">Jasmine</a> for information around either of these tools.
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+| <a href="http://www.protractortest.org/#/" target="_blank">Protractor</a> or
+| <a href="https://jasmine.github.io/" target="_blank">Jasmine</a> for information around either of these tools.
 | We only describe how these tools can be used to test AG Grid below.
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<note>
-| End to End testing can be fragile. If you change something trivial upstream it can have a big impact
-| on an End to End test, so we recommend using End to End tests in conjunction with unit tests. It's often
-| easier to find and fix a problem at the unit testing stage than it is in the end to end stage.
-</note>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+|
+| [[note]]
+| | End to End testing can be fragile. If you change something trivial upstream it can have a big impact
+| | on an End to End test, so we recommend using End to End tests in conjuction with unit tests. It's often
+| | easier to find and fix a problem at the unit testing stage than it is in the end to end stage.
+|
 | ## Testing Dependencies
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false} language="bash">
+|
+| ```bash
 | npm install protractor webdriver-manager --save-dev
 |
 | # optional dependencies - if you're using TypeScript
 | npm install @types/jasmine @types/selenium-webdriver --save-dev
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+| ```
+|
 | Note you can install `protractor` and `webdriver-manager` globally if you'd prefer, which would allow
 | for shorter commands when executing either of these tools.
 |
 | We now need to update the webdriver:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false} language="bash">
+| ```bash
 | ./node_modules/.bin/webdriver-manager update
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+| ```
+|
 | This can be added to your package.json for easier packaging and repeatability:
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false}>
+|
+| ```json
 | "scripts": {
 |     "postinstall": "webdriver-manager update"
 | }
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+| ```
+|
 | ### Selenium Server
 |
 | You can either start & stop your tests in a script, or start the Selenium server separately,
@@ -116,30 +84,19 @@ title: "Testing AG Grid"
 |
 | Remember that the interaction between your tests and the browser is as follows:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false} language="bash">
-| [Test Scripts] &lt; ------------ > [Selenium Server] &lt; ------------ > [Browser Drivers]
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+| ```bash
+| [Test Scripts] < ------------ > [Selenium Server] < ------------ > [Browser Drivers]
+| ```
+|
 | We'll run the server separately to begin with here:
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false} language="bash">
+|
+| ```bash
 | ./node_modules/.bin/webdriver-manager start
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+| ```
+|
 | ## Sample Configuration
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false} language="bash">
+|
+| ```js
 | // conf.js
 | exports.config = {
 |     framework: 'jasmine',
@@ -147,38 +104,23 @@ title: "Testing AG Grid"
 | }
 |
 | // Here we specify the Jasmine testing framework as well as our test to run.
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+| ```
 | ## Sample Test
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<note>
-| If you're testing against a non-Angular application then you need to tell `Protractor`
-| not to wait for Angular by adding this to either your configuration or your tests: `browser.ignoreSynchronization = true;`
-</note>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+|
+| [[note]]
+| | If you're testing against a non-Angular application then you need to tell `Protractor`
+| | not to wait for Angular by adding this to either your configuration or your tests: `browser.ignoreSynchronization = true;`
+|
 | For this sample test we'll be testing this simple example:
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<grid-example title='Hello World' name='hello-world' type='typescript' options='{ "exampleHeight": "210px" }'></grid-example>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+|
+| <grid-example title='Hello World' name='hello-world' type='typescript' options='{ "exampleHeight": "210px" }'></grid-example>
+|
 | ## Checking Headers
 |
 | Let's start off by checking the headers are the ones we're expecting. We can do this by retrieving
 | all `div`'s that have the `ag-header-cell-text` class:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false}>
+| ```js
 | // spec.js
 | describe('AG Grid Protractor Test', function () {
 |     // not an angular application
@@ -197,31 +139,22 @@ title: "Testing AG Grid"
 |             });
 |     });
 | });
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+| ```
+|
 | We can now run our test by executing the following command:
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false} language="bash">
+|
+| ```bash
 | ./node_modules/.bin/protractor conf.js
 |
 | # or if protractor is installed globally protractor conf.js
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+| ```
+|
 | ## Checking Grid Data
 |
-| We can match grid data by looking for rows by matching `div[row="&lt;row id>"]` and then column
+| We can match grid data by looking for rows by matching `div[row="<row id>"]` and then column
 | values within these rows by looking for `div`'s with a class of `.ag-cell-value`:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false}>
+| ```js
 | it('first row should have expected grid data', () => {
 |     element.all(by.css('div[row="0"] div.ag-cell-value'))
 |         .map(function (cell) {
@@ -231,57 +164,38 @@ title: "Testing AG Grid"
 |             expect(cellValues).toEqual(["Toyota", "Celica", "35000"]);
 |         });
 | });
-</snippet>  
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+| ```
+|
 | We can add this to `spec.js` and run the tests as before.
 |
 | ## AG Grid Testing Utilities
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<note>
-| These utilities scripts should still be considered beta and are subject to change. 
-</note>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+| [[note]]
+| | These utilities scripts should still be considered beta and are subject to change. Please provide feedback to
+| | the <a href="https://github.com/seanlandsman/ag-grid-testing" target="_blank">GitHub</a> repository.
+|
 | Here at AG Grid we use a number of utility functions that make it easier for us to test AG Grid functionality.
 |
 | The utilities can be installed & imported as follows:
 |
 | Installing:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false} language="bash">
+| ```bash
 | npm install ag-grid-testing --save-dev
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+| ```
+|
 | Importing:
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false}>
+|
+| ```js
 | let ag_grid_utils = require("ag-grid-testing");
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+| ```
+|
 | ### verifyRowDataMatchesGridData
 |
 | Compares Grid data to provided data. The order of the data provided should correspond to the order within
 | the grid. The property names should correspond to the `colId`'s of the columns.
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false}>
+| ```js
 | ag_grid_utils.verifyRowDataMatchesGridData(
 |     [
 |         {
@@ -295,72 +209,48 @@ title: "Testing AG Grid"
 |         // more rows...
 |     ]
 | );
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+| ```
+|
 | ### verifyCellContentAttributesContains
 |
 | Useful when there is an array of data within a cell, each of which is writing an attribute (for example an image).
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false}>
+| ```js
 | ag_grid_utils.verifyCellContentAttributesContains(1, "3", "src", ['android', 'mac', 'css'], "img");
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+| ```
+|
 | ### allElementsTextMatch
 |
 | Verifies that all elements text (ie the cell value) matches the provided data. Usf
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false}>
+| ```js
 | ag_grid_utils.allElementsTextMatch(by.css(".ag-header-cell-text"),
 |     ['#', 'Name', 'Country', 'Skills', 'Proficiency', 'Mobile', 'Land-line']
 | );
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+| ```
+|
 | ### clickOnHeader
 |
 | Clicks on a header with the provided `headerName`.
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false}>
+|
+| ```js
 | ag_grid_utils.clickOnHeader("Name");
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+| ```
+|
 | ### getLocatorForCell
 |
 | Provides a CSS `Locator` for a grid cell, by row & id and optionally a further CSS selector.
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false}>
-|ag_grid_utils.getLocatorForCell(0, "make")
-|ag_grid_utils.getLocatorForCell(0, "make", "div.myClass")
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+| ```js
+| ag_grid_utils.getLocatorForCell(0, "make")
+| ag_grid_utils.getLocatorForCell(0, "make", "div.myClass")
+| ```
+|
 | ### getCellContentsAsText
 |
 | Returns the cell value (as text) for by row & id and optionally a further CSS selector.
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false}>
+| ```js
 | ag_grid_utils.getCellContentsAsText(0, "make")
 |     .then(function(cellValue) {
 |         // do something with cellValue
@@ -370,8 +260,7 @@ title: "Testing AG Grid"
 |     .then(function(cellValue) {
 |         // do something with cellValue
 |     });
-</snippet>
-</framework-specific-section>
+| ```
 
 <framework-specific-section frameworks="angular">
 | We will walk through how you can use testing AG Grid as part of your Angular application,

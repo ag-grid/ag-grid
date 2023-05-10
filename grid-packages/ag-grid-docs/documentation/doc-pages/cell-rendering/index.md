@@ -7,38 +7,31 @@ By default the grid renders values into the cells as strings. If you want someth
 <api-documentation source='column-properties/properties.json' section='styling' names='["cellRenderer"]'></api-documentation>
 
 The cell renderer for a column is set via `colDef.cellRenderer` and can be any of the following types:
-
-<framework-specific-section frameworks="javascript">
+ 
+[[only-javascript]]
 |1. `undefined`: Grid renders the value as a string.
 |1. `String`: The name of a cell renderer component.
 |1. `Class`: Direct reference to a cell renderer component.
 |1. `Function`: A function that returns either an HTML string or DOM element for display.
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
+[[only-angular]]
 |1. `undefined`: Grid renders the value as a string.
 |1. `String`: The name of a cell renderer component.
 |1. `Class`: Direct reference to a cell renderer component.
 |1. `Function`: A function that returns either an HTML string or DOM element for display.
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
+[[only-vue]]
 |1. `undefined`: Grid renders the value as a string.
 |1. `String`: The name of a registered Vue cell renderer component.
 |1. `Function`: A function that returns either an HTML string or DOM element for display.
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
+[[only-react]]
 |1. `undefined`: Grid renders the value as a string.
 |1. `String`: The name of a cell renderer component.
 |1. `Class`: Direct reference to a cell renderer component.
 |1. `Function`: A function that returns JSX for display.
-</framework-specific-section>
 
 The code snippet below demonstrates each of these method types.
 
-<framework-specific-section frameworks="javascript">
-<snippet spaceBetweenProperties="true">
+[[only-javascript]]
+| <snippet spaceBetweenProperties="true">
 | const gridOptions = {
 |     columnDefs: [
 |         // 1 - undefined - Grid renders the value as a string.
@@ -66,11 +59,10 @@ The code snippet below demonstrates each of these method types.
 |         }
 |     ]
 | }
-</snippet>
-</framework-specific-section>
+| </snippet>
 
-<framework-specific-section frameworks="angular">
-<snippet spaceBetweenProperties="true">
+[[only-angular]]
+| <snippet spaceBetweenProperties="true">
 | const gridOptions = {
 |     columnDefs: [
 |         // 1 - undefined - Grid renders the value as a string.
@@ -98,11 +90,10 @@ The code snippet below demonstrates each of these method types.
 |         }
 |     ]
 | }
-</snippet>
-</framework-specific-section>
+| </snippet>
 
-<framework-specific-section frameworks="react">
-<snippet spaceBetweenProperties="true">
+[[only-react]]
+| <snippet spaceBetweenProperties="true">
 | const gridOptions = {
 |     columnDefs: [
 |         // 1 - undefined - Grid renders the value as a string.
@@ -130,11 +121,10 @@ The code snippet below demonstrates each of these method types.
 |         }
 |     ]
 | }
-</snippet>
-</framework-specific-section>
+| </snippet>
 
-<framework-specific-section frameworks="vue">
-<snippet spaceBetweenProperties="true"> 
+[[only-vue]]
+| <snippet spaceBetweenProperties="true">
 | const gridOptions = {
 |     columnDefs: [
 |         // 1 - undefined - Grid renders the value as a string.
@@ -157,8 +147,8 @@ The code snippet below demonstrates each of these method types.
 |         }
 |     ]
 | }
-</snippet>
-</framework-specific-section>
+| </snippet>
+
 
 This remainder of this documentation page goes through the grid provided cell renderer's. To build your own cell renderer see the section [Cell Rendering Components](/component-cell-renderer/).
 
@@ -184,9 +174,15 @@ The result is an object with `component` and `params` to use instead of `cellRen
 
 This following shows the Selector always returning back a Mood Cell Renderer:
 
+[[only-javascript]]
 md-include:selector-common.md
+[[only-angular]]
+md-include:selector-common.md
+[[only-react]]
+md-include:selector-common.md
+[[only-vue]]
 md-include:selector-vue.md
- 
+
 Here is a full example.
 - The column 'Value' holds data of different types as shown in the column 'Type' (numbers/genders/moods).
 - `colDef.cellRendererSelector` is a function that selects the renderer based on the row data.

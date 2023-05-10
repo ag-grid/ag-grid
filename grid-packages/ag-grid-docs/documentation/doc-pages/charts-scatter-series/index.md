@@ -4,9 +4,8 @@ title: "Scatter Series"
 
 Scatter charts use two axes to plot `(x,y)` pairs of numeric variables as points at the intersection of `x` and `y`.
 
-<note>
-Scatter series configuration is largely the same as line series configuration (please refer to the [line series documentation](/charts-line-series/) to learn more), so here we'll just give some examples and cover only the differences.
-</note>
+[[note]]
+| Scatter series configuration is largely the same as line series configuration (please refer to the [line series documentation](/charts-line-series/) to learn more), so here we'll just give some examples and cover only the differences.
 
 ## Scatter Plot
 
@@ -67,9 +66,8 @@ for every data point, scatter series label placement is constrained so that:
 
 If these constraints are not satisfied, a label is not placed.
 
-<note>
-Satisfying these constraints is computationally intensive and the complexity rises exponentially with increasing number of data points. Given that label placement might have to happen in real time, for example, when resizing a chart window, it is advised not to enable scatter series labels for data sets with more than a few hundred points.
-</note>
+[[note]]
+| Satisfying these constraints is computationally intensive and the complexity rises exponentially with increasing number of data points. Given that label placement might have to happen in real time, for example, when resizing a chart window, it is advised not to enable scatter series labels for data sets with more than a few hundred points.
 
 To enable scatter series labels we have to set the `label.enabled` config of a series to `true` and specify which key should be used to fetch the label values.
 

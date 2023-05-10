@@ -1,5 +1,5 @@
-<framework-specific-section frameworks="react">
-<snippet transform={false}>
+[[only-react]]
+|```js
 | colDef = {
 |    cellEditor: MyCellEditor,    
 |    cellEditorParams: {
@@ -8,5 +8,4 @@
 |    },
 |    // ...other props
 |}
-</snippet>
-</framework-specific-section>
+|```

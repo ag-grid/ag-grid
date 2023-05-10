@@ -1,5 +1,5 @@
-<framework-specific-section frameworks="javascript">
-<snippet transform={false}>
+[[only-javascript]]
+|```js
 |// a list of column definitions
 |const colDefs = [{
 |
@@ -23,5 +23,4 @@
 |        ]
 |    }
 |}]
-</snippet>
-</framework-specific-section>
+|```

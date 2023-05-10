@@ -1,5 +1,6 @@
-<framework-specific-section frameworks="react">
-<snippet transform={false} language="jsx">
+[[only-react]]
+|
+|```jsx
 |const KEY_UP = 'ArrowUp';
 |const KEY_DOWN = 'ArrowDown';
 |
@@ -35,5 +36,4 @@
 |        </div>
 |    );
 |};
-</snippet>
-</framework-specific-section>
+||```

@@ -5,10 +5,9 @@ frameworks: ["javascript"]
 
 We walk through the main steps required when using AG Grid with Rollup.js. We use AG Grid modules to only include the code that we require with the aim of keeping bundle size to a minimum.
 
-<note>
-A full working example of using Rollup.js with AG Grid can be found on
-[Github](https://github.com/seanlandsman/ag-grid-rollup).
-</note>
+[[note]]
+| A full working example of using Rollup.js with AG Grid can be found on
+| [Github](https://github.com/seanlandsman/ag-grid-rollup).
 
 ## Initialise Project
 

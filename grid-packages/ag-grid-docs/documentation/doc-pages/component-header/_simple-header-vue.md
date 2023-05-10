@@ -1,24 +1,22 @@
-<framework-specific-section frameworks="vue">
+[[only-vue]]
 |Below is a simple example of header component:
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-<snippet transform={false}>
+|
+|```js
 |const CustomHeader = {
 |    template: `
-|      &lt;div>
-|          &lt;div v-if="params.enableMenu" ref="menuButton" class="customHeaderMenuButton" @click="onMenuClicked($event)">
-|            &lt;i class="fa" :class="params.menuIcon">&lt;/i>
-|          &lt;/div>
-|          &lt;div class="customHeaderLabel">{{ params.displayName }}&lt;/div>
-|          &lt;div v-if="params.enableSorting" @click="onSortRequested('asc', $event)" :class="ascSort" class="customSortDownLabel">
-|            &lt;i class="fa fa-long-arrow-alt-down">&lt;/i>&lt;/div>
-|          &lt;div v-if="params.enableSorting" @click="onSortRequested('desc', $event)" :class="descSort" class="customSortUpLabel">
-|            &lt;i class="fa fa-long-arrow-alt-up">&lt;/i>&lt;/div>
-|          &lt;div v-if="params.enableSorting" @click="onSortRequested('', $event)" :class="noSort" class="customSortRemoveLabel">
-|            &lt;i class="fa fa-times">&lt;/i>
-|          &lt;/div>
-|      &lt;/div>
+|      <div>
+|          <div v-if="params.enableMenu" ref="menuButton" class="customHeaderMenuButton" @click="onMenuClicked($event)">
+|            <i class="fa" :class="params.menuIcon"></i>
+|          </div>
+|          <div class="customHeaderLabel">{{ params.displayName }}</div>
+|          <div v-if="params.enableSorting" @click="onSortRequested('asc', $event)" :class="ascSort" class="customSortDownLabel">
+|            <i class="fa fa-long-arrow-alt-down"></i></div>
+|          <div v-if="params.enableSorting" @click="onSortRequested('desc', $event)" :class="descSort" class="customSortUpLabel">
+|            <i class="fa fa-long-arrow-alt-up"></i></div>
+|          <div v-if="params.enableSorting" @click="onSortRequested('', $event)" :class="noSort" class="customSortRemoveLabel">
+|            <i class="fa fa-times"></i>
+|          </div>
+|      </div>
 |    `,
 |    data: function () {
 |        return {
@@ -54,5 +52,5 @@
 |        }
 |    }
 |};
-</snippet>
-</framework-specific-section>
+|```
+ 

@@ -1,16 +1,14 @@
-<framework-specific-section frameworks="javascript">
+[[only-javascript]]
 |Below is a simple example of cell renderer class:
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false}>
+|
+|```js
 |class CustomDateComponent {
 |    init(params) {
 |        const template = `
-|            &lt;input type="text" data-input style="width: 100%;" />
-|            &lt;a class="input-button" title="clear" data-clear>
-|                &lt;i class="fa fa-times">&lt;/i>
-|            &lt;/a>`;
+|            <input type="text" data-input style="width: 100%;" />
+|            <a class="input-button" title="clear" data-clear>
+|                <i class="fa fa-times"></i>
+|            </a>`;
 |
 |        this.params = params;
 |    
@@ -55,5 +53,4 @@
 |        this.eInput.setAttribute('placeholder', placeholder);
 |    }
 |}
-</snippet>
-</framework-specific-section>
+|```

@@ -1,5 +1,5 @@
-<framework-specific-section frameworks="vue">
-<snippet transform={false}>
+[[only-vue]]
+|```js
 |// a list of column definitions
 |this.columnDefs = [
 |
@@ -24,5 +24,5 @@
 |        ]
 |    }
 |}]
-</snippet>
-</framework-specific-section>
+|```
+

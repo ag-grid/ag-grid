@@ -112,20 +112,18 @@ The example below shows this feature. Note the following:
 
 <grid-example title='Removing Single Children' name='remove-single-children' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules":["clientside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
 
-<note>
-Filtering does not impact what groups get removed. For example if you have a group with two
-children, the group is not removed, even if you apply a filter that removes one of the children.
-This is because AG Grid does grouping first and then applies filters second. If you change the filter,
-only the filter is reapplied, the grouping is not reapplied.
-</note>
+[[note]]
+| Filtering does not impact what groups get removed. For example if you have a group with two
+| children, the group is not removed, even if you apply a filter that removes one of the children.
+| This is because AG Grid does grouping first and then applies filters second. If you change the filter,
+| only the filter is reapplied, the grouping is not reapplied.
 
-<note>
-The properties `groupRemoveSingleChildren`, `groupRemoveLowestSingleChildren`
-and `groupHideOpenParents` are mutually exclusive, you can only pick one.
-Technically it doesn't make sense to mix these. They don't work together as the logic for removing single
-children clashes with the logic for hiding open parents. Both want to remove parents at different times
-and for different reasons.
-</note>
+[[note]]
+| The properties `groupRemoveSingleChildren`, `groupRemoveLowestSingleChildren`
+| and `groupHideOpenParents` are mutually exclusive, you can only pick one.
+| Technically it doesn't make sense to mix these. They don't work together as the logic for removing single
+| children clashes with the logic for hiding open parents. Both want to remove parents at different times
+| and for different reasons.
 
 ## Next Up
 

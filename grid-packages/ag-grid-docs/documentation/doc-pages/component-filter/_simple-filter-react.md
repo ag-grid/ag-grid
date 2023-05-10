@@ -1,9 +1,7 @@
-<framework-specific-section frameworks="react">
+[[only-react]]
 |Below is a simple example of filter component as a Hook:
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<snippet transform={false} language="jsx">
+|
+|```jsx
 |export default forwardRef((props, ref) => {
 |    const [year, setYear] = useState('All');
 |
@@ -37,26 +35,22 @@
 |    }, [year]);
 |
 |    return (
-|        &lt;div style={{display: "inline-block", width: "400px"}} onChange={onYearChange}>
-|            &lt;div style={{padding: "10px", backgroundColor: "#d3d3d3", textAlign: "center"}}>This is a very wide filter&lt;/div>
-|            &lt;label style={{margin: "10px", padding: "50px", display: "inline-block", backgroundColor: "#999999"}}>
-|                &lt;input type="radio" name="year" value="All" checked={year === 'All'}/> All
-|            &lt;/label>
-|            &lt;label style={{margin: "10px", padding: "50px", display: "inline-block", backgroundColor: "#999999"}}>
-|                &lt;input type="radio" name="year" value="2010"/> Since 2010
-|            &lt;/label>
-|        &lt;/div>
+|        <div style={{display: "inline-block", width: "400px"}} onChange={onYearChange}>
+|            <div style={{padding: "10px", backgroundColor: "#d3d3d3", textAlign: "center"}}>This is a very wide filter</div>
+|            <label style={{margin: "10px", padding: "50px", display: "inline-block", backgroundColor: "#999999"}}>
+|                <input type="radio" name="year" value="All" checked={year === 'All'}/> All
+|            </label>
+|            <label style={{margin: "10px", padding: "50px", display: "inline-block", backgroundColor: "#999999"}}>
+|                <input type="radio" name="year" value="2010"/> Since 2010
+|            </label>
+|        </div>
 |    )
 |});
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
+|```
+|
 |And here is the same example as a Class-based Component:
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<snippet transform={false} language="jsx">
+|
+|```jsx
 |export default class YearFilter extends Component {
 |    constructor(props) {
 |        super(props);
@@ -90,17 +84,16 @@
 |
 |    render() {
 |        return (
-|            &lt;div style={{display: "inline-block", width: "400px"}} onChange={this.onYearChange.bind(this)}>
-|                &lt;div style={{padding: "10px", backgroundColor: "#d3d3d3", textAlign: "center"}}>This is a very wide filter&lt;/div>
-|                &lt;label style={{margin: "10px", padding: "50px", display: "inline-block", backgroundColor: "#999999"}}>
-|                    &lt;input type="radio" name="year" value="All" checked={this.state.year === 'All'}/> All
-|                &lt;/label>
-|                &lt;label style={{margin: "10px", padding: "50px", display: "inline-block", backgroundColor: "#999999"}}>
-|                    &lt;input type="radio" name="year" value="2010" /> Since 2010
-|                &lt;/label>
-|            &lt;/div>
+|            <div style={{display: "inline-block", width: "400px"}} onChange={this.onYearChange.bind(this)}>
+|                <div style={{padding: "10px", backgroundColor: "#d3d3d3", textAlign: "center"}}>This is a very wide filter</div>
+|                <label style={{margin: "10px", padding: "50px", display: "inline-block", backgroundColor: "#999999"}}>
+|                    <input type="radio" name="year" value="All" checked={this.state.year === 'All'}/> All
+|                </label>
+|                <label style={{margin: "10px", padding: "50px", display: "inline-block", backgroundColor: "#999999"}}>
+|                    <input type="radio" name="year" value="2010" /> Since 2010
+|                </label>
+|            </div>
 |        );
 |    }
 |}
-</snippet>
-</framework-specific-section>
+|```

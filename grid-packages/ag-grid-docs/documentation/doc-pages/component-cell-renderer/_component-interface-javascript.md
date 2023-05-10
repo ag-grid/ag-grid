@@ -1,12 +1,9 @@
-<framework-specific-section frameworks="javascript">
+[[only-javascript]]
 |## Cell Renderer Component
 |
 |The interface for the cell renderer component is as follows:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false} language="ts">
+|```ts
 |interface ICellRendererComp {
 |    // Optional - Params for rendering. The same params that are passed to the cellRenderer function.
 |    init?(params: ICellRendererParams): void;
@@ -23,9 +20,7 @@
 |    // a new component in its place with the new values.
 |    refresh(params: ICellRendererParams): boolean;
 |}
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+|```
+|
 |The interface for the cell renderer parameters is as follows:
-</framework-specific-section>
+|

@@ -9,9 +9,8 @@ Row Grouping performs a _GROUP BY_ operation to the 'flat' list of rows provided
 by one or more columns. The Display Types listed below are only concerned with how the results of Row Grouping are 
 displayed in the grid. 
 
-<note>
-If the rows supplied to the grid do not need to be grouped by the grid, consider using [Tree Data](../tree-data/) instead.
-</note>
+[[note]]
+| If the rows supplied to the grid do not need to be grouped by the grid, consider using [Tree Data](../tree-data/) instead.
 
 ## Single Group Column 
 

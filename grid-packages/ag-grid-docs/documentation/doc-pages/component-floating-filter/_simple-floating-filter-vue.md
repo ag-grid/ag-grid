@@ -1,12 +1,10 @@
-<framework-specific-section frameworks="vue">
+[[only-vue]]
 |Below is an example of floating filter component:
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-<snippet transform={false}>
+|
+|```js
 |const NumberFloatingFilterComponent = {
 |    template: `
-|        &gt; &lt;input v-bind:style="{ color: params.color, width: '30px' }" type="number" min="0" 
+|        &gt; <input v-bind:style="{ color: params.color, width: '30px' }" type="number" min="0" 
 |               v-model="currentValue" v-on:inpuot="onInputBoxChanged()"/>
 |    `,
 |    data: function () {
@@ -40,5 +38,5 @@
 |
 |    }
 |}
-</snippet>
-</framework-specific-section> 
+|```
+ 

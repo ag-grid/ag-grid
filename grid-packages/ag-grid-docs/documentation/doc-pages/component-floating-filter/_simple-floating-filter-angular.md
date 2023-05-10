@@ -1,15 +1,13 @@
-<framework-specific-section frameworks="angular">
+[[only-angular]]
 |Below is an example of floating filter component:
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
-<snippet transform={false}>
+|
+|```js
 |import {IFloatingFilterAngularComp} from "ag-grid-angular";
 |import {IFloatingFilterParams} from "ag-grid-community";
 |
 |@Component({
 |    selector: 'number-component',
-|    template: `&gt; &lt;input [style.color]="params.color" style="width: 30px" type="number" min="0" [(ngModel)]="currentValue"
+|    template: `&gt; <input [style.color]="params.color" style="width: 30px" type="number" min="0" [(ngModel)]="currentValue"
 |                           (input)="onInputBoxChanged($event)"/>`
 |})
 |export class NumberFloatingFilterComponent implements IFloatingFilterAngularComp {
@@ -49,5 +47,4 @@
 |        });
 |    }
 |}
-</snippet>
-</framework-specific-section>
+|```

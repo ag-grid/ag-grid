@@ -1,16 +1,16 @@
-<framework-specific-section frameworks="javascript,angular,react">
-<snippet transform={false}>
+|
+|```js
 |cellRendererSelector: params => {
 |    return {
 |        component: GenderCellRenderer,
 |        params: {values: ['Male', 'Female']}
 |    };
 |}
-</snippet>
-
-However a selector only makes sense when a selection is made. The following demonstrates selecting between Mood and Gender Cell Renderers:
-
-<snippet transform={false}>
+|```
+|
+|However a selector only makes sense when a selection is made. The following demonstrates selecting between Mood and Gender Cell Renderers:
+|
+|```js
 |cellRendererSelector: params => {
 |
 |    const type = params.data.type;
@@ -30,5 +30,10 @@ However a selector only makes sense when a selection is made. The following demo
 |
 |    return undefined;
 |}
+<<<<<<< HEAD
 </snippet>
 </framework-specific-section>
+=======
+|```
+|
+>>>>>>> parent of 2bc59fb1df (AG-7941 Gatsby 4 upgrade)

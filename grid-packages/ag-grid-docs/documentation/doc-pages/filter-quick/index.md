@@ -50,9 +50,8 @@ const gridOptions = {
 </snippet>
 
 
-<note>
-The Quick Filter will work 'out of the box' in most cases, so you should only override the Quick Filter value if you have a particular problem to resolve.
-</note>
+[[note]]
+| The Quick Filter will work 'out of the box' in most cases, so you should only override the Quick Filter value if you have a particular problem to resolve.
 
 ## Quick Filter Cache
 

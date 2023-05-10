@@ -29,9 +29,8 @@ A category range can only contain cells from a single column, whereas a series r
 
 Chart ranges can be adjusted from within the grid by dragging on the chart range handle located at the bottom right of the series range. Both the category and series ranges are connected so when the chart range is dragged in an up or down direction they will be updated together.
 
-<note>
-The chart range handle will only appear when all series columns are contiguous. However, it is possible to move columns around in the grid to connect the series range.
-</note>
+[[note]]
+| The chart range handle will only appear when all series columns are contiguous. However, it is possible to move columns around in the grid to connect the series range.
 
 ## Defining categories and series
 

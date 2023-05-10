@@ -24,9 +24,8 @@ AG Grid currently supports Angular v10 and above. However, in the next major rel
 
 ## AG Grid Legacy
 
-<note>
-AG Grid Legacy is only required for apps on Angular v8-11 that wish to use AG Grid v28 or v29.
-</note>
+[[note]]
+| AG Grid Legacy is only required for apps on Angular v8-11 that wish to use AG Grid v28 or v29.
 
 In AG Grid v28 the package `ag-grid-angular` was migrated to the Ivy distribution format. This is the [recommended](https://angular.io/guide/creating-libraries#publishing-libraries) format for Angular libraries from v12. As a result, v28+ of AG Grid will only compile in Angular v12+.
 

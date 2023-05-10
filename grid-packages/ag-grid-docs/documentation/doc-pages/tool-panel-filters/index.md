@@ -170,10 +170,9 @@ const gridOptions = {
 
 Notice from the snippet above that it's possible to define groups in the tool panel that don't exist in the grid. Also note that filters can be omitted or positioned in a different order however note that all referenced columns (that contain filters) must already exist in the grid.
 
-<note>
-When providing a custom layout it is recommend to enable `suppressSyncLayoutWithGrid` in the
-tool panel params to prevent users changing the layout when moving columns in the grid.
-</note>
+[[note]]
+| When providing a custom layout it is recommend to enable `suppressSyncLayoutWithGrid` in the
+| tool panel params to prevent users changing the layout when moving columns in the grid.
 
 The example below shows two custom layouts for the Filters Tool Panel. Note the following:
 

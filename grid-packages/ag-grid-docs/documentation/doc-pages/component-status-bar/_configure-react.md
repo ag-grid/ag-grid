@@ -1,6 +1,6 @@
-<framework-specific-section frameworks="react">
-<snippet transform={false} language="jsx">
-|&lt;AgGridReact 
+[[only-react]]
+|```jsx
+|<AgGridReact 
 |       statusBar: {{
 |           statusPanels: [
 |               {
@@ -17,9 +17,6 @@
 |       }}
 |       ...other props...
 |/>
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
+|```
+|
 |In the configuration above we've specified a custom component (`MyStatusBarComponent`) as well as the provided `agAggregationComponent` component.
-</framework-specific-section>

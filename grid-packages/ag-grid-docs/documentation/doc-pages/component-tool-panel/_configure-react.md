@@ -1,6 +1,6 @@
-<framework-specific-section frameworks="react">
-<snippet transform={false} language="jsx">
-|&lt;AgGridReact
+[[only-react]]
+|```jsx
+|<AgGridReact
 |    sideBar: {{
 |        toolPanels: [
 |            {
@@ -14,5 +14,4 @@
 |    }}
 |       ...other props...
 |/>
-</snippet>
-</framework-specific-section>
+|```

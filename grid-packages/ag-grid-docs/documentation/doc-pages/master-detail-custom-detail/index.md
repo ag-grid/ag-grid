@@ -93,8 +93,7 @@ The following example shows an implementation of keyboard navigation in a custom
 * Click a cell in the `Mila Smith` master row and press <kbd>Tab</kbd> key to move focus to the custom detail panel inputs of the `Mila Smith` master row.
 * Click a cell in the `Evelyn Taylor` master row and press <kbd>Shift</kbd>+<kbd>Tab</kbd> to focus the inputs in the custom detail panel of the `Mila Smith` master row.
 
-<note>
-This example is illustrative of the main concepts, but the actual implementation of custom keyboard navigation will vary based on the specific custom detail panel.
-</note>
+[[note]]
+| This example is illustrative of the main concepts, but the actual implementation of custom keyboard navigation will vary based on the specific custom detail panel.
 
 <grid-example title='Custom Detail Cell Renderer Keyboard Navigation' name='custom-detail-keyboard-navigation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>

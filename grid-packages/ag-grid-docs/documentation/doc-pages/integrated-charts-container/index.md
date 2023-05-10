@@ -25,9 +25,8 @@ popup window, but instead places the charts into the DOM below the grid. This cr
 the complexity of the example and focus on just the callback and the interactions of the grid.
 
 
-<note>
-When providing an element to display your chart, it is important to always set the `popupParent` to be `document.body`. This will allow floating elements within the chart's menus to be positioned correctly.
-</note>
+[[note]]
+| When providing an element to display your chart, it is important to always set the `popupParent` to be `document.body`. This will allow floating elements within the chart's menus to be positioned correctly.
 
 From the example below, the following can be noted:
 

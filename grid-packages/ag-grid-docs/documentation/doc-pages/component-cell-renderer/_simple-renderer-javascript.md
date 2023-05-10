@@ -1,9 +1,7 @@
-<framework-specific-section frameworks="javascript">
+[[only-javascript]]
 |Below is a simple example of cell renderer class:
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<snippet transform={false}>
+|
+|```js
 |class TotalValueRenderer {
 |    // gets called once before the renderer is used
 |    init(params) {
@@ -56,5 +54,4 @@
 |        return params.valueFormatted ? params.valueFormatted : params.value;
 |    }
 |}
-</snippet>
-</framework-specific-section>
+|```

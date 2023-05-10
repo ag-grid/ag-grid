@@ -49,9 +49,8 @@ These grid options are illustrated below:
 | }
 </snippet>
 
-<note>
-Note that the nested detail grid can be configured to use any Row Model.
-</note>
+[[note]]
+| Note that the nested detail grid can be configured to use any Row Model.
 
 ## Example: Infinite Scrolling with Master / Detail
 
@@ -154,10 +153,9 @@ Option 3 - use autoHeight
 | }
 </snippet>
 
-<note>
-Purging the cache and dynamic row heights do not work together for the Server-Side Row Model.
-If you are using dynamic row height, ensure `maxBlocksInCache` is not set.
-</note>
+[[note]]
+| Purging the cache and dynamic row heights do not work together for the Server-Side Row Model.
+| If you are using dynamic row height, ensure `maxBlocksInCache` is not set.
 
 ### Example Using Callback getRowHeight()
 

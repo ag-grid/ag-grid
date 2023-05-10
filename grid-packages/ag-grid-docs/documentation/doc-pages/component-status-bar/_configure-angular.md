@@ -1,5 +1,5 @@
-<framework-specific-section frameworks="angular">
-<snippet transform={false}>
+[[only-angular]]
+|```js
 |this.gridOptions = {
 |    statusBar: {
 |        statusPanels: [
@@ -17,9 +17,6 @@
 |    },
 |    // ...other properties
 |}
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
+|```
+|
 |In the configuration above we've specified a custom component (`MyStatusBarComponent`) as well as the provided `agAggregationComponent` component.
-</framework-specific-section>

@@ -130,12 +130,11 @@ The example below demonstrates Changed Path Selection. The example is best viewe
 
 <grid-example title='Small Changes Big Data' name='small-changes-big-data' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
-<note>
-Note that [Header Checkbox Selection](/row-selection/#header-checkbox-selection)
-is not turned on for the example above. If it was it would slow the grid down marginally as it requires each
-row to be checked (for selection state) between each update. If you need a blazing fast grid managing rapid
-changes, consider avoiding this feature.
-</note>
+[[note]]
+| Note that [Header Checkbox Selection](/row-selection/#header-checkbox-selection)
+| is not turned on for the example above. If it was it would slow the grid down marginally as it requires each
+| row to be checked (for selection state) between each update. If you need a blazing fast grid managing rapid
+| changes, consider avoiding this feature.
 
 
 ## Suppress Model Updates

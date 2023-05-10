@@ -1,18 +1,15 @@
-<framework-specific-section frameworks="angular">
+[[only-angular]]
 |
 |Below is a simple example of a status bar component:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
-<snippet transform={false}>
+|```js
 |import { Component } from "@angular/core";
 |import { IStatusPanelAngularComp } from 'ag-grid-angular';
 |import { IStatusPanelParams } from "ag-grid-community";
 |
 |@Component({
 |    selector: 'status-component',
-|    template: `&lt;input type="button" (click)="onClick()" value="Click Me For Selected Row Count"/>`,
+|    template: `<input type="button" (click)="onClick()" value="Click Me For Selected Row Count"/>`,
 |    styles: [ 'input { padding: 5px; margin: 5px }']
 |})
 |export class ClickableStatusBarComponent implements IStatusPanelAngularComp {
@@ -26,5 +23,4 @@
 |        alert('Selected Row Count: ' + this.params.api.getSelectedRows().length)
 |    }
 |}
-</snippet>
-</framework-specific-section>
+|```

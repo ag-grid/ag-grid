@@ -1,5 +1,5 @@
-<framework-specific-section frameworks="vue">
-<snippet transform={false}>
+[[only-vue]]
+|```js
 |this.gridOptions = {
 |    statusBar: {
 |        statusPanels: [
@@ -17,9 +17,6 @@
 |    },
 |    // ...other properties
 |}
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+|```
+|
 |In the configuration above we've specified a custom component (`myStatusBarComponent`) as well as the provided `agAggregationComponent` component.
-</framework-specific-section>

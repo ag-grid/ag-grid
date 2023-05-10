@@ -1,7 +1,7 @@
-<framework-specific-section frameworks="vue">
-Below is a simple example of cell editor component:
-
-<snippet transform={false}>
+[[only-vue]]
+|Below is a simple example of cell editor component:
+|
+|```js
 |const DoublingEditor = {
 |    template: `<input type="number" v-model="value" ref="input" style="width: 100%" />`,
 |    data() {
@@ -35,11 +35,11 @@ Below is a simple example of cell editor component:
 |        Vue.nextTick(() => this.$refs.input.focus());
 |    }
 |}
-</snippet>
-
-And here is the same cell editor using Vue 3's Composition API:
-
-<snippet transform={false}>
+|```
+|
+|And here is the same cell editor using Vue 3's Composition API:
+|
+|```js
 |export default {
 |     template: `<input type="number" v-model="value" ref="input" style="width: 100%"/>`,
 |     setup(props) {
@@ -78,5 +78,5 @@ And here is the same cell editor using Vue 3's Composition API:
 |         nextTick(() => this.$refs.input.focus());
 |     }
 | };
-</snippet>
-</framework-specific-section>
+|``` 
+|

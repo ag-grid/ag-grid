@@ -12,11 +12,10 @@ Users can change the contents of cells through the following grid features:
 - [Copy / Paste](/clipboard/)
 - [Fill Handle](/range-selection-fill-handle/)
 
-<note>
-This Undo / Redo feature is designed to be a recovery mechanism for user editing mistakes. Performing grid
-operations that change the row / column order, e.g. sorting, filtering and grouping, will clear the
-undo / redo stacks.
-</note>
+[[note]]
+| This Undo / Redo feature is designed to be a recovery mechanism for user editing mistakes. Performing grid
+| operations that change the row / column order, e.g. sorting, filtering and grouping, will clear the
+| undo / redo stacks.
 
 ## Enabling Undo / Redo
 

@@ -68,9 +68,8 @@ Going back to our [stacked column](#stacked-columns) example, if we wanted to no
 normalizedTo: 100
 ```
 
-<note>
-It's possible to use any non-zero value to normalize to.
-</note>
+[[note]]
+| It's possible to use any non-zero value to normalize to.
 
 <chart-example title='Normalized Column Series' name='normalized-column' type='generated'></chart-example>
 
@@ -98,9 +97,8 @@ The above formatter produces an attractive chart where the labels don't stick ou
 
 <chart-example title='Column Series with Labels' name='labeled-column' type='generated'></chart-example>
 
-<note>
-It's best to avoid using labels with grouped columns (or bars), because columns in grouped mode tend to be narrow and often won't fit a label.
-</note>
+[[note]]
+| It's best to avoid using labels with grouped columns (or bars), because columns in grouped mode tend to be narrow and often won't fit a label.
 
 To learn more about label configuration please refer to the [API reference](#reference-AgBarSeriesOptions-label) below.
 

@@ -60,24 +60,21 @@ The chart instance can be obtained from the `chartRef` using the `getChartRef(ch
 
 Here is the implementation:
 
-<snippet transform={false}>
-|function onChartCreated(event) {
-|    const chartRef = gridOptions.api.getChartRef(event.chartId);
-|    const chart = chartRef.chart;
-|}
-</snippet>
-
+```js
+function onChartCreated(event) {
+    const chartRef = gridOptions.api.getChartRef(event.chartId);
+    const chart = chartRef.chart;
+}
+```
 Note in the snippet above, the `chartId` is obtained from the [`ChartCreated`](#chartcreated) event which is supplied to the `onChartCreated` callback. The `chartId` is provided in all chart events.
 
 ## Updating Chart Instance
 
-<framework-specific-section frameworks="javascript">
+[[only-javascript]]
 |The chart instance can be updated using the `AgChart.updateDelta()` method, as described in the [Standalone Charts - API > Create/Update](/charts-api-create-update/#delta-options-update) section.
-</framework-specific-section>
 
-<framework-specific-section frameworks="frameworks">
+[[only-frameworks]]
 |The chart instance can be updated using the `AgChart.updateDelta()` method, as described in the [Standalone Charts - API > Create/Update](/charts-api-create-update/#delta-options-update-1) section.
-</framework-specific-section>
 
 The example below shows how the chart instance can be used, creating a subtitle and updating
 it dynamically as you change the range selection.

@@ -1,7 +1,7 @@
 ---
 title: "Tooltip Component"
 ---
-  
+ 
 Tooltip components allow you to add your own tooltips to the grid's column headers and cells. Use these when the provided tooltip component or the default browser tooltip do not meet your requirements.
 
 ## Simple Tooltip Component
@@ -42,9 +42,8 @@ If you don't want to use the grid's tooltip component, you can use the `enableBr
 
 By default, when you hover on an item, it will take 2 seconds for the tooltip to be displayed and then 10 seconds for the tooltip to hide. If you need to change these delays, the `tooltipShowDelay` and `tooltipHideDelay` configs should be used, which are set in milliseconds.
 
-<note>
-The delays will have no effect if you are using browser tooltips, as they are controlled entirely by the browser.
-</note>
+[[note]]
+| The delays will have no effect if you are using browser tooltips, as they are controlled entirely by the browser.
 
 ## Showing Blank Values
 
@@ -64,9 +63,8 @@ The example below shows both displaying and not displaying the tooltip for blank
 
 When we want to display a header tooltip, we set the `headerTooltip` config as a `string`, and that string will be displayed as the tooltip. However, when working with custom tooltips we set `colDef.tooltipComponent` to assign the column's tooltip component and the `headerTooltip` value will passed to the `params` object.
 
-<note>
-If `headerTooltip` is not present, the tooltip will not be rendered.
-</note>
+[[note]]
+| If `headerTooltip` is not present, the tooltip will not be rendered.
 
 The example below shows how to set a custom tooltip to a header and to a grouped header. Note the following:
 

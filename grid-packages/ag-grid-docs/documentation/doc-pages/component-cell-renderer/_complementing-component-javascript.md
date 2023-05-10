@@ -1,5 +1,6 @@
-<framework-specific-section frameworks="javascript">
-<snippet transform={false}>
+[[only-javascript]]
+|
+|```js
 |// define cellRenderer to be reused
 |const myCellRenderer = params => `<span style="color: ${params.color}">${params.value}</span>`;
 |
@@ -14,5 +15,4 @@
 |colDef.cellRendererParams = {
 |    color: 'irishGreen'
 |}
-</snippet>
-</framework-specific-section>
+|```

@@ -1,5 +1,5 @@
-<framework-specific-section frameworks="react">
-<snippet transform={false} language="jsx">
+[[only-react]]
+|```jsx
 |  const updateStatusBar = () => { ... }
 |
 |  useEffect(() => {
@@ -8,5 +8,4 @@
 |    // Remember to remove the event listener when the component is destroyed
 |    return () => props.api.removeEventListener('modelUpdated', updateStatusBar);
 |  }, []);
-</snippet>
-</framework-specific-section>
+|```

@@ -14,9 +14,8 @@ The following axis types are available to all sparklines:
 - [Number Axis](/sparklines-axis-types/#number-axis) - data is spaced based on the magnitude of the X values.
 - [Time Axis](/sparklines-axis-types/#time-axis) - data is spaced according to the time between data points.
 
-<note>
-The Y values supplied in the sparkline data will always be plotted using the [Number Axis](../sparklines-axis-types/#number-axis) on a continuous scale.
-</note>
+[[note]]
+| The Y values supplied in the sparkline data will always be plotted using the [Number Axis](/sparklines-axis-types/#number-axis) on a continuous scale.
 
 Here's an illustration showing how sparklines can look visually different when different axis types are configured.
 

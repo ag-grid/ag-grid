@@ -1,4 +1,4 @@
-<framework-specific-section frameworks="react">
+[[only-react]]
 |## Cell Editor Component
 |
 |When a React component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell &
@@ -6,10 +6,7 @@
 |
 |The editor interface is as follows:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<snippet transform={false} language="ts">
+|```ts
 |interface ICellEditorReactComp {
 |
 |    // Mandatory - Return the final value - called by the grid once after editing is complete
@@ -32,20 +29,13 @@
 |    // If doing full line edit, then gets called when focus is leaving the editor
 |    focusOut?(): boolean;
 |}
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<note>
-|Note that if you're using Hooks for Grid Components that have lifecycle/callbacks that the
-|grid will call (for example, the `getValue` callback from an Editor Component), then you'll need to expose them with
-|`forwardRef` & `useImperativeHandle`.
+|```
+|[[note]]
+||Note that if you're using Hooks for Grid Components that have lifecycle/callbacks that the
+||grid will call (for example, the `getValue` callback from an Editor Component), then you'll need to expose them with
+||`forwardRef` & `useImperativeHandle`.
+||
+||Please refer to the [Hook](/react-hooks/) documentation (or the examples on this page) for more information.
 |
-|Please refer to the [Hook](/react-hooks/) documentation (or the examples on this page) for more information.
-</note>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-The interface for values available on component creation (via `props`) is `ICellEditorParams`:
-</framework-specific-section>
+|The interface for values available on component creation (via `props`) is `ICellEditorParams`:
 

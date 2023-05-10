@@ -1,14 +1,12 @@
-<framework-specific-section frameworks="vue">
+[[only-vue]]
 |## Custom Filter Interface
 |
 |When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell &
 |row values available to you via `this.params`.
 |
 |The interface for a custom filter component is as follows:
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-<snippet transform={false} language="ts">
+|
+|```ts
 |interface IFilter {
 |
 |    // Return true if the filter is active. If active then 1) the grid will show the filter icon in the column
@@ -70,10 +68,8 @@
 |    // before the component is reopened.
 |    afterGuiDetached?(): void;
 |}
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
+|```
+|
 |### Custom Filter Parameters
 |
 |When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell and 
@@ -81,4 +77,4 @@
 |
 |If custom params are provided via the `colDef.filterParams` property, these
 |will be additionally added to the params object, overriding items of the same name if a name clash exists.
-</framework-specific-section>
+|

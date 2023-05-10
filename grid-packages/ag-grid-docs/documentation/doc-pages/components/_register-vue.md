@@ -1,4 +1,4 @@
-<framework-specific-section frameworks="vue">
+[[only-vue]]
 |
 |## Registering Custom Components
 |
@@ -19,16 +19,13 @@
 |
 |Inline Custom Components can only be registered within the Grid by name:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-<snippet transform={false}>
-|&lt;template>
-|   &lt;ag-grid-vue :columnDefs="columnDefs" ...other properties>
-|   &lt;/ag-grid-vue>
-|&lt;/template>
+|```js
+|<template>
+|   <ag-grid-vue :columnDefs="columnDefs" ...other properties>
+|   </ag-grid-vue>
+|</template>
 |
-|&lt;script>
+|<script>
 |//...other imports
 |import {AgGridVue} from "ag-grid-vue3";
 |
@@ -36,7 +33,7 @@
 |   components: {
 |       AgGridVue,
 |       CubeComponent: {
-|           template: '&lt;span>{{ valueCubed() }}&lt;/span>',
+|           template: '<span>{{ valueCubed() }}</span>',
 |           methods: {
 |               valueCubed() {
 |                   return this.params.value * this.params.value * this.params.value;
@@ -57,27 +54,22 @@
 |   }
 |   //...other properties & methods
 |}
-|&lt;/script>
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
+|</script>
+|```
+|
 |## Registering Non-Inline Custom Components
 |
 |### 1. By Name
 | To use a component within the grid you will reference components by **case-sensitive**
 | name, for example:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-<snippet transform={false}>
-|&lt;template>
-|   &lt;ag-grid-vue ...other properties>
-|   &lt;/ag-grid-vue>
-|&lt;/template>
+|```js
+|<template>
+|   <ag-grid-vue ...other properties>
+|   </ag-grid-vue>
+|</template>
 |
-|&lt;script>
+|<script>
 |//...other imports
 |import {AgGridVue} from "ag-grid-vue3";
 |import CubeComponent from './CubeComponent.vue';
@@ -100,43 +92,32 @@
 |   }
 |   //...other properties & methods
 |}
-|&lt;/script>
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
+|</script>
+|```
 |### 2. By Direct Reference
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-<note>
-|**Deprecated.**
 |
-|This approach is supported but not recommend and will be removed in a future release.
-|
-</note>
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
+|[[note]]
+||<strong>Deprecated.</strong>
+||
+||This approach is supported but not recommend and will be removed in a future release.
+||
 |When registering components within the Grid by direct reference the target components *must* be wrapped in `Vue.extend(...)` (for Vue 2), or
 |`defineComponent(...)` (for Vue 3):
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-<snippet transform={false}>
-|&lt;template>
-|   &lt;ag-grid-vue ...other properties>
-|   &lt;/ag-grid-vue>
-|&lt;/template>
 |
-|&lt;script>
+|```js
+|<template>
+|   <ag-grid-vue ...other properties>
+|   </ag-grid-vue>
+|</template>
+|
+|<script>
 |//...other imports
 |import Vue from "vue";
 |import {AgGridVue} from "ag-grid-vue3";
 |
 |// component wrapped in Vue.extend for direct reference
 |const CubeComponent = Vue.extend({
-|   template: '&lt;span>{{ valueCubed() }}&lt;/span>',
+|   template: '<span>{{ valueCubed() }}</span>',
 |   methods: {
 |       valueCubed() {
 |           return this.params.value * this.params.value * this.params.value;
@@ -163,6 +144,4 @@
 |   }
 |   //...other properties & methods
 |}
-|&lt;/script>
-</snippet>
-</framework-specific-section>
+|</script>

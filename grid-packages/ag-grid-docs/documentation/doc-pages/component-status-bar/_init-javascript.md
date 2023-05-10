@@ -1,5 +1,5 @@
-<framework-specific-section frameworks="javascript">
-<snippet transform={false}>
+[[only-javascript]]
+|```js
 |class ClickableStatusBarComponent() {
 |  init(params) {
 |    this.params = params;
@@ -13,5 +13,4 @@
 |  
 |   updateStatusBar(){ ... }
 |}
-</snippet>
-</framework-specific-section>
+|```

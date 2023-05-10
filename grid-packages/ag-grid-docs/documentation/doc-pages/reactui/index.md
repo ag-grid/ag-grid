@@ -30,9 +30,8 @@ If you want to profile (using React Developer Tools) the example above, do the f
 1. From inside Plunker, open in a new tab.
 1. Open React Developer Tools
 
-<note>
-We do not advise using the React Developer Tools on the AG Grid website, or inside Plunker, as both the AG Grid website and Plunker are also written in React, which complicates the React Developer Tools.
-</note>
+[[note]]
+| We do not advise using the React Developer Tools on the AG Grid website, or inside Plunker, as both the AG Grid website and Plunker are also written in React, which complicates the React Developer Tools.
 
 As the grid is written in React, we welcome trashing it using React profiling tools for how well it plays alongside your application with regards component refresh and wasted render cycles.
 

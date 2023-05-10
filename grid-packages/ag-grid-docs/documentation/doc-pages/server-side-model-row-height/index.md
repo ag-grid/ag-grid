@@ -13,9 +13,8 @@ To enable [Dynamic Row Height](/row-height/) when using the Server-Side Row Mode
 
 <grid-example title='Dynamic Row Height Example' name='dynamic-row-height' type='generated' options='{ "enterprise": true, "exampleHeight": 630, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
-<note>
-Ensure `maxBlocksInCache` is not set when using dynamic row height.
-</note>
+[[note]]
+| Ensure `maxBlocksInCache` is not set when using dynamic row height.
 
 ## Auto Row Height
 
@@ -30,9 +29,8 @@ details on these properties.
 
 <grid-example title='Auto Row Height Example' name='auto-row-height' type='generated' options='{ "enterprise": true, "exampleHeight": 610, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
-<note>
-Ensure `maxBlocksInCache` is not set when using auto row height.
-</note>
+[[note]]
+| Ensure `maxBlocksInCache` is not set when using auto row height.
 
 ## Next Up
 

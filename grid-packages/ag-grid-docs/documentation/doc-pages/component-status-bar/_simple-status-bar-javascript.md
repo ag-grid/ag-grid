@@ -1,11 +1,8 @@
-<framework-specific-section frameworks="javascript">
+[[only-javascript]]
 |
 |Below is a simple example of a status bar component:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false}>
+|```js
 |class ClickableStatusBarComponent {
 |    init(params) {
 |        this.params = params;
@@ -31,5 +28,4 @@
 |        alert('Selected Row Count: ' + this.params.api.getSelectedRows().length)
 |    }
 |}
-</snippet>
-</framework-specific-section>
+|```

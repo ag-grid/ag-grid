@@ -1,5 +1,6 @@
-<framework-specific-section frameworks="vue">
-<snippet transform={false}>
+[[only-vue]]
+|
+|```js
 |const KEY_LEFT = 'ArrowLeft';
 |const KEY_UP = 'ArrowUp';
 |const KEY_RIGHT = 'ArrowRight';
@@ -44,5 +45,4 @@
 |        this.value = this.params.value;
 |    }
 |}
-</snippet>
-</framework-specific-section>
+|```

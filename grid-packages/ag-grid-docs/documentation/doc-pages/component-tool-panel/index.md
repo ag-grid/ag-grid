@@ -2,7 +2,7 @@
 title: "Tool Panel Component"
 enterprise: true
 ---
- 
+
 Custom Tool Panel Components can be included into the grid's Side Bar. Implement these when you require more Tool Panels to meet your application requirements.
 
 ## Simple Tool Panel Component
@@ -11,7 +11,7 @@ md-include:simple-tool-panel-javascript.md
 md-include:simple-tool-panel-angular.md
 md-include:simple-tool-panel-react.md
 md-include:simple-tool-panel-vue.md
- 
+
 ## Example: 'Custom Stats' Tool Panel Component 
 
 The example below provides a 'Custom Stats' Tool Panel to demonstrates how to create and register a Custom Tool Panel Component with the grid and include it the Side Bar:
@@ -22,7 +22,7 @@ md-include:component-interface-javascript.md
 md-include:component-interface-angular.md
 md-include:component-interface-react.md
 md-include:component-interface-vue.md
- 
+
 <interface-documentation interfaceName='IToolPanelParams' ></interface-documentation>
 
 ## Registering Tool Panel Components

@@ -1,4 +1,4 @@
-<framework-specific-section frameworks="react">
+[[only-react]]
 |
 | ## Properties, Events, Callbacks and APIs
 |
@@ -9,11 +9,8 @@
 |
 | So in summary, in React, everything is done via props. Here is an example:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<snippet transform={false} language="jsx">
-| &lt;AgGridReact
+| ```jsx
+| <AgGridReact
 |    ref={gridRef} // useful for accessing the grid's API
 |
 |    rowSelection="multiple" // simple attributes, not bound to any state or prop
@@ -32,11 +29,8 @@
 |    // inside onGridReady, you receive the grid APIs if you want them
 |    onGridReady={onGridReady}
 | />
-</snippet>
-</framework-specific-section>
-
-
-<framework-specific-section frameworks="react">
+| ```
+|
 | ## React Hooks
 |
 | When setting properties, it's best to treat non-simple types as immutable objects (e.g. by using `useState` or `useMemo`). See [React Hooks](/react-hooks/) for best practices on using React Hooks with the grid.
@@ -45,10 +39,7 @@
 |
 | The API of the grid can be referenced through the component's React Reference.
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<snippet transform={false} language="jsx">
+| ```jsx
 | // React reference
 | const gridRef = useRef();
 |
@@ -66,21 +57,17 @@
 |     gridRef.columnApi.resetColumnState();
 | }
 |
-| &lt;button click={myListener}>Do Something&lt;/button>
-| &lt;AgGridReact
+| <button click={myListener}>Do Something</button>
+| <AgGridReact
 |     ref={gridRef}
 |     //...
 | />
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
+| ```
+|
 | The Grid API and Column API are also provided as part of all the grid events as well as a parameters
 | to all grid callbacks.
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<snippet transform={false} language="jsx">
+|
+| ```jsx
 | // access API from event object
 | onGridReady = e => {
 |     e.api.sizeColumnsToFit();
@@ -93,23 +80,18 @@
 |     e.columnApi.resetColumnState();
 | }
 |
-| &lt;AgGridReact
+| <AgGridReact
 |     onGridReady={onGridReady} // register event listener
 |     sendToClipboard={sendToClipboard} // register callback
 |     //...
 | />
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<note>
-| Given React is asynchronous, the grid may not be initialised when you access the API from the
-| React reference. If you want to access the API as soon as it's available (ie do initialisation
-| work), consider listening to the `gridReady` event and doing such initialisation there.
-</note>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
+| ```
+|
+|[[note]]
+|| Given React is asynchronous, the grid may not be initialised when you access the API from the
+|| React reference. If you want to access the API as soon as it's available (ie do initialisation
+|| work), consider listening to the `gridReady` event and doing such initialisation there.
+|
 | ## Grid Options
 |
 | The `gridOptions` object is a 'one stop shop' for the entire interface into the grid, commonly used if using plain JavaScript.
@@ -118,10 +100,8 @@
 | The GridOptions interface supports a generic parameter for row data as detailed in [Typescript Generics](/typescript-generics).
 |
 | The example below shows the different types of items available on `gridOptions`.
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<snippet transform={false} language="jsx">
+|
+| ```js
 | const gridOptions = {
 |     // PROPERTIES
 |     // Objects like myRowData and myColDefs would be created in your application
@@ -139,25 +119,21 @@
 |     // CALLBACKS
 |     getRowHeight: (params) => 25
 | }
-| &lt;AgGridReact
-|     gridOptions={gridOptions}
+| ```
 |
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
+| ```jsx
+| <AgGridReact
+|     gridOptions={gridOptions}
+| ```
+|
 | Note the if using Grid Options, the grid will not react to property changes. For example `gridOptions.rowData` will only get used once when the grid is initialised, not if you change `gridOptions.rowData` after the grid is initialised. For this reason, while using React, it's best only use Grid Options for properties that do not change.
 |
 | Once the grid is initialised, you will also have access to the grid API (`api`) and column API (`columnApi`) on the `gridOptions` object as shown:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<snippet transform={false} language="jsx">
+| ```js
 | // refresh the grid
 | gridOptions.api.redrawRows();
 |
 | // resize columns in the grid to fit the available space
 | gridOptions.columnApi.sizeColumnsToFit();
-</snippet>
-</framework-specific-section>
+| ```

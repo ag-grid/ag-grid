@@ -1,14 +1,11 @@
-<framework-specific-section frameworks="vue">
+[[only-vue]]
 |## Declaring Custom Components
 | VueJS components can be defined as either simple inline components, or as full/complex
 | externalised ones (i.e in a separate file).
 |
 | ### "Inline" Components
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-<snippet transform={false}>
+|```js
 |export default {
 |   data() {
 |       return {
@@ -18,7 +15,7 @@
 |   components: {
 |       AgGridVue,              // the actual AgGridVue Grid component
 |       CubeComponent: {        // an inline custom component
-|           template: '&lt;span>{{ valueCubed() }}&lt;/span>',
+|           template: '<span>{{ valueCubed() }}</span>',
 |           methods: {
 |               valueCubed() {
 |                   return this.params.value * this.params.value * this.params.value;
@@ -27,59 +24,47 @@
 |       }
 |   }
 |}
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
+|```
+|
 | Note here that we can define the property name either quoted or not but note that in
 | order to reference these components in your column definitions you'll need to provide
 | them as **case-sensitive** strings.
 |
 | ### Locally Declared Components
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-<snippet transform={false}>
+|
+| ```js
 |const SquareComponent = {
-|    template: '&lt;span>{{ valueSquared() }}&lt;/span>',
+|    template: '<span>{{ valueSquared() }}</span>',
 |    methods: {
 |        valueSquared() {
 |            return this.params.value * this.params.value;
 |        }
 |    }
 |};
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
+| ```
+|
 | ### Externalised JavaScript Components (.js files)
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-<snippet transform={false}>
+|
+|```js
 |// SquareComponent.js
 |export default {
-|    template: '&lt;span>{{ valueSquared() }}&lt;/span>',
+|    template: '<span>{{ valueSquared() }}</span>',
 |    methods: {
 |        valueSquared() {
 |            return this.params.value * this.params.value;
 |        }
 |    }
 |};
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-| ### Externalised Single File Components (SFC / .vue files)
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-<snippet transform={false}>
-| &lt;template>
-|     &lt;span class="currency">{{ params.value | currency('EUR') }}&lt;/span>
-| &lt;/template>
+| ```
 |
-| &lt;script>
+| ### Externalised Single File Components (SFC / .vue files)
+|
+| ```jsx
+| <template>
+|     <span class="currency">{{ params.value | currency('EUR') }}</span>
+| </template>
+|
+| <script>
 | export default {
 |     filters: {
 |         currency(value, symbol) {
@@ -91,37 +76,28 @@
 |         }
 |     }
 | };
-| &lt;/script>
+| </script>
 |
-| &lt;style scoped>
+| <style scoped>
 |     .currency {
 |         color: blue;
 |     }
-| &lt;/style>
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
+| </style>
+| ```
+|
 | Note that in this case the component name will match the actual reference, but you can
 | specify a different one if you choose:
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-<snippet transform={false}>
+|
+| ```js
 | components: {
 |     AgGridVue,
 |     'MySquareComponent': SquareComponent
 | }
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-<note>
-|All of the above works if you're going to register components by Name (see below). If you wish to register components
-|by direct reference then you will need to wrap your component with `Vue.extend(...your component...)` (for Vue 2), or `defineComponent(...your component...)`
-|(for Vue 3).
-|
-|We highly recommend registration by name for the flexibility it provides - all of our examples use registration by name.
-|
-</note>
-</framework-specific-section>
+| ```
+|[[note]]
+||All of the above works if you're going to register components by Name (see below). If you wish to register components
+||by direct reference then you will need to wrap your component with `Vue.extend(...your component...)` (for Vue 2), or `defineComponent(...your component...)`
+||(for Vue 3).
+||
+||We highly recommend registration by name for the flexibility it provides - all of our examples use registration by name.
+||

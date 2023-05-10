@@ -1,7 +1,7 @@
-<framework-specific-section frameworks="angular">
-Below is a simple example of cell renderer class:
-
-<snippet transform={false}>
+[[only-angular]]
+|Below is a simple example of cell renderer class:
+|
+|```js
 |import { AfterViewInit, Component, ViewChild, ViewContainerRef } from "@angular/core";
 |import { ICellEditorAngularComp } from "ag-grid-angular";
 |
@@ -46,5 +46,4 @@ Below is a simple example of cell renderer class:
 |        return this.value > 1000;
 |    }
 |}
-</snippet>
-</framework-specific-section>
+|```

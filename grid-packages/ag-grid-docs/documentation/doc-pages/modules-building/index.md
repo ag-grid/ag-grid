@@ -4,7 +4,7 @@ title: "Building Applications With AG Grid Modules"
 
 In this section we demonstrate how you can cherry pick modules to provide the features you need with a reduced application bundle size.
 
-<framework-specific-section frameworks="frameworks">
+[[only-frameworks]]
 | ## Introduction
 |
 | In order to use selective AG Grid modules within your application you need to do two things:
@@ -13,7 +13,8 @@ In this section we demonstrate how you can cherry pick modules to provide the fe
 | - Register the modules you require with the Grid
 |
 | That's it! In the sections below we will expand on these points with examples.
-||
+
+[[only-frameworks]]
 | ### Choosing Our Modules
 |
 | You can refer to the complete list of modules [here](/modules/#modules) but for our purposes we're going to assume that the application we're building requires the following features:
@@ -26,10 +27,7 @@ In this section we demonstrate how you can cherry pick modules to provide the fe
 |
 | This is what our `package.json` file will look like based on the requirements above:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="frameworks">
-<snippet transform={false}>
+| ```js
 | "dependencies": {
 |     "@ag-grid-community/client-side-row-model": "~@AG_GRID_VERSION@",
 |     "@ag-grid-enterprise/excel-export": "~@AG_GRID_VERSION@",
@@ -37,43 +35,30 @@ In this section we demonstrate how you can cherry pick modules to provide the fe
 |
 |     //...other dependencies...
 | }
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="frameworks">
+| ```
+|
 | ### Registering Our Modules
 |
 | Now that these modules are available to us we need to import them within our application, and then register them with the Grid:
-</framework-specific-section>
-
-<framework-specific-section frameworks="frameworks">
-<snippet transform={false}>
+|
+| ```js
 | import { ModuleRegistry } from '@ag-grid-community/core';
 | import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 | import { MenuModule } from '@ag-grid-enterprise/menu';
 | import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 |
 | ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule]);
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="frameworks">
-<note>
-| You do not need to register framework modules (ie. `@ag-grid-community/angular`, `@ag-grid-community/react`, `@ag-grid-community/vue` etc).
-</note>
-</framework-specific-section>
-
-<framework-specific-section frameworks="frameworks">
+| ```
+|
+| [[note]]
+| | You do not need to register framework modules (ie. `@ag-grid-community/angular`, `@ag-grid-community/react`, `@ag-grid-community/vue` etc).
+|
 | And that's all that's required. Below is an example using the above configuration for your framework.
 | 
 | ### Example
-</framework-specific-section>
-
-<framework-specific-section frameworks="frameworks">
-<grid-example title='Using Modules' name='module-grid' type='multi' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel"], "showCode": true }'></grid-example>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+| <grid-example title='Using Modules' name='module-grid' type='multi' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel"], "showCode": true }'></grid-example>
+|
+[[only-javascript]]
 | ## Building Your Own UMD Bundle
 |
 | `ag-grid-community` and `ag-grid-enterprise` provide UMD bundles with their distribution for ease of use, and these are great for getting started and making use of all features with very little effort.
@@ -90,10 +75,7 @@ In this section we demonstrate how you can cherry pick modules to provide the fe
 |
 | This is what our `package.json` file will look like based on the requirements above:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false}>
+| ```js
 | "dependencies": {
 |     "@ag-grid-community/client-side-row-model": "~@AG_GRID_VERSION@",
 |     "@ag-grid-enterprise/excel-export": "~@AG_GRID_VERSION@",
@@ -101,10 +83,7 @@ In this section we demonstrate how you can cherry pick modules to provide the fe
 |
 |     //...other dependencies...
 | }
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+| ```
 |
 | ### Specify What Is Included In The Bundle
 |
@@ -115,10 +94,7 @@ In this section we demonstrate how you can cherry pick modules to provide the fe
 |
 | Let's create a file called `main.js` that will serve as our entry point:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false}>
+| ```js
 | export * from '@ag-grid-community/core';
 | export * from '@ag-grid-enterprise/core';
 | export * from '@ag-grid-community/client-side-row-model';
@@ -136,18 +112,13 @@ In this section we demonstrate how you can cherry pick modules to provide the fe
 |
 | import '@ag-grid-community/styles/ag-grid.css';
 | import '@ag-grid-community/styles/ag-theme-alpine.css';
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+| ```
+|
 | Note that we've included the Module Registration step here - we do this so that consumers of our UMD bundle won't have to. This is a convenience step but is recommended for UMD bundles.
 |
 | Next we'll create a Webpack configuration file:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false}>
+| ```js
 | module.exports = {
 |     mode: 'production',
 |     entry: path.resolve(__dirname, '../src/main.js'),
@@ -158,10 +129,8 @@ In this section we demonstrate how you can cherry pick modules to provide the fe
 |         libraryTarget: 'umd'
 |     }
 | }
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
+| ```
+|
 | There are two main items here:
 |
 | - `entry`: We specify the `main.js` entry file we created that will determine what to include in our bundle.
@@ -169,26 +138,19 @@ In this section we demonstrate how you can cherry pick modules to provide the fe
 |
 | You can then build your bundle as follows:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false} language="bash">
+| ```bash
 | webpack --config config/webpack.prod.js
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-| Which will result in a file called `dist/bundle.umd.js` being created, which we can then use as follows:
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false} language="html">
-| &lt;!DOCTYPE html>
-| &lt;html>
-| &lt;head>
-|     &lt;script src="./dist/bundle.umd.js">&lt;/script>
+| ```
 |
-|     &lt;script>
+| Which will result in a file called `dist/bundle.umd.js` being created, which we can then use as follows:
+|
+| ```html
+| <!DOCTYPE html>
+| <html>
+| <head>
+|     <script src="./dist/bundle.umd.js"></script>
+|
+|     <script>
 |         var columnDefs = [
 |             { field: 'make' },
 |             { field: 'model' },
@@ -213,11 +175,11 @@ In this section we demonstrate how you can cherry pick modules to provide the fe
 |             var gridDiv = document.querySelector('#myGrid');
 |             new agGrid.Grid(gridDiv, gridOptions);
 |         });
-|     &lt;/script>
-| &lt;/head>
-| &lt;body>
-|     &lt;div id="myGrid" style="height: 200px; width:500px;" class="ag-theme-alpine">&lt;/div>
-| &lt;/body>
-| &lt;/html>
-</snippet>
-</framework-specific-section>
+|     </script>
+| </head>
+| <body>
+|     <div id="myGrid" style="height: 200px; width:500px;" class="ag-theme-alpine"></div>
+| </body>
+| </html>
+| ```
+|

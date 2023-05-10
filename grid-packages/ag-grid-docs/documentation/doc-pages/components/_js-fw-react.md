@@ -1,5 +1,5 @@
-<framework-specific-section frameworks="react">
-## Mixing JavaScript and React
+[[only-react]]
+|## Mixing JavaScript and React
 |
 |When providing Custom Components you have a choice of the following:
 |1. Provide an AG Grid component as a React Component.
@@ -7,10 +7,7 @@
 |
 |The following code snippet shows how both JavaScript and React Components can be used at the same time:
 |
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<snippet transform={false} language="jsx">
+|```jsx
 |//...other imports
 |import JavascriptComponent from './JavascriptComponent.js';
 |import ReactComponent from './ReactComponent';
@@ -46,14 +43,14 @@
 |   ], []);
 |
 |    return (
-|        &lt;div className="ag-theme-alpine">
-|            &lt;AgGridReact
+|        <div className="ag-theme-alpine">
+|            <AgGridReact
 |               components={components}
 |               columnDefs={columnDefs}
 |               ...other properties
 |            />
-|        &lt;/div>
+|        </div>
 |    );
 |};
-</snippet>
-</framework-specific-section>
+|```
+|

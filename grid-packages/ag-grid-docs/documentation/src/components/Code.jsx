@@ -60,8 +60,7 @@ const GrammarMap = {
  * This uses Prism.highlight() which is the most-performant method for syntax highlighting because it only executes a
  * small part of the Prism lifecycle.
  */
-const CodeWithoutPrismPlugins = ({ code, language }) => {
-    return <code dangerouslySetInnerHTML={{__html: Prism.highlight(code, GrammarMap[language], language)}}/>;
-}
+const CodeWithoutPrismPlugins = ({ code, language }) =>
+    <code dangerouslySetInnerHTML={{ __html: Prism.highlight(code, GrammarMap[language], language) }} />;
 
 export default memo(Code);

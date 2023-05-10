@@ -1,9 +1,7 @@
-<framework-specific-section frameworks="vue">
+[[only-vue]]
 |Below is a simple example of cell renderer component:
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-<snippet transform={false}>
+|
+|```js
 |export default {
 |    template: `<span>{{ displayValue }}</span>`,
 |    data: function () {
@@ -15,15 +13,11 @@
 |        this.displayValue = new Array(this.params.value).fill('#').join('');
 |    },
 |};
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
+|```
+|
 |And below is the example using Vue 3's Composition API:
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-<snippet transform={false}>
+|
+|```js
 |export default {
 |    template: `<span>{{ displayValue }}</span>`,
 |    setup(props) {
@@ -33,5 +27,6 @@
 |        }
 |    }
 |};
-</snippet>
-</framework-specific-section>
+|```
+|
+ 

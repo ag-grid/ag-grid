@@ -122,15 +122,14 @@ The behaviour of paste changes depending whether you have a single cell or a ran
 - When a **single cell is selected**. The paste will proceed starting at the selected cell if multiple cells are to be pasted.
 - When a **range of cells selected**. If the selected range being pasted is larger than copied range, it will repeat if it fits evenly, otherwise it will just copy the cells into the start of the range.
 
-<note>
-The 'paste' operation in the context menu is not possible and hence always disabled.
-It is not possible because of a browser security restriction that JavaScript cannot
-take data from the clipboard without the user explicitly doing a paste command from the browser
-(e.g. <kbd>Ctrl</kbd>+<kbd>V</kbd> or from the browser menu). If JavaScript could do this, then websites could steal
-data from the client via grabbing from the clipboard maliciously. The reason why the grid keeps
-the paste in the menu as disabled is to indicate to the user that paste is possible and it provides
-the shortcut as a hint to the user. This is also why the API cannot copy from clipboard.
-</note>
+[[note]]
+| The 'paste' operation in the context menu is not possible and hence always disabled.
+| It is not possible because of a browser security restriction that JavaScript cannot
+| take data from the clipboard without the user explicitly doing a paste command from the browser
+| (e.g. <kbd>Ctrl</kbd>+<kbd>V</kbd> or from the browser menu). If JavaScript could do this, then websites could steal
+| data from the client via grabbing from the clipboard maliciously. The reason why the grid keeps
+| the paste in the menu as disabled is to indicate to the user that paste is possible and it provides
+| the shortcut as a hint to the user. This is also why the API cannot copy from clipboard.
 
 ## Disabling Paste
 
@@ -207,9 +206,8 @@ By default, the grid will use `\t` (tab) as the field delimiter. This is to keep
 
 The grid's selection and copy features replace the built-in browser behaviour for selecting and copying text. If you want to use the normal browser behaviour instead, you should set `enableCellTextSelection=true` in the gridOptions. It's important to mention that this config should be combined with `ensureDomOrder=true` also in the gridOptions.
 
-<note>
-This is not an enterprise config and can be used at any time to enable cell text selection.
-</note>
+[[note]]
+| This is not an enterprise config and can be used at any time to enable cell text selection.
 
 <grid-example title='Using Browser text selection' name='cellTextSelection' type='generated'></grid-example>
 

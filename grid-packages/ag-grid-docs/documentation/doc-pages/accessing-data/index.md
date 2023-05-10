@@ -62,13 +62,12 @@ Sometimes you may want to iterate through all the Row Nodes in the grid. This ca
 | });
 </snippet>
 
-<note>
-All the methods above work with the Client-Side Row Model, i.e. the default [Row Model](../row-models/).
-For all the other row models (i.e. [Viewport](../viewport/),
-[Infinite](../infinite-scrolling/) and [Server-Side](../server-side-model/)) the only method
-that is supported is `api.forEachNode()` and that will return back Row Nodes that are loaded into
-browser memory only (as each of these row models use a data source to lazy load rows).
-</note>
+[[note]]
+| All the methods above work with the Client-Side Row Model, i.e. the default [Row Model](/row-models/).
+| For all the other row models (i.e. [Viewport](/viewport/),
+| [Infinite](/infinite-scrolling/) and [Server-Side](/server-side-model/)) the only method
+| that is supported is `api.forEachNode()` and that will return back Row Nodes that are loaded into
+| browser memory only (as each of these row models use a data source to lazy load rows).
 
 ## Example Using For-Each Methods
 

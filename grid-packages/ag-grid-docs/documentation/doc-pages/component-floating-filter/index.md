@@ -2,23 +2,22 @@
 title: "Floating Filter Component"
 ---
 
-<framework-specific-section frameworks="javascript,angular,vue">
+[[only-javascript-or-angular-or-vue]]
 |Floating Filter Components allow you to add your own floating filter types to AG Grid. You can create a Custom Floating Filter Component to work alongside one of the grid's Provided Filters, or alongside a Custom Filter.
-</framework-specific-section>
 
-<framework-specific-section frameworks="react">
-<video-section id="CxwfX4KodaM" title="React Floating Filters" header="true">
-Floating Filter Components allow you to add your own floating filter types to AG Grid. You can create a Custom Floating Filter Component to work alongside one of the grid's Provided Filters, or alongside a Custom Filter.
-</video-section>
-</framework-specific-section>
+[[only-react]]
+|<video-section id="CxwfX4KodaM" title="React Floating Filters" header="true">
+|Floating Filter Components allow you to add your own floating filter types to AG Grid. You can create a Custom Floating Filter Component to work alongside one of the grid's Provided Filters, or alongside a Custom Filter.
+|</video-section>
+
 
 This page focuses on writing your own floating filter components. To see general information about floating filters in AG Grid see [floating filters](/floating-filters/).
 
 ## Simple Floating Filter 
  
-md-include:simple-floating-filter-javascript.md 
-md-include:simple-floating-filter-angular.md 
-md-include:simple-floating-filter-react.md 
+md-include:simple-floating-filter-javascript.md
+md-include:simple-floating-filter-angular.md
+md-include:simple-floating-filter-react.md
 md-include:simple-floating-filter-vue.md
 
 ## Example: Custom Floating Filter
@@ -97,40 +96,29 @@ This example uses the previous custom filter but implementing the `getModelAsStr
 
 <grid-example title='Custom Filter Only' name='custom-filter' type='generated'></grid-example>
 
-<framework-specific-section frameworks="angular">
+[[only-angular]]
 | ## Sliding Floating Filters
 |
 | The below example shows how to create a custom floating filter re-using the out-of-the-box Number filter with Angular.
-</framework-specific-section>
+|
+| <grid-example title='Angular Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370, "extras": ["bootstrap"], "includeNgFormsModule" : true }'></grid-example>
 
-<framework-specific-section frameworks="angular">
-<grid-example title='Angular Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370, "extras": ["bootstrap"], "includeNgFormsModule" : true }'></grid-example>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
+[[only-react]]
 | ## Sliding Floating Filters
 |
 | The below example shows how to create a custom floating filter re-using the out-of-the-box Number filter with React.
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<grid-example title='React Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370, "onlyShow": "react", "extras": ["bootstrap"] }'></grid-example>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
+|
+| <grid-example title='React Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370, "onlyShow": "react", "extras": ["bootstrap"] }'></grid-example>
+|
 | Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please
-| see [here](../react-hooks/) for more information.
-</framework-specific-section>
+| see [here](/react-hooks/) for more information.
 
-<framework-specific-section frameworks="vue">
+[[only-vue]]
 | ## Sliding  Floating Filters
 |
 | The below example shows how to create a custom floating filter re-using the out-of-the-box Number filter with Vue.
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-<grid-example title='Vue Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370, "extras": ["bootstrap"] }'></grid-example>
-</framework-specific-section>
+|
+| <grid-example title='Vue Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370, "extras": ["bootstrap"] }'></grid-example>
 
 ## Complex example with jQuery
 

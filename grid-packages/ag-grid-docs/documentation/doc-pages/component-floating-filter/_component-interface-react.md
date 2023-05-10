@@ -1,11 +1,9 @@
-<framework-specific-section frameworks="react">
+[[only-react]]
 |## Custom Floating Filter Interface
 |
 |The interface for a custom filter component is as follows:
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<snippet transform={false} language="ts">
+|
+|```ts
 |interface IFloatingFilterReactComp {
 |    // Gets called every time the parent filter changes. Your floating
 |    // filter would typically refresh its UI to reflect the new filter
@@ -21,20 +19,15 @@
 |    afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 |
 |}
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<note>
-|Note that if you're using Hooks for Grid Components that have lifecycle/callbacks that the
-|grid will call (for example, the `onParentModelChanged` callback from an Editor Component), then you'll need to expose them with
-|`forwardRef` & `useImperativeHandle`.
+|```
 |
+|[[note]]
+||Note that if you're using Hooks for Grid Components that have lifecycle/callbacks that the
+||grid will call (for example, the `onParentModelChanged` callback from an Editor Component), then you'll need to expose them with
+||`forwardRef` & `useImperativeHandle`.
+||
 ||Please refer to the [Hook](/react-hooks/) documentation (or the examples on this page) for more information.
-</note>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
+|
 |### Custom Filter Parameters
 |
 |When a React component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell &
@@ -42,4 +35,4 @@
 |
 |If custom params are provided via the `colDef.floatingFilterComponentParams` property, these
 |will be additionally added to the params object, overriding items of the same name if a name clash exists.
-</framework-specific-section>
+|

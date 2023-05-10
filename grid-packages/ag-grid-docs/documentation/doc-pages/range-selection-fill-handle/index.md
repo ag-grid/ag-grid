@@ -22,9 +22,8 @@ const gridOptions = {
 }
 </snippet>
 
-<note>
-It's important to note that if you enable both `enableFillHandle` and `enableRangeHandle`, the Fill Handle will take precedence.
-</note>
+[[note]]
+| It's important to note that if you enable both `enableFillHandle` and `enableRangeHandle`, the Fill Handle will take precedence.
 
 ## Default Fill Handle
 The default Fill Handle behaviour will be as close as possible to other spreadsheet applications. Note the following:
@@ -103,9 +102,8 @@ const gridOptions = {
 ### FillOperationParams
 <interface-documentation interfaceName='FillOperationParams'></interface-documentation>
 
-<note>
-If a `fillOperation` callback is provided, the fill handle will always run it. If the current values are not relevant to the `fillOperation` function that was provided, `false` should be returned to allow the grid to process the values as it normally would.
-</note>
+[[note]]
+| If a `fillOperation` callback is provided, the fill handle will always run it. If the current values are not relevant to the `fillOperation` function that was provided, `false` should be returned to allow the grid to process the values as it normally would.
 
 The example below will use the custom `fillOperation` for the **Day of the week** column, but it will use the default operation for any other column.
 
@@ -115,9 +113,8 @@ The example below will use the custom `fillOperation` for the **Day of the week*
 
 The example below will use the custom `fillOperation` to prevent values in the **Country** column from being altered by the Fill Handle.
 
-<note>
-When the `fillOperation` function returns `params.currentCellValue` that value is not added to the `params.values` list. This allows users to skip any cells in the Fill Handle operation.
-</note>
+[[note]]
+| When the `fillOperation` function returns `params.currentCellValue` that value is not added to the `params.values` list. This allows users to skip any cells in the Fill Handle operation.
 
 <grid-example title='Skipping Columns' name='skipping-columns' type='generated' options='{ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "range"] }'></grid-example>
 

@@ -17,9 +17,8 @@ The following example demonstrates:
 
 <grid-example title='Unbalanced Groups' name='unbalanced-groups' type='mixed' options='{ "enterprise": true, "exampleHeight": 570, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
-<note>
-The unbalanced group feature is not supported when using the Server SideRow Model (SSRM)
-</note>
+[[note]]
+| The unbalanced group feature is not supported when using the Server SideRow Model (SSRM)
 
 ## Balanced Groups
 

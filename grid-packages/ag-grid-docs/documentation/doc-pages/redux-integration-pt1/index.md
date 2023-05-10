@@ -14,9 +14,8 @@ while UI events to add and delete files will be dispatched to the Redux store fo
 
 As shown above, files are grouped by folder, and files can be added or deleted via context menu options.
 
-<note>
-This section assumes the reader is familiar with React and ES6 Javascript features.
-</note>
+[[note]]
+| This section assumes the reader is familiar with React and ES6 Javascript features.
 
 ## Do I need Redux?
 
@@ -119,10 +118,9 @@ The `fileReducer` handles each action type with a case clause within a switch st
 to understand that the reducer doesn't modify the state directly but instead returns a new version for
 the store to persist. As a result there must not be any side effects contained within the reducer.
 
-<note>
-The helper methods used in the reducer are omitted for brevity but can be examined in the code
-tab provided in the example at the end of this section.
-</note>
+[[note]]
+| The helper methods used in the reducer are omitted for brevity but can be examined in the code
+| tab provided in the example at the end of this section.
 
 Rather than create action objects directly, a more elegant approach is to create helper functions referred to as
 
@@ -227,9 +225,8 @@ Now that our stateless `FileView` component is connected to our Redux store, whe
 in the store changes, our component will re-render with the latest file state available in `this.props.files`.
 
 
-<note>
-Bindings exist for most major javascript frameworks so Redux is not limited to React applications.
-</note>
+[[note]]
+| Bindings exist for most major javascript frameworks so Redux is not limited to React applications.
 
 ## Adding the Data Table
 

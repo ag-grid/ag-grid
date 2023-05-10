@@ -1,4 +1,4 @@
-<snippet transform={false} language="ts">
+|```ts
 |loadingCellRendererSelector: (params) => {
 |    const useCustomRenderer = ...some condition/check...
 |    if (useCustomRenderer) {
@@ -15,4 +15,4 @@
 |        }
 |    }
 |}
-</snippet>
+|```

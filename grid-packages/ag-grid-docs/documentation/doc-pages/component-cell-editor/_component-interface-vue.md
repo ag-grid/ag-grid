@@ -1,4 +1,4 @@
-<framework-specific-section frameworks="vue">
+[[only-vue]]
 |## Cell Editor Component
 |
 |When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell and 
@@ -9,4 +9,3 @@
 |
 |The editor `params` interface is as follows:
 |
-</framework-specific-section>

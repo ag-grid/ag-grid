@@ -2,15 +2,13 @@
 title: "Column Definitions"
 ---
 
-<framework-specific-section frameworks="javascript,angular,vue">
+[[only-javascript-or-angular-or-vue]]
 |Each column in the grid is defined using a Column Definition (`ColDef`). Columns are positioned in the grid according to the order the Column Definitions are specified in the Grid Options.
-</framework-specific-section>
 
-<framework-specific-section frameworks="react">
-<video-section id="aDCepyF_DUY" title="React Column Definitions" header="true">
-Each column in the grid is defined using a Column Definition (<code>ColDef</code>). Columns are positioned in the grid according to the order the Column Definitions are specified in the Grid Options.
-</video-section>
-</framework-specific-section>
+[[only-react]]
+|<video-section id="aDCepyF_DUY" title="React Column Definitions" header="true">
+|Each column in the grid is defined using a Column Definition (<code>ColDef</code>). Columns are positioned in the grid according to the order the Column Definitions are specified in the Grid Options.
+|</video-section>
 
 
 The following example shows a simple grid with 3 columns defined:
@@ -91,9 +89,8 @@ In addition to the above, the grid provides additional ways to help simplify and
 
 Default columns and column types can specify any of the [column properties](/column-properties/) available on a column.
 
-<note>
-Column Types are designed to work on Columns only, i.e. they won't be applied to Column Groups.
-</note>
+[[note]]
+| Column Types are designed to work on Columns only, i.e. they won't be applied to Column Groups.
 
 The following code snippet demonstrates these three properties:
 
@@ -138,19 +135,19 @@ At each stage if a column property already exists, the latter will override the 
 
 For example, the following is an outline of the steps used when creating 'Col C' shown above:
 
-<snippet transform="false">
-|// Step 1: the grid starts with an empty definition
-|{}
-|
-|// Step 2: default column properties are merged in
-|{ width: 100, editable: true, filter: 'agTextColumnFilter' }
-|
-|// Step 3: column type properties are merged in (using the 'type' property), overriding where necessary
-|{ width: 100, editable: false, filter: 'agTextColumnFilter' }
-|
-|// Step 4: finally column definition properties are merged in, overriding where necessary
-|{ headerName: 'Col C', field: 'c', width: 100, editable: false, filter: 'agTextColumnFilter' }
-</snippet>
+```js
+// Step 1: the grid starts with an empty definition
+{}
+
+// Step 2: default column properties are merged in
+{ width: 100, editable: true, filter: 'agTextColumnFilter' }
+
+// Step 3: column type properties are merged in (using the 'type' property), overriding where necessary
+{ width: 100, editable: false, filter: 'agTextColumnFilter' }
+
+// Step 4: finally column definition properties are merged in, overriding where necessary
+{ headerName: 'Col C', field: 'c', width: 100, editable: false, filter: 'agTextColumnFilter' }
+```
 
 The following example demonstrates the different configuration properties in action.
 
@@ -160,9 +157,8 @@ The following example demonstrates the different configuration properties in act
 
 The grid provides a handy shortcut for aligning columns to the right. Setting the column definition type to `rightAligned` aligns the column header and contents to the right, which makes the scanning of the data easier for the user.
 
-<note>
-Because right alignment is used for numbers, we also provided an alias `numericColumn` that can be used to align the header and cell text to the right.
-</note>
+[[note]]
+| Because right alignment is used for numbers, we also provided an alias `numericColumn` that can be used to align the header and cell text to the right.
 
 <snippet>
 const gridOptions = {

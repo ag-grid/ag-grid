@@ -1,9 +1,7 @@
-<framework-specific-section frameworks="react">
+[[only-react]]
 |Below is a simple example of cell renderer as a Hook:
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-<snippet transform={false} language="jsx">
+|
+|```jsx
 |export default props => {
 |    const cellValue = props.valueFormatted ? props.valueFormatted : props.value;
 |
@@ -18,15 +16,11 @@
 |        </span>
 |    );
 |}
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
+|```
+|
 |And here is the same example as a Class-based Component:
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<snippet transform={false} language="jsx">
+|
+|```jsx
 |export default class TotalValueRenderer extends Component {
 |    constructor(props) {
 |        super(props);
@@ -60,5 +54,4 @@
 |        return params.valueFormatted ? params.valueFormatted : params.value;
 |    }
 |};
-</snippet>
-</framework-specific-section>
+|```

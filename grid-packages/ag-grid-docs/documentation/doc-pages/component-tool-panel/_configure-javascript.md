@@ -1,5 +1,5 @@
-<framework-specific-section frameworks="javascript">
-<snippet transform={false}>
+[[only-javascript]]
+|```js
 |const gridOptions: {
 |    sideBar: {
 |        toolPanels: [
@@ -15,5 +15,4 @@
 |
 |    // other grid properties
 |}
-</snippet>
-</framework-specific-section>
+|```

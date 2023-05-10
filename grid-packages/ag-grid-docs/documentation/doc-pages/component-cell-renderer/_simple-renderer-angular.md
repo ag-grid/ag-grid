@@ -1,9 +1,7 @@
-<framework-specific-section frameworks="angular">
+[[only-angular]]
 |Below is a simple example of cell renderer class:
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
-<snippet transform={false} language="ts">
+|
+|```js
 |import {Component} from "@angular/core";
 |import {ICellRendererAngularComp} from 'ag-grid-angular';
 |import {ICellRendererParams} from "ag-grid-community";
@@ -40,5 +38,4 @@
 |        return params.valueFormatted ? params.valueFormatted : params.value;
 |    }
 |}
-</snippet>
-</framework-specific-section>
+|```

@@ -51,9 +51,8 @@ Set the row data type on the grid options interface via `GridOptions<ICar>`. The
 |}
 </snippet>
 
-<note>
-You do not need to explicitly type callbacks and events that are defined as part of `GridOptions`. Typescript will correctly pass the generic type down the interface hierarchy.
-</note>
+[[note]]
+| You do not need to explicitly type callbacks and events that are defined as part of `GridOptions`. Typescript will correctly pass the generic type down the interface hierarchy.
 
 ### Configure via Interfaces
 

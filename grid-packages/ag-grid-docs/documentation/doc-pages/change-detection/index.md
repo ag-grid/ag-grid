@@ -11,9 +11,8 @@ Change detection can be broken down into the following two categories:
 
 1. **Aggregation Change Detection:** When a value for any cell changes, the grid will recalculate all [aggregations](/aggregation/) that are impacted by the changed value. This means the grid will automatically keep aggregation results (the values in the grouped row) up to date as the data beneath it changes.
 
-<note>
-If you are using a custom cell renderer see [Component Refresh](../component-cell-renderer/#component-refresh) for more details on how to update your component following change detection.
-</note>
+[[note]]
+| If you are using a custom cell renderer see [Component Refresh](/component-cell-renderer/#component-refresh) for more details on how to update your component following change detection.
 
 ## Example: Change Detection and Value Getters
 
@@ -32,12 +31,11 @@ a refresh. Notice the following:
 
 The grid keeps a local copy of all values rendered in each cell. When a refresh of the cell is requested, the cell will only be refreshed if the value has changed.
 
-<note>
-You might ask, is checking every cell against its value a performance problem? The answer is no.
-What AG Grid does is similar to the change detection algorithms in frameworks.
-Doing this many checks in JavaScript is not a problem. Slowness comes when the DOM is updated
-many times. AG Grid minimises the DOM updates by only updating the DOM where changes are detected.
-</note>
+[[note]]
+| You might ask, is checking every cell against its value a performance problem? The answer is no.
+| What AG Grid does is similar to the change detection algorithms in frameworks.
+| Doing this many checks in JavaScript is not a problem. Slowness comes when the DOM is updated
+| many times. AG Grid minimises the DOM updates by only updating the DOM where changes are detected.
 
 ### Comparing Values
 

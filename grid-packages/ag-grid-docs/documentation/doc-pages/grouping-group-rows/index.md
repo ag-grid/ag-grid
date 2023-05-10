@@ -72,12 +72,14 @@ To provide your own Cell Renderer, use the grid properties `groupRowRenderer` an
 Using your own Cell Renderer hands over rendering of the group row to your custom Cell Renderer. However, that also means
 the customer Cell Renderer will also need to provide expand / collapse functionality.
 
-<framework-specific-section frameworks="javascript,angular,react">
+[[only-javascript]]
 md-include:group-config-common.md
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-<snippet transform={false}>
+[[only-angular]]
+md-include:group-config-common.md
+[[only-react]]
+md-include:group-config-common.md
+[[only-vue]]
+|<snippet>
 |const gridOptions = {
 |    // configures Group Rows with a customer Cell Renderer
 |    groupDisplayType: 'groupRows', 
@@ -86,9 +88,8 @@ md-include:group-config-common.md
 |        someProp: 'someValue',
 |    },
 |}
-</snippet>
-</framework-specific-section>
- 
+|</snippet>
+
 ### Configuring Group Cell Renderer
 
 Configure the default Group Cell Renderer using `groupRowRendererParams`. Full details on what to configure are provided
@@ -111,7 +112,7 @@ Below shows an example of aggregation with Group Rows. It also provides an `inne
 displaying inside the row groups, however it keeps the Default Group Cell Renderer for its expand / collapse 
 functionality. Note the following:
 
-<framework-specific-section frameworks="javascript,angular,react">
+[[only-javascript]]
 |- Each group spans the width of the grid.
 |- Each group uses a custom Cell Renderer. The cell renderer shows the aggregation data for each medal type.
 |- Each medal column is editable, you can change the number of medals for any of the athletes.
@@ -120,15 +121,30 @@ functionality. Note the following:
 |    1. If you edit any cell
 |    1. If you filter the data (ie take rows out).
 |- The example shows how to use CSS to enable the row hover effect, which is not shown on full width rows by default.
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
+[[only-angular]]
+|- Each group spans the width of the grid.
+|- Each group uses a custom Cell Renderer. The cell renderer shows the aggregation data for each medal type.
+|- Each medal column is editable, you can change the number of medals for any of the athletes.
+|- The column Year has a filter on it.
+|- Aggregation data in the full width row is updated if:
+|    1. If you edit any cell
+|    1. If you filter the data (ie take rows out).
+|- The example shows how to use CSS to enable the row hover effect, which is not shown on full width rows by default.
+[[only-react]]
+|- Each group spans the width of the grid.
+|- Each group uses a custom Cell Renderer. The cell renderer shows the aggregation data for each medal type.
+|- Each medal column is editable, you can change the number of medals for any of the athletes.
+|- The column Year has a filter on it.
+|- The cell renderer has logic listening for changes to filtering and data cell changes. This means the aggregation data in the full width row is updated if:
+|    1. If you edit any cell
+|    1. If you filter the data (ie take rows out).
+|- The example shows how to use CSS to enable the row hover effect, which is not shown on full width rows by default.
+[[only-vue]]
 |- Each group spans the width of the grid.
 |- Each group uses a custom Cell Renderer. The cell renderer shows the aggregation data for each medal type.
 |- Each medal column is editable, you can change the number of medals for any of the athletes.
 |- The column Year has a filter on it.
 |- The example shows how to use CSS to enable the row hover effect, which is not shown on full width rows by default.
-</framework-specific-section>
 
 <grid-example title='Full Width Groups Rendering' name='full-width-groups-rendering' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"], "extras": ["fontawesome"] }'></grid-example>
 

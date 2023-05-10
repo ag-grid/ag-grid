@@ -214,6 +214,5 @@ Theme extension works with multiple themes too, set the `extend-theme` parameter
 ));
 ```
 
-<note>
-`extend-theme` internally uses the Sass `@extend` rule, which generates new selectors for `.ag-theme-acmecorp` while leaving the original selectors for `.ag-theme-alpine` intact. This slightly increases the output of the compiled CSS, but the difference is likely to be too small to measure in real world conditions (less than 1kb gzipped)
-</note>
+[[note]]
+| `extend-theme` internally uses the Sass `@extend` rule, which generates new selectors for `.ag-theme-acmecorp` while leaving the original selectors for `.ag-theme-alpine` intact. This slightly increases the output of the compiled CSS, but the difference is likely to be too small to measure in real world conditions (less than 1kb gzipped)

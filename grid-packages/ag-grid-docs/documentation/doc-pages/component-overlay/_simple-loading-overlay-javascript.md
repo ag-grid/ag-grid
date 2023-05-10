@@ -1,17 +1,15 @@
-<framework-specific-section frameworks="javascript">
+[[only-javascript]]
 |Below is a example of loading overlay class with a custom `loadingMessage` param:
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false}>
+|
+|```js
 |class CustomLoadingCellRenderer {
 |    init(params) {
 |        this.eGui = document.createElement('div');
 |        this.eGui.innerHTML = `
-|            &lt;div class="ag-custom-loading-cell" style="padding-left: 10px; line-height: 25px;">  
-|                &lt;i class="fas fa-spinner fa-pulse">&lt;/i> 
-|                &lt;span>${params.loadingMessage} &lt;/span>
-|            &lt;/div>
+|            <div class="ag-custom-loading-cell" style="padding-left: 10px; line-height: 25px;">  
+|                <i class="fas fa-spinner fa-pulse"></i> 
+|                <span>${params.loadingMessage} </span>
+|            </div>
 |        `;
 |    }
 |
@@ -27,5 +25,4 @@
 |    loadingMessage: 'One moment please...',
 |  },
 |}
-</snippet>
-</framework-specific-section>
+|```

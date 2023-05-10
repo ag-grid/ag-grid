@@ -2,15 +2,15 @@
 title: "Updating Data"
 ---
 
-<framework-specific-section frameworks="javascript,angular,vue">
+[[only-javascript-or-angular-or-vue]]
 |There are many ways in which data can change in your application, and as a result many ways in which you can inform the grid of data changes. This section explains the different ways of how you can update data inside the grid using the grid's API.
-</framework-specific-section>
 
-<framework-specific-section frameworks="react">
-<video-section id="_V5qFr62uhY" title="React Updating Datal" header="true">
-There are many ways in which data can change in your application, and as a result many ways in which you can inform the grid of data changes. This section explains the different ways of how you can update data inside the grid using the grid's API.
-</video-section>
-</framework-specific-section>
+
+[[only-react]]
+|<video-section id="_V5qFr62uhY" title="React Updating Datal" header="true">
+|There are many ways in which data can change in your application, and as a result many ways in which you can inform the grid of data changes. This section explains the different ways of how you can update data inside the grid using the grid's API.
+|</video-section>
+
 
 ## Updates vs Edits vs Refresh
 

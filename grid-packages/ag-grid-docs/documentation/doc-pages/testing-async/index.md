@@ -60,9 +60,8 @@ beforeEach(() => {
 });
  ```
 
-<note>
-It is not recommended to run fixture.detectChanges() inside the beforeEach method as this can lead to numerous issues when testing asynchronous code.
-</note>
+[[note]]
+|It is not recommended to run fixture.detectChanges() inside the beforeEach method as this can lead to numerous issues when testing asynchronous code.
 
 Two approaches are outlined below to test the asynchronous grid behaviour.
  - Using `fakeAsync`

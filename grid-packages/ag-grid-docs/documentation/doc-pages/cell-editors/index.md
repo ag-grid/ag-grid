@@ -49,15 +49,15 @@ From a lifecycle and behaviour point of view, 'in cell' and 'popup' have no impa
 
 ### Configure Popup
 
-<framework-specific-section frameworks="react">
-| Configure that an Editor is in a popup by setting `cellEditorPopup=true` on the [Column Definition](../column-definitions/).
-</framework-specific-section>
+[[only-react]]
+|Configure that an Editor is in a popup by setting `cellEditorPopup=true` on the [Column Definition](/column-definitions/).
 
-<framework-specific-section frameworks="javascript,angular,vue">
-| Configure that an Editor is in a popup in one of the following ways:
-| 1. For [Custom Cell Editors](../component-cell-editor/), implement the `isPopup()` method on the Custom Cell Editor OR specify `cellEditorPopup=true` on the [Column Definition](../column-definitions/).
-| 1. For [Provided Cell Editors](../provided-cell-editors/), you do not need to to anything, as `isPopup` is already implemented on these.
-</framework-specific-section>
+[[only-javascript-or-angular-or-vue]]
+|Configure that an Editor is in a popup in one of the following ways:
+|1. For [Custom Cell Editors](/component-cell-editor/), implement the `isPopup()` method on the Custom Cell Editor OR specify `cellEditorPopup=true` on the [Column Definition](/column-definitions/).
+|1. For [Provided Cell Editors](/provided-cell-editors/), you do not need to to anything, as `isPopup` is already implemented on these.
+
+
 
 ## Many Editors One Column
 

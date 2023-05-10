@@ -76,12 +76,11 @@ Note the following:
 
 <grid-example title='Group and Leaf Aggregate Filtering' name='agg-filtering-all' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter"] }'></grid-example>
 
-<note>
-Take note of the following while using `groupAggFiltering`:
-- [Set Filters](../filter-set/) are not fully supported in conjunction with this feature. Only leaf values will be displayed in the Filter List.
-- When `groupAggFiltering` is enabled, [Suppressing Filtered Aggregation](../aggregation-filtering/#suppressing-aggregation-updates-when-filtering) is enabled by default.
-- If Tree Data mode is enabled, the behaviour of `groupAggFiltering` will be different. See [Tree Data Filtering](../tree-data/#tree-data-filtering).
-</note>
+[[note]]
+| Take note of the following while using `groupAggFiltering`:
+| - [Set Filters](/filter-set/) are not fully supported in conjunction with this feature. Only leaf values will be displayed in the Filter List.
+| - When `groupAggFiltering` is enabled, [Suppressing Filtered Aggregation](/aggregation-filtering/#suppressing-aggregation-updates-when-filtering) is enabled by default.
+| - If Tree Data mode is enabled, the behaviour of `groupAggFiltering` will be different. See [Tree Data Filtering](/tree-data/#tree-data-filtering).
 
 ### Custom Group Aggregation Filtering
 
