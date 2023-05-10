@@ -258,7 +258,7 @@ export class AxisLabel {
     format: string | undefined = undefined;
 
     getFont(): string {
-        return getFont(this.fontSize, this.fontFamily, this.fontStyle, this.fontWeight);
+        return getFont(this);
     }
 }
 
@@ -1152,11 +1152,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
     private wrapLabels(labelSelection: Selection<Text, any>, labelCount: number) {
         const {
-            label,
             label: { parallel, maxWidth, maxHeight },
         } = this;
-
-        const font = label.getFont();
 
         const defaultMaxLabelWidth = parallel
             ? Math.round(this.calculateAvailableRange() / labelCount)
@@ -1170,7 +1167,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
         labelSelection.each((node, datum, index) => {
             const formattedText = this.formatTickDatum(datum.tick, index);
-            const labelText = Text.wrap(formattedText, maxLabelWidth, maxLabelHeight, font, label.fontSize, true);
+            const labelText = Text.wrap(formattedText, maxLabelWidth, maxLabelHeight, node);
             node.text = labelText;
         });
     }
