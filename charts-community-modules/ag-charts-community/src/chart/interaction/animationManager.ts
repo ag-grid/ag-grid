@@ -2,7 +2,7 @@ import { BaseManager } from './baseManager';
 import {
     animate as baseAnimate,
     AnimationControls,
-    AnimationOptions,
+    AnimationOptions as BaseAnimationOptions,
     Driver,
     tween,
     TweenControls,
@@ -16,6 +16,8 @@ interface AnimationEvent<AnimationEventType> {
     type: AnimationEventType;
     delta: number;
 }
+
+interface AnimationOptions<T> extends Omit<BaseAnimationOptions<T>, 'driver'> {}
 
 interface AnimationManyOptions<T> extends Omit<AnimationOptions<T>, 'from' | 'to' | 'onUpdate'> {
     onUpdate: (props: Array<T>) => void;

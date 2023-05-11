@@ -3754,6 +3754,25 @@
     "meta": { "typeParams": ["AnimationEventType"] },
     "type": { "type": "AnimationEventType", "delta": "number" }
   },
+  "AnimationOptions": {
+    "meta": { "typeParams": ["T"] },
+    "type": {
+      "driver": "Driver",
+      "autoplay?": "boolean",
+      "delay?": "number",
+      "repeat?": "number",
+      "repeatType?": "RepeatType",
+      "onComplete?": "() => void",
+      "onPlay?": "() => void",
+      "onRepeat?": "() => void",
+      "onStop?": "() => void",
+      "onUpdate?": "(v: T) => void",
+      "duration": "number",
+      "from": "T",
+      "to": "T",
+      "ease?": "Easing<T>"
+    }
+  },
   "AnimationManyOptions": {
     "meta": { "typeParams": ["T"] },
     "type": {
@@ -3766,7 +3785,9 @@
       "onPlay?": "() => void",
       "onRepeat?": "() => void",
       "onStop?": "() => void",
-      "onUpdate?": "(v: AnimationOptions<T>) => void"
+      "onUpdate?": "(v: AnimationOptions<T>) => void",
+      "duration": "number",
+      "ease?": "Easing<AnimationOptions<T>>"
     }
   },
   "ChartEventType": {
@@ -4382,25 +4403,6 @@
     "meta": { "isEnum": true },
     "type": ["Loop = 'loop'", "Reverse = 'reverse'"],
     "docs": [null, null]
-  },
-  "AnimationOptions": {
-    "meta": { "typeParams": ["T"] },
-    "type": {
-      "driver": "Driver",
-      "autoplay?": "boolean",
-      "delay?": "number",
-      "repeat?": "number",
-      "repeatType?": "RepeatType",
-      "onComplete?": "() => void",
-      "onPlay?": "() => void",
-      "onRepeat?": "() => void",
-      "onStop?": "() => void",
-      "onUpdate?": "(v: T) => void",
-      "duration": "number",
-      "from": "T",
-      "to": "T",
-      "ease?": "Easing<T>"
-    }
   },
   "AnimationControls": {
     "meta": {},
