@@ -4301,6 +4301,11 @@
     "type": ["Sector", "Callout", "Label"],
     "docs": [null, null, null]
   },
+  "PieAnimationState": {
+    "meta": { "isTypeAlias": true },
+    "type": "'empty' | 'ready'"
+  },
+  "PieAnimationEvent": { "meta": { "isTypeAlias": true }, "type": "'load'" },
   "SeriesNodeDatum": {
     "meta": {
       "doc": "/** Processed series datum used in node selections,\n * contains information used to render pie sectors, bars, markers, etc.\n */"

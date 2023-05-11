@@ -6217,6 +6217,8 @@
     }
   },
   "PieNodeTag": {},
+  "PieAnimationState": {},
+  "PieAnimationEvent": {},
   "SeriesNodeDatum": {
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
