@@ -1440,9 +1440,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                     { from: rotation, to: datum.endAngle },
                 ],
                 {
-                    duration: 600,
+                    duration: 1000,
                     repeat: 0,
-                    ease: easing.easeInOut,
+                    ease: easing.linear,
                     onUpdate: ([startAngle, endAngle]) => {
                         node.startAngle = startAngle;
                         node.endAngle = endAngle;
