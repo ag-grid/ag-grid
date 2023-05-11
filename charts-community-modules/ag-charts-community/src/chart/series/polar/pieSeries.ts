@@ -1429,7 +1429,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).forEach((node) => {
             const { datum } = node;
 
-            if (!this.animationManager) {
+            if (!this.animationManager || this.animationManager.skipAnimations) {
                 node.startAngle = datum.startAngle;
                 node.endAngle = datum.endAngle;
                 return;
