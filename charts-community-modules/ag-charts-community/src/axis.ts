@@ -693,25 +693,26 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             gridLength,
             label: { enabled: enabledLabels, avoidCollisions, autoWrap },
         } = this;
-        let i = 0;
-        let labelOverlap = true;
-        let ticks: any[] = [];
+
         const { maxTickCount, minTickCount, defaultTickCount } = this.estimateTickCount({
             minSpacing: this.tick.minSpacing,
             maxSpacing: this.tick.maxSpacing,
         });
+
         const continuous = scale instanceof ContinuousScale;
         const secondaryAxis = primaryTickCount !== undefined;
-
         const checkForOverlap =
             !autoWrap &&
             enabledLabels &&
             avoidCollisions &&
             this.tick.interval === undefined &&
             this.tick.values === undefined;
-        const tickSpacing = !isNaN(this.tick.minSpacing) || !isNaN(this.tick.maxSpacing);
-        const maxIterations = this.tick.count || !continuous || isNaN(maxTickCount) ? 10 : maxTickCount;
+        const filterTicks = checkForOverlap && !(continuous && this.tick.count === undefined);
 
+        const maxIterations = this.tick.count || !continuous || isNaN(maxTickCount) ? 10 : maxTickCount;
+        let i = 0;
+        let labelOverlap = true;
+        let ticks: any[] = [];
         while (labelOverlap) {
             let unchanged = true;
             while (unchanged) {
@@ -723,30 +724,17 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
                 }
 
                 const prevTicks = ticks;
-                const tickCount = Math.max(defaultTickCount - i, minTickCount);
-
-                const filterTicks =
-                    checkForOverlap && !(continuous && this.tick.count === undefined) && (tickSpacing || i !== 0);
+                const tickCount = this.tick.count ?? Math.max(defaultTickCount - i, minTickCount);
 
                 if (this.tick.values) {
                     ticks = this.tick.values;
-                } else if (maxTickCount === 0) {
-                    ticks = [];
-                } else if (i === 0 || !filterTicks) {
-                    this.setTickCount(this.tick.count ?? tickCount, minTickCount, maxTickCount);
-                    ticks = scale.ticks!();
-                }
-
-                if (filterTicks) {
-                    const keepEvery = tickSpacing ? Math.ceil(ticks.length / tickCount) : 2;
-                    ticks = ticks.filter((_, i) => i % keepEvery === 0);
-                }
-
-                let secondaryAxisTicks;
-                if (secondaryAxis) {
+                } else if (secondaryAxis) {
                     // `updateSecondaryAxisTicks` mutates `scale.domain` based on `primaryTickCount`
-                    secondaryAxisTicks = this.updateSecondaryAxisTicks(primaryTickCount);
-                    ticks = secondaryAxisTicks;
+                    ticks = this.updateSecondaryAxisTicks(primaryTickCount);
+                } else if (filterTicks && i !== 0) {
+                    ticks = this.filterTicks(ticks, tickCount);
+                } else {
+                    ticks = this.createTicks(tickCount, minTickCount, maxTickCount);
                 }
 
                 this.updateSelections({
@@ -785,6 +773,17 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         }
 
         return { ticks, primaryTickCount };
+    }
+
+    private filterTicks(ticks: any, tickCount: number): any[] {
+        const tickSpacing = !isNaN(this.tick.minSpacing) || !isNaN(this.tick.maxSpacing);
+        const keepEvery = tickSpacing ? Math.ceil(ticks.length / tickCount) : 2;
+        return ticks.filter((_: any, i: number) => i % keepEvery === 0);
+    }
+
+    private createTicks(tickCount: number, minTickCount: number, maxTickCount: number) {
+        this.setTickCount(tickCount, minTickCount, maxTickCount);
+        return this.scale.ticks!();
     }
 
     private estimateTickCount({ minSpacing, maxSpacing }: { minSpacing: number; maxSpacing: number }): {
