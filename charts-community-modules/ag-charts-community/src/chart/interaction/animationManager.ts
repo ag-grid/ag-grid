@@ -34,8 +34,17 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
     private isPlaying = false;
     private requestId?: number;
     private lastTime?: number;
+    private readyToPlay = false;
 
     public skipAnimations = false;
+
+    constructor() {
+        super();
+
+        window.addEventListener('DOMContentLoaded', () => {
+            this.readyToPlay = true;
+        });
+    }
 
     public play() {
         if (this.isPlaying) return;
@@ -170,6 +179,11 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
 
     private startAnimationCycle() {
         const frame = (time: number) => {
+            if (!this.readyToPlay) {
+                this.requestId = requestAnimationFrame(frame);
+                return;
+            }
+
             if (this.lastTime === undefined) this.lastTime = time;
             const delta = time - this.lastTime;
             this.lastTime = time;

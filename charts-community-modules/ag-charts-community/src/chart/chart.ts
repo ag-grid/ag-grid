@@ -253,9 +253,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.layoutService = new LayoutService();
         this.updateService = new UpdateService((type = ChartUpdateType.FULL) => this.update(type));
 
-        // Delay playing animations by a 10ms to avoid the initial ~150ms jerk
-        setTimeout(() => this.animationManager.play(), 10);
         this.animationManager.skipAnimations = true;
+        this.animationManager.play();
 
         SizeMonitor.observe(this.element, (size) => {
             const { width, height } = size;
