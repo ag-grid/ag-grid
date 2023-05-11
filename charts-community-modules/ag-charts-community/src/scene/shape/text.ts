@@ -532,7 +532,7 @@ export class Text extends Shape {
                 continue;
             }
             const expectedLineWidth = lineWidth + spaceWidth + width;
-            if (lines.length === linesCount || expectedLineWidth <= averageLineWidth) {
+            if (expectedLineWidth <= averageLineWidth) {
                 // Keep adding words to the line
                 currentLine.push(word);
                 lineWidth = expectedLineWidth;
