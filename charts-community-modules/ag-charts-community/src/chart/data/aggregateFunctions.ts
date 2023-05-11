@@ -1,4 +1,4 @@
-import { AggregatePropertyDefinition } from './dataModel';
+import { AggregatePropertyDefinition, DatumPropertyDefinition } from './dataModel';
 import { extendDomain } from './utilFunctions';
 
 type ContinuousDomain<T extends number | Date> = [T, T];
@@ -123,4 +123,15 @@ export function area<K>(props: K[], aggFn: AggregatePropertyDefinition<any, any>
     }
 
     return result;
+}
+
+export function accumulatedValue(): DatumPropertyDefinition<any>['processor'] {
+    return () => {
+        let value = 0;
+
+        return (datum: any) => {
+            value += datum;
+            return value;
+        };
+    };
 }
