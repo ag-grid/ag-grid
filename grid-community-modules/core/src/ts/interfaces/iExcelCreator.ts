@@ -404,6 +404,16 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
      */
     suppressTextAsCDATA?: boolean;
     /**
+     * If `true`, the outline (controls to expand and collapse) for Row Groups will not be added automatically to the Excel Document.
+     * Default: `false`.
+     */
+    suppressRowOutline?: boolean;
+    /**
+     * If `true`, the outline (controls to expand and collapse) for Group Columns will not be added automatically to the Excel Document.
+     * Default: `false`.
+     */
+    suppressColumnOutline?: boolean;
+    /**
      * The mimeType of the Excel file. Note that this defaults to `application/vnd.ms-excel` if exportMode is `xml`.
      * Default: `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`
      */
