@@ -201,11 +201,7 @@ export class ChartTheme {
     }
 
     private static getCaptionWrappingDefaults() {
-        return {
-            enabled: true,
-            breakWord: true,
-            hyphens: true,
-        };
+        return 'break-word' as const;
     }
 
     private static getChartDefaults() {

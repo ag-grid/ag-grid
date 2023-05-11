@@ -45,6 +45,8 @@ export type Ratio = number;
 /** Alias to denote that a value is a data value. */
 export type DataValue = any;
 
+export type TextWrap = 'never' | 'break-word' | 'hyphenate' | 'on-space';
+
 /** Define a range within which an interaction can trigger on a point with one of:
  * - A distance in pixels from a point within which the event can be triggered.
  * - `'exact'` triggers when the event occurs directly over a point.
@@ -283,19 +285,10 @@ export interface AgChartCaptionOptions {
     /** Used to constrain the height of the title. */
     maxHeight?: PixelSize;
     /** Text wrapping strategy for long titles. */
-    wrapping?: AgChartCaptionWrappingOptions;
+    wrapping?: TextWrap;
 }
 export interface AgChartSubtitleOptions extends AgChartCaptionOptions {}
 export interface AgChartFooterOptions extends AgChartCaptionOptions {}
-
-export interface AgChartCaptionWrappingOptions {
-    /** Enables or disables text wrapping. */
-    enabled?: boolean;
-    /** If true, long words will be split into parts, when there is not enough space to fit them. */
-    breakWord?: boolean;
-    /** Determines if the hyphens should be inserted when breaking long words. */
-    hyphens?: boolean;
-}
 
 export interface AgAxisCaptionOptions {
     /** Whether or not the title should be shown. */

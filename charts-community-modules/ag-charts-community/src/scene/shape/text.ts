@@ -2,7 +2,7 @@ import { Shape } from './shape';
 import { BBox } from '../bbox';
 import { HdpiCanvas } from '../../canvas/hdpiCanvas';
 import { RedrawType, SceneChangeDetection, RenderContext } from '../node';
-import { FontStyle, FontWeight, AgChartCaptionWrappingOptions } from '../../chart/agChartOptions';
+import { FontStyle, FontWeight } from '../../chart/agChartOptions';
 
 export interface TextSizeProperties {
     fontFamily: string;
@@ -326,7 +326,7 @@ export class Text extends Shape {
         maxWidth: number,
         maxHeight: number,
         textProps: TextSizeProperties,
-        wrapProps: AgChartCaptionWrappingOptions,
+        wrapProps: WordWrapProperties,
         cumulativeHeight: number
     ): { result: string; truncated: boolean; cumulativeHeight: number } {
         text = text.trim();
