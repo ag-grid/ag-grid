@@ -345,39 +345,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 on: {
                     load: {
                         target: 'ready',
-                        action: () => {
-                            const rotation = Math.PI / -2 + toRadians(this.rotation);
-
-                            this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).forEach((node) => {
-                                const { datum } = node;
-
-                                if (!this.animationManager) {
-                                    node.startAngle = datum.startAngle;
-                                    node.endAngle = datum.endAngle;
-                                    return;
-                                }
-
-                                node.startAngle = rotation;
-                                node.endAngle = rotation;
-
-                                this.animationManager.animateMany<number>(
-                                    `${this.id}_empty-load-ready_${node.id}`,
-                                    [
-                                        { from: rotation, to: datum.startAngle },
-                                        { from: rotation, to: datum.endAngle },
-                                    ],
-                                    {
-                                        duration: 600,
-                                        repeat: 0,
-                                        ease: easing.easeInOut,
-                                        onUpdate: ([startAngle, endAngle]) => {
-                                            node.startAngle = startAngle;
-                                            node.endAngle = endAngle;
-                                        },
-                                    }
-                                );
-                            });
-                        },
+                        action: () => this.animateEmptyLoadReady(),
                     },
                 },
             },
@@ -1447,6 +1415,40 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             if (datum[legendItemKey] === datumToggledLegendItemValue) {
                 this.toggleSeriesItem(datumItemId, enabled);
             }
+        });
+    }
+
+    animateEmptyLoadReady() {
+        const rotation = Math.PI / -2 + toRadians(this.rotation);
+
+        this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).forEach((node) => {
+            const { datum } = node;
+
+            if (!this.animationManager) {
+                node.startAngle = datum.startAngle;
+                node.endAngle = datum.endAngle;
+                return;
+            }
+
+            node.startAngle = rotation;
+            node.endAngle = rotation;
+
+            this.animationManager.animateMany<number>(
+                `${this.id}_empty-load-ready_${node.id}`,
+                [
+                    { from: rotation, to: datum.startAngle },
+                    { from: rotation, to: datum.endAngle },
+                ],
+                {
+                    duration: 600,
+                    repeat: 0,
+                    ease: easing.easeInOut,
+                    onUpdate: ([startAngle, endAngle]) => {
+                        node.startAngle = startAngle;
+                        node.endAngle = endAngle;
+                    },
+                }
+            );
         });
     }
 }
