@@ -5614,6 +5614,7 @@
     "meta": { "typeParams": ["K", "Grouped extends boolean | undefined"] }
   },
   "PropertyDefinition": { "meta": { "typeParams": ["K"] } },
+  "ProcessorFn": {},
   "DatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "InternalDatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "AggregatePropertyDefinition": {
@@ -5621,6 +5622,10 @@
       "typeParams": ["D", "K extends keyof D", "R = [number, number]", "R2 = R"]
     }
   },
+  "GroupValueProcessorDefinition": {
+    "meta": { "typeParams": ["D", "K extends keyof D"] }
+  },
+  "PropertyValueProcessorDefinition": { "meta": { "typeParams": ["D"] } },
   "ReducerOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
   "ProcessorOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
   "Series": {

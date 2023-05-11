@@ -50,9 +50,10 @@ import {
     FontWeight,
 } from '../../agChartOptions';
 import { LogAxis } from '../../axis/logAxis';
-import { DataModel, SMALLEST_KEY_INTERVAL, AGG_VALUES_EXTENT } from '../../data/dataModel';
+import { DataModel } from '../../data/dataModel';
 import { sum } from '../../data/aggregateFunctions';
 import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
+import { AGG_VALUES_EXTENT, normaliseGroupTo, SMALLEST_KEY_INTERVAL } from '../../data/processors';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
@@ -332,7 +333,12 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const activeStacks = this.yKeys
             .map((stack) => stack.filter((key) => seriesItemEnabled.get(key)))
             .filter((stack) => stack.length > 0);
+
         const normaliseTo = normalizedTo && isFinite(normalizedTo) ? normalizedTo : undefined;
+        const extraProps = [];
+        if (normaliseTo) {
+            extraProps.push(normaliseGroupTo(activeSeriesItems, normaliseTo, 'sum'));
+        }
 
         this.dataModel = new DataModel<any, any, true>({
             props: [
@@ -341,10 +347,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 ...activeStacks.map((stack) => sum(stack)),
                 ...(isContinuousX ? [SMALLEST_KEY_INTERVAL] : []),
                 AGG_VALUES_EXTENT,
+                ...extraProps,
             ],
             groupByKeys: true,
             dataVisible: this.visible && activeSeriesItems.length > 0,
-            normaliseTo,
         });
 
         this.processedData = this.dataModel.processData(data);

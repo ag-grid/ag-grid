@@ -3682,15 +3682,19 @@
       "isTypeAlias": true,
       "typeParams": ["K", "Grouped extends boolean | undefined"]
     },
-    "type": "{ readonly props: PropertyDefinition<K>[]; readonly groupByKeys?: Grouped; readonly groupByFn?: GroupByFn; readonly normaliseTo?: number; readonly dataVisible?: boolean; }"
+    "type": "{ readonly props: PropertyDefinition<K>[]; readonly groupByKeys?: Grouped; readonly groupByFn?: GroupByFn; readonly dataVisible?: boolean; }"
   },
   "PropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
-    "type": "DatumPropertyDefinition<K> | AggregatePropertyDefinition<any, any, any> | ReducerOutputPropertyDefinition<any> | ProcessorOutputPropertyDefinition<any>"
+    "type": "DatumPropertyDefinition<K> | AggregatePropertyDefinition<any, any, any> | PropertyValueProcessorDefinition<any> | GroupValueProcessorDefinition<any, any> | ReducerOutputPropertyDefinition<any> | ProcessorOutputPropertyDefinition<any>"
+  },
+  "ProcessorFn": {
+    "meta": { "isTypeAlias": true },
+    "type": "(datum: any, previousDatum?: any) => any"
   },
   "DatumPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
-    "type": "{ type: 'key' | 'value'; valueType: DatumPropertyType; property: K; invalidValue?: any; missingValue?: any; validation?: (datum: any) => boolean; }"
+    "type": "{ type: 'key' | 'value'; valueType: DatumPropertyType; property: K; invalidValue?: any; missingValue?: any; validation?: (datum: any) => boolean; processor?: () => ProcessorFn; }"
   },
   "InternalDatumPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
@@ -3701,7 +3705,15 @@
       "isTypeAlias": true,
       "typeParams": ["D", "K extends keyof D", "R = [number, number]", "R2 = R"]
     },
-    "type": "{ type: 'aggregate'; aggregateFunction: (values: D[K][], keys?: D[K][]) => R; groupAggregateFunction?: (next?: R, acc?: R2) => R2; finalFunction?: (result: R2) => [ number, number ]; properties: K[]; }"
+    "type": "{ type: 'aggregate'; aggregateFunction: (values: D[K][], keys?: D[K][]) => R; groupAggregateFunction?: (next?: R, acc?: R2) => R2; finalFunction?: (result: R2) => [ number, number ]; properties: (K | number)[]; }"
+  },
+  "GroupValueProcessorDefinition": {
+    "meta": { "isTypeAlias": true, "typeParams": ["D", "K extends keyof D"] },
+    "type": "{ type: 'group-value-processor'; properties: (K | number)[]; adjust: () => (values: D[K][], indexes: number[]) => void; }"
+  },
+  "PropertyValueProcessorDefinition": {
+    "meta": { "isTypeAlias": true, "typeParams": ["D"] },
+    "type": "{ type: 'property-value-processor'; property: string | number; adjust: () => (processedData: ProcessedData<D>, valueIndex: number) => void; }"
   },
   "ReducerOutputPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["R"] },
