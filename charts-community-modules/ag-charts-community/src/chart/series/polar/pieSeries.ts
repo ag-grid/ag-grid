@@ -170,7 +170,7 @@ export class DoughnutInnerCircle {
 }
 
 type PieAnimationState = 'empty' | 'ready';
-type PieAnimationEvent = 'load';
+type PieAnimationEvent = 'update';
 class PieStateMachine extends StateMachine<PieAnimationState, PieAnimationEvent> {}
 
 export class PieSeries extends PolarSeries<PieNodeDatum> {
@@ -343,14 +343,19 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.animationStates = new PieStateMachine('empty', {
             empty: {
                 on: {
-                    load: {
+                    update: {
                         target: 'ready',
-                        action: () => this.animateEmptyLoadReady(),
+                        action: () => this.animateEmptyUpdateReady(),
                     },
                 },
             },
             ready: {
-                on: {},
+                on: {
+                    update: {
+                        target: 'ready',
+                        action: () => this.animateReadyUpdateReady(),
+                    },
+                },
             },
         });
     }
@@ -804,7 +809,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             }
         });
 
-        this.animationStates.transition('load');
+        this.animationStates.transition('update');
 
         this.updateCalloutLineNodes();
         this.updateCalloutLabelNodes(seriesBox);
@@ -1418,7 +1423,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         });
     }
 
-    animateEmptyLoadReady() {
+    animateEmptyUpdateReady() {
         const rotation = Math.PI / -2 + toRadians(this.rotation);
 
         this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).forEach((node) => {
@@ -1434,7 +1439,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             node.endAngle = rotation;
 
             this.animationManager.animateMany<number>(
-                `${this.id}_empty-load-ready_${node.id}`,
+                `${this.id}_empty-update-ready_${node.id}`,
                 [
                     { from: rotation, to: datum.startAngle },
                     { from: rotation, to: datum.endAngle },
@@ -1449,6 +1454,15 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                     },
                 }
             );
+        });
+    }
+
+    animateReadyUpdateReady() {
+        this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).forEach((node) => {
+            const { datum } = node;
+
+            node.startAngle = datum.startAngle;
+            node.endAngle = datum.endAngle;
         });
     }
 }
