@@ -148,3 +148,8 @@ export function setAriaSelected(element: Element, selected?: boolean): void {
 export function setAriaChecked(element: Element, checked?: boolean) {
     setAriaAttribute(element, 'checked', checked === undefined ? 'mixed' : checked);
 }
+
+export function setAriaControls(controllerElement: Element, controlledElement: Element) {
+    toggleAriaAttribute(controllerElement, 'controls', controlledElement.id);
+    setAriaLabelledBy(controlledElement, controllerElement.id);
+}
