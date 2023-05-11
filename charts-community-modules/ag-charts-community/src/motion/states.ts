@@ -17,7 +17,7 @@ export class StateMachine<State extends string, Event extends string> {
     private states: Record<State, StateDefinition<State>>;
     private state: State;
 
-    debug = true;
+    debug = false;
 
     constructor(initialState: State, states: Record<State, StateDefinition<State>>) {
         this.state = initialState;
