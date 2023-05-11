@@ -192,7 +192,6 @@ describe('Text', () => {
                     textNode.x = currX;
                     textNode.y = currY;
                     textNode.text = Text.wrap(textNode.text, maxWidth, truncate ? maxHeight : Infinity, textNode, {
-                        enabled: true,
                         breakWord: true,
                         hyphens: true,
                     });

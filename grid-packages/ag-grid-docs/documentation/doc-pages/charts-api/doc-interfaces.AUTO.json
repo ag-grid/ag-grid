@@ -6452,6 +6452,10 @@
     "fontWeight": { "type": { "returnType": "FontWeight", "optional": true } },
     "lineHeight": { "type": { "returnType": "number", "optional": true } }
   },
+  "WordWrapProperties": {
+    "breakWord": { "type": { "returnType": "boolean", "optional": true } },
+    "hyphens": { "type": { "returnType": "boolean", "optional": true } }
+  },
   "Comparator": { "meta": { "typeParams": ["T"] } },
   "LiteralOrFn": { "meta": { "typeParams": ["T"] } },
   "TransformFn": {},

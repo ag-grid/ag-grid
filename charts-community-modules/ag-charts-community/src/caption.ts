@@ -81,7 +81,7 @@ export class Caption {
         const { text, wrapping } = this;
         const maxWidth = this.maxWidth == null ? containerWidth : Math.min(this.maxWidth, containerWidth);
         const maxHeight = this.maxHeight == null ? containerHeight : this.maxHeight;
-        if (!wrapping.enabled || (!isFinite(maxWidth) && !isFinite(maxHeight))) {
+        if ((wrapping && !wrapping.enabled) || (!isFinite(maxWidth) && !isFinite(maxHeight))) {
             this.node.text = text;
             return;
         }

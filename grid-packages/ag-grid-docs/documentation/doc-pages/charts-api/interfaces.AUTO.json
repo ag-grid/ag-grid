@@ -4557,6 +4557,10 @@
       "lineHeight?": "number"
     }
   },
+  "WordWrapProperties": {
+    "meta": {},
+    "type": { "breakWord?": "boolean", "hyphens?": "boolean" }
+  },
   "Comparator": {
     "meta": { "isTypeAlias": true, "typeParams": ["T"] },
     "type": "(a: T, b: T) => number"

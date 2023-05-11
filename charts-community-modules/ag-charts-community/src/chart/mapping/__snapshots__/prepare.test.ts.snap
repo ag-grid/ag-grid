@@ -122,7 +122,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Northern Ireland Statistics and Research Agency",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": true,
@@ -385,7 +389,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "theme": Object {
     "overrides": Object {
@@ -420,7 +428,11 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Marriage Statistics (Northern Ireland)",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -595,7 +607,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Department for Environment, Food & Rural Affairs; Agriculture and Horticulture Development Board",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": true,
@@ -817,7 +833,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "theme": Object {
     "overrides": Object {
@@ -857,7 +877,11 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Cattle Holdings and Beef Exports (UK)",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -981,7 +1005,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: HM Revenue & Customs",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": true,
@@ -1483,7 +1511,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "theme": Object {
     "overrides": Object {
@@ -1530,7 +1562,11 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Taxed Alcohol Consumption (UK)",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -1654,7 +1690,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Environmental Agency",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": true,
@@ -1845,7 +1885,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "theme": Object {
     "overrides": Object {
@@ -1868,7 +1912,11 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "WEEE Collected in UK",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "class": "my-tooltip",
@@ -1992,7 +2040,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: US Geological Survey",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": false,
@@ -2138,7 +2190,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -2149,7 +2205,11 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Worldwide Earthquakes",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -2272,7 +2332,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: US Geological Survey",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": true,
@@ -2593,7 +2657,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "theme": Object {
     "overrides": Object {
@@ -2634,7 +2702,11 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Earthquake Magnitudes by Source",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -2758,7 +2830,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Department for Business, Energy & Industrial Strategy",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": true,
@@ -3222,7 +3298,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "theme": Object {
     "overrides": Object {
@@ -3264,7 +3344,11 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Changes in UK Energy Stock",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -3388,7 +3472,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Office for National Statistics",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": false,
@@ -3542,7 +3630,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "theme": Object {
     "overrides": Object {
@@ -3563,7 +3655,11 @@ Object {
     "spacing": 25,
     "text": "Gross Weekly Earnings
 by Occupation",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -3687,7 +3783,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Office for National Statistics",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": false,
@@ -3841,7 +3941,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -3853,7 +3957,11 @@ Object {
     "spacing": 25,
     "text": "Change in Number of Jobs in UK
 (June to September)",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -3975,7 +4083,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Footnote",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": false,
@@ -4117,7 +4229,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "time distribution of commits",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -4127,7 +4243,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": "bold",
     "text": "Punch Card of Github",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -4256,7 +4376,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Simple Maps",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": false,
@@ -4398,7 +4522,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -4409,7 +4537,11 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Most Populous Cities",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -4533,7 +4665,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Ministry of Justice, HM Prison Service, and Her Majesty’s Prison and Probation Service",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": true,
@@ -4697,7 +4833,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "theme": Object {
     "overrides": Object {
@@ -4731,7 +4871,11 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Changes in Prison Population",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -4855,7 +4999,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Office for National Statistics",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": true,
@@ -5020,7 +5168,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "theme": Object {
     "overrides": Object {
@@ -5056,7 +5208,11 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Annual Growth in Pay",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -5180,7 +5336,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Office for National Statistics",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": true,
@@ -5371,7 +5531,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "theme": Object {
     "overrides": Object {
@@ -5396,7 +5560,11 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Regular Internet Users",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -5520,7 +5688,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: UCI",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": false,
@@ -5678,7 +5850,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "USA 1987",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -5688,7 +5864,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": "bold",
     "text": "Vehicle weight distribution",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -5815,7 +5995,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Department for Environment, Food and Rural Affairs",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": true,
@@ -6848,7 +7032,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "theme": Object {
     "overrides": Object {
@@ -6916,7 +7104,11 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Imported Banana Prices",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -7040,7 +7232,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Footnote",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": false,
@@ -7187,7 +7383,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "log scale",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -7197,7 +7397,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": "bold",
     "text": "World Population Over Time",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -7229,7 +7433,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Footnote",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": true,
@@ -7404,7 +7612,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Area represents market cap. Color represents change from the day before.",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -7414,7 +7626,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": "bold",
     "text": "S&P 500 index stocks categorized by sectors and industries.",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -7539,7 +7755,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Department for Business, Energy & Industrial Strategy",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": true,
@@ -7733,7 +7953,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "theme": Object {
     "overrides": Object {
@@ -7758,7 +7982,11 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "UK Energy Sources",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -7883,7 +8111,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Office for National Statistics",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": true,
@@ -8050,7 +8282,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "theme": Object {
     "overrides": Object {
@@ -8088,7 +8324,11 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Internet Users by Geographical Location",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -8213,7 +8453,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Department for Education",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": true,
@@ -8394,7 +8638,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "theme": Object {
     "overrides": Object {
@@ -8437,7 +8685,11 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Ethnic Diversity of School Pupils",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -8565,7 +8817,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Department for Digital, Culture, Media & Sport",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": true,
@@ -8950,7 +9206,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "theme": Object {
     "overrides": Object {
@@ -8973,7 +9233,11 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Total Visitors to Tate Galleries",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -9097,7 +9361,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Department for Digital, Culture, Media & Sport",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": false,
@@ -9251,7 +9519,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -9262,7 +9534,11 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Total Visitors to Museums and Galleries",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -9295,7 +9571,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Home Office",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": true,
@@ -9482,7 +9762,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -9493,7 +9777,11 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Dwelling Fires (UK)",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -9617,7 +9905,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: UCI",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": false,
@@ -9762,7 +10054,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "USA 1987",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -9772,7 +10068,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": "bold",
     "text": "Engine size distribution",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -9900,7 +10200,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Department for Business, Energy & Industrial Strategy",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": true,
@@ -10107,7 +10411,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "theme": Object {
     "overrides": Object {
@@ -10132,7 +10440,11 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Road fuel prices",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -10164,7 +10476,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Office for National Statistics",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": false,
@@ -10330,7 +10646,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -10341,7 +10661,11 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Religions of London Population",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -10464,7 +10788,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Statistics Online Computational Resource",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": false,
@@ -10606,7 +10934,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -10617,7 +10949,11 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Height vs Weight for Major League Baseball Players",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -10746,7 +11082,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Department for Digital, Culture, Media & Sport",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": true,
@@ -10934,7 +11274,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "theme": Object {
     "overrides": Object {
@@ -10982,7 +11326,11 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Total Visitors to Science Museums",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -11107,7 +11455,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Ministry of Housing, Communities & Local Government",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": true,
@@ -11279,7 +11631,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "theme": Object {
     "overrides": Object {
@@ -11305,7 +11661,11 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "UK Housing Stock",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -11429,7 +11789,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Transport for London",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": true,
@@ -11606,7 +11970,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Victoria Line (2010)",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "theme": Object {
     "overrides": Object {
@@ -11647,7 +12015,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": "bold",
     "text": "Average Station Entries",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
@@ -11771,7 +12143,11 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: UCI",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "legend": Object {
     "enabled": false,
@@ -11929,7 +12305,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "USA 1987",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -11939,7 +12319,11 @@ Object {
     "fontStyle": undefined,
     "fontWeight": "bold",
     "text": "Vehicle weight distribution",
-    "wrapping": "always",
+    "wrapping": Object {
+      "breakWord": true,
+      "enabled": true,
+      "hyphens": true,
+    },
   },
   "tooltip": Object {
     "delay": 0,
