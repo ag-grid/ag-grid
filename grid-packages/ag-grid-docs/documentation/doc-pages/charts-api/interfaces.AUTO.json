@@ -4451,6 +4451,13 @@
     "meta": { "isTypeAlias": true, "typeParams": ["T"] },
     "type": "(opts: EasingOpts<T>) => (time: number) => T"
   },
+  "StateDefinition": {
+    "meta": { "typeParams": ["State extends string"] },
+    "type": {
+      "actions?": "{ onEnter?: () => void; onExit?: () => void; }",
+      "on": "{ [key: string]: { target: State; action: () => void; }; }"
+    }
+  },
   "ScaleClampParams": {
     "meta": {},
     "type": { "strict": "boolean" },

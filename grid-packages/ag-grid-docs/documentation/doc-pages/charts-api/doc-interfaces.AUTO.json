@@ -6405,6 +6405,21 @@
     "meta": { "typeParams": ["T"] }
   },
   "Easing": { "meta": { "typeParams": ["T"] } },
+  "StateDefinition": {
+    "actions": {
+      "type": {
+        "returnType": "{\n        onEnter?: () => void;\n        onExit?: () => void;\n    }",
+        "optional": true
+      }
+    },
+    "on": {
+      "type": {
+        "returnType": "{\n        [key: string]: {\n            target: State;\n            action: () => void;\n        };\n    }",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["State extends string"] }
+  },
   "ScaleClampParams": {
     "strict": {
       "description": "/** If `true` the values outside of the domain will become `NaN`.\n     * If `false` such values will be clamped to the domain edges.\n     */",
