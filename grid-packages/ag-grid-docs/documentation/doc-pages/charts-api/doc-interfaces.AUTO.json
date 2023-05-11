@@ -5836,6 +5836,7 @@
     "x": { "type": { "returnType": "ZoomState", "optional": true } },
     "y": { "type": { "returnType": "ZoomState", "optional": true } }
   },
+  "Flag": {},
   "Layers": {},
   "LayoutStage": {},
   "AxisLabelLayout": {},

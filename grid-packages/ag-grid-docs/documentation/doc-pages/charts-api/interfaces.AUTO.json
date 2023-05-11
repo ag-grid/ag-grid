@@ -3923,6 +3923,7 @@
     "meta": {},
     "type": { "type": "'zoom-change'", "x?": "ZoomState", "y?": "ZoomState" }
   },
+  "Flag": { "meta": { "isTypeAlias": true }, "type": "1 | -1" },
   "Layers": {
     "meta": { "isEnum": true },
     "type": [
