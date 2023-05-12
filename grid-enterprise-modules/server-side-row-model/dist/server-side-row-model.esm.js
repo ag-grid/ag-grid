@@ -49651,7 +49651,9 @@ var LazyCache = /** @class */ (function (_super) {
         if (!previousNode) {
             return this.store.getDisplayIndexStart() + storeIndex;
         }
-        return (_b = (_a = previousNode.node.childStore) === null || _a === void 0 ? void 0 : _a.getDisplayIndexEnd()) !== null && _b !== void 0 ? _b : previousNode.node.rowIndex + 1;
+        var storeIndexDiff = storeIndex - previousNode.index;
+        var previousDisplayIndex = ((_b = (_a = previousNode.node.childStore) === null || _a === void 0 ? void 0 : _a.getDisplayIndexEnd()) !== null && _b !== void 0 ? _b : previousNode.node.rowIndex);
+        return previousDisplayIndex + storeIndexDiff;
     };
     /**
      * Creates a new row and inserts it at the given index
@@ -49722,7 +49724,6 @@ var LazyCache = /** @class */ (function (_super) {
         var _this = this;
         var blockCounts = {};
         var blockStates = {};
-        var dirtyBlocks = new Set();
         this.nodeMap.forEach(function (_a) {
             var _b;
             var node = _a.node, index = _a.index;
@@ -49737,11 +49738,8 @@ var LazyCache = /** @class */ (function (_super) {
             else if (_this.rowLoader.isRowLoading(blockStart)) {
                 rowState = 'loading';
             }
-            else if (_this.nodesToRefresh.has(node)) {
+            else if (_this.nodesToRefresh.has(node) || node.stub) {
                 rowState = 'needsLoading';
-            }
-            if (node.__needsRefreshWhenVisible || node.stub) {
-                dirtyBlocks.add(blockStart);
             }
             if (!blockStates[blockStart]) {
                 blockStates[blockStart] = new Set();
@@ -49973,8 +49971,11 @@ var LazyCache = /** @class */ (function (_super) {
     };
     LazyCache.prototype.onLoadSuccess = function (firstRowIndex, numberOfRowsExpected, response) {
         var _this = this;
+        var _a;
         if (!this.live)
             return;
+        var info = (_a = response.groupLevelInfo) !== null && _a !== void 0 ? _a : response.storeInfo;
+        this.store.setStoreInfo(info);
         if (this.getRowIdFunc != null) {
             var duplicates = this.extractDuplicateIds(response.rowData);
             if (duplicates.length > 0) {
@@ -50277,6 +50278,7 @@ var LazyStore = /** @class */ (function (_super) {
         _this.level = parentRowNode.level + 1;
         _this.group = ssrmParams.rowGroupCols ? _this.level < ssrmParams.rowGroupCols.length : false;
         _this.leafGroup = ssrmParams.rowGroupCols ? _this.level === ssrmParams.rowGroupCols.length - 1 : false;
+        _this.info = {};
         return _this;
     }
     LazyStore.prototype.init = function () {
@@ -50767,7 +50769,9 @@ var LazyStore = /** @class */ (function (_super) {
         return this.ssrmParams;
     };
     LazyStore.prototype.setStoreInfo = function (info) {
-        this.info = info;
+        if (info) {
+            Object.assign(this.info, info);
+        }
     };
     // gets called 1) row count changed 2) cache purged
     LazyStore.prototype.fireStoreUpdatedEvent = function () {

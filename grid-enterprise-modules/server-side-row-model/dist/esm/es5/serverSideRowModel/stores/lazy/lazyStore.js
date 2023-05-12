@@ -50,6 +50,7 @@ var LazyStore = /** @class */ (function (_super) {
         _this.level = parentRowNode.level + 1;
         _this.group = ssrmParams.rowGroupCols ? _this.level < ssrmParams.rowGroupCols.length : false;
         _this.leafGroup = ssrmParams.rowGroupCols ? _this.level === ssrmParams.rowGroupCols.length - 1 : false;
+        _this.info = {};
         return _this;
     }
     LazyStore.prototype.init = function () {
@@ -544,7 +545,9 @@ var LazyStore = /** @class */ (function (_super) {
         return this.ssrmParams;
     };
     LazyStore.prototype.setStoreInfo = function (info) {
-        this.info = info;
+        if (info) {
+            Object.assign(this.info, info);
+        }
     };
     // gets called 1) row count changed 2) cache purged
     LazyStore.prototype.fireStoreUpdatedEvent = function () {

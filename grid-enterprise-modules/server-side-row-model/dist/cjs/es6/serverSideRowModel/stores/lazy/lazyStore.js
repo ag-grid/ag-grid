@@ -19,6 +19,7 @@ class LazyStore extends core_1.BeanStub {
         this.level = parentRowNode.level + 1;
         this.group = ssrmParams.rowGroupCols ? this.level < ssrmParams.rowGroupCols.length : false;
         this.leafGroup = ssrmParams.rowGroupCols ? this.level === ssrmParams.rowGroupCols.length - 1 : false;
+        this.info = {};
     }
     init() {
         let numberOfRows = 1;
@@ -499,7 +500,9 @@ class LazyStore extends core_1.BeanStub {
         return this.ssrmParams;
     }
     setStoreInfo(info) {
-        this.info = info;
+        if (info) {
+            Object.assign(this.info, info);
+        }
     }
     // gets called 1) row count changed 2) cache purged
     fireStoreUpdatedEvent() {

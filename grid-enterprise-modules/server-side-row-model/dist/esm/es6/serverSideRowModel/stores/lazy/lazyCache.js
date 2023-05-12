@@ -264,7 +264,9 @@ export class LazyCache extends BeanStub {
         if (!previousNode) {
             return this.store.getDisplayIndexStart() + storeIndex;
         }
-        return (_b = (_a = previousNode.node.childStore) === null || _a === void 0 ? void 0 : _a.getDisplayIndexEnd()) !== null && _b !== void 0 ? _b : previousNode.node.rowIndex + 1;
+        const storeIndexDiff = storeIndex - previousNode.index;
+        const previousDisplayIndex = ((_b = (_a = previousNode.node.childStore) === null || _a === void 0 ? void 0 : _a.getDisplayIndexEnd()) !== null && _b !== void 0 ? _b : previousNode.node.rowIndex);
+        return previousDisplayIndex + storeIndexDiff;
     }
     /**
      * Creates a new row and inserts it at the given index
@@ -334,7 +336,6 @@ export class LazyCache extends BeanStub {
     getBlockStates() {
         const blockCounts = {};
         const blockStates = {};
-        const dirtyBlocks = new Set();
         this.nodeMap.forEach(({ node, index }) => {
             var _a;
             const blockStart = this.rowLoader.getBlockStartIndexForIndex(index);
@@ -348,11 +349,8 @@ export class LazyCache extends BeanStub {
             else if (this.rowLoader.isRowLoading(blockStart)) {
                 rowState = 'loading';
             }
-            else if (this.nodesToRefresh.has(node)) {
+            else if (this.nodesToRefresh.has(node) || node.stub) {
                 rowState = 'needsLoading';
-            }
-            if (node.__needsRefreshWhenVisible || node.stub) {
-                dirtyBlocks.add(blockStart);
             }
             if (!blockStates[blockStart]) {
                 blockStates[blockStart] = new Set();
@@ -572,8 +570,11 @@ export class LazyCache extends BeanStub {
         return [...duplicates];
     }
     onLoadSuccess(firstRowIndex, numberOfRowsExpected, response) {
+        var _a;
         if (!this.live)
             return;
+        const info = (_a = response.groupLevelInfo) !== null && _a !== void 0 ? _a : response.storeInfo;
+        this.store.setStoreInfo(info);
         if (this.getRowIdFunc != null) {
             const duplicates = this.extractDuplicateIds(response.rowData);
             if (duplicates.length > 0) {
