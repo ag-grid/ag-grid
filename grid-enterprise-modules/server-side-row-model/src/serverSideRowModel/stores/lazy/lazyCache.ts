@@ -323,6 +323,11 @@ export class LazyCache extends BeanStub {
                 // take the node before and after the boundary and return those
                 const previousNode = this.nodeDisplayIndexMap.get(skippedRowBound.from - 1);
                 const nextNode = this.nodeDisplayIndexMap.get(skippedRowBound.to + 1);
+
+                const parentNode = this.store.getParentNode();
+                if (nextNode == null && parentNode.sibling?.rowIndex === skippedRowBound.to + 1) {
+                    return { previousNode, nextNode: parentNode.sibling };
+                }
                 return { previousNode, nextNode };
             }
         }
