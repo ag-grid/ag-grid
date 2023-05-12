@@ -728,6 +728,9 @@ export class LazyCache extends BeanStub {
     public onLoadSuccess(firstRowIndex: number, numberOfRowsExpected: number, response: LoadSuccessParams) {
         if (!this.live) return;
 
+        const info = response.groupLevelInfo ?? response.storeInfo;
+        this.store.setStoreInfo(info);
+    
         if (this.getRowIdFunc != null) {
             const duplicates = this.extractDuplicateIds(response.rowData);
             if (duplicates.length > 0) {
