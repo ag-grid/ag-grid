@@ -208,6 +208,12 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     lockPosition?: boolean | 'left' | 'right';
     /** Set to `true` if you do not want this column to be movable via dragging. Default: `false` */
     suppressMovable?: boolean;
+    /**
+     * Set to true to format values using the column's `valueFormatter` when exporting data from the grid.
+     * This applies to CSV and Excel export, as well as clipboard operations and the fill handle.
+     * Default: `false`
+     */
+    useValueFormatterForExport?: boolean;
 
     // *** Columns: Editing *** //
 
@@ -243,6 +249,12 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      *
      * Default: `over`. */
     cellEditorPopupPosition?: 'over' | 'under';
+    /**
+     * Set to true to parse values using the column's `valueParser` when importing data to the grid.
+     * This applies to clipboard operations and the fill handle.
+     * Default: `false`
+     */
+    useValueParserForImport?: boolean;
 
     // *** Columns: Events *** //
 
@@ -499,16 +511,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     /** Set to `true` if you want this column header for this column to span the whole height of the header container. Default: `false` */
     spanHeaderHeight?: boolean;
-    /**
-     * Set to true to format values using the column's `valueFormatter` when exporting data from the grid.
-     * This applies to CSV and Excel export, as well as clipboard operations and the fill handle.
-     */
-    useValueFormatterForExport?: boolean;
-    /**
-     * Set to true to parse values using the column's `valueParser` when importing data to the grid.
-     * This applies to clipboard operations and the fill handle.
-     */
-    useValueParserForImport?: boolean;
 }
 export interface ColumnFunctionCallbackParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {
     /** Row node for the given row */
