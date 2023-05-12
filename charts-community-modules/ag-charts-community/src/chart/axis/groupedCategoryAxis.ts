@@ -229,7 +229,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         // and then rotated, zero rotation means 12 (not 3) o-clock.
         // -1 = flip
         //  1 = don't flip (default)
-        const { autoRotation, labelRotation, parallelFlipFlag } = calculateLabelRotation({
+        const { defaultRotation, configuredRotation, parallelFlipFlag } = calculateLabelRotation({
             rotation: label.rotation,
             parallel,
             regularFlipRotation: normalizeAngle360(rotation - Math.PI / 2),
@@ -290,7 +290,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
             label.x = labelX;
             label.rotationCenterX = labelX;
             if (!datum.children.length) {
-                label.rotation = labelRotation;
+                label.rotation = configuredRotation;
                 label.textAlign = 'end';
                 label.textBaseline = 'middle';
 
@@ -306,7 +306,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
                 if (bbox && bbox.width > availableRange) {
                     label.visible = false;
                 } else if (isHorizontal) {
-                    label.rotation = autoRotation;
+                    label.rotation = defaultRotation;
                 } else {
                     label.rotation = -Math.PI / 2;
                 }

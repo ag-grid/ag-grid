@@ -43,7 +43,15 @@ import { Default } from './util/default';
 import { Deprecated } from './util/deprecation';
 import { extent } from './util/array';
 import { ChartAxisDirection } from './chart/chartAxisDirection';
-import { calculateLabelBBox, calculateLabelRotation, getTextAlign, getTextBaseline } from './chart/label';
+import {
+    calculateLabelRotation,
+    calculateLabelAutoRotation,
+    calculateLabelBBox,
+    getLabelSpacing,
+    getTextAlign,
+    getTextBaseline,
+    Flag,
+} from './chart/label';
 import { Logger } from './util/logger';
 import { AxisLayout } from './chart/layout/layoutService';
 
@@ -237,6 +245,15 @@ export class AxisLabel {
      */
     @Validate(BOOLEAN)
     mirrored: boolean = false;
+
+    /**
+     * The side of the axis line to position the labels on.
+     * -1 = left (default)
+     * 1 = right
+     */
+    getSideFlag(): Flag {
+        return this.mirrored ? 1 : -1;
+    }
 
     /**
      * Labels are rendered perpendicular to the axis line by default.
@@ -613,32 +630,18 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         this.updateLine();
         const { rotation, parallelFlipRotation, regularFlipRotation } = this.calculateRotations();
 
-        // The side of the axis line to position the labels on.
-        // -1 = left (default)
-        //  1 = right
-        const sideFlag = this.label.mirrored ? 1 : -1;
-
-        const halfBandwidth = (this.scale.bandwidth || 0) / 2;
-
         let ticks = [];
         ({ ticks, primaryTickCount } = this.generateTicks({
             primaryTickCount,
             parallelFlipRotation,
             regularFlipRotation,
-            halfBandwidth,
-            sideFlag,
         }));
 
-        this.updateGridLines({
-            halfBandwidth,
-            sideFlag,
-        });
-
         const anyTickVisible = this.updateVisibility();
-
-        this.updateCrossLines({ sideFlag, rotation, parallelFlipRotation, regularFlipRotation });
+        this.updateGridLines();
+        this.updateCrossLines({ rotation, parallelFlipRotation, regularFlipRotation });
         this.updateTitle({ ticks });
-        this.updateTickLines({ sideFlag, anyTickVisible });
+        this.updateTickLines(anyTickVisible);
 
         return primaryTickCount;
     }
@@ -679,14 +682,10 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         primaryTickCount,
         parallelFlipRotation,
         regularFlipRotation,
-        halfBandwidth,
-        sideFlag,
     }: {
         primaryTickCount?: number;
         parallelFlipRotation: number;
         regularFlipRotation: number;
-        halfBandwidth: number;
-        sideFlag: 1 | -1;
     }): { ticks: any[]; primaryTickCount?: number } {
         const {
             scale,
@@ -699,6 +698,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             maxSpacing: this.tick.maxSpacing,
         });
 
+        const halfBandwidth = (this.scale.bandwidth || 0) / 2;
         const continuous = scale instanceof ContinuousScale;
         const secondaryAxis = primaryTickCount !== undefined;
         const checkForOverlap =
@@ -761,12 +761,11 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             const { labelData, rotated } = this.updateLabels({
                 parallelFlipRotation,
                 regularFlipRotation,
-                sideFlag,
                 tickLabelGroupSelection: this.tickLabelGroupSelection,
                 ticks,
             });
 
-            const labelSpacing = this.getLabelSpacing(rotated);
+            const labelSpacing = getLabelSpacing(this.label.minSpacing, rotated);
 
             // no need for further iterations if `avoidCollisions` is false
             labelOverlap = checkForOverlap ? axisLabelsOverlap(labelData, labelSpacing) : false;
@@ -880,19 +879,18 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     }
 
     private updateCrossLines({
-        sideFlag,
         rotation,
         parallelFlipRotation,
         regularFlipRotation,
     }: {
-        sideFlag: 1 | -1;
         rotation: number;
         parallelFlipRotation: number;
         regularFlipRotation: number;
     }) {
         const anySeriesActive = this.isAnySeriesActive();
+        const sideFlag = this.label.getSideFlag();
         this.crossLines?.forEach((crossLine) => {
-            crossLine.sideFlag = -sideFlag as -1 | 1;
+            crossLine.sideFlag = -sideFlag as Flag;
             crossLine.direction = rotation === -Math.PI / 2 ? ChartAxisDirection.X : ChartAxisDirection.Y;
             crossLine.label.parallel = crossLine.label.parallel ?? this.label.parallel;
             crossLine.parallelFlipRotation = parallelFlipRotation;
@@ -901,8 +899,9 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         });
     }
 
-    private updateTickLines({ sideFlag, anyTickVisible }: { sideFlag: 1 | -1; anyTickVisible: boolean }) {
-        const { tick } = this;
+    private updateTickLines(anyTickVisible: boolean) {
+        const { tick, label } = this;
+        const sideFlag = label.getSideFlag();
         this.tickLineGroupSelection.each((line) => {
             line.strokeWidth = tick.width;
             line.stroke = tick.color;
@@ -922,13 +921,6 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
         return max - min;
     }
-    private getLabelSpacing(rotated?: boolean): number {
-        const { label } = this;
-        if (!isNaN(label.minSpacing)) {
-            return label.minSpacing;
-        }
-        return rotated ? 0 : 10;
-    }
 
     protected calculateDomain() {
         // Placeholder for subclasses to override.
@@ -946,7 +938,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             gridLength,
         } = this;
         const rotation = toRadians(this.rotation);
-        const sideFlag = label.mirrored ? 1 : -1;
+        const sideFlag = label.getSideFlag();
 
         const translationX = Math.floor(translation.x);
         const translationY = Math.floor(translation.y);
@@ -1026,7 +1018,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         this.gridArcGroupSelection = gridArcGroupSelection;
     }
 
-    private updateGridLines({ halfBandwidth, sideFlag }: { halfBandwidth: number; sideFlag: -1 | 1 }) {
+    private updateGridLines() {
         const { gridStyle, scale, tick, gridPadding, gridLength } = this;
         if (gridLength && gridStyle.length) {
             const styleCount = gridStyle.length;
@@ -1034,6 +1026,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
             if (this.radialGrid) {
                 const angularGridLength = normalizeAngle360Inclusive(toRadians(gridLength));
+                const halfBandwidth = (this.scale.bandwidth || 0) / 2;
 
                 grid = this.gridArcGroupSelection.each((arc, datum) => {
                     const radius = Math.round(scale.convert(datum) + halfBandwidth);
@@ -1044,6 +1037,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
                     arc.radius = radius;
                 });
             } else {
+                const sideFlag = this.label.getSideFlag();
                 grid = this.gridLineGroupSelection.each((line) => {
                     line.x1 = gridPadding;
                     line.x2 = -sideFlag * gridLength + gridPadding;
@@ -1066,13 +1060,11 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     private updateLabels({
         ticks,
         tickLabelGroupSelection,
-        sideFlag,
         parallelFlipRotation,
         regularFlipRotation,
     }: {
         ticks: any[];
         tickLabelGroupSelection: Selection<Text, any>;
-        sideFlag: -1 | 1;
         parallelFlipRotation: number;
         regularFlipRotation: number;
     }): { labelData: PointLabelDatum[]; rotated: boolean } {
@@ -1086,7 +1078,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             return { labelData: [], rotated: false };
         }
 
-        const { autoRotation, labelRotation, parallelFlipFlag, regularFlipFlag } = calculateLabelRotation({
+        const { defaultRotation, configuredRotation, parallelFlipFlag, regularFlipFlag } = calculateLabelRotation({
             rotation,
             parallel,
             regularFlipRotation,
@@ -1096,11 +1088,13 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
         this.fractionDigits = (ticks as any).fractionDigits >= 0 ? (ticks as any).fractionDigits : 0;
 
+        const sideFlag = this.label.getSideFlag();
         const labelX = sideFlag * (tick.size + label.padding + this.seriesAreaPadding);
 
         const labelMatrix = new Matrix();
-        Matrix.updateTransformMatrix(labelMatrix, 1, 1, autoRotation, 0, 0);
+        Matrix.updateTransformMatrix(labelMatrix, 1, 1, defaultRotation, 0, 0);
 
+        // Apply label option values
         let labelData: PointLabelDatum[] = [];
         const labelSelection = tickLabelGroupSelection.each((node, datum, index) => {
             const { tick, translationY } = datum;
@@ -1118,52 +1112,44 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             }
 
             const bbox = node.computeBBox();
-            const labelDatum = calculateLabelBBox(bbox, labelX, translationY, labelMatrix);
+            const labelDatum = calculateLabelBBox(node.text, bbox, labelX, translationY, labelMatrix);
 
             labelData.push(labelDatum);
         });
 
-        const labelSpacing = this.getLabelSpacing();
-        const labelsOverlap = axisLabelsOverlap(labelData, labelSpacing);
-        const autoRotateLabels = label.rotation === undefined && label.autoRotate === true && labelsOverlap;
-
-        // When no user label rotation angle has been specified and the width of any label exceeds the average tick gap (`autoRotateLabels` is `true`),
-        // automatically rotate the labels
-        const labelAutoRotation = autoRotateLabels ? normalizeAngle360(toRadians(label.autoRotateAngle)) : 0;
-
-        const rotated = !!(labelRotation || labelAutoRotation);
-
-        const autoWrapLabels = autoWrap && !rotated;
-        if (autoWrapLabels) {
+        const autoRotate = label.rotation === undefined && label.autoRotate === true;
+        let autoRotation = 0;
+        if (autoRotate) {
+            autoRotation = calculateLabelAutoRotation(labelData, label.minSpacing, label.autoRotateAngle);
+        } else if (autoWrap) {
             this.wrapLabels(labelSelection, labelData.length);
         }
 
-        const combinedRotation = autoRotation + labelRotation + labelAutoRotation;
-        if (combinedRotation) {
-            Matrix.updateTransformMatrix(labelMatrix, 1, 1, combinedRotation, 0, 0);
-        }
+        const combinedRotation = defaultRotation + configuredRotation + autoRotation;
 
-        const labelTextBaseline = getTextBaseline(parallel, labelRotation, sideFlag, parallelFlipFlag);
-        const labelTextAlign = getTextAlign(parallel, labelRotation, labelAutoRotation, sideFlag, regularFlipFlag);
+        Matrix.updateTransformMatrix(labelMatrix, 1, 1, combinedRotation, 0, 0);
+
+        // Position labels
         labelData = [];
-        labelSelection.each((label, datum) => {
-            const userHidden = label.text === '' || label.text == undefined;
+        const labelTextBaseline = getTextBaseline(parallel, configuredRotation, sideFlag, parallelFlipFlag);
+        const labelTextAlign = getTextAlign(parallel, configuredRotation, autoRotation, sideFlag, regularFlipFlag);
+        labelSelection.each((node, datum) => {
+            const userHidden = node.text === '' || node.text == undefined;
             if (userHidden) {
-                label.visible = false; // hide empty labels
+                node.visible = false; // hide empty labels
                 return;
             }
 
-            label.textBaseline = labelTextBaseline;
-            label.textAlign = labelTextAlign;
-            label.x = labelX;
-            label.rotationCenterX = labelX;
-            label.rotation = combinedRotation;
-
-            label.visible = true;
+            node.textBaseline = labelTextBaseline;
+            node.textAlign = labelTextAlign;
+            node.x = labelX;
+            node.rotationCenterX = labelX;
+            node.rotation = combinedRotation;
+            node.visible = true;
             const { translationY } = datum;
 
-            const bbox = label.computeBBox();
-            const labelDatum = calculateLabelBBox(bbox, labelX, translationY, labelMatrix);
+            const bbox = node.computeBBox();
+            const labelDatum = calculateLabelBBox(node.text, bbox, labelX, translationY, labelMatrix);
 
             labelData.push(labelDatum);
         });
@@ -1176,6 +1162,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             padding: this.label.padding,
             format: this.label.format,
         };
+
+        const rotated = !!(configuredRotation || autoRotation);
 
         return { labelData, rotated };
     }
@@ -1226,7 +1214,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         if (title.enabled && lineNode.visible) {
             titleVisible = true;
 
-            const sideFlag = label.mirrored ? 1 : -1;
+            const sideFlag = label.getSideFlag();
             const parallelFlipRotation = normalizeAngle360(rotation);
             const padding = Caption.PADDING;
             const titleNode = title.node;

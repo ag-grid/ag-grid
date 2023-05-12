@@ -339,14 +339,14 @@ export class CrossLine {
             return;
         }
 
-        const { autoRotation, labelRotation } = calculateLabelRotation({
+        const { defaultRotation, configuredRotation } = calculateLabelRotation({
             rotation,
             parallel,
             regularFlipRotation,
             parallelFlipRotation,
         });
 
-        crossLineLabel.rotation = autoRotation + labelRotation;
+        crossLineLabel.rotation = defaultRotation + configuredRotation;
 
         crossLineLabel.textBaseline = 'middle';
         crossLineLabel.textAlign = 'center';

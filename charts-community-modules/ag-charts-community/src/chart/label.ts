@@ -4,7 +4,7 @@ import { FontStyle, FontWeight } from './agChartOptions';
 import { normalizeAngle360, toRadians } from '../util/angle';
 import { BBox } from '../scene/bbox';
 import { Matrix } from '../scene/matrix';
-import { PointLabelDatum } from '../util/labelPlacement';
+import { axisLabelsOverlap, PointLabelDatum } from '../util/labelPlacement';
 
 export class Label {
     @Validate(BOOLEAN)
@@ -29,27 +29,51 @@ export class Label {
         return getFont(this);
     }
 }
-type Flag = 1 | -1;
+export type Flag = 1 | -1;
 export function calculateLabelRotation(opts: {
     rotation?: number;
     parallel?: boolean;
     regularFlipRotation?: number;
     parallelFlipRotation?: number;
-}): { labelRotation: number; autoRotation: number; parallelFlipFlag: Flag; regularFlipFlag: Flag } {
+}): { configuredRotation: number; defaultRotation: number; parallelFlipFlag: Flag; regularFlipFlag: Flag } {
     const { parallelFlipRotation = 0, regularFlipRotation = 0 } = opts;
-    const labelRotation = opts.rotation ? normalizeAngle360(toRadians(opts.rotation)) : 0;
-    const parallelFlipFlag = !labelRotation && parallelFlipRotation >= 0 && parallelFlipRotation <= Math.PI ? -1 : 1;
+    const configuredRotation = opts.rotation ? normalizeAngle360(toRadians(opts.rotation)) : 0;
+    const parallelFlipFlag =
+        !configuredRotation && parallelFlipRotation >= 0 && parallelFlipRotation <= Math.PI ? -1 : 1;
     // Flip if the axis rotation angle is in the top hemisphere.
-    const regularFlipFlag = !labelRotation && regularFlipRotation >= 0 && regularFlipRotation <= Math.PI ? -1 : 1;
+    const regularFlipFlag = !configuredRotation && regularFlipRotation >= 0 && regularFlipRotation <= Math.PI ? -1 : 1;
 
-    let autoRotation = 0;
+    let defaultRotation = 0;
     if (opts.parallel) {
-        autoRotation = (parallelFlipFlag * Math.PI) / 2;
+        defaultRotation = (parallelFlipFlag * Math.PI) / 2;
     } else if (regularFlipFlag === -1) {
-        autoRotation = Math.PI;
+        defaultRotation = Math.PI;
     }
 
-    return { labelRotation, autoRotation, parallelFlipFlag, regularFlipFlag };
+    return { configuredRotation, defaultRotation, parallelFlipFlag, regularFlipFlag };
+}
+
+export function calculateLabelAutoRotation(
+    labelData: PointLabelDatum[],
+    minSpacing: number,
+    autoRotateAngle: number,
+    rotated?: boolean
+) {
+    const labelSpacing = getLabelSpacing(minSpacing, rotated);
+    const labelsOverlap = axisLabelsOverlap(labelData, labelSpacing);
+    // When no user label rotation angle has been specified and the width of any label exceeds the average tick gap (`autoRotateLabels` is `true`),
+    // automatically rotate the labels
+    if (labelsOverlap) {
+        return normalizeAngle360(toRadians(autoRotateAngle));
+    }
+    return 0;
+}
+
+export function getLabelSpacing(minSpacing: number, rotated?: boolean): number {
+    if (!isNaN(minSpacing)) {
+        return minSpacing;
+    }
+    return rotated ? 0 : 10;
 }
 
 export function getTextBaseline(
@@ -94,7 +118,13 @@ export function getTextAlign(
     return 'start';
 }
 
-export function calculateLabelBBox(bbox: BBox, labelX: number, labelY: number, labelMatrix: Matrix): PointLabelDatum {
+export function calculateLabelBBox(
+    text: string,
+    bbox: BBox,
+    labelX: number,
+    labelY: number,
+    labelMatrix: Matrix
+): PointLabelDatum {
     // Text.computeBBox() does not take into account any of the transformations that have been applied to the label nodes, only the width and height are useful.
     // Rather than taking into account all transformations including those of parent nodes which would be the result of `computeTransformedBBox()`, giving the x and y in the entire axis coordinate space,
     // take into account only the rotation and translation applied to individual label nodes to get the x y coordinates of the labels relative to each other
@@ -118,7 +148,7 @@ export function calculateLabelBBox(bbox: BBox, labelX: number, labelY: number, l
         label: {
             width,
             height,
-            text: '',
+            text,
         },
     };
 }
