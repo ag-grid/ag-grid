@@ -85,7 +85,7 @@ The following example demonstrates how to specify exact tick values:
 
 ### Tick Min / Max Spacing
 
-The `tick.minSpacing` and `tick.maxSpacing` options alter the default behavior by defining the approximate minimum and
+The `tick.minSpacing` and `tick.maxSpacing` options alter the default behaviour by defining the approximate minimum and
 maximum pixel gaps that should exist between ticks. You can provide one or both options as needed. An appropriate number
 of ticks will be generated to meet the specified `tick.minSpacing` and `tick.maxSpacing` constraints taking the rendered
 size of the chart into account. A sample configuration is shown below:
