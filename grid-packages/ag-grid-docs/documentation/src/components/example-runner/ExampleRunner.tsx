@@ -542,8 +542,7 @@ const ExampleRunnerInner = ({
         height: exampleInfo.options.exampleHeight || '500px',
     };
 
-    const isGenerated = isGeneratedExample(type);
-    const linkId = `example-${name}`;
+    exampleInfo.linkId = `example-${name}`;
 
     return (
         <div className={classnames('tabs-outer', styles.tabsContainer)}>
@@ -614,68 +613,6 @@ const ExampleRunnerInner = ({
                 <CodeViewer isActive={showCode} exampleInfo={exampleInfo} />
             </div>
         </div>
-    );
-};
-
-const ImportTypeSelector = ({ id, importType, onChange }) => {
-    const formId = `${id}-import-style-selector`;
-    return isServerSideRendering() ? null : (
-        <>
-            <label htmlFor={formId}>Import type:</label>{' '}
-            <select id={formId} value={importType} onChange={onChange} onBlur={onChange}>
-                {['packages', 'modules'].map((type) => (
-                    <option key={type} value={type}>
-                        {type[0].toUpperCase()}
-                        {type.substring(1)}
-                    </option>
-                ))}
-            </select>
-        </>
-    );
-};
-
-const ReactStyleSelector = ({ id, useFunctionalReact, useTypescript, onChange }) => {
-    const formId = `${id}-react-style-selector`;
-    return isServerSideRendering() ? null : (
-        <>
-            <label htmlFor={formId}>Code style:</label>{' '}
-            <select
-                id={formId}
-                value={useFunctionalReact ? (useTypescript ? 'hooksTs' : 'hooks') : 'classes'}
-                onChange={onChange}
-                onBlur={onChange}
-            >
-                <option value="classes">Classes</option>
-                <option value="hooks">Hooks</option>
-                <option value="hooksTs">Hooks TS</option>
-            </select>
-        </>
-    );
-};
-
-const VueStyleSelector = ({ id, useVue3, onChange }) => {
-    const formId = `${id}-vue-style-selector`;
-    return isServerSideRendering() ? null : (
-        <>
-            <label htmlFor={formId}>Version:</label>{' '}
-            <select id={formId} value={JSON.stringify(useVue3)} onChange={onChange} onBlur={onChange}>
-                <option value="false">Vue 2</option>
-                <option value="true">Vue 3</option>
-            </select>
-        </>
-    );
-};
-
-const TypescriptStyleSelector = ({ id, useTypescript, onChange }) => {
-    const formId = `${id}-typescript-style-selector`;
-    return isServerSideRendering() ? null : (
-        <>
-            <label htmlFor={formId}>Code style:</label>{' '}
-            <select id={formId} value={JSON.stringify(useTypescript)} onChange={onChange} onBlur={onChange}>
-                <option value="false">Javascript</option>
-                <option value="true">Typescript</option>
-            </select>
-        </>
     );
 };
 
