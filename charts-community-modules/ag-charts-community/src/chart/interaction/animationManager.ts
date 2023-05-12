@@ -83,7 +83,6 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
             ...opts,
             autoplay: this.isPlaying ? opts.autoplay : false,
             driver: this.createDriver(id),
-            duration: this.skipAnimations ? 1 : opts.duration,
         };
         const controller = baseAnimate(optsExtra);
 
@@ -93,6 +92,15 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
         }
 
         this.controllers[id] = controller;
+
+        if (this.skipAnimations) {
+            // Initialise the animation with the final values immediately and then stop the animation
+            opts.onUpdate?.(opts.to);
+            controller.stop();
+        } else {
+            // Initialise the animation immediately without requesting a frame to prevent flashes
+            opts.onUpdate?.(opts.from);
+        }
 
         return controller;
     }
