@@ -44,6 +44,11 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
         window.addEventListener('DOMContentLoaded', () => {
             this.readyToPlay = true;
         });
+
+        // Fallback if `DOMContentLoaded` event is not fired, e.g. in an iframe
+        setTimeout(() => {
+            this.readyToPlay = true;
+        }, 10);
     }
 
     public play() {
