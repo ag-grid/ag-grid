@@ -57550,66 +57550,40 @@ var LazyCache = /** @class */ (function (_super) {
     };
     LazyCache.prototype.purgeExcessRows = function () {
         var _this = this;
+        var _a;
         // Delete all stub nodes which aren't in the viewport or already loading
         this.purgeStubsOutsideOfViewport();
+        if (this.store.getDisplayIndexEnd() == null || this.storeParams.maxBlocksInCache == null) {
+            // if group is collapsed, or max blocks missing, ignore the event
+            return;
+        }
         var firstRowInViewport = this.api.getFirstDisplayedRow();
         var lastRowInViewport = this.api.getLastDisplayedRow();
         var firstRowBlockStart = this.rowLoader.getBlockStartIndexForIndex(firstRowInViewport);
-        var _a = __read$16(this.rowLoader.getBlockBoundsForIndex(lastRowInViewport), 2), _ = _a[0], lastRowBlockEnd = _a[1];
-        // number of blocks to cache on top of the viewport blocks
-        var numberOfRowsToRetain = this.getNumberOfRowsToRetain(firstRowBlockStart, lastRowBlockEnd);
-        if (this.store.getDisplayIndexEnd() == null || numberOfRowsToRetain == null) {
-            // if group is collapsed, or max blocks missing, ignore the event
+        var lastRowBlockStart = this.rowLoader.getBlockStartIndexForIndex(lastRowInViewport);
+        var blockSize = this.rowLoader.getBlockSize();
+        var blocksInViewport = ((lastRowBlockStart - firstRowBlockStart) / blockSize) + 1;
+        var numberOfBlocksToRetain = Math.max(blocksInViewport, (_a = this.storeParams.maxBlocksInCache) !== null && _a !== void 0 ? _a : 0);
+        var estimatedLoadedBlocks = this.nodeDisplayIndexMap.size / blockSize;
+        var blocksToRemove = Math.ceil(estimatedLoadedBlocks - numberOfBlocksToRetain);
+        if (blocksToRemove <= 0) {
             return;
         }
         // don't check the nodes that could have been cached out of necessity
         var disposableNodes = this.nodeMap.filter(function (_a) {
             var node = _a.node;
-            return !node.stub && !_this.isNodeCached(node);
+            var rowBlockStart = _this.rowLoader.getBlockStartIndexForIndex(node.rowIndex);
+            var rowBlockInViewport = rowBlockStart >= firstRowBlockStart && rowBlockStart <= lastRowBlockStart;
+            return !rowBlockInViewport && !_this.isNodeCached(node);
         });
-        if (disposableNodes.length <= numberOfRowsToRetain) {
-            // not enough rows to bother clearing any
-            return;
-        }
-        var disposableNodesNotInViewport = disposableNodes.filter(function (_a) {
-            var node = _a.node;
-            var startRowNum = node.rowIndex;
-            if (startRowNum == null || startRowNum === -1) {
-                // row is not displayed and can be disposed
-                return true;
-            }
-            if (firstRowBlockStart <= startRowNum && startRowNum < lastRowBlockEnd) {
-                // start row in viewport, block is in viewport
-                return false;
-            }
-            var lastRowNum = startRowNum + blockSize;
-            if (firstRowBlockStart <= lastRowNum && lastRowNum < lastRowBlockEnd) {
-                // end row in viewport, block is in viewport
-                return false;
-            }
-            if (startRowNum < firstRowBlockStart && lastRowNum >= lastRowBlockEnd) {
-                // full block surrounds in viewport
-                return false;
-            }
-            // block does not appear in viewport and can be disposed
-            return true;
-        });
-        // reduce the number of rows to retain by the number in viewport which were retained
-        numberOfRowsToRetain = numberOfRowsToRetain - (disposableNodes.length - disposableNodesNotInViewport.length);
-        if (!disposableNodesNotInViewport.length) {
+        if (disposableNodes.length === 0) {
             return;
         }
         var midViewportRow = firstRowInViewport + ((lastRowInViewport - firstRowInViewport) / 2);
-        var blockDistanceArray = this.getBlocksDistanceFromRow(disposableNodesNotInViewport, midViewportRow);
-        var blockSize = this.rowLoader.getBlockSize();
-        var numberOfBlocksToRetain = Math.ceil(numberOfRowsToRetain / blockSize);
-        if (blockDistanceArray.length <= numberOfBlocksToRetain) {
-            return;
-        }
+        var blockDistanceArray = this.getBlocksDistanceFromRow(disposableNodes, midViewportRow);
         // sort the blocks by distance from middle of viewport
         blockDistanceArray.sort(function (a, b) { return Math.sign(b[1] - a[1]); });
-        var blocksToRemove = blockDistanceArray.length - Math.max(numberOfBlocksToRetain, 0);
-        for (var i = 0; i < blocksToRemove; i++) {
+        for (var i = 0; i < Math.min(blocksToRemove, blockDistanceArray.length); i++) {
             var blockStart = Number(blockDistanceArray[i][0]);
             for (var x = blockStart; x < blockStart + blockSize; x++) {
                 var lazyNode = this.nodeMap.getBy('index', x);
