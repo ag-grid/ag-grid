@@ -149,8 +149,11 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      *  
      * The data type can also be inferred from the row data by using the `'auto'` type.
      * Data type inference only works for the Client-Side Row Model, and requires non-null data.
+     * 
+     * If `cellDataType` is set on the default column definition or a column type,
+     * it can be turned off for this column by setting the value to `null`.
      */
-    cellDataType?: string;
+    cellDataType?: string | null;
     /** Function or expression. Gets the value from your data for display. */
     valueGetter?: string | ValueGetterFunc<TData, TValue>;
     /** A function or expression to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */

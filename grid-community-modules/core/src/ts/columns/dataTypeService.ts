@@ -50,7 +50,7 @@ export class DataTypeService extends BeanStub {
         const dataTypeDefinitions = this.gridOptionsService.get('dataTypeDefinitions') ?? {};
 
         iterateObject(dataTypeDefinitions, (cellDataType: string, dataTypeDefinition: DataTypeDefinition) => {
-            const mergedDataTypeDefinition = this.processDataTypeDefinition(dataTypeDefinition, dataTypeDefinitions);
+            const mergedDataTypeDefinition = this.processDataTypeDefinition(dataTypeDefinition, dataTypeDefinitions, [cellDataType]);
             if (mergedDataTypeDefinition) {
                 this.dataTypeDefinitions[cellDataType] = mergedDataTypeDefinition;
             }
@@ -80,17 +80,14 @@ export class DataTypeService extends BeanStub {
 
     private processDataTypeDefinition(
         dataTypeDefinition: DataTypeDefinition,
-        dataTypeDefinitions: { [key: string]: DataTypeDefinition }
+        dataTypeDefinitions: { [key: string]: DataTypeDefinition },
+        alreadyProcessedDataTypes: string[]
     ): DataTypeDefinition | undefined {
         let mergedDataTypeDefinition: DataTypeDefinition;
         const extendsCellDataType = dataTypeDefinition.extends;
         if (dataTypeDefinition.extends === dataTypeDefinition.baseDataType) {
             const baseDataTypeDefinition = DEFAULT_DATA_TYPES[extendsCellDataType];
-            if (
-                !baseDataTypeDefinition ||
-                baseDataTypeDefinition.baseDataType !== dataTypeDefinition.baseDataType
-            ) {
-                this.warnBaseDataTypesUnmatching();
+            if (!this.validateDataTypeDefinition(dataTypeDefinition, baseDataTypeDefinition, extendsCellDataType)) {
                 return undefined;
             }
             mergedDataTypeDefinition = this.mergeDataTypeDefinitions(
@@ -98,17 +95,20 @@ export class DataTypeService extends BeanStub {
                 dataTypeDefinition
             );
         } else {
+            if (alreadyProcessedDataTypes.includes(extendsCellDataType)) {
+                doOnce(() => console.warn(
+                    'AG Grid: Data type definition hierarchies (via the "extends" property) cannot contain circular references.'
+                ), 'dataTypeExtendsCircularRef');
+                return undefined;
+            }
             const extendedDataTypeDefinition = dataTypeDefinitions[extendsCellDataType];
-            if (
-                !extendedDataTypeDefinition ||
-                extendedDataTypeDefinition.baseDataType !== dataTypeDefinition.baseDataType
-            ) {
-                this.warnBaseDataTypesUnmatching();
+            if (!this.validateDataTypeDefinition(dataTypeDefinition, extendedDataTypeDefinition, extendsCellDataType)) {
                 return undefined;
             }
             const mergedExtendedDataTypeDefinition = this.processDataTypeDefinition(
                 extendedDataTypeDefinition,
-                dataTypeDefinitions
+                dataTypeDefinitions,
+                [...alreadyProcessedDataTypes, extendsCellDataType]
             );
             if (!mergedExtendedDataTypeDefinition) {
                 return undefined;
@@ -122,18 +122,34 @@ export class DataTypeService extends BeanStub {
         return mergedDataTypeDefinition;
     }
 
-    private warnBaseDataTypesUnmatching(): void {
-        doOnce(() => console.warn(
-            'AG Grid: The "baseDataType" property of a data type definition must match that of its parent.'
-        ), 'dataTypeBaseTypesMatch');
+    private validateDataTypeDefinition(
+        dataTypeDefinition: DataTypeDefinition,
+        parentDataTypeDefinition: DataTypeDefinition | CoreDataTypeDefinition,
+        parentCellDataType: string
+    ): boolean {
+        if (!parentDataTypeDefinition) {
+            doOnce(() => console.warn(
+                `AG Grid: The data type definition ${parentCellDataType} does not exist.`
+            ), 'dataTypeDefMissing' + parentCellDataType);
+            return false;
+        }
+        if (parentDataTypeDefinition.baseDataType !== dataTypeDefinition.baseDataType) {
+            doOnce(() => console.warn(
+                'AG Grid: The "baseDataType" property of a data type definition must match that of its parent.'
+            ), 'dataTypeBaseTypesMatch');
+            return false;
+        }
+        return true;
     }
 
     public updateColDefAndGetColumnType(
         colDef: ColDef,
-        cellDataType: string | undefined,
+        cellDataType: string | null | undefined,
         field: string | undefined
     ): string | string[] | undefined {
-        cellDataType = cellDataType ?? colDef.cellDataType;
+        if (cellDataType === undefined) {
+            cellDataType = colDef.cellDataType
+        }
         if (!cellDataType) {
             return undefined;
         }
@@ -153,7 +169,22 @@ export class DataTypeService extends BeanStub {
         colDef.cellDataType = cellDataType;
         if (dataTypeDefinition.valueFormatter) {
             colDef.valueFormatter = (params: ValueFormatterParams) => {
-                return params.node?.group || params.column.isRowGroupActive() ? undefined as any : dataTypeDefinition.valueFormatter!(params as any);
+                if (params.node?.group || params.column.isRowGroupActive()) {
+                    const { aggFunc } = params.colDef;
+                    if (aggFunc && (
+                        aggFunc === 'first' ||
+                        aggFunc === 'last' ||
+                        (
+                            dataTypeDefinition.baseDataType === 'number' && (
+                                aggFunc === 'sum' || aggFunc === 'min' || aggFunc === 'max' || aggFunc === 'avg'
+                            )
+                        )
+                     )) {
+                        return dataTypeDefinition.valueFormatter!(params);
+                    }
+                    return undefined as any;
+                }
+                return dataTypeDefinition.valueFormatter!(params);
             }
         }
         if (dataTypeDefinition.valueParser) {
@@ -183,6 +214,10 @@ export class DataTypeService extends BeanStub {
             } else {
                 this.initWaitForRowData();
             }
+        } else {
+            doOnce(() => console.warn(
+                'AG Grid: Inferring cell data types (cellDataType = "auto") only works with the Client-Side Row Model. Please supply the actual cell data types for each column.'
+            ), 'dataTypeInferenceCsrm');
         }
         if (value == null) {
             return undefined;
