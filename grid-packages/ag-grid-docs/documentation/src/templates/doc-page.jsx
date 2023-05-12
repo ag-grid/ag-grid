@@ -86,7 +86,12 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
                     exampleIndexData,
                     config: props.config != null ? JSON.parse(props.config) : undefined,
                 }),
-            snippet: (props) => Snippet({ ...props, framework }),
+            snippet: (props) => Snippet({
+                ...props,
+                // NOTE: lowercased upstream
+                lineNumbers: props.linenumbers === 'true',
+                framework
+            }),
             'expandable-snippet': (props) =>
                 ExpandableSnippet({
                     ...props,

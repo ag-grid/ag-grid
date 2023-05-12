@@ -97,7 +97,7 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
-<snippet language="html" transform={false} numberLines={true}>
+<snippet language="html" transform={false} lineNumbers="true">
 | &lt;!DOCTYPE html>
 | &lt;html lang="en">
 |     &lt;head>
@@ -130,7 +130,7 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<snippet language="jsx" transform={false} numberLines={true}>
+<snippet language="jsx" transform={false} lineNumbers="true">
 | import React, { Component } from 'react';
 | import { AgChartsReact } from 'ag-charts-react';
 |
@@ -199,7 +199,7 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<snippet language="html" transform={false} numberLines={true}>
+<snippet language="html" transform={false} lineNumbers="true">
 | <div id="root"></div>
 </snippet>
 </framework-specific-section>
@@ -221,7 +221,7 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-<snippet language="jsx" transform={false} numberLines={true}>
+<snippet language="jsx" transform={false} lineNumbers="true">
 | import { Component } from '@angular/core';
 | import { AgChartOptions } from 'ag-charts-community';
 |
@@ -286,7 +286,7 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-<snippet language="jsx" transform={false} numberLines={true}>
+<snippet language="jsx" transform={false} lineNumbers="true">
 | import { BrowserModule } from '@angular/platform-browser';
 | import { NgModule } from '@angular/core';
 | import { AgChartsAngularModule } from 'ag-charts-angular';
@@ -312,7 +312,7 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-<snippet language="html" transform={false} numberLines={true}> 
+<snippet language="html" transform={false} lineNumbers="true"> 
 | <ag-charts-angular
 |     style="position: absolute; top: 0; right: 0; bottom: 0; left: 0;"
 |     [options]="options">
@@ -337,7 +337,7 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-<snippet language="html" transform={false} numberLines={true}> 
+<snippet language="html" transform={false} lineNumbers="true"> 
 | <template>
 |    <ag-charts-vue :options="options"></ag-charts-vue>
 | </template>
@@ -416,7 +416,7 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-<snippet language="jsx" transform={false} numberLines={true}>
+<snippet language="jsx" transform={false} lineNumbers="true">
 | import { createApp } from 'vue'
 | import App from './App.vue'
 |

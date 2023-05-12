@@ -13,7 +13,7 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-<snippet transform={false} language="jsx" numberLines={true}>
+<snippet transform={false} language="jsx" lineNumbers="true">
 |&lt;template>
 |  &lt;ag-grid-vue
 |    style="width: 500px; height: 200px"
@@ -59,7 +59,7 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-<snippet transform={false} language="jsx" numberLines={true}>
+<snippet transform={false} language="jsx" lineNumbers="true">
 |import { createApp } from "vue";
 |import App from "./App.vue";
 |

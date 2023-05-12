@@ -13,7 +13,7 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<snippet transform={false} language="jsx" numberLines={true}>
+<snippet transform={false} language="jsx" lineNumbers="true">
 |import React, { useState } from 'react';
 |import { createRoot } from 'react-dom/client';
 |import { AgGridReact } from 'ag-grid-react';
@@ -55,7 +55,7 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<snippet transform={false} language="html" numberLines={true}>
+<snippet transform={false} language="html" lineNumbers="true">
 |&lt;div id="root">&lt;/div>
 </snippet>
 </framework-specific-section>

@@ -13,7 +13,7 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-<snippet transform={false} language="ts">
+<snippet transform={false} language="ts" lineNumbers="true">
 |import { Component } from '@angular/core';
 |import { ColDef } from 'ag-grid-community';
 |
@@ -46,7 +46,7 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-<snippet transform={false} language="html" numberLines={true}>
+<snippet transform={false} language="html" lineNumbers="true">
 |&lt;ag-grid-angular
 |    style="width: 500px; height: 350px;"
 |    class="ag-theme-alpine"
@@ -62,7 +62,7 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-<snippet transform={false} language="scss" numberLines={true}>
+<snippet transform={false} language="scss" lineNumbers="true">
 |@import 'ag-grid-community/styles/ag-grid.css';
 |@import 'ag-grid-community/styles/ag-theme-alpine.css';
 </snippet>

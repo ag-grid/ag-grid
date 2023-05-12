@@ -13,7 +13,7 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
-<snippet transform={false} lineNumbers={true}>
+<snippet transform={false} lineNumbers="true">
 |const columnDefs = [
 |  { field: "make" },
 |  { field: "model" },
@@ -49,7 +49,7 @@
 
 
 <framework-specific-section frameworks="javascript">
-<snippet language="html" transform={false} numberLines={true}>
+<snippet language="html" transform={false} lineNumbers="true">
 |&lt;!DOCTYPE html>
 |&lt;html lang="en">
 |&lt;head>
