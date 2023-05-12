@@ -88,24 +88,24 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 | var data = [
 |     {
 |         beverage: 'Coffee',
-|         Q1: 450,
-|         Q2: 560,
-|         Q3: 600,
-|         Q4: 700
+|         Q1: 700,
+|         Q2: 600,
+|         Q3: 560,
+|         Q4: 450
 |     },
 |     {
 |         beverage: 'Tea',
-|         Q1: 270,
-|         Q2: 380,
-|         Q3: 450,
-|         Q4: 520
+|         Q1: 520,
+|         Q2: 450,
+|         Q3: 380,
+|         Q4: 270
 |     },
 |     {
 |         beverage: 'Milk',
-|         Q1: 180,
-|         Q2: 170,
-|         Q3: 190,
-|         Q4: 200
+|         Q1: 200,
+|         Q2: 190,
+|         Q3: 170,
+|         Q4: 180
 |     },
 | ];
 |
@@ -128,10 +128,10 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 |         left: 40
 |     },
 |     series: [
-|         { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
-|         { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
-|         { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
 |         { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
+|         { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|         { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|         { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
 |     ],
 |     legend: {
 |         spacing: 40
@@ -157,24 +157,24 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 |     beverageSpending = [
 |         {
 |             beverage: 'Coffee',
-|             Q1: 450,
-|             Q2: 560,
-|             Q3: 600,
-|             Q4: 700,
+|             Q1: 700,
+|             Q2: 600,
+|             Q3: 560,
+|             Q4: 450
 |         },
 |         {
 |             beverage: 'Tea',
-|             Q1: 270,
-|             Q2: 380,
-|             Q3: 450,
-|             Q4: 520,
+|             Q1: 520,
+|             Q2: 450,
+|             Q3: 380,
+|             Q4: 270
 |         },
 |         {
 |             beverage: 'Milk',
-|             Q1: 180,
-|             Q2: 170,
-|             Q3: 190,
-|             Q4: 200,
+|             Q1: 200,
+|             Q2: 190,
+|             Q3: 170,
+|             Q4: 180
 |         },
 |     ];
 |     constructor() {
@@ -190,10 +190,10 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 |                 text: 'Based on a sample size of 200 respondents',
 |             },
 |             series: [
-|                 { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
-|                 { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
-|                 { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
 |                 { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
 |             ],
 |         };
 |     }
@@ -211,24 +211,24 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 |     data = [
 |         {
 |             beverage: 'Coffee',
-|             Q1: 450,
-|             Q2: 560,
-|             Q3: 600,
-|             Q4: 700,
+|             Q1: 700,
+|             Q2: 600,
+|             Q3: 560,
+|             Q4: 450
 |         },
 |         {
 |             beverage: 'Tea',
-|             Q1: 270,
-|             Q2: 380,
-|             Q3: 450,
-|             Q4: 520,
+|             Q1: 520,
+|             Q2: 450,
+|             Q3: 380,
+|             Q4: 270
 |         },
 |         {
 |             beverage: 'Milk',
-|             Q1: 180,
-|             Q2: 170,
-|             Q3: 190,
-|             Q4: 200,
+|             Q1: 200,
+|             Q2: 190,
+|             Q3: 170,
+|             Q4: 180
 |         },
 |     ];
 |
@@ -248,10 +248,10 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 |                     left: 40,
 |                 },
 |                 series: [
-|                     { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
-|                     { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
-|                     { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
 |                     { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
+|                     { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|                     { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|                     { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
 |                 ],
 |                 legend: { spacing: 40 },
 |             },
@@ -285,24 +285,24 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 |                     data: [
 |                       {
 |                         beverage: 'Coffee',
-|                         Q1: 450,
-|                         Q2: 560,
-|                         Q3: 600,
-|                         Q4: 700,
+|                         Q1: 700,
+|                         Q2: 600,
+|                         Q3: 560,
+|                         Q4: 450
 |                       },
 |                       {
 |                         beverage: 'Tea',
-|                         Q1: 270,
-|                         Q2: 380,
-|                         Q3: 450,
-|                         Q4: 520,
+|                         Q1: 520,
+|                         Q2: 450,
+|                         Q3: 380,
+|                         Q4: 270
 |                       },
 |                       {
 |                         beverage: 'Milk',
-|                         Q1: 180,
-|                         Q2: 170,
-|                         Q3: 190,
-|                         Q4: 200,
+|                         Q1: 200,
+|                         Q2: 190,
+|                         Q3: 170,
+|                         Q4: 180
 |                       },
 |                     ],
 |                     title: {
@@ -321,10 +321,10 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 |                       left: 40,
 |                     },
 |                     series: [
-|                       { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
-|                       { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
-|                       { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
 |                       { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
+|                       { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|                       { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|                       { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
 |                     ],
 |                     legend: { spacing: 40 },
 |                 },
@@ -462,19 +462,19 @@ Let's say you want to visualise how much you spend on coffee each quarter and th
 | var data = [
 |     {
 |         quarter: 'Q1',
-|         spending: 450,
+|         spending: 700,
 |     },
 |     {
 |         quarter: 'Q2',
-|         spending: 560,
-|     },
-|     {
-|         quarter: 'Q3',
 |         spending: 600,
 |     },
 |     {
+|         quarter: 'Q3',
+|         spending: 560,
+|     },
+|     {
 |         quarter: 'Q4',
-|         spending: 700,
+|         spending: 450,
 |     },
 | ];
 </snippet>
@@ -559,19 +559,19 @@ Next, let's declare the basic chart configuration. Edit `src/app.component.ts`:
 |     data = [
 |         {
 |             quarter: 'Q1',
-|             spending: 450,
+|             spending: 700,
 |         },
 |         {
 |             quarter: 'Q2',
-|             spending: 560,
-|         },
-|         {
-|             quarter: 'Q3',
 |             spending: 600,
 |         },
 |         {
+|             quarter: 'Q3',
+|             spending: 560,
+|         },
+|         {
 |             quarter: 'Q4',
-|             spending: 700,
+|             spending: 450,
 |         },
 |     ];
 |
@@ -636,19 +636,19 @@ After a few seconds of waiting, you should be good to go. Let's get to the actua
 |     data = [
 |         {
 |             quarter: 'Q1',
-|             spending: 450,
+|             spending: 700,
 |         },
 |         {
 |             quarter: 'Q2',
-|             spending: 560,
-|         },
-|         {
-|             quarter: 'Q3',
 |             spending: 600,
 |         },
 |         {
+|             quarter: 'Q3',
+|             spending: 560,
+|         },
+|         {
 |             quarter: 'Q4',
-|             spending: 700,
+|             spending: 450,
 |         },
 |     ];
 |
@@ -744,19 +744,19 @@ Next, let's declare the basic charts configuration. Edit `src/App.vue`:
 |           data: [
 |             {
 |                   quarter: 'Q1',
-|                   spending: 450,
+|                   spending: 700,
 |             },
 |             {
 |                   quarter: 'Q2',
-|                   spending: 560,
-|             },
-|             {
-|                   quarter: 'Q3',
 |                   spending: 600,
 |             },
 |             {
+|                   quarter: 'Q3',
+|                   spending: 560,
+|             },
+|             {
 |                   quarter: 'Q4',
-|                   spending: 700,
+|                   spending: 450,
 |             },
 |           ],
 |           series: [{
@@ -793,11 +793,11 @@ The chart legend uses the `yKey` for the series, which in this case is `'spendin
 |     series: [{
 |         xKey: 'quarter',
 |         yKey: 'spending',
-|+         yName: 'Coffee Spending',
+|+        yName: 'Coffee Spending',
 |     }],
-| +   legend: {
-| +       enabled: true,
-| +   },
+|+    legend: {
+|+        enabled: true,
+|+   },
 | });
 </snippet>
 </framework-specific-section>
@@ -812,9 +812,9 @@ The chart legend uses the `yKey` for the series, which in this case is `'spendin
 |             yKey: 'spending',
 |+            yName: 'Coffee Spending',
 |         }],
-| +       legend: {
-| +           enabled: true,
-| +       },
+|+        legend: {
+|+            enabled: true,
+|+        },
 |     };
 | }
 </snippet>
@@ -833,9 +833,9 @@ The chart legend uses the `yKey` for the series, which in this case is `'spendin
 |                 yKey: 'spending',
 |+                yName: 'Coffee Spending',
 |             }],
-| +           legend: {
-| +               enabled: true,
-| +           },
+|+            legend: {
+|+                enabled: true,
+|+            },
 |         }
 |     }
 | }
@@ -850,19 +850,19 @@ The chart legend uses the `yKey` for the series, which in this case is `'spendin
 |       data: [
 |         {
 |           quarter: 'Q1',
-|           spending: 450,
+|           spending: 700,
 |         },
 |         {
 |           quarter: 'Q2',
-|           spending: 560,
-|         },
-|         {
-|           quarter: 'Q3',
 |           spending: 600,
 |         },
 |         {
+|           quarter: 'Q3',
+|           spending: 560,
+|         },
+|         {
 |           quarter: 'Q4',
-|           spending: 700,
+|           spending: 450,
 |         },
 |       ],
 |       series: [{
@@ -870,9 +870,9 @@ The chart legend uses the `yKey` for the series, which in this case is `'spendin
 |         yKey: 'spending',
 |+        yName: 'Coffee Spending',
 |       }],
-| +     legend: {
-| +       enabled: true,
-| +     },
+|+      legend: {
+|+        enabled: true,
+|+      },
 |     },
 |   };
 | }
@@ -889,42 +889,42 @@ Now let's try something more interesting. Let's say you want to visualise how mu
 | var data = [
 |     {
 |         beverage: 'Coffee',
-|         Q1: 450,
-|         Q2: 560,
-|         Q3: 600,
-|         Q4: 700,
+|         Q1: 700,
+|         Q2: 600,
+|         Q3: 560,
+|         Q4: 450
 |     },
 |     {
 |         beverage: 'Tea',
-|         Q1: 270,
-|         Q2: 380,
-|         Q3: 450,
-|         Q4: 520,
+|         Q1: 520,
+|         Q2: 450,
+|         Q3: 380,
+|         Q4: 270
 |     },
 |     {
 |         beverage: 'Milk',
-|         Q1: 180,
-|         Q2: 170,
-|         Q3: 190,
-|         Q4: 200,
+|         Q1: 200,
+|         Q2: 190,
+|         Q3: 170,
+|         Q4: 180
 |     },
 | ];
 </snippet>
 
 <framework-specific-section frameworks="javascript">
 
-This time, let's choose another series type to plot the data: stacked columns. Here's the chart factory configuration we can use to do 
-that: 
+This time, let's choose another series type to plot the data: stacked columns. Here's the chart factory configuration we can use to do
+that:
 
 <snippet transform={false}>
 | agCharts.AgChart.create({
 |     data: data,
 |     container: document.querySelector('#myChart'),
 |     series: [
-|         { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
-|         { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
-|         { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
 |         { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
+|         { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|         { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|         { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
 |     ],
 | });
 </snippet>
@@ -940,10 +940,10 @@ This time, let's choose another series type to plot the data: stacked columns. H
 |     this.options = {
 |         data: this.data,
 |         series: [
-|             { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
-|             { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
-|             { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
 |             { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
+|             { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|             { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|             { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
 |         ],
 |     };
 | }
@@ -959,10 +959,10 @@ This time, let's choose another series type to plot the data: stacked columns. H
 |         options: {
 |             data: this.data,
 |             series: [
-|                 { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
-|                 { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
-|                 { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
 |                 { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|                 { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
 |             ],
 |         }
 |     }
@@ -978,31 +978,31 @@ This time, let's choose another series type to plot the data: stacked columns. H
 |       data: [
 |         {
 |           beverage: 'Coffee',
-|           Q1: 450,
-|           Q2: 560,
-|           Q3: 600,
-|           Q4: 700,
+|           Q1: 700,
+|           Q2: 600,
+|           Q3: 560,
+|           Q4: 450
 |         },
 |         {
 |           beverage: 'Tea',
-|           Q1: 270,
-|           Q2: 380,
-|           Q3: 450,
-|           Q4: 520,
+|           Q1: 520,
+|           Q2: 450,
+|           Q3: 380,
+|           Q4: 270
 |         },
 |         {
 |           beverage: 'Milk',
-|           Q1: 180,
-|           Q2: 170,
-|           Q3: 190,
-|           Q4: 200,
+|           Q1: 200,
+|           Q2: 190,
+|           Q3: 170,
+|           Q4: 180
 |         },
 |       ],
 |       series: [
-|           { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
-|           { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
-|           { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
 |           { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
+|           { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
+|           { type: 'column', xKey: 'beverage', yKey: 'Q3', stacked: true },
+|           { type: 'column', xKey: 'beverage', yKey: 'Q4', stacked: true },
 |       ],
 |     },
 |   };
@@ -1028,14 +1028,7 @@ We can enhance our chart by providing a label for each block segment. We can set
 |         {
 |             type: 'column',
 |             xKey: 'beverage',
-|             yKey: 'Q4',
-|             stacked: true,
-|+            label: {},
-|         },
-|         {
-|             type: 'column',
-|             xKey: 'beverage',
-|             yKey: 'Q3',
+|             yKey: 'Q1',
 |             stacked: true,
 |+            label: {},
 |         },
@@ -1049,7 +1042,14 @@ We can enhance our chart by providing a label for each block segment. We can set
 |         {
 |             type: 'column',
 |             xKey: 'beverage',
-|             yKey: 'Q1',
+|             yKey: 'Q3',
+|             stacked: true,
+|+            label: {},
+|         },
+|         {
+|             type: 'column',
+|             xKey: 'beverage',
+|             yKey: 'Q4',
 |             stacked: true,
 |+            label: {},
 |         },
@@ -1067,14 +1067,7 @@ We can enhance our chart by providing a label for each block segment. We can set
 |             {
 |                 type: 'column',
 |                 xKey: 'beverage',
-|                 yKey: 'Q4',
-|                 stacked: true,
-|+                label: {},
-|             },
-|             {
-|                 type: 'column',
-|                 xKey: 'beverage',
-|                 yKey: 'Q3',
+|                 yKey: 'Q1',
 |                 stacked: true,
 |+                label: {},
 |             },
@@ -1088,7 +1081,14 @@ We can enhance our chart by providing a label for each block segment. We can set
 |             {
 |                 type: 'column',
 |                 xKey: 'beverage',
-|                 yKey: 'Q1',
+|                 yKey: 'Q3',
+|                 stacked: true,
+|+                label: {},
+|             },
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q4',
 |                 stacked: true,
 |+                label: {},
 |             },
@@ -1110,14 +1110,7 @@ We can enhance our chart by providing a label for each block segment. We can set
 |                 {
 |                     type: 'column',
 |                     xKey: 'beverage',
-|                     yKey: 'Q4',
-|                     stacked: true,
-|+                    label: {},
-|                 },
-|                 {
-|                     type: 'column',
-|                     xKey: 'beverage',
-|                     yKey: 'Q3',
+|                     yKey: 'Q1',
 |                     stacked: true,
 |+                    label: {},
 |                 },
@@ -1131,7 +1124,14 @@ We can enhance our chart by providing a label for each block segment. We can set
 |                 {
 |                     type: 'column',
 |                     xKey: 'beverage',
-|                     yKey: 'Q1',
+|                     yKey: 'Q3',
+|                     stacked: true,
+|+                    label: {},
+|                 },
+|                 {
+|                     type: 'column',
+|                     xKey: 'beverage',
+|                     yKey: 'Q4',
 |                     stacked: true,
 |+                    label: {},
 |                 },
@@ -1150,38 +1150,31 @@ We can enhance our chart by providing a label for each block segment. We can set
 |       data: [
 |         {
 |           beverage: 'Coffee',
-|           Q1: 450,
-|           Q2: 560,
-|           Q3: 600,
-|           Q4: 700,
+|           Q1: 700,
+|           Q2: 600,
+|           Q3: 560,
+|           Q4: 450
 |         },
 |         {
 |           beverage: 'Tea',
-|           Q1: 270,
-|           Q2: 380,
-|           Q3: 450,
-|           Q4: 520,
+|           Q1: 520,
+|           Q2: 450,
+|           Q3: 380,
+|           Q4: 270
 |         },
 |         {
 |           beverage: 'Milk',
-|           Q1: 180,
-|           Q2: 170,
-|           Q3: 190,
-|           Q4: 200,
+|           Q1: 200,
+|           Q2: 190,
+|           Q3: 170,
+|           Q4: 180
 |         },
 |       ],
 |       series: [
 |         {
 |           type: 'column',
 |           xKey: 'beverage',
-|           yKey: 'Q4',
-|           stacked: true,
-|+          label: {},
-|         },
-|         {
-|           type: 'column',
-|           xKey: 'beverage',
-|           yKey: 'Q3',
+|           yKey: 'Q1',
 |           stacked: true,
 |+          label: {},
 |         },
@@ -1195,7 +1188,14 @@ We can enhance our chart by providing a label for each block segment. We can set
 |         {
 |           type: 'column',
 |           xKey: 'beverage',
-|           yKey: 'Q1',
+|           yKey: 'Q3',
+|           stacked: true,
+|+          label: {},
+|         },
+|         {
+|           type: 'column',
+|           xKey: 'beverage',
+|           yKey: 'Q4',
 |           stacked: true,
 |+          label: {},
 |         },
@@ -1228,14 +1228,7 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 |         {
 |             type: 'column',
 |             xKey: 'beverage',
-|             yKey: 'Q4',
-|             stacked: true,
-|             label: {},
-|         },
-|         {
-|             type: 'column',
-|             xKey: 'beverage',
-|             yKey: 'Q3',
+|             yKey: 'Q1',
 |             stacked: true,
 |             label: {},
 |         },
@@ -1249,7 +1242,14 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 |         {
 |             type: 'column',
 |             xKey: 'beverage',
-|             yKey: 'Q1',
+|             yKey: 'Q3',
+|             stacked: true,
+|             label: {},
+|         },
+|         {
+|             type: 'column',
+|             xKey: 'beverage',
+|             yKey: 'Q4',
 |             stacked: true,
 |             label: {},
 |         },
@@ -1276,14 +1276,7 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 |             {
 |                 type: 'column',
 |                 xKey: 'beverage',
-|                 yKey: 'Q4',
-|                 stacked: true,
-|                 label: {},
-|             },
-|             {
-|                 type: 'column',
-|                 xKey: 'beverage',
-|                 yKey: 'Q3',
+|                 yKey: 'Q1',
 |                 stacked: true,
 |                 label: {},
 |             },
@@ -1297,7 +1290,14 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 |             {
 |                 type: 'column',
 |                 xKey: 'beverage',
-|                 yKey: 'Q1',
+|                 yKey: 'Q3',
+|                 stacked: true,
+|                 label: {},
+|             },
+|             {
+|                 type: 'column',
+|                 xKey: 'beverage',
+|                 yKey: 'Q4',
 |                 stacked: true,
 |                 label: {},
 |             },
@@ -1328,14 +1328,7 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 |                 {
 |                     type: 'column',
 |                     xKey: 'beverage',
-|                     yKey: 'Q4',
-|                     stacked: true,
-|                     label: {},
-|                 },
-|                 {
-|                     type: 'column',
-|                     xKey: 'beverage',
-|                     yKey: 'Q3',
+|                     yKey: 'Q1',
 |                     stacked: true,
 |                     label: {},
 |                 },
@@ -1349,7 +1342,14 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 |                 {
 |                     type: 'column',
 |                     xKey: 'beverage',
-|                     yKey: 'Q1',
+|                     yKey: 'Q3',
+|                     stacked: true,
+|                     label: {},
+|                 },
+|                 {
+|                     type: 'column',
+|                     xKey: 'beverage',
+|                     yKey: 'Q4',
 |                     stacked: true,
 |                     label: {},
 |                 },
@@ -1368,24 +1368,24 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 |       data: [
 |         {
 |           beverage: 'Coffee',
-|           Q1: 450,
-|           Q2: 560,
-|           Q3: 600,
-|           Q4: 700,
+|           Q1: 700,
+|           Q2: 600,
+|           Q3: 560,
+|           Q4: 450
 |         },
 |         {
 |           beverage: 'Tea',
-|           Q1: 270,
-|           Q2: 380,
-|           Q3: 450,
-|           Q4: 520,
+|           Q1: 520,
+|           Q2: 450,
+|           Q3: 380,
+|           Q4: 270
 |         },
 |         {
 |           beverage: 'Milk',
-|           Q1: 180,
-|           Q2: 170,
-|           Q3: 190,
-|           Q4: 200,
+|           Q1: 200,
+|           Q2: 190,
+|           Q3: 170,
+|           Q4: 180
 |         },
 |       ],
 |+      title: {
@@ -1401,14 +1401,7 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 |         {
 |           type: 'column',
 |           xKey: 'beverage',
-|           yKey: 'Q4',
-|           stacked: true,
-|           label: {},
-|         },
-|         {
-|           type: 'column',
-|           xKey: 'beverage',
-|           yKey: 'Q3',
+|           yKey: 'Q1',
 |           stacked: true,
 |           label: {},
 |         },
@@ -1422,7 +1415,14 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 |         {
 |           type: 'column',
 |           xKey: 'beverage',
-|           yKey: 'Q1',
+|           yKey: 'Q3',
+|           stacked: true,
+|           label: {},
+|         },
+|         {
+|           type: 'column',
+|           xKey: 'beverage',
+|           yKey: 'Q4',
 |           stacked: true,
 |           label: {},
 |         },
