@@ -889,7 +889,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     seriesId: id,
                     enabled: seriesItemEnabled.get(yKey) || false,
                     label: {
-                        text: legendItemNames[yKey] || yNames[yKey] || yKey,
+                        text: legendItemNames[yKey] ?? yNames[yKey] ?? yKey,
                     },
                     marker: {
                         fill: fills[colorIndex % fills.length],
