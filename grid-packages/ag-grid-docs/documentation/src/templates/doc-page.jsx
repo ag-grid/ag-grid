@@ -120,7 +120,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
             'framework-specific-section': (props) =>
                 FrameworkSpecificSection({ ...props, currentFramework: framework }),
             'chart-gallery': (props) => (
-                <AGStyles hasFontSizeResponsive={false}>
+                <AGStyles>
                     <ChartGallery {...props} />
                 </AGStyles>
             ),
