@@ -19644,6 +19644,107 @@
       "type": { "returnType": "TContext", "optional": false }
     }
   },
+  "CheckboxCellRendererParams": {
+    "disabled": { "type": { "returnType": "boolean", "optional": true } },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "value": {
+      "description": "/** Value to be rendered. */",
+      "type": { "returnType": "TValue | null | undefined", "optional": false }
+    },
+    "valueFormatted": {
+      "description": "/** Formatted value to be rendered. */",
+      "type": { "returnType": "string | null | undefined", "optional": false }
+    },
+    "fullWidth": {
+      "description": "/** True if this is a full width row. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "pinned": {
+      "description": "/** Pinned state of the cell. */",
+      "type": { "returnType": "\"left\" | \"right\" | null", "optional": true }
+    },
+    "data": {
+      "description": "/** The row's data. Data property can be `undefined` when row grouping or loading infinite row models. */",
+      "type": { "returnType": "TData | undefined", "optional": false }
+    },
+    "node": {
+      "description": "/** The row node. */",
+      "type": { "returnType": "IRowNode<TData>", "optional": false }
+    },
+    "rowIndex": {
+      "description": "/** The current index of the row (this changes after filter and sort). */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "colDef": {
+      "description": "/** The cell's column definition. */",
+      "type": { "returnType": "ColDef<TData, TValue>", "optional": true }
+    },
+    "column": {
+      "description": "/** The cell's column. */",
+      "type": { "returnType": "Column<TValue>", "optional": true }
+    },
+    "eGridCell": {
+      "description": "/** The grid's cell, a DOM div element. */",
+      "type": { "returnType": "HTMLElement", "optional": false }
+    },
+    "eParentOfValue": {
+      "description": "/** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */",
+      "type": { "returnType": "HTMLElement", "optional": false }
+    },
+    "getValue": {
+      "description": "/** Convenience function to get most recent up to date value. */",
+      "type": {
+        "arguments": {},
+        "returnType": "TValue | null | undefined",
+        "optional": true
+      }
+    },
+    "setValue": {
+      "description": "/** Convenience function to set the value. */",
+      "type": {
+        "arguments": { "value": "TValue | null | undefined" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "formatValue": {
+      "description": "/** Convenience function to format a value using the column's formatter. */",
+      "type": {
+        "arguments": { "value": "TValue | null | undefined" },
+        "returnType": "string",
+        "optional": true
+      }
+    },
+    "refreshCell": {
+      "description": "/** Convenience function to refresh the cell. */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "registerRowDragger": {
+      "description": "/** registerRowDragger:\n     * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n     * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n     * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n     * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n     */",
+      "type": {
+        "arguments": {
+          "rowDraggerElement": "HTMLElement",
+          "dragStartPixels?": "number",
+          "value?": "string",
+          "suppressVisibilityChange?": "boolean"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "TContext", "optional": false }
+    }
+  },
   "IGroupCellRenderer": {
     "setInnerRenderer": {
       "type": {
