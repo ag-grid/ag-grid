@@ -140,8 +140,6 @@ const TypescriptStyleSelector = ({ id }) => {
 const CodeOptions = ({ exampleInfo }) => {
     const isGenerated = isGeneratedExample(exampleInfo.type);
 
-    console.log('exampleInfo', exampleInfo);
-
     return (
         <div className={styles.outer}>
             {exampleInfo.framework === 'javascript' &&
