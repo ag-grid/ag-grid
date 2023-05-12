@@ -9,7 +9,7 @@ export const AGStyles: FunctionComponent<Props> = ({ hasFontSizeResponsive = tru
     return createElement(
         'div',
         {
-            className: `ag-styles ${hasFontSizeResponsive && 'font-size-responsive'}`,
+            className: 'ag-styles' + `${hasFontSizeResponsive ? ' font-size-responsive' : ''}`,
         },
         children
     );
