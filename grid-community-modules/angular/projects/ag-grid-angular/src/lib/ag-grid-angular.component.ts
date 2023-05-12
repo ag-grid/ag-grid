@@ -863,6 +863,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public suppressRowTransform: boolean | undefined = undefined;
     /** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false`     */
     @Input() public columnHoverHighlight: boolean | undefined = undefined;
+    /** Provide a custom unique Grid Id to the grid to be used instead of the default unique Id provided by AG Grid.      */
+    @Input() public gridId: string | undefined = undefined;
     @Input() public deltaSort: boolean | undefined = undefined;
     @Input() public treeDataDisplayType: TreeDataDisplayType | undefined = undefined;
     /** @deprecated v29.2     */

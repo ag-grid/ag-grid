@@ -17,6 +17,7 @@ export interface ContextParams {
     providedBeanInstances: any;
     beanClasses: any[];
     debug: boolean;
+    gridId: string;
 }
 
 export interface ComponentMeta {
@@ -246,6 +247,10 @@ export class Context {
 
         const allMethodsList = Object.keys(allMethods);
         allMethodsList.forEach(methodName => beanInstance[methodName]());
+    }
+
+    public getGridId(): string {
+        return this.contextParams.gridId;
     }
 
     public getBean(name: string): any {

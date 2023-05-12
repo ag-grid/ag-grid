@@ -572,7 +572,7 @@ export class FilterManager extends BeanStub {
 
     private createFilterInstance(column: Column): AgPromise<IFilterComp> | null {
         const defaultFilter =
-            ModuleRegistry.isRegistered(ModuleNames.SetFilterModule) ? 'agSetColumnFilter' : 'agTextColumnFilter';
+            ModuleRegistry.isRegistered(ModuleNames.SetFilterModule, this.context.getGridId()) ? 'agSetColumnFilter' : 'agTextColumnFilter';
 
         const colDef = column.getColDef();
 

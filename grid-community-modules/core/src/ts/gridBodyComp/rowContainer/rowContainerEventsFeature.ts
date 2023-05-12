@@ -318,13 +318,13 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private onCtrlAndV(): void {
-        if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule) && !this.gridOptionsService.is('suppressClipboardPaste')) {
+        if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule, this.context.getGridId()) && !this.gridOptionsService.is('suppressClipboardPaste')) {
             this.clipboardService.pasteFromClipboard();
         }
     }
 
     private onCtrlAndD(event: KeyboardEvent): void {
-        if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule) && !this.gridOptionsService.is('suppressClipboardPaste')) {
+        if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule, this.context.getGridId()) && !this.gridOptionsService.is('suppressClipboardPaste')) {
             this.clipboardService.copyRangeDown();
         }
         event.preventDefault();

@@ -169,7 +169,7 @@ export class UserComponentRegistry extends BeanStub {
 
         const moduleForComponent = this.enterpriseAgDefaultCompsModule[name];
         if (moduleForComponent) {
-            ModuleRegistry.assertRegistered(moduleForComponent, `AG Grid '${propertyName}' component: ${name}`);
+            ModuleRegistry.assertRegistered(moduleForComponent, `AG Grid '${propertyName}' component: ${name}`, this.context.getGridId());
         } else if (this.deprecatedAgGridDefaults[name]) {
             doOnce(() => console.warn(this.deprecatedAgGridDefaults[name]), name)
         }

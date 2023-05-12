@@ -77,19 +77,19 @@ export class GridCtrl extends BeanStub {
     }
 
     public showDropZones(): boolean {
-        return ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule);
+        return ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule, this.context.getGridId());
     }
 
     public showSideBar(): boolean {
-        return ModuleRegistry.isRegistered(ModuleNames.SideBarModule);
+        return ModuleRegistry.isRegistered(ModuleNames.SideBarModule, this.context.getGridId());
     }
 
     public showStatusBar(): boolean {
-        return ModuleRegistry.isRegistered(ModuleNames.StatusBarModule);
+        return ModuleRegistry.isRegistered(ModuleNames.StatusBarModule, this.context.getGridId());
     }
 
     public showWatermark(): boolean {
-        return ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule);
+        return ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule, this.context.getGridId());
     }
 
     private onGridSizeChanged(): void {

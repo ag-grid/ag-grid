@@ -235,7 +235,8 @@
       "type": { "returnType": "any", "optional": false }
     },
     "beanClasses": { "type": { "returnType": "any[]", "optional": false } },
-    "debug": { "type": { "returnType": "boolean", "optional": false } }
+    "debug": { "type": { "returnType": "boolean", "optional": false } },
+    "gridId": { "type": { "returnType": "string", "optional": false } }
   },
   "ComponentMeta": {
     "componentClass": {
@@ -3359,6 +3360,10 @@
     "columnHoverHighlight": {
       "description": "/** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "gridId": {
+      "description": "/** Provide a custom unique Grid Id to the grid to be used instead of the default unique Id provided by AG Grid.  */",
+      "type": { "returnType": "string", "optional": true }
     },
     "deltaSort": { "type": { "returnType": "boolean", "optional": true } },
     "treeDataDisplayType": {
@@ -22077,6 +22082,10 @@
       "description": "/** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "gridId": {
+      "description": "/** Provide a custom unique Grid Id to the grid to be used instead of the default unique Id provided by AG Grid.  */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "deltaSort": { "type": { "returnType": "boolean", "optional": true } },
     "treeDataDisplayType": {
       "type": { "returnType": "TreeDataDisplayType", "optional": true }
@@ -24905,6 +24914,10 @@
     "columnHoverHighlight": {
       "description": "/** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "gridId": {
+      "description": "/** Provide a custom unique Grid Id to the grid to be used instead of the default unique Id provided by AG Grid.  */",
+      "type": { "returnType": "string", "optional": true }
     },
     "deltaSort": { "type": { "returnType": "boolean", "optional": true } },
     "treeDataDisplayType": {
@@ -27740,6 +27753,10 @@
     "columnHoverHighlight": {
       "description": "/** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "gridId": {
+      "description": "/** Provide a custom unique Grid Id to the grid to be used instead of the default unique Id provided by AG Grid.  */",
+      "type": { "returnType": "string", "optional": true }
     },
     "deltaSort": { "type": { "returnType": "boolean", "optional": true } },
     "treeDataDisplayType": {

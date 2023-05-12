@@ -336,16 +336,16 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         }
 
         const usingCSRM = this.gridOptionsService.isRowModelType('clientSide');
-        if (usingCSRM && !ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule)) {
+        if (usingCSRM && !ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule, this.gridOptionsService.getGridId())) {
             const rowGroupingItems: (keyof ColDef)[] = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
             const itemsUsed = rowGroupingItems.filter(x => exists(colDefAny[x]));
             if (itemsUsed.length > 0) {
-                ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, itemsUsed.map(i => 'colDef.' + i).join(', '));
+                ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, itemsUsed.map(i => 'colDef.' + i).join(', '), this.gridOptionsService.getGridId());
             }
         }
 
         if (this.colDef.cellEditor === 'agRichSelect' || this.colDef.cellEditor === 'agRichSelectCellEditor') {
-            ModuleRegistry.assertRegistered(ModuleNames.RichSelectModule, this.colDef.cellEditor);
+            ModuleRegistry.assertRegistered(ModuleNames.RichSelectModule, this.colDef.cellEditor, this.gridOptionsService.getGridId());
         }
 
         if (this.gridOptionsService.isTreeData()) {
@@ -365,7 +365,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
                 const enterpriseMenuTabs: ColumnMenuTab[] = ['columnsMenuTab', 'generalMenuTab'];
                 const itemsUsed = enterpriseMenuTabs.filter(x => colDefAny.menuTabs.includes(x));
                 if (itemsUsed.length > 0) {
-                    ModuleRegistry.assertRegistered(ModuleNames.MenuModule, `menuTab(s): ${itemsUsed.map(t => `'${t}'`).join()}`);
+                    ModuleRegistry.assertRegistered(ModuleNames.MenuModule, `menuTab(s): ${itemsUsed.map(t => `'${t}'`).join()}`, this.gridOptionsService.getGridId());
                 }
 
                 colDefAny.menuTabs.forEach((tab: ColumnMenuTab) => {
@@ -379,11 +379,11 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         }
 
         if (exists(colDefAny.columnsMenuParams)) {
-            ModuleRegistry.assertRegistered(ModuleNames.MenuModule, 'columnsMenuParams');
+            ModuleRegistry.assertRegistered(ModuleNames.MenuModule, 'columnsMenuParams', this.gridOptionsService.getGridId());
         }
 
         if (exists(colDefAny.columnsMenuParams)) {
-            ModuleRegistry.assertRegistered(ModuleNames.ColumnsToolPanelModule, 'columnsMenuParams');
+            ModuleRegistry.assertRegistered(ModuleNames.ColumnsToolPanelModule, 'columnsMenuParams', this.gridOptionsService.getGridId());
         }
 
         if (exists(this.colDef.width) && typeof this.colDef.width !== 'number') {

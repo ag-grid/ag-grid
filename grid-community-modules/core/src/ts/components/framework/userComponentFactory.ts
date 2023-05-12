@@ -373,7 +373,7 @@ export class UserComponentFactory extends BeanStub {
         } else {
             const usingDefaultFilter = (jsComp == null && fwComp == null) && (def.filter === true);
             if (usingDefaultFilter) {
-                const setFilterModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule);
+                const setFilterModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule, this.context.getGridId());
                 defaultFloatingFilterType = setFilterModuleLoaded ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';
             }
         }

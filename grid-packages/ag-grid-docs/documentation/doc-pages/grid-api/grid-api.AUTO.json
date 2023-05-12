@@ -16,6 +16,7 @@
     "description": "/** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */",
     "type": { "arguments": {}, "returnType": "Context" }
   },
+  "getGridId": { "type": { "arguments": {}, "returnType": "string" } },
   "___setProperty": {
     "description": "/** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */",
     "type": { "arguments": { "propertyName": "K", "value": "GridOptions[K]" } }

@@ -210,7 +210,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     private isRowGroupingModuleLoaded(): boolean {
-        return ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Row Grouping');
+        return ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Row Grouping', this.context.getGridId());
     }
 
     public expandColumnGroups(groupIds?: string[]): void {

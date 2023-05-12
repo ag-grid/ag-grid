@@ -37,7 +37,7 @@ type FunctionKeys = Exclude<KeysLike<Function>, CallbackKeys>;
  */
 export class PropertyKeys {
     public static STRING_PROPERTIES: KeysOfType<string>[] = [
-        'rowSelection', 'overlayLoadingTemplate', 'overlayNoRowsTemplate',
+        'rowSelection', 'overlayLoadingTemplate', 'overlayNoRowsTemplate', 'gridId',
         'quickFilterText', 'rowModelType', 'editType', 'domLayout', 'clipboardDelimiter', 'rowGroupPanelShow',
         'multiSortKey', 'pivotColumnGroupTotals', 'pivotRowTotals', 'pivotPanelShow', 'fillHandleDirection',
         'serverSideStoreType', 'groupDisplayType', 'treeDataDisplayType', 'colResizeDefault'

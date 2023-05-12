@@ -956,6 +956,10 @@
     "description": "/** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
+  "gridId": {
+    "description": "/** Provide a custom unique Grid Id to the grid to be used instead of the default unique Id provided by AG Grid.  */",
+    "type": { "returnType": "string" }
+  },
   "deltaSort": { "type": { "returnType": "boolean" } },
   "treeDataDisplayType": { "type": { "returnType": "TreeDataDisplayType" } },
   "functionsPassive": {

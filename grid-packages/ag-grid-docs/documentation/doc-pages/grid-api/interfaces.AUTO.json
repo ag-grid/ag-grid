@@ -165,7 +165,8 @@
     "type": {
       "providedBeanInstances": "any",
       "beanClasses": "any[]",
-      "debug": "boolean"
+      "debug": "boolean",
+      "gridId": "string"
     }
   },
   "ComponentMeta": {
@@ -1784,6 +1785,7 @@
       "suppressRowHoverHighlight?": "boolean",
       "suppressRowTransform?": "boolean",
       "columnHoverHighlight?": "boolean",
+      "gridId?": "string",
       "deltaSort?": "boolean",
       "treeDataDisplayType?": "TreeDataDisplayType",
       "functionsPassive?": "boolean",
@@ -2161,6 +2163,7 @@
       "suppressRowHoverHighlight?": "/** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. Default: `false` */",
       "suppressRowTransform?": "/** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. Default: `false` */",
       "columnHoverHighlight?": "/** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false` */",
+      "gridId?": "/** Provide a custom unique Grid Id to the grid to be used instead of the default unique Id provided by AG Grid.  */",
       "functionsPassive?": "/** @deprecated v29.2 */",
       "getContextMenuItems?": "/** For customising the context menu. */",
       "getMainMenuItems?": "/** For customising the main 'column header' menu. */",
@@ -12172,6 +12175,7 @@
       "suppressRowHoverHighlight?": "boolean",
       "suppressRowTransform?": "boolean",
       "columnHoverHighlight?": "boolean",
+      "gridId?": "string",
       "deltaSort?": "boolean",
       "treeDataDisplayType?": "TreeDataDisplayType",
       "functionsPassive?": "boolean",
@@ -12550,6 +12554,7 @@
       "suppressRowHoverHighlight?": "/** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. Default: `false` */",
       "suppressRowTransform?": "/** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. Default: `false` */",
       "columnHoverHighlight?": "/** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false` */",
+      "gridId?": "/** Provide a custom unique Grid Id to the grid to be used instead of the default unique Id provided by AG Grid.  */",
       "functionsPassive?": "/** @deprecated v29.2 */",
       "getContextMenuItems?": "/** For customising the context menu. */",
       "getMainMenuItems?": "/** For customising the main 'column header' menu. */",
@@ -12936,6 +12941,7 @@
       "suppressRowHoverHighlight?": "boolean",
       "suppressRowTransform?": "boolean",
       "columnHoverHighlight?": "boolean",
+      "gridId?": "string",
       "deltaSort?": "boolean",
       "treeDataDisplayType?": "TreeDataDisplayType",
       "functionsPassive?": "boolean",
@@ -13314,6 +13320,7 @@
       "suppressRowHoverHighlight?": "/** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. Default: `false` */",
       "suppressRowTransform?": "/** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. Default: `false` */",
       "columnHoverHighlight?": "/** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false` */",
+      "gridId?": "/** Provide a custom unique Grid Id to the grid to be used instead of the default unique Id provided by AG Grid.  */",
       "functionsPassive?": "/** @deprecated v29.2 */",
       "getContextMenuItems?": "/** For customising the context menu. */",
       "getMainMenuItems?": "/** For customising the main 'column header' menu. */",
@@ -13702,6 +13709,7 @@
       "suppressRowHoverHighlight?": "boolean",
       "suppressRowTransform?": "boolean",
       "columnHoverHighlight?": "boolean",
+      "gridId?": "string",
       "deltaSort?": "boolean",
       "treeDataDisplayType?": "TreeDataDisplayType",
       "functionsPassive?": "boolean",
@@ -14080,6 +14088,7 @@
       "suppressRowHoverHighlight?": "/** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. Default: `false` */",
       "suppressRowTransform?": "/** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. Default: `false` */",
       "columnHoverHighlight?": "/** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false` */",
+      "gridId?": "/** Provide a custom unique Grid Id to the grid to be used instead of the default unique Id provided by AG Grid.  */",
       "functionsPassive?": "/** @deprecated v29.2 */",
       "getContextMenuItems?": "/** For customising the context menu. */",
       "getMainMenuItems?": "/** For customising the main 'column header' menu. */",
