@@ -5668,7 +5668,7 @@
     "type": {
       "type": { "returnType": "AnimationEventType", "optional": false }
     },
-    "delta": { "type": { "returnType": "number", "optional": false } },
+    "deltaMs": { "type": { "returnType": "number", "optional": false } },
     "meta": { "typeParams": ["AnimationEventType"] }
   },
   "AnimationOptions": {

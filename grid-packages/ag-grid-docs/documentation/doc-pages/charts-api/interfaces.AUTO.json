@@ -3766,7 +3766,7 @@
   },
   "AnimationEvent": {
     "meta": { "typeParams": ["AnimationEventType"] },
-    "type": { "type": "AnimationEventType", "delta": "number" }
+    "type": { "type": "AnimationEventType", "deltaMs": "number" }
   },
   "AnimationOptions": {
     "meta": { "typeParams": ["T"] },

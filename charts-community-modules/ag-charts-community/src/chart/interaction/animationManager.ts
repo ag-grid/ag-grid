@@ -14,7 +14,7 @@ type AnimationEventType = 'animation-frame';
 
 interface AnimationEvent<AnimationEventType> {
     type: AnimationEventType;
-    delta: number;
+    deltaMs: number;
 }
 
 interface AnimationOptions<T> extends Omit<BaseAnimationOptions<T>, 'driver'> {}
@@ -176,9 +176,15 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
             return {
                 start: () => {
                     this.updaters.push([id, update]);
+                    if (this.requestId == null) {
+                        this.startAnimationCycle();
+                    }
                 },
                 stop: () => {
                     this.updaters = this.updaters.filter(([uid]) => uid !== id);
+                    if (this.updaters.length <= 0) {
+                        this.cancelAnimationFrame();
+                    }
                 },
                 reset: () => {},
             };
@@ -193,14 +199,14 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
             }
 
             if (this.lastTime === undefined) this.lastTime = time;
-            const delta = time - this.lastTime;
+            const deltaMs = time - this.lastTime;
             this.lastTime = time;
 
             this.updaters.forEach(([_, update]) => {
-                update(delta);
+                update(deltaMs);
             });
 
-            this.listeners.dispatch('animation-frame', { type: 'animation-frame', delta });
+            this.listeners.dispatch('animation-frame', { type: 'animation-frame', deltaMs });
 
             this.requestId = requestAnimationFrame(frame);
         };
