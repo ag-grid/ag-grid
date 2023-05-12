@@ -7,21 +7,26 @@ import { CellEditingStartedEvent, CellEditingStoppedEvent, Events } from "../../
 import { WithoutGridCommon } from "../../interfaces/iCommon";
 import { KeyCode } from "../../constants/keyCode";
 import { getAriaCheckboxStateName } from "../../utils/aria";
+import { GROUP_AUTO_COLUMN_ID } from "../../columns/autoGroupColService";
+
+export interface CheckboxCellRendererParams<TData = any, TContext = any> extends ICellRendererParams<TData, boolean, TContext> {
+    disabled?: boolean;
+}
 
 export class CheckboxCellRenderer extends Component implements ICellRenderer {
     private static TEMPLATE = /* html*/`
-        <div class="ag-cell-wrapper" role="presentation">
+        <div class="ag-cell-wrapper ag-checkbox-cell" role="presentation">
             <ag-checkbox role="presentation" ref="eCheckbox"></ag-checkbox>
         </div>`;
 
     @RefSelector('eCheckbox') private eCheckbox: AgCheckbox;
-    private params: ICellRendererParams<any, boolean>;
+    private params: CheckboxCellRendererParams;
 
     constructor() {
         super(CheckboxCellRenderer.TEMPLATE);
     }
 
-    public init(params: ICellRendererParams<any, boolean>): void {
+    public init(params: CheckboxCellRendererParams): void {
         this.params = params;
         this.updateCheckbox(params);
         this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
@@ -54,21 +59,34 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
         });
     }
 
-    public refresh(params: ICellRendererParams<any, boolean>): boolean {
+    public refresh(params: CheckboxCellRendererParams): boolean {
         this.params = params;
         this.updateCheckbox(params);
         return true;
     }
 
-    private updateCheckbox(params: ICellRendererParams<any, boolean>): void {
+    private updateCheckbox(params: CheckboxCellRendererParams): void {
         let isSelected: boolean | undefined;
-        if (params.node.group) {
-            isSelected = params.value == null || (params.value as any) === '' ? undefined : (params.value as any) === 'true';
+        let displayed = true;
+        if (params.node.group && params.column) {
+            const colId = params.column.getColId();
+            if (colId.startsWith(GROUP_AUTO_COLUMN_ID)) {
+                // if we're grouping by this column then the value is a string and we need to parse it
+                isSelected = params.value == null || (params.value as any) === '' ? undefined : (params.value as any) === 'true';
+            } else if (params.node.aggData && params.node.aggData[colId] !== undefined) {
+                isSelected = params.value ?? undefined;
+            } else {
+                displayed = false;
+            }
         } else {
             isSelected = params.value ?? undefined;
         }
+        if (!displayed) {
+            this.eCheckbox.setDisplayed(false);
+            return;
+        }
         this.eCheckbox.setValue(isSelected);
-        const disabled = !params.column?.isCellEditable(params.node);
+        const disabled = params.disabled || !params.column?.isCellEditable(params.node);
         this.eCheckbox.setDisabled(disabled);
 
         const translate = this.localeService.getLocaleTextFunc();
