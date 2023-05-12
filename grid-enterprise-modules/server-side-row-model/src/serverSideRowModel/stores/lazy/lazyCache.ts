@@ -368,7 +368,9 @@ export class LazyCache extends BeanStub {
             return this.store.getDisplayIndexStart()! + storeIndex;
         }
 
-        return previousNode.node.childStore?.getDisplayIndexEnd() ?? previousNode.node.rowIndex! + 1;
+        const storeIndexDiff = storeIndex - previousNode.index;
+        const previousDisplayIndex = (previousNode.node.childStore?.getDisplayIndexEnd() ?? previousNode.node.rowIndex!);
+        return previousDisplayIndex + storeIndexDiff;
     }
 
     /**
