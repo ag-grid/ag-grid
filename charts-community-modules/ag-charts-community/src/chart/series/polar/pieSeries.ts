@@ -40,6 +40,8 @@ import {
     AgPieSeriesFormatterParams,
 } from '../../agChartOptions';
 import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
+import { StateMachine } from '../../../motion/states';
+import * as easing from '../../../motion/easing';
 
 class PieSeriesNodeBaseClickEvent extends SeriesNodeBaseClickEvent<any> {
     readonly angleKey: string;
@@ -167,6 +169,10 @@ export class DoughnutInnerCircle {
     fillOpacity? = 1;
 }
 
+type PieAnimationState = 'empty' | 'ready';
+type PieAnimationEvent = 'update';
+class PieStateMachine extends StateMachine<PieAnimationState, PieAnimationEvent> {}
+
 export class PieSeries extends PolarSeries<PieNodeDatum> {
     static className = 'PieSeries';
     static type = 'pie' as const;
@@ -177,6 +183,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     private calloutLabelSelection: Selection<Group, PieNodeDatum>;
     private sectorLabelSelection: Selection<Text, PieNodeDatum>;
     private innerLabelsSelection: Selection<Text, DoughnutInnerLabel>;
+
+    private animationStates: PieStateMachine;
 
     // The group node that contains the background graphics.
     readonly backgroundGroup: Group;
@@ -331,6 +339,25 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.calloutLabelSelection = Selection.select(pieCalloutLabels, Group);
         this.sectorLabelSelection = Selection.select(pieSectorLabels, Text);
         this.innerLabelsSelection = Selection.select(innerLabels, Text);
+
+        this.animationStates = new PieStateMachine('empty', {
+            empty: {
+                on: {
+                    update: {
+                        target: 'ready',
+                        action: () => this.animateEmptyUpdateReady(),
+                    },
+                },
+            },
+            ready: {
+                on: {
+                    update: {
+                        target: 'ready',
+                        action: () => this.animateReadyUpdateReady(),
+                    },
+                },
+            },
+        });
     }
 
     addChartEventListeners(): void {
@@ -748,8 +775,10 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             sector.innerRadius = Math.max(0, innerRadius);
             sector.outerRadius = Math.max(0, radius);
 
-            sector.startAngle = datum.startAngle;
-            sector.endAngle = datum.endAngle;
+            if (isDatumHighlighted) {
+                sector.startAngle = datum.startAngle;
+                sector.endAngle = datum.endAngle;
+            }
 
             const format = this.getSectorFormat(datum.datum, datum.itemId, index, isDatumHighlighted);
 
@@ -779,6 +808,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 updateSectorFn(node, node.datum, index, isDatumHighlighted);
             }
         });
+
+        this.animationStates.transition('update');
 
         this.updateCalloutLineNodes();
         this.updateCalloutLabelNodes(seriesBox);
@@ -1389,6 +1420,40 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             if (datum[legendItemKey] === datumToggledLegendItemValue) {
                 this.toggleSeriesItem(datumItemId, enabled);
             }
+        });
+    }
+
+    animateEmptyUpdateReady() {
+        const rotation = Math.PI / -2 + toRadians(this.rotation);
+
+        this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).forEach((node) => {
+            const { datum } = node;
+
+            this.animationManager?.animateMany<number>(
+                `${this.id}_empty-update-ready_${node.id}`,
+                [
+                    { from: rotation, to: datum.startAngle },
+                    { from: rotation, to: datum.endAngle },
+                ],
+                {
+                    duration: 1000,
+                    repeat: 0,
+                    ease: easing.linear,
+                    onUpdate: ([startAngle, endAngle]) => {
+                        node.startAngle = startAngle;
+                        node.endAngle = endAngle;
+                    },
+                }
+            );
+        });
+    }
+
+    animateReadyUpdateReady() {
+        this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).forEach((node) => {
+            const { datum } = node;
+
+            node.startAngle = datum.startAngle;
+            node.endAngle = datum.endAngle;
         });
     }
 }

@@ -5671,6 +5671,37 @@
     "delta": { "type": { "returnType": "number", "optional": false } },
     "meta": { "typeParams": ["AnimationEventType"] }
   },
+  "AnimationOptions": {
+    "driver": { "type": { "returnType": "Driver", "optional": false } },
+    "autoplay": { "type": { "returnType": "boolean", "optional": true } },
+    "delay": { "type": { "returnType": "number", "optional": true } },
+    "repeat": { "type": { "returnType": "number", "optional": true } },
+    "repeatType": { "type": { "returnType": "RepeatType", "optional": true } },
+    "onComplete": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onPlay": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onRepeat": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onStop": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onUpdate": {
+      "type": {
+        "arguments": { "v": "T" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "meta": { "typeParams": ["T"] },
+    "duration": { "type": { "returnType": "number", "optional": false } },
+    "from": { "type": { "returnType": "T", "optional": false } },
+    "to": { "type": { "returnType": "T", "optional": false } },
+    "ease": { "type": { "returnType": "Easing<T>", "optional": true } }
+  },
   "AnimationManyOptions": {
     "meta": { "typeParams": ["T"] },
     "driver": { "type": { "returnType": "Driver", "optional": false } },
@@ -5689,6 +5720,10 @@
     },
     "onStop": {
       "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "duration": { "type": { "returnType": "number", "optional": false } },
+    "ease": {
+      "type": { "returnType": "Easing<AnimationOptions<T>>", "optional": true }
     }
   },
   "ChartEventType": {},
@@ -6191,6 +6226,8 @@
     }
   },
   "PieNodeTag": {},
+  "PieAnimationState": {},
+  "PieAnimationEvent": {},
   "SeriesNodeDatum": {
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
@@ -6305,37 +6342,6 @@
     "meta": { "typeParams": ["T"] }
   },
   "RepeatType": {},
-  "AnimationOptions": {
-    "driver": { "type": { "returnType": "Driver", "optional": false } },
-    "autoplay": { "type": { "returnType": "boolean", "optional": true } },
-    "delay": { "type": { "returnType": "number", "optional": true } },
-    "repeat": { "type": { "returnType": "number", "optional": true } },
-    "repeatType": { "type": { "returnType": "RepeatType", "optional": true } },
-    "onComplete": {
-      "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "onPlay": {
-      "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "onRepeat": {
-      "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "onStop": {
-      "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "onUpdate": {
-      "type": {
-        "arguments": { "v": "T" },
-        "returnType": "void",
-        "optional": true
-      }
-    },
-    "meta": { "typeParams": ["T"] },
-    "duration": { "type": { "returnType": "number", "optional": false } },
-    "from": { "type": { "returnType": "T", "optional": false } },
-    "to": { "type": { "returnType": "T", "optional": false } },
-    "ease": { "type": { "returnType": "Easing<T>", "optional": true } }
-  },
   "AnimationControls": {
     "isPlaying": { "type": { "returnType": "boolean", "optional": false } },
     "play": {
@@ -6410,6 +6416,21 @@
     "meta": { "typeParams": ["T"] }
   },
   "Easing": { "meta": { "typeParams": ["T"] } },
+  "StateDefinition": {
+    "actions": {
+      "type": {
+        "returnType": "{\n        onEnter?: () => void;\n        onExit?: () => void;\n    }",
+        "optional": true
+      }
+    },
+    "on": {
+      "type": {
+        "returnType": "{\n        [key in Event]: {\n            target: State;\n            action: () => void;\n        };\n    }",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["State extends string", "Event extends string"] }
+  },
   "ScaleClampParams": {
     "strict": {
       "description": "/** If `true` the values outside of the domain will become `NaN`.\n     * If `false` such values will be clamped to the domain edges.\n     */",

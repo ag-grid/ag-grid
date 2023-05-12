@@ -2,7 +2,7 @@ import { BaseManager } from './baseManager';
 import {
     animate as baseAnimate,
     AnimationControls,
-    AnimationOptions,
+    AnimationOptions as BaseAnimationOptions,
     Driver,
     tween,
     TweenControls,
@@ -16,6 +16,8 @@ interface AnimationEvent<AnimationEventType> {
     type: AnimationEventType;
     delta: number;
 }
+
+interface AnimationOptions<T> extends Omit<BaseAnimationOptions<T>, 'driver'> {}
 
 interface AnimationManyOptions<T> extends Omit<AnimationOptions<T>, 'from' | 'to' | 'onUpdate'> {
     onUpdate: (props: Array<T>) => void;
@@ -32,8 +34,17 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
     private isPlaying = false;
     private requestId?: number;
     private lastTime?: number;
+    private readyToPlay = false;
 
     public skipAnimations = false;
+
+    constructor() {
+        super();
+
+        window.addEventListener('DOMContentLoaded', () => {
+            this.readyToPlay = true;
+        });
+    }
 
     public play() {
         if (this.isPlaying) return;
@@ -72,7 +83,6 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
             ...opts,
             autoplay: this.isPlaying ? opts.autoplay : false,
             driver: this.createDriver(id),
-            duration: this.skipAnimations ? 0 : opts.duration,
         };
         const controller = baseAnimate(optsExtra);
 
@@ -82,6 +92,15 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
         }
 
         this.controllers[id] = controller;
+
+        if (this.skipAnimations) {
+            // Initialise the animation with the final values immediately and then stop the animation
+            opts.onUpdate?.(opts.to);
+            controller.stop();
+        } else {
+            // Initialise the animation immediately without requesting a frame to prevent flashes
+            opts.onUpdate?.(opts.from);
+        }
 
         return controller;
     }
@@ -168,6 +187,11 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
 
     private startAnimationCycle() {
         const frame = (time: number) => {
+            if (!this.readyToPlay) {
+                this.requestId = requestAnimationFrame(frame);
+                return;
+            }
+
             if (this.lastTime === undefined) this.lastTime = time;
             const delta = time - this.lastTime;
             this.lastTime = time;

@@ -3768,6 +3768,25 @@
     "meta": { "typeParams": ["AnimationEventType"] },
     "type": { "type": "AnimationEventType", "delta": "number" }
   },
+  "AnimationOptions": {
+    "meta": { "typeParams": ["T"] },
+    "type": {
+      "driver": "Driver",
+      "autoplay?": "boolean",
+      "delay?": "number",
+      "repeat?": "number",
+      "repeatType?": "RepeatType",
+      "onComplete?": "() => void",
+      "onPlay?": "() => void",
+      "onRepeat?": "() => void",
+      "onStop?": "() => void",
+      "onUpdate?": "(v: T) => void",
+      "duration": "number",
+      "from": "T",
+      "to": "T",
+      "ease?": "Easing<T>"
+    }
+  },
   "AnimationManyOptions": {
     "meta": { "typeParams": ["T"] },
     "type": {
@@ -3780,7 +3799,9 @@
       "onPlay?": "() => void",
       "onRepeat?": "() => void",
       "onStop?": "() => void",
-      "onUpdate?": "(v: AnimationOptions<T>) => void"
+      "onUpdate?": "(v: AnimationOptions<T>) => void",
+      "duration": "number",
+      "ease?": "Easing<AnimationOptions<T>>"
     }
   },
   "ChartEventType": {
@@ -4294,6 +4315,11 @@
     "type": ["Sector", "Callout", "Label"],
     "docs": [null, null, null]
   },
+  "PieAnimationState": {
+    "meta": { "isTypeAlias": true },
+    "type": "'empty' | 'ready'"
+  },
+  "PieAnimationEvent": { "meta": { "isTypeAlias": true }, "type": "'update'" },
   "SeriesNodeDatum": {
     "meta": {
       "doc": "/** Processed series datum used in node selections,\n * contains information used to render pie sectors, bars, markers, etc.\n */"
@@ -4397,25 +4423,6 @@
     "type": ["Loop = 'loop'", "Reverse = 'reverse'"],
     "docs": [null, null]
   },
-  "AnimationOptions": {
-    "meta": { "typeParams": ["T"] },
-    "type": {
-      "driver": "Driver",
-      "autoplay?": "boolean",
-      "delay?": "number",
-      "repeat?": "number",
-      "repeatType?": "RepeatType",
-      "onComplete?": "() => void",
-      "onPlay?": "() => void",
-      "onRepeat?": "() => void",
-      "onStop?": "() => void",
-      "onUpdate?": "(v: T) => void",
-      "duration": "number",
-      "from": "T",
-      "to": "T",
-      "ease?": "Easing<T>"
-    }
-  },
   "AnimationControls": {
     "meta": {},
     "type": {
@@ -4462,6 +4469,13 @@
   "Easing": {
     "meta": { "isTypeAlias": true, "typeParams": ["T"] },
     "type": "(opts: EasingOpts<T>) => (time: number) => T"
+  },
+  "StateDefinition": {
+    "meta": { "typeParams": ["State extends string", "Event extends string"] },
+    "type": {
+      "actions?": "{ onEnter?: () => void; onExit?: () => void; }",
+      "on": "{[key in Event]: { target: State; action: () => void; }}"
+    }
   },
   "ScaleClampParams": {
     "meta": {},
