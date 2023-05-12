@@ -1,12 +1,12 @@
 import { Logger } from '../util/logger';
 
-interface StateDefinition<State extends string> {
+interface StateDefinition<State extends string, Event extends string> {
     actions?: {
         onEnter?: () => void;
         onExit?: () => void;
     };
     on: {
-        [key: string]: {
+        [key in Event]: {
             target: State;
             action: () => void;
         };
@@ -14,12 +14,12 @@ interface StateDefinition<State extends string> {
 }
 
 export class StateMachine<State extends string, Event extends string> {
-    private states: Record<State, StateDefinition<State>>;
+    private states: Record<State, StateDefinition<State, Event>>;
     private state: State;
 
     debug = false;
 
-    constructor(initialState: State, states: Record<State, StateDefinition<State>>) {
+    constructor(initialState: State, states: Record<State, StateDefinition<State, Event>>) {
         this.state = initialState;
         this.states = states;
 

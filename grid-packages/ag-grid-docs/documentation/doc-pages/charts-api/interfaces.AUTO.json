@@ -4457,10 +4457,10 @@
     "type": "(opts: EasingOpts<T>) => (time: number) => T"
   },
   "StateDefinition": {
-    "meta": { "typeParams": ["State extends string"] },
+    "meta": { "typeParams": ["State extends string", "Event extends string"] },
     "type": {
       "actions?": "{ onEnter?: () => void; onExit?: () => void; }",
-      "on": "{ [key: string]: { target: State; action: () => void; }; }"
+      "on": "{[key in Event]: { target: State; action: () => void; }}"
     }
   },
   "ScaleClampParams": {

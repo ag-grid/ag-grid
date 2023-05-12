@@ -6416,11 +6416,11 @@
     },
     "on": {
       "type": {
-        "returnType": "{\n        [key: string]: {\n            target: State;\n            action: () => void;\n        };\n    }",
+        "returnType": "{\n        [key in Event]: {\n            target: State;\n            action: () => void;\n        };\n    }",
         "optional": false
       }
     },
-    "meta": { "typeParams": ["State extends string"] }
+    "meta": { "typeParams": ["State extends string", "Event extends string"] }
   },
   "ScaleClampParams": {
     "strict": {
