@@ -655,11 +655,13 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         this.setDomain();
         this.setTickInterval(this.tick.interval);
 
-        if (scale instanceof ContinuousScale) {
-            scale.nice = nice;
-            this.setTickCount(this.tick.count);
-            scale.update();
+        if (!(scale instanceof ContinuousScale)) {
+            return;
         }
+
+        scale.nice = nice;
+        this.setTickCount(this.tick.count);
+        scale.update();
     }
 
     private calculateRotations() {
