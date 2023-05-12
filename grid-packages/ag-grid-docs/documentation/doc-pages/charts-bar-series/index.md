@@ -61,7 +61,7 @@ This will produce the following chart:</p>
 
 Providing a matching `legendItemName` allows us to merge matching legend items. When a legend item is clicked, all items that have a matching `legendItemName` will be toggled together.
 
-<chart-example title='Clustered' name='grouped-stack-shared' type='generated'></chart-example>
+<chart-example title='Grouped Stacks with a Shared Legend' name='grouped-stack-shared' type='generated'></chart-example>
 
 ### Grouped Stacks
 
