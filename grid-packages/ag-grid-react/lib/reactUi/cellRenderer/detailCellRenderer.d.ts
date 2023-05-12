@@ -1,4 +1,4 @@
-// ag-grid-react v29.3.4
+// ag-grid-react v29.3.5
 import React from "react";
 import { IDetailCellRendererParams } from "ag-grid-community";
 declare const _default: React.ForwardRefExoticComponent<IDetailCellRendererParams<any, any> & React.RefAttributes<unknown>>;

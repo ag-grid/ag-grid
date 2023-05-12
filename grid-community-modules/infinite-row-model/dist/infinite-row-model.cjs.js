@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-community/infinite-row-model - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.4
+          * @ag-grid-community/infinite-row-model - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.5
           * @link https://www.ag-grid.com/
           * @license MIT
           */
@@ -747,7 +747,7 @@ var InfiniteRowModel = /** @class */ (function (_super) {
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '29.3.4';
+var VERSION = '29.3.5';
 
 var InfiniteRowModelModule = {
     version: VERSION,

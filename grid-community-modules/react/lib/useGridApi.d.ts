@@ -1,4 +1,4 @@
-// @ag-grid-community/react v29.3.4
+// @ag-grid-community/react v29.3.5
 import { RefObject } from 'react';
 import { ColumnApi, GridApi } from '@ag-grid-community/core';
 import { AgGridReact } from './agGridReact';

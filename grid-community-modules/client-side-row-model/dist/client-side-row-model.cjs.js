@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-community/client-side-row-model - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.4
+          * @ag-grid-community/client-side-row-model - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v29.3.5
           * @link https://www.ag-grid.com/
           * @license MIT
           */
@@ -1990,7 +1990,7 @@ var ImmutableService = /** @class */ (function (_super) {
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '29.3.4';
+var VERSION = '29.3.5';
 
 var ClientSideRowModelModule = {
     version: VERSION,
