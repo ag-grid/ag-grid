@@ -1302,7 +1302,7 @@ export interface AgBarSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     xName?: string;
     /** Human-readable description of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     yName?: string;
-    /** Human-readable description of the y-values. If supplied, matching items with the same value will be toggled together. Falls back to `yName` if not provided, but does not merge. */
+    /** Human-readable description of the y-values. If supplied, matching items with the same value will be toggled together. */
     legendItemName?: string;
     /** The colour to use for the fill of the bars. */
     fill?: CssColor;
@@ -1499,7 +1499,7 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     sectorLabelKey?: string;
     /** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
     sectorLabelName?: string;
-    /** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */
+    /** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. */
     legendItemKey?: string;
     /** The colours to cycle through for the fills of the sectors. */
     fills?: CssColor[];

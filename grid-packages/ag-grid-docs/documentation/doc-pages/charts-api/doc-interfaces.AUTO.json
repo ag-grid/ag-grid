@@ -912,7 +912,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "legendItemKey": {
-      "description": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */",
+      "description": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. */",
       "type": { "returnType": "string", "optional": true }
     },
     "fills": {
@@ -3753,7 +3753,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "legendItemName": {
-      "description": "/** Human-readable description of the y-values. If supplied, matching items with the same value will be toggled together. Falls back to `yName` if not provided, but does not merge. */",
+      "description": "/** Human-readable description of the y-values. If supplied, matching items with the same value will be toggled together. */",
       "type": { "returnType": "string", "optional": true }
     },
     "fill": {
@@ -4371,7 +4371,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "legendItemKey": {
-      "description": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */",
+      "description": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. */",
       "type": { "returnType": "string", "optional": true }
     },
     "fills": {
