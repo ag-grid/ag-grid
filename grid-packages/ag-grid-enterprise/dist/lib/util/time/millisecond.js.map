@@ -1,0 +1,1 @@
+{"version":3,"file":"millisecond.js","sourceRoot":"","sources":["../../../src/util/time/millisecond.ts"],"names":[],"mappings":";;;AAAA,uCAAmD;AAEnD,SAAS,MAAM,CAAC,IAAU;IACtB,OAAO,IAAI,CAAC,OAAO,EAAE,CAAC;AAC1B,CAAC;AAED,SAAS,MAAM,CAAC,OAAe;IAC3B,OAAO,IAAI,IAAI,CAAC,OAAO,CAAC,CAAC;AAC7B,CAAC;AAEY,QAAA,WAAW,GAAG,IAAI,gCAAqB,CAAC,MAAM,EAAE,MAAM,CAAC,CAAC;AACrE,kBAAe,mBAAW,CAAC"}
