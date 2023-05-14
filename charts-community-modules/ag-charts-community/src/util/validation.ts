@@ -200,6 +200,8 @@ export function STRING_UNION(...values: string[]) {
     return predicateWithMessage((v: any) => typeof v === 'string' && values.indexOf(v) >= 0, message);
 }
 
+export const OPT_STRING_OR_FUNCTION = OR(OPT_STRING, OPT_FUNCTION);
+
 export const BOOLEAN_ARRAY = predicateWithMessage(ARRAY(undefined, BOOLEAN), 'expecting an Array of boolean values');
 export const OPT_BOOLEAN_ARRAY = predicateWithMessage(
     (v: any, ctx) => OPTIONAL(v, ctx, BOOLEAN_ARRAY),
