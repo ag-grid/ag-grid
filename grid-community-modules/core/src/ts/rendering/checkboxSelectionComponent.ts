@@ -33,6 +33,7 @@ export class CheckboxSelectionComponent extends Component {
     @PostConstruct
     private postConstruct(): void {
         this.eCheckbox.setPassive(true);
+        setAriaLive(this.eCheckbox.getInputElement(), 'polite');
     }
 
     public getCheckboxId(): string {
