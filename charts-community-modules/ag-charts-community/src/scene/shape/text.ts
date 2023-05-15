@@ -10,6 +10,8 @@ interface TextSizeProperties {
     fontStyle?: FontStyle;
     fontWeight?: FontWeight;
     lineHeight?: number;
+    textBaseline?: CanvasTextBaseline;
+    textAlign?: CanvasTextAlign;
 }
 
 interface WordWrapProperties {
@@ -31,7 +33,7 @@ export class Text extends Shape {
     // The default line spacing for document editors is usually 1.15
     static defaultLineHeightRatio = 1.15;
 
-    protected static defaultStyles = Object.assign({}, Shape.defaultStyles, {
+    static defaultStyles = Object.assign({}, Shape.defaultStyles, {
         textAlign: 'start' as CanvasTextAlign,
         fontStyle: undefined,
         fontWeight: undefined,
@@ -88,112 +90,9 @@ export class Text extends Shape {
     lineHeight?: number = undefined;
 
     computeBBox(): BBox {
-        return HdpiCanvas.has.textMetrics ? this.getPreciseBBox() : this.getApproximateBBox();
-    }
-
-    private getPreciseBBox(): BBox {
-        let left = 0;
-        let top = 0;
-        let width = 0;
-        let height = 0;
-
-        // Distance between first and last base lines.
-        let baselineDistance = 0;
-
-        for (let i = 0; i < this.lines.length; i++) {
-            const metrics: any = HdpiCanvas.measureText(this.lines[i], this.font, this.textBaseline, this.textAlign);
-
-            left = Math.max(left, metrics.actualBoundingBoxLeft);
-            width = Math.max(width, metrics.width);
-
-            if (i == 0) {
-                top += metrics.actualBoundingBoxAscent;
-                height += metrics.actualBoundingBoxAscent;
-            } else {
-                baselineDistance += metrics.fontBoundingBoxAscent ?? metrics.emHeightAscent;
-            }
-
-            if (i == this.lines.length - 1) {
-                height += metrics.actualBoundingBoxDescent;
-            } else {
-                baselineDistance += metrics.fontBoundingBoxDescent ?? metrics.emHeightDescent;
-            }
-        }
-
-        if (this.lineHeight !== undefined) {
-            baselineDistance = (this.lines.length - 1) * this.lineHeight;
-        }
-        height += baselineDistance;
-
-        top += baselineDistance * this.getVerticalOffset();
-
-        return new BBox(this.x - left, this.y - top, width, height);
-    }
-
-    private getVerticalOffset(): number {
-        switch (this.textBaseline) {
-            case 'top':
-            case 'hanging':
-                return 0;
-            case 'bottom':
-            case 'alphabetic':
-            case 'ideographic':
-                return 1;
-            case 'middle':
-                return 0.5;
-        }
-    }
-
-    private getApproximateBBox(): BBox {
-        let width = 0;
-        let firstLineHeight = 0;
-        // Distance between first and last base lines.
-        let baselineDistance = 0;
-
-        if (this.lines.length > 0) {
-            const lineSize = HdpiCanvas.getTextSize(this.lines[0], this.font);
-
-            width = lineSize.width;
-            firstLineHeight = lineSize.height;
-        }
-
-        for (let i = 1; i < this.lines.length; i++) {
-            const lineSize = HdpiCanvas.getTextSize(this.lines[i], this.font);
-
-            width = Math.max(width, lineSize.width);
-            baselineDistance += this.lineHeight ?? lineSize.height;
-        }
-
-        let { x, y } = this;
-
-        switch (this.textAlign) {
-            case 'end':
-            case 'right':
-                x -= width;
-                break;
-            case 'center':
-                x -= width / 2;
-        }
-
-        switch (this.textBaseline) {
-            case 'alphabetic':
-                y -= firstLineHeight * 0.7 + baselineDistance * 0.5;
-                break;
-            case 'middle':
-                y -= firstLineHeight * 0.45 + baselineDistance * 0.5;
-                break;
-            case 'ideographic':
-                y -= firstLineHeight + baselineDistance;
-                break;
-            case 'hanging':
-                y -= firstLineHeight * 0.2 + baselineDistance * 0.5;
-                break;
-            case 'bottom':
-                y -= firstLineHeight + baselineDistance;
-                break;
-        }
-
-        return new BBox(x, y, width, firstLineHeight + baselineDistance);
+        return HdpiCanvas.has.textMetrics
+            ? getPreciseBBox(this.lines, this.x, this.y, this)
+            : getApproximateBBox(this.lines, this.x, this.y, this);
     }
 
     private getLineHeight(line: string): number {
@@ -291,7 +190,7 @@ export class Text extends Shape {
         const { lines, x, y } = this;
         const lineHeights = this.lines.map((line) => this.getLineHeight(line));
         const totalHeight = lineHeights.reduce((a, b) => a + b, 0);
-        let offsetY: number = -(totalHeight - lineHeights[0]) * this.getVerticalOffset();
+        let offsetY: number = -(totalHeight - lineHeights[0]) * getVerticalOffset(this.textBaseline);
 
         for (let i = 0; i < lines.length; i++) {
             renderCallback(lines[i], x, y + offsetY);
@@ -602,4 +501,126 @@ export function createTextMeasurer(font: string): TextMeasurer {
 export function getFont(fontProps: TextSizeProperties): string {
     const { fontFamily, fontSize, fontStyle, fontWeight } = fontProps;
     return [fontStyle ?? '', fontWeight ?? '', fontSize + 'px', fontFamily].join(' ').trim();
+}
+
+export function measureText(lines: string[], x: number, y: number, textProps: TextSizeProperties): BBox {
+    return HdpiCanvas.has.textMetrics
+        ? getPreciseBBox(lines, x, y, textProps)
+        : getApproximateBBox(lines, x, y, textProps);
+}
+
+function getPreciseBBox(lines: string[], x: number, y: number, textProps: TextSizeProperties): BBox {
+    let left = 0;
+    let top = 0;
+    let width = 0;
+    let height = 0;
+
+    // Distance between first and last base lines.
+    let baselineDistance = 0;
+
+    const font = getFont(textProps);
+    const {
+        lineHeight,
+        textBaseline = Text.defaultStyles.textBaseline,
+        textAlign = Text.defaultStyles.textAlign,
+    } = textProps;
+    for (let i = 0; i < lines.length; i++) {
+        const metrics: any = HdpiCanvas.measureText(lines[i], font, textBaseline, textAlign);
+
+        left = Math.max(left, metrics.actualBoundingBoxLeft);
+        width = Math.max(width, metrics.width);
+
+        if (i == 0) {
+            top += metrics.actualBoundingBoxAscent;
+            height += metrics.actualBoundingBoxAscent;
+        } else {
+            baselineDistance += metrics.fontBoundingBoxAscent ?? metrics.emHeightAscent;
+        }
+
+        if (i == lines.length - 1) {
+            height += metrics.actualBoundingBoxDescent;
+        } else {
+            baselineDistance += metrics.fontBoundingBoxDescent ?? metrics.emHeightDescent;
+        }
+    }
+
+    if (lineHeight !== undefined) {
+        baselineDistance = (lines.length - 1) * lineHeight;
+    }
+    height += baselineDistance;
+
+    top += baselineDistance * getVerticalOffset(textBaseline);
+
+    return new BBox(x - left, y - top, width, height);
+}
+
+function getApproximateBBox(lines: string[], x: number, y: number, textProps: TextSizeProperties): BBox {
+    let width = 0;
+    let firstLineHeight = 0;
+    // Distance between first and last base lines.
+    let baselineDistance = 0;
+
+    const font = getFont(textProps);
+    const {
+        lineHeight,
+        textBaseline = Text.defaultStyles.textBaseline,
+        textAlign = Text.defaultStyles.textAlign,
+    } = textProps;
+
+    if (lines.length > 0) {
+        const lineSize = HdpiCanvas.getTextSize(lines[0], font);
+
+        width = lineSize.width;
+        firstLineHeight = lineSize.height;
+    }
+
+    for (let i = 1; i < lines.length; i++) {
+        const lineSize = HdpiCanvas.getTextSize(lines[i], font);
+
+        width = Math.max(width, lineSize.width);
+        baselineDistance += lineHeight ?? lineSize.height;
+    }
+
+    switch (textAlign) {
+        case 'end':
+        case 'right':
+            x -= width;
+            break;
+        case 'center':
+            x -= width / 2;
+    }
+
+    switch (textBaseline) {
+        case 'alphabetic':
+            y -= firstLineHeight * 0.7 + baselineDistance * 0.5;
+            break;
+        case 'middle':
+            y -= firstLineHeight * 0.45 + baselineDistance * 0.5;
+            break;
+        case 'ideographic':
+            y -= firstLineHeight + baselineDistance;
+            break;
+        case 'hanging':
+            y -= firstLineHeight * 0.2 + baselineDistance * 0.5;
+            break;
+        case 'bottom':
+            y -= firstLineHeight + baselineDistance;
+            break;
+    }
+
+    return new BBox(x, y, width, firstLineHeight + baselineDistance);
+}
+
+function getVerticalOffset(textBaseline: CanvasTextBaseline): number {
+    switch (textBaseline) {
+        case 'top':
+        case 'hanging':
+            return 0;
+        case 'bottom':
+        case 'alphabetic':
+        case 'ideographic':
+            return 1;
+        case 'middle':
+            return 0.5;
+    }
 }

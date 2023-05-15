@@ -4672,7 +4672,9 @@
       "fontSize": "number",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
-      "lineHeight?": "number"
+      "lineHeight?": "number",
+      "textBaseline?": "CanvasTextBaseline",
+      "textAlign?": "CanvasTextAlign"
     }
   },
   "WordWrapProperties": {
