@@ -92,15 +92,14 @@ class LazyCache extends core_1.BeanStub {
         }
         const { previousNode, nextNode } = adjacentNodes;
         // if the node before this node is expanded, this node might be a child of that node
-        if (previousNode && previousNode.expanded && ((_c = previousNode.childStore) === null || _c === void 0 ? void 0 : _c.isDisplayIndexInStore(displayIndex))) {
-            return (_d = previousNode.childStore) === null || _d === void 0 ? void 0 : _d.getRowUsingDisplayIndex(displayIndex);
+        if (previousNode && previousNode.node.expanded && ((_c = previousNode.node.childStore) === null || _c === void 0 ? void 0 : _c.isDisplayIndexInStore(displayIndex))) {
+            return (_d = previousNode.node.childStore) === null || _d === void 0 ? void 0 : _d.getRowUsingDisplayIndex(displayIndex);
         }
         // if we have the node after this node, we can calculate the store index of this node by the difference
         // in display indexes between the two nodes.
         if (nextNode) {
-            const nextSimpleRowStoreIndex = this.nodeMap.getBy('node', nextNode);
-            const displayIndexDiff = nextNode.rowIndex - displayIndex;
-            const newStoreIndex = nextSimpleRowStoreIndex.index - displayIndexDiff;
+            const displayIndexDiff = nextNode.node.rowIndex - displayIndex;
+            const newStoreIndex = nextNode.index - displayIndexDiff;
             return this.createStubNode(newStoreIndex, displayIndex);
         }
         // if no next node, calculate from end index of this store
@@ -140,11 +139,6 @@ class LazyCache extends core_1.BeanStub {
             return;
         }
         const defaultRowHeight = this.gridOptionsService.getRowHeightAsNumber();
-        // these are recorded so that the previous node can be found more quickly when a node is missing
-        this.skippedDisplayIndexes.push({
-            from: displayIndexSeq.peek(),
-            to: displayIndexSeq.peek() + numberOfRowsToSkip
-        });
         displayIndexSeq.skip(numberOfRowsToSkip);
         nextRowTop.value += numberOfRowsToSkip * defaultRowHeight;
     }
@@ -155,7 +149,6 @@ class LazyCache extends core_1.BeanStub {
     setDisplayIndexes(displayIndexSeq, nextRowTop) {
         // Create a map of display index nodes for access speed
         this.nodeDisplayIndexMap.clear();
-        this.skippedDisplayIndexes = [];
         // create an object indexed by store index, as this will sort all of the nodes when we iterate
         // the object
         const orderedMap = {};
@@ -163,8 +156,7 @@ class LazyCache extends core_1.BeanStub {
             orderedMap[lazyNode.index] = lazyNode.node;
         });
         let lastIndex = -1;
-        // iterate over the nodes in order, setting the display index on each node. When display indexes
-        // are skipped, they're added to the skippedDisplayIndexes array
+        // iterate over the nodes in order, setting the display index on each node.
         for (const stringIndex in orderedMap) {
             const node = orderedMap[stringIndex];
             const numericIndex = Number(stringIndex);
@@ -174,13 +166,6 @@ class LazyCache extends core_1.BeanStub {
             // set this nodes index and row top
             this.blockUtils.setDisplayIndex(node, displayIndexSeq, nextRowTop);
             this.nodeDisplayIndexMap.set(node.rowIndex, node);
-            const passedRows = displayIndexSeq.peek() - node.rowIndex;
-            if (passedRows > 1) {
-                this.skippedDisplayIndexes.push({
-                    from: node.rowIndex + 1,
-                    to: displayIndexSeq.peek()
-                });
-            }
             // store this index for skipping after this
             lastIndex = numericIndex;
         }
@@ -220,17 +205,27 @@ class LazyCache extends core_1.BeanStub {
      * @returns the previous and next loaded row nodes surrounding the given display index
      */
     getSurroundingNodesByDisplayIndex(displayIndex) {
-        // iterate over the skipped display indexes to find the bound this display index belongs to
-        for (let i in this.skippedDisplayIndexes) {
-            const skippedRowBound = this.skippedDisplayIndexes[i];
-            if (skippedRowBound.from <= displayIndex && skippedRowBound.to >= displayIndex) {
-                // take the node before and after the boundary and return those
-                const previousNode = this.nodeDisplayIndexMap.get(skippedRowBound.from - 1);
-                const nextNode = this.nodeDisplayIndexMap.get(skippedRowBound.to + 1);
-                return { previousNode, nextNode };
+        let nextNode;
+        let previousNode;
+        this.nodeMap.forEach(lazyNode => {
+            // previous node
+            if (displayIndex > lazyNode.node.rowIndex) {
+                // get the largest previous node
+                if (previousNode == null || previousNode.node.rowIndex < lazyNode.node.rowIndex) {
+                    previousNode = lazyNode;
+                }
+                return;
             }
-        }
-        return null;
+            // next node
+            // get the smallest next node
+            if (nextNode == null || nextNode.node.rowIndex > lazyNode.node.rowIndex) {
+                nextNode = lazyNode;
+                return;
+            }
+        });
+        if (!previousNode && !nextNode)
+            return null;
+        return { previousNode, nextNode };
     }
     /**
      * Get or calculate the display index for a given store index
@@ -540,7 +535,7 @@ class LazyCache extends core_1.BeanStub {
         return hasFocus;
     }
     isNodeCached(node) {
-        return (!!node.group && node.expanded) || this.isNodeFocused(node);
+        return (node.isExpandable() && node.expanded) || this.isNodeFocused(node);
     }
     extractDuplicateIds(rows) {
         if (!this.getRowIdFunc == null) {

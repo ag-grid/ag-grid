@@ -304,7 +304,7 @@ var LazyStore = /** @class */ (function (_super) {
         var _b = (_a = this.cache.getSurroundingNodesByDisplayIndex(displayIndex)) !== null && _a !== void 0 ? _a : {}, previousNode = _b.previousNode, nextNode = _b.nextNode;
         // previous node may equal, or catch via detail node or child of group
         if (previousNode) {
-            var boundsFromRow = this.blockUtils.extractRowBounds(previousNode, displayIndex);
+            var boundsFromRow = this.blockUtils.extractRowBounds(previousNode.node, displayIndex);
             if (boundsFromRow != null) {
                 return boundsFromRow;
             }
@@ -312,9 +312,9 @@ var LazyStore = /** @class */ (function (_super) {
         var defaultRowHeight = this.gridOptionsService.getRowHeightAsNumber();
         // if node after this, can calculate backwards (and ignore detail/grouping)
         if (nextNode) {
-            var numberOfRowDiff_1 = Math.floor((nextNode.rowIndex - displayIndex) * defaultRowHeight);
+            var numberOfRowDiff_1 = Math.floor((nextNode.node.rowIndex - displayIndex) * defaultRowHeight);
             return {
-                rowTop: nextNode.rowTop - numberOfRowDiff_1,
+                rowTop: nextNode.node.rowTop - numberOfRowDiff_1,
                 rowHeight: defaultRowHeight,
             };
         }

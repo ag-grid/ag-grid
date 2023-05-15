@@ -28,16 +28,6 @@ export declare class LazyCache extends BeanStub {
      */
     private nodesToRefresh;
     /**
-     * A list of display indexes bounds which are not currently present in this store, this can be due to;
-     * - Row stub hasn't been generated yet
-     * - Display index belongs to a child store
-     * - Display index is a detail node
-     *
-     *    (Note, this is not always up to date, as stub nodes being generated do not refresh this, however
-     *     this is a non issue as stub nodes are only ever default height and occupy 1 display index)
-     */
-    private skippedDisplayIndexes;
-    /**
      * End of store properties
      */
     private numberOfRows;
@@ -98,8 +88,8 @@ export declare class LazyCache extends BeanStub {
      * @returns the previous and next loaded row nodes surrounding the given display index
      */
     getSurroundingNodesByDisplayIndex(displayIndex: number): {
-        previousNode: RowNode<any> | undefined;
-        nextNode: RowNode<any> | undefined;
+        previousNode: LazyStoreNode | undefined;
+        nextNode: LazyStoreNode | undefined;
     } | null;
     /**
      * Get or calculate the display index for a given store index

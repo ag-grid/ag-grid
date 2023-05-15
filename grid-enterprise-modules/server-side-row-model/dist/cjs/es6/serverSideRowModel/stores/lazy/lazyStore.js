@@ -263,7 +263,7 @@ class LazyStore extends core_1.BeanStub {
         const { previousNode, nextNode } = (_a = this.cache.getSurroundingNodesByDisplayIndex(displayIndex)) !== null && _a !== void 0 ? _a : {};
         // previous node may equal, or catch via detail node or child of group
         if (previousNode) {
-            const boundsFromRow = this.blockUtils.extractRowBounds(previousNode, displayIndex);
+            const boundsFromRow = this.blockUtils.extractRowBounds(previousNode.node, displayIndex);
             if (boundsFromRow != null) {
                 return boundsFromRow;
             }
@@ -271,9 +271,9 @@ class LazyStore extends core_1.BeanStub {
         const defaultRowHeight = this.gridOptionsService.getRowHeightAsNumber();
         // if node after this, can calculate backwards (and ignore detail/grouping)
         if (nextNode) {
-            const numberOfRowDiff = Math.floor((nextNode.rowIndex - displayIndex) * defaultRowHeight);
+            const numberOfRowDiff = Math.floor((nextNode.node.rowIndex - displayIndex) * defaultRowHeight);
             return {
-                rowTop: nextNode.rowTop - numberOfRowDiff,
+                rowTop: nextNode.node.rowTop - numberOfRowDiff,
                 rowHeight: defaultRowHeight,
             };
         }
