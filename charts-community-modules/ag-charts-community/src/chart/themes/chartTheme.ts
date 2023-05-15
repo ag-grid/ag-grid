@@ -201,7 +201,7 @@ export class ChartTheme {
     }
 
     private static getCaptionWrappingDefaults() {
-        return 'break-word' as const;
+        return 'hyphenate' as const;
     }
 
     private static getChartDefaults() {

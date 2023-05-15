@@ -4552,6 +4552,13 @@
     "meta": {},
     "type": { "breakWord?": "boolean", "hyphens?": "boolean" }
   },
+  "TextMeasurer": {
+    "meta": {},
+    "type": {
+      "size(text: string)": "{ width: number; height: number; }",
+      "width(line: string)": "number"
+    }
+  },
   "Comparator": {
     "meta": { "isTypeAlias": true, "typeParams": ["T"] },
     "type": "(a: T, b: T) => number"

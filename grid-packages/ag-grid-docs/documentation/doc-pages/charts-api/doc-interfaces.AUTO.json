@@ -6431,6 +6431,22 @@
     "breakWord": { "type": { "returnType": "boolean", "optional": true } },
     "hyphens": { "type": { "returnType": "boolean", "optional": true } }
   },
+  "TextMeasurer": {
+    "size": {
+      "type": {
+        "arguments": { "text": "string" },
+        "returnType": "{ width: number; height: number }",
+        "optional": false
+      }
+    },
+    "width": {
+      "type": {
+        "arguments": { "line": "string" },
+        "returnType": "number",
+        "optional": false
+      }
+    }
+  },
   "Comparator": { "meta": { "typeParams": ["T"] } },
   "LiteralOrFn": { "meta": { "typeParams": ["T"] } },
   "TransformFn": {},
