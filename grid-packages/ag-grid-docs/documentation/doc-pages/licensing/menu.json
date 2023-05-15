@@ -979,6 +979,11 @@
             "showInCollapsed": true
           },
           {
+            "title": "Cell Data Types",
+            "url": "/cell-data-types/",
+            "showInCollapsed": true
+          },
+          {
             "title": "Parsing Values",
             "url": "/value-parsers/",
             "showInCollapsed": true

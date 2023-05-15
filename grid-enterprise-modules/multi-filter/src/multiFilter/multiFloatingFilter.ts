@@ -107,7 +107,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     private createFloatingFilter(filterDef: IFilterDef, params: IFloatingFilterParams<IFilter>): AgPromise<IFloatingFilterComp> | null {
         let defaultComponentName = this.userComponentFactory.getDefaultFloatingFilterType(
             filterDef,
-            () => this.filterManager.getDefaultFloatingFilter(this.params.column.getColDef())
+            () => this.filterManager.getDefaultFloatingFilter(this.params.column)
         ) ?? 'agReadOnlyFloatingFilter';
 
         const compDetails = this.userComponentFactory.getFloatingFilterCompDetails(filterDef, params, defaultComponentName);

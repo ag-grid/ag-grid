@@ -587,12 +587,12 @@ export class FilterManager extends BeanStub {
         return defaultFilter;
     }
 
-    public getDefaultFloatingFilter(colDef: ColDef): string {
+    public getDefaultFloatingFilter(column: Column): string {
         let defaultFloatingFilterType: string;
         if (ModuleRegistry.isRegistered(ModuleNames.SetFilterModule)) {
             defaultFloatingFilterType = 'agSetColumnFloatingFilter';
         } else {
-            const cellDataType = colDef.cellDataType;
+            const cellDataType = column.getColDef().cellDataType;
             if (cellDataType === 'number') {
                 defaultFloatingFilterType = 'agNumberColumnFloatingFilter';
             } else if (cellDataType === 'date' || cellDataType === 'dateString') {
@@ -765,7 +765,7 @@ export class FilterManager extends BeanStub {
         const filterParams = this.createFilterParams(column, colDef);
         const finalFilterParams = this.userComponentFactory.mergeParamsWithApplicationProvidedParams(colDef, FilterComponent, filterParams);
 
-        let defaultFloatingFilterType = this.userComponentFactory.getDefaultFloatingFilterType(colDef, () => this.getDefaultFloatingFilter(colDef));
+        let defaultFloatingFilterType = this.userComponentFactory.getDefaultFloatingFilterType(colDef, () => this.getDefaultFloatingFilter(column));
 
         if (defaultFloatingFilterType == null) {
             defaultFloatingFilterType = 'agReadOnlyFloatingFilter';

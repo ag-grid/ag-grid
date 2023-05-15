@@ -12,13 +12,12 @@ import {
     DataTypeDefinition,
     DateStringDataTypeDefinition,
     DEFAULT_DATA_TYPES,
-    DataTypeCheckerParams,
 } from '../entities/dataType';
 import { IRowModel } from '../interfaces/iRowModel';
 import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import { Events } from '../eventKeys';
 import { ColumnModel } from './columnModel';
-import { getValueUsingField, iterateObject } from '../utils/object';
+import { getValueUsingField } from '../utils/object';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { ModuleNames } from '../modules/moduleNames';
 import { ValueService } from '../valueService/valueService';
@@ -33,6 +32,7 @@ export class DataTypeService extends BeanStub {
     @Autowired('valueService') private valueService: ValueService;
 
     private dataTypeDefinitions: { [cellDataType: string]: DataTypeDefinition | CoreDataTypeDefinition } = {};
+    private dataTypeMatchers: { [cellDataType: string]: ((value: any) => boolean) | undefined };
     private isWaitingForRowData = false;
 
     @PostConstruct
@@ -48,12 +48,25 @@ export class DataTypeService extends BeanStub {
     private processDataTypeDefinitions(): void {
         this.dataTypeDefinitions = { ...DEFAULT_DATA_TYPES };
         const dataTypeDefinitions = this.gridOptionsService.get('dataTypeDefinitions') ?? {};
+        this.dataTypeMatchers = {};
 
-        iterateObject(dataTypeDefinitions, (cellDataType: string, dataTypeDefinition: DataTypeDefinition) => {
+        Object.entries(dataTypeDefinitions).forEach(([cellDataType, dataTypeDefinition]) => {
             const mergedDataTypeDefinition = this.processDataTypeDefinition(dataTypeDefinition, dataTypeDefinitions, [cellDataType]);
             if (mergedDataTypeDefinition) {
                 this.dataTypeDefinitions[cellDataType] = mergedDataTypeDefinition;
+                if (dataTypeDefinition.dataTypeMatcher) {
+                    this.dataTypeMatchers[cellDataType] = dataTypeDefinition.dataTypeMatcher;
+                }
             }
+        });
+
+        ['dateString', 'text', 'number', 'boolean', 'date'].forEach((cellDataType) => {
+            const overriddenDataTypeMatcher = this.dataTypeMatchers[cellDataType];
+            if (overriddenDataTypeMatcher) {
+                // remove to maintain correct ordering
+                delete this.dataTypeMatchers[cellDataType];
+            }
+            this.dataTypeMatchers[cellDataType] = overriddenDataTypeMatcher ?? DEFAULT_DATA_TYPES[cellDataType].dataTypeMatcher;
         });
     }
 
@@ -84,8 +97,8 @@ export class DataTypeService extends BeanStub {
         alreadyProcessedDataTypes: string[]
     ): DataTypeDefinition | undefined {
         let mergedDataTypeDefinition: DataTypeDefinition;
-        const extendsCellDataType = dataTypeDefinition.extends;
-        if (dataTypeDefinition.extends === dataTypeDefinition.baseDataType) {
+        const extendsCellDataType = dataTypeDefinition.extendsDataType;
+        if (dataTypeDefinition.extendsDataType === dataTypeDefinition.baseDataType) {
             const baseDataTypeDefinition = DEFAULT_DATA_TYPES[extendsCellDataType];
             if (!this.validateDataTypeDefinition(dataTypeDefinition, baseDataTypeDefinition, extendsCellDataType)) {
                 return undefined;
@@ -97,7 +110,7 @@ export class DataTypeService extends BeanStub {
         } else {
             if (alreadyProcessedDataTypes.includes(extendsCellDataType)) {
                 doOnce(() => console.warn(
-                    'AG Grid: Data type definition hierarchies (via the "extends" property) cannot contain circular references.'
+                    'AG Grid: Data type definition hierarchies (via the "extendsDataType" property) cannot contain circular references.'
                 ), 'dataTypeExtendsCircularRef');
                 return undefined;
             }
@@ -221,21 +234,9 @@ export class DataTypeService extends BeanStub {
         }
         if (value == null) {
             return undefined;
-        } else if (typeof value === 'string') {
-            const matcher = (this.dataTypeDefinitions.dateString as DateStringDataTypeDefinition).dateMatcher!;
-            if (matcher(value)) {
-                return 'dateString';
-            } else {
-                return 'text';
-            }
-        } else if (typeof value === 'number') {
-            return 'number';
-        } else if (typeof value === 'boolean') {
-            return 'boolean';
-        } else if (value instanceof Date) {
-            return 'date';
         }
-        return 'object';
+        const [cellDataType] = Object.entries(this.dataTypeMatchers).find(([_cellDataType, dataTypeMatcher]) => dataTypeMatcher!(value)) ?? ['object'];
+        return cellDataType;
     }
 
     private initWaitForRowData(): void {
@@ -285,22 +286,14 @@ export class DataTypeService extends BeanStub {
 
     public checkType(column: Column, value: any): boolean {
         const colDef = column.getColDef();
-        if (!colDef.cellDataType) {
+        if (!colDef.cellDataType || value == null) {
             return true;
         }
-        const typeChecker = this.dataTypeDefinitions[colDef.cellDataType]?.dataTypeChecker;
-        if (!typeChecker) {
+        const dataTypeMatcher = this.dataTypeDefinitions[colDef.cellDataType]?.dataTypeMatcher;
+        if (!dataTypeMatcher) {
             return true;
         }
-        const params: DataTypeCheckerParams<any, any> = {
-            value,
-            colDef: column.getColDef(),
-            column: column,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
-        };
-        return typeChecker(params);
+        return dataTypeMatcher(value);
     }
 
     private setColDefPropertiesForBaseDataType(colDef: ColDef, dataTypeDefinition: DataTypeDefinition | CoreDataTypeDefinition): void {
@@ -311,13 +304,14 @@ export class DataTypeService extends BeanStub {
                 colDef.headerClass = 'ag-right-aligned-header';
                 colDef.cellClass = 'ag-right-aligned-cell';
                 colDef.cellEditor = 'agNumberCellEditor';
-                colDef.keyCreator = (params: KeyCreatorParams) => dataTypeDefinition.valueFormatter!(params);
                 if (usingSetFilter) {
                     colDef.filterParams = {
-                        valueFormatter: (params: ValueFormatterParams) => {
-                            const valueFormatted = dataTypeDefinition.valueFormatter!(params);
-                            return valueFormatted === '' ? translate('blanks', '(Blanks)') : valueFormatted;
-                        }
+                        comparator: (a: string, b: string) => {
+                            const valA = a == null ? 0 : parseInt(a);
+                            const valB = b == null ? 0 : parseInt(b);
+                            if (valA === valB) return 0;
+                            return valA > valB ? 1 : -1;
+                        },
                     };
                 }
                 colDef.useValueFormatterForExport = true;
@@ -334,8 +328,7 @@ export class DataTypeService extends BeanStub {
                             if (params.value == null) {
                                 return translate('blanks', '(Blanks)');
                             }
-                            const value = String(params.value);
-                            return translate(value, value);
+                            return translate(String(params.value), params.value ? 'True' : 'False');
                         }
                     };
                 } else {

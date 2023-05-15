@@ -1681,21 +1681,21 @@
     },
     "type": {
       "baseDataType": "TValueType",
+      "extendsDataType": "string",
       "valueParser?": "ValueParserLiteFunc<TData, TValue>",
       "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
-      "dataTypeChecker?": "DataTypeChecker<TData, TValue>",
+      "dataTypeMatcher?": "(value: any) => boolean",
       "columnTypes?": "string | string[]",
-      "extends": "string",
       "appendColumnTypes?": "boolean",
       "suppressDefaultProperties?": "boolean"
     },
     "docs": {
       "baseDataType": "/** The underlying data type */",
+      "extendsDataType": "/** The data type that this extends. Either one of the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`)\n     * or another custom data type. \n     */",
       "valueParser?": "/** Parses a value into the correct data type.\n     * This will be used as the `colDef.valueParser` (unless overridden),\n     * and in other places where parsing is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value parser of the data type that this extends will be used.\n     */",
       "valueFormatter?": "/** Formats a value for display.\n     * This will be used as the `colDef.valueFormatter` (unless overridden),\n     * and in other places where formatting is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value formatter of the data type that this extends will be used.\n     */",
-      "dataTypeChecker?": "/** Returns `true` if a value is of this data type.\n     * Used to ensure values of the wrong data type cannot be set into this column.\n     * If not provided, the data type checker of the data type that this extends will be used.\n     */",
+      "dataTypeMatcher?": "/** Returns `true` if the `value` is of this data type.\n     * Used when inferring cell data types as well as to ensure values of the\n     * wrong data type cannot be set into this column.\n     * If not provided, the data type matcher of the data type that this extends will be used.\n     */",
       "columnTypes?": "/** A comma separated string or array of strings containing `ColumnType` keys,\n     * which can be used as a template for columns of this data type.\n     */",
-      "extends": "/** The data type that this extends. Either one of the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`)\n     * or another custom data type. \n     */",
       "appendColumnTypes?": "/** If `true`, this data type will append any specified column types to those of the data type that this extends.\n     * If `false`, the column types for this data type will replace any of the data type that this extends.\n     * Default: `false`.\n     */",
       "suppressDefaultProperties?": "/** By default, certain column definition properties are set based on the base data type.\n     * If this is set to `true`, these properties will not be set.\n     * Default: `false`.\n     */"
     }
@@ -1707,21 +1707,21 @@
     },
     "type": {
       "baseDataType": "TValueType",
+      "extendsDataType": "string",
       "valueParser?": "ValueParserLiteFunc<TData, TValue>",
       "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
-      "dataTypeChecker?": "DataTypeChecker<TData, TValue>",
+      "dataTypeMatcher?": "(value: any) => boolean",
       "columnTypes?": "string | string[]",
-      "extends": "string",
       "appendColumnTypes?": "boolean",
       "suppressDefaultProperties?": "boolean"
     },
     "docs": {
       "baseDataType": "/** The underlying data type */",
+      "extendsDataType": "/** The data type that this extends. Either one of the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`)\n     * or another custom data type. \n     */",
       "valueParser?": "/** Parses a value into the correct data type.\n     * This will be used as the `colDef.valueParser` (unless overridden),\n     * and in other places where parsing is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value parser of the data type that this extends will be used.\n     */",
       "valueFormatter?": "/** Formats a value for display.\n     * This will be used as the `colDef.valueFormatter` (unless overridden),\n     * and in other places where formatting is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value formatter of the data type that this extends will be used.\n     */",
-      "dataTypeChecker?": "/** Returns `true` if a value is of this data type.\n     * Used to ensure values of the wrong data type cannot be set into this column.\n     * If not provided, the data type checker of the data type that this extends will be used.\n     */",
+      "dataTypeMatcher?": "/** Returns `true` if the `value` is of this data type.\n     * Used when inferring cell data types as well as to ensure values of the\n     * wrong data type cannot be set into this column.\n     * If not provided, the data type matcher of the data type that this extends will be used.\n     */",
       "columnTypes?": "/** A comma separated string or array of strings containing `ColumnType` keys,\n     * which can be used as a template for columns of this data type.\n     */",
-      "extends": "/** The data type that this extends. Either one of the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`)\n     * or another custom data type. \n     */",
       "appendColumnTypes?": "/** If `true`, this data type will append any specified column types to those of the data type that this extends.\n     * If `false`, the column types for this data type will replace any of the data type that this extends.\n     * Default: `false`.\n     */",
       "suppressDefaultProperties?": "/** By default, certain column definition properties are set based on the base data type.\n     * If this is set to `true`, these properties will not be set.\n     * Default: `false`.\n     */"
     }
@@ -1733,21 +1733,21 @@
     },
     "type": {
       "baseDataType": "TValueType",
+      "extendsDataType": "string",
       "valueParser?": "ValueParserLiteFunc<TData, TValue>",
       "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
-      "dataTypeChecker?": "DataTypeChecker<TData, TValue>",
+      "dataTypeMatcher?": "(value: any) => boolean",
       "columnTypes?": "string | string[]",
-      "extends": "string",
       "appendColumnTypes?": "boolean",
       "suppressDefaultProperties?": "boolean"
     },
     "docs": {
       "baseDataType": "/** The underlying data type */",
+      "extendsDataType": "/** The data type that this extends. Either one of the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`)\n     * or another custom data type. \n     */",
       "valueParser?": "/** Parses a value into the correct data type.\n     * This will be used as the `colDef.valueParser` (unless overridden),\n     * and in other places where parsing is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value parser of the data type that this extends will be used.\n     */",
       "valueFormatter?": "/** Formats a value for display.\n     * This will be used as the `colDef.valueFormatter` (unless overridden),\n     * and in other places where formatting is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value formatter of the data type that this extends will be used.\n     */",
-      "dataTypeChecker?": "/** Returns `true` if a value is of this data type.\n     * Used to ensure values of the wrong data type cannot be set into this column.\n     * If not provided, the data type checker of the data type that this extends will be used.\n     */",
+      "dataTypeMatcher?": "/** Returns `true` if the `value` is of this data type.\n     * Used when inferring cell data types as well as to ensure values of the\n     * wrong data type cannot be set into this column.\n     * If not provided, the data type matcher of the data type that this extends will be used.\n     */",
       "columnTypes?": "/** A comma separated string or array of strings containing `ColumnType` keys,\n     * which can be used as a template for columns of this data type.\n     */",
-      "extends": "/** The data type that this extends. Either one of the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`)\n     * or another custom data type. \n     */",
       "appendColumnTypes?": "/** If `true`, this data type will append any specified column types to those of the data type that this extends.\n     * If `false`, the column types for this data type will replace any of the data type that this extends.\n     * Default: `false`.\n     */",
       "suppressDefaultProperties?": "/** By default, certain column definition properties are set based on the base data type.\n     * If this is set to `true`, these properties will not be set.\n     * Default: `false`.\n     */"
     }
@@ -1759,21 +1759,21 @@
     },
     "type": {
       "baseDataType": "TValueType",
+      "extendsDataType": "string",
       "valueParser?": "ValueParserLiteFunc<TData, TValue>",
       "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
-      "dataTypeChecker?": "DataTypeChecker<TData, TValue>",
+      "dataTypeMatcher?": "(value: any) => boolean",
       "columnTypes?": "string | string[]",
-      "extends": "string",
       "appendColumnTypes?": "boolean",
       "suppressDefaultProperties?": "boolean"
     },
     "docs": {
       "baseDataType": "/** The underlying data type */",
+      "extendsDataType": "/** The data type that this extends. Either one of the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`)\n     * or another custom data type. \n     */",
       "valueParser?": "/** Parses a value into the correct data type.\n     * This will be used as the `colDef.valueParser` (unless overridden),\n     * and in other places where parsing is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value parser of the data type that this extends will be used.\n     */",
       "valueFormatter?": "/** Formats a value for display.\n     * This will be used as the `colDef.valueFormatter` (unless overridden),\n     * and in other places where formatting is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value formatter of the data type that this extends will be used.\n     */",
-      "dataTypeChecker?": "/** Returns `true` if a value is of this data type.\n     * Used to ensure values of the wrong data type cannot be set into this column.\n     * If not provided, the data type checker of the data type that this extends will be used.\n     */",
+      "dataTypeMatcher?": "/** Returns `true` if the `value` is of this data type.\n     * Used when inferring cell data types as well as to ensure values of the\n     * wrong data type cannot be set into this column.\n     * If not provided, the data type matcher of the data type that this extends will be used.\n     */",
       "columnTypes?": "/** A comma separated string or array of strings containing `ColumnType` keys,\n     * which can be used as a template for columns of this data type.\n     */",
-      "extends": "/** The data type that this extends. Either one of the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`)\n     * or another custom data type. \n     */",
       "appendColumnTypes?": "/** If `true`, this data type will append any specified column types to those of the data type that this extends.\n     * If `false`, the column types for this data type will replace any of the data type that this extends.\n     * Default: `false`.\n     */",
       "suppressDefaultProperties?": "/** By default, certain column definition properties are set based on the base data type.\n     * If this is set to `true`, these properties will not be set.\n     * Default: `false`.\n     */"
     }
@@ -1785,21 +1785,21 @@
     },
     "type": {
       "baseDataType": "TValueType",
+      "extendsDataType": "string",
       "valueParser?": "ValueParserLiteFunc<TData, TValue>",
       "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
-      "dataTypeChecker?": "DataTypeChecker<TData, TValue>",
+      "dataTypeMatcher?": "(value: any) => boolean",
       "columnTypes?": "string | string[]",
-      "extends": "string",
       "appendColumnTypes?": "boolean",
       "suppressDefaultProperties?": "boolean"
     },
     "docs": {
       "baseDataType": "/** The underlying data type */",
+      "extendsDataType": "/** The data type that this extends. Either one of the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`)\n     * or another custom data type. \n     */",
       "valueParser?": "/** Parses a value into the correct data type.\n     * This will be used as the `colDef.valueParser` (unless overridden),\n     * and in other places where parsing is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value parser of the data type that this extends will be used.\n     */",
       "valueFormatter?": "/** Formats a value for display.\n     * This will be used as the `colDef.valueFormatter` (unless overridden),\n     * and in other places where formatting is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value formatter of the data type that this extends will be used.\n     */",
-      "dataTypeChecker?": "/** Returns `true` if a value is of this data type.\n     * Used to ensure values of the wrong data type cannot be set into this column.\n     * If not provided, the data type checker of the data type that this extends will be used.\n     */",
+      "dataTypeMatcher?": "/** Returns `true` if the `value` is of this data type.\n     * Used when inferring cell data types as well as to ensure values of the\n     * wrong data type cannot be set into this column.\n     * If not provided, the data type matcher of the data type that this extends will be used.\n     */",
       "columnTypes?": "/** A comma separated string or array of strings containing `ColumnType` keys,\n     * which can be used as a template for columns of this data type.\n     */",
-      "extends": "/** The data type that this extends. Either one of the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`)\n     * or another custom data type. \n     */",
       "appendColumnTypes?": "/** If `true`, this data type will append any specified column types to those of the data type that this extends.\n     * If `false`, the column types for this data type will replace any of the data type that this extends.\n     * Default: `false`.\n     */",
       "suppressDefaultProperties?": "/** By default, certain column definition properties are set based on the base data type.\n     * If this is set to `true`, these properties will not be set.\n     * Default: `false`.\n     */"
     }
@@ -1812,26 +1812,24 @@
     "type": {
       "dateParser?": "(value: string | undefined) => Date | undefined",
       "dateFormatter?": "(value: Date | undefined) => string | undefined",
-      "dateMatcher?": "(value: string) => boolean",
       "baseDataType": "TValueType",
+      "extendsDataType": "string",
       "valueParser?": "ValueParserLiteFunc<TData, TValue>",
       "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
-      "dataTypeChecker?": "DataTypeChecker<TData, TValue>",
+      "dataTypeMatcher?": "(value: any) => boolean",
       "columnTypes?": "string | string[]",
-      "extends": "string",
       "appendColumnTypes?": "boolean",
       "suppressDefaultProperties?": "boolean"
     },
     "docs": {
       "dateParser?": "/** Converts a date in `string` format to a `Date`. */",
       "dateFormatter?": "/** Converts a date in `Date` format to a `string`. */",
-      "dateMatcher?": "/** Returns `true` if the `value` is a date defined as a `string`.\n     * Used when inferring cell data types.\n     */",
       "baseDataType": "/** The underlying data type */",
+      "extendsDataType": "/** The data type that this extends. Either one of the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`)\n     * or another custom data type. \n     */",
       "valueParser?": "/** Parses a value into the correct data type.\n     * This will be used as the `colDef.valueParser` (unless overridden),\n     * and in other places where parsing is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value parser of the data type that this extends will be used.\n     */",
       "valueFormatter?": "/** Formats a value for display.\n     * This will be used as the `colDef.valueFormatter` (unless overridden),\n     * and in other places where formatting is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value formatter of the data type that this extends will be used.\n     */",
-      "dataTypeChecker?": "/** Returns `true` if a value is of this data type.\n     * Used to ensure values of the wrong data type cannot be set into this column.\n     * If not provided, the data type checker of the data type that this extends will be used.\n     */",
+      "dataTypeMatcher?": "/** Returns `true` if the `value` is of this data type.\n     * Used when inferring cell data types as well as to ensure values of the\n     * wrong data type cannot be set into this column.\n     * If not provided, the data type matcher of the data type that this extends will be used.\n     */",
       "columnTypes?": "/** A comma separated string or array of strings containing `ColumnType` keys,\n     * which can be used as a template for columns of this data type.\n     */",
-      "extends": "/** The data type that this extends. Either one of the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`)\n     * or another custom data type. \n     */",
       "appendColumnTypes?": "/** If `true`, this data type will append any specified column types to those of the data type that this extends.\n     * If `false`, the column types for this data type will replace any of the data type that this extends.\n     * Default: `false`.\n     */",
       "suppressDefaultProperties?": "/** By default, certain column definition properties are set based on the base data type.\n     * If this is set to `true`, these properties will not be set.\n     * Default: `false`.\n     */"
     }
@@ -1843,21 +1841,21 @@
     },
     "type": {
       "baseDataType": "TValueType",
+      "extendsDataType": "string",
       "valueParser?": "ValueParserLiteFunc<TData, TValue>",
       "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
-      "dataTypeChecker?": "DataTypeChecker<TData, TValue>",
+      "dataTypeMatcher?": "(value: any) => boolean",
       "columnTypes?": "string | string[]",
-      "extends": "string",
       "appendColumnTypes?": "boolean",
       "suppressDefaultProperties?": "boolean"
     },
     "docs": {
       "baseDataType": "/** The underlying data type */",
+      "extendsDataType": "/** The data type that this extends. Either one of the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`)\n     * or another custom data type. \n     */",
       "valueParser?": "/** Parses a value into the correct data type.\n     * This will be used as the `colDef.valueParser` (unless overridden),\n     * and in other places where parsing is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value parser of the data type that this extends will be used.\n     */",
       "valueFormatter?": "/** Formats a value for display.\n     * This will be used as the `colDef.valueFormatter` (unless overridden),\n     * and in other places where formatting is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value formatter of the data type that this extends will be used.\n     */",
-      "dataTypeChecker?": "/** Returns `true` if a value is of this data type.\n     * Used to ensure values of the wrong data type cannot be set into this column.\n     * If not provided, the data type checker of the data type that this extends will be used.\n     */",
+      "dataTypeMatcher?": "/** Returns `true` if the `value` is of this data type.\n     * Used when inferring cell data types as well as to ensure values of the\n     * wrong data type cannot be set into this column.\n     * If not provided, the data type matcher of the data type that this extends will be used.\n     */",
       "columnTypes?": "/** A comma separated string or array of strings containing `ColumnType` keys,\n     * which can be used as a template for columns of this data type.\n     */",
-      "extends": "/** The data type that this extends. Either one of the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`)\n     * or another custom data type. \n     */",
       "appendColumnTypes?": "/** If `true`, this data type will append any specified column types to those of the data type that this extends.\n     * If `false`, the column types for this data type will replace any of the data type that this extends.\n     * Default: `false`.\n     */",
       "suppressDefaultProperties?": "/** By default, certain column definition properties are set based on the base data type.\n     * If this is set to `true`, these properties will not be set.\n     * Default: `false`.\n     */"
     }
@@ -1868,7 +1866,7 @@
   },
   "CoreDataTypeDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["TData = any"] },
-    "type": "Omit<TextDataTypeDefinition<TData>, 'extends'> | Omit<NumberDataTypeDefinition<TData>, 'extends'> | Omit<BooleanDataTypeDefinition<TData>, 'extends'> | Omit<DateDataTypeDefinition<TData>, 'extends'> | Omit<DateStringDataTypeDefinition<TData>, 'extends'> | Omit<ObjectDataTypeDefinition<TData, any>, 'extends'>"
+    "type": "Omit<TextDataTypeDefinition<TData>, 'extendsDataType'> | Omit<NumberDataTypeDefinition<TData>, 'extendsDataType'> | Omit<BooleanDataTypeDefinition<TData>, 'extendsDataType'> | Omit<DateDataTypeDefinition<TData>, 'extendsDataType'> | Omit<DateStringDataTypeDefinition<TData>, 'extendsDataType'> | Omit<ObjectDataTypeDefinition<TData, any>, 'extendsDataType'>"
   },
   "GridOptions": {
     "meta": { "typeParams": ["TData = any"] },

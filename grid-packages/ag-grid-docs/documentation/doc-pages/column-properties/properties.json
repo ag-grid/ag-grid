@@ -19,6 +19,7 @@
                 "url": "/column-definitions/#default-column-definitions"
             }
         },
+        "cellDataType": {},
         "valueGetter": {
             "description": "Function or [expression](/cell-expressions/#column-definition-expressions). Gets the value from your data for display.",
             "more": {
@@ -168,7 +169,13 @@
         "initialHide": {},
         "lockVisible": {},
         "lockPosition": {},
-        "suppressMovable": {}
+        "suppressMovable": {},
+        "useValueFormatterForExport": {
+            "more": {
+                "name": "Using Value Formatters with Other Grid Features",
+                "url": "/value-formatters/#using-value-formatters-with-other-grid-features"
+            }
+        }
     },
     "width": {
         "meta": {
@@ -365,7 +372,13 @@
         },
         "cellEditorPopup": {},
         "cellEditorPopupPosition": {},
-        "singleClickEdit": {}
+        "singleClickEdit": {},
+        "useValueParserForImport": {
+            "more": {
+                "name": "Using Value Parsers with Other Grid Features",
+                "url": "/value-parsers/#using-value-parsers-with-other-grid-features"
+            }
+        }
     },
     "grouping": {
         "meta": {

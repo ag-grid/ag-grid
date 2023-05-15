@@ -44,6 +44,12 @@ interface BaseDataTypeDefinition<TValueType extends BaseCellDataType, TData = an
     /** The underlying data type */
     baseDataType: TValueType;
     /**
+     * The data type that this extends. Either one of the pre-defined data types
+     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`)
+     * or another custom data type. 
+     */
+    extendsDataType: string;
+    /**
      * Parses a value into the correct data type.
      * This will be used as the `colDef.valueParser` (unless overridden),
      * and in other places where parsing is required.
@@ -62,22 +68,17 @@ interface BaseDataTypeDefinition<TValueType extends BaseCellDataType, TData = an
      */
 	valueFormatter?: ValueFormatterLiteFunc<TData, TValue>;
     /**
-     * Returns `true` if a value is of this data type.
-     * Used to ensure values of the wrong data type cannot be set into this column.
-     * If not provided, the data type checker of the data type that this extends will be used.
+     * Returns `true` if the `value` is of this data type.
+     * Used when inferring cell data types as well as to ensure values of the
+     * wrong data type cannot be set into this column.
+     * If not provided, the data type matcher of the data type that this extends will be used.
      */
-    dataTypeChecker?: DataTypeChecker<TData, TValue>;
+    dataTypeMatcher?: (value: any) => boolean;
     /**
      * A comma separated string or array of strings containing `ColumnType` keys,
      * which can be used as a template for columns of this data type.
      */
 	columnTypes?: string | string[];
-    /**
-     * The data type that this extends. Either one of the pre-defined data types
-     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`)
-     * or another custom data type. 
-     */
-    extends: string;
     /**
      * If `true`, this data type will append any specified column types to those of the data type that this extends.
      * If `false`, the column types for this data type will replace any of the data type that this extends.
@@ -114,11 +115,6 @@ export interface DateStringDataTypeDefinition<TData = any> extends BaseDataTypeD
     dateParser?: (value: string | undefined) => Date | undefined;
     /** Converts a date in `Date` format to a `string`. */
     dateFormatter?: (value: Date | undefined) => string | undefined;
-    /**
-     * Returns `true` if the `value` is a date defined as a `string`.
-     * Used when inferring cell data types.
-     */
-    dateMatcher?: (value: string) => boolean;
 }
 
 /** Represents an `'object'` data type (any type). */
@@ -136,12 +132,12 @@ export type DataTypeDefinition<TData = any> =
 
 /** Configuration options for pre-defined data types. */
 export type CoreDataTypeDefinition<TData = any> = 
-    | Omit<TextDataTypeDefinition<TData>, 'extends'>
-    | Omit<NumberDataTypeDefinition<TData>, 'extends'>
-    | Omit<BooleanDataTypeDefinition<TData>, 'extends'>
-    | Omit<DateDataTypeDefinition<TData>, 'extends'>
-    | Omit<DateStringDataTypeDefinition<TData>, 'extends'>
-    | Omit<ObjectDataTypeDefinition<TData, any>, 'extends'>;
+    | Omit<TextDataTypeDefinition<TData>, 'extendsDataType'>
+    | Omit<NumberDataTypeDefinition<TData>, 'extendsDataType'>
+    | Omit<BooleanDataTypeDefinition<TData>, 'extendsDataType'>
+    | Omit<DateDataTypeDefinition<TData>, 'extendsDataType'>
+    | Omit<DateStringDataTypeDefinition<TData>, 'extendsDataType'>
+    | Omit<ObjectDataTypeDefinition<TData, any>, 'extendsDataType'>;
 
 function defaultDateFormatMatcher(value: string): boolean {
     return !!value.match('\\d{4}-\\d{2}-\\d{2}')
@@ -152,17 +148,18 @@ export const DEFAULT_DATA_TYPES: { [key: string]: CoreDataTypeDefinition } = {
         baseDataType: 'number',
         valueParser: (params: ValueParserLiteParams<any, number>) => params.newValue === '' ? null : Number(params.newValue),
         valueFormatter: (params: ValueFormatterLiteParams<any, number>) => params.value == null ? '' : String(params.value),
-        dataTypeChecker: (params: DataTypeCheckerParams<any, number>) => params.value == null || typeof params.value === 'number',
+        dataTypeMatcher: (value: any) => typeof value === 'number',
     },
     text: {
         baseDataType: 'text',
         valueParser: (params: ValueParserLiteParams<any, string>) => params.newValue === '' ? null : params.newValue,
+        dataTypeMatcher: (value: any) => typeof value === 'string',
     },
     boolean: {
         baseDataType: 'boolean',
         valueParser: (params: ValueParserLiteParams<any, boolean>) => params.newValue === '' ? null : String(params.newValue).toLowerCase() === 'true',
         valueFormatter: (params: ValueFormatterLiteParams<any, boolean>) => params.value == null ? '' : String(params.value),
-        dataTypeChecker: (params: DataTypeCheckerParams<any, boolean>) => params.value == null || typeof params.value === 'boolean',
+        dataTypeMatcher: (value: any) => typeof value === 'boolean',
     },
     date: {
         baseDataType: 'date',
@@ -173,16 +170,15 @@ export const DEFAULT_DATA_TYPES: { [key: string]: CoreDataTypeDefinition } = {
             if (isNaN(params.value.getTime())) { return params.value.toString() }
             return serialiseDate(params.value, false) ?? '';
         },
-        dataTypeChecker: (params: DataTypeCheckerParams<any, Date>) => params.value == null || params.value instanceof Date,
+        dataTypeMatcher: (value: any) => value instanceof Date,
     },
     dateString: {
         baseDataType: 'dateString',
-        dateMatcher: (value: string) => defaultDateFormatMatcher(value),
         dateParser: (value: string | undefined) => parseDateTimeFromString(value) ?? undefined,
         dateFormatter: (value: Date | undefined) => serialiseDate(value ?? null, false) ?? undefined,
         valueParser: (params: ValueParserLiteParams<any, string>) => defaultDateFormatMatcher(String(params.newValue)) ? params.newValue : null,
         valueFormatter: (params: ValueFormatterLiteParams<any, string>) => defaultDateFormatMatcher(String(params.value)) ? params.value! : '',
-        dataTypeChecker: (params: DataTypeCheckerParams<any, string>) => params.value == null || (typeof params.value === 'string' && defaultDateFormatMatcher(params.value)),
+        dataTypeMatcher: (value: any) => typeof value === 'string' && defaultDateFormatMatcher(value),
     },
     object: {
         baseDataType: 'object',
