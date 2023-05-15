@@ -16,8 +16,8 @@
   "Opacity": {},
   "PixelSize": {},
   "Ratio": {},
-  "TextWrap": {},
   "DataValue": {},
+  "TextWrap": {},
   "AgChartInteractionRange": {},
   "AgChartThemePalette": {
     "fills": {
@@ -919,7 +919,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "legendItemKey": {
-      "description": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */",
+      "description": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. */",
       "type": { "returnType": "string", "optional": true }
     },
     "fills": {
@@ -3884,7 +3884,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "yKey": {
-      "description": "/** The keys to use to retrieve y-values from the data. */",
+      "description": "/** The key to use to retrieve y-values from the data. */",
       "type": { "returnType": "string", "optional": true }
     },
     "xName": {
@@ -3893,6 +3893,10 @@
     },
     "yName": {
       "description": "/** Human-readable description of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "legendItemName": {
+      "description": "/** Human-readable description of the y-values. If supplied, matching items with the same value will be toggled together. */",
       "type": { "returnType": "string", "optional": true }
     },
     "fill": {
@@ -4514,7 +4518,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "legendItemKey": {
-      "description": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */",
+      "description": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. */",
       "type": { "returnType": "string", "optional": true }
     },
     "fills": {
@@ -5614,6 +5618,7 @@
     "meta": { "typeParams": ["K", "Grouped extends boolean | undefined"] }
   },
   "PropertyDefinition": { "meta": { "typeParams": ["K"] } },
+  "ProcessorFn": {},
   "DatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "InternalDatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "AggregatePropertyDefinition": {
@@ -5621,6 +5626,10 @@
       "typeParams": ["D", "K extends keyof D", "R = [number, number]", "R2 = R"]
     }
   },
+  "GroupValueProcessorDefinition": {
+    "meta": { "typeParams": ["D", "K extends keyof D"] }
+  },
+  "PropertyValueProcessorDefinition": { "meta": { "typeParams": ["D"] } },
   "ReducerOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
   "ProcessorOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
   "Series": {
@@ -5659,8 +5668,39 @@
     "type": {
       "type": { "returnType": "AnimationEventType", "optional": false }
     },
-    "delta": { "type": { "returnType": "number", "optional": false } },
+    "deltaMs": { "type": { "returnType": "number", "optional": false } },
     "meta": { "typeParams": ["AnimationEventType"] }
+  },
+  "AnimationOptions": {
+    "driver": { "type": { "returnType": "Driver", "optional": false } },
+    "autoplay": { "type": { "returnType": "boolean", "optional": true } },
+    "delay": { "type": { "returnType": "number", "optional": true } },
+    "repeat": { "type": { "returnType": "number", "optional": true } },
+    "repeatType": { "type": { "returnType": "RepeatType", "optional": true } },
+    "onComplete": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onPlay": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onRepeat": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onStop": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onUpdate": {
+      "type": {
+        "arguments": { "v": "T" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "meta": { "typeParams": ["T"] },
+    "duration": { "type": { "returnType": "number", "optional": false } },
+    "from": { "type": { "returnType": "T", "optional": false } },
+    "to": { "type": { "returnType": "T", "optional": false } },
+    "ease": { "type": { "returnType": "Easing<T>", "optional": true } }
   },
   "AnimationManyOptions": {
     "meta": { "typeParams": ["T"] },
@@ -5680,6 +5720,10 @@
     },
     "onStop": {
       "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "duration": { "type": { "returnType": "number", "optional": false } },
+    "ease": {
+      "type": { "returnType": "Easing<AnimationOptions<T>>", "optional": true }
     }
   },
   "ChartEventType": {},
@@ -6182,6 +6226,8 @@
     }
   },
   "PieNodeTag": {},
+  "PieAnimationState": {},
+  "PieAnimationEvent": {},
   "SeriesNodeDatum": {
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
@@ -6296,37 +6342,6 @@
     "meta": { "typeParams": ["T"] }
   },
   "RepeatType": {},
-  "AnimationOptions": {
-    "driver": { "type": { "returnType": "Driver", "optional": false } },
-    "autoplay": { "type": { "returnType": "boolean", "optional": true } },
-    "delay": { "type": { "returnType": "number", "optional": true } },
-    "repeat": { "type": { "returnType": "number", "optional": true } },
-    "repeatType": { "type": { "returnType": "RepeatType", "optional": true } },
-    "onComplete": {
-      "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "onPlay": {
-      "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "onRepeat": {
-      "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "onStop": {
-      "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "onUpdate": {
-      "type": {
-        "arguments": { "v": "T" },
-        "returnType": "void",
-        "optional": true
-      }
-    },
-    "meta": { "typeParams": ["T"] },
-    "duration": { "type": { "returnType": "number", "optional": false } },
-    "from": { "type": { "returnType": "T", "optional": false } },
-    "to": { "type": { "returnType": "T", "optional": false } },
-    "ease": { "type": { "returnType": "Easing<T>", "optional": true } }
-  },
   "AnimationControls": {
     "isPlaying": { "type": { "returnType": "boolean", "optional": false } },
     "play": {
@@ -6401,6 +6416,21 @@
     "meta": { "typeParams": ["T"] }
   },
   "Easing": { "meta": { "typeParams": ["T"] } },
+  "StateDefinition": {
+    "actions": {
+      "type": {
+        "returnType": "{\n        onEnter?: () => void;\n        onExit?: () => void;\n    }",
+        "optional": true
+      }
+    },
+    "on": {
+      "type": {
+        "returnType": "{\n        [key in Event]: {\n            target: State;\n            action: () => void;\n        };\n    }",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["State extends string", "Event extends string"] }
+  },
   "ScaleClampParams": {
     "strict": {
       "description": "/** If `true` the values outside of the domain will become `NaN`.\n     * If `false` such values will be clamped to the domain edges.\n     */",
@@ -6562,6 +6592,26 @@
     "fontStyle": { "type": { "returnType": "FontStyle", "optional": true } },
     "fontWeight": { "type": { "returnType": "FontWeight", "optional": true } },
     "lineHeight": { "type": { "returnType": "number", "optional": true } }
+  },
+  "WordWrapProperties": {
+    "breakWord": { "type": { "returnType": "boolean", "optional": true } },
+    "hyphens": { "type": { "returnType": "boolean", "optional": true } }
+  },
+  "TextMeasurer": {
+    "size": {
+      "type": {
+        "arguments": { "text": "string" },
+        "returnType": "{ width: number; height: number }",
+        "optional": false
+      }
+    },
+    "width": {
+      "type": {
+        "arguments": { "line": "string" },
+        "returnType": "number",
+        "optional": false
+      }
+    }
   },
   "Comparator": { "meta": { "typeParams": ["T"] } },
   "LiteralOrFn": { "meta": { "typeParams": ["T"] } },

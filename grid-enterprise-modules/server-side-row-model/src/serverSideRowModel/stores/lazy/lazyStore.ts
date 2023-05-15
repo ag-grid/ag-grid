@@ -186,6 +186,10 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         this.displayIndexStart = undefined;
         this.displayIndexEnd = undefined;
         this.cache.getNodes().forEach(lazyNode => this.blockUtils.clearDisplayIndex(lazyNode.node));
+
+        if (this.parentRowNode.sibling) {
+            this.blockUtils.clearDisplayIndex(this.parentRowNode.sibling);
+        }
         this.cache.clearDisplayIndexes();
     }
 
@@ -207,6 +211,9 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @returns the virtual size of this store
      */
     getRowCount(): number {
+        if (this.parentRowNode.sibling) {
+            return this.cache.getRowCount() + 1;
+        }
         return this.cache.getRowCount();
     }
 
@@ -243,6 +250,10 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
         // delegate to the store to set the row display indexes
         this.cache.setDisplayIndexes(displayIndexSeq, nextRowTop);
+
+        if (this.parentRowNode.sibling) {
+            this.blockUtils.setDisplayIndex(this.parentRowNode.sibling, displayIndexSeq, nextRowTop);
+        }
 
         this.displayIndexEnd = displayIndexSeq.peek();
         this.heightPx = nextRowTop.value - this.topPx;
@@ -317,6 +328,9 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @returns the row node if the display index falls within the store, if it didn't exist this will create a new stub to return
      */
     getRowUsingDisplayIndex(displayRowIndex: number): IRowNode<any> | undefined {
+        if (this.parentRowNode.sibling && displayRowIndex === this.parentRowNode.sibling.rowIndex) {
+            return this.parentRowNode.sibling;
+        }
         return this.cache.getRowByDisplayIndex(displayRowIndex);
     }
 

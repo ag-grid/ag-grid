@@ -78,6 +78,10 @@ export class BlockUtils extends BeanStub {
             this.destroyBean(rowNode.childStore);
             rowNode.childStore = null;
         }
+
+        if (rowNode.sibling) {
+            this.destroyRowNode(rowNode.sibling, false);
+        }
         // this is needed, so row render knows to fade out the row, otherwise it
         // sees row top is present, and thinks the row should be shown. maybe
         // rowNode should have a flag on whether it is visible???
@@ -112,6 +116,10 @@ export class BlockUtils extends BeanStub {
                 }
                 console.warn(`data is `, rowNode.data);
             }, 'ServerSideBlock-CannotHaveNullOrUndefinedForKey');
+        }
+
+        if (this.beans.gridOptionsService.is('groupIncludeFooter')) {
+            rowNode.createFooter();
         }
     }
 
@@ -170,6 +178,7 @@ export class BlockUtils extends BeanStub {
         // getting set, if it's a group node and colDef.autoHeight=true
         if (_.exists(data)) {
             rowNode.setRowHeight(this.gridOptionsService.getRowHeightForNode(rowNode, false, cachedRowHeight).height);
+            rowNode.sibling?.setRowHeight(this.gridOptionsService.getRowHeightForNode(rowNode.sibling, false, cachedRowHeight).height);
         }
     }
 

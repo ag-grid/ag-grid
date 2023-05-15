@@ -2072,6 +2072,11 @@
                 "title": "Zoom",
                 "url": "/charts-zoom/",
                 "enterprise": "charts"
+              },
+              {
+                "title": "Animation",
+                "url": "/charts-animation/",
+                "enterprise": "charts"
               }
             ]
           }

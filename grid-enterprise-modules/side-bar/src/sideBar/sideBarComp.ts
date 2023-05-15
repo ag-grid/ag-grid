@@ -162,8 +162,7 @@ export class SideBarComp extends Component implements ISideBar {
             this.setDisplayed(shouldDisplaySideBar);
 
             const toolPanelDefs = this.sideBar.toolPanels as ToolPanelDef[];
-            this.sideBarButtonsComp.setToolPanelDefs(toolPanelDefs);
-            this.setupToolPanels(toolPanelDefs);
+            this.createToolPanelsAndSideButtons(toolPanelDefs);
             this.setSideBarPosition(this.sideBar.position);
 
             if (!this.sideBar.hiddenByDefault) {
@@ -192,34 +191,49 @@ export class SideBarComp extends Component implements ISideBar {
         return this;
     }
 
-    private setupToolPanels(defs: ToolPanelDef[]): void {
-        defs.forEach(def => {
-            if (def.id == null) {
-                console.warn(`AG Grid: please review all your toolPanel components, it seems like at least one of them doesn't have an id`);
-                return;
-            }
+    private createToolPanelsAndSideButtons(defs: ToolPanelDef[]): void {
+        for (const def of defs) {
+            this.createToolPanelAndSideButton(def);
+        }
+    }
 
-            // helpers, in case user doesn't have the right module loaded
-            if (def.toolPanel === 'agColumnsToolPanel') {
-                const moduleMissing =
-                    !ModuleRegistry.assertRegistered(ModuleNames.ColumnsToolPanelModule, 'Column Tool Panel');
-                if (moduleMissing) { return; }
-            }
+    private validateDef(def: ToolPanelDef): boolean {
+        if (def.id == null) {
+            console.warn(`AG Grid: please review all your toolPanel components, it seems like at least one of them doesn't have an id`);
+            return false;
+        }
 
-            if (def.toolPanel === 'agFiltersToolPanel') {
-                const moduleMissing =
-                    !ModuleRegistry.assertRegistered(ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel');
-                if (moduleMissing) { return; }
-            }
+        // helpers, in case user doesn't have the right module loaded
+        if (def.toolPanel === 'agColumnsToolPanel') {
+            const moduleMissing =
+                !ModuleRegistry.assertRegistered(ModuleNames.ColumnsToolPanelModule, 'Column Tool Panel');
+            if (moduleMissing) { return false; }
+        }
 
-            const wrapper = new ToolPanelWrapper();
-            this.getContext().createBean(wrapper);
-            wrapper.setToolPanelDef(def);
-            wrapper.setDisplayed(false);
-            this.getGui().appendChild(wrapper.getGui());
+        if (def.toolPanel === 'agFiltersToolPanel') {
+            const moduleMissing =
+                !ModuleRegistry.assertRegistered(ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel');
+            if (moduleMissing) { return false; }
+        }
 
-            this.toolPanelWrappers.push(wrapper);
-        });
+        return true;
+
+    }
+
+    private createToolPanelAndSideButton(def: ToolPanelDef): void {
+        if (!this.validateDef(def)) { return; }
+        const button = this.sideBarButtonsComp.addButtonComp(def);
+        const wrapper = this.getContext().createBean(new ToolPanelWrapper());
+
+        wrapper.setToolPanelDef(def);
+        wrapper.setDisplayed(false);
+
+        const wrapperGui = wrapper.getGui();
+        this.appendChild(wrapperGui);
+
+        this.toolPanelWrappers.push(wrapper);
+
+        _.setAriaControls(button.getButtonElement(), wrapperGui);
     }
 
     public refresh(): void {

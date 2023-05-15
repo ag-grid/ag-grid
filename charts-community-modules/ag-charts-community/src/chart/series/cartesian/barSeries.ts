@@ -50,9 +50,10 @@ import {
     FontWeight,
 } from '../../agChartOptions';
 import { LogAxis } from '../../axis/logAxis';
-import { DataModel, SMALLEST_KEY_INTERVAL, AGG_VALUES_EXTENT } from '../../data/dataModel';
+import { DataModel } from '../../data/dataModel';
 import { sum } from '../../data/aggregateFunctions';
 import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
+import { AGG_VALUES_EXTENT, normaliseGroupTo, SMALLEST_KEY_INTERVAL } from '../../data/processors';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
@@ -295,6 +296,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         }
     }
 
+    legendItemNames: { [key in string]: string } = {};
+
     /**
      * The value to normalize the bars to.
      * Should be a finite positive value or `undefined`.
@@ -332,7 +335,12 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const activeStacks = this.yKeys
             .map((stack) => stack.filter((key) => seriesItemEnabled.get(key)))
             .filter((stack) => stack.length > 0);
+
         const normaliseTo = normalizedTo && isFinite(normalizedTo) ? normalizedTo : undefined;
+        const extraProps = [];
+        if (normaliseTo) {
+            extraProps.push(normaliseGroupTo(activeSeriesItems, normaliseTo, 'sum'));
+        }
 
         this.dataModel = new DataModel<any, any, true>({
             props: [
@@ -341,10 +349,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 ...activeStacks.map((stack) => sum(stack)),
                 ...(isContinuousX ? [SMALLEST_KEY_INTERVAL] : []),
                 AGG_VALUES_EXTENT,
+                ...extraProps,
             ],
             groupByKeys: true,
             dataVisible: this.visible && activeSeriesItems.length > 0,
-            normaliseTo,
         });
 
         this.processedData = this.dataModel.processData(data);
@@ -857,6 +865,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             xKey,
             yKeys,
             yNames,
+            legendItemNames,
             cumYKeyCount,
             seriesItemEnabled,
             hideInLegend,
@@ -886,7 +895,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     seriesId: id,
                     enabled: seriesItemEnabled.get(yKey) || false,
                     label: {
-                        text: yNames[yKey] || yKey,
+                        text: legendItemNames[yKey] ?? yNames[yKey] ?? yKey,
                     },
                     marker: {
                         fill: fills[colorIndex % fills.length],
@@ -906,9 +915,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         super.toggleSeriesItem(itemId, enabled);
 
-        // Toggle items where the yName matches the yName of the clicked item
-        Object.keys(this.yNames)
-            .filter((id) => this.yNames[id] === this.yNames[itemId])
+        // Toggle items where the legendItemName matches the legendItemName of the clicked item
+        Object.keys(this.legendItemNames)
+            .filter((id) => this.legendItemNames[id] === this.legendItemNames[itemId])
             .forEach((yKey) => {
                 if (yKey !== itemId) {
                     super.toggleSeriesItem(yKey, enabled);
@@ -936,9 +945,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
                 newEnableds[yKey] = newEnableds[yKey] ?? newEnabled;
 
-                // Toggle other items that have matching yNames which have not already been processed.
-                Object.keys(this.yNames)
-                    .filter((id) => this.yNames[id] === this.yNames[yKey])
+                // Toggle other items that have matching legendItemNames which have not already been processed.
+                Object.keys(this.legendItemNames)
+                    .filter((id) => this.legendItemNames[id] === this.legendItemNames[yKey])
                     .forEach((nameYKey) => {
                         newEnableds[nameYKey] = newEnableds[nameYKey] ?? newEnabled;
                     });

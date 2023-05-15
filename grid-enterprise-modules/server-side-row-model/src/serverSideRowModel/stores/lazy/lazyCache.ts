@@ -323,6 +323,11 @@ export class LazyCache extends BeanStub {
                 // take the node before and after the boundary and return those
                 const previousNode = this.nodeDisplayIndexMap.get(skippedRowBound.from - 1);
                 const nextNode = this.nodeDisplayIndexMap.get(skippedRowBound.to + 1);
+
+                const parentNode = this.store.getParentNode();
+                if (nextNode == null && parentNode.sibling?.rowIndex === skippedRowBound.to + 1) {
+                    return { previousNode, nextNode: parentNode.sibling };
+                }
                 return { previousNode, nextNode };
             }
         }
@@ -455,7 +460,6 @@ export class LazyCache extends BeanStub {
     public getBlockStates() {
         const blockCounts: { [key: string]: number } = {};
         const blockStates: { [key: string]: Set<string> } = {};
-        const dirtyBlocks = new Set<number>();
 
         this.nodeMap.forEach(({ node, index }) => {
             const blockStart = this.rowLoader.getBlockStartIndexForIndex(index);
@@ -469,12 +473,8 @@ export class LazyCache extends BeanStub {
                 rowState = 'failed';
             } else if (this.rowLoader.isRowLoading(blockStart)) {
                 rowState = 'loading';
-            } else if (this.nodesToRefresh.has(node)) {
+            } else if (this.nodesToRefresh.has(node) || node.stub) {
                 rowState = 'needsLoading';
-            }
-            
-            if (node.__needsRefreshWhenVisible || node.stub) {
-                dirtyBlocks.add(blockStart);
             }
 
             if (!blockStates[blockStart]) {
@@ -578,22 +578,6 @@ export class LazyCache extends BeanStub {
         });
     }
 
-    /**
-     * Calculates the number of rows to cache based on either the viewport, or number of cached blocks 
-     */
-    private getNumberOfRowsToRetain(firstRow: number, lastRow: number): number | null {
-        const numberOfCachedBlocks = this.storeParams.maxBlocksInCache;
-        if (numberOfCachedBlocks == null) {
-            return null;
-        }
-    
-        const blockSize = this.rowLoader.getBlockSize();
-        const numberOfViewportBlocks = Math.ceil((lastRow - firstRow) / blockSize);
-        const numberOfBlocksToRetain = Math.max(numberOfCachedBlocks, numberOfViewportBlocks);
-        const numberOfRowsToRetain = numberOfBlocksToRetain * blockSize;
-        return numberOfRowsToRetain;
-    }
-
     private getBlocksDistanceFromRow(nodes: LazyStoreNode[], otherDisplayIndex: number) {
         const blockDistanceToMiddle: { [key: number]: number } = {};
         nodes.forEach(({ node, index }) => {
@@ -617,73 +601,72 @@ export class LazyCache extends BeanStub {
         // Delete all stub nodes which aren't in the viewport or already loading
         this.purgeStubsOutsideOfViewport();
 
-        const firstRowInViewport = this.api.getFirstDisplayedRow();
-        const lastRowInViewport = this.api.getLastDisplayedRow();
-        const firstRowBlockStart = this.rowLoader.getBlockStartIndexForIndex(firstRowInViewport);
-        const [_, lastRowBlockEnd] = this.rowLoader.getBlockBoundsForIndex(lastRowInViewport);
-
-        // number of blocks to cache on top of the viewport blocks
-        let numberOfRowsToRetain = this.getNumberOfRowsToRetain(firstRowBlockStart, lastRowBlockEnd);
-        if (this.store.getDisplayIndexEnd() == null || numberOfRowsToRetain == null) {
+        if (this.store.getDisplayIndexEnd() == null || this.storeParams.maxBlocksInCache == null) {
             // if group is collapsed, or max blocks missing, ignore the event
             return;
         }
 
-        // don't check the nodes that could have been cached out of necessity
-        const disposableNodes = this.nodeMap.filter(({ node }) => !node.stub && !this.isNodeCached(node));
-        if (disposableNodes.length <= numberOfRowsToRetain) {
-            // not enough rows to bother clearing any
+        const firstRowInViewport = this.api.getFirstDisplayedRow();
+        const lastRowInViewport = this.api.getLastDisplayedRow();
+
+        // the start storeIndex of every block in this store
+        const allLoadedBlocks: Set<number> = new Set();
+        // the start storeIndex of every displayed block in this store
+        const blocksInViewport: Set<number> = new Set();
+        this.nodeMap.forEach(({ index, node }) => {
+            const blockStart = this.rowLoader.getBlockStartIndexForIndex(index);
+            allLoadedBlocks.add(blockStart);
+
+            const isInViewport = node.rowIndex! >= firstRowInViewport && node.rowIndex! <= lastRowInViewport;
+            if (isInViewport) {
+                blocksInViewport.add(blockStart);
+            }
+        });
+
+        // if the viewport is larger than the max blocks, then the viewport size is minimum cache size
+        const numberOfBlocksToRetain = Math.max(blocksInViewport.size, this.storeParams.maxBlocksInCache ?? 0);
+
+        // ensure there is blocks that can be removed
+        const loadedBlockCount = allLoadedBlocks.size;
+        const blocksToRemove = loadedBlockCount - numberOfBlocksToRetain;
+        if (blocksToRemove <= 0) {
             return;
         }
 
-        const disposableNodesNotInViewport = disposableNodes.filter(({ node }) => {
-            const startRowNum = node.rowIndex;
-
-            if (startRowNum == null || startRowNum === -1) {
-                // row is not displayed and can be disposed
-                return true;
-            }
-    
-            if (firstRowBlockStart <= startRowNum && startRowNum < lastRowBlockEnd) {
-                // start row in viewport, block is in viewport
-                return false;
+        // the first and last block in the viewport
+        let firstRowBlockStart = Number.MAX_SAFE_INTEGER;
+        let lastRowBlockStart = Number.MIN_SAFE_INTEGER;
+        blocksInViewport.forEach(blockStart => {
+            if (firstRowBlockStart > blockStart) {
+                firstRowBlockStart = blockStart;
             }
 
-            const lastRowNum = startRowNum + blockSize;
-            if (firstRowBlockStart <= lastRowNum && lastRowNum < lastRowBlockEnd) {
-                // end row in viewport, block is in viewport
-                return false;
+            if (lastRowBlockStart < blockStart) {
+                lastRowBlockStart = blockStart;
             }
-
-            if (startRowNum < firstRowBlockStart && lastRowNum >= lastRowBlockEnd) {
-                // full block surrounds in viewport
-                return false;
-            }
-
-            // block does not appear in viewport and can be disposed
-            return true;
         });
 
-        // reduce the number of rows to retain by the number in viewport which were retained
-        numberOfRowsToRetain = numberOfRowsToRetain - (disposableNodes.length - disposableNodesNotInViewport.length);
+        // all nodes which aren't cached or in the viewport, and so can be removed
+        const disposableNodes = this.nodeMap.filter(({ node, index }) => {
+            const rowBlockStart = this.rowLoader.getBlockStartIndexForIndex(index);
+            const rowBlockInViewport = rowBlockStart >= firstRowBlockStart && rowBlockStart <= lastRowBlockStart;
 
-        if (!disposableNodesNotInViewport.length) {
+            return !rowBlockInViewport && !this.isNodeCached(node);
+        });
+
+        if (disposableNodes.length === 0) {
             return;
         }
 
         const midViewportRow = firstRowInViewport + ((lastRowInViewport - firstRowInViewport) / 2);
-        const blockDistanceArray = this.getBlocksDistanceFromRow(disposableNodesNotInViewport, midViewportRow);
-
+        const blockDistanceArray = this.getBlocksDistanceFromRow(disposableNodes, midViewportRow);
         const blockSize = this.rowLoader.getBlockSize();
-        const numberOfBlocksToRetain = Math.ceil(numberOfRowsToRetain / blockSize);
-        if (blockDistanceArray.length <= numberOfBlocksToRetain) {
-            return;
-        }
 
         // sort the blocks by distance from middle of viewport
         blockDistanceArray.sort((a, b) => Math.sign(b[1] - a[1]));
-        const blocksToRemove = blockDistanceArray.length - Math.max(numberOfBlocksToRetain, 0);
-        for (let i = 0; i < blocksToRemove; i++) {
+
+        // remove excess blocks, starting from furthest from viewport
+        for (let i = 0; i < Math.min(blocksToRemove, blockDistanceArray.length); i++) {
             const blockStart = Number(blockDistanceArray[i][0]);
             for (let x = blockStart; x < blockStart + blockSize; x++) {
                 const lazyNode = this.nodeMap.getBy('index', x);

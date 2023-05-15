@@ -48,6 +48,7 @@ import { LogAxis } from '../../axis/logAxis';
 import { DataModel } from '../../data/dataModel';
 import { TimeAxis } from '../../axis/timeAxis';
 import { sum } from '../../data/aggregateFunctions';
+import { normaliseGroupTo } from '../../data/processors';
 
 interface FillSelectionDatum {
     readonly itemId: string;
@@ -232,7 +233,12 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         const isContinuousY = yAxis?.scale instanceof ContinuousScale;
 
         const enabledYKeys = [...seriesItemEnabled.entries()].filter(([, enabled]) => enabled).map(([yKey]) => yKey);
+
         const normaliseTo = normalizedTo && isFinite(normalizedTo) ? normalizedTo : undefined;
+        const extraProps = [];
+        if (normaliseTo) {
+            extraProps.push(normaliseGroupTo(enabledYKeys, normaliseTo, 'sum'));
+        }
 
         this.dataModel = new DataModel<any, any, true>({
             props: [
@@ -244,10 +250,10 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                     })
                 ),
                 sum(enabledYKeys),
+                ...extraProps,
             ],
             groupByKeys: true,
             dataVisible: this.visible && enabledYKeys.length > 0,
-            normaliseTo,
         });
 
         this.processedData = this.dataModel.processData(data);

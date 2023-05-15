@@ -89,7 +89,7 @@ const GridBodyComp = () => {
             updateLayoutClasses: setLayoutClass,
             setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
             setPinnedTopBottomOverflowY: setTopAndBottomOverflowY,
-            setCellSelectableCss: setCellSelectableCss,
+            setCellSelectableCss: (cssClass, flag) => setCellSelectableCss(flag ? cssClass : null),
             setBodyViewportWidth: (width) => eBodyViewport.current!.style.width = width,
             registerBodyViewportResizeListener: listener => {
                 const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport.current!, listener);
@@ -120,7 +120,7 @@ const GridBodyComp = () => {
         [layoutClass]
     );
     const bodyViewportClasses = useMemo(() =>
-        classesList('ag-body-viewport', rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss), 
+        classesList('ag-body-viewport', 'ag-selectable', rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss), 
         [rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss]
     );
     const bodyClasses = useMemo(() =>
@@ -132,15 +132,15 @@ const GridBodyComp = () => {
         [layoutClass]
     );
     const topClasses = useMemo(() =>
-        classesList('ag-floating-top', cellSelectableCss), 
+        classesList('ag-floating-top', 'ag-selectable', cellSelectableCss), 
         [cellSelectableCss]
     );
     const stickyTopClasses = useMemo(() =>
-        classesList('ag-sticky-top', cellSelectableCss), 
+        classesList('ag-sticky-top', 'ag-selectable', cellSelectableCss), 
         [cellSelectableCss]
     );
     const bottomClasses = useMemo(() =>
-        classesList('ag-floating-bottom', cellSelectableCss),
+        classesList('ag-floating-bottom', 'ag-selectable', cellSelectableCss),
         [cellSelectableCss]
     );
 
