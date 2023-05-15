@@ -6312,7 +6312,7 @@
     "pageY": { "type": { "returnType": "number", "optional": false } },
     "offsetX": { "type": { "returnType": "number", "optional": false } },
     "offsetY": { "type": { "returnType": "number", "optional": false } },
-    "showArrow": { "type": { "returnType": "boolean", "optional": false } },
+    "showArrow": { "type": { "returnType": "boolean", "optional": true } },
     "position": {
       "type": {
         "returnType": "{\n        xOffset?: number;\n        yOffset?: number;\n    }",
