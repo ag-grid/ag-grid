@@ -43,8 +43,11 @@
   "Opacity": { "meta": { "isTypeAlias": true }, "type": "number" },
   "PixelSize": { "meta": { "isTypeAlias": true }, "type": "number" },
   "Ratio": { "meta": { "isTypeAlias": true }, "type": "number" },
-  "TextWrap": { "meta": { "isTypeAlias": true }, "type": "'always' | 'never'" },
   "DataValue": { "meta": { "isTypeAlias": true }, "type": "any" },
+  "TextWrap": {
+    "meta": { "isTypeAlias": true },
+    "type": "'never' | 'break-word' | 'hyphenate' | 'on-space'"
+  },
   "AgChartInteractionRange": {
     "meta": { "isTypeAlias": true },
     "type": "PixelSize | 'exact' | 'nearest'"
@@ -4645,6 +4648,17 @@
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
       "lineHeight?": "number"
+    }
+  },
+  "WordWrapProperties": {
+    "meta": {},
+    "type": { "breakWord?": "boolean", "hyphens?": "boolean" }
+  },
+  "TextMeasurer": {
+    "meta": {},
+    "type": {
+      "size(text: string)": "{ width: number; height: number; }",
+      "width(line: string)": "number"
     }
   },
   "Comparator": {

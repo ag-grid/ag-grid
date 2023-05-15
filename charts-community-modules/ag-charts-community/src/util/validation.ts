@@ -280,3 +280,9 @@ export const INTERACTION_RANGE = predicateWithMessage(
     (v: any) => (typeof v === 'number' && Number.isFinite(v)) || INTERACTION_RANGES.includes(v),
     `expecting an interaction range of 'exact', 'nearest' or a number`
 );
+
+const TEXT_WRAPS = ['never', 'break-word', 'hyphenate', 'on-space'];
+export const TEXT_WRAP = predicateWithMessage(
+    (v: any) => TEXT_WRAPS.includes(v),
+    `expecting a text wrap strategy keyword such as 'never', 'break-word', 'hyphenate', 'on-space'`
+);

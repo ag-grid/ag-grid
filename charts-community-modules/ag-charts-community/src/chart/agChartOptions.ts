@@ -42,10 +42,10 @@ export type PixelSize = number;
 /** Alias to denote that a value is a ratio, usually in the range [0, 1]. */
 export type Ratio = number;
 
-export type TextWrap = 'always' | 'never';
-
 /** Alias to denote that a value is a data value. */
 export type DataValue = any;
+
+export type TextWrap = 'never' | 'break-word' | 'hyphenate' | 'on-space';
 
 /** Define a range within which an interaction can trigger on a point with one of:
  * - A distance in pixels from a point within which the event can be triggered.

@@ -200,6 +200,10 @@ export class ChartTheme {
         };
     }
 
+    private static getCaptionWrappingDefaults() {
+        return 'hyphenate' as const;
+    }
+
     private static getChartDefaults() {
         return {
             background: {
@@ -220,7 +224,7 @@ export class ChartTheme {
                 fontSize: 16,
                 fontFamily: this.fontFamily,
                 color: 'rgb(70, 70, 70)',
-                wrapping: 'always' as const,
+                wrapping: ChartTheme.getCaptionWrappingDefaults(),
             },
             subtitle: {
                 enabled: false,
@@ -230,7 +234,7 @@ export class ChartTheme {
                 fontSize: 12,
                 fontFamily: this.fontFamily,
                 color: 'rgb(140, 140, 140)',
-                wrapping: 'always' as const,
+                wrapping: ChartTheme.getCaptionWrappingDefaults(),
             },
             footnote: {
                 enabled: false,
@@ -241,7 +245,7 @@ export class ChartTheme {
                 fontFamily: this.fontFamily,
                 color: 'rgb(140, 140, 140)',
                 spacing: 30,
-                wrapping: 'always' as const,
+                wrapping: ChartTheme.getCaptionWrappingDefaults(),
             },
             legend: {
                 enabled: true,
