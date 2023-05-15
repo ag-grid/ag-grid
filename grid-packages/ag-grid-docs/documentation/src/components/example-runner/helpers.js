@@ -40,7 +40,6 @@ export const getExampleInfo = (
     options = {},
     framework = 'javascript',
     useFunctionalReact = false,
-    enableVue3,
     useVue3 = false,
     useTypescript = false,
     importType = 'modules',
@@ -115,7 +114,6 @@ export const getExampleInfo = (
         sourcePath,
         boilerplatePath,
         appLocation,
-        enableVue3,
         getFile: (name) => nodes.filter((file) => file.relativePath === sourcePath + name)[0],
         getFiles: (extension, exclude = () => false) =>
             nodes.filter(
