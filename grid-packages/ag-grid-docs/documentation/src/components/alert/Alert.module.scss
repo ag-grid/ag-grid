@@ -37,7 +37,10 @@
 }
 
 .alert.warning {
-    --alert-background-color: #{mix(map.get($abstract-colors, 'ag-grid-orange'), white, 15%)};
+    --alert-background-color: var(--warning-background);
+    --text-color: var(--warning-text);
+
+    color: var(--text-color);
 
     :global(.icon) {
         --text-color: var(--ag-grid-orange);
