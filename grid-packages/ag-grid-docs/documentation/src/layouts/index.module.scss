@@ -46,51 +46,6 @@ main {
     }
 }
 
-:global(.custom-block) {
-    &:global(.note) {
-        @extend .alert, .alert-primary;
-
-        background-image: url('../images/info.svg');
-        background-size: 3rem;
-        background-repeat: no-repeat;
-        background-position: 1rem 1rem;
-        padding-left: 5rem;
-        min-height: 5rem;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        justify-content: center;
-
-        :global(code.language-text) {
-            background-color: $pink;
-            color: $light;
-        }
-
-        a {
-            color: $pink;
-
-            &:hover {
-                color: $red;
-            }
-        }
-
-        &:global(.warning) {
-            @extend .alert-warning;
-            background-image: url('../images/warning.svg');
-        }
-    }
-
-    &:global(-heading) {
-        @extend .alert-heading, .h5;
-    }
-
-    &:global(-body) {
-        p:last-child {
-            margin-bottom: 0;
-        }
-    }
-}
-
 :global {
     .event-hierarchy {
         font-size: 0.8rem;
