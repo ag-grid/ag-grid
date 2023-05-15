@@ -13,6 +13,7 @@ import {
     SeriesTooltip,
     SeriesNodeBaseClickEvent,
     valueProperty,
+    rangedValueProperty,
     accumulativeValueProperty,
 } from './../series';
 import { Label } from '../../label';
@@ -398,20 +399,20 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const extraProps = [];
         if (radiusKey) {
             extraProps.push(
-                valueProperty(radiusKey, true),
+                rangedValueProperty(radiusKey, { min: this.radiusMin, max: this.radiusMax }),
                 valueProperty(radiusKey, true), // Raw value pass-through.
-                normalisePropertyTo(radiusKey, 1)
+                normalisePropertyTo(radiusKey, [0, 1], this.radiusMin, this.radiusMax)
             );
             extraProps.push();
         }
 
-        data = data.map((d, idx) => (seriesItemEnabled[idx] ? d : {}));
+        data = data.map((d, idx) => (seriesItemEnabled[idx] ? d : { ...d, [angleKey]: 0 }));
 
         this.dataModel = new DataModel<any, any, true>({
             props: [
                 accumulativeValueProperty(angleKey, true),
                 valueProperty(angleKey, true), // Raw value pass-through.
-                normalisePropertyTo(angleKey, 1),
+                normalisePropertyTo(angleKey, [0, 1]),
                 ...extraProps,
             ],
         });
@@ -438,9 +439,10 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         let currentStart = 0;
         const nodeData = processedData.data.map((group, index): PieNodeDatum => {
             const { datum, values } = group;
+            const currentValue = values[angleIdx];
 
             const startAngle = angleScale.convert(currentStart) + toRadians(rotation);
-            currentStart = values[angleIdx];
+            currentStart = currentValue;
             const endAngle = angleScale.convert(currentStart) + toRadians(rotation);
             const span = Math.abs(endAngle - startAngle);
             const midAngle = startAngle + span / 2;
@@ -449,7 +451,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const radius = radiusIdx >= 0 ? values[radiusIdx] ?? 1 : 1;
             const radiusValue = radiusIdx >= 0 ? values[radiusIdx + 1] : undefined;
 
-            const labels = this.getLabels(datum, midAngle, span);
+            const labels = this.getLabels(datum, midAngle, span, true);
             const sectorFormat = this.getSectorFormat(datum, index, index, false);
 
             return {
@@ -479,11 +481,11 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         ];
     }
 
-    private getLabels(datum: any, midAngle: number, span: number) {
+    private getLabels(datum: any, midAngle: number, span: number, skipDisabled: boolean) {
         const { calloutLabel, sectorLabel, legendItemKey } = this;
 
-        const calloutLabelKey = calloutLabel.enabled ? this.calloutLabelKey : undefined;
-        const sectorLabelKey = sectorLabel.enabled ? this.sectorLabelKey : undefined;
+        const calloutLabelKey = !skipDisabled || calloutLabel.enabled ? this.calloutLabelKey : undefined;
+        const sectorLabelKey = !skipDisabled || sectorLabel.enabled ? this.sectorLabelKey : undefined;
 
         if (!calloutLabelKey && !sectorLabelKey) return {};
 
@@ -1319,7 +1321,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         } = nodeDatum;
         const formattedAngleValue = typeof angleValue === 'number' ? toFixed(angleValue) : String(angleValue);
         const title = this.title ? this.title.text : undefined;
-        const content = `${label}: ${formattedAngleValue}`;
+        const content = `${label ? `${label}: ` : ''}${formattedAngleValue}`;
         const defaults: AgTooltipRendererResult = {
             title,
             backgroundColor: color,
@@ -1364,7 +1366,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             if (titleText) {
                 labelParts.push(titleText);
             }
-            const labels = this.getLabels(datum, 2 * Math.PI, 2 * Math.PI);
+            const labels = this.getLabels(datum, 2 * Math.PI, 2 * Math.PI, false);
             if (legendItemKey) {
                 labelParts.push(String(labels.legendItemKey));
             } else if (calloutLabelKey) {

@@ -82,6 +82,24 @@ export function valueProperty<K>(propName: K, continuous: boolean, opts = {} as 
     return result;
 }
 
+export function rangedValueProperty<K>(
+    propName: K,
+    { min = -Infinity, max = Infinity }: { min?: number; max?: number }
+): DatumPropertyDefinition<K> {
+    return {
+        type: 'value',
+        property: propName,
+        valueType: 'range',
+        validation: (v) => checkDatum(v, true) != null,
+        processor: () => (datum) => {
+            if (typeof datum !== 'number') return datum;
+            if (isNaN(datum)) return datum;
+
+            return Math.min(Math.max(datum, min), max);
+        },
+    };
+}
+
 export function accumulativeValueProperty<K>(
     propName: K,
     continuous: boolean,
