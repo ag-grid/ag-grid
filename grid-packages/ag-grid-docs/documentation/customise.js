@@ -102,47 +102,16 @@ const fixFileLoadingIssue = () => {
         name: 'Fix file loading issue',
         apply: () => updateFileContents(
             './node_modules/gatsby-source-filesystem/gatsby-node.js',
-            `  const createAndProcessNode = path => {
+            `
+  const createAndProcessNode = path => {
     const fileNodePromise = createFileNode(path, createNodeId, pluginOptions).then(fileNode => {
       createNode(fileNode);
       return null;
     });
     return fileNodePromise;
-  };
-
-  const deletePathNode = path => {
-    const node = getNode(createNodeId(path)); // It's possible the node was never created as sometimes tools will
-    // write and then immediately delete temporary files to the file system.
-
-    if (node) {
-      deleteNode(node);
-    }
-  }; // For every path that is reported before the 'ready' event, we throw them
-  // into a queue and then flush the queue when 'ready' event arrives.
-  // After 'ready', we handle the 'add' event without putting it into a queue.
-
-
-  let pathQueue = [];
-
-  const flushPathQueue = () => {
-    const queue = pathQueue.slice();
-    pathQueue = null;
-    return Promise.all( // eslint-disable-next-line consistent-return
-    queue.map(({
-      op,
-      path
-    }) => {
-      switch (op) {
-        case \`delete\`:
-          return deletePathNode(path);
-
-        case \`upsert\`:
-          return createAndProcessNode(path);
-      }
-    }));
-  };
-`,
-            `const createAndProcessNode = path => {
+  };`,
+            `
+  const createAndProcessNode = path => {
     return createFileNode(path, createNodeId, pluginOptions)
       .catch(() => {
         reporter.warn(\`Failed to create FileNode for \${path}. Re-trying...\`);
@@ -155,48 +124,7 @@ const fixFileLoadingIssue = () => {
       .catch(error => {
         reporter.error(\`Failed to create FileNode for \${path}\`, error);
       });
-  };
-    
-  const deletePathNode = path => {
-    const node = getNode(createNodeId(path));
-    // It's possible the node was never created as sometimes tools will
-    // write and then immediately delete temporary files to the file system.
-    if (node) {
-      deleteNode(node);
-    }
-  };
-
-  async function promiseAllInBatches(task, items, batchSize) {
-    let position = 0;
-    let results = [];
-    while (position < items.length) {
-      const itemsForBatch = items.slice(position, position + batchSize);
-      results = [...results, ...await Promise.all(itemsForBatch.map(item => task(item)))];
-      position += batchSize;
-    }
-    return results;
-  }
-
-  // For every path that is reported before the 'ready' event, we throw them
-  // into a queue and then flush the queue when 'ready' event arrives.
-  // After 'ready', we handle the 'add' event without putting it into a queue.
-  let pathQueue = [];
-  const flushPathQueue = async () => {
-    const queue = pathQueue.slice();
-    pathQueue = null;
-
-    return promiseAllInBatches(({
-                                                   op,
-                                                   path
-                                               }) => {
-        switch (op) {
-            case \`delete\`:
-                return deletePathNode(path);
-            case \`upsert\`:
-                return createAndProcessNode(path);
-        }
-    }, queue, 5000);
-  };            `
+  };`
         )
     });
 };
@@ -451,165 +379,6 @@ const renameSitemapXml = () => {
             './node_modules/gatsby-plugin-sitemap/gatsby-ssr.js',
             `href: withPrefix(_path.posix.join(output, "/sitemap-index.xml"))`,
             `href: withPrefix(_path.posix.join(output, "/sitemap.xml"))`,
-        )
-    });
-};
-
-const disableSharedArray = () => {
-    // to get prism to work in pages
-    return applyCustomisation('webidl-conversions', '6.1.0', {
-        name: 'webidl-conversions - disabled shared array',
-        apply: () => updateFileContents(
-            './node_modules/webidl-conversions/lib/index.js',
-            `const abByteLengthGetter =
-    Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, "byteLength").get;
-const sabByteLengthGetter =
-    Object.getOwnPropertyDescriptor(SharedArrayBuffer.prototype, "byteLength").get;
-
-function isNonSharedArrayBuffer(V) {
-    try {
-        // This will throw on SharedArrayBuffers, but not detached ArrayBuffers.
-        // (The spec says it should throw, but the spec conflicts with implementations: https://github.com/tc39/ecma262/issues/678)
-        abByteLengthGetter.call(V);
-
-        return true;
-    } catch {
-        return false;
-    }
-}
-
-function isSharedArrayBuffer(V) {
-    try {
-        sabByteLengthGetter.call(V);
-        return true;
-    } catch {
-        return false;
-    }
-}
-`,
-            `const abByteLengthGetter =
-    Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, "byteLength").get;
-// const sabByteLengthGetter =
-//     Object.getOwnPropertyDescriptor(SharedArrayBuffer.prototype, "byteLength").get;
-
-function isNonSharedArrayBuffer(V) {
-    try {
-        // This will throw on SharedArrayBuffers, but not detached ArrayBuffers.
-        // (The spec says it should throw, but the spec conflicts with implementations: https://github.com/tc39/ecma262/issues/678)
-        abByteLengthGetter.call(V);
-
-        return true;
-    } catch {
-        return false;
-    }
-}
-
-function isSharedArrayBuffer(V) {
-    // try {
-    //     sabByteLengthGetter.call(V);
-    //     return true;
-    // } catch {
-    //     return false;
-    // }
-    return false;
-}
-`,
-        )
-    });
-};
-
-const disableJsDomNodeNetResources = () => {
-    // for prism to work in the pages
-
-    return applyCustomisation('jsdom', '16.7.0', {
-                name: 'jsdom',
-                apply: () => updateFileContents(
-                    './node_modules/remark-prism/node_modules/jsdom/lib/jsdom/browser/resources/resource-loader.js',
-                    `const agentFactory = require("../../living/helpers/agent-factory");
-const Request = require("../../living/helpers/http-request");
-`,
-                    `//const agentFactory = require("../../living/helpers/agent-factory");
-//const Request = require("../../living/helpers/http-request");
-`,
-                )
-            },
-            './node_modules/remark-prism/node_modules/jsdom/package.json') &&
-        applyCustomisation('jsdom', '16.7.0', {
-                name: 'jsdom',
-                apply: () => updateFileContents(
-                    './node_modules/remark-prism/node_modules/jsdom/lib/jsdom/browser/resources/resource-loader.js',
-                    `      case "http":
-      case "https": {
-        const agents = agentFactory(this._proxy, this._strictSSL);
-        const headers = {
-          "User-Agent": this._userAgent,
-          "Accept-Language": "en",
-          "Accept-Encoding": "gzip",
-          "Accept": accept || "*/*"
-        };
-        if (referrer && !IS_BROWSER) {
-          headers.Referer = referrer;
-        }
-        const requestClient = new Request(
-          urlString,
-          { followRedirects: true, cookieJar, agents },
-          { headers }
-        );
-        const promise = new Promise((resolve, reject) => {
-          const accumulated = [];
-          requestClient.once("response", res => {
-            promise.response = res;
-            const { statusCode } = res;
-            // TODO This deviates from the spec when it comes to
-            // loading resources such as images
-            if (statusCode < 200 || statusCode > 299) {
-              requestClient.abort();
-              reject(new Error(\`Resource was not loaded. Status: \${statusCode}\`));
-            }
-          });
-          requestClient.on("data", chunk => {
-            accumulated.push(chunk);
-          });
-          requestClient.on("end", () => resolve(Buffer.concat(accumulated)));
-          requestClient.on("error", reject);
-        });
-        // The method fromURL in lib/api.js crashes without the following four
-        // properties defined on the Promise instance, causing the test suite to halt
-        requestClient.on("end", () => {
-          promise.href = requestClient.currentURL;
-        });
-        promise.abort = requestClient.abort.bind(requestClient);
-        promise.getHeader = name => headers[name] || requestClient.getHeader(name);
-        requestClient.end();
-        return promise;
-      }
-`,
-                    ``,
-                )
-            },
-            './node_modules/remark-prism/node_modules/jsdom/package.json') &&
-        applyCustomisation('jsdom', '16.7.0', {
-                name: 'jsdom',
-                apply: () => updateFileContents(
-                    './node_modules/remark-prism/node_modules/jsdom/lib/jsdom/living/interfaces.js',
-                    `  XMLHttpRequestUpload: require("./generated/XMLHttpRequestUpload"),
-  XMLHttpRequest: require("./generated/XMLHttpRequest"),
-`,
-                    ``,
-                )
-            },
-            './node_modules/remark-prism/node_modules/jsdom/package.json');
-};
-
-const addAgStylesToReactMarkdown = () => {
-    // adds ag styles to blocks created by FrameworkSpecificSelection
-
-    return applyCustomisation('react-markdown', '5.0.3', {
-        name: `Add ag styles to framework specific blocks`,
-        apply: () => updateFileContents(
-            './node_modules/react-markdown/lib/renderers.js',
-            'var className = props.className;',
-            'var className = "ag-styles font-size-responsive";'
         )
     });
 };

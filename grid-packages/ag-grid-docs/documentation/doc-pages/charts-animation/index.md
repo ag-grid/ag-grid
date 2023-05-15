@@ -7,4 +7,4 @@ Animation examples.
 
 ## Pie Series
 
-<chart-example title='Pie Series' name='pie' type='generated'></chart-example>
+<chart-example title='Pie Series' name='pie' type='generated' options='{ "enterprise": true }'></chart-example>
