@@ -58,8 +58,11 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
         createElement: React.createElement,
         components: {
             a: (props) => DocumentationLink({ ...props, framework }),
-            gif: (props) =>
-                Gif({ ...props, pageName, autoPlay: props.autoPlay != null ? JSON.parse(props.autoPlay) : false }),
+            gif: (props) => (
+                <AGStyles hasFontSizeResponsive={false}>
+                    {Gif({ ...props, pageName, autoPlay: props.autoPlay != null ? JSON.parse(props.autoPlay) : false })}
+                </AGStyles>
+            ),
             'grid-example': (props) => (
                 <AGStyles hasFontSizeResponsive={false}>
                     <ExampleRunner {...getExampleRunnerProps(props, 'grid')} />
@@ -86,12 +89,13 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
                     exampleIndexData,
                     config: props.config != null ? JSON.parse(props.config) : undefined,
                 }),
-            snippet: (props) => Snippet({
-                ...props,
-                // NOTE: lowercased upstream
-                lineNumbers: props.linenumbers === 'true',
-                framework
-            }),
+            snippet: (props) =>
+                Snippet({
+                    ...props,
+                    // NOTE: lowercased upstream
+                    lineNumbers: props.linenumbers === 'true',
+                    framework,
+                }),
             'expandable-snippet': (props) =>
                 ExpandableSnippet({
                     ...props,
