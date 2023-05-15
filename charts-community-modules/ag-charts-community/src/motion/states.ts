@@ -5,10 +5,10 @@ interface StateDefinition<State extends string, Event extends string> {
         onEnter?: () => void;
         onExit?: () => void;
     };
-    on: {
-        [key in Event]: {
+    on?: {
+        [key in Event]?: {
             target: State;
-            action: () => void;
+            action: (data?: any) => void;
         };
     };
 }
@@ -26,26 +26,28 @@ export class StateMachine<State extends string, Event extends string> {
         if (this.debug) Logger.debug(`%c${this.constructor.name} | init -> ${initialState}`, 'color: green');
     }
 
-    transition(event: Event) {
+    transition(event: Event, data?: any) {
         const currentStateConfig = this.states[this.state];
-        const destinationTransition = currentStateConfig?.on[event];
+        const destinationTransition = currentStateConfig?.on?.[event];
 
         if (!destinationTransition) {
-            if (this.debug)
+            if (this.debug) {
                 Logger.debug(`%c${this.constructor.name} | ${this.state} -> ${event} -> ${this.state}`, 'color: grey');
+            }
             return;
         }
 
         const destinationState = destinationTransition.target;
         const destinationStateConfig = this.states[destinationState];
 
-        if (this.debug)
+        if (this.debug) {
             Logger.debug(
                 `%c${this.constructor.name} | ${this.state} -> ${event} -> ${destinationState}`,
                 'color: green'
             );
+        }
 
-        destinationTransition.action();
+        destinationTransition.action(data);
         currentStateConfig?.actions?.onExit?.();
         destinationStateConfig?.actions?.onEnter?.();
 

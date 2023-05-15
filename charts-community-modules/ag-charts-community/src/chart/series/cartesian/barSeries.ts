@@ -54,6 +54,7 @@ import { DataModel } from '../../data/dataModel';
 import { sum } from '../../data/aggregateFunctions';
 import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
 import { AGG_VALUES_EXTENT, normaliseGroupTo, SMALLEST_KEY_INTERVAL } from '../../data/processors';
+import * as easing from '../../../motion/easing';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
@@ -716,10 +717,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 });
             }
             rect.crisp = crisp;
-            rect.x = datum.x;
-            rect.y = datum.y;
-            rect.width = datum.width;
-            rect.height = datum.height;
             rect.fill = (format && format.fill) || fill;
             rect.stroke = (format && format.stroke) || stroke;
             rect.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
@@ -984,6 +981,87 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         this.groupScale.domain = visibleStacks;
 
         this.nodeDataRefresh = true;
+    }
+
+    animateEmptyUpdateReady(subGroups: Array<Selection<Rect, BarNodeDatum>>) {
+        if (!this.processedData) return;
+
+        let startingX = Infinity;
+        let startingY = 0;
+        subGroups.forEach((subGroup) =>
+            subGroup.each((_, datum) => {
+                if (datum.yValue >= 0) {
+                    startingX = Math.min(startingX, datum.x);
+                    startingY = Math.max(startingY, datum.height + datum.y);
+                }
+            })
+        );
+
+        subGroups.forEach((subGroup) => {
+            subGroup.each((rect, datum) => {
+                if (this.getBarDirection() === ChartAxisDirection.X) {
+                    this.animationManager?.animateMany(
+                        `${this.id}_empty-update-ready_${rect.id}`,
+                        [
+                            { from: startingX, to: datum.x },
+                            { from: 0, to: datum.width },
+                        ],
+                        {
+                            duration: 1000,
+                            ease: easing.linear,
+                            repeat: 0,
+                            onUpdate([x, width]) {
+                                rect.x = x;
+                                rect.width = width;
+
+                                rect.y = datum.y;
+                                rect.height = datum.height;
+                            },
+                        }
+                    );
+                } else {
+                    this.animationManager?.animateMany(
+                        `${this.id}_empty-update-ready_${rect.id}`,
+                        [
+                            { from: startingY, to: datum.y },
+                            { from: 0, to: datum.height },
+                        ],
+                        {
+                            duration: 1000,
+                            ease: easing.linear,
+                            repeat: 0,
+                            onUpdate([y, height]) {
+                                rect.y = y;
+                                rect.height = height;
+
+                                rect.x = datum.x;
+                                rect.width = datum.width;
+                            },
+                        }
+                    );
+                }
+            });
+        });
+    }
+
+    animateReadyUpdateReady(subGroups: Array<Selection<Rect, BarNodeDatum>>) {
+        subGroups.forEach((subGroup) => {
+            subGroup.each((rect, datum) => {
+                rect.x = datum.x;
+                rect.y = datum.y;
+                rect.width = datum.width;
+                rect.height = datum.height;
+            });
+        });
+    }
+
+    animateReadyHighlightReady(highlightSelection: Selection<Rect, BarNodeDatum>) {
+        highlightSelection.each((rect, datum) => {
+            rect.x = datum.x;
+            rect.y = datum.y;
+            rect.width = datum.width;
+            rect.height = datum.height;
+        });
     }
 
     protected isLabelEnabled() {

@@ -4191,6 +4191,14 @@
       "hasMarkers": "boolean"
     }
   },
+  "CartesianAnimationState": {
+    "meta": { "isTypeAlias": true },
+    "type": "'empty' | 'ready'"
+  },
+  "CartesianAnimationEvent": {
+    "meta": { "isTypeAlias": true },
+    "type": "'update' | 'highlight'"
+  },
   "HistogramSeriesNodeTag": {
     "meta": { "isEnum": true },
     "type": ["Bin", "Label"],
@@ -4477,7 +4485,7 @@
     "meta": { "typeParams": ["State extends string", "Event extends string"] },
     "type": {
       "actions?": "{ onEnter?: () => void; onExit?: () => void; }",
-      "on": "{[key in Event]: { target: State; action: () => void; }}"
+      "on?": "{[key in Event]?: { target: State; action: (data?: any) => void; }}"
     }
   },
   "ScaleClampParams": {
