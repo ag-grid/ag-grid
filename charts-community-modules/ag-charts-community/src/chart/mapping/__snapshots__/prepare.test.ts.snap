@@ -249,7 +249,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -306,7 +308,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -363,7 +367,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -422,9 +428,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "line",
@@ -792,7 +795,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -856,9 +861,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "column",
@@ -1102,7 +1104,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -1160,7 +1164,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -1218,7 +1224,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -1276,7 +1284,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -1334,7 +1344,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -1392,7 +1404,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -1450,7 +1464,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -1521,9 +1537,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "line",
@@ -1858,9 +1871,6 @@ Object {
     "class": "my-tooltip",
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "column",
@@ -2097,7 +2107,9 @@ Object {
       "title": undefined,
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "scatter",
@@ -2136,9 +2148,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "scatter",
@@ -2380,7 +2389,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -2437,7 +2448,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -2494,7 +2507,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -2551,7 +2566,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -2616,9 +2633,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "line",
@@ -2872,7 +2886,9 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "area",
@@ -2946,7 +2962,9 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "area",
@@ -3020,7 +3038,9 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "area",
@@ -3094,7 +3114,9 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "area",
@@ -3168,7 +3190,9 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "area",
@@ -3240,9 +3264,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "area",
@@ -3537,9 +3558,6 @@ by Occupation",
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "bar",
@@ -3825,9 +3843,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "bar",
@@ -4063,7 +4078,9 @@ Object {
       "title": "Punch Card",
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "scatter",
@@ -4097,9 +4114,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "scatter",
@@ -4342,7 +4356,9 @@ Object {
       "title": "Most populous cities",
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "scatter",
@@ -4377,9 +4393,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "scatter",
@@ -4697,9 +4710,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "column",
@@ -5020,9 +5030,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "bar",
@@ -5358,9 +5365,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "column",
@@ -5648,9 +5652,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "histogram",
@@ -5897,7 +5898,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -5955,7 +5958,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6013,7 +6018,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6071,7 +6078,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6129,7 +6138,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6187,7 +6198,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6245,7 +6258,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6303,7 +6318,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6361,7 +6378,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6419,7 +6438,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6477,7 +6498,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6535,7 +6558,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6593,7 +6618,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6651,7 +6678,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6709,7 +6738,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6767,7 +6798,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "line",
@@ -6859,9 +6892,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "line",
@@ -7104,7 +7134,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": [Function],
       },
       "type": "line",
@@ -7138,9 +7170,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "line",
@@ -7353,9 +7382,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "treemap",
@@ -7622,7 +7648,9 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "area",
@@ -7695,9 +7723,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "area",
@@ -8023,9 +8048,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "bar",
@@ -8370,9 +8392,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "column",
@@ -8629,7 +8648,9 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": [Function],
       },
       "type": "area",
@@ -8702,7 +8723,9 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": [Function],
       },
       "type": "area",
@@ -8775,7 +8798,9 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": [Function],
       },
       "type": "area",
@@ -8848,7 +8873,9 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": [Function],
       },
       "type": "area",
@@ -8901,9 +8928,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "area",
@@ -9188,9 +9212,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "column",
@@ -9417,9 +9438,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "pie",
@@ -9694,9 +9712,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "histogram",
@@ -9944,7 +9959,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": [Function],
       },
       "type": "line",
@@ -10002,7 +10019,9 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": [Function],
       },
       "type": "line",
@@ -10051,9 +10070,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "line",
@@ -10258,9 +10274,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "pie",
@@ -10497,7 +10510,9 @@ Object {
       "title": undefined,
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
       },
       "type": "scatter",
@@ -10532,9 +10547,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "scatter",
@@ -10802,7 +10814,9 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": [Function],
       },
       "type": "area",
@@ -10895,9 +10909,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "area",
@@ -11216,9 +11227,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "bar",
@@ -11556,9 +11564,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "column",
@@ -11846,9 +11851,6 @@ Object {
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
   },
   "type": "histogram",
