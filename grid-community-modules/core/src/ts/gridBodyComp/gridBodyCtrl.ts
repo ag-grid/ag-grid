@@ -174,7 +174,7 @@ export class GridBodyCtrl extends BeanStub {
         const scrollbarWidth = visible ? (this.gridOptionsService.getScrollbarWidth() || 0) : 0;
         const pad = isInvisibleScrollbar() ? 16 : 0;
         const width = `calc(100% + ${scrollbarWidth + pad}px)`;
-        this.comp.setBodyViewportWidth(width);
+        setTimeout(() => this.comp.setBodyViewportWidth(width), 0);
     }
 
     private onGridColumnsChanged(): void {

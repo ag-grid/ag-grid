@@ -64,7 +64,7 @@ export abstract class AbstractFakeScrollComp extends Component {
         if (this.invisibleScrollbar === undefined) {
             this.initialiseInvisibleScrollbar();
         }
-        this.setScrollVisible();
+        setTimeout(() => this.setScrollVisible(), 0);
     }
 
     protected hideAndShowInvisibleScrollAsNeeded(): void {

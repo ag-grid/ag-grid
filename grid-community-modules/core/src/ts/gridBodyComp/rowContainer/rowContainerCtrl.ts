@@ -338,7 +338,7 @@ export class RowContainerCtrl extends BeanStub {
             const visible = this.scrollVisibleService.isHorizontalScrollShowing();
             const scrollbarWidth = visible ? scrollWidth : 0;
             const size = scrollbarWidth == 0 ? '100%' : `calc(100% + ${scrollbarWidth}px)`;
-            this.comp.setViewportHeight(size);
+            setTimeout(() => this.comp.setViewportHeight(size), 0);
         }
 
         if (this.name === RowContainerName.FULL_WIDTH) {
