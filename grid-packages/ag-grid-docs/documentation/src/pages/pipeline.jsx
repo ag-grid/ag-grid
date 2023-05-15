@@ -249,7 +249,7 @@ const Pipeline = ({ location }) => {
                     <div className={classnames('page-margin', styles.container)}>
                         <h1>AG Grid Pipeline</h1>
                         <section className={styles.header}>
-                            <Alert type="info">
+                            <Alert type="idea">
                                 <p>
                                     The AG Grid pipeline lists the feature requests and active bugs in our product
                                     backlog. Use it to see the items scheduled for our next release or to look up the

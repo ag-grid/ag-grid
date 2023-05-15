@@ -103,6 +103,7 @@ export const ICON_MAP = {
     codesandbox: CodeSandboxIcon,
     maximize: maximizeIcon,
     minimize: minimizeIcon,
+    idea: CarbonIcon.DataEnrichment,
     ...SOCIALS_ICON_MAP,
     ...DOCS_CATEGORIES_ICON_MAP,
     ...HOMEPAGE_FEATURES_ICON_MAP,

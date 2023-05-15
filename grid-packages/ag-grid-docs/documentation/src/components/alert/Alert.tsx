@@ -1,22 +1,21 @@
-import classnames from 'classnames';
+import classNames from 'classnames';
 import React, { FunctionComponent, ReactNode } from 'react';
+import { Icon } from '../Icon';
 import styles from './Alert.module.scss';
 
 interface Props {
-    type: 'info' | 'flag' | 'default';
+    type: 'info' | 'idea' | 'warning' | 'default';
     children: ReactNode;
 }
 
 export const Alert: FunctionComponent<Props> = ({ type = 'default', children }) => {
+    const icon = type !== 'default' ? type : null;
+
     return (
-        <div
-            className={classnames({
-                [styles.alert]: true,
-                [styles.info]: type === 'info',
-                [styles.flag]: type === 'flag',
-            })}
-        >
-            {children}
+        <div className={classNames(styles.alert, styles[type])}>
+            {icon && <Icon name={icon} />}
+
+            <div className={styles.content}>{children}</div>
         </div>
     );
 };
