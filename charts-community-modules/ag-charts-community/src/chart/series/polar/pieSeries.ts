@@ -184,7 +184,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     private sectorLabelSelection: Selection<Text, PieNodeDatum>;
     private innerLabelsSelection: Selection<Text, DoughnutInnerLabel>;
 
-    private animationStates: PieStateMachine;
+    private animationState: PieStateMachine;
 
     // The group node that contains the background graphics.
     readonly backgroundGroup: Group;
@@ -340,7 +340,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.sectorLabelSelection = Selection.select(pieSectorLabels, Text);
         this.innerLabelsSelection = Selection.select(innerLabels, Text);
 
-        this.animationStates = new PieStateMachine('empty', {
+        this.animationState = new PieStateMachine('empty', {
             empty: {
                 on: {
                     update: {
@@ -809,7 +809,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             }
         });
 
-        this.animationStates.transition('update');
+        this.animationState.transition('update');
 
         this.updateCalloutLineNodes();
         this.updateCalloutLabelNodes(seriesBox);
@@ -1439,7 +1439,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                     duration: 1000,
                     repeat: 0,
                     ease: easing.linear,
-                    onUpdate: ([startAngle, endAngle]) => {
+                    onUpdate([startAngle, endAngle]) {
                         node.startAngle = startAngle;
                         node.endAngle = endAngle;
                     },
