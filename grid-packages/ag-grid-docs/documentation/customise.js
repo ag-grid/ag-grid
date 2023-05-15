@@ -174,6 +174,8 @@ const fixFileLoadingIssue = () => {
       const itemsForBatch = items.slice(position, position + batchSize);
       results = [...results, ...await Promise.all(itemsForBatch.map(item => task(item)))];
       position += batchSize;
+      
+      console.log(\`Processing batch \${position}\`);
     }
     return results;
   }
@@ -458,152 +460,6 @@ const renameSitemapXml = () => {
     });
 };
 
-const disableSharedArray = () => {
-    // to get prism to work in pages
-    return applyCustomisation('webidl-conversions', '6.1.0', {
-        name: 'webidl-conversions - disabled shared array',
-        apply: () => updateFileContents(
-            './node_modules/webidl-conversions/lib/index.js',
-            `const abByteLengthGetter =
-    Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, "byteLength").get;
-const sabByteLengthGetter =
-    Object.getOwnPropertyDescriptor(SharedArrayBuffer.prototype, "byteLength").get;
-
-function isNonSharedArrayBuffer(V) {
-    try {
-        // This will throw on SharedArrayBuffers, but not detached ArrayBuffers.
-        // (The spec says it should throw, but the spec conflicts with implementations: https://github.com/tc39/ecma262/issues/678)
-        abByteLengthGetter.call(V);
-
-        return true;
-    } catch {
-        return false;
-    }
-}
-
-function isSharedArrayBuffer(V) {
-    try {
-        sabByteLengthGetter.call(V);
-        return true;
-    } catch {
-        return false;
-    }
-}
-`,
-            `const abByteLengthGetter =
-    Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, "byteLength").get;
-// const sabByteLengthGetter =
-//     Object.getOwnPropertyDescriptor(SharedArrayBuffer.prototype, "byteLength").get;
-
-function isNonSharedArrayBuffer(V) {
-    try {
-        // This will throw on SharedArrayBuffers, but not detached ArrayBuffers.
-        // (The spec says it should throw, but the spec conflicts with implementations: https://github.com/tc39/ecma262/issues/678)
-        abByteLengthGetter.call(V);
-
-        return true;
-    } catch {
-        return false;
-    }
-}
-
-function isSharedArrayBuffer(V) {
-    // try {
-    //     sabByteLengthGetter.call(V);
-    //     return true;
-    // } catch {
-    //     return false;
-    // }
-    return false;
-}
-`,
-        )
-    });
-};
-
-const disableJsDomNodeNetResources = () => {
-    // for prism to work in the pages
-
-    return applyCustomisation('jsdom', '16.7.0', {
-                name: 'jsdom',
-                apply: () => updateFileContents(
-                    './node_modules/remark-prism/node_modules/jsdom/lib/jsdom/browser/resources/resource-loader.js',
-                    `const agentFactory = require("../../living/helpers/agent-factory");
-const Request = require("../../living/helpers/http-request");
-`,
-                    `//const agentFactory = require("../../living/helpers/agent-factory");
-//const Request = require("../../living/helpers/http-request");
-`,
-                )
-            },
-            './node_modules/remark-prism/node_modules/jsdom/package.json') &&
-        applyCustomisation('jsdom', '16.7.0', {
-                name: 'jsdom',
-                apply: () => updateFileContents(
-                    './node_modules/remark-prism/node_modules/jsdom/lib/jsdom/browser/resources/resource-loader.js',
-                    `      case "http":
-      case "https": {
-        const agents = agentFactory(this._proxy, this._strictSSL);
-        const headers = {
-          "User-Agent": this._userAgent,
-          "Accept-Language": "en",
-          "Accept-Encoding": "gzip",
-          "Accept": accept || "*/*"
-        };
-        if (referrer && !IS_BROWSER) {
-          headers.Referer = referrer;
-        }
-        const requestClient = new Request(
-          urlString,
-          { followRedirects: true, cookieJar, agents },
-          { headers }
-        );
-        const promise = new Promise((resolve, reject) => {
-          const accumulated = [];
-          requestClient.once("response", res => {
-            promise.response = res;
-            const { statusCode } = res;
-            // TODO This deviates from the spec when it comes to
-            // loading resources such as images
-            if (statusCode < 200 || statusCode > 299) {
-              requestClient.abort();
-              reject(new Error(\`Resource was not loaded. Status: \${statusCode}\`));
-            }
-          });
-          requestClient.on("data", chunk => {
-            accumulated.push(chunk);
-          });
-          requestClient.on("end", () => resolve(Buffer.concat(accumulated)));
-          requestClient.on("error", reject);
-        });
-        // The method fromURL in lib/api.js crashes without the following four
-        // properties defined on the Promise instance, causing the test suite to halt
-        requestClient.on("end", () => {
-          promise.href = requestClient.currentURL;
-        });
-        promise.abort = requestClient.abort.bind(requestClient);
-        promise.getHeader = name => headers[name] || requestClient.getHeader(name);
-        requestClient.end();
-        return promise;
-      }
-`,
-                    ``,
-                )
-            },
-            './node_modules/remark-prism/node_modules/jsdom/package.json') &&
-        applyCustomisation('jsdom', '16.7.0', {
-                name: 'jsdom',
-                apply: () => updateFileContents(
-                    './node_modules/remark-prism/node_modules/jsdom/lib/jsdom/living/interfaces.js',
-                    `  XMLHttpRequestUpload: require("./generated/XMLHttpRequestUpload"),
-  XMLHttpRequest: require("./generated/XMLHttpRequest"),
-`,
-                    ``,
-                )
-            },
-            './node_modules/remark-prism/node_modules/jsdom/package.json');
-};
-
 const addAgStylesToReactMarkdown = () => {
     // adds ag styles to blocks created by FrameworkSpecificSelection
 
@@ -613,6 +469,18 @@ const addAgStylesToReactMarkdown = () => {
             './node_modules/react-markdown/lib/renderers.js',
             'var className = props.className;',
             'var className = "ag-styles font-size-responsive";'
+        )
+    });
+};
+
+const checkForRehypePluginExistance = () => {
+
+    return applyCustomisation('gatsby-transformer-rehype', '2.0.1', {
+        name: `Checks for plugin existence`,
+        apply: () => updateFileContents(
+            './node_modules/gatsby-transformer-rehype/create-schema-customization.js',
+            'const plugin = types.find(node => node.plugin.name === name);',
+            'const plugin = types.find(node => node.plugin && node.plugin.name === name);'
         )
     });
 };
@@ -630,8 +498,7 @@ const success = [
     jsxErrorProcessingIssue(),
     excludeDodgyLintRules(),
     addAgStylesToReactMarkdown(),
-    // disableSharedArray(),
-    // disableJsDomNodeNetResources()
+    checkForRehypePluginExistance()
 ].every(x => x);
 
 if (success) {

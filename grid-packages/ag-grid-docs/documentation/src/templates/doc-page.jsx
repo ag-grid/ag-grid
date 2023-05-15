@@ -97,7 +97,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
             'video-section': VideoSection,
             'video-link': VideoLink,
             'chart-gallery': ChartGallery,
-            'charts-api-explorer': (props) => ChartsApiExplorer({ ...props, framework, jsonData, exampleIndexData }),
+            'charts-api-explorer': (props) => ChartsApiExplorer({ ...props, framework, exampleIndexData }),
             'note': Note,
             'warning': Warning,
             'framework-specific-section': props => FrameworkSpecificSection({...props, currentFramework: framework}),

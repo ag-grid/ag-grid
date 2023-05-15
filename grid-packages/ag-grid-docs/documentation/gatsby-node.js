@@ -178,6 +178,11 @@ exports.onCreateNode = async ({node, loadNodeContent, getNode, actions: {createN
     } else if (node.internal.type === 'File' && node.internal.mediaType === 'application/json') {
         // load contents of JSON files to be used e.g. by ApiDocumentation
         node.internal.content = await loadNodeContent(node);
+        await createNodeField({
+            node,
+            name: 'internalContent',
+            value: 'test'
+        });
     }
 };
 
