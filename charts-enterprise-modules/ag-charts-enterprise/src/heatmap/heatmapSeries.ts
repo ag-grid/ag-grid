@@ -359,14 +359,14 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
         labelSelection.each((text, datum) => {
             text.text = datum.label.text;
             text.fill = label.color;
-            text.x = datum.point?.x ?? 0;
-            text.y = datum.point?.y ?? 0;
+            text.x = datum.nodeMidPoint.x;
+            text.y = datum.nodeMidPoint.y;
             text.fontStyle = label.fontStyle;
             text.fontWeight = label.fontWeight;
             text.fontSize = label.fontSize;
             text.fontFamily = label.fontFamily;
-            text.textAlign = 'left';
-            text.textBaseline = 'top';
+            text.textAlign = 'center';
+            text.textBaseline = 'middle';
         });
     }
 
