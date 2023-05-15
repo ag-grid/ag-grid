@@ -133,11 +133,7 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
 
     constructor() {
         super({
-            pickModes: [
-                SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST,
-                SeriesNodePickMode.NEAREST_NODE,
-                SeriesNodePickMode.EXACT_SHAPE_MATCH,
-            ],
+            pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH],
             pathsPerSeries: 0,
             hasMarkers: false,
         });
