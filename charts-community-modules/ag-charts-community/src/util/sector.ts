@@ -33,7 +33,7 @@ export function isPointInSector(x: number, y: number, sector: SectorBoundaries) 
     if (startAngle === (3 * Math.PI) / 2) {
         return angle > endAngle;
     }
-    return angle >= endAngle && angle <= startAngle;
+    return angle <= endAngle && angle >= startAngle;
 }
 
 function lineCollidesSector(line: LineCoordinates, sector: SectorBoundaries) {

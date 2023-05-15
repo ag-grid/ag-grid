@@ -4298,6 +4298,8 @@
     "type": {
       "index": "number",
       "radius": "number",
+      "angleValue": "number",
+      "radiusValue?": "number",
       "startAngle": "number",
       "endAngle": "number",
       "midAngle": "number",
@@ -4305,7 +4307,8 @@
       "midSin": "number",
       "calloutLabel?": "{ readonly text: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; hidden: boolean; collisionTextAlign?: CanvasTextAlign; collisionOffsetY: number; box?: BBox; }",
       "sectorLabel?": "{ readonly text: string; }",
-      "sectorFormat": "AgPieSeriesFormat",
+      "sectorFormat": "Required<AgPieSeriesFormat>",
+      "legendItemKey?": "string",
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",

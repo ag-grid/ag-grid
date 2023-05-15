@@ -6195,6 +6195,8 @@
   "PieNodeDatum": {
     "index": { "type": { "returnType": "number", "optional": false } },
     "radius": { "type": { "returnType": "number", "optional": false } },
+    "angleValue": { "type": { "returnType": "number", "optional": false } },
+    "radiusValue": { "type": { "returnType": "number", "optional": true } },
     "startAngle": { "type": { "returnType": "number", "optional": false } },
     "endAngle": { "type": { "returnType": "number", "optional": false } },
     "midAngle": { "type": { "returnType": "number", "optional": false } },
@@ -6213,8 +6215,9 @@
       }
     },
     "sectorFormat": {
-      "type": { "returnType": "AgPieSeriesFormat", "optional": false }
+      "type": { "returnType": "Required<AgPieSeriesFormat>", "optional": false }
     },
+    "legendItemKey": { "type": { "returnType": "string", "optional": true } },
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },

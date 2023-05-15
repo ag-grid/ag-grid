@@ -19,7 +19,7 @@ export class PolarChart extends Chart {
 
         const fullSeriesRect = shrinkRect.clone();
         this.computeSeriesRect(shrinkRect);
-        this.computeCircle();
+        await this.computeCircle();
 
         const hoverRectPadding = 20;
         const hoverRect = shrinkRect.clone().grow(hoverRectPadding);
@@ -46,7 +46,7 @@ export class PolarChart extends Chart {
         this.seriesRect = shrinkRect;
     }
 
-    private computeCircle() {
+    private async computeCircle() {
         const seriesBox = this.seriesRect!;
         const polarSeries = this.series.filter((series) => {
             return series instanceof PolarSeries;
@@ -66,10 +66,15 @@ export class PolarChart extends Chart {
         let radius = initialRadius;
         setSeriesCircle(centerX, centerY, radius);
 
-        const shake = ({ hideWhenNecessary = false } = {}) => {
-            const labelBoxes = polarSeries
-                .map((series) => series.computeLabelsBBox({ hideWhenNecessary }, seriesBox))
-                .filter((box) => box != null) as BBox[];
+        const shake = async ({ hideWhenNecessary = false } = {}) => {
+            const labelBoxes = [];
+            for (const series of polarSeries) {
+                const box = await series.computeLabelsBBox({ hideWhenNecessary }, seriesBox);
+                if (box == null) continue;
+
+                labelBoxes.push(box);
+            }
+
             if (labelBoxes.length === 0) {
                 setSeriesCircle(centerX, centerY, initialRadius);
                 return;
@@ -86,11 +91,11 @@ export class PolarChart extends Chart {
             radius = refined.radius;
         };
 
-        shake(); // Initial attempt
-        shake(); // Precise attempt
-        shake(); // Just in case
-        shake({ hideWhenNecessary: true }); // Hide unnecessary labels
-        shake({ hideWhenNecessary: true }); // Final result
+        await shake(); // Initial attempt
+        await shake(); // Precise attempt
+        await shake(); // Just in case
+        await shake({ hideWhenNecessary: true }); // Hide unnecessary labels
+        await shake({ hideWhenNecessary: true }); // Final result
     }
 
     private refineCircle(labelsBox: BBox, radius: number) {

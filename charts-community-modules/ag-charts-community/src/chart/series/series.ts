@@ -24,6 +24,7 @@ import { ChartAxisDirection } from '../chartAxisDirection';
 import { AgChartInteractionRange } from '../agChartOptions';
 import { DatumPropertyDefinition, fixNumericExtent } from '../data/dataModel';
 import { TooltipPosition } from '../tooltip/tooltip';
+import { accumulatedValue } from '../data/aggregateFunctions';
 
 /**
  * Processed series datum used in node selections,
@@ -77,6 +78,18 @@ export function valueProperty<K>(propName: K, continuous: boolean, opts = {} as 
         type: 'value',
         valueType: continuous ? 'range' : 'category',
         validation: (v) => checkDatum(v, continuous) != null,
+    };
+    return result;
+}
+
+export function accumulativeValueProperty<K>(
+    propName: K,
+    continuous: boolean,
+    opts = {} as Partial<DatumPropertyDefinition<K>>
+) {
+    const result: DatumPropertyDefinition<K> = {
+        ...valueProperty(propName, continuous, opts),
+        processor: accumulatedValue(),
     };
     return result;
 }
