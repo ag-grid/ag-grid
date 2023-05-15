@@ -105,7 +105,7 @@ The following example demonstrates how to specify min / max tick spacing. Note t
 <chart-example title='Min / Max Spacing' name='axis-tick-min-max-spacing' type='generated'></chart-example>
 
 <note>
-When `minSpacing` and `maxSpacing` are very close in value, the actual spacing between the ticks may be outside the requested range. This is because the specified constraints may result in ticks with non-standard intervals rather than round intervals such as 1x, 2x, 5x, and 10x. To avoid this, set `maxSpacing` to be 2-3 times larger than `minSpacing`.
+| When `minSpacing` and `maxSpacing` are very close in value, the actual spacing between the ticks may be outside the requested range. This is because the specified constraints may result in ticks with non-standard intervals rather than round intervals such as 1x, 2x, 5x, and 10x. To avoid this, set `maxSpacing` to be 2-3 times larger than `minSpacing`.
 </note>
 
 ## Next Up
