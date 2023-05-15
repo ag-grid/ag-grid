@@ -1007,6 +1007,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                             { from: 0, to: datum.width },
                         ],
                         {
+                            disableInteractions: true,
                             duration: 1000,
                             ease: easing.linear,
                             repeat: 0,
@@ -1027,6 +1028,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                             { from: 0, to: datum.height },
                         ],
                         {
+                            disableInteractions: true,
                             duration: 1000,
                             ease: easing.linear,
                             repeat: 0,

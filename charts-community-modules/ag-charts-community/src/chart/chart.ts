@@ -243,7 +243,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.scene.container = element;
         this.autoSize = true;
 
-        this.animationManager = new AnimationManager();
         this.chartEventManager = new ChartEventManager();
         this.cursorManager = new CursorManager(element);
         this.highlightManager = new HighlightManager();
@@ -253,6 +252,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.layoutService = new LayoutService();
         this.updateService = new UpdateService((type = ChartUpdateType.FULL) => this.update(type));
 
+        this.animationManager = new AnimationManager(this.interactionManager);
         this.animationManager.skipAnimations = true;
         this.animationManager.play();
 

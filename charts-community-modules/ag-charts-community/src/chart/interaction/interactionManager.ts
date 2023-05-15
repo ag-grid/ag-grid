@@ -86,6 +86,8 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
     private touchDown = false;
     private dragStartElement?: HTMLElement;
 
+    private enabled = true;
+
     public constructor(element: HTMLElement, doc = document) {
         super();
 
@@ -126,10 +128,18 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
         }
     }
 
+    enable() {
+        this.enabled = true;
+    }
+
+    disable() {
+        this.enabled = false;
+    }
+
     private processEvent(event: SupportedEvent) {
         const types: InteractionTypes[] = this.decideInteractionEventTypes(event);
 
-        if (types.length > 0) {
+        if (types.length > 0 && this.enabled) {
             // Async dispatch to avoid blocking the event-processing thread.
             this.dispatchEvent(event, types);
         }
