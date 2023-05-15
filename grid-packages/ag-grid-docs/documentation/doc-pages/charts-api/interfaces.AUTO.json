@@ -4397,7 +4397,7 @@
       "pageY": "number",
       "offsetX": "number",
       "offsetY": "number",
-      "showArrow": "boolean",
+      "showArrow?": "boolean",
       "position?": "{ xOffset?: number; yOffset?: number; }",
       "enableInteraction?": "boolean",
       "event": "Event | InteractionEvent<any>"

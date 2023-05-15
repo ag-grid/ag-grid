@@ -140,8 +140,8 @@ export class SeriesTooltip {
     @Validate(BOOLEAN)
     enabled: boolean = true;
 
-    @Validate(BOOLEAN)
-    showArrow: boolean = true;
+    @Validate(OPT_BOOLEAN)
+    showArrow?: boolean = undefined;
 
     interaction?: SeriesTooltipInteraction = new SeriesTooltipInteraction();
 
