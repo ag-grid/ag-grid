@@ -332,24 +332,11 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
         labelData: HeatmapNodeDatum[];
         labelSelection: _Scene.Selection<_Scene.Text, HeatmapNodeDatum>;
     }) {
-        const { labelSelection } = opts;
-        const {
-            label: { enabled },
-        } = this;
+        const { labelData, labelSelection } = opts;
+        const { enabled } = this.label;
+        const data = enabled ? labelData : [];
 
-        const placedLabels = enabled ? this.chart?.placeLabels().get(this) ?? [] : [];
-
-        const placedNodeDatum = placedLabels.map(
-            (v): HeatmapNodeDatum => ({
-                ...(v.datum as HeatmapNodeDatum),
-                point: {
-                    x: v.x,
-                    y: v.y,
-                    size: v.datum.point.size,
-                },
-            })
-        );
-        return labelSelection.update(placedNodeDatum);
+        return labelSelection.update(data);
     }
 
     protected async updateLabelNodes(opts: { labelSelection: _Scene.Selection<_Scene.Text, HeatmapNodeDatum> }) {
@@ -357,6 +344,11 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
         const { label } = this;
 
         labelSelection.each((text, datum) => {
+            if (datum.label.width > datum.width || datum.label.height > datum.height) {
+                text.visible = false;
+                return;
+            }
+            text.visible = true;
             text.text = datum.label.text;
             text.fill = label.color;
             text.x = datum.nodeMidPoint.x;
