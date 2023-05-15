@@ -2,6 +2,7 @@
 
 .tabsContainer {
     container-type: inline-size;
+    margin-bottom: $size-2 !important; // !important for .ag-styles specificity
 }
 
 .externalLinks {

@@ -7,7 +7,8 @@
 
     display: flex;
     gap: $size-2;
-    padding: $size-3;
+    align-items: center;
+    padding: $size-2;
     background-color: var(--alert-background-color);
     border-radius: var(--border-radius);
 
@@ -15,16 +16,24 @@
         position: relative;
         flex-shrink: 0;
     }
+
+    p:last-child {
+        margin-bottom: 0 !important; // !important for .ag-styles specificity
+    }
 }
 
-.alert.info :global(.icon) {
+.alert.info {
     --text-color: var(--medium-electric-blue);
+
+    color: var(--text-color);
 }
 
-.alert.idea :global(.icon) {
-    --text-color: hsl(33, 100%, 65%);
+.alert.idea {
+    :global(.icon) {
+        --text-color: hsl(33, 100%, 65%);
 
-    bottom: 0.125em;
+        bottom: 0.125em;
+    }
 }
 
 .alert.warning {
