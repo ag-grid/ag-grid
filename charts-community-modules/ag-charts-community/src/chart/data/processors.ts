@@ -1,6 +1,7 @@
 import {
     GroupValueProcessorDefinition,
     ProcessorOutputPropertyDefinition,
+    PropertyId,
     PropertyValueProcessorDefinition,
     ReducerOutputPropertyDefinition,
 } from './dataModel';
@@ -62,7 +63,7 @@ export const SORT_DOMAIN_GROUPS: ProcessorOutputPropertyDefinition<any> = {
 };
 
 export function normaliseGroupTo(
-    properties: (string | number)[],
+    properties: PropertyId<any>[],
     normaliseTo: number,
     mode: 'sum' | 'range' = 'sum'
 ): GroupValueProcessorDefinition<any, any> {
@@ -100,7 +101,7 @@ export function normaliseGroupTo(
 }
 
 export function normalisePropertyTo(
-    property: string | number,
+    property: PropertyId<any>,
     normaliseTo: [number, number],
     rangeMin?: number,
     rangeMax?: number
@@ -109,7 +110,8 @@ export function normalisePropertyTo(
     const normalise = (val: number, start: number, span: number) => {
         const result = normaliseTo[0] + ((val - start) / span) * normaliseSpan;
 
-        if (result > normaliseTo[1]) return normaliseTo[1];
+        if (span === 0) return normaliseTo[1];
+        if (result >= normaliseTo[1]) return normaliseTo[1];
         if (result < normaliseTo[0]) return normaliseTo[0];
         return result;
     };

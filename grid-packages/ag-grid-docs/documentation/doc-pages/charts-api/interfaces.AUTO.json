@@ -3697,9 +3697,13 @@
     "meta": { "isTypeAlias": true },
     "type": "(datum: any, previousDatum?: any) => any"
   },
+  "PropertyId": {
+    "meta": { "isTypeAlias": true, "typeParams": ["K extends string"] },
+    "type": "K | { id: string; }"
+  },
   "DatumPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
-    "type": "{ type: 'key' | 'value'; valueType: DatumPropertyType; property: K; invalidValue?: any; missingValue?: any; validation?: (datum: any) => boolean; processor?: () => ProcessorFn; }"
+    "type": "{ id?: string; type: 'key' | 'value'; valueType: DatumPropertyType; property: K; invalidValue?: any; missingValue?: any; validation?: (datum: any) => boolean; processor?: () => ProcessorFn; }"
   },
   "InternalDatumPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
@@ -3708,25 +3712,33 @@
   "AggregatePropertyDefinition": {
     "meta": {
       "isTypeAlias": true,
-      "typeParams": ["D", "K extends keyof D", "R = [number, number]", "R2 = R"]
+      "typeParams": [
+        "D",
+        "K extends keyof D & string",
+        "R = [number, number]",
+        "R2 = R"
+      ]
     },
-    "type": "{ type: 'aggregate'; aggregateFunction: (values: D[K][], keys?: D[K][]) => R; groupAggregateFunction?: (next?: R, acc?: R2) => R2; finalFunction?: (result: R2) => [ number, number ]; properties: (K | number)[]; }"
+    "type": "{ id?: string; type: 'aggregate'; aggregateFunction: (values: D[K][], keys?: D[K][]) => R; groupAggregateFunction?: (next?: R, acc?: R2) => R2; finalFunction?: (result: R2) => [ number, number ]; properties: PropertyId<K>[]; }"
   },
   "GroupValueProcessorDefinition": {
-    "meta": { "isTypeAlias": true, "typeParams": ["D", "K extends keyof D"] },
-    "type": "{ type: 'group-value-processor'; properties: (K | number)[]; adjust: () => (values: D[K][], indexes: number[]) => void; }"
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["D", "K extends keyof D & string"]
+    },
+    "type": "{ id?: string; type: 'group-value-processor'; properties: PropertyId<K>[]; adjust: () => (values: D[K][], indexes: number[]) => void; }"
   },
   "PropertyValueProcessorDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["D"] },
-    "type": "{ type: 'property-value-processor'; property: string | number; adjust: () => (processedData: ProcessedData<D>, valueIndex: number) => void; }"
+    "type": "{ id?: string; type: 'property-value-processor'; property: PropertyId<keyof D & string>; adjust: () => (processedData: ProcessedData<D>, valueIndex: number) => void; }"
   },
   "ReducerOutputPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["R"] },
-    "type": "{ type: 'reducer'; property: string; initialValue?: R; reducer: () => (acc: R, next: UngroupedDataItem<any, any>) => R; }"
+    "type": "{ id?: string; type: 'reducer'; property: string; initialValue?: R; reducer: () => (acc: R, next: UngroupedDataItem<any, any>) => R; }"
   },
   "ProcessorOutputPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["R"] },
-    "type": "{ type: 'processor'; property: string; calculate: (data: ProcessedData<any>) => R; }"
+    "type": "{ id?: string; type: 'processor'; property: string; calculate: (data: ProcessedData<any>) => R; }"
   },
   "Series": {
     "meta": {},

@@ -84,8 +84,9 @@ export function valueProperty<K>(propName: K, continuous: boolean, opts = {} as 
 
 export function rangedValueProperty<K>(
     propName: K,
-    { min = -Infinity, max = Infinity }: { min?: number; max?: number }
+    opts = {} as Partial<DatumPropertyDefinition<K>> & { min?: number; max?: number }
 ): DatumPropertyDefinition<K> {
+    const { min = -Infinity, max = Infinity, ...defOpts } = opts;
     return {
         type: 'value',
         property: propName,
@@ -97,6 +98,7 @@ export function rangedValueProperty<K>(
 
             return Math.min(Math.max(datum, min), max);
         },
+        ...defOpts,
     };
 }
 

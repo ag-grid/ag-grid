@@ -399,9 +399,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const extraProps = [];
         if (radiusKey) {
             extraProps.push(
-                rangedValueProperty(radiusKey, { min: this.radiusMin, max: this.radiusMax }),
-                valueProperty(radiusKey, true), // Raw value pass-through.
-                normalisePropertyTo(radiusKey, [0, 1], this.radiusMin, this.radiusMax)
+                rangedValueProperty(radiusKey, { id: 'radiusValue', min: this.radiusMin ?? 0, max: this.radiusMax }),
+                valueProperty(radiusKey, true, { id: `radiusRaw` }), // Raw value pass-through.
+                normalisePropertyTo({ id: 'radiusValue' }, [0, 1], this.radiusMin ?? 0, this.radiusMax)
             );
             extraProps.push();
         }
@@ -410,9 +410,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         this.dataModel = new DataModel<any, any, true>({
             props: [
-                accumulativeValueProperty(angleKey, true),
-                valueProperty(angleKey, true), // Raw value pass-through.
-                normalisePropertyTo(angleKey, [0, 1]),
+                accumulativeValueProperty(angleKey, true, { id: `angleValue` }),
+                valueProperty(angleKey, true, { id: `angleRaw` }), // Raw value pass-through.
+                normalisePropertyTo({ id: 'angleValue' }, [0, 1], 0),
                 ...extraProps,
             ],
         });
@@ -427,12 +427,12 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     async createNodeData() {
-        const { id: seriesId, processedData, dataModel, rotation, radiusKey, angleScale } = this;
+        const { id: seriesId, processedData, dataModel, rotation, angleScale } = this;
 
         if (!processedData || !dataModel || processedData.type !== 'ungrouped') return [];
 
-        const angleIdx = dataModel.resolveProcessedDataIndex(this.angleKey)?.index ?? -1;
-        const radiusIdx = dataModel.resolveProcessedDataIndex(radiusKey || '')?.index ?? -1;
+        const angleIdx = dataModel.resolveProcessedDataIndexById(`angleValue`)?.index ?? -1;
+        const radiusIdx = dataModel.resolveProcessedDataIndexById(`radiusValue`)?.index ?? -1;
 
         if (angleIdx < 0) return [];
 

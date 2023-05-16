@@ -15,6 +15,7 @@ Object {
     ],
     "values": Array [
       Object {
+        "id": undefined,
         "index": 0,
         "missing": false,
         "property": "ie",
@@ -22,6 +23,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 1,
         "missing": false,
         "property": "chrome",
@@ -29,6 +31,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 2,
         "missing": false,
         "property": "firefox",
@@ -36,6 +39,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 3,
         "missing": false,
         "property": "safari",
@@ -255,6 +259,7 @@ Object {
     ],
     "values": Array [
       Object {
+        "id": undefined,
         "index": 0,
         "missing": false,
         "property": "curb-weight",
@@ -527,6 +532,7 @@ Object {
     ],
     "values": Array [
       Object {
+        "id": undefined,
         "index": 0,
         "missing": false,
         "property": "highway-mpg",
@@ -983,6 +989,7 @@ Object {
     ],
     "values": Array [
       Object {
+        "id": undefined,
         "index": 0,
         "missing": false,
         "property": "total",
@@ -990,6 +997,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 1,
         "missing": false,
         "property": "regular",
@@ -1476,6 +1484,7 @@ Object {
     ],
     "values": Array [
       Object {
+        "id": undefined,
         "index": 0,
         "missing": false,
         "property": "petroleum",
@@ -1483,6 +1492,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 1,
         "missing": false,
         "property": "naturalGas",
@@ -1490,6 +1500,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 2,
         "missing": false,
         "property": "bioenergyWaste",
@@ -1497,6 +1508,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 3,
         "missing": false,
         "property": "nuclear",
@@ -1504,6 +1516,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 4,
         "missing": false,
         "property": "windSolarHydro",
@@ -1511,6 +1524,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 5,
         "missing": false,
         "property": "imported",
@@ -1807,6 +1821,7 @@ Object {
     ],
     "values": Array [
       Object {
+        "id": undefined,
         "index": 0,
         "missing": false,
         "property": "white",
@@ -1814,6 +1829,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 1,
         "missing": false,
         "property": "mixed",
@@ -1821,6 +1837,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 2,
         "missing": false,
         "property": "asian",
@@ -1828,6 +1845,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 3,
         "missing": false,
         "property": "black",
@@ -1835,6 +1853,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 4,
         "missing": false,
         "property": "chinese",
@@ -1842,6 +1861,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 5,
         "missing": false,
         "property": "other",
@@ -2174,6 +2194,7 @@ Object {
     ],
     "values": Array [
       Object {
+        "id": undefined,
         "index": 0,
         "missing": false,
         "property": "ownerOccupied",
@@ -2181,6 +2202,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 1,
         "missing": false,
         "property": "privateRented",
@@ -2188,6 +2210,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 2,
         "missing": false,
         "property": "localAuthority",
@@ -2195,6 +2218,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 3,
         "missing": false,
         "property": "housingAssociation",
@@ -2529,6 +2553,7 @@ Object {
     ],
     "values": Array [
       Object {
+        "id": undefined,
         "index": 0,
         "missing": false,
         "processor": [Function],
@@ -2537,6 +2562,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 1,
         "missing": false,
         "processor": [Function],
@@ -2545,6 +2571,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 2,
         "missing": false,
         "processor": [Function],
@@ -2553,6 +2580,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 3,
         "missing": false,
         "processor": [Function],
@@ -2840,6 +2868,7 @@ Object {
     ],
     "values": Array [
       Object {
+        "id": undefined,
         "index": 0,
         "missing": false,
         "processor": [Function],
@@ -2848,6 +2877,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 1,
         "missing": false,
         "processor": [Function],
@@ -2856,6 +2886,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 2,
         "missing": false,
         "processor": [Function],
@@ -2864,6 +2895,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 3,
         "missing": false,
         "processor": [Function],
@@ -3150,6 +3182,7 @@ Object {
     ],
     "values": Array [
       Object {
+        "id": undefined,
         "index": 0,
         "invalidValue": NaN,
         "missing": false,
@@ -3160,6 +3193,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 1,
         "invalidValue": NaN,
         "missing": false,
@@ -3170,6 +3204,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 2,
         "invalidValue": NaN,
         "missing": false,
@@ -3180,6 +3215,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 3,
         "invalidValue": NaN,
         "missing": false,
@@ -3242,6 +3278,118 @@ Object {
 }
 `;
 
+exports[`DataModel repeated property processing should generated the expected results 1`] = `
+Object {
+  "data": Array [
+    Object {
+      "datum": Object {
+        "browser": "Chrome",
+        "share": 0.6869,
+        "year": 2020,
+      },
+      "keys": Array [],
+      "values": Array [
+        0,
+        0.6869,
+      ],
+    },
+    Object {
+      "datum": Object {
+        "browser": "Edge",
+        "share": 0.0463,
+        "year": 2020,
+      },
+      "keys": Array [],
+      "values": Array [
+        0.1478760779303737,
+        0.05,
+      ],
+    },
+    Object {
+      "datum": Object {
+        "browser": "Safari",
+        "share": 0.087,
+        "year": 2020,
+      },
+      "keys": Array [],
+      "values": Array [
+        0.4257425742574256,
+        0.087,
+      ],
+    },
+    Object {
+      "datum": Object {
+        "browser": "Firefox",
+        "share": 0.0955,
+        "year": 2020,
+      },
+      "keys": Array [],
+      "values": Array [
+        0.7307569466624081,
+        0.0955,
+      ],
+    },
+    Object {
+      "datum": Object {
+        "browser": "Other",
+        "share": 0.0843,
+        "year": 2020,
+      },
+      "keys": Array [],
+      "values": Array [
+        1,
+        0.0843,
+      ],
+    },
+  ],
+  "defs": Object {
+    "keys": Array [],
+    "values": Array [
+      Object {
+        "id": "angle",
+        "index": 0,
+        "missing": false,
+        "processor": [Function],
+        "property": "share",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "id": "radius",
+        "index": 1,
+        "missing": false,
+        "processor": [Function],
+        "property": "share",
+        "type": "value",
+        "validation": [Function],
+        "valueType": "range",
+      },
+    ],
+  },
+  "domain": Object {
+    "keys": Array [],
+    "values": Array [
+      Array [
+        0,
+        1,
+      ],
+      Array [
+        0.05,
+        0.6869,
+      ],
+    ],
+  },
+  "indices": Object {
+    "keys": Object {},
+    "values": Object {
+      "share": 1,
+    },
+  },
+  "time": Any<Number>,
+  "type": "ungrouped",
+}
+`;
+
 exports[`DataModel ungrouped processing - accumulated and normalised properties should generated the expected results 1`] = `
 Object {
   "data": Array [
@@ -3252,7 +3400,7 @@ Object {
       },
       "keys": Array [],
       "values": Array [
-        3.01543592113546,
+        2.978445409938555,
         "Christian",
         4159000,
       ],
@@ -3264,7 +3412,7 @@ Object {
       },
       "keys": Array [],
       "values": Array [
-        3.0857646742852896,
+        3.049570275710106,
         "Buddhist",
         97000,
       ],
@@ -3276,7 +3424,7 @@ Object {
       },
       "keys": Array [],
       "values": Array [
-        3.4163823179587136,
+        3.383930469440284,
         "Hindu",
         456000,
       ],
@@ -3288,7 +3436,7 @@ Object {
       },
       "keys": Array [],
       "values": Array [
-        3.5381888182594485,
+        3.507115803972454,
         "Jewish",
         168000,
       ],
@@ -3300,7 +3448,7 @@ Object {
       },
       "keys": Array [],
       "values": Array [
-        4.419110829362979,
+        4.398009741214046,
         "Muslim",
         1215000,
       ],
@@ -3312,7 +3460,7 @@ Object {
       },
       "keys": Array [],
       "values": Array [
-        4.5082905885117315,
+        4.488199003996527,
         "Sikh",
         123000,
       ],
@@ -3324,7 +3472,7 @@ Object {
       },
       "keys": Array [],
       "values": Array [
-        4.634447320966064,
+        4.61578381476199,
         "Other",
         174000,
       ],
@@ -3346,6 +3494,7 @@ Object {
     "keys": Array [],
     "values": Array [
       Object {
+        "id": undefined,
         "index": 0,
         "missing": false,
         "processor": [Function],
@@ -3361,6 +3510,7 @@ Object {
         "valueType": "category",
       },
       Object {
+        "id": undefined,
         "index": 2,
         "missing": false,
         "property": "population",
@@ -3373,7 +3523,7 @@ Object {
     "keys": Array [],
     "values": Array [
       Array [
-        0.0703287531498292,
+        0,
         6.283185307179586,
       ],
       Array [
@@ -4148,6 +4298,7 @@ Object {
     ],
     "values": Array [
       Object {
+        "id": undefined,
         "index": 0,
         "missing": false,
         "property": "petrol",
@@ -4155,6 +4306,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 1,
         "missing": false,
         "property": "diesel",

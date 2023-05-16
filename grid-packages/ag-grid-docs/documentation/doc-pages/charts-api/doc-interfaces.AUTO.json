@@ -5619,15 +5619,21 @@
   },
   "PropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "ProcessorFn": {},
+  "PropertyId": { "meta": { "typeParams": ["K extends string"] } },
   "DatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "InternalDatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "AggregatePropertyDefinition": {
     "meta": {
-      "typeParams": ["D", "K extends keyof D", "R = [number, number]", "R2 = R"]
+      "typeParams": [
+        "D",
+        "K extends keyof D & string",
+        "R = [number, number]",
+        "R2 = R"
+      ]
     }
   },
   "GroupValueProcessorDefinition": {
-    "meta": { "typeParams": ["D", "K extends keyof D"] }
+    "meta": { "typeParams": ["D", "K extends keyof D & string"] }
   },
   "PropertyValueProcessorDefinition": { "meta": { "typeParams": ["D"] } },
   "ReducerOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
