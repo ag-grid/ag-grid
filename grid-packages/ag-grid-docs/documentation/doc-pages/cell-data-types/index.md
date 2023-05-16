@@ -51,8 +51,8 @@ The column definition properties that are set based on the cell data type will o
 As most grid functionality works directly with `string` values, the `'text'` cell data type does not set many properties. All of the other cell data types set the following (unless specified):
 - A [Value Parser](/value-parsers/) to convert from `string` to the relevant data type.
 - A [Value Formatter](/value-formatters/) to convert from the relevant data type to `string`.
-- `useValueParserForImport = true` to [Use the Value Parser with Other Grid Features](/value-parsers/#using-value-parsers-with-other-grid-features).
-- `useValueFormatterForExport = true` to [Use the Value Formatter with Other Grid Features](/value-formatters/#using-value-formatters-with-other-grid-features).
+- `useValueParserForImport = true` to [Use the Value Parser with Other Grid Features](/value-parsers/#use-value-parser-for-import).
+- `useValueFormatterForExport = true` to [Use the Value Formatter with Other Grid Features](/value-formatters/#use-value-formatter-for-export).
 - A [Key Creator](/grouping-complex-objects/#creating-group-keys-from-complex-objects) which uses the Value Formatter to allow Row Grouping to work (except for `'number'` which doesn't need to).
 
 ### Text
@@ -74,7 +74,7 @@ The following properties are set:
 The `'boolean'` cell data type is used for `boolean` values.
 
 The following properties are set:
-- The [Checkbox Cell Renderer](/checkbox-cell-renderer/) is used for rendering, which displays a checkbox.
+- The [Checkbox Cell Renderer](/cell-rendering/#checkbox-cell-renderer) is used for rendering, which displays a checkbox.
 - The [Checkbox Cell Editor](/provided-cell-editors/#checkbox-cell-editor) is used for editing (similar to the renderer).
 - `suppressKeyboardEvent` is set to enable the <kbd>Space</kbd> key to toggle the renderer value.
 - For AG Grid Community, the [Text Filter](/filter-text/) is used, and `filterParams` is set to display a single dropdown with `'True'`/`'False'` (or equivalents with [Localisation](/localisation/)).

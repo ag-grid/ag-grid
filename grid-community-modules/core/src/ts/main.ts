@@ -205,7 +205,7 @@ export { RowRenderer, FlashCellsParams, GetCellRendererInstancesParams, RefreshC
 export { ValueFormatterService } from "./rendering/valueFormatterService";
 export { ILoadingCellRenderer, ILoadingCellRendererComp, ILoadingCellRendererParams } from "./rendering/cellRenderers/loadingCellRenderer";
 export { CssClassManager } from "./rendering/cssClassManager";
-export { CheckboxCellRenderer, CheckboxCellRendererParams } from "./rendering/cellRenderers/checkboxCellRenderer";
+export { CheckboxCellRenderer, ICheckboxCellRendererParams } from "./rendering/cellRenderers/checkboxCellRenderer";
 
 // row models
 export { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";

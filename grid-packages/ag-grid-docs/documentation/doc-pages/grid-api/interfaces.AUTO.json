@@ -10723,6 +10723,9 @@
       "context": "TContext"
     },
     "docs": {
+      "min?": "/** Min allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */",
+      "max?": "/** Max allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */",
+      "step?": "/** Granularity of the value when updating. Default: 'any'. */",
       "value": "/** Current value of the cell */",
       "eventKey": "/** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable\n     *  characters appear here */",
       "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n     *  shift + letter 'a' only printable characters appear here */",
@@ -10767,6 +10770,9 @@
       "context": "TContext"
     },
     "docs": {
+      "min?": "/** Min allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */",
+      "max?": "/** Max allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */",
+      "step?": "/** Granularity of the value when updating. Default: 'any'. */",
       "value": "/** Current value of the cell */",
       "eventKey": "/** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable\n     *  characters appear here */",
       "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n     *  shift + letter 'a' only printable characters appear here */",
@@ -10859,6 +10865,10 @@
       "context": "TContext"
     },
     "docs": {
+      "min?": "/** Min allowed value. */",
+      "max?": "/** Max allowed value. */",
+      "precision?": "/** Number of digits allowed after the decimal point. */",
+      "step?": "/** Granularity of the value when updating. Default: 'any'. */",
       "value": "/** Current value of the cell */",
       "eventKey": "/** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable\n     *  characters appear here */",
       "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n     *  shift + letter 'a' only printable characters appear here */",
@@ -10982,7 +10992,7 @@
       "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
-  "CheckboxCellRendererParams": {
+  "ICheckboxCellRendererParams": {
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "disabled?": "boolean",
@@ -11007,6 +11017,7 @@
       "context": "TContext"
     },
     "docs": {
+      "disabled?": "/** Set to `true` for the input to be disabled. */",
       "value": "/** Value to be rendered. */",
       "valueFormatted": "/** Formatted value to be rendered. */",
       "fullWidth?": "/** True if this is a full width row. */",

@@ -9,7 +9,8 @@ import { KeyCode } from "../../constants/keyCode";
 import { getAriaCheckboxStateName } from "../../utils/aria";
 import { GROUP_AUTO_COLUMN_ID } from "../../columns/autoGroupColService";
 
-export interface CheckboxCellRendererParams<TData = any, TContext = any> extends ICellRendererParams<TData, boolean, TContext> {
+export interface ICheckboxCellRendererParams<TData = any, TContext = any> extends ICellRendererParams<TData, boolean, TContext> {
+    /** Set to `true` for the input to be disabled. */
     disabled?: boolean;
 }
 
@@ -20,13 +21,13 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
         </div>`;
 
     @RefSelector('eCheckbox') private eCheckbox: AgCheckbox;
-    private params: CheckboxCellRendererParams;
+    private params: ICheckboxCellRendererParams;
 
     constructor() {
         super(CheckboxCellRenderer.TEMPLATE);
     }
 
-    public init(params: CheckboxCellRendererParams): void {
+    public init(params: ICheckboxCellRendererParams): void {
         this.params = params;
         this.updateCheckbox(params);
         this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
@@ -54,18 +55,19 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
                     this.eCheckbox.toggle();
                 }
                 const isSelected = this.eCheckbox.getValue();
-                this.onCheckboxChanged(isSelected)
+                this.onCheckboxChanged(isSelected);
+                event.preventDefault();
             }
         });
     }
 
-    public refresh(params: CheckboxCellRendererParams): boolean {
+    public refresh(params: ICheckboxCellRendererParams): boolean {
         this.params = params;
         this.updateCheckbox(params);
         return true;
     }
 
-    private updateCheckbox(params: CheckboxCellRendererParams): void {
+    private updateCheckbox(params: ICheckboxCellRendererParams): void {
         let isSelected: boolean | undefined;
         let displayed = true;
         if (params.node.group && params.column) {
@@ -86,7 +88,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
             return;
         }
         this.eCheckbox.setValue(isSelected);
-        const disabled = params.disabled || !params.column?.isCellEditable(params.node);
+        const disabled = params.disabled != null ? params.disabled : !params.column?.isCellEditable(params.node);
         this.eCheckbox.setDisabled(disabled);
 
         const translate = this.localeService.getLocaleTextFunc();

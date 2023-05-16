@@ -7,8 +7,11 @@ import { CellEditorInput, SimpleCellEditor } from "./simpleCellEditor";
 import { exists } from "../../utils/generic";
 
 export interface IDateStringCellEditorParams<TData = any, TContext = any> extends ICellEditorParams<TData, string, TContext> {
+    /** Min allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */
     min?: string | Date;
+    /** Max allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */
     max?: string | Date;
+    /** Granularity of the value when updating. Default: 'any'. */
     step?: number;
 }
 

@@ -40,7 +40,7 @@ The example below shows value formatters in action.
 
 <grid-example title='Value Formatters' name='value-formatters' type='generated'></grid-example>
 
-## Using Value Formatters with Other Grid Features
+## Use Value Formatter for Export
 
 Sometimes you may want to use the value formatter when performing other grid operations that need values in string format. This is possible by setting the column definition property `useValueFormatterForExport = true`.
 

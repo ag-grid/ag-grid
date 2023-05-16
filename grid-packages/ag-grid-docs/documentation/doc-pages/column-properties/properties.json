@@ -19,7 +19,12 @@
                 "url": "/column-definitions/#default-column-definitions"
             }
         },
-        "cellDataType": {},
+        "cellDataType": {
+            "more": {
+                "name": "Cell Data Types",
+                "url": "/cell-data-types/"
+            }
+        },
         "valueGetter": {
             "description": "Function or [expression](/cell-expressions/#column-definition-expressions). Gets the value from your data for display.",
             "more": {
@@ -173,7 +178,7 @@
         "useValueFormatterForExport": {
             "more": {
                 "name": "Using Value Formatters with Other Grid Features",
-                "url": "/value-formatters/#using-value-formatters-with-other-grid-features"
+                "url": "/value-formatters/#use-value-formatter-for-export"
             }
         }
     },
@@ -376,7 +381,7 @@
         "useValueParserForImport": {
             "more": {
                 "name": "Using Value Parsers with Other Grid Features",
-                "url": "/value-parsers/#using-value-parsers-with-other-grid-features"
+                "url": "/value-parsers/#use-value-parser-for-import"
             }
         }
     },

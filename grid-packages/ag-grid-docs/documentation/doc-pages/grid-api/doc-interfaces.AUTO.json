@@ -19052,9 +19052,18 @@
     }
   },
   "IDateCellEditorParams": {
-    "min": { "type": { "returnType": "string | Date", "optional": true } },
-    "max": { "type": { "returnType": "string | Date", "optional": true } },
-    "step": { "type": { "returnType": "number", "optional": true } },
+    "min": {
+      "description": "/** Min allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */",
+      "type": { "returnType": "string | Date", "optional": true }
+    },
+    "max": {
+      "description": "/** Max allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */",
+      "type": { "returnType": "string | Date", "optional": true }
+    },
+    "step": {
+      "description": "/** Granularity of the value when updating. Default: 'any'. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "value": {
       "description": "/** Current value of the cell */",
@@ -19142,9 +19151,18 @@
     }
   },
   "IDateStringCellEditorParams": {
-    "min": { "type": { "returnType": "string | Date", "optional": true } },
-    "max": { "type": { "returnType": "string | Date", "optional": true } },
-    "step": { "type": { "returnType": "number", "optional": true } },
+    "min": {
+      "description": "/** Min allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */",
+      "type": { "returnType": "string | Date", "optional": true }
+    },
+    "max": {
+      "description": "/** Max allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */",
+      "type": { "returnType": "string | Date", "optional": true }
+    },
+    "step": {
+      "description": "/** Granularity of the value when updating. Default: 'any'. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "value": {
       "description": "/** Current value of the cell */",
@@ -19331,10 +19349,22 @@
     }
   },
   "INumberCellEditorParams": {
-    "min": { "type": { "returnType": "number", "optional": true } },
-    "max": { "type": { "returnType": "number", "optional": true } },
-    "precision": { "type": { "returnType": "number", "optional": true } },
-    "step": { "type": { "returnType": "number", "optional": true } },
+    "min": {
+      "description": "/** Min allowed value. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "max": {
+      "description": "/** Max allowed value. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "precision": {
+      "description": "/** Number of digits allowed after the decimal point. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "step": {
+      "description": "/** Granularity of the value when updating. Default: 'any'. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "value": {
       "description": "/** Current value of the cell */",
@@ -19643,8 +19673,11 @@
       "type": { "returnType": "TContext", "optional": false }
     }
   },
-  "CheckboxCellRendererParams": {
-    "disabled": { "type": { "returnType": "boolean", "optional": true } },
+  "ICheckboxCellRendererParams": {
+    "disabled": {
+      "description": "/** Set to `true` for the input to be disabled. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "value": {
       "description": "/** Value to be rendered. */",

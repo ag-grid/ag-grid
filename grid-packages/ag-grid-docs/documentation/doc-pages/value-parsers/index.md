@@ -39,7 +39,7 @@ Below shows an example using value parsers. The following can be noted:
 
 <grid-example title='Value Parsers' name='example-parsers' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
-## Using Value Parsers with Other Grid Features
+## Use Value Parser for Import
 
 Sometimes you may want to use the value parser when performing other grid operations apart from editing that can update values. This is possible by setting the column definition property `useValueParserForImport = true`.
 

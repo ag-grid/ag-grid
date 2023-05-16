@@ -4,9 +4,13 @@ import { CellEditorInput, SimpleCellEditor } from "./simpleCellEditor";
 import { exists } from "../../utils/generic";
 
 export interface INumberCellEditorParams<TData = any, TContext = any> extends ICellEditorParams<TData, number, TContext> {
+    /** Min allowed value. */
     min?: number;
+    /** Max allowed value. */
     max?: number;
+    /** Number of digits allowed after the decimal point. */
     precision?: number;
+    /** Granularity of the value when updating. Default: 'any'. */
     step?: number;
 }
 
