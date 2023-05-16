@@ -87,6 +87,7 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
     private dragStartElement?: HTMLElement;
 
     private enabled = true;
+    private pausers: String[] = [];
 
     public constructor(element: HTMLElement, doc = document) {
         super();
@@ -128,12 +129,16 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
         }
     }
 
-    enable() {
-        this.enabled = true;
+    resume(callerId: string) {
+        this.pausers = this.pausers.filter((id) => id !== callerId);
+        this.enabled = this.pausers.length <= 0;
+
+        return this.enabled;
     }
 
-    disable() {
+    pause(callerId: string) {
         this.enabled = false;
+        this.pausers.push(callerId);
     }
 
     private processEvent(event: SupportedEvent) {

@@ -40,7 +40,6 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
     private readyToPlay = false;
 
     private interactionManager: InteractionManager;
-    private interactionDisablers: Array<AnimationId> = [];
 
     public skipAnimations = false;
 
@@ -194,8 +193,7 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
                     }
 
                     if (disableInteractions) {
-                        this.interactionManager.disable();
-                        this.interactionDisablers.push(id);
+                        this.interactionManager.pause(`animation_${id}`);
                     }
                 },
                 stop: () => {
@@ -204,9 +202,8 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
                         this.cancelAnimationFrame();
                     }
 
-                    this.interactionDisablers = this.interactionDisablers.filter((did) => did !== id);
-                    if (this.interactionDisablers.length <= 0) {
-                        this.interactionManager.enable();
+                    if (disableInteractions) {
+                        this.interactionManager.resume(`animation_${id}`);
                     }
                 },
                 reset: () => {},
