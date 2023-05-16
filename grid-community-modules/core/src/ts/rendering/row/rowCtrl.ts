@@ -160,18 +160,6 @@ export class RowCtrl extends BeanStub {
         const businessKey = this.businessKeyForNodeFunc(this.rowNode);
         this.businessKeySanitised = escapeString(businessKey!);
     }
-    private setRowBusinessKey(comp: IRowComp): void {
-        if (this.businessKeySanitised != null) {
-            comp.setRowBusinessKey(this.businessKeySanitised);
-        }
-    }
-
-    private setRowId(comp: IRowComp) {
-        const rowIdSanitised = escapeString(this.rowNode.id);
-        if (rowIdSanitised != null) {
-            comp.setRowId(rowIdSanitised);
-        }
-    }
 
     public isSticky(): boolean {
         return this.rowNode.sticky;
@@ -259,8 +247,8 @@ export class RowCtrl extends BeanStub {
             setAriaExpanded(gui.element, this.rowNode.expanded == true);
         }
 
-        this.setRowId(comp);
-        this.setRowBusinessKey(comp);
+        this.setRowCompRowId(comp);
+        this.setRowCompRowBusinessKey(comp);
 
         if (this.isFullWidth() && !this.beans.gridOptionsService.is('suppressCellFocus')) {
             comp.setTabIndex(-1);
@@ -306,6 +294,18 @@ export class RowCtrl extends BeanStub {
         }
 
         this.executeProcessRowPostCreateFunc();
+    }
+
+    private setRowCompRowBusinessKey(comp: IRowComp): void {
+        if (this.businessKeySanitised == null) { return; }
+            comp.setRowBusinessKey(this.businessKeySanitised);
+    }
+
+    private setRowCompRowId(comp: IRowComp) {
+        const rowId = escapeString(this.rowNode.id);
+        if (rowId == null) { return; }
+
+        comp.setRowId(rowId);
     }
 
     private executeSlideAndFadeAnimations(gui: RowGui): void {
@@ -686,9 +686,9 @@ export class RowCtrl extends BeanStub {
 
         // as data has changed update the dom row id attributes
         this.allRowGuis.forEach(gui => {
-            this.setRowId(gui.rowComp);
+            this.setRowCompRowId(gui.rowComp);
             this.updateRowBusinessKey();
-            this.setRowBusinessKey(gui.rowComp);
+            this.setRowCompRowBusinessKey(gui.rowComp);
         });
 
         // check for selected also, as this could be after lazy loading of the row data, in which case
