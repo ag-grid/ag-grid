@@ -34,3 +34,14 @@
         transition: fill $default-transition-timing;
     }
 }
+
+.simpleSelects {
+    position: relative;
+    top: $size-half;
+
+    select {
+        margin-left: 0 !important; // !important for .ag-styles specificity;
+        padding: 0 $size-3 0 0 !important; // !important for .ag-styles specificity;
+        border: none !important; // !important for .ag-styles specificity;
+    }
+}

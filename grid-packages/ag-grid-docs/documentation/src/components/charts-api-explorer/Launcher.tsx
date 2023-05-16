@@ -62,7 +62,7 @@ const LauncherInner = ({
 
     return (
         <div className={styles.launcher}>
-            <div>
+            <div className={styles.simpleSelects}>
                 {/* perversely we don't show the hook/class when the type is react as the example provided will be displayed "as is" */}
                 {exampleInfo.framework === 'react' && exampleInfo.type !== 'react' && (
                     <ReactStyleSelector
