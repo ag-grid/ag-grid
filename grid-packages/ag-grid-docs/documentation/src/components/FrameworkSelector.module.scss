@@ -24,10 +24,9 @@
         content: '';
         position: absolute;
         height: 2px;
-        bottom: -1px;
+        bottom: -2px;
         left: 5px;
         right: 5px;
-        border-radius: 1px;
         background-color: var(--input-primary-color);
         opacity: 0;
         transition: opacity $default-transition-timing;
