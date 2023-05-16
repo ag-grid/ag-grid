@@ -23,7 +23,7 @@ const {
 } = _ModuleSupport;
 const { Rect, Label, toTooltipHtml } = _Scene;
 const { ContinuousScale, ColorScale } = _Scale;
-const { sanitizeHtml, Logger } = _Util;
+const { sanitizeHtml, Color, Logger } = _Util;
 
 interface HeatmapNodeDatum extends Required<_ModuleSupport.CartesianSeriesNodeDatum> {
     readonly label: _Util.MeasuredLabel;
@@ -290,7 +290,12 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
             colorKey,
             formatter,
             highlightStyle: {
-                item: { fill: highlightedFill, stroke: highlightedStroke, strokeWidth: highlightedDatumStrokeWidth },
+                item: {
+                    fill: highlightedFill,
+                    stroke: highlightedStroke,
+                    strokeWidth: highlightedDatumStrokeWidth,
+                    fillOpacity: highlightedFillOpacity,
+                },
             },
             id: seriesId,
         } = this;
@@ -301,7 +306,10 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
         datumSelection.each((rect, datum) => {
             const { point, width, height } = datum;
 
-            const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : datum.fill;
+            const fill =
+                isDatumHighlighted && highlightedFill !== undefined
+                    ? Color.interpolate(datum.fill, highlightedFill)(highlightedFillOpacity ?? 1)
+                    : datum.fill;
             const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : this.stroke;
             const strokeWidth =
                 isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
