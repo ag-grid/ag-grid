@@ -139,7 +139,7 @@ const ReactStyleSelector = ({ useFunctionalReact, useTypescript, onChange }) => 
     const formId = `chart-api-explorer-react-style-selector`;
     return isServerSideRendering() ? null : (
         <>
-            <label htmlFor={formId}>Code style:</label>{' '}
+            <label htmlFor={formId}>Language:</label>{' '}
             <select
                 id={formId}
                 value={useFunctionalReact ? (useTypescript ? 'hooksTs' : 'hooks') : 'classes'}
@@ -171,7 +171,7 @@ const TypescriptStyleSelector = ({ useTypescript, onChange }) => {
     const formId = `chart-api-explorer-typescript-style-selector`;
     return isServerSideRendering() ? null : (
         <>
-            <label htmlFor={formId}>Code style:</label>{' '}
+            <label htmlFor={formId}>Language:</label>{' '}
             <select id={formId} value={JSON.stringify(useTypescript)} onChange={onChange} onBlur={onChange}>
                 <option value="false">Javascript</option>
                 <option value="true">Typescript</option>
