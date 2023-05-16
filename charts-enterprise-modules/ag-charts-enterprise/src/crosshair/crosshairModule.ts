@@ -56,9 +56,9 @@ export interface AgCrosshairLabelRendererParams {
 export interface AgCrosshairLabelRendererResult {
     /** Text for the label. */
     text?: string;
-    /** Label text color. */
+    /** Label text colour. */
     color?: CssColor;
-    /** Label background color. */
+    /** Label background colour. */
     backgroundColor?: CssColor;
     /** Opacity of the label. */
     opacity?: Opacity;
