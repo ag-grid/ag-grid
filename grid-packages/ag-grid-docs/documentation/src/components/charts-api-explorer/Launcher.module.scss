@@ -6,6 +6,7 @@
     align-items: center;
     gap: $size-1;
     bottom: $size-half;
+    margin-right: $size-2 !important; // !important for .ag-styles specificity
 
     // Extra specificity to override .ag-styles specificity
     &:global(.list-style-none) {

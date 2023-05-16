@@ -69,10 +69,6 @@
     min-width: 350px;
     gap: $size-2;
     overflow-y: scroll;
-
-    pre:global(.code) {
-        margin-bottom: 2px !important; // !important for .ag-styles specificity
-    }
 }
 
 .chart {
@@ -83,6 +79,6 @@
 }
 
 .codeContainer {
-    overflow: auto;
     height: 50%;
+    overflow: auto;
 }
