@@ -32,7 +32,7 @@ const ABSTRACT_COLOR_GROUPS = {
         'ghost-white',
         'white',
     ],
-    Other: ['cerise-pink'],
+    Other: ['cerise-pink', 'danger-red'],
 };
 
 /**

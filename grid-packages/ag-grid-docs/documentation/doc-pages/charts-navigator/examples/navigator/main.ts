@@ -1,4 +1,4 @@
-import { AgAreaSeriesTooltip, AgCartesianChartOptions, AgChart, AgChartTooltipOptions, AgSeriesTooltip } from 'ag-charts-community'
+import { AgAreaSeriesTooltip, AgCartesianChartOptions, AgChart } from 'ag-charts-community'
 import { getData } from './data';
 
 const tooltip: AgAreaSeriesTooltip = {

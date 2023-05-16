@@ -114,7 +114,7 @@ gatsby-fast-refresh {
 
 .homepageFrameworks {
     background-color: var(--bright-blue-gray);
-    padding-top: ds.$size-3;
+    padding-top: ds.$size-2;
     padding-bottom: ds.$size-6;
 
     @media screen and (min-width: 640px) {
@@ -170,7 +170,45 @@ gatsby-fast-refresh {
 
     @media screen and (min-width: 940px) {
         padding-top: ds.$size-8;
-        padding-bottom: ds.$size-5;
+        padding-bottom: ds.$size-2;
+    }
+}
+
+.homepageCustomers {
+    background-color: var(--ghost-blue);
+    padding-bottom: ds.$size-6;
+}
+
+.customersInner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: ds.$size-3;
+
+    p {
+        margin-bottom: 0 !important; // !important needed because of .ag-styles specificity;
+        text-align: center;
+    }
+}
+
+.customerLogos {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0 ds.$size-4;
+
+    @media screen and (min-width: 640px) {
+        gap: 0 ds.$size-6;
+    }
+
+    img {
+        height: ds.$size-7;
+
+        @media screen and (min-width: 640px) {
+            height: ds.$size-8;
+        }
     }
 }
 

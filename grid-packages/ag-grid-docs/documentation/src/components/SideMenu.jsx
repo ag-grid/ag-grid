@@ -52,12 +52,8 @@ const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu }) => {
     }, [hideMenu]);
 
     useEffect(() => {
-        if (!menuRef.current) {
-            return;
-        }
-
         $('body').scrollspy({ target: '#side-menu', offset: 120 });
-    }, [menuRef.current]);
+    }, []);
 
     return (
         allHeadings.length > 0 && (

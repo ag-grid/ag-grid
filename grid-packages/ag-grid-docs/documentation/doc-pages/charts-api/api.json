@@ -4,6 +4,9 @@
     "enabled": {
       "default": true
     },
+    "showArrow": {
+      "default": true
+    },
     "tracking": {
       "default": true
     },
@@ -216,6 +219,52 @@
         "Arial, sans-serif",
         "Times New Roman, serif"
       ]
+    }
+  },
+  "AgCartesianChartLegendOptions": {
+    "enabled": {
+      "description": "Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present."
+    },
+    "position": {
+      "default": "bottom",
+      "options": ["top", "right", "bottom", "left"]
+    },
+    "spacing": {
+      "default": 20,
+      "min": 0,
+      "max": 40,
+      "unit": "px"
+    }
+  },
+  "AgPolarChartLegendOptions": {
+    "enabled": {
+      "description": "Whether or not to show the legend.",
+      "default": "true"
+    },
+    "position": {
+      "default": "bottom",
+      "options": ["top", "right", "bottom", "left"]
+    },
+    "spacing": {
+      "default": 20,
+      "min": 0,
+      "max": 40,
+      "unit": "px"
+    }
+  },
+  "AgHierarchyChartLegendOptions": {
+    "enabled": {
+      "description": "Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present."
+    },
+    "position": {
+      "default": "bottom",
+      "options": ["top", "right", "bottom", "left"]
+    },
+    "spacing": {
+      "default": 20,
+      "min": 0,
+      "max": 40,
+      "unit": "px"
     }
   },
   "AgChartLegendItemOptions": {
@@ -437,21 +486,7 @@
       ],
       "breakIndex": 5
     },
-    "AgCartesianChartLegendOptions": {
-      "enabled": {
-        "description": "Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present."
-      },
-      "position": {
-        "default": "bottom",
-        "options": ["top", "right", "bottom", "left"]
-      },
-      "spacing": {
-        "default": 20,
-        "min": 0,
-        "max": 40,
-        "unit": "px"
-      }
-    }
+    "legend": "AgCartesianChartLegendOptions"
   },
   "AgPolarChartOptions": {
     "meta": {
@@ -499,22 +534,7 @@
       ],
       "breakIndex": 5
     },
-    "AgPolarChartLegendOptions": {
-      "enabled": {
-        "description": "Whether or not to show the legend.",
-        "default": "true"
-      },
-      "position": {
-        "default": "bottom",
-        "options": ["top", "right", "bottom", "left"]
-      },
-      "spacing": {
-        "default": 20,
-        "min": 0,
-        "max": 40,
-        "unit": "px"
-      }
-    }
+    "legend": "AgPolarChartLegendOptions"
   },
   "AgHierarchyChartOptions": {
     "meta": {
@@ -562,21 +582,7 @@
       ],
       "breakIndex": 5
     },
-    "AgHierarchyChartLegendOptions": {
-      "enabled": {
-        "description": "Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present."
-      },
-      "position": {
-        "default": "bottom",
-        "options": ["top", "right", "bottom", "left"]
-      },
-      "spacing": {
-        "default": 20,
-        "min": 0,
-        "max": 40,
-        "unit": "px"
-      }
-    }
+    "legend": "AgHierarchyChartLegendOptions"
   },
   "AgNumberAxisOptions": {
     "nice": {

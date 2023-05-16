@@ -1,14 +1,31 @@
-.video-section {
-    composes: d-flex from global;
+@use '../design-system' as *;
 
-    &--header {
-        font-size: 1.25rem;
+.videoSection {
+    display: flex;
+    flex-direction: column;
+    gap: $size-2;
+
+    @media screen and (min-width: $breakpoint-docs-home-small) {
+        flex-direction: row;
+        align-items: flex-start;
     }
 
-    &__frame {
-        composes: ml-3 from global;
+    // `&:global(.ag-styles)` for .ag-styles specificity issues
+    &:global(.ag-styles) p {
+        margin-bottom: 0 !important; // !important for .ag-styles specificity;
+    }
+}
 
-        border: 2px solid $dark;
-        border-radius: 5px;
+.header {
+    font-size: var(--font-size-extra-large);
+}
+
+.ytIframe {
+    aspect-ratio: 16/9;
+    border-radius: var(--border-radius);
+    border: 2px solid var(--bright-blue-gray);
+
+    @media screen and (min-width: $breakpoint-docs-home-small) {
+        max-width: 16rem;
     }
 }

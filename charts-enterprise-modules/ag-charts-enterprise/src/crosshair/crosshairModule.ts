@@ -12,12 +12,6 @@ export const CrosshairModule: _ModuleSupport.AxisModule = {
     themeTemplate: AXIS_CROSSHAIR_THEME,
 };
 
-export interface AgCrosshairLabelFormatterParams {
-    readonly value: any;
-    readonly fractionDigits: number;
-    readonly formatter?: (x: any) => string;
-}
-
 export interface AgCrosshairOptions {
     /** Whether or not to show the crosshair. */
     enabled?: boolean;

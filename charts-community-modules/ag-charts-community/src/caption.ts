@@ -7,8 +7,8 @@ import {
     OPT_FONT_STYLE,
     OPT_FONT_WEIGHT,
     OPT_NUMBER,
-    OPT_STRING,
     STRING,
+    TEXT_WRAP,
     Validate,
 } from './util/validation';
 import { FontStyle, FontWeight, TextWrap } from './chart/agChartOptions';
@@ -58,8 +58,8 @@ export class Caption {
     @Validate(OPT_NUMBER(0))
     maxHeight?: number = undefined;
 
-    @Validate(OPT_STRING)
-    wrapping?: TextWrap = 'always';
+    @Validate(TEXT_WRAP)
+    wrapping: TextWrap = 'break-word';
 
     constructor() {
         const node = this.node;
@@ -75,7 +75,11 @@ export class Caption {
             this.node.text = text;
             return;
         }
-        const wrapped = Text.wrap(text, maxWidth, maxHeight, this);
+        const wrapOptions = {
+            hyphens: wrapping === 'hyphenate',
+            breakWord: wrapping === 'break-word' || wrapping === 'hyphenate',
+        };
+        const wrapped = Text.wrap(text, maxWidth, maxHeight, this, wrapOptions);
         this.node.text = wrapped;
     }
 }

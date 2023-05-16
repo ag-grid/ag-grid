@@ -1,4 +1,5 @@
 import React from 'react';
+import { Snippet } from '../snippet/Snippet';
 
 export const TextElements = () => {
     return (
@@ -144,6 +145,19 @@ export const TextElements = () => {
     --font-weight-bold: 600;
     --icon-size: 2em;
 }`}</pre>
+            </div>
+
+            <div>
+                <p className="item-label">
+                    Preformatted code: <code>&lt;Snippet&gt;</code>
+                </p>
+                <Snippet framework="javascript">
+                    {`const addOne = (x) => {
+    // Add one here
+    const result = x + 1;
+    return result;
+}`}
+                </Snippet>
             </div>
 
             <p className="item-label">

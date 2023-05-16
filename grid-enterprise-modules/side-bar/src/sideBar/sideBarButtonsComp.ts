@@ -45,17 +45,13 @@ export class SideBarButtonsComp extends Component {
         }
     }
 
-    public setToolPanelDefs(toolPanelDefs: ToolPanelDef[]): void {
-        toolPanelDefs.forEach(this.addButtonComp.bind(this));
-    }
-
     public setActiveButton(id: string | undefined): void {
         this.buttonComps.forEach(comp => {
             comp.setSelected(id === comp.getToolPanelId());
         });
     }
 
-    private addButtonComp(def: ToolPanelDef): void {
+    public addButtonComp(def: ToolPanelDef): SideBarButtonComp {
         const buttonComp = this.createBean(new SideBarButtonComp(def));
         this.buttonComps.push(buttonComp);
         this.appendChild(buttonComp);
@@ -66,6 +62,8 @@ export class SideBarButtonsComp extends Component {
                 toolPanelId: def.id
             });
         });
+
+        return buttonComp;
     }
 
     @PreDestroy

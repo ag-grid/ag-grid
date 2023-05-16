@@ -50,9 +50,11 @@ import {
     FontWeight,
 } from '../../agChartOptions';
 import { LogAxis } from '../../axis/logAxis';
-import { DataModel, SMALLEST_KEY_INTERVAL, AGG_VALUES_EXTENT } from '../../data/dataModel';
+import { DataModel } from '../../data/dataModel';
 import { sum } from '../../data/aggregateFunctions';
 import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
+import { AGG_VALUES_EXTENT, normaliseGroupTo, SMALLEST_KEY_INTERVAL } from '../../data/processors';
+import * as easing from '../../../motion/easing';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
@@ -295,6 +297,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         }
     }
 
+    legendItemNames: { [key in string]: string } = {};
+
     /**
      * The value to normalize the bars to.
      * Should be a finite positive value or `undefined`.
@@ -332,7 +336,12 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const activeStacks = this.yKeys
             .map((stack) => stack.filter((key) => seriesItemEnabled.get(key)))
             .filter((stack) => stack.length > 0);
+
         const normaliseTo = normalizedTo && isFinite(normalizedTo) ? normalizedTo : undefined;
+        const extraProps = [];
+        if (normaliseTo) {
+            extraProps.push(normaliseGroupTo(activeSeriesItems, normaliseTo, 'sum'));
+        }
 
         this.dataModel = new DataModel<any, any, true>({
             props: [
@@ -341,10 +350,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 ...activeStacks.map((stack) => sum(stack)),
                 ...(isContinuousX ? [SMALLEST_KEY_INTERVAL] : []),
                 AGG_VALUES_EXTENT,
+                ...extraProps,
             ],
             groupByKeys: true,
             dataVisible: this.visible && activeSeriesItems.length > 0,
-            normaliseTo,
         });
 
         this.processedData = this.dataModel.processData(data);
@@ -708,10 +717,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 });
             }
             rect.crisp = crisp;
-            rect.x = datum.x;
-            rect.y = datum.y;
-            rect.width = datum.width;
-            rect.height = datum.height;
             rect.fill = (format && format.fill) || fill;
             rect.stroke = (format && format.stroke) || stroke;
             rect.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
@@ -857,6 +862,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             xKey,
             yKeys,
             yNames,
+            legendItemNames,
             cumYKeyCount,
             seriesItemEnabled,
             hideInLegend,
@@ -886,7 +892,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     seriesId: id,
                     enabled: seriesItemEnabled.get(yKey) || false,
                     label: {
-                        text: yNames[yKey] || yKey,
+                        text: legendItemNames[yKey] ?? yNames[yKey] ?? yKey,
                     },
                     marker: {
                         fill: fills[colorIndex % fills.length],
@@ -906,9 +912,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         super.toggleSeriesItem(itemId, enabled);
 
-        // Toggle items where the yName matches the yName of the clicked item
-        Object.keys(this.yNames)
-            .filter((id) => this.yNames[id] === this.yNames[itemId])
+        // Toggle items where the legendItemName matches the legendItemName of the clicked item
+        Object.keys(this.legendItemNames)
+            .filter((id) => this.legendItemNames[id] === this.legendItemNames[itemId])
             .forEach((yKey) => {
                 if (yKey !== itemId) {
                     super.toggleSeriesItem(yKey, enabled);
@@ -936,9 +942,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
                 newEnableds[yKey] = newEnableds[yKey] ?? newEnabled;
 
-                // Toggle other items that have matching yNames which have not already been processed.
-                Object.keys(this.yNames)
-                    .filter((id) => this.yNames[id] === this.yNames[yKey])
+                // Toggle other items that have matching legendItemNames which have not already been processed.
+                Object.keys(this.legendItemNames)
+                    .filter((id) => this.legendItemNames[id] === this.legendItemNames[yKey])
                     .forEach((nameYKey) => {
                         newEnableds[nameYKey] = newEnableds[nameYKey] ?? newEnabled;
                     });
@@ -977,6 +983,87 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         this.nodeDataRefresh = true;
     }
 
+    animateEmptyUpdateReady(subGroups: Array<Selection<Rect, BarNodeDatum>>) {
+        if (!this.processedData) return;
+
+        let startingX = Infinity;
+        let startingY = 0;
+        subGroups.forEach((subGroup) =>
+            subGroup.each((_, datum) => {
+                if (datum.yValue >= 0) {
+                    startingX = Math.min(startingX, datum.x);
+                    startingY = Math.max(startingY, datum.height + datum.y);
+                }
+            })
+        );
+
+        subGroups.forEach((subGroup) => {
+            subGroup.each((rect, datum) => {
+                if (this.getBarDirection() === ChartAxisDirection.X) {
+                    this.animationManager?.animateMany(
+                        `${this.id}_empty-update-ready_${rect.id}`,
+                        [
+                            { from: startingX, to: datum.x },
+                            { from: 0, to: datum.width },
+                        ],
+                        {
+                            duration: 1000,
+                            ease: easing.linear,
+                            repeat: 0,
+                            onUpdate([x, width]) {
+                                rect.x = x;
+                                rect.width = width;
+
+                                rect.y = datum.y;
+                                rect.height = datum.height;
+                            },
+                        }
+                    );
+                } else {
+                    this.animationManager?.animateMany(
+                        `${this.id}_empty-update-ready_${rect.id}`,
+                        [
+                            { from: startingY, to: datum.y },
+                            { from: 0, to: datum.height },
+                        ],
+                        {
+                            duration: 1000,
+                            ease: easing.linear,
+                            repeat: 0,
+                            onUpdate([y, height]) {
+                                rect.y = y;
+                                rect.height = height;
+
+                                rect.x = datum.x;
+                                rect.width = datum.width;
+                            },
+                        }
+                    );
+                }
+            });
+        });
+    }
+
+    animateReadyUpdateReady(subGroups: Array<Selection<Rect, BarNodeDatum>>) {
+        subGroups.forEach((subGroup) => {
+            subGroup.each((rect, datum) => {
+                rect.x = datum.x;
+                rect.y = datum.y;
+                rect.width = datum.width;
+                rect.height = datum.height;
+            });
+        });
+    }
+
+    animateReadyHighlightReady(highlightSelection: Selection<Rect, BarNodeDatum>) {
+        highlightSelection.each((rect, datum) => {
+            rect.x = datum.x;
+            rect.y = datum.y;
+            rect.width = datum.width;
+            rect.height = datum.height;
+        });
+    }
+
     protected isLabelEnabled() {
         return this.label.enabled;
     }
@@ -995,6 +1082,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 }
 
 export class ColumnSeries extends BarSeries {
+    static className = 'ColumnSeries';
+
     protected getBarDirection() {
         return ChartAxisDirection.Y;
     }

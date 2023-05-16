@@ -27,8 +27,11 @@ export class ValueService extends BeanStub {
 
     private initialised = false;
 
+    private isSsrm = false;
+
     @PostConstruct
     public init(): void {
+        this.isSsrm = this.gridOptionsService.isRowModelType('serverSide');
         this.cellExpressions = this.gridOptionsService.is('enableCellExpressions');
         this.isTreeData = this.gridOptionsService.is('treeData');
         this.initialised = true;
@@ -70,6 +73,10 @@ export class ValueService extends BeanStub {
         const groupDataExists = rowNode.groupData && rowNode.groupData[colId] !== undefined;
         const aggDataExists = !ignoreAggData && rowNode.aggData && rowNode.aggData[colId] !== undefined;
 
+        // SSRM agg data comes from the data attribute, so ignore that instead
+        const ignoreSsrmAggData = this.isSsrm && ignoreAggData && !!column.getColDef().aggFunc;
+        const ssrmFooterGroupCol = this.isSsrm && rowNode.footer && rowNode.field && (column.getColDef().showRowGroup === true || column.getColDef().showRowGroup === rowNode.field);
+
         if (forFilter && colDef.filterValueGetter) {
             result = this.executeFilterValueGetter(colDef.filterValueGetter, data, column, rowNode);
         } else if (this.isTreeData && aggDataExists) {
@@ -84,7 +91,11 @@ export class ValueService extends BeanStub {
             result = rowNode.aggData[colId];
         } else if (colDef.valueGetter) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
-        } else if (field && data) {
+        } else if (ssrmFooterGroupCol) {
+            // this is for group footers in SSRM, as the SSRM row won't have groupData, need to extract
+            // the group value from the data using the row field
+            result = getValueUsingField(data, rowNode.field!, column.isFieldContainsDots());
+        } else if (field && data && !ignoreSsrmAggData) {
             result = getValueUsingField(data, field, column.isFieldContainsDots());
         }
 

@@ -104,7 +104,7 @@
     },
     "MetaRecord": {
         "meta": { "isTypeAlias": true },
-        "type": "{ description?: string; doc?: string; type?: InterfaceLookupMetaType; typeParams?: string[]; isTypeAlias?: boolean; isRequired?: boolean; default: any; min?: number; max?: number; unit?: string; options?: string[]; suggestions?: string[]; breakIndex?: number; ordering?: { [prop: string]: OrderingPriority; }; }"
+        "type": "{ description?: string; doc?: string; type?: InterfaceLookupMetaType; typeParams?: string[]; isTypeAlias?: boolean; isRequired?: boolean; default: any; min?: number; max?: number; unit?: string; options?: string[]; suggestions?: string[]; ordering?: { [prop: string]: OrderingPriority; }; }"
     },
     "OrderingPriority": { "meta": { "isTypeAlias": true }, "type": "'high' | 'natural' | 'low'" },
     "InterfaceLookup": {
@@ -121,24 +121,24 @@
     },
     "JsonPrimitiveProperty": {
         "meta": { "isTypeAlias": true },
-        "type": "{ type: \"primitive\"; tsType: string; aliasType?: string; options?: string; }"
+        "type": "{ type: 'primitive'; tsType: string; aliasType?: string; options?: string; }"
     },
     "JsonObjectProperty": {
         "meta": { "isTypeAlias": true },
-        "type": "{ type: \"nested-object\"; tsType: string; model: JsonModel; }"
+        "type": "{ type: 'nested-object'; tsType: string; model: JsonModel; }"
     },
     "JsonArray": {
         "meta": { "isTypeAlias": true },
-        "type": "{ type: \"array\"; tsType: string; depth: number; elements: Exclude<JsonProperty, JsonArray>; }"
+        "type": "{ type: 'array'; tsType: string; depth: number; elements: Exclude<JsonProperty, JsonArray>; }"
     },
     "JsonUnionType": {
         "meta": { "isTypeAlias": true },
-        "type": "{ type: \"union\"; tsType: string; options: Exclude<JsonProperty, JsonUnionType>[]; }"
+        "type": "{ type: 'union'; tsType: string; options: Exclude<JsonProperty, JsonUnionType>[]; }"
     },
     "JsonFunction": {
         "meta": {},
         "type": {
-            "type": "\"function\"",
+            "type": "'function'",
             "tsType": "string",
             "documentation?": "string",
             "parameters": "Record<string, JsonModelProperty>",
@@ -156,7 +156,7 @@
     "JsonModel": {
         "meta": {},
         "type": {
-            "type": "\"model\"",
+            "type": "'model'",
             "tsType": "string",
             "documentation?": "string",
             "properties": "Record<string, JsonModelProperty>"
@@ -165,7 +165,7 @@
     "Config": { "meta": { "isTypeAlias": true }, "type": "{ includeDeprecated: boolean; }" },
     "PropertyClass": {
         "meta": { "isTypeAlias": true },
-        "type": "\"primitive\" | \"nested-object\" | \"union-nested-object\" | \"union-mixed\" | \"alias\" | \"unknown\" | \"function\""
+        "type": "'primitive' | 'nested-object' | 'union-nested-object' | 'union-mixed' | 'alias' | 'unknown' | 'function'"
     },
-    "Wrapping": { "meta": { "isTypeAlias": true }, "type": "\"none\" | \"array\"" }
+    "Wrapping": { "meta": { "isTypeAlias": true }, "type": "'none' | 'array'" }
 }

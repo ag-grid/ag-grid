@@ -1,16 +1,15 @@
-import React from 'react';
-import logos from 'images/logos';
+import classnames from 'classnames';
+import { convertUrl } from 'components/documentation-helpers';
 import MenuView from 'components/menu-view/MenuView';
-import {SEO} from 'components/SEO';
-import {convertUrl} from 'components/documentation-helpers';
+import { SEO } from 'components/SEO';
+import logos from 'images/logos';
+import React from 'react';
 import menuData from '../../doc-pages/licensing/menu.json';
-import styles from './home.module.scss';
-import menuStyles from '../components/menu-view/MenuView.module.scss';
+import { Icon } from '../components/Icon';
 import tileStyles from '../components/menu-view/Tile.module.scss';
-import classnames from "classnames";
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faPlayCircle} from '@fortawesome/free-solid-svg-icons'
+import supportedFrameworks from '../utils/supported-frameworks';
 import featuredVideos from './featuredVideos.json';
+import styles from './home.module.scss';
 
 const flatRenderItems = (items, framework) => {
     return items.reduce((prev, curr) => {
@@ -20,7 +19,9 @@ const flatRenderItems = (items, framework) => {
             return ret;
         }
 
-        ret = prev.concat(Object.assign({}, {title: curr.title, url: curr.url}, curr.icon ? {icon: curr.icon} : {}));
+        ret = prev.concat(
+            Object.assign({}, { title: curr.title, url: curr.url }, curr.icon ? { icon: curr.icon } : {})
+        );
 
         if (!curr.items) {
             return ret;
@@ -30,35 +31,36 @@ const flatRenderItems = (items, framework) => {
     }, []);
 };
 
-const panelItemsFilter = (pane, framework) => data => ((data.frameworks && data.frameworks.indexOf(framework) !== -1) || !data.frameworks) && data.pane === pane;
+const panelItemsFilter = (pane, framework) => (data) =>
+    ((data.frameworks && data.frameworks.indexOf(framework) !== -1) || !data.frameworks) && data.pane === pane;
 
 const urlMap = {
     javascript: {
         'video-tutorial': 'https://youtu.be/KS-wg5zfCXc',
-        'example': 'https://plnkr.co/edit/nmWxAxWONarW5gj2?p=preview?p=preview',
+        example: 'https://plnkr.co/edit/nmWxAxWONarW5gj2?p=preview?p=preview',
         'example-title': 'StackBlitz Example',
-        'example-icon': 'stackblitz'
+        'example-icon': 'stackblitz',
     },
     angular: {
         'video-tutorial': 'https://youtu.be/AeEfiWAGyLc',
-        'example': 'https://stackblitz.com/edit/ag-grid-angular-hello-world',
-        'thinkster': 'https://thinkster.io/tutorials/fundamentals-of-ag-grid-with-angular',
+        example: 'https://stackblitz.com/edit/ag-grid-angular-hello-world',
+        thinkster: 'https://thinkster.io/tutorials/fundamentals-of-ag-grid-with-angular',
         'example-title': 'StackBlitz Example',
-        'example-icon': 'stackblitz'
+        'example-icon': 'stackblitz',
     },
     react: {
         'video-tutorial': 'https://youtu.be/GTu79aWJT1E',
-        'example': 'https://stackblitz.com/edit/ag-grid-react-hello-world',
-        'thinkster': 'https://thinkster.io/tutorials/using-ag-grid-with-react-getting-started',
+        example: 'https://stackblitz.com/edit/ag-grid-react-hello-world',
+        thinkster: 'https://thinkster.io/tutorials/using-ag-grid-with-react-getting-started',
         'example-title': 'StackBlitz Example',
-        'example-icon': 'stackblitz'
+        'example-icon': 'stackblitz',
     },
     vue: {
         'video-tutorial': 'https://youtu.be/eW3qCti1lsA',
-        'example': 'https://codesandbox.io/s/ag-grid-vue-3-example-bvwik?file=/src/App.vue',
+        example: 'https://codesandbox.io/s/ag-grid-vue-3-example-bvwik?file=/src/App.vue',
         'example-title': 'CodeSandbox Example',
-        'example-icon': 'codesandbox'
-    }
+        'example-icon': 'codesandbox',
+    },
 };
 
 const parseGettingStartedUrl = (url, framework) => {
@@ -68,23 +70,23 @@ const parseGettingStartedUrl = (url, framework) => {
         return {
             href: urlMap[framework][match[1]],
             target: '_blank',
-            rel: 'noreferrer'
+            rel: 'noreferrer',
         };
     }
 
     return {
-        href: convertUrl(url, framework)
+        href: convertUrl(url, framework),
     };
 };
 
 const getLogo = (name, framework) => logos[name === 'framework' ? framework : name];
 
-const GettingStartedPane = ({framework, data}) => {
+const GettingStartedPane = ({ framework, data }) => {
     const linksToRender = flatRenderItems(data, framework);
 
     return (
-        <div className={styles['docs-home__getting-started__item_pane']}>
-            {linksToRender.map(link => {
+        <>
+            {linksToRender.map((link) => {
                 const title = link.title.includes('{example-title}') ? urlMap[framework]['example-title'] : link.title;
                 const icon = link.icon.includes('{example-icon}') ? urlMap[framework]['example-icon'] : link.icon;
                 const parsedLink = parseGettingStartedUrl(link.url, framework);
@@ -92,79 +94,98 @@ const GettingStartedPane = ({framework, data}) => {
                 const alt = `${frameworkCapitalised} Grid: ${link.title}`;
 
                 return (
-                    <a key={`${framework}_${link.title.replace(/\s/g, '').toLowerCase()}`} {...parsedLink}
-                       className={styles['docs-home__getting-started__item']}>
+                    <a
+                        key={`${framework}_${link.title.replace(/\s/g, '').toLowerCase()}`}
+                        {...parsedLink}
+                        className={classnames(tileStyles.tile, tileStyles.linkTile)}
+                    >
                         <div className={styles['docs-home__getting-started__item_logo']}>
-                            <img src={getLogo(icon, framework)} alt={alt} style={{height: 64, width: 64}}/>
+                            <img src={getLogo(icon, framework)} alt={alt} style={{ height: 64, width: 64 }} />
                         </div>
-                        <div className={styles['docs-home__getting-started__item_label']}>
-                            {title}
-                        </div>
+                        <div className={tileStyles.linkTileTitle}>{title}</div>
                     </a>
                 );
             })}
-        </div>
+        </>
     );
 };
 
-const GettingStarted = ({framework, data}) => {
-    const title = `${framework === 'javascript' ? 'JavaScript' : framework} Data Grid: Getting Started`;
+const GettingStarted = ({ framework, data }) => {
+    const title = `Getting Started`;
     const leftPaneItems = data.filter(panelItemsFilter('left', framework));
     const rightPaneItems = data.filter(panelItemsFilter('right', framework));
 
     return (
-        <div className={styles['docs-home__getting-started']}>
-            <h2 className={styles['docs-home__getting-started__title']}>{title}</h2>
-            <div className={styles['docs-home__getting-started__row']}>
-                <GettingStartedPane framework={framework} data={leftPaneItems}/>
-                {rightPaneItems.length > 0 && <GettingStartedPane framework={framework} data={rightPaneItems}/>}
+        <div className={classnames(styles.section, styles.gettingStartedSection)}>
+            <h2>{title}</h2>
+            <div className={styles.sectionInner}>
+                <GettingStartedPane framework={framework} data={leftPaneItems} />
+                {rightPaneItems.length > 0 && <GettingStartedPane framework={framework} data={rightPaneItems} />}
             </div>
         </div>
     );
 };
 
-const VideoPanel = ({framework, videos}) => {
-    const title = `${framework} Data Grid: Videos`;
+const VideoPanel = ({ framework, videos }) => {
+    const title = `Videos`;
     return (
-        <div className={menuStyles['menu-view']}>
-            <h2 className={menuStyles['menu-view__title']}>
-                {title}
-            </h2>
-            <div className={menuStyles['menu-view__tile-row']}>
-                {videos.map(video => (
-                        <div className={classnames(tileStyles['menu-view-tile'], tileStyles['video-tile'])} style={{height: "10rem"}} key={video.id}>
-                            <a href={`https://www.youtube.com/watch?v=${video.id}&list=${video.list}`} target="_blank" rel="noreferrer">
-                                <img style={{height: "100%", width: "100%"}} alt={video.title || title} src={`https://i.ytimg.com/vi/${video.id}/mqdefault.jpg`}/>
-                            </a>
-                        </div>
-                    )
-                )}
-                <div className={classnames(tileStyles['menu-view-tile'])} style={{height: "10rem"}}>
-                    <div className={styles['docs-home__video-panel__videos__all-videos']}>
-                        <a href="./videos/" style={{margin: "auto"}}>
-                            <div style={{flexDirection: "column"}}>
-                                <FontAwesomeIcon icon={faPlayCircle} size="6x"/>
-                                <div className={styles['docs-home__video-panel__videos__all-videos__title']}>All Videos</div>
-                            </div>
+        <div className={styles.section}>
+            <h2>{title}</h2>
+            <div className={styles.sectionInner}>
+                {videos.map((video) => (
+                    <div
+                        className={classnames(tileStyles.tile, tileStyles.videoTile, tileStyles.linkTile)}
+                        key={video.id}
+                    >
+                        <a
+                            href={`https://www.youtube.com/watch?v=${video.id}&list=${video.list}`}
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            <img
+                                style={{ height: '100%', width: '100%' }}
+                                alt={video.title || title}
+                                src={`https://i.ytimg.com/vi/${video.id}/mqdefault.jpg`}
+                            />
                         </a>
                     </div>
-                </div>
+                ))}
+                <a href="./videos/" className={classnames(tileStyles.tile, tileStyles.linkTile)}>
+                    <div className={styles.allVideosInner}>
+                        <Icon name="playCircle" svgClasses={styles.allVideosIcon} />
+                        <div className={tileStyles.linkTileTitle}>All Videos</div>
+                    </div>
+                </a>
             </div>
         </div>
-    )
+    );
 };
 
 /**
  * This is the home page for the documentation.
  */
-const HomePage = ({pageContext: {framework}}) => {
+const HomePage = ({ pageContext: { framework } }) => {
     // basics / getting started
     const gettingStartedItems = menuData[0].items[0].items;
 
     const frameworkVideos = featuredVideos[framework];
 
+    const otherFrameworks = () => {
+        const frameworks = supportedFrameworks.filter((f) => {
+            return f !== framework;
+        });
+
+        return (
+            <span style={{ textTransform: 'capitalize' }}>
+                <a href={`../${frameworks[0]}-data-grid/`}>{frameworks[0]}</a>,{' '}
+                <a href={`../${frameworks[1]}-data-grid/`}>{frameworks[1]}</a>, or{' '}
+                <a href={`../${frameworks[2]}-data-grid/`}>{frameworks[2]}</a>
+            </span>
+        );
+    };
+
     return (
-        <div className={styles['docs-home']}>
+        <div className={classnames(styles.docsHome, 'ag-styles')}>
             {/*eslint-disable-next-line react/jsx-pascal-case*/}
             <SEO
                 title="Documentation"
@@ -172,9 +193,26 @@ const HomePage = ({pageContext: {framework}}) => {
                 framework={framework}
                 pageName="home"
             />
-            <GettingStarted framework={framework} data={gettingStartedItems}/>
-            {frameworkVideos && frameworkVideos.length > 0 && <VideoPanel framework={framework} videos={frameworkVideos}/>}
-            <MenuView framework={framework} data={menuData}/>
+
+            <div className={classnames(styles.section, styles.introSection, 'font-size-responsive')}>
+                <h1>AG Grid {framework} Documentation</h1>
+                <p className="font-size-extra-large">Start developing with the best JavaScript Grid in the world.</p>
+                <p className="font-size-medium">
+                    You can get started with <a href="./getting-started/">a simple sample project and tutorial</a>,
+                    watch our extensive selection of <a href="./videos/">videos</a>, or use our documentation to learn
+                    how to <a href="./npm/">install with NPM</a> or review the{' '}
+                    <a href="./grid-options/">grid options</a>.
+                </p>
+                <p className="font-size-medium">
+                    Looking for documentation for another framework? Switch to {otherFrameworks()}.
+                </p>
+            </div>
+
+            <GettingStarted framework={framework} data={gettingStartedItems} />
+            {frameworkVideos && frameworkVideos.length > 0 && (
+                <VideoPanel framework={framework} videos={frameworkVideos} />
+            )}
+            <MenuView framework={framework} data={menuData} />
         </div>
     );
 };

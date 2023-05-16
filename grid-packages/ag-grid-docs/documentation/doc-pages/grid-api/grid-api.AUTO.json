@@ -326,19 +326,19 @@
     "type": { "arguments": { "value": "boolean" }, "returnType": "void" }
   },
   "selectAll": {
-    "description": "/** Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded.\n     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`\n     */",
+    "description": "/** Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded.\n     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAll'`\n     */",
     "type": {
       "arguments": { "source": "SelectionEventSourceType = 'apiSelectAll'" }
     }
   },
   "deselectAll": {
-    "description": "/** Clear all row selections, regardless of filtering.\n     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`\n     */",
+    "description": "/** Clear all row selections, regardless of filtering.\n     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAll'`\n     */",
     "type": {
       "arguments": { "source": "SelectionEventSourceType = 'apiSelectAll'" }
     }
   },
   "selectAllFiltered": {
-    "description": "/** Select all filtered rows.\n     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`\n     */",
+    "description": "/** Select all filtered rows.\n     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllFiltered'`\n     */",
     "type": {
       "arguments": {
         "source": "SelectionEventSourceType = 'apiSelectAllFiltered'"
@@ -346,7 +346,7 @@
     }
   },
   "deselectAllFiltered": {
-    "description": "/** Clear all filtered selections.\n     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`\n     */",
+    "description": "/** Clear all filtered selections.\n     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllFiltered'`\n     */",
     "type": {
       "arguments": {
         "source": "SelectionEventSourceType = 'apiSelectAllFiltered'"
@@ -369,7 +369,7 @@
     }
   },
   "selectAllOnCurrentPage": {
-    "description": "/** Select all rows on the current page.\n     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`\n     */",
+    "description": "/** Select all rows on the current page.\n     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllCurrentPage'`\n     */",
     "type": {
       "arguments": {
         "source": "SelectionEventSourceType = 'apiSelectAllCurrentPage'"
@@ -377,7 +377,7 @@
     }
   },
   "deselectAllOnCurrentPage": {
-    "description": "/** Clear all filtered on the current page.\n     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`\n     */",
+    "description": "/** Clear all filtered on the current page.\n     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllCurrentPage'`\n     */",
     "type": {
       "arguments": {
         "source": "SelectionEventSourceType = 'apiSelectAllCurrentPage'"

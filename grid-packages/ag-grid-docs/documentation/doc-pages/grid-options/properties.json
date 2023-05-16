@@ -379,14 +379,7 @@
                 "url": "/integrated-charts-container/"
             }
         },
-        "chartThemes": {
-            "default": [
-                "ag-default",
-                "ag-material",
-                "ag-pastel",
-                "ag-vivid",
-                "ag-solar"
-            ],
+        "chartThemes": {            
             "more": {
                 "name": "Provided Themes",
                 "url": "/integrated-charts-customisation/#provided-themes"

@@ -3126,7 +3126,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "chartThemes": {
-      "description": "/** The list of chart themes to be used. */",
+      "description": "/** The list of chart themes that a user can chose from in the chart settings panel.\n     * Default: `['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar' ]`\n     */",
       "type": { "returnType": "string[]", "optional": true }
     },
     "customChartThemes": {
@@ -14154,6 +14154,14 @@
       "description": "/** If `true`, text content will be encoded with XML character entities like `&amp;lt;` and `&amp;gt;`. This is only relevant when `exportMode='xml'`.\n     * Default: `false`\n     */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "suppressRowOutline": {
+      "description": "/** If `true`, the outline (controls to expand and collapse) for Row Groups will not be added automatically to the Excel Document.\n     * Default: `false`.\n     */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressColumnOutline": {
+      "description": "/** If `true`, the outline (controls to expand and collapse) for Group Columns will not be added automatically to the Excel Document.\n     * Default: `false`.\n     */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "mimeType": {
       "description": "/** The mimeType of the Excel file. Note that this defaults to `application/vnd.ms-excel` if exportMode is `xml`.\n     * Default: `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`\n     */",
       "type": { "returnType": "string", "optional": true }
@@ -22379,7 +22387,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "chartThemes": {
-      "description": "/** The list of chart themes to be used. */",
+      "description": "/** The list of chart themes that a user can chose from in the chart settings panel.\n     * Default: `['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar' ]`\n     */",
       "type": { "returnType": "string[]", "optional": true }
     },
     "customChartThemes": {
@@ -25215,7 +25223,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "chartThemes": {
-      "description": "/** The list of chart themes to be used. */",
+      "description": "/** The list of chart themes that a user can chose from in the chart settings panel.\n     * Default: `['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar' ]`\n     */",
       "type": { "returnType": "string[]", "optional": true }
     },
     "customChartThemes": {
@@ -28057,7 +28065,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "chartThemes": {
-      "description": "/** The list of chart themes to be used. */",
+      "description": "/** The list of chart themes that a user can chose from in the chart settings panel.\n     * Default: `['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar' ]`\n     */",
       "type": { "returnType": "string[]", "optional": true }
     },
     "customChartThemes": {

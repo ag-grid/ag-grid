@@ -105,6 +105,22 @@ const Default = () => {
                     </div>
                 </div>
 
+                <div className={styles.homepageCustomers}>
+                    <div className={classNames(styles.customersInner, 'page-margin')}>
+                        <p className="font-size-small text-secondary">
+                            Trusted by developers at nine out of ten Fortune 500 companies
+                        </p>
+                        <div className={styles.customerLogos}>
+                            <img src="./images/customer-logos/at-and-t.svg" alt="AT & T logo" />
+                            <img src="./images/customer-logos/fed-ex.svg" alt="FedEx logo" />
+                            <img src="./images/customer-logos/wells-fargo.svg" alt="Wells Fargo logo" />
+                            <img src="./images/customer-logos/bank-of-america.svg" alt="Bank of America logo" />
+                            <img src="./images/customer-logos/procter-and-gamble.svg" alt="Procter & Gamble logo" />
+                            <img src="./images/customer-logos/cardinal-health.svg" alt="Cardinal Health logo" />
+                        </div>
+                    </div>
+                </div>
+
                 <section className={styles.automatedRowGroupingOuter}>
                     <div className={classNames('page-margin', styles.homepageExample)}>
                         <div className={styles.automatedRowGrouping}>

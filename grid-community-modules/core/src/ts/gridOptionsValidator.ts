@@ -67,7 +67,7 @@ export class GridOptionsValidator {
             if (this.gridOptionsService.exists('groupDefaultExpanded')) {
                 console.warn(msg('groupDefaultExpanded', 'isServerSideGroupOpenByDefault callback'));
             }
-            if (this.gridOptionsService.exists('groupIncludeFooter')) {
+            if (this.gridOptionsService.exists('groupIncludeFooter') && this.gridOptionsService.is('suppressServerSideInfiniteScroll')) {
                 console.warn(msg('groupIncludeFooter'));
             }
             if (this.gridOptionsService.exists('groupIncludeTotalFooter')) {

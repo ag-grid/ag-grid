@@ -18,7 +18,6 @@ import {
 } from './ApiDocumentation.types';
 import Code from './Code';
 import {
-    addMoreLink,
     convertMarkdown,
     convertUrl,
     escapeGenericCode,
@@ -30,6 +29,7 @@ import {
     getLongestNameLength,
     getTypeUrl,
     inferType,
+    removeDefaultValue,
     sortAndFilterProperties,
     writeAllInterfaces,
 } from './documentation-helpers';
@@ -105,7 +105,7 @@ export const InterfaceDocumentation: React.FC<any> = ({
             })
         );
         const escapedLines = escapeGenericCode(lines);
-        return <Code code={escapedLines} className={styles['reference__code-sample']} keepMarkup={true} />;
+        return <Code code={escapedLines} keepMarkup={true} />;
     }
 
     let props = {};
@@ -400,18 +400,14 @@ const Section: React.FC<SectionProps> = ({
     const wrap = !!config.maxLeftColumnWidth;
 
     return (
-        <>
+        <div className={classnames(styles.apiReferenceOuter, 'ag-styles')}>
             {header}
             <table
-                className={styles['reference']}
+                className={classnames(styles['reference'], styles.apiReference)}
                 style={config.overrideBottomMargin ? { marginBottom: config.overrideBottomMargin } : {}}
             >
                 <colgroup>
-                    <col className={styles['reference__expander-cell']}></col>
-                    <col
-                        className={wrap ? styles['reference__name-cell__wrap'] : undefined}
-                        style={{ width: leftColumnWidth + 'ch' }}
-                    ></col>
+                    <col></col>
                     <col></col>
                 </colgroup>
                 <tbody>{rows}</tbody>
@@ -426,7 +422,7 @@ const Section: React.FC<SectionProps> = ({
                     breadcrumbs={{ ...breadcrumbs }}
                 />
             ))}
-        </>
+        </div>
     );
 };
 
@@ -462,13 +458,6 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
         propDescription = formatJsDocString(propDescription);
         // process property object
         description = convertMarkdown(propDescription, framework);
-
-        const { more } = definition;
-
-        if (more != null && more.url && !config.hideMore) {
-            const seeMore = ` See <a href="${convertUrl(more.url, framework)}">${more.name}</a>.`;
-            description = addMoreLink(description, seeMore);
-        }
     } else {
         // this must be the parent of a child object
         if (definition.meta != null && definition.meta.description != null) {
@@ -476,6 +465,13 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
         }
 
         isObject = true;
+    }
+
+    // Default may or may not be on a new line in JsDoc but in both cases we want the default to be on the next line
+    let defaultValue = definition.default;
+    if (description != null && !defaultValue) {
+        const defaultReg = / Default: <code>(.*)<\/code>/;
+        defaultValue = description.match(defaultReg)?.length === 2 ? description.match(defaultReg)[1] : undefined;
     }
 
     let displayName = name;
@@ -543,73 +539,72 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
 
     const wrap = !!config.maxLeftColumnWidth;
 
+    // Split display name on capital letter, add <wbr> to improve text splitting across lines
+    const displayNameSplit = displayName
+        .split(/(?=[A-Z])/)
+        .reverse()
+        .reduce((acc, cv) => {
+            return `${cv}<wbr />` + acc;
+        });
+
+    const { more } = definition;
+
     return (
         <tr ref={propertyRef}>
-            <td
-                className={styles['reference__expander-cell']}
-                onClick={() => setExpanded(!isExpanded)}
-                role="presentation"
-            >
-                {showAdditionalDetails && (
-                    <div className={classnames(styles['reference__expander'], { [styles.isExpanded]: isExpanded })}>
-                        <Icon name="chevronRight" />
-                    </div>
-                )}
-            </td>
-            <td role="presentation">
-                <h6 id={idName} style={{ display: 'inline-flex' }} className="side-menu-exclude">
-                    <code
+            <td role="presentation" className={styles.leftColumn}>
+                <h6 id={idName} className={classnames(styles.name, 'side-menu-exclude')}>
+                    <span
                         onClick={() => setExpanded(!isExpanded)}
-                        dangerouslySetInnerHTML={{ __html: displayName }}
-                        className={
-                            wrap
-                                ? `${styles['reference__name']} ${styles['reference__name__wrap']}`
-                                : styles['reference__name']
-                        }
-                    ></code>
-                    <a href={`#${idName}`} className="docs-header-icon ag-styles" style={{ fontSize: 'small' }}>
+                        dangerouslySetInnerHTML={{ __html: displayNameSplit }}
+                    ></span>
+                    <a href={`#${idName}`} className="docs-header-icon ag-styles">
                         <Icon name="link" />
                     </a>
                 </h6>
 
-                <div
-                    title={typeUrl && isObject ? getInterfaceName(name) : propertyType}
-                    className={styles['reference__property']}
-                    onClick={() => setExpanded(!isExpanded)}
-                >
-                    {typeUrl ? (
-                        <a
-                            className={styles['reference__property-type']}
-                            href={typeUrl}
-                            target={typeUrl.startsWith('http') ? '_blank' : '_self'}
-                            rel="noreferrer"
-                        >
-                            {isObject ? getInterfaceName(name) : propertyType}
-                        </a>
-                    ) : (
-                        <span className={styles['reference__property-type']}>{propertyType}</span>
+                <div className={styles.metaList}>
+                    <div
+                        title={typeUrl && isObject ? getInterfaceName(name) : propertyType}
+                        className={styles.metaItem}
+                        onClick={() => setExpanded(!isExpanded)}
+                    >
+                        <span className={styles.metaLabel}>Type</span>
+                        {typeUrl ? (
+                            <a
+                                className={styles.metaValue}
+                                href={typeUrl}
+                                target={typeUrl.startsWith('http') ? '_blank' : '_self'}
+                                rel="noreferrer"
+                            >
+                                {isObject ? getInterfaceName(name) : propertyType}
+                            </a>
+                        ) : (
+                            <span className={styles.metaValue}>{propertyType}</span>
+                        )}
+                    </div>
+                    {defaultValue != null && (
+                        <div className={styles.metaItem}>
+                            <span className={styles.metaLabel}>Default</span>
+                            <span className={styles.metaValue}>{defaultValue}</span>
+                        </div>
                     )}
                 </div>
             </td>
-            <td>
+            <td className={styles.rightColumn}>
                 <div
                     onClick={() => setExpanded(!isExpanded)}
                     role="presentation"
-                    className={classnames(styles['reference__description'], {
+                    className={classnames(styles.description, {
                         [styles['reference__description--expanded']]: isExpanded,
                     })}
-                    dangerouslySetInnerHTML={{ __html: description }}
+                    dangerouslySetInnerHTML={{ __html: removeDefaultValue(description) }}
                 ></div>
                 {isObject && (
                     <div>
                         See <a href={`#reference-${id}.${name}`}>{name}</a> for more details.
                     </div>
                 )}
-                {definition.default != null && (
-                    <div>
-                        Default: <code>{formatJson(definition.default)}</code>
-                    </div>
-                )}
+
                 {definition.options != null && (
                     <div>
                         Options:{' '}
@@ -621,7 +616,25 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                         ))}
                     </div>
                 )}
-                {showAdditionalDetails && <div className={isExpanded ? '' : 'd-none'}>{codeSection}</div>}
+                <div className={styles.actions}>
+                    {showAdditionalDetails && (
+                        <button
+                            className={classnames(styles.seeMore, 'button-style-none')}
+                            onClick={() => setExpanded(!isExpanded)}
+                            role="presentation"
+                        >
+                            {!isExpanded ? 'More' : 'Hide'} details{' '}
+                            <Icon name={isExpanded ? 'chevronUp' : 'chevronDown'} />
+                        </button>
+                    )}
+                    {more != null && more.url && !config.hideMore && (
+                        <span>
+                            <span className="text-secondary">See:</span>{' '}
+                            <a href="${convertUrl(more.url, framework)}">{more.name}</a>
+                        </span>
+                    )}
+                </div>
+                {showAdditionalDetails && isExpanded && <div>{codeSection}</div>}
             </td>
         </tr>
     );
@@ -847,7 +860,7 @@ const FunctionCodeSample: React.FC<FunctionCode> = ({ framework, name, type, con
 
     return (
         <>
-            <Code code={escapedLines} className={styles['reference__code-sample']} keepMarkup={true} />
+            <Code code={escapedLines} keepMarkup={true} />
             {customHTML ?? customHTML}
         </>
     );

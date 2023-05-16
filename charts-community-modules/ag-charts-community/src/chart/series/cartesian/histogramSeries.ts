@@ -49,9 +49,9 @@ import {
     fixNumericExtent,
     GroupByFn,
     PropertyDefinition,
-    SORT_DOMAIN_GROUPS,
 } from '../../data/dataModel';
 import { area, groupAverage, groupCount, sum } from '../../data/aggregateFunctions';
+import { SORT_DOMAIN_GROUPS } from '../../data/processors';
 
 const HISTOGRAM_AGGREGATIONS = ['count', 'sum', 'mean'];
 const HISTOGRAM_AGGREGATION = predicateWithMessage(

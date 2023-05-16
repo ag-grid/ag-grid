@@ -299,7 +299,10 @@ export interface GridOptions<TData = any> {
     // *** Integrated Charts *** //
     /** Set to `true` to Enable Charts. Default: `false` */
     enableCharts?: boolean;
-    /** The list of chart themes to be used. */
+    /**
+     * The list of chart themes that a user can chose from in the chart settings panel.
+     * Default: `['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar' ]`
+     */
     chartThemes?: string[];
     /** A map containing custom chart themes. */
     customChartThemes?: { [name: string]: AgChartTheme };

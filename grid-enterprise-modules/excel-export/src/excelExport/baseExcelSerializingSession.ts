@@ -44,6 +44,8 @@ export interface ExcelGridSerializingParams extends GridSerializingParams {
     margins?: ExcelSheetMargin;
     pageSetup?: ExcelSheetPageSetup;
     sheetName: string;
+    suppressColumnOutline?: boolean;
+    suppressRowOutline?: boolean;
     styleLinker: (params: StyleLinkerInterface) => string[];
     addImageToCell?: (rowIndex: number, column: Column, value: string) => { image: ExcelImage, value?: string } | undefined;
     suppressTextAsCDATA?: boolean;
@@ -88,6 +90,11 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
     public addCustomContent(customContent: ExcelRow[]): void {
         customContent.forEach(row => {
             const rowLen = this.rows.length + 1;
+            let outlineLevel: number | undefined;
+
+            if (!this.config.suppressRowOutline && row.outlineLevel != null) {
+                outlineLevel = row.outlineLevel;
+            }
 
             const rowObj: ExcelRow = {
                 height: getHeightFromProperty(rowLen, row.height || this.config.rowHeight),
@@ -115,7 +122,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
 
                     return this.createCell(excelStyleId, type, value);
                 }),
-                outlineLevel: row.outlineLevel || undefined
+                outlineLevel
             };
 
             if (row.collapsed != null) { rowObj.collapsed = row.collapsed; }
@@ -229,7 +236,11 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
                 skipCols -= 1;
                 return;
             }
-            if (!this.config.gridOptionsService.is('groupHideOpenParents') && node.level != null) {
+
+            const isGroupHideOpenParents = this.config.gridOptionsService.is('groupHideOpenParents');
+            const isSuppressRowOutline = !!this.config.suppressRowOutline;
+
+            if (!isGroupHideOpenParents && !isSuppressRowOutline && node.level != null) {
                 const padding = node.footer ? 1 : 0;
                 _.last(this.rows).outlineLevel = node.level + padding;
             }
