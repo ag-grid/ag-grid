@@ -23,7 +23,7 @@ const {
 } = _ModuleSupport;
 const { Rect, Label, toTooltipHtml } = _Scene;
 const { ContinuousScale, ColorScale } = _Scale;
-const { sanitizeHtml } = _Util;
+const { sanitizeHtml, Logger } = _Util;
 
 interface HeatmapNodeDatum extends Required<_ModuleSupport.CartesianSeriesNodeDatum> {
     readonly label: _Util.MeasuredLabel;
@@ -201,6 +201,13 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
         const { data, visible, xAxis, yAxis } = this;
 
         if (!(data && visible && xAxis && yAxis)) {
+            return [];
+        }
+
+        if (xAxis.type !== 'category' || yAxis.type !== 'category') {
+            Logger.warnOnce(
+                `Heatmap series expected axes to have "category" type, but received "${xAxis.type}" and "${yAxis.type}" instead.`
+            );
             return [];
         }
 
