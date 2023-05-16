@@ -52,6 +52,7 @@ import {
 } from '../../data/dataModel';
 import { area, groupAverage, groupCount, sum } from '../../data/aggregateFunctions';
 import { SORT_DOMAIN_GROUPS } from '../../data/processors';
+import * as easing from '../../../motion/easing';
 
 const HISTOGRAM_AGGREGATIONS = ['count', 'sum', 'mean'];
 const HISTOGRAM_AGGREGATION = predicateWithMessage(
@@ -436,9 +437,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             const fillOpacity = isDatumHighlighted ? highlightFillOpacity : seriesFillOpacity;
 
             rect.x = datum.x;
-            rect.y = datum.y;
             rect.width = datum.width;
-            rect.height = datum.height;
             rect.fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : datum.fill;
             rect.stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : datum.stroke;
             rect.fillOpacity = fillOpacity;
@@ -569,6 +568,56 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             },
         ];
         return legendData;
+    }
+
+    animateEmptyUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, HistogramNodeDatum>> }) {
+        let startingY = 0;
+        datumSelections.forEach((datumSelection) =>
+            datumSelection.each((_, datum) => {
+                startingY = Math.max(startingY, datum.height + datum.y);
+            })
+        );
+
+        datumSelections.forEach((datumSelection) => {
+            datumSelection.each((rect, datum) => {
+                this.animationManager?.animateMany(
+                    `${this.id}_empty-update-ready_${rect.id}`,
+                    [
+                        { from: startingY, to: datum.y },
+                        { from: 0, to: datum.height },
+                    ],
+                    {
+                        disableInteractions: true,
+                        duration: 1000,
+                        ease: easing.linear,
+                        repeat: 0,
+                        onUpdate([y, height]) {
+                            rect.y = y;
+                            rect.height = height;
+
+                            rect.x = datum.x;
+                            rect.width = datum.width;
+                        },
+                    }
+                );
+            });
+        });
+    }
+
+    animateReadyUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, HistogramNodeDatum>> }) {
+        datumSelections.forEach((datumSelection) => {
+            datumSelection.each((rect, datum) => {
+                rect.y = datum.y;
+                rect.height = datum.height;
+            });
+        });
+    }
+
+    animateReadyHighlightReady(highlightSelection: Selection<Rect, HistogramNodeDatum>) {
+        highlightSelection.each((rect, datum) => {
+            rect.y = datum.y;
+            rect.height = datum.height;
+        });
     }
 
     protected isLabelEnabled() {
