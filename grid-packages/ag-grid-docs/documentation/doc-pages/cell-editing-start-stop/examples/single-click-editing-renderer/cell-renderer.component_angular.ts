@@ -16,7 +16,7 @@ export class CellRenderer implements ICellRendererAngularComp {
 
     agInit(params: ICellRendererParams<IOlympicData, string>): void {
         this.params = params;
-        this.displayValue = params.value
+        this.displayValue = params.value ?? '';
     }
 
     onClick() {

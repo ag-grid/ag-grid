@@ -99,6 +99,12 @@
     "description": "/** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property. */",
     "type": { "returnType": "{ [key: string]: ColDef<TData>; }" }
   },
+  "dataTypeDefinitions": {
+    "description": "/** An object map of cell data types to their definitions.\n     * Cell data types can either override/update the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`),\n     * or can be custom data types.\n     */",
+    "type": {
+      "returnType": "{\n        [cellDataType: string]: DataTypeDefinition<TData>;\n    }"
+    }
+  },
   "maintainColumnOrder": {
     "description": "/** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */",
     "type": { "returnType": "boolean" }

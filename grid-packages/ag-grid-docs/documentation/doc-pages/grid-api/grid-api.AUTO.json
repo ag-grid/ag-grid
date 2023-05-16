@@ -497,8 +497,8 @@
   },
   "getColumnDef": {
     "type": {
-      "arguments": { "key": "string | Column" },
-      "returnType": "ColDef<TData> | null"
+      "arguments": { "key": "string | Column<TValue>" },
+      "returnType": "ColDef<TData, TValue> | null"
     }
   },
   "getColumnDefs": {
@@ -1025,8 +1025,11 @@
   "getValue": {
     "description": "/** Gets the value for a column for a particular `rowNode` (row).\n     * This is useful if you want the raw value of a cell e.g. if implementing your own CSV export.\n     */",
     "type": {
-      "arguments": { "colKey": "string | Column", "rowNode": "IRowNode" },
-      "returnType": "any"
+      "arguments": {
+        "colKey": "string | Column<TValue>",
+        "rowNode": "IRowNode"
+      },
+      "returnType": "TValue | null | undefined"
     }
   },
   "addEventListener": {
@@ -1383,6 +1386,15 @@
   "getDisplayedRowCount": {
     "description": "/** Returns the total number of displayed rows. */",
     "type": { "arguments": {}, "returnType": "number" }
+  },
+  "setDataTypeDefinitions": {
+    "description": "/** Resets the data type definitions. This will update the columns in the grid. */",
+    "type": {
+      "arguments": {
+        "dataTypeDefinitions": "{ [cellDataType: string]: DataTypeDefinition<TData>; }"
+      },
+      "returnType": "void"
+    }
   },
   "setPagination": {
     "description": "/** Set whether the grid paginates the data or not.\n     *  - `true` to enable pagination\n     *  - `false` to disable pagination\n     */",

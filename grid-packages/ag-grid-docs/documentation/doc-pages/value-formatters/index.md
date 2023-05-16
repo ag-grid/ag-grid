@@ -39,3 +39,15 @@ The example below shows value formatters in action.
  - Columns`(A)` and `(B)` use a `bracketsFormatter` to display the value inside brackets
 
 <grid-example title='Value Formatters' name='value-formatters' type='generated'></grid-example>
+
+## Use Value Formatter for Export
+
+Sometimes you may want to use the value formatter when performing other grid operations that need values in string format. This is possible by setting the column definition property `useValueFormatterForExport = true`.
+
+<api-documentation source='column-properties/properties.json' section="display" names='["useValueFormatterForExport"]' ></api-documentation>
+
+This applies to the following features:
+- [Copy/Cut](/clipboard/#processing-pasted-data)
+- [Fill Handle](/range-selection-fill-handle/)
+- [CSV Export](/csv-export/)
+- [Excel Export](/excel-export-customising-content/)

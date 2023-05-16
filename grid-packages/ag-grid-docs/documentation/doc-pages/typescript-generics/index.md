@@ -118,6 +118,7 @@ function onRowSelected(event: RowSelectedEvent&lt;ICar>) {
 |The `&lt;AgGridReact>` component accepts a generic parameter as `&lt;AgGridReact&lt;ICar>>`.
 |
 </snippet>
+</framework-specific-section>
 
 <framework-specific-section frameworks="react">
 <snippet transform={false} language="jsx">
@@ -166,9 +167,13 @@ A good example of this is [Row Grouping](/grouping). The `onRowSelected` event i
 
 When working with cell values it is possible to provide a generic interface for the `value` property. While this will often be a primitive type, such as `string` or `number`, it can also be a complex type. Using a generic for the cell value will enable auto-completion and type-checking.
 
+### Configure via ColDef
+
+Set the cell value type directly on the column definition interface via `ColDef<TData, TValue>` (e.g. `ColDef<ICar, number>`). This will be passed through to all properties in the column definition that use the cell value type.
+
 ### Configure via Interfaces
 
-The generic parameter `TValue` needs to be explicitly provided to each interface. Here is an example of a `valueFormatter` for the price column. The `params.value` property is correctly typed as a `number` due to typing the params argument as `ValueFormatterParams<ICar, number>`.
+Each interface that accepts a generic type of `TValue` can also be configured individually. Here is an example of a `valueFormatter` for the price column. The `params.value` property is correctly typed as a `number` due to typing the params argument as `ValueFormatterParams<ICar, number>`.
 
 <snippet transform={false} langauge="ts">
 |const colDefs: ColDef&lt;ICar>[] = [
@@ -184,9 +189,9 @@ The generic parameter `TValue` needs to be explicitly provided to each interface
 
 The `TValue` generic type is also supported for cell renderers / editors by `ICellRendererParams<TData, TValue>` and `ICellEditorParams<TData, TValue>` respectively.
 
-### Typed: TValue | undefined
+### Typed: TValue | null | undefined
 
-For a number of events and callbacks when a generic interface is provided the `value` property is typed as `TValue | undefined` instead of `any`. This is because it is possible for the `value` property to be undefined under certain grid configurations. 
+For a number of events and callbacks when a generic interface is provided, the `value` property is typed as `TValue | null | undefined` instead of `any`. This is because it is possible for the `value` property to be `undefined` under certain grid configurations, and it can be `null` when cell editing is enabled and the value has been deleted.
 
 ## Context: \<TContext\>
 

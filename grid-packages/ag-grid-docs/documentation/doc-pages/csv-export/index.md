@@ -11,7 +11,7 @@ The same data that is in the grid gets exported, but none of the GUI representat
 - The raw values, and not the result of cell renderer will get used, meaning:
     - Value Getters will be used.
     - Cell Renderers will **NOT** be used.
-    - Cell Formatters will **NOT** be used (use `processCellCallback` instead).
+    - Cell Formatters will **NOT** be used (use `processCellCallback` instead), unless [Use Value Formatter for Export](/value-formatters/#use-value-formatter-for-export) is enabled.
 
 - Cell styles are not exported.
 - If row grouping:

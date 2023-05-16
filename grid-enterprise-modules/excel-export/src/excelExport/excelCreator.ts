@@ -16,6 +16,8 @@ import {
     ExcelRow,
     CssClassApplier,
     ColumnGroup,
+    ValueFormatterService,
+    ValueParserService
 } from '@ag-grid-community/core';
 import { ExcelXmlSerializingSession } from './excelXmlSerializingSession';
 import { ExcelXlsxSerializingSession } from './excelXlsxSerializingSession';
@@ -116,6 +118,8 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
 
     @Autowired('gridSerializer') private gridSerializer: GridSerializer;
     @Autowired('gridOptionsService') gridOptionsService: GridOptionsService;
+    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
+    @Autowired('valueParserService') private valueParserService: ValueParserService;
 
     private exportMode: string = 'xlsx';
 
@@ -217,7 +221,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
     }
 
     public createSerializingSession(params: ExcelExportParams): SerializingSession {
-        const { columnModel, valueService, gridOptionsService } = this;
+        const { columnModel, valueService, gridOptionsService, valueFormatterService, valueParserService } = this;
         const isXlsx = this.getExportMode() === 'xlsx';
 
         let sheetName = 'ag-grid';
@@ -231,6 +235,8 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
             columnModel,
             valueService,
             gridOptionsService,
+            valueFormatterService,
+            valueParserService,
             headerRowHeight: params.headerRowHeight || params.rowHeight,
             baseExcelStyles: this.gridOptionsService.get('excelStyles') || [],
             styleLinker: this.styleLinker.bind(this)

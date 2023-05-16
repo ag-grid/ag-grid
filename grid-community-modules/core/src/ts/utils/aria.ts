@@ -153,3 +153,12 @@ export function setAriaControls(controllerElement: Element, controlledElement: E
     toggleAriaAttribute(controllerElement, 'controls', controlledElement.id);
     setAriaLabelledBy(controlledElement, controllerElement.id);
 }
+
+export function getAriaCheckboxStateName(translate: (key: string, defaultValue: string, variableValues?: string[]) => string, state?: boolean): string {
+    return state === undefined
+        ? translate('ariaIndeterminate', 'indeterminate')
+        : (state === true
+            ? translate('ariaChecked', 'checked')
+            : translate('ariaUnchecked', 'unchecked')
+        );
+}
