@@ -1,4 +1,5 @@
 import { BaseManager } from './baseManager';
+import { InteractionManager } from './interactionManager';
 import {
     animate as baseAnimate,
     AnimationControls,
@@ -17,7 +18,9 @@ interface AnimationEvent<AnimationEventType> {
     deltaMs: number;
 }
 
-interface AnimationOptions<T> extends Omit<BaseAnimationOptions<T>, 'driver'> {}
+interface AnimationOptions<T> extends Omit<BaseAnimationOptions<T>, 'driver'> {
+    disableInteractions?: boolean;
+}
 
 interface AnimationManyOptions<T> extends Omit<AnimationOptions<T>, 'from' | 'to' | 'onUpdate'> {
     onUpdate: (props: Array<T>) => void;
@@ -36,10 +39,14 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
     private lastTime?: number;
     private readyToPlay = false;
 
+    private interactionManager: InteractionManager;
+
     public skipAnimations = false;
 
-    constructor() {
+    constructor(interactionManager: InteractionManager) {
         super();
+
+        this.interactionManager = interactionManager;
 
         window.addEventListener('DOMContentLoaded', () => {
             this.readyToPlay = true;
@@ -87,7 +94,7 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
         const optsExtra = {
             ...opts,
             autoplay: this.isPlaying ? opts.autoplay : false,
-            driver: this.createDriver(id),
+            driver: this.createDriver(id, opts.disableInteractions),
         };
         const controller = baseAnimate(optsExtra);
 
@@ -176,7 +183,7 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
         return tween(optsExtra);
     }
 
-    private createDriver(id: AnimationId): Driver {
+    private createDriver(id: AnimationId, disableInteractions?: boolean): Driver {
         return (update: (time: number) => void) => {
             return {
                 start: () => {
@@ -184,11 +191,19 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
                     if (this.requestId == null) {
                         this.startAnimationCycle();
                     }
+
+                    if (disableInteractions) {
+                        this.interactionManager.pause(`animation_${id}`);
+                    }
                 },
                 stop: () => {
                     this.updaters = this.updaters.filter(([uid]) => uid !== id);
                     if (this.updaters.length <= 0) {
                         this.cancelAnimationFrame();
+                    }
+
+                    if (disableInteractions) {
+                        this.interactionManager.resume(`animation_${id}`);
                     }
                 },
                 reset: () => {},
