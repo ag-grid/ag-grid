@@ -8,7 +8,7 @@ import { RowNode } from '../entities/rowNode';
 import { stopPropagationForAgGrid } from '../utils/event';
 import { CheckboxSelectionCallback } from '../entities/colDef';
 import { GroupCheckboxSelectionCallback } from './cellRenderers/groupCellRendererCtrl';
-import { getAriaCheckboxStateName } from '../utils/aria';
+import { getAriaCheckboxStateName, setAriaLive } from '../utils/aria';
 
 export class CheckboxSelectionComponent extends Component {
 
