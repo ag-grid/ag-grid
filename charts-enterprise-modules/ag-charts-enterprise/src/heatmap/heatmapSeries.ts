@@ -171,6 +171,12 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
             const colorKeyIdx = this.dataModel.resolveProcessedDataIndexById('colorValue')?.index ?? -1;
             colorScale.domain = colorDomain ?? this.processedData!.domain.values[colorKeyIdx];
             colorScale.range = colorRange;
+            if (colorScale.domain.length > colorScale.range.length) {
+                Logger.warnOnce(
+                    `Heatmap series have "colorDomain" and "colorRange" count mismatch. The count of "colorDomain" values should be less or equal to the count of "colorRange" values.`
+                );
+                colorScale.domain = [colorScale.domain[0], colorScale.domain[colorScale.domain.length - 1]];
+            }
         }
     }
 
