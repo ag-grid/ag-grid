@@ -35,6 +35,7 @@ import {
     AgCartesianSeriesMarkerFormat,
 } from '../../agChartOptions';
 import { DataModel } from '../../data/dataModel';
+import * as easing from '../../../motion/easing';
 
 interface ScatterNodeDatum extends Required<CartesianSeriesNodeDatum> {
     readonly label: MeasuredLabel;
@@ -376,7 +377,6 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             node.fill = (format && format.fill) || fill;
             node.stroke = (format && format.stroke) || stroke;
             node.strokeWidth = format?.strokeWidth ?? strokeWidth;
-            node.size = format && format.size !== undefined ? format.size : size;
             node.fillOpacity = fillOpacity ?? 1;
             node.strokeOpacity = strokeOpacity ?? 1;
             node.translationX = datum.point?.x ?? 0;
@@ -551,6 +551,72 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             },
         ];
         return legendData;
+    }
+
+    animateEmptyUpdateReady({ markerSelections }: { markerSelections: Array<Selection<Marker, ScatterNodeDatum>> }) {
+        markerSelections.forEach((markerSelection) => {
+            markerSelection.each((marker, datum) => {
+                const format = this.animateFormatter(marker, datum);
+                const size = datum.point?.size ?? 0;
+
+                const to = format && format.size !== undefined ? format.size : size;
+
+                this.animationManager?.animate(`${this.id}_empty-update-ready_${marker.id}`, {
+                    from: 0,
+                    to: to,
+                    disableInteractions: true,
+                    duration: 1000,
+                    ease: easing.linear,
+                    repeat: 0,
+                    onUpdate(size) {
+                        marker.size = size;
+                    },
+                });
+            });
+        });
+    }
+
+    animateReadyUpdateReady({ markerSelections }: { markerSelections: Array<Selection<Marker, ScatterNodeDatum>> }) {
+        markerSelections.forEach((markerSelection) => {
+            markerSelection.each((marker, datum) => {
+                const format = this.animateFormatter(marker, datum);
+                const size = datum.point?.size ?? 0;
+
+                marker.size = format && format.size !== undefined ? format.size : size;
+            });
+        });
+    }
+
+    animateFormatter(marker: Marker, datum: ScatterNodeDatum) {
+        const {
+            xKey,
+            yKey,
+            marker: { strokeWidth: markerStrokeWidth },
+            id: seriesId,
+        } = this;
+        const { formatter } = this.marker;
+
+        const fill = datum.fill ?? marker.fill;
+        const stroke = marker.stroke;
+        const strokeWidth = markerStrokeWidth ?? 1;
+        const size = datum.point?.size ?? 0;
+
+        let format: AgCartesianSeriesMarkerFormat | undefined = undefined;
+        if (formatter) {
+            format = formatter({
+                datum: datum.datum,
+                xKey,
+                yKey,
+                fill,
+                stroke,
+                strokeWidth,
+                size,
+                highlighted: false,
+                seriesId,
+            });
+        }
+
+        return format;
     }
 
     protected isLabelEnabled() {

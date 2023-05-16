@@ -983,13 +983,11 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         this.nodeDataRefresh = true;
     }
 
-    animateEmptyUpdateReady(subGroups: Array<Selection<Rect, BarNodeDatum>>) {
-        if (!this.processedData) return;
-
+    animateEmptyUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
         let startingX = Infinity;
         let startingY = 0;
-        subGroups.forEach((subGroup) =>
-            subGroup.each((_, datum) => {
+        datumSelections.forEach((datumSelection) =>
+            datumSelection.each((_, datum) => {
                 if (datum.yValue >= 0) {
                     startingX = Math.min(startingX, datum.x);
                     startingY = Math.max(startingY, datum.height + datum.y);
@@ -997,8 +995,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             })
         );
 
-        subGroups.forEach((subGroup) => {
-            subGroup.each((rect, datum) => {
+        datumSelections.forEach((datumSelection) => {
+            datumSelection.each((rect, datum) => {
                 if (this.getBarDirection() === ChartAxisDirection.X) {
                     this.animationManager?.animateMany(
                         `${this.id}_empty-update-ready_${rect.id}`,
@@ -1046,9 +1044,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         });
     }
 
-    animateReadyUpdateReady(subGroups: Array<Selection<Rect, BarNodeDatum>>) {
-        subGroups.forEach((subGroup) => {
-            subGroup.each((rect, datum) => {
+    animateReadyUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
+        datumSelections.forEach((datumSelection) => {
+            datumSelection.each((rect, datum) => {
                 rect.x = datum.x;
                 rect.y = datum.y;
                 rect.width = datum.width;
