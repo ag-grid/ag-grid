@@ -985,61 +985,36 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
     animateEmptyUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
         let startingX = Infinity;
-        let startingY = 0;
         datumSelections.forEach((datumSelection) =>
             datumSelection.each((_, datum) => {
                 if (datum.yValue >= 0) {
                     startingX = Math.min(startingX, datum.x);
-                    startingY = Math.max(startingY, datum.height + datum.y);
                 }
             })
         );
 
         datumSelections.forEach((datumSelection) => {
             datumSelection.each((rect, datum) => {
-                if (this.getBarDirection() === ChartAxisDirection.X) {
-                    this.animationManager?.animateMany(
-                        `${this.id}_empty-update-ready_${rect.id}`,
-                        [
-                            { from: startingX, to: datum.x },
-                            { from: 0, to: datum.width },
-                        ],
-                        {
-                            disableInteractions: true,
-                            duration: 1000,
-                            ease: easing.linear,
-                            repeat: 0,
-                            onUpdate([x, width]) {
-                                rect.x = x;
-                                rect.width = width;
+                this.animationManager?.animateMany(
+                    `${this.id}_empty-update-ready_${rect.id}`,
+                    [
+                        { from: startingX, to: datum.x },
+                        { from: 0, to: datum.width },
+                    ],
+                    {
+                        disableInteractions: true,
+                        duration: 1000,
+                        ease: easing.linear,
+                        repeat: 0,
+                        onUpdate([x, width]) {
+                            rect.x = x;
+                            rect.width = width;
 
-                                rect.y = datum.y;
-                                rect.height = datum.height;
-                            },
-                        }
-                    );
-                } else {
-                    this.animationManager?.animateMany(
-                        `${this.id}_empty-update-ready_${rect.id}`,
-                        [
-                            { from: startingY, to: datum.y },
-                            { from: 0, to: datum.height },
-                        ],
-                        {
-                            disableInteractions: true,
-                            duration: 1000,
-                            ease: easing.linear,
-                            repeat: 0,
-                            onUpdate([y, height]) {
-                                rect.y = y;
-                                rect.height = height;
-
-                                rect.x = datum.x;
-                                rect.width = datum.width;
-                            },
-                        }
-                    );
-                }
+                            rect.y = datum.y;
+                            rect.height = datum.height;
+                        },
+                    }
+                );
             });
         });
     }
@@ -1090,5 +1065,41 @@ export class ColumnSeries extends BarSeries {
 
     protected getCategoryDirection() {
         return ChartAxisDirection.X;
+    }
+
+    animateEmptyUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
+        let startingY = 0;
+        datumSelections.forEach((datumSelection) =>
+            datumSelection.each((_, datum) => {
+                if (datum.yValue >= 0) {
+                    startingY = Math.max(startingY, datum.height + datum.y);
+                }
+            })
+        );
+
+        datumSelections.forEach((datumSelection) => {
+            datumSelection.each((rect, datum) => {
+                this.animationManager?.animateMany(
+                    `${this.id}_empty-update-ready_${rect.id}`,
+                    [
+                        { from: startingY, to: datum.y },
+                        { from: 0, to: datum.height },
+                    ],
+                    {
+                        disableInteractions: true,
+                        duration: 1000,
+                        ease: easing.linear,
+                        repeat: 0,
+                        onUpdate([y, height]) {
+                            rect.y = y;
+                            rect.height = height;
+
+                            rect.x = datum.x;
+                            rect.width = datum.width;
+                        },
+                    }
+                );
+            });
+        });
     }
 }
