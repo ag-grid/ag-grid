@@ -39,7 +39,7 @@ export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<Seri
         return [];
     }
 
-    async computeLabelsBBox(_options: { hideWhenNecessary: boolean }, _seriesRect: BBox): Promise<BBox | null> {
+    computeLabelsBBox(_options: { hideWhenNecessary: boolean }, _seriesRect: BBox): BBox | null {
         return null;
     }
 }

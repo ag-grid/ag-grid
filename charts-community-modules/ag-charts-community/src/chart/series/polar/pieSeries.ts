@@ -419,14 +419,18 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.processedData = this.dataModel.processData(data);
     }
 
-    async maybeRefreshNodeData() {
+    maybeRefreshNodeData() {
         if (!this.nodeDataRefresh) return;
-        const [{ nodeData = [] } = {}] = await this.createNodeData();
+        const [{ nodeData = [] } = {}] = this._createNodeData();
         this.nodeData = nodeData;
         this.nodeDataRefresh = false;
     }
 
     async createNodeData() {
+        return this._createNodeData();
+    }
+
+    private _createNodeData() {
         const { id: seriesId, processedData, dataModel, rotation, angleScale } = this;
 
         if (!processedData || !dataModel || processedData.type !== 'ungrouped') return [];
@@ -654,7 +658,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     async update({ seriesRect }: { seriesRect: BBox }) {
         const { title } = this;
 
-        await this.maybeRefreshNodeData();
+        this.maybeRefreshNodeData();
         this.updateTitleNodes();
         this.updateRadiusScale();
         this.updateInnerCircleNodes();
@@ -1075,12 +1079,12 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         });
     }
 
-    async computeLabelsBBox(options: { hideWhenNecessary: boolean }, seriesRect: BBox) {
+    computeLabelsBBox(options: { hideWhenNecessary: boolean }, seriesRect: BBox) {
         const { radiusScale, calloutLabel, calloutLine } = this;
         const calloutLength = calloutLine.length;
         const { offset, maxCollisionOffset } = calloutLabel;
 
-        await this.maybeRefreshNodeData();
+        this.maybeRefreshNodeData();
 
         this.updateRadiusScale();
         this.computeCalloutLabelCollisionOffsets();

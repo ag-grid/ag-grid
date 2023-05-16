@@ -19,7 +19,7 @@ export class PolarChart extends Chart {
 
         const fullSeriesRect = shrinkRect.clone();
         this.computeSeriesRect(shrinkRect);
-        await this.computeCircle();
+        this.computeCircle();
 
         const hoverRectPadding = 20;
         const hoverRect = shrinkRect.clone().grow(hoverRectPadding);
@@ -46,7 +46,7 @@ export class PolarChart extends Chart {
         this.seriesRect = shrinkRect;
     }
 
-    private async computeCircle() {
+    private computeCircle() {
         const seriesBox = this.seriesRect!;
         const polarSeries = this.series.filter((series) => {
             return series instanceof PolarSeries;
@@ -69,7 +69,7 @@ export class PolarChart extends Chart {
         const shake = async ({ hideWhenNecessary = false } = {}) => {
             const labelBoxes = [];
             for (const series of polarSeries) {
-                const box = await series.computeLabelsBBox({ hideWhenNecessary }, seriesBox);
+                const box = series.computeLabelsBBox({ hideWhenNecessary }, seriesBox);
                 if (box == null) continue;
 
                 labelBoxes.push(box);
@@ -91,11 +91,11 @@ export class PolarChart extends Chart {
             radius = refined.radius;
         };
 
-        await shake(); // Initial attempt
-        await shake(); // Precise attempt
-        await shake(); // Just in case
-        await shake({ hideWhenNecessary: true }); // Hide unnecessary labels
-        await shake({ hideWhenNecessary: true }); // Final result
+        shake(); // Initial attempt
+        shake(); // Precise attempt
+        shake(); // Just in case
+        shake({ hideWhenNecessary: true }); // Hide unnecessary labels
+        shake({ hideWhenNecessary: true }); // Final result
     }
 
     private refineCircle(labelsBox: BBox, radius: number) {
