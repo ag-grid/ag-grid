@@ -24,7 +24,7 @@ export abstract class AbstractFakeScrollComp extends Component {
     }
 
     protected postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, () => setTimeout(() => this.onScrollVisibilityChanged()));
         this.onScrollVisibilityChanged();
         this.addOrRemoveCssClass('ag-apple-scrollbar', isMacOsUserAgent() || isIOSUserAgent());
     }
@@ -64,7 +64,8 @@ export abstract class AbstractFakeScrollComp extends Component {
         if (this.invisibleScrollbar === undefined) {
             this.initialiseInvisibleScrollbar();
         }
-        setTimeout(() => this.setScrollVisible(), 0);
+
+        this.setScrollVisible();
     }
 
     protected hideAndShowInvisibleScrollAsNeeded(): void {
