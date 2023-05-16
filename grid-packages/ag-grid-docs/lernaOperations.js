@@ -430,7 +430,7 @@ const rebuildPackagesBasedOnChangeState = async (runUnitTests = true,
 
             if (runUnitTests && !buildFailed) {
                 console.log("Running 'test' on changed modules");
-                result = await buildPackages(packagesToRun, 'test');
+                result = await buildPackages(packagesToRun, 'test', '--concurrency 1');
                 buildFailed = result.exitCode !== 0 || result.failed === 1 || buildFailed;
             }
 
