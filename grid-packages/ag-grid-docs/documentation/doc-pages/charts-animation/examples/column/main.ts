@@ -1,4 +1,4 @@
-import { AgChartOptions } from "ag-charts-enterprise"
+import { AgChartOptions, AgEnterpriseCharts } from "ag-charts-enterprise"
 import { getData } from "./data"
 
 const options: AgChartOptions = {
