@@ -164,23 +164,23 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
 
         this.dataModel = new DataModel<any>({
             props: [
-                valueProperty(xKey, isContinuousX),
-                valueProperty(yKey, isContinuousY),
-                ...(colorKey ? [valueProperty(colorKey, true)] : []),
+                valueProperty(xKey, isContinuousX, { id: 'xValue' }),
+                valueProperty(yKey, isContinuousY, { id: 'yValue' }),
+                ...(colorKey ? [valueProperty(colorKey, true, { id: 'colorValue' })] : []),
             ],
         });
         this.processedData = this.dataModel.processData(data ?? []);
 
         if (colorKey) {
-            const colorKeyIdx = this.dataModel.resolveProcessedDataIndex(colorKey)?.index ?? -1;
+            const colorKeyIdx = this.dataModel.resolveProcessedDataIndexById('colorValue')?.index ?? -1;
             colorScale.domain = colorDomain ?? this.processedData!.domain.values[colorKeyIdx];
             colorScale.range = colorRange;
         }
     }
 
     getDomain(direction: _ModuleSupport.ChartAxisDirection): any[] {
-        const xDataIdx = this.dataModel?.resolveProcessedDataIndex(this.xKey);
-        const yDataIdx = this.dataModel?.resolveProcessedDataIndex(this.yKey);
+        const xDataIdx = this.dataModel?.resolveProcessedDataIndexById('xValue');
+        const yDataIdx = this.dataModel?.resolveProcessedDataIndexById('yValue');
 
         if (!xDataIdx || !yDataIdx) {
             return [];
@@ -478,7 +478,7 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
         if (colorKey) {
             let colorDomain = this.colorDomain;
             if (!colorDomain) {
-                const colorKeyIdx = this.dataModel!.resolveProcessedDataIndex(colorKey)?.index ?? -1;
+                const colorKeyIdx = this.dataModel!.resolveProcessedDataIndexById('colorValue')?.index ?? -1;
                 colorDomain = this.processedData!.domain.values[colorKeyIdx];
             }
             return [
