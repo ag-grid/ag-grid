@@ -1,5 +1,6 @@
 import { Logger } from '../../util/logger';
 import { isNumber } from '../../util/value';
+import { windowValue } from '../../util/window';
 import { ContinuousDomain, extendDomain } from './utilFunctions';
 
 export type UngroupedDataItem<D, V> = {
@@ -123,7 +124,10 @@ export type PropertyDefinition<K> =
     | ProcessorOutputPropertyDefinition<any>;
 
 type ProcessorFn = (datum: any, previousDatum?: any) => any;
+export type PropertyId<K extends string> = K | { id: string };
+
 export type DatumPropertyDefinition<K> = {
+    id?: string;
     type: 'key' | 'value';
     valueType: DatumPropertyType;
     property: K;
@@ -138,27 +142,31 @@ type InternalDatumPropertyDefinition<K> = DatumPropertyDefinition<K> & {
     missing: boolean;
 };
 
-export type AggregatePropertyDefinition<D, K extends keyof D, R = [number, number], R2 = R> = {
+export type AggregatePropertyDefinition<D, K extends keyof D & string, R = [number, number], R2 = R> = {
+    id?: string;
     type: 'aggregate';
     aggregateFunction: (values: D[K][], keys?: D[K][]) => R;
     groupAggregateFunction?: (next?: R, acc?: R2) => R2;
     finalFunction?: (result: R2) => [number, number];
-    properties: (K | number)[];
+    properties: PropertyId<K>[];
 };
 
-export type GroupValueProcessorDefinition<D, K extends keyof D> = {
+export type GroupValueProcessorDefinition<D, K extends keyof D & string> = {
+    id?: string;
     type: 'group-value-processor';
-    properties: (K | number)[];
+    properties: PropertyId<K>[];
     adjust: () => (values: D[K][], indexes: number[]) => void;
 };
 
 export type PropertyValueProcessorDefinition<D> = {
+    id?: string;
     type: 'property-value-processor';
-    property: string | number;
+    property: PropertyId<keyof D & string>;
     adjust: () => (processedData: ProcessedData<D>, valueIndex: number) => void;
 };
 
 export type ReducerOutputPropertyDefinition<R> = {
+    id?: string;
     type: 'reducer';
     property: string;
     initialValue?: R;
@@ -166,6 +174,7 @@ export type ReducerOutputPropertyDefinition<R> = {
 };
 
 export type ProcessorOutputPropertyDefinition<R> = {
+    id?: string;
     type: 'processor';
     property: string;
     calculate: (data: ProcessedData<any>) => R;
@@ -173,7 +182,13 @@ export type ProcessorOutputPropertyDefinition<R> = {
 
 const INVALID_VALUE = Symbol('invalid');
 
-export class DataModel<D extends object, K extends keyof D = keyof D, Grouped extends boolean | undefined = undefined> {
+export class DataModel<
+    D extends object,
+    K extends keyof D & string = keyof D & string,
+    Grouped extends boolean | undefined = undefined
+> {
+    static DEBUG = () => [true, 'data-model'].includes(windowValue('agChartsDebug')) ?? false;
+
     private readonly opts: Options<K, Grouped>;
     private readonly keys: InternalDatumPropertyDefinition<K>[];
     private readonly values: InternalDatumPropertyDefinition<K>[];
@@ -221,13 +236,12 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
             if (properties.length === 0) continue;
 
             for (const property of properties) {
-                if (typeof property === 'number') {
-                    if (property < 0 || property > this.values.length) {
-                        throw new Error(
-                            `AG Charts - internal config error: aggregate property indexes must match defined properties (${property}).`
-                        );
-                    }
-                } else if (!this.values.some((def) => def.property === property)) {
+                if (typeof property === 'string' && !this.values.some((def) => def.property === property)) {
+                    throw new Error(
+                        `AG Charts - internal config error: aggregate properties must match defined properties (${properties}).`
+                    );
+                }
+                if (typeof property !== 'string' && !this.values.some((def) => def.id === property.id)) {
                     throw new Error(
                         `AG Charts - internal config error: aggregate properties must match defined properties (${properties}).`
                     );
@@ -236,25 +250,28 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
         }
     }
 
-    resolveProcessedDataIndex(propName: string): { type: 'key' | 'value'; index: number } | undefined {
-        const def = this.resolveProcessedDataDef(propName);
+    resolveProcessedDataIndexById(searchId: string): { type: 'key' | 'value'; index: number } | undefined {
+        const { keys, values } = this;
+
+        const def = [...keys, ...values].find(({ id }) => id === searchId);
+        if (!def) return undefined;
 
         if (def?.type === 'key' || def?.type === 'value') {
             return { type: def.type, index: def.index };
         }
     }
 
-    resolveProcessedDataDef(propName: string): InternalDatumPropertyDefinition<any> | undefined {
+    resolveProcessedDataDefById(searchId: string): InternalDatumPropertyDefinition<any> | undefined {
         const { keys, values } = this;
 
-        const def = [...keys, ...values].find(({ property }) => property === propName);
+        const def = [...keys, ...values].find(({ id }) => id === searchId);
         if (!def) return undefined;
 
         return def;
     }
 
-    getDomain(propName: string, processedData: ProcessedData<K>): any[] | ContinuousDomain<number> | [] {
-        const idx = this.resolveProcessedDataIndex(propName);
+    getDomain(searchId: string, processedData: ProcessedData<K>): any[] | ContinuousDomain<number> | [] {
+        const idx = this.resolveProcessedDataIndexById(searchId);
 
         if (!idx) {
             return [];
@@ -313,13 +330,20 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
         const end = performance.now();
         processedData.time = end - start;
 
+        if (DataModel.DEBUG()) {
+            logProcessedData(processedData);
+        }
+
         return processedData as Grouped extends true ? GroupedData<D> : UngroupedData<D>;
     }
 
-    private valueIdxLookup(prop: any) {
-        if (typeof prop === 'number') return prop;
-
-        const result = this.values.findIndex((def) => def.property === prop);
+    private valueIdxLookup(prop: PropertyId<any>) {
+        let result;
+        if (typeof prop === 'string') {
+            result = this.values.findIndex((def) => def.property === prop);
+        } else {
+            result = this.values.findIndex((def) => def.id === prop.id);
+        }
 
         if (result >= 0) {
             return result;
@@ -377,7 +401,7 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
         resultData.length = resultDataIdx;
 
         const propertyDomain = (def: InternalDatumPropertyDefinition<K>) => {
-            const result = dataDomain.get(def.property)!.domain;
+            const result = dataDomain.get(def.id ?? def.property)!.domain;
             if (Array.isArray(result) && result[0] > result[1]) {
                 // Ignore starting values.
                 return [];
@@ -560,10 +584,12 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
 
     private initDataDomainProcessor() {
         const { keys: keyDefs, values: valueDefs } = this;
-        const dataDomain: Map<K, { type: 'range'; domain: [number, number] } | { type: 'category'; domain: Set<any> }> =
-            new Map();
+        const dataDomain: Map<
+            string,
+            { type: 'range'; domain: [number, number] } | { type: 'category'; domain: Set<any> }
+        > = new Map();
         const processorFns = new Map<InternalDatumPropertyDefinition<K>, ProcessorFn>();
-        const initDataDomainKey = (key: K, type: DatumPropertyType, updateDataDomain: typeof dataDomain) => {
+        const initDataDomainKey = (key: string, type: DatumPropertyType, updateDataDomain: typeof dataDomain) => {
             if (type === 'category') {
                 updateDataDomain.set(key, { type, domain: new Set() });
             } else {
@@ -571,8 +597,8 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
             }
         };
         const initDataDomain = (updateDataDomain = dataDomain) => {
-            keyDefs.forEach((def) => initDataDomainKey(def.property, def.valueType, updateDataDomain));
-            valueDefs.forEach((def) => initDataDomainKey(def.property, def.valueType, updateDataDomain));
+            keyDefs.forEach((def) => initDataDomainKey(def.id ?? def.property, def.valueType, updateDataDomain));
+            valueDefs.forEach((def) => initDataDomainKey(def.id ?? def.property, def.valueType, updateDataDomain));
             return updateDataDomain;
         };
         initDataDomain();
@@ -584,7 +610,7 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
                 def.missing = true;
             }
 
-            if (!dataDomain.has(def.property)) {
+            if (!dataDomain.has(def.id ?? def.property)) {
                 initDataDomain(dataDomain);
             }
 
@@ -608,7 +634,7 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
                 value = processorFns.get(def)?.(value, previousDatum !== INVALID_VALUE ? previousDatum : undefined);
             }
 
-            const meta = dataDomain.get(def.property);
+            const meta = dataDomain.get(def.id ?? def.property);
             if (meta?.type === 'category') {
                 meta.domain.add(value);
             } else if (meta?.type === 'range') {
@@ -623,5 +649,45 @@ export class DataModel<D extends object, K extends keyof D = keyof D, Grouped ex
         };
 
         return { dataDomain, processValue, initDataDomain };
+    }
+}
+
+function logProcessedData(processedData: ProcessedData<any>) {
+    const log = (name: string, data: any[]) => {
+        if (data.length > 0) {
+            // eslint-disable-next-line no-console
+            console.log(name);
+            // eslint-disable-next-line no-console
+            console.table(data);
+        }
+    };
+
+    log('Key Domains', processedData.domain.keys);
+    log('Value Domains', processedData.domain.values);
+    log('Aggregate Domains', processedData.domain.aggValues ?? []);
+
+    if (processedData.type === 'grouped') {
+        const flattenedValues = processedData.data.reduce((acc, next) => {
+            const keys = next.keys;
+            const aggValues = next.aggValues ?? [];
+            const skipKeys = next.keys.map(() => undefined);
+            const skipAggValues = aggValues?.map(() => undefined);
+            acc.push(
+                next.values.map((v, i) => [
+                    ...(i === 0 ? keys : skipKeys),
+                    ...v,
+                    ...(i == 0 ? aggValues : skipAggValues),
+                ])
+            );
+            return acc;
+        }, [] as any[]);
+        log('Values', flattenedValues);
+    } else {
+        const flattenedValues = processedData.data.reduce((acc, next) => {
+            const aggValues = next.aggValues ?? [];
+            acc.push([...next.keys, ...next.values, ...aggValues]);
+            return acc;
+        }, [] as any[]);
+        log('Values', flattenedValues);
     }
 }

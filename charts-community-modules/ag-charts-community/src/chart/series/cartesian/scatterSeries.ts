@@ -176,23 +176,23 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
         this.dataModel = new DataModel<any>({
             props: [
-                valueProperty(xKey, isContinuousX),
-                valueProperty(yKey, isContinuousY),
-                ...(sizeKey ? [valueProperty(sizeKey, true)] : []),
-                ...(colorKey ? [valueProperty(colorKey, true)] : []),
+                valueProperty(xKey, isContinuousX, { id: `xValue` }),
+                valueProperty(yKey, isContinuousY, { id: `yValue` }),
+                ...(sizeKey ? [valueProperty(sizeKey, true, { id: `sizeValue` })] : []),
+                ...(colorKey ? [valueProperty(colorKey, true, { id: `colorValue` })] : []),
             ],
             dataVisible: this.visible,
         });
         this.processedData = this.dataModel.processData(data ?? []);
 
         if (sizeKey) {
-            const sizeKeyIdx = this.dataModel.resolveProcessedDataIndex(sizeKey)?.index ?? -1;
+            const sizeKeyIdx = this.dataModel.resolveProcessedDataIndexById(`sizeValue`)?.index ?? -1;
             const processedSize = this.processedData?.domain.values[sizeKeyIdx] ?? [];
             this.sizeScale.domain = marker.domain ? marker.domain : processedSize;
         }
 
         if (colorKey) {
-            const colorKeyIdx = this.dataModel.resolveProcessedDataIndex(colorKey)?.index ?? -1;
+            const colorKeyIdx = this.dataModel.resolveProcessedDataIndexById(`colorValue`)?.index ?? -1;
             colorScale.domain = colorDomain ?? this.processedData!.domain.values[colorKeyIdx];
             colorScale.range = colorRange;
         }
@@ -202,9 +202,9 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         const { dataModel, processedData } = this;
         if (!processedData || !dataModel) return [];
 
-        const key = direction === ChartAxisDirection.X ? this.xKey : this.yKey;
-        const dataDef = dataModel.resolveProcessedDataDef(key);
-        const domain = dataModel.getDomain(key, processedData);
+        const id = direction === ChartAxisDirection.X ? `xValue` : `yValue`;
+        const dataDef = dataModel.resolveProcessedDataDefById(id);
+        const domain = dataModel.getDomain(id, processedData);
         if (dataDef?.valueType === 'category') {
             return domain;
         }
@@ -223,8 +223,8 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     async createNodeData() {
         const { visible, xAxis, yAxis, yKey, xKey, label, labelKey } = this;
 
-        const xDataIdx = this.dataModel?.resolveProcessedDataIndex(xKey);
-        const yDataIdx = this.dataModel?.resolveProcessedDataIndex(yKey);
+        const xDataIdx = this.dataModel?.resolveProcessedDataIndexById(`xValue`);
+        const yDataIdx = this.dataModel?.resolveProcessedDataIndexById(`yValue`);
 
         if (!(xDataIdx && yDataIdx && visible && xAxis && yAxis)) {
             return [];

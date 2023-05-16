@@ -130,6 +130,9 @@ export function accumulatedValue(): DatumPropertyDefinition<any>['processor'] {
         let value = 0;
 
         return (datum: any) => {
+            if (typeof datum !== 'number') return datum;
+            if (isNaN(datum)) return datum;
+
             value += datum;
             return value;
         };

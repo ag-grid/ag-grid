@@ -5619,15 +5619,21 @@
   },
   "PropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "ProcessorFn": {},
+  "PropertyId": { "meta": { "typeParams": ["K extends string"] } },
   "DatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "InternalDatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "AggregatePropertyDefinition": {
     "meta": {
-      "typeParams": ["D", "K extends keyof D", "R = [number, number]", "R2 = R"]
+      "typeParams": [
+        "D",
+        "K extends keyof D & string",
+        "R = [number, number]",
+        "R2 = R"
+      ]
     }
   },
   "GroupValueProcessorDefinition": {
-    "meta": { "typeParams": ["D", "K extends keyof D"] }
+    "meta": { "typeParams": ["D", "K extends keyof D & string"] }
   },
   "PropertyValueProcessorDefinition": { "meta": { "typeParams": ["D"] } },
   "ReducerOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
@@ -6197,6 +6203,8 @@
   "PieNodeDatum": {
     "index": { "type": { "returnType": "number", "optional": false } },
     "radius": { "type": { "returnType": "number", "optional": false } },
+    "angleValue": { "type": { "returnType": "number", "optional": false } },
+    "radiusValue": { "type": { "returnType": "number", "optional": true } },
     "startAngle": { "type": { "returnType": "number", "optional": false } },
     "endAngle": { "type": { "returnType": "number", "optional": false } },
     "midAngle": { "type": { "returnType": "number", "optional": false } },
@@ -6215,8 +6223,9 @@
       }
     },
     "sectorFormat": {
-      "type": { "returnType": "AgPieSeriesFormat", "optional": false }
+      "type": { "returnType": "Required<AgPieSeriesFormat>", "optional": false }
     },
+    "legendItemKey": { "type": { "returnType": "string", "optional": true } },
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },

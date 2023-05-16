@@ -242,9 +242,10 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
         this.dataModel = new DataModel<any, any, true>({
             props: [
-                keyProperty(xKey, isContinuousX),
+                keyProperty(xKey, isContinuousX, { id: 'xValue' }),
                 ...enabledYKeys.map((yKey) =>
                     valueProperty(yKey, isContinuousY, {
+                        id: `yValue-${yKey}`,
                         missingValue: NaN,
                         invalidValue: undefined,
                     })
@@ -353,7 +354,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         };
 
         yKeys.forEach((yKey, seriesIdx) => {
-            const yKeyDataIndex = this.dataModel?.resolveProcessedDataIndex(yKey);
+            const yKeyDataIndex = this.dataModel?.resolveProcessedDataIndexById(`yValue-${yKey}`);
             const labelSelectionData: LabelSelectionDatum[] = [];
             const markerSelectionData: MarkerSelectionDatum[] = [];
             const strokeSelectionData: StrokeSelectionDatum = { itemId: yKey, points: [], yValues: [] };
@@ -751,7 +752,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     getTooltipHtml(nodeDatum: MarkerSelectionDatum): string {
         const { xKey, id: seriesId } = this;
         const { yKey } = nodeDatum;
-        const yKeyDataIndex = this.dataModel?.resolveProcessedDataIndex(yKey);
+        const yKeyDataIndex = this.dataModel?.resolveProcessedDataIndexById(`yValue-${yKey}`);
 
         if (!(xKey && yKey) || !yKeyDataIndex) {
             return '';
