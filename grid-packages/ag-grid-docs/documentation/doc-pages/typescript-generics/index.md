@@ -118,6 +118,7 @@ function onRowSelected(event: RowSelectedEvent&lt;ICar>) {
 |The `&lt;AgGridReact>` component accepts a generic parameter as `&lt;AgGridReact&lt;ICar>>`.
 |
 </snippet>
+</framework-specific-section>
 
 <framework-specific-section frameworks="react">
 <snippet transform={false} language="jsx">
