@@ -29,11 +29,19 @@ export const Form = () => {
                     </select>
                 </div>
             </div>
-            <div>
-                <p className="item-label">
-                    Range <code>input type="range"</code>
-                </p>
-                <input type="range" min="0" max="100" id="range" name="range" defaultValue="50" />
+            <div className="grid">
+                <div>
+                    <p className="item-label">
+                        Range <code>input type="range"</code>
+                    </p>
+                    <input type="range" min="0" max="100" id="range" name="range" defaultValue="50" />
+                </div>
+                <div>
+                    <p className="item-label">
+                        Range <code>input type="number"</code>
+                    </p>
+                    <input type="number" min="0" max="100" id="range" name="number" defaultValue="50" />
+                </div>
             </div>
             <div className="grid">
                 <div>

@@ -1082,6 +1082,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 }
 
 export class ColumnSeries extends BarSeries {
+    static className = 'ColumnSeries';
+
     protected getBarDirection() {
         return ChartAxisDirection.Y;
     }

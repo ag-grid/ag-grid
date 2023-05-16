@@ -785,6 +785,12 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.legendType = legendType;
     }
 
+    private applyLegendOptions?: (legend: ChartLegend) => void = undefined;
+
+    setLegendInit(initLegend: (legend: ChartLegend) => void) {
+        this.applyLegendOptions = initLegend;
+    }
+
     private async updateLegend() {
         const legendData: ChartLegendDatum[] = [];
         this.series
@@ -795,6 +801,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
             });
         const legendType = legendData.length > 0 ? legendData[0].legendType : 'category';
         this.attachLegend(legendType);
+        this.applyLegendOptions?.(this.legend!);
+
         this.legend!.data = legendData;
     }
 

@@ -1,65 +1,104 @@
-.code-viewer {
-    composes: d-flex from global;
+@use "../../design-system/" as *;
 
-    border: 0;
+.codeViewer {
+    display: flex;
     height: 100%;
+}
 
-    &--hidden {
-        composes: d-none from global;
-    }
+.hidden {
+    display: none;
+}
 
-    &__files {
-        composes: mt-2 ml-2 mb-2 py-2 from global;
+.files {
+    position: relative;
+    flex-shrink: 0;
+    min-width: 10rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: $size-1 0 $size-1 $size-1;
+    color: var(--secondary-text-color);
+    box-shadow: inset -2px 0 0 0 var(--bright-blue-gray);
 
-        flex: 0 0 200px;
-        background-color: #dfdfdf;
-        border-radius: 5px 0 0 5px;
-        overflow-y: auto;
-        overflow-x: hidden;
-    }
+    h4 {
+        margin-top: 0 !important; // !important for .ag-styles specificity
+        margin-bottom: 0 !important; // !important for .ag-styles specificity
+        padding-left: $size-half + 2px !important; // !important for .ag-styles specificity
+        font-size: var(--font-size-small) !important; // !important for .ag-styles specificity
+        font-weight: var(--font-weight-normal) !important; // !important for .ag-styles specificity
 
-    &__file {
-        font-size: 0.85rem;
-        padding: 10px;
-        width: 200px;
-
-        &:focus {
-            outline: none;
-        }
-
-        &--active {
-            color: $light;
-            background-color: $dark;
-            outline: none;
-
-            &:focus {
-                outline: 1px solid $light;
-                outline-offset: -2px;
-            }
+        &:not(:first-child) {
+            margin-top: $size-5 !important; // !important for .ag-styles specificity
         }
     }
+}
 
-    &__file-title {
-        composes: py-1 px-2 from global;
+.file {
+    --file-border-color: transparent;
 
-        border-bottom: 1px solid $light;
-        color: $primary;
-        font-weight: bold;
+    position: relative;
+    width: 100%;
+    padding: 0 $size-2 2px $size-half !important; // !important for .ag-styles specificity
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity
+    border-top: 2px solid var(--file-border-color) !important; // !important for .ag-styles specificity
+    border-left: 2px solid var(--file-border-color) !important; // !important for .ag-styles specificity
+    border-bottom: 2px solid var(--file-border-color) !important; // !important for .ag-styles specificity
+    border-top-left-radius: var(--border-radius);
+    border-bottom-left-radius: var(--border-radius);
+    transition: color $default-transition-timing, background-color $default-transition-timing,
+        border-color $default-transition-timing;
+
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        width: var(--border-radius);
+        height: var(--border-radius);
+        right: 0;
+        border-right: 2px solid var(--bright-blue-gray);
+        opacity: 0;
+        transition: opacity $default-transition-timing;
     }
 
-    &__file + &__file-title {
-        margin-top: 20px;
+    &::before {
+        top: -4px;
+        border-bottom-right-radius: var(--border-radius);
+        border-bottom: 2px solid var(--bright-blue-gray);
+        box-shadow: 2px 2px 0 0 var(--ghost-blue);
     }
 
-    &__code {
-        flex: 1 1 auto;
-        display: flex;
-        flex-direction: column;
-        overflow: auto;
+    &::after {
+        bottom: -4px;
+        border-top-right-radius: var(--border-radius);
+        border-top: 2px solid var(--bright-blue-gray);
+        box-shadow: 2px -2px 0 0 var(--ghost-blue);
+    }
 
-        pre {
-            flex: 1;
-            margin: 0;
+    &.isActive {
+        --file-border-color: var(--bright-blue-gray);
+
+        color: var(--text-color) !important; // !important for .ag-styles specificity
+        background-color: var(--ghost-blue) !important; // !important for .ag-styles specificity
+
+        &::before,
+        &::after {
+            opacity: 1;
         }
+    }
+}
+
+.code {
+    width: 100%;
+    overflow: auto;
+
+    > div {
+        height: 100%;
+    }
+
+    pre {
+        height: 100%;
+        border: none !important; // !important for .ag-styles specificity
+        border-radius: 0 !important; // !important for .ag-styles specificity
+        margin-bottom: 0 !important; // !important for .ag-styles specificity
     }
 }

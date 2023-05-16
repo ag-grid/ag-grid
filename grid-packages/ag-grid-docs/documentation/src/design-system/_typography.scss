@@ -100,7 +100,7 @@ strong,
 }
 
 .normal-weight-text {
-    --font-weight: var(--font-weight);
+    font-weight: var(--font-weight);
 }
 
 .monospace-text {

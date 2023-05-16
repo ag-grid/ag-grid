@@ -2309,6 +2309,11 @@ AddType text/javascript ts jsx
     Redirect 301 /react-data-grid/filter-custom/ /react-data-grid/component-filter/
     Redirect 301 /vue-data-grid/filter-custom/ /vue-data-grid/component-filter/
 
+    Redirect 301 /javascript-data-grid/grid-features/ https://www.ag-grid.com/
+    Redirect 301 /angular-data-grid/grid-features/ https://www.ag-grid.com/
+    Redirect 301 /react-data-grid/grid-features/ https://www.ag-grid.com/
+    Redirect 301 /vue-data-grid/grid-features/ https://www.ag-grid.com/
+
     Redirect 301 /cookies.php /cookies
     Redirect 301 /privacy.php /privacy
     Redirect 301 /about.php /about

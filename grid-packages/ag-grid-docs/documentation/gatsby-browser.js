@@ -8,7 +8,6 @@ import { navigate, withPrefix } from 'gatsby';
 import { LocalStorage } from 'utils/local-storage';
 import supportedFrameworks from 'utils/supported-frameworks.js';
 import './src/bootstrap.scss'; // Import the Bootstrap CSS
-import './src/themes/prism-coy-without-shadows.css'; // Import theme for Prism
 
 const frameworkStorageKey = 'framework';
 const getRelativePath = path => path.replace(withPrefix('/'), '/');
