@@ -106,7 +106,7 @@ function is2dArray<E>(array: E[] | E[][]): array is E[][] {
 
 export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatum>, Rect> {
     static className = 'BarSeries';
-    static type = 'bar' as const;
+    static type: 'bar' | 'column' = 'bar' as const;
 
     readonly label = new BarSeriesLabel();
 
@@ -1057,6 +1057,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 }
 
 export class ColumnSeries extends BarSeries {
+    static type = 'column' as const;
     static className = 'ColumnSeries';
 
     protected getBarDirection() {

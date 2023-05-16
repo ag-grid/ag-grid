@@ -62,15 +62,15 @@ const EXAMPLES: Record<string, TestCase> = {
     ...mixinDerivedCases({
         BASIC_CATEGORY_AXIS: {
             options: axesExamples.CATEGORY_AXIS_BASIC_EXAMPLE,
-            assertions: cartesianChartAssertions(),
+            assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
         },
         BASIC_CATEGORY_UNIFORM_AXIS: {
             options: axesExamples.CATEGORY_AXIS_UNIFORM_BASIC_EXAMPLE,
-            assertions: cartesianChartAssertions(),
+            assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
         },
         GROUPED_CATEGORY_AXIS: {
             options: axesExamples.GROUPED_CATEGORY_AXIS_EXAMPLE,
-            assertions: cartesianChartAssertions({ axisTypes: ['groupedCategory', 'number'] }),
+            assertions: cartesianChartAssertions({ axisTypes: ['groupedCategory', 'number'], seriesTypes: ['column'] }),
         },
         BASIC_TIME_AXIS: {
             options: axesExamples.TIME_AXIS_BASIC_EXAMPLE,
@@ -130,14 +130,14 @@ const EXAMPLES_NO_SERIES: Record<string, TestCase> = {
         options: axesExamples.COMBO_CATEGORY_NUMBER_AXIS_NO_SERIES,
         assertions: cartesianChartAssertions({
             axisTypes: ['category', 'number', 'number'],
-            seriesTypes: ['bar', 'line'],
+            seriesTypes: ['column', 'line'],
         }),
     },
     COMBO_CATEGORY_NUMBER_AXIS_NO_SERIES_FIXED_DOMAIN: {
         options: axesExamples.COMBO_CATEGORY_NUMBER_AXIS_NO_SERIES_FIXED_DOMAIN,
         assertions: cartesianChartAssertions({
             axisTypes: ['category', 'number', 'number'],
-            seriesTypes: ['bar', 'line'],
+            seriesTypes: ['column', 'line'],
         }),
     },
     AREA_CHART_NO_SERIES: {
@@ -171,7 +171,7 @@ const EXAMPLES_TICK_VALUES: Record<string, TestCase> = {
     },
     CATEGORY_AXIS_TICK_VALUES: {
         options: axesExamples.CATEGORY_AXIS_TICK_VALUES,
-        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['bar'] }),
+        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['column'] }),
     },
 };
 
@@ -186,7 +186,7 @@ const EXAMPLES_TICK_SPACING: Record<string, TestCase> = {
     },
     AXIS_TICK_MIN_MAX_SPACING: {
         options: axesExamples.AXIS_TICK_MIN_MAX_SPACING,
-        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['bar'] }),
+        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['column'] }),
     },
 };
 
@@ -194,13 +194,13 @@ const EXAMPLES_CLIPPING: Record<string, TestCase> = {
     ...mixinDerivedCases({
         GRDILINE_TICKLINE_CLIPPING: {
             options: axesExamples.GRDILINE_TICKLINE_CLIPPING,
-            assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['bar'] }),
+            assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['column'] }),
         },
         GROUPED_CATEGORY_AXIS_GRDILINE_TICKLINE_CLIPPING: {
             options: axesExamples.GROUPED_CATEGORY_AXIS_GRDILINE_TICKLINE_CLIPPING,
             assertions: cartesianChartAssertions({
                 axisTypes: ['groupedCategory', 'number'],
-                seriesTypes: ['bar'],
+                seriesTypes: ['column'],
             }),
         },
     }),
