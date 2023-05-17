@@ -37,6 +37,7 @@ export class FilterManager extends BeanStub {
     public static QUICK_FILTER_SEPARATOR = '\n';
 
     private allColumnFilters = new Map<string, FilterWrapper>();
+    private allColumnListeners = new Map<string, (() => null) | undefined>();
     private activeAggregateFilters: IFilterComp[] = [];
     private activeColumnFilters: IFilterComp[] = [];
 
@@ -558,7 +559,13 @@ export class FilterManager extends BeanStub {
 
         if (!filterWrapper) {
             filterWrapper = this.createFilterWrapper(column, source);
-            this.allColumnFilters.set(column.getColId(), filterWrapper);
+            const colId = column.getColId();
+            this.allColumnFilters.set(colId, filterWrapper);
+            this.allColumnListeners.set(
+                colId,
+                this.addManagedListener(column, Column.EVENT_COL_DEF_CHANGED,
+                () => this.checkDestroyFilter(colId))
+            );
         } else if (source !== 'NO_UI') {
             this.putIntoGui(filterWrapper, source);
         }
@@ -604,7 +611,10 @@ export class FilterManager extends BeanStub {
         return defaultFloatingFilterType;
     }
 
-    private createFilterInstance(column: Column): AgPromise<IFilterComp> | null {
+    private createFilterInstance(column: Column): {
+        filterPromise: (() => (AgPromise<IFilterComp> | null)) | null,
+        compDetails: UserCompDetails | null
+    } {
         const defaultFilter = this.getDefaultFilter(column);
 
         const colDef = column.getColDef();
@@ -630,14 +640,17 @@ export class FilterManager extends BeanStub {
         };
 
         const compDetails = this.userComponentFactory.getFilterDetails(colDef, params, defaultFilter);
-        if (!compDetails) { return null; }
-        const componentPromise = compDetails.newAgStackInstance();
-
-        if (componentPromise) {
-            componentPromise.then(r => filterInstance = r!);
-        }
-
-        return componentPromise;
+        if (!compDetails) { return { filterPromise: null, compDetails: null }; }
+        return {
+            filterPromise: () => {
+                const filterPromise = compDetails.newAgStackInstance();
+                if (filterPromise) {
+                    filterPromise.then(r => filterInstance = r!);
+                }
+                return filterPromise;
+            },
+            compDetails
+        };
     }
 
     public createFilterParams(column: Column, colDef: ColDef): IFilterParams {
@@ -662,12 +675,15 @@ export class FilterManager extends BeanStub {
             column: column,
             filterPromise: null,
             compiledElement: null,
-            guiPromise: AgPromise.resolve(null)
+            guiPromise: AgPromise.resolve(null),
+            compDetails: null
         };
 
-        filterWrapper.filterPromise = this.createFilterInstance(column);
+        const { filterPromise, compDetails } = this.createFilterInstance(column);
+        filterWrapper.filterPromise = filterPromise?.() ?? null;
+        filterWrapper.compDetails = compDetails;
 
-        if (filterWrapper.filterPromise) {
+        if (filterPromise) {
             this.putIntoGui(filterWrapper, source);
         }
 
@@ -800,11 +816,15 @@ export class FilterManager extends BeanStub {
     }
 
     // destroys the filter, so it no longer takes part
-    /**
-     * @param source if not calling this from the API, will need to add a new value
-     */
-    public destroyFilter(column: Column, source: 'api' = 'api'): void {
-        const filterWrapper = this.allColumnFilters.get(column.getColId());
+    public destroyFilter(column: Column, source: 'api' | 'columnChanged' = 'api'): void {
+        const colId = column.getColId();
+        const filterWrapper = this.allColumnFilters.get(colId);
+        const columnListener = this.allColumnListeners.get(colId);
+
+        if (columnListener) {
+            this.allColumnListeners.delete(colId);
+            columnListener();
+        }
 
         if (filterWrapper) {
             this.disposeFilterWrapper(filterWrapper, source);
@@ -831,6 +851,23 @@ export class FilterManager extends BeanStub {
         });
     }
 
+    private checkDestroyFilter(colId: string): void {
+        const filterWrapper = this.allColumnFilters.get(colId);
+        if (!filterWrapper) {
+            return;
+        }
+
+        const column = filterWrapper.column;
+
+        const { compDetails } = column.isFilterAllowed()
+            ? this.createFilterInstance(column)
+            : { compDetails: null };
+
+        if (!compDetails || filterWrapper.compDetails?.componentClass !== compDetails.componentClass) {
+            this.destroyFilter(column, 'columnChanged');
+        }
+    }
+
     protected destroy() {
         super.destroy();
         this.allColumnFilters.forEach(filterWrapper => this.disposeFilterWrapper(filterWrapper, 'gridDestroyed'));
@@ -842,4 +879,5 @@ export interface FilterWrapper {
     column: Column;
     filterPromise: AgPromise<IFilterComp> | null;
     guiPromise: AgPromise<HTMLElement | null>;
+    compDetails: UserCompDetails | null;
 }
