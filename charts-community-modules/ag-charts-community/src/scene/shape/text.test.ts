@@ -124,7 +124,7 @@ describe('Text', () => {
             },
             {
                 maxWidth: 100,
-                maxHeight: 100,
+                maxHeight: 50,
                 truncate: true,
                 breakWord: false,
                 hyphens: false,
@@ -140,6 +140,27 @@ describe('Text', () => {
                     {
                         ...BASE_OPTIONS,
                         text: 'Testing Sicherheitskontrolle breaking on space \n multi-line string with two lines',
+                    },
+                ],
+            },
+            {
+                maxWidth: 100,
+                maxHeight: 100,
+                truncate: true,
+                breakWord: true,
+                hyphens: true,
+                textOptions: [
+                    {
+                        ...BASE_OPTIONS,
+                        text: 'Testing Sicherheitskontrolle with hyphens',
+                    },
+                    {
+                        ...BASE_OPTIONS,
+                        text: 'Testing Sicherheitskontrolle with hyphens longer string',
+                    },
+                    {
+                        ...BASE_OPTIONS,
+                        text: 'Testing Sicherheitskontrolle with hyphens \n multi-line string with two lines',
                     },
                 ],
             },

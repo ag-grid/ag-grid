@@ -1,4 +1,4 @@
-import { Text } from './scene/shape/text';
+import { Text, createTextMeasurer, getFont } from './scene/shape/text';
 import { PointerEvents } from './scene/node';
 import {
     BOOLEAN,
@@ -59,7 +59,7 @@ export class Caption {
     maxHeight?: number = undefined;
 
     @Validate(TEXT_WRAP)
-    wrapping: TextWrap = 'break-word';
+    wrapping: TextWrap = 'always';
 
     constructor() {
         const node = this.node;
@@ -71,13 +71,20 @@ export class Caption {
         const { text, wrapping } = this;
         const maxWidth = this.maxWidth == null ? containerWidth : Math.min(this.maxWidth, containerWidth);
         const maxHeight = this.maxHeight == null ? containerHeight : this.maxHeight;
-        if (wrapping === 'never' || (!isFinite(maxWidth) && !isFinite(maxHeight))) {
+        if (!isFinite(maxWidth) && !isFinite(maxHeight)) {
             this.node.text = text;
+            return;
+        }
+        if (wrapping === 'never') {
+            const font = getFont(this);
+            const measurer = createTextMeasurer(font);
+            const trunc = Text.truncateLine(text, maxWidth, measurer);
+            this.node.text = trunc;
             return;
         }
         const wrapOptions = {
             hyphens: wrapping === 'hyphenate',
-            breakWord: wrapping === 'break-word' || wrapping === 'hyphenate',
+            breakWord: wrapping === 'always' || wrapping === 'hyphenate',
         };
         const wrapped = Text.wrap(text, maxWidth, maxHeight, this, wrapOptions);
         this.node.text = wrapped;

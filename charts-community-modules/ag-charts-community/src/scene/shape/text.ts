@@ -421,7 +421,7 @@ export class Text extends Shape {
         return parts;
     }
 
-    private static truncateLine(text: string, maxWidth: number, measurer: TextMeasurer) {
+    static truncateLine(text: string, maxWidth: number, measurer: TextMeasurer) {
         const lineWidth = measurer.width(text);
         const ellipsisWidth = measurer.width(ellipsis);
         if (lineWidth + ellipsisWidth <= maxWidth) {
@@ -523,7 +523,10 @@ export class Text extends Shape {
                 }
                 const trunc = Text.truncateLine(word, maxWidth, measurer);
                 currentLine.push(trunc);
-                lineWidth = maxWidth;
+                if (i < words.length - 1) {
+                    linesTruncated = true;
+                }
+                break;
             }
         }
 
@@ -579,7 +582,7 @@ interface TextMeasurer {
     width(line: string): number;
 }
 
-function createTextMeasurer(font: string): TextMeasurer {
+export function createTextMeasurer(font: string): TextMeasurer {
     const cache = new Map<string, number>();
     const getTextSize = (text: string) => HdpiCanvas.getTextSize(text, font);
     const getLineWidth = (text: string) => {

@@ -45,7 +45,7 @@ export type Ratio = number;
 /** Alias to denote that a value is a data value. */
 export type DataValue = any;
 
-export type TextWrap = 'never' | 'break-word' | 'hyphenate' | 'on-space';
+export type TextWrap = 'never' | 'always' | 'hyphenate' | 'on-space';
 
 /** Define a range within which an interaction can trigger on a point with one of:
  * - A distance in pixels from a point within which the event can be triggered.
@@ -290,7 +290,13 @@ export interface AgChartCaptionOptions {
     maxWidth?: PixelSize;
     /** Used to constrain the height of the title. */
     maxHeight?: PixelSize;
-    /** Text wrapping strategy for long titles. */
+    /**
+     * Text wrapping strategy for long texts.
+     * `'always'` will break the words that are longer than `maxWidth`.
+     * `'hyphenate'` is similar to `'always'`, but insert the hyphens (`-`) into the word breaks.
+     * `'on-space'` will break the text on white spaces and tabulation symbols only. If some long word can't fit the `maxWidth`, the text will be truncated.
+     * `'never'` disables text wrapping.
+     */
     wrapping?: TextWrap;
 }
 export interface AgChartSubtitleOptions extends AgChartCaptionOptions {}

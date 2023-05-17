@@ -1178,7 +1178,7 @@
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "wrapping": {
-      "description": "/** Text wrapping strategy for long titles. */",
+      "description": "/** Text wrapping strategy for long texts.\n     * `'always'` will break the words that are longer than `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but insert the hyphens (`-`) into the word breaks.\n     * `'on-space'` will break the text on white spaces and tabulation symbols only. If some long word can't fit the `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     */",
       "type": { "returnType": "TextWrap", "optional": true }
     }
   },
@@ -1224,7 +1224,7 @@
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "wrapping": {
-      "description": "/** Text wrapping strategy for long titles. */",
+      "description": "/** Text wrapping strategy for long texts.\n     * `'always'` will break the words that are longer than `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but insert the hyphens (`-`) into the word breaks.\n     * `'on-space'` will break the text on white spaces and tabulation symbols only. If some long word can't fit the `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     */",
       "type": { "returnType": "TextWrap", "optional": true }
     }
   },
@@ -1270,7 +1270,7 @@
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "wrapping": {
-      "description": "/** Text wrapping strategy for long titles. */",
+      "description": "/** Text wrapping strategy for long texts.\n     * `'always'` will break the words that are longer than `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but insert the hyphens (`-`) into the word breaks.\n     * `'on-space'` will break the text on white spaces and tabulation symbols only. If some long word can't fit the `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     */",
       "type": { "returnType": "TextWrap", "optional": true }
     }
   },
@@ -4377,7 +4377,7 @@
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "wrapping": {
-      "description": "/** Text wrapping strategy for long titles. */",
+      "description": "/** Text wrapping strategy for long texts.\n     * `'always'` will break the words that are longer than `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but insert the hyphens (`-`) into the word breaks.\n     * `'on-space'` will break the text on white spaces and tabulation symbols only. If some long word can't fit the `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     */",
       "type": { "returnType": "TextWrap", "optional": true }
     }
   },

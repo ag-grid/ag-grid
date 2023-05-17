@@ -46,7 +46,7 @@
   "DataValue": { "meta": { "isTypeAlias": true }, "type": "any" },
   "TextWrap": {
     "meta": { "isTypeAlias": true },
-    "type": "'never' | 'break-word' | 'hyphenate' | 'on-space'"
+    "type": "'never' | 'always' | 'hyphenate' | 'on-space'"
   },
   "AgChartInteractionRange": {
     "meta": { "isTypeAlias": true },
@@ -717,7 +717,7 @@
       "spacing?": "/** Spacing added to help position the text. */",
       "maxWidth?": "/** Used to constrain the width of the title. */",
       "maxHeight?": "/** Used to constrain the height of the title. */",
-      "wrapping?": "/** Text wrapping strategy for long titles. */"
+      "wrapping?": "/** Text wrapping strategy for long texts.\n     * `'always'` will break the words that are longer than `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but insert the hyphens (`-`) into the word breaks.\n     * `'on-space'` will break the text on white spaces and tabulation symbols only. If some long word can't fit the `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     */"
     }
   },
   "AgChartSubtitleOptions": {
@@ -746,7 +746,7 @@
       "spacing?": "/** Spacing added to help position the text. */",
       "maxWidth?": "/** Used to constrain the width of the title. */",
       "maxHeight?": "/** Used to constrain the height of the title. */",
-      "wrapping?": "/** Text wrapping strategy for long titles. */"
+      "wrapping?": "/** Text wrapping strategy for long texts.\n     * `'always'` will break the words that are longer than `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but insert the hyphens (`-`) into the word breaks.\n     * `'on-space'` will break the text on white spaces and tabulation symbols only. If some long word can't fit the `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     */"
     }
   },
   "AgChartFooterOptions": {
@@ -775,7 +775,7 @@
       "spacing?": "/** Spacing added to help position the text. */",
       "maxWidth?": "/** Used to constrain the width of the title. */",
       "maxHeight?": "/** Used to constrain the height of the title. */",
-      "wrapping?": "/** Text wrapping strategy for long titles. */"
+      "wrapping?": "/** Text wrapping strategy for long texts.\n     * `'always'` will break the words that are longer than `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but insert the hyphens (`-`) into the word breaks.\n     * `'on-space'` will break the text on white spaces and tabulation symbols only. If some long word can't fit the `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     */"
     }
   },
   "AgAxisCaptionOptions": {
@@ -2852,7 +2852,7 @@
       "spacing?": "/** Spacing added to help position the text. */",
       "maxWidth?": "/** Used to constrain the width of the title. */",
       "maxHeight?": "/** Used to constrain the height of the title. */",
-      "wrapping?": "/** Text wrapping strategy for long titles. */"
+      "wrapping?": "/** Text wrapping strategy for long texts.\n     * `'always'` will break the words that are longer than `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but insert the hyphens (`-`) into the word breaks.\n     * `'on-space'` will break the text on white spaces and tabulation symbols only. If some long word can't fit the `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     */"
     }
   },
   "AgPieSeriesCalloutOptions": {
