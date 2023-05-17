@@ -1,10 +1,7 @@
-.code {
-    color: #f8f9fa;
-    margin: 0 10px;
+@use "../../design-system/" as *;
 
-    pre[class*="language-"] {
-        margin: 0;
-        margin-bottom: 1em;
-        font-size: 0.8em;
-    }
+.code {
+    display: flex;
+    flex-direction: column;
+    gap: $size-2;
 }
