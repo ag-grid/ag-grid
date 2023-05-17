@@ -2,7 +2,7 @@ import { Autowired } from "../context/context";
 import { CtrlsService } from "../ctrlsService";
 import { Events } from "../eventKeys";
 import { BodyScrollEvent } from "../events";
-import { ResizeObserverService } from "../misc/resizeObserverService";
+import { AnimationFrameService } from "../misc/animationFrameService";
 import { isInvisibleScrollbar, isIOSUserAgent, isMacOsUserAgent } from "../utils/browser";
 import { Component } from "../widgets/component";
 import { RefSelector } from "../widgets/componentAnnotations";
@@ -14,7 +14,7 @@ export abstract class AbstractFakeScrollComp extends Component {
     @RefSelector('eContainer') protected readonly eContainer: HTMLElement;
     @Autowired('scrollVisibleService') protected readonly scrollVisibleService: ScrollVisibleService;
     @Autowired('ctrlsService') protected readonly ctrlsService: CtrlsService;
-    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
+    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
 
     protected invisibleScrollbar: boolean;
     protected hideTimeout: number | null = null;
@@ -67,7 +67,7 @@ export abstract class AbstractFakeScrollComp extends Component {
             this.initialiseInvisibleScrollbar();
         }
 
-        this.resizeObserverService.debounceIfResizeActive(() => this.setScrollVisible());
+        this.animationFrameService.requestAnimationFrame(() => this.setScrollVisible());
     }
 
     protected hideAndShowInvisibleScrollAsNeeded(): void {
