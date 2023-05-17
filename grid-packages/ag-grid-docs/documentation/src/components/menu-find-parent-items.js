@@ -30,23 +30,40 @@ function getFullPath(section, urlPath) {
     return [];
 }
 
-export function findParentItems(combinedMenuItems, urlPath) {
-    let foundPath;
-    combinedMenuItems.forEach((section) => {
-        if (foundPath) {
-            return;
-        }
+const isStandaloneChartsSection = ({ title }) => title === 'Standalone Charts';
+const isGridSection = ({ title }) => title !== 'Standalone Charts';
 
-        // Special case for Standalone Charts menu items
-        if (section.title === 'Standalone Charts') {
-            urlPath = urlPath.replace('/', '/charts-');
-        }
+export function findParentItems({ combinedMenuItems, path, page }) {
+    const pathSegment = `/${path.split('/').reverse()[1]}/`;
+    const isChartsPage = page.startsWith('charts');
+    let foundPath = [];
 
-        const sectionPath = getFullPath(section, urlPath);
+    // Charts and Grid have different URLs, so they can potentially have overlapping URL paths.
+    // Separate the processing, so it doesn't clash
+    if (isChartsPage) {
+        const [standaloneChartsSection] = combinedMenuItems.filter(isStandaloneChartsSection) || [];
+        const urlPath = pathSegment.replace('/', '/charts-');
+        const sectionPath = getFullPath(standaloneChartsSection, urlPath);
         if (sectionPath.length) {
-            foundPath = [section].concat(sectionPath);
+            foundPath = [standaloneChartsSection].concat(sectionPath);
         }
-    });
+    } else {
+        const [gridPath] =
+            combinedMenuItems
+                .map((section) => {
+                    const isGrid = isGridSection(section);
 
-    return foundPath || [];
+                    if (isGrid) {
+                        const sectionPath = getFullPath(section, pathSegment);
+                        if (sectionPath.length) {
+                            return [section].concat(sectionPath);
+                        }
+                    }
+                })
+                .filter((path) => Boolean(path)) || [];
+
+        foundPath = gridPath ?? foundPath;
+    }
+
+    return foundPath;
 }
