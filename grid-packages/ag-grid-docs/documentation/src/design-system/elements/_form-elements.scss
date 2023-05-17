@@ -193,6 +193,23 @@ select {
 }
 
 input[type='range'] {
+    @mixin track {
+        height: math.div(4em, 16);
+        background-color: var(--input-secondary-background-color);
+        border-radius: var(--border-radius);
+    }
+
+    @mixin thumb {
+        appearance: none;
+        width: 1em;
+        height: 1em;
+        margin-top: math.div(-6em, 16);
+        border-radius: 50%;
+        border: none;
+        background-color: var(--input-primary-color);
+        transition: background-color $default-transition-timing;
+    }
+
     appearance: none;
     min-height: $size-3;
     border-radius: var(--border-radius);
@@ -207,23 +224,22 @@ input[type='range'] {
         box-shadow: 0 0 0 3px var(--input-focus-box-shadow-color);
     }
 
+    // Using mixins as -webkit & -moz properties cannot be used as comma seperted list
     &::-webkit-slider-runnable-track {
-        height: math.div(4em, 16);
-        background-color: var(--input-secondary-background-color);
-        border-radius: var(--border-radius);
+        @include track;
     }
-
+    &::-moz-range-track {
+        @include track;
+    }
     &::-webkit-slider-thumb {
-        appearance: none;
-        width: 1em;
-        height: 1em;
-        margin-top: math.div(-6em, 16);
-        border-radius: 50%;
-        background-color: var(--input-primary-color);
-        transition: background-color $default-transition-timing;
+        @include thumb;
+    }
+    &::-moz-range-thumb {
+        @include thumb;
     }
 
-    &:hover::-webkit-slider-thumb {
+    &:hover::-webkit-slider-thumb,
+    &:hover::-moz-range-thumb {
         background-color: var(--link-hover-color);
     }
 }
