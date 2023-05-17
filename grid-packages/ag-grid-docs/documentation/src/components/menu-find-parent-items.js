@@ -35,7 +35,7 @@ const isGridSection = ({ title }) => title !== 'Standalone Charts';
 
 export function findParentItems({ combinedMenuItems, path, page }) {
     const pathSegment = `/${path.split('/').reverse()[1]}/`;
-    const isChartsPage = page.startsWith('charts');
+    const isChartsPage = page?.startsWith('charts');
     let foundPath = [];
 
     // Charts and Grid have different URLs, so they can potentially have overlapping URL paths.
