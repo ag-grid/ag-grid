@@ -19,6 +19,7 @@ import { PopupService } from "../widgets/popupService";
 import { MouseEventService } from "./mouseEventService";
 import { IRowModel } from "../interfaces/iRowModel";
 import { TouchListener, LongTapEvent } from "../widgets/touchListener";
+import { AnimationFrameService } from "../misc/animationFrameService";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -51,6 +52,7 @@ export interface IGridBodyComp extends LayoutView {
 
 export class GridBodyCtrl extends BeanStub {
 
+    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Autowired('rowContainerHeightService') private rowContainerHeightService: RowContainerHeightService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
@@ -174,7 +176,8 @@ export class GridBodyCtrl extends BeanStub {
         const scrollbarWidth = visible ? (this.gridOptionsService.getScrollbarWidth() || 0) : 0;
         const pad = isInvisibleScrollbar() ? 16 : 0;
         const width = `calc(100% + ${scrollbarWidth + pad}px)`;
-        this.comp.setBodyViewportWidth(width);
+
+        this.animationFrameService.requestAnimationFrame(() => this.comp.setBodyViewportWidth(width));
     }
 
     private onGridColumnsChanged(): void {

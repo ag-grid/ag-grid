@@ -8,6 +8,7 @@ import { CtrlsService } from "../../ctrlsService";
 import { getInnerWidth, getScrollLeft, isHorizontalScrollShowing, isVisible, setScrollLeft } from "../../utils/dom";
 import { ColumnModel } from "../../columns/columnModel";
 import { ResizeObserverService } from "../../misc/resizeObserverService";
+import { AnimationFrameService } from "../../misc/animationFrameService";
 import { ViewportSizeFeature } from "../viewportSizeFeature";
 import { convertToMap } from "../../utils/map";
 import { SetPinnedLeftWidthFeature } from "./setPinnedLeftWidthFeature";
@@ -148,6 +149,7 @@ export class RowContainerCtrl extends BeanStub {
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
+    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     private readonly name: RowContainerName;
@@ -338,7 +340,8 @@ export class RowContainerCtrl extends BeanStub {
             const visible = this.scrollVisibleService.isHorizontalScrollShowing();
             const scrollbarWidth = visible ? scrollWidth : 0;
             const size = scrollbarWidth == 0 ? '100%' : `calc(100% + ${scrollbarWidth}px)`;
-            this.comp.setViewportHeight(size);
+
+            this.animationFrameService.requestAnimationFrame(() => this.comp.setViewportHeight(size));
         }
 
         if (this.name === RowContainerName.FULL_WIDTH) {
