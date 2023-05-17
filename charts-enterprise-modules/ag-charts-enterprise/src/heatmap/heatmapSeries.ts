@@ -23,7 +23,7 @@ const {
 } = _ModuleSupport;
 const { Rect, Label, toTooltipHtml } = _Scene;
 const { ContinuousScale, ColorScale } = _Scale;
-const { sanitizeHtml } = _Util;
+const { sanitizeHtml, Color, Logger } = _Util;
 
 interface HeatmapNodeDatum extends Required<_ModuleSupport.CartesianSeriesNodeDatum> {
     readonly label: _Util.MeasuredLabel;
@@ -133,11 +133,7 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
 
     constructor() {
         super({
-            pickModes: [
-                SeriesNodePickMode.NEAREST_BY_MAIN_CATEGORY_AXIS_FIRST,
-                SeriesNodePickMode.NEAREST_NODE,
-                SeriesNodePickMode.EXACT_SHAPE_MATCH,
-            ],
+            pickModes: [SeriesNodePickMode.EXACT_SHAPE_MATCH],
             pathsPerSeries: 0,
             hasMarkers: false,
         });
@@ -175,6 +171,12 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
             const colorKeyIdx = this.dataModel.resolveProcessedDataIndexById('colorValue')?.index ?? -1;
             colorScale.domain = colorDomain ?? this.processedData!.domain.values[colorKeyIdx];
             colorScale.range = colorRange;
+            if (colorScale.domain.length > colorScale.range.length) {
+                Logger.warnOnce(
+                    `Heatmap series have "colorDomain" and "colorRange" count mismatch. The count of "colorDomain" values should be less or equal to the count of "colorRange" values.`
+                );
+                colorScale.domain = [colorScale.domain[0], colorScale.domain[colorScale.domain.length - 1]];
+            }
         }
     }
 
@@ -205,6 +207,13 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
         const { data, visible, xAxis, yAxis } = this;
 
         if (!(data && visible && xAxis && yAxis)) {
+            return [];
+        }
+
+        if (xAxis.type !== 'category' || yAxis.type !== 'category') {
+            Logger.warnOnce(
+                `Heatmap series expected axes to have "category" type, but received "${xAxis.type}" and "${yAxis.type}" instead.`
+            );
             return [];
         }
 
@@ -287,7 +296,12 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
             colorKey,
             formatter,
             highlightStyle: {
-                item: { fill: highlightedFill, stroke: highlightedStroke, strokeWidth: highlightedDatumStrokeWidth },
+                item: {
+                    fill: highlightedFill,
+                    stroke: highlightedStroke,
+                    strokeWidth: highlightedDatumStrokeWidth,
+                    fillOpacity: highlightedFillOpacity,
+                },
             },
             id: seriesId,
         } = this;
@@ -298,7 +312,10 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
         datumSelection.each((rect, datum) => {
             const { point, width, height } = datum;
 
-            const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : datum.fill;
+            const fill =
+                isDatumHighlighted && highlightedFill !== undefined
+                    ? Color.interpolate(datum.fill, highlightedFill)(highlightedFillOpacity ?? 1)
+                    : datum.fill;
             const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : this.stroke;
             const strokeWidth =
                 isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
@@ -336,24 +353,11 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
         labelData: HeatmapNodeDatum[];
         labelSelection: _Scene.Selection<_Scene.Text, HeatmapNodeDatum>;
     }) {
-        const { labelSelection } = opts;
-        const {
-            label: { enabled },
-        } = this;
+        const { labelData, labelSelection } = opts;
+        const { enabled } = this.label;
+        const data = enabled ? labelData : [];
 
-        const placedLabels = enabled ? this.chart?.placeLabels().get(this) ?? [] : [];
-
-        const placedNodeDatum = placedLabels.map(
-            (v): HeatmapNodeDatum => ({
-                ...(v.datum as HeatmapNodeDatum),
-                point: {
-                    x: v.x,
-                    y: v.y,
-                    size: v.datum.point.size,
-                },
-            })
-        );
-        return labelSelection.update(placedNodeDatum);
+        return labelSelection.update(data);
     }
 
     protected async updateLabelNodes(opts: { labelSelection: _Scene.Selection<_Scene.Text, HeatmapNodeDatum> }) {
@@ -361,16 +365,21 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
         const { label } = this;
 
         labelSelection.each((text, datum) => {
+            if (datum.label.width > datum.width || datum.label.height > datum.height) {
+                text.visible = false;
+                return;
+            }
+            text.visible = true;
             text.text = datum.label.text;
             text.fill = label.color;
-            text.x = datum.point?.x ?? 0;
-            text.y = datum.point?.y ?? 0;
+            text.x = datum.nodeMidPoint.x;
+            text.y = datum.nodeMidPoint.y;
             text.fontStyle = label.fontStyle;
             text.fontWeight = label.fontWeight;
             text.fontSize = label.fontSize;
             text.fontFamily = label.fontFamily;
-            text.textAlign = 'left';
-            text.textBaseline = 'top';
+            text.textAlign = 'center';
+            text.textBaseline = 'middle';
         });
     }
 
