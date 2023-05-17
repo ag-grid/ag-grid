@@ -49,11 +49,11 @@ export class Text extends Shape {
     y: number = 0;
 
     private lines: string[] = [];
-    private _splitText() {
-        this.lines = typeof this.text === 'string' ? this.text.split(/\r?\n/g) : [];
+    private _setLines() {
+        this.lines = splitText(this.text);
     }
 
-    @SceneChangeDetection({ redraw: RedrawType.MAJOR, changeCb: (o: Text) => o._splitText() })
+    @SceneChangeDetection({ redraw: RedrawType.MAJOR, changeCb: (o: Text) => o._setLines() })
     text?: string = undefined;
 
     private _dirtyFont: boolean = true;
@@ -623,4 +623,8 @@ function getVerticalOffset(textBaseline: CanvasTextBaseline): number {
         case 'middle':
             return 0.5;
     }
+}
+
+export function splitText(text?: string) {
+    return typeof text === 'string' ? text.split(/\r?\n/g) : [];
 }
