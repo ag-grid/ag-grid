@@ -662,20 +662,23 @@ function logProcessedData(processedData: ProcessedData<any>) {
         }
     };
 
+    // eslint-disable-next-line no-console
+    console.log({ processedData });
     log('Key Domains', processedData.domain.keys);
+    log('Group Domains', processedData.domain.groups ?? []);
     log('Value Domains', processedData.domain.values);
     log('Aggregate Domains', processedData.domain.aggValues ?? []);
 
     if (processedData.type === 'grouped') {
         const flattenedValues = processedData.data.reduce((acc, next) => {
-            const keys = next.keys;
+            const keys = next.keys ?? [];
             const aggValues = next.aggValues ?? [];
             const skipKeys = next.keys.map(() => undefined);
             const skipAggValues = aggValues?.map(() => undefined);
             acc.push(
-                next.values.map((v, i) => [
+                ...next.values.map((v, i) => [
                     ...(i === 0 ? keys : skipKeys),
-                    ...v,
+                    ...(v ?? []),
                     ...(i == 0 ? aggValues : skipAggValues),
                 ])
             );

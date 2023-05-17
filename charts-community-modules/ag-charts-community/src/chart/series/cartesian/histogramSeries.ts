@@ -162,6 +162,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     strokeWidth: number = 1;
 
     shadow?: DropShadow = undefined;
+    calculatedBins: [number, number][] = [];
 
     protected highlightedDatum?: HistogramNodeDatum;
 
@@ -256,11 +257,19 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             }
 
             const bins = this.bins ?? this.deriveBins(xExtent);
+            const binCount = bins.length;
+            this.calculatedBins = [...bins];
 
             return (item) => {
                 const xValue = item.keys[0];
-                for (const nextBin of bins) {
+                for (let i = 0; i < binCount; i++) {
+                    const nextBin = bins[i];
                     if (xValue >= nextBin[0] && xValue < nextBin[1]) {
+                        return nextBin;
+                    }
+                    if (i === binCount - 1 && xValue <= nextBin[1]) {
+                        // Handle edge case of a value being at the maximum extent, and the
+                        // final bin aligning with it.
                         return nextBin;
                     }
                 }
@@ -275,7 +284,6 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             groupByFn,
         });
         this.processedData = this.dataModel.processData(data ?? []);
-        this.processedData?.domain.groups?.sort((a, b) => a[0] - b[0]);
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
@@ -284,11 +292,10 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         if (!processedData) return [];
 
         const {
-            reduced: { [SORT_DOMAIN_GROUPS.property]: xBins = [[0, 0]] } = {},
             domain: { aggValues: [yDomain] = [] },
         } = processedData;
-        const xDomainMin = xBins?.[0][0];
-        const xDomainMax = xBins?.[(xBins?.length ?? 0) - 1][1];
+        const xDomainMin = this.calculatedBins?.[0][0];
+        const xDomainMax = this.calculatedBins?.[(this.calculatedBins?.length ?? 0) - 1][1];
         if (direction === ChartAxisDirection.X) {
             return fixNumericExtent([xDomainMin, xDomainMax]);
         }
