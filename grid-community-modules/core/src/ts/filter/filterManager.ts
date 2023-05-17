@@ -563,8 +563,7 @@ export class FilterManager extends BeanStub {
             this.allColumnFilters.set(colId, filterWrapper);
             this.allColumnListeners.set(
                 colId,
-                this.addManagedListener(column, Column.EVENT_COL_DEF_CHANGED,
-                () => this.checkDestroyFilter(colId))
+                this.addManagedListener(column, Column.EVENT_COL_DEF_CHANGED, () => this.checkDestroyFilter(colId))
             );
         } else if (source !== 'NO_UI') {
             this.putIntoGui(filterWrapper, source);
@@ -739,6 +738,7 @@ export class FilterManager extends BeanStub {
 
             columns.push(wrapper.column);
             this.disposeFilterWrapper(wrapper, 'columnChanged');
+            this.disposeColumnListener(colId);
         });
 
         if (columns.length > 0) {
@@ -819,16 +819,21 @@ export class FilterManager extends BeanStub {
     public destroyFilter(column: Column, source: 'api' | 'columnChanged' = 'api'): void {
         const colId = column.getColId();
         const filterWrapper = this.allColumnFilters.get(colId);
+
+        this.disposeColumnListener(colId);
+
+        if (filterWrapper) {
+            this.disposeFilterWrapper(filterWrapper, source);
+            this.onFilterChanged({ columns: [column] });
+        }
+    }
+
+    private disposeColumnListener(colId: string): void {
         const columnListener = this.allColumnListeners.get(colId);
 
         if (columnListener) {
             this.allColumnListeners.delete(colId);
             columnListener();
-        }
-
-        if (filterWrapper) {
-            this.disposeFilterWrapper(filterWrapper, source);
-            this.onFilterChanged({ columns: [column] });
         }
     }
 
@@ -871,6 +876,8 @@ export class FilterManager extends BeanStub {
     protected destroy() {
         super.destroy();
         this.allColumnFilters.forEach(filterWrapper => this.disposeFilterWrapper(filterWrapper, 'gridDestroyed'));
+        // don't need to destroy the listeners as they are managed listeners
+        this.allColumnListeners.clear();
     }
 }
 
