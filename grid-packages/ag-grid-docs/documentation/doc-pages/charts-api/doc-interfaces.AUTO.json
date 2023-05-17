@@ -1809,7 +1809,7 @@
       "type": { "returnType": "AgChartInteractionRange", "optional": true }
     },
     "position": {
-      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "description": "/** The position of the tooltip. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
     "delay": {
@@ -1821,7 +1821,7 @@
   "AgTooltipPositionOptions": {},
   "AgMovingTooltipPositionOptions": {
     "type": {
-      "description": "/** The type of positioning for the tooltip. By default, the tooltip follows the pointer. */",
+      "description": "/** The type of positioning for the tooltip. By default, for Bar, Histogram, Treemap, Pie and Doughnut series, the tooltip follows the pointer. For Line, Area and Scatter series, the tooltip is anchored to the highlighted node. */",
       "type": { "returnType": "AgTooltipPositionType", "optional": false }
     },
     "xOffset": {
@@ -3204,7 +3204,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
-      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "description": "/** The position of the tooltip. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
     "interaction": {
@@ -3281,7 +3281,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
-      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "description": "/** The position of the tooltip. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
     "interaction": {
@@ -3400,7 +3400,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
-      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "description": "/** The position of the tooltip. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
     "interaction": {
@@ -3621,7 +3621,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
-      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "description": "/** The position of the tooltip. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
     "interaction": {
@@ -3853,7 +3853,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
-      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "description": "/** The position of the tooltip. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
     "interaction": {
@@ -4074,7 +4074,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
-      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "description": "/** The position of the tooltip. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
     "interaction": {
@@ -4326,7 +4326,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
-      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "description": "/** The position of the tooltip. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
     "interaction": {
@@ -4842,7 +4842,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
-      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "description": "/** The position of the tooltip. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
     "interaction": {
