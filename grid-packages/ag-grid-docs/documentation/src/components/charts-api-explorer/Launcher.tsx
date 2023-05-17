@@ -127,7 +127,7 @@ const LauncherInner = ({
                 onKeyDown={(e) => doOnEnter(e, () => openPlunker(exampleInfo))}
                 role="button"
                 tabIndex={0}
-                title="Open in Plunker"
+                title="Edit on Plunker"
             >
                 <Icon name="plunkr" />
             </button>
