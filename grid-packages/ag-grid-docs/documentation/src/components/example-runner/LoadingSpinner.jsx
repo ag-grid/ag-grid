@@ -8,16 +8,16 @@ const loadingStyles = {
     transform: 'translate(-50%, -50%) scale(2)',
 };
 
-const loadingScript = `const testLoading = () => {
+const loadingScript = `const cleanupLoading = () => {
     if (document.querySelector('.ag-root-wrapper')) {
         document.querySelector('#loading-spinner').remove();
         document.querySelector('#loading-script').remove();
     } else {
-        requestAnimationFrame(() => testLoading());
+        requestAnimationFrame(() => cleanupLoading());
     }
 };
 
-testLoading(); `;
+cleanupLoading();`;
 
 export const LoadingSpinner = () => {
     return (
