@@ -76,7 +76,14 @@ export class Navigator extends _ModuleSupport.BaseModuleInstance implements _Mod
     }
 
     private updateGroupVisibility() {
-        this.rs.visible = this.enabled && this.visible;
+        const visible = this.enabled && this.visible;
+        this.rs.visible = visible;
+
+        if (visible) {
+            this.ctx.zoomManager.updateZoom('navigator', { x: { min: this.rs.min, max: this.rs.max } });
+        } else {
+            this.ctx.zoomManager.updateZoom('navigator');
+        }
     }
 
     constructor(private readonly ctx: _ModuleSupport.ModuleContext) {
@@ -98,6 +105,7 @@ export class Navigator extends _ModuleSupport.BaseModuleInstance implements _Mod
 
         ctx.scene.root!.appendChild(this.rs);
         this.destroyFns.push(() => ctx.scene.root?.removeChild(this.rs));
+        this.destroyFns.push(() => this.ctx.zoomManager.updateZoom('navigator'));
 
         this.updateGroupVisibility();
     }
