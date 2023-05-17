@@ -15,7 +15,8 @@ pre.code {
     --class-name-color: #2b91af;
     --property-color: #ff0000;
 
-    -webkit-font-smoothing: subpixel-antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 
     margin-bottom: $size-2;
     padding: $vertical-padding $size-2;
@@ -136,8 +137,6 @@ pre.code.line-numbers {
     }
 
     .line-numbers-rows {
-        -webkit-font-smoothing: antialiased;
-
         position: absolute;
         width: 3em !important; // Override gatsby default
         top: 0.0625em;
