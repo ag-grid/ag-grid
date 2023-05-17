@@ -26,7 +26,7 @@ const {
     STRING,
 } = _ModuleSupport;
 const { BBox, Group, Rect, Selection, Text } = _Scene;
-const { createId } = _Util;
+const { createId, tickFormat } = _Util;
 
 class GradientLegendLabel {
     @Validate(OPT_NUMBER(0))
@@ -207,11 +207,14 @@ export class GradientLegend {
             gradientBox.width = thickness;
             gradientBox.height = gradientLength;
         } else {
-            width = gradientLength + textWidth;
+            const maxWidth = shrinkRect.width;
+            const preferredWidth = gradientLength + textWidth;
+            const fitTextWidth = textWidth * colorDomain.length;
+            width = Math.min(maxWidth, Math.max(preferredWidth, fitTextWidth));
             height = thickness + padding + textHeight;
             gradientBox.x = textWidth / 2;
             gradientBox.y = 0;
-            gradientBox.width = gradientLength;
+            gradientBox.width = width - textWidth;
             gradientBox.height = thickness;
         }
 
@@ -268,16 +271,10 @@ export class GradientLegend {
             colorDomain = colorDomain.slice().reverse();
         }
 
-        this.textSelection.update(colorDomain).each((node, datum, i) => {
-            const t = i / (colorDomain.length - 1);
+        const format = this.formatDomain(colorDomain);
 
-            node.text = String(datum);
-            node.fill = label.color;
-            node.fontFamily = label.fontFamily;
-            node.fontSize = label.fontSize;
-            node.fontStyle = label.fontStyle;
-            node.fontWeight = label.fontWeight;
-
+        const setTextPosition = (node: _Scene.Text, index: number) => {
+            const t = index / (colorDomain.length - 1);
             if (orientation === 'vertical') {
                 node.textAlign = 'start';
                 node.textBaseline = 'middle';
@@ -289,14 +286,53 @@ export class GradientLegend {
                 node.x = gradientBox.x + gradientBox.width * t;
                 node.y = gradientBox.height + padding;
             }
+        };
+
+        const tempText = new Text();
+        tempText.fontFamily = label.fontFamily;
+        tempText.fontSize = label.fontSize;
+        tempText.fontStyle = label.fontStyle;
+        tempText.fontWeight = label.fontWeight;
+        const boxes = colorDomain.map((n, i) => {
+            tempText.text = format(n);
+            setTextPosition(tempText, i);
+            return tempText.computeBBox();
         });
+        const textsCollide = boxes.some((box) => {
+            return boxes.some((other) => {
+                return box !== other && box.collidesBBox(other);
+            });
+        });
+
+        this.textSelection.update(colorDomain).each((node, datum, i) => {
+            const t = i / (colorDomain.length - 1);
+            if (textsCollide && t > 0 && t < 1) {
+                node.visible = false;
+                return;
+            }
+
+            node.visible = true;
+            node.text = format(datum);
+            node.fill = label.color;
+            node.fontFamily = label.fontFamily;
+            node.fontSize = label.fontSize;
+            node.fontStyle = label.fontStyle;
+            node.fontWeight = label.fontWeight;
+
+            setTextPosition(node, i);
+        });
+    }
+
+    private formatDomain(domain: number[]) {
+        return tickFormat(domain, ',.2g');
     }
 
     private measureMaxText(colorDomain: number[]) {
         const { label } = this.item;
         const tempText = new Text();
+        const format = this.formatDomain(colorDomain);
         const boxes: _Scene.BBox[] = colorDomain.map((d) => {
-            const text = String(d);
+            const text = format(d);
             tempText.text = text;
             tempText.fill = label.color;
             tempText.fontFamily = label.fontFamily;
