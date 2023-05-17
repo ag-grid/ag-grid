@@ -126,6 +126,14 @@ export function initGrid({
     loadGrid();
 }
 
+export function cleanUp() {
+    generator.stop();
+    gridOptions.api?.destroy();
+
+    // Clean up tooltip, if user mouse happens to be hovering over
+    document.querySelector('.ag-sparkline-tooltip-wrapper')?.remove();
+}
+
 /**
  * Clean up between hot module replacement on dev server
  */
@@ -133,7 +141,6 @@ export function initGrid({
 if (import.meta.webpackHot) {
     // @ts-ignore
     import.meta.webpackHot.dispose(() => {
-        generator.stop();
-        gridOptions.api?.destroy();
+        cleanUp();
     });
 }
