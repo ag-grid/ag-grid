@@ -731,9 +731,9 @@ The chart legend uses the `yKey` for the series, which in this case is `'spendin
 |         yKey: 'spending',
 |+         yName: 'Coffee Spending',
 |     }],
-| +   legend: {
-| +       enabled: true,
-| +   },
+|+    legend: {
+|+        enabled: true,
+|+    },
 | });
 </snippet>
 </framework-specific-section>
