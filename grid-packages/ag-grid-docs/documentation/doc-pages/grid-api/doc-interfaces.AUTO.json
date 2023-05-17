@@ -9526,6 +9526,9 @@
         "returnType": "AgPromise<HTMLElement | null>",
         "optional": false
       }
+    },
+    "compDetails": {
+      "type": { "returnType": "UserCompDetails | null", "optional": false }
     }
   },
   "IFloatingFilterParent": {
@@ -11094,7 +11097,7 @@
     },
     "setCompDetails": {
       "type": {
-        "arguments": { "compDetails": "UserCompDetails" },
+        "arguments": { "compDetails?": "UserCompDetails | null" },
         "returnType": "void",
         "optional": false
       }
