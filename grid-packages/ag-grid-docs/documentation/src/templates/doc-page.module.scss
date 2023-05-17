@@ -260,3 +260,8 @@
         margin-top: 0;
     }
 }
+
+// Hack to target markdown images and not images within components
+.pageSections > div > div *:not([class]) img {
+    max-width: 100%;
+}
