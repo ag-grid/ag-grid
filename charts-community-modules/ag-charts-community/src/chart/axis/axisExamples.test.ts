@@ -248,23 +248,23 @@ const EXAMPLES_LABEL_AUTO_WRAPPING: Record<string, TestCase> = {
     },
     COLUMN_CHART_EXAMPLE: {
         options: applyAutoWrapping(switchToColumn(examples.BAR_CHART_EXAMPLE)),
-        assertions: cartesianChartAssertions(),
+        assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
     },
     GROUPED_COLUMN_CHART_EXAMPLE: {
         options: applyAutoWrapping(switchToColumn(examples.GROUPED_BAR_CHART_EXAMPLE)),
-        assertions: cartesianChartAssertions(),
+        assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
     },
     STACKED_COLUMN_CHART_EXAMPLE: {
         options: applyAutoWrapping(switchToColumn(examples.STACKED_BAR_CHART_EXAMPLE)),
-        assertions: cartesianChartAssertions(),
+        assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
     },
     ONE_HUNDRED_PERCENT_STACKED_COLUMN_EXAMPLE: {
         options: applyAutoWrapping(switchToColumn(examples.ONE_HUNDRED_PERCENT_STACKED_BAR_EXAMPLE)),
-        assertions: cartesianChartAssertions(),
+        assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
     },
     COLUMN_CHART_WITH_LABELS_EXAMPLE: {
         options: applyAutoWrapping(switchToColumn(examples.BAR_CHART_WITH_LABELS_EXAMPLE)),
-        assertions: cartesianChartAssertions(),
+        assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
     },
     SIMPLE_LINE_CHART_EXAMPLE: {
         options: applyAutoWrapping(examples.SIMPLE_LINE_CHART_EXAMPLE, 80),
