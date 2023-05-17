@@ -10,11 +10,17 @@ export class ResizeObserverService extends BeanStub {
     private polyfillFunctions: (() => void)[] = [];
     private polyfillScheduled: boolean;
 
+    private resizeCallbacksActive: number = 0;
+
     public observeResize(element: HTMLElement, callback: () => void): () => void {
         const eDocument = this.gridOptionsService.getDocument();
         const win = (eDocument.defaultView || window) as any;
         const useBrowserResizeObserver = () => {
-            const resizeObserver = new win.ResizeObserver(callback);
+            const resizeObserver = new win.ResizeObserver(() => {
+                this.resizeCallbacksActive++;
+                callback();
+                this.resizeCallbacksActive--;
+            });
             resizeObserver.observe(element);
             return () => resizeObserver.disconnect();
         };
@@ -58,6 +64,14 @@ export class ResizeObserverService extends BeanStub {
         }
 
         return usePolyfill();
+    }
+
+    public debounceIfResizeActive(func: () => void) {
+        if (this.resizeCallbacksActive > 0) {
+            debounce(() => func(), 0);
+        } else {
+            func();
+        }
     }
 
     private doNextPolyfillTurn(func: () => void): void {

@@ -19,6 +19,7 @@ import { PopupService } from "../widgets/popupService";
 import { MouseEventService } from "./mouseEventService";
 import { IRowModel } from "../interfaces/iRowModel";
 import { TouchListener, LongTapEvent } from "../widgets/touchListener";
+import { ResizeObserverService } from "../misc/resizeObserverService";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
@@ -51,6 +52,7 @@ export interface IGridBodyComp extends LayoutView {
 
 export class GridBodyCtrl extends BeanStub {
 
+    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
     @Autowired('rowContainerHeightService') private rowContainerHeightService: RowContainerHeightService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
@@ -123,7 +125,7 @@ export class GridBodyCtrl extends BeanStub {
 
     private addEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, () => setTimeout(() => this.onScrollVisibilityChanged(), 0));
+        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
     }
@@ -174,7 +176,8 @@ export class GridBodyCtrl extends BeanStub {
         const scrollbarWidth = visible ? (this.gridOptionsService.getScrollbarWidth() || 0) : 0;
         const pad = isInvisibleScrollbar() ? 16 : 0;
         const width = `calc(100% + ${scrollbarWidth + pad}px)`;
-        this.comp.setBodyViewportWidth(width);
+
+        this.resizeObserverService.debounceIfResizeActive(() => this.comp.setBodyViewportWidth(width));
     }
 
     private onGridColumnsChanged(): void {

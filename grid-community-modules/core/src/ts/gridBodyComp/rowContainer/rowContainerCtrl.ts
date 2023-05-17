@@ -283,7 +283,7 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     private addListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, () => setTimeout(() => this.onScrollVisibilityChanged(), 0));
+        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, () => this.onScrollVisibilityChanged());
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, () => this.onDisplayedColumnsChanged());
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => this.onDisplayedColumnsWidthChanged());
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, (params: DisplayedRowsChangedEvent) => this.onDisplayedRowsChanged(params.afterScroll));
@@ -338,7 +338,8 @@ export class RowContainerCtrl extends BeanStub {
             const visible = this.scrollVisibleService.isHorizontalScrollShowing();
             const scrollbarWidth = visible ? scrollWidth : 0;
             const size = scrollbarWidth == 0 ? '100%' : `calc(100% + ${scrollbarWidth}px)`;
-            this.comp.setViewportHeight(size);
+
+            this.resizeObserverService.debounceIfResizeActive(() => this.comp.setViewportHeight(size));
         }
 
         if (this.name === RowContainerName.FULL_WIDTH) {

@@ -2,6 +2,7 @@ import { Autowired } from "../context/context";
 import { CtrlsService } from "../ctrlsService";
 import { Events } from "../eventKeys";
 import { BodyScrollEvent } from "../events";
+import { ResizeObserverService } from "../misc/resizeObserverService";
 import { isInvisibleScrollbar, isIOSUserAgent, isMacOsUserAgent } from "../utils/browser";
 import { Component } from "../widgets/component";
 import { RefSelector } from "../widgets/componentAnnotations";
@@ -13,6 +14,7 @@ export abstract class AbstractFakeScrollComp extends Component {
     @RefSelector('eContainer') protected readonly eContainer: HTMLElement;
     @Autowired('scrollVisibleService') protected readonly scrollVisibleService: ScrollVisibleService;
     @Autowired('ctrlsService') protected readonly ctrlsService: CtrlsService;
+    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
     protected invisibleScrollbar: boolean;
     protected hideTimeout: number | null = null;
@@ -24,7 +26,7 @@ export abstract class AbstractFakeScrollComp extends Component {
     }
 
     protected postConstruct(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, () => setTimeout(() => this.onScrollVisibilityChanged()));
+        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, () => this.onScrollVisibilityChanged());
         this.onScrollVisibilityChanged();
         this.addOrRemoveCssClass('ag-apple-scrollbar', isMacOsUserAgent() || isIOSUserAgent());
     }
@@ -65,7 +67,7 @@ export abstract class AbstractFakeScrollComp extends Component {
             this.initialiseInvisibleScrollbar();
         }
 
-        this.setScrollVisible();
+        this.resizeObserverService.debounceIfResizeActive(() => this.setScrollVisible());
     }
 
     protected hideAndShowInvisibleScrollAsNeeded(): void {
