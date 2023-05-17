@@ -545,7 +545,7 @@ const ExampleRunnerInner = ({
     exampleInfo.linkId = `example-${name}`;
 
     return (
-        <div className={classnames('tabs-outer', styles.tabsContainer)}>
+        <div id={exampleInfo.linkId} className={classnames('tabs-outer', styles.tabsContainer)}>
             <header className={classnames('tabs-header', styles.header)}>
                 <ul className="tabs-nav-list" role="tablist">
                     {/* eslint-disable-line */}
