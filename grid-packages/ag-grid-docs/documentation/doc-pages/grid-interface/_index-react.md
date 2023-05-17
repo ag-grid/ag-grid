@@ -89,8 +89,8 @@
 |
 | // access API from callback params object
 | sendToClipboard = params => {
-|     e.api.sizeColumnsToFit();
-|     e.columnApi.resetColumnState();
+|     params.api.sizeColumnsToFit();
+|     params.columnApi.resetColumnState();
 | }
 |
 | &lt;AgGridReact
