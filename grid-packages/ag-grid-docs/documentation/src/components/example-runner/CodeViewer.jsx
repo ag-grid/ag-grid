@@ -7,6 +7,7 @@ import { Icon } from '../Icon';
 import CodeOptions from './CodeOptions';
 import styles from './CodeViewer.module.scss';
 import { getEntryFile, getExampleFiles } from './helpers';
+import { trackExampleRunnerEvent } from './track-example-runner-event';
 
 /**
  * This renders the code viewer in the example runner.
@@ -61,7 +62,16 @@ const CodeViewer = ({ isActive, exampleInfo }) => {
                                 key={path}
                                 path={path}
                                 isActive={activeFile === path}
-                                onClick={() => setActiveFile(path)}
+                                onClick={() => {
+                                    setActiveFile(path);
+                                    trackExampleRunnerEvent({
+                                        type: 'viewFileClick',
+                                        exampleInfo,
+                                        extraProps: {
+                                            filePath: path,
+                                        },
+                                    });
+                                }}
                             />
                         ))}
                     </ul>

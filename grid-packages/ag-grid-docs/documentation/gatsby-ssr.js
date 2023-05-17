@@ -12,6 +12,10 @@ import {siteMetadata} from './gatsby-config';
 import isDevelopment from './src/utils/is-development';
 import {isProductionBuild} from "./src/utils/consts";
 
+const PLAUSIBLE_DOMAIN = isProductionBuild()
+    ? 'ag-grid.com'
+    : 'testing.ag-grid.com';
+
 /**
  * This allows to customise the rendering of the body. We insert some scripts at the end of the body. It is better to
  * pull these files directly from a CDN rather than bundling them ourselves. However, the Node packages are still
@@ -69,7 +73,7 @@ export const wrapPageElement = ({element, props: {location: {pathname}}}) => {
 /**
  * This allows us to customise the page before it is rendered.
  */
-export const onPreRenderHTML = ({getHeadComponents, replaceHeadComponents, pathname}) => {
+export const onPreRenderHTML = ({ getHeadComponents, replaceHeadComponents, pathname }) => {
     // Remove script that causes issues with scroll position when a page is first loaded
     const headComponents = getHeadComponents().filter(el => el.key !== 'gatsby-remark-autolink-headers-script');
 
@@ -117,7 +121,10 @@ export const onPreRenderHTML = ({getHeadComponents, replaceHeadComponents, pathn
     // Add Plausible.io tracking
     if (!isDevelopment()) {
         headComponents.unshift(
-            <script defer data-domain="ag-grid.com" src="https://plausible.io/js/plausible.js"></script>
+            <>
+                <script defer data-domain={PLAUSIBLE_DOMAIN} src="https://plausible.io/js/script.tagged-events.outbound-links.js"></script>
+                <script>{`window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }`}</script>
+            </>
         );
     }
 

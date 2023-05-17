@@ -4,10 +4,11 @@ import { Icon } from 'components/Icon';
 import React from 'react';
 import isServerSideRendering from 'utils/is-server-side-rendering';
 import styles from './CodeOptions.module.scss';
+import { trackExampleRunnerEvent } from './track-example-runner-event';
 
 const isGeneratedExample = (type) => ['generated', 'mixed', 'typescript'].includes(type);
 
-const ImportTypeSelector = ({ id }) => {
+const ImportTypeSelector = ({ id, tracking }) => {
     const formId = `${id}-import-style-selector`;
     return isServerSideRendering() ? null : (
         <GlobalContextConsumer>
@@ -21,7 +22,11 @@ const ImportTypeSelector = ({ id }) => {
                             className={styles.simpleSelect}
                             id={formId}
                             value={exampleImportType}
-                            onChange={(event) => set({ exampleImportType: event.target.value })}
+                            onChange={(event) => {
+                                const value = event.target.value;
+                                set({ exampleImportType: value });
+                                tracking(value);
+                            }}
                             onBlur={(event) => set({ exampleImportType: event.target.value })}
                         >
                             {['packages', 'modules'].map((type) => (
@@ -38,13 +43,14 @@ const ImportTypeSelector = ({ id }) => {
     );
 };
 
-const ReactStyleSelector = ({ id }) => {
+const ReactStyleSelector = ({ id, tracking }) => {
     const formId = `${id}-react-style-selector`;
     return isServerSideRendering() ? null : (
         <GlobalContextConsumer>
             {({ useFunctionalReact, useTypescript, set }) => {
                 const onChange = (event) => {
-                    switch (event.target.value) {
+                    const value = event.target.value;
+                    switch (value) {
                         case 'classes':
                             set({ useFunctionalReact: false, useTypescript: false });
                             break;
@@ -69,7 +75,10 @@ const ReactStyleSelector = ({ id }) => {
                             className={styles.simpleSelect}
                             id={formId}
                             value={useFunctionalReact ? (useTypescript ? 'hooksTs' : 'hooks') : 'classes'}
-                            onChange={onChange}
+                            onChange={(event) => {
+                                onChange(event);
+                                tracking(event.target.value);
+                            }}
                             onBlur={onChange}
                         >
                             <option value="classes">Classes</option>
@@ -83,7 +92,7 @@ const ReactStyleSelector = ({ id }) => {
     );
 };
 
-const VueStyleSelector = ({ id }) => {
+const VueStyleSelector = ({ id, tracking }) => {
     const formId = `${id}-vue-style-selector`;
     return isServerSideRendering() ? null : (
         <GlobalContextConsumer>
@@ -97,7 +106,11 @@ const VueStyleSelector = ({ id }) => {
                             className={styles.simpleSelect}
                             id={formId}
                             value={JSON.stringify(useVue3)}
-                            onChange={(event) => set({ useVue3: JSON.parse(event.target.value) })}
+                            onChange={(event) => {
+                                const value = event.target.value;
+                                set({ useVue3: JSON.parse(value) });
+                                tracking(value);
+                            }}
                             onBlur={(event) => set({ useVue3: JSON.parse(event.target.value) })}
                         >
                             <option value="false">Vue 2</option>
@@ -110,7 +123,7 @@ const VueStyleSelector = ({ id }) => {
     );
 };
 
-const TypescriptStyleSelector = ({ id }) => {
+const TypescriptStyleSelector = ({ id, tracking }) => {
     const formId = `${id}-typescript-style-selector`;
     return isServerSideRendering() ? null : (
         <GlobalContextConsumer>
@@ -124,7 +137,11 @@ const TypescriptStyleSelector = ({ id }) => {
                             className={styles.simpleSelect}
                             id={formId}
                             value={JSON.stringify(useTypescript)}
-                            onChange={(event) => set({ useTypescript: JSON.parse(event.target.value) })}
+                            onChange={(event) => {
+                                const value = event.target.value;
+                                set({ useTypescript: JSON.parse(value) });
+                                tracking(value);
+                            }}
                             onBlur={(event) => set({ useTypescript: JSON.parse(event.target.value) })}
                         >
                             <option value="false">Javascript</option>
@@ -149,6 +166,15 @@ const CodeOptions = ({ exampleInfo }) => {
                         <TypescriptStyleSelector
                             id={`${exampleInfo.linkId}-typescript-style-selector`}
                             useTypescript={exampleInfo.useTypescript}
+                            tracking={(value) => {
+                                trackExampleRunnerEvent({
+                                    type: 'typescriptSelect',
+                                    exampleInfo,
+                                    extraProps: {
+                                        value,
+                                    },
+                                });
+                            }}
                         />
                     </div>
                 )}
@@ -160,6 +186,15 @@ const CodeOptions = ({ exampleInfo }) => {
                         id={exampleInfo.linkId}
                         useFunctionalReact={exampleInfo.useFunctionalReact}
                         useTypescript={exampleInfo.useTypescript}
+                        tracking={(value) => {
+                            trackExampleRunnerEvent({
+                                type: 'reactSelect',
+                                exampleInfo,
+                                extraProps: {
+                                    value,
+                                },
+                            });
+                        }}
                     />
                 </div>
             )}
@@ -170,7 +205,19 @@ const CodeOptions = ({ exampleInfo }) => {
                         return (
                             enableVue3 && (
                                 <div>
-                                    <VueStyleSelector id={exampleInfo.linkId} useVue3={exampleInfo.useVue3} />
+                                    <VueStyleSelector
+                                        id={exampleInfo.linkId}
+                                        useVue3={exampleInfo.useVue3}
+                                        tracking={(value) => {
+                                            trackExampleRunnerEvent({
+                                                type: 'vue3Select',
+                                                exampleInfo,
+                                                extraProps: {
+                                                    value,
+                                                },
+                                            });
+                                        }}
+                                    />
                                 </div>
                             )
                         );
@@ -182,7 +229,18 @@ const CodeOptions = ({ exampleInfo }) => {
                 (exampleInfo.framework !== 'javascript' || exampleInfo.internalFramework === 'typescript') &&
                 isGenerated && (
                     <div>
-                        <ImportTypeSelector id={exampleInfo.linkId} />
+                        <ImportTypeSelector
+                            id={exampleInfo.linkId}
+                            tracking={(value) => {
+                                trackExampleRunnerEvent({
+                                    type: 'importTypeSelect',
+                                    exampleInfo,
+                                    extraProps: {
+                                        value,
+                                    },
+                                });
+                            }}
+                        />
                         <DocumentationLink
                             className={styles.importInfoIcon}
                             framework={exampleInfo.framework}
