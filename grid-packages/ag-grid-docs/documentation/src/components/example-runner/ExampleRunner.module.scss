@@ -5,6 +5,17 @@
     margin-bottom: $size-2 !important; // !important for .ag-styles specificity
 }
 
+.header {
+    overflow-x: auto;
+}
+
+.headerInner {
+    display: flex;
+    width: 100%;
+    gap: $size-4;
+    min-width: 560px;
+}
+
 .externalLinks {
     display: flex;
     align-items: center;
