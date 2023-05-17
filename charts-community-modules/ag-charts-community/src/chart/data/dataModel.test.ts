@@ -13,17 +13,23 @@ import {
     SMALLEST_KEY_INTERVAL,
     SORT_DOMAIN_GROUPS,
 } from './processors';
+import { rangedValueProperty } from '../series/series';
 
 const rangeKey = (property: string) => ({ property, type: 'key' as const, valueType: 'range' as const });
 const categoryKey = (property: string) => ({ property, type: 'key' as const, valueType: 'category' as const });
-const value = (property: string) => ({ property, type: 'value' as const, valueType: 'range' as const });
+const value = (property: string, id?: string) => ({
+    property,
+    type: 'value' as const,
+    valueType: 'range' as const,
+    id,
+});
 const categoryValue = (property: string) => ({ property, type: 'value' as const, valueType: 'category' as const });
-const accumulatedGroupValue = (property: string) => ({
-    ...value(property),
+const accumulatedGroupValue = (property: string, id?: string) => ({
+    ...value(property, id),
     processor: () => (next, total) => next + (total ?? 0),
 });
-const accumulatedPropertyValue = (property: string) => ({
-    ...value(property),
+const accumulatedPropertyValue = (property: string, id?: string) => ({
+    ...value(property, id),
     processor: accumulatedValue(),
 });
 
@@ -134,7 +140,7 @@ describe('DataModel', () => {
                     accumulatedPropertyValue('population'),
                     categoryValue('religion'),
                     value('population'),
-                    normalisePropertyTo('population', 2 * Math.PI),
+                    normalisePropertyTo('population', [0, 2 * Math.PI]),
                 ],
             });
 
@@ -151,7 +157,7 @@ describe('DataModel', () => {
                         accumulatedPropertyValue('vp1'),
                         accumulatedPropertyValue('vp2'),
                         value('vp3'),
-                        normalisePropertyTo('vp1', 100),
+                        normalisePropertyTo('vp1', [0, 100]),
                     ],
                 });
                 const data = [
@@ -175,8 +181,8 @@ describe('DataModel', () => {
 
                     expect(result?.type).toEqual('ungrouped');
                     expect(result?.data.length).toEqual(3);
-                    expect(result?.data[0].values).toEqual([41.666666666666664, 7, 1]);
-                    expect(result?.data[1].values).toEqual([50, 9, 2]);
+                    expect(result?.data[0].values).toEqual([0, 7, 1]);
+                    expect(result?.data[1].values).toEqual([14.285714285714285, 9, 2]);
                     expect(result?.data[2].values).toEqual([100, 18, 3]);
                 });
 
@@ -186,7 +192,7 @@ describe('DataModel', () => {
                     expect(result?.type).toEqual('ungrouped');
                     expect(result?.domain.keys).toEqual([[2, 4]]);
                     expect(result?.domain.values).toEqual([
-                        [41.666666666666664, 100],
+                        [0, 100],
                         [7, 18],
                         [1, 3],
                     ]);
@@ -964,6 +970,23 @@ describe('DataModel', () => {
 
                 expect(result?.domain.keys).toEqual([[]]);
                 expect(result?.domain.values).toEqual([[], [], [], []]);
+            });
+        });
+    });
+
+    describe('repeated property processing', () => {
+        it('should generated the expected results', () => {
+            const data = [...examples.PIE_IN_A_DOUGHNUT.series![0]!.data!.map((v) => ({ ...v }))];
+            const dataModel = new DataModel<any, any>({
+                props: [
+                    accumulatedPropertyValue('share', 'angle'),
+                    rangedValueProperty('share', { id: 'radius', min: 0.05, max: 0.7 }),
+                    normalisePropertyTo({ id: 'angle' }, [0, 1]),
+                ],
+            });
+
+            expect(dataModel.processData(data)).toMatchSnapshot({
+                time: expect.any(Number),
             });
         });
     });

@@ -1,6 +1,7 @@
 import {
     GroupValueProcessorDefinition,
     ProcessorOutputPropertyDefinition,
+    PropertyId,
     PropertyValueProcessorDefinition,
     ReducerOutputPropertyDefinition,
 } from './dataModel';
@@ -62,7 +63,7 @@ export const SORT_DOMAIN_GROUPS: ProcessorOutputPropertyDefinition<any> = {
 };
 
 export function normaliseGroupTo(
-    properties: (string | number)[],
+    properties: PropertyId<any>[],
     normaliseTo: number,
     mode: 'sum' | 'range' = 'sum'
 ): GroupValueProcessorDefinition<any, any> {
@@ -100,32 +101,31 @@ export function normaliseGroupTo(
 }
 
 export function normalisePropertyTo(
-    property: string | number,
-    normaliseTo: number
+    property: PropertyId<any>,
+    normaliseTo: [number, number],
+    rangeMin?: number,
+    rangeMax?: number
 ): PropertyValueProcessorDefinition<any> {
-    const normalise = (val: number, extent: number) => {
-        const result = (val * normaliseTo) / extent;
-        if (result >= 0) {
-            return Math.min(normaliseTo, result);
-        }
-        return Math.max(-normaliseTo, result);
+    const normaliseSpan = normaliseTo[1] - normaliseTo[0];
+    const normalise = (val: number, start: number, span: number) => {
+        const result = normaliseTo[0] + ((val - start) / span) * normaliseSpan;
+
+        if (span === 0) return normaliseTo[1];
+        if (result >= normaliseTo[1]) return normaliseTo[1];
+        if (result < normaliseTo[0]) return normaliseTo[0];
+        return result;
     };
 
     return {
         type: 'property-value-processor',
         property,
         adjust: () => (pData, pIdx) => {
-            const domain = pData.domain.values[pIdx];
+            let [start, end] = pData.domain.values[pIdx];
+            if (rangeMin != null) start = rangeMin;
+            if (rangeMax != null) end = rangeMax;
+            const span = end - start;
 
-            let valuesExtent = 0;
-            for (const value of domain) {
-                const sumAbs = Math.abs(value);
-                if (valuesExtent < sumAbs) {
-                    valuesExtent = sumAbs;
-                }
-            }
-
-            pData.domain.values[pIdx] = [normalise(domain[0], valuesExtent), normalise(domain[1], valuesExtent)];
+            pData.domain.values[pIdx] = [normaliseTo[0], normaliseTo[1]];
 
             for (const group of pData.data) {
                 let groupValues = group.values;
@@ -133,7 +133,7 @@ export function normalisePropertyTo(
                     groupValues = [groupValues];
                 }
                 for (const values of groupValues) {
-                    values[pIdx] = normalise(values[pIdx], valuesExtent);
+                    values[pIdx] = normalise(values[pIdx], start, span);
                 }
             }
         },

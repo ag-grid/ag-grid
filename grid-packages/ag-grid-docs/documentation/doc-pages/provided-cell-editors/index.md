@@ -11,6 +11,15 @@ The grid comes with some cell editors provided out of the box. These cell editor
 
 <grid-example title='Editors' name='editors' type='generated' options='{ "enterprise": true, "modules": ["clientside","richselect"] }'></grid-example>
 
+There are also some additional cell editors that are generally used with [Cell Data Types](/cell-data-types/):
+
+- [Number Cell Editor](#number-cell-editor)
+- [Date Cell Editor](#date-cell-editor)
+- [Date as String Cell Editor](#date-as-string-cell-editor)
+- [Checkbox Cell Editor](#checkbox-cell-editor)
+
+<grid-example title='Cell Data Type Editors' name='cell-data-type-editors' type='generated'></grid-example>
+
 ## Text Cell Editor
 
 Simple text editor that uses the standard HTML `input`. This editor is the default if none other specified.
@@ -130,3 +139,86 @@ columnDefs: [
     }
 ]
 </snippet>
+
+## Number Cell Editor
+
+Simple number editor that uses the standard HTML number `input`.
+
+Specified with `agNumberCellEditor` and configured with `INumberCellEditorParams`.
+
+<interface-documentation interfaceName='INumberCellEditorParams' names='["min","max","precision","step"]'></interface-documentation>
+
+```js
+columnDefs: [
+    {
+        cellEditor: 'agNumberCellEditor',
+        cellEditorParams: {
+            min: 1,
+            max: 100,
+            precision: 0,
+        }
+        // ...other props
+    }
+]
+```
+
+## Date Cell Editor
+
+Simple date editor that uses the standard HTML date `input`. Requires cell values to be of type `Date`.
+
+Specified with `agDateCellEditor` and configured with `IDateCellEditorParams`.
+
+<interface-documentation interfaceName='IDateCellEditorParams' names='["min","max","step"]'></interface-documentation>
+
+```js
+columnDefs: [
+    {
+        cellEditor: 'agDateCellEditor',
+        cellEditorParams: {
+            min: '2000-01-01',
+            min: '2019-12-31',
+        }
+        // ...other props
+    }
+]
+```
+
+## Date as String Cell Editor
+
+Simple date editor that uses the standard HTML date `input`. Similar to the [Date Cell Editor](#date-cell-editor), but works off of cell values with `string` type.
+
+The date format is controlled via [Cell Data Types](/cell-data-types/) and the [Date as String Data Type Definition](/cell-data-types/#date-as-string-data-type-definition). The default is `'yyyy-mm-dd'`.
+
+Specified with `agDateStringCellEditor` and configured with `IDateStringCellEditorParams`.
+
+<interface-documentation interfaceName='IDateStringCellEditorParams' names='["min","max","step"]'></interface-documentation>
+
+```js
+columnDefs: [
+    {
+        cellEditor: 'agDateStringCellEditor',
+        cellEditorParams: {
+            min: '2000-01-01',
+            min: '2019-12-31',
+        }
+        // ...other props
+    }
+]
+```
+
+## Checkbox Cell Editor
+
+Simple boolean editor that uses the standard HTML checkbox `input`.
+
+Specified with `agCheckboxCellEditor`.
+
+Generally used in conjunction with the [Checkbox Cell Renderer](/cell-rendering/#checkbox-cell-renderer).
+
+```js
+columnDefs: [
+    {
+        cellEditor: 'agCheckboxCellEditor',
+        // ...other props
+    }
+]
+```

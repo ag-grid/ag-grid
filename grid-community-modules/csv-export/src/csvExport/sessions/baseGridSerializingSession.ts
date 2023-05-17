@@ -7,7 +7,9 @@ import {
     ProcessHeaderForExportParams,
     ProcessRowGroupForExportParams,
     RowNode,
-    ValueService
+    ValueFormatterService,
+    ValueService,
+    ValueParserService
 } from "@ag-grid-community/core";
 
 import { GridSerializingParams, GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from "../interfaces";
@@ -16,6 +18,8 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     public columnModel: ColumnModel;
     public valueService: ValueService;
     public gridOptionsService: GridOptionsService;
+    public valueFormatterService: ValueFormatterService;
+    public valueParserService: ValueParserService;
     public processCellCallback?: (params: ProcessCellForExportParams) => string;
     public processHeaderCallback?: (params: ProcessHeaderForExportParams) => string;
     public processGroupHeaderCallback?: (params: ProcessGroupHeaderForExportParams) => string;
@@ -25,14 +29,22 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
     constructor(config: GridSerializingParams) {
         const {
-            columnModel, valueService, gridOptionsService, processCellCallback,
-            processHeaderCallback, processGroupHeaderCallback,
-            processRowGroupCallback
+            columnModel,
+            valueService,
+            gridOptionsService,
+            valueFormatterService,
+            valueParserService,
+            processCellCallback,
+            processHeaderCallback,
+            processGroupHeaderCallback,
+            processRowGroupCallback,
         } = config;
 
         this.columnModel = columnModel;
         this.valueService = valueService;
         this.gridOptionsService = gridOptionsService;
+        this.valueFormatterService = valueFormatterService;
+        this.valueParserService = valueParserService;
         this.processCellCallback = processCellCallback;
         this.processHeaderCallback = processHeaderCallback;
         this.processGroupHeaderCallback = processGroupHeaderCallback;
@@ -146,8 +158,14 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                 api: this.gridOptionsService.api,
                 columnApi: this.gridOptionsService.columnApi,
                 context: this.gridOptionsService.context,
-                type: type
+                type: type,
+                parseValue: (valueToParse: string) => this.valueParserService.parseValue(column, rowNode, valueToParse, this.valueService.getValue(column, rowNode)),
+                formatValue: (valueToFormat: any) => this.valueFormatterService.formatValue(column, rowNode, valueToFormat) ?? valueToFormat
             });
+        }
+
+        if (column.getColDef().useValueFormatterForExport) {
+            return this.valueFormatterService.formatValue(column, rowNode, value);
         }
 
         return value != null ? value : '';

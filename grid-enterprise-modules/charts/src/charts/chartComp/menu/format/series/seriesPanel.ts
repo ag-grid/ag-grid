@@ -279,7 +279,7 @@ export class SeriesPanel extends Component {
     }
 
     private initBins() {
-        const currentValue = this.getSeriesOption<any>("bins").length;
+        const currentValue = (this.getSeriesOption<any>("bins") ?? this.getSeriesOption<any>("calculatedBins")).length;
 
         const seriesBinCountSlider = this.createBean(new AgSlider());
         seriesBinCountSlider

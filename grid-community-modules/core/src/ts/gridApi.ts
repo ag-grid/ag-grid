@@ -124,6 +124,7 @@ import { ValueCache } from "./valueService/valueCache";
 import { ValueService } from "./valueService/valueService";
 import { ISelectionService } from "./interfaces/iSelectionService";
 import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./interfaces/iServerSideSelection";
+import { DataTypeDefinition } from "./entities/dataType";
 
 export interface DetailGridInfo {
     /**
@@ -961,7 +962,7 @@ export class GridApi<TData = any> {
         return unwrapUserComp(comp) as any;
     }
 
-    public getColumnDef(key: string | Column): ColDef<TData> | null {
+    public getColumnDef<TValue = any>(key: string | Column<TValue>): ColDef<TData, TValue> | null {
         const column = this.columnModel.getPrimaryColumn(key);
         if (column) {
             return column.getColDef();
@@ -1441,7 +1442,7 @@ export class GridApi<TData = any> {
      * Gets the value for a column for a particular `rowNode` (row).
      * This is useful if you want the raw value of a cell e.g. if implementing your own CSV export.
      */
-    public getValue(colKey: string | Column, rowNode: IRowNode): any {
+    public getValue<TValue = any>(colKey: string | Column<TValue>, rowNode: IRowNode): TValue | null | undefined {
         let column = this.columnModel.getPrimaryColumn(colKey);
         if (missing(column)) {
             column = this.columnModel.getGridColumn(colKey);
@@ -1968,6 +1969,13 @@ export class GridApi<TData = any> {
     /** Returns the total number of displayed rows. */
     public getDisplayedRowCount(): number {
         return this.rowModel.getRowCount();
+    }
+
+    /** Resets the data type definitions. This will update the columns in the grid. */
+    public setDataTypeDefinitions(dataTypeDefinitions: {
+        [cellDataType: string]: DataTypeDefinition<TData>;
+    }): void {
+        this.gridOptionsService.set('dataTypeDefinitions', dataTypeDefinitions);
     }
 
     /**

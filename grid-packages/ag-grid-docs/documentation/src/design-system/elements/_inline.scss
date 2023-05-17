@@ -29,10 +29,6 @@ code {
     color: var(--code-text-color);
     background-color: var(--inline-element-background-color);
     border: 1px solid rgba(black, 0.1);
-
-    pre & {
-        font-size: 100%;
-    }
 }
 
 kbd {

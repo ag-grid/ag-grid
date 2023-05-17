@@ -265,6 +265,12 @@
                 "name": "Read Only Edit",
                 "url": "/value-setters/#read-only-edit"
             }
+        },
+        "dataTypeDefinitions": {
+            "more": {
+                "name": "Custom Cell Data Type Definitions",
+                "url": "/cell-data-types/#providing-custom-cell-data-types"
+            }
         }
     },
     "export": {

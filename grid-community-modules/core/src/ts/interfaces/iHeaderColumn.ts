@@ -5,13 +5,13 @@ import { ColumnPinnedType } from "../entities/column";
 
 // Implemented by Column and ColumnGroup. Allows the groups to contain a list of this type for it's children.
 // See the note at the top of Column class.
-export interface IHeaderColumn extends IEventEmitter {
+export interface IHeaderColumn<TValue = any> extends IEventEmitter {
     getUniqueId(): string;
     getActualWidth(): number;
     getMinWidth(): number | null | undefined;
     getLeft(): number | null;
     getOldLeft(): number | null;
-    getDefinition(): AbstractColDef | null;
+    getDefinition(): AbstractColDef<TValue> | null;
     getColumnGroupShow(): ColumnGroupShowType | undefined;
     getParent(): IHeaderColumn;
     isResizable(): boolean;

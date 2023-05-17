@@ -1161,7 +1161,7 @@
       "class?": "/** A class name to be added to the tooltip element of the chart. */",
       "tracking?": "/** @deprecated since v7.2.0 (ag-grid v29.2.0) If true, for series with markers the tooltip will be shown to the closest marker. */",
       "range?": "/** Range from a point that triggers the tooltip to show. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "position?": "/** The position of the tooltip. */",
       "delay?": "/** The time interval (in milliseconds) after which the tooltip is shown. */"
     }
   },
@@ -1181,7 +1181,7 @@
       "yOffset?": "PixelSize"
     },
     "docs": {
-      "type": "/** The type of positioning for the tooltip. By default, the tooltip follows the pointer. */",
+      "type": "/** The type of positioning for the tooltip. By default, for Bar, Histogram, Treemap, Pie and Doughnut series, the tooltip follows the pointer. For Line, Area and Scatter series, the tooltip is anchored to the highlighted node. */",
       "xOffset?": "/** The horizontal offset in pixels for the position of the tooltip. */",
       "yOffset?": "/** The vertical offset in pixels for the position of the tooltip. */"
     }
@@ -2122,7 +2122,7 @@
     "docs": {
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
       "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "position?": "/** The position of the tooltip. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
@@ -2176,7 +2176,7 @@
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
       "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "position?": "/** The position of the tooltip. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
@@ -2245,7 +2245,7 @@
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
       "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "position?": "/** The position of the tooltip. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
@@ -2373,7 +2373,7 @@
     "docs": {
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
       "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "position?": "/** The position of the tooltip. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
@@ -2527,7 +2527,7 @@
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
       "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "position?": "/** The position of the tooltip. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
@@ -2659,7 +2659,7 @@
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
       "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "position?": "/** The position of the tooltip. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
@@ -2821,7 +2821,7 @@
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
       "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "position?": "/** The position of the tooltip. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
@@ -3136,7 +3136,7 @@
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
       "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "position?": "/** The position of the tooltip. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
@@ -3697,9 +3697,13 @@
     "meta": { "isTypeAlias": true },
     "type": "(datum: any, previousDatum?: any) => any"
   },
+  "PropertyId": {
+    "meta": { "isTypeAlias": true, "typeParams": ["K extends string"] },
+    "type": "K | { id: string; }"
+  },
   "DatumPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
-    "type": "{ type: 'key' | 'value'; valueType: DatumPropertyType; property: K; invalidValue?: any; missingValue?: any; validation?: (datum: any) => boolean; processor?: () => ProcessorFn; }"
+    "type": "{ id?: string; type: 'key' | 'value'; valueType: DatumPropertyType; property: K; invalidValue?: any; missingValue?: any; validation?: (datum: any) => boolean; processor?: () => ProcessorFn; }"
   },
   "InternalDatumPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
@@ -3708,25 +3712,33 @@
   "AggregatePropertyDefinition": {
     "meta": {
       "isTypeAlias": true,
-      "typeParams": ["D", "K extends keyof D", "R = [number, number]", "R2 = R"]
+      "typeParams": [
+        "D",
+        "K extends keyof D & string",
+        "R = [number, number]",
+        "R2 = R"
+      ]
     },
-    "type": "{ type: 'aggregate'; aggregateFunction: (values: D[K][], keys?: D[K][]) => R; groupAggregateFunction?: (next?: R, acc?: R2) => R2; finalFunction?: (result: R2) => [ number, number ]; properties: (K | number)[]; }"
+    "type": "{ id?: string; type: 'aggregate'; aggregateFunction: (values: D[K][], keys?: D[K][]) => R; groupAggregateFunction?: (next?: R, acc?: R2) => R2; finalFunction?: (result: R2) => [ number, number ]; properties: PropertyId<K>[]; }"
   },
   "GroupValueProcessorDefinition": {
-    "meta": { "isTypeAlias": true, "typeParams": ["D", "K extends keyof D"] },
-    "type": "{ type: 'group-value-processor'; properties: (K | number)[]; adjust: () => (values: D[K][], indexes: number[]) => void; }"
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["D", "K extends keyof D & string"]
+    },
+    "type": "{ id?: string; type: 'group-value-processor'; properties: PropertyId<K>[]; adjust: () => (values: D[K][], indexes: number[]) => void; }"
   },
   "PropertyValueProcessorDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["D"] },
-    "type": "{ type: 'property-value-processor'; property: string | number; adjust: () => (processedData: ProcessedData<D>, valueIndex: number) => void; }"
+    "type": "{ id?: string; type: 'property-value-processor'; property: PropertyId<keyof D & string>; adjust: () => (processedData: ProcessedData<D>, valueIndex: number) => void; }"
   },
   "ReducerOutputPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["R"] },
-    "type": "{ type: 'reducer'; property: string; initialValue?: R; reducer: () => (acc: R, next: UngroupedDataItem<any, any>) => R; }"
+    "type": "{ id?: string; type: 'reducer'; property: string; initialValue?: R; reducer: () => (acc: R, next: UngroupedDataItem<any, any>) => R; }"
   },
   "ProcessorOutputPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["R"] },
-    "type": "{ type: 'processor'; property: string; calculate: (data: ProcessedData<any>) => R; }"
+    "type": "{ id?: string; type: 'processor'; property: string; calculate: (data: ProcessedData<any>) => R; }"
   },
   "Series": {
     "meta": {},
@@ -4306,6 +4318,8 @@
     "type": {
       "index": "number",
       "radius": "number",
+      "angleValue": "number",
+      "radiusValue?": "number",
       "startAngle": "number",
       "endAngle": "number",
       "midAngle": "number",
@@ -4313,7 +4327,8 @@
       "midSin": "number",
       "calloutLabel?": "{ readonly text: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; hidden: boolean; collisionTextAlign?: CanvasTextAlign; collisionOffsetY: number; box?: BBox; }",
       "sectorLabel?": "{ readonly text: string; }",
-      "sectorFormat": "AgPieSeriesFormat",
+      "sectorFormat": "Required<AgPieSeriesFormat>",
+      "legendItemKey?": "string",
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",

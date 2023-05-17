@@ -106,7 +106,7 @@ function is2dArray<E>(array: E[] | E[][]): array is E[][] {
 
 export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatum>, Rect> {
     static className = 'BarSeries';
-    static type = 'bar' as const;
+    static type: 'bar' | 'column' = 'bar' as const;
 
     readonly label = new BarSeriesLabel();
 
@@ -983,70 +983,45 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         this.nodeDataRefresh = true;
     }
 
-    animateEmptyUpdateReady(subGroups: Array<Selection<Rect, BarNodeDatum>>) {
-        if (!this.processedData) return;
-
+    animateEmptyUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
         let startingX = Infinity;
-        let startingY = 0;
-        subGroups.forEach((subGroup) =>
-            subGroup.each((_, datum) => {
+        datumSelections.forEach((datumSelection) =>
+            datumSelection.each((_, datum) => {
                 if (datum.yValue >= 0) {
                     startingX = Math.min(startingX, datum.x);
-                    startingY = Math.max(startingY, datum.height + datum.y);
                 }
             })
         );
 
-        subGroups.forEach((subGroup) => {
-            subGroup.each((rect, datum) => {
-                if (this.getBarDirection() === ChartAxisDirection.X) {
-                    this.animationManager?.animateMany(
-                        `${this.id}_empty-update-ready_${rect.id}`,
-                        [
-                            { from: startingX, to: datum.x },
-                            { from: 0, to: datum.width },
-                        ],
-                        {
-                            duration: 1000,
-                            ease: easing.linear,
-                            repeat: 0,
-                            onUpdate([x, width]) {
-                                rect.x = x;
-                                rect.width = width;
+        datumSelections.forEach((datumSelection) => {
+            datumSelection.each((rect, datum) => {
+                this.animationManager?.animateMany(
+                    `${this.id}_empty-update-ready_${rect.id}`,
+                    [
+                        { from: startingX, to: datum.x },
+                        { from: 0, to: datum.width },
+                    ],
+                    {
+                        disableInteractions: true,
+                        duration: 1000,
+                        ease: easing.linear,
+                        repeat: 0,
+                        onUpdate([x, width]) {
+                            rect.x = x;
+                            rect.width = width;
 
-                                rect.y = datum.y;
-                                rect.height = datum.height;
-                            },
-                        }
-                    );
-                } else {
-                    this.animationManager?.animateMany(
-                        `${this.id}_empty-update-ready_${rect.id}`,
-                        [
-                            { from: startingY, to: datum.y },
-                            { from: 0, to: datum.height },
-                        ],
-                        {
-                            duration: 1000,
-                            ease: easing.linear,
-                            repeat: 0,
-                            onUpdate([y, height]) {
-                                rect.y = y;
-                                rect.height = height;
-
-                                rect.x = datum.x;
-                                rect.width = datum.width;
-                            },
-                        }
-                    );
-                }
+                            rect.y = datum.y;
+                            rect.height = datum.height;
+                        },
+                    }
+                );
             });
         });
     }
 
-    animateReadyUpdateReady(subGroups: Array<Selection<Rect, BarNodeDatum>>) {
-        subGroups.forEach((subGroup) => {
-            subGroup.each((rect, datum) => {
+    animateReadyUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
+        datumSelections.forEach((datumSelection) => {
+            datumSelection.each((rect, datum) => {
                 rect.x = datum.x;
                 rect.y = datum.y;
                 rect.width = datum.width;
@@ -1082,6 +1057,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 }
 
 export class ColumnSeries extends BarSeries {
+    static type = 'column' as const;
     static className = 'ColumnSeries';
 
     protected getBarDirection() {
@@ -1090,5 +1066,41 @@ export class ColumnSeries extends BarSeries {
 
     protected getCategoryDirection() {
         return ChartAxisDirection.X;
+    }
+
+    animateEmptyUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
+        let startingY = 0;
+        datumSelections.forEach((datumSelection) =>
+            datumSelection.each((_, datum) => {
+                if (datum.yValue >= 0) {
+                    startingY = Math.max(startingY, datum.height + datum.y);
+                }
+            })
+        );
+
+        datumSelections.forEach((datumSelection) => {
+            datumSelection.each((rect, datum) => {
+                this.animationManager?.animateMany(
+                    `${this.id}_empty-update-ready_${rect.id}`,
+                    [
+                        { from: startingY, to: datum.y },
+                        { from: 0, to: datum.height },
+                    ],
+                    {
+                        disableInteractions: true,
+                        duration: 1000,
+                        ease: easing.linear,
+                        repeat: 0,
+                        onUpdate([y, height]) {
+                            rect.y = y;
+                            rect.height = height;
+
+                            rect.x = datum.x;
+                            rect.width = datum.width;
+                        },
+                    }
+                );
+            });
+        });
     }
 }

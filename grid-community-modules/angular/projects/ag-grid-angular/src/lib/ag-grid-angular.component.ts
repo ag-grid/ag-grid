@@ -60,6 +60,7 @@ import {
     ColumnVisibleEvent,
     ComponentStateChangedEvent,
     CsvExportParams,
+    DataTypeDefinition,
     DisplayedColumnsChangedEvent,
     DomLayoutType,
     DragStartedEvent,
@@ -350,6 +351,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public defaultColGroupDef: Partial<ColGroupDef<TData>> | undefined = undefined;
     /** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property.     */
     @Input() public columnTypes: { [key: string]: ColDef<TData>; } | undefined = undefined;
+    /** An object map of cell data types to their definitions.
+         * Cell data types can either override/update the pre-defined data types
+         * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`),
+         * or can be custom data types.
+         */
+    @Input() public dataTypeDefinitions: {
+        [cellDataType: string]: DataTypeDefinition<TData>;
+    } | undefined = undefined;
     /** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false`     */
     @Input() public maintainColumnOrder: boolean | undefined = undefined;
     /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false`     */

@@ -570,9 +570,42 @@ export class FilterManager extends BeanStub {
         return this.allColumnFilters.get(column.getColId());
     }
 
+    private getDefaultFilter(column: Column): string {
+        let defaultFilter;
+        if (ModuleRegistry.isRegistered(ModuleNames.SetFilterModule)) {
+            defaultFilter = 'agSetColumnFilter';
+        } else {
+            const cellDataType = column.getColDef().cellDataType;
+            if (cellDataType === 'number') {
+                defaultFilter = 'agNumberColumnFilter';
+            } else if (cellDataType === 'date' || cellDataType === 'dateString') {
+                defaultFilter = 'agDateColumnFilter';
+            } else {
+                defaultFilter = 'agTextColumnFilter';
+            }
+        }
+        return defaultFilter;
+    }
+
+    public getDefaultFloatingFilter(column: Column): string {
+        let defaultFloatingFilterType: string;
+        if (ModuleRegistry.isRegistered(ModuleNames.SetFilterModule)) {
+            defaultFloatingFilterType = 'agSetColumnFloatingFilter';
+        } else {
+            const cellDataType = column.getColDef().cellDataType;
+            if (cellDataType === 'number') {
+                defaultFloatingFilterType = 'agNumberColumnFloatingFilter';
+            } else if (cellDataType === 'date' || cellDataType === 'dateString') {
+                defaultFloatingFilterType = 'agDateColumnFloatingFilter';
+            } else {
+                defaultFloatingFilterType = 'agTextColumnFloatingFilter';
+            }
+        }
+        return defaultFloatingFilterType;
+    }
+
     private createFilterInstance(column: Column): AgPromise<IFilterComp> | null {
-        const defaultFilter =
-            ModuleRegistry.isRegistered(ModuleNames.SetFilterModule) ? 'agSetColumnFilter' : 'agTextColumnFilter';
+        const defaultFilter = this.getDefaultFilter(column);
 
         const colDef = column.getColDef();
 
@@ -732,7 +765,7 @@ export class FilterManager extends BeanStub {
         const filterParams = this.createFilterParams(column, colDef);
         const finalFilterParams = this.userComponentFactory.mergeParamsWithApplicationProvidedParams(colDef, FilterComponent, filterParams);
 
-        let defaultFloatingFilterType = this.userComponentFactory.getDefaultFloatingFilterType(colDef);
+        let defaultFloatingFilterType = this.userComponentFactory.getDefaultFloatingFilterType(colDef, () => this.getDefaultFloatingFilter(column));
 
         if (defaultFloatingFilterType == null) {
             defaultFloatingFilterType = 'agReadOnlyFloatingFilter';

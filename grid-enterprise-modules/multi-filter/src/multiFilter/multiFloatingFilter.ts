@@ -11,11 +11,13 @@ import {
     MultiFilterParams,
     IMultiFilterModel,
     IFilter,
+    FilterManager,
 } from '@ag-grid-community/core';
 import { MultiFilter } from './multiFilter';
 
 export class MultiFloatingFilterComp extends Component implements IFloatingFilterComp<MultiFilter> {
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
+    @Autowired('filterManager') private readonly filterManager: FilterManager;
 
     private floatingFilters: IFloatingFilterComp[] = [];
     private params: IFloatingFilterParams<MultiFilter>;
@@ -103,7 +105,10 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     }
 
     private createFloatingFilter(filterDef: IFilterDef, params: IFloatingFilterParams<IFilter>): AgPromise<IFloatingFilterComp> | null {
-        let defaultComponentName = this.userComponentFactory.getDefaultFloatingFilterType(filterDef) ?? 'agReadOnlyFloatingFilter';
+        let defaultComponentName = this.userComponentFactory.getDefaultFloatingFilterType(
+            filterDef,
+            () => this.filterManager.getDefaultFloatingFilter(this.params.column)
+        ) ?? 'agReadOnlyFloatingFilter';
 
         const compDetails = this.userComponentFactory.getFloatingFilterCompDetails(filterDef, params, defaultComponentName);
         return compDetails ? compDetails.newAgStackInstance() : null;

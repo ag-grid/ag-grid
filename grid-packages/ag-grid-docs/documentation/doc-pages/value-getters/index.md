@@ -72,15 +72,15 @@ When the value cache is turned on, each time a value getter is executed, its res
 This value cache is for advanced users who have time-consuming value getters and want to speed up their applications by introducing a cache to reduce the number of times value getters get executed.
 
 <note>
-One client of AG Grid had 1,000 rows and 20 columns in a grid. A lot of the columns were doing advanced
-maths, using third-party maths API in the valueGetter for 8 of the columns. The client was also grouping
-and the summing by the columns containing the value getters. This meant, if more rows were added, the grid
-recomputed the aggregations, resulting in all the value getters getting called again, causing the grid to
-stall for around 1,000ms as rows were added.
-
-Introducing the value cache meant the value getters were execute once when the initial data was loaded, so
-the 1,000ms happened once. Then when delta changes came in, the value getters were only executed on the
-new records, giving an almost seamless experience to the user.
+|One client of AG Grid had 1,000 rows and 20 columns in a grid. A lot of the columns were doing advanced
+|maths, using third-party maths API in the valueGetter for 8 of the columns. The client was also grouping
+|and the summing by the columns containing the value getters. This meant, if more rows were added, the grid
+|recomputed the aggregations, resulting in all the value getters getting called again, causing the grid to
+|stall for around 1,000ms as rows were added.
+|
+|Introducing the value cache meant the value getters were execute once when the initial data was loaded, so
+|the 1,000ms happened once. Then when delta changes came in, the value getters were only executed on the
+|new records, giving an almost seamless experience to the user.
 </note>
 
 ### Example: Value Cache

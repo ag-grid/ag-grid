@@ -63,7 +63,7 @@ const ReactStyleSelector = ({ id }) => {
                 return (
                     <>
                         <label className="font-size-small" htmlFor={formId}>
-                            Code style:
+                            Language:
                         </label>{' '}
                         <select
                             className={styles.simpleSelect}
@@ -118,7 +118,7 @@ const TypescriptStyleSelector = ({ id }) => {
                 return (
                     <>
                         <label className="font-size-small" htmlFor={formId}>
-                            Code style:
+                            Language:
                         </label>{' '}
                         <select
                             className={styles.simpleSelect}

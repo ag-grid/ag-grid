@@ -55,7 +55,7 @@ export function getNextColInstanceId() {
 // appear as a child of either the original tree or the displayed tree. However the relevant group classes
 // for each type only implements one, as each group can only appear in it's associated tree (eg ProvidedColumnGroup
 // can only appear in OriginalColumn tree).
-export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
+export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedColumn, IEventEmitter {
 
     // + renderedHeaderCell - for making header cell transparent when moving
     public static EVENT_MOVING_CHANGED: ColumnEventName = 'movingChanged';
@@ -91,7 +91,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
 
     private readonly colId: any;
-    private colDef: ColDef;
+    private colDef: ColDef<TValue>;
 
     // used by React (and possibly other frameworks) as key for rendering. also used to
     // identify old vs new columns for destroying cols when no longer used.
@@ -101,7 +101,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     // when the user provides an updated list of columns - so we can check if we have a column already
     // existing for a col def. we cannot use the this.colDef as that is the result of a merge.
     // This is used in ColumnFactory
-    private userProvidedColDef: ColDef | null;
+    private userProvidedColDef: ColDef<TValue> | null;
 
     private actualWidth: any;
 
@@ -142,7 +142,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     private parent: ColumnGroup;
     private originalParent: ProvidedColumnGroup | null;
 
-    constructor(colDef: ColDef, userProvidedColDef: ColDef | null, colId: string, primary: boolean) {
+    constructor(colDef: ColDef<TValue>, userProvidedColDef: ColDef<TValue> | null, colId: string, primary: boolean) {
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
         this.colId = colId;
@@ -208,7 +208,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     }
 
     // gets called when user provides an alternative colDef, eg
-    public setColDef(colDef: ColDef, userProvidedColDef: ColDef | null): void {
+    public setColDef(colDef: ColDef<TValue>, userProvidedColDef: ColDef<TValue> | null): void {
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
         this.initMinAndMaxWidths();
@@ -221,7 +221,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
      * This may not be correct, as items can be superseded by default column options.
      * However it's useful for comparison, eg to know which application column definition matches that column.
      */
-    public getUserProvidedColDef(): ColDef | null {
+    public getUserProvidedColDef(): ColDef<TValue> | null {
         return this.userProvidedColDef;
     }
 
@@ -686,7 +686,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
      * (e.g. `defaultColDef` grid option, or column types.
      *
      * Equivalent: `getDefinition` */
-    public getColDef(): ColDef {
+    public getColDef(): ColDef<TValue> {
         return this.colDef;
     }
 
@@ -715,7 +715,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         return this.colId;
     }
 
-    public getDefinition(): AbstractColDef {
+    public getDefinition(): AbstractColDef<TValue> {
         return this.colDef;
     }
 

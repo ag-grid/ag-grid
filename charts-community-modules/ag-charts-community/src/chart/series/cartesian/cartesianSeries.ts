@@ -442,10 +442,10 @@ export abstract class CartesianSeries<
             })
         );
 
-        this.animationState.transition(
-            'update',
-            this.subGroups.map(({ datumSelection }) => datumSelection)
-        );
+        this.animationState.transition('update', {
+            datumSelections: this.subGroups.map(({ datumSelection }) => datumSelection),
+            markerSelections: this.subGroups.map(({ markerSelection }) => markerSelection),
+        });
     }
 
     protected async updateHighlightSelection(seriesHighlighted?: boolean) {
@@ -785,8 +785,14 @@ export abstract class CartesianSeries<
         // Override point for sub-classes.
     }
 
-    protected animateEmptyUpdateReady(_data: Array<NodeDataSelection<N, C>>) {}
-    protected animateReadyUpdateReady(_data: Array<NodeDataSelection<N, C>>) {}
+    protected animateEmptyUpdateReady(_data: {
+        datumSelections: Array<NodeDataSelection<N, C>>;
+        markerSelections: Array<NodeDataSelection<Marker, C>>;
+    }) {}
+    protected animateReadyUpdateReady(_data: {
+        datumSelections: Array<NodeDataSelection<N, C>>;
+        markerSelections: Array<NodeDataSelection<Marker, C>>;
+    }) {}
     protected animateReadyHighlightReady(_data: NodeDataSelection<N, C>) {}
 
     protected abstract updateLabelSelection(opts: {

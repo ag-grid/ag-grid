@@ -527,7 +527,7 @@ export interface AgChartTooltipOptions {
     tracking?: boolean;
     /** Range from a point that triggers the tooltip to show. */
     range?: AgChartInteractionRange;
-    /** The position of the tooltip. By default the tooltip follows the mouse pointer. */
+    /** The position of the tooltip. */
     position?: AgTooltipPositionOptions;
     /** The time interval (in milliseconds) after which the tooltip is shown. */
     delay?: number;
@@ -537,7 +537,7 @@ export type AgTooltipPositionType = 'pointer' | 'node';
 export type AgTooltipPositionOptions = AgMovingTooltipPositionOptions;
 
 export interface AgMovingTooltipPositionOptions {
-    /** The type of positioning for the tooltip. By default, the tooltip follows the pointer. */
+    /** The type of positioning for the tooltip. By default, for Bar, Histogram, Treemap, Pie and Doughnut series, the tooltip follows the pointer. For Line, Area and Scatter series, the tooltip is anchored to the highlighted node. */
     type: AgTooltipPositionType;
     /** The horizontal offset in pixels for the position of the tooltip. */
     xOffset?: PixelSize;
@@ -1115,7 +1115,7 @@ export interface AgSeriesTooltip {
     enabled?: boolean;
     /** Set to false to remove the arrow attached to the series tooltip. */
     showArrow?: boolean;
-    /** The position of the tooltip. By default the tooltip follows the mouse pointer. */
+    /** The position of the tooltip. */
     position?: AgTooltipPositionOptions;
     /** Configuration for tooltip interaction. */
     interaction?: AgSeriesTooltipInteraction;

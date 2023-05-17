@@ -353,17 +353,17 @@
   },
   "AbstractColDef": {
     "meta": {
-      "typeParams": ["TData = any"],
+      "typeParams": ["TData = any", "TValue = any"],
       "doc": "/** AbstractColDef can be a group or a column definition */"
     },
     "type": {
       "headerName?": "string",
-      "headerValueGetter?": "string | HeaderValueGetterFunc<TData>",
+      "headerValueGetter?": "string | HeaderValueGetterFunc<TData, TValue>",
       "headerTooltip?": "string",
-      "headerClass?": "HeaderClass",
-      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams<TData>) => boolean",
+      "headerClass?": "HeaderClass<TData, TValue>",
+      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams<TData, TValue>) => boolean",
       "columnGroupShow?": "ColumnGroupShowType",
-      "toolPanelClass?": "ToolPanelClass<TData>",
+      "toolPanelClass?": "ToolPanelClass<TData, TValue>",
       "suppressColumnsToolPanel?": "boolean",
       "suppressFiltersToolPanel?": "boolean",
       "tooltipComponent?": "any",
@@ -402,12 +402,12 @@
       "headerGroupComponentFramework?": "any",
       "headerGroupComponentParams?": "any",
       "headerName?": "string",
-      "headerValueGetter?": "string | HeaderValueGetterFunc<TData>",
+      "headerValueGetter?": "string | HeaderValueGetterFunc<TData, TValue>",
       "headerTooltip?": "string",
-      "headerClass?": "HeaderClass",
-      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams<TData>) => boolean",
+      "headerClass?": "HeaderClass<TData, TValue>",
+      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams<TData, TValue>) => boolean",
       "columnGroupShow?": "ColumnGroupShowType",
-      "toolPanelClass?": "ToolPanelClass<TData>",
+      "toolPanelClass?": "ToolPanelClass<TData, TValue>",
       "suppressColumnsToolPanel?": "boolean",
       "suppressFiltersToolPanel?": "boolean",
       "tooltipComponent?": "any",
@@ -452,9 +452,9 @@
   "IAggFuncParams": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "values": "TValue[]",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "values": "(TValue | null)[]",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "pivotResultColumn?": "Column",
       "rowNode": "IRowNode<TData>",
       "data": "TData",
@@ -475,10 +475,10 @@
     }
   },
   "HeaderClassParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "colDef": "AbstractColDef<TData>",
-      "column?": "Column | null",
+      "colDef": "AbstractColDef<TData, TValue>",
+      "column?": "Column<TValue> | null",
       "columnGroup?": "ColumnGroup | null",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
@@ -491,14 +491,17 @@
     }
   },
   "HeaderClass": {
-    "meta": { "isTypeAlias": true, "typeParams": ["TData = any"] },
-    "type": "string | string[] | ((params: HeaderClassParams<TData>) => string | string[] | undefined)"
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
+    "type": "string | string[] | ((params: HeaderClassParams<TData, TValue>) => string | string[] | undefined)"
   },
   "ToolPanelClassParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "colDef": "AbstractColDef<TData>",
-      "column?": "Column | null",
+      "colDef": "AbstractColDef<TData, TValue>",
+      "column?": "Column<TValue> | null",
       "columnGroup?": "ProvidedColumnGroup | null",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
@@ -511,8 +514,11 @@
     }
   },
   "ToolPanelClass": {
-    "meta": { "isTypeAlias": true, "typeParams": ["TData = any"] },
-    "type": "string | string[] | ((params: ToolPanelClassParams<TData>) => string | string[] | undefined)"
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
+    "type": "string | string[] | ((params: ToolPanelClassParams<TData, TValue>) => string | string[] | undefined)"
   },
   "StringOrNumKeys": {
     "meta": { "isTypeAlias": true, "typeParams": ["TObj"] },
@@ -521,58 +527,64 @@
   "NestedPath": {
     "meta": {
       "isTypeAlias": true,
-      "typeParams": ["TValue", "Prefix extends string"]
+      "typeParams": ["TValue", "Prefix extends string", "TValueNestedChild"]
     },
-    "type": "TValue extends object ? `${Prefix}.${NestedFieldPaths<TValue>}` : never"
+    "type": "TValue extends object ? `${Prefix}.${NestedFieldPaths<TValue, TValueNestedChild>}` : never"
   },
   "NestedFieldPaths": {
-    "meta": { "isTypeAlias": true, "typeParams": ["TData = any"] },
-    "type": "{ [TKey in StringOrNumKeys<TData>]: `${TKey}` | NestedPath<TData[TKey], `${TKey}`>; }[StringOrNumKeys<TData>]"
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
+    "type": "{ [TKey in StringOrNumKeys<TData>]: (TData[TKey] extends TValue ? `${TKey}` : never) | NestedPath<TData[TKey], `${TKey}`, TValue>; }[StringOrNumKeys<TData>]"
   },
   "ColDef": {
     "meta": {
-      "typeParams": ["TData = any"],
+      "typeParams": ["TData = any", "TValue = any"],
       "doc": "/** Configuration options for columns in AG Grid. */"
     },
     "type": {
       "colId?": "string",
-      "field?": "NestedFieldPaths<TData>",
+      "field?": "NestedFieldPaths<TData, TValue>",
       "type?": "string | string[]",
-      "valueGetter?": "string | ValueGetterFunc<TData>",
-      "valueFormatter?": "string | ValueFormatterFunc<TData>",
+      "cellDataType?": "string | null",
+      "valueGetter?": "string | ValueGetterFunc<TData, TValue>",
+      "valueFormatter?": "string | ValueFormatterFunc<TData, TValue>",
       "refData?": "{ [key: string]: string; }",
-      "keyCreator?": "(params: KeyCreatorParams<TData>) => string",
-      "equals?": "(valueA: any, valueB: any) => boolean",
+      "keyCreator?": "(params: KeyCreatorParams<TData, TValue>) => string",
+      "equals?": "(valueA: TValue | null | undefined, valueB: TValue | null | undefined) => boolean",
       "tooltipField?": "NestedFieldPaths<TData>",
-      "tooltipValueGetter?": "(params: ITooltipParams<TData>) => string | any",
-      "checkboxSelection?": "boolean | CheckboxSelectionCallback<TData>",
+      "tooltipValueGetter?": "(params: ITooltipParams<TData, TValue>) => string | any",
+      "checkboxSelection?": "boolean | CheckboxSelectionCallback<TData, TValue>",
       "showDisabledCheckboxes?": "boolean",
       "icons?": "{ [key: string]: Function | string; }",
-      "suppressNavigable?": "boolean | SuppressNavigableCallback<TData>",
-      "suppressKeyboardEvent?": "(params: SuppressKeyboardEventParams<TData>) => boolean",
-      "suppressPaste?": "boolean | SuppressPasteCallback<TData>",
+      "suppressNavigable?": "boolean | SuppressNavigableCallback<TData, TValue>",
+      "suppressKeyboardEvent?": "(params: SuppressKeyboardEventParams<TData, TValue>) => boolean",
+      "suppressPaste?": "boolean | SuppressPasteCallback<TData, TValue>",
       "suppressFillHandle?": "boolean",
       "hide?": "boolean",
       "initialHide?": "boolean",
       "lockVisible?": "boolean",
       "lockPosition?": "boolean | 'left' | 'right'",
       "suppressMovable?": "boolean",
-      "editable?": "boolean | EditableCallback<TData>",
-      "valueSetter?": "string | ValueSetterFunc<TData>",
-      "valueParser?": "string | ValueParserFunc<TData>",
+      "useValueFormatterForExport?": "boolean",
+      "editable?": "boolean | EditableCallback<TData, TValue>",
+      "valueSetter?": "string | ValueSetterFunc<TData, TValue>",
+      "valueParser?": "string | ValueParserFunc<TData, TValue>",
       "cellEditor?": "any",
       "cellEditorFramework?": "any",
       "cellEditorParams?": "any",
-      "cellEditorSelector?": "CellEditorSelectorFunc<TData>",
+      "cellEditorSelector?": "CellEditorSelectorFunc<TData, TValue>",
       "singleClickEdit?": "boolean",
       "cellEditorPopup?": "boolean",
       "cellEditorPopupPosition?": "'over' | 'under'",
-      "onCellValueChanged?": "(event: NewValueParams<TData>) => void",
-      "onCellClicked?": "(event: CellClickedEvent<TData>) => void",
-      "onCellDoubleClicked?": "(event: CellDoubleClickedEvent<TData>) => void",
-      "onCellContextMenu?": "(event: CellContextMenuEvent<TData>) => void",
-      "getQuickFilterText?": "(params: GetQuickFilterTextParams<TData>) => string",
-      "filterValueGetter?": "string | ValueGetterFunc<TData>",
+      "useValueParserForImport?": "boolean",
+      "onCellValueChanged?": "(event: NewValueParams<TData, TValue>) => void",
+      "onCellClicked?": "(event: CellClickedEvent<TData, TValue>) => void",
+      "onCellDoubleClicked?": "(event: CellDoubleClickedEvent<TData, TValue>) => void",
+      "onCellContextMenu?": "(event: CellContextMenuEvent<TData, TValue>) => void",
+      "getQuickFilterText?": "(params: GetQuickFilterTextParams<TData, TValue>) => string",
+      "filterValueGetter?": "string | ValueGetterFunc<TData, TValue>",
       "floatingFilter?": "boolean",
       "wrapHeaderText?": "boolean",
       "autoHeaderHeight?": "boolean",
@@ -582,7 +594,7 @@
       "menuTabs?": "ColumnMenuTab[]",
       "columnsMenuParams?": "ColumnsMenuParams",
       "suppressMenu?": "boolean",
-      "headerCheckboxSelection?": "boolean | HeaderCheckboxSelectionCallback<TData>",
+      "headerCheckboxSelection?": "boolean | HeaderCheckboxSelectionCallback<TData, TValue>",
       "headerCheckboxSelectionFilteredOnly?": "boolean",
       "headerCheckboxSelectionCurrentPageOnly?": "boolean",
       "chartDataType?": "'category' | 'series' | 'time' | 'excluded'",
@@ -595,20 +607,20 @@
       "initialPivotIndex?": "number",
       "pivotComparator?": "(valueA: string, valueB: string) => number",
       "enablePivot?": "boolean",
-      "cellStyle?": "CellStyle | CellStyleFunc<TData>",
-      "cellClass?": "string | string[] | CellClassFunc<TData>",
-      "cellClassRules?": "CellClassRules<TData>",
+      "cellStyle?": "CellStyle | CellStyleFunc<TData, TValue>",
+      "cellClass?": "string | string[] | CellClassFunc<TData, TValue>",
+      "cellClassRules?": "CellClassRules<TData, TValue>",
       "cellRenderer?": "any",
       "cellRendererFramework?": "any",
       "cellRendererParams?": "any",
-      "cellRendererSelector?": "CellRendererSelectorFunc<TData>",
+      "cellRendererSelector?": "CellRendererSelectorFunc<TData, TValue>",
       "autoHeight?": "boolean",
       "wrapText?": "boolean",
       "enableCellChangeFlash?": "boolean",
       "suppressCellFlash?": "boolean",
-      "rowDrag?": "boolean | RowDragCallback<TData>",
+      "rowDrag?": "boolean | RowDragCallback<TData, TValue>",
       "rowDragText?": "(params: IRowDragItem, dragItemCount: number) => string",
-      "dndSource?": "boolean | DndSourceCallback<TData>",
+      "dndSource?": "boolean | DndSourceCallback<TData, TValue>",
       "dndSourceOnRowDrag?": "(params: DndSourceOnRowDragParams<TData>) => void",
       "rowGroup?": "boolean",
       "initialRowGroup?": "boolean",
@@ -616,8 +628,8 @@
       "initialRowGroupIndex?": "number",
       "enableRowGroup?": "boolean",
       "enableValue?": "boolean",
-      "aggFunc?": "string | IAggFunc<TData> | null",
-      "initialAggFunc?": "string | IAggFunc<TData>",
+      "aggFunc?": "string | IAggFunc<TData, TValue> | null",
+      "initialAggFunc?": "string | IAggFunc<TData, TValue>",
       "defaultAggFunc?": "string",
       "allowedAggFuncs?": "string[]",
       "showRowGroup?": "string | boolean",
@@ -627,10 +639,10 @@
       "sortIndex?": "number | null",
       "initialSortIndex?": "number",
       "sortingOrder?": "(SortDirection)[]",
-      "comparator?": "(valueA: any, valueB: any, nodeA: IRowNode<TData>, nodeB: IRowNode<TData>, isDescending: boolean) => number",
+      "comparator?": "(valueA: TValue | null | undefined, valueB: TValue | null | undefined, nodeA: IRowNode<TData>, nodeB: IRowNode<TData>, isDescending: boolean) => number",
       "unSortIcon?": "boolean",
-      "colSpan?": "(params: ColSpanParams<TData>) => number",
-      "rowSpan?": "(params: RowSpanParams<TData>) => number",
+      "colSpan?": "(params: ColSpanParams<TData, TValue>) => number",
+      "rowSpan?": "(params: RowSpanParams<TData, TValue>) => number",
       "width?": "number",
       "initialWidth?": "number",
       "minWidth?": "number",
@@ -644,12 +656,12 @@
       "pivotTotalColumnIds?": "string[]",
       "spanHeaderHeight?": "boolean",
       "headerName?": "string",
-      "headerValueGetter?": "string | HeaderValueGetterFunc<TData>",
+      "headerValueGetter?": "string | HeaderValueGetterFunc<TData, TValue>",
       "headerTooltip?": "string",
-      "headerClass?": "HeaderClass",
-      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams<TData>) => boolean",
+      "headerClass?": "HeaderClass<TData, TValue>",
+      "suppressHeaderKeyboardEvent?": "(params: SuppressHeaderKeyboardEventParams<TData, TValue>) => boolean",
       "columnGroupShow?": "ColumnGroupShowType",
-      "toolPanelClass?": "ToolPanelClass<TData>",
+      "toolPanelClass?": "ToolPanelClass<TData, TValue>",
       "suppressColumnsToolPanel?": "boolean",
       "suppressFiltersToolPanel?": "boolean",
       "tooltipComponent?": "any",
@@ -667,11 +679,12 @@
       "colId?": "/** The unique ID to give the column. This is optional. If missing, the ID will default to the field.\n     *  If both field and colId are missing, a unique ID will be generated.\n     *  This ID is used to identify the column in the API for sorting, filtering etc. */",
       "field?": "/** The field of the row object to get the cell's data from.\n     * Deep references into a row object is supported via dot notation, i.e `'address.firstLine'`.\n     */",
       "type?": "/** A comma separated string or array of strings containing `ColumnType` keys which can be used as a template for a column.\n     * This helps to reduce duplication of properties when you have a lot of common column properties.\n     */",
+      "cellDataType?": "/** The data type of the cell values for this column.\n     * Can either be one of the pre-defined data types\n     * `'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`,\n     * or a custom data type that has been defined in the `dataTypeDefinitions` grid option.\n     *  \n     * The data type can also be inferred from the row data by using the `'auto'` type.\n     * Data type inference only works for the Client-Side Row Model, and requires non-null data.\n     * \n     * If `cellDataType` is set on the default column definition or a column type,\n     * it can be turned off for this column by setting the value to `null`.\n     */",
       "valueGetter?": "/** Function or expression. Gets the value from your data for display. */",
       "valueFormatter?": "/** A function or expression to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */",
       "refData?": "/** Provided a reference data map to be used to map column values to their respective value from the map. */",
       "keyCreator?": "/** Function to return a string key for a value.\n     * This string is used for grouping, Set filtering, and searching within cell editor dropdowns.\n     * When filtering and searching the string is exposed to the user, so make sure to return a human-readable value. */",
-      "equals?": "/** Custom comparator for values, used by renderer to know if values have changed. Cells who's values have not changed don't get refreshed.\n     * By default the grid uses `===` is used which should work for most use cases.\n     */",
+      "equals?": "/** Custom comparator for values, used by renderer to know if values have changed. Cells whose values have not changed don't get refreshed.\n     * By default the grid uses `===` which should work for most use cases.\n     */",
       "tooltipField?": "/** The field of the tooltip to apply to the cell. */",
       "tooltipValueGetter?": "/** Callback that should return the string to use for a tooltip, `tooltipField` takes precedence if set.\n     * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component.\n     */",
       "checkboxSelection?": "/** Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */",
@@ -686,6 +699,7 @@
       "lockVisible?": "/** Set to `true` to block making column visible / hidden via the UI (API will still work). Default: `false` */",
       "lockPosition?": "/** Lock a column to position to `'left'` or`'right'` to always have this column displayed in that position. `true` is treated as `'left'` */",
       "suppressMovable?": "/** Set to `true` if you do not want this column to be movable via dragging. Default: `false` */",
+      "useValueFormatterForExport?": "/** Set to true to format values using the column's `valueFormatter` when exporting data from the grid.\n     * This applies to CSV and Excel export, as well as clipboard operations and the fill handle.\n     * Default: `false`\n     */",
       "editable?": "/** Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable. Default: `false` */",
       "valueSetter?": "/** Function or expression. Sets the value into your data for saving. Return `true` if the data changed. */",
       "valueParser?": "/** Function or expression. Parses the value for saving. */",
@@ -696,6 +710,7 @@
       "singleClickEdit?": "/** Set to `true` to have cells under this column enter edit mode after single click. Default: `false` */",
       "cellEditorPopup?": "/** Set to `true`, to have the cell editor appear in a popup.\n     */",
       "cellEditorPopupPosition?": "/** Set the position for the popup cell editor. Possible values are\n     *  - `over` Popup will be positioned over the cell\n     *  - `under` Popup will be positioned below the cell leaving the cell value visible.\n     *\n     * Default: `over`. */",
+      "useValueParserForImport?": "/** Set to true to parse values using the column's `valueParser` when importing data to the grid.\n     * This applies to clipboard operations and the fill handle.\n     * Default: `false`\n     */",
       "onCellValueChanged?": "/** Callback for after the value of a cell has changed, either due to editing or the application calling `api.setValue()`. */",
       "onCellClicked?": "/** Callback called when a cell is clicked. */",
       "onCellDoubleClicked?": "/** Callback called when a cell is double clicked. */",
@@ -794,12 +809,12 @@
     }
   },
   "ColumnFunctionCallbackParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "node": "IRowNode<TData>",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -815,12 +830,12 @@
     }
   },
   "CheckboxSelectionCallbackParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "node": "IRowNode<TData>",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -836,19 +851,24 @@
     }
   },
   "CheckboxSelectionCallback": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "params": "CheckboxSelectionCallbackParams<TData>" },
+      "arguments": {
+        "params": "CheckboxSelectionCallbackParams<TData, TValue>"
+      },
       "returnType": "boolean"
     }
   },
   "RowDragCallbackParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "node": "IRowNode<TData>",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -864,19 +884,22 @@
     }
   },
   "RowDragCallback": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "params": "RowDragCallbackParams<TData>" },
+      "arguments": { "params": "RowDragCallbackParams<TData, TValue>" },
       "returnType": "boolean"
     }
   },
   "DndSourceCallbackParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "node": "IRowNode<TData>",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -909,19 +932,22 @@
     }
   },
   "DndSourceCallback": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "params": "DndSourceCallbackParams<TData>" },
+      "arguments": { "params": "DndSourceCallbackParams<TData, TValue>" },
       "returnType": "boolean"
     }
   },
   "EditableCallbackParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "node": "IRowNode<TData>",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -937,19 +963,22 @@
     }
   },
   "EditableCallback": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "params": "EditableCallbackParams<TData>" },
+      "arguments": { "params": "EditableCallbackParams<TData, TValue>" },
       "returnType": "boolean"
     }
   },
   "SuppressPasteCallbackParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "node": "IRowNode<TData>",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -965,19 +994,22 @@
     }
   },
   "SuppressPasteCallback": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "params": "SuppressPasteCallbackParams<TData>" },
+      "arguments": { "params": "SuppressPasteCallbackParams<TData, TValue>" },
       "returnType": "boolean"
     }
   },
   "SuppressNavigableCallbackParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "node": "IRowNode<TData>",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -993,17 +1025,22 @@
     }
   },
   "SuppressNavigableCallback": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "params": "SuppressNavigableCallbackParams<TData>" },
+      "arguments": {
+        "params": "SuppressNavigableCallbackParams<TData, TValue>"
+      },
       "returnType": "boolean"
     }
   },
   "HeaderCheckboxSelectionCallbackParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1015,9 +1052,14 @@
     }
   },
   "HeaderCheckboxSelectionCallback": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "params": "HeaderCheckboxSelectionCallbackParams<TData>" },
+      "arguments": {
+        "params": "HeaderCheckboxSelectionCallbackParams<TData, TValue>"
+      },
       "returnType": "boolean"
     }
   },
@@ -1040,8 +1082,8 @@
     "type": {
       "node": "IRowNode<TData>",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1059,11 +1101,11 @@
   "GetQuickFilterTextParams": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "value": "TValue",
+      "value": "TValue | null | undefined",
       "node": "IRowNode<TData>",
       "data": "TData",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1103,12 +1145,12 @@
     }
   },
   "BaseColDefParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "node": "IRowNode<TData> | null",
       "data": "TData",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1124,12 +1166,12 @@
     }
   },
   "BaseColDefOptionalDataParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "node": "IRowNode<TData> | null",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1145,13 +1187,13 @@
     }
   },
   "ValueGetterParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "getValue": "(field: string) => any",
       "node": "IRowNode<TData> | null",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1168,17 +1210,20 @@
     }
   },
   "ValueGetterFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "params": "ValueGetterParams<TData>" },
-      "returnType": "any"
+      "arguments": { "params": "ValueGetterParams<TData, TValue>" },
+      "returnType": "TValue | null | undefined"
     }
   },
   "HeaderValueGetterParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "colDef": "AbstractColDef<TData>",
-      "column?": "Column | null",
+      "colDef": "AbstractColDef<TData, TValue>",
+      "column?": "Column<TValue> | null",
       "columnGroup?": "ColumnGroup | ProvidedColumnGroup | null",
       "providedColumnGroup": "ProvidedColumnGroup | null",
       "location": "string | null",
@@ -1197,21 +1242,49 @@
     }
   },
   "HeaderValueGetterFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "params": "HeaderValueGetterParams<TData>" },
-      "returnType": "any"
+      "arguments": { "params": "HeaderValueGetterParams<TData, TValue>" },
+      "returnType": "string"
+    }
+  },
+  "ChangedValueParams": {
+    "meta": { "typeParams": ["TData", "TValueOld", "TValueNew"] },
+    "type": {
+      "oldValue": "TValueOld",
+      "newValue": "TValueNew",
+      "node": "IRowNode<TData> | null",
+      "data": "TData",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "oldValue": "/** The value before the change */",
+      "newValue": "/** The value after the change */",
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
   "NewValueParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "oldValue": "any",
-      "newValue": "any",
+      "oldValue": "TValue | null | undefined",
+      "newValue": "TValue | null | undefined",
       "node": "IRowNode<TData> | null",
       "data": "TData",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1229,14 +1302,14 @@
     }
   },
   "ValueSetterParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "oldValue": "any",
-      "newValue": "any",
+      "oldValue": "TValue | null | undefined",
+      "newValue": "TValue | null | undefined",
       "node": "IRowNode<TData> | null",
       "data": "TData",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1254,21 +1327,24 @@
     }
   },
   "ValueSetterFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "params": "ValueSetterParams<TData>" },
+      "arguments": { "params": "ValueSetterParams<TData, TValue>" },
       "returnType": "boolean"
     }
   },
   "ValueParserParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "oldValue": "any",
-      "newValue": "any",
+      "oldValue": "TValue | null | undefined",
+      "newValue": "string",
       "node": "IRowNode<TData> | null",
       "data": "TData",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1291,18 +1367,18 @@
       "typeParams": ["TData = any", "TValue = any"]
     },
     "type": {
-      "arguments": { "params": "ValueParserParams<TData>" },
-      "returnType": "TValue"
+      "arguments": { "params": "ValueParserParams<TData, TValue>" },
+      "returnType": "TValue | null | undefined"
     }
   },
   "ValueFormatterParams": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "value": "TValue",
+      "value": "TValue | null | undefined",
       "node": "IRowNode<TData> | null",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1319,20 +1395,23 @@
     }
   },
   "ValueFormatterFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "params": "ValueFormatterParams<TData>" },
+      "arguments": { "params": "ValueFormatterParams<TData, TValue>" },
       "returnType": "string"
     }
   },
   "KeyCreatorParams": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "value": "TValue",
+      "value": "TValue | null | undefined",
       "node": "IRowNode<TData> | null",
       "data": "TData",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1349,12 +1428,12 @@
     }
   },
   "ColSpanParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "node": "IRowNode<TData> | null",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1370,12 +1449,12 @@
     }
   },
   "RowSpanParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "node": "IRowNode<TData> | null",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1391,14 +1470,14 @@
     }
   },
   "SuppressKeyboardEventParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
       "event": "KeyboardEvent",
       "editing": "boolean",
       "node": "IRowNode<TData>",
       "data": "TData | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -1416,10 +1495,10 @@
     }
   },
   "SuppressHeaderKeyboardEventParams": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "column": "Column | ColumnGroup",
-      "colDef": "ColDef<TData> | ColGroupDef<TData> | null",
+      "column": "Column<TValue> | ColumnGroup",
+      "colDef": "ColDef<TData, TValue> | ColGroupDef<TData> | null",
       "headerRowIndex": "number",
       "event": "KeyboardEvent",
       "api": "GridApi<TData>",
@@ -1437,9 +1516,9 @@
   "CellClassParams": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "column": "Column",
-      "colDef": "ColDef<TData>",
-      "value": "TValue",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
+      "value": "TValue | null | undefined",
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number",
@@ -1460,16 +1539,22 @@
     }
   },
   "CellClassFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "cellClassParams": "CellClassParams<TData>" },
+      "arguments": { "cellClassParams": "CellClassParams<TData, TValue>" },
       "returnType": "string | string[] | null | undefined"
     }
   },
   "CellStyleFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "cellClassParams": "CellClassParams<TData>" },
+      "arguments": { "cellClassParams": "CellClassParams<TData, TValue>" },
       "returnType": "CellStyle | null | undefined"
     }
   },
@@ -1478,22 +1563,28 @@
     "type": { "[cssProperty: string]": "string | number" }
   },
   "CellClassRules": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "[cssClassName: string]": "(((params: CellClassParams<TData>) => boolean) | string)"
+      "[cssClassName: string]": "(((params: CellClassParams<TData, TValue>) => boolean) | string)"
     }
   },
   "CellRendererSelectorFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "params": "ICellRendererParams<TData>" },
+      "arguments": { "params": "ICellRendererParams<TData, TValue>" },
       "returnType": "CellRendererSelectorResult | undefined"
     }
   },
   "CellEditorSelectorFunc": {
-    "meta": { "isCallSignature": true, "typeParams": ["TData = any"] },
+    "meta": {
+      "isCallSignature": true,
+      "typeParams": ["TData = any", "TValue = any"]
+    },
     "type": {
-      "arguments": { "params": "ICellEditorParams<TData>" },
+      "arguments": { "params": "ICellEditorParams<TData, TValue>" },
       "returnType": "CellEditorSelectorResult | undefined"
     }
   },
@@ -1543,6 +1634,240 @@
     "meta": { "isTypeAlias": true },
     "type": "'open' | 'closed'"
   },
+  "ValueParserLiteParams": {
+    "meta": { "isTypeAlias": true, "typeParams": ["TData", "TValue"] },
+    "type": "Omit<ValueParserParams<TData, TValue>, 'data' | 'node' | 'oldValue'>"
+  },
+  "ValueParserLiteFunc": {
+    "meta": { "isCallSignature": true, "typeParams": ["TData", "TValue"] },
+    "type": {
+      "arguments": { "params": "ValueParserLiteParams<TData, TValue>" },
+      "returnType": "TValue | null | undefined"
+    }
+  },
+  "ValueFormatterLiteParams": {
+    "meta": { "isTypeAlias": true, "typeParams": ["TData", "TValue"] },
+    "type": "Omit<ValueFormatterParams<TData, TValue>, 'data' | 'node'>"
+  },
+  "ValueFormatterLiteFunc": {
+    "meta": { "isCallSignature": true, "typeParams": ["TData", "TValue"] },
+    "type": {
+      "arguments": { "params": "ValueFormatterLiteParams<TData, TValue>" },
+      "returnType": "string"
+    }
+  },
+  "DataTypeCheckerParams": {
+    "meta": { "isTypeAlias": true, "typeParams": ["TData", "TValue"] },
+    "type": "Omit<BaseColDefOptionalDataParams<TData, TValue>, 'data' | 'node'> & { value: TValue | null | undefined; }"
+  },
+  "DataTypeChecker": {
+    "meta": { "isCallSignature": true, "typeParams": ["TData", "TValue"] },
+    "type": {
+      "arguments": { "params": "DataTypeCheckerParams<TData, TValue>" },
+      "returnType": "boolean"
+    }
+  },
+  "BaseCellDataType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'text' | 'number' | 'boolean' | 'date' | 'dateString' | 'object'"
+  },
+  "BaseDataTypeDefinition": {
+    "meta": {
+      "typeParams": [
+        "TValueType extends BaseCellDataType",
+        "TData = any",
+        "TValue = any"
+      ]
+    },
+    "type": {
+      "baseDataType": "TValueType",
+      "extendsDataType": "string",
+      "valueParser?": "ValueParserLiteFunc<TData, TValue>",
+      "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
+      "dataTypeMatcher?": "(value: any) => boolean",
+      "columnTypes?": "string | string[]",
+      "appendColumnTypes?": "boolean",
+      "suppressDefaultProperties?": "boolean"
+    },
+    "docs": {
+      "baseDataType": "/** The underlying data type */",
+      "extendsDataType": "/** The data type that this extends. Either one of the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`)\n     * or another custom data type. \n     */",
+      "valueParser?": "/** Parses a value into the correct data type.\n     * This will be used as the `colDef.valueParser` (unless overridden),\n     * and in other places where parsing is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value parser of the data type that this extends will be used.\n     */",
+      "valueFormatter?": "/** Formats a value for display.\n     * This will be used as the `colDef.valueFormatter` (unless overridden),\n     * and in other places where formatting is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value formatter of the data type that this extends will be used.\n     */",
+      "dataTypeMatcher?": "/** Returns `true` if the `value` is of this data type.\n     * Used when inferring cell data types as well as to ensure values of the\n     * wrong data type cannot be set into this column.\n     * If not provided, the data type matcher of the data type that this extends will be used.\n     */",
+      "columnTypes?": "/** A comma separated string or array of strings containing `ColumnType` keys,\n     * which can be used as a template for columns of this data type.\n     */",
+      "appendColumnTypes?": "/** If `true`, this data type will append any specified column types to those of the data type that this extends.\n     * If `false`, the column types for this data type will replace any of the data type that this extends.\n     * Default: `false`.\n     */",
+      "suppressDefaultProperties?": "/** By default, certain column definition properties are set based on the base data type.\n     * If this is set to `true`, these properties will not be set.\n     * Default: `false`.\n     */"
+    }
+  },
+  "TextDataTypeDefinition": {
+    "meta": {
+      "typeParams": ["TData = any"],
+      "doc": "/** Represents a `'text'` data type (type `string`). */"
+    },
+    "type": {
+      "baseDataType": "TValueType",
+      "extendsDataType": "string",
+      "valueParser?": "ValueParserLiteFunc<TData, TValue>",
+      "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
+      "dataTypeMatcher?": "(value: any) => boolean",
+      "columnTypes?": "string | string[]",
+      "appendColumnTypes?": "boolean",
+      "suppressDefaultProperties?": "boolean"
+    },
+    "docs": {
+      "baseDataType": "/** The underlying data type */",
+      "extendsDataType": "/** The data type that this extends. Either one of the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`)\n     * or another custom data type. \n     */",
+      "valueParser?": "/** Parses a value into the correct data type.\n     * This will be used as the `colDef.valueParser` (unless overridden),\n     * and in other places where parsing is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value parser of the data type that this extends will be used.\n     */",
+      "valueFormatter?": "/** Formats a value for display.\n     * This will be used as the `colDef.valueFormatter` (unless overridden),\n     * and in other places where formatting is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value formatter of the data type that this extends will be used.\n     */",
+      "dataTypeMatcher?": "/** Returns `true` if the `value` is of this data type.\n     * Used when inferring cell data types as well as to ensure values of the\n     * wrong data type cannot be set into this column.\n     * If not provided, the data type matcher of the data type that this extends will be used.\n     */",
+      "columnTypes?": "/** A comma separated string or array of strings containing `ColumnType` keys,\n     * which can be used as a template for columns of this data type.\n     */",
+      "appendColumnTypes?": "/** If `true`, this data type will append any specified column types to those of the data type that this extends.\n     * If `false`, the column types for this data type will replace any of the data type that this extends.\n     * Default: `false`.\n     */",
+      "suppressDefaultProperties?": "/** By default, certain column definition properties are set based on the base data type.\n     * If this is set to `true`, these properties will not be set.\n     * Default: `false`.\n     */"
+    }
+  },
+  "NumberDataTypeDefinition": {
+    "meta": {
+      "typeParams": ["TData = any"],
+      "doc": "/** Represents a `'number'` data type (type `number`). */"
+    },
+    "type": {
+      "baseDataType": "TValueType",
+      "extendsDataType": "string",
+      "valueParser?": "ValueParserLiteFunc<TData, TValue>",
+      "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
+      "dataTypeMatcher?": "(value: any) => boolean",
+      "columnTypes?": "string | string[]",
+      "appendColumnTypes?": "boolean",
+      "suppressDefaultProperties?": "boolean"
+    },
+    "docs": {
+      "baseDataType": "/** The underlying data type */",
+      "extendsDataType": "/** The data type that this extends. Either one of the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`)\n     * or another custom data type. \n     */",
+      "valueParser?": "/** Parses a value into the correct data type.\n     * This will be used as the `colDef.valueParser` (unless overridden),\n     * and in other places where parsing is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value parser of the data type that this extends will be used.\n     */",
+      "valueFormatter?": "/** Formats a value for display.\n     * This will be used as the `colDef.valueFormatter` (unless overridden),\n     * and in other places where formatting is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value formatter of the data type that this extends will be used.\n     */",
+      "dataTypeMatcher?": "/** Returns `true` if the `value` is of this data type.\n     * Used when inferring cell data types as well as to ensure values of the\n     * wrong data type cannot be set into this column.\n     * If not provided, the data type matcher of the data type that this extends will be used.\n     */",
+      "columnTypes?": "/** A comma separated string or array of strings containing `ColumnType` keys,\n     * which can be used as a template for columns of this data type.\n     */",
+      "appendColumnTypes?": "/** If `true`, this data type will append any specified column types to those of the data type that this extends.\n     * If `false`, the column types for this data type will replace any of the data type that this extends.\n     * Default: `false`.\n     */",
+      "suppressDefaultProperties?": "/** By default, certain column definition properties are set based on the base data type.\n     * If this is set to `true`, these properties will not be set.\n     * Default: `false`.\n     */"
+    }
+  },
+  "BooleanDataTypeDefinition": {
+    "meta": {
+      "typeParams": ["TData = any"],
+      "doc": "/** Represents a `'boolean'` data type (type `boolean`). */"
+    },
+    "type": {
+      "baseDataType": "TValueType",
+      "extendsDataType": "string",
+      "valueParser?": "ValueParserLiteFunc<TData, TValue>",
+      "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
+      "dataTypeMatcher?": "(value: any) => boolean",
+      "columnTypes?": "string | string[]",
+      "appendColumnTypes?": "boolean",
+      "suppressDefaultProperties?": "boolean"
+    },
+    "docs": {
+      "baseDataType": "/** The underlying data type */",
+      "extendsDataType": "/** The data type that this extends. Either one of the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`)\n     * or another custom data type. \n     */",
+      "valueParser?": "/** Parses a value into the correct data type.\n     * This will be used as the `colDef.valueParser` (unless overridden),\n     * and in other places where parsing is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value parser of the data type that this extends will be used.\n     */",
+      "valueFormatter?": "/** Formats a value for display.\n     * This will be used as the `colDef.valueFormatter` (unless overridden),\n     * and in other places where formatting is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value formatter of the data type that this extends will be used.\n     */",
+      "dataTypeMatcher?": "/** Returns `true` if the `value` is of this data type.\n     * Used when inferring cell data types as well as to ensure values of the\n     * wrong data type cannot be set into this column.\n     * If not provided, the data type matcher of the data type that this extends will be used.\n     */",
+      "columnTypes?": "/** A comma separated string or array of strings containing `ColumnType` keys,\n     * which can be used as a template for columns of this data type.\n     */",
+      "appendColumnTypes?": "/** If `true`, this data type will append any specified column types to those of the data type that this extends.\n     * If `false`, the column types for this data type will replace any of the data type that this extends.\n     * Default: `false`.\n     */",
+      "suppressDefaultProperties?": "/** By default, certain column definition properties are set based on the base data type.\n     * If this is set to `true`, these properties will not be set.\n     * Default: `false`.\n     */"
+    }
+  },
+  "DateDataTypeDefinition": {
+    "meta": {
+      "typeParams": ["TData = any"],
+      "doc": "/** Represents a `'date'` data type (type `Date`). */"
+    },
+    "type": {
+      "baseDataType": "TValueType",
+      "extendsDataType": "string",
+      "valueParser?": "ValueParserLiteFunc<TData, TValue>",
+      "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
+      "dataTypeMatcher?": "(value: any) => boolean",
+      "columnTypes?": "string | string[]",
+      "appendColumnTypes?": "boolean",
+      "suppressDefaultProperties?": "boolean"
+    },
+    "docs": {
+      "baseDataType": "/** The underlying data type */",
+      "extendsDataType": "/** The data type that this extends. Either one of the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`)\n     * or another custom data type. \n     */",
+      "valueParser?": "/** Parses a value into the correct data type.\n     * This will be used as the `colDef.valueParser` (unless overridden),\n     * and in other places where parsing is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value parser of the data type that this extends will be used.\n     */",
+      "valueFormatter?": "/** Formats a value for display.\n     * This will be used as the `colDef.valueFormatter` (unless overridden),\n     * and in other places where formatting is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value formatter of the data type that this extends will be used.\n     */",
+      "dataTypeMatcher?": "/** Returns `true` if the `value` is of this data type.\n     * Used when inferring cell data types as well as to ensure values of the\n     * wrong data type cannot be set into this column.\n     * If not provided, the data type matcher of the data type that this extends will be used.\n     */",
+      "columnTypes?": "/** A comma separated string or array of strings containing `ColumnType` keys,\n     * which can be used as a template for columns of this data type.\n     */",
+      "appendColumnTypes?": "/** If `true`, this data type will append any specified column types to those of the data type that this extends.\n     * If `false`, the column types for this data type will replace any of the data type that this extends.\n     * Default: `false`.\n     */",
+      "suppressDefaultProperties?": "/** By default, certain column definition properties are set based on the base data type.\n     * If this is set to `true`, these properties will not be set.\n     * Default: `false`.\n     */"
+    }
+  },
+  "DateStringDataTypeDefinition": {
+    "meta": {
+      "typeParams": ["TData = any"],
+      "doc": "/** Represents a `'dateString'` data type (type `string` that represents a date). */"
+    },
+    "type": {
+      "dateParser?": "(value: string | undefined) => Date | undefined",
+      "dateFormatter?": "(value: Date | undefined) => string | undefined",
+      "baseDataType": "TValueType",
+      "extendsDataType": "string",
+      "valueParser?": "ValueParserLiteFunc<TData, TValue>",
+      "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
+      "dataTypeMatcher?": "(value: any) => boolean",
+      "columnTypes?": "string | string[]",
+      "appendColumnTypes?": "boolean",
+      "suppressDefaultProperties?": "boolean"
+    },
+    "docs": {
+      "dateParser?": "/** Converts a date in `string` format to a `Date`. */",
+      "dateFormatter?": "/** Converts a date in `Date` format to a `string`. */",
+      "baseDataType": "/** The underlying data type */",
+      "extendsDataType": "/** The data type that this extends. Either one of the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`)\n     * or another custom data type. \n     */",
+      "valueParser?": "/** Parses a value into the correct data type.\n     * This will be used as the `colDef.valueParser` (unless overridden),\n     * and in other places where parsing is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value parser of the data type that this extends will be used.\n     */",
+      "valueFormatter?": "/** Formats a value for display.\n     * This will be used as the `colDef.valueFormatter` (unless overridden),\n     * and in other places where formatting is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value formatter of the data type that this extends will be used.\n     */",
+      "dataTypeMatcher?": "/** Returns `true` if the `value` is of this data type.\n     * Used when inferring cell data types as well as to ensure values of the\n     * wrong data type cannot be set into this column.\n     * If not provided, the data type matcher of the data type that this extends will be used.\n     */",
+      "columnTypes?": "/** A comma separated string or array of strings containing `ColumnType` keys,\n     * which can be used as a template for columns of this data type.\n     */",
+      "appendColumnTypes?": "/** If `true`, this data type will append any specified column types to those of the data type that this extends.\n     * If `false`, the column types for this data type will replace any of the data type that this extends.\n     * Default: `false`.\n     */",
+      "suppressDefaultProperties?": "/** By default, certain column definition properties are set based on the base data type.\n     * If this is set to `true`, these properties will not be set.\n     * Default: `false`.\n     */"
+    }
+  },
+  "ObjectDataTypeDefinition": {
+    "meta": {
+      "typeParams": ["TData", "TValue"],
+      "doc": "/** Represents an `'object'` data type (any type). */"
+    },
+    "type": {
+      "baseDataType": "TValueType",
+      "extendsDataType": "string",
+      "valueParser?": "ValueParserLiteFunc<TData, TValue>",
+      "valueFormatter?": "ValueFormatterLiteFunc<TData, TValue>",
+      "dataTypeMatcher?": "(value: any) => boolean",
+      "columnTypes?": "string | string[]",
+      "appendColumnTypes?": "boolean",
+      "suppressDefaultProperties?": "boolean"
+    },
+    "docs": {
+      "baseDataType": "/** The underlying data type */",
+      "extendsDataType": "/** The data type that this extends. Either one of the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`)\n     * or another custom data type. \n     */",
+      "valueParser?": "/** Parses a value into the correct data type.\n     * This will be used as the `colDef.valueParser` (unless overridden),\n     * and in other places where parsing is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value parser of the data type that this extends will be used.\n     */",
+      "valueFormatter?": "/** Formats a value for display.\n     * This will be used as the `colDef.valueFormatter` (unless overridden),\n     * and in other places where formatting is required.\n     * As this could be used in places where there is no row,\n     * the `params` do not have row node or data properties.\n     * If not provided, the value formatter of the data type that this extends will be used.\n     */",
+      "dataTypeMatcher?": "/** Returns `true` if the `value` is of this data type.\n     * Used when inferring cell data types as well as to ensure values of the\n     * wrong data type cannot be set into this column.\n     * If not provided, the data type matcher of the data type that this extends will be used.\n     */",
+      "columnTypes?": "/** A comma separated string or array of strings containing `ColumnType` keys,\n     * which can be used as a template for columns of this data type.\n     */",
+      "appendColumnTypes?": "/** If `true`, this data type will append any specified column types to those of the data type that this extends.\n     * If `false`, the column types for this data type will replace any of the data type that this extends.\n     * Default: `false`.\n     */",
+      "suppressDefaultProperties?": "/** By default, certain column definition properties are set based on the base data type.\n     * If this is set to `true`, these properties will not be set.\n     * Default: `false`.\n     */"
+    }
+  },
+  "DataTypeDefinition": {
+    "meta": { "isTypeAlias": true, "typeParams": ["TData = any"] },
+    "type": "TextDataTypeDefinition<TData> | NumberDataTypeDefinition<TData> | BooleanDataTypeDefinition<TData> | DateDataTypeDefinition<TData> | DateStringDataTypeDefinition<TData> | ObjectDataTypeDefinition<TData, any>"
+  },
+  "CoreDataTypeDefinition": {
+    "meta": { "isTypeAlias": true, "typeParams": ["TData = any"] },
+    "type": "Omit<TextDataTypeDefinition<TData>, 'extendsDataType'> | Omit<NumberDataTypeDefinition<TData>, 'extendsDataType'> | Omit<BooleanDataTypeDefinition<TData>, 'extendsDataType'> | Omit<DateDataTypeDefinition<TData>, 'extendsDataType'> | Omit<DateStringDataTypeDefinition<TData>, 'extendsDataType'> | Omit<ObjectDataTypeDefinition<TData, any>, 'extendsDataType'>"
+  },
   "GridOptions": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
@@ -1571,6 +1896,7 @@
       "defaultColDef?": "ColDef<TData>",
       "defaultColGroupDef?": "Partial<ColGroupDef<TData>>",
       "columnTypes?": "{ [key: string]: ColDef<TData>; }",
+      "dataTypeDefinitions?": "{ [cellDataType: string]: DataTypeDefinition<TData>; }",
       "maintainColumnOrder?": "boolean",
       "suppressFieldDotNotation?": "boolean",
       "headerHeight?": "number",
@@ -1948,6 +2274,7 @@
       "defaultColDef?": "/** A default column definition. Items defined in the actual column definitions get precedence. */",
       "defaultColGroupDef?": "/** A default column group definition. All column group definitions will use these properties. Items defined in the actual column group definition get precedence. */",
       "columnTypes?": "/** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property. */",
+      "dataTypeDefinitions?": "/** An object map of cell data types to their definitions.\n     * Cell data types can either override/update the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`),\n     * or can be custom data types.\n     */",
       "maintainColumnOrder?": "/** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */",
       "suppressFieldDotNotation?": "/** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */",
       "headerHeight?": "/** The height in pixels for the row containing the column label header. If not specified, it uses the theme value of `header-height`. */",
@@ -4354,9 +4681,9 @@
       "doc": "/**------------*/\n/** CELL EVENTS */\n/**------------*/"
     },
     "type": {
-      "column": "Column",
-      "colDef": "ColDef<TData>",
-      "value": "TValue | undefined",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
+      "value": "TValue | null | undefined",
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number | null",
@@ -4385,12 +4712,12 @@
   "CellWithDataEvent": {
     "meta": {
       "typeParams": ["TData = any", "TValue = any"],
-      "doc": "/** Use for cell events that will always have a value and data property. */"
+      "doc": "/** Use for cell events that will always have a data property. */"
     },
     "type": {
-      "column": "Column",
-      "colDef": "ColDef<TData>",
-      "value": "TValue",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
+      "value": "TValue | null | undefined",
       "data": "TData",
       "node": "IRowNode<TData>",
       "rowIndex": "number | null",
@@ -4419,9 +4746,9 @@
   "CellKeyDownEvent": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "column": "Column",
-      "colDef": "ColDef<TData>",
-      "value": "TValue | undefined",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
+      "value": "TValue | null | undefined",
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number | null",
@@ -4450,9 +4777,9 @@
   "CellKeyPressEvent": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "column": "Column",
-      "colDef": "ColDef<TData>",
-      "value": "TValue | undefined",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
+      "value": "TValue | null | undefined",
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number | null",
@@ -4481,9 +4808,9 @@
   "CellClickedEvent": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "column": "Column",
-      "colDef": "ColDef<TData>",
-      "value": "TValue | undefined",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
+      "value": "TValue | null | undefined",
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number | null",
@@ -4512,9 +4839,9 @@
   "CellMouseDownEvent": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "column": "Column",
-      "colDef": "ColDef<TData>",
-      "value": "TValue | undefined",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
+      "value": "TValue | null | undefined",
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number | null",
@@ -4543,9 +4870,9 @@
   "CellDoubleClickedEvent": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "column": "Column",
-      "colDef": "ColDef<TData>",
-      "value": "TValue | undefined",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
+      "value": "TValue | null | undefined",
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number | null",
@@ -4574,9 +4901,9 @@
   "CellMouseOverEvent": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "column": "Column",
-      "colDef": "ColDef<TData>",
-      "value": "TValue | undefined",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
+      "value": "TValue | null | undefined",
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number | null",
@@ -4605,9 +4932,9 @@
   "CellMouseOutEvent": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "column": "Column",
-      "colDef": "ColDef<TData>",
-      "value": "TValue | undefined",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
+      "value": "TValue | null | undefined",
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number | null",
@@ -4636,9 +4963,9 @@
   "CellContextMenuEvent": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "column": "Column",
-      "colDef": "ColDef<TData>",
-      "value": "TValue | undefined",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
+      "value": "TValue | null | undefined",
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number | null",
@@ -4667,10 +4994,10 @@
   "CellEditingStartedEvent": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "column": "Column",
-      "colDef": "ColDef<TData>",
-      "value": "TValue",
-      "data": "TData",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
+      "value": "TValue | null | undefined",
+      "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
@@ -4682,8 +5009,8 @@
       "type": "string"
     },
     "docs": {
-      "value": "/** The value for the cell */",
-      "data": "/** The user provided data for the row. */",
+      "value": "/** The value for the cell if available otherwise undefined. */",
+      "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
@@ -4698,13 +5025,13 @@
   "CellEditingStoppedEvent": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "oldValue": "any",
-      "newValue": "any",
+      "oldValue": "TValue | null | undefined",
+      "newValue": "TValue | null | undefined",
       "valueChanged": "boolean",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
-      "value": "TValue",
-      "data": "TData",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
+      "value": "TValue | null | undefined",
+      "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number | null",
       "rowPinned": "RowPinnedType",
@@ -4719,8 +5046,8 @@
       "oldValue": "/** The old value before editing */",
       "newValue": "/** The new value after editing */",
       "valueChanged": "/** Property indicating if the value of the editor has changed */",
-      "value": "/** The value for the cell */",
-      "data": "/** The user provided data for the row. */",
+      "value": "/** The value for the cell if available otherwise undefined. */",
+      "data": "/** The user provided data for the row. Data is `undefined` for row groups. */",
       "node": "/** The row node. */",
       "rowIndex": "/** The visible row index for the row */",
       "rowPinned": "/** Either 'top', 'bottom' or null / undefined (if not set) */",
@@ -4735,12 +5062,12 @@
   "CellValueChangedEvent": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "oldValue": "any",
-      "newValue": "any",
+      "oldValue": "TValue | null | undefined",
+      "newValue": "TValue | null | undefined",
       "source": "string | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
-      "value": "TValue",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
+      "value": "TValue | null | undefined",
       "data": "TData",
       "node": "IRowNode<TData>",
       "rowIndex": "number | null",
@@ -4769,12 +5096,12 @@
   "CellEditRequestEvent": {
     "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "oldValue": "any",
-      "newValue": "any",
+      "oldValue": "TValue | null | undefined",
+      "newValue": "TValue | null | undefined",
       "source": "string | undefined",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
-      "value": "TValue",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
+      "value": "TValue | null | undefined",
       "data": "TData",
       "node": "IRowNode<TData>",
       "rowIndex": "number | null",
@@ -5563,8 +5890,8 @@
       "textFormatter?": "TextFormatter",
       "node": "IRowNode<TData> | null",
       "data": "TData",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "any"
@@ -6311,11 +6638,15 @@
       "node?": "IRowNode<TData> | null",
       "column": "Column",
       "type": "string",
+      "parseValue": "(value: string) => any",
+      "formatValue": "(value: any) => string",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "TContext"
     },
     "docs": {
+      "parseValue": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
+      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */"
@@ -6900,9 +7231,9 @@
     }
   },
   "ICellEditor": {
-    "meta": {},
+    "meta": { "typeParams": ["TValue = any"] },
     "type": {
-      "getValue()": "any",
+      "getValue()": "TValue | null | undefined",
       "isPopup?()": "boolean",
       "getPopupPosition?()": "'over' | 'under' | undefined",
       "isCancelBeforeStart?()": "boolean",
@@ -6925,11 +7256,11 @@
   "ICellEditorParams": {
     "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
     "type": {
-      "value": "TValue",
+      "value": "TValue | null | undefined",
       "eventKey": "string | null",
       "charPress": "string | null",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "node": "IRowNode<TData>",
       "data": "TData",
       "rowIndex": "number",
@@ -6937,8 +7268,8 @@
       "onKeyDown": "(event: KeyboardEvent) => void",
       "stopEditing": "(suppressNavigateAfterEdit?: boolean) => void",
       "eGridCell": "HTMLElement",
-      "parseValue": "(value: any) => any",
-      "formatValue": "(value: any) => any",
+      "parseValue": "(value: string) => TValue | null | undefined",
+      "formatValue": "(value: TValue | null | undefined) => string",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "TContext"
@@ -6964,9 +7295,9 @@
     }
   },
   "ICellEditorComp": {
-    "meta": { "typeParams": ["TData = any"] },
+    "meta": { "typeParams": ["TData = any", "TValue = any"] },
     "type": {
-      "getValue()": "any",
+      "getValue()": "TValue | null | undefined",
       "isPopup?()": "boolean",
       "getPopupPosition?()": "'over' | 'under' | undefined",
       "isCancelBeforeStart?()": "boolean",
@@ -8130,14 +8461,14 @@
     }
   },
   "IHeaderColumn": {
-    "meta": {},
+    "meta": { "typeParams": ["TValue = any"] },
     "type": {
       "getUniqueId()": "string",
       "getActualWidth()": "number",
       "getMinWidth()": "number | null | undefined",
       "getLeft()": "number | null",
       "getOldLeft()": "number | null",
-      "getDefinition()": "AbstractColDef | null",
+      "getDefinition()": "AbstractColDef<TValue> | null",
       "getColumnGroupShow()": "ColumnGroupShowType | undefined",
       "getParent()": "IHeaderColumn",
       "isResizable()": "boolean",
@@ -8477,11 +8808,11 @@
       "cellRenderer": "any",
       "searchDebounceDelay?": "number",
       "formatValue": "(value: any) => any",
-      "value": "TValue",
+      "value": "TValue | null | undefined",
       "eventKey": "string | null",
       "charPress": "string | null",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "node": "IRowNode<TData>",
       "data": "TData",
       "rowIndex": "number",
@@ -8489,7 +8820,7 @@
       "onKeyDown": "(event: KeyboardEvent) => void",
       "stopEditing": "(suppressNavigateAfterEdit?: boolean) => void",
       "eGridCell": "HTMLElement",
-      "parseValue": "(value: any) => any",
+      "parseValue": "(value: string) => TValue | null | undefined",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "TContext"
@@ -9251,10 +9582,10 @@
     "type": {
       "level": "number",
       "location": "string",
-      "value?": "TValue",
+      "value?": "TValue | null",
       "valueFormatted?": "string | null",
-      "colDef?": "ColDef<TData> | ColGroupDef<TData> | null",
-      "column?": "Column | ColumnGroup",
+      "colDef?": "ColDef<TData, TValue> | ColGroupDef<TData> | null",
+      "column?": "Column<TValue> | ColumnGroup",
       "rowIndex?": "number",
       "node?": "IRowNode<TData>",
       "data?": "TData",
@@ -9338,20 +9669,20 @@
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
       "sparklineOptions?": "SparklineOptions",
-      "value": "TValue",
+      "value": "TValue | null | undefined",
       "valueFormatted": "string | null | undefined",
       "fullWidth?": "boolean",
       "pinned?": "\"left\" | \"right\" | null",
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number",
-      "colDef?": "ColDef",
-      "column?": "Column",
+      "colDef?": "ColDef<TData, TValue>",
+      "column?": "Column<TValue>",
       "eGridCell": "HTMLElement",
       "eParentOfValue": "HTMLElement",
-      "getValue?": "() => any",
-      "setValue?": "(value: any) => void",
-      "formatValue?": "(value: any) => any",
+      "getValue?": "() => TValue | null | undefined",
+      "setValue?": "(value: TValue | null | undefined) => void",
+      "formatValue?": "(value: TValue | null | undefined) => string",
       "refreshCell?": "() => void",
       "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void",
       "api": "GridApi<TData>",
@@ -10074,20 +10405,20 @@
       "agGridReact": "any",
       "frameworkComponentWrapper": "any",
       "pinned": "\"left\" | \"right\" | null | undefined",
-      "value": "TValue",
+      "value": "TValue | null | undefined",
       "valueFormatted": "string | null | undefined",
       "fullWidth?": "boolean",
       "pinned?": "\"left\" | \"right\" | null",
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number",
-      "colDef?": "ColDef",
-      "column?": "Column",
+      "colDef?": "ColDef<TData, TValue>",
+      "column?": "Column<TValue>",
       "eGridCell": "HTMLElement",
       "eParentOfValue": "HTMLElement",
-      "getValue?": "() => any",
-      "setValue?": "(value: any) => void",
-      "formatValue?": "(value: any) => any",
+      "getValue?": "() => TValue | null | undefined",
+      "setValue?": "(value: TValue | null | undefined) => void",
+      "formatValue?": "(value: TValue | null | undefined) => string",
       "refreshCell?": "() => void",
       "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void",
       "api": "GridApi<TData>",
@@ -10371,17 +10702,17 @@
       "setEditDetails(compDetails?: UserCompDetails, popup?: boolean, position?: 'over' | 'under')": "void"
     }
   },
-  "ILargeTextEditorParams": {
-    "meta": {},
+  "IDateCellEditorParams": {
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
-      "maxLength": "number",
-      "rows": "number",
-      "cols": "number",
-      "value": "TValue",
+      "min?": "string | Date",
+      "max?": "string | Date",
+      "step?": "number",
+      "value": "TValue | null | undefined",
       "eventKey": "string | null",
       "charPress": "string | null",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "node": "IRowNode<TData>",
       "data": "TData",
       "rowIndex": "number",
@@ -10389,8 +10720,102 @@
       "onKeyDown": "(event: KeyboardEvent) => void",
       "stopEditing": "(suppressNavigateAfterEdit?: boolean) => void",
       "eGridCell": "HTMLElement",
-      "parseValue": "(value: any) => any",
-      "formatValue": "(value: any) => any",
+      "parseValue": "(value: string) => TValue | null | undefined",
+      "formatValue": "(value: TValue | null | undefined) => string",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "TContext"
+    },
+    "docs": {
+      "min?": "/** Min allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */",
+      "max?": "/** Max allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */",
+      "step?": "/** Granularity of the value when updating. Default: 'any'. */",
+      "value": "/** Current value of the cell */",
+      "eventKey": "/** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable\n     *  characters appear here */",
+      "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n     *  shift + letter 'a' only printable characters appear here */",
+      "column": "/** Grid column */",
+      "colDef": "/** Column definition */",
+      "node": "/** Row node for the cell */",
+      "data": "/** Row data */",
+      "rowIndex": "/** Editing row index */",
+      "cellStartedEdit": "/** If doing full row edit, this is true if the cell is the one that started the edit\n     *  (eg it is the cell the use double clicked on, or pressed a key on etc). */",
+      "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n     *  arrows etc) back to grid - however you do */",
+      "stopEditing": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n     * true to prevent focus from moving to the next cell after editing stops in case the\n     * grid property `enterMovesDownAfterEdit=true` */",
+      "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n     *  will live inside. Useful if you want to add event listeners or classes at this level.\n     *  This is the DOM element that gets browser focus when selecting cells. */",
+      "parseValue": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
+      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "IDateStringCellEditorParams": {
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "type": {
+      "min?": "string | Date",
+      "max?": "string | Date",
+      "step?": "number",
+      "value": "TValue | null | undefined",
+      "eventKey": "string | null",
+      "charPress": "string | null",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
+      "node": "IRowNode<TData>",
+      "data": "TData",
+      "rowIndex": "number",
+      "cellStartedEdit": "boolean",
+      "onKeyDown": "(event: KeyboardEvent) => void",
+      "stopEditing": "(suppressNavigateAfterEdit?: boolean) => void",
+      "eGridCell": "HTMLElement",
+      "parseValue": "(value: string) => TValue | null | undefined",
+      "formatValue": "(value: TValue | null | undefined) => string",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "TContext"
+    },
+    "docs": {
+      "min?": "/** Min allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */",
+      "max?": "/** Max allowed value. Either `Date` object or string in format `'yyyy-mm-dd'`. */",
+      "step?": "/** Granularity of the value when updating. Default: 'any'. */",
+      "value": "/** Current value of the cell */",
+      "eventKey": "/** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable\n     *  characters appear here */",
+      "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n     *  shift + letter 'a' only printable characters appear here */",
+      "column": "/** Grid column */",
+      "colDef": "/** Column definition */",
+      "node": "/** Row node for the cell */",
+      "data": "/** Row data */",
+      "rowIndex": "/** Editing row index */",
+      "cellStartedEdit": "/** If doing full row edit, this is true if the cell is the one that started the edit\n     *  (eg it is the cell the use double clicked on, or pressed a key on etc). */",
+      "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n     *  arrows etc) back to grid - however you do */",
+      "stopEditing": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n     * true to prevent focus from moving to the next cell after editing stops in case the\n     * grid property `enterMovesDownAfterEdit=true` */",
+      "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n     *  will live inside. Useful if you want to add event listeners or classes at this level.\n     *  This is the DOM element that gets browser focus when selecting cells. */",
+      "parseValue": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
+      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "ILargeTextEditorParams": {
+    "meta": {},
+    "type": {
+      "maxLength": "number",
+      "rows": "number",
+      "cols": "number",
+      "value": "TValue | null | undefined",
+      "eventKey": "string | null",
+      "charPress": "string | null",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
+      "node": "IRowNode<TData>",
+      "data": "TData",
+      "rowIndex": "number",
+      "cellStartedEdit": "boolean",
+      "onKeyDown": "(event: KeyboardEvent) => void",
+      "stopEditing": "(suppressNavigateAfterEdit?: boolean) => void",
+      "eGridCell": "HTMLElement",
+      "parseValue": "(value: string) => TValue | null | undefined",
+      "formatValue": "(value: TValue | null | undefined) => string",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "TContext"
@@ -10418,15 +10843,18 @@
       "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
-  "ISelectCellEditorParams": {
-    "meta": {},
+  "INumberCellEditorParams": {
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
-      "values": "any[]",
-      "value": "TValue",
+      "min?": "number",
+      "max?": "number",
+      "precision?": "number",
+      "step?": "number",
+      "value": "TValue | null | undefined",
       "eventKey": "string | null",
       "charPress": "string | null",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "node": "IRowNode<TData>",
       "data": "TData",
       "rowIndex": "number",
@@ -10434,8 +10862,54 @@
       "onKeyDown": "(event: KeyboardEvent) => void",
       "stopEditing": "(suppressNavigateAfterEdit?: boolean) => void",
       "eGridCell": "HTMLElement",
-      "parseValue": "(value: any) => any",
-      "formatValue": "(value: any) => any",
+      "parseValue": "(value: string) => TValue | null | undefined",
+      "formatValue": "(value: TValue | null | undefined) => string",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "TContext"
+    },
+    "docs": {
+      "min?": "/** Min allowed value. */",
+      "max?": "/** Max allowed value. */",
+      "precision?": "/** Number of digits allowed after the decimal point. */",
+      "step?": "/** Granularity of the value when updating. Default: 'any'. */",
+      "value": "/** Current value of the cell */",
+      "eventKey": "/** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable\n     *  characters appear here */",
+      "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n     *  shift + letter 'a' only printable characters appear here */",
+      "column": "/** Grid column */",
+      "colDef": "/** Column definition */",
+      "node": "/** Row node for the cell */",
+      "data": "/** Row data */",
+      "rowIndex": "/** Editing row index */",
+      "cellStartedEdit": "/** If doing full row edit, this is true if the cell is the one that started the edit\n     *  (eg it is the cell the use double clicked on, or pressed a key on etc). */",
+      "onKeyDown": "/** callback to tell grid a key was pressed - useful to pass control key events (tab,\n     *  arrows etc) back to grid - however you do */",
+      "stopEditing": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n     * true to prevent focus from moving to the next cell after editing stops in case the\n     * grid property `enterMovesDownAfterEdit=true` */",
+      "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n     *  will live inside. Useful if you want to add event listeners or classes at this level.\n     *  This is the DOM element that gets browser focus when selecting cells. */",
+      "parseValue": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
+      "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "ISelectCellEditorParams": {
+    "meta": {},
+    "type": {
+      "values": "any[]",
+      "value": "TValue | null | undefined",
+      "eventKey": "string | null",
+      "charPress": "string | null",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
+      "node": "IRowNode<TData>",
+      "data": "TData",
+      "rowIndex": "number",
+      "cellStartedEdit": "boolean",
+      "onKeyDown": "(event: KeyboardEvent) => void",
+      "stopEditing": "(suppressNavigateAfterEdit?: boolean) => void",
+      "eGridCell": "HTMLElement",
+      "parseValue": "(value: string) => TValue | null | undefined",
+      "formatValue": "(value: TValue | null | undefined) => string",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "TContext"
@@ -10461,18 +10935,32 @@
       "context": "/** Application context as set on `gridOptions.context`. */"
     }
   },
-  "ITextCellEditorParams": {
+  "CellEditorInput": {
     "meta": {
-      "doc": "/** useFormatter: used when the cell value needs formatting prior to editing, such as when using reference data and you\n *               want to display text rather than code.\n*/"
+      "typeParams": [
+        "TValue",
+        "P extends ICellEditorParams",
+        "I extends AgInputTextField"
+      ]
     },
+    "type": {
+      "getTemplate()": "string",
+      "init(eInput: I, params: P)": "void",
+      "getValue()": "TValue | null | undefined",
+      "getStartValue()": "string | null | undefined",
+      "setCaret?()": "void"
+    }
+  },
+  "ITextCellEditorParams": {
+    "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
     "type": {
       "useFormatter": "boolean",
       "maxLength?": "number",
-      "value": "TValue",
+      "value": "TValue | null | undefined",
       "eventKey": "string | null",
       "charPress": "string | null",
-      "column": "Column",
-      "colDef": "ColDef<TData>",
+      "column": "Column<TValue>",
+      "colDef": "ColDef<TData, TValue>",
       "node": "IRowNode<TData>",
       "data": "TData",
       "rowIndex": "number",
@@ -10480,14 +10968,14 @@
       "onKeyDown": "(event: KeyboardEvent) => void",
       "stopEditing": "(suppressNavigateAfterEdit?: boolean) => void",
       "eGridCell": "HTMLElement",
-      "parseValue": "(value: any) => any",
-      "formatValue": "(value: any) => any",
+      "parseValue": "(value: string) => TValue | null | undefined",
+      "formatValue": "(value: TValue | null | undefined) => string",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "TContext"
     },
     "docs": {
-      "useFormatter": "/** If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor. */",
+      "useFormatter": "/** If `true`, the editor will use the provided `colDef.valueFormatter` to format the value displayed in the editor.\n     * Used when the cell value needs formatting prior to editing, such as when using reference data and you\n     * want to display text rather than code. */",
       "maxLength?": "/** Max number of characters to allow. Default: `524288` */",
       "value": "/** Current value of the cell */",
       "eventKey": "/** Key value of key that started the edit, eg 'Enter' or 'F2' - non-printable\n     *  characters appear here */",
@@ -10503,6 +10991,53 @@
       "eGridCell": "/** A reference to the DOM element representing the grid cell that your component\n     *  will live inside. Useful if you want to add event listeners or classes at this level.\n     *  This is the DOM element that gets browser focus when selecting cells. */",
       "parseValue": "/** Utility function to parse a value using the column's `colDef.valueParser` */",
       "formatValue": "/** Utility function to format a value using the column's `colDef.valueFormatter` */",
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "ICheckboxCellRendererParams": {
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "type": {
+      "disabled?": "boolean",
+      "value": "TValue | null | undefined",
+      "valueFormatted": "string | null | undefined",
+      "fullWidth?": "boolean",
+      "pinned?": "\"left\" | \"right\" | null",
+      "data": "TData | undefined",
+      "node": "IRowNode<TData>",
+      "rowIndex": "number",
+      "colDef?": "ColDef<TData, TValue>",
+      "column?": "Column<TValue>",
+      "eGridCell": "HTMLElement",
+      "eParentOfValue": "HTMLElement",
+      "getValue?": "() => TValue | null | undefined",
+      "setValue?": "(value: TValue | null | undefined) => void",
+      "formatValue?": "(value: TValue | null | undefined) => string",
+      "refreshCell?": "() => void",
+      "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "TContext"
+    },
+    "docs": {
+      "disabled?": "/** Set to `true` for the input to be disabled. */",
+      "value": "/** Value to be rendered. */",
+      "valueFormatted": "/** Formatted value to be rendered. */",
+      "fullWidth?": "/** True if this is a full width row. */",
+      "pinned?": "/** Pinned state of the cell. */",
+      "data": "/** The row's data. Data property can be `undefined` when row grouping or loading infinite row models. */",
+      "node": "/** The row node. */",
+      "rowIndex": "/** The current index of the row (this changes after filter and sort). */",
+      "colDef?": "/** The cell's column definition. */",
+      "column?": "/** The cell's column. */",
+      "eGridCell": "/** The grid's cell, a DOM div element. */",
+      "eParentOfValue": "/** The parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection. */",
+      "getValue?": "/** Convenience function to get most recent up to date value. */",
+      "setValue?": "/** Convenience function to set the value. */",
+      "formatValue?": "/** Convenience function to format a value using the column's formatter. */",
+      "refreshCell?": "/** Convenience function to refresh the cell. */",
+      "registerRowDragger": "/** registerRowDragger:\n     * @param rowDraggerElement The HTMLElement to be used as Row Dragger\n     * @param dragStartPixels The amount of pixels required to start the drag (Default: 4)\n     * @param value The value to be displayed while dragging. Note: Only relevant with Full Width Rows.\n     * @param suppressVisibilityChange Set to `true` to prevent the Grid from hiding the Row Dragger when it is disabled.\n     */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */"
@@ -10597,20 +11132,20 @@
   "ICellRendererParams": {
     "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
     "type": {
-      "value": "TValue",
+      "value": "TValue | null | undefined",
       "valueFormatted": "string | null | undefined",
       "fullWidth?": "boolean",
       "pinned?": "\"left\" | \"right\" | null",
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number",
-      "colDef?": "ColDef",
-      "column?": "Column",
+      "colDef?": "ColDef<TData, TValue>",
+      "column?": "Column<TValue>",
       "eGridCell": "HTMLElement",
       "eParentOfValue": "HTMLElement",
-      "getValue?": "() => any",
-      "setValue?": "(value: any) => void",
-      "formatValue?": "(value: any) => any",
+      "getValue?": "() => TValue | null | undefined",
+      "setValue?": "(value: TValue | null | undefined) => void",
+      "formatValue?": "(value: TValue | null | undefined) => string",
       "refreshCell?": "() => void",
       "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void",
       "api": "GridApi<TData>",
@@ -10690,20 +11225,20 @@
   "ILoadingCellRendererParams": {
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
-      "value": "TValue",
+      "value": "TValue | null | undefined",
       "valueFormatted": "string | null | undefined",
       "fullWidth?": "boolean",
       "pinned?": "\"left\" | \"right\" | null",
       "data": "TData | undefined",
       "node": "IRowNode<TData>",
       "rowIndex": "number",
-      "colDef?": "ColDef",
-      "column?": "Column",
+      "colDef?": "ColDef<TData, TValue>",
+      "column?": "Column<TValue>",
       "eGridCell": "HTMLElement",
       "eParentOfValue": "HTMLElement",
-      "getValue?": "() => any",
-      "setValue?": "(value: any) => void",
-      "formatValue?": "(value: any) => any",
+      "getValue?": "() => TValue | null | undefined",
+      "setValue?": "(value: TValue | null | undefined) => void",
+      "formatValue?": "(value: TValue | null | undefined) => string",
       "refreshCell?": "() => void",
       "registerRowDragger": "(rowDraggerElement: HTMLElement, dragStartPixels?: number, value?: string, suppressVisibilityChange?: boolean) => void",
       "api": "GridApi<TData>",
@@ -11052,10 +11587,10 @@
     "meta": { "typeParams": ["TData = any", "TValue = any", "TContext = any"] },
     "type": {
       "location": "string",
-      "value?": "TValue",
+      "value?": "TValue | null",
       "valueFormatted?": "string | null",
-      "colDef?": "ColDef<TData> | ColGroupDef<TData> | null",
-      "column?": "Column | ColumnGroup",
+      "colDef?": "ColDef<TData, TValue> | ColGroupDef<TData> | null",
+      "column?": "Column<TValue> | ColumnGroup",
       "rowIndex?": "number",
       "node?": "IRowNode<TData>",
       "data?": "TData",
@@ -11778,7 +12313,7 @@
     "meta": {},
     "type": {
       "agInit(params: ICellEditorParams)": "void",
-      "getValue()": "any",
+      "getValue()": "TValue | null | undefined",
       "isPopup?()": "boolean",
       "getPopupPosition?()": "'over' | 'under' | undefined",
       "isCancelBeforeStart?()": "boolean",
@@ -11814,7 +12349,7 @@
     "meta": {},
     "type": {
       "agInit(params: ICellEditorParams)": "void",
-      "getValue()": "any",
+      "getValue()": "TValue | null | undefined",
       "isPopup?()": "boolean",
       "getPopupPosition?()": "'over' | 'under' | undefined",
       "isCancelBeforeStart?()": "boolean",
@@ -11963,6 +12498,7 @@
       "defaultColDef?": "ColDef<TData>",
       "defaultColGroupDef?": "Partial<ColGroupDef<TData>>",
       "columnTypes?": "{ [key: string]: ColDef<TData>; }",
+      "dataTypeDefinitions?": "{ [cellDataType: string]: DataTypeDefinition<TData>; }",
       "maintainColumnOrder?": "boolean",
       "suppressFieldDotNotation?": "boolean",
       "headerHeight?": "number",
@@ -12341,6 +12877,7 @@
       "defaultColDef?": "/** A default column definition. Items defined in the actual column definitions get precedence. */",
       "defaultColGroupDef?": "/** A default column group definition. All column group definitions will use these properties. Items defined in the actual column group definition get precedence. */",
       "columnTypes?": "/** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property. */",
+      "dataTypeDefinitions?": "/** An object map of cell data types to their definitions.\n     * Cell data types can either override/update the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`),\n     * or can be custom data types.\n     */",
       "maintainColumnOrder?": "/** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */",
       "suppressFieldDotNotation?": "/** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */",
       "headerHeight?": "/** The height in pixels for the row containing the column label header. If not specified, it uses the theme value of `header-height`. */",
@@ -12727,6 +13264,7 @@
       "defaultColDef?": "ColDef<TData>",
       "defaultColGroupDef?": "Partial<ColGroupDef<TData>>",
       "columnTypes?": "{ [key: string]: ColDef<TData>; }",
+      "dataTypeDefinitions?": "{ [cellDataType: string]: DataTypeDefinition<TData>; }",
       "maintainColumnOrder?": "boolean",
       "suppressFieldDotNotation?": "boolean",
       "headerHeight?": "number",
@@ -13105,6 +13643,7 @@
       "defaultColDef?": "/** A default column definition. Items defined in the actual column definitions get precedence. */",
       "defaultColGroupDef?": "/** A default column group definition. All column group definitions will use these properties. Items defined in the actual column group definition get precedence. */",
       "columnTypes?": "/** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property. */",
+      "dataTypeDefinitions?": "/** An object map of cell data types to their definitions.\n     * Cell data types can either override/update the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`),\n     * or can be custom data types.\n     */",
       "maintainColumnOrder?": "/** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */",
       "suppressFieldDotNotation?": "/** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */",
       "headerHeight?": "/** The height in pixels for the row containing the column label header. If not specified, it uses the theme value of `header-height`. */",
@@ -13493,6 +14032,7 @@
       "defaultColDef?": "ColDef<TData>",
       "defaultColGroupDef?": "Partial<ColGroupDef<TData>>",
       "columnTypes?": "{ [key: string]: ColDef<TData>; }",
+      "dataTypeDefinitions?": "{ [cellDataType: string]: DataTypeDefinition<TData>; }",
       "maintainColumnOrder?": "boolean",
       "suppressFieldDotNotation?": "boolean",
       "headerHeight?": "number",
@@ -13871,6 +14411,7 @@
       "defaultColDef?": "/** A default column definition. Items defined in the actual column definitions get precedence. */",
       "defaultColGroupDef?": "/** A default column group definition. All column group definitions will use these properties. Items defined in the actual column group definition get precedence. */",
       "columnTypes?": "/** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property. */",
+      "dataTypeDefinitions?": "/** An object map of cell data types to their definitions.\n     * Cell data types can either override/update the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`),\n     * or can be custom data types.\n     */",
       "maintainColumnOrder?": "/** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */",
       "suppressFieldDotNotation?": "/** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */",
       "headerHeight?": "/** The height in pixels for the row containing the column label header. If not specified, it uses the theme value of `header-height`. */",
@@ -14320,7 +14861,7 @@
   "ICellEditorReactComp": {
     "meta": {},
     "type": {
-      "getValue()": "any",
+      "getValue()": "TValue | null | undefined",
       "isPopup?()": "boolean",
       "getPopupPosition?()": "'over' | 'under' | undefined",
       "isCancelBeforeStart?()": "boolean",

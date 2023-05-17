@@ -180,7 +180,7 @@ describe('ChartTheme', () => {
 
             expect((chart as any).background.fill).toBe('red');
 
-            expect(chart.series[0].type).toBe('bar');
+            expect(chart.series[0].type).toBe('column');
             expect((chart.series[0] as BarSeries).fills).toEqual(['red', 'green', 'blue', 'red', 'green']);
             expect((chart.series[0] as BarSeries).strokes).toEqual(['cyan', 'cyan', 'cyan', 'cyan', 'cyan']);
             expect((chart.series[0] as BarSeries).label.enabled).toBe(true);
@@ -422,7 +422,7 @@ describe('ChartTheme', () => {
 
             expect((cartesianChart as any).background.fill).toBe('red');
 
-            expect(cartesianChart!.series[0].type).toBe('bar');
+            expect(cartesianChart!.series[0].type).toBe('column');
             expect((cartesianChart!.series[0] as BarSeries).fills).toEqual(['red', 'green', 'blue', 'red', 'green']);
             expect((cartesianChart!.series[0] as BarSeries).strokes).toEqual(['cyan', 'cyan', 'cyan', 'cyan', 'cyan']);
             expect((cartesianChart!.series[0] as BarSeries).label.enabled).toBe(true);
@@ -843,7 +843,7 @@ describe('ChartTheme', () => {
             await waitForChartStability(cartesianChart);
             const { series } = cartesianChart;
 
-            expect(series[0].type).toEqual('bar');
+            expect(series[0].type).toEqual('column');
             expect(series[1].type).toEqual('line');
             expect(series[2].type).toEqual('area');
             expect((series[0] as BarSeries).strokeWidth).toEqual(16);

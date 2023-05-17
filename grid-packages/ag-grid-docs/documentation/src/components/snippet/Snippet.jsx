@@ -30,6 +30,7 @@ export const Snippet = (props) => {
             code={snippet}
             language={props.language ? props.language : languages[props.framework]}
             lineNumbers={props.lineNumbers}
+            className="font-size-responsive"
         />
     );
 };
