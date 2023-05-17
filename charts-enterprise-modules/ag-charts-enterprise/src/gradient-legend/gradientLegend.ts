@@ -25,7 +25,7 @@ const {
     POSITION,
     STRING,
 } = _ModuleSupport;
-const { Group, Rect, Selection, Text } = _Scene;
+const { BBox, Group, Rect, Selection, Text } = _Scene;
 const { createId } = _Util;
 
 class GradientLegendLabel {
@@ -146,51 +146,80 @@ export class GradientLegend {
     }
 
     private update(shrinkRect: _Scene.BBox) {
-        const newShrinkRect = shrinkRect.clone();
         const data = this.data[0];
 
         if (!this.enabled || !data || !data.enabled) {
             this.group.visible = false;
-            return { shrinkRect: newShrinkRect };
+            return { shrinkRect: shrinkRect.clone() };
         }
 
-        this.group.visible = true;
-        const { colorDomain } = data;
+        const { colorDomain, colorRange } = this.normalizeColorArrays(data);
 
-        const { spacing, reverseOrder } = this;
-        const { preferredLength, thickness } = this.gradientBar;
-        const { padding, label } = this.item;
+        const { gradientBox, newShrinkRect, translateX, translateY } = this.getMeasurements(colorDomain, shrinkRect);
+        this.updateGradientRect(colorRange, gradientBox);
+        this.updateText(colorDomain, gradientBox);
+
+        this.group.visible = true;
+        this.group.translationX = translateX;
+        this.group.translationY = translateY;
+
+        return { shrinkRect: newShrinkRect };
+    }
+
+    private normalizeColorArrays(data: GradientLegendDatum) {
+        let colorDomain = data.colorDomain.slice();
+        const colorRange = data.colorRange.slice();
+
+        if (colorDomain.length === colorRange.length) {
+            return { colorDomain, colorRange };
+        }
+
+        if (colorDomain.length === 2) {
+            const count = colorRange.length;
+            colorDomain = colorRange.map((_, i) => {
+                const [d0, d1] = colorDomain;
+                if (i === 0) return d0;
+                if (i === count - 1) return d1;
+                return d0 + ((d1 - d0) * i) / (count - 1);
+            });
+        } else if (colorDomain.length > colorRange.length) {
+            colorDomain.splice(colorRange.length);
+        } else {
+            colorRange.splice(colorDomain.length);
+        }
+        return { colorDomain, colorRange };
+    }
+
+    private getMeasurements(colorDomain: number[], shrinkRect: _Scene.BBox) {
+        const { preferredLength: gradientLength, thickness } = this.gradientBar;
+        const { padding } = this.item;
         const [textWidth, textHeight] = this.measureMaxText(colorDomain);
-        const gradientLength = preferredLength;
 
         let width: number;
         let height: number;
-        let gradientLeft: number;
-        let gradientTop: number;
+        const gradientBox = new BBox(0, 0, 0, 0);
         const orientation = this.getOrientation();
         if (orientation === 'vertical') {
             width = thickness + padding + textWidth;
             height = gradientLength + textHeight;
-            gradientLeft = 0;
-            gradientTop = textHeight / 2;
-            this.gradientRect.width = thickness;
-            this.gradientRect.height = gradientLength;
+            gradientBox.x = 0;
+            gradientBox.y = textHeight / 2;
+            gradientBox.width = thickness;
+            gradientBox.height = gradientLength;
         } else {
             width = gradientLength + textWidth;
             height = thickness + padding + textHeight;
-            gradientLeft = textWidth / 2;
-            gradientTop = 0;
-            this.gradientRect.width = gradientLength;
-            this.gradientRect.height = thickness;
+            gradientBox.x = textWidth / 2;
+            gradientBox.y = 0;
+            gradientBox.width = gradientLength;
+            gradientBox.height = thickness;
         }
-        this.gradientRect.x = gradientLeft;
-        this.gradientRect.y = gradientTop;
-        const colorRange = reverseOrder ? data.colorRange.slice().reverse() : data.colorRange;
-        const colorsString = colorRange.join(', ');
-        this.gradientRect.fill = `linear-gradient(${orientation === 'vertical' ? 0 : 90}deg, ${colorsString})`;
 
+        const { spacing } = this;
+        const newShrinkRect = shrinkRect.clone();
         let left: number;
         let top: number;
+
         if (this.position === 'left') {
             left = shrinkRect.x;
             top = shrinkRect.y + shrinkRect.height / 2 - height / 2;
@@ -209,22 +238,38 @@ export class GradientLegend {
             newShrinkRect.shrink(height + spacing, 'bottom');
         }
 
-        const stops: number[] = [];
-        const colorCount = colorRange.length;
-        for (let i = 0; i < colorCount; i++) {
-            const [d0, d1] = colorDomain;
-            const s = d0 + ((d1 - d0) * i) / (colorCount - 1);
-            stops.push(s);
+        return {
+            translateX: left,
+            translateY: top,
+            gradientBox,
+            newShrinkRect,
+        };
+    }
+
+    private updateGradientRect(colorRange: string[], gradientBox: _Scene.BBox) {
+        if (this.reverseOrder) {
+            colorRange = colorRange.slice().reverse();
         }
-        if (orientation === 'vertical') {
-            stops.reverse();
-        }
-        if (reverseOrder) {
-            stops.reverse();
+        const colorsString = colorRange.join(', ');
+        const orientation = this.getOrientation();
+        const rotation = orientation === 'vertical' ? 0 : 90;
+        this.gradientRect.fill = `linear-gradient(${rotation}deg, ${colorsString})`;
+
+        this.gradientRect.x = gradientBox.x;
+        this.gradientRect.y = gradientBox.y;
+        this.gradientRect.width = gradientBox.width;
+        this.gradientRect.height = gradientBox.height;
+    }
+
+    private updateText(colorDomain: number[], gradientBox: _Scene.BBox) {
+        const { label, padding } = this.item;
+        const orientation = this.getOrientation();
+        if (this.reverseOrder) {
+            colorDomain = colorDomain.slice().reverse();
         }
 
-        this.textSelection.update(stops).each((node, datum, i) => {
-            const t = i / (stops.length - 1);
+        this.textSelection.update(colorDomain).each((node, datum, i) => {
+            const t = i / (colorDomain.length - 1);
 
             node.text = String(datum);
             node.fill = label.color;
@@ -236,20 +281,15 @@ export class GradientLegend {
             if (orientation === 'vertical') {
                 node.textAlign = 'start';
                 node.textBaseline = 'middle';
-                node.x = thickness + padding;
-                node.y = gradientTop + gradientLength * t;
+                node.x = gradientBox.width + padding;
+                node.y = gradientBox.y + gradientBox.height * t;
             } else {
                 node.textAlign = 'center';
                 node.textBaseline = 'top';
-                node.x = gradientLeft + gradientLength * t;
-                node.y = thickness + padding;
+                node.x = gradientBox.x + gradientBox.width * t;
+                node.y = gradientBox.height + padding;
             }
         });
-
-        this.group.translationX = left;
-        this.group.translationY = top;
-
-        return { shrinkRect: newShrinkRect };
     }
 
     private measureMaxText(colorDomain: number[]) {
