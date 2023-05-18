@@ -793,7 +793,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         paths,
         seriesRect,
     }: {
-        markerSelections: Array<Selection<Marker, any>>;
+        markerSelections: Array<Selection<Marker, MarkerSelectionDatum>>;
         contextData: Array<AreaSeriesNodeDataContext>;
         paths: Array<Array<Path>>;
         seriesRect?: BBox;
@@ -958,7 +958,47 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         });
     }
 
-    private animateFormatter(datum: any) {
+    animateReadyUpdateReady({
+        contextData,
+        paths,
+    }: {
+        contextData: Array<AreaSeriesNodeDataContext>;
+        paths: Array<Array<Path>>;
+    }) {
+        const { strokes, fills, fillOpacity, lineDash, lineDashOffset, strokeOpacity, strokeWidth, shadow } = this;
+
+        contextData.forEach(({ itemId }, seriesIdx) => {
+            const [fill, stroke] = paths[seriesIdx];
+
+            // Stroke
+            stroke.tag = AreaSeriesTag.Stroke;
+            stroke.fill = undefined;
+            stroke.lineJoin = stroke.lineCap = 'round';
+            stroke.pointerEvents = PointerEvents.None;
+
+            stroke.stroke = strokes[seriesIdx % strokes.length];
+            stroke.strokeWidth = this.getStrokeWidth(this.strokeWidth, { itemId });
+            stroke.strokeOpacity = strokeOpacity;
+            stroke.lineDash = lineDash;
+            stroke.lineDashOffset = lineDashOffset;
+
+            // Fill
+            fill.tag = AreaSeriesTag.Fill;
+            fill.stroke = undefined;
+            fill.lineJoin = 'round';
+            fill.pointerEvents = PointerEvents.None;
+
+            fill.fill = fills[seriesIdx % fills.length];
+            fill.fillOpacity = fillOpacity;
+            fill.strokeOpacity = strokeOpacity;
+            fill.strokeWidth = strokeWidth;
+            fill.lineDash = lineDash;
+            fill.lineDashOffset = lineDashOffset;
+            fill.fillShadow = shadow;
+        });
+    }
+
+    private animateFormatter(datum: MarkerSelectionDatum) {
         const { marker, fills, strokes, xKey = '', yKeys, id: seriesId } = this;
         const { size, formatter } = marker;
 
