@@ -66,7 +66,7 @@ export class PolarChart extends Chart {
         let radius = initialRadius;
         setSeriesCircle(centerX, centerY, radius);
 
-        const shake = async ({ hideWhenNecessary = false } = {}) => {
+        const shake = ({ hideWhenNecessary = false } = {}) => {
             const labelBoxes = [];
             for (const series of polarSeries) {
                 const box = series.computeLabelsBBox({ hideWhenNecessary }, seriesBox);
