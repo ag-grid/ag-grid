@@ -87,7 +87,7 @@ const AboutPage = () => {
                             <div>
                                 <img src="../images/team/niall.jpg" alt="Niall Crosby, CEO / Founder" />
                                 <h3>Niall Crosby</h3>
-                                <p>CEO</p>
+                                <p>CEO / Founder</p>
                             </div>
                             <div>
                                 <img src="../images/team/rob.jpg" alt="Rob Clarke, VP Engineering" />
