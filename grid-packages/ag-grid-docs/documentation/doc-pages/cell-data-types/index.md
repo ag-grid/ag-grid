@@ -114,6 +114,7 @@ The default Value Parser and Value Formatter do not really do anything, as their
 The following properties are set:
 - `cellEditorParams.useFormatter = true` so that the cell editor uses the Value Formatter.
 - A `comparator` is defined to allow [Custom Sorting](/row-sorting/#custom-sorting) using the Value Formatter.
+- The `equals` method is defined to allow [Comparing Values](/change-detection/#comparing-values) using the Value Formatter.
 - For AG Grid Community, a [Filter Value Getter](/value-getters/#filter-value-getters) is used to convert the value with the Value Formatter.
 - For AG Grid Enterprise, `filterParams.valueFormatter` is set to format the values using the Value Formatter.
 

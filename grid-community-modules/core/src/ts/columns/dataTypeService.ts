@@ -404,31 +404,35 @@ export class DataTypeService extends BeanStub {
                 colDef.cellEditorParams = {
                     useFormatter: true,
                 };
+                const formatValue = (column: Column, colDef: ColDef, value: any) => dataTypeDefinition.valueFormatter!({
+                    api: this.gridOptionsService.api,
+                    columnApi: this.gridOptionsService.columnApi,
+                    context: this.gridOptionsService.context,
+                    column,
+                    colDef,
+                    value
+                });
                 colDef.comparator = (a: any, b: any) => {
                     const column = this.columnModel.getPrimaryColumn(colId);
                     const colDef = column?.getColDef();
                     if (!column || !colDef) {
                         return 0;
                     }
-                    const valA = a == null ? '' : dataTypeDefinition.valueFormatter!({
-                        api: this.gridOptionsService.api,
-                        columnApi: this.gridOptionsService.columnApi,
-                        context: this.gridOptionsService.context,
-                        column,
-                        colDef,
-                        value: a
-                    });
-                    const valB = b == null ? '' : dataTypeDefinition.valueFormatter!({
-                        api: this.gridOptionsService.api,
-                        columnApi: this.gridOptionsService.columnApi,
-                        context: this.gridOptionsService.context,
-                        column,
-                        colDef,
-                        value: b
-                    });
+                    const valA = a == null ? '' : formatValue(column, colDef, a);
+                    const valB = b == null ? '' : formatValue(column, colDef, b);
                     if (valA === valB) return 0;
                     return valA > valB ? 1 : -1;
                 };
+                colDef.equals = (a: any, b: any) => {
+                    const column = this.columnModel.getPrimaryColumn(colId);
+                    const colDef = column?.getColDef();
+                    if (!column || !colDef) {
+                        return a === b;
+                    }
+                    const valA = formatValue(column, colDef, a);
+                    const valB = formatValue(column, colDef, b);
+                    return valA === valB;
+                }
                 colDef.keyCreator = (params: KeyCreatorParams) => dataTypeDefinition.valueFormatter!(params);
                 if (usingSetFilter) {
                     colDef.filterParams = {
