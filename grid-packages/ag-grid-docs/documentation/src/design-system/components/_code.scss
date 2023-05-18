@@ -129,8 +129,11 @@ pre.code {
 
 pre.code.line-numbers {
     position: relative;
-    padding-left: 3.8em;
     counter-reset: linenumber;
+
+    @media screen and (min-width: $breakpoint-code-line-numbers) {
+        padding-left: 3.8em;
+    }
 
     > code {
         white-space: inherit;
@@ -150,6 +153,10 @@ pre.code.line-numbers {
         border-right: 1px solid rgba(map.get($abstract-colors, medium-electric-blue), 0.1);
         pointer-events: none;
         user-select: none;
+
+        @media screen and (max-width: $breakpoint-code-line-numbers) {
+            display: none;
+        }
     }
 
     .line-numbers-rows > span {
