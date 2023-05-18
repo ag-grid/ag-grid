@@ -10,8 +10,10 @@ export interface INumberCellEditorParams<TData = any, TContext = any> extends IC
     max?: number;
     /** Number of digits allowed after the decimal point. */
     precision?: number;
-    /** Granularity of the value when updating. Default: 'any'. */
+    /** Granularity of the value when stepping up/down. Defaults to any value allowed. */
     step?: number;
+    /** Display stepper buttons in editor. Default: `false` */
+    showStepperButtons?: boolean;
 }
 
 class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditorParams, AgInputNumberField> {
@@ -36,6 +38,9 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
         }
         if (params.step != null) {
             eInput.setStep(params.step);
+        }
+        if (params.showStepperButtons) {
+            eInput.getInputElement().classList.add('ag-number-field-input-stepper');
         }
     }
 

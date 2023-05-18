@@ -19373,8 +19373,12 @@
       "type": { "returnType": "number", "optional": true }
     },
     "step": {
-      "description": "/** Granularity of the value when updating. Default: 'any'. */",
+      "description": "/** Granularity of the value when stepping up/down. Defaults to any value allowed. */",
       "type": { "returnType": "number", "optional": true }
+    },
+    "showStepperButtons": {
+      "description": "/** Display stepper buttons in editor. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
     },
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "value": {
