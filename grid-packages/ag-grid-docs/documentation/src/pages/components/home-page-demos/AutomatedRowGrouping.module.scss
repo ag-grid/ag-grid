@@ -187,6 +187,18 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
         margin-bottom: ds.$size-2 !important; // !important for .ag-styles specificity;
         font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity;
         line-height: var(--line-height-ultra-tight) !important; // !important for .ag-styles specificity;
+
+        @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
+            font-size: var(--font-size-massive) !important; // !important for .ag-styles specificity;
+        }
+    }
+
+    p {
+        max-width: 50em;
+
+        @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
+            font-size: var(--font-size-large) !important; // !important for .ag-styles specificity;
+        }
     }
 }
 
