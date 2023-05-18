@@ -4,7 +4,7 @@ import { HdpiCanvas } from '../../canvas/hdpiCanvas';
 import { RedrawType, SceneChangeDetection, RenderContext } from '../node';
 import { FontStyle, FontWeight } from '../../chart/agChartOptions';
 
-interface TextSizeProperties {
+export interface TextSizeProperties {
     fontFamily: string;
     fontSize: number;
     fontStyle?: FontStyle;
