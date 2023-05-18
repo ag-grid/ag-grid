@@ -938,7 +938,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     }
 
     private animateFormatter(datum: any) {
-        const { marker, fills, strokes, xKey, yKeys, id: seriesId } = this;
+        const { marker, fills, strokes, xKey = '', yKeys, id: seriesId } = this;
         const { size, formatter } = marker;
 
         const yKeyIndex = yKeys.indexOf(datum.yKey);

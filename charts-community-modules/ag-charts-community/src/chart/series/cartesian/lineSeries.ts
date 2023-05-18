@@ -608,7 +608,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
     }
 
     private animateFormatter(datum: LineNodeDatum) {
-        const { marker, xKey, yKey, stroke: lineStroke, id: seriesId } = this;
+        const { marker, xKey = '', yKey = '', stroke: lineStroke, id: seriesId } = this;
         const { size, formatter } = marker;
 
         const fill = marker.fill;
