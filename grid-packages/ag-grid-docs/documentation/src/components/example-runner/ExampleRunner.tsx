@@ -11,6 +11,7 @@ import styles from './ExampleRunner.module.scss';
 import ExampleRunnerResult from './ExampleRunnerResult';
 import { getExampleInfo, getIndexHtmlUrl, openPlunker } from './helpers';
 import { getIndexHtml } from './index-html-helper';
+import { trackExampleRunnerEvent } from './track-example-runner-event';
 import { useExampleFileNodes } from './use-example-file-nodes';
 
 /**
@@ -551,6 +552,7 @@ const ExampleRunnerInner = ({
                             onClick={(e) => {
                                 setShowCode(false);
                                 e.preventDefault();
+                                trackExampleRunnerEvent({ type: 'viewPreviewClick', exampleInfo });
                             }}
                             role="tab"
                             title="Run example"
@@ -570,6 +572,7 @@ const ExampleRunnerInner = ({
                             onClick={(e) => {
                                 setShowCode(true);
                                 e.preventDefault();
+                                trackExampleRunnerEvent({ type: 'viewCodeClick', exampleInfo });
                             }}
                             role="tab"
                             title="View Example Source Code"
@@ -582,11 +585,23 @@ const ExampleRunnerInner = ({
 
                 <ul className={classnames('list-style-none', styles.externalLinks)}>
                     <li>
-                        <OpenInCTA type="newTab" href={getIndexHtmlUrl(exampleInfo)} />
+                        <OpenInCTA
+                            type="newTab"
+                            href={getIndexHtmlUrl(exampleInfo)}
+                            tracking={() => {
+                                trackExampleRunnerEvent({ type: 'newTabClick', exampleInfo });
+                            }}
+                        />
                     </li>
                     {!exampleInfo.options.noPlunker && (
                         <li>
-                            <OpenInCTA type="plunkr" onClick={() => openPlunker(exampleInfo)} />
+                            <OpenInCTA
+                                type="plunkr"
+                                onClick={() => openPlunker(exampleInfo)}
+                                tracking={() => {
+                                    trackExampleRunnerEvent({ type: 'openCodeClick', exampleInfo });
+                                }}
+                            />
                         </li>
                     )}
                 </ul>
@@ -598,13 +613,19 @@ const ExampleRunnerInner = ({
                 style={exampleStyle}
             >
                 <VisibilitySensor partialVisibility={true}>
-                    {({ isVisible }) => (
-                        <ExampleRunnerResult
-                            resultFrameIsVisible={!showCode}
-                            isOnScreen={isVisible}
-                            exampleInfo={exampleInfo}
-                        />
-                    )}
+                    {({ isVisible }) => {
+                        if (isVisible) {
+                            trackExampleRunnerEvent({ type: 'isVisible', exampleInfo, trackOnce: true });
+                        }
+
+                        return (
+                            <ExampleRunnerResult
+                                resultFrameIsVisible={!showCode}
+                                isOnScreen={isVisible}
+                                exampleInfo={exampleInfo}
+                            />
+                        );
+                    }}
                 </VisibilitySensor>
                 <CodeViewer isActive={showCode} exampleInfo={exampleInfo} />
             </div>

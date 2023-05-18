@@ -7,6 +7,7 @@ type CtaType = 'newTab' | 'plunkr' | 'stackblitz' | 'codesandbox';
 
 type BaseProps = {
     type: CtaType;
+    tracking?: () => void;
 };
 type ButtonProps = BaseProps & {
     onClick: MouseEventHandler<HTMLButtonElement>;
@@ -41,7 +42,7 @@ const COPY_TEXT: Record<CtaType, ReactNode> = {
 };
 
 export const OpenInCTA: FunctionComponent<Props> = (props) => {
-    const { type } = props;
+    const { type, tracking } = props;
     const copyText = COPY_TEXT[type];
 
     const isButton = Boolean((props as ButtonProps).onClick);
@@ -49,14 +50,28 @@ export const OpenInCTA: FunctionComponent<Props> = (props) => {
     if (isButton) {
         const { onClick } = props as ButtonProps;
         return (
-            <button className={classnames('button-style-none', styles.cta)} onClick={onClick}>
+            <button
+                className={classnames('button-style-none', styles.cta)}
+                onClick={(event) => {
+                    onClick(event);
+                    tracking && tracking();
+                }}
+            >
                 {copyText}
             </button>
         );
     } else {
         const { href } = props as LinkProps;
         return (
-            <a className={styles.cta} href={href} target="_blank" rel="noreferrer">
+            <a
+                className={styles.cta}
+                href={href}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => {
+                    tracking && tracking();
+                }}
+            >
                 {copyText}
             </a>
         );

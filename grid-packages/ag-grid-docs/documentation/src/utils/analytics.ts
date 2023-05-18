@@ -3,6 +3,7 @@ const trackingCache = {};
 const EVENT_NAME = {
     rowGrouping: 'Homepage Example Row Grouping',
     integratedCharts: 'Homepage Example Integrated Charts',
+    exampleRunner: 'Example Runner',
 };
 
 const trackPlausible = ({ eventName, props }: { eventName: string; props?: object }) => {
@@ -58,6 +59,22 @@ export const trackOnceHomepageExampleIntegratedCharts = (props: object) => {
 
     if (!trackingCache[cacheKey]) {
         trackHomepageExampleIntegratedCharts(props);
+        trackingCache[cacheKey] = true;
+    }
+};
+
+export const trackExampleRunner = (props: object) => {
+    trackPlausible({
+        eventName: EVENT_NAME.exampleRunner,
+        props,
+    });
+};
+
+export const trackOnceExampleRunner = (props: object) => {
+    const cacheKey = `${EVENT_NAME.exampleRunner}.${JSON.stringify(props)}`;
+
+    if (!trackingCache[cacheKey]) {
+        trackExampleRunner(props);
         trackingCache[cacheKey] = true;
     }
 };
