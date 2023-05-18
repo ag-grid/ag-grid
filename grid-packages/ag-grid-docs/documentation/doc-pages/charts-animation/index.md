@@ -17,6 +17,10 @@ Animation examples.
 
 <chart-example title='Column Series' name='column' type='generated' options='{ "enterprise": true }'></chart-example>
 
+## Histogram Series
+
+<chart-example title='Histogram Series' name='histogram' type='generated' options='{ "enterprise": true }'></chart-example>
+
 ## Scatter Series
 
 <chart-example title='Scatter Series' name='scatter' type='generated' options='{ "enterprise": true }'></chart-example>
