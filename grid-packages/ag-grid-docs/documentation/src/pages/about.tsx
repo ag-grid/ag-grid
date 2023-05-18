@@ -85,9 +85,9 @@ const AboutPage = () => {
 
                         <article className={styles.team}>
                             <div>
-                                <img src="../images/team/niall.jpg" alt="Niall Crosby, Founder / CEO / CTO" />
+                                <img src="../images/team/niall.jpg" alt="Niall Crosby, CEO / Founder" />
                                 <h3>Niall Crosby</h3>
-                                <p>CEO / Founder</p>
+                                <p>CEO</p>
                             </div>
                             <div>
                                 <img src="../images/team/rob.jpg" alt="Rob Clarke, VP Engineering" />
