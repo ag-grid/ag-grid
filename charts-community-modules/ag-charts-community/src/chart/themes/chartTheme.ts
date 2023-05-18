@@ -143,8 +143,6 @@ export class ChartTheme {
             ...this.getSeriesDefaults(),
             fillOpacity: 1,
             strokeOpacity: 1,
-            xKey: '',
-            xName: '',
             normalizedTo: undefined,
             strokeWidth: 1,
             lineDash: [0],
@@ -354,10 +352,6 @@ export class ChartTheme {
             line: {
                 ...ChartTheme.getLineSeriesDefaults(),
                 title: undefined,
-                xKey: '',
-                xName: '',
-                yKey: '',
-                yName: '',
                 strokeWidth: 2,
                 strokeOpacity: 1,
                 lineDash: [0],
@@ -379,13 +373,6 @@ export class ChartTheme {
             },
             scatter: {
                 ...ChartTheme.getScatterSeriesDefaults(),
-                title: undefined,
-                xKey: '',
-                yKey: '',
-                sizeKey: undefined,
-                labelKey: undefined,
-                xName: '',
-                yName: '',
                 sizeName: 'Size',
                 labelName: 'Label',
                 marker: {
@@ -402,8 +389,6 @@ export class ChartTheme {
             },
             area: {
                 ...ChartTheme.getAreaSeriesDefaults(),
-                xKey: '',
-                xName: '',
                 normalizedTo: undefined,
                 fillOpacity: 0.8,
                 strokeOpacity: 1,
@@ -435,10 +420,6 @@ export class ChartTheme {
             },
             histogram: {
                 ...ChartTheme.getSeriesDefaults(),
-                xKey: '',
-                yKey: '',
-                xName: '',
-                yName: '',
                 strokeWidth: 1,
                 fillOpacity: 1,
                 strokeOpacity: 1,
@@ -474,15 +455,12 @@ export class ChartTheme {
                 ...ChartTheme.getSeriesDefaults(),
                 title: {
                     enabled: true,
-                    text: '',
                     fontStyle: undefined,
                     fontWeight: 'bold',
                     fontSize: 14,
                     fontFamily: ChartTheme.fontFamily,
                     color: 'rgb(70, 70, 70)',
                 },
-                angleKey: '',
-                angleName: '',
                 radiusKey: undefined,
                 radiusName: undefined,
                 calloutLabelKey: undefined,
@@ -640,7 +618,7 @@ export class ChartTheme {
     };
 
     constructor(options?: AgChartThemeOptions) {
-        options = deepMerge({}, options || {}) as AgChartThemeOptions;
+        options = deepMerge({}, options ?? {}) as AgChartThemeOptions;
         const { overrides = null, palette = null } = options;
 
         const defaults = this.createChartConfigPerChartType(this.getDefaults());

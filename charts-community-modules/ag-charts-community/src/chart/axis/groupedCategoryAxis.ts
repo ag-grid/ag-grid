@@ -80,7 +80,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
             layout.resize(
                 Math.abs(range[1] - range[0]),
                 layout.depth * lineHeight,
-                (Math.min(range[0], range[1]) || 0) + (s.bandwidth || 0) / 2,
+                (Math.min(range[0], range[1]) || 0) + (s.bandwidth ?? 0) / 2,
                 -layout.depth * lineHeight,
                 range[1] - range[0] < 0
             );
@@ -146,7 +146,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
 
         const domain = new Array<any>().concat(...domains);
 
-        const values = extent(domain) || domain;
+        const values = extent(domain) ?? domain;
 
         this.dataDomain = this.normaliseDataDomain(values);
         this.scale.domain = this.dataDomain;
@@ -255,7 +255,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
             node.translationY = datum.screenX;
             if (index === 0) {
                 // use the phantom root as the axis title
-                if (title && title.enabled && labels.length > 0) {
+                if (title?.enabled && labels.length > 0) {
                     node.visible = true;
                     node.text = title.text;
                     node.fontSize = title.fontSize;

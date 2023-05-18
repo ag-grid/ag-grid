@@ -5514,7 +5514,6 @@
   "VisibilityMap": {},
   "OptionalHTMLElement": {},
   "TransferableResources": {},
-  "ChartUpdateOptions": {},
   "PickedNode": {},
   "BoundSeries": {
     "type": { "type": { "returnType": "string", "optional": false } },
@@ -6313,11 +6312,6 @@
     }
   },
   "ChartThemeDefaults": {},
-  "DarkThemeParams": {
-    "seriesLabelDefaults": {
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
   "TooltipMeta": {
     "pageX": { "type": { "returnType": "number", "optional": false } },
     "pageY": { "type": { "returnType": "number", "optional": false } },

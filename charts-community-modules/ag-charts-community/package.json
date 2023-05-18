@@ -34,6 +34,7 @@
     "lint": "run-s lint:*",
     "lint:prettier": "npx prettier -c .",
     "lint:eslint": "npx eslint src/ --ext .js,.ts",
+    "lint:prune": "npx ts-prune -p tsconfig.cjs.es5.json",
     "predocker:init": "docker build -t charts:latest .docker",
     "docker:init": ".docker/run.sh init",
     "docker:run": ".docker/run.sh run",

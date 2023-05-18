@@ -199,7 +199,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     readonly id = createId(this);
 
     get type(): string {
-        return (this.constructor as any).type || '';
+        return (this.constructor as any).type ?? '';
     }
 
     // The group node that contains all the nodes used to render this series.
@@ -344,7 +344,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     getKeys(direction: ChartAxisDirection): string[] {
         const { directionKeys } = this;
         const resolvedDirection = this.resolveKeyDirection(direction);
-        const keys = directionKeys && directionKeys[resolvedDirection];
+        const keys = directionKeys?.[resolvedDirection];
         const values: string[] = [];
 
         const flatten = (...array: any[]) => {

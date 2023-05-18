@@ -3560,10 +3560,6 @@
     "meta": { "isTypeAlias": true },
     "type": "{ container?: OptionalHTMLElement; scene: Scene; element: HTMLElement; }"
   },
-  "ChartUpdateOptions": {
-    "meta": { "isTypeAlias": true },
-    "type": "{ forceNodeDataRefresh?: boolean; seriesToUpdate?: Iterable<Series>; }"
-  },
   "PickedNode": {
     "meta": { "isTypeAlias": true },
     "type": "{ series: Series<any>; datum: SeriesNodeDatum; distance: number; }"
@@ -4412,7 +4408,6 @@
     "meta": { "isTypeAlias": true },
     "type": "{ cartesian: AgCartesianThemeOptions; groupedCategory: AgCartesianThemeOptions; polar: AgPolarThemeOptions; hierarchy: AgHierarchyThemeOptions; } & { [key in keyof AgCartesianSeriesTheme]?: AgCartesianThemeOptions; } & { [key in keyof AgPolarSeriesTheme]?: AgPolarThemeOptions; } & { [key in keyof AgHierarchySeriesTheme]?: AgHierarchyThemeOptions; }"
   },
-  "DarkThemeParams": { "meta": {}, "type": { "seriesLabelDefaults": "any" } },
   "TooltipMeta": {
     "meta": {},
     "type": {

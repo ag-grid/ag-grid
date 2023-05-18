@@ -31,9 +31,9 @@ import {
     OPT_LINE_DASH,
     OPT_NUMBER,
     OPT_COLOR_STRING,
-    STRING,
     Validate,
     predicateWithMessage,
+    OPT_STRING,
 } from '../../../util/validation';
 import {
     AgCartesianSeriesLabelFormatterParams,
@@ -134,8 +134,8 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         this.label.enabled = false;
     }
 
-    @Validate(STRING)
-    xKey: string = '';
+    @Validate(OPT_STRING)
+    xKey?: string = undefined;
 
     @Validate(BOOLEAN)
     areaPlot: boolean = false;
@@ -149,14 +149,14 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     @Validate(OPT_NUMBER(0))
     binCount?: number = undefined;
 
-    @Validate(STRING)
-    xName: string = '';
+    @Validate(OPT_STRING)
+    xName?: string = undefined;
 
-    @Validate(STRING)
-    yKey: string = '';
+    @Validate(OPT_STRING)
+    yKey?: string = undefined;
 
-    @Validate(STRING)
-    yName: string = '';
+    @Validate(OPT_STRING)
+    yName?: string = undefined;
 
     @Validate(NUMBER(0))
     strokeWidth: number = 1;
@@ -304,14 +304,14 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     }
 
     protected getNodeClickEvent(event: MouseEvent, datum: HistogramNodeDatum): CartesianSeriesNodeClickEvent<any> {
-        return new CartesianSeriesNodeClickEvent(this.xKey, this.yKey, event, datum, this);
+        return new CartesianSeriesNodeClickEvent(this.xKey ?? '', this.yKey ?? '', event, datum, this);
     }
 
     protected getNodeDoubleClickEvent(
         event: MouseEvent,
         datum: HistogramNodeDatum
     ): CartesianSeriesNodeDoubleClickEvent<any> {
-        return new CartesianSeriesNodeDoubleClickEvent(this.xKey, this.yKey, event, datum, this);
+        return new CartesianSeriesNodeDoubleClickEvent(this.xKey ?? '', this.yKey ?? '', event, datum, this);
     }
 
     async createNodeData() {
@@ -323,7 +323,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
         const { scale: xScale } = xAxis;
         const { scale: yScale } = yAxis;
-        const { fill, stroke, strokeWidth, id: seriesId, yKey, xKey } = this;
+        const { fill, stroke, strokeWidth, id: seriesId, yKey = '', xKey = '' } = this;
 
         const nodeData: HistogramNodeDatum[] = [];
 
@@ -398,7 +398,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             });
         });
 
-        return [{ itemId: this.yKey, nodeData, labelData: nodeData }];
+        return [{ itemId: this.yKey ?? this.id, nodeData, labelData: nodeData }];
     }
 
     protected nodeFactory() {
@@ -445,8 +445,8 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
             rect.x = datum.x;
             rect.width = datum.width;
-            rect.fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : datum.fill;
-            rect.stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : datum.stroke;
+            rect.fill = (isDatumHighlighted ? highlightedFill : undefined) ?? datum.fill;
+            rect.stroke = (isDatumHighlighted ? highlightedStroke : undefined) ?? datum.stroke;
             rect.fillOpacity = fillOpacity;
             rect.strokeOpacity = strokeOpacity;
             rect.strokeWidth = strokeWidth;
@@ -496,7 +496,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     }
 
     getTooltipHtml(nodeDatum: HistogramNodeDatum): string {
-        const { xKey, yKey, xAxis, yAxis } = this;
+        const { xKey, yKey = '', xAxis, yAxis } = this;
 
         if (!xKey || !xAxis || !yAxis) {
             return '';
@@ -564,11 +564,11 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                 seriesId: id,
                 enabled: visible,
                 label: {
-                    text: yName || xKey || 'Frequency',
+                    text: yName ?? xKey ?? 'Frequency',
                 },
                 marker: {
-                    fill: fill || 'rgba(0, 0, 0, 0)',
-                    stroke: stroke || 'rgba(0, 0, 0, 0)',
+                    fill: fill ?? 'rgba(0, 0, 0, 0)',
+                    stroke: stroke ?? 'rgba(0, 0, 0, 0)',
                     fillOpacity: fillOpacity,
                     strokeOpacity: strokeOpacity,
                 },

@@ -19,7 +19,7 @@ export function groupSeriesByType(seriesOptions: SeriesOptions[]) {
             continue;
         }
 
-        const seriesType = s.type || 'line';
+        const seriesType = s.type ?? 'line';
         const groupingKey = (s as any).stacked ? 'stacked' : 'grouped';
         const indexKey = `${seriesType}-${s.xKey}-${groupingKey}`;
         if (indexMap[indexKey] == null) {
@@ -168,7 +168,7 @@ export function processSeriesOptions(seriesOptions: SeriesOptions[]) {
     const preprocessed = seriesOptions.map((series) => {
         // Change the default for bar/columns when yKey is used to be grouped rather than stacked.
         if ((series.type === 'bar' || series.type === 'column') && series.yKey != null && !series.stacked) {
-            return { ...series, grouped: series.grouped != null ? series.grouped : true };
+            return { ...series, grouped: series.grouped ?? true };
         }
 
         return series;

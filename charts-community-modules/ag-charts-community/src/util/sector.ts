@@ -1,14 +1,14 @@
 import { BBox } from '../scene/bbox';
 import { segmentIntersection, arcIntersections } from '../scene/intersection';
 
-export interface SectorBoundaries {
+interface SectorBoundaries {
     startAngle: number;
     endAngle: number;
     innerRadius: number;
     outerRadius: number;
 }
 
-export interface LineCoordinates {
+interface LineCoordinates {
     start: { x: number; y: number };
     end: { x: number; y: number };
 }

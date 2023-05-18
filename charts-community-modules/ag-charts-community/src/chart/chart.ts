@@ -44,8 +44,6 @@ type OptionalHTMLElement = HTMLElement | undefined | null;
 
 export type TransferableResources = { container?: OptionalHTMLElement; scene: Scene; element: HTMLElement };
 
-export type ChartUpdateOptions = { forceNodeDataRefresh?: boolean; seriesToUpdate?: Iterable<Series> };
-
 type PickedNode = {
     series: Series<any>;
     datum: SeriesNodeDatum;
@@ -475,7 +473,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         type = ChartUpdateType.FULL,
         opts?: { forceNodeDataRefresh?: boolean; seriesToUpdate?: Iterable<Series> }
     ) {
-        const { forceNodeDataRefresh = false, seriesToUpdate = this.series } = opts || {};
+        const { forceNodeDataRefresh = false, seriesToUpdate = this.series } = opts ?? {};
 
         if (forceNodeDataRefresh) {
             this.series.forEach((series) => series.markNodeDataDirty());
@@ -670,7 +668,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         this.axes.forEach((axis) => {
             const direction = axis.direction;
-            const directionAxes = directionToAxesMap[direction] || (directionToAxesMap[direction] = []);
+            const directionAxes = (directionToAxesMap[direction] ??= []);
             directionAxes.push(axis);
         });
 
@@ -879,7 +877,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
 
         if (subtitle) {
-            subtitle.node.visible = title !== undefined && title.enabled && subtitle.enabled;
+            subtitle.node.visible = (title?.enabled && subtitle.enabled) ?? false;
             if (subtitle.node.visible) {
                 positionTopAndShrinkBBox(subtitle);
             }
@@ -1183,8 +1181,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     changeHighlightDatum(event: HighlightChangeEvent) {
         const seriesToUpdate: Set<Series> = new Set<Series>();
-        const { series: newSeries = undefined, datum: newDatum } = event.currentHighlight || {};
-        const { series: lastSeries = undefined, datum: lastDatum } = event.previousHighlight || {};
+        const { series: newSeries = undefined, datum: newDatum } = event.currentHighlight ?? {};
+        const { series: lastSeries = undefined, datum: lastDatum } = event.previousHighlight ?? {};
 
         if (lastSeries) {
             seriesToUpdate.add(lastSeries);

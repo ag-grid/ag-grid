@@ -1,4 +1,4 @@
-export type Listener<H extends Function> = {
+type Listener<H extends Function> = {
     symbol?: Symbol;
     handler: H;
 };

@@ -4,7 +4,7 @@ import { HdpiCanvas } from '../../canvas/hdpiCanvas';
 import { RedrawType, SceneChangeDetection, RenderContext } from '../node';
 import { FontStyle, FontWeight } from '../../chart/agChartOptions';
 
-export interface TextSizeProperties {
+interface TextSizeProperties {
     fontFamily: string;
     fontSize: number;
     fontStyle?: FontStyle;
@@ -12,7 +12,7 @@ export interface TextSizeProperties {
     lineHeight?: number;
 }
 
-export interface WordWrapProperties {
+interface WordWrapProperties {
     breakWord?: boolean;
     hyphens?: boolean;
 }
@@ -20,7 +20,7 @@ export interface WordWrapProperties {
 const ellipsis = '\u2026';
 
 function SceneFontChangeDetection(opts?: { redraw?: RedrawType; changeCb?: (t: any) => any }) {
-    const { redraw = RedrawType.MAJOR, changeCb } = opts || {};
+    const { redraw = RedrawType.MAJOR, changeCb } = opts ?? {};
 
     return SceneChangeDetection({ redraw, type: 'font', changeCb });
 }
@@ -52,7 +52,7 @@ export class Text extends Shape {
     }
 
     @SceneChangeDetection({ redraw: RedrawType.MAJOR, changeCb: (o: Text) => o._splitText() })
-    text: string = '';
+    text?: string = undefined;
 
     private _dirtyFont: boolean = true;
     private _font?: string;
@@ -248,7 +248,7 @@ export class Text extends Shape {
 
             const { fillShadow } = this;
 
-            if (fillShadow && fillShadow.enabled) {
+            if (fillShadow?.enabled) {
                 ctx.shadowColor = fillShadow.color;
                 ctx.shadowOffsetX = fillShadow.xOffset * pixelRatio;
                 ctx.shadowOffsetY = fillShadow.yOffset * pixelRatio;
@@ -478,7 +478,7 @@ export class Text extends Shape {
             return { lines, linesTruncated: true, wordsBrokenOrTruncated, cumulativeHeight };
         }
 
-        wordLoop: for (let i = 0; i < words.length; i++) {
+        for (let i = 0; i < words.length; i++) {
             const word = words[i];
             const wordWidth = measurer.width(word);
             const expectedSpaceWidth = currentLine.length === 0 ? 0 : spaceWidth;
@@ -507,15 +507,18 @@ export class Text extends Shape {
                 // Break the word into parts
                 const availWidth = maxWidth - lineWidth - expectedSpaceWidth;
                 const parts = Text.breakWord(word, availWidth, maxWidth, wrapProps.hyphens!, measurer);
+                let breakLoop = false;
                 for (let p = 0; p < parts.length; p++) {
                     const part = parts[p];
                     part && currentLine.push(part);
                     if (p === parts.length - 1) {
                         lineWidth = measurer.width(part);
                     } else if (!addNewLine()) {
-                        break wordLoop;
+                        breakLoop = true;
+                        break;
                     }
                 }
+                if (breakLoop) break;
             } else {
                 // Truncate the word
                 if (!addNewLine()) {
@@ -598,5 +601,5 @@ export function createTextMeasurer(font: string): TextMeasurer {
 
 export function getFont(fontProps: TextSizeProperties): string {
     const { fontFamily, fontSize, fontStyle, fontWeight } = fontProps;
-    return [fontStyle || '', fontWeight || '', fontSize + 'px', fontFamily].join(' ').trim();
+    return [fontStyle ?? '', fontWeight ?? '', fontSize + 'px', fontFamily].join(' ').trim();
 }

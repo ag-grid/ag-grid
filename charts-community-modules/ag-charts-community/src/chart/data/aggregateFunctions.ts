@@ -3,7 +3,7 @@ import { extendDomain } from './utilFunctions';
 
 type ContinuousDomain<T extends number | Date> = [T, T];
 
-export function sumValues(values: any[], accumulator = [0, 0] as ContinuousDomain<number>) {
+function sumValues(values: any[], accumulator = [0, 0] as ContinuousDomain<number>) {
     for (const value of values) {
         if (typeof value !== 'number') {
             continue;

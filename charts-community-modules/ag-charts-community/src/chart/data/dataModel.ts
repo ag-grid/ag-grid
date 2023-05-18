@@ -363,32 +363,30 @@ export class DataModel<
 
         const resultData = new Array(dataVisible ? data.length : 0);
         let resultDataIdx = 0;
-        dataLoop: for (const datum of data) {
+        for (const datum of data) {
             const keys = dataVisible ? new Array(keyDefs.length) : undefined;
             let keyIdx = 0;
             let key;
             for (const def of keyDefs) {
                 key = processValue(def, datum, key);
-                if (key === INVALID_VALUE) {
-                    continue dataLoop;
-                }
+                if (key === INVALID_VALUE) break;
                 if (keys) {
                     keys[keyIdx++] = key;
                 }
             }
+            if (key === INVALID_VALUE) continue;
 
             const values = dataVisible && valueDefs.length > 0 ? new Array(valueDefs.length) : undefined;
             let valueIdx = 0;
             let value;
             for (const def of valueDefs) {
                 value = processValue(def, datum, value);
-                if (value === INVALID_VALUE) {
-                    continue dataLoop;
-                }
+                if (value === INVALID_VALUE) break;
                 if (values) {
                     values[valueIdx++] = value;
                 }
             }
+            if (value === INVALID_VALUE) continue;
 
             if (dataVisible) {
                 resultData[resultDataIdx++] = {

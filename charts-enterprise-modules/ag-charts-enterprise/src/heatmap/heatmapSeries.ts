@@ -13,7 +13,6 @@ const {
     SeriesNodePickMode,
     valueProperty,
     ChartAxisDirection,
-    STRING,
     COLOR_STRING_ARRAY,
     OPT_NUMBER,
     OPT_STRING,
@@ -76,27 +75,27 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
     @Validate(OPT_STRING)
     labelKey?: string = undefined;
 
-    @Validate(STRING)
+    @Validate(OPT_STRING)
     @ActionOnSet<HeatmapSeries>({
         newValue(_xKey: string) {
             this.processedData = undefined;
         },
     })
-    xKey: string = '';
+    xKey?: string = undefined;
 
-    @Validate(STRING)
-    xName: string = '';
+    @Validate(OPT_STRING)
+    xName?: string = undefined;
 
-    @Validate(STRING)
+    @Validate(OPT_STRING)
     @ActionOnSet<HeatmapSeries>({
         newValue(_yKey: string) {
             this.processedData = undefined;
         },
     })
-    yKey: string = '';
+    yKey?: string = undefined;
 
-    @Validate(STRING)
-    yName: string = '';
+    @Validate(OPT_STRING)
+    yName?: string = undefined;
 
     @Validate(OPT_STRING)
     labelName?: string = 'Label';
@@ -144,7 +143,7 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
     }
 
     async processData() {
-        const { xKey, yKey, xAxis, yAxis } = this;
+        const { xKey = '', yKey = '', xAxis, yAxis } = this;
 
         if (!xAxis || !yAxis) {
             return;
@@ -196,11 +195,18 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
     }
 
     protected getNodeClickEvent(event: MouseEvent, datum: HeatmapNodeDatum): HeatmapSeriesNodeClickEvent {
-        return new HeatmapSeriesNodeClickEvent(this.labelKey, this.xKey, this.yKey, event, datum, this);
+        return new HeatmapSeriesNodeClickEvent(this.labelKey, this.xKey ?? '', this.yKey ?? '', event, datum, this);
     }
 
     protected getNodeDoubleClickEvent(event: MouseEvent, datum: HeatmapNodeDatum): HeatmapSeriesNodeDoubleClickEvent {
-        return new HeatmapSeriesNodeDoubleClickEvent(this.labelKey, this.xKey, this.yKey, event, datum, this);
+        return new HeatmapSeriesNodeDoubleClickEvent(
+            this.labelKey,
+            this.xKey ?? '',
+            this.yKey ?? '',
+            event,
+            datum,
+            this
+        );
     }
 
     async createNodeData() {
@@ -219,13 +225,13 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
 
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
-        const xOffset = (xScale.bandwidth || 0) / 2;
-        const yOffset = (yScale.bandwidth || 0) / 2;
-        const { colorScale, label, labelKey, xKey, yKey } = this;
+        const xOffset = (xScale.bandwidth ?? 0) / 2;
+        const yOffset = (yScale.bandwidth ?? 0) / 2;
+        const { colorScale, label, labelKey, xKey = '', yKey = '' } = this;
         const nodeData: HeatmapNodeDatum[] = new Array(this.processedData?.data.length ?? 0);
 
-        const width = xScale.bandwidth || 10;
-        const height = yScale.bandwidth || 10;
+        const width = xScale.bandwidth ?? 10;
+        const height = yScale.bandwidth ?? 10;
 
         const font = label.getFont();
         let actualLength = 0;
@@ -263,7 +269,7 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
 
         nodeData.length = actualLength;
 
-        return [{ itemId: this.yKey, nodeData, labelData: nodeData }];
+        return [{ itemId: this.yKey ?? this.id, nodeData, labelData: nodeData }];
     }
 
     getLabelData(): _Util.PointLabelDatum[] {
@@ -279,7 +285,7 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
         datumSelection: _Scene.Selection<_Scene.Rect, HeatmapNodeDatum>;
     }) {
         const { nodeData, datumSelection } = opts;
-        const data = nodeData || [];
+        const data = nodeData ?? [];
         return datumSelection.update(data);
     }
 
@@ -343,8 +349,8 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
             rect.y = point.y - height / 2;
             rect.width = width;
             rect.height = height;
-            rect.fill = format?.fill || fill;
-            rect.stroke = format?.stroke || stroke;
+            rect.fill = format?.fill ?? fill;
+            rect.stroke = format?.stroke ?? stroke;
             rect.strokeWidth = format?.strokeWidth ?? strokeWidth;
         });
     }
@@ -425,8 +431,8 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
             });
         }
 
-        const color = (format && format.fill) || fill || 'gray';
-        const title = this.title || yName;
+        const color = format?.fill ?? fill ?? 'gray';
+        const title = this.title ?? yName;
         const datum = nodeDatum.datum;
         const xValue = datum[xKey];
         const yValue = datum[yKey];
@@ -479,7 +485,7 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
     getLegendData(): any[] {
         const { data, xKey, yKey } = this;
 
-        if (!(data && data.length && xKey && yKey)) {
+        if (!(data?.length && xKey && yKey)) {
             return [];
         }
 

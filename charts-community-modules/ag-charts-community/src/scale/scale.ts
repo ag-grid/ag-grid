@@ -1,4 +1,4 @@
-export interface ScaleClampParams {
+interface ScaleClampParams {
     /**
      * If `true` the values outside of the domain will become `NaN`.
      * If `false` such values will be clamped to the domain edges.
@@ -6,7 +6,7 @@ export interface ScaleClampParams {
     strict: boolean;
 }
 
-export interface ScaleTickFormatParams {
+interface ScaleTickFormatParams {
     ticks?: any[];
     specifier?: any;
 }

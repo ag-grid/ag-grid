@@ -40,7 +40,7 @@ export class TimeAxis extends ChartAxis<TimeScale, number | Date> {
         }
 
         if (d.length > 2) {
-            d = (extent(d) || [0, 1000]).map((x) => new Date(x));
+            d = (extent(d) ?? [0, 1000]).map((x) => new Date(x));
         }
         if (min instanceof Date) {
             d = [min, d[1]];

@@ -257,7 +257,6 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "year",
-      "xName": "",
       "yKey": "marriages",
       "yName": "Marriages",
     },
@@ -316,7 +315,6 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "year",
-      "xName": "",
       "yKey": "civilPartnerships",
       "yName": "Civil partnerships",
     },
@@ -375,7 +373,6 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "year",
-      "xName": "",
       "yKey": "divorces",
       "yName": "Divorces",
     },
@@ -734,7 +731,6 @@ Object {
         true,
       ],
       "xKey": "year",
-      "xName": "",
       "yKeys": Array [
         Array [
           "male",
@@ -803,7 +799,6 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "year",
-      "xName": "",
       "yKey": "exportedTonnes",
       "yName": "Beef exports",
     },
@@ -1112,9 +1107,7 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "year",
-      "xName": "",
       "yKey": "stillWine",
-      "yName": "",
     },
     Object {
       "highlightStyle": Object {
@@ -1172,9 +1165,7 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "year",
-      "xName": "",
       "yKey": "sparklingWine",
-      "yName": "",
     },
     Object {
       "highlightStyle": Object {
@@ -1232,9 +1223,7 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "year",
-      "xName": "",
       "yKey": "madeWine",
-      "yName": "",
     },
     Object {
       "highlightStyle": Object {
@@ -1292,9 +1281,7 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "year",
-      "xName": "",
       "yKey": "whisky",
-      "yName": "",
     },
     Object {
       "highlightStyle": Object {
@@ -1352,9 +1339,7 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "year",
-      "xName": "",
       "yKey": "potableSpirits",
-      "yName": "",
     },
     Object {
       "highlightStyle": Object {
@@ -1412,9 +1397,7 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "year",
-      "xName": "",
       "yKey": "beer",
-      "yName": "",
     },
     Object {
       "highlightStyle": Object {
@@ -1472,9 +1455,7 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "year",
-      "xName": "",
       "yKey": "cider",
-      "yName": "",
     },
   ],
   "subtitle": Object {
@@ -1809,7 +1790,6 @@ Object {
         true,
       ],
       "xKey": "quarter",
-      "xName": "",
       "yKeys": Array [
         Array [
           "largeHousehold",
@@ -2086,7 +2066,6 @@ Object {
         "fontStyle": undefined,
         "fontWeight": undefined,
       },
-      "labelKey": undefined,
       "labelName": "Label",
       "marker": Object {
         "enabled": true,
@@ -2104,7 +2083,6 @@ Object {
       "showInLegend": true,
       "sizeKey": "magnitude",
       "sizeName": "Magnitude",
-      "title": undefined,
       "tooltip": Object {
         "enabled": true,
         "position": Object {
@@ -2397,9 +2375,7 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "time",
-      "xName": "",
       "yKey": "magnitude",
-      "yName": "",
     },
     Object {
       "highlightStyle": Object {
@@ -2456,9 +2432,7 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "time",
-      "xName": "",
       "yKey": "magnitude",
-      "yName": "",
     },
     Object {
       "highlightStyle": Object {
@@ -2515,9 +2489,7 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "time",
-      "xName": "",
       "yKey": "magnitude",
-      "yName": "",
     },
     Object {
       "highlightStyle": Object {
@@ -2574,9 +2546,7 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "time",
-      "xName": "",
       "yKey": "magnitude",
-      "yName": "",
     },
   ],
   "subtitle": Object {
@@ -2896,7 +2866,6 @@ Object {
         true,
       ],
       "xKey": "quarter",
-      "xName": "",
       "yKeys": Array [
         "naturalGas",
       ],
@@ -2972,7 +2941,6 @@ Object {
         true,
       ],
       "xKey": "quarter",
-      "xName": "",
       "yKeys": Array [
         "coal",
       ],
@@ -3048,7 +3016,6 @@ Object {
         true,
       ],
       "xKey": "quarter",
-      "xName": "",
       "yKeys": Array [
         "primaryOil",
       ],
@@ -3124,7 +3091,6 @@ Object {
         true,
       ],
       "xKey": "quarter",
-      "xName": "",
       "yKeys": Array [
         "petroleum",
       ],
@@ -3200,7 +3166,6 @@ Object {
         true,
       ],
       "xKey": "quarter",
-      "xName": "",
       "yKeys": Array [
         "manufacturedFuels",
       ],
@@ -3516,7 +3481,6 @@ Object {
         true,
       ],
       "xKey": "type",
-      "xName": "",
       "yKeys": Array [
         Array [
           "earnings",
@@ -3810,7 +3774,6 @@ Object {
         true,
       ],
       "xKey": "job",
-      "xName": "",
       "yKeys": Array [
         Array [
           "change",
@@ -4057,7 +4020,6 @@ Object {
         "fontStyle": undefined,
         "fontWeight": undefined,
       },
-      "labelKey": undefined,
       "labelName": "Label",
       "marker": Object {
         "enabled": true,
@@ -4648,7 +4610,6 @@ Object {
         true,
       ],
       "xKey": "month",
-      "xName": "",
       "yKeys": Array [
         Array [
           "menDelta",
@@ -4966,7 +4927,6 @@ Object {
         true,
       ],
       "xKey": "type",
-      "xName": "",
       "yKeys": Array [
         Array [
           "total",
@@ -5301,7 +5261,6 @@ Object {
         true,
       ],
       "xKey": "year",
-      "xName": "",
       "yKeys": Array [
         Array [
           "16-24",
@@ -5625,8 +5584,6 @@ Object {
       "visible": true,
       "xKey": "curb-weight",
       "xName": "Curb weight",
-      "yKey": "",
-      "yName": "",
     },
   ],
   "subtitle": Object {
@@ -5906,7 +5863,6 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "belize",
       "yName": "Belize",
     },
@@ -5966,7 +5922,6 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "cameroon",
       "yName": "Cameroon",
     },
@@ -6026,7 +5981,6 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "columbia",
       "yName": "Columbia",
     },
@@ -6086,7 +6040,6 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "costaRica",
       "yName": "Costa Rica",
     },
@@ -6146,7 +6099,6 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "dominicanRepublic",
       "yName": "Dominican Republic",
     },
@@ -6206,7 +6158,6 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "ecuador",
       "yName": "Ecuador",
     },
@@ -6266,7 +6217,6 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "ghana",
       "yName": "Ghana",
     },
@@ -6326,7 +6276,6 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "honduras",
       "yName": "Honduras",
     },
@@ -6386,7 +6335,6 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "ivoryCoast",
       "yName": "Ivory Coast",
     },
@@ -6446,7 +6394,6 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "jamaica",
       "yName": "Jamaica",
     },
@@ -6506,7 +6453,6 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "mexico",
       "yName": "Mexico",
     },
@@ -6566,7 +6512,6 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "panama",
       "yName": "Panama",
     },
@@ -6626,7 +6571,6 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "windwardIsles",
       "yName": "Windward Isles",
     },
@@ -6686,7 +6630,6 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "guatemala",
       "yName": "Guatemala",
     },
@@ -6746,7 +6689,6 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "nicaragua",
       "yName": "Nicaragua",
     },
@@ -6806,7 +6748,6 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "brazil",
       "yName": "Brazil",
     },
@@ -7142,9 +7083,7 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "year",
-      "xName": "",
       "yKey": "population",
-      "yName": "",
     },
   ],
   "subtitle": Object {
@@ -7664,7 +7603,6 @@ Object {
         true,
       ],
       "xKey": "month",
-      "xName": "",
       "yKeys": Array [
         "coal",
         "petroleum",
@@ -7982,7 +7920,6 @@ Object {
         true,
       ],
       "xKey": "area",
-      "xName": "",
       "yKeys": Array [
         Array [
           "usedInLast3Months",
@@ -8315,7 +8252,6 @@ Object {
         true,
       ],
       "xKey": "type",
-      "xName": "",
       "yKeys": Array [
         Array [
           "white",
@@ -8658,7 +8594,6 @@ Object {
         true,
       ],
       "xKey": "date",
-      "xName": "",
       "yKeys": Array [
         "Tate Modern",
       ],
@@ -8733,7 +8668,6 @@ Object {
         true,
       ],
       "xKey": "date",
-      "xName": "",
       "yKeys": Array [
         "Tate Britain",
       ],
@@ -8808,7 +8742,6 @@ Object {
         true,
       ],
       "xKey": "date",
-      "xName": "",
       "yKeys": Array [
         "Tate Liverpool",
       ],
@@ -8883,7 +8816,6 @@ Object {
         true,
       ],
       "xKey": "date",
-      "xName": "",
       "yKeys": Array [
         "Tate St Ives",
       ],
@@ -9180,7 +9112,6 @@ Object {
         true,
       ],
       "xKey": "year",
-      "xName": "",
       "yKeys": Array [
         Array [
           "visitors",
@@ -9290,7 +9221,6 @@ Object {
   "series": Array [
     Object {
       "angleKey": "count",
-      "angleName": "",
       "calloutLabel": Object {
         "color": "rgb(70, 70, 70)",
         "enabled": false,
@@ -9685,8 +9615,6 @@ Object {
       "visible": true,
       "xKey": "engine-size",
       "xName": "Engine Size",
-      "yKey": "",
-      "yName": "",
     },
   ],
   "subtitle": Object {
@@ -9967,9 +9895,7 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "date",
-      "xName": "",
       "yKey": "petrol",
-      "yName": "",
     },
     Object {
       "highlightStyle": Object {
@@ -10027,9 +9953,7 @@ Object {
       "type": "line",
       "visible": true,
       "xKey": "date",
-      "xName": "",
       "yKey": "diesel",
-      "yName": "",
     },
   ],
   "subtitle": Object {
@@ -10147,7 +10071,6 @@ Object {
   "series": Array [
     Object {
       "angleKey": "population",
-      "angleName": "",
       "calloutLabel": Object {
         "color": "rgb(70, 70, 70)",
         "enabled": true,
@@ -10239,7 +10162,6 @@ Object {
         "fontSize": 14,
         "fontStyle": undefined,
         "fontWeight": "bold",
-        "text": "",
       },
       "tooltip": Object {
         "enabled": true,
@@ -10489,7 +10411,6 @@ Object {
         "fontStyle": undefined,
         "fontWeight": undefined,
       },
-      "labelKey": undefined,
       "labelName": "Label",
       "marker": Object {
         "enabled": true,
@@ -10505,9 +10426,7 @@ Object {
       },
       "nodeClickRange": "exact",
       "showInLegend": true,
-      "sizeKey": undefined,
       "sizeName": "Size",
-      "title": undefined,
       "tooltip": Object {
         "enabled": true,
         "position": Object {
@@ -10518,9 +10437,7 @@ Object {
       "type": "scatter",
       "visible": true,
       "xKey": "weight",
-      "xName": "",
       "yKey": "height",
-      "yName": "",
     },
   ],
   "subtitle": Object {
@@ -10829,7 +10746,6 @@ Object {
         true,
       ],
       "xKey": "date",
-      "xName": "",
       "yKeys": Array [
         "Science Museum",
         "National Media Museum",
@@ -11171,7 +11087,6 @@ Object {
         true,
       ],
       "xKey": "type",
-      "xName": "",
       "yKeys": Array [
         Array [
           "ownerOccupied",
@@ -11491,7 +11406,6 @@ Object {
         true,
       ],
       "xKey": "station",
-      "xName": "",
       "yKeys": Array [
         Array [
           "early",
@@ -11824,8 +11738,6 @@ Object {
       "visible": true,
       "xKey": "curb-weight",
       "xName": "Curb weight",
-      "yKey": "",
-      "yName": "",
     },
   ],
   "subtitle": Object {

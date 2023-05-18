@@ -30,12 +30,12 @@ import {
     OPT_FUNCTION,
     OPT_LINE_DASH,
     OPT_NUMBER,
-    STRING,
     STRING_ARRAY,
     COLOR_STRING_ARRAY,
     Validate,
     OPTIONAL,
     ValidatePredicate,
+    OPT_STRING,
 } from '../../../util/validation';
 import { CategoryAxis } from '../../axis/categoryAxis';
 import { GroupedCategoryAxis } from '../../axis/groupedCategoryAxis';
@@ -161,18 +161,18 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         return direction;
     }
 
-    @Validate(STRING)
-    protected _xKey: string = '';
-    set xKey(value: string) {
+    @Validate(OPT_STRING)
+    protected _xKey?: string = undefined;
+    set xKey(value: string | undefined) {
         this._xKey = value;
         this.processedData = undefined;
     }
-    get xKey(): string {
+    get xKey(): string | undefined {
         return this._xKey;
     }
 
-    @Validate(STRING)
-    xName: string = '';
+    @Validate(OPT_STRING)
+    xName?: string = undefined;
 
     private cumYKeyCount: number[] = [];
     private flatYKeys: string[] | undefined = undefined; // only set when a user used a flat array for yKeys
@@ -384,7 +384,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 return keys;
             }
 
-            const keysExtent = extent(keys) || [NaN, NaN];
+            const keysExtent = extent(keys) ?? [NaN, NaN];
             if (direction === ChartAxisDirection.Y) {
                 return [keysExtent[0] + -smallestX, keysExtent[1]];
             }
@@ -397,14 +397,14 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }
 
     protected getNodeClickEvent(event: MouseEvent, datum: BarNodeDatum): CartesianSeriesNodeClickEvent<any> {
-        return new CartesianSeriesNodeClickEvent(this.xKey, datum.yKey, event, datum, this);
+        return new CartesianSeriesNodeClickEvent(this.xKey ?? '', datum.yKey, event, datum, this);
     }
 
     protected getNodeDoubleClickEvent(
         event: MouseEvent,
         datum: BarNodeDatum
     ): CartesianSeriesNodeDoubleClickEvent<any> {
-        return new CartesianSeriesNodeDoubleClickEvent(this.xKey, datum.yKey, event, datum, this);
+        return new CartesianSeriesNodeDoubleClickEvent(this.xKey ?? '', datum.yKey, event, datum, this);
     }
 
     private getCategoryAxis(): ChartAxis<Scale<any, number>> | undefined {
@@ -454,7 +454,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         const {
             groupScale,
             yKeys,
-            xKey,
+            xKey = '',
             cumYKeyCount,
             fills,
             strokes,
@@ -585,8 +585,10 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                         labelTextAlign = 'center';
                         labelTextBaseline = 'middle';
                     } else {
-                        labelTextAlign = barAlongX ? (yValue >= 0 ? 'start' : 'end') : 'center';
-                        labelTextBaseline = barAlongX ? 'middle' : yValue >= 0 ? 'bottom' : 'top';
+                        const xAlign = yValue >= 0 ? 'start' : 'end';
+                        labelTextAlign = barAlongX ? xAlign : 'center';
+                        const yBaseline = yValue >= 0 ? 'bottom' : 'top';
+                        labelTextBaseline = barAlongX ? 'middle' : yBaseline;
                     }
 
                     const colorIndex = cumYKeyCount[stackIndex] + levelIndex;
@@ -670,7 +672,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             strokeOpacity,
             shadow,
             formatter,
-            xKey,
+            xKey = '',
             highlightStyle: {
                 item: {
                     fill: highlightedFill,
@@ -717,9 +719,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 });
             }
             rect.crisp = crisp;
-            rect.fill = (format && format.fill) || fill;
-            rect.stroke = (format && format.stroke) || stroke;
-            rect.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
+            rect.fill = format?.fill ?? fill;
+            rect.stroke = format?.stroke ?? stroke;
+            rect.strokeWidth = format?.strokeWidth ?? strokeWidth;
             rect.fillOpacity = fillOpacity;
             rect.strokeOpacity = strokeOpacity;
             rect.lineDash = this.lineDash;
@@ -825,7 +827,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             });
         }
 
-        const color = (format && format.fill) || fill;
+        const color = format?.fill ?? fill;
 
         const defaults: AgTooltipRendererResult = {
             title,
@@ -872,7 +874,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             strokeOpacity,
         } = this;
 
-        if (!data || !data.length || !xKey || !yKeys.length) {
+        if (!data?.length || !xKey || !yKeys.length) {
             return [];
         }
 
@@ -890,7 +892,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     id,
                     itemId: yKey,
                     seriesId: id,
-                    enabled: seriesItemEnabled.get(yKey) || false,
+                    enabled: seriesItemEnabled.get(yKey) ?? false,
                     label: {
                         text: legendItemNames[yKey] ?? yNames[yKey] ?? yKey,
                     },

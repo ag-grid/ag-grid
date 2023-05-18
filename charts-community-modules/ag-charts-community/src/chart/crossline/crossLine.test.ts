@@ -38,7 +38,7 @@ const labelPositions: AgCrossLineLabelPosition[] = [
 ];
 
 const flipCrossLinesRange = (crossLineOptions: AgCrossLineOptions): AgCrossLineOptions => {
-    const flippedRange: [any, any] = [crossLineOptions.range[1], crossLineOptions.range[0]];
+    const flippedRange: [any, any] = [crossLineOptions.range?.[1], crossLineOptions.range?.[0]];
     return {
         ...crossLineOptions,
         range: flippedRange,
@@ -72,7 +72,7 @@ const mixinFlippedRangeCases = (
             ...example,
             options: {
                 ...example.options,
-                axes: example.options.axes.map((axis) =>
+                axes: example.options.axes?.map((axis) =>
                     axis.crossLines ? { ...axis, crossLines: axis.crossLines.map((c) => flipCrossLinesRange(c)) } : axis
                 ),
             },
@@ -90,7 +90,7 @@ const mixinLabelPositionCases = (example: CartesianTestCase): Record<string, Car
             ...example,
             options: {
                 ...example.options,
-                axes: example.options.axes.map((axis) =>
+                axes: example.options.axes?.map((axis) =>
                     axis.crossLines
                         ? {
                               ...axis,

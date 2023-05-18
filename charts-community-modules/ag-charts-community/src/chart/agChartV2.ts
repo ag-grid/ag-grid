@@ -326,7 +326,7 @@ abstract class AgChartInternal {
     ) {
         const { chart } = proxy;
 
-        let { width, height } = opts || {};
+        let { width, height } = opts ?? {};
         const currentWidth = chart.width;
         const currentHeight = chart.height;
 
@@ -382,7 +382,7 @@ abstract class AgChartInternal {
         if (processedOptions.type == null) {
             processedOptions = {
                 ...processedOptions,
-                type: chart.processedOptions.type || optionsType(processedOptions),
+                type: chart.processedOptions.type ?? optionsType(processedOptions),
             } as Partial<AgChartOptions>;
         }
 
@@ -439,7 +439,7 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
 
     const seriesOpts = processedOptions.series as any[];
     const seriesDataUpdate = !!processedOptions.data || seriesOpts?.some((s) => s.data != null);
-    const otherRefreshUpdate = processedOptions.legend || processedOptions.title || processedOptions.subtitle;
+    const otherRefreshUpdate = processedOptions.legend ?? processedOptions.title ?? processedOptions.subtitle;
     forceNodeDataRefresh = forceNodeDataRefresh || seriesDataUpdate || !!otherRefreshUpdate;
     if (processedOptions.data) {
         chart.data = processedOptions.data;
@@ -502,8 +502,8 @@ function applySeries(chart: Chart, options: AgChartOptions) {
     // Try to optimise series updates if series count and types didn't change.
     if (matchingTypes) {
         chart.series.forEach((s, i) => {
-            const previousOpts = chart.processedOptions?.series?.[i] || {};
-            const seriesDiff = jsonDiff(previousOpts, optSeries[i] || {}) as any;
+            const previousOpts = chart.processedOptions?.series?.[i] ?? {};
+            const seriesDiff = jsonDiff(previousOpts, optSeries[i] ?? {}) as any;
 
             if (!seriesDiff) {
                 return;
@@ -535,7 +535,7 @@ function applyAxes(chart: Chart, options: AgCartesianChartOptions) {
         const oldOpts = chart.processedOptions;
         if (isAgCartesianChartOptions(oldOpts)) {
             chart.axes.forEach((a, i) => {
-                const previousOpts = oldOpts.axes?.[i] || {};
+                const previousOpts = oldOpts.axes?.[i] ?? {};
                 const axisDiff = jsonDiff(previousOpts, optAxes[i]) as any;
 
                 debug(`applying axis diff idx ${i}`, axisDiff);
@@ -555,7 +555,7 @@ function applyAxes(chart: Chart, options: AgCartesianChartOptions) {
 function applyLegend(chart: Chart, options: AgChartOptions) {
     const skip = ['listeners'];
     chart.setLegendInit((legend) => {
-        applyOptionValues(legend, options.legend || {}, { skip });
+        applyOptionValues(legend, options.legend ?? {}, { skip });
         if (options.legend?.listeners) {
             Object.assign(chart.legend!.listeners, options.legend.listeners ?? {});
         }
@@ -566,7 +566,7 @@ function createSeries(options: SeriesOptionsTypes[]): Series[] {
     const series: Series<any>[] = [];
 
     let index = 0;
-    for (const seriesOptions of options || []) {
+    for (const seriesOptions of options ?? []) {
         const path = `series[${index++}]`;
         const seriesInstance = getSeries(seriesOptions.type!);
         applySeriesValues(seriesInstance, seriesOptions, { path, index });
@@ -582,7 +582,7 @@ function createAxis(chart: Chart, options: AgCartesianAxisOptions[]): ChartAxis[
     const moduleContext = chart.getModuleContext();
 
     let index = 0;
-    for (const axisOptions of options || []) {
+    for (const axisOptions of options ?? []) {
         let axis;
         switch (axisOptions.type) {
             case 'number':
@@ -665,7 +665,7 @@ function applySeriesValues(
 ): Series<any> {
     const skip: string[] = ['series[].listeners'];
     const jsonApplyOptions = getJsonApplyOptions();
-    const ctrs = jsonApplyOptions.constructors || {};
+    const ctrs = jsonApplyOptions.constructors ?? {};
     const seriesTypeOverrides = {
         constructors: {
             ...ctrs,
@@ -676,7 +676,7 @@ function applySeriesValues(
     const applyOpts = {
         ...jsonApplyOptions,
         ...seriesTypeOverrides,
-        skip: ['series[].type', ...(skip || [])],
+        skip: ['series[].type', ...(skip ?? [])],
         ...(path ? { path } : {}),
         idx: index ?? -1,
     };

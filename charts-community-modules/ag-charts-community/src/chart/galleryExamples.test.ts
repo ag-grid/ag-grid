@@ -213,8 +213,8 @@ describe('Gallery Examples', () => {
 
                 afterEach(() => {
                     chart.destroy();
-                    chart = null;
-                    options = null;
+                    chart = null!;
+                    options = null!;
                 });
 
                 it(`it should update chart instance as expected`, async () => {

@@ -464,7 +464,7 @@ export abstract class Node extends ChangeDetectable {
     }
 
     markClean(opts?: { force?: boolean; recursive?: boolean }) {
-        const { force = false, recursive = true } = opts || {};
+        const { force = false, recursive = true } = opts ?? {};
 
         if (this._dirty === RedrawType.NONE && !force) {
             return;

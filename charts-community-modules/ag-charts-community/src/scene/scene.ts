@@ -61,7 +61,7 @@ export class Scene {
     ) {
         const {
             document = window.document,
-            mode = windowValue('agChartsSceneRenderModel') || 'adv-composite',
+            mode = windowValue('agChartsSceneRenderModel') ?? 'adv-composite',
             width,
             height,
             overrideDevicePixelRatio = undefined,
@@ -294,7 +294,7 @@ export class Scene {
     }
 
     async render(opts?: { debugSplitTimes: number[]; extraDebugStats: Record<string, number> }) {
-        const { debugSplitTimes = [performance.now()], extraDebugStats = {} } = opts || {};
+        const { debugSplitTimes = [performance.now()], extraDebugStats = {} } = opts ?? {};
         const {
             canvas,
             canvas: { context: ctx },
@@ -575,7 +575,7 @@ export class Scene {
                     .map((c) => c.dirtyTree)
                     .filter((t) => t.dirty !== undefined)
                     .reduce((result, childTree) => {
-                        result[childTree.name || '<unknown>'] = childTree;
+                        result[childTree.name ?? '<unknown>'] = childTree;
                         return result;
                     }, {} as Record<string, {}>),
             },

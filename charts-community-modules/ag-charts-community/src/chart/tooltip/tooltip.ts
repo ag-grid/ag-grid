@@ -12,7 +12,7 @@ import {
 import { AgChartInteractionRange, AgTooltipRendererResult } from '../agChartOptions';
 import { InteractionEvent } from '../interaction/interactionManager';
 
-export const DEFAULT_TOOLTIP_CLASS = 'ag-chart-tooltip';
+const DEFAULT_TOOLTIP_CLASS = 'ag-chart-tooltip';
 
 const defaultTooltipCss = `
 .${DEFAULT_TOOLTIP_CLASS} {
@@ -134,13 +134,13 @@ export function toTooltipHtml(input: string | AgTooltipRendererResult, defaults?
         return input;
     }
 
-    defaults = defaults || {};
+    defaults = defaults ?? {};
 
     const {
-        content = defaults.content || '',
-        title = defaults.title || undefined,
-        color = defaults.color || 'white',
-        backgroundColor = defaults.backgroundColor || '#888',
+        content = defaults.content ?? '',
+        title = defaults.title ?? undefined,
+        color = defaults.color ?? 'white',
+        backgroundColor = defaults.backgroundColor ?? '#888',
     } = input;
 
     const titleHtml = title
@@ -152,12 +152,12 @@ export function toTooltipHtml(input: string | AgTooltipRendererResult, defaults?
 }
 
 const POSITION_TYPES = ['pointer', 'node'];
-export const POSITION_TYPE = predicateWithMessage(
+const POSITION_TYPE = predicateWithMessage(
     (v: any) => POSITION_TYPES.includes(v),
     `expecting a position type keyword such as 'pointer' or 'node'`
 );
 
-export type TooltipPositionType = 'pointer' | 'node';
+type TooltipPositionType = 'pointer' | 'node';
 
 export class TooltipPosition {
     @Validate(POSITION_TYPE)

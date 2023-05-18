@@ -157,13 +157,13 @@ export class CrosshairLabel {
             return input;
         }
 
-        defaults = defaults || {};
+        defaults = defaults ?? {};
 
         const {
-            text = defaults.text || '',
+            text = defaults.text ?? '',
             color = defaults.color,
             backgroundColor = undefined,
-            opacity = defaults.opacity || 1,
+            opacity = defaults.opacity ?? 1,
         } = input;
 
         let contentHtml;

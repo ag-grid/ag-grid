@@ -379,7 +379,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     private processSeriesItemEnabled() {
         const { data, visible } = this;
-        this.seriesItemEnabled = data?.map(() => visible) || [];
+        this.seriesItemEnabled = data?.map(() => visible) ?? [];
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
@@ -592,9 +592,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const isDatumHighlighted = highlight && highlightedDatum?.series === this && itemId === highlightedDatum.itemId;
         const highlightedStyle = isDatumHighlighted ? this.highlightStyle.item : null;
 
-        const fill = highlightedStyle?.fill || fills[index % fills.length];
+        const fill = highlightedStyle?.fill ?? fills[index % fills.length];
         const fillOpacity = highlightedStyle?.fillOpacity ?? seriesFillOpacity;
-        const stroke = highlightedStyle?.stroke || strokes[index % strokes.length];
+        const stroke = highlightedStyle?.stroke ?? strokes[index % strokes.length];
         const strokeWidth = highlightedStyle?.strokeWidth ?? this.getStrokeWidth(this.strokeWidth);
 
         let format: AgPieSeriesFormat | undefined;
@@ -612,9 +612,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         }
 
         return {
-            fill: format?.fill || fill,
+            fill: format?.fill ?? fill,
             fillOpacity: format?.fillOpacity ?? fillOpacity,
-            stroke: format?.stroke || stroke,
+            stroke: format?.stroke ?? stroke,
             strokeWidth: format?.strokeWidth ?? strokeWidth,
         };
     }
@@ -857,7 +857,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const outerRadius = Math.max(0, radius);
             const label = datum.calloutLabel;
 
-            if (label && label.text && !label.hidden && outerRadius !== 0) {
+            if (label?.text && !label.hidden && outerRadius !== 0) {
                 line.visible = true;
                 line.strokeWidth = calloutStrokeWidth;
                 line.stroke = calloutColors[index % calloutColors.length];
@@ -871,9 +871,18 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 if (label.collisionTextAlign || label.collisionOffsetY !== 0) {
                     // Get the closest point to the text bounding box
                     const box = label.box!;
-                    const cx = x2 < box.x ? box.x : x2 > box.x + box.width ? box.x + box.width : x2;
-                    const cy = y2 < box.y ? box.y : y2 > box.y + box.height ? box.y + box.height : y2;
-
+                    let cx = x2;
+                    let cy = y2;
+                    if (x2 < box.x) {
+                        cx = box.x;
+                    } else if (x2 > box.x + box.width) {
+                        cx = box.x + box.width;
+                    }
+                    if (y2 < box.y) {
+                        cy = box.y;
+                    } else if (y2 > box.y + box.height) {
+                        cy = box.y + box.height;
+                    }
                     // Apply label offset
                     const dx = cx - x2;
                     const dy = cy - y2;
@@ -1125,7 +1134,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 return box;
             })
             .filter((box) => box != null) as BBox[];
-        if (this.title && this.title.text) {
+        if (this.title?.text) {
             const dy = this.getTitleTranslationY();
             if (isFinite(dy)) {
                 this.setTextDimensionalProps(text, 0, dy, this.title, {
@@ -1161,7 +1170,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         textNode.text = label!.text;
         textNode.x = x;
         textNode.y = y;
-        textNode.textAlign = label!.collisionTextAlign || label!.textAlign;
+        textNode.textAlign = label?.collisionTextAlign ?? label?.textAlign ?? 'center';
         textNode.textBaseline = label!.textBaseline;
     }
 
@@ -1324,7 +1333,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             calloutLabel: { text: label = '' } = {},
         } = nodeDatum;
         const formattedAngleValue = typeof angleValue === 'number' ? toFixed(angleValue) : String(angleValue);
-        const title = this.title ? this.title.text : undefined;
+        const title = this.title?.text;
         const content = `${label ? `${label}: ` : ''}${formattedAngleValue}`;
         const defaults: AgTooltipRendererResult = {
             title,
@@ -1364,7 +1373,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         if (!legendItemKey && !calloutLabelKey) return [];
 
-        const titleText = this.title && this.title.showInLegend && this.title.text;
+        const titleText = this.title?.showInLegend && this.title.text;
         const legendData: CategoryLegendDatum[] = data.map((datum, index) => {
             const labelParts = [];
             if (titleText) {

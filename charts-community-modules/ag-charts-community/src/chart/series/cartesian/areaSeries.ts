@@ -30,7 +30,6 @@ import {
     OPT_FUNCTION,
     OPT_LINE_DASH,
     OPT_STRING,
-    STRING,
     STRING_ARRAY,
     COLOR_STRING_ARRAY,
     Validate,
@@ -156,19 +155,19 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         label.enabled = false;
     }
 
-    @Validate(STRING)
-    protected _xKey: string = '';
-    set xKey(value: string) {
+    @Validate(OPT_STRING)
+    protected _xKey?: string = undefined;
+    set xKey(value: string | undefined) {
         this._xKey = value;
         this.processedData = undefined;
     }
 
-    get xKey(): string {
+    get xKey(): string | undefined {
         return this._xKey;
     }
 
-    @Validate(STRING)
-    xName: string = '';
+    @Validate(OPT_STRING)
+    xName?: string = undefined;
 
     @Validate(STRING_ARRAY)
     protected _yKeys: string[] = [];
@@ -296,13 +295,13 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         }
 
         const contexts: AreaSeriesNodeDataContext[] = [];
-        const { yKeys, xKey, marker, label, fills, strokes, id: seriesId } = this;
+        const { yKeys, xKey = '', marker, label, fills, strokes, id: seriesId } = this;
         const { scale: xScale } = xAxis;
         const { scale: yScale } = yAxis;
 
         const continuousY = yScale instanceof ContinuousScale;
 
-        const xOffset = (xScale.bandwidth || 0) / 2;
+        const xOffset = (xScale.bandwidth ?? 0) / 2;
 
         const xDataCount = data.length;
         const cumulativePathValues: CumulativeValue[] = new Array(xDataCount)
@@ -621,7 +620,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         const { markerSelection, isHighlight: isDatumHighlighted } = opts;
         const {
             id: seriesId,
-            xKey,
+            xKey = '',
             marker,
             seriesItemEnabled,
             yKeys,
@@ -641,7 +640,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         } = this;
 
         const { size, formatter } = marker;
-        const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
+        const markerStrokeWidth = marker.strokeWidth ?? this.strokeWidth;
 
         const customMarker = typeof marker.shape === 'function';
 
@@ -650,12 +649,12 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             const fill =
                 isDatumHighlighted && highlightedFill !== undefined
                     ? highlightedFill
-                    : marker.fill || fills[yKeyIndex % fills.length];
+                    : marker.fill ?? fills[yKeyIndex % fills.length];
             const fillOpacity = isDatumHighlighted ? highlightFillOpacity : markerFillOpacity;
             const stroke =
                 isDatumHighlighted && highlightedStroke !== undefined
                     ? highlightedStroke
-                    : marker.stroke || strokes[yKeyIndex % fills.length];
+                    : marker.stroke ?? strokes[yKeyIndex % fills.length];
             const strokeWidth =
                 isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                     ? highlightedDatumStrokeWidth
@@ -676,12 +675,12 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 });
             }
 
-            node.fill = (format && format.fill) || fill;
-            node.stroke = (format && format.stroke) || stroke;
-            node.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
+            node.fill = format?.fill ?? fill;
+            node.stroke = format?.stroke ?? stroke;
+            node.strokeWidth = format?.strokeWidth ?? strokeWidth;
             node.fillOpacity = fillOpacity ?? 1;
             node.strokeOpacity = marker.strokeOpacity ?? strokeOpacity ?? 1;
-            node.size = format && format.size !== undefined ? format.size : size;
+            node.size = format?.size ?? size;
 
             node.translationX = datum.point.x;
             node.translationY = datum.point.y;
@@ -739,14 +738,14 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     }
 
     protected getNodeClickEvent(event: MouseEvent, datum: MarkerSelectionDatum): CartesianSeriesNodeClickEvent<any> {
-        return new CartesianSeriesNodeClickEvent(this.xKey, datum.yKey, event, datum, this);
+        return new CartesianSeriesNodeClickEvent(this.xKey ?? '', datum.yKey, event, datum, this);
     }
 
     protected getNodeDoubleClickEvent(
         event: MouseEvent,
         datum: MarkerSelectionDatum
     ): CartesianSeriesNodeDoubleClickEvent<any> {
-        return new CartesianSeriesNodeDoubleClickEvent(this.xKey, datum.yKey, event, datum, this);
+        return new CartesianSeriesNodeDoubleClickEvent(this.xKey ?? '', datum.yKey, event, datum, this);
     }
 
     getTooltipHtml(nodeDatum: MarkerSelectionDatum): string {
@@ -785,9 +784,9 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         const title = sanitizeHtml(yName);
         const content = sanitizeHtml(xString + ': ' + yString);
 
-        const strokeWidth = markerStrokeWidth !== undefined ? markerStrokeWidth : this.strokeWidth;
-        const fill = markerFill || fills[yKeyIndex % fills.length];
-        const stroke = markerStroke || strokes[yKeyIndex % fills.length];
+        const strokeWidth = markerStrokeWidth ?? this.strokeWidth;
+        const fill = markerFill ?? fills[yKeyIndex % fills.length];
+        const stroke = markerStroke ?? strokes[yKeyIndex % fills.length];
 
         let format: AgCartesianSeriesMarkerFormat | undefined = undefined;
 
@@ -805,7 +804,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             });
         }
 
-        const color = (format && format.fill) || fill;
+        const color = format?.fill ?? fill;
 
         const defaults: AgTooltipRendererResult = {
             title,
@@ -848,7 +847,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         const { data, id, xKey, yKeys, yNames, seriesItemEnabled, marker, fills, strokes, fillOpacity, strokeOpacity } =
             this;
 
-        if (!data || !data.length || !xKey || !yKeys.length) {
+        if (!data?.length || !xKey || !yKeys.length) {
             return [];
         }
 
@@ -863,14 +862,14 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 id,
                 itemId: yKey,
                 seriesId: id,
-                enabled: seriesItemEnabled.get(yKey) || false,
+                enabled: seriesItemEnabled.get(yKey) ?? false,
                 label: {
                     text: yNames[index] || yKeys[index],
                 },
                 marker: {
                     shape: marker.shape,
-                    fill: marker.fill || fills[index % fills.length],
-                    stroke: marker.stroke || strokes[index % strokes.length],
+                    fill: marker.fill ?? fills[index % fills.length],
+                    stroke: marker.stroke ?? strokes[index % strokes.length],
                     fillOpacity: marker.fillOpacity ?? fillOpacity,
                     strokeOpacity: marker.strokeOpacity ?? strokeOpacity,
                 },

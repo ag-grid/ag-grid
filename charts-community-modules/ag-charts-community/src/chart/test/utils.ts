@@ -70,7 +70,7 @@ export function range(start: number, end: number, step = 1): number[] {
 }
 
 export function dateRange(start: Date, end: Date, step = 24 * 60 * 60 * 1000): Date[] {
-    const result = [];
+    const result: Date[] = [];
 
     let next = start.getTime();
     const endTime = end.getTime();
@@ -128,7 +128,7 @@ export function wheelEvent({
 }
 
 export function cartesianChartAssertions(params?: { type?: string; axisTypes?: string[]; seriesTypes?: string[] }) {
-    const { axisTypes = ['category', 'number'], seriesTypes = ['bar'] } = params || {};
+    const { axisTypes = ['category', 'number'], seriesTypes = ['bar'] } = params ?? {};
 
     return async (chartOrProxy: Chart | AgChartInstance) => {
         const chart = deproxy(chartOrProxy);
@@ -140,7 +140,7 @@ export function cartesianChartAssertions(params?: { type?: string; axisTypes?: s
 }
 
 export function polarChartAssertions(params?: { seriesTypes?: string[] }) {
-    const { seriesTypes = ['pie'] } = params || {};
+    const { seriesTypes = ['pie'] } = params ?? {};
 
     return async (chartOrProxy: Chart | AgChartInstance) => {
         const chart = deproxy(chartOrProxy);
@@ -151,7 +151,7 @@ export function polarChartAssertions(params?: { seriesTypes?: string[] }) {
 }
 
 export function hierarchyChartAssertions(params?: { seriesTypes?: string[] }) {
-    const { seriesTypes = ['treemap'] } = params || {};
+    const { seriesTypes = ['treemap'] } = params ?? {};
 
     return async (chartOrProxy: Chart | AgChartInstance) => {
         const chart = deproxy(chartOrProxy);
@@ -217,14 +217,6 @@ export function scrollAction(x: number, y: number, delta: number): Promise<void>
     return new Promise((resolve) => {
         setTimeout(resolve, 50);
     });
-}
-
-export function combineAssertions(...assertions: ((chart: AgChartInstance) => void)[]) {
-    return async (chartOrProxy: AgChartInstance) => {
-        for (const assertion of assertions) {
-            await assertion(chartOrProxy);
-        }
-    };
 }
 
 export function extractImageData({

@@ -1,6 +1,6 @@
 import interpolate from '../interpolate/value';
 
-export interface EasingOpts<T> {
+interface EasingOpts<T> {
     from: T;
     to: T;
 }
