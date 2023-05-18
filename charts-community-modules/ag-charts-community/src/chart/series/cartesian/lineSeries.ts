@@ -3,6 +3,7 @@ import { ContinuousScale } from '../../../scale/continuousScale';
 import { Selection } from '../../../scene/selection';
 import { SeriesNodeDatum, SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode, valueProperty } from '../series';
 import { extent } from '../../../util/array';
+import { BBox } from '../../../scene/bbox';
 import { PointerEvents } from '../../../scene/node';
 import { Text } from '../../../scene/shape/text';
 import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
@@ -30,6 +31,7 @@ import {
     AgCartesianSeriesMarkerFormat,
 } from '../../agChartOptions';
 import { DataModel, UngroupedDataItem } from '../../data/dataModel';
+import * as easing from '../../../motion/easing';
 
 interface LineNodeDatum extends CartesianSeriesNodeDatum {
     readonly point: SeriesNodeDatum['point'] & {
@@ -267,41 +269,6 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
     protected isPathOrSelectionDirty(): boolean {
         return this.marker.isDirty();
-    }
-
-    protected async updatePaths(opts: { seriesHighlighted?: boolean; contextData: LineContext; paths: Path[] }) {
-        const {
-            contextData: { nodeData },
-            paths: [lineNode],
-        } = opts;
-        const { path: linePath } = lineNode;
-
-        lineNode.fill = undefined;
-        lineNode.lineJoin = 'round';
-        lineNode.pointerEvents = PointerEvents.None;
-
-        linePath.clear({ trackChanges: true });
-        for (const data of nodeData) {
-            if (data.point.moveTo) {
-                linePath.moveTo(data.point.x, data.point.y);
-            } else {
-                linePath.lineTo(data.point.x, data.point.y);
-            }
-        }
-        lineNode.checkPathDirty();
-    }
-
-    protected async updatePathNodes(opts: { seriesHighlighted?: boolean; paths: Path[] }) {
-        const {
-            paths: [lineNode],
-        } = opts;
-
-        lineNode.stroke = this.stroke;
-        lineNode.strokeWidth = this.getStrokeWidth(this.strokeWidth);
-        lineNode.strokeOpacity = this.strokeOpacity;
-
-        lineNode.lineDash = this.lineDash;
-        lineNode.lineDashOffset = this.lineDashOffset;
     }
 
     protected markerFactory() {
@@ -551,6 +518,119 @@ export class LineSeries extends CartesianSeries<LineContext> {
             },
         ];
         return legendData;
+    }
+
+    animateEmptyUpdateReady({
+        markerSelections,
+        contextData,
+        paths,
+        seriesRect,
+    }: {
+        markerSelections: Array<Selection<Marker, LineNodeDatum>>;
+        contextData: Array<LineContext>;
+        paths: Array<Array<Path>>;
+        seriesRect?: BBox;
+    }) {
+        contextData.forEach(({ nodeData }, contextDataIndex) => {
+            const [lineNode] = paths[contextDataIndex];
+
+            const { path: linePath } = lineNode;
+
+            lineNode.fill = undefined;
+            lineNode.lineJoin = 'round';
+            lineNode.pointerEvents = PointerEvents.None;
+
+            lineNode.stroke = this.stroke;
+            lineNode.strokeWidth = this.getStrokeWidth(this.strokeWidth);
+            lineNode.strokeOpacity = this.strokeOpacity;
+
+            lineNode.lineDash = this.lineDash;
+            lineNode.lineDashOffset = this.lineDashOffset;
+
+            const animationOptions = {
+                from: 0,
+                to: seriesRect?.width ?? 0,
+                disableInteractions: true,
+                duration: 1000,
+                ease: easing.linear,
+                repeat: 0,
+            };
+
+            this.animationManager?.animate<number>(`${this.id}_empty-update-ready`, {
+                ...animationOptions,
+                onUpdate(xValue) {
+                    linePath.clear({ trackChanges: true });
+
+                    nodeData.forEach((datum, index) => {
+                        if (datum.point.x <= xValue) {
+                            // Draw/move the full segment if past the end of this segment
+                            if (datum.point.moveTo) {
+                                linePath.moveTo(datum.point.x, datum.point.y);
+                            } else {
+                                linePath.lineTo(datum.point.x, datum.point.y);
+                            }
+                        } else if (index > 0 && nodeData[index - 1].point.x < xValue) {
+                            // Draw/move partial line if in between the start and end of this segment
+                            const start = nodeData[index - 1].point;
+                            const end = datum.point;
+
+                            const x = xValue;
+                            const y = start.y + ((x - start.x) * (end.y - start.y)) / (end.x - start.x);
+
+                            if (datum.point.moveTo) {
+                                linePath.moveTo(x, y);
+                            } else {
+                                linePath.lineTo(x, y);
+                            }
+                        }
+                    });
+
+                    lineNode.checkPathDirty();
+                },
+            });
+
+            markerSelections[contextDataIndex].each((marker, datum) => {
+                const format = this.animateFormatter(datum);
+                const size = datum.point?.size ?? 0;
+
+                this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${marker.id}`, {
+                    ...animationOptions,
+                    onUpdate(xValue) {
+                        if (datum.point.x <= xValue) {
+                            marker.size = format && format.size !== undefined ? format.size : size;
+                        } else {
+                            marker.size = 0;
+                        }
+                    },
+                });
+            });
+        });
+    }
+
+    private animateFormatter(datum: LineNodeDatum) {
+        const { marker, xKey = '', yKey = '', stroke: lineStroke, id: seriesId } = this;
+        const { size, formatter } = marker;
+
+        const fill = marker.fill;
+        const stroke = marker.stroke || lineStroke;
+        const strokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
+
+        let format: AgCartesianSeriesMarkerFormat | undefined = undefined;
+        if (formatter) {
+            format = formatter({
+                datum: datum.datum,
+                xKey,
+                yKey,
+                fill,
+                stroke,
+                strokeWidth,
+                size,
+                highlighted: false,
+                seriesId,
+            });
+        }
+
+        return format;
     }
 
     protected isLabelEnabled() {

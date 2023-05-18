@@ -223,6 +223,14 @@ export abstract class CartesianSeries<
 
         await this.updateSelections(seriesHighlighted, anySeriesItemEnabled);
         await this.updateNodes(seriesHighlighted, anySeriesItemEnabled);
+
+        this.animationState.transition('update', {
+            datumSelections: this.subGroups.map(({ datumSelection }) => datumSelection),
+            markerSelections: this.subGroups.map(({ markerSelection }) => markerSelection),
+            contextData: this._contextNodeData,
+            paths: this.subGroups.map(({ paths }) => paths),
+            seriesRect,
+        });
     }
 
     protected async updateSelections(seriesHighlighted: boolean | undefined, anySeriesItemEnabled: boolean) {
@@ -241,19 +249,14 @@ export abstract class CartesianSeries<
             await this.updateSeriesGroups();
         }
 
-        await Promise.all(this.subGroups.map((g, i) => this.updateSeriesGroupSelections(g, i, seriesHighlighted)));
+        await Promise.all(this.subGroups.map((g, i) => this.updateSeriesGroupSelections(g, i)));
     }
 
-    private async updateSeriesGroupSelections(
-        subGroup: SubGroup<C, any>,
-        seriesIdx: number,
-        seriesHighlighted?: boolean
-    ) {
-        const { datumSelection, labelSelection, markerSelection, paths } = subGroup;
+    private async updateSeriesGroupSelections(subGroup: SubGroup<C, any>, seriesIdx: number) {
+        const { datumSelection, labelSelection, markerSelection } = subGroup;
         const contextData = this._contextNodeData[seriesIdx];
-        const { nodeData, labelData, itemId } = contextData;
+        const { nodeData, labelData } = contextData;
 
-        await this.updatePaths({ seriesHighlighted, itemId, contextData, paths, seriesIdx });
         subGroup.datumSelection = await this.updateDatumSelection({ nodeData, datumSelection, seriesIdx });
         subGroup.labelSelection = await this.updateLabelSelection({ labelData, labelSelection, seriesIdx });
         if (markerSelection) {
@@ -431,7 +434,6 @@ export abstract class CartesianSeries<
                     return;
                 }
 
-                await this.updatePathNodes({ seriesHighlighted, itemId, paths, seriesIdx });
                 await this.updateDatumNodes({ datumSelection, isHighlight: false, seriesIdx });
                 await this.updateLabelNodes({ labelSelection, seriesIdx });
                 if (hasMarkers && markerSelection) {
@@ -439,11 +441,6 @@ export abstract class CartesianSeries<
                 }
             })
         );
-
-        this.animationState.transition('update', {
-            datumSelections: this.subGroups.map(({ datumSelection }) => datumSelection),
-            markerSelections: this.subGroups.map(({ markerSelection }) => markerSelection),
-        });
     }
 
     protected async updateHighlightSelection(seriesHighlighted?: boolean) {
@@ -661,26 +658,6 @@ export abstract class CartesianSeries<
         return false;
     }
 
-    protected async updatePaths(opts: {
-        seriesHighlighted?: boolean;
-        itemId?: string;
-        contextData: C;
-        paths: Path[];
-        seriesIdx: number;
-    }): Promise<void> {
-        // Override point for sub-classes.
-        opts.paths.forEach((p) => (p.visible = false));
-    }
-
-    protected async updatePathNodes(_opts: {
-        seriesHighlighted?: boolean;
-        itemId?: string;
-        paths: Path[];
-        seriesIdx: number;
-    }): Promise<void> {
-        // Override point for sub-classes.
-    }
-
     protected async updateHighlightSelectionItem(opts: {
         item?: C['nodeData'][number];
         highlightSelection: NodeDataSelection<N, C>;
@@ -745,15 +722,23 @@ export abstract class CartesianSeries<
     protected animateEmptyUpdateReady(_data: {
         datumSelections: Array<NodeDataSelection<N, C>>;
         markerSelections: Array<NodeDataSelection<Marker, C>>;
+        contextData: Array<C>;
+        paths: Array<Array<Path>>;
+        seriesRect?: BBox;
     }) {
         // Override point for sub-classes.
     }
+
     protected animateReadyUpdateReady(_data: {
         datumSelections: Array<NodeDataSelection<N, C>>;
         markerSelections: Array<NodeDataSelection<Marker, C>>;
+        contextData: Array<C>;
+        paths: Array<Array<Path>>;
+        seriesRect?: BBox;
     }) {
         // Override point for sub-classes.
     }
+
     protected animateReadyHighlightReady(_data: NodeDataSelection<N, C>) {
         // Override point for sub-classes.
     }
