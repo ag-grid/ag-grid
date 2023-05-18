@@ -1821,7 +1821,7 @@
   "AgTooltipPositionOptions": {},
   "AgMovingTooltipPositionOptions": {
     "type": {
-      "description": "/** The type of positioning for the tooltip. By default, for Bar, Histogram, Treemap, Pie and Doughnut series, the tooltip follows the pointer. For Line, Area and Scatter series, the tooltip is anchored to the highlighted node. */",
+      "description": "/** The type of positioning for the tooltip. By default, the tooltip follows the mouse pointer for series without markers, and it is anchored to the highlighted marker node for series with markers. */",
       "type": { "returnType": "AgTooltipPositionType", "optional": false }
     },
     "xOffset": {
