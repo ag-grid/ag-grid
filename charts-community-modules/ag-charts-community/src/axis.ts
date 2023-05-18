@@ -365,9 +365,6 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
     protected readonly layout: Pick<AxisLayout, 'label'> = {
         label: {
-            align: 'center',
-            baseline: 'middle',
-            rotation: 0,
             fractionDigits: 0,
             padding: this.label.padding,
             format: this.label.format,
@@ -635,10 +632,11 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         this.initScale();
         this.updatePosition();
         this.updateLine();
-        const { rotation, parallelFlipRotation, regularFlipRotation } = this.calculateRotations();
 
+        const { rotation, parallelFlipRotation, regularFlipRotation } = this.calculateRotations();
         const sideFlag = this.label.getSideFlag();
         const labelX = sideFlag * (this.tick.size + this.label.padding + this.seriesAreaPadding);
+
         const ticksResult = this.getTicks({
             primaryTickCount,
             parallelFlipRotation,
@@ -662,14 +660,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             labelX,
         });
 
-        this.layout.label = {
-            align: textAlign,
-            baseline: textBaseline,
-            rotation: combinedRotation,
-            fractionDigits: this.fractionDigits,
-            padding: this.label.padding,
-            format: this.label.format,
-        };
+        this.updateLayoutState();
 
         const anyTickVisible = this.updateVisibility();
         this.updateGridLines();
@@ -678,6 +669,14 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         this.updateTickLines(anyTickVisible);
 
         return primaryTickCount;
+    }
+
+    private updateLayoutState() {
+        this.layout.label = {
+            fractionDigits: this.fractionDigits,
+            padding: this.label.padding,
+            format: this.label.format,
+        };
     }
 
     private initScale() {
