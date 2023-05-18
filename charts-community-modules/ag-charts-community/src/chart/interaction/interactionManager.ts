@@ -1,3 +1,4 @@
+import { Logger } from '../../util/logger';
 import { isNumber } from '../../util/value';
 import { BaseManager } from './baseManager';
 
@@ -146,7 +147,7 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
 
         if (types.length > 0 && this.enabled) {
             // Async dispatch to avoid blocking the event-processing thread.
-            this.dispatchEvent(event, types);
+            this.dispatchEvent(event, types).catch((e) => Logger.errorOnce(e));
         }
     }
 

@@ -304,7 +304,7 @@ abstract class AgChartInternal {
             }
         };
 
-        asyncDownload();
+        asyncDownload().catch((e) => Logger.errorOnce(e));
     }
 
     static async getImageDataURL(proxy: AgChartInstanceProxy, opts?: ImageDataUrlOptions): Promise<string> {

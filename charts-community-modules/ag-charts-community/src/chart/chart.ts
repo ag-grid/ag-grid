@@ -417,7 +417,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         const count = callbacks.length;
         if (count === 0) {
             callbacks.push(cb);
-            this._processCallbacks();
+            this._processCallbacks().catch((e) => Logger.errorOnce(e));
         } else {
             // Factory callback process already running, the callback will be invoked asynchronously.
             // Clear the queue after the first callback to prevent unnecessary re-renderings.
