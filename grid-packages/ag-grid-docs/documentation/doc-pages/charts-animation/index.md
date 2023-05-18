@@ -24,3 +24,11 @@ Animation examples.
 ## Scatter Series
 
 <chart-example title='Scatter Series' name='scatter' type='generated' options='{ "enterprise": true }'></chart-example>
+
+## Line Series
+
+<chart-example title='Scatter Series' name='line' type='generated' options='{ "enterprise": true }'></chart-example>
+
+## Area Series
+
+<chart-example title='Scatter Series' name='area' type='generated' options='{ "enterprise": true }'></chart-example>
