@@ -1157,7 +1157,7 @@
     },
     "docs": {
       "enabled?": "/** Set to false to disable tooltips for all series in the chart. */",
-      "showArrow?": "/** Set to false to remove the arrow attached to the tooltip. */",
+      "showArrow?": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "class?": "/** A class name to be added to the tooltip element of the chart. */",
       "tracking?": "/** @deprecated since v7.2.0 (ag-grid v29.2.0) If true, for series with markers the tooltip will be shown to the closest marker. */",
       "range?": "/** Range from a point that triggers the tooltip to show. */",
@@ -2121,7 +2121,7 @@
     },
     "docs": {
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
-      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "showArrow?": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "position?": "/** The position of the tooltip. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
@@ -2175,7 +2175,7 @@
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
-      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "showArrow?": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "position?": "/** The position of the tooltip. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
@@ -2244,7 +2244,7 @@
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
-      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "showArrow?": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "position?": "/** The position of the tooltip. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
@@ -2372,7 +2372,7 @@
     },
     "docs": {
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
-      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "showArrow?": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "position?": "/** The position of the tooltip. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
@@ -2526,7 +2526,7 @@
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
-      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "showArrow?": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "position?": "/** The position of the tooltip. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
@@ -2658,7 +2658,7 @@
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
-      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "showArrow?": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "position?": "/** The position of the tooltip. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
@@ -2820,7 +2820,7 @@
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
-      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "showArrow?": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "position?": "/** The position of the tooltip. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
@@ -3135,7 +3135,7 @@
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
-      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "showArrow?": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "position?": "/** The position of the tooltip. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }

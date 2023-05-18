@@ -1793,7 +1793,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "showArrow": {
-      "description": "/** Set to false to remove the arrow attached to the tooltip. */",
+      "description": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "class": {
@@ -3200,7 +3200,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "showArrow": {
-      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "description": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
@@ -3277,7 +3277,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "showArrow": {
-      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "description": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
@@ -3396,7 +3396,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "showArrow": {
-      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "description": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
@@ -3617,7 +3617,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "showArrow": {
-      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "description": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
@@ -3849,7 +3849,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "showArrow": {
-      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "description": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
@@ -4070,7 +4070,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "showArrow": {
-      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "description": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
@@ -4322,7 +4322,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "showArrow": {
-      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "description": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
@@ -4838,7 +4838,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "showArrow": {
-      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "description": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {

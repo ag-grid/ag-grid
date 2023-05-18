@@ -4,9 +4,6 @@
     "enabled": {
       "default": true
     },
-    "showArrow": {
-      "default": true
-    },
     "tracking": {
       "default": true
     },

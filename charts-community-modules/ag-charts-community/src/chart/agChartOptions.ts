@@ -525,7 +525,7 @@ export interface AgPaginationLabelOptions {
 export interface AgChartTooltipOptions {
     /** Set to false to disable tooltips for all series in the chart. */
     enabled?: boolean;
-    /** Set to false to remove the arrow attached to the tooltip. */
+    /** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */
     showArrow?: boolean;
     /** A class name to be added to the tooltip element of the chart. */
     class?: string;
@@ -1119,7 +1119,7 @@ export interface AgAreaSeriesMarker<DatumType> extends AgCartesianSeriesMarker<D
 export interface AgSeriesTooltip {
     /** Whether or not to show tooltips when the series are hovered over. */
     enabled?: boolean;
-    /** Set to false to remove the arrow attached to the series tooltip. */
+    /** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */
     showArrow?: boolean;
     /** The position of the tooltip. */
     position?: AgTooltipPositionOptions;
