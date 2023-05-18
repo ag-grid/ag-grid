@@ -99,8 +99,8 @@ const GettingStartedPane = ({ framework, data }) => {
                         {...parsedLink}
                         className={classnames(tileStyles.tile, tileStyles.linkTile)}
                     >
-                        <div className={styles['docs-home__getting-started__item_logo']}>
-                            <img src={getLogo(icon, framework)} alt={alt} style={{ height: 64, width: 64 }} />
+                        <div className={styles.gettingStartedLogo}>
+                            <img src={getLogo(icon, framework)} alt={alt} />
                         </div>
                         <div className={tileStyles.linkTileTitle}>{title}</div>
                     </a>

@@ -15,7 +15,8 @@ pre.code {
     --class-name-color: #2b91af;
     --property-color: #ff0000;
 
-    -webkit-font-smoothing: subpixel-antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 
     margin-bottom: $size-2;
     padding: $vertical-padding $size-2;
@@ -128,18 +129,20 @@ pre.code {
 
 pre.code.line-numbers {
     position: relative;
-    padding-left: 3.8em;
     counter-reset: linenumber;
+
+    @media screen and (min-width: $breakpoint-code-line-numbers) {
+        padding-left: 3.8em;
+    }
 
     > code {
         white-space: inherit;
     }
 
     .line-numbers-rows {
-        -webkit-font-smoothing: antialiased;
-
         position: absolute;
         width: 3em !important; // Override gatsby default
+        min-height: calc(100% - 0.0625em);
         top: 0.0625em;
         left: 0;
         padding-top: $vertical-padding;
@@ -150,6 +153,10 @@ pre.code.line-numbers {
         border-right: 1px solid rgba(map.get($abstract-colors, medium-electric-blue), 0.1);
         pointer-events: none;
         user-select: none;
+
+        @media screen and (max-width: $breakpoint-code-line-numbers) {
+            display: none;
+        }
     }
 
     .line-numbers-rows > span {

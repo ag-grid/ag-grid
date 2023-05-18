@@ -3,6 +3,7 @@ import { doOnEnter } from 'components/key-handlers';
 import React, { useEffect, useState } from 'react';
 import isServerSideRendering from 'utils/is-server-side-rendering';
 import Code from '../Code';
+import { Icon } from '../Icon';
 import CodeOptions from './CodeOptions';
 import styles from './CodeViewer.module.scss';
 import { getEntryFile, getExampleFiles } from './helpers';
@@ -13,6 +14,7 @@ import { getEntryFile, getExampleFiles } from './helpers';
 const CodeViewer = ({ isActive, exampleInfo }) => {
     const [files, setFiles] = useState(null);
     const [activeFile, setActiveFile] = useState(null);
+    const [showFiles, setShowFiles] = useState(true);
 
     let unmount = false;
     const didUnmount = () => unmount;
@@ -26,26 +28,52 @@ const CodeViewer = ({ isActive, exampleInfo }) => {
     const exampleFiles = keys.filter((key) => !files[key].isFramework);
 
     return (
-        <div className={classnames(styles.codeViewer, { [styles.hidden]: !isActive })}>
-            <div className={styles.files}>
-                <ul className="list-style-none">
-                    {exampleFiles.map((path) => (
-                        <FileItem
-                            key={path}
-                            path={path}
-                            isActive={activeFile === path}
-                            onClick={() => setActiveFile(path)}
-                        />
-                    ))}
-                </ul>
-
-                <CodeOptions exampleInfo={exampleInfo} />
+        <div className={classnames(styles.codeViewer, { [styles.hidden]: !isActive, [styles.hideFiles]: !showFiles })}>
+            <div className={styles.mobileHeader}>
+                <button
+                    className={'button-style-none button-as-link'}
+                    onClick={() => {
+                        setShowFiles(!showFiles);
+                    }}
+                >
+                    {showFiles ? (
+                        <span>
+                            Hide files
+                            <Icon name="arrowLeft" />
+                        </span>
+                    ) : (
+                        <span>
+                            Show files
+                            <Icon name="arrowRight" />
+                        </span>
+                    )}
+                </button>
+                <span>
+                    <span className="text-secondary">Viewing: </span>
+                    {activeFile}
+                </span>
             </div>
-            <div className={styles.code}>
-                {!files && <FileView path={'loading.js'} code={'// Loading...'} />}
-                {files && activeFile && files[activeFile] && (
-                    <FileView key={activeFile} path={activeFile} code={files[activeFile].source} />
-                )}
+            <div className={styles.inner}>
+                <div className={styles.files}>
+                    <ul className="list-style-none">
+                        {exampleFiles.map((path) => (
+                            <FileItem
+                                key={path}
+                                path={path}
+                                isActive={activeFile === path}
+                                onClick={() => setActiveFile(path)}
+                            />
+                        ))}
+                    </ul>
+
+                    <CodeOptions exampleInfo={exampleInfo} />
+                </div>
+                <div className={styles.code}>
+                    {!files && <FileView path={'loading.js'} code={'// Loading...'} />}
+                    {files && activeFile && files[activeFile] && (
+                        <FileView key={activeFile} path={activeFile} code={files[activeFile].source} />
+                    )}
+                </div>
             </div>
         </div>
     );

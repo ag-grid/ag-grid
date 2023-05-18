@@ -1,9 +1,7 @@
+@use "sass:map";
 @use "../../design-system/" as *;
 
 .options {
-    line-height: 1.6em;
-    color: #495057;
-    font-size: 0.9em;
     position: absolute;
     top: 0;
     bottom: 0;
@@ -12,7 +10,6 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    border-radius: 5px;
 }
 
 .noContent {
@@ -176,5 +173,19 @@ body ul.metaList {
 
     input {
         min-width: auto !important; // !important for .ag-styles specificity
+    }
+}
+
+.isSearching .expandable {
+    --text-color: #{map.get($abstract-colors, dark-gunmetal-gray)};
+
+    cursor: unset;
+
+    &:hover {
+        --text-color: #{map.get($abstract-colors, dark-gunmetal-gray)};
+    }
+
+    :global(.icon) {
+        display: none;
     }
 }

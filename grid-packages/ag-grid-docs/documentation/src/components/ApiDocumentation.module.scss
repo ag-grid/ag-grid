@@ -78,15 +78,24 @@
 }
 
 .name {
-    -webkit-font-smoothing: subpixel-antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 
+    position: relative;
+    display: inline-block;
+    margin-top: $size-half !important; // !important for .ag-styles specificity;
+    padding-right: $size-3;
     font-family: var(--monospace-font-family) !important; // !important for .ag-styles specificity;
     font-size: var(--font-size-large) !important; // !important for .ag-styles specificity;
     font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity;
-    line-height: var(--line-height-ultra-tight) !important; // !important for .ag-styles specificity;
 
     @container (min-width: #{$breakpoint-table-small}) {
         font-size: var(--font-size-medium) !important; // !important for .ag-styles specificity;
+    }
+
+    :global(a.docs-header-icon) {
+        position: absolute;
+        bottom: -0.125em;
     }
 }
 

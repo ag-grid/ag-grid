@@ -630,7 +630,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                     {more != null && more.url && !config.hideMore && (
                         <span>
                             <span className="text-secondary">See:</span>{' '}
-                            <a href="${convertUrl(more.url, framework)}">{more.name}</a>
+                            <a href={convertUrl(more.url, framework)}>{more.name}</a>
                         </span>
                     )}
                 </div>

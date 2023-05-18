@@ -4,6 +4,7 @@
     display: flex;
     align-items: center;
     gap: $size-2;
+    flex-shrink: 0;
     margin-left: auto !important; // !important for .ag-styles specificity
     padding-right: $size-2;
 

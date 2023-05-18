@@ -50,6 +50,15 @@
     }
 }
 
+.gettingStartedLogo {
+    margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+
+    img {
+        width: $size-7;
+        height: $size-7;
+    }
+}
+
 .allVideosInner {
     display: flex;
     flex-direction: column;
