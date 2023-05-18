@@ -345,7 +345,7 @@ export const Options = ({ chartType, updateOption }) => {
             {isSearching && !context.hasResults && (
                 <div className={styles.noContent}>No properties match your search: '{getTrimmedSearchText()}'</div>
             )}
-            <div className={styles.content}>{options}</div>
+            <div className={classnames(styles.content, { [styles.isSearching]: isSearching })}>{options}</div>
         </div>
     );
 };
