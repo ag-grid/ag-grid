@@ -53,19 +53,20 @@ export const AgGridReactUiFunc = <TData,>(props: AgReactUiProps<TData>) => {
         setPortalRefresher((prev) => prev + 1);
     }, []);
 
-    if (!portalManager.current) {
-        portalManager.current = new PortalManager2(updatePortalRefresher,
-            props.componentWrappingElement,
-            props.maxComponentCreationTimeMs
-        );
-        destroyFuncs.current.push(() => {
-            portalManager.current!.destroy();
-            portalManager.current = null;
-        });
-    }
-
     useLayoutEffect(() => {
         const modules = props.modules || [];
+
+        if (!portalManager.current) {
+            portalManager.current = new PortalManager2(updatePortalRefresher,
+                props.componentWrappingElement,
+                props.maxComponentCreationTimeMs
+            );
+            destroyFuncs.current.push(() => {
+                portalManager.current!.destroy();
+                portalManager.current = null;
+            });
+        }
+
         const gridParams: GridParams = {
             providedBeanInstances: {
                 frameworkComponentWrapper: new ReactFrameworkComponentWrapper(portalManager.current!),
