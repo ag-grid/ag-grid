@@ -40,7 +40,7 @@ export abstract class AgPickerField<TElement extends HTMLElement, TValue> extend
     protected postConstruct() {
         super.postConstruct();
 
-        const displayId = `${this.getCompId()}-display`;
+        const displayId = `ag-${this.getCompId()}-display`;
 
         this.eDisplayField.setAttribute('id', displayId);
         setAriaDescribedBy(this.eWrapper, displayId);

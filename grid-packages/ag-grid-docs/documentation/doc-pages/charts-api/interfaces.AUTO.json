@@ -44,6 +44,10 @@
   "PixelSize": { "meta": { "isTypeAlias": true }, "type": "number" },
   "Ratio": { "meta": { "isTypeAlias": true }, "type": "number" },
   "DataValue": { "meta": { "isTypeAlias": true }, "type": "any" },
+  "TextWrap": {
+    "meta": { "isTypeAlias": true },
+    "type": "'never' | 'always' | 'hyphenate' | 'on-space'"
+  },
   "AgChartInteractionRange": {
     "meta": { "isTypeAlias": true },
     "type": "PixelSize | 'exact' | 'nearest'"
@@ -140,6 +144,7 @@
     "type": {
       "axes?": "AgCartesianAxesTheme",
       "series?": "S",
+      "legend?": "AgCartesianChartLegendOptions",
       "navigator?": "AgNavigatorOptions",
       "data?": "any[]",
       "container?": "HTMLElement | null",
@@ -153,7 +158,6 @@
       "subtitle?": "AgChartSubtitleOptions",
       "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
-      "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
@@ -162,6 +166,7 @@
     "docs": {
       "axes?": "/** Axis configurations. */",
       "series?": "/** Series configurations. */",
+      "legend?": "/** Configuration for the chart legend. */",
       "navigator?": "/** Configuration for the chart navigator. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
@@ -175,7 +180,6 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
-      "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -186,6 +190,7 @@
     "meta": { "typeParams": ["S = AgPolarSeriesTheme"] },
     "type": {
       "series?": "S",
+      "legend?": "AgPolarChartLegendOptions",
       "data?": "any[]",
       "container?": "HTMLElement | null",
       "width?": "PixelSize",
@@ -198,7 +203,6 @@
       "subtitle?": "AgChartSubtitleOptions",
       "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
-      "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
@@ -206,6 +210,7 @@
     },
     "docs": {
       "series?": "/** Series configurations. */",
+      "legend?": "/** Configuration for the chart legend. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
       "width?": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
@@ -218,7 +223,6 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
-      "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -229,6 +233,7 @@
     "meta": { "typeParams": ["S = AgHierarchySeriesTheme"] },
     "type": {
       "series?": "S",
+      "legend?": "AgHierarchyChartLegendOptions",
       "data?": "any[]",
       "container?": "HTMLElement | null",
       "width?": "PixelSize",
@@ -241,7 +246,6 @@
       "subtitle?": "AgChartSubtitleOptions",
       "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
-      "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
@@ -249,6 +253,7 @@
     },
     "docs": {
       "series?": "/** Series configurations. */",
+      "legend?": "/** Configuration for the chart legend. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
       "width?": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
@@ -261,7 +266,6 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
-      "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -572,7 +576,7 @@
       "calloutLabelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "sectorLabelKey?": "/** The key to use to retrieve sector label values from the data. */",
       "sectorLabelName?": "/** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
-      "legendItemKey?": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */",
+      "legendItemKey?": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. */",
       "fills?": "/** The colours to cycle through for the fills of the sectors. */",
       "strokes?": "/** The colours to cycle through for the strokes of the sectors. */",
       "fillOpacity?": "/** The opacity of the fill for the sectors. */",
@@ -699,7 +703,8 @@
       "color?": "CssColor",
       "spacing?": "number",
       "maxWidth?": "PixelSize",
-      "maxHeight?": "PixelSize"
+      "maxHeight?": "PixelSize",
+      "wrapping?": "TextWrap"
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",
@@ -711,7 +716,8 @@
       "color?": "/** The colour to use for the text. */",
       "spacing?": "/** Spacing added to help position the text. */",
       "maxWidth?": "/** Used to constrain the width of the title. */",
-      "maxHeight?": "/** Used to constrain the height of the title. */"
+      "maxHeight?": "/** Used to constrain the height of the title. */",
+      "wrapping?": "/** Text wrapping strategy for long texts.\n     * `'always'` will break the words that are longer than `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but insert the hyphens (`-`) into the word breaks.\n     * `'on-space'` will break the text on white spaces and tabulation symbols only. If some long word can't fit the `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     */"
     }
   },
   "AgChartSubtitleOptions": {
@@ -726,7 +732,8 @@
       "color?": "CssColor",
       "spacing?": "number",
       "maxWidth?": "PixelSize",
-      "maxHeight?": "PixelSize"
+      "maxHeight?": "PixelSize",
+      "wrapping?": "TextWrap"
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",
@@ -738,7 +745,8 @@
       "color?": "/** The colour to use for the text. */",
       "spacing?": "/** Spacing added to help position the text. */",
       "maxWidth?": "/** Used to constrain the width of the title. */",
-      "maxHeight?": "/** Used to constrain the height of the title. */"
+      "maxHeight?": "/** Used to constrain the height of the title. */",
+      "wrapping?": "/** Text wrapping strategy for long texts.\n     * `'always'` will break the words that are longer than `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but insert the hyphens (`-`) into the word breaks.\n     * `'on-space'` will break the text on white spaces and tabulation symbols only. If some long word can't fit the `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     */"
     }
   },
   "AgChartFooterOptions": {
@@ -753,7 +761,8 @@
       "color?": "CssColor",
       "spacing?": "number",
       "maxWidth?": "PixelSize",
-      "maxHeight?": "PixelSize"
+      "maxHeight?": "PixelSize",
+      "wrapping?": "TextWrap"
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",
@@ -765,7 +774,8 @@
       "color?": "/** The colour to use for the text. */",
       "spacing?": "/** Spacing added to help position the text. */",
       "maxWidth?": "/** Used to constrain the width of the title. */",
-      "maxHeight?": "/** Used to constrain the height of the title. */"
+      "maxHeight?": "/** Used to constrain the height of the title. */",
+      "wrapping?": "/** Text wrapping strategy for long texts.\n     * `'always'` will break the words that are longer than `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but insert the hyphens (`-`) into the word breaks.\n     * `'on-space'` will break the text on white spaces and tabulation symbols only. If some long word can't fit the `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     */"
     }
   },
   "AgAxisCaptionOptions": {
@@ -968,7 +978,31 @@
       "legendItemDoubleClick?": "/** The listener to call when a legend item is double clicked. */"
     }
   },
-  "AgChartLegendOptions": {
+  "AgChartBaseLegendOptions": {
+    "meta": {},
+    "type": {
+      "position?": "AgChartLegendPosition",
+      "orientation?": "AgChartOrientation",
+      "maxWidth?": "PixelSize",
+      "maxHeight?": "PixelSize",
+      "spacing?": "PixelSize",
+      "item?": "AgChartLegendItemOptions",
+      "reverseOrder?": "boolean",
+      "listeners?": "AgChartLegendListeners",
+      "pagination?": "AgChartLegendPaginationOptions"
+    },
+    "docs": {
+      "position?": "/** Where the legend should show in relation to the chart. */",
+      "orientation?": "/** How the legend items should be arranged. */",
+      "maxWidth?": "/** Used to constrain the width of the legend. */",
+      "maxHeight?": "/** Used to constrain the height of the legend. */",
+      "spacing?": "/** The spacing in pixels to use outside the legend. */",
+      "item?": "/** Configuration for the legend items that consist of a marker and a label. */",
+      "reverseOrder?": "/** Reverse the display order of legend items if `true`. */",
+      "listeners?": "/** Optional callbacks for specific legend-related events. */"
+    }
+  },
+  "AgCartesianChartLegendOptions": {
     "meta": {},
     "type": {
       "enabled?": "boolean",
@@ -984,6 +1018,58 @@
     },
     "docs": {
       "enabled?": "/** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */",
+      "position?": "/** Where the legend should show in relation to the chart. */",
+      "orientation?": "/** How the legend items should be arranged. */",
+      "maxWidth?": "/** Used to constrain the width of the legend. */",
+      "maxHeight?": "/** Used to constrain the height of the legend. */",
+      "spacing?": "/** The spacing in pixels to use outside the legend. */",
+      "item?": "/** Configuration for the legend items that consist of a marker and a label. */",
+      "reverseOrder?": "/** Reverse the display order of legend items if `true`. */",
+      "listeners?": "/** Optional callbacks for specific legend-related events. */"
+    }
+  },
+  "AgHierarchyChartLegendOptions": {
+    "meta": {},
+    "type": {
+      "enabled?": "boolean",
+      "position?": "AgChartLegendPosition",
+      "orientation?": "AgChartOrientation",
+      "maxWidth?": "PixelSize",
+      "maxHeight?": "PixelSize",
+      "spacing?": "PixelSize",
+      "item?": "AgChartLegendItemOptions",
+      "reverseOrder?": "boolean",
+      "listeners?": "AgChartLegendListeners",
+      "pagination?": "AgChartLegendPaginationOptions"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */",
+      "position?": "/** Where the legend should show in relation to the chart. */",
+      "orientation?": "/** How the legend items should be arranged. */",
+      "maxWidth?": "/** Used to constrain the width of the legend. */",
+      "maxHeight?": "/** Used to constrain the height of the legend. */",
+      "spacing?": "/** The spacing in pixels to use outside the legend. */",
+      "item?": "/** Configuration for the legend items that consist of a marker and a label. */",
+      "reverseOrder?": "/** Reverse the display order of legend items if `true`. */",
+      "listeners?": "/** Optional callbacks for specific legend-related events. */"
+    }
+  },
+  "AgPolarChartLegendOptions": {
+    "meta": {},
+    "type": {
+      "enabled?": "boolean",
+      "position?": "AgChartLegendPosition",
+      "orientation?": "AgChartOrientation",
+      "maxWidth?": "PixelSize",
+      "maxHeight?": "PixelSize",
+      "spacing?": "PixelSize",
+      "item?": "AgChartLegendItemOptions",
+      "reverseOrder?": "boolean",
+      "listeners?": "AgChartLegendListeners",
+      "pagination?": "AgChartLegendPaginationOptions"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not to show the legend. The legend is shown by default. */",
       "position?": "/** Where the legend should show in relation to the chart. */",
       "orientation?": "/** How the legend items should be arranged. */",
       "maxWidth?": "/** Used to constrain the width of the legend. */",
@@ -1075,7 +1161,7 @@
       "class?": "/** A class name to be added to the tooltip element of the chart. */",
       "tracking?": "/** @deprecated since v7.2.0 (ag-grid v29.2.0) If true, for series with markers the tooltip will be shown to the closest marker. */",
       "range?": "/** Range from a point that triggers the tooltip to show. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "position?": "/** The position of the tooltip. */",
       "delay?": "/** The time interval (in milliseconds) after which the tooltip is shown. */"
     }
   },
@@ -1095,7 +1181,7 @@
       "yOffset?": "PixelSize"
     },
     "docs": {
-      "type": "/** The type of positioning for the tooltip. By default, the tooltip follows the pointer. */",
+      "type": "/** The type of positioning for the tooltip. By default, for Bar, Histogram, Treemap, Pie and Doughnut series, the tooltip follows the pointer. For Line, Area and Scatter series, the tooltip is anchored to the highlighted node. */",
       "xOffset?": "/** The horizontal offset in pixels for the position of the tooltip. */",
       "yOffset?": "/** The vertical offset in pixels for the position of the tooltip. */"
     }
@@ -1257,7 +1343,6 @@
       "subtitle?": "AgChartSubtitleOptions",
       "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
-      "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
@@ -1276,7 +1361,6 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
-      "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -2038,7 +2122,7 @@
     "docs": {
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
       "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "position?": "/** The position of the tooltip. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
@@ -2092,7 +2176,7 @@
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
       "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "position?": "/** The position of the tooltip. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
@@ -2161,7 +2245,7 @@
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
       "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "position?": "/** The position of the tooltip. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
@@ -2289,7 +2373,7 @@
     "docs": {
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
       "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "position?": "/** The position of the tooltip. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
@@ -2443,7 +2527,7 @@
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
       "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "position?": "/** The position of the tooltip. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
@@ -2462,6 +2546,7 @@
       "yKey?": "string",
       "xName?": "string",
       "yName?": "string",
+      "legendItemName?": "string",
       "fill?": "CssColor",
       "stroke?": "CssColor",
       "strokeWidth?": "PixelSize",
@@ -2488,9 +2573,10 @@
       "stackGroup?": "/** An ID to be used to group stacked items. */",
       "normalizedTo?": "/** The number to normalise the bar stacks to. Has no effect when `grouped` is `true`. For example, if `normalizedTo` is set to `100`, the bar stacks will all be scaled proportionally so that each of their totals is 100. */",
       "xKey?": "/** The key to use to retrieve x-values from the data. */",
-      "yKey?": "/** The keys to use to retrieve y-values from the data. */",
+      "yKey?": "/** The key to use to retrieve y-values from the data. */",
       "xName?": "/** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
       "yName?": "/** Human-readable description of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "legendItemName?": "/** Human-readable description of the y-values. If supplied, matching items with the same value will be toggled together. */",
       "fill?": "/** The colour to use for the fill of the bars. */",
       "stroke?": "/** The colours to use for the stroke of the bars. */",
       "strokeWidth?": "/** The width in pixels of the stroke for the bars. */",
@@ -2573,7 +2659,7 @@
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
       "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "position?": "/** The position of the tooltip. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
@@ -2735,7 +2821,7 @@
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
       "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "position?": "/** The position of the tooltip. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
@@ -2752,7 +2838,8 @@
       "color?": "CssColor",
       "spacing?": "number",
       "maxWidth?": "PixelSize",
-      "maxHeight?": "PixelSize"
+      "maxHeight?": "PixelSize",
+      "wrapping?": "TextWrap"
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",
@@ -2764,7 +2851,8 @@
       "color?": "/** The colour to use for the text. */",
       "spacing?": "/** Spacing added to help position the text. */",
       "maxWidth?": "/** Used to constrain the width of the title. */",
-      "maxHeight?": "/** Used to constrain the height of the title. */"
+      "maxHeight?": "/** Used to constrain the height of the title. */",
+      "wrapping?": "/** Text wrapping strategy for long texts.\n     * `'always'` will break the words that are longer than `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but insert the hyphens (`-`) into the word breaks.\n     * `'on-space'` will break the text on white spaces and tabulation symbols only. If some long word can't fit the `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     */"
     }
   },
   "AgPieSeriesCalloutOptions": {
@@ -2889,7 +2977,7 @@
       "calloutLabelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "sectorLabelKey?": "/** The key to use to retrieve sector label values from the data. */",
       "sectorLabelName?": "/** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
-      "legendItemKey?": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */",
+      "legendItemKey?": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. */",
       "fills?": "/** The colours to cycle through for the fills of the sectors. */",
       "strokes?": "/** The colours to cycle through for the strokes of the sectors. */",
       "fillOpacity?": "/** The opacity of the fill for the sectors. */",
@@ -3048,7 +3136,7 @@
       "renderer?": "/** Function used to create the content for tooltips. */",
       "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
       "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
-      "position?": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "position?": "/** The position of the tooltip. */",
       "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
@@ -3252,6 +3340,7 @@
       "type?": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram' | TAddonType",
       "axes?": "AgCartesianAxisOptions[]",
       "series?": "AgCartesianSeriesOptions<TAddonSeries>[]",
+      "legend?": "AgCartesianChartLegendOptions",
       "navigator?": "AgNavigatorOptions",
       "data?": "any[]",
       "container?": "HTMLElement | null",
@@ -3265,7 +3354,6 @@
       "subtitle?": "AgChartSubtitleOptions",
       "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
-      "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
@@ -3275,6 +3363,7 @@
       "type?": "/** If specified overrides the default series type. */",
       "axes?": "/** Axis configurations. */",
       "series?": "/** Series configurations. */",
+      "legend?": "/** Configuration for the chart legend. */",
       "navigator?": "/** Configuration for the chart navigator. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
@@ -3288,7 +3377,6 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
-      "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -3300,6 +3388,7 @@
     "type": {
       "type?": "'pie'",
       "series?": "AgPolarSeriesOptions[]",
+      "legend?": "AgPolarChartLegendOptions",
       "data?": "any[]",
       "container?": "HTMLElement | null",
       "width?": "PixelSize",
@@ -3312,7 +3401,6 @@
       "subtitle?": "AgChartSubtitleOptions",
       "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
-      "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
@@ -3321,6 +3409,7 @@
     "docs": {
       "type?": "/** If specified overrides the default series type. */",
       "series?": "/** Series configurations. */",
+      "legend?": "/** Configuration for the chart legend. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
       "width?": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
@@ -3333,7 +3422,6 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
-      "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -3346,6 +3434,7 @@
       "type?": "'treemap'",
       "data?": "any",
       "series?": "AgHierarchySeriesOptions[]",
+      "legend?": "AgHierarchyChartLegendOptions",
       "container?": "HTMLElement | null",
       "width?": "PixelSize",
       "height?": "PixelSize",
@@ -3357,7 +3446,6 @@
       "subtitle?": "AgChartSubtitleOptions",
       "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
-      "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
@@ -3366,6 +3454,7 @@
     "docs": {
       "type?": "/** If specified overrides the default series type. */",
       "series?": "/** Series configurations. */",
+      "legend?": "/** Configuration for the chart legend. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
       "width?": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
@@ -3378,7 +3467,6 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
-      "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -3599,15 +3687,23 @@
       "isTypeAlias": true,
       "typeParams": ["K", "Grouped extends boolean | undefined"]
     },
-    "type": "{ readonly props: PropertyDefinition<K>[]; readonly groupByKeys?: Grouped; readonly groupByFn?: GroupByFn; readonly normaliseTo?: number; readonly dataVisible?: boolean; }"
+    "type": "{ readonly props: PropertyDefinition<K>[]; readonly groupByKeys?: Grouped; readonly groupByFn?: GroupByFn; readonly dataVisible?: boolean; }"
   },
   "PropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
-    "type": "DatumPropertyDefinition<K> | AggregatePropertyDefinition<any, any, any> | ReducerOutputPropertyDefinition<any> | ProcessorOutputPropertyDefinition<any>"
+    "type": "DatumPropertyDefinition<K> | AggregatePropertyDefinition<any, any, any> | PropertyValueProcessorDefinition<any> | GroupValueProcessorDefinition<any, any> | ReducerOutputPropertyDefinition<any> | ProcessorOutputPropertyDefinition<any>"
+  },
+  "ProcessorFn": {
+    "meta": { "isTypeAlias": true },
+    "type": "(datum: any, previousDatum?: any) => any"
+  },
+  "PropertyId": {
+    "meta": { "isTypeAlias": true, "typeParams": ["K extends string"] },
+    "type": "K | { id: string; }"
   },
   "DatumPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
-    "type": "{ type: 'key' | 'value'; valueType: DatumPropertyType; property: K; invalidValue?: any; missingValue?: any; validation?: (datum: any) => boolean; }"
+    "type": "{ id?: string; type: 'key' | 'value'; valueType: DatumPropertyType; property: K; invalidValue?: any; missingValue?: any; validation?: (datum: any) => boolean; processor?: () => ProcessorFn; }"
   },
   "InternalDatumPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["K"] },
@@ -3616,17 +3712,33 @@
   "AggregatePropertyDefinition": {
     "meta": {
       "isTypeAlias": true,
-      "typeParams": ["D", "K extends keyof D", "R = [number, number]", "R2 = R"]
+      "typeParams": [
+        "D",
+        "K extends keyof D & string",
+        "R = [number, number]",
+        "R2 = R"
+      ]
     },
-    "type": "{ type: 'aggregate'; aggregateFunction: (values: D[K][], keys?: D[K][]) => R; groupAggregateFunction?: (next?: R, acc?: R2) => R2; finalFunction?: (result: R2) => [ number, number ]; properties: K[]; }"
+    "type": "{ id?: string; type: 'aggregate'; aggregateFunction: (values: D[K][], keys?: D[K][]) => R; groupAggregateFunction?: (next?: R, acc?: R2) => R2; finalFunction?: (result: R2) => [ number, number ]; properties: PropertyId<K>[]; }"
+  },
+  "GroupValueProcessorDefinition": {
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["D", "K extends keyof D & string"]
+    },
+    "type": "{ id?: string; type: 'group-value-processor'; properties: PropertyId<K>[]; adjust: () => (values: D[K][], indexes: number[]) => void; }"
+  },
+  "PropertyValueProcessorDefinition": {
+    "meta": { "isTypeAlias": true, "typeParams": ["D"] },
+    "type": "{ id?: string; type: 'property-value-processor'; property: PropertyId<keyof D & string>; adjust: () => (processedData: ProcessedData<D>, valueIndex: number) => void; }"
   },
   "ReducerOutputPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["R"] },
-    "type": "{ type: 'reducer'; property: string; initialValue?: R; reducer: () => (acc: R, next: UngroupedDataItem<any, any>) => R; }"
+    "type": "{ id?: string; type: 'reducer'; property: string; initialValue?: R; reducer: () => (acc: R, next: UngroupedDataItem<any, any>) => R; }"
   },
   "ProcessorOutputPropertyDefinition": {
     "meta": { "isTypeAlias": true, "typeParams": ["R"] },
-    "type": "{ type: 'processor'; property: string; calculate: (data: ProcessedData<any>) => R; }"
+    "type": "{ id?: string; type: 'processor'; property: string; calculate: (data: ProcessedData<any>) => R; }"
   },
   "Series": {
     "meta": {},
@@ -3660,6 +3772,51 @@
       "max": "number",
       "fn": "(bbox: BBox) => number",
       "padding": "number"
+    }
+  },
+  "AnimationId": { "meta": { "isTypeAlias": true }, "type": "string" },
+  "AnimationEventType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'animation-frame'"
+  },
+  "AnimationEvent": {
+    "meta": { "typeParams": ["AnimationEventType"] },
+    "type": { "type": "AnimationEventType", "deltaMs": "number" }
+  },
+  "AnimationOptions": {
+    "meta": { "typeParams": ["T"] },
+    "type": {
+      "driver": "Driver",
+      "autoplay?": "boolean",
+      "delay?": "number",
+      "repeat?": "number",
+      "repeatType?": "RepeatType",
+      "onComplete?": "() => void",
+      "onPlay?": "() => void",
+      "onRepeat?": "() => void",
+      "onStop?": "() => void",
+      "onUpdate?": "(v: T) => void",
+      "duration": "number",
+      "from": "T",
+      "to": "T",
+      "ease?": "Easing<T>"
+    }
+  },
+  "AnimationManyOptions": {
+    "meta": { "typeParams": ["T"] },
+    "type": {
+      "driver": "Driver",
+      "autoplay?": "boolean",
+      "delay?": "number",
+      "repeat?": "number",
+      "repeatType?": "RepeatType",
+      "onComplete?": "() => void",
+      "onPlay?": "() => void",
+      "onRepeat?": "() => void",
+      "onStop?": "() => void",
+      "onUpdate?": "(v: AnimationOptions<T>) => void",
+      "duration": "number",
+      "ease?": "Easing<AnimationOptions<T>>"
     }
   },
   "ChartEventType": {
@@ -4046,6 +4203,14 @@
       "hasMarkers": "boolean"
     }
   },
+  "CartesianAnimationState": {
+    "meta": { "isTypeAlias": true },
+    "type": "'empty' | 'ready'"
+  },
+  "CartesianAnimationEvent": {
+    "meta": { "isTypeAlias": true },
+    "type": "'update' | 'highlight'"
+  },
   "HistogramSeriesNodeTag": {
     "meta": { "isEnum": true },
     "type": ["Bin", "Label"],
@@ -4153,6 +4318,8 @@
     "type": {
       "index": "number",
       "radius": "number",
+      "angleValue": "number",
+      "radiusValue?": "number",
       "startAngle": "number",
       "endAngle": "number",
       "midAngle": "number",
@@ -4160,7 +4327,8 @@
       "midSin": "number",
       "calloutLabel?": "{ readonly text: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; hidden: boolean; collisionTextAlign?: CanvasTextAlign; collisionOffsetY: number; box?: BBox; }",
       "sectorLabel?": "{ readonly text: string; }",
-      "sectorFormat": "AgPieSeriesFormat",
+      "sectorFormat": "Required<AgPieSeriesFormat>",
+      "legendItemKey?": "string",
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
@@ -4173,6 +4341,11 @@
     "type": ["Sector", "Callout", "Label"],
     "docs": [null, null, null]
   },
+  "PieAnimationState": {
+    "meta": { "isTypeAlias": true },
+    "type": "'empty' | 'ready'"
+  },
+  "PieAnimationEvent": { "meta": { "isTypeAlias": true }, "type": "'update'" },
   "SeriesNodeDatum": {
     "meta": {
       "doc": "/** Processed series datum used in node selections,\n * contains information used to render pie sectors, bars, markers, etc.\n */"
@@ -4247,7 +4420,7 @@
       "pageY": "number",
       "offsetX": "number",
       "offsetY": "number",
-      "showArrow": "boolean",
+      "showArrow?": "boolean",
       "position?": "{ xOffset?: number; yOffset?: number; }",
       "enableInteraction?": "boolean",
       "event": "Event | InteractionEvent<any>"
@@ -4262,6 +4435,74 @@
     "type": "(type: ChartUpdateType, options: { forceNodeDataRefresh?: boolean; }) => void"
   },
   "Tick": { "meta": {}, "type": { "labels": "string[]" } },
+  "KeyframesOptions": {
+    "meta": { "typeParams": ["T"] },
+    "type": {
+      "duration": "number",
+      "from": "T",
+      "to": "T",
+      "ease?": "Easing<T>"
+    }
+  },
+  "RepeatType": {
+    "meta": { "isEnum": true },
+    "type": ["Loop = 'loop'", "Reverse = 'reverse'"],
+    "docs": [null, null]
+  },
+  "AnimationControls": {
+    "meta": {},
+    "type": {
+      "isPlaying": "boolean",
+      "play": "() => AnimationControls",
+      "pause": "() => AnimationControls",
+      "stop": "() => AnimationControls",
+      "reset": "() => AnimationControls"
+    }
+  },
+  "DriverControls": {
+    "meta": {},
+    "type": {
+      "start": "() => void",
+      "stop": "() => void",
+      "reset": "() => void"
+    }
+  },
+  "Driver": {
+    "meta": { "isTypeAlias": true },
+    "type": "(update: (time: number) => void) => DriverControls"
+  },
+  "TweenOptions": {
+    "meta": { "typeParams": ["T"] },
+    "type": {
+      "driver": "Driver",
+      "duration": "number",
+      "from": "T",
+      "to": "T",
+      "ease?": "Easing<T>"
+    }
+  },
+  "TweenControls": {
+    "meta": { "typeParams": ["T"] },
+    "type": {
+      "start": "(onUpdate?: (value: T) => void) => TweenControls<T>",
+      "stop": "() => TweenControls<T>"
+    }
+  },
+  "EasingOpts": {
+    "meta": { "typeParams": ["T"] },
+    "type": { "from": "T", "to": "T" }
+  },
+  "Easing": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
+    "type": "(opts: EasingOpts<T>) => (time: number) => T"
+  },
+  "StateDefinition": {
+    "meta": { "typeParams": ["State extends string", "Event extends string"] },
+    "type": {
+      "actions?": "{ onEnter?: () => void; onExit?: () => void; }",
+      "on?": "{[key in Event]?: { target: State; action: (data?: any) => void; }}"
+    }
+  },
   "ScaleClampParams": {
     "meta": {},
     "type": { "strict": "boolean" },
@@ -4432,6 +4673,17 @@
       "lineHeight?": "number"
     }
   },
+  "WordWrapProperties": {
+    "meta": {},
+    "type": { "breakWord?": "boolean", "hyphens?": "boolean" }
+  },
+  "TextMeasurer": {
+    "meta": {},
+    "type": {
+      "size(text: string)": "{ width: number; height: number; }",
+      "width(line: string)": "number"
+    }
+  },
   "Comparator": {
     "meta": { "isTypeAlias": true, "typeParams": ["T"] },
     "type": "(a: T, b: T) => number"
@@ -4517,12 +4769,13 @@
     "type": {
       "scene": "Scene",
       "mode": "'standalone' | 'integrated'",
+      "animationManager": "AnimationManager",
       "chartEventManager": "ChartEventManager",
       "cursorManager": "CursorManager",
       "highlightManager": "HighlightManager",
       "interactionManager": "InteractionManager",
-      "zoomManager": "ZoomManager",
       "tooltipManager": "TooltipManager",
+      "zoomManager": "ZoomManager",
       "dataService": "DataService",
       "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>",
       "updateService": "UpdateService"
@@ -4534,12 +4787,13 @@
       "parent": "P",
       "scene": "Scene",
       "mode": "'standalone' | 'integrated'",
+      "animationManager": "AnimationManager",
       "chartEventManager": "ChartEventManager",
       "cursorManager": "CursorManager",
       "highlightManager": "HighlightManager",
       "interactionManager": "InteractionManager",
-      "zoomManager": "ZoomManager",
       "tooltipManager": "TooltipManager",
+      "zoomManager": "ZoomManager",
       "dataService": "DataService",
       "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>",
       "updateService": "UpdateService"

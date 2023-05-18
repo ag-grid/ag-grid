@@ -1,4 +1,4 @@
-import { Text } from './scene/shape/text';
+import { Text, createTextMeasurer, getFont } from './scene/shape/text';
 import { PointerEvents } from './scene/node';
 import {
     BOOLEAN,
@@ -8,9 +8,10 @@ import {
     OPT_FONT_WEIGHT,
     OPT_NUMBER,
     STRING,
+    TEXT_WRAP,
     Validate,
 } from './util/validation';
-import { FontStyle, FontWeight } from './chart/agChartOptions';
+import { FontStyle, FontWeight, TextWrap } from './chart/agChartOptions';
 import { ProxyPropertyOnWrite } from './util/proxy';
 
 export class Caption {
@@ -57,6 +58,9 @@ export class Caption {
     @Validate(OPT_NUMBER(0))
     maxHeight?: number = undefined;
 
+    @Validate(TEXT_WRAP)
+    wrapping: TextWrap = 'always';
+
     constructor() {
         const node = this.node;
         node.textAlign = 'center';
@@ -64,14 +68,25 @@ export class Caption {
     }
 
     computeTextWrap(containerWidth: number, containerHeight: number) {
-        const { text } = this;
+        const { text, wrapping } = this;
         const maxWidth = this.maxWidth == null ? containerWidth : Math.min(this.maxWidth, containerWidth);
         const maxHeight = this.maxHeight == null ? containerHeight : this.maxHeight;
         if (!isFinite(maxWidth) && !isFinite(maxHeight)) {
             this.node.text = text;
             return;
         }
-        const wrapped = Text.wrap(text, maxWidth, maxHeight, this);
+        if (wrapping === 'never') {
+            const font = getFont(this);
+            const measurer = createTextMeasurer(font);
+            const trunc = Text.truncateLine(text, maxWidth, measurer);
+            this.node.text = trunc;
+            return;
+        }
+        const wrapOptions = {
+            hyphens: wrapping === 'hyphenate',
+            breakWord: wrapping === 'always' || wrapping === 'hyphenate',
+        };
+        const wrapped = Text.wrap(text, maxWidth, maxHeight, this, wrapOptions);
         this.node.text = wrapped;
     }
 }

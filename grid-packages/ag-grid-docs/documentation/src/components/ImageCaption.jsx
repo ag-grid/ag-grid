@@ -1,8 +1,8 @@
-import React from 'react';
 import classnames from 'classnames';
+import React from 'react';
 import Gif from './Gif';
-import { useImageFileNodes, getImage } from './use-image-file-nodes';
 import styles from './ImageCaption.module.scss';
+import { getImage, useImageFileNodes } from './use-image-file-nodes';
 
 /**
  * This can be used to show an image in a box, along with text if provided, and provides various options for configuring
@@ -19,7 +19,8 @@ const ImageCaption = ({
     height,
     maxwidth: maxWidth,
     minwidth: minWidth,
-    width }) => {
+    width,
+}) => {
     const { fluidImages, images } = useImageFileNodes();
 
     let imgSrc;
@@ -41,29 +42,43 @@ const ImageCaption = ({
 
     const style = {};
 
-    if (width != null) { style.width = width; }
-    if (minWidth != null) { style.minWidth = minWidth; }
-    if (maxWidth != null) { style.maxWidth = maxWidth; }
-    if (height != null) { style.height = height; }
+    if (width != null) {
+        style.width = width;
+    }
+    if (minWidth != null) {
+        style.minWidth = minWidth;
+    }
+    if (maxWidth != null) {
+        style.maxWidth = maxWidth;
+    }
+    if (height != null) {
+        style.height = height;
+    }
 
-    const description = children &&
-        <div className={classnames(styles['image-caption__body'], { [styles['image-caption__body--description-top']]: descriptionTop })}>
-            <div className={styles['image-caption__body-text']}>{children}</div>
-        </div>;
-
-    const imageClasses = classnames(
-        styles['image-caption__image'],
-        {
-            [styles['image-caption__image--centered']]: centered,
-            [styles['image-caption__image--constrained']]: constrained,
-        });
+    const description = children && (
+        <div
+            className={classnames(styles.body, {
+                [styles.top]: descriptionTop,
+            })}
+        >
+            <div className={styles.bodyText}>{children}</div>
+        </div>
+    );
 
     return (
-        <div className={classnames(styles['image-caption'], { [styles['image-caption--centered']]: centered, [styles['image-caption--constrained']]: constrained })} style={style}>
+        <div
+            className={classnames(styles.imageCaption, {
+                [styles.centered]: centered,
+                [styles.constrained]: constrained,
+            })}
+            style={style}
+        >
             {descriptionTop && description}
-            {src.endsWith('.gif') ?
-                <Gif src={src} alt={alt} className={imageClasses} wrapped={true} /> :
-                <img src={imgSrc} className={imageClasses} alt={alt} />}
+            {src.endsWith('.gif') ? (
+                <Gif src={src} alt={alt} className={styles.image} wrapped={true} />
+            ) : (
+                <img src={imgSrc} className={styles.image} alt={alt} />
+            )}
             {!descriptionTop && description}
         </div>
     );

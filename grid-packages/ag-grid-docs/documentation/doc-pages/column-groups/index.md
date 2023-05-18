@@ -186,5 +186,6 @@ In the example below, note the following:
 
 <grid-example title='Span Header Height' name='span-header-height' type='generated' options='{ "exampleHeight": 300 }'></grid-example>
 
-[[warning]]
+<warning>
 | The property `spanHeaderHeight`  does not work with `autoHeaderHeight`.
+</warning>

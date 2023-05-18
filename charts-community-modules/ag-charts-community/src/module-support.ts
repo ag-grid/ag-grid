@@ -7,6 +7,7 @@ export * from './chart/chartAxisDirection';
 export * from './chart/data/dataModel';
 export * from './chart/updateService';
 export * from './chart/layout/layoutService';
+export * from './chart/interaction/animationManager';
 export * from './chart/interaction/cursorManager';
 export * from './chart/interaction/highlightManager';
 export * from './chart/interaction/interactionManager';

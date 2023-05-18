@@ -11,7 +11,7 @@ The same data that is in the grid gets exported, but none of the GUI representat
 - The raw values, and not the result of cell renderer will get used, meaning:
     - Value Getters will be used.
     - Cell Renderers will **NOT** be used.
-    - Cell Formatters will **NOT** be used (use `processCellCallback` instead).
+    - Cell Formatters will **NOT** be used (use `processCellCallback` instead), unless [Use Value Formatter for Export](/value-formatters/#use-value-formatter-for-export) is enabled.
 
 - Cell styles are not exported.
 - If row grouping:
@@ -20,15 +20,17 @@ The same data that is in the grid gets exported, but none of the GUI representat
     - By default, group names will be in the format "-> Parent Name -> Child Name" (use `processRowGroupCallback` to change this).
     - Row group footers (`groupIncludeFooter=true`) will **NOT** be exported - this is a GUI addition only.
 
-[[note]]
-| The CSV export will be enabled by default. If you want to disable it, you can set the property `suppressCsvExport = true` in your gridOptions.
+<note>
+The CSV export will be enabled by default. If you want to disable it, you can set the property `suppressCsvExport = true` in your gridOptions.
+</note>
 
 ## Security Concerns
 
 When opening CSV files, spreadsheet applications like Excel, Apple Numbers, Google Sheets and others will automatically execute cell values that start with the following symbols as formulas: `+`, `-`, `=`, `@`, `Tab (0x09)` and `Carriage Return (0x0D)`. In order to prevent any malicious content from being exported we recommend using the `callback` methods shown in the [CSV Export Params](/csv-export/#csvexportparams) to modify the exported cell values so that they do NOT start with any of the characters listed above. This way the applications will not execute the cell value directly if it starts with the characters listed above. If you'd like to keep the cell values unchanged when exporting, please allow exporting to Excel only.
 
-[[note]]
-| Detailed info regarding CSV Injection can be found in the [OWASP CSV Injection](https://owasp.org/www-community/attacks/CSV_Injection) website.
+<note>
+Detailed info regarding CSV Injection can be found in the [OWASP CSV Injection](https://owasp.org/www-community/attacks/CSV_Injection) website.
+</note>
 
 ## Standard Export
 

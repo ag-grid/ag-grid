@@ -12,6 +12,10 @@ table:not(.no-zebra) tr:nth-child(even) {
     background-color: var(--table-odd-row-background-color);
 }
 
+tbody {
+    vertical-align: top;
+}
+
 tr {
     border-top: 1px solid var(--border-color);
 }

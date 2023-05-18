@@ -1,6 +1,5 @@
-[[only-angular]]
-|
-|```js
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
 |// define cellRenderer to be reused
 |@Component({
 |    selector: 'colour-cell',
@@ -53,4 +52,5 @@
 |   ..other methods
 |}
 |
-|```
+</snippet>
+</framework-specific-section>

@@ -413,7 +413,6 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     protected requestedRange: number[] = [0, 1];
     set range(value: number[]) {
         this.requestedRange = value.slice();
-        this.updateRange();
     }
     get range(): number[] {
         return this.requestedRange;
@@ -593,6 +592,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      */
     update(primaryTickCount?: number): number | undefined {
+        this.updateRange();
         this.calculateDomain();
 
         const {

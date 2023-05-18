@@ -1,43 +1,47 @@
 import React from 'react';
-import classnames from 'classnames';
-import chartGallery from '../../../doc-pages/charts-overview/gallery.json';
-import thumbnails from './thumbnails';
 import toKebabCase from 'utils/to-kebab-case';
+import chartGallery from '../../../doc-pages/charts-overview/gallery.json';
 import styles from './ChartGallery.module.scss';
+import thumbnails from './thumbnails';
 
 /**
  * This used to display the chart gallery on the Standalone Charts Overview page.
  */
 const ChartGallery = () => {
     const filter = (c) => !c.startsWith('_');
-    const categories = Object.keys(chartGallery)
-        .filter(filter);
+    const categories = Object.keys(chartGallery).filter(filter);
 
-    return <>
-        {categories.map(c => <GallerySection key={c} title={c} exampleNames={Object.keys(chartGallery[c]).filter(filter)} />)}
-    </>;
+    return (
+        <>
+            {categories.map((c) => (
+                <GallerySection key={c} title={c} exampleNames={Object.keys(chartGallery[c]).filter(filter)} />
+            ))}
+        </>
+    );
 };
 
-const GallerySection = ({ title, exampleNames }) =>
+const GallerySection = ({ title, exampleNames }) => (
     <>
-        <h3 id={toKebabCase(title)} className={styles['chart-gallery__title']}>{title}</h3>
-        <div className={styles['chart-gallery']}>
-            {exampleNames.map(name => <GalleryItem key={`${title}_${name}`} name={name} />)}
-            {[...new Array((3 - exampleNames.length % 3) % 3)].map((_, i) => <EmptyGalleryItem key={`empty_${i}`} />)}
+        <h3 id={toKebabCase(title)} className={styles.title}>
+            {title}
+        </h3>
+        <div className={styles.chartGallery}>
+            {exampleNames.map((name) => (
+                <GalleryItem key={`${title}_${name}`} name={name} />
+            ))}
         </div>
-    </>;
+    </>
+);
 
 const GalleryItem = ({ name }) => {
     const kebabCase = toKebabCase(name);
 
-    return <div className={styles['chart-gallery-item']}>
-        <a href={`../gallery/${kebabCase}/`} className={styles['chart-gallery-item__link']}>
-            <img className={styles['chart-gallery-item__thumbnail']} src={thumbnails[kebabCase]} alt={name} /><br />
-            <div className={styles['chart-gallery-item__name']}>{name}</div>
+    return (
+        <a href={`../gallery/${kebabCase}/`} className={styles.galleryItem}>
+            <img className={styles.thumbnail} src={thumbnails[kebabCase]} alt={name} />
+            <span className={styles.name}>{name}</span>
         </a>
-    </div>;
+    );
 };
-
-const EmptyGalleryItem = () => <div className={classnames(styles['chart-gallery-item'], styles['chart-gallery-item--empty'])}></div>;
 
 export default ChartGallery;

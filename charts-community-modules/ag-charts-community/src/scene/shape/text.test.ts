@@ -54,11 +54,17 @@ describe('Text', () => {
             maxWidth: number;
             maxHeight: number;
             truncate: boolean;
+            breakWord: boolean;
+            hyphens: boolean;
+            x?: number;
+            y?: number;
         }[] = [
             {
                 maxWidth: 100,
                 maxHeight: 100,
                 truncate: true,
+                breakWord: true,
+                hyphens: true,
                 textOptions: [
                     {
                         ...BASE_OPTIONS,
@@ -78,6 +84,8 @@ describe('Text', () => {
                 maxWidth: 50,
                 maxHeight: 50,
                 truncate: true,
+                breakWord: true,
+                hyphens: true,
                 textOptions: [
                     {
                         ...BASE_OPTIONS,
@@ -97,6 +105,8 @@ describe('Text', () => {
                 maxWidth: 25,
                 maxHeight: 25,
                 truncate: true,
+                breakWord: true,
+                hyphens: true,
                 textOptions: [
                     {
                         ...BASE_OPTIONS,
@@ -113,9 +123,76 @@ describe('Text', () => {
                 ],
             },
             {
+                maxWidth: 100,
+                maxHeight: 50,
+                truncate: true,
+                breakWord: false,
+                hyphens: false,
+                textOptions: [
+                    {
+                        ...BASE_OPTIONS,
+                        text: 'Testing Sicherheitskontrolle breaking on space',
+                    },
+                    {
+                        ...BASE_OPTIONS,
+                        text: 'Testing Sicherheitskontrolle breaking on space longer string',
+                    },
+                    {
+                        ...BASE_OPTIONS,
+                        text: 'Testing Sicherheitskontrolle breaking on space \n multi-line string with two lines',
+                    },
+                ],
+            },
+            {
+                maxWidth: 100,
+                maxHeight: 100,
+                truncate: true,
+                breakWord: true,
+                hyphens: true,
+                textOptions: [
+                    {
+                        ...BASE_OPTIONS,
+                        text: 'Testing Sicherheitskontrolle with hyphens',
+                    },
+                    {
+                        ...BASE_OPTIONS,
+                        text: 'Testing Sicherheitskontrolle with hyphens longer string',
+                    },
+                    {
+                        ...BASE_OPTIONS,
+                        text: 'Testing Sicherheitskontrolle with hyphens \n multi-line string with two lines',
+                    },
+                ],
+            },
+            {
+                maxWidth: 100,
+                maxHeight: 100,
+                truncate: true,
+                breakWord: true,
+                hyphens: false,
+                textOptions: [
+                    {
+                        ...BASE_OPTIONS,
+                        text: 'Testing Sicherheitskontrolle without hyphens',
+                    },
+                    {
+                        ...BASE_OPTIONS,
+                        text: 'Testing Sicherheitskontrolle without hyphens longer string',
+                    },
+                    {
+                        ...BASE_OPTIONS,
+                        text: 'Testing Sicherheitskontrolle without hyphens \n multi-line string with two lines',
+                    },
+                ],
+            },
+            {
                 maxWidth: 50,
                 maxHeight: 50,
                 truncate: false,
+                breakWord: true,
+                hyphens: true,
+                x: 400,
+                y: 0,
                 textOptions: [
                     {
                         ...BASE_OPTIONS,
@@ -180,18 +257,21 @@ describe('Text', () => {
             let rowHeight = 0;
             for (const WRAPPING_CASE in WRAPPING_TEST_CASES) {
                 const testCaseRow = WRAPPING_TEST_CASES[WRAPPING_CASE];
-                let currX = GAP;
-                currY = currY + rowHeight + GAP;
+                let currX = GAP + (testCaseRow.x ?? 0);
+                currY = (testCaseRow.y ?? currY + rowHeight) + GAP;
                 rowHeight = 0;
 
-                const { maxWidth, maxHeight, truncate } = testCaseRow;
+                const { maxWidth, maxHeight, truncate, breakWord, hyphens } = testCaseRow;
 
                 for (const testCase of testCaseRow.textOptions) {
                     const textNode = Object.assign(new Text(), testCase);
 
                     textNode.x = currX;
                     textNode.y = currY;
-                    textNode.text = Text.wrap(textNode.text, maxWidth, truncate ? maxHeight : Infinity, textNode);
+                    textNode.text = Text.wrap(textNode.text, maxWidth, truncate ? maxHeight : Infinity, textNode, {
+                        breakWord,
+                        hyphens,
+                    });
                     textNode._setLayerManager(mockLayerManager);
 
                     ctx.save();

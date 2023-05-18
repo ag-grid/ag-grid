@@ -405,7 +405,7 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
     const completeOptions = jsonMerge([chart.processedOptions ?? {}, processedOptions], noDataCloneMergeOptions);
     const modulesChanged = applyModules(chart, completeOptions);
 
-    const skip = ['type', 'data', 'series', 'autoSize', 'listeners', 'theme', 'legend.listeners'];
+    const skip = ['type', 'data', 'series', 'autoSize', 'listeners', 'theme', 'legend'];
     if (isAgCartesianChartOptions(processedOptions)) {
         // Append axes to defaults.
         skip.push('axes');
@@ -435,6 +435,7 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
             forceNodeDataRefresh = true;
         }
     }
+    applyLegend(chart, processedOptions);
 
     const seriesOpts = processedOptions.series as any[];
     const seriesDataUpdate = !!processedOptions.data || seriesOpts?.some((s) => s.data != null);
@@ -447,9 +448,6 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
     // Needs to be done last to avoid overrides by width/height properties.
     if (processedOptions.autoSize != null) {
         chart.autoSize = processedOptions.autoSize;
-    }
-    if (processedOptions.legend?.listeners) {
-        Object.assign(chart.legend!.listeners, processedOptions.legend.listeners ?? {});
     }
     if (processedOptions.listeners) {
         chart.updateAllSeriesListeners();
@@ -552,6 +550,16 @@ function applyAxes(chart: Chart, options: AgCartesianChartOptions) {
 
     chart.axes = createAxis(chart, optAxes);
     return true;
+}
+
+function applyLegend(chart: Chart, options: AgChartOptions) {
+    const skip = ['listeners'];
+    chart.setLegendInit((legend) => {
+        applyOptionValues(legend, options.legend || {}, { skip });
+        if (options.legend?.listeners) {
+            Object.assign(chart.legend!.listeners, options.legend.listeners ?? {});
+        }
+    });
 }
 
 function createSeries(options: SeriesOptionsTypes[]): Series[] {

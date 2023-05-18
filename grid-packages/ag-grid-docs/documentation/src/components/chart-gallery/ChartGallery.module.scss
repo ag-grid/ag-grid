@@ -1,52 +1,62 @@
-.chart-gallery {
-    width: 100%;
+@use "../../design-system/" as *;
+
+.chartGallery {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    gap: $size-2;
+    container-type: inline-size;
+}
 
-    .chart-gallery-item {
-        width: calc(50% - 6px);
-        border: 1px solid $border-color;
-        border-radius: 10px;
-        overflow: hidden;
-        text-align: center;
-        transition: transform 0.5s, box-shadow 0.5s;
-        margin-bottom: 12px;
+.title {
+    font-size: var(--font-size-massive) !important; // !important for .ag-styles specificity
+    margin-top: $size-7 !important; // !important for .ag-styles specificity
 
-        @include media-breakpoint-up(lg) {
-            width: calc(33% - 6px);
-        }
+    &:first-child {
+        margin-top: $size-4 !important; // !important for .ag-styles specificity
+    }
+}
 
-        &:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 6px -6px $ag-grey;
-        }
+.galleryItem {
+    --columns: 1;
+    --width: calc((100% - #{$size-2} * (var(--columns) - 1)) / var(--columns));
 
-        &__link {
-            display: block;
-            text-decoration: none;
-            height: 100%;
-            font-size: larger;
-        }
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: var(--width);
+    text-align: center;
+    border-radius: var(--border-radius);
+    background-color: var(--ghost-blue);
+    border: 2px solid var(--bright-blue-gray);
+    transition: color $default-transition-timing, border-color $default-transition-timing !important; // !important for .ag-styles specificity
 
-        &__thumbnail {
-            width: 100%;
-        }
-
-        &__name {
-            padding: 10px;
-            background-color: #f9fcff;
-            height: 100%;
-        }
-
-        &--empty {
-            visibility: hidden;
-        }
+    &:hover {
+        border-color: var(--link-hover-color);
     }
 
-    &__title {
-        font-size: xx-large;
-        padding-top: 1.2rem;
-        padding-bottom: 0.1rem;
+    @container (min-width: 460px) {
+        --columns: 2;
     }
+
+    @container (min-width: 720px) {
+        --columns: 3;
+    }
+
+    @container (min-width: 900px) {
+        --columns: 4;
+    }
+
+    @container (min-width: 1300px) {
+        --columns: 5;
+    }
+}
+
+.thumbnail {
+    width: 100%;
+}
+
+.name {
+    display: block;
+    padding: $size-2;
+    line-height: var(--line-height-tight);
 }

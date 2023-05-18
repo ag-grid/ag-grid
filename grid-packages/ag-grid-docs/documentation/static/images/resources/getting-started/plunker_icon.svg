@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 34 34" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;">
+    <g transform="matrix(0.165049,0,0,0.165049,0.00953707,0.331335)">
+        <g transform="matrix(6.05882,0,0,6.05882,-1551.06,-1551.06)">
+            <use xlink:href="#_Image1" x="255" y="255" width="35px" height="35px"/>
+        </g>
+        <g transform="matrix(0.986907,0,0,0.986907,1.34857,0.0981965)">
+            <path d="M198.5,38.157C198.5,21.237 184.763,7.5 167.843,7.5L38.157,7.5C21.237,7.5 7.5,21.237 7.5,38.157L7.5,167.843C7.5,184.763 21.237,198.5 38.157,198.5L167.843,198.5C184.763,198.5 198.5,184.763 198.5,167.843L198.5,38.157Z" style="fill:none;stroke:black;stroke-width:15px;"/>
+        </g>
+        <path d="M162,74L117,119L117,32L88,32L88,119L42,74L42,114L101.99,174.01L162,114L162,74Z"/>
+    </g>
+    <defs>
+        <image id="_Image1" width="35px" height="35px" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACMAAAAjCAYAAAAe2bNZAAAACXBIWXMAAA7EAAAOxAGVKw4bAAABXUlEQVRYhe3Yv0sWcRzA8ZcRiEMoyYcgiBb3QAXXpibBNhehcGlsa2puDWlIl9xb3Brb2hKFFgfBP+ATNfQDF3sa7rnspHskHp/n+wz33u4Hdy/uvjfchwlq6rITMnMKC7g95L0+4ygizv4bk5kb2MQiZoeE1P3EId7iVUT8GojJzFvYwdoVAdr6gMcRcfxPTGbO4hPujBhS9w33IuIErl04uDVGCNzAm/66PMdk5gM8GiOk7j6eNDB4WABSt0YTs1wIAkv0F3BmXsd3TBcE3a2fzExhCNy8+DUVrcO01WHa6jBtdZi2OkxbHaaticT0iiqqen/+DjLzK+YKYub/fk37xRicRMSXScF8pLmAd3FaANLDdgMTEUd4XgDzOiLeNzD9XuLdGCGHeFZvNDD9qcAqnqomBqPqDC+wEhE/6p2DRiILWFf9YC2r5jOXznMGlKqPZB97EXEwxLVG32/3CUhqDbbNmAAAAABJRU5ErkJggg=="/>
+    </defs>
+</svg>

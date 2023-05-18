@@ -51,6 +51,9 @@ describe('Chart', () => {
                 colorRange: ['white', 'yellow', 'red', 'blue', 'black'],
             },
         ],
+        legend: {
+            enabled: true,
+        },
     };
 
     const compare = async () => {

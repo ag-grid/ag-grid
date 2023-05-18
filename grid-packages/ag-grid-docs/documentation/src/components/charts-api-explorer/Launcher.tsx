@@ -1,10 +1,10 @@
-import { faChartLine, faCompress, faExternalLinkAlt, faWindowRestore } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { AgChartOptions } from 'ag-charts-community';
 import React, { useMemo } from 'react';
 import GlobalContextConsumer from '../../components/GlobalContext';
 import isServerSideRendering from '../../utils/is-server-side-rendering';
 import { getExampleInfo, openPlunker } from '../example-runner/helpers';
 import { useExampleFileNodes } from '../example-runner/use-example-file-nodes';
+import { Icon } from '../Icon';
 import { doOnEnter } from '../key-handlers';
 import styles from './Launcher.module.scss';
 
@@ -61,11 +61,8 @@ const LauncherInner = ({
     const isGenerated = isGeneratedExample(exampleInfo.type);
 
     return (
-        <div className={styles['launcher']}>
-            <div className={styles['launcher__heading']}>
-                <h2>API Explorer</h2>
-            </div>
-            <div className={`anchor ${styles['launcher__options']}`}>
+        <div className={styles.launcher}>
+            <div className={styles.simpleSelects}>
                 {/* perversely we don't show the hook/class when the type is react as the example provided will be displayed "as is" */}
                 {exampleInfo.framework === 'react' && exampleInfo.type !== 'react' && (
                     <ReactStyleSelector
@@ -104,102 +101,82 @@ const LauncherInner = ({
                         />
                     )}
             </div>
-            <div className={styles['launcher__menu-items']}>
-                <div
-                    className={styles['launcher__menu-item']}
-                    onClick={() => setFullScreenGraph(!fullScreenGraph)}
-                    onKeyDown={(e) => doOnEnter(e, () => setFullScreenGraph(!fullScreenGraph))}
-                    role="button"
-                    tabIndex={0}
-                >
-                    <FontAwesomeIcon
-                        icon={fullScreenGraph ? faCompress : faChartLine}
-                        fixedWidth
-                        title="Open chart preview fullscreen"
-                    />
-                </div>
-                <div
-                    className={styles['launcher__menu-item']}
-                    onClick={() => setFullScreen(!fullScreen)}
-                    onKeyDown={(e) => doOnEnter(e, () => setFullScreen(!fullScreen))}
-                    role="button"
-                    tabIndex={0}
-                >
-                    <FontAwesomeIcon
-                        icon={fullScreen ? faCompress : faWindowRestore}
-                        fixedWidth
-                        title={fullScreen ? 'Exit fullscreen' : 'Open fullscreen'}
-                    />
-                </div>
-                <div
-                    className={styles['launcher__menu-item']}
-                    onClick={() => openPlunker(exampleInfo)}
-                    onKeyDown={(e) => doOnEnter(e, () => openPlunker(exampleInfo))}
-                    role="button"
-                    tabIndex={0}
-                >
-                    <FontAwesomeIcon icon={faExternalLinkAlt} fixedWidth title="Open in Plunker" />
-                </div>
-            </div>
+            <button
+                className="button-style-none"
+                onClick={() => setFullScreenGraph(!fullScreenGraph)}
+                onKeyDown={(e) => doOnEnter(e, () => setFullScreenGraph(!fullScreenGraph))}
+                role="button"
+                tabIndex={0}
+                title="Open chart preview fullscreen"
+            >
+                <Icon name="docs-integrated-charts" />
+            </button>
+            <button
+                className="button-style-none"
+                onClick={() => setFullScreen(!fullScreen)}
+                onKeyDown={(e) => doOnEnter(e, () => setFullScreen(!fullScreen))}
+                role="button"
+                tabIndex={0}
+                title={fullScreen ? 'Exit fullscreen' : 'Open fullscreen'}
+            >
+                {fullScreen ? <Icon name="minimize" /> : <Icon name="maximize" />}
+            </button>
+            <button
+                className="button-style-none"
+                onClick={() => openPlunker(exampleInfo)}
+                onKeyDown={(e) => doOnEnter(e, () => openPlunker(exampleInfo))}
+                role="button"
+                tabIndex={0}
+                title="Open in Plunker"
+            >
+                <Icon name="plunkr" />
+            </button>
         </div>
     );
 };
 
 const ReactStyleSelector = ({ useFunctionalReact, useTypescript, onChange }) => {
-    return (
-        <div className={styles['launcher__framework-style']}>
-            {!isServerSideRendering() && (
-                <select
-                    className={styles['launcher__framework-style__select']}
-                    style={{ width: 120 }}
-                    value={useFunctionalReact ? (useTypescript ? 'hooksTs' : 'hooks') : 'classes'}
-                    onChange={onChange}
-                    onBlur={onChange}
-                >
-                    <option value="classes">Classes</option>
-                    <option value="hooks">Hooks</option>
-                    <option value="hooksTs">Hooks TS</option>
-                </select>
-            )}
-        </div>
+    const formId = `chart-api-explorer-react-style-selector`;
+    return isServerSideRendering() ? null : (
+        <>
+            <label htmlFor={formId}>Language:</label>{' '}
+            <select
+                id={formId}
+                value={useFunctionalReact ? (useTypescript ? 'hooksTs' : 'hooks') : 'classes'}
+                onChange={onChange}
+                onBlur={onChange}
+            >
+                <option value="classes">Classes</option>
+                <option value="hooks">Hooks</option>
+                <option value="hooksTs">Hooks TS</option>
+            </select>
+        </>
     );
 };
 
 const VueStyleSelector = ({ useVue3, onChange }) => {
-    return (
-        <div className={styles['launcher__framework-style']}>
-            {!isServerSideRendering() && (
-                <select
-                    className={styles['launcher__framework-style__select']}
-                    style={{ width: 120 }}
-                    value={JSON.stringify(useVue3)}
-                    onChange={onChange}
-                    onBlur={onChange}
-                >
-                    <option value="false">Vue 2</option>
-                    <option value="true">Vue 3</option>
-                </select>
-            )}
-        </div>
+    const formId = `chart-api-explorer-vue-style-selector`;
+    return isServerSideRendering() ? null : (
+        <>
+            <label htmlFor={formId}>Version:</label>{' '}
+            <select id={formId} value={JSON.stringify(useVue3)} onChange={onChange} onBlur={onChange}>
+                <option value="false">Vue 2</option>
+                <option value="true">Vue 3</option>
+            </select>
+        </>
     );
 };
 
 const TypescriptStyleSelector = ({ useTypescript, onChange }) => {
-    return (
-        <div className={styles['launcher__framework-style']}>
-            {!isServerSideRendering() && (
-                <select
-                    className={styles['launcher__framework-style__select']}
-                    style={{ width: 120 }}
-                    value={JSON.stringify(useTypescript)}
-                    onChange={onChange}
-                    onBlur={onChange}
-                >
-                    <option value="false">Javascript</option>
-                    <option value="true">Typescript</option>
-                </select>
-            )}
-        </div>
+    const formId = `chart-api-explorer-typescript-style-selector`;
+    return isServerSideRendering() ? null : (
+        <>
+            <label htmlFor={formId}>Language:</label>{' '}
+            <select id={formId} value={JSON.stringify(useTypescript)} onChange={onChange} onBlur={onChange}>
+                <option value="false">Javascript</option>
+                <option value="true">Typescript</option>
+            </select>
+        </>
     );
 };
 

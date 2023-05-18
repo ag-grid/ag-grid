@@ -1,28 +1,17 @@
-.string-editor,
-.number-editor,
-.colour-editor {
-    &__input {
-        border: 1px solid $primary;
-        border-radius: 5px;
-        padding: 4px 8px;
-        font-size: 0.8rem;
-    }
+@use "../../design-system/" as *;
+
+.stringEditor {
+    width: 100%;
 }
 
-.string-editor {
-    &__input {
-        margin-top: 0.5em;
-        width: 100%;
-    }
-}
-
-.number-editor {
+.numberEditor {
     display: flex;
     margin-top: 0.5em;
     width: 100%;
 
-    &__slider {
+    .slider {
         flex-grow: 1;
+        margin-right: $size-2;
         vertical-align: middle;
         accent-color: $primary;
 
@@ -31,68 +20,89 @@
         }
     }
 
-    &__input {
+    input {
         width: 15%;
-        margin-left: 1em;
-        max-height: 2em;
         min-width: 4.5em;
     }
-}
 
-.preset-editor {
-    display: flex;
-    margin: 5px 0;
-
-    &__option {
-        flex-grow: 1;
-        border: 1px solid $ag-grey;
-        border-right: 0;
-        padding: 8px 4px;
-        text-align: center;
-        cursor: pointer;
-        background-color: white;
-        outline: none;
-
-        &:first-child {
-            border-radius: 5px 0 0 5px;
-        }
-
-        &:last-child {
-            border: 1px solid $ag-grey;
-            border-radius: 0 5px 5px 0;
-        }
-
-        &--selected {
-            box-shadow: inset 0 0 2px 2px $primary;
-        }
+    span {
+        position: relative;
+        top: 6px;
     }
 }
 
-.colour-editor {
+.presetEditor {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $size-half $size-2;
+    margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+    padding-left: $size-half;
+    padding-right: $size-half;
+
+    label {
+        cursor: pointer;
+    }
+
+    input {
+        margin-right: $size-half;
+    }
+
+    span {
+        position: relative;
+        top: -2px;
+        transition: color $default-transition-timing;
+    }
+}
+
+.colourEditor {
     margin-top: 0.5em;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    gap: $size-2;
 
-    &__input-wrapper {
+    .inputWrapper {
         position: relative;
-        width: 35%;
     }
 
-    &__input {
+    input {
         width: 100%;
+        padding-right: $size-3 !important; // !important for .ag-styles specificity
     }
 
-    &__sample {
+    .sample {
         position: absolute;
-        width: 15px;
-        height: 15px;
+        width: 1em;
+        height: 1em;
         border: solid 1px black;
-        top: 5px;
-        right: 5px;
+        top: calc(50% - 0.5em);
+        right: 1em;
     }
 
-    &__slider {
+    .slider {
         flex-grow: 1;
-        margin: 5px 0 0 15px;
+
+        &:last-child {
+            margin-right: $size-1;
+        }
+    }
+
+    // override deafult react-color slider styles
+    :global(.hue-picker),
+    :global(.alpha-picker) {
+        height: 8px !important;
+        cursor: pointer;
+    }
+
+    // override deafult react-color slider styles
+    :global(.hue-horizontal),
+    :global(.alpha-picker) > div > div {
+        border-radius: 4px !important;
+    }
+
+    // override deafult react-color slider styles
+    :global(.hue-horizontal) > div > div,
+    :global(.alpha-picker) > div > div:last-child > div > div {
+        transform: translate(-9px, -5px) !important;
     }
 }

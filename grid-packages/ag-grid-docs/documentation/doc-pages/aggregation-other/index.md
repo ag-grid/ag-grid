@@ -34,9 +34,10 @@ The following example demonstrates overriding the default agg function. Note the
 
 <grid-example title='Default Aggregation Function' name='default-aggregation-function' type='generated' options='{ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
-[[note]]
-| Note that unlike `aggFunc` you can't pass a custom aggregation function directly to `defaultAggFunc`,
-| as demonstrated in the previous example, it must be registered first. See [Registering Custom Functions](/aggregation-custom-functions#registering-custom-functions) for how to do this.
+<note>
+Note that unlike `aggFunc` you can't pass a custom aggregation function directly to `defaultAggFunc`,
+as demonstrated in the previous example, it must be registered first. See [Registering Custom Functions](../aggregation-custom-functions#registering-custom-functions) for how to do this.
+</note>
 
 ## Restricting Aggregation Functions
 
@@ -91,6 +92,10 @@ The empty aggregation calls happen in the following two scenarios:
 If the data changes after the aggregation is done, you can tell the grid to recompute the aggregates through the API method `refreshClientSideRowModel('aggregate')`.
 
 <api-documentation source='grid-api/api.json' section='data' names='["refreshClientSideRowModel"]' ></api-documentation>
+
+## Suppressing Top Level Aggregations
+
+When aggregations are present, the grid also aggregates all the top level rows into one parent row. This total aggregation is not shown in the grid so a speed increase can be produced by turning this top level aggregation off by setting `suppressAggAtRootLevel=true`.
 
 ## Next Up
 

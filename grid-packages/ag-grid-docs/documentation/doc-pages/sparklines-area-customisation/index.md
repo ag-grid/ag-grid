@@ -146,9 +146,9 @@ Here is the result of the configuration shown in the above snippet:
     <image-caption src="resources/custom-axis.png" alt="Axis line customisation" width="250px" constrained="true">Custom axis line</image-caption>
 </div>
 
-[[note]]
-| It is possible to remove the axis line entirely by setting the axis `strokeWidth` to `0`.
-
+<note>
+It is possible to remove the axis line entirely by setting the axis `strokeWidth` to `0`.
+</note>
 
 ## Crosshairs Options
 

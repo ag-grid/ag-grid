@@ -39,6 +39,8 @@ import {
     CtrlsService,
     WithoutGridCommon,
     ProcessRowGroupForExportParams,
+    ValueFormatterService,
+    ValueParserService
 } from "@ag-grid-community/core";
 
 interface RowCallback {
@@ -76,9 +78,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
-
-
-
+    @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
+    @Autowired('valueParserService') private valueParserService: ValueParserService;
 
     private clientSideRowModel: IClientSideRowModel;
     private logger: Logger;
@@ -380,7 +381,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                 }
 
                 const newValue = this.processCell(
-                    rowNode, column, currentRowData[idx], EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc);
+                    rowNode, column, currentRowData[idx], EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc, true);
 
                 rowNode.setDataValue(column, newValue, SOURCE_PASTE);
 
@@ -595,7 +596,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             column.isSuppressPaste(rowNode)
         ) { return; }
 
-        const processedValue = this.processCell(rowNode, column, value, type, this.gridOptionsService.getCallback('processCellFromClipboard'));
+        const processedValue = this.processCell(rowNode, column, value, type, this.gridOptionsService.getCallback('processCellFromClipboard'), true);
         rowNode.setDataValue(column, processedValue, SOURCE_PASTE);
         
         const { rowIndex, rowPinned } = rowNode;
@@ -901,7 +902,9 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                 value,
                 node,
                 column,
-                type: 'clipboard'
+                type: 'clipboard',
+                formatValue: (valueToFormat: any) => this.valueFormatterService.formatValue(column, node, valueToFormat) ?? valueToFormat,
+                parseValue: (valueToParse: string) => this.valueParserService.parseValue(column, node, valueToParse, this.valueService.getValue(column, node))
             });
         }
         return value;
@@ -923,16 +926,23 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         column: Column,
         value: T,
         type: string,
-        func?: ((params: WithoutGridCommon<ProcessCellForExportParams>) => T)): T {
+        func?: ((params: WithoutGridCommon<ProcessCellForExportParams>) => T),
+        canParse?: boolean): T {
         if (func) {
             const params: WithoutGridCommon<ProcessCellForExportParams> = {
                 column,
                 node: rowNode,
                 value,
                 type,
+                formatValue: (valueToFormat: any) => this.valueFormatterService.formatValue(column, rowNode ?? null, valueToFormat) ?? valueToFormat,
+                parseValue: (valueToParse: string) => this.valueParserService.parseValue(column, rowNode ?? null, valueToParse, this.valueService.getValue(column, rowNode))
+
             };
 
             return func(params);
+        }
+        if (canParse && column.getColDef().useValueParserForImport) {
+            return this.valueParserService.parseValue(column, rowNode ?? null, value, this.valueService.getValue(column, rowNode));
         }
 
         return value;

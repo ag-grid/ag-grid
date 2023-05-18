@@ -123,8 +123,9 @@ const gridOptions = {
 }
 </snippet>
 
-[[note]]
-| When providing a custom columns layout by setting the **columnLayout** property, the `suppressSyncLayoutWithGrid` will automatically set to true. This means that reordering the columns in the grid will not reorder the columns in the list shown in columns menu tab.
+<note>
+When providing a custom columns layout by setting the **columnLayout** property, the `suppressSyncLayoutWithGrid` will automatically set to true. This means that reordering the columns in the grid will not reorder the columns in the list shown in columns menu tab.
+</note>
 
 The following example demonstrates providing custom column layouts in the column menu tab via the **columnLayout** property. Note the following:
 

@@ -45,6 +45,8 @@ export type Ratio = number;
 /** Alias to denote that a value is a data value. */
 export type DataValue = any;
 
+export type TextWrap = 'never' | 'always' | 'hyphenate' | 'on-space';
+
 /** Define a range within which an interaction can trigger on a point with one of:
  * - A distance in pixels from a point within which the event can be triggered.
  * - `'exact'` triggers when the event occurs directly over a point.
@@ -124,6 +126,8 @@ export interface AgCartesianThemeOptions<S = AgCartesianSeriesTheme> extends AgB
     axes?: AgCartesianAxesTheme;
     /** Series configurations. */
     series?: S;
+    /** Configuration for the chart legend. */
+    legend?: AgCartesianChartLegendOptions;
     /** Configuration for the chart navigator. */
     navigator?: AgNavigatorOptions;
 }
@@ -131,11 +135,15 @@ export interface AgCartesianThemeOptions<S = AgCartesianSeriesTheme> extends AgB
 export interface AgPolarThemeOptions<S = AgPolarSeriesTheme> extends AgBaseChartOptions {
     /** Series configurations. */
     series?: S;
+    /** Configuration for the chart legend. */
+    legend?: AgPolarChartLegendOptions;
 }
 
 export interface AgHierarchyThemeOptions<S = AgHierarchySeriesTheme> extends AgBaseChartOptions {
     /** Series configurations. */
     series?: S;
+    /** Configuration for the chart legend. */
+    legend?: AgHierarchyChartLegendOptions;
 }
 
 export interface AgCrossLineThemeOptions extends Omit<AgCrossLineOptions, 'type'> {}
@@ -282,6 +290,14 @@ export interface AgChartCaptionOptions {
     maxWidth?: PixelSize;
     /** Used to constrain the height of the title. */
     maxHeight?: PixelSize;
+    /**
+     * Text wrapping strategy for long texts.
+     * `'always'` will break the words that are longer than `maxWidth`.
+     * `'hyphenate'` is similar to `'always'`, but insert the hyphens (`-`) into the word breaks.
+     * `'on-space'` will break the text on white spaces and tabulation symbols only. If some long word can't fit the `maxWidth`, the text will be truncated.
+     * `'never'` disables text wrapping.
+     */
+    wrapping?: TextWrap;
 }
 export interface AgChartSubtitleOptions extends AgChartCaptionOptions {}
 export interface AgChartFooterOptions extends AgChartCaptionOptions {}
@@ -423,9 +439,7 @@ export interface AgChartLegendListeners {
     legendItemDoubleClick?: (event: AgChartLegendDoubleClickEvent) => void;
 }
 
-export interface AgChartLegendOptions {
-    /** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */
-    enabled?: boolean;
+export interface AgChartBaseLegendOptions {
     /** Where the legend should show in relation to the chart. */
     position?: AgChartLegendPosition;
     /** How the legend items should be arranged. */
@@ -443,6 +457,21 @@ export interface AgChartLegendOptions {
     /** Optional callbacks for specific legend-related events. */
     listeners?: AgChartLegendListeners;
     pagination?: AgChartLegendPaginationOptions;
+}
+
+export interface AgCartesianChartLegendOptions extends AgChartBaseLegendOptions {
+    /** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */
+    enabled?: boolean;
+}
+
+export interface AgHierarchyChartLegendOptions extends AgChartBaseLegendOptions {
+    /** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */
+    enabled?: boolean;
+}
+
+export interface AgPolarChartLegendOptions extends AgChartBaseLegendOptions {
+    /** Whether or not to show the legend. The legend is shown by default. */
+    enabled?: boolean;
 }
 
 export interface AgChartLegendPaginationOptions {
@@ -504,7 +533,7 @@ export interface AgChartTooltipOptions {
     tracking?: boolean;
     /** Range from a point that triggers the tooltip to show. */
     range?: AgChartInteractionRange;
-    /** The position of the tooltip. By default the tooltip follows the mouse pointer. */
+    /** The position of the tooltip. */
     position?: AgTooltipPositionOptions;
     /** The time interval (in milliseconds) after which the tooltip is shown. */
     delay?: number;
@@ -514,7 +543,7 @@ export type AgTooltipPositionType = 'pointer' | 'node';
 export type AgTooltipPositionOptions = AgMovingTooltipPositionOptions;
 
 export interface AgMovingTooltipPositionOptions {
-    /** The type of positioning for the tooltip. By default, the tooltip follows the pointer. */
+    /** The type of positioning for the tooltip. By default, for Bar, Histogram, Treemap, Pie and Doughnut series, the tooltip follows the pointer. For Line, Area and Scatter series, the tooltip is anchored to the highlighted node. */
     type: AgTooltipPositionType;
     /** The horizontal offset in pixels for the position of the tooltip. */
     xOffset?: PixelSize;
@@ -611,8 +640,6 @@ export interface AgBaseChartOptions {
     footnote?: AgChartFooterOptions;
     /** Global configuration that applies to all tooltips in the chart. */
     tooltip?: AgChartTooltipOptions;
-    /** Configuration for the chart legend. */
-    legend?: AgChartLegendOptions;
     /** A map of event names to event listeners. */
     listeners?: AgBaseChartListeners;
     /** Configuration for the chart highlighting. */
@@ -1094,7 +1121,7 @@ export interface AgSeriesTooltip {
     enabled?: boolean;
     /** Set to false to remove the arrow attached to the series tooltip. */
     showArrow?: boolean;
-    /** The position of the tooltip. By default the tooltip follows the mouse pointer. */
+    /** The position of the tooltip. */
     position?: AgTooltipPositionOptions;
     /** Configuration for tooltip interaction. */
     interaction?: AgSeriesTooltipInteraction;
@@ -1296,12 +1323,14 @@ export interface AgBarSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     normalizedTo?: number;
     /** The key to use to retrieve x-values from the data. */
     xKey?: string;
-    /** The keys to use to retrieve y-values from the data. */
+    /** The key to use to retrieve y-values from the data. */
     yKey?: string;
     /** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     xName?: string;
     /** Human-readable description of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     yName?: string;
+    /** Human-readable description of the y-values. If supplied, matching items with the same value will be toggled together. */
+    legendItemName?: string;
     /** The colour to use for the fill of the bars. */
     fill?: CssColor;
     /** The colours to use for the stroke of the bars. */
@@ -1497,7 +1526,7 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     sectorLabelKey?: string;
     /** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
     sectorLabelName?: string;
-    /** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */
+    /** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. */
     legendItemKey?: string;
     /** The colours to cycle through for the fills of the sectors. */
     fills?: CssColor[];
@@ -1781,6 +1810,8 @@ export interface AgCartesianChartOptions<TAddonType = never, TAddonSeries = neve
     axes?: AgCartesianAxisOptions[];
     /** Series configurations. */
     series?: AgCartesianSeriesOptions<TAddonSeries>[];
+    /** Configuration for the chart legend. */
+    legend?: AgCartesianChartLegendOptions;
     /** Configuration for the chart navigator. */
     navigator?: AgNavigatorOptions;
 }
@@ -1790,6 +1821,8 @@ export interface AgPolarChartOptions extends AgBaseChartOptions {
     type?: 'pie';
     /** Series configurations. */
     series?: AgPolarSeriesOptions[];
+    /** Configuration for the chart legend. */
+    legend?: AgPolarChartLegendOptions;
 }
 
 export interface AgHierarchyChartOptions extends AgBaseChartOptions {
@@ -1798,6 +1831,8 @@ export interface AgHierarchyChartOptions extends AgBaseChartOptions {
     data?: any;
     /** Series configurations. */
     series?: AgHierarchySeriesOptions[];
+    /** Configuration for the chart legend. */
+    legend?: AgHierarchyChartLegendOptions;
 }
 
 export type AgChartOptions<TAddonType = never, TAddonSeries = never> =

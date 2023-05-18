@@ -1,16 +1,16 @@
-|
-|```js
+<framework-specific-section frameworks="javascript,angular,react">
+<snippet transform={false}>
 |cellRendererSelector: params => {
 |    return {
 |        component: GenderCellRenderer,
 |        params: {values: ['Male', 'Female']}
 |    };
 |}
-|```
-|
-|However a selector only makes sense when a selection is made. The following demonstrates selecting between Mood and Gender Cell Renderers:
-|
-|```js
+</snippet>
+
+However a selector only makes sense when a selection is made. The following demonstrates selecting between Mood and Gender Cell Renderers:
+
+<snippet transform={false}>
 |cellRendererSelector: params => {
 |
 |    const type = params.data.type;
@@ -30,5 +30,5 @@
 |
 |    return undefined;
 |}
-|```
-|
+</snippet>
+</framework-specific-section>

@@ -49,7 +49,7 @@ export class PropertyKeys {
         'defaultColGroupDef', 'defaultColDef', 'defaultCsvExportParams', 'defaultExcelExportParams', 'columnTypes',
         'rowClassRules', 'detailCellRendererParams', 'loadingCellRendererParams', 'loadingOverlayComponentParams',
         'noRowsOverlayComponentParams', 'popupParent', 'statusBar', 'sideBar', 'chartThemeOverrides',
-        'customChartThemes', 'chartToolPanelsDef'
+        'customChartThemes', 'chartToolPanelsDef', 'dataTypeDefinitions'
     ];
 
     public static ARRAY_PROPERTIES: KeysOfType<any[]>[] = [

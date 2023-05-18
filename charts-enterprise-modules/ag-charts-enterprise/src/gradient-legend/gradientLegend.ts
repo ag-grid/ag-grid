@@ -17,6 +17,7 @@ const {
     BOOLEAN,
     COLOR_STRING,
     NUMBER,
+    OPT_BOOLEAN,
     OPT_NUMBER,
     OPT_FUNCTION,
     OPT_FONT_STYLE,
@@ -57,6 +58,11 @@ class GradientLegendItem {
     maxWidth?: number = undefined;
     @Validate(NUMBER(0))
     padding = 8;
+
+    // Placeholders
+    marker?: any = undefined;
+    paddingX = 0;
+    paddingY = 0;
 }
 
 class GradientBar {
@@ -78,6 +84,12 @@ export class GradientLegend {
 
     @Validate(POSITION)
     position: AgChartLegendPosition = 'bottom';
+
+    @Validate(OPT_BOOLEAN)
+    reverseOrder?: boolean = undefined;
+
+    // Placeholder
+    pagination?: any = undefined;
 
     private getOrientation(): AgChartOrientation {
         switch (this.position) {
@@ -143,9 +155,9 @@ export class GradientLegend {
         }
 
         this.group.visible = true;
-        const { colorDomain, colorRange } = data;
+        const { colorDomain } = data;
 
-        const { spacing } = this;
+        const { spacing, reverseOrder } = this;
         const { preferredLength, thickness } = this.gradientBar;
         const { padding, label } = this.item;
         const [textWidth, textHeight] = this.measureMaxText(colorDomain);
@@ -173,7 +185,8 @@ export class GradientLegend {
         }
         this.gradientRect.x = gradientLeft;
         this.gradientRect.y = gradientTop;
-        const colorsString = data.colorRange.join(', ');
+        const colorRange = reverseOrder ? data.colorRange.slice().reverse() : data.colorRange;
+        const colorsString = colorRange.join(', ');
         this.gradientRect.fill = `linear-gradient(${orientation === 'vertical' ? 0 : 90}deg, ${colorsString})`;
 
         let left: number;
@@ -204,6 +217,9 @@ export class GradientLegend {
             stops.push(s);
         }
         if (orientation === 'vertical') {
+            stops.reverse();
+        }
+        if (reverseOrder) {
             stops.reverse();
         }
 

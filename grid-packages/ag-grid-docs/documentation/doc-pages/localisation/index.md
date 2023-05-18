@@ -34,8 +34,9 @@ This to try in the example are as follows:
 
 <grid-example title='Localisation' name='localisation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel", "filterpanel", "setfilter", "csv", "excel", "charts", "clipboard", "range", "rowgrouping", "multifilter", "sidebar", "statusbar"], "exampleHeight": 650 }'></grid-example>
 
-[[note]]
-| Some localisation variables have `${variable}` in them. When this occurs, it means that part of the string will be replaced by a variable value.
+<note>
+Some localisation variables have `${variable}` in them. When this occurs, it means that part of the string will be replaced by a variable value.
+</note>
 
 ## Changing Locale
 

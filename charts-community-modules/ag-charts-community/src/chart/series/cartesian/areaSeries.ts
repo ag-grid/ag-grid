@@ -48,6 +48,7 @@ import { LogAxis } from '../../axis/logAxis';
 import { DataModel } from '../../data/dataModel';
 import { TimeAxis } from '../../axis/timeAxis';
 import { sum } from '../../data/aggregateFunctions';
+import { normaliseGroupTo } from '../../data/processors';
 
 interface FillSelectionDatum {
     readonly itemId: string;
@@ -232,22 +233,28 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         const isContinuousY = yAxis?.scale instanceof ContinuousScale;
 
         const enabledYKeys = [...seriesItemEnabled.entries()].filter(([, enabled]) => enabled).map(([yKey]) => yKey);
+
         const normaliseTo = normalizedTo && isFinite(normalizedTo) ? normalizedTo : undefined;
+        const extraProps = [];
+        if (normaliseTo) {
+            extraProps.push(normaliseGroupTo(enabledYKeys, normaliseTo, 'sum'));
+        }
 
         this.dataModel = new DataModel<any, any, true>({
             props: [
-                keyProperty(xKey, isContinuousX),
+                keyProperty(xKey, isContinuousX, { id: 'xValue' }),
                 ...enabledYKeys.map((yKey) =>
                     valueProperty(yKey, isContinuousY, {
+                        id: `yValue-${yKey}`,
                         missingValue: NaN,
                         invalidValue: undefined,
                     })
                 ),
                 sum(enabledYKeys),
+                ...extraProps,
             ],
             groupByKeys: true,
             dataVisible: this.visible && enabledYKeys.length > 0,
-            normaliseTo,
         });
 
         this.processedData = this.dataModel.processData(data);
@@ -347,7 +354,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         };
 
         yKeys.forEach((yKey, seriesIdx) => {
-            const yKeyDataIndex = this.dataModel?.resolveProcessedDataIndex(yKey);
+            const yKeyDataIndex = this.dataModel?.resolveProcessedDataIndexById(`yValue-${yKey}`);
             const labelSelectionData: LabelSelectionDatum[] = [];
             const markerSelectionData: MarkerSelectionDatum[] = [];
             const strokeSelectionData: StrokeSelectionDatum = { itemId: yKey, points: [], yValues: [] };
@@ -745,7 +752,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     getTooltipHtml(nodeDatum: MarkerSelectionDatum): string {
         const { xKey, id: seriesId } = this;
         const { yKey } = nodeDatum;
-        const yKeyDataIndex = this.dataModel?.resolveProcessedDataIndex(yKey);
+        const yKeyDataIndex = this.dataModel?.resolveProcessedDataIndexById(`yValue-${yKey}`);
 
         if (!(xKey && yKey) || !yKeyDataIndex) {
             return '';

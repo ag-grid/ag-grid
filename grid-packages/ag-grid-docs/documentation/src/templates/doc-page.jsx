@@ -4,27 +4,28 @@ import ChartGallery from 'components/chart-gallery/ChartGallery';
 import ChartsApiExplorer from 'components/charts-api-explorer/ChartsApiExplorer';
 import ExampleRunner from 'components/example-runner/ExampleRunner';
 import { ExpandableSnippet } from 'components/expandable-snippet/ExpandableSnippet';
-import FeatureOverview from 'components/FeatureOverview';
+import FrameworkSpecificSection from 'components/FrameworkSpecificSection';
 import Gif from 'components/Gif';
 import { Icon } from 'components/Icon';
 import IconsPanel from 'components/IconsPanel';
 import ImageCaption from 'components/ImageCaption';
 import MatrixTable from 'components/MatrixTable';
+import Note from 'components/Note';
+import { OpenInCTA } from 'components/OpenInCTA';
 import { SEO } from 'components/SEO';
 import SideMenu from 'components/SideMenu';
 import { Snippet } from 'components/snippet/Snippet';
-import { Tabs } from 'components/Tabs';
-import VideoLink from 'components/VideoLink';
+import { Tabs } from 'components/tabs/Tabs';
 import VideoSection from 'components/VideoSection';
+import Warning from 'components/Warning';
 import { graphql } from 'gatsby';
 import React, { useState } from 'react';
 import rehypeReact from 'rehype-react';
-import processFrameworkSpecificSections from 'utils/framework-specific-sections';
 import { getProductType } from 'utils/page-header';
 import stripHtml from 'utils/strip-html';
 import DocumentationLink from '../components/DocumentationLink';
 import LearningVideos from '../components/LearningVideos';
-import { addNonBreakingSpaceBetweenLastWords } from '../utils/add-non-breaking-space-between-last-words';
+import { TabsLinks } from '../components/tabs/TabsLinks';
 import { AGStyles } from './ag-styles';
 import styles from './doc-page.module.scss';
 
@@ -41,8 +42,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
         return null;
     }
 
-    // handles [[only-xxxx blocks
-    const ast = processFrameworkSpecificSections(page.htmlAst, framework);
+    const ast = page.htmlAst;
 
     const getExampleRunnerProps = (props, library) => ({
         ...props,
@@ -58,10 +58,21 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
         createElement: React.createElement,
         components: {
             a: (props) => DocumentationLink({ ...props, framework }),
-            gif: (props) =>
-                Gif({ ...props, pageName, autoPlay: props.autoPlay != null ? JSON.parse(props.autoPlay) : false }),
-            'grid-example': (props) => ExampleRunner(getExampleRunnerProps(props, 'grid')),
-            'chart-example': (props) => ExampleRunner(getExampleRunnerProps(props, 'charts')),
+            gif: (props) => (
+                <AGStyles hasFontSizeResponsive={false}>
+                    {Gif({ ...props, pageName, autoPlay: props.autoPlay != null ? JSON.parse(props.autoPlay) : false })}
+                </AGStyles>
+            ),
+            'grid-example': (props) => (
+                <AGStyles hasFontSizeResponsive={false}>
+                    <ExampleRunner {...getExampleRunnerProps(props, 'grid')} />
+                </AGStyles>
+            ),
+            'chart-example': (props) => (
+                <AGStyles hasFontSizeResponsive={false}>
+                    <ExampleRunner {...getExampleRunnerProps(props, 'charts')} />
+                </AGStyles>
+            ),
             'api-documentation': (props) =>
                 ApiDocumentation({
                     ...props,
@@ -78,7 +89,13 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
                     exampleIndexData,
                     config: props.config != null ? JSON.parse(props.config) : undefined,
                 }),
-            snippet: (props) => Snippet({ ...props, framework }),
+            snippet: (props) =>
+                Snippet({
+                    ...props,
+                    // NOTE: lowercased upstream
+                    lineNumbers: props.linenumbers === 'true',
+                    framework,
+                }),
             'expandable-snippet': (props) =>
                 ExpandableSnippet({
                     ...props,
@@ -87,16 +104,36 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
                     breadcrumbs: props.breadcrumbs ? JSON.parse(props.breadcrumbs) : undefined,
                     config: props.config != null ? JSON.parse(props.config) : undefined,
                 }),
-            'feature-overview': (props) => FeatureOverview({ ...props, framework }),
-            'icons-panel': IconsPanel,
+            'icons-panel': (props) => (
+                <AGStyles hasFontSizeResponsive={false}>
+                    <IconsPanel {...props} />
+                </AGStyles>
+            ),
             'image-caption': (props) => ImageCaption({ ...props, pageName }),
             'matrix-table': (props) => MatrixTable({ ...props, framework, exampleIndexData }),
-            tabs: (props) => Tabs({ ...props }),
+            tabs: (props) => (
+                <AGStyles hasFontSizeResponsive={false}>
+                    <Tabs {...props} />
+                </AGStyles>
+            ),
+            'tabs-links': TabsLinks,
             'learning-videos': (props) => LearningVideos({ framework }),
             'video-section': VideoSection,
-            'video-link': VideoLink,
-            'chart-gallery': ChartGallery,
-            'charts-api-explorer': (props) => ChartsApiExplorer({ ...props, framework, exampleIndexData }),
+            note: Note,
+            warning: Warning,
+            'framework-specific-section': (props) =>
+                FrameworkSpecificSection({ ...props, currentFramework: framework }),
+            'chart-gallery': (props) => (
+                <AGStyles>
+                    <ChartGallery {...props} />
+                </AGStyles>
+            ),
+            'charts-api-explorer': (props) => (
+                <AGStyles hasFontSizeResponsive={false}>
+                    <ChartsApiExplorer {...props} framework={framework} exampleIndexData={exampleIndexData} />
+                </AGStyles>
+            ),
+            'open-in-cta': OpenInCTA,
 
             // AG Styles wrapper - wrap markdown -> html elements with `.ag-styles` to apply the new design system.
             // Can be removed when the new design system is applied to everything
@@ -150,7 +187,13 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
                     <table {...otherProps}>{children}</table>
                 </AGStyles>
             ),
-            pre: ({ children, ...otherProps }) => <pre {...otherProps}>{children}</pre>,
+            pre: ({ children, className, ...otherProps }) => (
+                <AGStyles>
+                    <pre className={classnames('code', className)} {...otherProps}>
+                        {children}
+                    </pre>
+                </AGStyles>
+            ),
             hr: ({ children, ...otherProps }) => (
                 <AGStyles>
                     <hr {...otherProps}>{children}</hr>
@@ -182,7 +225,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
                     {getProductType(framework, pageName.startsWith('charts-'), version)}
                 </span>
             )}
-            <span>{addNonBreakingSpaceBetweenLastWords(title)}</span>
+            <span>{title}</span>
         </>
     );
 

@@ -122,7 +122,7 @@
     "JsonArray": {},
     "JsonUnionType": {},
     "JsonFunction": {
-        "type": { "type": { "returnType": "\"function\"", "optional": false } },
+        "type": { "type": { "returnType": "'function'", "optional": false } },
         "tsType": { "type": { "returnType": "string", "optional": false } },
         "documentation": { "type": { "returnType": "string", "optional": true } },
         "parameters": { "type": { "returnType": "Record<string, JsonModelProperty>", "optional": false } },
@@ -131,7 +131,7 @@
     "JsonProperty": {},
     "JsonModelProperty": {},
     "JsonModel": {
-        "type": { "type": { "returnType": "\"model\"", "optional": false } },
+        "type": { "type": { "returnType": "'model'", "optional": false } },
         "tsType": { "type": { "returnType": "string", "optional": false } },
         "documentation": { "type": { "returnType": "string", "optional": true } },
         "properties": { "type": { "returnType": "Record<string, JsonModelProperty>", "optional": false } }

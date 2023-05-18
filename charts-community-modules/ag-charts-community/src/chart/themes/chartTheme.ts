@@ -118,7 +118,6 @@ export class ChartTheme {
         return {
             tooltip: {
                 enabled: true,
-                showArrow: true,
                 renderer: undefined,
             },
             visible: true,
@@ -177,6 +176,9 @@ export class ChartTheme {
             tooltip: {
                 ...seriesDefaults.tooltip,
                 format: undefined,
+                position: {
+                    type: 'node' as AgTooltipPositionType,
+                },
             },
         };
     }
@@ -186,6 +188,25 @@ export class ChartTheme {
         return {
             ...seriesDefaults,
             nodeClickRange: 'nearest' as AgChartInteractionRange,
+            tooltip: {
+                ...seriesDefaults.tooltip,
+                position: {
+                    type: 'node' as AgTooltipPositionType,
+                },
+            },
+        };
+    }
+
+    private static getScatterSeriesDefaults() {
+        const seriesDefaults = this.getSeriesDefaults();
+        return {
+            ...seriesDefaults,
+            tooltip: {
+                ...seriesDefaults.tooltip,
+                position: {
+                    type: 'node' as AgTooltipPositionType,
+                },
+            },
         };
     }
 
@@ -198,6 +219,10 @@ export class ChartTheme {
             strokeWidth: 1,
             formatter: undefined,
         };
+    }
+
+    private static getCaptionWrappingDefaults() {
+        return 'hyphenate' as const;
     }
 
     private static getChartDefaults() {
@@ -220,6 +245,7 @@ export class ChartTheme {
                 fontSize: 16,
                 fontFamily: this.fontFamily,
                 color: 'rgb(70, 70, 70)',
+                wrapping: ChartTheme.getCaptionWrappingDefaults(),
             },
             subtitle: {
                 enabled: false,
@@ -229,6 +255,7 @@ export class ChartTheme {
                 fontSize: 12,
                 fontFamily: this.fontFamily,
                 color: 'rgb(140, 140, 140)',
+                wrapping: ChartTheme.getCaptionWrappingDefaults(),
             },
             footnote: {
                 enabled: false,
@@ -239,6 +266,7 @@ export class ChartTheme {
                 fontFamily: this.fontFamily,
                 color: 'rgb(140, 140, 140)',
                 spacing: 30,
+                wrapping: ChartTheme.getCaptionWrappingDefaults(),
             },
             legend: {
                 enabled: true,
@@ -284,12 +312,8 @@ export class ChartTheme {
             },
             tooltip: {
                 enabled: true,
-                showArrow: true,
                 range: 'nearest' as AgChartInteractionRange,
                 delay: 0,
-                position: {
-                    type: 'pointer' as AgTooltipPositionType,
-                },
             },
             listeners: {},
         };
@@ -354,7 +378,7 @@ export class ChartTheme {
                 },
             },
             scatter: {
-                ...ChartTheme.getSeriesDefaults(),
+                ...ChartTheme.getScatterSeriesDefaults(),
                 title: undefined,
                 xKey: '',
                 yKey: '',

@@ -1,34 +1,47 @@
+@use "sass:map";
 @use '../../design-system/' as *;
 
-$padding-size: $size-3;
-$icon-size: 30px;
-
 .alert {
-    padding: $padding-size;
-    background-color: var(--bright-blue-gray);
+    --alert-background-color: var(--bright-blue-gray);
+    --icon-size: 3em;
+
+    display: flex;
+    gap: $size-2;
+    padding: $size-2;
+    background-color: var(--alert-background-color);
     border-radius: var(--border-radius);
+
+    :global(.icon) {
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    p:last-child {
+        margin-bottom: 0 !important; // !important for .ag-styles specificity
+    }
 }
 
 .alert.info {
-    padding-left: calc($padding-size + $icon-size + $size-2);
-    background-size: $icon-size $icon-size;
-    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSIjRkZDMTA3IiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTIwIDQ1bDEwLjUtM000NS41IDIwaC01TTMwLjUgMzZDMzAgMzEgMzcgMjkgMzcgMjFzLTctMTEtMTItMTEtMTEuNSAzLTExLjUgMTEgNyAxMSA3IDE2LjVjLTEuNSAzIDEwLTEuNSAxMC0xLjV6TTIwIDQybDEwLjUtM00yOC41IDQ2LjVjLTIuMzMzIDEuNjY3LTQuNSAxLjY2Ny02LjUgME0xMiAzMWwtMi41IDJNOS41IDIwaC01TTM4IDMxbDMgMk0zNiAxMWw0LTRNMjUgNi41VjFNMTQgMTFsLTQtMy41Ii8+PC9nPjwvc3ZnPg==);
-    background-repeat: no-repeat;
-    background-position-x: $padding-size;
-    background-position-y: $padding-size;
+    --text-color: var(--medium-electric-blue);
+
+    color: var(--text-color);
 }
 
-.alert.flag {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: $size-2;
+.alert.idea {
+    :global(.icon) {
+        --text-color: hsl(33, 100%, 65%);
 
-    @media screen and (min-width: $breakpoint-alert-flag-small) {
-        flex-direction: row;
+        bottom: 0.125em;
     }
+}
 
-    img {
-        width: 80px;
+.alert.warning {
+    --alert-background-color: var(--warning-background);
+    --text-color: var(--warning-text);
+
+    color: var(--text-color);
+
+    :global(.icon) {
+        --text-color: var(--ag-grid-orange);
     }
 }

@@ -376,6 +376,11 @@ export class GridOptionsService {
         return document;
     }
 
+    public getWindow() {
+        const eDocument = this.getDocument();
+        return eDocument.defaultView || window;
+    }
+
     public getRootNode(): Document | ShadowRoot {
         return this.eGridDiv.getRootNode() as Document | ShadowRoot;
     }

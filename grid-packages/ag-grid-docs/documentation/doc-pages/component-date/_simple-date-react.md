@@ -1,7 +1,9 @@
-[[only-react]]
+<framework-specific-section frameworks="react">
 |Below is a simple example of filter component as a Hook:
-|
-|```jsx
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<snippet transform={false} language="jsx">
 |export default forwardRef((props, ref) => {
 |    const [date, setDate] = useState(null);
 |    const [picker, setPicker] = useState(null);
@@ -82,21 +84,25 @@
 |
 |    // inlining styles to make simpler the component
 |    return (
-|        <div className="ag-input-wrapper custom-date-filter" role="presentation" ref={refFlatPickr}>
-|            <input type="text" ref={refInput} data-input style={{ width: "100%" }} />
-|            <a class='input-button' title='clear' data-clear>
-|                <i class='fa fa-times'></i>
-|            </a>
-|        </div>
+|        &lt;div className="ag-input-wrapper custom-date-filter" role="presentation" ref={refFlatPickr}>
+|            &lt;input type="text" ref={refInput} data-input style={{ width: "100%" }} />
+|            &lt;a class='input-button' title='clear' data-clear>
+|                &lt;i class='fa fa-times'>&lt;/i>
+|            &lt;/a>
+|        &lt;/div>
 |    );
 |});
-|```
-|
+</snippet>
+</framework-specific-section> 
+
+<framework-specific-section frameworks="react">
 | Note that the grid calls `getDate` and `setDate` synchronously. As state is asynchronous, you will also need to use a ref if using state to store the current date value. This is demonstrated in the example above.
 |
 | Here is the same example as a Class-based Component:
-|
-|```jsx
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<snippet transform={false} language="jsx">
 |export default class CustomDateComponent extends Component {
 |    constructor(props) {
 |        super(props);
@@ -109,12 +115,12 @@
 |    render() {
 |        //Inlining styles to make simpler the component
 |        return (
-|            <div className="ag-input-wrapper custom-date-filter" role="presentation" ref="flatpickr">
-|                <input type="text" ref="eInput" data-input style={{width: "100%"}}/>
-|                <a class='input-button' title='clear' data-clear>
-|                    <i class='fa fa-times'></i>
-|                </a>
-|            </div>
+|            &lt;div className="ag-input-wrapper custom-date-filter" role="presentation" ref="flatpickr">
+|                &lt;input type="text" ref="eInput" data-input style={{width: "100%"}}/>
+|                &lt;a class='input-button' title='clear' data-clear>
+|                    &lt;i class='fa fa-times'>&lt;/i>
+|                &lt;/a>
+|            &lt;/div>
 |        );
 |    }
 |
@@ -177,5 +183,5 @@
 |        this.updateAndNotifyAgGrid(selectedDates[0]);
 |    };
 |}
-|```
-
+</snippet>
+</framework-specific-section>

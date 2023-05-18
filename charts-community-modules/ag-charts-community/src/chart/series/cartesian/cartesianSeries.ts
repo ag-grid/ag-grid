@@ -30,6 +30,7 @@ import { getMarker } from '../../marker/util';
 import { Logger } from '../../../util/logger';
 import { DataModel, ProcessedData } from '../../data/dataModel';
 import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
+import { StateMachine } from '../../../motion/states';
 
 type NodeDataSelection<N extends Node, ContextType extends SeriesNodeDataContext> = Selection<
     N,
@@ -87,6 +88,11 @@ export class CartesianSeriesNodeDoubleClickEvent<
 > extends CartesianSeriesNodeBaseClickEvent<Datum> {
     readonly type = 'nodeDoubleClick';
 }
+
+type CartesianAnimationState = 'empty' | 'ready';
+type CartesianAnimationEvent = 'update' | 'highlight';
+class CartesianStateMachine extends StateMachine<CartesianAnimationState, CartesianAnimationEvent> {}
+
 export abstract class CartesianSeries<
     C extends SeriesNodeDataContext<any, any>,
     N extends Node = Group
@@ -107,6 +113,8 @@ export abstract class CartesianSeries<
     private subGroupId: number = 0;
 
     private readonly opts: SeriesOpts;
+
+    private animationState: CartesianStateMachine;
 
     /**
      * The assumption is that the values will be reset (to `true`)
@@ -131,6 +139,29 @@ export abstract class CartesianSeries<
 
         const { pathsPerSeries = 1, hasMarkers = false, pathsZIndexSubOrderOffset = [] } = opts;
         this.opts = { pathsPerSeries, hasMarkers, pathsZIndexSubOrderOffset };
+
+        this.animationState = new CartesianStateMachine('empty', {
+            empty: {
+                on: {
+                    update: {
+                        target: 'ready',
+                        action: (data) => this.animateEmptyUpdateReady(data),
+                    },
+                },
+            },
+            ready: {
+                on: {
+                    update: {
+                        target: 'ready',
+                        action: (data) => this.animateReadyUpdateReady(data),
+                    },
+                    highlight: {
+                        target: 'ready',
+                        action: (data) => this.animateReadyHighlightReady(data),
+                    },
+                },
+            },
+        });
     }
 
     addChartEventListeners(): void {
@@ -356,6 +387,7 @@ export abstract class CartesianSeries<
             });
         } else {
             await this.updateDatumNodes({ datumSelection: highlightSelection, isHighlight: true, seriesIdx: -1 });
+            this.animationState.transition('highlight', highlightSelection);
         }
         await this.updateLabelNodes({ labelSelection: highlightLabelSelection, seriesIdx: -1 });
 
@@ -409,6 +441,11 @@ export abstract class CartesianSeries<
                 }
             })
         );
+
+        this.animationState.transition('update', {
+            datumSelections: this.subGroups.map(({ datumSelection }) => datumSelection),
+            markerSelections: this.subGroups.map(({ markerSelection }) => markerSelection),
+        });
     }
 
     protected async updateHighlightSelection(seriesHighlighted?: boolean) {
@@ -747,6 +784,16 @@ export abstract class CartesianSeries<
     }): Promise<void> {
         // Override point for sub-classes.
     }
+
+    protected animateEmptyUpdateReady(_data: {
+        datumSelections: Array<NodeDataSelection<N, C>>;
+        markerSelections: Array<NodeDataSelection<Marker, C>>;
+    }) {}
+    protected animateReadyUpdateReady(_data: {
+        datumSelections: Array<NodeDataSelection<N, C>>;
+        markerSelections: Array<NodeDataSelection<Marker, C>>;
+    }) {}
+    protected animateReadyHighlightReady(_data: NodeDataSelection<N, C>) {}
 
     protected abstract updateLabelSelection(opts: {
         labelData: C['labelData'];

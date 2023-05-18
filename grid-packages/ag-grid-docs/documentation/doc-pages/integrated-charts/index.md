@@ -30,8 +30,9 @@ import { GridChartsModule } from "@ag-grid-enterprise/charts";
 ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule]);
 ```
 
-[[note]]
-| If you are not using ES6 Modules and are instead using the bundled version of AG Grid Enterprise, note that `ag-grid-enterprise.js` already contains the charting module.
+<note>
+If you are not using ES6 Modules and are instead using the bundled version of AG Grid Enterprise, note that `ag-grid-enterprise.js` already contains the charting module.
+</note>
 
 ## Next Up
 

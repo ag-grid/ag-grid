@@ -99,6 +99,11 @@ const REDUCE_CONFIG: Record<string, ReduceConfig<any>> = {
     stroke: { outputProp: 'strokes', reducer: DEFAULTING_ARRAY_REDUCER('stroke', SKIP), start: [] },
     yName: { outputProp: 'yNames', reducer: DEFAULTING_ARRAY_REDUCER('yName', SKIP), start: [] },
     visible: { outputProp: 'visibles', reducer: DEFAULTING_ARRAY_REDUCER('visible', true), start: [] },
+    legendItemName: {
+        outputProp: 'legendItemNames',
+        reducer: DEFAULTING_ARRAY_REDUCER('legendItemName', true),
+        start: [],
+    },
 
     grouped: {
         outputProp: 'grouped',

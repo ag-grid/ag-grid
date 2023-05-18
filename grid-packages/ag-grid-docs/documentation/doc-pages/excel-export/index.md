@@ -28,7 +28,7 @@ The default Excel export behaviour will export the grid as it is currently rende
 Note that the raw values, and not the result from a cell renderer will be used, meaning the results from:
 
 - Value Getters will be used. 
-- Cell Renderers / Formatters will **NOT** be used. 
+- Cell Renderers / Formatters will **NOT** be used, unless [Use Value Formatter for Export](/value-formatters/#use-value-formatter-for-export) is enabled.
 - Cell styles will **NOT** be exported by default. 
 
 In the following example reorder some columns and apply some filter and sort operations - then export from the 'Excel Export' option 
@@ -39,12 +39,13 @@ in the context menu, or the 'Export to Excel' button provided. Note the followin
 
 <grid-example title='Default Excel Export' name='excel-default-export' type='generated' options='{ "enterprise": true, "modules": ["clientside", "csv", "excel", "menu"], "exampleHeight": 600 }'></grid-example>
 
-[[note]]
+<note>
 |1. The column width in Excel will be the same as the actual width of the column in the application at the time that the export happens, or 75px, whichever is wider. "Actual width" may be different from the width in the column definition if column has been resized or uses flex sizing. This can be overridden using the `columnWidth` export parameter.
 |
 |1. The data types of your columns are passed to Excel as part of the export so that you can work with the data within Excel in the correct format.
 |
 |1. The cells of the column header groups are merged in the same manner as the group headers in AG Grid.
+</note>
 
 ## Custom Excel Export 
 

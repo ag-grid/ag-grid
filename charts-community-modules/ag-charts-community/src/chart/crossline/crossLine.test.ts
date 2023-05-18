@@ -234,7 +234,7 @@ const EXAMPLES: Record<string, CartesianTestCase> = {
     },
     COLUMN_CROSSLINES: {
         options: examples.COLUMN_CROSSLINES,
-        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['bar'] }),
+        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['column'] }),
     },
     BAR_CROSSLINES: {
         options: examples.BAR_CROSSLINES,

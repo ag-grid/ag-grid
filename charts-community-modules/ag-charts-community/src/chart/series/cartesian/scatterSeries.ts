@@ -35,6 +35,7 @@ import {
     AgCartesianSeriesMarkerFormat,
 } from '../../agChartOptions';
 import { DataModel } from '../../data/dataModel';
+import * as easing from '../../../motion/easing';
 
 interface ScatterNodeDatum extends Required<CartesianSeriesNodeDatum> {
     readonly label: MeasuredLabel;
@@ -175,23 +176,23 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
 
         this.dataModel = new DataModel<any>({
             props: [
-                valueProperty(xKey, isContinuousX),
-                valueProperty(yKey, isContinuousY),
-                ...(sizeKey ? [valueProperty(sizeKey, true)] : []),
-                ...(colorKey ? [valueProperty(colorKey, true)] : []),
+                valueProperty(xKey, isContinuousX, { id: `xValue` }),
+                valueProperty(yKey, isContinuousY, { id: `yValue` }),
+                ...(sizeKey ? [valueProperty(sizeKey, true, { id: `sizeValue` })] : []),
+                ...(colorKey ? [valueProperty(colorKey, true, { id: `colorValue` })] : []),
             ],
             dataVisible: this.visible,
         });
         this.processedData = this.dataModel.processData(data ?? []);
 
         if (sizeKey) {
-            const sizeKeyIdx = this.dataModel.resolveProcessedDataIndex(sizeKey)?.index ?? -1;
+            const sizeKeyIdx = this.dataModel.resolveProcessedDataIndexById(`sizeValue`)?.index ?? -1;
             const processedSize = this.processedData?.domain.values[sizeKeyIdx] ?? [];
             this.sizeScale.domain = marker.domain ? marker.domain : processedSize;
         }
 
         if (colorKey) {
-            const colorKeyIdx = this.dataModel.resolveProcessedDataIndex(colorKey)?.index ?? -1;
+            const colorKeyIdx = this.dataModel.resolveProcessedDataIndexById(`colorValue`)?.index ?? -1;
             colorScale.domain = colorDomain ?? this.processedData!.domain.values[colorKeyIdx];
             colorScale.range = colorRange;
         }
@@ -201,9 +202,9 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         const { dataModel, processedData } = this;
         if (!processedData || !dataModel) return [];
 
-        const key = direction === ChartAxisDirection.X ? this.xKey : this.yKey;
-        const dataDef = dataModel.resolveProcessedDataDef(key);
-        const domain = dataModel.getDomain(key, processedData);
+        const id = direction === ChartAxisDirection.X ? `xValue` : `yValue`;
+        const dataDef = dataModel.resolveProcessedDataDefById(id);
+        const domain = dataModel.getDomain(id, processedData);
         if (dataDef?.valueType === 'category') {
             return domain;
         }
@@ -222,8 +223,8 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     async createNodeData() {
         const { visible, xAxis, yAxis, yKey, xKey, label, labelKey } = this;
 
-        const xDataIdx = this.dataModel?.resolveProcessedDataIndex(xKey);
-        const yDataIdx = this.dataModel?.resolveProcessedDataIndex(yKey);
+        const xDataIdx = this.dataModel?.resolveProcessedDataIndexById(`xValue`);
+        const yDataIdx = this.dataModel?.resolveProcessedDataIndexById(`yValue`);
 
         if (!(xDataIdx && yDataIdx && visible && xAxis && yAxis)) {
             return [];
@@ -376,7 +377,6 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             node.fill = (format && format.fill) || fill;
             node.stroke = (format && format.stroke) || stroke;
             node.strokeWidth = format?.strokeWidth ?? strokeWidth;
-            node.size = format && format.size !== undefined ? format.size : size;
             node.fillOpacity = fillOpacity ?? 1;
             node.strokeOpacity = strokeOpacity ?? 1;
             node.translationX = datum.point?.x ?? 0;
@@ -551,6 +551,72 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             },
         ];
         return legendData;
+    }
+
+    animateEmptyUpdateReady({ markerSelections }: { markerSelections: Array<Selection<Marker, ScatterNodeDatum>> }) {
+        markerSelections.forEach((markerSelection) => {
+            markerSelection.each((marker, datum) => {
+                const format = this.animateFormatter(marker, datum);
+                const size = datum.point?.size ?? 0;
+
+                const to = format && format.size !== undefined ? format.size : size;
+
+                this.animationManager?.animate(`${this.id}_empty-update-ready_${marker.id}`, {
+                    from: 0,
+                    to: to,
+                    disableInteractions: true,
+                    duration: 1000,
+                    ease: easing.linear,
+                    repeat: 0,
+                    onUpdate(size) {
+                        marker.size = size;
+                    },
+                });
+            });
+        });
+    }
+
+    animateReadyUpdateReady({ markerSelections }: { markerSelections: Array<Selection<Marker, ScatterNodeDatum>> }) {
+        markerSelections.forEach((markerSelection) => {
+            markerSelection.each((marker, datum) => {
+                const format = this.animateFormatter(marker, datum);
+                const size = datum.point?.size ?? 0;
+
+                marker.size = format && format.size !== undefined ? format.size : size;
+            });
+        });
+    }
+
+    animateFormatter(marker: Marker, datum: ScatterNodeDatum) {
+        const {
+            xKey,
+            yKey,
+            marker: { strokeWidth: markerStrokeWidth },
+            id: seriesId,
+        } = this;
+        const { formatter } = this.marker;
+
+        const fill = datum.fill ?? marker.fill;
+        const stroke = marker.stroke;
+        const strokeWidth = markerStrokeWidth ?? 1;
+        const size = datum.point?.size ?? 0;
+
+        let format: AgCartesianSeriesMarkerFormat | undefined = undefined;
+        if (formatter) {
+            format = formatter({
+                datum: datum.datum,
+                xKey,
+                yKey,
+                fill,
+                stroke,
+                strokeWidth,
+                size,
+                highlighted: false,
+                seriesId,
+            });
+        }
+
+        return format;
     }
 
     protected isLabelEnabled() {

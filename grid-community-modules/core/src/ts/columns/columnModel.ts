@@ -295,6 +295,10 @@ export class ColumnModel extends BeanStub {
         this.createColumnsFromColumnDefs(colsPreviouslyExisted, source);
     }
 
+    public recreateColumnDefs(source: ColumnEventType = 'api'): void {
+        this.onSharedColDefChanged(source);
+    }
+
     private destroyOldColumns(oldTree: IProvidedColumn[] | null, newTree?: IProvidedColumn[] | null): void {
         const oldObjectsById: {[id: number]: IProvidedColumn | null} = {};
 

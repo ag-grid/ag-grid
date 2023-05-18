@@ -34,11 +34,13 @@ const gridOptions = {
 
 It's important to note that images can only be exported as `base64` strings, and the image format must be either `PNG`, `GIF` or `JPG`. You can convert your images to a `base64` string, using third party tools, or using the code in our examples on this page.
 
-[[note]]
-| Every image is required to have an `id`. This way, if you're exporting the same image multiple times as part of the same export operation, the `id` will be used to access the image data, so the image file is imported only once.
+<note>
+Every image is required to have an `id`. This way, if you're exporting the same image multiple times as part of the same export operation, the `id` will be used to access the image data, so the image file is imported only once.
+</note>
 
-[[warning]]
+<warning>
 | At the moment, it's only possible the export one image per cell.
+</warning>
 
 ## Cells with Images
 
@@ -68,8 +70,9 @@ Note the following:
 - The first row has a larger height as set in the `rowHeight` callback.
 - The custom content added using `prependContent` spans across two columns.
 
-[[note]]
-| Even if an ExcelCell object that merges multiple cells across is created, the `ExcelImage` still needs be informed of how many columns it will be spanning. This is done by passing `position: { colSpan: number }` to the `ExcelImage`.
+<note>
+Even if an ExcelCell object that merges multiple cells across is created, the `ExcelImage` still needs be informed of how many columns it will be spanning. This is done by passing `position: { colSpan: number }` to the `ExcelImage`.
+</note>
 
 <grid-example title='Excel Export - Prepend Images' name='excel-export-prepend-images' type='generated' options='{ "enterprise": true, "modules": ["clientside", "csv", "excel", "menu"] }'></grid-example>
 

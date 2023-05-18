@@ -124,6 +124,7 @@ import { ValueCache } from "./valueService/valueCache";
 import { ValueService } from "./valueService/valueService";
 import { ISelectionService } from "./interfaces/iSelectionService";
 import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./interfaces/iServerSideSelection";
+import { DataTypeDefinition } from "./entities/dataType";
 
 export interface DetailGridInfo {
     /**
@@ -704,7 +705,7 @@ export class GridApi<TData = any> {
 
     /**
      * Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAll'`
      */
     public selectAll(source: SelectionEventSourceType = 'apiSelectAll') {
         this.selectionService.selectAllRowNodes({ source });
@@ -712,7 +713,7 @@ export class GridApi<TData = any> {
 
     /**
      * Clear all row selections, regardless of filtering.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAll'`
      */
     public deselectAll(source: SelectionEventSourceType = 'apiSelectAll') {
         this.selectionService.deselectAllRowNodes({ source });
@@ -720,7 +721,7 @@ export class GridApi<TData = any> {
 
     /**
      * Select all filtered rows.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllFiltered'`
      */
     public selectAllFiltered(source: SelectionEventSourceType = 'apiSelectAllFiltered') {
         this.selectionService.selectAllRowNodes({ source, justFiltered: true });
@@ -728,7 +729,7 @@ export class GridApi<TData = any> {
 
     /**
      * Clear all filtered selections.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllFiltered'`
      */
     public deselectAllFiltered(source: SelectionEventSourceType = 'apiSelectAllFiltered') {
         this.selectionService.deselectAllRowNodes({ source, justFiltered: true });
@@ -766,7 +767,7 @@ export class GridApi<TData = any> {
 
     /**
      * Select all rows on the current page.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllCurrentPage'`
      */
     public selectAllOnCurrentPage(source: SelectionEventSourceType = 'apiSelectAllCurrentPage') {
         this.selectionService.selectAllRowNodes({ source, justCurrentPage: true });
@@ -774,7 +775,7 @@ export class GridApi<TData = any> {
 
     /**
      * Clear all filtered on the current page.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllCurrentPage'`
      */
     public deselectAllOnCurrentPage(source: SelectionEventSourceType = 'apiSelectAllCurrentPage') {
         this.selectionService.deselectAllRowNodes({ source, justCurrentPage: true });
@@ -961,7 +962,7 @@ export class GridApi<TData = any> {
         return unwrapUserComp(comp) as any;
     }
 
-    public getColumnDef(key: string | Column): ColDef<TData> | null {
+    public getColumnDef<TValue = any>(key: string | Column<TValue>): ColDef<TData, TValue> | null {
         const column = this.columnModel.getPrimaryColumn(key);
         if (column) {
             return column.getColDef();
@@ -1441,7 +1442,7 @@ export class GridApi<TData = any> {
      * Gets the value for a column for a particular `rowNode` (row).
      * This is useful if you want the raw value of a cell e.g. if implementing your own CSV export.
      */
-    public getValue(colKey: string | Column, rowNode: IRowNode): any {
+    public getValue<TValue = any>(colKey: string | Column<TValue>, rowNode: IRowNode): TValue | null | undefined {
         let column = this.columnModel.getPrimaryColumn(colKey);
         if (missing(column)) {
             column = this.columnModel.getGridColumn(colKey);
@@ -1968,6 +1969,13 @@ export class GridApi<TData = any> {
     /** Returns the total number of displayed rows. */
     public getDisplayedRowCount(): number {
         return this.rowModel.getRowCount();
+    }
+
+    /** Resets the data type definitions. This will update the columns in the grid. */
+    public setDataTypeDefinitions(dataTypeDefinitions: {
+        [cellDataType: string]: DataTypeDefinition<TData>;
+    }): void {
+        this.gridOptionsService.set('dataTypeDefinitions', dataTypeDefinitions);
     }
 
     /**

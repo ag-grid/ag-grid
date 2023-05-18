@@ -1,6 +1,14 @@
 import { BBox } from '../../scene/bbox';
 import { DeprecatedAndRenamedTo } from '../../util/deprecation';
-import { Validate, BOOLEAN, NUMBER, OPT_STRING, INTERACTION_RANGE, predicateWithMessage } from '../../util/validation';
+import {
+    Validate,
+    BOOLEAN,
+    NUMBER,
+    OPT_STRING,
+    INTERACTION_RANGE,
+    predicateWithMessage,
+    OPT_BOOLEAN,
+} from '../../util/validation';
 import { AgChartInteractionRange, AgTooltipRendererResult } from '../agChartOptions';
 import { InteractionEvent } from '../interaction/interactionManager';
 
@@ -112,7 +120,7 @@ export interface TooltipMeta {
     pageY: number;
     offsetX: number;
     offsetY: number;
-    showArrow: boolean;
+    showArrow?: boolean;
     position?: {
         xOffset?: number;
         yOffset?: number;
@@ -179,8 +187,8 @@ export class Tooltip {
     @Validate(BOOLEAN)
     enabled: boolean = true;
 
-    @Validate(BOOLEAN)
-    showArrow: boolean = true;
+    @Validate(OPT_BOOLEAN)
+    showArrow?: boolean = undefined;
 
     @Validate(OPT_STRING)
     class?: string = undefined;
@@ -309,7 +317,8 @@ export class Tooltip {
         const top = limit(windowBounds.y, naiveTop, maxTop);
 
         const constrained = left !== naiveLeft || top !== naiveTop;
-        const showArrow = !constrained && meta.showArrow;
+        const defaultShowArrow = !constrained && !xOffset && !yOffset;
+        const showArrow = meta.showArrow ?? this.showArrow ?? defaultShowArrow;
         this.updateShowArrow(showArrow);
         element.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
 
@@ -348,6 +357,6 @@ export class Tooltip {
     }
 
     private updateShowArrow(show: boolean) {
-        this._showArrow = this.showArrow && show;
+        this._showArrow = show;
     }
 }
