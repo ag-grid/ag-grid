@@ -514,7 +514,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             // position title so that it doesn't briefly get rendered in the top left hand corner of the canvas before update is called.
             this.setTickCount(this.tick.count);
             this.setTickInterval(this.tick.interval);
-            this.updateTitle(this.label.getSideFlag());
+            this.updateTitle({ anyTickVisible: true, sideFlag: this.label.getSideFlag() });
         }
     }
     get title(): Caption | undefined {
@@ -655,11 +655,11 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             labelX,
         });
 
+        this.updateVisibility();
         this.updateGridLines(sideFlag);
         this.updateTickLines(sideFlag);
-        this.updateTitle(sideFlag);
+        this.updateTitle({ anyTickVisible: tickData.ticks.length > 0, sideFlag });
         this.updateCrossLines({ rotation, parallelFlipRotation, regularFlipRotation, sideFlag });
-        this.updateVisibility();
         this.updateLayoutState();
 
         primaryTickCount = ticksResult.primaryTickCount;
@@ -1324,7 +1324,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         lineNode.visible = true;
     }
 
-    private updateTitle(sideFlag: Flag): void {
+    private updateTitle({ anyTickVisible, sideFlag }: { anyTickVisible: boolean; sideFlag: Flag }): void {
         const { rotation, title, lineNode, requestedRange, tickLineGroup, tickLabelGroup } = this;
 
         if (!title) {
@@ -1346,10 +1346,12 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
             let bboxYDimension = 0;
 
-            const tickBBox = Group.computeBBox([tickLineGroup, tickLabelGroup]);
-            const tickWidth = rotation === 0 ? tickBBox.width : tickBBox.height;
-            if (Math.abs(tickWidth) < Infinity) {
-                bboxYDimension += tickWidth;
+            if (anyTickVisible) {
+                const tickBBox = Group.computeBBox([tickLineGroup, tickLabelGroup]);
+                const tickWidth = rotation === 0 ? tickBBox.width : tickBBox.height;
+                if (Math.abs(tickWidth) < Infinity) {
+                    bboxYDimension += tickWidth;
+                }
             }
 
             if (sideFlag === -1) {
