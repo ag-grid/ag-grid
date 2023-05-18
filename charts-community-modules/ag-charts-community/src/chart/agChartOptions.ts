@@ -42,10 +42,10 @@ export type PixelSize = number;
 /** Alias to denote that a value is a ratio, usually in the range [0, 1]. */
 export type Ratio = number;
 
-export type TextWrap = 'always' | 'never';
-
 /** Alias to denote that a value is a data value. */
 export type DataValue = any;
+
+export type TextWrap = 'never' | 'always' | 'hyphenate' | 'on-space';
 
 /** Define a range within which an interaction can trigger on a point with one of:
  * - A distance in pixels from a point within which the event can be triggered.
@@ -290,7 +290,13 @@ export interface AgChartCaptionOptions {
     maxWidth?: PixelSize;
     /** Used to constrain the height of the title. */
     maxHeight?: PixelSize;
-    /** Text wrapping strategy for long titles. */
+    /**
+     * Text wrapping strategy for long texts.
+     * `'always'` will break the words that are longer than `maxWidth`.
+     * `'hyphenate'` is similar to `'always'`, but insert the hyphens (`-`) into the word breaks.
+     * `'on-space'` will break the text on white spaces and tabulation symbols only. If some long word can't fit the `maxWidth`, the text will be truncated.
+     * `'never'` disables text wrapping.
+     */
     wrapping?: TextWrap;
 }
 export interface AgChartSubtitleOptions extends AgChartCaptionOptions {}
@@ -519,7 +525,7 @@ export interface AgPaginationLabelOptions {
 export interface AgChartTooltipOptions {
     /** Set to false to disable tooltips for all series in the chart. */
     enabled?: boolean;
-    /** Set to false to remove the arrow attached to the tooltip. */
+    /** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */
     showArrow?: boolean;
     /** A class name to be added to the tooltip element of the chart. */
     class?: string;
@@ -527,7 +533,7 @@ export interface AgChartTooltipOptions {
     tracking?: boolean;
     /** Range from a point that triggers the tooltip to show. */
     range?: AgChartInteractionRange;
-    /** The position of the tooltip. By default the tooltip follows the mouse pointer. */
+    /** The position of the tooltip. */
     position?: AgTooltipPositionOptions;
     /** The time interval (in milliseconds) after which the tooltip is shown. */
     delay?: number;
@@ -537,7 +543,7 @@ export type AgTooltipPositionType = 'pointer' | 'node';
 export type AgTooltipPositionOptions = AgMovingTooltipPositionOptions;
 
 export interface AgMovingTooltipPositionOptions {
-    /** The type of positioning for the tooltip. By default, the tooltip follows the pointer. */
+    /** The type of positioning for the tooltip. By default, the tooltip follows the mouse pointer for series without markers, and it is anchored to the highlighted marker node for series with markers. */
     type: AgTooltipPositionType;
     /** The horizontal offset in pixels for the position of the tooltip. */
     xOffset?: PixelSize;
@@ -1113,9 +1119,9 @@ export interface AgAreaSeriesMarker<DatumType> extends AgCartesianSeriesMarker<D
 export interface AgSeriesTooltip {
     /** Whether or not to show tooltips when the series are hovered over. */
     enabled?: boolean;
-    /** Set to false to remove the arrow attached to the series tooltip. */
+    /** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */
     showArrow?: boolean;
-    /** The position of the tooltip. By default the tooltip follows the mouse pointer. */
+    /** The position of the tooltip. */
     position?: AgTooltipPositionOptions;
     /** Configuration for tooltip interaction. */
     interaction?: AgSeriesTooltipInteraction;
@@ -1317,12 +1323,14 @@ export interface AgBarSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     normalizedTo?: number;
     /** The key to use to retrieve x-values from the data. */
     xKey?: string;
-    /** The keys to use to retrieve y-values from the data. */
+    /** The key to use to retrieve y-values from the data. */
     yKey?: string;
     /** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     xName?: string;
     /** Human-readable description of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     yName?: string;
+    /** Human-readable description of the y-values. If supplied, matching items with the same value will be toggled together. */
+    legendItemName?: string;
     /** The colour to use for the fill of the bars. */
     fill?: CssColor;
     /** The colours to use for the stroke of the bars. */
@@ -1518,7 +1526,7 @@ export interface AgPieSeriesOptions<DatumType = any> extends AgBaseSeriesOptions
     sectorLabelKey?: string;
     /** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */
     sectorLabelName?: string;
-    /** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */
+    /** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. */
     legendItemKey?: string;
     /** The colours to cycle through for the fills of the sectors. */
     fills?: CssColor[];

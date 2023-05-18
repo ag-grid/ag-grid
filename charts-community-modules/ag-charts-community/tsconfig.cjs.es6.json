@@ -8,7 +8,8 @@
         },
         "noUnusedParameters": true,
         "noUnusedLocals": true,
-        "strict": true
+        "strict": true,
+        "declarationMap": true
     },
     "files": ["src/chart/test/utils.ts", "src/chart/test/mock-canvas.ts"],
     "include": ["src/**/*"],

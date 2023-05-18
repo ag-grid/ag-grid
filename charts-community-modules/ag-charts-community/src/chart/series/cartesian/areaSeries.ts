@@ -1,6 +1,7 @@
 import { Selection } from '../../../scene/selection';
 import { DropShadow } from '../../../scene/dropShadow';
 import { SeriesTooltip, SeriesNodeDataContext, keyProperty, valueProperty } from '../series';
+import { BBox } from '../../../scene/bbox';
 import { PointerEvents } from '../../../scene/node';
 import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import { Path } from '../../../scene/shape/path';
@@ -30,7 +31,6 @@ import {
     OPT_FUNCTION,
     OPT_LINE_DASH,
     OPT_STRING,
-    STRING,
     STRING_ARRAY,
     COLOR_STRING_ARRAY,
     Validate,
@@ -48,6 +48,8 @@ import { LogAxis } from '../../axis/logAxis';
 import { DataModel } from '../../data/dataModel';
 import { TimeAxis } from '../../axis/timeAxis';
 import { sum } from '../../data/aggregateFunctions';
+import { normaliseGroupTo } from '../../data/processors';
+import * as easing from '../../../motion/easing';
 
 interface FillSelectionDatum {
     readonly itemId: string;
@@ -155,19 +157,19 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         label.enabled = false;
     }
 
-    @Validate(STRING)
-    protected _xKey: string = '';
-    set xKey(value: string) {
+    @Validate(OPT_STRING)
+    protected _xKey?: string = undefined;
+    set xKey(value: string | undefined) {
         this._xKey = value;
         this.processedData = undefined;
     }
 
-    get xKey(): string {
+    get xKey(): string | undefined {
         return this._xKey;
     }
 
-    @Validate(STRING)
-    xName: string = '';
+    @Validate(OPT_STRING)
+    xName?: string = undefined;
 
     @Validate(STRING_ARRAY)
     protected _yKeys: string[] = [];
@@ -232,22 +234,28 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         const isContinuousY = yAxis?.scale instanceof ContinuousScale;
 
         const enabledYKeys = [...seriesItemEnabled.entries()].filter(([, enabled]) => enabled).map(([yKey]) => yKey);
+
         const normaliseTo = normalizedTo && isFinite(normalizedTo) ? normalizedTo : undefined;
+        const extraProps = [];
+        if (normaliseTo) {
+            extraProps.push(normaliseGroupTo(enabledYKeys, normaliseTo, 'sum'));
+        }
 
         this.dataModel = new DataModel<any, any, true>({
             props: [
-                keyProperty(xKey, isContinuousX),
+                keyProperty(xKey, isContinuousX, { id: 'xValue' }),
                 ...enabledYKeys.map((yKey) =>
                     valueProperty(yKey, isContinuousY, {
+                        id: `yValue-${yKey}`,
                         missingValue: NaN,
                         invalidValue: undefined,
                     })
                 ),
                 sum(enabledYKeys),
+                ...extraProps,
             ],
             groupByKeys: true,
             dataVisible: this.visible && enabledYKeys.length > 0,
-            normaliseTo,
         });
 
         this.processedData = this.dataModel.processData(data);
@@ -289,13 +297,13 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         }
 
         const contexts: AreaSeriesNodeDataContext[] = [];
-        const { yKeys, xKey, marker, label, fills, strokes, id: seriesId } = this;
+        const { yKeys, xKey = '', marker, label, fills, strokes, id: seriesId } = this;
         const { scale: xScale } = xAxis;
         const { scale: yScale } = yAxis;
 
         const continuousY = yScale instanceof ContinuousScale;
 
-        const xOffset = (xScale.bandwidth || 0) / 2;
+        const xOffset = (xScale.bandwidth ?? 0) / 2;
 
         const xDataCount = data.length;
         const cumulativePathValues: CumulativeValue[] = new Array(xDataCount)
@@ -347,7 +355,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         };
 
         yKeys.forEach((yKey, seriesIdx) => {
-            const yKeyDataIndex = this.dataModel?.resolveProcessedDataIndex(yKey);
+            const yKeyDataIndex = this.dataModel?.resolveProcessedDataIndexById(`yValue-${yKey}`);
             const labelSelectionData: LabelSelectionDatum[] = [];
             const markerSelectionData: MarkerSelectionDatum[] = [];
             const strokeSelectionData: StrokeSelectionDatum = { itemId: yKey, points: [], yValues: [] };
@@ -488,100 +496,6 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         return this.marker.isDirty();
     }
 
-    protected async updatePaths(opts: {
-        seriesHighlighted?: boolean;
-        contextData: AreaSeriesNodeDataContext;
-        paths: Path[];
-    }) {
-        const {
-            contextData: { fillSelectionData, strokeSelectionData },
-            paths: [fill, stroke],
-        } = opts;
-
-        fill.datum = fillSelectionData;
-        fill.tag = AreaSeriesTag.Fill;
-        fill.lineJoin = 'round';
-        fill.stroke = undefined;
-        fill.pointerEvents = PointerEvents.None;
-
-        stroke.datum = strokeSelectionData;
-        stroke.tag = AreaSeriesTag.Stroke;
-        stroke.fill = undefined;
-        stroke.lineJoin = stroke.lineCap = 'round';
-        stroke.pointerEvents = PointerEvents.None;
-    }
-
-    protected async updatePathNodes(opts: {
-        seriesHighlighted?: boolean;
-        itemId?: string;
-        paths: Path[];
-        seriesIdx: number;
-    }) {
-        const {
-            paths: [fill, stroke],
-            seriesIdx,
-            itemId,
-        } = opts;
-        const { strokes, fills, fillOpacity, strokeOpacity, strokeWidth, shadow } = this;
-
-        {
-            const {
-                datum: { points },
-            } = fill;
-            fill.fill = fills[seriesIdx % fills.length];
-            fill.fillOpacity = fillOpacity;
-            fill.strokeOpacity = strokeOpacity;
-            fill.strokeWidth = strokeWidth;
-            fill.lineDash = this.lineDash;
-            fill.lineDashOffset = this.lineDashOffset;
-            fill.fillShadow = shadow;
-
-            const path = fill.path;
-            path.clear({ trackChanges: true });
-
-            let i = 0;
-            for (const p of points) {
-                if (i++ > 0) {
-                    path.lineTo(p.x, p.y);
-                } else {
-                    path.moveTo(p.x, p.y);
-                }
-            }
-
-            path.closePath();
-            fill.checkPathDirty();
-        }
-
-        {
-            const {
-                datum: { points, yValues },
-            } = stroke;
-            let moveTo = true;
-
-            stroke.stroke = strokes[seriesIdx % strokes.length];
-            stroke.strokeWidth = this.getStrokeWidth(this.strokeWidth, { itemId });
-            stroke.strokeOpacity = strokeOpacity;
-            stroke.lineDash = this.lineDash;
-            stroke.lineDashOffset = this.lineDashOffset;
-
-            const path = stroke.path;
-            path.clear({ trackChanges: true });
-
-            let i = 0;
-            for (const p of points) {
-                if (yValues[i++] === undefined) {
-                    moveTo = true;
-                } else if (moveTo) {
-                    path.moveTo(p.x, p.y);
-                    moveTo = false;
-                } else {
-                    path.lineTo(p.x, p.y);
-                }
-            }
-            stroke.checkPathDirty();
-        }
-    }
-
     protected markerFactory() {
         const { shape } = this.marker;
         const MarkerShape = getMarker(shape);
@@ -614,7 +528,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         const { markerSelection, isHighlight: isDatumHighlighted } = opts;
         const {
             id: seriesId,
-            xKey,
+            xKey = '',
             marker,
             seriesItemEnabled,
             yKeys,
@@ -634,7 +548,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         } = this;
 
         const { size, formatter } = marker;
-        const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
+        const markerStrokeWidth = marker.strokeWidth ?? this.strokeWidth;
 
         const customMarker = typeof marker.shape === 'function';
 
@@ -643,12 +557,12 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             const fill =
                 isDatumHighlighted && highlightedFill !== undefined
                     ? highlightedFill
-                    : marker.fill || fills[yKeyIndex % fills.length];
+                    : marker.fill ?? fills[yKeyIndex % fills.length];
             const fillOpacity = isDatumHighlighted ? highlightFillOpacity : markerFillOpacity;
             const stroke =
                 isDatumHighlighted && highlightedStroke !== undefined
                     ? highlightedStroke
-                    : marker.stroke || strokes[yKeyIndex % fills.length];
+                    : marker.stroke ?? strokes[yKeyIndex % fills.length];
             const strokeWidth =
                 isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                     ? highlightedDatumStrokeWidth
@@ -669,12 +583,12 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 });
             }
 
-            node.fill = (format && format.fill) || fill;
-            node.stroke = (format && format.stroke) || stroke;
-            node.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
+            node.fill = format?.fill ?? fill;
+            node.stroke = format?.stroke ?? stroke;
+            node.strokeWidth = format?.strokeWidth ?? strokeWidth;
             node.fillOpacity = fillOpacity ?? 1;
             node.strokeOpacity = marker.strokeOpacity ?? strokeOpacity ?? 1;
-            node.size = format && format.size !== undefined ? format.size : size;
+            node.size = format?.size ?? size;
 
             node.translationX = datum.point.x;
             node.translationY = datum.point.y;
@@ -732,20 +646,20 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     }
 
     protected getNodeClickEvent(event: MouseEvent, datum: MarkerSelectionDatum): CartesianSeriesNodeClickEvent<any> {
-        return new CartesianSeriesNodeClickEvent(this.xKey, datum.yKey, event, datum, this);
+        return new CartesianSeriesNodeClickEvent(this.xKey ?? '', datum.yKey, event, datum, this);
     }
 
     protected getNodeDoubleClickEvent(
         event: MouseEvent,
         datum: MarkerSelectionDatum
     ): CartesianSeriesNodeDoubleClickEvent<any> {
-        return new CartesianSeriesNodeDoubleClickEvent(this.xKey, datum.yKey, event, datum, this);
+        return new CartesianSeriesNodeDoubleClickEvent(this.xKey ?? '', datum.yKey, event, datum, this);
     }
 
     getTooltipHtml(nodeDatum: MarkerSelectionDatum): string {
         const { xKey, id: seriesId } = this;
         const { yKey } = nodeDatum;
-        const yKeyDataIndex = this.dataModel?.resolveProcessedDataIndex(yKey);
+        const yKeyDataIndex = this.dataModel?.resolveProcessedDataIndexById(`yValue-${yKey}`);
 
         if (!(xKey && yKey) || !yKeyDataIndex) {
             return '';
@@ -778,9 +692,9 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         const title = sanitizeHtml(yName);
         const content = sanitizeHtml(xString + ': ' + yString);
 
-        const strokeWidth = markerStrokeWidth !== undefined ? markerStrokeWidth : this.strokeWidth;
-        const fill = markerFill || fills[yKeyIndex % fills.length];
-        const stroke = markerStroke || strokes[yKeyIndex % fills.length];
+        const strokeWidth = markerStrokeWidth ?? this.strokeWidth;
+        const fill = markerFill ?? fills[yKeyIndex % fills.length];
+        const stroke = markerStroke ?? strokes[yKeyIndex % fills.length];
 
         let format: AgCartesianSeriesMarkerFormat | undefined = undefined;
 
@@ -798,7 +712,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             });
         }
 
-        const color = (format && format.fill) || fill;
+        const color = format?.fill ?? fill;
 
         const defaults: AgTooltipRendererResult = {
             title,
@@ -841,7 +755,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         const { data, id, xKey, yKeys, yNames, seriesItemEnabled, marker, fills, strokes, fillOpacity, strokeOpacity } =
             this;
 
-        if (!data || !data.length || !xKey || !yKeys.length) {
+        if (!data?.length || !xKey || !yKeys.length) {
             return [];
         }
 
@@ -856,14 +770,14 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 id,
                 itemId: yKey,
                 seriesId: id,
-                enabled: seriesItemEnabled.get(yKey) || false,
+                enabled: seriesItemEnabled.get(yKey) ?? false,
                 label: {
                     text: yNames[index] || yKeys[index],
                 },
                 marker: {
                     shape: marker.shape,
-                    fill: marker.fill || fills[index % fills.length],
-                    stroke: marker.stroke || strokes[index % strokes.length],
+                    fill: marker.fill ?? fills[index % fills.length],
+                    stroke: marker.stroke ?? strokes[index % strokes.length],
                     fillOpacity: marker.fillOpacity ?? fillOpacity,
                     strokeOpacity: marker.strokeOpacity ?? strokeOpacity,
                 },
@@ -871,6 +785,184 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         }
 
         return legendData;
+    }
+
+    animateEmptyUpdateReady({
+        markerSelections,
+        contextData,
+        paths,
+        seriesRect,
+    }: {
+        markerSelections: Array<Selection<Marker, any>>;
+        contextData: Array<AreaSeriesNodeDataContext>;
+        paths: Array<Array<Path>>;
+        seriesRect?: BBox;
+    }) {
+        const { strokes, fills, fillOpacity, lineDash, lineDashOffset, strokeOpacity, strokeWidth, shadow } = this;
+
+        contextData.forEach(({ fillSelectionData, strokeSelectionData, itemId }, seriesIdx) => {
+            const [fill, stroke] = paths[seriesIdx];
+
+            const animationOptions = {
+                from: 0,
+                to: seriesRect?.width ?? 0,
+                disableInteractions: true,
+                duration: 1000,
+                ease: easing.linear,
+                repeat: 0,
+            };
+
+            // Stroke
+            {
+                const { points } = strokeSelectionData;
+                const filteredPoints = points.filter((point) => !isNaN(point.x) && !isNaN(point.y));
+
+                stroke.fill = undefined;
+                stroke.lineJoin = 'round';
+                stroke.pointerEvents = PointerEvents.None;
+
+                stroke.stroke = strokes[seriesIdx % strokes.length];
+                stroke.strokeWidth = this.getStrokeWidth(this.strokeWidth, { itemId });
+                stroke.strokeOpacity = strokeOpacity;
+                stroke.lineDash = lineDash;
+                stroke.lineDashOffset = lineDashOffset;
+
+                this.animationManager?.animate<number>(`${this.id}_empty-update-ready_stroke_${seriesIdx}`, {
+                    ...animationOptions,
+                    onUpdate(xValue) {
+                        stroke.path.clear({ trackChanges: true });
+
+                        filteredPoints.forEach((point, index) => {
+                            if (point.x <= xValue) {
+                                // Draw/move the full segment if past the end of this segment
+                                stroke.path.lineTo(point.x, point.y);
+                            } else if (index > 0 && filteredPoints[index - 1].x <= xValue) {
+                                // Draw/move partial line if in between the start and end of this segment
+                                const start = filteredPoints[index - 1];
+                                const end = point;
+
+                                const x = xValue;
+                                const y = start.y + ((x - start.x) * (end.y - start.y)) / (end.x - start.x);
+
+                                stroke.path.lineTo(x, y);
+                            }
+                        });
+
+                        stroke.checkPathDirty();
+                    },
+                });
+            }
+
+            // Fill
+            {
+                const points = fillSelectionData.points.slice(0, fillSelectionData.points.length / 2);
+                const bottomPoints = fillSelectionData.points.slice(fillSelectionData.points.length / 2);
+
+                fill.fill = fills[seriesIdx % fills.length];
+                fill.fillOpacity = fillOpacity;
+                fill.strokeOpacity = strokeOpacity;
+                fill.strokeWidth = strokeWidth;
+                fill.lineDash = lineDash;
+                fill.lineDashOffset = lineDashOffset;
+                fill.fillShadow = shadow;
+
+                this.animationManager?.animate<number>(`${this.id}_empty-update-ready_fill_${seriesIdx}`, {
+                    ...animationOptions,
+                    onUpdate(xValue) {
+                        fill.path.clear({ trackChanges: true });
+
+                        let x = 0;
+                        let y = 0;
+
+                        points.forEach((point, index) => {
+                            if (point.x <= xValue) {
+                                // Draw/move the full segment if past the end of this segment
+                                x = point.x;
+                                y = point.y;
+
+                                fill.path.lineTo(point.x, point.y);
+                            } else if (index > 0 && points[index - 1].x < xValue) {
+                                // Draw/move partial line if in between the start and end of this segment
+                                const start = points[index - 1];
+                                const end = point;
+
+                                x = xValue;
+                                y = start.y + ((x - start.x) * (end.y - start.y)) / (end.x - start.x);
+
+                                fill.path.lineTo(x, y);
+                            }
+                        });
+
+                        bottomPoints.forEach((point, index) => {
+                            const reverseIndex = bottomPoints.length - index - 1;
+
+                            if (point.x <= xValue) {
+                                fill.path.lineTo(point.x, point.y);
+                            } else if (reverseIndex > 0 && points[reverseIndex - 1].x < xValue) {
+                                const start = point;
+                                const end = bottomPoints[index + 1];
+
+                                const bottomY = start.y + ((x - start.x) * (end.y - start.y)) / (end.x - start.x);
+
+                                fill.path.lineTo(x, bottomY);
+                            }
+                        });
+
+                        fill.path.lineTo(
+                            bottomPoints[bottomPoints.length - 1].x,
+                            bottomPoints[bottomPoints.length - 1].y
+                        );
+
+                        fill.path.closePath();
+                        fill.checkPathDirty();
+                    },
+                });
+            }
+
+            markerSelections[seriesIdx].each((marker, datum) => {
+                const format = this.animateFormatter(datum);
+                const size = datum.point?.size ?? 0;
+
+                this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${marker.id}`, {
+                    ...animationOptions,
+                    onUpdate(xValue) {
+                        if (datum.point.x <= xValue) {
+                            marker.size = format && format.size !== undefined ? format.size : size;
+                        } else {
+                            marker.size = 0;
+                        }
+                    },
+                });
+            });
+        });
+    }
+
+    private animateFormatter(datum: any) {
+        const { marker, fills, strokes, xKey = '', yKeys, id: seriesId } = this;
+        const { size, formatter } = marker;
+
+        const yKeyIndex = yKeys.indexOf(datum.yKey);
+
+        const fill = marker.fill || fills[yKeyIndex % fills.length];
+        const stroke = marker.stroke || strokes[yKeyIndex % fills.length];
+        const strokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
+
+        let format: AgCartesianSeriesMarkerFormat | undefined = undefined;
+        if (formatter) {
+            format = formatter({
+                datum: datum.datum,
+                xKey,
+                yKey: datum.yKey,
+                fill,
+                stroke,
+                strokeWidth,
+                size,
+                highlighted: false,
+                seriesId,
+            });
+        }
+
+        return format;
     }
 
     protected isLabelEnabled() {

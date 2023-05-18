@@ -11,7 +11,7 @@ export enum RedrawType {
     MAJOR, // Significant change in rendering.
 }
 
-export type SceneChangeDetectionOptions = {
+type SceneChangeDetectionOptions = {
     redraw?: RedrawType;
     type?: 'normal' | 'transform' | 'path' | 'font';
     convertor?: (o: any) => any;
@@ -32,7 +32,7 @@ function functionConstructorAvailable() {
 const STRING_FUNCTION_USEABLE = functionConstructorAvailable();
 
 export function SceneChangeDetection(opts?: SceneChangeDetectionOptions) {
-    const { changeCb, convertor } = opts || {};
+    const { changeCb, convertor } = opts ?? {};
 
     return function (target: any, key: string) {
         // `target` is either a constructor (static member) or prototype (instance member)
@@ -51,7 +51,7 @@ export function SceneChangeDetection(opts?: SceneChangeDetectionOptions) {
 }
 
 function prepareFastGetSet(target: any, key: string, privateKey: string, opts?: SceneChangeDetectionOptions) {
-    const { redraw = RedrawType.TRIVIAL, type = 'normal', checkDirtyOnAssignment = false } = opts || {};
+    const { redraw = RedrawType.TRIVIAL, type = 'normal', checkDirtyOnAssignment = false } = opts ?? {};
     // Optimised code-path.
 
     // Remove all conditional logic from runtime - generate a setter with the exact necessary
@@ -98,7 +98,7 @@ function prepareSlowGetSet(target: any, key: string, privateKey: string, opts?: 
         changeCb,
         convertor,
         checkDirtyOnAssignment = false,
-    } = opts || {};
+    } = opts ?? {};
 
     // Unoptimised but 'safe' code-path, for environments with CSP headers and no 'unsafe-eval'.
     // We deliberately do not support debug branches found in the optimised path above, since

@@ -25,6 +25,8 @@ The grid cell and row group values exported to Excel can be customised using the
     config='{"description":"See below the functions on the `ExcelExportParams` interface to customise exported grid cell and row group values."}'>
 </interface-documentation>
 
+Note that it is also possible to format the values by [Using the Value Formatter for Export](/value-formatters/#use-value-formatter-for-export).
+
 The following example shows Excel customisations where the exported document has the following:
 
 * All row groups with the prefix `row group: `

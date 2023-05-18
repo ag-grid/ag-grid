@@ -24,6 +24,7 @@ import { ChartAxisDirection } from '../chartAxisDirection';
 import { AgChartInteractionRange } from '../agChartOptions';
 import { DatumPropertyDefinition, fixNumericExtent } from '../data/dataModel';
 import { TooltipPosition } from '../tooltip/tooltip';
+import { accumulatedValue } from '../data/aggregateFunctions';
 
 /**
  * Processed series datum used in node selections,
@@ -77,6 +78,38 @@ export function valueProperty<K>(propName: K, continuous: boolean, opts = {} as 
         type: 'value',
         valueType: continuous ? 'range' : 'category',
         validation: (v) => checkDatum(v, continuous) != null,
+    };
+    return result;
+}
+
+export function rangedValueProperty<K>(
+    propName: K,
+    opts = {} as Partial<DatumPropertyDefinition<K>> & { min?: number; max?: number }
+): DatumPropertyDefinition<K> {
+    const { min = -Infinity, max = Infinity, ...defOpts } = opts;
+    return {
+        type: 'value',
+        property: propName,
+        valueType: 'range',
+        validation: (v) => checkDatum(v, true) != null,
+        processor: () => (datum) => {
+            if (typeof datum !== 'number') return datum;
+            if (isNaN(datum)) return datum;
+
+            return Math.min(Math.max(datum, min), max);
+        },
+        ...defOpts,
+    };
+}
+
+export function accumulativeValueProperty<K>(
+    propName: K,
+    continuous: boolean,
+    opts = {} as Partial<DatumPropertyDefinition<K>>
+) {
+    const result: DatumPropertyDefinition<K> = {
+        ...valueProperty(propName, continuous, opts),
+        processor: accumulatedValue(),
     };
     return result;
 }
@@ -140,8 +173,8 @@ export class SeriesTooltip {
     @Validate(BOOLEAN)
     enabled: boolean = true;
 
-    @Validate(BOOLEAN)
-    showArrow: boolean = true;
+    @Validate(OPT_BOOLEAN)
+    showArrow?: boolean = undefined;
 
     interaction?: SeriesTooltipInteraction = new SeriesTooltipInteraction();
 
@@ -166,7 +199,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     readonly id = createId(this);
 
     get type(): string {
-        return (this.constructor as any).type || '';
+        return (this.constructor as any).type ?? '';
     }
 
     // The group node that contains all the nodes used to render this series.
@@ -311,7 +344,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     getKeys(direction: ChartAxisDirection): string[] {
         const { directionKeys } = this;
         const resolvedDirection = this.resolveKeyDirection(direction);
-        const keys = directionKeys && directionKeys[resolvedDirection];
+        const keys = directionKeys?.[resolvedDirection];
         const values: string[] = [];
 
         const flatten = (...array: any[]) => {

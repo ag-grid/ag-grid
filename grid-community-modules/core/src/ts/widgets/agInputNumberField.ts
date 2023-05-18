@@ -37,7 +37,7 @@ export class AgInputNumberField extends AgInputTextField {
     public normalizeValue(value: string): string {
         if (value === '') { return ''; }
 
-        if (this.precision) {
+        if (this.precision != null) {
             value = this.adjustPrecision(value);
         }
 
@@ -53,7 +53,7 @@ export class AgInputNumberField extends AgInputTextField {
     }
 
     private adjustPrecision(value: string): string {
-        if (this.precision) {
+        if (this.precision != null) {
             const floatString = parseFloat(value).toFixed(this.precision);
             value = parseFloat(floatString).toString();
         }

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Tabs } from '../tabs/Tabs';
 
 export const Containers = () => {
     return (
@@ -40,6 +41,50 @@ export const Containers = () => {
                     </ul>
                 </div>
             </div>
+
+            <p className="item-label">
+                <span>Tabbed section:</span>
+                <code>&lt;Tabs&gt;</code>
+            </p>
+            <Tabs>
+                <div tab-label="Section ONE">
+                    <b>Section ONE:</b> Et inventore est veniam expedita adipisci. Dolor rerum in ex illo. Rerum
+                    autem deleniti aut eligendi tempora aliquam nihil id magnam. Porro eveniet quisquam voluptate
+                    labore tempore saepe qui qui facilis.
+                </div>
+                <div tab-label="Section TWO">
+                    <b>Section TWO:</b> Ut natus velit quaerat quas quis distinctio illo aut. Neque autem atque sunt
+                    doloribus illum fuga quam est mollitia. Et molestiae quia vero quos ipsa est eius voluptates
+                    repellendus. Placeat consequatur maiores provident.
+                </div>
+                <div tab-label="Section THREE">
+                    <b>Section THREE:</b> Velit laboriosam sed numquam excepturi quam distinctio incidunt ut ut.
+                    Odit in quia nemo officiis perferendis aspernatur animi molestiae. Quia recusandae dolorem hic
+                    repellat.
+                </div>
+            </Tabs>
+
+            <p className="item-label">
+                <span>Tabbed section with heading:</span>
+                <code>&lt;Tabs heading="Heading" &gt;</code>
+            </p>
+            <Tabs heading="A few tabbed sections">
+                <div tab-label="Section ONE">
+                    <b>Section ONE:</b> Et inventore est veniam expedita adipisci. Dolor rerum in ex illo. Rerum
+                    autem deleniti aut eligendi tempora aliquam nihil id magnam. Porro eveniet quisquam voluptate
+                    labore tempore saepe qui qui facilis.
+                </div>
+                <div tab-label="Section TWO">
+                    <b>Section TWO:</b> Ut natus velit quaerat quas quis distinctio illo aut. Neque autem atque sunt
+                    doloribus illum fuga quam est mollitia. Et molestiae quia vero quos ipsa est eius voluptates
+                    repellendus. Placeat consequatur maiores provident.
+                </div>
+                <div tab-label="Section THREE">
+                    <b>Section THREE:</b> Velit laboriosam sed numquam excepturi quam distinctio incidunt ut ut.
+                    Odit in quia nemo officiis perferendis aspernatur animi molestiae. Quia recusandae dolorem hic
+                    repellat.
+                </div>
+            </Tabs>
         </>
     );
 };

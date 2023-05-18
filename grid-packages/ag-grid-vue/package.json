@@ -23,7 +23,7 @@
   ],
   "scripts": {
     "clean": "rimraf dist lib main.d.ts main.js .hash",
-    "bundle": "npx cross-env vue-cli-service build --target lib src/AgGridVue.ts && rm ./dist/demo.html",
+    "bundle": "NODE_OPTIONS=--openssl-legacy-provider npx cross-env vue-cli-service build --target lib src/AgGridVue.ts && rm ./dist/demo.html",
     "npm": "npx tsc -p tsconfig-lib.json",
     "build": "echo \"module.exports = require('./build')\" > ./node_modules/vue-template-compiler/index.js && npx gulp copy-from-module-source && npm run npm && npm run bundle && npm run hash",
     "build-prod": "npm run build",

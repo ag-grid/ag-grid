@@ -16,8 +16,8 @@
   "Opacity": {},
   "PixelSize": {},
   "Ratio": {},
-  "TextWrap": {},
   "DataValue": {},
+  "TextWrap": {},
   "AgChartInteractionRange": {},
   "AgChartThemePalette": {
     "fills": {
@@ -919,7 +919,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "legendItemKey": {
-      "description": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */",
+      "description": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. */",
       "type": { "returnType": "string", "optional": true }
     },
     "fills": {
@@ -1178,7 +1178,7 @@
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "wrapping": {
-      "description": "/** Text wrapping strategy for long titles. */",
+      "description": "/** Text wrapping strategy for long texts.\n     * `'always'` will break the words that are longer than `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but insert the hyphens (`-`) into the word breaks.\n     * `'on-space'` will break the text on white spaces and tabulation symbols only. If some long word can't fit the `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     */",
       "type": { "returnType": "TextWrap", "optional": true }
     }
   },
@@ -1224,7 +1224,7 @@
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "wrapping": {
-      "description": "/** Text wrapping strategy for long titles. */",
+      "description": "/** Text wrapping strategy for long texts.\n     * `'always'` will break the words that are longer than `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but insert the hyphens (`-`) into the word breaks.\n     * `'on-space'` will break the text on white spaces and tabulation symbols only. If some long word can't fit the `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     */",
       "type": { "returnType": "TextWrap", "optional": true }
     }
   },
@@ -1270,7 +1270,7 @@
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "wrapping": {
-      "description": "/** Text wrapping strategy for long titles. */",
+      "description": "/** Text wrapping strategy for long texts.\n     * `'always'` will break the words that are longer than `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but insert the hyphens (`-`) into the word breaks.\n     * `'on-space'` will break the text on white spaces and tabulation symbols only. If some long word can't fit the `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     */",
       "type": { "returnType": "TextWrap", "optional": true }
     }
   },
@@ -1793,7 +1793,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "showArrow": {
-      "description": "/** Set to false to remove the arrow attached to the tooltip. */",
+      "description": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "class": {
@@ -1809,7 +1809,7 @@
       "type": { "returnType": "AgChartInteractionRange", "optional": true }
     },
     "position": {
-      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "description": "/** The position of the tooltip. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
     "delay": {
@@ -1821,7 +1821,7 @@
   "AgTooltipPositionOptions": {},
   "AgMovingTooltipPositionOptions": {
     "type": {
-      "description": "/** The type of positioning for the tooltip. By default, the tooltip follows the pointer. */",
+      "description": "/** The type of positioning for the tooltip. By default, the tooltip follows the mouse pointer for series without markers, and it is anchored to the highlighted marker node for series with markers. */",
       "type": { "returnType": "AgTooltipPositionType", "optional": false }
     },
     "xOffset": {
@@ -3200,11 +3200,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "showArrow": {
-      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "description": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
-      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "description": "/** The position of the tooltip. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
     "interaction": {
@@ -3277,11 +3277,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "showArrow": {
-      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "description": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
-      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "description": "/** The position of the tooltip. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
     "interaction": {
@@ -3396,11 +3396,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "showArrow": {
-      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "description": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
-      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "description": "/** The position of the tooltip. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
     "interaction": {
@@ -3617,11 +3617,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "showArrow": {
-      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "description": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
-      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "description": "/** The position of the tooltip. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
     "interaction": {
@@ -3849,11 +3849,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "showArrow": {
-      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "description": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
-      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "description": "/** The position of the tooltip. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
     "interaction": {
@@ -3884,7 +3884,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "yKey": {
-      "description": "/** The keys to use to retrieve y-values from the data. */",
+      "description": "/** The key to use to retrieve y-values from the data. */",
       "type": { "returnType": "string", "optional": true }
     },
     "xName": {
@@ -3893,6 +3893,10 @@
     },
     "yName": {
       "description": "/** Human-readable description of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "legendItemName": {
+      "description": "/** Human-readable description of the y-values. If supplied, matching items with the same value will be toggled together. */",
       "type": { "returnType": "string", "optional": true }
     },
     "fill": {
@@ -4066,11 +4070,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "showArrow": {
-      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "description": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
-      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "description": "/** The position of the tooltip. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
     "interaction": {
@@ -4318,11 +4322,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "showArrow": {
-      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "description": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
-      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "description": "/** The position of the tooltip. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
     "interaction": {
@@ -4373,7 +4377,7 @@
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "wrapping": {
-      "description": "/** Text wrapping strategy for long titles. */",
+      "description": "/** Text wrapping strategy for long texts.\n     * `'always'` will break the words that are longer than `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but insert the hyphens (`-`) into the word breaks.\n     * `'on-space'` will break the text on white spaces and tabulation symbols only. If some long word can't fit the `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     */",
       "type": { "returnType": "TextWrap", "optional": true }
     }
   },
@@ -4514,7 +4518,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "legendItemKey": {
-      "description": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. Falls back to `calloutLabelKey` if not provided, but does not merge. */",
+      "description": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. */",
       "type": { "returnType": "string", "optional": true }
     },
     "fills": {
@@ -4834,11 +4838,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "showArrow": {
-      "description": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "description": "/** The tooltip arrow is displayed by default, unless the container restricts it or a position offset is provided. To always display the arrow, set `showArrow` to `true`. To remove the arrow, set `showArrow` to `false`.  */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "position": {
-      "description": "/** The position of the tooltip. By default the tooltip follows the mouse pointer. */",
+      "description": "/** The position of the tooltip. */",
       "type": { "returnType": "AgTooltipPositionOptions", "optional": true }
     },
     "interaction": {
@@ -5510,7 +5514,6 @@
   "VisibilityMap": {},
   "OptionalHTMLElement": {},
   "TransferableResources": {},
-  "ChartUpdateOptions": {},
   "PickedNode": {},
   "BoundSeries": {
     "type": { "type": { "returnType": "string", "optional": false } },
@@ -5614,13 +5617,24 @@
     "meta": { "typeParams": ["K", "Grouped extends boolean | undefined"] }
   },
   "PropertyDefinition": { "meta": { "typeParams": ["K"] } },
+  "ProcessorFn": {},
+  "PropertyId": { "meta": { "typeParams": ["K extends string"] } },
   "DatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "InternalDatumPropertyDefinition": { "meta": { "typeParams": ["K"] } },
   "AggregatePropertyDefinition": {
     "meta": {
-      "typeParams": ["D", "K extends keyof D", "R = [number, number]", "R2 = R"]
+      "typeParams": [
+        "D",
+        "K extends keyof D & string",
+        "R = [number, number]",
+        "R2 = R"
+      ]
     }
   },
+  "GroupValueProcessorDefinition": {
+    "meta": { "typeParams": ["D", "K extends keyof D & string"] }
+  },
+  "PropertyValueProcessorDefinition": { "meta": { "typeParams": ["D"] } },
   "ReducerOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
   "ProcessorOutputPropertyDefinition": { "meta": { "typeParams": ["R"] } },
   "Series": {
@@ -5659,8 +5673,39 @@
     "type": {
       "type": { "returnType": "AnimationEventType", "optional": false }
     },
-    "delta": { "type": { "returnType": "number", "optional": false } },
+    "deltaMs": { "type": { "returnType": "number", "optional": false } },
     "meta": { "typeParams": ["AnimationEventType"] }
+  },
+  "AnimationOptions": {
+    "driver": { "type": { "returnType": "Driver", "optional": false } },
+    "autoplay": { "type": { "returnType": "boolean", "optional": true } },
+    "delay": { "type": { "returnType": "number", "optional": true } },
+    "repeat": { "type": { "returnType": "number", "optional": true } },
+    "repeatType": { "type": { "returnType": "RepeatType", "optional": true } },
+    "onComplete": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onPlay": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onRepeat": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onStop": {
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onUpdate": {
+      "type": {
+        "arguments": { "v": "T" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "meta": { "typeParams": ["T"] },
+    "duration": { "type": { "returnType": "number", "optional": false } },
+    "from": { "type": { "returnType": "T", "optional": false } },
+    "to": { "type": { "returnType": "T", "optional": false } },
+    "ease": { "type": { "returnType": "Easing<T>", "optional": true } }
   },
   "AnimationManyOptions": {
     "meta": { "typeParams": ["T"] },
@@ -5680,6 +5725,10 @@
     },
     "onStop": {
       "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "duration": { "type": { "returnType": "number", "optional": false } },
+    "ease": {
+      "type": { "returnType": "Easing<AnimationOptions<T>>", "optional": true }
     }
   },
   "ChartEventType": {},
@@ -6046,6 +6095,8 @@
     },
     "hasMarkers": { "type": { "returnType": "boolean", "optional": false } }
   },
+  "CartesianAnimationState": {},
+  "CartesianAnimationEvent": {},
   "HistogramSeriesNodeTag": {},
   "HistogramNodeDatum": {
     "x": { "type": { "returnType": "number", "optional": false } },
@@ -6151,6 +6202,8 @@
   "PieNodeDatum": {
     "index": { "type": { "returnType": "number", "optional": false } },
     "radius": { "type": { "returnType": "number", "optional": false } },
+    "angleValue": { "type": { "returnType": "number", "optional": false } },
+    "radiusValue": { "type": { "returnType": "number", "optional": true } },
     "startAngle": { "type": { "returnType": "number", "optional": false } },
     "endAngle": { "type": { "returnType": "number", "optional": false } },
     "midAngle": { "type": { "returnType": "number", "optional": false } },
@@ -6169,8 +6222,9 @@
       }
     },
     "sectorFormat": {
-      "type": { "returnType": "AgPieSeriesFormat", "optional": false }
+      "type": { "returnType": "Required<AgPieSeriesFormat>", "optional": false }
     },
+    "legendItemKey": { "type": { "returnType": "string", "optional": true } },
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
@@ -6182,6 +6236,8 @@
     }
   },
   "PieNodeTag": {},
+  "PieAnimationState": {},
+  "PieAnimationEvent": {},
   "SeriesNodeDatum": {
     "series": { "type": { "returnType": "Series<any>", "optional": false } },
     "itemId": { "type": { "returnType": "any", "optional": true } },
@@ -6256,17 +6312,12 @@
     }
   },
   "ChartThemeDefaults": {},
-  "DarkThemeParams": {
-    "seriesLabelDefaults": {
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
   "TooltipMeta": {
     "pageX": { "type": { "returnType": "number", "optional": false } },
     "pageY": { "type": { "returnType": "number", "optional": false } },
     "offsetX": { "type": { "returnType": "number", "optional": false } },
     "offsetY": { "type": { "returnType": "number", "optional": false } },
-    "showArrow": { "type": { "returnType": "boolean", "optional": false } },
+    "showArrow": { "type": { "returnType": "boolean", "optional": true } },
     "position": {
       "type": {
         "returnType": "{\n        xOffset?: number;\n        yOffset?: number;\n    }",
@@ -6296,37 +6347,6 @@
     "meta": { "typeParams": ["T"] }
   },
   "RepeatType": {},
-  "AnimationOptions": {
-    "driver": { "type": { "returnType": "Driver", "optional": false } },
-    "autoplay": { "type": { "returnType": "boolean", "optional": true } },
-    "delay": { "type": { "returnType": "number", "optional": true } },
-    "repeat": { "type": { "returnType": "number", "optional": true } },
-    "repeatType": { "type": { "returnType": "RepeatType", "optional": true } },
-    "onComplete": {
-      "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "onPlay": {
-      "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "onRepeat": {
-      "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "onStop": {
-      "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "onUpdate": {
-      "type": {
-        "arguments": { "v": "T" },
-        "returnType": "void",
-        "optional": true
-      }
-    },
-    "meta": { "typeParams": ["T"] },
-    "duration": { "type": { "returnType": "number", "optional": false } },
-    "from": { "type": { "returnType": "T", "optional": false } },
-    "to": { "type": { "returnType": "T", "optional": false } },
-    "ease": { "type": { "returnType": "Easing<T>", "optional": true } }
-  },
   "AnimationControls": {
     "isPlaying": { "type": { "returnType": "boolean", "optional": false } },
     "play": {
@@ -6401,6 +6421,21 @@
     "meta": { "typeParams": ["T"] }
   },
   "Easing": { "meta": { "typeParams": ["T"] } },
+  "StateDefinition": {
+    "actions": {
+      "type": {
+        "returnType": "{\n        onEnter?: () => void;\n        onExit?: () => void;\n    }",
+        "optional": true
+      }
+    },
+    "on": {
+      "type": {
+        "returnType": "{\n        [key in Event]?: {\n            target: State;\n            action: (data?: any) => void;\n        };\n    }",
+        "optional": true
+      }
+    },
+    "meta": { "typeParams": ["State extends string", "Event extends string"] }
+  },
   "ScaleClampParams": {
     "strict": {
       "description": "/** If `true` the values outside of the domain will become `NaN`.\n     * If `false` such values will be clamped to the domain edges.\n     */",
@@ -6562,6 +6597,26 @@
     "fontStyle": { "type": { "returnType": "FontStyle", "optional": true } },
     "fontWeight": { "type": { "returnType": "FontWeight", "optional": true } },
     "lineHeight": { "type": { "returnType": "number", "optional": true } }
+  },
+  "WordWrapProperties": {
+    "breakWord": { "type": { "returnType": "boolean", "optional": true } },
+    "hyphens": { "type": { "returnType": "boolean", "optional": true } }
+  },
+  "TextMeasurer": {
+    "size": {
+      "type": {
+        "arguments": { "text": "string" },
+        "returnType": "{ width: number; height: number }",
+        "optional": false
+      }
+    },
+    "width": {
+      "type": {
+        "arguments": { "line": "string" },
+        "returnType": "number",
+        "optional": false
+      }
+    }
   },
   "Comparator": { "meta": { "typeParams": ["T"] } },
   "LiteralOrFn": { "meta": { "typeParams": ["T"] } },

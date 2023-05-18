@@ -32,7 +32,7 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
     protected readonly modules: Record<string, { instance: ModuleInstance }> = {};
 
     get type(): AgCartesianAxisType {
-        return (this.constructor as any).type || '';
+        return (this.constructor as any).type ?? '';
     }
 
     protected useCalculatedTickCount() {

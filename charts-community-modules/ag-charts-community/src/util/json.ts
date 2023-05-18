@@ -168,7 +168,7 @@ export interface JsonMergeOptions {
  * @returns the combination of all of the json inputs
  */
 export function jsonMerge<T>(json: T[], opts?: JsonMergeOptions): T {
-    const avoidDeepClone = opts?.avoidDeepClone || [];
+    const avoidDeepClone = opts?.avoidDeepClone ?? [];
     const jsonTypes = json.map((v) => classify(v));
     if (jsonTypes.some((v) => v === 'array')) {
         // Clone final array.
@@ -265,7 +265,7 @@ export function jsonApply<Target, Source extends DeepPartial<Target>>(
     } = params;
 
     if (target == null) {
-        throw new Error(`AG Charts - target is uninitialised: ${path || '<root>'}`);
+        throw new Error(`AG Charts - target is uninitialised: ${path ?? '<root>'}`);
     }
     if (source == null) {
         return target;
@@ -300,7 +300,7 @@ export function jsonApply<Target, Source extends DeepPartial<Target>>(
                 continue;
             }
 
-            const allowableTypes = allowedTypes[propertyMatcherPath] || [currentValueType];
+            const allowableTypes = allowedTypes[propertyMatcherPath] ?? [currentValueType];
             if (currentValueType === 'class-instance' && newValueType === 'object') {
                 // Allowed, this is the common case! - do not error.
             } else if (currentValueType != null && newValueType != null && !allowableTypes.includes(newValueType)) {
@@ -377,7 +377,7 @@ export function jsonWalk(
     ...jsons: any[]
 ) {
     const jsonType = classify(json);
-    const skip = opts.skip || [];
+    const skip = opts.skip ?? [];
 
     if (jsonType === 'array') {
         json.forEach((element: any, index: number) => {

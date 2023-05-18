@@ -1,8 +1,9 @@
 import { BaseManager } from './baseManager';
+import { InteractionManager } from './interactionManager';
 import {
     animate as baseAnimate,
     AnimationControls,
-    AnimationOptions,
+    AnimationOptions as BaseAnimationOptions,
     Driver,
     tween,
     TweenControls,
@@ -14,7 +15,11 @@ type AnimationEventType = 'animation-frame';
 
 interface AnimationEvent<AnimationEventType> {
     type: AnimationEventType;
-    delta: number;
+    deltaMs: number;
+}
+
+interface AnimationOptions<T> extends Omit<BaseAnimationOptions<T>, 'driver'> {
+    disableInteractions?: boolean;
 }
 
 interface AnimationManyOptions<T> extends Omit<AnimationOptions<T>, 'from' | 'to' | 'onUpdate'> {
@@ -32,8 +37,26 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
     private isPlaying = false;
     private requestId?: number;
     private lastTime?: number;
+    private readyToPlay = false;
+
+    private interactionManager: InteractionManager;
 
     public skipAnimations = false;
+
+    constructor(interactionManager: InteractionManager) {
+        super();
+
+        this.interactionManager = interactionManager;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            this.readyToPlay = true;
+        });
+
+        // Fallback if `DOMContentLoaded` event is not fired, e.g. in an iframe
+        setTimeout(() => {
+            this.readyToPlay = true;
+        }, 10);
+    }
 
     public play() {
         if (this.isPlaying) return;
@@ -71,8 +94,7 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
         const optsExtra = {
             ...opts,
             autoplay: this.isPlaying ? opts.autoplay : false,
-            driver: this.createDriver(id),
-            duration: this.skipAnimations ? 0 : opts.duration,
+            driver: this.createDriver(id, opts.disableInteractions),
         };
         const controller = baseAnimate(optsExtra);
 
@@ -82,6 +104,15 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
         }
 
         this.controllers[id] = controller;
+
+        if (this.skipAnimations) {
+            // Initialise the animation with the final values immediately and then stop the animation
+            opts.onUpdate?.(opts.to);
+            controller.stop();
+        } else {
+            // Initialise the animation immediately without requesting a frame to prevent flashes
+            opts.onUpdate?.(opts.from);
+        }
 
         return controller;
     }
@@ -152,14 +183,28 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
         return tween(optsExtra);
     }
 
-    private createDriver(id: AnimationId): Driver {
+    private createDriver(id: AnimationId, disableInteractions?: boolean): Driver {
         return (update: (time: number) => void) => {
             return {
                 start: () => {
                     this.updaters.push([id, update]);
+                    if (this.requestId == null) {
+                        this.startAnimationCycle();
+                    }
+
+                    if (disableInteractions) {
+                        this.interactionManager.pause(`animation_${id}`);
+                    }
                 },
                 stop: () => {
                     this.updaters = this.updaters.filter(([uid]) => uid !== id);
+                    if (this.updaters.length <= 0) {
+                        this.cancelAnimationFrame();
+                    }
+
+                    if (disableInteractions) {
+                        this.interactionManager.resume(`animation_${id}`);
+                    }
                 },
                 reset: () => {},
             };
@@ -168,15 +213,20 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
 
     private startAnimationCycle() {
         const frame = (time: number) => {
+            if (!this.readyToPlay) {
+                this.requestId = requestAnimationFrame(frame);
+                return;
+            }
+
             if (this.lastTime === undefined) this.lastTime = time;
-            const delta = time - this.lastTime;
+            const deltaMs = time - this.lastTime;
             this.lastTime = time;
 
             this.updaters.forEach(([_, update]) => {
-                update(delta);
+                update(deltaMs);
             });
 
-            this.listeners.dispatch('animation-frame', { type: 'animation-frame', delta });
+            this.listeners.dispatch('animation-frame', { type: 'animation-frame', deltaMs });
 
             this.requestId = requestAnimationFrame(frame);
         };

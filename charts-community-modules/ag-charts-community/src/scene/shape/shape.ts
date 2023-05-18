@@ -239,7 +239,7 @@ export abstract class Shape extends Node {
         // manually here.
         const pixelRatio = this.layerManager?.canvas.pixelRatio ?? 1;
         const fillShadow = this.fillShadow;
-        if (fillShadow && fillShadow.enabled) {
+        if (fillShadow?.enabled) {
             ctx.shadowColor = fillShadow.color;
             ctx.shadowOffsetX = fillShadow.xOffset * pixelRatio;
             ctx.shadowOffsetY = fillShadow.yOffset * pixelRatio;

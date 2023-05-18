@@ -92,6 +92,16 @@ To enable sticky groups, set the `groupRowsSticky` property to true. This behavi
 
 <grid-example title='Sticky Groups' name='sticky-groups' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
+## Row Group Footers
+
+To enable [Row Group Footers](/grouping-footers/), set the `groupIncludeFooter` property to true. Note that the total footer is not supported by the SSRM.
+
+<grid-example title='Group Footers' name='group-footer' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+
+Row group footers can also be used with `groupDisplayType='multipleColumns`, as demonstrated in the example below.
+
+<grid-example title='Multiple Group Columns and Footers' name='group-footer-multiple-cols' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+
 ## Expand All / Collapse All
 
 It is possible to expand and collapse all group rows using the `expandAll()` and `collapseAll()` grid API's.

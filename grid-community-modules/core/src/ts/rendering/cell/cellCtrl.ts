@@ -7,6 +7,7 @@ import { CellPosition } from "../../entities/cellPositionUtils";
 import {
     CellContextMenuEvent,
     CellEditingStartedEvent,
+    CellEditingStoppedEvent,
     CellEvent,
     CellFocusedEvent,
     Events,
@@ -467,7 +468,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private dispatchEditingStoppedEvent(oldValue: any, newValue: any, valueChanged: boolean): void {
-        const editingStoppedEvent = {
+        const editingStoppedEvent: CellEditingStoppedEvent = {
             ...this.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED),
             oldValue,
             newValue,
@@ -528,28 +529,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private parseValue(newValue: any): any {
-        const colDef = this.column.getColDef();
-        const params: NewValueParams = {
-            node: this.rowNode,
-            data: this.rowNode.data,
-            oldValue: this.getValue(),
-            newValue: newValue,
-            colDef: colDef,
-            column: this.column,
-            api: this.beans.gridOptionsService.api,
-            columnApi: this.beans.gridOptionsService.columnApi,
-            context: this.beans.gridOptionsService.context
-        };
-
-        const valueParser = colDef.valueParser;
-
-        if (exists(valueParser)) {
-            if (typeof valueParser === 'function') {
-                return valueParser(params);
-            }
-            return this.beans.expressionService.evaluate(valueParser, params);
-        }
-        return newValue;
+        return this.beans.valueParserService.parseValue(this.column, this.rowNode, newValue, this.getValue());
     }
 
     public setFocusOutOnEditor(): void {

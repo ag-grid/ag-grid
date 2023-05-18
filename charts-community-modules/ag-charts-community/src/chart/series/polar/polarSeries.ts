@@ -2,6 +2,7 @@ import { Series, SeriesNodeDatum, SeriesNodeDataContext, SeriesNodePickMode } fr
 import { BBox } from '../../../scene/bbox';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { PointLabelDatum } from '../../../util/labelPlacement';
+import { DataModel, ProcessedData } from '../../data/dataModel';
 
 export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<SeriesNodeDataContext<S>> {
     /**
@@ -19,6 +20,9 @@ export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<Seri
      * and is not supposed to be set by the user.
      */
     radius: number = 0;
+
+    protected dataModel?: DataModel<any, any, any>;
+    protected processedData?: ProcessedData<any>;
 
     constructor({ useLabelLayer = false }) {
         super({

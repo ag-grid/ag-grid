@@ -89,6 +89,6 @@ export class LinearScale extends ContinuousScale<number> {
     }
 
     tickFormat({ ticks, specifier }: { ticks?: any[]; specifier?: string }) {
-        return tickFormat(ticks || this.ticks(), specifier);
+        return tickFormat(ticks ?? this.ticks(), specifier);
     }
 }

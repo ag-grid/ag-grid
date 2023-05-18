@@ -413,7 +413,6 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     protected requestedRange: number[] = [0, 1];
     set range(value: number[]) {
         this.requestedRange = value.slice();
-        this.updateRange();
     }
     get range(): number[] {
         return this.requestedRange;
@@ -593,6 +592,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      */
     update(primaryTickCount?: number): number | undefined {
+        this.updateRange();
         this.calculateDomain();
 
         const {
@@ -634,7 +634,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             scale.update();
         }
 
-        const halfBandwidth = (scale.bandwidth || 0) / 2;
+        const halfBandwidth = (scale.bandwidth ?? 0) / 2;
 
         this.updatePosition();
         this.updateLine();
@@ -770,8 +770,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         this.crossLines?.forEach((crossLine) => {
             crossLine.sideFlag = -sideFlag as -1 | 1;
             crossLine.direction = rotation === -Math.PI / 2 ? ChartAxisDirection.X : ChartAxisDirection.Y;
-            crossLine.label.parallel =
-                crossLine.label.parallel !== undefined ? crossLine.label.parallel : parallelLabels;
+            crossLine.label.parallel = crossLine.label.parallel ?? parallelLabels;
             crossLine.parallelFlipRotation = parallelFlipRotation;
             crossLine.regularFlipRotation = regularFlipRotation;
             crossLine.update(anySeriesActive);
@@ -910,15 +909,16 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     }) {
         const { scale } = this;
         const data = ticks.map((t) => ({ tick: t, translationY: scale.convert(t) + halfBandwidth }));
+        const gridData = gridLength ? data : [];
         const gridLineGroupSelection = this.radialGrid
             ? this.gridLineGroupSelection
-            : this.gridLineGroupSelection.update(gridLength ? data : [], (group) => {
+            : this.gridLineGroupSelection.update(gridData, (group) => {
                   const node = new Line();
                   node.tag = Tags.GridLine;
                   group.append(node);
               });
         const gridArcGroupSelection = this.radialGrid
-            ? this.gridArcGroupSelection.update(gridLength ? data : [], (group) => {
+            ? this.gridArcGroupSelection.update(gridData, (group) => {
                   const node = new Arc();
                   node.tag = Tags.GridArc;
                   group.append(node);

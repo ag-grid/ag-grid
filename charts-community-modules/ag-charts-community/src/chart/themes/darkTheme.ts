@@ -3,10 +3,6 @@ import { ChartTheme, OVERRIDE_SERIES_LABEL_DEFAULTS } from './chartTheme';
 import { CHART_TYPES } from '../factory/chartTypes';
 import { getSeriesThemeTemplate } from '../factory/seriesTypes';
 
-export interface DarkThemeParams {
-    seriesLabelDefaults: any;
-}
-
 export class DarkTheme extends ChartTheme {
     static fontColor = 'rgb(200, 200, 200)';
     static mutedFontColor = 'rgb(150, 150, 150)';

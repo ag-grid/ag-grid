@@ -44,8 +44,6 @@ type OptionalHTMLElement = HTMLElement | undefined | null;
 
 export type TransferableResources = { container?: OptionalHTMLElement; scene: Scene; element: HTMLElement };
 
-export type ChartUpdateOptions = { forceNodeDataRefresh?: boolean; seriesToUpdate?: Iterable<Series> };
-
 type PickedNode = {
     series: Series<any>;
     datum: SeriesNodeDatum;
@@ -243,7 +241,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.scene.container = element;
         this.autoSize = true;
 
-        this.animationManager = new AnimationManager();
         this.chartEventManager = new ChartEventManager();
         this.cursorManager = new CursorManager(element);
         this.highlightManager = new HighlightManager();
@@ -253,6 +250,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.layoutService = new LayoutService();
         this.updateService = new UpdateService((type = ChartUpdateType.FULL) => this.update(type));
 
+        this.animationManager = new AnimationManager(this.interactionManager);
         this.animationManager.skipAnimations = true;
         this.animationManager.play();
 
@@ -475,7 +473,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         type = ChartUpdateType.FULL,
         opts?: { forceNodeDataRefresh?: boolean; seriesToUpdate?: Iterable<Series> }
     ) {
-        const { forceNodeDataRefresh = false, seriesToUpdate = this.series } = opts || {};
+        const { forceNodeDataRefresh = false, seriesToUpdate = this.series } = opts ?? {};
 
         if (forceNodeDataRefresh) {
             this.series.forEach((series) => series.markNodeDataDirty());
@@ -670,7 +668,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         this.axes.forEach((axis) => {
             const direction = axis.direction;
-            const directionAxes = directionToAxesMap[direction] || (directionToAxesMap[direction] = []);
+            const directionAxes = (directionToAxesMap[direction] ??= []);
             directionAxes.push(axis);
         });
 
@@ -785,6 +783,12 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.legendType = legendType;
     }
 
+    private applyLegendOptions?: (legend: ChartLegend) => void = undefined;
+
+    setLegendInit(initLegend: (legend: ChartLegend) => void) {
+        this.applyLegendOptions = initLegend;
+    }
+
     private async updateLegend() {
         const legendData: ChartLegendDatum[] = [];
         this.series
@@ -795,6 +799,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
             });
         const legendType = legendData.length > 0 ? legendData[0].legendType : 'category';
         this.attachLegend(legendType);
+        this.applyLegendOptions?.(this.legend!);
+
         this.legend!.data = legendData;
     }
 
@@ -871,7 +877,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
 
         if (subtitle) {
-            subtitle.node.visible = title !== undefined && title.enabled && subtitle.enabled;
+            subtitle.node.visible = (title?.enabled && subtitle.enabled) ?? false;
             if (subtitle.node.visible) {
                 positionTopAndShrinkBBox(subtitle);
             }
@@ -1175,8 +1181,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     changeHighlightDatum(event: HighlightChangeEvent) {
         const seriesToUpdate: Set<Series> = new Set<Series>();
-        const { series: newSeries = undefined, datum: newDatum } = event.currentHighlight || {};
-        const { series: lastSeries = undefined, datum: lastDatum } = event.previousHighlight || {};
+        const { series: newSeries = undefined, datum: newDatum } = event.currentHighlight ?? {};
+        const { series: lastSeries = undefined, datum: lastDatum } = event.previousHighlight ?? {};
 
         if (lastSeries) {
             seriesToUpdate.add(lastSeries);

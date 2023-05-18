@@ -1,4 +1,4 @@
-import { Text } from './scene/shape/text';
+import { Text, createTextMeasurer, getFont } from './scene/shape/text';
 import { PointerEvents } from './scene/node';
 import {
     BOOLEAN,
@@ -9,6 +9,7 @@ import {
     OPT_NUMBER,
     OPT_STRING,
     STRING,
+    TEXT_WRAP,
     Validate,
 } from './util/validation';
 import { FontStyle, FontWeight, TextWrap } from './chart/agChartOptions';
@@ -22,9 +23,9 @@ export class Caption {
     @Validate(BOOLEAN)
     enabled = false;
 
-    @Validate(STRING)
+    @Validate(OPT_STRING)
     @ProxyPropertyOnWrite('node')
-    text: string = '';
+    text?: string = undefined;
 
     @Validate(OPT_FONT_STYLE)
     @ProxyPropertyOnWrite('node')
@@ -58,8 +59,8 @@ export class Caption {
     @Validate(OPT_NUMBER(0))
     maxHeight?: number = undefined;
 
-    @Validate(OPT_STRING)
-    wrapping?: TextWrap = 'always';
+    @Validate(TEXT_WRAP)
+    wrapping: TextWrap = 'always';
 
     constructor() {
         const node = this.node;
@@ -69,13 +70,24 @@ export class Caption {
 
     computeTextWrap(containerWidth: number, containerHeight: number) {
         const { text, wrapping } = this;
-        const maxWidth = this.maxWidth == null ? containerWidth : Math.min(this.maxWidth, containerWidth);
-        const maxHeight = this.maxHeight == null ? containerHeight : this.maxHeight;
-        if (wrapping === 'never' || (!isFinite(maxWidth) && !isFinite(maxHeight))) {
+        const maxWidth = Math.min(this.maxWidth ?? Infinity, containerWidth);
+        const maxHeight = this.maxHeight ?? containerHeight;
+        if (!isFinite(maxWidth) && !isFinite(maxHeight)) {
             this.node.text = text;
             return;
         }
-        const wrapped = Text.wrap(text, maxWidth, maxHeight, this);
+        if (wrapping === 'never') {
+            const font = getFont(this);
+            const measurer = createTextMeasurer(font);
+            const trunc = Text.truncateLine(text ?? '', maxWidth, measurer);
+            this.node.text = trunc;
+            return;
+        }
+        const wrapOptions = {
+            hyphens: wrapping === 'hyphenate',
+            breakWord: wrapping === 'always' || wrapping === 'hyphenate',
+        };
+        const wrapped = Text.wrap(text ?? '', maxWidth, maxHeight, this, wrapOptions);
         this.node.text = wrapped;
     }
 }

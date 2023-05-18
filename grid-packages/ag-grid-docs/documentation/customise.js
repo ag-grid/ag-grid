@@ -143,10 +143,19 @@ const fixFileLoadingIssue = () => {
 `,
             `
   const createAndProcessNode = path => {
-    const fileNodePromise = createFileNode(path, createNodeId, pluginOptions, cache).then(fileNode => {
-      createNode(fileNode);
-      return null;
-    });
+    const fileNodePromise = createFileNode(path, createNodeId, pluginOptions, cache)
+      .catch(() => {
+        reporter.warn(\`Failed to create FileNode for \${path}. Re-trying...\`);
+        return createFileNode(path, createNodeId, pluginOptions);
+      })
+      .then(fileNode => {
+        createNode(fileNode);
+        return null;
+      })
+      .catch(error => {
+        reporter.error(\`Failed to create FileNode for \${path}\`, error);
+      });
+
     return fileNodePromise;
   };
   const deletePathNode = path => {
@@ -199,7 +208,7 @@ const fixFileLoadingIssue = () => {
 const jsxErrorProcessingIssue = () => {
     // Prevents Gatsby from dying when an JSX error is introduced
 
-    return applyCustomisation('gatsby-cli', '5.9.0', {
+    return applyCustomisation('gatsby-cli', '5.10.0', {
             name: 'JSX Error Processing Issue',
             apply: () => updateFileContents(
                 './node_modules/gatsby-cli/lib/structured-errors/construct-error.js',

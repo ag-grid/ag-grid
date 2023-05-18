@@ -63,34 +63,36 @@ The tooltip position can be modified using the `tooltip.position.type` property.
 - `node` - Anchors the tooltip to the highlighted node
 - `pointer` - Anchors the tooltip to the mouse pointer
 
-The default option is `pointer`, which means that the tooltip follows the mouse as it moves.
+For series with markers, such as `line`, `area`, `scatter` and `bubble`, where each data point is represented by a marker, the default tooltip `position.type` is `node`. This means that the tooltip will be positioned above the highlighted marker node.
 
-The distance between the tooltip and the anchor point can be adjusted using the `xOffset` and `yOffset` properties in `tooltip.position` options:
+For series without markers, such as `bar`,`column`, `histogram`, `treemap`, `pie` and `doughnut`, where each data point is represented by a fixed shape, for example a rectangle or a pie sector, the default tooltip `position.type` is `pointer`. This means that the tooltip will follow the mouse pointer as it moves over the shapes.
+
+The `xOffset` and `yOffset` properties in `tooltip.position` options define the distance in pixels from the tooltip to the anchor point:
 
 ```js
 tooltip: {
     position: {
-        type: 'node',
-        xOffset: 60,
-        yOffset: 75,
+        type: 'pointer',
+        xOffset: 80, // positions tooltip 80px to the right of the mouse cursor
+        yOffset: 80, // positions tooltip 80px down from the start of the mouse cursor
     }
 }
 ```
 
 ### Example: Tooltip Position
 
-This example demonstrates how to change the default position of the tooltip. Note that:
+In this example we show how to change the tooltip's default position. Note that:
 
-- The tooltip is anchored to the highlighted marker node, rather than the mouse pointer.
-- By default, when `tooltip.position.xOffset` or `tooltip.position.yOffset` are configured, the arrow on the tooltip is removed.
+- Instead of the tooltip being anchored to the highlighted marker node, it is anchored 80 pixels to the left and below the mouse pointer.
+- By default, when `tooltip.position.xOffset` or `tooltip.position.yOffset` are configured, the tooltip arrow is removed.
 
 <chart-example title='Tooltip Position' name='tooltip-position' type='generated'></chart-example>
 
 ## Tooltip Arrow
 
-The chart tooltip shows an arrow underneath it to indicate its exact point of origin when it's not constrained by the container.
+The chart tooltip shows an arrow below it to indicate its exact point of origin when it's unconstrained by the container and has no [position offset](#tooltip-position) supplied.
 
-To remove the arrow, set `tooltip.showArrow` to false.
+Set `tooltip.showArrow` to `true` to always show the arrow, and set it to `false` to remove the arrow.
 
 ```js
 tooltip: {

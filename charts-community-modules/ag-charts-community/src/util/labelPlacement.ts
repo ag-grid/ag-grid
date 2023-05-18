@@ -62,7 +62,7 @@ export function placeLabels(
     for (let j = 0; j < data.length; j++) {
         const labels: PlacedLabel[] = (result[j] = []);
         const datum = data[j];
-        if (!(datum && datum.length && datum[0].label)) {
+        if (!(datum?.length && datum[0].label)) {
             continue;
         }
         for (let i = 0, ln = datum.length; i < ln; i++) {

@@ -19,15 +19,17 @@ import { PopupService } from "../widgets/popupService";
 import { MouseEventService } from "./mouseEventService";
 import { IRowModel } from "../interfaces/iRowModel";
 import { TouchListener, LongTapEvent } from "../widgets/touchListener";
+import { AnimationFrameService } from "../misc/animationFrameService";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
     ANIMATION_OFF = 'ag-row-no-animation'
 }
 
-export const CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
 export const CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
-export const CSS_CLASS_COLUMN_MOVING = 'ag-column-moving';
+
+const CSS_CLASS_CELL_SELECTION_INVISIBLE = 'ag-selection-invisible';
+const CSS_CLASS_COLUMN_MOVING = 'ag-column-moving';
 
 export interface IGridBodyComp extends LayoutView {
     setColumnMovingCss(cssClass: string, on: boolean): void;
@@ -50,6 +52,7 @@ export interface IGridBodyComp extends LayoutView {
 
 export class GridBodyCtrl extends BeanStub {
 
+    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Autowired('rowContainerHeightService') private rowContainerHeightService: RowContainerHeightService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
@@ -162,8 +165,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public setCellTextSelection(selectable: boolean = false): void {
-        const cssClass = selectable ? CSS_CLASS_CELL_SELECTABLE : null;
-        this.comp.setCellSelectableCss(cssClass, selectable);
+        this.comp.setCellSelectableCss(CSS_CLASS_CELL_SELECTION_INVISIBLE, !selectable);
     }
 
     private onScrollVisibilityChanged(): void {
@@ -174,7 +176,8 @@ export class GridBodyCtrl extends BeanStub {
         const scrollbarWidth = visible ? (this.gridOptionsService.getScrollbarWidth() || 0) : 0;
         const pad = isInvisibleScrollbar() ? 16 : 0;
         const width = `calc(100% + ${scrollbarWidth + pad}px)`;
-        this.comp.setBodyViewportWidth(width);
+
+        this.animationFrameService.requestAnimationFrame(() => this.comp.setBodyViewportWidth(width));
     }
 
     private onGridColumnsChanged(): void {

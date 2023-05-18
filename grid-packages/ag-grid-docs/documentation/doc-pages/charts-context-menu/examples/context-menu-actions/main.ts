@@ -10,7 +10,6 @@ const options: AgCartesianChartOptions = {
     text: "Sweaters made",
   },
   contextMenu: {
-    enabled: true,
     extraActions: [
       {
         label: "Say hello",

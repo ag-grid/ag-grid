@@ -90,6 +90,7 @@ import { ColDef, ColGroupDef, IAggFunc, SortDirection } from "./colDef";
 import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetGroupRowAggParams, GetLocaleTextParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideGroupLevelParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsFullWidthRowParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostSortRowsParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams, GetGroupAggFilteringParams } from "../interfaces/iCallbackParams";
 import { SideBarDef } from "../interfaces/iSideBar";
 import { IRowNode } from "../interfaces/iRowNode";
+import { DataTypeDefinition } from "./dataType";
 
 export interface GridOptions<TData = any> {
 
@@ -167,6 +168,15 @@ export interface GridOptions<TData = any> {
     defaultColGroupDef?: Partial<ColGroupDef<TData>>;
     /** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property. */
     columnTypes?: { [key: string]: ColDef<TData>; };
+    /**
+     * An object map of cell data types to their definitions.
+     * Cell data types can either override/update the pre-defined data types
+     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`),
+     * or can be custom data types.
+     */
+    dataTypeDefinitions?: {
+        [cellDataType: string]: DataTypeDefinition<TData>;
+    }
     /** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */
     maintainColumnOrder?: boolean;
     /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */
@@ -289,7 +299,10 @@ export interface GridOptions<TData = any> {
     // *** Integrated Charts *** //
     /** Set to `true` to Enable Charts. Default: `false` */
     enableCharts?: boolean;
-    /** The list of chart themes to be used. */
+    /**
+     * The list of chart themes that a user can chose from in the chart settings panel.
+     * Default: `['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar' ]`
+     */
     chartThemes?: string[];
     /** A map containing custom chart themes. */
     customChartThemes?: { [name: string]: AgChartTheme };

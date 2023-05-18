@@ -96,4 +96,23 @@ input[type='submit']:not(.button-style-none),
     border: none;
     color: var(--text-color);
     background-color: transparent;
+
+    &.button-as-link {
+        --text-color: var(--link-color);
+
+        transition: color $default-transition-timing;
+
+        &:hover {
+            --text-color: var(--link-hover-color);
+
+            > .icon {
+                --text-color: var(--link-hover-color);
+            }
+        }
+
+        > .icon {
+            --icon-size: 1.5em;
+            --text-color: var(--link-color);
+        }
+    }
 }

@@ -159,6 +159,8 @@ These three callbacks above are demonstrated in the example below. Note the foll
 
 <grid-example title='Example Process' name='process' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
 
+It is also possible to process the data by [Using the Value Formatter for Export](/value-formatters/#use-value-formatter-for-export) to format the cells when copied, and  [Using the Value Parser for Import](/value-parsers/#use-value-parser-for-import) to format the cells when pasted.
+
 ### Processing Data from Clipboard
 
 To have complete control of processing clipboard data when pasting, you can use the callback below:

@@ -20,7 +20,7 @@ export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     addOrRemoveBodyCssClass(cssClassName: string, on: boolean): void;
     setButtonWrapperDisplayed(displayed: boolean): void;
-    setCompDetails(compDetails: UserCompDetails): void;
+    setCompDetails(compDetails?: UserCompDetails | null): void;
     getFloatingFilterComp(): AgPromise<IFloatingFilter> | null;
     setWidth(width: string): void;
     setMenuIcon(icon: HTMLElement): void;
@@ -41,6 +41,11 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
 
     private suppressFilterButton: boolean;
     private active: boolean;
+    private iconCreated: boolean = false;
+
+    private userCompDetails?: UserCompDetails | null;
+    private destroySyncListener: (() => null) | undefined;
+    private destroyFilterChangedListener: (() => null) | undefined;
 
     constructor(column: Column, parentRowCtrl: HeaderRowCtrl) {
         super(column, parentRowCtrl);
@@ -53,36 +58,41 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         this.eButtonShowMainFilter = eButtonShowMainFilter;
         this.eFloatingFilterBody = eFloatingFilterBody;
 
-        const colDef = this.column.getColDef();
-        const filterExists = !!colDef.filter || !!colDef.filterFramework;
-        const floatingFilterExists = !!colDef.floatingFilter;
-        this.active = filterExists && floatingFilterExists;
+        this.setupActive();
 
         this.setupWidth();
         this.setupLeft();
         this.setupHover();
         this.setupFocus();
+        this.setupFilterButton();
         this.setupUserComp();
         this.setupSyncWithFilter();
         this.setupUi();
 
         this.addManagedListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
-        if (this.active) {
-            this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, this.updateFilterButton.bind(this));
-        }
+        this.setupFilterChangedListener();
+        this.addManagedListener(this.column, Column.EVENT_COL_DEF_CHANGED, this.onColDefChanged.bind(this));
+    }
+
+    private setupActive(): void {
+        const colDef = this.column.getColDef();
+        const filterExists = !!colDef.filter || !!colDef.filterFramework;
+        const floatingFilterExists = !!colDef.floatingFilter;
+        this.active = filterExists && floatingFilterExists;
     }
 
     private setupUi(): void {
         this.comp.setButtonWrapperDisplayed(!this.suppressFilterButton && this.active);
-
-        if (!this.active) { return; }
-
+        
         this.comp.addOrRemoveBodyCssClass('ag-floating-filter-full-body', this.suppressFilterButton);
         this.comp.addOrRemoveBodyCssClass('ag-floating-filter-body', !this.suppressFilterButton);
+        
+        if (!this.active || this.iconCreated) { return; }
 
         const eMenuIcon = createIconNoSpan('filter', this.gridOptionsService, this.column);
 
         if (eMenuIcon) {
+            this.iconCreated = true;
             this.eButtonShowMainFilter.appendChild(eMenuIcon);
         }
     }
@@ -218,13 +228,15 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         this.createManagedBean(setLeftFeature);
     }
 
-    private setupUserComp(): void {
-        if (!this.active) { return; }
-
+    private setupFilterButton(): void {
         const colDef = this.column.getColDef();
         // this is unusual - we need a params value OUTSIDE the component the params are for.
         // the params are for the floating filter component, but this property is actually for the wrapper.
         this.suppressFilterButton = colDef.floatingFilterComponentParams ? !!colDef.floatingFilterComponentParams.suppressFilterButton : false;
+    }
+
+    private setupUserComp(): void {
+        if (!this.active) { return; }
 
         const compDetails = this.filterManager.getFloatingFilterCompDetails(
             this.column,
@@ -232,8 +244,13 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         );
 
         if (compDetails) {
-            this.comp.setCompDetails(compDetails);
+            this.setCompDetails(compDetails);
         }
+    }
+
+    private setCompDetails(compDetails?: UserCompDetails | null): void {
+        this.userCompDetails = compDetails;
+        this.comp.setCompDetails(compDetails);
     }
 
     private showParentFilter() {
@@ -258,7 +275,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
             });
         };
 
-        this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, syncWithFilter);
+        this.destroySyncListener = this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, syncWithFilter);
 
         if (this.filterManager.isFilterActive(this.column)) {
             syncWithFilter(null);
@@ -275,9 +292,54 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         listener();
     }
 
+    private setupFilterChangedListener(): void {
+        if (this.active) {
+            this.destroyFilterChangedListener = this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, this.updateFilterButton.bind(this));
+        }
+    }
+
     private updateFilterButton(): void {
         if (!this.suppressFilterButton && this.comp) {
             this.comp.setButtonWrapperDisplayed(this.filterManager.isFilterAllowed(this.column));
+        }
+    }
+
+    private onColDefChanged(): void {
+        const wasActive = this.active;
+        this.setupActive();
+        const becomeActive = !wasActive && this.active;
+        if (wasActive && !this.active) {
+            this.destroySyncListener?.();
+            this.destroyFilterChangedListener?.();
+        }
+
+        const newCompDetails = this.active
+            ? this.filterManager.getFloatingFilterCompDetails(
+                this.column,
+                () => this.showParentFilter()
+            )
+            : null;
+
+        const compPromise = this.comp.getFloatingFilterComp();
+        if (!compPromise || !newCompDetails) {
+            this.updateCompDetails(newCompDetails, becomeActive);
+        } else {
+            compPromise.then(compInstance => {
+                if (!compInstance || this.userCompDetails?.componentClass !== newCompDetails.componentClass) {
+                    this.updateCompDetails(newCompDetails, becomeActive);
+                }
+            });
+        }
+    }
+
+    private updateCompDetails(compDetails: UserCompDetails | null | undefined, becomeActive: boolean): void {
+        this.setCompDetails(compDetails);
+        // filter button and UI can change based on params, so always want to update
+        this.setupFilterButton();
+        this.setupUi();
+        if (becomeActive) {
+            this.setupSyncWithFilter();
+            this.setupFilterChangedListener();
         }
     }
 }

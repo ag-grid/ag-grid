@@ -122,7 +122,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Northern Ireland Statistics and Research Agency",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": true,
@@ -249,14 +249,14 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "year",
-      "xName": "",
       "yKey": "marriages",
       "yName": "Marriages",
     },
@@ -307,14 +307,14 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "year",
-      "xName": "",
       "yKey": "civilPartnerships",
       "yName": "Civil partnerships",
     },
@@ -365,14 +365,14 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "year",
-      "xName": "",
       "yKey": "divorces",
       "yName": "Divorces",
     },
@@ -385,7 +385,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "theme": Object {
     "overrides": Object {
@@ -420,16 +420,12 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Marriage Statistics (Northern Ireland)",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "line",
 }
@@ -595,7 +591,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Department for Environment, Food & Rural Affairs; Agriculture and Horticulture Development Board",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": true,
@@ -728,7 +724,6 @@ Object {
         "enabled": true,
         "position": Object {},
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "column",
       "visibles": Array [
@@ -736,7 +731,6 @@ Object {
         true,
       ],
       "xKey": "year",
-      "xName": "",
       "yKeys": Array [
         Array [
           "male",
@@ -797,14 +791,14 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "year",
-      "xName": "",
       "yKey": "exportedTonnes",
       "yName": "Beef exports",
     },
@@ -817,7 +811,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "theme": Object {
     "overrides": Object {
@@ -857,16 +851,12 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Cattle Holdings and Beef Exports (UK)",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "column",
 }
@@ -981,7 +971,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: HM Revenue & Customs",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": true,
@@ -1109,16 +1099,15 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "year",
-      "xName": "",
       "yKey": "stillWine",
-      "yName": "",
     },
     Object {
       "highlightStyle": Object {
@@ -1168,16 +1157,15 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "year",
-      "xName": "",
       "yKey": "sparklingWine",
-      "yName": "",
     },
     Object {
       "highlightStyle": Object {
@@ -1227,16 +1215,15 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "year",
-      "xName": "",
       "yKey": "madeWine",
-      "yName": "",
     },
     Object {
       "highlightStyle": Object {
@@ -1286,16 +1273,15 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "year",
-      "xName": "",
       "yKey": "whisky",
-      "yName": "",
     },
     Object {
       "highlightStyle": Object {
@@ -1345,16 +1331,15 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "year",
-      "xName": "",
       "yKey": "potableSpirits",
-      "yName": "",
     },
     Object {
       "highlightStyle": Object {
@@ -1404,16 +1389,15 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "year",
-      "xName": "",
       "yKey": "beer",
-      "yName": "",
     },
     Object {
       "highlightStyle": Object {
@@ -1463,16 +1447,15 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "year",
-      "xName": "",
       "yKey": "cider",
-      "yName": "",
     },
   ],
   "subtitle": Object {
@@ -1483,7 +1466,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "theme": Object {
     "overrides": Object {
@@ -1530,16 +1513,12 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Taxed Alcohol Consumption (UK)",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "line",
 }
@@ -1654,7 +1633,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Environmental Agency",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": true,
@@ -1798,7 +1777,6 @@ Object {
         "enabled": true,
         "position": Object {},
         "renderer": [Function],
-        "showArrow": true,
       },
       "type": "column",
       "visibles": Array [
@@ -1812,7 +1790,6 @@ Object {
         true,
       ],
       "xKey": "quarter",
-      "xName": "",
       "yKeys": Array [
         Array [
           "largeHousehold",
@@ -1845,7 +1822,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "theme": Object {
     "overrides": Object {
@@ -1868,17 +1845,13 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "WEEE Collected in UK",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "class": "my-tooltip",
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "column",
 }
@@ -1992,7 +1965,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: US Geological Survey",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": false,
@@ -2093,7 +2066,6 @@ Object {
         "fontStyle": undefined,
         "fontWeight": undefined,
       },
-      "labelKey": undefined,
       "labelName": "Label",
       "marker": Object {
         "enabled": true,
@@ -2111,12 +2083,12 @@ Object {
       "showInLegend": true,
       "sizeKey": "magnitude",
       "sizeName": "Magnitude",
-      "title": undefined,
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "scatter",
       "visible": true,
@@ -2138,7 +2110,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -2149,16 +2121,12 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Worldwide Earthquakes",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "scatter",
 }
@@ -2272,7 +2240,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: US Geological Survey",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": true,
@@ -2399,16 +2367,15 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "time",
-      "xName": "",
       "yKey": "magnitude",
-      "yName": "",
     },
     Object {
       "highlightStyle": Object {
@@ -2457,16 +2424,15 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "time",
-      "xName": "",
       "yKey": "magnitude",
-      "yName": "",
     },
     Object {
       "highlightStyle": Object {
@@ -2515,16 +2481,15 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "time",
-      "xName": "",
       "yKey": "magnitude",
-      "yName": "",
     },
     Object {
       "highlightStyle": Object {
@@ -2573,16 +2538,15 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "time",
-      "xName": "",
       "yKey": "magnitude",
-      "yName": "",
     },
   ],
   "subtitle": Object {
@@ -2593,7 +2557,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "theme": Object {
     "overrides": Object {
@@ -2634,16 +2598,12 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Earthquake Magnitudes by Source",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "line",
 }
@@ -2758,7 +2718,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Department for Business, Energy & Industrial Strategy",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": true,
@@ -2896,16 +2856,16 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "area",
       "visibles": Array [
         true,
       ],
       "xKey": "quarter",
-      "xName": "",
       "yKeys": Array [
         "naturalGas",
       ],
@@ -2971,16 +2931,16 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "area",
       "visibles": Array [
         true,
       ],
       "xKey": "quarter",
-      "xName": "",
       "yKeys": Array [
         "coal",
       ],
@@ -3046,16 +3006,16 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "area",
       "visibles": Array [
         true,
       ],
       "xKey": "quarter",
-      "xName": "",
       "yKeys": Array [
         "primaryOil",
       ],
@@ -3121,16 +3081,16 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "area",
       "visibles": Array [
         true,
       ],
       "xKey": "quarter",
-      "xName": "",
       "yKeys": Array [
         "petroleum",
       ],
@@ -3196,16 +3156,16 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "area",
       "visibles": Array [
         true,
       ],
       "xKey": "quarter",
-      "xName": "",
       "yKeys": Array [
         "manufacturedFuels",
       ],
@@ -3222,7 +3182,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "theme": Object {
     "overrides": Object {
@@ -3264,16 +3224,12 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Changes in UK Energy Stock",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "area",
 }
@@ -3388,7 +3344,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Office for National Statistics",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": false,
@@ -3519,14 +3475,12 @@ Object {
         "enabled": true,
         "position": Object {},
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "bar",
       "visibles": Array [
         true,
       ],
       "xKey": "type",
-      "xName": "",
       "yKeys": Array [
         Array [
           "earnings",
@@ -3542,7 +3496,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "theme": Object {
     "overrides": Object {
@@ -3563,16 +3517,12 @@ Object {
     "spacing": 25,
     "text": "Gross Weekly Earnings
 by Occupation",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "bar",
 }
@@ -3687,7 +3637,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Office for National Statistics",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": false,
@@ -3818,14 +3768,12 @@ Object {
         "enabled": true,
         "position": Object {},
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "bar",
       "visibles": Array [
         true,
       ],
       "xKey": "job",
-      "xName": "",
       "yKeys": Array [
         Array [
           "change",
@@ -3841,7 +3789,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -3853,16 +3801,12 @@ Object {
     "spacing": 25,
     "text": "Change in Number of Jobs in UK
 (June to September)",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "bar",
 }
@@ -3975,7 +3919,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Footnote",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": false,
@@ -4076,7 +4020,6 @@ Object {
         "fontStyle": undefined,
         "fontWeight": undefined,
       },
-      "labelKey": undefined,
       "labelName": "Label",
       "marker": Object {
         "enabled": true,
@@ -4097,9 +4040,10 @@ Object {
       "title": "Punch Card",
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "scatter",
       "visible": true,
@@ -4117,7 +4061,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "time distribution of commits",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -4127,16 +4071,12 @@ Object {
     "fontStyle": undefined,
     "fontWeight": "bold",
     "text": "Punch Card of Github",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "scatter",
 }
@@ -4256,7 +4196,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Simple Maps",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": false,
@@ -4378,9 +4318,10 @@ Object {
       "title": "Most populous cities",
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "scatter",
       "visible": true,
@@ -4398,7 +4339,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -4409,16 +4350,12 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Most Populous Cities",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "scatter",
 }
@@ -4533,7 +4470,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Ministry of Justice, HM Prison Service, and Her Majesty’s Prison and Probation Service",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": true,
@@ -4666,7 +4603,6 @@ Object {
         "enabled": true,
         "position": Object {},
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "column",
       "visibles": Array [
@@ -4674,7 +4610,6 @@ Object {
         true,
       ],
       "xKey": "month",
-      "xName": "",
       "yKeys": Array [
         Array [
           "menDelta",
@@ -4697,7 +4632,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "theme": Object {
     "overrides": Object {
@@ -4731,16 +4666,12 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Changes in Prison Population",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "column",
 }
@@ -4855,7 +4786,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Office for National Statistics",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": true,
@@ -4989,7 +4920,6 @@ Object {
         "enabled": true,
         "position": Object {},
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "bar",
       "visibles": Array [
@@ -4997,7 +4927,6 @@ Object {
         true,
       ],
       "xKey": "type",
-      "xName": "",
       "yKeys": Array [
         Array [
           "total",
@@ -5020,7 +4949,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "theme": Object {
     "overrides": Object {
@@ -5056,16 +4985,12 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Annual Growth in Pay",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "bar",
 }
@@ -5180,7 +5105,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Office for National Statistics",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": true,
@@ -5324,7 +5249,6 @@ Object {
         "enabled": true,
         "position": Object {},
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "column",
       "visibles": Array [
@@ -5337,7 +5261,6 @@ Object {
         true,
       ],
       "xKey": "year",
-      "xName": "",
       "yKeys": Array [
         Array [
           "16-24",
@@ -5371,7 +5294,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "theme": Object {
     "overrides": Object {
@@ -5396,16 +5319,12 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Regular Internet Users",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "column",
 }
@@ -5520,7 +5439,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: UCI",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": false,
@@ -5660,14 +5579,11 @@ Object {
         "enabled": true,
         "position": Object {},
         "renderer": [Function],
-        "showArrow": true,
       },
       "type": "histogram",
       "visible": true,
       "xKey": "curb-weight",
       "xName": "Curb weight",
-      "yKey": "",
-      "yName": "",
     },
   ],
   "subtitle": Object {
@@ -5678,7 +5594,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "USA 1987",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -5688,16 +5604,12 @@ Object {
     "fontStyle": undefined,
     "fontWeight": "bold",
     "text": "Vehicle weight distribution",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "histogram",
 }
@@ -5815,7 +5727,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Department for Environment, Food and Rural Affairs",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": true,
@@ -5943,14 +5855,14 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "belize",
       "yName": "Belize",
     },
@@ -6002,14 +5914,14 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "cameroon",
       "yName": "Cameroon",
     },
@@ -6061,14 +5973,14 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "columbia",
       "yName": "Columbia",
     },
@@ -6120,14 +6032,14 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "costaRica",
       "yName": "Costa Rica",
     },
@@ -6179,14 +6091,14 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "dominicanRepublic",
       "yName": "Dominican Republic",
     },
@@ -6238,14 +6150,14 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "ecuador",
       "yName": "Ecuador",
     },
@@ -6297,14 +6209,14 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "ghana",
       "yName": "Ghana",
     },
@@ -6356,14 +6268,14 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "honduras",
       "yName": "Honduras",
     },
@@ -6415,14 +6327,14 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "ivoryCoast",
       "yName": "Ivory Coast",
     },
@@ -6474,14 +6386,14 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "jamaica",
       "yName": "Jamaica",
     },
@@ -6533,14 +6445,14 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "mexico",
       "yName": "Mexico",
     },
@@ -6592,14 +6504,14 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "panama",
       "yName": "Panama",
     },
@@ -6651,14 +6563,14 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "windwardIsles",
       "yName": "Windward Isles",
     },
@@ -6710,14 +6622,14 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "guatemala",
       "yName": "Guatemala",
     },
@@ -6769,14 +6681,14 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "nicaragua",
       "yName": "Nicaragua",
     },
@@ -6828,14 +6740,14 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "week",
-      "xName": "",
       "yKey": "brazil",
       "yName": "Brazil",
     },
@@ -6848,7 +6760,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "theme": Object {
     "overrides": Object {
@@ -6916,16 +6828,12 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Imported Banana Prices",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "line",
 }
@@ -7040,7 +6948,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Footnote",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": false,
@@ -7167,16 +7075,15 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": [Function],
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "year",
-      "xName": "",
       "yKey": "population",
-      "yName": "",
     },
   ],
   "subtitle": Object {
@@ -7187,7 +7094,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "log scale",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -7197,16 +7104,12 @@ Object {
     "fontStyle": undefined,
     "fontWeight": "bold",
     "text": "World Population Over Time",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "line",
 }
@@ -7229,7 +7132,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Footnote",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": true,
@@ -7390,7 +7293,6 @@ Object {
         "enabled": true,
         "position": Object {},
         "renderer": [Function],
-        "showArrow": true,
       },
       "type": "treemap",
       "visible": true,
@@ -7404,7 +7306,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Area represents market cap. Color represents change from the day before.",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -7414,16 +7316,12 @@ Object {
     "fontStyle": undefined,
     "fontWeight": "bold",
     "text": "S&P 500 index stocks categorized by sectors and industries.",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "treemap",
 }
@@ -7539,7 +7437,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Department for Business, Energy & Industrial Strategy",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": true,
@@ -7689,9 +7587,10 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "area",
       "visibles": Array [
@@ -7704,7 +7603,6 @@ Object {
         true,
       ],
       "xKey": "month",
-      "xName": "",
       "yKeys": Array [
         "coal",
         "petroleum",
@@ -7733,7 +7631,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "theme": Object {
     "overrides": Object {
@@ -7758,16 +7656,12 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "UK Energy Sources",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "area",
 }
@@ -7883,7 +7777,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Office for National Statistics",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": true,
@@ -8018,7 +7912,6 @@ Object {
         "enabled": true,
         "position": Object {},
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "bar",
       "visibles": Array [
@@ -8027,7 +7920,6 @@ Object {
         true,
       ],
       "xKey": "area",
-      "xName": "",
       "yKeys": Array [
         Array [
           "usedInLast3Months",
@@ -8050,7 +7942,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "theme": Object {
     "overrides": Object {
@@ -8088,16 +7980,12 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Internet Users by Geographical Location",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "bar",
 }
@@ -8213,7 +8101,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Department for Education",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": true,
@@ -8353,7 +8241,6 @@ Object {
         "enabled": true,
         "position": Object {},
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "column",
       "visibles": Array [
@@ -8365,7 +8252,6 @@ Object {
         true,
       ],
       "xKey": "type",
-      "xName": "",
       "yKeys": Array [
         Array [
           "white",
@@ -8394,7 +8280,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "theme": Object {
     "overrides": Object {
@@ -8437,16 +8323,12 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Ethnic Diversity of School Pupils",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "column",
 }
@@ -8565,7 +8447,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Department for Digital, Culture, Media & Sport",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": true,
@@ -8702,16 +8584,16 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": [Function],
-        "showArrow": true,
       },
       "type": "area",
       "visibles": Array [
         true,
       ],
       "xKey": "date",
-      "xName": "",
       "yKeys": Array [
         "Tate Modern",
       ],
@@ -8776,16 +8658,16 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": [Function],
-        "showArrow": true,
       },
       "type": "area",
       "visibles": Array [
         true,
       ],
       "xKey": "date",
-      "xName": "",
       "yKeys": Array [
         "Tate Britain",
       ],
@@ -8850,16 +8732,16 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": [Function],
-        "showArrow": true,
       },
       "type": "area",
       "visibles": Array [
         true,
       ],
       "xKey": "date",
-      "xName": "",
       "yKeys": Array [
         "Tate Liverpool",
       ],
@@ -8924,16 +8806,16 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": [Function],
-        "showArrow": true,
       },
       "type": "area",
       "visibles": Array [
         true,
       ],
       "xKey": "date",
-      "xName": "",
       "yKeys": Array [
         "Tate St Ives",
       ],
@@ -8950,7 +8832,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "theme": Object {
     "overrides": Object {
@@ -8973,16 +8855,12 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Total Visitors to Tate Galleries",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "area",
 }
@@ -9097,7 +8975,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Department for Digital, Culture, Media & Sport",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": false,
@@ -9228,14 +9106,12 @@ Object {
         "enabled": true,
         "position": Object {},
         "renderer": [Function],
-        "showArrow": true,
       },
       "type": "column",
       "visibles": Array [
         true,
       ],
       "xKey": "year",
-      "xName": "",
       "yKeys": Array [
         Array [
           "visitors",
@@ -9251,7 +9127,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -9262,16 +9138,12 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Total Visitors to Museums and Galleries",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "column",
 }
@@ -9295,7 +9167,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Home Office",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": true,
@@ -9349,7 +9221,6 @@ Object {
   "series": Array [
     Object {
       "angleKey": "count",
-      "angleName": "",
       "calloutLabel": Object {
         "color": "rgb(70, 70, 70)",
         "enabled": false,
@@ -9468,7 +9339,6 @@ Object {
         "enabled": true,
         "position": Object {},
         "renderer": [Function],
-        "showArrow": true,
       },
       "type": "pie",
       "visible": true,
@@ -9482,7 +9352,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -9493,16 +9363,12 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Dwelling Fires (UK)",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "pie",
 }
@@ -9617,7 +9483,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: UCI",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": false,
@@ -9744,14 +9610,11 @@ Object {
         "enabled": true,
         "position": Object {},
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "histogram",
       "visible": true,
       "xKey": "engine-size",
       "xName": "Engine Size",
-      "yKey": "",
-      "yName": "",
     },
   ],
   "subtitle": Object {
@@ -9762,7 +9625,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "USA 1987",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -9772,16 +9635,12 @@ Object {
     "fontStyle": undefined,
     "fontWeight": "bold",
     "text": "Engine size distribution",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "histogram",
 }
@@ -9900,7 +9759,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Department for Business, Energy & Industrial Strategy",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": true,
@@ -10028,16 +9887,15 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": [Function],
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "date",
-      "xName": "",
       "yKey": "petrol",
-      "yName": "",
     },
     Object {
       "highlightStyle": Object {
@@ -10087,16 +9945,15 @@ Object {
       "tooltip": Object {
         "enabled": true,
         "format": undefined,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": [Function],
-        "showArrow": true,
       },
       "type": "line",
       "visible": true,
       "xKey": "date",
-      "xName": "",
       "yKey": "diesel",
-      "yName": "",
     },
   ],
   "subtitle": Object {
@@ -10107,7 +9964,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "theme": Object {
     "overrides": Object {
@@ -10132,16 +9989,12 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Road fuel prices",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "line",
 }
@@ -10164,7 +10017,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Office for National Statistics",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": false,
@@ -10218,7 +10071,6 @@ Object {
   "series": Array [
     Object {
       "angleKey": "population",
-      "angleName": "",
       "calloutLabel": Object {
         "color": "rgb(70, 70, 70)",
         "enabled": true,
@@ -10310,13 +10162,11 @@ Object {
         "fontSize": 14,
         "fontStyle": undefined,
         "fontWeight": "bold",
-        "text": "",
       },
       "tooltip": Object {
         "enabled": true,
         "position": Object {},
         "renderer": [Function],
-        "showArrow": true,
       },
       "type": "pie",
       "visible": true,
@@ -10330,7 +10180,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -10341,16 +10191,12 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Religions of London Population",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "pie",
 }
@@ -10464,7 +10310,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Statistics Online Computational Resource",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": false,
@@ -10565,7 +10411,6 @@ Object {
         "fontStyle": undefined,
         "fontWeight": undefined,
       },
-      "labelKey": undefined,
       "labelName": "Label",
       "marker": Object {
         "enabled": true,
@@ -10581,21 +10426,18 @@ Object {
       },
       "nodeClickRange": "exact",
       "showInLegend": true,
-      "sizeKey": undefined,
       "sizeName": "Size",
-      "title": undefined,
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "scatter",
       "visible": true,
       "xKey": "weight",
-      "xName": "",
       "yKey": "height",
-      "yName": "",
     },
   ],
   "subtitle": Object {
@@ -10606,7 +10448,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -10617,16 +10459,12 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Height vs Weight for Major League Baseball Players",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "scatter",
 }
@@ -10746,7 +10584,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Department for Digital, Culture, Media & Sport",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": true,
@@ -10893,9 +10731,10 @@ Object {
       ],
       "tooltip": Object {
         "enabled": true,
-        "position": Object {},
+        "position": Object {
+          "type": "node",
+        },
         "renderer": [Function],
-        "showArrow": true,
       },
       "type": "area",
       "visibles": Array [
@@ -10907,7 +10746,6 @@ Object {
         true,
       ],
       "xKey": "date",
-      "xName": "",
       "yKeys": Array [
         "Science Museum",
         "National Media Museum",
@@ -10934,7 +10772,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "theme": Object {
     "overrides": Object {
@@ -10982,16 +10820,12 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "Total Visitors to Science Museums",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "area",
 }
@@ -11107,7 +10941,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Ministry of Housing, Communities & Local Government",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": true,
@@ -11244,7 +11078,6 @@ Object {
         "enabled": true,
         "position": Object {},
         "renderer": undefined,
-        "showArrow": true,
       },
       "type": "bar",
       "visibles": Array [
@@ -11254,7 +11087,6 @@ Object {
         true,
       ],
       "xKey": "type",
-      "xName": "",
       "yKeys": Array [
         Array [
           "ownerOccupied",
@@ -11279,7 +11111,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Subtitle",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "theme": Object {
     "overrides": Object {
@@ -11305,16 +11137,12 @@ Object {
     "fontWeight": "bold",
     "spacing": 25,
     "text": "UK Housing Stock",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "bar",
 }
@@ -11429,7 +11257,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: Transport for London",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": true,
@@ -11568,7 +11396,6 @@ Object {
         "enabled": true,
         "position": Object {},
         "renderer": [Function],
-        "showArrow": true,
       },
       "type": "column",
       "visibles": Array [
@@ -11579,7 +11406,6 @@ Object {
         true,
       ],
       "xKey": "station",
-      "xName": "",
       "yKeys": Array [
         Array [
           "early",
@@ -11606,7 +11432,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "Victoria Line (2010)",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "theme": Object {
     "overrides": Object {
@@ -11647,16 +11473,12 @@ Object {
     "fontStyle": undefined,
     "fontWeight": "bold",
     "text": "Average Station Entries",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "column",
 }
@@ -11771,7 +11593,7 @@ Object {
     "fontWeight": undefined,
     "spacing": 30,
     "text": "Source: UCI",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "legend": Object {
     "enabled": false,
@@ -11911,14 +11733,11 @@ Object {
         "enabled": true,
         "position": Object {},
         "renderer": [Function],
-        "showArrow": true,
       },
       "type": "histogram",
       "visible": true,
       "xKey": "curb-weight",
       "xName": "Curb weight",
-      "yKey": "",
-      "yName": "",
     },
   ],
   "subtitle": Object {
@@ -11929,7 +11748,7 @@ Object {
     "fontStyle": undefined,
     "fontWeight": undefined,
     "text": "USA 1987",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "title": Object {
     "color": "rgb(70, 70, 70)",
@@ -11939,16 +11758,12 @@ Object {
     "fontStyle": undefined,
     "fontWeight": "bold",
     "text": "Vehicle weight distribution",
-    "wrapping": "always",
+    "wrapping": "hyphenate",
   },
   "tooltip": Object {
     "delay": 0,
     "enabled": true,
-    "position": Object {
-      "type": "pointer",
-    },
     "range": "nearest",
-    "showArrow": true,
   },
   "type": "histogram",
 }

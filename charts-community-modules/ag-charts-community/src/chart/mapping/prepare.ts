@@ -127,7 +127,7 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, fallback
     const userSuppliedOptionsType = options.type;
     const type = optionsType(options);
 
-    const globalTooltipPositionOptions = options.tooltip?.position || {};
+    const globalTooltipPositionOptions = options.tooltip?.position ?? {};
 
     const checkSeriesType = (type?: string) => {
         if (type != null && !(isSeriesOptionType(type) || getSeriesDefaults(type))) {
@@ -172,7 +172,7 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, fallback
     // Apply series themes before calling processSeriesOptions() as it reduces and renames some
     // properties, and in that case then cannot correctly have themes applied.
     mergedOptions.series = processSeriesOptions(
-        ((mergedOptions.series as SeriesOptions[]) || []).map((s) => {
+        ((mergedOptions.series as SeriesOptions[]) ?? []).map((s) => {
             let type = defaultSeriesType;
             if (s.type) {
                 type = s.type;
@@ -215,7 +215,7 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, fallback
                 const axisType = axis.type;
                 const axesTheme = jsonMerge([
                     axesThemes[axisType],
-                    axesThemes[axisType][axis.position || 'unknown'] || {},
+                    axesThemes[axisType][axis.position ?? 'unknown'] ?? {},
                 ]);
                 return prepareAxis(axis, axesTheme);
             });
@@ -254,7 +254,7 @@ function mergeSeriesOptions<T extends SeriesOptionsTypes>(
     );
     const mergedSeries = jsonMerge(
         [
-            seriesThemes[type] || {},
+            seriesThemes[type] ?? {},
             { ...series, type, tooltip: { ...series.tooltip, position: mergedTooltipPosition } },
         ],
         noDataCloneMergeOptions
@@ -275,7 +275,7 @@ function prepareMainOptions<T>(
 
 function prepareTheme<T extends AgChartOptions>(options: T) {
     const theme = getChartTheme(options.theme);
-    const themeConfig = theme.config[optionsType(options) || 'cartesian'];
+    const themeConfig = theme.config[optionsType(options) ?? 'cartesian'];
 
     const seriesThemes = Object.entries<any>(theme.config).reduce((result, [seriesType, { series }]) => {
         result[seriesType] = series?.[seriesType];
@@ -284,7 +284,7 @@ function prepareTheme<T extends AgChartOptions>(options: T) {
 
     return {
         theme,
-        axesThemes: themeConfig['axes'] || {},
+        axesThemes: themeConfig['axes'] ?? {},
         seriesThemes: seriesThemes,
         cleanedTheme: jsonMerge([themeConfig, { axes: DELETE, series: DELETE }]),
     };
@@ -315,7 +315,7 @@ function calculateSeriesPalette<T extends SeriesOptionsTypes>(context: Preparati
     } = context;
 
     const inputAny = input as any;
-    let colourCount = countArrayElements(inputAny['yKeys'] || []) || 1; // Defaults to 1 if no yKeys.
+    let colourCount = countArrayElements(inputAny['yKeys'] ?? []) || 1; // Defaults to 1 if no yKeys.
     switch (input.type) {
         case 'pie':
             colourCount = Math.max(fills.length, strokes.length);

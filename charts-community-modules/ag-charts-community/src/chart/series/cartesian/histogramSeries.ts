@@ -31,9 +31,9 @@ import {
     OPT_LINE_DASH,
     OPT_NUMBER,
     OPT_COLOR_STRING,
-    STRING,
     Validate,
     predicateWithMessage,
+    OPT_STRING,
 } from '../../../util/validation';
 import {
     AgCartesianSeriesLabelFormatterParams,
@@ -49,9 +49,10 @@ import {
     fixNumericExtent,
     GroupByFn,
     PropertyDefinition,
-    SORT_DOMAIN_GROUPS,
 } from '../../data/dataModel';
 import { area, groupAverage, groupCount, sum } from '../../data/aggregateFunctions';
+import { SORT_DOMAIN_GROUPS } from '../../data/processors';
+import * as easing from '../../../motion/easing';
 
 const HISTOGRAM_AGGREGATIONS = ['count', 'sum', 'mean'];
 const HISTOGRAM_AGGREGATION = predicateWithMessage(
@@ -133,8 +134,8 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         this.label.enabled = false;
     }
 
-    @Validate(STRING)
-    xKey: string = '';
+    @Validate(OPT_STRING)
+    xKey?: string = undefined;
 
     @Validate(BOOLEAN)
     areaPlot: boolean = false;
@@ -148,19 +149,20 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     @Validate(OPT_NUMBER(0))
     binCount?: number = undefined;
 
-    @Validate(STRING)
-    xName: string = '';
+    @Validate(OPT_STRING)
+    xName?: string = undefined;
 
-    @Validate(STRING)
-    yKey: string = '';
+    @Validate(OPT_STRING)
+    yKey?: string = undefined;
 
-    @Validate(STRING)
-    yName: string = '';
+    @Validate(OPT_STRING)
+    yName?: string = undefined;
 
     @Validate(NUMBER(0))
     strokeWidth: number = 1;
 
     shadow?: DropShadow = undefined;
+    calculatedBins: [number, number][] = [];
 
     protected highlightedDatum?: HistogramNodeDatum;
 
@@ -255,11 +257,19 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             }
 
             const bins = this.bins ?? this.deriveBins(xExtent);
+            const binCount = bins.length;
+            this.calculatedBins = [...bins];
 
             return (item) => {
                 const xValue = item.keys[0];
-                for (const nextBin of bins) {
+                for (let i = 0; i < binCount; i++) {
+                    const nextBin = bins[i];
                     if (xValue >= nextBin[0] && xValue < nextBin[1]) {
+                        return nextBin;
+                    }
+                    if (i === binCount - 1 && xValue <= nextBin[1]) {
+                        // Handle edge case of a value being at the maximum extent, and the
+                        // final bin aligning with it.
                         return nextBin;
                     }
                 }
@@ -274,7 +284,6 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             groupByFn,
         });
         this.processedData = this.dataModel.processData(data ?? []);
-        this.processedData?.domain.groups?.sort((a, b) => a[0] - b[0]);
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
@@ -283,11 +292,10 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         if (!processedData) return [];
 
         const {
-            reduced: { [SORT_DOMAIN_GROUPS.property]: xBins = [[0, 0]] } = {},
             domain: { aggValues: [yDomain] = [] },
         } = processedData;
-        const xDomainMin = xBins?.[0][0];
-        const xDomainMax = xBins?.[(xBins?.length ?? 0) - 1][1];
+        const xDomainMin = this.calculatedBins?.[0][0];
+        const xDomainMax = this.calculatedBins?.[(this.calculatedBins?.length ?? 0) - 1][1];
         if (direction === ChartAxisDirection.X) {
             return fixNumericExtent([xDomainMin, xDomainMax]);
         }
@@ -296,14 +304,14 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     }
 
     protected getNodeClickEvent(event: MouseEvent, datum: HistogramNodeDatum): CartesianSeriesNodeClickEvent<any> {
-        return new CartesianSeriesNodeClickEvent(this.xKey, this.yKey, event, datum, this);
+        return new CartesianSeriesNodeClickEvent(this.xKey ?? '', this.yKey ?? '', event, datum, this);
     }
 
     protected getNodeDoubleClickEvent(
         event: MouseEvent,
         datum: HistogramNodeDatum
     ): CartesianSeriesNodeDoubleClickEvent<any> {
-        return new CartesianSeriesNodeDoubleClickEvent(this.xKey, this.yKey, event, datum, this);
+        return new CartesianSeriesNodeDoubleClickEvent(this.xKey ?? '', this.yKey ?? '', event, datum, this);
     }
 
     async createNodeData() {
@@ -315,7 +323,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
 
         const { scale: xScale } = xAxis;
         const { scale: yScale } = yAxis;
-        const { fill, stroke, strokeWidth, id: seriesId, yKey, xKey } = this;
+        const { fill, stroke, strokeWidth, id: seriesId, yKey = '', xKey = '' } = this;
 
         const nodeData: HistogramNodeDatum[] = [];
 
@@ -390,7 +398,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             });
         });
 
-        return [{ itemId: this.yKey, nodeData, labelData: nodeData }];
+        return [{ itemId: this.yKey ?? this.id, nodeData, labelData: nodeData }];
     }
 
     protected nodeFactory() {
@@ -436,11 +444,9 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             const fillOpacity = isDatumHighlighted ? highlightFillOpacity : seriesFillOpacity;
 
             rect.x = datum.x;
-            rect.y = datum.y;
             rect.width = datum.width;
-            rect.height = datum.height;
-            rect.fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : datum.fill;
-            rect.stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : datum.stroke;
+            rect.fill = (isDatumHighlighted ? highlightedFill : undefined) ?? datum.fill;
+            rect.stroke = (isDatumHighlighted ? highlightedStroke : undefined) ?? datum.stroke;
             rect.fillOpacity = fillOpacity;
             rect.strokeOpacity = strokeOpacity;
             rect.strokeWidth = strokeWidth;
@@ -490,7 +496,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
     }
 
     getTooltipHtml(nodeDatum: HistogramNodeDatum): string {
-        const { xKey, yKey, xAxis, yAxis } = this;
+        const { xKey, yKey = '', xAxis, yAxis } = this;
 
         if (!xKey || !xAxis || !yAxis) {
             return '';
@@ -558,17 +564,67 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                 seriesId: id,
                 enabled: visible,
                 label: {
-                    text: yName || xKey || 'Frequency',
+                    text: yName ?? xKey ?? 'Frequency',
                 },
                 marker: {
-                    fill: fill || 'rgba(0, 0, 0, 0)',
-                    stroke: stroke || 'rgba(0, 0, 0, 0)',
+                    fill: fill ?? 'rgba(0, 0, 0, 0)',
+                    stroke: stroke ?? 'rgba(0, 0, 0, 0)',
                     fillOpacity: fillOpacity,
                     strokeOpacity: strokeOpacity,
                 },
             },
         ];
         return legendData;
+    }
+
+    animateEmptyUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, HistogramNodeDatum>> }) {
+        let startingY = 0;
+        datumSelections.forEach((datumSelection) =>
+            datumSelection.each((_, datum) => {
+                startingY = Math.max(startingY, datum.height + datum.y);
+            })
+        );
+
+        datumSelections.forEach((datumSelection) => {
+            datumSelection.each((rect, datum) => {
+                this.animationManager?.animateMany(
+                    `${this.id}_empty-update-ready_${rect.id}`,
+                    [
+                        { from: startingY, to: datum.y },
+                        { from: 0, to: datum.height },
+                    ],
+                    {
+                        disableInteractions: true,
+                        duration: 1000,
+                        ease: easing.linear,
+                        repeat: 0,
+                        onUpdate([y, height]) {
+                            rect.y = y;
+                            rect.height = height;
+
+                            rect.x = datum.x;
+                            rect.width = datum.width;
+                        },
+                    }
+                );
+            });
+        });
+    }
+
+    animateReadyUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, HistogramNodeDatum>> }) {
+        datumSelections.forEach((datumSelection) => {
+            datumSelection.each((rect, datum) => {
+                rect.y = datum.y;
+                rect.height = datum.height;
+            });
+        });
+    }
+
+    animateReadyHighlightReady(highlightSelection: Selection<Rect, HistogramNodeDatum>) {
+        highlightSelection.each((rect, datum) => {
+            rect.y = datum.y;
+            rect.height = datum.height;
+        });
     }
 
     protected isLabelEnabled() {

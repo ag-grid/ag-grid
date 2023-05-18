@@ -28,22 +28,3 @@ export function extent(values: Array<number | Date>): [number, number] | undefin
     }
     return extent;
 }
-
-/**
- * finds the min and max using a process appropriate for stacked values. Ie,
- * summing up the positive and negative numbers, and returning the totals of each
- */
-export function findMinMax(values: number[]): { min?: number; max?: number } {
-    let min: number | undefined = undefined;
-    let max: number | undefined = undefined;
-
-    for (const value of values) {
-        if (value < 0) {
-            min = (min ?? 0) + value;
-        } else if (value >= 0) {
-            max = (max ?? 0) + value;
-        }
-    }
-
-    return { min, max };
-}

@@ -12,8 +12,8 @@ import pageStyles from './doc-page.module.scss';
  */
 const ChartGalleryPageTemplate = ({ pageContext: { framework, name, description, previous, next, pageName } }) => {
     return (
-        <div id="doc-page-wrapper" className={pageStyles['doc-page__wrapper']}>
-            <div id="doc-content" className={classnames(pageStyles['doc-page'], pageStyles.noSideMenu)}>
+        <div id="doc-page-wrapper" className={pageStyles['doc-page-wrapper']}>
+            <div id="doc-content" className={classnames(pageStyles['doc-page'], pageStyles.noSideMenu, 'ag-styles')}>
                 {/*eslint-disable-next-line react/jsx-pascal-case*/}
                 <SEO
                     title={`Gallery - ${name}`}

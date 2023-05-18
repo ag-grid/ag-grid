@@ -119,7 +119,7 @@ export const Tables = () => {
                 Stacked table: <code>table.stack</code> / <code>{`table { @incldue stack-table(); }`}</code>
             </p>
 
-            <figure style={{ 'max-width': '300px' }}>
+            <figure style={{ maxWidth: '300px' }}>
                 <table role="grid" className="stack">
                     <thead>
                         <tr>

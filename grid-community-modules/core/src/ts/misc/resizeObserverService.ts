@@ -1,6 +1,5 @@
 import { Bean } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { debounce } from "../utils/function";
 import { offsetHeight, offsetWidth } from "../utils/dom";
 
 const DEBOUNCE_DELAY = 50;
@@ -11,8 +10,7 @@ export class ResizeObserverService extends BeanStub {
     private polyfillScheduled: boolean;
 
     public observeResize(element: HTMLElement, callback: () => void): () => void {
-        const eDocument = this.gridOptionsService.getDocument();
-        const win = (eDocument.defaultView || window) as any;
+        const win = this.gridOptionsService.getWindow();
         const useBrowserResizeObserver = () => {
             const resizeObserver = new win.ResizeObserver(callback);
             resizeObserver.observe(element);
@@ -59,6 +57,7 @@ export class ResizeObserverService extends BeanStub {
 
         return usePolyfill();
     }
+
 
     private doNextPolyfillTurn(func: () => void): void {
         this.polyfillFunctions.push(func);

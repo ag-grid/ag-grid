@@ -128,7 +128,7 @@ export function format(formatter: string | FormatterOptions) {
             result = `${result}%`;
         }
         if (!isNaN(width!)) {
-            result = addPadding(result, width!, fill || zero, align);
+            result = addPadding(result, width!, fill ?? zero, align);
         }
         result = `${prefix}${result}${suffix}`;
         return result;
@@ -264,7 +264,7 @@ function addPadding(numString: string, width: number, fill = ' ', align = '>') {
 }
 
 export function tickFormat(ticks: any[], formatter?: string): (n: number | { valueOf(): number }) => string {
-    const options = parseFormatter(formatter || ',f');
+    const options = parseFormatter(formatter ?? ',f');
     if (isNaN(options.precision!)) {
         if (options.type === 'f' || options.type === '%') {
             options.precision = Math.max(

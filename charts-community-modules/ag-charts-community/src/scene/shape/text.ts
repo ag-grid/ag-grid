@@ -4,7 +4,7 @@ import { HdpiCanvas } from '../../canvas/hdpiCanvas';
 import { RedrawType, SceneChangeDetection, RenderContext } from '../node';
 import { FontStyle, FontWeight } from '../../chart/agChartOptions';
 
-export interface TextSizeProperties {
+interface TextSizeProperties {
     fontFamily: string;
     fontSize: number;
     fontStyle?: FontStyle;
@@ -12,11 +12,19 @@ export interface TextSizeProperties {
     lineHeight?: number;
 }
 
+interface WordWrapProperties {
+    breakWord?: boolean;
+    hyphens?: boolean;
+}
+
+const ellipsis = '\u2026';
+
 function SceneFontChangeDetection(opts?: { redraw?: RedrawType; changeCb?: (t: any) => any }) {
-    const { redraw = RedrawType.MAJOR, changeCb } = opts || {};
+    const { redraw = RedrawType.MAJOR, changeCb } = opts ?? {};
 
     return SceneChangeDetection({ redraw, type: 'font', changeCb });
 }
+
 export class Text extends Shape {
     static className = 'Text';
 
@@ -44,7 +52,7 @@ export class Text extends Shape {
     }
 
     @SceneChangeDetection({ redraw: RedrawType.MAJOR, changeCb: (o: Text) => o._splitText() })
-    text: string = '';
+    text?: string = undefined;
 
     private _dirtyFont: boolean = true;
     private _font?: string;
@@ -240,7 +248,7 @@ export class Text extends Shape {
 
             const { fillShadow } = this;
 
-            if (fillShadow && fillShadow.enabled) {
+            if (fillShadow?.enabled) {
                 ctx.shadowColor = fillShadow.color;
                 ctx.shadowOffsetX = fillShadow.xOffset * pixelRatio;
                 ctx.shadowOffsetY = fillShadow.yOffset * pixelRatio;
@@ -292,12 +300,28 @@ export class Text extends Shape {
         }
     }
 
-    static wrap(text: string, maxWidth: number, maxHeight: number, textProps: TextSizeProperties): string {
+    static wrap(
+        text: string,
+        maxWidth: number,
+        maxHeight: number,
+        textProps: TextSizeProperties,
+        wrapProps: WordWrapProperties = {}
+    ): string {
+        const font = getFont(textProps);
+        const measurer = createTextMeasurer(font);
         const lines: string[] = text.split(/\r?\n/g);
         const result: string[] = [];
         let cumulativeHeight = 0;
         for (const line of lines) {
-            const wrappedLine = Text.wrapLine(line, maxWidth, maxHeight, textProps, cumulativeHeight);
+            const wrappedLine = Text.wrapLine(
+                line,
+                maxWidth,
+                maxHeight,
+                measurer,
+                textProps,
+                wrapProps,
+                cumulativeHeight
+            );
             result.push(wrappedLine.result);
             cumulativeHeight = wrappedLine.cumulativeHeight;
             if (wrappedLine.truncated) {
@@ -311,82 +335,271 @@ export class Text extends Shape {
         text: string,
         maxWidth: number,
         maxHeight: number,
+        measurer: TextMeasurer,
         textProps: TextSizeProperties,
+        wrapProps: WordWrapProperties,
         cumulativeHeight: number
     ): { result: string; truncated: boolean; cumulativeHeight: number } {
-        const { fontSize, lineHeight = fontSize * Text.defaultLineHeightRatio } = textProps;
-        const font = getFont(textProps);
-        const lines: string[] = [];
-        const guesstimate = Math.max(1, Math.round(maxWidth / fontSize));
-        const ellipsis = '\u2026';
-        let truncated = false;
+        text = text.trim();
+        if (!text) {
+            return { result: '', truncated: false, cumulativeHeight };
+        }
 
-        const sliceText = (text: string, startIndex: number, isLastLine: boolean) => {
-            const whiteSpaceIndex = text.indexOf(' ', startIndex);
-            const lastWhiteSpaceIndex = whiteSpaceIndex > 0 ? whiteSpaceIndex : text.lastIndexOf(' ');
-            const noWhiteSpace = lastWhiteSpaceIndex < 0;
-            const index = noWhiteSpace ? Math.max(1, startIndex) : lastWhiteSpaceIndex;
-            return {
-                result: text.slice(0, index),
-                index,
-                addHyphen: !isLastLine && noWhiteSpace,
-            };
-        };
+        const initialSize = measurer.size(text);
+        if (initialSize.width <= maxWidth) {
+            // Text fits into a single line
+            return { result: text, truncated: false, cumulativeHeight: cumulativeHeight + initialSize.height };
+        }
+        if (initialSize.height > maxHeight || measurer.width('W') > maxWidth) {
+            // Not enough space for a single line or character
+            return { result: '', truncated: true, cumulativeHeight };
+        }
 
-        function processText(text: string) {
-            let result = text;
-            let index = text.length;
-            let addHyphen = false;
-            let { width } = HdpiCanvas.getTextSize(text, font);
+        const words = text.split(/\s+/g);
+        const wrapResult = Text.wrapLineSequentially(
+            words,
+            maxWidth,
+            maxHeight,
+            measurer,
+            textProps,
+            wrapProps,
+            cumulativeHeight
+        );
+        cumulativeHeight = wrapResult.cumulativeHeight;
 
-            const maxCount = 10;
-            let count: number = 0;
-            let prev = result;
-            const isLastLine = cumulativeHeight + 2 * lineHeight > maxHeight;
-            while (width > maxWidth && count < maxCount) {
-                ({ result, index, addHyphen } = sliceText(result, Math.min(guesstimate, index), isLastLine));
-                ({ width } = HdpiCanvas.getTextSize(result.concat(addHyphen ? '-' : ''), font));
-                if (result === prev) {
-                    break;
-                }
-                count++;
-                prev = result;
-            }
-
-            cumulativeHeight += lineHeight;
-
-            if (cumulativeHeight > maxHeight) {
-                truncated = true;
-                const lastLine = lines.pop();
-                if (!lastLine) {
-                    return;
-                }
-
-                for (let len = lastLine.length; len >= 0; len--) {
-                    const truncatedLine = `${lastLine.substring(0, len)}${ellipsis}`;
-                    const lastLineWidth = HdpiCanvas.getTextSize(truncatedLine, font).width;
-                    if (lastLineWidth <= maxWidth) {
-                        lines.push(truncatedLine);
-                        return;
-                    }
-                }
-                return;
-            }
-
-            lines.push(result.concat(addHyphen ? '-' : ''));
-
-            const remainder = text.slice(index);
-            if (remainder && remainder.length > 1 && remainder !== text) {
-                processText(remainder.trim());
+        let { lines } = wrapResult;
+        if (!(wrapResult.wordsBrokenOrTruncated || wrapResult.linesTruncated)) {
+            // If no word breaks or truncations, try the balanced wrapping
+            const linesCount = wrapResult.lines.length;
+            const balanced = Text.wrapLineBalanced(words, maxWidth, measurer, linesCount);
+            if (balanced.length === lines.length) {
+                // Some lines can't be balanced properly because of unusually long words
+                lines = balanced;
             }
         }
 
-        processText(text.trim());
-        return { result: lines.join('\n'), truncated, cumulativeHeight };
+        const wrappedText = lines.map((ln) => ln.join(' ')).join('\n');
+        return { result: wrappedText, truncated: wrapResult.linesTruncated, cumulativeHeight };
     }
+
+    private static punctuationMarks = ['.', ',', '-', ':', ';', '!', '?', `'`, '"', '(', ')'];
+
+    private static breakWord(
+        word: string,
+        firstLineWidth: number,
+        maxWidth: number,
+        hyphens: boolean,
+        measurer: TextMeasurer
+    ): string[] {
+        const isPunctuationAt = (index: number) => Text.punctuationMarks.includes(word[index]);
+        const h = hyphens ? measurer.width('-') : 0;
+        const breaks: number[] = [];
+        let partWidth = 0;
+        let p = 0;
+        for (let i = 0; i < word.length; i++) {
+            const c = word[i];
+            const w = measurer.width(c);
+            const limit = p === 0 ? firstLineWidth : maxWidth;
+            if (partWidth + w + h > limit) {
+                breaks.push(i);
+                partWidth = 0;
+                p++;
+            }
+            partWidth += w;
+        }
+        const parts: string[] = [];
+        let start = 0;
+        for (const index of breaks) {
+            let part = word.substring(start, index);
+            if (hyphens && part.length > 0 && !isPunctuationAt(index - 1) && !isPunctuationAt(index)) {
+                part += '-';
+            }
+            parts.push(part);
+            start = index;
+        }
+        parts.push(word.substring(start));
+        return parts;
+    }
+
+    static truncateLine(text: string, maxWidth: number, measurer: TextMeasurer) {
+        const lineWidth = measurer.width(text);
+        const ellipsisWidth = measurer.width(ellipsis);
+        if (lineWidth + ellipsisWidth <= maxWidth) {
+            return `${text}${ellipsis}`;
+        }
+        let index = Math.floor((text.length * maxWidth) / lineWidth) + 1;
+        let trunc: string;
+        let truncWidth: number;
+        do {
+            trunc = text.substring(0, index);
+            truncWidth = measurer.width(trunc);
+        } while (--index >= 0 && truncWidth + ellipsisWidth > maxWidth);
+        return `${trunc}${ellipsis}`;
+    }
+
+    private static wrapLineSequentially(
+        words: string[],
+        maxWidth: number,
+        maxHeight: number,
+        measurer: TextMeasurer,
+        textProps: TextSizeProperties,
+        wrapProps: WordWrapProperties,
+        cumulativeHeight: number
+    ) {
+        const { fontSize, lineHeight = fontSize * Text.defaultLineHeightRatio } = textProps;
+        const spaceWidth = measurer.width(' ');
+
+        let wordsBrokenOrTruncated = false;
+        let linesTruncated = false;
+
+        const lines: string[][] = [];
+        let currentLine: string[] = [];
+        let lineWidth = 0;
+
+        const addNewLine = () => {
+            const expectedHeight = cumulativeHeight + lineHeight;
+            if (expectedHeight >= maxHeight) {
+                // Truncate the last line
+                const lastLine = currentLine.join(' ');
+                const trunc = Text.truncateLine(lastLine, maxWidth, measurer);
+                currentLine.splice(0, currentLine.length, trunc);
+                linesTruncated = true;
+                return false;
+            }
+            // Add new line
+            currentLine = [];
+            lineWidth = 0;
+            cumulativeHeight = expectedHeight;
+            lines.push(currentLine);
+            return true;
+        };
+
+        if (!addNewLine()) {
+            return { lines, linesTruncated: true, wordsBrokenOrTruncated, cumulativeHeight };
+        }
+
+        for (let i = 0; i < words.length; i++) {
+            const word = words[i];
+            const wordWidth = measurer.width(word);
+            const expectedSpaceWidth = currentLine.length === 0 ? 0 : spaceWidth;
+            const expectedLineWidth = lineWidth + expectedSpaceWidth + wordWidth;
+
+            if (expectedLineWidth <= maxWidth) {
+                // If the word fits, add it to the current line
+                currentLine.push(word);
+                lineWidth = expectedLineWidth;
+                continue;
+            }
+
+            if (wordWidth <= maxWidth) {
+                // If the word is not too long, put it onto new line
+                if (!addNewLine()) {
+                    break;
+                }
+                currentLine.push(word);
+                lineWidth = wordWidth;
+                continue;
+            }
+
+            // Handle a long word
+            wordsBrokenOrTruncated = true;
+            if (wrapProps.breakWord) {
+                // Break the word into parts
+                const availWidth = maxWidth - lineWidth - expectedSpaceWidth;
+                const parts = Text.breakWord(word, availWidth, maxWidth, wrapProps.hyphens!, measurer);
+                let breakLoop = false;
+                for (let p = 0; p < parts.length; p++) {
+                    const part = parts[p];
+                    part && currentLine.push(part);
+                    if (p === parts.length - 1) {
+                        lineWidth = measurer.width(part);
+                    } else if (!addNewLine()) {
+                        breakLoop = true;
+                        break;
+                    }
+                }
+                if (breakLoop) break;
+            } else {
+                // Truncate the word
+                if (!addNewLine()) {
+                    break;
+                }
+                const trunc = Text.truncateLine(word, maxWidth, measurer);
+                currentLine.push(trunc);
+                if (i < words.length - 1) {
+                    linesTruncated = true;
+                }
+                break;
+            }
+        }
+
+        return { lines, linesTruncated, wordsBrokenOrTruncated, cumulativeHeight };
+    }
+
+    private static wrapLineBalanced(words: string[], maxWidth: number, measurer: TextMeasurer, linesCount: number) {
+        const totalWordsWidth = words.reduce((sum, w) => sum + measurer.width(w), 0);
+        const spaceWidth = measurer.width(' ');
+        const totalSpaceWidth = spaceWidth * (words.length - linesCount - 2);
+        const averageLineWidth = (totalWordsWidth + totalSpaceWidth) / linesCount;
+
+        const lines: string[][] = [];
+
+        let currentLine: string[] = [];
+        let lineWidth = measurer.width(words[0]);
+        let newLine = true;
+        for (let i = 0; i < words.length; i++) {
+            const word = words[i];
+            const width = measurer.width(word);
+            if (newLine) {
+                // New line
+                currentLine = [];
+                currentLine.push(word);
+                lineWidth = width;
+                newLine = false;
+                lines.push(currentLine);
+                continue;
+            }
+            const expectedLineWidth = lineWidth + spaceWidth + width;
+            if (expectedLineWidth <= averageLineWidth) {
+                // Keep adding words to the line
+                currentLine.push(word);
+                lineWidth = expectedLineWidth;
+            } else if (expectedLineWidth <= maxWidth) {
+                // Add the last word to the line
+                currentLine.push(word);
+                newLine = true;
+            } else {
+                // Put the word onto the next line
+                currentLine = [word];
+                lineWidth = width;
+                lines.push(currentLine);
+            }
+        }
+
+        return lines;
+    }
+}
+
+interface TextMeasurer {
+    size(text: string): { width: number; height: number };
+    width(line: string): number;
+}
+
+export function createTextMeasurer(font: string): TextMeasurer {
+    const cache = new Map<string, number>();
+    const getTextSize = (text: string) => HdpiCanvas.getTextSize(text, font);
+    const getLineWidth = (text: string) => {
+        if (cache.has(text)) {
+            return cache.get(text)!;
+        }
+        const { width } = getTextSize(text);
+        cache.set(text, width);
+        return width;
+    };
+    return { size: getTextSize, width: getLineWidth };
 }
 
 export function getFont(fontProps: TextSizeProperties): string {
     const { fontFamily, fontSize, fontStyle, fontWeight } = fontProps;
-    return [fontStyle || '', fontWeight || '', fontSize + 'px', fontFamily].join(' ').trim();
+    return [fontStyle ?? '', fontWeight ?? '', fontSize + 'px', fontFamily].join(' ').trim();
 }

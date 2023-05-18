@@ -7,7 +7,7 @@ export function ScenePathChangeDetection(opts?: {
     convertor?: (o: any) => any;
     changeCb?: (t: any) => any;
 }) {
-    const { redraw = RedrawType.MAJOR, changeCb, convertor } = opts || {};
+    const { redraw = RedrawType.MAJOR, changeCb, convertor } = opts ?? {};
 
     return SceneChangeDetection({ redraw, type: 'path', convertor, changeCb });
 }

@@ -109,7 +109,7 @@ export class Matrix {
             e = A[0] * B[4] + A[2] * B[5] + A[4],
             f = A[1] * B[4] + A[3] * B[5] + A[5];
 
-        C = C || A;
+        C = C ?? A;
         C[0] = a;
         C[1] = b;
         C[2] = c;

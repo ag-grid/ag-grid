@@ -19,7 +19,7 @@ export function groupSeriesByType(seriesOptions: SeriesOptions[]) {
             continue;
         }
 
-        const seriesType = s.type || 'line';
+        const seriesType = s.type ?? 'line';
         const groupingKey = (s as any).stacked ? 'stacked' : 'grouped';
         const indexKey = `${seriesType}-${s.xKey}-${groupingKey}`;
         if (indexMap[indexKey] == null) {
@@ -99,6 +99,11 @@ const REDUCE_CONFIG: Record<string, ReduceConfig<any>> = {
     stroke: { outputProp: 'strokes', reducer: DEFAULTING_ARRAY_REDUCER('stroke', SKIP), start: [] },
     yName: { outputProp: 'yNames', reducer: DEFAULTING_ARRAY_REDUCER('yName', SKIP), start: [] },
     visible: { outputProp: 'visibles', reducer: DEFAULTING_ARRAY_REDUCER('visible', true), start: [] },
+    legendItemName: {
+        outputProp: 'legendItemNames',
+        reducer: DEFAULTING_ARRAY_REDUCER('legendItemName', true),
+        start: [],
+    },
 
     grouped: {
         outputProp: 'grouped',
@@ -163,7 +168,7 @@ export function processSeriesOptions(seriesOptions: SeriesOptions[]) {
     const preprocessed = seriesOptions.map((series) => {
         // Change the default for bar/columns when yKey is used to be grouped rather than stacked.
         if ((series.type === 'bar' || series.type === 'column') && series.yKey != null && !series.stacked) {
-            return { ...series, grouped: series.grouped != null ? series.grouped : true };
+            return { ...series, grouped: series.grouped ?? true };
         }
 
         return series;

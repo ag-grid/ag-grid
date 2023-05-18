@@ -54,6 +54,10 @@
             background-color: var(--bright-blue-gray) !important; // !important needed because of .ag-styles specificity
             z-index: 1002;
         }
+
+        &:disabled {
+            display: none;
+        }
     }
 
     a {

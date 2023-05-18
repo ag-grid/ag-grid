@@ -55,6 +55,7 @@ export class RowContainerEventsFeature extends BeanStub {
         this.addMouseListeners();
         this.mockContextMenuForIPad();
         this.addKeyboardEvents();
+        this.addClipboardEvents();
     }
 
     private addKeyboardEvents(): void {
@@ -64,6 +65,12 @@ export class RowContainerEventsFeature extends BeanStub {
             const listener = this.processKeyboardEvent.bind(this, eventName);
             this.addManagedListener(this.element, eventName, listener);
         });
+    }
+
+    private addClipboardEvents(): void {
+        this.addManagedListener(this.element, 'copy', this.onCopy.bind(this));
+        this.addManagedListener(this.element, 'cut', this.onCut.bind(this));
+        this.addManagedListener(this.element, 'paste', this.onPaste.bind(this));
     }
 
     private addMouseListeners(): void {
@@ -255,9 +262,6 @@ export class RowContainerEventsFeature extends BeanStub {
         const keyCode = normaliseQwertyAzerty(keyboardEvent);
 
         if (keyCode === KeyCode.A) { return this.onCtrlAndA(keyboardEvent); }
-        if (keyCode === KeyCode.C) { return this.onCtrlAndC(keyboardEvent); }
-        if (keyCode === KeyCode.X) { return this.onCtrlAndX(keyboardEvent); }
-        if (keyCode === KeyCode.V) { return this.onCtrlAndV(); }
         if (keyCode === KeyCode.D) { return this.onCtrlAndD(keyboardEvent); }
         if (keyCode === KeyCode.Z) { return this.onCtrlAndZ(keyboardEvent); }
         if (keyCode === KeyCode.Y) { return this.onCtrlAndY(); }
@@ -300,24 +304,24 @@ export class RowContainerEventsFeature extends BeanStub {
         event.preventDefault();
     }
 
-    private onCtrlAndC(event: KeyboardEvent): void {
+    private onCopy(event: ClipboardEvent): void {
         if (!this.clipboardService || this.gridOptionsService.is('enableCellTextSelection')) { return; }
 
-        this.clipboardService.copyToClipboard();
         event.preventDefault();
+        this.clipboardService.copyToClipboard();
     }
 
-    private onCtrlAndX(event: KeyboardEvent): void {
+    private onCut(event: ClipboardEvent): void {
         if (
             !this.clipboardService ||
             this.gridOptionsService.is('enableCellTextSelection') ||
             this.gridOptionsService.is('suppressCutToClipboard')) { return; }
 
-        this.clipboardService.cutToClipboard();
-        event.preventDefault();
+            event.preventDefault();
+            this.clipboardService.cutToClipboard();
     }
 
-    private onCtrlAndV(): void {
+    private onPaste(): void {
         if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule) && !this.gridOptionsService.is('suppressClipboardPaste')) {
             this.clipboardService.pasteFromClipboard();
         }

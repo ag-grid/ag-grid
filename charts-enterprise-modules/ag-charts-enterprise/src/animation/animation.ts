@@ -17,5 +17,6 @@ export class Animation extends _ModuleSupport.BaseModuleInstance implements _Mod
     constructor(readonly ctx: _ModuleSupport.ModuleContext) {
         super();
         this.animationManager = ctx.animationManager;
+        this.animationManager.skipAnimations = false;
     }
 }
