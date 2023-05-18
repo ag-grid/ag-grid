@@ -1,6 +1,7 @@
 import { Selection } from '../../../scene/selection';
 import { DropShadow } from '../../../scene/dropShadow';
 import { SeriesTooltip, SeriesNodeDataContext, keyProperty, valueProperty } from '../series';
+import { BBox } from '../../../scene/bbox';
 import { PointerEvents } from '../../../scene/node';
 import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import { Path } from '../../../scene/shape/path';
@@ -790,70 +791,58 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         markerSelections,
         contextData,
         paths,
+        seriesRect,
     }: {
         markerSelections: Array<Selection<Marker, any>>;
         contextData: Array<AreaSeriesNodeDataContext>;
         paths: Array<Array<Path>>;
+        seriesRect?: BBox;
     }) {
         const { strokes, fills, fillOpacity, lineDash, lineDashOffset, strokeOpacity, strokeWidth, shadow } = this;
 
-        contextData.forEach(({ fillSelectionData, strokeSelectionData }, seriesIdx) => {
+        contextData.forEach(({ fillSelectionData, strokeSelectionData, itemId }, seriesIdx) => {
             const [fill, stroke] = paths[seriesIdx];
+
+            const animationOptions = {
+                from: 0,
+                to: seriesRect?.width ?? 0,
+                disableInteractions: true,
+                duration: 1000,
+                ease: easing.linear,
+                repeat: 0,
+            };
 
             // Stroke
             {
                 const { points } = strokeSelectionData;
-                const nodeLengths: Array<number> = [0];
                 const filteredPoints = points.filter((point) => !isNaN(point.x) && !isNaN(point.y));
-                const lineLength = filteredPoints.reduce((sum, point, index) => {
-                    if (index === 0) return sum;
-                    const prev = filteredPoints[index - 1];
-                    const length = Math.sqrt(Math.pow(point.x - prev.x, 2) + Math.pow(point.y - prev.y, 2));
-                    nodeLengths.push(sum + length);
-                    return sum + length;
-                }, 0);
 
                 stroke.fill = undefined;
                 stroke.lineJoin = 'round';
                 stroke.pointerEvents = PointerEvents.None;
 
                 stroke.stroke = strokes[seriesIdx % strokes.length];
-                // stroke.strokeWidth = this.getStrokeWidth(this.strokeWidth, { itemId });
-                stroke.strokeWidth = 3;
+                stroke.strokeWidth = this.getStrokeWidth(this.strokeWidth, { itemId });
                 stroke.strokeOpacity = strokeOpacity;
                 stroke.lineDash = lineDash;
                 stroke.lineDashOffset = lineDashOffset;
 
-                const animationOptions = {
-                    from: 0,
-                    to: lineLength,
-                    disableInteractions: true,
-                    duration: 5000,
-                    ease: easing.linear,
-                    repeat: 0,
-                };
-
                 this.animationManager?.animate<number>(`${this.id}_empty-update-ready_stroke_${seriesIdx}`, {
                     ...animationOptions,
-                    onUpdate(length) {
+                    onUpdate(xValue) {
                         stroke.path.clear({ trackChanges: true });
 
                         filteredPoints.forEach((point, index) => {
-                            if (nodeLengths[index] <= length) {
+                            if (point.x <= xValue) {
                                 // Draw/move the full segment if past the end of this segment
                                 stroke.path.lineTo(point.x, point.y);
-                            } else if (index > 0 && nodeLengths[index - 1] < length) {
+                            } else if (index > 0 && filteredPoints[index - 1].x <= xValue) {
                                 // Draw/move partial line if in between the start and end of this segment
-                                // https://math.stackexchange.com/a/1630886
                                 const start = filteredPoints[index - 1];
                                 const end = point;
 
-                                const segmentLength = nodeLengths[index] - nodeLengths[index - 1];
-                                const remainingLength = nodeLengths[index] - length;
-                                const ratio = (segmentLength - remainingLength) / segmentLength;
-
-                                const x = (1 - ratio) * start.x + ratio * end.x;
-                                const y = (1 - ratio) * start.y + ratio * end.y;
+                                const x = xValue;
+                                const y = start.y + ((x - start.x) * (end.y - start.y)) / (end.x - start.x);
 
                                 stroke.path.lineTo(x, y);
                             }
@@ -869,15 +858,6 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 const points = fillSelectionData.points.slice(0, fillSelectionData.points.length / 2);
                 const bottomPoints = fillSelectionData.points.slice(fillSelectionData.points.length / 2);
 
-                const nodeLengths: Array<number> = [0];
-                const lineLength = points.reduce((sum, point, index) => {
-                    if (index === 0) return sum;
-                    const prev = points[index - 1];
-                    const length = Math.sqrt(Math.pow(point.x - prev.x, 2) + Math.pow(point.y - prev.y, 2));
-                    nodeLengths.push(sum + length);
-                    return sum + length;
-                }, 0);
-
                 fill.fill = fills[seriesIdx % fills.length];
                 fill.fillOpacity = fillOpacity;
                 fill.strokeOpacity = strokeOpacity;
@@ -886,42 +866,28 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                 fill.lineDashOffset = lineDashOffset;
                 fill.fillShadow = shadow;
 
-                const animationOptions = {
-                    from: 0,
-                    to: lineLength,
-                    disableInteractions: true,
-                    duration: 5000,
-                    ease: easing.linear,
-                    repeat: 0,
-                };
-
                 this.animationManager?.animate<number>(`${this.id}_empty-update-ready_fill_${seriesIdx}`, {
                     ...animationOptions,
-                    onUpdate(length) {
+                    onUpdate(xValue) {
                         fill.path.clear({ trackChanges: true });
 
                         let x = 0;
                         let y = 0;
 
                         points.forEach((point, index) => {
-                            if (nodeLengths[index] <= length) {
+                            if (point.x <= xValue) {
                                 // Draw/move the full segment if past the end of this segment
                                 x = point.x;
                                 y = point.y;
 
                                 fill.path.lineTo(point.x, point.y);
-                            } else if (index > 0 && nodeLengths[index - 1] < length) {
+                            } else if (index > 0 && points[index - 1].x < xValue) {
                                 // Draw/move partial line if in between the start and end of this segment
-                                // https://math.stackexchange.com/a/1630886
                                 const start = points[index - 1];
                                 const end = point;
 
-                                const segmentLength = nodeLengths[index] - nodeLengths[index - 1];
-                                const remainingLength = nodeLengths[index] - length;
-                                const ratio = (segmentLength - remainingLength) / segmentLength;
-
-                                x = (1 - ratio) * start.x + ratio * end.x;
-                                y = (1 - ratio) * start.y + ratio * end.y;
+                                x = xValue;
+                                y = start.y + ((x - start.x) * (end.y - start.y)) / (end.x - start.x);
 
                                 fill.path.lineTo(x, y);
                             }
@@ -930,9 +896,9 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                         bottomPoints.forEach((point, index) => {
                             const reverseIndex = bottomPoints.length - index - 1;
 
-                            if (nodeLengths[reverseIndex] <= length) {
+                            if (point.x <= xValue) {
                                 fill.path.lineTo(point.x, point.y);
-                            } else if (index < bottomPoints.length - 1 && nodeLengths[reverseIndex - 1] < length) {
+                            } else if (reverseIndex > 0 && points[reverseIndex - 1].x < xValue) {
                                 const start = point;
                                 const end = bottomPoints[index + 1];
 
@@ -952,15 +918,33 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                     },
                 });
             }
+
+            markerSelections[seriesIdx].each((marker, datum) => {
+                const format = this.animateFormatter(datum);
+                const size = datum.point?.size ?? 0;
+
+                this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${marker.id}`, {
+                    ...animationOptions,
+                    onUpdate(xValue) {
+                        if (datum.point.x <= xValue) {
+                            marker.size = format && format.size !== undefined ? format.size : size;
+                        } else {
+                            marker.size = 0;
+                        }
+                    },
+                });
+            });
         });
     }
 
-    private animateFormatter(datum: LineNodeDatum) {
-        const { marker, xKey, yKey, stroke: lineStroke, id: seriesId } = this;
+    private animateFormatter(datum: any) {
+        const { marker, fills, strokes, xKey, yKeys, id: seriesId } = this;
         const { size, formatter } = marker;
 
-        const fill = marker.fill;
-        const stroke = marker.stroke || lineStroke;
+        const yKeyIndex = yKeys.indexOf(datum.yKey);
+
+        const fill = marker.fill || fills[yKeyIndex % fills.length];
+        const stroke = marker.stroke || strokes[yKeyIndex % fills.length];
         const strokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
 
         let format: AgCartesianSeriesMarkerFormat | undefined = undefined;
@@ -968,7 +952,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             format = formatter({
                 datum: datum.datum,
                 xKey,
-                yKey,
+                yKey: datum.yKey,
                 fill,
                 stroke,
                 strokeWidth,

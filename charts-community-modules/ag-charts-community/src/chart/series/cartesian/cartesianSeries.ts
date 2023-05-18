@@ -229,6 +229,7 @@ export abstract class CartesianSeries<
             markerSelections: this.subGroups.map(({ markerSelection }) => markerSelection),
             contextData: this._contextNodeData,
             paths: this.subGroups.map(({ paths }) => paths),
+            seriesRect,
         });
     }
 
@@ -433,7 +434,6 @@ export abstract class CartesianSeries<
                     return;
                 }
 
-                await this.updatePathNodes({ seriesHighlighted, itemId, paths, seriesIdx });
                 await this.updateDatumNodes({ datumSelection, isHighlight: false, seriesIdx });
                 await this.updateLabelNodes({ labelSelection, seriesIdx });
                 if (hasMarkers && markerSelection) {
@@ -658,24 +658,45 @@ export abstract class CartesianSeries<
         return false;
     }
 
-    protected async updatePaths(opts: {
-        seriesHighlighted?: boolean;
-        itemId?: string;
-        contextData: C;
-        paths: Path[];
-        seriesIdx: number;
-    }): Promise<void> {
-        // Override point for sub-classes.
-        opts.paths.forEach((p) => (p.visible = false));
-    }
+    protected validateXYData(
+        xKey: string,
+        yKey: string,
+        data: any[],
+        xAxis: ChartAxis,
+        yAxis: ChartAxis,
+        xData: number[],
+        yData: any[],
+        yDepth = 1
+    ) {
+        if (this.chart?.mode === 'integrated') {
+            // Integrated Charts use-cases do not require this validation.
+            return true;
+        }
 
-    protected async updatePathNodes(_opts: {
-        seriesHighlighted?: boolean;
-        itemId?: string;
-        paths: Path[];
-        seriesIdx: number;
-    }): Promise<void> {
-        // Override point for sub-classes.
+        if (!xAxis || !yAxis || data.length === 0 || (this.seriesItemEnabled.size > 0 && !this.isAnySeriesVisible())) {
+            return true;
+        }
+
+        const hasNumber = (items: any[], depth = 0, maxDepth = 0): boolean => {
+            return items.some(
+                depth === maxDepth ? (y) => isContinuous(y) : (arr) => hasNumber(arr, depth + 1, maxDepth)
+            );
+        };
+
+        const isContinuousX = xAxis.scale instanceof ContinuousScale;
+        const isContinuousY = yAxis.scale instanceof ContinuousScale;
+
+        let validationResult = true;
+        if (isContinuousX && !hasNumber(xData)) {
+            Logger.warnOnce(`the number axis has no numeric data supplied for xKey: [${xKey}].`);
+            validationResult = false;
+        }
+        if (isContinuousY && !hasNumber(yData, 0, yDepth - 1)) {
+            Logger.warnOnce(`the number axis has no numeric data supplied for yKey: [${yKey}].`);
+            validationResult = false;
+        }
+
+        return validationResult;
     }
 
     protected async updateHighlightSelectionItem(opts: {
@@ -744,6 +765,7 @@ export abstract class CartesianSeries<
         markerSelections: Array<NodeDataSelection<Marker, C>>;
         contextData: Array<C>;
         paths: Array<Array<Path>>;
+        seriesRect?: BBox;
     }) {
         // Override point for sub-classes.
     }
@@ -753,6 +775,7 @@ export abstract class CartesianSeries<
         markerSelections: Array<NodeDataSelection<Marker, C>>;
         contextData: Array<C>;
         paths: Array<Array<Path>>;
+        seriesRect?: BBox;
     }) {
         // Override point for sub-classes.
     }

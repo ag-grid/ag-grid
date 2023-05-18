@@ -3,6 +3,7 @@ import { ContinuousScale } from '../../../scale/continuousScale';
 import { Selection } from '../../../scene/selection';
 import { SeriesNodeDatum, SeriesTooltip, SeriesNodeDataContext, SeriesNodePickMode, valueProperty } from '../series';
 import { extent } from '../../../util/array';
+import { BBox } from '../../../scene/bbox';
 import { PointerEvents } from '../../../scene/node';
 import { Text } from '../../../scene/shape/text';
 import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
@@ -270,19 +271,6 @@ export class LineSeries extends CartesianSeries<LineContext> {
         return this.marker.isDirty();
     }
 
-    protected async updatePathNodes(opts: { seriesHighlighted?: boolean; paths: Path[] }) {
-        const {
-            paths: [lineNode],
-        } = opts;
-
-        lineNode.stroke = this.stroke;
-        lineNode.strokeWidth = this.getStrokeWidth(this.strokeWidth);
-        lineNode.strokeOpacity = this.strokeOpacity;
-
-        lineNode.lineDash = this.lineDash;
-        lineNode.lineDashOffset = this.lineDashOffset;
-    }
-
     protected markerFactory() {
         const { shape } = this.marker;
         const MarkerShape = getMarker(shape);
@@ -536,37 +524,32 @@ export class LineSeries extends CartesianSeries<LineContext> {
         markerSelections,
         contextData,
         paths,
+        seriesRect,
     }: {
         markerSelections: Array<Selection<Marker, LineNodeDatum>>;
         contextData: Array<LineContext>;
         paths: Array<Array<Path>>;
+        seriesRect?: BBox;
     }) {
         contextData.forEach(({ nodeData }, contextDataIndex) => {
             const [lineNode] = paths[contextDataIndex];
 
             const { path: linePath } = lineNode;
 
-            const nodeLengths: Array<number> = [0];
-            const lineLength = nodeData.reduce((sum, datum, index) => {
-                if (index === 0) return sum;
-                const prev = nodeData[index - 1];
-
-                const length = Math.sqrt(
-                    Math.pow(datum.point.x - prev.point.x, 2) + Math.pow(datum.point.y - prev.point.y, 2)
-                );
-
-                nodeLengths.push(sum + length);
-
-                return sum + length;
-            }, 0);
-
             lineNode.fill = undefined;
             lineNode.lineJoin = 'round';
             lineNode.pointerEvents = PointerEvents.None;
 
+            lineNode.stroke = this.stroke;
+            lineNode.strokeWidth = this.getStrokeWidth(this.strokeWidth);
+            lineNode.strokeOpacity = this.strokeOpacity;
+
+            lineNode.lineDash = this.lineDash;
+            lineNode.lineDashOffset = this.lineDashOffset;
+
             const animationOptions = {
                 from: 0,
-                to: lineLength,
+                to: seriesRect?.width ?? 0,
                 disableInteractions: true,
                 duration: 1000,
                 ease: easing.linear,
@@ -575,29 +558,24 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
             this.animationManager?.animate<number>(`${this.id}_empty-update-ready`, {
                 ...animationOptions,
-                onUpdate(length) {
+                onUpdate(xValue) {
                     linePath.clear({ trackChanges: true });
 
                     nodeData.forEach((datum, index) => {
-                        if (nodeLengths[index] <= length) {
+                        if (datum.point.x <= xValue) {
                             // Draw/move the full segment if past the end of this segment
                             if (datum.point.moveTo) {
                                 linePath.moveTo(datum.point.x, datum.point.y);
                             } else {
                                 linePath.lineTo(datum.point.x, datum.point.y);
                             }
-                        } else if (index > 0 && nodeLengths[index - 1] < length) {
+                        } else if (index > 0 && nodeData[index - 1].point.x < xValue) {
                             // Draw/move partial line if in between the start and end of this segment
-                            // https://math.stackexchange.com/a/1630886
                             const start = nodeData[index - 1].point;
                             const end = datum.point;
 
-                            const segmentLength = nodeLengths[index] - nodeLengths[index - 1];
-                            const remainingLength = nodeLengths[index] - length;
-                            const ratio = (segmentLength - remainingLength) / segmentLength;
-
-                            const x = (1 - ratio) * start.x + ratio * end.x;
-                            const y = (1 - ratio) * start.y + ratio * end.y;
+                            const x = xValue;
+                            const y = start.y + ((x - start.x) * (end.y - start.y)) / (end.x - start.x);
 
                             if (datum.point.moveTo) {
                                 linePath.moveTo(x, y);
@@ -611,14 +589,14 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 },
             });
 
-            markerSelections[contextDataIndex].each((marker, datum, index) => {
+            markerSelections[contextDataIndex].each((marker, datum) => {
                 const format = this.animateFormatter(datum);
                 const size = datum.point?.size ?? 0;
 
                 this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${marker.id}`, {
                     ...animationOptions,
-                    onUpdate(length) {
-                        if (nodeLengths[index] <= length) {
+                    onUpdate(xValue) {
+                        if (datum.point.x <= xValue) {
                             marker.size = format && format.size !== undefined ? format.size : size;
                         } else {
                             marker.size = 0;
