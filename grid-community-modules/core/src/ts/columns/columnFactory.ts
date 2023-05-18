@@ -273,7 +273,7 @@ export class ColumnFactory extends BeanStub {
     ): Column {
         // see if column already exists
         let column = this.findExistingColumn(colDef, existingColsCopy);
-        
+
         // make sure we remove, so if user provided duplicate id, then we don't have more than
         // one column instance for colDef with common id
         if (existingColsCopy && column) {
