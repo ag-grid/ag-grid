@@ -6,6 +6,7 @@ import { ChartAxisDirection } from './chartAxisDirection';
 import { BBox } from '../scene/bbox';
 import { AgCartesianAxisPosition } from './agChartOptions';
 import { Logger } from '../util/logger';
+import { toRadians } from '../util/angle';
 
 type VisibilityMap = { crossLines: boolean; series: boolean };
 const directions: AgCartesianAxisPosition[] = ['top', 'right', 'bottom', 'left'];
@@ -459,6 +460,6 @@ export class CartesianChart extends Chart {
                 break;
         }
 
-        axis.updatePosition();
+        axis.updatePosition({ rotation: toRadians(axis.rotation), sideFlag: axis.label.getSideFlag() });
     }
 }

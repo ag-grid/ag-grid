@@ -514,7 +514,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             // position title so that it doesn't briefly get rendered in the top left hand corner of the canvas before update is called.
             this.setTickCount(this.tick.count);
             this.setTickInterval(this.tick.interval);
-            this.updateTitle({ ticks: this.scale.ticks!() });
+            this.updateTitle(this.label.getSideFlag());
         }
     }
     get title(): Caption | undefined {
@@ -629,29 +629,24 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      */
     update(primaryTickCount?: number): number | undefined {
-        this.initScale();
-        this.updatePosition();
-        this.updateLine();
-
         const { rotation, parallelFlipRotation, regularFlipRotation } = this.calculateRotations();
         const sideFlag = this.label.getSideFlag();
         const labelX = sideFlag * (this.tick.size + this.label.padding + this.seriesAreaPadding);
 
-        const ticksResult = this.getTicks({
+        this.updateScale();
+        this.updatePosition({ rotation, sideFlag });
+        this.updateLine();
+
+        const ticksResult = this.generateTicks({
             primaryTickCount,
             parallelFlipRotation,
             regularFlipRotation,
             labelX,
             sideFlag,
         });
-
-        primaryTickCount = ticksResult.primaryTickCount;
-
         const { tickData, combinedRotation, textBaseline, textAlign } = ticksResult;
 
         this.updateSelections(tickData.ticks);
-        // When the scale domain or the ticks change, the label format may change
-        this.onLabelFormatChange(tickData.rawTicks, this.label.format);
         this.updateLabels({
             tickLabelGroupSelection: this.tickLabelGroupSelection,
             combinedRotation,
@@ -660,14 +655,14 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             labelX,
         });
 
+        this.updateGridLines(sideFlag);
+        this.updateTickLines(sideFlag);
+        this.updateTitle(sideFlag);
+        this.updateCrossLines({ rotation, parallelFlipRotation, regularFlipRotation, sideFlag });
+        this.updateVisibility();
         this.updateLayoutState();
 
-        const anyTickVisible = this.updateVisibility();
-        this.updateGridLines();
-        this.updateCrossLines({ rotation, parallelFlipRotation, regularFlipRotation });
-        this.updateTitle({ ticks: tickData.rawTicks });
-        this.updateTickLines(anyTickVisible);
-
+        primaryTickCount = ticksResult.primaryTickCount;
         return primaryTickCount;
     }
 
@@ -679,21 +674,20 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         };
     }
 
-    private initScale() {
+    private updateScale() {
         this.updateRange();
         this.calculateDomain();
-
-        const { scale, nice } = this;
-
         this.setDomain();
         this.setTickInterval(this.tick.interval);
 
+        const { scale, nice } = this;
         if (!(scale instanceof ContinuousScale)) {
             return;
         }
 
-        scale.nice = nice;
         this.setTickCount(this.tick.count);
+
+        scale.nice = nice;
         scale.update();
     }
 
@@ -713,7 +707,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         return { rotation, parallelFlipRotation, regularFlipRotation };
     }
 
-    private getTicks({
+    private generateTicks({
         primaryTickCount,
         parallelFlipRotation,
         regularFlipRotation,
@@ -806,7 +800,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
                 const prevTicks = tickData.rawTicks;
                 const tickCount = this.tick.count ?? Math.max(defaultTickCount - i, minTickCount);
 
-                const { rawTicks, ticks, labelCount } = this.generateTicks({
+                const { rawTicks, ticks, labelCount } = this.getTicks({
                     previousTicks: prevTicks,
                     tickCount,
                     minTickCount,
@@ -937,7 +931,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         return labelData;
     }
 
-    private generateTicks({
+    private getTicks({
         previousTicks,
         tickCount,
         minTickCount,
@@ -968,6 +962,9 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         } else {
             rawTicks = this.createTicks(tickCount, minTickCount, maxTickCount);
         }
+
+        // When the scale domain or the ticks change, the label format may change
+        this.onLabelFormatChange(rawTicks, this.label.format);
 
         const halfBandwidth = (this.scale.bandwidth || 0) / 2;
         const ticks: TickDatum[] = [];
@@ -1049,13 +1046,12 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         return { minTickCount, maxTickCount, defaultTickCount };
     }
 
-    private updateVisibility(): boolean {
+    private updateVisibility() {
         const { requestedRange } = this;
 
         const requestedRangeMin = Math.min(...requestedRange);
         const requestedRangeMax = Math.max(...requestedRange);
 
-        let anyTickVisible = false;
         const visibleFn = (node: Line | Text | Arc) => {
             const min = Math.floor(requestedRangeMin);
             const max = Math.ceil(requestedRangeMax);
@@ -1073,9 +1069,6 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             }
 
             const visible = node.translationY >= min && node.translationY <= max;
-            if (visible) {
-                anyTickVisible = true;
-            }
             node.visible = visible;
         };
 
@@ -1085,25 +1078,22 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         tickLineGroupSelection.each(visibleFn);
         tickLabelGroupSelection.each(visibleFn);
 
-        this.tickLineGroup.visible = this.tick.enabled && anyTickVisible;
-        this.tickLabelGroup.visible = this.label.enabled && anyTickVisible;
-        this.gridLineGroup.visible = anyTickVisible;
-        this.gridArcGroup.visible = anyTickVisible;
-
-        return anyTickVisible;
+        this.tickLineGroup.visible = this.tick.enabled;
+        this.tickLabelGroup.visible = this.label.enabled;
     }
 
     private updateCrossLines({
         rotation,
         parallelFlipRotation,
         regularFlipRotation,
+        sideFlag,
     }: {
         rotation: number;
         parallelFlipRotation: number;
         regularFlipRotation: number;
+        sideFlag: Flag;
     }) {
         const anySeriesActive = this.isAnySeriesActive();
-        const sideFlag = this.label.getSideFlag();
         this.crossLines?.forEach((crossLine) => {
             crossLine.sideFlag = -sideFlag as Flag;
             crossLine.direction = rotation === -Math.PI / 2 ? ChartAxisDirection.X : ChartAxisDirection.Y;
@@ -1114,13 +1104,11 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         });
     }
 
-    private updateTickLines(anyTickVisible: boolean) {
-        const { tick, label } = this;
-        const sideFlag = label.getSideFlag();
+    private updateTickLines(sideFlag: Flag) {
+        const { tick } = this;
         this.tickLineGroupSelection.each((line) => {
             line.strokeWidth = tick.width;
             line.stroke = tick.color;
-            line.visible = anyTickVisible;
             line.x1 = sideFlag * tick.size;
             line.x2 = 0;
             line.y1 = 0;
@@ -1141,20 +1129,9 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         // Placeholder for subclasses to override.
     }
 
-    updatePosition() {
-        const {
-            label,
-            crossLineGroup,
-            axisGroup,
-            gridGroup,
-            translation,
-            gridLineGroupSelection,
-            gridPadding,
-            gridLength,
-        } = this;
-        const rotation = toRadians(this.rotation);
-        const sideFlag = label.getSideFlag();
-
+    updatePosition({ rotation, sideFlag }: { rotation: number; sideFlag: Flag }) {
+        const { crossLineGroup, axisGroup, gridGroup, translation, gridLineGroupSelection, gridPadding, gridLength } =
+            this;
         const translationX = Math.floor(translation.x);
         const translationY = Math.floor(translation.y);
 
@@ -1223,7 +1200,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         this.gridArcGroupSelection = gridArcGroupSelection;
     }
 
-    private updateGridLines() {
+    private updateGridLines(sideFlag: Flag) {
         const { gridStyle, scale, tick, gridPadding, gridLength } = this;
         if (gridLength && gridStyle.length) {
             const styleCount = gridStyle.length;
@@ -1242,7 +1219,6 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
                     arc.radius = radius;
                 });
             } else {
-                const sideFlag = this.label.getSideFlag();
                 grid = this.gridLineGroupSelection.each((line) => {
                     line.x1 = gridPadding;
                     line.x2 = -sideFlag * gridLength + gridPadding;
@@ -1348,8 +1324,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         lineNode.visible = true;
     }
 
-    private updateTitle({ ticks }: { ticks: any[] }): void {
-        const { label, rotation, title, lineNode, requestedRange, tickLineGroup, tickLabelGroup } = this;
+    private updateTitle(sideFlag: Flag): void {
+        const { rotation, title, lineNode, requestedRange, tickLineGroup, tickLabelGroup } = this;
 
         if (!title) {
             return;
@@ -1359,7 +1335,6 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         if (title.enabled && lineNode.visible) {
             titleVisible = true;
 
-            const sideFlag = label.getSideFlag();
             const parallelFlipRotation = normalizeAngle360(rotation);
             const padding = Caption.PADDING;
             const titleNode = title.node;
@@ -1370,14 +1345,13 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             titleNode.x = Math.floor((titleRotationFlag * sideFlag * (requestedRange[0] + requestedRange[1])) / 2);
 
             let bboxYDimension = 0;
-            // TODO: make a boolean to see whether the axis is visible
-            if (ticks?.length > 0) {
-                const tickBBox = Group.computeBBox([tickLineGroup, tickLabelGroup]);
-                const tickWidth = rotation === 0 ? tickBBox.width : tickBBox.height;
-                if (Math.abs(tickWidth) < Infinity) {
-                    bboxYDimension += tickWidth;
-                }
+
+            const tickBBox = Group.computeBBox([tickLineGroup, tickLabelGroup]);
+            const tickWidth = rotation === 0 ? tickBBox.width : tickBBox.height;
+            if (Math.abs(tickWidth) < Infinity) {
+                bboxYDimension += tickWidth;
             }
+
             if (sideFlag === -1) {
                 titleNode.y = Math.floor(titleRotationFlag * (-padding - bboxYDimension));
             } else {

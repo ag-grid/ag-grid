@@ -199,8 +199,9 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         const bandwidth = rangeLength / scale.domain.length || 0;
         const rotation = toRadians(this.rotation);
         const isHorizontal = Math.abs(Math.cos(rotation)) < 1e-8;
+        const sideFlag = label.getSideFlag();
 
-        this.updatePosition();
+        this.updatePosition({ rotation, sideFlag });
 
         const title = this.title;
         // The Text `node` of the Caption is not used to render the title of the grouped category axis.
@@ -216,10 +217,6 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         const treeLabels = tickTreeLayout ? tickTreeLayout.nodes : [];
         const isLabelTree = tickTreeLayout ? tickTreeLayout.depth > 1 : false;
         const ticks = tickScale.ticks();
-        // The side of the axis line to position the labels on.
-        // -1 = left (default)
-        //  1 = right
-        const sideFlag = label.mirrored ? 1 : -1;
         // When labels are parallel to the axis line, the `parallelFlipFlag` is used to
         // flip the labels to avoid upside-down text, when the axis is rotated
         // such that it is in the right hemisphere, i.e. the angle of rotation
