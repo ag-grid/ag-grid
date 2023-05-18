@@ -95,7 +95,7 @@ If the data changes after the aggregation is done, you can tell the grid to reco
 
 ## Suppressing Top Level Aggregations
 
-When aggregations are present, the grid also aggregates all the top level rows into one parent row. This total aggregation is not shown in the grid so a speed increase can be produced by turning this top level aggregation off by setting `suppressAggAtRootLevel=true`. It is the intention that a future release of the grid will allow exposing the top level aggregation hence why this feature is left in.
+When aggregations are present, the grid also aggregates all the top level rows into one parent row. This total aggregation is not shown in the grid so a speed increase can be produced by turning this top level aggregation off by setting `suppressAggAtRootLevel=true`.
 
 ## Next Up
 
