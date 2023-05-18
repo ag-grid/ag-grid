@@ -26,7 +26,7 @@ There are six pre-defined data types: `'text'`, `'number'`, `'boolean'`, `'date'
 
 As well as specifying a specific cell data type for a column, the grid can also infer the cell data type from the row data. This can be done by setting `cellDataType = 'auto'`. This can be set on the [Default Column Definition](/column-definitions/#custom-column-types) to apply to all columns.
 
-The inference will occur the first time that row data is passed into the grid. Inference will only work for columns that contain non-null values; for other columns you will need to set the cell data type directly.
+The inference will occur the first time that row data is passed into the grid. For inference to work for a column, it must contain non-null values and have the `field` property set (inference will not use Value Getters). If these conditions are not met, no cell data type will be set (it will need to be defined directly on the column if desired). Note that where inference is possible but it does not match any of the pre-defined cell data types, it will default to `object`.
 
 The following example demonstrates enabling cell data types (via `'auto'`):
 - The **Athlete** column has a `'text'` data type.
@@ -68,6 +68,8 @@ The following properties are set:
 - The [Number Cell Editor](/provided-cell-editors/#number-cell-editor) is used for editing.
 - For AG Grid Community, the [Number Filter](/filter-number/) is used.
 - For AG Grid Enterprise, `filterParams.comparator` is set to [Sort the Filter List](/filter-set-filter-list/#sorting-filter-lists).
+
+To show only a certain number of decimal places, you can [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions) and provide your own Value Formatter. It is also possible to control the number of decimal places allowed during editing, by providing a precision to the [Number Cell Editor](/provided-cell-editors/#number-cell-editor).
 
 ### Boolean
 

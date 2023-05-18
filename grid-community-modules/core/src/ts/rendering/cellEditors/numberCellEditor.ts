@@ -44,7 +44,11 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
         if (!exists(value) && !exists(this.params.value)) {
             return this.params.value;
         }
-        return this.params.parseValue(value!);
+        const parsedValue = this.params.parseValue(value!);
+        if (parsedValue == null) {
+            return parsedValue;
+        }
+        return isNaN(parsedValue) ? null : parsedValue;
     }
 
     public getStartValue(): string | null | undefined {
