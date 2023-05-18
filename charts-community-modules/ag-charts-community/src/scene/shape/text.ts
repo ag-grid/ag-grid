@@ -14,9 +14,9 @@ interface TextSizeProperties {
     textAlign?: CanvasTextAlign;
 }
 
-interface WordWrapProperties {
-    breakWord?: boolean;
-    hyphens?: boolean;
+export interface WordWrapProperties {
+    breakWord: boolean;
+    hyphens: boolean;
 }
 
 const ellipsis = '\u2026';
@@ -204,7 +204,7 @@ export class Text extends Shape {
         maxWidth: number,
         maxHeight: number,
         textProps: TextSizeProperties,
-        wrapProps: WordWrapProperties = {}
+        wrapProps: WordWrapProperties
     ): string {
         const font = getFont(textProps);
         const measurer = createTextMeasurer(font);

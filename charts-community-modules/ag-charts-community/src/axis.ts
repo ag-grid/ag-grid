@@ -1187,7 +1187,10 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
         labelSelection.each((node, datum, index) => {
             const formattedText = this.formatTickDatum(datum.tick, index);
-            const labelText = Text.wrap(formattedText, maxLabelWidth, maxLabelHeight, node);
+            const labelText = Text.wrap(formattedText, maxLabelWidth, maxLabelHeight, node, {
+                breakWord: true,
+                hyphens: true,
+            });
             node.text = labelText;
         });
     }

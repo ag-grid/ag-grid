@@ -4679,7 +4679,7 @@
   },
   "WordWrapProperties": {
     "meta": {},
-    "type": { "breakWord?": "boolean", "hyphens?": "boolean" }
+    "type": { "breakWord": "boolean", "hyphens": "boolean" }
   },
   "TextMeasurer": {
     "meta": {},

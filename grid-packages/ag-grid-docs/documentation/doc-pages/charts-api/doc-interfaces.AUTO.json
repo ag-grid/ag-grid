@@ -6618,8 +6618,8 @@
     }
   },
   "WordWrapProperties": {
-    "breakWord": { "type": { "returnType": "boolean", "optional": true } },
-    "hyphens": { "type": { "returnType": "boolean", "optional": true } }
+    "breakWord": { "type": { "returnType": "boolean", "optional": false } },
+    "hyphens": { "type": { "returnType": "boolean", "optional": false } }
   },
   "TextMeasurer": {
     "size": {
