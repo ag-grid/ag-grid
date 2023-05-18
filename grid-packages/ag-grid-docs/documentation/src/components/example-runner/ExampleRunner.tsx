@@ -547,55 +547,53 @@ const ExampleRunnerInner = ({
     return (
         <div id={exampleInfo.linkId} className={classnames('tabs-outer', styles.tabsContainer)}>
             <header className={classnames('tabs-header', styles.header)}>
-                <div className={styles.headerInner}>
-                    <ul className="tabs-nav-list" role="tablist">
-                        {/* eslint-disable-line */}
-                        <li className="tabs-nav-item" role="presentation">
-                            <button
-                                className={classnames('button-style-none', 'tabs-nav-link', { active: !showCode })}
-                                onClick={(e) => {
-                                    setShowCode(false);
-                                    e.preventDefault();
-                                }}
-                                role="tab"
-                                title="Run example"
-                                disabled={!showCode}
-                            >
-                                Preview <Icon name="executableProgram" />
-                            </button>
-                        </li>
-                        <li className="tabs-nav-item" role="presentation">
-                            <button
-                                className={classnames(
-                                    'button-style-none',
-                                    'tabs-nav-link',
-                                    { active: showCode },
-                                    styles.codeTabButton
-                                )}
-                                onClick={(e) => {
-                                    setShowCode(true);
-                                    e.preventDefault();
-                                }}
-                                role="tab"
-                                title="View Example Source Code"
-                                disabled={showCode}
-                            >
-                                Code <Icon name="code" />
-                            </button>
-                        </li>
-                    </ul>
+                <ul className="tabs-nav-list" role="tablist">
+                    {/* eslint-disable-line */}
+                    <li className="tabs-nav-item" role="presentation">
+                        <button
+                            className={classnames('button-style-none', 'tabs-nav-link', { active: !showCode })}
+                            onClick={(e) => {
+                                setShowCode(false);
+                                e.preventDefault();
+                            }}
+                            role="tab"
+                            title="Run example"
+                            disabled={!showCode}
+                        >
+                            Preview <Icon name="executableProgram" />
+                        </button>
+                    </li>
+                    <li className="tabs-nav-item" role="presentation">
+                        <button
+                            className={classnames(
+                                'button-style-none',
+                                'tabs-nav-link',
+                                { active: showCode },
+                                styles.codeTabButton
+                            )}
+                            onClick={(e) => {
+                                setShowCode(true);
+                                e.preventDefault();
+                            }}
+                            role="tab"
+                            title="View Example Source Code"
+                            disabled={showCode}
+                        >
+                            Code <Icon name="code" />
+                        </button>
+                    </li>
+                </ul>
 
-                    <ul className={classnames('list-style-none', styles.externalLinks)}>
+                <ul className={classnames('list-style-none', styles.externalLinks)}>
+                    <li>
+                        <OpenInCTA type="newTab" href={getIndexHtmlUrl(exampleInfo)} />
+                    </li>
+                    {!exampleInfo.options.noPlunker && (
                         <li>
-                            <OpenInCTA type="newTab" href={getIndexHtmlUrl(exampleInfo)} />
+                            <OpenInCTA type="plunkr" onClick={() => openPlunker(exampleInfo)} />
                         </li>
-                        {!exampleInfo.options.noPlunker && (
-                            <li>
-                                <OpenInCTA type="plunkr" onClick={() => openPlunker(exampleInfo)} />
-                            </li>
-                        )}
-                    </ul>
-                </div>
+                    )}
+                </ul>
             </header>
             <div
                 className={classnames('tabs-content', styles.content)}
