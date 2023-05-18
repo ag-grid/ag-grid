@@ -158,7 +158,8 @@ export class DataTypeService extends BeanStub {
     public updateColDefAndGetColumnType(
         colDef: ColDef,
         cellDataType: string | null | undefined,
-        field: string | undefined
+        field: string | undefined,
+        colId: string
     ): string | string[] | undefined {
         if (cellDataType === undefined) {
             cellDataType = colDef.cellDataType
@@ -204,7 +205,7 @@ export class DataTypeService extends BeanStub {
             colDef.valueParser = dataTypeDefinition.valueParser;
         }
         if (!dataTypeDefinition.suppressDefaultProperties) {
-            this.setColDefPropertiesForBaseDataType(colDef, dataTypeDefinition);
+            this.setColDefPropertiesForBaseDataType(colDef, dataTypeDefinition, colId);
         }
         return dataTypeDefinition.columnTypes;
     }
@@ -296,7 +297,11 @@ export class DataTypeService extends BeanStub {
         return dataTypeMatcher(value);
     }
 
-    private setColDefPropertiesForBaseDataType(colDef: ColDef, dataTypeDefinition: DataTypeDefinition | CoreDataTypeDefinition): void {
+    private setColDefPropertiesForBaseDataType(
+        colDef: ColDef,
+        dataTypeDefinition: DataTypeDefinition | CoreDataTypeDefinition,
+        colId: string
+    ): void {
         const usingSetFilter = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule);
         const translate = this.localeService.getLocaleTextFunc();
         switch (dataTypeDefinition.baseDataType) {
@@ -398,6 +403,31 @@ export class DataTypeService extends BeanStub {
             case 'object': {
                 colDef.cellEditorParams = {
                     useFormatter: true,
+                };
+                colDef.comparator = (a: any, b: any) => {
+                    const column = this.columnModel.getPrimaryColumn(colId);
+                    const colDef = column?.getColDef();
+                    if (!column || !colDef) {
+                        return 0;
+                    }
+                    const valA = a == null ? '' : dataTypeDefinition.valueFormatter!({
+                        api: this.gridOptionsService.api,
+                        columnApi: this.gridOptionsService.columnApi,
+                        context: this.gridOptionsService.context,
+                        column,
+                        colDef,
+                        value: a
+                    });
+                    const valB = b == null ? '' : dataTypeDefinition.valueFormatter!({
+                        api: this.gridOptionsService.api,
+                        columnApi: this.gridOptionsService.columnApi,
+                        context: this.gridOptionsService.context,
+                        column,
+                        colDef,
+                        value: b
+                    });
+                    if (valA === valB) return 0;
+                    return valA > valB ? 1 : -1;
                 };
                 colDef.keyCreator = (params: KeyCreatorParams) => dataTypeDefinition.valueFormatter!(params);
                 if (usingSetFilter) {

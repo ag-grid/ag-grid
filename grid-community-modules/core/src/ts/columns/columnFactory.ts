@@ -271,11 +271,9 @@ export class ColumnFactory extends BeanStub {
         existingColsCopy: Column[] | null,
         columnKeyCreator: ColumnKeyCreator
     ): Column {
-        const colDefMerged = this.mergeColDefs(colDef);
-
         // see if column already exists
         let column = this.findExistingColumn(colDef, existingColsCopy);
-
+        
         // make sure we remove, so if user provided duplicate id, then we don't have more than
         // one column instance for colDef with common id
         if (existingColsCopy && column) {
@@ -284,10 +282,12 @@ export class ColumnFactory extends BeanStub {
 
         if (!column) {
             // no existing column, need to create one
-            const colId = columnKeyCreator.getUniqueKey(colDefMerged.colId, colDefMerged.field);
+            const colId = columnKeyCreator.getUniqueKey(colDef.colId, colDef.field);
+            const colDefMerged = this.mergeColDefs(colDef, colId);
             column = new Column(colDefMerged, colDef, colId, primaryColumns);
             this.context.createBean(column);
         } else {
+            const colDefMerged = this.mergeColDefs(colDef, column.getColId());
             column.setColDef(colDefMerged, colDef);
             this.applyColumnState(column, colDefMerged);
         }
@@ -384,7 +384,7 @@ export class ColumnFactory extends BeanStub {
         });
     }
 
-    public mergeColDefs(colDef: ColDef): ColDef {
+    public mergeColDefs(colDef: ColDef, colId: string): ColDef {
         // start with empty merged definition
         const colDefMerged: ColDef = {} as ColDef;
 
@@ -392,7 +392,7 @@ export class ColumnFactory extends BeanStub {
         const defaultColDef = this.gridOptionsService.get('defaultColDef');
         mergeDeep(colDefMerged, defaultColDef, false, true);
 
-        let columnType = this.dataTypeService.updateColDefAndGetColumnType(colDefMerged, colDef.cellDataType, colDef.field);
+        let columnType = this.dataTypeService.updateColDefAndGetColumnType(colDefMerged, colDef.cellDataType, colDef.field, colId);
 
         // merge properties from column type properties
         if (colDef.type) {
