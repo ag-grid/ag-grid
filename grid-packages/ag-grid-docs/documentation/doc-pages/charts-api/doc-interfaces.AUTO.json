@@ -2,6 +2,8 @@
   "_config_": {},
   "Tags": {},
   "TickCount": { "meta": { "typeParams": ["S"] } },
+  "TickDatum": {},
+  "TickData": {},
   "TickInterval": { "meta": { "typeParams": ["S"] } },
   "Size": {},
   "OffscreenCanvasRenderingContext2D": {},

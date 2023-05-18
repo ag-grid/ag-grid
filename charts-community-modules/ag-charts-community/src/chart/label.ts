@@ -4,7 +4,7 @@ import { FontStyle, FontWeight } from './agChartOptions';
 import { normalizeAngle360, toRadians } from '../util/angle';
 import { BBox } from '../scene/bbox';
 import { Matrix } from '../scene/matrix';
-import { axisLabelsOverlap, PointLabelDatum } from '../util/labelPlacement';
+import { PointLabelDatum } from '../util/labelPlacement';
 
 export class Label {
     @Validate(BOOLEAN)
@@ -53,22 +53,6 @@ export function calculateLabelRotation(opts: {
     return { configuredRotation, defaultRotation, parallelFlipFlag, regularFlipFlag };
 }
 
-export function calculateLabelAutoRotation(
-    labelData: PointLabelDatum[],
-    minSpacing: number,
-    autoRotateAngle: number,
-    rotated?: boolean
-) {
-    const labelSpacing = getLabelSpacing(minSpacing, rotated);
-    const labelsOverlap = axisLabelsOverlap(labelData, labelSpacing);
-    // When no user label rotation angle has been specified and the width of any label exceeds the average tick gap (`autoRotateLabels` is `true`),
-    // automatically rotate the labels
-    if (labelsOverlap) {
-        return normalizeAngle360(toRadians(autoRotateAngle));
-    }
-    return 0;
-}
-
 export function getLabelSpacing(minSpacing: number, rotated?: boolean): number {
     if (!isNaN(minSpacing)) {
         return minSpacing;
@@ -81,7 +65,7 @@ export function getTextBaseline(
     labelRotation: number,
     sideFlag: Flag,
     parallelFlipFlag: Flag
-): 'hanging' | 'bottom' | 'middle' {
+): CanvasTextBaseline {
     if (parallel && !labelRotation) {
         if (sideFlag * parallelFlipFlag === -1) {
             return 'hanging';
@@ -98,7 +82,7 @@ export function getTextAlign(
     labelAutoRotation: number,
     sideFlag: Flag,
     regularFlipFlag: Flag
-): 'start' | 'end' | 'center' {
+): CanvasTextAlign {
     const labelRotated = labelRotation > 0 && labelRotation <= Math.PI;
     const labelAutoRotated = labelAutoRotation > 0 && labelAutoRotation <= Math.PI;
     const alignFlag = labelRotated || labelAutoRotated ? -1 : 1;
