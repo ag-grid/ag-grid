@@ -908,10 +908,12 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                             }
                         });
 
-                        fill.path.lineTo(
-                            bottomPoints[bottomPoints.length - 1].x,
-                            bottomPoints[bottomPoints.length - 1].y
-                        );
+                        if (bottomPoints.length > 0) {
+                            fill.path.lineTo(
+                                bottomPoints[bottomPoints.length - 1].x,
+                                bottomPoints[bottomPoints.length - 1].y
+                            );
+                        }
 
                         fill.path.closePath();
                         fill.checkPathDirty();
