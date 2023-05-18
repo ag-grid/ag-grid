@@ -142,7 +142,7 @@ pre.code.line-numbers {
     .line-numbers-rows {
         position: absolute;
         width: 3em !important; // Override gatsby default
-        height: calc(100% - 0.0625em);
+        min-height: calc(100% - 0.0625em);
         top: 0.0625em;
         left: 0;
         padding-top: $vertical-padding;

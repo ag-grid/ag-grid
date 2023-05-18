@@ -35,6 +35,7 @@
 .header {
     display: flex;
     justify-content: space-between;
+    overflow-x: visible !important; // !important for .ag-styles specificity
 
     li {
         margin-bottom: 0 !important; // !important for .ag-styles specificity

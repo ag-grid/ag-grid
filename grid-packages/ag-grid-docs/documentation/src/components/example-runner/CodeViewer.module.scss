@@ -1,8 +1,49 @@
 @use "../../design-system/" as *;
 
 .codeViewer {
-    display: flex;
+    --files-min-width: 10em;
+    --mobile-header-height: #{$size-4};
+
     height: 100%;
+    container-type: inline-size;
+}
+
+.inner {
+    display: flex;
+    min-width: 100%;
+    height: 100%;
+    transition: transform 0.33s ease-in-out, min-width 0.33s ease-in-out;
+
+    @container (width < 640px) {
+        height: calc(100% - var(--mobile-header-height));
+
+        .hideFiles & {
+            transform: translateX(calc(var(--files-min-width) * -1));
+            min-width: calc(100% + var(--files-min-width));
+        }
+    }
+}
+
+.mobileHeader {
+    --icon-size: 1.125em;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0 $size-2;
+    height: var(--mobile-header-height);
+    padding: 0 $size-2;
+    border-bottom: 2px solid var(--bright-blue-gray);
+
+    @container (width > 640px) {
+        display: none;
+    }
+
+    svg {
+        position: relative;
+        margin-left: $size-half !important; // !important for .ag-styles specificity
+        bottom: 0.125em;
+    }
 }
 
 .hidden {
@@ -12,7 +53,7 @@
 .files {
     position: relative;
     flex-shrink: 0;
-    min-width: 10rem;
+    min-width: var(--files-min-width);
     overflow-y: auto;
     overflow-x: hidden;
     padding: $size-1 0 $size-1 $size-1;
