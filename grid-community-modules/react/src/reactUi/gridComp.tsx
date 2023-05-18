@@ -34,20 +34,19 @@ const GridComp = ({ context }: GridCompProps) => {
 
     const onTabKeyDown = useCallback(() => undefined, []);
 
-    const beans = useMemo(() => context.getBean('beans') as Beans, [context]);
+    const beans = useMemo(() => {
+        if (context.isDestroyed()) { return null; }
+        return context.getBean('beans') as Beans;
+    }, [context]);
 
     useReactCommentEffect(' AG Grid ', eRootWrapperRef);
 
     // create shared controller.
     useLayoutEffect(() => {
+        if (context.isDestroyed()) { return; }
 
         const currentController = gridCtrlRef.current = context.createBean(new GridCtrl());
-
         const gridCtrl = gridCtrlRef.current!;
-        if (!(gridCtrl as any).dragAndDropService) {
-            console.log('gridCtrl', gridCtrl);
-            return;
-        }
 
         focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
 
@@ -92,7 +91,7 @@ const GridComp = ({ context }: GridCompProps) => {
 
     // initialise the extra components
     useEffect(() => {
-        if (!tabGuardReady) { return; }
+        if (!tabGuardReady || !beans) { return; }
 
         const gridCtrl = gridCtrlRef.current!;
         if (!gridCtrl) { return; }
@@ -182,7 +181,7 @@ const GridComp = ({ context }: GridCompProps) => {
     return (
         <div ref={ eRootWrapperRef } className={ rootWrapperClasses } style={ topStyle } role="presentation">
             <div className={ rootWrapperBodyClasses } ref={ eGridBodyParentRef } role="presentation">
-                { initialised && eGridBodyParent &&
+                {initialised && eGridBodyParent && beans &&
                     <BeansContext.Provider value={beans}>
                         <TabGuardComp
                             ref={ setTabGuardCompRef }
