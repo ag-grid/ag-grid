@@ -51,8 +51,6 @@ export class CtrlsService extends BeanStub {
 
     public static readonly NAME = 'ctrlsService';
 
-    private api: GridApi;
-    private columnApi: ColumnApi;
     private gridCtrl: GridCtrl;
     private gridBodyCtrl: GridBodyCtrl;
 
@@ -156,8 +154,8 @@ export class CtrlsService extends BeanStub {
             gridCtrl: this.gridCtrl,
             gridHeaderCtrl: this.gridHeaderCtrl,
 
-            api: this.api,
-            columnApi: this.columnApi
+            api: this.gridOptionsService.api,
+            columnApi: this.gridOptionsService.columnApi
         };
     }
 
@@ -255,10 +253,8 @@ export class CtrlsService extends BeanStub {
         this.checkReady();
     }
 
-    public registerGridCtrl(ctrl: GridCtrl, api: GridApi, columnApi: ColumnApi): void {
+    public registerGridCtrl(ctrl: GridCtrl): void {
         this.gridCtrl = ctrl;
-        this.api = api;
-        this.columnApi = columnApi;
         this.checkReady();
     }
 
