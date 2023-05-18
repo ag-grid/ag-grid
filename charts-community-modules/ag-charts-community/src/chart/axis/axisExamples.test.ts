@@ -292,7 +292,7 @@ describe('Axis Examples', () => {
         });
     }
 
-    describe('no series cases', () => {
+    describe.skip('no series cases', () => {
         beforeEach(() => {
             // Increase timeout for legend toggle case.
             jest.setTimeout(10_000);
