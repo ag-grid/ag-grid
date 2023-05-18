@@ -967,26 +967,33 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
     }) {
         const { strokes, fills, fillOpacity, lineDash, lineDashOffset, strokeOpacity, strokeWidth, shadow } = this;
 
-        contextData.forEach(({ itemId }, seriesIdx) => {
+        contextData.forEach(({ strokeSelectionData, fillSelectionData, itemId }, seriesIdx) => {
             const [fill, stroke] = paths[seriesIdx];
 
             // Stroke
-            stroke.tag = AreaSeriesTag.Stroke;
-            stroke.fill = undefined;
-            stroke.lineJoin = stroke.lineCap = 'round';
-            stroke.pointerEvents = PointerEvents.None;
-
             stroke.stroke = strokes[seriesIdx % strokes.length];
             stroke.strokeWidth = this.getStrokeWidth(this.strokeWidth, { itemId });
             stroke.strokeOpacity = strokeOpacity;
             stroke.lineDash = lineDash;
             stroke.lineDashOffset = lineDashOffset;
 
+            stroke.path.clear({ trackChanges: true });
+
+            let moveTo = true;
+            strokeSelectionData.points.forEach((point, index) => {
+                if (strokeSelectionData.yValues[index] === undefined || isNaN(point.x) || isNaN(point.y)) {
+                    moveTo = true;
+                } else if (moveTo) {
+                    stroke.path.moveTo(point.x, point.y);
+                    moveTo = false;
+                } else {
+                    stroke.path.lineTo(point.x, point.y);
+                }
+            });
+
+            stroke.checkPathDirty();
+
             // Fill
-            fill.tag = AreaSeriesTag.Fill;
-            fill.stroke = undefined;
-            fill.lineJoin = 'round';
-            fill.pointerEvents = PointerEvents.None;
 
             fill.fill = fills[seriesIdx % fills.length];
             fill.fillOpacity = fillOpacity;
@@ -995,6 +1002,15 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
             fill.lineDash = lineDash;
             fill.lineDashOffset = lineDashOffset;
             fill.fillShadow = shadow;
+
+            fill.path.clear({ trackChanges: true });
+
+            fillSelectionData.points.forEach((point) => {
+                fill.path.lineTo(point.x, point.y);
+            });
+
+            fill.path.closePath();
+            fill.checkPathDirty();
         });
     }
 
