@@ -1,9 +1,12 @@
-[[only-javascript]]
+<framework-specific-section frameworks="javascript">
 |## Cell Editor Component
 |
 |The interface for the cell editor component is as follows:
 |
-|```ts
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript">
+<snippet transform={false} language="ts">
 |interface ICellEditorComp {
 |
 |    // gets called once after the editor is created
@@ -53,7 +56,11 @@
 |    // If doing full line edit, then gets called when focus is leaving the editor
 |    focusOut?(): boolean;
 |}
-|```
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript">
 |The params object provided to the `init` method of the cell editor has the following interface:
+</framework-specific-section>
 
 

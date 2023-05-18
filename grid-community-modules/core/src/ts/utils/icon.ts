@@ -135,21 +135,28 @@ export const iconNameClassMap: { [key: string]: string; } = {
  * @param {string} iconName
  * @param {GridOptionsService} gridOptionsService
  * @param {Column | null} [column]
- * @returns {HTMLElement}
+ * @returns {Element}
  */
-export function createIcon(iconName: string, gridOptionsService: GridOptionsService, column: Column | null): HTMLElement {
+export function createIcon(iconName: string, gridOptionsService: GridOptionsService, column: Column | null): Element {
     const iconContents = createIconNoSpan(iconName, gridOptionsService, column);
 
-    if (iconContents && iconContents.className.indexOf('ag-icon') > -1) {
-        return iconContents;
+    if (iconContents) {
+        const { className } = iconContents;
+        if (
+            (typeof className === 'string' && className.indexOf('ag-icon') > -1) ||
+            (typeof className === 'object' && className['ag-icon'])
+        ) {
+            return iconContents;
+        }
     }
 
     const eResult = document.createElement('span');
     eResult.appendChild(iconContents!);
+
     return eResult;
 }
 
-export function createIconNoSpan(iconName: string, gridOptionsService: GridOptionsService, column?: Column | null, forceCreate?: boolean): HTMLElement | undefined {
+export function createIconNoSpan(iconName: string, gridOptionsService: GridOptionsService, column?: Column | null, forceCreate?: boolean): Element | undefined {
     let userProvidedIcon: Function | string | null = null;
 
     // check col for icon first
@@ -184,7 +191,7 @@ export function createIconNoSpan(iconName: string, gridOptionsService: GridOptio
         }
 
         if (isNodeOrElement(rendererResult)) {
-            return rendererResult as HTMLElement;
+            return rendererResult as Element;
         }
 
         console.warn('AG Grid: iconRenderer should return back a string or a dom object');

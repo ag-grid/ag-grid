@@ -8,12 +8,13 @@ This section describes the Server-Side Datasource and demonstrates how it is use
 The Server-Side Row Model requires a datasource to fetch rows for the grid. When users scroll or perform grid operations
 such as sorting or grouping, more data will be requested via the datasource.
 
-[[note]]
-| Most of the Server-Side Row Model examples include a fake server that generates SQL to imitate how a real server
-| might use the requests sent from the grid. These examples use [AlaSQL](http://alasql.org/) which is a
-| JavaScript SQL database that works in browsers.
+<note>
+|Most of the Server-Side Row Model examples include a fake server that generates SQL to imitate how a real server
+|might use the requests sent from the grid. These examples use [AlaSQL](http://alasql.org/) which is a
+|JavaScript SQL database that works in browsers.
 |
-| However, note that the Server-Side Row Model does not impose any restrictions on the server-side technologies used.
+|However, note that the Server-Side Row Model does not impose any restrictions on the server-side technologies used.
+</note>
 
 ## Enabling Server-Side Row Model
 
@@ -84,7 +85,7 @@ The example below demonstrates loading rows using a simple SSRM Datasource. Note
 
 - The Server-Side Row Model is selected using the grid options property: `rowModelType = 'serverSide'`.
 - The datasource is registered with the grid using: `api.setServerSideDatasource(datasource)`.
-- The `getRows(params)` defines the request parameters, with `params` containing a `startRow` and `endRow` that determines the range of rows to return. For example, if block size is 100, the `getRows` function will be called with `startRow: 0` and `endRow: 100` and the grid will expect a result with 100 rows (rows 0 to 99).
+- The `getRows(params)` defines the request parameters, with `params` containing a `startRow` and `endRow` that determines the range of rows to return. For example, if the `getRows` function is called with `startRow: 0` and `endRow: 100`, then the grid will expect a result with 100 rows (rows 0 to 99).
 - When scrolling down there is a delay as more rows are fetched from the server.
 - Open the browser's dev console to view the contents of the request made by the grid for rows.
 

@@ -70,58 +70,14 @@ const plugins = [
                         }
                     }
                 },
-                {
-                    // This handles images from Markdown files
-                    resolve: 'gatsby-remark-images',
-                    options: {
-                        maxWidth: 800,
-                        quality: 100,
-                    },
-                },
-                'gatsby-remark-attr', // This allows attributes to be used in Markdown, e.g. for images//
-                {
-                    // This adds custom blocks to Markdown, e.g. for info or warning messages, and our framework-specific sections
-                    resolve: 'gatsby-remark-custom-blocks',
-                    options: {
-                        blocks: {
-                            note: {
-                                classes: 'note',
-                                title: 'optional',
-                            },
-                            warning: {
-                                classes: 'note warning',
-                                title: 'optional'
-                            },
-                            'only-javascript': {
-                                classes: 'javascript-only-section',
-                            },
-                            'only-angular': {
-                                classes: 'angular-only-section',
-                            },
-                            'only-react': {
-                                classes: 'react-only-section',
-                            },
-                            'only-vue': {
-                                classes: 'vue-only-section',
-                            },
-                            'only-angular-or-vue': {
-                                classes: 'angular-or-vue-only-section',
-                            },
-                            'only-angular-or-react': {
-                                classes: 'angular-or-react-only-section',
-                            },
-                            'only-javascript-or-angular-or-vue': {
-                                classes: 'angular-or-vue-or-javascript-only-section',
-                            },
-                            'only-javascript-or-angular-or-react': {
-                                classes: 'angular-or-react-or-javascript-only-section',
-                            },
-                            'only-frameworks': {
-                                classes: 'frameworks-only-section',
-                            }
-                        },
-                    },
-                },
+                // {
+                //     // This handles images from Markdown files
+                //     resolve: 'gatsby-remark-images',
+                //     options: {
+                //         maxWidth: 800,
+                //         quality: 100,
+                //     },
+                // },
                 // This ensures the parent tag of Markdown content is a div rather than a p, to avoid warnings in the browser
                 'gatsby-remark-component-parent2div',
                 {

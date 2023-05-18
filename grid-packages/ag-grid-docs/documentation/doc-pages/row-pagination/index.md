@@ -30,11 +30,12 @@ If you set `paginationAutoPageSize=true` the grid will automatically show as man
 
 <grid-example title='Auto Page Size' name='auto-page-size' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping" ] }'></grid-example>
 
-[[note]]
-| Each pagination page must have the same number of rows. If you use `paginationAutoPageSize` with
-| [getRowHeight()](/row-height/#getrowheight-callback) callback (to have different
-| rows with different heights) then the page height will be calculated using the default row height and not
-| the actual row heights. Therefore the rows will not fit perfectly into the page if these features are mixed.
+<note>
+Each pagination page must have the same number of rows. If you use `paginationAutoPageSize` with
+[getRowHeight()](../row-height/#getrowheight-callback) callback (to have different
+rows with different heights) then the page height will be calculated using the default row height and not
+the actual row heights. Therefore the rows will not fit perfectly into the page if these features are mixed.
+</note>
 
 ## Example: Customising Pagination
 

@@ -32,8 +32,9 @@ The full list of chart groups with the corresponding chart types are shown below
 
 <interface-documentation interfaceName="ChartGroupsDef" config='{"description":"", "asCode":true, "lineBetweenProps": false}'></interface-documentation>
 
-[[note]]
-| The contents and order of chart menu items in the [Context Menu](/context-menu/) will match the `ChartGroupsDef` configuration.
+<note>
+The contents and order of chart menu items in the [Context Menu](../context-menu/) will match the `ChartGroupsDef` configuration.
+</note>
 
 The example below shows a subset of the provided chart groups with the chart types reordered. Note the following:
 
@@ -73,8 +74,9 @@ const gridOptions = {
 }
 </snippet>
 
-[[note]]
-| The `seriesChartType` group is only shown in [Combination Charts](/integrated-charts-api-range-chart/#combination-charts/).
+<note>
+The `seriesChartType` group is only shown in [Combination Charts](../integrated-charts-api-range-chart/#combination-charts/).
+</note>
 
 The following example shows some Data Panel customisations. Note the following:
 
@@ -115,8 +117,9 @@ const gridOptions = {
 }
 </snippet>
 
-[[note]]
-| The selected chart determines which groups are displayed. For example, a pie chart does not have an axis so **Axis** groups will not be shown even if they are listed in `chartToolPanelsDef.formatPanel.groups`.
+<note>
+The selected chart determines which groups are displayed. For example, a pie chart does not have an axis so **Axis** groups will not be shown even if they are listed in `chartToolPanelsDef.formatPanel.groups`.
+</note>
 
 The following example shows some Format Panel customisations. Note the following:
 
@@ -138,6 +141,17 @@ const gridOptions = {
     },
 }
 </snippet>
+
+To hide the Chart Tool Panels, the `chartToolPanelsDef.panels` grid option can be set to an empty array:
+
+<snippet>
+const gridOptions = {
+    chartToolPanelsDef: {
+        panels: [], // No Chart Tool Panels are shown and the button is also hidden
+    },
+}
+</snippet>
+
 
 The following example shows how the Chart Tool Panels can be omitted and ordered. Note the following:
 

@@ -1,12 +1,14 @@
-[[only-vue]]
+<framework-specific-section frameworks="vue">
 |Below is an example of no rows overlay class with custom `noRowsMessageFunc()` param:
-|
-|```js
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false}>
 |const MyOverlay = {
 |    template: `
-|        <div class="ag-overlay-loading-center" style="background-color: lightcoral;">
-|            <i class="far fa-frown"> {{params.noRowsMessageFunc()}}</i>
-|        </div>
+|        &lt;div class="ag-overlay-loading-center" style="background-color: lightcoral;">
+|            &lt;i class="far fa-frown"> {{params.noRowsMessageFunc()}}&lt;/i>
+|        &lt;/div>
 |    `
 |}
 |
@@ -17,5 +19,5 @@
 |    noRowsMessageFunc: () => 'Sorry - no rows! at: ' + new Date(),
 |  },
 |}
-|```
- 
+</snippet>
+</framework-specific-section>

@@ -59,18 +59,18 @@ You can define rules which can be applied to include certain CSS classes via the
 The following snippet shows `rowClassRules` that use functions and the value from the year column:
 
 <snippet>
-|const gridOptions = {
-|    rowClassRules: {
-|        // apply green to 2008
-|        'rag-green-outer': function(params) { return params.data.year === 2008; },
-|
-|        // apply amber 2004
-|        'rag-amber-outer': function(params) { return params.data.year === 2004; },
-|
-|        // apply red to 2000
-|        'rag-red-outer': function(params) { return params.data.year === 2000; }
-|    }
-|}
+| const gridOptions = {
+|     rowClassRules: {
+|         // apply green to 2008
+|         'rag-green-outer': function(params) { return params.data.year === 2008; },
+| 
+|         // apply amber 2004
+|         'rag-amber-outer': function(params) { return params.data.year === 2004; },
+| 
+|         // apply red to 2000
+|         'rag-red-outer': function(params) { return params.data.year === 2000; }
+|     }
+| }
 </snippet>
 
 All rowStyle, rowClass and rowClassRules functions take a `RowClassParams` params object.

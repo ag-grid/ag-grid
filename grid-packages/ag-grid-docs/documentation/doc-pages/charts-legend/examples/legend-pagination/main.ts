@@ -131,7 +131,6 @@ const options: AgChartOptions = {
     },
   ],
   legend: {
-    position: "bottom",
     maxHeight: 40,
     maxWidth: 800,
     pagination: {

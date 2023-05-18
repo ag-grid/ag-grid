@@ -7,8 +7,6 @@ import { setAriaColCount, setAriaMultiSelectable, setAriaRowCount } from '../uti
 import { Component } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';
 import {
-    CSS_CLASS_CELL_SELECTABLE,
-    CSS_CLASS_COLUMN_MOVING,
     CSS_CLASS_FORCE_VERTICAL_SCROLL,
     GridBodyCtrl,
     IGridBodyComp,
@@ -19,7 +17,7 @@ import { RowContainerName } from "./rowContainer/rowContainerCtrl";
 const GRID_BODY_TEMPLATE = /* html */
     `<div class="ag-root ag-unselectable" role="treegrid">
         <ag-header-root ref="gridHeader"></ag-header-root>
-        <div class="ag-floating-top" ref="eTop" role="presentation">
+        <div class="ag-floating-top ag-selectable" ref="eTop" role="presentation">
             <ag-row-container ref="topLeftContainer" name="${RowContainerName.TOP_LEFT}"></ag-row-container>
             <ag-row-container ref="topCenterContainer" name="${RowContainerName.TOP_CENTER}"></ag-row-container>
             <ag-row-container ref="topRightContainer" name="${RowContainerName.TOP_RIGHT}"></ag-row-container>
@@ -27,7 +25,7 @@ const GRID_BODY_TEMPLATE = /* html */
         </div>
         <div class="ag-body" ref="eBody" role="presentation">
             <div class="ag-body-clipper" ref="eBodyClipper" role="presentation">
-                <div class="ag-body-viewport" ref="eBodyViewport" role="presentation">
+                <div class="ag-body-viewport ag-selectable" ref="eBodyViewport" role="presentation">
                     <ag-row-container ref="leftContainer" name="${RowContainerName.LEFT}"></ag-row-container>
                     <ag-row-container ref="centerContainer" name="${RowContainerName.CENTER}"></ag-row-container>
                     <ag-row-container ref="rightContainer" name="${RowContainerName.RIGHT}"></ag-row-container>
@@ -36,13 +34,13 @@ const GRID_BODY_TEMPLATE = /* html */
             </div>
             <ag-fake-vertical-scroll></ag-fake-vertical-scroll>
         </div>
-        <div class="ag-sticky-top" ref="eStickyTop" role="presentation">
+        <div class="ag-sticky-top ag-selectable" ref="eStickyTop" role="presentation">
             <ag-row-container ref="stickyTopLeftContainer" name="${RowContainerName.STICKY_TOP_LEFT}"></ag-row-container>
             <ag-row-container ref="stickyTopCenterContainer" name="${RowContainerName.STICKY_TOP_CENTER}"></ag-row-container>
             <ag-row-container ref="stickyTopRightContainer" name="${RowContainerName.STICKY_TOP_RIGHT}"></ag-row-container>
             <ag-row-container ref="stickyTopFullWidthContainer" name="${RowContainerName.STICKY_TOP_FULL_WIDTH}"></ag-row-container>
         </div>
-        <div class="ag-floating-bottom" ref="eBottom" role="presentation">
+        <div class="ag-floating-bottom ag-selectable" ref="eBottom" role="presentation">
             <ag-row-container ref="bottomLeftContainer" name="${RowContainerName.BOTTOM_LEFT}"></ag-row-container>
             <ag-row-container ref="bottomCenterContainer" name="${RowContainerName.BOTTOM_CENTER}"></ag-row-container>
             <ag-row-container ref="bottomRightContainer" name="${RowContainerName.BOTTOM_RIGHT}"></ag-row-container>
@@ -118,9 +116,9 @@ export class GridBodyComp extends Component {
                 this.addDestroyFunc(() => unsubscribeFromResize());
             },
             setPinnedTopBottomOverflowY: overflow => this.eTop.style.overflowY = this.eBottom.style.overflowY = overflow,
-            setCellSelectableCss: (cssClass, selectable) => {
+            setCellSelectableCss: (cssClass: string, selectable: boolean) => {
                 [this.eTop, this.eBodyViewport, this.eBottom]
-                    .forEach(ct => ct.classList.toggle(CSS_CLASS_CELL_SELECTABLE, selectable));
+                    .forEach(ct => ct.classList.toggle(cssClass, selectable));
             },
             setBodyViewportWidth: width => this.eBodyViewport.style.width = width
         };

@@ -1,5 +1,5 @@
 import { ColumnPinnedType, HeaderRowContainerCtrl, HeaderRowCtrl, IHeaderRowContainerComp } from '@ag-grid-community/core';
-import { createMemo, createSignal, For, onCleanup, onMount, useContext } from 'solid-js';
+import { createEffect, createMemo, createSignal, For, onCleanup, onMount, useContext } from 'solid-js';
 import { BeansContext } from '../core/beansContext';
 import { CssClasses } from '../core/utils';
 import HeaderRowComp from './headerRowComp';
@@ -9,7 +9,6 @@ const HeaderRowContainerComp = (props: {pinned: ColumnPinnedType | null})=> {
     const [getCssClasses, setCssClasses] = createSignal<CssClasses>(new CssClasses());
     const [getAriaHidden, setAriaHidden] = createSignal<true | false>(false);
     const [getCenterContainerWidth, setCenterContainerWidth] = createSignal<string>();
-    const [getCenterContainerTransform, setCenterContainerTransform] = createSignal<string>();
     const [getPinnedContainerWidth, setPinnedContainerWidth] = createSignal<string>();
     const [getHeaderRowCtrls, setHeaderRowCtrls] = createSignal<HeaderRowCtrl[]>([]);
 
@@ -21,13 +20,13 @@ const HeaderRowContainerComp = (props: {pinned: ColumnPinnedType | null})=> {
     const centre = !pinnedLeft && !pinnedRight;
 
     const destroyFuncs: (()=>void)[] = [];
-    onCleanup( ()=> {
+
+    onCleanup(() => {
         destroyFuncs.forEach( f => f() );
         destroyFuncs.length = 0;
     });
 
     onMount(() => {
-
         const compProxy: IHeaderRowContainerComp = {
             setDisplayed: (displayed) => {
                 setCssClasses(getCssClasses().setClass('ag-hidden', !displayed));
@@ -37,7 +36,7 @@ const HeaderRowContainerComp = (props: {pinned: ColumnPinnedType | null})=> {
 
             // centre only
             setCenterWidth: width => setCenterContainerWidth(width),
-            setContainerTransform: transform => setCenterContainerTransform(transform),
+            setViewportScrollLeft: left => eGui.scrollLeft = left,
 
             // pinned only
             setPinnedContainerWidth: width => setPinnedContainerWidth(width)
@@ -54,11 +53,10 @@ const HeaderRowContainerComp = (props: {pinned: ColumnPinnedType | null})=> {
     const insertRowsJsx = ()=> 
     <For each={getHeaderRowCtrls()}>{ ctrl =>
         <HeaderRowComp ctrl={ctrl}/>
-    }</For>;    
+    }</For>;
     
-    const eCenterContainerStyle = createMemo( ()=> ({
-        width: getCenterContainerWidth(),
-        transform: getCenterContainerTransform()
+    const eCenterContainerStyle = createMemo(()=> ({
+        width: getCenterContainerWidth()
     }));
 
     const ePinnedStyle = createMemo( ()=> ({

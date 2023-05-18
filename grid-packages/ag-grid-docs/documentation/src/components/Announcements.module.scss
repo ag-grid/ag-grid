@@ -26,6 +26,7 @@
 
 .announcement {
     padding: $size-1;
+    background-color: var(--ghost-blue);
     border-radius: var(--border-radius);
-    background-color: var(--bright-blue-gray);
+    border: 2px solid var(--bright-blue-gray);
 }

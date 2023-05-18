@@ -99,6 +99,12 @@
     "description": "/** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property. */",
     "type": { "returnType": "{ [key: string]: ColDef<TData>; }" }
   },
+  "dataTypeDefinitions": {
+    "description": "/** An object map of cell data types to their definitions.\n     * Cell data types can either override/update the pre-defined data types\n     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`),\n     * or can be custom data types.\n     */",
+    "type": {
+      "returnType": "{\n        [cellDataType: string]: DataTypeDefinition<TData>;\n    }"
+    }
+  },
   "maintainColumnOrder": {
     "description": "/** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */",
     "type": { "returnType": "boolean" }
@@ -260,7 +266,7 @@
     "type": { "returnType": "boolean" }
   },
   "chartThemes": {
-    "description": "/** The list of chart themes to be used. */",
+    "description": "/** The list of chart themes that a user can chose from in the chart settings panel.\n     * Default: `['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar' ]`\n     */",
     "type": { "returnType": "string[]" }
   },
   "customChartThemes": {
@@ -593,7 +599,7 @@
     "type": { "returnType": "any" }
   },
   "embedFullWidthRows": {
-    "description": "/** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling. */",
+    "description": "/** Set to `true` to have the Full Width Rows embedded in grid's main container so they can be scrolled horizontally . */",
     "type": { "returnType": "boolean" }
   },
   "groupDisplayType": {

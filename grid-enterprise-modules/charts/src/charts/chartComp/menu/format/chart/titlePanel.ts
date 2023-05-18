@@ -1,8 +1,16 @@
-import { _, Autowired, Component, PostConstruct, ChartMenuOptions,GetChartToolbarItemsParams, WithoutGridCommon, AgSlider, AgGroupComponent, RefSelector, AgGroupComponentParams } from "@ag-grid-community/core";
+import {
+    _,
+    AgSlider,
+    Autowired,
+    ChartMenuOptions,
+    Component,
+    GetChartToolbarItemsParams,
+    PostConstruct,
+    WithoutGridCommon
+} from "@ag-grid-community/core";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
-import { PaddingPanel } from "./paddingPanel";
 
 export default class TitlePanel extends Component {
 

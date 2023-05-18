@@ -42,7 +42,6 @@ export class AgGridReactUi<TData = any> extends Component<AgReactUiProps<TData>,
         if (this.state.context) {
             this.renderedAfterMount = true;
         }
-
         return (
             <div style={ this.createStyleForDiv() } className={ this.props.className } ref={ this.eGui }>
                 { this.state.context && <GridComp context={ this.state.context }/> }

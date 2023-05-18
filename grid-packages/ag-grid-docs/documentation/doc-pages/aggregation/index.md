@@ -7,7 +7,7 @@ When [Row Grouping](/grouping/), aggregation functions can be applied to any col
 
 ## Enabling Aggregation
 
-The simplest way to enable aggregations is with the built-in aggregation functions; `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. 
+The simplest way to enable aggregations is with the built-in aggregation functions: `sum`, `min`, `max`, `count`, `avg`, `first`, and `last`. 
 
 The following snippet shows how these agg functions can be applied to columns via `colDef.aggFunc`:
 
@@ -31,9 +31,10 @@ The example below uses the same built-in aggregation functions shown in the snip
 
 <grid-example title='Enabling Aggregation' name='enabling-aggregation' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel", "setfilter"] }'></grid-example>
 
-[[note]]
+<note>
 | The built-in functions will support `bigint` values if you have them in your data, but the `avg`
 | function will lose precision as it can only use integer arithmetic if `bigint` is used.
+</note>
 
 ## Customisations
 
@@ -42,10 +43,7 @@ are also possible as summarised below:
 
 - **[Custom Functions](/aggregation-custom-functions/)** - provide custom aggregations to the grid.
 - **[Aggregation Filtering](/aggregation-filtering/)** - configure and customise how aggregations are filtered.
-
-## Suppressing Top Level Aggregations
-
-When aggregations are present, the grid also aggregates all the top level rows into one parent row. This total aggregation is not shown in the grid so a speed increase can be produced by turning this top level aggregation off by setting `suppressAggAtRootLevel=true`. It is the intention that a future release of the grid will allow exposing the top level aggregation hence why this feature is left in.
+- **[Other Customisations](/aggregation-other/)** - other ways to customise aggregations.
 
 ## API Reference
 

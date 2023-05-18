@@ -5,9 +5,9 @@
 // NOTE: Only typescript types should be imported from the AG Grid packages
 // to prevent AG Grid from loading the code twice
 import { GetRowIdParams, GridOptions, GridSizeChangedEvent, ISetFilter } from 'ag-grid-community';
+import { createGenerator } from '../../utils/grid/generator-utils';
 import { COLUMN_ID_PRIORITIES, FILTER_ROWS_BREAKPOINT, UPDATE_INTERVAL } from './constants';
 import { columnDefs, generateStocks, generateStockUpdate } from './data';
-import { createGenerator } from './generator-utils';
 import { fixtureData } from './rowDataFixture';
 
 const rowData = generateStocks();
@@ -126,6 +126,14 @@ export function initGrid({
     loadGrid();
 }
 
+export function cleanUp() {
+    generator.stop();
+    gridOptions.api?.destroy();
+
+    // Clean up tooltip, if user mouse happens to be hovering over
+    document.querySelector('.ag-sparkline-tooltip-wrapper')?.remove();
+}
+
 /**
  * Clean up between hot module replacement on dev server
  */
@@ -133,7 +141,6 @@ export function initGrid({
 if (import.meta.webpackHot) {
     // @ts-ignore
     import.meta.webpackHot.dispose(() => {
-        generator.stop();
-        gridOptions.api?.destroy();
+        cleanUp();
     });
 }

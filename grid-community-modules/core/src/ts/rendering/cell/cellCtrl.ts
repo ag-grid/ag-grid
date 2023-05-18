@@ -7,6 +7,7 @@ import { CellPosition } from "../../entities/cellPositionUtils";
 import {
     CellContextMenuEvent,
     CellEditingStartedEvent,
+    CellEditingStoppedEvent,
     CellEvent,
     CellFocusedEvent,
     Events,
@@ -142,7 +143,9 @@ export class CellCtrl extends BeanStub {
             this.addDestroyFunc(() => { this.cellRangeFeature?.destroy(); this.cellRangeFeature = null; });
         }
 
-        this.addTooltipFeature();
+        if (this.column.isTooltipEnabled()) {
+            this.addTooltipFeature();
+        }
     }
 
     private addTooltipFeature(): void {
@@ -199,7 +202,7 @@ export class CellCtrl extends BeanStub {
         printLayout: boolean,
         startEditing: boolean
     ): void {
-        this.cellComp = comp;        
+        this.cellComp = comp;
         this.eGui = eGui;
         this.printLayout = printLayout;
 
@@ -447,7 +450,7 @@ export class CellCtrl extends BeanStub {
         if (!this.editing) { return false; }
 
         const { newValue, newValueExists } = this.takeValueFromCellEditor(cancel);
-        const oldValue = this.getValueFromValueService();
+        const oldValue = this.rowNode.getValueFromValueService(this.column);
         let valueChanged = false;
 
         if (newValueExists) {
@@ -465,7 +468,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private dispatchEditingStoppedEvent(oldValue: any, newValue: any, valueChanged: boolean): void {
-        const editingStoppedEvent = {
+        const editingStoppedEvent: CellEditingStoppedEvent = {
             ...this.createEvent(null, Events.EVENT_CELL_EDITING_STOPPED),
             oldValue,
             newValue,
@@ -477,7 +480,7 @@ export class CellCtrl extends BeanStub {
 
     private createCellEditorParams(key: string | null, charPress: string | null, cellStartedEdit: boolean): ICellEditorParams {
         return {
-            value: this.getValueFromValueService(),
+            value: this.rowNode.getValueFromValueService(this.column),
             eventKey: key,
             charPress: charPress,
             column: this.column,
@@ -502,7 +505,7 @@ export class CellCtrl extends BeanStub {
         const res: ICellRendererParams = {
             value: this.value,
             valueFormatted: this.valueFormatted,
-            getValue: this.getValueFromValueService.bind(this),
+            getValue: () => this.rowNode.getValueFromValueService(this.column),
             setValue: (value:any) => this.beans.valueService.setValue(this.rowNode, this.column, value),
             formatValue: this.formatValue.bind(this),
             data: this.rowNode.data,
@@ -526,28 +529,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private parseValue(newValue: any): any {
-        const colDef = this.column.getColDef();
-        const params: NewValueParams = {
-            node: this.rowNode,
-            data: this.rowNode.data,
-            oldValue: this.getValue(),
-            newValue: newValue,
-            colDef: colDef,
-            column: this.column,
-            api: this.beans.gridOptionsService.api,
-            columnApi: this.beans.gridOptionsService.columnApi,
-            context: this.beans.gridOptionsService.context
-        };
-
-        const valueParser = colDef.valueParser;
-
-        if (exists(valueParser)) {
-            if (typeof valueParser === 'function') {
-                return valueParser(params);
-            }
-            return this.beans.expressionService.evaluate(valueParser, params);
-        }
-        return newValue;
+        return this.beans.valueParserService.parseValue(this.column, this.rowNode, newValue, this.getValue());
     }
 
     public setFocusOutOnEditor(): void {
@@ -741,7 +723,7 @@ export class CellCtrl extends BeanStub {
         const oldValue = this.value;
         const oldValueFormatted = this.valueFormatted;
 
-        this.value = this.getValueFromValueService();
+        this.value = this.rowNode.getValueFromValueService(this.column);
         this.valueFormatted = this.callValueFormatter(this.value);
 
         const valuesDifferent = force ? true :
@@ -758,30 +740,6 @@ export class CellCtrl extends BeanStub {
 
     public getComp(): ICellComp {
         return this.cellComp;
-    }
-
-    public getValueFromValueService(): any {
-        // if we don't check this, then the grid will render leaf groups as open even if we are not
-        // allowing the user to open leaf groups. confused? remember for pivot mode we don't allow
-        // opening leaf groups, so we have to force leafGroups to be closed in case the user expanded
-        // them via the API, or user user expanded them in the UI before turning on pivot mode
-        const lockedClosedGroup = this.rowNode.leafGroup && this.beans.columnModel.isPivotMode();
-
-        const isOpenGroup = this.rowNode.group && this.rowNode.expanded && !this.rowNode.footer && !lockedClosedGroup;
-
-        // are we showing group footers
-        const groupFootersEnabled = this.beans.gridOptionsService.is('groupIncludeFooter');
-
-        // if doing footers, we normally don't show agg data at group level when group is open
-        const groupAlwaysShowAggData = this.beans.gridOptionsService.is('groupSuppressBlankHeader');
-
-        // if doing grouping and footers, we don't want to include the agg value
-        // in the header when the group is open
-        const ignoreAggData = (isOpenGroup && groupFootersEnabled) && !groupAlwaysShowAggData;
-
-        const value = this.beans.valueService.getValue(this.column, this.rowNode, false, ignoreAggData);
-
-        return value;
     }
 
     public getValue(): any {

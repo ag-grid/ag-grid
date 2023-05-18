@@ -5,27 +5,28 @@ enterprise: true
 
 The user can bring up the context menu by right clicking on a cell. By default, the context menu provides 'copy', 'paste' and 'export'. Copy will copy the selected cells or rows to the clipboard. Paste will always, forever, be disabled.
 
-[[note]]
-| The 'paste' operation in the context menu is not possible and hence always disabled.
-| It is not possible because of a browser security restriction that JavaScript cannot
-| take data from the clipboard without the user explicitly doing a paste command from the browser
-| (e.g. <kbd>Ctrl</kbd>+<kbd>V</kbd> or from the browser menu). If JavaScript could do this, then websites could steal
-| data from the client by accessing the clipboard maliciously. The reason why the grid keeps
-| the disabled paste option in the menu is to indicate to the user that paste is possible and it provides
-| the keyboard shortcut as a hint to the user.
+<note>
+The 'paste' operation in the context menu is not possible and hence always disabled.
+It is not possible because of a browser security restriction that JavaScript cannot
+take data from the clipboard without the user explicitly doing a paste command from the browser
+(e.g. <kbd>Ctrl</kbd>+<kbd>V</kbd> or from the browser menu). If JavaScript could do this, then websites could steal
+data from the client by accessing the clipboard maliciously. The reason why the grid keeps
+the disabled paste option in the menu is to indicate to the user that paste is possible and it provides
+the keyboard shortcut as a hint to the user.
+</note>
 
 ## Configuring the Context Menu
 
 You can customise the context menu by providing a `getContextMenuItems()` callback. Each time the context menu is to be shown, the callback is called to retrieve the menu items. This allows the client application to display a menu individually customised to each cell.
 
-The result of `getContextMenuItems(params)` should be a list with each item either a) a string or b) a `MenuItemDef`. Use 'string' to pick from built in menu items and use MenuItem descriptions for your own menu items.
+The result of `getContextMenuItems(params)` should be a list with each item either a) a string or b) a `MenuItemDef`. Use 'string' to pick from built in menu items and use `MenuItemDef` descriptions for your own menu items.
 
 <api-documentation source='grid-options/properties.json' section='accessories' names='["getContextMenuItems"]' ></api-documentation>
 
 
-If you want to access your underlying data item, you access that through the rowNode as `var dataItem = node.data`.
+If you want to access your underlying data item, you can access that through the rowNode as `node.data`.
 
-Note: If you set `checked=true`, then icon will be ignored, these options are mutually exclusive.
+Note: if you set `checked=true`, then the icon will be ignored - these options are mutually exclusive.
 
 If you want to turn off the context menu completely, set the grid property `suppressContextMenu=true`.
 
@@ -46,7 +47,7 @@ The following is a list of all the default built in menu items with the rules ab
 - `csvExport`: Export to CSV using all default export values. Shown by default.
 - `excelExport`: Export to Excel (.xlsx) using all default export values. Shown by default.
 - `chartRange`: Chart a range of selected cells. Only shown if charting is enabled. Configured via [chartToolPanelsDef](/integrated-charts-chart-tool-panels/#settings-tool-panel).
-- `pivotChart`: Chart all grouped and pivoted data from the grid. Only shown if charting is enabled and in [pivot mode](/integrated-charts-pivot-chart/). Configured via [chartToolPanelsDef](/integrated-charts-chart-tool-panels/#settings-tool-panel).
+- `pivotChart`: Chart all grouped and pivoted data from the grid. Only shown if charting is enabled and in [Pivot Mode](/integrated-charts-pivot-chart/). Configured via [chartToolPanelsDef](/integrated-charts-chart-tool-panels/#settings-tool-panel).
 
 ## Default Context Menu
 
@@ -54,7 +55,7 @@ One drawback of using the AG Grid context menu is that you may want to show the 
 
 ## Hiding the Context Menu
 
-Hide the context menu with the grid API `hidePopupMenu()`, which will hide either the context menu or the [column menu](/column-menu/), whichever is showing.
+Hide the context menu with the grid API `hidePopupMenu()`, which will hide either the context menu or the [Column Menu](/column-menu/), whichever is showing.
 
 ## Context Menu Example
 

@@ -26,8 +26,7 @@ export class WatermarkComp extends Component {
     }
 
     private shouldDisplayWatermark(): boolean {
-        const eDocument = this.gridOptionsService.getDocument();
-        const win = (eDocument.defaultView || window);
+        const win = this.gridOptionsService.getWindow();
         const loc = win.location;
         const { pathname } = loc;
 

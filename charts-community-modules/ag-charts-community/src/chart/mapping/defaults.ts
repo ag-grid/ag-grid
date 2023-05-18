@@ -3,6 +3,7 @@ import { NumberAxis } from '../axis/numberAxis';
 import { CategoryAxis } from '../axis/categoryAxis';
 
 export type SeriesOptionsTypes = NonNullable<AgChartOptions['series']>[number];
+export type AxesOptionsTypes = NonNullable<AgCartesianChartOptions['axes']>[number];
 
 export const DEFAULT_CARTESIAN_CHART_OVERRIDES: AgCartesianChartOptions = {
     axes: [

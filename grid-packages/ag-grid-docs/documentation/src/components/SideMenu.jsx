@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React, { useEffect, useRef, useState } from 'react';
+import { addNonBreakingSpaceBetweenLastWords } from '../utils/add-non-breaking-space-between-last-words';
 import styles from './SideMenu.module.scss';
 
 /**
@@ -51,12 +52,8 @@ const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu }) => {
     }, [hideMenu]);
 
     useEffect(() => {
-        if (!menuRef.current) {
-            return;
-        }
-
         $('body').scrollspy({ target: '#side-menu', offset: 120 });
-    }, [menuRef.current]);
+    }, []);
 
     return (
         allHeadings.length > 0 && (
@@ -76,7 +73,7 @@ const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu }) => {
                         {allHeadings.map((heading) => (
                             <li key={`${pageName}_${heading.id}`} className={styles[`level-${heading.depth}`]}>
                                 <a className="nav-link" href={`#${heading.id}`}>
-                                    {heading.value}
+                                    {addNonBreakingSpaceBetweenLastWords(heading.value)}
                                 </a>
                             </li>
                         ))}

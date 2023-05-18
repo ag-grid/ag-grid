@@ -15,13 +15,13 @@ function tsGenerateWithOptionReferences(node, srcFile) {
         .replace(new RegExp(`AgChart\\.update\\(chart, options\\);?`, 'g'), '');
 }
 
-export function parser(examplePath, fileName, srcFile, html) {
-    const bindings = internalParser(readAsJsFile(srcFile, { includeImports: true }), html);
-    const typedBindings = internalParser(srcFile, html);
+export function parser(examplePath, fileName, srcFile, html, exampleSettings) {
+    const bindings = internalParser(readAsJsFile(srcFile, { includeImports: true }), html, exampleSettings);
+    const typedBindings = internalParser(srcFile, html, exampleSettings);
     return { bindings, typedBindings };
 }
 
-export function internalParser(js, html) {
+export function internalParser(js, html, exampleSettings) {
     const domTree = $(`<div>${html}</div>`);
 
     domTree.find('style').remove();
@@ -181,6 +181,7 @@ export function internalParser(js, html) {
     tsBindings.imports = extractImportStatements(tsTree);
     tsBindings.optionsTypeInfo = extractTypeInfoForVariable(tsTree, 'options');
     tsBindings.usesChartApi = usesChartApi(tsTree);
+    tsBindings.chartSettings = exampleSettings;
 
     return tsBindings;
 }

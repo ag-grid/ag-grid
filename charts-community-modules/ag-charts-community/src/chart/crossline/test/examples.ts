@@ -257,7 +257,7 @@ export const LINE_CROSSLINES: AgCartesianChartOptions = {
             crossLines: [
                 {
                     type: 'range',
-                    range: ['1', '13'],
+                    range: [1, 13],
                     label: {
                         text: '1 - 13',
                         position: 'top',
@@ -266,7 +266,7 @@ export const LINE_CROSSLINES: AgCartesianChartOptions = {
                 },
                 {
                     type: 'range',
-                    range: ['34', '45'],
+                    range: [34, 45],
                     label: {
                         text: '34 - 45',
                         position: 'top',
@@ -275,7 +275,7 @@ export const LINE_CROSSLINES: AgCartesianChartOptions = {
                 },
                 {
                     type: 'line',
-                    value: '27',
+                    value: 27,
                     label: {
                         text: '27',
                         position: 'top',

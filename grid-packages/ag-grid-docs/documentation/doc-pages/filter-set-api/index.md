@@ -10,17 +10,17 @@ This section describes how the Set Filter can be controlled programmatically usi
 Get and set the state of the Set Filter by getting and setting the model on the filter instance.
 
 <snippet>
-|// get filter instance
-|const countryFilterComponent = gridOptions.api.getFilterInstance('country');
-|
-|// get filter model
-|const model = countryFilterComponent.getModel();
-|
-|// set filter model and update
-|countryFilterComponent.setModel({ values: ['Spain', 'Ireland', 'South Africa'] });
-|
-|// refresh rows based on the filter (not automatic to allow for batching multiple filters)
-|gridOptions.api.onFilterChanged();
+| // get filter instance
+| const countryFilterComponent = gridOptions.api.getFilterInstance('country');
+| 
+| // get filter model
+| const model = countryFilterComponent.getModel();
+| 
+| // set filter model and update
+| countryFilterComponent.setModel({ values: ['Spain', 'Ireland', 'South Africa'] });
+| 
+| // refresh rows based on the filter (not automatic to allow for batching multiple filters)
+| gridOptions.api.onFilterChanged();
 </snippet>
 
 The filter model contains an array of string values where each item in the array corresponds to an element to be selected from the set.
@@ -61,9 +61,9 @@ const gridOptions = {
 }
 </snippet>
 
-[[note]]
-| The `caseSensitive` option also affects [Mini-Filter](/filter-set-mini-filter/#enabling-case-sensitive-searches) searches and the values presented in the [Filter List](/filter-set-filter-list/#enabling-value-case-sensitivity).
-
+<note>
+The `caseSensitive` option also affects [Mini-Filter](/filter-set-mini-filter/#enabling-case-sensitive-searches) searches and the values presented in the [Filter List](/filter-set-filter-list/#enabling-value-case-sensitivity).
+</note>
 
 The following example demonstrates the difference in behaviour between `caseSensitive: false` (the default) and `caseSensitive: true`:
 - With `caseSensitive: false` (the default):

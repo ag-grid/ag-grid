@@ -26,7 +26,7 @@ export interface BaseDropZonePanelParams {
     dragAndDropIcon: string;
     emptyMessage: string;
     title: string;
-    icon: HTMLElement;
+    icon: Element;
 }
 
 export interface BaseDropZonePanelBeans {
@@ -165,7 +165,7 @@ export abstract class BaseDropZonePanel extends Component {
         }
     }
 
-    private addElementClasses(el: HTMLElement, suffix?: string) {
+    private addElementClasses(el: Element, suffix?: string) {
         suffix = suffix ? `-${suffix}` : '';
         const direction = this.horizontal ? 'horizontal' : 'vertical';
         el.classList.add(`ag-column-drop${suffix}`, `ag-column-drop-${direction}${suffix}`);

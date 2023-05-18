@@ -99,6 +99,7 @@ var myTheme: AgChartTheme = {
         },
         column: {
           label: {
+            enabled: true,
             color: "white",
           },
         },

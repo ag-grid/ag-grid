@@ -17,12 +17,12 @@ export class FiltersToolPanelHeaderPanel extends Component {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
 
-    @RefSelector('eExpand') private eExpand: HTMLElement;
+    @RefSelector('eExpand') private eExpand: Element;
     @RefSelector('eFilterTextField') private eFilterTextField: AgInputTextField;
 
-    private eExpandChecked: HTMLElement;
-    private eExpandUnchecked: HTMLElement;
-    private eExpandIndeterminate: HTMLElement;
+    private eExpandChecked: Element;
+    private eExpandUnchecked: Element;
+    private eExpandIndeterminate: Element;
 
     private onSearchTextChangedDebounced: () => void;
 

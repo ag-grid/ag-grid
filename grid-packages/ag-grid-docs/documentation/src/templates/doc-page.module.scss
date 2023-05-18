@@ -1,7 +1,9 @@
+@use "sass:map";
 @use '../design-system' as *;
 
 .doc-page-wrapper {
-    --horizontal-margin: #{$horizontal-margin}; // required as outside of .aq-styles
+    --horizontal-margin: #{$horizontal-margin}; // required as outside of .ag-styles
+    --docs-page-max-width: 68em;
 
     display: flex;
     justify-content: space-between;
@@ -12,6 +14,10 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) and (max-width: $breakpoint-docs-nav-large) {
         padding-right: var(--horizontal-margin);
+    }
+
+    @media screen and (min-width: $breakpoint-docs-nav-extra-large) {
+        --docs-page-max-width: 74em;
     }
 }
 
@@ -32,7 +38,18 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
         padding-right: $size-7;
-        max-width: 60em;
+        max-width: var(--docs-page-max-width);
+    }
+
+    &.noSideMenu {
+        @media screen and (min-width: $breakpoint-docs-nav-large) {
+            padding-right: $horizontal-margin;
+            max-width: none;
+        }
+
+        @media screen and (min-width: 1600px) {
+            padding-right: calc(50vw - $max-page-width / 2);
+        }
     }
 
     h2:first-child,
@@ -69,8 +86,14 @@
     h5,
     h6 {
         &:hover :global(.docs-header-icon) {
-            opacity: 0.3333;
+            opacity: 0.5;
         }
+    }
+
+    // Required because of docs .ag-styles <div> wrapping
+    li ol,
+    li ul {
+        padding-left: 1.125em;
     }
 
     :global(.docs-header-icon) {
@@ -91,7 +114,7 @@
             height: 0.85em;
             top: -0.1em;
             visibility: visible;
-            fill: var(--sky-blue);
+            fill: var(--azure-blue);
         }
     }
 
@@ -100,31 +123,6 @@
 
         width: 1rem;
         margin-left: 0.25rem;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 3rem;
-        table-layout: fixed;
-
-        th,
-        td {
-            border-bottom: 1px solid #dee2e6;
-            border-top: 1px solid #dee2e6;
-            padding: 0.5rem 1rem;
-            vertical-align: top;
-        }
-
-        th {
-            background-color: #f9fcff;
-        }
-
-        tr:nth-child(2n) {
-            td {
-                background-color: #f9fcff;
-            }
-        }
     }
 
     a {
@@ -140,22 +138,36 @@
         }
     }
 
-    kbd {
-        background-color: #f7f7f7;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), 0 0 0 2px #fff inset;
-        color: #333;
-        display: inline-block;
-        font-family: Arial, Helvetica, sans-serif;
-        line-height: 1.4;
-        margin: 0 0.1em;
-        padding: 0.1em 0.6em;
-        text-shadow: 0 1px 0 #fff;
-    }
-
     ul li > p {
         margin-bottom: 0.25rem;
+    }
+
+    // Required to overwrite bootstrap styles
+    kbd {
+        color: map.get($abstract-colors, map.get($semantic-colors, text-color));
+        display: inline-block;
+        margin: 0.1em 0.1em;
+        padding: 0.1em 0.6em;
+        border-radius: 0.25em;
+        font-family: $font-family;
+        background-color: white;
+        border: 1px solid #ccc;
+        box-shadow: 0 1px 0 rgb(0 0 0 / 20%), inset 0 0 0 2px white;
+        text-shadow: 0 1px 0 white;
+    }
+
+    :global(.alert) {
+        margin-bottom: $size-2;
+
+        // Needed because of .ag-styles weirdness
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 0 !important; // !important for .ag-styles specificity
+        }
     }
 }
 
@@ -223,4 +235,28 @@
 
     font-size: var(--font-size-extra-large);
     margin-bottom: $size-4;
+
+    code {
+        font-size: 0.8em;
+    }
+}
+
+// Reduce spacing between page intro & first heading
+.pageSections > div > div:nth-child(2) {
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin-top: $size-2;
+    }
+
+    // Fix for tables that are directly below page intro
+    table h2,
+    table h3,
+    table h4,
+    table h5,
+    table h6 {
+        margin-top: 0;
+    }
 }

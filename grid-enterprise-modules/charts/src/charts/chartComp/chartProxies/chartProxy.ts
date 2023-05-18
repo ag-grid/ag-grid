@@ -1,5 +1,13 @@
-import { _, ChartType, AgChartTheme as GridAgChartTheme, SeriesChartType } from "@ag-grid-community/core";
-import { AgChart, AgChartTheme, AgChartThemeOverrides, AgChartThemePalette, AgChartInstance, _Theme, AgChartOptions, AgChartPaddingOptions } from "ag-charts-community";
+import { _, AgChartTheme as GridAgChartTheme, ChartType, SeriesChartType } from "@ag-grid-community/core";
+import {
+    _Theme,
+    AgChart,
+    AgChartInstance,
+    AgChartOptions,
+    AgChartTheme,
+    AgChartThemeOverrides,
+    AgChartThemePalette
+} from "ag-charts-community";
 import { CrossFilteringContext } from "../../chartService";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
 import { deproxy } from "../utils/integration";

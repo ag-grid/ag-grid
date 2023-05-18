@@ -4,8 +4,9 @@ enterprise: true
 ---
 This section show how rows can be added, removed and updated using the Server-Side Transaction API.
 
-[[note]]
-| Server-Side Transactions require [Row ID's](/server-side-model-configuration/#providing-row-ids) to be supplied to grid.
+<note>
+Server-Side Transactions require [Row ID's](../server-side-model-configuration/#providing-row-ids) to be supplied to grid.
+</note>
 
 ##Transaction API
 
@@ -16,17 +17,17 @@ The SSRM Transaction API allows rows to be added, removed or updated in the grid
 These operations are shown in the snippet below:
 
 <snippet>
-gridOptions.api.applyServerSideTransaction({ 
-    add: [ 
-        { tradeId: 101, portfolio: 'Aggressive', product: 'Aluminium', book: 'GL-62472', current: 57969 }
-    ],
-    update: [
-        { tradeId: 102,  portfolio: 'Aggressive', product: 'Aluminium', book: 'GL-624723', current: 58927 }
-    ],
-    remove: [
-        { tradeId: 103 }
-    ]
-});
+| gridOptions.api.applyServerSideTransaction({ 
+|     add: [ 
+|         { tradeId: 101, portfolio: 'Aggressive', product: 'Aluminium', book: 'GL-62472', current: 57969 }
+|     ],
+|     update: [
+|         { tradeId: 102,  portfolio: 'Aggressive', product: 'Aluminium', book: 'GL-624723', current: 58927 }
+|     ],
+|     remove: [
+|         { tradeId: 103 }
+|     ]
+| });
 </snippet>
 
 The following example demonstrates add / update and remove operations via the Server-Side Transaction API. Note the following:
@@ -77,16 +78,18 @@ When using asynchronous transactions, the grid delays any transactions received 
 The snippet below demonstrates three asynchronous transactions applied sequentially, however because these transactions are asynchronously batched, the grid would only update the DOM once.
 
 <snippet>
-// due to asynchronous batching, the following transactions are applied together preventing unnecessary DOM updates
-gridOptions.api.applyServerSideTransactionAsync({ 
-    add: [{ tradeId: 101, portfolio: 'Aggressive', product: 'Aluminium', book: 'GL-62472', current: 57969 }],
-});
-gridOptions.api.applyServerSideTransactionAsync({ 
-    update: [{ tradeId: 102,  portfolio: 'Aggressive', product: 'Aluminium', book: 'GL-624723', current: 58927 }],
-});
-gridOptions.api.applyServerSideTransactionAsync({ 
-    remove: [{ tradeId: 103 }],
-});
+| // due to asynchronous batching, the following transactions are applied together preventing unnecessary DOM updates
+| gridOptions.api.applyServerSideTransactionAsync({ 
+|     add: [{ tradeId: 101, portfolio: 'Aggressive', product: 'Aluminium', book: 'GL-62472', current: 57969 }],
+| });
+|
+| gridOptions.api.applyServerSideTransactionAsync({ 
+|     update: [{ tradeId: 102,  portfolio: 'Aggressive', product: 'Aluminium', book: 'GL-624723', current: 58927 }],
+| });
+|
+| gridOptions.api.applyServerSideTransactionAsync({ 
+|     remove: [{ tradeId: 103 }],
+| });
 </snippet>
 
 In the example below, note the following:

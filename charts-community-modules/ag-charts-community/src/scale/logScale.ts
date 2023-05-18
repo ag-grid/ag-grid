@@ -179,14 +179,9 @@ export class LogScale extends ContinuousScale<number> {
         }
 
         ticks = ticks ?? this.ticks();
-        const k = Math.max(1, (base * count) / ticks.length);
 
         return (d) => {
-            let i = d / this.pow(Math.round(this.log(d)));
-            if (i * base < base - 0.5) {
-                i *= base;
-            }
-            return i <= k ? (specifier as (x: number) => string)(d) : '';
+            return (specifier as (x: number) => string)(d);
         };
     }
 }

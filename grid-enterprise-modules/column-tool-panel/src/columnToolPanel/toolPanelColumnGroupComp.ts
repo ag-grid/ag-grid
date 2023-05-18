@@ -44,11 +44,11 @@ export class ToolPanelColumnGroupComp extends Component {
     @RefSelector('cbSelect') private cbSelect: AgCheckbox;
     @RefSelector('eLabel') private eLabel: HTMLElement;
 
-    @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: HTMLElement;
-    @RefSelector('eGroupClosedIcon') private eGroupClosedIcon: HTMLElement;
-    @RefSelector('eColumnGroupIcons') private eColumnGroupIcons: HTMLElement;
+    @RefSelector('eGroupOpenedIcon') private eGroupOpenedIcon: Element;
+    @RefSelector('eGroupClosedIcon') private eGroupClosedIcon: Element;
+    @RefSelector('eColumnGroupIcons') private eColumnGroupIcons: Element;
 
-    private eDragHandle: HTMLElement;
+    private eDragHandle: Element;
 
     private readonly columnGroup: ProvidedColumnGroup;
     private readonly columnDept: number;

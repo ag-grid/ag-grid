@@ -10,17 +10,20 @@ We expose the APIs for triggering download via the `AgChart` class:
 
 <api-documentation source='charts-api/doc-interfaces.AUTO.json' section="AgChart" names='["download", "getImageDataURL"]' config='{ "showSnippets": false, "lookupRoot": "charts-api", "suppressTypes": ["AgChartInstance", "AgChartOptions", "DeepPartial"] }'></api-documentation>
 
-[[only-react]]
-| The `AgChartInstance` can be obtained using a React `Ref` to our `<AgChartsReact />` tag, which
+<framework-specific-section frameworks="react">
+| The `AgChartInstance` can be obtained using a React `Ref` to our `&lt;AgChartsReact />` tag, which
 | exposes a `chart` property.
+</framework-specific-section>
 
-[[only-angular]]
+<framework-specific-section frameworks="angular">
 | The `AgChartInstance` can be obtained using an Angular `@ViewChild` decorator to reference our `AgChartsAngular` tag, which
 | exposes a `chart` property.
+</framework-specific-section>
 
-[[only-vue]]
+<framework-specific-section frameworks="vue">
 | The `AgChartInstance` can be obtained using the Vue `$refs` component property to reference our `AgChartsVue` tag, which
 | exposes a `chart` property.
+</framework-specific-section>
 
  This example demonstrates:
  - How to obtain a reference to an `AgChartInstance`.

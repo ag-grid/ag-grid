@@ -41,12 +41,12 @@ const GridBodyComp = ()=> {
     let eBottom: HTMLDivElement;
 
     const destroyFuncs: (()=>void)[] = [];
-    onCleanup( ()=> {
+    onCleanup(() => {
         destroyFuncs.forEach( f => f() );
         destroyFuncs.length = 0;
     });
 
-    onMount( () => {
+    onMount(() => {
         if (!context) { return; }
 
         const newComp = (tag: string) => {
@@ -75,7 +75,7 @@ const GridBodyComp = ()=> {
             updateLayoutClasses: setLayoutClass,
             setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
             setPinnedTopBottomOverflowY: setTopAndBottomOverflowY,
-            setCellSelectableCss: setCellSelectableCss,
+            setCellSelectableCss: (cssClass, flag) => setCellSelectableCss(flag ? cssClass : null),
             setBodyViewportWidth: setBodyViewportWidth,
 
             registerBodyViewportResizeListener: listener => {
@@ -85,11 +85,11 @@ const GridBodyComp = ()=> {
         };
 
         const ctrl = context.createBean(new GridBodyCtrl());
-        onCleanup( ()=> context.destroyBean(ctrl) );
+        onCleanup(() => context.destroyBean(ctrl) );
 
         // fixme - should not be in a timeout,
-        // was becusae we need GridHeaderComp to be created first
-        setTimeout( ()=> 
+        // was because we need GridHeaderComp to be created first
+        setTimeout(() => 
             ctrl.setComp(
                 compProxy,
                 eRoot,
@@ -110,16 +110,16 @@ const GridBodyComp = ()=> {
         classesList('ag-body-clipper', getLayoutClass())
     );
     const getBodyViewportClasses = createMemo(() =>
-        classesList('ag-body-viewport', getRowAnimationClass(), getLayoutClass(), getForceVerticalScrollClass(), getCellSelectableCss())
+        classesList('ag-body-viewport', 'ag-selectable', getRowAnimationClass(), getLayoutClass(), getForceVerticalScrollClass(), getCellSelectableCss())
     );
     const getTopClasses = createMemo(() =>
-        classesList('ag-floating-top', getCellSelectableCss())
+        classesList('ag-floating-top', 'ag-selectable', getCellSelectableCss())
     );
     const getStickyTopClasses = createMemo(() =>
-        classesList('ag-sticky-top', getCellSelectableCss())
+        classesList('ag-sticky-top', 'ag-selectable', getCellSelectableCss())
     );
     const getBottomClasses = createMemo(() =>
-        classesList('ag-floating-bottom', getCellSelectableCss())
+        classesList('ag-floating-bottom', 'ag-selectable', getCellSelectableCss())
     );
 
     const getTopStyle = createMemo(() => ({

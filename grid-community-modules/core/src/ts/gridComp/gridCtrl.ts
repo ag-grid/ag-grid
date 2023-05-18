@@ -137,14 +137,20 @@ export class GridCtrl extends BeanStub {
 
     public focusInnerElement(fromBottom?: boolean) {
         const focusableContainers = this.view.getFocusableContainers();
+        const allColumns = this.columnModel.getAllDisplayedColumns();
 
         if (fromBottom) {
             if (focusableContainers.length > 1) {
                 return this.focusService.focusInto(last(focusableContainers), true);
             }
 
-            const lastColumn = last(this.columnModel.getAllDisplayedColumns());
+
+            const lastColumn = last(allColumns);
             if (this.focusService.focusGridView(lastColumn, true)) { return true; }
+        }
+        
+        if (this.gridOptionsService.getNum('headerHeight') === 0) {
+            return this.focusService.focusGridView(allColumns[0]);
         }
 
         return this.focusService.focusFirstHeader();

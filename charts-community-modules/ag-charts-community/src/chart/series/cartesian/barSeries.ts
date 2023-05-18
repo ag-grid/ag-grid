@@ -3,24 +3,24 @@ import { Rect } from '../../../scene/shape/rect';
 import { Text } from '../../../scene/shape/text';
 import { BandScale } from '../../../scale/bandScale';
 import { DropShadow } from '../../../scene/dropShadow';
-import { SeriesNodeDataContext, SeriesTooltip, SeriesNodePickMode } from '../series';
+import { SeriesNodeDataContext, SeriesTooltip, SeriesNodePickMode, keyProperty, valueProperty } from '../series';
 import { Label } from '../../label';
 import { PointerEvents } from '../../../scene/node';
-import { LegendDatum } from '../../legendDatum';
+import { ChartLegendDatum, CategoryLegendDatum } from '../../legendDatum';
 import {
     CartesianSeries,
     CartesianSeriesNodeClickEvent,
     CartesianSeriesNodeDatum,
     CartesianSeriesNodeDoubleClickEvent,
 } from './cartesianSeries';
-import { ChartAxis, flipChartAxisDirection } from '../../chartAxis';
+import { ChartAxis } from '../../chartAxis';
 import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
-import { extent, findMinMax } from '../../../util/array';
+import { extent } from '../../../util/array';
 import { areArrayItemsStrictlyEqual } from '../../../util/equal';
 import { Scale } from '../../../scale/scale';
 import { sanitizeHtml } from '../../../util/sanitize';
-import { checkDatum, isNumber } from '../../../util/value';
+import { isNumber } from '../../../util/value';
 import { ContinuousScale } from '../../../scale/continuousScale';
 import { Point } from '../../../scene/point';
 import {
@@ -50,7 +50,11 @@ import {
     FontWeight,
 } from '../../agChartOptions';
 import { LogAxis } from '../../axis/logAxis';
-import { Logger } from '../../../util/logger';
+import { DataModel } from '../../data/dataModel';
+import { sum } from '../../data/aggregateFunctions';
+import { LegendItemClickChartEvent, LegendItemDoubleClickChartEvent } from '../../interaction/chartEventManager';
+import { AGG_VALUES_EXTENT, normaliseGroupTo, SMALLEST_KEY_INTERVAL } from '../../data/processors';
+import * as easing from '../../../motion/easing';
 
 const BAR_LABEL_PLACEMENTS: AgBarSeriesLabelPlacement[] = ['inside', 'outside'];
 const OPT_BAR_LABEL_PLACEMENT: ValidatePredicate = (v: any, ctx) =>
@@ -102,18 +106,11 @@ function is2dArray<E>(array: E[] | E[][]): array is E[][] {
 
 export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatum>, Rect> {
     static className = 'BarSeries';
-    static type = 'bar' as const;
-
-    private xData: any[] = [];
-    private yData: number[][][] = [];
-    private yDomain: number[] = [];
+    static type: 'bar' | 'column' = 'bar' as const;
 
     readonly label = new BarSeriesLabel();
 
     tooltip: BarSeriesTooltip = new BarSeriesTooltip();
-
-    @Validate(BOOLEAN)
-    flipXY = false;
 
     @Validate(COLOR_STRING_ARRAY)
     fills: string[] = ['#c16068', '#a2bf8a', '#ebcc87', '#80a0c3', '#b58dae', '#85c0d1'];
@@ -155,14 +152,20 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     private groupScale = new BandScale<string>();
 
     protected resolveKeyDirection(direction: ChartAxisDirection) {
-        return this.flipXY ? flipChartAxisDirection(direction) : direction;
+        if (this.getBarDirection() === ChartAxisDirection.X) {
+            if (direction === ChartAxisDirection.X) {
+                return ChartAxisDirection.Y;
+            }
+            return ChartAxisDirection.X;
+        }
+        return direction;
     }
 
     @Validate(STRING)
     protected _xKey: string = '';
     set xKey(value: string) {
         this._xKey = value;
-        this.xData = [];
+        this.processedData = undefined;
     }
     get xKey(): string {
         return this._xKey;
@@ -294,6 +297,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         }
     }
 
+    legendItemNames: { [key in string]: string } = {};
+
     /**
      * The value to normalize the bars to.
      * Should be a finite positive value or `undefined`.
@@ -320,183 +325,74 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         this.processYKeys();
         this.processYNames();
 
-        const { xKey, yKeys, seriesItemEnabled } = this;
-        const data = xKey && yKeys.length && this.data ? this.data : [];
+        const { xKey, seriesItemEnabled, normalizedTo, data = [] } = this;
 
-        const xAxis = this.getCategoryAxis();
-        const yAxis = this.getValueAxis();
+        const isContinuousX = this.getCategoryAxis()?.scale instanceof ContinuousScale;
+        const isContinuousY = this.getValueAxis()?.scale instanceof ContinuousScale;
 
-        if (!(xAxis && yAxis)) {
-            return;
+        const activeSeriesItems = [...seriesItemEnabled.entries()]
+            .filter(([, enabled]) => enabled)
+            .map(([yKey]) => yKey);
+        const activeStacks = this.yKeys
+            .map((stack) => stack.filter((key) => seriesItemEnabled.get(key)))
+            .filter((stack) => stack.length > 0);
+
+        const normaliseTo = normalizedTo && isFinite(normalizedTo) ? normalizedTo : undefined;
+        const extraProps = [];
+        if (normaliseTo) {
+            extraProps.push(normaliseGroupTo(activeSeriesItems, normaliseTo, 'sum'));
         }
 
-        const setSmallestXInterval = (curr: number, prev: number) => {
-            if (this.smallestDataInterval === undefined) {
-                this.smallestDataInterval = { x: Infinity, y: Infinity };
-            }
-            const { x } = this.smallestDataInterval;
-
-            const interval = Math.abs(curr - prev);
-            if (interval > 0 && interval < x) {
-                this.smallestDataInterval.x = interval;
-            }
-        };
-
-        const isContinuousX = xAxis.scale instanceof ContinuousScale;
-        const isContinuousY = yAxis.scale instanceof ContinuousScale;
-        let keysFound = true; // only warn once
-        let prevX = Infinity;
-        this.xData = data.map((datum) => {
-            if (keysFound && !(xKey in datum)) {
-                keysFound = false;
-                Logger.warn(`the key '${xKey}' was not found in the data: `, datum);
-            }
-
-            const x = checkDatum(datum[xKey], isContinuousX);
-
-            if (isContinuousX) {
-                setSmallestXInterval(x, prevX);
-            }
-
-            prevX = x;
-
-            return x;
+        this.dataModel = new DataModel<any, any, true>({
+            props: [
+                keyProperty(xKey, isContinuousX),
+                ...activeSeriesItems.map((yKey) => valueProperty(yKey, isContinuousY, { invalidValue: null })),
+                ...activeStacks.map((stack) => sum(stack)),
+                ...(isContinuousX ? [SMALLEST_KEY_INTERVAL] : []),
+                AGG_VALUES_EXTENT,
+                ...extraProps,
+            ],
+            groupByKeys: true,
+            dataVisible: this.visible && activeSeriesItems.length > 0,
         });
 
-        this.yData = data.map((datum) =>
-            yKeys.map((stack) => {
-                return stack.map((yKey) => {
-                    if (keysFound && !(yKey in datum)) {
-                        keysFound = false;
-                        Logger.warn(`the key '${yKey}' was not found in the data: `, datum);
-                    }
+        this.processedData = this.dataModel.processData(data);
 
-                    const yDatum = checkDatum(datum[yKey], isContinuousY);
-
-                    if (!seriesItemEnabled.get(yKey) || yDatum === undefined) {
-                        return NaN;
-                    }
-
-                    return yDatum;
-                });
-            })
-        );
-
-        const xyValid = this.validateXYData(
-            this.xKey,
-            this.yKeys.join(', '),
-            data,
-            xAxis,
-            yAxis,
-            this.xData,
-            this.yData,
-            3
-        );
-        if (!xyValid) {
-            this.xData = [];
-            this.yData = [];
-            this.yDomain = [];
-            return;
-        }
-
-        // Contains min/max values for each stack in each group,
-        // where min is zero and max is a positive total of all values in the stack
-        // or min is a negative total of all values in the stack and max is zero.
-        const isLogAxis = yAxis instanceof LogAxis;
-        let yMinMax: {
-            min?: number;
-            max?: number;
-        }[][];
-
-        if (!isLogAxis) {
-            yMinMax = this.yData.map((group) => group.map((stack) => findMinMax(stack)));
-        } else {
-            yMinMax = this.yData.map((group) =>
-                group.map((stack) => {
-                    const stackExtent = extent(stack) ?? [];
-
-                    return {
-                        min: stackExtent[0],
-                        max: stackExtent[1],
-                    };
-                })
-            );
-        }
-
-        const { yData, normalizedTo } = this;
-
-        // Calculate the sum of the absolute values of all items in each stack in each group. Used for normalization of stacked bars.
-        const yAbsTotal = this.yData.map((group) =>
-            group.map((stack) =>
-                stack.reduce((acc, stack) => {
-                    acc += isNaN(stack) ? 0 : Math.abs(stack);
-                    return acc;
-                }, 0)
-            )
-        );
-
-        let { min: yMin, max: yMax } = this.findLargestMinMax(yMinMax);
-
-        if (yMin === Infinity && yMax === -Infinity) {
-            // There's no data in the domain.
-            this.yDomain = [];
-            return;
-        }
-
-        if (normalizedTo && isFinite(normalizedTo)) {
-            yMin = yMin < 0 ? -normalizedTo : isLogAxis ? 1 : 0;
-            yMax = yMax > 0 ? normalizedTo : isLogAxis ? -1 : 0;
-            yData.forEach((group, i) => {
-                group.forEach((stack, j) => {
-                    stack.forEach((y, k) => {
-                        stack[k] = (y / yAbsTotal[i][j]) * normalizedTo;
-                    });
-                });
-            });
-        }
-
-        this.yDomain = this.fixNumericExtent([yMin, yMax], this.yAxis);
-    }
-
-    findLargestMinMax(groups: { min?: number; max?: number }[][]): { min: number; max: number } {
-        let tallestStackMin = Infinity;
-        let tallestStackMax = -Infinity;
-
-        for (const group of groups) {
-            for (const stack of group) {
-                const { min = Infinity, max = -Infinity } = stack;
-                if (min < tallestStackMin) {
-                    tallestStackMin = min;
-                }
-                if (max > tallestStackMax) {
-                    tallestStackMax = max;
-                }
-            }
-        }
-
-        return { min: tallestStackMin, max: tallestStackMax };
+        this.smallestDataInterval = {
+            x: this.processedData?.reduced?.[SMALLEST_KEY_INTERVAL.property] ?? Infinity,
+            y: Infinity,
+        };
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
-        const { flipXY } = this;
-        if (this.flipXY) {
-            direction = flipChartAxisDirection(direction);
-        }
-        if (direction === ChartAxisDirection.X) {
-            if (!(this.getCategoryAxis()?.scale instanceof ContinuousScale)) {
-                return this.xData;
+        const { processedData } = this;
+        if (!processedData) return [];
+
+        const {
+            defs: {
+                keys: [keyDef],
+            },
+            domain: {
+                keys: [keys],
+                values: [yExtent],
+            },
+            reduced: { [SMALLEST_KEY_INTERVAL.property]: smallestX, [AGG_VALUES_EXTENT.property]: ySumExtent } = {},
+        } = processedData;
+
+        if (direction === this.getCategoryDirection()) {
+            if (keyDef.valueType === 'category') {
+                return keys;
             }
-            // The last node will be clipped if the scale is not a band scale
-            // Extend the domain by the smallest data interval so that the last band is not clipped
-            const xDomain = extent(this.xData) || [NaN, NaN];
-            if (flipXY) {
-                xDomain[0] = xDomain[0] - (this.smallestDataInterval?.x ?? 0);
-            } else {
-                xDomain[1] = xDomain[1] + (this.smallestDataInterval?.x ?? 0);
+
+            const keysExtent = extent(keys) || [NaN, NaN];
+            if (direction === ChartAxisDirection.Y) {
+                return [keysExtent[0] + -smallestX, keysExtent[1]];
             }
-            return xDomain;
+            return [keysExtent[0], keysExtent[1] + smallestX];
+        } else if (this.getValueAxis() instanceof LogAxis) {
+            return this.fixNumericExtent(yExtent as any);
         } else {
-            return this.yDomain;
+            return this.fixNumericExtent(ySumExtent);
         }
     }
 
@@ -512,11 +408,11 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }
 
     private getCategoryAxis(): ChartAxis<Scale<any, number>> | undefined {
-        return this.flipXY ? this.yAxis : this.xAxis;
+        return this.getCategoryDirection() === ChartAxisDirection.Y ? this.yAxis : this.xAxis;
     }
 
     private getValueAxis(): ChartAxis<Scale<any, number>> | undefined {
-        return this.flipXY ? this.xAxis : this.yAxis;
+        return this.getBarDirection() === ChartAxisDirection.Y ? this.yAxis : this.xAxis;
     }
 
     private calculateStep(range: number): number | undefined {
@@ -564,11 +460,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             strokes,
             strokeWidth,
             seriesItemEnabled,
-            xData,
-            yData,
             label,
-            flipXY,
             id: seriesId,
+            processedData,
         } = this;
 
         const {
@@ -616,27 +510,30 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                   groupScale.rawBandwidth;
         const contexts: SeriesNodeDataContext<BarNodeDatum>[][] = [];
 
-        xData.forEach((group, groupIndex) => {
-            const seriesDatum = data[groupIndex];
-            const x = xScale.convert(group);
+        processedData?.data.forEach(({ keys, datum: seriesDatum, values }, dataIndex) => {
+            const x = xScale.convert(keys[0]);
 
-            const groupYs = yData[groupIndex]; // y-data for groups of stacks
-            for (let stackIndex = 0; stackIndex < groupYs.length; stackIndex++) {
-                const stackYs = groupYs[stackIndex]; // y-data for a stack within a group
-                contexts[stackIndex] = contexts[stackIndex] ?? [];
+            for (let stackIndex = 0; stackIndex < (yKeys?.length ?? 0); stackIndex++) {
+                const stackYKeys = yKeys?.[stackIndex] ?? []; // y-data for a stack within a group
+                contexts[stackIndex] ??= [];
 
                 let prevMinY = 0;
                 let prevMaxY = 0;
 
-                for (let levelIndex = 0; levelIndex < stackYs.length; levelIndex++) {
-                    const currY = +stackYs[levelIndex];
-                    const yKey = yKeys[stackIndex][levelIndex];
-                    const barX = x + groupScale.convert(String(stackIndex));
-                    contexts[stackIndex][levelIndex] = contexts[stackIndex][levelIndex] ?? {
+                for (let levelIndex = 0; levelIndex < stackYKeys.length; levelIndex++) {
+                    const yKey = stackYKeys[levelIndex];
+                    const yIndex = processedData?.indices.values[yKey] ?? -1;
+                    contexts[stackIndex][levelIndex] ??= {
                         itemId: yKey,
                         nodeData: [],
                         labelData: [],
                     };
+
+                    if (yIndex === undefined) continue;
+
+                    const yValue = values[0][yIndex];
+                    const currY = +yValue;
+                    const barX = x + groupScale.convert(String(stackIndex));
 
                     // Bars outside of visible range are not rendered, so we create node data
                     // only for the visible subset of user data.
@@ -650,7 +547,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     const prevY = currY < 0 ? prevMinY : prevMaxY;
                     const y = yScale.convert(prevY + currY, { strict: false });
                     const bottomY = yScale.convert(prevY, { strict: false });
-                    const yValue = seriesDatum[yKey]; // unprocessed y-value
 
                     let labelText: string;
                     if (labelFormatter) {
@@ -665,7 +561,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     let labelX: number;
                     let labelY: number;
 
-                    if (flipXY) {
+                    const barAlongX = this.getBarDirection() === ChartAxisDirection.X;
+                    if (barAlongX) {
                         labelY = barX + barWidth / 2;
                         if (labelPlacement === 'inside') {
                             labelX = y + ((yValue >= 0 ? -1 : 1) * Math.abs(bottomY - y)) / 2;
@@ -688,24 +585,35 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                         labelTextAlign = 'center';
                         labelTextBaseline = 'middle';
                     } else {
-                        labelTextAlign = flipXY ? (yValue >= 0 ? 'start' : 'end') : 'center';
-                        labelTextBaseline = flipXY ? 'middle' : yValue >= 0 ? 'bottom' : 'top';
+                        labelTextAlign = barAlongX ? (yValue >= 0 ? 'start' : 'end') : 'center';
+                        labelTextBaseline = barAlongX ? 'middle' : yValue >= 0 ? 'bottom' : 'top';
                     }
 
                     const colorIndex = cumYKeyCount[stackIndex] + levelIndex;
+                    const rect = {
+                        x: barAlongX ? Math.min(y, bottomY) : barX,
+                        y: barAlongX ? barX : Math.min(y, bottomY),
+                        width: barAlongX ? Math.abs(bottomY - y) : barWidth,
+                        height: barAlongX ? barWidth : Math.abs(bottomY - y),
+                    };
+                    const nodeMidPoint = {
+                        x: rect.x + rect.width / 2,
+                        y: rect.y + rect.height / 2,
+                    };
                     const nodeData: BarNodeDatum = {
-                        index: groupIndex,
+                        index: dataIndex,
                         series: this,
                         itemId: yKey,
-                        datum: seriesDatum,
+                        datum: seriesDatum[0],
                         cumulativeValue: prevY + currY,
                         yValue,
                         yKey,
                         xKey,
-                        x: flipXY ? Math.min(y, bottomY) : barX,
-                        y: flipXY ? barX : Math.min(y, bottomY),
-                        width: flipXY ? Math.abs(bottomY - y) : barWidth,
-                        height: flipXY ? barWidth : Math.abs(bottomY - y),
+                        x: rect.x,
+                        y: rect.y,
+                        width: rect.width,
+                        height: rect.height,
+                        nodeMidPoint,
                         colorIndex,
                         fill: fills[colorIndex % fills.length],
                         stroke: strokes[colorIndex % strokes.length],
@@ -763,7 +671,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             shadow,
             formatter,
             xKey,
-            flipXY,
             highlightStyle: {
                 item: {
                     fill: highlightedFill,
@@ -810,10 +717,6 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 });
             }
             rect.crisp = crisp;
-            rect.x = datum.x;
-            rect.y = datum.y;
-            rect.width = datum.width;
-            rect.height = datum.height;
             rect.fill = (format && format.fill) || fill;
             rect.stroke = (format && format.stroke) || stroke;
             rect.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
@@ -823,7 +726,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             rect.lineDashOffset = this.lineDashOffset;
             rect.fillShadow = shadow;
             // Prevent stroke from rendering for zero height columns and zero width bars.
-            rect.visible = flipXY ? datum.width > 0 : datum.height > 0;
+            rect.visible = this.getCategoryDirection() === ChartAxisDirection.X ? datum.width > 0 : datum.height > 0;
         });
     }
 
@@ -869,12 +772,12 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }
 
     getTooltipHtml(nodeDatum: BarNodeDatum): string {
-        const { xKey, yKeys, yData } = this;
+        const { xKey, yKeys, processedData } = this;
         const xAxis = this.getCategoryAxis();
         const yAxis = this.getValueAxis();
         const { yKey } = nodeDatum;
 
-        if (!yData.length || !xKey || !yKey || !xAxis || !yAxis) {
+        if (!processedData || !xKey || !yKey || !xAxis || !yAxis) {
             return '';
         }
 
@@ -952,13 +855,14 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         return toTooltipHtml(defaults);
     }
 
-    getLegendData(): LegendDatum[] {
+    getLegendData(): ChartLegendDatum[] {
         const {
             id,
             data,
             xKey,
             yKeys,
             yNames,
+            legendItemNames,
             cumYKeyCount,
             seriesItemEnabled,
             hideInLegend,
@@ -966,35 +870,29 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
             strokes,
             fillOpacity,
             strokeOpacity,
-            flipXY,
         } = this;
 
         if (!data || !data.length || !xKey || !yKeys.length) {
             return [];
         }
 
-        const legendData: LegendDatum[] = [];
+        const legendData: CategoryLegendDatum[] = [];
 
         this.yKeys.forEach((stack, stackIndex) => {
-            // Column stacks should be listed in the legend in reverse order, for symmetry with the
-            // vertical stack display order. Bar stacks are already consistent left-to-right with
-            // the legend.
-            const startLevel = flipXY ? 0 : stack.length - 1;
-            const direction = flipXY ? 1 : -1;
-
-            for (let levelIndex = startLevel, step = 0; step < stack.length; levelIndex += direction, step++) {
+            for (let levelIndex = 0; levelIndex < stack.length; levelIndex++) {
                 const yKey = stack[levelIndex];
                 if (hideInLegend.indexOf(yKey) >= 0) {
                     return;
                 }
                 const colorIndex = cumYKeyCount[stackIndex] + levelIndex;
                 legendData.push({
+                    legendType: 'category',
                     id,
                     itemId: yKey,
                     seriesId: id,
                     enabled: seriesItemEnabled.get(yKey) || false,
                     label: {
-                        text: yNames[yKey] || yKey,
+                        text: legendItemNames[yKey] ?? yNames[yKey] ?? yKey,
                     },
                     marker: {
                         fill: fills[colorIndex % fills.length],
@@ -1009,9 +907,58 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         return legendData;
     }
 
-    toggleSeriesItem(itemId: string, enabled: boolean): void {
+    onLegendItemClick(event: LegendItemClickChartEvent) {
+        const { itemId, enabled } = event;
+
         super.toggleSeriesItem(itemId, enabled);
 
+        // Toggle items where the legendItemName matches the legendItemName of the clicked item
+        Object.keys(this.legendItemNames)
+            .filter((id) => this.legendItemNames[id] === this.legendItemNames[itemId])
+            .forEach((yKey) => {
+                if (yKey !== itemId) {
+                    super.toggleSeriesItem(yKey, enabled);
+                }
+            });
+
+        this.calculateVisibleDomain();
+    }
+
+    onLegendItemDoubleClick(event: LegendItemDoubleClickChartEvent) {
+        const { enabled, itemId, numVisibleItems } = event;
+
+        const totalVisibleItems = Object.values(numVisibleItems).reduce((p, v) => p + v, 0);
+        const singleEnabledInEachSeries =
+            Object.values(numVisibleItems).filter((v) => v === 1).length === Object.keys(numVisibleItems).length;
+
+        const newEnableds: { [key: string]: boolean } = {};
+
+        this.yKeys.forEach((stack) => {
+            stack.forEach((yKey) => {
+                const matches = yKey === itemId;
+                const singleEnabledWasClicked = totalVisibleItems === 1 && enabled;
+
+                const newEnabled = matches || singleEnabledWasClicked || (singleEnabledInEachSeries && enabled);
+
+                newEnableds[yKey] = newEnableds[yKey] ?? newEnabled;
+
+                // Toggle other items that have matching legendItemNames which have not already been processed.
+                Object.keys(this.legendItemNames)
+                    .filter((id) => this.legendItemNames[id] === this.legendItemNames[yKey])
+                    .forEach((nameYKey) => {
+                        newEnableds[nameYKey] = newEnableds[nameYKey] ?? newEnabled;
+                    });
+            });
+        });
+
+        Object.keys(newEnableds).forEach((yKey) => {
+            super.toggleSeriesItem(yKey, newEnableds[yKey]);
+        });
+
+        this.calculateVisibleDomain();
+    }
+
+    calculateVisibleDomain() {
         const yKeys = this.yKeys.map((stack) => stack.slice()); // deep clone
 
         this.seriesItemEnabled.forEach((enabled, yKey) => {
@@ -1036,7 +983,124 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         this.nodeDataRefresh = true;
     }
 
+    animateEmptyUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
+        let startingX = Infinity;
+        datumSelections.forEach((datumSelection) =>
+            datumSelection.each((_, datum) => {
+                if (datum.yValue >= 0) {
+                    startingX = Math.min(startingX, datum.x);
+                }
+            })
+        );
+
+        datumSelections.forEach((datumSelection) => {
+            datumSelection.each((rect, datum) => {
+                this.animationManager?.animateMany(
+                    `${this.id}_empty-update-ready_${rect.id}`,
+                    [
+                        { from: startingX, to: datum.x },
+                        { from: 0, to: datum.width },
+                    ],
+                    {
+                        disableInteractions: true,
+                        duration: 1000,
+                        ease: easing.linear,
+                        repeat: 0,
+                        onUpdate([x, width]) {
+                            rect.x = x;
+                            rect.width = width;
+
+                            rect.y = datum.y;
+                            rect.height = datum.height;
+                        },
+                    }
+                );
+            });
+        });
+    }
+
+    animateReadyUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
+        datumSelections.forEach((datumSelection) => {
+            datumSelection.each((rect, datum) => {
+                rect.x = datum.x;
+                rect.y = datum.y;
+                rect.width = datum.width;
+                rect.height = datum.height;
+            });
+        });
+    }
+
+    animateReadyHighlightReady(highlightSelection: Selection<Rect, BarNodeDatum>) {
+        highlightSelection.each((rect, datum) => {
+            rect.x = datum.x;
+            rect.y = datum.y;
+            rect.width = datum.width;
+            rect.height = datum.height;
+        });
+    }
+
     protected isLabelEnabled() {
         return this.label.enabled;
+    }
+
+    getBandScalePadding() {
+        return { inner: 0.2, outer: 0.3 };
+    }
+
+    protected getBarDirection() {
+        return ChartAxisDirection.X;
+    }
+
+    protected getCategoryDirection() {
+        return ChartAxisDirection.Y;
+    }
+}
+
+export class ColumnSeries extends BarSeries {
+    static type = 'column' as const;
+    static className = 'ColumnSeries';
+
+    protected getBarDirection() {
+        return ChartAxisDirection.Y;
+    }
+
+    protected getCategoryDirection() {
+        return ChartAxisDirection.X;
+    }
+
+    animateEmptyUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
+        let startingY = 0;
+        datumSelections.forEach((datumSelection) =>
+            datumSelection.each((_, datum) => {
+                if (datum.yValue >= 0) {
+                    startingY = Math.max(startingY, datum.height + datum.y);
+                }
+            })
+        );
+
+        datumSelections.forEach((datumSelection) => {
+            datumSelection.each((rect, datum) => {
+                this.animationManager?.animateMany(
+                    `${this.id}_empty-update-ready_${rect.id}`,
+                    [
+                        { from: startingY, to: datum.y },
+                        { from: 0, to: datum.height },
+                    ],
+                    {
+                        disableInteractions: true,
+                        duration: 1000,
+                        ease: easing.linear,
+                        repeat: 0,
+                        onUpdate([y, height]) {
+                            rect.y = y;
+                            rect.height = height;
+
+                            rect.x = datum.x;
+                            rect.width = datum.width;
+                        },
+                    }
+                );
+            });
+        });
     }
 }

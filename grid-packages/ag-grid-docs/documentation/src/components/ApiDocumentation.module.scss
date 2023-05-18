@@ -1,28 +1,5 @@
-// Fix styles for heading anchor lists whilst working on .ag-styles
-.apiDocumentationOuter {
-    :global(.anchor) {
-        position: absolute;
-        top: 0;
-        left: 0;
-        transform: translateX(-100%);
-        padding-right: 4px;
-
-        svg {
-            visibility: hidden;
-        }
-    }
-
-    h1:hover,
-    h2:hover,
-    h3:hover,
-    h4:hover,
-    h5:hover,
-    h6:hover {
-        :global(.anchor) svg {
-            visibility: visible;
-        }
-    }
-}
+@use "sass:map";
+@use '../design-system' as *;
 
 .breadcrumbs {
     margin-bottom: 1rem;
@@ -33,103 +10,132 @@
 }
 
 .reference {
-    height: 1px; // needed for divs to fit table cell heights correctly
-
-    &__name {
-        font-weight: bold;
-        color: inherit;
-        word-break: keep-all;
-        word-wrap: normal;
-    }
-
-    &__name__wrap {
-        word-break: break-word;
-    }
-
     &__required {
         color: red;
-    }
-
-    &__type {
-        color: $primary;
-        font-size: 0.9rem;
-        white-space: nowrap;
-    }
-
-    &__property {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    &__property-type {
-        color: $primary;
-        font-size: 0.9rem;
-        white-space: break-spaces;
-    }
-
-    &__expander-cell {
-        padding: 0 !important;
-        width: 1.1rem !important;
-
-        + td {
-            width: 280px;
-        }
     }
 
     &__name-cell__wrap {
         width: 100%;
     }
+}
 
-    &__expander {
-        composes: pt-2 from global;
+.apiReferenceOuter {
+    container-type: inline-size;
+}
 
-        background-color: $light;
-        height: 100%;
-        padding: 0 1px;
-        cursor: pointer;
+.apiReference {
+    table-layout: fixed;
 
-        svg {
-            width: 1em;
-            margin-left: 0.05em;
-            vertical-align: middle;
-            transition: transform 0.33s ease-in-out;
+    @container (max-width: #{$breakpoint-table-small}) {
+        display: block;
+
+        thead,
+        tbody,
+        tr,
+        td {
+            display: block;
+            width: 100%;
         }
 
-        &.isExpanded svg {
-            transform: rotate(90deg);
+        tr {
+            padding-top: $size-1 !important; // !important for .ag-styles specificity
+            padding-bottom: $size-1 !important; // !important for .ag-styles specificity
         }
-    }
 
-    &__code-sample {
-        composes: my-2 from global;
-    }
-
-    // Fix styles for heading anchor links whilst working on .ag-styles
-    :global(.anchor) {
-        margin-left: 4px;
-
-        svg {
-            visibility: hidden;
+        td {
+            padding-right: 0 !important; // !important for .ag-styles specificity
+            padding-left: 0 !important; // !important for .ag-styles specificity
+            border: none !important; // !important for .ag-styles specificity
         }
     }
 
-    // Fix styles for heading anchor links whilst working on .ag-styles
-    h1:hover,
-    h2:hover,
-    h3:hover,
-    h4:hover,
-    h5:hover,
-    h6:hover {
-        :global(.anchor) svg {
-            visibility: visible;
-        }
+    @container (min-width: #{$breakpoint-table-small}) {
+        height: 1px; // needed for divs to fit table cell heights correctly
+    }
+
+    tr:nth-child(even),
+    tr:nth-child(even) td {
+        background-color: white !important; // !important for .ag-styles specificity
+    }
+
+    pre:global(.code) {
+        margin-top: $size-2;
+        margin-bottom: $size-1;
     }
 
     :global(a.docs-header-icon) {
         font-size: var(--font-size-large) !important; // !important for .ag-styles specificity
+    }
+}
 
-        svg {
-            top: -0.5em;
-        }
+.leftColumn {
+    width: 40%;
+    padding-left: 0 !important; // !important for .ag-styles specificity
+}
+
+.rightColumn {
+    padding-right: 0 !important; // !important for .ag-styles specificity
+}
+
+.name {
+    -webkit-font-smoothing: subpixel-antialiased;
+
+    font-family: var(--monospace-font-family) !important; // !important for .ag-styles specificity;
+    font-size: var(--font-size-large) !important; // !important for .ag-styles specificity;
+    font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity;
+    line-height: var(--line-height-ultra-tight) !important; // !important for .ag-styles specificity;
+
+    @container (min-width: #{$breakpoint-table-small}) {
+        font-size: var(--font-size-medium) !important; // !important for .ag-styles specificity;
+    }
+}
+
+.metaList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $size-1 $size-3;
+}
+
+.metaItem {
+    display: flex;
+    flex-direction: column;
+}
+
+.metaLabel {
+    font-size: var(--font-size-extra-small);
+    color: var(--secondary-text-color);
+}
+
+.metaValue {
+    font-size: var(--font-size-small);
+    font-family: var(--monospace-font-family);
+    color: var(--code-text-color);
+}
+
+.description {
+    padding-top: $size-half;
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $size-2 $size-4;
+    margin-top: $size-1 !important; // !important for .ag-styles specificity
+}
+
+.seeMore {
+    --text-color: var(--link-color);
+    --icon-size: 1em;
+
+    min-width: 10.5ch;
+    transition: color $default-transition-timing;
+
+    &:hover {
+        --text-color: var(--link-hover-color);
+    }
+
+    svg {
+        margin-top: -0.1em;
+        transition: fill $default-transition-timing;
     }
 }

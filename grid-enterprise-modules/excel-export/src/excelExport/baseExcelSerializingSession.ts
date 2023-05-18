@@ -5,7 +5,6 @@ import {
     RowHeightCallbackParams,
     ExcelCell,
     ExcelColumn,
-    ExcelData,
     ExcelHeaderFooterConfig,
     ExcelImage,
     ExcelRow,
@@ -45,6 +44,8 @@ export interface ExcelGridSerializingParams extends GridSerializingParams {
     margins?: ExcelSheetMargin;
     pageSetup?: ExcelSheetPageSetup;
     sheetName: string;
+    suppressColumnOutline?: boolean;
+    suppressRowOutline?: boolean;
     styleLinker: (params: StyleLinkerInterface) => string[];
     addImageToCell?: (rowIndex: number, column: Column, value: string) => { image: ExcelImage, value?: string } | undefined;
     suppressTextAsCDATA?: boolean;
@@ -89,25 +90,39 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
     public addCustomContent(customContent: ExcelRow[]): void {
         customContent.forEach(row => {
             const rowLen = this.rows.length + 1;
+            let outlineLevel: number | undefined;
+
+            if (!this.config.suppressRowOutline && row.outlineLevel != null) {
+                outlineLevel = row.outlineLevel;
+            }
 
             const rowObj: ExcelRow = {
                 height: getHeightFromProperty(rowLen, row.height || this.config.rowHeight),
                 cells: (row.cells || []).map((cell, idx) => {
                     const image = this.addImage(rowLen, this.columnsToExport[idx], cell.data?.value as string);
-                    const ret = { ...cell };
+
+                    let excelStyles: string[] | null = null;
+                    
+                    if (cell.styleId) {
+                        excelStyles = typeof cell.styleId === 'string' ? [cell.styleId] : cell.styleId;
+                    }
+
+                    const excelStyleId = this.getStyleId(excelStyles);
 
                     if (image) {
-                        ret.data = {} as ExcelData;
-                        if (image.value != null) {
-                            ret.data.value = image.value;
-                        } else {
-                            ret.data.type = 'e';
-                            ret.data.value = null;
-                        }
+                        return this.createCell(excelStyleId, this.getDataTypeForValue(image.value), image.value == null ? '' : image.value);
                     }
-                    return ret;
+
+                    const value = cell.data?.value ?? '';
+                    const type = this.getDataTypeForValue(value);
+
+                    if (cell.mergeAcross) {
+                        return this.createMergedCell(excelStyleId, type, value, cell.mergeAcross)
+                    }
+
+                    return this.createCell(excelStyleId, type, value);
                 }),
-                outlineLevel: row.outlineLevel || undefined
+                outlineLevel
             };
 
             if (row.collapsed != null) { rowObj.collapsed = row.collapsed; }
@@ -221,7 +236,11 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
                 skipCols -= 1;
                 return;
             }
-            if (!this.config.gridOptionsService.is('groupHideOpenParents') && node.level != null) {
+
+            const isGroupHideOpenParents = this.config.gridOptionsService.is('groupHideOpenParents');
+            const isSuppressRowOutline = !!this.config.suppressRowOutline;
+
+            if (!isGroupHideOpenParents && !isSuppressRowOutline && node.level != null) {
                 const padding = node.footer ? 1 : 0;
                 _.last(this.rows).outlineLevel = node.level + padding;
             }

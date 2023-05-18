@@ -1,5 +1,4 @@
-import { Bean, PreDestroy, Autowired, PostConstruct } from "../context/context";
-import { LoggerFactory, Logger } from "../logger";
+import { Bean, PreDestroy, Autowired } from "../context/context";
 import { DragStartedEvent, DragStoppedEvent, Events } from "../events";
 import { BeanStub } from "../context/beanStub";
 import { exists } from "../utils/generic";
@@ -15,25 +14,18 @@ import { isFocusableFormField } from "../utils/dom";
 @Bean('dragService')
 export class DragService extends BeanStub {
 
-    @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
 
     private currentDragParams: DragListenerParams | null;
     private dragging: boolean;
+    private startTarget: EventTarget | null;
     private mouseStartEvent: MouseEvent | null;
     private touchLastTime: Touch | null;
     private touchStart: Touch | null;
 
-    private logger: Logger;
-
     private dragEndFunctions: Function[] = [];
 
     private dragSources: DragSourceAndListener[] = [];
-
-    @PostConstruct
-    private init(): void {
-        this.logger = this.loggerFactory.create('DragService');
-    }
 
     @PreDestroy
     private removeAllListeners(): void {
@@ -95,6 +87,10 @@ export class DragService extends BeanStub {
         });
     }
 
+    public getStartTarget(): EventTarget | null {
+        return this.startTarget;
+    }
+
     // gets called whenever mouse down on any drag source
     private onTouchStart(params: DragListenerParams, touchEvent: TouchEvent): void {
         this.currentDragParams = params;
@@ -108,13 +104,13 @@ export class DragService extends BeanStub {
         const touchMoveEvent = (e: TouchEvent) => this.onTouchMove(e, params.eElement);
         const touchEndEvent = (e: TouchEvent) => this.onTouchUp(e, params.eElement);
         const documentTouchMove = (e: TouchEvent) => { if (e.cancelable) { e.preventDefault(); } };
-        const target = touchEvent.target as HTMLElement;
 
+        const target = touchEvent.target as Document | ShadowRoot | EventTarget;
         const events = [
             // Prevents the page document from moving while we are dragging items around.
             // preventDefault needs to be called in the touchmove listener and never inside the
             // touchstart, because using touchstart causes the click event to be cancelled on touch devices.
-            { target: document, type: 'touchmove', listener: documentTouchMove, options: { passive: false } },
+            { target: this.gridOptionsService.getRootNode(), type: 'touchmove', listener: documentTouchMove, options: { passive: false } },
             { target, type: 'touchmove', listener: touchMoveEvent, options: { passive: true } },
             { target, type: 'touchend', listener: touchEndEvent, options: { passive: true} },
             { target, type: 'touchcancel', listener: touchEndEvent, options: { passive: true} }
@@ -150,13 +146,13 @@ export class DragService extends BeanStub {
         this.dragging = false;
 
         this.mouseStartEvent = mouseEvent;
-
-        const eDocument = this.gridOptionsService.getDocument();
+        this.startTarget = mouseEvent.target;
 
         const mouseMoveEvent = (event: MouseEvent) => this.onMouseMove(event, params.eElement);
         const mouseUpEvent = (event: MouseEvent) => this.onMouseUp(event, params.eElement);
         const contextEvent = (event: MouseEvent) => event.preventDefault();
-        const target = eDocument;
+
+        const target = this.gridOptionsService.getRootNode();
         const events = [
             { target, type: 'mousemove', listener: mouseMoveEvent },
             { target, type: 'mouseup', listener: mouseUpEvent },
@@ -173,7 +169,7 @@ export class DragService extends BeanStub {
 
     private addTemporaryEvents(
         events: {
-            target: HTMLElement | Document,
+            target: Document | ShadowRoot | EventTarget,
             type: string,
             listener: (e: MouseEvent | TouchEvent, el: HTMLElement) => void,
             options?: any
@@ -210,7 +206,7 @@ export class DragService extends BeanStub {
         return null;
     }
 
-    private onCommonMove(currentEvent: MouseEvent | Touch, startEvent: MouseEvent | Touch, el: HTMLElement): void {
+    private onCommonMove(currentEvent: MouseEvent | Touch, startEvent: MouseEvent | Touch, el: Element): void {
         if (!this.dragging) {
             // if mouse hasn't travelled from the start position enough, do nothing
             if (!this.dragging && this.isEventNearStartEvent(currentEvent, startEvent)) { return; }
@@ -236,7 +232,7 @@ export class DragService extends BeanStub {
         this.currentDragParams!.onDragging(currentEvent);
     }
 
-    private onTouchMove(touchEvent: TouchEvent, el: HTMLElement): void {
+    private onTouchMove(touchEvent: TouchEvent, el: Element): void {
         const touch = this.getFirstActiveTouch(touchEvent.touches);
         if (!touch) { return; }
 
@@ -246,7 +242,7 @@ export class DragService extends BeanStub {
 
     // only gets called after a mouse down - as this is only added after mouseDown
     // and is removed when mouseUp happens
-    private onMouseMove(mouseEvent: MouseEvent, el: HTMLElement): void {
+    private onMouseMove(mouseEvent: MouseEvent, el: Element): void {
         // when `isEnableCellTextSelect` is `true`, we need to preventDefault on mouseMove
         // to avoid the grid text being selected while dragging components.
         // Note: Safari also has an issue, where `user-select: none` is not being respected.
@@ -263,6 +259,7 @@ export class DragService extends BeanStub {
          ) {
             mouseEvent.preventDefault();
         }
+
         this.onCommonMove(mouseEvent, this.mouseStartEvent!, el);
     }
 
@@ -273,7 +270,7 @@ export class DragService extends BeanStub {
         return !!tagName?.match('^a$|textarea|input|select|button');
     }
 
-    public onTouchUp(touchEvent: TouchEvent, el: HTMLElement): void {
+    public onTouchUp(touchEvent: TouchEvent, el: Element): void {
         let touch = this.getFirstActiveTouch(touchEvent.changedTouches);
 
         // i haven't worked this out yet, but there is no matching touch
@@ -299,11 +296,11 @@ export class DragService extends BeanStub {
         // }
     }
 
-    public onMouseUp(mouseEvent: MouseEvent, el: HTMLElement): void {
+    public onMouseUp(mouseEvent: MouseEvent, el: Element): void {
         this.onUpCommon(mouseEvent, el);
     }
 
-    public onUpCommon(eventOrTouch: MouseEvent | Touch, el: HTMLElement): void {
+    public onUpCommon(eventOrTouch: MouseEvent | Touch, el: Element): void {
         if (this.dragging) {
             this.dragging = false;
             this.currentDragParams!.onDragStop(eventOrTouch);
@@ -315,6 +312,7 @@ export class DragService extends BeanStub {
         }
 
         this.mouseStartEvent = null;
+        this.startTarget = null;
         this.touchStart = null;
         this.touchLastTime = null;
         this.currentDragParams = null;
@@ -335,7 +333,7 @@ export interface DragListenerParams {
     /** After how many pixels of dragging should the drag operation start. Default is 4px. */
     dragStartPixels?: number;
     /** Dom element to add the drag handling to */
-    eElement: HTMLElement;
+    eElement: Element;
     /** Some places may wish to ignore certain events, eg range selection ignores shift clicks */
     skipMouseEvent?: (mouseEvent: MouseEvent) => boolean;
     /** Callback for drag starting */

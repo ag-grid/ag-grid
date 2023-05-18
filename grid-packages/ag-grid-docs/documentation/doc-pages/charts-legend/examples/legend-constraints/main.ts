@@ -69,7 +69,6 @@ const options: AgChartOptions = {
     },
   ],
   legend: {
-    position: 'bottom',
     maxHeight: 200,
     item: {
       maxWidth: 130,

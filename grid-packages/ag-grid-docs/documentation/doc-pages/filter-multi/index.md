@@ -24,7 +24,7 @@ By default the Multi Filter will show a [Text Filter](/filter-text/) and [Set Fi
 
 The example below shows the Multi Filter in action. Note the following:
 
-- The **Athlete** has a Multi Filter with default behaviour.
+- The **Athlete** column has a Multi Filter with default behaviour.
 - The **Country**, **Gold** and **Date** columns have Multi Filters with the child filters configured explicitly, using the [Text](/filter-text/), [Number](/filter-number/) and [Date](/filter-date/) Simple Filters respectively.
 - Different `filterParams` can be supplied to each child filter:<br />
     - The Text Filter in the Country column has a different default option (`'startsWith'`)

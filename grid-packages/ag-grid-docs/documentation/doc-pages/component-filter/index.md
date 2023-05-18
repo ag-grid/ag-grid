@@ -2,20 +2,22 @@
 title: "Filter Component"
 ---
 
-[[only-javascript-or-angular-or-vue]]
+<framework-specific-section frameworks="javascript,angular,vue">
 |Filter components allow you to add your own filter types to AG Grid. Use them when the Provided Filters do not meet your requirements.
+</framework-specific-section>
 
-[[only-react]]
-|<video-section id="yO3_nTyDv6o" title="React Custom Filters" header="true">
-|Filter components allow you to add your own filter types to AG Grid. Use them when the Provided Filters do not meet your requirements.
-|</video-section>
+<framework-specific-section frameworks="react">
+<video-section id="yO3_nTyDv6o" title="React Custom Filters" header="true">
+Filter components allow you to add your own filter types to AG Grid. Use them when the Provided Filters do not meet your requirements.
+</video-section>
+</framework-specific-section>
 
 ## Simple Filter
 
 md-include:simple-filter-javascript.md
 md-include:simple-filter-angular.md
 md-include:simple-filter-react.md
-md-include:simple-filter-vue.md
+md-include:simple-filter-vue.md 
 
 ## Custom Filter Example
 
@@ -57,17 +59,19 @@ There are two ways you can get fix this problem:
   This is the best solution, but you can only do this if you are writing the component yourself.
 - Add the `ag-custom-component-popup` CSS class to your floating element. An example of this usage can be found here: [Custom Date Component](/component-date/#example-custom-date)
 
-[[only-angular]]
+<framework-specific-section frameworks="angular">
 | ## Accessing the Angular Component Instance
 |
 | AG Grid allows you to get a reference to the filter instances via the `api.getFilterInstance(colKey)` method.
-|
-| ```ts
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false} language="ts">
 | // let's assume an Angular component as follows
 | @Component({
 |     selector: 'filter-cell',
 |     template: `
-|         Filter: <input style="height: 10px" #input (ngModelChange)="onChange($event)" [ngModel]="text">
+|         Filter: &lt;input style="height: 10px" #input (ngModelChange)="onChange($event)" [ngModel]="text">
 |     `
 | })
 | class PartialMatchFilterComponent implements IFilterAngularComp {
@@ -81,21 +85,28 @@ There are two ways you can get fix this problem:
 |
 | // later in your app, if you want to execute myMethod()...
 | laterOnInYourApplicationSomewhere() {
-|     const angularFilterInstance = api.getFilterInstance<PartialMatchFilterComponent>('name'); // assume filter on name column
+|     const angularFilterInstance = api.getFilterInstance&lt;PartialMatchFilterComponent>('name'); // assume filter on name column
 |     angularFilterInstance.myMethod();
 | }
-| ```
-|
-| The example below illustrates how a custom filter component can be accessed and methods on it invoked:
-|
-| <grid-example title='Angular Filter Component' name='filter-component' type='mixed' options='{ "enterprise": false, "exampleHeight": 445, "onlyShow": "angular", "extras": ["bootstrap"], "includeNgFormsModule" : true }'></grid-example>
+</snippet>
+</framework-specific-section>
 
-[[only-react]]
+<framework-specific-section frameworks="angular">
+| The example below illustrates how a custom filter component can be accessed and methods on it invoked:
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<grid-example title='Angular Filter Component' name='filter-component' type='mixed' options='{ "enterprise": false, "exampleHeight": 445, "onlyShow": "angular", "extras": ["bootstrap"], "includeNgFormsModule" : true }'></grid-example>
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
 | ## Accessing the React Component Instance
 |
 | AG Grid allows you to get a reference to the filter instances via `api.getFilterInstance(colKey, callback)`. React components are created asynchronously, so it is necessary to use a callback rather than relying on the return value of this method. 
-|
-| ```ts
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<snippet transform={false} language="ts">
 | // let's assume a React component as follows
 | class NameFilter extends React.Component {
 |     ... // standard filter methods hidden
@@ -113,21 +124,28 @@ There are two ways you can get fix this problem:
 |         filterInstance.myMethod();
 |     });
 | }
-| ```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
 | The example below illustrates how a custom filter component can be accessed and methods on it invoked:
-|
-| <grid-example title='React Filter Component' name='filter-component' type='mixed' options='{ "enterprise": false, "exampleHeight": 445, "extras": ["bootstrap"] }'></grid-example>
-|
-[[only-vue]]
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<grid-example title='React Filter Component' name='filter-component' type='mixed' options='{ "enterprise": false, "exampleHeight": 445, "extras": ["bootstrap"] }'></grid-example>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 | ## Accessing the VueJS Component Instance
 |
 | AG Grid allows you to get a reference to the filter instances via the `api.getFilterInstance(colKey)` method.
-|
-| ```ts
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="ts">
 | // let's assume a VueJS component as follows
 | export default {
-|     template: `<input style="height: 20px" :ref="'input'" v-model="text">`,
+|     template: `&lt;input style="height: 20px" :ref="'input'" v-model="text">`,
 |     data() {
 |         ...data
 |     },
@@ -143,9 +161,13 @@ There are two ways you can get fix this problem:
 |         const filterInstance = api.getFilterInstance('name'); // assume filter on name column
 |         filterInstance.myMethod();
 |     }
-| ```
-|
-| The example below illustrates how a custom filter component can be accessed and methods on it invoked:
-|
-| <grid-example title='Vue Filter Component' name='filter-component' type='mixed' options='{ "enterprise": false, "exampleHeight": 445, "onlyShow": "vue", "extras": ["bootstrap"] }'></grid-example>
+</snippet>
+</framework-specific-section>
 
+<framework-specific-section frameworks="vue">
+| The example below illustrates how a custom filter component can be accessed and methods on it invoked:
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<grid-example title='Vue Filter Component' name='filter-component' type='mixed' options='{ "enterprise": false, "exampleHeight": 445, "onlyShow": "vue", "extras": ["bootstrap"] }'></grid-example>
+</framework-specific-section>

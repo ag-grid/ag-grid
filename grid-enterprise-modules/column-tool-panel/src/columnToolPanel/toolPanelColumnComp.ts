@@ -36,7 +36,7 @@ export class ToolPanelColumnComp extends Component {
     @RefSelector('eLabel') private eLabel: HTMLElement;
     @RefSelector('cbSelect') private cbSelect: AgCheckbox;
 
-    private eDragHandle: HTMLElement;
+    private eDragHandle: Element;
     private displayName: string | null;
     private processingColumnStateChange = false;
 

@@ -170,9 +170,16 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                             return;
                         }
 
+                        count++;
+
                         // see if value is wrapped, can happen when doing count() or avg() functions
                         if (typeof value === 'object' && 'value' in value) {
                             value = value.value;
+
+                            // ensure that the new value wouldn't have been skipped by the previous check
+                            if (value === '') {
+                                return;
+                            }
                         }
 
                         if (typeof value === 'string') {
@@ -193,7 +200,6 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
                             numberCount++;
                         }
-                        count++;
                     });
 
                     currentRow = this.cellNavigationService.getRowBelow(currentRow);

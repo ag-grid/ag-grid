@@ -20,7 +20,7 @@ export class TouchListener implements IEventEmitter {
 
     private static DOUBLE_TAP_MILLIS = 500;
 
-    private eElement: HTMLElement;
+    private eElement: Element;
 
     private destroyFuncs: Function[] = [];
 
@@ -37,7 +37,7 @@ export class TouchListener implements IEventEmitter {
 
     private preventMouseClick: boolean;
 
-    constructor(eElement: HTMLElement, preventMouseClick = false) {
+    constructor(eElement: Element, preventMouseClick = false) {
         this.eElement = eElement;
         this.preventMouseClick = preventMouseClick;
 

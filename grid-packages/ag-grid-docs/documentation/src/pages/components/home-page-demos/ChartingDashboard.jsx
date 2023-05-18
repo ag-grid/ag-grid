@@ -42,7 +42,7 @@ const ChartingDashboardDemo = () => (
         <div id="integrated-charting-grid" style={{ height: 400 }} className="ag-theme-balham-dark"></div>
         <div id="integrated-charting-chart" style={{ height: 400 }} className="ag-theme-balham-dark"></div>
 
-        <a href="/javascript-data-grid/integrated-charts/">Read more about integrated charting</a>
+        <a className='read-more-link' href="/javascript-data-grid/integrated-charts/">Read more about integrated charting</a>
     </>
 );
 

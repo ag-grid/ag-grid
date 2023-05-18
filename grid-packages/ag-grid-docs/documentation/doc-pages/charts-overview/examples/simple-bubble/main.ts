@@ -50,9 +50,6 @@ const options: AgChartOptions = {
       },
     },
   ],
-  legend: {
-    enabled: false,
-  },
   seriesAreaPadding: {
     left: 40,
   },

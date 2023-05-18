@@ -1,8 +1,11 @@
-[[only-react]]
+<framework-specific-section frameworks="react">
 |
 |Below is a simple example of a tool panel component as a Hook:
 |
-|```jsx
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<snippet transform={false} language="jsx">
 |const totalStyle = {paddingBottom: '15px'};
 |
 |export default props => {
@@ -37,24 +40,28 @@
 |    }, []);
 |
 |    return (
-|        <div style={{textAlign: "center"}}>
-|                <span>
-|                    <h2><i className="fa fa-calculator"></i> Custom Stats</h2>
-|                    <dl style={{fontSize: 'large', padding: '30px 40px 10px 30px'}}>
-|                        <dt style={totalStyle}>Total Medals: <b>{numMedals}</b></dt>
-|                        <dt style={totalStyle}>Total Gold: <b>{numGold}</b></dt>
-|                        <dt style={totalStyle}>Total Silver: <b>{numSilver}</b></dt>
-|                        <dt style={totalStyle}>Total Bronze: <b>{numBronze}</b></dt>
-|                    </dl>
-|                </span>
-|        </div>
+|        &lt;div style={{textAlign: "center"}}>
+|                &lt;span>
+|                    &lt;h2>&lt;i className="fa fa-calculator">&lt;/i> Custom Stats&lt;/h2>
+|                    &lt;dl style={{fontSize: 'large', padding: '30px 40px 10px 30px'}}>
+|                        &lt;dt style={totalStyle}>Total Medals: &lt;b>{numMedals}&lt;/b>&lt;/dt>
+|                        &lt;dt style={totalStyle}>Total Gold: &lt;b>{numGold}&lt;/b>&lt;/dt>
+|                        &lt;dt style={totalStyle}>Total Silver: &lt;b>{numSilver}&lt;/b>&lt;/dt>
+|                        &lt;dt style={totalStyle}>Total Bronze: &lt;b>{numBronze}&lt;/b>&lt;/dt>
+|                    &lt;/dl>
+|                &lt;/span>
+|        &lt;/div>
 |    );
 |};
-|```
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
 |And here is the same example as a Class-based Component:
-|
-|```jsx
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<snippet transform={false} language="jsx">
 |export default class CustomStatsToolPanel extends Component {
 |    constructor(props) {
 |        super(props);
@@ -69,17 +76,17 @@
 |        const totalStyle = {paddingBottom: '15px'};
 |
 |        return (
-|            <div style={{textAlign: "center"}}>
-|                <span>
-|                    <h2><i className="fa fa-calculator"></i> Custom Stats</h2>
-|                    <dl style={{fontSize: 'large', padding: '30px 40px 10px 30px'}}>
-|                        <dt style={totalStyle}>Total Medals: <b>{this.state.numMedals}</b></dt>
-|                        <dt style={totalStyle}>Total Gold: <b>{this.state.numGold}</b></dt>
-|                        <dt style={totalStyle}>Total Silver: <b>{this.state.numSilver}</b></dt>
-|                        <dt style={totalStyle}>Total Bronze: <b>{this.state.numBronze}</b></dt>
-|                    </dl>
-|                </span>
-|            </div>
+|            &lt;div style={{textAlign: "center"}}>
+|                &lt;span>
+|                    &lt;h2>&lt;i className="fa fa-calculator">&lt;/i> Custom Stats&lt;/h2>
+|                    &lt;dl style={{fontSize: 'large', padding: '30px 40px 10px 30px'}}>
+|                        &lt;dt style={totalStyle}>Total Medals: &lt;b>{this.state.numMedals}&lt;/b>&lt;/dt>
+|                        &lt;dt style={totalStyle}>Total Gold: &lt;b>{this.state.numGold}&lt;/b>&lt;/dt>
+|                        &lt;dt style={totalStyle}>Total Silver: &lt;b>{this.state.numSilver}&lt;/b>&lt;/dt>
+|                        &lt;dt style={totalStyle}>Total Bronze: &lt;b>{this.state.numBronze}&lt;/b>&lt;/dt>
+|                    &lt;/dl>
+|                &lt;/span>
+|            &lt;/div>
 |        );
 |    }
 |
@@ -98,4 +105,5 @@
 |        this.setState({numMedals, numGold, numSilver, numBronze});
 |    }
 |}
-|```
+</snippet>
+</framework-specific-section>

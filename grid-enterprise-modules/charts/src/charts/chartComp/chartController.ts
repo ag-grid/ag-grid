@@ -15,7 +15,7 @@ import {
     SeriesChartType,
     WithoutGridCommon
 } from "@ag-grid-community/core";
-import { ChartDataModel, ColState } from "./chartDataModel";
+import { ChartDataModel, ColState } from "./model/chartDataModel";
 import { ChartProxy, UpdateChartParams } from "./chartProxies/chartProxy";
 import { _Theme, AgChartThemePalette } from "ag-charts-community";
 import { ChartSeriesType, getSeriesType } from "./utils/seriesTypeMapper";
@@ -111,7 +111,7 @@ export class ChartController extends BeanStub {
     public getChartModel(): ChartModel {
         const modelType: ChartModelType = this.model.pivotChart ? 'pivot' : 'range';
 
-        const seriesChartTypes = this.isComboChart() ? this.model.seriesChartTypes : undefined;
+        const seriesChartTypes = this.isComboChart() ? this.model.comboChartModel.seriesChartTypes : undefined;
 
         return {
             modelType,
@@ -143,7 +143,7 @@ export class ChartController extends BeanStub {
     public setChartType(chartType: ChartType): void {
         this.model.chartType = chartType;
 
-        this.model.updateSeriesChartTypes();
+        this.model.comboChartModel.updateSeriesChartTypes();
 
         this.raiseChartModelUpdateEvent();
         this.raiseChartOptionsChangedEvent();
@@ -257,11 +257,12 @@ export class ChartController extends BeanStub {
     }
 
     public customComboExists(): boolean {
-        return this.model.savedCustomSeriesChartTypes && this.model.savedCustomSeriesChartTypes.length > 0;
+        const savedCustomSeriesChartTypes = this.model.comboChartModel.savedCustomSeriesChartTypes;
+        return savedCustomSeriesChartTypes && savedCustomSeriesChartTypes.length > 0;
     }
 
     public getSeriesChartTypes(): SeriesChartType[] {
-        return this.model.seriesChartTypes;
+        return this.model.comboChartModel.seriesChartTypes;
     }
 
     public isComboChart(): boolean {
@@ -269,7 +270,7 @@ export class ChartController extends BeanStub {
     }
 
     public updateSeriesChartType(colId: string, chartType?: ChartType, secondaryAxis?: boolean): void {
-        const seriesChartType = this.model.seriesChartTypes.find(s => s.colId === colId);
+        const seriesChartType = this.model.comboChartModel.seriesChartTypes.find(s => s.colId === colId);
         if (seriesChartType) {
 
             // once a combo chart has been modified it is now a 'customCombo' chart
@@ -288,10 +289,10 @@ export class ChartController extends BeanStub {
             }
 
             // replace existing custom series types with this latest version
-            this.model.savedCustomSeriesChartTypes = this.model.seriesChartTypes;
+            this.model.comboChartModel.savedCustomSeriesChartTypes = this.model.comboChartModel.seriesChartTypes;
 
             // series chart types can be modified, i.e. column chart types should be moved to primary axis
-            this.model.updateSeriesChartTypes();
+            this.model.comboChartModel.updateSeriesChartTypes();
 
             this.updateForDataChange();
 

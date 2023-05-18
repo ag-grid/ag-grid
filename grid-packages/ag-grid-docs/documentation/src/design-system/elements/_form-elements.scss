@@ -46,6 +46,7 @@ input[type='text'],
 input[type='search'],
 input[type='email'],
 input[type='checkbox'],
+input[type='number'],
 select {
     &:disabled,
     &[readonly] {
@@ -60,7 +61,8 @@ select {
 
 input[type='text'],
 input[type='search'],
-input[type='email'] {
+input[type='email'],
+input[type='number'] {
     padding: math.div(6em, 16) math.div(12em, 16);
     line-height: var(--line-height-normal);
     border-radius: var(--border-radius);
@@ -192,21 +194,37 @@ select {
 
 input[type='range'] {
     appearance: none;
-    position: relative;
-    top: -0.125em;
-    background-color: var(--input-secondary-background-color);
+    min-height: $size-3;
     border-radius: var(--border-radius);
-    height: math.div(4em, 16);
+    background-color: transparent;
+    outline: none;
+    border: 2px solid transparent;
     cursor: pointer;
+    transition: border-color $default-transition-timing, box-shadow $default-transition-timing;
 
-    &::-webkit-slider-thumb,
-    &::-moz-range-thumb,
-    &::-ms-thumb {
+    &:focus-visible:not(:disabled):not([readonly]) {
+        border-color: var(--input-focus-border-color);
+        box-shadow: 0 0 0 3px var(--input-focus-box-shadow-color);
+    }
+
+    &::-webkit-slider-runnable-track {
+        height: math.div(4em, 16);
+        background-color: var(--input-secondary-background-color);
+        border-radius: var(--border-radius);
+    }
+
+    &::-webkit-slider-thumb {
         appearance: none;
         width: 1em;
         height: 1em;
+        margin-top: math.div(-6em, 16);
         border-radius: 50%;
         background-color: var(--input-primary-color);
+        transition: background-color $default-transition-timing;
+    }
+
+    &:hover::-webkit-slider-thumb {
+        background-color: var(--link-hover-color);
     }
 }
 

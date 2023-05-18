@@ -12,43 +12,18 @@ version: 2
    .gatsby-resp-image-image {
        box-shadow: none !important;
    }
-
-   .code-tab pre {
-       margin-top: 0;
-   }
-
-   .code-tab .nav-item {
-       margin-bottom: 0 !important;
-   }
 </style>
 
 AG Grid is the industry standard for Vue Enterprise Applications. Developers using AG Grid
 are building applications that would not be possible if AG Grid did not exist.
 
+<tabs>
 
-<section class="code-tab mb-3">
-<div class="card">
-<div class="card-header">Quick Look Code Example</div>
-<div class="card-body">
-<ul class="nav nav-tabs">
-<li class="nav-item">
-<a  class="nav-link active" id="component-tab" data-toggle="tab" href="#component" role="tab" aria-controls="component" aria-selected="true">
+<tabs-links>
+  <open-in-cta type="codesandbox" href="https://codesandbox.io/s/ag-grid-vue-example-xu6c4?file=/src/App.vue" />
+</tabs-links>
 
-App.vue
-
-</a>
-</li>
-<li class="nav-item">
-<a class="nav-link" id="template-tab" data-toggle="tab" href="#template" role="tab" aria-controls="template" aria-selected="false">
-
-index.js
-
-</a>
-</li>
-</ul>
-<div class="tab-content">
-<div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
-
+<div tab-label="App.vue">
 
 ```jsx
 <template>
@@ -95,8 +70,8 @@ export default {
 ```
 
 </div>
-<div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
 
+<div tab-label="index.js">
 
 ```jsx
 import Vue from 'vue';
@@ -109,17 +84,8 @@ new Vue({
 ```
 
 </div>
-</div>
-</div>
-<div class="text-right" style="margin-top: -1.5rem;">
 
-<a class="btn btn-dark mb-2 mr-3" href="https://codesandbox.io/s/ag-grid-vue-example-xu6c4?file=/src/App.vue" target="_blank">
-    Open in CodeSandbox
-</a>
-
-</div>
-</div>
-</section>
+</tabs>
 
 <video-section id="eW3qCti1lsA" title="Getting Started Video Tutorial">
     In this article, we will walk you through the necessary steps to add AG Grid
@@ -131,14 +97,9 @@ new Vue({
 
 <br/><br/>
 
-[[note]]
+<note>
 | We offer two versions of Vue support - one for Vue 2 and one for Vue 3. The only difference
 | in use is how you import the dependency:
-|
-| | Version | Package Imports  | Module Imports          |
-| | ------- | ---------------- | ----------------------- |
-| | Vue 2   | ag-grid-vue      | @ag-grid-community/vue  |
-| | Vue 3   | ag-grid-vue3     | @ag-grid-community/vue3 |
 |
 | If you unsure what import type to use you should use the package import type
 | (i.e. `ag-grid-vue`/ `ag-grid-vue3`).
@@ -149,6 +110,13 @@ new Vue({
 |
 | For the Vue 3 version of this tutorial please see the documentation [here.](/getting-started/)
 |
+</note>
+
+| Version | Package Imports  | Module Imports          |
+| ------- | ---------------- | ----------------------- |
+| Vue 2   | ag-grid-vue      | @ag-grid-community/vue  |
+| Vue 3   | ag-grid-vue3     | @ag-grid-community/vue3 |
+
 
 ## Add AG Grid to Your Project
 
@@ -270,9 +238,10 @@ The code above imports the grid "structure" stylesheet (`ag-grid.css`), and one 
 available grid themes: (`ag-theme-alpine.css`). AG Grid ships several different themes - pick one that
 matches your project design.
 
-[[note]]
-| In a later section we documentation on how you can [Customise the Theme Look](#customise-the-theme-look-2)
-| using SCSS, which is our recommended approach.
+<note>
+In a later section we documentation on how you can [Customise the Theme Look](#customise-the-theme-look-2)
+using SCSS, which is our recommended approach.
+</note>
 
 As this will be a simple example we can delete the `src/components` directory - our example
 application will live in `src/App.vue`.
@@ -547,10 +516,11 @@ done with the tutorial.
 
 ## Grouping (enterprise)
 
-[[note]]
-| Grouping is a feature exclusive to AG Grid Enterprise. You are free to trial AG Grid Enterprise
-| to see what you think. You only need to get in touch if you want to start using AG Grid Enterprise
-| in a project intended for production.
+<note>
+Grouping is a feature exclusive to AG Grid Enterprise. You are free to trial AG Grid Enterprise
+to see what you think. You only need to get in touch if you want to start using AG Grid Enterprise
+in a project intended for production.
+</note>
 
 In addition to filtering and sorting, [grouping](/grouping/) is another effective way for the user
 to make sense out of large amounts of data.
@@ -664,10 +634,11 @@ checkbox that selects/deselects all items in the group.
 Note that we also removed `checkboxSelection: true` from the `make` column definition as the `autoGroupColumnDef` definition allows for checkbox selection
 at both the group and leaf level.
 
-[[note]]
-| Don't worry if this step feels a bit overwhelming - the  grouping feature is very powerful and
-| supports complex interaction scenarios which you might not need initially. The grouping documentation
-| section contains plenty of real-world runnable examples that can get you started for your particular case.
+<note>
+Don't worry if this step feels a bit overwhelming - the  grouping feature is very powerful and
+supports complex interaction scenarios which you might not need initially. The grouping documentation
+section contains plenty of real-world runnable examples that can get you started for your particular case.
+</note>
 
 ## Customise the Theme Look
 

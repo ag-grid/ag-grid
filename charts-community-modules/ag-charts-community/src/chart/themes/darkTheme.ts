@@ -1,10 +1,25 @@
-import { ChartTheme } from './chartTheme';
 import { AgChartThemeOptions } from '../agChartOptions';
+import { ChartTheme, OVERRIDE_SERIES_LABEL_DEFAULTS } from './chartTheme';
+import { CHART_TYPES } from '../factory/chartTypes';
+import { getSeriesThemeTemplate } from '../factory/seriesTypes';
+
+export interface DarkThemeParams {
+    seriesLabelDefaults: any;
+}
 
 export class DarkTheme extends ChartTheme {
+    static fontColor = 'rgb(200, 200, 200)';
+    static mutedFontColor = 'rgb(150, 150, 150)';
+
+    static seriesLabelDefaults = {
+        label: {
+            color: DarkTheme.fontColor,
+        },
+    };
+
     protected getDefaults(): (typeof ChartTheme)['defaults'] {
-        const fontColor = 'rgb(200, 200, 200)';
-        const mutedFontColor = 'rgb(150, 150, 150)';
+        const fontColor = DarkTheme.fontColor;
+        const mutedFontColor = DarkTheme.mutedFontColor;
 
         const axisDefaults = {
             title: {
@@ -74,11 +89,24 @@ export class DarkTheme extends ChartTheme {
             },
         };
 
+        const getOverridesByType = (seriesTypes: string[]) => {
+            return seriesTypes.reduce((obj, seriesType) => {
+                const template = getSeriesThemeTemplate(seriesType);
+                if (template) {
+                    obj[seriesType] = this.templateTheme(template);
+                }
+                return obj;
+            }, {} as Record<string, any>);
+        };
+
         return this.mergeWithParentDefaults(super.getDefaults(), {
             cartesian: {
                 ...chartDefaults,
                 ...chartAxesDefaults,
                 series: {
+                    line: {
+                        ...seriesLabelDefaults,
+                    },
                     bar: {
                         ...seriesLabelDefaults,
                     },
@@ -88,6 +116,7 @@ export class DarkTheme extends ChartTheme {
                     histogram: {
                         ...seriesLabelDefaults,
                     },
+                    ...getOverridesByType(CHART_TYPES.cartesianTypes),
                 },
             },
             groupedCategory: {
@@ -103,6 +132,7 @@ export class DarkTheme extends ChartTheme {
                     histogram: {
                         ...seriesLabelDefaults,
                     },
+                    ...getOverridesByType(CHART_TYPES.cartesianTypes),
                 },
             },
             polar: {
@@ -122,6 +152,7 @@ export class DarkTheme extends ChartTheme {
                             color: fontColor,
                         },
                     },
+                    ...getOverridesByType(CHART_TYPES.polarTypes),
                 },
             },
             hierarchy: {
@@ -153,9 +184,18 @@ export class DarkTheme extends ChartTheme {
                             },
                         },
                     },
+                    ...getOverridesByType(CHART_TYPES.hierarchyTypes),
                 },
             },
         });
+    }
+
+    protected getTemplateParameters() {
+        const result = super.getTemplateParameters();
+
+        result.extensions.set(OVERRIDE_SERIES_LABEL_DEFAULTS, DarkTheme.seriesLabelDefaults.label);
+
+        return result;
     }
 
     constructor(options?: AgChartThemeOptions) {

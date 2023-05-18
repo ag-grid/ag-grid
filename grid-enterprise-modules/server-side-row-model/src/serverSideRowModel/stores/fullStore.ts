@@ -749,4 +749,10 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         return invalidRange ? [] : result;
     }
 
+    public getStoreBounds() {
+        return {
+            topPx: this.topPx,
+            heightPx: this.heightPx,
+        }
+    }
 }

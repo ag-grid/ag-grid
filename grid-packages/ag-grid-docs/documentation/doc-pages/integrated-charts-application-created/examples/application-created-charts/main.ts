@@ -71,11 +71,6 @@ const gridOptions: GridOptions = {
   },
   chartThemes: ['ag-pastel-dark'],
   chartThemeOverrides: {
-    common: {
-      legend: {
-        position: 'bottom',
-      },
-    },
     column: {
       axes: {
         number: {

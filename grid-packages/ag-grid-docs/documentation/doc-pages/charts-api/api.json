@@ -4,6 +4,9 @@
     "enabled": {
       "default": true
     },
+    "showArrow": {
+      "default": true
+    },
     "tracking": {
       "default": true
     },
@@ -218,12 +221,43 @@
       ]
     }
   },
-  "AgChartLegendOptions": {
+  "AgCartesianChartLegendOptions": {
     "enabled": {
-      "default": true
+      "description": "Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present."
     },
     "position": {
-      "default": "right",
+      "default": "bottom",
+      "options": ["top", "right", "bottom", "left"]
+    },
+    "spacing": {
+      "default": 20,
+      "min": 0,
+      "max": 40,
+      "unit": "px"
+    }
+  },
+  "AgPolarChartLegendOptions": {
+    "enabled": {
+      "description": "Whether or not to show the legend.",
+      "default": "true"
+    },
+    "position": {
+      "default": "bottom",
+      "options": ["top", "right", "bottom", "left"]
+    },
+    "spacing": {
+      "default": 20,
+      "min": 0,
+      "max": 40,
+      "unit": "px"
+    }
+  },
+  "AgHierarchyChartLegendOptions": {
+    "enabled": {
+      "description": "Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present."
+    },
+    "position": {
+      "default": "bottom",
       "options": ["top", "right", "bottom", "left"]
     },
     "spacing": {
@@ -451,7 +485,8 @@
         "ag-vivid-dark"
       ],
       "breakIndex": 5
-    }
+    },
+    "legend": "AgCartesianChartLegendOptions"
   },
   "AgPolarChartOptions": {
     "meta": {
@@ -498,7 +533,8 @@
         "ag-vivid-dark"
       ],
       "breakIndex": 5
-    }
+    },
+    "legend": "AgPolarChartLegendOptions"
   },
   "AgHierarchyChartOptions": {
     "meta": {
@@ -545,7 +581,8 @@
         "ag-vivid-dark"
       ],
       "breakIndex": 5
-    }
+    },
+    "legend": "AgHierarchyChartLegendOptions"
   },
   "AgNumberAxisOptions": {
     "nice": {
@@ -872,7 +909,7 @@
     },
     "aggregation": {
       "default": "sum",
-      "options": ["sum", "mean"]
+      "options": ["count", "sum", "mean"]
     },
     "lineDashOffset": {
       "default": 0,
@@ -977,9 +1014,6 @@
     "angleKey": {
       "isRequired": true
     },
-    "labelKey": {
-      "isRequired": true
-    },
     "lineDashOffset": {
       "default": 0,
       "min": 0,
@@ -1045,29 +1079,6 @@
       "min": 0,
       "max": 20,
       "unit": "px"
-    },
-    "label": {
-      "offset": {
-        "default": 3,
-        "min": 0,
-        "max": 20,
-        "unit": "px"
-      },
-      "minAngle": {
-        "default": 20,
-        "min": 0,
-        "max": 360,
-        "unit": "&deg;"
-      },
-      "formatter": {
-        "type": {
-          "parameters": {
-            "value": "string"
-          },
-          "returnType": "string"
-        },
-        "description": "Function used to turn 'labelKey' values into text to be displayed next to each pie sector. Be default the values are simply stringified."
-      }
     }
   },
   "AgPieSeriesSectorLabelOptions": {

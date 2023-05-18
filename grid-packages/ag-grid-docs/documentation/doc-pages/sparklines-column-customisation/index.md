@@ -104,8 +104,9 @@ Here is the result of the configuration shown in the above snippet.
     <image-caption src="resources/custom-highlighted-stroke.png" alt="Stroke customisation for highlighted state" width="250px" constrained="true">Custom highlighted stroke</image-caption>
 </div>
 
-[[note]]
-| If `strokeWidth` is set to a value greater than `1`, it is recommended to set the axis line `strokeWidth` to the same value in order to preserve the alignment of the columns with the axis line.
+<note>
+If `strokeWidth` is set to a value greater than `1`, it is recommended to set the axis line `strokeWidth` to the same value in order to preserve the alignment of the columns with the axis line.
+</note>
 
 ## Column Padding Options
 
@@ -234,8 +235,9 @@ Label `placement` options include `insideBase`, `center`, `insideEnd` and `outsi
     <image-caption src="resources/custom-label-placement-outsideEnd.png" alt="Column label placement default" width="250px" constrained="true">outsideEnd</image-caption>
 </div>
 
-[[note]]
-| When configuring labels with placement:`outsideEnd`, it is recommended to add some padding to the sparkline using the `padding` options in order to prevent the labels from being clipped.
+<note>
+When configuring labels with placement:`outsideEnd`, it is recommended to add some padding to the sparkline using the `padding` options in order to prevent the labels from being clipped.
+</note>
 
 ## Axis Line Options
 
@@ -258,8 +260,9 @@ sparklineOptions: {
     <image-caption src="resources/custom-axis.png" alt="Axis line customisation" width="250px" constrained="true">Custom axis line</image-caption>
 </div>
 
-[[note]]
-| It's possible to remove the axis line entirely by setting the axis `strokeWidth` to `0`.
+<note>
+It's possible to remove the axis line entirely by setting the axis `strokeWidth` to `0`.
+</note>
 
 ## Sparkline Padding Options
 

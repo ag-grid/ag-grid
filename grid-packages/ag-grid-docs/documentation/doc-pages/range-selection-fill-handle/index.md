@@ -22,8 +22,9 @@ const gridOptions = {
 }
 </snippet>
 
-[[note]]
-| It's important to note that if you enable both `enableFillHandle` and `enableRangeHandle`, the Fill Handle will take precedence.
+<note>
+It's important to note that if you enable both `enableFillHandle` and `enableRangeHandle`, the Fill Handle will take precedence.
+</note>
 
 ## Default Fill Handle
 The default Fill Handle behaviour will be as close as possible to other spreadsheet applications. Note the following:
@@ -62,17 +63,17 @@ By the default, the Fill Handle can be dragged horizontally or vertically. If dr
 <api-documentation source='grid-api/api.json' section='selection' names='["setFillHandleDirection"]'></api-documentation>
 
 <snippet>
-const gridOptions = {
-    columnDefs: [
-        { field: 'country' },
-        { field: 'year' },
-        { field: 'sport' },
-        { field: 'total' }
-    ],
-    enableRangeSelection: true,
-    enableFillHandle: true,
-    fillHandleDirection: 'x' // Fill Handle can only be dragged horizontally
-}
+| const gridOptions = {
+|     columnDefs: [
+|         { field: 'country' },
+|         { field: 'year' },
+|         { field: 'sport' },
+|         { field: 'total' }
+|     ],
+|     enableRangeSelection: true,
+|     enableFillHandle: true,
+|     fillHandleDirection: 'x' // Fill Handle can only be dragged horizontally
+| }
 </snippet>
 
 <grid-example title='Fill Handle - Direction' name='fill-handle-direction' type='generated' options='{ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "range"] }'></grid-example>
@@ -102,8 +103,9 @@ const gridOptions = {
 ### FillOperationParams
 <interface-documentation interfaceName='FillOperationParams'></interface-documentation>
 
-[[note]]
-| If a `fillOperation` callback is provided, the fill handle will always run it. If the current values are not relevant to the `fillOperation` function that was provided, `false` should be returned to allow the grid to process the values as it normally would.
+<note>
+If a `fillOperation` callback is provided, the fill handle will always run it. If the current values are not relevant to the `fillOperation` function that was provided, `false` should be returned to allow the grid to process the values as it normally would.
+</note>
 
 The example below will use the custom `fillOperation` for the **Day of the week** column, but it will use the default operation for any other column.
 
@@ -113,13 +115,15 @@ The example below will use the custom `fillOperation` for the **Day of the week*
 
 The example below will use the custom `fillOperation` to prevent values in the **Country** column from being altered by the Fill Handle.
 
-[[note]]
-| When the `fillOperation` function returns `params.currentCellValue` that value is not added to the `params.values` list. This allows users to skip any cells in the Fill Handle operation.
+<note>
+When the `fillOperation` function returns `params.currentCellValue` that value is not added to the `params.values` list. This allows users to skip any cells in the Fill Handle operation.
+</note>
 
 <grid-example title='Skipping Columns' name='skipping-columns' type='generated' options='{ "enterprise": true, "exampleHeight": 560, "modules": ["clientside", "range"] }'></grid-example>
 
-[[warning]]
+<warning>
 | Non editable cells will **not** be changed by the Fill Handle, so there is no need to add custom logic to skip columns that aren't editable.
+</warning>
 
 ## Read Only Edit
 

@@ -85,7 +85,7 @@ The following example demonstrates the results of the tooltip renderer above. No
 ### Accessing Row Data
 
 It is possible to display data from other columns of the current row in the sparkline tooltip.
-This access is provideded by the input parameter supplied to the [Tooltip Renderer](/sparklines-tooltips/#tooltip-renderer), which includes a `context` object with a `data` property containing the row data.
+This access is provided by the input parameter supplied to the [Tooltip Renderer](/sparklines-tooltips/#tooltip-renderer), which includes a `context` object with a `data` property containing the row data.
 
 The following snippet shows how values from the **Symbol** column can be shown in the tooltip title:
 
@@ -104,7 +104,7 @@ The following example demonstrates the above tooltip renderer.
 
 ## Tooltip Styles
 
-The [renderer](/sparklines-tooltips/#tooltip-renderer) function can return style attributes including `color`, `backgroundColor` and `opacity` for the tooltip as shown below:
+The [Tooltip Renderer](/sparklines-tooltips/#tooltip-renderer) function can return style attributes including `color`, `backgroundColor` and `opacity` for the tooltip as shown below:
 
 ```js
 const tooltipRenderer = (params) => {
@@ -154,7 +154,6 @@ sparklineOptions: {
 }
 ```
 
-
 Here's a live example to demonstrate the configuration above.
 
 - Note that the tooltip is now positioned underneath the mouse cursor as `xOffset` is set to `0`px and `yOffset` to `20`px.
@@ -164,7 +163,7 @@ Here's a live example to demonstrate the configuration above.
 
 ## Custom Tooltip
 
-Instead of having the tooltip [renderer](/sparklines-tooltips/#tooltip-renderer) return an object with title and content strings to be used in the default tooltip template, you can return a string with completely custom markup that will override the template.
+Instead of having the [Tooltip Renderer](/sparklines-tooltips/#tooltip-renderer) return an object with title and content strings to be used in the default tooltip template, you can return a string with completely custom markup that will override the template.
 
 We could use the following tooltip renderer to return custom HTML for the sparkline tooltip:
 

@@ -103,7 +103,7 @@ export class ResizeFeature extends BeanStub {
     private onResizing(finished: boolean, resizeAmount: number): void {
         const resizeAmountNormalised = this.normaliseResizeAmount(resizeAmount);
         const columnWidths = [{ key: this.column, newWidth: this.resizeStartWidth + resizeAmountNormalised }];
-        this.columnModel.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, "uiColumnDragged");
+        this.columnModel.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, "uiColumnResized");
 
         if (finished) {
             this.comp.addOrRemoveCssClass('ag-column-resizing', false);

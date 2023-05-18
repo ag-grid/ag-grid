@@ -319,7 +319,7 @@ const Changelog = ({ location }) => {
                         <h1>AG Grid Changelog</h1>
 
                         <section className={styles.header}>
-                            <Alert type="info">
+                            <Alert type="idea">
                                 The AG Grid Changelog lists the feature requests implemented and defects resolved across
                                 AG Grid releases. If you can’t find the item you’re looking for, check the{' '}
                                 <a href="https://www.ag-grid.com/ag-grid-pipeline/">Pipeline</a> for items in our

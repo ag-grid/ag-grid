@@ -86,7 +86,7 @@ function GridExample() {
     return (
         <AgGridReact
             className="ag-theme-alpine"
-            animateRows="true"
+            animateRows={true}
             columnDefs={columnDefs}
             defaultColDef={defaultColDef}
             rowData={rowData}

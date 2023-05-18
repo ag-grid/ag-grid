@@ -9,6 +9,7 @@ export type AxisLabelLayout = {
     rotation: number;
     fractionDigits: number;
     padding: number;
+    format?: string;
 };
 
 export interface AxisLayout {
@@ -21,7 +22,8 @@ export interface AxisLayout {
 
 export interface LayoutCompleteEvent {
     type: 'layout-complete';
-    series: { rect: BBox; paddedRect: BBox; visible: boolean };
+    chart: { width: number; height: number };
+    series: { rect: BBox; paddedRect: BBox; hoverRect: BBox; visible: boolean };
     axes?: (AxisLayout & {
         id: string;
     })[];

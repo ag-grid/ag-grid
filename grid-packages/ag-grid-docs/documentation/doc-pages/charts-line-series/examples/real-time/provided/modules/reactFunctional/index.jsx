@@ -42,9 +42,6 @@ const ChartExample = () => {
         title: {
             text: 'Core Voltage',
         },
-        legend: {
-            enabled: false,
-        },
     });
 
 

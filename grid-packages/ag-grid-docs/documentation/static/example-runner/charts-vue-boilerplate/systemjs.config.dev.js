@@ -44,6 +44,10 @@
                 main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
+            'ag-charts-enterprise': {
+                main: './dist/cjs/es5/main.js',
+                defaultExtension: 'js'
+            },
         },
         meta: {
             '*.js': {
@@ -57,3 +61,7 @@
         }
     });
 })(this);
+
+window.addEventListener('error', e => {
+    console.error('ERROR', e.message, e.filename)
+});

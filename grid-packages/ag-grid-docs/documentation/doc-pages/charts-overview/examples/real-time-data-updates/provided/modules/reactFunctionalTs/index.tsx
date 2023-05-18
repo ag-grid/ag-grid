@@ -45,9 +45,6 @@ const ChartExample = () => {
                 max: 100,
             },
         ],
-        legend: {
-            position: "bottom",
-        },
     });
 
 

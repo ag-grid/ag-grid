@@ -568,9 +568,7 @@
         },
         "setSideBarVisible": {},
         "isSideBarVisible": {},
-        "setSideBarPosition": {
-            "default": "right"
-        },
+        "setSideBarPosition": {},
         "openToolPanel": {
             "more": {
                 "name": "Tool Panel",

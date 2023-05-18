@@ -28,14 +28,14 @@ export class ToolPanelFilterComp extends Component {
     @RefSelector('eFilterToolPanelHeader') private eFilterToolPanelHeader: HTMLElement;
     @RefSelector('eFilterName') private eFilterName: HTMLElement;
     @RefSelector('agFilterToolPanelBody') private agFilterToolPanelBody: HTMLElement;
-    @RefSelector('eFilterIcon') private eFilterIcon: HTMLElement;
-    @RefSelector('eExpand') private eExpand: HTMLElement;
+    @RefSelector('eFilterIcon') private eFilterIcon: Element;
+    @RefSelector('eExpand') private eExpand: Element;
 
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('columnModel') private columnModel: ColumnModel;
 
-    private eExpandChecked: HTMLElement;
-    private eExpandUnchecked: HTMLElement;
+    private eExpandChecked: Element;
+    private eExpandUnchecked: Element;
     private hideHeader: boolean;
     private column: Column;
     private expanded: boolean = false;
@@ -92,7 +92,7 @@ export class ToolPanelFilterComp extends Component {
         this.eFilterToolPanelHeader.classList.add(cssClass);
     }
 
-    private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
+    private addInIcon(iconName: string, eParent: Element, column: Column): void {
         if (eParent == null) { return; }
 
         const eIcon = _.createIconNoSpan(iconName, this.gridOptionsService, column)!;

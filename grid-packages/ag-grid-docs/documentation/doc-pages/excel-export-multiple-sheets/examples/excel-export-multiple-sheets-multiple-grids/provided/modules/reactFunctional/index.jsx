@@ -68,7 +68,6 @@ const defaultColDef = {
 
 const GridExample = () => {
     const [leftApi, setLeftApi] = useState(null);
-    const [leftColumnApi, setLeftColumnApi] = useState(null);
     const [rightApi, setRightApi] = useState(null);
     const [rawData, setRawData] = useState([]);
     const [leftRowData, setLeftRowData] = useState(null);
@@ -143,7 +142,6 @@ const GridExample = () => {
     const onGridReady = (params, side) => {
         if (side === 0) {
             setLeftApi(params.api);
-            setLeftColumnApi(params.columnApi);
         }
 
         if (side === 1) {
@@ -167,7 +165,7 @@ const GridExample = () => {
             <div className="panel-heading">{id === 0 ? 'Athletes' : 'Selected Athletes'}</div>
             <div className="panel-body">
                 <AgGridReact
-                    style={{ height: '100%;' }}
+                    style={{ height: '100%' }}
                     defaultColDef={defaultColDef}
                     getRowId={getRowId}
                     rowDragManaged={true}
@@ -188,7 +186,7 @@ const GridExample = () => {
     return (
         <div className="top-container">
             {getTopToolBar()}
-            <div class="grid-wrapper ag-theme-alpine">
+            <div className="grid-wrapper ag-theme-alpine">
                 {getGridWrapper(0)}
                 {getGridWrapper(1)}
             </div>

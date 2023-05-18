@@ -41,8 +41,7 @@ import {
     TabToNextCellParams,
     TabToNextHeaderParams
 } from "./interfaces/iCallbackParams";
-import { RowNode } from "./entities/rowNode";
-import { RowPinnedType, IRowNode } from "./interfaces/iRowNode";
+import { IRowNode, RowPinnedType } from "./interfaces/iRowNode";
 import { AgEvent, ColumnEventType, SelectionEventSourceType } from "./events";
 import { EventService } from "./eventService";
 import { FilterManager } from "./filter/filterManager";
@@ -57,11 +56,17 @@ import { CsvExportParams, ProcessCellForExportParams } from "./interfaces/export
 import { IAggFuncService } from "./interfaces/iAggFuncService";
 import { ICellEditor } from "./interfaces/iCellEditor";
 import {
-    ChartDownloadParams, ChartModel, CloseChartToolPanelParams, GetChartImageDataUrlParams,
-    IChartService, OpenChartToolPanelParams,
-    CreateCrossFilterChartParams, CreatePivotChartParams, CreateRangeChartParams,
+    ChartDownloadParams,
+    ChartModel,
+    CloseChartToolPanelParams,
+    CreateCrossFilterChartParams,
+    CreatePivotChartParams,
+    CreateRangeChartParams,
+    GetChartImageDataUrlParams,
+    IChartService,
+    OpenChartToolPanelParams,
 } from './interfaces/IChartService';
-import { ClientSideRowModelSteps, IClientSideRowModel, ClientSideRowModelStep } from "./interfaces/iClientSideRowModel";
+import { ClientSideRowModelStep, ClientSideRowModelSteps, IClientSideRowModel } from "./interfaces/iClientSideRowModel";
 import { IClipboardCopyParams, IClipboardCopyRowsParams, IClipboardService } from "./interfaces/iClipboardService";
 import { IColumnToolPanel } from "./interfaces/iColumnToolPanel";
 import { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
@@ -102,7 +107,14 @@ import { PaginationProxy } from "./pagination/paginationProxy";
 import { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
 import { ICellRenderer } from "./rendering/cellRenderers/iCellRenderer";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
-import { FlashCellsParams, GetCellEditorInstancesParams, GetCellRendererInstancesParams, RedrawRowsParams, RefreshCellsParams, RowRenderer } from "./rendering/rowRenderer";
+import {
+    FlashCellsParams,
+    GetCellEditorInstancesParams,
+    GetCellRendererInstancesParams,
+    RedrawRowsParams,
+    RefreshCellsParams,
+    RowRenderer
+} from "./rendering/rowRenderer";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
 import { SortController } from "./sortController";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
@@ -112,11 +124,12 @@ import { ValueCache } from "./valueService/valueCache";
 import { ValueService } from "./valueService/valueService";
 import { ISelectionService } from "./interfaces/iSelectionService";
 import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./interfaces/iServerSideSelection";
+import { DataTypeDefinition } from "./entities/dataType";
 
 export interface DetailGridInfo {
     /**
-     * Id of the detail grid, the format is `detail_<ROW_ID>`,
-     * where ROW_ID is the `id` of the parent row.
+     * Id of the detail grid, the format is `detail_{ROW-ID}`,
+     * where `ROW-ID` is the `id` of the parent row.
      */
     id: string;
     /** Grid api of the detail grid. */
@@ -692,7 +705,7 @@ export class GridApi<TData = any> {
 
     /**
      * Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAll'`
      */
     public selectAll(source: SelectionEventSourceType = 'apiSelectAll') {
         this.selectionService.selectAllRowNodes({ source });
@@ -700,7 +713,7 @@ export class GridApi<TData = any> {
 
     /**
      * Clear all row selections, regardless of filtering.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAll'`
      */
     public deselectAll(source: SelectionEventSourceType = 'apiSelectAll') {
         this.selectionService.deselectAllRowNodes({ source });
@@ -708,7 +721,7 @@ export class GridApi<TData = any> {
 
     /**
      * Select all filtered rows.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllFiltered'`
      */
     public selectAllFiltered(source: SelectionEventSourceType = 'apiSelectAllFiltered') {
         this.selectionService.selectAllRowNodes({ source, justFiltered: true });
@@ -716,7 +729,7 @@ export class GridApi<TData = any> {
 
     /**
      * Clear all filtered selections.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllFiltered'`
      */
     public deselectAllFiltered(source: SelectionEventSourceType = 'apiSelectAllFiltered') {
         this.selectionService.deselectAllRowNodes({ source, justFiltered: true });
@@ -754,7 +767,7 @@ export class GridApi<TData = any> {
 
     /**
      * Select all rows on the current page.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllCurrentPage'`
      */
     public selectAllOnCurrentPage(source: SelectionEventSourceType = 'apiSelectAllCurrentPage') {
         this.selectionService.selectAllRowNodes({ source, justCurrentPage: true });
@@ -762,7 +775,7 @@ export class GridApi<TData = any> {
 
     /**
      * Clear all filtered on the current page.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllCurrentPage'`
      */
     public deselectAllOnCurrentPage(source: SelectionEventSourceType = 'apiSelectAllCurrentPage') {
         this.selectionService.deselectAllRowNodes({ source, justCurrentPage: true });
@@ -949,7 +962,7 @@ export class GridApi<TData = any> {
         return unwrapUserComp(comp) as any;
     }
 
-    public getColumnDef(key: string | Column): ColDef<TData> | null {
+    public getColumnDef<TValue = any>(key: string | Column<TValue>): ColDef<TData, TValue> | null {
         const column = this.columnModel.getPrimaryColumn(key);
         if (column) {
             return column.getColDef();
@@ -1044,6 +1057,10 @@ export class GridApi<TData = any> {
      * Defaults to `normal` if no domLayout provided.
      */
     public setDomLayout(domLayout?: DomLayoutType) {
+        if (!this.clientSideRowModel && domLayout === 'autoHeight' && !this.gridOptionsService.is('pagination')) {
+            console.error(`AG Grid: domLayout can only be set to 'autoHeight' when using the client side row model or when using pagination.`);
+            return;
+        }
         this.gridOptionsService.set('domLayout', domLayout);
     }
 
@@ -1388,11 +1405,11 @@ export class GridApi<TData = any> {
         this.gridOptionsService.set('deltaSort', enable);
     }
     /**
-     * Sets the `rowCount` and `lastRowIndexKnown` properties.
-     * The second parameter, `lastRowIndexKnown`, is optional and if left out, only `rowCount` is set.
+     * Sets the `rowCount` and `maxRowFound` properties.
+     * The second parameter, `maxRowFound`, is optional and if left out, only `rowCount` is set.
      * Set `rowCount` to adjust the height of the vertical scroll.
-     * Set `lastRowIndexKnown` to enable / disable searching for more rows.
-     * Use this method if you add or remove rows into the dataset and need to reset the number of rows or put the data back into 'look for data' mode.
+     * Set `maxRowFound` to enable / disable searching for more rows.
+     * Use this method if you add or remove rows into the dataset and need to reset the number of rows or instruct the grid that the entire row count is no longer known.
      */
     public setRowCount(rowCount: number, maxRowFound?: boolean): void {
         if (this.serverSideRowModel) {
@@ -1425,7 +1442,7 @@ export class GridApi<TData = any> {
      * Gets the value for a column for a particular `rowNode` (row).
      * This is useful if you want the raw value of a cell e.g. if implementing your own CSV export.
      */
-    public getValue(colKey: string | Column, rowNode: IRowNode): any {
+    public getValue<TValue = any>(colKey: string | Column<TValue>, rowNode: IRowNode): TValue | null | undefined {
         let column = this.columnModel.getPrimaryColumn(colKey);
         if (missing(column)) {
             column = this.columnModel.getGridColumn(colKey);
@@ -1815,9 +1832,6 @@ export class GridApi<TData = any> {
 
         const res: RowNodeTransaction<TData> | null = this.clientSideRowModel.updateRowData(rowDataTransaction);
 
-        // refresh all the full width rows
-        this.rowRenderer.refreshFullWidthRows(res!.update as RowNode[]);
-
         // do change detection for all present cells
         if (!this.gridOptionsService.is('suppressChangeDetection')) {
             this.rowRenderer.refreshCells();
@@ -1878,9 +1892,10 @@ export class GridApi<TData = any> {
     }
 
     /**
-     * Refresh a server-side level.
+     * Refresh a server-side store level.
      * If you pass no parameters, then the top level store is refreshed.
      * To refresh a child level, pass in the string of keys to get to the desired level.
+     * Once the store refresh is complete, the storeRefreshed event is fired.
      */
     public refreshServerSide(params?: RefreshServerSideParams): void {
         if (!this.serverSideRowModel) {
@@ -1956,12 +1971,23 @@ export class GridApi<TData = any> {
         return this.rowModel.getRowCount();
     }
 
+    /** Resets the data type definitions. This will update the columns in the grid. */
+    public setDataTypeDefinitions(dataTypeDefinitions: {
+        [cellDataType: string]: DataTypeDefinition<TData>;
+    }): void {
+        this.gridOptionsService.set('dataTypeDefinitions', dataTypeDefinitions);
+    }
+
     /**
      * Set whether the grid paginates the data or not.
      *  - `true` to enable pagination
      *  - `false` to disable pagination
      */
     public setPagination(value: boolean) {
+        if (!this.clientSideRowModel && this.gridOptionsService.get('domLayout') === 'autoHeight' && !value) {
+            console.error(`AG Grid: Pagination cannot be disabled when using domLayout set to 'autoHeight' unless using the client-side row model.`);
+            return;
+        }
         this.gridOptionsService.set('pagination', value);
     }
     /**

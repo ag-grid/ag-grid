@@ -1,0 +1,5 @@
+dist/
+.husky/
+
+# Copied from elsewhere, we shouldn't be forcing formatting.
+src/license/

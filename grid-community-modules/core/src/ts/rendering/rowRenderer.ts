@@ -140,11 +140,10 @@ export class RowRenderer extends BeanStub {
         this.addManagedPropertyListener('rowClass', this.redrawRows.bind(this));
 
         if (this.gridOptionsService.is('groupRowsSticky')) {
-            if (this.rowModel.getType() != 'clientSide') {
-                doOnce(() => console.warn('AG Grid: The feature Sticky Row Groups only works with the Client Side Row Model'), 'rowRenderer.stickyWorksWithCsrmOnly');
-            } else if (this.gridOptionsService.isTreeData()) {
-                doOnce(() => console.warn('AG Grid: The feature Sticky Row Groups does not work with Tree Data.'), 'rowRenderer.stickyDoesNotWorkWithTreeData');
-            }  else {
+            const rowModelType = this.rowModel.getType();
+            if (rowModelType != 'clientSide' && rowModelType != 'serverSide') {
+                doOnce(() => console.warn('AG Grid: The feature Sticky Row Groups only works with the Client Side or Server Side Row Model'), 'rowRenderer.stickyWorksWithCsrmOnly');
+            } else {
                 this.stickyRowFeature = this.createManagedBean(new StickyRowFeature(
                     this.createRowCon.bind(this),
                     this.destroyRowCtrls.bind(this)
@@ -869,7 +868,7 @@ export class RowRenderer extends BeanStub {
         this.getLockOnRefresh();
         this.redraw(null, false, true);
         this.releaseLockOnRefresh();
-        this.dispatchDisplayedRowsChanged();
+        this.dispatchDisplayedRowsChanged(true);
 
         if (cellFocused != null) {
             const newFocusedCell = this.getCellToRestoreFocusToAfterRefresh();
@@ -973,8 +972,8 @@ export class RowRenderer extends BeanStub {
         this.updateAllRowCtrls();
     }
 
-    private dispatchDisplayedRowsChanged(): void {
-        const event: WithoutGridCommon<DisplayedRowsChangedEvent> = { type: Events.EVENT_DISPLAYED_ROWS_CHANGED };
+    private dispatchDisplayedRowsChanged(afterScroll: boolean = false): void {
+        const event: WithoutGridCommon<DisplayedRowsChangedEvent> = { type: Events.EVENT_DISPLAYED_ROWS_CHANGED, afterScroll };
         this.eventService.dispatchEvent(event);
     }
 
@@ -1012,7 +1011,8 @@ export class RowRenderer extends BeanStub {
 
     public getFullWidthRowCtrls(rowNodes?: IRowNode[]): RowCtrl[] {
         const rowNodesMap = this.mapRowNodes(rowNodes);
-        return getAllValuesInObject(this.rowCtrlsByRowIndex).filter((rowCtrl: RowCtrl) => {
+        
+        return this.getAllRowCtrls().filter((rowCtrl: RowCtrl) => {
             // include just full width
             if (!rowCtrl.isFullWidth()) { return false; }
 
@@ -1024,38 +1024,22 @@ export class RowRenderer extends BeanStub {
         });
     }
 
-    public refreshFullWidthRows(rowNodesToRefresh?: RowNode[]): void {
-        const rowsToRemove: string[] = [];
-
-        const selectivelyRefreshing = !!rowNodesToRefresh;
-        const idsToRefresh: { [id: string]: boolean; } | undefined = selectivelyRefreshing ? {} : undefined;
-
-        if (selectivelyRefreshing && idsToRefresh) {
-            rowNodesToRefresh!.forEach(r => idsToRefresh[r.id!] = true);
+    public refreshFullWidthRow(rowNode: RowNode) {
+        const fullWidthCtrl = this.getFullWidthRowCtrls().find(rowCtrl => rowCtrl.getRowNode() === rowNode);
+        if (!fullWidthCtrl) {
+            return;
         }
 
-        this.getFullWidthRowCtrls().forEach(fullWidthRowCtrl => {
-            const rowNode = fullWidthRowCtrl.getRowNode();
+        const refreshed = fullWidthCtrl.refreshFullWidth();
+        if (refreshed) {
+            return;
+        }
 
-            if (selectivelyRefreshing && idsToRefresh) {
-                // we refresh if a) this node is present or b) this parents nodes is present. checking parent
-                // node is important for master/detail, as we want detail to refresh on changes to parent node.
-                // it's also possible, if user is provider their own fullWidth, that details panels contain
-                // some info on the parent, eg if in tree data and child row shows some data from parent row also.
-                const parentId = (rowNode.level > 0 && rowNode.parent) ? rowNode.parent.id : undefined;
-                const skipThisNode = !idsToRefresh[rowNode.id!] && !idsToRefresh[parentId!];
-                if (skipThisNode) { return; }
-            }
-
-            const fullWidthRowsRefreshed = fullWidthRowCtrl.refreshFullWidth();
-            if (!fullWidthRowsRefreshed) {
-                const rowIndex = fullWidthRowCtrl.getRowNode().rowIndex;
-
-                rowsToRemove.push(rowIndex!.toString());
-            }
-        });
-
-        this.removeRowCtrls(rowsToRemove);
+        if (rowNode.sticky) {
+            this.stickyRowFeature.refreshStickyNode(rowNode);
+        } else {
+            this.removeRowCtrls([rowNode.rowIndex!]);
+        }
         this.redrawAfterScroll();
     }
 

@@ -44,6 +44,10 @@
   "PixelSize": { "meta": { "isTypeAlias": true }, "type": "number" },
   "Ratio": { "meta": { "isTypeAlias": true }, "type": "number" },
   "DataValue": { "meta": { "isTypeAlias": true }, "type": "any" },
+  "TextWrap": {
+    "meta": { "isTypeAlias": true },
+    "type": "'never' | 'always' | 'hyphenate' | 'on-space'"
+  },
   "AgChartInteractionRange": {
     "meta": { "isTypeAlias": true },
     "type": "PixelSize | 'exact' | 'nearest'"
@@ -140,6 +144,7 @@
     "type": {
       "axes?": "AgCartesianAxesTheme",
       "series?": "S",
+      "legend?": "AgCartesianChartLegendOptions",
       "navigator?": "AgNavigatorOptions",
       "data?": "any[]",
       "container?": "HTMLElement | null",
@@ -153,7 +158,6 @@
       "subtitle?": "AgChartSubtitleOptions",
       "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
-      "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
@@ -162,6 +166,7 @@
     "docs": {
       "axes?": "/** Axis configurations. */",
       "series?": "/** Series configurations. */",
+      "legend?": "/** Configuration for the chart legend. */",
       "navigator?": "/** Configuration for the chart navigator. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
@@ -175,7 +180,6 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
-      "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -186,6 +190,7 @@
     "meta": { "typeParams": ["S = AgPolarSeriesTheme"] },
     "type": {
       "series?": "S",
+      "legend?": "AgPolarChartLegendOptions",
       "data?": "any[]",
       "container?": "HTMLElement | null",
       "width?": "PixelSize",
@@ -198,7 +203,6 @@
       "subtitle?": "AgChartSubtitleOptions",
       "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
-      "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
@@ -206,6 +210,7 @@
     },
     "docs": {
       "series?": "/** Series configurations. */",
+      "legend?": "/** Configuration for the chart legend. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
       "width?": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
@@ -218,7 +223,6 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
-      "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -229,6 +233,7 @@
     "meta": { "typeParams": ["S = AgHierarchySeriesTheme"] },
     "type": {
       "series?": "S",
+      "legend?": "AgHierarchyChartLegendOptions",
       "data?": "any[]",
       "container?": "HTMLElement | null",
       "width?": "PixelSize",
@@ -241,7 +246,6 @@
       "subtitle?": "AgChartSubtitleOptions",
       "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
-      "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
@@ -249,6 +253,7 @@
     },
     "docs": {
       "series?": "/** Series configurations. */",
+      "legend?": "/** Configuration for the chart legend. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
       "width?": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
@@ -261,7 +266,6 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
-      "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -520,21 +524,18 @@
       "innerLabels?": "AgDoughnutInnerLabelThemeOptions",
       "type?": "'pie'",
       "title?": "AgPieTitleOptions",
-      "label?": "AgPieSeriesLabelOptions<DatumType>",
       "calloutLabel?": "AgPieSeriesLabelOptions<DatumType>",
       "sectorLabel?": "AgPieSeriesSectorLabelOptions<DatumType>",
-      "callout?": "AgPieSeriesCalloutOptions",
       "calloutLine?": "AgPieSeriesCalloutOptions",
       "angleKey?": "string",
       "angleName?": "string",
       "radiusKey?": "string",
       "radiusName?": "string",
-      "labelKey?": "string",
-      "labelName?": "string",
       "calloutLabelKey?": "string",
       "calloutLabelName?": "string",
       "sectorLabelKey?": "string",
       "sectorLabelName?": "string",
+      "legendItemKey?": "string",
       "fills?": "CssColor[]",
       "strokes?": "CssColor[]",
       "fillOpacity?": "Opacity",
@@ -564,21 +565,18 @@
     },
     "docs": {
       "title?": "/** Configuration for the series title. */",
-      "label?": "/** Configuration for the labels used outside of the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabel instead.\n     */",
       "calloutLabel?": "/** Configuration for the labels used outside of the sectors. */",
       "sectorLabel?": "/** Configuration for the labels used inside the sectors. */",
-      "callout?": "/** Configuration for the callout lines used with the labels for the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLine instead.\n     */",
       "calloutLine?": "/** Configuration for the callout lines used with the labels for the sectors. */",
       "angleKey?": "/** The key to use to retrieve angle values from the data. */",
       "angleName?": "/** A human-readable description of the angle values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "radiusKey?": "/** The key to use to retrieve radius values from the data. */",
       "radiusName?": "/** A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
-      "labelKey?": "/** The key to use to retrieve label values from the data.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
-      "labelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
       "calloutLabelKey?": "/** The key to use to retrieve label values from the data. */",
       "calloutLabelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "sectorLabelKey?": "/** The key to use to retrieve sector label values from the data. */",
       "sectorLabelName?": "/** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "legendItemKey?": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. */",
       "fills?": "/** The colours to cycle through for the fills of the sectors. */",
       "strokes?": "/** The colours to cycle through for the strokes of the sectors. */",
       "fillOpacity?": "/** The opacity of the fill for the sectors. */",
@@ -654,7 +652,7 @@
     "meta": {},
     "type": { "noData?": "AgChartOverlayOptions" },
     "docs": {
-      "noData?": "/** An overlay to be displayed when there is no data, */"
+      "noData?": "/** An overlay to be displayed when there is no data. */"
     }
   },
   "AgChartLabelOptions": {
@@ -703,7 +701,10 @@
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
       "color?": "CssColor",
-      "spacing?": "number"
+      "spacing?": "number",
+      "maxWidth?": "PixelSize",
+      "maxHeight?": "PixelSize",
+      "wrapping?": "TextWrap"
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",
@@ -713,7 +714,10 @@
       "fontSize?": "/** The font size in pixels to use for the text. */",
       "fontFamily?": "/** The font family to use for the text. */",
       "color?": "/** The colour to use for the text. */",
-      "spacing?": "/** Spacing added to help position the text. */"
+      "spacing?": "/** Spacing added to help position the text. */",
+      "maxWidth?": "/** Used to constrain the width of the title. */",
+      "maxHeight?": "/** Used to constrain the height of the title. */",
+      "wrapping?": "/** Text wrapping strategy for long texts.\n     * `'always'` will break the words that are longer than `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but insert the hyphens (`-`) into the word breaks.\n     * `'on-space'` will break the text on white spaces and tabulation symbols only. If some long word can't fit the `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     */"
     }
   },
   "AgChartSubtitleOptions": {
@@ -726,7 +730,10 @@
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
       "color?": "CssColor",
-      "spacing?": "number"
+      "spacing?": "number",
+      "maxWidth?": "PixelSize",
+      "maxHeight?": "PixelSize",
+      "wrapping?": "TextWrap"
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",
@@ -736,7 +743,10 @@
       "fontSize?": "/** The font size in pixels to use for the text. */",
       "fontFamily?": "/** The font family to use for the text. */",
       "color?": "/** The colour to use for the text. */",
-      "spacing?": "/** Spacing added to help position the text. */"
+      "spacing?": "/** Spacing added to help position the text. */",
+      "maxWidth?": "/** Used to constrain the width of the title. */",
+      "maxHeight?": "/** Used to constrain the height of the title. */",
+      "wrapping?": "/** Text wrapping strategy for long texts.\n     * `'always'` will break the words that are longer than `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but insert the hyphens (`-`) into the word breaks.\n     * `'on-space'` will break the text on white spaces and tabulation symbols only. If some long word can't fit the `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     */"
     }
   },
   "AgChartFooterOptions": {
@@ -749,7 +759,10 @@
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
       "color?": "CssColor",
-      "spacing?": "number"
+      "spacing?": "number",
+      "maxWidth?": "PixelSize",
+      "maxHeight?": "PixelSize",
+      "wrapping?": "TextWrap"
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",
@@ -759,7 +772,10 @@
       "fontSize?": "/** The font size in pixels to use for the text. */",
       "fontFamily?": "/** The font family to use for the text. */",
       "color?": "/** The colour to use for the text. */",
-      "spacing?": "/** Spacing added to help position the text. */"
+      "spacing?": "/** Spacing added to help position the text. */",
+      "maxWidth?": "/** Used to constrain the width of the title. */",
+      "maxHeight?": "/** Used to constrain the height of the title. */",
+      "wrapping?": "/** Text wrapping strategy for long texts.\n     * `'always'` will break the words that are longer than `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but insert the hyphens (`-`) into the word breaks.\n     * `'on-space'` will break the text on white spaces and tabulation symbols only. If some long word can't fit the `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     */"
     }
   },
   "AgAxisCaptionOptions": {
@@ -867,15 +883,7 @@
   },
   "AgChartLegendLabelFormatterParams": {
     "meta": {},
-    "type": {
-      "id": "string",
-      "seriesId": "string",
-      "itemId": "any",
-      "value": "string"
-    },
-    "docs": {
-      "id": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId. */"
-    }
+    "type": { "seriesId": "string", "itemId": "any", "value": "string" }
   },
   "AgChartLegendLabelOptions": {
     "meta": {},
@@ -970,7 +978,31 @@
       "legendItemDoubleClick?": "/** The listener to call when a legend item is double clicked. */"
     }
   },
-  "AgChartLegendOptions": {
+  "AgChartBaseLegendOptions": {
+    "meta": {},
+    "type": {
+      "position?": "AgChartLegendPosition",
+      "orientation?": "AgChartOrientation",
+      "maxWidth?": "PixelSize",
+      "maxHeight?": "PixelSize",
+      "spacing?": "PixelSize",
+      "item?": "AgChartLegendItemOptions",
+      "reverseOrder?": "boolean",
+      "listeners?": "AgChartLegendListeners",
+      "pagination?": "AgChartLegendPaginationOptions"
+    },
+    "docs": {
+      "position?": "/** Where the legend should show in relation to the chart. */",
+      "orientation?": "/** How the legend items should be arranged. */",
+      "maxWidth?": "/** Used to constrain the width of the legend. */",
+      "maxHeight?": "/** Used to constrain the height of the legend. */",
+      "spacing?": "/** The spacing in pixels to use outside the legend. */",
+      "item?": "/** Configuration for the legend items that consist of a marker and a label. */",
+      "reverseOrder?": "/** Reverse the display order of legend items if `true`. */",
+      "listeners?": "/** Optional callbacks for specific legend-related events. */"
+    }
+  },
+  "AgCartesianChartLegendOptions": {
     "meta": {},
     "type": {
       "enabled?": "boolean",
@@ -985,7 +1017,59 @@
       "pagination?": "AgChartLegendPaginationOptions"
     },
     "docs": {
-      "enabled?": "/** Whether or not to show the legend. */",
+      "enabled?": "/** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */",
+      "position?": "/** Where the legend should show in relation to the chart. */",
+      "orientation?": "/** How the legend items should be arranged. */",
+      "maxWidth?": "/** Used to constrain the width of the legend. */",
+      "maxHeight?": "/** Used to constrain the height of the legend. */",
+      "spacing?": "/** The spacing in pixels to use outside the legend. */",
+      "item?": "/** Configuration for the legend items that consist of a marker and a label. */",
+      "reverseOrder?": "/** Reverse the display order of legend items if `true`. */",
+      "listeners?": "/** Optional callbacks for specific legend-related events. */"
+    }
+  },
+  "AgHierarchyChartLegendOptions": {
+    "meta": {},
+    "type": {
+      "enabled?": "boolean",
+      "position?": "AgChartLegendPosition",
+      "orientation?": "AgChartOrientation",
+      "maxWidth?": "PixelSize",
+      "maxHeight?": "PixelSize",
+      "spacing?": "PixelSize",
+      "item?": "AgChartLegendItemOptions",
+      "reverseOrder?": "boolean",
+      "listeners?": "AgChartLegendListeners",
+      "pagination?": "AgChartLegendPaginationOptions"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */",
+      "position?": "/** Where the legend should show in relation to the chart. */",
+      "orientation?": "/** How the legend items should be arranged. */",
+      "maxWidth?": "/** Used to constrain the width of the legend. */",
+      "maxHeight?": "/** Used to constrain the height of the legend. */",
+      "spacing?": "/** The spacing in pixels to use outside the legend. */",
+      "item?": "/** Configuration for the legend items that consist of a marker and a label. */",
+      "reverseOrder?": "/** Reverse the display order of legend items if `true`. */",
+      "listeners?": "/** Optional callbacks for specific legend-related events. */"
+    }
+  },
+  "AgPolarChartLegendOptions": {
+    "meta": {},
+    "type": {
+      "enabled?": "boolean",
+      "position?": "AgChartLegendPosition",
+      "orientation?": "AgChartOrientation",
+      "maxWidth?": "PixelSize",
+      "maxHeight?": "PixelSize",
+      "spacing?": "PixelSize",
+      "item?": "AgChartLegendItemOptions",
+      "reverseOrder?": "boolean",
+      "listeners?": "AgChartLegendListeners",
+      "pagination?": "AgChartLegendPaginationOptions"
+    },
+    "docs": {
+      "enabled?": "/** Whether or not to show the legend. The legend is shown by default. */",
       "position?": "/** Where the legend should show in relation to the chart. */",
       "orientation?": "/** How the legend items should be arranged. */",
       "maxWidth?": "/** Used to constrain the width of the legend. */",
@@ -1064,17 +1148,42 @@
     "meta": {},
     "type": {
       "enabled?": "boolean",
+      "showArrow?": "boolean",
       "class?": "string",
       "tracking?": "boolean",
       "range?": "AgChartInteractionRange",
+      "position?": "AgTooltipPositionOptions",
       "delay?": "number"
     },
     "docs": {
       "enabled?": "/** Set to false to disable tooltips for all series in the chart. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the tooltip. */",
       "class?": "/** A class name to be added to the tooltip element of the chart. */",
       "tracking?": "/** @deprecated since v7.2.0 (ag-grid v29.2.0) If true, for series with markers the tooltip will be shown to the closest marker. */",
       "range?": "/** Range from a point that triggers the tooltip to show. */",
+      "position?": "/** The position of the tooltip. */",
       "delay?": "/** The time interval (in milliseconds) after which the tooltip is shown. */"
+    }
+  },
+  "AgTooltipPositionType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'pointer' | 'node'"
+  },
+  "AgTooltipPositionOptions": {
+    "meta": { "isTypeAlias": true },
+    "type": "AgMovingTooltipPositionOptions"
+  },
+  "AgMovingTooltipPositionOptions": {
+    "meta": {},
+    "type": {
+      "type": "AgTooltipPositionType",
+      "xOffset?": "PixelSize",
+      "yOffset?": "PixelSize"
+    },
+    "docs": {
+      "type": "/** The type of positioning for the tooltip. By default, for Bar, Histogram, Treemap, Pie and Doughnut series, the tooltip follows the pointer. For Line, Area and Scatter series, the tooltip is anchored to the highlighted node. */",
+      "xOffset?": "/** The horizontal offset in pixels for the position of the tooltip. */",
+      "yOffset?": "/** The vertical offset in pixels for the position of the tooltip. */"
     }
   },
   "AgChartBackground": {
@@ -1093,7 +1202,6 @@
     "meta": { "typeParams": ["T extends string"] },
     "type": {
       "type": "T",
-      "series": "any",
       "seriesId": "string",
       "datum": "any",
       "xKey?": "string",
@@ -1109,7 +1217,6 @@
     },
     "docs": {
       "type": "/** Event type. */",
-      "series": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
       "seriesId": "/** Series ID, as specified in series.id (or generated if not specified) */",
       "datum": "/** Datum from the chart or series data array. */",
       "xKey?": "/** xKey as specified on series options */",
@@ -1127,7 +1234,6 @@
     "meta": {},
     "type": {
       "type": "T",
-      "series": "any",
       "seriesId": "string",
       "datum": "any",
       "xKey?": "string",
@@ -1143,7 +1249,6 @@
     },
     "docs": {
       "type": "/** Event type. */",
-      "series": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
       "seriesId": "/** Series ID, as specified in series.id (or generated if not specified) */",
       "datum": "/** Datum from the chart or series data array. */",
       "xKey?": "/** xKey as specified on series options */",
@@ -1161,7 +1266,6 @@
     "meta": {},
     "type": {
       "type": "T",
-      "series": "any",
       "seriesId": "string",
       "datum": "any",
       "xKey?": "string",
@@ -1177,7 +1281,6 @@
     },
     "docs": {
       "type": "/** Event type. */",
-      "series": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
       "seriesId": "/** Series ID, as specified in series.id (or generated if not specified) */",
       "datum": "/** Datum from the chart or series data array. */",
       "xKey?": "/** xKey as specified on series options */",
@@ -1240,7 +1343,6 @@
       "subtitle?": "AgChartSubtitleOptions",
       "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
-      "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
@@ -1259,7 +1361,6 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
-      "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -1288,6 +1389,7 @@
   "AgAxisBaseTickOptions": {
     "meta": {},
     "type": {
+      "enabled?": "boolean",
       "width?": "PixelSize",
       "size?": "PixelSize",
       "color?": "CssColor",
@@ -1296,6 +1398,7 @@
       "maxSpacing?": "number"
     },
     "docs": {
+      "enabled?": "/** Set to false to hide the axis tick lines. */",
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
       "color?": "/** The colour of the axis ticks. */",
@@ -1307,6 +1410,7 @@
   "AgAxisCategoryTickOptions": {
     "meta": {},
     "type": {
+      "enabled?": "boolean",
       "width?": "PixelSize",
       "size?": "PixelSize",
       "color?": "CssColor",
@@ -1315,6 +1419,7 @@
       "maxSpacing?": "number"
     },
     "docs": {
+      "enabled?": "/** Set to false to hide the axis tick lines. */",
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
       "color?": "/** The colour of the axis ticks. */",
@@ -1328,6 +1433,7 @@
     "type": {
       "count?": "number",
       "interval?": "number",
+      "enabled?": "boolean",
       "width?": "PixelSize",
       "size?": "PixelSize",
       "color?": "CssColor",
@@ -1338,6 +1444,7 @@
     "docs": {
       "count?": "/** A hint of how many ticks to use across an axis.\n     * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.\n     * @deprecated since v7.1.0 (ag-grid v29.1.0) Use tick.interval or tick.minSpacing and tick.maxSpacing instead.\n     */",
       "interval?": "/** The step value between ticks specified as a number. If the configured interval results in too many ticks given the chart size, it will be ignored.\n     */",
+      "enabled?": "/** Set to false to hide the axis tick lines. */",
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
       "color?": "/** The colour of the axis ticks. */",
@@ -1351,6 +1458,7 @@
     "type": {
       "count?": "any",
       "interval?": "any",
+      "enabled?": "boolean",
       "width?": "PixelSize",
       "size?": "PixelSize",
       "color?": "CssColor",
@@ -1361,6 +1469,7 @@
     "docs": {
       "count?": "/** A hint of how many ticks to use across an axis.\n     * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.\n     * The following intervals from the `agCharts.time` namespace can be used:\n     * `millisecond, second, minute, hour, day, sunday, monday, tuesday, wednesday, thursday, friday, saturday, month, year, utcMinute, utcHour, utcDay, utcMonth, utcYear`.\n     * Derived intervals can be created by using the `every` method on the default ones. For example, `agCharts.time.month.every(2)` will return a derived interval that will make the axis place ticks for every other month. */",
       "interval?": "/** The step value between ticks specified as a TimeInterval or a number. If the configured interval results in dense ticks given the data domain, the ticks will be removed.\n     */",
+      "enabled?": "/** Set to false to hide the axis tick lines. */",
       "width?": "/** The width in pixels of the axis ticks (and corresponding grid line). */",
       "size?": "/** The length in pixels of the axis ticks. */",
       "color?": "/** The colour of the axis ticks. */",
@@ -1381,6 +1490,7 @@
   "AgAxisLabelOptions": {
     "meta": {},
     "type": {
+      "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
       "fontSize?": "FontSize",
@@ -1396,6 +1506,7 @@
       "formatter?": "(params: AgAxisLabelFormatterParams) => string | undefined"
     },
     "docs": {
+      "enabled?": "/** Set to false to hide the axis labels. */",
       "fontStyle?": "/** The font style to use for the labels. */",
       "fontWeight?": "/** The font weight to use for the labels. */",
       "fontSize?": "/** The font size in pixels to use for the labels. */",
@@ -1702,7 +1813,6 @@
     "meta": { "typeParams": ["DatumType"] },
     "type": {
       "type": "'nodeClick'",
-      "series": "any",
       "seriesId": "string",
       "datum": "DatumType",
       "xKey?": "string",
@@ -1717,7 +1827,6 @@
     },
     "docs": {
       "type": "/** Event type. */",
-      "series": "/** @deprecated since v6.2.1 (ag-grid v28.2.1) Use seriesId to get the series ID. */",
       "seriesId": "/** Series ID, as specified in series.id (or generated if not specified) */",
       "datum": "/** Datum from the series data array. */",
       "xKey?": "/** xKey as specified on series options */",
@@ -2004,9 +2113,24 @@
   },
   "AgSeriesTooltip": {
     "meta": {},
-    "type": { "enabled?": "boolean" },
+    "type": {
+      "enabled?": "boolean",
+      "showArrow?": "boolean",
+      "position?": "AgTooltipPositionOptions",
+      "interaction?": "AgSeriesTooltipInteraction"
+    },
     "docs": {
-      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
+      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "position?": "/** The position of the tooltip. */",
+      "interaction?": "/** Configuration for tooltip interaction. */"
+    }
+  },
+  "AgSeriesTooltipInteraction": {
+    "meta": {},
+    "type": { "enabled": "boolean" },
+    "docs": {
+      "enabled": "/** Set to true to keep the tooltip open when the mouse is hovering over it, and enable clicking tooltip text */"
     }
   },
   "AgCartesianSeriesLabelFormatterParams": {
@@ -2043,11 +2167,17 @@
     "type": {
       "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "format?": "string",
-      "enabled?": "boolean"
+      "enabled?": "boolean",
+      "showArrow?": "boolean",
+      "position?": "AgTooltipPositionOptions",
+      "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
-      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
+      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "position?": "/** The position of the tooltip. */",
+      "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
   "AgLineSeriesOptions": {
@@ -2106,16 +2236,32 @@
     "meta": {},
     "type": {
       "renderer?": "(params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
-      "enabled?": "boolean"
+      "enabled?": "boolean",
+      "showArrow?": "boolean",
+      "position?": "AgTooltipPositionOptions",
+      "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
-      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
+      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "position?": "/** The position of the tooltip. */",
+      "interaction?": "/** Configuration for tooltip interaction. */"
+    }
+  },
+  "AgScatterSeriesLabelFormatterParams": {
+    "meta": { "typeParams": ["DatumType"] },
+    "type": { "datum": "DatumType", "seriesId": "string", "value": "number" },
+    "docs": {
+      "datum": "/** Datum from the series data array. */",
+      "seriesId": "/** The ID of the series. */",
+      "value": "/** The value of yKey as specified on series options. */"
     }
   },
   "AgScatterSeriesLabelOptions": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
+      "formatter?": "(params: AgScatterSeriesLabelFormatterParams<DatumType>) => string",
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -2124,6 +2270,7 @@
       "color?": "CssColor"
     },
     "docs": {
+      "formatter?": "/** Function to modify the text displayed by the label. By default the values are simply stringified. */",
       "enabled?": "/** Whether or not the labels should be shown. */",
       "fontStyle?": "/** The font style to use for the labels. */",
       "fontWeight?": "/** The font weight to use for the labels. */",
@@ -2169,7 +2316,7 @@
     "type": {
       "type?": "'scatter'",
       "marker?": "AgScatterSeriesMarker<DatumType>",
-      "label?": "AgScatterSeriesLabelOptions",
+      "label?": "AgScatterSeriesLabelOptions<DatumType>",
       "xKey?": "string",
       "yKey?": "string",
       "xName?": "string",
@@ -2218,10 +2365,16 @@
     "type": {
       "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "format?": "string",
-      "enabled?": "boolean"
+      "enabled?": "boolean",
+      "showArrow?": "boolean",
+      "position?": "AgTooltipPositionOptions",
+      "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
-      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
+      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "position?": "/** The position of the tooltip. */",
+      "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
   "AgAreaSeriesOptions": {
@@ -2365,11 +2518,17 @@
     "meta": {},
     "type": {
       "renderer?": "(params: AgBarSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
-      "enabled?": "boolean"
+      "enabled?": "boolean",
+      "showArrow?": "boolean",
+      "position?": "AgTooltipPositionOptions",
+      "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
-      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
+      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "position?": "/** The position of the tooltip. */",
+      "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
   "AgBarSeriesOptions": {
@@ -2387,7 +2546,7 @@
       "yKey?": "string",
       "xName?": "string",
       "yName?": "string",
-      "flipXY?": "boolean",
+      "legendItemName?": "string",
       "fill?": "CssColor",
       "stroke?": "CssColor",
       "strokeWidth?": "PixelSize",
@@ -2414,9 +2573,10 @@
       "stackGroup?": "/** An ID to be used to group stacked items. */",
       "normalizedTo?": "/** The number to normalise the bar stacks to. Has no effect when `grouped` is `true`. For example, if `normalizedTo` is set to `100`, the bar stacks will all be scaled proportionally so that each of their totals is 100. */",
       "xKey?": "/** The key to use to retrieve x-values from the data. */",
-      "yKey?": "/** The keys to use to retrieve y-values from the data. */",
+      "yKey?": "/** The key to use to retrieve y-values from the data. */",
       "xName?": "/** A human-readable description of the x-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
       "yName?": "/** Human-readable description of the y-values. If supplied, a corresponding `yName` will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */",
+      "legendItemName?": "/** Human-readable description of the y-values. If supplied, matching items with the same value will be toggled together. */",
       "fill?": "/** The colour to use for the fill of the bars. */",
       "stroke?": "/** The colours to use for the stroke of the bars. */",
       "strokeWidth?": "/** The width in pixels of the stroke for the bars. */",
@@ -2490,11 +2650,17 @@
     "meta": {},
     "type": {
       "renderer?": "(params: AgHistogramSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
-      "enabled?": "boolean"
+      "enabled?": "boolean",
+      "showArrow?": "boolean",
+      "position?": "AgTooltipPositionOptions",
+      "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
-      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
+      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "position?": "/** The position of the tooltip. */",
+      "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
   "AgHistogramBinDatum": {
@@ -2646,11 +2812,17 @@
     "meta": {},
     "type": {
       "renderer?": "(params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
-      "enabled?": "boolean"
+      "enabled?": "boolean",
+      "showArrow?": "boolean",
+      "position?": "AgTooltipPositionOptions",
+      "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
-      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
+      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "position?": "/** The position of the tooltip. */",
+      "interaction?": "/** Configuration for tooltip interaction. */"
     }
   },
   "AgPieTitleOptions": {
@@ -2664,7 +2836,10 @@
       "fontSize?": "FontSize",
       "fontFamily?": "FontFamily",
       "color?": "CssColor",
-      "spacing?": "number"
+      "spacing?": "number",
+      "maxWidth?": "PixelSize",
+      "maxHeight?": "PixelSize",
+      "wrapping?": "TextWrap"
     },
     "docs": {
       "enabled?": "/** Whether or not the text should be shown. */",
@@ -2674,7 +2849,10 @@
       "fontSize?": "/** The font size in pixels to use for the text. */",
       "fontFamily?": "/** The font family to use for the text. */",
       "color?": "/** The colour to use for the text. */",
-      "spacing?": "/** Spacing added to help position the text. */"
+      "spacing?": "/** Spacing added to help position the text. */",
+      "maxWidth?": "/** Used to constrain the width of the title. */",
+      "maxHeight?": "/** Used to constrain the height of the title. */",
+      "wrapping?": "/** Text wrapping strategy for long texts.\n     * `'always'` will break the words that are longer than `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but insert the hyphens (`-`) into the word breaks.\n     * `'on-space'` will break the text on white spaces and tabulation symbols only. If some long word can't fit the `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     */"
     }
   },
   "AgPieSeriesCalloutOptions": {
@@ -2746,21 +2924,18 @@
     "type": {
       "type?": "'pie'",
       "title?": "AgPieTitleOptions",
-      "label?": "AgPieSeriesLabelOptions<DatumType>",
       "calloutLabel?": "AgPieSeriesLabelOptions<DatumType>",
       "sectorLabel?": "AgPieSeriesSectorLabelOptions<DatumType>",
-      "callout?": "AgPieSeriesCalloutOptions",
       "calloutLine?": "AgPieSeriesCalloutOptions",
       "angleKey?": "string",
       "angleName?": "string",
       "radiusKey?": "string",
       "radiusName?": "string",
-      "labelKey?": "string",
-      "labelName?": "string",
       "calloutLabelKey?": "string",
       "calloutLabelName?": "string",
       "sectorLabelKey?": "string",
       "sectorLabelName?": "string",
+      "legendItemKey?": "string",
       "fills?": "CssColor[]",
       "strokes?": "CssColor[]",
       "fillOpacity?": "Opacity",
@@ -2791,21 +2966,18 @@
     },
     "docs": {
       "title?": "/** Configuration for the series title. */",
-      "label?": "/** Configuration for the labels used outside of the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabel instead.\n     */",
       "calloutLabel?": "/** Configuration for the labels used outside of the sectors. */",
       "sectorLabel?": "/** Configuration for the labels used inside the sectors. */",
-      "callout?": "/** Configuration for the callout lines used with the labels for the sectors.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLine instead.\n     */",
       "calloutLine?": "/** Configuration for the callout lines used with the labels for the sectors. */",
       "angleKey?": "/** The key to use to retrieve angle values from the data. */",
       "angleName?": "/** A human-readable description of the angle values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "radiusKey?": "/** The key to use to retrieve radius values from the data. */",
       "radiusName?": "/** A human-readable description of the radius values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
-      "labelKey?": "/** The key to use to retrieve label values from the data.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
-      "labelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
       "calloutLabelKey?": "/** The key to use to retrieve label values from the data. */",
       "calloutLabelName?": "/** A human-readable description of the label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
       "sectorLabelKey?": "/** The key to use to retrieve sector label values from the data. */",
       "sectorLabelName?": "/** A human-readable description of the sector label values. If supplied, this will be passed to the tooltip renderer as one of the parameters. */",
+      "legendItemKey?": "/** The key to use to retrieve legend item labels from the data. If multiple pie series share this key they will be merged in the legend. */",
       "fills?": "/** The colours to cycle through for the fills of the sectors. */",
       "strokes?": "/** The colours to cycle through for the strokes of the sectors. */",
       "fillOpacity?": "/** The opacity of the fill for the sectors. */",
@@ -2838,8 +3010,6 @@
   "AgPieSeriesTooltipRendererParams": {
     "meta": {},
     "type": {
-      "labelKey?": "string",
-      "labelName?": "string",
       "calloutLabelKey?": "string",
       "calloutLabelName?": "string",
       "sectorLabelKey?": "string",
@@ -2856,8 +3026,6 @@
       "seriesId": "string"
     },
     "docs": {
-      "labelKey?": "/** labelKey as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelKey or series.sectorLabelKey instead.\n     */",
-      "labelName?": "/** labelName as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use series.calloutLabelName or series.sectorLabelName instead.\n     */",
       "calloutLabelKey?": "/** calloutLabelKey as specified on series options. */",
       "calloutLabelName?": "/** calloutLabelName as specified on series options. */",
       "sectorLabelKey?": "/** sectorLabelKey as specified on series options. */",
@@ -2878,9 +3046,6 @@
     "meta": { "typeParams": ["DatumType"] },
     "type": {
       "datum": "DatumType",
-      "labelKey?": "string",
-      "labelValue?": "string",
-      "labelName?": "string",
       "calloutLabelKey?": "string",
       "calloutLabelValue?": "string",
       "calloutLabelName?": "string",
@@ -2893,14 +3058,10 @@
       "radiusKey?": "string",
       "radiusValue?": "any",
       "radiusName?": "string",
-      "value?": "any",
       "seriesId": "string"
     },
     "docs": {
       "datum": "/** Datum from the series data array that the label is being rendered for. */",
-      "labelKey?": "/** labelKey as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelKey instead.\n     */",
-      "labelValue?": "/** labelValue as read from series data via the labelKey property.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelValue instead.\n     */",
-      "labelName?": "/** labelName as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use calloutLabelName instead.\n     */",
       "calloutLabelKey?": "/** calloutLabelKey as specified on series options. */",
       "calloutLabelValue?": "/** calloutLabelValue as read from series data via the calloutLabelKey property. */",
       "calloutLabelName?": "/** calloutLabelName as specified on series options. */",
@@ -2913,7 +3074,6 @@
       "radiusKey?": "/** radiusKey as specified on series options. */",
       "radiusValue?": "/** radiusValue as read from series data via the radiusKey property. */",
       "radiusName?": "/** radiusName as specified on series options. */",
-      "value?": "/** The value of labelKey as specified on series options.\n     *\n     * @deprecated since v6.2.0 (ag-grid v28.2.0) Use item.datum instead.\n     */",
       "seriesId": "/** The ID of the series. */"
     }
   },
@@ -2967,25 +3127,52 @@
     "meta": { "typeParams": ["DatumType"] },
     "type": {
       "renderer?": "(params: AgTreemapSeriesTooltipRendererParams<DatumType>) => string | AgTooltipRendererResult",
-      "enabled?": "boolean"
+      "enabled?": "boolean",
+      "showArrow?": "boolean",
+      "position?": "AgTooltipPositionOptions",
+      "interaction?": "AgSeriesTooltipInteraction"
     },
     "docs": {
       "renderer?": "/** Function used to create the content for tooltips. */",
-      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */"
+      "enabled?": "/** Whether or not to show tooltips when the series are hovered over. */",
+      "showArrow?": "/** Set to false to remove the arrow attached to the series tooltip. */",
+      "position?": "/** The position of the tooltip. */",
+      "interaction?": "/** Configuration for tooltip interaction. */"
+    }
+  },
+  "AgTreemapSeriesLabelFormatterParams": {
+    "meta": { "typeParams": ["DatumType"] },
+    "type": { "datum": "DatumType" }
+  },
+  "AgTreemapSeriesValueLabelOptions": {
+    "meta": { "typeParams": ["DatumType"] },
+    "type": {
+      "key?": "string",
+      "name?": "string",
+      "formatter?": "(params: AgTreemapSeriesLabelFormatterParams<DatumType>) => string",
+      "style?": "AgChartLabelOptions"
+    },
+    "docs": {
+      "key?": "/** A property to be used as a key to retrieve a value from datum. */",
+      "name?": "/** A name of a datum value. */",
+      "formatter?": "/** A function to generate a value label from datum. */",
+      "style?": "/** The label's font and color style. */"
     }
   },
   "AgTreemapSeriesLabelsOptions": {
-    "meta": {},
+    "meta": { "typeParams": ["DatumType"] },
     "type": {
       "large?": "AgChartLabelOptions",
       "medium?": "AgChartLabelOptions",
       "small?": "AgChartLabelOptions",
-      "value?": "{ key?: string; name?: string; formatter?: (params: { datum: any; }) => string | undefined; style?: AgChartLabelOptions; }"
+      "formatter?": "(params: AgTreemapSeriesLabelFormatterParams<DatumType>) => string",
+      "value?": "AgTreemapSeriesValueLabelOptions<DatumType>"
     },
     "docs": {
       "large?": "/** The label configuration for the large leaf tiles. */",
       "medium?": "/** The label configuration for the medium-sized leaf tiles. */",
       "small?": "/** The label configuration for the small leaf tiles. */",
+      "formatter?": "/** A function to generate a label/title for the cell. */",
       "value?": "/** The configuration for the cell value label. */"
     }
   },
@@ -3018,7 +3205,7 @@
       "type?": "'treemap'",
       "title?": "AgTreemapSeriesLabelOptions",
       "subtitle?": "AgTreemapSeriesLabelOptions",
-      "labels?": "AgTreemapSeriesLabelsOptions",
+      "labels?": "AgTreemapSeriesLabelsOptions<DatumType>",
       "labelKey?": "string",
       "sizeKey?": "string",
       "colorKey?": "string",
@@ -3031,6 +3218,7 @@
       "tileStrokeWidth?": "number",
       "tooltip?": "AgTreemapSeriesTooltip<DatumType>",
       "nodePadding?": "PixelSize",
+      "nodeGap?": "PixelSize",
       "gradient?": "boolean",
       "tileShadow?": "AgDropShadowOptions",
       "labelShadow?": "AgDropShadowOptions",
@@ -3060,7 +3248,8 @@
       "tileStroke?": "/** The tile's stroke color. */",
       "tileStrokeWidth?": "/** The tile's stroke width. */",
       "tooltip?": "/** Series-specific tooltip configuration. */",
-      "nodePadding?": "/** The amount of padding in pixels inside of each treemap tile. Increasing `nodePadding` will reserve more space for parent labels. */",
+      "nodePadding?": "/** The amount of padding in pixels inside of each treemap tile.\n     * Default: `20`\n     */",
+      "nodeGap?": "/** The amount of gap in pixels between treemap tiles.\n     * Default: `0`\n     */",
       "gradient?": "/** Whether or not to use gradients for treemap tiles. */",
       "tileShadow?": "/** Configuration for the shadow used behind the treemap tiles. */",
       "labelShadow?": "/** Configuration for the shadow used behind the treemap labels. */",
@@ -3134,8 +3323,8 @@
     }
   },
   "AgCartesianSeriesOptions": {
-    "meta": { "isTypeAlias": true },
-    "type": "AgLineSeriesOptions | AgScatterSeriesOptions | AgAreaSeriesOptions | AgBarSeriesOptions | AgHistogramSeriesOptions"
+    "meta": { "isTypeAlias": true, "typeParams": ["TAddon = never"] },
+    "type": "AgLineSeriesOptions | AgScatterSeriesOptions | AgAreaSeriesOptions | AgBarSeriesOptions | AgHistogramSeriesOptions | TAddon"
   },
   "AgPolarSeriesOptions": {
     "meta": { "isTypeAlias": true },
@@ -3146,11 +3335,12 @@
     "type": "AgTreemapSeriesOptions"
   },
   "AgCartesianChartOptions": {
-    "meta": {},
+    "meta": { "typeParams": ["TAddonType = never", "TAddonSeries = never"] },
     "type": {
-      "type?": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram'",
+      "type?": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram' | TAddonType",
       "axes?": "AgCartesianAxisOptions[]",
-      "series?": "AgCartesianSeriesOptions[]",
+      "series?": "AgCartesianSeriesOptions<TAddonSeries>[]",
+      "legend?": "AgCartesianChartLegendOptions",
       "navigator?": "AgNavigatorOptions",
       "data?": "any[]",
       "container?": "HTMLElement | null",
@@ -3164,7 +3354,6 @@
       "subtitle?": "AgChartSubtitleOptions",
       "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
-      "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
@@ -3174,6 +3363,7 @@
       "type?": "/** If specified overrides the default series type. */",
       "axes?": "/** Axis configurations. */",
       "series?": "/** Series configurations. */",
+      "legend?": "/** Configuration for the chart legend. */",
       "navigator?": "/** Configuration for the chart navigator. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
@@ -3187,7 +3377,6 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
-      "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -3199,6 +3388,7 @@
     "type": {
       "type?": "'pie'",
       "series?": "AgPolarSeriesOptions[]",
+      "legend?": "AgPolarChartLegendOptions",
       "data?": "any[]",
       "container?": "HTMLElement | null",
       "width?": "PixelSize",
@@ -3211,7 +3401,6 @@
       "subtitle?": "AgChartSubtitleOptions",
       "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
-      "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
@@ -3220,6 +3409,7 @@
     "docs": {
       "type?": "/** If specified overrides the default series type. */",
       "series?": "/** Series configurations. */",
+      "legend?": "/** Configuration for the chart legend. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
       "width?": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
@@ -3232,7 +3422,6 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
-      "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -3245,6 +3434,7 @@
       "type?": "'treemap'",
       "data?": "any",
       "series?": "AgHierarchySeriesOptions[]",
+      "legend?": "AgHierarchyChartLegendOptions",
       "container?": "HTMLElement | null",
       "width?": "PixelSize",
       "height?": "PixelSize",
@@ -3256,7 +3446,6 @@
       "subtitle?": "AgChartSubtitleOptions",
       "footnote?": "AgChartFooterOptions",
       "tooltip?": "AgChartTooltipOptions",
-      "legend?": "AgChartLegendOptions",
       "listeners?": "AgBaseChartListeners",
       "highlight?": "AgChartHighlightOptions",
       "theme?": "string | AgChartTheme",
@@ -3265,6 +3454,7 @@
     "docs": {
       "type?": "/** If specified overrides the default series type. */",
       "series?": "/** Series configurations. */",
+      "legend?": "/** Configuration for the chart legend. */",
       "data?": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "container?": "/** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */",
       "width?": "/** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */",
@@ -3277,7 +3467,6 @@
       "subtitle?": "/** Configuration for the subtitle shown beneath the chart title. Note: a subtitle will only be shown if a title is also present. */",
       "footnote?": "/** Configuration for the footnote shown at the bottom of the chart. */",
       "tooltip?": "/** Global configuration that applies to all tooltips in the chart. */",
-      "legend?": "/** Configuration for the chart legend. */",
       "listeners?": "/** A map of event names to event listeners. */",
       "highlight?": "/** Configuration for the chart highlighting. */",
       "theme?": "/** Theme to use for rendering of the chart. Specify an inbuilt theme name, or provide an `AgChartTheme` instance to customise. */",
@@ -3285,8 +3474,11 @@
     }
   },
   "AgChartOptions": {
-    "meta": { "isTypeAlias": true },
-    "type": "AgCartesianChartOptions | AgPolarChartOptions | AgHierarchyChartOptions"
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["TAddonType = never", "TAddonSeries = never"]
+    },
+    "type": "AgCartesianChartOptions<TAddonType, TAddonSeries> | AgPolarChartOptions | AgHierarchyChartOptions"
   },
   "AgChartInstance": {
     "meta": {},
@@ -3383,7 +3575,8 @@
       "getDomain(direction: ChartAxisDirection)": "any[]",
       "isEnabled()": "boolean",
       "getKeys(direction: ChartAxisDirection)": "string[]",
-      "visible": "boolean"
+      "visible": "boolean",
+      "getBandScalePadding?()": "{ inner: number; outer: number; }"
     }
   },
   "ChartAxisDirection": {
@@ -3437,6 +3630,134 @@
     "meta": { "isTypeAlias": true },
     "type": "Record<string, { vertical: [ Date, Date ]; horizontal: [ number, number ]; }>"
   },
+  "ContinuousDomain": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T extends number | Date"] },
+    "type": "[ T, T ]"
+  },
+  "UngroupedDataItem": {
+    "meta": { "isTypeAlias": true, "typeParams": ["D", "V"] },
+    "type": "{ keys: any[]; values: V; aggValues?: [ number, number ][]; datum: D; }"
+  },
+  "UngroupedData": {
+    "meta": { "typeParams": ["D"] },
+    "type": {
+      "type": "'ungrouped'",
+      "data": "UngroupedDataItem<D, any[]>[]",
+      "domain": "{ keys: any[][]; values: any[][]; groups?: any[][]; aggValues?: [ number, number ][]; }",
+      "indices": "{ keys: Record<keyof D, number>; values: Record<keyof D, number>; }",
+      "reduced?": "Record<string, any>",
+      "defs": "{ keys: DatumPropertyDefinition<keyof D>[]; values: DatumPropertyDefinition<keyof D>[]; }",
+      "time": "number"
+    }
+  },
+  "GroupedDataItem": {
+    "meta": { "isTypeAlias": true, "typeParams": ["D"] },
+    "type": "UngroupedDataItem<D[], any[][]> & { area?: number; }"
+  },
+  "GroupedData": {
+    "meta": { "typeParams": ["D"] },
+    "type": {
+      "type": "'grouped'",
+      "data": "GroupedDataItem<D>[]",
+      "domain": "UngroupedData<D>['domain']",
+      "indices": "UngroupedData<D>['indices']",
+      "reduced?": "UngroupedData<D>['reduced']",
+      "defs": "UngroupedData<D>['defs']",
+      "time": "number"
+    }
+  },
+  "ProcessedData": {
+    "meta": { "isTypeAlias": true, "typeParams": ["D"] },
+    "type": "UngroupedData<D> | GroupedData<D>"
+  },
+  "DatumPropertyType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'range' | 'category'"
+  },
+  "GroupingFn": {
+    "meta": { "isTypeAlias": true, "typeParams": ["K"] },
+    "type": "(data: UngroupedDataItem<K, any[]>) => K[]"
+  },
+  "GroupByFn": {
+    "meta": { "isTypeAlias": true },
+    "type": "(extractedData: UngroupedData<any>) => GroupingFn<any>"
+  },
+  "Options": {
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["K", "Grouped extends boolean | undefined"]
+    },
+    "type": "{ readonly props: PropertyDefinition<K>[]; readonly groupByKeys?: Grouped; readonly groupByFn?: GroupByFn; readonly dataVisible?: boolean; }"
+  },
+  "PropertyDefinition": {
+    "meta": { "isTypeAlias": true, "typeParams": ["K"] },
+    "type": "DatumPropertyDefinition<K> | AggregatePropertyDefinition<any, any, any> | PropertyValueProcessorDefinition<any> | GroupValueProcessorDefinition<any, any> | ReducerOutputPropertyDefinition<any> | ProcessorOutputPropertyDefinition<any>"
+  },
+  "ProcessorFn": {
+    "meta": { "isTypeAlias": true },
+    "type": "(datum: any, previousDatum?: any) => any"
+  },
+  "PropertyId": {
+    "meta": { "isTypeAlias": true, "typeParams": ["K extends string"] },
+    "type": "K | { id: string; }"
+  },
+  "DatumPropertyDefinition": {
+    "meta": { "isTypeAlias": true, "typeParams": ["K"] },
+    "type": "{ id?: string; type: 'key' | 'value'; valueType: DatumPropertyType; property: K; invalidValue?: any; missingValue?: any; validation?: (datum: any) => boolean; processor?: () => ProcessorFn; }"
+  },
+  "InternalDatumPropertyDefinition": {
+    "meta": { "isTypeAlias": true, "typeParams": ["K"] },
+    "type": "DatumPropertyDefinition<K> & { index: number; missing: boolean; }"
+  },
+  "AggregatePropertyDefinition": {
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": [
+        "D",
+        "K extends keyof D & string",
+        "R = [number, number]",
+        "R2 = R"
+      ]
+    },
+    "type": "{ id?: string; type: 'aggregate'; aggregateFunction: (values: D[K][], keys?: D[K][]) => R; groupAggregateFunction?: (next?: R, acc?: R2) => R2; finalFunction?: (result: R2) => [ number, number ]; properties: PropertyId<K>[]; }"
+  },
+  "GroupValueProcessorDefinition": {
+    "meta": {
+      "isTypeAlias": true,
+      "typeParams": ["D", "K extends keyof D & string"]
+    },
+    "type": "{ id?: string; type: 'group-value-processor'; properties: PropertyId<K>[]; adjust: () => (values: D[K][], indexes: number[]) => void; }"
+  },
+  "PropertyValueProcessorDefinition": {
+    "meta": { "isTypeAlias": true, "typeParams": ["D"] },
+    "type": "{ id?: string; type: 'property-value-processor'; property: PropertyId<keyof D & string>; adjust: () => (processedData: ProcessedData<D>, valueIndex: number) => void; }"
+  },
+  "ReducerOutputPropertyDefinition": {
+    "meta": { "isTypeAlias": true, "typeParams": ["R"] },
+    "type": "{ id?: string; type: 'reducer'; property: string; initialValue?: R; reducer: () => (acc: R, next: UngroupedDataItem<any, any>) => R; }"
+  },
+  "ProcessorOutputPropertyDefinition": {
+    "meta": { "isTypeAlias": true, "typeParams": ["R"] },
+    "type": "{ id?: string; type: 'processor'; property: string; calculate: (data: ProcessedData<any>) => R; }"
+  },
+  "Series": {
+    "meta": {},
+    "type": {
+      "id": "string",
+      "type": "string",
+      "toggleSeriesItem(itemId: string, enabled: boolean)": "void",
+      "getLegendData()": "any[]"
+    }
+  },
+  "SeriesGetter": { "meta": { "isTypeAlias": true }, "type": "() => Series[]" },
+  "ChartType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'cartesian' | 'polar' | 'hierarchy'"
+  },
+  "SeriesConstructor": {
+    "meta": { "isTypeAlias": true },
+    "type": "new () => Series<any>"
+  },
   "Page": {
     "meta": { "isTypeAlias": true },
     "type": "{ columns: Column[]; pageWidth: number; pageHeight: number; startIndex: number; endIndex: number; }"
@@ -3453,6 +3774,82 @@
       "padding": "number"
     }
   },
+  "AnimationId": { "meta": { "isTypeAlias": true }, "type": "string" },
+  "AnimationEventType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'animation-frame'"
+  },
+  "AnimationEvent": {
+    "meta": { "typeParams": ["AnimationEventType"] },
+    "type": { "type": "AnimationEventType", "deltaMs": "number" }
+  },
+  "AnimationOptions": {
+    "meta": { "typeParams": ["T"] },
+    "type": {
+      "driver": "Driver",
+      "autoplay?": "boolean",
+      "delay?": "number",
+      "repeat?": "number",
+      "repeatType?": "RepeatType",
+      "onComplete?": "() => void",
+      "onPlay?": "() => void",
+      "onRepeat?": "() => void",
+      "onStop?": "() => void",
+      "onUpdate?": "(v: T) => void",
+      "duration": "number",
+      "from": "T",
+      "to": "T",
+      "ease?": "Easing<T>"
+    }
+  },
+  "AnimationManyOptions": {
+    "meta": { "typeParams": ["T"] },
+    "type": {
+      "driver": "Driver",
+      "autoplay?": "boolean",
+      "delay?": "number",
+      "repeat?": "number",
+      "repeatType?": "RepeatType",
+      "onComplete?": "() => void",
+      "onPlay?": "() => void",
+      "onRepeat?": "() => void",
+      "onStop?": "() => void",
+      "onUpdate?": "(v: AnimationOptions<T>) => void",
+      "duration": "number",
+      "ease?": "Easing<AnimationOptions<T>>"
+    }
+  },
+  "ChartEventType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'legend-item-click' | 'legend-item-double-click'"
+  },
+  "ChartEvents": {
+    "meta": { "isTypeAlias": true },
+    "type": "LegendItemClickChartEvent | LegendItemDoubleClickChartEvent"
+  },
+  "ChartEvent": {
+    "meta": { "typeParams": ["ChartEventType"] },
+    "type": { "type": "ChartEventType" }
+  },
+  "LegendItemClickChartEvent": {
+    "meta": {},
+    "type": {
+      "series": "any",
+      "itemId": "any",
+      "enabled": "boolean",
+      "type": "'legend-item-click'"
+    }
+  },
+  "LegendItemDoubleClickChartEvent": {
+    "meta": {},
+    "type": {
+      "series": "any",
+      "itemId": "any",
+      "enabled": "boolean",
+      "numVisibleItems": "{ [key: string]: number; }",
+      "type": "'legend-item-double-click'"
+    }
+  },
   "CursorState": { "meta": {}, "type": { "style": "string" } },
   "HighlightState": {
     "meta": {},
@@ -3467,7 +3864,10 @@
       "xKey?": "string",
       "yKey?": "string",
       "cumulativeValue?": "number",
-      "point?": "Readonly<SizedPoint>"
+      "aggregatedValue?": "number",
+      "domain?": "[ number, number ]",
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "HighlightChangeEvent": {
@@ -3480,11 +3880,11 @@
   },
   "InteractionTypes": {
     "meta": { "isTypeAlias": true },
-    "type": "'click' | 'dblclick' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left' | 'wheel'"
+    "type": "'click' | 'dblclick' | 'contextmenu' | 'hover' | 'drag-start' | 'drag' | 'drag-end' | 'leave' | 'page-left' | 'wheel'"
   },
   "SUPPORTED_EVENTS": {
     "meta": { "isTypeAlias": true },
-    "type": "'click' | 'dblclick' | 'mousedown' | 'mousemove' | 'mouseup' | 'mouseout' | 'mouseenter' | 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel' | 'pagehide' | 'wheel'"
+    "type": "'click' | 'dblclick' | 'contextmenu' | 'mousedown' | 'mousemove' | 'mouseup' | 'mouseout' | 'mouseenter' | 'touchstart' | 'touchmove' | 'touchend' | 'touchcancel' | 'pagehide' | 'wheel'"
   },
   "InteractionEvent": {
     "meta": {
@@ -3510,7 +3910,7 @@
   },
   "TooltipState": {
     "meta": {},
-    "type": { "content": "string", "meta": "TooltipMeta" }
+    "type": { "content": "string", "meta?": "TooltipMeta" }
   },
   "ZoomState": { "meta": {}, "type": { "min": "number", "max": "number" } },
   "AxisZoomState": {
@@ -3542,7 +3942,7 @@
   },
   "AxisLabelLayout": {
     "meta": { "isTypeAlias": true },
-    "type": "{ baseline: 'hanging' | 'bottom' | 'middle'; align: 'start' | 'end' | 'center'; rotation: number; fractionDigits: number; padding: number; }"
+    "type": "{ baseline: 'hanging' | 'bottom' | 'middle'; align: 'start' | 'end' | 'center'; rotation: number; fractionDigits: number; padding: number; format?: string; }"
   },
   "AxisLayout": {
     "meta": {},
@@ -3558,7 +3958,8 @@
     "meta": {},
     "type": {
       "type": "'layout-complete'",
-      "series": "{ rect: BBox; paddedRect: BBox; visible: boolean; }",
+      "chart": "{ width: number; height: number; }",
+      "series": "{ rect: BBox; paddedRect: BBox; hoverRect: BBox; visible: boolean; }",
       "axes?": "(AxisLayout & { id: string; })[]"
     }
   },
@@ -3580,15 +3981,35 @@
     "meta": { "isTypeAlias": true, "typeParams": ["T extends EventTypes"] },
     "type": "T extends LayoutStage ? LayoutProcessor : LayoutListener"
   },
-  "LegendDatum": {
+  "ChartLegend": {
     "meta": {},
     "type": {
+      "computeBBox()": "BBox",
+      "attachLegend(node: Node | null)": "void",
+      "destroy()": "void",
+      "data": "any",
+      "item": "{ label: { formatter?: (params: any) => string; }; }",
+      "listeners": "AgChartLegendListeners"
+    }
+  },
+  "ChartLegendDatum": {
+    "meta": {},
+    "type": {
+      "legendType": "string",
+      "seriesId": "string",
+      "enabled": "boolean"
+    }
+  },
+  "CategoryLegendDatum": {
+    "meta": {},
+    "type": {
+      "legendType": "'category'",
       "id": "string",
       "itemId": "any",
-      "seriesId": "string",
-      "enabled": "boolean",
       "marker": "{ shape?: string | (new () => Marker); fill: string; stroke: string; fillOpacity: number; strokeOpacity: number; }",
-      "label": "{ text: string; }"
+      "label": "{ text: string; }",
+      "seriesId": "string",
+      "enabled": "boolean"
     }
   },
   "SeriesOptionsTypes": {
@@ -3618,7 +4039,7 @@
   },
   "ThemeMap": {
     "meta": { "isTypeAlias": true },
-    "type": "{[key in AgChartThemeName | 'undefined' | 'null']?: ChartTheme}"
+    "type": "{[key in AgChartThemeName | 'undefined' | 'null']?: () => ChartTheme}"
   },
   "Transforms": {
     "meta": {
@@ -3687,10 +4108,6 @@
     "meta": { "isTypeAlias": true },
     "type": "{ left: number; right: number; }"
   },
-  "ProcessedXDatum": {
-    "meta": { "isTypeAlias": true },
-    "type": "{ xDatum: any; seriesDatum: any; }"
-  },
   "AreaSeriesTag": {
     "meta": { "isEnum": true },
     "type": ["Fill", "Stroke", "Marker", "Label"],
@@ -3720,7 +4137,8 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "BarSeriesNodeTag": {
@@ -3756,7 +4174,8 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "SubGroup": {
@@ -3781,9 +4200,16 @@
     "type": {
       "pathsPerSeries": "number",
       "pathsZIndexSubOrderOffset": "number[]",
-      "hasMarkers": "boolean",
-      "renderLayerPerSubSeries": "boolean"
+      "hasMarkers": "boolean"
     }
+  },
+  "CartesianAnimationState": {
+    "meta": { "isTypeAlias": true },
+    "type": "'empty' | 'ready'"
+  },
+  "CartesianAnimationEvent": {
+    "meta": { "isTypeAlias": true },
+    "type": "'update' | 'highlight'"
   },
   "HistogramSeriesNodeTag": {
     "meta": { "isEnum": true },
@@ -3800,22 +4226,22 @@
       "fill?": "string",
       "stroke?": "string",
       "strokeWidth": "number",
+      "aggregatedValue": "number",
+      "frequency": "number",
+      "domain": "[ number, number ]",
       "label?": "{ readonly text: string; readonly x: number; readonly y: number; readonly fontStyle?: FontStyle; readonly fontWeight?: FontWeight; readonly fontSize: number; readonly fontFamily: string; readonly fill: string; }",
       "xKey": "string",
       "yKey": "string",
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "HistogramAggregation": {
     "meta": { "isTypeAlias": true },
     "type": "NonNullable<AgHistogramSeriesOptions['aggregation']>"
-  },
-  "AggregationFunction": {
-    "meta": { "isTypeAlias": true },
-    "type": "(bin: HistogramBin, yKey: string) => number"
   },
   "LineNodeDatum": {
     "meta": {},
@@ -3827,12 +4253,9 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint?": "Readonly<Point>"
     }
-  },
-  "PointDatum": {
-    "meta": {},
-    "type": { "xDatum": "any", "yDatum": "any", "datum": "any" }
   },
   "LineContext": {
     "meta": { "isTypeAlias": true },
@@ -3842,17 +4265,23 @@
     "meta": {},
     "type": {
       "label": "MeasuredLabel",
+      "fill": "string | undefined",
       "xKey": "string",
       "yKey": "string",
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "TreeDatum": {
     "meta": { "isTypeAlias": true },
     "type": "{ [prop: string]: any; children?: TreeDatum[]; }"
+  },
+  "Side": {
+    "meta": { "isTypeAlias": true },
+    "type": "'left' | 'right' | 'top' | 'bottom'"
   },
   "TreemapNodeDatum": {
     "meta": {},
@@ -3867,7 +4296,8 @@
       "children": "TreemapNodeDatum[]",
       "series": "Series<any>",
       "itemId?": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "TextNodeTag": {
@@ -3888,6 +4318,8 @@
     "type": {
       "index": "number",
       "radius": "number",
+      "angleValue": "number",
+      "radiusValue?": "number",
       "startAngle": "number",
       "endAngle": "number",
       "midAngle": "number",
@@ -3895,11 +4327,13 @@
       "midSin": "number",
       "calloutLabel?": "{ readonly text: string; readonly textAlign: CanvasTextAlign; readonly textBaseline: CanvasTextBaseline; hidden: boolean; collisionTextAlign?: CanvasTextAlign; collisionOffsetY: number; box?: BBox; }",
       "sectorLabel?": "{ readonly text: string; }",
-      "sectorFormat": "AgPieSeriesFormat",
+      "sectorFormat": "Required<AgPieSeriesFormat>",
+      "legendItemKey?": "string",
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "PieNodeTag": {
@@ -3907,6 +4341,11 @@
     "type": ["Sector", "Callout", "Label"],
     "docs": [null, null, null]
   },
+  "PieAnimationState": {
+    "meta": { "isTypeAlias": true },
+    "type": "'empty' | 'ready'"
+  },
+  "PieAnimationEvent": { "meta": { "isTypeAlias": true }, "type": "'update'" },
   "SeriesNodeDatum": {
     "meta": {
       "doc": "/** Processed series datum used in node selections,\n * contains information used to render pie sectors, bars, markers, etc.\n */"
@@ -3915,7 +4354,8 @@
       "series": "Series<any>",
       "itemId?": "any",
       "datum": "any",
-      "point?": "Readonly<SizedPoint>"
+      "point?": "Readonly<SizedPoint>",
+      "nodeMidPoint?": "Readonly<Point>"
     }
   },
   "SeriesNodePickMode": {
@@ -3972,7 +4412,7 @@
     "meta": { "isTypeAlias": true },
     "type": "{ cartesian: AgCartesianThemeOptions; groupedCategory: AgCartesianThemeOptions; polar: AgPolarThemeOptions; hierarchy: AgHierarchyThemeOptions; } & { [key in keyof AgCartesianSeriesTheme]?: AgCartesianThemeOptions; } & { [key in keyof AgPolarSeriesTheme]?: AgPolarThemeOptions; } & { [key in keyof AgHierarchySeriesTheme]?: AgHierarchyThemeOptions; }"
   },
-  "EventTarget": { "meta": {}, "type": { "classList": "DOMTokenList" } },
+  "DarkThemeParams": { "meta": {}, "type": { "seriesLabelDefaults": "any" } },
   "TooltipMeta": {
     "meta": {},
     "type": {
@@ -3980,10 +4420,89 @@
       "pageY": "number",
       "offsetX": "number",
       "offsetY": "number",
+      "showArrow?": "boolean",
+      "position?": "{ xOffset?: number; yOffset?: number; }",
+      "enableInteraction?": "boolean",
       "event": "Event | InteractionEvent<any>"
     }
   },
+  "TooltipPositionType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'pointer' | 'node'"
+  },
+  "UpdateCallback": {
+    "meta": { "isTypeAlias": true },
+    "type": "(type: ChartUpdateType, options: { forceNodeDataRefresh?: boolean; }) => void"
+  },
   "Tick": { "meta": {}, "type": { "labels": "string[]" } },
+  "KeyframesOptions": {
+    "meta": { "typeParams": ["T"] },
+    "type": {
+      "duration": "number",
+      "from": "T",
+      "to": "T",
+      "ease?": "Easing<T>"
+    }
+  },
+  "RepeatType": {
+    "meta": { "isEnum": true },
+    "type": ["Loop = 'loop'", "Reverse = 'reverse'"],
+    "docs": [null, null]
+  },
+  "AnimationControls": {
+    "meta": {},
+    "type": {
+      "isPlaying": "boolean",
+      "play": "() => AnimationControls",
+      "pause": "() => AnimationControls",
+      "stop": "() => AnimationControls",
+      "reset": "() => AnimationControls"
+    }
+  },
+  "DriverControls": {
+    "meta": {},
+    "type": {
+      "start": "() => void",
+      "stop": "() => void",
+      "reset": "() => void"
+    }
+  },
+  "Driver": {
+    "meta": { "isTypeAlias": true },
+    "type": "(update: (time: number) => void) => DriverControls"
+  },
+  "TweenOptions": {
+    "meta": { "typeParams": ["T"] },
+    "type": {
+      "driver": "Driver",
+      "duration": "number",
+      "from": "T",
+      "to": "T",
+      "ease?": "Easing<T>"
+    }
+  },
+  "TweenControls": {
+    "meta": { "typeParams": ["T"] },
+    "type": {
+      "start": "(onUpdate?: (value: T) => void) => TweenControls<T>",
+      "stop": "() => TweenControls<T>"
+    }
+  },
+  "EasingOpts": {
+    "meta": { "typeParams": ["T"] },
+    "type": { "from": "T", "to": "T" }
+  },
+  "Easing": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
+    "type": "(opts: EasingOpts<T>) => (time: number) => T"
+  },
+  "StateDefinition": {
+    "meta": { "typeParams": ["State extends string", "Event extends string"] },
+    "type": {
+      "actions?": "{ onEnter?: () => void; onExit?: () => void; }",
+      "on?": "{[key in Event]?: { target: State; action: (data?: any) => void; }}"
+    }
+  },
   "ScaleClampParams": {
     "meta": {},
     "type": { "strict": "boolean" },
@@ -4140,6 +4659,31 @@
     "meta": { "isTypeAlias": true },
     "type": "'round' | 'bevel' | 'miter'"
   },
+  "CanvasContext": {
+    "meta": { "isTypeAlias": true },
+    "type": "CanvasFillStrokeStyles & CanvasCompositing & CanvasShadowStyles & CanvasPathDrawingStyles & CanvasDrawPath"
+  },
+  "TextSizeProperties": {
+    "meta": {},
+    "type": {
+      "fontFamily": "string",
+      "fontSize": "number",
+      "fontStyle?": "FontStyle",
+      "fontWeight?": "FontWeight",
+      "lineHeight?": "number"
+    }
+  },
+  "WordWrapProperties": {
+    "meta": {},
+    "type": { "breakWord?": "boolean", "hyphens?": "boolean" }
+  },
+  "TextMeasurer": {
+    "meta": {},
+    "type": {
+      "size(text: string)": "{ width: number; height: number; }",
+      "width(line: string)": "number"
+    }
+  },
   "Comparator": {
     "meta": { "isTypeAlias": true, "typeParams": ["T"] },
     "type": "(a: T, b: T) => number"
@@ -4178,6 +4722,10 @@
     "docs": {
       "avoidDeepClone": "/** Contains a list of properties where deep clones should be avoided\n     */"
     }
+  },
+  "JsonApplyParams": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ constructors?: Record<string, new () => any>; allowedTypes?: Record<string, ReturnType<typeof classify>[]>; }"
   },
   "Classification": {
     "meta": { "isTypeAlias": true },
@@ -4220,11 +4768,15 @@
     "meta": {},
     "type": {
       "scene": "Scene",
-      "interactionManager": "InteractionManager",
-      "highlightManager": "HighlightManager",
+      "mode": "'standalone' | 'integrated'",
+      "animationManager": "AnimationManager",
+      "chartEventManager": "ChartEventManager",
       "cursorManager": "CursorManager",
-      "zoomManager": "ZoomManager",
+      "highlightManager": "HighlightManager",
+      "interactionManager": "InteractionManager",
       "tooltipManager": "TooltipManager",
+      "zoomManager": "ZoomManager",
+      "dataService": "DataService",
       "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>",
       "updateService": "UpdateService"
     }
@@ -4234,11 +4786,15 @@
     "type": {
       "parent": "P",
       "scene": "Scene",
-      "interactionManager": "InteractionManager",
-      "highlightManager": "HighlightManager",
+      "mode": "'standalone' | 'integrated'",
+      "animationManager": "AnimationManager",
+      "chartEventManager": "ChartEventManager",
       "cursorManager": "CursorManager",
-      "zoomManager": "ZoomManager",
+      "highlightManager": "HighlightManager",
+      "interactionManager": "InteractionManager",
       "tooltipManager": "TooltipManager",
+      "zoomManager": "ZoomManager",
+      "dataService": "DataService",
       "layoutService": "Pick<LayoutService, 'addListener' | 'removeListener'>",
       "updateService": "UpdateService"
     }
@@ -4251,42 +4807,75 @@
       "direction": "'x' | 'y'",
       "continuous": "boolean",
       "keys": "() => string[]",
+      "scaleValueFormatter": "(specifier: string) => ((x: any) => string) | undefined",
       "scaleBandwidth": "() => number",
       "scaleConvert(val: any)": "number",
       "scaleInvert(position: number)": "any"
     }
   },
-  "ModuleInstance": {
-    "meta": {},
-    "type": { "update()": "void", "destroy()": "void" }
+  "LegendConstructor": {
+    "meta": { "isTypeAlias": true },
+    "type": "new (moduleContext: ModuleContext) => ChartLegend"
   },
-  "ModuleInstanceMeta": {
-    "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
-    "type": { "instance": "M" }
-  },
+  "ModuleInstance": { "meta": {}, "type": { "destroy()": "void" } },
   "BaseModule": {
     "meta": {},
     "type": {
       "optionsKey": "string",
-      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
+      "packageType": "'community' | 'enterprise'",
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
+      "optionConstructors?": "JsonApplyParams['constructors']"
     }
   },
   "RootModule": {
     "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
     "type": {
       "type": "'root'",
-      "initialiseModule(ctx: ModuleContext)": "ModuleInstanceMeta<M>",
+      "instanceConstructor": "new (ctx: ModuleContext) => M",
+      "themeTemplate?": "{}",
       "optionsKey": "string",
-      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
+      "packageType": "'community' | 'enterprise'",
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
+      "optionConstructors?": "JsonApplyParams['constructors']"
     }
   },
   "AxisModule": {
     "meta": { "typeParams": ["M extends ModuleInstance = ModuleInstance"] },
     "type": {
       "type": "'axis'",
-      "initialiseModule(ctx: ModuleContextWithParent<AxisContext>)": "ModuleInstanceMeta<M>",
+      "axisTypes": "('category' | 'number' | 'log' | 'time')[]",
+      "instanceConstructor": "new (ctx: ModuleContextWithParent<AxisContext>) => M",
+      "themeTemplate": "{}",
       "optionsKey": "string",
-      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]"
+      "packageType": "'community' | 'enterprise'",
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
+      "optionConstructors?": "JsonApplyParams['constructors']"
+    }
+  },
+  "LegendModule": {
+    "meta": {},
+    "type": {
+      "type": "'legend'",
+      "identifier": "string",
+      "instanceConstructor": "LegendConstructor",
+      "optionsKey": "string",
+      "packageType": "'community' | 'enterprise'",
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
+      "optionConstructors?": "JsonApplyParams['constructors']"
+    }
+  },
+  "SeriesModule": {
+    "meta": {},
+    "type": {
+      "type": "'series'",
+      "identifier": "string",
+      "instanceConstructor": "SeriesConstructor",
+      "seriesDefaults": "{}",
+      "themeTemplate": "{}",
+      "optionsKey": "string",
+      "packageType": "'community' | 'enterprise'",
+      "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",
+      "optionConstructors?": "JsonApplyParams['constructors']"
     }
   },
   "Module": {
@@ -4294,7 +4883,7 @@
       "isTypeAlias": true,
       "typeParams": ["M extends ModuleInstance = ModuleInstance"]
     },
-    "type": "RootModule<M> | AxisModule<M>"
+    "type": "RootModule<M> | AxisModule<M> | LegendModule | SeriesModule"
   },
   "FormatterOptions": {
     "meta": {},

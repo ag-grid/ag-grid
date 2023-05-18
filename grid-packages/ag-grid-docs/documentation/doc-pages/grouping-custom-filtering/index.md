@@ -42,13 +42,13 @@ Note that [Adding Values to Leaf Nodes](/grouping-single-group-column/#adding-va
 When applying a filter directly on the group column instead of using the Group Column Filter, the filter model is tied to the group column instead of the underlying columns. To set the filter via the Grid API on a single group column (`setFilterModel`), it needs to be referenced using the name `ag-Grid-AutoColumn`.
 
 <snippet>
-gridOptions.api.setFilterModel({
-    'ag-Grid-AutoColumn': {
-        filterType: 'text',
-        type: 'contains',
-        filter: 'Skiing'
-    },
-});
+| gridOptions.api.setFilterModel({
+|     'ag-Grid-AutoColumn': {
+|         filterType: 'text',
+|         type: 'contains',
+|         filter: 'Skiing'
+|     },
+| });
 </snippet>
 
 The following example demonstrates filtering with a single group column. Note the following:
@@ -94,13 +94,13 @@ Note in the snippet above that the `filterValueGetter` uses the `colId` value to
 Similar to when using a single group column, the filter model is tied to the group columns instead of the underlying columns. To set the filter via the Grid API against each of the group columns, `ag-Grid-AutoColumn-[colId]` is used, where `[colId]` is the column id.
 
 <snippet>
-gridOptions.api.setFilterModel({
-    'ag-Grid-AutoColumn-sport': {
-        filterType: 'text',
-        type: 'contains',
-        filter: 'Skiing'
-    },
-});
+| gridOptions.api.setFilterModel({
+|     'ag-Grid-AutoColumn-sport': {
+|         filterType: 'text',
+|         type: 'contains',
+|         filter: 'Skiing'
+|     },
+| });
 </snippet>
 
 The following example demonstrates filtering with multiple group columns. Note the following:

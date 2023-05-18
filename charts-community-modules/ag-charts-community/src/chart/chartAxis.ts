@@ -6,15 +6,7 @@ import { ContinuousScale } from '../scale/continuousScale';
 import { POSITION, STRING_ARRAY, Validate } from '../util/validation';
 import { AgCartesianAxisPosition, AgCartesianAxisType } from './agChartOptions';
 import { AxisLayout } from './layout/layoutService';
-import { AxisContext, AxisModule, ModuleContext, ModuleInstanceMeta } from '../util/module';
-
-export function flipChartAxisDirection(direction: ChartAxisDirection): ChartAxisDirection {
-    if (direction === ChartAxisDirection.X) {
-        return ChartAxisDirection.Y;
-    } else {
-        return ChartAxisDirection.X;
-    }
-}
+import { AxisContext, AxisModule, ModuleContext, ModuleInstance } from '../util/module';
 
 interface BoundSeries {
     type: string;
@@ -22,6 +14,7 @@ interface BoundSeries {
     isEnabled(): boolean;
     getKeys(direction: ChartAxisDirection): string[];
     visible: boolean;
+    getBandScalePadding?(): { inner: number; outer: number };
 }
 
 export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, number, any>, D = any> extends Axis<
@@ -36,7 +29,7 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
     linkedTo?: ChartAxis;
     includeInvisibleDomains: boolean = false;
 
-    protected readonly modules: Record<string, ModuleInstanceMeta> = {};
+    protected readonly modules: Record<string, { instance: ModuleInstance }> = {};
 
     get type(): AgCartesianAxisType {
         return (this.constructor as any).type || '';
@@ -153,19 +146,20 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
                 direction: this.direction,
                 continuous: this.scale instanceof ContinuousScale,
                 keys,
+                scaleValueFormatter: (specifier: string) => this.scale.tickFormat?.({ specifier }) ?? undefined,
                 scaleBandwidth: () => this.scale.bandwidth ?? 0,
                 scaleConvert: (val) => this.scale.convert(val),
                 scaleInvert: (val) => this.scale.invert?.(val) ?? undefined,
             };
         }
 
-        const moduleMeta = module.initialiseModule({
+        const moduleInstance = new module.instanceConstructor({
             ...this.moduleCtx,
             parent: this.axisContext,
         });
-        this.modules[module.optionsKey] = moduleMeta;
+        this.modules[module.optionsKey] = { instance: moduleInstance };
 
-        (this as any)[module.optionsKey] = moduleMeta.instance;
+        (this as any)[module.optionsKey] = moduleInstance;
     }
 
     removeModule(module: AxisModule) {

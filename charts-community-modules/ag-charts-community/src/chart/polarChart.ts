@@ -12,16 +12,25 @@ export class PolarChart extends Chart {
 
     constructor(document = window.document, overrideDevicePixelRatio?: number, resources?: TransferableResources) {
         super(document, overrideDevicePixelRatio, resources);
-
-        const root = this.scene.root!;
-        this.legend.attachLegend(root);
     }
 
     async performLayout() {
         const shrinkRect = await super.performLayout();
 
+        const fullSeriesRect = shrinkRect.clone();
         this.computeSeriesRect(shrinkRect);
         this.computeCircle();
+
+        const hoverRectPadding = 20;
+        const hoverRect = shrinkRect.clone().grow(hoverRectPadding);
+        this.hoverRect = hoverRect;
+
+        this.layoutService.dispatchLayoutComplete({
+            type: 'layout-complete',
+            chart: { width: this.scene.width, height: this.scene.height },
+            series: { rect: fullSeriesRect, paddedRect: shrinkRect, hoverRect, visible: true },
+            axes: [],
+        });
 
         return shrinkRect;
     }
@@ -57,10 +66,15 @@ export class PolarChart extends Chart {
         let radius = initialRadius;
         setSeriesCircle(centerX, centerY, radius);
 
-        const shake = ({ hideWhenNecessary = false } = {}) => {
-            const labelBoxes = polarSeries
-                .map((series) => series.computeLabelsBBox({ hideWhenNecessary }))
-                .filter((box) => box != null) as BBox[];
+        const shake = async ({ hideWhenNecessary = false } = {}) => {
+            const labelBoxes = [];
+            for (const series of polarSeries) {
+                const box = series.computeLabelsBBox({ hideWhenNecessary }, seriesBox);
+                if (box == null) continue;
+
+                labelBoxes.push(box);
+            }
+
             if (labelBoxes.length === 0) {
                 setSeriesCircle(centerX, centerY, initialRadius);
                 return;

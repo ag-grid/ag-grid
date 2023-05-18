@@ -95,6 +95,9 @@ export class AxisLine {
 }
 
 class AxisTick<S extends Scale<D, number>, D = any> {
+    @Validate(BOOLEAN)
+    enabled = true;
+
     /**
      * The line width to be used by axis ticks.
      */
@@ -143,6 +146,9 @@ class AxisTick<S extends Scale<D, number>, D = any> {
 }
 
 export class AxisLabel {
+    @Validate(BOOLEAN)
+    enabled = true;
+
     @Validate(OPT_FONT_STYLE)
     fontStyle?: FontStyle = undefined;
 
@@ -324,6 +330,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             rotation: 0,
             fractionDigits: 0,
             padding: this.label.padding,
+            format: this.label.format,
         },
     };
 
@@ -406,7 +413,6 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     protected requestedRange: number[] = [0, 1];
     set range(value: number[]) {
         this.requestedRange = value.slice();
-        this.updateRange();
     }
     get range(): number[] {
         return this.requestedRange;
@@ -586,13 +592,14 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      */
     update(primaryTickCount?: number): number | undefined {
+        this.updateRange();
         this.calculateDomain();
 
         const {
             scale,
             gridLength,
             tick,
-            label: { parallel: parallelLabels, mirrored, avoidCollisions },
+            label: { enabled: enabledLabels, parallel: parallelLabels, mirrored, avoidCollisions },
             requestedRange,
         } = this;
         const requestedRangeMin = Math.min(...requestedRange);
@@ -642,7 +649,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         const continuous = scale instanceof ContinuousScale;
         const secondaryAxis = primaryTickCount !== undefined;
 
-        const checkForOverlap = avoidCollisions && this.tick.interval === undefined && this.tick.values === undefined;
+        const checkForOverlap =
+            enabledLabels && avoidCollisions && this.tick.interval === undefined && this.tick.values === undefined;
         const tickSpacing = !isNaN(this.tick.minSpacing) || !isNaN(this.tick.maxSpacing);
         const maxIterations = this.tick.count || !continuous || isNaN(maxTickCount) ? 10 : maxTickCount;
 
@@ -754,8 +762,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         tickLineGroupSelection.each(visibleFn);
         tickLabelGroupSelection.each(visibleFn);
 
-        this.tickLineGroup.visible = anyTickVisible;
-        this.tickLabelGroup.visible = anyTickVisible;
+        this.tickLineGroup.visible = this.tick.enabled && anyTickVisible;
+        this.tickLabelGroup.visible = enabledLabels && anyTickVisible;
         this.gridLineGroup.visible = anyTickVisible;
         this.gridArcGroup.visible = anyTickVisible;
 
@@ -998,12 +1006,17 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         sideFlag: -1 | 1;
         parallelFlipRotation: number;
         regularFlipRotation: number;
-    }) {
+    }): { labelData: PointLabelDatum[]; rotated: boolean } {
         const {
             label,
-            label: { parallel, rotation },
+            label: { enabled: labelsEnabled, parallel, rotation },
             tick,
         } = this;
+
+        if (!labelsEnabled) {
+            return { labelData: [], rotated: false };
+        }
+
         let labelAutoRotation = 0;
 
         const { autoRotation, labelRotation, parallelFlipFlag, regularFlipFlag } = calculateLabelRotation({
@@ -1160,6 +1173,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             rotation: combinedRotation,
             fractionDigits: this.fractionDigits,
             padding: this.label.padding,
+            format: this.label.format,
         };
 
         return { labelData, rotated: !!(labelRotation || labelAutoRotation) };
@@ -1263,5 +1277,9 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
     clipGrid(x: number, y: number, width: number, height: number) {
         this.gridGroup.setClipRectInGroupCoordinateSpace(new BBox(x, y, width, height));
+    }
+
+    calculatePadding(min: number, _max: number): number {
+        return Math.abs(min * 0.01);
     }
 }
