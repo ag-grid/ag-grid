@@ -608,25 +608,59 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      */
     update(primaryTickCount?: number): number | undefined {
-        this.updateRange();
-        this.calculateDomain();
-
-        const {
-            scale,
-            gridLength,
-            tick,
-            label: { enabled: enabledLabels, parallel: parallelLabels, mirrored, avoidCollisions, autoWrap },
-            requestedRange,
-        } = this;
-        const requestedRangeMin = Math.min(...requestedRange);
-        const requestedRangeMax = Math.max(...requestedRange);
-        const rotation = toRadians(this.rotation);
-        const anySeriesActive = this.isAnySeriesActive();
+        this.initScale();
+        this.updatePosition();
+        this.updateLine();
+        const { rotation, parallelFlipRotation, regularFlipRotation } = this.calculateRotations();
 
         // The side of the axis line to position the labels on.
         // -1 = left (default)
         //  1 = right
-        const sideFlag = mirrored ? 1 : -1;
+        const sideFlag = this.label.mirrored ? 1 : -1;
+
+        const halfBandwidth = (this.scale.bandwidth || 0) / 2;
+
+        let ticks = [];
+        ({ ticks, primaryTickCount } = this.generateTicks({
+            primaryTickCount,
+            parallelFlipRotation,
+            regularFlipRotation,
+            halfBandwidth,
+            sideFlag,
+        }));
+
+        this.updateGridLines({
+            halfBandwidth,
+            sideFlag,
+        });
+
+        const anyTickVisible = this.updateVisibility();
+
+        this.updateCrossLines({ sideFlag, rotation, parallelFlipRotation, regularFlipRotation });
+        this.updateTitle({ ticks });
+        this.updateTickLines({ sideFlag, anyTickVisible });
+
+        return primaryTickCount;
+    }
+
+    private initScale() {
+        this.updateRange();
+        this.calculateDomain();
+
+        const { scale, nice } = this;
+
+        this.setDomain();
+        this.setTickInterval(this.tick.interval);
+
+        if (scale instanceof ContinuousScale) {
+            scale.nice = nice;
+            this.setTickCount(this.tick.count);
+            scale.update();
+        }
+    }
+
+    private calculateRotations() {
+        const rotation = toRadians(this.rotation);
         // When labels are parallel to the axis line, the `parallelFlipFlag` is used to
         // flip the labels to avoid upside-down text, when the axis is rotated
         // such that it is in the right hemisphere, i.e. the angle of rotation
@@ -638,23 +672,27 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         //  1 = don't flip (default)
         const parallelFlipRotation = normalizeAngle360(rotation);
         const regularFlipRotation = normalizeAngle360(rotation - Math.PI / 2);
+        return { rotation, parallelFlipRotation, regularFlipRotation };
+    }
 
-        const nice = this.nice;
-        this.setDomain();
-
-        this.setTickInterval(this.tick.interval);
-
-        if (scale instanceof ContinuousScale) {
-            scale.nice = nice;
-            this.setTickCount(this.tick.count);
-            scale.update();
-        }
-
-        const halfBandwidth = (scale.bandwidth ?? 0) / 2;
-
-        this.updatePosition();
-        this.updateLine();
-
+    private generateTicks({
+        primaryTickCount,
+        parallelFlipRotation,
+        regularFlipRotation,
+        halfBandwidth,
+        sideFlag,
+    }: {
+        primaryTickCount?: number;
+        parallelFlipRotation: number;
+        regularFlipRotation: number;
+        halfBandwidth: number;
+        sideFlag: 1 | -1;
+    }): { ticks: any[]; primaryTickCount?: number } {
+        const {
+            scale,
+            gridLength,
+            label: { enabled: enabledLabels, avoidCollisions, autoWrap },
+        } = this;
         let i = 0;
         let labelOverlap = true;
         let ticks: any[] = [];
@@ -746,69 +784,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             labelOverlap = checkForOverlap ? axisLabelsOverlap(labelData, labelSpacing) : false;
         }
 
-        this.updateGridLines({
-            gridLength,
-            halfBandwidth,
-            sideFlag,
-        });
-
-        let anyTickVisible = false;
-        const visibleFn = (node: Line | Text | Arc) => {
-            const min = Math.floor(requestedRangeMin);
-            const max = Math.ceil(requestedRangeMax);
-            if (min === max) {
-                node.visible = false;
-                return;
-            }
-
-            // Fix an effect of rounding error
-            if (node.translationY >= min - 1 && node.translationY < min) {
-                node.translationY = min;
-            }
-            if (node.translationY > max && node.translationY <= max + 1) {
-                node.translationY = max;
-            }
-
-            const visible = node.translationY >= min && node.translationY <= max;
-            if (visible) {
-                anyTickVisible = true;
-            }
-            node.visible = visible;
-        };
-
-        const { gridLineGroupSelection, gridArcGroupSelection, tickLineGroupSelection, tickLabelGroupSelection } = this;
-        gridLineGroupSelection.each(visibleFn);
-        gridArcGroupSelection.each(visibleFn);
-        tickLineGroupSelection.each(visibleFn);
-        tickLabelGroupSelection.each(visibleFn);
-
-        this.tickLineGroup.visible = this.tick.enabled && anyTickVisible;
-        this.tickLabelGroup.visible = enabledLabels && anyTickVisible;
-        this.gridLineGroup.visible = anyTickVisible;
-        this.gridArcGroup.visible = anyTickVisible;
-
-        this.crossLines?.forEach((crossLine) => {
-            crossLine.sideFlag = -sideFlag as -1 | 1;
-            crossLine.direction = rotation === -Math.PI / 2 ? ChartAxisDirection.X : ChartAxisDirection.Y;
-            crossLine.label.parallel = crossLine.label.parallel ?? parallelLabels;
-            crossLine.parallelFlipRotation = parallelFlipRotation;
-            crossLine.regularFlipRotation = regularFlipRotation;
-            crossLine.update(anySeriesActive);
-        });
-
-        this.updateTitle({ ticks });
-
-        tickLineGroupSelection.each((line) => {
-            line.strokeWidth = tick.width;
-            line.stroke = tick.color;
-            line.visible = anyTickVisible;
-            line.x1 = sideFlag * tick.size;
-            line.x2 = 0;
-            line.y1 = 0;
-            line.y2 = 0;
-        });
-
-        return primaryTickCount;
+        return { ticks, primaryTickCount };
     }
 
     private estimateTickCount({ minSpacing, maxSpacing }: { minSpacing: number; maxSpacing: number }): {
@@ -858,6 +834,85 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         }
 
         return { minTickCount, maxTickCount, defaultTickCount };
+    }
+
+    private updateVisibility(): boolean {
+        const { requestedRange } = this;
+
+        const requestedRangeMin = Math.min(...requestedRange);
+        const requestedRangeMax = Math.max(...requestedRange);
+
+        let anyTickVisible = false;
+        const visibleFn = (node: Line | Text | Arc) => {
+            const min = Math.floor(requestedRangeMin);
+            const max = Math.ceil(requestedRangeMax);
+            if (min === max) {
+                node.visible = false;
+                return;
+            }
+
+            // Fix an effect of rounding error
+            if (node.translationY >= min - 1 && node.translationY < min) {
+                node.translationY = min;
+            }
+            if (node.translationY > max && node.translationY <= max + 1) {
+                node.translationY = max;
+            }
+
+            const visible = node.translationY >= min && node.translationY <= max;
+            if (visible) {
+                anyTickVisible = true;
+            }
+            node.visible = visible;
+        };
+
+        const { gridLineGroupSelection, gridArcGroupSelection, tickLineGroupSelection, tickLabelGroupSelection } = this;
+        gridLineGroupSelection.each(visibleFn);
+        gridArcGroupSelection.each(visibleFn);
+        tickLineGroupSelection.each(visibleFn);
+        tickLabelGroupSelection.each(visibleFn);
+
+        this.tickLineGroup.visible = this.tick.enabled && anyTickVisible;
+        this.tickLabelGroup.visible = this.label.enabled && anyTickVisible;
+        this.gridLineGroup.visible = anyTickVisible;
+        this.gridArcGroup.visible = anyTickVisible;
+
+        return anyTickVisible;
+    }
+
+    private updateCrossLines({
+        sideFlag,
+        rotation,
+        parallelFlipRotation,
+        regularFlipRotation,
+    }: {
+        sideFlag: 1 | -1;
+        rotation: number;
+        parallelFlipRotation: number;
+        regularFlipRotation: number;
+    }) {
+        const anySeriesActive = this.isAnySeriesActive();
+        this.crossLines?.forEach((crossLine) => {
+            crossLine.sideFlag = -sideFlag as -1 | 1;
+            crossLine.direction = rotation === -Math.PI / 2 ? ChartAxisDirection.X : ChartAxisDirection.Y;
+            crossLine.label.parallel = crossLine.label.parallel ?? this.label.parallel;
+            crossLine.parallelFlipRotation = parallelFlipRotation;
+            crossLine.regularFlipRotation = regularFlipRotation;
+            crossLine.update(anySeriesActive);
+        });
+    }
+
+    private updateTickLines({ sideFlag, anyTickVisible }: { sideFlag: 1 | -1; anyTickVisible: boolean }) {
+        const { tick } = this;
+        this.tickLineGroupSelection.each((line) => {
+            line.strokeWidth = tick.width;
+            line.stroke = tick.color;
+            line.visible = anyTickVisible;
+            line.x1 = sideFlag * tick.size;
+            line.x2 = 0;
+            line.y1 = 0;
+            line.y2 = 0;
+        });
     }
 
     private calculateAvailableRange(): number {
@@ -972,16 +1027,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         this.gridArcGroupSelection = gridArcGroupSelection;
     }
 
-    private updateGridLines({
-        gridLength,
-        halfBandwidth,
-        sideFlag,
-    }: {
-        gridLength: number;
-        halfBandwidth: number;
-        sideFlag: -1 | 1;
-    }) {
-        const { gridStyle, scale, tick, gridPadding } = this;
+    private updateGridLines({ halfBandwidth, sideFlag }: { halfBandwidth: number; sideFlag: -1 | 1 }) {
+        const { gridStyle, scale, tick, gridPadding, gridLength } = this;
         if (gridLength && gridStyle.length) {
             const styleCount = gridStyle.length;
             let grid: Selection<Line | Arc, Group>;
