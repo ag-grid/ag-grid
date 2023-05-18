@@ -67,7 +67,7 @@ export class GridCtrl extends BeanStub {
             this.eGridHostDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(() => unsubscribeFromResize());
 
-        this.ctrlsService.registerGridCtrl(this);
+        this.ctrlsService.registerGridCtrl(this, this.gridOptionsService.api, this.gridOptionsService.columnApi);
     }
 
     public isDetailGrid(): boolean {

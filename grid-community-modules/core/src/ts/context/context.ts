@@ -40,9 +40,12 @@ export class Context {
     private beanWrappers: { [key: string]: BeanWrapper; } = {};
     private contextParams: ContextParams;
     private logger: ILogger;
-    private id = id++;
+    public id = id++;
 
     private destroyed = false;
+    public isDestroyed(): boolean {
+        return this.destroyed;
+    }
 
     public constructor(params: ContextParams, logger: ILogger) {
         if (!params || !params.beanClasses) {

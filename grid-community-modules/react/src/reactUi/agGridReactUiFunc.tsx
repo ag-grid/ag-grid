@@ -1,38 +1,28 @@
 import {
-    BaseComponentWrapper,
-    CtrlsService,
-    ColumnApi,
+    BaseComponentWrapper, ColumnApi,
     ComponentType,
     ComponentUtil,
-    Context,
-    FrameworkComponentWrapper,
+    Context, CtrlsService, FrameworkComponentWrapper,
     GridApi,
     GridCoreCreator,
     GridOptions,
     GridParams,
     WrappableInterface,
-    _,
+    _
 } from '@ag-grid-community/core';
 import React, {
-    useContext,
-    useCallback,
-    useImperativeHandle,
-    forwardRef,
-    useMemo,
+    useCallback, useEffect, useLayoutEffect, useMemo,
     useRef,
-    useState,
-    useLayoutEffect,
-    useEffect,
+    useState
 } from 'react';
 import { AgReactUiProps } from '../shared/interfaces';
 import { NewReactComponent } from '../shared/newReactComponent';
-import { PortalManager, PortalManager2 } from '../shared/portalManager';
-import GridComp from './gridComp';
+import { PortalManager2 } from '../shared/portalManager';
 import { ReactFrameworkOverrides } from '../shared/reactFrameworkOverrides';
+import GridComp from './gridComp';
 
-export const AgGridReactUiFunc = (props: AgReactUiProps<any>) => {
-    const apiRef = useRef<GridApi<any> | null>(null);
-    const columnApiRef = useRef<ColumnApi | null>(null);
+export const AgGridReactUiFunc = <TData,>(props: AgReactUiProps<TData>) => {
+    const apiRef = useRef<GridApi | null>(null);
     const gridOptionsRef = useRef<GridOptions | null>(null);
     const eGui = useRef<HTMLDivElement | null>(null);
     const portalManager = useRef<PortalManager2 | null>(null);
@@ -58,16 +48,21 @@ export const AgGridReactUiFunc = (props: AgReactUiProps<any>) => {
         }
     }, []);
 
-    useLayoutEffect(() => {
-        if (!portalManager.current) {
-            portalManager.current = new PortalManager2(
-                eGui.current!,
-                props.componentWrappingElement,
-                props.maxComponentCreationTimeMs
-            );
-            destroyFuncs.current.push(() => portalManager.current!.destroy());
-        }
+    const [, setPortalRefresher] = useState(0);
+    const updatePortalRefresher = useCallback(() => {
+        setPortalRefresher((prev) => prev + 1);
     }, []);
+
+    if (!portalManager.current) {
+        portalManager.current = new PortalManager2(updatePortalRefresher,
+            props.componentWrappingElement,
+            props.maxComponentCreationTimeMs
+        );
+        destroyFuncs.current.push(() => {
+            portalManager.current!.destroy();
+            portalManager.current = null;
+        });
+    }
 
     useLayoutEffect(() => {
         const modules = props.modules || [];
@@ -86,18 +81,32 @@ export const AgGridReactUiFunc = (props: AgReactUiProps<any>) => {
 
         const createUiCallback = (context: Context) => {
             setContext(context);
-
+            console.log('AgGridReactUi.createUiCallback setContext', (context as any).id, context.isDestroyed());
+            destroyFuncs.current.push(() => {
+                context.destroy();
+            });
             // because React is Async, we need to wait for the UI to be initialised before exposing the API's
             const ctrlsService = context.getBean(CtrlsService.NAME) as CtrlsService;
-            ctrlsService.whenReady(() => {
-                debug('AgGridReactUi.createUiCallback');
+            ctrlsService.whenReady((p) => {
+                console.log('AgGridReactUi.createUiCallback');
 
-                apiRef.current = gridOptionsRef.current!.api!;
-                columnApiRef.current = gridOptionsRef.current!.columnApi!;
-                if (props.setGridApi) {
-                    props.setGridApi(apiRef.current, columnApiRef.current);
+                if (context.isDestroyed()) {
+                    console.warn('context destroyed before setup!');
+                    console.warn('destroying api', (p.api as any).context.id);
+                    p.api.destroy();
                 }
-                destroyFuncs.current.push(() => apiRef.current!.destroy());
+
+                const api = p.api;
+                apiRef.current = p.api;
+                const columnApi = p.columnApi!;
+                console.warn('setting api', (api as any).context.id);
+                if (props.setGridApi) {
+                    props.setGridApi(api, columnApi);
+                }
+                destroyFuncs.current.push(() => {
+                    console.warn('destroying api', (api as any).context.id);
+                    api!.destroy()
+                });
             });
         };
 
@@ -107,7 +116,7 @@ export const AgGridReactUiFunc = (props: AgReactUiProps<any>) => {
         const acceptChangesCallback = (context: Context) => {
             const ctrlsService = context.getBean(CtrlsService.NAME) as CtrlsService;
             ctrlsService.whenReady(() => {
-                debug('AgGridReactUi.acceptChangesCallback');
+                console.log('AgGridReactUi.acceptChangesCallback');
                 whenReadyFuncs.current.forEach((f) => f());
                 whenReadyFuncs.current.length = 0;
                 ready.current = true;
@@ -125,13 +134,11 @@ export const AgGridReactUiFunc = (props: AgReactUiProps<any>) => {
         );
 
         return () => {
-            debug('AgGridReactUi.destroy');
+            console.log('AgGridReactUi.destroy');
             destroyFuncs.current.forEach((f) => f());
             destroyFuncs.current.length = 0;
         };
     }, []);
-
-
 
     const style = useMemo(() => {
         return {
@@ -142,31 +149,25 @@ export const AgGridReactUiFunc = (props: AgReactUiProps<any>) => {
 
     const processWhenReady = useCallback((func: () => void) => {
         if (ready.current) {
-            debug('AgGridReactUi.processWhenReady sync');
+            console.log('AgGridReactUi.processWhenReady sync');
             func();
         } else {
-            debug('AgGridReactUi.processWhenReady async');
+            console.log('AgGridReactUi.processWhenReady async');
             whenReadyFuncs.current.push(func);
         }
     }, []);
 
-    const processPropsChanges = useCallback((nextProps: any) => {
-        const changes = {};
-
-        extractGridPropertyChanges(prevProps.current, nextProps, changes, context);
-        prevProps.current = nextProps;
-
-        processWhenReady(() => ComponentUtil.processOnChange(changes, apiRef.current!));
-    }, []);
-
     useEffect(() => {
-        processPropsChanges(props);
-    }, [props])
-    //{portalManager.current!.getPortals()}
+        const changes = {};
+        extractGridPropertyChanges(prevProps.current, props, changes, context);
+        prevProps.current = props;
+        processWhenReady(() => ComponentUtil.processOnChange(changes, apiRef.current!));
+    }, [props, context]);
+
     return (
         <div style={style} className={props.className} ref={eGui}>
-            {context && <> <span>context.id{(context as any).id}</span> <GridComp context={context} /> </>}
-
+            {context && !context.isDestroyed() && <> <span>context.id{(context as any).id}</span> <GridComp context={context} /> </>}
+            {portalManager.current?.getPortals() ?? null}
         </div>
     );
 };
@@ -184,10 +185,6 @@ class ReactFrameworkComponentWrapper
     createWrapper(UserReactComponent: { new(): any }, componentType: ComponentType): WrappableInterface {
         return new NewReactComponent(UserReactComponent, this.parent as any, componentType);
     }
-}
-
-function debug(msg: string, obj?: any) {
-    // console.log(msg, obj);
 }
 
 function extractGridPropertyChanges(prevProps: any, nextProps: any, changes: any, context: any) {
