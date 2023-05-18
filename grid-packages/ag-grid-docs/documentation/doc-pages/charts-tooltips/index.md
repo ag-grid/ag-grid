@@ -90,9 +90,9 @@ In this example we show how to change the tooltip's default position. Note that:
 
 ## Tooltip Arrow
 
-The chart tooltip shows an arrow underneath it to indicate its exact point of origin when it's not constrained by the container.
+The chart tooltip shows an arrow below it to indicate its exact point of origin when it's unconstrained by the container and has no [position offset](#tooltip-position) supplied.
 
-To remove the arrow, set `tooltip.showArrow` to false.
+Set `tooltip.showArrow` to `true` to always show the arrow, and set it to `false` to remove the arrow.
 
 ```js
 tooltip: {
