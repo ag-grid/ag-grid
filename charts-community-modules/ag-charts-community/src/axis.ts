@@ -637,14 +637,13 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         this.updatePosition({ rotation, sideFlag });
         this.updateLine();
 
-        const ticksResult = this.generateTicks({
+        const { tickData, combinedRotation, textBaseline, textAlign, ...ticksResult } = this.generateTicks({
             primaryTickCount,
             parallelFlipRotation,
             regularFlipRotation,
             labelX,
             sideFlag,
         });
-        const { tickData, combinedRotation, textBaseline, textAlign } = ticksResult;
 
         this.updateSelections(tickData.ticks);
         this.updateLabels({
