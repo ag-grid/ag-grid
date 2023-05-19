@@ -248,7 +248,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.zoomManager = new ZoomManager();
         this.dataService = new DataService(() => this.series);
         this.layoutService = new LayoutService();
-        this.updateService = new UpdateService((type = ChartUpdateType.FULL) => this.update(type));
+        this.updateService = new UpdateService((type = ChartUpdateType.FULL, { forceNodeDataRefresh }) =>
+            this.update(type, { forceNodeDataRefresh })
+        );
 
         this.animationManager = new AnimationManager(this.interactionManager);
         this.animationManager.skipAnimations = true;
