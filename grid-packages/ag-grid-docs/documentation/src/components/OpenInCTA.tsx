@@ -25,17 +25,17 @@ const COPY_TEXT: Record<CtaType, ReactNode> = {
     ),
     plunkr: (
         <>
-            Open in Plunkr <Icon name="plunkr" />
+            Edit on Plunkr <Icon name="plunkr" />
         </>
     ),
     stackblitz: (
         <>
-            Open in StackBlitz <Icon name="stackblitz" />
+            Edit on StackBlitz <Icon name="stackblitz" />
         </>
     ),
     codesandbox: (
         <>
-            Open in CodeSandbox <Icon name="codesandbox" />
+            Edit on CodeSandbox <Icon name="codesandbox" />
         </>
     ),
 };

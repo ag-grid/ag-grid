@@ -58,7 +58,7 @@
         }
     }
 
-    input[class^='ag-'][type='number'] {
+    input[class^='ag-'][type='number']:not(.ag-number-field-input-stepper) {
         -moz-appearance: textfield;
         &::-webkit-outer-spin-button,
         &::-webkit-inner-spin-button {

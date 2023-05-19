@@ -146,7 +146,7 @@ Simple number editor that uses the standard HTML number `input`.
 
 Specified with `agNumberCellEditor` and configured with `INumberCellEditorParams`.
 
-<interface-documentation interfaceName='INumberCellEditorParams' names='["min","max","precision","step"]'></interface-documentation>
+<interface-documentation interfaceName='INumberCellEditorParams' names='["min","max","precision","step","showStepperButtons"]'></interface-documentation>
 
 ```js
 columnDefs: [

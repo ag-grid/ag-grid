@@ -793,7 +793,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         paths,
         seriesRect,
     }: {
-        markerSelections: Array<Selection<Marker, any>>;
+        markerSelections: Array<Selection<Marker, MarkerSelectionDatum>>;
         contextData: Array<AreaSeriesNodeDataContext>;
         paths: Array<Array<Path>>;
         seriesRect?: BBox;
@@ -814,11 +814,11 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
             // Stroke
             {
-                const { points } = strokeSelectionData;
-                const filteredPoints = points.filter((point) => !isNaN(point.x) && !isNaN(point.y));
+                const { points, yValues } = strokeSelectionData;
 
+                stroke.tag = AreaSeriesTag.Stroke;
                 stroke.fill = undefined;
-                stroke.lineJoin = 'round';
+                stroke.lineJoin = stroke.lineCap = 'round';
                 stroke.pointerEvents = PointerEvents.None;
 
                 stroke.stroke = strokes[seriesIdx % strokes.length];
@@ -832,13 +832,26 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                     onUpdate(xValue) {
                         stroke.path.clear({ trackChanges: true });
 
-                        filteredPoints.forEach((point, index) => {
-                            if (point.x <= xValue) {
-                                // Draw/move the full segment if past the end of this segment
-                                stroke.path.lineTo(point.x, point.y);
-                            } else if (index > 0 && filteredPoints[index - 1].x <= xValue) {
+                        let moveTo = true;
+                        points.forEach((point, index) => {
+                            // Draw/move the full segment if past the end of this segment
+                            if (yValues[index] === undefined || isNaN(point.x) || isNaN(point.y)) {
+                                moveTo = true;
+                            } else if (point.x <= xValue) {
+                                if (moveTo) {
+                                    stroke.path.moveTo(point.x, point.y);
+                                    moveTo = false;
+                                } else {
+                                    stroke.path.lineTo(point.x, point.y);
+                                }
+                            } else if (
+                                index > 0 &&
+                                yValues[index] !== undefined &&
+                                yValues[index - 1] !== undefined &&
+                                points[index - 1].x <= xValue
+                            ) {
                                 // Draw/move partial line if in between the start and end of this segment
-                                const start = filteredPoints[index - 1];
+                                const start = points[index - 1];
                                 const end = point;
 
                                 const x = xValue;
@@ -855,8 +868,14 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
             // Fill
             {
-                const points = fillSelectionData.points.slice(0, fillSelectionData.points.length / 2);
-                const bottomPoints = fillSelectionData.points.slice(fillSelectionData.points.length / 2);
+                const { points: allPoints } = fillSelectionData;
+                const points = allPoints.slice(0, allPoints.length / 2);
+                const bottomPoints = allPoints.slice(allPoints.length / 2);
+
+                fill.tag = AreaSeriesTag.Fill;
+                fill.stroke = undefined;
+                fill.lineJoin = 'round';
+                fill.pointerEvents = PointerEvents.None;
 
                 fill.fill = fills[seriesIdx % fills.length];
                 fill.fillOpacity = fillOpacity;
@@ -908,10 +927,12 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                             }
                         });
 
-                        fill.path.lineTo(
-                            bottomPoints[bottomPoints.length - 1].x,
-                            bottomPoints[bottomPoints.length - 1].y
-                        );
+                        if (bottomPoints.length > 0) {
+                            fill.path.lineTo(
+                                bottomPoints[bottomPoints.length - 1].x,
+                                bottomPoints[bottomPoints.length - 1].y
+                            );
+                        }
 
                         fill.path.closePath();
                         fill.checkPathDirty();
@@ -937,7 +958,63 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         });
     }
 
-    private animateFormatter(datum: any) {
+    animateReadyUpdateReady({
+        contextData,
+        paths,
+    }: {
+        contextData: Array<AreaSeriesNodeDataContext>;
+        paths: Array<Array<Path>>;
+    }) {
+        const { strokes, fills, fillOpacity, lineDash, lineDashOffset, strokeOpacity, strokeWidth, shadow } = this;
+
+        contextData.forEach(({ strokeSelectionData, fillSelectionData, itemId }, seriesIdx) => {
+            const [fill, stroke] = paths[seriesIdx];
+
+            // Stroke
+            stroke.stroke = strokes[seriesIdx % strokes.length];
+            stroke.strokeWidth = this.getStrokeWidth(this.strokeWidth, { itemId });
+            stroke.strokeOpacity = strokeOpacity;
+            stroke.lineDash = lineDash;
+            stroke.lineDashOffset = lineDashOffset;
+
+            stroke.path.clear({ trackChanges: true });
+
+            let moveTo = true;
+            strokeSelectionData.points.forEach((point, index) => {
+                if (strokeSelectionData.yValues[index] === undefined || isNaN(point.x) || isNaN(point.y)) {
+                    moveTo = true;
+                } else if (moveTo) {
+                    stroke.path.moveTo(point.x, point.y);
+                    moveTo = false;
+                } else {
+                    stroke.path.lineTo(point.x, point.y);
+                }
+            });
+
+            stroke.checkPathDirty();
+
+            // Fill
+
+            fill.fill = fills[seriesIdx % fills.length];
+            fill.fillOpacity = fillOpacity;
+            fill.strokeOpacity = strokeOpacity;
+            fill.strokeWidth = strokeWidth;
+            fill.lineDash = lineDash;
+            fill.lineDashOffset = lineDashOffset;
+            fill.fillShadow = shadow;
+
+            fill.path.clear({ trackChanges: true });
+
+            fillSelectionData.points.forEach((point) => {
+                fill.path.lineTo(point.x, point.y);
+            });
+
+            fill.path.closePath();
+            fill.checkPathDirty();
+        });
+    }
+
+    private animateFormatter(datum: MarkerSelectionDatum) {
         const { marker, fills, strokes, xKey = '', yKeys, id: seriesId } = this;
         const { size, formatter } = marker;
 

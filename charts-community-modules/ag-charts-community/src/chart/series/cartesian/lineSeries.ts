@@ -607,6 +607,35 @@ export class LineSeries extends CartesianSeries<LineContext> {
         });
     }
 
+    animateReadyUpdateReady({
+        contextData,
+        paths,
+    }: {
+        markerSelections: Array<Selection<Marker, LineNodeDatum>>;
+        contextData: Array<LineContext>;
+        paths: Array<Array<Path>>;
+        seriesRect?: BBox;
+    }) {
+        contextData.forEach(({ nodeData }, contextDataIndex) => {
+            const [lineNode] = paths[contextDataIndex];
+
+            const { path: linePath } = lineNode;
+
+            linePath.clear({ trackChanges: true });
+
+            nodeData.forEach((datum) => {
+                // Draw/move the full segment if past the end of this segment
+                if (datum.point.moveTo) {
+                    linePath.moveTo(datum.point.x, datum.point.y);
+                } else {
+                    linePath.lineTo(datum.point.x, datum.point.y);
+                }
+            });
+
+            lineNode.checkPathDirty();
+        });
+    }
+
     private animateFormatter(datum: LineNodeDatum) {
         const { marker, xKey = '', yKey = '', stroke: lineStroke, id: seriesId } = this;
         const { size, formatter } = marker;

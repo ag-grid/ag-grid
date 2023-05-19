@@ -30,7 +30,9 @@ export function useIntersectionObserver({
         observer.observe(elementRef.current);
 
         return () => {
-            observer.unobserve(elementRef.current);
+            if(elementRef.current) {
+                observer.unobserve(elementRef.current);
+            }
         };
     }, [elementRef.current]);
 }

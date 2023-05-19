@@ -177,8 +177,10 @@ async function run() {
         log.ok('Dev Server stopped');
     }
 
-    process.on('exit', stop);
-    process.on('SIGINT', stop);
+    // eslint-disable-next-line no-console
+    const stopCb = () => stop().catch((e) => console.log(e));
+    process.on('exit', stopCb);
+    process.on('SIGINT', stopCb);
 
     await devServer.start();
     log.ok(`Dev Server started on port ${PORT}`);
@@ -188,4 +190,6 @@ async function run() {
     openURLInBrowser(`http://localhost:${PORT}/`);
 }
 
-run();
+run()
+    // eslint-disable-next-line no-console
+    .catch((e) => console.error(e));
