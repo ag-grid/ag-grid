@@ -34,9 +34,15 @@
     height: var(--mobile-header-height);
     padding: 0 $size-2;
     border-bottom: 2px solid var(--bright-blue-gray);
+    overflow-x: auto;
 
     @container (width > 640px) {
         display: none;
+    }
+
+    button,
+    span {
+        flex-shrink: 0;
     }
 
     svg {
@@ -60,6 +66,10 @@
     color: var(--secondary-text-color);
     box-shadow: inset -2px 0 0 0 var(--bright-blue-gray);
 
+    @container (width < 640px) {
+        width: var(--files-min-width);
+    }
+
     h4 {
         margin-top: 0 !important; // !important for .ag-styles specificity
         margin-bottom: 0 !important; // !important for .ag-styles specificity
@@ -81,6 +91,8 @@
     padding: 0 $size-2 2px $size-half !important; // !important for .ag-styles specificity
     font-size: var(--font-size-small);
     font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity
+    overflow: hidden;
+    text-overflow: ellipsis;
     border-top: 2px solid var(--file-border-color) !important; // !important for .ag-styles specificity
     border-left: 2px solid var(--file-border-color) !important; // !important for .ag-styles specificity
     border-bottom: 2px solid var(--file-border-color) !important; // !important for .ag-styles specificity

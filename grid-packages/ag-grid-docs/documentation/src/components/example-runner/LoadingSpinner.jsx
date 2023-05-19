@@ -9,7 +9,7 @@ const loadingStyles = {
 };
 
 const loadingScript = `const cleanupLoading = () => {
-    if (document.querySelector('.ag-root-wrapper')) {
+    if (document.querySelector('.ag-root-wrapper, .ag-chart-wrapper')) {
         document.querySelector('#loading-spinner').remove();
         document.querySelector('#loading-script').remove();
     } else {
