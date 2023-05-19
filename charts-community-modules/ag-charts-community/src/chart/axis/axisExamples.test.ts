@@ -406,7 +406,7 @@ describe('Axis Examples', () => {
                 const reference = await snapshot();
 
                 chart.series.forEach((s) => {
-                    s.toggleSeriesItem(s.getKeys(ChartAxisDirection.Y)[0], true);
+                    (s as any).toggleSeriesItem(s.getKeys(ChartAxisDirection.Y)[0], true);
                 });
                 chart.update(ChartUpdateType.FULL);
 
@@ -414,7 +414,7 @@ describe('Axis Examples', () => {
                 (expect(afterUpdate) as any).not.toMatchImage(reference);
 
                 chart.series.forEach((s) => {
-                    s.toggleSeriesItem(s.getKeys(ChartAxisDirection.Y)[0], false);
+                    (s as any).toggleSeriesItem(s.getKeys(ChartAxisDirection.Y)[0], false);
                 });
                 chart.update(ChartUpdateType.FULL);
 
@@ -440,14 +440,14 @@ describe('Axis Examples', () => {
             expect(chart.series[1].getKeys(ChartAxisDirection.Y)).toEqual(['exportedTonnes']);
 
             // Hide series bound to secondary axis.
-            chart.series[1].toggleSeriesItem('exportedTonnes', false);
+            (chart.series[1] as any).toggleSeriesItem('exportedTonnes', false);
             chart.update(ChartUpdateType.FULL);
 
             const afterUpdate = await snapshot();
             (expect(afterUpdate) as any).not.toMatchImage(reference);
 
             // Show series bound to secondary axis.
-            chart.series[1].toggleSeriesItem('exportedTonnes', true);
+            (chart.series[1] as any).toggleSeriesItem('exportedTonnes', true);
             chart.update(ChartUpdateType.FULL);
 
             const afterFinalUpdate = await snapshot();
