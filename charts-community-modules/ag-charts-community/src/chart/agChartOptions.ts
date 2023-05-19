@@ -732,12 +732,6 @@ export interface AgAxisLabelOptions {
     padding?: PixelSize;
     /** The colour to use for the labels */
     color?: CssColor;
-    /** If set to `true`, axis labels will be wrapped on multiple lines.*/
-    autoWrap?: boolean;
-    /** Used to constrain the width of the label when `autoWrap` is `true`, if the label text width exceeds the `maxWidth`, it will be wrapped on multiple lines automatically. If `maxWidth` is omitted, a default width constraint will be applied. */
-    maxWidth?: PixelSize;
-    /** Used to constrain the height of the multiline label, if the label text height exceeds the `maxHeight`, it will be truncated automatically. If `maxHeight` is omitted, a default height constraint will be applied. */
-    maxHeight?: PixelSize;
     /** The rotation of the axis labels in degrees. Note: for integrated charts the default is 335 degrees, unless the axis shows grouped or default categories (indexes). The first row of labels in a grouped category axis is rotated perpendicular to the axis line. */
     rotation?: number;
     /** If specified and axis labels may collide, they are rotated so that they are positioned at the supplied angle. This is enabled by default for category. If the `rotation` property is specified, it takes precedence. */
