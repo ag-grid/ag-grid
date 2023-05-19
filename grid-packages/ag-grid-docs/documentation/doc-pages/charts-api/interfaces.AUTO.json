@@ -8,6 +8,14 @@
     "meta": { "isTypeAlias": true, "typeParams": ["S"] },
     "type": "S extends TimeScale ? number | TimeInterval : number"
   },
+  "TickDatum": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ tickLabel: string; tick: any; translationY: number; }"
+  },
+  "TickData": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ rawTicks: any[]; ticks: TickDatum[]; labelCount: number; }"
+  },
   "TickInterval": {
     "meta": { "isTypeAlias": true, "typeParams": ["S"] },
     "type": "S extends TimeScale ? number | TimeInterval : number"
@@ -3917,6 +3925,7 @@
     "meta": {},
     "type": { "type": "'zoom-change'", "x?": "ZoomState", "y?": "ZoomState" }
   },
+  "Flag": { "meta": { "isTypeAlias": true }, "type": "1 | -1" },
   "Layers": {
     "meta": { "isEnum": true },
     "type": [
@@ -3938,7 +3947,7 @@
   },
   "AxisLabelLayout": {
     "meta": { "isTypeAlias": true },
-    "type": "{ baseline: 'hanging' | 'bottom' | 'middle'; align: 'start' | 'end' | 'center'; rotation: number; fractionDigits: number; padding: number; format?: string; }"
+    "type": "{ fractionDigits: number; padding: number; format?: string; }"
   },
   "AxisLayout": {
     "meta": {},
@@ -4665,12 +4674,14 @@
       "fontSize": "number",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
-      "lineHeight?": "number"
+      "lineHeight?": "number",
+      "textBaseline?": "CanvasTextBaseline",
+      "textAlign?": "CanvasTextAlign"
     }
   },
   "WordWrapProperties": {
     "meta": {},
-    "type": { "breakWord?": "boolean", "hyphens?": "boolean" }
+    "type": { "breakWord": "boolean", "hyphens": "boolean" }
   },
   "TextMeasurer": {
     "meta": {},

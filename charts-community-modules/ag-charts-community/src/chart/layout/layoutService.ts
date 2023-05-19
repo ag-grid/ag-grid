@@ -4,9 +4,6 @@ import { Listeners } from '../../util/listeners';
 export type LayoutStage = 'start-layout' | 'before-series';
 
 export type AxisLabelLayout = {
-    baseline: 'hanging' | 'bottom' | 'middle';
-    align: 'start' | 'end' | 'center';
-    rotation: number;
     fractionDigits: number;
     padding: number;
     format?: string;

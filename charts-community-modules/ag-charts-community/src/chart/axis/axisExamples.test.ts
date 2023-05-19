@@ -206,6 +206,72 @@ const EXAMPLES_CLIPPING: Record<string, TestCase> = {
     }),
 };
 
+function switchToColumn<T>(opts: T): T {
+    return {
+        ...opts,
+        series: opts['series']?.map((s) => ({ ...s, type: 'column' })),
+        axes: opts['axes']?.map((a) => ({ ...a, position: a.position === 'left' ? 'bottom' : 'left' })),
+    };
+}
+
+function applyAutoWrapping<T>(opts: T, maxWidth?: number): T {
+    return {
+        ...opts,
+        axes:
+            opts['axes']?.map((axis) => ({
+                ...axis,
+                label: { ...axis.label, autoWrap: true, maxWidth, autoRotate: false, rotation: 0 },
+            })) || undefined,
+    };
+}
+
+const EXAMPLES_LABEL_AUTO_WRAPPING: Record<string, TestCase> = {
+    BAR_CHART_EXAMPLE: {
+        options: applyAutoWrapping(examples.BAR_CHART_EXAMPLE, 150),
+        assertions: cartesianChartAssertions(),
+    },
+    GROUPED_BAR_CHART_EXAMPLE: {
+        options: applyAutoWrapping(examples.GROUPED_BAR_CHART_EXAMPLE),
+        assertions: cartesianChartAssertions(),
+    },
+    STACKED_BAR_CHART_EXAMPLE: {
+        options: applyAutoWrapping(examples.STACKED_BAR_CHART_EXAMPLE, 150),
+        assertions: cartesianChartAssertions(),
+    },
+    ONE_HUNDRED_PERCENT_STACKED_BAR_EXAMPLE: {
+        options: applyAutoWrapping(examples.ONE_HUNDRED_PERCENT_STACKED_BAR_EXAMPLE, 100),
+        assertions: cartesianChartAssertions(),
+    },
+    BAR_CHART_WITH_LABELS_EXAMPLE: {
+        options: applyAutoWrapping(examples.BAR_CHART_WITH_LABELS_EXAMPLE),
+        assertions: cartesianChartAssertions(),
+    },
+    COLUMN_CHART_EXAMPLE: {
+        options: applyAutoWrapping(switchToColumn(examples.BAR_CHART_EXAMPLE)),
+        assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
+    },
+    GROUPED_COLUMN_CHART_EXAMPLE: {
+        options: applyAutoWrapping(switchToColumn(examples.GROUPED_BAR_CHART_EXAMPLE)),
+        assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
+    },
+    STACKED_COLUMN_CHART_EXAMPLE: {
+        options: applyAutoWrapping(switchToColumn(examples.STACKED_BAR_CHART_EXAMPLE)),
+        assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
+    },
+    ONE_HUNDRED_PERCENT_STACKED_COLUMN_EXAMPLE: {
+        options: applyAutoWrapping(switchToColumn(examples.ONE_HUNDRED_PERCENT_STACKED_BAR_EXAMPLE)),
+        assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
+    },
+    COLUMN_CHART_WITH_LABELS_EXAMPLE: {
+        options: applyAutoWrapping(switchToColumn(examples.BAR_CHART_WITH_LABELS_EXAMPLE)),
+        assertions: cartesianChartAssertions({ seriesTypes: ['column'] }),
+    },
+    SIMPLE_LINE_CHART_EXAMPLE: {
+        options: applyAutoWrapping(examples.SIMPLE_LINE_CHART_EXAMPLE, 80),
+        assertions: cartesianChartAssertions({ axisTypes: ['time', 'number'], seriesTypes: ['line', 'line'] }),
+    },
+};
+
 function mixinDerivedCases(baseCases: Record<string, TestCase>): Record<string, TestCase> {
     const result = { ...baseCases };
 
@@ -422,6 +488,37 @@ describe('Axis Examples', () => {
 
     describe('configured tick spacing cases', () => {
         for (const [exampleName, example] of Object.entries(EXAMPLES_TICK_SPACING)) {
+            it(`for ${exampleName} it should create chart instance as expected`, async () => {
+                const options: AgChartOptions = example.options;
+                chart = deproxy(AgChart.create(options)) as Chart;
+                await waitForChartStability(chart);
+                await example.assertions(chart);
+            });
+
+            it(`for ${exampleName} it should render to canvas as expected`, async () => {
+                const compare = async () => {
+                    await waitForChartStability(chart);
+
+                    const newImageData = extractImageData({ ...ctx });
+                    (expect(newImageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
+                };
+
+                const options: AgChartOptions = { ...example.options };
+                prepareTestOptions(options);
+
+                chart = deproxy(AgChart.create(options)) as Chart;
+                await compare();
+
+                if (example.extraScreenshotActions) {
+                    await example.extraScreenshotActions(chart);
+                    await compare();
+                }
+            });
+        }
+    });
+
+    describe('auto wrap axis labels cases', () => {
+        for (const [exampleName, example] of Object.entries(EXAMPLES_LABEL_AUTO_WRAPPING)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = example.options;
                 chart = deproxy(AgChart.create(options)) as Chart;

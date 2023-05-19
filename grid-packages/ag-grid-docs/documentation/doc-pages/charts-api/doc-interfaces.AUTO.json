@@ -2,6 +2,8 @@
   "_config_": {},
   "Tags": {},
   "TickCount": { "meta": { "typeParams": ["S"] } },
+  "TickDatum": {},
+  "TickData": {},
   "TickInterval": { "meta": { "typeParams": ["S"] } },
   "Size": {},
   "OffscreenCanvasRenderingContext2D": {},
@@ -5824,6 +5826,7 @@
     "x": { "type": { "returnType": "ZoomState", "optional": true } },
     "y": { "type": { "returnType": "ZoomState", "optional": true } }
   },
+  "Flag": {},
   "Layers": {},
   "LayoutStage": {},
   "AxisLabelLayout": {},
@@ -6596,11 +6599,17 @@
     "fontSize": { "type": { "returnType": "number", "optional": false } },
     "fontStyle": { "type": { "returnType": "FontStyle", "optional": true } },
     "fontWeight": { "type": { "returnType": "FontWeight", "optional": true } },
-    "lineHeight": { "type": { "returnType": "number", "optional": true } }
+    "lineHeight": { "type": { "returnType": "number", "optional": true } },
+    "textBaseline": {
+      "type": { "returnType": "CanvasTextBaseline", "optional": true }
+    },
+    "textAlign": {
+      "type": { "returnType": "CanvasTextAlign", "optional": true }
+    }
   },
   "WordWrapProperties": {
-    "breakWord": { "type": { "returnType": "boolean", "optional": true } },
-    "hyphens": { "type": { "returnType": "boolean", "optional": true } }
+    "breakWord": { "type": { "returnType": "boolean", "optional": false } },
+    "hyphens": { "type": { "returnType": "boolean", "optional": false } }
   },
   "TextMeasurer": {
     "size": {
