@@ -28,7 +28,7 @@ const App = () => {
     return (
         <div style={{ display: 'flex' }}>
             <div className="ag-theme-alpine" style={{ height: 400, width: 600, margin: 10 }}>
-                <AgGridReactUi<any>
+                <AgGridReactUi
                     defaultColDef={{
                         resizable: true,
                         filter: true,

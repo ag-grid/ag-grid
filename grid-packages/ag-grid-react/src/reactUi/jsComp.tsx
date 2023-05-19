@@ -11,12 +11,7 @@ export const showJsComp = (
     ref?: MutableRefObject<any> | ((ref: any)=>void)
 )  => {
 
-    if (context.isDestroyed()) {
-        console.error('AG Grid: React Component not created as React Context is destroyed');
-        return;
-    }
-
-    const doNothing = !compDetails || compDetails.componentFromFramework;
+    const doNothing = context.isDestroyed() || !compDetails || compDetails.componentFromFramework;
     if (doNothing) { return; }
 
     const promise = compDetails!.newAgStackInstance();
