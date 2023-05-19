@@ -3746,12 +3746,7 @@
   },
   "Series": {
     "meta": {},
-    "type": {
-      "id": "string",
-      "type": "string",
-      "toggleSeriesItem(itemId: string, enabled: boolean)": "void",
-      "getLegendData()": "any[]"
-    }
+    "type": { "id": "string", "type": "string", "getLegendData()": "any[]" }
   },
   "SeriesGetter": { "meta": { "isTypeAlias": true }, "type": "() => Series[]" },
   "ChartType": {

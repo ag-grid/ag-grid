@@ -561,7 +561,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
 
     abstract getLegendData(): ChartLegendDatum[];
 
-    toggleSeriesItem(_itemId: any, enabled: boolean): void {
+    protected toggleSeriesItem(_itemId: any, enabled: boolean): void {
         this.visible = enabled;
         this.nodeDataRefresh = true;
     }
