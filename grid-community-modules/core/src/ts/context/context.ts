@@ -34,18 +34,13 @@ interface BeanWrapper {
     beanInstance: any;
     beanName: any;
 }
-var id = 0;
 export class Context {
 
     private beanWrappers: { [key: string]: BeanWrapper; } = {};
     private contextParams: ContextParams;
     private logger: ILogger;
-    public id = id++;
 
     private destroyed = false;
-    public isDestroyed(): boolean {
-        return this.destroyed;
-    }
 
     public constructor(params: ContextParams, logger: ILogger) {
         if (!params || !params.beanClasses) {
@@ -55,7 +50,7 @@ export class Context {
         this.contextParams = params;
 
         this.logger = logger;
-        this.logger.log(this.id + " >> creating ag-Application Context");
+        this.logger.log(">> creating ag-Application Context");
 
         this.createBeans();
 
@@ -63,7 +58,7 @@ export class Context {
 
         this.wireBeans(beanInstances);
 
-        this.logger.log(this.id + " >> ag-Application Context ready - component is alive");
+        this.logger.log(">> ag-Application Context ready - component is alive");
     }
 
     private getBeanInstances(): any[] {
@@ -124,7 +119,7 @@ export class Context {
             } else {
                 beanName = "" + BeanClass;
             }
-            console.error(this.id + `Context item ${beanName} is not a bean`);
+            console.error(`Context item ${beanName} is not a bean`);
             return;
         }
 
@@ -208,7 +203,7 @@ export class Context {
 
     private lookupBeanInstance(wiringBean: string, beanName: string, optional = false): any {
         if (this.destroyed) {
-            this.logger.log(this.id + ` AG Grid: bean reference ${beanName} is used after the grid is destroyed!`);
+            this.logger.log(`AG Grid: bean reference ${beanName} is used after the grid is destroyed!`);
             return null;
         }
 
@@ -227,7 +222,7 @@ export class Context {
         }
 
         if (!optional) {
-            console.error(this.id + `AG Grid: unable to find bean reference ${beanName} while initialising ${wiringBean}`);
+            console.error(`AG Grid: unable to find bean reference ${beanName} while initialising ${wiringBean}`);
         }
 
         return null;
@@ -264,7 +259,7 @@ export class Context {
     public destroy(): void {
         if (this.destroyed) { return; }
 
-        this.logger.log(this.id + " >> Shutting down ag-Application Context");
+        this.logger.log(">> Shutting down ag-Application Context");
 
         const beanInstances = this.getBeanInstances();
         this.destroyBeans(beanInstances);
@@ -272,7 +267,7 @@ export class Context {
         this.contextParams.providedBeanInstances = null;
         this.destroyed = true;
 
-        this.logger.log(this.id + " >> ag-Application Context shut down - component is dead");
+        this.logger.log(">> ag-Application Context shut down - component is dead");
     }
 
     public destroyBean<T>(bean: T): undefined {
@@ -296,6 +291,10 @@ export class Context {
         });
 
         return [];
+    }
+
+    public isDestroyed(): boolean {
+        return this.destroyed;
     }
 }
 
@@ -344,11 +343,11 @@ export function Optional(name?: string): Function {
 
 function autowiredFunc(target: any, name: string | undefined, optional: boolean, classPrototype: any, methodOrAttributeName: string, index: number | null) {
     if (name === null) {
-        console.error(this.id + "AG Grid: Autowired name should not be null");
+        console.error("AG Grid: Autowired name should not be null");
         return;
     }
     if (typeof index === "number") {
-        console.error(this.id + "AG Grid: Autowired should be on an attribute");
+        console.error("AG Grid: Autowired should be on an attribute");
         return;
     }
 
