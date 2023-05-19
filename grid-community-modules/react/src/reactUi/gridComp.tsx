@@ -9,7 +9,6 @@ import { BeansContext } from './beansContext';
 import GridBodyComp from './gridBodyComp';
 import useReactCommentEffect from './reactComment';
 import TabGuardComp, { TabGuardCompCallback } from './tabGuardComp';
-import { useLayoutEffectOnce } from './useEffectOnce';
 import { classesList } from './utils';
 
 interface GridCompProps {
@@ -91,12 +90,10 @@ const GridComp = ({ context }: GridCompProps) => {
 
     // initialise the extra components
     useEffect(() => {
-        if (!tabGuardReady || !beans) { return; }
+        if (!tabGuardReady || !beans || !gridCtrlRef.current) { return; }
 
         const gridCtrl = gridCtrlRef.current!;
-        if (!gridCtrl) { return; }
         const beansToDestroy: any[] = [];
-
         const {agStackComponentsRegistry} = beans;
 
         const HeaderDropZonesClass = agStackComponentsRegistry.getComponentClass('AG-GRID-HEADER-DROP-ZONES');
