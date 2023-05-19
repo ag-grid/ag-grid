@@ -2,7 +2,7 @@
 // @refresh reset
 
 import classNames from 'classnames';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { createAutomatedIntegratedCharts } from '../../../components/automated-examples/examples/integrated-charts';
 import { INTEGRATED_CHARTS_ID } from '../../../components/automated-examples/lib/constants';
@@ -11,6 +11,10 @@ import { OverlayButton } from '../../../components/automated-examples/OverlayBut
 import { ToggleAutomatedExampleButton } from '../../../components/automated-examples/ToggleAutomatedExampleButton';
 import LogoMark from '../../../components/LogoMark';
 import breakpoints from '../../../design-system/breakpoint.module.scss';
+import {
+    trackHomepageExampleIntegratedCharts,
+    trackOnceHomepageExampleIntegratedCharts,
+} from '../../../utils/analytics';
 import { hostPrefix, isProductionBuild, localPrefix } from '../../../utils/consts';
 import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
 import styles from './AutomatedIntegratedCharts.module.scss';
@@ -61,6 +65,13 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
         setScriptIsEnabled(isEnabled);
         automatedExampleManager.setEnabled({ id: exampleId, isEnabled });
     };
+    const gridInteraction = useCallback(() => {
+        if (!scriptIsEnabled) {
+            trackOnceHomepageExampleIntegratedCharts({
+                type: 'interactedWithGrid',
+            });
+        }
+    }, [scriptIsEnabled]);
 
     useIntersectionObserver({
         elementRef: gridRef,
@@ -68,6 +79,10 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
             if (isIntersecting) {
                 debuggerManager.log(`${exampleId} intersecting - start`);
                 automatedExampleManager.start(exampleId);
+
+                trackOnceHomepageExampleIntegratedCharts({
+                    type: 'hasStarted',
+                });
             } else {
                 debuggerManager.log(`${exampleId} not intersecting - inactive`);
                 automatedExampleManager.inactive(exampleId);
@@ -131,7 +146,8 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
             </header>
 
             <Helmet>{helmet.map((entry) => entry)}</Helmet>
-            <div ref={gridRef} className="automated-integrated-charts-grid ag-theme-alpine">
+            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
+            <div ref={gridRef} className="automated-integrated-charts-grid ag-theme-alpine" onClick={gridInteraction}>
                 <OverlayButton
                     ref={overlayRef}
                     ariaLabel="Give me control"
@@ -142,6 +158,11 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
                         if (!isMobile()) {
                             setAllScriptEnabledVars(false);
                             automatedExampleManager.stop(exampleId);
+
+                            trackHomepageExampleIntegratedCharts({
+                                type: 'controlGridClick',
+                                clickType: 'overlay',
+                            });
                         }
                     }}
                 />
@@ -160,6 +181,12 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
                                 setAllScriptEnabledVars(true);
                                 automatedExampleManager.start(exampleId);
                             }
+
+                            trackHomepageExampleIntegratedCharts({
+                                type: 'controlGridClick',
+                                clickType: 'button',
+                                value: scriptIsEnabled ? 'stop' : 'start',
+                            });
                         }}
                         isHoveredOver={gridIsHoveredOver}
                         scriptIsActive={scriptIsEnabled}
