@@ -16,7 +16,7 @@ import React, {
 } from 'react';
 import { AgReactUiProps } from '../shared/interfaces';
 import { NewReactComponent } from '../shared/newReactComponent';
-import { PortalManager2 } from '../shared/portalManager';
+import { PortalManager } from '../shared/portalManager';
 import { ReactFrameworkOverrides } from '../shared/reactFrameworkOverrides';
 import GridComp from './gridComp';
 
@@ -24,7 +24,7 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
     const apiRef = useRef<GridApi | null>(null);
     const gridOptionsRef = useRef<GridOptions | null>(null);
     const eGui = useRef<HTMLDivElement | null>(null);
-    const portalManager = useRef<PortalManager2 | null>(null);
+    const portalManager = useRef<PortalManager | null>(null);
     const destroyFuncs = useRef<(() => void)[]>([]);
     const whenReadyFuncs = useRef<(() => void)[]>([]);
 
@@ -56,7 +56,7 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
         const modules = props.modules || [];
 
         if (!portalManager.current) {
-            portalManager.current = new PortalManager2(updatePortalRefresher,
+            portalManager.current = new PortalManager(updatePortalRefresher,
                 props.componentWrappingElement,
                 props.maxComponentCreationTimeMs
             );
@@ -175,9 +175,9 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
 class ReactFrameworkComponentWrapper
     extends BaseComponentWrapper<WrappableInterface>
     implements FrameworkComponentWrapper {
-    private readonly parent: PortalManager2;
+    private readonly parent: PortalManager;
 
-    constructor(parent: PortalManager2) {
+    constructor(parent: PortalManager) {
         super();
         this.parent = parent;
     }

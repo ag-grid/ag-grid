@@ -1,7 +1,7 @@
 import { Component, ReactPortal } from "react";
 import { ReactComponent } from "./reactComponent";
 
-export class PortalManager {
+export class LegacyPortalManager {
 
     private static MAX_COMPONENT_CREATION_TIME_IN_MS: number = 1000; // a second should be more than enough to instantiate a component
 
@@ -17,7 +17,7 @@ export class PortalManager {
     constructor(parent: Component, wrappingElement?: string, maxComponentCreationTimeMs?: number) {
         this.wrappingElement = wrappingElement ? wrappingElement : 'div';
         this.parent = parent;
-        this.maxComponentCreationTimeMs = maxComponentCreationTimeMs ? maxComponentCreationTimeMs : PortalManager.MAX_COMPONENT_CREATION_TIME_IN_MS;
+        this.maxComponentCreationTimeMs = maxComponentCreationTimeMs ? maxComponentCreationTimeMs : LegacyPortalManager.MAX_COMPONENT_CREATION_TIME_IN_MS;
     }
 
     public getPortals(): ReactPortal[] {
@@ -93,7 +93,7 @@ export class PortalManager {
     }
 }
 
-export class PortalManager2 {
+export class PortalManager {
 
     private static MAX_COMPONENT_CREATION_TIME_IN_MS: number = 1000; // a second should be more than enough to instantiate a component
 
@@ -109,7 +109,7 @@ export class PortalManager2 {
     constructor(refresher: () => void, wrappingElement?: string, maxComponentCreationTimeMs?: number) {
         this.wrappingElement = wrappingElement ? wrappingElement : 'div';
         this.refresher = refresher;
-        this.maxComponentCreationTimeMs = maxComponentCreationTimeMs ? maxComponentCreationTimeMs : PortalManager2.MAX_COMPONENT_CREATION_TIME_IN_MS;
+        this.maxComponentCreationTimeMs = maxComponentCreationTimeMs ? maxComponentCreationTimeMs : PortalManager.MAX_COMPONENT_CREATION_TIME_IN_MS;
     }
 
     public getPortals(): ReactPortal[] {

@@ -34,6 +34,7 @@ interface BeanWrapper {
     beanInstance: any;
     beanName: any;
 }
+
 export class Context {
 
     private beanWrappers: { [key: string]: BeanWrapper; } = {};
