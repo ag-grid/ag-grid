@@ -178,7 +178,9 @@ async function run() {
     }
 
     // eslint-disable-next-line no-console
-    const stopCb = () => stop().catch((e) => console.log(e));
+    const stopCb = () => {
+        stop().catch((e) => console.log(e));
+    };
     process.on('exit', stopCb);
     process.on('SIGINT', stopCb);
 
