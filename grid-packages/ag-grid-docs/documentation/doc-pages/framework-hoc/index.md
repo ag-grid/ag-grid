@@ -5,7 +5,7 @@ frameworks: ["react"]
 ### Redux / Higher Order Components (HOC)
 
 <note>
-We provide a guide on how to use AG Grid with Redux in our <a href="../redux-integration-pt1/">React/Redux Integration Guide </a>
+We provide a guide on how to use AG Grid with Redux in our [React/Redux Integration Guide.](../redux-integration-pt1/)
 </note>
 
 If you use `connect` to use Redux, or if you're using a Higher Order Component (HOC) to wrap the grid React component,
