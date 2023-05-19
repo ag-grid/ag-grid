@@ -12,7 +12,6 @@ import {
     ToolPanelDef,
     GridApi,
     ToolPanelVisibleChangedEvent,
-    InternalToolPanelVisibleChangedEvent,
     Autowired,
     ManagedFocusFeature,
     FocusService,
@@ -269,28 +268,24 @@ export class SideBarComp extends Component implements ISideBar {
     }
 
     private raiseToolPanelVisibleEvent(key: string | undefined, previousKey: string | undefined, source: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api'): void {
-        // To be removed in v30
-        const oldEvent: WithoutGridCommon<ToolPanelVisibleChangedEvent> = {
-            type: Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
-            source: key,
-        };
-        this.eventService.dispatchEvent(oldEvent);
-
+        const switchingToolPanel = !!key && !!previousKey;
         if (previousKey) {
-            const event: WithoutGridCommon<InternalToolPanelVisibleChangedEvent> = {
-                type: Events.EVENT_INTERNAL_TOOL_PANEL_VISIBLE_CHANGED,
+            const event: WithoutGridCommon<ToolPanelVisibleChangedEvent> = {
+                type: Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
                 source,
                 key: previousKey,
                 visible: false,
+                switchingToolPanel,
             };
             this.eventService.dispatchEvent(event);
         }
         if (key) {
-            const event: WithoutGridCommon<InternalToolPanelVisibleChangedEvent> = {
-                type: Events.EVENT_INTERNAL_TOOL_PANEL_VISIBLE_CHANGED,
+            const event: WithoutGridCommon<ToolPanelVisibleChangedEvent> = {
+                type: Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
                 source,
                 key,
                 visible: true,
+                switchingToolPanel,
             };
             this.eventService.dispatchEvent(event);
         }

@@ -962,7 +962,7 @@ export interface GridOptions<TData = any> {
     // **********************************************************************************************************
 
     // *** Accessories *** //
-    /** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */
+    /** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */
     onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>): void;
     /** The tool panel size has been changed. */
     onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>): void;
