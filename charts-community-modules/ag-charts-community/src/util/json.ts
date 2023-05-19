@@ -51,7 +51,7 @@ type DeepPartial<T> = {
  *
  * @returns `null` if no differences, or an object with the subset of properties that have changed.
  */
-export function jsonDiff<T extends any>(source: T, target: T): Partial<T> | null {
+export function jsonDiff<T extends unknown>(source: T, target: T): Partial<T> | null {
     const sourceType = classify(source);
     const targetType = classify(target);
 

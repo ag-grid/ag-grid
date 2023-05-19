@@ -480,8 +480,8 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         const yString = sanitizeHtml(yAxis.formatDatum(yValue));
 
         let content =
-            `<b>${sanitizeHtml(xName || xKey)}</b>: ${xString}<br>` +
-            `<b>${sanitizeHtml(yName || yKey)}</b>: ${yString}`;
+            `<b>${sanitizeHtml(xName ?? xKey)}</b>: ${xString}<br>` +
+            `<b>${sanitizeHtml(yName ?? yKey)}</b>: ${yString}`;
 
         if (sizeKey) {
             content += `<br><b>${sanitizeHtml(sizeName ?? sizeKey)}</b>: ${sanitizeHtml(datum[sizeKey])}`;
@@ -528,7 +528,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         const { id, data, xKey, yKey, yName, title, visible, marker } = this;
         const { fill, stroke, fillOpacity, strokeOpacity } = marker;
 
-        if (!(data && data.length && xKey && yKey)) {
+        if (!(data?.length && xKey && yKey)) {
             return [];
         }
 

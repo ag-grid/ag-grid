@@ -510,9 +510,9 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
             domain,
             domain: [rangeMin, rangeMax],
         } = nodeDatum;
-        const title = `${sanitizeHtml(xName || xKey)}: ${xAxis.formatDatum(rangeMin)} - ${xAxis.formatDatum(rangeMax)}`;
+        const title = `${sanitizeHtml(xName ?? xKey)}: ${xAxis.formatDatum(rangeMin)} - ${xAxis.formatDatum(rangeMax)}`;
         let content = yKey
-            ? `<b>${sanitizeHtml(yName || yKey)} (${aggregation})</b>: ${yAxis.formatDatum(aggregatedValue)}<br>`
+            ? `<b>${sanitizeHtml(yName ?? yKey)} (${aggregation})</b>: ${yAxis.formatDatum(aggregatedValue)}<br>`
             : '';
 
         content += `<b>Frequency</b>: ${frequency}`;

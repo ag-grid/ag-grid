@@ -650,7 +650,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         }
         const spacing = this.title?.spacing ?? 0;
         const titleOffset = 2 + spacing;
-        const minLabelY = Math.min(0, ...this.nodeData.map((d) => d.calloutLabel?.box?.y || 0));
+        const minLabelY = Math.min(0, ...this.nodeData.map((d) => d.calloutLabel?.box?.y ?? 0));
         const dy = Math.max(0, -outerRadius - minLabelY);
         return -outerRadius - titleOffset - dy;
     }
@@ -848,7 +848,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         const { radiusScale, calloutLine } = this;
         const calloutLength = calloutLine.length;
         const calloutStrokeWidth = calloutLine.strokeWidth;
-        const calloutColors = calloutLine.colors || this.strokes;
+        const calloutColors = calloutLine.colors ?? this.strokes;
         const { offset } = this.calloutLabel;
 
         this.calloutLabelSelection.selectByTag<Line>(PieNodeTag.Callout).forEach((line, index) => {
@@ -1011,13 +1011,13 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const paddedBoxes = boxes.map((box) => box.clone().grow(minSpacing / 2));
 
             let labelsCollideLabelsByX = false;
-            loop: for (let i = 0; i < paddedBoxes.length; i++) {
+            for (let i = 0; i < paddedBoxes.length && !labelsCollideLabelsByX; i++) {
                 const box = paddedBoxes[i];
                 for (let j = i + 1; j < labels.length; j++) {
                     const other = paddedBoxes[j];
                     if (box.collidesBBox(other)) {
                         labelsCollideLabelsByX = true;
-                        break loop;
+                        break;
                     }
                 }
             }
@@ -1040,7 +1040,13 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 .filter((datum) => datum.calloutLabel!.textAlign === 'center')
                 .forEach((datum) => {
                     const label = datum.calloutLabel!;
-                    label.collisionTextAlign = datum.midCos < 0 ? 'right' : datum.midCos > 0 ? 'left' : 'center';
+                    if (datum.midCos < 0) {
+                        label.collisionTextAlign = 'right';
+                    } else if (datum.midCos > 0) {
+                        label.collisionTextAlign = 'left';
+                    } else {
+                        label.collisionTextAlign = 'center';
+                    }
                 });
         };
 
@@ -1063,7 +1069,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             const radius = radiusScale.convert(datum.radius);
             const outerRadius = Math.max(0, radius);
 
-            if (!label || !label.text || outerRadius === 0 || label.hidden) {
+            if (!label?.text || outerRadius === 0 || label.hidden) {
                 text.visible = false;
                 return;
             }

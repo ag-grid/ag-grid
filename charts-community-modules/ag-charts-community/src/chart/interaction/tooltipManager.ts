@@ -85,13 +85,12 @@ export class TooltipManager {
         let metaToApply: TooltipMeta | undefined = undefined;
 
         // Last added entry wins.
-        ids.reverse()
-            .slice(0, 1)
-            .forEach((id) => {
-                const { content, meta } = this.states[id] ?? {};
-                contentToApply = content;
-                metaToApply = meta;
-            });
+        ids.reverse();
+        ids.slice(0, 1).forEach((id) => {
+            const { content, meta } = this.states[id] ?? {};
+            contentToApply = content;
+            metaToApply = meta;
+        });
 
         if (metaToApply === undefined || contentToApply === undefined) {
             this.appliedState = undefined;

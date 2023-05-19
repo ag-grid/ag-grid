@@ -88,7 +88,7 @@ export class InteractionManager extends BaseManager<InteractionTypes, Interactio
     private dragStartElement?: HTMLElement;
 
     private enabled = true;
-    private pausers: String[] = [];
+    private pausers: string[] = [];
 
     public constructor(element: HTMLElement, doc = document) {
         super();

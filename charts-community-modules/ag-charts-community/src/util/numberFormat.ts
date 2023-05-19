@@ -57,12 +57,12 @@ const surroundedRegEx = (() => {
 function parseFormatter(formatter: string): FormatterOptions {
     let prefix: string | undefined;
     let suffix: string | undefined;
-    const surrounded = formatter.match(surroundedRegEx);
+    const surrounded = surroundedRegEx.exec(formatter);
     if (surrounded) {
         [, prefix, formatter, suffix] = surrounded;
     }
 
-    const match = formatter.match(formatRegEx);
+    const match = formatRegEx.exec(formatter);
     if (!match) {
         throw new Error(`The number formatter is invalid: ${formatter}`);
     }

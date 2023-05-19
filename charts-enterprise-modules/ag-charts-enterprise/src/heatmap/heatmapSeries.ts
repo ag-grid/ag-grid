@@ -440,8 +440,8 @@ export class HeatmapSeries extends _ModuleSupport.CartesianSeries<
         const yString = sanitizeHtml(yAxis.formatDatum(yValue));
 
         let content =
-            `<b>${sanitizeHtml(xName || xKey)}</b>: ${xString}<br>` +
-            `<b>${sanitizeHtml(yName || yKey)}</b>: ${yString}`;
+            `<b>${sanitizeHtml(xName ?? xKey)}</b>: ${xString}<br>` +
+            `<b>${sanitizeHtml(yName ?? yKey)}</b>: ${yString}`;
 
         if (colorKey) {
             content = `<b>${sanitizeHtml(colorName || colorKey)}</b>: ${sanitizeHtml(colorValue)}<br>` + content;

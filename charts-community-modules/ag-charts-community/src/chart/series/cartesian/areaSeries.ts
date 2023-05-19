@@ -401,7 +401,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                     const nextYDatum = isNaN(rawNextYDatum) ? undefined : rawNextYDatum;
 
                     // marker data
-                    const point = createMarkerCoordinate(xDatum, +yDatum!, datumIdx, seriesDatum[yKey]);
+                    const point = createMarkerCoordinate(xDatum, +yDatum, datumIdx, seriesDatum[yKey]);
 
                     if (marker) {
                         markerSelectionData.push({
@@ -411,7 +411,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                             datum: seriesDatum,
                             nodeMidPoint: { x: point.x, y: point.y },
                             cumulativeValue: cumulativeMarkerValues[datumIdx],
-                            yValue: yDatum!,
+                            yValue: yDatum,
                             yKey,
                             xKey,
                             point,
@@ -424,7 +424,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                     let labelText: string;
 
                     if (label.formatter) {
-                        labelText = label.formatter({ value: yDatum!, seriesId });
+                        labelText = label.formatter({ value: yDatum, seriesId });
                     } else {
                         labelText = isNumber(yDatum) ? Number(yDatum).toFixed(2) : String(yDatum);
                     }
@@ -948,7 +948,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                     ...animationOptions,
                     onUpdate(xValue) {
                         if (datum.point.x <= xValue) {
-                            marker.size = format && format.size !== undefined ? format.size : size;
+                            marker.size = format?.size ?? size;
                         } else {
                             marker.size = 0;
                         }
@@ -1020,9 +1020,9 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
         const yKeyIndex = yKeys.indexOf(datum.yKey);
 
-        const fill = marker.fill || fills[yKeyIndex % fills.length];
-        const stroke = marker.stroke || strokes[yKeyIndex % fills.length];
-        const strokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
+        const fill = marker.fill ?? fills[yKeyIndex % fills.length];
+        const stroke = marker.stroke ?? strokes[yKeyIndex % fills.length];
+        const strokeWidth = marker.strokeWidth ?? this.strokeWidth;
 
         let format: AgCartesianSeriesMarkerFormat | undefined = undefined;
         if (formatter) {

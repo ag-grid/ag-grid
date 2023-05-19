@@ -212,7 +212,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                     moveTo = true;
                     continue;
                 }
-                const tolerance = (xScale.bandwidth ?? markerSize * 0.5 + (strokeWidth || 0)) + 1;
+                const tolerance = (xScale.bandwidth ?? markerSize * 0.5 + (strokeWidth ?? 0)) + 1;
 
                 nextPoint =
                     processedData.data[i + 1]?.values[yIdx] === undefined ? undefined : processedData.data[i + 1];
@@ -597,7 +597,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                     ...animationOptions,
                     onUpdate(xValue) {
                         if (datum.point.x <= xValue) {
-                            marker.size = format && format.size !== undefined ? format.size : size;
+                            marker.size = format?.size ?? size;
                         } else {
                             marker.size = 0;
                         }
@@ -641,8 +641,8 @@ export class LineSeries extends CartesianSeries<LineContext> {
         const { size, formatter } = marker;
 
         const fill = marker.fill;
-        const stroke = marker.stroke || lineStroke;
-        const strokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
+        const stroke = marker.stroke ?? lineStroke;
+        const strokeWidth = marker.strokeWidth ?? this.strokeWidth;
 
         let format: AgCartesianSeriesMarkerFormat | undefined = undefined;
         if (formatter) {

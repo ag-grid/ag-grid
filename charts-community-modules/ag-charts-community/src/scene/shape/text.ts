@@ -446,8 +446,7 @@ export class Text extends Shape {
         let currentLine: string[] = [];
         let lineWidth = measurer.width(words[0]);
         let newLine = true;
-        for (let i = 0; i < words.length; i++) {
-            const word = words[i];
+        for (const word of words) {
             const width = measurer.width(word);
             if (newLine) {
                 // New line

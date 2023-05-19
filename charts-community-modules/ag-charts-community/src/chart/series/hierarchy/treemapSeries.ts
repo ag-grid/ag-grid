@@ -711,6 +711,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
 
     buildLabelMeta(boxes: Map<TreemapNodeDatum, BBox>) {
         const { labels, title, subtitle, nodePadding, labelKey } = this;
+        const wrappedRegExp = /-$/m;
 
         type TextMeta = {
             text: string;
@@ -758,7 +759,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                         breakWord: true,
                         hyphens: true,
                     });
-                    if (!wrapped || wrapped.match(/-$/m) || wrapped.endsWith('\u2026')) {
+                    if (!wrapped || wrappedRegExp.exec(wrapped) || wrapped.endsWith('\u2026')) {
                         // Avoid hyphens and ellipsis
                         continue;
                     }

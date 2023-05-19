@@ -187,7 +187,7 @@ export class DataModel<
     K extends keyof D & string = keyof D & string,
     Grouped extends boolean | undefined = undefined
 > {
-    static DEBUG = () => [true, 'data-model'].includes(windowValue('agChartsDebug')) ?? false;
+    static DEBUG = () => [true, 'data-model'].includes(windowValue('agChartsDebug') as string) ?? false;
 
     private readonly opts: Options<K, Grouped>;
     private readonly keys: InternalDatumPropertyDefinition<K>[];

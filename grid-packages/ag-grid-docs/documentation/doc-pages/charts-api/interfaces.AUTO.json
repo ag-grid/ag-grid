@@ -4552,6 +4552,10 @@
     "meta": { "isTypeAlias": true },
     "type": "{ top: number; left: number; right: number; bottom: number; }"
   },
+  "ShrinkOrGrowPosition": {
+    "meta": { "isTypeAlias": true },
+    "type": "'top' | 'left' | 'bottom' | 'right' | 'vertical' | 'horizontal'"
+  },
   "RedrawType": {
     "meta": { "isEnum": true },
     "type": ["NONE", "TRIVIAL", "MINOR", "MAJOR"],

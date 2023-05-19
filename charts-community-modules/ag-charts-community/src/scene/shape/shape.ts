@@ -116,7 +116,7 @@ export abstract class Shape extends Node {
         const { fill } = this;
 
         let linearGradientMatch: RegExpMatchArray | null;
-        if (fill?.startsWith('linear-gradient') && (linearGradientMatch = fill.match(LINEAR_GRADIENT_REGEXP))) {
+        if (fill?.startsWith('linear-gradient') && (linearGradientMatch = LINEAR_GRADIENT_REGEXP.exec(fill))) {
             const angle = parseFloat(linearGradientMatch[1]);
             const colors = [];
             const colorsPart = linearGradientMatch[2];

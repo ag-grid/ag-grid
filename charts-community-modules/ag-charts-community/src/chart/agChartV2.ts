@@ -211,7 +211,7 @@ class AgChartInstanceProxy implements AgChartInstance {
 }
 
 abstract class AgChartInternal {
-    static DEBUG = () => windowValue('agChartsDebug') ?? false;
+    static DEBUG = () => (windowValue('agChartsDebug') as string | boolean) ?? false;
 
     static initialised = false;
     static initialiseModules() {

@@ -23,8 +23,18 @@ interface Bounds extends Readonly<Point> {
 
 function circleRectOverlap(c: SizedPoint, x: number, y: number, w: number, h: number): boolean {
     // Find closest horizontal and vertical edges.
-    const edgeX = c.x < x ? x : c.x > x + w ? x + w : c.x;
-    const edgeY = c.y < y ? y : c.y > y + h ? y + h : c.y;
+    let edgeX = c.x;
+    if (c.x < x) {
+        edgeX = x;
+    } else if (c.x > x + w) {
+        edgeX = x + w;
+    }
+    let edgeY = c.y;
+    if (c.y < y) {
+        edgeY = y;
+    } else if (c.y > y + h) {
+        edgeY = y + h;
+    }
     // Find distance to closest edges.
     const dx = c.x - edgeX;
     const dy = c.y - edgeY;
