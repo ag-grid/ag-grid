@@ -79,8 +79,12 @@ export class Caption {
         if (wrapping === 'never') {
             const font = getFont(this);
             const measurer = createTextMeasurer(font);
-            const trunc = Text.truncateLine(text ?? '', maxWidth, measurer);
-            this.node.text = trunc;
+            if (text && measurer.width(text) > maxWidth) {
+                const trunc = Text.truncateLine(text ?? '', maxWidth, measurer);
+                this.node.text = trunc;
+            } else {
+                this.node.text = text;
+            }
             return;
         }
         const wrapOptions = {
