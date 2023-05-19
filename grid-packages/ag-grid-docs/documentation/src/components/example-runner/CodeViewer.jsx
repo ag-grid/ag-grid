@@ -34,7 +34,7 @@ const CodeViewer = ({ isActive, exampleInfo }) => {
                 <button
                     className={'button-style-none button-as-link'}
                     onClick={() => {
-                        setShowFiles(!showFiles);
+                        setShowFiles((prevShowFiles) => !prevShowFiles);
                     }}
                 >
                     {showFiles ? (
