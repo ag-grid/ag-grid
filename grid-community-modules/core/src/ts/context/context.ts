@@ -203,6 +203,11 @@ export class Context {
     }
 
     private lookupBeanInstance(wiringBean: string, beanName: string, optional = false): any {
+        if (this.destroyed) {
+            this.logger.log(`AG Grid: bean reference ${beanName} is used after the grid is destroyed!`);
+            return null;
+        }
+
         if (beanName === "context") {
             return this;
         }
@@ -287,6 +292,10 @@ export class Context {
         });
 
         return [];
+    }
+
+    public isDestroyed(): boolean {
+        return this.destroyed;
     }
 }
 

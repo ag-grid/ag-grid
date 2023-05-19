@@ -14,7 +14,7 @@ import React, { Component } from 'react';
 import { LegacyReactComponent } from './legacyReactComponent';
 import { AgGridReactProps } from '../shared/interfaces';
 import { NewReactComponent } from '../shared/newReactComponent';
-import { PortalManager } from '../shared/portalManager';
+import { LegacyPortalManager } from '../shared/portalManager';
 import { ReactFrameworkOverrides } from '../shared/reactFrameworkOverrides';
 
 export class AgGridReactLegacy<TData = any> extends Component<AgGridReactProps<TData>, {}> {
@@ -34,7 +34,7 @@ export class AgGridReactLegacy<TData = any> extends Component<AgGridReactProps<T
     api: GridApi<TData> | null = null;
     columnApi!: ColumnApi;
 
-    portalManager: PortalManager;
+    portalManager: LegacyPortalManager;
 
     destroyed = false;
 
@@ -45,7 +45,7 @@ export class AgGridReactLegacy<TData = any> extends Component<AgGridReactProps<T
     constructor(public props: AgGridReactProps<TData>) {
         super(props);
 
-        this.portalManager = new PortalManager(this, props.componentWrappingElement, props.maxComponentCreationTimeMs);
+        this.portalManager = new LegacyPortalManager(this, props.componentWrappingElement, props.maxComponentCreationTimeMs);
     }
 
     render() {
@@ -220,9 +220,9 @@ function addProperties(listOfProps: string[], propType: any) {
 class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrappableInterface> implements FrameworkComponentWrapper {
 
     private readonly agGridReact!: AgGridReactLegacy;
-    private readonly portalManager!: PortalManager;
+    private readonly portalManager!: LegacyPortalManager;
 
-    constructor(agGridReact: AgGridReactLegacy, portalManager: PortalManager) {
+    constructor(agGridReact: AgGridReactLegacy, portalManager: LegacyPortalManager) {
         super();
         this.agGridReact = agGridReact;
         this.portalManager = portalManager;
