@@ -164,10 +164,18 @@ const CodeOptions = ({ exampleInfo }) => {
                 </div>
             )}
 
-            {exampleInfo.enableVue3 && exampleInfo.framework === 'vue' && (
-                <div>
-                    <VueStyleSelector id={exampleInfo.linkId} useVue3={exampleInfo.useVue3} />
-                </div>
+            {exampleInfo.framework === 'vue' && (
+                <GlobalContextConsumer>
+                    {({ enableVue3 }) => {
+                        return (
+                            enableVue3 && (
+                                <div>
+                                    <VueStyleSelector id={exampleInfo.linkId} useVue3={exampleInfo.useVue3} />
+                                </div>
+                            )
+                        );
+                    }}
+                </GlobalContextConsumer>
             )}
 
             {exampleInfo.library === 'grid' &&

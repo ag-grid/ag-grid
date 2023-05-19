@@ -26,10 +26,8 @@ export const ExampleRunner = (props) => {
                     ...props,
                     exampleImportType,
                     useFunctionalReact,
-                    enableVue3,
                     useVue3: enableVue3 ? useVue3 : false,
                     useTypescript,
-                    set,
                 };
 
                 return <ExampleRunnerInner {...innerProps} />;
@@ -459,10 +457,8 @@ const ExampleRunnerInner = ({
     library,
     exampleImportType,
     useFunctionalReact,
-    enableVue3,
     useVue3,
     useTypescript,
-    set,
 }) => {
     const nodes = useExampleFileNodes();
     const [showCode, setShowCode] = useState(!!(options && options.showCode));
