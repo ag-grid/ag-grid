@@ -1,5 +1,5 @@
-[[only-react]]
-|## Mixing JavaScript and React
+<framework-specific-section frameworks="react">
+## Mixing JavaScript and React
 |
 |When providing Custom Components you have a choice of the following:
 |1. Provide an AG Grid component as a React Component.
@@ -7,19 +7,22 @@
 |
 |The following code snippet shows how both JavaScript and React Components can be used at the same time:
 |
-|```jsx
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<snippet transform={false} language="jsx">
 |//...other imports
 |import JavascriptComponent from './JavascriptComponent.js';
 |import ReactComponent from './ReactComponent';
 |
 |const GridExample = () => {
 |   // JS and React components, only need register if looking up by name
-|   const [components] = useState({
+|   const components = useMemo(() => ({
 |       'javascriptComponent': JavascriptComponent,
 |       'reactComponent': ReactComponent    
-|   });
+|   }), []);
 |
-|   const [columnDefs] = useState([
+|   const columnDefs = useMemo( () => [
 |       {
 |           headerName: "JS Cell",
 |           field: "value",
@@ -40,17 +43,17 @@
 |           field: "value",
 |           cellRenderer: ReactComponent, // React comp by Direct Reference
 |       }
-|   ]);
+|   ], []);
 |
 |    return (
-|        <div className="ag-theme-alpine">
-|            <AgGridReact
+|        &lt;div className="ag-theme-alpine">
+|            &lt;AgGridReact
 |               components={components}
 |               columnDefs={columnDefs}
 |               ...other properties
 |            />
-|        </div>
+|        &lt;/div>
 |    );
 |};
-|```
-|
+</snippet>
+</framework-specific-section>

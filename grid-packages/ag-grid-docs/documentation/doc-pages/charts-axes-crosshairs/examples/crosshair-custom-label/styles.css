@@ -1,0 +1,42 @@
+.ag-crosshair-label {
+  all: unset;
+  pointer-events: none;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+
+.primary-axes-crosshair-label {
+  background-color: rgba(0, 113, 235);
+  color: rgb(255, 255, 255);
+  border-radius: 10px;
+  font: 14px arial, sans-serif;
+  padding: 2px 5px;
+}
+
+.secondary-axes-crosshair-label {
+  background-color: rgba(228, 21, 81);
+  color: rgb(255, 255, 255);
+  font: 14px arial, sans-serif;
+  padding: 2px 3px;
+}
+
+.crosshair-label-arrow-right::after {
+  content: '';
+  position: absolute;
+  top: 25%;
+  right: -5px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 5px solid rgb(228, 21, 81);
+}
+
+.crosshair-label-arrow-top::after {
+  content: '';
+  position: absolute;
+  top: -25%;
+  left: 37%;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid rgb(228, 21, 81);
+}

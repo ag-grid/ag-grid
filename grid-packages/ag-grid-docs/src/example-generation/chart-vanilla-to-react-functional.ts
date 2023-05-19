@@ -17,7 +17,7 @@ function getImports(componentFilenames: string[], bindings): string[] {
 
     const imports = [
         `import React, { useState${useCallback ? ', useCallback ' : ''}${bindings.usesChartApi ? ', useRef ' : ''}} from 'react';`,
-        "import { render } from 'react-dom';",
+        "import { createRoot } from 'react-dom/client';",
         "import { AgChartsReact } from 'ag-charts-react';",
     ];
 
@@ -28,6 +28,10 @@ function getImports(componentFilenames: string[], bindings): string[] {
 
     if (componentFilenames) {
         imports.push(...componentFilenames.map(getImport));
+    }
+
+    if (bindings.chartSettings.enterprise) {
+        imports.push("import 'ag-charts-enterprise';");
     }
 
     return imports;
@@ -93,14 +97,13 @@ const ChartExample = () => {
 
 ${bindings.globals.join('\n')}
 
-render(
-    <ChartExample />,
-    document.querySelector('#root')
-)
+const root = createRoot(document.getElementById('root'));
+root.render(<ChartExample />);
 `;
 
         if (bindings.usesChartApi) {
             indexFile = indexFile.replace(/AgChart.(\w*)\((\w*)(,|\))/g, 'AgChart.$1(chartRef.current.chart$3');
+            indexFile = indexFile.replace(/AgEnterpriseCharts.(\w*)\((\w*)(,|\))/g, 'AgEnterpriseCharts.$1(chartRef.current.chart$3');
             indexFile = indexFile.replace(/\(this.chartRef.current.chart, options/g, '(chartRef.current.chart, options');
         }
 

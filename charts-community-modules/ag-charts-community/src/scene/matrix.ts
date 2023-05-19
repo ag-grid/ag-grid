@@ -25,7 +25,7 @@ export class Matrix {
         this.elements = elements;
     }
 
-    setElements(elements: number[]): Matrix {
+    setElements(elements: number[]): this {
         const e = this.elements;
 
         // `this.elements = elements.slice()` is 4-5 times slower
@@ -109,7 +109,7 @@ export class Matrix {
             e = A[0] * B[4] + A[2] * B[5] + A[4],
             f = A[1] * B[4] + A[3] * B[5] + A[5];
 
-        C = C || A;
+        C = C ?? A;
         C[0] = a;
         C[1] = b;
         C[2] = c;
@@ -123,7 +123,7 @@ export class Matrix {
      * Returns the current matrix.
      * @param other
      */
-    multiplySelf(other: Matrix): Matrix {
+    multiplySelf(other: Matrix): this {
         this.AxB(this.elements, other.elements);
 
         return this;
@@ -142,7 +142,7 @@ export class Matrix {
         return new Matrix(elements);
     }
 
-    preMultiplySelf(other: Matrix): Matrix {
+    preMultiplySelf(other: Matrix): this {
         this.AxB(other.elements, this.elements, this.elements);
 
         return this;
@@ -172,7 +172,7 @@ export class Matrix {
     /**
      * Save the inverse of this matrix to the given matrix.
      */
-    inverseTo(other: Matrix): Matrix {
+    inverseTo(other: Matrix): this {
         const el = this.elements;
         let a = el[0],
             b = el[1],
@@ -192,7 +192,7 @@ export class Matrix {
         return this;
     }
 
-    invertSelf(): Matrix {
+    invertSelf(): this {
         const el = this.elements;
         let a = el[0],
             b = el[1],

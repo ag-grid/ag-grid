@@ -1,5 +1,5 @@
-[[only-angular]]
-|```js
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
 |    sideBar: {
 |        toolPanels: [
 |            {
@@ -12,4 +12,5 @@
 |        ]
 |    }
 |    // other grid properties
-|```
+</snippet>
+</framework-specific-section>

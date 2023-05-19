@@ -28,7 +28,6 @@ Note in the snippet above that specifying an `agSparklineCellRenderer` will disp
 
 The following example shows the minimum configuration required to display data in a sparkline. Note the following:
 
-
 - The **Change** column is configured to use an `agSparklineCellRenderer`.
 - No sparkline options are supplied to the `agSparklineCellRenderer` so the default [Line Sparkline](/sparklines-line-customisation/) is used.
 - An array of numbers is supplied as data to the **Change** column, which means no [Data Mapping](/sparklines-data/) is required.

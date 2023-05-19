@@ -28,6 +28,7 @@ const options: AgChartOptions = {
     fontFamily: "Georgia, Times New Roman, Times, Serif",
     fontSize: 22,
     color: "#162c53",
+    spacing: 25,
   },
   footnote: {
     text: "Source: Northern Ireland Statistics and Research Agency",
@@ -108,7 +109,6 @@ const options: AgChartOptions = {
     },
   ],
   legend: {
-    position: "bottom",
     item: {
       marker: {
         strokeWidth: 0,

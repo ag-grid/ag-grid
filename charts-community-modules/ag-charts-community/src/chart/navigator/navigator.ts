@@ -75,7 +75,14 @@ export class Navigator extends BaseModuleInstance implements ModuleInstance {
     }
 
     private updateGroupVisibility() {
-        this.rs.visible = this.enabled && this.visible;
+        const visible = this.enabled && this.visible;
+        this.rs.visible = visible;
+
+        if (visible) {
+            this.ctx.zoomManager.updateZoom('navigator', { x: { min: this.rs.min, max: this.rs.max } });
+        } else {
+            this.ctx.zoomManager.updateZoom('navigator');
+        }
     }
 
     constructor(private readonly ctx: ModuleContext) {
@@ -97,6 +104,7 @@ export class Navigator extends BaseModuleInstance implements ModuleInstance {
 
         ctx.scene.root!.appendChild(this.rs);
         this.destroyFns.push(() => ctx.scene.root?.removeChild(this.rs));
+        this.destroyFns.push(() => this.ctx.zoomManager.updateZoom('navigator'));
 
         this.updateGroupVisibility();
     }
@@ -117,10 +125,6 @@ export class Navigator extends BaseModuleInstance implements ModuleInstance {
             this.rs.width = rect.width;
         }
         this.visible = visible;
-    }
-
-    public update(): void {
-        // Nothing to do!
     }
 
     private onDragStart(offset: Offset) {

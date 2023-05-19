@@ -60,6 +60,7 @@ import {
     ColumnVisibleEvent,
     ComponentStateChangedEvent,
     CsvExportParams,
+    DataTypeDefinition,
     DisplayedColumnsChangedEvent,
     DomLayoutType,
     DragStartedEvent,
@@ -149,6 +150,7 @@ import {
     SortChangedEvent,
     SortDirection,
     StatusPanelDef,
+    StoreRefreshedEvent,
     TabToNextCellParams,
     TabToNextHeaderParams,
     ToolPanelSizeChangedEvent,
@@ -349,6 +351,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public defaultColGroupDef: Partial<ColGroupDef<TData>> | undefined = undefined;
     /** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property.     */
     @Input() public columnTypes: { [key: string]: ColDef<TData>; } | undefined = undefined;
+    /** An object map of cell data types to their definitions.
+         * Cell data types can either override/update the pre-defined data types
+         * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`),
+         * or can be custom data types.
+         */
+    @Input() public dataTypeDefinitions: {
+        [cellDataType: string]: DataTypeDefinition<TData>;
+    } | undefined = undefined;
     /** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false`     */
     @Input() public maintainColumnOrder: boolean | undefined = undefined;
     /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false`     */
@@ -440,7 +450,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public excludeChildrenWhenTreeDataFiltering: boolean | undefined = undefined;
     /** Set to `true` to Enable Charts. Default: `false`     */
     @Input() public enableCharts: boolean | undefined = undefined;
-    /** The list of chart themes to be used.     */
+    /** The list of chart themes that a user can chose from in the chart settings panel.
+         * Default: `['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar' ]`
+         */
     @Input() public chartThemes: string[] | undefined = undefined;
     /** A map containing custom chart themes.     */
     @Input() public customChartThemes: { [name: string]: AgChartTheme } | undefined = undefined;
@@ -638,7 +650,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public fullWidthCellRendererFramework: any = undefined;
     /** Customise the parameters provided to the `fullWidthCellRenderer` component.     */
     @Input() public fullWidthCellRendererParams: any = undefined;
-    /** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling.     */
+    /** Set to `true` to have the Full Width Rows embedded in grid's main container so they can be scrolled horizontally .     */
     @Input() public embedFullWidthRows: boolean | undefined = undefined;
     /** Specifies how the results of row grouping should be displayed.
          *
@@ -864,6 +876,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public columnHoverHighlight: boolean | undefined = undefined;
     @Input() public deltaSort: boolean | undefined = undefined;
     @Input() public treeDataDisplayType: TreeDataDisplayType | undefined = undefined;
+    /** @deprecated v29.2     */
     @Input() public functionsPassive: boolean | undefined = undefined;
     @Input() public enableGroupEdit: boolean | undefined = undefined;
     /** For customising the context menu.     */
@@ -1106,6 +1119,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public rowDataUpdated: EventEmitter<RowDataUpdatedEvent<TData>> = new EventEmitter<RowDataUpdatedEvent<TData>>();
     /** Async transactions have been applied. Contains a list of all transaction results.     */
     @Output() public asyncTransactionsFlushed: EventEmitter<AsyncTransactionsFlushed<TData>> = new EventEmitter<AsyncTransactionsFlushed<TData>>();
+    /** A server side store has finished refreshing.     */
+    @Output() public storeRefreshed: EventEmitter<StoreRefreshedEvent<TData>> = new EventEmitter<StoreRefreshedEvent<TData>>();
     /** Cell is clicked.     */
     @Output() public cellClicked: EventEmitter<CellClickedEvent<TData>> = new EventEmitter<CellClickedEvent<TData>>();
     /** Cell is double clicked.     */
@@ -1132,9 +1147,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public rangeSelectionChanged: EventEmitter<RangeSelectionChangedEvent<TData>> = new EventEmitter<RangeSelectionChangedEvent<TData>>();
     /** Sort has changed. The grid also listens for this and updates the model.     */
     @Output() public sortChanged: EventEmitter<SortChangedEvent<TData>> = new EventEmitter<SortChangedEvent<TData>>();
+    /** @deprecated v29.2     */
     @Output() public columnRowGroupChangeRequest: EventEmitter<ColumnRowGroupChangeRequestEvent<TData>> = new EventEmitter<ColumnRowGroupChangeRequestEvent<TData>>();
+    /** @deprecated v29.2     */
     @Output() public columnPivotChangeRequest: EventEmitter<ColumnPivotChangeRequestEvent<TData>> = new EventEmitter<ColumnPivotChangeRequestEvent<TData>>();
+    /** @deprecated v29.2     */
     @Output() public columnValueChangeRequest: EventEmitter<ColumnValueChangeRequestEvent<TData>> = new EventEmitter<ColumnValueChangeRequestEvent<TData>>();
+    /** @deprecated v29.2     */
     @Output() public columnAggFuncChangeRequest: EventEmitter<ColumnAggFuncChangeRequestEvent<TData>> = new EventEmitter<ColumnAggFuncChangeRequestEvent<TData>>();
 
 

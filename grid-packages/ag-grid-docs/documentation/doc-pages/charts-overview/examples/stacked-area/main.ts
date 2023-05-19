@@ -39,6 +39,7 @@ const options: AgChartOptions = {
   title: {
     text: "Total Visitors to Science Museums",
     fontSize: 18,
+    spacing: 25,
   },
   footnote: {
     text: "Source: Department for Digital, Culture, Media & Sport",
@@ -100,9 +101,6 @@ const options: AgChartOptions = {
       },
     },
   ],
-  legend: {
-    position: "bottom",
-  },
 }
 
 var chart = AgChart.create(options)

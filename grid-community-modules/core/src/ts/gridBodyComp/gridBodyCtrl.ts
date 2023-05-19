@@ -19,15 +19,17 @@ import { PopupService } from "../widgets/popupService";
 import { MouseEventService } from "./mouseEventService";
 import { IRowModel } from "../interfaces/iRowModel";
 import { TouchListener, LongTapEvent } from "../widgets/touchListener";
+import { AnimationFrameService } from "../misc/animationFrameService";
 
 export enum RowAnimationCssClasses {
     ANIMATION_ON = 'ag-row-animation',
     ANIMATION_OFF = 'ag-row-no-animation'
 }
 
-export const CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
 export const CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
-export const CSS_CLASS_COLUMN_MOVING = 'ag-column-moving';
+
+const CSS_CLASS_CELL_SELECTION_INVISIBLE = 'ag-selection-invisible';
+const CSS_CLASS_COLUMN_MOVING = 'ag-column-moving';
 
 export interface IGridBodyComp extends LayoutView {
     setColumnMovingCss(cssClass: string, on: boolean): void;
@@ -50,6 +52,7 @@ export interface IGridBodyComp extends LayoutView {
 
 export class GridBodyCtrl extends BeanStub {
 
+    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Autowired('rowContainerHeightService') private rowContainerHeightService: RowContainerHeightService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
@@ -162,8 +165,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public setCellTextSelection(selectable: boolean = false): void {
-        const cssClass = selectable ? CSS_CLASS_CELL_SELECTABLE : null;
-        this.comp.setCellSelectableCss(cssClass, selectable);
+        this.comp.setCellSelectableCss(CSS_CLASS_CELL_SELECTION_INVISIBLE, !selectable);
     }
 
     private onScrollVisibilityChanged(): void {
@@ -174,7 +176,8 @@ export class GridBodyCtrl extends BeanStub {
         const scrollbarWidth = visible ? (this.gridOptionsService.getScrollbarWidth() || 0) : 0;
         const pad = isInvisibleScrollbar() ? 16 : 0;
         const width = `calc(100% + ${scrollbarWidth + pad}px)`;
-        this.comp.setBodyViewportWidth(width);
+
+        this.animationFrameService.requestAnimationFrame(() => this.comp.setBodyViewportWidth(width));
     }
 
     private onGridColumnsChanged(): void {
@@ -277,32 +280,53 @@ export class GridBodyCtrl extends BeanStub {
     private addBodyViewportListener(): void {
         // we want to listen for clicks directly on the eBodyViewport, so the user has a way of showing
         // the context menu if no rows or columns are displayed, or user simply clicks outside of a cell
-        const listener = (mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => {
-            if (!mouseEvent && !touchEvent) { return; }
-
-            if (this.gridOptionsService.is('preventDefaultOnContextMenu')) {
-                const event = (mouseEvent || touchEvent)!;
-                event.preventDefault();
-            }
-
-            const { target } = (mouseEvent || touch)!;
-
-            if (target === this.eBodyViewport || target === this.ctrlsService.getCenterRowContainerCtrl().getViewportElement()) {
-                // show it
-                if (this.contextMenuFactory) {
-                    if (mouseEvent) {
-                        this.contextMenuFactory.onContextMenu(mouseEvent, null, null, null, null, this.eGridBody);
-                    } else if (touchEvent) {
-                        this.contextMenuFactory.onContextMenu(null, touchEvent, null, null, null, this.eGridBody);
-                    }
-                }
-            }
-        };
-
+        const listener = this.onBodyViewportContextMenu.bind(this);
         this.addManagedListener(this.eBodyViewport, 'contextmenu', listener);
         this.mockContextMenuForIPad(listener);
+
         this.addManagedListener(this.eBodyViewport, 'wheel', this.onBodyViewportWheel.bind(this));
         this.addManagedListener(this.eStickyTop, 'wheel', this.onStickyTopWheel.bind(this));
+
+        // allow mouseWheel on the Full Width Container to Scroll the Viewport
+        this.addFullWidthContainerWheelListener();
+    }
+
+    private addFullWidthContainerWheelListener(): void {
+        const fullWidthContainer = this.eBodyViewport.querySelector('.ag-full-width-container');
+        const eCenterColsViewport = this.eBodyViewport.querySelector('.ag-center-cols-viewport');
+
+        if (fullWidthContainer && eCenterColsViewport) {
+            this.addManagedListener(fullWidthContainer, 'wheel', (e: WheelEvent) => this.onFullWidthContainerWheel(e, eCenterColsViewport));
+        }
+    }
+
+    private onFullWidthContainerWheel(e: WheelEvent, eCenterColsViewport: Element): void {
+        if (!e.deltaX || Math.abs(e.deltaY) > Math.abs(e.deltaX)) { return; }
+        
+        e.preventDefault();
+        eCenterColsViewport.scrollBy({ left: e.deltaX });
+    }
+
+    private onBodyViewportContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
+        if (!mouseEvent && !touchEvent) { return; }
+
+        if (this.gridOptionsService.is('preventDefaultOnContextMenu')) {
+            const event = (mouseEvent || touchEvent)!;
+            event.preventDefault();
+        }
+
+        const { target } = (mouseEvent || touch)!;
+
+        if (target === this.eBodyViewport || target === this.ctrlsService.getCenterRowContainerCtrl().getViewportElement()) {
+            // show it
+            if (!this.contextMenuFactory) { return; }
+
+            if (mouseEvent) {
+                this.contextMenuFactory.onContextMenu(mouseEvent, null, null, null, null, this.eGridBody);
+            } else if (touchEvent) {
+                this.contextMenuFactory.onContextMenu(null, touchEvent, null, null, null, this.eGridBody);
+            }
+        }
     }
 
     private mockContextMenuForIPad(listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void): void {

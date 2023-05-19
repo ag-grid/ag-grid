@@ -2,10 +2,10 @@ import {
     _,
     ChartFormatPanel,
     ChartFormatPanelGroup,
+    ChartPanelGroupDef,
     ChartType,
     Component,
-    PostConstruct,
-    ChartPanelGroupDef
+    PostConstruct
 } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 import { LegendPanel } from "./legend/legendPanel";

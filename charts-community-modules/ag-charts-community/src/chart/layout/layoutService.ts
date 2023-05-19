@@ -1,23 +1,26 @@
 import { BBox } from '../../scene/bbox';
 import { Listeners } from '../../util/listeners';
 
-export type LayoutStage = 'before-series';
+export type LayoutStage = 'start-layout' | 'before-series';
 
 export type AxisLabelLayout = {
-    baseline: 'hanging' | 'bottom' | 'middle';
-    align: 'start' | 'end' | 'center';
-    rotation: number;
     fractionDigits: number;
+    padding: number;
+    format?: string;
 };
 
 export interface AxisLayout {
     rect: BBox;
+    gridPadding: number;
+    seriesAreaPadding: number;
+    tickSize: number;
     label: AxisLabelLayout;
 }
 
 export interface LayoutCompleteEvent {
     type: 'layout-complete';
-    series: { rect: BBox; visible: boolean };
+    chart: { width: number; height: number };
+    series: { rect: BBox; paddedRect: BBox; hoverRect: BBox; visible: boolean };
     axes?: (AxisLayout & {
         id: string;
     })[];

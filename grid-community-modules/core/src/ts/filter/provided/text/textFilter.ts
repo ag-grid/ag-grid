@@ -28,8 +28,26 @@ export interface TextFilterModel extends ISimpleFilterModel {
     }
 
 export interface TextMatcherParams extends BaseColDefParams {
+    /**
+     * The applicable filter option being tested.
+     * One of: `equals`, `notEqual`, `contains`, `notContains`, `startsWith`, `endsWith`.
+     */
     filterOption: string | null | undefined;
+    /**
+     * The value about to be filtered.
+     * If this column has a value getter, this value will be coming from the value getter,
+     * otherwise it is the raw value injected into the grid.
+     * If a `textFormatter` is provided, this value will have been formatted.
+     * If no `textFormatter` is provided and `caseSensitive` is not provided or is `false`,
+     * the value will have been converted to lower case.
+     */
     value: any;
+    /**
+     * The value to filter by.
+     * If a `textFormatter` is provided, this value will have been formatted.
+     * If no `textFormatter` is provided and `caseSensitive` is not provided or is `false`,
+     * the value will have been converted to lower case.
+     */
     filterText: string | null;
     textFormatter?: TextFormatter;
 }
@@ -54,6 +72,7 @@ export type TextFilterParams<TData = any> = ITextFilterParams & IFilterParams<TD
 export interface ITextFilterParams extends ISimpleFilterParams {
     /**
      * Used to override how to filter based on the user input.
+     * Returns `true` if the value passes the filter, otherwise `false`.
      */
     textMatcher?: TextMatcher;
     /**

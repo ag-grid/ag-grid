@@ -1,4 +1,4 @@
-import { AgChart, AgCartesianChartOptions, time } from "ag-charts-community"
+import { AgCartesianChartOptions, AgChart, time } from "ag-charts-community"
 
 var systemLoad = 0
 var userLoad = 0
@@ -57,7 +57,13 @@ const options: AgCartesianChartOptions = {
     fontSize: 18,
   },
   series: [
-    { type: "area", xKey: "time", yKey: "system", stacked: true, yName: "System" },
+    {
+      type: "area",
+      xKey: "time",
+      yKey: "system",
+      stacked: true,
+      yName: "System",
+    },
     { type: "area", xKey: "time", yKey: "user", stacked: true, yName: "User" },
   ],
   axes: [
@@ -80,9 +86,6 @@ const options: AgCartesianChartOptions = {
       max: 100,
     },
   ],
-  legend: {
-    position: "bottom",
-  },
 }
 
 var chart = AgChart.create(options)

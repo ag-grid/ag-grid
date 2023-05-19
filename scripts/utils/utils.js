@@ -85,6 +85,7 @@ const getPackageInformation = () => {
         .filter(packageDirectory => !exclude.includes(packageDirectory))
         .forEach(packageDirectory => {
             fs.readdirSync(packageDirectory)
+                .filter(directory => !directory.includes('.git'))
                 .forEach(directory => {
                     const projectRoot = `./${packageDirectory}/${directory}`;
                     const projectPackageJson = readFile(`${projectRoot}/package.json`);

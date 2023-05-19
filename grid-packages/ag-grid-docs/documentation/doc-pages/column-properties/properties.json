@@ -19,6 +19,12 @@
                 "url": "/column-definitions/#default-column-definitions"
             }
         },
+        "cellDataType": {
+            "more": {
+                "name": "Cell Data Types",
+                "url": "/cell-data-types/"
+            }
+        },
         "valueGetter": {
             "description": "Function or [expression](/cell-expressions/#column-definition-expressions). Gets the value from your data for display.",
             "more": {
@@ -168,7 +174,13 @@
         "initialHide": {},
         "lockVisible": {},
         "lockPosition": {},
-        "suppressMovable": {}
+        "suppressMovable": {},
+        "useValueFormatterForExport": {
+            "more": {
+                "name": "Using Value Formatters with Other Grid Features",
+                "url": "/value-formatters/#use-value-formatter-for-export"
+            }
+        }
     },
     "width": {
         "meta": {
@@ -365,7 +377,13 @@
         },
         "cellEditorPopup": {},
         "cellEditorPopupPosition": {},
-        "singleClickEdit": {}
+        "singleClickEdit": {},
+        "useValueParserForImport": {
+            "more": {
+                "name": "Using Value Parsers with Other Grid Features",
+                "url": "/value-parsers/#use-value-parser-for-import"
+            }
+        }
     },
     "grouping": {
         "meta": {
@@ -438,6 +456,7 @@
         },
         "groupId": {},
         "marryChildren": {},
+        "stickyLabel": {},
         "openByDefault": {},
         "columnGroupShow": {},
         "toolPanelClass": {},

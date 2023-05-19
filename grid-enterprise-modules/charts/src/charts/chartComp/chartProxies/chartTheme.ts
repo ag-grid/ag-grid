@@ -1,13 +1,13 @@
 import { _ } from '@ag-grid-community/core';
 import {
-    AgChartThemePalette,
+    _Theme,
     AgChartLegendClickEvent,
     AgChartTheme,
     AgChartThemeName,
     AgChartThemeOverrides,
+    AgChartThemePalette,
     AgPieSeriesTooltipRendererParams,
     AgPolarSeriesTheme,
-    _Theme,
 } from 'ag-charts-community';
 import { ALL_AXIS_TYPES } from '../utils/axisTypeMapper';
 import { getSeriesType } from '../utils/seriesTypeMapper';

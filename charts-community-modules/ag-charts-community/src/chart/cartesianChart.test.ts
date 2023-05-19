@@ -10,10 +10,9 @@ import {
     IMAGE_SNAPSHOT_DEFAULTS,
     setupMockCanvas,
     extractImageData,
-    CANVAS_WIDTH,
-    CANVAS_HEIGHT,
     hoverAction,
     deproxy,
+    prepareTestOptions,
 } from './test/utils';
 import * as examples from './test/examples';
 
@@ -216,9 +215,7 @@ describe('CartesianChart', () => {
             }, []);
             it.each(YKEYS)(`should render series with yKey [%s] appropriately`, async (yKey) => {
                 const options: AgChartOptions = { ...tcOptions };
-                options.autoSize = false;
-                options.width = CANVAS_WIDTH;
-                options.height = CANVAS_HEIGHT;
+                prepareTestOptions(options);
 
                 chart = deproxy(AgChart.create(options)) as CartesianChart;
                 await waitForChartStability(chart);
@@ -257,11 +254,10 @@ describe('CartesianChart', () => {
 
                     return s;
                 }),
+                container: document.body,
             };
 
-            options.autoSize = false;
-            options.width = CANVAS_WIDTH;
-            options.height = CANVAS_HEIGHT;
+            prepareTestOptions(options);
 
             chart = deproxy(AgChart.create(options)) as CartesianChart;
             await waitForChartStability(chart);
@@ -308,9 +304,8 @@ describe('CartesianChart', () => {
                 },
             };
 
-            options.autoSize = false;
-            options.width = width ?? CANVAS_WIDTH;
-            options.height = CANVAS_HEIGHT;
+            prepareTestOptions(options);
+            options.width = width ?? options.width;
 
             chart = deproxy(AgChart.create(options)) as CartesianChart;
             await waitForChartStability(chart);
@@ -327,9 +322,8 @@ describe('CartesianChart', () => {
                 },
             };
 
-            options.autoSize = false;
-            options.width = CANVAS_WIDTH;
-            options.height = height ?? CANVAS_HEIGHT;
+            prepareTestOptions(options);
+            options.height = height ?? options.height;
 
             chart = deproxy(AgChart.create(options)) as CartesianChart;
             await waitForChartStability(chart);

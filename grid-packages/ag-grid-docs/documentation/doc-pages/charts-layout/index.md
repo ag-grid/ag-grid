@@ -18,6 +18,7 @@ of later elements:
 - Footnote plus its configured spacing
 - Legend plus its configured spacing
 - Navigator plus its configured margin
+- Series area padding
 - Axes
 - Series area
 
@@ -57,6 +58,10 @@ height of the title and its additional `subtitle.spacing`.
 
 `navigator.margin` can be used to adjust the space between the navigator and later components.
 
+### Series Area Padding
+
+`seriesAreaPadding` configuration is applied. It can be used to avoid the overlapping of series items with legend, title and axes labels.
+
 ### Axes
 
 `axes` layout is then calculated based upon the remaining space and how the [axes](/charts-axes/) are
@@ -75,7 +80,3 @@ and most other components just move around or adjust alignment.
 By default, the chart will resize automatically to fill the container element. If either the `width` or `height` configs are set, auto-sizing will be disabled unless the `autoSize` config is explicitly set to `true`.
 
 Make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container.
-
-## Next Up
-
-Continue to the next section to learn about the [legend and its layout](/charts-legend/).

@@ -8,7 +8,6 @@ import { useLayoutEffectOnce } from '../useEffectOnce';
 const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
 
     const { context } = useContext(BeansContext);
-    const [width, setWidth] = useState<string>();
     const [title, setTitle] = useState<string>();
     const [colId, setColId] = useState<string>();
     const [ariaSort, setAriaSort] = useState<ColumnSortState>();
@@ -26,7 +25,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
 
     useLayoutEffectOnce(() => {
         const compProxy: IHeaderCellComp = {
-            setWidth: width => setWidth(width),
+            setWidth: width => eGui.current!.style.width = width,
             addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
             setColId: id => setColId(id),
             setTitle: title => setTitle(title),
@@ -51,8 +50,6 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
         ctrl.setDragSource(eGui.current!);
     }, [userCompDetails]);
 
-    const style = useMemo(() => ({ width }), [width]);
-
     const userCompStateless = useMemo(() => {
         const res = userCompDetails?.componentFromFramework && isComponentStateless(userCompDetails.componentClass);
         return !!res;
@@ -65,7 +62,6 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
         <div
             ref={eGui}
             className="ag-header-cell"
-            style={ style }
             title={ title }
             col-id={ colId }
             aria-sort={ ariaSort }

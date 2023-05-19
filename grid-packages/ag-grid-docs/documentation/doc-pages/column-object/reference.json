@@ -12,6 +12,8 @@
         "getParent": {},
         "isFilterAllowed": {},
         "isFilterActive": {},
+        "isCellEditable": {},
+        "isHovered": {},
         "getSort": {},
         "getAggFunc": {},
         "getActualWidth": {},

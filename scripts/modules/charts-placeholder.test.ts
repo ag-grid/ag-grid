@@ -1,14 +1,14 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import { AgChart, AgChartOptions } from 'ag-charts-community';
+
 import {
     waitForChartStability,
     setupMockCanvas,
-    CANVAS_WIDTH,
-    CANVAS_HEIGHT,
     extractImageData,
     IMAGE_SNAPSHOT_DEFAULTS,
-} from 'ag-charts-community/src/chart/test/utils';
+    prepareTestOptions,
+} from 'ag-charts-community/dist/cjs/es5/main-test';
 
 expect.extend({ toMatchImageSnapshot });
 
@@ -49,9 +49,7 @@ describe('Chart', () => {
 
     it(`should render placeholder chart as expected`, async () => {
         const options: AgChartOptions = { ...EXAMPLE_OPTIONS };
-        options.autoSize = false;
-        options.width = CANVAS_WIDTH;
-        options.height = CANVAS_HEIGHT;
+        prepareTestOptions(options);
 
         chart = AgChart.create(options);
         await compare();

@@ -12,43 +12,36 @@ export class PolarChart extends Chart {
 
     constructor(document = window.document, overrideDevicePixelRatio?: number, resources?: TransferableResources) {
         super(document, overrideDevicePixelRatio, resources);
-
-        const root = this.scene.root!;
-        this.legend.attachLegend(root);
     }
 
     async performLayout() {
-        this.scene.root!.visible = true;
+        const shrinkRect = await super.performLayout();
 
-        const {
-            padding,
-            scene: { width, height },
-        } = this;
-
-        let shrinkRect = new BBox(0, 0, width, height);
-        shrinkRect.shrink(padding.left, 'left');
-        shrinkRect.shrink(padding.top, 'top');
-        shrinkRect.shrink(padding.right, 'right');
-        shrinkRect.shrink(padding.bottom, 'bottom');
-
-        shrinkRect = this.positionCaptions(shrinkRect);
-        shrinkRect = this.positionLegend(shrinkRect);
+        const fullSeriesRect = shrinkRect.clone();
         this.computeSeriesRect(shrinkRect);
         this.computeCircle();
+
+        const hoverRectPadding = 20;
+        const hoverRect = shrinkRect.clone().grow(hoverRectPadding);
+        this.hoverRect = hoverRect;
+
+        this.layoutService.dispatchLayoutComplete({
+            type: 'layout-complete',
+            chart: { width: this.scene.width, height: this.scene.height },
+            series: { rect: fullSeriesRect, paddedRect: shrinkRect, hoverRect, visible: true },
+            axes: [],
+        });
+
+        return shrinkRect;
     }
 
     private computeSeriesRect(shrinkRect: BBox) {
-        const { legend, seriesPadding } = this;
+        const { seriesAreaPadding } = this;
 
-        if (legend.visible && legend.enabled && legend.data.length) {
-            const legendPadding = legend.spacing;
-            shrinkRect.shrink(legendPadding, legend.position);
-        }
-
-        shrinkRect.shrink(seriesPadding.left, 'left');
-        shrinkRect.shrink(seriesPadding.top, 'top');
-        shrinkRect.shrink(seriesPadding.right, 'right');
-        shrinkRect.shrink(seriesPadding.bottom, 'bottom');
+        shrinkRect.shrink(seriesAreaPadding.left, 'left');
+        shrinkRect.shrink(seriesAreaPadding.top, 'top');
+        shrinkRect.shrink(seriesAreaPadding.right, 'right');
+        shrinkRect.shrink(seriesAreaPadding.bottom, 'bottom');
 
         this.seriesRect = shrinkRect;
     }
@@ -74,9 +67,14 @@ export class PolarChart extends Chart {
         setSeriesCircle(centerX, centerY, radius);
 
         const shake = ({ hideWhenNecessary = false } = {}) => {
-            const labelBoxes = polarSeries
-                .map((series) => series.computeLabelsBBox({ hideWhenNecessary }))
-                .filter((box) => box != null) as BBox[];
+            const labelBoxes = [];
+            for (const series of polarSeries) {
+                const box = series.computeLabelsBBox({ hideWhenNecessary }, seriesBox);
+                if (box == null) continue;
+
+                labelBoxes.push(box);
+            }
+
             if (labelBoxes.length === 0) {
                 setSeriesCircle(centerX, centerY, initialRadius);
                 return;
@@ -95,6 +93,7 @@ export class PolarChart extends Chart {
 
         shake(); // Initial attempt
         shake(); // Precise attempt
+        shake(); // Just in case
         shake({ hideWhenNecessary: true }); // Hide unnecessary labels
         shake({ hideWhenNecessary: true }); // Final result
     }
@@ -125,12 +124,21 @@ export class PolarChart extends Chart {
         if (newRadius < minRadius) {
             // If the radius is too small, reduce the label padding
             newRadius = minRadius;
-            if (newRadius === minVerticalRadius) {
-                const t = seriesBox.height / (newRadius * 2 + padTop + padBottom);
-                padTop *= t;
-                padBottom *= t;
+            const horizontalPadding = padLeft + padRight;
+            const verticalPadding = padTop + padBottom;
+            if (2 * newRadius + verticalPadding > seriesBox.height) {
+                const padHeight = seriesBox.height - 2 * newRadius;
+                if (Math.min(padTop, padBottom) * 2 > padHeight) {
+                    padTop = padHeight / 2;
+                    padBottom = padHeight / 2;
+                } else if (padTop > padBottom) {
+                    padTop = padHeight - padBottom;
+                } else {
+                    padBottom = padHeight - padTop;
+                }
             }
-            if (newRadius === minHorizontalRadius) {
+
+            if (2 * newRadius + horizontalPadding > seriesBox.width) {
                 const padWidth = seriesBox.width - 2 * newRadius;
                 if (Math.min(padLeft, padRight) * 2 > padWidth) {
                     padLeft = padWidth / 2;

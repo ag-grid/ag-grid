@@ -12,7 +12,6 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
     const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
     const [cssResizableClasses, setResizableCssClasses] = useState<CssClasses>(new CssClasses());
     const [resizableAriaHidden, setResizableAriaHidden] = useState<"true" | "false">("false");
-    const [width, setWidth] = useState<string>();
     const [title, setTitle] = useState<string>();
     const [colId, setColId] = useState<string>();
     const [ariaExpanded, setAriaExpanded] = useState<'true'|'false'|undefined>();
@@ -26,7 +25,7 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
     useLayoutEffectOnce(() => {
 
         const compProxy: IHeaderGroupCellComp = {
-            setWidth: width => setWidth(width),
+            setWidth: width => eGui.current!.style.width = width,
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
             setColId: id => setColId(id),
             setTitle: title => setTitle(title),
@@ -57,10 +56,6 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
         userCompDomElement && ctrl.setDragSource(userCompDomElement);
     }, [userCompDetails]);
 
-    const style = useMemo( ()=> ({
-        width: width
-    }), [width]);
-    
     const className = useMemo( ()=> 'ag-header-group-cell ' + cssClasses.toString(), [cssClasses] );
     const resizableClassName = useMemo( ()=> 'ag-header-cell-resize ' + cssResizableClasses.toString(), [cssResizableClasses] );
 
@@ -68,7 +63,7 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
     const UserCompClass = userCompDetails && userCompDetails.componentClass;
 
     return (
-        <div ref={eGui} className={className} style={style} title={title} col-id={colId} 
+        <div ref={eGui} className={className} title={title} col-id={colId} 
                     role="columnheader" tabIndex={-1} aria-expanded={ariaExpanded}>
             { reactUserComp && <UserCompClass { ...userCompDetails!.params } /> }
             <div ref={eResize} aria-hidden={resizableAriaHidden} className={resizableClassName}></div>

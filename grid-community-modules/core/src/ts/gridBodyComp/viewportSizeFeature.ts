@@ -119,14 +119,10 @@ export class ViewportSizeFeature extends BeanStub {
         };
 
         this.scrollVisibleService.setScrollsVisible(params);
-
-        // fix - gridComp should just listen to event from above
-        this.gridBodyCtrl.setVerticalScrollPaddingVisible(params.verticalScrollShowing);
     }
 
     private isHorizontalScrollShowing(): boolean {
-        const isAlwaysShowHorizontalScroll = this.gridOptionsService.is('alwaysShowHorizontalScroll');
-        return isAlwaysShowHorizontalScroll || this.centerContainerCtrl.isViewportHScrollShowing();
+        return this.centerContainerCtrl.isHorizontalScrollShowing();
     }
 
     // this gets called whenever a change in the viewport, so we can inform column controller it has to work

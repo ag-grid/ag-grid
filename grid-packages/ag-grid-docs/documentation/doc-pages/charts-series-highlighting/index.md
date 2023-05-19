@@ -83,7 +83,3 @@ The example above provides a separate `highlightStyle` for each pie series co
 The highlight style can be provided in a chart theme just once to be used by all pie series, as illustrated by the example below:
 
 <chart-example title='Pie Series with Custom Highlight Style Theme' name='basic-pie-theme' type='generated'></chart-example>
-
-## Next Up
-
-Continue to the next section to learn about the [chart themes](/charts-themes/).

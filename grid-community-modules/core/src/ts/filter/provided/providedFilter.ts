@@ -1,7 +1,7 @@
 import { IDoesFilterPassParams, IFilter, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
 import { Autowired, PostConstruct } from '../../context/context';
 import { IRowModel } from '../../interfaces/iRowModel';
-import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
+import { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import { loadTemplate, setDisabled } from '../../utils/dom';
 import { debounce } from '../../utils/function';
 import { AgPromise } from '../../utils/promise';
@@ -29,7 +29,7 @@ export interface IProvidedFilterParams {
     /**
      * Specifies the buttons to be shown in the filter, in the order they should be displayed in.
      * The options are:
-     * 
+     *
      *  - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.
      *  - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.
      *  - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.
@@ -39,7 +39,7 @@ export interface IProvidedFilterParams {
     /**
      * If the Apply button is present, the filter popup will be closed immediately when the Apply
      * or Reset button is clicked if this is set to `true`.
-     * 
+     *
      * Default: `false`
      */
     closeOnApply?: boolean;
@@ -52,7 +52,7 @@ export interface IProvidedFilterParams {
     /**
      * If set to `true`, disables controls in the filter to mutate its state. Normally this would
      * be used in conjunction with the Filter API.
-     * 
+     *
      * Default: `false`
      */
     readOnly?: boolean;
@@ -89,6 +89,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     private hidePopup: ((params: PopupEventParams) => void) | null | undefined = null;
     // a debounce of the onBtApply method
     private onBtApplyDebounce: () => void;
+    private debouncePending = false;
 
     // after the user hits 'apply' the model gets copied to here. this is then the model that we use for
     // all filtering. so if user changes UI but doesn't hit apply, then the UI will be out of sync with this model.
@@ -98,7 +99,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     // not active) then this appliedModel will be null/undefined.
     private appliedModel: M | null = null;
 
-    private positionableFeature: PositionableFeature;
+    private positionableFeature: PositionableFeature | undefined;
 
     @Autowired('rowModel') protected readonly rowModel: IRowModel;
 
@@ -131,7 +132,14 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
                 handleKeyDown: this.handleKeyDown.bind(this)
             }
         ));
-        this.positionableFeature = new PositionableFeature(this.getPositionableElement(), { forcePopupParentAsOffsetParent: true });
+
+        this.positionableFeature = new PositionableFeature(
+            this.getPositionableElement(),
+            {
+                forcePopupParentAsOffsetParent: true
+            }
+        );
+
         this.createBean(this.positionableFeature);
     }
 
@@ -151,6 +159,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     protected resetTemplate(paramsMap?: any) {
         let eGui = this.getGui();
+
         if (eGui) {
             eGui.removeEventListener('submit', this.onFormSubmit);
         }
@@ -254,7 +263,19 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     private setupOnBtApplyDebounce(): void {
         const debounceMs = ProvidedFilter.getDebounceMs(this.providedFilterParams, this.getDefaultDebounceMs());
-        this.onBtApplyDebounce = debounce(this.onBtApply.bind(this), debounceMs);
+        const debounceFunc = debounce(this.checkApplyDebounce.bind(this), debounceMs);
+        this.onBtApplyDebounce = () => {
+            this.debouncePending = true;
+            debounceFunc();
+        };
+    }
+
+    private checkApplyDebounce(): void {
+        if (this.debouncePending) {
+            // May already have been applied, so don't apply again (e.g. closing filter before debounce timeout)
+            this.debouncePending = false;
+            this.onBtApply();
+        }
     }
 
     public getModel(): M | null {
@@ -276,10 +297,14 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     private onBtCancel(e: Event): void {
         this.resetUiToActiveModel(this.getModel(), () => {
-            if (this.providedFilterParams.closeOnApply) {
-                this.close(e);
-            }
+            this.handleCancelEnd(e);
         });
+    }
+
+    protected handleCancelEnd(e: Event): void {
+        if (this.providedFilterParams.closeOnApply) {
+            this.close(e);
+        }
     }
 
     protected resetUiToActiveModel(currentModel: M | null, afterUiUpdatedFunc?: () => void): void {
@@ -388,10 +413,25 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
-        if (params?.container === 'floatingFilter') {
-            this.positionableFeature.restoreLastSize();
-            this.positionableFeature.setResizable(
-                this.gridOptionsService.is('enableRtl')
+        if (params) {
+            this.hidePopup = params.hidePopup;
+        }
+
+        this.refreshFilterResizer(params?.container);
+    }
+
+    private refreshFilterResizer(containerType?: ContainerType): void {
+        // tool panel is scrollable, so don't need to size
+        if (!this.positionableFeature || containerType === 'toolPanel') { return; }
+
+        const isFloatingFilter = containerType === 'floatingFilter';
+
+        const { positionableFeature, gridOptionsService } = this;
+
+        if (isFloatingFilter) {
+            positionableFeature.restoreLastSize();
+            positionableFeature.setResizable(
+                gridOptionsService.is('enableRtl')
                     ? { bottom: true, bottomLeft: true, left: true }
                     : { bottom: true, bottomRight: true, right: true }
             );
@@ -399,10 +439,15 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
             this.positionableFeature.removeSizeFromEl();
             this.positionableFeature.setResizable(false);
         }
+        this.positionableFeature.constrainSizeToAvailableHeight(true);
+    }
 
-        if (params == null) { return; }
+    public afterGuiDetached(): void {
+        this.checkApplyDebounce();
 
-        this.hidePopup = params.hidePopup;
+        if (this.positionableFeature) {
+            this.positionableFeature.constrainSizeToAvailableHeight(false);
+        }
     }
 
     // static, as used by floating filter also
@@ -425,10 +470,15 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     public destroy(): void {
         const eGui = this.getGui();
+
         if (eGui) {
             eGui.removeEventListener('submit', this.onFormSubmit);
         }
         this.hidePopup = null;
+
+        if (this.positionableFeature) {
+            this.positionableFeature = this.destroyBean(this.positionableFeature);
+        }
 
         super.destroy();
     }

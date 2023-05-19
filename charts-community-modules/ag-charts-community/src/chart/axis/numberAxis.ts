@@ -21,7 +21,7 @@ export class NumberAxis extends ChartAxis<LinearScale | LogScale, number> {
         const { min, max } = this;
 
         if (d.length > 2) {
-            d = extent(d) || [NaN, NaN];
+            d = extent(d) ?? [NaN, NaN];
         }
         if (!isNaN(min)) {
             d = [min, d[1]];

@@ -1,6 +1,6 @@
 import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
 
-function getColumnDefs() {
+function getColumnDefs(): ColDef<IOlympicData>[] {
   return [
     { field: 'athlete' },
     { field: 'age' },
@@ -26,7 +26,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function setHeaderNames() {
-  const columnDefs: ColDef[] = getColumnDefs()
+  const columnDefs = getColumnDefs()
   columnDefs.forEach(function (colDef, index) {
     colDef.headerName = 'C' + index
   })
@@ -34,7 +34,7 @@ function setHeaderNames() {
 }
 
 function removeHeaderNames() {
-  const columnDefs: ColDef[] = getColumnDefs()
+  const columnDefs = getColumnDefs()
   columnDefs.forEach(function (colDef, index) {
     colDef.headerName = undefined
   })
@@ -42,7 +42,7 @@ function removeHeaderNames() {
 }
 
 function setValueFormatters() {
-  const columnDefs: ColDef[] = getColumnDefs()
+  const columnDefs = getColumnDefs()
   columnDefs.forEach(function (colDef, index) {
     colDef.valueFormatter = function (params) {
       return '[ ' + params.value + ' ]'
@@ -52,7 +52,7 @@ function setValueFormatters() {
 }
 
 function removeValueFormatters() {
-  const columnDefs: ColDef[] = getColumnDefs()
+  const columnDefs = getColumnDefs()
   columnDefs.forEach(function (colDef, index) {
     colDef.valueFormatter = undefined
   })

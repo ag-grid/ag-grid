@@ -1,5 +1,5 @@
 ---
-title: "Markers"
+title: "Series Markers"
 ---
 
 Data points in `line`, `area` and `scatter` series can be represented by markers.
@@ -76,8 +76,4 @@ The final result is shown in the example below.
 ## API Reference
 
 <interface-documentation interfaceName='AgCartesianSeriesMarker' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
-
-## Next Up
-
-Continue to the next section to learn about [formatters](/charts-formatters/).
 

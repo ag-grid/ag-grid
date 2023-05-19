@@ -47,27 +47,27 @@ The grid has the following API methods for editing:
 
 <api-documentation source='grid-api/api.json' section='editing' names='["startEditingCell", "stopEditing", "getEditingCells"]'></api-documentation>
 
-If the grid is editing, `getEditingCells()` returns back details of the editing cell(s). The result is an array of objects. If only one cell is editing (the default) then the array will have one entry. If multiple cells are editing (e.g. [Full Row Edit](#full-row-editing)) then the array contains all editing cells.
+If the grid is editing, `getEditingCells()` returns back details of the editing cell(s). The result is an array of objects. If only one cell is editing (the default) then the array will have one entry. If multiple cells are editing (e.g. [Full Row Edit](/cell-editing-full-row/)) then the array contains all editing cells.
 
 Below is a code example of using the editing API methods.
 
 <snippet>
-|// start editing country cell on first row
-|gridOptions.api.startEditingCell({
-|    rowIndex: 0,
-|    colKey: 'country'
-|});
-|
-|// stop editing
-|gridOptions.api.stopEditing();
-|
-|// print details of editing cell
-|const cellDefs = gridOptions.api.getEditingCells();
-|cellDefs.forEach(cellDef => {
-|    console.log(cellDef.rowIndex);
-|    console.log(cellDef.column.getId());
-|    console.log(cellDef.floating);
-|});
+| // start editing country cell on first row
+| gridOptions.api.startEditingCell({
+|     rowIndex: 0,
+|     colKey: 'country'
+| });
+| 
+| // stop editing
+| gridOptions.api.stopEditing();
+| 
+| // print details of editing cell
+| const cellDefs = gridOptions.api.getEditingCells();
+| cellDefs.forEach(cellDef => {
+|     console.log(cellDef.rowIndex);
+|     console.log(cellDef.column.getId());
+|     console.log(cellDef.floating);
+| });
 </snippet>
 
 The example below illustrates different parts of the editing API. Each button starts editing the 'Last Name' column of the first row with the following differences:
@@ -138,5 +138,6 @@ The example below shows the editing with `stopEditingWhenCellsLoseFocus = true`.
 
 <grid-example title='Stop Editing When Cells Loses Focus' name='stop-edit-when-grid-loses-focus' type='generated' options='{ "exampleHeight": 510 }'></grid-example>
 
-[[note]]
-| Cell Editing can also be performed via Cell Editor Components; please see [Cell Editor Components](/component-cell-editor/) for more information.
+<note>
+Cell Editing can also be performed via Cell Editor Components; please see [Cell Editor Components](../component-cell-editor/) for more information.
+</note>

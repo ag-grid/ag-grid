@@ -1,5 +1,5 @@
 ---
-title: "Get Started with AG Grid"
+title: "Get Started with AG Grid" 
 ---
 <style>
     .gatsby-resp-image-wrapper {
@@ -9,19 +9,10 @@ title: "Get Started with AG Grid"
     }
     .gatsby-resp-image-image { 
         box-shadow: none !important;
-    }  
- 
-    .code-tab pre { 
-        margin-top: 0;    
-    }   
-  
-    .code-tab .nav-item { 
-        margin-bottom: 0 !important;
-    }   
-</style>   
+    }
+</style>
 
 md-include:javascript.md
 md-include:angular.md    
 md-include:react.md   
-md-include:vue.md   
- 
+md-include:vue.md

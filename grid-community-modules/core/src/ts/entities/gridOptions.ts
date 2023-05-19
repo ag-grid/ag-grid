@@ -59,6 +59,7 @@ import {
     RowValueChangedEvent,
     SelectionChangedEvent,
     SortChangedEvent,
+    StoreRefreshedEvent,
     ToolPanelSizeChangedEvent,
     ToolPanelVisibleChangedEvent,
     UndoEndedEvent,
@@ -89,6 +90,7 @@ import { ColDef, ColGroupDef, IAggFunc, SortDirection } from "./colDef";
 import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetGroupRowAggParams, GetLocaleTextParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideGroupLevelParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsFullWidthRowParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostSortRowsParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams, GetGroupAggFilteringParams } from "../interfaces/iCallbackParams";
 import { SideBarDef } from "../interfaces/iSideBar";
 import { IRowNode } from "../interfaces/iRowNode";
+import { DataTypeDefinition } from "./dataType";
 
 export interface GridOptions<TData = any> {
 
@@ -166,6 +168,15 @@ export interface GridOptions<TData = any> {
     defaultColGroupDef?: Partial<ColGroupDef<TData>>;
     /** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property. */
     columnTypes?: { [key: string]: ColDef<TData>; };
+    /**
+     * An object map of cell data types to their definitions.
+     * Cell data types can either override/update the pre-defined data types
+     * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`),
+     * or can be custom data types.
+     */
+    dataTypeDefinitions?: {
+        [cellDataType: string]: DataTypeDefinition<TData>;
+    }
     /** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */
     maintainColumnOrder?: boolean;
     /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */
@@ -288,7 +299,10 @@ export interface GridOptions<TData = any> {
     // *** Integrated Charts *** //
     /** Set to `true` to Enable Charts. Default: `false` */
     enableCharts?: boolean;
-    /** The list of chart themes to be used. */
+    /**
+     * The list of chart themes that a user can chose from in the chart settings panel.
+     * Default: `['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar' ]`
+     */
     chartThemes?: string[];
     /** A map containing custom chart themes. */
     customChartThemes?: { [name: string]: AgChartTheme };
@@ -516,6 +530,7 @@ export interface GridOptions<TData = any> {
     rowDragText?: (params: IRowDragItem, dragItemCount: number) => string;
 
     // *** Row Full Width *** //
+
     /**
     * Provide your own cell renderer component to use for full width rows.
     * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details.
@@ -526,10 +541,11 @@ export interface GridOptions<TData = any> {
     /** Customise the parameters provided to the `fullWidthCellRenderer` component. */
     fullWidthCellRendererParams?: any;
 
-    /** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling. */
+    /** Set to `true` to have the Full Width Rows embedded in grid's main container so they can be scrolled horizontally . */
     embedFullWidthRows?: boolean;
 
     // *** Row Grouping *** //
+
     /**
      * Specifies how the results of row grouping should be displayed.
      *
@@ -794,6 +810,8 @@ export interface GridOptions<TData = any> {
 
     deltaSort?: boolean;
     treeDataDisplayType?: TreeDataDisplayType;
+    
+    /** @deprecated v29.2 */
     functionsPassive?: boolean;
     enableGroupEdit?: boolean;
 
@@ -1104,6 +1122,10 @@ export interface GridOptions<TData = any> {
     /** Async transactions have been applied. Contains a list of all transaction results. */
     onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed<TData>): void;
 
+    // *** Row Model: Server Side ***//
+    /** A server side store has finished refreshing. */
+    onStoreRefreshed?(event: StoreRefreshedEvent<TData>): void;
+
     // *** Selection *** //
     /** Cell is clicked. */
     onCellClicked?(event: CellClickedEvent<TData>): void;
@@ -1134,9 +1156,13 @@ export interface GridOptions<TData = any> {
     /** Sort has changed. The grid also listens for this and updates the model. */
     onSortChanged?(event: SortChangedEvent<TData>): void;
 
+    /** @deprecated v29.2 */
     onColumnRowGroupChangeRequest?(event: ColumnRowGroupChangeRequestEvent<TData>): void;
+    /** @deprecated v29.2 */
     onColumnPivotChangeRequest?(event: ColumnPivotChangeRequestEvent<TData>): void;
+    /** @deprecated v29.2 */
     onColumnValueChangeRequest?(event: ColumnValueChangeRequestEvent<TData>): void;
+    /** @deprecated v29.2 */
     onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent<TData>): void;
 
     /**
@@ -1213,7 +1239,7 @@ export interface MenuItemLeafDef {
     /** Set to true to provide a check beside the option */
     checked?: boolean;
     /** The icon to display, either a DOM element or HTML string */
-    icon?: HTMLElement | string;
+    icon?: Element | string;
     /** CSS classes to apply to the menu item */
     cssClasses?: string[];
     /** Tooltip for the menu item */

@@ -225,7 +225,8 @@ export class PaginationComp extends Component {
 
         this.lbFirstRowOnPage.innerHTML = this.formatNumber(startRow);
         if (this.rowNodeBlockLoader.isLoading()) {
-            this.lbLastRowOnPage.innerHTML = '?';
+            const translate = this.localeService.getLocaleTextFunc();
+            this.lbLastRowOnPage.innerHTML = translate('pageLastRowUnknown', '?');
         } else {
             this.lbLastRowOnPage.innerHTML = this.formatNumber(endRow);
         }

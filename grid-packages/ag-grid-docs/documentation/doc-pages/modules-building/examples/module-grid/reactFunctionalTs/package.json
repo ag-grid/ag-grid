@@ -2,8 +2,8 @@
     "name": "ag-grid-modules",
     "description": "NOTE: This package.json file is solely used by Plunker to look up type definitions.",
     "dependencies": {
-        "react": "17",
-        "react-dom": "17",
+        "react": "18",
+        "react-dom": "18",
         "@ag-grid-community/react": "*",
         "@ag-grid-community/core": "*",
         "@ag-grid-community/client-side-row-model": "*",

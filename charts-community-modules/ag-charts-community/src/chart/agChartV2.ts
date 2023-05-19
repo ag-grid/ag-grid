@@ -15,14 +15,14 @@ import {
 import { CartesianChart } from './cartesianChart';
 import { PolarChart } from './polarChart';
 import { HierarchyChart } from './hierarchyChart';
-import { Caption } from '../caption';
 import { Series } from './series/series';
+import { getSeries } from './factory/seriesTypes';
 import { AreaSeries } from './series/cartesian/areaSeries';
 import { BarSeries } from './series/cartesian/barSeries';
 import { HistogramSeries } from './series/cartesian/histogramSeries';
 import { LineSeries } from './series/cartesian/lineSeries';
 import { ScatterSeries } from './series/cartesian/scatterSeries';
-import { PieSeries, PieTitle, DoughnutInnerLabel, DoughnutInnerCircle } from './series/polar/pieSeries';
+import { PieSeries, PieTitle } from './series/polar/pieSeries';
 import { TreemapSeries } from './series/hierarchy/treemapSeries';
 import { ChartAxis } from './chartAxis';
 import { LogAxis } from './axis/logAxis';
@@ -33,7 +33,6 @@ import { TimeAxis } from './axis/timeAxis';
 import { Chart } from './chart';
 import { ChartUpdateType } from './chartUpdateType';
 import { TypedEventListener } from '../util/observable';
-import { DropShadow } from '../scene/dropShadow';
 import { jsonDiff, jsonMerge, jsonApply } from '../util/json';
 import {
     prepareOptions,
@@ -44,13 +43,14 @@ import {
     noDataCloneMergeOptions,
 } from './mapping/prepare';
 import { SeriesOptionsTypes } from './mapping/defaults';
-import { CrossLine } from './crossline/crossLine';
 import { windowValue } from '../util/window';
 import { AxisModule, Module, RootModule } from '../util/module';
 import { Logger } from '../util/logger';
+import { getJsonApplyOptions } from './chartOptions';
 
 // Deliberately imported via `module-support` so that internal module registration happens.
 import { REGISTERED_MODULES } from '../module-support';
+import { setupModules } from './factory/setupModules';
 
 type SeriesOptionType<T extends Series> = T extends LineSeries
     ? AgLineSeriesOptions
@@ -211,12 +211,23 @@ class AgChartInstanceProxy implements AgChartInstance {
 }
 
 abstract class AgChartInternal {
-    static DEBUG = () => windowValue('agChartsDebug') ?? false;
+    static DEBUG = () => (windowValue('agChartsDebug') as string | boolean) ?? false;
+
+    static initialised = false;
+    static initialiseModules() {
+        if (AgChartInternal.initialised) return;
+
+        setupModules();
+
+        AgChartInternal.initialised = true;
+    }
 
     static createOrUpdate(
         userOptions: AgChartOptions & { overrideDevicePixelRatio?: number },
         proxy?: AgChartInstanceProxy
     ) {
+        AgChartInternal.initialiseModules();
+
         debug('>>> createOrUpdate() user options', userOptions);
         const mixinOpts: any = {};
         if (AgChartInternal.DEBUG() === true) {
@@ -293,7 +304,7 @@ abstract class AgChartInternal {
             }
         };
 
-        asyncDownload();
+        asyncDownload().catch((e) => Logger.errorOnce(e));
     }
 
     static async getImageDataURL(proxy: AgChartInstanceProxy, opts?: ImageDataUrlOptions): Promise<string> {
@@ -315,7 +326,7 @@ abstract class AgChartInternal {
     ) {
         const { chart } = proxy;
 
-        let { width, height } = opts || {};
+        let { width, height } = opts ?? {};
         const currentWidth = chart.width;
         const currentHeight = chart.height;
 
@@ -371,7 +382,7 @@ abstract class AgChartInternal {
         if (processedOptions.type == null) {
             processedOptions = {
                 ...processedOptions,
-                type: chart.processedOptions.type || optionsType(processedOptions),
+                type: chart.processedOptions.type ?? optionsType(processedOptions),
             } as Partial<AgChartOptions>;
         }
 
@@ -394,7 +405,7 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
     const completeOptions = jsonMerge([chart.processedOptions ?? {}, processedOptions], noDataCloneMergeOptions);
     const modulesChanged = applyModules(chart, completeOptions);
 
-    const skip = ['type', 'data', 'series', 'autoSize', 'listeners', 'theme', 'legend.listeners'];
+    const skip = ['type', 'data', 'series', 'autoSize', 'listeners', 'theme', 'legend'];
     if (isAgCartesianChartOptions(processedOptions)) {
         // Append axes to defaults.
         skip.push('axes');
@@ -424,10 +435,11 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
             forceNodeDataRefresh = true;
         }
     }
+    applyLegend(chart, processedOptions);
 
     const seriesOpts = processedOptions.series as any[];
     const seriesDataUpdate = !!processedOptions.data || seriesOpts?.some((s) => s.data != null);
-    const otherRefreshUpdate = processedOptions.legend || processedOptions.title || processedOptions.subtitle;
+    const otherRefreshUpdate = processedOptions.legend ?? processedOptions.title ?? processedOptions.subtitle;
     forceNodeDataRefresh = forceNodeDataRefresh || seriesDataUpdate || !!otherRefreshUpdate;
     if (processedOptions.data) {
         chart.data = processedOptions.data;
@@ -437,8 +449,8 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
     if (processedOptions.autoSize != null) {
         chart.autoSize = processedOptions.autoSize;
     }
-    if (processedOptions.legend?.listeners) {
-        Object.assign(chart.legend.listeners, processedOptions.legend.listeners ?? {});
+    if (processedOptions.listeners) {
+        chart.updateAllSeriesListeners();
     }
 
     chart.processedOptions = completeOptions;
@@ -490,8 +502,8 @@ function applySeries(chart: Chart, options: AgChartOptions) {
     // Try to optimise series updates if series count and types didn't change.
     if (matchingTypes) {
         chart.series.forEach((s, i) => {
-            const previousOpts = chart.processedOptions?.series?.[i] || {};
-            const seriesDiff = jsonDiff(previousOpts, optSeries[i] || {}) as any;
+            const previousOpts = chart.processedOptions?.series?.[i] ?? {};
+            const seriesDiff = jsonDiff(previousOpts, optSeries[i] ?? {}) as any;
 
             if (!seriesDiff) {
                 return;
@@ -499,7 +511,7 @@ function applySeries(chart: Chart, options: AgChartOptions) {
 
             debug(`applying series diff idx ${i}`, seriesDiff);
 
-            applySeriesValues(s as any, seriesDiff, { path: `series[${i}]` });
+            applySeriesValues(s as any, seriesDiff, { path: `series[${i}]`, index: i });
             s.markNodeDataDirty();
         });
 
@@ -523,7 +535,7 @@ function applyAxes(chart: Chart, options: AgCartesianChartOptions) {
         const oldOpts = chart.processedOptions;
         if (isAgCartesianChartOptions(oldOpts)) {
             chart.axes.forEach((a, i) => {
-                const previousOpts = oldOpts.axes?.[i] || {};
+                const previousOpts = oldOpts.axes?.[i] ?? {};
                 const axisDiff = jsonDiff(previousOpts, optAxes[i]) as any;
 
                 debug(`applying axis diff idx ${i}`, axisDiff);
@@ -540,40 +552,25 @@ function applyAxes(chart: Chart, options: AgCartesianChartOptions) {
     return true;
 }
 
+function applyLegend(chart: Chart, options: AgChartOptions) {
+    const skip = ['listeners'];
+    chart.setLegendInit((legend) => {
+        applyOptionValues(legend, options.legend ?? {}, { skip });
+        if (options.legend?.listeners) {
+            Object.assign(chart.legend!.listeners, options.legend.listeners ?? {});
+        }
+    });
+}
+
 function createSeries(options: SeriesOptionsTypes[]): Series[] {
     const series: Series<any>[] = [];
 
     let index = 0;
-    for (const seriesOptions of options || []) {
+    for (const seriesOptions of options ?? []) {
         const path = `series[${index++}]`;
-        switch (seriesOptions.type) {
-            case 'area':
-                series.push(applySeriesValues(new AreaSeries(), seriesOptions, { path }));
-                break;
-            case 'bar':
-                series.push(applySeriesValues(new BarSeries(), seriesOptions, { path }));
-                break;
-            case 'column':
-                series.push(applySeriesValues(new BarSeries(), seriesOptions, { path }));
-                break;
-            case 'histogram':
-                series.push(applySeriesValues(new HistogramSeries(), seriesOptions, { path }));
-                break;
-            case 'line':
-                series.push(applySeriesValues(new LineSeries(), seriesOptions, { path }));
-                break;
-            case 'scatter':
-                series.push(applySeriesValues(new ScatterSeries(), seriesOptions, { path }));
-                break;
-            case 'pie':
-                series.push(applySeriesValues(new PieSeries(), seriesOptions, { path }));
-                break;
-            case 'treemap':
-                series.push(applySeriesValues(new TreemapSeries(), seriesOptions, { path }));
-                break;
-            default:
-                throw new Error('AG Charts - unknown series type: ' + (seriesOptions as any).type);
-        }
+        const seriesInstance = getSeries(seriesOptions.type!);
+        applySeriesValues(seriesInstance, seriesOptions, { path, index });
+        series.push(seriesInstance);
     }
 
     return series;
@@ -585,7 +582,7 @@ function createAxis(chart: Chart, options: AgCartesianAxisOptions[]): ChartAxis[
     const moduleContext = chart.getModuleContext();
 
     let index = 0;
-    for (const axisOptions of options || []) {
+    for (const axisOptions of options ?? []) {
         let axis;
         switch (axisOptions.type) {
             case 'number':
@@ -652,39 +649,23 @@ function registerListeners<T extends ObservableLike>(source: T, listeners?: {}) 
     }
 }
 
-const JSON_APPLY_OPTIONS: Parameters<typeof jsonApply>[2] = {
-    constructors: {
-        title: Caption,
-        subtitle: Caption,
-        footnote: Caption,
-        shadow: DropShadow,
-        innerCircle: DoughnutInnerCircle,
-        'axes[].crossLines[]': CrossLine,
-        'series[].innerLabels[]': DoughnutInnerLabel,
-    },
-    allowedTypes: {
-        'legend.pagination.marker.shape': ['primitive', 'function'],
-        'series[].marker.shape': ['primitive', 'function'],
-        'axis[].tick.count': ['primitive', 'class-instance'],
-    },
-};
-
 function applyOptionValues<T, S>(target: T, options?: S, { skip, path }: { skip?: string[]; path?: string } = {}): T {
     const applyOpts = {
-        ...JSON_APPLY_OPTIONS,
+        ...getJsonApplyOptions(),
         skip,
         ...(path ? { path } : {}),
     };
     return jsonApply<T, any>(target, options, applyOpts);
 }
 
-function applySeriesValues<T extends Series<any>, S extends SeriesOptionType<T>>(
-    target: T,
-    options?: S,
-    { path }: { path?: string } = {}
-): T {
+function applySeriesValues(
+    target: Series<any>,
+    options?: SeriesOptionType<any>,
+    { path, index }: { path?: string; index?: number } = {}
+): Series<any> {
     const skip: string[] = ['series[].listeners'];
-    const ctrs = JSON_APPLY_OPTIONS?.constructors || {};
+    const jsonApplyOptions = getJsonApplyOptions();
+    const ctrs = jsonApplyOptions.constructors ?? {};
     const seriesTypeOverrides = {
         constructors: {
             ...ctrs,
@@ -693,13 +674,14 @@ function applySeriesValues<T extends Series<any>, S extends SeriesOptionType<T>>
     };
 
     const applyOpts = {
-        ...JSON_APPLY_OPTIONS,
+        ...jsonApplyOptions,
         ...seriesTypeOverrides,
-        skip: ['series[].type', ...(skip || [])],
+        skip: ['series[].type', ...(skip ?? [])],
         ...(path ? { path } : {}),
+        idx: index ?? -1,
     };
 
-    const result = jsonApply<T, any>(target, options, applyOpts);
+    const result = jsonApply(target, options, applyOpts);
 
     const listeners = options?.listeners;
     if (listeners != null) {

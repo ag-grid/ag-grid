@@ -6,7 +6,7 @@ A legend makes it easier to tell at a glance which series or series items corres
 
 ## Position
 
-A legend is shown by default but can be hidden using the `enabled` config:
+By default, a legend is displayed for all charts with more than one series present. However, it can be hidden by using the `enabled` configuration option:
 
 ```js
 legend: {
@@ -224,8 +224,11 @@ This example demonstrates toggling the visiblity of series via clicks and double
 
 ## API Reference
 
-<interface-documentation interfaceName='AgChartLegendOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
+### Cartesian Chart Legend Options
+<interface-documentation interfaceName='AgCartesianChartLegendOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
 
-## Next Up
+### Polar Chart Legend Options
+<interface-documentation interfaceName='AgPolarChartLegendOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>
 
-Continue to the next section to learn about the [series](../series-highlighting/).
+### Hierarchy Chart Legend Options
+<interface-documentation interfaceName='AgHierarchyChartLegendOptions' overridesrc="charts-api/api.json" config='{ "showSnippets": false, "lookupRoot": "charts-api" }'></interface-documentation>

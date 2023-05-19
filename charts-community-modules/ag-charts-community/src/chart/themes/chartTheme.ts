@@ -1,3 +1,4 @@
+import { jsonMerge, jsonWalk } from '../../util/json';
 import { deepMerge } from '../../util/object';
 import {
     FontWeight,
@@ -13,8 +14,11 @@ import {
     AgCartesianSeriesTheme,
     AgHierarchySeriesTheme,
     AgChartInteractionRange,
+    AgTooltipPositionType,
 } from '../agChartOptions';
-import { DEFAULT_TOOLTIP_CLASS } from '../tooltip/tooltip';
+import { CHART_AXES_TYPES, getAxisThemeTemplate } from '../chartAxesTypes';
+import { ChartType, CHART_TYPES, getChartDefaults } from '../factory/chartTypes';
+import { getSeriesThemeTemplate } from '../factory/seriesTypes';
 
 const palette: AgChartThemePalette = {
     fills: ['#f3622d', '#fba71b', '#57b757', '#41a9c9', '#4258c9', '#9a42c8', '#c84164', '#888888'],
@@ -30,9 +34,13 @@ type ChartThemeDefaults = {
     [key in keyof AgPolarSeriesTheme]?: AgPolarThemeOptions;
 } & { [key in keyof AgHierarchySeriesTheme]?: AgHierarchyThemeOptions };
 
+export const EXTENDS_SERIES_DEFAULTS = Symbol('extends-series-defaults');
+export const OVERRIDE_SERIES_LABEL_DEFAULTS = Symbol('override-series-label-defaults');
+export const DEFAULT_FONT_FAMILY = Symbol('default-font');
+
 const BOLD: FontWeight = 'bold';
 const INSIDE: AgBarSeriesLabelOptions['placement'] = 'inside';
-const RIGHT: AgChartLegendPosition = 'right';
+const BOTTOM: AgChartLegendPosition = 'bottom';
 export class ChartTheme {
     readonly palette: AgChartThemePalette;
 
@@ -42,7 +50,7 @@ export class ChartTheme {
 
     readonly config: any;
 
-    private static fontFamily = 'Verdana, sans-serif';
+    static fontFamily = 'Verdana, sans-serif';
 
     private static getAxisDefaults() {
         return {
@@ -106,7 +114,7 @@ export class ChartTheme {
         };
     }
 
-    private static getSeriesDefaults() {
+    static getSeriesDefaults() {
         return {
             tooltip: {
                 enabled: true,
@@ -133,11 +141,8 @@ export class ChartTheme {
     private static getBarSeriesDefaults() {
         return {
             ...this.getSeriesDefaults(),
-            flipXY: false,
             fillOpacity: 1,
             strokeOpacity: 1,
-            xKey: '',
-            xName: '',
             normalizedTo: undefined,
             strokeWidth: 1,
             lineDash: [0],
@@ -169,6 +174,9 @@ export class ChartTheme {
             tooltip: {
                 ...seriesDefaults.tooltip,
                 format: undefined,
+                position: {
+                    type: 'node' as AgTooltipPositionType,
+                },
             },
         };
     }
@@ -178,6 +186,25 @@ export class ChartTheme {
         return {
             ...seriesDefaults,
             nodeClickRange: 'nearest' as AgChartInteractionRange,
+            tooltip: {
+                ...seriesDefaults.tooltip,
+                position: {
+                    type: 'node' as AgTooltipPositionType,
+                },
+            },
+        };
+    }
+
+    private static getScatterSeriesDefaults() {
+        const seriesDefaults = this.getSeriesDefaults();
+        return {
+            ...seriesDefaults,
+            tooltip: {
+                ...seriesDefaults.tooltip,
+                position: {
+                    type: 'node' as AgTooltipPositionType,
+                },
+            },
         };
     }
 
@@ -190,6 +217,10 @@ export class ChartTheme {
             strokeWidth: 1,
             formatter: undefined,
         };
+    }
+
+    private static getCaptionWrappingDefaults() {
+        return 'hyphenate' as const;
     }
 
     private static getChartDefaults() {
@@ -212,6 +243,7 @@ export class ChartTheme {
                 fontSize: 16,
                 fontFamily: this.fontFamily,
                 color: 'rgb(70, 70, 70)',
+                wrapping: ChartTheme.getCaptionWrappingDefaults(),
             },
             subtitle: {
                 enabled: false,
@@ -221,6 +253,7 @@ export class ChartTheme {
                 fontSize: 12,
                 fontFamily: this.fontFamily,
                 color: 'rgb(140, 140, 140)',
+                wrapping: ChartTheme.getCaptionWrappingDefaults(),
             },
             footnote: {
                 enabled: false,
@@ -230,10 +263,12 @@ export class ChartTheme {
                 fontSize: 12,
                 fontFamily: this.fontFamily,
                 color: 'rgb(140, 140, 140)',
+                spacing: 30,
+                wrapping: ChartTheme.getCaptionWrappingDefaults(),
             },
             legend: {
                 enabled: true,
-                position: RIGHT,
+                position: BOTTOM,
                 spacing: 20,
                 listeners: {},
                 item: {
@@ -277,7 +312,6 @@ export class ChartTheme {
                 enabled: true,
                 range: 'nearest' as AgChartInteractionRange,
                 delay: 0,
-                class: DEFAULT_TOOLTIP_CLASS,
             },
             listeners: {},
         };
@@ -311,19 +345,13 @@ export class ChartTheme {
         series: {
             column: {
                 ...ChartTheme.getBarSeriesDefaults(),
-                flipXY: false,
             },
             bar: {
                 ...ChartTheme.getBarSeriesDefaults(),
-                flipXY: true,
             },
             line: {
                 ...ChartTheme.getLineSeriesDefaults(),
                 title: undefined,
-                xKey: '',
-                xName: '',
-                yKey: '',
-                yName: '',
                 strokeWidth: 2,
                 strokeOpacity: 1,
                 lineDash: [0],
@@ -344,14 +372,7 @@ export class ChartTheme {
                 },
             },
             scatter: {
-                ...ChartTheme.getSeriesDefaults(),
-                title: undefined,
-                xKey: '',
-                yKey: '',
-                sizeKey: undefined,
-                labelKey: undefined,
-                xName: '',
-                yName: '',
+                ...ChartTheme.getScatterSeriesDefaults(),
                 sizeName: 'Size',
                 labelName: 'Label',
                 marker: {
@@ -368,8 +389,6 @@ export class ChartTheme {
             },
             area: {
                 ...ChartTheme.getAreaSeriesDefaults(),
-                xKey: '',
-                xName: '',
                 normalizedTo: undefined,
                 fillOpacity: 0.8,
                 strokeOpacity: 1,
@@ -401,10 +420,6 @@ export class ChartTheme {
             },
             histogram: {
                 ...ChartTheme.getSeriesDefaults(),
-                xKey: '',
-                yKey: '',
-                xName: '',
-                yName: '',
                 strokeWidth: 1,
                 fillOpacity: 1,
                 strokeOpacity: 1,
@@ -431,34 +446,6 @@ export class ChartTheme {
                 },
             },
         },
-        navigator: {
-            enabled: false,
-            height: 30,
-            mask: {
-                fill: '#999999',
-                stroke: '#999999',
-                strokeWidth: 1,
-                fillOpacity: 0.2,
-            },
-            minHandle: {
-                fill: '#f2f2f2',
-                stroke: '#999999',
-                strokeWidth: 1,
-                width: 8,
-                height: 16,
-                gripLineGap: 2,
-                gripLineLength: 8,
-            },
-            maxHandle: {
-                fill: '#f2f2f2',
-                stroke: '#999999',
-                strokeWidth: 1,
-                width: 8,
-                height: 16,
-                gripLineGap: 2,
-                gripLineLength: 8,
-            },
-        },
     };
 
     private static readonly polarDefaults: AgPolarThemeOptions = {
@@ -468,15 +455,12 @@ export class ChartTheme {
                 ...ChartTheme.getSeriesDefaults(),
                 title: {
                     enabled: true,
-                    text: '',
                     fontStyle: undefined,
                     fontWeight: 'bold',
                     fontSize: 14,
                     fontFamily: ChartTheme.fontFamily,
                     color: 'rgb(70, 70, 70)',
                 },
-                angleKey: '',
-                angleName: '',
                 radiusKey: undefined,
                 radiusName: undefined,
                 calloutLabelKey: undefined,
@@ -491,7 +475,7 @@ export class ChartTheme {
                     fontFamily: ChartTheme.fontFamily,
                     color: 'rgb(70, 70, 70)',
                     offset: 3,
-                    minAngle: 20,
+                    minAngle: 0,
                 },
                 sectorLabel: {
                     enabled: true,
@@ -567,6 +551,7 @@ export class ChartTheme {
                 },
                 highlightGroups: true,
                 nodePadding: 2,
+                nodeGap: 0,
                 title: {
                     enabled: true,
                     color: 'white',
@@ -625,7 +610,7 @@ export class ChartTheme {
         },
     };
 
-    static readonly defaults: ChartThemeDefaults = {
+    private static readonly defaults: ChartThemeDefaults = {
         cartesian: ChartTheme.cartesianDefaults,
         groupedCategory: ChartTheme.cartesianDefaults,
         polar: ChartTheme.polarDefaults,
@@ -633,7 +618,7 @@ export class ChartTheme {
     };
 
     constructor(options?: AgChartThemeOptions) {
-        options = deepMerge({}, options || {}) as AgChartThemeOptions;
+        options = deepMerge({}, options ?? {}) as AgChartThemeOptions;
         const { overrides = null, palette = null } = options;
 
         const defaults = this.createChartConfigPerChartType(this.getDefaults());
@@ -643,22 +628,24 @@ export class ChartTheme {
 
             const applyOverrides = <K extends keyof typeof defaults>(
                 type: K,
-                seriesTypes: (keyof typeof defaults)[],
+                seriesTypes: string[],
                 overrideOpts: AgChartThemeOverrides[K]
             ) => {
                 if (overrideOpts) {
                     defaults[type] = deepMerge(defaults[type], overrideOpts);
-                    seriesTypes.forEach((seriesType) => {
+                    seriesTypes.forEach((s) => {
+                        const seriesType = s as keyof AgChartThemeOverrides;
                         defaults[seriesType] = deepMerge(defaults[seriesType], overrideOpts);
                     });
                 }
             };
             applyOverrides('common', Object.keys(defaults) as any[], common);
-            applyOverrides('cartesian', ChartTheme.cartesianSeriesTypes, cartesian);
-            applyOverrides('polar', ChartTheme.polarSeriesTypes, polar);
-            applyOverrides('hierarchy', ChartTheme.hierarchySeriesTypes, hierarchy);
+            applyOverrides('cartesian', CHART_TYPES.cartesianTypes, cartesian);
+            applyOverrides('polar', CHART_TYPES.polarTypes, polar);
+            applyOverrides('hierarchy', CHART_TYPES.hierarchyTypes, hierarchy);
 
-            ChartTheme.seriesTypes.forEach((seriesType) => {
+            CHART_TYPES.seriesTypes.forEach((s) => {
+                const seriesType = s as keyof AgChartThemeOverrides;
                 const chartConfig = overrides[seriesType];
                 if (chartConfig) {
                     if (chartConfig.series) {
@@ -673,31 +660,22 @@ export class ChartTheme {
         this.config = Object.freeze(defaults);
     }
 
-    private static cartesianSeriesTypes: (keyof AgChartThemeOverrides)[] = [
-        'line',
-        'area',
-        'bar',
-        'column',
-        'scatter',
-        'histogram',
-    ];
-    private static polarSeriesTypes: (keyof AgChartThemeOverrides)[] = ['pie'];
-    private static hierarchySeriesTypes: (keyof AgChartThemeOverrides)[] = ['treemap'];
-    private static seriesTypes: (keyof AgChartThemeOverrides)[] = ChartTheme.cartesianSeriesTypes
-        .concat(ChartTheme.polarSeriesTypes)
-        .concat(ChartTheme.hierarchySeriesTypes);
-
     private createChartConfigPerChartType(config: ChartThemeDefaults) {
         const typeToAliases = {
-            cartesian: ChartTheme.cartesianSeriesTypes,
-            polar: ChartTheme.polarSeriesTypes,
-            hierarchy: ChartTheme.hierarchySeriesTypes,
+            cartesian: CHART_TYPES.cartesianTypes,
+            polar: CHART_TYPES.polarTypes,
+            hierarchy: CHART_TYPES.hierarchyTypes,
             groupedCategory: [],
         };
-        Object.entries(typeToAliases).forEach(([type, aliases]) => {
-            aliases.forEach((alias) => {
-                if (!config[alias as keyof ChartThemeDefaults]) {
-                    config[alias as keyof ChartThemeDefaults] = deepMerge({}, config[type as keyof ChartThemeDefaults]);
+        Object.entries(typeToAliases).forEach(([nextType, aliases]) => {
+            const type = nextType as ChartType;
+            const typeDefaults = this.templateTheme(getChartDefaults(type)) as any;
+
+            aliases.forEach((next) => {
+                const alias = next as keyof ChartThemeDefaults;
+                if (!config[alias]) {
+                    config[alias] = deepMerge({}, config[type]);
+                    deepMerge(config[alias], typeDefaults);
                 }
             });
         });
@@ -705,17 +683,88 @@ export class ChartTheme {
         return config as AgChartThemeOverrides;
     }
 
-    /**
-     * Meant to be overridden in subclasses. For example:
-     * ```
-     *     getDefaults() {
-     *         const subclassDefaults = { ... };
-     *         return this.mergeWithParentDefaults(subclassDefaults);
-     *     }
-     * ```
-     */
     protected getDefaults(): ChartThemeDefaults {
-        return deepMerge({}, ChartTheme.defaults);
+        const defaults = deepMerge({}, ChartTheme.defaults);
+        const getOverridesByType = (chartType: ChartType, seriesTypes: string[]) => {
+            const result = this.templateTheme(getChartDefaults(chartType)) as any;
+            result.series = seriesTypes.reduce((obj, seriesType) => {
+                const template = getSeriesThemeTemplate(seriesType);
+                if (template) {
+                    obj[seriesType] = this.templateTheme(template);
+                }
+                return obj;
+            }, {} as Record<string, any>);
+
+            if (chartType === 'cartesian') {
+                result.axes = CHART_AXES_TYPES.axesTypes.reduce((obj, axisType) => {
+                    const template = getAxisThemeTemplate(axisType);
+                    if (template) {
+                        obj[axisType] = this.templateTheme(template);
+                    }
+                    return obj;
+                }, {} as Record<string, any>);
+            }
+            return result;
+        };
+
+        const extension = {
+            cartesian: getOverridesByType('cartesian', CHART_TYPES.cartesianTypes),
+            groupedCategory: getOverridesByType('cartesian', CHART_TYPES.cartesianTypes),
+            polar: getOverridesByType('polar', CHART_TYPES.polarTypes),
+            hierarchy: getOverridesByType('hierarchy', CHART_TYPES.hierarchyTypes),
+        };
+        return deepMerge(defaults, extension);
+    }
+
+    protected templateTheme(themeTemplate: {}): {} {
+        const themeInstance = jsonMerge([themeTemplate]);
+        const { extensions, properties } = this.getTemplateParameters();
+
+        jsonWalk(
+            themeInstance,
+            (_, node) => {
+                if (node['__extends__']) {
+                    const key = node['__extends__'];
+                    const source = extensions.get(key);
+                    if (source == null) {
+                        throw new Error('AG Charts - no template variable provided for: ' + key);
+                    }
+                    Object.assign(node, source, node);
+                    delete node['__extends__'];
+                }
+                if (node['__overrides__']) {
+                    const key = node['__overrides__'];
+                    const source = extensions.get(key);
+                    if (source == null) {
+                        throw new Error('AG Charts - no template variable provided for: ' + key);
+                    }
+                    Object.assign(node, source);
+                    delete node['__overrides__'];
+                }
+                for (const [name, value] of Object.entries(node)) {
+                    if (properties.has(value)) {
+                        node[name] = properties.get(value);
+                    }
+                }
+            },
+            {}
+        );
+
+        return themeInstance;
+    }
+
+    protected getTemplateParameters() {
+        const extensions = new Map();
+        extensions.set(EXTENDS_SERIES_DEFAULTS, ChartTheme.getSeriesDefaults());
+        extensions.set(OVERRIDE_SERIES_LABEL_DEFAULTS, {});
+
+        const properties = new Map();
+        properties.set(DEFAULT_FONT_FAMILY, ChartTheme.fontFamily);
+
+        return {
+            extensions,
+            properties,
+        };
     }
 
     protected mergeWithParentDefaults(

@@ -65,9 +65,10 @@ export function fileReducer(state = {}, action) {
 }
 ```
 
-[[note]]
-| The helper methods used in the reducer are omitted for brevity but can be examined in the code
-| tab provided in the example at the end of this section.
+<note>
+The helper methods used in the reducer are omitted for brevity but can be examined in the code
+tab provided in the example at the end of this section.
+</note>
 
 Rather than create action objects directly we shall use the following _Action Creators_ as shown below:
 
@@ -109,18 +110,17 @@ component as shown below:
 // index.jsx
 
 import React from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 
 import store from './store.jsx';
 import FileBrowser from './FileBrowser.jsx';
 
-render(
-    <Provider store={ store }>
-        <FileBrowser/>
-    </Provider>,
-    document.getElementById('root')
-);
+const root = createRoot(document.getElementById('root'));
+root.render(
+    <Provider store={store}>
+        <FileView/>
+    </Provider>);
 ```
 
 The `Provider` accepts the store as property and makes it available via props to all child components.

@@ -217,19 +217,23 @@ export interface ExcelRow {
 }
 
 export interface ExcelCell {
-    /** Cell reference. */
-    ref?: string;
-    /** The ExcelStyle id to be associated with the cell. */
-    styleId?: string;
     /** The data that will be added to the cell. */
     data?: ExcelData;
+
+    /** Cell reference. */
+    ref?: string;
+
+    /** Collapsible ranges. */
+    collapsibleRanges?: number[][];
+
+    /** The ExcelStyle id to be associated with the cell. */
+    styleId?: string | string[];
+    
     /**
      * The number of cells to span across (1 means span 2 columns).
      * Default: `0`
      */
     mergeAcross?: number;
-    /** Collapsible ranges. */
-    collapsibleRanges?: number[][];
 }
 
 export interface ExcelImagePosition {
@@ -399,6 +403,16 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
      * Default: `false`
      */
     suppressTextAsCDATA?: boolean;
+    /**
+     * If `true`, the outline (controls to expand and collapse) for Row Groups will not be added automatically to the Excel Document.
+     * Default: `false`.
+     */
+    suppressRowOutline?: boolean;
+    /**
+     * If `true`, the outline (controls to expand and collapse) for Group Columns will not be added automatically to the Excel Document.
+     * Default: `false`.
+     */
+    suppressColumnOutline?: boolean;
     /**
      * The mimeType of the Excel file. Note that this defaults to `application/vnd.ms-excel` if exportMode is `xml`.
      * Default: `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`

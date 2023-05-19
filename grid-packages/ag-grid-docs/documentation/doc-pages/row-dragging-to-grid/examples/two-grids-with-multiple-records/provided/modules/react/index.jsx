@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
@@ -189,17 +189,17 @@ class GridExample extends Component {
             <div className="panel-body">
                 <div onChange={this.onRadioChange} >
                     <input type="radio" id="move" name="radio" value="0" checked={this.state.radioChecked === 0} />
-                    <label for="move">Remove Source Rows</label>
+                    <label htmlFor="move">Remove Source Rows</label>
                     <input type="radio" id="deselect" name="radio" value="1" checked={this.state.radioChecked === 1} />
-                    <label for="deselect">Only Deselect Source Rows</label>
+                    <label htmlFor="deselect">Only Deselect Source Rows</label>
                     <input type="radio" id="none" name="radio" value="2" checked={this.state.radioChecked === 2} />
-                    <label for="none">None</label>
+                    <label htmlFor="none">None</label>
                 </div>
                 <input type="checkbox" id="toggleCheck" checked={this.state.checkBoxSelected} onChange={this.onCheckboxChange} />
-                <label for="toggleCheck">Checkbox Select</label>
+                <label htmlFor="toggleCheck">Checkbox Select</label>
                 <span className="input-group-button">
-                    <button type="button" className="btn btn-default reset" style={{ marginLeft: '5px;' }} onClick={this.reset}>
-                        <i className="fas fa-redo" style={{ marginRight: '5px;' }}></i>Reset
+                    <button type="button" className="btn btn-default reset" style={{ marginLeft: '5px' }} onClick={this.reset}>
+                        <i className="fas fa-redo" style={{ marginRight: '5px' }}></i>Reset
                     </button>
                 </span>
             </div>
@@ -211,7 +211,7 @@ class GridExample extends Component {
             <div className="panel-heading">{id === 0 ? 'Athletes' : 'Selected Athletes'}</div>
             <div className="panel-body">
                 <AgGridReact
-                    style={{ height: '100%;' }}
+                    style={{ height: '100%' }}
                     defaultColDef={defaultColDef}
                     getRowId={this.getRowId}
                     rowDragManaged={true}
@@ -232,7 +232,7 @@ class GridExample extends Component {
     render = () => (
         <div className="top-container">
             {this.getTopToolBar()}
-            <div class="grid-wrapper ag-theme-alpine">
+            <div className="grid-wrapper ag-theme-alpine">
                 {this.getGridWrapper(0)}
                 {this.getGridWrapper(1)}
             </div>
@@ -240,7 +240,5 @@ class GridExample extends Component {
     );
 }
 
-render(
-    <GridExample></GridExample>,
-    document.querySelector('#root')
-)
+const root = createRoot(document.getElementById('root'));
+root.render(<GridExample />);

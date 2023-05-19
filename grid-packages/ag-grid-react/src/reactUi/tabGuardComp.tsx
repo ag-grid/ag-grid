@@ -4,7 +4,7 @@ import {
     TabGuardCtrl, ITabGuard, GridCtrl, TabGuardClassNames
 } from 'ag-grid-community';
 import { BeansContext } from './beansContext';
-import { useEffectOnce } from './useEffectOnce';
+import { useLayoutEffectOnce } from './useEffectOnce';
 
 export interface TabGuardCompCallback {
     forceFocusOutOfContainer(): void;
@@ -33,7 +33,7 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
         }
     }));
 
-    useEffectOnce(() => {
+    useLayoutEffectOnce(() => {
         const eTopGuard = topTabGuardRef.current!;
         const eBottomGuard = bottomTabGuardRef.current!;
 

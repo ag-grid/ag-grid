@@ -1,12 +1,11 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import {
-    CANVAS_HEIGHT,
-    CANVAS_WIDTH,
     cartesianChartAssertions,
     CartesianTestCase,
     extractImageData,
     IMAGE_SNAPSHOT_DEFAULTS,
+    prepareTestOptions,
     repeat,
     setupMockCanvas,
     waitForChartStability,
@@ -39,7 +38,7 @@ const labelPositions: AgCrossLineLabelPosition[] = [
 ];
 
 const flipCrossLinesRange = (crossLineOptions: AgCrossLineOptions): AgCrossLineOptions => {
-    const flippedRange: [any, any] = [crossLineOptions.range[1], crossLineOptions.range[0]];
+    const flippedRange: [any, any] = [crossLineOptions.range?.[1], crossLineOptions.range?.[0]];
     return {
         ...crossLineOptions,
         range: flippedRange,
@@ -73,7 +72,7 @@ const mixinFlippedRangeCases = (
             ...example,
             options: {
                 ...example.options,
-                axes: example.options.axes.map((axis) =>
+                axes: example.options.axes?.map((axis) =>
                     axis.crossLines ? { ...axis, crossLines: axis.crossLines.map((c) => flipCrossLinesRange(c)) } : axis
                 ),
             },
@@ -91,7 +90,7 @@ const mixinLabelPositionCases = (example: CartesianTestCase): Record<string, Car
             ...example,
             options: {
                 ...example.options,
-                axes: example.options.axes.map((axis) =>
+                axes: example.options.axes?.map((axis) =>
                     axis.crossLines
                         ? {
                               ...axis,
@@ -235,7 +234,7 @@ const EXAMPLES: Record<string, CartesianTestCase> = {
     },
     COLUMN_CROSSLINES: {
         options: examples.COLUMN_CROSSLINES,
-        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['bar'] }),
+        assertions: cartesianChartAssertions({ axisTypes: ['category', 'number'], seriesTypes: ['column'] }),
     },
     BAR_CROSSLINES: {
         options: examples.BAR_CROSSLINES,
@@ -275,9 +274,7 @@ describe('crossLines', () => {
         for (const [exampleName, example] of Object.entries(EXAMPLES)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgCartesianChartOptions = { ...example.options };
-                options.autoSize = false;
-                options.width = CANVAS_WIDTH;
-                options.height = CANVAS_HEIGHT;
+                prepareTestOptions(options);
 
                 chart = AgChart.create(options) as Chart;
                 await waitForChartStability(chart);
@@ -293,9 +290,7 @@ describe('crossLines', () => {
                 };
 
                 const options: AgCartesianChartOptions = { ...example.options };
-                options.autoSize = false;
-                options.width = CANVAS_WIDTH;
-                options.height = CANVAS_HEIGHT;
+                prepareTestOptions(options);
 
                 chart = AgChart.create(options) as Chart;
                 await compare();

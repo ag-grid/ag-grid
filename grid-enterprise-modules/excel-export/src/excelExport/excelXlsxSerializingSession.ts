@@ -14,14 +14,11 @@ export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<Exc
 
     protected createExcel(data: ExcelWorksheet): string {
         const { excelStyles, config } = this;
-        const { margins, pageSetup, headerFooterConfig } = config;
 
         return ExcelXlsxFactory.createExcel(
             excelStyles,
             data,
-            margins,
-            pageSetup,
-            headerFooterConfig
+            config
         );
     }
 

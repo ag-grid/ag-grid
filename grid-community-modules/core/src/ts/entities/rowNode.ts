@@ -1,4 +1,4 @@
-import { AgEvent, Events, RowEvent, RowSelectedEvent, SelectionChangedEvent, SelectionEventSourceType } from "../events";
+import { AgEvent, Events, RowEvent, RowSelectedEvent, SelectionEventSourceType } from "../events";
 import { EventService } from "../eventService";
 import { DetailGridInfo } from "../gridApi";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
@@ -138,9 +138,6 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     /** Used by server side row model, true if this row node failed a load */
     public failedLoad: boolean;
 
-    /** Used by server side row model, true if this row node requires reload */
-    public __needsRefresh: boolean;
-
     /** Used by server side row model, true if this node needs refreshed by the server when in viewport */
     public __needsRefreshWhenVisible: boolean;
 
@@ -225,6 +222,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     public alreadyRendered = false;
 
     public highlighted: RowHighlightPosition | null = null;
+
+    private hovered: boolean = false;
 
     private selected: boolean | undefined = false;
     private eventService: EventService | null;
@@ -498,6 +497,16 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         }
     }
 
+    public setHovered(hovered: boolean): void {
+        if (this.hovered === hovered) { return; }
+
+        this.hovered = hovered;
+    }
+
+    public isHovered(): boolean {
+        return this.hovered;
+    }
+
     public setAllChildrenCount(allChildrenCount: number | null): void {
         if (this.allChildrenCount === allChildrenCount) { return; }
 
@@ -557,9 +566,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         if (!this.__autoHeights) {
             this.__autoHeights = {};
         }
-        const autoHeights = this.__autoHeights!;
-
-        autoHeights[column.getId()] = cellHeight;
+        this.__autoHeights[column.getId()] = cellHeight;
 
         if (cellHeight != null) {
             if (this.checkAutoHeightsDebounced == null) {
@@ -579,12 +586,40 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         const displayedAutoHeightCols = this.beans.columnModel.getAllDisplayedAutoHeightCols();
         displayedAutoHeightCols.forEach(col => {
-            const cellHeight = autoHeights[col.getId()];
+            let cellHeight = autoHeights[col.getId()];
+
             if (cellHeight == null) {
-                notAllPresent = true;
-                return;
+                // If column spanning is active a column may not provide auto height for a row if that
+                // cell is not present for the given row due to a previous cell spanning over the auto height column.
+                if (this.beans.columnModel.isColSpanActive()) {
+                    let activeColsForRow: Column[] = [];
+                    switch (col.getPinned()) {
+                        case 'left':
+                            activeColsForRow = this.beans.columnModel.getDisplayedLeftColumnsForRow(this);
+                            break;
+                        case 'right':
+                            activeColsForRow = this.beans.columnModel.getDisplayedRightColumnsForRow(this);
+                            break;
+                        case null:
+                            activeColsForRow = this.beans.columnModel.getViewportCenterColumnsForRow(this);
+                            break;
+                    }
+                    if (activeColsForRow.includes(col)) {
+                        // Column is present in the row, i.e not spanned over, but no auto height was provided so we cannot calculate the row height
+                        notAllPresent = true;
+                        return;
+                    }
+                    // Ignore this column as it is spanned over and not present in the row
+                    cellHeight = -1;
+                } else {
+                    notAllPresent = true;
+                    return;
+                }
+            } else {
+                // At least one auto height is present
+                nonePresent = false;
             }
-            nonePresent = false;
+
             if (cellHeight > newRowHeight) {
                 newRowHeight = cellHeight;
             }
@@ -687,12 +722,19 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
      * @returns `True` if the value was changed, otherwise `False`.
      */
     public setDataValue(colKey: string | Column, newValue: any, eventSource?: string): boolean {
+        const getColumnFromKey = () => {
+            if (typeof colKey !== 'string') {
+                return colKey;
+            }
+            // if in pivot mode, grid columns wont include primary columns
+            return this.beans.columnModel.getGridColumn(colKey) ?? this.beans.columnModel.getPrimaryColumn(colKey);
+        }
         // When it is done via the editors, no 'cell changed' event gets fired, as it's assumed that
         // the cell knows about the change given it's in charge of the editing.
         // this method is for the client to call, so the cell listens for the change
         // event, and also flashes the cell when the change occurs.
-        const column = this.beans.columnModel.getPrimaryColumn(colKey)!;
-        const oldValue = this.beans.valueService.getValue(column, this);
+        const column = getColumnFromKey()!;
+        const oldValue = this.getValueFromValueService(column);
 
         if (this.beans.gridOptionsService.is('readOnlyEdit')) {
             this.dispatchEventForSaveValueReadOnly(column, oldValue, newValue, eventSource);
@@ -705,6 +747,30 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.checkRowSelectable();
 
         return valueChanged;
+    }
+
+    public getValueFromValueService(column: Column): any {
+        // if we don't check this, then the grid will render leaf groups as open even if we are not
+        // allowing the user to open leaf groups. confused? remember for pivot mode we don't allow
+        // opening leaf groups, so we have to force leafGroups to be closed in case the user expanded
+        // them via the API, or user user expanded them in the UI before turning on pivot mode
+        const lockedClosedGroup = this.leafGroup && this.beans.columnModel.isPivotMode();
+
+        const isOpenGroup = this.group && this.expanded && !this.footer && !lockedClosedGroup;
+
+        // are we showing group footers
+        const groupFootersEnabled = this.beans.gridOptionsService.is('groupIncludeFooter');
+
+        // if doing footers, we normally don't show agg data at group level when group is open
+        const groupAlwaysShowAggData = this.beans.gridOptionsService.is('groupSuppressBlankHeader');
+
+        // if doing grouping and footers, we don't want to include the agg value
+        // in the header when the group is open
+        const ignoreAggData = (isOpenGroup && groupFootersEnabled) && !groupAlwaysShowAggData;
+
+        const value = this.beans.valueService.getValue(column, this, false, ignoreAggData);
+
+        return value;
     }
 
     private dispatchEventForSaveValueReadOnly(column: Column, oldValue: any, newValue: any, eventSource?: string): void {
@@ -880,15 +946,21 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         if (atLeastOneMixed || (atLeastOneSelected && atLeastOneDeSelected)) {
             return undefined;
-        } else if (atLeastOneSelected) {
-            return true;
-        } else if (atLeastOneDeSelected) {
-            return false;
-        } else if (!this.selectable) {
-            return null;
-        } else {
-            return this.selected;
         }
+
+        if (atLeastOneSelected) {
+            return true;
+        }
+
+        if (atLeastOneDeSelected) {
+            return false;
+        }
+
+        if (!this.selectable) {
+            return null;
+        }
+
+        return this.selected;
     }
 
     public setSelectedInitialValue(selected?: boolean): void {

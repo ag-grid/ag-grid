@@ -7,7 +7,7 @@ Here we discuss areas of Master / Detail that didn't quite fit with the other se
 
 ## Syncing Detail Scrolling with Master
 
-By default, the Detail Grid takes up the width of the Master Grid and does not move when the Master Grid's columns are horizontally scrolled. This is because the Detail Grid is not sitting with the other Master Grid's cells, rather it is in a separate container that overlays the Master Grid's cells and takes up with full width of the grid ignoring all the Master Grid's columns.
+By default, the Detail Grid takes up the width of the Master Grid and does not move when the Master Grid's columns are horizontally scrolled. This is because the Detail Grid is not sitting with the other Master Grid's cells, rather it is in a separate container that overlays the Master Grid's cells and takes up the full width of the grid ignoring all the Master Grid's columns.
 
 The underlying feature of the grid that allows the Detail Grid to span the width of the Master Grid is called [Full Width Row](/full-width-rows/).
 

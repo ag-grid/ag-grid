@@ -326,19 +326,19 @@
     "type": { "arguments": { "value": "boolean" }, "returnType": "void" }
   },
   "selectAll": {
-    "description": "/** Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded.\n     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`\n     */",
+    "description": "/** Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded.\n     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAll'`\n     */",
     "type": {
       "arguments": { "source": "SelectionEventSourceType = 'apiSelectAll'" }
     }
   },
   "deselectAll": {
-    "description": "/** Clear all row selections, regardless of filtering.\n     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`\n     */",
+    "description": "/** Clear all row selections, regardless of filtering.\n     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAll'`\n     */",
     "type": {
       "arguments": { "source": "SelectionEventSourceType = 'apiSelectAll'" }
     }
   },
   "selectAllFiltered": {
-    "description": "/** Select all filtered rows.\n     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`\n     */",
+    "description": "/** Select all filtered rows.\n     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllFiltered'`\n     */",
     "type": {
       "arguments": {
         "source": "SelectionEventSourceType = 'apiSelectAllFiltered'"
@@ -346,7 +346,7 @@
     }
   },
   "deselectAllFiltered": {
-    "description": "/** Clear all filtered selections.\n     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`\n     */",
+    "description": "/** Clear all filtered selections.\n     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllFiltered'`\n     */",
     "type": {
       "arguments": {
         "source": "SelectionEventSourceType = 'apiSelectAllFiltered'"
@@ -369,7 +369,7 @@
     }
   },
   "selectAllOnCurrentPage": {
-    "description": "/** Select all rows on the current page.\n     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`\n     */",
+    "description": "/** Select all rows on the current page.\n     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllCurrentPage'`\n     */",
     "type": {
       "arguments": {
         "source": "SelectionEventSourceType = 'apiSelectAllCurrentPage'"
@@ -377,7 +377,7 @@
     }
   },
   "deselectAllOnCurrentPage": {
-    "description": "/** Clear all filtered on the current page.\n     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`\n     */",
+    "description": "/** Clear all filtered on the current page.\n     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllCurrentPage'`\n     */",
     "type": {
       "arguments": {
         "source": "SelectionEventSourceType = 'apiSelectAllCurrentPage'"
@@ -497,8 +497,8 @@
   },
   "getColumnDef": {
     "type": {
-      "arguments": { "key": "string | Column" },
-      "returnType": "ColDef<TData> | null"
+      "arguments": { "key": "string | Column<TValue>" },
+      "returnType": "ColDef<TData, TValue> | null"
     }
   },
   "getColumnDefs": {
@@ -1012,7 +1012,7 @@
     "type": { "arguments": { "enable": "boolean" }, "returnType": "void" }
   },
   "setRowCount": {
-    "description": "/** Sets the `rowCount` and `lastRowIndexKnown` properties.\n     * The second parameter, `lastRowIndexKnown`, is optional and if left out, only `rowCount` is set.\n     * Set `rowCount` to adjust the height of the vertical scroll.\n     * Set `lastRowIndexKnown` to enable / disable searching for more rows.\n     * Use this method if you add or remove rows into the dataset and need to reset the number of rows or put the data back into 'look for data' mode.\n     */",
+    "description": "/** Sets the `rowCount` and `maxRowFound` properties.\n     * The second parameter, `maxRowFound`, is optional and if left out, only `rowCount` is set.\n     * Set `rowCount` to adjust the height of the vertical scroll.\n     * Set `maxRowFound` to enable / disable searching for more rows.\n     * Use this method if you add or remove rows into the dataset and need to reset the number of rows or instruct the grid that the entire row count is no longer known.\n     */",
     "type": {
       "arguments": { "rowCount": "number", "maxRowFound?": "boolean" },
       "returnType": "void"
@@ -1025,8 +1025,11 @@
   "getValue": {
     "description": "/** Gets the value for a column for a particular `rowNode` (row).\n     * This is useful if you want the raw value of a cell e.g. if implementing your own CSV export.\n     */",
     "type": {
-      "arguments": { "colKey": "string | Column", "rowNode": "IRowNode" },
-      "returnType": "any"
+      "arguments": {
+        "colKey": "string | Column<TValue>",
+        "rowNode": "IRowNode"
+      },
+      "returnType": "TValue | null | undefined"
     }
   },
   "addEventListener": {
@@ -1332,7 +1335,7 @@
     "type": { "arguments": {}, "returnType": "void" }
   },
   "refreshServerSide": {
-    "description": "/** Refresh a server-side level.\n     * If you pass no parameters, then the top level store is refreshed.\n     * To refresh a child level, pass in the string of keys to get to the desired level.\n     */",
+    "description": "/** Refresh a server-side store level.\n     * If you pass no parameters, then the top level store is refreshed.\n     * To refresh a child level, pass in the string of keys to get to the desired level.\n     * Once the store refresh is complete, the storeRefreshed event is fired.\n     */",
     "type": {
       "arguments": { "params?": "RefreshServerSideParams" },
       "returnType": "void"
@@ -1383,6 +1386,15 @@
   "getDisplayedRowCount": {
     "description": "/** Returns the total number of displayed rows. */",
     "type": { "arguments": {}, "returnType": "number" }
+  },
+  "setDataTypeDefinitions": {
+    "description": "/** Resets the data type definitions. This will update the columns in the grid. */",
+    "type": {
+      "arguments": {
+        "dataTypeDefinitions": "{ [cellDataType: string]: DataTypeDefinition<TData>; }"
+      },
+      "returnType": "void"
+    }
   },
   "setPagination": {
     "description": "/** Set whether the grid paginates the data or not.\n     *  - `true` to enable pagination\n     *  - `false` to disable pagination\n     */",

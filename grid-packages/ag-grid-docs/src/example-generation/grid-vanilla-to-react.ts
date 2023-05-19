@@ -8,7 +8,7 @@ function getModuleImports(bindings: any, componentFilenames: string[], allStyles
 
     let imports = [
         "import React, { Component } from 'react';",
-        "import { render } from 'react-dom';",
+        "import { createRoot } from 'react-dom/client';",
         "import { AgGridReact } from '@ag-grid-community/react';"
     ];
 
@@ -45,7 +45,7 @@ function getPackageImports(bindings: any, componentFilenames: string[], allStyle
 
     const imports = [
         "import React, { Component } from 'react';",
-        "import { render } from 'react-dom';",
+        "import { createRoot } from 'react-dom/client';",
         "import { AgGridReact } from 'ag-grid-react';"
     ];
 
@@ -210,10 +210,8 @@ ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   
 
 ${bindings.utils.join('\n')}
 
-render(
-    <GridExample></GridExample>,
-    document.querySelector('#root')
-)
+const root = createRoot(document.getElementById('root'));
+root.render(<GridExample />);
 `;
     };
 }

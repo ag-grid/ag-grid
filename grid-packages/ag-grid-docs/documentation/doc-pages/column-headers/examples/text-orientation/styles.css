@@ -5,7 +5,7 @@
 }
 
 .ag-header-cell-label .ag-header-cell-text {
-    /*Force the width corresponding at how much width
+    /*Force the width corresponding to how much width
     we need once the text is laid out vertically*/
     width: 55px;
     writing-mode: vertical-lr;

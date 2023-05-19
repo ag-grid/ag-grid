@@ -45,6 +45,7 @@ function updatePackageBowserJsonFiles() {
     packageDirs.forEach(packageDirectory => {
         fs.readdirSync(packageDirectory)
             .filter(packageMatchesResolvedModuleToVersion)
+            .filter(directory => !directory.includes('.git'))
             .forEach(directory => {
                 // update all package.json files
                 const currentPackageJsonFile = `${CWD}/${packageDirectory}/${directory}/package.json`;

@@ -1,9 +1,8 @@
 import { Scene } from '../scene/scene';
 import { Group } from '../scene/group';
+import { Text } from '../scene/shape/text';
 import { Series, SeriesNodeDatum, SeriesNodePickMode } from './series/series';
 import { Padding } from '../util/padding';
-import { Background } from './background';
-import { Legend } from './legend';
 
 import { BBox } from '../scene/bbox';
 import { SizeMonitor } from '../util/sizeMonitor';
@@ -21,19 +20,25 @@ import { BOOLEAN, STRING_UNION, Validate } from '../util/validation';
 import { sleep } from '../util/async';
 import { Tooltip, TooltipMeta as PointerMeta } from './tooltip/tooltip';
 import { ChartOverlays } from './overlay/chartOverlays';
-import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { jsonMerge } from '../util/json';
 import { Layers } from './layers';
+import { AnimationManager } from './interaction/animationManager';
 import { CursorManager } from './interaction/cursorManager';
+import { ChartEventManager } from './interaction/chartEventManager';
 import { HighlightChangeEvent, HighlightManager } from './interaction/highlightManager';
+import { InteractionEvent, InteractionManager } from './interaction/interactionManager';
 import { TooltipManager } from './interaction/tooltipManager';
-import { Module, ModuleContext, ModuleInstanceMeta, RootModule } from '../util/module';
 import { ZoomManager } from './interaction/zoomManager';
+import { Module, ModuleContext, ModuleInstance, RootModule } from '../util/module';
 import { LayoutService } from './layout/layoutService';
+import { DataService } from './dataService';
+import { UpdateService } from './updateService';
 import { ChartUpdateType } from './chartUpdateType';
-import { LegendDatum } from './legendDatum';
+import { ChartLegendDatum, ChartLegend } from './legendDatum';
 import { Logger } from '../util/logger';
 import { ActionOnSet } from '../util/proxy';
+import { ChartHighlight } from './chartHighlight';
+import { getLegend } from './factory/legendTypes';
 
 type OptionalHTMLElement = HTMLElement | undefined | null;
 
@@ -60,10 +65,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     readonly scene: Scene;
     readonly seriesRoot = new Group({ name: `${this.id}-Series-root` });
-    readonly background: Background = new Background();
-    readonly legend: Legend;
+    legend: ChartLegend | undefined;
     readonly tooltip: Tooltip;
     readonly overlays: ChartOverlays;
+    readonly highlight: ChartHighlight;
 
     @ActionOnSet<Chart>({
         newValue(value) {
@@ -150,7 +155,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     padding = new Padding(20);
 
-    seriesPadding = new Padding(0);
+    seriesAreaPadding = new Padding(0);
 
     @ActionOnSet<Chart>({
         newValue(value) {
@@ -185,22 +190,25 @@ export abstract class Chart extends Observable implements AgChartInstance {
     @Validate(STRING_UNION('standalone', 'integrated'))
     mode: 'standalone' | 'integrated' = 'standalone';
 
-    @Validate(STRING_UNION('tooltip', 'node'))
-    public highlightRange: 'tooltip' | 'node' = 'tooltip';
-
     private _destroyed: boolean = false;
     get destroyed() {
         return this._destroyed;
     }
 
-    protected readonly interactionManager: InteractionManager;
+    protected readonly animationManager: AnimationManager;
+    protected readonly chartEventManager: ChartEventManager;
     protected readonly cursorManager: CursorManager;
     protected readonly highlightManager: HighlightManager;
+    protected readonly interactionManager: InteractionManager;
     protected readonly tooltipManager: TooltipManager;
     protected readonly zoomManager: ZoomManager;
     protected readonly layoutService: LayoutService;
+    protected readonly updateService: UpdateService;
+    protected readonly dataService: DataService;
     protected readonly axisGroup: Group;
-    protected readonly modules: Record<string, ModuleInstanceMeta> = {};
+    protected readonly modules: Record<string, { instance: ModuleInstance }> = {};
+    protected readonly legendModules: Record<string, { instance: ModuleInstance }> = {};
+    private legendType: string | undefined;
 
     protected constructor(
         document = window.document,
@@ -219,10 +227,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
         root.visible = false;
         root.append(this.seriesRoot);
 
-        const background = this.background;
-        background.fill = 'white';
-        root.appendChild(background.node);
-
         this.axisGroup = new Group({ name: 'Axes', layer: true, zIndex: Layers.AXIS_ZINDEX });
         root.appendChild(this.axisGroup);
 
@@ -237,14 +241,18 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.scene.container = element;
         this.autoSize = true;
 
-        this.interactionManager = new InteractionManager(element);
+        this.chartEventManager = new ChartEventManager();
         this.cursorManager = new CursorManager(element);
         this.highlightManager = new HighlightManager();
+        this.interactionManager = new InteractionManager(element);
         this.zoomManager = new ZoomManager();
+        this.dataService = new DataService(() => this.series);
         this.layoutService = new LayoutService();
+        this.updateService = new UpdateService((type = ChartUpdateType.FULL) => this.update(type));
 
-        background.width = this.scene.width;
-        background.height = this.scene.height;
+        this.animationManager = new AnimationManager(this.interactionManager);
+        this.animationManager.skipAnimations = true;
+        this.animationManager.play();
 
         SizeMonitor.observe(this.element, (size) => {
             const { width, height } = size;
@@ -264,31 +272,31 @@ export abstract class Chart extends Observable implements AgChartInstance {
             this._lastAutoSize = [width, height];
             this.resize(width, height);
         });
+        this.layoutService.addListener('start-layout', (e) => this.positionPadding(e.shrinkRect));
+        this.layoutService.addListener('start-layout', (e) => this.positionCaptions(e.shrinkRect));
 
         this.tooltip = new Tooltip(this.scene.canvas.element, document, document.body);
-        this.tooltipManager = new TooltipManager(this.tooltip);
-        this.legend = new Legend(
-            this,
-            this.interactionManager,
-            this.cursorManager,
-            this.highlightManager,
-            this.tooltipManager
-        );
+        this.tooltipManager = new TooltipManager(this.tooltip, this.interactionManager);
+        this.attachLegend('category');
         this.overlays = new ChartOverlays(this.element);
+        this.highlight = new ChartHighlight();
         this.container = container;
 
         // Add interaction listeners last so child components are registered first.
         this.interactionManager.addListener('click', (event) => this.onClick(event));
         this.interactionManager.addListener('dblclick', (event) => this.onDoubleClick(event));
         this.interactionManager.addListener('hover', (event) => this.onMouseMove(event));
-        this.interactionManager.addListener('leave', () => this.disablePointer());
+        this.interactionManager.addListener('leave', (event) => this.onLeave(event));
         this.interactionManager.addListener('page-left', () => this.destroy());
+        this.interactionManager.addListener('wheel', () => this.disablePointer());
 
+        this.animationManager.addListener('animation-frame', (_) => {
+            this.update(ChartUpdateType.SCENE_RENDER);
+        });
+        this.highlightManager.addListener('highlight-change', (event) => this.changeHighlightDatum(event));
         this.zoomManager.addListener('zoom-change', (_) =>
             this.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true })
         );
-
-        this.highlightManager.addListener('highlight-change', (event) => this.changeHighlightDatum(event));
     }
 
     addModule(module: RootModule) {
@@ -296,13 +304,13 @@ export abstract class Chart extends Observable implements AgChartInstance {
             throw new Error('AG Charts - module already initialised: ' + module.optionsKey);
         }
 
-        const moduleMeta = module.initialiseModule(this.getModuleContext());
-        this.modules[module.optionsKey] = moduleMeta;
+        const moduleInstance = new module.instanceConstructor(this.getModuleContext());
+        this.modules[module.optionsKey] = { instance: moduleInstance };
 
-        (this as any)[module.optionsKey] = moduleMeta.instance;
+        (this as any)[module.optionsKey] = moduleInstance;
     }
 
-    removeModule(module: Module) {
+    removeModule(module: RootModule) {
         this.modules[module.optionsKey]?.instance?.destroy();
         delete this.modules[module.optionsKey];
         delete (this as any)[module.optionsKey];
@@ -315,21 +323,31 @@ export abstract class Chart extends Observable implements AgChartInstance {
     getModuleContext(): ModuleContext {
         const {
             scene,
-            interactionManager,
-            zoomManager,
+            animationManager,
+            chartEventManager,
             cursorManager,
             highlightManager,
+            interactionManager,
             tooltipManager,
+            zoomManager,
+            dataService,
             layoutService,
+            updateService,
+            mode,
         } = this;
         return {
             scene,
-            interactionManager,
-            zoomManager,
+            animationManager,
+            chartEventManager,
             cursorManager,
             highlightManager,
+            interactionManager,
             tooltipManager,
+            zoomManager,
+            dataService,
             layoutService,
+            updateService,
+            mode,
         };
     }
 
@@ -344,7 +362,9 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this._performUpdateType = ChartUpdateType.NONE;
         this._pendingFactoryUpdates.splice(0);
 
+        this.tooltipManager.destroy();
         this.tooltip.destroy();
+        this.legend?.destroy();
         SizeMonitor.unobserve(this.element);
 
         for (const [key, module] of Object.entries(this.modules)) {
@@ -382,7 +402,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     disablePointer(highlightOnly = false) {
         if (!highlightOnly) {
-            this.tooltipManager.updateTooltip(this.id);
+            this.tooltipManager.removeTooltip(this.id);
         }
         this.highlightManager.updateHighlight(this.id);
         if (this.lastInteractionEvent) {
@@ -397,7 +417,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         const count = callbacks.length;
         if (count === 0) {
             callbacks.push(cb);
-            this._processCallbacks();
+            this._processCallbacks().catch((e) => Logger.errorOnce(e));
         } else {
             // Factory callback process already running, the callback will be invoked asynchronously.
             // Clear the queue after the first callback to prevent unnecessary re-renderings.
@@ -453,7 +473,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         type = ChartUpdateType.FULL,
         opts?: { forceNodeDataRefresh?: boolean; seriesToUpdate?: Iterable<Series> }
     ) {
-        const { forceNodeDataRefresh = false, seriesToUpdate = this.series } = opts || {};
+        const { forceNodeDataRefresh = false, seriesToUpdate = this.series } = opts ?? {};
 
         if (forceNodeDataRefresh) {
             this.series.forEach((series) => series.markNodeDataDirty());
@@ -590,15 +610,14 @@ export abstract class Chart extends Observable implements AgChartInstance {
     protected initSeries(series: Series<any>) {
         series.chart = this;
         series.highlightManager = this.highlightManager;
+        series.animationManager = this.animationManager;
         if (!series.data) {
             series.data = this.data;
         }
-        if (this.hasEventListener('seriesNodeClick')) {
-            series.addEventListener('nodeClick', this.onSeriesNodeClick);
-        }
-        if (this.hasEventListener('seriesNodeDoubleClick')) {
-            series.addEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
-        }
+        this.addSeriesListeners(series);
+
+        series.chartEventManager = this.chartEventManager;
+        series.addChartEventListeners();
     }
 
     protected freeSeries(series: Series<any>) {
@@ -613,6 +632,25 @@ export abstract class Chart extends Observable implements AgChartInstance {
             this.seriesRoot.removeChild(series.rootGroup);
         });
         this._series = []; // using `_series` instead of `series` to prevent infinite recursion
+    }
+
+    protected addSeriesListeners(series: Series<any>) {
+        if (this.hasEventListener('seriesNodeClick')) {
+            series.addEventListener('nodeClick', this.onSeriesNodeClick);
+        }
+
+        if (this.hasEventListener('seriesNodeDoubleClick')) {
+            series.addEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
+        }
+    }
+
+    updateAllSeriesListeners(): void {
+        this.series.forEach((series) => {
+            series.removeEventListener('nodeClick', this.onSeriesNodeClick);
+            series.removeEventListener('nodeDoubleClick', this.onSeriesNodeDoubleClick);
+
+            this.addSeriesListeners(series);
+        });
     }
 
     protected assignSeriesToAxes() {
@@ -630,7 +668,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         this.axes.forEach((axis) => {
             const direction = axis.direction;
-            const directionAxes = directionToAxesMap[direction] || (directionToAxesMap[direction] = []);
+            const directionAxes = (directionToAxesMap[direction] ??= []);
             directionAxes.push(axis);
         });
 
@@ -689,9 +727,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
         if (!width || !height || !Number.isFinite(width) || !Number.isFinite(height)) return;
 
         if (this.scene.resize(width, height)) {
-            this.background.width = width;
-            this.background.height = height;
-
             this.disablePointer();
             this.update(ChartUpdateType.PERFORM_LAYOUT, { forceNodeDataRefresh: true });
         }
@@ -734,45 +769,84 @@ export abstract class Chart extends Observable implements AgChartInstance {
         return new Map(labels.map((l, i) => [visibleSeries[i], l]));
     }
 
-    private async updateLegend() {
-        const legendData: LegendDatum[] = [];
+    private attachLegend(legendType: string) {
+        if (this.legendType === legendType) {
+            return;
+        }
 
+        this.legend?.destroy();
+        this.legend = undefined;
+
+        const ctx = this.getModuleContext();
+        this.legend = getLegend(legendType, ctx);
+        this.legend.attachLegend(this.scene.root);
+        this.legendType = legendType;
+    }
+
+    private applyLegendOptions?: (legend: ChartLegend) => void = undefined;
+
+    setLegendInit(initLegend: (legend: ChartLegend) => void) {
+        this.applyLegendOptions = initLegend;
+    }
+
+    private async updateLegend() {
+        const legendData: ChartLegendDatum[] = [];
         this.series
             .filter((s) => s.showInLegend)
             .forEach((series) => {
-                legendData.push(...series.getLegendData());
+                const data = series.getLegendData();
+                legendData.push(...data);
             });
+        const legendType = legendData.length > 0 ? legendData[0].legendType : 'category';
+        this.attachLegend(legendType);
+        this.applyLegendOptions?.(this.legend!);
 
-        const { formatter } = this.legend.item.label;
-        if (formatter) {
-            legendData.forEach(
-                (datum) =>
-                    (datum.label.text = formatter({
-                        get id() {
-                            Logger.warnOnce(`LegendLabelFormatterParams.id is deprecated, use seriesId instead`);
-                            return datum.seriesId;
-                        },
-                        itemId: datum.itemId,
-                        value: datum.label.text,
-                        seriesId: datum.seriesId,
-                    }))
-            );
-        }
-
-        this.legend.data = legendData;
+        this.legend!.data = legendData;
     }
 
-    abstract performLayout(): Promise<void>;
+    protected async performLayout() {
+        this.scene.root!.visible = true;
 
-    protected positionCaptions(shrinkRect: BBox): BBox {
+        const {
+            scene: { width, height },
+        } = this;
+
+        let shrinkRect = new BBox(0, 0, width, height);
+        ({ shrinkRect } = this.layoutService.dispatchPerformLayout('start-layout', { shrinkRect }));
+        ({ shrinkRect } = this.layoutService.dispatchPerformLayout('before-series', { shrinkRect }));
+
+        return shrinkRect;
+    }
+
+    private positionPadding(shrinkRect: BBox) {
+        const { padding } = this;
+
+        shrinkRect.shrink(padding.left, 'left');
+        shrinkRect.shrink(padding.top, 'top');
+        shrinkRect.shrink(padding.right, 'right');
+        shrinkRect.shrink(padding.bottom, 'bottom');
+
+        return { shrinkRect };
+    }
+
+    private positionCaptions(shrinkRect: BBox) {
         const { title, subtitle, footnote } = this;
         const newShrinkRect = shrinkRect.clone();
+
+        const updateCaption = (caption: Caption) => {
+            const defaultCaptionHeight = shrinkRect.height / 10;
+            const captionLineHeight = caption.lineHeight ?? caption.fontSize * Text.defaultLineHeightRatio;
+            const maxWidth = shrinkRect.width;
+            const maxHeight = Math.max(captionLineHeight, defaultCaptionHeight);
+            caption.computeTextWrap(maxWidth, maxHeight);
+        };
 
         const positionTopAndShrinkBBox = (caption: Caption) => {
             const baseY = newShrinkRect.y;
             caption.node.x = newShrinkRect.x + newShrinkRect.width / 2;
             caption.node.y = baseY;
             caption.node.textBaseline = 'top';
+            updateCaption(caption);
             const bbox = caption.node.computeBBox();
 
             // As the bbox (x,y) ends up at a different location than specified above, we need to
@@ -787,6 +861,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             caption.node.x = newShrinkRect.x + newShrinkRect.width / 2;
             caption.node.y = baseY;
             caption.node.textBaseline = 'bottom';
+            updateCaption(caption);
             const bbox = caption.node.computeBBox();
 
             const bboxHeight = Math.ceil(baseY - bbox.y + (caption.spacing ?? 0));
@@ -802,7 +877,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
 
         if (subtitle) {
-            subtitle.node.visible = title !== undefined && title.enabled && subtitle.enabled;
+            subtitle.node.visible = (title?.enabled && subtitle.enabled) ?? false;
             if (subtitle.node.visible) {
                 positionTopAndShrinkBBox(subtitle);
             }
@@ -815,105 +890,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
             }
         }
 
-        return newShrinkRect;
+        return { shrinkRect: newShrinkRect };
     }
 
-    protected positionLegend(shrinkRect: BBox): BBox {
-        const { legend } = this;
-        const newShrinkRect = shrinkRect.clone();
-
-        if (!legend.enabled || !legend.data.length) {
-            return newShrinkRect;
-        }
-
-        const [legendWidth, legendHeight] = this.calculateLegendDimensions(shrinkRect);
-
-        let translationX = 0;
-        let translationY = 0;
-
-        legend.translationX = 0;
-        legend.translationY = 0;
-        legend.performLayout(legendWidth, legendHeight);
-        const legendBBox = legend.computePagedBBox();
-
-        const calculateTranslationPerpendicularDimension = () => {
-            switch (legend.position) {
-                case 'top':
-                    return 0;
-                case 'bottom':
-                    return shrinkRect.height - legendBBox.height;
-                case 'left':
-                    return 0;
-                case 'right':
-                default:
-                    return shrinkRect.width - legendBBox.width;
-            }
-        };
-        if (legend.visible) {
-            switch (legend.position) {
-                case 'top':
-                case 'bottom':
-                    translationX = (shrinkRect.width - legendBBox.width) / 2;
-                    translationY = calculateTranslationPerpendicularDimension();
-                    newShrinkRect.shrink(legendBBox.height, legend.position);
-                    break;
-
-                case 'left':
-                case 'right':
-                default:
-                    translationX = calculateTranslationPerpendicularDimension();
-                    translationY = (shrinkRect.height - legendBBox.height) / 2;
-                    newShrinkRect.shrink(legendBBox.width, legend.position);
-            }
-
-            // Round off for pixel grid alignment to work properly.
-            legend.translationX = Math.floor(-legendBBox.x + shrinkRect.x + translationX);
-            legend.translationY = Math.floor(-legendBBox.y + shrinkRect.y + translationY);
-        }
-
-        return newShrinkRect;
-    }
-
-    private calculateLegendDimensions(shrinkRect: BBox): [number, number] {
-        const { legend } = this;
-        const { width, height } = shrinkRect;
-
-        const aspectRatio = width / height;
-        const maxCoefficient = 0.5;
-        const minHeightCoefficient = 0.2;
-        const minWidthCoefficient = 0.25;
-
-        let legendWidth = 0;
-        let legendHeight = 0;
-
-        switch (legend.position) {
-            case 'top':
-            case 'bottom':
-                // A horizontal legend should take maximum between 20 to 50 percent of the chart height if height is larger than width
-                // and maximum 20 percent of the chart height if height is smaller than width.
-                const heightCoefficient =
-                    aspectRatio < 1
-                        ? Math.min(maxCoefficient, minHeightCoefficient * (1 / aspectRatio))
-                        : minHeightCoefficient;
-                legendWidth = legend.maxWidth ? Math.min(legend.maxWidth, width) : width;
-                legendHeight = legend.maxHeight
-                    ? Math.min(legend.maxHeight, height)
-                    : Math.round(height * heightCoefficient);
-                break;
-
-            case 'left':
-            case 'right':
-            default:
-                // A vertical legend should take maximum between 25 to 50 percent of the chart width if width is larger than height
-                // and maximum 25 percent of the chart width if width is smaller than height.
-                const widthCoefficient =
-                    aspectRatio > 1 ? Math.min(maxCoefficient, minWidthCoefficient * aspectRatio) : minWidthCoefficient;
-                legendWidth = legend.maxWidth ? Math.min(legend.maxWidth, width) : Math.round(width * widthCoefficient);
-                legendHeight = legend.maxHeight ? Math.min(legend.maxHeight, height) : height;
-        }
-
-        return [legendWidth, legendHeight];
-    }
+    protected hoverRect?: BBox;
 
     // Should be available after the first layout.
     protected seriesRect?: BBox;
@@ -970,6 +950,14 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.update(ChartUpdateType.SCENE_RENDER);
     }
 
+    protected onLeave(event: InteractionEvent<'leave'>): void {
+        if (this.tooltip.pointerLeftOntoTooltip(event)) {
+            return;
+        }
+
+        this.disablePointer();
+    }
+
     private lastInteractionEvent?: InteractionEvent<'hover'> = undefined;
     private pointerScheduler = debouncedAnimationFrame(() => {
         if (this.lastInteractionEvent) {
@@ -978,7 +966,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.lastInteractionEvent = undefined;
     });
     protected handlePointer(event: InteractionEvent<'hover'>) {
-        const { lastPick } = this;
+        const { lastPick, hoverRect } = this;
         const { offsetX, offsetY } = event;
 
         const disablePointer = (highlightOnly = false) => {
@@ -988,7 +976,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             }
         };
 
-        if (!(this.seriesRect && this.seriesRect.containsPoint(offsetX, offsetY))) {
+        if (!hoverRect?.containsPoint(offsetX, offsetY)) {
             disablePointer();
             return;
         }
@@ -996,8 +984,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
         // Handle node highlighting and tooltip toggling when pointer within `tooltip.range`
         this.handlePointerTooltip(event, disablePointer);
 
-        // Handle mouse cursor when pointer withing `series[].nodeClickRange`
-        this.handlePointerNodeCursor(event);
+        // Handle node highlighting and mouse cursor when pointer withing `series[].nodeClickRange`
+        this.handlePointerNode(event);
     }
 
     protected handlePointerTooltip(
@@ -1016,17 +1004,17 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         if (!pick) {
             this.tooltipManager.updateTooltip(this.id);
-            if (this.highlightRange === 'tooltip') disablePointer(true);
+            if (this.highlight.range === 'tooltip') disablePointer(true);
             return;
         }
 
-        const isNewDatum = this.highlightRange === 'node' || !lastPick || lastPick.datum !== pick.datum;
+        const isNewDatum = this.highlight.range === 'node' || !lastPick || lastPick.datum !== pick.datum;
         let html;
 
         if (isNewDatum) {
             html = pick.series.getTooltipHtml(pick.datum);
 
-            if (this.highlightRange === 'tooltip') {
+            if (this.highlight.range === 'tooltip') {
                 this.highlightManager.updateHighlight(this.id, pick.datum);
             }
         } else if (lastPick) {
@@ -1039,28 +1027,37 @@ export abstract class Chart extends Observable implements AgChartInstance {
         const rangeMatched = range === 'nearest' || isPixelRange || exactlyMatched;
         const shouldUpdateTooltip = tooltipEnabled && rangeMatched && (!isNewDatum || html !== undefined);
 
-        const meta = this.mergePointerDatum({ pageX, pageY, offsetX, offsetY, event: event }, pick.datum);
+        const position = {
+            xOffset: pick.datum.series.tooltip.position.xOffset,
+            yOffset: pick.datum.series.tooltip.position.yOffset,
+        };
+
+        const meta = this.mergePointerDatum(
+            { pageX, pageY, offsetX, offsetY, event: event, showArrow: pick.series.tooltip.showArrow, position },
+            pick.datum
+        );
+        meta.enableInteraction = pick.series.tooltip.interaction?.enabled ?? false;
 
         if (shouldUpdateTooltip) {
             this.tooltipManager.updateTooltip(this.id, meta, html);
         }
     }
 
-    protected handlePointerNodeCursor(event: InteractionEvent<'hover'>) {
+    protected handlePointerNode(event: InteractionEvent<'hover'>) {
         const found = this.checkSeriesNodeRange(event, (series: Series, datum: any) => {
             if (series.hasEventListener('nodeClick') || series.hasEventListener('nodeDoubleClick')) {
                 this.cursorManager.updateCursor('chart', 'pointer');
+            }
 
-                if (this.highlightRange === 'node') {
-                    this.highlightManager.updateHighlight(this.id, datum);
-                }
+            if (this.highlight.range === 'node') {
+                this.highlightManager.updateHighlight(this.id, datum);
             }
         });
 
         if (!found) {
             this.cursorManager.updateCursor('chart');
 
-            if (this.highlightRange === 'node') {
+            if (this.highlight.range === 'node') {
                 this.highlightManager.updateHighlight(this.id);
             }
         }
@@ -1104,13 +1101,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         event: InteractionEvent<'click' | 'dblclick' | 'hover'>,
         callback: (series: Series, datum: any) => void
     ): boolean {
-        // If the tooltip picking uses `nearest` then, irregardless of the range of each series, the same node would
-        // be picked, so we can shortcut to using the last pick. Otherwise, we need to pick a node distinctly
-        // from the tooltip picking in case the node click range is greater than the tooltip range.
-        const nearestNode =
-            this.tooltip.range === 'nearest'
-                ? this.lastPick
-                : this.pickSeriesNode({ x: event.offsetX, y: event.offsetY }, false);
+        const nearestNode = this.pickSeriesNode({ x: event.offsetX, y: event.offsetY }, false);
 
         const datum = nearestNode?.datum;
         const nodeClickRange = datum?.series.nodeClickRange;
@@ -1169,8 +1160,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
     };
 
     private mergePointerDatum(meta: PointerMeta, datum: SeriesNodeDatum): PointerMeta {
-        if (datum.point) {
-            const { x, y } = datum.point;
+        const { type } = datum.series.tooltip.position;
+
+        if (type === 'node' && datum.nodeMidPoint) {
+            const { x, y } = datum.nodeMidPoint;
             const { canvas } = this.scene;
             const point = datum.series.rootGroup.inverseTransformPoint(x, y);
             const canvasRect = canvas.element.getBoundingClientRect();
@@ -1188,8 +1181,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     changeHighlightDatum(event: HighlightChangeEvent) {
         const seriesToUpdate: Set<Series> = new Set<Series>();
-        const { series: newSeries = undefined, datum: newDatum } = event.currentHighlight || {};
-        const { series: lastSeries = undefined, datum: lastDatum } = event.previousHighlight || {};
+        const { series: newSeries = undefined, datum: newDatum } = event.currentHighlight ?? {};
+        const { series: lastSeries = undefined, datum: lastDatum } = event.previousHighlight ?? {};
 
         if (lastSeries) {
             seriesToUpdate.add(lastSeries);

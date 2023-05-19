@@ -51,6 +51,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private getDataPath?: GetDataPath<any>;
     private groupingTreeList = false;
     private hardRefreshVirtualList = false;
+    private noValueFormatterSupplied = false;
 
     // To make the filtering super fast, we store the keys in an Set rather than using the default array
     private appliedModelKeys: Set<string | null> | null = null;
@@ -255,6 +256,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             if (keyCreator && !convertValuesToStrings && !treeList) {
                 throw new Error('AG Grid: Must supply a Value Formatter in Set Filter params when using a Key Creator unless convertValuesToStrings is enabled');
             }
+            this.noValueFormatterSupplied = true;
             // ref data is handled by ValueFormatterService
             if (!isRefData) {
                 valueFormatter = params => _.toStringOrNull(params.value)!;
@@ -286,7 +288,11 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     public getFormattedValue(key: string | null): string | null {
-        const value: V | null = this.valueModel!.getValue(key);
+        let value: V | string | null = this.valueModel!.getValue(key);
+        if (this.noValueFormatterSupplied && (this.treeDataTreeList || this.groupingTreeList) && Array.isArray(value)) {
+            // essentially get back the cell value
+            value = _.last(value) as string;
+        }
 
         const formattedValue = this.valueFormatterService.formatValue(
             this.setFilterParams!.column, null, value, this.valueFormatter, false);
@@ -554,6 +560,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     public afterGuiDetached(): void {
+        super.afterGuiDetached();
+
         // discard any unapplied UI state (reset to model)
         if (this.setFilterParams?.excelMode) {
             this.resetMiniFilter();
@@ -811,9 +819,18 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         this.valueModel?.setMiniFilter(null);
     }
 
-    protected resetUiToActiveModel(currentModel: SetFilterModel | null): void {
-        // override the default behaviour as we don't want to clear the mini filter
-        this.setModelAndRefresh(currentModel == null ? null : currentModel.values).then(() => this.onUiChanged(false, 'prevent'));
+    protected resetUiToActiveModel(currentModel: SetFilterModel | null, afterUiUpdatedFunc?: () => void): void {
+        // override the default behaviour as we don't always want to clear the mini filter
+        this.setModelAndRefresh(currentModel == null ? null : currentModel.values).then(() => {
+            this.onUiChanged(false, 'prevent');
+
+            afterUiUpdatedFunc?.();
+        });
+    }
+
+    protected handleCancelEnd(e: Event): void {
+        this.setMiniFilter(null);
+        super.handleCancelEnd(e);
     }
 
     private onMiniFilterKeyPress(e: KeyboardEvent): void {

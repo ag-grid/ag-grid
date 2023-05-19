@@ -1,6 +1,5 @@
-[[only-react]]
-|
-|```jsx
+<framework-specific-section frameworks="react">
+<snippet transform={false}>
 |// define cellRenderer to be reused
 |const ColourCellRenderer = props => <span style={{color: props.color}}>{props.value}</span>;
 |
@@ -35,4 +34,5 @@
 |       </div>
 |   );
 |};
-|```
+</snippet>
+</framework-specific-section>

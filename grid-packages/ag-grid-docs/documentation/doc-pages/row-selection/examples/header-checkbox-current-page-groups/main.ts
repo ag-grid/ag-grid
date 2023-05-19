@@ -1,4 +1,4 @@
-import { Grid, GridOptions, IGroupCellRendererParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, IGroupCellRendererParams, IsGroupOpenByDefaultParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -36,7 +36,11 @@ const gridOptions: GridOptions<IOlympicData> = {
 
   groupSelectsChildren: true,
 
-  isGroupOpenByDefault: (params) => params.key === 'Australia' || params.key === 'Rowing',
+  isGroupOpenByDefault: isGroupOpenByDefault,
+}
+
+function isGroupOpenByDefault(params: IsGroupOpenByDefaultParams<IOlympicData, any>) {
+  return params.key === 'Australia' || params.key === 'Rowing'
 }
 
 // setup the grid after the page has finished loading

@@ -1,6 +1,7 @@
 import {
     ExcelOOXMLTemplate,
     ExcelWorksheet,
+    ExcelCell,
     ExcelRow,
     ExcelColumn,
     XmlElement,
@@ -17,8 +18,9 @@ import rowFactory from './row';
 import mergeCellFactory from './mergeCell';
 import { ExcelXlsxFactory } from '../../excelXlsxFactory';
 import { getExcelColumnName } from '../../assets/excelUtils';
+import { ExcelGridSerializingParams} from '../../baseExcelSerializingSession';
 
-const getMergedCellsAndAddColumnGroups = (rows: ExcelRow[], cols: ExcelColumn[]): string[] => {
+const getMergedCellsAndAddColumnGroups = (rows: ExcelRow[], cols: ExcelColumn[], suppressColumnOutline: boolean): string[] => {
     const mergedCells: string[] = [];
     const cellsWithCollapsibleGroups: number[][] = [];
 
@@ -27,7 +29,7 @@ const getMergedCellsAndAddColumnGroups = (rows: ExcelRow[], cols: ExcelColumn[])
         let merges = 0;
         let lastCol: ExcelColumn;
 
-        cells.forEach((currentCell, cellIdx) => {
+        cells.forEach((currentCell: ExcelCell, cellIdx: number) => {
             const min = cellIdx + merges + 1;
             const start = getExcelColumnName(min);
             const outputRow = rowIdx + 1;
@@ -80,7 +82,7 @@ const getMergedCellsAndAddColumnGroups = (rows: ExcelRow[], cols: ExcelColumn[])
         cols.push({
             min: range[0],
             max: range[1],
-            outlineLevel: currentOutlineLevel || 1,
+            outlineLevel: suppressColumnOutline ? undefined : (currentOutlineLevel || 1),
             width: (refCol || { width: 100 }).width
         });
 
@@ -352,14 +354,14 @@ const worksheetFactory: ExcelOOXMLTemplate = {
     getTemplate(params: {
         worksheet: ExcelWorksheet,
         currentSheet: number,
-        margins?: ExcelSheetMargin,
-        pageSetup?: ExcelSheetPageSetup,
-        headerFooterConfig?: ExcelHeaderFooterConfig
+        config: ExcelGridSerializingParams
     }) {
-        const { worksheet, currentSheet, margins = {}, pageSetup, headerFooterConfig } = params;
+        const { worksheet, currentSheet, config } = params;
+        const { margins = {}, pageSetup, headerFooterConfig, suppressColumnOutline } = config;
+
         const { table } = worksheet;
         const { rows, columns } = table;
-        const mergedCells = (columns && columns.length) ? getMergedCellsAndAddColumnGroups(rows, columns) : [];
+        const mergedCells = (columns && columns.length) ? getMergedCellsAndAddColumnGroups(rows, columns, !!suppressColumnOutline) : [];
 
         const createWorksheetChildren = _.compose(
             addSheetPr(),

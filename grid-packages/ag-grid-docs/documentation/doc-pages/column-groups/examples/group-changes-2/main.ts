@@ -1,6 +1,6 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions, ColDef, ColGroupDef } from '@ag-grid-community/core'
 
-function createNormalColDefs() {
+function createNormalColDefs(): (ColDef | ColGroupDef)[] {
   return [
     {
       headerName: 'Athlete Details',
@@ -22,7 +22,7 @@ function createNormalColDefs() {
   ]
 }
 
-function createExtraColDefs() {
+function createExtraColDefs(): (ColDef | ColGroupDef)[] {
   return [
     {
       headerName: 'Athlete Details',

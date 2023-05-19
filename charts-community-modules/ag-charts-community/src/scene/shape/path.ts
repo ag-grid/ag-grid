@@ -7,7 +7,7 @@ export function ScenePathChangeDetection(opts?: {
     convertor?: (o: any) => any;
     changeCb?: (t: any) => any;
 }) {
-    const { redraw = RedrawType.MAJOR, changeCb, convertor } = opts || {};
+    const { redraw = RedrawType.MAJOR, changeCb, convertor } = opts ?? {};
 
     return SceneChangeDetection({ redraw, type: 'path', convertor, changeCb });
 }
@@ -27,10 +27,6 @@ export class Path extends Shape {
 
     @ScenePathChangeDetection()
     clipMode?: 'normal' | 'punch-out';
-
-    constructor(private readonly renderOverride?: (ctx: CanvasRenderingContext2D) => void) {
-        super();
-    }
 
     /**
      * The path only has to be updated when certain attributes change.
@@ -64,9 +60,11 @@ export class Path extends Shape {
         return this.path.closedPath && this.path.isPointInPath(point.x, point.y);
     }
 
-    protected isDirtyPath() {
+    protected isDirtyPath(): boolean {
         // Override point for more expensive dirty checks.
+        return false;
     }
+
     updatePath() {
         // Override point for subclasses.
     }
@@ -96,12 +94,8 @@ export class Path extends Shape {
                 ctx.clip();
             }
 
-            if (this.renderOverride) {
-                this.renderOverride(ctx);
-            } else {
-                this.path.draw(ctx);
-                this.fillStroke(ctx);
-            }
+            this.path.draw(ctx);
+            this.fillStroke(ctx);
 
             if (this.clipMode === 'punch-out') {
                 // Bound the shape rendered to outside the clipping path.
@@ -113,8 +107,6 @@ export class Path extends Shape {
             }
 
             ctx.restore();
-        } else if (this.renderOverride) {
-            this.renderOverride(ctx);
         } else {
             this.path.draw(ctx);
             this.fillStroke(ctx);

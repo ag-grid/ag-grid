@@ -44,6 +44,11 @@ describe('ChartTheme', () => {
                     },
                     background: {
                         fill: 'red',
+                        // image: {
+                        //     url: 'https://example.com',
+                        //     width: 10,
+                        //     height: 20,
+                        // },
                     },
                     series: {
                         column: {
@@ -173,9 +178,9 @@ describe('ChartTheme', () => {
             expect(chart.title && chart.title.fontSize).toBe(24);
             expect(chart.title && chart.title.fontWeight).toBe('normal');
 
-            expect(chart.background.fill).toBe('red');
+            expect((chart as any).background.fill).toBe('red');
 
-            expect(chart.series[0].type).toBe('bar');
+            expect(chart.series[0].type).toBe('column');
             expect((chart.series[0] as BarSeries).fills).toEqual(['red', 'green', 'blue', 'red', 'green']);
             expect((chart.series[0] as BarSeries).strokes).toEqual(['cyan', 'cyan', 'cyan', 'cyan', 'cyan']);
             expect((chart.series[0] as BarSeries).label.enabled).toBe(true);
@@ -270,7 +275,7 @@ describe('ChartTheme', () => {
             expect(chart.title && chart.title.fontSize).toBe(24);
             expect(chart.title && chart.title.fontWeight).toBe('normal');
 
-            expect(chart.background.fill).toBe('red');
+            expect((chart as any).background.fill).toBe('red');
 
             expect(chart.series[0].type).toBe('pie');
             expect((chart.series[0] as PieSeries).fills).toEqual(['red', 'green', 'blue']);
@@ -415,9 +420,9 @@ describe('ChartTheme', () => {
             expect(cartesianChart!.title && cartesianChart!.title.fontSize).toBe(24);
             expect(cartesianChart!.title && cartesianChart!.title.fontWeight).toBe('normal');
 
-            expect(cartesianChart!.background.fill).toBe('red');
+            expect((cartesianChart as any).background.fill).toBe('red');
 
-            expect(cartesianChart!.series[0].type).toBe('bar');
+            expect(cartesianChart!.series[0].type).toBe('column');
             expect((cartesianChart!.series[0] as BarSeries).fills).toEqual(['red', 'green', 'blue', 'red', 'green']);
             expect((cartesianChart!.series[0] as BarSeries).strokes).toEqual(['cyan', 'cyan', 'cyan', 'cyan', 'cyan']);
             expect((cartesianChart!.series[0] as BarSeries).label.enabled).toBe(true);
@@ -435,7 +440,7 @@ describe('ChartTheme', () => {
             expect(polarChart!.title && polarChart!.title.fontSize).toBe(24);
             expect(polarChart!.title && polarChart!.title.fontWeight).toBe('normal');
 
-            expect(polarChart!.background.fill).toBe('red');
+            expect((polarChart as any).background.fill).toBe('red');
 
             expect(polarChart!.series[0].type).toBe('pie');
             expect((polarChart!.series[0] as PieSeries).fills).toEqual(['red', 'green', 'blue']);
@@ -838,7 +843,7 @@ describe('ChartTheme', () => {
             await waitForChartStability(cartesianChart);
             const { series } = cartesianChart;
 
-            expect(series[0].type).toEqual('bar');
+            expect(series[0].type).toEqual('column');
             expect(series[1].type).toEqual('line');
             expect(series[2].type).toEqual('area');
             expect((series[0] as BarSeries).strokeWidth).toEqual(16);

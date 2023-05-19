@@ -26,31 +26,32 @@ These grid options are illustrated below:
 
 
 <snippet spaceBetweenProperties="true">
-|const gridOptions = {
-|    // master grid columns
-|    columnDefs: [],
-|
-|    // use the server-side row model
-|    rowModelType: 'serverSide',
-|
-|    // enable master detail
-|    masterDetail: true,
-|
-|    detailCellRendererParams: {
-|        detailGridOptions: {
-|            // detail grid columns
-|            columnDefs: [],
-|        },
-|        getDetailRowData: params => {
-|            // supply data to the detail grid
-|            params.successCallback(params.data);
-|        }
-|    },
-|}
+| const gridOptions = {
+|     // master grid columns
+|     columnDefs: [],
+| 
+|     // use the server-side row model
+|     rowModelType: 'serverSide',
+| 
+|     // enable master detail
+|     masterDetail: true,
+| 
+|     detailCellRendererParams: {
+|         detailGridOptions: {
+|             // detail grid columns
+|             columnDefs: [],
+|         },
+|         getDetailRowData: params => {
+|             // supply data to the detail grid
+|             params.successCallback(params.data);
+|         }
+|     },
+| }
 </snippet>
 
-[[note]]
-| Note that the nested detail grid can be configured to use any Row Model.
+<note>
+Note that the nested detail grid can be configured to use any Row Model.
+</note>
 
 ## Example: Infinite Scrolling with Master / Detail
 
@@ -69,13 +70,13 @@ It is possible to combine [Server-Side Grouping](/server-side-model-grouping/) w
 The following snippet shows row grouping on the 'country' column by setting `rowGroup = true`:
 
 <snippet suppressFrameworkContext="true">
-|const gridOptions = {
-|    columnDefs: [
-|        { field: 'country', rowGroup: true },
-|
-|        // more column definitions
-|    ]
-|}
+| const gridOptions = {
+|     columnDefs: [
+|         { field: 'country', rowGroup: true },
+| 
+|         // more column definitions
+|     ]
+| }
 </snippet>
 
 ## Example: Row Grouping with Master Detail
@@ -100,14 +101,14 @@ Rather than use the `autoGroupColumnDef` for the master rows as shown in the exa
 This is shown in the code snippet below:
 
 <snippet suppressFrameworkContext="true">
-|const gridOptions = {
-|    columnDefs: [
-|        { field: 'country', rowGroup: true },
-|        { field: 'accountId', maxWidth: 200, cellRenderer: 'agGroupCellRenderer' },
-|
-|        // more column definitions
-|    ]
-|}
+| const gridOptions = {
+|     columnDefs: [
+|         { field: 'country', rowGroup: true },
+|         { field: 'accountId', maxWidth: 200, cellRenderer: 'agGroupCellRenderer' },
+| 
+|         // more column definitions
+|     ]
+| }
 </snippet>
 
 ## Detail Row Height
@@ -129,33 +130,34 @@ const gridOptions = {
 
 Option 2 - dynamic detail row height, dynamically sets height for all rows
 <snippet>
-|const gridOptions = {
-|    getRowHeight: params => {
-|        const isDetailRow = params.node.detail;
-|
-|        // not that this callback gets called for all rows, not just the detail row
-|        if (isDetailRow) {
-|            // dynamically calculate detail row height
-|            return params.data.children.length * 50;
-|        }
-|        // for all non-detail rows, return 25, the default row height
-|        return 25;
-|    }
-|}
+| const gridOptions = {
+|     getRowHeight: params => {
+|         const isDetailRow = params.node.detail;
+| 
+|         // not that this callback gets called for all rows, not just the detail row
+|         if (isDetailRow) {
+|             // dynamically calculate detail row height
+|             return params.data.children.length * 50;
+|         }
+|         // for all non-detail rows, return 25, the default row height
+|         return 25;
+|     }
+| }
 </snippet>
 
 Option 3 - use autoHeight
 <snippet>
-|const gridOptions = {
-|    detailCellRendererParams: {
-|        autoHeight: true,
-|    }
-|}
+| const gridOptions = {
+|     detailCellRendererParams: {
+|         autoHeight: true,
+|     }
+| }
 </snippet>
 
-[[note]]
-| Purging the cache and dynamic row heights do not work together for the Server-Side Row Model.
-| If you are using dynamic row height, ensure `maxBlocksInCache` is not set.
+<note>
+Purging the cache and dynamic row heights do not work together for the Server-Side Row Model.
+If you are using dynamic row height, ensure `maxBlocksInCache` is not set.
+</note>
 
 ### Example Using Callback getRowHeight()
 
@@ -163,7 +165,6 @@ The following example explicitly sets detail row heights based on the number of 
 
 - **getRowHeight()** - is implemented to size detail rows according to the number of records.
 - **node.detail** - is used to identify 'detail' row nodes.
-
 
 <grid-example title='Dynamic Detail Row Height' name='dynamic-detail-row-height' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 

@@ -1,0 +1,55 @@
+@use '../../design-system' as *;
+
+.buttonOuter {
+    display: inline-block;
+    width: 262px;
+}
+
+.button {
+    $replay-width: 224px;
+    $control-width: 254px;
+
+    position: relative;
+    width: $replay-width;
+    padding: 0.25em 0.5em 0.4em 0.5em !important; // !important for .ag-styles specificity;
+    text-align: left;
+    transition: background-color $default-transition-timing, border $default-transition-timing,
+        box-shadow $default-transition-timing, width $default-transition-timing !important; // !important for .ag-styles specificity
+
+    @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
+        display: none !important; // !important for .ag-styles specificity;
+    }
+
+    :global(.icon) {
+        --icon-size: 1.5em !important; // !important for .ag-styles specificity;
+
+        margin: -1em 0 -1em 0.25em !important; // !important for .ag-styles specificity;
+    }
+
+    span {
+        transition: opacity 0.4s;
+    }
+
+    &.isActive {
+        width: $control-width;
+    }
+}
+
+.controlInner {
+    opacity: 0;
+
+    .isActive & {
+        opacity: 1;
+    }
+}
+
+.replayInner {
+    position: absolute;
+    top: 0.25em;
+    left: 0.5em;
+    opacity: 1;
+
+    .isActive & {
+        opacity: 0;
+    }
+}

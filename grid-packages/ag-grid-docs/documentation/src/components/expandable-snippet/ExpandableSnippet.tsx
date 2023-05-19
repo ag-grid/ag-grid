@@ -5,7 +5,7 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 import {convertMarkdown, formatJsDocString} from "../documentation-helpers";
 import styles from "./ExpandableSnippet.module.scss";
-import codeStyles from '../Code.module.scss';
+
 
 import {
     buildModel,
@@ -49,8 +49,8 @@ export const ExpandableSnippet: React.FC<ExpandableSnippetParams> = ({
     const model = buildModel(interfacename, interfaceLookup, codeLookup, config);
 
     return (
-        <div className={styles["expandable-snippet"]} role="presentation">
-            <pre className={classnames(codeStyles['code'], 'language-ts')}>
+        <div className={classnames('ag-styles', styles["expandable-snippet"])} role="presentation">
+            <pre className={classnames('code', 'language-ts')}>
                 <code className={'language-ts'}>
                     <BuildSnippet breadcrumbs={breadcrumbs} model={model} config={config}/>
                 </code>

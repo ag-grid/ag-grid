@@ -17,8 +17,9 @@ All the defined classes from [cellClass](/cell-styles/#cell-class) and all the c
 
 The example below demonstrates how to merge the styles in Excel. Everyone less than 23 will have a green background, and a light green color font (`#e0ffc1`) also because redFont is set in cellClass, it will always be applied.
 
-[[note]]
-| The ExcelStyle id `cell` is applied to every cell that is **not** a header, and it's useful if you need a style to be applied to all cells.
+<note>
+The ExcelStyle id `cell` is applied to every cell that is **not** a header, and it's useful if you need a style to be applied to all cells.
+</note>
 
 <snippet>
 const gridOptions = {

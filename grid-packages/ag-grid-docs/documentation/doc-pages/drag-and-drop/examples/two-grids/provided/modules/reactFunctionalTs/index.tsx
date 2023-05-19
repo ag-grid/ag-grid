@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
@@ -29,7 +29,7 @@ const baseGridOptions: GridOptions = {
 }
 
 const baseColumnDefs: ColDef[] = [
-    { field: 'id', dndSource: true },
+    { field: 'id', dndSource: true, width: 90 },
     { field: 'color' },
     { field: 'value1' },
     { field: 'value2' }
@@ -189,7 +189,5 @@ const GridExample = () => {
     );
 }
 
-render(
-    <GridExample></GridExample>,
-    document.querySelector('#root')
-)
+const root = createRoot(document.getElementById('root')!);
+root.render(<GridExample />);

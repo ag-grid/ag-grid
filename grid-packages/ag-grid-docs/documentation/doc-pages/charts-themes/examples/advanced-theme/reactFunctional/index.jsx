@@ -1,7 +1,7 @@
 'use strict';
 
 import React, { useState, useCallback, useRef } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { AgChartsReact } from 'ag-charts-react';
 
 const Chart1 = () => {
@@ -98,6 +98,7 @@ var myTheme = {
         },
         column: {
           label: {
+            enabled: true,
             color: "white",
           },
         },
@@ -186,14 +187,12 @@ var data = [
   },
 ]
 
-render(
-  <div id="charts">
-    <div id="chart1">
-      <Chart1 />
-    </div>
-    <div id="chart2">
-      <Chart2 />
-    </div>
-  </div>,
-  document.querySelector("#root")
-)
+const root = createRoot(document.getElementById('root'));
+root.render(<div id="charts">
+  <div id="chart1">
+    <Chart1 />
+  </div>
+  <div id="chart2">
+    <Chart2 />
+  </div>
+</div>);

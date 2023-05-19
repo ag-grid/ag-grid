@@ -168,7 +168,9 @@
         }
     }
 
-    .ag-menu:not(.ag-tabs) .ag-simple-filter-body-wrapper {
+    .ag-menu:not(.ag-tabs) .ag-filter .ag-simple-filter-body-wrapper,
+    // for custom filters without `ag-filter-wrapper`
+    .ag-menu:not(.ag-tabs) .ag-filter > *:not(.ag-filter-wrapper) {
         min-width: calc(var(--ag-menu-min-width) - 2px);
     }
 

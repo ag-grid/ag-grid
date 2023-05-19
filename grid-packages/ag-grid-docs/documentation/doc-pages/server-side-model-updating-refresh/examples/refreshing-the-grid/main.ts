@@ -1,4 +1,4 @@
-import { Grid, GridOptions, IServerSideDatasource, GetRowIdParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, IServerSideDatasource, GetRowIdParams, StoreRefreshedEvent } from '@ag-grid-community/core'
 declare var FakeServer: any;
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -33,6 +33,9 @@ const gridOptions: GridOptions = {
       parts.push(data.id)
     }
     return parts.join('-')
+  },
+  onStoreRefreshed: (event: StoreRefreshedEvent) => {
+    console.log('Refresh finished for store with route:', event.route);
   },
   // use the server-side row model
   rowModelType: 'serverSide',

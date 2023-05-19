@@ -1,4 +1,4 @@
-import { Node, RedrawType, SceneChangeDetection, RenderContext, LayerManager } from './node';
+import { Node, RedrawType, SceneChangeDetection, RenderContext, LayerManager, ZIndexSubOrder } from './node';
 import { BBox } from './bbox';
 import { HdpiCanvas } from '../canvas/hdpiCanvas';
 import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
@@ -33,13 +33,13 @@ export class Group extends Node {
         protected readonly opts?: {
             readonly layer?: boolean;
             readonly zIndex?: number;
-            readonly zIndexSubOrder?: [string, number];
+            readonly zIndexSubOrder?: ZIndexSubOrder;
             readonly name?: string;
         }
     ) {
         super();
 
-        const { zIndex, zIndexSubOrder } = opts || {};
+        const { zIndex, zIndexSubOrder } = opts ?? {};
 
         this.isContainerNode = true;
         if (zIndex !== undefined) {
@@ -64,7 +64,7 @@ export class Group extends Node {
         super._setLayerManager(scene);
 
         if (scene && this.opts?.layer) {
-            const { zIndex, zIndexSubOrder, name } = this.opts || {};
+            const { zIndex, zIndexSubOrder, name } = this.opts ?? {};
             const getComputedOpacity = () => this.getComputedOpacity();
             const getVisibility = () => this.getVisibility();
             this.layer = scene.addLayer({ zIndex, zIndexSubOrder, name, getComputedOpacity, getVisibility });

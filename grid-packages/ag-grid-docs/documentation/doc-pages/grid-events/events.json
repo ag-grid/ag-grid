@@ -232,6 +232,16 @@
         "rowDataUpdated": {},
         "asyncTransactionsFlushed": {}
     },
+    "serverSideRowModel": {
+        "meta": {
+            "displayName": "RowModel: Server-Side",
+            "page": {
+                "name": "Server-Side Row Model",
+                "url": "/server-side-model/"
+            }
+        },
+        "storeRefreshed": {}
+    },
     "navigation": {
         "meta": {
             "displayName": "Keyboard Navigation",

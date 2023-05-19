@@ -1,7 +1,7 @@
 import { addTransformToInstanceProperty, BREAK_TRANSFORM_CHAIN } from './decorator';
 import { Logger } from './logger';
 
-export function createDeprecationWarning() {
+function createDeprecationWarning() {
     return (key: string, message?: string) => {
         const msg = [`Property [${key}] is deprecated.`, message].filter((v) => v != null).join(' ');
         Logger.warnOnce(msg);

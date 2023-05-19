@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { render } from 'react-dom';
+import React, { useRef } from 'react';
+import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
@@ -29,7 +29,7 @@ const baseGridOptions = {
 }
 
 const baseColumnDefs = [
-    { field: 'id', dndSource: true },
+    { field: 'id', dndSource: true, width: 90 },
     { field: 'color' },
     { field: 'value1' },
     { field: 'value2' }
@@ -54,17 +54,15 @@ const rightGridOptions = {
 let nextRowId = 100;
 
 const GridExample = () => {
-    const [leftGridApi, setLeftGridApi] = useState(null);
-    const [rightGridApi, setRightGridApi] = useState(null);
+    const leftGridRef = useRef(null);
+    const rightGridRef = useRef(null);
 
     const onLeftGridReady = (params) => {
         params.api.setRowData(createLeftRowData());
-        setLeftGridApi(params.api);
     }
 
     const onRightGridReady = (params) => {
         params.api.setRowData([]);
-        setRightGridApi(params.api);
     }
 
     const createLeftRowData = () => ['Red', 'Green', 'Blue'].map(createDataItem);
@@ -102,14 +100,14 @@ const GridExample = () => {
             remove: [data]
         };
 
-        const rowIsInLeftGrid = !!leftGridApi.getRowNode(data.id);
+        const rowIsInLeftGrid = !!leftGridRef.current.api.getRowNode(data.id);
         if (rowIsInLeftGrid) {
-            leftGridApi.applyTransaction(transaction);
+            leftGridRef.current.api.applyTransaction(transaction);
         }
 
-        const rowIsInRightGrid = !!rightGridApi.getRowNode(data.id);
+        const rowIsInRightGrid = !!rightGridRef.current.api.getRowNode(data.id);
         if (rowIsInRightGrid) {
-            rightGridApi.applyTransaction(transaction);
+            rightGridRef.current.api.applyTransaction(transaction);
         }
     };
 
@@ -140,7 +138,7 @@ const GridExample = () => {
             return;
         }
 
-        const gridApi = grid === 'left' ? leftGridApi : rightGridApi;
+        const gridApi = grid === 'left' ? leftGridRef.current.api : rightGridRef.current.api;
 
         // do nothing if row is already in the grid, otherwise we would have duplicates
         const rowAlreadyInGrid = !!gridApi.getRowNode(data.id);
@@ -159,7 +157,7 @@ const GridExample = () => {
         <div className="outer">
             <div style={{ height: "100%" }} className="inner-col ag-theme-alpine" onDragOver={gridDragOver}
                 onDrop={(e) => gridDrop('left', e)}>
-                <AgGridReact gridOptions={leftGridOptions} onGridReady={onLeftGridReady} />
+                <AgGridReact ref={leftGridRef} gridOptions={leftGridOptions} onGridReady={onLeftGridReady} />
             </div>
 
             <div className="inner-col factory-panel">
@@ -185,13 +183,11 @@ const GridExample = () => {
 
             <div style={{ height: "100%" }} className="inner-col ag-theme-alpine" onDragOver={gridDragOver}
                 onDrop={(e) => gridDrop('right', e)}>
-                <AgGridReact gridOptions={rightGridOptions} onGridReady={onRightGridReady} />
+                <AgGridReact ref={rightGridRef} gridOptions={rightGridOptions} onGridReady={onRightGridReady} />
             </div>
         </div>
     );
 }
 
-render(
-    <GridExample></GridExample>,
-    document.querySelector('#root')
-)
+const root = createRoot(document.getElementById('root'));
+root.render(<GridExample />);

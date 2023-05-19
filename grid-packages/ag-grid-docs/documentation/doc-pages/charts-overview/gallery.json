@@ -1,6 +1,6 @@
 
 {
-    "Bar/Column": {
+    "Bar / Column": {
         "Simple Bar": {
             "description": "Bar charts represent data using horizontal bars, with the length of each bar proportional to the value being plotted. They are useful for categorical data, and are simple to interpret. They work best where the number of data points is limited.",
             "example": "simple-bar"
@@ -42,7 +42,7 @@
             "example": "column-with-negative-values"
         }
     },
-    "Pie/Doughnut": {
+    "Pie / Doughnut": {
         "Simple Pie": {
             "description": "Pie charts are used to express a part-to-whole relationship, where all the slices combine to represent 100%. They work best for a small number of categories.",
             "example": "simple-pie"
@@ -70,7 +70,7 @@
             "example": "line-with-gaps"
         }
     },
-    "Scatter/Bubble": {
+    "Scatter / Bubble": {
         "Simple Scatter": {
             "description": "Scatter charts (also known as scatter plots or XY charts) show the relationship between two variables, placing one variable on each axis, and can be useful for demonstrating any correlation between the variables.",
             "example": "simple-scatter"

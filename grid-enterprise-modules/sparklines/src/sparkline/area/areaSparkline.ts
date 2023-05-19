@@ -1,7 +1,7 @@
 import { MarkerFormat, MarkerFormatterParams, CrosshairLineOptions } from '@ag-grid-community/core';
 import { _Scale, _Scene, _Util } from 'ag-charts-community';
 
-import { Point, SeriesNodeDatum, Sparkline } from '../sparkline';
+import { Point, SeriesNodeDatum, Sparkline, ZINDICIES } from '../sparkline';
 import { toTooltipHtml } from '../tooltip/sparklineTooltip';
 import { getMarker } from '../marker/markerFactory';
 import { getLineDash } from '../../util/lineDash';
@@ -59,8 +59,10 @@ export class AreaSparkline extends Sparkline {
     private areaSparklineGroup: _Scene.Group = new _Scene.Group();
     private xAxisLine: _Scene.Line = new _Scene.Line();
     private markers: _Scene.Group = new _Scene.Group();
-    private markerSelection: _Scene.Selection<_Scene.Marker, AreaNodeDatum> =
-        _Scene.Selection.select(this.markers, () => this.markerFactory());
+    private markerSelection: _Scene.Selection<_Scene.Marker, AreaNodeDatum> = _Scene.Selection.select(
+        this.markers,
+        () => this.markerFactory()
+    );
     private markerSelectionData: AreaNodeDatum[] = [];
 
     readonly marker = new SparklineMarker();
@@ -70,6 +72,14 @@ export class AreaSparkline extends Sparkline {
     constructor() {
         super();
         this.rootGroup.append(this.areaSparklineGroup);
+
+        this.xAxisLine.zIndex = ZINDICIES.AXIS_LINE_ZINDEX;
+        this.fillPath.zIndex = ZINDICIES.SERIES_FILL_ZINDEX;
+        this.strokePath.zIndex = ZINDICIES.SERIES_STROKE_ZINDEX;
+        this.xCrosshairLine.zIndex = ZINDICIES.CROSSHAIR_ZINDEX;
+        this.yCrosshairLine.zIndex = ZINDICIES.CROSSHAIR_ZINDEX;
+        this.markers.zIndex = ZINDICIES.SERIES_MARKERS_ZINDEX;
+
         this.areaSparklineGroup.append([
             this.fillPath,
             this.xAxisLine,
@@ -374,7 +384,7 @@ export class AreaSparkline extends Sparkline {
         xCrosshairLine.y2 = yScale.range[1];
         xCrosshairLine.x1 = xCrosshairLine.x2 = 0;
         xCrosshairLine.stroke = xLine.stroke;
-        xCrosshairLine.strokeWidth = xLine.strokeWidth || 1;
+        xCrosshairLine.strokeWidth = xLine.strokeWidth ?? 1;
 
         xCrosshairLine.lineCap = xLine.lineCap === 'round' || xLine.lineCap === 'square' ? xLine.lineCap : undefined;
 
@@ -403,7 +413,7 @@ export class AreaSparkline extends Sparkline {
         yCrosshairLine.x2 = xScale.range[1];
         yCrosshairLine.y1 = yCrosshairLine.y2 = 0;
         yCrosshairLine.stroke = yLine.stroke;
-        yCrosshairLine.strokeWidth = yLine.strokeWidth || 1;
+        yCrosshairLine.strokeWidth = yLine.strokeWidth ?? 1;
 
         yCrosshairLine.lineCap = yLine.lineCap === 'round' || yLine.lineCap === 'square' ? yLine.lineCap : undefined;
 
@@ -428,9 +438,10 @@ export class AreaSparkline extends Sparkline {
             title,
         };
 
-        if (this.tooltip.renderer) {
+        const tooltipRenderer = this.processedOptions?.tooltip?.renderer;
+        if (tooltipRenderer) {
             return toTooltipHtml(
-                this.tooltip.renderer({
+                tooltipRenderer({
                     context: this.context,
                     datum: seriesDatum,
                     yValue,

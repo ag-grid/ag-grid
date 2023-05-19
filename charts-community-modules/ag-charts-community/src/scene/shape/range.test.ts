@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 
-import { setupMockCanvas, extractImageData, CANVAS_HEIGHT } from '../../chart/test/utils';
+import { setupMockCanvas, extractImageData } from '../../chart/test/utils';
 import { Range } from './range';
 
 expect.extend({ toMatchImageSnapshot });
@@ -71,7 +71,7 @@ describe('Range', () => {
             const ctx = canvasCtx.nodeCanvas!.getContext('2d');
             (ctx as any).canvas.width = CANVAS_WIDTH;
             ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            ctx.fillRect(0, 0, CANVAS_WIDTH, canvasCtx.nodeCanvas?.height ?? 0);
 
             let currY = 0;
             let rowHeight = 0;

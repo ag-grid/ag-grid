@@ -19,4 +19,5 @@
     @include meta.load-css('./src/design-system/elements/table');
 
     @include meta.load-css('./src/design-system/components/containers');
+    @include meta.load-css('./src/design-system/components/code');
 }

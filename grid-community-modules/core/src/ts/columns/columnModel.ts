@@ -43,8 +43,6 @@ import { SortController } from "../sortController";
 import { missingOrEmpty, exists, missing, attrToBoolean, attrToNumber } from '../utils/generic';
 import { camelCaseToHumanText } from '../utils/string';
 import { ColumnDefFactory } from "./columnDefFactory";
-import { IRowModel } from "../interfaces/iRowModel";
-import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { convertToMap } from '../utils/map';
 import { doOnce } from '../utils/function';
 import { CtrlsService } from '../ctrlsService';
@@ -135,7 +133,6 @@ export class ColumnModel extends BeanStub {
     @Optional('valueCache') private valueCache: ValueCache;
     @Optional('animationFrameService') private animationFrameService: AnimationFrameService;
 
-    @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('columnDefFactory') private columnDefFactory: ColumnDefFactory;
 
@@ -261,8 +258,6 @@ export class ColumnModel extends BeanStub {
 
     private columnDefs: (ColDef | ColGroupDef)[];
 
-    private flexColsCalculatedAtLestOnce = false;
-
     @PostConstruct
     public init(): void {
         this.suppressColumnVirtualisation = this.gridOptionsService.is('suppressColumnVirtualisation');
@@ -298,6 +293,10 @@ export class ColumnModel extends BeanStub {
         const colsPreviouslyExisted = !!this.columnDefs;
         this.columnDefs = columnDefs;
         this.createColumnsFromColumnDefs(colsPreviouslyExisted, source);
+    }
+
+    public recreateColumnDefs(source: ColumnEventType = 'api'): void {
+        this.onSharedColDefChanged(source);
     }
 
     private destroyOldColumns(oldTree: IProvidedColumn[] | null, newTree?: IProvidedColumn[] | null): void {
@@ -627,7 +626,7 @@ export class ColumnModel extends BeanStub {
         }
 
         if (!shouldSkipHeaderGroups) {
-            this.autoSizeColumnGroupsByColumns(columns, stopAtGroup);
+            this.autoSizeColumnGroupsByColumns(columns, source, stopAtGroup);
         }
 
         this.dispatchColumnResizedEvent(columnsAutosized, true, 'autosizeColumns');
@@ -724,7 +723,7 @@ export class ColumnModel extends BeanStub {
         }
     }
 
-    private autoSizeColumnGroupsByColumns(keys: (string | Column)[], stopAtGroup?: ColumnGroup): Column[] {
+    private autoSizeColumnGroupsByColumns(keys: (string | Column)[], source: ColumnEventType, stopAtGroup?: ColumnGroup): Column[] {
         const columnGroups: Set<ColumnGroup> = new Set();
         const columns = this.getGridColumns(keys);
 
@@ -748,7 +747,7 @@ export class ColumnModel extends BeanStub {
                 if (headerGroupCtrl) { break; }
             }
             if (headerGroupCtrl) {
-                headerGroupCtrl.resizeLeafColumnsToFit();
+                headerGroupCtrl.resizeLeafColumnsToFit(source);
             }
         }
 
@@ -843,6 +842,10 @@ export class ColumnModel extends BeanStub {
         }
 
         return this.getDisplayedColumnsForRow(rowNode, this.displayedColumnsRight);
+    }
+
+    public isColSpanActive(): boolean {
+        return this.colSpanActive;
     }
 
     private getDisplayedColumnsForRow(
@@ -3279,8 +3282,7 @@ export class ColumnModel extends BeanStub {
         if (this.autoHeightActive) {
             this.autoHeightActiveAtLeastOnce = true;
 
-            const rowModelType = this.rowModel.getType();
-            const supportedRowModel = rowModelType === 'clientSide' || rowModelType === 'serverSide';
+            const supportedRowModel = this.gridOptionsService.isRowModelType('clientSide') || this.gridOptionsService.isRowModelType('serverSide');
             if (!supportedRowModel) {
                 const message = 'AG Grid - autoHeight columns only work with Client Side Row Model and Server Side Row Model.';
                 doOnce(() => console.warn(message), 'autoHeightActive.wrongRowModel');
@@ -3372,7 +3374,7 @@ export class ColumnModel extends BeanStub {
         }
         columnsForQuickFilter = columnsForQuickFilter ?? [];
         this.columnsForQuickFilter = this.gridOptionsService.is('excludeHiddenColumnsFromQuickFilter')
-            ? columnsForQuickFilter.filter(col => col.isVisible())
+            ? columnsForQuickFilter.filter(col => col.isVisible() || col.isRowGroupActive())
             : columnsForQuickFilter;
     }
 
@@ -3742,19 +3744,6 @@ export class ColumnModel extends BeanStub {
 
         if (params.fireResizedEvent) {
             this.dispatchColumnResizedEvent(changedColumns, true, source, flexingColumns);
-        }
-
-        // if the user sets rowData directly into GridOptions, then the row data is set before
-        // grid is attached to the DOM. this means the columns are not flexed, and then the rows
-        // have the wrong height (as they depend on column widths). so once the columns have
-        // been flexed for the first time (only happens once grid is attached to DOM, as dependency
-        // on getting the grid width, which only happens after attached after ResizeObserver fires)
-        // we get get rows to re-calc their heights.
-        if (!this.flexColsCalculatedAtLestOnce) {
-            if (this.gridOptionsService.isRowModelType('clientSide')) {
-                (this.rowModel as IClientSideRowModel).resetRowHeights();
-            }
-            this.flexColsCalculatedAtLestOnce = true;
         }
 
         return flexingColumns;

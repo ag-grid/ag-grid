@@ -6,8 +6,9 @@ enterprise: true
 Selecting rows and groups in the Server-Side Row Model is supported.
 Just set the property `rowSelection` to either `'single'` or `'multiple'` as with any other row model.
 
-[[note]]
-| Server-Side Row Selection requires [Row ID's](/server-side-model-configuration/#providing-row-ids) to be supplied to grid.
+<note>
+Server-Side Row Selection requires [Row ID's](../server-side-model-configuration/#providing-row-ids) to be supplied to grid.
+</note>
 
 ## Enabling Row Selection
 
@@ -15,6 +16,7 @@ Row selection can be enabled in the grid by setting the `rowSelection` property 
 
 - Selecting a single row can be achieved by clicking it. Clicking another row selects it and de-selects any other rows.
 - Selecting multiple rows can be achieved by holding down <kbd>Ctrl</kbd> and mouse clicking the rows. A range of fully loaded rows can be selected by using <kbd>Shift</kbd>.
+- The selected rows are preserved when the grid is sorted or filtered and are displayed as selected when scrolled into view.  Select a row, apply a column filter so that the selected row is in the filter results and it will appear as selected in the filter results. If a selected row doesn’t match the applied filter, it will still be selected when the filter is removed.
 
 <grid-example title='Click Selection' name='click-selection' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
@@ -30,7 +32,7 @@ The following example demonstrates checkbox selection with the SSRM. Note the fo
 
 <api-documentation source='grid-options/properties.json' section='selection' names='["isRowSelectable"]' ></api-documentation>
 
-<grid-example title='Checkbox Example' name='checkbox' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
+<grid-example title='Checkbox Selection' name='checkbox' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
 ## Header Checkbox Selection
 
@@ -38,13 +40,14 @@ The header select-all checkbox can be enabled by setting `headerCheckboxSelectio
 
 The following example demonstrates select-all with the SSRM. Note the following;
 
-- Selecting the header checkbox selects every node in the grid.
-- Deselecting one node puts the header checkbox into an indeterminate state, clicking this again asserts every node is selected.
+- Selecting the header checkbox selects every row in the grid, even rows not matching the currently applied column filter (if one is applied). Setting `headerCheckboxSelectionFilteredOnly=true` or  `headerCheckboxSelectionCurrentPageOnly=true` is not supported when using the server-side row model.
+- Deselecting one row puts the header checkbox into an indeterminate state, clicking this again asserts every row is selected.
 
-<grid-example title='Select-All Example' name='select-all' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
+<grid-example title='Header Checkbox Selection' name='select-all' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
-[[note]]
-| When using select-all, you should **not** use the api functions `getSelectedNodes()` or `getSelectedRows()`. See the API section for suggested alternatives.
+<note>
+When using header checkbox selection with the server-side row model, you should **not** use the api functions `getSelectedNodes()` or `getSelectedRows()`. See the [Selection API](../server-side-model-selection/#selection-api) section below for suggested alternatives.
+</note>
 
 ## Group Selection
 
@@ -56,10 +59,11 @@ The following example demonstrates `groupSelectsChildren` with the SSRM. Note th
 - Deselecting `United States` &rarr; `2004` also deselects all of its children, and puts the `United States` row in an indeterminate state.
 - Changing the row group columns resets the selection state.
 
-<grid-example title='Group Selects Children Example' name='group-selects-children' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
+<grid-example title='Group Selection' name='group-selects-children' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
-[[note]]
-| When using `groupSelectsChildren`, you should **not** use the api functions `getSelectedNodes()` or `getSelectedRows()`. See the API section for suggested alternatives.
+<note>
+When using group selection with the server-side row model, you should **not** use the api functions `getSelectedNodes()` or `getSelectedRows()`. See the [Selection API](../server-side-model-selection/#selection-api) section below for suggested alternatives.
+</note>
 
 ### Transactions
 
@@ -86,10 +90,10 @@ When using selection where all selected rows may not have been loaded, it is ins
 The below snippet demonstrates how to set all nodes as selected, except for the row which has the ID `United States`, and the row with the ID `United States2004`.
 
 <snippet spaceBetweenProperties="true">
-gridOptions.api.setServerSideSelectionState({
-    selectAll: true,
-    toggledNodes: ['United States', 'United States2004'],
-});
+| gridOptions.api.setServerSideSelectionState({
+|     selectAll: true,
+|     toggledNodes: ['United States', 'United States2004'],
+| });
 </snippet>
 
 In the example below, note the following;
@@ -97,31 +101,31 @@ In the example below, note the following;
  - The `Save Selection` button has been configured to store the result of `api.getServerSideSelectionState()`, it also logs the saved state to the console when clicked.
  - The `Load Selection` button can subsequently re-apply the previously saved selection rules using `api.setServerSideSelectionState(state)`.
 
-<grid-example title='API Select-All Example' name='api-select-all' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
+<grid-example title='Select All API' name='api-select-all' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
-### Group Selects Children API Selection
+### Group Selection API
 
 The below snippet demonstrates how to set all nodes as selected, except for the row which has the ID `United States`, and its child row with the ID `United States2004`.
 
 <snippet spaceBetweenProperties="true">
-params.api.setServerSideSelectionState({
-    // this root level config can be used to determine a global select-all
-    selectAllChildren: true,
-    // all of the top level group nodes which do not conform with the select all value will have an entry here
-    // including indeterminate nodes
-    toggledNodes: [{
-        // as this is a group node with toggledNodes, this node will be marked as indeterminate
-        nodeId: 'United States',
-        // selectAllChildren can be used to determine whether this groups children are all selected
-        selectAllChildren: false,
-        toggledNodes: [{
-            // this group node has no toggledNodes, and so it will respect its own `selectAllChildren` property along
-            // with its descendants.
-            nodeId: 'United States2004',
-            selectAllChildren: true,
-        }],
-    }],
-});
+| params.api.setServerSideSelectionState({
+|     // this root level config can be used to determine a global select-all
+|     selectAllChildren: true,
+|     // all of the top level group nodes which do not conform with the select all value will have an entry here
+|     // including indeterminate nodes
+|     toggledNodes: [{
+|         // as this is a group node with toggledNodes, this node will be marked as indeterminate
+|         nodeId: 'United States',
+|         // selectAllChildren can be used to determine whether this groups children are all selected
+|         selectAllChildren: false,
+|         toggledNodes: [{
+|             // this group node has no toggledNodes, and so it will respect its own `selectAllChildren` property along
+|             // with its descendants.
+|             nodeId: 'United States2004',
+|             selectAllChildren: true,
+|         }],
+|     }],
+| });
 </snippet>
 
 In the example below, note the following;
@@ -130,7 +134,7 @@ In the example below, note the following;
  - The `Load Selection` button can subsequently re-apply the previously saved selection rules using `api.setServerSideSelectionState(state)`.
 
 
-<grid-example title='API Group Selects Children Example' name='api-group-selects-children' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
+<grid-example title='Group Selection API' name='api-group-selects-children' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
 ## Tree Data
 Row selection is also supported when using tree data. See this documented on the [SSRM Tree Data](/server-side-model-tree-data/#selection-with-tree-data) page.

@@ -9,7 +9,7 @@ fi
 MODULE_PATH=$(echo $PWD | sed s:${LOCAL_REPO_ROOT}/::)
 MODULE_NAME=$(basename $MODULE_PATH)
 CHARTS_PATH=charts-community-modules/ag-charts-community
-ENTERPRISE_PATH=charts-enterprise-modules/core
+ENTERPRISE_PATH=charts-enterprise-modules/ag-charts-enterprise
 
 DOCKER_REPO_ROOT=/workspace/ag-grid
 DOCKER_MODULE_PATH=${DOCKER_REPO_ROOT}/${MODULE_PATH}
@@ -21,25 +21,34 @@ ENTERPRISE_NODE_MODULES_PATH=${DOCKER_ENTERPRISE_PATH}/node_modules
 NODE_MODULES_PATH=${DOCKER_MODULE_PATH}/node_modules
 
 EXTRA_VOL_MOUNTS=""
-INIT_CMD="npm i --no-package-lock"
-SCOPE="ag-charts-community"
-if [[ "$MODULE_NAME" != "ag-charts-community" ]] ; then
-    EXTRA_VOL_MOUNTS="-v charts-${MODULE_NAME}-nm:${NODE_MODULES_PATH} -v ${LOCAL_REPO_ROOT}/${MODULE_PATH}:${DOCKER_MODULE_PATH}"
+case "$MODULE_NAME" in
+    ag-charts-community)
+        SCOPE="ag-charts-community"
+        INIT_CMD="npm i --no-package-lock"
+    ;;
 
-    if [[ ${MODULE_PATH} == charts-enterprise-modules/* ]] ; then
-        SCOPE="@ag-charts-enterprise/${MODULE_NAME}"
-    elif [[ ${MODULE_PATH} == charts-community-modules/* ]] ; then
-        SCOPE="@ag-charts-community/${MODULE_NAME}"
-    fi
+    ag-charts-enterprise)
+        SCOPE="ag-charts-enterprise"
+        INIT_CMD="npx lerna bootstrap --include-dependencies --scope=${SCOPE}"
+    ;;
 
-    INIT_CMD="npx lerna bootstrap --include-dependencies --scope=${SCOPE}"
-fi
+    *)
+        EXTRA_VOL_MOUNTS="-v charts-${MODULE_NAME}-nm:${NODE_MODULES_PATH} -v ${LOCAL_REPO_ROOT}/${MODULE_PATH}:${DOCKER_MODULE_PATH}"
+
+        if [[ ${MODULE_PATH} == charts-enterprise-modules/* ]] ; then
+            SCOPE="@ag-charts-enterprise/${MODULE_NAME}"
+        elif [[ ${MODULE_PATH} == charts-community-modules/* ]] ; then
+            SCOPE="@ag-charts-community/${MODULE_NAME}"
+        fi
+
+        INIT_CMD="npx lerna bootstrap --include-dependencies --scope=${SCOPE}"
+    ;;
+esac
 
 DOCKER_OPTS="--rm"
 if [ -t 0 ] ; then
     # If run from a terminal, enable interactive mode.
     DOCKER_OPTS="${DOCKER_OPTS} -it"
-    INIT_CMD="-il ${INIT_CMD}"
 fi
 
 case $1 in

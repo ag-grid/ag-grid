@@ -1,19 +1,18 @@
 'use strict';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
 import { AgGridReact } from '@ag-grid-community/react';
-import React, { useEffect, useMemo, useState } from 'react';
-import { render } from 'react-dom';
+import React, { useEffect, useRef, useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule])
 
 const GridExample = () => {
-
-    const [gridApi, setGridApi] = useState<GridApi | null>(null);
+    const gridRef = useRef<AgGridReact>(null);
     const [rowData, setRowData] = useState(null);
     const columnDefs = useMemo<ColDef[]>(() => [
         { field: "athlete", width: 150 },
@@ -33,14 +32,12 @@ const GridExample = () => {
     });
 
     useEffect(() => {
-        if (gridApi) {
-            gridApi!.sizeColumnsToFit();
+        if (gridRef.current && rowData) {
+            gridRef.current.api.sizeColumnsToFit();
         }
     }, [rowData]);
 
     const onGridReady = (params: GridReadyEvent) => {
-        setGridApi(params.api);
-
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then(resp => resp.json())
             .then(data => {
@@ -77,6 +74,7 @@ const GridExample = () => {
             <div style={{ height: 'calc(100% - 25px)' }} className="ag-theme-alpine">
                 <div style={style}>
                     <AgGridReact
+                        ref={gridRef}
                         rowData={rowData}
                         columnDefs={columnDefs}
                         onGridReady={onGridReady}>
@@ -88,4 +86,5 @@ const GridExample = () => {
 
 }
 
-render(<GridExample></GridExample>, document.querySelector('#root'))
+const root = createRoot(document.getElementById('root')!);
+root.render(<GridExample />);

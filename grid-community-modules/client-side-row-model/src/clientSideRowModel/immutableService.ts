@@ -42,12 +42,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
         if (!transactionAndMap) { return; }
 
         const [transaction, orderIdMap] = transactionAndMap;
-        const nodeTransaction = this.clientSideRowModel.updateRowData(transaction, orderIdMap);
-        // need to force updating of full width rows - note this wouldn't be necessary the full width cell comp listened
-        // to the data change event on the row node and refreshed itself.
-        if (nodeTransaction) {
-            this.rowRenderer.refreshFullWidthRows(nodeTransaction.update as RowNode[]);
-        }
+        this.clientSideRowModel.updateRowData(transaction, orderIdMap);
     }
 
     // converts the setRowData() command to a transaction

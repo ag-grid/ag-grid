@@ -66,6 +66,7 @@ const options: AgChartOptions = {
       type: 'pie',
       title: {
         text: 'Q1',
+        spacing: 0,
       },
       calloutLabel: {
         enabled: false,
@@ -80,6 +81,7 @@ const options: AgChartOptions = {
       type: 'pie',
       title: {
         text: 'Q2',
+        spacing: 0,
       },
       calloutLabel: {
         enabled: false,
@@ -93,6 +95,7 @@ const options: AgChartOptions = {
       type: 'pie',
       title: {
         text: 'Q3',
+        spacing: 0,
       },
       calloutLabel: {
         enabled: false,
@@ -106,6 +109,7 @@ const options: AgChartOptions = {
       type: 'pie',
       title: {
         text: 'Q4',
+        spacing: 0,
       },
       calloutLabel: {
         enabled: false,

@@ -20,7 +20,7 @@ export default class YearFloatingFilter extends Component {
 
     render() {
         return (
-            <div class="year-filter">
+            <div className="year-filter">
                 <label>
                     <input type="radio" checked={!this.state.isActive} onChange={() => this.toggleFilter(false)} /> All
                 </label>

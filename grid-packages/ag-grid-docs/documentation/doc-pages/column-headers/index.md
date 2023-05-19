@@ -63,7 +63,7 @@ The following example shows how you can provide a unique look and feel to the he
 }
 
 .ag-header-cell-label .ag-header-cell-text {
-    /* Force the width corresponding at how much width
+    /* Force the width corresponding to how much width
     we need once the text is laid out vertically */
     width: 30px;
     transform: rotate(90deg);
@@ -175,8 +175,9 @@ When you provide your own template, everything should work as expected as long a
 
 The ref parameters are used by the grid to identify elements to add functionality to. If you leave an element out of your template, the functionality will not be added. For example if you do not specify `eLabel` then the column will not react to click events for sorting.
 
-[[note]]
-| Templates are not meant to let you configure icons. If you are looking to change the icons, check our [icon docs](/custom-icons/).
+<note>
+Templates are not meant to let you configure icons. If you are looking to change the icons, check our [icon docs](/custom-icons/).
+</note>
 
 ### Example: Simple Header Templates
 

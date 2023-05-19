@@ -17,6 +17,7 @@ export class ColDefUtil {
         initialSort: undefined,
         field: undefined,
         type: undefined,
+        cellDataType: undefined,
         tooltipComponent: undefined,
         tooltipField: undefined,
         headerTooltip: undefined,
@@ -77,6 +78,7 @@ export class ColDefUtil {
         suppressFiltersToolPanel: undefined,
         openByDefault: undefined,
         marryChildren: undefined,
+        stickyLabel: undefined,
         hide: undefined,
         initialHide: undefined,
         rowGroup: undefined,
@@ -138,7 +140,9 @@ export class ColDefUtil {
         tooltipValueGetter: undefined,
         cellRendererSelector: undefined,
         cellEditorSelector: undefined,
-        spanHeaderHeight: undefined
+        spanHeaderHeight: undefined,
+        useValueFormatterForExport: undefined,
+        useValueParserForImport: undefined,
     };
 
     public static ALL_PROPERTIES: ColKey[] = Object.keys(ColDefUtil.ColDefPropertyMap) as ColKey[];

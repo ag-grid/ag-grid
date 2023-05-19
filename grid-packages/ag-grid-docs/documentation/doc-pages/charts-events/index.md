@@ -1,6 +1,5 @@
 ---
 title: "Events"
-enterprise: true
 ---
 
 This section explains how to listen and respond to various chart and series events.
@@ -147,7 +146,3 @@ All series event options have similar interface contracts. See the series-specif
 ### Chart Events
 
 <interface-documentation interfaceName='AgBaseChartListeners' names='["click", "doubleClick", "seriesNodeClick"] ' config='{ "lookupRoot": "charts-api" }'></interface-documentation>
-
-## Next Up
-
-Continue to the next section to learn more about [overlays](/charts-overlays/).

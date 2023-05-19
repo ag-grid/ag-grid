@@ -1,9 +1,11 @@
-[[only-angular]]
+<framework-specific-section frameworks="angular">
 |## Cell Renderer Component
 |
 |The interface for the cell renderer component is as follows:
-|
-|```ts
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false} language="ts">
 |interface ICellRendererAngularComp {
 |    // Mandatory - Params for rendering
 |    agInit(params: ICellRendererParams): void;
@@ -13,6 +15,9 @@
 |    // with the new values.
 |    refresh(params: ICellRendererParams): boolean;
 |}
-|```
-|The interface for the cell renderer parameters is as follows:
-|
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+The interface for the cell renderer parameters is as follows:
+</framework-specific-section>

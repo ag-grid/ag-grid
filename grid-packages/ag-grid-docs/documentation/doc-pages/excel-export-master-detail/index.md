@@ -13,11 +13,12 @@ There is an important difference between rendering and exporting Master / Detail
 
 When exporting, the original data object representing the row is passed to `getCustomContentBelowRow` which returns styled content to be inserted into the export. In this case no separate instance of the Grid is created for the detail rows. This ensures good export performance even with large Master / Detail data sets. However, if your `detailGridOptions` contains value getters, value formatters, sorting, filtering etc and you want these to appear in the export, they must be applied inside `getCustomContentBelowRow`.
 
-[[note]]
-| Since detail grids are full Grid instances, triggering an export through the right-click context menu on
-| a detail grid will do a normal export for the detail grid only. If this is not appropriate for your application
-| you can disable the export item in the context menu, or replace it with a custom item that triggers an export on
-| the master grid.
+<note>
+Since detail grids are full Grid instances, triggering an export through the right-click context menu on
+a detail grid will do a normal export for the detail grid only. If this is not appropriate for your application
+you can disable the export item in the context menu, or replace it with a custom item that triggers an export on
+the master grid.
+</note>
 
 The example below demonstrates how both the master and detail data can be exported.
 

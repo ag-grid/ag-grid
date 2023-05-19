@@ -1,4 +1,4 @@
-import { DATA_MARKET_SHARE } from './data';
+import { DATA_MARKET_SHARE, DATA_MANY_LONG_LABELS } from './data';
 import { AgPolarChartOptions } from '../../../agChartOptions';
 
 export const PIE_SERIES: AgPolarChartOptions = {
@@ -244,6 +244,23 @@ export const GROUPED_DOUGHNUT_SERIES_DIFFERENT_RADII: AgPolarChartOptions = {
             radiusKey: 'satisfaction',
             outerRadiusOffset: -150,
             innerRadiusOffset: -250,
+        },
+    ],
+};
+
+export const PIE_CALLOUT_LABELS_COLLISIONS: AgPolarChartOptions = {
+    title: {
+        text: 'Many Long Labels',
+    },
+    data: DATA_MANY_LONG_LABELS,
+    series: [
+        {
+            type: 'pie',
+            angleKey: 'value',
+            calloutLabelKey: 'label',
+            calloutLabel: {
+                minAngle: 1,
+            },
         },
     ],
 };

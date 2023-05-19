@@ -84,7 +84,7 @@ export class Events {
      * and replaced with the new event (but using the old event type and interface name)
      */
     public static EVENT_INTERNAL_TOOL_PANEL_VISIBLE_CHANGED: 'internalToolPanelVisibleChanged' = 'internalToolPanelVisibleChanged';
-    
+
     public static EVENT_COLUMN_PANEL_ITEM_DRAG_START: 'columnPanelItemDragStart' = 'columnPanelItemDragStart';
     public static EVENT_COLUMN_PANEL_ITEM_DRAG_END: 'columnPanelItemDragEnd' = 'columnPanelItemDragEnd';
 
@@ -183,6 +183,9 @@ export class Events {
      * (not used if doing plain JavaScript). If the grid receives changes due
      * to bound properties, this event fires after the grid has finished processing the change. */
     public static EVENT_COMPONENT_STATE_CHANGED: 'componentStateChanged' = 'componentStateChanged';
+
+    /** Only used by the SSRM, called when the grid has no more rows to refresh */
+    public static EVENT_STORE_REFRESHED: 'storeRefreshed' = 'storeRefreshed';
 
     /*****************************  INTERNAL EVENTS: START ******************************************* */
 

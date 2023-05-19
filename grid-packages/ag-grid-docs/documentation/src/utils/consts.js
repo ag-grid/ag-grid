@@ -18,4 +18,9 @@ export const rootLocalPrefix = `//${isDevelopment() && !IS_SSR && window.locatio
 export const localPrefix = `//${isDevelopment() && !IS_SSR && window.location ? `${window.location.hostname}:8080` : process.env.GATSBY_HOST}${process.env.GATSBY_ROOT_DIRECTORY || ''}/dev`;
 export const hostPrefix = `https://${isDevelopment() && !IS_SSR && window.location ? `${window.location.hostname}:8000` : process.env.GATSBY_HOST}${process.env.GATSBY_ROOT_DIRECTORY || ''}`;
 
+// determines if we're prod or archives - the latter uses dev artefacts and prod doesn't
 export const isProductionBuild = () => (!isDevelopment() && process.env.GATSBY_HOST ==='www.ag-grid.com' && !process.env.GATSBY_ROOT_DIRECTORY);
+export const isPreProductionBuild = () => (!isDevelopment() && process.env.GATSBY_HOST ==='www.ag-grid.com' && process.env.GATSBY_ROOT_DIRECTORY && process.env.GATSBY_ROOT_DIRECTORY.includes('/archive/'));
+
+// used in docs app code to determine if prod type features should be exposed
+export const isProductionEnvironment = () => (isProductionBuild() || isPreProductionBuild());

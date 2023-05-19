@@ -18,9 +18,6 @@ const options: AgChartOptions = {
       binCount: 20,
     },
   ],
-  legend: {
-    enabled: false,
-  },
   axes: [
     {
       type: 'number',

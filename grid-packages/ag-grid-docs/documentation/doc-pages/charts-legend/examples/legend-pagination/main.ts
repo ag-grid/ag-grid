@@ -114,6 +114,7 @@ const options: AgChartOptions = {
       position: "bottom",
       type: "time",
       gridStyle: [],
+      nice: false,
     },
     {
       position: "right",
@@ -130,7 +131,6 @@ const options: AgChartOptions = {
     },
   ],
   legend: {
-    position: "bottom",
     maxHeight: 40,
     maxWidth: 800,
     pagination: {

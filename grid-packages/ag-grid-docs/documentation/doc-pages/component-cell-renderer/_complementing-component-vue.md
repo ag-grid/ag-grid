@@ -1,18 +1,17 @@
-[[only-vue]]
+<framework-specific-section frameworks="vue">
+<snippet transform={false}>
+|&lt;template>
+|     &lt;ag-grid-vue :columnDefs="columnDefs" ...other properties>
+|     &lt;/ag-grid-vue>
+|&lt;/template>
 |
-|```js
-|<template>
-|     <ag-grid-vue :columnDefs="columnDefs" ...other properties>
-|     </ag-grid-vue>
-|</template>
-|
-|<script>
+|&lt;script>
 |//...other imports
 |import {AgGridVue} from "ag-grid-vue3";
 |
 |// define cellRenderer to be reused
 |const ColourComponent = {
-|   template: '<span :style="{color: params.color}">{{params.value}}</span>'
+|   template: '&lt;span :style="{color: params.color}">{{params.value}}&lt;/span>'
 |};
 |
 |export default {
@@ -44,6 +43,6 @@
 |  }
 |  //...other properties & methods
 |}
-|</script>
-|
-|```
+|&lt;/script>
+</snippet>
+</framework-specific-section>

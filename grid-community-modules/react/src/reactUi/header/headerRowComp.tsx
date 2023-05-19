@@ -12,8 +12,7 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
     const [ transform, setTransform ] = useState<string>();
     const [ height, setHeight ] = useState<string>();
-    const [ top, setTop ] = useState<string>();
-    const [ width, setWidth ] = useState<string>();
+    const [top, setTop] = useState<string>();
     const [ ariaRowIndex, setAriaRowIndex ] = useState<number>();
     const [ cellCtrls, setCellCtrls ] = useState<AbstractHeaderCellCtrl[]>([]);
 
@@ -52,7 +51,7 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
             setHeight: height => setHeight(height),
             setTop: top => setTop(top),
             setHeaderCtrls: ctrls => setCellCtrls(prev => setCellCtrlsMaintainOrder(prev, ctrls)),
-            setWidth: width => setWidth(width),
+            setWidth: width => eGui.current!.style.width = width,
             setAriaRowIndex: rowIndex => setAriaRowIndex(rowIndex)
         };
 
@@ -64,8 +63,7 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
         transform: transform,
         height: height,
         top: top,
-        width: width
-    }), [transform, height, top, width]);
+    }), [transform, height, top]);
 
     const className = useMemo( ()=> {
         const res: string[] = [`ag-header-row`];

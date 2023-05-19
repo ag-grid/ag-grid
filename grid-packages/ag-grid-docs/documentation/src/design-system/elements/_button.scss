@@ -1,12 +1,11 @@
 @use '../core' as *;
 
-button,
-input[type='reset'],
-input[type='submit'],
-.button,
-.button-secondary {
+button:not(.button-style-none),
+input[type='reset']:not(.button-style-none),
+input[type='submit']:not(.button-style-none),
+.button:not(.button-style-none),
+.button-secondary:not(.button-style-none) {
     appearance: none;
-
     display: inline-block;
     font-size: var(--font-size);
     font-weight: $font-weight-bold;
@@ -23,7 +22,8 @@ input[type='submit'],
     transition: background-color $default-transition-timing, border $default-transition-timing,
         box-shadow $default-transition-timing;
 
-    &:hover {
+    &:hover,
+    &.hover {
         background-color: var(--button-hover-color);
         color: var(--button-text-color);
     }
@@ -33,7 +33,6 @@ input[type='submit'],
         transition: background-color 0.125s ease-in-out;
     }
 
-    &:focus,
     &:focus-visible {
         border-color: var(--button-hover-color);
         box-shadow: 0 0 0 4px var(--button-focus-box-shadow-color);
@@ -52,6 +51,8 @@ input[type='submit'],
     }
 
     .icon {
+        --icon-size: 2em;
+
         display: inline-block;
         position: relative;
         bottom: 0.05em;
@@ -60,7 +61,7 @@ input[type='submit'],
     }
 }
 
-.button-secondary {
+.button-secondary:not(.button-style-none) {
     --button-color: var(--water-blue);
     --button-hover-color: var(--sky-blue);
     --button-active-color: var(--azure-blue);
@@ -68,7 +69,7 @@ input[type='submit'],
     --button-focus-box-shadow-color: var(--light-water-blue);
 }
 
-.button-input {
+.button-input:not(.button-style-none) {
     --button-color: var(--white);
     --button-hover-color: var(--white);
     --button-active-color: var(--white);
@@ -79,13 +80,39 @@ input[type='submit'],
     transition: border-color $default-transition-timing, box-shadow $default-transition-timing;
 
     &:hover:not(:disabled):not([readonly]),
-    &:focus:not(:disabled):not([readonly]),
     &:focus-visible:not(:disabled):not([readonly]) {
         border-color: var(--input-focus-border-color);
     }
 
-    &:focus:not(:disabled):not([readonly]),
     &:focus-visible:not(:disabled):not([readonly]) {
         box-shadow: 0 0 0 3px var(--input-focus-box-shadow-color);
+    }
+}
+
+.button-style-none {
+    appearance: none;
+    padding: 0;
+    text-align: left;
+    border: none;
+    color: var(--text-color);
+    background-color: transparent;
+
+    &.button-as-link {
+        --text-color: var(--link-color);
+
+        transition: color $default-transition-timing;
+
+        &:hover {
+            --text-color: var(--link-hover-color);
+
+            > .icon {
+                --text-color: var(--link-hover-color);
+            }
+        }
+
+        > .icon {
+            --icon-size: 1.5em;
+            --text-color: var(--link-color);
+        }
     }
 }

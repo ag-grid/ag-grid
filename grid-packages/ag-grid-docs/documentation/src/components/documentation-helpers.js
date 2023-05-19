@@ -193,12 +193,20 @@ const NEWLINE_DEFAULT_STRING = '<br> Default:';
 /** Handle correct placement of more link so that default is always at the end on a new line even if already included in JsDoc. */
 export function addMoreLink(description, seeMore) {
     // Get default string along with its value
-    var defaultReg = new RegExp(NEWLINE_DEFAULT_STRING + '(.*)', "g");
-    const hasDefault = description.match(defaultReg);
-    if (hasDefault && hasDefault.length > 0) {
-        return description.replace(hasDefault[0], seeMore + hasDefault[0]);
-    }
+  //  var defaultReg = new RegExp(NEWLINE_DEFAULT_STRING + '(.*)', "g");
+  //  const hasDefault = description.match(defaultReg);
+  //  if (hasDefault && hasDefault.length > 0) {
+  //      return description.replace(hasDefault[0], seeMore + hasDefault[0]);
+  //  }
     return description + seeMore;
+}
+
+export function removeDefaultValue(docString) {
+
+    // Default may or may not be on a new line in JsDoc but in both cases we want the default to be on the next line
+    const defaultReg = /(\n\s+\*)?(<br>)? Default:.*<\/code>/g;
+
+    return docString.replace(defaultReg, '');
 }
 
 export function formatJsDocString(docString) {
@@ -208,8 +216,6 @@ export function formatJsDocString(docString) {
     const paramReg = /\* @param (\w+) (.*)\n/g;
     const returnsReg = /\* (@returns) (.*)\n/g;
     const newLineReg = /\n\s+\*(?!\*)/g;
-    // Default may or may not be on a new line in JsDoc but in both cases we want the default to be on the next line
-    const defaultReg = /(\n\s+\*)?(<br>)? Default:/g;
 
     // Turn option list, new line starting with - into bullet points
     // eslint-disable-next-line
@@ -218,7 +224,6 @@ export function formatJsDocString(docString) {
     let formatted = docString
         .replace('/**', '')
         .replace('*/', '')
-        .replace(defaultReg, NEWLINE_DEFAULT_STRING)
         .replace(paramReg, '<br> `$1` $2 \n')
         .replace(returnsReg, '<br> <strong>Returns: </strong> $2 \n')
         .replace(optionReg, '<li style="margin-left:1rem"> $1 </li>')

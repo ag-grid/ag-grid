@@ -5,6 +5,7 @@ import { ChangeDetectable, SceneChangeDetection, RedrawType } from './changeDete
 import { SceneDebugOptions } from './sceneDebugOptions';
 import { HdpiCanvas } from '../canvas/hdpiCanvas';
 import { HdpiOffscreenCanvas } from '../canvas/hdpiOffscreenCanvas';
+import { LiteralOrFn } from '../util/compare';
 
 export { SceneChangeDetection, RedrawType };
 
@@ -38,6 +39,7 @@ const zIndexChangedCallback = (o: any) => {
 };
 
 type Layer = HdpiCanvas | HdpiOffscreenCanvas;
+export type ZIndexSubOrder = [LiteralOrFn<string | number>, LiteralOrFn<number>];
 
 export interface LayerManager {
     debug: SceneDebugOptions;
@@ -45,12 +47,12 @@ export interface LayerManager {
     markDirty(): void;
     addLayer(opts: {
         zIndex?: number;
-        zIndexSubOrder?: [string, number];
+        zIndexSubOrder?: ZIndexSubOrder;
         name?: string;
         getComputedOpacity: () => number;
         getVisibility: () => boolean;
     }): Layer | undefined;
-    moveLayer(canvas: Layer, zIndex: number, zIndexSubOrder?: [string, number]): void;
+    moveLayer(canvas: Layer, zIndex: number, zIndexSubOrder?: ZIndexSubOrder): void;
     removeLayer(canvas: Layer): void;
 }
 
@@ -331,7 +333,9 @@ export abstract class Node extends ChangeDetectable {
             // for more complex shapes, so discarding items based on this will save a lot of
             // processing when the point is nowhere near the child.
             for (let i = children.length - 1; i >= 0; i--) {
-                const hit = children[i].computeBBox()?.containsPoint(x, y) ? children[i].pickNode(x, y) : undefined;
+                const child = children[i];
+                const containsPoint = child.computeTransformedBBox()?.containsPoint(x, y);
+                const hit = containsPoint ? child.pickNode(x, y) : undefined;
 
                 if (hit) {
                     return hit;
@@ -460,7 +464,7 @@ export abstract class Node extends ChangeDetectable {
     }
 
     markClean(opts?: { force?: boolean; recursive?: boolean }) {
-        const { force = false, recursive = true } = opts || {};
+        const { force = false, recursive = true } = opts ?? {};
 
         if (this._dirty === RedrawType.NONE && !force) {
             return;
@@ -494,7 +498,7 @@ export abstract class Node extends ChangeDetectable {
         changeCb: zIndexChangedCallback,
     })
     /** Discriminators for render order within a zIndex. */
-    zIndexSubOrder?: [string, number] = undefined;
+    zIndexSubOrder?: ZIndexSubOrder = undefined;
 
     pointerEvents: PointerEvents = PointerEvents.All;
 

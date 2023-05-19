@@ -13,7 +13,6 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
     const [cssBodyClasses, setBodyCssClasses] = useState<CssClasses>(new CssClasses());
     const [cssButtonWrapperClasses, setButtonWrapperCssClasses] = useState<CssClasses>(new CssClasses('ag-floating-filter-button', 'ag-hidden'));
     const [buttonWrapperAriaHidden, setButtonWrapperAriaHidden] = useState<"true" | "false">("false");
-    const [width, setWidth] = useState<string>();
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails>();
 
     const eGui = useRef<HTMLDivElement>(null);
@@ -54,7 +53,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
                 setButtonWrapperCssClasses(prev => prev.setClass('ag-hidden', !displayed))
                 setButtonWrapperAriaHidden(!displayed ? "true" : "false");
             },
-            setWidth: width => setWidth(width),
+            setWidth: width => eGui.current!.style.width = width,
             setCompDetails: compDetails => setUserCompDetails(compDetails),
             getFloatingFilterComp: ()=> userCompPromise.current ? userCompPromise.current :  null,
             setMenuIcon: eIcon => eButtonShowMainFilter.current!.appendChild(eIcon)
@@ -67,10 +66,6 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
     // js comps
     useLayoutEffect(() => showJsComp(userCompDetails, context, eFloatingFilterBody.current!, userCompRef), [userCompDetails]);
 
-    const style = useMemo(() => ({
-        width: width
-    }), [width]);
-    
     const className = useMemo(() => cssClasses.toString(), [cssClasses] );
     const bodyClassName = useMemo(() => cssBodyClasses.toString(), [cssBodyClasses] );
     const buttonWrapperClassName = useMemo(() => cssButtonWrapperClasses.toString(), [cssButtonWrapperClasses] );
@@ -86,7 +81,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
     const UserCompClass = userCompDetails && userCompDetails.componentClass;
 
     return (
-        <div ref={eGui} className={className} style={style} role="gridcell" tabIndex={-1}>
+        <div ref={eGui} className={className} role="gridcell" tabIndex={-1}>
             <div ref={eFloatingFilterBody} className={bodyClassName} role="presentation">
                 { reactUserComp && userCompStateless && <UserCompClass { ...userCompDetails!.params } /> }
                 { reactUserComp && !userCompStateless && <UserCompClass { ...userCompDetails!.params } ref={ userCompRef }/> }

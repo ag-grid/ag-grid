@@ -3,7 +3,7 @@ import { CssClasses } from "../utils";
 import { IDetailCellRenderer, IDetailCellRendererCtrl, IDetailCellRendererParams, GridOptions, GridApi, ColumnApi } from "ag-grid-community";
 import { BeansContext } from "../beansContext";
 import { AgGridReactUi } from "../agGridReactUi";
-import { useEffectOnce } from "../useEffectOnce";
+import { useEffectOnce, useLayoutEffectOnce } from "../useEffectOnce";
 
 const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
 
@@ -26,13 +26,13 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
         }));
     }
     
-    useEffectOnce(() => {
+    useLayoutEffectOnce(() => {
         if (props.template && typeof props.template === 'string') {
             console.warn('AG Grid: detailCellRendererParams.template is not supported by React - this only works with frameworks that work against String templates. To change the template, please provide your own React Detail Cell Renderer.');
         }
     });
 
-    useEffectOnce(() => {
+    useLayoutEffectOnce(() => {
         const compProxy: IDetailCellRenderer = {
             addOrRemoveCssClass: (name: string, on: boolean) => setCssClasses(prev => prev.setClass(name, on)),
             addOrRemoveDetailGridCssClass: (name: string, on: boolean) => setGridCssClasses(prev => prev.setClass(name, on)),

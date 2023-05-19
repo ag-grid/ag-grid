@@ -1,14 +1,14 @@
 'use strict';
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { render } from 'react-dom';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
 import MySimpleEditor, { MySimpleInterface } from './mySimpleEditor';
 
-import { ColDef, GridApi, ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -65,7 +65,6 @@ const createRowData = () => {
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);
-    const [gridApi, setGridApi] = useState<GridApi>();
     const [rowData] = useState<any[]>(createRowData());
     const columnDefs = useMemo<ColDef[]>(() => [
         {
@@ -107,10 +106,10 @@ const GridExample = () => {
         }
     ], []);
 
-    useEffect(() => {
+    const onGridReady = useCallback((params: GridReadyEvent) => {
         if (gridRef.current) {
             const interval = window.setInterval(() => {
-                const instances = gridApi!.getCellEditorInstances();
+                const instances = params.api.getCellEditorInstances();
                 if (instances.length > 0) {
                     const instance = instances[0] as Partial<MySimpleInterface>;
                     if (instance.myCustomFunction) {
@@ -126,7 +125,7 @@ const GridExample = () => {
 
             return () => clearInterval(interval);
         }
-    }, [gridRef.current])
+    }, [])
 
     return (
         <div style={{ width: '100%', height: '100%' }}>
@@ -148,11 +147,12 @@ const GridExample = () => {
                     }}
                     rowData={rowData}
                     columnDefs={columnDefs}
-                    onGridReady={params => setGridApi(params.api)}
+                    onGridReady={onGridReady}
                 />
             </div>
         </div>
     );
 }
 
-render(<GridExample></GridExample>, document.querySelector('#root'))
+const root = createRoot(document.getElementById('root')!);
+root.render(<GridExample />);

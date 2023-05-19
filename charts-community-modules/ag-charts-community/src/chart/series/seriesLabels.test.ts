@@ -1,13 +1,12 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import {
-    CANVAS_HEIGHT,
-    CANVAS_WIDTH,
     cartesianChartAssertions,
     extractImageData,
     hierarchyChartAssertions,
     IMAGE_SNAPSHOT_DEFAULTS,
     polarChartAssertions,
+    prepareTestOptions,
     repeat,
     setupMockCanvas,
     TestCase,
@@ -23,15 +22,15 @@ expect.extend({ toMatchImageSnapshot });
 const EXAMPLES: Record<string, TestCase> = {
     COLUMN_SERIES_LABELS: {
         options: examples.COLUMN_SERIES_LABELS,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'category'], seriesTypes: ['bar'] }),
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'category'], seriesTypes: ['column'] }),
     },
     STACKED_COLUMN_SERIES_LABELS: {
         options: examples.STACKED_COLUMN_SERIES_LABELS,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'category'], seriesTypes: ['bar'] }),
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'category'], seriesTypes: ['column'] }),
     },
     GROUPED_COLUMN_SERIES_LABELS: {
         options: examples.GROUPED_COLUMN_SERIES_LABELS,
-        assertions: cartesianChartAssertions({ axisTypes: ['number', 'category'], seriesTypes: ['bar'] }),
+        assertions: cartesianChartAssertions({ axisTypes: ['number', 'category'], seriesTypes: ['column'] }),
     },
     BAR_SERIES_LABELS: {
         options: examples.BAR_SERIES_LABELS,
@@ -101,14 +100,14 @@ const EXAMPLES: Record<string, TestCase> = {
         options: examples.LINE_COLUMN_COMBO_SERIES_LABELS,
         assertions: cartesianChartAssertions({
             axisTypes: ['category', 'number', 'number'],
-            seriesTypes: ['bar', 'line'],
+            seriesTypes: ['column', 'line'],
         }),
     },
     AREA_COLUMN_COMBO_SERIES_LABELS: {
         options: examples.AREA_COLUMN_COMBO_SERIES_LABELS,
         assertions: cartesianChartAssertions({
             axisTypes: ['category', 'number', 'number'],
-            seriesTypes: ['area', 'bar'],
+            seriesTypes: ['area', 'column'],
         }),
     },
     HISTOGRAM_SCATTER_COMBO_SERIES_LABELS: {
@@ -144,9 +143,7 @@ describe('series labels', () => {
         for (const [exampleName, example] of Object.entries(EXAMPLES)) {
             it(`for ${exampleName} it should create chart instance as expected`, async () => {
                 const options: AgChartOptions = { ...example.options };
-                options.autoSize = false;
-                options.width = CANVAS_WIDTH;
-                options.height = CANVAS_HEIGHT;
+                prepareTestOptions(options);
 
                 chart = AgChart.create(options) as Chart;
                 await waitForChartStability(chart);
@@ -162,9 +159,7 @@ describe('series labels', () => {
                 };
 
                 const options: AgChartOptions = { ...example.options };
-                options.autoSize = false;
-                options.width = CANVAS_WIDTH;
-                options.height = CANVAS_HEIGHT;
+                prepareTestOptions(options);
 
                 chart = AgChart.create(options) as Chart;
                 await compare();

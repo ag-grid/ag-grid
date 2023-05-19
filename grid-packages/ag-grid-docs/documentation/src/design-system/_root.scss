@@ -11,6 +11,7 @@
     }
 
     --max-page-width: #{$max-page-width};
+    --horizontal-margin: #{$horizontal-margin};
 
     --border-radius: #{$border-radius};
 
@@ -38,5 +39,5 @@
     --font-weight: var(--font-weight-normal);
     --line-height: var(--line-height-normal);
 
-    --icon-size: 2em;
+    --icon-size: #{$icon-size};
 }

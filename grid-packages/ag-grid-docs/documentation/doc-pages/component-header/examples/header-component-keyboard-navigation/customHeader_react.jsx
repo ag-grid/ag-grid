@@ -6,7 +6,7 @@ export default class CustomElements extends Component {
       <div className="custom-header">
         <span>{this.props.displayName}</span>
         <button>Click me</button>
-        <input value="120"/>
+        <input defaultValue="120" />
         <a href="https://ag-grid.com" target="_blank">Link</a>
       </div>
     )

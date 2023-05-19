@@ -4,14 +4,24 @@
 a {
     text-decoration: none;
     color: var(--link-color);
+    transition: color $default-transition-timing;
 
     &:hover {
         color: var(--link-hover-color);
     }
+
+    > .icon {
+        --icon-size: 1.5em;
+        --text-color: var(--link-color);
+    }
+
+    &:hover > .icon {
+        --text-color: var(--link-hover-color);
+    }
 }
 
 code {
-    font-size: 0.9rem;
+    font-size: 0.875em;
     padding: 0 0.2em;
     font-family: var(--monospace-font-family);
     white-space: normal;
@@ -25,7 +35,7 @@ kbd {
     color: var(--text-color); // Bootstrap conflict
 
     display: inline-block;
-    margin: 0 0.1em;
+    margin: 0.1em 0.1em;
     padding: 0.1em 0.6em;
     font-family: var(--font-family);
     border-radius: var(--border-radius);

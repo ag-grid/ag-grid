@@ -40,7 +40,7 @@ export class TimeAxis extends ChartAxis<TimeScale, number | Date> {
         }
 
         if (d.length > 2) {
-            d = (extent(d) || [0, 1000]).map((x) => new Date(x));
+            d = (extent(d) ?? [0, 1000]).map((x) => new Date(x));
         }
         if (min instanceof Date) {
             d = [min, d[1]];
@@ -66,5 +66,11 @@ export class TimeAxis extends ChartAxis<TimeScale, number | Date> {
 
     formatDatum(datum: Date): string {
         return this.datumFormatter(datum);
+    }
+
+    calculatePadding(_min: number, _max: number) {
+        // numbers in domain correspond to Unix timestamps
+        // automatically expand domain by 1 in each direction
+        return 1;
     }
 }

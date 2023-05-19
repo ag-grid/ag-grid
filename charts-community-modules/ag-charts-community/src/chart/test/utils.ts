@@ -35,8 +35,16 @@ process.env.PANGOCAIRO_BACKEND = 'fontconfig';
 process.env.FONTCONFIG_PATH = __dirname;
 process.env.FONTCONFIG_NAME = `${__dirname}/fonts.conf`;
 
-export const CANVAS_WIDTH = 800;
-export const CANVAS_HEIGHT = 600;
+const CANVAS_WIDTH = 800;
+const CANVAS_HEIGHT = 600;
+
+export function prepareTestOptions<T extends AgChartOptions<any, any>>(options: T, container = document.body) {
+    options.autoSize = false;
+    options.width = CANVAS_WIDTH;
+    options.height = CANVAS_HEIGHT;
+    options.container = container;
+    return options;
+}
 
 export function deproxy(chartOrProxy: Chart | AgChartInstance): Chart {
     return chartOrProxy instanceof Chart ? (chartOrProxy as any) : (chartOrProxy as any).chart;
@@ -62,7 +70,7 @@ export function range(start: number, end: number, step = 1): number[] {
 }
 
 export function dateRange(start: Date, end: Date, step = 24 * 60 * 60 * 1000): Date[] {
-    const result = [];
+    const result: Date[] = [];
 
     let next = start.getTime();
     const endTime = end.getTime();
@@ -101,6 +109,12 @@ export function clickEvent({ offsetX, offsetY }: { offsetX: number; offsetY: num
     return event;
 }
 
+export function doubleClickEvent({ offsetX, offsetY }: { offsetX: number; offsetY: number }): MouseEvent {
+    const event = new MouseEvent('dblclick', { bubbles: true } as any);
+    Object.assign(event, { offsetX, offsetY, pageX: offsetX, pageY: offsetY });
+    return event;
+}
+
 export function wheelEvent({
     clientX,
     clientY,
@@ -114,7 +128,7 @@ export function wheelEvent({
 }
 
 export function cartesianChartAssertions(params?: { type?: string; axisTypes?: string[]; seriesTypes?: string[] }) {
-    const { axisTypes = ['category', 'number'], seriesTypes = ['bar'] } = params || {};
+    const { axisTypes = ['category', 'number'], seriesTypes = ['bar'] } = params ?? {};
 
     return async (chartOrProxy: Chart | AgChartInstance) => {
         const chart = deproxy(chartOrProxy);
@@ -126,7 +140,7 @@ export function cartesianChartAssertions(params?: { type?: string; axisTypes?: s
 }
 
 export function polarChartAssertions(params?: { seriesTypes?: string[] }) {
-    const { seriesTypes = ['pie'] } = params || {};
+    const { seriesTypes = ['pie'] } = params ?? {};
 
     return async (chartOrProxy: Chart | AgChartInstance) => {
         const chart = deproxy(chartOrProxy);
@@ -137,7 +151,7 @@ export function polarChartAssertions(params?: { seriesTypes?: string[] }) {
 }
 
 export function hierarchyChartAssertions(params?: { seriesTypes?: string[] }) {
-    const { seriesTypes = ['treemap'] } = params || {};
+    const { seriesTypes = ['treemap'] } = params ?? {};
 
     return async (chartOrProxy: Chart | AgChartInstance) => {
         const chart = deproxy(chartOrProxy);
@@ -147,10 +161,16 @@ export function hierarchyChartAssertions(params?: { seriesTypes?: string[] }) {
     };
 }
 
+const checkTargetValid = (target: HTMLElement) => {
+    if (!target.isConnected) throw new Error('Chart must be configured with a container for event testing to work');
+};
+
 export function hoverAction(x: number, y: number): (chart: Chart | AgChartInstance) => Promise<void> {
     return async (chartOrProxy) => {
         const chart = deproxy(chartOrProxy);
         const target = chart.scene.canvas.element as HTMLElement;
+        checkTargetValid(target);
+
         // Reveal tooltip.
         target?.dispatchEvent(mouseMoveEvent({ offsetX: x - 1, offsetY: y - 1 }));
         target?.dispatchEvent(mouseMoveEvent({ offsetX: x, offsetY: y }));
@@ -165,7 +185,27 @@ export function clickAction(x: number, y: number): (chart: Chart | AgChartInstan
     return async (chartOrProxy) => {
         const chart = deproxy(chartOrProxy);
         const target = chart.scene.canvas.element;
+        checkTargetValid(target);
+
         target?.dispatchEvent(clickEvent({ offsetX: x, offsetY: y }));
+        return new Promise((resolve) => {
+            setTimeout(resolve, 50);
+        });
+    };
+}
+
+export function doubleClickAction(x: number, y: number): (chart: Chart | AgChartInstance) => Promise<void> {
+    return async (chartOrProxy) => {
+        const chart = deproxy(chartOrProxy);
+        const target = chart.scene.canvas.element;
+        // A double click is always preceeded by two single clicks, simulate here to ensure correct handling
+        target?.dispatchEvent(clickEvent({ offsetX: x, offsetY: y }));
+        target?.dispatchEvent(clickEvent({ offsetX: x, offsetY: y }));
+        await new Promise((resolve) => {
+            setTimeout(resolve, 50);
+        });
+        await waitForChartStability(chart);
+        target?.dispatchEvent(doubleClickEvent({ offsetX: x, offsetY: y }));
         return new Promise((resolve) => {
             setTimeout(resolve, 50);
         });
@@ -179,27 +219,19 @@ export function scrollAction(x: number, y: number, delta: number): Promise<void>
     });
 }
 
-export function combineAssertions(...assertions: ((chart: AgChartInstance) => void)[]) {
-    return async (chartOrProxy: AgChartInstance) => {
-        for (const assertion of assertions) {
-            await assertion(chartOrProxy);
-        }
-    };
-}
-
 export function extractImageData({
     nodeCanvas,
     bbox,
 }: {
-    nodeCanvas?: Canvas;
+    nodeCanvas: Canvas;
     bbox?: { x: number; y: number; width: number; height: number };
 }) {
     let sourceCanvas = nodeCanvas;
-    if (bbox) {
+    if (bbox && nodeCanvas) {
         const { x, y, width, height } = bbox;
         sourceCanvas = createCanvas(width, height);
         sourceCanvas
-            .getContext('2d')
+            ?.getContext('2d')
             .drawImage(
                 nodeCanvas,
                 Math.round(x),
@@ -213,10 +245,10 @@ export function extractImageData({
             );
     }
 
-    return sourceCanvas.toBuffer('image/png', CANVAS_TO_BUFFER_DEFAULTS);
+    return sourceCanvas?.toBuffer('image/png', CANVAS_TO_BUFFER_DEFAULTS);
 }
 
-export function setupMockCanvas(): { nodeCanvas?: Canvas } {
+export function setupMockCanvas(): { nodeCanvas: Canvas } {
     const mockCtx: mockCanvas.MockContext = new mockCanvas.MockContext();
 
     beforeEach(() => {
@@ -229,10 +261,10 @@ export function setupMockCanvas(): { nodeCanvas?: Canvas } {
         mockCanvas.teardown(mockCtx);
     });
 
-    return mockCtx.ctx;
+    return mockCtx?.ctx;
 }
 
-export function toMatchImage(actual, expected, { writeDiff = true } = {}) {
+export function toMatchImage(this: any, actual: Buffer, expected: Buffer, { writeDiff = true } = {}) {
     // Grab values from enclosing Jest scope.
     const { testPath, currentTestName } = this;
 

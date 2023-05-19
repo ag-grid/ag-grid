@@ -1,7 +1,8 @@
 'use strict';
 
 import React, { forwardRef, useEffect, useImperativeHandle, useMemo, memo, useRef, useState } from 'react';
-import ReactDOM, { render } from 'react-dom';
+import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -352,7 +353,5 @@ const GridExample = () => {
     );
 };
 
-render(
-    <GridExample />,
-    document.querySelector('#root')
-);
+const root = createRoot(document.getElementById('root')!);
+root.render(<GridExample />);

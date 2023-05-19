@@ -29,10 +29,11 @@ const gridOptions = {
 To lookup a Row Node use `getRowNode()` on the Grid API as follows:
 
 <snippet>
-// get the row node with ID 55
-const rowNode = gridOptions.api.getRowNode('55');
-// do something with the row, e.g. select it
-rowNode.setSelected(true);
+| // get the row node with ID 55
+| const rowNode = gridOptions.api.getRowNode('55');
+|
+| // do something with the row, e.g. select it
+| rowNode.setSelected(true);
 </snippet>
 
 ## Iterating Rows
@@ -40,30 +41,34 @@ rowNode.setSelected(true);
 Sometimes you may want to iterate through all the Row Nodes in the grid. This can be done using the grid's iteration APIs. The iteration APIs go through every Row Node, regardless of whether the Row Node is displayed or not. For example, if grouping and the group is closed, the group's children are not displayed by the grid, however the children are included in the iteration 'for-each' methods.
 
 <snippet>
-// iterate through every node in the grid
-gridOptions.api.forEachNode((rowNode, index) => {
-    console.log('node ' + rowNode.data.athlete + ' is in the grid');
-});
-// iterate only nodes that pass the filter
-gridOptions.api.forEachNodeAfterFilter((rowNode, index) => {
-    console.log('node ' + rowNode.data.athlete + ' passes the filter');
-});
-// iterate only nodes that pass the filter and ordered by the sort order
-gridOptions.api.forEachNodeAfterFilterAndSort((rowNode, index) => {
-    console.log('node ' + rowNode.data.athlete + ' passes the filter and is in this order');
-});
-// iterate through every leaf node in the grid
-gridOptions.api.forEachLeafNode((rowNode, index) => {
-    console.log('node ' + rowNode.data.athlete + ' is not a group!');
-});
+| // iterate through every node in the grid
+| gridOptions.api.forEachNode((rowNode, index) => {
+|     console.log('node ' + rowNode.data.athlete + ' is in the grid');
+| });
+|
+| // iterate only nodes that pass the filter
+| gridOptions.api.forEachNodeAfterFilter((rowNode, index) => {
+|     console.log('node ' + rowNode.data.athlete + ' passes the filter');
+| });
+|
+| // iterate only nodes that pass the filter and ordered by the sort order
+| gridOptions.api.forEachNodeAfterFilterAndSort((rowNode, index) => {
+|     console.log('node ' + rowNode.data.athlete + ' passes the filter and is in this order');
+| });
+|
+| // iterate through every leaf node in the grid
+| gridOptions.api.forEachLeafNode((rowNode, index) => {
+|     console.log('node ' + rowNode.data.athlete + ' is not a group!');
+| });
 </snippet>
 
-[[note]]
-| All the methods above work with the Client-Side Row Model, i.e. the default [Row Model](/row-models/).
-| For all the other row models (i.e. [Viewport](/viewport/),
-| [Infinite](/infinite-scrolling/) and [Server-Side](/server-side-model/)) the only method
-| that is supported is `api.forEachNode()` and that will return back Row Nodes that are loaded into
-| browser memory only (as each of these row models use a data source to lazy load rows).
+<note>
+All the methods above work with the Client-Side Row Model, i.e. the default [Row Model](../row-models/).
+For all the other row models (i.e. [Viewport](../viewport/),
+[Infinite](../infinite-scrolling/) and [Server-Side](../server-side-model/)) the only method
+that is supported is `api.forEachNode()` and that will return back Row Nodes that are loaded into
+browser memory only (as each of these row models use a data source to lazy load rows).
+</note>
 
 ## Example Using For-Each Methods
 

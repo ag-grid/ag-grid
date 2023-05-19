@@ -1,3 +1,4 @@
+import classnames from 'classnames';
 import Footer from 'components/footer/Footer';
 import { GlobalContextProvider } from 'components/GlobalContext';
 import Menu from 'components/Menu';
@@ -7,20 +8,6 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import favIcons from '../images/favicons';
 import styles from './index.module.scss';
-import './mailchimp.css';
-
-// export const getScreenLayout = path => {
-//     // order is important here
-//     const processedPath = path.replace(/.*archive\/[0-9]{1,2}.[0-9].[0-9]/, "") // legacy archives
-//         .replace(/.*(testing|archives).ag-grid.com\/AG-[0-9][0-9][0-9][0-9]/, "") // branch builds/new archives
-//         .replace(/.*ag-grid.com/, "") // prod
-//         .replace(/.*localhost:8000/, "") // localhost
-//         .replace(/\?.*/, ""); // query params
-//
-//     const fullScreenPage = isFullScreenPage(processedPath);
-//     const fullScreenWithFooter = isFullScreenPageWithFooter(processedPath);
-//     return {fullScreenPage, fullScreenWithFooter};
-// }
 
 /**
  * This controls the layout template for all pages.
@@ -56,15 +43,15 @@ export const Layout = ({
                 <SiteHeader path={path} />
 
                 {!fullScreen && <TopBar frameworks={frameworks} currentFramework={framework} path={path} />}
-                <div className={styles['content-viewport']}>
-                    {!fullScreen && (
-                        <aside className={`${styles['main-menu']}`}>
-                            <Menu currentFramework={framework} currentPage={pageName} />
-                        </aside>
-                    )}
-                    <main is="div" className={styles['content']}>
-                        {children}
-                    </main>
+
+                <div className={classnames(styles.contentContainer, !fullScreen && styles.fullScreenPage)}>
+                    <div className={styles['content-viewport']}>
+                        {!fullScreen && <Menu currentFramework={framework} currentPage={pageName} path={path} />}
+
+                        <main is="div" className={styles['content']}>
+                            {children}
+                        </main>
+                    </div>
                 </div>
             </div>
             {(fullScreenWithFooter || !fullScreen) && <Footer framework={framework} />}

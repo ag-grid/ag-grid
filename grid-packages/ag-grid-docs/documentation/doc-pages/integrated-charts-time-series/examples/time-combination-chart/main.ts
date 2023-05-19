@@ -6,7 +6,14 @@ import {
 } from '@ag-grid-community/core';
 import { AgCartesianSeriesTooltipRendererParams } from 'ag-charts-community';
 import { getData } from "./data";
-declare var moment: any;
+
+function formatDate(date: Date | number) {
+  return Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: undefined,
+  }).format(new Date(date))
+}
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -33,9 +40,6 @@ const gridOptions: GridOptions = {
     common: {
       padding: {
         top: 45,
-      },
-      legend: {
-        position: 'bottom',
       },
       axes: {
         number: {
@@ -94,7 +98,7 @@ function numberParser(params: ValueParserParams) {
 function chartTooltipRenderer({ xValue, yValue }: AgCartesianSeriesTooltipRendererParams) {
   xValue = xValue instanceof Date ? xValue : new Date(xValue);
   return {
-    content: `${moment(xValue).format('DD MMM')}: ${yValue}`,
+    content: `${formatDate(xValue)}: ${yValue}`,
   };
 }
 

@@ -1,5 +1,5 @@
-[[only-vue]]
-|```js
+<framework-specific-section frameworks="vue">
+<snippet transform={false}>
 |this.gridOptions: {
 |    sideBar: {
 |        toolPanels: [
@@ -15,4 +15,5 @@
 |
 |    // other grid properties
 |}
-|```
+</snippet>
+</framework-specific-section>

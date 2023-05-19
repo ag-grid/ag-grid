@@ -31,8 +31,9 @@ learn more about the supplied `params`.
 This is the simplest way to supply custom functions, however it has limitations compared with 
 [Registering Custom Functions](/aggregation-custom-functions/#registering-custom-functions).
 
-[[note]]
-| Direct Functions will not appear in the [Columns Tool Panel](/tool-panel-columns/) or work when [Saving and Applying Column State](/column-state/#save-and-apply).
+<note>
+Direct Functions will not appear in the [Columns Tool Panel](../tool-panel-columns/) or work when [Saving and Applying Column State](../column-state/#save-and-apply).
+</note>
 
 The example below uses the direct `aggFunc` approach shown in the above snippet. Note the following:
 - Rows are grouped by the **Country** and **Year** columns by enabling the `rowGroup` column definition property.
@@ -89,10 +90,11 @@ the column or registered to the grid and reference by name (similar to grid prov
 
 A custom aggregation function takes values to aggregate and aggregates them.
 
-[[note]]
-| Javascript doesn't always represent decimal numbers correctly (e.g `0.2 + 0.1 = 0.30000000000000004`). For this
-| reason, if your aggregations rely on decimal values, it's better to add logic to enforce the amount of decimal
-| numbers that will be displayed in the cell (see the Rounded Average on Age Column in the example below).
+<note>
+Javascript doesn't always represent decimal numbers correctly (e.g `0.2 + 0.1 = 0.30000000000000004`). For this
+reason, if your aggregations rely on decimal values, it's better to add logic to enforce the amount of decimal
+numbers that will be displayed in the cell (see the Rounded Average on Age Column in the example below).
+</note>
 
 The next example shows many custom aggregation functions configured in a variety of ways and demonstrating different things aggregation functions can do.
 
@@ -130,45 +132,45 @@ also be resolved by the grid to a single value. This is shown in the code snippe
 
 
 <snippet spaceBetweenProperties="true">
-|const gridOptions = {
-|    columnDefs: [
-|        { field: 'gold', aggFunc: 'sum' },
-|        { field: 'silver', aggFunc: 'sum' },
-|        {
-|            headerName: 'Ratio',
-|            colId: 'ratio',
-|            valueGetter: params => {
-|                if (!params.node.group) {
-|                    // no need to handle group levels - calculated in the 'ratioAggFunc'
-|                    return {
-|                        gold: params.data.gold,
-|                        silver: params.data.silver,
-|                        toString: () => (gold && silver) ? gold / silver : 0,
-|                    }
-|                }
-|            },
-|            aggFunc: (params) => {
-|                var goldSum = 0;
-|                var silverSum = 0;
-|                params.values.forEach(value => {
-|                    if (value && value.gold) {
-|                        goldSum += value.gold;
-|                    }
-|                    if (value && value.silver) {
-|                        silverSum += value.silver;
-|                    }
-|                });
-|                return {
-|                    gold: goldSum,
-|                    silver: silverSum,
-|                    toString: () => {
-|                        return goldSum && silverSum ? goldSum / silverSum : 0;
-|                    },
-|                }
-|            }
-|        }
-|    ]
-|}
+| const gridOptions = {
+|     columnDefs: [
+|         { field: 'gold', aggFunc: 'sum' },
+|         { field: 'silver', aggFunc: 'sum' },
+|         {
+|             headerName: 'Ratio',
+|             colId: 'ratio',
+|             valueGetter: params => {
+|                 if (!params.node.group) {
+|                     // no need to handle group levels - calculated in the 'ratioAggFunc'
+|                     return {
+|                         gold: params.data.gold,
+|                         silver: params.data.silver,
+|                         toString: () => (gold && silver) ? gold / silver : 0,
+|                     }
+|                 }
+|             },
+|             aggFunc: (params) => {
+|                 var goldSum = 0;
+|                 var silverSum = 0;
+|                 params.values.forEach(value => {
+|                     if (value && value.gold) {
+|                         goldSum += value.gold;
+|                     }
+|                     if (value && value.silver) {
+|                         silverSum += value.silver;
+|                     }
+|                 });
+|                 return {
+|                     gold: goldSum,
+|                     silver: silverSum,
+|                     toString: () => {
+|                         return goldSum && silverSum ? goldSum / silverSum : 0;
+|                     },
+|                 }
+|             }
+|         }
+|     ]
+| }
 </snippet>
 
 The following example demonstrates this approach in action:
@@ -179,10 +181,11 @@ The following example demonstrates this approach in action:
 
 Using `colDef.aggFunc` is the preferred way of doing aggregations. However you may find scenarios where you cannot define your aggregations with respect to individual column values. Maybe you are aggregating sales records in different currencies and you need to read the value from one column and the currency code from another column and then convert the record to a common currency for aggregation - the point being you need data from more than just one column, or you want to put the results into different columns to the inputs for the calculation. For that reason, you can take control of the row aggregation by providing a `getGroupRowAgg` function as a grid callback.
 
-[[note]]
-| Using `colDef.aggFunc` is the preferred way of doing aggregations, only use `getGroupRowAgg`
-| if you cannot achieve what you want as it will make your code more complex. Also note that `getGroupRowAgg`
-| will not work when pivoting.
+<note>
+Using `colDef.aggFunc` is the preferred way of doing aggregations, only use `getGroupRowAgg`
+if you cannot achieve what you want as it will make your code more complex. Also note that `getGroupRowAgg`
+will not work when pivoting.
+</note>
 
 For groups, when aggregating, the grid stores the results in the colId of the column. For example, if you have a group defined as follows:
 

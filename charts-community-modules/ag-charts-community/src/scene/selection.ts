@@ -38,7 +38,7 @@ export class Selection<TChild extends Node = Node, TDatum = any> {
             data.slice(old.length).forEach((datum) => {
                 const node = factory(datum);
                 node.datum = datum;
-                init && init(node);
+                init?.(node);
                 parent.appendChild(node);
                 this._nodes.push(node);
             });
@@ -48,7 +48,7 @@ export class Selection<TChild extends Node = Node, TDatum = any> {
             });
         }
 
-        this._data = data;
+        this._data = data.slice(0);
         for (let i = 0; i < data.length; i++) {
             this._nodes[i].datum = this._data[i];
         }
@@ -61,7 +61,7 @@ export class Selection<TChild extends Node = Node, TDatum = any> {
         return this;
     }
 
-    select<T extends Node = Node>(predicate: (node: Node) => boolean): T[] {
+    static selectAll<T extends Node = Node>(parent: Node, predicate: (node: Node) => boolean): T[] {
         const results: T[] = [];
         const traverse = (node: Node) => {
             if (predicate(node)) {
@@ -69,8 +69,20 @@ export class Selection<TChild extends Node = Node, TDatum = any> {
             }
             node.children.forEach(traverse);
         };
-        traverse(this._parent);
+        traverse(parent);
         return results;
+    }
+
+    static selectByClass<T extends Node = Node>(node: Node, Class: new () => T): T[] {
+        return Selection.selectAll(node, (node) => node instanceof Class);
+    }
+
+    static selectByTag<T extends Node = Node>(node: Node, tag: number): T[] {
+        return Selection.selectAll(node, (node) => node.tag === tag);
+    }
+
+    select<T extends Node = Node>(predicate: (node: Node) => boolean): T[] {
+        return Selection.selectAll(this._parent, predicate);
     }
 
     selectByClass<T extends Node = Node>(Class: new () => T): T[] {

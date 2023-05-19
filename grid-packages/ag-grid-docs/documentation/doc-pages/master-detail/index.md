@@ -13,32 +13,32 @@ Master / Detail can be enabled using the `masterDetail` grid option with detail 
 `detailCellRendererParams` as shown below:
 
 <snippet spaceBetweenProperties="true">
-|const gridOptions = {
-|    // enable Master / Detail
-|    masterDetail: true,
-|
-|    // the first Column is configured to use agGroupCellRenderer
-|    columnDefs: [
-|        { field: 'name', cellRenderer: 'agGroupCellRenderer' },
-|        { field: 'account' }
-|    ],
-|
-|    // provide Detail Cell Renderer Params
-|    detailCellRendererParams: {
-|        // provide the Grid Options to use on the Detail Grid
-|        detailGridOptions: {
-|            columnDefs: [
-|                { field: 'callId' },
-|                { field: 'direction' },
-|                { field: 'number'}
-|            ]
-|        },
-|        // get the rows for each Detail Grid
-|        getDetailRowData: params => {
-|            params.successCallback(params.data.callRecords);
-|        }
-|    }
-|}
+| const gridOptions = {
+|     // enable Master / Detail
+|     masterDetail: true,
+| 
+|     // the first Column is configured to use agGroupCellRenderer
+|     columnDefs: [
+|         { field: 'name', cellRenderer: 'agGroupCellRenderer' },
+|         { field: 'account' }
+|     ],
+| 
+|     // provide Detail Cell Renderer Params
+|     detailCellRendererParams: {
+|         // provide the Grid Options to use on the Detail Grid
+|         detailGridOptions: {
+|             columnDefs: [
+|                 { field: 'callId' },
+|                 { field: 'direction' },
+|                 { field: 'number'}
+|             ]
+|         },
+|         // get the rows for each Detail Grid
+|         getDetailRowData: params => {
+|             params.successCallback(params.data.callRecords);
+|         }
+|     }
+| }
 </snippet>
 
 The example below shows a simple Master / Detail with all the above configured.
@@ -51,9 +51,10 @@ The example below shows a simple Master / Detail with all the above configured.
 
 1. Provide a callback via the Detail Cell Renderer* parameter `getDetailRowData`. The callback is called for each Detail Grid and sets the rows to display in each Detail Grid.
 
-[[note]]
-| To learn more about `detailCellRendererParams` configuration see the
-| [Detail Grids](/master-detail-grids/) section.
+<note>
+To learn more about `detailCellRendererParams` configuration see the
+[Detail Grids](../master-detail-grids/) section.
+</note>
 
 <grid-example title='Master Detail Example' name='simple' type='generated' options='{ "enterprise": true, "exampleHeight": 535, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 

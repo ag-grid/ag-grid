@@ -62,24 +62,25 @@ The following code snippet shows the relevant `gridOptions` entries for configur
 server-side row model:
 
 <snippet spaceBetweenProperties="true">
-|const gridOptions = {
-|    // choose Server-Side Row Model
-|    rowModelType: 'serverSide',
-|    // enable Tree Data
-|    treeData: true,
-|    // indicate if row is a group node
-|    isServerSideGroup: dataItem => {
-|        return dataItem.group;
-|    },
-|    // specify which group key to use
-|    getServerSideGroupKey: dataItem => {
-|        return dataItem.employeeId;
-|    },
-|}
+| const gridOptions = {
+|     // choose Server-Side Row Model
+|     rowModelType: 'serverSide',
+|     // enable Tree Data
+|     treeData: true,
+|     // indicate if row is a group node
+|     isServerSideGroup: dataItem => {
+|         return dataItem.group;
+|     },
+|     // specify which group key to use
+|     getServerSideGroupKey: dataItem => {
+|         return dataItem.employeeId;
+|     },
+| }
 </snippet>
 
-[[note]]
-| Be careful not to get mixed up with the [Client-Side Tree Data](/tree-data/) configurations by mistake.
+<note>
+Be careful not to get mixed up with the [Client-Side Tree Data](../tree-data/) configurations by mistake.
+</note>
 
 The example below shows this in action where the following can be noted:
 

@@ -2,8 +2,8 @@
     "name": "ag-chart-packages",
     "description": "NOTE: This package.json file is solely used by Plunker to look up type definitions.",
     "dependencies": {
-        "react": "17",
-        "react-dom": "17",
+        "react": "18",
+        "react-dom": "18",
         "ag-charts-community": "^7.0.0",
         "ag-charts-react": "^7.0.0"
     }

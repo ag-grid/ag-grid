@@ -14,7 +14,7 @@ The Date Filter can be configured as shown below:
 const gridOptions = {
     columnDefs: [
         {
-            field: 'age',
+            field: 'date',
             // configure column to use the Date Filter
             filter: 'agDateColumnFilter',
             filterParams: {
@@ -69,42 +69,42 @@ This pattern is intended to be similar to the JavaScript `compareTo(a, b)` funct
 Below is an example of using a date filter with a comparator.
 
 <snippet>
-|const gridOptions = {
-|    columnDefs: [
-|        // column definition configured to use a date filter
-|        {
-|            field: 'date',
-|            filter: 'agDateColumnFilter',
-|            // add extra parameters for the date filter
-|            filterParams: {
-|                // provide comparator function
-|                comparator: (filterLocalDateAtMidnight, cellValue) => {
-|                    const dateAsString = cellValue;
-|
-|                    if (dateAsString == null) {
-|                        return 0;
-|                    }
-|
-|                    // In the example application, dates are stored as dd/mm/yyyy
-|                    // We create a Date object for comparison against the filter date
-|                    const dateParts = dateAsString.split('/');
-|                    const year = Number(dateParts[2]);
-|                    const month = Number(dateParts[1]) - 1;
-|                    const day = Number(dateParts[0]);
-|                    const cellDate = new Date(year, month, day);
-|
-|                    // Now that both parameters are Date objects, we can compare
-|                    if (cellDate < filterLocalDateAtMidnight) {
-|                        return -1;
-|                    } else if (cellDate > filterLocalDateAtMidnight) {
-|                        return 1;
-|                    }
-|                    return 0;
-|                }
-|            }
-|        }
-|    ]
-|}
+| const gridOptions = {
+|     columnDefs: [
+|         // column definition configured to use a date filter
+|         {
+|             field: 'date',
+|             filter: 'agDateColumnFilter',
+|             // add extra parameters for the date filter
+|             filterParams: {
+|                 // provide comparator function
+|                 comparator: (filterLocalDateAtMidnight, cellValue) => {
+|                     const dateAsString = cellValue;
+| 
+|                     if (dateAsString == null) {
+|                         return 0;
+|                     }
+| 
+|                     // In the example application, dates are stored as dd/mm/yyyy
+|                     // We create a Date object for comparison against the filter date
+|                     const dateParts = dateAsString.split('/');
+|                     const year = Number(dateParts[2]);
+|                     const month = Number(dateParts[1]) - 1;
+|                     const day = Number(dateParts[0]);
+|                     const cellDate = new Date(year, month, day);
+| 
+|                     // Now that both parameters are Date objects, we can compare
+|                     if (cellDate < filterLocalDateAtMidnight) {
+|                         return -1;
+|                     } else if (cellDate > filterLocalDateAtMidnight) {
+|                         return 1;
+|                     }
+|                     return 0;
+|                 }
+|             }
+|         }
+|     ]
+| }
 </snippet>
 
 Once the date comparator callback is provided, then the Date Filter is able to perform all the comparison operations it needs, e.g. 'Less Than', 'Greater Than' and 'Equals'.

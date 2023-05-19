@@ -1,6 +1,6 @@
-import { describe, it, expect } from '@jest/globals';
+import { describe, expect, it } from '@jest/globals';
 import * as fs from 'fs';
-import { upgradeChartModel, heuristicVersionDetection } from './chartModelMigration';
+import { heuristicVersionDetection, upgradeChartModel } from './chartModelMigration';
 import { VERSION } from '../version';
 
 import { ChartModel } from '@ag-grid-community/core';

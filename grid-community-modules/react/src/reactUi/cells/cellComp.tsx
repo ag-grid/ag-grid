@@ -1,5 +1,5 @@
 import { CellCtrl, Component, ICellComp, ICellEditor, ICellRendererComp, UserCompDetails, _, ICellEditorComp, CssClassManager, CellStyle } from '@ag-grid-community/core';
-import React, { MutableRefObject, useCallback, useEffect, useRef, useState, useMemo, memo, useContext } from 'react';
+import React, { MutableRefObject, useCallback, useEffect, useRef, useState, useMemo, memo, useContext, useLayoutEffect } from 'react';
 import { isComponentStateless } from '../utils';
 import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
@@ -211,7 +211,7 @@ const CellComp = (props: {
     // way for React is just allow the new props to propagate down to the React Cell Renderer)
     // however we do this for backwards compatibility, as having refresh used to be supported.
     const lastRenderDetails = useRef<RenderDetails>();
-    useEffect(() => {
+    useLayoutEffect(() => {
         const oldDetails = lastRenderDetails.current;
         const newDetails = renderDetails;
         lastRenderDetails.current = renderDetails;
@@ -245,7 +245,7 @@ const CellComp = (props: {
 
     }, [renderDetails]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const doingJsEditor = editDetails && !editDetails.compDetails.componentFromFramework;
         if (!doingJsEditor) { return; }
 
@@ -280,7 +280,7 @@ const CellComp = (props: {
     }, [editDetails]);
 
     // tool widgets effect
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (!cellCtrl || !context) { return; }
 
         if (!eCellWrapper.current || !showCellWrapper) { return; }

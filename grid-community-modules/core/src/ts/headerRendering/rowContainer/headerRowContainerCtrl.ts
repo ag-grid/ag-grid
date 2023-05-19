@@ -20,7 +20,7 @@ import { HeaderGroupCellCtrl } from "../cells/columnGroup/headerGroupCellCtrl";
 
 export interface IHeaderRowContainerComp {
     setCenterWidth(width: string): void;
-    setContainerTransform(transform: string): void;
+    setViewportScrollLeft(left: number): void;
     setPinnedContainerWidth(width: string): void;
     setDisplayed(displayed: boolean): void;
     setCtrls(ctrls: HeaderRowCtrl[]): void;
@@ -37,6 +37,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
     private pinned: ColumnPinnedType;
     private comp: IHeaderRowContainerComp;
     private hidden: boolean = false;
+    private includeFloatingFilter: boolean = false;
 
     private filtersRowCtrl: HeaderRowCtrl | undefined;
     private columnsRowCtrl: HeaderRowCtrl | undefined;
@@ -58,7 +59,8 @@ export class HeaderRowContainerCtrl extends BeanStub {
         this.setupDragAndDrop(this.eViewport);
 
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
-        this.addManagedListener(this.eViewport, 'scroll', this.resetScrollLeft.bind(this));
+
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
 
         this.ctrlsService.registerHeaderContainer(this, this.pinned);
 
@@ -104,13 +106,13 @@ export class HeaderRowContainerCtrl extends BeanStub {
         };
 
         const refreshFilters = () => {
-            const includeFloatingFilter = this.columnModel.hasFloatingFilters() && !this.hidden;
+            this.includeFloatingFilter = this.columnModel.hasFloatingFilters() && !this.hidden;
 
             const destroyPreviousComp = () => {
                 this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);
             };
 
-            if (!includeFloatingFilter) {
+            if (!this.includeFloatingFilter) {
                 destroyPreviousComp();
                 return;
             }
@@ -165,18 +167,21 @@ export class HeaderRowContainerCtrl extends BeanStub {
         this.refresh(true);
     }
 
+    private onDisplayedColumnsChanged(): void {
+        const includeFloatingFilter = this.columnModel.hasFloatingFilters() && !this.hidden;
+        if (this.includeFloatingFilter !== includeFloatingFilter) {
+            this.refresh(true);
+        }
+    }
+
     private setupCenterWidth(): void {
         if (this.pinned != null) { return; }
 
-        this.createManagedBean(new CenterWidthFeature(width => this.comp.setCenterWidth(`${width}px`)));
+        this.createManagedBean(new CenterWidthFeature(width => this.comp.setCenterWidth(`${width}px`), true));
     }
 
     public setHorizontalScroll(offset: number): void {
-        this.comp.setContainerTransform(`translateX(${offset}px)`);
-    }
-
-    private resetScrollLeft(): void {
-        this.eViewport.scrollLeft = 0;
+        this.comp.setViewportScrollLeft(offset);
     }
 
     private setupPinnedWidth(): void {
@@ -261,7 +266,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
     }
 
     public getRowCount(): number {
-        return this.getAllCtrls().length;
+        return this.groupsRowCtrls.length + (this.columnsRowCtrl ? 1 : 0) + (this.filtersRowCtrl ? 1 : 0);    
     }
 
     protected destroy(): void {

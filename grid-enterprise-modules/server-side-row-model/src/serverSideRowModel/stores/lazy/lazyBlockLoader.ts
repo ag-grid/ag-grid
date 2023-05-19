@@ -14,6 +14,7 @@ export class LazyBlockLoader extends BeanStub {
     private readonly parentNode: RowNode;
     private readonly cache: LazyCache;
 
+    private checkForLoadQueued: boolean = false;
     private loaderTimeout: number | undefined = undefined;
     private nextBlockToLoad: [string, number] | undefined = undefined;
 
@@ -35,60 +36,56 @@ export class LazyBlockLoader extends BeanStub {
         return this.loadingNodes.has(index);
     }
 
-    private doesRowNeedLoaded(index: number) {
-        // block already loading, don't duplicate request
-        if(this.loadingNodes.has(index)) {
-            return false;
+    private getBlockToLoad() {
+        const firstRowInViewport = this.api.getFirstDisplayedRow();
+        const lastRowInViewport = this.api.getLastDisplayedRow();
+
+        // quick look-up for priority rows needing loading in viewport.
+        for(let i = firstRowInViewport; i <= lastRowInViewport; i++) {
+            const node = this.cache.getNodeCachedByDisplayIndex(i);
+
+            if (!node) {
+                // if no row details, ignore, as row hasn't been created
+                // and it's too expensive to work out its location here
+                continue;
+            }
+
+            const lazyNode = this.cache.getNodes().getBy('node', node);
+            if (!lazyNode) {
+                continue;
+            }
+
+            if(this.isRowLoading(lazyNode.index)) {
+                continue;
+            }
+
+            if (node.__needsRefreshWhenVisible || (node.stub && !node.failedLoad)) {
+                return this.getBlockStartIndexForIndex(lazyNode.index);
+            }
         }
-        const node = this.cache.getRowByStoreIndex(index);
-        if (!node) {
-            return false;
-        }
 
-        // user has manually refreshed this node
-        if (node.__needsRefresh) {
-            return true;
-        }
-
-        const firstRow = this.api.getFirstDisplayedRow();
-        const lastRow = this.api.getLastDisplayedRow();
-        const isRowInViewport = node.rowIndex != null && node.rowIndex >= firstRow && node.rowIndex <= lastRow;
-        
-        // other than refreshing nodes, only ever load nodes in viewport
-        if (!isRowInViewport) {
-            return false;
-        }
-
-        // if node is a loading stub, or if it needs reverified, we refresh
-        return (node.stub && !node.failedLoad) || node.__needsRefreshWhenVisible;
-    }
-
-    private getBlocksToLoad() {
-        const indexesToLoad = new Set<number>();
-
-        // filter for nodes somewhat reasonably close to viewport, so we don't refresh all data
-        // sort by distance to viewport, so user is making relevant requests
-        this.cache.getNodeMapEntries().forEach(([stringIndex, node]) => {
-            const numericIndex = Number(stringIndex);
-            const blockStart = this.getBlockStartIndexForIndex(numericIndex);
-            // if node is a loading stub, or has manually been marked as needsRefresh we refresh
-            if (this.doesRowNeedLoaded(numericIndex)) {
-                indexesToLoad.add(blockStart);
+        const nodesToRefresh = this.cache.getNodesToRefresh();
+        let nodeToRefresh: RowNode | null = null;
+        let nodeToRefreshDist: number = Number.MAX_SAFE_INTEGER;
+        nodesToRefresh.forEach(node => {
+            if (node.rowIndex == null) {
+                nodeToRefresh = node;
                 return;
             }
-        });
-        return [...indexesToLoad];
-    }
+            const distToViewportTop = Math.abs(firstRowInViewport - node.rowIndex);
+            const distToViewportBottom = Math.abs(node.rowIndex - lastRowInViewport);
+            if (distToViewportTop < nodeToRefreshDist) {
+                nodeToRefresh = node;
+                nodeToRefreshDist = distToViewportTop;
+            }
 
-    private getNodeRanges() {
-        const ranges: { [startOfRange: string]: number } = {};
-        this.getBlocksToLoad().forEach(index => {
-            const rangeSize = _.oneOrGreater(this.gridOptionsService.getNum('cacheBlockSize')) || LazyBlockLoader.DEFAULT_BLOCK_SIZE;
-            const translatedIndex = index - (index % rangeSize);
-            ranges[translatedIndex] = translatedIndex + rangeSize;
+            if (distToViewportBottom < nodeToRefreshDist) {
+                nodeToRefresh = node;
+                nodeToRefreshDist = distToViewportBottom;
+            }
         });
-
-        return ranges;
+        const lazyIndex = this.cache.getNodes().getBy('node', nodeToRefresh)?.index;
+        return lazyIndex == null ? undefined : this.getBlockStartIndexForIndex(lazyIndex);
     }
 
     public reset() {
@@ -153,42 +150,27 @@ export class LazyBlockLoader extends BeanStub {
         this.cache.getSsrmParams().datasource?.getRows(params);
     }
 
-    private isBlockInViewport(blockStart: number, blockEnd: number) {
-        const firstRowInViewport = this.api.getFirstDisplayedRow();
-        const lastRowInViewport = this.api.getLastDisplayedRow();
-
-        const blockContainsViewport = blockStart <= firstRowInViewport && blockEnd >= lastRowInViewport;
-        const blockEndIsInViewport = blockEnd > firstRowInViewport && blockEnd < lastRowInViewport
-        const blockStartIsInViewport = blockStart > firstRowInViewport && blockStart < lastRowInViewport;
-        return blockContainsViewport || blockEndIsInViewport || blockStartIsInViewport;
+    private getNextBlockToLoad(): [string, number] | null {
+        const result = this.getBlockToLoad();
+        if (result != null && result < 0) {
+            this.getBlockToLoad();
+        }
+        if (result != null) {
+            return [String(result), result + this.getBlockSize()];
+        }
+        return null;
     }
 
-    private getNextBlockToLoad() {
-        const ranges = this.getNodeRanges();
-        const toLoad = Object.entries(ranges);
-        if (toLoad.length === 0) {
-            return null;
+    public queueLoadCheck() {
+        // already going to check next cycle, ignore.
+        if (this.checkForLoadQueued) {
+            return;
         }
-    
-        const firstRowInViewport = this.api.getFirstDisplayedRow();
-        toLoad.sort(([aStart, aEnd], [bStart, bEnd]) => {
-            const isAInViewport = this.isBlockInViewport(Number(aStart), aEnd);
-            const isBInViewport = this.isBlockInViewport(Number(bStart), bEnd);
-
-            // always prioritise loading blocks in viewport
-            if (isAInViewport) {
-                return -1;
-            }
-
-            // always prioritise loading blocks in viewport
-            if (isBInViewport) {
-                return 1;
-            }
-
-            // prioritise based on how close to the viewport the block is
-            return Math.abs(firstRowInViewport - Number(aStart)) - Math.abs(firstRowInViewport - Number(bStart));
+        this.checkForLoadQueued = true;
+        window.queueMicrotask(() => {
+            this.checkForLoadQueued = false;
+            this.queueLoadAction();
         });
-        return toLoad[0];
     }
 
     public queueLoadAction() {

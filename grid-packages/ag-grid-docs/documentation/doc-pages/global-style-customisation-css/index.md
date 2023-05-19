@@ -57,8 +57,9 @@ This is implemented by setting default values for variables that reference other
 
 In this example, if you provide a value for `--ag-grid-size` of 10px then `--ag-cell-horizontal-padding` will default to 30px and --ag-header-height to 10px. However it is still possible to override these defaults with your own values.
 
-[[note]]
-| The Sass Styling API additionally implements [Colour Blending](/global-style-customisation-sass/#colour-blending), where for example if you set `range-selection-border-color` to red then `range-selection-background-color` will automatically default to a semi-transparent red. This is not possible in pure CSS, so it's necessary to set both `--ag-range-selection-border-color` and `--ag-range-selection-background-color`. See [Theme Colour Variables](#theme-colour-variables) for instructions on how to manually recreate this in CSS.
+<note>
+The Sass Styling API additionally implements [Colour Blending](/global-style-customisation-sass/#colour-blending), where for example if you set `range-selection-border-color` to red then `range-selection-background-color` will automatically default to a semi-transparent red. This is not possible in pure CSS, so it's necessary to set both `--ag-range-selection-border-color` and `--ag-range-selection-background-color`. See [Theme Colour Variables](#theme-colour-variables) for instructions on how to manually recreate this in CSS.
+</note>
 
 ## Customising Themes using CSS Rules
 

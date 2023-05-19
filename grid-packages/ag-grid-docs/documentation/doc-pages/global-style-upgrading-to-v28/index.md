@@ -10,8 +10,9 @@ With the release of v28, we have ported our grid layout system to use CSS variab
 
 In order to ease the upgrade to v28, we have continued to include the legacy Sass API and CSS stylesheets at their old file paths. They will be removed in v29.
 
-[[warning]]
+<warning>
 | If you upgrade an app from v27 to v29+ without changing the import paths for CSS and Sass (.scss) files then the paths will be invalid and the themes won't work.
+</warning>
 
 We recommend that all users upgrade to the new styles.
 

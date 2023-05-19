@@ -26,7 +26,6 @@ import { WithoutGridCommon } from "./interfaces/iCommon";
 import { FOCUSABLE_EXCLUDE, FOCUSABLE_SELECTOR } from "./utils/dom";
 import { TabGuardClassNames } from "./widgets/tabGuardCtrl";
 
-
 @Bean('focusService')
 export class FocusService extends BeanStub {
 
@@ -248,8 +247,8 @@ export class FocusService extends BeanStub {
 
         const event: WithoutGridCommon<CellFocusClearedEvent> = {
             type: Events.EVENT_CELL_FOCUS_CLEARED,
-            ... this.getFocusEventParams(),
-        }
+            ...this.getFocusEventParams(),
+        };
 
         this.focusedCellPosition = null;
 
@@ -283,7 +282,7 @@ export class FocusService extends BeanStub {
 
         const event: WithoutGridCommon<CellFocusedEvent> = {
             type: Events.EVENT_CELL_FOCUSED,
-            ... this.getFocusEventParams(),
+            ...this.getFocusEventParams(),
             forceBrowserFocus,
             preventScrollOnBrowserFocus,
             floating: null
@@ -446,7 +445,7 @@ export class FocusService extends BeanStub {
         const toFocus = up ? last(focusableElements) : focusableElements[0];
 
         if (toFocus) {
-            toFocus.focus();
+            toFocus.focus({ preventScroll: true });
             return true;
         }
 
@@ -568,13 +567,13 @@ export class FocusService extends BeanStub {
         return true;
     }
 
-    public focusNextGridCoreContainer(backwards: boolean): boolean {
-        if (this.gridCtrl.focusNextInnerContainer(backwards)) {
+    public focusNextGridCoreContainer(backwards: boolean, forceOut: boolean = false): boolean {
+        if (!forceOut && this.gridCtrl.focusNextInnerContainer(backwards)) {
             return true;
         }
 
-        if (!backwards && !this.gridCtrl.isDetailGrid()) {
-            this.gridCtrl.forceFocusOutOfContainer();
+        if (forceOut || (!backwards && !this.gridCtrl.isDetailGrid())) {
+            this.gridCtrl.forceFocusOutOfContainer(backwards);
         }
 
         return false;

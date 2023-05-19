@@ -126,6 +126,7 @@ const AG_GRID_LOCALE_EN = {
     to: 'to',
     of: 'of',
     page: 'Page',
+    pageLastRowUnknown: '?',
     nextPage: 'Next Page',
     lastPage: 'Last Page',
     firstPage: 'First Page',
@@ -305,6 +306,7 @@ const AG_GRID_LOCALE_EN = {
     ariaSearch: 'Search',
     ariaSortableColumn: 'Press ENTER to sort',
     ariaToggleVisibility: 'Press SPACE to toggle visibility',
+    ariaToggleCellValue: 'Press SPACE to toggle cell value',
     ariaUnchecked: 'unchecked',
     ariaVisible: 'visible',
     ariaSearchFilterValues: 'Search filter values',
@@ -334,6 +336,9 @@ const AG_GRID_LOCALE_EN = {
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
-    decimalSeparator: '.'
+    decimalSeparator: '.',
 
+    // Data types
+    true: 'True',
+    false: 'False',
 }

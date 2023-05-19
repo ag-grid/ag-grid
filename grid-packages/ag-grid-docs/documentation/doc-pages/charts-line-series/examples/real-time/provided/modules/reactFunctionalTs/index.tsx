@@ -1,7 +1,7 @@
 'use strict';
 
 import React, { useState, useCallback, useRef } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { AgChartsReact } from 'ag-charts-react';
 import { AgChart, AgChartOptions, time } from 'ag-charts-community';
 
@@ -42,9 +42,6 @@ const ChartExample = () => {
         ],
         title: {
             text: 'Core Voltage',
-        },
-        legend: {
-            enabled: false,
         },
     });
 
@@ -94,7 +91,5 @@ function getData() {
     return data;
 }
 
-render(
-    <ChartExample />,
-    document.querySelector('#root')
-)
+const root = createRoot(document.getElementById('root')!);
+root.render(<ChartExample />);

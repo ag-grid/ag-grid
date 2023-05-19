@@ -34,9 +34,6 @@ const options: AgCartesianChartOptions = {
             enabled: true,
           },
         },
-        legend: {
-          position: "bottom",
-        },
       },
     },
   },

@@ -255,7 +255,7 @@
     .ag-sticky-top-full-width-container {
         position: absolute;
         top: 0px;
-        left: 0px;
+        @include ag.unthemed-rtl(( left: 0 ));
         // turn off pointer events, because this container overlays the main row containers.
         // so when user clicks on space between full width rows, we want the mouse clicks to
         // pass onto the underlying container where the real rows are. eg if using full width
@@ -263,9 +263,6 @@
         // opens a group the children are shown in the other containers - we want to make sure we
         // don't block mouse clicks to those other containers with the children.
         pointer-events: none;
-    }
-    .ag-full-width-container {
-        width: 100%;
     }
 
     .ag-floating-bottom-full-width-container, .ag-floating-top-full-width-container {
@@ -377,7 +374,7 @@
         position: relative;
     }
 
-    .ag-header-cell-sortable {
+    .ag-header-cell-sortable .ag-header-cell-label {
         cursor: pointer;
     }
 
@@ -397,7 +394,11 @@
 
     .ag-header-row {
         position: absolute;
-        overflow: hidden; // so when floating filters are height 0px, the contents don't spill out
+    }
+
+    .ag-header-row:not(.ag-header-row-column-group) {
+        // so when floating filters are height 0px, the contents don't spill out
+        overflow: hidden;
     }
 
     .ag-header.ag-header-allow-overflow .ag-header-row {
@@ -428,6 +429,11 @@
         align-items: center;
         text-overflow: ellipsis;
         align-self: stretch;
+    }
+
+    .ag-header-group-cell-label.ag-sticky-label {
+        position: sticky;
+        flex: none;
     }
 
     .ag-header-cell-text {
@@ -918,8 +924,8 @@
 
     .ag-popup-editor {
         position: absolute;
-        user-select: none;
         z-index: 1;
+        @include ag.selectable(none);
     }
 
     .ag-large-text-input {
@@ -1054,8 +1060,8 @@
     .ag-resizer {
         position: absolute;
         pointer-events: none;
-        user-select: none;
         z-index: 1;
+        @include ag.selectable(none);
         &.ag-resizer-topLeft {
             top: 0;
             left: 0;
@@ -1166,7 +1172,7 @@
         max-height: 100%;
         overflow-y: auto;
         position: absolute;
-        user-select: none;
+        @include ag.selectable(none);
     }
 
     .ag-menu-column-select-wrapper {
@@ -1279,7 +1285,7 @@
         overflow-y: auto;
         overflow-x: hidden;
         cursor: default;
-        user-select: none;
+        @include ag.selectable(none);
     }
 
     .ag-column-select-column,

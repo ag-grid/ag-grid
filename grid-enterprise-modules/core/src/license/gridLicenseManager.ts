@@ -11,8 +11,8 @@ export class GridLicenseManager extends BeanStub {
         this.licenseManager.validateLicense();
     }
 
-    public getLicenseDetails(licenseKey: string) {
-        this.licenseManager.getLicenseDetails(licenseKey);
+    static getLicenseDetails(licenseKey: string) {
+        return new LicenseManager(null as any).getLicenseDetails(licenseKey);
     }
 
     public isDisplayWatermark(): boolean {

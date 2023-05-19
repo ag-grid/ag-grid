@@ -102,7 +102,7 @@ Missing or invalid X and Y values need to be handled differently and are describ
 If the Y value of the data point is `Infinity`, `null`, `undefined`, `NaN`, a `string` or an `object`, i.e. if it's not
 a `number`, it will be classified as missing or invalid.
 
-``` js
+```js
 // Missing Y Values
 const data = [
     0.17,
@@ -145,7 +145,7 @@ For example if the axis is configured to be a [Number Axis](/sparklines-axis-typ
 have X values which are not of type `number`, these values will be considered invalid and will be ignored when the
 sparkline is rendered.
 
-``` js
+```js
 // Missing X Values
 const data = [
     [2.1, 0.17],

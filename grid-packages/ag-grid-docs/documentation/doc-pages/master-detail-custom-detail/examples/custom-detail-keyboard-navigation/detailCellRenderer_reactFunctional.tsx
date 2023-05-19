@@ -56,7 +56,7 @@ const DetailCellRenderer = ({ data, eParentOfValue }: ICellRendererParams) => {
         <p>
           <label>
             Number:<br />
-            <input type="text" value={number} onChange={e => setNumber(e.target.value)} onFocus={(e) => {console.log('focus number', e)}}/>
+            <input type="text" value={number} onChange={e => setNumber(e.target.value)}/>
           </label>
         </p>
         <p>

@@ -1,6 +1,6 @@
 import { GetGroupRowAggParams, Grid, GridOptions } from '@ag-grid-community/core'
 
-const gridOptions: GridOptions<IOlympicData> = {
+const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'country', rowGroup: true, hide: true },
     { field: 'year', rowGroup: true, hide: true },
@@ -26,7 +26,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   getGroupRowAgg: getGroupRowAgg,
 }
 
-function getGroupRowAgg(params: GetGroupRowAggParams<IOlympicData>) {
+function getGroupRowAgg(params: GetGroupRowAggParams) {
   const result = {
     gold: 0,
     silver: 0,
@@ -73,5 +73,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: any[]) => gridOptions.api!.setRowData(data))
 })

@@ -1,3 +1,5 @@
+@use "../../design-system/" as *;
+
 .chart {
     vertical-align: bottom;
     display: flex;
@@ -6,11 +8,10 @@
     align-items: center;
     width: 100%;
     height: 100%;
-    padding: 10px;
-    padding-top: 0;
 
     :global(.ag-chart-wrapper) {
-        border: 1px solid #aaa;
+        border: 2px solid var(--bright-blue-gray);
+        border-radius: var(--border-radius);
         box-sizing: border-box;
         overflow: hidden;
     }
@@ -28,8 +29,18 @@
 }
 
 .close {
+    --text-color: var(--link-color);
+
     position: fixed;
     top: 0px;
     right: 2px;
     z-index: 201;
+
+    &:hover {
+        --text-color: var(--link-hover-color);
+    }
+
+    svg {
+        transition: fill $default-transition-timing;
+    }
 }

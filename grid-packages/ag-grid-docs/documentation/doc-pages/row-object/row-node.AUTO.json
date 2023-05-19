@@ -177,6 +177,10 @@
     "description": "/** Returns:\n     * - `true` if the node is a full width cell.\n     * - `false` if the node is not a full width cell.\n     */",
     "type": { "arguments": {}, "returnType": "boolean" }
   },
+  "isHovered": {
+    "description": "/** Returns:\n     * - `true` if the node is currently hovered.\n     * - `false` if the node is not hovered.\n     */",
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
   "addEventListener": {
     "description": "/** Add an event listener. */",
     "type": {

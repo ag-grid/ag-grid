@@ -10,6 +10,7 @@ import {
     DragSourceType
 } from "../../../dragAndDrop/dragAndDropService";
 import { Column } from "../../../entities/column";
+import { ColumnEventType } from "../../../events";
 import { ColumnGroup } from "../../../entities/columnGroup";
 import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
 import { GridApi } from "../../../gridApi";
@@ -85,9 +86,11 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         ));
     }
 
-    public resizeLeafColumnsToFit(): void {
-        this.groupResizeFeature.onResizeStart(false);
-        this.groupResizeFeature.resizeLeafColumnsToFit();
+    public resizeLeafColumnsToFit(source: ColumnEventType): void {
+        // check to avoid throwing when a component has not been setup yet (React 18)
+        if (!this.groupResizeFeature) { return; }
+
+        this.groupResizeFeature.resizeLeafColumnsToFit(source);
     }
 
     private setupUserComp(): void {

@@ -8,9 +8,10 @@ import {
     IMAGE_SNAPSHOT_DEFAULTS,
     setupMockCanvas,
     extractImageData,
-    CANVAS_WIDTH,
-    CANVAS_HEIGHT,
     deproxy,
+    clickAction,
+    doubleClickAction,
+    prepareTestOptions,
 } from './test/utils';
 import * as examples from './test/examples';
 import { AgCartesianChartOptions } from './agChartOptions';
@@ -18,7 +19,7 @@ import { seedRandom } from './test/random';
 
 expect.extend({ toMatchImageSnapshot });
 
-function buildSeries(data) {
+function buildSeries(data: { x: number; y: number }) {
     return {
         data: [data],
         xKey: 'x',
@@ -27,7 +28,7 @@ function buildSeries(data) {
     };
 }
 
-const SERIES = [];
+const SERIES: { data: { x: number; y: number }[]; xKey: string; yKey: string; yName: string }[] = [];
 const seriesDataRandom = seedRandom(10763960837);
 
 for (let i = 0; i < 200; i++) {
@@ -75,12 +76,10 @@ describe('Legend', () => {
                 ...examples.LINE_GRAPH_WITH_GAPS_EXAMPLE,
             };
 
-            options.autoSize = false;
-            options.width = width ?? CANVAS_WIDTH;
-            options.height = CANVAS_HEIGHT;
+            prepareTestOptions(options);
+            options.width = width ?? options.width;
 
             chart = deproxy(AgChart.create(options)) as CartesianChart;
-            await waitForChartStability(chart);
             await compare(chart);
         });
     });
@@ -91,15 +90,94 @@ describe('Legend', () => {
         it.each(positions)('should render legend correctly at position [%s]', async (position) => {
             const options = {
                 ...OPTIONS,
-                autoSize: false,
-                width: CANVAS_WIDTH,
-                height: CANVAS_HEIGHT,
                 legend: {
                     position,
                 },
             };
+            prepareTestOptions(options);
 
             chart = deproxy(AgChart.create(options)) as CartesianChart;
+            await compare(chart);
+        });
+    });
+
+    describe('Clicking a legend', () => {
+        it('should hide the related series', async () => {
+            const options = {
+                ...examples.PIE_IN_A_DOUGHNUT,
+            };
+
+            prepareTestOptions(options);
+
+            chart = deproxy(AgChart.create(options)) as CartesianChart;
+
+            await waitForChartStability(chart);
+
+            const { x = 0, y = 0 } = chart.legend?.computeBBox() ?? {};
+            await clickAction(x, y)(chart);
+
+            await compare(chart);
+        });
+
+        it('when clicked twice should hide and re-show the related series', async () => {
+            const options = {
+                ...examples.PIE_IN_A_DOUGHNUT,
+            };
+
+            prepareTestOptions(options);
+
+            chart = deproxy(AgChart.create(options)) as CartesianChart;
+
+            await waitForChartStability(chart);
+            const { x = 0, y = 0 } = chart.legend?.computeBBox() ?? {};
+
+            await clickAction(x, y)(chart);
+            await waitForChartStability(chart);
+            await clickAction(x, y)(chart);
+
+            await compare(chart);
+        });
+    });
+
+    describe('Double clicking a legend', () => {
+        it('should hide all other series except this one', async () => {
+            const options = {
+                ...examples.PIE_IN_A_DOUGHNUT,
+            };
+
+            prepareTestOptions(options);
+
+            chart = deproxy(AgChart.create(options)) as CartesianChart;
+
+            await waitForChartStability(chart);
+            const { x = 0, y = 0 } = chart.legend?.computeBBox() ?? {};
+
+            await doubleClickAction(x, y)(chart);
+
+            await compare(chart);
+        });
+
+        it('when double clicked twice should show all series', async () => {
+            const options = {
+                ...examples.PIE_IN_A_DOUGHNUT,
+            };
+
+            prepareTestOptions(options);
+
+            chart = deproxy(AgChart.create(options)) as CartesianChart;
+
+            await waitForChartStability(chart);
+            const { x = 0, y = 0 } = chart.legend?.computeBBox() ?? {};
+
+            await doubleClickAction(x, y)(chart);
+            await waitForChartStability(chart);
+
+            // Click the legend item again for some reason... why does this test require this?
+            await clickAction(x, y)(chart);
+            await waitForChartStability(chart);
+
+            await doubleClickAction(x, y)(chart);
+
             await compare(chart);
         });
     });

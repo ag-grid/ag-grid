@@ -1,4 +1,4 @@
-[[only-vue]]
+<framework-specific-section frameworks="vue">
 |## Cell Renderer Component
 |
 |When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell and 
@@ -9,3 +9,4 @@
 |
 |The interface for both the initial `params` value, as well as the argument passed in subsequent `refresh` calls 
 |(see below for details on `refresh`) are as follows:
+</framework-specific-section>

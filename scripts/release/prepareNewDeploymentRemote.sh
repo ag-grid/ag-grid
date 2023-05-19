@@ -41,7 +41,6 @@ echo "Copying non-versioned directories"
 cp -R ./$PUBLIC_HTML_FOLDER/support public_html_tmp/
 cp -R ./$PUBLIC_HTML_FOLDER/example-assets public_html_tmp/
 cp -R ./$PUBLIC_HTML_FOLDER/ecommerce public_html_tmp/
-cp -R ./$PUBLIC_HTML_FOLDER/ecommerce-uat public_html_tmp/
 cp -R ./$PUBLIC_HTML_FOLDER/zendesk public_html_tmp/
 cp -R ./$PUBLIC_HTML_FOLDER/services public_html_tmp/
 cp -R ./$PUBLIC_HTML_FOLDER/robots.txt public_html_tmp/

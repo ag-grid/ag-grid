@@ -531,7 +531,7 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                     jsFile = jsFile.replace(/new Grid\(/g, 'new agGrid.Grid(');
 
                     // Chart classes that need scoping
-                    const chartImports = typedBindings.imports.find(i => i.module.includes('ag-charts-community'));
+                    const chartImports = typedBindings.imports.find(i => i.module.includes('ag-charts-community') || i.module.includes('ag-charts-enterprise'));
                     if (chartImports) {
                         chartImports.imports.forEach(i => {
                             const toReplace = `(?<!\\.)${i}([\\s\/.])`
@@ -618,8 +618,11 @@ function addPackageJson(type, framework, importType, basePath) {
     }
 
     if (framework === 'reactFunctionalTs') {
-        addDependency('react', '17');
-        addDependency('react-dom', '17');
+        addDependency('react', '18');
+        addDependency('react-dom', '18');
+
+        addDependency('@types/react', '18');
+        addDependency('@types/react-dom', '18');
     }
 
     if (importType === 'modules' && framework !== 'vanilla') {

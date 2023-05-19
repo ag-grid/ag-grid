@@ -63,12 +63,9 @@ function createQuarterlySalesChart(gridApi: GridApi) {
     chartThemeOverrides: {
       common: {
         title: {
-          enabled: true,
           text: 'Quarterly Sales ($)',
         },
-        legend: {
-          enabled: false,
-        },
+        legend: { enabled: false },
         axes: {
           category: {
             label: {
@@ -99,11 +96,10 @@ function createSalesByRefChart(gridApi: GridApi) {
     chartThemeOverrides: {
       common: {
         title: {
-          enabled: true,
           text: 'Sales by Representative ($)',
         },
       },
-      pie: {
+      pie: { 
         series: {
           title: {
             enabled: false,
@@ -111,6 +107,9 @@ function createSalesByRefChart(gridApi: GridApi) {
           calloutLabel: {
             enabled: false,
           },
+        },
+        legend: {
+          position: 'right',
         },
       },
     },
@@ -128,12 +127,9 @@ function createHandsetSalesChart(gridApi: GridApi) {
     chartThemeOverrides: {
       common: {
         title: {
-          enabled: true,
           text: 'Handsets Sold (Units)',
         },
-        legend: {
-          enabled: false,
-        },
+        legend: { enabled: false },
       },
     },
     chartContainer: document.querySelector('#barChart') as any,

@@ -492,7 +492,8 @@ export class GroupCellRendererCtrl extends BeanStub {
         const eGroupCell = params.eGridCell;
 
         // if editing groups, then double click is to start editing
-        if (!this.gridOptionsService.is('enableGroupEdit') && this.isExpandable() && !params.suppressDoubleClickExpand) {
+        const isDoubleClickEdit = this.params.column?.isCellEditable(params.node) && this.gridOptionsService.is('enableGroupEdit');
+        if (!isDoubleClickEdit && this.isExpandable() && !params.suppressDoubleClickExpand) {
             this.addManagedListener(eGroupCell, 'dblclick', this.onCellDblClicked.bind(this));
         }
 

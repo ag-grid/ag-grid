@@ -376,6 +376,11 @@ export class GridOptionsService {
         return document;
     }
 
+    public getWindow() {
+        const eDocument = this.getDocument();
+        return eDocument.defaultView || window;
+    }
+
     public getRootNode(): Document | ShadowRoot {
         return this.eGridDiv.getRootNode() as Document | ShadowRoot;
     }
@@ -416,7 +421,7 @@ export class GridOptionsService {
     public isColumnsSortingCoupledToGroup(): boolean {
         const autoGroupColumnDef = this.gridOptions.autoGroupColumnDef;
         const isClientSideRowModel = this.isRowModelType('clientSide');
-        return isClientSideRowModel && !autoGroupColumnDef?.comparator;
+        return isClientSideRowModel && !autoGroupColumnDef?.comparator && !this.isTreeData();
     }
 
     public getGroupAggFiltering(): ((params: WithoutGridCommon<GetGroupAggFilteringParams>) => boolean) | undefined {

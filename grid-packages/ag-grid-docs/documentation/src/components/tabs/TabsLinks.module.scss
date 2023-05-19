@@ -1,0 +1,14 @@
+@use '../../design-system/' as *;
+
+.externalLinks {
+    display: flex;
+    align-items: center;
+    gap: $size-2;
+    flex-shrink: 0;
+    margin-left: auto !important; // !important for .ag-styles specificity
+    padding-right: $size-2;
+
+    li {
+        margin-bottom: 0.125em !important; // !important for .ag-styles specificity
+    }
+}

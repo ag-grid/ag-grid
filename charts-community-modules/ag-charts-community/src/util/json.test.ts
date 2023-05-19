@@ -10,6 +10,7 @@ class TestApply {
     array?: number[] = undefined;
     recurse?: TestApply = undefined;
     recurseArray?: TestApply[] = undefined;
+    _declarationOrder?: number = undefined;
 
     constructor(params: { [K in keyof TestApply]?: TestApply[K] } = {}) {
         Object.assign(this, params);
@@ -493,6 +494,30 @@ describe('json module', () => {
             expect(target.recurse).toBeInstanceOf(TestApply);
             expect(target.recurse?.recurse).toBeInstanceOf(TestApply);
             expect(target.recurse?.recurse?.recurse).toBeInstanceOf(TestApply);
+        });
+
+        it('should populate _declarationOrder for array types', () => {
+            const testString1 = 'hello!';
+            const testString2 = 'world!';
+            const target = new TestApply({});
+            const json = { recurseArray: [{ recurse: { str: testString1 } }, { recurse: { str: testString2 } }] };
+
+            const opts = {
+                path: 'series[0]',
+                allowedTypes: { 'series[].recurse.str': ['function' as const] },
+                constructors: {
+                    'series[].recurseArray[]': TestApply,
+                    'series[].recurseArray[].recurse': TestApply,
+                },
+            };
+
+            jsonApply(target, json as any, opts);
+            expect(target.recurseArray?.[0]).toBeInstanceOf(TestApply);
+            expect(target.recurseArray?.[0]._declarationOrder).toEqual(0);
+            expect(target.recurseArray?.[1]).toBeInstanceOf(TestApply);
+            expect(target.recurseArray?.[1]._declarationOrder).toEqual(1);
+            expect(target.recurseArray?.[0].recurse?._declarationOrder).toBeUndefined();
+            expect(target.recurseArray?.[1].recurse?._declarationOrder).toBeUndefined();
         });
 
         it('should instantiate complex types by path with nested arrays', () => {

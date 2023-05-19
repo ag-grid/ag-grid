@@ -3,7 +3,7 @@
 import { AgChartsReact } from "ag-charts-react"
 import { time } from 'ag-charts-community';
 import React, { useCallback, useEffect, useRef, useState } from "react"
-import { render } from "react-dom"
+import { createRoot } from "react-dom/client"
 
 const ChartExample = () => {
   const chartRef = useRef(null)
@@ -56,9 +56,6 @@ const ChartExample = () => {
         max: 100,
       },
     ],
-    legend: {
-      position: "bottom",
-    },
   })
   useEffect(() => {
     setInterval(updateData, refreshRateInMilliseconds);
@@ -109,4 +106,5 @@ function getData() {
   return data
 }
 
-render(<ChartExample />, document.querySelector("#root"))
+const root = createRoot(document.getElementById('root'));
+root.render(<ChartExample />);

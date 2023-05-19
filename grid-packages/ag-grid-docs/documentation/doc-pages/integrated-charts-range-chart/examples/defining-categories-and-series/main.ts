@@ -32,9 +32,6 @@ const gridOptions: GridOptions = {
         enabled: true,
         text: 'Medals by Age',
       },
-      legend: {
-        position: 'bottom',
-      },
     },
     column: {
       axes: {

@@ -1,11 +1,9 @@
 import { Group } from '../../scene/group';
-import { LegendDatum } from '../legendDatum';
+import { ChartLegendDatum } from '../legendDatum';
 import { Observable, TypedEvent } from '../../util/observable';
 import { ChartAxis } from '../chartAxis';
 import { createId } from '../../util/id';
-import { isNumber } from '../../util/value';
-import { TimeAxis } from '../axis/timeAxis';
-import { createDeprecationWarning } from '../../util/deprecation';
+import { checkDatum } from '../../util/value';
 import {
     BOOLEAN,
     OPT_BOOLEAN,
@@ -19,9 +17,14 @@ import { PlacedLabel, PointLabelDatum } from '../../util/labelPlacement';
 import { Layers } from '../layers';
 import { SizedPoint, Point } from '../../scene/point';
 import { BBox } from '../../scene/bbox';
+import { AnimationManager } from '../interaction/animationManager';
+import { ChartEventManager } from '../interaction/chartEventManager';
 import { HighlightManager } from '../interaction/highlightManager';
 import { ChartAxisDirection } from '../chartAxisDirection';
 import { AgChartInteractionRange } from '../agChartOptions';
+import { DatumPropertyDefinition, fixNumericExtent } from '../data/dataModel';
+import { TooltipPosition } from '../tooltip/tooltip';
+import { accumulatedValue } from '../data/aggregateFunctions';
 
 /**
  * Processed series datum used in node selections,
@@ -37,6 +40,7 @@ export interface SeriesNodeDatum {
     readonly itemId?: any;
     readonly datum: any;
     readonly point?: Readonly<SizedPoint>;
+    nodeMidPoint?: Readonly<Point>;
 }
 
 /** Modes of matching user interactions to rendered nodes (e.g. hover or click) */
@@ -56,8 +60,59 @@ export type SeriesNodePickMatch = {
     distance: number;
 };
 
-const warnDeprecated = createDeprecationWarning();
-const warnSeriesDeprecated = () => warnDeprecated('series', 'Use seriesId to get the series ID');
+export function keyProperty<K>(propName: K, continuous: boolean, opts = {} as Partial<DatumPropertyDefinition<K>>) {
+    const result: DatumPropertyDefinition<K> = {
+        ...opts,
+        property: propName,
+        type: 'key',
+        valueType: continuous ? 'range' : 'category',
+        validation: (v) => checkDatum(v, continuous) != null,
+    };
+    return result;
+}
+
+export function valueProperty<K>(propName: K, continuous: boolean, opts = {} as Partial<DatumPropertyDefinition<K>>) {
+    const result: DatumPropertyDefinition<K> = {
+        ...opts,
+        property: propName,
+        type: 'value',
+        valueType: continuous ? 'range' : 'category',
+        validation: (v) => checkDatum(v, continuous) != null,
+    };
+    return result;
+}
+
+export function rangedValueProperty<K>(
+    propName: K,
+    opts = {} as Partial<DatumPropertyDefinition<K>> & { min?: number; max?: number }
+): DatumPropertyDefinition<K> {
+    const { min = -Infinity, max = Infinity, ...defOpts } = opts;
+    return {
+        type: 'value',
+        property: propName,
+        valueType: 'range',
+        validation: (v) => checkDatum(v, true) != null,
+        processor: () => (datum) => {
+            if (typeof datum !== 'number') return datum;
+            if (isNaN(datum)) return datum;
+
+            return Math.min(Math.max(datum, min), max);
+        },
+        ...defOpts,
+    };
+}
+
+export function accumulativeValueProperty<K>(
+    propName: K,
+    continuous: boolean,
+    opts = {} as Partial<DatumPropertyDefinition<K>>
+) {
+    const result: DatumPropertyDefinition<K> = {
+        ...valueProperty(propName, continuous, opts),
+        processor: accumulatedValue(),
+    };
+    return result;
+}
 
 export class SeriesNodeBaseClickEvent<Datum extends { datum: any }> implements TypedEvent {
     readonly type: 'nodeClick' | 'nodeDoubleClick' = 'nodeClick';
@@ -65,18 +120,10 @@ export class SeriesNodeBaseClickEvent<Datum extends { datum: any }> implements T
     readonly event: Event;
     readonly seriesId: string;
 
-    private readonly _series: Series;
-    /** @deprecated */
-    get series() {
-        warnSeriesDeprecated();
-        return this._series;
-    }
-
     constructor(nativeEvent: Event, datum: Datum, series: Series) {
         this.event = nativeEvent;
         this.datum = datum.datum;
         this.seriesId = series.id;
-        this._series = series;
     }
 }
 
@@ -124,7 +171,19 @@ export class HighlightStyle {
 
 export class SeriesTooltip {
     @Validate(BOOLEAN)
-    enabled = true;
+    enabled: boolean = true;
+
+    @Validate(OPT_BOOLEAN)
+    showArrow?: boolean = undefined;
+
+    interaction?: SeriesTooltipInteraction = new SeriesTooltipInteraction();
+
+    readonly position: TooltipPosition = new TooltipPosition();
+}
+
+export class SeriesTooltipInteraction {
+    @Validate(BOOLEAN)
+    enabled = false;
 }
 
 export type SeriesNodeDataContext<S = SeriesNodeDatum, L = S> = {
@@ -140,7 +199,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     readonly id = createId(this);
 
     get type(): string {
-        return (this.constructor as any).type || '';
+        return (this.constructor as any).type ?? '';
     }
 
     // The group node that contains all the nodes used to render this series.
@@ -165,6 +224,8 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         placeLabels(): Map<Series<any>, PlacedLabel[]>;
         getSeriesRect(): Readonly<BBox> | undefined;
     };
+    animationManager?: AnimationManager;
+    chartEventManager?: ChartEventManager;
     highlightManager?: HighlightManager;
     xAxis?: ChartAxis;
     yAxis?: ChartAxis;
@@ -212,6 +273,12 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     @Validate(INTERACTION_RANGE)
     nodeClickRange: AgChartInteractionRange = 'exact';
 
+    getBandScalePadding() {
+        return { inner: 1, outer: 0 };
+    }
+
+    _declarationOrder: number = -1;
+
     constructor({
         useSeriesGroupLayer = true,
         useLabelLayer = false,
@@ -229,6 +296,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
                 name: `${this.id}-content`,
                 layer: useSeriesGroupLayer,
                 zIndex: Layers.SERIES_LAYER_ZINDEX,
+                zIndexSubOrder: [() => this._declarationOrder, 0],
             })
         );
 
@@ -237,7 +305,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
                 name: `${this.id}-highlight`,
                 layer: true,
                 zIndex: Layers.SERIES_LAYER_ZINDEX,
-                zIndexSubOrder: [this.id, 15000],
+                zIndexSubOrder: [() => this._declarationOrder, 15000],
             })
         );
         this.highlightNode = this.highlightGroup.appendChild(new Group({ name: 'highlightNode' }));
@@ -258,6 +326,10 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         }
     }
 
+    addChartEventListeners(): void {
+        return;
+    }
+
     destroy(): void {
         // Override point for sub-classes.
     }
@@ -272,7 +344,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     getKeys(direction: ChartAxisDirection): string[] {
         const { directionKeys } = this;
         const resolvedDirection = this.resolveKeyDirection(direction);
-        const keys = directionKeys && directionKeys[resolvedDirection];
+        const keys = directionKeys?.[resolvedDirection];
         const values: string[] = [];
 
         const flatten = (...array: any[]) => {
@@ -487,14 +559,7 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
         return new SeriesNodeDoubleClickEvent(event, datum, this);
     }
 
-    /**
-     * @private
-     * Returns an array with the items of this series
-     * that should be shown in the legend. It's up to the series to determine
-     * what is considered an item. An item could be the series itself or some
-     * part of the series.
-     */
-    abstract getLegendData(): LegendDatum[];
+    abstract getLegendData(): ChartLegendDatum[];
 
     toggleSeriesItem(_itemId: any, enabled: boolean): void {
         this.visible = enabled;
@@ -508,48 +573,19 @@ export abstract class Series<C extends SeriesNodeDataContext = SeriesNodeDataCon
     readonly highlightStyle = new HighlightStyle();
 
     protected fixNumericExtent(extent?: [number | Date, number | Date], axis?: ChartAxis): number[] {
-        if (extent === undefined) {
-            // Don't return a range, there is no range.
-            return [];
+        const fixedExtent = fixNumericExtent(extent);
+
+        if (fixedExtent.length === 0) {
+            return fixedExtent;
         }
 
-        let [min, max] = extent;
-        min = +min;
-        max = +max;
-
-        if (min === 0 && max === 0) {
-            // domain has zero length and the single valid value is 0. Use the default of [0, 1].
-            return [0, 1];
-        }
-
-        if (min === Infinity && max === -Infinity) {
-            // There's no data in the domain.
-            return [];
-        }
-        if (min === Infinity) {
-            min = 0;
-        }
-        if (max === -Infinity) {
-            max = 0;
-        }
-
+        let [min, max] = fixedExtent;
         if (min === max) {
             // domain has zero length, there is only a single valid value in data
 
-            if (axis instanceof TimeAxis) {
-                // numbers in domain correspond to Unix timestamps
-                // automatically expand domain by 1 in each direction
-                min -= 1;
-                max += 1;
-            } else {
-                const padding = Math.abs(min * 0.01);
-                min -= padding;
-                max += padding;
-            }
-        }
-
-        if (!(isNumber(min) && isNumber(max))) {
-            return [];
+            const padding = axis?.calculatePadding(min, max) ?? 1;
+            min -= padding;
+            max += padding;
         }
 
         return [min, max];
