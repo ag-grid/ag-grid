@@ -1,7 +1,6 @@
 interface Series {
     id: string;
     type: string;
-    toggleSeriesItem(itemId: string, enabled: boolean): void;
     getLegendData(): any[];
 }
 

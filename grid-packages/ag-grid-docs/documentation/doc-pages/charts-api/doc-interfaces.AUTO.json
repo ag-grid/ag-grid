@@ -5642,13 +5642,6 @@
   "Series": {
     "id": { "type": { "returnType": "string", "optional": false } },
     "type": { "type": { "returnType": "string", "optional": false } },
-    "toggleSeriesItem": {
-      "type": {
-        "arguments": { "itemId": "string", "enabled": "boolean" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
     "getLegendData": {
       "type": { "arguments": {}, "returnType": "any[]", "optional": false }
     }

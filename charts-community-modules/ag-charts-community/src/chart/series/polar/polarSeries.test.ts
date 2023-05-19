@@ -153,7 +153,7 @@ describe('PolarSeries', () => {
             const reference = await snapshot();
 
             options.data?.forEach((_, idx) => {
-                chart.series[0].toggleSeriesItem(idx, false);
+                (chart.series[0] as any).toggleSeriesItem(idx, false);
             });
             chart.update(ChartUpdateType.FULL);
 
@@ -161,7 +161,7 @@ describe('PolarSeries', () => {
             (expect(afterUpdate) as any).not.toMatchImage(reference);
 
             options.data?.forEach((_, idx) => {
-                chart.series[0].toggleSeriesItem(idx, true);
+                (chart.series[0] as any).toggleSeriesItem(idx, true);
             });
             chart.update(ChartUpdateType.FULL);
 

@@ -602,14 +602,14 @@ export abstract class CartesianSeries<
     onLegendItemClick(event: LegendItemClickChartEvent) {
         const { enabled, itemId, series } = event;
 
-        if (series.id === this.id) {
-            this.toggleSeriesItem(itemId, enabled);
-        }
+        if (series.id !== this.id) return;
+        this.toggleSeriesItem(itemId, enabled);
     }
 
     onLegendItemDoubleClick(event: LegendItemDoubleClickChartEvent) {
         const { enabled, itemId, series, numVisibleItems } = event;
 
+        if (series.id !== this.id) return;
         const totalVisibleItems = Object.values(numVisibleItems).reduce((p, v) => p + v, 0);
 
         const wasClicked = series.id === this.id;
@@ -618,7 +618,7 @@ export abstract class CartesianSeries<
         this.toggleSeriesItem(itemId, newEnabled);
     }
 
-    toggleSeriesItem(itemId: string, enabled: boolean): void {
+    protected toggleSeriesItem(itemId: string, enabled: boolean): void {
         if (this.seriesItemEnabled.size > 0) {
             this.seriesItemEnabled.set(itemId, enabled);
             this.nodeDataRefresh = true;

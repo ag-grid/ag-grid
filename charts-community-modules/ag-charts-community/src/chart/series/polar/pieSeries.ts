@@ -1452,7 +1452,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         });
     }
 
-    toggleSeriesItem(itemId: number, enabled: boolean): void {
+    protected toggleSeriesItem(itemId: number, enabled: boolean): void {
         this.seriesItemEnabled[itemId] = enabled;
         this.nodeDataRefresh = true;
     }
