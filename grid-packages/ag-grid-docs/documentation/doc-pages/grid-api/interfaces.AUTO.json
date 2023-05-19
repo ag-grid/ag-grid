@@ -2169,6 +2169,8 @@
       "isFullWidthRow?": "(params: IsFullWidthRowParams<TData>) => boolean",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "void",
       "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "void",
+      "onCutStart?(event: CutStartEvent<TData>)": "void",
+      "onCutEnd?(event: CutEndEvent<TData>)": "void",
       "onPasteStart?(event: PasteStartEvent<TData>)": "void",
       "onPasteEnd?(event: PasteEndEvent<TData>)": "void",
       "onColumnVisible?(event: ColumnVisibleEvent<TData>)": "void",
@@ -2544,6 +2546,8 @@
       "isFullWidthRow?": "/** Tells the grid if this row should be rendered as full width. */",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
       "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "/** The tool panel size has been changed. */",
+      "onCutStart?(event: CutStartEvent<TData>)": "/** Cut operation has started. */",
+      "onCutEnd?(event: CutEndEvent<TData>)": "/** Cut operation has ended. */",
       "onPasteStart?(event: PasteStartEvent<TData>)": "/** Paste operation has started. */",
       "onPasteEnd?(event: PasteEndEvent<TData>)": "/** Paste operation has ended. */",
       "onColumnVisible?(event: ColumnVisibleEvent<TData>)": "/** A column, or group of columns, was hidden / shown. */",
@@ -3610,6 +3614,38 @@
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */"
+    }
+  },
+  "CutStartEvent": {
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "type": {
+      "source": "'api' | 'ui' | 'contextMenu'",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "TContext",
+      "type": "string"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
+  },
+  "CutEndEvent": {
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "type": {
+      "source": "'api' | 'ui' | 'contextMenu'",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "TContext",
+      "type": "string"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
     }
   },
   "PasteStartEvent": {
@@ -7691,7 +7727,7 @@
     "type": {
       "pasteFromClipboard()": "void",
       "copyToClipboard(params?: IClipboardCopyParams)": "void",
-      "cutToClipboard(params?: IClipboardCopyParams)": "void",
+      "cutToClipboard(params?: IClipboardCopyParams, source?: 'api' | 'ui' | 'contextMenu')": "void",
       "copySelectedRowsToClipboard(params?: IClipboardCopyRowsParams)": "void",
       "copySelectedRangeToClipboard(params?: IClipboardCopyParams)": "void",
       "copyRangeDown()": "void"
@@ -12774,6 +12810,8 @@
       "isFullWidthRow?": "(params: IsFullWidthRowParams<TData>) => boolean",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "void",
       "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "void",
+      "onCutStart?(event: CutStartEvent<TData>)": "void",
+      "onCutEnd?(event: CutEndEvent<TData>)": "void",
       "onPasteStart?(event: PasteStartEvent<TData>)": "void",
       "onPasteEnd?(event: PasteEndEvent<TData>)": "void",
       "onColumnVisible?(event: ColumnVisibleEvent<TData>)": "void",
@@ -13150,6 +13188,8 @@
       "isFullWidthRow?": "/** Tells the grid if this row should be rendered as full width. */",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
       "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "/** The tool panel size has been changed. */",
+      "onCutStart?(event: CutStartEvent<TData>)": "/** Cut operation has started. */",
+      "onCutEnd?(event: CutEndEvent<TData>)": "/** Cut operation has ended. */",
       "onPasteStart?(event: PasteStartEvent<TData>)": "/** Paste operation has started. */",
       "onPasteEnd?(event: PasteEndEvent<TData>)": "/** Paste operation has ended. */",
       "onColumnVisible?(event: ColumnVisibleEvent<TData>)": "/** A column, or group of columns, was hidden / shown. */",
@@ -13540,6 +13580,8 @@
       "isFullWidthRow?": "(params: IsFullWidthRowParams<TData>) => boolean",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "void",
       "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "void",
+      "onCutStart?(event: CutStartEvent<TData>)": "void",
+      "onCutEnd?(event: CutEndEvent<TData>)": "void",
       "onPasteStart?(event: PasteStartEvent<TData>)": "void",
       "onPasteEnd?(event: PasteEndEvent<TData>)": "void",
       "onColumnVisible?(event: ColumnVisibleEvent<TData>)": "void",
@@ -13916,6 +13958,8 @@
       "isFullWidthRow?": "/** Tells the grid if this row should be rendered as full width. */",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
       "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "/** The tool panel size has been changed. */",
+      "onCutStart?(event: CutStartEvent<TData>)": "/** Cut operation has started. */",
+      "onCutEnd?(event: CutEndEvent<TData>)": "/** Cut operation has ended. */",
       "onPasteStart?(event: PasteStartEvent<TData>)": "/** Paste operation has started. */",
       "onPasteEnd?(event: PasteEndEvent<TData>)": "/** Paste operation has ended. */",
       "onColumnVisible?(event: ColumnVisibleEvent<TData>)": "/** A column, or group of columns, was hidden / shown. */",
@@ -14308,6 +14352,8 @@
       "isFullWidthRow?": "(params: IsFullWidthRowParams<TData>) => boolean",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "void",
       "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "void",
+      "onCutStart?(event: CutStartEvent<TData>)": "void",
+      "onCutEnd?(event: CutEndEvent<TData>)": "void",
       "onPasteStart?(event: PasteStartEvent<TData>)": "void",
       "onPasteEnd?(event: PasteEndEvent<TData>)": "void",
       "onColumnVisible?(event: ColumnVisibleEvent<TData>)": "void",
@@ -14684,6 +14730,8 @@
       "isFullWidthRow?": "/** Tells the grid if this row should be rendered as full width. */",
       "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
       "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "/** The tool panel size has been changed. */",
+      "onCutStart?(event: CutStartEvent<TData>)": "/** Cut operation has started. */",
+      "onCutEnd?(event: CutEndEvent<TData>)": "/** Cut operation has ended. */",
       "onPasteStart?(event: PasteStartEvent<TData>)": "/** Paste operation has started. */",
       "onPasteEnd?(event: PasteEndEvent<TData>)": "/** Paste operation has ended. */",
       "onColumnVisible?(event: ColumnVisibleEvent<TData>)": "/** A column, or group of columns, was hidden / shown. */",

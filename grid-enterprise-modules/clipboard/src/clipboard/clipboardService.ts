@@ -14,6 +14,8 @@ import {
     Column,
     ColumnModel,
     CsvExportParams,
+    CutEndEvent,
+    CutStartEvent,
     Events,
     FlashCellsEvent,
     FocusService,
@@ -612,9 +614,23 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         this.copyOrCutToClipboard(params);
     }
 
-    public cutToClipboard(params: IClipboardCopyParams = {}): void {
+    public cutToClipboard(params: IClipboardCopyParams = {}, source: 'api' | 'ui' | 'contextMenu' = 'api'): void {
         if (this.gridOptionsService.is('suppressCutToClipboard')) { return; }
+
+        const startEvent: WithoutGridCommon<CutStartEvent> = {
+            type: Events.EVENT_CUT_START,
+            source
+        };
+        this.eventService.dispatchEvent(startEvent);
+
         this.copyOrCutToClipboard(params, true);
+
+        const endEvent: WithoutGridCommon<CutEndEvent> = {
+            type: Events.EVENT_CUT_END,
+            source
+        };
+        this.eventService.dispatchEvent(endEvent);
+
     }
 
     private copyOrCutToClipboard(params: IClipboardCopyParams, cut?: boolean): void {

@@ -4268,6 +4268,42 @@
       },
       "meta": { "isEvent": true, "name": "onToolPanelSizeChanged" }
     },
+    "onCutStart": {
+      "description": "/** Cut operation has started. */",
+      "type": {
+        "arguments": { "event": "CutStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onCutStart" }
+    },
+    "cutStart": {
+      "description": "/** Cut operation has started. */",
+      "type": {
+        "arguments": { "event": "CutStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onCutStart" }
+    },
+    "onCutEnd": {
+      "description": "/** Cut operation has ended. */",
+      "type": {
+        "arguments": { "event": "CutEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onCutEnd" }
+    },
+    "cutEnd": {
+      "description": "/** Cut operation has ended. */",
+      "type": {
+        "arguments": { "event": "CutEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onCutEnd" }
+    },
     "onPasteStart": {
       "description": "/** Paste operation has started. */",
       "type": {
@@ -6895,6 +6931,56 @@
     "context": {
       "description": "/** Application context as set on `gridOptions.context`. */",
       "type": { "returnType": "TContext", "optional": false }
+    }
+  },
+  "CutStartEvent": {
+    "source": {
+      "type": {
+        "returnType": "'api' | 'ui' | 'contextMenu'",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "TContext", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "CutEndEvent": {
+    "source": {
+      "type": {
+        "returnType": "'api' | 'ui' | 'contextMenu'",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "TContext", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
     }
   },
   "PasteStartEvent": {
@@ -13454,7 +13540,10 @@
     },
     "cutToClipboard": {
       "type": {
-        "arguments": { "params?": "IClipboardCopyParams" },
+        "arguments": {
+          "params?": "IClipboardCopyParams",
+          "source?": "'api' | 'ui' | 'contextMenu'"
+        },
         "returnType": "void",
         "optional": false
       }
@@ -23536,6 +23625,42 @@
       },
       "meta": { "isEvent": true, "name": "onToolPanelSizeChanged" }
     },
+    "onCutStart": {
+      "description": "/** Cut operation has started. */",
+      "type": {
+        "arguments": { "event": "CutStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onCutStart" }
+    },
+    "cutStart": {
+      "description": "/** Cut operation has started. */",
+      "type": {
+        "arguments": { "event": "CutStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onCutStart" }
+    },
+    "onCutEnd": {
+      "description": "/** Cut operation has ended. */",
+      "type": {
+        "arguments": { "event": "CutEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onCutEnd" }
+    },
+    "cutEnd": {
+      "description": "/** Cut operation has ended. */",
+      "type": {
+        "arguments": { "event": "CutEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onCutEnd" }
+    },
     "onPasteStart": {
       "description": "/** Paste operation has started. */",
       "type": {
@@ -26371,6 +26496,42 @@
         "optional": true
       },
       "meta": { "isEvent": true, "name": "onToolPanelSizeChanged" }
+    },
+    "onCutStart": {
+      "description": "/** Cut operation has started. */",
+      "type": {
+        "arguments": { "event": "CutStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onCutStart" }
+    },
+    "cutStart": {
+      "description": "/** Cut operation has started. */",
+      "type": {
+        "arguments": { "event": "CutStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onCutStart" }
+    },
+    "onCutEnd": {
+      "description": "/** Cut operation has ended. */",
+      "type": {
+        "arguments": { "event": "CutEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onCutEnd" }
+    },
+    "cutEnd": {
+      "description": "/** Cut operation has ended. */",
+      "type": {
+        "arguments": { "event": "CutEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onCutEnd" }
     },
     "onPasteStart": {
       "description": "/** Paste operation has started. */",
@@ -29213,6 +29374,42 @@
         "optional": true
       },
       "meta": { "isEvent": true, "name": "onToolPanelSizeChanged" }
+    },
+    "onCutStart": {
+      "description": "/** Cut operation has started. */",
+      "type": {
+        "arguments": { "event": "CutStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onCutStart" }
+    },
+    "cutStart": {
+      "description": "/** Cut operation has started. */",
+      "type": {
+        "arguments": { "event": "CutStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onCutStart" }
+    },
+    "onCutEnd": {
+      "description": "/** Cut operation has ended. */",
+      "type": {
+        "arguments": { "event": "CutEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onCutEnd" }
+    },
+    "cutEnd": {
+      "description": "/** Cut operation has ended. */",
+      "type": {
+        "arguments": { "event": "CutEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onCutEnd" }
     },
     "onPasteStart": {
       "description": "/** Paste operation has started. */",

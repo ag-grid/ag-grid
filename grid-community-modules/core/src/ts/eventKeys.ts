@@ -91,6 +91,9 @@ export class Events {
     /** Model was updated - grid updates the drawn rows when this happens */
     public static EVENT_MODEL_UPDATED: 'modelUpdated' = 'modelUpdated';
 
+    public static EVENT_CUT_START: 'cutStart' = 'cutStart';
+    public static EVENT_CUT_END: 'cutEnd' = 'cutEnd';
+
     public static EVENT_PASTE_START: 'pasteStart' = 'pasteStart';
     public static EVENT_PASTE_END: 'pasteEnd' = 'pasteEnd';
 
