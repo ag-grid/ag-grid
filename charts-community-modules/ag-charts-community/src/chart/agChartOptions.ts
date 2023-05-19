@@ -291,10 +291,10 @@ export interface AgChartCaptionOptions {
     /** Used to constrain the height of the title. */
     maxHeight?: PixelSize;
     /**
-     * Text wrapping strategy for long texts.
-     * `'always'` will break the words that are longer than `maxWidth`.
-     * `'hyphenate'` is similar to `'always'`, but insert the hyphens (`-`) into the word breaks.
-     * `'on-space'` will break the text on white spaces and tabulation symbols only. If some long word can't fit the `maxWidth`, the text will be truncated.
+     * Text wrapping strategy for long text.
+     * `'always'` will always wrap text to fit within the `maxWidth`.
+     * `'hyphenate'` is similar to `'always'`, but inserts a hyphen (`-`) if forced to wrap in the middle of a word.
+     * `'on-space'` will only wrap on white space. If there is no possibility to wrap a line on space and satisfy `maxWidth`, the text will be truncated.
      * `'never'` disables text wrapping.
      */
     wrapping?: TextWrap;
