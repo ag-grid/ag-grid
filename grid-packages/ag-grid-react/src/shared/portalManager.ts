@@ -97,7 +97,7 @@ export class PortalManager2 {
 
     private static MAX_COMPONENT_CREATION_TIME_IN_MS: number = 1000; // a second should be more than enough to instantiate a component
 
-    private parent: HTMLDivElement;
+    private refresher: () => void;
     private wrappingElement: string;
     private destroyed = false;
 
@@ -106,9 +106,9 @@ export class PortalManager2 {
 
     private maxComponentCreationTimeMs: number;
 
-    constructor(parent: HTMLDivElement, wrappingElement?: string, maxComponentCreationTimeMs?: number) {
+    constructor(refresher: () => void, wrappingElement?: string, maxComponentCreationTimeMs?: number) {
         this.wrappingElement = wrappingElement ? wrappingElement : 'div';
-        this.parent = parent;
+        this.refresher = refresher;
         this.maxComponentCreationTimeMs = maxComponentCreationTimeMs ? maxComponentCreationTimeMs : PortalManager2.MAX_COMPONENT_CREATION_TIME_IN_MS;
     }
 
@@ -147,9 +147,8 @@ export class PortalManager2 {
 
         setTimeout(() => {
             if (!this.destroyed) { // destroyed?
-                //   this.parent.forceUpdate(() => {
-                //       this.hasPendingPortalUpdate = false;
-                //   });
+                this.refresher();
+                this.hasPendingPortalUpdate = false;
             }
         });
 

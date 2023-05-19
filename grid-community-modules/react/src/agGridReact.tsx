@@ -3,7 +3,6 @@ import { AgGridReactLegacy } from './legacy/agGridReactLegacy';
 import { AgGridReactUi } from './reactUi/agGridReactUi';
 import { AgGridReactProps, AgReactUiProps } from './shared/interfaces';
 import { ColumnApi, GridApi } from '@ag-grid-community/core';
-import { AgGridReactUiFunc } from './reactUi/agGridReactUiFunc';
 
 
 export class AgGridReact<TData = any> extends Component<AgGridReactProps<TData> | AgReactUiProps<TData>, {}> {
@@ -18,8 +17,7 @@ export class AgGridReact<TData = any> extends Component<AgGridReactProps<TData> 
     render() {
         const ReactComponentToUse = this.props.suppressReactUi ?
             <AgGridReactLegacy<TData> {...this.props} setGridApi={this.setGridApi} />
-            : this.props.useFunc ? <AgGridReactUiFunc {...this.props} setGridApi={this.setGridApi} />
-                : <AgGridReactUi {...this.props} setGridApi={this.setGridApi} />;
+            : <AgGridReactUi<TData> {...this.props} setGridApi={this.setGridApi} />;
         return ReactComponentToUse;
     }
 }

@@ -11,12 +11,15 @@ export const showJsComp = (
     ref?: MutableRefObject<any> | ((ref: any)=>void)
 )  => {
 
-    if ((context as any).destroyed) { return; }
+    if (context.isDestroyed()) {
+        console.error('AG Grid: React Component not created as React Context is destroyed');
+        return;
+    }
 
     const doNothing = !compDetails || compDetails.componentFromFramework;
     if (doNothing) { return; }
 
-    const promise = compDetails.newAgStackInstance();
+    const promise = compDetails!.newAgStackInstance();
     if (!promise) { return; }
     
     // almost all JS Comps are NOT async, however the Floating Multi Filter is Async as it could

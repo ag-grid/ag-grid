@@ -5,6 +5,7 @@ import { AgGridReactUi } from './reactUi/agGridReactUi';
 
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
+import { ColDef } from '@ag-grid-community/core';
 
 
 const App = () => {
@@ -14,7 +15,7 @@ const App = () => {
         { make: 'Ford', model: 'Mondeo', price: 32000 },
         { make: 'Porsche', model: 'Boxster', price: 72000 }
     ]);
-    const [colDefs, setColDefs] = useState([
+    const [colDefs, setColDefs] = useState<ColDef[]>([
         { field: 'make' },
         { field: 'model' },
         { field: 'price' },
@@ -27,7 +28,7 @@ const App = () => {
     return (
         <div style={{ display: 'flex' }}>
             <div className="ag-theme-alpine" style={{ height: 400, width: 600, margin: 10 }}>
-                <AgGridReactUi
+                <AgGridReactUi<any>
                     defaultColDef={{
                         resizable: true,
                         filter: true,
