@@ -72,7 +72,7 @@ describe('Zoom', () => {
         (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
     };
 
-    describe.skip('when a user scrolls the mouse wheel', () => {
+    describe('when a user scrolls the mouse wheel', () => {
         it('should zoom in', async () => {
             await scrollAction(cx, cy, -1);
 
