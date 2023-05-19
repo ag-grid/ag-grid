@@ -8,16 +8,11 @@ import { HeaderRowContainerCtrl } from "./headerRendering/rowContainer/headerRow
 import { ColumnPinnedType } from "./entities/column";
 import { FakeHScrollComp } from "./gridBodyComp/fakeHScrollComp";
 import { FakeVScrollComp } from "./gridBodyComp/fakeVScrollComp";
-import { GridApi } from "./gridApi";
-import { ColumnApi } from "./columns/columnApi";
 
 // for all controllers that are singletons, they can register here so other parts
 // of the application can access them.
 
 interface ReadyParams {
-    api: GridApi;
-    columnApi: ColumnApi;
-
     gridCtrl: GridCtrl;
     gridBodyCtrl: GridBodyCtrl;
 
@@ -153,9 +148,6 @@ export class CtrlsService extends BeanStub {
             gridBodyCtrl: this.gridBodyCtrl,
             gridCtrl: this.gridCtrl,
             gridHeaderCtrl: this.gridHeaderCtrl,
-
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi
         };
     }
 
