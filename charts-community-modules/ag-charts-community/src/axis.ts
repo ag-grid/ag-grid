@@ -753,7 +753,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             avoidCollisions &&
             this.tick.interval === undefined &&
             this.tick.values === undefined;
-        const filterTicks = checkForOverlap && !(continuous && this.tick.count === undefined);
+        let filterTicks = false;
 
         const { defaultRotation, configuredRotation, parallelFlipFlag, regularFlipFlag } = calculateLabelRotation({
             rotation,
@@ -806,7 +806,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
                     maxTickCount,
                     primaryTickCount,
                     secondaryAxis,
-                    filterTicks: filterTicks && i !== 0,
+                    filterTicks,
                 });
 
                 tickData.rawTicks = rawTicks;
@@ -849,6 +849,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
                 configuredRotation,
                 defaultRotation
             ));
+
+            filterTicks = labelOverlap && !(continuous && this.tick.count === undefined);
         }
 
         const combinedRotation = defaultRotation + configuredRotation + autoRotation;
