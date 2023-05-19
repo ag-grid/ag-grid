@@ -63,9 +63,9 @@ The tooltip position can be modified using the `tooltip.position.type` property.
 - `node` - Anchors the tooltip to the highlighted node
 - `pointer` - Anchors the tooltip to the mouse pointer
 
-For series with markers, such as `line`, `area`, `scatter` and `bubble`, where each data point is represented by a marker, the default tooltip `position.type` is `node`. This means that the tooltip will be positioned above the highlighted marker node.
+For series with markers, such as `line`, `area`, and `scatter`, where each data point is represented by a marker, the default tooltip `position.type` is `node`. This means that the tooltip will be positioned above the highlighted marker node.
 
-For series without markers, such as `bar`,`column`, `histogram`, `treemap`, `pie` and `doughnut`, where each data point is represented by a fixed shape, for example a rectangle or a pie sector, the default tooltip `position.type` is `pointer`. This means that the tooltip will follow the mouse pointer as it moves over the shapes.
+For series without markers, such as `bar`,`column`, `histogram`, `treemap` and `pie`, where each data point is represented by a fixed shape, for example a rectangle or a pie sector, the default tooltip `position.type` is `pointer`. This means that the tooltip will follow the mouse pointer as it moves over the shapes.
 
 The `xOffset` and `yOffset` properties in `tooltip.position` options define the distance in pixels from the tooltip to the anchor point:
 
@@ -96,7 +96,7 @@ Set `tooltip.showArrow` to `true` to always show the arrow, and set it to `false
 
 ```js
 tooltip: {
-    showArrow: false
+  showArrow: false
 }
 ```
 
