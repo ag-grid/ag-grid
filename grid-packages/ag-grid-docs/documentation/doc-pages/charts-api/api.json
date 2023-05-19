@@ -120,6 +120,10 @@
         "Arial, sans-serif",
         "Times New Roman, serif"
       ]
+    },
+    "wrapping": {
+      "default": "hyphenate",
+      "options": ["always", "hyphenate", "on-space", "never"]
     }
   },
   "AgChartSubtitleOptions": {
@@ -168,6 +172,10 @@
         "Arial, sans-serif",
         "Times New Roman, serif"
       ]
+    },
+    "wrapping": {
+      "default": "hyphenate",
+      "options": ["always", "hyphenate", "on-space", "never"]
     }
   },
   "AgChartFooterOptions": {
@@ -216,6 +224,10 @@
         "Arial, sans-serif",
         "Times New Roman, serif"
       ]
+    },
+    "wrapping": {
+      "default": "hyphenate",
+      "options": ["always", "hyphenate", "on-space", "never"]
     }
   },
   "AgCartesianChartLegendOptions": {

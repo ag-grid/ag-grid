@@ -1180,7 +1180,7 @@
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "wrapping": {
-      "description": "/** Text wrapping strategy for long text.\n     * `'always'` will always wrap text to fit within the `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but inserts a hyphen (`-`) if forced to wrap in the middle of a word.\n     * `'on-space'` will only wrap on white space. If there is no possibility to wrap a line on space and satisfy `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     */",
+      "description": "/** Text wrapping strategy for long text.\n     * `'always'` will always wrap text to fit within the `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but inserts a hyphen (`-`) if forced to wrap in the middle of a word.\n     * `'on-space'` will only wrap on white space. If there is no possibility to wrap a line on space and satisfy `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     * Default: `'hyphenate'`\n     */",
       "type": { "returnType": "TextWrap", "optional": true }
     }
   },
@@ -1226,7 +1226,7 @@
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "wrapping": {
-      "description": "/** Text wrapping strategy for long text.\n     * `'always'` will always wrap text to fit within the `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but inserts a hyphen (`-`) if forced to wrap in the middle of a word.\n     * `'on-space'` will only wrap on white space. If there is no possibility to wrap a line on space and satisfy `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     */",
+      "description": "/** Text wrapping strategy for long text.\n     * `'always'` will always wrap text to fit within the `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but inserts a hyphen (`-`) if forced to wrap in the middle of a word.\n     * `'on-space'` will only wrap on white space. If there is no possibility to wrap a line on space and satisfy `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     * Default: `'hyphenate'`\n     */",
       "type": { "returnType": "TextWrap", "optional": true }
     }
   },
@@ -1272,7 +1272,7 @@
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "wrapping": {
-      "description": "/** Text wrapping strategy for long text.\n     * `'always'` will always wrap text to fit within the `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but inserts a hyphen (`-`) if forced to wrap in the middle of a word.\n     * `'on-space'` will only wrap on white space. If there is no possibility to wrap a line on space and satisfy `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     */",
+      "description": "/** Text wrapping strategy for long text.\n     * `'always'` will always wrap text to fit within the `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but inserts a hyphen (`-`) if forced to wrap in the middle of a word.\n     * `'on-space'` will only wrap on white space. If there is no possibility to wrap a line on space and satisfy `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     * Default: `'hyphenate'`\n     */",
       "type": { "returnType": "TextWrap", "optional": true }
     }
   },
@@ -4379,7 +4379,7 @@
       "type": { "returnType": "PixelSize", "optional": true }
     },
     "wrapping": {
-      "description": "/** Text wrapping strategy for long text.\n     * `'always'` will always wrap text to fit within the `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but inserts a hyphen (`-`) if forced to wrap in the middle of a word.\n     * `'on-space'` will only wrap on white space. If there is no possibility to wrap a line on space and satisfy `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     */",
+      "description": "/** Text wrapping strategy for long text.\n     * `'always'` will always wrap text to fit within the `maxWidth`.\n     * `'hyphenate'` is similar to `'always'`, but inserts a hyphen (`-`) if forced to wrap in the middle of a word.\n     * `'on-space'` will only wrap on white space. If there is no possibility to wrap a line on space and satisfy `maxWidth`, the text will be truncated.\n     * `'never'` disables text wrapping.\n     * Default: `'hyphenate'`\n     */",
       "type": { "returnType": "TextWrap", "optional": true }
     }
   },
