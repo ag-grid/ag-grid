@@ -17,7 +17,7 @@ const TOOLTIP_ID = 'context-menu';
 
 export class ContextMenu extends _ModuleSupport.BaseModuleInstance implements _ModuleSupport.ModuleInstance {
     @Validate(BOOLEAN)
-    enabled = false;
+    enabled = true;
 
     /**
      * Extra menu actions with a label and callback.
