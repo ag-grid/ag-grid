@@ -522,11 +522,13 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
     animateEmptyUpdateReady({
         markerSelections,
+        labelSelections,
         contextData,
         paths,
         seriesRect,
     }: {
         markerSelections: Array<Selection<Marker, LineNodeDatum>>;
+        labelSelections: Array<Selection<Text, LineNodeDatum>>;
         contextData: Array<LineContext>;
         paths: Array<Array<Path>>;
         seriesRect?: BBox;
@@ -547,11 +549,13 @@ export class LineSeries extends CartesianSeries<LineContext> {
             lineNode.lineDash = this.lineDash;
             lineNode.lineDashOffset = this.lineDashOffset;
 
+            const duration = 1000;
+
             const animationOptions = {
                 from: 0,
                 to: seriesRect?.width ?? 0,
                 disableInteractions: true,
-                duration: 1000,
+                duration,
                 ease: easing.linear,
                 repeat: 0,
             };
@@ -601,6 +605,21 @@ export class LineSeries extends CartesianSeries<LineContext> {
                         } else {
                             marker.size = 0;
                         }
+                    },
+                });
+            });
+
+            labelSelections[contextDataIndex].each((label, datum) => {
+                const delay = seriesRect?.width ? (datum.point.x / seriesRect.width) * duration - duration / 10 : 0;
+                this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+                    from: 0,
+                    to: 1,
+                    delay,
+                    duration: duration / 10,
+                    ease: easing.linear,
+                    repeat: 0,
+                    onUpdate: (opacity) => {
+                        label.opacity = opacity;
                     },
                 });
             });
