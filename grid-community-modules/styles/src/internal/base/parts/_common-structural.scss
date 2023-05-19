@@ -861,6 +861,10 @@
         flex: none;
     }
 
+    .ag-set-floating-filter-input input[disabled] {
+        pointer-events: none;
+    }
+
     // /**
     //  ****************************
     //  * Drag & Drop
