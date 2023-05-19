@@ -214,6 +214,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     private filterPlaceholder: SimpleFilterParams['filterPlaceholder'];
     private lastUiCompletePosition: number | null = null;
     private joinOperatorId = 0;
+    private filterListOptions: ListOption[];
 
     protected optionsFactory: OptionsFactory;
     protected abstract getDefaultFilterOptions(): string[];
@@ -442,6 +443,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
         this.optionsFactory = new OptionsFactory();
         this.optionsFactory.init(params, this.getDefaultFilterOptions());
+        this.createFilterListOptions();
 
         this.createOption();
         this.createMissingConditionsAndOperators();
@@ -531,20 +533,24 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         return defaultJoinOperator === 'AND' || defaultJoinOperator === 'OR' ? defaultJoinOperator : 'AND';
     }
 
-    private putOptionsIntoDropdown(eType: AgSelect): void {
+    private createFilterListOptions(): void {
         const filterOptions = this.optionsFactory.getFilterOptions();
 
-        // Add specified options to all condition drop-downs.
-        filterOptions.forEach(option => {
-            const listOption = typeof option === 'string' ?
+        this.filterListOptions = filterOptions.map(option => 
+            typeof option === 'string' ?
                 this.createBoilerplateListOption(option) :
-                this.createCustomListOption(option);
+                this.createCustomListOption(option)
+        );
+    }
 
+    private putOptionsIntoDropdown(eType: AgSelect): void {
+        // Add specified options to condition drop-down.
+        this.filterListOptions.forEach(listOption => {
             eType.addOption(listOption);
         });
 
         // Make drop-downs read-only if there is only one option.
-        eType.setDisabled(filterOptions.length <= 1);
+        eType.setDisabled(this.filterListOptions.length <= 1);
     }
 
     private createBoilerplateListOption(option: string): ListOption {
@@ -620,14 +626,12 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         this.eTypes.forEach((eType, position) => {
             const disabled = this.isConditionDisabled(position, lastUiCompletePosition);
 
-            const group = position === 1 ? [eType, this.eJoinOperatorPanels[0], this.eJoinOperatorsAnd[0], this.eJoinOperatorsOr[0]] : [eType]
-            group.forEach(element => {
-                if (element instanceof AgAbstractInputField || element instanceof AgSelect) {
-                    element.setDisabled(disabled);
-                } else {
-                    setDisabled(element, disabled);
-                }
-            });
+            eType.setDisabled(disabled || this.filterListOptions.length <= 1);
+            if (position === 1) {
+                setDisabled(this.eJoinOperatorPanels[0], disabled);
+                this.eJoinOperatorsAnd[0].setDisabled(disabled);
+                this.eJoinOperatorsOr[0].setDisabled(disabled);
+            }
         });
 
         this.eConditionBodies.forEach((element, index) => {
@@ -921,7 +925,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         eType
             .setValue(this.optionsFactory.getDefaultOption(), true)
             .setAriaLabel(filteringLabel)
-            .setDisabled(this.isReadOnly());
+            .setDisabled(this.isReadOnly() || this.filterListOptions.length <= 1);
     }
 
     private resetJoinOperatorAnd(eJoinOperatorAnd: AgRadioButton, index: number, uniqueGroupId: number): void {
