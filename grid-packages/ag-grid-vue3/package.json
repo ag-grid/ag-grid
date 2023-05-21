@@ -29,6 +29,10 @@
     "test:unit": "vue-cli-service test:unit",
     "test:e2ex": "vue-cli-service test:e2e"
   },
+  "dependencies": {
+    "ag-grid-community": "~29.3.0",
+    "vue": "^3.0.0"
+  },
   "peerDependencies": {
     "ag-grid-community": "~29.3.0",
     "vue": "^3.0.0"
