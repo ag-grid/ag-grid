@@ -97,6 +97,9 @@ export class Events {
     public static EVENT_FILL_START: 'fillStart' = 'fillStart';
     public static EVENT_FILL_END: 'fillEnd' = 'fillEnd';
 
+    public static EVENT_RANGE_DELETE_START: 'rangeDeleteStart' = 'rangeDeleteStart';
+    public static EVENT_RANGE_DELETE_END: 'rangeDeleteEnd' = 'rangeDeleteEnd';
+
     /** Undo operation has started. */
     public static EVENT_UNDO_STARTED: 'undoStarted' = 'undoStarted';
     /** Undo operation has ended. */

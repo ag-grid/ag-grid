@@ -2196,6 +2196,8 @@
       "onUndoEnded?(event: UndoEndedEvent<TData>)": "void",
       "onRedoStarted?(event: RedoStartedEvent<TData>)": "void",
       "onRedoEnded?(event: RedoEndedEvent<TData>)": "void",
+      "onRangeDeleteStart?(event: RangeDeleteStartEvent<TData>)": "void",
+      "onRangeDeleteEnd?(event: RangeDeleteEndEvent<TData>)": "void",
       "onFilterOpened?(event: FilterOpenedEvent<TData>)": "void",
       "onFilterChanged?(event: FilterChangedEvent<TData>)": "void",
       "onFilterModified?(event: FilterModifiedEvent<TData>)": "void",
@@ -2571,6 +2573,8 @@
       "onUndoEnded?(event: UndoEndedEvent<TData>)": "/** Undo operation has ended. */",
       "onRedoStarted?(event: RedoStartedEvent<TData>)": "/** Redo operation has started. */",
       "onRedoEnded?(event: RedoEndedEvent<TData>)": "/** Redo operation has ended. */",
+      "onRangeDeleteStart?(event: RangeDeleteStartEvent<TData>)": "/** Range delete operation (cell clear) has started. */",
+      "onRangeDeleteEnd?(event: RangeDeleteEndEvent<TData>)": "/** Range delete operation (cell clear) has ended. */",
       "onFilterOpened?(event: FilterOpenedEvent<TData>)": "/** Filter has been opened. */",
       "onFilterChanged?(event: FilterChangedEvent<TData>)": "/** Filter has been modified and applied. */",
       "onFilterModified?(event: FilterModifiedEvent<TData>)": "/** Filter was modified but not applied. Used when filters have 'Apply' buttons. */",
@@ -3664,6 +3668,38 @@
     "type": {
       "initialRange": "CellRange",
       "finalRange": "CellRange",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "TContext",
+      "type": "string"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
+  },
+  "RangeDeleteStartEvent": {
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "type": {
+      "source": "'deleteKeyPressed'",
+      "api": "GridApi<TData>",
+      "columnApi": "ColumnApi",
+      "context": "TContext",
+      "type": "string"
+    },
+    "docs": {
+      "api": "/** The grid api. */",
+      "columnApi": "/** The column api. */",
+      "context": "/** Application context as set on `gridOptions.context`. */",
+      "type": "/** Event identifier */"
+    }
+  },
+  "RangeDeleteEndEvent": {
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "type": {
+      "source": "'deleteKeyPressed'",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "TContext",
@@ -8713,7 +8749,7 @@
       "getRangeEndRow(cellRange: CellRange)": "RowPosition",
       "createCellRangeFromCellRangeParams(params: CellRangeParams)": "CellRange | undefined",
       "setCellRanges(cellRanges: CellRange[])": "void",
-      "clearCellRangeCellValues(cellRanges?: CellRange[], source?: string)": "void"
+      "clearCellRangeCellValues(params: ClearCellRangeParams)": "void"
     }
   },
   "ISelectionHandle": {
@@ -8795,6 +8831,20 @@
       "floatingEnd": "string",
       "columnStart": "string | Column",
       "columnEnd": "string | Column"
+    }
+  },
+  "ClearCellRangeParams": {
+    "meta": {},
+    "type": {
+      "cellRanges?": "CellRange[]",
+      "cellEventSource?": "string",
+      "dispatchWrapperEvents?": "boolean",
+      "wrapperEventSource?": "'deleteKeyPressed'"
+    },
+    "docs": {
+      "cellEventSource?": "/** Source passed to cellValueChanged event */",
+      "dispatchWrapperEvents?": "/** True to dispatch rangeDeleteStart and rangeDeleteEnd events */",
+      "wrapperEventSource?": "/** Source passed to rangeDeleteStart and rangeDeleteEnd events */"
     }
   },
   "CellValue": {
@@ -12801,6 +12851,8 @@
       "onUndoEnded?(event: UndoEndedEvent<TData>)": "void",
       "onRedoStarted?(event: RedoStartedEvent<TData>)": "void",
       "onRedoEnded?(event: RedoEndedEvent<TData>)": "void",
+      "onRangeDeleteStart?(event: RangeDeleteStartEvent<TData>)": "void",
+      "onRangeDeleteEnd?(event: RangeDeleteEndEvent<TData>)": "void",
       "onFilterOpened?(event: FilterOpenedEvent<TData>)": "void",
       "onFilterChanged?(event: FilterChangedEvent<TData>)": "void",
       "onFilterModified?(event: FilterModifiedEvent<TData>)": "void",
@@ -13177,6 +13229,8 @@
       "onUndoEnded?(event: UndoEndedEvent<TData>)": "/** Undo operation has ended. */",
       "onRedoStarted?(event: RedoStartedEvent<TData>)": "/** Redo operation has started. */",
       "onRedoEnded?(event: RedoEndedEvent<TData>)": "/** Redo operation has ended. */",
+      "onRangeDeleteStart?(event: RangeDeleteStartEvent<TData>)": "/** Range delete operation (cell clear) has started. */",
+      "onRangeDeleteEnd?(event: RangeDeleteEndEvent<TData>)": "/** Range delete operation (cell clear) has ended. */",
       "onFilterOpened?(event: FilterOpenedEvent<TData>)": "/** Filter has been opened. */",
       "onFilterChanged?(event: FilterChangedEvent<TData>)": "/** Filter has been modified and applied. */",
       "onFilterModified?(event: FilterModifiedEvent<TData>)": "/** Filter was modified but not applied. Used when filters have 'Apply' buttons. */",
@@ -13567,6 +13621,8 @@
       "onUndoEnded?(event: UndoEndedEvent<TData>)": "void",
       "onRedoStarted?(event: RedoStartedEvent<TData>)": "void",
       "onRedoEnded?(event: RedoEndedEvent<TData>)": "void",
+      "onRangeDeleteStart?(event: RangeDeleteStartEvent<TData>)": "void",
+      "onRangeDeleteEnd?(event: RangeDeleteEndEvent<TData>)": "void",
       "onFilterOpened?(event: FilterOpenedEvent<TData>)": "void",
       "onFilterChanged?(event: FilterChangedEvent<TData>)": "void",
       "onFilterModified?(event: FilterModifiedEvent<TData>)": "void",
@@ -13943,6 +13999,8 @@
       "onUndoEnded?(event: UndoEndedEvent<TData>)": "/** Undo operation has ended. */",
       "onRedoStarted?(event: RedoStartedEvent<TData>)": "/** Redo operation has started. */",
       "onRedoEnded?(event: RedoEndedEvent<TData>)": "/** Redo operation has ended. */",
+      "onRangeDeleteStart?(event: RangeDeleteStartEvent<TData>)": "/** Range delete operation (cell clear) has started. */",
+      "onRangeDeleteEnd?(event: RangeDeleteEndEvent<TData>)": "/** Range delete operation (cell clear) has ended. */",
       "onFilterOpened?(event: FilterOpenedEvent<TData>)": "/** Filter has been opened. */",
       "onFilterChanged?(event: FilterChangedEvent<TData>)": "/** Filter has been modified and applied. */",
       "onFilterModified?(event: FilterModifiedEvent<TData>)": "/** Filter was modified but not applied. Used when filters have 'Apply' buttons. */",
@@ -14335,6 +14393,8 @@
       "onUndoEnded?(event: UndoEndedEvent<TData>)": "void",
       "onRedoStarted?(event: RedoStartedEvent<TData>)": "void",
       "onRedoEnded?(event: RedoEndedEvent<TData>)": "void",
+      "onRangeDeleteStart?(event: RangeDeleteStartEvent<TData>)": "void",
+      "onRangeDeleteEnd?(event: RangeDeleteEndEvent<TData>)": "void",
       "onFilterOpened?(event: FilterOpenedEvent<TData>)": "void",
       "onFilterChanged?(event: FilterChangedEvent<TData>)": "void",
       "onFilterModified?(event: FilterModifiedEvent<TData>)": "void",
@@ -14711,6 +14771,8 @@
       "onUndoEnded?(event: UndoEndedEvent<TData>)": "/** Undo operation has ended. */",
       "onRedoStarted?(event: RedoStartedEvent<TData>)": "/** Redo operation has started. */",
       "onRedoEnded?(event: RedoEndedEvent<TData>)": "/** Redo operation has ended. */",
+      "onRangeDeleteStart?(event: RangeDeleteStartEvent<TData>)": "/** Range delete operation (cell clear) has started. */",
+      "onRangeDeleteEnd?(event: RangeDeleteEndEvent<TData>)": "/** Range delete operation (cell clear) has ended. */",
       "onFilterOpened?(event: FilterOpenedEvent<TData>)": "/** Filter has been opened. */",
       "onFilterChanged?(event: FilterChangedEvent<TData>)": "/** Filter has been modified and applied. */",
       "onFilterModified?(event: FilterModifiedEvent<TData>)": "/** Filter was modified but not applied. Used when filters have 'Apply' buttons. */",

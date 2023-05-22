@@ -293,7 +293,7 @@ export class FillHandle extends AbstractSelectionHandle {
             columns,
             startColumn: columns[0]
         };
-        this.rangeService.clearCellRangeCellValues([cellRange]);
+        this.rangeService.clearCellRangeCellValues({ cellRanges: [cellRange] });
     }
 
     private processValues(
