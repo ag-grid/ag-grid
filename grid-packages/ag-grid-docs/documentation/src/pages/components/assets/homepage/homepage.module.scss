@@ -1,3 +1,4 @@
+@use "sass:math";
 @use '../../../../design-system' as ds; // needed to deal with bootstrap conflict
 
 @import '../common/vars.scss';
@@ -194,6 +195,9 @@ gatsby-fast-refresh {
 
 .customerLogos {
     display: inline-flex;
+    max-width: 58em;
+    margin-left: auto;
+    margin-right: auto;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
@@ -204,10 +208,10 @@ gatsby-fast-refresh {
     }
 
     img {
-        height: ds.$size-7;
+        height: ds.$size-1 * 7;
 
         @media screen and (min-width: 640px) {
-            height: ds.$size-8;
+            height: ds.$size-1 * 10;
         }
     }
 }
