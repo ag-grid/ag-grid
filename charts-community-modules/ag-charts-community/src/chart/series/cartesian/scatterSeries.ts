@@ -600,7 +600,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         });
     }
 
-    animateReadyUpdateReady({ markerSelections }: { markerSelections: Array<Selection<Marker, ScatterNodeDatum>> }) {
+    animateReadyUpdate({ markerSelections }: { markerSelections: Array<Selection<Marker, ScatterNodeDatum>> }) {
         markerSelections.forEach((markerSelection) => {
             markerSelection.each((marker, datum) => {
                 const format = this.animateFormatter(marker, datum);

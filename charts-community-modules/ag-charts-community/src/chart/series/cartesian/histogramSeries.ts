@@ -611,18 +611,28 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         });
     }
 
-    animateReadyUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, HistogramNodeDatum>> }) {
+    animateReadyUpdate({ datumSelections }: { datumSelections: Array<Selection<Rect, HistogramNodeDatum>> }) {
         datumSelections.forEach((datumSelection) => {
-            datumSelection.each((rect, datum) => {
-                rect.y = datum.y;
-                rect.height = datum.height;
-            });
+            this.resetSelectionRects(datumSelection);
         });
     }
 
-    animateReadyHighlightReady(highlightSelection: Selection<Rect, HistogramNodeDatum>) {
-        highlightSelection.each((rect, datum) => {
+    animateReadyHighlight(highlightSelection: Selection<Rect, HistogramNodeDatum>) {
+        this.resetSelectionRects(highlightSelection);
+    }
+
+    animateReadyResize({ datumSelections }: { datumSelections: Array<Selection<Rect, HistogramNodeDatum>> }) {
+        this.animationManager?.stop();
+        datumSelections.forEach((datumSelection) => {
+            this.resetSelectionRects(datumSelection);
+        });
+    }
+
+    resetSelectionRects(selection: Selection<Rect, HistogramNodeDatum>) {
+        selection.each((rect, datum) => {
+            rect.x = datum.x;
             rect.y = datum.y;
+            rect.width = datum.width;
             rect.height = datum.height;
         });
     }
