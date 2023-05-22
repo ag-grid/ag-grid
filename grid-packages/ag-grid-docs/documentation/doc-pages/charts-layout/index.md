@@ -12,6 +12,7 @@ Each chart is composed of a single or multiple series, and optionally a legend, 
 
 Components are laid out in the following order; earlier elements take up space that is then unavailable for the layout
 of later elements:
+
 - Chart padding
 - Title plus its configured spacing
 - Sub-title plus its configured spacing
@@ -77,6 +78,6 @@ When the chart size changes, the layout process is performed for the new availab
 Most components are typically a fixed size, so typically it is the series-area which shrinks or grows
 and most other components just move around or adjust alignment.
 
-By default, the chart will resize automatically to fill the container element. If either the `width` or `height` configs are set, auto-sizing will be disabled unless the `autoSize` config is explicitly set to `true`.
+By default `autoSize` is `true`, meaning the chart will resize automatically to fill the `container` element. If either the `width` or `height` options are set then those dimensions become frozen at the specified size. If `autoSize` is set to `false` then `width` and `height` will default to the initial `container` element size.
 
 Make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container.
