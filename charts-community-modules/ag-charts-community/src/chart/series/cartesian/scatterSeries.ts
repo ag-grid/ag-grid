@@ -188,6 +188,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             const colorKeyIdx = this.dataModel.resolveProcessedDataIndexById(`colorValue`)?.index ?? -1;
             colorScale.domain = colorDomain ?? this.processedData!.domain.values[colorKeyIdx];
             colorScale.range = colorRange;
+            colorScale.update();
         }
     }
 

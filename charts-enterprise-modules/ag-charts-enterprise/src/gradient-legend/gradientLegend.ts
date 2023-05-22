@@ -324,6 +324,10 @@ export class GradientLegend {
     }
 
     private formatDomain(domain: number[]) {
+        const formatter = this.item.label.formatter;
+        if (formatter) {
+            return (d: number) => formatter({ value: d } as any);
+        }
         return tickFormat(domain, ',.2g');
     }
 
