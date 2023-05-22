@@ -78,6 +78,6 @@ When the chart size changes, the layout process is performed for the new availab
 Most components are typically a fixed size, so typically it is the series-area which shrinks or grows
 and most other components just move around or adjust alignment.
 
-By default `autoSize` is `true`, meaning the chart will resize automatically to fill the `container` element. If either the `width` or `height` options are set then those dimensions become frozen at the specified size. If `autoSize` is set to `false` then `width` and `height` will default to the initial `container` element size.
+By default `autoSize` is `true`, meaning the chart will resize automatically to fill the `container` element. If either the `width` or `height` option is set, then that dimension becomes frozen at the specified size. If `autoSize` is set to `false` then `width` and `height` will default to the initial `container` element size.
 
 Make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container.
