@@ -141,8 +141,7 @@
 }
 
 .code {
-    width: 100%;
-    overflow: auto;
+    overflow: hidden;
 
     > div {
         height: 100%;
@@ -150,8 +149,8 @@
 
     pre {
         height: 100%;
-        border: none !important; // !important for .ag-styles specificity
-        border-radius: 0 !important; // !important for .ag-styles specificity
         margin-bottom: 0 !important; // !important for .ag-styles specificity
+        border-radius: 0 !important; // !important for .ag-styles specificity
+        border: none !important; // !important for .ag-styles specificity
     }
 }
