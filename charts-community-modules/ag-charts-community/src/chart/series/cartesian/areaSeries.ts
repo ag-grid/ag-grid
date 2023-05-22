@@ -789,11 +789,13 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
 
     animateEmptyUpdateReady({
         markerSelections,
+        labelSelections,
         contextData,
         paths,
         seriesRect,
     }: {
         markerSelections: Array<Selection<Marker, MarkerSelectionDatum>>;
+        labelSelections: Array<Selection<Text, LabelSelectionDatum>>;
         contextData: Array<AreaSeriesNodeDataContext>;
         paths: Array<Array<Path>>;
         seriesRect?: BBox;
@@ -803,11 +805,13 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         contextData.forEach(({ fillSelectionData, strokeSelectionData, itemId }, seriesIdx) => {
             const [fill, stroke] = paths[seriesIdx];
 
+            const duration = 1000;
+
             const animationOptions = {
                 from: 0,
                 to: seriesRect?.width ?? 0,
                 disableInteractions: true,
-                duration: 1000,
+                duration,
                 ease: easing.linear,
                 repeat: 0,
             };
@@ -952,6 +956,21 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
                         } else {
                             marker.size = 0;
                         }
+                    },
+                });
+            });
+
+            labelSelections[seriesIdx].each((label, datum) => {
+                const delay = seriesRect?.width ? (datum.point.x / seriesRect.width) * duration - duration / 10 : 0;
+                this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+                    from: 0,
+                    to: 1,
+                    delay,
+                    duration: duration / 10,
+                    ease: easing.linear,
+                    repeat: 0,
+                    onUpdate: (opacity) => {
+                        label.opacity = opacity;
                     },
                 });
             });

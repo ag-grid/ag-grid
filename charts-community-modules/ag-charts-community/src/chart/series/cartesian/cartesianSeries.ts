@@ -227,6 +227,7 @@ export abstract class CartesianSeries<
         this.animationState.transition('update', {
             datumSelections: this.subGroups.map(({ datumSelection }) => datumSelection),
             markerSelections: this.subGroups.map(({ markerSelection }) => markerSelection),
+            labelSelections: this.subGroups.map(({ labelSelection }) => labelSelection),
             contextData: this._contextNodeData,
             paths: this.subGroups.map(({ paths }) => paths),
             seriesRect,
@@ -722,6 +723,7 @@ export abstract class CartesianSeries<
     protected animateEmptyUpdateReady(_data: {
         datumSelections: Array<NodeDataSelection<N, C>>;
         markerSelections: Array<NodeDataSelection<Marker, C>>;
+        labelSelections: Array<LabelDataSelection<Text, C>>;
         contextData: Array<C>;
         paths: Array<Array<Path>>;
         seriesRect?: BBox;

@@ -987,7 +987,15 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         this.nodeDataRefresh = true;
     }
 
-    animateEmptyUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
+    animateEmptyUpdateReady({
+        datumSelections,
+        labelSelections,
+    }: {
+        datumSelections: Array<Selection<Rect, BarNodeDatum>>;
+        labelSelections: Array<Selection<Text, BarNodeDatum>>;
+    }) {
+        const duration = 1000;
+
         let startingX = Infinity;
         datumSelections.forEach((datumSelection) =>
             datumSelection.each((_, datum) => {
@@ -1007,7 +1015,7 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     ],
                     {
                         disableInteractions: true,
-                        duration: 1000,
+                        duration,
                         ease: easing.linear,
                         repeat: 0,
                         onUpdate([x, width]) {
@@ -1019,6 +1027,22 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                         },
                     }
                 );
+            });
+        });
+
+        labelSelections.forEach((labelSelection) => {
+            labelSelection.each((label) => {
+                this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+                    from: 0,
+                    to: 1,
+                    delay: duration - duration / 10,
+                    duration: duration / 10,
+                    ease: easing.linear,
+                    repeat: 0,
+                    onUpdate: (opacity) => {
+                        label.opacity = opacity;
+                    },
+                });
             });
         });
     }
@@ -1072,7 +1096,15 @@ export class ColumnSeries extends BarSeries {
         return ChartAxisDirection.X;
     }
 
-    animateEmptyUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
+    animateEmptyUpdateReady({
+        datumSelections,
+        labelSelections,
+    }: {
+        datumSelections: Array<Selection<Rect, BarNodeDatum>>;
+        labelSelections: Array<Selection<Text, BarNodeDatum>>;
+    }) {
+        const duration = 1000;
+
         let startingY = 0;
         datumSelections.forEach((datumSelection) =>
             datumSelection.each((_, datum) => {
@@ -1092,7 +1124,7 @@ export class ColumnSeries extends BarSeries {
                     ],
                     {
                         disableInteractions: true,
-                        duration: 1000,
+                        duration,
                         ease: easing.linear,
                         repeat: 0,
                         onUpdate([y, height]) {
@@ -1104,6 +1136,22 @@ export class ColumnSeries extends BarSeries {
                         },
                     }
                 );
+            });
+        });
+
+        labelSelections.forEach((labelSelection) => {
+            labelSelection.each((label) => {
+                this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+                    from: 0,
+                    to: 1,
+                    delay: duration - duration / 10,
+                    duration: duration / 10,
+                    ease: easing.linear,
+                    repeat: 0,
+                    onUpdate: (opacity) => {
+                        label.opacity = opacity;
+                    },
+                });
             });
         });
     }

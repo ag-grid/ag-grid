@@ -1475,6 +1475,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     animateEmptyUpdateReady() {
+        const duration = 1000;
         const rotation = Math.PI / -2 + toRadians(this.rotation);
 
         this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).forEach((node) => {
@@ -1488,7 +1489,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 ],
                 {
                     disableInteractions: true,
-                    duration: 1000,
+                    duration,
                     ease: easing.linear,
                     repeat: 0,
                     onUpdate([startAngle, endAngle]) {
@@ -1497,6 +1498,42 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                     },
                 }
             );
+        });
+
+        const labelAnimationOptions = {
+            from: 0,
+            to: 1,
+            delay: duration - duration / 10,
+            duration: duration / 10,
+            ease: easing.linear,
+            repeat: 0,
+        };
+
+        this.calloutLabelSelection.each((label) => {
+            this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${label.id}`, {
+                ...labelAnimationOptions,
+                onUpdate(opacity) {
+                    label.opacity = opacity;
+                },
+            });
+        });
+
+        this.sectorLabelSelection.each((label) => {
+            this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${label.id}`, {
+                ...labelAnimationOptions,
+                onUpdate(opacity) {
+                    label.opacity = opacity;
+                },
+            });
+        });
+
+        this.innerLabelsSelection.each((label) => {
+            this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${label.id}`, {
+                ...labelAnimationOptions,
+                onUpdate(opacity) {
+                    label.opacity = opacity;
+                },
+            });
         });
     }
 
