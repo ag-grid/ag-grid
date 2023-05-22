@@ -32,9 +32,6 @@ xdescribe('ExpandableSnippet', () => {
                 config={({expandAll: true})}
             ></ExpandableSnippet>)
 
-
-        console.log(tree);
-
         expect(tree.toJSON()).toMatchSnapshot();
     });
 });
