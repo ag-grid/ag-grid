@@ -366,7 +366,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         const defaultRowHeight = this.gridOptionsService.getRowHeightAsNumber();
         // if node after this, can calculate backwards (and ignore detail/grouping)
         if (nextNode) {
-            const numberOfRowDiff = Math.floor((nextNode.node.rowIndex! - displayIndex) * defaultRowHeight);
+            const numberOfRowDiff = (nextNode.node.rowIndex! - displayIndex) * defaultRowHeight;
             return {
                 rowTop: nextNode.node.rowTop! - numberOfRowDiff,
                 rowHeight: defaultRowHeight,
@@ -375,7 +375,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
         // otherwise calculate from end of store
         const lastTop = this.topPx + this.heightPx;
-        const numberOfRowDiff = Math.floor((this.getDisplayIndexEnd()! - displayIndex) * defaultRowHeight);
+        const numberOfRowDiff = (this.getDisplayIndexEnd()! - displayIndex) * defaultRowHeight;
         return {
             rowTop: lastTop - numberOfRowDiff,
             rowHeight: defaultRowHeight,
