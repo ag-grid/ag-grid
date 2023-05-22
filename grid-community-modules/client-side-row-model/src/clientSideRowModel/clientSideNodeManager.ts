@@ -141,8 +141,11 @@ export class ClientSideNodeManager {
     private updateSelection(nodesToUnselect: RowNode[], source: SelectionEventSourceType): void {
         const selectionChanged = nodesToUnselect.length > 0;
         if (selectionChanged) {
-            nodesToUnselect.forEach(rowNode => {
-                rowNode.setSelected(false, false, true, source);
+            this.selectionService.setNodesSelected({
+                newValue: false,
+                nodes: nodesToUnselect,
+                suppressFinishActions: true,
+                source,
             });
         }
 

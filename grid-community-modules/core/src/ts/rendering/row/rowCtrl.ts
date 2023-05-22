@@ -948,18 +948,42 @@ export class RowCtrl extends BeanStub {
 
         if (this.rowNode.isSelected()) {
             if (multiSelectOnClick) {
-                this.rowNode.setSelectedParams({ newValue: false, event: mouseEvent, source });
+                this.beans.selectionService.setNodeSelected({
+                    newValue: false,
+                    event: mouseEvent,
+                    source,
+                    node: this.rowNode,
+                });
             } else if (multiSelectKeyPressed) {
                 if (rowDeselectionWithCtrl) {
-                    this.rowNode.setSelectedParams({ newValue: false, event: mouseEvent, source });
+                    this.beans.selectionService.setNodeSelected({
+                        newValue: false,
+                        event: mouseEvent,
+                        source,
+                        node: this.rowNode,
+                    });
                 }
             } else {
                 // selected with no multi key, must make sure anything else is unselected
-                this.rowNode.setSelectedParams({ newValue: true, clearSelection: !shiftKeyPressed, rangeSelect: shiftKeyPressed, event: mouseEvent, source });
+                this.beans.selectionService.setNodeSelected({
+                    newValue: true,
+                    clearSelection: !shiftKeyPressed,
+                    rangeSelect: shiftKeyPressed,
+                    event: mouseEvent,
+                    source,
+                    node: this.rowNode,
+                });
             }
         } else {
             const clearSelection = multiSelectOnClick ? false : !multiSelectKeyPressed;
-            this.rowNode.setSelectedParams({ newValue: true, clearSelection: clearSelection, rangeSelect: shiftKeyPressed, event: mouseEvent, source });
+            this.beans.selectionService.setNodeSelected({
+                newValue: true,
+                clearSelection: clearSelection,
+                rangeSelect: shiftKeyPressed,
+                event: mouseEvent,
+                source,
+                node: this.rowNode,
+            });
         }
     }
 

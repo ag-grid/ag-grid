@@ -353,7 +353,11 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
             const isGroupSelectsChildren = this.beans.gridOptionsService.is('groupSelectsChildren');
             if (isGroupSelectsChildren) {
                 const selected = this.calculateSelectedFromChildren();
-                this.setSelectedParams({ newValue: selected ?? false, source: 'selectableChanged' });
+                this.beans.selectionService.setNodeSelected({
+                    node: this,
+                    newValue: selected ?? false,
+                    source: 'selectableChanged',
+                });
             }
         }
     }
@@ -993,6 +997,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     /**
+     * @deprecated use `gridApi.setNodesSelected` instead
+     * 
      * Select (or deselect) the node.
      * @param newValue -`true` for selection, `false` for deselection.
      * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact.
@@ -1010,7 +1016,12 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     // to make calling code more readable, this is the same method as setSelected except it takes names parameters
+    /**
+     * @deprecated use `gridApi.setNodesSelected` instead
+     */
     public setSelectedParams(params: SetSelectedParams & { event?: Event }): number {
+        console.warn('AG Grid: since version v30, rowNode.setSelected() and rowNode.setSelectedParams() are deprecated, please use `gridApi.setNodesSelected()` instead');
+
         if (this.rowPinned) {
             console.warn('AG Grid: cannot select pinned rows');
             return 0;

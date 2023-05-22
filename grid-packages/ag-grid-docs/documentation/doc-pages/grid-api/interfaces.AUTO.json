@@ -9163,6 +9163,7 @@
       "getSelectedRows()": "any[]",
       "getSelectionCount()": "number",
       "setNodeSelected(params: ISetNodeSelectedParams)": "number",
+      "setNodesSelected(params: ISetNodesSelectedParams)": "number",
       "filterFromSelection(predicate: (node: RowNode) => boolean)": "void",
       "updateGroupsFromChildrenSelections(source: SelectionEventSourceType, changedPath?: ChangedPath)": "boolean",
       "syncInRowNode(rowNode: RowNode, oldNode: RowNode | null)": "void",
@@ -9177,10 +9178,35 @@
       "getSelectAllState(justFiltered?: boolean, justCurrentPage?: boolean)": "/** @param justFiltered whether to just include nodes which have passed the filter\n     * @param justCurrentPage whether to just include nodes on the current page\n     * @returns all nodes including unselectable nodes which are the target of this selection attempt\n     */"
     }
   },
+  "INodeSelectionParams": {
+    "meta": {},
+    "type": {
+      "newValue": "boolean",
+      "clearSelection?": "boolean",
+      "suppressFinishActions?": "boolean",
+      "rangeSelect?": "boolean",
+      "groupSelectsFiltered?": "boolean",
+      "source": "SelectionEventSourceType",
+      "event?": "Event"
+    }
+  },
   "ISetNodeSelectedParams": {
     "meta": {},
     "type": {
       "node": "RowNode",
+      "newValue": "boolean",
+      "clearSelection?": "boolean",
+      "suppressFinishActions?": "boolean",
+      "rangeSelect?": "boolean",
+      "groupSelectsFiltered?": "boolean",
+      "source": "SelectionEventSourceType",
+      "event?": "Event"
+    }
+  },
+  "ISetNodesSelectedParams": {
+    "meta": {},
+    "type": {
+      "nodes": "RowNode[]",
       "newValue": "boolean",
       "clearSelection?": "boolean",
       "suppressFinishActions?": "boolean",
