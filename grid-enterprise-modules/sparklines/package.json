@@ -62,7 +62,7 @@
   "devDependencies": {
     "@types/jest": "^25.2.1",
     "@types/node": "12.20.20",
-    "jest-canvas-mock": "2.3.1",
+    "jest-canvas-mock": "2.5.1",
     "jest": "^25.4.0",
     "ts-jest": "^25.4.0",
     "typescript": "~4.3.5",
