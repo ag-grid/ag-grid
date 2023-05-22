@@ -39,7 +39,7 @@ const updateFileContents = (filename, existingContent, newContent) => {
 const addMarkdownIncludeSupport = () => {
     // updates the method for reading files to automatically replace the Markdown imports with file contents at this stage
 
-    return applyCustomisation('gatsby-source-filesystem', '4.25.0', {
+    return applyCustomisation('gatsby-source-filesystem', '5.9.0', {
         name: 'Add support for including Markdown files into other Markdown files',
         apply: () => updateFileContents(
             './node_modules/gatsby-source-filesystem/index.js',
@@ -70,7 +70,7 @@ const fixScrollingIssue = () => {
     // removes some of the scroll handling that this plugin adds which seems to cause the page to scroll to the wrong
     // position when hash URLs are initially loaded
 
-    return applyCustomisation('gatsby-remark-autolink-headers', '5.25.0', {
+    return applyCustomisation('gatsby-remark-autolink-headers', '6.9.0', {
         name: 'Fix scrolling issue for hash URLs',
         apply: () => updateFileContents(
             './node_modules/gatsby-remark-autolink-headers/gatsby-browser.js',
@@ -85,7 +85,7 @@ const ignoreFsUsages = () => {
     // this feature is added to allow for incremental builds but causes issue with code out of our control (algolia) as well as with the ExampleRunner
     // remove this check and just allow it to continue
 
-    return applyCustomisation('gatsby', '4.25.5', {
+    return applyCustomisation('gatsby', '5.9.1', {
         name: `Don't track fs usages when doing prod build`,
         apply: () => updateFileContents(
             './node_modules/gatsby/dist/utils/webpack.config.js',
@@ -99,36 +99,35 @@ const fixFileLoadingIssue = () => {
     // adds error handling around loading of files to avoid the Gatsby process periodically dying when file contents
     // cannot be read correctly when saving examples
 
-    return applyCustomisation('gatsby-source-filesystem', '4.25.0', {
+    return applyCustomisation('gatsby-source-filesystem', '5.9.0', {
         name: 'Fix file loading issue',
         apply: () => updateFileContents(
             './node_modules/gatsby-source-filesystem/gatsby-node.js',
             `  const createAndProcessNode = path => {
-    const fileNodePromise = createFileNode(path, createNodeId, pluginOptions).then(fileNode => {
+    const fileNodePromise = createFileNode(path, createNodeId, pluginOptions, cache).then(fileNode => {
       createNode(fileNode);
       return null;
     });
     return fileNodePromise;
   };
-
   const deletePathNode = path => {
-    const node = getNode(createNodeId(path)); // It's possible the node was never created as sometimes tools will
+    const node = getNode(createNodeId(path));
+    // It's possible the node was never created as sometimes tools will
     // write and then immediately delete temporary files to the file system.
-
     if (node) {
       deleteNode(node);
     }
-  }; // For every path that is reported before the 'ready' event, we throw them
+  };
+
+  // For every path that is reported before the 'ready' event, we throw them
   // into a queue and then flush the queue when 'ready' event arrives.
   // After 'ready', we handle the 'add' event without putting it into a queue.
-
-
   let pathQueue = [];
-
   const flushPathQueue = () => {
     const queue = pathQueue.slice();
     pathQueue = null;
-    return Promise.all( // eslint-disable-next-line consistent-return
+    return Promise.all(
+    // eslint-disable-next-line consistent-return
     queue.map(({
       op,
       path
@@ -136,15 +135,15 @@ const fixFileLoadingIssue = () => {
       switch (op) {
         case \`delete\`:
           return deletePathNode(path);
-
         case \`upsert\`:
           return createAndProcessNode(path);
       }
     }));
   };
 `,
-            `const createAndProcessNode = path => {
-    return createFileNode(path, createNodeId, pluginOptions)
+            `
+  const createAndProcessNode = path => {
+    const fileNodePromise = createFileNode(path, createNodeId, pluginOptions, cache)
       .catch(() => {
         reporter.warn(\`Failed to create FileNode for \${path}. Re-trying...\`);
         return createFileNode(path, createNodeId, pluginOptions);
@@ -156,8 +155,9 @@ const fixFileLoadingIssue = () => {
       .catch(error => {
         reporter.error(\`Failed to create FileNode for \${path}\`, error);
       });
+
+    return fileNodePromise;
   };
-    
   const deletePathNode = path => {
     const node = getNode(createNodeId(path));
     // It's possible the node was never created as sometimes tools will
@@ -199,7 +199,8 @@ const fixFileLoadingIssue = () => {
                 return createAndProcessNode(path);
         }
     }, queue, 5000);
-  };            `
+  };
+            `
         )
     });
 };
@@ -207,7 +208,7 @@ const fixFileLoadingIssue = () => {
 const jsxErrorProcessingIssue = () => {
     // Prevents Gatsby from dying when an JSX error is introduced
 
-    return applyCustomisation('gatsby-cli', '4.25.0', {
+    return applyCustomisation('gatsby-cli', '5.10.0', {
             name: 'JSX Error Processing Issue',
             apply: () => updateFileContents(
                 './node_modules/gatsby-cli/lib/structured-errors/construct-error.js',
@@ -437,7 +438,7 @@ rules: {}`,
 const restrictSearchForPageQueries = () => {
     // restricts the files that Gatsby searches for queries, which improves performance
 
-    return applyCustomisation('gatsby', '4.25.5', {
+    return applyCustomisation('gatsby', '5.9.1', {
         name: 'Restrict search for page queries',
         apply: () => updateFileContents(
             './node_modules/gatsby/dist/query/query-compiler.js',
@@ -450,7 +451,7 @@ const restrictSearchForPageQueries = () => {
 const renameSitemapXml = () => {
     // renames sitemap-index.xml to sitemap.xml (which is standard)
 
-    return applyCustomisation('gatsby-plugin-sitemap', '5.25.0', {
+    return applyCustomisation('gatsby-plugin-sitemap', '6.9.0', {
         name: 'Rename sitemap reference',
         apply: () => updateFileContents(
             './node_modules/gatsby-plugin-sitemap/gatsby-ssr.js',
