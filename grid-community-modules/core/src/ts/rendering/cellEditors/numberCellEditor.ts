@@ -49,9 +49,12 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
         if (!exists(value) && !exists(this.params.value)) {
             return this.params.value;
         }
-        const parsedValue = this.params.parseValue(value!);
+        let parsedValue = this.params.parseValue(value!);
         if (parsedValue == null) {
             return parsedValue;
+        }
+        if (typeof parsedValue === 'string') {
+            parsedValue = Number(parsedValue);
         }
         return isNaN(parsedValue) ? null : parsedValue;
     }
