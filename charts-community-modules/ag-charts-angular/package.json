@@ -6,7 +6,7 @@
     "ng": "ng",
     "build": "ng build && npm run hash",
     "build-prod": "npm run build",
-    "test:e2e": "ng test --watch false --browsers ChromeHeadless",
+    "test:e2e": "NODE_OPTIONS=--openssl-legacy-provider ng test --watch false --browsers ChromeHeadless",
     "lint": "ng lint",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
