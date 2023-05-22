@@ -29,15 +29,13 @@
     "test:unit": "vue-cli-service test:unit",
     "test:e2ex": "vue-cli-service test:e2e"
   },
-  "dependencies": {
-    "ag-grid-community": "~29.3.0",
-    "vue": "^3.0.0"
-  },
   "peerDependencies": {
     "ag-grid-community": "~29.3.0",
     "vue": "^3.0.0"
   },
   "devDependencies": {
+    "ag-grid-community": "~29.3.0",
+    "vue": "^3.0.0",
     "@types/jest": "^24.0.19",
     "@vue/cli-plugin-e2e-cypress": "~4.5.0",
     "@vue/cli-plugin-typescript": "~4.5.0",
