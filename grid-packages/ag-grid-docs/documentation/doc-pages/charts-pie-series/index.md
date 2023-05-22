@@ -194,7 +194,7 @@ series: [
 
 In the example below, we match the series with a `legendItemKey` of `'os'` comparing the market share of each operating system in two different years.
 
-<chart-example title='Multi-Doughnut Chart with Shared Series' name='multi-doughnut-shared' type='generated'></chart-example>
+<chart-example title='Multi-Doughnut Chart with Shared Legend' name='multi-doughnut-shared' type='generated'></chart-example>
 
 ## API Reference
 
