@@ -792,7 +792,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     private async updateLegend() {
-        const legendData: ChartLegendDatum[] = [];
+        let legendData: ChartLegendDatum[] = [];
         this.series
             .filter((s) => s.showInLegend)
             .forEach((series) => {
@@ -802,6 +802,15 @@ export abstract class Chart extends Observable implements AgChartInstance {
         const legendType = legendData.length > 0 ? legendData[0].legendType : 'category';
         this.attachLegend(legendType);
         this.applyLegendOptions?.(this.legend!);
+
+        if (legendType === 'category') {
+            const usedLabels = new Set();
+            legendData = legendData.filter((d: any) => {
+                const alreadyUsed = usedLabels.has(d.label.text);
+                usedLabels.add(d.label.text);
+                return !alreadyUsed;
+            });
+        }
 
         this.legend!.data = legendData;
     }
