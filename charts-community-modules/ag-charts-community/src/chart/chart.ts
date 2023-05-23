@@ -254,6 +254,13 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.animationManager.skipAnimations = true;
         this.animationManager.play();
 
+        this.tooltip = new Tooltip(this.scene.canvas.element, document, document.body);
+        this.tooltipManager = new TooltipManager(this.tooltip, this.interactionManager);
+        this.attachLegend('category');
+        this.overlays = new ChartOverlays(this.element);
+        this.highlight = new ChartHighlight();
+        this.container = container;
+
         SizeMonitor.observe(this.element, (size) => {
             const { width, height } = size;
 
@@ -275,13 +282,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
         });
         this.layoutService.addListener('start-layout', (e) => this.positionPadding(e.shrinkRect));
         this.layoutService.addListener('start-layout', (e) => this.positionCaptions(e.shrinkRect));
-
-        this.tooltip = new Tooltip(this.scene.canvas.element, document, document.body);
-        this.tooltipManager = new TooltipManager(this.tooltip, this.interactionManager);
-        this.attachLegend('category');
-        this.overlays = new ChartOverlays(this.element);
-        this.highlight = new ChartHighlight();
-        this.container = container;
 
         // Add interaction listeners last so child components are registered first.
         this.interactionManager.addListener('click', (event) => this.onClick(event));
