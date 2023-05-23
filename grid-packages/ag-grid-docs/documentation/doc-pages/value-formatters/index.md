@@ -49,5 +49,6 @@ Sometimes you may want to use the value formatter when performing other grid ope
 This applies to the following features:
 - [Copy/Cut](/clipboard/#processing-pasted-data)
 - [Fill Handle](/range-selection-fill-handle/)
+- [Copy Range Down](/range-selection/#copy-range-down)
 - [CSV Export](/csv-export/)
 - [Excel Export](/excel-export-customising-content/)

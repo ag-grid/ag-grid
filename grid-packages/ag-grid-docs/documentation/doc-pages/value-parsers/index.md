@@ -48,3 +48,4 @@ Sometimes you may want to use the value parser when performing other grid operat
 This applies to the following features:
 - [Paste](/clipboard/#processing-pasted-data)
 - [Fill Handle](/range-selection-fill-handle/)
+- [Copy Range Down](/range-selection/#copy-range-down)
