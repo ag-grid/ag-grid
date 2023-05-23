@@ -85,7 +85,6 @@
     "gatsby-remark-component-parent2div": "1.2.3",
     "gatsby-remark-copy-linked-files": "6.9.0",
     "gatsby-remark-embed-snippet": "8.9.0",
-    "gatsby-remark-images": "7.9.0",
     "gatsby-remark-prismjs": "7.9.0",
     "gatsby-source-filesystem": "5.9.0",
     "gatsby-transformer-rehype": "2.0.1",
