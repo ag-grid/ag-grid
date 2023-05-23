@@ -1294,7 +1294,7 @@
     }
   },
   "onToolPanelVisibleChanged": {
-    "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+    "description": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
     "type": {
       "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
       "returnType": "void"
@@ -1302,7 +1302,7 @@
     "meta": { "isEvent": true, "name": "onToolPanelVisibleChanged" }
   },
   "toolPanelVisibleChanged": {
-    "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+    "description": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
     "type": {
       "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
       "returnType": "void"

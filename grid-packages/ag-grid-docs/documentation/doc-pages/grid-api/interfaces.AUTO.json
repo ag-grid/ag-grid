@@ -2542,7 +2542,7 @@
       "getRowHeight?": "/** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */",
       "isFullWidthCell?": "/** @deprecated v27.2 Use `isFullWidthRow` instead. */",
       "isFullWidthRow?": "/** Tells the grid if this row should be rendered as full width. */",
-      "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
       "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "/** The tool panel size has been changed. */",
       "onPasteStart?(event: PasteStartEvent<TData>)": "/** Paste operation has started. */",
       "onPasteEnd?(event: PasteEndEvent<TData>)": "/** Paste operation has ended. */",
@@ -2961,28 +2961,10 @@
   "ToolPanelVisibleChangedEvent": {
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
-      "source": "string | undefined",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "TContext",
-      "type": "string"
-    },
-    "docs": {
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */",
-      "type": "/** Event identifier */"
-    }
-  },
-  "InternalToolPanelVisibleChangedEvent": {
-    "meta": {
-      "typeParams": ["TData = any", "TContext = any"],
-      "doc": "/** This is the replacement event for ToolPanelVisibleChangedEvent. In v30, this will be renamed ToolPanelVisibleChangedEvent,\n * and the original ToolPanelVisibleChangedEvent will be dropped\n */"
-    },
-    "type": {
       "source": "'sideBarButtonClicked' | 'sideBarInitializing' | 'api'",
       "key": "string",
       "visible": "boolean",
+      "switchingToolPanel": "boolean",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "TContext",
@@ -2991,6 +2973,7 @@
     "docs": {
       "key": "/** Key of tool panel. */",
       "visible": "/** True if now visible; false if now hidden. */",
+      "switchingToolPanel": "/** True if switching between tool panels. False if showing/hiding. */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -13174,7 +13157,7 @@
       "getRowHeight?": "/** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */",
       "isFullWidthCell?": "/** @deprecated v27.2 Use `isFullWidthRow` instead. */",
       "isFullWidthRow?": "/** Tells the grid if this row should be rendered as full width. */",
-      "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
       "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "/** The tool panel size has been changed. */",
       "onPasteStart?(event: PasteStartEvent<TData>)": "/** Paste operation has started. */",
       "onPasteEnd?(event: PasteEndEvent<TData>)": "/** Paste operation has ended. */",
@@ -13940,7 +13923,7 @@
       "getRowHeight?": "/** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */",
       "isFullWidthCell?": "/** @deprecated v27.2 Use `isFullWidthRow` instead. */",
       "isFullWidthRow?": "/** Tells the grid if this row should be rendered as full width. */",
-      "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
       "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "/** The tool panel size has been changed. */",
       "onPasteStart?(event: PasteStartEvent<TData>)": "/** Paste operation has started. */",
       "onPasteEnd?(event: PasteEndEvent<TData>)": "/** Paste operation has ended. */",
@@ -14708,7 +14691,7 @@
       "getRowHeight?": "/** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */",
       "isFullWidthCell?": "/** @deprecated v27.2 Use `isFullWidthRow` instead. */",
       "isFullWidthRow?": "/** Tells the grid if this row should be rendered as full width. */",
-      "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
       "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "/** The tool panel size has been changed. */",
       "onPasteStart?(event: PasteStartEvent<TData>)": "/** Paste operation has started. */",
       "onPasteEnd?(event: PasteEndEvent<TData>)": "/** Paste operation has ended. */",

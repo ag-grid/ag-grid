@@ -4233,7 +4233,7 @@
       }
     },
     "onToolPanelVisibleChanged": {
-      "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "description": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
       "type": {
         "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
         "returnType": "void",
@@ -4242,7 +4242,7 @@
       "meta": { "isEvent": true, "name": "onToolPanelVisibleChanged" }
     },
     "toolPanelVisibleChanged": {
-      "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "description": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
       "type": {
         "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
         "returnType": "void",
@@ -5986,28 +5986,6 @@
   },
   "ToolPanelVisibleChangedEvent": {
     "source": {
-      "type": { "returnType": "string | undefined", "optional": false }
-    },
-    "meta": { "typeParams": ["TData = any", "TContext = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "TContext", "optional": false }
-    },
-    "type": {
-      "description": "/** Event identifier */",
-      "type": { "returnType": "string", "optional": false }
-    }
-  },
-  "InternalToolPanelVisibleChangedEvent": {
-    "source": {
       "type": {
         "returnType": "'sideBarButtonClicked' | 'sideBarInitializing' | 'api'",
         "optional": false
@@ -6019,6 +5997,10 @@
     },
     "visible": {
       "description": "/** True if now visible; false if now hidden. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "switchingToolPanel": {
+      "description": "/** True if switching between tool panels. False if showing/hiding. */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
@@ -23539,7 +23521,7 @@
       }
     },
     "onToolPanelVisibleChanged": {
-      "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "description": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
       "type": {
         "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
         "returnType": "void",
@@ -23548,7 +23530,7 @@
       "meta": { "isEvent": true, "name": "onToolPanelVisibleChanged" }
     },
     "toolPanelVisibleChanged": {
-      "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "description": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
       "type": {
         "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
         "returnType": "void",
@@ -26375,7 +26357,7 @@
       }
     },
     "onToolPanelVisibleChanged": {
-      "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "description": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
       "type": {
         "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
         "returnType": "void",
@@ -26384,7 +26366,7 @@
       "meta": { "isEvent": true, "name": "onToolPanelVisibleChanged" }
     },
     "toolPanelVisibleChanged": {
-      "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "description": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
       "type": {
         "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
         "returnType": "void",
@@ -29217,7 +29199,7 @@
       }
     },
     "onToolPanelVisibleChanged": {
-      "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "description": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
       "type": {
         "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
         "returnType": "void",
@@ -29226,7 +29208,7 @@
       "meta": { "isEvent": true, "name": "onToolPanelVisibleChanged" }
     },
     "toolPanelVisibleChanged": {
-      "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "description": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
       "type": {
         "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
         "returnType": "void",

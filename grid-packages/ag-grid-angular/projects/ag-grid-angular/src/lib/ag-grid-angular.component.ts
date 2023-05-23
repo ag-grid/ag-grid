@@ -989,7 +989,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Tells the grid if this row should be rendered as full width.     */
     @Input() public isFullWidthRow: ((params: IsFullWidthRowParams<TData>) => boolean) | undefined = undefined;
 
-    /** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status.     */
+    /** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel.     */
     @Output() public toolPanelVisibleChanged: EventEmitter<ToolPanelVisibleChangedEvent<TData>> = new EventEmitter<ToolPanelVisibleChangedEvent<TData>>();
     /** The tool panel size has been changed.     */
     @Output() public toolPanelSizeChanged: EventEmitter<ToolPanelSizeChangedEvent<TData>> = new EventEmitter<ToolPanelSizeChangedEvent<TData>>();
