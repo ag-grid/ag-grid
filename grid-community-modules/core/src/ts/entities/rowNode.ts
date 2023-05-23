@@ -364,7 +364,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
     public setId(id?: string): void {
         // see if user is providing the id's
-        const getRowIdFunc = this.beans.gridOptionsService.getRowIdFunc();
+        const getRowIdFunc = this.beans.gridOptionsService.getCallback('getRowId');
 
         if (getRowIdFunc) {
             // if user is providing the id's, then we set the id only after the data has been set.
@@ -1116,20 +1116,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
      * - `false` if the node is not a full width cell
      */
     public isFullWidthCell(): boolean {
-        const isFullWidthCellFunc = this.getIsFullWidthCellFunc();
+        const isFullWidthCellFunc = this.beans.gridOptionsService.getCallback('isFullWidthRow');
         return isFullWidthCellFunc ? isFullWidthCellFunc({ rowNode: this }) : false;
-    }
-
-    private getIsFullWidthCellFunc() {
-        const isFullWidthRow = this.beans.gridOptionsService.getCallback('isFullWidthRow');
-        if (isFullWidthRow) {
-            return isFullWidthRow;
-        }
-        // this is the deprecated way, so provide a proxy to make it compatible
-        const isFullWidthCell = this.beans.gridOptionsService.get('isFullWidthCell');
-        if (isFullWidthCell) {
-            return (params: WithoutGridCommon<IsFullWidthRowParams>) => isFullWidthCell(params.rowNode);
-        }
     }
 
     /**

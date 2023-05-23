@@ -154,7 +154,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         // if user is providing id's, then this means we can keep the selection between datasource hits,
         // as the rows will keep their unique id's even if, for example, server side sorting or filtering
         // is done.
-        const getRowIdFunc = this.gridOptionsService.getRowIdFunc();
+        const getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
         const userGeneratingIds = getRowIdFunc != null;
 
         if (!userGeneratingIds) {

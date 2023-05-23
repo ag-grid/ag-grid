@@ -39,8 +39,6 @@ export interface AbstractColDef<TData = any, TValue = any> {
     * See [Tooltip Component](https://www.ag-grid.com/javascript-data-grid/component-tooltip/) for framework specific implementation details.
     */
     tooltipComponent?: any;
-    /** @deprecated As of v27, use `tooltipComponent` for framework components too. */
-    tooltipComponentFramework?: any;
     /** The params used to configure `tooltipComponent`. */
     tooltipComponentParams?: any;
 
@@ -68,8 +66,6 @@ export interface ColGroupDef<TData = any> extends AbstractColDef<TData> {
     * See [Header Group Component](https://www.ag-grid.com/javascript-data-grid/component-header/#header-group-components/) for framework specific implementation details.
     */
     headerGroupComponent?: any;
-    /** @deprecated As of v27, use `headerGroupComponent` for framework components too. */
-    headerGroupComponentFramework?: any;
     /** The params used to configure the `headerGroupComponent`. */
     headerGroupComponentParams?: any;
 }
@@ -231,8 +227,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     * See [Cell Editor](https://www.ag-grid.com/javascript-data-grid/component-cell-editor/) for framework specific implementation detail.
     */
     cellEditor?: any;
-    /** @deprecated As of v27, use `cellEditor` for framework components too. */
-    cellEditorFramework?: any;
     /** Params to be passed to the `cellEditor` component. */
     cellEditorParams?: any;
     /** Callback to select which cell editor to be used for a given row within the same column. */
@@ -294,8 +288,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     * See [Header Component](https://www.ag-grid.com/javascript-data-grid/component-header/) for framework specific implementation detail.
     */
     headerComponent?: any;
-    /** @deprecated As of v27, use `headerComponent` for framework components too. */
-    headerComponentFramework?: any;
     /** The parameters to be passed to the `headerComponent`. */
     headerComponentParams?: any;
 
@@ -365,8 +357,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     * See [Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/) for framework specific implementation details.
     */
     cellRenderer?: any;
-    /** @deprecated As of v27, use `cellRenderer` for framework components too. */
-    cellRendererFramework?: any;
     /** Params to be passed to the `cellRenderer` component. */
     cellRendererParams?: any;
     /** Callback to select which cell renderer to be used for a given row within the same column. */
@@ -741,8 +731,6 @@ export interface CellEditorSelectorFunc<TData = any, TValue = any> {
 export interface CellRendererSelectorResult {
     /** Equivalent of setting `colDef.cellRenderer` */
     component?: any;
-    /** @deprecated As of v27, use `component` for framework components too. */
-    frameworkComponent?: any;
     /** Equivalent of setting `colDef.cellRendererParams` */
     params?: any;
 }
@@ -750,8 +738,6 @@ export interface CellRendererSelectorResult {
 export interface CellEditorSelectorResult {
     /** Equivalent of setting `colDef.cellEditor` */
     component?: any;
-    /** @deprecated As of v27, use `component` for framework components too. */
-    frameworkComponent?: any;
     /** Equivalent of setting `colDef.cellEditorParams` */
     params?: any;
     /** Equivalent of setting `colDef.cellEditorPopup` */

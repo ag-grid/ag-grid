@@ -52,7 +52,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
             return;
         }
 
-        const getRowIdFunc = this.gridOptionsService.getRowIdFunc();
+        const getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
         if (getRowIdFunc == null) {
             console.error('AG Grid: ImmutableService requires getRowId() callback to be implemented, your row data needs IDs!');
             return;

@@ -385,18 +385,6 @@ export class GridOptionsService {
         return this.eGridDiv.getRootNode() as Document | ShadowRoot;
     }
 
-    public getRowIdFunc(): ((params: WithoutGridCommon<GetRowIdParams>) => string) | undefined {
-        const getRowId = this.getCallback('getRowId');
-        if (getRowId) {
-            return getRowId;
-        }
-        // this is the deprecated way, so provide a proxy to make it compatible
-        const getRowNodeId = this.gridOptions.getRowNodeId;
-        if (getRowNodeId) {
-            return (params: WithoutGridCommon<GetRowIdParams>) => getRowNodeId(params.data);
-        }
-    }
-
     public getAsyncTransactionWaitMillis(): number | undefined {
         return exists(this.gridOptions.asyncTransactionWaitMillis) ? this.gridOptions.asyncTransactionWaitMillis : 50;
     }
