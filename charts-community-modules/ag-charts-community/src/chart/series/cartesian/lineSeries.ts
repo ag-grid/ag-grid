@@ -560,12 +560,19 @@ export class LineSeries extends CartesianSeries<LineContext> {
                 repeat: 0,
             };
 
+            // Clone and sort the nodes by their x-values to ensure the line is drawn smoothly between each point
+            const sortedNodes = [...nodeData];
+            sortedNodes.sort((a, b) => {
+                if (a.point.x === b.point.x) return 0;
+                return a.point.x < b.point.x ? -1 : 1;
+            });
+
             this.animationManager?.animate<number>(`${this.id}_empty-update-ready`, {
                 ...animationOptions,
                 onUpdate(xValue) {
                     linePath.clear({ trackChanges: true });
 
-                    nodeData.forEach((datum, index) => {
+                    sortedNodes.forEach((datum, index) => {
                         if (datum.point.x <= xValue) {
                             // Draw/move the full segment if past the end of this segment
                             if (datum.point.moveTo) {
@@ -573,9 +580,9 @@ export class LineSeries extends CartesianSeries<LineContext> {
                             } else {
                                 linePath.lineTo(datum.point.x, datum.point.y);
                             }
-                        } else if (index > 0 && nodeData[index - 1].point.x < xValue) {
+                        } else if (index > 0 && sortedNodes[index - 1].point.x < xValue) {
                             // Draw/move partial line if in between the start and end of this segment
-                            const start = nodeData[index - 1].point;
+                            const start = sortedNodes[index - 1].point;
                             const end = datum.point;
 
                             const x = xValue;
