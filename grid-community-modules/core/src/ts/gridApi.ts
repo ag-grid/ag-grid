@@ -1157,11 +1157,7 @@ export class GridApi<TData = any> {
     public setRowGroupPanelShow(rowGroupPanelShow: 'always' | 'onlyWhenGrouping' | 'never'): void {
         this.gridOptionsService.set('rowGroupPanelShow', rowGroupPanelShow);
     }
-    /** @deprecated v27.2 - Use `setGetGroupRowAgg` instead. */
-    public setGroupRowAggNodes(groupRowAggNodesFunc: (nodes: IRowNode[]) => any): void {
-        logDeprecation<GridApi>('27.2', 'setGroupRowAggNodes', 'setGetGroupRowAgg');
-        this.gridOptionsService.set('groupRowAggNodes', groupRowAggNodesFunc);
-    }
+
     public setGetGroupRowAgg(getGroupRowAggFunc: (params: GetGroupRowAggParams) => any): void {
         this.gridOptionsService.set('getGroupRowAgg', getGroupRowAggFunc);
     }
@@ -1178,11 +1174,6 @@ export class GridApi<TData = any> {
         this.gridOptionsService.set('processRowPostCreate', processRowPostCreateFunc);
     }
 
-    /** @deprecated v27.1 Use `setGetRowId` instead  */
-    public setGetRowNodeId(getRowNodeIdFunc: GetRowNodeIdFunc): void {
-        logDeprecation<GridApi>('27.1', 'setGetRowNodeId', 'setGetRowId');
-        this.gridOptionsService.set('getRowNodeId', getRowNodeIdFunc);
-    }
     public setGetRowId(getRowIdFunc: GetRowIdFunc): void {
         this.gridOptionsService.set('getRowId', getRowIdFunc);
     }
@@ -1191,11 +1182,6 @@ export class GridApi<TData = any> {
         this.gridOptionsService.set('getRowClass', rowClassFunc);
     }
 
-    /** @deprecated v27.2 Use `setIsFullWidthRow` instead. */
-    public setIsFullWidthCell(isFullWidthCellFunc: (rowNode: IRowNode) => boolean): void {
-        logDeprecation<GridApi>('27.2', 'setIsFullWidthCell', 'setIsFullWidthRow');
-        this.gridOptionsService.set('isFullWidthCell', isFullWidthCellFunc);
-    }
     public setIsFullWidthRow(isFullWidthRowFunc: (params: IsFullWidthRowParams) => boolean): void {
         this.gridOptionsService.set('isFullWidthRow', isFullWidthRowFunc);
     }
@@ -1208,11 +1194,6 @@ export class GridApi<TData = any> {
         this.gridOptionsService.set('isRowMaster', isRowMasterFunc);
     }
 
-    /** @deprecated v27.2 Use `setPostSortRows` instead */
-    public setPostSort(postSortFunc: (nodes: IRowNode[]) => void): void {
-        logDeprecation<GridApi>('27.2', 'setPostSort', 'setPostSortRows');
-        this.gridOptionsService.set('postSort', postSortFunc);
-    }
     public setPostSortRows(postSortRowsFunc: (params: PostSortRowsParams) => void): void {
         this.gridOptionsService.set('postSortRows', postSortRowsFunc);
     }
@@ -1265,11 +1246,6 @@ export class GridApi<TData = any> {
         this.gridOptionsService.set('postProcessPopup', postProcessPopupFunc);
     }
 
-    /** @deprecated v27.2 - Use `setInitialGroupOrderComparator` instead */
-    public setDefaultGroupOrderComparator(defaultGroupOrderComparatorFunc: (nodeA: IRowNode, nodeB: IRowNode) => number): void {
-        logDeprecation<GridApi>('27.2', 'setDefaultGroupOrderComparator', 'setInitialGroupOrderComparator');
-        this.gridOptionsService.set('defaultGroupOrderComparator', defaultGroupOrderComparatorFunc);
-    }
     public setInitialGroupOrderComparator(initialGroupOrderComparatorFunc: (params: InitialGroupOrderComparatorParams) => number): void {
         this.gridOptionsService.set('initialGroupOrderComparator', initialGroupOrderComparatorFunc);
     }

@@ -120,10 +120,6 @@ export interface IFilterOptionDef {
     predicate?: (filterValues: any[], cellValue: any) => boolean;
     /** Number of inputs to display for this option. Defaults to `1` if unspecified. */
     numberOfInputs?: 0 | 1 | 2;
-    /** @deprecated v26.2 use `predicate` instead. */
-    test?: (filterValue: any, cellValue: any) => boolean;
-    /** @deprecated v26.2 use `numberOfInputs: 0` instead. */
-    hideFilterInput?: boolean;
 }
 
 /**
