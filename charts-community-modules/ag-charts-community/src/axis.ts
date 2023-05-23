@@ -106,13 +106,7 @@ type TickStrategyResult = {
 
 type TickStrategy = (params: TickStrategyParams) => TickStrategyResult;
 
-export enum TickStrategyType {
-    GENERATE,
-    AUTO_WRAP,
-    AUTO_ROTATE,
-}
-
-export enum TickGenerationType {
+enum TickGenerationType {
     CREATE,
     CREATE_SECONDARY,
     FILTER,

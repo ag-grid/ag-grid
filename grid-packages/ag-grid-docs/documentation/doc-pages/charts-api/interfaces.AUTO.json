@@ -16,11 +16,6 @@
     "meta": { "isTypeAlias": true },
     "type": "(params: TickStrategyParams) => TickStrategyResult"
   },
-  "TickStrategyType": {
-    "meta": { "isEnum": true },
-    "type": ["GENERATE", "AUTO_WRAP", "AUTO_ROTATE"],
-    "docs": [null, null, null]
-  },
   "TickGenerationType": {
     "meta": { "isEnum": true },
     "type": ["CREATE", "CREATE_SECONDARY", "FILTER", "VALUES"],

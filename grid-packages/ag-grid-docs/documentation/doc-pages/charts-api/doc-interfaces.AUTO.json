@@ -4,7 +4,6 @@
   "TickStrategyParams": {},
   "TickStrategyResult": {},
   "TickStrategy": {},
-  "TickStrategyType": {},
   "TickGenerationType": {},
   "TickCount": { "meta": { "typeParams": ["S"] } },
   "TickDatum": {},
