@@ -1,9 +1,9 @@
-import { RowNode, SelectionEventSourceType, ISetNodeSelectedParams } from "@ag-grid-community/core";
+import { RowNode, SelectionEventSourceType, ISetNodesSelectedParams } from "@ag-grid-community/core";
 
 export interface ISelectionStrategy {
     getSelectedState(): any;
     setSelectedState(state: any): void;
-    setNodeSelected(params: ISetNodeSelectedParams): number;
+    setNodesSelected(params: ISetNodesSelectedParams): number;
     isNodeSelected(node: RowNode): boolean | undefined;
     processNewRow(node: RowNode): void;
     getSelectedNodes(): RowNode<any>[];

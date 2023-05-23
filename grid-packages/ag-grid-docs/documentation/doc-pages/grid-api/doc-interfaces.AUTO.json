@@ -16390,6 +16390,13 @@
         "optional": false
       }
     },
+    "setNodesSelected": {
+      "type": {
+        "arguments": { "params": "ISetNodesSelectedParams" },
+        "returnType": "number",
+        "optional": false
+      }
+    },
     "filterFromSelection": {
       "type": {
         "arguments": { "predicate": "(node: RowNode) => boolean" },
@@ -16457,8 +16464,39 @@
       }
     }
   },
+  "INodeSelectionParams": {
+    "newValue": { "type": { "returnType": "boolean", "optional": false } },
+    "clearSelection": { "type": { "returnType": "boolean", "optional": true } },
+    "suppressFinishActions": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "rangeSelect": { "type": { "returnType": "boolean", "optional": true } },
+    "groupSelectsFiltered": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "source": {
+      "type": { "returnType": "SelectionEventSourceType", "optional": false }
+    },
+    "event": { "type": { "returnType": "Event", "optional": true } }
+  },
   "ISetNodeSelectedParams": {
     "node": { "type": { "returnType": "RowNode", "optional": false } },
+    "newValue": { "type": { "returnType": "boolean", "optional": false } },
+    "clearSelection": { "type": { "returnType": "boolean", "optional": true } },
+    "suppressFinishActions": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "rangeSelect": { "type": { "returnType": "boolean", "optional": true } },
+    "groupSelectsFiltered": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "source": {
+      "type": { "returnType": "SelectionEventSourceType", "optional": false }
+    },
+    "event": { "type": { "returnType": "Event", "optional": true } }
+  },
+  "ISetNodesSelectedParams": {
+    "nodes": { "type": { "returnType": "RowNode[]", "optional": false } },
     "newValue": { "type": { "returnType": "boolean", "optional": false } },
     "clearSelection": { "type": { "returnType": "boolean", "optional": true } },
     "suppressFinishActions": {

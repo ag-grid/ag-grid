@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions, IRowNode } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -22,9 +22,17 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function selectAllAmerican() {
+  const selected: IRowNode[] = [];
+  const deselected: IRowNode[] = [];
   gridOptions.api!.forEachNode(function (node) {
-    node.setSelected(node.data!.country === 'United States')
-  })
+    if (node.data!.country === 'United States') {
+      selected.push(node);
+    } else {
+      deselected.push(node);
+    }
+  });
+  gridOptions.api!.setNodesSelected({ nodes: selected, newValue: true });
+  gridOptions.api!.setNodesSelected({ nodes: deselected, newValue: false });
 }
 
 // setup the grid after the page has finished loading

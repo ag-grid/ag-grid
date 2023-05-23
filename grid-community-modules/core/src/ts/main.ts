@@ -320,7 +320,7 @@ export { ValueParserService } from "./valueService/valueParserService";
 
 // uncatalogued
 export { IRowModel, RowBounds, RowModelType } from "./interfaces/iRowModel";
-export { ISelectionService, ISetNodeSelectedParams } from "./interfaces/iSelectionService";
+export { ISelectionService, ISetNodeSelectedParams, ISetNodesSelectedParams } from "./interfaces/iSelectionService";
 export { IServerSideSelectionState, IServerSideGroupSelectionState } from "./interfaces/iServerSideSelection";
 export { IAggFuncService } from "./interfaces/iAggFuncService";
 export { IClipboardService, IClipboardCopyParams, IClipboardCopyRowsParams } from "./interfaces/iClipboardService";
