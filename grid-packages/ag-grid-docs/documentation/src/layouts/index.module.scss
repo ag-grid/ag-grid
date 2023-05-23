@@ -9,10 +9,6 @@ html {
     -moz-osx-font-smoothing: grayscale;
 
     overflow-x: hidden;
-
-    @include media-breakpoint-up(lg) {
-        scroll-padding-top: 72px;
-    }
 }
 
 main {
@@ -35,17 +31,6 @@ main {
 
     @media (min-width: 992px) {
         flex-direction: row;
-    }
-}
-
-.content {
-    width: 100vw;
-    max-width: 100%;
-}
-
-@include media-breakpoint-up(lg) {
-    .content {
-        max-width: calc(100% - 300px);
     }
 }
 
