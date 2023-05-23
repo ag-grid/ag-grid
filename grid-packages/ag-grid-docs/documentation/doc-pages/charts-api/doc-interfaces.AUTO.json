@@ -59,84 +59,92 @@
     "cartesian": {
       "description": "/** Specifies defaults for all cartesian charts (used for bar, column, histogram, line, scatter and area series) */",
       "type": {
-        "returnType": "AgCartesianThemeOptions<AgCartesianSeriesTheme>",
+        "returnType": "AgCartesianThemeOptions<AgCartesianSeriesTheme, LegendOverrides>",
         "optional": true
       }
     },
     "column": {
       "description": "/** Specifies defaults for column charts. */",
       "type": {
-        "returnType": "AgCartesianThemeOptions<AgBarSeriesOptions>",
+        "returnType": "AgCartesianThemeOptions<AgBarSeriesOptions, LegendOverrides>",
         "optional": true
       }
     },
     "bar": {
       "description": "/** Specifies defaults for bar charts. */",
       "type": {
-        "returnType": "AgCartesianThemeOptions<AgBarSeriesOptions>",
+        "returnType": "AgCartesianThemeOptions<AgBarSeriesOptions, LegendOverrides>",
         "optional": true
       }
     },
     "line": {
       "description": "/** Specifies defaults for line charts. */",
       "type": {
-        "returnType": "AgCartesianThemeOptions<AgLineSeriesOptions>",
+        "returnType": "AgCartesianThemeOptions<AgLineSeriesOptions, LegendOverrides>",
         "optional": true
       }
     },
     "area": {
       "description": "/** Specifies defaults for area charts. */",
       "type": {
-        "returnType": "AgCartesianThemeOptions<AgAreaSeriesOptions>",
+        "returnType": "AgCartesianThemeOptions<AgAreaSeriesOptions, LegendOverrides>",
         "optional": true
       }
     },
     "scatter": {
       "description": "/** Specifies defaults for scatter/bubble charts. */",
       "type": {
-        "returnType": "AgCartesianThemeOptions<AgScatterSeriesOptions>",
+        "returnType": "AgCartesianThemeOptions<AgScatterSeriesOptions, LegendOverrides>",
         "optional": true
       }
     },
     "histogram": {
       "description": "/** Specifies defaults for histogram charts. */",
       "type": {
-        "returnType": "AgCartesianThemeOptions<AgHistogramSeriesOptions>",
+        "returnType": "AgCartesianThemeOptions<AgHistogramSeriesOptions, LegendOverrides>",
         "optional": true
       }
     },
     "polar": {
       "description": "/** Specifies defaults for all polar charts (used for pie series) */",
       "type": {
-        "returnType": "AgPolarThemeOptions<AgPolarSeriesTheme>",
+        "returnType": "AgPolarThemeOptions<AgPolarSeriesTheme, LegendOverrides>",
         "optional": true
       }
     },
     "pie": {
       "description": "/** Specifies defaults for pie/doughnut charts. */",
       "type": {
-        "returnType": "AgPolarThemeOptions<AgPieSeriesOptions>",
+        "returnType": "AgPolarThemeOptions<AgPieSeriesOptions, LegendOverrides>",
         "optional": true
       }
     },
     "hierarchy": {
       "description": "/** Specifies defaults for all hierarchy charts (used for treemap series) */",
       "type": {
-        "returnType": "AgHierarchyThemeOptions<AgHierarchySeriesTheme>",
+        "returnType": "AgHierarchyThemeOptions<AgHierarchySeriesTheme, LegendOverrides>",
         "optional": true
       }
     },
     "treemap": {
       "description": "/** Specifies defaults for all treemap charts. */",
       "type": {
-        "returnType": "AgHierarchyThemeOptions<AgHierarchySeriesOptions>",
+        "returnType": "AgHierarchyThemeOptions<AgHierarchySeriesOptions, LegendOverrides>",
         "optional": true
       }
     },
     "common": {
       "description": "/** Specifies defaults for all chart types. Be careful to only use properties that apply to all chart types here. For example, don't specify `navigator` configuration here as navigators are only available in cartesian charts. */",
       "type": { "returnType": "any", "optional": true }
-    }
+    },
+    "legend": {
+      "description": "/** Specifies defaults for all legend types. */",
+      "type": {
+        "returnType": "{ category: AgChartBaseLegendOptions } & LegendOverrides",
+        "optional": true
+      }
+    },
+    "meta": { "typeParams": ["LegendOverrides = {}"] }
   },
   "AgCartesianAxisThemeSpecialOptions": {},
   "AgCartesianAxisThemeOptions": {
@@ -182,7 +190,7 @@
     "legend": {
       "description": "/** Configuration for the chart legend. */",
       "type": {
-        "returnType": "AgCartesianChartLegendOptions",
+        "returnType": "{\n        category: AgHierarchyChartLegendOptions;\n    } & LegendExtension",
         "optional": true
       }
     },
@@ -190,7 +198,9 @@
       "description": "/** Configuration for the chart navigator. */",
       "type": { "returnType": "AgNavigatorOptions", "optional": true }
     },
-    "meta": { "typeParams": ["S = AgCartesianSeriesTheme"] },
+    "meta": {
+      "typeParams": ["S = AgCartesianSeriesTheme", "LegendExtension = {}"]
+    },
     "data": {
       "description": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "type": { "returnType": "any[]", "optional": true }
@@ -263,9 +273,14 @@
     },
     "legend": {
       "description": "/** Configuration for the chart legend. */",
-      "type": { "returnType": "AgPolarChartLegendOptions", "optional": true }
+      "type": {
+        "returnType": "{\n        category: AgHierarchyChartLegendOptions;\n    } & LegendExtension",
+        "optional": true
+      }
     },
-    "meta": { "typeParams": ["S = AgPolarSeriesTheme"] },
+    "meta": {
+      "typeParams": ["S = AgPolarSeriesTheme", "LegendExtension = {}"]
+    },
     "data": {
       "description": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "type": { "returnType": "any[]", "optional": true }
@@ -339,11 +354,13 @@
     "legend": {
       "description": "/** Configuration for the chart legend. */",
       "type": {
-        "returnType": "AgHierarchyChartLegendOptions",
+        "returnType": "{\n        category: AgHierarchyChartLegendOptions;\n    } & LegendExtension",
         "optional": true
       }
     },
-    "meta": { "typeParams": ["S = AgHierarchySeriesTheme"] },
+    "meta": {
+      "typeParams": ["S = AgHierarchySeriesTheme", "LegendExtension = {}"]
+    },
     "data": {
       "description": "/** The data to render the chart from. If this is not specified, it must be set on individual series instead. */",
       "type": { "returnType": "any[]", "optional": true }
@@ -1538,6 +1555,10 @@
     }
   },
   "AgChartBaseLegendOptions": {
+    "type": {
+      "description": "/** The legend type. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "position": {
       "description": "/** Where the legend should show in relation to the chart. */",
       "type": { "returnType": "AgChartLegendPosition", "optional": true }
@@ -1581,6 +1602,10 @@
     "enabled": {
       "description": "/** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "type": {
+      "description": "/** The legend type. */",
+      "type": { "returnType": "string", "optional": true }
     },
     "position": {
       "description": "/** Where the legend should show in relation to the chart. */",
@@ -1626,6 +1651,10 @@
       "description": "/** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "type": {
+      "description": "/** The legend type. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "position": {
       "description": "/** Where the legend should show in relation to the chart. */",
       "type": { "returnType": "AgChartLegendPosition", "optional": true }
@@ -1669,6 +1698,10 @@
     "enabled": {
       "description": "/** Whether or not to show the legend. The legend is shown by default. */",
       "type": { "returnType": "boolean", "optional": true }
+    },
+    "type": {
+      "description": "/** The legend type. */",
+      "type": { "returnType": "string", "optional": true }
     },
     "position": {
       "description": "/** Where the legend should show in relation to the chart. */",
@@ -5866,6 +5899,7 @@
   "LayoutProcessor": {},
   "Handler": { "meta": { "typeParams": ["T extends EventTypes"] } },
   "ChartLegend": {
+    "type": { "type": { "returnType": "string", "optional": false } },
     "computeBBox": {
       "type": { "arguments": {}, "returnType": "BBox", "optional": false }
     },
@@ -5880,12 +5914,6 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "data": { "type": { "returnType": "any", "optional": false } },
-    "item": {
-      "type": {
-        "returnType": "{\n        label: {\n            formatter?: (params: any) => string;\n        };\n    }",
-        "optional": false
-      }
-    },
     "listeners": {
       "type": { "returnType": "AgChartLegendListeners", "optional": false }
     }
@@ -6874,6 +6902,7 @@
     "instanceConstructor": {
       "type": { "returnType": "LegendConstructor", "optional": false }
     },
+    "themeTemplate": { "type": { "returnType": "{}", "optional": false } },
     "optionsKey": { "type": { "returnType": "string", "optional": false } },
     "packageType": {
       "type": { "returnType": "'community' | 'enterprise'", "optional": false }

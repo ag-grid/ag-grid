@@ -4,15 +4,11 @@ import { BBox } from '../scene/bbox';
 import { AgChartLegendListeners } from './agChartOptions';
 
 export interface ChartLegend {
+    readonly type: string;
     computeBBox(): BBox;
     attachLegend(node: Node | null): void;
     destroy(): void;
     data: any;
-    item: {
-        label: {
-            formatter?: (params: any) => string;
-        };
-    };
     listeners: AgChartLegendListeners;
 }
 

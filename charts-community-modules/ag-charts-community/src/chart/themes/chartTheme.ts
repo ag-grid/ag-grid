@@ -17,6 +17,7 @@ import {
     AgTooltipPositionType,
 } from '../agChartOptions';
 import { CHART_AXES_TYPES, getAxisThemeTemplate } from '../chartAxesTypes';
+import { CHART_LEGEND_TYPES, getLegendThemeTemplate } from '../chartLegendTypes';
 import { ChartType, CHART_TYPES, getChartDefaults } from '../factory/chartTypes';
 import { getSeriesThemeTemplate } from '../factory/seriesTypes';
 
@@ -37,6 +38,7 @@ type ChartThemeDefaults = {
 export const EXTENDS_SERIES_DEFAULTS = Symbol('extends-series-defaults');
 export const OVERRIDE_SERIES_LABEL_DEFAULTS = Symbol('override-series-label-defaults');
 export const DEFAULT_FONT_FAMILY = Symbol('default-font');
+export const EXTENDS_LEGEND_DEFAULTS = Symbol('extends-legend-defaults');
 
 const BOLD: FontWeight = 'bold';
 const INSIDE: AgBarSeriesLabelOptions['placement'] = 'inside';
@@ -267,46 +269,7 @@ export class ChartTheme {
                 wrapping: ChartTheme.getCaptionWrappingDefaults(),
             },
             legend: {
-                enabled: true,
-                position: BOTTOM,
-                spacing: 20,
-                listeners: {},
-                item: {
-                    paddingX: 16,
-                    paddingY: 8,
-                    marker: {
-                        shape: undefined,
-                        size: 15,
-                        strokeWidth: 1,
-                        padding: 8,
-                    },
-                    label: {
-                        color: 'black',
-                        fontStyle: undefined,
-                        fontWeight: undefined,
-                        fontSize: 12,
-                        fontFamily: this.fontFamily,
-                        formatter: undefined,
-                    },
-                },
-                reverseOrder: false,
-                pagination: {
-                    marker: {
-                        size: 12,
-                    },
-                    activeStyle: {
-                        fill: 'rgb(70, 70, 70)',
-                    },
-                    inactiveStyle: {
-                        fill: 'rgb(219, 219, 219)',
-                    },
-                    highlightStyle: {
-                        fill: 'rgb(70, 70, 70)',
-                    },
-                    label: {
-                        color: 'rgb(70, 70, 70)',
-                    },
-                },
+                category: ChartTheme.categoryLegendDefaults,
             },
             tooltip: {
                 enabled: true,
@@ -316,6 +279,49 @@ export class ChartTheme {
             listeners: {},
         };
     }
+
+    private static categoryLegendDefaults = {
+        enabled: true,
+        position: BOTTOM,
+        spacing: 20,
+        listeners: {},
+        item: {
+            paddingX: 16,
+            paddingY: 8,
+            marker: {
+                shape: undefined,
+                size: 15,
+                strokeWidth: 1,
+                padding: 8,
+            },
+            label: {
+                color: 'black',
+                fontStyle: undefined,
+                fontWeight: undefined,
+                fontSize: 12,
+                fontFamily: ChartTheme.fontFamily,
+                formatter: undefined,
+            },
+        },
+        reverseOrder: false,
+        pagination: {
+            marker: {
+                size: 12,
+            },
+            activeStyle: {
+                fill: 'rgb(70, 70, 70)',
+            },
+            inactiveStyle: {
+                fill: 'rgb(219, 219, 219)',
+            },
+            highlightStyle: {
+                fill: 'rgb(70, 70, 70)',
+            },
+            label: {
+                color: 'rgb(70, 70, 70)',
+            },
+        },
+    };
 
     private static readonly cartesianDefaults: AgCartesianThemeOptions = {
         ...ChartTheme.getChartDefaults(),
@@ -520,6 +526,9 @@ export class ChartTheme {
 
     private static readonly hierarchyDefaults: AgHierarchyThemeOptions = {
         ...ChartTheme.getChartDefaults(),
+        legend: {
+            category: {} as any,
+        },
         series: {
             treemap: {
                 ...ChartTheme.getSeriesDefaults(),
@@ -704,6 +713,13 @@ export class ChartTheme {
                     return obj;
                 }, {} as Record<string, any>);
             }
+            result.legend = CHART_LEGEND_TYPES.legendTypes.reduce((obj, legendType) => {
+                const template = getLegendThemeTemplate(legendType);
+                if (template) {
+                    obj[legendType] = this.templateTheme(template);
+                }
+                return obj;
+            }, {} as Record<string, any>);
             return result;
         };
 
@@ -756,6 +772,7 @@ export class ChartTheme {
     protected getTemplateParameters() {
         const extensions = new Map();
         extensions.set(EXTENDS_SERIES_DEFAULTS, ChartTheme.getSeriesDefaults());
+        extensions.set(EXTENDS_LEGEND_DEFAULTS, {});
         extensions.set(OVERRIDE_SERIES_LABEL_DEFAULTS, {});
 
         const properties = new Map();

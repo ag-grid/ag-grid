@@ -95,20 +95,21 @@
     }
   },
   "AgChartThemeOverrides": {
-    "meta": {},
+    "meta": { "typeParams": ["LegendOverrides = {}"] },
     "type": {
-      "cartesian?": "AgCartesianThemeOptions<AgCartesianSeriesTheme>",
-      "column?": "AgCartesianThemeOptions<AgBarSeriesOptions>",
-      "bar?": "AgCartesianThemeOptions<AgBarSeriesOptions>",
-      "line?": "AgCartesianThemeOptions<AgLineSeriesOptions>",
-      "area?": "AgCartesianThemeOptions<AgAreaSeriesOptions>",
-      "scatter?": "AgCartesianThemeOptions<AgScatterSeriesOptions>",
-      "histogram?": "AgCartesianThemeOptions<AgHistogramSeriesOptions>",
-      "polar?": "AgPolarThemeOptions<AgPolarSeriesTheme>",
-      "pie?": "AgPolarThemeOptions<AgPieSeriesOptions>",
-      "hierarchy?": "AgHierarchyThemeOptions<AgHierarchySeriesTheme>",
-      "treemap?": "AgHierarchyThemeOptions<AgHierarchySeriesOptions>",
-      "common?": "any"
+      "cartesian?": "AgCartesianThemeOptions<AgCartesianSeriesTheme, LegendOverrides>",
+      "column?": "AgCartesianThemeOptions<AgBarSeriesOptions, LegendOverrides>",
+      "bar?": "AgCartesianThemeOptions<AgBarSeriesOptions, LegendOverrides>",
+      "line?": "AgCartesianThemeOptions<AgLineSeriesOptions, LegendOverrides>",
+      "area?": "AgCartesianThemeOptions<AgAreaSeriesOptions, LegendOverrides>",
+      "scatter?": "AgCartesianThemeOptions<AgScatterSeriesOptions, LegendOverrides>",
+      "histogram?": "AgCartesianThemeOptions<AgHistogramSeriesOptions, LegendOverrides>",
+      "polar?": "AgPolarThemeOptions<AgPolarSeriesTheme, LegendOverrides>",
+      "pie?": "AgPolarThemeOptions<AgPieSeriesOptions, LegendOverrides>",
+      "hierarchy?": "AgHierarchyThemeOptions<AgHierarchySeriesTheme, LegendOverrides>",
+      "treemap?": "AgHierarchyThemeOptions<AgHierarchySeriesOptions, LegendOverrides>",
+      "common?": "any",
+      "legend?": "{ category: AgChartBaseLegendOptions; } & LegendOverrides"
     },
     "docs": {
       "cartesian?": "/** Specifies defaults for all cartesian charts (used for bar, column, histogram, line, scatter and area series) */",
@@ -122,7 +123,8 @@
       "pie?": "/** Specifies defaults for pie/doughnut charts. */",
       "hierarchy?": "/** Specifies defaults for all hierarchy charts (used for treemap series) */",
       "treemap?": "/** Specifies defaults for all treemap charts. */",
-      "common?": "/** Specifies defaults for all chart types. Be careful to only use properties that apply to all chart types here. For example, don't specify `navigator` configuration here as navigators are only available in cartesian charts. */"
+      "common?": "/** Specifies defaults for all chart types. Be careful to only use properties that apply to all chart types here. For example, don't specify `navigator` configuration here as navigators are only available in cartesian charts. */",
+      "legend?": "/** Specifies defaults for all legend types. */"
     }
   },
   "AgCartesianAxisThemeSpecialOptions": {
@@ -148,11 +150,13 @@
     }
   },
   "AgCartesianThemeOptions": {
-    "meta": { "typeParams": ["S = AgCartesianSeriesTheme"] },
+    "meta": {
+      "typeParams": ["S = AgCartesianSeriesTheme", "LegendExtension = {}"]
+    },
     "type": {
       "axes?": "AgCartesianAxesTheme",
       "series?": "S",
-      "legend?": "AgCartesianChartLegendOptions",
+      "legend?": "{ category: AgHierarchyChartLegendOptions; } & LegendExtension",
       "navigator?": "AgNavigatorOptions",
       "data?": "any[]",
       "container?": "HTMLElement | null",
@@ -195,10 +199,12 @@
     }
   },
   "AgPolarThemeOptions": {
-    "meta": { "typeParams": ["S = AgPolarSeriesTheme"] },
+    "meta": {
+      "typeParams": ["S = AgPolarSeriesTheme", "LegendExtension = {}"]
+    },
     "type": {
       "series?": "S",
-      "legend?": "AgPolarChartLegendOptions",
+      "legend?": "{ category: AgHierarchyChartLegendOptions; } & LegendExtension",
       "data?": "any[]",
       "container?": "HTMLElement | null",
       "width?": "PixelSize",
@@ -238,10 +244,12 @@
     }
   },
   "AgHierarchyThemeOptions": {
-    "meta": { "typeParams": ["S = AgHierarchySeriesTheme"] },
+    "meta": {
+      "typeParams": ["S = AgHierarchySeriesTheme", "LegendExtension = {}"]
+    },
     "type": {
       "series?": "S",
-      "legend?": "AgHierarchyChartLegendOptions",
+      "legend?": "{ category: AgHierarchyChartLegendOptions; } & LegendExtension",
       "data?": "any[]",
       "container?": "HTMLElement | null",
       "width?": "PixelSize",
@@ -989,6 +997,7 @@
   "AgChartBaseLegendOptions": {
     "meta": {},
     "type": {
+      "type?": "string",
       "position?": "AgChartLegendPosition",
       "orientation?": "AgChartOrientation",
       "maxWidth?": "PixelSize",
@@ -1000,6 +1009,7 @@
       "pagination?": "AgChartLegendPaginationOptions"
     },
     "docs": {
+      "type?": "/** The legend type. */",
       "position?": "/** Where the legend should show in relation to the chart. */",
       "orientation?": "/** How the legend items should be arranged. */",
       "maxWidth?": "/** Used to constrain the width of the legend. */",
@@ -1014,6 +1024,7 @@
     "meta": {},
     "type": {
       "enabled?": "boolean",
+      "type?": "string",
       "position?": "AgChartLegendPosition",
       "orientation?": "AgChartOrientation",
       "maxWidth?": "PixelSize",
@@ -1026,6 +1037,7 @@
     },
     "docs": {
       "enabled?": "/** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */",
+      "type?": "/** The legend type. */",
       "position?": "/** Where the legend should show in relation to the chart. */",
       "orientation?": "/** How the legend items should be arranged. */",
       "maxWidth?": "/** Used to constrain the width of the legend. */",
@@ -1040,6 +1052,7 @@
     "meta": {},
     "type": {
       "enabled?": "boolean",
+      "type?": "string",
       "position?": "AgChartLegendPosition",
       "orientation?": "AgChartOrientation",
       "maxWidth?": "PixelSize",
@@ -1052,6 +1065,7 @@
     },
     "docs": {
       "enabled?": "/** Whether or not to show the legend. By default, the chart displays a legend when there is more than one series present. */",
+      "type?": "/** The legend type. */",
       "position?": "/** Where the legend should show in relation to the chart. */",
       "orientation?": "/** How the legend items should be arranged. */",
       "maxWidth?": "/** Used to constrain the width of the legend. */",
@@ -1066,6 +1080,7 @@
     "meta": {},
     "type": {
       "enabled?": "boolean",
+      "type?": "string",
       "position?": "AgChartLegendPosition",
       "orientation?": "AgChartOrientation",
       "maxWidth?": "PixelSize",
@@ -1078,6 +1093,7 @@
     },
     "docs": {
       "enabled?": "/** Whether or not to show the legend. The legend is shown by default. */",
+      "type?": "/** The legend type. */",
       "position?": "/** Where the legend should show in relation to the chart. */",
       "orientation?": "/** How the legend items should be arranged. */",
       "maxWidth?": "/** Used to constrain the width of the legend. */",
@@ -3984,11 +4000,11 @@
   "ChartLegend": {
     "meta": {},
     "type": {
+      "type": "string",
       "computeBBox()": "BBox",
       "attachLegend(node: Node | null)": "void",
       "destroy()": "void",
       "data": "any",
-      "item": "{ label: { formatter?: (params: any) => string; }; }",
       "listeners": "AgChartLegendListeners"
     }
   },
@@ -4863,6 +4879,7 @@
       "type": "'legend'",
       "identifier": "string",
       "instanceConstructor": "LegendConstructor",
+      "themeTemplate": "{}",
       "optionsKey": "string",
       "packageType": "'community' | 'enterprise'",
       "chartTypes": "('cartesian' | 'polar' | 'hierarchy')[]",

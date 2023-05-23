@@ -29,11 +29,14 @@ const { BBox, Group, Rect, Selection, Text } = _Scene;
 const { createId, tickFormat } = _Util;
 
 class GradientLegendLabel {
-    @Validate(OPT_NUMBER(0))
-    maxLength?: number = undefined;
-
     @Validate(COLOR_STRING)
     color: string = 'black';
+
+    @Validate(STRING)
+    fontFamily: string = 'Verdana, sans-serif';
+
+    @Validate(NUMBER(0))
+    fontSize: number = 12;
 
     @Validate(OPT_FONT_STYLE)
     fontStyle?: FontStyle = undefined;
@@ -41,28 +44,17 @@ class GradientLegendLabel {
     @Validate(OPT_FONT_WEIGHT)
     fontWeight?: FontWeight = undefined;
 
-    @Validate(NUMBER(0))
-    fontSize: number = 12;
-
-    @Validate(STRING)
-    fontFamily: string = 'Verdana, sans-serif';
-
     @Validate(OPT_FUNCTION)
     formatter?: (params: AgChartLegendLabelFormatterParams) => string = undefined;
-}
 
-class GradientLegendItem {
-    readonly label = new GradientLegendLabel();
-    /** Used to constrain the width of legend items. */
     @Validate(OPT_NUMBER(0))
     maxWidth?: number = undefined;
-    @Validate(NUMBER(0))
-    padding = 8;
 
-    // Placeholders
-    marker?: any = undefined;
-    paddingX = 0;
-    paddingY = 0;
+    @Validate(OPT_NUMBER(0))
+    minSpacing?: number = 8;
+
+    @Validate(OPT_NUMBER(0))
+    padding?: number = 8;
 }
 
 class GradientBar {
@@ -73,6 +65,8 @@ class GradientBar {
 export class GradientLegend {
     static className = 'GradientLegend';
 
+    readonly type = 'gradient';
+
     readonly id = createId(this);
 
     private readonly group: _Scene.Group = new Group({ name: 'legend', layer: true, zIndex: Layers.LEGEND_ZINDEX });
@@ -82,14 +76,15 @@ export class GradientLegend {
     @Validate(BOOLEAN)
     enabled = true;
 
+    private gradient = new GradientBar();
+
+    readonly label = new GradientLegendLabel();
+
     @Validate(POSITION)
     position: AgChartLegendPosition = 'bottom';
 
     @Validate(OPT_BOOLEAN)
     reverseOrder?: boolean = undefined;
-
-    // Placeholder
-    pagination?: any = undefined;
 
     private getOrientation(): AgChartOrientation {
         switch (this.position) {
@@ -107,10 +102,6 @@ export class GradientLegend {
      */
     @Validate(NUMBER(0))
     spacing = 20;
-
-    private gradientBar = new GradientBar();
-
-    readonly item = new GradientLegendItem();
 
     data: GradientLegendDatum[] = [];
 
@@ -191,8 +182,8 @@ export class GradientLegend {
     }
 
     private getMeasurements(colorDomain: number[], shrinkRect: _Scene.BBox) {
-        const { preferredLength: gradientLength, thickness } = this.gradientBar;
-        const { padding } = this.item;
+        const { preferredLength: gradientLength, thickness } = this.gradient;
+        const { padding = 0 } = this.label;
         const [textWidth, textHeight] = this.measureMaxText(colorDomain);
 
         let width: number;
@@ -265,7 +256,8 @@ export class GradientLegend {
     }
 
     private updateText(colorDomain: number[], gradientBox: _Scene.BBox) {
-        const { label, padding } = this.item;
+        const { label } = this;
+        const { padding = 0 } = label;
         const orientation = this.getOrientation();
         if (this.reverseOrder) {
             colorDomain = colorDomain.slice().reverse();
@@ -324,7 +316,7 @@ export class GradientLegend {
     }
 
     private formatDomain(domain: number[]) {
-        const formatter = this.item.label.formatter;
+        const formatter = this.label.formatter;
         if (formatter) {
             return (d: number) => formatter({ value: d } as any);
         }
@@ -332,7 +324,7 @@ export class GradientLegend {
     }
 
     private measureMaxText(colorDomain: number[]) {
-        const { label } = this.item;
+        const { label } = this;
         const tempText = new Text();
         const format = this.formatDomain(colorDomain);
         const boxes: _Scene.BBox[] = colorDomain.map((d) => {

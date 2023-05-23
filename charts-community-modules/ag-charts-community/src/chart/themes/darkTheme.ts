@@ -63,23 +63,25 @@ export class DarkTheme extends ChartTheme {
                 color: mutedFontColor,
             },
             legend: {
-                item: {
-                    label: {
-                        color: fontColor,
+                category: {
+                    item: {
+                        label: {
+                            color: fontColor,
+                        },
                     },
-                },
-                pagination: {
-                    activeStyle: {
-                        fill: fontColor,
-                    },
-                    inactiveStyle: {
-                        fill: mutedFontColor,
-                    },
-                    highlightStyle: {
-                        fill: fontColor,
-                    },
-                    label: {
-                        color: fontColor,
+                    pagination: {
+                        activeStyle: {
+                            fill: fontColor,
+                        },
+                        inactiveStyle: {
+                            fill: mutedFontColor,
+                        },
+                        highlightStyle: {
+                            fill: fontColor,
+                        },
+                        label: {
+                            color: fontColor,
+                        },
                     },
                 },
             },
