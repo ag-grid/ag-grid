@@ -633,14 +633,31 @@ export class LineSeries extends CartesianSeries<LineContext> {
         });
     }
 
-    animateReadyUpdateReady({
+    animateReadyUpdate(data: {
+        markerSelections: Array<Selection<Marker, LineNodeDatum>>;
+        contextData: Array<LineContext>;
+        paths: Array<Array<Path>>;
+    }) {
+        this.resetMarkersAndPaths(data);
+    }
+
+    animateReadyResize(data: {
+        markerSelections: Array<Selection<Marker, LineNodeDatum>>;
+        contextData: Array<LineContext>;
+        paths: Array<Array<Path>>;
+    }) {
+        this.animationManager?.stop();
+        this.resetMarkersAndPaths(data);
+    }
+
+    resetMarkersAndPaths({
+        markerSelections,
         contextData,
         paths,
     }: {
         markerSelections: Array<Selection<Marker, LineNodeDatum>>;
         contextData: Array<LineContext>;
         paths: Array<Array<Path>>;
-        seriesRect?: BBox;
     }) {
         contextData.forEach(({ nodeData }, contextDataIndex) => {
             const [lineNode] = paths[contextDataIndex];
@@ -650,7 +667,6 @@ export class LineSeries extends CartesianSeries<LineContext> {
             linePath.clear({ trackChanges: true });
 
             nodeData.forEach((datum) => {
-                // Draw/move the full segment if past the end of this segment
                 if (datum.point.moveTo) {
                     linePath.moveTo(datum.point.x, datum.point.y);
                 } else {
@@ -659,6 +675,12 @@ export class LineSeries extends CartesianSeries<LineContext> {
             });
 
             lineNode.checkPathDirty();
+
+            markerSelections[contextDataIndex].each((marker, datum) => {
+                const format = this.animateFormatter(datum);
+                const size = datum.point?.size ?? 0;
+                marker.size = format?.size ?? size;
+            });
         });
     }
 

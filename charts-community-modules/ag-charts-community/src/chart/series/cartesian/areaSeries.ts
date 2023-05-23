@@ -977,7 +977,7 @@ export class AreaSeries extends CartesianSeries<AreaSeriesNodeDataContext> {
         });
     }
 
-    animateReadyUpdateReady({
+    animateReadyUpdate({
         contextData,
         paths,
     }: {

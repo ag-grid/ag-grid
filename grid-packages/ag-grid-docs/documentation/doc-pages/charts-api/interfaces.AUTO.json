@@ -4209,7 +4209,7 @@
   },
   "CartesianAnimationEvent": {
     "meta": { "isTypeAlias": true },
-    "type": "'update' | 'highlight'"
+    "type": "'update' | 'highlight' | 'resize'"
   },
   "HistogramSeriesNodeTag": {
     "meta": { "isEnum": true },

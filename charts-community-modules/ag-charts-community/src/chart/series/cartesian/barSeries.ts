@@ -1047,19 +1047,25 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         });
     }
 
-    animateReadyUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
+    animateReadyUpdate({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
         datumSelections.forEach((datumSelection) => {
-            datumSelection.each((rect, datum) => {
-                rect.x = datum.x;
-                rect.y = datum.y;
-                rect.width = datum.width;
-                rect.height = datum.height;
-            });
+            this.resetSelectionRects(datumSelection);
         });
     }
 
-    animateReadyHighlightReady(highlightSelection: Selection<Rect, BarNodeDatum>) {
-        highlightSelection.each((rect, datum) => {
+    animateReadyHighlight(highlightSelection: Selection<Rect, BarNodeDatum>) {
+        this.resetSelectionRects(highlightSelection);
+    }
+
+    animateReadyResize({ datumSelections }: { datumSelections: Array<Selection<Rect, BarNodeDatum>> }) {
+        this.animationManager?.stop();
+        datumSelections.forEach((datumSelection) => {
+            this.resetSelectionRects(datumSelection);
+        });
+    }
+
+    resetSelectionRects(selection: Selection<Rect, BarNodeDatum>) {
+        selection.each((rect, datum) => {
             rect.x = datum.x;
             rect.y = datum.y;
             rect.width = datum.width;
