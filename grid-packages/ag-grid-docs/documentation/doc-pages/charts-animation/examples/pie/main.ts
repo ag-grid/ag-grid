@@ -7,17 +7,23 @@ const options: AgChartOptions = {
     enabled: true,
   },
   data: [
-    { value: 56.9 },
-    { value: 22.5 },
-    { value: 6.8 },
-    { value: 8.5 },
-    { value: 2.6 },
-    { value: 1.9 },
+    { label: "Android", value: 56.9 },
+    { label: "iOS", value: 22.5 },
+    { label: "BlackBerry", value: 6.8 },
+    { label: "Symbian", value: 8.5 },
+    { label: "Bada", value: 2.6 },
+    { label: "Windows", value: 1.9 },
   ],
   series: [
     {
       type: "pie",
       angleKey: "value",
+      calloutLabelKey: "label",
+      sectorLabelKey: "value",
+      sectorLabel: {
+        color: "white",
+        fontWeight: "bold",
+      },
     },
   ],
 }
