@@ -94,6 +94,7 @@ type TickStrategyParams = {
     tickData: TickData;
     textProps: TextSizeProperties;
     labelOverlap: boolean;
+    terminate: boolean;
     primaryTickCount?: number;
 };
 
@@ -811,8 +812,9 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
                     index,
                     tickData,
                     textProps,
-                    primaryTickCount,
                     labelOverlap,
+                    terminate,
+                    primaryTickCount,
                 }));
 
                 const ticksResult = tickData.ticks;
@@ -855,8 +857,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             tickGenerationType = TickGenerationType.CREATE;
         }
 
-        const tickGenerationStrategy = ({ index, tickData, primaryTickCount }: TickStrategyParams) =>
-            this.createTickData(tickGenerationType, index, tickData, primaryTickCount);
+        const tickGenerationStrategy = ({ index, tickData, primaryTickCount, terminate }: TickStrategyParams) =>
+            this.createTickData(tickGenerationType, index, tickData, terminate, primaryTickCount);
 
         strategies.push(tickGenerationStrategy);
 
@@ -866,11 +868,11 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
             strategies.push(autoWrapStrategy);
         } else if (avoidLabelCollisions && autoRotate) {
-            const autoRotateStrategy = ({ index, tickData, labelOverlap }: TickStrategyParams) => ({
+            const autoRotateStrategy = ({ index, tickData, labelOverlap, terminate }: TickStrategyParams) => ({
                 index,
                 tickData,
                 autoRotation: this.getAutoRotation(labelOverlap),
-                terminate: false,
+                terminate,
             });
 
             strategies.push(autoRotateStrategy);
@@ -883,13 +885,17 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         tickGenerationType: TickGenerationType,
         index: number,
         tickData: TickData,
+        terminate: boolean,
         primaryTickCount?: number
     ): TickStrategyResult {
-        const { tick } = this;
+        const { scale, tick } = this;
         const { maxTickCount, minTickCount, defaultTickCount } = this.estimateTickCount({
             minSpacing: tick.minSpacing,
             maxSpacing: tick.maxSpacing,
         });
+
+        const continuous = scale instanceof ContinuousScale;
+        const maxIterations = tick.count || !continuous || isNaN(maxTickCount) ? 10 : maxTickCount;
 
         let tickCount = tick.count ?? Math.max(defaultTickCount - index, minTickCount);
 
@@ -897,10 +903,11 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             tick.interval === undefined &&
             tick.values === undefined &&
             tick.count === undefined &&
-            tickCount > minTickCount;
+            tickCount > minTickCount &&
+            (continuous || tickGenerationType === TickGenerationType.FILTER);
 
         let unchanged = true;
-        while (unchanged) {
+        while (unchanged && index <= maxIterations) {
             const prevTicks = tickData.rawTicks;
             tickCount = tick.count ?? Math.max(defaultTickCount - index, minTickCount);
 
@@ -921,7 +928,7 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
             index++;
         }
 
-        return { tickData, index, autoRotation: 0, terminate: false };
+        return { tickData, index, autoRotation: 0, terminate };
     }
 
     private checkLabelOverlap(

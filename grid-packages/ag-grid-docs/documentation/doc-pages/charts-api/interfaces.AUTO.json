@@ -6,7 +6,7 @@
   },
   "TickStrategyParams": {
     "meta": { "isTypeAlias": true },
-    "type": "{ index: number; tickData: TickData; textProps: TextSizeProperties; labelOverlap: boolean; primaryTickCount?: number; }"
+    "type": "{ index: number; tickData: TickData; textProps: TextSizeProperties; labelOverlap: boolean; terminate: boolean; primaryTickCount?: number; }"
   },
   "TickStrategyResult": {
     "meta": { "isTypeAlias": true },
