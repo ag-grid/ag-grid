@@ -577,7 +577,15 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         return legendData;
     }
 
-    animateEmptyUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, HistogramNodeDatum>> }) {
+    animateEmptyUpdateReady({
+        datumSelections,
+        labelSelections,
+    }: {
+        datumSelections: Array<Selection<Rect, HistogramNodeDatum>>;
+        labelSelections: Array<Selection<Text, HistogramNodeDatum>>;
+    }) {
+        const duration = 1000;
+
         let startingY = 0;
         datumSelections.forEach((datumSelection) =>
             datumSelection.each((_, datum) => {
@@ -595,7 +603,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                     ],
                     {
                         disableInteractions: true,
-                        duration: 1000,
+                        duration,
                         ease: easing.linear,
                         repeat: 0,
                         onUpdate([y, height]) {
@@ -607,6 +615,22 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                         },
                     }
                 );
+            });
+        });
+
+        labelSelections.forEach((labelSelection) => {
+            labelSelection.each((label) => {
+                this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+                    from: 0,
+                    to: 1,
+                    delay: duration - duration / 10,
+                    duration: duration / 10,
+                    ease: easing.linear,
+                    repeat: 0,
+                    onUpdate: (opacity) => {
+                        label.opacity = opacity;
+                    },
+                });
             });
         });
     }
