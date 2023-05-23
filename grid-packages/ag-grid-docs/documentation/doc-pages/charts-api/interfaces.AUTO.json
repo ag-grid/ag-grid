@@ -4,6 +4,28 @@
     "type": ["TickLine", "TickLabel", "GridLine", "GridArc", "AxisLine"],
     "docs": [null, null, null, null, null]
   },
+  "TickStrategyParams": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ index: number; tickData: TickData; textProps: TextSizeProperties; labelOverlap: boolean; primaryTickCount?: number; }"
+  },
+  "TickStrategyResult": {
+    "meta": { "isTypeAlias": true },
+    "type": "{ index: number; tickData: TickData; autoRotation: number; terminate: boolean; }"
+  },
+  "TickStrategy": {
+    "meta": { "isTypeAlias": true },
+    "type": "(params: TickStrategyParams) => TickStrategyResult"
+  },
+  "TickStrategyType": {
+    "meta": { "isEnum": true },
+    "type": ["GENERATE", "AUTO_WRAP", "AUTO_ROTATE"],
+    "docs": [null, null, null]
+  },
+  "TickGenerationType": {
+    "meta": { "isEnum": true },
+    "type": ["CREATE", "CREATE_SECONDARY", "FILTER", "VALUES"],
+    "docs": [null, null, null, null]
+  },
   "TickCount": {
     "meta": { "isTypeAlias": true, "typeParams": ["S"] },
     "type": "S extends TimeScale ? number | TimeInterval : number"
