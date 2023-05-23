@@ -54,6 +54,9 @@ class NumberCellEditorInput implements CellEditorInput<number, INumberCellEditor
             return parsedValue;
         }
         if (typeof parsedValue === 'string') {
+            if (parsedValue === '') {
+                return null;
+            }
             parsedValue = Number(parsedValue);
         }
         return isNaN(parsedValue) ? null : parsedValue;
