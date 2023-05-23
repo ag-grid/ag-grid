@@ -120,7 +120,7 @@
     }
 
     code {
-        color: $primary;
+        color: var(--link-color);
         font-size: 14px;
         line-height: 1rem;
     }

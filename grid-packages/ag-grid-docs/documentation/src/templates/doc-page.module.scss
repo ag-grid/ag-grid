@@ -128,7 +128,7 @@
     a {
         &:hover {
             text-decoration: none;
-            color: $ag-orange;
+            color: var(--ag-grid-orange);
         }
     }
 

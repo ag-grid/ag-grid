@@ -1,12 +1,6 @@
 @use "sass:math";
 @use '../../../../design-system' as ds; // needed to deal with bootstrap conflict
 
-@import '../common/vars.scss';
-@import '../common/bootstrap.scss';
-@import '../common/grid.scss';
-@import '../common/content.scss';
-@import '../common/mixins.scss';
-
 $z-index-base: 10000; // For automated example mouse
 $z-index-debug-canvas: $z-index-base + 10;
 $z-index-debug-panel: $z-index-debug-canvas + 200;

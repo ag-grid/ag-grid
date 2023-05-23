@@ -1,10 +1,5 @@
 @use '../../design-system' as *;
 
-@import '~bootstrap/scss/card';
-@import '~bootstrap/scss/list-group';
-@import '~bootstrap/scss/utilities/display';
-@import '~bootstrap/scss/utilities/spacing';
-
 .searchResults {
     display: none;
     position: absolute;

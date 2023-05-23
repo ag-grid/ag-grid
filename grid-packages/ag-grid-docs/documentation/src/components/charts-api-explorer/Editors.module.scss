@@ -13,7 +13,7 @@
         flex-grow: 1;
         margin-right: $size-2;
         vertical-align: middle;
-        accent-color: $primary;
+        accent-color: var(--link-color);
 
         &_hidden {
             visibility: hidden;
