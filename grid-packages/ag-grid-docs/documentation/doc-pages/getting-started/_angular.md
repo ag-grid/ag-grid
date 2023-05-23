@@ -289,7 +289,7 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-<img src="../../images/resources/getting-started/step1.png" alt="AG Grid in its simplest form" style="height: 2.5rem"/>
+<image-caption src="step1.png" alt="AG Grid in its simplest form" maxWidth="80%" constrained="true" centered="true"></image-caption>
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">

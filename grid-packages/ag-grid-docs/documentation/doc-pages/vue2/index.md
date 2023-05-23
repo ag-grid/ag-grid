@@ -311,7 +311,7 @@ provide the AG Grid functionality.
 
 If everything works as expected, you should see a simple grid like the one on the screenshot:
 
-![AG Grid hello world](resources/step1.png)
+<image-caption src="step1.png" alt="AG Grid hello world" maxWidth="80%" constrained="true" centered="true"></image-caption>
 
 ## Enable Sorting And Filtering
 
@@ -349,7 +349,7 @@ With this property set, the grid will display a small column menu icon when you 
 Pressing it will display a popup with a filtering UI which lets you choose the kind of filter and
 the text that you want to filter by.
 
-![AG Grid sorting and filtering](resources/step2.png)
+<image-caption src="step2.png" alt="AG Grid sorting and filtering" maxWidth="80%" constrained="true" centered="true"></image-caption>
 
 ## Fetch Remote Data
 
@@ -438,7 +438,7 @@ export default {
 We've enabled [multiple row selection](/row-selection/#example-multiple-row-selection) by adding `rowSelection="multiple"`, and we've
 also added a checkbox to the `make` column with `checkboxSelection: true`.
 
-![Vue AG Grid Selection](resources/vue-grid-1.png)
+<image-caption src="vue-grid-1.png" alt="Vue AG Grid Selection" maxWidth="80%" constrained="true" centered="true"></image-caption> 
 
 Great! Now the first column contains a checkbox that, when clicked, selects the row. The only thing
 we have to add is a button that gets the selected data and sends it to the server. To do this, we are
@@ -553,7 +553,7 @@ enterprise license key. You can ignore the message as we are trialing. In additi
 the grid got a few UI improvements - a custom context menu and fancier column menu popup -
 feel free to look around:
 
-![AG Grid final](resources/step3.png)
+<image-caption src="step3.png" alt="AG Grid final" maxWidth="80%" constrained="true" centered="true"></image-caption>
 
 Now, let's enable grouping! Add an `autoGroupColumnDef` property, bind to it, and update
 the `columnDefs` with a `rowGroup`:

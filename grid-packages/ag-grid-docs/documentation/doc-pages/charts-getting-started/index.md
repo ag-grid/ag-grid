@@ -633,7 +633,7 @@ Let's follow the [Vue CLI instructions](https://cli.vuejs.org/) and run the foll
 
 When prompted choose `default (babel, eslint)`:
 
-![Select Default Features](vue-cli-step.png)
+<image-caption src="vue-cli-step.png" alt="Select Default Features" maxWidth="40rem" constrained="true"></image-caption>
 
 We're now ready to start our application:
 
@@ -815,7 +815,7 @@ The chart legend uses the `yKey` for the series, which in this case is `'spendin
 </snippet>
 </framework-specific-section>
 
-![Line chart with legend](line-chart-legend.png)
+<image-caption src="line-chart-legend.png" alt="Line chart with legend" maxWidth="80%" constrained="true" centered="true"></image-caption>
 
 ## Basic Column Chart
 
@@ -948,7 +948,7 @@ This time, let's choose another series type to plot the data: stacked columns. H
 
 Chart tooltips are enabled by default so you can hover over a block to see its value.
 
-![Column chart](beverage-expenses-no-labels.png)
+<image-caption src="beverage-expenses-no-labels.png" alt="Column chart" maxWidth="80%" constrained="true" centered="true"></image-caption>
 
 ## Labels and Titles
 
@@ -1142,7 +1142,7 @@ We can enhance our chart by providing a label for each block segment. We can set
 </snippet>
 </framework-specific-section>
 
-![Column chart with labels](beverage-expenses-labels.png)
+<image-caption src="beverage-expenses-labels.png" alt="Column chart with labels" maxWidth="80%" constrained="true" centered="true"></image-caption>
 
 If we then want to add a title and subtitle to the chart, we can simply add this to our chart config:
 
@@ -1369,7 +1369,7 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 </snippet>
 </framework-specific-section>
 
-![Column chart with captions](beverage-expenses-captions.png)
+<image-caption src="beverage-expenses-captions.png" alt="Column chart with captions" maxWidth="80%" constrained="true" centered="true"></image-caption>
 
 <framework-specific-section frameworks="javascript">
 

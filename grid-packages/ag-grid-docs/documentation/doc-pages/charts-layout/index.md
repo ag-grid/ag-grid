@@ -6,7 +6,7 @@ This section explains the components of a chart and how they are laid out inside
 
 ## How is the chart layout calculated?
 
-![Chart Layout](cartesian-chart-layout.png)
+<image-caption src="cartesian-chart-layout.png" alt="Chart Layout" maxWidth="80%" constrained="true" centered="true"></image-caption>
 
 Each chart is composed of a single or multiple series, and optionally a legend, axes, and captions, such as title, subtitle and footnote. All of these components are managed by the chart's layout engine. They are sized and positioned appropriately based on the chart's dimensions, the nature of the data and the configuration.
 
