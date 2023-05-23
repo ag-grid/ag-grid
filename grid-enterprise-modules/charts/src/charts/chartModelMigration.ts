@@ -26,6 +26,7 @@ export function upgradeChartModel(model: ChartModel): ChartModel {
     model = migrateIfBefore('28.0.0', model, migrateV28);
     model = migrateIfBefore('28.2.0', model, migrateV28_2);
     model = migrateIfBefore('29.0.0', model, migrateV29);
+    model = migrateIfBefore('30.0.0', model, migrateV30);
     model = cleanup(model);
 
     // Bump version to latest.
@@ -180,6 +181,8 @@ function migrateV28(model: ChartModel) {
 function migrateV28_2(model: ChartModel) {
     model = jsonRename('chartOptions.pie.series.callout', 'calloutLine', model);
     model = jsonRename('chartOptions.pie.series.label', 'calloutLabel', model);
+    model = jsonRename('chartOptions.pie.series.labelKey', 'sectorLabelKey', model);
+    model = jsonRename('chartOptions.pie.series.labelName', 'sectorLabelName', model);
 
     // series.yKeys => yKey ?
     // series.yNames => yName ?
@@ -194,6 +197,12 @@ function migrateV29(model: ChartModel) {
     model = jsonMoveIfMissing('chartOptions.scatter.series.strokeOpacity', 'chartOptions.scatter.series.marker.strokeOpacity', model);
     model = jsonMoveIfMissing('chartOptions.scatter.series.strokeWidth', 'chartOptions.scatter.series.marker.strokeWidth', model);
     model = jsonMove('chartOptions.scatter.series.paired', 'chartOptions.scatter.paired', model);
+
+    return model;
+}
+
+function migrateV30(model: ChartModel) {
+    model = jsonDelete('chartOptions.*.series.flipXY', model);
 
     return model;
 }

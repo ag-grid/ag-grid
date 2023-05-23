@@ -622,6 +622,120 @@ Object {
 }
 `;
 
+exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-pie-callout successfully 1`] = `
+Object {
+  "cellRange": Object {
+    "columns": Array [
+      "country",
+      "sugar",
+      "fat",
+      "weight",
+    ],
+    "rowEndIndex": 19,
+    "rowEndPinned": null,
+    "rowStartIndex": 0,
+    "rowStartPinned": null,
+  },
+  "chartId": "id-760p8yfq12q",
+  "chartOptions": Object {
+    "pie": Object {
+      "background": Object {
+        "fill": "white",
+        "visible": true,
+      },
+      "legend": Object {
+        "enabled": true,
+        "item": Object {
+          "label": Object {
+            "color": "rgb(87, 87, 87)",
+            "fontFamily": "Verdana, sans-serif",
+            "fontSize": 8,
+            "fontStyle": "normal",
+            "fontWeight": "normal",
+          },
+          "marker": Object {
+            "padding": 3,
+            "shape": "square",
+            "size": 8,
+            "strokeWidth": 1,
+          },
+          "paddingX": 9,
+          "paddingY": 3,
+        },
+        "position": "bottom",
+        "spacing": 20,
+      },
+      "padding": Object {
+        "bottom": 20,
+        "left": 20,
+        "right": 20,
+        "top": 20,
+      },
+      "series": Object {
+        "calloutLabel": Object {
+          "color": "rgb(87, 87, 87)",
+          "enabled": true,
+          "fontFamily": "Verdana, sans-serif",
+          "fontSize": 8,
+          "fontStyle": "normal",
+          "fontWeight": "normal",
+          "minAngle": 0,
+          "offset": 3,
+        },
+        "calloutLine": Object {
+          "length": 10,
+          "strokeWidth": 2,
+        },
+        "fillOpacity": 1,
+        "highlightStyle": Object {
+          "item": Object {
+            "fill": "yellow",
+          },
+        },
+        "shadow": Object {
+          "blur": 5,
+          "color": "rgba(0, 0, 0, 0.5)",
+          "enabled": false,
+          "xOffset": 3,
+          "yOffset": 3,
+        },
+        "strokeOpacity": 1,
+        "strokeWidth": 1,
+        "title": Object {
+          "color": "rgb(87, 87, 87)",
+          "enabled": true,
+          "fontFamily": "Verdana, sans-serif",
+          "fontSize": 12,
+          "fontStyle": "normal",
+          "fontWeight": "bold",
+        },
+        "tooltip": Object {
+          "enabled": true,
+        },
+      },
+      "subtitle": Object {
+        "color": "rgb(87, 87, 87)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 12,
+        "fontStyle": "normal",
+        "fontWeight": "normal",
+      },
+      "title": Object {
+        "color": "rgb(87, 87, 87)",
+        "enabled": false,
+        "fontFamily": "Verdana, sans-serif",
+        "fontSize": 16,
+        "fontStyle": "normal",
+        "fontWeight": "bold",
+      },
+    },
+  },
+  "chartThemeName": "ag-default",
+  "chartType": "doughnut",
+}
+`;
+
 exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-scatter successfully 1`] = `
 Object {
   "cellRange": Object {
@@ -3270,7 +3384,6 @@ Object {
       "series": Object {
         "cursor": "default",
         "fillOpacity": 1,
-        "flipXY": false,
         "grouped": false,
         "highlightStyle": Object {
           "item": Object {
@@ -3621,7 +3734,6 @@ Object {
       "series": Object {
         "cursor": "default",
         "fillOpacity": 1,
-        "flipXY": false,
         "grouped": false,
         "highlightStyle": Object {
           "item": Object {
