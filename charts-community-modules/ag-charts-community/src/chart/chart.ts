@@ -34,7 +34,7 @@ import { LayoutService } from './layout/layoutService';
 import { DataService } from './dataService';
 import { UpdateService } from './updateService';
 import { ChartUpdateType } from './chartUpdateType';
-import { ChartLegendDatum, ChartLegend } from './legendDatum';
+import { CategoryLegendDatum, ChartLegendDatum, ChartLegend } from './legendDatum';
 import { Logger } from '../util/logger';
 import { ActionOnSet } from '../util/proxy';
 import { ChartHighlight } from './chartHighlight';
@@ -793,7 +793,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     private async updateLegend() {
-        const legendData: ChartLegendDatum[] = [];
+        let legendData: ChartLegendDatum[] = [];
         this.series
             .filter((s) => s.showInLegend)
             .forEach((series) => {
@@ -803,6 +803,15 @@ export abstract class Chart extends Observable implements AgChartInstance {
         const legendType = legendData.length > 0 ? legendData[0].legendType : 'category';
         this.attachLegend(legendType);
         this.applyLegendOptions?.(this.legend!);
+
+        if (legendType === 'category') {
+            const usedLabels = new Set();
+            legendData = legendData.filter((d) => {
+                const alreadyUsed = usedLabels.has((d as CategoryLegendDatum).label.text);
+                usedLabels.add((d as CategoryLegendDatum).label.text);
+                return !alreadyUsed;
+            });
+        }
 
         this.legend!.data = legendData;
     }
