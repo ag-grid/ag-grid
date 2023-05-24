@@ -1653,6 +1653,18 @@ export interface AgTreemapSeriesLabelFormatterParams<DatumType> {
     datum: DatumType;
 }
 
+export interface AgTreemapSeriesTileLabelOptions extends AgChartLabelOptions {
+    /**
+     * Text wrapping strategy for treemap labels.
+     * `'always'` will always wrap text to fit within the tile.
+     * `'hyphenate'` is similar to `'always'`, but inserts a hyphen (`-`) if forced to wrap in the middle of a word.
+     * `'on-space'` will only wrap on white space. If there is no possibility to wrap a line on space and satisfy the tile dimensions, the text will be truncated.
+     * `'never'` disables text wrapping.
+     * Default: `'on-space'`
+     */
+    wrapping?: TextWrap;
+}
+
 export interface AgTreemapSeriesValueLabelOptions<DatumType> {
     /** A property to be used as a key to retrieve a value from datum. */
     key?: string;
@@ -1666,11 +1678,11 @@ export interface AgTreemapSeriesValueLabelOptions<DatumType> {
 
 export interface AgTreemapSeriesLabelsOptions<DatumType> {
     /** The label configuration for the large leaf tiles. */
-    large?: AgChartLabelOptions;
+    large?: AgTreemapSeriesTileLabelOptions;
     /** The label configuration for the medium-sized leaf tiles. */
-    medium?: AgChartLabelOptions;
+    medium?: AgTreemapSeriesTileLabelOptions;
     /** The label configuration for the small leaf tiles. */
-    small?: AgChartLabelOptions;
+    small?: AgTreemapSeriesTileLabelOptions;
     /** A function to generate a label/title for the cell. */
     formatter?: (params: AgTreemapSeriesLabelFormatterParams<DatumType>) => string;
     /** The configuration for the cell value label. */

@@ -7228,6 +7228,7 @@ Object {
           "fontSize": 18,
           "fontStyle": undefined,
           "fontWeight": "bold",
+          "wrapping": "on-space",
         },
         "medium": Object {
           "color": "white",
@@ -7236,6 +7237,7 @@ Object {
           "fontSize": 14,
           "fontStyle": undefined,
           "fontWeight": "bold",
+          "wrapping": "on-space",
         },
         "small": Object {
           "color": "white",
@@ -7244,6 +7246,7 @@ Object {
           "fontSize": 10,
           "fontStyle": undefined,
           "fontWeight": "bold",
+          "wrapping": "on-space",
         },
         "value": Object {
           "formatter": [Function],

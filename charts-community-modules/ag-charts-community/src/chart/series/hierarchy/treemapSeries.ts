@@ -25,6 +25,7 @@ import {
     STRING,
     COLOR_STRING_ARRAY,
     Validate,
+    TEXT_WRAP,
 } from '../../../util/validation';
 import {
     AgTreemapSeriesLabelsOptions,
@@ -32,6 +33,7 @@ import {
     AgTooltipRendererResult,
     AgTreemapSeriesFormatterParams,
     AgTreemapSeriesFormat,
+    TextWrap,
 } from '../../agChartOptions';
 import { Logger } from '../../../util/logger';
 
@@ -89,6 +91,11 @@ class TreemapSeriesNodeDoubleClickEvent extends TreemapSeriesNodeBaseClickEvent 
 class TreemapSeriesLabel extends Label {
     @Validate(NUMBER(0))
     padding = 10;
+}
+
+class TreemapSeriesTileLabel extends Label {
+    @Validate(TEXT_WRAP)
+    wrapping: TextWrap = 'on-space';
 }
 
 class TreemapValueLabel {
@@ -181,21 +188,21 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
 
     readonly labels = {
         large: (() => {
-            const label = new Label();
+            const label = new TreemapSeriesTileLabel();
             label.color = 'white';
             label.fontWeight = 'bold';
             label.fontSize = 18;
             return label;
         })(),
         medium: (() => {
-            const label = new Label();
+            const label = new TreemapSeriesTileLabel();
             label.color = 'white';
             label.fontWeight = 'bold';
             label.fontSize = 14;
             return label;
         })(),
         small: (() => {
-            const label = new Label();
+            const label = new TreemapSeriesTileLabel();
             label.color = 'white';
             label.fontWeight = 'bold';
             label.fontSize = 10;
@@ -756,10 +763,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                         labelStyle = s;
                         break;
                     }
-                    const wrapped = Text.wrap(labelText, availTextWidth, availTextHeight, s, {
-                        breakWord: true,
-                        hyphens: true,
-                    });
+                    const wrapped = Text.wrap(labelText, availTextWidth, availTextHeight, s, s.wrapping);
                     if (!wrapped || wrappedRegExp.exec(wrapped) || wrapped.endsWith('\u2026')) {
                         // Avoid hyphens and ellipsis
                         continue;

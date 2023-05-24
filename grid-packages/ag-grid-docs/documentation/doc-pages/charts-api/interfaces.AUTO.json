@@ -3169,6 +3169,27 @@
     "meta": { "typeParams": ["DatumType"] },
     "type": { "datum": "DatumType" }
   },
+  "AgTreemapSeriesTileLabelOptions": {
+    "meta": {},
+    "type": {
+      "wrapping?": "TextWrap",
+      "enabled?": "boolean",
+      "fontStyle?": "FontStyle",
+      "fontWeight?": "FontWeight",
+      "fontSize?": "FontSize",
+      "fontFamily?": "FontFamily",
+      "color?": "CssColor"
+    },
+    "docs": {
+      "wrapping?": "/** Text wrapping strategy for treemap labels.\n     * `'always'` will always wrap text to fit within the tile.\n     * `'hyphenate'` is similar to `'always'`, but inserts a hyphen (`-`) if forced to wrap in the middle of a word.\n     * `'on-space'` will only wrap on white space. If there is no possibility to wrap a line on space and satisfy the tile dimensions, the text will be truncated.\n     * `'never'` disables text wrapping.\n     * Default: `'on-space'`\n     */",
+      "enabled?": "/** Whether or not the labels should be shown. */",
+      "fontStyle?": "/** The font style to use for the labels. */",
+      "fontWeight?": "/** The font weight to use for the labels. */",
+      "fontSize?": "/** The font size in pixels to use for the labels. */",
+      "fontFamily?": "/** The font family to use for the labels. */",
+      "color?": "/** The colour to use for the labels. */"
+    }
+  },
   "AgTreemapSeriesValueLabelOptions": {
     "meta": { "typeParams": ["DatumType"] },
     "type": {
@@ -3187,9 +3208,9 @@
   "AgTreemapSeriesLabelsOptions": {
     "meta": { "typeParams": ["DatumType"] },
     "type": {
-      "large?": "AgChartLabelOptions",
-      "medium?": "AgChartLabelOptions",
-      "small?": "AgChartLabelOptions",
+      "large?": "AgTreemapSeriesTileLabelOptions",
+      "medium?": "AgTreemapSeriesTileLabelOptions",
+      "small?": "AgTreemapSeriesTileLabelOptions",
       "formatter?": "(params: AgTreemapSeriesLabelFormatterParams<DatumType>) => string",
       "value?": "AgTreemapSeriesValueLabelOptions<DatumType>"
     },
@@ -4694,10 +4715,6 @@
       "textBaseline?": "CanvasTextBaseline",
       "textAlign?": "CanvasTextAlign"
     }
-  },
-  "WordWrapProperties": {
-    "meta": {},
-    "type": { "breakWord": "boolean", "hyphens": "boolean" }
   },
   "TextMeasurer": {
     "meta": {},
