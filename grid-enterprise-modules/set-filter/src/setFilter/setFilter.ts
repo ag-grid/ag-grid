@@ -324,8 +324,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             }
         }
         if (params.excelMode && params.defaultToNothingSelected) {
+            params.defaultToNothingSelected = false;
             _.doOnce(() => console.warn(
-                'AG Grid: The Set Filter Parameter "defaultToNothingSelected" does not work with "excelMode".'
+                'AG Grid: The Set Filter Parameter "defaultToNothingSelected" value was ignored because it does not work when "excelMode" is used.'
             ), 'setFilterExcelModeDefaultToNothingSelect'
         );
         }
