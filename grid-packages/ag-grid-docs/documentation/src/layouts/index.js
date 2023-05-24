@@ -6,8 +6,12 @@ import { SiteHeader } from 'components/site-header/SiteHeader';
 import { TopBar } from 'components/TopBar';
 import React from 'react';
 import { Helmet } from 'react-helmet';
+import designSystem from '../design-system/design-system.scss';
 import favIcons from '../images/favicons';
 import styles from './index.module.scss';
+
+// Required so that VS Code dosen't automatically remove the import with format on save
+designSystem;
 
 /**
  * This controls the layout template for all pages.

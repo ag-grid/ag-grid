@@ -1,7 +1,7 @@
 @use '../../design-system' as *;
 
 .ag-styles {
-    @include design-system-styles();
+    // @include design-system-styles();
 
     font-family: var(--font-family); // Needed as we can't set styles for <html> yet
     font-size: var(--font-size); // Needed as we can't set styles for <html> yet
