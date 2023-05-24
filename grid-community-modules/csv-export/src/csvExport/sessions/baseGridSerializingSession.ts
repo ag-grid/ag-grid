@@ -165,7 +165,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         }
 
         if (column.getColDef().useValueFormatterForExport) {
-            return this.valueFormatterService.formatValue(column, rowNode, value);
+            return this.valueFormatterService.formatValue(column, rowNode, value) ?? value ?? '';
         }
 
         return value != null ? value : '';
