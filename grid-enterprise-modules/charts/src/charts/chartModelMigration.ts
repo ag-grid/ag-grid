@@ -202,6 +202,11 @@ function migrateV29(model: ChartModel) {
 }
 
 function migrateV30(model: ChartModel) {
+    // Repeated from migrateV28_2() as they were applied retrospectively for the v30 release.
+    model = jsonRename('chartOptions.pie.series.labelKey', 'sectorLabelKey', model);
+    model = jsonRename('chartOptions.pie.series.labelName', 'sectorLabelName', model);
+
+    // Actual v30 changes.
     model = jsonDelete('chartOptions.*.series.flipXY', model);
 
     return model;
