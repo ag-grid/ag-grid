@@ -14,7 +14,6 @@ export const GRADIENT_LEGEND_THEME = {
         fontStyle: undefined,
         fontWeight: undefined,
         formatter: undefined,
-        maxWidth: undefined,
         minSpacing: 8,
         padding: 8,
     },
