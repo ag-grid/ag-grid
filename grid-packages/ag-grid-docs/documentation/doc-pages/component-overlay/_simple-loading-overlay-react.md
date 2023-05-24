@@ -1,5 +1,5 @@
 <framework-specific-section frameworks="react">
-|Below is an example of overlay component with custom `loadingMessage` param as a Hook:
+|Below is an example of overlay component with custom `loadingMessage`:
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
@@ -11,32 +11,6 @@
 |        &lt;/div>
 |    );
 |};
-|
-|const gridOptions: GridOptions = {
-|  ...
-|  loadingOverlayComponent: CustomLoadingOverlay,
-|  loadingOverlayComponentParams: {
-|    loadingMessage: 'One moment please...',
-|  },
-|}
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-|And here is the same example as a Class-based Component:
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<snippet transform={false} language="jsx">
-|export default class CustomLoadingOverlay extends Component {
-|    render() {
-|        return (
-|            &lt;div className="ag-overlay-loading-center" style={{backgroundColor: 'lightsteelblue', height: '9%'}}>
-|                &lt;i className="fas fa-hourglass-half"> {this.props.loadingMessage} &lt;/i>
-|            &lt;/div>
-|        );
-|    }
-|}
 |
 |const gridOptions: GridOptions = {
 |  ...
