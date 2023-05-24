@@ -10,7 +10,7 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
             format: 'cjs',
             env: 'development',
             extension: '.cjs.js',
-            config: {external: id => /@ag-grid-/.test(id)} // all other @ag-grid deps should be treated as externals so as to prevent duplicate modules when using more than one cjs file
+            config: {external: id => /@ag-grid-/.test(id) || (bundlePrefix === 'ag-charts-enterprise' &&  /ag-charts-community/.test(id))} // all other @ag-grid deps should be treated as externals so as to prevent duplicate modules when using more than one cjs file
 
         },
         {
@@ -19,7 +19,7 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
             format: 'cjs',
             env: 'production',
             extension: '.cjs.min.js',
-            config: {external: id => /@ag-grid-/.test(id)} // all other @ag-grid deps should be treated as externals so as to prevent duplicate modules when using more than one cjs file
+            config: {external: id => /@ag-grid-/.test(id) || (bundlePrefix === 'ag-charts-enterprise' &&  /ag-charts-community/.test(id))} // all other @ag-grid deps should be treated as externals so as to prevent duplicate modules when using more than one cjs file
 
         },
         {
