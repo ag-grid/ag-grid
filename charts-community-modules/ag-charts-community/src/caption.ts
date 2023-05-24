@@ -87,11 +87,7 @@ export class Caption {
             }
             return;
         }
-        const wrapOptions = {
-            hyphens: wrapping === 'hyphenate',
-            breakWord: wrapping === 'always' || wrapping === 'hyphenate',
-        };
-        const wrapped = Text.wrap(text ?? '', maxWidth, maxHeight, this, wrapOptions);
+        const wrapped = Text.wrap(text ?? '', maxWidth, maxHeight, this, wrapping);
         this.node.text = wrapped;
     }
 }

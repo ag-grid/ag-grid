@@ -2,7 +2,7 @@ import { Shape } from './shape';
 import { BBox } from '../bbox';
 import { HdpiCanvas } from '../../canvas/hdpiCanvas';
 import { RedrawType, SceneChangeDetection, RenderContext } from '../node';
-import { FontStyle, FontWeight } from '../../chart/agChartOptions';
+import { FontStyle, FontWeight, TextWrap } from '../../chart/agChartOptions';
 
 export interface TextSizeProperties {
     fontFamily: string;
@@ -12,11 +12,6 @@ export interface TextSizeProperties {
     lineHeight?: number;
     textBaseline?: CanvasTextBaseline;
     textAlign?: CanvasTextAlign;
-}
-
-export interface WordWrapProperties {
-    breakWord: boolean;
-    hyphens: boolean;
 }
 
 const ellipsis = '\u2026';
@@ -204,7 +199,7 @@ export class Text extends Shape {
         maxWidth: number,
         maxHeight: number,
         textProps: TextSizeProperties,
-        wrapProps: WordWrapProperties
+        wrapping: TextWrap
     ): string {
         const font = getFont(textProps);
         const measurer = createTextMeasurer(font);
@@ -218,7 +213,7 @@ export class Text extends Shape {
                 maxHeight,
                 measurer,
                 textProps,
-                wrapProps,
+                wrapping,
                 cumulativeHeight
             );
             result.push(wrappedLine.result);
@@ -236,7 +231,7 @@ export class Text extends Shape {
         maxHeight: number,
         measurer: TextMeasurer,
         textProps: TextSizeProperties,
-        wrapProps: WordWrapProperties,
+        wrapping: TextWrap,
         cumulativeHeight: number
     ): { result: string; truncated: boolean; cumulativeHeight: number } {
         text = text.trim();
@@ -261,7 +256,7 @@ export class Text extends Shape {
             maxHeight,
             measurer,
             textProps,
-            wrapProps,
+            wrapping,
             cumulativeHeight
         );
         cumulativeHeight = wrapResult.cumulativeHeight;
@@ -342,10 +337,12 @@ export class Text extends Shape {
         maxHeight: number,
         measurer: TextMeasurer,
         textProps: TextSizeProperties,
-        wrapProps: WordWrapProperties,
+        wrapping: TextWrap,
         cumulativeHeight: number
     ) {
         const { fontSize, lineHeight = fontSize * Text.defaultLineHeightRatio } = textProps;
+        const breakWord = wrapping === 'always' || wrapping === 'hyphenate';
+        const hyphenate = wrapping === 'hyphenate';
         const spaceWidth = measurer.width(' ');
 
         let wordsBrokenOrTruncated = false;
@@ -402,10 +399,10 @@ export class Text extends Shape {
 
             // Handle a long word
             wordsBrokenOrTruncated = true;
-            if (wrapProps.breakWord) {
+            if (breakWord) {
                 // Break the word into parts
                 const availWidth = maxWidth - lineWidth - expectedSpaceWidth;
-                const parts = Text.breakWord(word, availWidth, maxWidth, wrapProps.hyphens!, measurer);
+                const parts = Text.breakWord(word, availWidth, maxWidth, hyphenate, measurer);
                 let breakLoop = false;
                 for (let p = 0; p < parts.length; p++) {
                     const part = parts[p];

@@ -1,6 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 
+import { TextWrap } from '../../chart/agChartOptions';
 import { setupMockCanvas, extractImageData } from '../../chart/test/utils';
 import { LayerManager } from '../node';
 import { Text } from './text';
@@ -268,10 +269,14 @@ describe('Text', () => {
 
                     textNode.x = currX;
                     textNode.y = currY;
-                    textNode.text = Text.wrap(textNode.text, maxWidth, truncate ? maxHeight : Infinity, textNode, {
-                        breakWord,
-                        hyphens,
-                    });
+                    const wrapping: TextWrap = hyphens ? 'hyphenate' : breakWord ? 'always' : 'on-space';
+                    textNode.text = Text.wrap(
+                        textNode.text ?? '',
+                        maxWidth,
+                        truncate ? maxHeight : Infinity,
+                        textNode,
+                        wrapping
+                    );
                     textNode._setLayerManager(mockLayerManager);
 
                     ctx.save();

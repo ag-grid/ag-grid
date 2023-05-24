@@ -37,7 +37,7 @@ import { axisLabelsOverlap, PointLabelDatum } from './util/labelPlacement';
 import { ContinuousScale } from './scale/continuousScale';
 import { Matrix } from './scene/matrix';
 import { TimeScale } from './scale/timeScale';
-import { AgAxisGridStyle, AgAxisLabelFormatterParams, FontStyle, FontWeight } from './chart/agChartOptions';
+import { AgAxisGridStyle, AgAxisLabelFormatterParams, FontStyle, FontWeight, TextWrap } from './chart/agChartOptions';
 import { LogScale } from './scale/logScale';
 import { Default } from './util/default';
 import { Deprecated } from './util/deprecation';
@@ -1355,10 +1355,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
 
         tickData.ticks.forEach((tickDatum) => {
             const { tickLabel } = tickDatum;
-            const wrappedTickLabel = Text.wrap(tickLabel, maxLabelWidth, maxLabelHeight, labelProps, {
-                breakWord: true,
-                hyphens: true,
-            });
+            const wrapping: TextWrap = 'hyphenate';
+            const wrappedTickLabel = Text.wrap(tickLabel, maxLabelWidth, maxLabelHeight, labelProps, wrapping);
             tickDatum.tickLabel = wrappedTickLabel;
         });
 

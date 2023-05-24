@@ -577,6 +577,7 @@ export class ChartTheme {
                         fontSize: 18,
                         fontFamily: 'Verdana, sans-serif',
                         color: 'white',
+                        wrapping: 'on-space',
                     },
                     medium: {
                         enabled: true,
@@ -585,6 +586,7 @@ export class ChartTheme {
                         fontSize: 14,
                         fontFamily: 'Verdana, sans-serif',
                         color: 'white',
+                        wrapping: 'on-space',
                     },
                     small: {
                         enabled: true,
@@ -593,6 +595,7 @@ export class ChartTheme {
                         fontSize: 10,
                         fontFamily: 'Verdana, sans-serif',
                         color: 'white',
+                        wrapping: 'on-space',
                     },
                     value: {
                         style: {

@@ -4860,6 +4860,36 @@
     "datum": { "type": { "returnType": "DatumType", "optional": false } },
     "meta": { "typeParams": ["DatumType"] }
   },
+  "AgTreemapSeriesTileLabelOptions": {
+    "wrapping": {
+      "description": "/** Text wrapping strategy for treemap labels.\n     * `'always'` will always wrap text to fit within the tile.\n     * `'hyphenate'` is similar to `'always'`, but inserts a hyphen (`-`) if forced to wrap in the middle of a word.\n     * `'on-space'` will only wrap on white space. If there is no possibility to wrap a line on space and satisfy the tile dimensions, the text will be truncated.\n     * `'never'` disables text wrapping.\n     * Default: `'on-space'`\n     */",
+      "type": { "returnType": "TextWrap", "optional": true }
+    },
+    "enabled": {
+      "description": "/** Whether or not the labels should be shown. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "fontStyle": {
+      "description": "/** The font style to use for the labels. */",
+      "type": { "returnType": "FontStyle", "optional": true }
+    },
+    "fontWeight": {
+      "description": "/** The font weight to use for the labels. */",
+      "type": { "returnType": "FontWeight", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** The font size in pixels to use for the labels. */",
+      "type": { "returnType": "FontSize", "optional": true }
+    },
+    "fontFamily": {
+      "description": "/** The font family to use for the labels. */",
+      "type": { "returnType": "FontFamily", "optional": true }
+    },
+    "color": {
+      "description": "/** The colour to use for the labels. */",
+      "type": { "returnType": "CssColor", "optional": true }
+    }
+  },
   "AgTreemapSeriesValueLabelOptions": {
     "key": {
       "description": "/** A property to be used as a key to retrieve a value from datum. */",
@@ -4888,15 +4918,24 @@
   "AgTreemapSeriesLabelsOptions": {
     "large": {
       "description": "/** The label configuration for the large leaf tiles. */",
-      "type": { "returnType": "AgChartLabelOptions", "optional": true }
+      "type": {
+        "returnType": "AgTreemapSeriesTileLabelOptions",
+        "optional": true
+      }
     },
     "medium": {
       "description": "/** The label configuration for the medium-sized leaf tiles. */",
-      "type": { "returnType": "AgChartLabelOptions", "optional": true }
+      "type": {
+        "returnType": "AgTreemapSeriesTileLabelOptions",
+        "optional": true
+      }
     },
     "small": {
       "description": "/** The label configuration for the small leaf tiles. */",
-      "type": { "returnType": "AgChartLabelOptions", "optional": true }
+      "type": {
+        "returnType": "AgTreemapSeriesTileLabelOptions",
+        "optional": true
+      }
     },
     "formatter": {
       "description": "/** A function to generate a label/title for the cell. */",
@@ -6604,10 +6643,6 @@
     "textAlign": {
       "type": { "returnType": "CanvasTextAlign", "optional": true }
     }
-  },
-  "WordWrapProperties": {
-    "breakWord": { "type": { "returnType": "boolean", "optional": false } },
-    "hyphens": { "type": { "returnType": "boolean", "optional": false } }
   },
   "TextMeasurer": {
     "size": {
