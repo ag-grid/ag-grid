@@ -52,21 +52,6 @@
         }
     }
 
-    h2:first-child,
-    h3:first-child,
-    h4:first-child {
-        margin-bottom: $size-half; // Required because of .ag-styles wrapper
-    }
-
-    h2:first-child {
-        margin-top: $size-6;
-    }
-
-    h3:first-child,
-    h4:first-child {
-        margin-top: $size-4;
-    }
-
     // Required because of .ag-styles wrapper
     p,
     ul,
@@ -250,4 +235,34 @@
 // Hack to target markdown images and not images within components
 .pageSections > div > div *:not([class]) img {
     max-width: 100%;
+}
+
+.pageSections > div {
+    > h2 {
+        margin-top: $size-6;
+    }
+
+    > h3,
+    > h4 {
+        margin-top: $size-4;
+    }
+
+    > h1,
+    > h2,
+    > h3,
+    > h4,
+    > h5,
+    > h6,
+    > p,
+    > ul,
+    > ol,
+    > table,
+    > pre,
+    > hr {
+        font-size: var(--font-size);
+
+        @media screen and (min-width: $max-page-width) {
+            @include font-size-responsive();
+        }
+    }
 }

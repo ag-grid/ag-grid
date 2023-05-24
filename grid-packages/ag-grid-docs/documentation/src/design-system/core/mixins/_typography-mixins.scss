@@ -1,0 +1,12 @@
+@use "../variables" as *;
+
+@mixin font-size-responsive() {
+    --font-size-extra-small: #{$large-font-size-extra-small};
+    --font-size-small: #{$large-font-size-small};
+    --font-size-medium: #{$large-font-size-medium};
+    --font-size-large: #{$large-font-size-large};
+    --font-size-extra-large: #{$large-font-size-extra-large};
+    --font-size-massive: #{$large-font-size-massive};
+    --font-size-gigantic: #{$large-font-size-gigantic};
+    --font-size-gargantuan: #{$large-font-size-gargantuan};
+}
