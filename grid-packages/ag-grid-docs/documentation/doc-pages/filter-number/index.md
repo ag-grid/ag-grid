@@ -43,9 +43,7 @@ Number Filters are configured though the `filterParams` attribute of the column 
 
 ## Custom Number Support
 
-HTML5 `number` inputs have mixed browser support and behaviour, particularly around locale-specific nuances, e.g. using commas rather than periods for decimal values. Due to this, the default behaviour of the Number Filter is to use a `number` input in Chrome and Microsoft Edge, and to use a `text` input in all other browsers whilst preventing non-numeric characters.
-
-If you want to override the default behaviour, or allow users to type other characters (e.g. currency symbols, commas for thousands, etc.), the Number Filter allows you to control what characters the user is allowed to type. In this case, a `text` input is used with JavaScript controlling what characters the user is allowed (rather than the browser). You can also provide custom logic to parse the provided value into a number to be used in the filtering.
+The default behaviour of the Number Filter is to use a `number` input, however this has mixed browser support and behaviour. If you want to override the default behaviour, or allow users to type other characters (e.g. currency symbols, commas for thousands, etc.), the Number Filter allows you to control what characters the user is allowed to type. In this case, a `text` input is used with JavaScript controlling what characters the user is allowed (rather than the browser). You can also provide custom logic to parse the provided value into a number to be used in the filtering.
 
 Custom number support is enabled by specifying configuration similar to the following:
 
@@ -71,6 +69,8 @@ The `allowedCharPattern` is a regex of all the characters that are allowed to be
 The `numberParser` should take the user-entered text and return either a number if one can be interpreted, or `null` if not.
 
 Custom number support can be seen in the [Number Filter Example](#example-number-filter) above.
+
+An `allowedCharPattern` of `\\d\\-\\.` will give similar behaviour to the default `number` input.
 
 ## Number Filter Model
 

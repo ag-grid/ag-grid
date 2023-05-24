@@ -707,7 +707,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         super.afterGuiDetached();
 
         const appliedModel = this.getModel();
-        if (!this.areModelsEqual(appliedModel!, this.getModelFromUi()!)) {
+        if (!this.areModelsEqual(appliedModel!, this.getModelFromUi()!) || this.hasInvalidInputs()) {
             this.resetUiToActiveModel(appliedModel);
         }
 
@@ -1034,5 +1034,9 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     protected isBlank(cellValue: V) {
         return cellValue == null ||
             (typeof cellValue === 'string' && cellValue.trim().length === 0);
+    }
+
+    protected hasInvalidInputs(): boolean {
+        return false;
     }
 }
