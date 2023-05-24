@@ -26,7 +26,7 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 
 <div tab-label="main.js">
 <snippet transform={false} lineNumbers="true">
-| var data = [
+| const data = [
 |     {
 |         beverage: 'Coffee',
 |         Q1: 700,
@@ -50,8 +50,8 @@ AG Charts is a powerful standalone component with no dependencies. The charts fa
 |     },
 | ];
 |
-| var options = {
-|     container: document.querySelector('#myChart'),
+| const options = {
+|     container: document.getElementById('myChart'),
 |     data: data,
 |     title: {
 |         text: 'Beverage Expenses'
@@ -395,7 +395,7 @@ In this article we will walk through the necessary steps to add AG Charts to an 
 Let's say you want to visualise how much you spend on coffee each quarter and that you have the following data:
 
 <snippet transform={false}>
-| var data = [
+| const data = [
 |     {
 |         quarter: 'Q1',
 |         spending: 700,
@@ -420,7 +420,7 @@ To render it we can use this simple chart factory configuration:
 <snippet transform={false}>
 | agCharts.AgChart.create({
 |     data: data,
-|     container: document.querySelector('#myChart'),
+|     container: document.getElementById('myChart'),
 |     series: [{
 |         xKey: 'quarter',
 |         yKey: 'spending',
@@ -725,7 +725,7 @@ The chart legend uses the `yKey` for the series, which in this case is `'spendin
 <snippet language="diff" transform={false}>
 | agCharts.AgChart.create({
 |     data: data,
-|     container: document.querySelector('#myChart'),
+|     container: document.getElementById('myChart'),
 |     series: [{
 |         xKey: 'quarter',
 |         yKey: 'spending',
@@ -815,14 +815,14 @@ The chart legend uses the `yKey` for the series, which in this case is `'spendin
 </snippet>
 </framework-specific-section>
 
-<image-caption src="line-chart-legend.png" alt="Line chart with legend" maxWidth="80%" constrained="true" centered="true"></image-caption>
+<chart-example title='Line Chart' name='line-chart-legend' type='generated'></chart-example>
 
 ## Basic Column Chart
 
 Now let's try something more interesting. Let's say you want to visualise how much is spent on coffee, milk and tea in your company each quarter and in total. Your data might look something like this:
 
 <snippet transform={false}>
-| var data = [
+| const data = [
 |     {
 |         beverage: 'Coffee',
 |         Q1: 700,
@@ -855,7 +855,7 @@ that:
 <snippet transform={false}>
 | agCharts.AgChart.create({
 |     data: data,
-|     container: document.querySelector('#myChart'),
+|     container: document.getElementById('myChart'),
 |     series: [
 |         { type: 'column', xKey: 'beverage', yKey: 'Q1', stacked: true },
 |         { type: 'column', xKey: 'beverage', yKey: 'Q2', stacked: true },
@@ -948,7 +948,7 @@ This time, let's choose another series type to plot the data: stacked columns. H
 
 Chart tooltips are enabled by default so you can hover over a block to see its value.
 
-<image-caption src="beverage-expenses-no-labels.png" alt="Column chart" maxWidth="80%" constrained="true" centered="true"></image-caption>
+<chart-example title='Column Chart' name='beverage-expenses-no-labels' type='generated'></chart-example>
 
 ## Labels and Titles
 
@@ -959,7 +959,7 @@ We can enhance our chart by providing a label for each block segment. We can set
 <snippet language="diff" transform={false}>
 |agCharts.AgChart.create({
 |     data: data,
-|     container: document.querySelector('#myChart'),
+|     container: document.getElementById('myChart'),
 |     series: [
 |         {
 |             type: 'column',
@@ -1142,7 +1142,7 @@ We can enhance our chart by providing a label for each block segment. We can set
 </snippet>
 </framework-specific-section>
 
-<image-caption src="beverage-expenses-labels.png" alt="Column chart with labels" maxWidth="80%" constrained="true" centered="true"></image-caption>
+<chart-example title='Column Chart With Labels' name='beverage-expenses-labels' type='generated'></chart-example>
 
 If we then want to add a title and subtitle to the chart, we can simply add this to our chart config:
 
@@ -1150,7 +1150,7 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 <snippet language="diff" transform={false}>
 | agCharts.AgChart.create({
 |     data: data,
-|     container: document.querySelector('#myChart'),
+|     container: document.getElementById('myChart'),
 |+    title: {
 |+        text: 'Beverage Expenses',
 |+    },
@@ -1369,7 +1369,7 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 </snippet>
 </framework-specific-section>
 
-<image-caption src="beverage-expenses-captions.png" alt="Column chart with captions" maxWidth="80%" constrained="true" centered="true"></image-caption>
+<chart-example title='Column Chart With Captions' name='beverage-expenses-captions' type='generated'></chart-example>
 
 <framework-specific-section frameworks="javascript">
 
