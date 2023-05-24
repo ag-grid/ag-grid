@@ -1,7 +1,5 @@
-.collapse {
-    &:not(.show) {
-        display: none;
-    }
+.collapse:not(.show) {
+    display: none;
 }
 
 .collapsing {

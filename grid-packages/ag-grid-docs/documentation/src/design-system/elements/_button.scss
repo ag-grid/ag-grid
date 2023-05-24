@@ -1,5 +1,11 @@
 @use '../core' as *;
 
+button {
+    font-size: inherit;
+    line-height: inherit;
+    cursor: pointer;
+}
+
 button:not(.button-style-none),
 input[type='reset']:not(.button-style-none),
 input[type='submit']:not(.button-style-none),
