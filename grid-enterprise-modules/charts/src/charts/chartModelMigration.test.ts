@@ -23,10 +23,10 @@ function nextVersions(): string[] {
     const versionParts = VERSION.split('.').map(Number);
     const result: string[] = [];
 
-    for (let i = 0 ; i < 3 ; i++) {
+    for (let i = 0; i < 3; i++) {
         const newVersionParts: number[] = [];
 
-        for (let v = 0 ; v < 3 ; v++) {
+        for (let v = 0; v < 3; v++) {
             if (v < i) {
                 newVersionParts[v] = versionParts[v];
             } else if (v === i) {
@@ -49,6 +49,7 @@ describe('chartModelMigration', () => {
         '22.1.0': {},
         '22.1.0-bar': {},
         '22.1.0-pie': {},
+        '22.1.0-pie-callout': {},
         '22.1.0-scatter': {},
         '22.1.0-doughnut': {},
         '23.0.0': {},
@@ -85,8 +86,7 @@ describe('chartModelMigration', () => {
             const chartModel = loadChartModel(name);
 
             const upgradedChartModel = upgradeChartModel(chartModel);
-            const isCurrentOrNextVersion = [VERSION, ...NEXT_VERSIONS]
-                .includes(upgradedChartModel.version ?? '');
+            const isCurrentOrNextVersion = [VERSION, ...NEXT_VERSIONS].includes(upgradedChartModel.version ?? '');
             expect(isCurrentOrNextVersion).toEqual(true);
         });
     });
