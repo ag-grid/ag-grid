@@ -391,7 +391,7 @@ function removeDisabledOptions<T extends AgChartOptions>(options: T) {
 
 function prepareLegendEnabledOption<T extends AgChartOptions>(options: T, mergedOptions: any) {
     // Disable legend by default for single series cartesian charts
-    if (options.legend?.enabled || mergedOptions.legend?.enabled) {
+    if (options.legend?.enabled !== undefined || mergedOptions.legend?.enabled !== undefined) {
         return;
     }
     if ((options.series ?? []).length > 1) {

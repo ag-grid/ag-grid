@@ -7135,7 +7135,6 @@ Object {
     "wrapping": "hyphenate",
   },
   "legend": Object {
-    "enabled": true,
     "item": Object {
       "label": Object {
         "color": "black",
@@ -9173,7 +9172,6 @@ Object {
     "wrapping": "hyphenate",
   },
   "legend": Object {
-    "enabled": true,
     "item": Object {
       "label": Object {
         "color": "black",
