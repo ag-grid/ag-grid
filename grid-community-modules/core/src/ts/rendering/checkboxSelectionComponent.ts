@@ -9,11 +9,9 @@ import { stopPropagationForAgGrid } from '../utils/event';
 import { CheckboxSelectionCallback } from '../entities/colDef';
 import { GroupCheckboxSelectionCallback } from './cellRenderers/groupCellRendererCtrl';
 import { getAriaCheckboxStateName, setAriaLive } from '../utils/aria';
-import { SelectionService } from '../selectionService';
 
 export class CheckboxSelectionComponent extends Component {
 
-    @Autowired('selectionService') private selectionService: SelectionService;
     @RefSelector('eCheckbox') private eCheckbox: AgCheckbox;
 
     private rowNode: RowNode;
@@ -65,26 +63,12 @@ export class CheckboxSelectionComponent extends Component {
     private onCheckedClicked(event: MouseEvent): number {
         const groupSelectsFiltered = this.gridOptionsService.is('groupSelectsFiltered');
 
-        return this.selectionService.setNodeSelected({
-            newValue: false,
-            rangeSelect: event.shiftKey,
-            groupSelectsFiltered: groupSelectsFiltered,
-            event,
-            source: 'checkboxSelected',
-            node: this.rowNode,
-        });
+        return this.rowNode.setSelectedParams({ newValue: false, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered, event, source: 'checkboxSelected' });
     }
 
     private onUncheckedClicked(event: MouseEvent): number {
         const groupSelectsFiltered = this.gridOptionsService.is('groupSelectsFiltered');
-        return this.selectionService.setNodeSelected({
-            newValue: true,
-            rangeSelect: event.shiftKey,
-            groupSelectsFiltered: groupSelectsFiltered,
-            event,
-            source: 'checkboxSelected',
-            node: this.rowNode,
-        });
+        return this.rowNode.setSelectedParams({ newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered, event, source: 'checkboxSelected' });
     }
 
     public init(params: {

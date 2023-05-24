@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, IRowNode } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', minWidth: 200 },
@@ -27,19 +27,20 @@ const gridOptions: GridOptions<IOlympicData> = {
 function onBtExport() {
   var spreadsheets: string[] = []
 
+  let nodesToExport: IRowNode[] = [];
   gridOptions.api!.forEachNode((node, index) => {
-    if (index % 100 === 0) {
-      gridOptions.api!.deselectAll()
-    }
-
-    node.setSelected(true)
+    nodesToExport.push(node);
 
     if (index % 100 === 99) {
+      gridOptions.api!.setNodesSelected({ nodes: nodesToExport, newValue: true });
       spreadsheets.push(
         gridOptions.api!.getSheetDataForExcel({
           onlySelected: true,
         })!
       )
+
+      gridOptions.api!.deselectAll()
+      nodesToExport = [];
     }
   })
 

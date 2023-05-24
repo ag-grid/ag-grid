@@ -9016,7 +9016,7 @@
   "IRowNode": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "setSelected(newValue: boolean, clearSelection?: boolean, suppressFinishActions?: boolean, source?: SelectionEventSourceType)": "void",
+      "setSelected(newValue: boolean, clearSelection?: boolean, source?: SelectionEventSourceType)": "void",
       "isSelected()": "boolean | undefined",
       "isRowPinned()": "boolean",
       "isExpandable()": "boolean",
@@ -9069,7 +9069,7 @@
       "sibling": "IRowNode<TData>"
     },
     "docs": {
-      "setSelected(newValue: boolean, clearSelection?: boolean, suppressFinishActions?: boolean, source?: SelectionEventSourceType)": "/** Select (or deselect) the node.\n     * @param newValue -`true` for selection, `false` for deselection.\n     * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact. Default: `false`\n     * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired. Default: `false`\n     * @param source - Source property that will appear in the `selectionChanged` event. Default: `'api'`\n     */",
+      "setSelected(newValue: boolean, clearSelection?: boolean, source?: SelectionEventSourceType)": "/** Select (or deselect) the node.\n     * @param newValue -`true` for selection, `false` for deselection.\n     * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact. Default: `false`\n     * @param source - Source property that will appear in the `selectionChanged` event. Default: `'api'`\n     */",
       "isSelected()": "/** Returns:\n     * - `true` if node is selected.\n     * - `false` if the node isn't selected.\n     * - `undefined` if it's partially selected (group where not all children are selected). \n     */",
       "isRowPinned()": "/** Returns:\n     * - `true` if node is either pinned to the `top` or `bottom`.\n     * - `false` if the node isn't pinned.\n     */",
       "isExpandable()": "/** Returns:\n    * - `true` if the node can be expanded, i.e it is a group or master row.\n    * - `false` if the node cannot be expanded.\n    */",
@@ -9145,7 +9145,6 @@
       "getSelectedNodes()": "RowNode<any>[]",
       "getSelectedRows()": "any[]",
       "getSelectionCount()": "number",
-      "setNodeSelected(params: ISetNodeSelectedParams)": "number",
       "setNodesSelected(params: ISetNodesSelectedParams)": "number",
       "filterFromSelection(predicate: (node: RowNode) => boolean)": "void",
       "updateGroupsFromChildrenSelections(source: SelectionEventSourceType, changedPath?: ChangedPath)": "boolean",
@@ -9164,19 +9163,6 @@
   "INodeSelectionParams": {
     "meta": {},
     "type": {
-      "newValue": "boolean",
-      "clearSelection?": "boolean",
-      "suppressFinishActions?": "boolean",
-      "rangeSelect?": "boolean",
-      "groupSelectsFiltered?": "boolean",
-      "source": "SelectionEventSourceType",
-      "event?": "Event"
-    }
-  },
-  "ISetNodeSelectedParams": {
-    "meta": {},
-    "type": {
-      "node": "RowNode",
       "newValue": "boolean",
       "clearSelection?": "boolean",
       "suppressFinishActions?": "boolean",

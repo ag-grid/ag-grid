@@ -14,7 +14,7 @@ import { iterateObject } from "./utils/object";
 import { exists } from "./utils/generic";
 import { WithoutGridCommon } from "./interfaces/iCommon";
 import { PaginationProxy } from "./pagination/paginationProxy";
-import { ISelectionService, ISetNodeSelectedParams, ISetNodesSelectedParams } from "./interfaces/iSelectionService";
+import { ISelectionService, ISetNodesSelectedParams } from "./interfaces/iSelectionService";
 import { _ } from "./utils";
 
 @Bean('selectionService')
@@ -49,11 +49,6 @@ export class SelectionService extends BeanStub implements ISelectionService {
 
     private isMultiselect() {
         return this.rowSelection === 'multiple';
-    }
-
-    public setNodeSelected(params: ISetNodeSelectedParams): number {
-        const { node, ...others } = params;
-        return this.setNodesSelected({ ...others, nodes: [node]});
     }
 
     public setNodesSelected(params: ISetNodesSelectedParams): number {
@@ -278,12 +273,11 @@ export class SelectionService extends BeanStub implements ISelectionService {
         iterateObject(this.selectedNodes, (key: string, otherRowNode: RowNode) => {
             if (otherRowNode && otherRowNode.id !== rowNodeToKeepSelected.id) {
                 const rowNode = this.selectedNodes[otherRowNode.id!];
-                updatedCount += this.setNodeSelected({
+                updatedCount += rowNode!.setSelectedParams({
                     newValue: false,
                     clearSelection: false,
                     suppressFinishActions: true,
                     source,
-                    node: rowNode!,
                 });
                 if (this.groupSelectsChildren && otherRowNode.parent) {
                     groupsToRefresh[otherRowNode.parent.id!] = otherRowNode.parent;

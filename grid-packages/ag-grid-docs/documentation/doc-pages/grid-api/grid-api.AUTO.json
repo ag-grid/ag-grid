@@ -328,7 +328,9 @@
   "setNodesSelected": {
     "description": "/** Set all of the provided nodes selection state to the provided value.\n     */",
     "type": {
-      "arguments": { "params": "{ nodes: IRowNode[]; newValue: boolean; }" }
+      "arguments": {
+        "params": "{ nodes: IRowNode[]; newValue: boolean; source?: SelectionEventSourceType; }"
+      }
     }
   },
   "selectAll": {

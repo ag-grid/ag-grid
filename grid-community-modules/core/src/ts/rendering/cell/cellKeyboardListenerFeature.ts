@@ -168,22 +168,20 @@ export class CellKeyboardListenerFeature extends BeanStub {
             const newSelection = !currentSelection;
             if (newSelection || !gridOptionsService.is('suppressRowDeselection')) {
                 const groupSelectsFiltered = this.beans.gridOptionsService.is('groupSelectsFiltered');
-                const updatedCount = this.beans.selectionService.setNodeSelected({
+                const updatedCount = this.rowNode.setSelectedParams({
                     newValue: newSelection,
                     rangeSelect: event.shiftKey,
                     groupSelectsFiltered: groupSelectsFiltered,
                     event,
                     source: 'spacePressed',
-                    node: this.rowNode,
                 });
                 if (currentSelection === undefined && updatedCount === 0) {
-                    this.beans.selectionService.setNodeSelected({
+                    this.rowNode.setSelectedParams({
                         newValue: false,
                         rangeSelect: event.shiftKey,
                         groupSelectsFiltered: groupSelectsFiltered,
                         event,
                         source: 'spacePressed',
-                        node: this.rowNode,
                     });
                 }
             }

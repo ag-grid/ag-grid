@@ -948,42 +948,18 @@ export class RowCtrl extends BeanStub {
 
         if (this.rowNode.isSelected()) {
             if (multiSelectOnClick) {
-                this.beans.selectionService.setNodeSelected({
-                    newValue: false,
-                    event: mouseEvent,
-                    source,
-                    node: this.rowNode,
-                });
+                this.rowNode.setSelectedParams({ newValue: false, event: mouseEvent, source });
             } else if (multiSelectKeyPressed) {
                 if (rowDeselectionWithCtrl) {
-                    this.beans.selectionService.setNodeSelected({
-                        newValue: false,
-                        event: mouseEvent,
-                        source,
-                        node: this.rowNode,
-                    });
+                    this.rowNode.setSelectedParams({ newValue: false, event: mouseEvent, source });
                 }
             } else {
                 // selected with no multi key, must make sure anything else is unselected
-                this.beans.selectionService.setNodeSelected({
-                    newValue: true,
-                    clearSelection: !shiftKeyPressed,
-                    rangeSelect: shiftKeyPressed,
-                    event: mouseEvent,
-                    source,
-                    node: this.rowNode,
-                });
+                this.rowNode.setSelectedParams({ newValue: true, clearSelection: !shiftKeyPressed, rangeSelect: shiftKeyPressed, event: mouseEvent, source });
             }
         } else {
             const clearSelection = multiSelectOnClick ? false : !multiSelectKeyPressed;
-            this.beans.selectionService.setNodeSelected({
-                newValue: true,
-                clearSelection: clearSelection,
-                rangeSelect: shiftKeyPressed,
-                event: mouseEvent,
-                source,
-                node: this.rowNode,
-            });
+            this.rowNode.setSelectedParams({ newValue: true, clearSelection: clearSelection, rangeSelect: shiftKeyPressed, event: mouseEvent, source });
         }
     }
 

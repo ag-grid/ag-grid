@@ -707,7 +707,7 @@ export class GridApi<TData = any> {
     /**
      * Set all of the provided nodes selection state to the provided value.
      */
-    public setNodesSelected(params: { nodes: IRowNode[], newValue: boolean }) {
+    public setNodesSelected(params: { nodes: IRowNode[], newValue: boolean, source?: SelectionEventSourceType }) {
         const allNodesValid = params.nodes.every(node => {
             if (node.rowPinned) {
                 console.warn('AG Grid: cannot select pinned rows');
@@ -725,9 +725,10 @@ export class GridApi<TData = any> {
             return;
         }
 
-        const { nodes, ...other } = params;
+
+        const { nodes, source, newValue } = params;
         const nodesAsRowNode = nodes as RowNode[];
-        this.selectionService.setNodesSelected({ nodes: nodesAsRowNode, ...other, source: 'api' });
+        this.selectionService.setNodesSelected({ nodes: nodesAsRowNode, source: source ?? 'api', newValue });
     }
 
 

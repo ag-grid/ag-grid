@@ -16025,12 +16025,11 @@
   },
   "IRowNode": {
     "setSelected": {
-      "description": "/** Select (or deselect) the node.\n     * @param newValue -`true` for selection, `false` for deselection.\n     * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact. Default: `false`\n     * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired. Default: `false`\n     * @param source - Source property that will appear in the `selectionChanged` event. Default: `'api'`\n     */",
+      "description": "/** Select (or deselect) the node.\n     * @param newValue -`true` for selection, `false` for deselection.\n     * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact. Default: `false`\n     * @param source - Source property that will appear in the `selectionChanged` event. Default: `'api'`\n     */",
       "type": {
         "arguments": {
           "newValue": "boolean",
           "clearSelection?": "boolean",
-          "suppressFinishActions?": "boolean",
           "source?": "SelectionEventSourceType"
         },
         "returnType": "void",
@@ -16365,13 +16364,6 @@
     "getSelectionCount": {
       "type": { "arguments": {}, "returnType": "number", "optional": false }
     },
-    "setNodeSelected": {
-      "type": {
-        "arguments": { "params": "ISetNodeSelectedParams" },
-        "returnType": "number",
-        "optional": false
-      }
-    },
     "setNodesSelected": {
       "type": {
         "arguments": { "params": "ISetNodesSelectedParams" },
@@ -16447,22 +16439,6 @@
     }
   },
   "INodeSelectionParams": {
-    "newValue": { "type": { "returnType": "boolean", "optional": false } },
-    "clearSelection": { "type": { "returnType": "boolean", "optional": true } },
-    "suppressFinishActions": {
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "rangeSelect": { "type": { "returnType": "boolean", "optional": true } },
-    "groupSelectsFiltered": {
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "source": {
-      "type": { "returnType": "SelectionEventSourceType", "optional": false }
-    },
-    "event": { "type": { "returnType": "Event", "optional": true } }
-  },
-  "ISetNodeSelectedParams": {
-    "node": { "type": { "returnType": "RowNode", "optional": false } },
     "newValue": { "type": { "returnType": "boolean", "optional": false } },
     "clearSelection": { "type": { "returnType": "boolean", "optional": true } },
     "suppressFinishActions": {

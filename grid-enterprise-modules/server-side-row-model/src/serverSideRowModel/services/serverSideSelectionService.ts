@@ -1,4 +1,4 @@
-import { Autowired, Bean, BeanStub, ChangedPath, Events, IRowModel, ISelectionService, IServerSideSelectionState, IServerSideGroupSelectionState, PostConstruct, RowNode, SelectionChangedEvent, SelectionEventSourceType, WithoutGridCommon, ISetNodeSelectedParams, ISetNodesSelectedParams } from "@ag-grid-community/core";
+import { Autowired, Bean, BeanStub, ChangedPath, Events, IRowModel, ISelectionService, IServerSideSelectionState, IServerSideGroupSelectionState, PostConstruct, RowNode, SelectionChangedEvent, SelectionEventSourceType, WithoutGridCommon, ISetNodesSelectedParams } from "@ag-grid-community/core";
 import { DefaultStrategy } from "./selection/strategies/defaultStrategy";
 import { GroupSelectsChildrenStrategy } from "./selection/strategies/groupSelectsChildrenStrategy";
 import { ISelectionStrategy } from "./selection/strategies/iSelectionStrategy";
@@ -46,11 +46,6 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
             source: 'api',
         };
         this.eventService.dispatchEvent(event);
-    }
-    
-    public setNodeSelected(params: ISetNodeSelectedParams): number {
-        const { node, ...other } = params;
-        return this.setNodesSelected({ nodes: [node], ...other });
     }
 
     public setNodesSelected(params: ISetNodesSelectedParams): number {
