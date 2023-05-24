@@ -536,7 +536,7 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
                         chartImports.imports.forEach(i => {
                             const toReplace = `(?<!\\.)${i}([\\s\/.])`
                             const reg = new RegExp(toReplace, "g");
-                            jsFile = jsFile.replace(reg, `agCharts.${i}$1`);
+                            jsFile = jsFile.replace(reg, `${options && options.enterprise ? 'agChartsEnterprise' : 'agCharts'}.${i}$1`);
                         })
                     }
 
