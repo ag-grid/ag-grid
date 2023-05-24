@@ -318,7 +318,7 @@ export class RowContainerEventsFeature extends BeanStub {
             this.gridOptionsService.is('suppressCutToClipboard')) { return; }
 
             event.preventDefault();
-            this.clipboardService.cutToClipboard();
+            this.clipboardService.cutToClipboard(undefined, 'ui');
     }
 
     private onPaste(): void {

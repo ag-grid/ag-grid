@@ -17,6 +17,18 @@
                 "url": "/clipboard/"
             }
         },
+        "cutStart": {
+            "more": {
+                "name": "Clipboard Events",
+                "url": "/clipboard/#clipboard-events"
+            }
+        },
+        "cutEnd": {
+            "more": {
+                "name": "Clipboard Events",
+                "url": "/clipboard/#clipboard-events"
+            }
+        },
         "pasteStart": {
             "more": {
                 "name": "Clipboard Events",

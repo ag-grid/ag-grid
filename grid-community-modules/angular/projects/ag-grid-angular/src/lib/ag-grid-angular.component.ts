@@ -60,6 +60,8 @@ import {
     ColumnVisibleEvent,
     ComponentStateChangedEvent,
     CsvExportParams,
+    CutEndEvent,
+    CutStartEvent,
     DataTypeDefinition,
     DisplayedColumnsChangedEvent,
     DomLayoutType,
@@ -993,6 +995,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public toolPanelVisibleChanged: EventEmitter<ToolPanelVisibleChangedEvent<TData>> = new EventEmitter<ToolPanelVisibleChangedEvent<TData>>();
     /** The tool panel size has been changed.     */
     @Output() public toolPanelSizeChanged: EventEmitter<ToolPanelSizeChangedEvent<TData>> = new EventEmitter<ToolPanelSizeChangedEvent<TData>>();
+    /** Cut operation has started.     */
+    @Output() public cutStart: EventEmitter<CutStartEvent<TData>> = new EventEmitter<CutStartEvent<TData>>();
+    /** Cut operation has ended.     */
+    @Output() public cutEnd: EventEmitter<CutEndEvent<TData>> = new EventEmitter<CutEndEvent<TData>>();
     /** Paste operation has started.     */
     @Output() public pasteStart: EventEmitter<PasteStartEvent<TData>> = new EventEmitter<PasteStartEvent<TData>>();
     /** Paste operation has ended.     */

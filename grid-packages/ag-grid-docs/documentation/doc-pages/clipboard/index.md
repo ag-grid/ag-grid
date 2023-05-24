@@ -219,16 +219,16 @@ This is not an enterprise config and can be used at any time to enable cell text
 
 The following events are relevant to clipboard operations:
 
-<api-documentation source='grid-events/events.json' section='clipboard' names='["pasteStart","pasteEnd"]' config='{"overrideBottomMargin":"0rem"}'></api-documentation>
+<api-documentation source='grid-events/events.json' section='clipboard' names='["cutStart","cutEnd","pasteStart","pasteEnd"]' config='{"overrideBottomMargin":"0rem"}'></api-documentation>
 <api-documentation source='grid-events/events.json' section='editing' names='["cellValueChanged"]' config='{ "hideMore":false}'></api-documentation>
 
-For a paste operation the events will be fired as:
+For a cut or paste operation the events will be fired as:
 
-1. One `pasteStart` event.
+1. One `cutStart`/`pasteStart` event.
 1. Many `cellValueChanged` events.
-1. One `pasteEnd` event.
+1. One `cutEnd`/`pasteEnd` event.
 
-If the application is doing work each time it receives a `cellValueChanged`, you can use the `pasteStart` and `pasteEnd` events to suspend the applications work and then do the work for all cells impacted by the paste operation after the paste operation.
+If the application is doing work each time it receives a `cellValueChanged`, you can use the `cutStart`/`pasteStart` and `cutEnd`/`pasteEnd` events to suspend the applications work and then do the work for all cells impacted by the cut/paste operation after the cut/paste operation.
 
 There are no events triggered by copy to clipboard as this does not change the grid's data.
 

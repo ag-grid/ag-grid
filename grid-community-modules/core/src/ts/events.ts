@@ -243,6 +243,14 @@ export interface RowDragMoveEvent<TData = any, TContext = any> extends RowDragEv
 
 export interface RowDragLeaveEvent<TData = any, TContext = any> extends RowDragEvent<TData, TContext> { }
 
+export interface CutStartEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    source: 'api' | 'ui' | 'contextMenu';
+}
+
+export interface CutEndEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    source: 'api' | 'ui' | 'contextMenu';
+}
+
 export interface PasteStartEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     source: string;
 }

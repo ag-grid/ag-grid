@@ -33,6 +33,8 @@ import {
     ColumnValueChangeRequestEvent,
     ColumnVisibleEvent,
     ComponentStateChangedEvent,
+    CutEndEvent,
+    CutStartEvent,
     DisplayedColumnsChangedEvent,
     DragStartedEvent,
     DragStoppedEvent,
@@ -968,6 +970,10 @@ export interface GridOptions<TData = any> {
     onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>): void;
 
     // *** Clipboard *** //
+    /** Cut operation has started. */
+    onCutStart?(event: CutStartEvent<TData>): void;
+    /** Cut operation has ended. */
+    onCutEnd?(event: CutEndEvent<TData>): void;
     /** Paste operation has started. */
     onPasteStart?(event: PasteStartEvent<TData>): void;
     /** Paste operation has ended. */
