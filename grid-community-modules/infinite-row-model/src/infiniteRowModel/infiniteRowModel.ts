@@ -64,7 +64,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     private verifyProps(): void {
-        if (this.gridOptionsService.exists('initialGroupOrderComparator') || this.gridOptionsService.exists('defaultGroupOrderComparator')) {
+        if (this.gridOptionsService.exists('initialGroupOrderComparator')) {
             const message = `AG Grid: initialGroupOrderComparator cannot be used with Infinite Row Model. If using Infinite Row Model, then sorting is done on the server side, nothing to do with the client.`;
             _.doOnce(() => console.warn(message), 'IRM.InitialGroupOrderComparator');
         }
