@@ -48,9 +48,6 @@ class GradientLegendLabel {
     formatter?: (params: AgChartLegendLabelFormatterParams) => string = undefined;
 
     @Validate(OPT_NUMBER(0))
-    maxWidth?: number = undefined;
-
-    @Validate(OPT_NUMBER(0))
     minSpacing?: number = 8;
 
     @Validate(OPT_NUMBER(0))
@@ -58,8 +55,11 @@ class GradientLegendLabel {
 }
 
 class GradientBar {
-    thickness = 16;
-    preferredLength = 100;
+    @Validate(OPT_NUMBER(0))
+    thickness?: number = 16;
+
+    @Validate(OPT_NUMBER(0))
+    preferredLength?: number = 100;
 }
 
 export class GradientLegend {
@@ -182,8 +182,8 @@ export class GradientLegend {
     }
 
     private getMeasurements(colorDomain: number[], shrinkRect: _Scene.BBox) {
-        const { preferredLength: gradientLength, thickness } = this.gradient;
-        const { padding = 0 } = this.label;
+        const { preferredLength: gradientLength = 0, thickness = 0 } = this.gradient;
+        const { padding = 0, minSpacing = 0 } = this.label;
         const [textWidth, textHeight] = this.measureMaxText(colorDomain);
 
         let width: number;
@@ -192,7 +192,9 @@ export class GradientLegend {
         const orientation = this.getOrientation();
         if (orientation === 'vertical') {
             width = thickness + padding + textWidth;
-            height = gradientLength + textHeight;
+            const preferredHeight = gradientLength + textHeight;
+            const fitTextHeight = textHeight * colorDomain.length + minSpacing * (colorDomain.length - 1);
+            height = Math.max(preferredHeight, fitTextHeight);
             gradientBox.x = 0;
             gradientBox.y = textHeight / 2;
             gradientBox.width = thickness;
@@ -200,7 +202,7 @@ export class GradientLegend {
         } else {
             const maxWidth = shrinkRect.width;
             const preferredWidth = gradientLength + textWidth;
-            const fitTextWidth = textWidth * colorDomain.length;
+            const fitTextWidth = textWidth * colorDomain.length + minSpacing * (colorDomain.length - 1);
             width = Math.min(maxWidth, Math.max(preferredWidth, fitTextWidth));
             height = thickness + padding + textHeight;
             gradientBox.x = textWidth / 2;

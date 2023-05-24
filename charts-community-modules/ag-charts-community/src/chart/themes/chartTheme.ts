@@ -17,8 +17,8 @@ import {
     AgTooltipPositionType,
 } from '../agChartOptions';
 import { CHART_AXES_TYPES, getAxisThemeTemplate } from '../chartAxesTypes';
-import { CHART_LEGEND_TYPES, getLegendThemeTemplate } from '../chartLegendTypes';
 import { ChartType, CHART_TYPES, getChartDefaults } from '../factory/chartTypes';
+import { getLegendTypes, getLegendThemeTemplate } from '../factory/legendTypes';
 import { getSeriesThemeTemplate } from '../factory/seriesTypes';
 
 const palette: AgChartThemePalette = {
@@ -713,13 +713,15 @@ export class ChartTheme {
                     return obj;
                 }, {} as Record<string, any>);
             }
-            result.legend = CHART_LEGEND_TYPES.legendTypes.reduce((obj, legendType) => {
+
+            result.legend = getLegendTypes().reduce((obj, legendType) => {
                 const template = getLegendThemeTemplate(legendType);
                 if (template) {
                     obj[legendType] = this.templateTheme(template);
                 }
                 return obj;
             }, {} as Record<string, any>);
+
             return result;
         };
 
