@@ -267,7 +267,6 @@ export class ChartTheme {
                 wrapping: ChartTheme.getCaptionWrappingDefaults(),
             },
             legend: {
-                enabled: true,
                 position: BOTTOM,
                 spacing: 20,
                 listeners: {},

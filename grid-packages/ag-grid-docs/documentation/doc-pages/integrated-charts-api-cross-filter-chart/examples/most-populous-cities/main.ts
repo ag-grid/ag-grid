@@ -72,6 +72,9 @@ function createBubbleChart(gridApi: GridApi) {
           enabled: true,
           text: 'Latitude vs Longitude of Most Populous Cities',
         },
+        legend: {
+          enabled: false,
+        },
       },
     },
     chartContainer: document.querySelector('#bubbleChart') as any,
