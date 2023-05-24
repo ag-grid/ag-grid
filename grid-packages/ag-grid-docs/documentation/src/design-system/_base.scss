@@ -6,5 +6,9 @@
 }
 
 html {
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+    line-height: var(--line-height);
+    font-weight: var(--font-weight);
     color: var(--text-color);
 }

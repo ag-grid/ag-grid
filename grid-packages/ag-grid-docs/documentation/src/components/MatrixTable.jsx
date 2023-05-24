@@ -61,7 +61,7 @@ const createTable = (framework, allColumns, allRows, isTree, booleanOnly, string
     const columnNames = columnFields.map((column) => allColumns[column]);
 
     return (
-        <div className={classnames(styles.outer, 'ag-styles')}>
+        <div className={styles.outer}>
             <table className={classnames(styles.matrix, styles['matrix-table'])}>
                 <thead>
                     <tr>

@@ -1,14 +1,7 @@
 @use '../../design-system' as *;
 
 .ag-styles {
-    // @include design-system-styles();
-
-    font-family: var(--font-family); // Needed as we can't set styles for <html> yet
-    font-size: var(--font-size); // Needed as we can't set styles for <html> yet
-    line-height: var(--line-height); // Needed as we can't set styles for <html> yet
-    font-weight: var(--font-weight); // Needed as we can't set styles for <html> yet
-
-    color: var(--text-color); // Needed as we can't set styles for <html> yet
+    // @include design-system-styles()
 
     // Required because we can't set .font-size-responsive on the same element as .ag-styles for docs page yet
     &.font-size-responsive {
@@ -25,7 +18,7 @@
     }
 }
 
-.ag-styles .style-guide {
+.style-guide {
     display: grid;
     grid-template-columns: 200px 1fr;
     grid-template-areas:

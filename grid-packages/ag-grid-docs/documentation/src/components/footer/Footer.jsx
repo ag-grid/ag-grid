@@ -1,4 +1,3 @@
-import classnames from 'classnames';
 import DocumentationLink from 'components/DocumentationLink';
 import React from 'react';
 import { Icon } from '../Icon';
@@ -29,7 +28,7 @@ const MenuColumns = ({ framework = 'javascript' }) =>
     ));
 
 const Footer = ({ framework }) => (
-    <footer className={classnames(styles.footer, 'ag-styles')}>
+    <footer className={styles.footer}>
         <div className="page-margin">
             <div className={styles['row']}>
                 <MenuColumns framework={framework} />

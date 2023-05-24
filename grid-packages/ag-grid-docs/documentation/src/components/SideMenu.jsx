@@ -57,11 +57,7 @@ const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu }) => {
 
     return (
         allHeadings.length > 0 && (
-            <nav
-                id="side-menu"
-                ref={menuRef}
-                className={classNames(styles.sideNav, 'ag-styles', 'font-size-responsive')}
-            >
+            <nav id="side-menu" ref={menuRef} className={classNames(styles.sideNav, 'font-size-responsive')}>
                 <div>
                     <ul className="list-style-none">
                         <li className={styles['level-1']}>

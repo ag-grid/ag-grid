@@ -15,7 +15,7 @@ export const TopBar = ({ frameworks, currentFramework, path }) => {
         }));
 
     return (
-        <div className={classNames(styles.topBar, 'ag-styles')}>
+        <div className={styles.topBar}>
             <div className="page-margin">
                 <div className={styles.topBarInner}>
                     <button

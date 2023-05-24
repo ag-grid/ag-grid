@@ -1,16 +1,14 @@
 @use '../../design-system/core/' as *;
 
 .footer {
+    --text-color: var(--white);
+    --link-color: var(--white);
+    --link-hover-color: var(--white);
+
     padding-top: $size-5;
     padding-bottom: calc($size-5 * 2);
     background-color: var(--dark-cerulean-blue);
-
-    // Required to deal with .ag-styles specificity
-    &:global(.ag-styles) {
-        --text-color: var(--white);
-        --link-color: var(--white);
-        --link-hover-color: var(--white);
-    }
+    color: var(--text-color);
 
     h4,
     p {
@@ -64,15 +62,8 @@
         margin-bottom: -12px;
         padding-top: 12px;
         padding-bottom: 12px;
-        text-decoration: underline;
         text-underline-offset: 2px;
         transition: text-decoration-color $default-transition-timing;
-
-        // Required to deal with .ag-styles specificity
-        :global(.ag-styles) & {
-            text-decoration: underline;
-            text-decoration-color: transparent;
-        }
 
         &:hover {
             text-decoration-color: var(--white);

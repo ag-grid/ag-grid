@@ -14,3 +14,8 @@
         float: right;
     }
 }
+
+// .ag-styles fallout
+div :global(.tabs-header) ul {
+    margin-bottom: 0 !important;
+}
