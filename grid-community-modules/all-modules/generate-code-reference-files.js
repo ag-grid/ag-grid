@@ -454,7 +454,8 @@ function extractMethodsAndPropsFromNode(node, srcFile) {
 function writeFormattedFile(dir, filename, data) {
     const fullPath = dir + filename;
 
-    const currentContent = fs.readFileSync(fullPath).toString('utf-8');
+    const alreadyExists = fs.existsSync(fullPath);
+    const currentContent = alreadyExists ? fs.readFileSync(fullPath).toString('utf-8') : '';
     const config = prettierJs.resolveConfig.sync(fullPath, {});
     const fileOptions = { ...config, filepath: fullPath };
     const newContent = prettierJs.format(JSON.stringify(data), fileOptions);
