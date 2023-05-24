@@ -214,23 +214,7 @@ export class GridOptionsValidator {
     }
 
     private deprecatedProperties: DeprecatedReference<GridOptions> = {
-        serverSideInfiniteScroll: { version: '29', message: 'Infinite Scrolling is now the default behaviour. This can be suppressed with `suppressServerSideInfiniteScroll`.' },
         rememberGroupStateWhenNewData: { version: '24', message: 'Now that transaction updates are possible and they keep group state, this feature is no longer needed.' },
-
-        suppressEnterpriseResetOnNewColumns: { version: '25', message: 'Now that it is possible to dynamically change columns in the grid, this is no longer needed.' },
-        suppressColumnStateEvents: { version: '25', message: 'Events should be ignored based on the `event.source`, which will be "api" if the event was due to setting column state via the API.' },
-        defaultExportParams: { version: '25.2', message: 'The property `defaultExportParams` has been replaced by `defaultCsvExportParams` and `defaultExcelExportParams`' },
-        stopEditingWhenGridLosesFocus: { version: '25.2.2', newProp: 'stopEditingWhenCellsLoseFocus', copyToNewProp: true },
-
-        applyColumnDefOrder: { version: '26', message: 'The property `applyColumnDefOrder` is no longer needed, as this is the default behaviour. To turn this behaviour off, set maintainColumnOrder=true' },
-        groupMultiAutoColumn: { version: '26', newProp: 'groupDisplayType', copyToNewProp: true, newPropValue: 'multipleColumns' },
-        groupUseEntireRow: { version: '26', newProp: 'groupDisplayType', copyToNewProp: true, newPropValue: 'groupRows' },
-        defaultGroupSortComparator: { version: '26', newProp: 'initialGroupOrderComparator' },
-        enableMultiRowDragging: { version: '26.1', newProp: 'rowDragMultiRow', copyToNewProp: true },
-        colWidth: { version: '26.1', newProp: 'defaultColDef.width' as any },
-        minColWidth: { version: '26.1', newProp: 'defaultColDef.minWidth' as any },
-        maxColWidth: { version: '26.1', newProp: 'defaultColDef.maxWidth' as any },
-        reactUi: { version: '26.1', message: 'React UI is on by default, so no need for reactUi=true. To turn it off, set suppressReactUi=true.' },
 
         suppressCellSelection: { version: '27', newProp: 'suppressCellFocus', copyToNewProp: true },
         clipboardDeliminator: { version: '27.1', newProp: 'clipboardDelimiter', copyToNewProp: true },
@@ -248,6 +232,7 @@ export class GridOptionsValidator {
         processSecondaryColGroupDef: { version: '28', newProp: 'processPivotResultColGroupDef', copyToNewProp: true },
         getServerSideStoreParams: { version: '28', newProp: 'getServerSideGroupLevelParams', copyToNewProp: true },
 
+        serverSideInfiniteScroll: { version: '29', message: 'Infinite Scrolling is now the default behaviour. This can be suppressed with `suppressServerSideInfiniteScroll`.' },
         enableChartToolPanelsButton: { version: '29', message: 'The Chart Tool Panels button is now enabled by default. To hide the Chart Tool Panels button and display the hamburger button instead, set suppressChartToolPanelsButton=true.' },
         functionsPassive: { version: '29.2' },
         onColumnRowGroupChangeRequest: { version: '29.2' },
@@ -272,19 +257,6 @@ export class GridOptionsValidator {
         });
 
         // Manual messages and deprecation behaviour that don't fit our standard approach above.
-        if (options.groupSuppressAutoColumn) {
-            const propName = options.treeData ? 'treeDataDisplayType' : 'groupDisplayType';
-
-            console.warn(`AG Grid: since v26.0, the grid property \`groupSuppressAutoColumn\` has been replaced by \`${propName} = 'custom'\``);
-            options[propName] = 'custom';
-        }
-        if (options.immutableData) {
-            if (options.getRowId) {
-                console.warn('AG Grid: since v27.1, `immutableData` is deprecated. With the `getRowId` callback implemented, immutable data is enabled by default so you can remove `immutableData=true`.');
-            } else {
-                console.warn('AG Grid: since v27.1, `immutableData` is deprecated. To enable immutable data you must implement the `getRowId()` callback.');
-            }
-        }
         if (options.serverSideStoreType) {
             console.warn('AG Grid: since v29.0, `serverSideStoreType` has been replaced by `suppressServerSideInfiniteScroll`. Set to false to use Partial Store, and true to use Full Store.');
             options.suppressServerSideInfiniteScroll = options.serverSideStoreType !== 'partial';

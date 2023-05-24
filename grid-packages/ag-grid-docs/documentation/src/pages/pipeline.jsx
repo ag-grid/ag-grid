@@ -284,7 +284,6 @@ const Pipeline = ({ location }) => {
                                 issueTypeCellRenderer: IssueTypeCellRenderer,
                             }}
                             defaultColDef={defaultColDef}
-                            reactUi={false}
                             enableCellTextSelection={true}
                             detailCellRendererParams={detailCellRendererParams}
                             detailCellRenderer={'myDetailCellRenderer'}

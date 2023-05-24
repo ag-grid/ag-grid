@@ -119,7 +119,7 @@ export function getPropertyBindings(bindings: any, componentFileNames: string[],
                 propertyAttributes.push(toInput(property));
                 propertyVars.push(toMember(property));
                 propertyAssignments.push(toAssignment(property));
-            } else if (componentFileNames.length > 0 && (property.name === 'components' || property.name === 'frameworkComponents')) {
+            } else if (componentFileNames.length > 0 && (property.name === 'components')) {
                 if (bindings.frameworkComponents) {
                     const userAgComponents = OVERRIDABLE_AG_COMPONENTS.filter(agComponentName => bindings.frameworkComponents.some(component => component.name === agComponentName))
                         .map(agComponentName => `${agComponentName}: '${agComponentName}'`);

@@ -86,7 +86,7 @@ function processColDefsForFunctionalReactOrVue(propertyName: string, exampleType
 }
 
 function processComponentsForVue(propertyName: string, exampleType, providedExamples) {
-    if (propertyName === 'components' || propertyName === 'frameworkComponents') {
+    if (propertyName === 'components') {
         return exampleType === 'generated' || (exampleType === 'mixed' && !(providedExamples['vue'] && providedExamples['vue3']));
     }
 

@@ -82,7 +82,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         if (!this.eDetailGrid) { return; }
 
         // AG-1715
-        // this is only needed when reactUi=false, once we remove the old way
+        // this is only needed when suppressReactUi=true, once we remove the old way
         // of doing react, and Master / Details is all native React, then we
         // can remove this code.
         const agGridReact = this.context.getBean('agGridReact');
