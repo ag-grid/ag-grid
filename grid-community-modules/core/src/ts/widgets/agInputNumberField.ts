@@ -124,6 +124,9 @@ export class AgInputNumberField extends AgInputTextField {
         if (exists(value)) {
             // need to maintain the scientific notation format whilst typing (e.g. 1e10)
             let setInputValueOnly = this.isScientificNotation(value);
+            if (setInputValueOnly && this.eInput.validity.valid) {
+                return setValueFunc(value);
+            }
             if (!setInputValueOnly) {
                 value = this.adjustPrecision(value);
                 const normalizedValue = this.normalizeValue(value);
