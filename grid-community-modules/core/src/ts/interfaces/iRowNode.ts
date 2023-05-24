@@ -167,10 +167,9 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      * Select (or deselect) the node.
      * @param newValue -`true` for selection, `false` for deselection.
      * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact. Default: `false`
-     * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired. Default: `false`
      * @param source - Source property that will appear in the `selectionChanged` event. Default: `'api'`
      */
-    setSelected(newValue: boolean, clearSelection?: boolean, suppressFinishActions?: boolean, source?: SelectionEventSourceType): void;
+    setSelected(newValue: boolean, clearSelection?: boolean, source?: SelectionEventSourceType): void;
 
     /** Returns:
      * - `true` if node is selected.

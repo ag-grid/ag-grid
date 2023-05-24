@@ -22,7 +22,8 @@ import {
     IsApplyServerSideTransactionParams,
     SelectionChangedEvent,
     IRowNode,
-    StoreRefreshedEvent
+    StoreRefreshedEvent,
+    ISelectionService
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../../serverSideRowModel";
 import { StoreUtils } from "../storeUtils";
@@ -34,6 +35,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
     @Autowired('ssrmStoreUtils') private storeUtils: StoreUtils;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('selectionService') private selectionService: ISelectionService;
 
     // display indexes
     private displayIndexStart: number | undefined;
@@ -155,28 +157,25 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     }
 
     private updateSelectionAfterTransaction(updatedNodes?: RowNode[], removedNodes?: RowNode[]) {
-        let fireSelectionUpdatedEvent = false;
+        const nodesToDeselect: RowNode[] = [];
         updatedNodes?.forEach(node => {
             if (node.isSelected() && !node.selectable) {
-                node.setSelected(false, false, true, 'rowDataChanged');
-                fireSelectionUpdatedEvent = true;
+                nodesToDeselect.push(node);
             }
         });
 
         removedNodes?.forEach(node => {
             if (node.isSelected()) {
-                node.setSelected(false, false, true, 'rowDataChanged');
-                fireSelectionUpdatedEvent = true;
+                nodesToDeselect.push(node);
             }
         });
 
-        if (fireSelectionUpdatedEvent) {
-            const event: WithoutGridCommon<SelectionChangedEvent> = {
-                type: Events.EVENT_SELECTION_CHANGED,
-                source: 'rowDataChanged'
-            };
-            this.eventService.dispatchEvent(event);
-        }
+        this.selectionService.setNodesSelected({
+            newValue: false,
+            clearSelection: false,
+            nodes: nodesToDeselect,
+            source: 'rowDataChanged',
+        });
     }
 
     /**
@@ -366,7 +365,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         const defaultRowHeight = this.gridOptionsService.getRowHeightAsNumber();
         // if node after this, can calculate backwards (and ignore detail/grouping)
         if (nextNode) {
-            const numberOfRowDiff = Math.floor((nextNode.node.rowIndex! - displayIndex) * defaultRowHeight);
+            const numberOfRowDiff = (nextNode.node.rowIndex! - displayIndex) * defaultRowHeight;
             return {
                 rowTop: nextNode.node.rowTop! - numberOfRowDiff,
                 rowHeight: defaultRowHeight,
@@ -375,7 +374,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
         // otherwise calculate from end of store
         const lastTop = this.topPx + this.heightPx;
-        const numberOfRowDiff = Math.floor((this.getDisplayIndexEnd()! - displayIndex) * defaultRowHeight);
+        const numberOfRowDiff = (this.getDisplayIndexEnd()! - displayIndex) * defaultRowHeight;
         return {
             rowTop: lastTop - numberOfRowDiff,
             rowHeight: defaultRowHeight,

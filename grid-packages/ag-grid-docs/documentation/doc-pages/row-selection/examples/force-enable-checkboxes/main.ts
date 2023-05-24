@@ -1,4 +1,4 @@
-import { Grid, GridOptions, FirstDataRenderedEvent, CheckboxSelectionCallbackParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, FirstDataRenderedEvent, CheckboxSelectionCallbackParams, IRowNode } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -20,9 +20,13 @@ const gridOptions: GridOptions<IOlympicData> = {
   rowSelection: 'multiple',
   suppressRowClickSelection: true,
   onFirstDataRendered: (params: FirstDataRenderedEvent<IOlympicData>) => {
-    params.api.forEachNode((node) =>      
-      node.setSelected(!!node.data && node.data.year !== 2012)
-    );
+    const nodesToSelect: IRowNode[] = [];
+    params.api.forEachNode((node) => {
+      if (node.data && node.data.year !== 2012) {
+        nodesToSelect.push(node);
+      }
+    });
+    params.api.setNodesSelected({ nodes: nodesToSelect, newValue: true });
   }
 }
 

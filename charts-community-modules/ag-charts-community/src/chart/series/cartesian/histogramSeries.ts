@@ -577,7 +577,15 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
         return legendData;
     }
 
-    animateEmptyUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, HistogramNodeDatum>> }) {
+    animateEmptyUpdateReady({
+        datumSelections,
+        labelSelections,
+    }: {
+        datumSelections: Array<Selection<Rect, HistogramNodeDatum>>;
+        labelSelections: Array<Selection<Text, HistogramNodeDatum>>;
+    }) {
+        const duration = 1000;
+
         let startingY = 0;
         datumSelections.forEach((datumSelection) =>
             datumSelection.each((_, datum) => {
@@ -595,7 +603,7 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                     ],
                     {
                         disableInteractions: true,
-                        duration: 1000,
+                        duration,
                         ease: easing.linear,
                         repeat: 0,
                         onUpdate([y, height]) {
@@ -609,20 +617,46 @@ export class HistogramSeries extends CartesianSeries<SeriesNodeDataContext<Histo
                 );
             });
         });
-    }
 
-    animateReadyUpdateReady({ datumSelections }: { datumSelections: Array<Selection<Rect, HistogramNodeDatum>> }) {
-        datumSelections.forEach((datumSelection) => {
-            datumSelection.each((rect, datum) => {
-                rect.y = datum.y;
-                rect.height = datum.height;
+        labelSelections.forEach((labelSelection) => {
+            labelSelection.each((label) => {
+                this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+                    from: 0,
+                    to: 1,
+                    delay: duration - duration / 10,
+                    duration: duration / 10,
+                    ease: easing.linear,
+                    repeat: 0,
+                    onUpdate: (opacity) => {
+                        label.opacity = opacity;
+                    },
+                });
             });
         });
     }
 
-    animateReadyHighlightReady(highlightSelection: Selection<Rect, HistogramNodeDatum>) {
-        highlightSelection.each((rect, datum) => {
+    animateReadyUpdate({ datumSelections }: { datumSelections: Array<Selection<Rect, HistogramNodeDatum>> }) {
+        datumSelections.forEach((datumSelection) => {
+            this.resetSelectionRects(datumSelection);
+        });
+    }
+
+    animateReadyHighlight(highlightSelection: Selection<Rect, HistogramNodeDatum>) {
+        this.resetSelectionRects(highlightSelection);
+    }
+
+    animateReadyResize({ datumSelections }: { datumSelections: Array<Selection<Rect, HistogramNodeDatum>> }) {
+        this.animationManager?.stop();
+        datumSelections.forEach((datumSelection) => {
+            this.resetSelectionRects(datumSelection);
+        });
+    }
+
+    resetSelectionRects(selection: Selection<Rect, HistogramNodeDatum>) {
+        selection.each((rect, datum) => {
+            rect.x = datum.x;
             rect.y = datum.y;
+            rect.width = datum.width;
             rect.height = datum.height;
         });
     }

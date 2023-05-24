@@ -18,6 +18,7 @@ const options: AgChartOptions = {
       yKey: "ie",
       yName: "IE",
       stacked: true,
+      label: {},
     },
     {
       type: "area",
@@ -25,6 +26,7 @@ const options: AgChartOptions = {
       yKey: "firefox",
       yName: "Firefox",
       stacked: true,
+      label: {},
     },
     {
       type: "area",
@@ -32,6 +34,7 @@ const options: AgChartOptions = {
       yKey: "safari",
       yName: "Safari",
       stacked: true,
+      label: {},
     },
     {
       type: "area",
@@ -39,6 +42,7 @@ const options: AgChartOptions = {
       yKey: "chrome",
       yName: "Chrome",
       stacked: true,
+      label: {},
     },
   ],
 }

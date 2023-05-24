@@ -184,8 +184,14 @@
 
 <framework-specific-section frameworks="javascript">
 | If everything is correct, you should see a simple grid that looks like this:
-|
-| ![AG Grid in its simplest form](../../images/resources/getting-started/step1.png)
+
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript">
+<image-caption src="step1.png" alt="AG Grid in its simplest form" maxWidth="80%" constrained="true" centered="true"></image-caption>
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript">
 |
 | We will now break this file down and explain the different parts...
 |

@@ -1,4 +1,4 @@
-import { Autowired, BeanStub, IRowModel, IRowNode, IServerSideGroupSelectionState, RowNode, SelectionEventSourceType, ISetNodeSelectedParams, ColumnModel, FilterManager, PostConstruct, Events, IServerSideStore, ISelectionService } from "@ag-grid-community/core";
+import { Autowired, BeanStub, IRowModel, IRowNode, IServerSideGroupSelectionState, RowNode, SelectionEventSourceType, ISetNodesSelectedParams, ColumnModel, FilterManager, PostConstruct, Events, IServerSideStore, ISelectionService } from "@ag-grid-community/core";
 import { ServerSideRowModel } from "../../../serverSideRowModel";
 import { ISelectionStrategy } from "./iSelectionStrategy";
 
@@ -119,11 +119,19 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         return anyStateChanged;
     }
 
-    public setNodeSelected(params: ISetNodeSelectedParams): number {
+    public setNodesSelected(params: ISetNodesSelectedParams): number {
+        const { nodes, ...other } = params;
+
+        if (nodes.length === 0) return 0;
+
         if (params.rangeSelect) {
-            const nodes = this.rowModel.getNodesInRangeForSelection(params.node, this.lastSelected);
+            if (nodes.length > 1) {
+                throw new Error('AG Grid: cannot select multiple rows when using rangeSelect');
+            }
+            const node = nodes[0];
+            const rangeOfNodes = this.rowModel.getNodesInRangeForSelection(node, this.lastSelected);
             // sort the routes by route length, high to low, this means we can do the lowest level children first
-            const routes = nodes.map(this.getRouteToNode).sort((a, b) => b.length - a.length);
+            const routes = rangeOfNodes.map(this.getRouteToNode).sort((a, b) => b.length - a.length);
 
             // skip routes if we've already done a descendent
             const completedRoutes: Set<IRowNode> = new Set();
@@ -134,18 +142,20 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                 }
 
                 route.forEach(part => completedRoutes.add(part));
-                this.recursivelySelectNode(route, this.selectedState, params);
+                this.recursivelySelectNode(route, this.selectedState, {node, ...other});
             });
 
             this.removeRedundantState();
-            this.lastSelected = params.node;
+            this.lastSelected = node;
             return 1;
         }
 
-        const idPathToNode = this.getRouteToNode(params.node);
-        this.recursivelySelectNode(idPathToNode, this.selectedState, params);
+        params.nodes.forEach(node => {
+            const idPathToNode = this.getRouteToNode(node);
+            this.recursivelySelectNode(idPathToNode, this.selectedState, { ...other, node });
+        });
         this.removeRedundantState();
-        this.lastSelected = params.node;
+        this.lastSelected = params.nodes[params.nodes.length - 1];
         return 1;
     }
 

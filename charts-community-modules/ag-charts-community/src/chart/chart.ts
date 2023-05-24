@@ -34,7 +34,7 @@ import { LayoutService } from './layout/layoutService';
 import { DataService } from './dataService';
 import { UpdateService } from './updateService';
 import { ChartUpdateType } from './chartUpdateType';
-import { ChartLegendDatum, ChartLegend } from './legendDatum';
+import { CategoryLegendDatum, ChartLegendDatum, ChartLegend } from './legendDatum';
 import { Logger } from '../util/logger';
 import { ActionOnSet } from '../util/proxy';
 import { ChartHighlight } from './chartHighlight';
@@ -108,16 +108,14 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
     @ActionOnSet<Chart>({
         newValue(value) {
-            this.autoSize = false;
-            this.resize(value, this.height);
+            this.resize(value);
         },
     })
     width?: number;
 
     @ActionOnSet<Chart>({
         newValue(value) {
-            this.autoSize = false;
-            this.resize(this.width, value);
+            this.resize(undefined, value);
         },
     })
     height?: number;
@@ -141,7 +139,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             if (!this._lastAutoSize) {
                 return;
             }
-            this.resize(this._lastAutoSize[0], this._lastAutoSize[1]);
+            this.resize();
         } else {
             style.display = 'inline-block';
             style.width = 'auto';
@@ -267,12 +265,13 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 return;
             }
 
-            if (width === this.width && height === this.height) {
+            const [autoWidth = 0, authHeight = 0] = this._lastAutoSize ?? [];
+            if (autoWidth === width && authHeight === height) {
                 return;
             }
 
             this._lastAutoSize = [width, height];
-            this.resize(width, height);
+            this.resize();
         });
         this.layoutService.addListener('start-layout', (e) => this.positionPadding(e.shrinkRect));
         this.layoutService.addListener('start-layout', (e) => this.positionCaptions(e.shrinkRect));
@@ -726,6 +725,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     private resize(width?: number, height?: number) {
+        width ??= this.width ?? (this.autoSize ? this._lastAutoSize?.[0] : this.scene.canvas.width);
+        height ??= this.height ?? (this.autoSize ? this._lastAutoSize?.[1] : this.scene.canvas.height);
         if (!width || !height || !Number.isFinite(width) || !Number.isFinite(height)) return;
 
         if (this.scene.resize(width, height)) {
@@ -792,7 +793,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
     }
 
     private async updateLegend() {
-        const legendData: ChartLegendDatum[] = [];
+        let legendData: ChartLegendDatum[] = [];
         this.series
             .filter((s) => s.showInLegend)
             .forEach((series) => {
@@ -802,6 +803,15 @@ export abstract class Chart extends Observable implements AgChartInstance {
         const legendType = legendData.length > 0 ? legendData[0].legendType : 'category';
         this.attachLegend(legendType);
         this.applyLegendOptions?.(this.legend!);
+
+        if (legendType === 'category') {
+            const usedLabels = new Set();
+            legendData = legendData.filter((d) => {
+                const alreadyUsed = usedLabels.has((d as CategoryLegendDatum).label.text);
+                usedLabels.add((d as CategoryLegendDatum).label.text);
+                return !alreadyUsed;
+            });
+        }
 
         this.legend!.data = legendData;
     }

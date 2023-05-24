@@ -16,6 +16,9 @@ const options: AgChartOptions = {
       yKey: "winnings",
       yName: "Winnings",
       aggregation: "sum",
+      label: {
+        color: "white",
+      },
     },
   ],
   axes: [

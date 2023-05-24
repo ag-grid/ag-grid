@@ -552,7 +552,6 @@ const ExampleRunnerInner = ({
                             onClick={(e) => {
                                 setShowCode(false);
                                 e.preventDefault();
-                                trackExampleRunnerEvent({ type: 'viewPreviewClick', exampleInfo });
                             }}
                             role="tab"
                             title="Run example"
@@ -572,7 +571,6 @@ const ExampleRunnerInner = ({
                             onClick={(e) => {
                                 setShowCode(true);
                                 e.preventDefault();
-                                trackExampleRunnerEvent({ type: 'viewCodeClick', exampleInfo });
                             }}
                             role="tab"
                             title="View Example Source Code"
@@ -585,23 +583,11 @@ const ExampleRunnerInner = ({
 
                 <ul className={classnames('list-style-none', styles.externalLinks)}>
                     <li>
-                        <OpenInCTA
-                            type="newTab"
-                            href={getIndexHtmlUrl(exampleInfo)}
-                            tracking={() => {
-                                trackExampleRunnerEvent({ type: 'newTabClick', exampleInfo });
-                            }}
-                        />
+                        <OpenInCTA type="newTab" href={getIndexHtmlUrl(exampleInfo)} />
                     </li>
                     {!exampleInfo.options.noPlunker && (
                         <li>
-                            <OpenInCTA
-                                type="plunkr"
-                                onClick={() => openPlunker(exampleInfo)}
-                                tracking={() => {
-                                    trackExampleRunnerEvent({ type: 'openCodeClick', exampleInfo });
-                                }}
-                            />
+                            <OpenInCTA type="plunkr" onClick={() => openPlunker(exampleInfo)} />
                         </li>
                     )}
                 </ul>

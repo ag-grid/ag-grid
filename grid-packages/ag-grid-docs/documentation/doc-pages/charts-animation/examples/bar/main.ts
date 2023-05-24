@@ -15,6 +15,9 @@ const options: AgChartOptions = {
       yKey: "iphone",
       yName: "iPhone",
       stackGroup: "Devices",
+      label: {
+        color: "white",
+      },
     },
     {
       type: "bar",
@@ -41,6 +44,9 @@ const options: AgChartOptions = {
       xKey: "quarter",
       yKey: "services",
       yName: "Services",
+      label: {
+        color: "white",
+      },
     },
   ],
 }

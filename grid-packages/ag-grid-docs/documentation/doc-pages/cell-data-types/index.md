@@ -2,7 +2,7 @@
 title: "Cell Data Types"
 ---
 
-Editing values of different data types, as well as using other grid functionality, is made easy by using cell data types.
+Working with values of different data types is made easy by using cell data types.
 
 ## Enable Cell Data Types
 
@@ -26,7 +26,7 @@ There are six pre-defined data types: `'text'`, `'number'`, `'boolean'`, `'date'
 
 As well as specifying a specific cell data type for a column, the grid can also infer the cell data type from the row data. This can be done by setting `cellDataType = 'auto'`. This can be set on the [Default Column Definition](/column-definitions/#custom-column-types) to apply to all columns.
 
-The inference will occur the first time that row data is passed into the grid. For inference to work for a column, it must contain non-null values and have the `field` property set (inference will not use Value Getters). If these conditions are not met, no cell data type will be set (it will need to be defined directly on the column if desired). Note that where inference is possible but it does not match any of the pre-defined cell data types, it will default to `object`.
+The inference will occur the first time that row data is passed into the grid. For inference to work for a column, it must contain non-null values and have the `field` property set. Inference will not use Value Getters, and will ignore columns with one defined. If these conditions are not met, no cell data type will be set (it will need to be defined directly on the column if desired). Note that where inference is possible but it does not match any of the pre-defined cell data types, it will default to `object`.
 
 The following example demonstrates enabling cell data types (via `'auto'`):
 - The **Athlete** column has a `'text'` data type.
@@ -53,7 +53,7 @@ As most grid functionality works directly with `string` values, the `'text'` cel
 - A [Value Formatter](/value-formatters/) to convert from the relevant data type to `string`.
 - `useValueParserForImport = true` to [Use the Value Parser with Other Grid Features](/value-parsers/#use-value-parser-for-import).
 - `useValueFormatterForExport = true` to [Use the Value Formatter with Other Grid Features](/value-formatters/#use-value-formatter-for-export).
-- A [Key Creator](/grouping-complex-objects/#creating-group-keys-from-complex-objects) which uses the Value Formatter to allow Row Grouping to work (except for `'number'` which doesn't need to).
+- A [Key Creator](/grouping-complex-objects/#creating-group-keys-from-complex-objects) which uses the Value Formatter (from the data type definition) to allow Row Grouping to work (except for `'number'` which doesn't need to).
 
 ### Text
 
@@ -90,7 +90,7 @@ The default Value Parser and Value Formatter use the ISO string format `'yyyy-mm
 
 The following properties are set:
 - The [Date Cell Editor](/provided-cell-editors/#date-cell-editor) is used for editing.
-- For AG Grid Enterprise, `filterParams.valueFormatter` is set to format the values using the Value Formatter.
+- For AG Grid Enterprise, `filterParams.valueFormatter` is set to format the values using the Value Formatter (from the data type definition).
 
 ### Date as String
 
@@ -101,7 +101,7 @@ This data type uses the ISO string format `'yyyy-mm-dd'`. If you wish to use a d
 The following properties are set:
 - The [Date as String Cell Editor](/provided-cell-editors/#date-as-string-cell-editor) is used for editing.
 - For AG Grid Community, the [Date Filter](/filter-text/) is used, and `filterParams.comparator` is set to parse the `string` date values.
-- For AG Grid Enterprise, `filterParams.valueFormatter` is set to format the values using the Value Formatter.
+- For AG Grid Enterprise, `filterParams.valueFormatter` is set to format the values using the Value Formatter (from the data type definition).
 
 ### Object
 
@@ -109,12 +109,15 @@ The `'object'` cell data type is used for values that are complex objects (e.g. 
 
 If you have different types of complex object, you will want to [Provide Custom Cell Data Types](#providing-custom-cell-data-types).
 
-The default Value Parser and Value Formatter do not really do anything, as their behaviour needs to change based on the object structure. It is expected that you will [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions).
+<note>
+For objects to work properly, you must [Override the Pre-Defined Cell Data Type Definition](#overriding-the-pre-defined-cell-data-type-definitions) to provide a Value Parser and Value Formatter, as their behaviour needs to change based on the object structure.
+</note>
 
 The following properties are set:
-- `cellEditorParams.useFormatter = true` so that cell editor uses the Value Formatter.
-- For AG Grid Community, a [Filter Value Getter](/value-getters/#filter-value-getters) is used to convert the value with the Value Formatter 
-- For AG Grid Enterprise, `filterParams.valueFormatter` is set to format the values using the Value Formatter.
+- `cellEditorParams.useFormatter = true` so that the cell editor uses the Value Formatter (from the data type definition).
+- A `comparator` is defined to allow [Custom Sorting](/row-sorting/#custom-sorting) using the Value Formatter (from the data type definition).
+- For AG Grid Community, a [Filter Value Getter](/value-getters/#filter-value-getters) is used to convert the value with the Value Formatter (from the data type definition).
+- For AG Grid Enterprise, `filterParams.valueFormatter` is set to format the values using the Value Formatter (from the data type definition).
 
 ### Pre-Defined Cell Data Type Example
 

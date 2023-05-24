@@ -1,4 +1,4 @@
----
+--- 
 title: "Get Started with AG Grid" 
 ---
 <style>
@@ -11,8 +11,9 @@ title: "Get Started with AG Grid"
         box-shadow: none !important;
     }
 </style>
-
+ 
 md-include:javascript.md
 md-include:angular.md    
 md-include:react.md   
 md-include:vue.md
+ 

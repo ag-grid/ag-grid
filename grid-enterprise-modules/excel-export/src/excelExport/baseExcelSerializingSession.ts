@@ -186,6 +186,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
         return this.config.autoConvertFormulas && value.toString().startsWith('=');
     }
     protected isNumerical(value: any): boolean {
+        if (typeof value === 'bigint') { return true; }
         return isFinite(value) && value !== '' && !isNaN(parseFloat(value));
     }
 

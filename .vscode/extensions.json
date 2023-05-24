@@ -4,8 +4,6 @@
     "recommendations": [
         // mono repo import path fixer
         "q.typescript-mono-repo-import-helper",
-        // ts-lint
-        "ms-vscode.vscode-typescript-tslint-plugin",
         // git helper
         "eamodio.gitlens",
         // code spelling

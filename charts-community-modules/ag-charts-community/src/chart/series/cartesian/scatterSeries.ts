@@ -188,6 +188,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
             const colorKeyIdx = this.dataModel.resolveProcessedDataIndexById(`colorValue`)?.index ?? -1;
             colorScale.domain = colorDomain ?? this.processedData!.domain.values[colorKeyIdx];
             colorScale.range = colorRange;
+            colorScale.update();
         }
     }
 
@@ -554,7 +555,15 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
         return legendData;
     }
 
-    animateEmptyUpdateReady({ markerSelections }: { markerSelections: Array<Selection<Marker, ScatterNodeDatum>> }) {
+    animateEmptyUpdateReady({
+        markerSelections,
+        labelSelections,
+    }: {
+        markerSelections: Array<Selection<Marker, ScatterNodeDatum>>;
+        labelSelections: Array<Selection<Text, ScatterNodeDatum>>;
+    }) {
+        const duration = 1000;
+
         markerSelections.forEach((markerSelection) => {
             markerSelection.each((marker, datum) => {
                 const format = this.animateFormatter(marker, datum);
@@ -566,7 +575,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                     from: 0,
                     to: to,
                     disableInteractions: true,
-                    duration: 1000,
+                    duration,
                     ease: easing.linear,
                     repeat: 0,
                     onUpdate(size) {
@@ -575,9 +584,24 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                 });
             });
         });
+
+        labelSelections.forEach((labelSelection) => {
+            labelSelection.each((label) => {
+                this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
+                    from: 0,
+                    to: 1,
+                    duration,
+                    ease: easing.linear,
+                    repeat: 0,
+                    onUpdate: (opacity) => {
+                        label.opacity = opacity;
+                    },
+                });
+            });
+        });
     }
 
-    animateReadyUpdateReady({ markerSelections }: { markerSelections: Array<Selection<Marker, ScatterNodeDatum>> }) {
+    animateReadyUpdate({ markerSelections }: { markerSelections: Array<Selection<Marker, ScatterNodeDatum>> }) {
         markerSelections.forEach((markerSelection) => {
             markerSelection.each((marker, datum) => {
                 const format = this.animateFormatter(marker, datum);

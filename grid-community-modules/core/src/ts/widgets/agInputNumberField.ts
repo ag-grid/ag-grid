@@ -1,5 +1,6 @@
 import { AgInputTextField, ITextInputField } from "./agInputTextField";
 import { addOrRemoveAttribute } from '../utils/dom';
+import { exists } from "../utils/generic";
 
 export class AgInputNumberField extends AgInputTextField {
     private precision?: number;
@@ -104,13 +105,47 @@ export class AgInputNumberField extends AgInputTextField {
     }
 
     public setValue(value?: string | null, silent?: boolean): this {
-        if (value != null) {
-            value = this.adjustPrecision(value);
-            const normalizedValue = this.normalizeValue(value);
+        return this.setValueOrInputValue(v => super.setValue(v, silent), () => this, value);
+    }
 
-            if (value != normalizedValue) { return this; }
+    public setStartValue(value?: string | null): void {
+        return this.setValueOrInputValue<void>(
+            v => super.setValue(v, true),
+            v => { this.eInput.value = v; },
+            value
+        );
+    }
+
+    private setValueOrInputValue<T>(
+        setValueFunc: (value?: string | null) => T,
+        setInputValueOnlyFunc: (value: string) => T,
+        value?: string | null
+    ): T {
+        if (exists(value)) {
+            // need to maintain the scientific notation format whilst typing (e.g. 1e10)
+            let setInputValueOnly = this.isScientificNotation(value);
+            if (!setInputValueOnly) {
+                value = this.adjustPrecision(value);
+                const normalizedValue = this.normalizeValue(value);
+                // outside of valid range
+                setInputValueOnly = value != normalizedValue;
+            }
+
+            if (setInputValueOnly) { return setInputValueOnlyFunc(value); }
         }
 
-        return super.setValue(value, silent);
+        return setValueFunc(value);
+    }
+
+    public getValue(): string | null | undefined {
+        const inputValue = this.eInput.value;
+        if (this.isScientificNotation(inputValue) && this.eInput.validity.valid) {
+            return this.adjustPrecision(inputValue);
+        }
+        return super.getValue();
+    }
+
+    private isScientificNotation(value: string): boolean {
+        return typeof value === 'string' && value.includes('e');
     }
 }

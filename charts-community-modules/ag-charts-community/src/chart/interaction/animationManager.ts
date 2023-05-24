@@ -125,6 +125,7 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
         const state = props.map((prop) => prop.from);
 
         let updateBatch = 0;
+        let completeBatch = 0;
 
         const onUpdate = (index: number) => (v: T) => {
             state[index] = v;
@@ -134,9 +135,15 @@ export class AnimationManager extends BaseManager<AnimationEventType, AnimationE
             }
         };
 
+        const onComplete = () => {
+            if (++completeBatch >= props.length) {
+                opts.onComplete?.();
+            }
+        };
+
         const drivers = props.map((prop, index) => {
             const inner_id = `${id}-${index}`;
-            return this.animate(inner_id, { ...opts, ...prop, onUpdate: onUpdate(index) });
+            return this.animate(inner_id, { ...opts, ...prop, onUpdate: onUpdate(index), onComplete: onComplete });
         });
 
         const controls = {

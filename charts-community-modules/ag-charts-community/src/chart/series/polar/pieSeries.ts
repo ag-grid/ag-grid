@@ -485,13 +485,25 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         ];
     }
 
-    private getLabels(datum: any, midAngle: number, span: number, skipDisabled: boolean) {
+    private getLabels(
+        datum: any,
+        midAngle: number,
+        span: number,
+        skipDisabled: boolean
+    ): {
+        calloutLabel?: any;
+        legendItem?: {
+            key: string;
+            text: string;
+        };
+        sectorLabel?: { text: string };
+    } {
         const { calloutLabel, sectorLabel, legendItemKey } = this;
 
         const calloutLabelKey = !skipDisabled || calloutLabel.enabled ? this.calloutLabelKey : undefined;
         const sectorLabelKey = !skipDisabled || sectorLabel.enabled ? this.sectorLabelKey : undefined;
 
-        if (!calloutLabelKey && !sectorLabelKey) return {};
+        if (!calloutLabelKey && !sectorLabelKey && !legendItemKey) return {};
 
         const labelFormatterParams = this.getLabelFormatterParams(datum);
 
@@ -518,6 +530,11 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             }
         }
 
+        let legendItemText;
+        if (legendItemKey) {
+            legendItemText = String(datum[legendItemKey]);
+        }
+
         return {
             ...(calloutLabelText != null
                 ? {
@@ -532,7 +549,9 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                   }
                 : {}),
             ...(sectorLabelText != null ? { sectorLabel: { text: sectorLabelText } } : {}),
-            ...(legendItemKey != null ? { legendItemKey: datum[legendItemKey] } : {}),
+            ...(legendItemKey != null && legendItemText != null
+                ? { legendItem: { key: legendItemKey, text: legendItemText } }
+                : {}),
         };
     }
 
@@ -1380,20 +1399,27 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         if (!legendItemKey && !calloutLabelKey) return [];
 
         const titleText = this.title?.showInLegend && this.title.text;
-        const legendData: CategoryLegendDatum[] = data.map((datum, index) => {
+        const legendData: CategoryLegendDatum[] = [];
+
+        for (let index = 0; index < data.length; index++) {
+            const datum = data[index];
+
             const labelParts = [];
             if (titleText) {
                 labelParts.push(titleText);
             }
             const labels = this.getLabels(datum, 2 * Math.PI, 2 * Math.PI, false);
-            if (legendItemKey) {
-                labelParts.push(String(labels.legendItemKey));
-            } else if (calloutLabelKey) {
+            if (legendItemKey && labels.legendItem !== undefined) {
+                labelParts.push(labels.legendItem.text);
+            } else if (calloutLabelKey && labels.calloutLabel?.text !== undefined) {
                 labelParts.push(labels.calloutLabel?.text);
             }
 
+            if (labelParts.length === 0) continue;
+
             const sectorFormat = this.getSectorFormat(datum, index, index, false);
-            return {
+
+            legendData.push({
                 legendType: 'category',
                 id,
                 itemId: index,
@@ -1408,8 +1434,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                     fillOpacity: this.fillOpacity,
                     strokeOpacity: this.strokeOpacity,
                 },
-            };
-        });
+            });
+        }
 
         return legendData;
     }
@@ -1475,6 +1501,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     }
 
     animateEmptyUpdateReady() {
+        const duration = 1000;
         const rotation = Math.PI / -2 + toRadians(this.rotation);
 
         this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).forEach((node) => {
@@ -1488,7 +1515,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 ],
                 {
                     disableInteractions: true,
-                    duration: 1000,
+                    duration,
                     ease: easing.linear,
                     repeat: 0,
                     onUpdate([startAngle, endAngle]) {
@@ -1497,6 +1524,42 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                     },
                 }
             );
+        });
+
+        const labelAnimationOptions = {
+            from: 0,
+            to: 1,
+            delay: duration - duration / 10,
+            duration: duration / 10,
+            ease: easing.linear,
+            repeat: 0,
+        };
+
+        this.calloutLabelSelection.each((label) => {
+            this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${label.id}`, {
+                ...labelAnimationOptions,
+                onUpdate(opacity) {
+                    label.opacity = opacity;
+                },
+            });
+        });
+
+        this.sectorLabelSelection.each((label) => {
+            this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${label.id}`, {
+                ...labelAnimationOptions,
+                onUpdate(opacity) {
+                    label.opacity = opacity;
+                },
+            });
+        });
+
+        this.innerLabelsSelection.each((label) => {
+            this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${label.id}`, {
+                ...labelAnimationOptions,
+                onUpdate(opacity) {
+                    label.opacity = opacity;
+                },
+            });
         });
     }
 

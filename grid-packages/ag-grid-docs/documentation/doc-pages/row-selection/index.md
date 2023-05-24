@@ -283,16 +283,17 @@ The `isSelected()` method returns `true` if the node is selected, or `false` if 
 
 The grid API has the following methods for selection:
 
-<api-documentation source='grid-api/api.json' section='selection' names='["selectAll","deselectAll","selectAllFiltered","deselectAllFiltered","getSelectedNodes", "getSelectedRows"]'></api-documentation>
+<api-documentation source='grid-api/api.json' section='selection' names='["selectAll","deselectAll","selectAllFiltered","deselectAllFiltered","getSelectedNodes", "getSelectedRows", "setNodesSelected"]'></api-documentation>
 
 If you want to select only filtered-out row nodes, you could do this using the following:
 
 <snippet>
 | // loop through each node when it is filtered out
+| const nodes = [];
 | gridOptions.api.forEachNodeAfterFilter(node => {
-|     // select the node
-|     node.setSelected(true);
+|     nodes.push(node);
 | });
+| gridOptions.api.setNodesSelected({ nodes, newValue: true });
 </snippet>
 
 ### Example: Using forEachNode

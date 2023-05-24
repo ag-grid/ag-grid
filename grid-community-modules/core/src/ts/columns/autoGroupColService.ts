@@ -53,7 +53,7 @@ export class AutoGroupColService extends BeanStub {
         const userAutoColDef = this.gridOptionsService.get('autoGroupColumnDef');
         mergeDeep(defaultAutoColDef, userAutoColDef);
 
-        defaultAutoColDef = this.columnFactory.mergeColDefs(defaultAutoColDef);
+        defaultAutoColDef = this.columnFactory.mergeColDefs(defaultAutoColDef, colId);
 
         defaultAutoColDef.colId = colId;
 

@@ -478,7 +478,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                             column,
                             this.valueService.getValue(column, rowNode),
                             EXPORT_TYPE_DRAG_COPY,
-                            processCellForClipboardFunc);
+                            processCellForClipboardFunc, false, true);
 
                         firstRowValues.push(value);
                     });
@@ -489,7 +489,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                         if (!column.isCellEditable(rowNode) || column.isSuppressPaste(rowNode)) { return; }
 
                         const firstRowValue = this.processCell(
-                            rowNode, column, firstRowValues[index], EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc);
+                            rowNode, column, firstRowValues[index], EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc, true);
 
                         rowNode.setDataValue(column, firstRowValue, SOURCE_PASTE);
 
@@ -943,7 +943,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         value: T,
         type: string,
         func?: ((params: WithoutGridCommon<ProcessCellForExportParams>) => T),
-        canParse?: boolean): T {
+        canParse?: boolean,
+        canFormat?: boolean): T {
         if (func) {
             const params: WithoutGridCommon<ProcessCellForExportParams> = {
                 column,
@@ -959,6 +960,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         }
         if (canParse && column.getColDef().useValueParserForImport) {
             return this.valueParserService.parseValue(column, rowNode ?? null, value, this.valueService.getValue(column, rowNode));
+        } else if (canFormat && column.getColDef().useValueFormatterForExport) {
+            return this.valueFormatterService.formatValue(column, rowNode ?? null, value) ?? value as any;
         }
 
         return value;

@@ -2544,7 +2544,7 @@
       "getRowHeight?": "/** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */",
       "isFullWidthCell?": "/** @deprecated v27.2 Use `isFullWidthRow` instead. */",
       "isFullWidthRow?": "/** Tells the grid if this row should be rendered as full width. */",
-      "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
       "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "/** The tool panel size has been changed. */",
       "onCutStart?(event: CutStartEvent<TData>)": "/** Cut operation has started. */",
       "onCutEnd?(event: CutEndEvent<TData>)": "/** Cut operation has ended. */",
@@ -2965,28 +2965,10 @@
   "ToolPanelVisibleChangedEvent": {
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "type": {
-      "source": "string | undefined",
-      "api": "GridApi<TData>",
-      "columnApi": "ColumnApi",
-      "context": "TContext",
-      "type": "string"
-    },
-    "docs": {
-      "api": "/** The grid api. */",
-      "columnApi": "/** The column api. */",
-      "context": "/** Application context as set on `gridOptions.context`. */",
-      "type": "/** Event identifier */"
-    }
-  },
-  "InternalToolPanelVisibleChangedEvent": {
-    "meta": {
-      "typeParams": ["TData = any", "TContext = any"],
-      "doc": "/** This is the replacement event for ToolPanelVisibleChangedEvent. In v30, this will be renamed ToolPanelVisibleChangedEvent,\n * and the original ToolPanelVisibleChangedEvent will be dropped\n */"
-    },
-    "type": {
       "source": "'sideBarButtonClicked' | 'sideBarInitializing' | 'api'",
       "key": "string",
       "visible": "boolean",
+      "switchingToolPanel": "boolean",
       "api": "GridApi<TData>",
       "columnApi": "ColumnApi",
       "context": "TContext",
@@ -2995,6 +2977,7 @@
     "docs": {
       "key": "/** Key of tool panel. */",
       "visible": "/** True if now visible; false if now hidden. */",
+      "switchingToolPanel": "/** True if switching between tool panels. False if showing/hiding. */",
       "api": "/** The grid api. */",
       "columnApi": "/** The column api. */",
       "context": "/** Application context as set on `gridOptions.context`. */",
@@ -9069,7 +9052,7 @@
   "IRowNode": {
     "meta": { "typeParams": ["TData = any"] },
     "type": {
-      "setSelected(newValue: boolean, clearSelection?: boolean, suppressFinishActions?: boolean, source?: SelectionEventSourceType)": "void",
+      "setSelected(newValue: boolean, clearSelection?: boolean, source?: SelectionEventSourceType)": "void",
       "isSelected()": "boolean | undefined",
       "isRowPinned()": "boolean",
       "isExpandable()": "boolean",
@@ -9122,7 +9105,7 @@
       "sibling": "IRowNode<TData>"
     },
     "docs": {
-      "setSelected(newValue: boolean, clearSelection?: boolean, suppressFinishActions?: boolean, source?: SelectionEventSourceType)": "/** Select (or deselect) the node.\n     * @param newValue -`true` for selection, `false` for deselection.\n     * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact. Default: `false`\n     * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired. Default: `false`\n     * @param source - Source property that will appear in the `selectionChanged` event. Default: `'api'`\n     */",
+      "setSelected(newValue: boolean, clearSelection?: boolean, source?: SelectionEventSourceType)": "/** Select (or deselect) the node.\n     * @param newValue -`true` for selection, `false` for deselection.\n     * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact. Default: `false`\n     * @param source - Source property that will appear in the `selectionChanged` event. Default: `'api'`\n     */",
       "isSelected()": "/** Returns:\n     * - `true` if node is selected.\n     * - `false` if the node isn't selected.\n     * - `undefined` if it's partially selected (group where not all children are selected). \n     */",
       "isRowPinned()": "/** Returns:\n     * - `true` if node is either pinned to the `top` or `bottom`.\n     * - `false` if the node isn't pinned.\n     */",
       "isExpandable()": "/** Returns:\n    * - `true` if the node can be expanded, i.e it is a group or master row.\n    * - `false` if the node cannot be expanded.\n    */",
@@ -9198,7 +9181,7 @@
       "getSelectedNodes()": "RowNode<any>[]",
       "getSelectedRows()": "any[]",
       "getSelectionCount()": "number",
-      "setNodeSelected(params: ISetNodeSelectedParams)": "number",
+      "setNodesSelected(params: ISetNodesSelectedParams)": "number",
       "filterFromSelection(predicate: (node: RowNode) => boolean)": "void",
       "updateGroupsFromChildrenSelections(source: SelectionEventSourceType, changedPath?: ChangedPath)": "boolean",
       "syncInRowNode(rowNode: RowNode, oldNode: RowNode | null)": "void",
@@ -9213,10 +9196,22 @@
       "getSelectAllState(justFiltered?: boolean, justCurrentPage?: boolean)": "/** @param justFiltered whether to just include nodes which have passed the filter\n     * @param justCurrentPage whether to just include nodes on the current page\n     * @returns all nodes including unselectable nodes which are the target of this selection attempt\n     */"
     }
   },
-  "ISetNodeSelectedParams": {
+  "INodeSelectionParams": {
     "meta": {},
     "type": {
-      "node": "RowNode",
+      "newValue": "boolean",
+      "clearSelection?": "boolean",
+      "suppressFinishActions?": "boolean",
+      "rangeSelect?": "boolean",
+      "groupSelectsFiltered?": "boolean",
+      "source": "SelectionEventSourceType",
+      "event?": "Event"
+    }
+  },
+  "ISetNodesSelectedParams": {
+    "meta": {},
+    "type": {
+      "nodes": "RowNode[]",
       "newValue": "boolean",
       "clearSelection?": "boolean",
       "suppressFinishActions?": "boolean",
@@ -13186,7 +13181,7 @@
       "getRowHeight?": "/** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */",
       "isFullWidthCell?": "/** @deprecated v27.2 Use `isFullWidthRow` instead. */",
       "isFullWidthRow?": "/** Tells the grid if this row should be rendered as full width. */",
-      "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
       "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "/** The tool panel size has been changed. */",
       "onCutStart?(event: CutStartEvent<TData>)": "/** Cut operation has started. */",
       "onCutEnd?(event: CutEndEvent<TData>)": "/** Cut operation has ended. */",
@@ -13956,7 +13951,7 @@
       "getRowHeight?": "/** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */",
       "isFullWidthCell?": "/** @deprecated v27.2 Use `isFullWidthRow` instead. */",
       "isFullWidthRow?": "/** Tells the grid if this row should be rendered as full width. */",
-      "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
       "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "/** The tool panel size has been changed. */",
       "onCutStart?(event: CutStartEvent<TData>)": "/** Cut operation has started. */",
       "onCutEnd?(event: CutEndEvent<TData>)": "/** Cut operation has ended. */",
@@ -14728,7 +14723,7 @@
       "getRowHeight?": "/** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */",
       "isFullWidthCell?": "/** @deprecated v27.2 Use `isFullWidthRow` instead. */",
       "isFullWidthRow?": "/** Tells the grid if this row should be rendered as full width. */",
-      "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent<TData>)": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
       "onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>)": "/** The tool panel size has been changed. */",
       "onCutStart?(event: CutStartEvent<TData>)": "/** Cut operation has started. */",
       "onCutEnd?(event: CutEndEvent<TData>)": "/** Cut operation has ended. */",

@@ -180,7 +180,7 @@ import 'ag-grid-enterprise';
 
 If you are using packages then check that you select the 'Packages' option from the example runner dropdown as this means the code that you see will be using `packages`. This is important as it means any imports will be from `packages` enabling correct copy and pasting.
 
-![Example Runner using Packages](resources/package-example-runner.png)
+<image-caption src="package-example-runner.png" alt="Example Runner using Packages" maxWidth="90%" constrained="true" centered="true"></image-caption>
 
 ## Mixing **packages** and **modules**
 

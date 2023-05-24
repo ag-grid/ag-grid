@@ -143,9 +143,7 @@ const GridExample = () => {
                 remove: nodes.map(function (node) { return node.data; })
             });
         } else if (radioChecked === 1) {
-            nodes.forEach(function (node) {
-                node.setSelected(false);
-            });
+            params.api.setNodesSelected({ nodes, newValue: false });
         }
     }, [leftApi, radioChecked]);
 
