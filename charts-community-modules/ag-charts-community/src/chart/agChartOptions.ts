@@ -621,9 +621,9 @@ export interface AgBaseChartOptions {
     data?: any[];
     /** The element to place the rendered chart into.<br/><strong>Important:</strong> make sure to read the `autoSize` config description for information on how the container element affects the chart size (by default). */
     container?: HTMLElement | null;
-    /** The width of the chart in pixels. Has no effect if `autoSize` is set to `true`. */
+    /** The width of the chart in pixels. */
     width?: PixelSize;
-    /** The height of the chart in pixels. Has no effect if `autoSize` is set to `true`. */
+    /** The height of the chart in pixels. */
     height?: PixelSize;
     /** By default, the chart will resize automatically to fill the container element. Set this to `false` to disable this behaviour. If `width` or `height` are specified, auto-sizing will be active for the other unspecified dimension.<br/><strong>Important:</strong> if this config is set to `true`, make sure to give the chart's `container` element an explicit size, otherwise you will run into a chicken and egg situation where the container expects to size itself according to the content and the chart expects to size itself according to the container. */
     autoSize?: boolean;
