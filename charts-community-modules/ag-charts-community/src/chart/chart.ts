@@ -256,7 +256,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         this.tooltip = new Tooltip(this.scene.canvas.element, document, document.body);
         this.tooltipManager = new TooltipManager(this.tooltip, this.interactionManager);
-        this.attachLegend('category');
         this.overlays = new ChartOverlays(this.element);
         this.highlight = new ChartHighlight();
         this.container = container;
@@ -298,6 +297,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.zoomManager.addListener('zoom-change', (_) =>
             this.update(ChartUpdateType.PROCESS_DATA, { forceNodeDataRefresh: true })
         );
+
+        this.attachLegend('category');
     }
 
     addModule(module: RootModule) {
