@@ -1,6 +1,7 @@
 @use '../core' as *;
 
 button {
+    font-family: var(--font-family);
     font-size: inherit;
     line-height: inherit;
     cursor: pointer;
