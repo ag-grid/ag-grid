@@ -311,7 +311,7 @@ const Section: React.FC<SectionProps> = ({
                 {!config.hideHeader && (
                     <HeaderTag id={`reference-${id}`} style={{ position: 'relative' }}>
                         {displayName}
-                        <a href={`#reference-${id}`} className="docs-header-icon ag-styles">
+                        <a href={`#reference-${id}`} className="docs-header-icon">
                             <Icon name="link" />
                         </a>
                     </HeaderTag>
@@ -400,7 +400,7 @@ const Section: React.FC<SectionProps> = ({
     const wrap = !!config.maxLeftColumnWidth;
 
     return (
-        <div className={classnames(styles.apiReferenceOuter, 'ag-styles')}>
+        <div className={styles.apiReferenceOuter}>
             {header}
             <table
                 className={classnames(styles['reference'], styles.apiReference)}
@@ -557,7 +557,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                         onClick={() => setExpanded(!isExpanded)}
                         dangerouslySetInnerHTML={{ __html: displayNameSplit }}
                     ></span>
-                    <a href={`#${idName}`} className="docs-header-icon ag-styles">
+                    <a href={`#${idName}`} className="docs-header-icon">
                         <Icon name="link" />
                     </a>
                 </h6>

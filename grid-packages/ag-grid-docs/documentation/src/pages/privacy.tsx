@@ -1,4 +1,3 @@
-import classnames from 'classnames';
 import React from 'react';
 import SEO from './components/SEO';
 import styles from './PolicyPages.module.scss';
@@ -10,7 +9,7 @@ const Privacy = () => {
                 title="AG Grid: Privacy Policy"
                 description="We take your privacy very seriously at AG Grid. This page outlines our privacy policy which we have updated in light of GDPR."
             />
-            <div className={classnames(styles.policyPage, 'ag-styles')}>
+            <div className={styles.policyPage}>
                 <div className="page-margin">
                     <h1>AG Grid Privacy Policy</h1>
                     <hr />

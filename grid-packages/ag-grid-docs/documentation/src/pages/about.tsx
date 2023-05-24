@@ -1,4 +1,3 @@
-import classnames from 'classnames';
 import React from 'react';
 import styles from './about.module.scss';
 import SEO from './components/SEO';
@@ -10,7 +9,7 @@ const AboutPage = () => {
                 title="Our Mission, Our Principles and Our Team at AG Grid"
                 description="AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This is the story of AG Grid and explains our mission, where we came from and who we are."
             />
-            <div className={classnames(styles.aboutPage, 'ag-styles')}>
+            <div className={styles.aboutPage}>
                 <div className="page-margin">
                     <section>
                         <h1>About AG Grid</h1>

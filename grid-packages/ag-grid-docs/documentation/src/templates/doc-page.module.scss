@@ -201,7 +201,7 @@
 }
 
 // Hack to target "intro" section of docs page
-.pageSections > div > div:first-child {
+.pageSections > div > p:first-child {
     --font-size-extra-large: #{$font-size-extra-large};
 
     font-size: var(--font-size-extra-large);
@@ -247,6 +247,14 @@
         margin-top: $size-4;
     }
 
+    p,
+    > ul,
+    > ol,
+    > table,
+    > pre {
+        font-size: var(--font-size-medium);
+    }
+
     > h1,
     > h2,
     > h3,
@@ -259,8 +267,6 @@
     > table,
     > pre,
     > hr {
-        font-size: var(--font-size);
-
         @media screen and (min-width: $max-page-width) {
             @include font-size-responsive();
         }
