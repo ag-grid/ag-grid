@@ -1,5 +1,5 @@
 <framework-specific-section frameworks="vue">
-|Below is a simple example of an a tool panel component:
+|Below is an example of an a tool panel component:
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">

@@ -5,9 +5,9 @@ enterprise: true
 
 The Columns Tool Panel provides functions for managing the grid's columns.
 
-## Simple Example
+## Example
 
-Below shows a simple example of the Columns Tool Panel. The following can be noted:
+Below shows an example of the Columns Tool Panel. The following can be noted:
 
 - Grid property `toolPanel='columns'` which shows only the Columns Tool Panel.
 - Grid property `defaultColDef` has `enableValue`, `enableRowGroup` and `enablePivot` set. This means all columns can be dragged to any of the Row Groups, Values and Column sections. Although each column can be dragged to these sections, it does not make sense to do so. For example, it does not make sense to aggregate the country column, but it does make sense to group rows by country.

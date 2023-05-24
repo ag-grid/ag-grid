@@ -44,9 +44,9 @@ when using CSS `transform`. The downside to not using `transform` is performance
 (after sort or filter) will be slower.
 </note>
 
-## Row Spanning Simple Example
+## Row Spanning Example
 
-Below is a simple example using row spanning. The example doesn't make much sense,
+Below is an example using row spanning. The example doesn't make much sense,
 it just arbitrarily sets row span on some cells for demonstration purposes.
 
 - The **Athlete** column is configured to span 2 rows for 'Aleksey Nemov' and 4 rows for 'Ryan Lochte'.

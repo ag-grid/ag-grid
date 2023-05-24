@@ -16,7 +16,7 @@ AG Grid Solid is NOT a JavaScript component with a thin Solid wrapper. AG Grid i
 
 ## Show Me
 
-Below is a simple example using AG Grid with SolidJS. Take a look at the code and note the use of the ```AgGridSolid``` component.
+Below is an example using AG Grid with SolidJS. Take a look at the code and note the use of the ```AgGridSolid``` component.
 
 <iframe style="width:100%; height: 500px" src="https://stackblitz.com/edit/solidjs-template-gvftye?embed=1&file=src/App.tsx"></iframe>
 

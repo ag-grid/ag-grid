@@ -1,5 +1,5 @@
 <framework-specific-section frameworks="angular">
-|Below is a simple example of cell renderer class:
+|Below is an example of cell renderer class:
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">

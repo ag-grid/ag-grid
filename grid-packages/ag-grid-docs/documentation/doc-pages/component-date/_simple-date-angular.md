@@ -1,5 +1,5 @@
 <framework-specific-section frameworks="angular">
-|Below is a simple example of filter component class:
+|Below is an example of filter component class:
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">

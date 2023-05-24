@@ -1,6 +1,6 @@
 <framework-specific-section frameworks="vue">
 |
-|Below is a simple example of an a tooltip component:
+|Below is an example of a tooltip component:
 |
 </framework-specific-section>
 

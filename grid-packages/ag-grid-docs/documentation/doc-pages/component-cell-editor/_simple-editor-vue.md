@@ -1,5 +1,5 @@
 <framework-specific-section frameworks="vue">
-Below is a simple example of cell editor component:
+Below is an example of cell editor component:
 
 <snippet transform={false}>
 |const DoublingEditor = {

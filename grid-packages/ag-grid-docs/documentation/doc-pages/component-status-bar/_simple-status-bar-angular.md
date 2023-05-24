@@ -1,6 +1,6 @@
 <framework-specific-section frameworks="angular">
 |
-|Below is a simple example of a status bar component:
+|Below is an example of a status bar component:
 |
 </framework-specific-section>
 

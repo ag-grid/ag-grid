@@ -1,5 +1,5 @@
 <framework-specific-section frameworks="angular">
-|Below is a simple example of a tool panel component:
+|Below is an example of a tool panel component:
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
