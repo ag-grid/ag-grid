@@ -5,6 +5,7 @@ import {
     KeyCreatorParams,
     SuppressKeyboardEventParams,
     ValueFormatterParams,
+    ValueGetterFunc,
     ValueGetterParams,
 } from '../entities/colDef';
 import {
@@ -24,6 +25,7 @@ import { ValueService } from '../valueService/valueService';
 import { Column } from '../entities/column';
 import { doOnce } from '../utils/function';
 import { KeyCode } from '../constants/keyCode';
+import { exists } from '../utils/generic';
 
 @Bean('dataTypeService')
 export class DataTypeService extends BeanStub {
@@ -33,7 +35,8 @@ export class DataTypeService extends BeanStub {
 
     private dataTypeDefinitions: { [cellDataType: string]: DataTypeDefinition | CoreDataTypeDefinition } = {};
     private dataTypeMatchers: { [cellDataType: string]: ((value: any) => boolean) | undefined };
-    private isWaitingForRowData = false;
+    private isWaitingForRowData: boolean = false;
+    private hasObjectValueHandlers: boolean;
 
     @PostConstruct
     public init(): void {
@@ -59,6 +62,7 @@ export class DataTypeService extends BeanStub {
                 }
             }
         });
+        this.hasObjectValueHandlers = this.checkObjectValueHandlers();
 
         ['dateString', 'text', 'number', 'boolean', 'date'].forEach((cellDataType) => {
             const overriddenDataTypeMatcher = this.dataTypeMatchers[cellDataType];
@@ -157,18 +161,23 @@ export class DataTypeService extends BeanStub {
 
     public updateColDefAndGetColumnType(
         colDef: ColDef,
-        cellDataType: string | null | undefined,
-        field: string | undefined,
+        userColDef: ColDef,
         colId: string
     ): string | string[] | undefined {
+        let { cellDataType } = userColDef;
+        const { field, valueGetter } = userColDef;
         if (cellDataType === undefined) {
-            cellDataType = colDef.cellDataType
+            cellDataType = colDef.cellDataType;
+        }
+        if (cellDataType === undefined && this.rowModel.getType() === 'clientSide') {
+            // enable by default
+            cellDataType = 'auto';
         }
         if (!cellDataType) {
             return undefined;
         }
         if (cellDataType === 'auto') {
-            cellDataType = this.inferCellDataType(field);
+            cellDataType = this.inferCellDataType(field, valueGetter);
             if (!cellDataType) {
                 return undefined;
             }
@@ -179,6 +188,11 @@ export class DataTypeService extends BeanStub {
                 `AG Grid: Missing data type definition - "${cellDataType}"`
             ), 'dataTypeMissing' + cellDataType);
             return undefined;
+        }
+        if (cellDataType === 'object' && !this.hasObjectValueHandlers) {
+            doOnce(() => console.warn(
+                'AG Grid: Cell data type is "object" but the "object" data type definition has not been overridden with both a value parser and a value formatter.'
+            ), 'dataTypeObjectValueHandler');
         }
         colDef.cellDataType = cellDataType;
         if (dataTypeDefinition.valueFormatter) {
@@ -210,8 +224,14 @@ export class DataTypeService extends BeanStub {
         return dataTypeDefinition.columnTypes;
     }
 
-    private inferCellDataType(field: string | undefined): string | undefined {
+    private inferCellDataType(field: string | undefined, valueGetter: string | ValueGetterFunc<any, any> | undefined): string | undefined {
         if (!field) {
+            return undefined;
+        }
+        if (valueGetter) {
+            doOnce(() => console.warn(
+                'AG Grid: Cannot infer cell data type for column (cellDataType = "auto") if "valueGetter" is set. Please supply a cell data type directly for the column.'
+            ), 'dataTypeInferenceValueGetter');
             return undefined;
         }
         const rowData = this.gridOptionsService.get('rowData');
@@ -230,7 +250,7 @@ export class DataTypeService extends BeanStub {
             }
         } else {
             doOnce(() => console.warn(
-                'AG Grid: Inferring cell data types (cellDataType = "auto") only works with the Client-Side Row Model. Please supply the actual cell data types for each column.'
+                'AG Grid: Inferring cell data types (cellDataType = "auto") only works with the Client-Side Row Model. Please supply cell data types directly for the columns.'
             ), 'dataTypeInferenceCsrm');
         }
         if (value == null) {
@@ -253,6 +273,13 @@ export class DataTypeService extends BeanStub {
                 this.columnModel.recreateColumnDefs('rowDataUpdated');
             });
         });
+    }
+
+    private checkObjectValueHandlers(): boolean {
+        const resolvedObjectDataTypeDefinition = this.dataTypeDefinitions.object;
+        const defaultObjectDataTypeDefinition = DEFAULT_DATA_TYPES.object;
+        return resolvedObjectDataTypeDefinition.valueParser !== defaultObjectDataTypeDefinition.valueParser
+            && resolvedObjectDataTypeDefinition.valueFormatter !== defaultObjectDataTypeDefinition.valueFormatter;
     }
 
     public convertColumnTypes(type: string | string[]): string[] {
@@ -330,7 +357,7 @@ export class DataTypeService extends BeanStub {
                 if (usingSetFilter) {
                     colDef.filterParams = {
                         valueFormatter: (params: ValueFormatterParams) => {
-                            if (params.value == null) {
+                            if (!exists(params.value)) {
                                 return translate('blanks', '(Blanks)');
                             }
                             return translate(String(params.value), params.value ? 'True' : 'False');
@@ -367,7 +394,7 @@ export class DataTypeService extends BeanStub {
                     colDef.filterParams = {
                         valueFormatter: (params: ValueFormatterParams) => {
                             const valueFormatted = dataTypeDefinition.valueFormatter!(params);
-                            return valueFormatted === '' ? translate('blanks', '(Blanks)') : valueFormatted;
+                            return exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
                         }
                     };
                 }
@@ -382,7 +409,7 @@ export class DataTypeService extends BeanStub {
                     colDef.filterParams = {
                         valueFormatter: (params: ValueFormatterParams) => {
                             const valueFormatted = dataTypeDefinition.valueFormatter!(params);
-                            return valueFormatted === '' ? translate('blanks', '(Blanks)') : valueFormatted;
+                            return exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
                         }
                     };
                 } else {
@@ -423,22 +450,12 @@ export class DataTypeService extends BeanStub {
                     if (valA === valB) return 0;
                     return valA > valB ? 1 : -1;
                 };
-                colDef.equals = (a: any, b: any) => {
-                    const column = this.columnModel.getPrimaryColumn(colId);
-                    const colDef = column?.getColDef();
-                    if (!column || !colDef) {
-                        return a === b;
-                    }
-                    const valA = formatValue(column, colDef, a);
-                    const valB = formatValue(column, colDef, b);
-                    return valA === valB;
-                }
                 colDef.keyCreator = (params: KeyCreatorParams) => dataTypeDefinition.valueFormatter!(params);
                 if (usingSetFilter) {
                     colDef.filterParams = {
                         valueFormatter: (params: ValueFormatterParams) => {
                             const valueFormatted = dataTypeDefinition.valueFormatter!(params);
-                            return valueFormatted === '' ? translate('blanks', '(Blanks)') : valueFormatted;
+                            return exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
                         }
                     };
                 } else {
