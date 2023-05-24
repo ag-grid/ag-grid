@@ -27,7 +27,6 @@
     "fix": "run-s fix:*",
     "fix:prettier": "npx prettier -w .",
     "fix:eslint": "npx eslint --fix src/ --ext .js,.ts",
-    "fix:generated-docs": "npx lerna run --scope @ag-grid-community/all-modules generate-doc-files",
     "lint": "run-s lint:*",
     "lint:prettier": "npx prettier -c .",
     "lint:eslint": "npx eslint src/ --ext .js,.ts",
@@ -109,7 +108,6 @@
   },
   "lint-staged": {
     "*.{ts,js,md,json}": ".lint-staged/run.sh prettier",
-    "*.{ts,js}": ".lint-staged/run.sh eslint",
-    "*.ts": ".lint-staged/run.sh autodocs"
+    "*.{ts,js}": ".lint-staged/run.sh eslint"
   }
 }
