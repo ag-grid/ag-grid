@@ -11,8 +11,6 @@ const { formatNode, findNode, getJsDoc } = getFormatterForTS(ts);
 
 const EVENT_LOOKUP = ComponentUtil.EVENT_CALLBACKS;
 
-const VERIFY_MODE = process.argv.some(v => v === '--check');
-
 function buildGlob(basePath) {
     const opts = { ignore: [`${basePath}/**/*.test.ts`, `${basePath}/**/*.spec.ts`] };
     return glob.sync(`${basePath}/**/*.ts`, opts);
@@ -454,24 +452,11 @@ function extractMethodsAndPropsFromNode(node, srcFile) {
 function writeFormattedFile(dir, filename, data) {
     const fullPath = dir + filename;
 
-    const alreadyExists = fs.existsSync(fullPath);
-    const currentContent = alreadyExists ? fs.readFileSync(fullPath).toString('utf-8') : '';
-    const config = prettierJs.resolveConfig.sync(fullPath, {});
-    const fileOptions = { ...config, filepath: fullPath };
-    const newContent = prettierJs.format(JSON.stringify(data), fileOptions);
-
-    if (VERIFY_MODE) {
-        if (currentContent !== newContent) {
-            console.warn(`Needs to be updated: ${fullPath}`);
-            process.exit(1);
-        }
-    } else if (currentContent !== newContent) {
-        // Only write if content changed.
-        fs.writeFileSync(fullPath, JSON.stringify(data));
-        gulp.src(fullPath)
-            .pipe(prettier({}))
-            .pipe(gulp.dest(dir))
-    }
+    // Only write if content changed.
+    fs.writeFileSync(fullPath, JSON.stringify(data));
+    gulp.src(fullPath)
+        .pipe(prettier({}))
+        .pipe(gulp.dest(dir))
 }
 
 function getGridOptions() {
