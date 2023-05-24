@@ -189,8 +189,6 @@ function createDebugPanel(classname: string) {
 
     debugPanelEl = document.createElement('div');
     debugPanelEl.classList.add(classname);
-    // Add .ag-styles, until it is on the entire site
-    debugPanelEl.classList.add('ag-styles');
 
     document.body.appendChild(debugPanelEl);
 

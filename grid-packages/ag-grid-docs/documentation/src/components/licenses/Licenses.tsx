@@ -126,7 +126,7 @@ const License = (props: LicenseData) => {
 export const Licenses = () => {
     return DEV_LICENSE_DATA.map((data) => {
         return (
-            <div key={data.name} className={classnames(styles.license, data.className, 'ag-card', data.id)}>
+            <div key={data.name} className={classnames(styles.license, data.className, 'card', data.id)}>
                 <License {...data} />
             </div>
         );

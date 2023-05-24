@@ -48,7 +48,7 @@ export const ExpandableSnippet: React.FC<ExpandableSnippetParams> = ({
     const model = buildModel(interfacename, interfaceLookup, codeLookup, config);
 
     return (
-        <div className={classnames('ag-styles', styles["expandable-snippet"])} role="presentation">
+        <div className={classnames(styles["expandable-snippet"])} role="presentation">
             <pre className={classnames('code', 'language-ts')}>
                 <code className={'language-ts'}>
                     <BuildSnippet breadcrumbs={breadcrumbs} model={model} config={config}/>

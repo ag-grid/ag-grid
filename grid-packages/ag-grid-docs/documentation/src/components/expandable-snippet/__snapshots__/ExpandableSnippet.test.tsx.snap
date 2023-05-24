@@ -2,7 +2,7 @@
 
 exports[`ExpandableSnippet renders HTML as expected 1`] = `
 <div
-  className="ag-styles expandable-snippet"
+  className="expandable-snippet"
   role="presentation"
 >
   <pre
