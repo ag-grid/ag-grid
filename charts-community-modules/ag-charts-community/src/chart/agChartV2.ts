@@ -550,12 +550,11 @@ function applyAxes(chart: Chart, options: AgCartesianChartOptions) {
 
 function applyLegend(chart: Chart, options: AgChartOptions) {
     const skip = ['listeners'];
-    chart.setLegendInit((legend) => {
-        applyOptionValues(legend, options.legend ?? {}, { skip });
-        if (options.legend?.listeners) {
-            Object.assign(chart.legend!.listeners, options.legend.listeners ?? {});
-        }
-    });
+    chart.updateLegend(options.legend?.type ?? 'category');
+    applyOptionValues(chart.legend, options.legend ?? {}, { skip });
+    if (options.legend?.listeners) {
+        Object.assign(chart.legend!.listeners, options.legend.listeners ?? {});
+    }
 }
 
 function createSeries(options: SeriesOptionsTypes[]): Series[] {

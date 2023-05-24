@@ -165,7 +165,10 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, fallback
 
     removeDisabledOptions<T>(options);
 
-    const { context, mergedOptions, axesThemes, seriesThemes } = prepareMainOptions<T>(defaultOverrides as T, options);
+    const { context, mergedOptions, axesThemes, seriesThemes, legendThemes } = prepareMainOptions<T>(
+        defaultOverrides as T,
+        options
+    );
 
     // Special cases where we have arrays of elements which need their own defaults.
 
@@ -188,6 +191,10 @@ export function prepareOptions<T extends AgChartOptions>(newOptions: T, fallback
             return mergedSeries;
         })
     ).map((s) => prepareSeries(context, s)) as any[];
+
+    const legend = (mergedOptions as any).legend;
+    const legendType = legend?.type ?? 'category';
+    mergedOptions.legend = prepareLegend(legend, legendThemes[legendType]);
 
     const checkAxisType = (type?: string) => {
         const isAxisType = isAxisOptionType(type);
@@ -265,12 +272,12 @@ function mergeSeriesOptions<T extends SeriesOptionsTypes>(
 function prepareMainOptions<T>(
     defaultOverrides: T,
     options: T
-): { context: PreparationContext; mergedOptions: T; axesThemes: any; seriesThemes: any } {
-    const { theme, cleanedTheme, axesThemes, seriesThemes } = prepareTheme(options);
+): { context: PreparationContext; mergedOptions: T; axesThemes: any; legendThemes: any; seriesThemes: any } {
+    const { theme, cleanedTheme, axesThemes, legendThemes, seriesThemes } = prepareTheme(options);
     const context: PreparationContext = { colourIndex: 0, palette: theme.palette };
     const mergedOptions = jsonMerge([defaultOverrides, cleanedTheme, options], noDataCloneMergeOptions);
 
-    return { context, mergedOptions, axesThemes, seriesThemes };
+    return { context, mergedOptions, axesThemes, legendThemes, seriesThemes };
 }
 
 function prepareTheme<T extends AgChartOptions>(options: T) {
@@ -285,8 +292,9 @@ function prepareTheme<T extends AgChartOptions>(options: T) {
     return {
         theme,
         axesThemes: themeConfig['axes'] ?? {},
+        legendThemes: themeConfig['legend'] ?? {},
         seriesThemes: seriesThemes,
-        cleanedTheme: jsonMerge([themeConfig, { axes: DELETE, series: DELETE }]),
+        cleanedTheme: jsonMerge([themeConfig, { axes: DELETE, legend: DELETE, series: DELETE }]),
     };
 }
 
@@ -370,6 +378,10 @@ function prepareAxis<T extends AxesOptionsTypes>(
     const cleanTheme = { crossLines: DELETE };
 
     return jsonMerge([axisTheme, cleanTheme, axis, removeOptions], noDataCloneMergeOptions);
+}
+
+function prepareLegend(legend: any, legendTheme: any) {
+    return jsonMerge([legendTheme, legend], noDataCloneMergeOptions);
 }
 
 function removeDisabledOptions<T extends AgChartOptions>(options: T) {

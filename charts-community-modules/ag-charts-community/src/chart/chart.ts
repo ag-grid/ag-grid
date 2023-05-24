@@ -278,7 +278,6 @@ export abstract class Chart extends Observable implements AgChartInstance {
 
         this.tooltip = new Tooltip(this.scene.canvas.element, document, document.body);
         this.tooltipManager = new TooltipManager(this.tooltip, this.interactionManager);
-        this.attachLegend('category');
         this.overlays = new ChartOverlays(this.element);
         this.highlight = new ChartHighlight();
         this.container = container;
@@ -742,7 +741,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
 
         await Promise.all(this.series.map((s) => s.processData()));
-        await this.updateLegend();
+        await this.updateLegendData();
     }
 
     placeLabels(): Map<Series<any>, PlacedLabel[]> {
@@ -786,13 +785,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.legendType = legendType;
     }
 
-    private applyLegendOptions?: (legend: ChartLegend) => void = undefined;
-
-    setLegendInit(initLegend: (legend: ChartLegend) => void) {
-        this.applyLegendOptions = initLegend;
-    }
-
-    private async updateLegend() {
+    private async updateLegendData() {
         let legendData: ChartLegendDatum[] = [];
         this.series
             .filter((s) => s.showInLegend)
@@ -800,10 +793,8 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 const data = series.getLegendData();
                 legendData.push(...data);
             });
-        const legendType = legendData.length > 0 ? legendData[0].legendType : 'category';
-        this.attachLegend(legendType);
-        this.applyLegendOptions?.(this.legend!);
 
+        const legendType = legendData.length > 0 ? legendData[0].legendType : 'category';
         if (legendType === 'category') {
             const usedLabels = new Set();
             legendData = legendData.filter((d) => {
@@ -814,6 +805,10 @@ export abstract class Chart extends Observable implements AgChartInstance {
         }
 
         this.legend!.data = legendData;
+    }
+
+    updateLegend(type: string) {
+        this.attachLegend(type);
     }
 
     protected async performLayout() {

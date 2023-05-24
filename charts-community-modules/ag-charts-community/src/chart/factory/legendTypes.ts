@@ -21,3 +21,17 @@ export function getLegend(type: string, ctx: ModuleContext): ChartLegend {
 
     throw new Error(`AG Charts - unknown legend type: ${type}`);
 }
+
+export function getLegendTypes() {
+    return Object.keys(LEGEND_FACTORIES);
+}
+
+const LEGEND_THEME_TEMPLATES: Record<string, {}> = {};
+
+export function registerLegendThemeTemplate(legendType: string, theme: {}) {
+    LEGEND_THEME_TEMPLATES[legendType] = theme;
+}
+
+export function getLegendThemeTemplate(legendType: string): {} {
+    return LEGEND_THEME_TEMPLATES[legendType] ?? {};
+}

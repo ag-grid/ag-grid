@@ -78,34 +78,37 @@ export interface AgChartTheme extends AgChartThemeOptions {
     baseTheme?: AgChartThemeName; // | ChartTheme;
 }
 
-export interface AgChartThemeOverrides {
+export interface AgChartThemeOverrides<LegendOverrides = {}> {
     /** Specifies defaults for all cartesian charts (used for bar, column, histogram, line, scatter and area series) */
-    cartesian?: AgCartesianThemeOptions<AgCartesianSeriesTheme>;
+    cartesian?: AgCartesianThemeOptions<AgCartesianSeriesTheme, LegendOverrides>;
     /** Specifies defaults for column charts. */
-    column?: AgCartesianThemeOptions<AgBarSeriesOptions>;
+    column?: AgCartesianThemeOptions<AgBarSeriesOptions, LegendOverrides>;
     /** Specifies defaults for bar charts. */
-    bar?: AgCartesianThemeOptions<AgBarSeriesOptions>;
+    bar?: AgCartesianThemeOptions<AgBarSeriesOptions, LegendOverrides>;
     /** Specifies defaults for line charts. */
-    line?: AgCartesianThemeOptions<AgLineSeriesOptions>;
+    line?: AgCartesianThemeOptions<AgLineSeriesOptions, LegendOverrides>;
     /** Specifies defaults for area charts. */
-    area?: AgCartesianThemeOptions<AgAreaSeriesOptions>;
+    area?: AgCartesianThemeOptions<AgAreaSeriesOptions, LegendOverrides>;
     /** Specifies defaults for scatter/bubble charts. */
-    scatter?: AgCartesianThemeOptions<AgScatterSeriesOptions>;
+    scatter?: AgCartesianThemeOptions<AgScatterSeriesOptions, LegendOverrides>;
     /** Specifies defaults for histogram charts. */
-    histogram?: AgCartesianThemeOptions<AgHistogramSeriesOptions>;
+    histogram?: AgCartesianThemeOptions<AgHistogramSeriesOptions, LegendOverrides>;
 
     /** Specifies defaults for all polar charts (used for pie series) */
-    polar?: AgPolarThemeOptions<AgPolarSeriesTheme>;
+    polar?: AgPolarThemeOptions<AgPolarSeriesTheme, LegendOverrides>;
     /** Specifies defaults for pie/doughnut charts. */
-    pie?: AgPolarThemeOptions<AgPieSeriesOptions>;
+    pie?: AgPolarThemeOptions<AgPieSeriesOptions, LegendOverrides>;
 
     /** Specifies defaults for all hierarchy charts (used for treemap series) */
-    hierarchy?: AgHierarchyThemeOptions<AgHierarchySeriesTheme>;
+    hierarchy?: AgHierarchyThemeOptions<AgHierarchySeriesTheme, LegendOverrides>;
     /** Specifies defaults for all treemap charts. */
-    treemap?: AgHierarchyThemeOptions<AgHierarchySeriesOptions>;
+    treemap?: AgHierarchyThemeOptions<AgHierarchySeriesOptions, LegendOverrides>;
 
     /** Specifies defaults for all chart types. Be careful to only use properties that apply to all chart types here. For example, don't specify `navigator` configuration here as navigators are only available in cartesian charts. */
     common?: any;
+
+    /** Specifies defaults for all legend types. */
+    legend?: { category: AgChartBaseLegendOptions } & LegendOverrides;
 }
 
 type AgCartesianAxisThemeSpecialOptions = 'position' | 'type' | 'crossLines';
@@ -121,29 +124,35 @@ export interface AgCartesianAxisThemeOptions<T> {
     left?: Omit<T, AgCartesianAxisThemeSpecialOptions>;
 }
 
-export interface AgCartesianThemeOptions<S = AgCartesianSeriesTheme> extends AgBaseChartOptions {
+export interface AgCartesianThemeOptions<S = AgCartesianSeriesTheme, LegendExtension = {}> extends AgBaseChartOptions {
     /** Axis configurations. */
     axes?: AgCartesianAxesTheme;
     /** Series configurations. */
     series?: S;
     /** Configuration for the chart legend. */
-    legend?: AgCartesianChartLegendOptions;
+    legend?: {
+        category: AgHierarchyChartLegendOptions;
+    } & LegendExtension;
     /** Configuration for the chart navigator. */
     navigator?: AgNavigatorOptions;
 }
 
-export interface AgPolarThemeOptions<S = AgPolarSeriesTheme> extends AgBaseChartOptions {
+export interface AgPolarThemeOptions<S = AgPolarSeriesTheme, LegendExtension = {}> extends AgBaseChartOptions {
     /** Series configurations. */
     series?: S;
     /** Configuration for the chart legend. */
-    legend?: AgPolarChartLegendOptions;
+    legend?: {
+        category: AgHierarchyChartLegendOptions;
+    } & LegendExtension;
 }
 
-export interface AgHierarchyThemeOptions<S = AgHierarchySeriesTheme> extends AgBaseChartOptions {
+export interface AgHierarchyThemeOptions<S = AgHierarchySeriesTheme, LegendExtension = {}> extends AgBaseChartOptions {
     /** Series configurations. */
     series?: S;
     /** Configuration for the chart legend. */
-    legend?: AgHierarchyChartLegendOptions;
+    legend?: {
+        category: AgHierarchyChartLegendOptions;
+    } & LegendExtension;
 }
 
 export interface AgCrossLineThemeOptions extends Omit<AgCrossLineOptions, 'type'> {}
@@ -441,6 +450,8 @@ export interface AgChartLegendListeners {
 }
 
 export interface AgChartBaseLegendOptions {
+    /** The legend type. */
+    type?: string;
     /** Where the legend should show in relation to the chart. */
     position?: AgChartLegendPosition;
     /** How the legend items should be arranged. */
@@ -1804,7 +1815,8 @@ export type AgPolarSeriesOptions = AgPieSeriesOptions;
 
 export type AgHierarchySeriesOptions = AgTreemapSeriesOptions;
 
-export interface AgCartesianChartOptions<TAddonType = never, TAddonSeries = never> extends AgBaseChartOptions {
+export interface AgCartesianChartOptions<TAddonType = never, TAddonSeries = never, TLegendAddon = never>
+    extends AgBaseChartOptions {
     /** If specified overrides the default series type. */
     type?: 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram' | TAddonType;
     /** Axis configurations. */
@@ -1812,34 +1824,34 @@ export interface AgCartesianChartOptions<TAddonType = never, TAddonSeries = neve
     /** Series configurations. */
     series?: AgCartesianSeriesOptions<TAddonSeries>[];
     /** Configuration for the chart legend. */
-    legend?: AgCartesianChartLegendOptions;
+    legend?: AgCartesianChartLegendOptions | TLegendAddon;
     /** Configuration for the chart navigator. */
     navigator?: AgNavigatorOptions;
 }
 
-export interface AgPolarChartOptions extends AgBaseChartOptions {
+export interface AgPolarChartOptions<TLegendAddon = never> extends AgBaseChartOptions {
     /** If specified overrides the default series type. */
     type?: 'pie';
     /** Series configurations. */
     series?: AgPolarSeriesOptions[];
     /** Configuration for the chart legend. */
-    legend?: AgPolarChartLegendOptions;
+    legend?: AgPolarChartLegendOptions | TLegendAddon;
 }
 
-export interface AgHierarchyChartOptions extends AgBaseChartOptions {
+export interface AgHierarchyChartOptions<TLegendAddon = never> extends AgBaseChartOptions {
     /** If specified overrides the default series type. */
     type?: 'treemap';
     data?: any;
     /** Series configurations. */
     series?: AgHierarchySeriesOptions[];
     /** Configuration for the chart legend. */
-    legend?: AgHierarchyChartLegendOptions;
+    legend?: AgHierarchyChartLegendOptions | TLegendAddon;
 }
 
-export type AgChartOptions<TAddonType = never, TAddonSeries = never> =
-    | AgCartesianChartOptions<TAddonType, TAddonSeries>
-    | AgPolarChartOptions
-    | AgHierarchyChartOptions;
+export type AgChartOptions<TAddonType = never, TAddonSeries = never, TLegendAddon = never> =
+    | AgCartesianChartOptions<TAddonType, TAddonSeries, TLegendAddon>
+    | AgPolarChartOptions<TLegendAddon>
+    | AgHierarchyChartOptions<TLegendAddon>;
 
 export interface AgChartInstance {
     /** Get the `AgChartOptions` representing the current chart configuration. */

@@ -140,6 +140,8 @@ class LegendListeners implements AgChartLegendListeners {
 export class Legend {
     static className = 'Legend';
 
+    readonly type = 'category';
+
     readonly id = createId(this);
 
     private readonly group: Group = new Group({ name: 'legend', layer: true, zIndex: Layers.LEGEND_ZINDEX });
