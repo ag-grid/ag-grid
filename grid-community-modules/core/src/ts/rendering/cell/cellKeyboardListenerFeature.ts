@@ -95,7 +95,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
 
         if (isDeleteKey(key, gridOptionsService.is('enableCellEditingOnBackspace'))) {
             if (rangeService && gridOptionsService.isEnableRangeSelection()) {
-                rangeService.clearCellRangeCellValues();
+                rangeService.clearCellRangeCellValues({ dispatchWrapperEvents: true, wrapperEventSource: 'deleteKeyPressed' });
             } else if (cellCtrl.isCellEditable()) {
                 rowNode.setDataValue(cellCtrl.getColumn(), null, 'cellClear');
             }

@@ -151,6 +151,18 @@
                 "name": "Undo / Redo Events",
                 "url": "/undo-redo-edits/#undo--redo-events"
             }
+        },
+        "rangeDeleteStart": {
+            "more": {
+                "name": "Delete Range",
+                "url": "/range-selection/#delete-range"
+            }
+        },
+        "rangeDeleteEnd": {
+            "more": {
+                "name": "Delete Range",
+                "url": "/range-selection/#delete-range"
+            }
         }
     },
     "filter": {

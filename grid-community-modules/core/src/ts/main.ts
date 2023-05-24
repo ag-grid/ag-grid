@@ -265,7 +265,7 @@ export { AgPickerField } from "./widgets/agPickerField";
 // range
 export {
     CellRange, CellRangeParams, CellRangeType, RangeSelection, AddRangeSelectionParams, IRangeService,
-    ISelectionHandle, SelectionHandleType, ISelectionHandleFactory
+    ISelectionHandle, SelectionHandleType, ISelectionHandleFactory, ClearCellRangeParams
 } from "./interfaces/IRangeService";
 export {
     IChartService,

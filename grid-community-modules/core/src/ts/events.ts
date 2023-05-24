@@ -267,6 +267,14 @@ export interface FillEndEvent<TData = any, TContext = any> extends AgGridEvent<T
     finalRange: CellRange;
 }
 
+export interface RangeDeleteStartEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    source: 'deleteKeyPressed';
+}
+
+export interface RangeDeleteEndEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    source: 'deleteKeyPressed';
+}
+
 export interface UndoStartedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     /** Source of the event. `api` if via API method. `ui` if via keyboard shortcut. */
     source: 'api' | 'ui';

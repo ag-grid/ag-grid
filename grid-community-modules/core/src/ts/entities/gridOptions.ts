@@ -46,6 +46,8 @@ import {
     PasteEndEvent,
     PasteStartEvent,
     PinnedRowDataChangedEvent,
+    RangeDeleteEndEvent,
+    RangeDeleteStartEvent,
     RangeSelectionChangedEvent,
     RedoEndedEvent,
     RedoStartedEvent,
@@ -1041,6 +1043,10 @@ export interface GridOptions<TData = any> {
     onRedoStarted?(event: RedoStartedEvent<TData>): void;
     /** Redo operation has ended. */
     onRedoEnded?(event: RedoEndedEvent<TData>): void;
+    /** Range delete operation (cell clear) has started. */
+    onRangeDeleteStart?(event: RangeDeleteStartEvent<TData>): void;
+    /** Range delete operation (cell clear) has ended. */
+    onRangeDeleteEnd?(event: RangeDeleteEndEvent<TData>): void;
 
     // *** Filtering *** //
     /** Filter has been opened. */

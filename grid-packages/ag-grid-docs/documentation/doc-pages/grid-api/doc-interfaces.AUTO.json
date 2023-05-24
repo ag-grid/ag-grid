@@ -4770,6 +4770,42 @@
       },
       "meta": { "isEvent": true, "name": "onRedoEnded" }
     },
+    "onRangeDeleteStart": {
+      "description": "/** Range delete operation (cell clear) has started. */",
+      "type": {
+        "arguments": { "event": "RangeDeleteStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRangeDeleteStart" }
+    },
+    "rangeDeleteStart": {
+      "description": "/** Range delete operation (cell clear) has started. */",
+      "type": {
+        "arguments": { "event": "RangeDeleteStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRangeDeleteStart" }
+    },
+    "onRangeDeleteEnd": {
+      "description": "/** Range delete operation (cell clear) has ended. */",
+      "type": {
+        "arguments": { "event": "RangeDeleteEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRangeDeleteEnd" }
+    },
+    "rangeDeleteEnd": {
+      "description": "/** Range delete operation (cell clear) has ended. */",
+      "type": {
+        "arguments": { "event": "RangeDeleteEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRangeDeleteEnd" }
+    },
     "onFilterOpened": {
       "description": "/** Filter has been opened. */",
       "type": {
@@ -7009,6 +7045,50 @@
       "type": { "returnType": "CellRange", "optional": false }
     },
     "finalRange": { "type": { "returnType": "CellRange", "optional": false } },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "TContext", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "RangeDeleteStartEvent": {
+    "source": {
+      "type": { "returnType": "'deleteKeyPressed'", "optional": false }
+    },
+    "meta": { "typeParams": ["TData = any", "TContext = any"] },
+    "api": {
+      "description": "/** The grid api. */",
+      "type": { "returnType": "GridApi<TData>", "optional": false }
+    },
+    "columnApi": {
+      "description": "/** The column api. */",
+      "type": { "returnType": "ColumnApi", "optional": false }
+    },
+    "context": {
+      "description": "/** Application context as set on `gridOptions.context`. */",
+      "type": { "returnType": "TContext", "optional": false }
+    },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "RangeDeleteEndEvent": {
+    "source": {
+      "type": { "returnType": "'deleteKeyPressed'", "optional": false }
+    },
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
     "api": {
       "description": "/** The grid api. */",
@@ -15557,7 +15637,7 @@
     },
     "clearCellRangeCellValues": {
       "type": {
-        "arguments": { "cellRanges?": "CellRange[]", "source?": "string" },
+        "arguments": { "params": "ClearCellRangeParams" },
         "returnType": "void",
         "optional": false
       }
@@ -15664,6 +15744,21 @@
     },
     "columnEnd": {
       "type": { "returnType": "string | Column", "optional": false }
+    }
+  },
+  "ClearCellRangeParams": {
+    "cellRanges": { "type": { "returnType": "CellRange[]", "optional": true } },
+    "cellEventSource": {
+      "description": "/** Source passed to cellValueChanged event */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "dispatchWrapperEvents": {
+      "description": "/** True to dispatch rangeDeleteStart and rangeDeleteEnd events */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "wrapperEventSource": {
+      "description": "/** Source passed to rangeDeleteStart and rangeDeleteEnd events */",
+      "type": { "returnType": "'deleteKeyPressed'", "optional": true }
     }
   },
   "CellValue": {},
@@ -24103,6 +24198,42 @@
       },
       "meta": { "isEvent": true, "name": "onRedoEnded" }
     },
+    "onRangeDeleteStart": {
+      "description": "/** Range delete operation (cell clear) has started. */",
+      "type": {
+        "arguments": { "event": "RangeDeleteStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRangeDeleteStart" }
+    },
+    "rangeDeleteStart": {
+      "description": "/** Range delete operation (cell clear) has started. */",
+      "type": {
+        "arguments": { "event": "RangeDeleteStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRangeDeleteStart" }
+    },
+    "onRangeDeleteEnd": {
+      "description": "/** Range delete operation (cell clear) has ended. */",
+      "type": {
+        "arguments": { "event": "RangeDeleteEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRangeDeleteEnd" }
+    },
+    "rangeDeleteEnd": {
+      "description": "/** Range delete operation (cell clear) has ended. */",
+      "type": {
+        "arguments": { "event": "RangeDeleteEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRangeDeleteEnd" }
+    },
     "onFilterOpened": {
       "description": "/** Filter has been opened. */",
       "type": {
@@ -26954,6 +27085,42 @@
         "optional": true
       },
       "meta": { "isEvent": true, "name": "onRedoEnded" }
+    },
+    "onRangeDeleteStart": {
+      "description": "/** Range delete operation (cell clear) has started. */",
+      "type": {
+        "arguments": { "event": "RangeDeleteStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRangeDeleteStart" }
+    },
+    "rangeDeleteStart": {
+      "description": "/** Range delete operation (cell clear) has started. */",
+      "type": {
+        "arguments": { "event": "RangeDeleteStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRangeDeleteStart" }
+    },
+    "onRangeDeleteEnd": {
+      "description": "/** Range delete operation (cell clear) has ended. */",
+      "type": {
+        "arguments": { "event": "RangeDeleteEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRangeDeleteEnd" }
+    },
+    "rangeDeleteEnd": {
+      "description": "/** Range delete operation (cell clear) has ended. */",
+      "type": {
+        "arguments": { "event": "RangeDeleteEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRangeDeleteEnd" }
     },
     "onFilterOpened": {
       "description": "/** Filter has been opened. */",
@@ -29812,6 +29979,42 @@
         "optional": true
       },
       "meta": { "isEvent": true, "name": "onRedoEnded" }
+    },
+    "onRangeDeleteStart": {
+      "description": "/** Range delete operation (cell clear) has started. */",
+      "type": {
+        "arguments": { "event": "RangeDeleteStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRangeDeleteStart" }
+    },
+    "rangeDeleteStart": {
+      "description": "/** Range delete operation (cell clear) has started. */",
+      "type": {
+        "arguments": { "event": "RangeDeleteStartEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRangeDeleteStart" }
+    },
+    "onRangeDeleteEnd": {
+      "description": "/** Range delete operation (cell clear) has ended. */",
+      "type": {
+        "arguments": { "event": "RangeDeleteEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRangeDeleteEnd" }
+    },
+    "rangeDeleteEnd": {
+      "description": "/** Range delete operation (cell clear) has ended. */",
+      "type": {
+        "arguments": { "event": "RangeDeleteEndEvent<TData>" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onRangeDeleteEnd" }
     },
     "onFilterOpened": {
       "description": "/** Filter has been opened. */",

@@ -1771,6 +1771,38 @@
     },
     "meta": { "isEvent": true, "name": "onRedoEnded" }
   },
+  "onRangeDeleteStart": {
+    "description": "/** Range delete operation (cell clear) has started. */",
+    "type": {
+      "arguments": { "event": "RangeDeleteStartEvent<TData>" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onRangeDeleteStart" }
+  },
+  "rangeDeleteStart": {
+    "description": "/** Range delete operation (cell clear) has started. */",
+    "type": {
+      "arguments": { "event": "RangeDeleteStartEvent<TData>" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onRangeDeleteStart" }
+  },
+  "onRangeDeleteEnd": {
+    "description": "/** Range delete operation (cell clear) has ended. */",
+    "type": {
+      "arguments": { "event": "RangeDeleteEndEvent<TData>" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onRangeDeleteEnd" }
+  },
+  "rangeDeleteEnd": {
+    "description": "/** Range delete operation (cell clear) has ended. */",
+    "type": {
+      "arguments": { "event": "RangeDeleteEndEvent<TData>" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onRangeDeleteEnd" }
+  },
   "onFilterOpened": {
     "description": "/** Filter has been opened. */",
     "type": {

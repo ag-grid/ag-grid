@@ -671,7 +671,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     private clearCellsAfterCopy(type: CellClearType) {
         this.eventService.dispatchEvent({ type: Events.EVENT_KEY_SHORTCUT_CHANGED_CELL_START });
         if (type === CellClearType.CellRange) {
-            this.rangeService.clearCellRangeCellValues(undefined, 'clipboardService');
+            this.rangeService.clearCellRangeCellValues({ cellEventSource: 'clipboardService' });
         } else if (type === CellClearType.SelectedRows) {
             this.clearSelectedRows();
         } else {

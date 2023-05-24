@@ -125,6 +125,8 @@ import {
     ProcessGroupHeaderForExportParams,
     ProcessHeaderForExportParams,
     ProcessRowParams,
+    RangeDeleteEndEvent,
+    RangeDeleteStartEvent,
     RangeSelectionChangedEvent,
     RedoEndedEvent,
     RedoStartedEvent,
@@ -1058,6 +1060,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public redoStarted: EventEmitter<RedoStartedEvent<TData>> = new EventEmitter<RedoStartedEvent<TData>>();
     /** Redo operation has ended.     */
     @Output() public redoEnded: EventEmitter<RedoEndedEvent<TData>> = new EventEmitter<RedoEndedEvent<TData>>();
+    /** Range delete operation (cell clear) has started.     */
+    @Output() public rangeDeleteStart: EventEmitter<RangeDeleteStartEvent<TData>> = new EventEmitter<RangeDeleteStartEvent<TData>>();
+    /** Range delete operation (cell clear) has ended.     */
+    @Output() public rangeDeleteEnd: EventEmitter<RangeDeleteEndEvent<TData>> = new EventEmitter<RangeDeleteEndEvent<TData>>();
     /** Filter has been opened.     */
     @Output() public filterOpened: EventEmitter<FilterOpenedEvent<TData>> = new EventEmitter<FilterOpenedEvent<TData>>();
     /** Filter has been modified and applied.     */

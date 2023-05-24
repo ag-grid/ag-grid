@@ -90,6 +90,14 @@ When you have more than one row selected in a range, pressing keys <kbd>Ctrl</kb
 
 The Value Formatter and Value Parser can be used whilst copying the range by setting the [Use Value Formatter For Export](/value-formatters/#use-value-formatter-for-export) and [Use Value Parser for Import](/value-parsers/#use-value-parser-for-import) properties.
 
+## Delete Range
+
+When [Cell Editing](/cell-editing/) is enabled, pressing the <kbd>Delete</kbd> key will clear all of the cells in the range (by setting the cell values to `null`).
+
+This will also emit the following events, which can be seen in the [Advanced Range Selection Example](#example-advanced-range-selection) below.
+
+<api-documentation source='grid-events/events.json' section='editing' names='["rangeDeleteStart","rangeDeleteEnd"]' ></api-documentation>
+
 ## Example: Advanced Range Selection
 
 The example below demonstrates a more complex range selection scenario. The example listens for the `rangeSelectionChanged` event and creates a sum of all the number values that are in the range (it ignores all non-number values). The `finished` flag is used to update the eager and lazy figures separately.
