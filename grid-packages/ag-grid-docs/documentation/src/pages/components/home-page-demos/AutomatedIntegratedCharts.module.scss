@@ -66,31 +66,6 @@ $z-index-splash-contents: 10;
         }
     }
 
-    // Copy default theme slider styles to deal with .ag-styles specificity issues
-    input[type='range'] {
-        &::-webkit-slider-runnable-track {
-            margin: 0 !important;
-            padding: 0 !important;
-            width: 100% !important;
-            height: 3px !important;
-            background-color: var(--ag-border-color) !important;
-            border-radius: var(--ag-border-radius) !important;
-            border-radius: var(--ag-checkbox-border-radius) !important;
-        }
-
-        &::-webkit-slider-thumb {
-            margin: 0 !important;
-            padding: 0 !important;
-            -webkit-appearance: none !important;
-            width: var(--ag-icon-size) !important;
-            height: var(--ag-icon-size) !important;
-            background-color: var(--ag-background-color) !important;
-            border: 1px solid !important;
-            border-color: var(--ag-checkbox-unchecked-color) !important;
-            border-radius: var(--ag-icon-size) !important;
-        }
-    }
-
     // Button overrides for .ag-styles specificity
     :global(button.ag-side-button-button) {
         // Inherit text styles
@@ -202,15 +177,15 @@ $z-index-splash-contents: 10;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    margin-bottom: $size-2 !important; // !important for .ag-styles specificity;
+    margin-bottom: $size-2;
 
     h2 {
-        margin-bottom: $size-2 !important; // !important for .ag-styles specificity;
-        font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity;
-        line-height: var(--line-height-ultra-tight) !important; // !important for .ag-styles specificity;
+        margin-bottom: $size-2;
+        font-weight: var(--font-weight-bold);
+        line-height: var(--line-height-ultra-tight);
 
         @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
-            font-size: var(--font-size-massive) !important; // !important for .ag-styles specificity;
+            font-size: var(--font-size-massive);
         }
     }
 
@@ -218,7 +193,7 @@ $z-index-splash-contents: 10;
         max-width: 50em;
 
         @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
-            font-size: var(--font-size-large) !important; // !important for .ag-styles specificity;
+            font-size: var(--font-size-large);
         }
     }
 }
@@ -228,10 +203,10 @@ $z-index-splash-contents: 10;
     justify-content: center;
     align-items: center;
     gap: $size-6;
-    margin-top: $size-3 !important; // !important for .ag-styles specificity;
+    margin-top: $size-3;
 
     button {
-        margin-left: $size-1 !important; // !important for .ag-styles specificity;
+        margin-left: $size-1;
     }
 }
 
@@ -249,20 +224,20 @@ $z-index-splash-contents: 10;
 }
 
 .exploreExampleButton {
-    padding: 0.375em 0.5em 0.5em 0.5em !important; // !important for .ag-styles specificity;
+    padding: 0.375em 0.5em 0.5em 0.5em;
 
     @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
-        display: none !important; // !important for .ag-styles specificity;
+        display: none;
     }
 
     @media screen and (min-width: $breakpoint-automated-row-grouping-large) {
-        font-size: var(--font-size-extra-large) !important; // !important for .ag-styles specificity;
+        font-size: var(--font-size-extra-large);
     }
 
     :global(.icon) {
-        --icon-size: 1.5em !important; // !important for .ag-styles specificity;
+        --icon-size: 1.5em;
 
-        margin: -1em 0 -1em 0.25em !important; // !important for .ag-styles specificity;
+        margin: -1em 0 -1em 0.25em;
     }
 }
 

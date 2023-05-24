@@ -47,7 +47,7 @@
 
     svg {
         position: relative;
-        margin-left: $size-half !important; // !important for .ag-styles specificity
+        margin-left: $size-half;
         bottom: 0.125em;
     }
 }
@@ -71,14 +71,14 @@
     }
 
     h4 {
-        margin-top: 0 !important; // !important for .ag-styles specificity
-        margin-bottom: 0 !important; // !important for .ag-styles specificity
-        padding-left: $size-half + 2px !important; // !important for .ag-styles specificity
-        font-size: var(--font-size-small) !important; // !important for .ag-styles specificity
-        font-weight: var(--font-weight-normal) !important; // !important for .ag-styles specificity
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-left: $size-half + 2px;
+        font-size: var(--font-size-small);
+        font-weight: var(--font-weight-normal);
 
         &:not(:first-child) {
-            margin-top: $size-5 !important; // !important for .ag-styles specificity
+            margin-top: $size-5;
         }
     }
 }
@@ -88,14 +88,14 @@
 
     position: relative;
     width: 100%;
-    padding: 0 $size-2 2px $size-half !important; // !important for .ag-styles specificity
+    padding: 0 $size-2 2px $size-half;
     font-size: var(--font-size-small);
-    font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity
+    font-weight: var(--font-weight-bold);
     overflow: hidden;
     text-overflow: ellipsis;
-    border-top: 2px solid var(--file-border-color) !important; // !important for .ag-styles specificity
-    border-left: 2px solid var(--file-border-color) !important; // !important for .ag-styles specificity
-    border-bottom: 2px solid var(--file-border-color) !important; // !important for .ag-styles specificity
+    border-top: 2px solid var(--file-border-color);
+    border-left: 2px solid var(--file-border-color);
+    border-bottom: 2px solid var(--file-border-color);
     border-top-left-radius: var(--border-radius);
     border-bottom-left-radius: var(--border-radius);
     transition: color $default-transition-timing, background-color $default-transition-timing,
@@ -130,8 +130,8 @@
     &.isActive {
         --file-border-color: var(--bright-blue-gray);
 
-        color: var(--text-color) !important; // !important for .ag-styles specificity
-        background-color: var(--ghost-blue) !important; // !important for .ag-styles specificity
+        color: var(--text-color);
+        background-color: var(--ghost-blue);
 
         &::before,
         &::after {
@@ -149,8 +149,8 @@
 
     pre {
         height: 100%;
-        margin-bottom: 0 !important; // !important for .ag-styles specificity
-        border-radius: 0 !important; // !important for .ag-styles specificity
-        border: none !important; // !important for .ag-styles specificity
+        margin-bottom: 0;
+        border-radius: 0;
+        border: none;
     }
 }

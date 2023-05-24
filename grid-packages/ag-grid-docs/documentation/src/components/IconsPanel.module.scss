@@ -52,7 +52,7 @@
     }
 
     p.iconName {
-        margin-bottom: 0 !important; // !important for .ag-styles specificity
+        margin-bottom: 0;
         text-align: center;
     }
 }
@@ -60,7 +60,7 @@
 .footer {
     display: flex;
     justify-content: flex-end;
-    margin-top: $size-2 !important; // !important for .ag-styles specificity
+    margin-top: $size-2;
 }
 
 .downloadButton {

@@ -28,17 +28,17 @@
     }
 
     h2 {
-        margin-top: 0 !important; // !important for .ag-styles specificity
+        margin-top: 0;
     }
 }
 
 .header {
     display: flex;
     justify-content: space-between;
-    overflow-x: visible !important; // !important for .ag-styles specificity
+    overflow-x: visible !important;
 
     li {
-        margin-bottom: 0 !important; // !important for .ag-styles specificity
+        margin-bottom: 0;
     }
 }
 

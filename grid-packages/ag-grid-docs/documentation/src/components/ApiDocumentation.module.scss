@@ -38,14 +38,14 @@
         }
 
         tr {
-            padding-top: $size-1 !important; // !important for .ag-styles specificity
-            padding-bottom: $size-1 !important; // !important for .ag-styles specificity
+            padding-top: $size-1;
+            padding-bottom: $size-1;
         }
 
         td {
-            padding-right: 0 !important; // !important for .ag-styles specificity
-            padding-left: 0 !important; // !important for .ag-styles specificity
-            border: none !important; // !important for .ag-styles specificity
+            padding-right: 0;
+            padding-left: 0;
+            border: none;
         }
     }
 
@@ -55,7 +55,7 @@
 
     tr:nth-child(even),
     tr:nth-child(even) td {
-        background-color: white !important; // !important for .ag-styles specificity
+        background-color: white;
     }
 
     pre:global(.code) {
@@ -64,17 +64,17 @@
     }
 
     :global(a.docs-header-icon) {
-        font-size: var(--font-size-large) !important; // !important for .ag-styles specificity
+        font-size: var(--font-size-large);
     }
 }
 
 .leftColumn {
     width: 40%;
-    padding-left: 0 !important; // !important for .ag-styles specificity
+    padding-left: 0;
 }
 
 .rightColumn {
-    padding-right: 0 !important; // !important for .ag-styles specificity
+    padding-right: 0;
 }
 
 .name {
@@ -83,14 +83,14 @@
 
     position: relative;
     display: inline-block;
-    margin-top: $size-half !important; // !important for .ag-styles specificity;
+    margin-top: $size-half;
     padding-right: $size-3;
-    font-family: var(--monospace-font-family) !important; // !important for .ag-styles specificity;
-    font-size: var(--font-size-large) !important; // !important for .ag-styles specificity;
-    font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity;
+    font-family: var(--monospace-font-family);
+    font-size: var(--font-size-large);
+    font-weight: var(--font-weight-bold);
 
     @container (min-width: #{$breakpoint-table-small}) {
-        font-size: var(--font-size-medium) !important; // !important for .ag-styles specificity;
+        font-size: var(--font-size-medium);
     }
 
     :global(a.docs-header-icon) {
@@ -129,7 +129,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: $size-2 $size-4;
-    margin-top: $size-1 !important; // !important for .ag-styles specificity
+    margin-top: $size-1;
 }
 
 .seeMore {

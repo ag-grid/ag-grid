@@ -13,7 +13,7 @@
     border-radius: var(--border-radius);
     border: 2px solid var(--bright-blue-gray);
     transition: color $default-transition-timing, border-color $default-transition-timing,
-        background-color $default-transition-timing !important; // !important needed because of .ag-styles specificity
+        background-color $default-transition-timing;
 
     &:focus-visible {
         outline: none;
@@ -50,7 +50,7 @@
         display: flex;
         align-items: center;
         gap: $size-half;
-        margin-bottom: 0 !important; // !important needed because of .ag-styles specificity
+        margin-bottom: 0;
         line-height: var(--line-height-ultra-tight);
     }
 }
@@ -76,7 +76,7 @@
 }
 
 .renderedItems {
-    margin-top: $size-2 !important; // !important needed because of .ag-styles specificity
+    margin-top: $size-2;
 
     @media screen and (max-width: $breakpoint-docs-home-small) {
         a {
@@ -151,8 +151,8 @@
 }
 
 .enterpriseIcon {
-    --icon-size: 1rem !important; // !important for .ag-styles specificity
-    --text-color: red !important; // !important for .ag-styles specificity
+    --icon-size: 1rem !important;
+    --text-color: red !important;
 
     margin-left: 0.2em;
     margin-top: -0.1em;

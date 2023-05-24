@@ -85,6 +85,8 @@ h6,
 b,
 strong,
 .bold-text {
+    --font-weight: var(--font-weight-bold);
+
     font-weight: var(--font-weight-bold);
 }
 

@@ -34,10 +34,10 @@
 
     figure {
         max-width: 40em;
-        margin-bottom: $size-6 !important; // !important for .ag-styles specificity
+        margin-bottom: $size-6;
 
         li:last-child & {
-            margin-bottom: 0 !important; // !important for .ag-styles specificity
+            margin-bottom: 0;
         }
     }
 

@@ -12,23 +12,19 @@
         align-items: center;
         gap: 0 $size-2;
 
-        b {
-            font-weight: var(--font-weight-bold) !important; // only needed for .ag-styles specificity
-        }
-
         span {
-            font-weight: var(--font-weight-thin) !important; // !important for .ag-styles specificity
+            font-weight: var(--font-weight-thin);
             margin-right: $size-6;
         }
     }
 
-    p {
+    p:not(:last-child) {
         margin-top: $size-1;
-        margin-bottom: $size-half !important; // !important for .ag-styles specificity
+        margin-bottom: $size-half;
     }
 
     ul {
-        margin-bottom: $size-2 !important; // !important for .ag-styles specificity
+        margin-bottom: $size-2;
 
         a::before {
             content: '- ';

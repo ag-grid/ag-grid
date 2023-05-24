@@ -1,23 +1,5 @@
 @use '../../design-system' as *;
 
-.ag-styles {
-    // @include design-system-styles()
-
-    // Required because we can't set .font-size-responsive on the same element as .ag-styles for docs page yet
-    &.font-size-responsive {
-        @media screen and (min-width: $max-page-width) {
-            --font-size-extra-small: #{$large-font-size-extra-small};
-            --font-size-small: #{$large-font-size-small};
-            --font-size-medium: #{$large-font-size-medium};
-            --font-size-large: #{$large-font-size-large};
-            --font-size-extra-large: #{$large-font-size-extra-large};
-            --font-size-massive: #{$large-font-size-massive};
-            --font-size-gigantic: #{$large-font-size-gigantic};
-            --font-size-gargantuan: #{$large-font-size-gargantuan};
-        }
-    }
-}
-
 .style-guide {
     display: grid;
     grid-template-columns: 200px 1fr;

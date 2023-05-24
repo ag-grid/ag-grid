@@ -1,9 +1,6 @@
 @use '../design-system' as *;
 
 .docsHome {
-    --max-page-width: #{$max-page-width}; // required as outside of .ag-styles
-    --horizontal-margin: #{$horizontal-margin}; // required as outside of .ag-styles
-
     margin-bottom: $size-7;
 
     @media screen and (max-width: $breakpoint-docs-nav-medium) {
@@ -16,7 +13,7 @@
 }
 
 .section {
-    margin-top: $size-7 !important; // !important for .ag-styles specificity
+    margin-top: $size-7;
 }
 
 .sectionInner {
@@ -31,7 +28,7 @@
 
 .introSection {
     max-width: 60em;
-    margin-top: $size-4 !important; // !important for .ag-styles specificity
+    margin-top: $size-4;
 
     h1 {
         text-transform: capitalize;
@@ -51,7 +48,7 @@
 }
 
 .gettingStartedLogo {
-    margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+    margin-bottom: $size-1;
 
     img {
         width: $size-7;

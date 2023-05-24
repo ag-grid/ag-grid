@@ -13,8 +13,8 @@
     gap: $size-1;
     text-align: left;
     font-weight: $font-weight-bold;
-    border: 1px solid var(--border-color) !important; // !important for .ag-styles specificity
-    transition: color $default-transition-timing !important; // !important for .ag-styles specificity
+    border: 1px solid var(--border-color);
+    transition: color $default-transition-timing !important;
 
     &:hover {
         --button-text-color: var(--medium-electric-blue);

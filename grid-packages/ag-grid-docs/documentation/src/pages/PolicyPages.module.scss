@@ -10,7 +10,7 @@
     }
 
     nav li:not(:last-child) {
-        margin-bottom: $size-half !important; // !important for .ag-styles specificity
+        margin-bottom: $size-half;
     }
 
     hr {
@@ -29,25 +29,25 @@
         }
 
         nav li:not(:last-child) {
-            margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+            margin-bottom: $size-1;
             line-height: var(--line-height-tight);
         }
     }
 }
 
 .introduction {
-    margin-top: $size-4 !important; // !important needed because of .ag-styles specificity
+    margin-top: $size-4;
 }
 
 .policyList {
     counter-reset: policy-count;
 
     list-style: none;
-    padding-left: 0 !important; // !important needed because of .ag-styles specificity
+    padding-left: 0;
 
     > li {
         counter-increment: policy-count;
-        margin-bottom: $size-6 !important; // !important needed because of .ag-styles specificity
+        margin-bottom: $size-6;
     }
 
     li > h3:first-child:before {
@@ -70,7 +70,7 @@
 }
 
 .settingsButton {
-    margin-bottom: $size-2 !important; // !important needed because of .ag-styles specificity
+    margin-bottom: $size-2;
 }
 
 // Overrides for OneTrust 3rd party styles on cookies page

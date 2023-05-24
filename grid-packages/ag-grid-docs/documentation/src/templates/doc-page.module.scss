@@ -2,7 +2,6 @@
 @use '../design-system' as *;
 
 .doc-page-wrapper {
-    --horizontal-margin: #{$horizontal-margin}; // required as outside of .ag-styles
     --docs-page-max-width: 68em;
 
     display: flex;
@@ -52,18 +51,6 @@
         }
     }
 
-    // Required because of .ag-styles wrapper
-    p,
-    ul,
-    ol {
-        margin-bottom: $size-2 !important;
-    }
-
-    // Required because of .ag-styles wrapper
-    li p:last-child {
-        margin-bottom: $size-1 !important;
-    }
-
     h1,
     h2,
     h3,
@@ -75,17 +62,11 @@
         }
     }
 
-    // Required because of docs .ag-styles <div> wrapping
-    li ol,
-    li ul {
-        padding-left: 1.125em;
-    }
-
     :global(.docs-header-icon) {
         position: relative;
         padding-left: 0;
         margin-left: $size-1;
-        font-size: inherit !important; // !important for .ag-styles specificity
+        font-size: inherit;
         opacity: 0;
         transition: opacity 0.33s ease-in-out;
 
@@ -129,16 +110,6 @@
 
     :global(.alert) {
         margin-bottom: $size-2;
-
-        // Needed because of .ag-styles weirdness
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            margin-top: 0 !important; // !important for .ag-styles specificity
-        }
     }
 }
 
@@ -147,18 +118,18 @@
 }
 
 .docsPageTitle {
-    margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+    margin-bottom: $size-1;
 
     @media screen and (min-width: $breakpoint-docs-search-medium) {
         padding-right: 166px;
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
-        line-height: var(--line-height-ultra-tight) !important; // !important for .ag-styles specificity
+        line-height: var(--line-height-ultra-tight);
     }
 
     > span {
-        margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+        margin-bottom: $size-1;
     }
 }
 
@@ -214,22 +185,7 @@
 
 // Reduce spacing between page intro & first heading
 .pageSections > div > div:nth-child(2) {
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        margin-top: $size-2;
-    }
-
-    // Fix for tables that are directly below page intro
-    table h2,
-    table h3,
-    table h4,
-    table h5,
-    table h6 {
-        margin-top: 0;
-    }
+    margin-bottom: -$size-2;
 }
 
 // Hack to target markdown images and not images within components

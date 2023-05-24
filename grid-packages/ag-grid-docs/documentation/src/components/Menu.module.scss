@@ -36,42 +36,42 @@
     }
 }
 
-.menuInner {
-    flex-basis: auto !important;
+ul.menuInner {
+    flex-basis: auto;
     flex-direction: column;
     padding-top: $size-3;
     padding-bottom: $size-7;
 
     li {
-        margin-bottom: $size-half !important; // !important for .ag-styles specificity
+        margin-bottom: $size-half !important;
     }
 
     li li {
-        margin-bottom: 0 !important; // !important for .ag-styles specificity
+        margin-bottom: 0;
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
-        display: block !important; // !important for .ag-styles specificity
+        display: block !important;
     }
 }
 
-.sectionHeader {
+button.sectionHeader {
     width: 100%;
-    padding-top: $size-half !important; // !important for .ag-styles specificity
-    padding-bottom: $size-half !important; // !important for .ag-styles specificity
-    margin-top: 0 !important; // !important for .ag-styles specificity
+    padding-top: $size-half;
+    padding-bottom: $size-half;
+    margin-top: 0;
     font-weight: var(--font-weight-bold);
-    border: 2px solid transparent !important; // !important for .ag-styles specificity
+    border: 2px solid transparent;
     outline: none;
     transition: color $default-transition-timing, border-color $default-transition-timing;
     border-radius: var(--border-radius);
 
     &:hover {
-        --text-color: var(--link-color) !important; // !important for .ag-styles specificity
+        --text-color: var(--link-color);
     }
 
     &:focus-visible {
-        border-color: var(--bright-blue-gray) !important; // !important for .ag-styles specificity
+        border-color: var(--bright-blue-gray);
     }
 
     &:hover .sectionIcon {
@@ -83,7 +83,7 @@
     }
 
     li:first-child & {
-        margin-top: $size-1 !important; // !important for .ag-styles specificity
+        margin-top: $size-1;
     }
 
     + .menuGroup {
@@ -107,33 +107,27 @@
     --first-indent-size: 4px;
     --indent-size: 12px;
 
-    line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
+    line-height: var(--line-height-tight);
     font-size: var(--font-size-small);
 
     ul a,
     ul .groupLabel {
-        margin-left: calc(
-            var(--first-indent-size) + var(--indent-size)
-        ) !important; // !important for .ag-styles specificity
+        margin-left: calc(var(--first-indent-size) + var(--indent-size));
     }
 
     ul ul a,
     ul ul .groupLabel {
-        margin-left: calc(
-            var(--first-indent-size) + var(--indent-size) * 2
-        ) !important; // !important for .ag-styles specificity
+        margin-left: calc(var(--first-indent-size) + var(--indent-size) * 2);
     }
 
     ul ul ul a,
     ul ul ul .groupLabel {
-        margin-left: calc(
-            var(--first-indent-size) + var(--indent-size) * 3
-        ) !important; // !important for .ag-styles specificity
+        margin-left: calc(var(--first-indent-size) + var(--indent-size) * 3);
     }
 
     .enterpriseIcon {
-        --icon-size: 1.15em !important; // !important for .ag-styles specificity
-        --text-color: red !important; // !important for .ag-styles specificity
+        --icon-size: 1.15em;
+        --text-color: red;
 
         position: relative;
         margin-left: 2px;
@@ -157,7 +151,7 @@
     outline: none;
     border-radius: var(--border-radius);
     border: 2px solid transparent;
-    color: var(--secondary-text-color) !important; // !important for .ag-styles specificity
+    color: var(--secondary-text-color);
     font-weight: var(--font-weight-bold);
     transition: color $default-transition-timing, border-color $default-transition-timing;
 
@@ -173,7 +167,7 @@
     }
 
     &:focus-visible {
-        border-color: var(--input-focus-border-color) !important; // !important for .ag-styles specificity
+        border-color: var(--input-focus-border-color);
 
         &::before {
             background-color: var(--input-focus-border-color);
@@ -181,11 +175,11 @@
     }
 
     &.activeItemParent {
-        color: var(--text-color) !important; // !important for .ag-styles specificity
+        color: var(--text-color);
     }
 
     &:hover {
-        color: var(--link-color) !important; // !important for .ag-styles specificity
+        color: var(--link-color);
 
         &::before {
             background-color: var(--link-color) !important;
@@ -194,7 +188,7 @@
 
     &.activeMenuItem {
         pointer-events: none;
-        color: var(--text-color) !important; // !important for .ag-styles specificity
+        color: var(--text-color);
 
         &::before {
             background-color: var(--text-color);
@@ -204,13 +198,13 @@
 
 .menuGroup .groupLabel {
     display: block;
-    margin-left: var(--first-indent-size) !important; // !important for .ag-styles specificity
+    margin-left: var(--first-indent-size) !important;
     padding-top: 5px;
     padding-bottom: 5px;
     padding-left: $size-2 + 2px;
     transition: color $default-transition-timing;
 
     &.activeItemParent {
-        color: var(--text-color) !important; // !important for .ag-styles specificity
+        color: var(--text-color);
     }
 }

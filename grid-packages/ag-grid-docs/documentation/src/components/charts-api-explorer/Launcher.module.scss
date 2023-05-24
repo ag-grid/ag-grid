@@ -6,12 +6,7 @@
     align-items: center;
     gap: $size-1;
     bottom: $size-half;
-    margin-right: $size-2 !important; // !important for .ag-styles specificity
-
-    // Extra specificity to override .ag-styles specificity
-    &:global(.list-style-none) {
-        margin-bottom: 0 !important; // !important for .ag-styles specificity
-    }
+    margin-right: $size-2;
 
     label {
         color: var(--secondary-text-color);
@@ -40,8 +35,8 @@
     top: $size-half;
 
     select {
-        margin-left: 0 !important; // !important for .ag-styles specificity;
-        padding: 0 $size-3 0 0 !important; // !important for .ag-styles specificity;
-        border: none !important; // !important for .ag-styles specificity;
+        margin-left: 0;
+        padding: 0 $size-3 0 0;
+        border: none;
     }
 }

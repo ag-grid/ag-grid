@@ -10,7 +10,7 @@
     }
 
     svg {
-        --icon-size: 1.25em !important; // !important for .ag-styles specificity
+        --icon-size: 1.25em;
 
         position: relative;
         bottom: 0.125em;

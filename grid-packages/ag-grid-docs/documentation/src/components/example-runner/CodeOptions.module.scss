@@ -14,19 +14,19 @@
 }
 
 .simpleSelect {
-    margin-left: 0 !important; // !important for .ag-styles specificity;
-    padding: 0 $size-3 0 0 !important; // !important for .ag-styles specificity;
-    border: none !important; // !important for .ag-styles specificity;
+    margin-left: 0;
+    padding: 0 $size-3 0 0;
+    border: none;
 }
 
 .importInfoIcon svg {
-    --icon-size: 1.25em !important; // !important for .ag-styles specificity;
-    --text-color: var(--secondary-text-color) !important; // !important for .ag-styles specificity;
+    --icon-size: 1.25em;
+    --text-color: var(--secondary-text-color);
 
     position: relative;
     bottom: 0.125em;
 
     &:hover {
-        --text-color: var(--link-color) !important; // !important for .ag-styles specificity;
+        --text-color: var(--link-color);
     }
 }

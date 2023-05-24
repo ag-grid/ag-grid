@@ -1,10 +1,6 @@
 @use '../design-system' as *;
 
 html {
-    // Font smoothing can be moved to _typography.scss after .ag-styles is removed
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-
     overflow-x: hidden;
 }
 

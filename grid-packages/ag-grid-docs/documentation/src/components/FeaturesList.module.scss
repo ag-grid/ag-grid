@@ -1,11 +1,11 @@
 @use '../design-system' as *;
 
 .featuresListOuter {
-    margin-top: $size-8 !important; // !important for .ag-styles specificity
+    margin-top: $size-8;
 
     p {
         text-align: center;
-        margin-bottom: $size-4 !important; // !important for .ag-styles specificity
+        margin-bottom: $size-4;
     }
 }
 

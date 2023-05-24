@@ -60,7 +60,7 @@
 
     position: relative;
     padding-left: $size-2;
-    margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+    margin-bottom: $size-1;
 }
 
 .sideNav a {
@@ -105,15 +105,15 @@
 
 .sideNav .level-1 {
     font-size: var(--font-size-large);
-    margin-bottom: var(--item-gap) !important; // !important for .ag-styles specificity
+    margin-bottom: var(--item-gap) !important;
 }
 
 .sideNav .level-2 {
-    margin-bottom: var(--item-gap) !important; // !important for .ag-styles specificity
+    margin-bottom: var(--item-gap) !important;
 }
 
 .sideNav .level-3 {
-    margin-bottom: calc(var(--item-gap) / 2) !important; // !important for .ag-styles specificity
+    margin-bottom: calc(var(--item-gap) / 2) !important;
     padding-left: $size-4;
 }
 

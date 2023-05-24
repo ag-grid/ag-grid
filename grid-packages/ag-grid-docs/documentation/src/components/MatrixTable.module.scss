@@ -10,18 +10,6 @@
     @container (max-width: #{$breakpoint-table-small}) {
         @include stack-table();
 
-        // Fixing .ag-styles specificity issues
-        tr,
-        td {
-            background-color: transparent !important;
-        }
-
-        // Fixing .ag-styles specificity issues
-        td {
-            padding: 0 !important;
-            border: none !important;
-        }
-
         div {
             display: inline;
         }

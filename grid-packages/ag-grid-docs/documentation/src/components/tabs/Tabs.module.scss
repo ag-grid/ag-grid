@@ -1,14 +1,14 @@
 @use '../../design-system/' as *;
 
 .tabsOuter {
-    margin-top: $size-2 !important; // !important for .ag-styles specificity
-    margin-bottom: $size-2 !important; // !important for .ag-styles specificity
+    margin-top: $size-2;
+    margin-bottom: $size-2;
 }
 
 .hasHeading {
-    padding-top: $size-1 !important; // !important for .ag-styles specificity
+    padding-top: $size-1;
 }
 
 .heading {
-    margin-top: 0 !important; // !important for .ag-styles specificity
+    margin-top: 0;
 }

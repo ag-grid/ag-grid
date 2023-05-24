@@ -46,24 +46,23 @@ gatsby-fast-refresh {
 
     h1,
     h2 {
-        --line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
+        --line-height: var(--line-height-tight);
 
-        color: var(--text-color) !important; // needed to deal with .ag-styles
+        color: var(--text-color);
     }
 
     h1 {
         --font-size: 28px;
-        --font-weight: #{$font-weight-bold}; // needed to deal with .ag-styles `
 
         @media screen and (min-width: $breakpoint-hero-small) {
-            --font-size: var(--font-size-massive) !important; // !important for .ag-styles specificity
+            --font-size: var(--font-size-massive);
         }
 
         @media screen and (min-width: $breakpoint-hero-large) {
-            --font-size: min(3.4vw, 54px) !important; // !important for .ag-styles specificity
+            --font-size: min(3.4vw, 54px);
 
-            margin-top: -0.225em !important; // !important for .ag-styles specificity;
-            margin-bottom: 0.5em !important; // !important for .ag-styles specificity;
+            margin-top: -0.225em;
+            margin-bottom: 0.5em;
         }
     }
 
@@ -74,12 +73,12 @@ gatsby-fast-refresh {
         margin-bottom: 1.4em;
 
         @media screen and (min-width: $breakpoint-hero-small) {
-            --font-size: 22px !important; // !important for .ag-styles specificity
+            --font-size: 22px;
         }
 
         @media screen and (min-width: $breakpoint-hero-large) {
-            --font-size: min(1.9vw, 30px) !important; // !important for .ag-styles specificity
-            --font-weight: var(--font-weight-thin) !important; // !important for .ag-styles specificity
+            --font-size: min(1.9vw, 30px);
+            --font-weight: var(--font-weight-thin);
 
             max-width: unset;
         }
@@ -128,7 +127,7 @@ gatsby-fast-refresh {
 }
 
 .automatedIntegratedChartsOuter {
-    margin-bottom: $size-8 !important; // !important for .ag-styles specificity;
+    margin-bottom: $size-8;
     background-color: var(--bright-blue-gray);
 }
 
@@ -149,12 +148,12 @@ gatsby-fast-refresh {
 }
 
 .frameworksLabel {
-    font-size: var(--font-size); // needed to deal with .ag-styles
-    font-weight: var(--font-weight); // needed to deal with .ag-styles
+    font-size: var(--font-size);
+    font-weight: var(--font-weight);
 
     @media screen and (min-width: 1020px) {
-        --font-size: var(--font-size-extra-large) !important; // !important for .ag-styles specificity
-        --font-weight: var(--font-weight-thin) !important; // !important for .ag-styles specificity
+        --font-size: var(--font-size-extra-large);
+        --font-weight: var(--font-weight-thin);
     }
 }
 
@@ -182,7 +181,7 @@ gatsby-fast-refresh {
     gap: $size-3;
 
     p {
-        margin-bottom: 0 !important; // !important needed because of .ag-styles specificity;
+        margin-bottom: 0;
         text-align: center;
     }
 }
@@ -210,13 +209,8 @@ gatsby-fast-refresh {
     }
 }
 
-.demoHeader {
-    text-align: center;
-    margin-bottom: $size-2 !important; // !important for .ag-styles specificity
-}
-
 .sponsorshipInner {
-    margin-bottom: $size-10 !important; // !important for .ag-styles specificity
+    margin-bottom: $size-10;
 
     @media screen and (min-width: $breakpoint-sponsorship-large) {
         display: flex;
@@ -225,10 +219,10 @@ gatsby-fast-refresh {
     }
 
     > div {
-        --line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
+        --line-height: var(--line-height-tight);
 
         text-align: center;
-        margin-bottom: $size-5 !important; // !important for .ag-styles specificity
+        margin-bottom: $size-5;
 
         @media screen and (min-width: $breakpoint-sponsorship-large) {
             text-align: unset;
@@ -266,7 +260,7 @@ gatsby-fast-refresh {
     gap: 0 $size-2;
 
     &:not(:last-child) {
-        margin-bottom: $size-4 !important; // !important for .ag-styles specificity
+        margin-bottom: $size-4 !important;
     }
 
     img {
@@ -277,7 +271,7 @@ gatsby-fast-refresh {
 
     h3 {
         grid-area: name;
-        margin-bottom: 0 !important; // !important for .ag-styles specificity
+        margin-bottom: 0;
     }
 
     a {
@@ -308,9 +302,9 @@ gatsby-fast-refresh {
     }
 
     h2 {
-        font-size: $font-size-medium !important; // !important for .ag-styles specificity
-        margin-bottom: $size-half !important; // !important for .ag-styles specificity
-        margin-top: $size-1 !important; // !important for .ag-styles specificity
+        font-size: $font-size-medium;
+        margin-bottom: $size-half;
+        margin-top: $size-1;
 
         overflow: hidden;
         text-overflow: ellipsis;
@@ -348,7 +342,7 @@ gatsby-fast-refresh {
         justify-content: space-between;
 
         button {
-            padding: $size-half !important; // !important for .ag-styles specificity
+            padding: $size-half;
             line-height: $line-height-ultra-tight;
         }
     }

@@ -181,15 +181,15 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    margin-bottom: $size-2 !important; // !important for .ag-styles specificity;
+    margin-bottom: $size-2;
 
     h2 {
-        margin-bottom: $size-2 !important; // !important for .ag-styles specificity;
-        font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity;
-        line-height: var(--line-height-ultra-tight) !important; // !important for .ag-styles specificity;
+        margin-bottom: $size-2;
+        font-weight: var(--font-weight-bold);
+        line-height: var(--line-height-ultra-tight);
 
         @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
-            font-size: var(--font-size-massive) !important; // !important for .ag-styles specificity;
+            font-size: var(--font-size-massive);
         }
     }
 
@@ -197,7 +197,7 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
         max-width: 50em;
 
         @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
-            font-size: var(--font-size-large) !important; // !important for .ag-styles specificity;
+            font-size: var(--font-size-large);
         }
     }
 }
@@ -207,14 +207,14 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
     justify-content: center;
     align-items: center;
     gap: $size-6;
-    margin-top: $size-1 !important; // !important for .ag-styles specificity;
+    margin-top: $size-1;
 
     @media screen and (min-width: $breakpoint-automated-row-grouping-medium) {
-        margin-top: $size-3 !important; // !important for .ag-styles specificity;
+        margin-top: $size-3;
     }
 
     button {
-        margin-left: $size-1 !important; // !important for .ag-styles specificity;
+        margin-left: $size-1;
     }
 }
 
