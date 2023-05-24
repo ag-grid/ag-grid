@@ -78,16 +78,25 @@ export class AutoGroupColService extends BeanStub {
 
         const existingCol = existingCols.find( col => col.getId()==colId );
 
+        const isSortingCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
         if (existingCol) {
+            if (isSortingCoupled) {
+                // if col is coupled sorting, and has sort attribute, we want to ignore this
+                // because we only accept the sort on creation of the col
+                defaultAutoColDef.sort = undefined;
+                defaultAutoColDef.sortIndex = undefined;
+            }
+
             existingCol.setColDef(defaultAutoColDef, null);
             this.columnFactory.applyColumnState(existingCol, defaultAutoColDef);
             return existingCol;
         }
 
-        const isSortingCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
-        if (isSortingCoupled && (defaultAutoColDef.sort || defaultAutoColDef.initialSort) && !defaultAutoColDef.field) {
+        if (isSortingCoupled && (defaultAutoColDef.sort || defaultAutoColDef.initialSort || 'sortIndex' in defaultAutoColDef) && !defaultAutoColDef.field) {
             // if no field, then this column cannot hold its own sort state
-            mergeDeep(defaultAutoColDef, { sort: null, initialSort: null } as ColDef, true, true);
+            defaultAutoColDef.sort = null;
+            defaultAutoColDef.sortIndex = null;
+            defaultAutoColDef.initialSort = null;
         }
 
         const newCol = new Column(defaultAutoColDef, null, colId, true);
