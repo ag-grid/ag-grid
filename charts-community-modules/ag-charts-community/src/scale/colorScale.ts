@@ -21,6 +21,16 @@ export class ColorScale implements Scale<number, string, number> {
             }
         }
 
+        for (let i = 1; i < domain.length; i++) {
+            const a = domain[i - 1];
+            const b = domain[i];
+            if (a >= b) {
+                Logger.warnOnce('`colorDomain` values should be supplied in ascending order.');
+                domain.sort((a, b) => a - b);
+                break;
+            }
+        }
+
         const isSmallRange = range.length < domain.length;
         if (isSmallRange || (domain.length > 2 && range.length > domain.length)) {
             Logger.warnOnce(
