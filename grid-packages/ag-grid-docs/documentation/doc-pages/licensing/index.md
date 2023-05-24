@@ -5,7 +5,7 @@ enterprise: true
 
 AG Grid comes in two forms: AG Grid Community (free for everyone, including production use) and AG Grid Enterprise (you need a license to use).
 
-<div style="display: flex;">
+<div class="ag-styles" style="display: flex;">
     <div>
         The Enterprise version of AG Grid comes with more features and <a href="https://ag-grid.zendesk.com/" target="_blank">support via Zendesk</a>. The features that are only available in AG Grid Enterprise are marked with the Enterprise icon<enterprise-icon></enterprise-icon> as demonstrated in the image to the right and in the <a href="/licensing/#feature-comparison">feature comparison</a> below. 
         <br/>

@@ -109,7 +109,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
                     <IconsPanel {...props} />
                 </AGStyles>
             ),
-            'image-caption': (props) => ImageCaption({ ...props, pageName }),
+            'image-caption': (props) => <AGStyles>{ImageCaption({ ...props, pageName })}</AGStyles>,
             'matrix-table': (props) => MatrixTable({ ...props, framework, exampleIndexData }),
             tabs: (props) => (
                 <AGStyles hasFontSizeResponsive={false}>
