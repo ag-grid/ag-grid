@@ -76,7 +76,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
 
     private setupActive(): void {
         const colDef = this.column.getColDef();
-        const filterExists = !!colDef.filter || !!colDef.filterFramework;
+        const filterExists = !!colDef.filter;
         const floatingFilterExists = !!colDef.floatingFilter;
         this.active = filterExists && floatingFilterExists;
     }

@@ -673,13 +673,6 @@
       "returnType": "void"
     }
   },
-  "setGroupRowAggNodes": {
-    "description": "/** @deprecated v27.2 - Use `setGetGroupRowAgg` instead. */",
-    "type": {
-      "arguments": { "groupRowAggNodesFunc": "(nodes: IRowNode[]) => any" },
-      "returnType": "void"
-    }
-  },
   "setGetGroupRowAgg": {
     "type": {
       "arguments": {
@@ -710,13 +703,6 @@
       "returnType": "void"
     }
   },
-  "setGetRowNodeId": {
-    "description": "/** @deprecated v27.1 Use `setGetRowId` instead  */",
-    "type": {
-      "arguments": { "getRowNodeIdFunc": "GetRowNodeIdFunc" },
-      "returnType": "void"
-    }
-  },
   "setGetRowId": {
     "type": {
       "arguments": { "getRowIdFunc": "GetRowIdFunc" },
@@ -728,13 +714,6 @@
       "arguments": {
         "rowClassFunc": "(params: RowClassParams) => string | string[]"
       },
-      "returnType": "void"
-    }
-  },
-  "setIsFullWidthCell": {
-    "description": "/** @deprecated v27.2 Use `setIsFullWidthRow` instead. */",
-    "type": {
-      "arguments": { "isFullWidthCellFunc": "(rowNode: IRowNode) => boolean" },
       "returnType": "void"
     }
   },
@@ -755,13 +734,6 @@
   "setIsRowMaster": {
     "type": {
       "arguments": { "isRowMasterFunc": "IsRowMaster" },
-      "returnType": "void"
-    }
-  },
-  "setPostSort": {
-    "description": "/** @deprecated v27.2 Use `setPostSortRows` instead */",
-    "type": {
-      "arguments": { "postSortFunc": "(nodes: IRowNode[]) => void" },
       "returnType": "void"
     }
   },
@@ -851,15 +823,6 @@
     "type": {
       "arguments": {
         "postProcessPopupFunc": "(params: PostProcessPopupParams) => void"
-      },
-      "returnType": "void"
-    }
-  },
-  "setDefaultGroupOrderComparator": {
-    "description": "/** @deprecated v27.2 - Use `setInitialGroupOrderComparator` instead */",
-    "type": {
-      "arguments": {
-        "defaultGroupOrderComparatorFunc": "(nodeA: IRowNode, nodeB: IRowNode) => number"
       },
       "returnType": "void"
     }

@@ -143,8 +143,6 @@ export interface GridOptions<TData = any> {
     copyHeadersToClipboard?: boolean;
     /** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */
     copyGroupHeadersToClipboard?: boolean;
-    /** @deprecated v27.1 Use `clipboardDelimiter` */
-    clipboardDeliminator?: string;
     /**
      * Specify the delimiter to use when copying to clipboard.
      * Default: `\t`
@@ -227,11 +225,6 @@ export interface GridOptions<TData = any> {
     // *** Components *** //
     /** A map of component names to components. */
     components?: { [p: string]: any; };
-    /** @deprecated As of v27, use `components` for framework components too. */
-    frameworkComponents?: { [p: string]: { new(): any; }; } | any;
-
-    /** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off. */
-    reactUi?: boolean;
 
     /** @deprecated Set to true to enable the experimental React UI. Works with React framework only.
      * It is planned the next major release of the grid will drop support of the legacy React engine,
@@ -325,8 +318,6 @@ export interface GridOptions<TData = any> {
     * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.
     */
     loadingCellRenderer?: any;
-    /** @deprecated As of v27, use `loadingCellRenderer` for framework components too. */
-    loadingCellRendererFramework?: any;
     /** Params to be passed to the `loadingCellRenderer` component. */
     loadingCellRendererParams?: any;
     /** Callback to select which loading cell renderer to be used when data is loading via a DataSource. */
@@ -350,8 +341,6 @@ export interface GridOptions<TData = any> {
     * See [Detail Cell Renderer](https://www.ag-grid.com/javascript-data-grid/master-detail-custom-detail/) for framework specific implementation details.
     */
     detailCellRenderer?: any;
-    /** @deprecated As of v27, use `detailCellRenderer` for framework components too. */
-    detailCellRendererFramework?: any;
     /** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */
     detailCellRendererParams?: any;
 
@@ -410,8 +399,6 @@ export interface GridOptions<TData = any> {
     * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-loading-overlay-component) for framework specific implementation details.
     */
     loadingOverlayComponent?: any;
-    /** @deprecated As of v27, use `loadingOverlayComponent` for framework components too. */
-    loadingOverlayComponentFramework?: any;
     /** Customise the parameters provided to the loading overlay component. */
     loadingOverlayComponentParams?: any;
 
@@ -426,8 +413,6 @@ export interface GridOptions<TData = any> {
     * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-no-rows-overlay-component) for framework specific implementation details.
     */
     noRowsOverlayComponent?: any;
-    /** @deprecated As of v27, use `noRowsOverlayComponent` for framework components too. */
-    noRowsOverlayComponentFramework?: any;
     /** Customise the parameters provided to the no rows overlay component. */
     noRowsOverlayComponentParams?: any;
 
@@ -540,8 +525,6 @@ export interface GridOptions<TData = any> {
     * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details.
     */
     fullWidthCellRenderer?: any;
-    /** @deprecated As of v27, use `fullWidthCellRenderer` for framework components too. */
-    fullWidthCellRendererFramework?: any;
     /** Customise the parameters provided to the `fullWidthCellRenderer` component. */
     fullWidthCellRendererParams?: any;
 
@@ -602,8 +585,6 @@ export interface GridOptions<TData = any> {
     * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details.
     */
     groupRowRenderer?: any;
-    /** @deprecated As of v27, use `groupRowRenderer` for framework components too. */
-    groupRowRendererFramework?: any;
     /** Customise the parameters provided to the `groupRowRenderer` component. */
     groupRowRendererParams?: any;
 
@@ -635,10 +616,6 @@ export interface GridOptions<TData = any> {
     // changeable with impact
     /** Set the data to be displayed as rows in the grid. */
     rowData?: TData[] | null;
-    /**
-     * @deprecated 27.1 Immutable Data is on by default when grid callback getRowId() is implemented
-     * Enables Immutable Data mode, for compatibility with immutable stores. Default: `false` */
-    immutableData?: boolean;
     /** How many milliseconds to wait before executing a batch of async transactions. */
     asyncTransactionWaitMillis?: number;
     /** Prevents Transactions changing sort, filter, group or pivot state when transaction only contains updates. Default: `false` */
@@ -752,10 +729,6 @@ export interface GridOptions<TData = any> {
     suppressRowDeselection?: boolean;
     /** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection. Default: `false` */
     suppressRowClickSelection?: boolean;
-    /**
-     * @deprecated v27 This property has been deprecated. Use `suppressCellFocus` instead.
-     */
-    suppressCellSelection?: boolean;
     /** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but remain enabled in other elements of the grid such as column headers, floating filters, tool panels. Default: `false` */
     suppressCellFocus?: boolean;
     /** If `true`, only a single range can be selected. Default: `false` */
@@ -868,8 +841,6 @@ export interface GridOptions<TData = any> {
     tabToNextCell?: (params: TabToNextCellParams<TData>) => (CellPosition | null);
 
     // *** Localisation *** //
-    /** @deprecated v27.2 - Use `getLocaleText` instead. */
-    localeTextFunc?: (key: string, defaultValue: string, variableValues?: string[]) => string;
     /** A callback for localising text within the grid. */
     getLocaleText?: (params: GetLocaleTextParams<TData>) => string;
 
@@ -882,16 +853,12 @@ export interface GridOptions<TData = any> {
     paginationNumberFormatter?: (params: PaginationNumberFormatterParams<TData>) => string;
 
     // *** Row Grouping and Pivoting *** //
-    /** @deprecated v27.2 - Use `getGroupRowAgg` instead. */
-    groupRowAggNodes?: (nodes: IRowNode[]) => any;
     /** Callback to use when you need access to more then the current column for aggregation. */
     getGroupRowAgg?: (params: GetGroupRowAggParams<TData>) => any;
     /** (Client-side Row Model only) Allows groups to be open by default. */
     isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams<TData>) => boolean;
     /** Allows default sorting of groups. */
     initialGroupOrderComparator?: (params: InitialGroupOrderComparatorParams<TData>) => number;
-    /** @deprecated v27.2 - Use `initialGroupOrderComparator` instead */
-    defaultGroupOrderComparator?: (nodeA: IRowNode<TData>, nodeB: IRowNode<TData>) => number;
     /** @deprecated v28 - Use `processPivotResultColDef` instead */
     processSecondaryColDef?: (colDef: ColDef<TData>) => void;
     /** @deprecated v28 - Use `processPivotResultColGroupDef` instead */
@@ -925,10 +892,7 @@ export interface GridOptions<TData = any> {
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
      */
     getBusinessKeyForNode?: (node: IRowNode<TData>) => string;
-    /**
-     * @deprecated v27.1 Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`
-     * Allows you to set the ID for a particular row node based on the data. */
-    getRowNodeId?: GetRowNodeIdFunc<TData>;
+
     /** Allows setting the ID for a particular row node based on the data. */
     getRowId?: GetRowIdFunc<TData>;
     /** When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.  Default: `false` */
@@ -943,8 +907,6 @@ export interface GridOptions<TData = any> {
     fillOperation?: (params: FillOperationParams<TData>) => any;
 
     // *** Sorting *** //
-    /** @deprecated v27.2 Use `postSortRows` instead */
-    postSort?: (nodes: IRowNode<TData>[]) => void;
     /** Callback to perform additional sorting after the grid has sorted the rows. */
     postSortRows?: (params: PostSortRowsParams<TData>) => void;
 
@@ -955,8 +917,6 @@ export interface GridOptions<TData = any> {
     getRowClass?: (params: RowClassParams<TData>) => string | string[] | undefined;
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */
     getRowHeight?: (params: RowHeightParams<TData>) => number | undefined | null;
-    /** @deprecated v27.2 Use `isFullWidthRow` instead. */
-    isFullWidthCell?: (rowNode: IRowNode<TData>) => boolean;
     /** Tells the grid if this row should be rendered as full width. */
     isFullWidthRow?: (params: IsFullWidthRowParams<TData>) => boolean;
 
@@ -1326,8 +1286,6 @@ export interface LoadingCellRendererSelectorFunc<TData = any> {
 export interface LoadingCellRendererSelectorResult {
     /** Equivalent of setting `loadingCellRenderer` */
     component?: any;
-    /** @deprecated As of v27, use `component` for framework components too. */
-    frameworkComponent?: any;
     /** Equivalent of setting `loadingCellRendererParams` */
     params?: any;
 }

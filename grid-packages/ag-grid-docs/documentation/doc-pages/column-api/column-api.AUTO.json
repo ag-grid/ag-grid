@@ -407,13 +407,6 @@
     "description": "/** @deprecated v28 Use `getColumns` instead */",
     "type": { "arguments": {}, "returnType": "Column[] | null" }
   },
-  "getOriginalColumnGroup": {
-    "description": "/** @deprecated v27 getOriginalColumnGroup is deprecated, use getProvidedColumnGroup. */",
-    "type": {
-      "arguments": { "name": "string" },
-      "returnType": "ProvidedColumnGroup | null"
-    }
-  },
   "getPrimaryColumns": {
     "description": "/** @deprecated v28 Use `getColumns` instead. */",
     "type": { "arguments": {}, "returnType": "Column[] | null" }

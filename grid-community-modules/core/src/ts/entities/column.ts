@@ -272,8 +272,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     private initTooltip(): void {
         this.tooltipEnabled = exists(this.colDef.tooltipField) ||
             exists(this.colDef.tooltipValueGetter) ||
-            exists(this.colDef.tooltipComponent) ||
-            exists(this.colDef.tooltipComponentFramework);
+            exists(this.colDef.tooltipComponent);
     }
 
     public resetActualWidth(source: ColumnEventType = 'api'): void {
@@ -305,7 +304,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     public isFilterAllowed(): boolean {
         // filter defined means it's a string, class or true.
         // if its false, null or undefined then it's false.
-        const filterDefined = !!this.colDef.filter || !!this.colDef.filterFramework;
+        const filterDefined = !!this.colDef.filter;
         return filterDefined;
     }
 
@@ -388,10 +387,6 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
 
         if (exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
             warnOnce('AG Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck');
-        }
-
-        if (colDefAny.pinnedRowCellRenderer || colDefAny.pinnedRowCellRendererParams || colDefAny.pinnedRowCellRendererFramework) {
-            warnOnce('AG Grid: pinnedRowCellRenderer[Params,Framework] no longer exist. Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.', 'colDef.pinnedRowCellRenderer-deprecated');
         }
 
         if (exists(colDefAny.columnGroupShow) && colDefAny.columnGroupShow !== 'closed' && colDefAny.columnGroupShow !== 'open') {

@@ -114,7 +114,7 @@ export class AutoGroupColService extends BeanStub {
 
         const userHasProvidedGroupCellRenderer =
             userDef &&
-            (userDef.cellRenderer || userDef.cellRendererFramework || userDef.cellRendererSelector);
+            (userDef.cellRenderer || userDef.cellRendererSelector);
 
         // only add the default group cell renderer if user hasn't provided one
         if (!userHasProvidedGroupCellRenderer) {
@@ -132,11 +132,10 @@ export class AutoGroupColService extends BeanStub {
                 headerValueGetter: colDef.headerValueGetter
             });
 
-            if (colDef.cellRenderer || colDef.cellRendererFramework) {
+            if (colDef.cellRenderer) {
                 Object.assign(res, {
                     cellRendererParams: {
                         innerRenderer: colDef.cellRenderer,
-                        innerRendererFramework: colDef.cellRendererFramework,
                         innerRendererParams: colDef.cellRendererParams
                     }
                 });

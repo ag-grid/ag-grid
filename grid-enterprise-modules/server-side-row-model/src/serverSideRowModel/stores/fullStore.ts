@@ -244,7 +244,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         const lookupNodeToRecycle = (data: any): RowNode | undefined => {
             if (!nodesToRecycle) { return undefined; }
 
-            const getRowIdFunc = this.gridOptionsService.getRowIdFunc();
+            const getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
             if (!getRowIdFunc) { return undefined; }
 
             const parentKeys = this.parentRowNode.getGroupKeys();
@@ -644,7 +644,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private lookupRowNode(data: any): RowNode | null {
-        const getRowIdFunc = this.gridOptionsService.getRowIdFunc();
+        const getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
 
         let rowNode: RowNode;
         if (getRowIdFunc != null) {

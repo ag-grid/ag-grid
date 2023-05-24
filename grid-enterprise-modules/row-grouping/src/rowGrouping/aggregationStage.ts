@@ -45,25 +45,13 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
         // detections). if no value columns and no changed path, means we have to go through all nodes in
         // case we need to clean up agg data from before.
         const noValueColumns = _.missingOrEmpty(this.columnModel.getValueColumns());
-        const noUserAgg = !this.getGroupRowAggFunc();
+        const noUserAgg = !this.gridOptionsService.getCallback('getGroupRowAgg');
         const changedPathActive = params.changedPath && params.changedPath.isActive();
         if (noValueColumns && noUserAgg && changedPathActive) { return; }
 
         const aggDetails = this.createAggDetails(params);
 
         this.recursivelyCreateAggData(aggDetails);
-    }
-
-    public getGroupRowAggFunc() {
-        const getGroupRowAgg = this.gridOptionsService.getCallback('getGroupRowAgg');
-        if (getGroupRowAgg) {
-            return getGroupRowAgg;
-        }
-        // this is the deprecated way, so provide a proxy to make it compatible
-        const groupRowAggNodes = this.gridOptionsService.get('groupRowAggNodes');
-        if (groupRowAggNodes) {
-            return (params: WithoutGridCommon<GetGroupRowAggParams>) => groupRowAggNodes(params.nodes);
-        }
     }
 
     private createAggDetails(params: StageExecuteParams): AggregationDetails {
@@ -124,7 +112,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
 
         const measureColumnsMissing = aggDetails.valueColumns.length === 0;
         const pivotColumnsMissing = aggDetails.pivotColumns.length === 0;
-        const userFunc = this.getGroupRowAggFunc();
+        const userFunc = this.gridOptionsService.getCallback('getGroupRowAgg');
 
         let aggResult: any;
         if (userFunc) {

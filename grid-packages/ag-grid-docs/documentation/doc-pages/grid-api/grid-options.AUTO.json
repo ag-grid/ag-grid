@@ -51,10 +51,6 @@
     "description": "/** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
-  "clipboardDeliminator": {
-    "description": "/** @deprecated v27.1 Use `clipboardDelimiter` */",
-    "type": { "returnType": "string" }
-  },
   "clipboardDelimiter": {
     "description": "/** Specify the delimiter to use when copying to clipboard.\n     * Default: `\\t`\n    */",
     "type": { "returnType": "string" }
@@ -173,14 +169,6 @@
     "description": "/** A map of component names to components. */",
     "type": { "returnType": "{ [p: string]: any; }" }
   },
-  "frameworkComponents": {
-    "description": "/** @deprecated As of v27, use `components` for framework components too. */",
-    "type": { "returnType": "{ [p: string]: { new(): any; }; } | any" }
-  },
-  "reactUi": {
-    "description": "/** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off. */",
-    "type": { "returnType": "boolean" }
-  },
   "suppressReactUi": {
     "description": "/** @deprecated Set to true to enable the experimental React UI. Works with React framework only.\n     * It is planned the next major release of the grid will drop support of the legacy React engine,\n     * hence this property is deprecated as will be removed in the next major release. */",
     "type": { "returnType": "boolean" }
@@ -293,10 +281,6 @@
     "description": "/** Provide your own loading cell renderer to use when data is loading via a DataSource.\n    * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.\n    */",
     "type": { "returnType": "any" }
   },
-  "loadingCellRendererFramework": {
-    "description": "/** @deprecated As of v27, use `loadingCellRenderer` for framework components too. */",
-    "type": { "returnType": "any" }
-  },
   "loadingCellRendererParams": {
     "description": "/** Params to be passed to the `loadingCellRenderer` component. */",
     "type": { "returnType": "any" }
@@ -323,10 +307,6 @@
   },
   "detailCellRenderer": {
     "description": "/** Provide a custom `detailCellRenderer` to use when a master row is expanded.\n    * See [Detail Cell Renderer](https://www.ag-grid.com/javascript-data-grid/master-detail-custom-detail/) for framework specific implementation details.\n    */",
-    "type": { "returnType": "any" }
-  },
-  "detailCellRendererFramework": {
-    "description": "/** @deprecated As of v27, use `detailCellRenderer` for framework components too. */",
     "type": { "returnType": "any" }
   },
   "detailCellRendererParams": {
@@ -411,10 +391,6 @@
     "description": "/** Provide a custom loading overlay component.\n    * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-loading-overlay-component) for framework specific implementation details.\n    */",
     "type": { "returnType": "any" }
   },
-  "loadingOverlayComponentFramework": {
-    "description": "/** @deprecated As of v27, use `loadingOverlayComponent` for framework components too. */",
-    "type": { "returnType": "any" }
-  },
   "loadingOverlayComponentParams": {
     "description": "/** Customise the parameters provided to the loading overlay component. */",
     "type": { "returnType": "any" }
@@ -429,10 +405,6 @@
   },
   "noRowsOverlayComponent": {
     "description": "/** Provide a custom no rows overlay component.\n    * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-no-rows-overlay-component) for framework specific implementation details.\n    */",
-    "type": { "returnType": "any" }
-  },
-  "noRowsOverlayComponentFramework": {
-    "description": "/** @deprecated As of v27, use `noRowsOverlayComponent` for framework components too. */",
     "type": { "returnType": "any" }
   },
   "noRowsOverlayComponentParams": {
@@ -590,10 +562,6 @@
     "description": "/** Provide your own cell renderer component to use for full width rows.\n    * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details.\n    */",
     "type": { "returnType": "any" }
   },
-  "fullWidthCellRendererFramework": {
-    "description": "/** @deprecated As of v27, use `fullWidthCellRenderer` for framework components too. */",
-    "type": { "returnType": "any" }
-  },
   "fullWidthCellRendererParams": {
     "description": "/** Customise the parameters provided to the `fullWidthCellRenderer` component. */",
     "type": { "returnType": "any" }
@@ -670,10 +638,6 @@
     "description": "/** Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.\n    * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details.\n    */",
     "type": { "returnType": "any" }
   },
-  "groupRowRendererFramework": {
-    "description": "/** @deprecated As of v27, use `groupRowRenderer` for framework components too. */",
-    "type": { "returnType": "any" }
-  },
   "groupRowRendererParams": {
     "description": "/** Customise the parameters provided to the `groupRowRenderer` component. */",
     "type": { "returnType": "any" }
@@ -713,10 +677,6 @@
   "rowData": {
     "description": "/** Set the data to be displayed as rows in the grid. */",
     "type": { "returnType": "TData[] | null" }
-  },
-  "immutableData": {
-    "description": "/** @deprecated 27.1 Immutable Data is on by default when grid callback getRowId() is implemented\n     * Enables Immutable Data mode, for compatibility with immutable stores. Default: `false` */",
-    "type": { "returnType": "boolean" }
   },
   "asyncTransactionWaitMillis": {
     "description": "/** How many milliseconds to wait before executing a batch of async transactions. */",
@@ -864,10 +824,6 @@
   },
   "suppressRowClickSelection": {
     "description": "/** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection. Default: `false` */",
-    "type": { "returnType": "boolean" }
-  },
-  "suppressCellSelection": {
-    "description": "/** @deprecated v27 This property has been deprecated. Use `suppressCellFocus` instead.\n     */",
     "type": { "returnType": "boolean" }
   },
   "suppressCellFocus": {
@@ -1079,17 +1035,6 @@
       "returnType": "(CellPosition | null)"
     }
   },
-  "localeTextFunc": {
-    "description": "/** @deprecated v27.2 - Use `getLocaleText` instead. */",
-    "type": {
-      "arguments": {
-        "key": "string",
-        "defaultValue": "string",
-        "variableValues?": "string[]"
-      },
-      "returnType": "string"
-    }
-  },
   "getLocaleText": {
     "description": "/** A callback for localising text within the grid. */",
     "type": {
@@ -1107,10 +1052,6 @@
       "arguments": { "params": "PaginationNumberFormatterParams<TData>" },
       "returnType": "string"
     }
-  },
-  "groupRowAggNodes": {
-    "description": "/** @deprecated v27.2 - Use `getGroupRowAgg` instead. */",
-    "type": { "arguments": { "nodes": "IRowNode[]" }, "returnType": "any" }
   },
   "getGroupRowAgg": {
     "description": "/** Callback to use when you need access to more then the current column for aggregation. */",
@@ -1130,13 +1071,6 @@
     "description": "/** Allows default sorting of groups. */",
     "type": {
       "arguments": { "params": "InitialGroupOrderComparatorParams<TData>" },
-      "returnType": "number"
-    }
-  },
-  "defaultGroupOrderComparator": {
-    "description": "/** @deprecated v27.2 - Use `initialGroupOrderComparator` instead */",
-    "type": {
-      "arguments": { "nodeA": "IRowNode<TData>", "nodeB": "IRowNode<TData>" },
       "returnType": "number"
     }
   },
@@ -1210,10 +1144,6 @@
       "returnType": "string"
     }
   },
-  "getRowNodeId": {
-    "description": "/** @deprecated v27.1 Use `getRowId` instead - however be aware, `getRowId()` will also set grid option `immutableData=true`\n     * Allows you to set the ID for a particular row node based on the data. */",
-    "type": { "returnType": "GetRowNodeIdFunc<TData>" }
-  },
   "getRowId": {
     "description": "/** Allows setting the ID for a particular row node based on the data. */",
     "type": { "returnType": "GetRowIdFunc<TData>" }
@@ -1244,13 +1174,6 @@
       "returnType": "any"
     }
   },
-  "postSort": {
-    "description": "/** @deprecated v27.2 Use `postSortRows` instead */",
-    "type": {
-      "arguments": { "nodes": "IRowNode<TData>[]" },
-      "returnType": "void"
-    }
-  },
   "postSortRows": {
     "description": "/** Callback to perform additional sorting after the grid has sorted the rows. */",
     "type": {
@@ -1277,13 +1200,6 @@
     "type": {
       "arguments": { "params": "RowHeightParams<TData>" },
       "returnType": "number | undefined | null"
-    }
-  },
-  "isFullWidthCell": {
-    "description": "/** @deprecated v27.2 Use `isFullWidthRow` instead. */",
-    "type": {
-      "arguments": { "rowNode": "IRowNode<TData>" },
-      "returnType": "boolean"
     }
   },
   "isFullWidthRow": {
