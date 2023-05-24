@@ -601,23 +601,23 @@ export class LineSeries extends CartesianSeries<LineContext> {
             });
 
             markerSelections[contextDataIndex].each((marker, datum) => {
+                const delay = seriesRect?.width ? (datum.point.x / seriesRect.width) * duration : 0;
                 const format = this.animateFormatter(datum);
                 const size = datum.point?.size ?? 0;
 
                 this.animationManager?.animate<number>(`${this.id}_empty-update-ready_${marker.id}`, {
                     ...animationOptions,
-                    onUpdate(xValue) {
-                        if (datum.point.x <= xValue) {
-                            marker.size = format?.size ?? size;
-                        } else {
-                            marker.size = 0;
-                        }
+                    to: format?.size ?? size,
+                    delay,
+                    duration: duration / 10,
+                    onUpdate(size) {
+                        marker.size = size;
                     },
                 });
             });
 
             labelSelections[contextDataIndex].each((label, datum) => {
-                const delay = seriesRect?.width ? (datum.point.x / seriesRect.width) * duration - duration / 10 : 0;
+                const delay = seriesRect?.width ? (datum.point.x / seriesRect.width) * duration : 0;
                 this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
