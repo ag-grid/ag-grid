@@ -1003,7 +1003,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
      */
     public setSelected(newValue: boolean, clearSelection: boolean = false, source: SelectionEventSourceType = 'api') {
         if (typeof source === 'boolean')  {
-            console.warn('AG Grid: since version v30, rowNode.setSelected() property `suppressFinishActions` has been deprecated, please use `gridApi.setNodesSelected()` for bulk actions, and the event `source` property for ignoring events instead.');
+            console.warn('AG Grid: since version v30, rowNode.setSelected() property `suppressFinishActions` has been removed, please use `gridApi.setNodesSelected()` for bulk actions, and the event `source` property for ignoring events instead.');
             return;
         }
 
