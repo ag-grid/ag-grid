@@ -257,6 +257,13 @@ export class GridOptionsValidator {
         });
 
         // Manual messages and deprecation behaviour that don't fit our standard approach above.
+        if (options.immutableData) {
+            if (options.getRowId) {
+                console.warn('AG Grid: since v27.1, `immutableData` is deprecated. With the `getRowId` callback implemented, immutable data is enabled by default so you can remove `immutableData=true`.');
+            } else {
+                console.warn('AG Grid: since v27.1, `immutableData` is deprecated. To enable immutable data you must implement the `getRowId()` callback.');
+            }
+        }
         if (options.serverSideStoreType) {
             console.warn('AG Grid: since v29.0, `serverSideStoreType` has been replaced by `suppressServerSideInfiniteScroll`. Set to false to use Partial Store, and true to use Full Store.');
             options.suppressServerSideInfiniteScroll = options.serverSideStoreType !== 'partial';
