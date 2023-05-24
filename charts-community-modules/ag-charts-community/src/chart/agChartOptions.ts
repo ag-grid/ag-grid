@@ -1815,7 +1815,8 @@ export type AgPolarSeriesOptions = AgPieSeriesOptions;
 
 export type AgHierarchySeriesOptions = AgTreemapSeriesOptions;
 
-export interface AgCartesianChartOptions<TAddonType = never, TAddonSeries = never> extends AgBaseChartOptions {
+export interface AgCartesianChartOptions<TAddonType = never, TAddonSeries = never, TLegendAddon = never>
+    extends AgBaseChartOptions {
     /** If specified overrides the default series type. */
     type?: 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram' | TAddonType;
     /** Axis configurations. */
@@ -1823,34 +1824,34 @@ export interface AgCartesianChartOptions<TAddonType = never, TAddonSeries = neve
     /** Series configurations. */
     series?: AgCartesianSeriesOptions<TAddonSeries>[];
     /** Configuration for the chart legend. */
-    legend?: AgCartesianChartLegendOptions;
+    legend?: AgCartesianChartLegendOptions | TLegendAddon;
     /** Configuration for the chart navigator. */
     navigator?: AgNavigatorOptions;
 }
 
-export interface AgPolarChartOptions extends AgBaseChartOptions {
+export interface AgPolarChartOptions<TLegendAddon = never> extends AgBaseChartOptions {
     /** If specified overrides the default series type. */
     type?: 'pie';
     /** Series configurations. */
     series?: AgPolarSeriesOptions[];
     /** Configuration for the chart legend. */
-    legend?: AgPolarChartLegendOptions;
+    legend?: AgPolarChartLegendOptions | TLegendAddon;
 }
 
-export interface AgHierarchyChartOptions extends AgBaseChartOptions {
+export interface AgHierarchyChartOptions<TLegendAddon = never> extends AgBaseChartOptions {
     /** If specified overrides the default series type. */
     type?: 'treemap';
     data?: any;
     /** Series configurations. */
     series?: AgHierarchySeriesOptions[];
     /** Configuration for the chart legend. */
-    legend?: AgHierarchyChartLegendOptions;
+    legend?: AgHierarchyChartLegendOptions | TLegendAddon;
 }
 
-export type AgChartOptions<TAddonType = never, TAddonSeries = never> =
-    | AgCartesianChartOptions<TAddonType, TAddonSeries>
-    | AgPolarChartOptions
-    | AgHierarchyChartOptions;
+export type AgChartOptions<TAddonType = never, TAddonSeries = never, TLegendAddon = never> =
+    | AgCartesianChartOptions<TAddonType, TAddonSeries, TLegendAddon>
+    | AgPolarChartOptions<TLegendAddon>
+    | AgHierarchyChartOptions<TLegendAddon>;
 
 export interface AgChartInstance {
     /** Get the `AgChartOptions` representing the current chart configuration. */

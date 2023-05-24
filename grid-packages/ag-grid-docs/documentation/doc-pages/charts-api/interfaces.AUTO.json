@@ -3359,12 +3359,18 @@
     "type": "AgTreemapSeriesOptions"
   },
   "AgCartesianChartOptions": {
-    "meta": { "typeParams": ["TAddonType = never", "TAddonSeries = never"] },
+    "meta": {
+      "typeParams": [
+        "TAddonType = never",
+        "TAddonSeries = never",
+        "TLegendAddon = never"
+      ]
+    },
     "type": {
       "type?": "'line' | 'bar' | 'column' | 'area' | 'scatter' | 'histogram' | TAddonType",
       "axes?": "AgCartesianAxisOptions[]",
       "series?": "AgCartesianSeriesOptions<TAddonSeries>[]",
-      "legend?": "AgCartesianChartLegendOptions",
+      "legend?": "AgCartesianChartLegendOptions | TLegendAddon",
       "navigator?": "AgNavigatorOptions",
       "data?": "any[]",
       "container?": "HTMLElement | null",
@@ -3408,11 +3414,11 @@
     }
   },
   "AgPolarChartOptions": {
-    "meta": {},
+    "meta": { "typeParams": ["TLegendAddon = never"] },
     "type": {
       "type?": "'pie'",
       "series?": "AgPolarSeriesOptions[]",
-      "legend?": "AgPolarChartLegendOptions",
+      "legend?": "AgPolarChartLegendOptions | TLegendAddon",
       "data?": "any[]",
       "container?": "HTMLElement | null",
       "width?": "PixelSize",
@@ -3453,12 +3459,12 @@
     }
   },
   "AgHierarchyChartOptions": {
-    "meta": {},
+    "meta": { "typeParams": ["TLegendAddon = never"] },
     "type": {
       "type?": "'treemap'",
       "data?": "any",
       "series?": "AgHierarchySeriesOptions[]",
-      "legend?": "AgHierarchyChartLegendOptions",
+      "legend?": "AgHierarchyChartLegendOptions | TLegendAddon",
       "container?": "HTMLElement | null",
       "width?": "PixelSize",
       "height?": "PixelSize",
@@ -3500,9 +3506,13 @@
   "AgChartOptions": {
     "meta": {
       "isTypeAlias": true,
-      "typeParams": ["TAddonType = never", "TAddonSeries = never"]
+      "typeParams": [
+        "TAddonType = never",
+        "TAddonSeries = never",
+        "TLegendAddon = never"
+      ]
     },
-    "type": "AgCartesianChartOptions<TAddonType, TAddonSeries> | AgPolarChartOptions | AgHierarchyChartOptions"
+    "type": "AgCartesianChartOptions<TAddonType, TAddonSeries, TLegendAddon> | AgPolarChartOptions<TLegendAddon> | AgHierarchyChartOptions<TLegendAddon>"
   },
   "AgChartInstance": {
     "meta": {},

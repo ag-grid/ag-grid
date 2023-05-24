@@ -15,7 +15,13 @@ import {
     AgCrosshairLabelRendererParams,
     AgCrosshairLabelRendererResult,
 } from './crosshair/main';
-import { GradientLegendModule } from './gradient-legend/main';
+import {
+    GradientLegendModule,
+    AgGradientLegendOptions,
+    AgGradientLegendLabelOptions,
+    AgGradientLegendLabelFormatterParams,
+    AgGradientLegendGradientBarOptions,
+} from './gradient-legend/main';
 import {
     AgHeatmapSeriesFormat,
     AgHeatmapSeriesFormatterParams,
@@ -49,6 +55,13 @@ export {
 };
 export { AgZoomAxes, AgZoomOptions, AgZoomPanKey, AgZoomScrollingPivot };
 
+export {
+    AgGradientLegendOptions,
+    AgGradientLegendLabelOptions,
+    AgGradientLegendLabelFormatterParams,
+    AgGradientLegendGradientBarOptions,
+};
+
 declare module 'ag-charts-community' {
     export interface AgCartesianChartOptions {
         animation?: AgAnimationOptions;
@@ -80,7 +93,7 @@ declare module 'ag-charts-community' {
 
 import { LicenseManager } from './license/licenseManager';
 
-export type AgChartOptions = AgCommunityChartOptions<'heatmap', AgHeatmapSeriesOptions>;
+export type AgChartOptions = AgCommunityChartOptions<'heatmap', AgHeatmapSeriesOptions, AgGradientLegendOptions>;
 export class AgEnterpriseCharts {
     public static create(options: AgChartOptions): AgChartInstance {
         new LicenseManager(options.container?.ownerDocument ?? document).validateLicense();
