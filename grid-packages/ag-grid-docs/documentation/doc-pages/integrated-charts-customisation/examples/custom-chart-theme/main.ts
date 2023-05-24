@@ -63,7 +63,6 @@ const gridOptions: GridOptions = {
             color: '#414182',
           },
           legend: {
-            enabled: true,
             position: 'left',
             spacing: 2,
             item: {
