@@ -1,4 +1,4 @@
-@use '../design-system' as ds; // .ag-styles - remove namespace after bootstrap removed.
+@use '../design-system' as *;
 
 html {
     // Font smoothing can be moved to _typography.scss after .ag-styles is removed

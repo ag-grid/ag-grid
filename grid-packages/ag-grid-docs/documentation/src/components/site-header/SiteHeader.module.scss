@@ -143,8 +143,8 @@
     }
 
     @media screen and (min-width: $breakpoint-site-header-small) {
-        display: block !important; // !important needed to override bootstrap
-        overflow: visible !important; // !important needed to override bootstrap
+        display: block !important; // !important for .ag-styles specificity
+        overflow: visible;
     }
 }
 
