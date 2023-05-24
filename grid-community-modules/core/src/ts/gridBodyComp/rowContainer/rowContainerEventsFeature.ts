@@ -282,7 +282,6 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private onCtrlAndA(event: KeyboardEvent): void {
-
         const { pinnedRowModel, paginationProxy, rangeService } = this;
 
         if (rangeService && paginationProxy.isRowsToRender()) {

@@ -8861,9 +8861,9 @@
       "wrapperEventSource?": "'deleteKeyPressed'"
     },
     "docs": {
-      "cellEventSource?": "/** Source passed to cellValueChanged event */",
-      "dispatchWrapperEvents?": "/** True to dispatch rangeDeleteStart and rangeDeleteEnd events */",
-      "wrapperEventSource?": "/** Source passed to rangeDeleteStart and rangeDeleteEnd events */"
+      "cellEventSource?": "/** Source passed to `cellValueChanged` event */",
+      "dispatchWrapperEvents?": "/** `true` to dispatch `rangeDeleteStart` and `rangeDeleteEnd` events */",
+      "wrapperEventSource?": "/** Source passed to `rangeDeleteStart` and `rangeDeleteEnd` events */"
     }
   },
   "CellValue": {
