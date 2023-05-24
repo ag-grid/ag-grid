@@ -764,7 +764,10 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                         break;
                     }
                     const wrapped = Text.wrap(labelText, availTextWidth, availTextHeight, s, s.wrapping);
-                    if (!wrapped || wrappedRegExp.exec(wrapped) || wrapped.endsWith('\u2026')) {
+                    if (
+                        !wrapped ||
+                        (s !== labels.small && (wrappedRegExp.exec(wrapped) || wrapped.endsWith('\u2026')))
+                    ) {
                         // Avoid hyphens and ellipsis
                         continue;
                     }
