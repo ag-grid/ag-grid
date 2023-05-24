@@ -1,4 +1,4 @@
-import { AgChart } from "ag-charts-community"
+import { AgChart, AgChartOptions } from "ag-charts-community"
 
 const data = [
   {

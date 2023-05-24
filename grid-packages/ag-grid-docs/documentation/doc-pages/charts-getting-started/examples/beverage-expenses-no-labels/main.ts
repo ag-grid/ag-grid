@@ -1,4 +1,4 @@
-import { AgChart } from "ag-charts-community"
+import { AgChart, AgChartOptions } from "ag-charts-community"
 
 const data = [
   {
@@ -24,7 +24,7 @@ const data = [
   },
 ]
 
-const options = {
+const options: AgChartOptions = {
   data: data,
   container: document.getElementById("myChart"),
   series: [
