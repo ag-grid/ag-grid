@@ -1,6 +1,10 @@
 {
   "_config_": {},
   "Tags": {},
+  "TickStrategyParams": {},
+  "TickStrategyResult": {},
+  "TickStrategy": {},
+  "TickGenerationType": {},
   "TickCount": { "meta": { "typeParams": ["S"] } },
   "TickDatum": {},
   "TickData": {},
