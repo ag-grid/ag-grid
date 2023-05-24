@@ -173,7 +173,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
                     rangeSelect: event.shiftKey,
                     groupSelectsFiltered: groupSelectsFiltered,
                     event,
-                    source: 'spacePressed'
+                    source: 'spacePressed',
                 });
                 if (currentSelection === undefined && updatedCount === 0) {
                     this.rowNode.setSelectedParams({
@@ -181,7 +181,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
                         rangeSelect: event.shiftKey,
                         groupSelectsFiltered: groupSelectsFiltered,
                         event,
-                        source: 'spacePressed'
+                        source: 'spacePressed',
                     });
                 }
             }

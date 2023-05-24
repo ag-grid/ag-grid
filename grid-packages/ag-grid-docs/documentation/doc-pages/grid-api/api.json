@@ -101,6 +101,7 @@
         "deselectAllOnCurrentPage": {},
         "getSelectedNodes": {},
         "getSelectedRows": {},
+        "setNodesSelected": {},
         "getBestCostNodeSelection": {},
         "getCellRanges": {},
         "addCellRange": {},

@@ -392,7 +392,7 @@ export class ColumnFactory extends BeanStub {
         const defaultColDef = this.gridOptionsService.get('defaultColDef');
         mergeDeep(colDefMerged, defaultColDef, false, true);
 
-        let columnType = this.dataTypeService.updateColDefAndGetColumnType(colDefMerged, colDef.cellDataType, colDef.field, colId);
+        let columnType = this.dataTypeService.updateColDefAndGetColumnType(colDefMerged, colDef, colId);
 
         // merge properties from column type properties
         if (colDef.type) {

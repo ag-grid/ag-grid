@@ -21,9 +21,13 @@ const gridOptions: GridOptions<IOlympicData> = {
     return !!params.data && params.data.year === 2012;
   },  
   onFirstDataRendered: (params: FirstDataRenderedEvent<IOlympicData>) => {
-    params.api.forEachNode((node) =>      
-      node.setSelected(!!node.data && node.data.year === 2012)
-    );
+    const nodesToSelect: IRowNode[] = [];
+    params.api.forEachNode((node: IRowNode) => {
+      if (node.data && node.data.year === 2012) {
+        nodesToSelect.push(node);
+      }
+    });
+    params.api.setNodesSelected({ nodes: nodesToSelect, newValue: true });
   }
 }
 

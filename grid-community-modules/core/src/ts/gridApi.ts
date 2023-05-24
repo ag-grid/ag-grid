@@ -125,6 +125,7 @@ import { ValueService } from "./valueService/valueService";
 import { ISelectionService } from "./interfaces/iSelectionService";
 import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./interfaces/iServerSideSelection";
 import { DataTypeDefinition } from "./entities/dataType";
+import { RowNode } from "./entities/rowNode";
 
 export interface DetailGridInfo {
     /**
@@ -702,6 +703,34 @@ export class GridApi<TData = any> {
     public setExcludeHiddenColumnsFromQuickFilter(value: boolean): void {
         this.gridOptionsService.set('excludeHiddenColumnsFromQuickFilter', value);
     }
+
+    /**
+     * Set all of the provided nodes selection state to the provided value.
+     */
+    public setNodesSelected(params: { nodes: IRowNode[], newValue: boolean, source?: SelectionEventSourceType }) {
+        const allNodesValid = params.nodes.every(node => {
+            if (node.rowPinned) {
+                console.warn('AG Grid: cannot select pinned rows');
+                return false;
+            }
+
+            if (node.id === undefined) {
+                console.warn('AG Grid: cannot select node until id for node is known');
+                return false;
+            }
+            return true;
+        });
+
+        if (!allNodesValid) {
+            return;
+        }
+
+
+        const { nodes, source, newValue } = params;
+        const nodesAsRowNode = nodes as RowNode[];
+        this.selectionService.setNodesSelected({ nodes: nodesAsRowNode, source: source ?? 'api', newValue });
+    }
+
 
     /**
      * Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded.

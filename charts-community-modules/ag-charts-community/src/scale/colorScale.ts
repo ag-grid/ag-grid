@@ -1,18 +1,41 @@
 import { Scale } from './scale';
 import { Color } from '../util/color';
+import { Logger } from '../util/logger';
 import interpolateColor from '../interpolate/color';
 
 export class ColorScale implements Scale<number, string, number> {
     domain = [0, 1];
+    range = ['red', 'blue'];
 
-    private _range = ['red', 'green'];
-    private parsedRange = this._range.map((v) => Color.fromString(v));
-    get range() {
-        return this._range;
-    }
-    set range(values: string[]) {
-        this._range = values;
-        this.parsedRange = values.map((v) => Color.fromString(v));
+    private parsedRange = this.range.map((v) => Color.fromString(v));
+
+    update() {
+        const { domain, range } = this;
+
+        if (domain.length < 2) {
+            Logger.warnOnce('`colorDomain` should have at least 2 values.');
+            if (domain.length === 0) {
+                domain.push(0, 1);
+            } else if (domain.length === 1) {
+                domain.push(domain[0] + 1);
+            }
+        }
+
+        const isSmallRange = range.length < domain.length;
+        if (isSmallRange || (domain.length > 2 && range.length > domain.length)) {
+            Logger.warnOnce(
+                'Number of elements in `colorRange` needs to match the number of elements in `colorDomain`.'
+            );
+            if (isSmallRange) {
+                for (let i = range.length; i < domain.length; i++) {
+                    range.push('black');
+                }
+            } else {
+                range.splice(domain.length);
+            }
+        }
+
+        this.parsedRange = this.range.map((v) => Color.fromString(v));
     }
 
     convert(x: number) {

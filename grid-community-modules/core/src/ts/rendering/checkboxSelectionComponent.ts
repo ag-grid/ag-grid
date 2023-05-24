@@ -1,5 +1,5 @@
 import { AgCheckbox } from '../widgets/agCheckbox';
-import { PostConstruct } from '../context/context';
+import { Autowired, PostConstruct } from '../context/context';
 import { Column } from '../entities/column';
 import { Component } from '../widgets/component';
 import { Events } from '../events';
@@ -62,14 +62,13 @@ export class CheckboxSelectionComponent extends Component {
 
     private onCheckedClicked(event: MouseEvent): number {
         const groupSelectsFiltered = this.gridOptionsService.is('groupSelectsFiltered');
-        const updatedCount = this.rowNode.setSelectedParams({ newValue: false, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered, event, source: 'checkboxSelected' });
-        return updatedCount;
+
+        return this.rowNode.setSelectedParams({ newValue: false, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered, event, source: 'checkboxSelected' });
     }
 
     private onUncheckedClicked(event: MouseEvent): number {
         const groupSelectsFiltered = this.gridOptionsService.is('groupSelectsFiltered');
-        const updatedCount = this.rowNode.setSelectedParams({ newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered, event, source: 'checkboxSelected' });
-        return updatedCount;
+        return this.rowNode.setSelectedParams({ newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered, event, source: 'checkboxSelected' });
     }
 
     public init(params: {

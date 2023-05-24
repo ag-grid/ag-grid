@@ -56,7 +56,7 @@ export class SimpleCellEditor<TValue, P extends ICellEditorParams, I extends AgI
         }
 
         if (startValue != null) {
-            eInput.setValue(startValue, true);
+            eInput.setStartValue(startValue);
         }
 
         this.addManagedListener(eInput.getGui(), 'keydown', (event: KeyboardEvent) => {

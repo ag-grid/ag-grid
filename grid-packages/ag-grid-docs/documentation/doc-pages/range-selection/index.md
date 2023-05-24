@@ -88,6 +88,8 @@ Ranges are defined by a list of columns. Pass in either a) a list of columns or 
 
 When you have more than one row selected in a range, pressing keys <kbd>Ctrl</kbd>+<kbd>D</kbd> will copy the top row values to all other rows in the selected range.
 
+The Value Formatter and Value Parser can be used whilst copying the range by setting the [Use Value Formatter For Export](/value-formatters/#use-value-formatter-for-export) and [Use Value Parser for Import](/value-parsers/#use-value-parser-for-import) properties.
+
 ## Delete Range
 
 When [Cell Editing](/cell-editing/) is enabled, pressing the <kbd>Delete</kbd> key will clear all of the cells in the range (by setting the cell values to `null`).

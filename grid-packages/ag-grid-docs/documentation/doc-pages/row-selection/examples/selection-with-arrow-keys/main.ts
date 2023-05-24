@@ -33,11 +33,10 @@ function navigateToNextCell(params: NavigateToNextCellParams): (CellPosition | n
     return suggestedNextCell
   }
 
-  params.api.forEachNode(function (node) {
-    if (node.rowIndex === suggestedNextCell!.rowIndex) {
-      node.setSelected(true)
-    }
-  })
+  const nodeToSelect = params.api.getDisplayedRowAtIndex(suggestedNextCell.rowIndex);
+  if (nodeToSelect) {
+    nodeToSelect.setSelected(true);
+  }
 
   return suggestedNextCell
 }

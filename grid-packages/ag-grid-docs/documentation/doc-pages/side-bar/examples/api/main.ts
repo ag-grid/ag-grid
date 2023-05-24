@@ -1,4 +1,4 @@
-import { Grid, GridOptions, SideBarDef } from '@ag-grid-community/core'
+import { Grid, GridOptions, SideBarDef, ToolPanelSizeChangedEvent, ToolPanelVisibleChangedEvent } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -46,6 +46,12 @@ const gridOptions: GridOptions<IOlympicData> = {
     ],
     defaultToolPanel: 'filters',
     hiddenByDefault: true,
+  },
+  onToolPanelVisibleChanged: (event: ToolPanelVisibleChangedEvent) => {
+    console.log('toolPanelVisibleChanged', event);
+  },
+  onToolPanelSizeChanged: (event: ToolPanelSizeChangedEvent) => {
+    console.log('toolPanelSizeChanged', event);
   },
 }
 

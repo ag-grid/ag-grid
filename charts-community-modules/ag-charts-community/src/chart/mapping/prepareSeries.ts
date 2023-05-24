@@ -101,7 +101,7 @@ const REDUCE_CONFIG: Record<string, ReduceConfig<any>> = {
     visible: { outputProp: 'visibles', reducer: DEFAULTING_ARRAY_REDUCER('visible', true), start: [] },
     legendItemName: {
         outputProp: 'legendItemNames',
-        reducer: DEFAULTING_ARRAY_REDUCER('legendItemName', true),
+        reducer: DEFAULTING_ARRAY_REDUCER('legendItemName', SKIP),
         start: [],
     },
 

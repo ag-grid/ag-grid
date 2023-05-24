@@ -156,9 +156,7 @@ class GridExample extends Component {
                         remove: nodes.map(function (node) { return node.data; })
                     });
                 } else if (this.state.radioChecked === 1) {
-                    nodes.forEach(function (node) {
-                        node.setSelected(false);
-                    });
+                    params.api.setNodesSelected({ nodes, newValue: false });
                 }
             }
         });

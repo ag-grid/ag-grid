@@ -405,7 +405,7 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
     const completeOptions = jsonMerge([chart.processedOptions ?? {}, processedOptions], noDataCloneMergeOptions);
     const modulesChanged = applyModules(chart, completeOptions);
 
-    const skip = ['type', 'data', 'series', 'autoSize', 'listeners', 'theme', 'legend'];
+    const skip = ['type', 'data', 'series', 'listeners', 'theme', 'legend'];
     if (isAgCartesianChartOptions(processedOptions)) {
         // Append axes to defaults.
         skip.push('axes');
@@ -445,10 +445,6 @@ function applyChartOptions(chart: Chart, processedOptions: Partial<AgChartOption
         chart.data = processedOptions.data;
     }
 
-    // Needs to be done last to avoid overrides by width/height properties.
-    if (processedOptions.autoSize != null) {
-        chart.autoSize = processedOptions.autoSize;
-    }
     if (processedOptions.listeners) {
         chart.updateAllSeriesListeners();
     }

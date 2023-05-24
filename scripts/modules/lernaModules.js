@@ -1,4 +1,4 @@
-const fs = require('fs');
+
 const path = require('path');
 const {spawn} = require('child_process');
 const docsLock = require('./../docsLock');
@@ -65,4 +65,3 @@ module.exports.testCommunityModules = () => executeLernaCommand(['run', 'test', 
 module.exports.testEnterpriseModules = () => executeLernaCommand(['run', 'test', getEnterpriseScopes()]);
 module.exports.testModules = () => executeLernaCommand(['run', 'test', getModuleScopes()]);
 
-console.log(getChartsModuleScopes())

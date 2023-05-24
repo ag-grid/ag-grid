@@ -4233,7 +4233,7 @@
       }
     },
     "onToolPanelVisibleChanged": {
-      "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "description": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
       "type": {
         "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
         "returnType": "void",
@@ -4242,7 +4242,7 @@
       "meta": { "isEvent": true, "name": "onToolPanelVisibleChanged" }
     },
     "toolPanelVisibleChanged": {
-      "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "description": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
       "type": {
         "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
         "returnType": "void",
@@ -6022,28 +6022,6 @@
   },
   "ToolPanelVisibleChangedEvent": {
     "source": {
-      "type": { "returnType": "string | undefined", "optional": false }
-    },
-    "meta": { "typeParams": ["TData = any", "TContext = any"] },
-    "api": {
-      "description": "/** The grid api. */",
-      "type": { "returnType": "GridApi<TData>", "optional": false }
-    },
-    "columnApi": {
-      "description": "/** The column api. */",
-      "type": { "returnType": "ColumnApi", "optional": false }
-    },
-    "context": {
-      "description": "/** Application context as set on `gridOptions.context`. */",
-      "type": { "returnType": "TContext", "optional": false }
-    },
-    "type": {
-      "description": "/** Event identifier */",
-      "type": { "returnType": "string", "optional": false }
-    }
-  },
-  "InternalToolPanelVisibleChangedEvent": {
-    "source": {
       "type": {
         "returnType": "'sideBarButtonClicked' | 'sideBarInitializing' | 'api'",
         "optional": false
@@ -6055,6 +6033,10 @@
     },
     "visible": {
       "description": "/** True if now visible; false if now hidden. */",
+      "type": { "returnType": "boolean", "optional": false }
+    },
+    "switchingToolPanel": {
+      "description": "/** True if switching between tool panels. False if showing/hiding. */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "meta": { "typeParams": ["TData = any", "TContext = any"] },
@@ -16138,12 +16120,11 @@
   },
   "IRowNode": {
     "setSelected": {
-      "description": "/** Select (or deselect) the node.\n     * @param newValue -`true` for selection, `false` for deselection.\n     * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact. Default: `false`\n     * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired. Default: `false`\n     * @param source - Source property that will appear in the `selectionChanged` event. Default: `'api'`\n     */",
+      "description": "/** Select (or deselect) the node.\n     * @param newValue -`true` for selection, `false` for deselection.\n     * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact. Default: `false`\n     * @param source - Source property that will appear in the `selectionChanged` event. Default: `'api'`\n     */",
       "type": {
         "arguments": {
           "newValue": "boolean",
           "clearSelection?": "boolean",
-          "suppressFinishActions?": "boolean",
           "source?": "SelectionEventSourceType"
         },
         "returnType": "void",
@@ -16478,9 +16459,9 @@
     "getSelectionCount": {
       "type": { "arguments": {}, "returnType": "number", "optional": false }
     },
-    "setNodeSelected": {
+    "setNodesSelected": {
       "type": {
-        "arguments": { "params": "ISetNodeSelectedParams" },
+        "arguments": { "params": "ISetNodesSelectedParams" },
         "returnType": "number",
         "optional": false
       }
@@ -16552,8 +16533,23 @@
       }
     }
   },
-  "ISetNodeSelectedParams": {
-    "node": { "type": { "returnType": "RowNode", "optional": false } },
+  "INodeSelectionParams": {
+    "newValue": { "type": { "returnType": "boolean", "optional": false } },
+    "clearSelection": { "type": { "returnType": "boolean", "optional": true } },
+    "suppressFinishActions": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "rangeSelect": { "type": { "returnType": "boolean", "optional": true } },
+    "groupSelectsFiltered": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "source": {
+      "type": { "returnType": "SelectionEventSourceType", "optional": false }
+    },
+    "event": { "type": { "returnType": "Event", "optional": true } }
+  },
+  "ISetNodesSelectedParams": {
+    "nodes": { "type": { "returnType": "RowNode[]", "optional": false } },
     "newValue": { "type": { "returnType": "boolean", "optional": false } },
     "clearSelection": { "type": { "returnType": "boolean", "optional": true } },
     "suppressFinishActions": {
@@ -23596,7 +23592,7 @@
       }
     },
     "onToolPanelVisibleChanged": {
-      "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "description": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
       "type": {
         "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
         "returnType": "void",
@@ -23605,7 +23601,7 @@
       "meta": { "isEvent": true, "name": "onToolPanelVisibleChanged" }
     },
     "toolPanelVisibleChanged": {
-      "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "description": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
       "type": {
         "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
         "returnType": "void",
@@ -26468,7 +26464,7 @@
       }
     },
     "onToolPanelVisibleChanged": {
-      "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "description": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
       "type": {
         "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
         "returnType": "void",
@@ -26477,7 +26473,7 @@
       "meta": { "isEvent": true, "name": "onToolPanelVisibleChanged" }
     },
     "toolPanelVisibleChanged": {
-      "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "description": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
       "type": {
         "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
         "returnType": "void",
@@ -29346,7 +29342,7 @@
       }
     },
     "onToolPanelVisibleChanged": {
-      "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "description": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
       "type": {
         "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
         "returnType": "void",
@@ -29355,7 +29351,7 @@
       "meta": { "isEvent": true, "name": "onToolPanelVisibleChanged" }
     },
     "toolPanelVisibleChanged": {
-      "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
+      "description": "/** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel. */",
       "type": {
         "arguments": { "event": "ToolPanelVisibleChangedEvent<TData>" },
         "returnType": "void",

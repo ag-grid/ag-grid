@@ -428,6 +428,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         const colorScale = new ColorScale();
         colorScale.domain = colorDomain;
         colorScale.range = colorRange;
+        colorScale.update();
 
         const createTreeNodeDatum = (datum: TreeDatum, depth = 0, parent?: TreemapNodeDatum) => {
             const label = (labelFormatter ? labelFormatter({ datum }) : labelKey && (datum[labelKey] as string)) ?? '';

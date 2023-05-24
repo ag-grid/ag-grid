@@ -27,8 +27,8 @@ Animation examples.
 
 ## Line Series
 
-<chart-example title='Scatter Series' name='line' type='generated' options='{ "enterprise": true }'></chart-example>
+<chart-example title='Line Series' name='line' type='generated' options='{ "enterprise": true }'></chart-example>
 
 ## Area Series
 
-<chart-example title='Scatter Series' name='area' type='generated' options='{ "enterprise": true }'></chart-example>
+<chart-example title='Area Series' name='area' type='generated' options='{ "enterprise": true }'></chart-example>

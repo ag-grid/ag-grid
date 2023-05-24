@@ -70,14 +70,6 @@ const plugins = [
                         }
                     }
                 },
-                // {
-                //     // This handles images from Markdown files
-                //     resolve: 'gatsby-remark-images',
-                //     options: {
-                //         maxWidth: 800,
-                //         quality: 100,
-                //     },
-                // },
                 // This ensures the parent tag of Markdown content is a div rather than a p, to avoid warnings in the browser
                 'gatsby-remark-component-parent2div',
                 {

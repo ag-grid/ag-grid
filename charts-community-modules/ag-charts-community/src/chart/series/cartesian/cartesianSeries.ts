@@ -88,7 +88,7 @@ export class CartesianSeriesNodeDoubleClickEvent<
 }
 
 type CartesianAnimationState = 'empty' | 'ready';
-type CartesianAnimationEvent = 'update' | 'highlight';
+type CartesianAnimationEvent = 'update' | 'highlight' | 'resize';
 class CartesianStateMachine extends StateMachine<CartesianAnimationState, CartesianAnimationEvent> {}
 
 export abstract class CartesianSeries<
@@ -151,11 +151,15 @@ export abstract class CartesianSeries<
                 on: {
                     update: {
                         target: 'ready',
-                        action: (data) => this.animateReadyUpdateReady(data),
+                        action: (data) => this.animateReadyUpdate(data),
                     },
                     highlight: {
                         target: 'ready',
-                        action: (data) => this.animateReadyHighlightReady(data),
+                        action: (data) => this.animateReadyHighlight(data),
+                    },
+                    resize: {
+                        target: 'ready',
+                        action: (data) => this.animateReadyResize(data),
                     },
                 },
             },
@@ -219,6 +223,12 @@ export abstract class CartesianSeries<
         if (jsonDiff(this.nodeDataDependencies, newNodeDataDependencies) != null) {
             this.nodeDataDependencies = newNodeDataDependencies;
             this.markNodeDataDirty();
+            this.animationState.transition('resize', {
+                datumSelections: this.subGroups.map(({ datumSelection }) => datumSelection),
+                markerSelections: this.subGroups.map(({ markerSelection }) => markerSelection),
+                contextData: this._contextNodeData,
+                paths: this.subGroups.map(({ paths }) => paths),
+            });
         }
 
         await this.updateSelections(seriesHighlighted, anySeriesItemEnabled);
@@ -731,7 +741,7 @@ export abstract class CartesianSeries<
         // Override point for sub-classes.
     }
 
-    protected animateReadyUpdateReady(_data: {
+    protected animateReadyUpdate(_data: {
         datumSelections: Array<NodeDataSelection<N, C>>;
         markerSelections: Array<NodeDataSelection<Marker, C>>;
         contextData: Array<C>;
@@ -741,7 +751,16 @@ export abstract class CartesianSeries<
         // Override point for sub-classes.
     }
 
-    protected animateReadyHighlightReady(_data: NodeDataSelection<N, C>) {
+    protected animateReadyHighlight(_data: NodeDataSelection<N, C>) {
+        // Override point for sub-classes.
+    }
+
+    protected animateReadyResize(_data: {
+        datumSelections: Array<NodeDataSelection<N, C>>;
+        markerSelections: Array<NodeDataSelection<Marker, C>>;
+        contextData: Array<C>;
+        paths: Array<Array<Path>>;
+    }) {
         // Override point for sub-classes.
     }
 
