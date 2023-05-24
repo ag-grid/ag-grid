@@ -156,6 +156,7 @@ export class NavigationService extends BeanStub {
         }
     }
 
+    // this method is throttled, see the `constructor`
     private onPageDown(gridCell: CellPosition): void {
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
@@ -173,6 +174,7 @@ export class NavigationService extends BeanStub {
         }
     }
 
+    // this method is throttled, see the `constructor`
     private onPageUp(gridCell: CellPosition): void {
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();

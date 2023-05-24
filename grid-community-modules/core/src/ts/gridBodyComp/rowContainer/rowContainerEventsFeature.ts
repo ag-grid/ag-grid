@@ -27,6 +27,7 @@ import { ModuleNames } from "../../modules/moduleNames";
 import { IClipboardService } from "../../interfaces/iClipboardService";
 import { CellCtrl } from "../../rendering/cell/cellCtrl";
 import { RowPinnedType } from "../../interfaces/iRowNode";
+import { throttle } from "../../utils/function";
 
 export class RowContainerEventsFeature extends BeanStub {
 
@@ -48,6 +49,11 @@ export class RowContainerEventsFeature extends BeanStub {
     constructor(element: HTMLElement) {
         super();
         this.element = element;
+
+        // onCopy and onCut can be called by Keyboard Events or Clipboard Events,
+        // so we should throttle the methods to make sure it only gets called once
+        this.onCopy = throttle(this.onCopy, 10);
+        this.onCut = throttle(this.onCut, 10);
     }
 
     @PostConstruct
@@ -157,15 +163,21 @@ export class RowContainerEventsFeature extends BeanStub {
         }
     }
 
+    private getControlsForEventTarget(target: EventTarget | null): { cellCtrl: CellCtrl | null, rowCtrl: RowCtrl | null } {
+        return {
+            cellCtrl: getCtrlForEventTarget<CellCtrl>(this.gridOptionsService, target, CellCtrl.DOM_DATA_KEY_CELL_CTRL),
+            rowCtrl: getCtrlForEventTarget<RowCtrl>(this.gridOptionsService, target, RowCtrl.DOM_DATA_KEY_ROW_CTRL)
+        }
+    }
+
     private processKeyboardEvent(eventName: string, keyboardEvent: KeyboardEvent): void {
-        const cellComp = getCtrlForEventTarget<CellCtrl>(this.gridOptionsService, keyboardEvent.target, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
-        const rowComp = getCtrlForEventTarget<RowCtrl>(this.gridOptionsService, keyboardEvent.target, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
+        const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(keyboardEvent.target);
 
         if (keyboardEvent.defaultPrevented) { return; }
-        if (cellComp) {
-            this.processCellKeyboardEvent(cellComp, eventName, keyboardEvent);
-        } else if (rowComp && rowComp.isFullWidth()) {
-            this.processFullWidthRowKeyboardEvent(rowComp, eventName, keyboardEvent);
+        if (cellCtrl) {
+            this.processCellKeyboardEvent(cellCtrl, eventName, keyboardEvent);
+        } else if (rowCtrl && rowCtrl.isFullWidth()) {
+            this.processFullWidthRowKeyboardEvent(rowCtrl, eventName, keyboardEvent);
         }
     }
 
@@ -262,9 +274,11 @@ export class RowContainerEventsFeature extends BeanStub {
         const keyCode = normaliseQwertyAzerty(keyboardEvent);
 
         if (keyCode === KeyCode.A) { return this.onCtrlAndA(keyboardEvent); }
+        if (keyCode === KeyCode.C) { return this.onCopy(keyboardEvent); }
         if (keyCode === KeyCode.D) { return this.onCtrlAndD(keyboardEvent); }
-        if (keyCode === KeyCode.Z) { return this.onCtrlAndZ(keyboardEvent); }
+        if (keyCode === KeyCode.D) { return this.onCut(keyboardEvent); }
         if (keyCode === KeyCode.Y) { return this.onCtrlAndY(); }
+        if (keyCode === KeyCode.Z) { return this.onCtrlAndZ(keyboardEvent); }
     }
 
     private onCtrlAndA(event: KeyboardEvent): void {
@@ -304,18 +318,29 @@ export class RowContainerEventsFeature extends BeanStub {
         event.preventDefault();
     }
 
-    private onCopy(event: ClipboardEvent): void {
+    // this method is throttled, see the `constructor`
+    private onCopy(event: ClipboardEvent | KeyboardEvent): void {
         if (!this.clipboardService || this.gridOptionsService.is('enableCellTextSelection')) { return; }
+
+        const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
+
+        if (cellCtrl?.isEditing() || rowCtrl?.isEditing()) { return; }
 
         event.preventDefault();
         this.clipboardService.copyToClipboard();
     }
-
-    private onCut(event: ClipboardEvent): void {
+    
+    // this method is throttled, see the `constructor`
+    private onCut(event: ClipboardEvent | KeyboardEvent): void {
         if (
             !this.clipboardService ||
             this.gridOptionsService.is('enableCellTextSelection') ||
-            this.gridOptionsService.is('suppressCutToClipboard')) { return; }
+            this.gridOptionsService.is('suppressCutToClipboard')
+        ) { return; }
+
+        const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
+
+        if (cellCtrl?.isEditing() || rowCtrl?.isEditing()) { return; }
 
             event.preventDefault();
             this.clipboardService.cutToClipboard(undefined, 'ui');
