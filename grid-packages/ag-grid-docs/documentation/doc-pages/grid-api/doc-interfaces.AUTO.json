@@ -4274,17 +4274,7 @@
         "arguments": { "event": "CutStartEvent<TData>" },
         "returnType": "void",
         "optional": true
-      },
-      "meta": { "isEvent": true, "name": "onCutStart" }
-    },
-    "cutStart": {
-      "description": "/** Cut operation has started. */",
-      "type": {
-        "arguments": { "event": "CutStartEvent<TData>" },
-        "returnType": "void",
-        "optional": true
-      },
-      "meta": { "isEvent": true, "name": "onCutStart" }
+      }
     },
     "onCutEnd": {
       "description": "/** Cut operation has ended. */",
@@ -4292,17 +4282,7 @@
         "arguments": { "event": "CutEndEvent<TData>" },
         "returnType": "void",
         "optional": true
-      },
-      "meta": { "isEvent": true, "name": "onCutEnd" }
-    },
-    "cutEnd": {
-      "description": "/** Cut operation has ended. */",
-      "type": {
-        "arguments": { "event": "CutEndEvent<TData>" },
-        "returnType": "void",
-        "optional": true
-      },
-      "meta": { "isEvent": true, "name": "onCutEnd" }
+      }
     },
     "onPasteStart": {
       "description": "/** Paste operation has started. */",
@@ -23627,17 +23607,7 @@
         "arguments": { "event": "CutStartEvent<TData>" },
         "returnType": "void",
         "optional": true
-      },
-      "meta": { "isEvent": true, "name": "onCutStart" }
-    },
-    "cutStart": {
-      "description": "/** Cut operation has started. */",
-      "type": {
-        "arguments": { "event": "CutStartEvent<TData>" },
-        "returnType": "void",
-        "optional": true
-      },
-      "meta": { "isEvent": true, "name": "onCutStart" }
+      }
     },
     "onCutEnd": {
       "description": "/** Cut operation has ended. */",
@@ -23645,17 +23615,7 @@
         "arguments": { "event": "CutEndEvent<TData>" },
         "returnType": "void",
         "optional": true
-      },
-      "meta": { "isEvent": true, "name": "onCutEnd" }
-    },
-    "cutEnd": {
-      "description": "/** Cut operation has ended. */",
-      "type": {
-        "arguments": { "event": "CutEndEvent<TData>" },
-        "returnType": "void",
-        "optional": true
-      },
-      "meta": { "isEvent": true, "name": "onCutEnd" }
+      }
     },
     "onPasteStart": {
       "description": "/** Paste operation has started. */",
@@ -26499,17 +26459,7 @@
         "arguments": { "event": "CutStartEvent<TData>" },
         "returnType": "void",
         "optional": true
-      },
-      "meta": { "isEvent": true, "name": "onCutStart" }
-    },
-    "cutStart": {
-      "description": "/** Cut operation has started. */",
-      "type": {
-        "arguments": { "event": "CutStartEvent<TData>" },
-        "returnType": "void",
-        "optional": true
-      },
-      "meta": { "isEvent": true, "name": "onCutStart" }
+      }
     },
     "onCutEnd": {
       "description": "/** Cut operation has ended. */",
@@ -26517,17 +26467,7 @@
         "arguments": { "event": "CutEndEvent<TData>" },
         "returnType": "void",
         "optional": true
-      },
-      "meta": { "isEvent": true, "name": "onCutEnd" }
-    },
-    "cutEnd": {
-      "description": "/** Cut operation has ended. */",
-      "type": {
-        "arguments": { "event": "CutEndEvent<TData>" },
-        "returnType": "void",
-        "optional": true
-      },
-      "meta": { "isEvent": true, "name": "onCutEnd" }
+      }
     },
     "onPasteStart": {
       "description": "/** Paste operation has started. */",
@@ -29377,17 +29317,7 @@
         "arguments": { "event": "CutStartEvent<TData>" },
         "returnType": "void",
         "optional": true
-      },
-      "meta": { "isEvent": true, "name": "onCutStart" }
-    },
-    "cutStart": {
-      "description": "/** Cut operation has started. */",
-      "type": {
-        "arguments": { "event": "CutStartEvent<TData>" },
-        "returnType": "void",
-        "optional": true
-      },
-      "meta": { "isEvent": true, "name": "onCutStart" }
+      }
     },
     "onCutEnd": {
       "description": "/** Cut operation has ended. */",
@@ -29395,17 +29325,7 @@
         "arguments": { "event": "CutEndEvent<TData>" },
         "returnType": "void",
         "optional": true
-      },
-      "meta": { "isEvent": true, "name": "onCutEnd" }
-    },
-    "cutEnd": {
-      "description": "/** Cut operation has ended. */",
-      "type": {
-        "arguments": { "event": "CutEndEvent<TData>" },
-        "returnType": "void",
-        "optional": true
-      },
-      "meta": { "isEvent": true, "name": "onCutEnd" }
+      }
     },
     "onPasteStart": {
       "description": "/** Paste operation has started. */",
