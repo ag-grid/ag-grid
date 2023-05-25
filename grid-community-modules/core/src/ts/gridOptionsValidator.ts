@@ -97,10 +97,6 @@ export class GridOptionsValidator {
                 this.pickOneWarning('groupRowsSticky', 'groupHideOpenParents');
             }
 
-            if (this.gridOptionsService.is('masterDetail')) {
-                this.pickOneWarning('groupRowsSticky', 'masterDetail');
-            }
-
             if (this.gridOptionsService.is('pagination')) {
                 this.pickOneWarning('groupRowsSticky', 'pagination');
             }
