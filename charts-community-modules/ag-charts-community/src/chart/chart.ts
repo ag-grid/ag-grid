@@ -806,10 +806,28 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.applyLegendOptions?.(this.legend!);
 
         if (legendType === 'category') {
+            const labelMarkerFills: { [key: string]: string[] } = {};
             const usedLabels = new Set();
+
+            legendData.forEach((d) => {
+                const dc = d as CategoryLegendDatum;
+                labelMarkerFills[dc.label.text] ??= [];
+                labelMarkerFills[dc.label.text].push(dc.marker.fill);
+            });
+
+            Object.keys(labelMarkerFills).forEach((name) => {
+                const fills = labelMarkerFills[name];
+                if (fills.length > 1) {
+                    Logger.warnOnce(
+                        `legend item '${name}' has multiple fill colors, this may cause unexpected behaviour.`
+                    );
+                }
+            });
+
             legendData = legendData.filter((d) => {
-                const alreadyUsed = usedLabels.has((d as CategoryLegendDatum).label.text);
-                usedLabels.add((d as CategoryLegendDatum).label.text);
+                const dc = d as CategoryLegendDatum;
+                const alreadyUsed = usedLabels.has(dc.label.text);
+                usedLabels.add(dc.label.text);
                 return !alreadyUsed;
             });
         }
