@@ -367,6 +367,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
         this.tooltipManager.destroy();
         this.tooltip.destroy();
         this.legend?.destroy();
+        this.overlays.noData.hide();
         SizeMonitor.unobserve(this.element);
 
         for (const [key, module] of Object.entries(this.modules)) {
