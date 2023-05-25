@@ -456,7 +456,7 @@
         },
         "groupId": {},
         "marryChildren": {},
-        "stickyLabel": {},
+        "suppressStickyLabel": {},
         "openByDefault": {},
         "columnGroupShow": {},
         "toolPanelClass": {},

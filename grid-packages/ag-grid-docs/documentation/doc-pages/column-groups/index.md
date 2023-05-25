@@ -110,14 +110,14 @@ Sometimes you want columns of the group to always stick together. To achieve thi
 
 <grid-example title='Marry Children' name='marry-children' type='generated' options='{ "exampleHeight": 560 }'></grid-example>
 
-## Sticky Label
+## Suppressing Sticky Label
 
-When Column Groups are too wide, it might be useful to have the **Header Label** to be always visible while scrolling the grid horizontally. To achieve this, set the column group property `stickyLabel=true`. The example below demonstrates the following:
+When Column Groups are too wide, the **Header Label** is always visible while scrolling the grid horizontally. To suppress this behaviour, set the column group property `suppressStickyLabel=true`. The example below demonstrates the following:
 
-- Both 'Athlete Details' and 'Sport Results' have `stickyLabel=true`.
-- If you scroll the grid horizontally, the header label will always be visible until it's completely out of view.
+- Both 'Athlete Details' and 'Sport Results' have `suppressStickyLabel=true`.
+- If you scroll the grid horizontally, the header label will not be visible until the column is completely out of view.
 
-<grid-example title='Sticky Label' name='sticky-label' type='generated' options='{ "exampleHeight": 560 }'></grid-example>
+<grid-example title='Sticky Label' name='suppress-sticky-label' type='generated' options='{ "exampleHeight": 560 }'></grid-example>
 
 ## Advanced Grouping Example
 

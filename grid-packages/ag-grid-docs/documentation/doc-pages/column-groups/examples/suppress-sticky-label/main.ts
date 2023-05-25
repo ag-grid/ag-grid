@@ -3,7 +3,7 @@ import { Grid, ColDef, ColGroupDef, GridOptions } from '@ag-grid-community/core'
 const columnDefs: (ColDef | ColGroupDef)[] = [
   {
     headerName: 'Athlete Details',
-    stickyLabel: true,
+    suppressStickyLabel: true,
     children: [
       { field: 'athlete', pinned: true, colId: 'athlete' },
       { field: 'country', colId: 'country' },
@@ -12,7 +12,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
   },
   {
     headerName: 'Sports Results',
-    stickyLabel: true,
+    suppressStickyLabel: true,
     openByDefault: true,
     children: [
       { field: 'sport', colId: 'sport' },

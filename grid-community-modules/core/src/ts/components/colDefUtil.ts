@@ -71,7 +71,7 @@ export class ColDefUtil {
         suppressFiltersToolPanel: undefined,
         openByDefault: undefined,
         marryChildren: undefined,
-        stickyLabel: undefined,
+        suppressStickyLabel: undefined,
         hide: undefined,
         initialHide: undefined,
         rowGroup: undefined,

@@ -57,9 +57,9 @@ export interface ColGroupDef<TData = any> extends AbstractColDef<TData> {
     /** Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed. Default: `false` */
     marryChildren?: boolean;
     /**
-     * If `true` the label of the Column Group will scroll alongside the grid to always remain visible. Default: `false`
+     * If `true` the label of the Column Group will not scroll alongside the grid to always remain visible. Default: `false`
      */
-    stickyLabel?: boolean;
+    suppressStickyLabel?: boolean;
 
     /**
     * The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.
