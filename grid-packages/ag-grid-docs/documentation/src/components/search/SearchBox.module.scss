@@ -20,6 +20,10 @@
         padding-bottom: 0.4375em;
         padding-left: 2em;
 
+        &::-webkit-search-cancel-button {
+            display: none;
+        }
+
         @media screen and (min-width: $breakpoint-docs-search-medium) {
             padding-right: 80px;
         }

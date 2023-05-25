@@ -23,7 +23,7 @@
 
     li {
         line-height: var(--line-height-tight);
-        margin-bottom: -2px;
+        margin-bottom: -2px !important;
     }
 
     li:first-child a {
@@ -55,7 +55,8 @@
         }
     }
 
-    a {
+    a,
+    a:hover {
         color: var(--text-color);
     }
 
@@ -67,6 +68,7 @@
     a:hover h4,
     a:hover .breadcrumb {
         color: var(--link-color);
+        transition: color $default-transition-timing;
     }
 
     mark {
@@ -84,7 +86,7 @@
 }
 
 :global(.ais-InfiniteHits-list) {
-    margin-bottom: 0;
+    margin-bottom: 0 !important;
     padding-left: 0;
     list-style: none;
 }
@@ -96,14 +98,14 @@
 }
 
 button:global(.ais-InfiniteHits-loadMore) {
+    --button-text-color: var(--link-color);
+
     width: 100%;
-    padding: $size-half;
-    margin-bottom: -2px;
+    padding: $size-half !important;
     border-top-right-radius: 0;
     border-top-left-radius: 0;
     font-weight: var(--font-weight-normal);
     box-shadow: none;
-    color: var(--link-color);
 
     &:hover {
         background-color: var(--bright-blue-gray);
