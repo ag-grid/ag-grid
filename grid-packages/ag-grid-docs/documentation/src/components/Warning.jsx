@@ -4,7 +4,7 @@ import { Alert } from './alert/Alert';
 
 const Warning = ({ children, title }) => {
     return (
-        <div className="ag-styles font-size-responsive">
+        <div className="font-size-responsive">
             <Alert type="warning">
                 <div>
                     {title && <h4>{title}</h4>}

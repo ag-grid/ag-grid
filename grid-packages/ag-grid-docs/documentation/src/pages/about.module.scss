@@ -15,7 +15,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: $size-2;
-    margin-bottom: calc($size-6 * 2) !important; // !important for .ag-styles specificity
+    margin-bottom: calc($size-6 * 2);
 
     @media screen and (min-width: $breakpoint-about-small) {
         gap: $size-4;
@@ -43,8 +43,8 @@
     }
 
     h3 {
-        margin-top: $size-1 !important; // !important for .ag-styles specificity
-        margin-bottom: 0 !important; // !important for .ag-styles specificity
+        margin-top: $size-1;
+        margin-bottom: 0;
     }
 }
 

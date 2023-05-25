@@ -1,57 +1,57 @@
 @use "../design-system/" as *;
 
 .container {
-    margin-top: $size-6 !important; // !important for .ag-styles specificity
-    margin-bottom: calc($size-6 * 4) !important; // !important for .ag-styles specificity
+    margin-top: $size-6;
+    margin-bottom: calc($size-6 * 4);
 }
 
 .topSection {
     display: flex;
     flex-wrap: wrap;
     gap: $size-4;
-    margin-top: $size-8 !important; // !important for .ag-styles specificity
+    margin-top: $size-8;
 
     @media screen and (min-width: $breakpoint-pricing-large) {
         flex-wrap: nowrap;
     }
 
     h1 {
-        font-size: 44px !important; // !important for .ag-styles specificit
-        font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificit
-        margin-bottom: $size-1 !important; // !important for .ag-styles specificit
-        line-height: $line-height-ultra-tight !important; // !important for .ag-styles specificit
+        font-size: 44px;
+        font-weight: var(--font-weight-bold);
+        margin-bottom: $size-1;
+        line-height: $line-height-ultra-tight;
     }
 }
 
 .intro {
     width: 100%;
-    margin-bottom: $size-4 !important; // !important for .ag-styles specificit
+    margin-bottom: $size-4;
     text-align: center;
-    
+
     @media screen and (min-width: $breakpoint-pricing-large) {
-        margin-top: $size-8 !important; // !important for .ag-styles specificit
+        margin-top: $size-8;
         text-align: left;
     }
 
     p:global(.font-size-large) {
         max-width: 44rem;
-        margin: 0 auto !important; // !important for .ag-styles specificit
+        margin: 0 auto;
     }
 }
 
 .salesEmail {
-    margin-top: $size-2 !important; // !important for .ag-styles specificit
-    margin-bottom: $size-2 !important; // !important for .ag-styles specificit
+    margin-top: $size-2;
+    margin-bottom: $size-2;
 
     a {
         @media screen and (max-width: $breakpoint-pricing-small) {
-            font-size: $font-size-medium !important; // !important for .ag-styles specificit
+            font-size: $font-size-medium;
         }
     }
 }
 
 .videoPrompt {
-    --line-height: $line-height-tight !important; // !important for .ag-styles specificity
+    --line-height: $line-height-tight;
 
     display: flex;
     flex-wrap: wrap;
@@ -59,7 +59,7 @@
     justify-content: center;
     text-align: center;
     gap: $size-1 $size-2;
-    margin-top: $size-7 !important; // !important for .ag-styles specificity
+    margin-top: $size-7;
 
     @media screen and (min-width: $breakpoint-pricing-small) {
         text-align: left;
@@ -71,7 +71,7 @@
 
     h3,
     p {
-        margin: 0 !important; // !important for .ag-styles specificity
+        margin: 0;
     }
 }
 
@@ -84,7 +84,7 @@
     img {
         width: 100%;
         aspect-ratio: 16 / 9;
-        margin-top: $size-1 !important; // !important for .ag-styles specificity
+        margin-top: $size-1;
         object-fit: cover;
         border-radius: var(--border-radius);
     }
@@ -94,16 +94,16 @@
 .communityEnterprise,
 .videoExplainer,
 .licensesInDetail {
-    margin-bottom: $size-8 !important; // !important for .ag-styles specificity
+    margin-bottom: $size-8;
 }
 
 .bulkLicenses {
-    margin-top: $size-5 !important; // !important for .ag-styles specificity
+    margin-top: $size-5;
     text-align: center;
 
     p {
         max-width: 48em;
-        margin: 0 auto $size-1 !important; // !important for .ag-styles specificity
+        margin: 0 auto $size-1;
     }
 }
 
@@ -113,7 +113,7 @@
     align-items: center;
     gap: $size-2;
     max-width: 48em;
-    margin: $size-7 auto $size-8 !important; // !important for .ag-styles specificity
+    margin: $size-7 auto $size-8;
 
     @media screen and (min-width: $breakpoint-alert-flag-small) {
         flex-direction: row;
@@ -138,10 +138,10 @@
 }
 
 .community {
-    margin-bottom: $size-4 !important; // !important for .ag-styles specificity
+    margin-bottom: $size-4;
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
-        margin-bottom: 0 !important; // !important for .ag-styles specificity
+        margin-bottom: 0;
     }
 }
 
@@ -177,7 +177,7 @@
     }
 
     div {
-        margin-bottom: $size-4 !important; // !important for .ag-styles specificity
+        margin-bottom: $size-4;
 
         @media screen and (min-width: $breakpoint-pricing-large) {
             grid-column: 2;
@@ -185,12 +185,12 @@
     }
 
     h3 {
-        --line-height: $line-height-tight !important; // !important for .ag-styles specificity
+        --line-height: $line-height-tight;
 
-        font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity
+        font-weight: var(--font-weight-bold);
 
         @media screen and (min-width: $breakpoint-pricing-large) {
-            margin-top: -$size-1 !important; // !important for .ag-styles specificity
+            margin-top: -$size-1;
         }
     }
 
@@ -215,15 +215,15 @@
     > h3 {
         width: 100%;
         text-align: center;
-        font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity
+        font-weight: var(--font-weight-bold);
     }
 
     ul {
-        --line-height: $line-height-tight !important; // !important for .ag-styles specificity
+        --line-height: $line-height-tight;
     }
 
     li:not(:last-child) {
-        margin-bottom: $size-half !important; // !important for .ag-styles specificity
+        margin-bottom: $size-half;
     }
 
     .singleApplicationLicense,
@@ -243,18 +243,18 @@
 }
 
 .contactSales {
-    margin-bottom: $size-10 !important; // !important for .ag-styles specificity
+    margin-bottom: $size-10;
     text-align: center;
 
     p {
         max-width: 740px;
         margin-right: auto;
-        margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+        margin-bottom: $size-1;
         margin-left: auto;
     }
 
     a {
-        font-size: $font-size-extra-large !important; // !important for .ag-styles specificity
+        font-size: $font-size-extra-large;
         display: inline-block;
     }
 }

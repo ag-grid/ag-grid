@@ -2,7 +2,7 @@
 
 .tabsContainer {
     container-type: inline-size;
-    margin-bottom: $size-2 !important; // !important for .ag-styles specificity
+    margin-bottom: $size-2;
 }
 
 .externalLinks {
@@ -10,35 +10,30 @@
     align-items: center;
     gap: $size-2;
     flex-shrink: 0;
-    margin-left: auto !important; // !important for .ag-styles specificity
+    margin-left: auto;
     padding-right: $size-2;
 
     li {
-        margin-bottom: 0.125em !important; // !important for .ag-styles specificity
+        margin-bottom: 0.125em !important;
     }
 }
 
-// Extra specificity to override .ag-styles
-:global(.ag-styles) ul.externalLinks {
-    margin-bottom: 0 !important;
-}
-
 .importInfoIcon {
-    margin-right: -$size-half !important; // !important for .ag-styles specificity
+    margin-right: -$size-half;
 
     &:hover svg {
         opacity: 1;
     }
 
     svg {
-        --text-color: var(--secondary-text-color) !important; // !important for .ag-styles specificity
+        --text-color: var(--secondary-text-color);
 
         opacity: 0.5;
         transition: opacity $default-transition-timing;
     }
 }
 
-.content {
+:global(.tabs-content).content {
     overflow: auto;
-    padding: 0 !important; // !important for .ag-styles specificity
+    padding: 0;
 }

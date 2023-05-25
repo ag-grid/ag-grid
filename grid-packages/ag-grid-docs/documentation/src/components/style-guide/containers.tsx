@@ -9,8 +9,7 @@ export const Containers = () => {
                 <code>.card</code>
             </p>
 
-            {/* `.ag-card` used because of bootstrap clash with `.card`. (.ag-styles issue)*/}
-            <div className="ag-card">
+            <div className="card">
                 <header>
                     <h3>Card header example</h3>
                 </header>
@@ -48,9 +47,9 @@ export const Containers = () => {
             </p>
             <Tabs>
                 <div tab-label="Section ONE">
-                    <b>Section ONE:</b> Et inventore est veniam expedita adipisci. Dolor rerum in ex illo. Rerum
-                    autem deleniti aut eligendi tempora aliquam nihil id magnam. Porro eveniet quisquam voluptate
-                    labore tempore saepe qui qui facilis.
+                    <b>Section ONE:</b> Et inventore est veniam expedita adipisci. Dolor rerum in ex illo. Rerum autem
+                    deleniti aut eligendi tempora aliquam nihil id magnam. Porro eveniet quisquam voluptate labore
+                    tempore saepe qui qui facilis.
                 </div>
                 <div tab-label="Section TWO">
                     <b>Section TWO:</b> Ut natus velit quaerat quas quis distinctio illo aut. Neque autem atque sunt
@@ -58,9 +57,8 @@ export const Containers = () => {
                     repellendus. Placeat consequatur maiores provident.
                 </div>
                 <div tab-label="Section THREE">
-                    <b>Section THREE:</b> Velit laboriosam sed numquam excepturi quam distinctio incidunt ut ut.
-                    Odit in quia nemo officiis perferendis aspernatur animi molestiae. Quia recusandae dolorem hic
-                    repellat.
+                    <b>Section THREE:</b> Velit laboriosam sed numquam excepturi quam distinctio incidunt ut ut. Odit in
+                    quia nemo officiis perferendis aspernatur animi molestiae. Quia recusandae dolorem hic repellat.
                 </div>
             </Tabs>
 
@@ -70,9 +68,9 @@ export const Containers = () => {
             </p>
             <Tabs heading="A few tabbed sections">
                 <div tab-label="Section ONE">
-                    <b>Section ONE:</b> Et inventore est veniam expedita adipisci. Dolor rerum in ex illo. Rerum
-                    autem deleniti aut eligendi tempora aliquam nihil id magnam. Porro eveniet quisquam voluptate
-                    labore tempore saepe qui qui facilis.
+                    <b>Section ONE:</b> Et inventore est veniam expedita adipisci. Dolor rerum in ex illo. Rerum autem
+                    deleniti aut eligendi tempora aliquam nihil id magnam. Porro eveniet quisquam voluptate labore
+                    tempore saepe qui qui facilis.
                 </div>
                 <div tab-label="Section TWO">
                     <b>Section TWO:</b> Ut natus velit quaerat quas quis distinctio illo aut. Neque autem atque sunt
@@ -80,9 +78,8 @@ export const Containers = () => {
                     repellendus. Placeat consequatur maiores provident.
                 </div>
                 <div tab-label="Section THREE">
-                    <b>Section THREE:</b> Velit laboriosam sed numquam excepturi quam distinctio incidunt ut ut.
-                    Odit in quia nemo officiis perferendis aspernatur animi molestiae. Quia recusandae dolorem hic
-                    repellat.
+                    <b>Section THREE:</b> Velit laboriosam sed numquam excepturi quam distinctio incidunt ut ut. Odit in
+                    quia nemo officiis perferendis aspernatur animi molestiae. Quia recusandae dolorem hic repellat.
                 </div>
             </Tabs>
         </>

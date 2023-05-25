@@ -20,18 +20,16 @@ const Code = ({ code, language = 'ts', className = undefined, keepMarkup = false
     }
 
     return (
-        <div className="ag-styles">
-            <pre
-                className={classnames('code', `language-${language}`, className, lineNumbers ? 'line-numbers' : null)}
-                {...props}
-            >
-                {keepMarkup || lineNumbers ? (
-                    <CodeWithPrismPlugins code={code} keepMarkup={keepMarkup} />
-                ) : (
-                    <CodeWithoutPrismPlugins language={language} code={code} />
-                )}
-            </pre>
-        </div>
+        <pre
+            className={classnames('code', `language-${language}`, className, lineNumbers ? 'line-numbers' : null)}
+            {...props}
+        >
+            {keepMarkup || lineNumbers ? (
+                <CodeWithPrismPlugins code={code} keepMarkup={keepMarkup} />
+            ) : (
+                <CodeWithoutPrismPlugins language={language} code={code} />
+            )}
+        </pre>
     );
 };
 

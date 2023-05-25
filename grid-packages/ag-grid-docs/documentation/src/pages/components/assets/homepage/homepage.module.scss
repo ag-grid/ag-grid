@@ -1,11 +1,5 @@
 @use "sass:math";
-@use '../../../../design-system' as ds; // needed to deal with bootstrap conflict
-
-@import '../common/vars.scss';
-@import '../common/bootstrap.scss';
-@import '../common/grid.scss';
-@import '../common/content.scss';
-@import '../common/mixins.scss';
+@use '../../../../design-system' as *;
 
 $z-index-base: 10000; // For automated example mouse
 $z-index-debug-canvas: $z-index-base + 10;
@@ -28,15 +22,15 @@ gatsby-fast-refresh {
 .homepageHero {
     --text-color: var(--white);
 
-    padding-top: ds.$size-5;
+    padding-top: $size-5;
     background-color: var(--dark-cerulean-blue);
 
-    @media screen and (min-width: ds.$breakpoint-hero-small) {
-        padding-top: ds.$size-7;
+    @media screen and (min-width: $breakpoint-hero-small) {
+        padding-top: $size-7;
     }
 
-    @media screen and (min-width: ds.$breakpoint-hero-large) {
-        padding-top: ds.$size-8;
+    @media screen and (min-width: $breakpoint-hero-large) {
+        padding-top: $size-8;
     }
 }
 
@@ -46,30 +40,29 @@ gatsby-fast-refresh {
     flex-direction: column;
     text-align: center;
 
-    @media screen and (min-width: ds.$breakpoint-hero-large) {
+    @media screen and (min-width: $breakpoint-hero-large) {
         text-align: unset;
     }
 
     h1,
     h2 {
-        --line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
+        --line-height: var(--line-height-tight);
 
-        color: var(--text-color) !important; // needed to deal with .ag-styles
+        color: var(--text-color);
     }
 
     h1 {
         --font-size: 28px;
-        --font-weight: #{ds.$font-weight-bold}; // needed to deal with .ag-styles `
 
-        @media screen and (min-width: ds.$breakpoint-hero-small) {
-            --font-size: var(--font-size-massive) !important; // !important for .ag-styles specificity
+        @media screen and (min-width: $breakpoint-hero-small) {
+            --font-size: var(--font-size-massive);
         }
 
-        @media screen and (min-width: ds.$breakpoint-hero-large) {
-            --font-size: min(3.4vw, 54px) !important; // !important for .ag-styles specificity
+        @media screen and (min-width: $breakpoint-hero-large) {
+            --font-size: min(3.4vw, 54px);
 
-            margin-top: -0.225em !important; // !important for .ag-styles specificity;
-            margin-bottom: 0.5em !important; // !important for .ag-styles specificity;
+            margin-top: -0.225em;
+            margin-bottom: 0.5em;
         }
     }
 
@@ -79,13 +72,13 @@ gatsby-fast-refresh {
         margin-left: auto;
         margin-bottom: 1.4em;
 
-        @media screen and (min-width: ds.$breakpoint-hero-small) {
-            --font-size: 22px !important; // !important for .ag-styles specificity
+        @media screen and (min-width: $breakpoint-hero-small) {
+            --font-size: 22px;
         }
 
-        @media screen and (min-width: ds.$breakpoint-hero-large) {
-            --font-size: min(1.9vw, 30px) !important; // !important for .ag-styles specificity
-            --font-weight: var(--font-weight-thin) !important; // !important for .ag-styles specificity
+        @media screen and (min-width: $breakpoint-hero-large) {
+            --font-size: min(1.9vw, 30px);
+            --font-weight: var(--font-weight-thin);
 
             max-width: unset;
         }
@@ -95,9 +88,9 @@ gatsby-fast-refresh {
 .heroInner {
     display: flex;
     flex-direction: column;
-    gap: 0 ds.$size-4;
+    gap: 0 $size-4;
 
-    @media screen and (min-width: ds.$breakpoint-hero-large) {
+    @media screen and (min-width: $breakpoint-hero-large) {
         flex-direction: row;
     }
 }
@@ -107,7 +100,7 @@ gatsby-fast-refresh {
     flex-direction: row-reverse;
     height: 320px;
 
-    @media screen and (min-width: ds.$breakpoint-hero-large) {
+    @media screen and (min-width: $breakpoint-hero-large) {
         width: 860px;
         height: 416px;
     }
@@ -115,26 +108,26 @@ gatsby-fast-refresh {
 
 .homepageFrameworks {
     background-color: var(--bright-blue-gray);
-    padding-top: ds.$size-2;
-    padding-bottom: ds.$size-6;
+    padding-top: $size-2;
+    padding-bottom: $size-6;
 
     @media screen and (min-width: 640px) {
-        padding-top: ds.$size-6;
+        padding-top: $size-6;
     }
 }
 
 .homepageExample {
-    padding-top: ds.$size-6;
-    padding-bottom: ds.$size-7;
+    padding-top: $size-6;
+    padding-bottom: $size-7;
 
-    @media screen and (min-width: ds.$breakpoint-automated-row-grouping-medium) {
-        padding-top: ds.$size-8;
-        padding-bottom: ds.$size-9;
+    @media screen and (min-width: $breakpoint-automated-row-grouping-medium) {
+        padding-top: $size-8;
+        padding-bottom: $size-9;
     }
 }
 
 .automatedIntegratedChartsOuter {
-    margin-bottom: ds.$size-8 !important; // !important for .ag-styles specificity;
+    margin-bottom: $size-8;
     background-color: var(--bright-blue-gray);
 }
 
@@ -143,41 +136,41 @@ gatsby-fast-refresh {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: ds.$size-1;
+    gap: $size-1;
 
     @media screen and (min-width: 640px) {
         flex-direction: row;
     }
 
     @media screen and (min-width: 1020px) {
-        gap: ds.$size-2;
+        gap: $size-2;
     }
 }
 
 .frameworksLabel {
-    font-size: var(--font-size); // needed to deal with .ag-styles
-    font-weight: var(--font-weight); // needed to deal with .ag-styles
+    font-size: var(--font-size);
+    font-weight: var(--font-weight);
 
     @media screen and (min-width: 1020px) {
-        --font-size: var(--font-size-extra-large) !important; // !important for .ag-styles specificity
-        --font-weight: var(--font-weight-thin) !important; // !important for .ag-styles specificity
+        --font-size: var(--font-size-extra-large);
+        --font-weight: var(--font-weight-thin);
     }
 }
 
 .homepageQuotes {
-    padding-top: ds.$size-7;
-    padding-bottom: ds.$size-1;
+    padding-top: $size-7;
+    padding-bottom: $size-1;
     background-color: var(--ghost-blue);
 
     @media screen and (min-width: 940px) {
-        padding-top: ds.$size-8;
-        padding-bottom: ds.$size-2;
+        padding-top: $size-8;
+        padding-bottom: $size-2;
     }
 }
 
 .homepageCustomers {
     background-color: var(--ghost-blue);
-    padding-bottom: ds.$size-6;
+    padding-bottom: $size-6;
 }
 
 .customersInner {
@@ -185,10 +178,10 @@ gatsby-fast-refresh {
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    gap: ds.$size-3;
+    gap: $size-3;
 
     p {
-        margin-bottom: 0 !important; // !important needed because of .ag-styles specificity;
+        margin-bottom: 0;
         text-align: center;
     }
 }
@@ -201,42 +194,37 @@ gatsby-fast-refresh {
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: 0 ds.$size-4;
+    gap: 0 $size-4;
 
     @media screen and (min-width: 640px) {
-        gap: 0 ds.$size-6;
+        gap: 0 $size-6;
     }
 
     img {
-        height: ds.$size-1 * 7;
+        height: $size-1 * 7;
 
         @media screen and (min-width: 640px) {
-            height: ds.$size-1 * 10;
+            height: $size-1 * 10;
         }
     }
 }
 
-.demoHeader {
-    text-align: center;
-    margin-bottom: ds.$size-2 !important; // !important for .ag-styles specificity
-}
-
 .sponsorshipInner {
-    margin-bottom: ds.$size-10 !important; // !important for .ag-styles specificity
+    margin-bottom: $size-10;
 
-    @media screen and (min-width: ds.$breakpoint-sponsorship-large) {
+    @media screen and (min-width: $breakpoint-sponsorship-large) {
         display: flex;
         justify-content: center;
-        gap: ds.$size-4;
+        gap: $size-4;
     }
 
     > div {
-        --line-height: var(--line-height-tight) !important; // !important for .ag-styles specificity
+        --line-height: var(--line-height-tight);
 
         text-align: center;
-        margin-bottom: ds.$size-5 !important; // !important for .ag-styles specificity
+        margin-bottom: $size-5;
 
-        @media screen and (min-width: ds.$breakpoint-sponsorship-large) {
+        @media screen and (min-width: $breakpoint-sponsorship-large) {
             text-align: unset;
         }
     }
@@ -246,7 +234,7 @@ gatsby-fast-refresh {
         margin-left: auto;
         margin-right: auto;
 
-        @media screen and (min-width: ds.$breakpoint-sponsorship-large) {
+        @media screen and (min-width: $breakpoint-sponsorship-large) {
             margin-left: unset;
             margin-right: unset;
         }
@@ -260,19 +248,19 @@ gatsby-fast-refresh {
 }
 
 .project {
-    --icon-size: #{ds.$size-7};
+    --icon-size: #{$size-7};
 
     display: grid;
     grid-template-columns: var(--icon-size) auto;
-    grid-template-rows: ds.$size-4 auto;
+    grid-template-rows: $size-4 auto;
     grid-template-areas:
         'icon name'
         'icon link';
     width: min(100%, 25em);
-    gap: 0 ds.$size-2;
+    gap: 0 $size-2;
 
     &:not(:last-child) {
-        margin-bottom: ds.$size-4 !important; // !important for .ag-styles specificity
+        margin-bottom: $size-4 !important;
     }
 
     img {
@@ -283,7 +271,7 @@ gatsby-fast-refresh {
 
     h3 {
         grid-area: name;
-        margin-bottom: 0 !important; // !important for .ag-styles specificity
+        margin-bottom: 0;
     }
 
     a {
@@ -300,7 +288,7 @@ gatsby-fast-refresh {
     border-left: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
     background-color: rgba(255, 255, 255, 0.85);
-    padding: ds.$size-2;
+    padding: $size-2;
     z-index: $z-index-debug-panel;
 
     :global(.disabled) {
@@ -314,9 +302,9 @@ gatsby-fast-refresh {
     }
 
     h2 {
-        font-size: ds.$font-size-medium !important; // !important for .ag-styles specificity
-        margin-bottom: ds.$size-half !important; // !important for .ag-styles specificity
-        margin-top: ds.$size-1 !important; // !important for .ag-styles specificity
+        font-size: $font-size-medium;
+        margin-bottom: $size-half;
+        margin-top: $size-1;
 
         overflow: hidden;
         text-overflow: ellipsis;
@@ -354,18 +342,18 @@ gatsby-fast-refresh {
         justify-content: space-between;
 
         button {
-            padding: ds.$size-half !important; // !important for .ag-styles specificity
-            line-height: ds.$line-height-ultra-tight;
+            padding: $size-half;
+            line-height: $line-height-ultra-tight;
         }
     }
 
     :global(.draw-checkbox) {
-        margin-top: ds.$size-1;
+        margin-top: $size-1;
         cursor: pointer;
     }
 
     :global(.mouse-position) {
-        margin-top: ds.$size-1;
+        margin-top: $size-1;
         cursor: pointer;
 
         &::before {
@@ -399,7 +387,7 @@ gatsby-fast-refresh {
 :global(.automated-example-drag) {
     pointer-events: none;
 
-    @media screen and (max-width: ds.$breakpoint-automated-row-grouping-medium) {
+    @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
         transform-origin: center left;
         transform: translate(-30px, 0) scale(0.5);
     }

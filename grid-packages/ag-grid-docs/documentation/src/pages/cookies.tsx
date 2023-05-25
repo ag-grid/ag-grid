@@ -10,7 +10,7 @@ const Cookies = () => {
                 title="AG Grid: Cookies Policy"
                 description="This page outlines our policy in relation to the cookies that we collect on our website."
             />
-            <div className={classnames(styles.policyPage, 'ag-styles')}>
+            <div className={styles.policyPage}>
                 <div className="page-margin">
                     <h1>Cookie Policy</h1>
                     <hr />

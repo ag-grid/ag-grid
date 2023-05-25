@@ -21,7 +21,7 @@ const ChartGallery = () => {
 };
 
 const GallerySection = ({ title, exampleNames }) => (
-    <>
+    <div className="font-size-responsive">
         <h3 id={toKebabCase(title)} className={styles.title}>
             {title}
         </h3>
@@ -30,7 +30,7 @@ const GallerySection = ({ title, exampleNames }) => (
                 <GalleryItem key={`${title}_${name}`} name={name} />
             ))}
         </div>
-    </>
+    </div>
 );
 
 const GalleryItem = ({ name }) => {

@@ -7,7 +7,6 @@
 import { navigate, withPrefix } from 'gatsby';
 import { LocalStorage } from 'utils/local-storage';
 import supportedFrameworks from 'utils/supported-frameworks.js';
-import './src/bootstrap.scss'; // Import the Bootstrap CSS
 import { cleanUp as heroGridCleanUp } from './src/components/hero-grid';
 import { cleanUp as rowGroupingExampleCleanUp } from './src/components/automated-examples/examples/row-grouping';
 import { cleanUp as integratedChartsExampleCleanUp } from './src/components/automated-examples/examples/integrated-charts';

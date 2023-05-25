@@ -58,7 +58,7 @@ export class Chart extends React.Component<{ options: {}; fullScreen: boolean; s
     }
 
     render() {
-        const cssClasses = classnames(styles['chart'], { [styles['fullscreen']]: this.props.fullScreen });
+        const cssClasses = classnames(styles.chart, { [styles.fullscreen]: this.props.fullScreen });
         return (
             <>
                 <div id="chart-container" className={cssClasses} ref={this.chart}></div>

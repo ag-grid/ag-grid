@@ -1,6 +1,6 @@
 @use '../core' as *;
 
-.ag-card {
+.card {
     --card-color: var(--border-color);
     --header-tint: 0.775;
     --content-tint: 0.95;
@@ -27,15 +27,15 @@
     }
 
     &.single-application {
-        --card-color: #0f5bce !important; // !important for .ag-styles specificity
-        --header-tint: 0.9 !important; // !important for .ag-styles specificity
-        --content-tint: 0.96 !important; // !important for .ag-styles specificity
+        --card-color: #0f5bce;
+        --header-tint: 0.9;
+        --content-tint: 0.96;
     }
 
     &.multiple-application {
-        --card-color: #2aaa33 !important; // !important for .ag-styles specificity
-        --header-tint: 0.91 !important; // !important for .ag-styles specificity
-        --content-tint: 0.97 !important; // !important for .ag-styles specificity
+        --card-color: #2aaa33;
+        --header-tint: 0.91;
+        --content-tint: 0.97;
     }
 }
 
@@ -57,20 +57,20 @@
     .tabs-nav-list {
         display: flex;
         flex-shrink: 0;
-        margin: 0 !important; // !important for .ag-styles specificity
+        margin: 0;
         padding-left: $size-half;
         list-style-type: none;
         border-bottom: none;
     }
 
     .tabs-nav-item {
-        margin-bottom: 0 !important; // !important for .ag-styles specificity
+        margin-bottom: 0;
         padding-left: $size-1;
         padding-right: $size-1;
     }
 
     .tabs-nav-link {
-        --text-color: var(--secondary-text-color);
+        --button-text-color: var(--secondary-text-color);
 
         position: relative;
         display: inline-block;
@@ -80,7 +80,7 @@
         cursor: pointer;
 
         &:hover {
-            --text-color: var(--link-color);
+            --button-text-color: var(--link-color);
         }
 
         &::after {
@@ -102,13 +102,13 @@
         svg {
             --icon-size: #{$size-3};
 
-            margin-top: -0.125em;
+            margin: -0.125em 0 0;
             transition: fill $default-transition-timing;
         }
     }
 
     .tabs-nav-link.active {
-        --text-color: var(--text-color);
+        --button-text-color: var(--text-color);
 
         pointer-events: none;
 
@@ -132,6 +132,6 @@
     }
 
     pre.code {
-        margin-bottom: 0 !important; // !important for .ag-styles specificity
+        margin-bottom: 0;
     }
 }

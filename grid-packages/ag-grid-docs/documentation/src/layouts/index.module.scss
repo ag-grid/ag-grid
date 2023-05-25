@@ -1,18 +1,7 @@
-@use '../design-system' as ds; // .ag-styles - remove namespace after bootstrap removed.
-
-@import '~bootstrap/scss/type';
-@import '~bootstrap/scss/alert';
+@use '../design-system' as *;
 
 html {
-    // Font smoothing can be moved to _typography.scss after .ag-styles is removed
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-
     overflow-x: hidden;
-
-    @include media-breakpoint-up(lg) {
-        scroll-padding-top: 72px;
-    }
 }
 
 main {
@@ -20,7 +9,7 @@ main {
     min-width: 0px;
 }
 
-.main-container {
+.mainContainer {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -28,54 +17,12 @@ main {
     width: 100%;
 }
 
-.content-viewport {
+.contentViewport {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
 
     @media (min-width: 992px) {
         flex-direction: row;
-    }
-}
-
-.content {
-    width: 100vw;
-    max-width: 100%;
-}
-
-@include media-breakpoint-up(lg) {
-    .content {
-        max-width: calc(100% - 300px);
-    }
-}
-
-:global {
-    .event-hierarchy {
-        font-size: 0.8rem;
-        font-weight: bold;
-        white-space: pre-wrap;
-        width: 100%;
-
-        &__property {
-            color: darkgreen;
-            font-weight: normal;
-        }
-
-        &__attribute {
-            color: darkorchid;
-            font-weight: bold;
-        }
-    }
-
-    .anchor {
-        color: black;
-        font-size: 1.3rem;
-
-        &.before {
-            height: 100%;
-            width: 1.5rem;
-            display: flex;
-            align-items: center;
-        }
     }
 }

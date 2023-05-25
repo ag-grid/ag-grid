@@ -10,18 +10,6 @@
     @container (max-width: #{$breakpoint-table-small}) {
         @include stack-table();
 
-        // Fixing .ag-styles specificity issues
-        tr,
-        td {
-            background-color: transparent !important;
-        }
-
-        // Fixing .ag-styles specificity issues
-        td {
-            padding: 0 !important;
-            border: none !important;
-        }
-
         div {
             display: inline;
         }
@@ -36,13 +24,13 @@
     font-size: var(--font-size-extra-large);
 }
 
-.level-3 {
+.level3 {
     @container (min-width: #{$breakpoint-table-small}) {
         margin-left: $size-2;
     }
 }
 
-.level-4 {
+.level4 {
     @container (min-width: #{$breakpoint-table-small}) {
         margin-left: $size-5;
     }
@@ -54,9 +42,9 @@
 }
 
 .tick {
-    --text-color: #{$success};
+    --text-color: #28a745;
 }
 
 .cross {
-    --text-color: #{$danger};
+    --text-color: #dc3545;
 }

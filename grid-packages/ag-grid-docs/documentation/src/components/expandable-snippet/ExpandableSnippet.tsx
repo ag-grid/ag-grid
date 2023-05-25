@@ -1,7 +1,6 @@
 import React, { Fragment, useState } from "react";
 import classnames from 'classnames';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { Icon } from "../Icon";
 
 import {convertMarkdown, formatJsDocString} from "../documentation-helpers";
 import styles from "./ExpandableSnippet.module.scss";
@@ -49,7 +48,7 @@ export const ExpandableSnippet: React.FC<ExpandableSnippetParams> = ({
     const model = buildModel(interfacename, interfaceLookup, codeLookup, config);
 
     return (
-        <div className={classnames('ag-styles', styles["expandable-snippet"])} role="presentation">
+        <div className={classnames(styles["expandable-snippet"])} role="presentation">
             <pre className={classnames('code', 'language-ts')}>
                 <code className={'language-ts'}>
                     <BuildSnippet breadcrumbs={breadcrumbs} model={model} config={config}/>
@@ -72,7 +71,6 @@ const BuildSnippet: React.FC<BuildSnippetParams> = ({
     config = {},
 }) => {
     return renderObjectBreadcrumb(breadcrumbs, () => <Fragment>
-        <FontAwesomeIcon icon={faChevronRight} className={styles['node-expander']} symbol="node-expander" />
         <div className={styles['json-object']} role="presentation">
             <ModelSnippet model={model} config={config} path={[]}></ModelSnippet>
         </div>
@@ -370,11 +368,7 @@ function maybeRenderModelDocumentation(
 }
 
 function renderJsonNodeExpander(isExpanded: boolean) {
-    return (
-        <Fragment>
-            <svg className={classnames(styles['expander'], { 'fa-rotate-90': isExpanded })}><use href="#node-expander" role="button"/></svg>
-        </Fragment>
-    );
+    return <Icon name="chevronRight" svgClasses={classnames(styles['expander'], { 'fa-rotate-90': isExpanded })} />
 }
 
 function renderPropertyDeclaration(

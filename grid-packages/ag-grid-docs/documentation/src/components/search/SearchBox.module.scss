@@ -14,14 +14,18 @@
         background-color: red;
     }
 
-    input {
+    input[type='search'] {
         width: 100%;
-        padding-top: 0.4375em !important; // !important for .ag-styles specificity
-        padding-bottom: 0.4375em !important; // !important for .ag-styles specificity
-        padding-left: 2em !important; // !important for .ag-styles specificity;
+        padding-top: 0.4375em;
+        padding-bottom: 0.4375em;
+        padding-left: 2em;
+
+        &::-webkit-search-cancel-button {
+            display: none;
+        }
 
         @media screen and (min-width: $breakpoint-docs-search-medium) {
-            padding-right: 80px !important; // !important for .ag-styles specificity;
+            padding-right: 80px;
         }
     }
 
@@ -35,6 +39,6 @@
 }
 
 .resultsOpen {
-    border-bottom-right-radius: 0 !important; // !important for .ag-styles specificity
-    border-bottom-left-radius: 0 !important; // !important for .ag-styles specificity
+    border-bottom-right-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
 }

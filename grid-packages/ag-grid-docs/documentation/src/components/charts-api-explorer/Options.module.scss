@@ -13,7 +13,7 @@
 }
 
 .noContent {
-    margin-top: $size-4 !important; // !important for .ag-styles specificity
+    margin-top: $size-4;
     text-align: center;
 }
 
@@ -21,7 +21,7 @@
     display: inline-block;
     overflow-y: auto;
     height: 100%;
-    margin-top: $size-2 !important; // !important for .ag-styles specificity
+    margin-top: $size-2;
 
     > .option:nth-child(even) {
         background-color: var(--ghost-blue);
@@ -58,11 +58,11 @@
 
     h3 {
         position: relative;
-        margin-top: 0 !important; // !important for .ag-styles specificity
-        margin-bottom: 0 !important; // !important for .ag-styles specificity
+        margin-top: 0;
+        margin-bottom: 0;
 
         &.hasPrefix {
-            margin-top: $size-2 !important; // !important for .ag-styles specificity
+            margin-top: $size-2;
         }
     }
 
@@ -100,8 +100,8 @@
     .children {
         padding-left: $size-1;
         padding-right: $size-1;
-        margin-top: $size-1 !important; // !important for .ag-styles specificity
-        margin-bottom: -$size-2 !important; // !important for .ag-styles specificity
+        margin-top: $size-1;
+        margin-bottom: -$size-2;
 
         &.hidden {
             display: none;
@@ -109,20 +109,14 @@
 
         .option > *:not(input),
         .option > .metaList {
-            padding-left: 0 !important; // !important for .ag-styles specificity
-            padding-right: 0 !important; // !important for .ag-styles specificity
+            padding-left: 0 !important;
+            padding-right: 0;
         }
     }
 
     pre {
         margin-top: $size-2;
-        margin-bottom: 0 !important; // !important for .ag-styles specificity
-    }
-
-    code {
-        color: $primary;
-        font-size: 14px;
-        line-height: 1rem;
+        margin-bottom: 0;
     }
 }
 
@@ -135,11 +129,11 @@
     display: flex;
     flex-wrap: wrap;
     gap: $size-1 $size-3;
-    padding-left: $size-1 !important; // !important for .ag-styles specificity
+    padding-left: $size-1 !important;
 }
 
 body ul.metaList {
-    margin-bottom: 0 !important; // !important for .ag-styles specificity
+    margin-bottom: 0;
 }
 
 .metaItem {
@@ -147,10 +141,10 @@ body ul.metaList {
     flex-direction: column;
 
     code {
-        padding: 0 !important; // !important for .ag-styles specificity
+        padding: 0;
         background: transparent;
-        background-color: transparent !important; // !important for .ag-styles specificity
-        border: none !important; // !important for .ag-styles specificity
+        background-color: transparent;
+        border: none;
     }
 }
 
@@ -172,7 +166,7 @@ body ul.metaList {
     justify-content: space-between;
 
     input {
-        min-width: auto !important; // !important for .ag-styles specificity
+        min-width: auto;
     }
 }
 

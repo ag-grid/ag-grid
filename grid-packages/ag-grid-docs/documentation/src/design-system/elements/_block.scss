@@ -22,7 +22,6 @@ ul.list-style-none,
 ol.list-style-none,
 .list-style-none > li ul,
 .list-style-none > li ol {
-    margin-bottom: 0;
     padding-left: 0;
     list-style: none;
 
@@ -44,4 +43,14 @@ hr {
     border-radius: 1px;
     background-color: var(--border-color);
     border: 0;
+}
+
+svg {
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+address {
+    font-style: inherit;
+    line-height: inherit;
 }

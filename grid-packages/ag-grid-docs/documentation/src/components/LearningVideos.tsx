@@ -50,17 +50,15 @@ const LearningVideos = ({ framework }: { framework: string }) => {
     const frameworkVideos = videos && videos[framework] && videos[framework].length > 0 ? videos[framework] : [];
 
     return (
-        <div className="ag-styles">
-            <ol className={classnames('list-style-none', styles.learningVideos)}>
-                {frameworkVideos.map((video: VideoData) => {
-                    return (
-                        <li key={video.url}>
-                            <Video {...video} />
-                        </li>
-                    );
-                })}
-            </ol>
-        </div>
+        <ol className={classnames('list-style-none', styles.learningVideos)}>
+            {frameworkVideos.map((video: VideoData) => {
+                return (
+                    <li key={video.url}>
+                        <Video {...video} />
+                    </li>
+                );
+            })}
+        </ol>
     );
 };
 

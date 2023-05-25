@@ -185,7 +185,7 @@ const HomePage = ({ pageContext: { framework } }) => {
     };
 
     return (
-        <div className={classnames(styles.docsHome, 'ag-styles')}>
+        <div className={styles.docsHome}>
             {/*eslint-disable-next-line react/jsx-pascal-case*/}
             <SEO
                 title="Documentation"

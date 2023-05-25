@@ -1,4 +1,3 @@
-import classnames from 'classnames';
 import { convertMarkdown, convertUrl } from 'components/documentation-helpers';
 import React from 'react';
 import { isProductionEnvironment } from '../utils/consts';
@@ -61,8 +60,8 @@ const createTable = (framework, allColumns, allRows, isTree, booleanOnly, string
     const columnNames = columnFields.map((column) => allColumns[column]);
 
     return (
-        <div className={classnames(styles.outer, 'ag-styles')}>
-            <table className={classnames(styles.matrix, styles['matrix-table'])}>
+        <div className={styles.outer}>
+            <table className={styles.matrix}>
                 <thead>
                     <tr>
                         {columnNames.map((column, idx) => (
@@ -181,7 +180,7 @@ const createTitleRow = (framework, title, isTree, rowData, level, rowKey) =>
                       {level === 1 ? (
                           <span className={styles.title}>{title}</span>
                       ) : (
-                          <span className={level > 2 ? styles[`level-${level}`] : ''}>
+                          <span className={level > 2 ? styles[`level${level}`] : ''}>
                               {wrapWithLink(renderEnterprise(title, isTree, rowData), rowData.url, framework)}
                           </span>
                       )}
@@ -215,7 +214,7 @@ const renderPropertyColumn = (framework, value, isTree, rowData, level) => {
     if (isTree) {
         const processedValue = wrapWithLink(renderEnterprise(value, isTree, rowData), rowData.url, framework);
 
-        return <span className={level > 2 ? styles[`level-${level}`] : ''}>{processedValue}</span>;
+        return <span className={level > 2 ? styles[`level${level}`] : ''}>{processedValue}</span>;
     }
 
     return <span dangerouslySetInnerHTML={{ __html: convertMarkdown(value, framework) }} />;

@@ -311,7 +311,7 @@ const Section: React.FC<SectionProps> = ({
                 {!config.hideHeader && (
                     <HeaderTag id={`reference-${id}`} style={{ position: 'relative' }}>
                         {displayName}
-                        <a href={`#reference-${id}`} className="docs-header-icon ag-styles">
+                        <a href={`#reference-${id}`} className="docs-header-icon">
                             <Icon name="link" />
                         </a>
                     </HeaderTag>
@@ -400,10 +400,10 @@ const Section: React.FC<SectionProps> = ({
     const wrap = !!config.maxLeftColumnWidth;
 
     return (
-        <div className={classnames(styles.apiReferenceOuter, 'ag-styles')}>
+        <div className={styles.apiReferenceOuter}>
             {header}
             <table
-                className={classnames(styles['reference'], styles.apiReference)}
+                className={classnames(styles.reference, styles.apiReference)}
                 style={config.overrideBottomMargin ? { marginBottom: config.overrideBottomMargin } : {}}
             >
                 <colgroup>
@@ -476,7 +476,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
 
     let displayName = name;
     if (!!definition.isRequired) {
-        displayName += `&nbsp;<span class="${styles['reference__required']}" title="Required">&ast;</span>`;
+        displayName += `&nbsp;<span class="${styles.required}" title="Required">&ast;</span>`;
     }
 
     if (!!definition.strikeThrough) {
@@ -557,7 +557,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                         onClick={() => setExpanded(!isExpanded)}
                         dangerouslySetInnerHTML={{ __html: displayNameSplit }}
                     ></span>
-                    <a href={`#${idName}`} className="docs-header-icon ag-styles">
+                    <a href={`#${idName}`} className="docs-header-icon">
                         <Icon name="link" />
                     </a>
                 </h6>
@@ -594,9 +594,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                 <div
                     onClick={() => setExpanded(!isExpanded)}
                     role="presentation"
-                    className={classnames(styles.description, {
-                        [styles['reference__description--expanded']]: isExpanded,
-                    })}
+                    className={styles.description}
                     dangerouslySetInnerHTML={{ __html: removeDefaultValue(description) }}
                 ></div>
                 {isObject && (
@@ -670,7 +668,7 @@ const Breadcrumbs = ({ breadcrumbs }) => {
         index++;
     });
 
-    return <div className={styles['breadcrumbs']}>{links}</div>;
+    return <div className={styles.breadcrumbs}>{links}</div>;
 };
 
 const ObjectCodeSample: React.FC<ObjectCode> = ({ framework, id, breadcrumbs, properties }) => {

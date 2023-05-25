@@ -1,26 +1,26 @@
-@use '../design-system' as ds;
+@use '../design-system' as *;
 
 .policyPage {
-    margin-top: ds.$size-6;
-    margin-bottom: calc(ds.$size-6 * 4);
+    margin-top: $size-6;
+    margin-bottom: calc($size-6 * 4);
 
     nav {
-        margin-top: ds.$size-4;
-        margin-bottom: ds.$size-4;
+        margin-top: $size-4;
+        margin-bottom: $size-4;
     }
 
     nav li:not(:last-child) {
-        margin-bottom: ds.$size-half !important; // !important for .ag-styles specificity
+        margin-bottom: $size-half;
     }
 
     hr {
-        margin-bottom: ds.$size-1;
+        margin-bottom: $size-1;
     }
 
-    @media screen and (min-width: ds.$max-page-width) {
+    @media screen and (min-width: $max-page-width) {
         header {
             display: flex;
-            gap: ds.$size-4;
+            gap: $size-4;
         }
 
         nav {
@@ -29,37 +29,37 @@
         }
 
         nav li:not(:last-child) {
-            margin-bottom: ds.$size-1 !important; // !important for .ag-styles specificity
+            margin-bottom: $size-1;
             line-height: var(--line-height-tight);
         }
     }
 }
 
 .introduction {
-    margin-top: ds.$size-4 !important; // !important needed because of .ag-styles specificity
+    margin-top: $size-4;
 }
 
 .policyList {
     counter-reset: policy-count;
 
     list-style: none;
-    padding-left: 0 !important; // !important needed because of .ag-styles specificity
+    padding-left: 0;
 
     > li {
         counter-increment: policy-count;
-        margin-bottom: ds.$size-6 !important; // !important needed because of .ag-styles specificity
+        margin-bottom: $size-6;
     }
 
     li > h3:first-child:before {
         content: counter(policy-count, decimal) '. ';
-        font-weight: ds.$font-weight-normal;
+        font-weight: $font-weight-normal;
     }
 
     li::marker {
         font-size: var(--font-size-extra-large);
     }
 
-    @media screen and (min-width: (ds.$max-page-width + ds.$size-4)) {
+    @media screen and (min-width: ($max-page-width + $size-4)) {
         list-style: decimal;
         padding-left: unset;
 
@@ -70,7 +70,7 @@
 }
 
 .settingsButton {
-    margin-bottom: ds.$size-2 !important; // !important needed because of .ag-styles specificity
+    margin-bottom: $size-2;
 }
 
 // Overrides for OneTrust 3rd party styles on cookies page

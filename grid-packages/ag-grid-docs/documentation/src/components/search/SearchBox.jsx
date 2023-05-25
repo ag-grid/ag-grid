@@ -28,7 +28,7 @@ const SearchBox = ({ delay, refine, currentRefinement, className, onFocus, resul
     return (
         <form className={classnames(className, styles.searchBox)}>
             <input
-                type="text"
+                type="search"
                 placeholder={searchPlaceholder}
                 aria-label="Search"
                 onChange={onChangeDebounced}

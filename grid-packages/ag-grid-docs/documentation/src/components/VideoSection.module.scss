@@ -9,11 +9,6 @@
         flex-direction: row;
         align-items: flex-start;
     }
-
-    // `&:global(.ag-styles)` for .ag-styles specificity issues
-    &:global(.ag-styles) p {
-        margin-bottom: 0 !important; // !important for .ag-styles specificity;
-    }
 }
 
 .header {

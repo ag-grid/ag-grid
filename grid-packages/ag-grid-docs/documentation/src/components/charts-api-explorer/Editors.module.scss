@@ -13,7 +13,7 @@
         flex-grow: 1;
         margin-right: $size-2;
         vertical-align: middle;
-        accent-color: $primary;
+        accent-color: var(--link-color);
 
         &_hidden {
             visibility: hidden;
@@ -35,7 +35,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: $size-half $size-2;
-    margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+    margin-bottom: $size-1;
     padding-left: $size-half;
     padding-right: $size-half;
 
@@ -67,7 +67,7 @@
 
     input {
         width: 100%;
-        padding-right: $size-3 !important; // !important for .ag-styles specificity
+        padding-right: $size-3;
     }
 
     .sample {
