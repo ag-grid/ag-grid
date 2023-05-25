@@ -248,18 +248,22 @@ export interface GridOptions<TData = any> {
      * Default: `false`
      */
     stopEditingWhenCellsLoseFocus?: boolean;
+    /** @deprecated As of v30, no longer used. To navigate with the Enter key use `enterNavigatesVertically`. */
+    enterMovesDown?: boolean,
+    /** @deprecated As of v30, no longer used. To navigate with the Enter key after edit use `enterNavigatesVerticallyAfterEdit`. */
+    enterMovesDownAfterEdit?: boolean,
     /**
-     * Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the `Enter` key.
-     * i.e. pressing the `Enter` key will move down to the cell beneath.
+     * Set to `true` along with `enterNavigatesVerticallyAfterEdit` to have Excel-style behaviour for the `Enter` key.
+     * i.e. pressing the `Enter` key will move down to the cell beneath and `Shift+Enter` will move up to the cell above.
      * Default: `false`
      */
-    enterMovesDown?: boolean;
+    enterNavigatesVertically?: boolean;
     /**
-     * Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.
-     * i.e. pressing the Enter key will move down to the cell beneath.
+     * Set to `true` along with `enterNavigatesVertically` to have Excel-style behaviour for the 'Enter' key.
+     * i.e. pressing the Enter key will move down to the cell beneath and Shift+Enter key will move up to the cell above.
      * Default: `false`
      */
-    enterMovesDownAfterEdit?: boolean;
+    enterNavigatesVerticallyAfterEdit?: boolean;
     /** Forces Cell Editing to start when backspace is pressed. This is only relevant for MacOS users. */
     enableCellEditingOnBackspace?: boolean;
     /** Set to `true` to enable Undo / Redo while editing. */

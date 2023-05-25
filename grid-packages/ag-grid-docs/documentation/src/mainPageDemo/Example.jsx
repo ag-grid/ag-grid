@@ -766,8 +766,8 @@ const Example = () => {
             // singleClickEdit: true,
             // suppressClickEdit: true,
             // suppressClipboardApi: true,
-            enterMovesDownAfterEdit: true,
-            enterMovesDown: true,
+            enterNavigatesVerticallyAfterEdit: true,
+            enterNavigatesVertically: true,
             // domLayout: 'autoHeight',
             // domLayout: 'forPrint',
             // groupDisplayType = 'groupRows'

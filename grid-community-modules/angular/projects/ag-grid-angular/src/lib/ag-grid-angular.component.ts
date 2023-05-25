@@ -412,16 +412,20 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * Default: `false`
          */
     @Input() public stopEditingWhenCellsLoseFocus: boolean | undefined = undefined;
-    /** Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the `Enter` key.
-         * i.e. pressing the `Enter` key will move down to the cell beneath.
-         * Default: `false`
-         */
+    /** @deprecated As of v30, no longer used. To navigate with the Enter key use `enterNavigatesVertically`.     */
     @Input() public enterMovesDown: boolean | undefined = undefined;
-    /** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.
-         * i.e. pressing the Enter key will move down to the cell beneath.
+    /** @deprecated As of v30, no longer used. To navigate with the Enter key after edit use `enterNavigatesVerticallyAfterEdit`.     */
+    @Input() public enterMovesDownAfterEdit: boolean | undefined = undefined;
+    /** Set to `true` along with `enterNavigatesVerticallyAfterEdit` to have Excel-style behaviour for the `Enter` key.
+         * i.e. pressing the `Enter` key will move down to the cell beneath and `Shift+Enter` will move up to the cell above.
          * Default: `false`
          */
-    @Input() public enterMovesDownAfterEdit: boolean | undefined = undefined;
+    @Input() public enterNavigatesVertically: boolean | undefined = undefined;
+    /** Set to `true` along with `enterNavigatesVertically` to have Excel-style behaviour for the 'Enter' key.
+         * i.e. pressing the Enter key will move down to the cell beneath and Shift+Enter key will move up to the cell above.
+         * Default: `false`
+         */
+    @Input() public enterNavigatesVerticallyAfterEdit: boolean | undefined = undefined;
     /** Forces Cell Editing to start when backspace is pressed. This is only relevant for MacOS users.     */
     @Input() public enableCellEditingOnBackspace: boolean | undefined = undefined;
     /** Set to `true` to enable Undo / Redo while editing.     */
@@ -1226,8 +1230,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_treeData: boolean | null | '';
     static ngAcceptInputType_masterDetail: boolean | null | '';
     static ngAcceptInputType_suppressMultiRangeSelection: boolean | null | '';
-    static ngAcceptInputType_enterMovesDownAfterEdit: boolean | null | '';
     static ngAcceptInputType_enterMovesDown: boolean | null | '';
+    static ngAcceptInputType_enterMovesDownAfterEdit: boolean | null | '';
+    static ngAcceptInputType_enterNavigatesVerticallyAfterEdit: boolean | null | '';
+    static ngAcceptInputType_enterNavigatesVertically: boolean | null | '';
     static ngAcceptInputType_suppressPropertyNamesCheck: boolean | null | '';
     static ngAcceptInputType_rowMultiSelectWithClick: boolean | null | '';
     static ngAcceptInputType_suppressRowHoverHighlight: boolean | null | '';

@@ -631,24 +631,25 @@ export class CellCtrl extends BeanStub {
 
     // cell editors call this, when they want to stop for reasons other
     // than what we pick up on. eg selecting from a dropdown ends editing.
-    public stopEditingAndFocus(suppressNavigateAfterEdit = false): void {
+    public stopEditingAndFocus(suppressNavigateAfterEdit = false, shiftKey: boolean = false): void {
         this.stopRowOrCellEdit();
         this.focusCell(true);
 
         if (!suppressNavigateAfterEdit) {
-            this.navigateAfterEdit();
+            this.navigateAfterEdit(shiftKey);
         }
     }
 
-    private navigateAfterEdit(): void {
+    private navigateAfterEdit(shiftKey: boolean): void {
         const fullRowEdit = this.beans.gridOptionsService.get('editType') === 'fullRow';
 
         if (fullRowEdit) { return; }
 
-        const enterMovesDownAfterEdit = this.beans.gridOptionsService.is('enterMovesDownAfterEdit');
+        const enterNavigatesVerticallyAfterEdit = this.beans.gridOptionsService.is('enterNavigatesVerticallyAfterEdit');
 
-        if (enterMovesDownAfterEdit) {
-            this.beans.navigationService.navigateToNextCell(null, KeyCode.DOWN, this.getCellPosition(), false);
+        if (enterNavigatesVerticallyAfterEdit) {
+            const key = shiftKey ? KeyCode.UP : KeyCode.DOWN;
+            this.beans.navigationService.navigateToNextCell(null, key, this.getCellPosition(), false);
         }
     }
 
