@@ -54,7 +54,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     abstract addCustomContent(customContent: T): void;
     abstract onNewHeaderGroupingRow(): RowSpanningAccumulator;
     abstract onNewHeaderRow(): RowAccumulator;
-    abstract onNewBodyRow(): RowAccumulator;
+    abstract onNewBodyRow(node?: RowNode): RowAccumulator;
     abstract parse(): string;
 
     public prepare(columnsToExport: Column[]): void {

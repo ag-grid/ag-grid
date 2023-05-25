@@ -48,7 +48,7 @@ export interface GridSerializingSession<T> {
     prepare(columnsToExport: Column[]): void;
     onNewHeaderGroupingRow(): RowSpanningAccumulator;
     onNewHeaderRow(): RowAccumulator;
-    onNewBodyRow(): RowAccumulator;
+    onNewBodyRow(node?: RowNode): RowAccumulator;
     addCustomContent(customContent: T): void;
 
     /**

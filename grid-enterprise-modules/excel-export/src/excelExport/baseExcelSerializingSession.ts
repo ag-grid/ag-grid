@@ -46,6 +46,7 @@ export interface ExcelGridSerializingParams extends GridSerializingParams {
     sheetName: string;
     suppressColumnOutline?: boolean;
     suppressRowOutline?: boolean;
+    keepRowGroupExpandState?: boolean;
     styleLinker: (params: StyleLinkerInterface) => string[];
     addImageToCell?: (rowIndex: number, column: Column, value: string) => { image: ExcelImage, value?: string } | undefined;
     suppressTextAsCDATA?: boolean;
@@ -69,6 +70,8 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
     protected rows: ExcelRow[] = [];
     protected cols: ExcelColumn[];
     protected columnsToExport: Column[];
+
+    private isHidingRow = false;
 
     constructor(config: ExcelGridSerializingParams) {
         super(config);
@@ -153,8 +156,39 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
         return this.onNewRow(this.onNewHeaderColumn, this.config.headerRowHeight);
     }
 
-    public onNewBodyRow(): RowAccumulator {
-        return this.onNewRow(this.onNewBodyColumn, this.config.rowHeight);
+    public onNewBodyRow(node?: RowNode): RowAccumulator {
+        const rowAccumulator = this.onNewRow(this.onNewBodyColumn, this.config.rowHeight);
+
+        if (node) {
+            this.addRowOutlineIfNecessary(node);
+        }
+
+        return rowAccumulator;
+    }
+
+    private addRowOutlineIfNecessary(node: RowNode): void {
+        const { gridOptionsService, suppressRowOutline, keepRowGroupExpandState } = this.config;
+        const isGroupHideOpenParents = gridOptionsService.is('groupHideOpenParents');
+
+        if (isGroupHideOpenParents || suppressRowOutline || node.level == null) { return; }
+
+        const padding = node.footer ? 1 : 0;
+        const currentRow = _.last(this.rows);
+
+        currentRow.outlineLevel = node.level + padding;
+
+        if (!keepRowGroupExpandState) { return; }
+
+        if (node.isExpandable()) {
+            const isExpanded = node.expanded;
+            this.isHidingRow = !isExpanded;
+
+            if (isExpanded) {
+                currentRow.collapsed = true;
+            }
+        } else {
+            currentRow.hidden = this.isHidingRow;
+        }
     }
 
     public prepare(columnsToExport: Column[]): void {
@@ -232,19 +266,13 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
 
     private onNewBodyColumn(rowIndex: number, currentCells: ExcelCell[]): (column: Column, index: number, node: RowNode) => void {
         let skipCols = 0;
+
         return (column, index, node) => {
             if (skipCols > 0) {
                 skipCols -= 1;
                 return;
             }
 
-            const isGroupHideOpenParents = this.config.gridOptionsService.is('groupHideOpenParents');
-            const isSuppressRowOutline = !!this.config.suppressRowOutline;
-
-            if (!isGroupHideOpenParents && !isSuppressRowOutline && node.level != null) {
-                const padding = node.footer ? 1 : 0;
-                _.last(this.rows).outlineLevel = node.level + padding;
-            }
             const valueForCell = this.extractRowCellValue(column, index, rowIndex, 'excel', node);
             const styleIds: string[] = this.config.styleLinker({ rowType: RowType.BODY, rowIndex, value: valueForCell, column, node });
             const excelStyleId: string | null = this.getStyleId(styleIds);

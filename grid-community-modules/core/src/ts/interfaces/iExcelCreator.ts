@@ -413,6 +413,12 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
      * Default: `false`.
      */
     suppressColumnOutline?: boolean;
+
+    /**
+     * If `true` the Excel Document will keep the same expand/collapse state for Grouped Rows as displayed on the Grid.
+     * Default: `false`.
+     */
+    keepRowGroupExpandState?: boolean;
     /**
      * The mimeType of the Excel file. Note that this defaults to `application/vnd.ms-excel` if exportMode is `xml`.
      * Default: `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`

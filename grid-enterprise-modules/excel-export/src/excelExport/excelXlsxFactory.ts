@@ -1,11 +1,8 @@
 import {
     Column,
     ExcelFactoryMode,
-    ExcelHeaderFooterConfig,
     ExcelImage,
     ExcelRelationship,
-    ExcelSheetMargin,
-    ExcelSheetPageSetup,
     ExcelStyle,
     ExcelWorksheet,
     RowHeightCallbackParams,

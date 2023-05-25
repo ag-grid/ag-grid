@@ -100,7 +100,7 @@ export class GridSerializer extends BeanStub {
 
         if (shouldRowBeSkipped) { return; }
 
-        const rowAccumulator: RowAccumulator = gridSerializingSession.onNewBodyRow();
+        const rowAccumulator: RowAccumulator = gridSerializingSession.onNewBodyRow(node);
         columnsToExport.forEach((column: Column, index: number) => {
             rowAccumulator.onColumn(column, index, node);
         });
