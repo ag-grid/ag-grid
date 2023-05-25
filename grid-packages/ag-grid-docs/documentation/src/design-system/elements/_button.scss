@@ -98,35 +98,31 @@ input[type='submit'],
 
 .button-style-none,
 .button-as-link {
+    --button-text-color: var(--text-color);
+
     appearance: none;
     padding: 0;
     text-align: left;
     font-weight: var(--font-weight-normal);
     border: none;
-    color: var(--text-color);
+    color: var(--button-text-color);
     background-color: transparent;
 
     &:hover {
-        color: var(--text-color);
+        color: var(--button-text-color);
         background-color: transparent;
     }
 }
 
 .button-as-link {
+    --button-text-color: var(--link-color);
     --text-color: var(--link-color);
+    --icon-size: 1.5em;
 
     transition: color $default-transition-timing;
 
     &:hover {
+        --button-text-color: var(--link-hover-color);
         --text-color: var(--link-hover-color);
-
-        > .icon {
-            --text-color: var(--link-hover-color);
-        }
-    }
-
-    > .icon {
-        --icon-size: 1.5em;
-        --text-color: var(--link-color);
     }
 }

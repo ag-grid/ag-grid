@@ -4,6 +4,7 @@
     $top-bar-height: 58px;
 
     --menu-width: min(30vw, 320px);
+    --font-size: var(--font-size-medium);
 
     border-bottom: 1px solid var(--border-color);
 
@@ -89,17 +90,17 @@ button.sectionHeader {
     + .menuGroup {
         padding-bottom: $size-1;
     }
-}
 
-.sectionIcon {
-    --icon-size: 20px;
+    .sectionIcon {
+        --icon-size: 20px;
 
-    position: relative;
-    top: -1px;
-    transition: transform 0.33s ease-in-out, fill $default-transition-timing;
+        position: relative;
+        top: -1px;
+        transition: transform 0.33s ease-in-out, fill $default-transition-timing;
 
-    &.active {
-        transform: rotate(90deg) !important;
+        &.active {
+            transform: rotate(90deg) !important;
+        }
     }
 }
 
