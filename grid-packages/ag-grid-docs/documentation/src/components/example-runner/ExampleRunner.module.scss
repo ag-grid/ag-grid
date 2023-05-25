@@ -33,7 +33,7 @@
     }
 }
 
-.content {
+:global(.tabs-content).content {
     overflow: auto;
     padding: 0;
 }
