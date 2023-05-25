@@ -24,7 +24,7 @@ function buildSeries(data: { x: number; y: number }) {
         data: [data],
         xKey: 'x',
         yKey: 'y',
-        yName: String(data.y),
+        yName: String(data.x),
     };
 }
 

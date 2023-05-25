@@ -213,7 +213,7 @@ export const specs: SpecDefinition[] = [
             {
                 name: 'default',
                 prepare: async page => {
-                    await clickElementByText(page, 'Expand All');
+                    await clickElementByText(page, 'Expand All Row Groups');
                 }
             }
         ]

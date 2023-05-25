@@ -53,13 +53,15 @@ export class AgInputNumberField extends AgInputTextField {
         return value;
     }
 
-    private adjustPrecision(value: string): string {
-        if (this.precision != null) {
-            const floatString = parseFloat(value).toFixed(this.precision);
-            value = parseFloat(floatString).toString();
+    private adjustPrecision(value: string, isScientificNotation?: boolean): string {
+        if (this.precision == null) {
+            return value;
         }
-
-        return value;
+        const floatString = parseFloat(value).toFixed(this.precision);
+        if (isScientificNotation) {
+            return parseFloat(floatString).toString();
+        }
+        return value.length > floatString.length ? floatString : value;
     }
 
     public setMin(min: number | undefined): this {
@@ -143,7 +145,7 @@ export class AgInputNumberField extends AgInputTextField {
     public getValue(): string | null | undefined {
         const inputValue = this.eInput.value;
         if (this.isScientificNotation(inputValue) && this.eInput.validity.valid) {
-            return this.adjustPrecision(inputValue);
+            return this.adjustPrecision(inputValue, true);
         }
         return super.getValue();
     }

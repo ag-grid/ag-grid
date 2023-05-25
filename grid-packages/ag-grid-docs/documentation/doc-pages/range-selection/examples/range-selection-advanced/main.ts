@@ -52,10 +52,10 @@ const gridOptions: GridOptions<IOlympicData> = {
     return params.value
   },
   onRangeDeleteStart: (event: RangeDeleteStartEvent) => {
-    console.log('rangeDeleteStart', event);
+    console.log('onRangeDeleteStart', event);
   },
   onRangeDeleteEnd: (event: RangeDeleteEndEvent) => {
-    console.log('rangeDeleteEnd', event);
+    console.log('onRangeDeleteEnd', event);
   }
 }
 
