@@ -3931,6 +3931,8 @@ export class ColumnModel extends BeanStub {
      * @returns whether auto cols have changed
      */
     private createGroupAutoColumnsIfNeeded(): boolean {
+        const forceRecreateAutoGroups = this.forceRecreateAutoGroups;
+        this.forceRecreateAutoGroups = false;
         if (!this.autoGroupsNeedBuilding) { return false; }
 
         this.autoGroupsNeedBuilding = false;
@@ -3954,7 +3956,7 @@ export class ColumnModel extends BeanStub {
             const autoColsDifferent = !this.autoColsEqual(newAutoGroupCols, this.groupAutoColumns);
             // we force recreate so new group cols pick up the new
             // definitions. otherwise we could ignore the new cols because they appear to be the same.
-            if (autoColsDifferent || this.forceRecreateAutoGroups) {
+            if (autoColsDifferent || forceRecreateAutoGroups) {
                 this.groupAutoColumns = newAutoGroupCols;
                 return true;
             }
