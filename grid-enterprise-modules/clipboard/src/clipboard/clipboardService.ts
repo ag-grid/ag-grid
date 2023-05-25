@@ -222,8 +222,6 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         const data: any[][] = [];
         const isNewline = (char: string) => char === '\r' || char === '\n';
 
-        let insideQuotedField = false;
-
         if (strData === '') { return [['']]; }
 
         // iterate over each character, keep track of current row and column (of the returned array)
@@ -245,45 +243,24 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
             ensureDataExists();
 
-            if (currentChar === '"') {
-                if (insideQuotedField) {
-                    if (nextChar === '"') {
-                        // unescape double quote
-                        data[row][column] += '"';
-                        position++;
-                    } else {
-                        // exit quoted field
-                        insideQuotedField = false;
-                    }
+            if (currentChar === delimiter) {
+                // move to next column
+                column++;
+                ensureDataExists();
 
-                    continue;
-                } else if (previousChar === undefined || previousChar === delimiter || isNewline(previousChar)) {
-                    // enter quoted field
-                    insideQuotedField = true;
-                    continue;
+                continue;
+            } else if (isNewline(currentChar)) {
+                // move to next row
+                column = 0;
+                row++;
+                ensureDataExists();
+
+                if (currentChar === '\r' && nextChar === '\n') {
+                    // skip over second newline character if it exists
+                    position++;
                 }
-            }
 
-            if (!insideQuotedField) {
-                if (currentChar === delimiter) {
-                    // move to next column
-                    column++;
-                    ensureDataExists();
-
-                    continue;
-                } else if (isNewline(currentChar)) {
-                    // move to next row
-                    column = 0;
-                    row++;
-                    ensureDataExists();
-
-                    if (currentChar === '\r' && nextChar === '\n') {
-                        // skip over second newline character if it exists
-                        position++;
-                    }
-
-                    continue;
-                }
+                continue;
             }
 
             // add current character to current column
