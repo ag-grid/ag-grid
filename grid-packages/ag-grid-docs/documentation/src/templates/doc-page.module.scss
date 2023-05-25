@@ -221,7 +221,6 @@
     > ul,
     > ol,
     > table,
-    > pre,
     > hr {
         @media screen and (min-width: $max-page-width) {
             @include font-size-responsive();
