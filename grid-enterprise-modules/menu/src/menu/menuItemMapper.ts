@@ -133,12 +133,12 @@ export class MenuItemMapper extends BeanStub {
                 };
             case 'expandAll':
                 return {
-                    name: localeTextFunc('expandAll', 'Expand All'),
+                    name: localeTextFunc('expandAll', 'Expand All Row Groups'),
                     action: () => this.gridApi.expandAll()
                 };
             case 'contractAll':
                 return {
-                    name: localeTextFunc('collapseAll', 'Collapse All'),
+                    name: localeTextFunc('collapseAll', 'Collapse All Row Groups'),
                     action: () => this.gridApi.collapseAll()
                 };
             case 'copy':
