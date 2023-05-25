@@ -11,10 +11,10 @@
 |@Component({
 |    selector: 'total-value-component',
 |    template: `
-|          <span>
-|              <span>{{cellValue}}</span>&nbsp;
-|              <button (click)="buttonClicked()">Push For Total</button>
-|          </span>
+|          &lt;span>
+|              &lt;span>{{cellValue}}&lt;/span>&nbsp;
+|              &lt;button (click)="buttonClicked()">Push For Total&lt;/button>
+|          &lt;/span>
 |    `
 |})
 |export class TotalValueRenderer implements ICellRendererAngularComp {

@@ -5,7 +5,7 @@
 <framework-specific-section frameworks="vue">
 <snippet transform={false}>
 |export default {
-|    template: `<span>{{ displayValue }}</span>`,
+|    template: `&lt;span>{{ displayValue }}&lt;/span>`,
 |    data: function () {
 |        return {
 |            displayValue: ''
@@ -25,7 +25,7 @@
 <framework-specific-section frameworks="vue">
 <snippet transform={false}>
 |export default {
-|    template: `<span>{{ displayValue }}</span>`,
+|    template: `&lt;span>{{ displayValue }}&lt;/span>`,
 |    setup(props) {
 |        const displayValue = new Array(props.params.value).fill('#').join('');
 |        return {

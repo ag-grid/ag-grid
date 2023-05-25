@@ -6,11 +6,11 @@
 |@Component({
 |    selector: 'my-grid',
 |    template: `
-|        <ag-grid-angular
+|        &lt;ag-grid-angular
 |                class="ag-theme-alpine"
 |                [columnDefs]="columnDefs"
 |                ...rest of the component...>
-|        </ag-grid-angular>
+|        &lt;/ag-grid-angular>
 |    `
 |})
 |export class AppComponent {

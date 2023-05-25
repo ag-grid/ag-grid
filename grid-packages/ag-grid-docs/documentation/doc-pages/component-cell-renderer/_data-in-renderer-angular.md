@@ -7,7 +7,7 @@
 |// cell renderer component  
 |@Component({
 |    selector: 'cell-renderer',
-|    template: `<span>{{params?.data?.theBoldValue}}</span>`
+|    template: `&lt;span>{{params?.data?.theBoldValue}}&lt;/span>`
 |})
 |class CellRendererComponent implements ICellRendererAngularComp {
 |    params!: ICellRendererParams;

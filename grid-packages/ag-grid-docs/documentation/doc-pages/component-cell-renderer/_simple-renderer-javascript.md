@@ -10,10 +10,10 @@
 |        // create the cell
 |        this.eGui = document.createElement('div');
 |        this.eGui.innerHTML = `
-|          <span>
-|              <span class="my-value"></span>
-|              <button class="btn-simple">Push For Total</button>
-|          </span>
+|          &lt;span>
+|              &lt;span class="my-value">&lt;/span>
+|              &lt;button class="btn-simple">Push For Total&lt;/button>
+|          &lt;/span>
 |       `;
 |
 |        // get references to the elements we want

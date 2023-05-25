@@ -40,7 +40,7 @@
 |    }
 |
 |    return (
-|        <input value={value}
+|        &lt;input value={value}
 |               onKeyDown={event => onKeyDown(event)}
 |        />
 |    );

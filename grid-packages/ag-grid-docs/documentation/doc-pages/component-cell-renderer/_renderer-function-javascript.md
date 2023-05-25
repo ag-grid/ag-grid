@@ -14,12 +14,12 @@
 |colDef.cellRenderer = params => `**${params.value.toUpperCase()}**`;
 |
 |// put a tooltip on the value
-|colDef.cellRenderer = params => `<span title="the tooltip">${params.value}</span>`;
+|colDef.cellRenderer = params => `&lt;span title="the tooltip">${params.value}&lt;/span>`;
 |
 |// create a DOM object
 |colDef.cellRenderer = params => {
 |    const eDiv = document.createElement('div');
-|    eDiv.innerHTML = '<span class="my-css-class"><button class="btn-simple">Push Me</button></span>';
+|    eDiv.innerHTML = '&lt;span class="my-css-class">&lt;button class="btn-simple">Push Me&lt;/button>&lt;/span>';
 |    const eButton = eDiv.querySelectorAll('.btn-simple')[0];
 |
 |    return eDiv;

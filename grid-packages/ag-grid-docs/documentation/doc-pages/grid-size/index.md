@@ -22,9 +22,9 @@ Under normal usage, your application should set the width and height of the grid
 | &lt;/div>
 |
 | <!-- OR set width using fixed pixels -->
-| <div class="ag-theme-alpine">
-|     <ag-grid-angular style="width: 500px; height: 200px"></ag-grid-angular>
-| </div>
+| &lt;div class="ag-theme-alpine">
+|     &lt;ag-grid-angular style="width: 500px; height: 200px">&lt;/ag-grid-angular>
+| &lt;/div>
 </snippet>
 </framework-specific-section>
 

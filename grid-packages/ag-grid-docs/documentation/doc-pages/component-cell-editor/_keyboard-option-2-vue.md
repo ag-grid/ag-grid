@@ -5,10 +5,10 @@
 |
 |const MyGrid = {
 |    template: `
-|       <ag-grid-vue
+|       &lt;ag-grid-vue
 |           class="ag-theme-alpine"
 |           :columnDefs="columnDefs">
-|       </ag-grid-vue>
+|       &lt;/ag-grid-vue>
 |    `,
 |    components: {
 |        'ag-grid-vue': AgGridVue

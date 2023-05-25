@@ -218,11 +218,11 @@ Using the same real-world example from above the `package.json` dependencies wil
 |
 | public modules: Module[] = [ClientSideRowModelModule, CsvExportModule, ExcelExportModule, MasterDetailModule];
 |
-| &lt;g-grid-angular>
+| &lt;ag-grid-angular>
 |     [rowData]="rowData"
 |     [columnDefs]="columnDefs"
 |     [modules]="modules"
-| </ag-grid-angular>
+| &lt;/ag-grid-angular>
 </snippet>
 </framework-specific-section>
 

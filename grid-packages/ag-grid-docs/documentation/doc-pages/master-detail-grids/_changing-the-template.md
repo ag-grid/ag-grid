@@ -36,10 +36,10 @@
 |    // example override using string template
 |    detailCellRendererParams: {
 |        template:
-|        '<div style="background-color: #edf6ff;">' +
-|            '  <div style="height: 10%;">Call Details</div>' +
-|            '  <div ref="eDetailGrid" style="height: 90%;"></div>' +
-|            '</div>'
+|        '&lt;div style="background-color: #edf6ff;">' +
+|            '  &lt;div style="height: 10%;">Call Details&lt;/div>' +
+|            '  &lt;div ref="eDetailGrid" style="height: 90%;">&lt;/div>' +
+|            '&lt;/div>'
 |    }
 </snippet>
 </framework-specific-section>
