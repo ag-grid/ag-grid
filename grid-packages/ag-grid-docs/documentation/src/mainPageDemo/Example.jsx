@@ -108,14 +108,7 @@ function ratingFilterRenderer(params) {
         <span>
             {[...Array(5)].map((x, i) => {
                 return value > i ? (
-                    <img
-                        key={i}
-                        src="../images/star.svg"
-                        alt={`${value} stars`}
-                        className={styles['star']}
-                        width="12"
-                        height="12"
-                    />
+                    <img key={i} src="../images/star.svg" alt={`${value} stars`} width="12" height="12" />
                 ) : null;
             })}
             (No stars)
@@ -133,14 +126,7 @@ function ratingRenderer(params) {
         <span>
             {[...Array(5)].map((x, i) => {
                 return value > i ? (
-                    <img
-                        key={i}
-                        src="../images/star.svg"
-                        alt={`${value} stars`}
-                        className={styles['star']}
-                        width="12"
-                        height="12"
-                    />
+                    <img key={i} src="../images/star.svg" alt={`${value} stars`} width="12" height="12" />
                 ) : null;
             })}
         </span>
@@ -626,7 +612,6 @@ const Example = () => {
         const theme = params.get('theme') || 'ag-theme-alpine';
         setGridTheme(theme);
     }, []);
-    const [bodyClass, setBodyClass] = useState('');
     const [base64Flags, setBase64Flags] = useState();
     const [defaultCols, setDefaultCols] = useState();
     const [isSmall, setIsSmall] = useState(false);
@@ -1409,7 +1394,6 @@ const Example = () => {
         const isDark = gridTheme.indexOf('dark') >= 0;
 
         if (isDark) {
-            setBodyClass(styles['dark']);
             gridOptions.chartThemes = [
                 'ag-default-dark',
                 'ag-material-dark',
@@ -1418,7 +1402,6 @@ const Example = () => {
                 'ag-solar-dark',
             ];
         } else {
-            setBodyClass('');
             gridOptions.chartThemes = null;
         }
     }, [gridTheme]);
@@ -1429,7 +1412,7 @@ const Example = () => {
                 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" />
                 {helmet.map((entry) => entry)}
             </Helmet>
-            <div className={classnames(styles.exampleWrapper, bodyClass)}>
+            <div className={classnames(styles.exampleWrapper)}>
                 <Toolbar
                     gridRef={gridRef}
                     dataSize={dataSize}

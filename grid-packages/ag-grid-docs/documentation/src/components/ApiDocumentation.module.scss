@@ -9,14 +9,8 @@
     }
 }
 
-.reference {
-    &__required {
-        color: red;
-    }
-
-    &__name-cell__wrap {
-        width: 100%;
-    }
+.required {
+    color: red;
 }
 
 .apiReferenceOuter {
@@ -134,7 +128,6 @@
 
 .seeMore {
     --text-color: var(--link-color);
-    --icon-size: 1em;
 
     min-width: 10.5ch;
     transition: color $default-transition-timing;
@@ -144,7 +137,9 @@
     }
 
     svg {
-        margin-top: -0.1em;
+        --icon-size: 1em;
+
+        margin: -0.1em 0 0;
         transition: fill $default-transition-timing;
     }
 }

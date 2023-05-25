@@ -42,19 +42,17 @@ export const Layout = ({
                 {getFavicons()}
                 {getAppleTouchIcons()}
             </Helmet>
-            <div className={styles['main-container']}>
+            <div className={styles.mainContainer}>
                 <Helmet htmlAttributes={{ lang: 'en' }} />
                 <SiteHeader path={path} />
 
                 {!fullScreen && <TopBar frameworks={frameworks} currentFramework={framework} path={path} />}
 
                 <div className={classnames(styles.contentContainer, !fullScreen && styles.fullScreenPage)}>
-                    <div className={styles['content-viewport']}>
+                    <div className={styles.contentViewport}>
                         {!fullScreen && <Menu currentFramework={framework} currentPage={pageName} path={path} />}
 
-                        <main is="div" className={styles['content']}>
-                            {children}
-                        </main>
+                        <main is="div">{children}</main>
                     </div>
                 </div>
             </div>

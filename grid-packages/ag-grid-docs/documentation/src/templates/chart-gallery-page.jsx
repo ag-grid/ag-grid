@@ -22,18 +22,18 @@ const ChartGalleryPageTemplate = ({ pageContext: { framework, name, description,
                     pageName={pageName}
                 />
 
-                <div className={styles['chart-navigation']}>
+                <div className={styles.chartNavigation}>
                     {/* eslint-disable jsx-a11y/control-has-associated-label */}
                     {previous && (
                         <a
-                            className={styles['chart-navigation__left']}
+                            className={styles.left}
                             href={`../${toKebabCase(previous)}/`}
                             dangerouslySetInnerHTML={{ __html: `\u276e&nbsp;&nbsp;${previous}` }}
                         ></a>
                     )}
                     {next && (
                         <a
-                            className={styles['chart-navigation__right']}
+                            className={styles.right}
                             href={`../${toKebabCase(next)}/`}
                             dangerouslySetInnerHTML={{ __html: `${next}&nbsp;&nbsp;\u276f` }}
                         ></a>
@@ -41,7 +41,7 @@ const ChartGalleryPageTemplate = ({ pageContext: { framework, name, description,
                     {/* eslint-enable jsx-a11y/control-has-associated-label */}
                 </div>
 
-                <h1 className={styles['title']}>{getHeaderTitle(`Gallery - ${name}`, framework, true)}</h1>
+                <h1 className={styles.title}>{getHeaderTitle(`Gallery - ${name}`, framework, true)}</h1>
                 <p dangerouslySetInnerHTML={{ __html: description }}></p>
 
                 <ExampleRunner

@@ -6,7 +6,7 @@ import styles from './Footer.module.scss';
 
 const MenuColumns = ({ framework = 'javascript' }) =>
     footerItems.map(({ title, links }) => (
-        <div key={title} className={styles['menu-column']}>
+        <div key={title} className={styles.menuColumn}>
             <h4 className="thin-text">{title}</h4>
             <ul className="list-style-none">
                 {links.map(({ name, url, newTab, iconName }) => (
@@ -30,10 +30,10 @@ const MenuColumns = ({ framework = 'javascript' }) =>
 const Footer = ({ framework }) => (
     <footer className={styles.footer}>
         <div className="page-margin">
-            <div className={styles['row']}>
+            <div className={styles.row}>
                 <MenuColumns framework={framework} />
             </div>
-            <div className={styles['row']}>
+            <div className={styles.row}>
                 <p className="font-size-small thin-text">
                     AG Grid Ltd registered in the United Kingdom. Company&nbsp;No.&nbsp;07318192.
                 </p>

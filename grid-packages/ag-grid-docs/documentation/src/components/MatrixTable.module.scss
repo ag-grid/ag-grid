@@ -24,13 +24,13 @@
     font-size: var(--font-size-extra-large);
 }
 
-.level-3 {
+.level3 {
     @container (min-width: #{$breakpoint-table-small}) {
         margin-left: $size-2;
     }
 }
 
-.level-4 {
+.level4 {
     @container (min-width: #{$breakpoint-table-small}) {
         margin-left: $size-5;
     }
