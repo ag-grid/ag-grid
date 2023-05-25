@@ -1400,7 +1400,7 @@ Creating charts is done using the `agCharts.AgChart` factory as shown in the exa
 The table below gives the ranges of compatible versions of AG Charts with Angular versions.
 
 <note>
-AG Charts Legacy is only required for apps on Angular v8-11 that wish to use AG Charts v6+. See [AG Grid Legacy](/angular-compatibility/#ag-grid-legacy) for more details about our legacy packages.
+AG Charts Legacy is only required for apps on Angular v8-11 that wish to use AG Charts v6-7. See [AG Grid Legacy](/angular-compatibility/#ag-grid-legacy) for more details about our legacy packages.
 </note>
 
 | Angular | AG Charts | AG Charts Package        |
