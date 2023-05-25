@@ -134,4 +134,10 @@
     pre.code {
         margin-bottom: 0;
     }
+
+    // If the only item in a tab is a code snippet ignore padding & remove border
+    div[tab-label] pre.code:only-child {
+        margin: -$size-2;
+        border: none;
+    }
 }

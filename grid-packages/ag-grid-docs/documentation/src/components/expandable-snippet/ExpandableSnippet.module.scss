@@ -1,3 +1,5 @@
+@use '../../design-system/' as *;
+
 $indent: 24px;
 
 .expandable-snippet {
@@ -102,4 +104,10 @@ $indent: 24px;
             line-height: calc(1.275rem - 2px);
         }
     }
+}
+
+// Ignore padding & remove border if within tabbed container
+:global(.tabs-outer) .expandable-snippet pre:global(.code) {
+    margin: -$size-2;
+    border: none;
 }
