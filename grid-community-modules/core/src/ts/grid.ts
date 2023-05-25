@@ -142,6 +142,8 @@ export class Grid {
     }
 }
 
+let nextGridId = 1;
+
 // created services of grid only, no UI, so frameworks can use this if providing
 // their own UI
 export class GridCoreCreator {
@@ -149,6 +151,7 @@ export class GridCoreCreator {
     public create(eGridDiv: HTMLElement, gridOptions: GridOptions, createUi: (context: Context) => void, acceptChanges?: (context: Context) => void, params?: GridParams): void {
 
         const debug = !!gridOptions.debug;
+        const gridId = gridOptions.gridId ?? String(nextGridId++);
 
         const registeredModules = this.getRegisteredModules(params);
 
@@ -160,7 +163,8 @@ export class GridCoreCreator {
         const contextParams: ContextParams = {
             providedBeanInstances: providedBeanInstances,
             beanClasses: beanClasses,
-            debug: debug
+            debug: debug,
+            gridId: gridId,
         };
 
         const logger = new Logger('AG Grid', () => gridOptions.debug);

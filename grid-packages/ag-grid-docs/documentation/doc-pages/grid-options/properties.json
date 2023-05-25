@@ -738,6 +738,7 @@
             }
         },
         "getBusinessKeyForNode": {},
+        "gridId": {},
         "processRowPostCreate": {},
         "enableRtl": {
             "more": {

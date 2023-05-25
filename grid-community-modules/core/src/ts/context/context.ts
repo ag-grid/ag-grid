@@ -17,6 +17,7 @@ export interface ContextParams {
     providedBeanInstances: any;
     beanClasses: any[];
     debug: boolean;
+    gridId: string;
 }
 
 export interface ComponentMeta {
@@ -296,6 +297,10 @@ export class Context {
 
     public isDestroyed(): boolean {
         return this.destroyed;
+    }
+
+    public getGridId(): string {
+        return this.contextParams.gridId;
     }
 }
 

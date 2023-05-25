@@ -785,6 +785,9 @@ export interface GridOptions<TData = any> {
     /** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false` */
     columnHoverHighlight?: boolean;
 
+    /** Provide a custom `gridId` for this instance of the grid. Value will be set on the root DOM node using the attribute `grid-id` as well as being accessible via the `gridApi.getGridId()` method.  */
+    gridId?: string;
+
     deltaSort?: boolean;
     treeDataDisplayType?: TreeDataDisplayType;
     

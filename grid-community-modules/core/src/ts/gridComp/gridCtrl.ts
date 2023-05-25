@@ -42,6 +42,8 @@ export class GridCtrl extends BeanStub {
         this.eGridHostDiv = eGridDiv;
         this.eGui = eGui;
 
+        this.eGui.setAttribute('grid-id', this.context.getGridId());
+
         // this drop target is just used to see if the drop event is inside the grid
         this.dragAndDropService.addDropTarget({
             getContainer: () => this.eGui,

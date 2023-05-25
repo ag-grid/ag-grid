@@ -264,6 +264,11 @@ export class GridApi<TData = any> {
         }
     }
 
+    /** Returns the `gridId` for the current grid as specified via the gridOptions property `gridId` or the auto assigned grid id if none was provided. */
+    public getGridId(): string {
+        return this.context.getGridId();
+    }
+
     /** Register a detail grid with the master grid when it is created. */
     public addDetailGridInfo(id: string, gridInfo: DetailGridInfo): void {
         this.detailGridInfoMap[id] = gridInfo;
