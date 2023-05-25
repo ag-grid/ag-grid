@@ -549,6 +549,14 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
 
     const { more } = definition;
 
+    const formattedDefaultValue = Array.isArray(defaultValue)
+        ? '[' +
+          defaultValue.map((v, i) => {
+              return i === 0 ? `"${v}"` : ` "${v}"`;
+          }) +
+          ']'
+        : defaultValue;
+
     return (
         <tr ref={propertyRef}>
             <td role="presentation" className={styles.leftColumn}>
@@ -582,10 +590,10 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                             <span className={styles.metaValue}>{propertyType}</span>
                         )}
                     </div>
-                    {defaultValue != null && (
+                    {formattedDefaultValue != null && (
                         <div className={styles.metaItem}>
                             <span className={styles.metaLabel}>Default</span>
-                            <span className={styles.metaValue}>{defaultValue}</span>
+                            <span className={styles.metaValue}>{formattedDefaultValue}</span>
                         </div>
                     )}
                 </div>

@@ -8,7 +8,6 @@ pre.code,
 pre.code code {
     color: black;
     background: none;
-    font-size: 1em;
     text-align: left;
     white-space: pre;
     word-spacing: normal;
@@ -49,6 +48,7 @@ pre.code {
 pre.code > code {
     position: relative;
     z-index: 1;
+    font-size: 0.9375em;
     background-color: white;
     background-image: linear-gradient(transparent 50%, var(--ghost-blue) 50%);
     background-size: 3em 3em;
