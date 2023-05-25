@@ -46,7 +46,7 @@ export interface ExcelGridSerializingParams extends GridSerializingParams {
     sheetName: string;
     suppressColumnOutline?: boolean;
     suppressRowOutline?: boolean;
-    keepRowGroupExpandState?: boolean;
+    rowGroupExpandState?:  'expanded' | 'collapsed' | 'match';
     styleLinker: (params: StyleLinkerInterface) => string[];
     addImageToCell?: (rowIndex: number, column: Column, value: string) => { image: ExcelImage, value?: string } | undefined;
     suppressTextAsCDATA?: boolean;
@@ -70,8 +70,6 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
     protected rows: ExcelRow[] = [];
     protected cols: ExcelColumn[];
     protected columnsToExport: Column[];
-
-    private isHidingRow = false;
 
     constructor(config: ExcelGridSerializingParams) {
         super(config);
@@ -167,7 +165,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
     }
 
     private addRowOutlineIfNecessary(node: RowNode): void {
-        const { gridOptionsService, suppressRowOutline, keepRowGroupExpandState } = this.config;
+        const { gridOptionsService, suppressRowOutline, rowGroupExpandState = 'expanded' } = this.config;
         const isGroupHideOpenParents = gridOptionsService.is('groupHideOpenParents');
 
         if (isGroupHideOpenParents || suppressRowOutline || node.level == null) { return; }
@@ -177,18 +175,31 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
 
         currentRow.outlineLevel = node.level + padding;
 
-        if (!keepRowGroupExpandState) { return; }
+        if (rowGroupExpandState === 'expanded') { return; }
+
+        const collapseAll = rowGroupExpandState === 'collapsed';
 
         if (node.isExpandable()) {
-            const isExpanded = node.expanded;
-            this.isHidingRow = !isExpanded;
-
-            if (isExpanded) {
-                currentRow.collapsed = true;
-            }
-        } else {
-            currentRow.hidden = this.isHidingRow;
+            const isExpanded = !collapseAll && node.expanded;
+            currentRow.collapsed = !isExpanded;
         }
+
+        currentRow.hidden = 
+            // always show the node if there is no parent to be expanded
+            !!node.parent &&
+            // or if it is a child of the root node
+            node.parent.level !== -1 &&
+            (collapseAll || this.isAnyParentCollapsed(node.parent));
+    }
+
+    private isAnyParentCollapsed(node?: RowNode | null): boolean {
+        while (node && node.level !== -1) {
+            if (!node.expanded) { return true; }
+
+            node = node.parent;
+        }
+
+        return false;
     }
 
     public prepare(columnsToExport: Column[]): void {
