@@ -638,7 +638,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         };
     }
 
-    private getInnerRadius() {
+    getInnerRadius() {
         const { radius, innerRadiusRatio, innerRadiusOffset } = this;
         const innerRadius = radius * (innerRadiusRatio ?? 1) + (innerRadiusOffset ? innerRadiusOffset : 0);
         if (innerRadius === radius || innerRadius < 0) {
@@ -647,7 +647,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         return innerRadius;
     }
 
-    private getOuterRadius() {
+    getOuterRadius() {
         const { radius, outerRadiusRatio, outerRadiusOffset } = this;
         const outerRadius = radius * (outerRadiusRatio ?? 1) + (outerRadiusOffset ? outerRadiusOffset : 0);
         if (outerRadius < 0) {
@@ -669,7 +669,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         }
         const spacing = this.title?.spacing ?? 0;
         const titleOffset = 2 + spacing;
-        const minLabelY = Math.min(0, ...this.nodeData.map((d) => d.calloutLabel?.box?.y ?? 0));
+        const labelsYs = this.nodeData.filter((d) => !d.calloutLabel?.hidden).map((d) => d.calloutLabel?.box?.y ?? 0);
+        const minLabelY = Math.min(0, ...labelsYs);
         const dy = Math.max(0, -outerRadius - minLabelY);
         return -outerRadius - titleOffset - dy;
     }
@@ -686,13 +687,18 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.rootGroup.translationY = this.centerY;
 
         if (title) {
-            const dy = this.getTitleTranslationY();
-            if (isFinite(dy)) {
-                title.node.visible = title.enabled;
-                title.node.translationY = dy;
-            } else {
-                title.node.visible = false;
+            let titleVisible = false;
+            if (title.enabled) {
+                const dy = this.getTitleTranslationY();
+                if (isFinite(dy)) {
+                    title.node.translationY = dy;
+                    const titleBox = title.node.computeBBox();
+                    if (!this.bboxIntersectsSurroundingSeries(titleBox, 0, dy)) {
+                        titleVisible = true;
+                    }
+                }
             }
+            title.node.visible = titleVisible;
         }
 
         this.updateNodeMidPoint();
@@ -938,7 +944,25 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
         const hasVerticalOverflow = box.y + errPx < seriesTop || box.y + box.height - errPx > seriesBottom;
         const textLength = Math.floor(text.length * visibleTextPart) - 1;
-        return { visibleTextPart, textLength, hasVerticalOverflow };
+        const hasSurroundingSeriesOverflow = this.bboxIntersectsSurroundingSeries(box);
+        return { visibleTextPart, textLength, hasVerticalOverflow, hasSurroundingSeriesOverflow };
+    }
+
+    private bboxIntersectsSurroundingSeries(box: BBox, dx = 0, dy = 0) {
+        const { surroundingRadius } = this;
+        if (surroundingRadius == null) {
+            return false;
+        }
+        const corners = [
+            { x: box.x + dx, y: box.y + dy },
+            { x: box.x + box.width + dx, y: box.y + dy },
+            { x: box.x + box.width + dx, y: box.y + box.height + dy },
+            { x: box.x + dx, y: box.y + box.height + dy },
+        ];
+        return corners.some((corner) => {
+            const radius = Math.sqrt(Math.pow(corner.x, 2) + Math.pow(corner.y, 2));
+            return radius > surroundingRadius!;
+        });
     }
 
     private computeCalloutLabelCollisionOffsets() {
@@ -1146,10 +1170,14 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                 }
 
                 if (options.hideWhenNecessary) {
-                    const { textLength, hasVerticalOverflow } = this.getLabelOverflow(label.text, box, seriesRect);
+                    const { textLength, hasVerticalOverflow, hasSurroundingSeriesOverflow } = this.getLabelOverflow(
+                        label.text,
+                        box,
+                        seriesRect
+                    );
                     const isTooShort = label.text.length > 2 && textLength < 2;
 
-                    if (hasVerticalOverflow || isTooShort) {
+                    if (hasVerticalOverflow || isTooShort || hasSurroundingSeriesOverflow) {
                         label.hidden = true;
                         return null;
                     }
