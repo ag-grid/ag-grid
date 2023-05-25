@@ -81,7 +81,7 @@ export interface ICellEditorParams<TData = any, TValue = any, TContext = any> ex
     onKeyDown: (event: KeyboardEvent) => void;
     /** Callback to tell grid to stop editing the current cell. Call with input parameter
      * true to prevent focus from moving to the next cell after editing stops in case the
-     * grid property `enterMovesDownAfterEdit=true` */
+     * grid property `enterNavigatesVerticallyAfterEdit=true` */
     stopEditing: (suppressNavigateAfterEdit?: boolean) => void;
     /** A reference to the DOM element representing the grid cell that your component
      *  will live inside. Useful if you want to add event listeners or classes at this level.

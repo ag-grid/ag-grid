@@ -238,15 +238,15 @@
                 "url": "/cell-editing-start-stop/#stop-editing-when-grid-loses-focus"
             }
         },
-        "enterMovesDown": {
-            "description": "Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the <kbd>Enter</kbd> key, i.e. pressing the <kbd>Enter</kbd> key will move down to the cell beneath. Default: `false` ",
+        "enterNavigatesVertically": {
+            "description": "Set to `true` along with `enterNavigatesVerticallyAfterEdit` to have Excel-style behaviour for the <kbd>Enter</kbd> key, i.e. pressing the <kbd>Enter</kbd> key will move down to the cell beneath. Default: `false` ",
             "more": {
                 "name": "Enter Key Navigation",
                 "url": "/cell-editing-start-stop/#enter-key-navigation"
             }
         },
-        "enterMovesDownAfterEdit": {
-            "description": "Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the <kbd>Enter</kbd> key, i.e. pressing the <kbd>Enter</kbd> key will move down to the cell beneath. Default: `false` ",
+        "enterNavigatesVerticallyAfterEdit": {
+            "description": "Set to `true` along with `enterNavigatesVertically` to have Excel-style behaviour for the <kbd>Enter</kbd> key, i.e. pressing the <kbd>Enter</kbd> key will move down to the cell beneath. Default: `false` ",
             "more": {
                 "name": "Enter Key Navigation",
                 "url": "/cell-editing-start-stop/#enter-key-navigation"

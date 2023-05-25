@@ -96,8 +96,8 @@ By default pressing <kbd>Enter</kbd> will start editing on a cell, or stop editi
 
 To allow consistency with Excel the grid has the following properties:
 
-- `enterMovesDown`: Set to `true` to have <kbd>Enter</kbd> key move focus to the cell below if not editing. The default is <kbd>Enter</kbd> key starts editing the currently focused cell.
-- `enterMovesDownAfterEdit:` Set to `true` to have <kbd>Enter</kbd> key move focus to the cell below after <kbd>Enter</kbd> is pressed while editing. The default is editing will stop and focus will remain on the editing cell.
+- `enterNavigatesVertically`: Set to `true` to have <kbd>Enter</kbd> key move focus to the cell below if not editing. The default is <kbd>Enter</kbd> key starts editing the currently focused cell.
+- `enterNavigatesVerticallyAfterEdit:` Set to `true` to have <kbd>Enter</kbd> key move focus to the cell below after <kbd>Enter</kbd> is pressed while editing. The default is editing will stop and focus will remain on the editing cell.
 
 The example below demonstrates the focus moving down when <kbd>Enter</kbd> is pressed.
 
