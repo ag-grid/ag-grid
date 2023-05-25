@@ -763,6 +763,10 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                         labelStyle = s;
                         break;
                     }
+                    if (s.wrapping === 'never') {
+                        continue;
+                    }
+                    // Check if wrapped text fits
                     const wrapped = Text.wrap(labelText, availTextWidth, availTextHeight, s, s.wrapping);
                     if (
                         !wrapped ||
