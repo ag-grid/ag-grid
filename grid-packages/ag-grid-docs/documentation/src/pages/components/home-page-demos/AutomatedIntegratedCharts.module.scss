@@ -66,34 +66,6 @@ $z-index-splash-contents: 10;
         }
     }
 
-    // Button overrides for .ag-styles specificity
-    :global(button.ag-side-button-button) {
-        // Inherit text styles
-        color: inherit;
-        font-family: inherit;
-        font-size: inherit;
-        font-weight: inherit;
-        line-height: inherit;
-
-        // Button styles
-        background: transparent;
-        padding: calc(var(--ag-grid-size) * 2) 0 calc(var(--ag-grid-size) * 2) 0;
-        width: 100%;
-        margin: 0;
-        min-height: calc(var(--ag-grid-size) * 18);
-        background-position-y: center;
-        background-position-x: center;
-        background-repeat: no-repeat;
-
-        border: none;
-        border-top: var(--ag-borders-side-button) var(--ag-border-color);
-        border-bottom: var(--ag-borders-side-button) var(--ag-border-color);
-
-        &:focus {
-            box-shadow: none;
-        }
-    }
-
     :global(.ag-root-wrapper) {
         border-radius: var(--border-radius);
 
@@ -102,73 +74,12 @@ $z-index-splash-contents: 10;
         }
     }
 
-    // Set chart side menu expand/collapse button overrides for .ag-styles specificity
     :global(.ag-chart-menu-close) {
         color: var(--ag-foreground-color);
 
         &:hover {
             color: var(--ag-alpine-active-color);
         }
-    }
-
-    // Set chart thumbnail overrides for .ag-styles specificity
-    :global(.ag-chart-mini-thumbnail) {
-        border: 1px solid var(--ag-secondary-border-color);
-        border-radius: 5px;
-        margin: 5px;
-
-        &:global(.ag-selected) {
-            border-color: var(--ag-minichart-selected-chart-color);
-        }
-    }
-
-    // Set mini filter overrides for .ag-styles specificity
-    :global(.ag-mini-filter) {
-        margin: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
-    }
-
-    // Set filter overrides for .ag-styles specificity
-    :global(.ag-set-filter-item) {
-        margin: 0px var(--ag-widget-container-horizontal-padding);
-    }
-
-    // Set chart panel button overrides for .ag-styles specificity
-    :global(.ag-chart-tool-panel-button-enable) {
-        :global(.ag-chart-menu-close) {
-            position: absolute;
-            top: 50%;
-            transition: transform 0.33s ease-in-out;
-            padding: 0;
-            display: block;
-            cursor: pointer;
-            border: none;
-
-            right: 0;
-
-            :global(.ag-icon) {
-                padding: 14px 5px 14px 2px;
-            }
-
-            &::before {
-                content: '';
-                position: absolute;
-                top: -40px;
-                bottom: -40px;
-
-                right: 0;
-            }
-        }
-    }
-
-    // Set chart panel group container overrides for .ag-styles specificity
-    :global(.ag-charts-format-top-level-group-container) {
-        margin-left: calc(var(--ag-grid-size) * 2);
-    }
-    :global(.ag-charts-format-top-level-group-item) {
-        margin: var(--ag-grid-size) 0;
-    }
-    :global(.ag-charts-format-sub-level-group-container > *) {
-        margin-bottom: var(--ag-widget-vertical-spacing);
     }
 }
 
