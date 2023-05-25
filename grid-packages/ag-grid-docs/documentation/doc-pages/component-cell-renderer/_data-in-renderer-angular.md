@@ -2,7 +2,7 @@
 |Here we use the safe navigation operator (`?`) to ensure that both `params` and `data` are valid before attempting to access `theBoldValue`:
 </framework-specific-section>
 
-<framework-specific-section frameworks="vue">
+<framework-specific-section frameworks="angular">
 <snippet transform={false}>
 |// cell renderer component  
 |@Component({

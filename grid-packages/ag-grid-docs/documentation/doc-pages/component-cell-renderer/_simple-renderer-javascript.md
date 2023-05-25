@@ -2,7 +2,7 @@
 |Below is an example of cell renderer class:
 </framework-specific-section>
 
-<framework-specific-section frameworks="react">
+<framework-specific-section frameworks="javascript">
 <snippet transform={false}>
 |class TotalValueRenderer {
 |    // gets called once before the renderer is used

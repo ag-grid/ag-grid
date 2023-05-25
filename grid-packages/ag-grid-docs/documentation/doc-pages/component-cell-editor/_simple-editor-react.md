@@ -36,7 +36,7 @@ Below is an example of Cell Editor:
 |    });
 |
 |    return (
-|        <input type="number"
+|        &lt;input type="number"
 |               ref={refInput}
 |               value={value}
 |               onChange={event => setValue(event.target.value)}

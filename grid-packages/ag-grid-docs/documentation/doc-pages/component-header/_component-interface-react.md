@@ -31,7 +31,7 @@
 </note>
 </framework-specific-section>
 
-<framework-specific-section frameworks="javascript">
+<framework-specific-section frameworks="react">
 |### Custom Header Parameters
 |
 |When a React component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell &

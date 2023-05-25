@@ -2,7 +2,7 @@
 |Below is an example of cell renderer:
 </framework-specific-section>
 
-<framework-specific-section frameworks="vue">
+<framework-specific-section frameworks="react">
 <snippet transform={false} language="jsx">
 |export default props => {
 |    const cellValue = props.valueFormatted ? props.valueFormatted : props.value;
@@ -12,10 +12,10 @@
 |    }
 |
 |    return (
-|        <span>
-|           <span>{cellValue}</span>&nbsp;
-|           <button onClick={() => buttonClicked()}>Push For Total</button>
-|        </span>
+|        &lt;span>
+|           &lt;span>{cellValue}&lt;/span>&nbsp;
+|           &lt;button onClick={() => buttonClicked()}>Push For Total&lt;/button>
+|        &lt;/span>
 |    );
 |}
 </snippet>
