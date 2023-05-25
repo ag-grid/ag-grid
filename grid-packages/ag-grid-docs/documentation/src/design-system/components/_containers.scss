@@ -70,7 +70,7 @@
     }
 
     .tabs-nav-link {
-        --text-color: var(--secondary-text-color);
+        --button-text-color: var(--secondary-text-color);
 
         position: relative;
         display: inline-block;
@@ -80,7 +80,7 @@
         cursor: pointer;
 
         &:hover {
-            --text-color: var(--link-color);
+            --button-text-color: var(--link-color);
         }
 
         &::after {
@@ -102,13 +102,13 @@
         svg {
             --icon-size: #{$size-3};
 
-            margin-top: -0.125em;
+            margin: -0.125em 0 0;
             transition: fill $default-transition-timing;
         }
     }
 
     .tabs-nav-link.active {
-        --text-color: var(--text-color);
+        --button-text-color: var(--text-color);
 
         pointer-events: none;
 
