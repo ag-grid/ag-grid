@@ -11,13 +11,13 @@ The following page provides information that is relevant when using older versio
  
  | Angular | AG Grid   | AG Grid Legacy    |
  | --------| --------- | ------------------|
- | 6 - 7   | 18 - 22   |                   |
- | 8       | 18 - 27   | 28                |
- | 9       | 23 - 27   | 28                |
- | 10 - 11 | 24 - 27   | 28 - 29           |
- | 12 - 13 | 25 - 30   | N/A               |
- | 14 - 15 | 25 - 30+  | N/A               |
  | 16+     | 28 - 30+  | N/A               |
+ | 14 - 15 | 25 - 30+  | N/A               |
+ | 12 - 13 | 25 - 30   | N/A               |
+ | 10 - 11 | 24 - 27   | 28 - 29           |
+ | 9       | 23 - 27   | 28                |
+ | 8       | 18 - 27   | 28                |
+ | 6 - 7   | 18 - 22   |                   |
 
  ## Future Support of Angular versions
 

@@ -1405,10 +1405,10 @@ AG Charts Legacy is only required for apps on Angular v8-11 that wish to use AG 
 
 | Angular | AG Charts | AG Charts Package        |
 | ------- | --------- | ------------------------ |
-| 8 - 11  | 2 - 5     | ag-charts-angular        |
-| 8 - 11  | 6 - 7     | ag-charts-angular-legacy |
-| 12 - 13 | 6 - 8     | ag-charts-angular        |
 | +14     | 6 - 8+    | ag-charts-angular        |
+| 12 - 13 | 6 - 8     | ag-charts-angular        |
+| 8 - 11  | 6 - 7     | ag-charts-angular-legacy |
+| 8 - 11  | 2 - 5     | ag-charts-angular        |
 
 </framework-specific-section>
 
