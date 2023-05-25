@@ -669,9 +669,7 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         }
         const spacing = this.title?.spacing ?? 0;
         const titleOffset = 2 + spacing;
-        const labelsYs = this.nodeData.filter((d) => !d.calloutLabel?.hidden).map((d) => d.calloutLabel?.box?.y ?? 0);
-        const minLabelY = Math.min(0, ...labelsYs);
-        const dy = Math.max(0, -outerRadius - minLabelY);
+        const dy = Math.max(0, -outerRadius);
         return -outerRadius - titleOffset - dy;
     }
 
@@ -1140,54 +1138,18 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
     computeLabelsBBox(options: { hideWhenNecessary: boolean }, seriesRect: BBox) {
         const { radiusScale, calloutLabel, calloutLine } = this;
         const calloutLength = calloutLine.length;
-        const { offset, maxCollisionOffset } = calloutLabel;
+        const { offset, maxCollisionOffset, minSpacing } = calloutLabel;
 
         this.maybeRefreshNodeData();
 
         this.updateRadiusScale();
         this.computeCalloutLabelCollisionOffsets();
 
+        const textBoxes: BBox[] = [];
         const text = new Text();
-        const textBoxes = this.nodeData
-            .map((datum) => {
-                const label = datum.calloutLabel;
-                const radius = radiusScale.convert(datum.radius);
-                const outerRadius = Math.max(0, radius);
-                if (!label || outerRadius === 0) {
-                    return null;
-                }
 
-                const labelRadius = outerRadius + calloutLength + offset;
-                const x = datum.midCos * labelRadius;
-                const y = datum.midSin * labelRadius + label.collisionOffsetY;
-                this.setTextDimensionalProps(text, x, y, this.calloutLabel, label);
-                const box = text.computeBBox();
-                label.box = box;
-
-                if (Math.abs(label.collisionOffsetY) > maxCollisionOffset) {
-                    label.hidden = true;
-                    return null;
-                }
-
-                if (options.hideWhenNecessary) {
-                    const { textLength, hasVerticalOverflow, hasSurroundingSeriesOverflow } = this.getLabelOverflow(
-                        label.text,
-                        box,
-                        seriesRect
-                    );
-                    const isTooShort = label.text.length > 2 && textLength < 2;
-
-                    if (hasVerticalOverflow || isTooShort || hasSurroundingSeriesOverflow) {
-                        label.hidden = true;
-                        return null;
-                    }
-                }
-
-                label.hidden = false;
-                return box;
-            })
-            .filter((box) => box != null) as BBox[];
-        if (this.title?.text) {
+        let titleBox: BBox;
+        if (this.title?.text && this.title.enabled) {
             const dy = this.getTitleTranslationY();
             if (isFinite(dy)) {
                 this.setTextDimensionalProps(text, 0, dy, this.title, {
@@ -1198,10 +1160,64 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
                     collisionTextAlign: undefined,
                     collisionOffsetY: 0,
                 });
-                const box = text.computeBBox();
-                textBoxes.push(box);
+                titleBox = text.computeBBox();
+                textBoxes.push(titleBox);
             }
         }
+
+        this.nodeData.forEach((datum) => {
+            const label = datum.calloutLabel;
+            const radius = radiusScale.convert(datum.radius);
+            const outerRadius = Math.max(0, radius);
+            if (!label || outerRadius === 0) {
+                return null;
+            }
+
+            const labelRadius = outerRadius + calloutLength + offset;
+            const x = datum.midCos * labelRadius;
+            const y = datum.midSin * labelRadius + label.collisionOffsetY;
+            this.setTextDimensionalProps(text, x, y, this.calloutLabel, label);
+            const box = text.computeBBox();
+            label.box = box;
+
+            // Hide labels that where pushed to far by the collision avoidance algorithm
+            if (Math.abs(label.collisionOffsetY) > maxCollisionOffset) {
+                label.hidden = true;
+                return;
+            }
+
+            // Hide labels intersecting or above the title
+            if (titleBox) {
+                const seriesTop = seriesRect.y - this.centerY;
+                const titleCleanArea = new BBox(
+                    titleBox.x - minSpacing,
+                    seriesTop,
+                    titleBox.width + 2 * minSpacing,
+                    titleBox.y + titleBox.height + minSpacing - seriesTop
+                );
+                if (box.collidesBBox(titleCleanArea)) {
+                    label.hidden = true;
+                    return;
+                }
+            }
+
+            if (options.hideWhenNecessary) {
+                const { textLength, hasVerticalOverflow, hasSurroundingSeriesOverflow } = this.getLabelOverflow(
+                    label.text,
+                    box,
+                    seriesRect
+                );
+                const isTooShort = label.text.length > 2 && textLength < 2;
+
+                if (hasVerticalOverflow || isTooShort || hasSurroundingSeriesOverflow) {
+                    label.hidden = true;
+                    return;
+                }
+            }
+
+            label.hidden = false;
+            textBoxes.push(box);
+        });
         if (textBoxes.length === 0) {
             return null;
         }
