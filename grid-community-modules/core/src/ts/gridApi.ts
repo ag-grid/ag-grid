@@ -474,7 +474,7 @@ export class GridApi<TData = any> {
         return this.pinnedRowModel.getPinnedTopRow(index);
     }
 
-    /** Gets the top pinned row with the specified index. */
+    /** Gets the bottom pinned row with the specified index. */
     public getPinnedBottomRow(index: number): IRowNode | undefined {
         return this.pinnedRowModel.getPinnedBottomRow(index);
     }
