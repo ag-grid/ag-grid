@@ -396,6 +396,16 @@ export class GridOptionsService {
         return this.is('animateRows');
     }
 
+    public isGroupRowsSticky(): boolean {
+        if (
+            this.is('suppressGroupRowsSticky') ||
+            this.is('paginateChildRows') ||
+            this.is('groupHideOpenParents')
+        ) { return false; }
+
+        return true;
+    }
+
     public isTreeData(): boolean {
         return this.is('treeData') && ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Tree Data');
     }

@@ -91,16 +91,6 @@ export class GridOptionsValidator {
         validateRegistered('getMainMenuItems', ModuleNames.MenuModule);
         validateRegistered('getContextMenuItems', ModuleNames.MenuModule);
         validateRegistered('allowContextMenuWithControlKey', ModuleNames.MenuModule);
-
-        if (this.gridOptionsService.is('groupRowsSticky')) {
-            if (this.gridOptionsService.is('groupHideOpenParents')) {
-                this.pickOneWarning('groupRowsSticky', 'groupHideOpenParents');
-            }
-
-            if (this.gridOptionsService.is('pagination')) {
-                this.pickOneWarning('groupRowsSticky', 'pagination');
-            }
-        }
     }
 
     private checkColumnDefProperties() {

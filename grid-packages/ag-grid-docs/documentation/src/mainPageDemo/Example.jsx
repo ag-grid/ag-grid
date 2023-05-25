@@ -812,7 +812,7 @@ const Example = () => {
             // paginateChildRows: true,
             // paginationPageSize: 10,
             // groupSelectsFiltered: true,
-            // groupRowsSticky: true,
+            // suppressGroupRowsSticky: true,
             suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
             // suppressColumnVirtualisation: true,
             // suppressContextMenu: true,

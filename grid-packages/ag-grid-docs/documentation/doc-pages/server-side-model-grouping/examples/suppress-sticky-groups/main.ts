@@ -25,7 +25,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   suppressAggFuncInHeader: true,
   animateRows: true,
   getRowId: getRowId,
-  groupRowsSticky: true,
+  suppressGroupRowsSticky: true
 }
 
 function getRowId(params: GetRowIdParams) {

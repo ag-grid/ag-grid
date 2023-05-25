@@ -194,7 +194,7 @@ export class CellNavigationService extends BeanStub {
     }
 
     private getNextStickyPosition(rowNode?: RowNode, up?: boolean): RowPosition | undefined {
-        if (!this.gridOptionsService.is('groupRowsSticky') || !rowNode || !rowNode.sticky) { return; }
+        if (!this.gridOptionsService.isGroupRowsSticky() || !rowNode || !rowNode.sticky) { return; }
 
         const stickyRowCtrls = [...this.rowRenderer.getStickyTopRowCtrls()].sort(
             (a, b) => a.getRowNode().rowIndex! - b.getRowNode().rowIndex!

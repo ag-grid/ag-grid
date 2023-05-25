@@ -858,12 +858,6 @@
             }
         },
         "groupSuppressBlankHeader": {},
-        "groupRowsSticky": {
-            "more": {
-                "name": "Sticky Groups",
-                "url": "/grouping-sticky-groups/"
-            }
-        },
         "groupSelectsFiltered": {
             "more": {
                 "name": "Group Selection",
@@ -934,6 +928,7 @@
                 "url": "/grouping-group-panel/#keeping-columns-visible"
             }
         },
+        "suppressGroupRowsSticky": {},
         "suppressRowGroupHidesColumns": {
             "more": {
                 "name": "Keeping Columns Visible",

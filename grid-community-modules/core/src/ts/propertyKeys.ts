@@ -88,7 +88,7 @@ export class PropertyKeys {
         'serverSideSortingAlwaysResets', 'serverSideSortAllLevels', 'serverSideFilterAllLevels', 'serverSideSortOnServer', 'serverSideFilterOnServer', 'suppressAggFilteredOnly',
         'showOpenedGroup', 'suppressClipboardApi', 'suppressModelUpdateAfterUpdateTransaction', 'stopEditingWhenCellsLoseFocus', 'maintainColumnOrder', 'groupMaintainOrder',
         'columnHoverHighlight', 'suppressReactUi', 'readOnlyEdit', 'suppressRowVirtualisation', 'enableCellEditingOnBackspace', 'resetRowDataOnUpdate',
-        'removePivotHeaderRowWhenSingleValueColumn', 'suppressCopySingleCellRanges', 'groupRowsSticky', 'suppressServerSideInfiniteScroll', 'rowGroupPanelSuppressSort',
+        'removePivotHeaderRowWhenSingleValueColumn', 'suppressCopySingleCellRanges', 'suppressGroupRowsSticky', 'suppressServerSideInfiniteScroll', 'rowGroupPanelSuppressSort',
         'allowShowChangeAfterFilter', 'suppressCutToClipboard'
     ];
 

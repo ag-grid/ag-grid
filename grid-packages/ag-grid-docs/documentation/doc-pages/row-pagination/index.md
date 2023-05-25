@@ -91,6 +91,10 @@ In the example below, note the following:
 - Each page will always contain exactly 10 rows (not groups).
 - Expanding a group will push rows to the next page to limit the total number of rows to 10.
 
+<note>
+When `paginateChildRows=true` the Grid automatically disables Group Rows Sticky, see: [Suppressing Sticky Groups](../grouping/#suppressing-sticky-groups).
+</note>
+
 <grid-example title='Grouping Paginate Child Rows' name='grouping-paginate-child-rows' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping" ] }'></grid-example>
 
 ### Fallback to Mode 2

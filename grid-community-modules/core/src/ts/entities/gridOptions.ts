@@ -239,7 +239,7 @@ export interface GridOptions<TData = any> {
     /** Set to `true` so that neither single nor double click starts editing. Default: `false` */
     suppressClickEdit?: boolean;
 
-    /** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false`.     */
+    /** Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead. Default: `false` */
     readOnlyEdit?: boolean;
 
     /**
@@ -597,11 +597,11 @@ export interface GridOptions<TData = any> {
     /** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */
     treeData?: boolean;
 
-    /** Set to `true` to suppress sort indicators and actions from the row group panel. Default: `false`. */
+    /** Set to `true` to suppress sort indicators and actions from the row group panel. Default: `false` */
     rowGroupPanelSuppressSort?: boolean;
 
-    /** Set to `true` to keep open Group Rows visible at the top of the grid. Default: `false`.*/
-    groupRowsSticky?: boolean;
+    /** Set to `true` prevent Group Rows from sticking to the top of the grid. Default: `false` */
+    suppressGroupRowsSticky?: boolean;
 
     /** @deprecated v24 - no longer needed, transaction updates keep group state */
     rememberGroupStateWhenNewData?: boolean;

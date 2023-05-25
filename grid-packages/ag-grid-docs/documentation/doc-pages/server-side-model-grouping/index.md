@@ -86,11 +86,11 @@ Below shows `isServerSideGroupOpenByDefault()` and `getRoute` in action. Note th
 
 <grid-example title='Open by Default' name='open-by-default' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
-## Sticky Groups
+## Suppressing Sticky Groups
 
-To enable sticky groups, set the `groupRowsSticky` property to true. This behaviour applies to all row group levels.
+By default the group nodes stick to the top of the Grid, to disable this behaviour, set the `suppressGroupRowsSticky` property to true. This behaviour applies to all row group levels.
 
-<grid-example title='Sticky Groups' name='sticky-groups' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+<grid-example title='Sticky Groups' name='suppress-sticky-groups' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
 ## Row Group Footers
 
