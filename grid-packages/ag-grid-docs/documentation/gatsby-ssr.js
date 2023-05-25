@@ -110,14 +110,6 @@ export const onPreRenderHTML = ({ getHeadComponents, replaceHeadComponents, path
         crossOrigin="anonymous"/>,
     );
 
-    // We import the Font Awesome CSS here even though it is also imported by the library to avoid a repaint flash
-    headComponents.unshift(
-        <link
-            key="fontawesome"
-            rel="stylesheet"
-            href={`https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-svg-core@${dependencies['@fortawesome/fontawesome-svg-core']}/styles.min.css`}
-            crossOrigin="anonymous"/>);
-
     // Add Plausible.io tracking
     if (!isDevelopment()) {
         headComponents.unshift(
