@@ -7,11 +7,11 @@ button {
     cursor: pointer;
 }
 
-button:not(.button-style-none),
-input[type='reset']:not(.button-style-none),
-input[type='submit']:not(.button-style-none),
-.button:not(.button-style-none),
-.button-secondary:not(.button-style-none) {
+button,
+input[type='reset'],
+input[type='submit'],
+.button,
+.button-secondary {
     appearance: none;
     display: inline-block;
     font-size: var(--font-size);
@@ -68,7 +68,7 @@ input[type='submit']:not(.button-style-none),
     }
 }
 
-.button-secondary:not(.button-style-none) {
+.button-secondary {
     --button-color: var(--water-blue);
     --button-hover-color: var(--sky-blue);
     --button-active-color: var(--azure-blue);
@@ -76,7 +76,7 @@ input[type='submit']:not(.button-style-none),
     --button-focus-box-shadow-color: var(--light-water-blue);
 }
 
-.button-input:not(.button-style-none) {
+.button-input {
     --button-color: var(--white);
     --button-hover-color: var(--white);
     --button-active-color: var(--white);
@@ -96,30 +96,37 @@ input[type='submit']:not(.button-style-none),
     }
 }
 
-.button-style-none {
+.button-style-none,
+.button-as-link {
     appearance: none;
     padding: 0;
     text-align: left;
+    font-weight: var(--font-weight-normal);
     border: none;
     color: var(--text-color);
     background-color: transparent;
 
-    &.button-as-link {
-        --text-color: var(--link-color);
+    &:hover {
+        color: var(--text-color);
+        background-color: transparent;
+    }
+}
 
-        transition: color $default-transition-timing;
+.button-as-link {
+    --text-color: var(--link-color);
 
-        &:hover {
-            --text-color: var(--link-hover-color);
+    transition: color $default-transition-timing;
 
-            > .icon {
-                --text-color: var(--link-hover-color);
-            }
-        }
+    &:hover {
+        --text-color: var(--link-hover-color);
 
         > .icon {
-            --icon-size: 1.5em;
-            --text-color: var(--link-color);
+            --text-color: var(--link-hover-color);
         }
+    }
+
+    > .icon {
+        --icon-size: 1.5em;
+        --text-color: var(--link-color);
     }
 }

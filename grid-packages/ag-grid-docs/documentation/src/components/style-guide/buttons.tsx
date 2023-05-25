@@ -63,10 +63,10 @@ export const Buttons = () => {
                 <div>
                     <p className="item-label">
                         <span>Button as link:</span>
-                        <code>.button-style-none.button-as-link</code>
+                        <code>.button-as-link</code>
                     </p>
 
-                    <button className="button-style-none button-as-link">Button as link</button>
+                    <button className="button-as-link">Button as link</button>
                 </div>
             </div>
 
