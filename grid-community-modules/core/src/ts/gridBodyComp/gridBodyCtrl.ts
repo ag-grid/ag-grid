@@ -28,7 +28,7 @@ export enum RowAnimationCssClasses {
 
 export const CSS_CLASS_FORCE_VERTICAL_SCROLL = 'ag-force-vertical-scroll';
 
-const CSS_CLASS_CELL_SELECTION_INVISIBLE = 'ag-selection-invisible';
+const CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
 const CSS_CLASS_COLUMN_MOVING = 'ag-column-moving';
 
 export interface IGridBodyComp extends LayoutView {
@@ -165,7 +165,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     public setCellTextSelection(selectable: boolean = false): void {
-        this.comp.setCellSelectableCss(CSS_CLASS_CELL_SELECTION_INVISIBLE, !selectable);
+        this.comp.setCellSelectableCss(CSS_CLASS_CELL_SELECTABLE, selectable);
     }
 
     private onScrollVisibilityChanged(): void {

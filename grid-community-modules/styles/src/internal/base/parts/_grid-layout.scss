@@ -176,11 +176,6 @@
         -webkit-font-smoothing: subpixel-antialiased;
     }
 
-    .ag-selection-invisible .ag-cell::selection, 
-    .ag-selection-invisible .ag-cell *:not(input):not(textarea)::selection {
-        background: transparent;
-    }
-
     // in full width rows, a cell renderer is rendered directly into a row with no cell in between,
     // in which case we need to apply the padding to the cell renderer's wrapper.
     .ag-row > .ag-cell-wrapper {

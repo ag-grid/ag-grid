@@ -120,7 +120,7 @@ const GridBodyComp = () => {
         [layoutClass]
     );
     const bodyViewportClasses = useMemo(() =>
-        classesList('ag-body-viewport', 'ag-selectable', rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss), 
+        classesList('ag-body-viewport', rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss), 
         [rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss]
     );
     const bodyClasses = useMemo(() =>
@@ -132,15 +132,15 @@ const GridBodyComp = () => {
         [layoutClass]
     );
     const topClasses = useMemo(() =>
-        classesList('ag-floating-top', 'ag-selectable', cellSelectableCss), 
+        classesList('ag-floating-top', cellSelectableCss), 
         [cellSelectableCss]
     );
     const stickyTopClasses = useMemo(() =>
-        classesList('ag-sticky-top', 'ag-selectable', cellSelectableCss), 
+        classesList('ag-sticky-top', cellSelectableCss), 
         [cellSelectableCss]
     );
     const bottomClasses = useMemo(() =>
-        classesList('ag-floating-bottom', 'ag-selectable', cellSelectableCss),
+        classesList('ag-floating-bottom', cellSelectableCss),
         [cellSelectableCss]
     );
 

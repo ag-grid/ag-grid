@@ -5,7 +5,7 @@ import { classesList } from './core/utils';
 import GridHeaderComp from "./header/gridHeaderComp";
 import RowContainerComp from "./rows/rowContainerComp";
 
-const GridBodyComp = ()=> {
+const GridBodyComp = () => {
 
     const {context, agStackComponentsRegistry, resizeObserverService} = useContext(BeansContext);
 
@@ -20,7 +20,7 @@ const GridBodyComp = ()=> {
     const [getTopDisplay, setTopDisplay] = createSignal<string>('');
     const [getBottomDisplay, setBottomDisplay] = createSignal<string>('');
     const [getBodyViewportWidth, setBodyViewportWidth] = createSignal<string>('');
-    
+
     const [getMovingCss, setMovingCss] = createSignal<string | null>(null);
     const [getForceVerticalScrollClass, setForceVerticalScrollClass] = createSignal<string | null>(null);
     const [getTopAndBottomOverflowY, setTopAndBottomOverflowY] = createSignal<string>('');
@@ -40,7 +40,7 @@ const GridBodyComp = ()=> {
     let eBodyViewport: HTMLDivElement;
     let eBottom: HTMLDivElement;
 
-    const destroyFuncs: (()=>void)[] = [];
+    const destroyFuncs: (() => void)[] = [];
     onCleanup(() => {
         destroyFuncs.forEach( f => f() );
         destroyFuncs.length = 0;
@@ -110,16 +110,16 @@ const GridBodyComp = ()=> {
         classesList('ag-body-clipper', getLayoutClass())
     );
     const getBodyViewportClasses = createMemo(() =>
-        classesList('ag-body-viewport', 'ag-selectable', getRowAnimationClass(), getLayoutClass(), getForceVerticalScrollClass(), getCellSelectableCss())
+        classesList('ag-body-viewport', getRowAnimationClass(), getLayoutClass(), getForceVerticalScrollClass(), getCellSelectableCss())
     );
     const getTopClasses = createMemo(() =>
-        classesList('ag-floating-top', 'ag-selectable', getCellSelectableCss())
+        classesList('ag-floating-top', getCellSelectableCss())
     );
     const getStickyTopClasses = createMemo(() =>
-        classesList('ag-sticky-top', 'ag-selectable', getCellSelectableCss())
+        classesList('ag-sticky-top', getCellSelectableCss())
     );
     const getBottomClasses = createMemo(() =>
-        classesList('ag-floating-bottom', 'ag-selectable', getCellSelectableCss())
+        classesList('ag-floating-bottom', getCellSelectableCss())
     );
 
     const getTopStyle = createMemo(() => ({
@@ -135,14 +135,14 @@ const GridBodyComp = ()=> {
         width: getStickyTopWidth
     }));
 
-    const getBottomStyle = createMemo(()=> ({
+    const getBottomStyle = createMemo(() => ({
         height: getBottomHeight,
         'min-height': getBottomHeight,
         display: getBottomDisplay,
         'overflow-y': (getTopAndBottomOverflowY as any)
     }));
 
-    const getBodyViewportStyle = createMemo( ()=> ({
+    const getBodyViewportStyle = createMemo(() => ({
         width: getBodyViewportWidth()
     }));
 
