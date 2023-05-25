@@ -57,17 +57,17 @@ This will produce the following chart:</p>
 
 <chart-example title='Grouped Column Series' name='grouped-column' type='generated'></chart-example>
 
-### Grouped Stacks with a Shared Legend
-
-Providing a matching `legendItemName` allows us to merge matching legend items. When a legend item is clicked, all items that have a matching `legendItemName` will be toggled together.
-
-<chart-example title='Grouped Stacks with a Shared Legend' name='grouped-stack-shared' type='generated'></chart-example>
-
 ### Grouped Stacks
 
 Stacks can be displayed in separate groups. The IDs of such groups should be specified in `stackGroup` property for each series (if left unset for some series, such series will be stacked together).
 
 <chart-example title='Grouped Stack Series' name='grouped-stack' type='generated'></chart-example>
+
+### Grouped Stacks with a Shared Legend
+
+Providing a matching `legendItemName` allows us to merge matching legend items. When a legend item is clicked, all items that have a matching `legendItemName` will be toggled together.
+
+<chart-example title='Grouped Stacks with a Shared Legend' name='grouped-stack-shared' type='generated'></chart-example>
 
 ### Normalized Columns
 
