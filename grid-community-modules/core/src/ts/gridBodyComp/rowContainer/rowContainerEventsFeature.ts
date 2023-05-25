@@ -54,6 +54,7 @@ export class RowContainerEventsFeature extends BeanStub {
         // so we should throttle the methods to make sure it only gets called once
         this.onCopy = throttle(this.onCopy, 10);
         this.onCut = throttle(this.onCut, 10);
+        this.onPaste = throttle(this.onPaste, 10);
     }
 
     @PostConstruct
@@ -274,9 +275,10 @@ export class RowContainerEventsFeature extends BeanStub {
         const keyCode = normaliseQwertyAzerty(keyboardEvent);
 
         if (keyCode === KeyCode.A) { return this.onCtrlAndA(keyboardEvent); }
-        if (keyCode === KeyCode.C) { return this.onCopy(keyboardEvent); }
+        if (keyCode === KeyCode.C) { return this.onCtrlAndC(keyboardEvent); }
         if (keyCode === KeyCode.D) { return this.onCtrlAndD(keyboardEvent); }
-        if (keyCode === KeyCode.D) { return this.onCut(keyboardEvent); }
+        if (keyCode === KeyCode.V) { return this.onCtrlAndV(keyboardEvent); }
+        if (keyCode === KeyCode.X) { return this.onCtrlAndX(keyboardEvent); }
         if (keyCode === KeyCode.Y) { return this.onCtrlAndY(); }
         if (keyCode === KeyCode.Z) { return this.onCtrlAndZ(keyboardEvent); }
     }
@@ -317,6 +319,10 @@ export class RowContainerEventsFeature extends BeanStub {
         event.preventDefault();
     }
 
+    private onCtrlAndC(event: KeyboardEvent): void {
+        this.onCopy(event);
+    }
+
     // this method is throttled, see the `constructor`
     private onCopy(event: ClipboardEvent | KeyboardEvent): void {
         if (!this.clipboardService || this.gridOptionsService.is('enableCellTextSelection')) { return; }
@@ -327,6 +333,10 @@ export class RowContainerEventsFeature extends BeanStub {
 
         event.preventDefault();
         this.clipboardService.copyToClipboard();
+    }
+
+    private onCtrlAndX(event: KeyboardEvent): void {
+        this.onCut(event);
     }
     
     // this method is throttled, see the `constructor`
@@ -345,7 +355,15 @@ export class RowContainerEventsFeature extends BeanStub {
             this.clipboardService.cutToClipboard(undefined, 'ui');
     }
 
-    private onPaste(): void {
+    private onCtrlAndV(event: KeyboardEvent): void {
+        this.onPaste(event);
+    }
+
+    // this method is throttled, see the `constructor`
+    private onPaste(event: ClipboardEvent | KeyboardEvent): void {
+        const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
+
+        if (cellCtrl?.isEditing() || rowCtrl?.isEditing()) { return; }
         if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule) && !this.gridOptionsService.is('suppressClipboardPaste')) {
             this.clipboardService.pasteFromClipboard();
         }
