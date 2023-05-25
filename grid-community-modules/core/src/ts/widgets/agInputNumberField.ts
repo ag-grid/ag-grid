@@ -57,11 +57,21 @@ export class AgInputNumberField extends AgInputTextField {
         if (this.precision == null) {
             return value;
         }
-        const floatString = parseFloat(value).toFixed(this.precision);
         if (isScientificNotation) {
+            const floatString = parseFloat(value).toFixed(this.precision);
             return parseFloat(floatString).toString();
         }
-        return value.length > floatString.length ? floatString : value;
+
+        // can't use toFixed here because we don't want to round up
+        const parts = String(value).split('.');
+        if (parts.length > 1) {
+            if (parts[1].length <= this.precision) {
+                return value;
+            } else if (this.precision > 0) {
+                return `${parts[0]}.${parts[1].slice(0, this.precision)}`;
+            }
+        }
+        return parts[0];
     }
 
     public setMin(min: number | undefined): this {
