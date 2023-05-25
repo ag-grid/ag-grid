@@ -673,7 +673,8 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     public isSpanHeaderHeight(): boolean {
-        return !!this.getColDef().spanHeaderHeight;
+        const colDef = this.getColDef();
+        return !colDef.suppressSpanHeaderHeight && !colDef.autoHeaderHeight;
     }
 
     /** Returns the column definition for this column.

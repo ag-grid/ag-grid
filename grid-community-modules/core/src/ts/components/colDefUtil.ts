@@ -133,7 +133,7 @@ export class ColDefUtil {
         tooltipValueGetter: undefined,
         cellRendererSelector: undefined,
         cellEditorSelector: undefined,
-        spanHeaderHeight: undefined,
+        suppressSpanHeaderHeight: undefined,
         useValueFormatterForExport: undefined,
         useValueParserForImport: undefined,
     };

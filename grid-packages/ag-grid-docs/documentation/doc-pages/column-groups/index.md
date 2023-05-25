@@ -151,15 +151,17 @@ The example above shows adding and removing groups. It is also possible to add a
 
 <grid-example title='Group Changes 2' name='group-changes-2' type='generated'></grid-example>
 
-## Span Header Height
+## Suppress Span Header Height
 
-By default the Grid will balance the column headers with different number of levels with an empty column group header cell, as shown in the example below. Note the following:
+By default the grid will resize the header cell to span the whole height of the header container, as shown in the example below.
 
-- The **Age** column has an empty column group header cell above it (shown with red borders).
+Note the following: 
 
-<grid-example title='Padded Header' name='padded-header' type='generated' options='{ "exampleHeight": 300 }'></grid-example>
+- The **Age** column header cell is not under a column group cell, but spans the entire height of the header container.
 
-Using the **Column Property** `spanHeaderHeight` will allow the header cell to span the whole height of the header container instead of using padding.
+<grid-example title='Span Header Height' name='span-header-height' type='generated' options='{ "exampleHeight": 300 }'></grid-example>
+
+Using the **Column Property** `suppressSpanHeaderHeight` the Grid will balance the column headers with different number of levels with an empty column group header cell, as shown in the example below.
 
 <snippet>
 const gridOptions = {
@@ -174,18 +176,14 @@ const gridOptions = {
     {
       field: 'age',
       width: 90,
-      spanHeaderHeight: true
+      suppressSpanHeaderHeight: true
     }
   ]
 }
 </snippet>
 
-In the example below, note the following: 
+Note the following:
 
-- The **Age** column header cell is not under a column group cell, but spans the entire height of the header container.
+- The **Age** column has an empty column group header cell above it (shown with red borders).
 
-<grid-example title='Span Header Height' name='span-header-height' type='generated' options='{ "exampleHeight": 300 }'></grid-example>
-
-<warning>
-| The property `spanHeaderHeight`  does not work with `autoHeaderHeight`.
-</warning>
+<grid-example title='Padded Header' name='padded-header' type='generated' options='{ "exampleHeight": 300 }'></grid-example>
