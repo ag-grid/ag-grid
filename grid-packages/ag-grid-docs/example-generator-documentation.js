@@ -29,7 +29,6 @@ const parsers = {
     ts: 'typescript',
 };
 
-const useAsyncFileOperations = false;
 const encodingOptions = { encoding: 'utf8' };
 
 function writeFile(destination, contents) {
@@ -44,12 +43,12 @@ function writeFile(destination, contents) {
     const parser = parsers[extension] || extension;
     const formattedContent = format(contents, parser, destination);
 
-    if (useAsyncFileOperations) {
-        fs.writeFile(destination, formattedContent, encodingOptions, () => {
-        });
-    } else {
-        fs.writeFileSync(destination, formattedContent, encodingOptions);
+    if (fs.existsSync(destination) && fs.readFileSync(destination).toString('utf-8') === formattedContent) {
+        // Nothing to write (don't trigger a cascade of build processes).
+        return;
     }
+
+    fs.writeFileSync(destination, formattedContent, encodingOptions);
 }
 
 function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, forceConversion = false) {
@@ -109,11 +108,7 @@ function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, f
             return src;
         }
 
-        if (useAsyncFileOperations) {
-            fs.readFile(sourceFile, encodingOptions, (_, contents) => writeFile(destinationFile, updateImports((contents))));
-        } else {
-            writeFile(destinationFile, updateImports((getFileContents(sourceFile))));
-        }
+        writeFile(destinationFile, updateImports((getFileContents(sourceFile))));
     });
 }
 
@@ -313,7 +308,9 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
             const basePath = path.join(createExamplePath(`_gen/${importType}`), framework);
             const scriptsPath = subdirectory ? path.join(basePath, subdirectory) : basePath;
 
-            fs.mkdirSync(scriptsPath, { recursive: true });
+            if (!fs.existsSync(scriptsPath)) {
+                fs.mkdirSync(scriptsPath, { recursive: true });
+            }
 
             Object.keys(files).forEach(name => writeFile(path.join(scriptsPath, name), files[name]));
 

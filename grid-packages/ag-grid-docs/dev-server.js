@@ -34,17 +34,58 @@ const lnk = require('lnk').sync;
 const EXPRESS_HTTPS_PORT = 8080;
 
 function debounce(cb, timeout = 500) {
-    let nextTimeout;
+    return debounceByPath(cb, 0, 0, timeout);
+}
 
-    return () => {
-        if (nextTimeout) {
-            clearTimeout(nextTimeout);
+/** Correct depth to pickup docs section. */
+const DEFAULT_GROUP_DEPTH = 3;
+/** Correct depth to pickup specific example directory. */
+const DEFAULT_PATH_DEPTH = 5;
+
+function debounceByPath(cb, groupDepth = DEFAULT_GROUP_DEPTH, pathDepth = DEFAULT_PATH_DEPTH, timeout = 500) {
+    let timeouts = {};
+
+    const pathFn = (path, depth) => {
+        const pathParts = path.split('/');
+        let key = pathParts.slice(0, depth).join('/');
+        if (pathParts.length > depth) {
+            key += '/';
         }
 
-        nextTimeout = setTimeout(() => {
-            nextTimeout = undefined;
-            cb();
+        return key;
+    };
+
+    const groupFn = (path) => pathFn(path, groupDepth);
+    const keyFn = (path) => pathFn(path, pathDepth);
+
+    return (file) => {
+        const group = groupFn(file);
+        const key = keyFn(file);
+
+        if (timeouts[group]?.timeoutRef) {
+            clearTimeout(timeouts[group].timeoutRef);
+        }
+
+        const timeoutRef = setTimeout(() => {
+            const paths = [];
+            const keys = Object.keys(timeouts[group].keys);
+            if (keys.length < 5) {
+                // If only a few example changed, use the more specific path(s).
+                paths.push(...keys);
+            } else {
+                // More than a few examples changed, trigger rebuild for all examples in a section.
+                paths.push(group);
+            }
+
+            delete timeouts[group];
+            for (const path of paths) {
+                cb(path);
+            }
         }, timeout);
+
+        timeouts[group] ??= { keys: {} };
+        timeouts[group].timeoutRef = timeoutRef;
+        timeouts[group].keys[key] = true;
     };
 }
 
@@ -286,11 +327,11 @@ async function watchAndGenerateExamples(chartsOnly) {
 
     chokidar
         .watch([`./documentation/doc-pages/**/examples/**/*.{html,css,js,jsx,ts}`], {ignored: ['**/_gen/**/*']})
-        .on('change', file => regenerateDocumentationExamplesForFileChange(file, chartsOnly));
+        .on('change', debounceByPath((path) => regenerateDocumentationExamplesForFileChange(path, chartsOnly)));
 
     chokidar
         .watch([`./documentation/doc-pages/**/*.md`], {ignoreInitial: true})
-        .on('add', file => regenerateDocumentationExamplesForFileChange(file, chartsOnly));
+        .on('add', debounceByPath((path) => regenerateDocumentationExamplesForFileChange(path, chartsOnly)));
 }
 
 const updateWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) => {
