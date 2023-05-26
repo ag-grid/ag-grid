@@ -256,15 +256,15 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                         insideQuotedField = false;
                     }
 
-                    continue;
+                    // continue;
                 } else if (previousChar === undefined || previousChar === delimiter || isNewline(previousChar)) {
                     // enter quoted field
                     insideQuotedField = true;
-                    continue;
+                    // continue;
                 }
             }
 
-            if (!insideQuotedField) {
+            if (!insideQuotedField && currentChar !== '"') {
                 if (currentChar === delimiter) {
                     // move to next column
                     column++;
