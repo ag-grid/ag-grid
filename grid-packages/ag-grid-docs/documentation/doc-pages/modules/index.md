@@ -72,7 +72,7 @@ When including AG Grid in your application via modules it is your responsibility
 
 ### Providing Modules Globally
 
-You can import and register modules to the Grid globally, but you need to ensure that this is done before **_any_** Grids are instantiated.
+You can import and register modules globally, but you need to ensure that this is done before **_any_** Grids are instantiated. Any modules registered globally will be available to all Grids.
 
 - Specify Modules Dependencies
 - Import Modules
@@ -181,6 +181,10 @@ A real-world example might be that we wish to use the `Client Side Row Model` (t
 
 ### Providing Modules To Individual Grids
 
+Modules can be registered directly with individual grids. Modules registered directly with a grid will *only* be available to that grid. When a grid is instantiated it uses both globally and individually registered modules. 
+
+Individually registering modules is most useful when you have multiple Grids in your application with varying feature requirements. It may also lead to smaller bundle sizes if your application uses lazy loading / code splitting.
+
 The steps required are:
 
 - Specify Modules Dependencies
@@ -286,12 +290,6 @@ Using the same real-world example from above the `package.json` dependencies wil
 </snippet>
 </framework-specific-section>   
 
-<note>
-It's important to note that when a module is added via the `modules` property, this module will be available to all other instances of the Grid created afterwards. This will produce the same behaviour as registering modules globally by calling `ModuleRegistry.registerModules()`.
-This means that you can't limit the functionality of specific grid instances based on whether you've registered a particular module for that specific grid. If a module was already registered by any one AG Grid instance, it is available to all AG Grid instances created subsequently.
-To control features per grid use the relevant [Grid Property](../grid-options/).
-</note>
-
 ## Core Modules
 
 If you specify _any_ Community or Enterprise dependency then the corresponding `core` module will also be pulled in and be made available to you. For example, if you include `@ag-grid-community/client-side-row-model` - a Community Module - then `@ag-grid-community/core` will be available. If you include `@ag-grid-enterprise/excel-export` - an Enterprise Module - then `@ag-grid-enterprise/core` will also be available.
@@ -343,7 +341,7 @@ See [Choosing a Theme](/global-style-customisation-sass/#choosing-a-theme) for f
 
 ## Module Examples
 
-Our Example Runner enables you to view the `modules` version of an example via the dropdown in the top right-hand corner. 
+Our Example Runner enables you to view the `modules` version of an example via the dropdown in the bottom left-hand corner. 
 
 When 'Modules' is selected, the source code includes the required modules along with the module import paths. This means
 you can copy and paste code from our examples without further tweaks.
