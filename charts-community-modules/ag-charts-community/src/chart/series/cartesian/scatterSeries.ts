@@ -564,6 +564,9 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
     }) {
         const duration = 1000;
 
+        const markerDuration = duration * 0.8;
+        const labelDuration = duration - markerDuration;
+
         markerSelections.forEach((markerSelection) => {
             markerSelection.each((marker, datum) => {
                 const format = this.animateFormatter(marker, datum);
@@ -575,7 +578,7 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                     from: 0,
                     to: to,
                     disableInteractions: true,
-                    duration,
+                    duration: markerDuration,
                     ease: easing.linear,
                     repeat: 0,
                     onUpdate(size) {
@@ -590,7 +593,8 @@ export class ScatterSeries extends CartesianSeries<SeriesNodeDataContext<Scatter
                 this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
-                    duration,
+                    delay: markerDuration,
+                    duration: labelDuration,
                     ease: easing.linear,
                     repeat: 0,
                     onUpdate: (opacity) => {

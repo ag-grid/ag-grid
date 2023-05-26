@@ -550,12 +550,13 @@ export class LineSeries extends CartesianSeries<LineContext> {
             lineNode.lineDashOffset = this.lineDashOffset;
 
             const duration = 1000;
+            const lineDuration = duration * 0.8;
+            const markerDuration = duration - lineDuration;
 
             const animationOptions = {
                 from: 0,
                 to: seriesRect?.width ?? 0,
                 disableInteractions: true,
-                duration,
                 ease: easing.linear,
                 repeat: 0,
             };
@@ -569,6 +570,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
 
             this.animationManager?.animate<number>(`${this.id}_empty-update-ready`, {
                 ...animationOptions,
+                duration: lineDuration,
                 onUpdate(xValue) {
                     linePath.clear({ trackChanges: true });
 
@@ -601,7 +603,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
             });
 
             markerSelections[contextDataIndex].each((marker, datum) => {
-                const delay = seriesRect?.width ? (datum.point.x / seriesRect.width) * duration : 0;
+                const delay = seriesRect?.width ? (datum.point.x / seriesRect.width) * lineDuration : 0;
                 const format = this.animateFormatter(datum);
                 const size = datum.point?.size ?? 0;
 
@@ -609,7 +611,7 @@ export class LineSeries extends CartesianSeries<LineContext> {
                     ...animationOptions,
                     to: format?.size ?? size,
                     delay,
-                    duration: duration / 10,
+                    duration: markerDuration,
                     onUpdate(size) {
                         marker.size = size;
                     },
@@ -617,12 +619,12 @@ export class LineSeries extends CartesianSeries<LineContext> {
             });
 
             labelSelections[contextDataIndex].each((label, datum) => {
-                const delay = seriesRect?.width ? (datum.point.x / seriesRect.width) * duration : 0;
+                const delay = seriesRect?.width ? (datum.point.x / seriesRect.width) * lineDuration : 0;
                 this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
                     delay,
-                    duration: duration / 10,
+                    duration: markerDuration,
                     ease: easing.linear,
                     repeat: 0,
                     onUpdate: (opacity) => {

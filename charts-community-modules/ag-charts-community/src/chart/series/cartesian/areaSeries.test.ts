@@ -20,6 +20,7 @@ import {
     extractImageData,
     TestCase,
     prepareTestOptions,
+    spyOnAnimationManager,
 } from '../../test/utils';
 
 expect.extend({ toMatchImageSnapshot });
@@ -147,6 +148,35 @@ describe('AreaSeries', () => {
                     await example.extraScreenshotActions(chart);
                     await compare();
                 }
+            });
+        }
+    });
+
+    describe('initial animation', () => {
+        const compare = async () => {
+            await waitForChartStability(chart);
+
+            const imageData = extractImageData(ctx);
+            (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
+        };
+
+        afterEach(() => {
+            jest.restoreAllMocks();
+        });
+
+        for (const ratio of [0, 0.25, 0.5, 0.75, 1]) {
+            it(`for AREA_CATEGORY_X_AXIS_FRACTIONAL_LOG_Y_AXIS should animate at ${ratio * 100}%`, async () => {
+                spyOnAnimationManager(1000, ratio);
+
+                const options: AgChartOptions = examples.CARTESIAN_CATEGORY_X_AXIS_LOG_Y_AXIS(
+                    DATA_FRACTIONAL_LOG_AXIS,
+                    'area'
+                );
+                prepareTestOptions(options);
+
+                chart = AgChart.create(options) as Chart;
+                await waitForChartStability(chart);
+                await compare();
             });
         }
     });

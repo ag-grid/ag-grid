@@ -11,7 +11,6 @@ import {
     DATA_ZERO_EXTENT_LOG_AXIS,
 } from '../../test/data';
 import * as examples from '../../test/examples';
-import { CARTESIAN_CATEGORY_X_AXIS_LOG_Y_AXIS } from '../../test/examples';
 import {
     waitForChartStability,
     cartesianChartAssertions,
@@ -20,13 +19,14 @@ import {
     extractImageData,
     TestCase,
     prepareTestOptions,
+    spyOnAnimationManager,
 } from '../../test/utils';
 
 expect.extend({ toMatchImageSnapshot });
 
 const buildLogAxisTestCase = (data: any[]): TestCase => {
     return {
-        options: CARTESIAN_CATEGORY_X_AXIS_LOG_Y_AXIS(data, 'column'),
+        options: examples.CARTESIAN_CATEGORY_X_AXIS_LOG_Y_AXIS(data, 'column'),
         assertions: cartesianChartAssertions({ axisTypes: ['category', 'log'], seriesTypes: ['column'] }),
     };
 };
@@ -123,6 +123,45 @@ describe('BarSeries', () => {
                     await example.extraScreenshotActions(chart);
                     await compare();
                 }
+            });
+        }
+    });
+
+    describe('initial animation', () => {
+        const compare = async () => {
+            await waitForChartStability(chart);
+
+            const imageData = extractImageData(ctx);
+            (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
+        };
+
+        afterEach(() => {
+            jest.restoreAllMocks();
+        });
+
+        for (const ratio of [0, 0.25, 0.5, 0.75, 1]) {
+            it(`for COLUMN_TIME_X_AXIS_NUMBER_Y_AXIS should animate at ${ratio * 100}%`, async () => {
+                spyOnAnimationManager(1000, ratio);
+
+                const options: AgChartOptions = { ...examples.COLUMN_TIME_X_AXIS_NUMBER_Y_AXIS };
+                prepareTestOptions(options);
+
+                chart = AgChart.create(options) as Chart;
+                await waitForChartStability(chart);
+                await compare();
+            });
+        }
+
+        for (const ratio of [0, 0.25, 0.5, 0.75, 1]) {
+            it(`for BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS should animate at ${ratio * 100}%`, async () => {
+                spyOnAnimationManager(1000, ratio);
+
+                const options: AgChartOptions = { ...examples.BAR_NUMBER_X_AXIS_NUMBER_Y_AXIS };
+                prepareTestOptions(options);
+
+                chart = AgChart.create(options) as Chart;
+                await waitForChartStability(chart);
+                await compare();
             });
         }
     });

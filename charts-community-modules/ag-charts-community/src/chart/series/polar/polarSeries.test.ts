@@ -16,6 +16,7 @@ import {
     repeat,
     deproxy,
     prepareTestOptions,
+    spyOnAnimationManager,
 } from '../../test/utils';
 
 expect.extend({ toMatchImageSnapshot, toMatchImage });
@@ -128,6 +129,32 @@ describe('PolarSeries', () => {
                     await example.extraScreenshotActions(chart);
                     await compare();
                 }
+            });
+        }
+    });
+
+    describe('initial animation', () => {
+        const compare = async () => {
+            await waitForChartStability(chart);
+
+            const imageData = extractImageData(ctx);
+            (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
+        };
+
+        afterEach(() => {
+            jest.restoreAllMocks();
+        });
+
+        for (const ratio of [0, 0.25, 0.5, 0.75, 1]) {
+            it(`for PIE_SERIES should animate at ${ratio * 100}%`, async () => {
+                spyOnAnimationManager(1000, ratio);
+
+                const options: AgPolarChartOptions = examples.PIE_SERIES;
+                prepareTestOptions(options);
+
+                chart = deproxy(AgChart.create(options));
+                await waitForChartStability(chart);
+                await compare();
             });
         }
     });
