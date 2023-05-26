@@ -1,7 +1,6 @@
 $indent: 24px;
 
 .expandable-snippet {
-
     .json-property {
         position: relative;
 
@@ -12,7 +11,8 @@ $indent: 24px;
         }
     }
 
-    .json-object-union, .json-object {
+    .json-object-union,
+    .json-object {
         padding-left: $indent;
     }
 
@@ -40,8 +40,8 @@ $indent: 24px;
     }
 
     .expander {
-        height: 0.8rem;
-        width: 1rem;
+        --icon-size: 1em;
+
         color: #212529;
     }
 
@@ -85,14 +85,14 @@ $indent: 24px;
     }
 
     .jsdoc-expandable {
-        background-color: #eeeeee;
         color: #212529;
-        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,Liberation Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans,
+            Liberation Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
         font-size: 1rem;
         font-weight: 400;
         line-height: 1.275rem;
         margin: 0;
-        padding: .6375rem 10px;
+        padding: 0.6375rem 10px;
         text-align: left;
         white-space: normal;
         hyphens: initial;

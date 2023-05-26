@@ -23,7 +23,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
 
     constructor() {
         super(/* html */`
-            <div class="ag-floating-filter-input" role="presentation">
+            <div class="ag-floating-filter-input ag-set-floating-filter-input" role="presentation">
                 <ag-input-text-field ref="eFloatingFilterText"></ag-input-text-field>
             </div>`
         );

@@ -12,7 +12,8 @@ $toolbar-width: 1024px;
 }
 
 .controlsContainer {
-    padding: ($size-1 + 1px) 0 $size-1;
+    padding-top: ($size-1 + 1px);
+    padding-bottom: $size-1;
     overflow: auto;
 }
 

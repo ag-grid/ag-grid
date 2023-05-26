@@ -5,7 +5,7 @@ import { classesList } from './core/utils';
 import GridHeaderComp from "./header/gridHeaderComp";
 import RowContainerComp from "./rows/rowContainerComp";
 
-const GridBodyComp = ()=> {
+const GridBodyComp = () => {
 
     const {context, agStackComponentsRegistry, resizeObserverService} = useContext(BeansContext);
 
@@ -20,7 +20,7 @@ const GridBodyComp = ()=> {
     const [getTopDisplay, setTopDisplay] = createSignal<string>('');
     const [getBottomDisplay, setBottomDisplay] = createSignal<string>('');
     const [getBodyViewportWidth, setBodyViewportWidth] = createSignal<string>('');
-    
+
     const [getMovingCss, setMovingCss] = createSignal<string | null>(null);
     const [getForceVerticalScrollClass, setForceVerticalScrollClass] = createSignal<string | null>(null);
     const [getTopAndBottomOverflowY, setTopAndBottomOverflowY] = createSignal<string>('');
@@ -40,13 +40,13 @@ const GridBodyComp = ()=> {
     let eBodyViewport: HTMLDivElement;
     let eBottom: HTMLDivElement;
 
-    const destroyFuncs: (()=>void)[] = [];
-    onCleanup( ()=> {
+    const destroyFuncs: (() => void)[] = [];
+    onCleanup(() => {
         destroyFuncs.forEach( f => f() );
         destroyFuncs.length = 0;
     });
 
-    onMount( () => {
+    onMount(() => {
         if (!context) { return; }
 
         const newComp = (tag: string) => {
@@ -75,7 +75,7 @@ const GridBodyComp = ()=> {
             updateLayoutClasses: setLayoutClass,
             setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
             setPinnedTopBottomOverflowY: setTopAndBottomOverflowY,
-            setCellSelectableCss: setCellSelectableCss,
+            setCellSelectableCss: (cssClass, flag) => setCellSelectableCss(flag ? cssClass : null),
             setBodyViewportWidth: setBodyViewportWidth,
 
             registerBodyViewportResizeListener: listener => {
@@ -85,11 +85,11 @@ const GridBodyComp = ()=> {
         };
 
         const ctrl = context.createBean(new GridBodyCtrl());
-        onCleanup( ()=> context.destroyBean(ctrl) );
+        onCleanup(() => context.destroyBean(ctrl) );
 
         // fixme - should not be in a timeout,
-        // was becusae we need GridHeaderComp to be created first
-        setTimeout( ()=> 
+        // was because we need GridHeaderComp to be created first
+        setTimeout(() => 
             ctrl.setComp(
                 compProxy,
                 eRoot,
@@ -135,14 +135,14 @@ const GridBodyComp = ()=> {
         width: getStickyTopWidth
     }));
 
-    const getBottomStyle = createMemo(()=> ({
+    const getBottomStyle = createMemo(() => ({
         height: getBottomHeight,
         'min-height': getBottomHeight,
         display: getBottomDisplay,
         'overflow-y': (getTopAndBottomOverflowY as any)
     }));
 
-    const getBodyViewportStyle = createMemo( ()=> ({
+    const getBodyViewportStyle = createMemo(() => ({
         width: getBodyViewportWidth()
     }));
 

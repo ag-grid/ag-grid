@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
-import { AgCartesianChartOptions, _ModuleSupport, AgEnterpriseCharts } from '../main';
+import { AgChartOptions, _ModuleSupport, AgEnterpriseCharts } from '../main';
 import {
     waitForChartStability,
     setupMockCanvas,
@@ -17,7 +17,7 @@ describe('Zoom', () => {
     let chart: any;
     const ctx = setupMockCanvas();
 
-    const EXAMPLE_OPTIONS: AgCartesianChartOptions = {
+    const EXAMPLE_OPTIONS: AgChartOptions = {
         data: [
             { x: 0, y: 0 },
             { x: 1, y: 50 },
@@ -40,7 +40,7 @@ describe('Zoom', () => {
     let cy: number = 0;
 
     beforeEach(async () => {
-        const options: AgCartesianChartOptions = { ...EXAMPLE_OPTIONS };
+        const options: AgChartOptions = { ...EXAMPLE_OPTIONS };
         prepareTestOptions(options);
         cx = options.width! / 2;
         cy = options.height! / 2;

@@ -38,7 +38,7 @@ export class Selection<TChild extends Node = Node, TDatum = any> {
             data.slice(old.length).forEach((datum) => {
                 const node = factory(datum);
                 node.datum = datum;
-                init && init(node);
+                init?.(node);
                 parent.appendChild(node);
                 this._nodes.push(node);
             });

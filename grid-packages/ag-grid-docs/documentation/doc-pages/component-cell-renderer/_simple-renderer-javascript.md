@@ -1,8 +1,8 @@
 <framework-specific-section frameworks="javascript">
-|Below is a simple example of cell renderer class:
+|Below is an example of cell renderer class:
 </framework-specific-section>
 
-<framework-specific-section frameworks="react">
+<framework-specific-section frameworks="javascript">
 <snippet transform={false}>
 |class TotalValueRenderer {
 |    // gets called once before the renderer is used
@@ -10,10 +10,10 @@
 |        // create the cell
 |        this.eGui = document.createElement('div');
 |        this.eGui.innerHTML = `
-|          <span>
-|              <span class="my-value"></span>
-|              <button class="btn-simple">Push For Total</button>
-|          </span>
+|          &lt;span>
+|              &lt;span class="my-value">&lt;/span>
+|              &lt;button class="btn-simple">Push For Total&lt;/button>
+|          &lt;/span>
 |       `;
 |
 |        // get references to the elements we want

@@ -39,7 +39,7 @@ export class Group extends Node {
     ) {
         super();
 
-        const { zIndex, zIndexSubOrder } = opts || {};
+        const { zIndex, zIndexSubOrder } = opts ?? {};
 
         this.isContainerNode = true;
         if (zIndex !== undefined) {
@@ -64,7 +64,7 @@ export class Group extends Node {
         super._setLayerManager(scene);
 
         if (scene && this.opts?.layer) {
-            const { zIndex, zIndexSubOrder, name } = this.opts || {};
+            const { zIndex, zIndexSubOrder, name } = this.opts ?? {};
             const getComputedOpacity = () => this.getComputedOpacity();
             const getVisibility = () => this.getVisibility();
             this.layer = scene.addLayer({ zIndex, zIndexSubOrder, name, getComputedOpacity, getVisibility });

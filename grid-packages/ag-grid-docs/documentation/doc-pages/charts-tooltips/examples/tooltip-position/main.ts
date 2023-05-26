@@ -27,9 +27,9 @@ const options: AgChartOptions = {
   tooltip: {
     showArrow: false,
     position: {
-      type: "node",
-      xOffset: 60,
-      yOffset: 75,
+      type: "pointer",
+      xOffset: 80,
+      yOffset: 80,
     },
   },
 }

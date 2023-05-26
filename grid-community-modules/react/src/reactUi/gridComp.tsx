@@ -4,12 +4,11 @@ import {
     GridCtrl,
     IGridComp
 } from '@ag-grid-community/core';
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState, useLayoutEffect } from 'react';
 import { BeansContext } from './beansContext';
 import GridBodyComp from './gridBodyComp';
 import useReactCommentEffect from './reactComment';
 import TabGuardComp, { TabGuardCompCallback } from './tabGuardComp';
-import { useLayoutEffectOnce } from './useEffectOnce';
 import { classesList } from './utils';
 
 interface GridCompProps {
@@ -34,22 +33,18 @@ const GridComp = ({ context }: GridCompProps) => {
 
     const onTabKeyDown = useCallback(() => undefined, []);
 
-    const beans = useMemo( ()=> context.getBean('beans') as Beans, []);
+    const beans = useMemo(() => {
+        if (context.isDestroyed()) { return null; }
+        return context.getBean('beans') as Beans;
+    }, [context]);
 
     useReactCommentEffect(' AG Grid ', eRootWrapperRef);
 
     // create shared controller.
-    useLayoutEffectOnce(() => {
+    useLayoutEffect(() => {
+        if (context.isDestroyed()) { return; }
+
         const currentController = gridCtrlRef.current = context.createBean(new GridCtrl());
-
-        return () => {
-            context.destroyBean(currentController);
-            gridCtrlRef.current = null;
-        }
-    });
-
-    // initialise the UI
-    useLayoutEffectOnce(() => {
         const gridCtrl = gridCtrlRef.current!;
 
         focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
@@ -87,15 +82,18 @@ const GridComp = ({ context }: GridCompProps) => {
         gridCtrl.setComp(compProxy, eRootWrapperRef.current!, eRootWrapperRef.current!);
 
         setInitialised(true);
-    });
+        return () => {
+            context.destroyBean(currentController);
+            gridCtrlRef.current = null;
+        }
+    }, [context]);
 
     // initialise the extra components
     useEffect(() => {
-        if (!tabGuardReady) { return; }
+        if (!tabGuardReady || !beans || !gridCtrlRef.current) { return; }
 
         const gridCtrl = gridCtrlRef.current!;
         const beansToDestroy: any[] = [];
-
         const {agStackComponentsRegistry} = beans;
 
         const HeaderDropZonesClass = agStackComponentsRegistry.getComponentClass('AG-GRID-HEADER-DROP-ZONES');
@@ -174,13 +172,13 @@ const GridComp = ({ context }: GridCompProps) => {
 
     const setTabGuardCompRef = useCallback((ref: TabGuardCompCallback) => {
         tabGuardRef.current = ref;
-        setTabGuardReady(true);
+        setTabGuardReady(ref !== null);
     }, []);
     
     return (
         <div ref={ eRootWrapperRef } className={ rootWrapperClasses } style={ topStyle } role="presentation">
             <div className={ rootWrapperBodyClasses } ref={ eGridBodyParentRef } role="presentation">
-                { initialised && eGridBodyParent &&
+                {initialised && eGridBodyParent && beans &&
                     <BeansContext.Provider value={beans}>
                         <TabGuardComp
                             ref={ setTabGuardCompRef }

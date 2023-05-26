@@ -14,13 +14,13 @@
     }
 
     p {
-        margin: 0 !important; // !important for .ag-styles specificity
+        margin: 0;
     }
 
     .top,
     .bottom {
-        padding-left: $size-2 !important; // !important for .ag-styles specificity
-        padding-right: $size-2 !important; // !important for .ag-styles specificity
+        padding-left: $size-2;
+        padding-right: $size-2;
     }
 
     .top {
@@ -29,20 +29,20 @@
         grid-template-columns: auto auto;
         grid-template-rows: auto auto auto;
         grid-template-areas: 'meta meta' 'price benefits' 'actions actions';
-        padding-top: $size-3 !important; // !important for .ag-styles specificity
-        padding-bottom: $size-2 !important; // !important for .ag-styles specificity
+        padding-top: $size-3;
+        padding-bottom: $size-2;
     }
 
     .bottom {
-        flex-grow: 0 !important; // !important for .ag-styles specificity
+        flex-grow: 0;
         align-self: flex-end;
         display: grid;
         grid-template-columns: 1fr 1fr;
         grid-template-columns: 1fr 1fr;
         grid-template-areas: 'meta price' 'required required';
         width: 100%;
-        padding-top: $size-2 !important; // !important for .ag-styles specificity
-        padding-bottom: $size-2 !important; // !important for .ag-styles specificity
+        padding-top: $size-2;
+        padding-bottom: $size-2;
         border-top: 1px solid var(--border-color);
 
         p {
@@ -68,12 +68,12 @@
     }
 
     .top & {
-        margin-bottom: $size-2 !important; // !important for .ag-styles specificity
+        margin-bottom: $size-2;
         text-align: center;
     }
 
     .bottom & p:last-child {
-        --line-height: $line-height-tight !important; // !important for .ag-styles specificity
+        --line-height: $line-height-tight;
 
         max-width: 13em;
     }
@@ -81,24 +81,23 @@
 
 p.name {
     .top & {
-        font-size: 46px !important; // !important for .ag-styles specificity
-        line-height: $line-height-ultra-tight !important; // !important for .ag-styles specificity
-        margin-top: $size-half !important; // !important for .ag-styles specificity
-        margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+        font-size: 46px;
+        line-height: $line-height-ultra-tight;
+        margin-top: $size-half;
+        margin-bottom: $size-1;
 
         @media screen and (min-width: $breakpoint-pricing-medium) and (max-width: $breakpoint-pricing-large) {
             max-width: 340px;
-            margin-left: auto !important; // !important for .ag-styles specificity
-            margin-right: auto !important; // !important for .ag-styles specificity
+            margin-left: auto;
+            margin-right: auto;
         }
     }
 
     .bottom & {
-        font-size: var(--font-size-extra-large) !important; // !important for .ag-styles specificity
-
-        line-height: $line-height-ultra-tight !important; // !important for .ag-styles specificity
-        margin-top: $size-half !important; // !important for .ag-styles specificity
-        margin-bottom: $size-half !important; // !important for .ag-styles specificity
+        font-size: var(--font-size-extra-large) !important; // !important for font-size weirdness
+        line-height: $line-height-ultra-tight;
+        margin-top: $size-half;
+        margin-bottom: $size-half;
     }
 }
 
@@ -121,14 +120,14 @@ p.name {
     }
 
     .bottom & p:last-child {
-        --line-height: $line-height-tight !important; // !important for .ag-styles specificity
+        --line-height: $line-height-tight;
 
         max-width: 13em;
     }
 }
 
 p.priceFullDollars {
-    line-height: $line-height-tight !important; // !important for .ag-styles specificity
+    line-height: $line-height-tight;
     letter-spacing: -0.05em;
 
     &::before {
@@ -136,12 +135,12 @@ p.priceFullDollars {
     }
 
     .top & {
-        font-size: 46px !important; // !important for .ag-styles specificity
-        font-weight: var(--font-weight-bold) !important; // !important for .ag-styles specificity
+        font-size: 46px !important; // !important for font-size weirdness
+        font-weight: var(--font-weight-bold);
     }
 
     .bottom & {
-        font-size: 36px !important; // !important for .ag-styles specificity
+        font-size: 36px !important; // !important for font-size weirdness
     }
 }
 
@@ -157,14 +156,14 @@ p.priceFullDollars {
 
     a {
         display: block;
-        margin-top: $size-half !important; // !important for .ag-styles specificity
+        margin-top: $size-half;
     }
 }
 
 .licenseActions {
     grid-area: actions;
     align-self: end;
-    margin-top: $size-5 !important; // !important for .ag-styles specificity
+    margin-top: $size-5;
 
     a {
         width: 100%;
@@ -189,6 +188,6 @@ p.priceFullDollars {
 }
 
 .devLicenseRequired {
-    padding-top: $size-2 !important; // !important for .ag-styles specificity
+    padding-top: $size-2;
     grid-area: required;
 }

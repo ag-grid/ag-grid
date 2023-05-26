@@ -1,4 +1,4 @@
-import { Autowired, Bean, BeanStub, ChangedPath, Events, IRowModel, ISelectionService, IServerSideSelectionState, IServerSideGroupSelectionState, PostConstruct, RowNode, SelectionChangedEvent, SelectionEventSourceType, WithoutGridCommon, ISetNodeSelectedParams } from "@ag-grid-community/core";
+import { Autowired, Bean, BeanStub, ChangedPath, Events, IRowModel, ISelectionService, IServerSideSelectionState, IServerSideGroupSelectionState, PostConstruct, RowNode, SelectionChangedEvent, SelectionEventSourceType, WithoutGridCommon, ISetNodesSelectedParams } from "@ag-grid-community/core";
 import { DefaultStrategy } from "./selection/strategies/defaultStrategy";
 import { GroupSelectsChildrenStrategy } from "./selection/strategies/groupSelectsChildrenStrategy";
 import { ISelectionStrategy } from "./selection/strategies/iSelectionStrategy";
@@ -6,7 +6,8 @@ import { ISelectionStrategy } from "./selection/strategies/iSelectionStrategy";
 @Bean('selectionService')
 export class ServerSideSelectionService extends BeanStub implements ISelectionService {
     @Autowired('rowModel') private rowModel: IRowModel;
-    selectionStrategy: ISelectionStrategy;
+    private selectionStrategy: ISelectionStrategy;
+    private rowSelection: 'single' | 'multiple' | undefined;
 
     @PostConstruct
     private init(): void {
@@ -24,6 +25,9 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
             };
             this.eventService.dispatchEvent(event);
         });
+
+        this.rowSelection = this.gridOptionsService.get('rowSelection');
+        this.addManagedPropertyListener('rowSelection', (propChange) => this.rowSelection = propChange.currentValue);
 
         const StrategyClazz = !groupSelectsChildren ? DefaultStrategy : GroupSelectsChildrenStrategy;
         this.selectionStrategy = this.createManagedBean(new StrategyClazz());
@@ -43,9 +47,19 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
         };
         this.eventService.dispatchEvent(event);
     }
-    
-    public setNodeSelected(params: ISetNodeSelectedParams): number {
-        const changedNodes = this.selectionStrategy.setNodeSelected(params);
+
+    public setNodesSelected(params: ISetNodesSelectedParams): number {
+        if (params.nodes.length > 1 && this.rowSelection !== 'multiple') {
+            console.warn(`AG Grid: cannot multi select while rowSelection='single'`);
+            return 0;
+        }
+
+        if (params.nodes.length > 1 && params.rangeSelect) {
+            console.warn(`AG Grid: cannot use range selection when multi selecting rows`);
+            return 0;
+        }
+
+        const changedNodes = this.selectionStrategy.setNodesSelected(params);
         this.shotgunResetNodeSelectionState(params.source);
 
         const event: WithoutGridCommon<SelectionChangedEvent> = {

@@ -1,8 +1,9 @@
-import { AggregatePropertyDefinition } from './dataModel';
+import { AggregatePropertyDefinition, DatumPropertyDefinition } from './dataModel';
+import { extendDomain } from './utilFunctions';
 
 type ContinuousDomain<T extends number | Date> = [T, T];
 
-export function sumValues(values: any[], accumulator = [0, 0] as ContinuousDomain<number>) {
+function sumValues(values: any[], accumulator = [0, 0] as ContinuousDomain<number>) {
     for (const value of values) {
         if (typeof value !== 'number') {
             continue;
@@ -39,6 +40,16 @@ export function groupSum<K>(props: K[]): AggregatePropertyDefinition<any, any, [
             return acc;
         },
     };
+}
+
+export function range<K>(props: K[]) {
+    const result: AggregatePropertyDefinition<any, any> = {
+        properties: props,
+        type: 'aggregate',
+        aggregateFunction: (values) => extendDomain(values),
+    };
+
+    return result;
 }
 
 export function count() {
@@ -112,4 +123,18 @@ export function area<K>(props: K[], aggFn: AggregatePropertyDefinition<any, any>
     }
 
     return result;
+}
+
+export function accumulatedValue(): DatumPropertyDefinition<any>['processor'] {
+    return () => {
+        let value = 0;
+
+        return (datum: any) => {
+            if (typeof datum !== 'number') return datum;
+            if (isNaN(datum)) return datum;
+
+            value += datum;
+            return value;
+        };
+    };
 }

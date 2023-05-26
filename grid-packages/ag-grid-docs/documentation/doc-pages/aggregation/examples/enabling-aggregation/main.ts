@@ -4,17 +4,8 @@ const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'country', rowGroup: true, hide: true },
     { field: 'year', rowGroup: true, hide: true },
-    {
-      field: 'gold',
-      aggFunc: 'sum',
-      enableValue: true,
-    },
-    {
-      field: 'silver',
-      aggFunc: 'max',
-      enableValue: true,
-      allowedAggFuncs: ['sum', 'max', 'avg'],
-    },
+    { field: 'gold', aggFunc: 'sum' },
+    { field: 'silver', aggFunc: 'max' },
     { field: 'bronze', aggFunc: 'avg' },
   ],
   defaultColDef: {

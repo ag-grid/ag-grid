@@ -32,14 +32,6 @@ case $TYPE in
     fi
   ;;
 
-  autodocs)
-    if [ "$MODE" == "verify" ] ; then
-        exec npx lerna run --scope @ag-grid-community/all-modules generate-doc-files -- -- --check
-    elif [ "$MODE" == "fix" ] ; then
-        exec npx lerna run --scope @ag-grid-community/all-modules generate-doc-files
-    fi
-  ;;
-
   *)
     echo "Unknown type of verification: ${TYPE}" >&2
     exit 5

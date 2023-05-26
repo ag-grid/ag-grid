@@ -89,7 +89,7 @@ const GridBodyComp = () => {
             updateLayoutClasses: setLayoutClass,
             setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
             setPinnedTopBottomOverflowY: setTopAndBottomOverflowY,
-            setCellSelectableCss: setCellSelectableCss,
+            setCellSelectableCss: (cssClass, flag) => setCellSelectableCss(flag ? cssClass : null),
             setBodyViewportWidth: (width) => eBodyViewport.current!.style.width = width,
             registerBodyViewportResizeListener: listener => {
                 const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport.current!, listener);

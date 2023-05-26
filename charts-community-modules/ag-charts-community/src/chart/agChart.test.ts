@@ -232,7 +232,7 @@ describe('update', () => {
                 {
                     type: 'area',
                     xKey: 'month',
-                    yKey: 'foobar',
+                    yKey: 'bazqux',
                 },
             ],
         });
@@ -248,7 +248,7 @@ describe('update', () => {
         expect((updatedSeries[1] as any).yKeys).toEqual([['profit', 'foobar']]);
         expect(updatedSeries[2]).toBeInstanceOf(AreaSeries);
         expect((updatedSeries[2] as any).xKey).toEqual('month');
-        expect((updatedSeries[2] as any).yKeys).toEqual(['foobar']);
+        expect((updatedSeries[2] as any).yKeys).toEqual(['bazqux']);
 
         AgChart.update(chartProxy, {
             data: revenueProfitData,

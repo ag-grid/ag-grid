@@ -23,7 +23,10 @@ import {
     WithoutGridCommon,
     DragService,
     CellCtrl,
-    _
+    _,
+    ClearCellRangeParams,
+    RangeDeleteStartEvent,
+    RangeDeleteEndEvent
 } from "@ag-grid-community/core";
 
 @Bean('rangeService')
@@ -337,7 +340,22 @@ export class RangeService extends BeanStub implements IRangeService {
         this.newestRangeStartCell = position;
     }
 
-    public clearCellRangeCellValues(cellRanges?: CellRange[], source: string = 'rangeService'): void {
+    public clearCellRangeCellValues(params: ClearCellRangeParams): void {
+        let { cellRanges } = params;
+        const {
+            cellEventSource = 'rangeService',
+            dispatchWrapperEvents,
+            wrapperEventSource = 'deleteKeyPressed'
+        } = params;
+
+        if (dispatchWrapperEvents) {
+            const startEvent: WithoutGridCommon<RangeDeleteStartEvent> = {
+                type: Events.EVENT_RANGE_DELETE_START,
+                source: wrapperEventSource
+            };
+            this.eventService.dispatchEvent(startEvent);
+        }
+
         if (!cellRanges) { cellRanges = this.cellRanges; }
 
         cellRanges.forEach(cellRange => {
@@ -347,10 +365,18 @@ export class RangeService extends BeanStub implements IRangeService {
                 for (let i = 0; i < cellRange.columns.length; i++) {
                     const column = this.columnModel.getGridColumn(cellRange.columns[i]);
                     if (!column || !column.isCellEditable(rowNode)) { return; }
-                    rowNode.setDataValue(column, null, source);
+                    rowNode.setDataValue(column, null, cellEventSource);
                 }
             });
         });
+
+        if (dispatchWrapperEvents) {
+            const endEvent: WithoutGridCommon<RangeDeleteEndEvent> = {
+                type: Events.EVENT_RANGE_DELETE_END,
+                source: wrapperEventSource
+            };
+            this.eventService.dispatchEvent(endEvent);
+        }
     }
 
     public createCellRangeFromCellRangeParams(params: CellRangeParams): CellRange | undefined {

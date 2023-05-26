@@ -1,5 +1,5 @@
 <framework-specific-section frameworks="react">
-|Below is an example of floating filter component as a Hook:
+|Below is an example of floating filter component:
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
@@ -53,63 +53,4 @@
 |    );
 |});
 </snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-|And here is the same example as a Class-based Component:
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<snippet transform={false} language="jsx">
-|export default class NumberFloatingFilterComponent extends Component {
-|    constructor(props) {
-|        super(props);
-|
-|        this.state = {
-|            currentValue: null
-|        }
-|
-|        this.inputRef = createRef();
-|    }
-|
-|    onParentModelChanged(parentModel) {
-|        // When the filter is empty we will receive a null value here
-|        if (!parentModel) {
-|            this.inputRef.current.value = '';
-|            this.setState({currentValue: null});
-|        } else {
-|            this.inputRef.current.value = parentModel.filter + '';
-|            this.setState({currentValue: parentModel.filter});
-|        }
-|    }
-|
-|    onInputBoxChanged = input => {
-|        if (input.target.value === '') {
-|            // clear the filter
-|            this.props.parentFilterInstance(instance => {
-|                instance.onFloatingFilterChanged(null, null);
-|            });
-|            return;
-|        }
-|
-|        this.setState({currentValue: Number(input.target.value)});
-|        this.props.parentFilterInstance(instance => {
-|            instance.onFloatingFilterChanged('greaterThan', input.target.value);
-|        });
-|    }
-|
-|    render() {
-|        const style = {
-|            color: this.props.color,
-|            width: "30px"
-|        };
-|
-|        return (
-|            &lt;Fragment>
-|                &gt; &lt;input ref={this.inputRef} style={style} type="number" min="0" onInput={this.onInputBoxChanged}/>
-|            &lt;/Fragment>
-|        );
-|    }
-|}
-</snippet> 
 </framework-specific-section>

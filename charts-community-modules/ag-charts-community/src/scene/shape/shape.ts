@@ -116,7 +116,7 @@ export abstract class Shape extends Node {
         const { fill } = this;
 
         let linearGradientMatch: RegExpMatchArray | null;
-        if (fill?.startsWith('linear-gradient') && (linearGradientMatch = fill.match(LINEAR_GRADIENT_REGEXP))) {
+        if (fill?.startsWith('linear-gradient') && (linearGradientMatch = LINEAR_GRADIENT_REGEXP.exec(fill))) {
             const angle = parseFloat(linearGradientMatch[1]);
             const colors = [];
             const colorsPart = linearGradientMatch[2];
@@ -239,7 +239,7 @@ export abstract class Shape extends Node {
         // manually here.
         const pixelRatio = this.layerManager?.canvas.pixelRatio ?? 1;
         const fillShadow = this.fillShadow;
-        if (fillShadow && fillShadow.enabled) {
+        if (fillShadow?.enabled) {
             ctx.shadowColor = fillShadow.color;
             ctx.shadowOffsetX = fillShadow.xOffset * pixelRatio;
             ctx.shadowOffsetY = fillShadow.yOffset * pixelRatio;

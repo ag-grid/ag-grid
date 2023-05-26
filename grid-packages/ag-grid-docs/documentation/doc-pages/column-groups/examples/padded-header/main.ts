@@ -10,7 +10,8 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
   },
   {
     field: 'age',
-    width: 90
+    width: 90,
+    suppressSpanHeaderHeight: true
   }
 ]
 

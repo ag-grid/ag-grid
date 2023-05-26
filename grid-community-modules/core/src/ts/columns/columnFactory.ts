@@ -11,12 +11,14 @@ import { BeanStub } from "../context/beanStub";
 import { iterateObject, mergeDeep } from '../utils/object';
 import { attrToNumber, attrToBoolean } from '../utils/generic';
 import { removeFromArray } from '../utils/array';
+import { DataTypeService } from './dataTypeService';
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 @Bean('columnFactory')
 export class ColumnFactory extends BeanStub {
 
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
+    @Autowired('dataTypeService') private dataTypeService: DataTypeService;
 
     private logger: Logger;
 
@@ -269,8 +271,6 @@ export class ColumnFactory extends BeanStub {
         existingColsCopy: Column[] | null,
         columnKeyCreator: ColumnKeyCreator
     ): Column {
-        const colDefMerged = this.mergeColDefs(colDef);
-
         // see if column already exists
         let column = this.findExistingColumn(colDef, existingColsCopy);
 
@@ -282,10 +282,12 @@ export class ColumnFactory extends BeanStub {
 
         if (!column) {
             // no existing column, need to create one
-            const colId = columnKeyCreator.getUniqueKey(colDefMerged.colId, colDefMerged.field);
+            const colId = columnKeyCreator.getUniqueKey(colDef.colId, colDef.field);
+            const colDefMerged = this.mergeColDefs(colDef, colId);
             column = new Column(colDefMerged, colDef, colId, primaryColumns);
             this.context.createBean(column);
         } else {
+            const colDefMerged = this.mergeColDefs(colDef, column.getColId());
             column.setColDef(colDefMerged, colDef);
             this.applyColumnState(column, colDefMerged);
         }
@@ -382,7 +384,7 @@ export class ColumnFactory extends BeanStub {
         });
     }
 
-    public mergeColDefs(colDef: ColDef): ColDef {
+    public mergeColDefs(colDef: ColDef, colId: string): ColDef {
         // start with empty merged definition
         const colDefMerged: ColDef = {} as ColDef;
 
@@ -390,8 +392,12 @@ export class ColumnFactory extends BeanStub {
         const defaultColDef = this.gridOptionsService.get('defaultColDef');
         mergeDeep(colDefMerged, defaultColDef, false, true);
 
+        let columnType = this.dataTypeService.updateColDefAndGetColumnType(colDefMerged, colDef, colId);
+
         // merge properties from column type properties
-        let columnType = colDef.type;
+        if (colDef.type) {
+            columnType = colDef.type;
+        }
 
         if (!columnType) {
             columnType = defaultColDef && defaultColDef.type;
@@ -416,19 +422,8 @@ export class ColumnFactory extends BeanStub {
     }
 
     private assignColumnTypes(type: string | string[], colDefMerged: ColDef) {
-        let typeKeys: string[] = [];
-
-        if (type instanceof Array) {
-            const invalidArray = type.some(a => typeof a !== 'string');
-            if (invalidArray) {
-                console.warn("AG Grid: if colDef.type is supplied an array it should be of type 'string[]'");
-            } else {
-                typeKeys = type;
-            }
-        } else if (typeof type === 'string') {
-            typeKeys = type.split(',');
-        } else {
-            console.warn("AG Grid: colDef.type should be of type 'string' | 'string[]'");
+        const typeKeys: string[] = this.dataTypeService.convertColumnTypes(type);
+        if (!typeKeys.length) {
             return;
         }
 

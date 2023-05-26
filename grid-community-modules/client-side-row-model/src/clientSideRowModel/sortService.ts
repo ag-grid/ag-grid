@@ -27,7 +27,7 @@ export class SortService extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        this.postSortFunc = this.getPostSortFunc();
+        this.postSortFunc = this.gridOptionsService.getCallback('postSortRows');
     }
 
     public sort(
@@ -95,18 +95,6 @@ export class SortService extends BeanStub {
         }
 
         this.updateGroupDataForHideOpenParents(changedPath);
-    }
-
-    private getPostSortFunc() {
-        const postSortRows = this.gridOptionsService.getCallback('postSortRows');
-        if (postSortRows) {
-            return postSortRows;
-        }
-        // this is the deprecated way, so provide a proxy to make it compatible
-        const postSort = this.gridOptionsService.get('postSort');
-        if (postSort) {
-            return (params: WithoutGridCommon<PostSortRowsParams>) => postSort(params.nodes);
-        }
     }
 
     private calculateDirtyNodes(rowNodeTransactions?: RowNodeTransaction[] | null): { [nodeId: string]: true } {

@@ -52,30 +52,22 @@ const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu }) => {
     }, [hideMenu]);
 
     useEffect(() => {
-        if (!menuRef.current) {
-            return;
-        }
-
         $('body').scrollspy({ target: '#side-menu', offset: 120 });
-    }, [menuRef.current]);
+    }, []);
 
     return (
         allHeadings.length > 0 && (
-            <nav
-                id="side-menu"
-                ref={menuRef}
-                className={classNames(styles.sideNav, 'ag-styles', 'font-size-responsive')}
-            >
+            <nav id="side-menu" ref={menuRef} className={classNames(styles.sideNav, 'font-size-responsive')}>
                 <div>
                     <ul className="list-style-none">
-                        <li className={styles['level-1']}>
+                        <li className={styles.level1}>
                             <a href="#top" className={classNames(styles.topLink, 'nav-link')}>
                                 {pageTitle}
                             </a>
                         </li>
 
                         {allHeadings.map((heading) => (
-                            <li key={`${pageName}_${heading.id}`} className={styles[`level-${heading.depth}`]}>
+                            <li key={`${pageName}_${heading.id}`} className={styles[`level${heading.depth}`]}>
                                 <a className="nav-link" href={`#${heading.id}`}>
                                     {addNonBreakingSpaceBetweenLastWords(heading.value)}
                                 </a>

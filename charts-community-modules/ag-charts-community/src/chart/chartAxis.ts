@@ -32,7 +32,7 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
     protected readonly modules: Record<string, { instance: ModuleInstance }> = {};
 
     get type(): AgCartesianAxisType {
-        return (this.constructor as any).type || '';
+        return (this.constructor as any).type ?? '';
     }
 
     protected useCalculatedTickCount() {
@@ -95,11 +95,10 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
             this.dataDomain = this.linkedTo.dataDomain;
         } else {
             const domains: any[][] = [];
-            boundSeries
-                .filter((s) => includeInvisibleDomains || s.isEnabled())
-                .forEach((series) => {
-                    domains.push(series.getDomain(direction));
-                });
+            const visibleSeries = boundSeries.filter((s) => includeInvisibleDomains || s.isEnabled());
+            for (const series of visibleSeries) {
+                domains.push(series.getDomain(direction));
+            }
 
             const domain = new Array<any>().concat(...domains);
             this.dataDomain = this.normaliseDataDomain(domain);

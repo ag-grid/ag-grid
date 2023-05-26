@@ -133,12 +133,12 @@ export class MenuItemMapper extends BeanStub {
                 };
             case 'expandAll':
                 return {
-                    name: localeTextFunc('expandAll', 'Expand All'),
+                    name: localeTextFunc('expandAll', 'Expand All Row Groups'),
                     action: () => this.gridApi.expandAll()
                 };
             case 'contractAll':
                 return {
-                    name: localeTextFunc('collapseAll', 'Collapse All'),
+                    name: localeTextFunc('collapseAll', 'Collapse All Row Groups'),
                     action: () => this.gridApi.collapseAll()
                 };
             case 'copy':
@@ -184,7 +184,7 @@ export class MenuItemMapper extends BeanStub {
                         shortcut: localeTextFunc('ctrlX', 'Ctrl+X'),
                         icon: _.createIconNoSpan('clipboardCut', this.gridOptionsService, null),
                         disabled: !isEditable || this.gridOptionsService.is('suppressCutToClipboard'),
-                        action: () => this.clipboardService.cutToClipboard()
+                        action: () => this.clipboardService.cutToClipboard(undefined, 'contextMenu')
                     };
                 } else {
                     return null;

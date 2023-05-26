@@ -46,8 +46,6 @@ md-include:register-vue.md
   
 <grid-example title='Registering Components' name='register' type='generated' options='{ "exampleHeight": 580 }'></grid-example>
 
-md-include:declare-angular.md
-
 md-include:advantages-vue.md
 
 ## Providing Additional Parameters  

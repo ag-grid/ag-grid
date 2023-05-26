@@ -1,5 +1,5 @@
 <framework-specific-section frameworks="angular">
-|Below is a simple example of cell renderer class:
+|Below is an example of cell renderer class:
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
@@ -11,10 +11,10 @@
 |@Component({
 |    selector: 'total-value-component',
 |    template: `
-|          <span>
-|              <span>{{cellValue}}</span>&nbsp;
-|              <button (click)="buttonClicked()">Push For Total</button>
-|          </span>
+|          &lt;span>
+|              &lt;span>{{cellValue}}&lt;/span>&nbsp;
+|              &lt;button (click)="buttonClicked()">Push For Total&lt;/button>
+|          &lt;/span>
 |    `
 |})
 |export class TotalValueRenderer implements ICellRendererAngularComp {

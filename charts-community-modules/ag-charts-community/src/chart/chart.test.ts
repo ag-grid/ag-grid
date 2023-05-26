@@ -129,7 +129,7 @@ describe('Chart', () => {
                         ...testParams.seriesOptions,
                     },
                 ],
-                ...(testParams.chartOptions || {}),
+                ...(testParams.chartOptions ?? {}),
             };
             prepareTestOptions(options);
             const chart = deproxy(AgChart.create(options));

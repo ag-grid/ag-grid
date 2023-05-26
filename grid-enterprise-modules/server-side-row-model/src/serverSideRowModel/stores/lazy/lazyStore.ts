@@ -22,7 +22,8 @@ import {
     IsApplyServerSideTransactionParams,
     SelectionChangedEvent,
     IRowNode,
-    StoreRefreshedEvent
+    StoreRefreshedEvent,
+    ISelectionService
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../../serverSideRowModel";
 import { StoreUtils } from "../storeUtils";
@@ -34,6 +35,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
     @Autowired('ssrmStoreUtils') private storeUtils: StoreUtils;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('selectionService') private selectionService: ISelectionService;
 
     // display indexes
     private displayIndexStart: number | undefined;
@@ -100,7 +102,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @returns an object determining the status of this transaction and effected nodes
      */
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
-        const idFunc = this.gridOptionsService.getRowIdFunc();
+        const idFunc = this.gridOptionsService.getCallback('getRowId');
         if (!idFunc) {
             console.warn('AG Grid: getRowId callback must be implemented for transactions to work. Transaction was ignored.');
             return {
@@ -155,28 +157,25 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     }
 
     private updateSelectionAfterTransaction(updatedNodes?: RowNode[], removedNodes?: RowNode[]) {
-        let fireSelectionUpdatedEvent = false;
+        const nodesToDeselect: RowNode[] = [];
         updatedNodes?.forEach(node => {
             if (node.isSelected() && !node.selectable) {
-                node.setSelected(false, false, true, 'rowDataChanged');
-                fireSelectionUpdatedEvent = true;
+                nodesToDeselect.push(node);
             }
         });
 
         removedNodes?.forEach(node => {
             if (node.isSelected()) {
-                node.setSelected(false, false, true, 'rowDataChanged');
-                fireSelectionUpdatedEvent = true;
+                nodesToDeselect.push(node);
             }
         });
 
-        if (fireSelectionUpdatedEvent) {
-            const event: WithoutGridCommon<SelectionChangedEvent> = {
-                type: Events.EVENT_SELECTION_CHANGED,
-                source: 'rowDataChanged'
-            };
-            this.eventService.dispatchEvent(event);
-        }
+        this.selectionService.setNodesSelected({
+            newValue: false,
+            clearSelection: false,
+            nodes: nodesToDeselect,
+            source: 'rowDataChanged',
+        });
     }
 
     /**
@@ -186,6 +185,10 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         this.displayIndexStart = undefined;
         this.displayIndexEnd = undefined;
         this.cache.getNodes().forEach(lazyNode => this.blockUtils.clearDisplayIndex(lazyNode.node));
+
+        if (this.parentRowNode.sibling) {
+            this.blockUtils.clearDisplayIndex(this.parentRowNode.sibling);
+        }
         this.cache.clearDisplayIndexes();
     }
 
@@ -207,6 +210,9 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @returns the virtual size of this store
      */
     getRowCount(): number {
+        if (this.parentRowNode.sibling) {
+            return this.cache.getRowCount() + 1;
+        }
         return this.cache.getRowCount();
     }
 
@@ -243,6 +249,10 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
         // delegate to the store to set the row display indexes
         this.cache.setDisplayIndexes(displayIndexSeq, nextRowTop);
+
+        if (this.parentRowNode.sibling) {
+            this.blockUtils.setDisplayIndex(this.parentRowNode.sibling, displayIndexSeq, nextRowTop);
+        }
 
         this.displayIndexEnd = displayIndexSeq.peek();
         this.heightPx = nextRowTop.value - this.topPx;
@@ -317,6 +327,9 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @returns the row node if the display index falls within the store, if it didn't exist this will create a new stub to return
      */
     getRowUsingDisplayIndex(displayRowIndex: number): IRowNode<any> | undefined {
+        if (this.parentRowNode.sibling && displayRowIndex === this.parentRowNode.sibling.rowIndex) {
+            return this.parentRowNode.sibling;
+        }
         return this.cache.getRowByDisplayIndex(displayRowIndex);
     }
 
@@ -343,7 +356,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
         // previous node may equal, or catch via detail node or child of group
         if (previousNode) {
-            const boundsFromRow = this.blockUtils.extractRowBounds(previousNode, displayIndex);
+            const boundsFromRow = this.blockUtils.extractRowBounds(previousNode.node, displayIndex);
             if (boundsFromRow != null) {
                 return boundsFromRow;
             }
@@ -352,16 +365,16 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         const defaultRowHeight = this.gridOptionsService.getRowHeightAsNumber();
         // if node after this, can calculate backwards (and ignore detail/grouping)
         if (nextNode) {
-            const numberOfRowDiff = Math.floor((nextNode.rowIndex! - displayIndex) * defaultRowHeight);
+            const numberOfRowDiff = (nextNode.node.rowIndex! - displayIndex) * defaultRowHeight;
             return {
-                rowTop: nextNode.rowTop! - numberOfRowDiff,
+                rowTop: nextNode.node.rowTop! - numberOfRowDiff,
                 rowHeight: defaultRowHeight,
             };
         }
 
         // otherwise calculate from end of store
         const lastTop = this.topPx + this.heightPx;
-        const numberOfRowDiff = Math.floor((this.getDisplayIndexEnd()! - displayIndex) * defaultRowHeight);
+        const numberOfRowDiff = (this.getDisplayIndexEnd()! - displayIndex) * defaultRowHeight;
         return {
             rowTop: lastTop - numberOfRowDiff,
             rowHeight: defaultRowHeight,

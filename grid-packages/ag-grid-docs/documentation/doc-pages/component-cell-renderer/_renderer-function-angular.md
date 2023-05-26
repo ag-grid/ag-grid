@@ -14,10 +14,10 @@
 |@Component({
 |    selector: 'my-app',
 |    template: `
-|        <ag-grid-angular
+|        &lt;ag-grid-angular
 |                [columnDefs]="columnDefs"
 |                ...other properties>
-|        </ag-grid-angular>`
+|        &lt;/ag-grid-angular>`
 |})
 |export class AppComponent {
 |    private columnDefs = [

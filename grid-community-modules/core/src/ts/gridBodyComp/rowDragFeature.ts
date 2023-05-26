@@ -256,7 +256,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             });
             this.moveRows(rowNodes!, pixel, increment);
         } else {
-            const getRowIdFunc = this.gridOptionsService.getRowIdFunc();
+            const getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
 
             let addIndex = this.clientSideRowModel.getRowIndexAtPixel(pixel) + 1;
 

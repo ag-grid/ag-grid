@@ -283,9 +283,9 @@ As with all row models, it is possible to enable pagination with infinite scroll
 | Example 2 | Equal     | Equal      | Recommended Sometimes |
 
 <note>
-**Having smaller infinite blocks size than your pagination page size is not supported** 
-
-You must have infinite block size greater than or equal to the pagination page size. If you have a smaller block size, the grid will not fetch enough rows to display one page. This breaks how infinite scrolling works and is not supported.
+|**Having smaller infinite blocks size than your pagination page size is not supported** 
+|
+|You must have infinite block size greater than or equal to the pagination page size. If you have a smaller block size, the grid will not fetch enough rows to display one page. This breaks how infinite scrolling works and is not supported.
 </note>
 
 ### Example 1: Auto Pagination Page Size, Large Infinite Block Size

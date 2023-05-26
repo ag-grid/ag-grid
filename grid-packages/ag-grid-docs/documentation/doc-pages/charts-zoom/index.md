@@ -22,7 +22,7 @@ A user will now be able to use the zooming features as in the following example,
 
 <chart-example title='Zoom' name='zoom' type='generated'></chart-example>
 
-## Enabling and disabling features
+## Enabling and Disabling Features
 
 You can enable and disable each feature of the zoom module separately if they are not appropriate for your chart. These can be toggled with the `enablePanning`, `enableScrolling` and `enableSelecting` options.
 
@@ -52,7 +52,7 @@ zoom: {
 
 <chart-example title='Zoom Axes' name='zoom-axes' type='generated'></chart-example>
 
-## Scrolling pivot
+## Scrolling Pivot
 
 By default, the chart will zoom while keeping the right side of the x-axis pinned. You can change this pivot point with the `scrollingPivot` property, setting it one of:
 
@@ -70,7 +70,7 @@ zoom: {
 
 <chart-example title='Zoom Scrolling Pivot' name='zoom-scrolling-pivot' type='generated'></chart-example>
 
-## Scrolling step
+## Scrolling Step
 
 When scrolling the chart zooms in by a step for each movement of the scroll wheel or on the trackpad. By default `scrollingStep` is set to `0.1`, or 10% of the chart at a time.
 
@@ -84,7 +84,7 @@ zoom: {
 
 <chart-example title='Zoom Scrolling Step' name='zoom-scrolling-step' type='generated'></chart-example>
 
-## Min x/y ratio
+## Min X/Y Ratio
 
 The `minXRatio` and `minYRatio` options can be used to limit how far a user can zoom in to the chart, helping to prevent them from getting lost in a blank space of the chart. These options are defined as the minimum proportion of the full chart that can be displayed. The default for both values is `0.2`.
 
@@ -99,7 +99,7 @@ zoom: {
 
 <chart-example title='Zoom Min Ratio' name='zoom-min-ratio' type='generated'></chart-example>
 
-## Pan key
+## Pan Key
 
 While zoomed in to the chart, a user can pan around by clicking and dragging.
 
@@ -115,7 +115,7 @@ zoom: {
 
 <chart-example title='Zoom Pan Key' name='zoom-pan-key' type='generated'></chart-example>
 
-## Context menu
+## Context Menu
 
 When both the zoom and context menu are enabled, additional zoom actions are added into the context menu for zooming and panning to the clicked location.
 

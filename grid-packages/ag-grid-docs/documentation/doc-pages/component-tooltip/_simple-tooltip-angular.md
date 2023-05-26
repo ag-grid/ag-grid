@@ -1,6 +1,6 @@
 <framework-specific-section frameworks="angular">
 |
-|Below is a simple example of a tooltip component:
+|Below is an example of a tooltip component:
 |
 </framework-specific-section>
 

@@ -4,19 +4,19 @@ title: "Navigator"
 
 The navigator allows to zoom in on a portion of chart's data and then pan around the chart. This is useful in charts with lots of data and real-time charts where one wants to show a slice of time, for example sensor data for the last 20 minutes.
 
-## Showing the Navigator
+## Enabling the Navigator
 
-The navigator is hidden by default, to enable it add the following config to the chart:
+The navigator is disabled by default, to enable it add the following config to the chart:
 
 ```js
 navigator: {
-    enabled: true
+  enabled: true
 }
 ```
 
-### Example: Showing the Navigator
+### Example: Enabling the Navigator
 
-<chart-example title='Showing the Navigator' name='navigator' type='generated'></chart-example>
+<chart-example title='Enabling the Navigator' name='navigator' type='generated'></chart-example>
 
 ## Setting the Visible Range
 
@@ -39,7 +39,7 @@ The navigator's `height` is configurable and affects chart's layout by leaving m
 
 ```js
 navigator: {
-    height: 50
+  height: 50
 }
 ```
 

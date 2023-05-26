@@ -2,7 +2,7 @@
 <snippet transform={false}>
 |// define cellRenderer to be reused
 |const ColourComponent = {
-|   template: '<span>{{params.data ? params.data.theBoldValue : null}}</span>'
+|   template: '&lt;span>{{params.data ? params.data.theBoldValue : null}}&lt;/span>'
 |};
 |
 </snippet>

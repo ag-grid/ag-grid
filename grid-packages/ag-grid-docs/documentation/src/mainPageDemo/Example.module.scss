@@ -1,9 +1,6 @@
 @use "../design-system/" as *;
 
 .exampleWrapper {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-
     display: flex;
     flex-direction: column;
     overflow: auto;
@@ -15,7 +12,7 @@
 }
 
 .gridWrapper {
-    margin-top: $size-2 !important; // !important needed because of .ag-styles specificity
+    margin-top: $size-2;
     flex: 1 1 auto;
     overflow: hidden;
     display: flex;

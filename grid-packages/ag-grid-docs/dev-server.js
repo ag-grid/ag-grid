@@ -33,6 +33,21 @@ const lnk = require('lnk').sync;
 
 const EXPRESS_HTTPS_PORT = 8080;
 
+function debounce(cb, timeout = 500) {
+    let nextTimeout;
+
+    return () => {
+        if (nextTimeout) {
+            clearTimeout(nextTimeout);
+        }
+
+        nextTimeout = setTimeout(() => {
+            nextTimeout = undefined;
+            cb();
+        }, timeout);
+    };
+}
+
 function reporter(middlewareOptions, options) {
     const {log, state, stats} = options;
 
@@ -650,9 +665,7 @@ const watchFrameworkModules = async () => {
             ignored: ignoredFolders,
             cwd: frameworkDirectory,
             persistent: true
-        }).on('change', async (data) => {
-            await rebuildPackagesBasedOnChangeState(false, false, false);
-        });
+        }).on('change', debounce(() => rebuildPackagesBasedOnChangeState(false, false, false)));
     });
 };
 
@@ -683,9 +696,7 @@ const watchAutoDocFiles = async () => {
     chokidar.watch(INTERFACE_GLOBS, {
         ignored: ignoredFolders,
         persistent: true
-    }).on('change', async (data) => {
-        await generateAutoDocFiles();
-    });
+    }).on('change', debounce(() => generateAutoDocFiles()));
 };
 
 const serveModuleAndPackages = (app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules) => {

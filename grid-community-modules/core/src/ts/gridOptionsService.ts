@@ -379,20 +379,13 @@ export class GridOptionsService {
         return document;
     }
 
-    public getRootNode(): Document | ShadowRoot {
-        return this.eGridDiv.getRootNode() as Document | ShadowRoot;
+    public getWindow() {
+        const eDocument = this.getDocument();
+        return eDocument.defaultView || window;
     }
 
-    public getRowIdFunc(): ((params: WithoutGridCommon<GetRowIdParams>) => string) | undefined {
-        const getRowId = this.getCallback('getRowId');
-        if (getRowId) {
-            return getRowId;
-        }
-        // this is the deprecated way, so provide a proxy to make it compatible
-        const getRowNodeId = this.gridOptions.getRowNodeId;
-        if (getRowNodeId) {
-            return (params: WithoutGridCommon<GetRowIdParams>) => getRowNodeId(params.data);
-        }
+    public getRootNode(): Document | ShadowRoot {
+        return this.eGridDiv.getRootNode() as Document | ShadowRoot;
     }
 
     public getAsyncTransactionWaitMillis(): number | undefined {
@@ -404,6 +397,16 @@ export class GridOptionsService {
         if (this.is('ensureDomOrder')) { return false; }
 
         return this.is('animateRows');
+    }
+
+    public isGroupRowsSticky(): boolean {
+        if (
+            this.is('suppressGroupRowsSticky') ||
+            this.is('paginateChildRows') ||
+            this.is('groupHideOpenParents')
+        ) { return false; }
+
+        return true;
     }
 
     public isTreeData(): boolean {

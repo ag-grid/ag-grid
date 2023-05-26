@@ -24,7 +24,7 @@ interface SceneLayer {
 }
 
 function buildSceneNodeHighlight() {
-    let config = windowValue('agChartsSceneDebug') ?? [];
+    let config = (windowValue('agChartsSceneDebug') as string | string[]) ?? [];
 
     if (typeof config === 'string') {
         config = [config];
@@ -61,7 +61,7 @@ export class Scene {
     ) {
         const {
             document = window.document,
-            mode = windowValue('agChartsSceneRenderModel') || 'adv-composite',
+            mode = (windowValue('agChartsSceneRenderModel') as SceneOptions['mode']) ?? 'adv-composite',
             width,
             height,
             overrideDevicePixelRatio = undefined,
@@ -71,8 +71,8 @@ export class Scene {
 
         this.opts = { document, mode };
         this.debug.consoleLog = windowValue('agChartsDebug') === true;
-        this.debug.stats = windowValue('agChartsSceneStats') ?? false;
-        this.debug.dirtyTree = windowValue('agChartsSceneDirtyTree') ?? false;
+        this.debug.stats = (windowValue('agChartsSceneStats') as any) ?? false;
+        this.debug.dirtyTree = (windowValue('agChartsSceneDirtyTree') as boolean) ?? false;
         this.debug.sceneNodeHighlight = buildSceneNodeHighlight();
         this.canvas = new HdpiCanvas({ document, width, height, overrideDevicePixelRatio });
     }
@@ -294,7 +294,7 @@ export class Scene {
     }
 
     async render(opts?: { debugSplitTimes: number[]; extraDebugStats: Record<string, number> }) {
-        const { debugSplitTimes = [performance.now()], extraDebugStats = {} } = opts || {};
+        const { debugSplitTimes = [performance.now()], extraDebugStats = {} } = opts ?? {};
         const {
             canvas,
             canvas: { context: ctx },
@@ -575,7 +575,7 @@ export class Scene {
                     .map((c) => c.dirtyTree)
                     .filter((t) => t.dirty !== undefined)
                     .reduce((result, childTree) => {
-                        result[childTree.name || '<unknown>'] = childTree;
+                        result[childTree.name ?? '<unknown>'] = childTree;
                         return result;
                     }, {} as Record<string, {}>),
             },

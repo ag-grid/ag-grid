@@ -95,7 +95,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
 
         if (isDeleteKey(key, gridOptionsService.is('enableCellEditingOnBackspace'))) {
             if (rangeService && gridOptionsService.isEnableRangeSelection()) {
-                rangeService.clearCellRangeCellValues();
+                rangeService.clearCellRangeCellValues({ dispatchWrapperEvents: true, wrapperEventSource: 'deleteKeyPressed' });
             } else if (cellCtrl.isCellEditable()) {
                 rowNode.setDataValue(cellCtrl.getColumn(), null, 'cellClear');
             }
@@ -108,10 +108,11 @@ export class CellKeyboardListenerFeature extends BeanStub {
 
     private onEnterKeyDown(e: KeyboardEvent): void {
         if (this.cellCtrl.isEditing() || this.rowCtrl.isEditing()) {
-            this.cellCtrl.stopEditingAndFocus();
+            this.cellCtrl.stopEditingAndFocus(false, e.shiftKey);
         } else {
-            if (this.beans.gridOptionsService.is('enterMovesDown')) {
-                this.beans.navigationService.navigateToNextCell(null, KeyCode.DOWN, this.cellCtrl.getCellPosition(), false);
+            if (this.beans.gridOptionsService.is('enterNavigatesVertically')) {
+                const key = e.shiftKey ? KeyCode.UP : KeyCode.DOWN;
+                this.beans.navigationService.navigateToNextCell(null, key, this.cellCtrl.getCellPosition(), false);
             } else {
                 this.cellCtrl.startRowOrCellEdit(KeyCode.ENTER, undefined, e);
                 if (this.cellCtrl.isEditing()) {
@@ -173,7 +174,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
                     rangeSelect: event.shiftKey,
                     groupSelectsFiltered: groupSelectsFiltered,
                     event,
-                    source: 'spacePressed'
+                    source: 'spacePressed',
                 });
                 if (currentSelection === undefined && updatedCount === 0) {
                     this.rowNode.setSelectedParams({
@@ -181,7 +182,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
                         rangeSelect: event.shiftKey,
                         groupSelectsFiltered: groupSelectsFiltered,
                         event,
-                        source: 'spacePressed'
+                        source: 'spacePressed',
                     });
                 }
             }

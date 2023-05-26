@@ -28,6 +28,11 @@ export class AgInputTextField extends AgAbstractInputField<HTMLInputElement, str
         return ret;
     }
 
+    /** Used to set an initial value into the input without necessarily setting `this.value` or triggering events (e.g. to set an invalid value) */
+    public setStartValue(value?: string | null): void {
+        this.setValue(value, true);
+    }
+
     private preventDisallowedCharacters(): void {
         const pattern = new RegExp(`[${this.config.allowedCharPattern}]`);
 

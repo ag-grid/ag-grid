@@ -4,9 +4,9 @@ title: "Axis Domain"
 
 The axis domain is the extent of displayed values along the axis.
 
-For a continuous axis, such as the [Number](/charts-axes-types/#number) or [Time](/charts-axes-types/#time) axis, the domain is calculated automatically from the minimum and maximum values of the data.
+For a continuous axis, such as the [Number](../axes-types/#number) or [Time](../axes-types/#time) axis, the domain is calculated automatically from the minimum and maximum values of the data.
 
-For the [Category](/charts-axes-types/#category) axis, the domain consists of the discrete values in the data.
+For the [Category](../axes-types/#category) axis, the domain consists of the discrete values in the data.
 
 ## Nice Domain
 
@@ -52,9 +52,11 @@ Use the buttons to set a specific domain minimum and maximum, or use the reset b
 
 <chart-example title='Number Axis Min & Max' name='axis-min-max' type='generated'></chart-example>
 
-<note>    
-| If the axis options have been configured with the [Tick Placement](../charts-axes-ticks/#tick-placement) properties, they take priority over the `axis.min` and `axis.max` properties.
-| To enforce the axis domain minimum and maximum configurations while also respecting the [Tick Placement](../charts-axes-ticks/#tick-placement) configurations, set the `axis.nice` property to `false`.
+<note>
+| When [Tick Values](../axes-ticks/#tick-values) are configured, the axis domain will be determined based on the values provided. In this case, `axis.nice`, `axis.min`, and `axis.max` will be ignored, and the domain will be extended as needed to accommodate the tick values.
+|
+| If the axis options have been configured with the [Tick Interval](../axes-ticks/#tick-interval) or [Tick Min / Max Spacing](../axes-ticks/#tick-min--max-spacing) properties, they take priority over the `axis.min` and `axis.max` properties.
+| To enforce the axis domain minimum and maximum configurations while also respecting the [Tick Placement](../axes-ticks/#tick-placement) configurations, set the `axis.nice` property to `false`.
 </note>
 
 ## Next Up

@@ -21,7 +21,7 @@ export class ColumnDefFactory {
             let childDef: ColDef | ColGroupDef = colDef;
 
             let pointer = col.getOriginalParent();
-
+            let lastPointer: ProvidedColumnGroup | null = null;
             while (pointer) {
 
                 let parentDef: ColGroupDef | null | undefined = null;
@@ -53,6 +53,13 @@ export class ColumnDefFactory {
                     childDef = parentDef;
                     pointer = pointer.getOriginalParent();
                 }
+
+                if (lastPointer === pointer) {
+                    addToResult = false;
+                    break;
+                }
+                // Ensure we don't get stuck in an infinite loop
+                lastPointer = pointer;
             }
 
             if (addToResult) {

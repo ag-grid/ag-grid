@@ -10,7 +10,7 @@
 |const KEY_PAGE_END = 'End';
 |
 |const MyCellEditor = {
-|    template: `<input v-model="value" @keydown="onKeyDown" /lo>`,
+|    template: `&lt;input v-model="value" @keydown="onKeyDown" />`,
 |    data() {
 |        return {
 |            value: null

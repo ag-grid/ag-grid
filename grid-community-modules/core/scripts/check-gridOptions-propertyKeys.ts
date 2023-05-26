@@ -29,7 +29,7 @@ function checkGridOptionPropertyKeys() {
     const gridOpsMembers = getGridOptionProps(srcFile, 'GridOptions');
 
 
-    const ignored = ['clipboardDeliminator', 'api', 'columnApi', 'TData']
+    const ignored = ['api', 'columnApi', 'TData']
     //Check our PropertyKeys is accurate via ComponentUtils
     const keysToCheck = [...ComponentUtil.ALL_PROPERTIES, ...ComponentUtil.EVENTS, ...ComponentUtil.EVENT_CALLBACKS, ...ignored];
     const missingPropertyKeys: string[] = [];

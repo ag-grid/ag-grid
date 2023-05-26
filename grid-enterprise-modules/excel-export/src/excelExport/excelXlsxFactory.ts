@@ -1,11 +1,8 @@
 import {
     Column,
     ExcelFactoryMode,
-    ExcelHeaderFooterConfig,
     ExcelImage,
     ExcelRelationship,
-    ExcelSheetMargin,
-    ExcelSheetPageSetup,
     ExcelStyle,
     ExcelWorksheet,
     RowHeightCallbackParams,
@@ -24,6 +21,7 @@ import relationshipsFactory from './files/ooxml/relationships';
 
 import { setExcelImageTotalHeight, setExcelImageTotalWidth, createXmlPart } from './assets/excelUtils';
 import { ImageIdMap, ExcelCalculatedImage } from './assets/excelInterfaces';
+import { ExcelGridSerializingParams } from './baseExcelSerializingSession';
 
 /**
  * See https://www.ecma-international.org/news/TC45_current_work/OpenXML%20White%20Paper.pdf
@@ -47,14 +45,12 @@ export class ExcelXlsxFactory {
     public static createExcel(
         styles: ExcelStyle[],
         worksheet: ExcelWorksheet,
-        margins?: ExcelSheetMargin,
-        pageSetup?: ExcelSheetPageSetup,
-        headerFooterConfig?: ExcelHeaderFooterConfig
+        config: ExcelGridSerializingParams
     ): string {
         this.addSheetName(worksheet);
         registerStyles(styles, this.sheetNames.length);
 
-        return this.createWorksheet(worksheet, margins, pageSetup, headerFooterConfig);
+        return this.createWorksheet(worksheet, config);
     }
 
     public static buildImageMap(image: ExcelImage, rowIndex: number, col: Column, columnsToExport: Column[], rowHeight?: number | ((params: RowHeightCallbackParams) => number)): void {
@@ -248,16 +244,12 @@ export class ExcelXlsxFactory {
 
     private static createWorksheet(
         worksheet: ExcelWorksheet,
-        margins?: ExcelSheetMargin,
-        pageSetup?: ExcelSheetPageSetup,
-        headerFooterConfig?: ExcelHeaderFooterConfig,
+        config: ExcelGridSerializingParams
     ): string {
         return createXmlPart(worksheetFactory.getTemplate({
             worksheet,
             currentSheet: this.sheetNames.length - 1,
-            margins,
-            pageSetup,
-            headerFooterConfig
+            config
         }));
     }
 }

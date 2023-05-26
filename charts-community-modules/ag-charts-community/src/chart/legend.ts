@@ -50,7 +50,7 @@ import { Logger } from '../util/logger';
 import { ModuleContext } from '../util/module';
 
 const ORIENTATIONS = ['horizontal', 'vertical'];
-export const OPT_ORIENTATION = predicateWithMessage(
+const OPT_ORIENTATION = predicateWithMessage(
     (v: any, ctx) => OPTIONAL(v, ctx, (v) => ORIENTATIONS.includes(v)),
     `expecting an orientation keyword such as 'horizontal' or 'vertical'`
 );
@@ -376,7 +376,7 @@ export class Legend {
         const paddedMarkerWidth = markerSize + markerPadding + paddingX;
 
         this.itemSelection.each((markerLabel, datum) => {
-            const Marker = getMarker(markerShape || datum.marker.shape);
+            const Marker = getMarker(markerShape ?? datum.marker.shape);
 
             if (!(markerLabel.marker && markerLabel.marker instanceof Marker)) {
                 markerLabel.marker = new Marker();
@@ -389,7 +389,7 @@ export class Legend {
             markerLabel.fontSize = fontSize;
             markerLabel.fontFamily = fontFamily;
 
-            const id = datum.itemId || datum.id;
+            const id = datum.itemId ?? datum.id;
             const labelText = this.getItemLabel(datum);
             const text = (labelText ?? '<unknown>').replace(/\r?\n/g, ' ');
             markerLabel.text = this.truncate(text, maxLength, maxItemWidth, paddedMarkerWidth, font, id);
@@ -882,7 +882,7 @@ export class Legend {
         }
 
         const series = datum ? this.dataService.getSeries().find((series) => series.id === datum?.id) : undefined;
-        if (datum && this.truncatedItems.has(datum.itemId || datum.id)) {
+        if (datum && this.truncatedItems.has(datum.itemId ?? datum.id)) {
             const labelText = this.getItemLabel(datum);
             this.tooltipManager.updateTooltip(
                 this.id,

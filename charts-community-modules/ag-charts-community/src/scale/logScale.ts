@@ -174,11 +174,9 @@ export class LogScale extends ContinuousScale<number> {
             return specifier;
         }
 
-        if (count == null) {
-            count = 10;
+        if (ticks == null) {
+            this.ticks();
         }
-
-        ticks = ticks ?? this.ticks();
 
         return (d) => {
             return (specifier as (x: number) => string)(d);

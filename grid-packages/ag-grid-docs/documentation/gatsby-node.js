@@ -177,7 +177,11 @@ exports.onCreateNode = async ({node, loadNodeContent, getNode, actions: {createN
         });
     } else if (node.internal.type === 'File' && node.internal.mediaType === 'application/json') {
         // load contents of JSON files to be used e.g. by ApiDocumentation
-        node.internal.content = await loadNodeContent(node);
+        await createNodeField({
+            node,
+            name: 'content',
+            value: await loadNodeContent(node)
+        });
     }
 };
 
@@ -193,9 +197,15 @@ const FULL_SCREEN_WITH_FOOTER_PAGES = [
     'style-guide',
 ];
 
-const isFullScreenPage = path => path === '/' || FULL_SCREEN_PAGES.some(page => { const regex = new RegExp(page, 'g' ); return path.match(regex) });
+const isFullScreenPage = path => path === '/' || FULL_SCREEN_PAGES.some(page => {
+    const regex = new RegExp(page, 'g');
+    return path.match(regex)
+});
 
-const isFullScreenPageWithFooter = path => FULL_SCREEN_WITH_FOOTER_PAGES.some(page => { const regex = new RegExp(page, 'g' ); return path.match(regex) });
+const isFullScreenPageWithFooter = path => FULL_SCREEN_WITH_FOOTER_PAGES.some(page => {
+    const regex = new RegExp(page, 'g');
+    return path.match(regex)
+});
 
 
 /**
@@ -210,7 +220,7 @@ exports.onCreatePage = ({page, actions: {createPage}}) => {
     } else if (isFullScreenPage(page.path)) {
         page.context.layout = 'fullScreenPage';
         createPage(page);
-    } else if(isFullScreenPageWithFooter(page.path)) {
+    } else if (isFullScreenPageWithFooter(page.path)) {
         page.context.layout = 'fullScreenPageWithFooter';
         createPage(page);
     }
@@ -323,7 +333,15 @@ const createChartGalleryPages = createPage => {
             createPage({
                 path: `/${framework}-charts/gallery/${toKebabCase(name)}/`,
                 component: chartGalleryPageTemplate,
-                context: {frameworks: supportedFrameworks, framework, name, description, previous, next, pageName: 'charts-overview'}
+                context: {
+                    frameworks: supportedFrameworks,
+                    framework,
+                    name,
+                    description,
+                    previous,
+                    next,
+                    pageName: 'charts-overview'
+                }
             });
         });
     });
@@ -351,6 +369,7 @@ exports.onCreateWebpackConfig = ({actions, getConfig}) => {
     const frameworkRequest = request => {
         return frameworks.some(framework => request.includes(framework))
     }
+
     class AgEs5CjsResolver {
         constructor(source, target) {
             this.source = source || 'resolve';
@@ -392,7 +411,7 @@ exports.onCreateWebpackConfig = ({actions, getConfig}) => {
             modules: [path.resolve(__dirname, 'src'), 'node_modules'],
         }
     };
-    if(isDevelopment()) {
+    if (isDevelopment()) {
         // favour cjs over es6 (docs only rebuilds cjs...) in dev mode
         newConfig.resolve['plugins'] = [new AgEs5CjsResolver()];
     }

@@ -202,3 +202,31 @@ The grid comes with some provided cell renderers out of the box. These cell rend
 
 - [Show Change Cell Renderers](/change-cell-renderers/): For animating changes when data is changing.
 
+- [Checkbox Cell Renderer](#checkbox-cell-renderer): For displaying boolean values with a checkbox.
+
+### Checkbox Cell Renderer
+
+Simple renderer for boolean values that uses the standard HTML checkbox `input`. The renderer also allows editing.
+
+If editing is enabled, then it is recommended to also use the [Checkbox Cell Editor](/provided-cell-editors/#checkbox-cell-editor) so that the UI matches when in edit mode.
+
+Specified with `agCheckboxCellRenderer` and configured with `ICheckboxCellRendererParams`.
+
+<interface-documentation interfaceName='ICheckboxCellRendererParams' names='["disabled"]'></interface-documentation>
+
+```js
+columnDefs: [
+    {
+        cellRenderer: 'agCheckboxCellRenderer',
+        cellRendererParams: {
+            disabled: true,
+        },
+        // ...other props
+    }
+]
+```
+
+<grid-example title='Checkbox Cell Renderer' name='checkbox-cell-renderer' type='generated'></grid-example>
+
+
+Note that if [Row Selection](/row-selection/) is enabled, it is recommended to set `suppressKeyboardEvent` on the column definition to prevent the <kbd>Space</kbd> key from triggering both row selection and toggling the checkbox. This is shown in the example above.

@@ -1,91 +1,73 @@
 <framework-specific-section frameworks="javascript">
-<section class="code-tab mb-3">
-<div class="card">
-<div class="card-header">Quick Look Code Example</div>
-<div class="card-body">
-<ul class="nav nav-tabs">
-<li class="nav-item">
-<a  class="nav-link active" id="component-tab" data-toggle="tab" href="#component" role="tab" aria-controls="component" aria-selected="true">
-
- main.js
-
-</a>
-</li>
-<li class="nav-item">
-<a class="nav-link" id="template-tab" data-toggle="tab" href="#template" role="tab" aria-controls="template" aria-selected="false">
-
-index.html
-
-</a>
-</li>
-</ul>
-<div class="tab-content">
-<div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
+| ### Quick Look Code Example
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
-<snippet transform={false}>
-| const columnDefs = [
-|   { field: "make" },
-|   { field: "model" },
-|   { field: "price" }
-| ];
+<tabs>
+
+<tabs-links>
+<open-in-cta type="plunkr" href="https://plnkr.co/edit/nmWxAxWONarW5gj2?p=preview?p=preview" />
+</tabs-links>
+
+<div tab-label="main.js">
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript">
+<snippet transform={false} lineNumbers="true">
+|const columnDefs = [
+|  { field: "make" },
+|  { field: "model" },
+|  { field: "price" }
+|];
 |
-| // specify the data
-| const rowData = [
-|   { make: "Toyota", model: "Celica", price: 35000 },
-|   { make: "Ford", model: "Mondeo", price: 32000 },
-|   { make: "Porsche", model: "Boxster", price: 72000 }
-| ];
+|// specify the data
+|const rowData = [
+|  { make: "Toyota", model: "Celica", price: 35000 },
+|  { make: "Ford", model: "Mondeo", price: 32000 },
+|  { make: "Porsche", model: "Boxster", price: 72000 }
+|];
 |
-| // let the grid know which columns and what data to use
-| const gridOptions = {
-|   columnDefs: columnDefs,
-|   rowData: rowData
-| };
+|// let the grid know which columns and what data to use
+|const gridOptions = {
+|  columnDefs: columnDefs,
+|  rowData: rowData
+|};
 |
-| // setup the grid after the page has finished loading
-| document.addEventListener('DOMContentLoaded', () => {
-|     const gridDiv = document.querySelector('#myGrid');
-|     new agGrid.Grid(gridDiv, gridOptions);
-| });
+|// setup the grid after the page has finished loading
+|document.addEventListener('DOMContentLoaded', () => {
+|  const gridDiv = document.querySelector('#myGrid');
+|  new agGrid.Grid(gridDiv, gridOptions);
+|});
 </snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
 </div>
-<div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
+
+<div tab-label="index.html">
 </framework-specific-section>
 
+
 <framework-specific-section frameworks="javascript">
-<snippet transform={false} language="html">
-| &lt;!DOCTYPE html>
-| &lt;html lang="en">
-| &lt;head>
-|     &lt;title>Ag-Grid Basic Example&lt;/title>
-|     &lt;script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js">&lt;/script>
-|     &lt;script src="main.js">&lt;/script>
-| &lt;/head>
-| &lt;body>
-|     &lt;div id="myGrid" style="height: 200px; width:500px;" class="ag-theme-alpine">&lt;/div>
-| &lt;/body>
-| &lt;/html>
+<snippet language="html" transform={false} lineNumbers="true">
+|&lt;!DOCTYPE html>
+|&lt;html lang="en">
+|&lt;head>
+|    &lt;title>Ag-Grid Basic Example&lt;/title>
+|    &lt;script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js">&lt;/script>
+|    &lt;script src="main.js">&lt;/script>
+|&lt;/head>
+|&lt;body>
+|    &lt;div id="myGrid" style="height: 200px; width:500px;" class="ag-theme-alpine">&lt;/div>
+|&lt;/body>
+|&lt;/html>
 </snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
 </div>
-</div>
-</div>
-<div class="text-right" style="margin-top: -1.5rem;">
 
- <a class="btn btn-dark mb-2 mr-3" href="https://plnkr.co/edit/nmWxAxWONarW5gj2?p=preview?p=preview" target="_blank">
-     Open in <img src="../../images/resources/getting-started/plunker_icon.svg" alt="Open in Plunker" style="width: 2.5rem" /> Plunker
- </a>
-
-</div>
-</div>
-</section>
+</tabs>
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
@@ -202,8 +184,14 @@ index.html
 
 <framework-specific-section frameworks="javascript">
 | If everything is correct, you should see a simple grid that looks like this:
-|
-| ![AG Grid in its simplest form](../../images/resources/getting-started/step1.png)
+
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript">
+<image-caption src="step1.png" alt="AG Grid in its simplest form" maxWidth="80%" constrained="true" centered="true"></image-caption>
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript">
 |
 | We will now break this file down and explain the different parts...
 |

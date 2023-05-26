@@ -102,7 +102,7 @@
 |     // CALLBACKS
 |     getRowHeight: (params) => 25
 | }
-| <ag-grid-vue
+| &lt;ag-grid-vue
 |     :gridOptions="gridOptions"
 </snippet>
 </framework-specific-section>

@@ -14,6 +14,8 @@ type Padding = {
     bottom: number;
 };
 
+type ShrinkOrGrowPosition = 'top' | 'left' | 'bottom' | 'right' | 'vertical' | 'horizontal';
+
 export class BBox {
     x: number;
     y: number;
@@ -59,11 +61,8 @@ export class BBox {
     }
 
     shrink(amounts: Partial<Padding>): this;
-    shrink(amount: number, position?: 'top' | 'left' | 'bottom' | 'right' | 'vertical' | 'horizontal'): this;
-    shrink(
-        amount: number | Partial<Padding>,
-        position?: 'top' | 'left' | 'bottom' | 'right' | 'vertical' | 'horizontal'
-    ) {
+    shrink(amount: number, position?: ShrinkOrGrowPosition): this;
+    shrink(amount: number | Partial<Padding>, position?: ShrinkOrGrowPosition) {
         const apply = (pos: typeof position, amt: number) => {
             switch (pos) {
                 case 'top':
@@ -97,18 +96,15 @@ export class BBox {
         if (typeof amount === 'number') {
             apply(position, amount);
         } else {
-            Object.entries(amount).forEach(([pos, amt]) => apply(pos as typeof position, amt!));
+            Object.entries(amount).forEach(([pos, amt]) => apply(pos as typeof position, amt));
         }
 
         return this;
     }
 
     grow(amounts: Partial<Padding>): this;
-    grow(amount: number, position?: 'top' | 'left' | 'bottom' | 'right' | 'vertical' | 'horizontal'): this;
-    grow(
-        amount: number | Partial<Padding>,
-        position?: 'top' | 'left' | 'bottom' | 'right' | 'vertical' | 'horizontal'
-    ) {
+    grow(amount: number, position?: ShrinkOrGrowPosition): this;
+    grow(amount: number | Partial<Padding>, position?: ShrinkOrGrowPosition) {
         if (typeof amount === 'number') {
             this.shrink(-amount, position);
         } else {

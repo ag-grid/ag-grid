@@ -1,5 +1,5 @@
 <framework-specific-section frameworks="vue">
-|Below is a simple example of loading cell renderer component:
+|Below is an example of loading cell renderer component:
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">

@@ -1,6 +1,6 @@
 <framework-specific-section frameworks="react">
 |
-|Below is a simple example of a tool panel component as a Hook:
+|Below is an example of a tool panel component:
 |
 </framework-specific-section>
 
@@ -53,57 +53,5 @@
 |        &lt;/div>
 |    );
 |};
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-|And here is the same example as a Class-based Component:
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<snippet transform={false} language="jsx">
-|export default class CustomStatsToolPanel extends Component {
-|    constructor(props) {
-|        super(props);
-|
-|        this.state = {numMedals: 0, numGold: 0, numSilver: 0, numBronze: 0};
-|
-|        // calculate stats when new rows loaded, i.e. onModelUpdated
-|        this.props.api.addEventListener('modelUpdated', this.updateTotals.bind(this));
-|    }
-|
-|    render() {
-|        const totalStyle = {paddingBottom: '15px'};
-|
-|        return (
-|            &lt;div style={{textAlign: "center"}}>
-|                &lt;span>
-|                    &lt;h2>&lt;i className="fa fa-calculator">&lt;/i> Custom Stats&lt;/h2>
-|                    &lt;dl style={{fontSize: 'large', padding: '30px 40px 10px 30px'}}>
-|                        &lt;dt style={totalStyle}>Total Medals: &lt;b>{this.state.numMedals}&lt;/b>&lt;/dt>
-|                        &lt;dt style={totalStyle}>Total Gold: &lt;b>{this.state.numGold}&lt;/b>&lt;/dt>
-|                        &lt;dt style={totalStyle}>Total Silver: &lt;b>{this.state.numSilver}&lt;/b>&lt;/dt>
-|                        &lt;dt style={totalStyle}>Total Bronze: &lt;b>{this.state.numBronze}&lt;/b>&lt;/dt>
-|                    &lt;/dl>
-|                &lt;/span>
-|            &lt;/div>
-|        );
-|    }
-|
-|    updateTotals() {
-|        let numGold = 0, numSilver = 0, numBronze = 0;
-|
-|        this.props.api.forEachNode(rowNode => {
-|            const data = rowNode.data;
-|
-|            if (data.gold) numGold += data.gold;
-|            if (data.silver) numSilver += data.silver;
-|            if (data.bronze) numBronze += data.bronze;
-|        });
-|
-|        const numMedals = numGold + numSilver + numBronze;
-|        this.setState({numMedals, numGold, numSilver, numBronze});
-|    }
-|}
 </snippet>
 </framework-specific-section>

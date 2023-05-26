@@ -1,5 +1,5 @@
 <framework-specific-section frameworks="javascript">
-|Below is a simple example of header component:
+|Below is an example of header component:
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">

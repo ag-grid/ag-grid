@@ -122,9 +122,7 @@ function addGridDropZone(params: GridReadyEvent) {
                     })
                 });
             } else if (deselectCheck) {
-                nodes.forEach(function (node) {
-                    node.setSelected(false);
-                });
+                params.api.setNodesSelected({ nodes, newValue: false });
             }
         }
     });

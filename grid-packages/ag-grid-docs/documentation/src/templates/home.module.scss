@@ -1,126 +1,76 @@
 @use '../design-system' as *;
 
-.docs-home {
-    --max-page-width: #{$max-page-width}; // required as outside of .aq-styles
-    --horizontal-margin: #{$horizontal-margin}; // required as outside of .aq-styles
+.docsHome {
+    margin-bottom: $size-7;
 
     @media screen and (max-width: $breakpoint-docs-nav-medium) {
         @include page-horizontal-margins();
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
-        padding-left: $size-2; // Should be $size-4 but waiting until docs home re-style
         padding-right: max(var(--horizontal-margin), calc(50vw - var(--max-page-width) / 2));
     }
+}
 
-    h2 {
-        color: #6a7576;
-        font-size: 1.95rem;
-        font-weight: 500;
+.section {
+    margin-top: $size-7;
+}
+
+.sectionInner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $size-1;
+
+    @media screen and (min-width: $breakpoint-docs-home-small) {
+        gap: $size-2;
     }
+}
 
-    h4 {
-        color: #6a7576;
-        font-size: 1rem;
-        font-weight: normal;
-        margin-top: 0;
+.introSection {
+    max-width: 60em;
+    margin-top: $size-4;
+
+    h1 {
+        text-transform: capitalize;
     }
+}
 
-    @include media-breakpoint-down(md) {
-        h2 {
-            font-size: 1.5rem;
-            background-color: white;
-        }
-    }
+.gettingStartedSection .sectionInner {
+    line-height: var(--line-height-tight);
 
-    &__getting-started {
-        text-align: left;
+    @media screen and (max-width: $breakpoint-docs-home-small) {
+        gap: $size-2;
 
-        &__title {
-            composes: mb-0 p-2 from global;
-            font-size: 2rem;
-            font-weight: 500;
-            text-align: left;
-            text-transform: capitalize;
-            margin: 10px;
-            border-radius: 0.3rem;
-        }
-
-        &__row {
-            composes: d-flex m-0 mb-2 from global;
-        }
-
-        &__item_pane {
-            display: flex;
-            flex-grow: 1;
-            flex-wrap: wrap;
-            margin-left: 10px;
-            margin-top: -5px;
-            margin-bottom: 20px;
-        }
-
-        &__item {
-            composes: d-flex flex-column justify-content-center align-items-center m-2 p-2 from global;
-            border: 1px solid $ag-light-grey;
-            border-radius: 5px;
-            width: 11.5rem;
-            height: 11.5rem;
-
-            &:hover {
-                background-color: #ebebeb;
-                text-decoration: none;
-            }
-
-            @include media-breakpoint-down(sm) {
-                width: 6.5rem;
-                height: 6.5rem;
-            }
-        }
-
-        &__item_logo {
-            composes: p-2 from global;
-            position: relative;
-            width: 5rem;
-            height: 5rem;
-
-            @include media-breakpoint-down(sm) {
-                width: 4.5rem;
-                height: 4.5rem;
-            }
-
-            img {
-                width: 100%;
-                height: 100%;
-            }
-        }
-
-        &__item_label {
-            text-align: center;
-            white-space: nowrap;
-            font-size: 1rem;
-
-            @include media-breakpoint-down(sm) {
-                font-size: 0.65rem;
-            }
+        > a {
+            width: calc(50% - $size-2 / 2);
         }
     }
+}
 
-    &__video-panel {
-        &__videos {
-            &__video-player {
-                &__title {
-                    font-size: smaller;
-                }
-            }
+.gettingStartedLogo {
+    margin-bottom: $size-1;
 
-            &__all-videos {
-                composes: d-flex from global;
+    img {
+        width: $size-7;
+        height: $size-7;
+    }
+}
 
-                &__title {
-                    width: 80%;
-                    margin: 0 auto;
-                }
-            }
-        }
+.allVideosInner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+}
+
+.allVideosIcon {
+    --icon-size: #{$size-7};
+    --text-color: var(--link-color);
+
+    transition: fill 0.2s ease-in-out;
+
+    a:hover & {
+        --text-color: var(--link-hover-color);
     }
 }

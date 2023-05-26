@@ -1,17 +1,15 @@
-import React from 'react';
 import classnames from 'classnames';
-
+import React from 'react';
+import { Icon } from '../Icon';
+import { doOnEnter } from '../key-handlers';
+import styles from './Chart.module.scss';
 import { data, series } from './templates';
 import { deepClone } from './utils';
-import styles from './Chart.module.scss';
-import { doOnEnter } from '../key-handlers';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCompress } from '@fortawesome/free-solid-svg-icons';
 
 /**
  * This renders the chart inside the Standalone Charts API Explorer.
  */
-export class Chart extends React.Component<{ options: {}, fullScreen: boolean, setFullScreen(o: boolean) }> {
+export class Chart extends React.Component<{ options: {}; fullScreen: boolean; setFullScreen(o: boolean) }> {
     chart: React.RefObject<HTMLDivElement>;
     chartInstance = undefined;
     AgChart = undefined;
@@ -19,7 +17,7 @@ export class Chart extends React.Component<{ options: {}, fullScreen: boolean, s
     constructor(props) {
         super(props);
         this.chart = React.createRef();
-    }    
+    }
 
     componentDidMount() {
         import('ag-charts-community').then(({ AgChart }) => {
@@ -60,24 +58,23 @@ export class Chart extends React.Component<{ options: {}, fullScreen: boolean, s
     }
 
     render() {
-        const cssClasses = classnames(styles['chart'], {[styles['fullscreen']]: this.props.fullScreen});
-        return <>
-            <div
-                id="chart-container"
-                className={cssClasses}
-                ref={this.chart}
-            >
-            </div>
-            {this.props.fullScreen && <div
-                className={styles['close']}
-                onClick={() => this.props.setFullScreen(false)}
-                onKeyDown={e => doOnEnter(e, () => this.props.setFullScreen(false))}
-                role="button"
-                tabIndex={0}
-            >
-                <FontAwesomeIcon icon={faCompress} fixedWidth title="Exit chart fullscreen" />
-            </div>
-        }
-        </>;
+        const cssClasses = classnames(styles.chart, { [styles.fullscreen]: this.props.fullScreen });
+        return (
+            <>
+                <div id="chart-container" className={cssClasses} ref={this.chart}></div>
+                {this.props.fullScreen && (
+                    <button
+                        className={classnames(styles.close, 'button-style-none')}
+                        onClick={() => this.props.setFullScreen(false)}
+                        onKeyDown={(e) => doOnEnter(e, () => this.props.setFullScreen(false))}
+                        role="button"
+                        tabIndex={0}
+                        title="Exit chart fullscreen"
+                    >
+                        <Icon name="minimize" />
+                    </button>
+                )}
+            </>
+        );
     }
 }

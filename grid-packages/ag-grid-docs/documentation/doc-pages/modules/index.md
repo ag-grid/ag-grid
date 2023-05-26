@@ -218,11 +218,11 @@ Using the same real-world example from above the `package.json` dependencies wil
 |
 | public modules: Module[] = [ClientSideRowModelModule, CsvExportModule, ExcelExportModule, MasterDetailModule];
 |
-| &lt;g-grid-angular>
+| &lt;ag-grid-angular>
 |     [rowData]="rowData"
 |     [columnDefs]="columnDefs"
 |     [modules]="modules"
-| </ag-grid-angular>
+| &lt;/ag-grid-angular>
 </snippet>
 </framework-specific-section>
 
@@ -348,4 +348,4 @@ Our Example Runner enables you to view the `modules` version of an example via t
 When 'Modules' is selected, the source code includes the required modules along with the module import paths. This means
 you can copy and paste code from our examples without further tweaks.
 
-![Module Examples](resources/module-example-runner.png)
+<image-caption src="module-example-runner.png" alt="Module Examples" maxWidth="90%" constrained="true" centered="true"></image-caption>

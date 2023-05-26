@@ -1,10 +1,15 @@
 {
     "extends": "../../module-build/tsconfig.test.json",
     "compilerOptions": {
+        "composite": true,
         "outDir": "dist-test",
         "rootDir": "src",
         "noUnusedParameters": true,
-        "noUnusedLocals": true
+        "noUnusedLocals": true,
+        "paths": {
+            "ag-charts-community": ["../../charts-community-modules/ag-charts-community/src/main.ts"]
+        }
     },
+    "references": [{ "path": "../../charts-community-modules/ag-charts-community/tsconfig.test.json" }],
     "include": ["**/*.test.ts", "**/test/*.ts", "src/ts/**/mock.ts"]
 }

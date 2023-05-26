@@ -4,30 +4,28 @@ import ChartGallery from 'components/chart-gallery/ChartGallery';
 import ChartsApiExplorer from 'components/charts-api-explorer/ChartsApiExplorer';
 import ExampleRunner from 'components/example-runner/ExampleRunner';
 import { ExpandableSnippet } from 'components/expandable-snippet/ExpandableSnippet';
-import FeatureOverview from 'components/FeatureOverview';
+import FrameworkSpecificSection from 'components/FrameworkSpecificSection';
 import Gif from 'components/Gif';
 import { Icon } from 'components/Icon';
 import IconsPanel from 'components/IconsPanel';
 import ImageCaption from 'components/ImageCaption';
 import MatrixTable from 'components/MatrixTable';
+import Note from 'components/Note';
+import { OpenInCTA } from 'components/OpenInCTA';
 import { SEO } from 'components/SEO';
 import SideMenu from 'components/SideMenu';
 import { Snippet } from 'components/snippet/Snippet';
-import { Tabs } from 'components/Tabs';
-import VideoLink from 'components/VideoLink';
+import { Tabs } from 'components/tabs/Tabs';
 import VideoSection from 'components/VideoSection';
+import Warning from 'components/Warning';
 import { graphql } from 'gatsby';
 import React, { useState } from 'react';
 import rehypeReact from 'rehype-react';
-import FrameworkSpecificSection from 'components/FrameworkSpecificSection';
-import Note from 'components/Note';
-import Warning from 'components/Warning';
 import { getProductType } from 'utils/page-header';
 import stripHtml from 'utils/strip-html';
 import DocumentationLink from '../components/DocumentationLink';
 import LearningVideos from '../components/LearningVideos';
-import { addNonBreakingSpaceBetweenLastWords } from '../utils/add-non-breaking-space-between-last-words';
-import { AGStyles } from './ag-styles';
+import { TabsLinks } from '../components/tabs/TabsLinks';
 import styles from './doc-page.module.scss';
 
 /**
@@ -61,8 +59,8 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
             a: (props) => DocumentationLink({ ...props, framework }),
             gif: (props) =>
                 Gif({ ...props, pageName, autoPlay: props.autoPlay != null ? JSON.parse(props.autoPlay) : false }),
-            'grid-example': (props) => ExampleRunner(getExampleRunnerProps(props, 'grid')),
-            'chart-example': (props) => ExampleRunner(getExampleRunnerProps(props, 'charts')),
+            'grid-example': (props) => <ExampleRunner {...getExampleRunnerProps(props, 'grid')} />,
+            'chart-example': (props) => <ExampleRunner {...getExampleRunnerProps(props, 'charts')} />,
             'api-documentation': (props) =>
                 ApiDocumentation({
                     ...props,
@@ -79,7 +77,13 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
                     exampleIndexData,
                     config: props.config != null ? JSON.parse(props.config) : undefined,
                 }),
-            snippet: (props) => Snippet({ ...props, framework }),
+            snippet: (props) =>
+                Snippet({
+                    ...props,
+                    // NOTE: lowercased upstream
+                    lineNumbers: props.linenumbers === 'true',
+                    framework,
+                }),
             'expandable-snippet': (props) =>
                 ExpandableSnippet({
                     ...props,
@@ -88,77 +92,26 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
                     breadcrumbs: props.breadcrumbs ? JSON.parse(props.breadcrumbs) : undefined,
                     config: props.config != null ? JSON.parse(props.config) : undefined,
                 }),
-            'feature-overview': (props) => FeatureOverview({ ...props, framework }),
-            'icons-panel': IconsPanel,
+            'icons-panel': (props) => <IconsPanel {...props} />,
             'image-caption': (props) => ImageCaption({ ...props, pageName }),
             'matrix-table': (props) => MatrixTable({ ...props, framework, exampleIndexData }),
-            tabs: (props) => Tabs({ ...props }),
+            tabs: (props) => <Tabs {...props} />,
+            'tabs-links': TabsLinks,
             'learning-videos': (props) => LearningVideos({ framework }),
             'video-section': VideoSection,
-            'video-link': VideoLink,
-            'chart-gallery': ChartGallery,
-            'charts-api-explorer': (props) => ChartsApiExplorer({ ...props, framework, jsonData, exampleIndexData }),
-            'note': Note,
-            'warning': Warning,
-            'framework-specific-section': props => FrameworkSpecificSection({...props, currentFramework: framework}),
-
-            // AG Styles wrapper - wrap markdown -> html elements with `.ag-styles` to apply the new design system.
-            // Can be removed when the new design system is applied to everything
-            h1: ({ children, ...otherProps }) => (
-                <AGStyles>
-                    <h1 {...otherProps}>{children}</h1>
-                </AGStyles>
+            note: Note,
+            warning: Warning,
+            'framework-specific-section': (props) =>
+                FrameworkSpecificSection({ ...props, currentFramework: framework }),
+            'chart-gallery': (props) => <ChartGallery {...props} />,
+            'charts-api-explorer': (props) => (
+                <ChartsApiExplorer {...props} framework={framework} exampleIndexData={exampleIndexData} />
             ),
-            h2: ({ children, ...otherProps }) => (
-                <AGStyles>
-                    <h2 {...otherProps}>{children}</h2>
-                </AGStyles>
-            ),
-            h3: ({ children, ...otherProps }) => (
-                <AGStyles>
-                    <h3 {...otherProps}>{children}</h3>
-                </AGStyles>
-            ),
-            h4: ({ children, ...otherProps }) => (
-                <AGStyles>
-                    <h4 {...otherProps}>{children}</h4>
-                </AGStyles>
-            ),
-            h5: ({ children, ...otherProps }) => (
-                <AGStyles>
-                    <h5 {...otherProps}>{children}</h5>
-                </AGStyles>
-            ),
-            h6: ({ children, ...otherProps }) => (
-                <AGStyles>
-                    <h6 {...otherProps}>{children}</h6>
-                </AGStyles>
-            ),
-            p: ({ children, ...otherProps }) => (
-                <AGStyles>
-                    <p {...otherProps}>{children}</p>
-                </AGStyles>
-            ),
-            ul: ({ children, ...otherProps }) => (
-                <AGStyles>
-                    <ul {...otherProps}>{children}</ul>
-                </AGStyles>
-            ),
-            ol: ({ children, ...otherProps }) => (
-                <AGStyles>
-                    <ol {...otherProps}>{children}</ol>
-                </AGStyles>
-            ),
-            table: ({ children, ...otherProps }) => (
-                <AGStyles>
-                    <table {...otherProps}>{children}</table>
-                </AGStyles>
-            ),
-            pre: ({ children, ...otherProps }) => <pre {...otherProps}>{children}</pre>,
-            hr: ({ children, ...otherProps }) => (
-                <AGStyles>
-                    <hr {...otherProps}>{children}</hr>
-                </AGStyles>
+            'open-in-cta': OpenInCTA,
+            pre: ({ children, className, ...otherProps }) => (
+                <pre className={classnames('code', className)} {...otherProps}>
+                    {children}
+                </pre>
             ),
         },
     }).Compiler;
@@ -186,7 +139,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
                     {getProductType(framework, pageName.startsWith('charts-'), version)}
                 </span>
             )}
-            <span>{addNonBreakingSpaceBetweenLastWords(title)}</span>
+            <span>{title}</span>
         </>
     );
 
@@ -195,19 +148,18 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
             <div id="doc-content" className={classnames(styles['doc-page'], { [styles.noSideMenu]: !showSideMenu })}>
                 {/*eslint-disable-next-line react/jsx-pascal-case*/}
                 <SEO title={title} description={description} framework={framework} pageName={pageName} />
-                <AGStyles>
-                    <header className={styles.docsPageHeader}>
-                        <h1 id="top" className={styles.docsPageTitle}>
-                            {pageTitle}
-                            {page.frontmatter.enterprise && (
-                                <span className={styles.enterpriseLabel}>
-                                    Enterprise
-                                    <Icon name="enterprise" />
-                                </span>
-                            )}
-                        </h1>
-                    </header>
-                </AGStyles>
+
+                <header className={styles.docsPageHeader}>
+                    <h1 id="top" className={styles.docsPageTitle}>
+                        {pageTitle}
+                        {page.frontmatter.enterprise && (
+                            <span className={styles.enterpriseLabel}>
+                                Enterprise
+                                <Icon name="enterprise" />
+                            </span>
+                        )}
+                    </h1>
+                </header>
 
                 {/* Wrapping div is a hack to target "intro" section of docs page */}
                 <div className={styles.pageSections}>{renderAst(ast)}</div>

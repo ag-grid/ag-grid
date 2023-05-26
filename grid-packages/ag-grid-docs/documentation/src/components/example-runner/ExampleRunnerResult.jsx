@@ -10,7 +10,7 @@ import isDevelopment from 'utils/is-development';
  */
 const ExampleRunnerResult = ({ isOnScreen = true, resultFrameIsVisible = true, exampleInfo }) => {
     const [isExecuting, setExecuting] = useState(isOnScreen && resultFrameIsVisible);
-    const { pageName, name, internalFramework, importType, type } = exampleInfo;
+    const { pageName, name, internalFramework, importType } = exampleInfo;
 
     useEffect(() => {
         // trigger the example to execute when it is on screen and the result pane is visible
@@ -47,7 +47,7 @@ const ExampleRunnerResult = ({ isOnScreen = true, resultFrameIsVisible = true, e
         key={`${pageName}_${name}_${internalFramework}_${importType}`}
         ref={iframeRef}
         title={name}
-        className={classnames(styles['example-runner-result'], { [styles['example-runner-result--hidden']]: !resultFrameIsVisible })} />;
+        className={classnames(styles.exampleRunnerResult, { [styles.hidden]: !resultFrameIsVisible })} />;
 };
 
 export default ExampleRunnerResult;

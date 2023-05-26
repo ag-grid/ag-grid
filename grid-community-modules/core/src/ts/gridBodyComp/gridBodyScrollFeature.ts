@@ -1,6 +1,5 @@
 import { Autowired, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { getInnerHeight, getScrollLeft, isRtlNegativeScroll, setScrollLeft } from "../utils/dom";
 import { CtrlsService } from "../ctrlsService";
 import { Events } from "../eventKeys";
 import { debounce } from "../utils/function";
@@ -16,6 +15,8 @@ import { RowContainerCtrl } from "./rowContainer/rowContainerCtrl";
 import { Column } from "../entities/column";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { IRowNode } from "../interfaces/iRowNode";
+import { getInnerHeight, getScrollLeft, isRtlNegativeScroll, isVisible, setScrollLeft } from "../utils/dom";
+import { waitUntil } from "../utils/function";
 
 type ScrollDirection = 'horizontal' | 'vertical';
 
@@ -327,6 +328,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
     // called by scrollHorizontally method and alignedGridsService
     public setHorizontalScrollPosition(hScrollPosition: number): void {
+        const fakeHScrollGui = this.ctrlsService.getFakeHScrollComp().getGui();
         const minScrollLeft = 0;
         const maxScrollLeft = this.centerRowContainerCtrl.getViewportElement().scrollWidth - this.centerRowContainerCtrl.getCenterWidth();
 
@@ -338,17 +340,27 @@ export class GridBodyScrollFeature extends BeanStub {
             }
         }
 
-        setScrollLeft(this.centerRowContainerCtrl.getViewportElement(), Math.abs(hScrollPosition), this.enableRtl);
-
-        // we need to manually do the event handling (rather than wait for the event)
-        // for the alignedGridsService, as if we don't, the aligned grid service gets
-        // notified async, and then it's 'consuming' flag doesn't get used right, and
-        // we can end up with an infinite loop
-        this.doHorizontalScroll(hScrollPosition);
+        // if called via API,  the Fake Scrollbar might not be rendered
+        waitUntil(
+            () => isVisible(fakeHScrollGui),
+            () => {
+                setScrollLeft(this.centerRowContainerCtrl.getViewportElement(), Math.abs(hScrollPosition), this.enableRtl);
+                // we need to manually do the event handling (rather than wait for the event)
+                // for the alignedGridsService, as if we don't, the aligned grid service gets
+                // notified async, and then it's 'consuming' flag doesn't get used right, and
+                // we can end up with an infinite loop
+                this.doHorizontalScroll(hScrollPosition);
+            }
+        );
     }
 
     public setVerticalScrollPosition(vScrollPosition: number): void {
-        this.eBodyViewport.scrollTop = vScrollPosition;
+        const fakeVScrollGui = this.ctrlsService.getFakeVScrollComp().getGui();
+        // if called via API,  the Fake Scrollbar might not be rendered
+        waitUntil(
+            () => isVisible(fakeVScrollGui),
+            () => { this.eBodyViewport.scrollTop = vScrollPosition; }
+        );
     }
 
     public getVScrollPosition(): { top: number, bottom: number; } {
@@ -484,7 +496,7 @@ export class GridBodyScrollFeature extends BeanStub {
             }
 
             if (newScrollPosition !== null) {
-                this.eBodyViewport.scrollTop = newScrollPosition;
+                this.setVerticalScrollPosition(newScrollPosition);
                 this.rowRenderer.redrawAfterScroll();
             }
 

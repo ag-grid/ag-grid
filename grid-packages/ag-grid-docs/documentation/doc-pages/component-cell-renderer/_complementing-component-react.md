@@ -1,7 +1,7 @@
 <framework-specific-section frameworks="react">
 <snippet transform={false}>
 |// define cellRenderer to be reused
-|const ColourCellRenderer = props => <span style={{color: props.color}}>{props.value}</span>;
+|const ColourCellRenderer = props => &lt;span style={{color: props.color}}>{props.value}&lt;/span>;
 |
 |const GridExample = () => {
 |   // other properties & methods
@@ -26,12 +26,12 @@
 |   ]);
 |
 |   return (
-|       <div className="ag-theme-alpine">
-|           <AgGridReact
+|       &lt;div className="ag-theme-alpine">
+|           &lt;AgGridReact
 |              columnDefs={columnDefs}
 |              ...other properties
 |           />
-|       </div>
+|       &lt;/div>
 |   );
 |};
 </snippet>

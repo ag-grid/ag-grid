@@ -83,7 +83,7 @@ import { LicenseManager } from './license/licenseManager';
 export type AgChartOptions = AgCommunityChartOptions<'heatmap', AgHeatmapSeriesOptions>;
 export class AgEnterpriseCharts {
     public static create(options: AgChartOptions): AgChartInstance {
-        new LicenseManager(options.container as any).validateLicense();
+        new LicenseManager(options.container?.ownerDocument ?? document).validateLicense();
 
         return AgChart.create(options as any);
     }

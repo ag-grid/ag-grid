@@ -118,7 +118,6 @@ export class ChartTheme {
         return {
             tooltip: {
                 enabled: true,
-                showArrow: true,
                 renderer: undefined,
             },
             visible: true,
@@ -144,8 +143,6 @@ export class ChartTheme {
             ...this.getSeriesDefaults(),
             fillOpacity: 1,
             strokeOpacity: 1,
-            xKey: '',
-            xName: '',
             normalizedTo: undefined,
             strokeWidth: 1,
             lineDash: [0],
@@ -177,6 +174,9 @@ export class ChartTheme {
             tooltip: {
                 ...seriesDefaults.tooltip,
                 format: undefined,
+                position: {
+                    type: 'node' as AgTooltipPositionType,
+                },
             },
         };
     }
@@ -186,6 +186,25 @@ export class ChartTheme {
         return {
             ...seriesDefaults,
             nodeClickRange: 'nearest' as AgChartInteractionRange,
+            tooltip: {
+                ...seriesDefaults.tooltip,
+                position: {
+                    type: 'node' as AgTooltipPositionType,
+                },
+            },
+        };
+    }
+
+    private static getScatterSeriesDefaults() {
+        const seriesDefaults = this.getSeriesDefaults();
+        return {
+            ...seriesDefaults,
+            tooltip: {
+                ...seriesDefaults.tooltip,
+                position: {
+                    type: 'node' as AgTooltipPositionType,
+                },
+            },
         };
     }
 
@@ -198,6 +217,10 @@ export class ChartTheme {
             strokeWidth: 1,
             formatter: undefined,
         };
+    }
+
+    private static getCaptionWrappingDefaults() {
+        return 'hyphenate' as const;
     }
 
     private static getChartDefaults() {
@@ -220,7 +243,7 @@ export class ChartTheme {
                 fontSize: 16,
                 fontFamily: this.fontFamily,
                 color: 'rgb(70, 70, 70)',
-                wrapping: 'always' as const,
+                wrapping: ChartTheme.getCaptionWrappingDefaults(),
             },
             subtitle: {
                 enabled: false,
@@ -230,7 +253,7 @@ export class ChartTheme {
                 fontSize: 12,
                 fontFamily: this.fontFamily,
                 color: 'rgb(140, 140, 140)',
-                wrapping: 'always' as const,
+                wrapping: ChartTheme.getCaptionWrappingDefaults(),
             },
             footnote: {
                 enabled: false,
@@ -241,10 +264,9 @@ export class ChartTheme {
                 fontFamily: this.fontFamily,
                 color: 'rgb(140, 140, 140)',
                 spacing: 30,
-                wrapping: 'always' as const,
+                wrapping: ChartTheme.getCaptionWrappingDefaults(),
             },
             legend: {
-                enabled: true,
                 position: BOTTOM,
                 spacing: 20,
                 listeners: {},
@@ -287,12 +309,8 @@ export class ChartTheme {
             },
             tooltip: {
                 enabled: true,
-                showArrow: true,
                 range: 'nearest' as AgChartInteractionRange,
                 delay: 0,
-                position: {
-                    type: 'pointer' as AgTooltipPositionType,
-                },
             },
             listeners: {},
         };
@@ -333,10 +351,6 @@ export class ChartTheme {
             line: {
                 ...ChartTheme.getLineSeriesDefaults(),
                 title: undefined,
-                xKey: '',
-                xName: '',
-                yKey: '',
-                yName: '',
                 strokeWidth: 2,
                 strokeOpacity: 1,
                 lineDash: [0],
@@ -357,14 +371,7 @@ export class ChartTheme {
                 },
             },
             scatter: {
-                ...ChartTheme.getSeriesDefaults(),
-                title: undefined,
-                xKey: '',
-                yKey: '',
-                sizeKey: undefined,
-                labelKey: undefined,
-                xName: '',
-                yName: '',
+                ...ChartTheme.getScatterSeriesDefaults(),
                 sizeName: 'Size',
                 labelName: 'Label',
                 marker: {
@@ -381,8 +388,6 @@ export class ChartTheme {
             },
             area: {
                 ...ChartTheme.getAreaSeriesDefaults(),
-                xKey: '',
-                xName: '',
                 normalizedTo: undefined,
                 fillOpacity: 0.8,
                 strokeOpacity: 1,
@@ -414,10 +419,6 @@ export class ChartTheme {
             },
             histogram: {
                 ...ChartTheme.getSeriesDefaults(),
-                xKey: '',
-                yKey: '',
-                xName: '',
-                yName: '',
                 strokeWidth: 1,
                 fillOpacity: 1,
                 strokeOpacity: 1,
@@ -453,15 +454,12 @@ export class ChartTheme {
                 ...ChartTheme.getSeriesDefaults(),
                 title: {
                     enabled: true,
-                    text: '',
                     fontStyle: undefined,
                     fontWeight: 'bold',
                     fontSize: 14,
                     fontFamily: ChartTheme.fontFamily,
                     color: 'rgb(70, 70, 70)',
                 },
-                angleKey: '',
-                angleName: '',
                 radiusKey: undefined,
                 radiusName: undefined,
                 calloutLabelKey: undefined,
@@ -579,6 +577,7 @@ export class ChartTheme {
                         fontSize: 18,
                         fontFamily: 'Verdana, sans-serif',
                         color: 'white',
+                        wrapping: 'on-space',
                     },
                     medium: {
                         enabled: true,
@@ -587,6 +586,7 @@ export class ChartTheme {
                         fontSize: 14,
                         fontFamily: 'Verdana, sans-serif',
                         color: 'white',
+                        wrapping: 'on-space',
                     },
                     small: {
                         enabled: true,
@@ -595,6 +595,7 @@ export class ChartTheme {
                         fontSize: 10,
                         fontFamily: 'Verdana, sans-serif',
                         color: 'white',
+                        wrapping: 'on-space',
                     },
                     value: {
                         style: {
@@ -619,7 +620,7 @@ export class ChartTheme {
     };
 
     constructor(options?: AgChartThemeOptions) {
-        options = deepMerge({}, options || {}) as AgChartThemeOptions;
+        options = deepMerge({}, options ?? {}) as AgChartThemeOptions;
         const { overrides = null, palette = null } = options;
 
         const defaults = this.createChartConfigPerChartType(this.getDefaults());

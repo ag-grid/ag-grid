@@ -95,6 +95,9 @@ import { GridOptionsService } from "./gridOptionsService";
 import { LocaleService } from "./localeService";
 import { GridOptionsValidator } from "./gridOptionsValidator";
 import { FakeVScrollComp } from "./gridBodyComp/fakeVScrollComp";
+import { DataTypeService } from "./columns/dataTypeService";
+import { AgInputDateField } from "./widgets/agInputDateField";
+import { ValueParserService } from "./valueService/valueParserService";
 
 export interface GridParams {
     // used by Web Components
@@ -149,7 +152,7 @@ export class GridCoreCreator {
     public create(eGridDiv: HTMLElement, gridOptions: GridOptions, createUi: (context: Context) => void, acceptChanges?: (context: Context) => void, params?: GridParams): void {
 
         const debug = !!gridOptions.debug;
-        const gridId = gridOptions.gridId || String(nextGridId++);
+        const gridId = gridOptions.gridId ?? String(nextGridId++);
 
         const registeredModules = this.getRegisteredModules(params, gridId);
 
@@ -271,6 +274,7 @@ export class GridCoreCreator {
             { componentName: 'AgInputTextField', componentClass: AgInputTextField },
             { componentName: 'AgInputTextArea', componentClass: AgInputTextArea },
             { componentName: 'AgInputNumberField', componentClass: AgInputNumberField },
+            { componentName: 'AgInputDateField', componentClass: AgInputDateField },
             { componentName: 'AgInputRange', componentClass: AgInputRange },
             { componentName: 'AgSelect', componentClass: AgSelect },
             { componentName: 'AgSlider', componentClass: AgSlider },
@@ -333,7 +337,7 @@ export class GridCoreCreator {
             SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
             UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,
             RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter, CtrlsService,
-            PinnedWidthService, RowNodeEventThrottle, CtrlsFactory
+            PinnedWidthService, RowNodeEventThrottle, CtrlsFactory, DataTypeService, ValueParserService
         ];
 
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => module.beans ? module.beans : []);

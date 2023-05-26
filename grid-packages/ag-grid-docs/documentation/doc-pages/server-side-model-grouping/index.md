@@ -86,11 +86,21 @@ Below shows `isServerSideGroupOpenByDefault()` and `getRoute` in action. Note th
 
 <grid-example title='Open by Default' name='open-by-default' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
-## Sticky Groups
+## Suppressing Sticky Groups
 
-To enable sticky groups, set the `groupRowsSticky` property to true. This behaviour applies to all row group levels.
+By default the group nodes stick to the top of the Grid, to disable this behaviour, set the `suppressGroupRowsSticky` property to true. This behaviour applies to all row group levels.
 
-<grid-example title='Sticky Groups' name='sticky-groups' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+<grid-example title='Sticky Groups' name='suppress-sticky-groups' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+
+## Row Group Footers
+
+To enable [Row Group Footers](/grouping-footers/), set the `groupIncludeFooter` property to true. Note that the total footer is not supported by the SSRM.
+
+<grid-example title='Group Footers' name='group-footer' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+
+Row group footers can also be used with `groupDisplayType='multipleColumns`, as demonstrated in the example below.
+
+<grid-example title='Multiple Group Columns and Footers' name='group-footer-multiple-cols' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
 ## Expand All / Collapse All
 
@@ -121,9 +131,9 @@ To open only specific groups, e.g. only groups at the top level, then use the `f
 
 The example below demonstrates these techniques. Note the following:
 
-- Clicking 'Expand All' will expand all loaded group rows. Doing this when the grid initially loads will expand all Year groups. Clicking it a second time (after Year groups have loaded) will cause all Year groups as well as their children Country groups to be expanded - this is a heaver operation with 100's of rows to expand.
+- Clicking 'Expand All Row Groups' will expand all loaded group rows. Doing this when the grid initially loads will expand all Year groups. Clicking it a second time (after Year groups have loaded) will cause all Year groups as well as their children Country groups to be expanded - this is a heaver operation with 100's of rows to expand.
 
-- Clicking 'Collapse All' will collapse all rows.
+- Clicking 'Collapse All Row Groups' will collapse all rows.
 - Clicking 'Expand Top Level Only' will expand Years only, even if more group rows are loaded..
 
 <grid-example title='Expand All' name='expand-all' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>

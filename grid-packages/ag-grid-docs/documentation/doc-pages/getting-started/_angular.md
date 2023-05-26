@@ -1,58 +1,40 @@
 <framework-specific-section frameworks="angular">
-<section class="code-tab mb-3">
-<div class="card">
-<div class="card-header">Quick Look Code Example</div>
-<div class="card-body">
-<ul class="nav nav-tabs">
-<li class="nav-item">
-<a  class="nav-link active" id="component-tab" data-toggle="tab" href="#component" role="tab" aria-controls="component" aria-selected="true">
-
- app.component.ts
-
-</a>
-</li>
-<li class="nav-item">
-<a class="nav-link" id="template-tab" data-toggle="tab" href="#template" role="tab" aria-controls="template" aria-selected="false">
-
- app.component.html
-
-</a>
-</li>
-<li class="nav-item">
-<a class="nav-link" id="styles-tab" data-toggle="tab" href="#styles" role="tab" aria-controls="styles" aria-selected="false">
-
- styles.scss
-
-</a>
-</li>
-</ul>
-<div class="tab-content">
-<div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
+| ### Quick Look Code Example
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-<snippet transform={false} language="ts">
+<tabs>
+
+ <tabs-links>
+ <open-in-cta type="stackblitz" href="https://stackblitz.com/edit/ag-grid-angular-hello-world" />
+ </tabs-links>
+
+<div tab-label="app.component.ts">
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false} language="ts" lineNumbers="true">
 |import { Component } from '@angular/core';
 |import { ColDef } from 'ag-grid-community';
 |
 |@Component({
-|   selector: 'app-root',
-|   templateUrl: './app.component.html',
-|   styleUrls: [ './app.component.scss' ]
+|    selector: 'app-root',
+|    templateUrl: './app.component.html',
+|    styleUrls: [ './app.component.scss' ]
 |})
 |export class AppComponent  {
 |
-|     columnDefs: ColDef[] = [
-|         { field: 'make' },
-|         { field: 'model' },
-|         { field: 'price' }
-|     ];
+|    columnDefs: ColDef[] = [
+|        { field: 'make' },
+|        { field: 'model' },
+|        { field: 'price' }
+|    ];
 |
-|     rowData = [
-|         { make: 'Toyota', model: 'Celica', price: 35000 },
-|         { make: 'Ford', model: 'Mondeo', price: 32000 },
-|         { make: 'Porsche', model: 'Boxster', price: 72000 }
-|     ];
+|    rowData = [
+|        { make: 'Toyota', model: 'Celica', price: 35000 },
+|        { make: 'Ford', model: 'Mondeo', price: 32000 },
+|        { make: 'Porsche', model: 'Boxster', price: 72000 }
+|    ];
 |
 |}
 </snippet>
@@ -60,27 +42,27 @@
 
 <framework-specific-section frameworks="angular">
 </div>
-<div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
+<div tab-label="app.component.html">
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-<snippet transform={false} language="html">
-| &lt;ag-grid-angular
-|     style="width: 500px; height: 350px;"
-|     class="ag-theme-alpine"
-|     [rowData]="rowData"
-|     [columnDefs]="columnDefs">
-| &lt;/ag-grid-angular>
+<snippet transform={false} language="html" lineNumbers="true">
+|&lt;ag-grid-angular
+|    style="width: 500px; height: 350px;"
+|    class="ag-theme-alpine"
+|    [rowData]="rowData"
+|    [columnDefs]="columnDefs">
+|&lt;/ag-grid-angular>
 </snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
 </div>
-<div class="tab-pane" id="styles" role="tabpanel" aria-labelledby="styles-tab">
+<div tab-label="styles.scss">
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-<snippet transform={false} language="scss">
+<snippet transform={false} language="scss" lineNumbers="true">
 |@import 'ag-grid-community/styles/ag-grid.css';
 |@import 'ag-grid-community/styles/ag-theme-alpine.css';
 </snippet>
@@ -88,20 +70,7 @@
 
 <framework-specific-section frameworks="angular">
 </div>
-</div>
-</div>
-<div class="text-right" style="margin-top: -1.5rem;">
-
- <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-grid-angular-hello-world" target="_blank">
-     Open in <img src="../../images/resources/getting-started/stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz 
- </a>
-
-</div>
-</div>
-</section>
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
+</tabs>
 <note>
 | Please refer to our [Compatibility Guide](/angular-compatibility/) for Supported Versions of
 | Angular & AG Grid.
@@ -320,7 +289,7 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-<img src="../../images/resources/getting-started/step1.png" alt="AG Grid in its simplest form" style="height: 2.5rem"/>
+<image-caption src="step1.png" alt="AG Grid in its simplest form" maxWidth="80%" constrained="true" centered="true"></image-caption>
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">

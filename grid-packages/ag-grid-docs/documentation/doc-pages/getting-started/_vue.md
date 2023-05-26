@@ -1,38 +1,27 @@
 <framework-specific-section frameworks="vue">
-<section class="code-tab mb-3">
-<div class="card">
-<div class="card-header">Quick Look Code Example</div>
-<div class="card-body">
-<ul class="nav nav-tabs">
-<li class="nav-item">
-<a  class="nav-link active" id="component-tab" data-toggle="tab" href="#component" role="tab" aria-controls="component" aria-selected="true">
-
-App.vue
-
-</a>
-</li>
-<li class="nav-item">
-<a class="nav-link" id="template-tab" data-toggle="tab" href="#template" role="tab" aria-controls="template" aria-selected="false">
-
-main.js
-
-</a>
-</li>
-</ul>
-<div class="tab-content">
-<div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
+| ### Quick Look Code Example
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-<snippet transform={false} language="jsx">
+<tabs>
+
+<tabs-links>
+<open-in-cta type="codesandbox" href="https://codesandbox.io/s/ag-grid-vue-3-example-bvwik?file=/src/main.js" />
+</tabs-links>
+
+<div tab-label="App.vue">
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="jsx" lineNumbers="true">
 |&lt;template>
-|   &lt;ag-grid-vue
-|     style="width: 500px; height: 200px"
-|     class="ag-theme-alpine"
-|     :columnDefs="columnDefs"
-|     :rowData="rowData"
-|   >
-|   &lt;/ag-grid-vue>
+|  &lt;ag-grid-vue
+|    style="width: 500px; height: 200px"
+|    class="ag-theme-alpine"
+|    :columnDefs="columnDefs"
+|    :rowData="rowData"
+|  >
+|  &lt;/ag-grid-vue>
 |&lt;/template>
 |
 |&lt;script>
@@ -41,24 +30,24 @@ main.js
 |import { AgGridVue } from "ag-grid-vue3";
 |
 |export default {
-|   name: "App",
-|   components: {
-|     AgGridVue,
-|   },
-|   setup() {
-|     return {
-|       columnDefs: [
-|         { headerName: "Make", field: "make" },
-|         { headerName: "Model", field: "model" },
-|         { headerName: "Price", field: "price" },
-|       ],
-|       rowData: [
-|         { make: "Toyota", model: "Celica", price: 35000 },
-|         { make: "Ford", model: "Mondeo", price: 32000 },
-|         { make: "Porsche", model: "Boxster", price: 72000 },
-|       ],
-|     };
-|   },
+|  name: "App",
+|  components: {
+|    AgGridVue,
+|  },
+|  setup() {
+|    return {
+|      columnDefs: [
+|        { headerName: "Make", field: "make" },
+|        { headerName: "Model", field: "model" },
+|        { headerName: "Price", field: "price" },
+|      ],
+|      rowData: [
+|        { make: "Toyota", model: "Celica", price: 35000 },
+|        { make: "Ford", model: "Mondeo", price: 32000 },
+|        { make: "Porsche", model: "Boxster", price: 72000 },
+|      ],
+|    };
+|  },
 |};
 |&lt;/script>
 </snippet>
@@ -66,27 +55,21 @@ main.js
 
 <framework-specific-section frameworks="vue">
 </div>
-<div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
+<div tab-label="main.js">
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-<snippet transform={false} language="jsx">
+<snippet transform={false} language="jsx" lineNumbers="true">
 |import { createApp } from "vue";
 |import App from "./App.vue";
 |
 |createApp(App).mount("#app");
-</snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
 </div>
-</div>
-</div>
-    <div class="text-right" style="margin-top: -1.5rem;">
-        <a class="btn btn-dark mb-2 mr-3" href="https://codesandbox.io/s/ag-grid-vue-3-example-bvwik?file=/src/App.vue" target="_blank">Open in CodeSandbox</a>
-    </div>
-</div>
-</section>
+
+</tabs>
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
@@ -287,7 +270,7 @@ main.js
 | If everything is correct, you should see a simple grid that looks like this:
 </framework-specific-section>
 <framework-specific-section frameworks="vue">
-| ![AG Grid in its simplest form](../../images/resources/getting-started/step1.png)
+<image-caption src="step1.png" alt="AG Grid in its simplest form" maxWidth="80%" constrained="true" centered="true"></image-caption>
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">

@@ -1,10 +1,18 @@
 import { BBox } from '../../scene/bbox';
 import { DeprecatedAndRenamedTo } from '../../util/deprecation';
-import { Validate, BOOLEAN, NUMBER, OPT_STRING, INTERACTION_RANGE, predicateWithMessage } from '../../util/validation';
+import {
+    Validate,
+    BOOLEAN,
+    NUMBER,
+    OPT_STRING,
+    INTERACTION_RANGE,
+    predicateWithMessage,
+    OPT_BOOLEAN,
+} from '../../util/validation';
 import { AgChartInteractionRange, AgTooltipRendererResult } from '../agChartOptions';
 import { InteractionEvent } from '../interaction/interactionManager';
 
-export const DEFAULT_TOOLTIP_CLASS = 'ag-chart-tooltip';
+const DEFAULT_TOOLTIP_CLASS = 'ag-chart-tooltip';
 
 const defaultTooltipCss = `
 .${DEFAULT_TOOLTIP_CLASS} {
@@ -112,7 +120,7 @@ export interface TooltipMeta {
     pageY: number;
     offsetX: number;
     offsetY: number;
-    showArrow: boolean;
+    showArrow?: boolean;
     position?: {
         xOffset?: number;
         yOffset?: number;
@@ -126,13 +134,13 @@ export function toTooltipHtml(input: string | AgTooltipRendererResult, defaults?
         return input;
     }
 
-    defaults = defaults || {};
+    defaults = defaults ?? {};
 
     const {
-        content = defaults.content || '',
-        title = defaults.title || undefined,
-        color = defaults.color || 'white',
-        backgroundColor = defaults.backgroundColor || '#888',
+        content = defaults.content ?? '',
+        title = defaults.title ?? undefined,
+        color = defaults.color ?? 'white',
+        backgroundColor = defaults.backgroundColor ?? '#888',
     } = input;
 
     const titleHtml = title
@@ -144,12 +152,12 @@ export function toTooltipHtml(input: string | AgTooltipRendererResult, defaults?
 }
 
 const POSITION_TYPES = ['pointer', 'node'];
-export const POSITION_TYPE = predicateWithMessage(
+const POSITION_TYPE = predicateWithMessage(
     (v: any) => POSITION_TYPES.includes(v),
     `expecting a position type keyword such as 'pointer' or 'node'`
 );
 
-export type TooltipPositionType = 'pointer' | 'node';
+type TooltipPositionType = 'pointer' | 'node';
 
 export class TooltipPosition {
     @Validate(POSITION_TYPE)
@@ -179,8 +187,8 @@ export class Tooltip {
     @Validate(BOOLEAN)
     enabled: boolean = true;
 
-    @Validate(BOOLEAN)
-    showArrow: boolean = true;
+    @Validate(OPT_BOOLEAN)
+    showArrow?: boolean = undefined;
 
     @Validate(OPT_STRING)
     class?: string = undefined;
@@ -309,7 +317,8 @@ export class Tooltip {
         const top = limit(windowBounds.y, naiveTop, maxTop);
 
         const constrained = left !== naiveLeft || top !== naiveTop;
-        const showArrow = !constrained && meta.showArrow;
+        const defaultShowArrow = !constrained && !xOffset && !yOffset;
+        const showArrow = meta.showArrow ?? this.showArrow ?? defaultShowArrow;
         this.updateShowArrow(showArrow);
         element.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
 
@@ -348,6 +357,6 @@ export class Tooltip {
     }
 
     private updateShowArrow(show: boolean) {
-        this._showArrow = this.showArrow && show;
+        this._showArrow = show;
     }
 }

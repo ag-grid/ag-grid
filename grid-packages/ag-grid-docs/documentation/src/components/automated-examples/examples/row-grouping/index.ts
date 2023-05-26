@@ -262,6 +262,17 @@ export function createAutomatedRowGrouping({
     };
 }
 
+export function cleanUp() {
+    clearTimeout(restartScriptTimeout);
+    if (scriptRunner) {
+        scriptRunner.stop();
+    }
+
+    stopWorkerMessages();
+    dataWorker?.terminate();
+    gridOptions.api?.destroy();
+}
+
 /**
  * Clean up between hot module replacement on dev server
  */
@@ -269,13 +280,6 @@ export function createAutomatedRowGrouping({
 if (import.meta.webpackHot) {
     // @ts-ignore
     import.meta.webpackHot.dispose(() => {
-        clearTimeout(restartScriptTimeout);
-        if (scriptRunner) {
-            scriptRunner.stop();
-        }
-
-        stopWorkerMessages();
-        dataWorker?.terminate();
-        gridOptions.api?.destroy();
+        cleanUp();
     });
 }

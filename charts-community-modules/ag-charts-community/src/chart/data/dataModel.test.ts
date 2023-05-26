@@ -4,12 +4,34 @@ import { DATA_BROWSER_MARKET_SHARE } from '../test/data';
 
 import * as examples from '../test/examples';
 
-import { AGG_VALUES_EXTENT, DataModel, GroupByFn, SMALLEST_KEY_INTERVAL, SORT_DOMAIN_GROUPS } from './dataModel';
-import { area, groupAverage, groupCount, sum } from './aggregateFunctions';
+import { DataModel, GroupByFn } from './dataModel';
+import { area, groupAverage, groupCount, range, sum, accumulatedValue } from './aggregateFunctions';
+import {
+    AGG_VALUES_EXTENT,
+    normaliseGroupTo,
+    normalisePropertyTo,
+    SMALLEST_KEY_INTERVAL,
+    SORT_DOMAIN_GROUPS,
+} from './processors';
+import { rangedValueProperty } from '../series/series';
 
 const rangeKey = (property: string) => ({ property, type: 'key' as const, valueType: 'range' as const });
 const categoryKey = (property: string) => ({ property, type: 'key' as const, valueType: 'category' as const });
-const value = (property: string) => ({ property, type: 'value' as const, valueType: 'range' as const });
+const value = (property: string, id?: string) => ({
+    property,
+    type: 'value' as const,
+    valueType: 'range' as const,
+    id,
+});
+const categoryValue = (property: string) => ({ property, type: 'value' as const, valueType: 'category' as const });
+const accumulatedGroupValue = (property: string, id?: string) => ({
+    ...value(property, id),
+    processor: () => (next, total) => next + (total ?? 0),
+});
+const accumulatedPropertyValue = (property: string, id?: string) => ({
+    ...value(property, id),
+    processor: accumulatedValue(),
+});
 
 describe('DataModel', () => {
     describe('ungrouped processing', () => {
@@ -70,6 +92,110 @@ describe('DataModel', () => {
                     const result = dataModel.processData(data);
 
                     expect(result?.reduced?.[SMALLEST_KEY_INTERVAL.property]).toEqual(1);
+                });
+            });
+
+            describe('category data', () => {
+                const dataModel = new DataModel<any, any, false>({
+                    props: [categoryKey('kp'), value('vp1'), value('vp2')],
+                    groupByKeys: false,
+                });
+                const data = [
+                    { kp: 'Q1', vp1: 5, vp2: 7 },
+                    { kp: 'Q1', vp1: 1, vp2: 2 },
+                    { kp: 'Q2', vp1: 6, vp2: 9 },
+                    { kp: 'Q2', vp1: 6, vp2: 9 },
+                ];
+
+                it('should extract the configured keys', () => {
+                    const result = dataModel.processData(data);
+
+                    expect(result?.type).toEqual('ungrouped');
+                    expect(result?.data.length).toEqual(4);
+                    expect(result?.data[0].keys).toEqual(['Q1']);
+                    expect(result?.data[1].keys).toEqual(['Q1']);
+                    expect(result?.data[2].keys).toEqual(['Q2']);
+                    expect(result?.data[3].keys).toEqual(['Q2']);
+                });
+
+                it('should extract the configured values', () => {
+                    const result = dataModel.processData(data);
+
+                    expect(result?.type).toEqual('ungrouped');
+                    expect(result?.data.length).toEqual(4);
+                    expect(result?.data[0].values).toEqual([5, 7]);
+                    expect(result?.data[1].values).toEqual([1, 2]);
+                    expect(result?.data[2].values).toEqual([6, 9]);
+                    expect(result?.data[3].values).toEqual([6, 9]);
+                });
+            });
+        });
+    });
+
+    describe('ungrouped processing - accumulated and normalised properties', () => {
+        it('should generated the expected results', () => {
+            const data = examples.SIMPLE_PIE_CHART_EXAMPLE.series?.[0].data!;
+            const dataModel = new DataModel<any, any>({
+                props: [
+                    accumulatedPropertyValue('population'),
+                    categoryValue('religion'),
+                    value('population'),
+                    normalisePropertyTo('population', [0, 2 * Math.PI]),
+                ],
+            });
+
+            expect(dataModel.processData(data)).toMatchSnapshot({
+                time: expect.any(Number),
+            });
+        });
+
+        describe('property tests', () => {
+            describe('simple data', () => {
+                const dataModel = new DataModel<any, any>({
+                    props: [
+                        rangeKey('kp'),
+                        accumulatedPropertyValue('vp1'),
+                        accumulatedPropertyValue('vp2'),
+                        value('vp3'),
+                        normalisePropertyTo('vp1', [0, 100]),
+                    ],
+                });
+                const data = [
+                    { kp: 2, vp1: 5, vp2: 7, vp3: 1 },
+                    { kp: 3, vp1: 1, vp2: 2, vp3: 2 },
+                    { kp: 4, vp1: 6, vp2: 9, vp3: 3 },
+                ];
+
+                it('should extract the configured keys', () => {
+                    const result = dataModel.processData(data);
+
+                    expect(result?.type).toEqual('ungrouped');
+                    expect(result?.data.length).toEqual(3);
+                    expect(result?.data[0].keys).toEqual([2]);
+                    expect(result?.data[1].keys).toEqual([3]);
+                    expect(result?.data[2].keys).toEqual([4]);
+                });
+
+                it('should extract the configured values', () => {
+                    const result = dataModel.processData(data);
+
+                    expect(result?.type).toEqual('ungrouped');
+                    expect(result?.data.length).toEqual(3);
+                    expect(result?.data[0].values).toEqual([0, 7, 1]);
+                    expect(result?.data[1].values).toEqual([14.285714285714285, 9, 2]);
+                    expect(result?.data[2].values).toEqual([100, 18, 3]);
+                });
+
+                it('should calculate the domains', () => {
+                    const result = dataModel.processData(data);
+
+                    expect(result?.type).toEqual('ungrouped');
+                    expect(result?.domain.keys).toEqual([[2, 4]]);
+                    expect(result?.domain.values).toEqual([
+                        [0, 100],
+                        [7, 18],
+                        [1, 3],
+                    ]);
                 });
             });
 
@@ -421,6 +547,82 @@ describe('DataModel', () => {
         });
     });
 
+    describe('grouped processing - stacked with accumulation example', () => {
+        it('should generated the expected results', () => {
+            const data = examples.STACKED_BAR_CHART_EXAMPLE.data!;
+            const dataModel = new DataModel<any, any, true>({
+                props: [
+                    categoryKey('type'),
+                    accumulatedGroupValue('ownerOccupied'),
+                    accumulatedGroupValue('privateRented'),
+                    accumulatedGroupValue('localAuthority'),
+                    accumulatedGroupValue('housingAssociation'),
+                ],
+                groupByKeys: true,
+            });
+
+            expect(dataModel.processData(data)).toMatchSnapshot({
+                time: expect.any(Number),
+            });
+        });
+
+        describe('property tests', () => {
+            const dataModel = new DataModel<any, any, true>({
+                props: [
+                    categoryKey('kp'),
+                    accumulatedGroupValue('vp1'),
+                    accumulatedGroupValue('vp2'),
+                    accumulatedGroupValue('vp3'),
+                    accumulatedGroupValue('vp4'),
+                ],
+                groupByKeys: true,
+            });
+            const data = [
+                { kp: 'Q1', vp1: 5, vp2: 7, vp3: 1, vp4: 5 },
+                { kp: 'Q1', vp1: 1, vp2: 2, vp3: 2, vp4: 4 },
+                { kp: 'Q2', vp1: 6, vp2: 9, vp3: 3, vp4: 3 },
+                { kp: 'Q2', vp1: 6, vp2: 9, vp3: 4, vp4: 2 },
+            ];
+
+            it('should extract the configured keys', () => {
+                const result = dataModel.processData(data);
+
+                expect(result?.type).toEqual('grouped');
+                expect(result?.data.length).toEqual(2);
+                expect(result?.data[0].keys).toEqual(['Q1']);
+                expect(result?.data[1].keys).toEqual(['Q2']);
+            });
+
+            it('should extract the configured accumulated values', () => {
+                const result = dataModel.processData(data);
+
+                expect(result?.type).toEqual('grouped');
+                expect(result?.data.length).toEqual(2);
+                expect(result?.data[0].values).toEqual([
+                    [5, 12, 13, 18],
+                    [1, 3, 5, 9],
+                ]);
+                expect(result?.data[1].values).toEqual([
+                    [6, 15, 18, 21],
+                    [6, 15, 19, 21],
+                ]);
+            });
+
+            it('should calculate the domains', () => {
+                const result = dataModel.processData(data);
+
+                expect(result?.type).toEqual('grouped');
+                expect(result?.domain.keys).toEqual([['Q1', 'Q2']]);
+                expect(result?.domain.values).toEqual([
+                    [1, 6],
+                    [3, 15],
+                    [5, 19],
+                    [9, 21],
+                ]);
+            });
+        });
+    });
+
     describe('grouped processing - stacked and normalised example', () => {
         it('should generated the expected results for 100% stacked columns example', () => {
             const data = examples.ONE_HUNDRED_PERCENT_STACKED_COLUMNS_EXAMPLE.data!;
@@ -434,10 +636,10 @@ describe('DataModel', () => {
                     value('chinese'),
                     value('other'),
                     sum(['white', 'mixed', 'asian', 'black', 'chinese', 'other']),
+                    normaliseGroupTo(['white', 'mixed', 'asian', 'black', 'chinese', 'other'], 100),
                     AGG_VALUES_EXTENT,
                 ],
                 groupByKeys: true,
-                normaliseTo: 100,
             });
 
             expect(dataModel.processData(data)).toMatchSnapshot({
@@ -457,10 +659,13 @@ describe('DataModel', () => {
                     value('windSolarHydro'),
                     value('imported'),
                     sum(['petroleum', 'naturalGas', 'bioenergyWaste', 'nuclear', 'windSolarHydro', 'imported']),
+                    normaliseGroupTo(
+                        ['petroleum', 'naturalGas', 'bioenergyWaste', 'nuclear', 'windSolarHydro', 'imported'],
+                        100
+                    ),
                     AGG_VALUES_EXTENT,
                 ],
                 groupByKeys: true,
-                normaliseTo: 100,
             });
 
             const result = dataModel.processData(data);
@@ -481,9 +686,10 @@ describe('DataModel', () => {
                     value('vp4'),
                     sum(['vp1', 'vp2']),
                     sum(['vp3', 'vp4']),
+                    normaliseGroupTo(['vp1', 'vp2'], 100),
+                    normaliseGroupTo(['vp3', 'vp4'], 100),
                 ],
                 groupByKeys: true,
-                normaliseTo: 100,
             });
             const data = [
                 { kp: 'Q1', vp1: 5, vp2: 7, vp3: 1, vp4: 5 },
@@ -513,12 +719,98 @@ describe('DataModel', () => {
                 expect(result?.data.map((g) => g.values)).toEqual([
                     [
                         [41.666666666666664, 58.333333333333336, 16.666666666666668, 83.33333333333333],
-                        [8.333333333333334, 16.666666666666668, 33.333333333333336, 66.66666666666667],
+                        [33.333333333333336, 66.66666666666667, 33.333333333333336, 66.66666666666667],
                     ],
                     [
                         [40, 60, 50, 50],
                         [40, 60, 66.66666666666667, 33.333333333333336],
                     ],
+                ]);
+            });
+        });
+    });
+
+    describe('grouped processing - stacked with accumulation and normalised example', () => {
+        it('should generated the expected results', () => {
+            const data = examples.STACKED_BAR_CHART_EXAMPLE.data!;
+            const dataModel = new DataModel<any, any, true>({
+                props: [
+                    categoryKey('type'),
+                    accumulatedGroupValue('ownerOccupied'),
+                    accumulatedGroupValue('privateRented'),
+                    accumulatedGroupValue('localAuthority'),
+                    accumulatedGroupValue('housingAssociation'),
+                    range(['ownerOccupied', 'privateRented', 'localAuthority', 'housingAssociation']),
+                    AGG_VALUES_EXTENT,
+                    normaliseGroupTo(
+                        ['ownerOccupied', 'privateRented', 'localAuthority', 'housingAssociation'],
+                        100,
+                        'range'
+                    ),
+                ],
+                groupByKeys: true,
+            });
+
+            expect(dataModel.processData(data)).toMatchSnapshot({
+                time: expect.any(Number),
+            });
+        });
+
+        describe('property tests', () => {
+            const dataModel = new DataModel<any, any, true>({
+                props: [
+                    categoryKey('kp'),
+                    accumulatedGroupValue('vp1'),
+                    accumulatedGroupValue('vp2'),
+                    accumulatedGroupValue('vp3'),
+                    accumulatedGroupValue('vp4'),
+                    range(['vp1', 'vp2', 'vp3', 'vp4']),
+                    AGG_VALUES_EXTENT,
+                    normaliseGroupTo(['vp1', 'vp2', 'vp3', 'vp4'], 100, 'range'),
+                ],
+                groupByKeys: true,
+            });
+            const data = [
+                { kp: 'Q1', vp1: 5, vp2: 7, vp3: 1, vp4: 5 },
+                { kp: 'Q1', vp1: 1, vp2: 2, vp3: 2, vp4: 4 },
+                { kp: 'Q2', vp1: 6, vp2: 9, vp3: 3, vp4: 3 },
+                { kp: 'Q2', vp1: 6, vp2: 9, vp3: 4, vp4: 2 },
+            ];
+
+            it('should extract the configured keys', () => {
+                const result = dataModel.processData(data);
+
+                expect(result?.type).toEqual('grouped');
+                expect(result?.data.length).toEqual(2);
+                expect(result?.data[0].keys).toEqual(['Q1']);
+                expect(result?.data[1].keys).toEqual(['Q2']);
+            });
+
+            it('should extract the configured accumulated values', () => {
+                const result = dataModel.processData(data);
+
+                expect(result?.type).toEqual('grouped');
+                expect(result?.data.length).toEqual(2);
+                expect(result?.data[0].values).toEqual([
+                    [27.77777777777778, 66.66666666666667, 72.22222222222223, 100],
+                    [11.11111111111111, 33.333333333333336, 55.55555555555556, 100],
+                ]);
+                expect(result?.data[1].values).toEqual([
+                    [28.571428571428573, 71.42857142857143, 85.71428571428571, 100],
+                    [28.571428571428573, 71.42857142857143, 90.47619047619048, 100],
+                ]);
+            });
+
+            it('should calculate the domains', () => {
+                const result = dataModel.processData(data);
+
+                expect(result?.type).toEqual('grouped');
+                expect(result?.domain.keys).toEqual([['Q1', 'Q2']]);
+                expect(result?.domain.values).toEqual([
+                    [1, 6],
+                    [3, 15],
+                    [5, 19],
+                    [9, 21],
                 ]);
             });
         });
@@ -541,7 +833,6 @@ describe('DataModel', () => {
             const dataModel = new DataModel<any, any, true>({
                 props: [categoryKey('engine-size'), groupCount(), SORT_DOMAIN_GROUPS],
                 groupByFn,
-                normaliseTo: 100,
             });
 
             expect(dataModel.processData(data)).toMatchSnapshot({
@@ -679,6 +970,23 @@ describe('DataModel', () => {
 
                 expect(result?.domain.keys).toEqual([[]]);
                 expect(result?.domain.values).toEqual([[], [], [], []]);
+            });
+        });
+    });
+
+    describe('repeated property processing', () => {
+        it('should generated the expected results', () => {
+            const data = [...examples.PIE_IN_A_DOUGHNUT.series![0]!.data!.map((v) => ({ ...v }))];
+            const dataModel = new DataModel<any, any>({
+                props: [
+                    accumulatedPropertyValue('share', 'angle'),
+                    rangedValueProperty('share', { id: 'radius', min: 0.05, max: 0.7 }),
+                    normalisePropertyTo({ id: 'angle' }, [0, 1]),
+                ],
+            });
+
+            expect(dataModel.processData(data)).toMatchSnapshot({
+                time: expect.any(Number),
             });
         });
     });

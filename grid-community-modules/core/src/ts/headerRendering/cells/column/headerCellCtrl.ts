@@ -533,17 +533,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         let stopResizeObserver: (() => void) | undefined;
 
         const checkMeasuring = () => {
-            const isSpanHeaderHeight = this.column.isSpanHeaderHeight();
             const newValue = this.column.isAutoHeaderHeight();
-
-            if (isSpanHeaderHeight) {
-                stopMeasuring();
-                if (newValue) {
-                    const message = "AG Grid: The properties `spanHeaderHeight` and `autoHeaderHeight` cannot be used together in the same column.";
-                    doOnce(() => console.warn(message), 'HeaderCellCtrl.spanHeaderHeightAndAutoHeaderHeight');
-                }
-                return;
-            }
 
             if (newValue && !isMeasuring) {
                 startMeasuring();

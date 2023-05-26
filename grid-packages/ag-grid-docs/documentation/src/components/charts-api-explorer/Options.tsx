@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import Code from '../Code';
 import { convertMarkdown, formatJsDocString, inferType } from '../documentation-helpers';
 import {
@@ -12,10 +12,11 @@ import {
     JsonUnionType,
     loadLookups,
 } from '../expandable-snippet/model';
+import { Icon } from '../Icon';
 import { doOnEnter } from '../key-handlers';
-import { PresetEditor, getPrimitivePropertyEditor, getPrimitiveEditor } from './Editors';
+import { getPrimitiveEditor, getPrimitivePropertyEditor, PresetEditor } from './Editors';
 import styles from './Options.module.scss';
-import { formatJson, deepClone, isXAxisNumeric } from './utils';
+import { deepClone, formatJson, isXAxisNumeric } from './utils';
 
 const FunctionDefinition = ({ definition }: { definition: JsonFunction }) => {
     const lines = [`function ${definition.tsType};`];
@@ -38,7 +39,7 @@ const FunctionDefinition = ({ definition }: { definition: JsonFunction }) => {
         const desc = typesToDisplay.pop();
 
         if (typesDisplayed.includes(desc.tsType)) {
-            return;
+            return null;
         }
         typesDisplayed.push(desc.tsType);
 
@@ -53,7 +54,17 @@ const FunctionDefinition = ({ definition }: { definition: JsonFunction }) => {
     return <Code code={lines} />;
 };
 
-const Option = ({ name, isVisible, isAlternate, isRequired, type, description, defaultValue, Editor, editorProps }) => {
+const Heading = ({ prefix, name, hasChevron }: { prefix: string; name: string; hasChevron?: boolean }) => {
+    return (
+        <h3>
+            <span className={styles.prefix}>{denormalizeArrayIndexName(prefix)}</span>
+            {name}
+            {hasChevron && <Icon name="chevronRight" />}
+        </h3>
+    );
+};
+
+const Option = ({ name, isVisible, isRequired, type, description, defaultValue, Editor, editorProps, prefix }) => {
     const derivedType = type || inferType(defaultValue);
     const isFunction = derivedType != null && typeof derivedType === 'object';
     const descriptionHTML = description && convertMarkdown(formatJsDocString(description));
@@ -62,35 +73,34 @@ const Option = ({ name, isVisible, isAlternate, isRequired, type, description, d
 
     return (
         <div
-            className={classnames(styles['option'], {
-                [styles['option--hidden']]: !isVisible,
-                [styles['option--alternate']]: isAlternate,
-            })}>
-            <span className={styles['option__name']}>{name}</span>
-            {derivedType && <span className={styles['option__type']}>{isFunction ? 'Function' : derivedType}</span>}
-            {isRequired ? (
-                <div className={styles['option__required']}>Required</div>
-            ) : (
-                <div className={styles['option__default']}>
-                    Default:{' '}
-                    {defaultValue != null ? (
-                        <code className={styles['option__code']}>{formatJson(defaultValue)}</code>
-                    ) : (
-                        'N/A'
-                    )}
-                </div>
-            )}
-            <br />
+            className={classnames(styles.option, {
+                [styles.hidden]: !isVisible,
+            })}
+        >
+            <Heading prefix={prefix} name={name} />
+
+            <ul className={classnames('list-style-none', styles.metaList)}>
+                {derivedType && (
+                    <li className={styles.metaItem}>
+                        <span className={styles.metaLabel}>Type</span>
+                        <code className={styles.metaValue}>{isFunction ? 'Function' : derivedType}</code>
+                    </li>
+                )}
+                {isRequired ? (
+                    <li className={styles.metaItem}>
+                        <span className={styles.metaLabel}>Required</span>
+                        <code className={styles.metaValue}>true</code>
+                    </li>
+                ) : defaultValue != null ? (
+                    <li className={styles.metaItem}>
+                        <span className={styles.metaLabel}>Default</span>
+                        <code>{formatJson(defaultValue)}</code>
+                    </li>
+                ) : null}
+            </ul>
             {isFunction && <FunctionDefinition definition={derivedType} />}
-            {descriptionHTML ? (
-                <>
-                    <span
-                        className={styles['option__description']}
-                        dangerouslySetInnerHTML={{ __html: configureLinksForParent(descriptionHTML) }}></span>
-                    <br />
-                </>
-            ) : (
-                <></>
+            {descriptionHTML && (
+                <span dangerouslySetInnerHTML={{ __html: configureLinksForParent(descriptionHTML) }}></span>
             )}
             {Editor && <Editor value={defaultValue} {...editorProps} />}
             {!Editor && editorProps.options && (
@@ -102,43 +112,39 @@ const Option = ({ name, isVisible, isAlternate, isRequired, type, description, d
     );
 };
 
-const ComplexOption = ({ name, description, isVisible, isAlternate, isSearching, children }) => {
+const ComplexOption = ({ name, description, isVisible, isSearching, prefix, children }) => {
     const [isExpanded, setExpanded] = useState(false);
     const contentIsExpanded = isExpanded || isSearching;
     const descriptionHTML = description && convertMarkdown(formatJsDocString(description));
 
     return (
         <div
-            className={classnames(styles['option'], {
-                [styles['option--hidden']]: !isVisible,
-                [styles['option--alternate']]: isAlternate,
-            })}>
+            className={classnames(styles.option, {
+                [styles.hidden]: !isVisible,
+            })}
+        >
             <div
-                className={styles['option--expandable']}
+                className={classnames(styles.expandable, {
+                    [styles.expanded]: contentIsExpanded,
+                })}
                 role="button"
                 tabIndex={0}
                 aria-expanded={isExpanded}
                 onClick={() => setExpanded(!isExpanded)}
-                onKeyDown={(e) => doOnEnter(e, () => setExpanded(!isExpanded))}>
-                <span className={styles['option__name']}>{name}</span>
-                <span className={styles['option__type']}>Object</span>
-                <span
-                    className={classnames(styles['option__expander'], {
-                        [styles['option__expander--expanded']]: contentIsExpanded,
-                    })}>
-                    ❯
-                </span>
-                <br />
-                {descriptionHTML && (
-                    <span
-                        className={styles['option__description']}
-                        dangerouslySetInnerHTML={{ __html: descriptionHTML }}></span>
-                )}
+                onKeyDown={(e) => doOnEnter(e, () => setExpanded(!isExpanded))}
+            >
+                <Heading prefix={prefix} name={name} hasChevron />
+                <div className={styles.metaItem}>
+                    <span className={styles.metaLabel}>Type</span>
+                    <code>Object</code>
+                </div>
             </div>
+            {descriptionHTML && <span dangerouslySetInnerHTML={{ __html: descriptionHTML }}></span>}
             <div
-                className={classnames(styles['option__content'], {
-                    [styles['option__content--hidden']]: !contentIsExpanded,
-                })}>
+                className={classnames(styles.children, {
+                    [styles.hidden]: !contentIsExpanded,
+                })}
+            >
                 {children}
             </div>
         </div>
@@ -147,11 +153,11 @@ const ComplexOption = ({ name, description, isVisible, isAlternate, isSearching,
 
 interface UnionOptionParameters {
     name: string;
+    prefix: string;
     desc: JsonUnionType;
     componentKey: string;
     parentMatchesSearch: boolean;
     requiresWholeObject: boolean;
-    isAlternate: boolean;
     isVisible: boolean;
     documentation: string | undefined;
     context: GenerateOptionParameters['context'];
@@ -160,8 +166,8 @@ interface UnionOptionParameters {
 const UnionOption = ({
     componentKey,
     name,
+    prefix,
     documentation,
-    isAlternate,
     isVisible,
     desc,
     context,
@@ -170,9 +176,9 @@ const UnionOption = ({
 }: UnionOptionParameters) => {
     const commonProps = {
         key: componentKey,
-        name: name,
+        name,
+        prefix,
         description: documentation || '',
-        isAlternate: isAlternate,
         isVisible: isVisible,
     };
     const { isSearching, matchesSearch, isRequiresWholeObject, updateOption } = context;
@@ -199,7 +205,6 @@ const UnionOption = ({
                     prefix: `${componentKey}.`,
                     parentMatchesSearch: parentMatchesSearch || (isSearching && matchesSearch(name)),
                     requiresWholeObject: requiresWholeObject || isRequiresWholeObject(name),
-                    isAlternate: !isAlternate,
                     context,
                 })}
             {currentOption.type === 'primitive' && (
@@ -220,15 +225,16 @@ const UnionOption = ({
 
 const Search = ({ value, onChange }) => {
     return (
-        <div className={styles['search']}>
-            <div className={styles['search__title']}>
-                <h2>Options</h2>
-            </div>
-            <div className={styles['search__box']}>
-                Search:{' '}
+        <div className={styles.search}>
+            <h2>Options</h2>
+            <div className="input-field inline">
+                <label htmlFor="search-options" className="input-label-inline">
+                    Search:
+                </label>{' '}
                 <input
-                    className={styles['search__input']}
                     type="text"
+                    id="search-options"
+                    name="search-options"
                     value={value}
                     maxLength={20}
                     onChange={(event) => onChange(event.target.value)}
@@ -261,7 +267,8 @@ export const Options = ({ chartType, updateOption }) => {
         );
     };
     const isRequiresWholeObject = (prop: string) => ['highlightStyle', 'item', 'series'].includes(prop);
-    const isArraySkipped = (prop: string) => ['series', 'axes', 'gridStyle', 'crossLines', 'innerLabels'].includes(prop);
+    const isArraySkipped = (prop: string) =>
+        ['series', 'axes', 'gridStyle', 'crossLines', 'innerLabels'].includes(prop);
     const isEditable = (key: string) => !['data', 'type', 'series.data'].includes(key);
 
     const isSearching = getTrimmedSearchText() !== '';
@@ -278,14 +285,14 @@ export const Options = ({ chartType, updateOption }) => {
 
     const axesModelDesc = model.properties['axes']?.desc;
     if (axesModelDesc?.type === 'array' && axesModelDesc.elements.type === 'union') {
-        const isAxisOfType = (axis: any, type: string) =>
-            axis.model.properties['type'].desc.tsType.includes(type);
+        const isAxisOfType = (axis: any, type: string) => axis.model.properties['type'].desc.tsType.includes(type);
         const getAxisModel = (axisType: string, direction: 'x' | 'y') => {
-            const axis = deepClone((axesModelDesc.elements as any).options.find(
-                (o) => o.type === 'nested-object' && isAxisOfType(o, axisType)
-            ));
-            axis.model.properties.position.desc.tsType =
-                direction === 'x' ? `'top' | 'bottom'` : `'left' | 'right'`;
+            const axis = deepClone(
+                (axesModelDesc.elements as any).options.find(
+                    (o) => o.type === 'nested-object' && isAxisOfType(o, axisType)
+                )
+            );
+            axis.model.properties.position.desc.tsType = direction === 'x' ? `'top' | 'bottom'` : `'left' | 'right'`;
             return axis;
         };
         const isXNumeric = isXAxisNumeric(chartType);
@@ -296,7 +303,7 @@ export const Options = ({ chartType, updateOption }) => {
         const keys = Object.keys(model.properties);
         const axesKeyIndex = keys.indexOf('axes');
         const newProps: Record<string, JsonModelProperty> = {};
-        keys.slice(0, axesKeyIndex).forEach((key) => newProps[key] = oldProps[key]);
+        keys.slice(0, axesKeyIndex).forEach((key) => (newProps[key] = oldProps[key]));
         newProps['axes[0]'] = {
             deprecated: false,
             desc: getAxisModel(isXNumeric ? 'number' : 'category', 'x'),
@@ -309,7 +316,7 @@ export const Options = ({ chartType, updateOption }) => {
             documentation: '/** Y-axis (numeric). */',
             required: false,
         };
-        keys.slice(axesKeyIndex + 1).forEach((key) => newProps[key] = oldProps[key]);
+        keys.slice(axesKeyIndex + 1).forEach((key) => (newProps[key] = oldProps[key]));
         model.properties = newProps;
     }
 
@@ -329,19 +336,16 @@ export const Options = ({ chartType, updateOption }) => {
         prefix: '',
         parentMatchesSearch: false,
         requiresWholeObject: false,
-        isAlternate: false,
         context,
     });
 
     return (
-        <div className={styles['options']}>
+        <div className={styles.options}>
             <Search value={searchText} onChange={(value) => setSearchText(value)} />
             {isSearching && !context.hasResults && (
-                <div className={styles['options__no-content']}>
-                    No properties match your search: '{getTrimmedSearchText()}'
-                </div>
+                <div className={styles.noContent}>No properties match your search: '{getTrimmedSearchText()}'</div>
             )}
-            <div className={styles['options__content']}>{options}</div>
+            <div className={classnames(styles.content, { [styles.isSearching]: isSearching })}>{options}</div>
         </div>
     );
 };
@@ -351,7 +355,6 @@ interface GenerateOptionParameters {
     prefix: string;
     parentMatchesSearch: boolean;
     requiresWholeObject: boolean;
-    isAlternate: boolean;
     context: {
         chartType: string;
         isSearching: boolean;
@@ -365,12 +368,17 @@ interface GenerateOptionParameters {
     };
 }
 
+/**
+ * Turn array index like "axes[0]" into "axes.0"
+ */
+const normalizeArrayIndexName = (name) => name.replace(/\[(\d+)\]/g, '.$1');
+const denormalizeArrayIndexName = (name) => name.replace(/\.(\d+)/g, '[$1]');
+
 const generateOptions = ({
     model,
     prefix = '',
     parentMatchesSearch = false,
     requiresWholeObject = false,
-    isAlternate = false,
     context,
 }: GenerateOptionParameters): any[] => {
     const {
@@ -383,13 +391,10 @@ const generateOptions = ({
         isArraySkipped,
         isEditable,
     } = context;
-    let elements: React.ReactFragment[] = [];
+    let elements: ReactNode[] = [];
 
     Object.entries(model.properties).forEach(([name, prop]) => {
-        // Turn array index like "axes[0]" into "axes.0"
-        const normalizedName = name.replace(/\[(\d+)\]/g, '.$1')
-
-        const key = `${prefix}${normalizedName}`;
+        const key = `${prefix}${normalizeArrayIndexName(name)}`;
         const componentKey = `${chartType}_${key}`;
         const {
             required,
@@ -412,10 +417,10 @@ const generateOptions = ({
         }
 
         let commonProps = {
+            prefix,
             key: componentKey,
             name: name,
             description: documentation || '',
-            isAlternate: isAlternate,
             isVisible: isVisible,
         };
 
@@ -440,13 +445,13 @@ const generateOptions = ({
                 <ComplexOption
                     {...commonProps}
                     isVisible={isVisible || childMatchesSearch(desc)}
-                    isSearching={isSearching}>
+                    isSearching={isSearching}
+                >
                     {generateOptions({
                         model: desc.model,
                         prefix: `${key}.`,
                         parentMatchesSearch: parentMatchesSearch || (isSearching && matchesSearch(name)),
                         requiresWholeObject: requiresWholeObject || isRequiresWholeObject(name),
-                        isAlternate: !isAlternate,
                         context,
                     })}
                 </ComplexOption>
@@ -456,14 +461,15 @@ const generateOptions = ({
                 <ComplexOption
                     {...commonProps}
                     isVisible={isVisible || childMatchesSearch(desc)}
-                    isSearching={isSearching}>
+                    isSearching={isSearching}
+                >
                     <UnionOption
                         componentKey={key}
                         desc={desc.elements}
                         documentation={documentation}
-                        isAlternate={isAlternate}
                         isVisible={isVisible}
                         name={name}
+                        prefix={prefix}
                         parentMatchesSearch={parentMatchesSearch}
                         requiresWholeObject={requiresWholeObject}
                         context={context}
@@ -475,13 +481,13 @@ const generateOptions = ({
                 <ComplexOption
                     {...commonProps}
                     isVisible={isVisible || childMatchesSearch(desc)}
-                    isSearching={isSearching}>
+                    isSearching={isSearching}
+                >
                     {generateOptions({
                         model: desc.elements.model,
                         prefix: `${key}.`,
                         parentMatchesSearch: parentMatchesSearch || (isSearching && matchesSearch(name)),
                         requiresWholeObject: requiresWholeObject || isRequiresWholeObject(name),
-                        isAlternate: !isAlternate,
                         context,
                     })}
                 </ComplexOption>
@@ -523,10 +529,6 @@ const generateOptions = ({
                     editorProps={{}}
                 />
             );
-        }
-
-        if (isVisible) {
-            isAlternate = !isAlternate;
         }
     });
 

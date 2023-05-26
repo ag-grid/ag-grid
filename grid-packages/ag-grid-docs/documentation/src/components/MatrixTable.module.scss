@@ -1,21 +1,50 @@
-.matrix-table {
-    &--pad3 {
-        composes: ml-3 from global;
+@use '../design-system' as *;
+
+.outer {
+    container-type: inline-size;
+}
+
+.matrix {
+    table-layout: auto !important;
+
+    @container (max-width: #{$breakpoint-table-small}) {
+        @include stack-table();
+
+        div {
+            display: inline;
+        }
     }
 
-    &--pad4 {
-        composes: ml-5 from global;
+    th {
+        white-space: nowrap;
     }
+}
 
-    &__title {
-        font-size: 1.5rem;
-    }
+.title {
+    font-size: var(--font-size-extra-large);
+}
 
-    &__true {
-        color: $success;
+.level3 {
+    @container (min-width: #{$breakpoint-table-small}) {
+        margin-left: $size-2;
     }
+}
 
-    &__false {
-        color: $danger;
+.level4 {
+    @container (min-width: #{$breakpoint-table-small}) {
+        margin-left: $size-5;
     }
+}
+
+.tick,
+.cross {
+    --icon-size: #{$size-3};
+}
+
+.tick {
+    --text-color: #28a745;
+}
+
+.cross {
+    --text-color: #dc3545;
 }

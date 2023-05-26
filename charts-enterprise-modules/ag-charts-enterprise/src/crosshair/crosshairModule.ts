@@ -12,12 +12,6 @@ export const CrosshairModule: _ModuleSupport.AxisModule = {
     themeTemplate: AXIS_CROSSHAIR_THEME,
 };
 
-export interface AgCrosshairLabelFormatterParams {
-    readonly value: any;
-    readonly fractionDigits: number;
-    readonly formatter?: (x: any) => string;
-}
-
 export interface AgCrosshairOptions {
     /** Whether or not to show the crosshair. */
     enabled?: boolean;
@@ -62,9 +56,9 @@ export interface AgCrosshairLabelRendererParams {
 export interface AgCrosshairLabelRendererResult {
     /** Text for the label. */
     text?: string;
-    /** Label text color. */
+    /** Label text colour. */
     color?: CssColor;
-    /** Label background color. */
+    /** Label background colour. */
     backgroundColor?: CssColor;
     /** Opacity of the label. */
     opacity?: Opacity;

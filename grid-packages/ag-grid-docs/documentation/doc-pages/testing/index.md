@@ -425,12 +425,6 @@ title: "Testing AG Grid"
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-<note>
-| If you are using our [legacy](../components/#view-engine-declaring-custom-components) packages and Angular <= v8 or if Ivy has been disabled you additionally need to provide your components to the grid via `AgGridModule.withComponents([RendererComponent, EditorComponent])`.
-</note>
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
 | ## Testing via the Grid API
 |
 | The grid's API will only be ready after `detectChanges` has been run:

@@ -32,7 +32,7 @@ export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, se
     }
 
     return (
-        <div className={classnames('ag-styles', styles.toolbar)}>
+        <div className={styles.toolbar}>
             <div className={classnames('page-margin', styles.controlsContainer)}>
                 <div className={styles.controls}>
                     <label htmlFor="data-size">Data Size:</label>

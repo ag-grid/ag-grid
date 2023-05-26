@@ -1,38 +1,27 @@
 <framework-specific-section frameworks="react">
-<section class="code-tab mb-3">
-<div class="card">
-<div class="card-header">Quick Look Code Example</div>
-<div class="card-body">
-<ul class="nav nav-tabs">
-<li class="nav-item">
-<a  class="nav-link active" id="component-tab" data-toggle="tab" href="#component" role="tab" aria-controls="component" aria-selected="true">
-
- index.js
-
-</a>
-</li>
-<li class="nav-item">
-<a class="nav-link" id="template-tab" data-toggle="tab" href="#template" role="tab" aria-controls="template" aria-selected="false">
-
- index.html
-
-</a>
-</li>
-</ul>
-<div class="tab-content">
-<div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
+| ### Quick Look Code Example
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<snippet transform={false} language="jsx">
-| import React, { useState } from 'react';
-| import { createRoot } from 'react-dom/client';
-| import { AgGridReact } from 'ag-grid-react';
+<tabs>
+
+<tabs-links>
+<open-in-cta type="stackblitz" href="https://stackblitz.com/edit/ag-grid-react-hello-world" />
+</tabs-links>
+
+<div tab-label="index.js">
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<snippet transform={false} language="jsx" lineNumbers="true">
+|import React, { useState } from 'react';
+|import { createRoot } from 'react-dom/client';
+|import { AgGridReact } from 'ag-grid-react';
 |
-| import 'ag-grid-community/styles/ag-grid.css';
-| import 'ag-grid-community/styles/ag-theme-alpine.css';
+|import 'ag-grid-community/styles/ag-grid.css';
+|import 'ag-grid-community/styles/ag-theme-alpine.css';
 |
-| const App = () => {
+|const App = () => {
 |    const [rowData] = useState([
 |        {make: "Toyota", model: "Celica", price: 35000},
 |        {make: "Ford", model: "Mondeo", price: 32000},
@@ -43,7 +32,7 @@
 |        { field: 'make' },
 |        { field: 'model' },
 |        { field: 'price' }
-|    ])
+|    ]);
 |
 |    return (
 |        &lt;div className="ag-theme-alpine" style={{height: 400, width: 600}}>
@@ -53,7 +42,7 @@
 |            &lt;/AgGridReact>
 |        &lt;/div>
 |    );
-| };
+|};
 |
 |const root = createRoot(document.getElementById('root'));
 |root.render(&lt;GridExample />);
@@ -62,36 +51,29 @@
 
 <framework-specific-section frameworks="react">
 </div>
-<div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
+<div tab-label="index.html">
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<snippet transform={false} language="html">
+<snippet transform={false} language="html" lineNumbers="true">
 |&lt;div id="root">&lt;/div>
 </snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
 </div>
-</div>
-</div>
-<div class="text-right" style="margin-top: -1.5rem;">
 
- <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-grid-react-hello-world" target="_blank">
-     Open in <img src="../../images/resources/getting-started/stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
- </a>
-
-</div>
-</div>
-</section>
+</tabs>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
 <note>
 | Please refer to our [Compatibility Chart](../react-compatibility) for Supported Versions of React & AG Grid.
-|
-| ## Getting Started with Community Video
 </note>
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+| ## Getting Started with Community Video
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
@@ -238,7 +220,11 @@
 
 <framework-specific-section frameworks="react">
 | If everything is correct, you should see a simple grid that looks like this:
-| ![AG Grid in its simplest form](../../images/resources/getting-started/step1.png)
+</framework-specific-section>
+<framework-specific-section frameworks="react">
+<image-caption src="step1.png" alt="AG Grid in its simplest form" maxWidth="80%" constrained="true" centered="true"></image-caption>
+</framework-specific-section>
+<framework-specific-section frameworks="react">
 |
 | We will now break this file down and explain the different parts...
 |

@@ -12,9 +12,9 @@ Under normal operation, AG Grid will render each row as a horizontal list of cel
 |Now that master / detail is directly supported, the usefulness of full width is reduced.
 </note>
 
-## Simple Example of Full Width Rows
+## Example of Full Width Rows
 
-Below shows a simple example using full width. The following can be noted:
+Below shows an example using full width. The following can be noted:
 
 - The rows for countries France, Italy and Peru have full width components instead of cells.
 

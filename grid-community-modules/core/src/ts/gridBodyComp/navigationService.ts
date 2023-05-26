@@ -156,6 +156,7 @@ export class NavigationService extends BeanStub {
         }
     }
 
+    // this method is throttled, see the `constructor`
     private onPageDown(gridCell: CellPosition): void {
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
@@ -173,6 +174,7 @@ export class NavigationService extends BeanStub {
         }
     }
 
+    // this method is throttled, see the `constructor`
     private onPageUp(gridCell: CellPosition): void {
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
@@ -817,7 +819,8 @@ export class NavigationService extends BeanStub {
     }
 
     public ensureCellVisible(gridCell: CellPosition): void {
-        const isGroupStickyEnabled = this.gridOptionsService.is('groupRowsSticky');
+        const isGroupStickyEnabled = this.gridOptionsService.isGroupRowsSticky();
+
         const rowNode = this.rowModel.getRow(gridCell.rowIndex);
         // sticky rows are always visible, so the grid shouldn't scroll to focus them.
         const skipScrollToRow = isGroupStickyEnabled && rowNode?.sticky;

@@ -55,6 +55,7 @@ const gridOptions: GridOptions = {
             fill: '#e5e5e5',
           },
           title: {
+            enabled: true,
             fontStyle: 'italic',
             fontWeight: '600',
             fontSize: 18,

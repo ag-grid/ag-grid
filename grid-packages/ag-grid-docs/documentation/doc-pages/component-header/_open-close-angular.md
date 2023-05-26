@@ -36,11 +36,11 @@
 </snippet>
 </framework-specific-section>
 
-<framework-specific-section frameworks="javascript">
+<framework-specific-section frameworks="angular">
 |To know if a group is expanded or collapsed, listen for the `expandedChanged` event on the column group.
 </framework-specific-section>
 
-<framework-specific-section frameworks="javascript">
+<framework-specific-section frameworks="angular">
 <snippet transform={false}>
 |// get a reference to the provided column group
 |const columnGroup = this.params.columnGroup.getProvidedColumnGroup();

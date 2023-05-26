@@ -11,16 +11,17 @@ The following page provides information that is relevant when using older versio
  
  | Angular | AG Grid   | AG Grid Legacy    |
  | --------| --------- | ------------------|
- | 6 - 7   | 18 - 22   |                   |
- | 8       | 18 - 27   | 28                |
- | 9       | 23 - 27   | 28                |
+ | 16+     | 28 - 30+  | N/A               |
+ | 14 - 15 | 25 - 30+  | N/A               |
+ | 12 - 13 | 25 - 30   | N/A               |
  | 10 - 11 | 24 - 27   | 28 - 29           |
- | 12 - 15 | 25 - 29+  | N/A               |
- | 16+     | 28 - 29+  | N/A               |
+ | 9       | 23 - 27   | 28                |
+ | 8       | 18 - 27   | 28                |
+ | 6 - 7   | 18 - 22   |                   |
 
  ## Future Support of Angular versions
 
-AG Grid currently supports Angular v10 and above. However, in the next major release (v30) we will not be publishing a new version of the AG Grid Legacy package which means the minimum supported Angular version will be v12.
+AG Grid currently supports Angular v12 and above. However, in the next major release (v31) we will be aligning our support to match Angular Long-term (LTS) versions on an ongoing basis. See [Angular Support policy and schedule](https://angular.io/guide/releases#support-policy-and-schedule). 
 
 ## AG Grid Legacy
 
@@ -78,6 +79,25 @@ If using Angular 12+ and versions of AG Grid up to v27 the following warning may
 |Processing legacy "View Engine" libraries:
 |- ag-grid-angular [es2015/esm2015]
 |Encourage the library authors to publish an Ivy distribution.
+</snippet>
+
+## Notes on Angular Components 10-11
+
+If you are using Angular v10-11 and have Ivy **disabled** via `enableIvy: false` then you must declare your custom components with the AgGridModule via the `withComponents` method. This enables AG Grid to be able to use your Angular components by adding them as `entryComponents` for you. You need to provide them in the **top level** `NgModule`:
+
+<snippet transform={false}>
+| @NgModule({
+|     imports: [
+|         BrowserModule,
+|         AgGridModule.withComponents(
+|             [
+|                 SquareComponent,      // Components to be used within the Grid
+|                 CubeComponent,
+|                 // ...other components
+|             ]
+|         ),
+|     ]
+| })
 </snippet>
 
 ## Notes on Angular 10

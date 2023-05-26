@@ -45,9 +45,6 @@ import {
 import { FrameworkComponentWrapper } from "./frameworkComponentWrapper";
 import { UserComponentRegistry } from "./userComponentRegistry";
 import { FloatingFilterMapper } from '../../filter/floating/floatingFilterMapper';
-import { ModuleNames } from '../../modules/moduleNames';
-import { ModuleRegistry } from '../../modules/moduleRegistry';
-import { doOnce } from "../../utils/function";
 import { AgGridCommon, WithoutGridCommon } from "../../interfaces/iCommon";
 
 export type DefinitionObject =
@@ -243,19 +240,9 @@ export class UserComponentFactory extends BeanStub {
             const selectorFunc: CellEditorSelectorFunc | CellRendererSelectorFunc = defObjectAny[propertyName + 'Selector'];
             const selectorRes = selectorFunc ? selectorFunc(params) : null;
 
-            const assignComp = (providedJsComp: any, providedFwComp: any) => {
-
-                const xxxFrameworkDeprecatedWarn = () => {
-                    const warningMessage = `AG Grid: As of v27, the property ${propertyName}Framework is deprecated. The property ${propertyName} can now be used for JavaScript AND Framework Components.`;
-                    doOnce(() => console.warn(warningMessage), `UserComponentFactory.${propertyName}FrameworkDeprecated`);
-                };
-
+            const assignComp = (providedJsComp: any) => {
                 if (typeof providedJsComp === 'string') {
                     compName = providedJsComp as string;
-                } else if (typeof providedFwComp === 'string') {
-                    xxxFrameworkDeprecatedWarn();
-                    compName = providedFwComp as string;
-                    // comp===true for filters, which means use the default comp
                 } else if (providedJsComp != null && providedJsComp !== true) {
                     const isFwkComp = this.getFrameworkOverrides().isFrameworkComponent(providedJsComp);
                     if (isFwkComp) {
@@ -263,26 +250,17 @@ export class UserComponentFactory extends BeanStub {
                     } else {
                         jsComp = providedJsComp;
                     }
-                } else if (providedFwComp != null) {
-                    xxxFrameworkDeprecatedWarn();
-                    fwComp = providedFwComp;
                 }
             };
 
             if (selectorRes) {
-                if (selectorRes.frameworkComponent != null) {
-                    const warningMessage = `AG Grid: As of v27, the return for ${propertyName}Selector has attributes [component, params] only. The attribute frameworkComponent is deprecated. You should now return back Framework Components using the 'component' attribute and the grid works out if it's a framework component or not.`;
-                    doOnce(() => console.warn(warningMessage), `UserComponentFactory.${propertyName}FrameworkSelectorDeprecated`);
-                    assignComp(selectorRes.frameworkComponent, undefined);
-                } else {
-                    assignComp(selectorRes.component, undefined);
-                }
+                assignComp(selectorRes.component);
                 paramsFromSelector = selectorRes.params;
                 popupFromSelector = (selectorRes as CellEditorSelectorResult).popup;
                 popupPositionFromSelector = (selectorRes as CellEditorSelectorResult).popupPosition;
             } else {
                 // if no selector, or result of selector is empty, take from defObject
-                assignComp(defObjectAny[propertyName], defObjectAny[propertyName + 'Framework']);
+                assignComp(defObjectAny[propertyName]);
             }
         }
 
@@ -359,7 +337,7 @@ export class UserComponentFactory extends BeanStub {
         return component.init(params);
     }
 
-    public getDefaultFloatingFilterType(def: IFilterDef): string | null {
+    public getDefaultFloatingFilterType(def: IFilterDef, getFromDefault: () => string): string | null {
         if (def == null) { return null; }
 
         let defaultFloatingFilterType: string | null = null;
@@ -373,8 +351,7 @@ export class UserComponentFactory extends BeanStub {
         } else {
             const usingDefaultFilter = (jsComp == null && fwComp == null) && (def.filter === true);
             if (usingDefaultFilter) {
-                const setFilterModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule, this.context.getGridId());
-                defaultFloatingFilterType = setFilterModuleLoaded ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';
+                defaultFloatingFilterType = getFromDefault();
             }
         }
 

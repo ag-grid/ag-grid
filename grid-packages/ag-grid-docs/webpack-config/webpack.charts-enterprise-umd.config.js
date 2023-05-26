@@ -12,7 +12,7 @@ module.exports = merge(common, {
 
     output: {
         filename: 'ag-charts-enterprise.js',
-        library: ['agCharts'],
+        library: ['agChartsEnterprise'],
         libraryTarget: 'umd',
         publicPath: '/',
         pathinfo: false

@@ -5,7 +5,7 @@ export const AnimationModule: _ModuleSupport.Module = {
     type: 'root',
     optionsKey: 'animation',
     packageType: 'enterprise',
-    chartTypes: ['cartesian'],
+    chartTypes: ['cartesian', 'polar'],
     instanceConstructor: Animation,
 };
 

@@ -20,11 +20,6 @@ export class LocaleService extends BeanStub {
             };
         }
 
-        const localeTextFunc = this.gridOptionsService.get('localeTextFunc');
-        if (localeTextFunc) {
-            return localeTextFunc;
-        }
-
         const localeText = this.gridOptionsService.get('localeText');
         return (key: string, defaultValue: string, variableValues?: string[]) => {
             let localisedText = localeText && localeText[key];

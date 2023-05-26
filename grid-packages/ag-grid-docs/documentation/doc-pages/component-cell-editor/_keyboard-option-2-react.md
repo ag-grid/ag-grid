@@ -22,17 +22,17 @@
 |    ];
 |
 |    return (
-|        <div
+|        &lt;div
 |            style={{
 |                height: '100%',
 |                width: '100%'
 |            }}
 |            className="ag-theme-alpine test-grid">
-|            <AgGridReact ...rest of the definition...>
+|            &lt;AgGridReact ...rest of the definition...>
 |                columnDefs={columnDefs}
 |                />
-|            </AgGridReact>
-|        </div>
+|            &lt;/AgGridReact>
+|        &lt;/div>
 |    );
 |};
 </snippet>

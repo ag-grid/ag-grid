@@ -7,8 +7,9 @@
 import { navigate, withPrefix } from 'gatsby';
 import { LocalStorage } from 'utils/local-storage';
 import supportedFrameworks from 'utils/supported-frameworks.js';
-import './src/bootstrap.scss'; // Import the Bootstrap CSS
-import './src/themes/prism-coy-without-shadows.css'; // Import theme for Prism
+import { cleanUp as heroGridCleanUp } from './src/components/hero-grid';
+import { cleanUp as rowGroupingExampleCleanUp } from './src/components/automated-examples/examples/row-grouping';
+import { cleanUp as integratedChartsExampleCleanUp } from './src/components/automated-examples/examples/integrated-charts';
 
 const frameworkStorageKey = 'framework';
 const getRelativePath = path => path.replace(withPrefix('/'), '/');
@@ -18,7 +19,7 @@ const getRelativePath = path => path.replace(withPrefix('/'), '/');
  * homepage, we check to see if we've stored a preferred framework, and automatically take them to the documentation for
  * that framework if so.
  */
-export const onRouteUpdate = ({ location }) => {
+export const onRouteUpdate = ({ location, prevLocation }) => {
     if (['/documentation/'].includes(getRelativePath(location.pathname))) {
         const selectedFramework = LocalStorage.get(frameworkStorageKey) || 'javascript';
 
@@ -30,5 +31,12 @@ export const onRouteUpdate = ({ location }) => {
         if (framework && supportedFrameworks.indexOf(framework) >= 0) {
             LocalStorage.set(frameworkStorageKey, framework);
         }
+    }
+
+    // If coming from homepage, clean up all the grids
+    if (prevLocation?.pathname === '/') {
+        heroGridCleanUp();
+        rowGroupingExampleCleanUp();
+        integratedChartsExampleCleanUp();
     }
 };

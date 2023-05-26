@@ -1,5 +1,5 @@
 <framework-specific-section frameworks="angular">
-Below is a simple example of cell renderer class:
+Below is an example of cell renderer class:
 
 <snippet transform={false}>
 |import { AfterViewInit, Component, ViewChild, ViewContainerRef } from "@angular/core";
@@ -7,7 +7,7 @@ Below is a simple example of cell renderer class:
 |
 |@Component({
 |    selector: 'editor-cell',
-|    template: `<input type="number" [(ngModel)]="value" #input style="width: 100%" />`
+|    template: `&lt;input type="number" [(ngModel)]="value" #input style="width: 100%" />`
 |})
 |export class DoublingEditor implements ICellEditorAngularComp, AfterViewInit {
 |    private params!: ICellEditorParams; 

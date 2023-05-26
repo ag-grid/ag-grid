@@ -25,6 +25,7 @@ import {
     STRING,
     COLOR_STRING_ARRAY,
     Validate,
+    TEXT_WRAP,
 } from '../../../util/validation';
 import {
     AgTreemapSeriesLabelsOptions,
@@ -32,6 +33,7 @@ import {
     AgTooltipRendererResult,
     AgTreemapSeriesFormatterParams,
     AgTreemapSeriesFormat,
+    TextWrap,
 } from '../../agChartOptions';
 import { Logger } from '../../../util/logger';
 
@@ -91,6 +93,11 @@ class TreemapSeriesLabel extends Label {
     padding = 10;
 }
 
+class TreemapSeriesTileLabel extends Label {
+    @Validate(TEXT_WRAP)
+    wrapping: TextWrap = 'on-space';
+}
+
 class TreemapValueLabel {
     @Validate(OPT_STRING)
     key?: string;
@@ -147,7 +154,7 @@ class TreemapTextHighlightStyle {
     color?: string = 'black';
 }
 
-export class TreemapHighlightStyle extends HighlightStyle {
+class TreemapHighlightStyle extends HighlightStyle {
     readonly text = new TreemapTextHighlightStyle();
 }
 
@@ -181,21 +188,21 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
 
     readonly labels = {
         large: (() => {
-            const label = new Label();
+            const label = new TreemapSeriesTileLabel();
             label.color = 'white';
             label.fontWeight = 'bold';
             label.fontSize = 18;
             return label;
         })(),
         medium: (() => {
-            const label = new Label();
+            const label = new TreemapSeriesTileLabel();
             label.color = 'white';
             label.fontWeight = 'bold';
             label.fontSize = 14;
             return label;
         })(),
         small: (() => {
-            const label = new Label();
+            const label = new TreemapSeriesTileLabel();
             label.color = 'white';
             label.fontWeight = 'bold';
             label.fontSize = 10;
@@ -428,18 +435,19 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         const colorScale = new ColorScale();
         colorScale.domain = colorDomain;
         colorScale.range = colorRange;
+        colorScale.update();
 
         const createTreeNodeDatum = (datum: TreeDatum, depth = 0, parent?: TreemapNodeDatum) => {
-            const label = (labelFormatter ? labelFormatter({ datum }) : labelKey && (datum[labelKey] as string)) || '';
+            const label = (labelFormatter ? labelFormatter({ datum }) : labelKey && (datum[labelKey] as string)) ?? '';
             let colorScaleValue = colorKey ? datum[colorKey] ?? depth : depth;
             colorScaleValue = validateColor(colorScaleValue);
             const isLeaf = !datum.children;
-            const fill =
-                typeof colorScaleValue === 'string'
-                    ? colorScaleValue
-                    : isLeaf || !groupFill
-                    ? colorScale.convert(colorScaleValue)
-                    : groupFill;
+            let fill = groupFill;
+            if (typeof colorScaleValue === 'string') {
+                fill = colorScaleValue;
+            } else if (isLeaf || !groupFill) {
+                fill = colorScale.convert(colorScaleValue);
+            }
             const nodeDatum: TreemapNodeDatum = {
                 datum,
                 depth,
@@ -598,19 +606,18 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
 
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : datum.fill;
             const fillOpacity = (isDatumHighlighted ? highlightedFillOpacity : 1) ?? 1;
-            const stroke =
-                isDatumHighlighted && highlightedStroke !== undefined
-                    ? highlightedStroke
-                    : datum.isLeaf
-                    ? tileStroke
-                    : groupStroke;
-            const strokeWidth =
-                isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
-                    ? highlightedDatumStrokeWidth
-                    : datum.isLeaf
-                    ? tileStrokeWidth
-                    : groupStrokeWidth;
-
+            let stroke = groupStroke;
+            if (isDatumHighlighted && highlightedStroke !== undefined) {
+                stroke = highlightedStroke;
+            } else if (datum.isLeaf) {
+                stroke = tileStroke;
+            }
+            let strokeWidth = groupStrokeWidth;
+            if (isDatumHighlighted && highlightedDatumStrokeWidth !== undefined) {
+                strokeWidth = highlightedDatumStrokeWidth;
+            } else if (datum.isLeaf) {
+                strokeWidth = tileStrokeWidth;
+            }
             const format = this.getTileFormat(datum, isDatumHighlighted);
 
             const fillColor = validateColor(format?.fill ?? fill);
@@ -712,6 +719,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
 
     buildLabelMeta(boxes: Map<TreemapNodeDatum, BBox>) {
         const { labels, title, subtitle, nodePadding, labelKey } = this;
+        const wrappedRegExp = /-$/m;
 
         type TextMeta = {
             text: string;
@@ -755,8 +763,15 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                         labelStyle = s;
                         break;
                     }
-                    const wrapped = Text.wrap(labelText, availTextWidth, availTextHeight, s);
-                    if (!wrapped || wrapped.match(/-$/m) || wrapped.endsWith('\u2026')) {
+                    if (s.wrapping === 'never') {
+                        continue;
+                    }
+                    // Check if wrapped text fits
+                    const wrapped = Text.wrap(labelText, availTextWidth, availTextHeight, s, s.wrapping);
+                    if (
+                        !wrapped ||
+                        (s !== labels.small && (wrappedRegExp.exec(wrapped) || wrapped.endsWith('\u2026')))
+                    ) {
                         // Avoid hyphens and ellipsis
                         continue;
                     }
@@ -785,15 +800,14 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
             const valueConfig = labels.value;
             const valueStyle = valueConfig.style;
             const valueMargin = (labelStyle.fontSize + valueStyle.fontSize) / 8;
-            const valueText = String(
-                datum.isLeaf
-                    ? valueConfig.formatter
-                        ? valueConfig.formatter({ datum: datum.datum })
-                        : valueConfig.key
-                        ? datum.datum[valueConfig.key]
-                        : ''
-                    : ''
-            );
+            let valueText = '';
+            if (datum.isLeaf) {
+                if (valueConfig.formatter) {
+                    valueText = valueConfig.formatter({ datum: datum.datum }) ?? '';
+                } else if (valueConfig.key) {
+                    valueText = datum.datum[valueConfig.key];
+                }
+            }
             const valueSize = getTextSize(valueText, valueStyle);
             const hasValueText =
                 valueText &&
@@ -858,7 +872,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
         const title: string | undefined = nodeDatum.depth ? datum[labelKey] : datum[labelKey] ?? rootName;
         let content = '';
         const format = this.getTileFormat(nodeDatum, false);
-        const color = format?.fill || nodeDatum.fill || 'gray';
+        const color = format?.fill ?? nodeDatum.fill ?? 'gray';
 
         const valueKey = labels.value.key;
         const valueFormatter = labels.value.formatter;

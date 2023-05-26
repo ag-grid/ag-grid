@@ -1,5 +1,5 @@
 <framework-specific-section frameworks="javascript">
-|Below is a simple example of a tooltip component:
+|Below is an example of a tooltip component:
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">

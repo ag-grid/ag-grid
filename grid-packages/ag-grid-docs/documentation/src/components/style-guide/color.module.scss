@@ -18,7 +18,7 @@ $colorFlowBreakpoint: 1050px;
 
     ul {
         columns: 2;
-        margin-bottom: $size-4 !important; // !important for .ag-styles specificity
+        margin-bottom: $size-4;
     }
 
     li {
@@ -31,7 +31,7 @@ $colorFlowBreakpoint: 1050px;
     display: grid;
     grid-template-columns: 100px 1fr;
     gap: 0 $size-2;
-    margin-bottom: $size-1 !important; // !important for .ag-styles specificity
+    margin-bottom: $size-1 !important;
     grid-template-areas:
         'color name'
         'color sassName'
@@ -43,22 +43,22 @@ $colorFlowBreakpoint: 1050px;
     border-radius: var(--border-radius);
 }
 
-.color--light {
+.lightColor {
     border: 1px solid var(--border-color);
 }
 
 .name {
-    composes: font-size-large bold-text from global;
-
     grid-area: name;
-    margin-top: -$size-half !important; // !important needed because of .ag-styles specificity
-    margin-bottom: $size-half !important; // !important needed because of .ag-styles specificity
+    margin-top: -$size-half;
+    margin-bottom: $size-half !important;
     text-transform: capitalize;
+    font-size: var(--font-size-large);
+    font-weight: var(--font-weight-bold);
 }
 
 .cssName {
     grid-area: sassName;
-    margin-bottom: $size-half !important; // !important needed because of .ag-styles specificity
+    margin-bottom: $size-half;
 
     code::before {
         content: 'var(';
@@ -70,9 +70,9 @@ $colorFlowBreakpoint: 1050px;
 }
 
 .colorValue {
-    composes: font-size-extra-small monospace-text from global;
-
     grid-area: colorValue;
+    font-size: var(--font-size-extra-small);
+    font-family: var(--monospace-font-family);
 
     span {
         opacity: calc(1 / 3);

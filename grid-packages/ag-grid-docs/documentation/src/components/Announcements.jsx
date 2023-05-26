@@ -8,7 +8,7 @@ import Version from './Version';
  * These are the announcement cards shown underneath the left-hand navigation menu.
  */
 const Announcements = ({ framework }) => (
-    <div className={styles['announcements']}>
+    <>
         <div className={styles.versions}>
             <Version
                 version="29.3.0"
@@ -82,7 +82,7 @@ const Announcements = ({ framework }) => (
                 developing for production.
             </p>
         </Announcement>
-    </div>
+    </>
 );
 
 /**

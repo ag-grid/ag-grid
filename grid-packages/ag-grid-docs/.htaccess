@@ -348,7 +348,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/grid-api/ /angular-data-grid/grid-api/
     Redirect 301 /documentation/angular/grid-callbacks/ /angular-data-grid/grid-options/
     Redirect 301 /documentation/angular/grid-events/ /angular-data-grid/grid-events/
-    Redirect 301 /documentation/angular/grid-features/ /angular-data-grid/grid-features/
+    Redirect 301 /documentation/angular/grid-features/ https://www.ag-grid.com/
     Redirect 301 /documentation/angular/grid-interface/ /angular-data-grid/grid-interface/
     Redirect 301 /documentation/angular/grid-properties/ /angular-data-grid/grid-options/
     Redirect 301 /documentation/angular/grid-size/ /angular-data-grid/grid-size/
@@ -604,7 +604,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/javascript/grid-api/ /javascript-data-grid/grid-api/
     Redirect 301 /documentation/javascript/grid-callbacks/ /javascript-data-grid/grid-options/
     Redirect 301 /documentation/javascript/grid-events/ /javascript-data-grid/grid-events/
-    Redirect 301 /documentation/javascript/grid-features/ /javascript-data-grid/grid-features/
+    Redirect 301 /documentation/javascript/grid-features/ https://www.ag-grid.com/
     Redirect 301 /documentation/javascript/grid-interface/ /javascript-data-grid/grid-interface/
     Redirect 301 /documentation/javascript/grid-properties/ /javascript-data-grid/grid-options/
     Redirect 301 /documentation/javascript/grid-size/ /javascript-data-grid/grid-size/
@@ -852,7 +852,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/react/grid-api/ /react-data-grid/grid-api/
     Redirect 301 /documentation/react/grid-callbacks/ /react-data-grid/grid-options/
     Redirect 301 /documentation/react/grid-events/ /react-data-grid/grid-events/
-    Redirect 301 /documentation/react/grid-features/ /react-data-grid/grid-features/
+    Redirect 301 /documentation/react/grid-features/ https://www.ag-grid.com/
     Redirect 301 /documentation/react/grid-interface/ /react-data-grid/grid-interface/
     Redirect 301 /documentation/react/grid-properties/ /react-data-grid/grid-options/
     Redirect 301 /documentation/react/grid-size/ /react-data-grid/grid-size/
@@ -1100,7 +1100,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/grid-api/ /vue-data-grid/grid-api/
     Redirect 301 /documentation/vue/grid-callbacks/ /vue-data-grid/grid-options/
     Redirect 301 /documentation/vue/grid-events/ /vue-data-grid/grid-events/
-    Redirect 301 /documentation/vue/grid-features/ /vue-data-grid/grid-features/
+    Redirect 301 /documentation/vue/grid-features/ https://www.ag-grid.com/
     Redirect 301 /documentation/vue/grid-interface/ /vue-data-grid/grid-interface/
     Redirect 301 /documentation/vue/grid-properties/ /vue-data-grid/grid-options/
     Redirect 301 /documentation/vue/grid-size/ /vue-data-grid/grid-size/
@@ -1213,7 +1213,7 @@ AddType text/javascript ts jsx
     Redirect 301 /example-excel-import/ /javascript-data-grid/excel-import/
     Redirect 301 /example-expressions-and-context/ /javascript-data-grid/expressions-and-context/
     Redirect 301 /example-react-redux/ /react-data-grid/redux-integration-pt1/
-    Redirect 301 /features-overview/ /javascript-data-grid/grid-features/
+    Redirect 301 /features-overview/ https://www.ag-grid.com/
     Redirect 301 /git-color/ https://medium.com/ag-grid/git-on-the-command-line-improving-the-experience-5a604cb14cf6
     Redirect 301 /graphql-server-side-operations/ /javascript-data-grid/server-side-operations-graphql/
     Redirect 301 /javascript-charts-api-explorer/ /javascript-charts/api-explorer/
@@ -1312,7 +1312,7 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid-events/ /javascript-data-grid/grid-events/
     Redirect 301 /javascript-grid-excel/ /javascript-data-grid/excel-export/
     Redirect 301 /javascript-grid-export/ /javascript-data-grid/excel-export/
-    Redirect 301 /javascript-grid-features/ /javascript-data-grid/grid-features/
+    Redirect 301 /javascript-grid-features/ https://www.ag-grid.com/
     Redirect 301 /javascript-grid-filter-api/ /javascript-data-grid/filter-api/
     Redirect 301 /javascript-grid-filter-component/ /javascript-data-grid/component-filter/
     Redirect 301 /javascript-grid-filter-custom/ /javascript-data-grid/component-filter/
@@ -1536,7 +1536,7 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid/grid-api/ /javascript-data-grid/grid-api/
     Redirect 301 /javascript-grid/grid-callbacks/ /javascript-data-grid/grid-options/
     Redirect 301 /javascript-grid/grid-events/ /javascript-data-grid/grid-events/
-    Redirect 301 /javascript-grid/grid-features/ /javascript-data-grid/grid-features/
+    Redirect 301 /javascript-grid/grid-features/ https://www.ag-grid.com/
     Redirect 301 /javascript-grid/grid-interface/ /javascript-data-grid/grid-interface/
     Redirect 301 /javascript-grid/grid-properties/ /javascript-data-grid/grid-options/
     Redirect 301 /javascript-grid/grid-size/ /javascript-data-grid/grid-size/
@@ -1733,7 +1733,7 @@ AddType text/javascript ts jsx
     Redirect 301 /angular-grid/grid-api/ /angular-data-grid/grid-api/
     Redirect 301 /angular-grid/grid-callbacks/ /angular-data-grid/grid-options/
     Redirect 301 /angular-grid/grid-events/ /angular-data-grid/grid-events/
-    Redirect 301 /angular-grid/grid-features/ /angular-data-grid/grid-features/
+    Redirect 301 /angular-grid/grid-features/ https://www.ag-grid.com/
     Redirect 301 /angular-grid/grid-interface/ /angular-data-grid/grid-interface/
     Redirect 301 /angular-grid/grid-properties/ /angular-data-grid/grid-options/
     Redirect 301 /angular-grid/grid-size/ /angular-data-grid/grid-size/
@@ -1934,7 +1934,7 @@ AddType text/javascript ts jsx
     Redirect 301 /react-grid/grid-api/ /react-data-grid/grid-api/
     Redirect 301 /react-grid/grid-callbacks/ /react-data-grid/grid-options/
     Redirect 301 /react-grid/grid-events/ /react-data-grid/grid-events/
-    Redirect 301 /react-grid/grid-features/ /react-data-grid/grid-features/
+    Redirect 301 /react-grid/grid-features/ https://www.ag-grid.com/
     Redirect 301 /react-grid/grid-interface/ /react-data-grid/grid-interface/
     Redirect 301 /react-grid/grid-properties/ /react-data-grid/grid-options/
     Redirect 301 /react-grid/grid-size/ /react-data-grid/grid-size/
@@ -2135,7 +2135,7 @@ AddType text/javascript ts jsx
     Redirect 301 /vue-grid/grid-api/ /vue-data-grid/grid-api/
     Redirect 301 /vue-grid/grid-callbacks/ /vue-data-grid/grid-options/
     Redirect 301 /vue-grid/grid-events/ /vue-data-grid/grid-events/
-    Redirect 301 /vue-grid/grid-features/ /vue-data-grid/grid-features/
+    Redirect 301 /vue-grid/grid-features/ https://www.ag-grid.com/
     Redirect 301 /vue-grid/grid-interface/ /vue-data-grid/grid-interface/
     Redirect 301 /vue-grid/grid-properties/ /vue-data-grid/grid-options/
     Redirect 301 /vue-grid/grid-size/ /vue-data-grid/grid-size/
@@ -2308,6 +2308,11 @@ AddType text/javascript ts jsx
     Redirect 301 /angular-data-grid/filter-custom/ /angular-data-grid/component-filter/
     Redirect 301 /react-data-grid/filter-custom/ /react-data-grid/component-filter/
     Redirect 301 /vue-data-grid/filter-custom/ /vue-data-grid/component-filter/
+
+    Redirect 301 /javascript-data-grid/grid-features/ https://www.ag-grid.com/
+    Redirect 301 /angular-data-grid/grid-features/ https://www.ag-grid.com/
+    Redirect 301 /react-data-grid/grid-features/ https://www.ag-grid.com/
+    Redirect 301 /vue-data-grid/grid-features/ https://www.ag-grid.com/
 
     Redirect 301 /cookies.php /cookies
     Redirect 301 /privacy.php /privacy

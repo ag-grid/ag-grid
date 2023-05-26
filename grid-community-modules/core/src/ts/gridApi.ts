@@ -124,6 +124,8 @@ import { ValueCache } from "./valueService/valueCache";
 import { ValueService } from "./valueService/valueService";
 import { ISelectionService } from "./interfaces/iSelectionService";
 import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./interfaces/iServerSideSelection";
+import { DataTypeDefinition } from "./entities/dataType";
+import { RowNode } from "./entities/rowNode";
 
 export interface DetailGridInfo {
     /**
@@ -264,6 +266,11 @@ export class GridApi<TData = any> {
         if (dynamicApi[setterName]) {
             dynamicApi[setterName](value);
         }
+    }
+
+    /** Returns the `gridId` for the current grid as specified via the gridOptions property `gridId` or the auto assigned grid id if none was provided. */
+    public getGridId(): string {
+        return this.context.getGridId();
     }
 
     /** Register a detail grid with the master grid when it is created. */
@@ -471,7 +478,7 @@ export class GridApi<TData = any> {
         return this.pinnedRowModel.getPinnedTopRow(index);
     }
 
-    /** Gets the top pinned row with the specified index. */
+    /** Gets the bottom pinned row with the specified index. */
     public getPinnedBottomRow(index: number): IRowNode | undefined {
         return this.pinnedRowModel.getPinnedBottomRow(index);
     }
@@ -707,8 +714,36 @@ export class GridApi<TData = any> {
     }
 
     /**
+     * Set all of the provided nodes selection state to the provided value.
+     */
+    public setNodesSelected(params: { nodes: IRowNode[], newValue: boolean, source?: SelectionEventSourceType }) {
+        const allNodesValid = params.nodes.every(node => {
+            if (node.rowPinned) {
+                console.warn('AG Grid: cannot select pinned rows');
+                return false;
+            }
+
+            if (node.id === undefined) {
+                console.warn('AG Grid: cannot select node until id for node is known');
+                return false;
+            }
+            return true;
+        });
+
+        if (!allNodesValid) {
+            return;
+        }
+
+
+        const { nodes, source, newValue } = params;
+        const nodesAsRowNode = nodes as RowNode[];
+        this.selectionService.setNodesSelected({ nodes: nodesAsRowNode, source: source ?? 'api', newValue });
+    }
+
+
+    /**
      * Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAll'`
      */
     public selectAll(source: SelectionEventSourceType = 'apiSelectAll') {
         this.selectionService.selectAllRowNodes({ source });
@@ -716,7 +751,7 @@ export class GridApi<TData = any> {
 
     /**
      * Clear all row selections, regardless of filtering.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAll'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAll'`
      */
     public deselectAll(source: SelectionEventSourceType = 'apiSelectAll') {
         this.selectionService.deselectAllRowNodes({ source });
@@ -724,7 +759,7 @@ export class GridApi<TData = any> {
 
     /**
      * Select all filtered rows.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllFiltered'`
      */
     public selectAllFiltered(source: SelectionEventSourceType = 'apiSelectAllFiltered') {
         this.selectionService.selectAllRowNodes({ source, justFiltered: true });
@@ -732,7 +767,7 @@ export class GridApi<TData = any> {
 
     /**
      * Clear all filtered selections.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllFiltered'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllFiltered'`
      */
     public deselectAllFiltered(source: SelectionEventSourceType = 'apiSelectAllFiltered') {
         this.selectionService.deselectAllRowNodes({ source, justFiltered: true });
@@ -770,7 +805,7 @@ export class GridApi<TData = any> {
 
     /**
      * Select all rows on the current page.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllCurrentPage'`
      */
     public selectAllOnCurrentPage(source: SelectionEventSourceType = 'apiSelectAllCurrentPage') {
         this.selectionService.selectAllRowNodes({ source, justCurrentPage: true });
@@ -778,7 +813,7 @@ export class GridApi<TData = any> {
 
     /**
      * Clear all filtered on the current page.
-     * @param source Source property that will appear in the `selectionChanged` event. Default: `'apiSelectAllCurrentPage'`
+     * @param source Source property that will appear in the `selectionChanged` event, defaults to `'apiSelectAllCurrentPage'`
      */
     public deselectAllOnCurrentPage(source: SelectionEventSourceType = 'apiSelectAllCurrentPage') {
         this.selectionService.deselectAllRowNodes({ source, justCurrentPage: true });
@@ -965,7 +1000,7 @@ export class GridApi<TData = any> {
         return unwrapUserComp(comp) as any;
     }
 
-    public getColumnDef(key: string | Column): ColDef<TData> | null {
+    public getColumnDef<TValue = any>(key: string | Column<TValue>): ColDef<TData, TValue> | null {
         const column = this.columnModel.getPrimaryColumn(key);
         if (column) {
             return column.getColDef();
@@ -1132,11 +1167,7 @@ export class GridApi<TData = any> {
     public setRowGroupPanelShow(rowGroupPanelShow: 'always' | 'onlyWhenGrouping' | 'never'): void {
         this.gridOptionsService.set('rowGroupPanelShow', rowGroupPanelShow);
     }
-    /** @deprecated v27.2 - Use `setGetGroupRowAgg` instead. */
-    public setGroupRowAggNodes(groupRowAggNodesFunc: (nodes: IRowNode[]) => any): void {
-        logDeprecation<GridApi>('27.2', 'setGroupRowAggNodes', 'setGetGroupRowAgg');
-        this.gridOptionsService.set('groupRowAggNodes', groupRowAggNodesFunc);
-    }
+
     public setGetGroupRowAgg(getGroupRowAggFunc: (params: GetGroupRowAggParams) => any): void {
         this.gridOptionsService.set('getGroupRowAgg', getGroupRowAggFunc);
     }
@@ -1153,11 +1184,6 @@ export class GridApi<TData = any> {
         this.gridOptionsService.set('processRowPostCreate', processRowPostCreateFunc);
     }
 
-    /** @deprecated v27.1 Use `setGetRowId` instead  */
-    public setGetRowNodeId(getRowNodeIdFunc: GetRowNodeIdFunc): void {
-        logDeprecation<GridApi>('27.1', 'setGetRowNodeId', 'setGetRowId');
-        this.gridOptionsService.set('getRowNodeId', getRowNodeIdFunc);
-    }
     public setGetRowId(getRowIdFunc: GetRowIdFunc): void {
         this.gridOptionsService.set('getRowId', getRowIdFunc);
     }
@@ -1166,11 +1192,6 @@ export class GridApi<TData = any> {
         this.gridOptionsService.set('getRowClass', rowClassFunc);
     }
 
-    /** @deprecated v27.2 Use `setIsFullWidthRow` instead. */
-    public setIsFullWidthCell(isFullWidthCellFunc: (rowNode: IRowNode) => boolean): void {
-        logDeprecation<GridApi>('27.2', 'setIsFullWidthCell', 'setIsFullWidthRow');
-        this.gridOptionsService.set('isFullWidthCell', isFullWidthCellFunc);
-    }
     public setIsFullWidthRow(isFullWidthRowFunc: (params: IsFullWidthRowParams) => boolean): void {
         this.gridOptionsService.set('isFullWidthRow', isFullWidthRowFunc);
     }
@@ -1183,11 +1204,6 @@ export class GridApi<TData = any> {
         this.gridOptionsService.set('isRowMaster', isRowMasterFunc);
     }
 
-    /** @deprecated v27.2 Use `setPostSortRows` instead */
-    public setPostSort(postSortFunc: (nodes: IRowNode[]) => void): void {
-        logDeprecation<GridApi>('27.2', 'setPostSort', 'setPostSortRows');
-        this.gridOptionsService.set('postSort', postSortFunc);
-    }
     public setPostSortRows(postSortRowsFunc: (params: PostSortRowsParams) => void): void {
         this.gridOptionsService.set('postSortRows', postSortRowsFunc);
     }
@@ -1240,11 +1256,6 @@ export class GridApi<TData = any> {
         this.gridOptionsService.set('postProcessPopup', postProcessPopupFunc);
     }
 
-    /** @deprecated v27.2 - Use `setInitialGroupOrderComparator` instead */
-    public setDefaultGroupOrderComparator(defaultGroupOrderComparatorFunc: (nodeA: IRowNode, nodeB: IRowNode) => number): void {
-        logDeprecation<GridApi>('27.2', 'setDefaultGroupOrderComparator', 'setInitialGroupOrderComparator');
-        this.gridOptionsService.set('defaultGroupOrderComparator', defaultGroupOrderComparatorFunc);
-    }
     public setInitialGroupOrderComparator(initialGroupOrderComparatorFunc: (params: InitialGroupOrderComparatorParams) => number): void {
         this.gridOptionsService.set('initialGroupOrderComparator', initialGroupOrderComparatorFunc);
     }
@@ -1445,7 +1456,7 @@ export class GridApi<TData = any> {
      * Gets the value for a column for a particular `rowNode` (row).
      * This is useful if you want the raw value of a cell e.g. if implementing your own CSV export.
      */
-    public getValue(colKey: string | Column, rowNode: IRowNode): any {
+    public getValue<TValue = any>(colKey: string | Column<TValue>, rowNode: IRowNode): TValue | null | undefined {
         let column = this.columnModel.getPrimaryColumn(colKey);
         if (missing(column)) {
             column = this.columnModel.getGridColumn(colKey);
@@ -1972,6 +1983,13 @@ export class GridApi<TData = any> {
     /** Returns the total number of displayed rows. */
     public getDisplayedRowCount(): number {
         return this.rowModel.getRowCount();
+    }
+
+    /** Resets the data type definitions. This will update the columns in the grid. */
+    public setDataTypeDefinitions(dataTypeDefinitions: {
+        [cellDataType: string]: DataTypeDefinition<TData>;
+    }): void {
+        this.gridOptionsService.set('dataTypeDefinitions', dataTypeDefinitions);
     }
 
     /**

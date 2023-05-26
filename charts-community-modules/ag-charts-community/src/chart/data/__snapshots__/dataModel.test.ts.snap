@@ -15,6 +15,7 @@ Object {
     ],
     "values": Array [
       Object {
+        "id": undefined,
         "index": 0,
         "missing": false,
         "property": "ie",
@@ -22,6 +23,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 1,
         "missing": false,
         "property": "chrome",
@@ -29,6 +31,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 2,
         "missing": false,
         "property": "firefox",
@@ -36,6 +39,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 3,
         "missing": false,
         "property": "safari",
@@ -78,7 +82,7 @@ Object {
       "aggValues": Array [
         Array [
           0,
-          0.012000000000000004,
+          0.012,
         ],
       ],
       "datum": Array [
@@ -255,6 +259,7 @@ Object {
     ],
     "values": Array [
       Object {
+        "id": undefined,
         "index": 0,
         "missing": false,
         "property": "curb-weight",
@@ -267,7 +272,7 @@ Object {
     "aggValues": Array [
       Array [
         0,
-        0.012000000000000004,
+        0.012,
       ],
     ],
     "groups": Array [
@@ -333,7 +338,7 @@ Object {
       "aggValues": Array [
         Array [
           0,
-          25.545454545454547,
+          25.5455,
         ],
       ],
       "datum": Array [
@@ -425,7 +430,7 @@ Object {
       "aggValues": Array [
         Array [
           0,
-          24.428571428571427,
+          24.4286,
         ],
       ],
       "datum": Array [
@@ -527,6 +532,7 @@ Object {
     ],
     "values": Array [
       Object {
+        "id": undefined,
         "index": 0,
         "missing": false,
         "property": "highway-mpg",
@@ -607,7 +613,7 @@ Object {
       "aggValues": Array [
         Array [
           0,
-          100,
+          11,
         ],
       ],
       "datum": Array [
@@ -666,7 +672,7 @@ Object {
       "aggValues": Array [
         Array [
           0,
-          100,
+          7,
         ],
       ],
       "datum": Array [
@@ -709,7 +715,7 @@ Object {
       "aggValues": Array [
         Array [
           0,
-          100,
+          2,
         ],
       ],
       "datum": Array [
@@ -745,7 +751,7 @@ Object {
     "aggValues": Array [
       Array [
         0,
-        100,
+        11,
       ],
     ],
     "groups": Array [
@@ -854,7 +860,7 @@ Object {
       "aggValues": Array [
         Array [
           0,
-          6.699999999999999,
+          6.7,
         ],
       ],
       "datum": Array [
@@ -878,7 +884,7 @@ Object {
       "aggValues": Array [
         Array [
           0,
-          6.800000000000001,
+          6.8,
         ],
       ],
       "datum": Array [
@@ -983,6 +989,7 @@ Object {
     ],
     "values": Array [
       Object {
+        "id": undefined,
         "index": 0,
         "missing": false,
         "property": "total",
@@ -990,6 +997,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 1,
         "missing": false,
         "property": "regular",
@@ -1476,6 +1484,7 @@ Object {
     ],
     "values": Array [
       Object {
+        "id": undefined,
         "index": 0,
         "missing": false,
         "property": "petroleum",
@@ -1483,6 +1492,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 1,
         "missing": false,
         "property": "naturalGas",
@@ -1490,6 +1500,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 2,
         "missing": false,
         "property": "bioenergyWaste",
@@ -1497,6 +1508,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 3,
         "missing": false,
         "property": "nuclear",
@@ -1504,6 +1516,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 4,
         "missing": false,
         "property": "windSolarHydro",
@@ -1511,6 +1524,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 5,
         "missing": false,
         "property": "imported",
@@ -1807,6 +1821,7 @@ Object {
     ],
     "values": Array [
       Object {
+        "id": undefined,
         "index": 0,
         "missing": false,
         "property": "white",
@@ -1814,6 +1829,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 1,
         "missing": false,
         "property": "mixed",
@@ -1821,6 +1837,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 2,
         "missing": false,
         "property": "asian",
@@ -1828,6 +1845,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 3,
         "missing": false,
         "property": "black",
@@ -1835,6 +1853,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 4,
         "missing": false,
         "property": "chinese",
@@ -1842,6 +1861,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 5,
         "missing": false,
         "property": "other",
@@ -2174,6 +2194,7 @@ Object {
     ],
     "values": Array [
       Object {
+        "id": undefined,
         "index": 0,
         "missing": false,
         "property": "ownerOccupied",
@@ -2181,6 +2202,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 1,
         "missing": false,
         "property": "privateRented",
@@ -2188,6 +2210,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 2,
         "missing": false,
         "property": "localAuthority",
@@ -2195,6 +2218,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 3,
         "missing": false,
         "property": "housingAssociation",
@@ -2283,6 +2307,672 @@ Object {
       0,
       6002,
     ],
+  },
+  "time": Any<Number>,
+  "type": "grouped",
+}
+`;
+
+exports[`DataModel grouped processing - stacked with accumulation and normalised example should generated the expected results 1`] = `
+Object {
+  "data": Array [
+    Object {
+      "aggValues": Array [
+        Array [
+          76.0913,
+          100,
+        ],
+      ],
+      "datum": Array [
+        Object {
+          "housingAssociation": 388,
+          "localAuthority": 274,
+          "ownerOccupied": 4567,
+          "privateRented": 773,
+          "type": "Semi-detached house",
+        },
+      ],
+      "keys": Array [
+        "Semi-detached house",
+      ],
+      "values": Array [
+        Array [
+          76.09130289903365,
+          88.97034321892703,
+          93.5354881706098,
+          100,
+        ],
+      ],
+    },
+    Object {
+      "aggValues": Array [
+        Array [
+          64.1101,
+          100,
+        ],
+      ],
+      "datum": Array [
+        Object {
+          "housingAssociation": 422,
+          "localAuthority": 231,
+          "ownerOccupied": 2842,
+          "privateRented": 938,
+          "type": "Medium/large terraced house",
+        },
+      ],
+      "keys": Array [
+        "Medium/large terraced house",
+      ],
+      "values": Array [
+        Array [
+          64.11008346492217,
+          85.26956914053689,
+          90.48048725468081,
+          100,
+        ],
+      ],
+    },
+    Object {
+      "aggValues": Array [
+        Array [
+          92.0191,
+          100,
+        ],
+      ],
+      "datum": Array [
+        Object {
+          "housingAssociation": 19,
+          "localAuthority": 4,
+          "ownerOccupied": 3655,
+          "privateRented": 294,
+          "type": "Detached house",
+        },
+      ],
+      "keys": Array [
+        "Detached house",
+      ],
+      "values": Array [
+        Array [
+          92.01913393756294,
+          99.42094662638469,
+          99.52165156092649,
+          100,
+        ],
+      ],
+    },
+    Object {
+      "aggValues": Array [
+        Array [
+          25.2511,
+          100,
+        ],
+      ],
+      "datum": Array [
+        Object {
+          "housingAssociation": 919,
+          "localAuthority": 621,
+          "ownerOccupied": 905,
+          "privateRented": 1139,
+          "type": "Purpose-built flat low rise",
+        },
+      ],
+      "keys": Array [
+        "Purpose-built flat low rise",
+      ],
+      "values": Array [
+        Array [
+          25.251116071428573,
+          57.03125,
+          74.35825892857143,
+          100,
+        ],
+      ],
+    },
+    Object {
+      "aggValues": Array [
+        Array [
+          44.0818,
+          100,
+        ],
+      ],
+      "datum": Array [
+        Object {
+          "housingAssociation": 295,
+          "localAuthority": 168,
+          "ownerOccupied": 1013,
+          "privateRented": 822,
+          "type": "Small terraced house",
+        },
+      ],
+      "keys": Array [
+        "Small terraced house",
+      ],
+      "values": Array [
+        Array [
+          44.081810269799824,
+          79.852045256745,
+          87.16275021758051,
+          100,
+        ],
+      ],
+    },
+    Object {
+      "aggValues": Array [
+        Array [
+          70.4934,
+          100,
+        ],
+      ],
+      "datum": Array [
+        Object {
+          "housingAssociation": 228,
+          "localAuthority": 180,
+          "ownerOccupied": 1486,
+          "privateRented": 214,
+          "type": "Bungalow",
+        },
+      ],
+      "keys": Array [
+        "Bungalow",
+      ],
+      "values": Array [
+        Array [
+          70.4933586337761,
+          80.64516129032258,
+          89.18406072106262,
+          100,
+        ],
+      ],
+    },
+    Object {
+      "aggValues": Array [
+        Array [
+          27.1552,
+          100,
+        ],
+      ],
+      "datum": Array [
+        Object {
+          "housingAssociation": 100,
+          "localAuthority": 37,
+          "ownerOccupied": 252,
+          "privateRented": 539,
+          "type": "Converted flat",
+        },
+      ],
+      "keys": Array [
+        "Converted flat",
+      ],
+      "values": Array [
+        Array [
+          27.155172413793103,
+          85.23706896551724,
+          89.22413793103448,
+          100,
+        ],
+      ],
+    },
+    Object {
+      "aggValues": Array [
+        Array [
+          23.7745,
+          100,
+        ],
+      ],
+      "datum": Array [
+        Object {
+          "housingAssociation": 68,
+          "localAuthority": 109,
+          "ownerOccupied": 97,
+          "privateRented": 134,
+          "type": "Purpose-built flat high rise",
+        },
+      ],
+      "keys": Array [
+        "Purpose-built flat high rise",
+      ],
+      "values": Array [
+        Array [
+          23.774509803921568,
+          56.61764705882353,
+          83.33333333333333,
+          100,
+        ],
+      ],
+    },
+  ],
+  "defs": Object {
+    "keys": Array [
+      Object {
+        "index": 0,
+        "missing": false,
+        "property": "type",
+        "type": "key",
+        "valueType": "category",
+      },
+    ],
+    "values": Array [
+      Object {
+        "id": undefined,
+        "index": 0,
+        "missing": false,
+        "processor": [Function],
+        "property": "ownerOccupied",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "id": undefined,
+        "index": 1,
+        "missing": false,
+        "processor": [Function],
+        "property": "privateRented",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "id": undefined,
+        "index": 2,
+        "missing": false,
+        "processor": [Function],
+        "property": "localAuthority",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "id": undefined,
+        "index": 3,
+        "missing": false,
+        "processor": [Function],
+        "property": "housingAssociation",
+        "type": "value",
+        "valueType": "range",
+      },
+    ],
+  },
+  "domain": Object {
+    "aggValues": Array [
+      Array [
+        23.7745,
+        100,
+      ],
+    ],
+    "groups": Array [
+      Array [
+        "Semi-detached house",
+      ],
+      Array [
+        "Medium/large terraced house",
+      ],
+      Array [
+        "Detached house",
+      ],
+      Array [
+        "Purpose-built flat low rise",
+      ],
+      Array [
+        "Small terraced house",
+      ],
+      Array [
+        "Bungalow",
+      ],
+      Array [
+        "Converted flat",
+      ],
+      Array [
+        "Purpose-built flat high rise",
+      ],
+    ],
+    "keys": Array [
+      Array [
+        "Semi-detached house",
+        "Medium/large terraced house",
+        "Detached house",
+        "Purpose-built flat low rise",
+        "Small terraced house",
+        "Bungalow",
+        "Converted flat",
+        "Purpose-built flat high rise",
+      ],
+    ],
+    "values": Array [
+      Array [
+        97,
+        4567,
+      ],
+      Array [
+        231,
+        5340,
+      ],
+      Array [
+        340,
+        5614,
+      ],
+      Array [
+        408,
+        6002,
+      ],
+    ],
+  },
+  "indices": Object {
+    "keys": Object {
+      "type": 0,
+    },
+    "values": Object {
+      "housingAssociation": 3,
+      "localAuthority": 2,
+      "ownerOccupied": 0,
+      "privateRented": 1,
+    },
+  },
+  "reduced": Object {
+    "aggValuesExtent": Array [
+      23.7745,
+      100,
+    ],
+  },
+  "time": Any<Number>,
+  "type": "grouped",
+}
+`;
+
+exports[`DataModel grouped processing - stacked with accumulation example should generated the expected results 1`] = `
+Object {
+  "data": Array [
+    Object {
+      "datum": Array [
+        Object {
+          "housingAssociation": 388,
+          "localAuthority": 274,
+          "ownerOccupied": 4567,
+          "privateRented": 773,
+          "type": "Semi-detached house",
+        },
+      ],
+      "keys": Array [
+        "Semi-detached house",
+      ],
+      "values": Array [
+        Array [
+          4567,
+          5340,
+          5614,
+          6002,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "housingAssociation": 422,
+          "localAuthority": 231,
+          "ownerOccupied": 2842,
+          "privateRented": 938,
+          "type": "Medium/large terraced house",
+        },
+      ],
+      "keys": Array [
+        "Medium/large terraced house",
+      ],
+      "values": Array [
+        Array [
+          2842,
+          3780,
+          4011,
+          4433,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "housingAssociation": 19,
+          "localAuthority": 4,
+          "ownerOccupied": 3655,
+          "privateRented": 294,
+          "type": "Detached house",
+        },
+      ],
+      "keys": Array [
+        "Detached house",
+      ],
+      "values": Array [
+        Array [
+          3655,
+          3949,
+          3953,
+          3972,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "housingAssociation": 919,
+          "localAuthority": 621,
+          "ownerOccupied": 905,
+          "privateRented": 1139,
+          "type": "Purpose-built flat low rise",
+        },
+      ],
+      "keys": Array [
+        "Purpose-built flat low rise",
+      ],
+      "values": Array [
+        Array [
+          905,
+          2044,
+          2665,
+          3584,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "housingAssociation": 295,
+          "localAuthority": 168,
+          "ownerOccupied": 1013,
+          "privateRented": 822,
+          "type": "Small terraced house",
+        },
+      ],
+      "keys": Array [
+        "Small terraced house",
+      ],
+      "values": Array [
+        Array [
+          1013,
+          1835,
+          2003,
+          2298,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "housingAssociation": 228,
+          "localAuthority": 180,
+          "ownerOccupied": 1486,
+          "privateRented": 214,
+          "type": "Bungalow",
+        },
+      ],
+      "keys": Array [
+        "Bungalow",
+      ],
+      "values": Array [
+        Array [
+          1486,
+          1700,
+          1880,
+          2108,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "housingAssociation": 100,
+          "localAuthority": 37,
+          "ownerOccupied": 252,
+          "privateRented": 539,
+          "type": "Converted flat",
+        },
+      ],
+      "keys": Array [
+        "Converted flat",
+      ],
+      "values": Array [
+        Array [
+          252,
+          791,
+          828,
+          928,
+        ],
+      ],
+    },
+    Object {
+      "datum": Array [
+        Object {
+          "housingAssociation": 68,
+          "localAuthority": 109,
+          "ownerOccupied": 97,
+          "privateRented": 134,
+          "type": "Purpose-built flat high rise",
+        },
+      ],
+      "keys": Array [
+        "Purpose-built flat high rise",
+      ],
+      "values": Array [
+        Array [
+          97,
+          231,
+          340,
+          408,
+        ],
+      ],
+    },
+  ],
+  "defs": Object {
+    "keys": Array [
+      Object {
+        "index": 0,
+        "missing": false,
+        "property": "type",
+        "type": "key",
+        "valueType": "category",
+      },
+    ],
+    "values": Array [
+      Object {
+        "id": undefined,
+        "index": 0,
+        "missing": false,
+        "processor": [Function],
+        "property": "ownerOccupied",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "id": undefined,
+        "index": 1,
+        "missing": false,
+        "processor": [Function],
+        "property": "privateRented",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "id": undefined,
+        "index": 2,
+        "missing": false,
+        "processor": [Function],
+        "property": "localAuthority",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "id": undefined,
+        "index": 3,
+        "missing": false,
+        "processor": [Function],
+        "property": "housingAssociation",
+        "type": "value",
+        "valueType": "range",
+      },
+    ],
+  },
+  "domain": Object {
+    "groups": Array [
+      Array [
+        "Semi-detached house",
+      ],
+      Array [
+        "Medium/large terraced house",
+      ],
+      Array [
+        "Detached house",
+      ],
+      Array [
+        "Purpose-built flat low rise",
+      ],
+      Array [
+        "Small terraced house",
+      ],
+      Array [
+        "Bungalow",
+      ],
+      Array [
+        "Converted flat",
+      ],
+      Array [
+        "Purpose-built flat high rise",
+      ],
+    ],
+    "keys": Array [
+      Array [
+        "Semi-detached house",
+        "Medium/large terraced house",
+        "Detached house",
+        "Purpose-built flat low rise",
+        "Small terraced house",
+        "Bungalow",
+        "Converted flat",
+        "Purpose-built flat high rise",
+      ],
+    ],
+    "values": Array [
+      Array [
+        97,
+        4567,
+      ],
+      Array [
+        231,
+        5340,
+      ],
+      Array [
+        340,
+        5614,
+      ],
+      Array [
+        408,
+        6002,
+      ],
+    ],
+  },
+  "indices": Object {
+    "keys": Object {
+      "type": 0,
+    },
+    "values": Object {
+      "housingAssociation": 3,
+      "localAuthority": 2,
+      "ownerOccupied": 0,
+      "privateRented": 1,
+    },
   },
   "time": Any<Number>,
   "type": "grouped",
@@ -2492,6 +3182,7 @@ Object {
     ],
     "values": Array [
       Object {
+        "id": undefined,
         "index": 0,
         "invalidValue": NaN,
         "missing": false,
@@ -2502,6 +3193,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 1,
         "invalidValue": NaN,
         "missing": false,
@@ -2512,6 +3204,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 2,
         "invalidValue": NaN,
         "missing": false,
@@ -2522,6 +3215,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 3,
         "invalidValue": NaN,
         "missing": false,
@@ -2577,6 +3271,282 @@ Object {
       "firefox": 2,
       "ie": 0,
       "safari": 3,
+    },
+  },
+  "time": Any<Number>,
+  "type": "ungrouped",
+}
+`;
+
+exports[`DataModel repeated property processing should generated the expected results 1`] = `
+Object {
+  "data": Array [
+    Object {
+      "datum": Object {
+        "browser": "Chrome",
+        "share": 0.6869,
+        "year": 2020,
+      },
+      "keys": Array [],
+      "values": Array [
+        0,
+        0.6869,
+      ],
+    },
+    Object {
+      "datum": Object {
+        "browser": "Edge",
+        "share": 0.0463,
+        "year": 2020,
+      },
+      "keys": Array [],
+      "values": Array [
+        0.1478760779303737,
+        0.05,
+      ],
+    },
+    Object {
+      "datum": Object {
+        "browser": "Safari",
+        "share": 0.087,
+        "year": 2020,
+      },
+      "keys": Array [],
+      "values": Array [
+        0.4257425742574256,
+        0.087,
+      ],
+    },
+    Object {
+      "datum": Object {
+        "browser": "Firefox",
+        "share": 0.0955,
+        "year": 2020,
+      },
+      "keys": Array [],
+      "values": Array [
+        0.7307569466624081,
+        0.0955,
+      ],
+    },
+    Object {
+      "datum": Object {
+        "browser": "Other",
+        "share": 0.0843,
+        "year": 2020,
+      },
+      "keys": Array [],
+      "values": Array [
+        1,
+        0.0843,
+      ],
+    },
+  ],
+  "defs": Object {
+    "keys": Array [],
+    "values": Array [
+      Object {
+        "id": "angle",
+        "index": 0,
+        "missing": false,
+        "processor": [Function],
+        "property": "share",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "id": "radius",
+        "index": 1,
+        "missing": false,
+        "processor": [Function],
+        "property": "share",
+        "type": "value",
+        "validation": [Function],
+        "valueType": "range",
+      },
+    ],
+  },
+  "domain": Object {
+    "keys": Array [],
+    "values": Array [
+      Array [
+        0,
+        1,
+      ],
+      Array [
+        0.05,
+        0.6869,
+      ],
+    ],
+  },
+  "indices": Object {
+    "keys": Object {},
+    "values": Object {
+      "share": 1,
+    },
+  },
+  "time": Any<Number>,
+  "type": "ungrouped",
+}
+`;
+
+exports[`DataModel ungrouped processing - accumulated and normalised properties should generated the expected results 1`] = `
+Object {
+  "data": Array [
+    Object {
+      "datum": Object {
+        "population": 4159000,
+        "religion": "Christian",
+      },
+      "keys": Array [],
+      "values": Array [
+        2.978445409938555,
+        "Christian",
+        4159000,
+      ],
+    },
+    Object {
+      "datum": Object {
+        "population": 97000,
+        "religion": "Buddhist",
+      },
+      "keys": Array [],
+      "values": Array [
+        3.049570275710106,
+        "Buddhist",
+        97000,
+      ],
+    },
+    Object {
+      "datum": Object {
+        "population": 456000,
+        "religion": "Hindu",
+      },
+      "keys": Array [],
+      "values": Array [
+        3.383930469440284,
+        "Hindu",
+        456000,
+      ],
+    },
+    Object {
+      "datum": Object {
+        "population": 168000,
+        "religion": "Jewish",
+      },
+      "keys": Array [],
+      "values": Array [
+        3.507115803972454,
+        "Jewish",
+        168000,
+      ],
+    },
+    Object {
+      "datum": Object {
+        "population": 1215000,
+        "religion": "Muslim",
+      },
+      "keys": Array [],
+      "values": Array [
+        4.398009741214046,
+        "Muslim",
+        1215000,
+      ],
+    },
+    Object {
+      "datum": Object {
+        "population": 123000,
+        "religion": "Sikh",
+      },
+      "keys": Array [],
+      "values": Array [
+        4.488199003996527,
+        "Sikh",
+        123000,
+      ],
+    },
+    Object {
+      "datum": Object {
+        "population": 174000,
+        "religion": "Other",
+      },
+      "keys": Array [],
+      "values": Array [
+        4.61578381476199,
+        "Other",
+        174000,
+      ],
+    },
+    Object {
+      "datum": Object {
+        "population": 2274000,
+        "religion": "None",
+      },
+      "keys": Array [],
+      "values": Array [
+        6.283185307179586,
+        "None",
+        2274000,
+      ],
+    },
+  ],
+  "defs": Object {
+    "keys": Array [],
+    "values": Array [
+      Object {
+        "id": undefined,
+        "index": 0,
+        "missing": false,
+        "processor": [Function],
+        "property": "population",
+        "type": "value",
+        "valueType": "range",
+      },
+      Object {
+        "index": 1,
+        "missing": false,
+        "property": "religion",
+        "type": "value",
+        "valueType": "category",
+      },
+      Object {
+        "id": undefined,
+        "index": 2,
+        "missing": false,
+        "property": "population",
+        "type": "value",
+        "valueType": "range",
+      },
+    ],
+  },
+  "domain": Object {
+    "keys": Array [],
+    "values": Array [
+      Array [
+        0,
+        6.283185307179586,
+      ],
+      Array [
+        "Christian",
+        "Buddhist",
+        "Hindu",
+        "Jewish",
+        "Muslim",
+        "Sikh",
+        "Other",
+        "None",
+      ],
+      Array [
+        97000,
+        8666000,
+      ],
+    ],
+  },
+  "indices": Object {
+    "keys": Object {},
+    "values": Object {
+      "population": 2,
+      "religion": 1,
     },
   },
   "time": Any<Number>,
@@ -3328,6 +4298,7 @@ Object {
     ],
     "values": Array [
       Object {
+        "id": undefined,
         "index": 0,
         "missing": false,
         "property": "petrol",
@@ -3335,6 +4306,7 @@ Object {
         "valueType": "range",
       },
       Object {
+        "id": undefined,
         "index": 1,
         "missing": false,
         "property": "diesel",
