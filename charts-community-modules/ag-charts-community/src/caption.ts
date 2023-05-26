@@ -1,4 +1,4 @@
-import { Text, createTextMeasurer, getFont } from './scene/shape/text';
+import { Text } from './scene/shape/text';
 import { PointerEvents } from './scene/node';
 import {
     BOOLEAN,
@@ -74,17 +74,6 @@ export class Caption {
         const maxHeight = this.maxHeight ?? containerHeight;
         if (!isFinite(maxWidth) && !isFinite(maxHeight)) {
             this.node.text = text;
-            return;
-        }
-        if (wrapping === 'never') {
-            const font = getFont(this);
-            const measurer = createTextMeasurer(font);
-            if (text && measurer.width(text) > maxWidth) {
-                const trunc = Text.truncateLine(text ?? '', maxWidth, measurer);
-                this.node.text = trunc;
-            } else {
-                this.node.text = text;
-            }
             return;
         }
         const wrapped = Text.wrap(text ?? '', maxWidth, maxHeight, this, wrapping);

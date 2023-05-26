@@ -749,36 +749,63 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
 
             let labelText = datum.isLeaf ? datum.label : datum.label.toUpperCase();
 
+            let valueText = '';
+            const valueConfig = labels.value;
+            const valueStyle = valueConfig.style;
+            const valueMargin = Math.ceil(valueStyle.fontSize * 2 * (Text.defaultLineHeightRatio - 1));
+            if (datum.isLeaf) {
+                if (valueConfig.formatter) {
+                    valueText = valueConfig.formatter({ datum: datum.datum }) ?? '';
+                } else if (valueConfig.key) {
+                    valueText = datum.datum[valueConfig.key];
+                }
+            }
+            let valueSize = getTextSize(valueText, valueStyle);
+            if (valueText && valueSize.width > availTextWidth) {
+                valueText = '';
+            }
+
             let labelStyle: Label;
             let wrappedText = '';
             if (datum.isLeaf) {
-                // Choose the font size that fits
                 labelStyle = labels.small;
-                for (const s of [labels.large, labels.medium, labels.small]) {
-                    const { width, height } = getTextSize(labelText, s);
-                    if (height > availTextHeight || isBoxTooSmall(s)) {
-                        continue;
+
+                const pickStyle = () => {
+                    const availHeight = availTextHeight - (valueText ? valueStyle.fontSize + valueMargin : 0);
+                    const labelStyles = [labels.large, labels.medium, labels.small];
+                    for (const style of labelStyles) {
+                        const { width, height } = getTextSize(labelText, style);
+                        if (height > availHeight || isBoxTooSmall(style)) {
+                            continue;
+                        }
+                        if (width <= availTextWidth) {
+                            return { style, wrappedText: undefined };
+                        }
+                        // Avoid hyphens and ellipsis for large and medium label styles
+                        const wrapped = Text.wrap(labelText, availTextWidth, availHeight, style, style.wrapping);
+                        if (
+                            wrapped &&
+                            wrapped !== '\u2026' &&
+                            (style === labels.small || !(wrappedRegExp.exec(wrapped) || wrapped.endsWith('\u2026')))
+                        ) {
+                            return { style, wrappedText: wrapped };
+                        }
                     }
-                    if (width <= availTextWidth) {
-                        labelStyle = s;
-                        break;
+                    // Check if small font fits by height
+                    const smallSize = getTextSize(labelText, labels.small);
+                    if (smallSize.height <= availHeight && !isBoxTooSmall(labels.small)) {
+                        return { style: labels.small, wrappedText: undefined };
                     }
-                    if (s.wrapping === 'never') {
-                        continue;
-                    }
-                    // Check if wrapped text fits
-                    const wrapped = Text.wrap(labelText, availTextWidth, availTextHeight, s, s.wrapping);
-                    if (
-                        !wrapped ||
-                        (s !== labels.small && (wrappedRegExp.exec(wrapped) || wrapped.endsWith('\u2026')))
-                    ) {
-                        // Avoid hyphens and ellipsis
-                        continue;
-                    }
-                    wrappedText = wrapped;
-                    labelStyle = s;
-                    break;
+                    return { style: undefined, wrappedText: undefined };
+                };
+
+                let result = pickStyle();
+                if (!result.style && valueText) {
+                    valueText = '';
+                    result = pickStyle();
                 }
+                labelStyle = result.style ?? labels.small;
+                wrappedText = result.wrappedText ?? '';
             } else if (datum.depth === 1) {
                 labelStyle = title;
             } else {
@@ -797,18 +824,7 @@ export class TreemapSeries extends HierarchySeries<TreemapNodeDatum> {
                 labelText = `${labelText.substring(0, textLength).trim()}…`;
             }
 
-            const valueConfig = labels.value;
-            const valueStyle = valueConfig.style;
-            const valueMargin = (labelStyle.fontSize + valueStyle.fontSize) / 8;
-            let valueText = '';
-            if (datum.isLeaf) {
-                if (valueConfig.formatter) {
-                    valueText = valueConfig.formatter({ datum: datum.datum }) ?? '';
-                } else if (valueConfig.key) {
-                    valueText = datum.datum[valueConfig.key];
-                }
-            }
-            const valueSize = getTextSize(valueText, valueStyle);
+            valueSize = getTextSize(valueText, valueStyle);
             const hasValueText =
                 valueText &&
                 valueSize.width < availTextWidth &&
