@@ -678,17 +678,15 @@ export interface AgAxisBaseTickOptions {
      * The values in this array must be compatible with the axis type.
      */
     values?: any[];
-    /** Minimum gap in pixels between tick lines.
-     */
+    /** Minimum gap in pixels between tick lines. */
     minSpacing?: number;
-    /** Maximum gap in pixels between tick lines.
-     */
-    maxSpacing?: number;
 }
 
 export interface AgAxisCategoryTickOptions extends AgAxisBaseTickOptions {}
 
 export interface AgAxisNumberTickOptions extends AgAxisBaseTickOptions {
+    /** Maximum gap in pixels between tick lines. */
+    maxSpacing?: number;
     /** A hint of how many ticks to use across an axis.
      * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.
      * @deprecated since v7.1.0 (ag-grid v29.1.0) Use tick.interval or tick.minSpacing and tick.maxSpacing instead.
@@ -700,6 +698,8 @@ export interface AgAxisNumberTickOptions extends AgAxisBaseTickOptions {
 }
 
 export interface AgAxisTimeTickOptions extends AgAxisBaseTickOptions {
+    /** Maximum gap in pixels between tick lines. */
+    maxSpacing?: number;
     /** A hint of how many ticks to use across an axis.
      * The axis is not guaranteed to use exactly this number of ticks, but will try to use a number of ticks that is close to the number given.
      * The following intervals from the `agCharts.time` namespace can be used:
