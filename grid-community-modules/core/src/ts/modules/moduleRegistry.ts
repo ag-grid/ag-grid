@@ -30,6 +30,10 @@ export class ModuleRegistry {
         ModuleRegistry.setModuleBased(moduleBased);
     }
 
+    public static unRegisterGridModules(gridId: string): void {
+        delete ModuleRegistry.gridModulesMap[gridId];
+    }
+
     public static registerModules(modules: Module[], moduleBased = true, gridId: string | undefined = undefined): void {
         ModuleRegistry.setModuleBased(moduleBased);
 

@@ -3,6 +3,7 @@ import { Component } from "../widgets/component";
 import { exists, values } from "../utils/generic";
 import { iterateObject } from "../utils/object";
 import { getFunctionName } from "../utils/function";
+import { ModuleRegistry } from "../modules/moduleRegistry";
 
 // steps in booting up:
 // 1. create all beans
@@ -267,6 +268,9 @@ export class Context {
         this.destroyBeans(beanInstances);
 
         this.contextParams.providedBeanInstances = null;
+
+        ModuleRegistry.unRegisterGridModules(this.contextParams.gridId);
+
         this.destroyed = true;
 
         this.logger.log(">> ag-Application Context shut down - component is dead");
