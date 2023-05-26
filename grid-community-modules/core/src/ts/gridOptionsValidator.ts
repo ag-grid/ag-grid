@@ -210,8 +210,8 @@ export class GridOptionsValidator {
         postSort: { version: '27.2', newProp: 'postSortRows' },
         isFullWidthCell: { version: '27.2', newProp: 'isFullWidthRow' },
         localeTextFunc: { version: '27.2', newProp: 'getLocaleText' },
-        enterMovesDown: { version: '30', newProp: 'enterNavigatesVertically'},
-        enterMovesDownAfterEdit: { version: '30', newProp: 'enterNavigatesVerticallyAfterEdit'},
+        enterMovesDown: { version: '30', newProp: 'enterNavigatesVertically', copyToNewProp: true },
+        enterMovesDownAfterEdit: { version: '30', newProp: 'enterNavigatesVerticallyAfterEdit', copyToNewProp: true },
 
         serverSideFilteringAlwaysResets: { version: '28.0', newProp: 'serverSideFilterAllLevels', copyToNewProp: true, },
         serverSideSortingAlwaysResets: { version: '28.0', newProp: 'serverSideSortAllLevels', copyToNewProp: true, },
