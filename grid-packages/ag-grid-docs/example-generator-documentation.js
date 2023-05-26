@@ -212,7 +212,7 @@ function readAsJsFile(tsFilePath) {
     return jsFile;
 }
 
-function createExampleGenerator(exampleType, prefix, importTypes) {
+function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
     const [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToReactFunctionalTs, vanillaToAngular, vanillaToTypescript] = getGeneratorCode(prefix);
     const appModuleAngular = new Map();
 
@@ -357,7 +357,12 @@ function createExampleGenerator(exampleType, prefix, importTypes) {
             addPackageJson(exampleType, framework, importType, destPath);
         };
 
-        fs.emptyDirSync(createExamplePath(`_gen`));
+        const genDir = createExamplePath(`_gen`);
+        if (!incremental) {
+            fs.emptyDirSync(genDir);
+        } else {
+            fs.mkdirSync(genDir, { recursive: true });
+        }
 
         if (type !== 'typescript') {
             // When the type == typescript we only want to generate the vanilla option and so skip all other frameworks
@@ -669,7 +674,8 @@ function getGeneratorCode(prefix) {
 }
 
 function generateExamples(type, importTypes, scope, trigger, done) {
-    const exampleGenerator = createExampleGenerator(type, `./src/example-generation/${type}-`, importTypes);
+    const incremental = !!trigger;
+    const exampleGenerator = createExampleGenerator(type, `./src/example-generation/${type}-`, importTypes, incremental);
     const regex = new RegExp(`<${type}-example.*?name=['"](.*?)['"].*?type=['"](.*?)['"](.*?options='(.*?)')?`, 'g');
 
     forEachExample(done, type, regex, exampleGenerator, scope, trigger);
