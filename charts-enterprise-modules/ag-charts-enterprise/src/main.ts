@@ -27,6 +27,7 @@ import {
 } from './heatmap/main';
 import { AgNavigatorOptions } from './navigator/main';
 import { AgZoomAxes, AgZoomOptions, AgZoomPanKey, AgZoomScrollingPivot, ZoomModule } from './zoom/main';
+import { WaterfallColumnModule } from './waterfall/main';
 
 export * from 'ag-charts-community';
 
@@ -36,6 +37,7 @@ _ModuleSupport.registerModule(ContextMenuModule);
 _ModuleSupport.registerModule(CrosshairModule);
 _ModuleSupport.registerModule(GradientLegendModule);
 _ModuleSupport.registerModule(HeatmapModule);
+_ModuleSupport.registerModule(WaterfallColumnModule);
 _ModuleSupport.registerModule(ZoomModule);
 
 export { AgCrosshairOptions, AgCrosshairLabel, AgCrosshairLabelRendererParams, AgCrosshairLabelRendererResult };
