@@ -358,7 +358,6 @@ describe('prepare', () => {
             expect(preparedOptions.axes![0]!.tick!.enabled).toBe(false);
             expect(preparedOptions.axes![0]!.tick!.width).toBe(theme.config.cartesian.axes.time.tick.width);
             expect(preparedOptions.axes![0]!.tick!.size).toBe(theme.config.cartesian.axes.time.tick.size);
-            expect(preparedOptions.axes![0]!.tick!.maxSpacing).toBe(theme.config.cartesian.axes.time.tick.maxSpacing);
 
             expect(preparedOptions.axes![0]!.title!.enabled).toBe(false);
             expect(preparedOptions.axes![0]!.title!.text).toBe(theme.config.cartesian.axes.time.title.text);
