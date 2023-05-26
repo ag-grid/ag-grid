@@ -63,8 +63,10 @@ After that all other modules are optional depending on your requirements.
 
 As a developer you do not need to worry about module dependencies. For example, the `FilterToolPanelModule` depends on the
 `SideBarModule` but as we have set up the dependencies as part of the module definition npm will install the dependent packages
-for you. Also, when [Registering Modules](/modules/#registering-ag-grid-modules) you only need to register the feature you require
-and AG Grid will take care of registering any dependant modules.
+for you. 
+
+Also, when [Registering Modules](/modules/#registering-ag-grid-modules) you only need to register the feature you require
+and AG Grid will take care of registering any dependant modules. Dependant modules will be registered in the same scope ([globally](/modules/#providing-modules-globally) / [individual](/modules/#providing-modules-to-individual-grids)) depending how you register the feature model. 
 
 ## Registering AG Grid Modules
 
