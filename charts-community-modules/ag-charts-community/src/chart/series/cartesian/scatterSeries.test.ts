@@ -3,6 +3,7 @@ import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import { AgChartOptions } from '../../agChartOptions';
 import { AgChart } from '../../agChartV2';
 import { Chart } from '../../chart';
+import * as examples from '../../test/examples';
 import {
     repeat,
     waitForChartStability,
@@ -10,6 +11,7 @@ import {
     setupMockCanvas,
     extractImageData,
     prepareTestOptions,
+    spyOnAnimationManager,
 } from '../../test/utils';
 
 expect.extend({ toMatchImageSnapshot });
@@ -75,5 +77,31 @@ describe('ScatterSeries', () => {
             chart = AgChart.create(options) as Chart;
             await compare();
         });
+    });
+
+    describe('initial animation', () => {
+        const compare = async () => {
+            await waitForChartStability(chart);
+
+            const imageData = extractImageData(ctx);
+            (expect(imageData) as any).toMatchImageSnapshot(IMAGE_SNAPSHOT_DEFAULTS);
+        };
+
+        afterEach(() => {
+            jest.restoreAllMocks();
+        });
+
+        for (const ratio of [0, 0.25, 0.5, 0.75, 1]) {
+            it(`for BUBBLE_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE should animate at ${ratio * 100}%`, async () => {
+                spyOnAnimationManager(1000, ratio);
+
+                const options: AgChartOptions = examples.BUBBLE_GRAPH_WITH_NEGATIVE_VALUES_EXAMPLE;
+                prepareTestOptions(options);
+
+                chart = AgChart.create(options) as Chart;
+                await waitForChartStability(chart);
+                await compare();
+            });
+        }
     });
 });

@@ -1,4 +1,4 @@
-import { expect, beforeEach, afterEach } from '@jest/globals';
+import { expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { Canvas, createCanvas, PngConfig } from 'canvas';
 import * as pixelmatch from 'pixelmatch';
 import { PNG } from 'pngjs';
@@ -9,6 +9,7 @@ import { CartesianChart } from '../cartesianChart';
 import { PolarChart } from '../polarChart';
 import { HierarchyChart } from '../hierarchyChart';
 import { AgCartesianChartOptions, AgChartInstance, AgChartOptions, AgPolarChartOptions } from '../agChartOptions';
+import { AnimationManager } from '../interaction/animationManager';
 import { resetIds } from '../../util/id';
 import * as mockCanvas from './mock-canvas';
 
@@ -287,4 +288,23 @@ export function toMatchImage(this: any, actual: Buffer, expected: Buffer, { writ
     }
 
     return { message: () => `Images were ${result} (${diffPercentage.toFixed(2)}%) pixels different`, pass };
+}
+
+export function spyOnAnimationManager(totalDuration: number, ratio: number) {
+    jest.spyOn(AnimationManager.prototype, 'animate').mockImplementation((_id, { from, to, delay, onUpdate }) => {
+        const delayRatio = delay ? delay / totalDuration : 0;
+        if (ratio < delayRatio) {
+            onUpdate?.(from as number);
+        } else {
+            const squashedRatio = Math.max(0, Math.min(1, (ratio - delayRatio) / (1 - delayRatio)));
+            onUpdate?.(((to as number) - (from as number)) * squashedRatio + (from as number));
+        }
+        return Promise.resolve() as any;
+    });
+
+    jest.spyOn(AnimationManager.prototype, 'animateMany').mockImplementation((_id, props, { onUpdate }) => {
+        const ratioProps = props.map(({ from, to }) => ((to as number) - (from as number)) * ratio + (from as number));
+        onUpdate?.(ratioProps);
+        return Promise.resolve() as any;
+    });
 }

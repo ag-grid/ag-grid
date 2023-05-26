@@ -996,6 +996,9 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
     }) {
         const duration = 1000;
 
+        const barDuration = duration * 0.8;
+        const labelDuration = duration - barDuration;
+
         let startingX = Infinity;
         datumSelections.forEach((datumSelection) =>
             datumSelection.each((_, datum) => {
@@ -1015,8 +1018,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                     ],
                     {
                         disableInteractions: true,
-                        duration,
-                        ease: easing.linear,
+                        duration: barDuration,
+                        ease: easing.easeOut,
                         repeat: 0,
                         onUpdate([x, width]) {
                             rect.x = x;
@@ -1035,8 +1038,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
                 this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
-                    delay: duration - duration / 10,
-                    duration: duration / 10,
+                    delay: barDuration,
+                    duration: labelDuration,
                     ease: easing.linear,
                     repeat: 0,
                     onUpdate: (opacity) => {
@@ -1111,6 +1114,9 @@ export class ColumnSeries extends BarSeries {
     }) {
         const duration = 1000;
 
+        const barDuration = duration * 0.8;
+        const labelDuration = duration - barDuration;
+
         let startingY = 0;
         datumSelections.forEach((datumSelection) =>
             datumSelection.each((_, datum) => {
@@ -1130,8 +1136,8 @@ export class ColumnSeries extends BarSeries {
                     ],
                     {
                         disableInteractions: true,
-                        duration,
-                        ease: easing.linear,
+                        duration: barDuration,
+                        ease: easing.easeOut,
                         repeat: 0,
                         onUpdate([y, height]) {
                             rect.y = y;
@@ -1150,8 +1156,8 @@ export class ColumnSeries extends BarSeries {
                 this.animationManager?.animate(`${this.id}_empty-update-ready_${label.id}`, {
                     from: 0,
                     to: 1,
-                    delay: duration - duration / 10,
-                    duration: duration / 10,
+                    delay: barDuration,
+                    duration: labelDuration,
                     ease: easing.linear,
                     repeat: 0,
                     onUpdate: (opacity) => {
