@@ -204,6 +204,14 @@ export class Text extends Shape {
         const font = getFont(textProps);
         const measurer = createTextMeasurer(font);
         const lines: string[] = text.split(/\r?\n/g);
+
+        if (lines.length === 0) {
+            return '';
+        }
+        if (wrapping === 'never') {
+            return Text.truncateLine(lines[0], maxWidth, measurer, false);
+        }
+
         const result: string[] = [];
         let cumulativeHeight = 0;
         for (const line of lines) {
@@ -315,8 +323,11 @@ export class Text extends Shape {
         return parts;
     }
 
-    static truncateLine(text: string, maxWidth: number, measurer: TextMeasurer) {
+    private static truncateLine(text: string, maxWidth: number, measurer: TextMeasurer, forceEllipsis: boolean) {
         const lineWidth = measurer.width(text);
+        if (lineWidth < maxWidth && !forceEllipsis) {
+            return text;
+        }
         const ellipsisWidth = measurer.width(ellipsis);
         if (lineWidth + ellipsisWidth <= maxWidth) {
             return `${text}${ellipsis}`;
@@ -357,7 +368,7 @@ export class Text extends Shape {
             if (expectedHeight >= maxHeight) {
                 // Truncate the last line
                 const lastLine = currentLine.join(' ');
-                const trunc = Text.truncateLine(lastLine, maxWidth, measurer);
+                const trunc = Text.truncateLine(lastLine, maxWidth, measurer, true);
                 currentLine.splice(0, currentLine.length, trunc);
                 linesTruncated = true;
                 return false;
@@ -420,7 +431,7 @@ export class Text extends Shape {
                 if (!addNewLine()) {
                     break;
                 }
-                const trunc = Text.truncateLine(word, maxWidth, measurer);
+                const trunc = Text.truncateLine(word, maxWidth, measurer, true);
                 currentLine.push(trunc);
                 if (i < words.length - 1) {
                     linesTruncated = true;
