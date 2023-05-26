@@ -254,10 +254,6 @@ export class Context {
         allMethodsList.forEach(methodName => beanInstance[methodName]());
     }
 
-    public getGridId(): string {
-        return this.contextParams.gridId;
-    }
-
     public getBean(name: string): any {
         return this.lookupBeanInstance("getBean", name, true);
     }

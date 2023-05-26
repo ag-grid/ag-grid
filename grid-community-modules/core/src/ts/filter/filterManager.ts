@@ -578,7 +578,7 @@ export class FilterManager extends BeanStub {
 
     private getDefaultFilter(column: Column): string {
         let defaultFilter;
-        if (ModuleRegistry.isRegistered(ModuleNames.SetFilterModule)) {
+        if (ModuleRegistry.isRegistered(ModuleNames.SetFilterModule, this.context.getGridId())) {
             defaultFilter = 'agSetColumnFilter';
         } else {
             const cellDataType = column.getColDef().cellDataType;
@@ -595,7 +595,7 @@ export class FilterManager extends BeanStub {
 
     public getDefaultFloatingFilter(column: Column): string {
         let defaultFloatingFilterType: string;
-        if (ModuleRegistry.isRegistered(ModuleNames.SetFilterModule)) {
+        if (ModuleRegistry.isRegistered(ModuleNames.SetFilterModule, this.context.getGridId())) {
             defaultFloatingFilterType = 'agSetColumnFloatingFilter';
         } else {
             const cellDataType = column.getColDef().cellDataType;
