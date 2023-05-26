@@ -471,7 +471,8 @@
         "copySelectedRangeDown": {
             "description": "Copies the selected range down, similar to <kbd>Ctrl</kbd>+<kbd>D</kbd> in Excel."
         },
-        "copySelectedRowsToClipboard": {}
+        "copySelectedRowsToClipboard": {},
+        "pasteFromClipboard": {}
     },
     "pagination": {
         "meta": {

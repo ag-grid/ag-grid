@@ -1682,6 +1682,13 @@ export class GridApi<TData = any> {
         }
     }
 
+    /** Pastes the data from the Clipboard into the Grid. */
+    public pasteFromClipboard(): void {
+        if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.pasteFromClipboard', this.context.getGridId())) {
+            this.clipboardService.pasteFromClipboard();
+        }
+    }
+
     /** Shows the column menu after and positions it relative to the provided button element. Use in conjunction with your own header template. */
     public showColumnMenuAfterButtonClick(colKey: string | Column, buttonElement: HTMLElement): void {
         // use grid column so works with pivot mode
