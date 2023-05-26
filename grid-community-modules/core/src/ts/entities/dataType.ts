@@ -152,7 +152,7 @@ export const DEFAULT_DATA_TYPES: { [key: string]: CoreDataTypeDefinition } = {
     },
     text: {
         baseDataType: 'text',
-        valueParser: (params: ValueParserLiteParams<any, string>) => params.newValue === '' ? null : params.newValue,
+        valueParser: (params: ValueParserLiteParams<any, string>) => params.newValue === '' ? null : toStringOrNull(params.newValue),
         dataTypeMatcher: (value: any) => typeof value === 'string',
     },
     boolean: {

@@ -12,7 +12,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     sortable: true,
     resizable: true,
     editable: true,
-    cellDataType: 'auto',
   },
   dataTypeDefinitions: {
     dateString: {

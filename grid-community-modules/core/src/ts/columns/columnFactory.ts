@@ -392,18 +392,8 @@ export class ColumnFactory extends BeanStub {
         const defaultColDef = this.gridOptionsService.get('defaultColDef');
         mergeDeep(colDefMerged, defaultColDef, false, true);
 
-        let columnType = this.dataTypeService.updateColDefAndGetColumnType(colDefMerged, colDef, colId);
+        const columnType = this.dataTypeService.updateColDefAndGetColumnType(colDefMerged, colDef, colId);
 
-        // merge properties from column type properties
-        if (colDef.type) {
-            columnType = colDef.type;
-        }
-
-        if (!columnType) {
-            columnType = defaultColDef && defaultColDef.type;
-        }
-
-        // if type of both colDef and defaultColDef, then colDef gets preference
         if (columnType) {
             this.assignColumnTypes(columnType, colDefMerged);
         }
@@ -418,11 +408,12 @@ export class ColumnFactory extends BeanStub {
             mergeDeep(colDefMerged, { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort } as ColDef, false, true);
         }
 
+        this.dataTypeService.validateColDef(colDefMerged);
+
         return colDefMerged;
     }
 
-    private assignColumnTypes(type: string | string[], colDefMerged: ColDef) {
-        const typeKeys: string[] = this.dataTypeService.convertColumnTypes(type);
+    private assignColumnTypes(typeKeys: string[], colDefMerged: ColDef) {
         if (!typeKeys.length) {
             return;
         }

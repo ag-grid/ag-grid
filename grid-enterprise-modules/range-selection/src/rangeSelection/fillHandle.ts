@@ -253,7 +253,7 @@ export class FillHandle extends AbstractSelectionHandle {
 
                     if (!fromUserFunction && col !== sourceCol) {
                         if (sourceCol?.getColDef()?.useValueFormatterForExport) {
-                            currentValue = this.valueFormatterService.formatValue(sourceCol, sourceRowNode!, currentValue);
+                            currentValue = this.valueFormatterService.formatValue(sourceCol, sourceRowNode!, currentValue) ?? currentValue;
                         }
                         if (col.getColDef().useValueParserForImport) {
                             currentValue = this.valueParserService.parseValue(col, rowNode, currentValue, cellValue);

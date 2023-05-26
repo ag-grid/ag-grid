@@ -139,17 +139,21 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     type?: string | string[];
     /**
      * The data type of the cell values for this column.
-     * Can either be one of the pre-defined data types
+     * Can either infer the data type from the row data (`true` - the default behaviour),
+     * define a specific data type (`string`), or have no data type (`false`).
+     * 
+     * If setting a specific data type (`string` value),
+     * this can either be one of the pre-defined data types
      * `'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`,
      * or a custom data type that has been defined in the `dataTypeDefinitions` grid option.
      *  
-     * The data type can also be inferred from the row data by using the `'auto'` type.
      * Data type inference only works for the Client-Side Row Model, and requires non-null data.
+     * It will also not work if the `valueGetter`, `valueParser` or `refData` properties are defined,
+     * or if this column is a sparkline.
      * 
-     * If `cellDataType` is set on the default column definition or a column type,
-     * it can be turned off for this column by setting the value to `null`.
+     * Default: `true`
      */
-    cellDataType?: string | null;
+    cellDataType?: boolean | string;
     /** Function or expression. Gets the value from your data for display. */
     valueGetter?: string | ValueGetterFunc<TData, TValue>;
     /** A function or expression to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */

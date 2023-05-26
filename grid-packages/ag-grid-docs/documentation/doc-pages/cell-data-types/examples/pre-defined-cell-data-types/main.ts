@@ -26,7 +26,6 @@ const gridOptions: GridOptions<IOlympicDataTypes> = {
     resizable: true,
     editable: true,
     enableRowGroup: true,
-    cellDataType: 'auto',
   },
   dataTypeDefinitions: {
     object: {
