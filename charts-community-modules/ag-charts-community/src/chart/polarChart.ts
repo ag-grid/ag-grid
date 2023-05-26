@@ -3,6 +3,7 @@ import { PolarSeries } from './series/polar/polarSeries';
 import { Padding } from '../util/padding';
 import { BBox } from '../scene/bbox';
 import { SeriesNodeDatum } from './series/series';
+import { PieSeries } from './series/polar/pieSeries';
 
 export class PolarChart extends Chart {
     static className = 'PolarChart';
@@ -58,6 +59,20 @@ export class PolarChart extends Chart {
                 series.centerY = cy;
                 series.radius = r;
             });
+
+            const pieSeries = polarSeries.filter((series): series is PieSeries => series instanceof PieSeries);
+            if (pieSeries.length > 1) {
+                const innerRadii = pieSeries
+                    .map((series) => {
+                        const innerRadius = series.getInnerRadius();
+                        return { series, innerRadius };
+                    })
+                    .sort((a, b) => a.innerRadius - b.innerRadius);
+                innerRadii[innerRadii.length - 1].series.surroundingRadius = undefined;
+                for (let i = 0; i < innerRadii.length - 1; i++) {
+                    innerRadii[i].series.surroundingRadius = innerRadii[i + 1].innerRadius;
+                }
+            }
         };
 
         const centerX = seriesBox.x + seriesBox.width / 2;

@@ -459,6 +459,7 @@ export class ChartTheme {
                     fontSize: 14,
                     fontFamily: ChartTheme.fontFamily,
                     color: 'rgb(70, 70, 70)',
+                    spacing: 0,
                 },
                 radiusKey: undefined,
                 radiusName: undefined,

@@ -9334,6 +9334,7 @@ Object {
         "fontSize": 14,
         "fontStyle": undefined,
         "fontWeight": "bold",
+        "spacing": 0,
         "text": "Annual Count",
       },
       "tooltip": Object {
@@ -10163,6 +10164,7 @@ Object {
         "fontSize": 14,
         "fontStyle": undefined,
         "fontWeight": "bold",
+        "spacing": 0,
       },
       "tooltip": Object {
         "enabled": true,
