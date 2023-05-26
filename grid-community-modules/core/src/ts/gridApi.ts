@@ -245,10 +245,6 @@ export class GridApi<TData = any> {
         return this.context;
     }
 
-    public getGridId(): string {
-        return this.context.getGridId();
-    }
-
     private getSetterMethod(key: keyof GridOptions) {
         return `set${key.charAt(0).toUpperCase()}${key.substring(1)}`;
     }

@@ -144,7 +144,6 @@ export class Grid {
 
 let nextGridId = 1;
 
-
 // created services of grid only, no UI, so frameworks can use this if providing
 // their own UI
 export class GridCoreCreator {
