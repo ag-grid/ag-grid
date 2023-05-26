@@ -20,7 +20,7 @@ A user will now be able to use the zooming features as in the following example,
 - Double click anywhere to reset the zoom.
 - Click and drag a box to select an area to zoom into (not enabled by default).
 
-<chart-example title='Zoom' name='zoom' type='generated'></chart-example>
+<chart-example title='Zoom' name='zoom' type='generated' options='{ "enterprise": true }'></chart-example>
 
 ## Enabling and Disabling Features
 
@@ -36,7 +36,7 @@ zoom: {
 }
 ```
 
-<chart-example title='Zoom Enabling and Disabling Features' name='zoom-selecting' type='generated'></chart-example>
+<chart-example title='Zoom Enabling and Disabling Features' name='zoom-selecting' type='generated' options='{ "enterprise": true }'></chart-example>
 
 ## Axes
 
@@ -50,7 +50,7 @@ zoom: {
 }
 ```
 
-<chart-example title='Zoom Axes' name='zoom-axes' type='generated'></chart-example>
+<chart-example title='Zoom Axes' name='zoom-axes' type='generated' options='{ "enterprise": true }'></chart-example>
 
 ## Scrolling Pivot
 
@@ -68,7 +68,7 @@ zoom: {
 }
 ```
 
-<chart-example title='Zoom Scrolling Pivot' name='zoom-scrolling-pivot' type='generated'></chart-example>
+<chart-example title='Zoom Scrolling Pivot' name='zoom-scrolling-pivot' type='generated' options='{ "enterprise": true }'></chart-example>
 
 ## Scrolling Step
 
@@ -82,7 +82,7 @@ zoom: {
 }
 ```
 
-<chart-example title='Zoom Scrolling Step' name='zoom-scrolling-step' type='generated'></chart-example>
+<chart-example title='Zoom Scrolling Step' name='zoom-scrolling-step' type='generated' options='{ "enterprise": true }'></chart-example>
 
 ## Min X/Y Ratio
 
@@ -97,7 +97,7 @@ zoom: {
 }
 ```
 
-<chart-example title='Zoom Min Ratio' name='zoom-min-ratio' type='generated'></chart-example>
+<chart-example title='Zoom Min Ratio' name='zoom-min-ratio' type='generated' options='{ "enterprise": true }'></chart-example>
 
 ## Pan Key
 
@@ -113,13 +113,13 @@ zoom: {
 }
 ```
 
-<chart-example title='Zoom Pan Key' name='zoom-pan-key' type='generated'></chart-example>
+<chart-example title='Zoom Pan Key' name='zoom-pan-key' type='generated' options='{ "enterprise": true }'></chart-example>
 
 ## Context Menu
 
 When both the zoom and context menu are enabled, additional zoom actions are added into the context menu for zooming and panning to the clicked location.
 
-<chart-example title='Zoom Context Menu' name='zoom-context-menu' type='generated'></chart-example>
+<chart-example title='Zoom Context Menu' name='zoom-context-menu' type='generated' options='{ "enterprise": true }'></chart-example>
 
 ## API Reference
 

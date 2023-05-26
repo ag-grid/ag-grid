@@ -15,7 +15,7 @@ contextMenu: {
 
 A user will now be able to use the context menu by right clicking anywhere on the chart, as in the following example.
 
-<chart-example title='Context Menu' name='context-menu' type='generated'></chart-example>
+<chart-example title='Context Menu' name='context-menu' type='generated' options='{ "enterprise": true }'></chart-example>
 
 ## Custom Actions
 
@@ -36,7 +36,7 @@ contextMenu: {
 }
 ```
 
-<chart-example title='Context Menu Custom Actions' name='context-menu-actions' type='generated'></chart-example>
+<chart-example title='Context Menu Custom Actions' name='context-menu-actions' type='generated' options='{ "enterprise": true }'></chart-example>
 
 ## API Reference
 
