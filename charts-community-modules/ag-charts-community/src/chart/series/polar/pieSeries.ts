@@ -321,6 +321,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
 
     readonly highlightStyle = new HighlightStyle();
 
+    surroundingRadius?: number = undefined;
+
     constructor() {
         super({ useLabelLayer: true });
 
@@ -685,18 +687,11 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
         this.rootGroup.translationY = this.centerY;
 
         if (title) {
-            let titleVisible = false;
-            if (title.enabled) {
-                const dy = this.getTitleTranslationY();
-                if (isFinite(dy)) {
-                    title.node.translationY = dy;
-                    const titleBox = title.node.computeBBox();
-                    if (!this.bboxIntersectsSurroundingSeries(titleBox, 0, dy)) {
-                        titleVisible = true;
-                    }
-                }
-            }
-            title.node.visible = titleVisible;
+            const dy = this.getTitleTranslationY();
+            const titleBox = title.node.computeBBox();
+            title.node.visible =
+                title.enabled && isFinite(dy) && !this.bboxIntersectsSurroundingSeries(titleBox, 0, dy);
+            title.node.translationY = isFinite(dy) ? dy : 0;
         }
 
         this.updateNodeMidPoint();
@@ -957,10 +952,8 @@ export class PieSeries extends PolarSeries<PieNodeDatum> {
             { x: box.x + box.width + dx, y: box.y + box.height + dy },
             { x: box.x + dx, y: box.y + box.height + dy },
         ];
-        return corners.some((corner) => {
-            const radius = Math.sqrt(Math.pow(corner.x, 2) + Math.pow(corner.y, 2));
-            return radius > surroundingRadius!;
-        });
+        const sur2 = surroundingRadius ** 2;
+        return corners.some((corner) => corner.x ** 2 + corner.y ** 2 > sur2);
     }
 
     private computeCalloutLabelCollisionOffsets() {

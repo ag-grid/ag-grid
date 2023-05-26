@@ -21,8 +21,6 @@ export abstract class PolarSeries<S extends SeriesNodeDatum> extends Series<Seri
      */
     radius: number = 0;
 
-    surroundingRadius?: number = undefined;
-
     protected dataModel?: DataModel<any, any, any>;
     protected processedData?: ProcessedData<any>;
 

@@ -68,13 +68,10 @@ export class PolarChart extends Chart {
                         return { series, innerRadius };
                     })
                     .sort((a, b) => a.innerRadius - b.innerRadius);
-                pieSeries.forEach((series) => {
-                    const outer = series.getOuterRadius();
-                    series.surroundingRadius = innerRadii
-                        .filter((i) => i.series !== series)
-                        .map((s) => s.innerRadius)
-                        .find((inner) => inner > outer);
-                });
+                innerRadii[innerRadii.length - 1].series.surroundingRadius = undefined;
+                for (let i = 0; i < innerRadii.length - 1; i++) {
+                    innerRadii[i].series.surroundingRadius = innerRadii[i + 1].innerRadius;
+                }
             }
         };
 
