@@ -352,7 +352,7 @@ export class RowCtrl extends BeanStub {
         const params = this.createFullWidthParams(gui.element, pinned);
 
         if (this.rowType == RowType.FullWidthDetail) {
-            if (!ModuleRegistry.assertRegistered(ModuleNames.MasterDetailModule, "cell renderer 'agDetailCellRenderer' (for master detail)")) {
+            if (!ModuleRegistry.assertRegistered(ModuleNames.MasterDetailModule, "cell renderer 'agDetailCellRenderer' (for master detail)", this.context.getGridId())) {
                 return;
             }
         }

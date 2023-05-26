@@ -220,6 +220,9 @@ export class GridOptionsService {
     // *************** Helper methods ************************** //
     // Methods to share common GridOptions related logic that goes above accessing a single property
 
+    public getGridId(): string {
+        return this.api.getGridId();
+    }
 
     // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
     // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
@@ -407,13 +410,13 @@ export class GridOptionsService {
     }
 
     public isTreeData(): boolean {
-        return this.is('treeData') && ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Tree Data');
+        return this.is('treeData') && ModuleRegistry.assertRegistered(ModuleNames.RowGroupingModule, 'Tree Data', this.api.getGridId());
     }
     public isMasterDetail() {
-        return this.is('masterDetail') && ModuleRegistry.assertRegistered(ModuleNames.MasterDetailModule, 'masterDetail');
+        return this.is('masterDetail') && ModuleRegistry.assertRegistered(ModuleNames.MasterDetailModule, 'masterDetail', this.api.getGridId());
     }
     public isEnableRangeSelection(): boolean {
-        return this.is('enableRangeSelection') && ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule);
+        return this.is('enableRangeSelection') && ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule, this.api.getGridId());
     }
 
     public isColumnsSortingCoupledToGroup(): boolean {

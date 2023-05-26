@@ -48,7 +48,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
     private getMenuItems(node: RowNode | null, column: Column | null, value: any): (MenuItemDef | string)[] | undefined {
         const defaultMenuOptions: string[] = [];
 
-        if (_.exists(node) && ModuleRegistry.isRegistered(ModuleNames.ClipboardModule)) {
+        if (_.exists(node) && ModuleRegistry.isRegistered(ModuleNames.ClipboardModule, this.context.getGridId())) {
             if (column) {
                 // only makes sense if column exists, could have originated from a row
                 if (!this.gridOptionsService.is('suppressCutToClipboard')) {
@@ -58,7 +58,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             }
         }
 
-        if (this.gridOptionsService.is('enableCharts') && ModuleRegistry.isRegistered(ModuleNames.GridChartsModule)) {
+        if (this.gridOptionsService.is('enableCharts') && ModuleRegistry.isRegistered(ModuleNames.GridChartsModule, this.context.getGridId())) {
             if (this.columnModel.isPivotMode()) {
                 defaultMenuOptions.push('pivotChart');
             }
@@ -70,8 +70,8 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
         if (_.exists(node)) {
             // if user clicks a cell
-            const csvModuleMissing = !ModuleRegistry.isRegistered(ModuleNames.CsvExportModule);
-            const excelModuleMissing = !ModuleRegistry.isRegistered(ModuleNames.ExcelExportModule);
+            const csvModuleMissing = !ModuleRegistry.isRegistered(ModuleNames.CsvExportModule, this.context.getGridId());
+            const excelModuleMissing = !ModuleRegistry.isRegistered(ModuleNames.ExcelExportModule, this.context.getGridId());
             const suppressExcel = this.gridOptionsService.is('suppressExcelExport') || excelModuleMissing;
             const suppressCsv = this.gridOptionsService.is('suppressCsvExport') || csvModuleMissing;
             const onIPad = _.isIOSUserAgent();

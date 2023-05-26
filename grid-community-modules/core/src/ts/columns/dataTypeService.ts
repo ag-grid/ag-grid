@@ -329,7 +329,7 @@ export class DataTypeService extends BeanStub {
         dataTypeDefinition: DataTypeDefinition | CoreDataTypeDefinition,
         colId: string
     ): void {
-        const usingSetFilter = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule);
+        const usingSetFilter = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule, this.context.getGridId());
         const translate = this.localeService.getLocaleTextFunc();
         switch (dataTypeDefinition.baseDataType) {
             case 'number': {
