@@ -1682,7 +1682,7 @@ export class GridApi<TData = any> {
         }
     }
 
-    /** Pastes the data from the Clipboard into the Grid. */
+    /** Pastes the data from the Clipboard into the focused cell of the grid. If no grid cell is focused, calling this method has no effect. */
     public pasteFromClipboard(): void {
         if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'api.pasteFromClipboard', this.context.getGridId())) {
             this.clipboardService.pasteFromClipboard();
