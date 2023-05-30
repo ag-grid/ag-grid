@@ -34,17 +34,14 @@ export class SortController extends BeanStub {
 
         const isColumnsSortingCoupledToGroup = this.gridOptionsService.isColumnsSortingCoupledToGroup();
         let columnsToUpdate = [column];
-        if (isColumnsSortingCoupledToGroup && column.getColDef().showRowGroup) {
-            if (!column.getColDef().field) {
-                // if no field is present, this column shouldn't have it's own sort direction
-                columnsToUpdate = [];
-            }
-
-            const rowGroupColumns = this.columnModel.getSourceColumnsForGroupColumn(column);
-            const sortableRowGroupColumns = rowGroupColumns?.filter(col => col.getColDef().sortable);
-            
-            if (sortableRowGroupColumns) {
-                columnsToUpdate = [...columnsToUpdate, ...sortableRowGroupColumns];
+        if (isColumnsSortingCoupledToGroup) {
+            if (column.getColDef().showRowGroup) {
+                const rowGroupColumns = this.columnModel.getSourceColumnsForGroupColumn(column);
+                const sortableRowGroupColumns = rowGroupColumns?.filter(col => col.getColDef().sortable);
+                
+                if (sortableRowGroupColumns) {
+                    columnsToUpdate = [column, ...sortableRowGroupColumns];
+                } 
             }
         }
 
@@ -127,20 +124,15 @@ export class SortController extends BeanStub {
             return null;
         }
 
-        // if a field is present, this column could have it's own sort, otherwise it's calculated from other columns
-        const currentSort = !!column.getColDef().field ? column.getSort() : this.getDisplaySortForColumn(column);
-        let result: SortDirection = sortingOrder[0];
+        const currentIndex = sortingOrder.indexOf(column.getSort()!);
+        const notInArray = currentIndex < 0;
+        const lastItemInArray = currentIndex == sortingOrder.length - 1;
+        let result: SortDirection;
 
-        if (currentSort !== 'mixed') {
-            const currentIndex = sortingOrder.indexOf(currentSort!);
-            const notInArray = currentIndex < 0;
-            const lastItemInArray = currentIndex == sortingOrder.length - 1;
-    
-            if (notInArray || lastItemInArray) {
-                result = sortingOrder[0];
-            } else {
-                result = sortingOrder[currentIndex + 1];
-            }
+        if (notInArray || lastItemInArray) {
+            result = sortingOrder[0];
+        } else {
+            result = sortingOrder[currentIndex + 1];
         }
 
         // verify the sort type exists, as the user could provide the sortingOrder, need to make sure it's valid
