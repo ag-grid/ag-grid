@@ -209,6 +209,7 @@ export class Crosshair extends _ModuleSupport.BaseModuleInstance implements _Mod
 
         const hasCrosshair =
             currentHighlight &&
+            currentHighlight.datum &&
             (currentHighlight.series.xAxis.id === axisCtx.axisId ||
                 currentHighlight.series.yAxis.id === axisCtx.axisId);
 
