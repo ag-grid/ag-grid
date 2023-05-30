@@ -214,10 +214,16 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
         const { visible, seriesItemEnabled, seriesItemTypes } = this;
         seriesItemEnabled.clear();
         seriesItemTypes.forEach((item) => seriesItemEnabled.set(item, visible));
+        this.nodeDataRefresh = true;
     }
 
     visibleChanged() {
         this.setSeriesItemEnabled();
+    }
+
+    addChartEventListeners(): void {
+        this.chartEventManager?.addListener('legend-item-click', (event) => this.onLegendItemClick(event));
+        this.chartEventManager?.addListener('legend-item-double-click', (event) => this.onLegendItemDoubleClick(event));
     }
 
     async processData() {
@@ -646,6 +652,31 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
             return;
         }
         this.toggleSeriesItem(itemId, enabled);
+    }
+
+    onLegendItemDoubleClick(event: _ModuleSupport.LegendItemDoubleClickChartEvent) {
+        const { enabled, itemId, series: maybeSeries } = event;
+
+        if (maybeSeries.type !== 'waterfallColumn') return;
+
+        const { seriesItemEnabled } = this;
+
+        let totalVisibleItems = 0;
+        for (const [_, enabled] of seriesItemEnabled.entries()) {
+            if (!enabled) {
+                continue;
+            }
+            totalVisibleItems++;
+        }
+
+        const singleEnabled = totalVisibleItems === 1 && enabled;
+        if (singleEnabled) {
+            this.setSeriesItemEnabled();
+            return;
+        }
+
+        this.seriesItemEnabled.clear();
+        this.toggleSeriesItem(itemId, true);
     }
 
     protected toggleSeriesItem(itemId: SeriesItemType, enabled: boolean): void {
