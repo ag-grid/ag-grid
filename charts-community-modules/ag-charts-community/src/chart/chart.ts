@@ -844,9 +844,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
                 const fills = labelMarkerFills[seriesType][name];
                 if (fills.size > 1) {
                     Logger.warnOnce(
-                        `legend item '${name}' has multiple fill colors, this may cause unexpected behaviour. '${[
-                            ...fills.values(),
-                        ].join("','")}'`
+                        `legend item '${name}' has multiple fill colors, this may cause unexpected behaviour.`
                     );
                 }
             });
