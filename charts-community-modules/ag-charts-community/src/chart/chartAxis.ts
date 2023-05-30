@@ -180,4 +180,12 @@ export class ChartAxis<S extends Scale<D, number, TickInterval<S>> = Scale<any, 
             delete (this as any)[key];
         }
     }
+
+    protected getTitleFormatterParams() {
+        return {
+            direction: this.direction,
+            keys: this.boundSeries.reduce((acc, next) => [...acc, ...next.getKeys(this.direction)], [] as string[]),
+            value: this.title?.text,
+        };
+    }
 }

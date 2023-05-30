@@ -30,13 +30,23 @@ import {
     LESS_THAN,
     NUMBER_OR_NAN,
     AND,
+    TEXT_WRAP,
+    OPT_FUNCTION,
 } from './util/validation';
 import { Layers } from './chart/layers';
 import { axisLabelsOverlap, PointLabelDatum } from './util/labelPlacement';
 import { ContinuousScale } from './scale/continuousScale';
 import { Matrix } from './scene/matrix';
 import { TimeScale } from './scale/timeScale';
-import { AgAxisGridStyle, AgAxisLabelFormatterParams, FontStyle, FontWeight, TextWrap } from './chart/agChartOptions';
+import {
+    AgAxisCaptionFormatterParams,
+    AgAxisCaptionOptions,
+    AgAxisGridStyle,
+    AgAxisLabelFormatterParams,
+    FontStyle,
+    FontWeight,
+    TextWrap,
+} from './chart/agChartOptions';
 import { LogScale } from './scale/logScale';
 import { Default } from './util/default';
 import { Deprecated } from './util/deprecation';
@@ -309,6 +319,35 @@ export class AxisLabel {
     }
 }
 
+export class AxisTitle implements AgAxisCaptionOptions {
+    @Validate(BOOLEAN)
+    enabled = false;
+
+    @Validate(OPT_STRING)
+    text?: string = undefined;
+
+    @Validate(OPT_FONT_STYLE)
+    fontStyle: FontStyle | undefined = undefined;
+
+    @Validate(OPT_FONT_WEIGHT)
+    fontWeight: FontWeight | undefined = undefined;
+
+    @Validate(NUMBER(0))
+    fontSize: number = 10;
+
+    @Validate(STRING)
+    fontFamily: string = 'sans-serif';
+
+    @Validate(OPT_COLOR_STRING)
+    color: string | undefined = undefined;
+
+    @Validate(TEXT_WRAP)
+    wrapping: TextWrap = 'always';
+
+    @Validate(OPT_FUNCTION)
+    formatter?: (params: AgAxisCaptionFormatterParams) => string = undefined;
+}
+
 /**
  * A general purpose linear axis with no notion of orientation.
  * The axis is always rendered vertically, with horizontal labels positioned to the left
@@ -318,7 +357,7 @@ export class AxisLabel {
  * The generic `D` parameter is the type of the domain of the axis' scale.
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
-export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
+export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     static readonly defaultTickMinSpacing = 50;
 
     readonly id = createId(this);
@@ -405,6 +444,9 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     constructor(scale: S) {
         this._scale = scale;
         this.refreshScale();
+
+        this._titleCaption.node.rotation = -Math.PI / 2;
+        this.axisGroup.appendChild(this._titleCaption.node);
     }
 
     public destroy() {
@@ -519,30 +561,8 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
         }
     }
 
-    protected _title: Caption | undefined = undefined;
-    set title(value: Caption | undefined) {
-        const oldTitle = this._title;
-        if (oldTitle !== value) {
-            if (oldTitle) {
-                this.axisGroup.removeChild(oldTitle.node);
-            }
-
-            if (value) {
-                value.node.rotation = -Math.PI / 2;
-                this.axisGroup.appendChild(value.node);
-            }
-
-            this._title = value;
-
-            // position title so that it doesn't briefly get rendered in the top left hand corner of the canvas before update is called.
-            this.setTickCount(this.tick.count);
-            this.setTickInterval(this.tick.interval);
-            this.updateTitle({ anyTickVisible: true, sideFlag: this.label.getSideFlag() });
-        }
-    }
-    get title(): Caption | undefined {
-        return this._title;
-    }
+    protected title: AxisTitle | undefined = undefined;
+    protected _titleCaption = new Caption();
 
     private setDomain() {
         const {
@@ -1379,19 +1399,29 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     }
 
     private updateTitle({ anyTickVisible, sideFlag }: { anyTickVisible: boolean; sideFlag: Flag }): void {
-        const { rotation, title, lineNode, requestedRange, tickLineGroup, tickLabelGroup } = this;
+        const identityFormatter = (params: { value?: string }) => params.value;
+        const { rotation, title, _titleCaption, lineNode, requestedRange, tickLineGroup, tickLabelGroup } = this;
+        const { formatter = identityFormatter } = this.title ?? {};
 
         if (!title) {
+            _titleCaption.enabled = false;
             return;
         }
 
+        _titleCaption.enabled = title.enabled;
+        _titleCaption.fontFamily = title.fontFamily;
+        _titleCaption.fontSize = title.fontSize;
+        _titleCaption.fontStyle = title.fontStyle;
+        _titleCaption.fontWeight = title.fontWeight;
+        _titleCaption.wrapping = title.wrapping;
+
         let titleVisible = false;
+        const titleNode = _titleCaption.node;
         if (title.enabled && lineNode.visible) {
             titleVisible = true;
 
             const parallelFlipRotation = normalizeAngle360(rotation);
             const padding = Caption.PADDING;
-            const titleNode = title.node;
             const titleRotationFlag =
                 sideFlag === -1 && parallelFlipRotation > Math.PI && parallelFlipRotation < Math.PI * 2 ? -1 : 1;
 
@@ -1414,9 +1444,11 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
                 titleNode.y = Math.floor(-padding - bboxYDimension);
             }
             titleNode.textBaseline = titleRotationFlag === 1 ? 'bottom' : 'top';
+
+            titleNode.text = formatter(this.getTitleFormatterParams());
         }
 
-        title.node.visible = titleVisible;
+        titleNode.visible = titleVisible;
     }
 
     // For formatting (nice rounded) tick values.
@@ -1470,4 +1502,6 @@ export class Axis<S extends Scale<D, number, TickInterval<S>>, D = any> {
     calculatePadding(min: number, _max: number): number {
         return Math.abs(min * 0.01);
     }
+
+    protected abstract getTitleFormatterParams(): AgAxisCaptionFormatterParams;
 }
