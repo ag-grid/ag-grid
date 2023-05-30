@@ -485,6 +485,27 @@ const checkForRehypePluginExistance = () => {
         )
     });
 };
+const suppressHydrationErrors = () => {
+
+    return applyCustomisation('gatsby', '5.9.1', {
+        name: `Suppress Hydration Errors`,
+        apply: () => updateFileContents(
+            './node_modules/gatsby/cache-dir/react-dom-utils.js',
+            'const hydrate = (Component, el) => reactDomClient.hydrateRoot(el, Component)',
+            'const hydrate = (Component, el) => reactDomClient.hydrateRoot(el, Component, {onRecoverableError: () => {}})'
+        )
+    });
+
+    // for development mode - we probably don't want to suppress this
+    // return applyCustomisation('gatsby', '5.9.1', {
+    //     name: `Suppress Hydration Errors`,
+    //     apply: () => updateFileContents(
+    //         './node_modules/gatsby/cache-dir/app.js',
+    //         'const root = reactDomClient.hydrateRoot(el, Component)',
+    //         'const root = reactDomClient.hydrateRoot(el, Component, {onRecoverableError: () => {}})'
+    //     )
+    // });
+};
 
 console.log(`--------------------------------------------------------------------------------`);
 console.log(`Applying customisations...`);
@@ -499,7 +520,8 @@ const success = [
     jsxErrorProcessingIssue(),
     excludeDodgyLintRules(),
     addAgStylesToReactMarkdown(),
-    checkForRehypePluginExistance()
+    checkForRehypePluginExistance(),
+    suppressHydrationErrors()
 ].every(x => x);
 
 if (success) {
