@@ -317,11 +317,14 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
         const yCurrIndex = dataModel.resolveProcessedDataIndexById('yCurrent')?.index ?? -1;
         const yPrevIndex = dataModel.resolveProcessedDataIndexById('yPrevious')?.index ?? -1;
 
+        const contextIndexMap = new Map<SeriesItemType, number>();
+
         processedData?.data.forEach(({ keys, datum, values }, dataIndex) => {
             const x = xScale.convert(keys[xIndex]);
 
-            const rawValue = values[yIndex];
-            const cumulativeValue = values[yCurrIndex];
+            const rawValue = +values[yIndex];
+
+            const cumulativeValue = +values[yCurrIndex];
             const trailingValue = values[yPrevIndex];
 
             const currY = yScale.convert(cumulativeValue, { strict: false });
@@ -332,7 +335,11 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
             const bottomY = isPositive ? prevY : currY;
 
             const itemId = isPositive ? 'positive' : 'negative';
-            const contextIndex = this.getContextIndex(itemId);
+            let contextIndex = contextIndexMap.get(itemId);
+            if (!contextIndex) {
+                contextIndex = contexts.length;
+                contextIndexMap.set(itemId, contextIndex);
+            }
             contexts[contextIndex] ??= {
                 itemId,
                 nodeData: [],
@@ -378,10 +385,6 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
         });
 
         return contexts;
-    }
-
-    private getContextIndex(itemId: SeriesItemType) {
-        return itemId === 'positive' ? 0 : 1;
     }
 
     private createLabelData(isPositive: boolean, rawValue: any, rect: Bounds): WaterfallNodeLabelDatum {
