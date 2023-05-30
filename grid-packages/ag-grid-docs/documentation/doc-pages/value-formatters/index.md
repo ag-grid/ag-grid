@@ -57,4 +57,4 @@ If [Cell Editing](/cell-editing/) is enabled along with `useValueFormatterForExp
 
 The following example demonstrates using the value formatter for export with each of the supported features mentioned above. `useValueParserForImport` is also enabled to ensure the features work as expected.
 
-<grid-example title='Use Value Formatter for Export' name='use-value-formatter-for-export' type='generated' options='{ "enterprise": true, "modules": ["clientside", "range", "clipboard", "excel"] }'></grid-example>
+<grid-example title='Use Value Formatter for Export' name='use-value-formatter-for-export' type='generated' options='{ "enterprise": true, "modules": ["clientside", "range", "clipboard", "excel", "menu"] }'></grid-example>
