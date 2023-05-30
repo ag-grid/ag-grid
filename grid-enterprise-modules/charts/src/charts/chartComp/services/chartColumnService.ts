@@ -33,7 +33,7 @@ export class ChartColumnService extends BeanStub {
     }
 
     public getGroupDisplayColumns(): Column[] {
-        return this.columnModel.getGroupAutoColumns() ?? [];
+        return this.columnModel.getGroupDisplayColumns();
     }
 
     public isPivotMode(): boolean {

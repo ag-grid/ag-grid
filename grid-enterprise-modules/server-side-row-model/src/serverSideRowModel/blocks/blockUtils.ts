@@ -190,7 +190,7 @@ export class BlockUtils extends BeanStub {
     }
 
     private setGroupDataIntoRowNode(rowNode: RowNode): void {
-        const groupDisplayCols: Column[] = this.columnModel.getGroupAutoColumns() ?? [];
+        const groupDisplayCols: Column[] = this.columnModel.getGroupDisplayColumns();
 
         const usingTreeData = this.gridOptionsService.isTreeData();
 
