@@ -305,7 +305,7 @@ export interface AgChartFooterOptions extends AgChartCaptionOptions {}
 export interface AgAxisCaptionFormatterParams {
     /** Default value to be used for the axis title (as specified in chart options or theme). */
     value?: string;
-    /** Keys bound to the axis the title belongs to. */
+    /** Direction of the axis the title belongs to. */
     direction: 'x' | 'y';
     /** Keys bound to the axis the title belongs to. */
     keys: string[];

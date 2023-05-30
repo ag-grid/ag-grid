@@ -561,7 +561,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         }
     }
 
-    protected title: AxisTitle | undefined = undefined;
+    public title: AxisTitle | undefined = undefined;
     protected _titleCaption = new Caption();
 
     private setDomain() {
@@ -1413,6 +1413,7 @@ export abstract class Axis<S extends Scale<D, number, TickInterval<S>>, D = any>
         _titleCaption.fontSize = title.fontSize;
         _titleCaption.fontStyle = title.fontStyle;
         _titleCaption.fontWeight = title.fontWeight;
+        _titleCaption.color = title.color;
         _titleCaption.wrapping = title.wrapping;
 
         let titleVisible = false;
