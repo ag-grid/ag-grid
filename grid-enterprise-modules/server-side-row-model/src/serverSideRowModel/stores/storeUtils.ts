@@ -142,8 +142,8 @@ export class StoreUtils extends BeanStub {
     public isServerSideSortAllLevels() {
         return this.gridOptionsService.is('serverSideSortAllLevels') && this.assertRowModelIsServerSide('serverSideSortAllLevels');
     }
-    public isServerSideFilterAllLevels() {
-        return this.gridOptionsService.is('serverSideFilterAllLevels') && this.assertRowModelIsServerSide('serverSideFilterAllLevels');
+    public isServerSideOnlyRefreshFilteredGroups() {
+        return this.gridOptionsService.is('serverSideOnlyRefreshFilteredGroups') && this.assertRowModelIsServerSide('serverSideOnlyRefreshFilteredGroups');
     }
     public isServerSideSortOnServer() {
         return this.gridOptionsService.is('serverSideSortOnServer') && this.assertRowModelIsServerSide('serverSideSortOnServer') && this.assertNotTreeData('serverSideSortOnServer');

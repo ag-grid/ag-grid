@@ -66,7 +66,6 @@ const gridOptions: GridOptions<IOlympicData> = {
 
   animateRows: true,
   suppressAggFuncInHeader: true,
-  serverSideFilterAllLevels: true,
 }
 
 let selectionState: IServerSideGroupSelectionState = {

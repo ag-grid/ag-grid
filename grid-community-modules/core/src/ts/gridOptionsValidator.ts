@@ -213,7 +213,7 @@ export class GridOptionsValidator {
         enterMovesDown: { version: '30', newProp: 'enterNavigatesVertically', copyToNewProp: true },
         enterMovesDownAfterEdit: { version: '30', newProp: 'enterNavigatesVerticallyAfterEdit', copyToNewProp: true },
 
-        serverSideFilteringAlwaysResets: { version: '28.0', newProp: 'serverSideFilterAllLevels', copyToNewProp: true, },
+        serverSideFilteringAlwaysResets: { version: '28.0', newProp: 'serverSideOnlyRefreshFilteredGroups', copyToNewProp: true, },
         serverSideSortingAlwaysResets: { version: '28.0', newProp: 'serverSideSortAllLevels', copyToNewProp: true, },
         suppressReactUi: { version: '28', message: 'The legacy React rendering engine is deprecated and will be removed in the next major version of the grid.' },
         processSecondaryColDef: { version: '28', newProp: 'processPivotResultColDef', copyToNewProp: true },
@@ -227,6 +227,7 @@ export class GridOptionsValidator {
         onColumnPivotChangeRequest: { version: '29.2' },
         onColumnValueChangeRequest: { version: '29.2' },
         onColumnAggFuncChangeRequest: { version: '29.2' },
+        serverSideFilterAllLevels: { version: '30', newProp: 'serverSideOnlyRefreshFilteredGroups', copyToNewProp: true, },
     }
 
     private checkForDeprecated() {
