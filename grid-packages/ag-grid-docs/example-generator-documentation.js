@@ -331,7 +331,11 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
 
             const destPath = path.join(createExamplePath(`_gen/${importType}`), framework);
             const sourcePath = path.join(providedRootPath, 'modules', framework);
-            if (importType === 'packages') {
+
+            // May want to formalise this feature in the future for other examples...
+            const suppressProvidePackageConversion = sourcePath.includes('modules/examples/individual-registration');
+
+            if (importType === 'packages' && !suppressProvidePackageConversion) {
                 // Convert the modules provided example into a packages version
                 fs.mkdirSync(destPath, { recursive: true });
 
