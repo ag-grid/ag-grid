@@ -445,6 +445,11 @@ export class FilterManager extends BeanStub {
         rowNode: RowNode;
         filterInstanceToSkip?: IFilterComp;
     }): boolean {
+        // check quick filter if in pivot mode
+        if (this.isQuickFilterPresent() && this.columnModel.isPivotMode() && !this.doesRowPassQuickFilter(params.rowNode)) {
+            return false;
+        }
+
         if (this.isAggregateFilterPresent() && !this.doAggregateFiltersPass(params.rowNode, params.filterInstanceToSkip)) {
             return false;
         }
@@ -461,8 +466,8 @@ export class FilterManager extends BeanStub {
         // we return true. that means if a row passes the quick filter,
         // but fails the column filter, it fails overall
 
-        // first up, check quick filter
-        if (this.isQuickFilterPresent() && !this.doesRowPassQuickFilter(params.rowNode)) {
+        // first up, check quick filter (but only if not in pivot mode)
+        if (this.isQuickFilterPresent() && !this.columnModel.isPivotMode() && !this.doesRowPassQuickFilter(params.rowNode)) {
             return false;
         }
 

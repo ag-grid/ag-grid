@@ -3360,6 +3360,9 @@ export class ColumnModel extends BeanStub {
             columnsForQuickFilter = this.primaryColumns;
         }
         columnsForQuickFilter = columnsForQuickFilter ?? [];
+        if (this.isPivotMode()) {
+            columnsForQuickFilter = [...columnsForQuickFilter, ...(this.secondaryColumns ?? [])];
+        }
         this.columnsForQuickFilter = this.gridOptionsService.is('excludeHiddenColumnsFromQuickFilter')
             ? columnsForQuickFilter.filter(col => col.isVisible() || col.isRowGroupActive())
             : columnsForQuickFilter;
