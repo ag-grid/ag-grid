@@ -18,6 +18,7 @@ import { ChartAxisDirection } from '../../chartAxisDirection';
 import { toTooltipHtml } from '../../tooltip/tooltip';
 import { extent } from '../../../util/array';
 import { areArrayItemsStrictlyEqual } from '../../../util/equal';
+import { Logger } from '../../../util/logger';
 import { Scale } from '../../../scale/scale';
 import { sanitizeHtml } from '../../../util/sanitize';
 import { isNumber } from '../../../util/value';
@@ -880,6 +881,8 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
 
         const legendData: CategoryLegendDatum[] = [];
 
+        this.validateLegendData();
+
         this.yKeys.forEach((stack, stackIndex) => {
             for (let levelIndex = 0; levelIndex < stack.length; levelIndex++) {
                 const yKey = stack[levelIndex];
@@ -907,6 +910,27 @@ export class BarSeries extends CartesianSeries<SeriesNodeDataContext<BarNodeDatu
         });
 
         return legendData;
+    }
+
+    validateLegendData() {
+        const { hideInLegend, legendItemNames } = this;
+
+        let hasAnyLegendItemName = false;
+
+        this.yKeys.forEach((stack) => {
+            stack.forEach((yKey) => {
+                if (hideInLegend.indexOf(yKey) >= 0) {
+                    return;
+                }
+
+                const hasLegendItemName = legendItemNames[yKey] !== undefined;
+                if (hasAnyLegendItemName && !hasLegendItemName) {
+                    Logger.warnOnce(`a series is missing the legendItemName property, unexpected behaviour may occur.`);
+                }
+
+                hasAnyLegendItemName = hasLegendItemName;
+            });
+        });
     }
 
     onLegendItemClick(event: LegendItemClickChartEvent) {
