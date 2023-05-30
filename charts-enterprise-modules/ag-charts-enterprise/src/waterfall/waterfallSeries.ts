@@ -308,9 +308,9 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
 
         const barWidth = xScale.bandwidth || 10;
 
-        const { yKey = '', xKey = '', positiveItem, negativeItem, processedData } = this;
+        const { yKey = '', xKey = '', processedData } = this;
 
-        const nodeData: WaterfallNodeDatum[] = [];
+        const contexts: _ModuleSupport.SeriesNodeDataContext<WaterfallNodeDatum>[] = [];
 
         const yIndex = processedData?.indices.values[yKey] ?? -1;
         const xIndex = processedData?.indices.keys[xKey] ?? -1;
@@ -327,9 +327,17 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
             const currY = yScale.convert(cumulativeValue, { strict: false });
             const prevY = yScale.convert(trailingValue, { strict: false });
 
-            const isPositive = rawValue > 0;
+            const isPositive = rawValue >= 0;
             const y = isPositive ? currY : prevY;
             const bottomY = isPositive ? prevY : currY;
+
+            const itemId = isPositive ? 'positive' : 'negative';
+            const contextIndex = this.getContextIndex(itemId);
+            contexts[contextIndex] ??= {
+                itemId,
+                nodeData: [],
+                labelData: [],
+            };
 
             const rect = {
                 x,
@@ -343,12 +351,12 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
                 y: rect.y + rect.height / 2,
             };
 
-            const { fill, stroke, strokeWidth } = isPositive ? positiveItem : negativeItem;
+            const { fill, stroke, strokeWidth } = this.getItemConfig(isPositive);
 
             const nodeDatum: WaterfallNodeDatum = {
                 index: dataIndex,
                 series: this,
-                itemId: yKey,
+                itemId,
                 datum,
                 cumulativeValue,
                 yValue: rawValue,
@@ -365,10 +373,15 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
                 label: this.createLabelData(isPositive, rawValue, rect),
             };
 
-            nodeData.push(nodeDatum);
+            contexts[contextIndex].nodeData.push(nodeDatum);
+            contexts[contextIndex].labelData.push(nodeDatum);
         });
 
-        return [{ itemId: this.yKey ?? this.id, nodeData, labelData: nodeData }];
+        return contexts;
+    }
+
+    private getContextIndex(itemId: SeriesItemType) {
+        return itemId === 'positive' ? 0 : 1;
     }
 
     private createLabelData(isPositive: boolean, rawValue: any, rect: Bounds): WaterfallNodeLabelDatum {
@@ -436,8 +449,6 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
         const { datumSelection, isHighlight: isDatumHighlighted } = opts;
         const {
             seriesItemEnabled,
-            positiveItem,
-            negativeItem,
             shadow,
             formatter,
             xKey = '',
@@ -459,8 +470,9 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
         const negativesActive = !!seriesItemEnabled.get('negative');
 
         datumSelection.each((rect, datum) => {
-            const isPositive = datum.yValue >= 0;
-            const isActive = (datum.yValue >= 0 && positivesActive) || (datum.yValue < 0 && negativesActive);
+            const isPositive = datum.itemId === 'positive';
+            const isActive = (isPositive && positivesActive) || (!isPositive && negativesActive);
+
             const {
                 fillOpacity: itemFillOpacity,
                 strokeOpacity: itemStrokeOpacity,
@@ -528,7 +540,8 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
         labelSelection.each((text, datum) => {
             const label = datum.label;
 
-            const isActive = (datum.yValue >= 0 && positivesActive) || (datum.yValue < 0 && negativesActive);
+            const isPositive = datum.itemId === 'positive';
+            const isActive = (isPositive && positivesActive) || (!isPositive && negativesActive);
             if (label && labelEnabled) {
                 text.fontStyle = fontStyle;
                 text.fontWeight = fontWeight;
@@ -562,7 +575,7 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
 
         let format: any | undefined = undefined;
 
-        const isPositive = yValue > 0;
+        const isPositive = datum.itemId === 'positive';
         const { fill, strokeWidth, name } = isPositive ? positiveItem : negativeItem;
 
         const color = format?.fill ?? fill ?? 'gray';
@@ -699,7 +712,7 @@ export class WaterfallSeries extends _ModuleSupport.CartesianSeries<
                     from: 0,
                     to: 0,
                 };
-                if (datum.yValue >= 0) {
+                if (datum.itemId === 'positive') {
                     yTransition.from = datum.y + datum.height;
                     yTransition.to = datum.y;
                 } else {
