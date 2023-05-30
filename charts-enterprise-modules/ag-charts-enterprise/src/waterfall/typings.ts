@@ -7,6 +7,8 @@ import {
     AgCartesianSeriesLabelOptions,
     CssColor,
     PixelSize,
+    Opacity,
+    AgDropShadowOptions,
 } from 'ag-charts-community';
 
 export interface AgWaterfallSeriesFormatterParams<DatumType> {
@@ -63,16 +65,16 @@ export interface AgWaterfallSeriesOptions<DatumType = any> extends AgBaseSeriesO
     xName?: string;
     /** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     yName?: string;
-    /** The key to use to retrieve values from the data to use as labels for the markers. */
+    /** The key to use to retrieve values from the data to use as labels for the bars. */
     labelKey?: string;
     /** A human-readable description of the label values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
     labelName?: string;
-    /** The name of the node key containing the color value. This value (along with `colorDomain` and `colorRange` configs) will be used to determine the tile color. */
-    colorKey?: string;
-    /** The stroke color of cells. */
-    stroke?: string; // fill and strokes TODO
-    /** The stroke width of cells. */
-    strokeWidth?: number;
+    /** Configuration for the positive series items. */
+    negativeItem?: AgWaterfallSeriesItemOptions;
+    /** Configuration for the negative series items. */
+    positiveItem?: AgWaterfallSeriesItemOptions;
+    /** Configuration for the shadow used behind the chart series. */
+    shadow?: AgDropShadowOptions;
     /** The title to use for the series. Defaults to `yName` if it exists, or `yKey` if not. */
     title?: string;
     /** Function used to return formatting for individual Waterfall cells, based on the given parameters. If the current cell is highlighted, the `highlighted` property will be set to `true`; make sure to check this if you want to differentiate between the highlighted and un-highlighted states. */
@@ -81,4 +83,19 @@ export interface AgWaterfallSeriesOptions<DatumType = any> extends AgBaseSeriesO
     tooltip?: AgWaterfallSeriesTooltip;
     /** A map of event names to event listeners. */
     listeners?: AgSeriesListeners<DatumType>;
+}
+
+export interface AgWaterfallSeriesItemOptions {
+    /** A human-readable description of the y-values. If supplied, this will be shown in the default tooltip and passed to the tooltip renderer as one of the parameters. */
+    name?: string;
+    /** The fill colour to use for the bars. */
+    fill?: CssColor;
+    /** Opacity of the bars. */
+    fillOpacity?: Opacity;
+    /** The colour to use for the bars. */
+    stroke?: CssColor;
+    /** The width in pixels of the bars. */
+    strokeWidth?: PixelSize;
+    /** Opacity of the bars. */
+    strokeOpacity?: Opacity;
 }
