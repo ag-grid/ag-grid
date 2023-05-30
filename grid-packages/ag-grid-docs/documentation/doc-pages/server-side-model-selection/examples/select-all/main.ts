@@ -47,7 +47,6 @@ const gridOptions: GridOptions<IOlympicData> = {
 
   animateRows: true,
   suppressAggFuncInHeader: true,
-  serverSideFilterAllLevels: true,
 }
 
 function getServerSideDatasource(server: any): IServerSideDatasource {

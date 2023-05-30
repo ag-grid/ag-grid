@@ -672,7 +672,9 @@ export interface GridOptions<TData = any> {
 
     /** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false` */
     serverSideSortAllLevels?: boolean;
-    /** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */
+    /** When enabled, only refresh groups directly impacted by a filter. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false` */
+    serverSideOnlyRefreshFilteredGroups?: boolean;
+    /** @deprecated v30 This property has been deprecated. Use `serverSideOnlyRefreshFilteredGroups` instead */
     serverSideFilterAllLevels?: boolean;
     /**
      *
@@ -687,7 +689,7 @@ export interface GridOptions<TData = any> {
     serverSideFilterOnServer?: boolean;
     /** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead. */
     serverSideSortingAlwaysResets?: boolean;
-    /** @deprecated v28 This property has been deprecated. Use `serverSideFilterAllLevels` instead. */
+    /** @deprecated v28 This property has been deprecated. Use `serverSideOnlyRefreshFilteredGroups` instead. */
     serverSideFilteringAlwaysResets?: boolean;
 
     // *** Row Model: Viewport *** //

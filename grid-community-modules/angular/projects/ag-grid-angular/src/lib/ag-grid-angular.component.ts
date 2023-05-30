@@ -758,8 +758,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public serverSideDatasource: IServerSideDatasource | undefined = undefined;
     /** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server. Default: `false`     */
     @Input() public serverSideSortAllLevels: boolean | undefined = undefined;
-    /** When enabled, always refreshes top level groups regardless of which column was filtered. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false`     */
-    @Input() public serverSideFilterAllLevels: boolean | undefined = undefined;
+    /** When enabled, only refresh groups directly impacted by a filter. This property only applies when there is Row Grouping & filtering is handled on the server. Default: `false`     */
+    @Input() public serverSideOnlyRefreshFilteredGroups: boolean | undefined = undefined;
     /**
          * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
          * Default: `false`
@@ -771,7 +771,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public serverSideFilterOnServer: boolean | undefined = undefined;
     /** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead.     */
     @Input() public serverSideSortingAlwaysResets: boolean | undefined = undefined;
-    /** @deprecated v28 This property has been deprecated. Use `serverSideFilterAllLevels` instead.     */
+    /** @deprecated v28 This property has been deprecated. Use `serverSideOnlyRefreshFilteredGroups` instead.     */
     @Input() public serverSideFilteringAlwaysResets: boolean | undefined = undefined;
     /** To use the viewport row model you need to provide the grid with a `viewportDatasource`.     */
     @Input() public viewportDatasource: IViewportDatasource | undefined = undefined;
@@ -1253,7 +1253,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_serverSideFilteringAlwaysResets: boolean | null | '';
     static ngAcceptInputType_serverSideSortingAlwaysResets: boolean | null | '';
     static ngAcceptInputType_serverSideSortAllLevels: boolean | null | '';
-    static ngAcceptInputType_serverSideFilterAllLevels: boolean | null | '';
+    static ngAcceptInputType_serverSideOnlyRefreshFilteredGroups: boolean | null | '';
     static ngAcceptInputType_serverSideSortOnServer: boolean | null | '';
     static ngAcceptInputType_serverSideFilterOnServer: boolean | null | '';
     static ngAcceptInputType_suppressAggFilteredOnly: boolean | null | '';

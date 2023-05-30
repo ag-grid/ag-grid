@@ -514,7 +514,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @param params a set of properties pertaining to the filter changes
      */
     refreshAfterFilter(params: StoreRefreshAfterParams) {
-        const serverFiltersAllLevels = this.storeUtils.isServerSideFilterAllLevels();
+        const serverFiltersAllLevels = !this.storeUtils.isServerSideOnlyRefreshFilteredGroups();
         if (serverFiltersAllLevels || this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)) {
             this.refreshStore(true);
             return;
