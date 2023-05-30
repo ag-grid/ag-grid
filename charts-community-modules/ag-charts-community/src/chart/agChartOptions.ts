@@ -1116,7 +1116,19 @@ export interface AgCartesianSeriesMarkerFormatterParams<DatumType> extends AgSer
     yKey: string;
 }
 
+export interface AgRadarLineSeriesMarkerFormatterParams<DatumType> extends AgSeriesMarkerFormatterParams<DatumType> {
+    angleKey: string;
+    radiusKey: string;
+}
+
 export interface AgCartesianSeriesMarkerFormat {
+    fill?: CssColor;
+    stroke?: CssColor;
+    strokeWidth?: PixelSize;
+    size?: PixelSize;
+}
+
+export interface AgRadarLineSeriesMarkerFormat {
     fill?: CssColor;
     stroke?: CssColor;
     strokeWidth?: PixelSize;
